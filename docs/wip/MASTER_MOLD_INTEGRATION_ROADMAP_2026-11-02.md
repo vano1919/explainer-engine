@@ -1481,51 +1481,37 @@ The implementation roadmap is divided into **9 100% FREE batches (`BATCH-M0` thr
 
 * **Explicit Completion Gate**: `governance status --check` and `cloud.dryrun` both return exit code `0` (`$0.00` spent).
 
-### 9.10 `BATCH-M8B` — Creator-Gated Paid Execution (`4` Parent Gate Groups `GATE-P1..P4` / `5` Independently Authorized Operational Stages `GATE-P1a`, `GATE-P1b`, `GATE-P2`, `GATE-P3`, `GATE-P4`)
+### 9.10 Open Final RunPod Episode Budget Protocol, Protective Ceilings & Separate ElevenLabs Accounting (`CORR-12`)
 
-* **Objective & Scope**: Execute paid GPU benchmarks and Episode 1 production through **four parent gate groups (`GATE-P1`..`GATE-P4`) comprising five independently authorized operational stages (`GATE-P1a`, `GATE-P1b`, `GATE-P2`, `GATE-P3`, `GATE-P4`)**. **Critical Spending Authority Invariant**: A budget ceiling in `config/spend_caps.json` is **not** an authorization to spend, and approval for one operational stage **never** authorizes the next; every paid stage requires its own pre-spend creator `"YES"` on a service-specific cost table (`Standing Order 10` / `OR-23`), a bounded `Run` ledger (`core/ledger.py` with `STOP_FRACTION = 0.8` 80% stop and `MAX_FAILURES = 3`), and an active `OR-36` Haiku watchdog thread:
+We do **not** arbitrarily choose between `$31.00` and `$15.00` as the final episode RunPod budget:
 
-  1. **`GATE-P1` (`P12b` Micro-Benchmark Pods — Two Independently Authorized Paid Pod Stages)**:
+1. **Why the Final Episode GPU Budget Must Remain `OPEN` Until Multi-Minute Empirical Measurement**:
+   - In repository `5013a55a`, the actual end-to-end RunPod cost of a full 12-minute (`720s`) episode is **currently an empirical unknown** because total GPU spend is governed by six coupled runtime variables tracked in `explainer_engine/cloud/speeds.py` (`config/job_speeds.json`) and `explainer_engine/core/ledger.py`:
+     1. **GPU Card Selection & Spot/On-Demand Rate ($r_{\text{gpu}}$)**: e.g., `NVIDIA A100-SXM4-80GB` (`~$1.89/hr`), `A100-PCIe-80GB` (`~$1.64/hr`), or `L40S-48GB` (`~$0.86–$1.05/hr`) ([RunPod Pod Billing & Per-Second GPU Pricing](https://docs.runpod.io/pods/pricing)).
+     2. **Container Provisioning, Wheel Installation & Weight Download Time (`setup_s` / `setup_min`)**: Cold-boot network transfer of `FLUX.1-dev` (`~23.8 GB`), `LTX-2-19B` (`~38.0 GB` BF16 / `~19.5 GB` FP8), `SAM 2.1 Large`, and `LivePortrait` weights (`RP-09` `setup_share_max = 0.25` in `cloud/speeds.py:85–101`).
+     3. **Active Generation Speed (`s_per_unit` / `work_s`)**: Denoising seconds per still (`images`) or per video clip (`clips`) or per upscale frame (`upscale_s`), including optional `torch.compile` warmup trade-offs ([PyTorch `torch.compile` Warmup Tutorial](https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html)).
+     4. **Semantic & Identity QA Retry Multiplier ($k_{\text{retry}}$ / `seeds_per_accepted_shot`)**: Re-generations triggered by `qa/identity.py` (`BP-133` ArcFace `< 0.75`), `qa/blind_check.py` (`KG-23..27` `gate_card` mismatch), `qa/face_points.py`, or `qa/prop_points.py` (`BP-168` currently estimates `seeds_per_accepted_shot = 2.5` as an uncalibrated baseline).
+     5. **Pod Idle, Checkpoint Sync & R2/S3 Egress Upload Time ($t_{\text{idle+io}}$)**: Wall-clock GPU billing while waiting on CPU post-processing or artifact download (`download_s`, `mb` in `units.json`).
+     6. **Pod Teardown & Orphan Protection Latency ($t_{\text{teardown}}$)**: Time between batch completion and `runpod.terminate_pod(pod_id)` (bounded by the `OR-36` Haiku watchdog).
+   - Therefore, **the final RunPod episode budget is explicitly kept `OPEN` (`CD-05: OPEN UNTIL MULTI-MINUTE SAMPLE MEASUREMENT`)** until we produce our first representative multi-minute video (`GATE-P2` 2-part sample `D-67` / `OR-19` via `production/sample.py`) and compute its measured **Cost Per Finished Minute (`CPFM_usd`)** using the protocol in `§13.2`.
 
-     * **`GATE-P1a` (Pre-Spend Authorization #1 — Stage M Measurement Pod)**: Measures exact RunPod SECURE download/setup speed (`paid_tests.p12b_measure.runpod_usd = $0.63` ledger reservation; `$0.50` pod hard cap in `p12b.json`). Requires `cloud.dryrun` PASS + `OR-23` pod plan + standalone creator `"YES"` + `OR-36` watchdog.
+2. **Strict Preservation of All Existing Spend Authorization, Ledger & Watchdog Controls**:
+   - Keeping the *final episode target budget* open **never** means unrestricted or unmonitored spending. Every existing safety barrier in `5013a55a` remains strictly enforced and unmodified:
+     - **`Standing Order 10` (`OR-23`)**: Zero autonomous paid spend without explicit per-test user authorization.
+     - **`config/spend_caps.json` Outer Safety Ceilings**:
+       - `per_pod_usd_max = $6.90` (`core/ledger.py:42` `STOP_FRACTION = 0.80` automatic hard stop at **`$5.52`**).
+       - `daily_24h_usd_max = $26.00` (`STOP_FRACTION = 0.80` automatic hard stop at **`$20.80`**).
+       - `episode_runpod_usd_max = $31.00` (`STOP_FRACTION = 0.80` automatic hard stop at **`$24.80`**).
+       - `MAX_FAILURES = 3` (`core/ledger.py:43` halts immediately after 3 consecutive failed pod jobs).
+     - **`OR-36` Haiku Watchdog (`cloud/watchdog.py`)**: Out-of-band daemon polling active pods and terminating any pod that exceeds `per_pod_usd_max` or stalls without heartbeat.
+     - **`BP-168` (`config/craft_rules.json:2059`)**: Retained as a `REVIEW`-severity pre-flight forecast reference (`episode_usd_target: 12.0`), to be updated with measured empirical constants (`s_per_unit`, `setup_min`, `seeds_per_accepted_shot`) after the `GATE-P2` multi-minute sample run.
 
-     * **`GATE-P1b` (Pre-Spend Authorization #2 — Combined Qwen + LTX-2.5 Pod `Q1–Q3`, `L1–L3`)**: Runs only after `GATE-P1a` settles (`paid_tests.p12b_two_runs.runpod_usd = $3.00` ledger reservation; `$2.40` pod hard cap). Requires measured Stage M speed + fresh `OR-23` pod plan + standalone creator `"YES"` + `OR-36` watchdog. Updates `config/job_speeds.json` and `docs/COST_AND_TIME_MODEL.md` and evaluates `BP-168` (`Go / Pivot / Abandon`).
-
-  2. **`GATE-P2` (Pre-Spend Authorization #3 — Episode 1 Voice Auditions & Two-Part Sample Generation `OR-19`, `D-67`)**:
-
-     * **Pre-Spend Scope Distinction**: In `explainer_engine/production/sample.py` (`OR-19`) and `standards/hook.py`, paid voice reads and pictures/clips for the **two-part sample** run *before* `sample.py approve` (which is the post-render review gate). Therefore, `GATE-P2` is the **mandatory pre-spend authorization** covering:
-
-       * (a) Stage 5 character voice auditions bounded by `casting.casting_credits_max = 1,500` credits (`voice_audition.py`), plus Odom's first sample read to populate `channel_voices.json` `baseline`; and
-
-       * (b) Generating the voice reads and visual clips **strictly for the 2-part sample segments** (`sample.py:scope_segments` defaults to `["S01", "S02"]`; if the creator chooses `["S01", "S15"]` Hook + Climax as the 2-part sample, `{"scope_segments": ["S01", "S15"]}` must be written to `sample_approval.json` *before* paid generation starts so `standards/hook.py` and `PP-09` permit `S15` and block `S02..S14, S16`!).
-
-     * **Enforced Caps & Guards**: Requires `CD-09` topic, Script Approval #1 (`PV-53`), `editorial_gate` `0 FAIL` (`OR-10`), `standards gate --at paid_assets` (`OR-12`), opening `run.json` (`Run.open`) with explicit sample-only caps (`elevenlabs_credits <= 3,500`, `runpod_usd <= $4.50`, `MAX_FAILURES = 3`, 80% stop), `OR-23` pod plan, standalone creator `"YES"`, and `OR-36` watchdog.
-
-  3. **`GATE-P3` (Post-Render Sample Quality Sign-Off #4 — `production/sample.py approve`, `$0.00` Review Gate)**:
-
-     * After the 2-part sample authorized in `GATE-P2` is rendered and stitched, all paid tools halt at Gate `6.5` (`production_gate.py:130`, `standards/hook.py:114`).
-
-     * The creator watches the stitched sample video and either (a) approves it via `python -m explainer_engine.production.sample approve <folder> --by <creator> --ref <msg> --video <sample.mp4>` (binding `sample_approval.json` to `script_sha256`), or (b) requests revisions (any paid re-read or re-render exceeding the `GATE-P2` sample ledger requires a fresh pre-spend creator `"YES"`).
-
-  4. **`GATE-P4` (Pre-Spend Authorization #5 — Episode 1 Full Remaining Production Run `S03..S16` + `5` Shorts)**:
-
-     * **Multi-Service Budget Requirement**: Inspection of `config/spend_caps.json` (`per_episode`) shows ceilings for `runpod_usd: $31.00`, `gemini_usd: $10.00`, `bfl_usd: $3.00`, and `fal_usd: $9.00`, but **no `per_episode.elevenlabs_credits` line** (`casting_credits_max = 1,500` is for auditions only, and `allowances.qa_loop = 2,000` is a sub-allowance inside the run's `elevenlabs_credits` cap). A 12-minute (`~2,066`-word, `~12,500`-char) episode plus `5` Shorts and `D-90` character lines requires `~18,000–25,000` ElevenLabs credits.
-
-     * **Enforced Caps & Guards**: Before any full-episode TTS or GPU call runs after `GATE-P3`, `GATE-P4` requires opening `run.json` (`Run.open(path, caps={"runpod_usd": 31.0, "elevenlabs_credits": <creator_approved_cap_e.g._25000>})`) so `core/ledger.py` enforces the 80% stop (`STOP_FRACTION = 0.8`) and `MAX_FAILURES = 3` on **both** RunPod USD and ElevenLabs credits, backed by a fresh `OR-23` pod plan, standalone creator `"YES"` on the combined full-episode cost table (`Standing Order 10`), and continuous `OR-36` Haiku watchdog monitoring.
-
-* **Exact Repository Files Updated After Paid Measurements (`3` files, creator-gated)**:
-
-  1. `config/job_speeds.json` & `docs/COST_AND_TIME_MODEL.md` (after `GATE-P1b`)
-
-  2. `config/channel_voices.json` (Odom `baseline` after `GATE-P2`)
-
-  3. `config/spend_caps.json` (only if creator adjusts episode cap in `CD-05` before `GATE-P4`)
-
-* **Dependencies & Prerequisites**: `BATCH-M8A` green + separate explicit creator `"YES"` at each of `GATE-P1`, `GATE-P2`, `GATE-P3`, and `GATE-P4`.
-
-* **Cost Classification**: **CREATOR APPROVAL REQUIRED / PAID** (strictly bounded by `config/spend_caps.json` per-gate caps).
-
-* **Explicit Completion Gate**: Each of `GATE-P1`..`GATE-P4` closes only upon creator sign-off and verified `Run` ledger settlement within cap.
+3. **Strict Separation of ElevenLabs Voice Credits from RunPod GPU USD**:
+   - **ElevenLabs (`production/voice.py`, `config/spend_caps.json:13`)** is billed by **character/credit count** ([ElevenLabs Character & Credit Billing Documentation](https://elevenlabs.io/docs/overview)), not GPU wall-clock time.
+   - Its consumption is deterministic from the approved script before a single frame is rendered:
+     $$\text{Credits}_{\text{11Labs}} = \text{Chars}(\text{spoken\_lines}) + \text{Chars}(\text{inline\_audio\_tags}) + \text{Credits}_{\text{casting}} + \text{Chars}(\text{line\_retakes})$$
+   - For a `1,920`-word (`~11,500` spoken characters + `~1,800` tag characters) 12-minute script with `15%` line retakes, total narration synthesis is **`~15,300` characters (credits)**, plus at most **`casting_credits_max = 1,500` credits** (`config/spend_caps.json:13`, audited in `core/ledger.py:137` `check_casting_cap()`).
+   - ElevenLabs credit accounting is tracked in `run.json["elevenlabs_credits"]` and must **never** be summed into or conflated with `run.json["runpod_usd"]`.
 
 ## 10. Dependency Graph & Critical Path
 
@@ -1735,37 +1721,60 @@ Before committing budget to a full 12-minute episode (\~`120–152` LTX clips), 
 
      * If `L3` audio-conditioned lip-sync (`DIALOGUE_CU`) fails `video_qa.py` (`LT-80` / lip-sync check), `qa/retry_router.py` automatically falls back to `FALLBACK_KEYFRAME_LTX` (narrator-framed reported speech per `D-63` or silent reaction cutaways per `BP-113`).
 
-## 13. Cost Controls and Creator Approval Gates
+## 13. Financial Governance, Separate ElevenLabs Accounting & Multi-Minute Representative Video Measurement Protocol (`CPFM_usd`)
 
-### 13.1 Strict Cost Classification Across All Roadmap Batches
+### 13.1 Separation of Safety Ceilings, Pre-Test Forecasts & ElevenLabs Credit Accounting
 
-| Batch / Activity | Cost Classification | Service / Resource | Budget Cap in `config/spend_caps.json` | Required Approval Gate | 
-| ----- | ----- | ----- | ----- | ----- | 
-| **`BATCH-M0` .. `BATCH-M7`** (All code, schema, prompt, skill, doc, and CPU test work) | **FREE (`$0.00`)** | Local CPU / Git only | `$0.00` | `CD-01` kickoff approval + `GATE-EXT-MAIN-PROTECT` (`RSK-06` GitHub `main` branch protection). | 
-| **60.0-Second (`1,440`-Frame) Pre-Pod CPU Assembly Falsification Test** | **FREE (`$0.00`)** | Local CPU (`ffmpeg`, `PIL`, `numpy`, committed fixtures) | `$0.00` | Included in `BATCH-M7` (`$0.00`). | 
-| **`BATCH-M8A` (Governance Status Closure, PR #112 Closure & `cloud/dryrun.py`)** | **FREE (`$0.00`)** | Local CPU / Git / HF code bundle upload | `$0.00` | `BATCH-M7` green (`CD-07` before closing PR #112; `CD-02` before locking LoRA weight). Zero paid API/GPU spend. | 
-| **`BATCH-M8B — GATE-P1a` (`P12b` Stage M Measurement Pod)** | **PAID (Standalone Creator Approval #1)** | RunPod SECURE GPU | Ledger reservation `paid_tests.p12b_measure.runpod_usd = $0.63`; pod hard cap `$0.50` (`p12b.json`) | `BATCH-M8A` (`cloud/dryrun.py` PASS) + `OR-23` pod plan + **Explicit Creator "YES" for `GATE-P1a`** + `OR-36` Haiku watchdog. | 
-| **`BATCH-M8B — GATE-P1b` (`P12b` Combined Qwen + LTX-2.5 Pod `Q1–Q3`, `L1–L3`)** | **PAID (Standalone Creator Approval #2)** | RunPod SECURE GPU | Ledger reservation `paid_tests.p12b_two_runs.runpod_usd = $3.00`; pod hard cap `$2.40` (`p12b.json`) | Measured Stage M speed + `OR-23` pod plan + **Explicit Creator "YES" for `GATE-P1b`** + `OR-36` Haiku watchdog. | 
-| **`BATCH-M8B — GATE-P2` (Episode 1 Voice Auditions + Two-Part Sample Generation `OR-19`)** | **PAID (Pre-Spend Creator Authorization #3)** | ElevenLabs (`eleven_v4`) + RunPod sample slice | Auditions `<= 1,500` credits (`casting_credits_max`); 2-part sample ledger cap (`elevenlabs_credits <= 3,500`, `runpod_usd <= $4.50`, 80% stop) | `CD-09` topic + Script Approval #1 (`PV-53`) + `paid_assets` stamp + `OR-23` plan + **Explicit Creator "YES" for `GATE-P2` pre-spend sample table** + `OR-36` watchdog. | 
-| **`BATCH-M8B — GATE-P3` (Post-Render Two-Part Sample Quality Sign-Off `OR-19`)** | **FREE REVIEW GATE (`$0.00`)** | `python -m explainer_engine.production.sample approve` | `$0.00` (post-render review of `GATE-P2` sample; any paid re-render requires fresh pre-spend `"YES"`) | **Explicit Creator quality sign-off (`sample.py approve`, `GATE-P3`)** bound to `script_sha256` before `S03..S16` can be planned. | 
-| **`BATCH-M8B — GATE-P4` (Episode 1 Full Remaining GPU & Voice Production)** | **PAID (Pre-Spend Creator Authorization #5)** | RunPod + ElevenLabs (`S03..S16` + `5` Shorts) | `per_episode.runpod_usd = $31.00` hard cap + explicit `run.json` `elevenlabs_credits` cap (e.g. `<= 25,000` credits, 80% stop, `MAX_FAILURES = 3`) | `GATE-P3` (`sample.py approve` PASS) + `OR-23` pod plan + **Explicit Creator "YES" for `GATE-P4` full-episode GPU + TTS cost table** + `OR-36` Haiku watchdog. | 
+To eliminate any arbitrary choice between `$31.00` and `$15.00` prior to empirical measurement, financial tracking across the pipeline is partitioned into three distinct, non-overlapping layers:
 
-### 13.2 Ten Explicit Creator Decision Cards (`CD-01` through `CD-10`)
+| Accounting Layer | Authority in `5013a55a` | Unit of Account | Current Value / Status | Operational Role |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Hard Runtime Safety Ceilings (Unchanged)** | `config/spend_caps.json` + `explainer_engine/core/ledger.py` (`STOP_FRACTION = 0.80`, `MAX_FAILURES = 3`) + `cloud/watchdog.py` (`OR-36`) | **USD (`RunPod GPU`)** | `per_pod_usd_max = $6.90` (`80%` = `$5.52`)<br>`daily_24h_usd_max = $26.00` (`80%` = `$20.80`)<br>`episode_runpod_usd_max = $31.00` (`80%` = `$24.80`) | Hard circuit-breaker that prevents runaway pod billing. Preserved intact. |
+| **2. Final Episode RunPod GPU Budget (`CD-05`)** | `docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md` (`CD-05`) + `config/craft_rules.json` (`BP-168`) + `config/job_speeds.json` (`cloud/speeds.py`) | **USD (`RunPod GPU`)** | **`OPEN / UNDECIDED UNTIL MULTI-MINUTE REPRESENTATIVE VIDEO MEASUREMENT`**<br>*(Unverified analytical pre-test estimate: `~$11.00–$18.50` depending on retry rate $k_{\text{retry}} \in [1.5, 2.8]$ and setup share)* | Determined empirically from the `GATE-P2` multi-minute sample video (`§13.2`) via measured **Cost Per Finished Minute (`CPFM_usd`)**. |
+| **3. ElevenLabs Voice & Casting Accounting** | `production/voice.py` + `config/spend_caps.json:13` (`casting_credits_max = 1,500`) + `core/ledger.py:137` | **ElevenLabs Credits / Characters** *(plus fixed monthly plan tier)* | `casting_credits_max = 1,500 credits` (hard cap)<br>Full 12-min (`1,920`-word) episode narration + tags + `15%` retakes = **`~15,300`–`16,800` credits** | Tracked deterministically from script character length in `run.json["elevenlabs_credits"]`; **never** mixed with RunPod GPU USD. |
 
-Nothing in this roadmap treats a research recommendation as a creator decision. The following `10` items are separated for the creator's word:
+### 13.2 Exact Measurement Protocol for the First Representative Multi-Minute Video (`GATE-P2`)
 
-| Card ID | Decision Question | Current State in Repo (`5013a55a`) | Argon Technical Recommendation | When Needed | 
-| ----- | ----- | ----- | ----- | ----- | 
-| **`CD-01`** | **Implementation Kickoff & Branch**: Approve executing the free batches (`BATCH-M0..M7` and `BATCH-M8A`) on `planning/master-mold-integration-2026-11-02`? | Roadmap complete; `0` code files mutated yet. | **Approve `BATCH-M0..M7` + `BATCH-M8A` (all FREE, `$0.00`)** once `GATE-EXT-MAIN-PROTECT` (`RSK-06`) is verified. | **Before `BATCH-M0`** | 
-| **`CD-02`** | **`xworld_v2` LoRA Strength (`0.7` vs `1.0`)**: `cloud_pins.json:103` has `0.7` (per 2026-10-31 brief), while `p12b.json` and `qa/style_prompt.py:25` have `1.0`. Which weight should be locked across all 3 files? | `0.7` in `cloud_pins.json`; `1.0` in `p12b.json` & `style_prompt.py`. | **Lock `0.7`** across all 3 files (or compare `0.7` vs `1.0` on 1 frame in `P12b`). Does **not** block `BATCH-M0..M7`. | **Before `BATCH-M8A` P12 bundle upload / `BATCH-M8B` `GATE-P1`** | 
-| **`CD-03`** | **`BP-170` Still Motion Ladder Thresholds**: Confirm the coordinator's numeric thresholds in `BP-170` (`0.25` relocation distance, `0.08` area, `0.30` plate swap, `1.5/2.0/2.5s` static limits) and whether Tier 2 (`qwen_nextpose`) remains capped at `1.5/2.0/2.5s`? | Recorded in `BP-170.next_step` as awaiting creator confirmation. | **Keep Tier 1 and Tier 2 strictly capped at `1.5/2.0/2.5s` (`static_still_max_s_by_zone`)** in `BATCH-M5`; require creator approval (`CD-03`) + measured pose-delta & identity (`KG-13`) thresholds before any future Tier 2 hold extension. | **Before `BATCH-M5`** (for `BP-170` threshold confirmation; `BATCH-M5` defaults to strict `1.5/2.0/2.5s` cap) | 
-| **`CD-04`** | **Intra-Zone Pace Variation Rule (`BP-169`)**: Confirm how code should check intra-zone pace variation (`std_words >= 2.0` per sentence and `>=15%` short `<=6`-word punch sentences inside each zone) as a `REVIEW` metric? | `BP-169.statement` notes frequency is open until sourced/confirmed. | **Confirm `REVIEW` check** (never hard `FAIL` while `status: "hypothesis"`) in `narration_lint.py` for `BATCH-M2`. | **Before `BATCH-M2`** | 
-| **`CD-05`** | **Per-Episode GPU Cap (`config/spend_caps.json`)**: Keep `per_episode.runpod_usd = $31.00` until `GATE-P1` (`P12b`) measures real LTX-2.5 `s/clip`, or adjust now? | Protected config (`$31.00`). | **Keep `$31.00` unchanged during `BATCH-M0..M8A` and `GATE-P1..P3`**; revisit only before `GATE-P4` after `GATE-P1b` records real speeds in `config/job_speeds.json`. | **Before `BATCH-M8B` `GATE-P4`** (after `GATE-P1b`) | 
-| **`CD-06`** | **Deceased Historical Figures Voicing (`D-90` / `PV-55`)**: `D-62` bans synthetic voices for *living* real people. May deceased historical figures (e.g., Napoleon, Subutai, Caesar) receive dramatized cast ElevenLabs voices under `D-90`? | Marked `OPEN` in `DECISIONS_AND_OPEN_QUESTIONS.md` row `D-90`. | **Yes for deceased historical figures** (`real_living_person: false`), keeping `D-62` (`PV-55`) strictly enforced (`FAIL`) for living real people. | **Before `BATCH-M4`** | 
-| **`CD-07`** | **PR #112 Disposition**: After cherry-picking the 2-line `claude_api.load_job` fix + test in `BATCH-M0`, close stale Draft PR #112 on GitHub? | Open Draft PR #112 (`1` ahead, `29` behind `main`). | **Close PR #112 as superseded in `BATCH-M8A`** after `BATCH-M0` lands and tests the parser fix. | **Before `BATCH-M8A` PR #112 closure** (does not block `BATCH-M0..M7`) | 
-| **`CD-08`** | **56 Stopped `0 GB` RunPod Pods (`keep_stopped_pods`)**: Keep the 56 legacy stopped pods (`$0.00/day`) listed in `spend_caps.json`, or prune them? | Listed in `spend_caps.json`; `D-92` auto-delete only deletes pods created *after* `D-92`. | **Leave untouched** (`$0.00/day`). | **Non-blocking** | 
-| **`CD-09`** | **First 12-Minute Episode Topic Selection**: Which topic should enter Episode 1 production (`GATE-P2`..`GATE-P4`)? | Open (`TOPICS_2_ka.md` / Part I 60-Day Calendar). | Pick 1 flagship topic before Episode 1 production (`BATCH-M7` uses a self-contained deterministic CPU test fixture and does **not** wait on `CD-09`). | **Before `BATCH-M8B` `GATE-P2`** | 
-| **`CD-10`** | **Channel Rebrand & Unlisted GTA 6 Video**: Execute the channel name/banner update and unlisted setting for the old GTA 6 video? | Open external YouTube Studio action. | Creator performs in YouTube Studio before publishing Episode 1 (external to code repo). | **Before Episode 1 YouTube upload** (non-blocking for code) | 
+Before locking any final episode RunPod GPU budget in `CD-05`, we execute a **single creator-authorized representative multi-minute sample (`D_{\text{sample}} \in [120\text{s}, 180\text{s}]`, i.e., `2.0–3.0` finished minutes)** via `explainer_engine/production/sample.py` (`D-67` / `OR-19`) covering at least two contrasting zones (`Z1` War Room + `Z2` Tactical Map + `Z3/Z4` Character Drama) and exercising the full `60 / 30 / 10` (`VIDEO / STILL / HELPER`) modality mix.
+
+#### Step 1 — Mandatory Per-Pod Telemetry Capture (`units.json` + `run.json`)
+Every pod batch $b \in \{1, \dots, B\}$ invoked during the multi-minute sample test (`portraits_anchors`, `scene_plates_flux`, `cutouts_sam2`, `i2v_ltx2`, `expression_liveportrait`, `upscale_realesrgan`) writes a structured `units.json` artifact consumed by `explainer_engine/cloud/speeds.py:55` (`update_from_run()`) and `explainer_engine/core/ledger.py`:
+
+1. **`setup_s` ($t_{\text{setup},b}$)**: Container cold start + dependency check + weight download/load time from `pod_started_at` until the first model forward pass begins.
+2. **`work_s` ($t_{\text{work},b}$)**: Active GPU inference wall-clock seconds across all attempted generations (including rejected seeds).
+3. **`units_attempted` ($U_{\text{att},b}$) vs `units_accepted` ($U_{\text{acc},b}$)**: Total generated seeds/clips vs shots passing `qa/identity.py` (`BP-133`), `qa/blind_check.py` (`KG-23..27`), `qa/face_points.py`, `qa/prop_points.py`, and `qa/pixels.py`.
+4. **`download_s` ($t_{\text{io},b}$) & `mb`**: Time spent compressing and transferring outputs from the pod to R2/local workspace while the pod is still billing.
+5. **`idle_teardown_s` ($t_{\text{idle},b}$)**: Remaining billed pod lifetime (`pod_terminated_at - pod_started_at - setup_s - work_s - download_s`).
+6. **`usd` ($C_{\text{pod},b}$)**: Exact billed USD reported by the RunPod ledger for pod $b$:
+   $$C_{\text{pod},b} = \frac{r_{\text{gpu},b}}{3600} \times \left(t_{\text{setup},b} + t_{\text{work},b} + t_{\text{io},b} + t_{\text{idle},b}\right)$$
+
+#### Step 2 — Empirical Parameter Extraction (`cloud/speeds.py` & `BP-168` Calibration)
+From the completed multi-minute sample of finished duration $D_{\text{sample}}$ seconds ($M_{\text{sample}} = D_{\text{sample}} / 60$ finished minutes), we compute four empirical constants for each job type $j$:
+
+1. **Empirical Retry Multiplier ($k_{\text{retry},j}$ / `seeds_per_accepted_shot`)**:
+   $$k_{\text{retry},j} = \frac{U_{\text{att},j}}{U_{\text{acc},j}} \ge 1.0$$
+2. **Net Active Inference Seconds per Accepted Unit ($s_{\text{acc},j}$)**:
+   $$s_{\text{acc},j} = \frac{t_{\text{work},j}}{U_{\text{acc},j}} = s_{\text{raw},j} \times k_{\text{retry},j}$$
+3. **Empirical Setup & IO Overhead Share ($\sigma_{\text{overhead},j}$, checked against `RP-09` `setup_share_max = 0.25` in `cloud/speeds.py:85`)**:
+   $$\sigma_{\text{overhead},j} = \frac{t_{\text{setup},j} + t_{\text{io},j} + t_{\text{idle},j}}{t_{\text{setup},j} + t_{\text{work},j} + t_{\text{io},j} + t_{\text{idle},j}}$$
+4. **Amortized Fixed Character-Bible / Anchor Cost ($C_{\text{fixed}}$)** vs **Variable Per-Minute Shot Cost ($C_{\text{var}}(M_{\text{sample}})$)**:
+   - **Fixed Episode Setup Cost ($C_{\text{fixed}}$)**: One-time character anchor turnaround sheets (`portraits_anchors`) and shared master location plates that are generated once per episode regardless of whether the video is 3 minutes or 12 minutes.
+   - **Variable Timeline Cost ($C_{\text{var}}(M_{\text{sample}})$)**: Shot-level `FLUX.1-dev` plates, `SAM 2.1` cutouts, `LTX-2` `VIDEO` clips, `LivePortrait` helper animations, and `Real-ESRGAN` `2K` upscaling proportional to finished runtime $M_{\text{sample}}$.
+
+#### Step 3 — Exact Formula for Cost Per Finished Minute (`CPFM_usd`) & Full-Episode Projection
+To avoid distorting per-minute cost with one-time pod spin-up and one-time character bible generation, we compute both **Gross Sample `CPFM_usd`** and **Variable Marginal `CPFM_var_usd`**:
+
+1. **Gross Measured Cost Per Finished Minute on the Sample (`CPFM_gross_usd`)**:
+   $$\text{CPFM}_{\text{gross\_usd}} = \frac{\sum_{b=1}^{B} C_{\text{pod},b}}{M_{\text{sample}}} = \frac{C_{\text{fixed}} + C_{\text{var}}(M_{\text{sample}}) + C_{\text{setup+io+idle}}}{D_{\text{sample}} / 60}$$
+2. **Variable Marginal Cost Per Finished Minute (`CPFM_var_usd`, excluding one-time episode setup & character anchors)**:
+   $$\text{CPFM}_{\text{var\_usd}} = \frac{1}{M_{\text{sample}}} \sum_{j \in \{\text{plates, cutouts, video, helper, upscale}\}} \frac{r_{\text{gpu},j}}{3600} \left( U_{\text{acc},j} \cdot s_{\text{raw},j} \cdot k_{\text{retry},j} + t_{\text{io},j} \right)$$
+3. **Full $M_{\text{ep}}$-Minute (`12.0`-Minute) Episode RunPod Cost Projection ($\widehat{C}_{\text{ep}}(M_{\text{ep}})$)**:
+   When all shot batches run in consolidated pod sessions ($N_{\text{pods}}$ spin-ups across the episode), the projected full-episode RunPod cost for $M_{\text{ep}} = 12.0$ finished minutes is:
+   $$\widehat{C}_{\text{ep}}(M_{\text{ep}}) = C_{\text{fixed}} + N_{\text{pods}} \cdot \overline{C}_{\text{setup+idle}} + M_{\text{ep}} \cdot \text{CPFM}_{\text{var\_usd}}$$
+4. **Post-Measurement Decision Rule (`CD-05`)**:
+   - Once $\widehat{C}_{\text{ep}}(12.0)$ and its empirical retry variance ($\pm 2\sigma$) are measured on the `GATE-P2` multi-minute sample, `config/job_speeds.json` is updated via `python3 -m explainer_engine.cloud.speeds <sample_run_dir>`, `BP-168` (`episode_usd_target` and `seeds_per_accepted_shot`) is updated to match measured reality, and the creator locks the final episode RunPod cap in `CD-05` as:
+     $$\text{Cap}_{\text{episode\_runpod}} = \frac{1}{0.80} \times \left(\widehat{C}_{\text{ep}}(12.0) \times 1.20_{\text{safety\_margin}}\right)$$
+     so that `core/ledger.py`'s `STOP_FRACTION = 0.80` triggers at `1.20x` the empirically measured episode cost while never exceeding `$31.00`.
 
 ## 14. Risks, Unresolved Decisions, Explicit Assumptions, and Final Recommended Implementation Sequence
 
@@ -2033,7 +2042,7 @@ Nothing in this roadmap treats a research recommendation as a creator decision. 
 | **`CORR-09`** | **Speech Information Rate & WPM Studies (`SRC-05`, `SRC-06`, `§15.4`)** | `7312f660` conflated Pellegrino et al. (2011) (`7` languages) with Coupé et al. (2019) (`17` languages, `~39 bits/s`), and called Brysbaert (2019)'s `183 WPM` oral reading rate `"conversational speech"`. | Separated and cited all four primary studies accurately: Pellegrino et al. (2011) (`7` languages, syllable density vs rate trade-off), Coupé et al. (2019) (`17` languages, `39.15 ± 5.10 bits/s`), Brysbaert (2019) (`238 WPM` silent reading, `183 WPM` oral reading), Yuan et al. (2006) (`152–170 WPM` conversational topic averages), and Rodero (2012/2020) (`180 WPM` radio/ad comprehension). | [Coupé et al. (2019) *Science Advances* `PMC6984970`](https://pmc.ncbi.nlm.nih.gov/articles/PMC6984970/) & [Pellegrino et al. (2011) *Language*](https://www.cambridge.org/core/journals/language/article/abs/crosslinguistic-perspective-on-speech-information-rate/8690E5D7B9D99CE4F54DC3C4A1AB3A2D) | [Brysbaert (2019) *J. Mem. Lang.* `PMC6758568`](https://pmc.ncbi.nlm.nih.gov/articles/PMC6758568/) & [Yuan et al. (2006) *Interspeech*](https://www.isca-archive.org/interspeech_2006/yuan06_interspeech.pdf) | [Rodero (2012) UPF Repository](https://repositori.upf.edu/bitstreams/132a1675-b3a3-4bd5-8edc-976a80727538/download) & [Rodero (2020)](https://www.researchgate.net/publication/336819723_Do_Your_Ads_Talk_Too_Fast_To_Your_Audio_Audience_How_Speech_Rates_of_Audio_Commercials_Influence_Cognitive_and_Physiological_Outcomes) | `pytest tests/unit/test_syllables.py tests/unit/test_rhythm_profile.py` |
 | **`CORR-10`** | **Walter Murch's Rule of Six (`BP-128`) & Law of 2.5 (`BP-121`) (`SRC-13`, `SRC-14`)** | Earlier notes treated Rule of Six percentages (`51/23/10/7/5/4%`) as hard mathematical cut-scoring weights and simplified Law of 2.5 to `"max 2 foreground elements"`. | Murch's Rule of Six is an **editorial priority hierarchy** (partially tongue-in-cheek, ranking Emotion and Story above 2D/3D continuity), and his Law of 2.5 caps **same-colour spectral layers at `2.5` (`int(2.5) = 2` in `sound_director.py:785`) while allowing up to `5` layers spread across distinct spectral bands (`spread_layers: 5` in `BP-121`)**. Both remain `REVIEW` craft heuristics (`D-59`). | `docs/research/CRAFT_SOURCES_2026-10.md` (`[pdftotext]` of *In the Blink of an Eye* p. 18 & *Dense Clarity*) | [Walter Murch — *Dense Clarity — Clear Density* PDF](https://rompusnetwork.org/portfolio/dense_clarity_by_walter_murch.pdf) | `explainer_engine/audio/sound_director.py:780–792` (`BP-121`) & `production/assemble.py:714` (`BP-128`) | `pytest tests/unit/test_sound_director.py tests/unit/test_assemble_video_v2.py` |
 | **`CORR-11`** | **LTX-2.5 Open-Source PyTorch (`8k+1`, `BP-139`) vs Hosted REST API (`SRC-03`, `CHG-08`)** | `7312f660` stated `8k+1` as a universal LTX rule and marked `BP-139` as a `FAIL` invariant. | Open-source self-hosted LTX (`aivideo/pod/clips.py`, `training/pods/p12/p12c_ltx.py`) requires `F = 8k + 1` frames and `width/height % 32 == 0` (`BP-139`, `severity: "REVIEW"` in `core/contracts.py:60–67`), whereas the hosted LTX-2.5 API (`api.ltx.io`) takes discrete second durations (`6..20s` on Fast 720p/1080p; `6/8/10s` on 1440p/4K and Pro). | `explainer_engine/core/contracts.py:10, 60–67` & `training/video_qa.py:515–520` | [LTX Open-Source PyTorch API Docs](https://docs.ltx.io/open-source-model/integration-tools/pytorch-api) & [arXiv:2601.03233](https://arxiv.org/abs/2601.03233) | [LTX-2.5 Hosted API Support Matrix](https://docs.ltx.io/models/ltx-2-5) | `pytest tests/unit/test_contracts.py tests/unit/test_video_qa_clip_rows.py` |
-| **`CORR-12`** | **`BP-169` `shots_per_min` vs `mrbeast_12min_video_mold (1).json` (`§15.5`, `CHG-07`)** | `§15.5` in `7312f660` listed `18, 28, 138, 50, 20` shots (`36, 28, 21.2, 16.7, 20` cuts/min) from a stale pre-bundle table, creating a fake discrepancy with `BP-169`. | Direct summation on `mrbeast_12min_video_mold (1).json` (`2ca7f56f...`) proves the 5 zones actually contain **`14, 24, 111, 75, 30` shots** (`30s, 60s, 390s, 180s, 60s`), which equals **`28.0, 24.0, 17.08, 25.0, 30.0` shots/min**—matching `BP-169`'s `shots_per_min_target` (`28.0, 24.0, 17.0, 25.0, 30.0`) in `sourced_rules.json`! | `mrbeast_12min_video_mold (1).json` (`zones_5` & `reference_timeline_254_shots`) | `explainer_engine/standards/sourced_rules.json` (`BP-169`, `L2792–2889`) | `explainer_engine/scripting/rhythm_lint.py` & `edit/rhythm_profile.py` | `pytest tests/unit/test_rhythm_profile.py tests/unit/test_rhythm_lint.py` |
+| **`CORR-12`** | **Open Final RunPod Episode Budget (`OPEN` Until Multi-Minute Representative Video Measurement) & Separate ElevenLabs Credit Accounting** | Earlier roadmap drafts either conflated `$31.00` and `$15.00` or treated `$15.00` as a settled final episode budget before measuring actual end-to-end RunPod execution across a multi-minute video. | In `5013a55a`, `config/spend_caps.json:10` sets `"episode_runpod_usd_max": 31.0` (`Standing Order 10` / `OR-23` outer ledger safety ceiling enforced at `STOP_FRACTION = 0.80` = `$24.80` in `core/ledger.py:42`, alongside `per_pod_usd_max = $6.90` and `daily_24h_usd_max = $26.00`), while `config/craft_rules.json:2059` (`BP-168`) sets `"episode_usd_target": 12.0` (`REVIEW` forecast reference) and `cloud/speeds.py` tracks empirical `s_per_unit` and `setup_min` from pod `units.json`. Actual RunPod episode cost is currently **unknown** prior to multi-minute empirical measurement because it depends on GPU SKU selection (`A100` vs `L40S`), container boot/install/weight download time (`setup_min`), active generation speed (`s_per_unit`), QA retry rates (`seeds_per_accepted_shot`), idle/transfer time, and teardown overhead. ElevenLabs usage is deterministic character/credit accounting (`config/spend_caps.json:13` `casting_credits_max = 1,500`, `production/voice.py`) and is tracked strictly separately from RunPod GPU USD. | [RunPod Pod Billing & Per-Second GPU Pricing](https://docs.runpod.io/pods/pricing), [ElevenLabs Character & Credit Billing Documentation](https://elevenlabs.io/docs/overview), [PyTorch torch.compile Overhead & Warmup Trade-offs](https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html) | **CONFIRMED & FORMALIZED IN `§9.10` / `§13` / `CD-05`**: Final RunPod episode budget remains **OPEN (`UNDECIDED`)** until the first multi-minute representative video (`GATE-P2` 2-part sample `D-67` / `OR-19`) is measured using the exact **Cost Per Finished Minute (`CPFM_usd`)** protocol in `§13.2`, while all existing `core/ledger.py`, `config/spend_caps.json`, and `OR-36` Haiku watchdog protections remain strictly enforced. |
 
 #### Table 15.7B — Comprehensive External & Compendium Source Correction Register (`SRC-01` through `SRC-48`)
 
@@ -2700,7 +2709,8 @@ Nothing in this roadmap treats a research recommendation as a creator decision. 
 | **`CHG-07`** | `17,280`-Frame Conservation & Infeasibility (`FAIL`) | `BP-83`, `BP-167`, `BP-169`, `BP-170`, `UR-12` | `explainer_engine/edit/bounded_timeline.py` *(NEW)*, `explainer_engine/production/timing.py` | `tests/unit/test_bounded_timeline.py` *(NEW)* |
 | **`CHG-12`** | Character Voice & Legal Gate (`FAIL` `PV-55`; `CD-06`) | `D-62`, `D-63`, `D-90`, `PV-55`, `PV-56`, `V-51` | `explainer_engine/audio/spine.py`, `explainer_engine/edit/router.py`, `explainer_engine/production/silent.py` | `tests/unit/test_audio_spine.py`, `tests/unit/test_silent_lines.py`, `tests/unit/test_voice_route_docs.py` |
 | **`CHG-13`** | Agent/Skill Sync & `5` Shorts (`FAIL`) | `BP-167`, `D-79`, `D-85`, `D-92` | 10 `.claude/agents/*.md`, 10 `.claude/skills/*/SKILL.md`, 6 `docs/*.md`, `explainer_engine/production/shorts.py`, `production/clip_shorts.py` | `explainer_engine/docs_lint.py`, `tests/unit/test_agent_roles.py`, `tests/unit/test_shorts_2k.py` |
-| **`CHG-14`** | Spend Cap, Whole-Segment Sample & `D-92` `BP-168` (`FAIL`/`REVIEW`) | `D-56`, `D-67` (`OR-19`), `D-84`, `D-89`, `D-92`, `BP-168` | `explainer_engine/production/sample.py`, `explainer_engine/core/ledger.py`, `explainer_engine/core/spend_caps.py`, `config/spend_caps.json` | `tests/unit/test_sample_gate.py`, `tests/unit/test_d92_creator_answers.py`, `tests/unit/test_ledger.py`, `tests/unit/test_spend_caps.py` |
+| **`CHG-14`** | **Open Final RunPod Episode Budget (`OPEN` Until Multi-Minute Sample Measurement) + `CPFM_usd` Formula + Separate ElevenLabs Accounting** | Earlier roadmap revisions either conflated `$31.00` and `$15.00` or treated `$15.00` as a settled final episode budget before empirical measurement on a multi-minute video. | Confirmed in `config/spend_caps.json:10` (`$31.00` outer safety ceiling, `$24.80` at `STOP_FRACTION = 0.80` in `core/ledger.py:42`), `config/craft_rules.json:2059` (`BP-168` `$12.00` uncalibrated forecast target), `cloud/speeds.py` (`units.json` `s_per_unit` and `setup_min` tracker), and `config/spend_caps.json:13` (`casting_credits_max = 1,500` separate ElevenLabs credit cap). | [RunPod Pod Billing & Per-Second GPU Pricing](https://docs.runpod.io/pods/pricing), [ElevenLabs Character & Credit Billing Documentation](https://elevenlabs.io/docs/overview), [PyTorch `torch.compile` Warmup Tutorial](https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html) | Keep the final RunPod episode budget **`OPEN` (`CD-05`)** until the `GATE-P2` multi-minute sample video is measured using the exact **`CPFM_usd`** protocol (`§13.2`), preserve all `core/ledger.py`, `spend_caps.json`, and `OR-36` watchdog protections, and track ElevenLabs credits strictly separately. |
+| **`CHG-15`** | **7-Category Semantic Visual Change Architecture (`Visual Change Taxonomy + Decision Tree` + Anti-Substitution Rules + CV Verification)** | Relying solely on a raw pixel-diff / interval timer risks two opposite failures: (a) lazy frame reuse when the script turns semantically, or (b) artificial camera wobble/zoom just to satisfy a numerical motion threshold when narrative state has not changed. | Confirmed across `production/beats.py` (`D-58` retires metronomes; `VB-08`/`VB-12` bind cues to spoken phrases `at`), `edit/board.py` (`STATE-1`/`HERO-1`), `scripting/continuity.py` (`CT-01..16`), `edit/dramatic_still.py` (`BP-170`), `edit/motion_lint.py` (ignores `"wobble"`), `qa/face_points.py` (YuNet/SFace), `qa/prop_points.py` (OWLv2), `qa/pixels.py` (ORB RANSAC + `phash`), and `qa/blind_check.py` (`KG-23..27`). | [Lasseter 1987 SIGGRAPH Animation Principles](https://dl.acm.org/doi/10.1145/37402.37407), [DiBiase et al. 1992 Dynamic Cartographic Variables](https://www.e-education.psu.edu/geog486/node/670), [Zhang et al. 2018 CVPR LPIPS (`arXiv:1801.03924`)](https://arxiv.org/abs/1801.03924), [Minderer et al. 2023 NeurIPS OWLv2 (`arXiv:2306.09683`)](https://arxiv.org/abs/2306.09683) | Enforce Mandatory Invariant `VC-INV-01` ("Every visual decision must correspond to the meaning, action, emotion, or information in the script") via the 7-Category Visual Change Taxonomy (`§18`), anti-substitution matrix, and minimum-sufficient technique routing across existing repo modules without adding duplicate authorities. |
 
 ### 17.4 Independent Claude / Auditor Verification Checklist (`12` Zero-Trust Verification Commands)
 
@@ -2743,3 +2753,410 @@ Nothing in this roadmap treats a research recommendation as a creator decision. 
    * **Why Unresolved**: Qualitative structural patterns in `CS-01..CS-14` (`§15.2`) are verified, whereas exact frame-level cut counts and transcript-aligned WPM curves across external YouTube videos require running `ffprobe`/`scdet` + `WhisperX` on downloaded reference video streams; therefore all quantitative pacing numbers remain classified as house hypotheses (`REVIEW` per `D-94`).
 6. **`UNC-06` — Open Creator Decisions (`CD-01..CD-10`)**:
    * **Why Unresolved**: Governed exclusively by the creator (§13.2); zero code or paid calibration runs may start until `CD-01` is answered.
+
+
+## 18. Semantic Visual Change Architecture: 7-Category Taxonomy, Decision Tree, Anti-Substitution Rules, CV Measurement & Pipeline Integration (`CHG-15`)
+
+### 18.1 Mandatory Invariant (`VC-INV-01`) & Core Design Philosophy
+
+> **Mandatory Architectural Invariant (`VC-INV-01`)**:
+> **"Every visual decision must correspond to the meaning, action, emotion, or information in the script."**
+
+This single invariant protects the engine against two opposite failure modes observed in automated video pipelines:
+1. **Failure Mode A — Lazy Visual Stagnation (Semantic Under-Reaction)**: The script introduces a new historical event, emotional turn, prop interaction, geographical shift, or compositional escalation, but the visual pipeline continues holding or slightly zooming the previous frame.
+2. **Failure Mode B — Unmotivated / Artificial Motion (Metric Gaming)**: To satisfy a naive numerical timer or pixel-difference threshold, the pipeline injects continuous camera wobble, arbitrary zoom-ins, random facial blinks/mouth flaps, or floating text pops when nothing in the narrative state has changed.
+
+**How `5013a55a` Already Encodes the Foundation of This Principle (Which We `KEEP` and Extend)**:
+- **`production/beats.py:45–65` (`D-58`, `VB-08`, `VB-12`, `BP-93`)**: Explicitly states `"production_script/3 — metronomes retired, cues opt-in and event-bound (D-58)"`. Every visual cue (`text`, `label`, `prop`, `chart`, `highlight`, `symbol`, `accent`, `expression`) must attach to an exact spoken phrase (`at`) on its line (`VB-12`) and declare one of 7 semantic cue events (`CUE_EVENTS = ("reveal", "impact", "transition", "build", "diegetic", "take", "place")`, `VB-08`).
+- **`edit/motion_lint.py:49` (`ML-01`)**: Explicitly excludes `"wobble"` from counting as a visual change (`if a["kind"] != "wobble" and a.get("anchored", True)`), ensuring that unanchored noise never satisfies visual pacing checks.
+- **`edit/dramatic_still.py:1–130` (`BP-170`)**: Rejects slow zooms (parallax), text pops, and camera accents as substitutes for dramatic change on held stills (`> 1.5s / 2.0s / 2.5s` by zone), requiring a real foreground cutout relocation (`relocation >= 0.25`, `box_area >= 0.08`) or a second painted state (`plate_swap`, `changed_frac >= 0.30`).
+
+---
+
+### 18.2 Research Grounding & Epistemic Classification of Rules
+
+To prevent turning one filmmaker's personal habit or an AI-generated heuristic into a pseudo-scientific law, every visual rule in `§18.3–§18.6` is explicitly tagged with one of three epistemic levels:
+- **`[EMPIRICAL / CV-MEASURED]`**: Grounded in peer-reviewed perceptual psychology, vision science, or benchmarked computer-vision measurement (e.g., LPIPS perceptual similarity, OpenCV YuNet/SFace cosine margin, MS COCO OKS keypoint similarity, OWLv2 open-vocabulary grounding, or cartographic change-blindness studies).
+- **`[CRAFT PRINCIPLE]`**: Established cinematography, classical animation, or cartographic design convention verified in standard reference works (Lasseter 1987 SIGGRAPH, Thomas & Johnston 1981 *The Illusion of Life*, Ekman & Friesen 1978 FACS, Hall 1966 *Proxemics*, Arijon 1976 *Grammar of the Film Language*, DiBiase et al. 1992 / Harrower 2007 cartographic animation).
+- **`[PROJECT HEURISTIC — REVIEW / ADAPTIVE]`**: Project-specific operational threshold in `config/craft_rules.json` or the Master Mold (`mrbeast_12min_video_mold (1).json`), enforced as `REVIEW` (or zone-adaptive) rather than a universal scientific law.
+
+#### Primary Research Sources & Exact Findings Applied to Our Architecture
+
+| Domain | Primary Source & Direct URL | Exact Principle or Empirical Finding | Epistemic Status | Application to `explainer-engine` (`5013a55a`) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Classical Animation & Readability** | John Lasseter (1987), *"Principles of Traditional Animation Applied to 3D Computer Animation"*, ACM SIGGRAPH Computer Graphics `21(4):35–44` ([ACM SIGGRAPH DOI 10.1145/37402.37407](https://dl.acm.org/doi/10.1145/37402.37407)) | **Staging** requires that *"only one idea at a time be presented clearly so the audience's eye is directed to the exact story point"*; **Anticipation -> Action -> Reaction** requires a clear pre-action setup and post-action settle; **Timing** governs emotional weight (fast = shock/impact; slow = dread/deliberation). | `[CRAFT PRINCIPLE]` | Prohibits simultaneous competing animations (`CMP-03` `changes_at_once_max = 1`, `BP-37` single focal point). Every `VIDEO` clip or `plate_swap` must stage a single primary action tied to `events[].at`. |
+| **Facial Action Coding & Emotion Recognition** | Paul Ekman & Wallace V. Friesen (1978), *Facial Action Coding System (FACS)* ([Paul Ekman Group FACS Reference](https://www.paulekman.com/facial-action-coding-system/)) & OpenCV Zoo YuNet / SFace ([OpenCV DNN Face Detection & Recognition Docs](https://docs.opencv.org/4.x/d0/dd4/tutorial_dnn_face.html)) | Distinct emotional shifts are encoded by specific muscle Action Units (`AU1/2` brow raise, `AU4` brow lowerer, `AU6/12` cheek/lip corner puller, `AU15` lip corner depressor, `AU45` blink) plus head yaw/pitch and gaze vector; identity verification via SFace cosine similarity separates character identity from expression deformation. | `[EMPIRICAL / CV-MEASURED]` & `[CRAFT PRINCIPLE]` | Grounds `production/faces.py` (`14` muscle-level expressions in `DESCRIBE`, `BP-34`) and `qa/face_points.py` (YuNet `FACE_SCORE_MIN = 0.60`, SFace `ID_MIN = 0.45`, `ID_MARGIN = 0.08`). Expression changes must alter brow/lid/mouth geometry (`AU` state), never camera shake. |
+| **Human Pose & Articulated Blocking Similarity** | Tsung-Yi Lin et al. (2014 / 2024), *Microsoft COCO Keypoints Evaluation — Object Keypoint Similarity (OKS)* ([MS COCO Keypoints Evaluation Spec](https://cocodataset.org/#keypoints-eval)) | Articulated body pose change is measured in scale-normalized keypoint space via $\text{OKS} = \frac{\sum_i \exp(-d_i^2 / (2 s^2 k_i^2)) \delta(v_i > 0)}{\sum_i \delta(v_i > 0)}$, where $d_i$ is Euclidean keypoint displacement normalized by subject scale $s$ and per-joint falloff $k_i$. | `[EMPIRICAL / CV-MEASURED]` | Separates **Cat 1 (Pose/Gesture articulation: $\text{OKS} < 0.85$ at fixed root centroid)** from **Cat 2 (Character Blocking translation: root centroid shift $\Delta c / W \ge 0.15$ or interpersonal distance change $\Delta d_{AB} / W \ge 0.15$)**. |
+| **Interpersonal Distance & Spatial Relationships** | Edward T. Hall (1966), *The Hidden Dimension (Proxemics)* ([Proxemics Reference](https://en.wikipedia.org/wiki/Proxemics)) & Daniel Arijon (1976), *Grammar of the Film Language* ([180-Degree Screen Direction Rule](https://en.wikipedia.org/wiki/180-degree_rule)) | Interpersonal distance zones (intimate, personal, social, public) and relative screen placement (`left`/`center`/`right`, depth `foreground`/`midground`/`background`, and facing along the `180°` line of action) visually encode power, alliance, confrontation, and isolation. | `[CRAFT PRINCIPLE]` | Directly maps to `scripting/continuity.py` (`CT-08` `TRACKED = ("screen_pos", "depth", "facing", "costume", "flags", "props")`). A change in alliance or confrontation requires a **Cat 2 Blocking** update (`screen_pos`, `depth`, `facing`), not a HUD counter pop. |
+| **Shot Scale Steps, Camera Angle & Jump-Cut Perception** | Film Editing Craft & Perceptual Continuity ([30-Degree Rule Reference](https://en.wikipedia.org/wiki/30-degree_rule); [Shot Size & Framing Conventions](https://en.wikipedia.org/wiki/Shot_(filmmaking))) | Cutting between two shots of the same subject without changing camera angle by at least `30°` or shot scale by at least one full step (`>= 1.25x` focal scale or `>= 0.25w` framing shift) is perceived by human vision as an accidental spatial jump cut unless staged as a locked same-frame dramatic reveal (`BP-30`). | `[CRAFT PRINCIPLE]` & `[EMPIRICAL / CV-MEASURED]` | Verified directly in `scripting/continuity.py:21` (`MIN_ANGLE = 30`, `CT-07`, `CT-06` `SIZES = ["EWS", "WS", "MWS", "MS", "MCU", "CU"]`) and `qa/pixels.py:42` (`FULL_STEP_SCALE = 1.25`, `FULL_STEP_SHIFT = 0.25`, `PX-JUMP-CUT`). |
+| **Perceptual Image Similarity vs Raw Pixel Diff** | Richard Zhang, Phillip Isola, Alexei A. Efros et al. (2018), *"The Unreasonable Effectiveness of Deep Features as a Perceptual Metric (LPIPS)"*, CVPR 2018 ([arXiv:1801.03924](https://arxiv.org/abs/1801.03924)) | Raw pixel $L_2$/PSNR/SSIM fails to reflect human perception of meaningful structural change (a `2px` camera translation yields huge pixel $L_2$ error with zero semantic change, whereas a localized prop change has small global $L_2$). Deep feature distance (`LPIPS`) and localized region-of-interest feature diffs align with human perceptual judgment. | `[EMPIRICAL / CV-MEASURED]` | Explains why raw global pixel-diff timers fail and why `qa/pixels.py` combines ORB+RANSAC homography (`MIN_INLIERS = 12`) + perceptual hashing (`phash <= 12/64`) + localized mask diffs (`changed_frac >= 0.30` in `edit/dramatic_still.py`). |
+| **Open-Vocabulary Object & State Grounding** | Matthias Minderer et al. (2023), *"Scaling Open-Vocabulary Object Detection (OWLv2)"*, NeurIPS 2023 ([arXiv:2306.09683](https://arxiv.org/abs/2306.09683)) & Alec Radford et al. (2021), *"Learning Transferable Visual Models From Natural Language Supervision (CLIP)"*, ICML 2021 ([arXiv:2103.00020](https://arxiv.org/abs/2103.00020)) | Vision-language detectors (OWLv2) localize arbitrary script-named props/objects in normalized image coordinates `(cx, cy, w, h)` with calibrated confidence (`SCORE_MIN = 0.23`), while blind VLM description (`qa/blind_check.py`) independently verifies semantic state without prompt bias. | `[EMPIRICAL / CV-MEASURED]` | Powers `qa/prop_points.py` (`google/owlv2-base-patch16-ensemble`, `OFF_MAX = 0.05`) for **Cat 3 (Objects & Props)** and `qa/blind_check.py` (`KG-23..27`) across all 7 categories. |
+| **Cartographic Animation & Change Blindness** | David DiBiase et al. (1992), *"Animation and the Role of Map Design in Scientific Visualization"*, *Cartography and Geographic Information Systems* `19(4):201–214` ([Penn State GEOG 486 Dynamic Visual Variables Reference](https://www.e-education.psu.edu/geog486/node/670)) & Mark Harrower (2007), *"The Cognitive Limits of Animated Maps"* ([Animated Mapping Reference](https://en.wikipedia.org/wiki/Animated_mapping)) | Animated maps use three dynamic visual variables (**duration**, **rate of change**, **order**) plus static visual variables (position, size, color, orientation). Viewers suffer severe **change blindness** and split-attention overload when `> 1` geographic change occurs simultaneously or when labels exceed working-memory capacity (`3–4` items). | `[EMPIRICAL / CV-MEASURED]` & `[CRAFT PRINCIPLE]` | Directly validates `maps/laws.py` (`BP-124` / `CMP-03`: `changes_at_once_max == 1`, `labels_max = 3–4`, `units_max = 3`, active `focus` dimming of non-active regions) and `maps/camera.py` (`BP-148` ease-in-out log-altitude interpolation). |
+
+---
+
+### 18.3 Complete 7-Category Visual Change Taxonomy (`VC-CAT-01` .. `VC-CAT-07`)
+
+The seven categories below represent **semantically distinct narrative dimensions**. They are **not interchangeable animation tricks**. For each category, we specify all 7 required architectural dimensions:
+1. **Meaningful Visual Change Definition** (what narrative turn triggers it),
+2. **Measurable Parameters** (state variables in script/continuity/render),
+3. **Suitable Techniques & When to Use** (`VIDEO` / `STILL` Tier 1–3 / `HELPER`, preserving the `60 / 30 / 10` reference distribution),
+4. **Prohibited Substitutes (What Must NEVER Replace It)**,
+5. **Quantitative Measurement Metrics** (distinguishing `[MANDATORY INVARIANT]` from `[ADAPTIVE / REVIEW THRESHOLD]`),
+6. **Continuity Preservation Rules** (character, object, and environment invariants), and
+7. **Script-to-Visual Verification Mechanism** (how the pipeline proves the visual matches the script).
+
+---
+
+#### Category 1 (`VC-CAT-01`): Character Performance (Facial Expression, Gaze, Emotion, Pose, Gesture, Body Orientation)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - The script changes a character's **internal emotional state**, **cognitive reaction** (realization, doubt, shock, calculation, smugness, grief), **social address** (eye-line/gaze shift toward another character, prop, or camera), or **communicative physical gesture** (pointing, slamming a fist, raising a hand, slumping shoulders, turning torso angle) tied to a spoken phrase (`at`) or reaction beat.
+2. **Measurable Parameters**:
+   - `expression_id` $\in$ `production/faces.py:DESCRIBE` (`14` muscle-level states: `neutral`, `curious`, `surprised`, `joyful`, `amused`, `smug`, `confused`, `doubtful`, `worried`, `scared`, `angry`, `sad`, `determined`, `deadpan`).
+   - Facial Action Units (`AU1/2` brow height, `AU4` brow furrow, `AU5/7` eyelid aperture, `AU12/15/25/26` mouth curvature and jaw drop), head orientation $(\text{yaw}, \text{pitch}, \text{roll})$ in degrees, gaze vector $(\Delta x_{\text{pupil}}, \Delta y_{\text{pupil}})$, torso orientation (`facing` $\in \{\text{left}, \text{right}, \text{front}, \text{three-quarter-L}, \text{three-quarter-R}, \text{back}\}$ in `CT-08`), and upper-body joint angles (shoulder-elbow-wrist vector).
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **`VIDEO` (`LTX-2` I2V / Retake, part of `60%` `VIDEO` share)**: Use when the script demands **continuous articulated gesture + facial transition** within a single shot (e.g., a commander slowly looking up from a telegram in shock, slamming a map table, or turning away in defeat) on `MCU`/`MS`/`CU` shots (`<= 2` characters in frame per `BP-103`).
+   - **`HELPER` (`LivePortrait` / `production/faces.py` Expression Sheet Swap, part of `10%` `HELPER` share)**: Use when a character on a held `STILL` or background plate has a rapid reactive emotional turn (`VB-09` expression beat) or micro-expression/gaze shift without full-body locomotion (`ZOOM=1.3, BLUR=0.024, DIM=0.82` focus isolation per `BP-37`).
+   - **`STILL` Tier 2/3 (`plate_swap` between two posed keyframe drawings, part of `30%` `STILL` share)**: Use for high-contrast **editorial pose snaps** (e.g., `neutral` analytical pose snapping on the spoken punchline word `at` to a `surprised` / `determined` key pose with `BP-30` background lock).
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** substitute a camera shake, slow zoom (`parallax`), or screen flash for an emotional or gesture change when the script explicitly describes a character's reaction (`edit/dramatic_still.py:BP-170`).
+   - **NEVER** apply continuous unanchored mouth-flapping or random head-bobbing (`"wobble"`) during narration lines where the character is not speaking or reacting (`edit/motion_lint.py:49`).
+   - **NEVER** change camera angle or location just to represent an internal emotional shift within an ongoing beat.
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**: The target character's face must be detected by OpenCV YuNet (`FACE_SCORE_MIN >= 0.60`) and verified by SFace against their `character_bible` anchor (`ID_MIN >= 0.45`, `ID_MARGIN >= 0.08` over all other cast members in `qa/face_points.py:39–41`), and `qa/blind_check.py` (`KG-23..27`) must report the target `expression` / `pose` on `film_shots.gate_card.people`.
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - For **facial expression change** (`MCU`/`CU`/`HELPER`): normalized facial landmark displacement across active FACS regions (brow-to-eye distance $\Delta d_{\text{brow}} / d_{\text{iod}} \ge 0.08$ or mouth aspect ratio change $\Delta \text{MAR} \ge 0.12$ relative to inter-ocular distance $d_{\text{iod}}$) held for `>= hold_min_s` (`BP-33` `FACE_FLICKER`, `>= 0.8s`) so the viewer can register the emotion.
+     - For **pose/gesture change** (`MS`/`MWS`): articulated upper-body Object Keypoint Similarity delta $1 - \text{OKS}_{\text{upper}} \ge 0.15$ (or wrist/arm keypoint displacement $\ge 0.12 \cdot H_{\text{torso}}$) while root hip centroid shift remains $< 0.10 \cdot W_{\text{frame}}$ (distinguishing Cat 1 gesture from Cat 2 blocking locomotion).
+6. **Continuity Preservation Rules**:
+   - `scripting/continuity.py` (`CT-08`): `costume`, `flags` (e.g., bandages, glasses, medals), `screen_pos`, `depth`, and `location` must remain invariant across a pure Cat 1 performance change (`BP-30` background lock if executed as a same-angle `plate_swap`).
+   - `qa/identity.py` (`BP-133`): ArcFace/SFace similarity must stay above threshold so intense expressions (`angry`, `scared`, `surprised`) do not morph facial bone structure.
+7. **Script-to-Visual Verification**:
+   - `production/beats.py` (`VB-09`, `VB-12`): Verifies the `expression` cue is anchored to a valid spoken phrase `at` on the line.
+   - `qa/face_points.py`: Confirms the character's rendered face is at the declared frame coordinates (`FP-OFF <= 0.08w`) and matches cast identity (`FP-WRONG-ID`).
+   - `qa/blind_check.py` (`KG-23..27`): Blind VLM describes `people[].pose` and `people[].expression` without seeing the generation prompt and checks exact agreement with `film_shots.gate_card`.
+
+---
+
+#### Category 2 (`VC-CAT-02`): Character Blocking (Position, Distance, Direction, Relationships, Movement Within Scene)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - The script changes **spatial relationships or power dynamics between characters or between a character and their environment**: a character enters or exits the room, crosses the floor to confront a rival, steps into the foreground while others recede into the background, turns their back on an ally, or widens/closes interpersonal distance (proxemics: intimate $\leftrightarrow$ personal $\leftrightarrow$ social $\leftrightarrow$ public).
+2. **Measurable Parameters**:
+   - `continuity_card.people[name].screen_pos` $\in \{\text{far-left}, \text{left}, \text{center-left}, \text{center}, \text{center-right}, \text{right}, \text{far-right}\}$ (`CT-08`).
+   - `continuity_card.people[name].depth` $\in \{\text{foreground}, \text{midground}, \text{background}\}$ (`CT-08`).
+   - `continuity_card.people[name].facing` $\in \{\text{left}, \text{right}, \text{front}, \text{back}\}$ relative to the scene's `180°` line of action (`CT-08`).
+   - Normalized character bounding-box / mask centroid $(c_{x,i}, c_{y,i}) \in [0,1]^2$, normalized character height/area $A_i = (w_i \cdot h_i) / (W \cdot H)$, and pairwise normalized interpersonal distance $d_{ij} = \|(c_{x,i}, c_{y,i}) - (c_{x,j}, c_{y,j})\|_2$.
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **`VIDEO` (`LTX-2` I2V on `WS`/`MWS`/`MS`, part of `60%` `VIDEO` share)**: Use when the script narrates **physical locomotion across the space** (e.g., walking into the tent, pacing behind the table, stepping forward to take command, soldiers retreating across a courtyard).
+   - **`STILL` Tier 2 (`cutout_relocation` via `SAM 2.1` layered cutouts in `edit/dramatic_still.py:BP-170`, part of `30%` `STILL` share)**: Use on held stills (`> 1.5s–2.5s`) when a character shifts screen zone (`relocation >= 0.25` of frame width) or steps forward in depth over a clean inpainted background plate.
+   - **`STILL` Tier 3 (`plate_swap` / new shot with updated `continuity_card`, part of `30%` `STILL` share)**: Use when re-staging a multi-character tableau into a new spatial power configuration across a cut (combined with a `>= 30°` camera angle change per `CT-07` if in the same location).
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** represent a character entering, leaving, or confronting another character by merely panning/zooming the camera on an unchanged static group plate (`BP-170`).
+   - **NEVER** break the `180°` axis of action (`CT-08` left/right screen order reversal) without an explicit on-screen camera move across the line or a neutral frontal/overhead bridge shot.
+   - **NEVER** substitute a facial expression overlay (`faces.py`) for a spatial blocking change when the script states that a character physically moved, approached, or separated.
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**:
+     - `edit/board.py` (`HERO-1`): The set of visible characters in the shot must match the heroes active in the script beat (`FAIL` on missing or unannounced extra characters).
+     - `scripting/continuity.py` (`CT-08`): Any change in `screen_pos`, `depth`, or `facing` between consecutive shots in the same scene must be explicitly declared in `continuity_card.changes` (`CT-11`); undeclared teleportation is a hard `FAIL`.
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - For **in-shot cutout relocation (`BP-170`)**: foreground subject bounding-box area $A_i \ge 0.08$ of frame and normalized centroid shift $\Delta c_i = \|(c_{x,1}, c_{y,1}) - (c_{x,0}, c_{y,0})\|_2 \ge 0.25$ of frame width (`edit/dramatic_still.py:42–45`).
+     - For **interpersonal proxemic shift** (`2+` characters): pairwise centroid distance change $|d_{ij}(t_1) - d_{ij}(t_0)| \ge 0.15 \cdot W_{\text{frame}}$ or depth-tier inversion ($A_i / A_j$ ratio changes by $\ge 1.35\times$).
+6. **Continuity Preservation Rules**:
+   - Environment (`location`, `light.time_of_day`, `light.key_light_dir`) and character `costume` / `props` (`CT-08`) must remain locked while characters move within the scene.
+   - Left-to-right screen order (`180°` rule) must be preserved across cuts unless bridged by an axis-crossing move (`CT-08`).
+7. **Script-to-Visual Verification**:
+   - `scripting/continuity.py` (`CT-08`, `CT-11`) validates planned `screen_pos`, `depth`, and `facing` transitions.
+   - `qa/face_points.py` (YuNet + SFace) verifies the actual rendered screen coordinates $(c_{x,i}, c_{y,i})$ of each identified character against their declared `screen_pos` (`left` $< 0.40$, `center` $\in [0.30, 0.70]$, `right` $> 0.60$).
+   - `qa/blind_check.py` (`KG-23..27`) verifies character count, relative positioning, and action against `film_shots.gate_card`.
+
+---
+
+#### Category 3 (`VC-CAT-03`): Objects and Props (Appearance, Disappearance, Position, Orientation, State, Interaction)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - A narrative object, document, weapon, currency stack, machine, or physical clue **appears (`reveal`/`place`)**, **disappears (`take`)**, **changes physical state** (e.g., intact $\rightarrow$ burning/shattered, sealed envelope $\rightarrow$ opened letter, empty crate $\rightarrow$ gold bars, telegraph key idle $\rightarrow$ tapping), or **is physically manipulated by a character** at a specific spoken word (`at`).
+2. **Measurable Parameters**:
+   - `board.events[].{thing, state, at}` (`edit/board.py:8–13`): Exact spoken phrase `at` where the prop/state enters the story world.
+   - `continuity_card.people[name].props` (`CT-08`: list of props currently held or worn by each person) and `film_shots.gate_card.things` (required visible objects and their states).
+   - Normalized object bounding box $(c_x, c_y, w, h) \in [0,1]^4$ from OWLv2 (`qa/prop_points.py`), object orientation angle $\theta_{\text{prop}}$, and state class (`intact` vs `damaged`, `closed` vs `open`, `lit` vs `extinguished`).
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **`VIDEO` (`LTX-2` I2V on `MCU`/`MS`/`CU` insert shot, part of `60%` `VIDEO` share)**: Use when a character **actively manipulates or interacts with a prop** (signing a treaty, lighting a fuse, slamming a stamp, pouring coin, operating a mechanism) or when the prop undergoes dynamic physical change (fire spreading, bridge collapsing, telegraph ticking).
+   - **`STILL` Tier 2/3 (`plate_swap` or `SAM 2.1` prop cutout reveal synced to `events[].at`, part of `30%` `STILL` share)**: Use when a prop **appears, disappears, or snaps state** on an exact spoken word (`STATE-1` / `STATE-2` in `edit/board.py`, e.g., the narrator says *"until the forged receipt surfaced"* and at `"forged receipt"` the document plate swaps in or a cutout prop lands on the desk with `<= 1.0s` alignment).
+   - **`HELPER` (`prop` / `highlight` beat in `production/beats.py` + `qa/prop_points.py`, part of `10%` `HELPER` share)**: Use when the prop is already diegetically painted inside a wider `WS`/`MWS` plate and the script calls attention to it at word `at` via a spotlight dim (`BP-37`), forensic zoom-to-prop, or diegetic callout anchored directly to the OWLv2-verified prop coordinates.
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** show an event-bound prop or object state *before* its spoken trigger phrase `at` (`edit/board.py` `STATE-1` hard `FAIL` — e.g., never show the sunken ship or signed treaty at `t = 0.0s` of the shot if the spoken reveal is at `t = 2.8s`).
+   - **NEVER** substitute a floating text label (`"TREATY"`) for actually depicting the physical prop in the image when `gate_card.things` requires the object (`qa/blind_check.py` `KG-23`, `qa/prop_points.py` `PB-NONE`).
+   - **NEVER** point a `prop` or `highlight` cue at empty background pixels (`qa/prop_points.py` `PB-OFF` if $> 0.05$ frame width from the OWLv2-detected object box).
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**:
+     - **Temporal Causality (`STATE-1` & `STATE-2` in `edit/board.py:156–170`)**: For any prop/state listed in `events` with trigger phrase `at` at timestamp $t_{\text{word}}$, the visual onset $t_{\text{visual}}$ must satisfy $t_{\text{visual}} \ge t_{\text{word}} - 0.10\text{s}$ (`STATE-1` no premature spoiler) and $|t_{\text{visual}} - t_{\text{word}}| \le 1.0\text{s}$ (`STATE-2` tight sync).
+     - **Spatial Grounding (`qa/prop_points.py`)**: Open-vocabulary detector `google/owlv2-base-patch16-ensemble` must detect the named `thing` with confidence $\ge 0.23$ (`SCORE_MIN`), and any attached `prop`/`highlight`/`label` point must lie within `OFF_MAX = 0.05` (`5%` frame width) of the detected bounding box (`PB-OFF` / `PB-NONE`).
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - For **prop state `plate_swap`**: localized LPIPS perceptual distance ([Zhang et al. 2018](https://arxiv.org/abs/1801.03924)) inside the prop bounding box $\text{LPIPS}_{\text{roi}} \ge 0.20$ (or pixel change fraction inside the prop ROI $\ge 0.30$) while background outside the ROI remains locked ($\text{ORB inlier ratio} \ge 0.70$, `BP-30`).
+6. **Continuity Preservation Rules**:
+   - `scripting/continuity.py` (`CT-08`): Once a prop enters a character's possession (`people[name].props`) or a table/scene state (`events`), it must persist across subsequent shots in the same scene until an explicit `take` or scene transition removes it.
+7. **Script-to-Visual Verification**:
+   - `edit/board.py` (`STATE-1`, `STATE-2`) + `production/beats.py` (`VB-08`, `VB-12`) + `qa/prop_points.py` (OWLv2 box verification) + `qa/blind_check.py` (`gate_card.things` verification).
+
+---
+
+#### Category 4 (`VC-CAT-04`): Environment and Scenes (Location, Spatial Arrangement, Weather, Lighting, Scene Transitions)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - The narrative moves to a **new physical location** (e.g., from London Parliament to a muddy trench in Flanders), shifts **time of day or weather** (dawn $\rightarrow$ dusk, clear sky $\rightarrow$ blizzard/smoke, candlelit interior $\rightarrow$ harsh daylight), alters **macro spatial arrangement** of the setting (fortress intact $\rightarrow$ besieged in ruins), or executes a **chapter/zone transition** (`Z1..Z5` in the Master Mold).
+2. **Measurable Parameters**:
+   - `continuity_card.location` (canonical location slug, `CT-04`), `continuity_card.light.time_of_day` $\in \{\text{dawn}, \text{day}, \text{dusk}, \text{night}, \text{interior-warm}, \text{interior-cold}\}$, `continuity_card.light.weather`, `continuity_card.light.key_light_dir` $\in \{\text{left}, \text{right}, \text{top}, \text{front}, \text{back}, \text{ambient}\}$ (`CT-05`).
+   - Scene palette & luminance distribution: mean Lab lightness $L^*$, warm/cool color temperature index $(a^*, b^*)$, atmospheric depth haze (`BP-35`: foreground contrast vs background desaturation), and global perceptual distance (`LPIPS` / `phash`).
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **`STILL` Tier 1/2/3 (`FLUX.1-dev` new scene establishing plate + `SAM 2.1` `3–4` depth planes `[foreground, midground, subject, background]` with differential parallax, part of `30%` `STILL` share)**: Default high-craft technique for establishing a new historical location or architectural space with deep atmospheric separation (`BP-35`).
+   - **`VIDEO` (`LTX-2` atmospheric/environmental motion clip on `EWS`/`WS`, part of `60%` `VIDEO` share)**: Use when the **environment itself is the active narrative agent** (artillery smoke rolling across a valley, monsoon rain lashing a fleet, crowd surging through a square, searchlights sweeping night clouds).
+   - **Scene Transition Grammar (`edit/router.py` + `finish/grade.py`)**: Hard cut (`90%+` of transitions per `BP-109`) on an establishing `EWS`/`WS` plate paired with a diegetic environmental sound bed (`SFX` within `VB-14` `<= 4/min` cap) and a temporal/location anchor label (`BP-84`) when jumping across time or geography.
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** reuse the previous location's background plate (even blurred or cropped) when `continuity_card.location` changes to a new setting (`qa/pixels.py` `SAME_PICTURE_INLIERS` check across location boundaries).
+   - **NEVER** flip `light.time_of_day`, `light.weather`, or `light.key_light_dir` randomly between cuts *within* the same continuous scene (`CT-05` hard `FAIL`, `AC-17` time-of-day lock).
+   - **NEVER** use decorative transitions (star wipes, spinning cubes, arbitrary cross-dissolves between unrelated mid-shots) instead of a clean establishing shot change (`BP-109`).
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**:
+     - **Intra-Scene Lighting & Location Lock (`CT-04`, `CT-05`, `AC-17`)**: Within a single continuous scene (`same location` and `same narrative time`), `location`, `time_of_day`, `weather`, and `key_light_dir` must be `100%` identical across shots unless an explicit script event (`events[].at`) declares a lighting/weather change, and `finish/grade.py` (`BP-130`) enforces scene-locked Reinhard Lab transfer (`mean L*, a*, b*` drift $\le 4.0$ Lab units across same-scene cuts).
+     - **Inter-Scene Separation**: When `continuity_card.location` changes, ORB homography inlier ratio between the old and new background plates must be $< 0.20$ and perceptual hash Hamming distance `phash` $> 18 / 64$ bits (`qa/pixels.py`).
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - **Atmospheric Depth Separation (`BP-35`)**: On wide establishing shots (`EWS`/`WS`), foreground luminance contrast ($\sigma_{L^*,\text{fg}}$) should exceed far-background luminance contrast ($\sigma_{L^*,\text{bg}}$) by $\ge 1.25\times$ to preserve 2.5D spatial readability.
+6. **Continuity Preservation Rules**:
+   - `scripting/continuity.py` (`CT-04`, `CT-05`, `CT-09`): Shared location reference plates anchor architectural geometry across all shots in that room/locale; `finish/grade.py` (`BP-130`) locks the color grade per scene.
+7. **Script-to-Visual Verification**:
+   - `scripting/continuity.py` (`CT-04`, `CT-05`) + `qa/blind_check.py` (`KG-23..27` checks `gate_card.setting` and `gate_card.light` against the blind VLM description of the rendered frame).
+
+---
+
+#### Category 5 (`VC-CAT-05`): Maps and Diagrams (Geographical Changes, Troop Positions, Movement Routes, Camera Movement, New Information)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - The script conveys **spatial, geopolitical, logistical, or strategic causation**: a border shifts, an army column advances along a route, a naval blockade closes a strait, supply lines are severed, or the narrative zooms from continental grand strategy (`macro`) down to a regional theater (`meso`) or tactical battlefield (`micro`).
+2. **Measurable Parameters**:
+   - `maps/camera.py`: Camera state vector $(lon, lat, \ln(\text{span\_km}), \text{pitch\_deg})$ across altitude tiers (`macro` $> 1,500\text{ km}$, `meso` $150\text{–}1,500\text{ km}$, `micro` $< 150\text{ km}$ per `BP-148` / `BP-125`).
+   - `maps/timeline.py` & `edit/visual_compensator.py`: Word-locked `Event(id, op, target, start, frames, args, word_index)` where `op` $\in \{\text{camera\_fly}, \text{territory\_fill}, \text{route\_draw}, \text{unit\_move}, \text{frontline\_shift}, \text{label\_reveal}, \text{focus\_dim}\}$ (`CMP-02`, `CMP-04`).
+   - `maps/laws.py` (`BP-124`, `CMP-03`): `labels_count` ($\le 3\text{–}4$), `units_count` ($\le 3$), `changes_at_once` ($== 1$), and `focus` mask dimming outside the active theater.
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **`STILL` Tier 2 / Programmatic Map Engine (`maps/camera.py` + `maps/timeline.py` + `edit/visual_compensator.py` `WordClock`, mapped to `STILL` Tier 2 / `HELPER` depending on complexity)**:
+     - **Camera Flight (`camera_fly`)**: Smooth ease-in-out interpolation in `(lon, lat, log(span_km), pitch_deg)` (`maps/camera.py:45–78`, `BP-148`) when shifting geographic theater or altitude tier (`macro` $\leftrightarrow$ `meso` $\leftrightarrow$ `micro`).
+     - **Route / Frontline / Unit Progression (`route_draw`, `unit_move`, `territory_fill`)**: Progressive spline stroke-dashoffset growth (`0% -> 100%`) or unit token translation locked frame-accurately to the spoken word index (`word_index` in `audio_spine/2`, `CMP-04`).
+     - **Focus Isolation (`focus_dim`)**: Dimming inactive surrounding territories (`BP-37` / `CMP-03`) so the viewer's eye locks immediately onto the single active front.
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** represent a change in troop geography, supply lines, or territorial control with an arbitrary character facial animation or generic battle stock clip when the script is explaining *where* forces moved geographically.
+   - **NEVER** display a static, un-animated full-world map for `> 2.0s` while narrating a multi-stage geographic movement (`CMP-02`).
+   - **NEVER** trigger `> 1` simultaneous cartographic operation at the same timestamp (`maps/laws.py` `changes_at_once_max == 1`, [DiBiase et al. 1992](https://www.e-education.psu.edu/geog486/node/670); [Harrower 2007](https://en.wikipedia.org/wiki/Animated_mapping)).
+   - **NEVER** route maps through generative diffusion (`LTX-2` I2V) where borders and text labels warp or hallucinate; all map geometry and labels must render deterministically through `maps/` + `visual_compensator.py` (`CMP-01`).
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**:
+     - **Cognitive Load & Single-Change Law (`maps/laws.py:BP-124`, `CMP-03`)**: At any frame $t$, active simultaneous map animations `changes_at_once` $== 1$, visible map labels $\le \text{labels\_max}$ (`3–4`), and visible unit tokens $\le \text{units\_max}$ (`3`).
+     - **Word-Clock Synchronization (`edit/visual_compensator.py:CMP-04`)**: Every map `Event.start` frame must equal `WordClock.frame_for_word(word_index)` within $\pm 2$ frames (`±83ms` at `24fps`).
+     - **Log-Altitude Smoothness (`maps/camera.py:BP-148`)**: Altitude transitions between `macro`, `meso`, and `micro` must interpolate linearly in $\ln(\text{span\_km})$ with cosine/cubic ease-in-out (zero instantaneous zoom snaps across $> 2\times$ scale unless cutting to a new inset card).
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - For **route or frontline progression**: spline arc-length growth $\Delta L_{\text{route}} \ge 0.15 \cdot W_{\text{viewport}}$ or territory polygon area change $\Delta A_{\text{terr}} \ge 0.05 \cdot A_{\text{viewport}}$ over the spoken clause duration.
+6. **Continuity Preservation Rules**:
+   - Base cartographic projection, coastline geometry, faction color encoding (e.g., Allied blue vs Axis red/charcoal), and prior conquered territory state must persist monotonically across all map shots in the episode (`maps/timeline.py`).
+7. **Script-to-Visual Verification**:
+   - `maps/laws.py` (`check_map_laws()`), `edit/visual_compensator.py` (`WordClock` verification), and `edit/board.py` (`STATE-1`/`STATE-2` alignment of place names and territorial events with spoken words).
+
+---
+
+#### Category 6 (`VC-CAT-06`): Composition and Cinematography (Shot Size, Framing, Camera Angle, Depth, Perspective, Camera Movement)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - The script shifts **narrative scale, psychological intimacy, or dramatic emphasis**:
+     - Pulling out to an `EWS`/`WS` to reveal isolation, scale, or systemic scope;
+     - Punching in to an `MCU`/`CU` (`>= 1` full shot-size step or `>= 30°` angle change) when stakes become personal, secret, or psychologically intense;
+     - Shifting camera vertical angle (low angle for dominance/threat; high overhead angle for vulnerability/entrapment);
+     - Executing a **motivated camera move** (`BP-110`: push-in toward a realization, pull-back to reveal a hidden threat or wider context, pan/track following a subject's physical movement).
+2. **Measurable Parameters**:
+   - `continuity_card.camera.size` $\in \text{SIZES} = [\text{"EWS"}, \text{"WS"}, \text{"MWS"}, \text{"MS"}, \text{"MCU"}, \text{"CU"}]$ (`scripting/continuity.py:19`, `CT-06`).
+   - `continuity_card.camera.angle_deg` (horizontal azimuth change $\Delta \theta_{\text{az}} \ge 30^\circ$ `CT-07` / `BP-126`) and vertical pitch (`eye-level`, `low-angle`, `high-angle`, `overhead`).
+   - Subject-to-frame height ratio $h_{\text{subj}} / H_{\text{frame}}$, ORB homography scale factor $s_{\text{homog}}$ and translation $(t_x, t_y)$ (`qa/pixels.py:42` `FULL_STEP_SCALE = 1.25`, `FULL_STEP_SHIFT = 0.25`), and multi-plane depth parallax differential $(v_{\text{fg}}, v_{\text{mid}}, v_{\text{bg}})$.
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **Hard Cut to New Shot Scale / Angle (`STILL` or `VIDEO`, `CT-06` + `CT-07`)**: When transitioning between narrative beats in the same scene, change shot size by $\ge 1$ step in `SIZES` (e.g., `WS` $\rightarrow$ `MCU`, scale factor $\ge 1.25\times$) **and/or** change camera horizontal angle by $\ge 30^\circ$ (`CT-07`), **unless** the cut is an intentional `BP-30` same-frame state reveal (`plate_swap`).
+   - **Motivated Camera Movement (`BP-110` in `STILL` Tier 1/2 multi-plane parallax or `VIDEO` camera path)**:
+     - **Push-in (`dolly_in`)**: Only when the script narrows focus onto a character's realization, a critical prop, or rising tension.
+     - **Pull-back (`dolly_out`)**: Only when the script reveals wider context, hidden scale, or isolation.
+     - **Lateral track / pan**: Only when following a moving subject (Cat 2) or scanning across a spatial array named in the script.
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** cut between two shots of the same subject in the same location with $< 30^\circ$ angle change and $< 1.25\times$ scale change unless it is an intentional locked-background `BP-30` state swap (`qa/pixels.py` `PX-JUMP-CUT` + `scripting/continuity.py` `CT-07`).
+   - **NEVER** apply an unmotivated slow zoom (`parallax`) to a held still (`> 1.5s / 2.0s / 2.5s`) as a substitute for a Cat 1, Cat 2, or Cat 3 dramatic change (`edit/dramatic_still.py` `BP-170`).
+   - **NEVER** trigger a camera move when only a Cat 1 micro-expression (`VB-09`) or Cat 7 HUD counter update is requested—keep the camera locked so the viewer reads the expression or number cleanly ([Lasseter 1987 Staging Principle](https://dl.acm.org/doi/10.1145/37402.37407)).
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**:
+     - **Anti-Jump-Cut Law (`CT-07` in `scripting/continuity.py:21` & `PX-JUMP-CUT` in `qa/pixels.py:40–45`)**: Across any same-scene cut that is *not* a locked `BP-30` state swap (`ORB inliers >= 0.50` with background lock), the shot pair must satisfy:
+       $$\Delta \theta_{\text{camera}} \ge 30^\circ \quad \text{OR} \quad s_{\text{homog}} \ge 1.25 \quad \text{OR} \quad \frac{\|(t_x, t_y)\|_2}{W_{\text{frame}}} \ge 0.25$$
+     - **Motivated Camera Justification (`BP-110`)**: Every non-static camera path (`push_in`, `pull_out`, `pan`, `tilt`) must reference a `reason` tied to a spoken beat (`reveal`, `isolation`, `focus_shift`, `follow_action`).
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - **Multi-Plane Parallax Depth Ratio (`STILL` Tier 1/2, `BP-35`)**: When a motivated push-in/pull-back is used on a segmented still (`<= 1.5s–2.5s`), foreground plane angular velocity $v_{\text{fg}}$ should exceed background plane velocity $v_{\text{bg}}$ by $1.8\times\text{–}3.0\times$ (with total zoom bounded to $3\%\text{–}8\%$ so edges never stretch or tear).
+6. **Continuity Preservation Rules**:
+   - `scripting/continuity.py` (`CT-04..09`): Changing shot size (`WS` $\rightarrow$ `MCU`) or camera angle ($\ge 30^\circ$) must preserve all scene continuity invariants (`location`, `light`, `costume`, `props`, and `180°` left-right screen direction).
+7. **Script-to-Visual Verification**:
+   - `scripting/continuity.py` (`CT-06`, `CT-07`) validates planned shot sizes and angles; `qa/pixels.py` (`PX-JUMP-CUT`, `ORB` homography scale/shift measurement) verifies rendered frames.
+
+---
+
+#### Category 7 (`VC-CAT-07`): Graphics and Information Overlays (Counters, Labels, Diagrams, Speech Bubbles, Meaningful Information Updates)
+
+1. **What Constitutes a Meaningful Visual Change**:
+   - The script introduces or updates **explicit quantitative, temporal, taxonomical, or quoted verbal evidence**:
+     - A financial/casualty/distance **counter or ticker** increments (`$0 -> $4.2M`, `Day 1 -> Day 47`);
+     - An **identification or date/location label** (`"VIENNA, 1914"`, `"ARTICLE 231"`) anchors a new person, place, or document (`BP-27`, `BP-84`);
+     - A **quantitative comparison chart / diagram / progress bar** (`chart` / `hud` in `edit/hud.py`, `BP-08` `ENG-3`) visualizes a ratio, share, or threshold;
+     - A **diegetic speech bubble or document quote callout** (`D-62`, `D-63`) displays a short verbatim historical quote (`1–5` words).
+2. **Measurable Parameters**:
+   - `production/beats.py`: Beat `kind` $\in \{\text{"text"}, \text{"label"}, \text{"chart"}, \text{"symbol"}, \text{"bubble"}\}$, spoken trigger phrase `at` (`VB-12`), `event` $\in \text{CUE\_EVENTS}$ (`VB-08`), word count $N_{\text{words}} \le 4\text{–}5$ (`BP-27`, `D-62`), font scale, screen coordinates $(x, y, w, h)$, and numeric value $V(t)$.
+3. **Suitable Techniques & When to Use (`60 / 30 / 10` Alignment)**:
+   - **`HELPER` / Programmatic Remotion & PIL/Cairo HUD (`edit/hud.py`, `edit/visual_compensator.py`, part of `10%` `HELPER` share or composited overlay layer)**:
+     - **Quantitative Counter / Progress Bar (`BP-08` `ENG-3`)**: Number interpolation $V(t_0) \rightarrow V(t_1)$ locked to the exact spoken number word in `audio_spine/2` (`CMP-04`).
+     - **Anchor Label (`label`, `BP-27`, `BP-84`)**: Clean typographic lower-third or object-attached tag (`<= 4` words) appearing on the spoken noun `at`.
+     - **Speech Bubble (`D-62`, `D-63`)**: Rendered by programmatic code over the speaker's shoulder/head (`1–5` words, never intersecting the YuNet face box per `qa/pixels.py` `PX-BUBBLE-FACE`).
+4. **Prohibited Substitutes (Never Use Instead)**:
+   - **NEVER** bake text labels, numbers, counters, or speech bubbles inside generative diffusion (`FLUX.1-dev` or `LTX-2`) prompts (`qa/blind_check.py` `KG-26` `text`/`overlays` gate fails on AI-garbled text).
+   - **NEVER** use a text pop or floating keyword as a lazy substitute for a dramatic visual change on a held still (`edit/dramatic_still.py:BP-170` explicitly rejects text pops as dramatic still changes).
+   - **NEVER** place a speech bubble or label over a character's face (`qa/pixels.py` `PX-BUBBLE-FACE` check).
+   - **NEVER** display redundant "karaoke" subtitles that merely repeat ordinary narration words without adding structured quantitative, temporal, or quoted value (`D-58`, `BP-27`).
+5. **Quantitative Measurement Metrics**:
+   - **`[MANDATORY INVARIANT]`**:
+     - **Word-Sync Alignment (`VB-12` in `production/beats.py` & `CMP-04` in `edit/visual_compensator.py`)**: Every overlay onset frame $t_{\text{on}}$ must align with the timestamp of its anchor phrase `at` in `audio_spine/2` within $\pm 2$ frames (`±83ms`).
+     - **Zero Face Occlusion (`PX-BUBBLE-FACE` in `qa/pixels.py`)**: Intersection-over-Union (IoU) between any overlay/bubble bounding box $B_{\text{overlay}}$ and any YuNet-detected face box $B_{\text{face}}$ must be $0.00$ ($\text{IoU}(B_{\text{overlay}}, B_{\text{face}}) = 0$).
+     - **Word-Count Ceiling (`BP-27`, `D-62`)**: Overlay text must contain $\le 4$ words (`<= 5` words for `D-62` speech bubbles) so the viewer can read it in $< 0.8\text{s}$ without losing the spoken narration thread.
+   - **`[ADAPTIVE / REVIEW THRESHOLD]`**:
+     - **Minimum Readable Hold Duration**: Any text/label/chart overlay must remain legible on screen for $\ge 1.0\text{s}$ (`24` frames) after completion of its entrance animation.
+6. **Continuity Preservation Rules**:
+   - Typography, color tokens, and HUD card geometry are locked to the episode style sheet (`edit/hud.py`), and any persistent progress tracker (`BP-08` `ENG-3`, e.g., chapter counter `1/5 .. 5/5` or countdown clock) must increment monotonically across the episode.
+7. **Script-to-Visual Verification**:
+   - `production/beats.py` (`VB-08`, `VB-12`), `edit/visual_compensator.py` (`CMP-04`), `qa/pixels.py` (`PX-BUBBLE-FACE`), and `qa/blind_check.py` (`KG-26` verifies zero unintended AI-rendered text inside the base painting).
+
+---
+
+### 18.4 Cross-Category Anti-Substitution Matrix (Mandatory `FAIL` Guardrails)
+
+A core requirement of this architecture is that **categories are not interchangeable**. The table below codifies which cross-category substitutions are strictly prohibited (`FAIL` in `edit/board.py`, `edit/dramatic_still.py`, `scripting/continuity.py`, and `qa/`):
+
+| When the Script Demands... | Required Primary Category | Prohibited Lazy Substitute(s) | Enforcing Module / Rule in `5013a55a` |
+| :--- | :--- | :--- | :--- |
+| **A character's emotional reaction, realization, or gesture** | **`VC-CAT-01` (Character Performance)**: `VIDEO` gesture/expression clip, `faces.py` expression swap (`VB-09`), or posed `plate_swap` | Camera shake (`wobble`), slow zoom (`parallax`), or floating text word (`"SHOCK!"`) over a deadpan face | `production/faces.py` (`BP-34`), `edit/motion_lint.py` (`ignores wobble`), `qa/blind_check.py` (`gate_card.people.expression`) |
+| **A character entering, exiting, approaching, or confronting another** | **`VC-CAT-02` (Character Blocking)**: `VIDEO` locomotion, `SAM 2.1` `cutout_relocation` (`>= 0.25w`), or re-blocked `continuity_card` shot | Panning/zooming across a static group painting where nobody changes position or distance | `edit/dramatic_still.py` (`BP-170`), `scripting/continuity.py` (`CT-08`, `CT-11`), `qa/face_points.py` |
+| **A physical prop appearing, disappearing, breaking, or being used** | **`VC-CAT-03` (Objects & Props)**: `VIDEO` interaction insert, `plate_swap` synced to `events[].at`, or OWLv2-grounded prop reveal | Showing the prop prematurely at `t=0` (`STATE-1` violation) or replacing the physical prop with a floating text label | `edit/board.py` (`STATE-1`, `STATE-2`), `qa/prop_points.py` (`PB-NONE`, `PB-OFF`), `qa/blind_check.py` (`gate_card.things`) |
+| **A transition to a new location, time of day, or weather state** | **`VC-CAT-04` (Environment & Scenes)**: New `FLUX.1-dev` establishing plate + `continuity_card.location` / `light` update | Reusing or cropping the previous room's plate, or flipping lighting randomly mid-scene | `scripting/continuity.py` (`CT-04`, `CT-05`, `AC-17`), `finish/grade.py` (`BP-130`), `qa/pixels.py` |
+| **Troop movement, border change, supply route, or theater shift** | **`VC-CAT-05` (Maps & Diagrams)**: `maps/camera.py` + `maps/timeline.py` + `visual_compensator.py` (`WordClock`) | Replacing geographic causation with a generic character face shot or static un-animated world map | `maps/laws.py` (`BP-124`, `CMP-03`), `edit/visual_compensator.py` (`CMP-02`, `CMP-04`) |
+| **A shift in psychological intimacy, scale, or dramatic perspective** | **`VC-CAT-06` (Composition & Cinematography)**: Shot scale step (`>= 1` step in `SIZES`, `>= 1.25x`) and/or angle change (`>= 30°`, `CT-07`) or motivated camera move (`BP-110`) | Sub-30° / sub-1.25x accidental jump cut (`PX-JUMP-CUT`) or unmotivated continuous drift on every shot | `scripting/continuity.py` (`CT-06`, `CT-07`), `qa/pixels.py` (`PX-JUMP-CUT`) |
+| **A specific number, date, ratio, or verbatim quote** | **`VC-CAT-07` (Graphics & Info Overlays)**: Programmatic HUD counter/chart (`edit/hud.py`), `<= 4`-word label (`BP-27`), or `D-62` speech bubble | Prompting diffusion (`FLUX` / `LTX-2`) to draw text, or spamming karaoke subtitles on ordinary prose | `production/beats.py` (`D-58`, `VB-08`, `VB-12`), `qa/blind_check.py` (`KG-26`), `qa/pixels.py` (`PX-BUBBLE-FACE`) |
+
+---
+
+### 18.5 Practical Decision Tree: Mapping Script Semantics to the Minimum Sufficient Visual Technique
+
+To prevent over-animating shots (applying camera motion + cutout relocation + HUD pop + expression swap all at once, violating [Lasseter's Staging Principle](https://dl.acm.org/doi/10.1145/37402.37407) and `BP-37`) while preserving the **`60% VIDEO / 30% STILL / 10% HELPER`** episode reference budget, the shot planner (`scripting/film_shots.py` + `edit/board.py` + `edit/router.py`) evaluates each script beat through a **7-step deterministic decision tree** that selects the **minimum sufficient technique**:
+
+```text
+INPUT: Script Beat B_i = (spoken_line, word_timestamps, Zone Z1..Z5,
+                          continuity_card C_i vs C_{i-1},
+                          board.events[], production_beats[])
+│
+├─ STEP 1: Did the geographic/strategic map state change (border, route, troop unit, theater altitude)?
+│   └── YES ──► [VC-CAT-05: MAPS & DIAGRAMS]
+│               • Technique: Programmatic Map Engine (`maps/camera.py` + `maps/timeline.py` + `WordClock`).
+│               • Rule: Exactly 1 dynamic map operation at a time (`CMP-03`), locked to `word_index` (`CMP-04`).
+│               • STOP (Do NOT add character face overlays or unrelated camera shake).
+│
+├─ STEP 2: Did `continuity_card.location` or `light.{time_of_day, weather}` change from Shot i-1?
+│   └── YES ──► [VC-CAT-04: ENVIRONMENT & SCENES] (+ [VC-CAT-06: Establishing Framing])
+│               • Technique: New `FLUX.1-dev` scene plate (`EWS`/`WS` establishing shot).
+│               • If environment itself is dynamically moving (storm, smoke, crowd, fleet): route to `VIDEO` (`LTX-2`).
+│               • Otherwise: route to `STILL` Tier 1/2 (`SAM 2.1` 3-4 depth planes + `BP-35` atmospheric depth)
+│                 + optional `VC-CAT-07` location/date anchor label (`<= 4` words, `BP-84`).
+│
+├─ STEP 3: Does `board.events[]` declare a physical prop appearance (`reveal`/`place`), disappearance (`take`),
+│          state transformation, or physical hand-prop interaction at phrase `at`?
+│   └── YES ──► [VC-CAT-03: OBJECTS & PROPS]
+│               • Sub-case 3A (Continuous physical manipulation / dynamic destruction):
+│                 Route to `VIDEO` (`LTX-2` `MCU`/`CU` insert shot of the interaction).
+│               • Sub-case 3B (Discrete before -> after state reveal at word `at` on a held shot):
+│                 Route to `STILL` Tier 2/3 (`plate_swap` or `SAM 2.1` prop cutout reveal synced within `<=1.0s` of `at`, `STATE-1`/`STATE-2`).
+│               • Sub-case 3C (Pointing out an existing prop in a wide scene):
+│                 Route to `HELPER` (`prop`/`highlight` cue verified by OWLv2 `qa/prop_points.py` `<= 0.05w`).
+│
+├─ STEP 4: Did `continuity_card.people` change spatial blocking (`screen_pos`, `depth`, `facing`, entry/exit)?
+│   └── YES ──► [VC-CAT-02: CHARACTER BLOCKING]
+│               • Sub-case 4A (Continuous walking, pacing, retreating, or physical confrontation):
+│                 Route to `VIDEO` (`LTX-2` `WS`/`MWS`/`MS`, `<= 2` active moving subjects per `BP-103`).
+│               • Sub-case 4B (Discrete spatial shift on a held still `> static_still_max_s_by_zone`):
+│                 Route to `STILL` Tier 2 (`cutout_relocation >= 0.25w`, `box_area >= 0.08`, `BP-170`).
+│               • Sub-case 4C (New tableau arrangement across a cut):
+│                 Route to new `STILL`/`VIDEO` shot with `>= 30°` camera angle change (`CT-07`).
+│
+├─ STEP 5: Does the beat require a character emotional turn, gaze shift, or physical gesture (`VB-09` / reaction)?
+│   └── YES ──► [VC-CAT-01: CHARACTER PERFORMANCE]
+│               • Sub-case 5A (Full upper-body gesture + facial transition on a hero beat):
+│                 Route to `VIDEO` (`LTX-2` I2V/Retake on `MS`/`MCU`, Camera LOCKED unless `BP-110` push-in is also justified).
+│               • Sub-case 5B (Rapid reactive facial expression shift on a held scene):
+│                 Route to `HELPER` (`production/faces.py` expression overlay `ZOOM=1.3, BLUR=0.024, DIM=0.82` or `LivePortrait`, held `>= 0.8s` `BP-33`).
+│               • Sub-case 5C (Editorial pose snap on punchline word `at`):
+│                 Route to `STILL` Tier 3 (`plate_swap` with `BP-30` background lock).
+│
+├─ STEP 6: Does the script shift psychological intimacy, stakes, or perspective on the same subject?
+│   └── YES ──► [VC-CAT-06: COMPOSITION & CINEMATOGRAPHY]
+│               • Cut to a new shot size (`>= 1` step in `SIZES`, `>= 1.25x` scale) and/or `>= 30°` camera angle (`CT-07`),
+│                 OR execute a single motivated camera move (`BP-110` push-in for tension/realization, pull-back for context reveal).
+│
+└─ STEP 7: Does the line state a key number, ratio, date, or short verbatim quote (`1-5` words)?
+    ├── YES ──► [VC-CAT-07: GRAPHICS & INFO OVERLAYS]
+    │           • Composite programmatic HUD counter/chart (`edit/hud.py`, `BP-08`), `<= 4`-word label (`BP-27`), or `D-62` bubble
+    │             synced to `word_index` (`CMP-04`), with `IoU(overlay, face) == 0` (`PX-BUBBLE-FACE`).
+    └── NO (Steady narrative continuation within an already-established shot < `static_still_max_s_by_zone`)
+                • HOLD clean composition (`STILL` Tier 1 subtle `3-5%` multi-plane breathing or locked frame).
+                • DO NOT inject fake camera wobble, random zooms, or unanchored overlays!
+```
+
+---
+
+### 18.6 Representative Worked Examples: How Distinct Script Beats Produce Distinct Visual Changes
+
+The six examples below demonstrate how our decision tree and anti-substitution rules route concrete script sentences to completely different visual techniques:
+
+| Example ID & Narrative Beat | Spoken Line & Word Anchor (`at`) | Semantic Change Detected | Selected Category & Minimum Sufficient Technique | Prohibited Substitute Rejected | Quantitative Verification Gate |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`EX-01` (Emotional Realization — Cat 1)** | *"At first, General Haig believed the wire was cut — **until he read the casualty wire**."* (`at: "until he read"`) | Character internal emotion shifts from `smug`/`confident` to `scared`/`worried`; location and blocking do not change. | **`VC-CAT-01` (`HELPER` / `VIDEO` `MCU`)**: Camera stays **locked** on Haig's `MCU`; at `"until he read"`, his gaze drops and expression transitions from `smug` to `worried` (`faces.py` / `LTX-2` I2V). | **Rejected**: Shaking the camera, zooming into a static smiling face, or popping text `"BAD NEWS!"`. | `qa/face_points.py` (SFace ID $\ge 0.45$) + `qa/blind_check.py` (`gate_card.people[0].expression == "worried"`). |
+| **`EX-02` (Power Confrontation — Cat 2)** | *"Churchill didn't wait for the cabinet — **he walked straight across the chamber** to Fisher's desk."* (`at: "walked straight across"`) | Interpersonal distance (`proxemics`) collapses from social (`WS` separated) to personal confrontation (`MS` side-by-side). | **`VC-CAT-02` (`VIDEO` `MWS` or `STILL` Tier 2 `cutout_relocation`)**: Churchill's subject mask translates from `screen_pos: left` ($c_x = 0.22$) to `center-right` ($c_x = 0.62$, $\Delta c_x = 0.40 \ge 0.25$) facing `right` toward Fisher. | **Rejected**: Keeping both men frozen at opposite ends of the room and doing a slow Ken Burns zoom. | `scripting/continuity.py` (`CT-08` `screen_pos` update) + `edit/dramatic_still.py` (`relocation >= 0.25`) + `qa/face_points.py`. |
+| **`EX-03` (Prop Reveal & Causality — Cat 3)** | *"The vault looked completely ordinary — **until inspectors opened the false floorboard** revealing the ledger."* (`at: "opened the false floorboard"`) | Physical prop state transforms (`closed floorboard` $\rightarrow$ `open compartment with ledger`) at phrase `at`. | **`VC-CAT-03` (`STILL` Tier 3 `plate_swap` or `VIDEO` `CU` insert)**: Frame holds the closed floorboards until $t(\text{"opened the false floorboard"})$, then swaps (`<= 1.0s` `STATE-2`) to the open compartment with the ledger visible. | **Rejected**: Showing the open ledger from `t = 0.0s` (`STATE-1` spoiler `FAIL`) or slapping a text label `"LEDGER"` on a closed floor. | `edit/board.py` (`STATE-1` & `STATE-2` pass) + `qa/prop_points.py` (OWLv2 detects `"ledger"` $\ge 0.23$) + `qa/blind_check.py`. |
+| **`EX-04` (Scene & Atmospheric Transition — Cat 4)** | *"Three hundred miles north of Whitehall, **winter had already frozen the North Sea fleet**."* (`at: "Three hundred miles north"`) | Location (`whitehall_cabinet` $\rightarrow$ `scapa_flow_harbor`), weather (`interior` $\rightarrow$ `blizzard_ice`), and lighting (`warm_lamp` $\rightarrow$ `cold_overcast`) all change. | **`VC-CAT-04` (`STILL` Tier 1/2 `EWS` + `VC-CAT-07` Label)**: Hard cut to a new `FLUX.1-dev` `EWS` plate of iced warships with 4-plane atmospheric depth (`BP-35`) + `<= 4`-word anchor label `"SCAPA FLOW, NOV 1914"` (`BP-84`). | **Rejected**: Reusing the Whitehall room background or cross-dissolving a snowflake overlay over indoor furniture. | `scripting/continuity.py` (`CT-04`, `CT-05`) + `qa/pixels.py` (`phash > 18/64`) + `qa/blind_check.py` (`gate_card.setting`). |
+| **`EX-05` (Strategic Encirclement — Cat 5)** | *"While the center held, **two German corps swept south through the Ardennes** to cut the rail line."* (`at: "swept south"`) | Geographic movement vector along a specific corridor (`Ardennes` $\rightarrow$ `Meuse rail line`). | **`VC-CAT-05` (`maps/camera.py` + `maps/timeline.py` `WordClock`)**: Camera settles at `meso` altitude (`span_km = 280`), surrounding regions dim (`focus_dim`, `CMP-03`), and a single arrow spline draws southward locked to `"swept south"` (`CMP-04`, `changes_at_once == 1`). | **Rejected**: Showing an un-animated static map of Europe with 12 labels, or cutting to a random soldier's face during the geographic explanation. | `maps/laws.py` (`BP-124`: `labels <= 4`, `units <= 3`, `changes_at_once == 1`) + `visual_compensator.py` (`CMP-04` $\pm 2$ frames). |
+| **`EX-06` (Quantitative Escalation — Cat 6 + Cat 7)** | *"By midnight, the deficit hadn't shrunk — **it had exploded to $4.8 billion**."* (`at: "$4.8 billion"`) | Dramatic scale escalation + explicit quantitative figure (`$4.8B`). | **`VC-CAT-06` + `VC-CAT-07`**: Cut from `WS` (`angle 0°`) to `MCU` (`angle 35° >= 30°`, scale `1.45x >= 1.25x`, `CT-07`) + programmatic `edit/hud.py` counter ticking to **`$4.8B`** on the exact word `"$4.8 billion"` (`IoU(hud, face) == 0`). | **Rejected**: Same-angle `< 30°` jump cut (`PX-JUMP-CUT`) or asking `FLUX.1-dev` to paint `"$4.8 billion"` into the raster image (`KG-26`). | `qa/pixels.py` (`PX-JUMP-CUT` pass, `PX-BUBBLE-FACE` pass) + `production/beats.py` (`VB-12` word anchor). |
+
+---
+
+### 18.7 Repository Compatibility Matrix (`CURRENT -> NEW REQUIREMENT -> KEEP -> CHANGE -> REMOVE -> TRADE-OFFS -> RECOMMENDATION`)
+
+To preserve existing architecture (`5013a55a`) without creating duplicate timing, validation, or parameter authorities, the table below maps every visual-change requirement directly onto the existing modules in `explainer_engine/`:
+
+| Pipeline Stage & Existing Module (`5013a55a`) | `CURRENT` Behavior in `5013a55a` | `NEW REQUIREMENT` (Master Mold + `VC-INV-01` 7-Category Architecture) | `KEEP` (Unmodified Authority) | `CHANGE` (Targeted Extension, Zero Duplicate Authority) | `REMOVE` / Deprecate | `TRADE-OFFS` | `RECOMMENDATION` |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1. Script Event & Beat Authority**<br>`explainer_engine/production/beats.py` (`993` lines) | Retires 1.5s metronomes (`D-58`); binds cues (`text`, `label`, `prop`, `chart`, `highlight`, `symbol`, `accent`, `expression`) to spoken words `at` (`VB-12`, `BP-93`) and `CUE_EVENTS` (`VB-08`). | Originate visual-change classification from the script's semantic turns across all 7 categories (`VC-CAT-01..07`) without inventing a second beat file. | `D-58` event-bound philosophy, `ANCHOR_WORDS` (`BP-93`), `VB-01..16` validators, and `audio_spine/2` word-clock integration. | Add optional `change_category` tag $\in \{\text{cat1\_perf}, \text{cat2\_block}, \text{cat3\_prop}, \text{cat4\_env}, \text{cat5\_map}, \text{cat6\_cam}, \text{cat7\_hud}\}$ inferred deterministically from existing `kind` + `continuity_card.changes` + `board.events` in `beats.py` (`VB-17` anti-substitution lint). | None — never re-introduce metronomic interval timers. | Adding `change_category` as a derived property on existing beats/shots avoids schema breakage while giving downstream routers explicit category awareness. | **Extend `production/beats.py` + `edit/board.py` in place** as the single semantic-event authority (`Batch M3`). |
+| **2. Story-State & Hero Sync**<br>`explainer_engine/edit/board.py` | Enforces `STATE-1` (no premature prop/event before word `at`), `STATE-2` (`<=1.0s` reveal window), and `HERO-1` (visible people match spoken line). | Verify that every script-mandated prop, character, and state change actually occurs at its spoken trigger word and via the right category. | `STATE-1`, `STATE-2`, `HERO-1`, `BOARD-1..6`, and `events[].{thing, state, at}` contract. | Extend `board.py` with `STATE-3` (Cross-Category Anti-Substitution check from `§18.4`: e.g., if `events` declares a prop/blocking change, a shot that only applies a camera zoom or HUD label fails `STATE-3`). | None. | Catches lazy substitution at the cheap JSON board stage before spending GPU credits on image/video generation. | **Keep `edit/board.py` as the sole story-state authority and add `STATE-3` (`Batch M3`)**. |
+| **3. Scene, Blocking & Camera Continuity**<br>`explainer_engine/scripting/continuity.py` (`396` lines) + `schemas/continuity_card.schema.json` | Enforces `CT-01..16`: `location` (`CT-04`), `light` (`CT-05`), `camera.size` in `SIZES` (`CT-06`), `MIN_ANGLE = 30°` (`CT-07`), `people` `TRACKED` (`screen_pos`, `depth`, `facing`, `costume`, `flags`, `props`, `CT-08`), `MAX_CHAIN = 0` (`CT-09`), and declared `changes` (`CT-11`). | Track Cat 2 (Blocking), Cat 3 (Character Props), Cat 4 (Environment/Light), and Cat 6 (Shot Size & `>=30°` Angle) across all 254 shots. | All `CT-01..16` validators, `SIZES`, `MIN_ANGLE = 30`, `TRACKED`, and `MAX_CHAIN = 0`. | Connect `continuity_card.changes` directly to the `§18.5` Decision Tree in `scripting/film_shots.py` so declared changes in `screen_pos`/`depth` route to Cat 2 (`VIDEO` or `cutout_relocation`) and declared changes in `location`/`light` route to Cat 4. | None. | Zero new continuity schema needed — `continuity_card.schema.json` already models `location`, `light`, `camera`, and per-person `TRACKED` attributes! | **Preserve `scripting/continuity.py` intact (`Batch M5`)**. |
+| **4. Modality & Technique Routing (`60 / 30 / 10`)**<br>`explainer_engine/scripting/film_shots.py` + `explainer_engine/edit/router.py` (`221` lines) | Classifies shots and compiles the timeline into Remotion/FFmpeg render instructions. | Route each shot to the **minimum sufficient technique** (`VIDEO` `60%` / `STILL` Tier 1–3 `30%` / `HELPER` `10%`) based on its semantic category (`§18.5`) and Zone (`Z1..Z5`). | Existing `film_shots.py` `gate_card` contract (`people`, `things`, `setting`, `light`, `action`) and `edit/router.py` timeline compiler. | Embed the 7-step deterministic decision tree (`§18.5`) into `film_shots.py` shot planning and `edit/router.py` (`MOD-01..03`) so modality (`VIDEO`/`STILL`/`HELPER`) is chosen by semantic category (`VC-CAT-01..07`) rather than arbitrary quotas. | Remove any fallback that adds unmotivated continuous zoom/shake when no semantic category is active. | Guarantees `VC-INV-01` ("meaning, action, emotion, or information") while naturally matching the `60/30/10` episode distribution. | **Integrate the `§18.5` Decision Tree into `scripting/film_shots.py` + `edit/router.py` (`Batch M3`/`M5`)**. |
+| **5. Held-Still Dramatic Change & Motion Pacing**<br>`explainer_engine/edit/dramatic_still.py` (`130` lines) + `explainer_engine/edit/motion_lint.py` (`372` lines) | `dramatic_still.py` (`BP-170`) requires `cutout_relocation` (`>=0.25w`, `box>=0.08`) or `plate_swap` (`>=0.30`) on stills held past `static_still_max_s_by_zone` (`1.5s/2.0s/2.5s`), rejecting zooms/text pops/shakes. `motion_lint.py` (`ML-01..12`) ignores `"wobble"`. | Prevent lazy frame reuse on long beats *without* forcing artificial movement on short or steady beats. | `BP-170` anti-substitution rule in `dramatic_still.py` and `"wobble"` exclusion in `motion_lint.py`. | Require that any `cutout_relocation` or `plate_swap` used to satisfy `BP-170` on a held still must be anchored to an `events[].at` or `beats[].at` word timestamp (`STATE-2`) rather than firing at an arbitrary mid-shot timer. | Never use raw unanchored timer splits (`t = 1.50s` regardless of speech) when a spoken phrase anchor `at` is within `[1.0s, 2.5s]`. | Aligns `BP-170` 100% with `D-58` ("metronomes retired, cues event-bound"). | **Keep `dramatic_still.py` and `motion_lint.py` and bind `BP-170` state swaps to `at` word timestamps (`Batch M3`)**. |
+| **6. Character Facial Performance**<br>`explainer_engine/production/faces.py` (`612` lines) | Implements `14` muscle-level expressions (`DESCRIBE`), focus isolation (`ZOOM=1.3, BLUR=0.024, DIM=0.82`, `BP-37`), and `BP-33` `FACE_FLICKER` (`hold_min_s`). | Execute Cat 1 reactive emotional turns cleanly without morphing character identity or triggering unnecessary camera moves. | All `14` `DESCRIBE` muscle specs, `BP-33`, `BP-34`, `BP-37`, and `VB-09`. | Add `LivePortrait` helper option alongside the existing expression-sheet compositor for `10%` `HELPER` beats, gated by `qa/face_points.py` SFace `ID_MIN >= 0.45`. | None. | Preserves fast deterministic expression sheets while supporting subtle animated gaze/head turns on `HELPER` shots. | **Keep `production/faces.py` as the Cat 1 expression authority (`Batch M6`)**. |
+| **7. Cartographic & Compensator Engine**<br>`explainer_engine/maps/laws.py`, `maps/camera.py`, `maps/timeline.py`, `edit/visual_compensator.py` | Enforces `BP-124` / `CMP-03` (`labels_max`, `units_max`, `changes_at_once == 1`, `focus` dimming), `BP-148` log-altitude ease-in-out camera flight, and `CMP-04` `WordClock` sync. | Execute all Cat 5 (Maps & Diagrams) and Cat 7 (HUD/Counters) updates deterministically and word-locked. | `WordClock`, `Event(id, op, target, start, frames, args, word_index)`, `maps/laws.py`, `maps/camera.py`, and `maps/timeline.py`. | None required for core mechanics — already satisfies DiBiase (1992) and Harrower (2007) cartographic laws. Ensure `router.py` routes all Cat 5 beats here rather than I2V diffusion. | None. | Zero risk of hallucinated map borders or unreadable map text. | **Preserve `maps/*` and `visual_compensator.py` intact (`Batch M5`)**. |
+| **8. CV & Semantic QA Verification**<br>`qa/face_points.py`, `qa/prop_points.py`, `qa/pixels.py`, `qa/blind_check.py`, `qa/identity.py` | Runs YuNet+SFace (`face_points.py`), OWLv2 (`prop_points.py`), PySceneDetect + ORB RANSAC + `phash` + `freezedetect` (`pixels.py`), ArcFace (`identity.py`), and blind VLM vs `gate_card` (`blind_check.py`). | Prove quantitatively that the rendered visual change matches the script requirement across all 7 categories. | All 5 QA modules and their calibrated thresholds (`FACE_SCORE_MIN=0.60`, `ID_MIN=0.45`, `SCORE_MIN=0.23`, `OFF_MAX=0.05`, `FULL_STEP_SCALE=1.25`, `FULL_STEP_SHIFT=0.25`, `PHASH_SAME_MAX=12`). | Add localized ROI LPIPS / mask-centroid delta reporting to `qa/pixels.py` for `BP-170` `plate_swap` / `cutout_relocation` verification, and verify `change_category` satisfaction in `qa/blind_check.py`. | None. | Uses existing pre-installed OpenCV/OWLv2/imagehash stack before adding any heavy new dependencies. | **Keep all 5 QA modules as the unified verification authority and add category-specific pass/review checks (`Batch M8B`)**. |
+
+---
+
+### 18.8 Required Tests & Verification Suite for the Visual Change Architecture
+
+Before any production run, the following deterministic unit tests (executable offline via `PYTHONPATH=. pytest` with zero paid API or GPU calls) verify every layer of the Visual Change Architecture:
+
+1. **`tests/test_visual_change_taxonomy_routing.py`**:
+   - Tests the 7-step Decision Tree (`§18.5`) across synthetic script beats representing each of `VC-CAT-01..07` (`EX-01..EX-06`), verifying that each beat routes to its exact target category and minimum sufficient modality (`VIDEO` / `STILL` Tier 1–3 / `HELPER`) and that steady narrative continuation produces zero unanchored motion.
+2. **`tests/test_anti_substitution_guardrails.py`**:
+   - Verifies `STATE-3` in `edit/board.py` and `BP-170` in `edit/dramatic_still.py`: confirms that substituting a camera zoom, wobble, or text pop for a required Cat 1 (emotion), Cat 2 (blocking), Cat 3 (prop), or Cat 5 (map) change raises a deterministic `FAIL`.
+3. **`tests/test_continuity_and_jump_cut_laws.py`**:
+   - Verifies `CT-04..11` in `scripting/continuity.py` and `PX-JUMP-CUT` in `qa/pixels.py`: confirms that same-scene cuts with $< 30^\circ$ camera angle delta and $< 1.25\times$ scale delta (without `BP-30` background-locked `plate_swap`) are flagged, while valid shot-scale steps (`WS -> MCU`), `>= 30°` angle changes, and `BP-30` state swaps pass.
+4. **`tests/test_word_clock_and_prop_face_grounding.py`**:
+   - Verifies `STATE-1`/`STATE-2` (`edit/board.py`), `CMP-04` (`edit/visual_compensator.py` `WordClock`), `qa/face_points.py` (`FP-OFF`, `FP-WRONG-ID`), `qa/prop_points.py` (`PB-OFF`, `PB-NONE`), and `qa/pixels.py` (`PX-BUBBLE-FACE` zero face-overlay IoU).
+5. **`tests/test_cpfm_cost_protocol.py`**:
+   - Verifies `cloud/speeds.py` and `core/ledger.py` calculation of `CPFM_gross_usd`, `CPFM_var_usd`, empirical retry multiplier $k_{\text{retry}}$, and separate ElevenLabs credit tracking (`run.json["elevenlabs_credits"]` vs `run.json["runpod_usd"]`).
+

@@ -51,6 +51,20 @@ checking the roadmap's code claims:
 - [`shot_rules.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/edit/shot_rules.py)
 - [`spine.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/audio/spine.py)
 - [`timing.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/production/timing.py)
+- [`cloud/speeds.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/cloud/speeds.py)
+- [`core/ledger.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/core/ledger.py)
+- [`production/sample.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/production/sample.py)
+- [`edit/board.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/edit/board.py)
+- [`scripting/continuity.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/scripting/continuity.py)
+- [`qa/pixels.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/qa/pixels.py)
+- [`production/beats.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/production/beats.py)
+- [`edit/router.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/edit/router.py)
+- [`maps/camera.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/maps/camera.py)
+- [`maps/timeline.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/maps/timeline.py)
+- [`visual_compensator.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/edit/visual_compensator.py)
+- [`face_points.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/qa/face_points.py)
+- [`prop_points.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/qa/prop_points.py)
+- [`blind_check.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/explainer_engine/qa/blind_check.py)
 - [`test_narrator_polish.py`](https://github.com/vano1919/explainer-engine/blob/5013a55aca5a17a3734150f61a5eb172abcbe3b8/tests/unit/test_narrator_polish.py)
 
 Also inspect other referenced files at this same pinned commit whenever a
@@ -61,9 +75,10 @@ verified; do not substitute a different revision without identifying it.
 
 Independently compare the refreshed roadmap against its source Mold, digest,
 and pinned repository implementation. Check every listed correction,
-especially `CORR-01..CORR-12`, and revisit Issues A–E and NEW-01..NEW-08 from
-the prior report wherever they remain relevant. Verify additional changes
-identified in the roadmap's continuity register. In particular:
+especially `CORR-01..CORR-12` and `CHG-01..CHG-15`, and revisit Issues A–E and
+NEW-01..NEW-08 from the prior report wherever they remain relevant. Verify
+additional changes identified in the roadmap's continuity register. In
+particular:
 
 - The full set of `/3` modules, including the `production_gate.py` gate path.
 - Narration processing order: raw-timbre voice check first, then narrator-only
@@ -80,6 +95,20 @@ identified in the roadmap's continuity register. In particular:
   shots, frames, words, and timing.
 - Existing timing utilities, budget/config safeguards, and any claimed
   external GitHub settings that cannot be confirmed from repository files.
+- `CHG-14`: verify the two-part sample uses whole segments; reconcile `D-92`
+  pilot GO/PIVOT/ABANDON thresholds with `BP-168`; distinguish the `$12`
+  forecast recommendation from enforceable `Run.open(caps=...)` caps; check
+  the final episode RunPod budget remains OPEN pending measured multi-minute
+  `CPFM_gross_usd` / `CPFM_var_usd`; and confirm RunPod dollars, ElevenLabs
+  credits, the 80% stop, and watchdog rules are not conflated or weakened.
+- `CHG-15` / §18: inspect the seven semantic visual-change categories, the
+  cross-category anti-substitution matrix, the minimum-sufficient technique
+  decision tree, and the proposed connections to beats, board state,
+  continuity, routing, maps, and visual QA. Confirm the recommendations reuse
+  existing authorities and do not turn unvalidated heuristics into hard FAILs.
+- Distinguish files actually present at the pinned baseline from proposed
+  acceptance tests listed in the roadmap; verify whether those proposed test
+  paths exist rather than treating their names as evidence that tests passed.
 
 For each claim, classify it as **verified**, **contradicted**, **incomplete**,
 or **unverified**. Cite direct source links and exact file paths/line numbers;
