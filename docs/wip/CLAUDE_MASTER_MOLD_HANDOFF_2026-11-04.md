@@ -9,9 +9,9 @@
 
 1. [Creator override: narration/dialogue mix and shot durations](CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md)
 2. [Synchronized TODO execution guide](CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md)
-2. [Gemini full-repository audit brief](GEMINI_ARGON_MASTER_MOLD_FULL_REPOSITORY_AUDIT_2026-11-03.md)
-3. [Master Mold integration roadmap](MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md)
-4. [Canonical decision log](../DECISIONS_AND_OPEN_QUESTIONS.md) and the latest entries in [PROGRESS](../PROGRESS.md)
+3. [Gemini full-repository audit brief](GEMINI_ARGON_MASTER_MOLD_FULL_REPOSITORY_AUDIT_2026-11-03.md)
+4. [Master Mold integration roadmap](MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md)
+5. [Canonical decision log](../DECISIONS_AND_OPEN_QUESTIONS.md) and the latest entries in [PROGRESS](../PROGRESS.md)
 
 The execution guide and audit brief remain source material to inspect, not general authority to execute. Their claims, recommendations, proposed code changes, test names, and creator-decision labels require independent verification. **The creator's 2026-11-04 instruction explicitly authorizes only the scoped D-95 code, test and documentation corrections, plus a commit/push to this branch.** D-95 overrides older ratio and generic shot-duration recommendations only within its stated scope; it does not approve other imported TODOs or unrelated creator decisions. No paid API calls, GPU/pod runs, full-episode rendering, YouTube Studio changes, uploading or publishing are authorized.
 
@@ -43,3 +43,7 @@ The imported package is only a selected part of a 1,353-entry repository snapsho
 2. Check the 42 stubs and every TODO against existing modules, schemas, gates, tests, and downstream callers. Preserve existing behavior; do not implement a batch from the guide alone.
 3. Update canonical decisions or request the creator's answer wherever a choice is not already recorded. Keep the existing `CD-05`/D-67 approval boundaries intact.
 4. Only after the audit and required approvals, propose a small, dependency-ordered free change set with focused tests and a `PROGRESS.md` entry. No paid API or pod action is authorized here; any pod still needs the itemized OR-23 plan and approval, and paid tests remain subject to OR-34.
+
+## Subsequent visual-grammar research request (2026-11-04)
+
+The creator has separately requested a read-only research/design proposal for a scene-to-shot visual grammar. Use [Gemini visual grammar research brief](GEMINI_VISUAL_GRAMMAR_AND_SHOT_DESIGN_RESEARCH_2026-11-04.md). The missing area is not another arbitrary restriction: it is a reusable decision system that chooses the appropriate visual technique, composition, camera, motion, image/keyframe prompt and VIDEO prompt from each story beat. Preserve D-93's 60/30/10 lane target and D-95's independent speech/duration rules. Do not edit code or implement the proposal until the creator approves a concrete, dependency-aware change plan.
