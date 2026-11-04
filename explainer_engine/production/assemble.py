@@ -1,38 +1,3 @@
-# =============================================================================
-# TODO [CLAUDE-MASTER-MOLD-SYNC] — BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0): Synchronous Master Mold v2.1.0 Alignment for `explainer_engine/production/assemble.py`
-# Target Module : explainer_engine/production/assemble.py
-# Target Classes/Symbols : def read_wav(), def load_audio(), def db(), def loop_to(), def moving_mean(), def envelope(), def rms_db(), def fade(), def music_fades(), class Sounds (methods: __init__, path, exists, load, loopable), def play_once(), def cue_bus(), def build_audio(), def v2_manifest(), def v2_library(), def perspective(), def _wet(), def _stereo_add(), def _normalised(), def write_wav(), def write_stems(), def _vacuum(), def build_audio_v2(), def stem_measures(), def render_v2(), def sd14_pointer(), def _finding(), def _checked_ref(), def clip_path(), def clip_info(), def _clip_info(), def clip_frames(), def _fit(), def whip_length(), def plan_video_v2(), def iter_video_frames(), def _whip_blur(), def export_otio(), def build_video_v2(), def look_filter(), def overlays(), def motion_box(), def placeholder(), def find_picture(), def picture_image(), def close_beats(), def shot_views(), def shot_bubbles(), def bubble_findings(), def to_frame(), def hero_faces_of(), def beats_for_shot(), def rest_weight(), def finish_frame(), def clean_cut(), def chunk_bounds(), def chunk_look(), def render_code(), def plan_stamp(), def progress(), def mux(), def measure_delivery(), def lock_alive(), def assemble(), def _assemble()
-# Reference Guide : docs/wip/CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md
-# Roadmap Reference : docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md
-# =============================================================================
-#
-# 1. რა ცვლილება უნდა გაკეთდეს (EXACT SYNCHRONOUS CHANGE SPECIFICATION):
-#    Synchronize this core module with `production_script/4` (`schema_version.py`, `mold_contract.py`), the 4-tier visual router (`tier_router.py`), the 6-stage `D-81` voice chain (`voice_chain.py`), and the 24 fps rational-time `bounded_timeline.py` solver so all CLI commands, config loaders, and package exports operate seamlessly across `/1`, `/2`, `/3`, and `/4` scripts.
-#
-# 2. რა ნაკლოვანება აქვს ამჟამინდელ კოდს (CURRENT CODE FLAW / DEFICIT AT 5013a55a):
-#    Currently this core module defaults to v2/v3 assumptions and does not expose or wire the new Master Mold v2.1.0 subsystems.
-#
-# 3. რატომაა უახლესი გადაწყვეტა უკეთესი (WHY THE NEW SOLUTION IS SUPERIOR):
-#    Ensures end-to-end synchronous behavior from CLI invocation through script validation, audio synthesis, 4-tier rendering, OTIO export, and final QA verification.
-#
-# 4. დამადასტურებელი ვებ-წყაროები — მინიმუმ 5 წყარო (VERIFIED WEB SOURCES >= 5):
-#    [1] JSON Schema Draft 2020-12 Official Specification
-#        URL: https://json-schema.org/draft/2020-12
-#        Rationale: Defines canonical $schema URI resolution, discriminator dispatch, additionalProperties: false enforcement, and backwards-compatible schema evolution across versioned contracts.
-#    [2] JSON Schema Core Validation Spec (2020-12)
-#        URL: https://json-schema.org/draft/2020-12/json-schema-core
-#        Rationale: Establishes structural validation guarantees so versioned payloads (/1, /2, /3, /4) cannot silently fall back to incompatible schema validators.
-#    [3] Python jsonschema Library Documentation
-#        URL: https://python-jsonschema.readthedocs.io/en/stable/
-#        Rationale: Reference implementation used by explainer_engine for Draft202012Validator dispatch and strict contract validation.
-#    [4] Anthropic Claude Code Costs & Prompt Caching
-#        URL: https://code.claude.com/docs/en/costs
-#        Rationale: Demonstrates why deterministic offline schema/contract validation (BATCH-M0/M2) must precede paid LLM/API calls to avoid wasted token and GPU spend.
-#    [5] OpenTimelineIO File Format Specification
-#        URL: https://opentimelineio.readthedocs.io/en/v0.13/tutorials/otio-file-format-specification.html
-#        Rationale: Defines timeline metadata and rational-time contract serialization that downstream edit/render stages consume from production_script/4.
-# =============================================================================
-
 """Assemble a video from a timed production script (D-43): nothing is decided here, everything comes from the timed
 file (``production/timing.py``): which picture, from which frame to which frame, its camera move, its bubbles; which
 ambience, sound and music, from when to when, how loud.
