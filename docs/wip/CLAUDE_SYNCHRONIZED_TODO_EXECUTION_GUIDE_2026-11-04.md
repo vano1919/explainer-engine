@@ -31,9 +31,6 @@
 ---
 
 ## 1. CREATOR DECISION AUTHORITY — D-95 IS THE ONLY NEW OVERRIDE IN THIS HANDOFF
----
-
-## 1. CREATOR DECISION AUTHORITY — D-95 IS THE ONLY NEW OVERRIDE IN THIS HANDOFF
 
 D-95 is the creator's explicit 2026-11-04 instruction. It supersedes the old narrator/dialogue split and universal shot-duration rule only within its scope. It does not imply approval of Gemini-generated `CD-01..CD-06`, does not close `CD-05`, and does not change D-93 visual lanes. The sections below remain Gemini-generated proposals unless their decisions are separately recorded in the canonical decision log.
 
