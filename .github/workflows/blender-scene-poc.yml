@@ -7,6 +7,12 @@ on:
     paths:
       - "experiments/blender_scene_poc/**"
       - ".github/workflows/blender-scene-poc.yml"
+  pull_request:
+    branches:
+      - "claude/master-mold-ready-2026-11-04"
+    paths:
+      - "experiments/blender_scene_poc/**"
+      - ".github/workflows/blender-scene-poc.yml"
 
 permissions:
   contents: read
