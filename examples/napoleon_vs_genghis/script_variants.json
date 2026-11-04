@@ -20,7 +20,7 @@
      "blocks": [
       {
        "id": "S01-01",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
@@ -33,7 +33,7 @@
       },
       {
        "id": "S01-02",
-       "seconds": 2.0,
+       "seconds": 2,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -46,7 +46,7 @@
       },
       {
        "id": "S01-03",
-       "seconds": 2.0,
+       "seconds": 2,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -59,7 +59,7 @@
       },
       {
        "id": "S01-04",
-       "seconds": 2.0,
+       "seconds": 2,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -72,7 +72,7 @@
       },
       {
        "id": "S01-05",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "narrated",
        "who": "riders",
@@ -84,14 +84,14 @@
        }
       }
      ],
-     "window_s": 12.0
+     "window_s": 12
     },
     {
      "id": "S02",
      "blocks": [
       {
        "id": "S02-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
@@ -104,7 +104,7 @@
       },
       {
        "id": "S02-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -117,7 +117,7 @@
       },
       {
        "id": "S02-03",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "genghis",
@@ -130,7 +130,7 @@
       },
       {
        "id": "S02-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "brun",
@@ -143,7 +143,7 @@
       },
       {
        "id": "S02-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "insert",
        "who": "infantry",
@@ -156,7 +156,7 @@
       },
       {
        "id": "S02-06",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -167,14 +167,14 @@
        }
       }
      ],
-     "window_s": 24.0
+     "window_s": 24
     },
     {
      "id": "S03",
      "blocks": [
       {
        "id": "S03-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "gunners",
@@ -187,7 +187,7 @@
       },
       {
        "id": "S03-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -200,7 +200,7 @@
       },
       {
        "id": "S03-03",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "narrated",
        "who": "gunners",
@@ -213,7 +213,7 @@
       },
       {
        "id": "S03-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
@@ -226,7 +226,7 @@
       },
       {
        "id": "S03-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -238,7 +238,7 @@
       },
       {
        "id": "S03-06",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
@@ -251,7 +251,7 @@
       },
       {
        "id": "S03-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
@@ -264,7 +264,7 @@
       },
       {
        "id": "S03-08",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "genghis",
@@ -277,7 +277,7 @@
       },
       {
        "id": "S03-09",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "insert",
        "who": "infantry",
@@ -290,7 +290,7 @@
       },
       {
        "id": "S03-10",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "narrated",
        "shots": 1,
@@ -301,14 +301,14 @@
        }
       }
      ],
-     "window_s": 39.0
+     "window_s": 39
     },
     {
      "id": "S04",
      "blocks": [
       {
        "id": "S04-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "bars",
@@ -321,7 +321,7 @@
       },
       {
        "id": "S04-02",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -334,7 +334,7 @@
       },
       {
        "id": "S04-03",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -347,7 +347,7 @@
       },
       {
        "id": "S04-04",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -360,7 +360,7 @@
       },
       {
        "id": "S04-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
@@ -373,7 +373,7 @@
       },
       {
        "id": "S04-06",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -386,7 +386,7 @@
       },
       {
        "id": "S04-07",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "bars",
@@ -399,7 +399,7 @@
       },
       {
        "id": "S04-08",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "bars",
@@ -412,7 +412,7 @@
       },
       {
        "id": "S04-09",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -425,7 +425,7 @@
       },
       {
        "id": "S04-10",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -438,7 +438,7 @@
       },
       {
        "id": "S04-11",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "bars",
@@ -451,7 +451,7 @@
       },
       {
        "id": "S04-12",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "bars",
@@ -464,7 +464,7 @@
       },
       {
        "id": "S04-13",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -477,7 +477,7 @@
       },
       {
        "id": "S04-14",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -490,7 +490,7 @@
       },
       {
        "id": "S04-15",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -503,7 +503,7 @@
       },
       {
        "id": "S04-16",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "bars",
@@ -516,7 +516,7 @@
       },
       {
        "id": "S04-17",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "establish",
        "who": "riders",
@@ -529,7 +529,7 @@
       },
       {
        "id": "S04-18",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "bars",
@@ -542,7 +542,7 @@
       },
       {
        "id": "S04-19",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -555,7 +555,7 @@
       },
       {
        "id": "S04-20",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -568,7 +568,7 @@
       },
       {
        "id": "S04-21",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -580,14 +580,14 @@
        }
       }
      ],
-     "window_s": 96.0
+     "window_s": 96
     },
     {
      "id": "S05",
      "blocks": [
       {
        "id": "S05-01",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "establish",
        "shots": 1,
@@ -599,7 +599,7 @@
       },
       {
        "id": "S05-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
@@ -612,7 +612,7 @@
       },
       {
        "id": "S05-03",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "insert",
        "who": "cavalry",
@@ -625,7 +625,7 @@
       },
       {
        "id": "S05-04",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "narrated",
        "who": "napoleon",
@@ -638,7 +638,7 @@
       },
       {
        "id": "S05-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "murat",
@@ -650,14 +650,14 @@
        }
       }
      ],
-     "window_s": 22.0
+     "window_s": 22
     },
     {
      "id": "S06",
      "blocks": [
       {
        "id": "S06-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "murat",
@@ -670,7 +670,7 @@
       },
       {
        "id": "S06-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -683,7 +683,7 @@
       },
       {
        "id": "S06-03",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "insert",
        "who": "riders",
@@ -696,7 +696,7 @@
       },
       {
        "id": "S06-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -709,7 +709,7 @@
       },
       {
        "id": "S06-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -722,7 +722,7 @@
       },
       {
        "id": "S06-06",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "insert",
        "who": "riders",
@@ -735,7 +735,7 @@
       },
       {
        "id": "S06-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -748,7 +748,7 @@
       },
       {
        "id": "S06-08",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -761,7 +761,7 @@
       },
       {
        "id": "S06-09",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -774,7 +774,7 @@
       },
       {
        "id": "S06-10",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "insert",
        "who": "riders",
@@ -787,7 +787,7 @@
       },
       {
        "id": "S06-11",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -800,7 +800,7 @@
       },
       {
        "id": "S06-12",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -813,7 +813,7 @@
       },
       {
        "id": "S06-13",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -826,7 +826,7 @@
       },
       {
        "id": "S06-14",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "cavalry",
@@ -839,7 +839,7 @@
       },
       {
        "id": "S06-15",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -852,7 +852,7 @@
       },
       {
        "id": "S06-16",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -865,7 +865,7 @@
       },
       {
        "id": "S06-17",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -878,7 +878,7 @@
       },
       {
        "id": "S06-18",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -891,7 +891,7 @@
       },
       {
        "id": "S06-19",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -904,7 +904,7 @@
       },
       {
        "id": "S06-20",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "gunners",
@@ -917,7 +917,7 @@
       },
       {
        "id": "S06-21",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -930,7 +930,7 @@
       },
       {
        "id": "S06-22",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -943,7 +943,7 @@
       },
       {
        "id": "S06-23",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "gunners",
@@ -956,7 +956,7 @@
       },
       {
        "id": "S06-24",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -969,7 +969,7 @@
       },
       {
        "id": "S06-25",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -982,7 +982,7 @@
       },
       {
        "id": "S06-26",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -995,7 +995,7 @@
       },
       {
        "id": "S06-27",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "establish",
        "who": "riders",
@@ -1007,14 +1007,14 @@
        }
       }
      ],
-     "window_s": 104.0
+     "window_s": 104
     },
     {
      "id": "S07",
      "blocks": [
       {
        "id": "S07-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "infantry",
@@ -1027,7 +1027,7 @@
       },
       {
        "id": "S07-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "murat",
@@ -1040,7 +1040,7 @@
       },
       {
        "id": "S07-03",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -1053,7 +1053,7 @@
       },
       {
        "id": "S07-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
@@ -1066,7 +1066,7 @@
       },
       {
        "id": "S07-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
@@ -1079,7 +1079,7 @@
       },
       {
        "id": "S07-06",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1092,7 +1092,7 @@
       },
       {
        "id": "S07-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
@@ -1105,7 +1105,7 @@
       },
       {
        "id": "S07-08",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1118,7 +1118,7 @@
       },
       {
        "id": "S07-09",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
@@ -1131,7 +1131,7 @@
       },
       {
        "id": "S07-10",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -1143,7 +1143,7 @@
       },
       {
        "id": "S07-11",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
@@ -1156,7 +1156,7 @@
       },
       {
        "id": "S07-12",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "napoleon",
@@ -1168,14 +1168,14 @@
        }
       }
      ],
-     "window_s": 49.0
+     "window_s": 49
     },
     {
      "id": "S08",
      "blocks": [
       {
        "id": "S08-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "bayan",
@@ -1188,7 +1188,7 @@
       },
       {
        "id": "S08-02",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "bayan",
@@ -1201,7 +1201,7 @@
       },
       {
        "id": "S08-03",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1214,7 +1214,7 @@
       },
       {
        "id": "S08-04",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "scene",
        "who": "bayan",
@@ -1227,7 +1227,7 @@
       },
       {
        "id": "S08-05",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1240,7 +1240,7 @@
       },
       {
        "id": "S08-06",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "scene",
        "who": "bayan",
@@ -1253,7 +1253,7 @@
       },
       {
        "id": "S08-07",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
@@ -1266,7 +1266,7 @@
       },
       {
        "id": "S08-08",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1279,7 +1279,7 @@
       },
       {
        "id": "S08-09",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1292,7 +1292,7 @@
       },
       {
        "id": "S08-10",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "bars",
@@ -1305,7 +1305,7 @@
       },
       {
        "id": "S08-11",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "establish",
        "who": "scouts",
@@ -1318,7 +1318,7 @@
       },
       {
        "id": "S08-12",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1331,7 +1331,7 @@
       },
       {
        "id": "S08-13",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "establish",
        "who": "infantry",
@@ -1344,7 +1344,7 @@
       },
       {
        "id": "S08-14",
-       "seconds": 7.0,
+       "seconds": 7,
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
@@ -1357,7 +1357,7 @@
       },
       {
        "id": "S08-15",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1370,7 +1370,7 @@
       },
       {
        "id": "S08-16",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "subutai",
@@ -1383,7 +1383,7 @@
       },
       {
        "id": "S08-17",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1396,7 +1396,7 @@
       },
       {
        "id": "S08-18",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "establish",
        "who": "riders",
@@ -1409,7 +1409,7 @@
       },
       {
        "id": "S08-19",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1422,7 +1422,7 @@
       },
       {
        "id": "S08-20",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
@@ -1435,7 +1435,7 @@
       },
       {
        "id": "S08-21",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -1448,7 +1448,7 @@
       },
       {
        "id": "S08-22",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "subutai",
@@ -1460,14 +1460,14 @@
        }
       }
      ],
-     "window_s": 103.0
+     "window_s": 103
     },
     {
      "id": "S09",
      "blocks": [
       {
        "id": "S09-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -1479,7 +1479,7 @@
       },
       {
        "id": "S09-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
@@ -1492,7 +1492,7 @@
       },
       {
        "id": "S09-03",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1505,7 +1505,7 @@
       },
       {
        "id": "S09-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "brun",
@@ -1518,7 +1518,7 @@
       },
       {
        "id": "S09-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -1531,7 +1531,7 @@
       },
       {
        "id": "S09-06",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -1544,7 +1544,7 @@
       },
       {
        "id": "S09-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "insert",
        "who": "napoleon",
@@ -1557,7 +1557,7 @@
       },
       {
        "id": "S09-08",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "establish",
        "shots": 1,
@@ -1569,7 +1569,7 @@
       },
       {
        "id": "S09-09",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "narrated",
        "who": "gunners",
@@ -1582,7 +1582,7 @@
       },
       {
        "id": "S09-10",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "scene",
        "who": "bayan",
@@ -1595,7 +1595,7 @@
       },
       {
        "id": "S09-11",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "establish",
        "shots": 1,
@@ -1607,7 +1607,7 @@
       },
       {
        "id": "S09-12",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "establish",
        "who": "riders",
@@ -1620,7 +1620,7 @@
       },
       {
        "id": "S09-13",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "genghis",
@@ -1632,14 +1632,14 @@
        }
       }
      ],
-     "window_s": 54.0
+     "window_s": 54
     },
     {
      "id": "S10",
      "blocks": [
       {
        "id": "S10-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -1652,7 +1652,7 @@
       },
       {
        "id": "S10-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -1665,7 +1665,7 @@
       },
       {
        "id": "S10-03",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "infantry",
@@ -1678,7 +1678,7 @@
       },
       {
        "id": "S10-04",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "scene",
        "who": "drummer",
@@ -1691,7 +1691,7 @@
       },
       {
        "id": "S10-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -1704,7 +1704,7 @@
       },
       {
        "id": "S10-06",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
@@ -1717,7 +1717,7 @@
       },
       {
        "id": "S10-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1730,7 +1730,7 @@
       },
       {
        "id": "S10-08",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1743,7 +1743,7 @@
       },
       {
        "id": "S10-09",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "establish",
        "who": "guards",
@@ -1756,7 +1756,7 @@
       },
       {
        "id": "S10-10",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
@@ -1769,7 +1769,7 @@
       },
       {
        "id": "S10-11",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -1782,7 +1782,7 @@
       },
       {
        "id": "S10-12",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1795,7 +1795,7 @@
       },
       {
        "id": "S10-13",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1808,7 +1808,7 @@
       },
       {
        "id": "S10-14",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "infantry",
@@ -1821,7 +1821,7 @@
       },
       {
        "id": "S10-15",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1834,7 +1834,7 @@
       },
       {
        "id": "S10-16",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "infantry",
@@ -1847,7 +1847,7 @@
       },
       {
        "id": "S10-17",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -1860,7 +1860,7 @@
       },
       {
        "id": "S10-18",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -1873,7 +1873,7 @@
       },
       {
        "id": "S10-19",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -1886,7 +1886,7 @@
       },
       {
        "id": "S10-20",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "gunners",
@@ -1899,7 +1899,7 @@
       },
       {
        "id": "S10-21",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -1912,7 +1912,7 @@
       },
       {
        "id": "S10-22",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "gunners",
@@ -1925,7 +1925,7 @@
       },
       {
        "id": "S10-23",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -1938,7 +1938,7 @@
       },
       {
        "id": "S10-24",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -1951,7 +1951,7 @@
       },
       {
        "id": "S10-25",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -1964,7 +1964,7 @@
       },
       {
        "id": "S10-26",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
@@ -1977,7 +1977,7 @@
       },
       {
        "id": "S10-27",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -1990,7 +1990,7 @@
       },
       {
        "id": "S10-28",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2003,7 +2003,7 @@
       },
       {
        "id": "S10-29",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -2016,7 +2016,7 @@
       },
       {
        "id": "S10-30",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "genghis",
@@ -2029,7 +2029,7 @@
       },
       {
        "id": "S10-31",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
@@ -2042,7 +2042,7 @@
       },
       {
        "id": "S10-32",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2055,7 +2055,7 @@
       },
       {
        "id": "S10-33",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "genghis",
@@ -2068,7 +2068,7 @@
       },
       {
        "id": "S10-34",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -2081,7 +2081,7 @@
       },
       {
        "id": "S10-35",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2094,7 +2094,7 @@
       },
       {
        "id": "S10-36",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -2106,7 +2106,7 @@
       },
       {
        "id": "S10-37",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -2119,7 +2119,7 @@
       },
       {
        "id": "S10-38",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2131,14 +2131,14 @@
        }
       }
      ],
-     "window_s": 148.0
+     "window_s": 148
     },
     {
      "id": "S11",
      "blocks": [
       {
        "id": "S11-01",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -2150,7 +2150,7 @@
       },
       {
        "id": "S11-02",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2163,7 +2163,7 @@
       },
       {
        "id": "S11-03",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -2176,7 +2176,7 @@
       },
       {
        "id": "S11-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2189,7 +2189,7 @@
       },
       {
        "id": "S11-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "brun",
@@ -2202,7 +2202,7 @@
       },
       {
        "id": "S11-06",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
@@ -2215,7 +2215,7 @@
       },
       {
        "id": "S11-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -2228,7 +2228,7 @@
       },
       {
        "id": "S11-08",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -2239,14 +2239,14 @@
        }
       }
      ],
-     "window_s": 35.0
+     "window_s": 35
     },
     {
      "id": "S12",
      "blocks": [
       {
        "id": "S12-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -2258,7 +2258,7 @@
       },
       {
        "id": "S12-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "riders",
@@ -2271,7 +2271,7 @@
       },
       {
        "id": "S12-03",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
@@ -2284,7 +2284,7 @@
       },
       {
        "id": "S12-04",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "narrated",
        "who": "infantry",
@@ -2297,7 +2297,7 @@
       },
       {
        "id": "S12-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
@@ -2310,7 +2310,7 @@
       },
       {
        "id": "S12-06",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -2323,7 +2323,7 @@
       },
       {
        "id": "S12-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "bars",
@@ -2336,7 +2336,7 @@
       },
       {
        "id": "S12-08",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "murat",
@@ -2349,7 +2349,7 @@
       },
       {
        "id": "S12-09",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2361,14 +2361,14 @@
        }
       }
      ],
-     "window_s": 40.0
+     "window_s": 40
     },
     {
      "id": "S13",
      "blocks": [
       {
        "id": "S13-01",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "napoleon",
@@ -2381,7 +2381,7 @@
       },
       {
        "id": "S13-02",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2394,7 +2394,7 @@
       },
       {
        "id": "S13-03",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2407,7 +2407,7 @@
       },
       {
        "id": "S13-04",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2420,7 +2420,7 @@
       },
       {
        "id": "S13-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
@@ -2433,7 +2433,7 @@
       },
       {
        "id": "S13-06",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2446,7 +2446,7 @@
       },
       {
        "id": "S13-07",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -2459,7 +2459,7 @@
       },
       {
        "id": "S13-08",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2472,7 +2472,7 @@
       },
       {
        "id": "S13-09",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "scene",
        "who": "bars",
@@ -2485,7 +2485,7 @@
       },
       {
        "id": "S13-10",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2498,7 +2498,7 @@
       },
       {
        "id": "S13-11",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2511,7 +2511,7 @@
       },
       {
        "id": "S13-12",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2524,7 +2524,7 @@
       },
       {
        "id": "S13-13",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2537,7 +2537,7 @@
       },
       {
        "id": "S13-14",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
@@ -2550,7 +2550,7 @@
       },
       {
        "id": "S13-15",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -2563,7 +2563,7 @@
       },
       {
        "id": "S13-16",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "light",
        "mode": "scene",
        "who": "brun",
@@ -2576,7 +2576,7 @@
       },
       {
        "id": "S13-17",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2589,7 +2589,7 @@
       },
       {
        "id": "S13-18",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "scene",
        "who": "genghis",
@@ -2602,7 +2602,7 @@
       },
       {
        "id": "S13-19",
-       "seconds": 6.0,
+       "seconds": 6,
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
@@ -2615,7 +2615,7 @@
       },
       {
        "id": "S13-20",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "napoleon",
@@ -2628,7 +2628,7 @@
       },
       {
        "id": "S13-21",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "establish",
        "who": "riders",
@@ -2640,14 +2640,14 @@
        }
       }
      ],
-     "window_s": 101.0
+     "window_s": 101
     },
     {
      "id": "S14",
      "blocks": [
       {
        "id": "S14-01",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "narrated",
        "who": "infantry",
@@ -2660,7 +2660,7 @@
       },
       {
        "id": "S14-02",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
@@ -2673,7 +2673,7 @@
       },
       {
        "id": "S14-03",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "narrated",
        "who": "riders",
@@ -2686,7 +2686,7 @@
       },
       {
        "id": "S14-04",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "napoleon",
@@ -2699,7 +2699,7 @@
       },
       {
        "id": "S14-05",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "hold",
        "mode": "establish",
        "shots": 1,
@@ -2711,7 +2711,7 @@
       },
       {
        "id": "S14-06",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "brun",
@@ -2724,7 +2724,7 @@
       },
       {
        "id": "S14-07",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
@@ -2737,7 +2737,7 @@
       },
       {
        "id": "S14-08",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
@@ -2750,7 +2750,7 @@
       },
       {
        "id": "S14-09",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -2763,7 +2763,7 @@
       },
       {
        "id": "S14-10",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
@@ -2776,7 +2776,7 @@
       },
       {
        "id": "S14-11",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "brun",
@@ -2788,14 +2788,14 @@
        }
       }
      ],
-     "window_s": 47.0
+     "window_s": 47
     },
     {
      "id": "S15",
      "blocks": [
       {
        "id": "S15-01",
-       "seconds": 3.0,
+       "seconds": 3,
        "tier": "full",
        "mode": "insert",
        "who": "drummer",
@@ -2808,7 +2808,7 @@
       },
       {
        "id": "S15-02",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -2821,7 +2821,7 @@
       },
       {
        "id": "S15-03",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
@@ -2833,14 +2833,14 @@
        }
       }
      ],
-     "window_s": 12.0
+     "window_s": 12
     },
     {
      "id": "S16",
      "blocks": [
       {
        "id": "S16-01",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "narrated",
        "who": "geniuses",
@@ -2853,7 +2853,7 @@
       },
       {
        "id": "S16-02",
-       "seconds": 5.0,
+       "seconds": 5,
        "tier": "light",
        "mode": "narrated",
        "who": "stranded",
@@ -2866,7 +2866,7 @@
       },
       {
        "id": "S16-03",
-       "seconds": 4.0,
+       "seconds": 4,
        "tier": "full",
        "mode": "narrated",
        "who": "genghis",
@@ -2878,7 +2878,7 @@
        }
       }
      ],
-     "window_s": 14.0
+     "window_s": 14
     }
    ],
    "cost_rows": [
@@ -2929,21 +2929,21 @@
    ],
    "dynamics": {
     "share_scene": 0.801,
-    "share_map_pure": 0.0,
+    "share_map_pure": 0,
     "share_compensator": 0.153,
-    "share_host": 0.0,
+    "share_host": 0,
     "share_hold": 0.046,
     "non_character": 0.199,
     "narrator_share": 0.449,
-    "map_run_max_s": 0.0,
-    "non_scene_run_max_s": 8.0,
+    "map_run_max_s": 0,
+    "non_scene_run_max_s": 8,
     "shots_per_min": 14.3
    },
    "cost": {
     "usd_planned": "unknown",
     "usd_worst": "unknown",
-    "known_usd_planned": 0.0,
-    "known_usd_worst": 0.0,
+    "known_usd_planned": 0,
+    "known_usd_worst": 0,
     "unknown_rows": [
      "keyframes (one per shot card)",
      "video, light tier",
@@ -2993,8 +2993,8 @@
       "kind": "cpu",
       "service": "runpod_usd",
       "units": 1,
-      "usd_planned": 0.0,
-      "usd_worst": 0.0,
+      "usd_planned": 0,
+      "usd_worst": 0,
       "basis": "estimate (by construction)"
      },
      {
@@ -3009,6 +3009,7 @@
     ]
    },
    "risks": [
+    "REVIEW VP-16 narrator",
     "REVIEW VP-18 video",
     "REVIEW VP-18 still",
     "REVIEW VP-18 helper",
@@ -3017,7 +3018,7 @@
     "REVIEW VP-12 cost"
    ],
    "scores": {
-    "code": 40,
+    "code": 30,
     "critic": null
    }
   },
@@ -3398,19 +3399,19 @@
     "share_scene": 0.362,
     "share_map_pure": 0.158,
     "share_compensator": 0.474,
-    "share_host": 0.0,
+    "share_host": 0,
     "share_hold": 0.006,
     "non_character": 0.638,
     "narrator_share": 0.638,
-    "map_run_max_s": 33.0,
-    "non_scene_run_max_s": 54.0,
+    "map_run_max_s": 33,
+    "non_scene_run_max_s": 54,
     "shots_per_min": 13.8
    },
    "cost": {
     "usd_planned": "unknown",
     "usd_worst": "unknown",
-    "known_usd_planned": 0.0,
-    "known_usd_worst": 0.0,
+    "known_usd_planned": 0,
+    "known_usd_worst": 0,
     "unknown_rows": [
      "keyframes (planned shots)",
      "video of the played blocks, full tier",
@@ -3450,8 +3451,8 @@
       "kind": "cpu",
       "service": "runpod_usd",
       "units": 1,
-      "usd_planned": 0.0,
-      "usd_worst": 0.0,
+      "usd_planned": 0,
+      "usd_worst": 0,
       "basis": "estimate (by construction)"
      },
      {

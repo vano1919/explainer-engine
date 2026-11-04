@@ -294,7 +294,7 @@ def test_napoleon_v1_is_rebuilt_from_the_shot_cards_and_scores_70():
     assert d["total_s"] == 900 and len(fs["shots"]) == 214
     assert d["share"]["scene"] == pytest.approx(0.801, abs=0.001) and d["share"]["compensator"] == pytest.approx(0.153, abs=0.001)
     assert d["share"]["hold"] == pytest.approx(0.046, abs=0.001) and d["share"]["map_pure"] == 0 and d["share"]["host"] == 0
-    assert d["narrator_share"] == pytest.approx(0.449, abs=0.001) and d["narrator_basis"] == "words"
+    assert d["narrator_share"] == pytest.approx(0.449, abs=0.001) and d["narrator_basis"] == "audible_words"
     assert d["non_scene_run_max_s"] == 8 and d["map_run_max_s"] == 0
     assert {t: round(s, 2) for t, s in d["turn_played_share"].items()} == {"S04": 0.89, "S06": 0.70, "S08": 0.83, "S10": 0.68,
                                                                            "S11": 0.74, "S13": 0.88}
@@ -307,11 +307,11 @@ def test_the_napoleon_fixture_is_current_valid_and_scored_as_designed():
     contracts.validate(doc, NAP)
     assert doc == VP.napoleon_variants(speeds={}), "script_variants.json is stale: run `variant_plan napoleon --write`"
     v1, v2 = doc["variants"]
-    # both variants predate BP-109's 60/30/10 (the creator, 2026-11-01): the three lane findings (and v2's pure map over the
-    # helper lane) cost 30 / 40 points; they were 70 / 70 under the old 10 % hold cap
+    # both variants predate BP-109's 60/30/10 (the creator, 2026-11-01): lane findings remain REVIEW; D-95 also adds a narrator-share
+    # REVIEW to v1 because its 44.9 % narration share is below the new 70-80 % spoken-word target.
     mix = ["REVIEW VP-18 helper", "REVIEW VP-18 still", "REVIEW VP-18 video"]
-    assert (v1["profile_id"], v1["scores"]["code"]) == ("D", 40)
-    assert sorted(v1["risks"]) == sorted(["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-11 KEYFRAME_LTX:light", "REVIEW VP-12 cost"] + mix)
+    assert (v1["profile_id"], v1["scores"]["code"]) == ("D", 30)
+    assert sorted(v1["risks"]) == sorted(["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-11 KEYFRAME_LTX:light", "REVIEW VP-12 cost", "REVIEW VP-16 narrator"] + mix)
     assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 30)
     assert sorted(v2["risks"]) == sorted(["REVIEW VP-02 map_pure", "REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-12 cost",
                                           "REVIEW VP-16 narrator"] + mix)
