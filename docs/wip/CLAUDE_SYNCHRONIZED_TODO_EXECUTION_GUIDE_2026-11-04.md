@@ -28,6 +28,8 @@
 
 6. **Change authority.** The previous D-95 implementation authorization has been completed and recorded. Do not infer that it authorizes BATCH-M0..M8B, the 42 stubs, new paid services, a full architecture migration or this guide's proposed decisions. The current visual-grammar research should be read-only until the creator reviews and approves a specific implementation plan.
 
+7. **Live main-branch protection gate (checked 2026-11-04).** GitHub's live API returned `protected: false` and `protection.enabled: false` for `main` (HEAD `6e1dccad30a865df670c258c86ffa1152a0dbe7e`); the repository rulesets endpoint returned an empty list. Therefore `GATE-EXT-MAIN-PROTECT` is **UNMET**, not passed. Sources: https://api.github.com/repos/vano1919/explainer-engine/branches/main and https://api.github.com/repos/vano1919/explainer-engine/rulesets (accessed 2026-11-04). Do not write to `main`, merge there, or mark the gate complete until an authorized repository administrator configures and verifies the intended protections. Do not change repository settings automatically as part of this audit.
+
 ---
 
 ## 1. CREATOR DECISION AUTHORITY — D-95 IS THE ONLY NEW OVERRIDE IN THIS HANDOFF
