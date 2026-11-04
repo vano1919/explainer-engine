@@ -1,0 +1,47 @@
+name: Blender scene PoC render
+
+on:
+  push:
+    branches:
+      - "experiment/blender-scene-poc-2026-11-04"
+    paths:
+      - "experiments/blender_scene_poc/**"
+      - ".github/workflows/blender-scene-poc.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out experiment branch
+        uses: actions/checkout@v7
+
+      - name: Install Blender runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libgl1 libegl1 libx11-6 libxi6 libxrender1 libxfixes3 libxkbcommon0 libsm6 libxext6 libglib2.0-0
+
+      - name: Download pinned Blender 4.2.0
+        run: |
+          curl --fail --location --retry 3 --output /tmp/blender.tar.xz https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
+          mkdir -p /tmp/blender
+          tar -xf /tmp/blender.tar.xz --strip-components=1 -C /tmp/blender
+          /tmp/blender/blender --version
+
+      - name: Render five-second scene
+        run: |
+          /tmp/blender/blender --background --factory-startup --python experiments/blender_scene_poc/build_scene.py
+
+      - name: Upload render outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-scene-poc-five-seconds
+          path: |
+            experiments/blender_scene_poc/render_output/blender_poc_video.mp4
+            experiments/blender_scene_poc/render_output/blender_poc_frame.png
+            experiments/blender_scene_poc/render_output/blender_poc.blend
+          if-no-files-found: error
+          retention-days: 7
