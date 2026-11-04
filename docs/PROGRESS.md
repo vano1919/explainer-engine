@@ -3892,3 +3892,12 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Corrected the stale BlindCheckReport / BlindChecker inventory row in the execution guide. Added a Claude-facing action note to the handoff with findings, scope, recommended investigation order and explicit no-implementation boundary.
 - Extended the Visual Grammar research brief with asset provenance, adapter-specific capability records, stronger worked-example requirements, and provenance/layout/provider acceptance tests. The proposal keeps these records separate from creator-approved visual intent and avoids creating duplicate registries prematurely.
 - Documentation only in this update. No application code, schema, CI dispatch, branch-protection settings, paid API, GPU pod, production render or upload was changed/run. Tests and docs lint were not run in this connected GitHub session.
+
+### 2026-11-04 — Supplemental cinematic craft report
+
+- Added the creator-supplied `cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md` to `docs/research/`; verified the copied file's SHA-256 matches the Downloads original (`44F0FE17B2F31B1999A536C6B6B937E6944657E029C60923C3CDDC890B35205F`).
+- Linked the report from `docs/INDEX.md` and the craft curriculum, explicitly marking its claims as supplemental and unverified rather than treating its proposed numbers, model/API facts, or tool routes as policy.
+- Added a non-binding visual-grammar idea set to `shot-visuals` and a research-authority/capability caution to `video-editing-architect`. Existing project rules remain authoritative, including D-93 and D-95; no thresholds, checklists, provider choices, or production architecture were changed.
+- No paid calls, pods, renders, or publishing actions. `git diff --check` passed. `python -m explainer_engine.docs_lint`
+  reported one pre-existing undefined decision-ID reference in the unchanged historical `PROGRESS.md` text; the same
+  reference exists at `HEAD`, so it was not altered as part of this task.

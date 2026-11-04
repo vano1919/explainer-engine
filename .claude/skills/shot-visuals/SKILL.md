@@ -145,6 +145,23 @@ The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..
   quantity or a place); the lane shares follow the scores, inside BP-127's run caps (house numbers of the Blueprint, not
   McKee's or Katz's), tuned later by the channel's own retention curve.
 
+### Optional visual grammar (research lead, not a shot quota)
+
+For each beat, first decide what the viewer needs to understand or feel, then choose the simplest picture that adds evidence
+or subtext instead of merely repeating the narration. The creator-supplied [cinematic craft report](../../../docs/research/cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md)
+offers these as options, not required coverage:
+
+- Establish geography before close action when the viewer needs to understand positions or scale.
+- Show physical cause and consequence, or pair an action with a meaningful reaction.
+- Delay a reveal when discovery is part of the beat; use visual contrast or a recurring motif when the comparison itself matters.
+- Compress repeated steps into a montage, or cross-cut only when parallel events create a clear question or consequence.
+- Use a map, chart, or other deterministic helper when it makes a factual relationship easier to see; source every fact and number.
+
+These are creative choices, not fixed durations, mandatory transitions, or a new visual framework. Keep screen direction and
+scene continuity; follow D-93's visual-lane target, D-95's independent speech and intent-based duration rules, and the active
+episode rulebook. The report's technical/provider claims remain unverified leads: confirm the selected adapter's actual
+capabilities and constraints before planning a generation.
+
 ### CHECKLIST (cinematography)
 
 Rendered from `explainer_engine/standards/craft_checklists/cinematography.json` (the one home of these ids; 

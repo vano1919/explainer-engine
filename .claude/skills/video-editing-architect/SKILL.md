@@ -22,6 +22,12 @@ this project. Every value can be moved by evidence; when you move one, say why i
 4. **Check against anti-patterns** (section 4) and the QA list (section 6) before rendering.
 5. **Look and listen** (frames either side of three cuts, the loudest three joins) and write what you saw and heard.
 
+Supplemental idea source: the creator-supplied [cinematic audio-visual craft and tool implementation report](../../../docs/research/cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md)
+contains technique examples and tool research. Treat it as a lead, not as verified project configuration: its timing, loudness,
+API/model, licensing, cost, and implementation claims are not adopted by this skill. `docs/EDITING.md`, D-93/D-95, the
+episode rulebook, and the selected provider adapter remain authoritative; verify any specific technical claim against those
+sources and the actual runtime before use.
+
 ---
 
 ## 1. Genre-to-style map
