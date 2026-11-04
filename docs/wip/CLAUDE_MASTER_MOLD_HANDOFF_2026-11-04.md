@@ -1,8 +1,8 @@
 # Claude handoff: Gemini Master Mold package (2026-11-04)
 
-**Branch:** `claude/master-mold-ready-2026-11-04`  
-**Base:** `planning/master-mold-integration-2026-11-02` at `bb0da660582ac0868825d88592276d7d43c234d5`  
-**Source archive:** `explainer-engine_CLAUDE_TODO_MASTER_MOLD_READY_2026-11-04.zip`  
+**Branch:** `claude/master-mold-ready-2026-11-04`
+**Base:** `planning/master-mold-integration-2026-11-02` at `bb0da660582ac0868825d88592276d7d43c234d5`
+**Source archive:** `explainer-engine_CLAUDE_TODO_MASTER_MOLD_READY_2026-11-04.zip`
 **Archive SHA-256:** `AA5433AACFA9FB5964705E25397164DDC73E1059A2EE5FAF4AC0BEFFD58CF674`
 
 ## Read first

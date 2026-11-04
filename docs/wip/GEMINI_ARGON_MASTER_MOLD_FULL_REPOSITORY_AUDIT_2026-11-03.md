@@ -1,9 +1,9 @@
 # Gemini Argon — Full Explainer Engine Repository and Master Mold Audit
 
-**Audit date:** 2026-11-03  
-**Repository:** `vano1919/explainer-engine` — https://github.com/vano1919/explainer-engine  
-**Frozen target:** `planning/master-mold-integration-2026-11-02` at `bb0da660582ac0868825d88592276d7d43c234d5`  
-**Main baseline:** `6e1dccad30a865df670c258c86ffa1152a0dbe7e`  
+**Audit date:** 2026-11-03
+**Repository:** `vano1919/explainer-engine` — https://github.com/vano1919/explainer-engine
+**Frozen target:** `planning/master-mold-integration-2026-11-02` at `bb0da660582ac0868825d88592276d7d43c234d5`
+**Main baseline:** `6e1dccad30a865df670c258c86ffa1152a0dbe7e`
 **PR #119 implementation baseline:** `5013a55aca5a17a3734150f61a5eb172abcbe3b8`
 
 ## Mission and operating boundary

@@ -2,9 +2,9 @@
 
 > **Status: unverified Gemini-generated proposal, not creator approval.** Verify every claimed baseline, defect, test path, and decision against this branch. No creator decision, implementation, paid call, or pod run is authorized by this guide. Start with the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md); in particular, `CD-05` remains open in the canonical progress record.
 
-**Document ID:** `CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04`  
-**Baseline Commit Audited:** `5013a55aa910820db16be2e59f9045a79573b219` (code baseline `bb0da662273ebcd18120c9eb8e2524df87efca2e`)  
-**Target Role:** Primary End-to-End Execution Blueprint for Claude Code (`BATCH-M0..M8B` + `GATE-P1..P3`)  
+**Document ID:** `CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04`
+**Baseline Commit Audited:** `5013a55aa910820db16be2e59f9045a79573b219` (code baseline `bb0da662273ebcd18120c9eb8e2524df87efca2e`)
+**Target Role:** Primary End-to-End Execution Blueprint for Claude Code (`BATCH-M0..M8B` + `GATE-P1..P3`)
 **Policy Rule:** Executable Python code in this repository has been intentionally left **unmodified**; instead, **301 Python modules and all top-level classes** have been annotated with `[CLAUDE-MASTER-MOLD-SYNC]` and `[CLAUDE-CLASS-SYNC]` `TODO` blocks containing:
 1. **რა ცვლილება უნდა გაკეთდეს** (Exact method-by-method, caller-to-callee synchronous change specification);
 2. **რა ნაკლოვანება აქვს ამჟამინდელ კოდს** (Exact current flaw, line numbers, and failure mode at `bb0da66` / `5013a55a`);
