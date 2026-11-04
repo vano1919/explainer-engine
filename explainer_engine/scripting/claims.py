@@ -1,3 +1,40 @@
+# =============================================================================
+# TODO [CLAUDE-MASTER-MOLD-SYNC] — BATCH-M2: Factual Claim & Counterfactual Premise Verification (`D-83`, `D-90`)
+# Target Module : explainer_engine/scripting/claims.py
+# Target Classes/Symbols : def parse_map(), def load_map(), def from_editorial(), def check()
+# Reference Guide : docs/wip/CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md
+# Roadmap Reference : docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md
+# =============================================================================
+#
+# 1. რა ცვლილება უნდა გაკეთდეს (EXACT SYNCHRONOUS CHANGE SPECIFICATION):
+#    Update `explainer_engine/scripting/claims.py`:
+#    - Distinguish grounding factual claims (which require source citations in `grounding` and `coda` tension zones) from explicitly marked counterfactual premises (`cold_open_type == "reversed_premise"` or counterfactual `escalation` projections).
+#    - Ensure historical character quotes (`D-90`) carry either a historical source citation or an explicit `"counterfactual_dramatization": true` marker so factual QA does not conflate dramatic what-if dialogue with unverified factual assertions.
+#
+# 2. რა ნაკლოვანება აქვს ამჟამინდელ კოდს (CURRENT CODE FLAW / DEFICIT AT 5013a55a):
+#    `claims.py` treats all segments uniformly without consulting `/4` `tension_zone` or `cold_open_type`, which can flag `reversed_premise` cold opens or counterfactual dramatic dialogue (`D-90`) as unverified factual claims.
+#
+# 3. რატომაა უახლესი გადაწყვეტა უკეთესი (WHY THE NEW SOLUTION IS SUPERIOR):
+#    Aligns claim verification with Master Mold v2.1.0's tension-zone architecture: strict factual grounding in `grounding`/`coda` and clearly labeled counterfactual modeling in `cold_open`/`escalation`.
+#
+# 4. დამადასტურებელი ვებ-წყაროები — მინიმუმ 5 წყარო (VERIFIED WEB SOURCES >= 5):
+#    [1] JSON Schema Draft 2020-12 Official Specification
+#        URL: https://json-schema.org/draft/2020-12
+#        Rationale: Defines canonical $schema URI resolution, discriminator dispatch, additionalProperties: false enforcement, and backwards-compatible schema evolution across versioned contracts.
+#    [2] JSON Schema Core Validation Spec (2020-12)
+#        URL: https://json-schema.org/draft/2020-12/json-schema-core
+#        Rationale: Establishes structural validation guarantees so versioned payloads (/1, /2, /3, /4) cannot silently fall back to incompatible schema validators.
+#    [3] Python jsonschema Library Documentation
+#        URL: https://python-jsonschema.readthedocs.io/en/stable/
+#        Rationale: Reference implementation used by explainer_engine for Draft202012Validator dispatch and strict contract validation.
+#    [4] Anthropic Claude Code Costs & Prompt Caching
+#        URL: https://code.claude.com/docs/en/costs
+#        Rationale: Demonstrates why deterministic offline schema/contract validation (BATCH-M0/M2) must precede paid LLM/API calls to avoid wasted token and GPU spend.
+#    [5] OpenTimelineIO File Format Specification
+#        URL: https://opentimelineio.readthedocs.io/en/v0.13/tutorials/otio-file-format-specification.html
+#        Rationale: Defines timeline metadata and rational-time contract serialization that downstream edit/render stages consume from production_script/4.
+# =============================================================================
+
 """Claims resolve to sources (invariant 5; PV-37, audit 2026-10-19 M1). stdlib only.
 
 The episode's ``claim_map.md`` (next to the production script) is the one place a claim lives: a table row

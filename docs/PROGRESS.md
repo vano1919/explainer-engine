@@ -3853,3 +3853,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - **P1b scope:** the P12b canary is not a finished-minute sample and cannot establish the D-92 creator-review-minutes-per-finished-minute verdict. The roadmap now keeps P1b as speed/identity measurement and defers D-92 verdict classification until representative finished-sample evidence exists.
 - Documentation only. No application code, schema, source-rule registry, protected spend caps, creator decision, or tests were changed. `docs_lint` and `pytest` were not run.
 
+### 2026-11-04 — Gemini Master Mold handoff branch prepared
+
+- Created `claude/master-mold-ready-2026-11-04` from `planning/master-mold-integration-2026-11-02` at `bb0da660582ac0868825d88592276d7d43c234d5`.
+- Imported the Gemini roadmap revision, read-only audit brief, execution guide, and 301 TODO-marked Python files (259 existing modules with annotation-only additions; 42 new stubs). Comparing the existing modules after removing the inserted TODO comments found unchanged executable bodies; four package `__init__.py` files differed only in whitespace. No implementation behavior was changed.
+- Added `docs/wip/CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md` and a read-first pointer in `CLAUDE.md`. The handoff records source/archive provenance, exclusions, and discrepancies Claude must verify. The Gemini guide's creator-decision claims are explicitly unverified; `CD-05` remains open, and no paid action is authorized.
+- Did not replace the progress history, verified-shot digest, `config/job_speeds.json`, or runtime state. The ZIP's added A100/A40 telemetry is attributed only to `"pod x"` and needs evidence before use; `jobs/` and `tools/runpod/` session data were excluded.
+- Verification: `python -m explainer_engine.docs_lint` reported 0 findings; `python -m compileall -q explainer_engine scripts` passed. `tests/unit/test_repo_hygiene.py` could not run because the available Python 3.14 environment has no `pytest` installed. No paid calls, pods, or production jobs were run.

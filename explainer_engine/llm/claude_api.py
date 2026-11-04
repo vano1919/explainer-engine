@@ -1,3 +1,38 @@
+# =============================================================================
+# TODO [CLAUDE-MASTER-MOLD-SYNC] — BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0): Synchronous Master Mold v2.1.0 Alignment for `explainer_engine/llm/claude_api.py`
+# Target Module : explainer_engine/llm/claude_api.py
+# Target Classes/Symbols : def secret_name(), def api_key(), class LLMError (methods: ), class KeyAbsent (methods: ), class NotApproved (methods: ), class RoutingError (methods: ), class PriceMissing (methods: ), class SecretInPrompt (methods: ), class LedgerGap (methods: ), class Overloaded (methods: ), class CacheCold (methods: ), class OutputTruncated (methods: __init__), class StreamBroken (methods: __init__), class Refused (methods: __init__), def _env_path(), def prices(), def routing(), def cache_dir(), def ledger_dir(), def caps(), def lines_below_spent(), class Route (methods: ), def route(), def usd_of(), def usage_of(), def iterations_usd(), class NS_ (methods: __init__), def _chars(), def worst_usd(), class Ledger (methods: __init__, rows, append, total, by_job, open_calls, check_gap), class Request (methods: ), class Result (methods: json), def check_secrets(), def redact(), def check_secret_path(), def _with_breakpoint(), def _block_json(), def save_partial(), def max_effort_ok(), def check_max_tokens(), def build_params(), def cache_key(), class ResponseCache (methods: __init__, get, put), def _safe(), def _visible(), def run_repo_tool(), class StreamSink (methods: __init__, _out, _tail, mark, _put, write, write_thinking, received), def _status(), class ClaudeAPI (methods: __init__, client, run_for, _reserve, _count, _send, _paid, _attempt), def load_job(), def cache_guard(), def loop_usd(), def estimate(), def proof_path(), def _on_sigterm(), def _out_name(), def main()
+# Reference Guide : docs/wip/CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md
+# Roadmap Reference : docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md
+# =============================================================================
+#
+# 1. რა ცვლილება უნდა გაკეთდეს (EXACT SYNCHRONOUS CHANGE SPECIFICATION):
+#    Synchronize this core module with `production_script/4` (`schema_version.py`, `mold_contract.py`), the 4-tier visual router (`tier_router.py`), the 6-stage `D-81` voice chain (`voice_chain.py`), and the 24 fps rational-time `bounded_timeline.py` solver so all CLI commands, config loaders, and package exports operate seamlessly across `/1`, `/2`, `/3`, and `/4` scripts.
+#
+# 2. რა ნაკლოვანება აქვს ამჟამინდელ კოდს (CURRENT CODE FLAW / DEFICIT AT 5013a55a):
+#    Currently this core module defaults to v2/v3 assumptions and does not expose or wire the new Master Mold v2.1.0 subsystems.
+#
+# 3. რატომაა უახლესი გადაწყვეტა უკეთესი (WHY THE NEW SOLUTION IS SUPERIOR):
+#    Ensures end-to-end synchronous behavior from CLI invocation through script validation, audio synthesis, 4-tier rendering, OTIO export, and final QA verification.
+#
+# 4. დამადასტურებელი ვებ-წყაროები — მინიმუმ 5 წყარო (VERIFIED WEB SOURCES >= 5):
+#    [1] JSON Schema Draft 2020-12 Official Specification
+#        URL: https://json-schema.org/draft/2020-12
+#        Rationale: Defines canonical $schema URI resolution, discriminator dispatch, additionalProperties: false enforcement, and backwards-compatible schema evolution across versioned contracts.
+#    [2] JSON Schema Core Validation Spec (2020-12)
+#        URL: https://json-schema.org/draft/2020-12/json-schema-core
+#        Rationale: Establishes structural validation guarantees so versioned payloads (/1, /2, /3, /4) cannot silently fall back to incompatible schema validators.
+#    [3] Python jsonschema Library Documentation
+#        URL: https://python-jsonschema.readthedocs.io/en/stable/
+#        Rationale: Reference implementation used by explainer_engine for Draft202012Validator dispatch and strict contract validation.
+#    [4] Anthropic Claude Code Costs & Prompt Caching
+#        URL: https://code.claude.com/docs/en/costs
+#        Rationale: Demonstrates why deterministic offline schema/contract validation (BATCH-M0/M2) must precede paid LLM/API calls to avoid wasted token and GPU spend.
+#    [5] OpenTimelineIO File Format Specification
+#        URL: https://opentimelineio.readthedocs.io/en/v0.13/tutorials/otio-file-format-specification.html
+#        Rationale: Defines timeline metadata and rational-time contract serialization that downstream edit/render stages consume from production_script/4.
+# =============================================================================
+
 """The Claude API client of the project (P0d, docs/LLM_API.md): the one place that calls Anthropic.
 
 Model and effort come from ``config/model_routing.json`` by task class (never a model string in a job file); the key is read
@@ -75,42 +110,52 @@ def api_key() -> str | None:
     return None
 
 
+# TODO [CLAUDE-CLASS-SYNC: LLMError] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `LLMError` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class LLMError(EngineError):
     """Base of the client's own refusals."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: KeyAbsent] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `KeyAbsent` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class KeyAbsent(LLMError):
     """``ANTHROPIC_API_KEY`` is not in the environment (the plan's stop rule: report, do not look for it elsewhere)."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: NotApproved] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `NotApproved` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class NotApproved(LLMError):
     """``config/spend_caps.json`` claude_api.approval is empty: no real call before the creator's word is recorded."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: RoutingError] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `RoutingError` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class RoutingError(LLMError):
     """The task class, model or effort is not allowed by ``config/model_routing.json``."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: PriceMissing] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `PriceMissing` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class PriceMissing(LLMError):
     """A model has no price line in ``config/llm_prices.json``."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: SecretInPrompt] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `SecretInPrompt` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class SecretInPrompt(LLMError):
     """A prompt, file or tool result matches the secret patterns (F7)."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: LedgerGap] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `LedgerGap` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class LedgerGap(LLMError):
     """A call has a start line and no result line: fix the ledger before any further call (OR-24 stop rule)."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: Overloaded] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Overloaded` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Overloaded(LLMError):
     """429 / overloaded for longer than OVERLOAD_WAIT_S."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: CacheCold] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `CacheCold` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class CacheCold(LLMError):
     """A tool loop's history is not being read from cache: it is billed as fresh input every turn (the J1b scope A state, $5.02)."""
 
 
+# TODO [CLAUDE-CLASS-SYNC: OutputTruncated] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `OutputTruncated` (methods: __init__) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class OutputTruncated(LLMError):
     """The answer hit max_tokens; it was paid and recorded but is not cached. ``text`` is what was paid for (F3: ``main`` writes it
     to ``<id>.truncated.md``), ``result`` the same as a Result when there is one, ``thinking`` the summarized thinking (F13: ``main``
@@ -121,6 +166,7 @@ class OutputTruncated(LLMError):
         self.text, self.result, self.thinking = text, result, thinking
 
 
+# TODO [CLAUDE-CLASS-SYNC: StreamBroken] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `StreamBroken` (methods: __init__) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class StreamBroken(LLMError):
     """The connection broke after text had arrived (F2): not retried, booked at the reservation; ``path`` holds the text so far."""
 
@@ -129,6 +175,7 @@ class StreamBroken(LLMError):
         self.path, self.text = path, text
 
 
+# TODO [CLAUDE-CLASS-SYNC: Refused] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Refused` (methods: __init__) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Refused(LLMError):
     """A safety refusal (stop_reason ``refusal``). Reported, never retried with a reworded prompt."""
 
@@ -174,6 +221,7 @@ def lines_below_spent(c: dict, spent_by_job: dict[str, float]) -> dict[str, floa
 
 
 # --- routing -----------------------------------------------------------------------------------------------------------
+# TODO [CLAUDE-CLASS-SYNC: Route] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Route` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 @dataclass(frozen=True)
 class Route:
     class_id: str
@@ -256,6 +304,7 @@ def iterations_usd(resp: Any, ttl: str, pr: dict, *, batch: bool = False) -> tup
     return total, rows
 
 
+# TODO [CLAUDE-CLASS-SYNC: NS_] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `NS_` (methods: __init__) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class NS_:   # a tiny namespace so usage_of can read an iteration entry like a response
     def __init__(self, **kw: Any) -> None:
         self.__dict__.update(kw)
@@ -274,6 +323,7 @@ def worst_usd(model: str, params: dict, ttl: str = "5m", *, batch: bool = False,
                           key: toks}, batch=batch)
 
 
+# TODO [CLAUDE-CLASS-SYNC: Ledger] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Ledger` (methods: __init__, rows, append, total, by_job, open_calls, check_gap) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Ledger:
     """``calls.jsonl``: a ``start`` line before every paid call and a ``done`` (or ``void``) line after it. A start without a
     result is a LedgerGap (a call the meter did not see); the total is the only meter we have (F8)."""
@@ -317,6 +367,7 @@ class Ledger:
 
 
 # --- the request -------------------------------------------------------------------------------------------------------
+# TODO [CLAUDE-CLASS-SYNC: Request] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Request` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 @dataclass
 class Request:
     id: str
@@ -337,6 +388,7 @@ class Request:
     max_effort_reason: str = ""                        # F16: why a single-shot request needs effort max (plans and audits run at xhigh)
 
 
+# TODO [CLAUDE-CLASS-SYNC: Result] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Result` (methods: json) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 @dataclass
 class Result:
     id: str
@@ -484,6 +536,7 @@ def cache_key(params: dict, salt: str = "") -> str:
     return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
+# TODO [CLAUDE-CLASS-SYNC: ResponseCache] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `ResponseCache` (methods: __init__, get, put) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class ResponseCache:
     def __init__(self, path: Path | None = None) -> None:
         self.dir = Path(path) if path else cache_dir()
@@ -581,6 +634,7 @@ def run_repo_tool(root: Path, name: str, args: dict) -> str:
 
 
 # --- the client --------------------------------------------------------------------------------------------------------
+# TODO [CLAUDE-CLASS-SYNC: StreamSink] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `StreamSink` (methods: __init__, _out, _tail, mark, _put, write, write_thinking, received, close, answer_on_disk, text) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class StreamSink:
     """F1: one call on disk as it arrives, ``<ledger>/stream/<uid>.txt``: a header line, then ``[thinking]`` with the summarized thinking
     and ``[answer]`` with the text (F13: thinking is billed and can use all of max_tokens, so a call with no text still leaves a file).
@@ -666,6 +720,7 @@ def _status(exc: BaseException) -> int | None:
     return getattr(exc, "status_code", None)
 
 
+# TODO [CLAUDE-CLASS-SYNC: ClaudeAPI] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `ClaudeAPI` (methods: __init__, client, run_for, _reserve, _count, _send, _paid, _attempt, _stream_proof, _thinking, _sources, _text, _finish, complete, _single, wrap_up_reason, _tool_loop, run_job, _batch) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class ClaudeAPI:
     """``complete(request)`` for one call (or a tool loop), ``run_job(job)`` for a job (batch from BATCH_MIN requests).
     ``client`` is injected by the tests; ``None`` builds the real SDK client on first use (key + approval checked then)."""

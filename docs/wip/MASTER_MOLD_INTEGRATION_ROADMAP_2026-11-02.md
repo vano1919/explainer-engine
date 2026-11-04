@@ -1,3 +1,5 @@
+> **Gemini 2026-11-04 source update — unverified proposal.** The supplied revision proposes a batch order and links to method-level TODOs; it does not record creator approval. Its `CD-01..CD-06` "locked" claims conflict with the canonical record: `D-96` is absent from the decision log and `CD-05` remains open in `PROGRESS.md`. Read the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md) before relying on any claim or TODO.
+
 # ARGON — FULL-CONTEXT MASTER MOLD v2.1.0 INTEGRATION ROADMAP
 
 * **Document Path:** `docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md`
@@ -2913,4 +2915,3 @@ INPUT: Script Beat B_i = (spoken_line, word_timestamps, Zone Z1..Z5,
 2. **D-92 metric semantics need a canonical definition.** Current ledger `renders_made = accepted + logged render retries`; `renders_made / accepted` counts total attempts including the initial render. BATCH-M1 must freeze the intended D-92 “seeds per accepted shot” interpretation and test the 1.0 baseline and exact 3.0/6.0 boundaries; do not silently convert this into retries-only.
 3. **P12b is not the D-92 finished-minute verdict.** The P1b canary may collect speed and identity evidence, but it is not a finished-minute sample and does not yield creator review minutes per finished minute. The roadmap now prohibits a D-92 GO/PIVOT/ABANDON conclusion at that stage.
 4. **No implementation claimed.** The updates are documentation-only. No Python code, canonical sourced-rule JSON, spend caps, creator decisions, or test files were changed. `docs_lint` and `pytest` were not run in this pass.
-
