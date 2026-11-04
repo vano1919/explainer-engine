@@ -1,3 +1,7 @@
+> **SUPERSEDED FOR THE INK CHRONICLE BLENDER PLANNING BRANCH (2026-11-04).** This is historical audit material only. Its LTX/Qwen four-tier routing, Master Mold v2.1.0 synchronization batches and imported TODO proposals are not active implementation instructions for this branch. Do not execute them or copy their TODOs forward. Use docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md and docs/architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md instead. Preserve this file as history until the Fable audit confirms whether it can be archived or removed safely.
+
+---
+
 > **Gemini 2026-11-04 source update — unverified proposal.** The supplied revision proposes a batch order and links to method-level TODOs; it does not record creator approval. Its `CD-01..CD-06` "locked" claims conflict with the canonical record: `D-96` is absent from the decision log and `CD-05` remains open in `PROGRESS.md`. Read the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md) before relying on any claim or TODO.
 
 # ARGON — FULL-CONTEXT MASTER MOLD v2.1.0 INTEGRATION ROADMAP
