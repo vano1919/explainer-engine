@@ -48,3 +48,37 @@ The imported package is only a selected part of a 1,353-entry repository snapsho
 ## Subsequent visual-grammar research request (2026-11-04)
 
 The creator has separately requested a read-only research/design proposal for a scene-to-shot visual grammar. Use [Gemini visual grammar research brief](GEMINI_VISUAL_GRAMMAR_AND_SHOT_DESIGN_RESEARCH_2026-11-04.md). The missing area is not another arbitrary restriction: it is a reusable decision system that chooses the appropriate visual technique, composition, camera, motion, image/keyframe prompt and VIDEO prompt from each story beat. Preserve D-93's 60/30/10 lane target and D-95's independent speech/duration rules. Do not edit code or implement the proposal until the creator approves a concrete, dependency-aware change plan.
+
+
+## Independent audit review — Claude action note (2026-11-04)
+
+> **Claude: read this section before proposing the next change.** The creator requested that the audit findings be reflected in the working documentation and that this handoff be updated. This note is not approval to implement the architecture changes below. Keep the branch read-only until the creator approves a bounded implementation plan.
+
+### Verified findings to carry forward
+
+1. **Branch/CI context:** the review branch compares to main as 86 commits ahead and 0 behind, with 300 changed paths (239 modified, 61 added, 0 deleted). This is the full branch-vs-main diff, not the size of the latest handoff changes. No PR result, combined status checks, or workflow runs were found for the reported target SHA. The workflow's push trigger includes main and systemic/**, while pull_request and workflow_dispatch also exist. Say "no run was found for this SHA"; do not say CI cannot be run.
+2. **Protection:** main was observed as unprotected with no repository rulesets. Target-branch protection could not be read because its API request returned 403; label it unknown. Main protection is a merge-governance gate, not a blocker to read-only work.
+3. **Layout handoff:** scripting/layout.py contains real geometry logic, and film_shots.py includes textual blocking/layout language. However, the inspected P6 edit.router does not call layout.solve() or attach its geometry artifact to the still spec; blocking_sha256 defaults to null, and shot_spec/1 has no structured layout artifact field. Keep the claim scoped to this route. Investigate a minimal hashed-artifact handoff through the actual generation adapter before proposing a schema change.
+4. **D-95 final-audio verification:** script-level spoken-word accounting and narrator timing exist. A final post-mix count of actually delivered narrator/character words is not established by the inspected flow. Trace TTS stems, dialogue clips, mixer and final export first; do not assume ASR or a new audio subsystem is necessary.
+5. **LTX:** the KEYFRAME_LTX planner entries remain unavailable pending a real pod dryrun. Distinguish spec creation from adapter/runtime proof. Keep local LTX 8k+1 rules separate from hosted API duration constraints.
+6. **BlindCheck inventory:** the execution guide's old BlindCheckReport / BlindChecker inventory row was incorrect and is now corrected. Existing blind_check.py functions are describe_rules, compare, second_look, style_verdict, and main; the PEP 701 compatibility refactor is already present. Do not reintroduce the nonexistent /4 field-stripping task.
+
+### Claude's next deliverable
+
+Return a **small, dependency-aware implementation proposal only**, organized as:
+
+- CURRENT: existing modules/contracts and actual callers.
+- GAP: one verified failure or missing handoff per item.
+- CHANGE: smallest code/schema integration that closes it.
+- KEEP: existing modules and behavior to preserve.
+- TESTS: focused regression and acceptance tests.
+- RISKS: backward compatibility, cache/hash invalidation, generation cost and provider constraints.
+- APPROVAL: decisions that must be returned to the creator before implementation.
+
+Recommended order:
+
+1. Map layout.solve/check/technical/eligen/blockout → edit.router → actual still renderer/adapter → keyframe QA. Propose only the minimal artifact contract that the consumer can actually use.
+2. Map script spoken words → narrator timing → character dialogue clips → final mixer/export; propose final D-95 verification only after identifying the reliable measurement point.
+3. Document exact LTX adapter capability and test plan; no pod, paid API or production render without explicit approval.
+
+Do not create a parallel Visual Grammar framework, do not implement the imported TODO inventory wholesale, do not change D-93 or D-95, and do not alter GitHub protection settings. Keep unknown capabilities explicitly unknown.
