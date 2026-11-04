@@ -129,7 +129,7 @@ If a future implementation is separately approved, assess whether this proposed 
 |---|---|---|---|
 | **BATCH-M0** | `explainer_engine/scripting/schema_version.py` | `resolve_schema_filename`, `detect_schema_version`, `is_v4_or_newer` | New canonical `/1..4` schema version resolver (stub created with full `TODO`). |
 | **BATCH-M0** | `explainer_engine/validate.py` | `_select_production_script_schema`, `validate_production_script` | Fix `/4` fallback to `v2`; wire `resolve_schema_filename` and optional `check_mold_contract`. |
-| **BATCH-M0** | `explainer_engine/qa/blind_check.py` | `BlindCheckReport.to_dict`, `BlindChecker` | Fix Python 3.11 PEP 701 nested f-string `SyntaxError` on line 36 + `/4` field stripping. |
+| **BATCH-M0** | `explainer_engine/qa/blind_check.py` | Existing: `describe_rules`, `compare`, `second_look`, `style_verdict`, `main` | Implemented blind-description comparison module. The PEP 701 same-quote f-string compatibility refactor is already present in commit `684241fb4e0481adb09ecbe932e7908046361a68`; the imported `BlindCheckReport` / `BlindChecker` / `/4` field-stripping request is not an implementation requirement for this module. CI currently configures Python 3.12; do not claim Python 3.11 support or failure without explicit runtime metadata and a test. |
 | **BATCH-M1** | `explainer_engine/cast/registry.py` | Proposed `CharacterCard`, `CastRegistry` (verify need and current equivalent) | Candidate `living` metadata and optional LoRA-scale configuration; no default value or automatic voice clearance is approved. |
 | **BATCH-M1** | `explainer_engine/cast/voice_clearance.py` | Proposed voice-clearance API (new stub; verify provider and legal policy) | Evaluate a case-by-case clearance gate; do not encode `living == False => approved`. Creator approval and rights / harm / deception review required. |
 | **BATCH-M1** | `explainer_engine/cast/__init__.py` | Package exports | Export `CastRegistry`, `CharacterCard`, `verify_voice_clearance`. |
@@ -172,3 +172,63 @@ If a future implementation is separately approved, assess whether this proposed 
 | **BATCH-M8A/B** | `explainer_engine/cloud/runpod.py` | `PodTelemetry`, `RunPodManager`, `dryrun_main` | Add `--dry-run` CLI entrypoint, `CD-05` per-zone runtime telemetry, and `D-78` `try/finally` pod termination. |
 
 *(The handoff records 301 module-level TODO-bearing Python files; class-level annotations total 88 and are not complete coverage of all top-level classes. Treat the TODO inventory as an imported proposal set, not proof of current implementation.)*
+
+
+## 5. INDEPENDENT TECHNICAL AUDIT ADDENDUM — 2026-11-04
+
+This addendum records a second read-only review of the live review branch. It refines priorities; it does not authorize application-code changes, implementation of TODO stubs, CI dispatch, repository-setting changes, paid API usage, GPU/pod execution or production rendering.
+
+### 5.1 Live GitHub state — compare against main
+
+Verified at the audit checkpoint:
+
+- Review branch: claude/master-mold-ready-2026-11-04; reported HEAD: 6650e17d96014a0e1e942c7ed785b574fbf1e773.
+- Main HEAD: 6e1dccad30a865df670c258c86ffa1152a0dbe7e.
+- Compare result: 86 commits ahead, 0 behind; 300 changed paths (239 modified, 61 added, 0 deleted). This is a comparison with main, not a count of only the latest documentation work.
+- GitHub PR search for this head branch returned no PR result. The target commit's combined status contained no status checks, and the commit workflow-run lookup returned no runs.
+- .github/workflows/quality.yml has push triggers for main and systemic/**, plus pull_request and workflow_dispatch. Therefore, a normal push to this review branch does not match the push trigger; this does not mean the workflow is impossible to run. A PR or explicit dispatch can run it, but neither is evidenced for this audited SHA.
+- Main was reported as protected=false with no repository rulesets. The API request for target-branch protection was denied (403), so target-branch protection is unknown, not false.
+
+Treat main protection as a merge-governance blocker, not as a blocker to read-only research or isolated planning on this branch. Do not merge until an authorized administrator configures and verifies protection and required checks.
+
+### 5.2 Confirmed architecture finding — layout geometry is not handed to the inspected P6 still route
+
+The existing explainer_engine/scripting/layout.py is implemented: it solves item boxes/depth, validates overlap/visibility, and can produce technical, relative, EliGen and blockout representations. film_shots.py also authors textual blocking/layout information in its prompts. These are real, distinct capabilities.
+
+In the inspected explainer_engine/edit/router.py P6 route:
+
+- the module does not import or call scripting.layout.solve();
+- the still specification is assembled from the composed prompt, model/LoRA, continuity references and inference parameters;
+- _spec() defaults blocking_sha256 to null;
+- the current shot_spec/1 schema has no structured layout object or layout-artifact reference field.
+
+Scope this finding precisely: textual blocking and composition language do reach the keyframe prompt; the calculated geometry/artifacts from layout.py are not shown to reach this inspected P6 still-generation specification. Do not claim that every legacy/other generation route lacks layout usage.
+
+Recommended next design task (not an implementation authorization): trace the actual keyframe renderer/adapter and propose the smallest compatible handoff for validated layout output. Prefer a hashed artifact reference or a small schema extension over creating a second layout engine. Acceptance tests should prove that the route carries the layout artifact identity/hash, the consumer actually reads it, stale hashes are rejected, and existing prompt/reference behavior remains intact.
+
+### 5.3 D-95 — distinguish script planning from final delivered speech
+
+variant_plan.py provides a pre-production spoken-word estimate from script lines and excludes voiced:false lines. audio/spine.py records measured narrator word timing and reserves/retimes native-dialogue windows with clip metadata. These are useful existing foundations.
+
+The inspected flow does not establish a final post-mix verification that recounts the actually delivered narrator and character spoken words after all stem/clip assembly. Do not silently treat planned script words, a clip duration, or a clip hash as proof of audible words.
+
+Before proposing code, trace the complete existing TTS/stem/mix/export path and identify the least expensive reliable measurement source. It may be validated synthesis/transcript metadata or audio analysis; do not assume a new ASR dependency is necessary. Define how the check detects missing, muted, truncated, duplicated or unintentionally unvoiced dialogue. Keep the D-95 speech ratio independent from D-93's visual runtime ratio.
+
+### 5.4 LTX capability status and adapter-specific frame rules
+
+variant_plan.py currently marks KEYFRAME_LTX:light and KEYFRAME_LTX:full unavailable until the relevant clip pod path passes the RunPod dryrun. A router-generated video spec is not proof of a functioning provider adapter or a successful render.
+
+Keep local-model frame quantization and hosted-API duration validation separate. The 8k+1 convention may be required by a specific local LTX implementation; it must not be imposed on a hosted API unless that exact API/version documents the same constraint. Record provider, model/version, adapter/endpoint, resolution, FPS, duration and frame rules separately, with unknown values left unknown.
+
+### 5.5 BlindCheck and inventory correction
+
+The inventory row above is corrected. The existing module contains describe_rules(), compare(), second_look(), style_verdict() and main(); it does not expose the imported BlindCheckReport / BlindChecker API described by the old row. The compatibility refactor is already present. In the inspected keyframe_gate.py, the visible integration is the import/use of STYLE_SUSPENDED; do not claim that a full blind-compare / second-look cycle is integrated there without tracing an actual caller elsewhere.
+
+### 5.6 Required verification before any implementation proposal
+
+1. Keep this branch read-only until the creator approves a concrete implementation plan.
+2. For layout handoff, map the producer, artifact contract, route, renderer/adapter and QA consumer before changing shot_spec.
+3. For D-95 final-audio verification, map each source stem/clip to the final mix and identify an auditable spoken-word measurement.
+4. For LTX, identify the exact local/hosted adapter and run a small smoke test only after separate creator approval for any pod or paid resource.
+5. Run the existing quality workflow on the exact candidate SHA through an approved PR or workflow dispatch; report actual results, not inferred results.
+6. Do not implement the remaining stubs as a batch. Each must first justify a real gap not already covered by an existing module.
