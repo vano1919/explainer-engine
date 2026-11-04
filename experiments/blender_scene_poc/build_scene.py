@@ -3,7 +3,7 @@ import math
 from mathutils import Vector
 from pathlib import Path
 
-OUT = Path(bpy.path.abspath("//"))
+OUT = Path(__file__).resolve().parent / "render_output"
 OUT.mkdir(parents=True, exist_ok=True)
 
 bpy.ops.object.select_all(action="SELECT")
@@ -33,14 +33,20 @@ def assign(obj, mat):
     obj.data.materials.append(mat)
     return obj
 
+def attach(obj, parent):
+    if parent:
+        world_matrix = obj.matrix_world.copy()
+        obj.parent = parent
+        obj.matrix_world = world_matrix
+    return obj
+
 def uv(name, loc, scale, mat, parent=None, segments=16, rings=12):
     bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=rings, location=loc)
     obj = bpy.context.object
     obj.name = name
     obj.scale = scale
     assign(obj, mat)
-    if parent:
-        obj.parent = parent
+    attach(obj, parent)
     return obj
 
 def cube(name, loc, scale, mat, parent=None, bevel=0.08):
@@ -54,8 +60,7 @@ def cube(name, loc, scale, mat, parent=None, bevel=0.08):
         mod.width = bevel
         mod.segments = 2
     assign(obj, mat)
-    if parent:
-        obj.parent = parent
+    attach(obj, parent)
     return obj
 
 def cylinder(name, loc, radius, depth, mat, parent=None, vertices=12):
@@ -63,8 +68,7 @@ def cylinder(name, loc, radius, depth, mat, parent=None, vertices=12):
     obj = bpy.context.object
     obj.name = name
     assign(obj, mat)
-    if parent:
-        obj.parent = parent
+    attach(obj, parent)
     return obj
 
 def rod(name, a, b, radius, mat, parent=None):
@@ -136,6 +140,7 @@ root.location = (-2.2, -0.8, 0)
 root.keyframe_insert(data_path="location", frame=36)
 root.location = (-2.2, -0.8, 0)
 root.keyframe_insert(data_path="location", frame=72)
+root.keyframe_insert(data_path="location", frame=120)
 arm_r.rotation_mode = "XYZ"
 arm_r.rotation_euler[1] = 0
 arm_r.keyframe_insert(data_path="rotation_euler", frame=1)
@@ -143,6 +148,7 @@ arm_r.rotation_euler[1] = math.radians(-24)
 arm_r.keyframe_insert(data_path="rotation_euler", frame=36)
 arm_r.rotation_euler[1] = math.radians(-8)
 arm_r.keyframe_insert(data_path="rotation_euler", frame=72)
+arm_r.keyframe_insert(data_path="rotation_euler", frame=120)
 
 # Camera, light and render.
 bpy.ops.object.camera_add(location=(0.0, -13.5, 6.2))
@@ -151,7 +157,10 @@ camera.name = "SHOT_CAMERA"
 target = Vector((0.4, 0.0, 2.3))
 camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
 camera.data.type = "ORTHO"
-camera.data.ortho_scale = 13.5
+camera.data.ortho_scale = 14.0
+camera.data.keyframe_insert(data_path="ortho_scale", frame=1)
+camera.data.ortho_scale = 12.8
+camera.data.keyframe_insert(data_path="ortho_scale", frame=120)
 bpy.context.scene.camera = camera
 
 bpy.ops.object.light_add(type="AREA", location=(-4, -7, 10))
@@ -164,14 +173,17 @@ key.rotation_euler = (Vector((0, 0, 1.5)) - key.location).to_track_quat("-Z", "Y
 
 scene = bpy.context.scene
 scene.frame_start = 1
-scene.frame_end = 72
+scene.frame_end = 120
 scene.render.engine = "BLENDER_EEVEE_NEXT"
 scene.render.resolution_x = 1280
 scene.render.resolution_y = 720
 scene.render.resolution_percentage = 100
 scene.render.fps = 24
-scene.render.image_settings.file_format = "PNG"
-scene.render.filepath = str(OUT / "blender_poc_frame.png")
+scene.render.image_settings.file_format = "FFMPEG"
+scene.render.ffmpeg.format = "MPEG4"
+scene.render.ffmpeg.codec = "H264"
+scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
+scene.render.filepath = str(OUT / "blender_poc_video")
 scene.world.color = (0.18, 0.18, 0.18)
 scene.view_settings.view_transform = "Standard"
 scene.view_settings.look = "AgX - Medium High Contrast"
@@ -180,8 +192,20 @@ scene.frame_set(36)
 assert scene.camera is not None
 assert len(scene.objects) >= 35
 assert root.animation_data is not None
-assert scene.frame_end == 72
+assert scene.frame_end == 120
+assert abs(scene.render.fps - 24) < 0.001
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT / "blender_poc.blend"))
+
+scene.frame_set(60)
+scene.render.image_settings.file_format = "PNG"
+scene.render.filepath = str(OUT / "blender_poc_frame.png")
 bpy.ops.render.render(write_still=True)
-print(f"BLENDER_POC_OK objects={len(scene.objects)} frames={scene.frame_end} output={OUT}")
+
+scene.render.image_settings.file_format = "FFMPEG"
+scene.render.filepath = str(OUT / "blender_poc_video")
+bpy.ops.render.render(animation=True)
+
+video = OUT / "blender_poc_video.mp4"
+assert video.exists() and video.stat().st_size > 10_000, "MP4 output missing or unexpectedly small"
+print(f"BLENDER_POC_OK objects={len(scene.objects)} frames={scene.frame_end} seconds={scene.frame_end / scene.render.fps:.2f} video={video}")
