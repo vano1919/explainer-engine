@@ -1,3 +1,7 @@
+> **SUPERSEDED FOR THE INK CHRONICLE BLENDER PLANNING BRANCH (2026-11-04).** This is historical audit material only. Its LTX/Qwen four-tier routing, Master Mold v2.1.0 synchronization batches and imported TODO proposals are not active implementation instructions for this branch. Do not execute them or copy their TODOs forward. Use docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md and docs/architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md instead. Preserve this file as history until the Fable audit confirms whether it can be archived or removed safely.
+
+---
+
 # CLAUDE SYNCHRONIZED TODO EXECUTION GUIDE (production_script/4 & Master Mold v2.1.0)
 
 > **Status: unverified Gemini-generated proposal, not creator approval, except for the explicitly recorded D-95 creator override.** Read [D-95 creator override](CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md) and the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md) first. D-95 is authoritative only for the 70–80% narrator / 20–30% voiced-dialogue spoken-word mix, the 5-second visible-dialogue coverage target, and justified non-dialogue VIDEO shots up to a 15-second planning ceiling subject to actual model constraints. It is independent from D-93 visual 60/30/10. All other proposals and imported TODOs remain unverified; CD-05 remains open. This guide is an audit backlog, not blanket execution permission. No code change, batch, paid API, pod, full render, upload or publishing action is authorized unless separately approved by the creator.
