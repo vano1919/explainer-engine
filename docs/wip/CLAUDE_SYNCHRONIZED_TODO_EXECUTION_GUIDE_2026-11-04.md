@@ -24,7 +24,7 @@
 
 4. **No speculative batch execution.** For every TODO, establish: (a) exact pinned baseline file and line range; (b) current branch file and whether it is production code, a stub or new; (c) real caller/callee chain; (d) relevant schema and fixtures; (e) reproduction of the claimed defect; (f) existing tests and test results; (g) decision authority. If any element is missing, stop that item and report NEEDS EVIDENCE or CREATOR DECISION. A title containing “CRITICAL”, “MUST” or “EXACT” does not raise its authority.
 
-5. **Creator decisions.** Only decisions recorded in the canonical decision log or explicit creator instructions are approved. CD-01..CD-06 labels inside imported Gemini material are not approval. In particular, CD-05 remains open and D-67 paid-sample scope must not be extended. D-95 changes only its stated speech and shot-duration rules; it does not approve unrelated visual, audio, model, voice-policy, cost or architecture proposals.
+5. **Creator decisions.** Only decisions recorded in the canonical decision log or explicit creator instructions are approved. CD-01..CD-06 labels inside imported Gemini material are not approval. In particular, CD-05 remains open and D-67 paid-sample scope must not be extended. D-95 changes only its stated speech and shot-duration rules; it does not approve unrelated visual, audio, model, voice-policy, cost or architecture proposals. A `living == false` field is not a legal, platform or provider clearance by itself; see the current https://elevenlabs.io/use-policy (last updated 2026-10-09). YouTube synthetic-content disclosure is case-specific; do not infer a blanket exemption merely because a video is animated: https://support.google.com/youtube/answer/14328491?hl=en-See.
 
 6. **Change authority.** The previous D-95 implementation authorization has been completed and recorded. Do not infer that it authorizes BATCH-M0..M8B, the 42 stubs, new paid services, a full architecture migration or this guide's proposed decisions. The current visual-grammar research should be read-only until the creator reviews and approves a specific implementation plan.
 
@@ -42,8 +42,8 @@ D-95 is the creator's explicit 2026-11-04 instruction. It supersedes the old nar
 The imported guide claims that several creator decision points are resolved. That claim is not accepted merely because it appears here: each item remains a proposal until the canonical decision log records explicit creator approval.
 
 ### 1.1 Question 1 — `CD-01`: Kickoff of Free Batches (`BATCH-M0..M8A`) After `GATE-EXT-MAIN-PROTECT`
-* **Locked Decision:** **APPROVE Option A** — Execute `GATE-EXT-MAIN-PROTECT` first, then execute the revised dependency-ordered zero-spend batches (`BATCH-M0 -> BATCH-M1 -> BATCH-M2 -> BATCH-M4 -> BATCH-M5 -> BATCH-M6 -> BATCH-M3 -> BATCH-M7 -> BATCH-M8A`) at **`$0.00` cloud/API spend**.
-* **5 Verified Logical & Web Foundations:**
+* **Unapproved proposal (not a creator decision):** Option A suggests checking `GATE-EXT-MAIN-PROTECT` before considering a dependency-ordered batch sequence. Neither the batch sequence nor a `$0.00` spend claim is approved by this label; verify protections, tool/model costs, prerequisites and actual batch dependencies before recommending execution.
+* **Claimed rationale and source leads — unverified; re-check direct relevance to each claim:**
   1. **Branch Integrity Before Code Mutation ([GitHub Docs — About Protected Branches](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches))**: Enabling branch protection and requiring the `quality` status check (`pytest` + `ruff`) before landing multi-batch refactors prevents unverified commits from reaching `main`.
   2. **Force-Push & Deletion Prevention ([GitHub Docs — Managing Rulesets for a Repository](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets))**: Repository rulesets block history rewrites and accidental branch deletion while Claude executes `BATCH-M0..M8A`.
   3. **Fail-Fast Schema Contract Dispatch ([JSON Schema Draft 2020-12 Specification](https://json-schema.org/draft/2020-12))**: Fixing `explainer_engine/validate.py:_select_production_script_schema()` in `BATCH-M0` first is a strict prerequisite for every downstream batch that validates `production_script/4`.
@@ -51,10 +51,10 @@ The imported guide claims that several creator decision points are resolved. Tha
   5. **Deterministic Timeline Dry-Run Verification ([OpenTimelineIO File Format Specification](https://opentimelineio.readthedocs.io/en/v0.13/tutorials/otio-file-format-specification.html))**: Completing `BATCH-M7` and `BATCH-M8A` offline allows full `.otio` rational-time verification (`0.000s` drift) before provisioning any cloud GPU.
 
 ### 1.2 Question 2 — `CD-02` (`xworld_v2` LoRA Weight `0.7` vs `1.0`) & `CD-03` (`BP-170` Tier 2 `qwen_nextpose` Static Cap `1.5 / 2.0 / 2.5s`)
-* **Locked Decisions:**
-  * **`CD-02` Locked at `0.7`:** Keep `xworld_v2` LoRA weight locked at **`0.7`** across `config/cloud_pins.json:103`, `explainer_engine/video/tier_router.py`, `explainer_engine/video/prompts.py`, and `explainer_engine/video/keyframes.py` (with `P12b` optionally logging `0.7` vs `1.0` comparison metrics).
-  * **`CD-03` Locked at Option A:** Keep the strict `BP-170` hard `FAIL` static duration cap (`1.5s` in `cold_open`/`climax`, `2.0s` in `escalation`, `2.5s` in `grounding`/`coda`) applied to **BOTH Tier 1 (`parallax_25d`) AND Tier 2 (`qwen_nextpose`)** until `P12b` empirically validates real multi-keyframe pose deltas on a GPU pod.
-* **6 Verified Logical & Web Foundations:**
+* **Unverified proposals — not creator-approved:**
+  * **Proposed `CD-02` value:** `0.7` is an unverified candidate, not a locked parameter. Confirm the actual adapter, current config and measured comparison before recommending a default.
+  * **Proposed `CD-03` option:** The zone caps and their application to both tiers are unverified proposals. Confirm the canonical BP-170 decision, the actual tiers and representative visual evidence before treating them as hard FAIL rules.
+* **Claimed rationale and source leads — unverified; re-check direct relevance to each claim:**
   1. **Low-Rank Adapter Scaling Math ([Hu et al., 2021 — *LoRA: Low-Rank Adaptation*, arXiv:2106.09685](https://arxiv.org/abs/2106.09685))**: In $W = W_0 + (\alpha/r) B A$, setting scale $\alpha/r = 1.0$ on a style adapter trained predominantly on static poses over-constrains attention projections and suppresses high-velocity prompt tokens (`KP-47`). Scaling to **`0.7`** preserves stylistic cohesion while retaining base-model geometric plasticity.
   2. **Base Model Pose Plasticity vs Adapter Saturation ([Qwen/Qwen-Image-2.1 Official Model Card](https://huggingface.co/Qwen/Qwen-Image-2.1))**: `Qwen-Image-2.1` and `Qwen-Image-Edit-2511` rely on strong text-image cross-attention for body pose and camera angle changes; `0.7` LoRA scaling prevents style-lock artifacts.
   3. **Readable Silhouette & Staging Principles ([Lasseter, 1987 — *Principles of Traditional Animation Applied to 3D Computer Animation*, ACM SIGGRAPH](https://dl.acm.org/doi/10.1145/37402.37407))**: A pose transition only registers as genuine animation when the character's silhouette and line of action change clearly; unverified Tier 2 edits risk producing near-identical holds that feel like frozen slides if held >2.5s.
@@ -64,8 +64,8 @@ The imported guide claims that several creator decision points are resolved. Tha
 
 ### 1.3 Question 3 — `CD-05` (`OPEN_PENDING_MEASUREMENT` Full-Episode RunPod Target + Post-`GATE-P3` Extension) & `CD-06` (`D-90` Deceased Historical Figures vs `D-62` Living-Person Ban)
 * **Locked Decisions:**
-  * **`CD-05` Locked at Option A:** Keep the full-episode RunPod render-time target marked `OPEN_PENDING_MEASUREMENT` until empirical data is collected; preserve `GATE-P2` / `GATE-P3` as the cheap 2-segment `D-67` smoke test (`seg_01` + `seg_02`, `$5.00` ceiling), and gate the `210–240s` multi-zone (`cold_open`, `grounding`, `escalation`, `climax`, `coda`) measurement run as a separate post-`GATE-P3` extension.
-  * **`CD-06` Locked at Option A:** Permit `D-90` ElevenLabs character voicing + Tier 4 (`ltx_portrait_720p`) LTX audio-to-video lip-sync **ONLY for deceased historical figures (`living == False`, e.g., Napoleon, Genghis Khan, Julius Caesar) and fictional archetypes**, while keeping **all living real people (`living == True`) strictly banned (`BLOCKED_LIVING_PERSON`)** under `D-62` and `PV-55`.
+  * **Proposed `CD-05` framing:** Keep the full-episode target open pending creator-approved measurement. The two-segment D-67 scope remains the existing boundary. Any 210–240-second multi-zone measurement extension is a separate, unapproved proposal requiring its own creator decision, manifest, cap, code path and approval record.
+  * **Proposed `CD-06` policy idea — NOT clearance:** A `living == False` flag is not sufficient to approve a voice or likeness use. ElevenLabs' Prohibited Use Policy (last updated 2026-10-09) also prohibits impersonation of a deceased individual where reasonably likely to cause harm or infringe applicable post-mortem rights. Any historical-character voice workflow needs a separate rights / harm / deception review, the exact voice source and service terms, and creator approval. Do not implement an automatic `living == False => approved` rule. Source: https://elevenlabs.io/use-policy
 * **6 Verified Logical & Web Foundations:**
   1. **Per-Second GPU Billing & Empirical Budgeting ([RunPod Pods Pricing](https://docs.runpod.io/pods/pricing))**: RTX PRO 6000 Blackwell (`$1.89/hr`) and H200 SXM (`$3.59/hr`) bill per second; because `production_script/4` uses variable `8k+1` LTX buckets (`97..257` frames) across 5 tension zones, a 2-segment smoke test cannot statistically estimate full-episode variance across all zones.
   2. **Container & Volume Storage Billing on Stopped Pods ([RunPod Billing Overview](https://docs.runpod.io/accounts-billing/billing))**: Stopped pods still incur disk storage charges until terminated (`remove_pod`), justifying the strict two-stage gate (`D-67` 2-segment smoke test first, separate multi-zone benchmark second, with automatic `try/finally` pod deletion under `D-78`).
@@ -76,13 +76,13 @@ The imported guide claims that several creator decision points are resolved. Tha
 
 ---
 
-## 2. CRITICAL SYSTEM CHECK DISCOVERIES & SYNCHRONIZED FIXES REQUIRED OF CLAUDE
+## 2. GEMINI-GENERATED SYSTEM-CHECK CLAIMS — VERIFY BEFORE ANY FIX
 
-Our AST and method-level System Check across all **301 Python modules** in the repository identified **7 critical synchronization mismatches** between `docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md` and the actual code at `bb0da66` / `5013a55a`. Claude **MUST** execute these exact fixes during `BATCH-M0..M8A`:
+The imported Gemini guide asserts that an AST / method-level scan found seven synchronization mismatches. This audit has not verified all seven, and at least one claim (the blind-check TODO) described symbols and an expression that do not exist in the cited source. Treat every row below as a lead only. No row authorizes a code change. Re-open the exact path at the pinned baseline, confirm the symbol and failure, locate the current implementation and callers, and run a focused reproducer/test before proposing a fix.
 
-| # | Defect / Desynchronization Found in System Check | Exact File & Line | Mandatory Synchronous Fix Documented in `TODO` |
+| # | Claimed defect / desynchronization | Claimed file & line (re-check) | Proposed remediation to evaluate — not approved |
 |---|---|---|---|
-| **1** | **Python 3.11 PEP 701 `SyntaxError` crashes `explainer_engine.qa` import** | `explainer_engine/qa/blind_check.py:36` | Extract `guesses_str = ", ".join(f'seg {g.segment_id}: "{g.guessed_topic}"' for g in self.guesses)` before the outer f-string in `BlindCheckReport.to_dict()` during **`BATCH-M0`**. |
+| **1** | **Python 3.11 PEP 701 compatibility risk** | `explainer_engine/qa/blind_check.py`, inside `describe_rules()` (re-check current line) | The actual nested same-quote f-string was in construction of `style_key`, not in a `BlindCheckReport` / `guesses` class. The branch now extracts `style_entries` before the outer f-string. Confirm minimum supported Python version and test on it; no `/4` field-stripping change is justified by this finding. |
 | **2** | **`production_script/4` silently falls back to `v2` JSON Schema** | `explainer_engine/validate.py:21-29` | Implement `explainer_engine/scripting/schema_version.py` (`resolve_schema_filename`, `detect_schema_version`) and call it from `_select_production_script_schema()` in **`BATCH-M0`**. |
 | **3** | **`D-81` 6-stage FFmpeg voice filtergraph diverges on 4 of 6 stages** | `explainer_engine/audio/voice_chain.py:18-65` | Change `highpass=f=80` -> `highpass=f=75`; `equalizer=f=130...` -> `bass=g=2.5:f=120:w=0.6`; `equalizer=f=3200:t=q:w=1.4:g=1.5` -> `equalizer=f=3200:t=q:w=1.2:g=1.8:m=0.5`; and `alimiter=limit=-1.0dB` -> `alimiter=limit=-1.0dB:level=disabled` in **`BATCH-M3`**. |
 | **4** | **Batch Execution Order Dependency Inversion (`BATCH-M3` vs `BATCH-M4/M5/M6`)** | `docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md` | Execute batches in strict dependency order: **`BATCH-M0 -> BATCH-M1 -> BATCH-M2 -> BATCH-M4 -> BATCH-M5 -> BATCH-M6 -> BATCH-M3 -> BATCH-M7 -> BATCH-M8A`**. |
@@ -92,9 +92,9 @@ Our AST and method-level System Check across all **301 Python modules** in the r
 
 ---
 
-## 3. END-TO-END SYNCHRONIZED EXECUTION CALL GRAPH (METHOD-BY-METHOD)
+## 3. PROPOSED TARGET CALL GRAPH — NOT THE CURRENT IMPLEMENTATION
 
-When Claude implements the `TODO` blocks across `BATCH-M0..M8A`, every module and method must interoperate along this exact synchronous call graph:
+If a future implementation is separately approved, assess whether this proposed call graph is necessary and viable. It is not evidence that these functions or modules currently exist or interoperate:
 
 1. **Schema & Contract Entry (`BATCH-M0` + `BATCH-M1` + `BATCH-M2`)**:
    - `explainer_engine.scripting.schema_version.detect_schema_version(script)` -> identifies `"production_script/4"`.
@@ -126,7 +126,7 @@ When Claude implements the `TODO` blocks across `BATCH-M0..M8A`, every module an
 
 ## 4. COMPLETE INVENTORY OF PRIMARY `TODO`-ANNOTATED MODULES BY BATCH
 
-| Batch | Module Path | Primary Classes / Functions Annotated | Mandatory Focus in `TODO` Block |
+| Batch | Module Path | Primary symbols named by the proposal (verify existence) | Unverified proposed focus in TODO |
 |---|---|---|---|
 | **BATCH-M0** | `explainer_engine/scripting/schema_version.py` | `resolve_schema_filename`, `detect_schema_version`, `is_v4_or_newer` | New canonical `/1..4` schema version resolver (stub created with full `TODO`). |
 | **BATCH-M0** | `explainer_engine/validate.py` | `_select_production_script_schema`, `validate_production_script` | Fix `/4` fallback to `v2`; wire `resolve_schema_filename` and optional `check_mold_contract`. |
@@ -172,4 +172,4 @@ When Claude implements the `TODO` blocks across `BATCH-M0..M8A`, every module an
 | **BATCH-M8A** | `explainer_engine/governance/__main__.py` | `build_parser`, `cmd_status` | Add `--check` flag to `governance status` so `python -m explainer_engine.governance status --check` succeeds. |
 | **BATCH-M8A/B** | `explainer_engine/cloud/runpod.py` | `PodTelemetry`, `RunPodManager`, `dryrun_main` | Add `--dry-run` CLI entrypoint, `CD-05` per-zone runtime telemetry, and `D-78` `try/finally` pod termination. |
 
-*(All remaining 258 repository modules across `explainer_engine/` and `scripts/` also carry synchronized `[CLAUDE-MASTER-MOLD-SYNC]` and `[CLAUDE-CLASS-SYNC]` `TODO` blocks at the top of each file and class.)*
+*(The handoff records 301 module-level TODO-bearing Python files; class-level annotations total 88 and are not complete coverage of all top-level classes. Treat the TODO inventory as an imported proposal set, not proof of current implementation.)*
