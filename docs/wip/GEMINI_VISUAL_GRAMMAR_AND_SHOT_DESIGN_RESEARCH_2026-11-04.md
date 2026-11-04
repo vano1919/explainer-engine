@@ -255,6 +255,42 @@ Recommend one canonical visual-intent object and a compilation path:
 
 A script writer should know the visual intent early, but do not force the writer to manually invent every low-level camera parameter. Decide which details should be authored, suggested by a planner, inferred from scene context or set by the provider adapter.
 
+
+### 7.1 Keep visual intent, asset provenance and provider capabilities separate
+
+Do not overload the visual-intent object with every execution detail. Research whether two small supporting records are needed, and prefer existing contracts where they already serve the purpose.
+
+**Asset / generation provenance record — candidate fields to evaluate:**
+- stable shot ID and source story-beat ID;
+- canonical visual-intent reference and hash/version;
+- input reference-image IDs and hashes;
+- for I2V, the exact accepted starting-frame asset ID and SHA-256;
+- image/video prompt text or prompt hash, with compiler/version;
+- provider, exact model ID, model revision, adapter/endpoint and local-vs-hosted mode;
+- seed and generation parameters that materially affect output;
+- parent/derived asset relationship (accepted keyframe → generated video);
+- output asset path/ID and SHA-256;
+- actual output width, height, FPS, frame count and duration;
+- generation/acceptance status and any retake/extension lineage.
+
+Explain which data already exists in the job manifest, route, shot spec, cache key or asset library. Do not duplicate it merely to create a new manifest. The key requirement is that every rendered asset can be traced to the intent, source frame, prompt compiler, model/version and parameters that produced it.
+
+**Provider capability record — keep it adapter-specific:**
+- exact provider and model/API identifier;
+- local package/checkpoint versus hosted endpoint;
+- model revision/API version and date checked;
+- supported input/output dimensions and aspect ratios;
+- supported FPS and duration options/limits;
+- frame-count quantization requirements;
+- image/reference conditioning support;
+- documented camera/motion controls;
+- prompt and negative-prompt semantics;
+- audio conditioning/generation support, if applicable;
+- capability state: supported, unsupported, unknown or not-tested;
+- source URL and the exact claim supported.
+
+Do not merge provider capabilities into creator-approved visual rules. A provider capability can change without changing the creative intent.
+
 ## 8. Image prompt and video prompt must be a matched pair
 
 This is one of the most important requirements.
@@ -299,6 +335,25 @@ At minimum research:
 For every technical capability, record the exact provider, model/version, API or local package, resolution, frame rate, duration, date accessed and source. Separate official capability from observed repository behavior and from your own hypothesis. If provider documentation and local adapter disagree, report the conflict rather than silently choosing one.
 
 Do not use a single generic duration limit across all models. The D-95 15-second ceiling is conditional on the actual model limits. Do not infer that LTX is production-ready just because a TODO mentions it.
+
+
+### Adapter-specific capability matrix (required)
+
+Return a row for every exact adapter/model combination currently configured or seriously proposed. At minimum, separate each local LTX implementation from each hosted LTX API. Do not transfer a constraint from one to the other by name alone.
+
+The matrix must include:
+- exact model and revision/API version;
+- exact local entrypoint or hosted endpoint;
+- image conditioning behavior and accepted image requirements;
+- output aspect ratios, dimensions, FPS, durations and frame-count rules;
+- whether 8k+1 frame quantization applies, with direct evidence from that exact implementation;
+- camera controls and their actual parameter names/semantics;
+- any maximum-duration or resolution trade-off;
+- runtime/provider limitations that affect the current adapter;
+- status (verified, partially verified, unknown, not tested);
+- direct primary source and access date.
+
+The code's current KEYFRAME_LTX planning status is unavailable pending a real clip-pod dryrun. Your research must not upgrade that status to production-ready. A prompt compiler or route specification is not a working generation adapter.
 
 ## 10. Visual direction and consistency
 
@@ -398,6 +453,7 @@ Deliver detailed shot plans and prompt pairs for:
 - an explanatory map or diagram.
 
 For each, show shot duration separately from shot count.
+For every worked example, also show: (a) exact first-frame state and geometry, (b) what the audience should notice first, (c) the relevant narration/dialogue/audio beat, (d) the timing of the action/reveal, (e) the end state, (f) the motivated cut/transition, and (g) what must remain continuous into the next shot. For the discovery/reveal example, identify the reveal beat and the visual mechanism that directs attention to it. For the explanatory map, distinguish geographic truth/labels from decorative cinematic treatment.
 
 ### F. Proposed visual-intent contract
 Show a minimal JSON example and a field dictionary. Mark every field as existing, proposed, derived or adapter-specific. Do not write code or edit the repository.
@@ -413,6 +469,9 @@ Specify:
 - composition and continuity QA;
 - duration / frame quantization checks per model;
 - lane-share accounting independent from speech-share accounting;
+- provenance tests proving an accepted I2V video points to the exact accepted first-frame hash and records the model/adapter/prompt lineage;
+- route/adapter tests proving any layout artifact carried by the shot spec is actually consumed, not merely serialized;
+- separate local-versus-hosted capability contract tests, including frame-count/duration validation;
 - regression tests ensuring D-95 and D-93 are unchanged.
 
 Do not claim tests have been run. No paid generation is authorized. Identify which visual-quality questions eventually need a small creator-approved sample render.
@@ -422,6 +481,11 @@ Use:
 CURRENT → PROBLEM → EVIDENCE → KEEP → CHANGE → REMOVE → REPLACE → TRADE-OFFS → RECOMMENDATION.
 
 Prioritize changes. State what should stay untouched. Identify which items are technically decidable and which require creator approval. Do not modify code or commit.
+
+### K. Asset provenance and provider capability evidence
+- Show how the accepted image and each derived video asset can be traced to a shot, visual intent, input frame hash, prompt/compiler version, model/provider revision, seed/parameters and output hash.
+- Provide the adapter-specific capability matrix described in §9, separating local and hosted behavior.
+- Mark existing fields/contracts versus proposed additions. Prefer reuse of route/job-manifest/cache structures; do not create duplicate registries without evidence.
 
 ### J. Source register
 List every source used with direct URL, title, publisher, date/version, access date, source quality and the claim it supports.
