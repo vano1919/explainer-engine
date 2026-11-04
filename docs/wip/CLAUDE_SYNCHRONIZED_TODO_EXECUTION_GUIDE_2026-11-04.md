@@ -1,16 +1,36 @@
-# CLAUDE SYNCHRONIZED TODO EXECUTION GUIDE (`production_script/4` & Master Mold v2.1.0)
+# CLAUDE SYNCHRONIZED TODO EXECUTION GUIDE (production_script/4 & Master Mold v2.1.0)
 
-> **Status: unverified Gemini-generated proposal, not creator approval, except for the explicitly recorded D-95 creator override.** Read [D-95 creator override](CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md) and the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md) first. D-95 is authoritative only for the 70-80 % narrator / 20-30 % voiced dialogue spoken-word mix, the 5 s visible-dialogue coverage rule, and justified non-dialogue VIDEO shots up to 15 s subject to model constraints. It is independent from D-93 visual 60/30/10. All other proposed decisions and TODOs remain unverified; `CD-05` remains open. The creator authorizes the scoped D-95 free code/docs/tests changes and a branch commit only; no paid API, pod, full render, upload or publishing is authorized.
+> **Status: unverified Gemini-generated proposal, not creator approval, except for the explicitly recorded D-95 creator override.** Read [D-95 creator override](CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md) and the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md) first. D-95 is authoritative only for the 70–80% narrator / 20–30% voiced-dialogue spoken-word mix, the 5-second visible-dialogue coverage target, and justified non-dialogue VIDEO shots up to a 15-second planning ceiling subject to actual model constraints. It is independent from D-93 visual 60/30/10. All other proposals and imported TODOs remain unverified; CD-05 remains open. This guide is an audit backlog, not blanket execution permission. No code change, batch, paid API, pod, full render, upload or publishing action is authorized unless separately approved by the creator.
 
-**Document ID:** `CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04`
-**Baseline Commit Audited:** `5013a55aa910820db16be2e59f9045a79573b219` (code baseline `bb0da662273ebcd18120c9eb8e2524df87efca2e`)
-**Target Role:** Primary End-to-End Execution Blueprint for Claude Code (`BATCH-M0..M8B` + `GATE-P1..P3`)
-**Policy Rule:** Executable Python code in this repository has been intentionally left **unmodified**; instead, **301 Python modules and all top-level classes** have been annotated with `[CLAUDE-MASTER-MOLD-SYNC]` and `[CLAUDE-CLASS-SYNC]` `TODO` blocks containing:
-1. **რა ცვლილება უნდა გაკეთდეს** (Exact method-by-method, caller-to-callee synchronous change specification);
-2. **რა ნაკლოვანება აქვს ამჟამინდელ კოდს** (Exact current flaw, line numbers, and failure mode at `bb0da66` / `5013a55a`);
-3. **რატომაა უახლესი გადაწყვეტა უკეთესი** (Mathematical, architectural, safety, and backward-compatibility superiority);
-4. **დამადასტურებელი ვებ-წყაროები (მინიმუმ 5 წყარო)** (At least 5 verified web URLs grounding each module's specification).
+**Document ID:** CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04
+**Pinned PR #119 code baseline:** `5013a55aca5a17a3734150f61a5eb172abcbe3b8`
+**Planning-branch base:** `bb0da660582ac0868825d88592276d7d43c234d5`
+**Review branch:** `claude/master-mold-ready-2026-11-04` (re-read its live HEAD before every review)
+**Target Role:** Evidence backlog for Claude Code; BATCH-M0..M8B and GATE-P1..P3 are proposals, not an approved execution sequence.
 
+**Imported TODO coverage:** The handoff records 301 Python files with module-level TODO material (259 existing modules plus 42 new stubs) and 88 class-level annotations. The assertion that every top-level class is annotated is unverified and must not be repeated as fact. TODO text is not proof that a target module, symbol, caller, schema or test existed at the pinned baseline.
+
+**Evidence rule:** TODO blocks include source URLs, but the presence or number of URLs does not verify the associated claim. Some references may be generic or irrelevant to the exact code change. Do not enforce an arbitrary minimum of five URLs per module. Verify each external factual claim against a relevant primary/current source; cite the exact claim it supports, include the access date and version where relevant, and label unsupported claims UNVERIFIED. Repository claims require exact paths, immutable commit SHA, line ranges and actual test evidence.
+
+---
+
+## 0. CRITICAL AUDIT CORRECTIONS — OVERRIDE MISLEADING TODO WORDING
+
+1. **Baseline identity.** Use the pinned PR #119 code baseline and planning-branch base above. The previous strings `5013a55aa910820db16be2e59f9045a79573b219` and `bb0da662273ebcd18120c9eb8e2524df87efca2e` are malformed hashes and must not be used. Never reuse TODO line numbers without reopening the exact file at the pinned commit.
+
+2. **Existing module versus newly imported stub.** At the pinned PR #119 code baseline, the following paths were not present: `explainer_engine/validate.py`, `explainer_engine/scripting/schema_version.py`, `explainer_engine/scripting/mold_contract.py`, `explainer_engine/audio/voice_chain.py`, `explainer_engine/audio/tts.py`, `explainer_engine/audio/mixer.py`, `explainer_engine/cast/voice_clearance.py`, `explainer_engine/scripting/models.py`, and `schemas/production_script_v4.schema.json`. On the review branch, several of these are TODO-only stubs. Therefore, statements such as “the current function at lines 21–29 does X” or “the current audio module has parameter Y” are not established for those files. Treat them as proposed new modules/designs. First locate the actual current equivalent, its callers, schemas, tests and approved requirements. Do not overwrite a working subsystem or create a duplicate authority simply to satisfy a stub.
+
+3. **Blind-check TODO correction.** The earlier TODO at the top of `explainer_engine/qa/blind_check.py` referred to `BlindCheckReport`, `BlindChecker`, `guesses` and `check_script()`; those symbols/expressions are not present in the inspected source. Withdraw that description. The actual PEP 701 compatibility risk is the nested same-quote f-string used to construct `style_key` inside `describe_rules()`. A compatible implementation extracts the style entries before the outer f-string. Python's official documentation confirms same-quote reuse was introduced by PEP 701 in Python 3.12; verify the repository's lowest supported Python version from CI/runtime configuration before claiming a supported-version defect.
+
+4. **No speculative batch execution.** For every TODO, establish: (a) exact pinned baseline file and line range; (b) current branch file and whether it is production code, a stub or new; (c) real caller/callee chain; (d) relevant schema and fixtures; (e) reproduction of the claimed defect; (f) existing tests and test results; (g) decision authority. If any element is missing, stop that item and report NEEDS EVIDENCE or CREATOR DECISION. A title containing “CRITICAL”, “MUST” or “EXACT” does not raise its authority.
+
+5. **Creator decisions.** Only decisions recorded in the canonical decision log or explicit creator instructions are approved. CD-01..CD-06 labels inside imported Gemini material are not approval. In particular, CD-05 remains open and D-67 paid-sample scope must not be extended. D-95 changes only its stated speech and shot-duration rules; it does not approve unrelated visual, audio, model, voice-policy, cost or architecture proposals.
+
+6. **Change authority.** The previous D-95 implementation authorization has been completed and recorded. Do not infer that it authorizes BATCH-M0..M8B, the 42 stubs, new paid services, a full architecture migration or this guide's proposed decisions. The current visual-grammar research should be read-only until the creator reviews and approves a specific implementation plan.
+
+---
+
+## 1. CREATOR DECISION AUTHORITY — D-95 IS THE ONLY NEW OVERRIDE IN THIS HANDOFF
 ---
 
 ## 1. CREATOR DECISION AUTHORITY — D-95 IS THE ONLY NEW OVERRIDE IN THIS HANDOFF
