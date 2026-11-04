@@ -322,13 +322,25 @@ def test_long_clips_holds_and_lines_on_holds():
     talk["tier"] = "light"
     assert "KP-37" in rules(d, "FAIL")
     talk["tier"] = "full"
-    talk["seconds"] = F.CLIP_MAX_S + 2
+    talk["seconds"] = F.DIALOGUE_SHOT_MAX_S + 1
     assert "KP-36" in rules(d, "REVIEW")
     d = _episode(doc())
     for s in d["shots"][:4]:
         if not s.get("dialogue"):
             s["tier"] = "hold"
     assert "KP-37" in rules(d, "REVIEW")
+
+
+
+def test_non_dialogue_video_can_hold_a_continuous_action_up_to_15_seconds():
+    d = _episode(doc())
+    action = next(s for s in d["shots"] if not s.get("dialogue"))
+    action["tier"] = "full"
+    action["seconds"] = 12.0
+    action["last_frame"] = True
+    assert not [f for f in F.check(d) if f["rule"] == "KP-36" and f["where"] == action["id"]]
+    action["seconds"] = F.NON_DIALOGUE_VIDEO_MAX_S + 1
+    assert [f for f in F.check(d) if f["rule"] == "KP-36" and f["where"] == action["id"]]
 
 
 def test_rhythm_and_camera_moves():

@@ -63,9 +63,8 @@ Procedure:
 Animated episodes (keyframe -> LTX shot, `docs/SHOT_PROMPTS.md`): every shot line of the scenario must be filmable, because the
 prompt writers can only film what you wrote. Per shot: ONE main actor named by what the viewer sees (hair, clothes colour, a
 prop; never "the woman", "a man", KP-01), one big action with a start, a peak and a settle (KP-12), the others' small
-reaction (KP-02), who stays in frame and who leaves on purpose (KP-03), the camera (KP-04), at most 10 s (KP-06), and the
-acting heroes large in the frame; a wide shot with a crowd carries only camera, weather and ambient motion (KP-13).
-An action that needs more is two shots.
+reaction (KP-02), who stays in frame and who leaves on purpose (KP-03), the camera (KP-04), and the
+acting heroes large in frame; voiced dialogue/lip-sync coverage is at most 5 s, while non-dialogue VIDEO action may run 10-15 s when a continuous battle, overhead move or task benefits from an uninterrupted shot (D-95/BP-108). Do not split an action merely to satisfy the dialogue cap; check actual model limits. A real narrative beat or technical provider limit may still justify a cut.
 For the shot cards (`film_shots/1`, KP-15, KP-28) you write: each hero's ONE visible tag (two traits, distinct from the
 others, the same words everywhere; the story name never goes in a prompt, KP-22), each place once in visible words, and per
 shot its `beat` (what it does for the story) and `mode` (scene, narrated, establish, insert).

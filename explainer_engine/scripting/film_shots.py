@@ -76,7 +76,8 @@ SAME_SIZE_RUN_MAX = sourced_rules.T("BP-103", "same_size_run_max")
 # the episode rules of the script engine v1 (KP-35..KP-40, docs/research/SCRIPT_ENGINE_V1_2026-10-24.md)
 SHOTS_PER_MIN = tuple(sourced_rules.T("BP-107", "shots_per_min"))  # KP-35
 MEDIAN_SHOT_S = tuple(sourced_rules.T("BP-107", "median_shot_s"))
-CLIP_MAX_S = sourced_rules.T("BP-108", "clip_max_s")  # KP-36
+DIALOGUE_SHOT_MAX_S = sourced_rules.T("BP-108", "dialogue_shot_max_s")  # KP-36 / D-95
+NON_DIALOGUE_VIDEO_MAX_S = sourced_rules.T("BP-108", "non_dialogue_video_max_s")
 KEYPOSE_AFTER_S = sourced_rules.T("BP-108", "keypose_after_s")
 LANE_SHARE = sourced_rules.T("BP-109", "lane_share")  # KP-37: video / still / helper by runtime (the creator, 2026-11-01)
 LANE_TOLERANCE = sourced_rules.T("BP-109", "lane_tolerance")
@@ -868,12 +869,15 @@ def episode_check(doc: dict) -> list[dict]:
         sid, tier = s["id"], s.get("tier")
         if not tier:
             add("ZI-03", "FAIL", sid, "no tier: say hold, light or full (KP-37)")
-        if s["seconds"] > CLIP_MAX_S:
-            add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s in one clip: past {CLIP_MAX_S:g} s people duplicate and fade "
-                                        "(BP-108); cut it in two")
+        if s.get("dialogue") and s["seconds"] > DIALOGUE_SHOT_MAX_S:
+            add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s dialogue/lip-sync coverage shot: keep this shot at "
+                                        f"{DIALOGUE_SHOT_MAX_S:g} s or less (BP-108); use motivated coverage, not arbitrary cuts")
+        elif visual_lane(s) == "video" and s["seconds"] > NON_DIALOGUE_VIDEO_MAX_S:
+            add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s non-dialogue VIDEO shot: above the "
+                                        f"{NON_DIALOGUE_VIDEO_MAX_S:g} s planning ceiling (BP-108); check model limits and split only if needed")
         if s["seconds"] > KEYPOSE_AFTER_S and s.get("action") and tier != "hold" and not s.get("last_frame"):
-            add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s with an action and no drawn last frame: guide the settle "
-                                        "(last_frame) so a key pose lands every few seconds (BP-108)")
+            add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s of pose-changing action without a guided last frame: add one "
+                                        "when the action has a discrete landing pose. This is a continuity aid, not an edit-cut limit (BP-108)")
         if s.get("dialogue") and tier in ("hold", "light"):
             add("KP-37", "FAIL", sid, f"a spoken line on a {tier} shot: lips and acting need the full tier")
         elif s["mode"] == "scene" and s.get("action") and tier == "hold":

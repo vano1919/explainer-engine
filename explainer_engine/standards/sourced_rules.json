@@ -4316,13 +4316,13 @@
   {
    "id": "BP-105",
    "area": "story",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Template D (historical docudrama, ST-19): the narrator has 25-45 % of the script's words, the dramatized scenes the rest (house aim 35-40 %; a political or personal rivalry sits near 25-30 %, a campaign higher). No study fixes the split; our retention data will move it.",
+   "statement": "Template D (12-minute historical docudrama, ST-19): the narrator targets 70-80 % of audible spoken words and voiced character dialogue makes up the complementary 20-30 % (midpoint target 75/25). Measure words on audible narrator and character lines only; exclude character lines marked voiced: false. This is the speech mix, not visual runtime or shot/lane allocation.",
    "thresholds": {
     "narrator_share": [
-     0.25,
-     0.45
+     0.70,
+     0.80
     ]
    },
    "sources": [
@@ -4343,8 +4343,9 @@
     "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
-    "dialogue-scenes '~40-60 % narration', for template D"
-   ]
+    "dialogue-scenes old ~40-60 % narration and pre-D-95 25-45 % narrator share"
+   ],
+   "decided": "the creator, 2026-11-04 (D-95): narrator 70-80 % and voiced character dialogue 20-30 % of audible spoken words; midpoint 75/25"
   },
   {
    "id": "BP-106",
@@ -4411,11 +4412,12 @@
   {
    "id": "BP-108",
    "area": "film",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Clip length (KP-36): one video clip is at most clip_max_s (plain LTX from one picture was clean at 10 s, duplicated a person at 15 s and turned heroes translucent at 20 s; LTX-2.5 Pro renders 6, 8 or 10 s); a shot longer than keypose_after_s that changes pose draws its last frame, so a key pose lands every 2.5-4 s.",
+   "statement": "Shot duration by intent (KP-06/KP-36, D-95): a visible voiced dialogue or lip-sync coverage shot is at most dialogue_shot_max_s; a non-dialogue VIDEO-lane action shot may run up to non_dialogue_video_max_s when a continuous battle, overhead move, task or camera choreography benefits from it. Do not split a 10-15 s non-dialogue action just to meet a dialogue limit. The 15 s value is a planning ceiling, not a promise that every model, resolution or frame rate supports it; the generation adapter must enforce the selected model's actual constraints. keypose_after_s requests a guided last frame for a pose-changing action when useful; it is not an edit-cut limit. STILL and HELPER lanes use their own rules.",
    "thresholds": {
-    "clip_max_s": 10.0,
+    "dialogue_shot_max_s": 5.0,
+    "non_dialogue_video_max_s": 15.0,
     "keypose_after_s": 5.0
    },
    "sources": [
@@ -4431,17 +4433,23 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:CLIP_MAX_S",
-    "explainer_engine/scripting/film_shots.py:KEYPOSE_AFTER_S"
+    "explainer_engine/scripting/film_shots.py:DIALOGUE_SHOT_MAX_S",
+    "explainer_engine/scripting/film_shots.py:NON_DIALOGUE_VIDEO_MAX_S",
+    "explainer_engine/scripting/film_shots.py:KEYPOSE_AFTER_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:DIALOGUE_SHOT_MAX_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:NON_DIALOGUE_VIDEO_MAX_S"
    ],
-   "supersedes": []
+   "supersedes": [
+    "universal 10 s / 8 s video-shot cap (KP-06) and pre-D-95 universal 10 s clip cap"
+   ],
+   "decided": "the creator, 2026-11-04 (D-95): 5 s dialogue coverage; non-dialogue VIDEO action up to 15 s when justified; provider limits still apply"
   },
   {
    "id": "BP-109",
    "area": "film",
    "status": "house",
    "severity": "REVIEW",
-   "statement": "Visual mix by runtime (the creator's rule of 2026-11-01): lane_share.video of the runtime is real video (LTX), lane_share.still is still frames on which Python adds objects and moves them (one picture or several layers, cut fast and on the narrator's words), lane_share.helper is helper visuals made by Python (maps, progress bars, calculations, counters); each share within tolerance. A still never reads as a slideshow: no still shot runs longer than still_shot_max_s (the creator's 'no shot longer than 5 s', 2026-10-25).",
+   "statement": "Visual mix by runtime (the creator's rule of 2026-11-01, D-93): lane_share.video is generated video (including non-dialogue LTX action), lane_share.still is still frames on which Python adds objects and moves them, and lane_share.helper is Python-made maps, progress bars, calculations and counters; each share stays within tolerance. The still_shot_max_s guard applies to the STILL lane only. It is independent from the spoken narration/dialogue mix (BP-105) and the VIDEO-lane duration rules (BP-108).",
    "thresholds": {
     "lane_share": {
      "video": 0.6,

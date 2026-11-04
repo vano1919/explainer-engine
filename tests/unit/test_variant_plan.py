@@ -48,7 +48,7 @@ def test_dynamics_on_a_toy_plan_gives_exact_shares_and_runs():
     assert d["share"] == {"scene": 0.1, "map_pure": 0.3, "compensator": 0.2, "host": 0.0, "hold": 0.4}
     assert sum(d["share"].values()) == pytest.approx(1.0) and d["non_character"] == pytest.approx(0.9)
     assert d["map_run_max_s"] == 30 and d["non_scene_run_max_s"] == 90
-    assert d["narrator_basis"] == "seconds" and d["narrator_share"] == pytest.approx(0.9)
+    assert d["narrator_basis"] == "unknown" and d["narrator_share"] is None
 
 
 def test_the_category_of_a_block_follows_its_lane_and_the_film_shots_1_inference():
@@ -112,12 +112,29 @@ def test_vp10_one_compensator_picture_over_seven_seconds_reviews():
 
 
 def test_vp16_the_narrator_share_uses_words_when_the_blocks_carry_them():
-    segs = [seg("S01", blk("scene", 10, who="a", words={"character": 60}), blk("compensator", 10, words={"narrator": 40}))]
-    d = VP.dynamics(segs, VP.profile("A"))
-    assert d["narrator_basis"] == "words" and d["narrator_share"] == pytest.approx(0.4)
+    balanced = [seg("S01", blk("scene", 10, who="a", words={"character": 30}), blk("compensator", 10, words={"narrator": 70}))]
+    d = VP.dynamics(balanced, VP.profile("A"))
+    assert d["narrator_basis"] == "audible_words" and d["narrator_share"] == pytest.approx(0.7)
     assert "VP-16" not in rules(VP.checks(d, VP.profile("A")))
     heavy = [seg("S01", blk("scene", 10, who="a", words={"character": 10}), blk("compensator", 10, words={"narrator": 90}))]
     assert sev(VP.checks(VP.dynamics(heavy, VP.profile("A")), VP.profile("A")), "VP-16") == ["REVIEW"]
+    unmeasured = [seg("S01", blk("scene", 10, who="a"), blk("compensator", 90))]
+    unknown = VP.dynamics(unmeasured, VP.profile("A"))
+    assert unknown["narrator_share"] is None and "VP-16" not in rules(VP.checks(unknown, VP.profile("A")))
+
+
+
+def test_segments_from_script_excludes_unvoiced_lines_from_dialogue_share():
+    doc = {"segments": [{"id": "S01", "lines": [
+        {"text": "The narrator explains the move."},
+        {"speaker": "historical_figure", "voiced": False, "text": "A silent bubble does not count as audible dialogue."},
+        {"speaker": "invented_character", "voiced": True, "text": "I will do it."}
+    ]}]}
+    blocks = VP.segments_from_script(doc)[0]["blocks"]
+    character_words = sum((b.get("words") or {}).get("character", 0) for b in blocks)
+    narrator_words = sum((b.get("words") or {}).get("narrator", 0) for b in blocks)
+    assert character_words == len("I will do it.".split())
+    assert narrator_words == len("The narrator explains the move.".split())
 
 
 def test_vp17_the_central_scene_has_the_most_played_seconds():

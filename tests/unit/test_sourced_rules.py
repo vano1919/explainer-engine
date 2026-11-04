@@ -93,6 +93,20 @@ def test_bp141_a_and_d_non_character_max_follows_the_d93_lane_mix():
 
 # --- BP-169..BP-172: the rhythm rows (Argon roadmap WP-R1, 2026-11-01) ---
 
+
+def test_d95_speech_mix_and_video_duration_rules_are_independent_from_visual_lanes():
+    speech = SR.rule("BP-105")
+    assert speech["status"] == "house"
+    assert SR.T("BP-105", "narrator_share") == [0.70, 0.80]
+    video = SR.rule("BP-108")
+    assert video["status"] == "house"
+    assert SR.T("BP-108", "dialogue_shot_max_s") == 5.0
+    assert SR.T("BP-108", "non_dialogue_video_max_s") == 15.0
+    lanes = SR.T("BP-109", "lane_share")
+    assert lanes == {"video": 0.6, "still": 0.3, "helper": 0.1}
+    assert SR.T("BP-109", "lane_tolerance") == 0.05
+
+
 def _schema(name):
     return json.loads((ROOT / "explainer_engine" / "schemas" / name).read_text(encoding="utf-8"))
 

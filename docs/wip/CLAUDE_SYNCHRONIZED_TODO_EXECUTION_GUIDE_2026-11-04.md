@@ -1,6 +1,6 @@
 # CLAUDE SYNCHRONIZED TODO EXECUTION GUIDE (`production_script/4` & Master Mold v2.1.0)
 
-> **Status: unverified Gemini-generated proposal, not creator approval.** Verify every claimed baseline, defect, test path, and decision against this branch. No creator decision, implementation, paid call, or pod run is authorized by this guide. Start with the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md); in particular, `CD-05` remains open in the canonical progress record.
+> **Status: unverified Gemini-generated proposal, not creator approval, except for the explicitly recorded D-95 creator override.** Read [D-95 creator override](CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md) and the [Claude handoff](CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md) first. D-95 is authoritative only for the 70-80 % narrator / 20-30 % voiced dialogue spoken-word mix, the 5 s visible-dialogue coverage rule, and justified non-dialogue VIDEO shots up to 15 s subject to model constraints. It is independent from D-93 visual 60/30/10. All other proposed decisions and TODOs remain unverified; `CD-05` remains open. The creator authorizes the scoped D-95 free code/docs/tests changes and a branch commit only; no paid API, pod, full render, upload or publishing is authorized.
 
 **Document ID:** `CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04`
 **Baseline Commit Audited:** `5013a55aa910820db16be2e59f9045a79573b219` (code baseline `bb0da662273ebcd18120c9eb8e2524df87efca2e`)
@@ -13,9 +13,13 @@
 
 ---
 
-## 1. LOCKED CREATOR DECISIONS (`CD-01` .. `CD-06`) — LOGICAL & SCIENTIFIC GROUNDING
+## 1. CREATOR DECISION AUTHORITY — D-95 IS THE ONLY NEW OVERRIDE IN THIS HANDOFF
 
-All previously open creator decision points (`CD-01`, `CD-02`, `CD-03`, `CD-05`, `CD-06`; note `CD-04` is already locked by `D-96`) are now **RESOLVED AND LOCKED** with >=5 logical and verified external sources each:
+D-95 is the creator's explicit 2026-11-04 instruction. It supersedes the old narrator/dialogue split and universal shot-duration rule only within its scope. It does not imply approval of Gemini-generated `CD-01..CD-06`, does not close `CD-05`, and does not change D-93 visual lanes. The sections below remain Gemini-generated proposals unless their decisions are separately recorded in the canonical decision log.
+
+## 1A. IMPORTED GEMINI DECISIONS (`CD-01` .. `CD-06`) — UNVERIFIED PROPOSALS, NOT LOCKED CREATOR DECISIONS
+
+The imported guide claims that several creator decision points are resolved. That claim is not accepted merely because it appears here: each item remains a proposal until the canonical decision log records explicit creator approval.
 
 ### 1.1 Question 1 — `CD-01`: Kickoff of Free Batches (`BATCH-M0..M8A`) After `GATE-EXT-MAIN-PROTECT`
 * **Locked Decision:** **APPROVE Option A** — Execute `GATE-EXT-MAIN-PROTECT` first, then execute the revised dependency-ordered zero-spend batches (`BATCH-M0 -> BATCH-M1 -> BATCH-M2 -> BATCH-M4 -> BATCH-M5 -> BATCH-M6 -> BATCH-M3 -> BATCH-M7 -> BATCH-M8A`) at **`$0.00` cloud/API spend**.

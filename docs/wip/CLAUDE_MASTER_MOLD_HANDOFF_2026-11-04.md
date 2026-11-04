@@ -7,12 +7,13 @@
 
 ## Read first
 
-1. [Synchronized TODO execution guide](CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md)
+1. [Creator override: narration/dialogue mix and shot durations](CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md)
+2. [Synchronized TODO execution guide](CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md)
 2. [Gemini full-repository audit brief](GEMINI_ARGON_MASTER_MOLD_FULL_REPOSITORY_AUDIT_2026-11-03.md)
 3. [Master Mold integration roadmap](MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md)
 4. [Canonical decision log](../DECISIONS_AND_OPEN_QUESTIONS.md) and the latest entries in [PROGRESS](../PROGRESS.md)
 
-The execution guide and audit brief are source material to inspect, not authority to execute. The audit brief explicitly requests a read-only audit. The guide's claims, recommendations, proposed code changes, test names, and creator-decision labels all require independent verification. This handoff does not authorize implementation, spend, pods, publishing, or changes to creator-owned decisions.
+The execution guide and audit brief remain source material to inspect, not general authority to execute. Their claims, recommendations, proposed code changes, test names, and creator-decision labels require independent verification. **The creator's 2026-11-04 instruction explicitly authorizes only the scoped D-95 code, test and documentation corrections, plus a commit/push to this branch.** D-95 overrides older ratio and generic shot-duration recommendations only within its stated scope; it does not approve other imported TODOs or unrelated creator decisions. No paid API calls, GPU/pod runs, full-episode rendering, YouTube Studio changes, uploading or publishing are authorized.
 
 ## What was imported
 

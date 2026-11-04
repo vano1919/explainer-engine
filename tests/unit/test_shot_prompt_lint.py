@@ -46,8 +46,12 @@ def test_camera_length_and_moving_vehicle():
     assert "KP-04" in rules(no_cam, "FAIL")
     two = {"id": "t", "kind": "video", "prompt": STYLE + "The girl ducks and stays in frame. The camera pans left, then a push-in."}
     assert "KP-04" in rules(two, "REVIEW")
-    assert "KP-06" in rules({"id": "l", "kind": "video", "seconds": 15, "prompt": STYLE + "x jumps. Static camera."}, "FAIL")
-    assert "KP-06" in rules({"id": "l", "kind": "video", "seconds": 9, "prompt": STYLE + "x jumps. Static camera."}, "REVIEW")
+    assert "KP-06" not in rules({"id": "l", "kind": "video", "seconds": 15, "prompt": STYLE + "x jumps. Static camera."})
+    assert "KP-06" in rules({"id": "l", "kind": "video", "seconds": 16, "prompt": STYLE + "x jumps. Static camera."}, "REVIEW")
+    dialogue = {"id": "ld", "kind": "video", "seconds": 6, "prompt": STYLE + 'The warrior shouts "Hold the line!" and stays in frame. Static camera.'}
+    assert "KP-06" in rules(dialogue, "REVIEW")
+    dialogue["seconds"] = 5
+    assert "KP-06" not in rules(dialogue)
     train = {"id": "ww", "kind": "video",
              "prompt": STYLE + "Two outlaws on the roof of the moving train wave and stay in frame. Static camera."}
     assert "KP-05" in rules(train, "REVIEW")

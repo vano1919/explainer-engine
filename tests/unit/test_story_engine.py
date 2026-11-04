@@ -443,6 +443,18 @@ def test_stacked_questions_outside_a_loop_are_flagged():
     assert not any(f["rule"] == "ST-11" for f in SL.lint(d))
 
 
+
+def test_template_d_spoken_share_ignores_unvoiced_character_lines():
+    d = storied()
+    d["drama"]["template"] = "D"
+    d["segments"][0]["lines"] = [
+        {"text": " ".join(["narration"] * 70)},
+        {"speaker": "invented_hero", "voiced": True, "text": " ".join(["dialogue"] * 30)},
+        {"speaker": "historical_figure", "voiced": False, "text": " ".join(["silent_bubble"] * 100)}
+    ]
+    assert not _st(d, "ST-19")
+
+
 def test_template_d_docudrama_rules():
     d = storied()
     assert not [f for f in SL.lint(d) if f["rule"] in ("ST-17", "ST-18", "ST-19")]  # templates A-C: unchanged

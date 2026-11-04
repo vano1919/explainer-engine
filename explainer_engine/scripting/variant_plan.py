@@ -164,7 +164,7 @@ def segments_from_script(doc: dict) -> list[dict]:
             secs = syllables.seconds(ln["text"], pause_after=float(ln.get("pause_after", 0) or 0))
             words = len(ln["text"].split())
             if ln.get("speaker"):
-                blocks.append({"category": "scene", "who": ln["speaker"], "seconds": secs, "words": {"character": words}})
+                blocks.append({"category": "scene", "who": ln["speaker"], "seconds": secs, "words": {"character": words if ln.get("voiced", True) is not False else 0}})
             else:
                 blocks.append({"category": "compensator", "seconds": secs, "words": {"narrator": words}})
         out.append({"id": seg["id"], "function": (seg.get("drama") or {}).get("function"), "blocks": blocks,
@@ -237,10 +237,10 @@ def dynamics(segments: list[dict], prof: dict, *, template: str = "D") -> dict:
     central = [t for t in turns if by_id[t].get("function") in CENTRAL_FUNCS]
     if not central and template == "D" and len(turns) >= 4:
         central = [turns[3]]  # template D row 10 is the central scene (docs/STORY_ENGINE.md)
-    # narrator share: spoken words when the blocks carry them, else the seconds that are not played
+    # Speech share is measured only from audible narrator/character words; never infer it from visual or played runtime.
     nw = sum((b.get("words") or {}).get("narrator", 0) for _, b, _ in flat)
     cw = sum((b.get("words") or {}).get("character", 0) for _, b, _ in flat)
-    narrator, basis = ((nw / (nw + cw), "words") if nw + cw else (1.0 - share[PLAYED] if total else 0.0, "seconds"))
+    narrator, basis = ((nw / (nw + cw), "audible_words") if nw + cw else (None, "unknown"))
     shots_band = SR.T("BP-107", "shots_per_min")
     default_rate = sum(shots_band) / 2
     planned = sum(b.get("shots") or max(1, round(b["seconds"] * default_rate / 60)) for _, b, _ in flat)
@@ -298,7 +298,7 @@ def checks(dyn: dict, prof: dict) -> list[dict]:
         _f(out, "VP-10", where, f"one compensator picture held longer than {SR.T('BP-141', 'kuleshov_max_s'):g} s (BP-141)",
            sev("BP-141"))
     lo, hi = SR.T("BP-105", "narrator_share")
-    if not lo <= dyn["narrator_share"] <= hi:
+    if dyn["narrator_share"] is not None and not lo <= dyn["narrator_share"] <= hi:
         _f(out, "VP-16", "narrator", f"the narrator has about {dyn['narrator_share']:.0%} ({dyn['narrator_basis']}); aim {lo:.0%}-{hi:.0%} "
            "(BP-105, a template D band: a tactical profile narrates more by design)", sev("BP-105"))
     if dyn["central"] and dyn["turn_played_s"]:
@@ -501,7 +501,7 @@ def variant_findings(variant: dict, *, speeds: dict | None = None, caps: dict | 
 def summarize(found: list[dict], dyn: dict) -> dict:
     """The derived numbers a /2 document stores per variant (``check_file`` recomputes them)."""
     return {"dynamics": {**{f"share_{k}": round(v, 3) for k, v in dyn["share"].items()},
-                         "non_character": round(dyn["non_character"], 3), "narrator_share": round(dyn["narrator_share"], 3),
+                         "non_character": round(dyn["non_character"], 3), "narrator_share": round(dyn["narrator_share"], 3) if dyn["narrator_share"] is not None else None,
                          "map_run_max_s": round(dyn["map_run_max_s"], 1), "non_scene_run_max_s": round(dyn["non_scene_run_max_s"], 1),
                          "shots_per_min": round(dyn["shots_per_min"], 1)},
             "scores_code": score(found), "eligible": not any(f["severity"] == "FAIL" for f in found),

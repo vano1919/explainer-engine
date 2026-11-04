@@ -116,7 +116,7 @@ The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..
 `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`. In short:
 - Name every acting person by what the picture shows ("the nurse in the purple jacket"); a bare "the woman" paints a stranger.
 - One actor first, one big action (start, peak, settle, body parts), the others react small; acting heroes large in frame.
-- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; at most 10 s; at most three sounds.
+- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; voiced dialogue/lip-sync coverage at most 5 s, non-dialogue VIDEO action up to 15 s where continuity benefits the scene; do not cut a no-dialogue battle/task shot just to meet the dialogue cap; at most three sounds. Validate actual model/resolution/fps limits.
 - Next pose: from the master, poses only, no framing word; a new framing is a cut with the hero sheet.
 - The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
 - A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.

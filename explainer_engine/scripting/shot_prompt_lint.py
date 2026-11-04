@@ -112,6 +112,8 @@ SLOW_MODIFIERS = re.compile(r"\b(slow|slowly|gently|unhurried|leisurely|quietly|
 HYPED_ZONES = frozenset({"hook_0_30s", "early_30_90s", "late_third_480_660s", "climax_660_720s"})
 SPEECH_WPS = sourced_rules.T("BP-100", "words_per_second")
 SPEECH_SETTLE_S = sourced_rules.T("BP-100", "settle_s")
+DIALOGUE_SHOT_MAX_S = sourced_rules.T("BP-108", "dialogue_shot_max_s")
+NON_DIALOGUE_VIDEO_MAX_S = sourced_rules.T("BP-108", "non_dialogue_video_max_s")
 QUOTE = re.compile(r'"([^"]+)"')
 
 
@@ -189,16 +191,16 @@ def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
         if VEHICLE.search(action) and not FOLLOW.search(action):
             add("KP-05", "REVIEW", "a fast vehicle: let the camera travel with it and keep the heroes large")
         seconds = float(shot.get("seconds", 0) or 0)
-        if seconds > 10:
-            add("KP-06", "FAIL", f"{seconds:g} s: at most 10 s, split the action into two shots")
-        elif seconds > 8:
-            add("KP-06", "REVIEW", f"{seconds:g} s: over 8 s")
+        spoken = QUOTE.findall(prompt)
+        if spoken and seconds > DIALOGUE_SHOT_MAX_S:
+            add("KP-06", "REVIEW", f"{seconds:g} s dialogue/lip-sync shot: aim for at most {DIALOGUE_SHOT_MAX_S:g} s; do not split a non-dialogue action to meet this cap")
+        elif not spoken and seconds > NON_DIALOGUE_VIDEO_MAX_S:
+            add("KP-06", "REVIEW", f"{seconds:g} s non-dialogue video shot: above the {NON_DIALOGUE_VIDEO_MAX_S:g} s planning ceiling")
         sounds = SOUNDS.search(prompt)
         if sounds and len([s for s in re.split(r"[,;]", sounds.group(1)) if s.strip(" .")]) > 3:
             add("KP-11", "REVIEW", "more than three sounds: keep three, the loudest once")
         if not STRONG.search(action) and shot.get("mode") not in ("insert", "establish"):
             add("KP-12", "REVIEW", "no big action verb: give the actor a start, a peak and a settle with body parts")
-        spoken = QUOTE.findall(prompt)
         if spoken and seconds:
             n = sum(len(q.split()) for q in spoken)
             room = SPEECH_WPS * max(0.0, seconds - 2 * SPEECH_SETTLE_S)

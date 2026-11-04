@@ -84,10 +84,9 @@ all-is-lost ~75 %, break-into-three ~80 %, finale to the end. Suits episodes who
 **C. Mystery reveal ladder.** A cold open on a contradiction, then a reveal that reframes everything about every
 2:00; the chronology is written out straight before the suspense order is chosen. Suits analysis episodes (D-26).
 
-**D. Historical docudrama, 15 minutes (2026-10-24).** An animated docudrama: a narrator plus characters who talk to each
-other, shots of 3-5 s. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
+**D. Historical docudrama (historical 15-minute reference map; current production target is 12 minutes under BP-167).** An animated docudrama: a narrator plus characters who talk to each other. Voiced dialogue/lip-sync coverage shots use the 5 s cap; non-dialogue VIDEO action may run 10-15 s where continuous choreography benefits the scene. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
 ending on the next question. Set `drama.template` to "D"; ST-17..ST-19 then apply. Times are for 15:00 and scale with
-length; the borders are guides, not a stopwatch. Evidence and what was not verified:
+length; the borders are guides, not a stopwatch. Speech mix is BP-105 (70-80 % narration / 20-30 % voiced character dialogue by audible words), independent from D-93/BP-109 visual runtime lanes. Evidence and what was not verified:
 [research/DOCUDRAMA_CONSTITUTION_2026-10-24.md](research/DOCUDRAMA_CONSTITUTION_2026-10-24.md).
 
 | # | Time | Segment (`function`) | What happens |
