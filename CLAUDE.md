@@ -1,3 +1,18 @@
+# NEW CREATOR DIRECTION — 2026-11-04 (PLANNING BRANCH OVERRIDE)
+
+> This branch is a dedicated planning branch for the creator-approved Ink Chronicle + Blender direction. Read these first:
+> 1. [Branch handoff](docs/architecture/BRANCH_HANDOFF_README_2026-11-04.md)
+> 2. [Ink Chronicle visual production direction](docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md)
+> 3. [Fable/Claude brief for the Opus plan](docs/architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md)
+>
+> **Important:** This is a new decision direction and intentionally conflicts with older rules and implementation mappings, including D-93, D-95, D-70, D-41, look_v2.json, world/bible.json, old LTX/Qwen TODOs and related schemas/tests. These conflicts must be explicitly audited and migrated. Do not treat older instructions as silently overriding this new creator direction. Do not silently delete old history either.
+>
+> **Planning only:** no Blender implementation, paid GPU/API work, destructive cleanup, production rollout, merge or publish is authorized in this branch yet. Fable/Claude must produce the complete Opus implementation plan and TODO disposition first. Opus must independently verify repository facts and external prices.
+>
+> The new visual runtime target is 10% HELPER / 30% STILL / 60% VIDEO. The new spoken-word planning target is nominal 70% narrator / 30% voiced character dialogue. These are separate axes. Final visual pixels must belong to the Ink Chronicle 3D-to-illustrated universe and be rendered through Blender. Master target: 2560×1440 at 24 fps. Recurring render/compute target: US$10–15 per 12–15-minute episode, unproven until benchmarked.
+
+---
+
 # CLAUDE.md — explainer-engine
 
 A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
