@@ -186,7 +186,7 @@ scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
 scene.render.filepath = str(OUT / "blender_poc_video")
 scene.world.color = (0.18, 0.18, 0.18)
 scene.view_settings.view_transform = "Standard"
-scene.view_settings.look = "AgX - Medium High Contrast"
+scene.view_settings.look = "Medium High Contrast"
 scene.frame_set(36)
 
 assert scene.camera is not None
