@@ -457,17 +457,19 @@ def fetch(asset_id: str, *, lib: dict | None = None, path: Path | None = None, r
 
 
 def ingest(src: Path | str, asset_id: str, kind: str, *, path: Path | None = None, repo: Path | None = None,
-           replace: bool = False, **fields) -> tuple[dict, list[str]]:
-    """Bring a file into the library (``import``): a binary over ``GIT_MAX_BYTES`` is copied into the content cache
-    ``tools/assets_cache/<sha256>/`` and recorded as external (its vault copy under ``vault_path``; run ``vault
-    check-uploaded`` after the batch, VT-01); a smaller one is copied to ``assets/3d/<kind>/`` (or ``assets/library/<kind>/``)
-    and stays in git. The source file is never moved or changed."""
+           replace: bool = False, external: bool = False, **fields) -> tuple[dict, list[str]]:
+    """Bring a file into the library (``import``): a binary over ``GIT_MAX_BYTES`` (or any file with ``external``: third-party
+    originals stay out of git whatever their size) is copied into the content cache ``tools/assets_cache/<sha256>/`` and
+    recorded as external (its vault copy under ``vault_path``; run ``vault check-uploaded`` after the batch, VT-01); a smaller
+    one is copied to ``assets/3d/<kind>/`` (or ``assets/library/<kind>/``) and stays in git. The source file is never moved."""
     repo = Path(repo or REPO)
     src = Path(src)
     if not src.exists():
         raise FileNotFoundError(src)
     digest = sha256_file(src)
-    if src.stat().st_size > GIT_MAX_BYTES:
+    if external and "external_path" not in fields:
+        fields["external_path"] = vault_path(kind, asset_id, src.name)
+    if external or src.stat().st_size > GIT_MAX_BYTES:
         dest = repo / CACHE / digest / src.name
     else:
         dest = repo / ("assets/3d" if kind in KINDS_3D else "assets/library") / kind / src.name
@@ -570,6 +572,7 @@ def main(argv: list[str] | None = None) -> int:
     im.add_argument("--deps", default="", help="comma-separated asset ids this file links")
     im.add_argument("--parent", default=None)
     im.add_argument("--replace", action="store_true")
+    im.add_argument("--external", action="store_true", help="keep the file out of git whatever its size (third-party originals)")
     f = sub.add_parser("find")
     f.add_argument("--tags", default="")
     f.add_argument("--kind", default=None, choices=KINDS)
@@ -617,6 +620,7 @@ def main(argv: list[str] | None = None) -> int:
                                          "poly_count": args.poly_count, "materials": lists(args.materials),
                                          "retargeted_from": args.retargeted_from}.items() if v not in (None, [])}
         rec, warnings = ingest(args.file, args.id, args.kind, path=path, repo=Path(args.repo), replace=args.replace,
+                               external=args.external,
                                tags=lists(args.tags), description=args.description, bible_version=args.bible,
                                parent=args.parent, deps=lists(args.deps), three_d=three_d,
                                made_with={"provider": "third_party"}, source=f"import {args.source}",

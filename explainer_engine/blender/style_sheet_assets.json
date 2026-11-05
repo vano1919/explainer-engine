@@ -1,0 +1,213 @@
+{
+ "_doc": "PoC 3 of roadmap 21.6 (ICW-05b): the free CC0 assets the style sheets use, by library id, with the direct download URL, the sha256 of the bytes registered in assets/library.json and the pack version. explainer_engine.blender.style_sheets fetch downloads them into tools/assets_cache/<sha256>/ (gitignored) when the vault copy is not reachable (a CI runner); nothing here is committed as a binary. KayKit Medieval Hexagon (CC0, page read 2026-11-05) is not listed: its itch.io download needs the browser's download button.",
+ "downloaded_on": "2026-11-05",
+ "assets": [
+  {
+   "id": "texture.ph_wooden_table_02_diff",
+   "kind": "texture",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/WoodenTable_02",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/WoodenTable_02/WoodenTable_02_diff_1k.jpg",
+   "name": "WoodenTable_02_diff_1k.jpg",
+   "sha256": "559a27ea7d127010c5557213020b7d4e43d57289ca041291665dfe1213f5fe6c",
+   "bytes": 144218,
+   "version": "1k jpg, published 2020-03-30",
+   "tags": [
+    "polyhaven",
+    "wood",
+    "table",
+    "diffuse"
+   ],
+   "description": "Poly Haven Wooden Table 02 diffuse map (1k); the only map the toon conversion reads"
+  },
+  {
+   "id": "model.ph_wooden_table_02",
+   "kind": "model",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/WoodenTable_02",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/WoodenTable_02/WoodenTable_02_1k.blend",
+   "name": "WoodenTable_02_1k.blend",
+   "sha256": "68d3e283ad80efad4358140b6881bf65a81c5e55911eedcd7b1536fcf9750a25",
+   "bytes": 166767,
+   "version": "1k blend, published 2020-03-30",
+   "tags": [
+    "polyhaven",
+    "furniture",
+    "table",
+    "wood",
+    "interior"
+   ],
+   "deps": [
+    "texture.ph_wooden_table_02_diff"
+   ],
+   "description": "Poly Haven Wooden Table 02 (Fran Calvente); PBR maps other than the diffuse not downloaded",
+   "three_d": {
+    "format": "blend",
+    "up_axis": "Z",
+    "poly_count": 920,
+    "bounds_m": [
+     0.301,
+     0.301,
+     0.418
+    ],
+    "materials": [
+     "WoodenTable_02"
+    ]
+   }
+  },
+  {
+   "id": "texture.ph_wooden_crate_01_diff",
+   "kind": "texture",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/wooden_crate_01",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_crate_01/wooden_crate_01_diff_1k.jpg",
+   "name": "wooden_crate_01_diff_1k.jpg",
+   "sha256": "16653f4abaf4c1d9bca94bde3bd8c54d0ea9a5298d1648abcf57de1f7ecc34cc",
+   "bytes": 711292,
+   "version": "1k jpg, published 2022-02-25",
+   "tags": [
+    "polyhaven",
+    "wood",
+    "crate",
+    "diffuse"
+   ],
+   "description": "Poly Haven Wooden Crate 01 diffuse map (1k)"
+  },
+  {
+   "id": "model.ph_wooden_crate_01",
+   "kind": "model",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/wooden_crate_01",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/wooden_crate_01/wooden_crate_01_1k.blend",
+   "name": "wooden_crate_01_1k.blend",
+   "sha256": "7279afbb41d4a4c199c6ebb77d534900ae24082b475525f4f3c7ecccd9b2b902",
+   "bytes": 263450,
+   "version": "1k blend, published 2022-02-25",
+   "tags": [
+    "polyhaven",
+    "prop",
+    "crate",
+    "wood",
+    "cargo"
+   ],
+   "deps": [
+    "texture.ph_wooden_crate_01_diff"
+   ],
+   "description": "Poly Haven Wooden Crate 01 (three meshes: crate, lid, latch)",
+   "three_d": {
+    "format": "blend",
+    "up_axis": "Z",
+    "poly_count": 3398,
+    "bounds_m": null,
+    "materials": [
+     "wooden_crate_01"
+    ]
+   }
+  },
+  {
+   "id": "model.ph_cannon_01",
+   "kind": "model",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/cannon_01",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/cannon_01/cannon_01_1k.blend",
+   "name": "cannon_01_1k.blend",
+   "sha256": "51fb00d2544af0d2e1362d9a933598a9b1753ffef2757e38dcabb0454161ba5e",
+   "bytes": 1232944,
+   "version": "1k blend, published 2022-03-16",
+   "tags": [
+    "polyhaven",
+    "prop",
+    "cannon",
+    "weapon",
+    "battle",
+    "artillery"
+   ],
+   "description": "Poly Haven Cannon 01 (rigged; the meshes are appended at rest pose, the rig is left out)",
+   "three_d": {
+    "format": "blend",
+    "up_axis": "Z",
+    "poly_count": 22420,
+    "bounds_m": null,
+    "materials": [
+     "cannon_01"
+    ]
+   }
+  },
+  {
+   "id": "material.ph_cobblestone_floor_01",
+   "kind": "material",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/cobblestone_floor_01",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cobblestone_floor_01/cobblestone_floor_01_diff_1k.jpg",
+   "name": "cobblestone_floor_01_diff_1k.jpg",
+   "sha256": "7630d6a59501cab4d2295b2be47bad892b8dae49895b4bee6bc26fd45c423e05",
+   "bytes": 459525,
+   "version": "1k jpg diffuse, published 2020-01-17",
+   "tags": [
+    "polyhaven",
+    "ground",
+    "cobblestone",
+    "street",
+    "stone"
+   ],
+   "description": "Poly Haven Cobblestone Floor 01 diffuse (1k): converted to a toon ground"
+  },
+  {
+   "id": "material.ph_brick_wall_001",
+   "kind": "material",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/brick_wall_001",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brick_wall_001/brick_wall_001_diffuse_1k.jpg",
+   "name": "brick_wall_001_diffuse_1k.jpg",
+   "sha256": "6a1233ec0186703de830354d89f122991e61e67fb67e0846c7eaf6c5aefea902",
+   "bytes": 574381,
+   "version": "1k jpg diffuse, published 2021-03-13",
+   "tags": [
+    "polyhaven",
+    "wall",
+    "brick",
+    "building"
+   ],
+   "description": "Poly Haven Brick Wall 001 diffuse (1k): converted to a toon wall"
+  },
+  {
+   "id": "hdri.ph_kloofendal_48d_partly_cloudy_puresky",
+   "kind": "hdri",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+   "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+   "name": "kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+   "sha256": "fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798",
+   "bytes": 1435119,
+   "version": "1k hdr, published 2022-11-19",
+   "tags": [
+    "polyhaven",
+    "hdri",
+    "sky",
+    "outdoor",
+    "daylight"
+   ],
+   "description": "Poly Haven Kloofendal 48d Partly Cloudy (Pure Sky) 1k: ambient colour only, never seen by the camera"
+  },
+  {
+   "id": "texture.acg_paper003",
+   "kind": "texture",
+   "source": "ambientcg",
+   "page": "https://ambientcg.com/view?id=Paper003",
+   "url": "https://ambientcg.com/get?file=Paper003_2K-JPG.zip",
+   "member": "Paper003_2K-JPG_Color.jpg",
+   "archive_sha256": "7939efd9c04e3da41341386730ad657034ed19dafc2211bad80e6f5182e89a2c",
+   "name": "Paper003_2K-JPG_Color.jpg",
+   "sha256": "b4ca68a796c628944a6ab655459501b1e4d3644b9ded6e5d66e42af752421a80",
+   "bytes": 369706,
+   "version": "2K-JPG",
+   "tags": [
+    "ambientcg",
+    "paper",
+    "grain",
+    "texture"
+   ],
+   "description": "ambientCG Paper 003 colour map (2K): the frame-wide paper grain of the ink look"
+  }
+ ]
+}

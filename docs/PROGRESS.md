@@ -4032,3 +4032,74 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Measured on Metal: the ICW-04 smoke and the ICW-05b round-2 clips; numbers in the runbook. Stand-in figures only.
 - Found: `style_sheets.mp4()` at efbcc17 leaves the colour matrix to ffmpeg (BT.601 values, untagged), reported to ICW-05b; the manifest's `device` says `cpu` on the Mac while EEVEE runs on Metal.
 - Docs only, no code or test changes. Results: `docs_lint` 0 findings. Cost: $0.
+
+### 2026-11-05 — ICW-05b: style engine, style bridge, PoC 3 CC0 assets, style sheets and motion clips (Ink Chronicle, roadmap 9.1, 21.6)
+
+- Work package ICW-05b (the rest of ICW-05), branch `icw/05b-style` from `opus/ink-chronicle-blender-visual-system-2026-11-04`
+  (d605b81), PR #127. Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw05b_2026-11-05/HANDOFF_ICW-05b.md`.
+- `blender/style.py` builds `style_graph/1` as data:
+  - the EEVEE path: Shader to RGB, a three-step ramp, rim, Emission;
+  - the Cycles-safe path: an N·L ramp;
+  - shared by both: Line Art, the paper pass and AgX.
+- The light profile is the default (the creator, 2026-11-05: palette and frame quality first, shadows and reflections secondary).
+  There are no cast shadows and no ray tracing, AO or fast GI; `StyleTokens.shadows` and `palette_match` are switches.
+- `blender/grade.py` and `agx_palette_match.json` invert AgX Medium High Contrast for each colour (OCIO). The palette's mean dE
+  drops from 12.98 to 2.25. Amber, teal and faction_b stay out of AgX's reach.
+- `bpy/render_shot.py` gains described scenes and motion keys. It is still the only bpy importer.
+- `edit/style_bridge.py` covers HELPER frames.
+- `blender/project.py` recognises an Apple silicon GPU (`device=auto`), and Cycles uses METAL there.
+- PoC 3: 9 CC0 records (Poly Haven, ambientCG), stored external and hash-verified on the vault. No binary is in git.
+- Renders, all free:
+  - 5 style sheets × A/B/C/S at 1440p, with EEVEE on the GitHub runner;
+  - 8 clips of 48 frames (2 scenes × B_shadow / B_light / B_match / A_match) on the creator's Mac M4 Pro, 0.33-0.73 s/frame;
+  - without shadows a frame is about 35 % faster, and the palette match costs nothing.
+- **Creator pick deferred:** ვანო (2026-11-05 14:58 UTC) picks the look on real-character frames in ICW-06. Every variant stays
+  selectable and the bible v1.5 `style` block is not written yet. The Mac is for tests only; production renders run on RunPod.
+- Open question, a contract matter for ICW-07 and the bible: an exact palette needs the Standard view transform, but shot_spec/2 pins
+  `view_transform` to AgX.
+- For ICW-07:
+  - add style.py to BP-173's `enforced_by` (style.py reads no threshold until then);
+  - `style_graph/1` in CONTRACTS;
+  - a described-scene field in shot_spec/2;
+  - INDEX rows;
+  - the AgX look-id note in roadmap 9.1;
+  - palette tokens for terrain (`SCENE_COLOURS`);
+  - eevee_full's missing `use_gtao` belongs to ICW-09.
+- Results: `docs_lint` 0 findings; fast suite 2705 passed (`test_seams` is the inherited ffprobe failure).
+- Cost: $0. No pod and no paid call.
+
+### 2026-11-05 — ICW-08: Blender render validator (Ink Chronicle, roadmap section 13)
+
+- Work package ICW-08, branch `icw/08-render-validator` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c4c7223, after
+  the PR #127 merge). Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw08_2026-11-05/HANDOFF_ICW-08.md`.
+- `blender/validate.py`: `RenderValidator.check(shot_dir, spec, still_mode=)` reads a `blender/render.py` shot folder and returns
+  `qa_report/1` rows: RV-FRAMES, RV-SIZE, RV-FPS (FAIL); RV-BLACK, RV-FROZEN (FAIL, BP-174, `still_mode` hold exempts the frozen
+  row); RV-FLICKER, RV-LINE (REVIEW, BP-174); RV-LINE-WEIGHT (REVIEW, BP-173, the stroke width scaled to 1440 rows); RV-CAL-* (INFO,
+  calibration numbers for ICW-09). `report()` makes one `qa_report/1` of stage `clip` (no retry directive: a failed FAIL row is
+  ESCALATE_TO_HUMAN); the CLI writes `<job>/qa/clip.qa_report.json`, which the review bundle already copies.
+- Definitions without numbers of their own: black = no lit pixel (as `render.check_png`), frozen = identical pixels, an edge pixel
+  = luma nearer the `ink` token than the `paper` token. Near-black luma and the smallest neighbour change are reported for ICW-09.
+- `style_findings`: palette dE to the nearest token, paper grain and specular share as INFO rows (no BP row exists for them yet).
+- `qa/scorecard.py` check 5 reads the render report (`render_qa`, `render_report`): a failed FAIL row fails it, a REVIEW row makes it
+  REVIEW; the legacy route's clip report is not read.
+- Registry: `blender/validate.py` added to BP-173 and BP-174 `enforced_by` (thresholds unchanged; the sync test requires it).
+- Tests: `tests/unit/test_blender_validate.py` (18): each synthetic defect (black run, frozen run, flicker, edge jump, missing frame,
+  wrong size, wrong clip rate, stroke width) triggers exactly its row.
+- Results: `docs_lint` 0 findings; fast suite 2723 passed, 2 skipped, 2 xfailed (`test_seams` deselected: the inherited ffprobe failure).
+- Cost: $0. No pod and no paid call.
+
+## 2026-11-05 — D-115: outside code allowed, licences recorded not gating; quality research delivered
+- The creator's word (18:42 UTC): quality first, then efficiency; "on GitHub all the code we need is written: find, combine,
+  fill in, adapt"; the rule against bringing outside code into the repo is lifted. Recorded as D-115 in the decision log;
+  roadmap 21.9 rewritten (rev. 6) and the 21.1/21.3/21.8 GPL-boundary phrases amended; Hunyuan3D-2.1 moves REJECT -> OPTIONAL
+  (licence facts stay recorded). The free-Mac-and-CI-runs rule (the creator, 17:31 UTC) is carried by the ICW-06 PR as its own decision row and is not on this branch yet.
+- Quality research (Opus high, deep research, outside the ICW packages, $0): report, integration plan WP-Q0..Q10, Georgian
+  summary and research notes q1-q6 in the project files folder `ink_chronicle_quality_research_2026-11-05/`. Verified by the
+  Fable thread: code-defect claims (luminance -> CONSTANT ramp -> Emission chain, grey rim, `use_gtao` gone in 5.2,
+  `BLENDER_EEVEE_NEXT` tried first) confirmed on `icw/05c-ink-round`; Blender 5.0 engine-id rename and Brushstroke Tools
+  1.2.3 GPL-3.0-or-later confirmed at their sources. Nothing rendered or measured by the research; every s/frame is EST.
+- Stale text reported, not deleted (CLAUDE.md precedence rule): roadmap 21.1 and 21.7 still describe the GPL boundary in
+  places not quoted above; the decision log wins. ICW-07 to-do: widen `test_repo_hygiene` provenance check to any
+  `# from <owner>/<repo>@` header; shot_spec/2 `view_transform` const AgX and `line_weight_px > 0` need a version step before
+  WP-Q1 lands.
+- Results: `docs_lint` (see the PR). Cost: $0.

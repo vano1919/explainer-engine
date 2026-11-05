@@ -1,0 +1,148 @@
+name: Ink Chronicle style sheets
+
+# ICW-05 (roadmap 15 ICW-05, 9.1, 21.6 PoC 3): the five style-sheet scenes (dialogue close-up, battle wide, travel, establishing,
+# map-adjacent tableau) rendered as 2560x1440 single frames on the pinned Blender 5.2.3 through the ICW-04 adapter
+# (explainer_engine/blender/render.py), EEVEE with the toon path in variants A/B/C and the Cycles-safe path as S, then one collage.
+# The CC0 assets (Poly Haven, ambientCG) are fetched from their source URLs and kept only at the sha256 registered in
+# assets/library.json (nothing third-party is committed). Free: no pod, no paid call. CPU runner, OpenGL through Mesa EGL.
+# Round 2 (mode "clips", manual only): the 48-frame clips of style_sheets.CLIP_VARIANTS with MP4 review copies. They are rendered
+# on the creator's Mac first (ICG-3); this mode is the fallback when the Mac is not there (a CPU runner takes hours for all eight).
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "sheets (single frames) or clips (round-2 48-frame clips)"
+        default: "sheets"
+        type: choice
+        options: ["sheets", "clips"]
+      variants:
+        description: "comma-separated variants (sheets: A,B,C,S; clips: B_shadow,B_light,B_match,A_match; empty = all)"
+        default: ""
+      scenes:
+        description: "comma-separated scenes (empty = all of the mode)"
+        default: ""
+  push:
+    branches:
+      - "icw/05b-**"
+    paths:
+      - "explainer_engine/blender/style.py"
+      - "explainer_engine/blender/style_sheets.py"
+      - "explainer_engine/blender/style_sheet_assets.json"
+      - "explainer_engine/blender/grade.py"
+      - "explainer_engine/blender/agx_palette_match.json"
+      - "explainer_engine/blender/bpy/render_shot.py"
+      - ".github/workflows/style-sheets.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: style-sheets-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sheets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ github.event.inputs.mode == 'clips' && 340 || 120 }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow>=10.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: style-sheet-assets-${{ hashFiles('explainer_engine/blender/style_sheet_assets.json') }}
+      - name: Fetch the CC0 assets (kept only at the registered sha256)
+        run: python -m explainer_engine.blender.style_sheets fetch
+      - name: Render the style sheets (2560x1440, one frame each)
+        if: github.event.inputs.mode != 'clips'
+        run: |
+          python -m explainer_engine.blender.style_sheets render --out sheets --binary "${{ steps.install.outputs.bin }}" \
+            --variants "${{ github.event.inputs.variants || 'A,B,C,S' }}" \
+            --scenes "${{ github.event.inputs.scenes || 'dialogue_cu,battle_wide,travel,establishing,map_tableau' }}"
+      - name: Render the round-2 clips (48 frames each, MP4 review copies)
+        if: github.event.inputs.mode == 'clips'
+        run: |
+          sudo apt-get install --yes --no-install-recommends ffmpeg
+          python -m explainer_engine.blender.style_sheets clips --out sheets --binary "${{ steps.install.outputs.bin }}" \
+            --variants "${{ github.event.inputs.variants || 'B_shadow,B_light,B_match,A_match' }}" \
+            --scenes "${{ github.event.inputs.scenes || 'dialogue_cu,battle_wide' }}"
+      - name: Check the frames and build the collage
+        if: github.event.inputs.mode != 'clips'
+        run: |
+          python - <<'PY'
+          import json
+          from explainer_engine.blender.render import check_png
+          d = json.load(open("sheets/style_sheets.json"))
+          bad = {r["scene"] + "/" + r["variant"]: check_png(r["frame"], 2560, 1440) for r in d["rows"] if check_png(r["frame"], 2560, 1440)}
+          assert not bad, bad
+          assert all(not r["findings"] for r in d["rows"]), [r["findings"] for r in d["rows"] if r["findings"]]
+          for r in d["rows"]:
+              print(r["scene"], r["variant"], r["engine"], r["seconds_per_frame"], r["gpu_backend"], r["applied"]["look"])
+          PY
+          python -m explainer_engine.blender.style_sheets collage --out sheets
+      - name: Collect the outputs
+        if: always()
+        run: |
+          mkdir -p sheets_artifact/frames
+          python - <<'PY' || true
+          import json, shutil
+          import os
+          for name in ("style_sheets.json", "style_clips.json"):
+              if os.path.exists(f"sheets/{name}"):
+                  for r in json.load(open(f"sheets/{name}"))["rows"]:
+                      shutil.copyfile(r["frame"], f"sheets_artifact/frames/{r['scene']}_{r['variant']}.png")
+          PY
+          cp sheets/style_sheets.json sheets/collage.png sheets/collage_preview.jpg sheets_artifact/ 2>/dev/null || true
+          cp sheets/style_clips.json sheets/clips_collage.png sheets/clips_collage_preview.jpg sheets_artifact/ 2>/dev/null || true
+          [ -d sheets/clips ] && cp -r sheets/clips sheets_artifact/ || true
+          for d in sheets/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "sheets_artifact/$(basename "$d").blender.log"; done || true
+          ls -la sheets_artifact
+      - name: Upload the style sheets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: style-sheets-${{ steps.pin.outputs.version }}-${{ github.sha }}
+          path: sheets_artifact/
+          if-no-files-found: error
+          retention-days: 30
