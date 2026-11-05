@@ -210,7 +210,7 @@ jobs:
       matrix:
         include:
           - {layout: antique_forum, shots: "forum_wide,forum_medium"}
-          - {layout: hill_castle, shots: "castle_hero,bridge_medium"}
+          - {layout: hill_castle, shots: "castle_hero,castle_still"}
           - {layout: harbour_square, shots: "harbour_wide,harbour_medium"}
           - {layout: field_camp, shots: "camp_wide,camp_medium"}
     runs-on: ubuntu-24.04

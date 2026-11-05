@@ -192,7 +192,7 @@
    ]
   },
   "hill_castle": {
-   "label": "A castle on a hill above a walled-bridge river and a plaster town, pines and broadleaf trees, mountains behind",
+   "label": "E2 Medieval: a castle on a hill above a river, a stone bridge, a village along the road, pines and a snow range",
    "landmarks": [
     "castle"
    ],
@@ -203,44 +203,130 @@
      0
     ]
    },
+   "terrain": {
+    "seed": 7,
+    "rolling": 1.6,
+    "hill": {
+     "x": 0,
+     "y": 72,
+     "rx": 50,
+     "ry": 42,
+     "h": 17
+    },
+    "river": {
+     "bend_x": -26,
+     "bend_y0": 12,
+     "bend_y1": 50,
+     "width": 4.5,
+     "depth": 2.6
+    },
+    "road": [
+     [
+      9,
+      14
+     ],
+     [
+      17,
+      19
+     ],
+     [
+      19,
+      28
+     ],
+     [
+      13,
+      38
+     ],
+     [
+      5,
+      47
+     ],
+     [
+      0,
+      56
+     ]
+    ],
+    "road_half": 2.0,
+    "causeway": {
+     "y": 14,
+     "half_y": 3.5,
+     "x0": 7,
+     "x1": 24,
+     "z": 2.95
+    },
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 0.75
+   },
    "blocks": [
     {
-     "type": "shape",
+     "type": "terrain",
      "name": "ground",
+     "rect": [
+      -220,
+      220,
+      -70,
+      200
+     ],
+     "res": [
+      176,
+      136
+     ],
+     "colours": {
+      "grass": "#6F9A47",
+      "meadow": "#9BB65A",
+      "forest": "#4E7A3A",
+      "road": "#B58E5B",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "mountains",
+     "range": {
+      "x0": -420,
+      "x1": 420,
+      "y0": 185,
+      "y1": 330,
+      "ramp": 45,
+      "scale": 75,
+      "seed": 3,
+      "floor": 0.0,
+      "peak": 150.0,
+      "snow_line": 62,
+      "rock_line": 34,
+      "rock_slope": 0.7
+     },
+     "res": [
+      168,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#9BB65A",
+      "forest": "#466F3A",
+      "road": "#B58E5B",
+      "rock": "#8A8378",
+      "snow": "#F1F3F5"
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
      "add": "plane",
      "params": {
       "size": 1
      },
      "pos": [
       0,
-      60,
-      0
+      200,
+      -1.4
      ],
      "scale": [
-      700,
-      520,
+      1800,
+      1500,
       1
-     ],
-     "colour": "#9DAA6A"
-    },
-    {
-     "type": "shape",
-     "name": "hill",
-     "add": "uv_sphere",
-     "params": {
-      "radius": 1,
-      "segments": 48,
-      "ring_count": 24
-     },
-     "pos": [
-      0,
-      64,
-      -9
-     ],
-     "scale": [
-      72,
-      56,
-      16
      ],
      "colour": "#8FA262"
     },
@@ -253,87 +339,15 @@
      },
      "pos": [
       0,
-      10,
-      0.04
+      60,
+      -0.75
      ],
      "scale": [
-      9,
-      260,
+      900,
+      600,
       1
      ],
-     "colour": "#6F8FA8"
-    },
-    {
-     "type": "shape",
-     "name": "mountain0",
-     "add": "cone",
-     "params": {
-      "radius1": 75,
-      "radius2": 0.0,
-      "depth": 85,
-      "vertices": 7
-     },
-     "pos": [
-      -120,
-      230,
-      40.5
-     ],
-     "yaw_deg": 0.0,
-     "colour": "#8E9BB0"
-    },
-    {
-     "type": "shape",
-     "name": "mountain1",
-     "add": "cone",
-     "params": {
-      "radius1": 95,
-      "radius2": 0.0,
-      "depth": 120,
-      "vertices": 7
-     },
-     "pos": [
-      10,
-      240,
-      58.0
-     ],
-     "yaw_deg": 17.0,
-     "colour": "#8E9BB0"
-    },
-    {
-     "type": "shape",
-     "name": "mountain2",
-     "add": "cone",
-     "params": {
-      "radius1": 75,
-      "radius2": 0.0,
-      "depth": 70,
-      "vertices": 7
-     },
-     "pos": [
-      125,
-      225,
-      33.0
-     ],
-     "yaw_deg": 34.0,
-     "colour": "#8E9BB0"
-    },
-    {
-     "type": "shape",
-     "name": "mountain3",
-     "add": "cone",
-     "params": {
-      "radius1": 55,
-      "radius2": 0.0,
-      "depth": 55,
-      "vertices": 7
-     },
-     "pos": [
-      -45,
-      215,
-      25.5
-     ],
-     "yaw_deg": 51.0,
-     "colour": "#8E9BB0"
+     "colour": "#5F8FA8"
     },
     {
      "type": "piece",
@@ -341,11 +355,11 @@
      "asset": "model.ph_modular_fort_01",
      "pos": [
       0,
-      62,
-      6.6
+      72,
+      13.97
      ],
      "yaw_deg": 0.0,
-     "scale": 2.4,
+     "scale": 1.4,
      "role": "landmark"
     },
     {
@@ -355,12 +369,12 @@
      "from": [
       -4.0,
       13.0,
-      0.0
+      -1.6
      ],
      "to": [
       4.0,
       13.0,
-      0.0
+      -1.6
      ],
      "step": 2.0,
      "yaw_deg": 0.0,
@@ -373,12 +387,12 @@
      "from": [
       -4.0,
       14.0,
-      0.0
+      -1.6
      ],
      "to": [
       4.0,
       14.0,
-      0.0
+      -1.6
      ],
      "step": 2.0,
      "yaw_deg": 0.0,
@@ -391,12 +405,12 @@
      "from": [
       -4.0,
       15.0,
-      0.0
+      -1.6
      ],
      "to": [
       4.0,
       15.0,
-      0.0
+      -1.6
      ],
      "step": 2.0,
      "yaw_deg": 0.0,
@@ -418,257 +432,518 @@
      "type": "floor",
      "name": "approach_l",
      "asset": "model.mvk_floor_brick",
-     "nx": 4,
+     "nx": 2,
      "ny": 2,
      "centre": [
       -10.0,
       14.0
      ],
-     "z": 0.05
+     "z": 3.0
     },
     {
      "type": "floor",
      "name": "approach_r",
      "asset": "model.mvk_floor_brick",
-     "nx": 4,
+     "nx": 2,
      "ny": 2,
      "centre": [
       10.0,
       14.0
      ],
-     "z": 0.05
+     "z": 3.0
     },
     {
-     "type": "ring",
+     "type": "house",
      "name": "house0",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "medium",
      "centre": [
-      -18,
-      24
+      21.23,
+      38.86
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": -59.0,
+     "terrain": true
     },
     {
-     "type": "piece",
-     "name": "roof0",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -18,
-      24,
-      3.1
-     ],
-     "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house1",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "small",
      "centre": [
-      -30,
-      30
+      18.38,
+      45.2
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": -48.4,
+     "terrain": true
     },
     {
-     "type": "piece",
-     "name": "roof1",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -30,
-      30,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house2",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "large",
      "centre": [
-      -16,
-      38
+      14.95,
+      51.01
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": -48.4,
+     "terrain": true
     },
     {
-     "type": "piece",
-     "name": "roof2",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -16,
-      38,
-      3.1
-     ],
-     "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house3",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "medium",
      "centre": [
-      -34,
-      46
+      6.19,
+      34.37
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": 131.6,
+     "terrain": true
     },
     {
-     "type": "piece",
-     "name": "roof3",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -34,
-      46,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house4",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "small",
      "centre": [
-      19,
-      26
+      0.82,
+      38.45
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": 131.6,
+     "terrain": true
     },
     {
-     "type": "piece",
-     "name": "roof4",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      19,
-      26,
-      3.1
-     ],
-     "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house5",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "large",
      "centre": [
-      31,
-      33
+      13.08,
+      53.25
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": -60.9,
+     "terrain": true
     },
     {
-     "type": "piece",
-     "name": "roof5",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      31,
-      33,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house6",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "small",
      "centre": [
-      17,
-      41
+      8.06,
+      56.94
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": -60.9,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house7",
+     "size": "medium",
+     "centre": [
+      -3.44,
+      44.08
+     ],
+     "yaw_deg": 119.1,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house8",
+     "size": "medium",
+     "centre": [
+      -7.33,
+      48.4
+     ],
+     "yaw_deg": 119.1,
+     "terrain": true
+    },
+    {
+     "type": "row",
+     "name": "fence_e",
+     "asset": "model.mvk_prop_woodenfence_single",
+     "from": [
+      26,
+      18,
+      -0.34
+     ],
+     "to": [
+      30,
+      40,
+      0.11
+     ],
+     "step": 2.0,
+     "yaw_deg": 79.7,
+     "scale": 1.0,
+     "role": "fence"
+    },
+    {
+     "type": "row",
+     "name": "fence_w",
+     "asset": "model.mvk_prop_woodenfence_single",
+     "from": [
+      -6,
+      24,
+      -3.09
+     ],
+     "to": [
+      -14,
+      40,
+      2.65
+     ],
+     "step": 2.0,
+     "yaw_deg": 116.6,
+     "scale": 1.0,
+     "role": "fence"
     },
     {
      "type": "piece",
-     "name": "roof6",
-     "asset": "model.mvk_roof_roundtiles_6x6",
+     "name": "cart0",
+     "asset": "model.mvk_prop_wagon",
      "pos": [
-      17,
-      41,
-      3.1
+      22,
+      34,
+      0
+     ],
+     "yaw_deg": 70.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "cart1",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      8,
+      31,
+      0
+     ],
+     "yaw_deg": 100.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels0",
+     "asset": "model.ph_wooden_barrels_01",
+     "pos": [
+      21,
+      23,
+      0
      ],
      "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
-     "name": "house7",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
-     "centre": [
-      35,
-      47
-     ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "scale": 1.5,
+     "role": "prop",
+     "terrain": true
     },
     {
      "type": "piece",
-     "name": "roof7",
-     "asset": "model.mvk_roof_roundtiles_6x6",
+     "name": "crate0",
+     "asset": "model.ph_wooden_crate_02",
      "pos": [
-      35,
-      47,
-      3.1
+      22.3,
+      23.5,
+      0
      ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
+     "yaw_deg": 0.0,
+     "scale": 1.3,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels1",
+     "asset": "model.ph_wooden_barrels_01",
+     "pos": [
+      22.5,
+      24.5,
+      0
+     ],
+     "yaw_deg": 40.0,
+     "scale": 1.5,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate1",
+     "asset": "model.ph_wooden_crate_02",
+     "pos": [
+      23.8,
+      25.0,
+      0
+     ],
+     "yaw_deg": 25.0,
+     "scale": 1.3,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels2",
+     "asset": "model.ph_wooden_barrels_01",
+     "pos": [
+      12,
+      33,
+      0
+     ],
+     "yaw_deg": 80.0,
+     "scale": 1.5,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate2",
+     "asset": "model.ph_wooden_crate_02",
+     "pos": [
+      13.3,
+      33.5,
+      0
+     ],
+     "yaw_deg": 50.0,
+     "scale": 1.3,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels3",
+     "asset": "model.ph_wooden_barrels_01",
+     "pos": [
+      9.5,
+      35.5,
+      0
+     ],
+     "yaw_deg": 120.0,
+     "scale": 1.5,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate3",
+     "asset": "model.ph_wooden_crate_02",
+     "pos": [
+      10.8,
+      36.0,
+      0
+     ],
+     "yaw_deg": 75.0,
+     "scale": 1.3,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels4",
+     "asset": "model.ph_wooden_barrels_01",
+     "pos": [
+      15,
+      24,
+      0
+     ],
+     "yaw_deg": 160.0,
+     "scale": 1.5,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate4",
+     "asset": "model.ph_wooden_crate_02",
+     "pos": [
+      16.3,
+      24.5,
+      0
+     ],
+     "yaw_deg": 100.0,
+     "scale": 1.3,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "shape",
+     "name": "hay0",
+     "add": "cone",
+     "params": {
+      "radius1": 1.3,
+      "radius2": 0.1,
+      "depth": 2.0,
+      "vertices": 9
+     },
+     "pos": [
+      24.5,
+      29,
+      0.64
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9B95A"
+    },
+    {
+     "type": "shape",
+     "name": "hay1",
+     "add": "cone",
+     "params": {
+      "radius1": 1.3,
+      "radius2": 0.1,
+      "depth": 2.0,
+      "vertices": 9
+     },
+     "pos": [
+      4,
+      26,
+      0.35
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9B95A"
+    },
+    {
+     "type": "shape",
+     "name": "hay2",
+     "add": "cone",
+     "params": {
+      "radius1": 1.3,
+      "radius2": 0.1,
+      "depth": 2.0,
+      "vertices": 9
+     },
+     "pos": [
+      2.5,
+      38,
+      4.61
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9B95A"
+    },
+    {
+     "type": "shape",
+     "name": "banner_pole0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.12,
+      "depth": 7.0,
+      "vertices": 6
+     },
+     "pos": [
+      -3.0,
+      55,
+      17.63
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5A4630"
+    },
+    {
+     "type": "shape",
+     "name": "banner0",
+     "add": "cube",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      -3.7,
+      55,
+      19.33
+     ],
+     "scale": [
+      0.6,
+      0.04,
+      1.5
+     ],
+     "colour": "#A8322D"
+    },
+    {
+     "type": "shape",
+     "name": "banner_pole1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.12,
+      "depth": 7.0,
+      "vertices": 6
+     },
+     "pos": [
+      3.0,
+      55,
+      17.64
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5A4630"
+    },
+    {
+     "type": "shape",
+     "name": "banner1",
+     "add": "cube",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      3.7,
+      55,
+      19.34
+     ],
+     "scale": [
+      0.6,
+      0.04,
+      1.5
+     ],
+     "colour": "#A8322D"
+    },
+    {
+     "type": "piece",
+     "name": "lantern0",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      13.5,
+      25,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "lantern1",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      16,
+      31,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "lantern2",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      6,
+      40,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop",
+     "terrain": true
     },
     {
      "type": "scatter",
@@ -677,105 +952,84 @@
       "model.snm_pine_1",
       "model.snm_pine_3"
      ],
-     "count": 60,
+     "count": 230,
      "rect": [
-      -85,
-      -12,
-      85,
-      95
+      -110,
+      -5,
+      110,
+      150
      ],
      "seed": 11,
      "scale": [
       1.0,
-      1.7
+      1.8
      ],
      "avoid": [
       [
-       -18,
-       24,
+       21.23,
+       38.86,
        7.5
       ],
       [
-       -30,
-       30,
+       18.38,
+       45.2,
        7.5
       ],
       [
-       -16,
-       38,
+       14.95,
+       51.01,
        7.5
       ],
       [
-       -34,
-       46,
+       6.19,
+       34.37,
        7.5
       ],
       [
-       19,
-       26,
+       0.82,
+       38.45,
        7.5
       ],
       [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
        31,
-       33,
-       7.5
-      ],
-      [
-       17,
-       41,
-       7.5
-      ],
-      [
-       35,
-       47,
-       7.5
-      ],
-      [
-       0,
-       14,
-       9
-      ],
-      [
-       0,
-       60,
-       34
-      ],
-      [
-       0,
-       0,
-       9
-      ],
-      [
-       -26,
-       -14,
-       11
-      ],
-      [
-       -21,
-       0,
-       10
-      ],
-      [
-       -14,
-       14,
-       8
-      ],
-      [
-       -8,
-       30,
-       6
+       3.5
       ]
      ],
-     "z_of": {
-      "hill": [
-       0,
-       64,
-       -9,
-       72,
-       56,
-       16
-      ]
-     }
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
     },
     {
      "type": "scatter",
@@ -784,12 +1038,12 @@
       "model.snm_commontree_1",
       "model.snm_commontree_3"
      ],
-     "count": 40,
+     "count": 150,
      "rect": [
-      -70,
-      -12,
-      70,
-      60
+      -100,
+      -5,
+      100,
+      130
      ],
      "seed": 23,
      "scale": [
@@ -798,91 +1052,155 @@
      ],
      "avoid": [
       [
-       -18,
-       24,
+       21.23,
+       38.86,
        7.5
       ],
       [
-       -30,
-       30,
+       18.38,
+       45.2,
        7.5
       ],
       [
-       -16,
-       38,
+       14.95,
+       51.01,
        7.5
       ],
       [
-       -34,
-       46,
+       6.19,
+       34.37,
        7.5
       ],
       [
-       19,
-       26,
+       0.82,
+       38.45,
        7.5
       ],
       [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
        31,
-       33,
-       7.5
-      ],
-      [
-       17,
-       41,
-       7.5
-      ],
-      [
-       35,
-       47,
-       7.5
-      ],
-      [
-       0,
-       14,
-       9
-      ],
-      [
-       0,
-       60,
-       34
-      ],
-      [
-       0,
-       0,
-       9
-      ],
-      [
-       -26,
-       -14,
-       11
-      ],
-      [
-       -21,
-       0,
-       10
-      ],
-      [
-       -14,
-       14,
-       8
-      ],
-      [
-       -8,
-       30,
-       6
+       3.5
       ]
      ],
-     "z_of": {
-      "hill": [
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
+    },
+    {
+     "type": "scatter",
+     "name": "bush",
+     "assets": [
+      "model.snm_bush_common"
+     ],
+     "count": 70,
+     "rect": [
+      -60,
+      0,
+      60,
+      90
+     ],
+     "seed": 29,
+     "scale": [
+      1.0,
+      2.0
+     ],
+     "avoid": [
+      [
+       21.23,
+       38.86,
+       7.5
+      ],
+      [
+       18.38,
+       45.2,
+       7.5
+      ],
+      [
+       14.95,
+       51.01,
+       7.5
+      ],
+      [
+       6.19,
+       34.37,
+       7.5
+      ],
+      [
+       0.82,
+       38.45,
+       7.5
+      ],
+      [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
        0,
-       64,
-       -9,
        72,
-       56,
-       16
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
+       31,
+       3.5
       ]
-     }
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
     },
     {
      "type": "scatter",
@@ -890,114 +1208,110 @@
      "assets": [
       "model.snm_rock_medium_1"
      ],
-     "count": 14,
+     "count": 30,
      "rect": [
-      -40,
-      -10,
-      40,
-      40
+      -60,
+      10,
+      60,
+      100
      ],
      "seed": 5,
      "scale": [
       0.8,
-      2.0
+      2.2
      ],
      "avoid": [
       [
-       -18,
-       24,
+       21.23,
+       38.86,
        7.5
       ],
       [
-       -30,
-       30,
+       18.38,
+       45.2,
        7.5
       ],
       [
-       -16,
-       38,
+       14.95,
+       51.01,
        7.5
       ],
       [
-       -34,
-       46,
+       6.19,
+       34.37,
        7.5
       ],
       [
-       19,
-       26,
+       0.82,
+       38.45,
        7.5
       ],
       [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
        31,
-       33,
-       7.5
-      ],
-      [
-       17,
-       41,
-       7.5
-      ],
-      [
-       35,
-       47,
-       7.5
-      ],
-      [
-       0,
-       14,
-       9
-      ],
-      [
-       0,
-       0,
-       9
-      ],
-      [
-       -26,
-       -14,
-       11
-      ],
-      [
-       -21,
-       0,
-       10
-      ],
-      [
-       -14,
-       14,
-       8
-      ],
-      [
-       -8,
-       30,
-       6
+       3.5
       ]
      ],
-     "z_of": {
-      "hill": [
-       0,
-       64,
-       -9,
-       72,
-       56,
-       16
-      ]
-     }
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
     }
    ],
    "cast": [
+    [
+     "rain",
+     "rain_lead",
+     null,
+     null,
+     [
+      18.2,
+      23.0
+     ],
+     26.7,
+     null,
+     0
+    ],
     [
      "knight",
      "ink_test_m",
      "costume.mco_male_ranger",
      "support_blue",
      [
-      0.0,
-      14.0,
-      3.05
+      16.31,
+      24.05
      ],
-     0.0,
+     -30.3,
      "Idle_Talking_Loop",
      0
     ],
@@ -1007,11 +1321,10 @@
      "costume.mco_female_ranger",
      "answer_coral",
      [
-      -1.4,
-      15.0,
-      3.05
+      20.05,
+      23.75
      ],
-     160.0,
+     44.7,
      "Idle_Loop",
      7
     ],
@@ -1021,11 +1334,10 @@
      "costume.mco_male_peasant",
      "faction_a",
      [
-      1.6,
-      13.2,
-      3.05
+      14.17,
+      25.68
      ],
-     200.0,
+     -15.3,
      "Idle_Loop",
      19
     ],
@@ -1035,11 +1347,10 @@
      "costume.mco_female_peasant",
      "answer_coral",
      [
-      -3.2,
-      14.2,
-      3.05
+      21.75,
+      27.5
      ],
-     90.0,
+     -175.3,
      "Walk_Formal_Loop",
      4
     ],
@@ -1049,11 +1360,10 @@
      "costume.mco_male_peasant",
      "faction_a",
      [
-      3.6,
-      15.0,
-      3.05
+      16.91,
+      31.42
      ],
-     270.0,
+     -175.3,
      "Walk_Formal_Loop",
      15
     ],
@@ -1063,10 +1373,10 @@
      "costume.mco_male_ranger",
      "faction_b",
      [
-      -18.0,
-      22.0
+      18.18,
+      38.05
      ],
-     0.0,
+     4.7,
      "Sword_Idle",
      2
     ],
@@ -1076,116 +1386,77 @@
      "costume.mco_male_ranger",
      "faction_b",
      [
-      -12.0,
-      14.0,
-      0.05
+      15.1,
+      43.82
      ],
-     90.0,
+     4.7,
      "Sword_Idle",
      26
-    ],
-    [
-     "rain",
-     "rain_lead",
-     null,
-     null,
-     [
-      -0.6,
-      13.0,
-      3.05
-     ],
-     0.0,
-     null,
-     0
     ]
    ],
    "shots": {
     "castle_still": [
      [
-      -38.0,
-      -30.0,
-      26.0
+      34.0,
+      -6.0,
+      12.0
      ],
      null,
      [
       0.0,
-      60.0,
-      16.0
+      68.0,
+      22.0
      ],
      null,
-     28,
+     26,
      1
     ],
     "castle_push": [
      [
-      -38.0,
-      -30.0,
-      26.0
+      34.0,
+      -6.0,
+      12.0
      ],
      [
-      -26.0,
-      -14.0,
-      20.0
-     ],
-     [
-      0.0,
-      60.0,
-      16.0
-     ],
-     [
-      0.0,
-      60.0,
-      16.0
-     ],
-     28,
-     0
-    ],
-    "bridge_medium": [
-     [
-      -6.5,
-      2.0,
-      2.4
-     ],
-     [
-      -4.5,
+      26.0,
       4.0,
-      2.6
+      9.5
      ],
      [
       0.0,
-      14.5,
-      4.3
+      68.0,
+      22.0
      ],
      [
       0.0,
-      14.5,
-      4.3
+      68.0,
+      22.0
      ],
-     32,
+     26,
      0
     ],
     "castle_hero": [
      [
-      -2.0,
-      3.6,
-      2.0
+      18.76,
+      16.12,
+      1.75
      ],
      [
-      -1.4,
-      5.6,
-      1.9
-     ],
-     [
-      0.0,
-      30.0,
-      4.5
+      18.63,
+      17.71,
+      1.7
      ],
      [
       0.0,
-      30.0,
-      4.5
+      62.0,
+      5.15
      ],
-     32,
+     [
+      0.0,
+      62.0,
+      4.95
+     ],
+     26,
      0
     ]
    }

@@ -321,9 +321,72 @@ def _yaw(side: str) -> float:
     return {"north": 0.0, "south": 180.0, "west": 90.0, "east": -90.0}[side]
 
 
-def _placements(block: dict, name: str, t: dict) -> list[dict]:
+HOUSE_SIZES = {"small": (2, 2), "medium": (3, 2), "large": (4, 3)}   # wall modules (2 m each): 4x4 m, 6x4 m, 8x6 m
+WALL_H = 3.0   # a plaster wall module is 3.125 m high; the roof sits on its top edge
+
+
+def terrain_for(spec: dict):
+    """The layout's ``Terrain`` (explainer_engine.blender.terrain) or None."""
+    if not spec.get("terrain"):
+        return None
+    from explainer_engine.blender import terrain as TR
+    return TR.Terrain(spec["terrain"])
+
+
+def _house(block: dict, name: str, T) -> list[dict]:
+    """One complete house of the kit: a wall ring (a door on the south side, windows on the others, corner posts), a roof scaled to
+    the footprint with a small overhang and, on a large house, a chimney. ``size`` small/medium/large; ``yaw_deg`` turns the whole
+    house about its centre; with ``terrain`` it stands on the ground (the lowest corner, a hand's breadth sunk)."""
+    nx, ny = HOUSE_SIZES[block["size"]]
+    m = 2.0
+    hx, hy = nx * m / 2, ny * m / 2
+    cx, cy = block["centre"]
+    yaw = block.get("yaw_deg", 0.0)
+    ca, sa = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
+    rot = lambda x, y: (round(cx + x * ca - y * sa, 4), round(cy + x * sa + y * ca, 4))  # noqa: E731
+    z0 = block.get("z", 0.0)
+    if T is not None and block.get("terrain", True):
+        z0 = min(T.height(*rot(sx * hx, sy * hy)) for sx in (-1, 0, 1) for sy in (-1, 0, 1)) - 0.12
+    out = []
+    plain, door = block.get("wall", "model.mvk_wall_plaster_straight"), "model.mvk_wall_plaster_door_round"
+    window = "model.mvk_wall_plaster_window_wide_round"
+    for side in ("north", "south", "west", "east"):
+        count = nx if side in ("north", "south") else ny
+        for i in range(count):
+            run = (-hx if side in ("north", "south") else -hy) + m * (i + 0.5)
+            x, y = {"north": (run, hy), "south": (run, -hy), "west": (-hx, run), "east": (hx, run)}[side]
+            asset = plain
+            if side == "south" and i == count // 2:
+                asset = door
+            elif (side in ("north", "east", "west")) and i % 2 == 0 and count > 1 and side != "south":
+                asset = window
+            px, py = rot(x, y)
+            out.append({"name": f"{name}_{side}_{i}", "asset": asset, "pos": [px, py, round(z0, 3)], "yaw": round(_yaw(side) + yaw, 2),
+                        "scale": 1.0, "role": "wall"})
+    for k, (sx, sy) in enumerate(((-1, 1), (1, 1), (1, -1), (-1, -1))):
+        px, py = rot(sx * hx, sy * hy)
+        out.append({"name": f"{name}_corner_{k}", "asset": "model.mvk_corner_exterior_brick", "pos": [px, py, round(z0, 3)],
+                    "yaw": round(90.0 * k + yaw, 2), "scale": 1.0, "role": "corner"})
+    over = 1.0
+    rx, ry = rot(0.0, 0.0)
+    out.append({"name": f"{name}_roof", "asset": "model.mvk_roof_roundtiles_6x6", "pos": [rx, ry, round(z0 + WALL_H - 0.1, 3)], "yaw": round(yaw, 2),
+                "scale": [round((nx * m + over) / 8.25, 4), round((ny * m + over) / 8.03, 4), 0.62], "role": "roof"})
+    if block["size"] == "large":
+        px, py = rot(hx * 0.45, -hy * 0.3)
+        out.append({"name": f"{name}_chimney", "asset": "model.mvk_prop_chimney", "pos": [px, py, round(z0 + WALL_H + 0.8, 3)], "yaw": round(yaw, 2),
+                    "scale": 1.0, "role": "prop"})
+    return out
+
+
+def _placements(block: dict, name: str, t: dict, T=None) -> list[dict]:
     kind = block["type"]
+    if kind == "terrain":   # a mesh the renderer builds from the height field, not a kit piece
+        return []
+    if kind == "house":
+        return _house(block, name, T)
     if kind == "piece":
+        if block.get("terrain") and T is not None:
+            block = {**block, "pos": [block["pos"][0], block["pos"][1], round(T.height(block["pos"][0], block["pos"][1]) + block.get("dz", 0.0), 3)]}
         return [{"name": name, "asset": block["asset"], "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0),
                  "scale": block.get("scale", 1.0), "role": block.get("role", "piece")}]
     if kind == "shape":   # a primitive (hill, river, mountain) in a flat tone: {add, params, pos, scale, yaw_deg, colour}
@@ -335,13 +398,17 @@ def _placements(block: dict, name: str, t: dict) -> list[dict]:
         x0, y0, x1, y1 = block["rect"]
         out = []
         while len(out) < block["count"]:
-            x, y = rng.uniform(x0, x1), rng.uniform(y0, y1)
+            x, y = round(rng.uniform(x0, x1), 3), round(rng.uniform(y0, y1), 3)
             if block.get("river", True) and abs(x) < 7.5 and -40 < y < 60:   # the river bed (hill_castle)
                 continue
             if any(math.hypot(x - cx, y - cy) < r for cx, cy, r in block.get("avoid", [])):
                 continue
             z = 0.0
-            if "hill" in block.get("z_of", {}):   # the surface of the ellipsoid hill (cx, cy, cz, rx, ry, rz), never below the ground
+            if block.get("terrain") and T is not None:
+                z = T.height(x, y)
+                if z < block.get("min_z", 0.4) or T.road_dist(x, y) < block.get("road_clear", 3.5):
+                    continue
+            elif "hill" in block.get("z_of", {}):   # the surface of the ellipsoid hill (cx, cy, cz, rx, ry, rz), never below the ground
                 cx, cy, cz, rx, ry, rz = block["z_of"]["hill"]
                 q = 1 - ((x - cx) / rx) ** 2 - ((y - cy) / ry) ** 2
                 z = round(max(0.0, cz + rz * math.sqrt(q)) if q > 0 else 0.0, 3)
@@ -395,8 +462,9 @@ def placements(layout_id: str, *, t: dict | None = None, doc: dict | None = None
         raise WorldKitError(f"unknown layout {layout_id!r} (known: {', '.join(sorted(doc['layouts']))})")
     known = {a["id"] for a in t["assets"]}
     out = []
+    T = terrain_for(doc["layouts"][layout_id])
     for i, block in enumerate(doc["layouts"][layout_id]["blocks"]):
-        for p in _placements(block, block.get("name", f"{block['type']}{i}"), t):
+        for p in _placements(block, block.get("name", f"{block['type']}{i}"), t, T):
             if p["asset"] is not None and p["asset"] not in known:
                 raise WorldKitError(f"{layout_id}/{p['name']}: {p['asset']} is not in world_kits.json")
             out.append(p)
@@ -435,6 +503,19 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
     t = t or table()
     by_id = {a["id"]: a for a in t["assets"]}
     objs, mats, made = [], {}, {}
+    spec = (doc or layouts())["layouts"][layout_id]
+    T = terrain_for(spec)
+    for i, b in enumerate(spec["blocks"]):
+        if b["type"] != "terrain":
+            continue
+        from explainer_engine.blender import terrain as TR
+        grid = (TR.Ranges(b["range"]).mesh(*b["res"]) if "range" in b else T.mesh(*b["rect"], *b["res"]))
+        slots = {}
+        for ci, cname in enumerate(TR.CLASSES):
+            mname = f"terrain_{b['name']}_{cname}"
+            mats[mname] = {"base": b["colours"][cname]}
+            slots[str(ci)] = mname
+        objs.append({"name": b["name"], "terrain": grid, "location": [0, 0, b.get("z", 0.0)], "material": slots, "smooth": True})
     for p in placements(layout_id, t=t, doc=doc):
         if p["asset"] is None:   # a primitive of the layout
             sh = p["shape"]
@@ -509,7 +590,11 @@ def _layout_cast(layout: str, cpaths, rain_blend: Path | None = None) -> tuple[l
     when ``rain_blend`` is given (the .blend is not in the repo); she faces -Y, so yaw 0 faces a camera that looks along +Y."""
     from explainer_engine.blender import style_sheets as SS
     out, mats = [], {}
-    for n, c, co, tint, xyz, yaw, act, off in layouts()["layouts"][layout].get("cast", []):
+    spec = layouts()["layouts"][layout]
+    T = terrain_for(spec)
+    for n, c, co, tint, xyz, yaw, act, off in spec.get("cast", []):
+        if T is not None and len(xyz) == 2:
+            xyz = [xyz[0], xyz[1], T.height(xyz[0], xyz[1])]
         if c == "rain_lead":
             if rain_blend is None:
                 continue

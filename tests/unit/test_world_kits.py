@@ -222,19 +222,38 @@ def test_the_bpy_job_script_knows_the_gltf_object_kind():
     assert '"gltf" in o' in src and "def _gltf(" in src
 
 
-def test_hill_castle_is_a_static_epic_set_with_a_deterministic_wood():
+def test_hill_castle_is_a_static_epic_set_on_a_terrain_with_complete_houses_and_a_deterministic_wood():
+    from explainer_engine.blender import terrain as TR
     ps = W.placements("hill_castle")
     assert ps == W.placements("hill_castle")
-    names = [p["name"] for p in ps]
-    assert {"castle", "hill", "river", "ground"} <= set(names) and sum(n.startswith("house") for n in names) >= 8 * 4
+    T = W.terrain_for(W.layouts()["layouts"]["hill_castle"])
+    castle = next(p for p in ps if p["name"] == "castle")
+    assert abs(castle["pos"][2] - (T.height(0, 72) - 0.4)) < 0.01   # the castle stands on the crown of the hill, not a fixed height
+    houses = sorted({p["name"].rsplit("_", 2)[0] for p in ps if p["role"] == "wall"})
+    assert len(houses) >= 8
+    for h in houses:   # a complete house: walls on every side, a door, corner posts and a roof, all standing on the ground
+        parts = [p for p in ps if p["name"].startswith(h + "_")]
+        assert sum(p["role"] == "wall" for p in parts) >= 8 and sum(p["role"] == "corner" for p in parts) == 4
+        assert any(p["asset"].endswith("door_round") for p in parts) and sum(p["role"] == "roof" for p in parts) == 1
     trees = [p for p in ps if p["role"] == "scatter"]
-    assert len(trees) == 114 and all(abs(p["pos"][0]) >= 7.5 or not -40 < p["pos"][1] < 60 for p in trees)   # none in the river bed
-    assert any(p["pos"][2] > 1.0 for p in trees)   # trees on the hill follow its surface
+    assert len(trees) == 480
+    assert all(p["pos"][2] == T.height(p["pos"][0], p["pos"][1]) >= 0.5 and T.road_dist(p["pos"][0], p["pos"][1]) >= 4.5 for p in trees)
+    assert any(p["pos"][2] > 3.0 for p in trees)   # trees on the slope follow the surface
     ss = W.scene_set("hill_castle")
     assert ss["set_id"] == "hill_castle" and any(o["landmark"] and o["id"] == "castle" for o in ss["objects"])
+    assert TR.CLASSES[T.face_class(0, 56, T.height(0, 56), 0.1)] == "road"   # the road reaches the gate
 
 
-def test_hill_shots_have_a_still_and_a_push_and_shapes_become_flat_toon_primitives(tmp_path):
+def test_the_terrain_is_a_deterministic_height_field_with_a_river_and_a_raised_causeway():
+    T = W.terrain_for(W.layouts()["layouts"]["hill_castle"])
+    assert T.height(3.0, 40.0) == T.height(3.0, 40.0)
+    assert T.height(0, 72) > 10 > T.height(0, 0)       # a hill under the castle, low land in front
+    assert T.height(0, 8) < -1 and T.height(12, 14) > 1.5   # the river is carved, the bridge ends stand on the causeway
+    g = T.mesh(-10, 10, -10, 10, 5, 5)
+    assert len(g["heights"]) == 25 and len(g["face_class"]) == 16
+
+
+def test_hill_shots_have_a_still_a_push_and_a_hero_and_terrain_becomes_one_mesh_with_class_slots(tmp_path):
     gltf, files = synthetic()
     data, _ = W.pack_piece(gltf, files.get, 32)
     paths = {}
@@ -244,8 +263,10 @@ def test_hill_shots_have_a_still_and_a_push_and_shapes_become_flat_toon_primitiv
         paths[a["id"]] = f
     sc = W.poc_scenes(paths, None, 24, "hill_castle")
     assert sc["castle_still"]["frames_total"] == 1 and sc["castle_push"]["frames_total"] == 24 and "to" in sc["castle_push"]["camera"]
-    hill = next(o for o in sc["castle_push"]["objects"] if o["name"] == "hill")
-    assert hill["add"] == "uv_sphere" and sc["castle_push"]["materials"][hill["material"]] == {"base": "#8FA262"}
+    assert "castle_hero" in sc
+    g = next(o for o in sc["castle_push"]["objects"] if o["name"] == "ground")
+    assert len(g["terrain"]["heights"]) == g["terrain"]["nx"] * g["terrain"]["ny"] and len(g["material"]) == 6
+    assert all(sc["castle_push"]["materials"][m]["base"].startswith("#") for m in g["material"].values())
     tree = next(o for o in sc["castle_push"]["objects"] if o["name"].startswith("pine_"))
     assert sc["castle_push"]["materials"][tree["material"]]["base"].startswith("#")   # foliage: one flat tone, no raw PBR
 

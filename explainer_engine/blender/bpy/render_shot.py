@@ -119,6 +119,30 @@ def _place(ob, o):
     ob.scale = (sc, sc, sc) if isinstance(sc, (int, float)) else sc
 
 
+def _terrain(o, report):
+    """A height-field mesh (WP-Q8, ``blender/terrain.py``): a grid whose vertices carry the given heights, one material slot per
+    class, each quad assigned its class; the caller maps slot index -> toon material like a character's."""
+    g = o["terrain"]
+    nx, ny = g["nx"], g["ny"]
+    xs = [g["x0"] + (g["x1"] - g["x0"]) * i / (nx - 1) for i in range(nx)]
+    ys = [g["y0"] + (g["y1"] - g["y0"]) * j / (ny - 1) for j in range(ny)]
+    verts = [(xs[i], ys[j], g["heights"][j * nx + i]) for j in range(ny) for i in range(nx)]
+    faces = [(j * nx + i, j * nx + i + 1, (j + 1) * nx + i + 1, (j + 1) * nx + i) for j in range(ny - 1) for i in range(nx - 1)]
+    me = bpy.data.meshes.new(o["name"])
+    me.from_pydata(verts, [], faces)
+    me.update()
+    ob = bpy.data.objects.new(o["name"], me)
+    bpy.context.scene.collection.objects.link(ob)
+    for _ in range(max(int(k) for k in o["material"]) + 1):
+        me.materials.append(None)
+    for poly, c in zip(me.polygons, g["face_class"]):
+        poly.material_index = c
+    ob["is_terrain"] = True
+    report.setdefault("terrain", {})[o["name"]] = {"verts": len(verts), "faces": len(faces)}
+    _place(ob, o)
+    return [ob]
+
+
 def _append(o, report):
     """Mesh objects of a library .blend under one empty (their own transforms kept), with every material replaced by the named
     toon material. Armatures, widgets and curves are left out (a prop is drawn at its rest pose), and so are their modifiers."""
@@ -660,6 +684,9 @@ def build_described(scene, sc, report):
         elif "gltf" in o:
             obs = _gltf(o, report)
             handle = bpy.data.objects[o["name"]]
+        elif "terrain" in o:
+            obs = _terrain(o, report)
+            handle = obs[0]
         elif "character" in o:
             handle = build_character(o, int(sc.get("frames_total", 1)), pending, report)
             if o.get("to"):
@@ -671,7 +698,7 @@ def build_described(scene, sc, report):
                 moving.append((handle, o))
             continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf, character nor rig_blend")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf, terrain, character nor rig_blend")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))
@@ -886,7 +913,7 @@ def apply_style(scene, style, pending, report):
     if scene.world is None:
         scene.world = bpy.data.worlds.new("world")
     build_tree(scene.world.node_tree, style["world"], missing, "world")
-    cast = [ob for obs, name, _ in pending if isinstance(name, dict) for ob in obs]   # the character meshes
+    cast = [ob for obs, name, _ in pending if isinstance(name, dict) for ob in obs if not ob.get("is_terrain")]   # the character meshes
     if "lights" in style:   # WP-Q1: real coloured lights (style.StyleEngine.lights); key_light is only their record
         lights_applied = build_lights(scene, style["lights"], cast, missing)
         fill = None
