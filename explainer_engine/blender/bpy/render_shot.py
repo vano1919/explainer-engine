@@ -602,14 +602,27 @@ def apply_style(scene, style, pending, report):
     ob = bpy.data.objects.new("key", sun)
     scene.collection.objects.link(ob)
     ob.rotation_euler = kl["rotation_euler"]
+    fill = style.get("fill_light")   # ICW-05c looks: a cool fill from the other side, never a shadow caster
+    if fill:
+        fl = bpy.data.lights.new("fill", "SUN")
+        fl.energy, fl.use_shadow = fill["energy"], fill.get("use_shadow", False)
+        fob = bpy.data.objects.new("fill", fl)
+        scene.collection.objects.link(fob)
+        fob.rotation_euler = fill["rotation_euler"]
     la = style["line_art"]
-    bpy.ops.object.grease_pencil_add(type="LINEART_SCENE", location=(0, 0, 0))
-    gp = bpy.context.active_object
-    gp.name = "line_art"
-    mod = [m for m in gp.modifiers if m.type == "LINEART"][0]
-    mod.radius, mod.crease_threshold, mod.opacity = la["radius"], la["crease_threshold_rad"], la["opacity"]
-    for gm in gp.data.materials:
-        gm.grease_pencil.color = la["ink_rgba"]
+    mod = None
+    if la.get("enabled", True):   # a look without lines has no Line Art at all (and saves its CPU time)
+        bpy.ops.object.grease_pencil_add(type="LINEART_SCENE", location=(0, 0, 0))
+        gp = bpy.context.active_object
+        gp.name = "line_art"
+        mod = [m for m in gp.modifiers if m.type == "LINEART"][0]
+        mod.radius, mod.crease_threshold, mod.opacity = la["radius"], la["crease_threshold_rad"], la["opacity"]
+        for gm in gp.data.materials:
+            gm.grease_pencil.color = la["ink_rgba"]
+    dof = style.get("camera_dof")
+    if dof:
+        cd = scene.camera.data.dof
+        cd.use_dof, cd.focus_distance, cd.aperture_fstop = True, dof["focus_distance_m"], dof["fstop"]
     st = style["scene"]
     vs = scene.view_settings
     vs.view_transform = st["view_transform"]
@@ -621,8 +634,12 @@ def apply_style(scene, style, pending, report):
             continue
     else:
         raise RuntimeError(f"this Blender has no look {st['look']!r} (tried {st['look_ids']})")
-    applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius,
-               "crease_threshold": mod.crease_threshold}
+    applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius if mod else None,
+               "crease_threshold": mod.crease_threshold if mod else None}
+    if fill:
+        applied["fill_light"] = fill["energy"]
+    if dof:
+        applied["dof_fstop"] = scene.camera.data.dof.aperture_fstop
     for k, v in st.get("eevee", {}).items():
         set_attr(scene.eevee, k, v, applied, missing, f"eevee.{k}")
     for k, v in st.get("cycles", {}).items():
@@ -630,6 +647,8 @@ def apply_style(scene, style, pending, report):
             set_attr(scene.cycles, k, v, applied, missing, f"cycles.{k}")
     paper = style["paper"]
     if paper.get("enabled"):
+        if "z" in paper.get("passes", []):   # the painted plate mixes by depth
+            bpy.context.view_layer.use_pass_z = True
         ng = bpy.data.node_groups.new("ink_paper", "CompositorNodeTree")
         ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
         build_tree(ng, paper, missing, "paper")

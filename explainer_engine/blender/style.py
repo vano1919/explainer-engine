@@ -110,6 +110,8 @@ class StyleTokens:
     shadows: bool = False
     # Emit the colours AgX turns back into the palette hex (grade.py, agx_palette_match.json) instead of the raw hex.
     palette_match: bool = False
+    # ICW-05c: the look round's knobs (``Look``, ``look_variants.json``). None = the ICW-05 toon graph, byte for byte as before.
+    art: "Look | None" = None
 
     def __post_init__(self) -> None:
         # BP-173's weight band is enforced where the registry lists it (core/contracts.py, CN-17 on every shot_spec/2 the
@@ -167,6 +169,10 @@ class StyleTokens:
     def to_dict(self) -> dict:
         d = asdict(self)
         d["tones"], d["thresholds"] = list(self.tones), list(self.thresholds)
+        if self.art is None:
+            d.pop("art")   # the ICW-05 graphs keep their bytes and hashes
+        else:
+            d["art"] = self.art.to_dict()
         return d
 
 
@@ -197,6 +203,172 @@ def line_radius(px: float, distance_m: float, lens_mm: float, *, sensor_mm: floa
     return round(px * metres_per_px / LINE_PX_PER_RADIUS, 6)
 
 
+# --- the look round (ICW-05c, 2026-11-05) ------------------------------------------------------------------------------------
+# The creator's reference (a stylized 3D-animation sheet, "like this, but less 3D"): soft painterly shading, a warm key with a
+# cool fill and a bright rim, matte painted materials, soft-focus painted backgrounds, a warm limited palette, no hard outline.
+# ``Look`` holds the independent knobs of that slider (look_variants.json, schema look_variants/1); every knob is plain data here
+# and plain nodes in the graph, so a blend of two variants is one more JSON entry. Hex values still come only from the palette
+# (or, for the reference-swatch map, from the proposal colours that look_variants.json lists until ICW-07 decides on them).
+
+SHADE_MODES = ("toon", "soft", "feathered", "flat", "painted_light")
+LIGHT_RIGS = ("cinematic", "key_rim", "flat_key", "ambient_only")
+LINE_MODES = ("none", "faint", "dark", "ink")
+BG_MODES = ("set", "dof", "plate", "flat")
+SKIES = ("paper", "gradient", "hdri")
+PALETTE_MAPS = ("raw", "warm_cinematic", "reference_swatches")
+KUWAHARA_SCOPES = ("frame", "background")
+
+
+def _tup(x) -> tuple:
+    return tuple(tuple(v) if isinstance(v, list) else v for v in x)
+
+
+@dataclass(frozen=True)
+class Look:
+    """One spot on the reference -> flat-painting slider. Shares are 0..1; colours are RGB multipliers (never hex)."""
+    id: str = "custom"
+    slider: int = 0                                         # 0 = the reference's stylized 3D, 10 = a flat painting of it
+    shade_mode: str = "soft"
+    ramp: tuple = ((0.0, 0.42), (0.35, 0.72), (0.9, 1.0))  # (light luminance, tone) stops; soft = blended between them
+    feather: float = 0.0                                    # feathered: the width of each step's soft edge (luminance)
+    shadow_tint: tuple = (0.86, 0.88, 1.0)                  # the dark end leans cool (the fill), the lit end warm (the key)
+    light_tint: tuple = (1.0, 0.97, 0.9)
+    brush: float = 0.0                                      # painted brush-stroke texture on the fills (share of value)
+    halftone: float = 0.0                                   # dots in the darkest step (share darkened under a dot)
+    texture_keep: float | None = None                       # at least this much of a set's photo texture survives (grounds, walls)
+    costume_keep: float | None = None                       # how much of a costume's own painted atlas survives over its tint
+    palette_map: str = "warm_cinematic"
+    saturation: float = 0.9
+    value: float = 1.0
+    warmth: float = 0.25                                    # share of a warm multiply over every surface
+    light_rig: str = "key_rim"
+    shadow_softness_deg: float = 6.0                        # the sun's disc when the rig casts shadows (soft edge)
+    fill: float = 0.45                                      # fill light energy (adds luminance on the shadow side)
+    rim_strength: float = 0.3
+    rim_tint: tuple = (1.0, 0.86, 0.66)
+    rim_soft: float = 0.08                                  # facing band over which the rim fades in
+    line_mode: str = "none"
+    line_px: float = 1.5
+    line_opacity: float = 1.0
+    line_colour: str = "ink"                                # a palette token (faint/coloured lines use a warm dark token)
+    bg_mode: str = "dof"
+    fstop: float = 2.8
+    sky: str = "gradient"
+    kuwahara: int = 0                                       # Kuwahara size in px at 1440p (0 = off)
+    kuwahara_scope: str = "frame"
+    plate_kuwahara: int = 0                                 # Kuwahara size on the far background only (bg_mode plate)
+    bleed: int = 0                                          # edge-aware blur of the fills, px at 1440p
+    paper: float = 0.0                                      # paper as a multiply base, share
+    grain: float = 0.0                                      # fine paint grain, share
+    vignette: float = 0.0
+    feel: str = ""
+
+    def __post_init__(self) -> None:
+        for name, val, known in (("shade_mode", self.shade_mode, SHADE_MODES), ("light_rig", self.light_rig, LIGHT_RIGS),
+                                 ("line_mode", self.line_mode, LINE_MODES), ("bg_mode", self.bg_mode, BG_MODES),
+                                 ("sky", self.sky, SKIES), ("palette_map", self.palette_map, PALETTE_MAPS),
+                                 ("kuwahara_scope", self.kuwahara_scope, KUWAHARA_SCOPES)):
+            if val not in known:
+                raise ValueError(f"{self.id}: unknown {name} {val!r} (known: {', '.join(known)})")
+        for name in ("brush", "halftone", "warmth", "paper", "grain", "vignette", "line_opacity", "feather", "rim_strength"):
+            if not 0 <= getattr(self, name) <= 1:
+                raise ValueError(f"{self.id}: {name} {getattr(self, name)} is not a share 0..1")
+        for name in ("texture_keep", "costume_keep"):
+            if getattr(self, name) is not None and not 0 <= getattr(self, name) <= 1:
+                raise ValueError(f"{self.id}: {name} is a share 0..1")
+        pos = [p for p, _ in self.ramp]
+        if not self.ramp or pos != sorted(pos) or len(set(pos)) != len(pos) or not all(0 <= p <= 1 for p in pos):
+            raise ValueError(f"{self.id}: ramp positions rise strictly inside 0..1")
+        if not all(0 < t <= 1.5 for _, t in self.ramp):
+            raise ValueError(f"{self.id}: ramp tones are light multipliers 0..1.5")
+        if not 0 <= self.slider <= 10:
+            raise ValueError(f"{self.id}: slider is 0..10")
+        if self.line_mode != "none" and not self.line_px > 0:
+            raise ValueError(f"{self.id}: a drawn line needs a width")
+        if not 0.5 <= self.fstop <= 64:
+            raise ValueError(f"{self.id}: f-stop {self.fstop} outside 0.5..64")
+        for name in ("kuwahara", "plate_kuwahara", "bleed"):
+            if not 0 <= getattr(self, name) <= 40:
+                raise ValueError(f"{self.id}: {name} {getattr(self, name)} px outside 0..40")
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Look":
+        kw = {k: v for k, v in d.items() if k not in ("label",)}
+        for k in ("ramp", "shadow_tint", "light_tint", "rim_tint"):
+            if k in kw:
+                kw[k] = _tup(kw[k])
+        return cls(**kw)
+
+    def to_dict(self) -> dict:
+        return json.loads(json.dumps(asdict(self)))
+
+    @property
+    def casts_shadows(self) -> bool:
+        return self.light_rig == "cinematic" or self.shade_mode == "flat" and self.light_rig != "ambient_only"
+
+
+def _mul(a, b) -> list[float]:
+    return [round(x * y, 6) for x, y in zip(a, b)]
+
+
+def _lerp(a, b, t) -> list[float]:
+    return [round(x + (y - x) * t, 6) for x, y in zip(a, b)]
+
+
+def _hex_scaled(hex_color: str, sat: float = 1.0, val: float = 1.0) -> str:
+    import colorsys
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    hh, ss, vv = colorsys.rgb_to_hsv(r, g, b)
+    r, g, b = colorsys.hsv_to_rgb(hh, min(1.0, ss * sat), min(1.0, vv * val))
+    return "#" + "".join(f"{round(c * 255):02x}" for c in (r, g, b))
+
+
+def _warm_neutral(hex_color: str) -> str:
+    """The warm cinematic map on a token: a near-neutral (grey stone, the night blue-grey, the ink) turns to a warm neutral of the
+    same value (the reference's stone and shadows are warm); saturated tokens keep their hue (the shader warms them)."""
+    import colorsys
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    hh, ss, vv = colorsys.rgb_to_hsv(r, g, b)
+    if ss >= 0.35:
+        return hex_color
+    r, g, b = colorsys.hsv_to_rgb(0.08, min(1.0, ss * 0.9 + 0.06), vv)
+    return "#" + "".join(f"{round(c * 255):02x}" for c in (r, g, b))
+
+
+VARIANTS_PATH = Path(__file__).resolve().parent / "look_variants.json"
+LOOK_SCHEMA = "look_variants/1"
+SWATCH_SUFFIX = "_swatch"
+
+
+def look_variants(path: Path | None = None) -> dict:
+    """The look round's document (``look_variants.json``): ``variants`` (id -> knobs + label + feel), ``swatch_map`` (palette token
+    -> the reference sheet's swatch, proposal colours), ``base`` (StyleTokens overrides every look shares)."""
+    doc = json.loads(Path(path or VARIANTS_PATH).read_text(encoding="utf-8"))
+    if doc.get("schema") != LOOK_SCHEMA:
+        raise ValueError(f"{path or VARIANTS_PATH} is not a {LOOK_SCHEMA} document")
+    return doc
+
+
+def look_tokens(variant_id: str, *, doc: dict | None = None) -> StyleTokens:
+    """StyleTokens for one look variant: the ICW-05 B tokens with the look attached (its line width as ``line_px``)."""
+    doc = doc or look_variants()
+    twin = variant_id.endswith(SWATCH_SUFFIX)
+    vid = variant_id[: -len(SWATCH_SUFFIX)] if twin else variant_id
+    v = next((x for x in doc["variants"] if x["id"] == vid), None)
+    if twin and vid not in doc.get("swatch_twins", []):
+        v = None
+    if v is not None and twin:
+        v = {**v, "id": variant_id, "palette_map": "reference_swatches", "label": v["label"] + ", reference swatches"}
+    if v is None:
+        raise KeyError(f"unknown look variant {variant_id!r} (known: {', '.join(x['id'] for x in doc['variants'])})")
+    art = Look.from_dict(v)
+    base = variant("B")
+    return replace(base, line_px=art.line_px if art.line_mode != "none" else base.line_px, shadows=art.casts_shadows,
+                   rim=art.rim_strength > 0, rim_strength=art.rim_strength, art=art)
+
+
 # --- node graphs ---------------------------------------------------------------------------------------------------------------
 # A graph is {"nodes": [{"id", "type", "props"?, "inputs"?, "ramp"?}], "links": [[from_id, out_socket, to_id, in_socket]]}.
 # Sockets are names, or integers where Blender's Mix node repeats a name per data type (inputs 6/7 = A/B colour, output 2 =
@@ -220,6 +392,7 @@ class StyleEngine:
     def __init__(self, tokens: StyleTokens | None = None) -> None:
         self.t = tokens or StyleTokens()
         self.pal = palette()
+        self.swatches = look_variants().get("swatch_map", {}) if self.t.art is not None else {}
 
     # -- materials --
     def _tone_nodes(self, path: str) -> tuple[list[dict], list[list], str]:
@@ -253,12 +426,18 @@ class StyleEngine:
         return rgba(h)
 
     def material(self, name: str, base: str | list[float], *, path: str = "eevee", texture: str | None = None,
-                 texture_mean: list[float] | None = None, tile: float | None = None, strength: float | None = None) -> dict:
+                 texture_mean: list[float] | None = None, tile: float | None = None, strength: float | None = None,
+                 slot: str | None = None) -> dict:
         """One toon material. ``base`` is a palette token, a hex or a linear RGBA; ``texture`` (an image path, the library file of
         a converted asset) is kept at ``texture_strength`` over ``texture_mean`` (its mean colour, linear), so a photo texture
         becomes a flat colour field with a trace of its grain (no raw PBR look, D-102); ``tile`` repeats it over the UVs (a
         ground plane), else the asset's own UVs are used. ``strength`` overrides the token's ``texture_strength`` for this material
-        (a character's costume atlas keeps more of its own parts than a photo ground does; ICW-06)."""
+        (a character's costume atlas keeps more of its own parts than a photo ground does; ICW-06). ``slot`` names a character
+        material's role (``costume``): only the look round reads it (``Look.costume_keep``)."""
+        if self.t.art is not None:
+            if path != "eevee":
+                raise ValueError(f"{name}: the look round's graphs are EEVEE-only (Shader to RGB)")
+            return self._art_material(name, base, texture=texture, texture_mean=texture_mean, tile=tile, strength=strength, slot=slot)
         t = self.t
         if strength is not None and not 0 <= strength <= 1:
             raise ValueError(f"{name}: texture strength {strength} is not a share 0..1")
@@ -295,9 +474,251 @@ class StyleEngine:
         links += [[last, 2, "emit", "Color"], ["emit", "Emission", "out", "Surface"]]
         return _keys({"name": name, "path": path, "nodes": nodes, "links": links})
 
+    # -- the look round (ICW-05c): the same document shape, other node trees --
+    def _art_colour(self, name_or_hex: str) -> list[float]:
+        """A token through the look's palette map: ``reference_swatches`` swaps a token for its swatch (proposal colours of
+        look_variants.json); the warm map is applied in the shader (it must reach textures too)."""
+        a = self.t.art
+        if a.palette_map == "reference_swatches" and name_or_hex in self.swatches:
+            return rgba(self.swatches[name_or_hex])
+        h = self.pal.get(name_or_hex, name_or_hex)
+        return rgba(_warm_neutral(h) if a.palette_map == "warm_cinematic" else h)
+
+    def _art_ramp(self) -> dict:
+        a = self.t.art
+        tone_of = lambda v: _lerp(a.shadow_tint, a.light_tint, min(1.0, max(0.0, (v - 0.4) / 0.6)))  # noqa: E731
+        stop = lambda p, v: [round(p, 6), [*[round(v * c, 6) for c in tone_of(v)], 1.0]]  # noqa: E731
+        if a.shade_mode == "feathered" and a.feather > 0:
+            stops = [stop(a.ramp[0][0], a.ramp[0][1])]
+            for (p0, v0), (p, v) in zip(a.ramp, a.ramp[1:]):
+                lo, hi = max(p0 + 1e-3, p - a.feather / 2), min(1.0, p + a.feather / 2)
+                stops += [stop(lo, v0), stop(hi, v)]
+            return {"interpolation": "LINEAR", "stops": stops}
+        interp = {"soft": "EASE", "painted_light": "LINEAR"}.get(a.shade_mode, "CONSTANT")
+        return {"interpolation": interp, "stops": [stop(p, v) for p, v in a.ramp]}
+
+    def _art_material(self, name: str, base, *, texture=None, texture_mean=None, tile=None, strength=None, slot=None) -> dict:
+        t, a = self.t, self.t.art
+        keep = t.texture_strength if strength is None else float(strength)
+        if texture is not None:
+            if slot == "costume" and a.costume_keep is not None:   # the costume's own painted atlas over the shot's tint
+                keep = a.costume_keep
+            elif strength is None and a.texture_keep is not None:  # a set's photo texture (grounds, walls, props)
+                keep = max(keep, a.texture_keep)
+        if not 0 <= keep <= 1:
+            raise ValueError(f"{name}: texture strength {keep} is not a share 0..1")
+        base_rgba = self._art_colour(base) if isinstance(base, str) else [round(float(x), 6) for x in base][:3] + [1.0]
+        if a.shade_mode == "painted_light":   # light painted onto the form: a soft top-to-bottom gradient, no live light
+            nodes = [{"id": "coords", "type": "ShaderNodeTexCoord"},
+                     {"id": "xyz", "type": "ShaderNodeSeparateXYZ"},
+                     {"id": "tone", "type": "ShaderNodeValToRGB", "ramp": self._art_ramp()}]
+            links = [["coords", "Generated", "xyz", "Vector"], ["xyz", "Z", "tone", "Fac"]]
+        else:
+            nodes = [{"id": "diffuse", "type": "ShaderNodeBsdfDiffuse", "inputs": {"Color": [1.0, 1.0, 1.0, 1.0], "Roughness": 0.0}},
+                     {"id": "to_rgb", "type": "ShaderNodeShaderToRGB"},
+                     {"id": "luma", "type": "ShaderNodeRGBToBW"},
+                     {"id": "tone", "type": "ShaderNodeValToRGB", "ramp": self._art_ramp()}]
+            links = [["diffuse", "BSDF", "to_rgb", "Shader"], ["to_rgb", "Color", "luma", "Color"], ["luma", "Val", "tone", "Fac"]]
+        nodes.append({"id": "base", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                      "inputs": {"Factor": 1.0, 6: base_rgba}})
+        links.append(["tone", "Color", "base", 7])
+        if texture is not None:
+            mean = [round(float(x), 6) for x in (texture_mean or base_rgba[:3])][:3] + [1.0]
+            nodes += [{"id": "tex", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": texture},
+                      {"id": "flatten", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                       "inputs": {"Factor": round(keep, 6), 6: mean}}]
+            links += [["tex", "Color", "flatten", 7], ["flatten", 2, "base", 6]]
+            if tile is not None:
+                nodes += [{"id": "uv", "type": "ShaderNodeTexCoord"},
+                          {"id": "tiling", "type": "ShaderNodeMapping", "inputs": {"Scale": [float(tile), float(tile), 1.0]}}]
+                links += [["uv", "UV", "tiling", "Vector"], ["tiling", "Vector", "tex", "Vector"]]
+        last = "base"
+        if a.brush > 0:   # brush strokes: a stretched object-space noise modulates the fill's value by +-brush
+            b = round(a.brush, 6)
+            nodes += [{"id": "brush_uv", "type": "ShaderNodeTexCoord"},
+                      {"id": "brush_dir", "type": "ShaderNodeMapping", "inputs": {"Scale": [3.0, 3.0, 18.0]}},
+                      {"id": "brush_noise", "type": "ShaderNodeTexNoise", "inputs": {"Scale": 4.0, "Detail": 3.0, "Roughness": 0.6}},
+                      {"id": "brush_gain", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY_ADD"},
+                       "inputs": {1: round(2 * b, 6), 2: round(1 - b, 6)}},
+                      {"id": "brush", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": 1.0}}]
+            links += [["brush_uv", "Object", "brush_dir", "Vector"], ["brush_dir", "Vector", "brush_noise", "Vector"],
+                      ["brush_noise", "Fac", "brush_gain", 0], [last, 2, "brush", 6], ["brush_gain", "Value", "brush", 7]]
+            last = "brush"
+        if a.halftone > 0 and a.shade_mode != "painted_light":   # print dots, only where the light is in the darkest step
+            k = 900.0
+            nodes += [{"id": "ht_uv", "type": "ShaderNodeTexCoord"},
+                      {"id": "ht_xyz", "type": "ShaderNodeSeparateXYZ"},
+                      {"id": "ht_x", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(k * 16 / 9, 3)}},
+                      {"id": "ht_y", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: k}},
+                      {"id": "ht_sx", "type": "ShaderNodeMath", "props": {"operation": "SINE"}},
+                      {"id": "ht_sy", "type": "ShaderNodeMath", "props": {"operation": "SINE"}},
+                      {"id": "ht_prod", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}},
+                      {"id": "ht_dot", "type": "ShaderNodeMath", "props": {"operation": "GREATER_THAN"}, "inputs": {1: 0.3}},
+                      {"id": "ht_dark", "type": "ShaderNodeMath", "props": {"operation": "LESS_THAN"},
+                       "inputs": {1: round(a.ramp[1][0] if len(a.ramp) > 1 else 0.2, 6)}},
+                      {"id": "ht_mask", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}},
+                      {"id": "halftone", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {7: [round(1 - a.halftone, 6)] * 3 + [1.0]}}]
+            links += [["ht_uv", "Window", "ht_xyz", "Vector"], ["ht_xyz", "X", "ht_x", 0], ["ht_xyz", "Y", "ht_y", 0],
+                      ["ht_x", "Value", "ht_sx", 0], ["ht_y", "Value", "ht_sy", 0], ["ht_sx", "Value", "ht_prod", 0],
+                      ["ht_sy", "Value", "ht_prod", 1], ["ht_prod", "Value", "ht_dot", 0], ["luma", "Val", "ht_dark", 0],
+                      ["ht_dot", "Value", "ht_mask", 0], ["ht_dark", "Value", "ht_mask", 1], ["ht_mask", "Value", "halftone", "Factor"],
+                      [last, 2, "halftone", 6]]
+            last = "halftone"
+        if a.palette_map == "warm_cinematic" or a.saturation != 1 or a.value != 1:
+            nodes += [{"id": "grade", "type": "ShaderNodeHueSaturation",
+                       "inputs": {"Hue": 0.5, "Saturation": round(a.saturation, 6), "Value": round(a.value, 6), "Fac": 1.0}}]
+            links += [[last, 2, "grade", "Color"]]
+            last, out_sock = "grade", "Color"
+        else:
+            out_sock = 2
+        if a.warmth > 0:
+            nodes += [{"id": "warm", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": round(a.warmth, 6), 7: [1.0, 0.86, 0.68, 1.0]}}]
+            links += [[last, out_sock, "warm", 6]]
+            last, out_sock = "warm", 2
+        if a.rim_strength > 0:
+            rim = [round(a.rim_strength * c, 6) for c in a.rim_tint] + [1.0]
+            cut = t.rim_cut
+            nodes += [{"id": "facing", "type": "ShaderNodeLayerWeight", "inputs": {"Blend": t.rim_width}},
+                      {"id": "rim_cut", "type": "ShaderNodeValToRGB",
+                       "ramp": {"interpolation": "LINEAR", "stops": [[round(max(0.0, cut - a.rim_soft), 6), [0.0, 0.0, 0.0, 1.0]],
+                                                                       [cut, [1.0, 1.0, 1.0, 1.0]]]}},
+                      {"id": "rim", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "ADD"}, "inputs": {7: rim}}]
+            links += [["facing", "Facing", "rim_cut", "Fac"], ["rim_cut", "Color", "rim", "Factor"], [last, out_sock, "rim", 6]]
+            last, out_sock = "rim", 2
+        nodes += [{"id": "emit", "type": "ShaderNodeEmission", "inputs": {"Strength": 1.0}},
+                  {"id": "out", "type": "ShaderNodeOutputMaterial"}]
+        links += [[last, out_sock, "emit", "Color"], ["emit", "Emission", "out", "Surface"]]
+        return _keys({"name": name, "path": "eevee", "nodes": nodes, "links": links})
+
+    def _art_world(self, hdri: str | None) -> dict:
+        """Lighting = the weak paper ambient (as the toon world); camera rays see the look's sky: the paper, a painted gradient
+        sky (warm horizon to a soft blue, with noise clouds) or the HDRI's own sky, warmed."""
+        t, a = self.t, self.t.art
+        paper = rgba(self.pal[t.paper])
+        nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": t.ambient}},
+                 {"id": "backdrop", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": 1.0}},
+                 {"id": "is_cam", "type": "ShaderNodeLightPath"},
+                 {"id": "mix", "type": "ShaderNodeMixShader"},
+                 {"id": "out", "type": "ShaderNodeOutputWorld"}]
+        links = [["is_cam", "Is Camera Ray", "mix", "Fac"], ["light", "Background", "mix", 1], ["backdrop", "Background", "mix", 2],
+                 ["mix", "Shader", "out", "Surface"]]
+        if a.sky == "gradient" or a.sky == "hdri" and hdri is None:
+            horizon = rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97))
+            top = rgba(_hex_scaled(self.pal["support_blue"], 0.62, 0.86))
+            cloud = rgba(self.pal[t.paper])
+            nodes += [{"id": "dir", "type": "ShaderNodeTexCoord"},
+                      {"id": "dir_xyz", "type": "ShaderNodeSeparateXYZ"},
+                      {"id": "height", "type": "ShaderNodeMapRange", "inputs": {"From Min": 0.0, "From Max": 0.3}},
+                      {"id": "sky", "type": "ShaderNodeValToRGB",
+                       "ramp": {"interpolation": "EASE", "stops": [[0.0, horizon], [1.0, top]]}},
+                      {"id": "clouds", "type": "ShaderNodeTexNoise", "inputs": {"Scale": 2.2, "Detail": 4.0, "Roughness": 0.55}},
+                      {"id": "cloud_cut", "type": "ShaderNodeMapRange", "inputs": {"From Min": 0.52, "From Max": 0.72,
+                                                                                    "To Max": 0.7}},
+                      {"id": "sky_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                       "inputs": {7: cloud}}]
+            links += [["dir", "Generated", "dir_xyz", "Vector"], ["dir_xyz", "Z", "height", "Value"], ["height", "Result", "sky", "Fac"],
+                      ["dir", "Generated", "clouds", "Vector"], ["clouds", "Fac", "cloud_cut", "Value"],
+                      ["cloud_cut", "Result", "sky_mix", "Factor"], ["sky", "Color", "sky_mix", 6], ["sky_mix", 2, "backdrop", "Color"]]
+        elif a.sky == "hdri":   # the HDRI's sky above the horizon, a warm haze below it (a "puresky" HDRI is blank down there)
+            haze = rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97))
+            nodes += [{"id": "env", "type": "ShaderNodeTexEnvironment", "image": hdri},
+                      {"id": "sky_warm", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": 1.0, 7: [0.62, 0.56, 0.48, 1.0]}},
+                      {"id": "dir", "type": "ShaderNodeTexCoord"},
+                      {"id": "dir_xyz", "type": "ShaderNodeSeparateXYZ"},
+                      {"id": "above", "type": "ShaderNodeMapRange", "inputs": {"From Min": -0.01, "From Max": 0.03}},
+                      {"id": "sky_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                       "inputs": {6: haze}}]
+            links += [["env", "Color", "sky_warm", 6], ["dir", "Generated", "dir_xyz", "Vector"], ["dir_xyz", "Z", "above", "Value"],
+                      ["above", "Result", "sky_mix", "Factor"], ["sky_warm", 2, "sky_mix", 7], ["sky_mix", 2, "backdrop", "Color"]]
+        return _keys({"nodes": nodes, "links": links})
+
+    def _art_line(self, distance_m: float, lens_mm: float, sensor_mm: float) -> dict:
+        a = self.t.art
+        if a.line_mode == "none":
+            return {"enabled": False, "line_px_1440": 0.0, "mode": "none"}
+        return {"enabled": True, "mode": a.line_mode, "radius": line_radius(a.line_px, distance_m, lens_mm, sensor_mm=sensor_mm),
+                "line_px_1440": a.line_px, "focus_distance_m": round(distance_m, 4),
+                "crease_threshold_rad": round(math.radians(self.t.crease_deg), 6), "crease_deg": self.t.crease_deg,
+                "ink_rgba": self._art_colour(a.line_colour), "opacity": round(a.line_opacity, 6)}
+
+    def _art_finish(self, texture: str | None, *, focus_m: float) -> dict:
+        """The compositor finish of a look, in order: Kuwahara (whole frame, brush strokes), the far background painted as a plate
+        (a bigger Kuwahara mixed in by depth), bleed (edge-aware blur), paper as a multiply base, paint grain, vignette."""
+        a = self.t.art
+        nodes = [{"id": "render", "type": "CompositorNodeRLayers"}]
+        links: list[list] = []
+        cur, sock, passes = "render", "Image", []
+
+        def kuw(nid, size, src, ssock):
+            nodes.append({"id": nid, "type": "CompositorNodeKuwahara",
+                          "inputs": {"Type": "Anisotropic", "Size": int(size), "Uniformity": 4, "Sharpness": 0.5, "Eccentricity": 1.0}})
+            links.append([src, ssock, nid, "Image"])
+
+        if a.kuwahara and a.kuwahara_scope == "frame":
+            kuw("kuwahara", a.kuwahara, cur, sock)
+            cur, sock = "kuwahara", "Image"
+        if a.bg_mode == "plate" and (a.plate_kuwahara or a.kuwahara and a.kuwahara_scope == "background"):
+            passes.append("z")
+            kuw("plate", a.plate_kuwahara or a.kuwahara, cur, sock)
+            nodes += [{"id": "far", "type": "ShaderNodeMapRange",
+                       "inputs": {"From Min": round(focus_m * 1.15, 4), "From Max": round(focus_m * 2.2, 4)}},
+                      {"id": "plate_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"}}]
+            links += [["render", "Depth", "far", "Value"], ["far", "Result", "plate_mix", "Factor"], [cur, sock, "plate_mix", 6],
+                      ["plate", "Image", "plate_mix", 7]]
+            cur, sock = "plate_mix", 2
+        if a.bleed:
+            nodes.append({"id": "bleed", "type": "CompositorNodeBilateralblur", "inputs": {"Size": int(a.bleed), "Threshold": 0.12}})
+            links += [[cur, sock, "bleed", "Image"], [cur, sock, "bleed", "Determinator"]]
+            cur, sock = "bleed", "Image"
+        if a.paper > 0 and texture is not None:   # paper as the base: the frame is multiplied into the sheet's grain
+            p = round(a.paper, 6)
+            nodes += [{"id": "paper", "type": "CompositorNodeImage", "image": texture},
+                      {"id": "fit", "type": "CompositorNodeScale", "inputs": {"Type": "Render Size", "Frame Type": "Crop"}},
+                      {"id": "grey", "type": "CompositorNodeRGBToBW"},
+                      {"id": "stretch", "type": "CompositorNodeNormalize"},
+                      {"id": "paper_gain", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY_ADD"}, "inputs": {1: p, 2: round(1 - p, 6)}},
+                      {"id": "paper_mul", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": 1.0}}]
+            links += [["paper", "Image", "fit", "Image"], ["fit", "Image", "grey", "Image"], ["grey", "Val", "stretch", 0],
+                      ["stretch", 0, "paper_gain", 0], [cur, sock, "paper_mul", 6], ["paper_gain", "Value", "paper_mul", 7]]
+            cur, sock = "paper_mul", 2
+        if a.grain > 0 or a.vignette > 0:
+            nodes.append({"id": "coords", "type": "CompositorNodeImageCoordinates"})
+            links.append(["render", "Image", "coords", "Image"])
+        if a.grain > 0:   # static paint grain in screen space (it stays put frame to frame, like the paper)
+            g = round(a.grain, 6)
+            nodes += [{"id": "grain_noise", "type": "ShaderNodeTexNoise", "inputs": {"Scale": 0.35, "Detail": 2.0, "Roughness": 0.7}},
+                      {"id": "grain_gain", "type": "ShaderNodeMapRange",
+                       "inputs": {"From Min": 0.3, "From Max": 0.7, "To Min": round(1 - g, 6), "To Max": round(1 + g * 0.4, 6)}},
+                      {"id": "grain_mul", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": 1.0}}]
+            links += [["coords", "Pixel", "grain_noise", "Vector"], ["grain_noise", "Factor", "grain_gain", "Value"],
+                      [cur, sock, "grain_mul", 6], ["grain_gain", "Result", "grain_mul", 7]]
+            cur, sock = "grain_mul", 2
+        if a.vignette > 0:
+            v = round(a.vignette, 6)
+            nodes += [{"id": "radius", "type": "ShaderNodeVectorMath", "props": {"operation": "LENGTH"}},
+                      {"id": "vig_gain", "type": "ShaderNodeMapRange",
+                       "inputs": {"From Min": 0.55, "From Max": 1.45, "To Min": 1.0, "To Max": round(1 - v, 6)}},
+                      {"id": "vig_mul", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": 1.0}}]
+            links += [["coords", "Normalized", "radius", 0], ["radius", "Value", "vig_gain", "Value"], [cur, sock, "vig_mul", 6],
+                      ["vig_gain", "Result", "vig_mul", 7]]
+            cur, sock = "vig_mul", 2
+        nodes.append({"id": "out", "type": "NodeGroupOutput"})
+        links.append([cur, sock, "out", "Image"])
+        return _keys({"enabled": True, "opacity": a.paper, "texture": texture if a.paper > 0 else None, "passes": passes,
+                      "nodes": nodes, "links": links})
+
     # -- world, line, paper, scene --
     def world(self, *, hdri: str | None = None) -> dict:
         """Camera rays see the paper colour; lighting is a weak ambient (or the HDRI at the same strength, for its colour only)."""
+        if self.t.art is not None:
+            return self._art_world(hdri)
         t = self.t
         paper = rgba(self.pal[t.paper])  # the ambient light keeps the plain paper value (a matched one is a display target)
         nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": t.ambient}},
@@ -313,6 +734,8 @@ class StyleEngine:
         return _keys({"nodes": nodes, "links": links})
 
     def line_art(self, *, distance_m: float, lens_mm: float, sensor_mm: float = 36.0) -> dict:
+        if self.t.art is not None:
+            return self._art_line(distance_m, lens_mm, sensor_mm)
         t = self.t
         return {"radius": line_radius(t.line_px, distance_m, lens_mm, sensor_mm=sensor_mm), "line_px_1440": t.line_px,
                 "focus_distance_m": round(distance_m, 4), "crease_threshold_rad": round(math.radians(t.crease_deg), 6),
@@ -378,6 +801,23 @@ class StyleEngine:
                                          sensor_mm=camera.get("sensor_mm", 36.0)),
                "paper": self.paper(paper_texture),
                "materials": [self.material(n, path=path, **kw) for n, kw in sorted((materials or {}).items())]}
+        a = self.t.art
+        if a is not None:
+            if path != "eevee":
+                raise ValueError("the look round's graphs are EEVEE-only (Shader to RGB)")
+            doc["paper"] = self._art_finish(paper_texture, focus_m=camera["focus_distance_m"])
+            kd = doc["key_light"]
+            if a.casts_shadows:
+                kd["angle_rad"] = round(math.radians(a.shadow_softness_deg), 6)
+            # the key is a probe of N.L here (the ramp positions are N.L): energy 1; no live key at all on ambient_only
+            kd["energy"] = 0.0 if a.light_rig == "ambient_only" else 1.0
+            if a.light_rig == "cinematic" or a.light_rig == "key_rim":   # a cool fill from the other side, no shadow (cheap)
+                el, az = 22.0, kl.azimuth_deg + 160.0
+                doc["fill_light"] = {"type": "SUN", "energy": round(a.fill, 6), "use_shadow": False,
+                                     "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)]}
+            if a.bg_mode in ("dof", "plate") and a.fstop:
+                doc["camera_dof"] = {"use_dof": True, "focus_distance_m": round(camera["focus_distance_m"], 4),
+                                     "fstop": round(a.fstop, 4)}
         doc["sha256"] = digest(doc)
         return doc
 
@@ -416,8 +856,14 @@ def check(doc: dict) -> list[str]:
         ee = doc["scene"]["eevee"]
         if ee.get("use_raytracing") or ee.get("use_gtao") or ee.get("use_fast_gi"):
             out.append("EEVEE ray tracing / AO on under Shader to RGB (unreliable, 9.1)")
-    if not doc["line_art"]["line_px_1440"] > 0:
+    if doc["line_art"].get("enabled", True) and not doc["line_art"]["line_px_1440"] > 0:
         out.append(f"line weight {doc['line_art']['line_px_1440']} px is not a width")
+    art = doc["tokens"].get("art")
+    if art is not None:
+        if doc["path"] != "eevee":
+            out.append("a look-round graph off the EEVEE path")
+        if art["light_rig"] != "cinematic" and doc["key_light"]["use_shadow"] and art["shade_mode"] != "flat":
+            out.append(f"look {art['id']}: cast shadows on outside the cinematic rig (the light profile)")
     return out
 
 

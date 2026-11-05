@@ -353,7 +353,7 @@ def materials(name: str, char_id: str, costume_id: str, paths: dict[str, Path], 
         mean = _mean(src)
         if s["slot"] == "costume":
             mname = f"{costume_id.split('.', 1)[1]}_{tint or 'own'}"
-            spec = {"base": tint or mean + [1.0], "texture": str(src), "strength": s["strength"]}
+            spec = {"base": tint or mean + [1.0], "texture": str(src), "strength": s["strength"], "slot": "costume"}
             if not tint:
                 spec["texture_mean"] = mean
         elif s.get("tint"):   # hair: the pack's grey strand map laid over the character's palette tone

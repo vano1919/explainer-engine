@@ -4131,3 +4131,30 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - PoC 2: `rigs.lipsync_measure` (mean |offset| of mouth openings to word starts in frames, open mouth outside every word window)
   and `rigs measure-lipsync`; the words come from `audio/local_words.py` (faster-whisper, free) on the Mac with Rhubarb's cues.
 - CI: the Blender smoke installs `pillow==12.3.0` for the character smoke (`characters._mean`).
+
+## 2026-11-05 — ICW-05c look round: ten looks from the creator's reference to a flat painting of it (branch icw/05c-ink-round)
+
+- Why: ვანო read the ICW-06 test frames as "a very poor world, a completely different style, not ink" (17:45 UTC) and sent a
+  reference sheet at 17:54 UTC ("like this, but less 3D"): a stylized 3D-animation look with soft painted light, a warm key and a
+  bright rim, matte painted materials, soft-focus painted backgrounds and a warm limited palette. Fable's plan rev. 2
+  (`/mnt/project-files/explainer-engine/ink_chronicle_ink_round_2026-11-05/PLAN_INK_ROUND.md`) turned that into ten variants
+  along one slider; this entry implements it. No variant is chosen; the bible is not touched (ICW-07 writes v1.5's style block
+  after the pick).
+- `blender/style.py`: `Look` (the knobs: shade mode toon/soft/feathered/flat/painted_light, ramp with a cool shadow tint and a
+  warm light tint, brush texture, halftone, light rig cinematic/key_rim/flat_key/ambient_only with a cool fill sun and a warm rim,
+  line mode none/faint/dark/ink, background set/dof/plate/flat, sky paper/gradient/hdri, Kuwahara on the frame or on the far
+  background by depth, bleed, paper as a multiply base, screen-space grain, vignette, palette maps warm_cinematic and
+  reference_swatches, `texture_keep` for set photos and `costume_keep` for a costume's own painted atlas over the shot's tint).
+  `StyleTokens.art` carries it; without it every ICW-05 graph keeps its bytes (`to_dict` drops the field). EEVEE only.
+- `blender/look_variants.json` (`look_variants/1`): the ten variants (slider 1-10) and three swatch twins (1, 5, 9 with the six
+  swatches sampled from the reference sheet as proposal colours; `design/palette.json` stays the house palette's home).
+- `bpy/render_shot.py`: the fill light, camera depth of field, the depth pass for the painted plate, and no Line Art object when a
+  look draws no line. `characters.materials` marks costume slots (`slot: costume`; the toon path ignores it).
+- `style_sheets looks / look-collage / look-report`: per look 24-frame clips of the dialogue close-up (real cast) and the battle
+  wide, a still of the establishing shot, MP4 review copies, `looks.json` rows written as they finish; the collage and the
+  summary (s/frame per scene, ratio to B_light on the same runner, over 2x flagged, BP-173 band) from every job's folder.
+- CI: `style-sheets.yml` job `looks` (matrix: B_light + one job per look, the swatch twins in their parent's job) and
+  `look-collage` (merges the artifacts). Runs on push to `icw/05c-**`; free (D-114).
+- BP-173: v04's faint contour is 1.5 px at 40 % opacity (the band's floor; 1 px fails CN-17). Looks without a line carry the B
+  token's 2.25 px in shot_spec/2 (`look.line_weight_px` has no "none"; proposed to ICW-07).
+- Tests: `tests/unit/test_look_variants.py` (20). Cost: $0.
