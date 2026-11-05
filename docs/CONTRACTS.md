@@ -219,6 +219,11 @@ BP-139, BP-167, BP-173, BP-175; D-59), never from this page.
   `render{profile, samples, motion_blur, denoise, output mkv_ffv1|png_seq}`, `seed`, `why` (required for cycles_hero).
   Cache key: everything but `job_id`, `shot_id` and `clock.start_frame` (the shot's place on the episode clock moves no pixel);
   assets count by sha256, the Rhubarb cues by their hash, never their path; asset lists are sorted.
+- **shot_spec/3** (WP-Q1, 2026-11-05): shot_spec/2 with a wider `look` and one more profile; /2 documents validate unchanged.
+  `look.view_transform` AgX | Standard | Khronos PBR Neutral (`grade_look` "None" off AgX), `look.shade_mode` (style.SHADE_MODES),
+  optional `look.shade_path` luma | lit | rgb_soft, `look.line_mode` none | faint | dark | ink with `line_weight_px` required when a
+  line is drawn and absent when not (CN-17 holds the weight to BP-173 only then); `render.profile` adds `eevee_painterly`. Keyed,
+  rendered and validated as /2 (`contracts.BLENDER_SPECS`).
 - **shot_route/2**: `job_id`, `fps`, `derived_from` (as /1), `pins.blender{version, series, archive_sha256, image|null}` (BP-175) and
   `routes[]{shot_id, lane, recipe blender_eevee/1|blender_cycles/1|python_helper/1, specs[], comp_items[]}`: a HELPER route is
   `python_helper/1` with comp items and no spec; a VIDEO_3D or STILL_3D route has exactly one spec (role video or still) and no comp
