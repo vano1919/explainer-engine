@@ -137,7 +137,7 @@ def write(ep):
     ep.teaser("canister_hit", 2, "Teaser: a cannon blast breaks a mass of riders.")
     ep.teaser("charge_split", 2, "Teaser: lances against a wall of bayonets.")
     ep.teaser("wagons_burn", 2, "Teaser: torches on the wagons.")
-    ep.shot("EWS", 3, "Reveal: an army no European has seen in six centuries.", mode="narrated", tier="light",
+    ep.shot("EWS", 3, "Reveal: an army no European has seen in six centuries.", narr="Out of the fog came something else.", mode="narrated", tier="light",
             who=["riders"], place="ridge", light="dawn light breaking through thin fog", src="keyframe",
             act=("riders", "sit still on their horses along the ridge", "raise their bows all at once",
                  "hold the bows high against the sky"),
@@ -152,7 +152,7 @@ def write(ep):
     ep.shot("WS", 4, "The columns stop, row after row.", mode="narrated", tier="full", who=["infantry"],
             act=("infantry", "march out of the fog in long blue columns", "jerk to a halt, row after row",
                  "stand frozen with muskets on their shoulders"),
-            narr="They came out of it in the year 1223.", claims=["I01"], lead=("none", ""),
+            narr="When they came out of it, the year was 1223.", claims=["I01"], lead=("none", ""),
             rel=["the fog bank rises behind the columns"], height={"infantry": "third"},
             foley=["boots stamping to a halt"])
     ep.shot("MS", 4, "The emperor sees what his army walked into.", mode="narrated", tier="light", who=["napoleon"],
@@ -169,7 +169,7 @@ def write(ep):
     ep.shot("MCU", 4, "A soldier's face: the first fear.", mode="narrated", tier="light", who=["brun"],
             act=("brun", "stares ahead under his bearskin cap", "swallows hard and raises his chin",
                  "holds still, eyes wide"),
-            narr="And it will be his worst victory.", lead=("right", "where he stares"),
+            narr="And it will be the worst victory of his life.", lead=("right", "where he stares"),
             on={"brun": "standing on the dirt road"},
             )
     ep.shot("INSERT", 4, "Two kinds of war in two hands.", mode="insert", tier="light",
@@ -177,7 +177,7 @@ def write(ep):
                  "a gust of wind shakes the bowstring", "the bowstring settles and hums"),
             narr="So what happens when the man who conquered Europe meets the man who conquered Asia?",
             place="steppe", light="soft gold morning light", src="keyframe")
-    ep.shot("EWS", 4, "Title beat: the two armies, a valley apart.", mode="establish", tier="hold", who=["infantry", "riders"],
+    ep.shot("EWS", 4, "Title beat: the two armies, a valley apart.", narr="The emperor's army here. The khan's army there.", mode="establish", tier="hold", who=["infantry", "riders"],
             place="steppe", light="soft gold morning light", src="keyframe", cam="push_in",
             end="the gap of empty grass between the two armies in the middle of the frame",
             react=[("infantry", "stand in silent rows"), ("riders", "wait on their shaggy horses")],
@@ -193,7 +193,7 @@ def write(ep):
     ep.shot("WS", 4, "His method, shown as a drill.", mode="narrated", tier="full", who=["gunners"],
             act=("gunners", "stand ready around the cannon", "ram a cannonball down the barrel and jump clear",
                  "freeze in their places beside the wheels"),
-            narr="Napoleon had trained as an artillery officer.", claims=["C04"],
+            narr="Napoleon had trained as an artillery officer, a gunner first.", claims=["C04"],
             lead=("left", "where the barrel points"), height={"gunners": "third"}, foley=["a ramrod thumping"])
     ep.shot("MS", 4, "The artilleryman's hand on his own weapon.", mode="narrated", tier="light", who=["napoleon"],
             act=("napoleon", "rests one hand on a bronze cannon barrel", "slaps the barrel twice with his palm",
@@ -208,12 +208,12 @@ def write(ep):
     ep.shot("MS", 4, "The infantry's reach is short.", mode="narrated", tier="full", who=["infantry"], src="keyframe",
             act=("infantry", "stand in a line with muskets at the shoulder", "swing the muskets down and fire one volley",
                  "lower the muskets in a cloud of white smoke"),
-            narr="His muskets reached about a hundred.", claims=["C06"], lead=("right", "where they fire"),
+            narr="His infantry muskets reached about a hundred metres.", claims=["C06"], lead=("right", "where they fire"),
             on={"infantry": "standing on the trampled grass"}, loud="one musket volley")
     ep.shot("EWS", 4, "The other machine: a herd that is an army.", mode="establish", tier="hold", who=["riders"],
             place="mgcamp", light="golden evening light", src="keyframe", cam="pan_right",
             end="the herd stretching to the horizon",
-            narr="Genghis Khan built his army to move.", lead=("right", "where the herd runs on"),
+            narr="Genghis Khan built his army to move, and to keep moving.", lead=("right", "where the herd runs on"),
             rel=["hundreds of spare horses graze behind the riders"], height={"riders": "quarter"}, foley=["many hooves on turf"])
     ep.shot("MWS", 4, "A rider changes horses at a gallop's end.", mode="narrated", tier="full", who=["riders"],
             place="mgcamp", light="golden evening light", src="keyframe",
@@ -234,12 +234,12 @@ def write(ep):
                  "keeps his chin raised", "his eyes crease a little at the corners"),
             narr="He promoted men for what they did, not for their fathers.", claims=["C11"],
             lead=("left", "where he looks"))
-    ep.shot("INSERT", 4, "Two weapons side by side, two philosophies.", mode="insert", tier="light", place="steppe",
+    ep.shot("INSERT", 4, "Two weapons side by side, two philosophies.", narr="Guns against horses. Weight against speed. Battle against campaign.", mode="insert", tier="light", place="steppe",
             light="soft gold morning light", src="keyframe",
             act=("infantry", "a heavy supply wagon wheel sinks in soft mud",
                  "a horse's hoof stamps down beside it and lifts away", "the wheel stays stuck in the mud"),
             foley=["mud sucking at a wheel"])
-    ep.shot("EWS", 4, "The gap between the armies closes.", mode="narrated", tier="hold", who=["infantry", "riders"],
+    ep.shot("EWS", 4, "The gap between the armies closes.", narr="Sooner or later, these machines would have to meet.", mode="narrated", tier="hold", who=["infantry", "riders"],
             place="steppe", light="soft gold morning light", src="keyframe", cam="push_in",
             end="the two armies small on each side of the empty valley",
             react=[("infantry", "march forward in step"), ("riders", "trot slowly closer")],
@@ -255,7 +255,7 @@ def write(ep):
                     "kemal": ("left_back", "right", GRASS, "holds his horse by the bridle"),
                     "bars": ("right", "left", "sitting astride a short shaggy horse", "holds the reins low"),
                     "brun": ("center_back", "right", GRASS, "leans on his musket")})
-    sh("WS", 4, "A lone rider comes to the emperor's tents.", mode="establish", who=["murat", "napoleon", "kemal", "bars"],
+    sh("WS", 5, "A lone rider comes to the emperor's tents.", narr="Then a rider came to the emperor's tents. He came alone.", claims=["I04"], mode="establish", who=["murat", "napoleon", "kemal", "bars"],
        act=("bars", "rides up toward the tents", "pulls his horse up hard",
             "sits the horse still in front of the generals"),
        react=[("napoleon", "raises one eyebrow"), ("kemal", "leans in to listen")],
@@ -265,51 +265,50 @@ def write(ep):
        where={"murat": "left", "napoleon": "right"}, facing={"murat": "napoleon", "napoleon": "murat"},
        act=("murat", "leans toward the general", "jabs a gloved finger at the rider", "keeps the finger pointed",
             "his lip curls into a grin"),
-       line=("murat", "napoleon", "Sire. Let me knock that ghost off his pony.", "eager, too loud"),
+       line=("murat", "napoleon", "Let me knock that ghost off his pony.", "eager, too loud"),
        lead=("right", "where he points"))
-    sh("MS", 6, "Napoleon wants information first.", who=["murat", "napoleon"],
+    sh("MS", 5, "Napoleon wants information first.", who=["murat", "napoleon"],
        where={"murat": "left", "napoleon": "right"}, facing={"murat": "napoleon", "napoleon": "murat"},
        act=("napoleon", "stands with his hands behind his back", "raises one hand flat to stop him",
             "holds the flat hand up", "his eyes stay on the rider"),
-       line=("napoleon", "murat", "Not yet. A man who rides in alone wants to talk.", "quiet, clipped"),
+       line=("napoleon", "murat", "Not yet. He rode in alone to talk.", "quiet, clipped"),
        lead=("left", "where his hand goes"))
     sh("OTS", 5, "The translator problem is solved by an accident of history.", who=["napoleon", "kemal"], over="napoleon",
        act=("kemal", "stares at the rider", "steps forward and raises his hand to his chest",
             "stands with the hand on his chest", "his eyebrows lift in surprise"),
-       claims=["C14", "C15"], line=("kemal", "napoleon", "Sire. He speaks the old Tatar tongue. My grandmother's.", "hushed, amazed"),
+       claims=["C14", "C15"], line=("kemal", "napoleon", "He speaks Tatar, Sire. My grandmother's tongue.", "hushed, amazed"),
        lead=("none", ""))
-    sh("CU", 4, "Napoleon registers the impossible and moves on.", tier="light", who=["napoleon"],
+    sh("CU", 5, "Napoleon registers the impossible and moves on.", narr="Napoleon had brought a Tatar speaker without knowing it.", claims=["C14", "C15"], tier="light", who=["napoleon"],
        act=("napoleon", "looks at the mameluke", "raises one eyebrow sharply", "holds the look"),
        lead=("left", "where he looks"))
     sh("MS", 4, "Get to the point.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"},
        facing={"kemal": "napoleon", "napoleon": "kemal"},
        act=("napoleon", "turns to the mameluke", "waves his hand toward the rider", "keeps the hand open"),
        line=("napoleon", "kemal", "Then tell me what he wants.", "fast, impatient"), lead=("left", "the mameluke"))
-    sh("OTS", 6, "The khan's terms.", who=["kemal", "bars"], over="kemal",
+    sh("OTS", 5, "The khan's terms.", who=["kemal", "bars"], over="kemal",
        act=("bars", "sits straight on his horse", "lifts his chin and raises one fist", "holds the fist up"),
-       line=("bars", "kemal", "The khan of all who live in felt tents says: kneel.", "formal, chanted"),
+       line=("bars", "kemal", "The khan of the felt tents says: kneel.", "formal, chanted"),
        lead=("above", "where his fist rises"))
-    sh("OTS", 6, "The price of living.", who=["kemal", "bars"], over="kemal",
+    sh("OTS", 5, "The price of living.", who=["kemal", "bars"], over="kemal",
        act=("bars", "lowers his fist", "points at the cannons and the horses", "keeps pointing"),
-       line=("bars", "kemal", "Give him your horses and your guns, and you will live.", "flat, rehearsed"),
+       line=("bars", "kemal", "Give him your horses and guns, and live.", "flat, rehearsed"),
        lead=("left", "where he points"))
-    sh("MS", 4, "Murat finds it funny.", who=["murat"],
+    sh("MS", 5, "Murat finds it funny.", narr="Murat had never even heard the name of this khan.", who=["murat"],
        act=("murat", "stares at the rider", "throws his head back and slaps his thigh", "shakes with laughter",
             "his mouth opens wide and his eyes squeeze shut"),
        lead=("above", "where his head goes"), foley=["a loud laugh"])
-    sh("OTS", 6, "Napoleon answers with his whole biography.", who=["bars", "napoleon"], over="bars",
+    sh("OTS", 5, "Napoleon answers with his whole biography.", who=["bars", "napoleon"], over="bars",
        act=("napoleon", "stands still in front of the rider", "jabs one finger at the ground", "keeps the finger down",
             "his eyes go hard and narrow"),
-       line=("napoleon", "bars", "Tell your khan I kneel to nobody. We meet in battle.", "slow, cold, every word clear"),
+       line=("napoleon", "bars", "Tell your khan I kneel to nobody.", "slow, cold, every word clear"),
        lead=("none", ""))
-    sh("OTS", 5, "The envoy's warning, with a history lesson inside it.", who=["napoleon", "bars"], over="napoleon",
+    sh("OTS", 5, "The envoy's warning, with a history lesson inside it.", narr="That spring, Rus princes had killed the khan's envoys.", who=["napoleon", "bars"], over="napoleon",
        act=("bars", "leans forward on his horse", "points back toward the west", "holds the pointing arm still"),
-       claims=["C10"], line=("bars", "napoleon", "This spring, princes on the river killed the khan's envoys.", "low, almost kind"),
-       lead=("left", "where he points"))
+       claims=["C10"], lead=("left", "where he points"))
     sh("OTS", 4, "The punchline.", who=["napoleon", "bars"], over="napoleon",
        act=("bars", "lowers his arm", "drops his hand onto the saddle", "sits very still"),
        line=("bars", "napoleon", "Now the princes are dead.", "quiet"), lead=("none", ""))
-    sh("MS", 4, "Murat goes for his pistol.", who=["murat"],
+    sh("MS", 5, "Murat goes for his pistol.", narr="To the Mongols, killing an envoy meant war without mercy.", claims=["C10"], who=["murat"],
        act=("murat", "reaches for the pistol in his belt", "yanks the pistol halfway out", "freezes with it half drawn",
             "his teeth bare"),
        lead=("right", "where the pistol points"), foley=["leather creaking"])
@@ -323,11 +322,11 @@ def write(ep):
     sh("OTS", 4, "The answer that is the whole strategy.", who=["napoleon", "bars"], over="napoleon",
        act=("bars", "smiles thinly", "pulls his horse's head round", "sits sideways on the turning horse"),
        line=("bars", "napoleon", "Everywhere you are not.", "almost a whisper"), lead=("right", "where he will turn"))
-    sh("EWS", 3, "On the far ridge, riders watch the camp.", mode="establish", tier="light", who=["riders"], place="ridge",
+    sh("EWS", 3, "On the far ridge, riders watch the camp.", narr="The khan's riders had been there all along.", mode="establish", tier="light", who=["riders"], place="ridge",
        light="warm late afternoon light", src="keyframe",
        act=("riders", "sit their horses along the far ridge", "turn their heads together toward the camp",
             "sit still, watching"), lead=("left", "the camp below"), height={"riders": "quarter"}, foley=["wind over the ridge"])
-    sh("WS", 4, "The envoy rides off into the empty steppe.", mode="establish", who=["murat", "napoleon", "bars"], exit=True,
+    sh("WS", 4, "The envoy rides off into the empty steppe.", narr="Then the steppe was empty again.", mode="establish", who=["murat", "napoleon", "bars"], exit=True,
        act=("bars", "turns his horse away from the tents", "kicks the horse into a trot up the slope",
             "rides small toward the horizon"),
        lead=("right", "where he rides off"), height={"bars": "quarter"}, foley=["hooves trotting away"])
@@ -337,11 +336,11 @@ def write(ep):
        line=("napoleon", "murat", "Murat. Tomorrow you find me that army.", "fast, certain"), lead=("left", "the marshal"))
     sh("MCU", 4, "Murat promises speed.", who=["murat"], 
        act=("murat", "grins under his plumes", "slaps his chest with his fist", "grins wide"),
-       line=("murat", "room", "Tomorrow, Sire. You'll have him by lunch.", "cocky"), lead=("none", ""))
+       line=("murat", "room", "You'll have him by lunch, Sire.", "cocky"), lead=("none", ""))
     sh("MCU", 5, "The soldier's view of strategy.", who=["brun"],
        act=("brun", "leans on his musket", "lifts his head and sniffs the air", "keeps his nose up",
             "his moustache twitches"),
-       line=("brun", "self", "Wherever it is, I hope it has bread.", "a grumble under his breath"), lead=("none", ""))
+       line=("brun", "self", "I hope it has bread.", "a grumble under his breath"), lead=("none", ""))
     # ---- 5. bridge (2:45-3:15) ----------------------------------------------------------------------------------
     ep.scene("S05", "wagons", light="dim violet evening light", ambience="wind over open grass, a wagon creaking",
              stage={"napoleon": ("center", "camera", "standing on the tent's wooden floor", ""),
@@ -352,7 +351,7 @@ def write(ep):
        rel=["the covered wagons stand in a long line on the grass"], foley=["a harness jingling"])
     sh("INSERT", 4, "An empty sack.", mode="insert",
        act=("infantry", "an empty flour sack hangs from a soldier's hand", "the hand shakes the sack upside down",
-            "a little white dust falls onto the grass"), narr="On this steppe, there were no farms.")
+            "a little white dust falls onto the grass"), narr="On this steppe, there were no farms to take from.")
     sh("INSERT", 4, "Only grass.", mode="insert", src="keyframe", place="steppe", light="dim violet evening light",
        act=("cavalry", "a French cavalry horse tears up a mouthful of grass", "the horse lifts its head, chewing",
             "the horse stands chewing in the wind"), narr="Only grass. And grass feeds horses, not men.")
@@ -360,9 +359,9 @@ def write(ep):
        src="keyframe",
        act=("napoleon", "bends over the table between the candles", "slams his fist down on the table",
             "leans on both fists, breathing hard", "his brows crush down over his eyes"),
-       narr="So he needed his battle, and he needed it fast.", lead=("none", ""), on={"napoleon": "standing on the tent's wooden floor"},
+       narr="So he needed his battle, and he needed it before the bread ran out.", lead=("none", ""), on={"napoleon": "standing on the tent's wooden floor"},
        loud="a fist on wood")
-    sh("WS", 4, "Murat's cavalry rides out at dawn.", mode="narrated", who=["murat", "cavalry"], place="steppe",
+    sh("WS", 4, "Murat's cavalry rides out at dawn.", narr="Murat rode out at dawn to find the khan.", mode="narrated", who=["murat", "cavalry"], place="steppe",
        light="cold pink dawn light", src="keyframe",
        act=("murat", "sits his horse at the head of the cavalry", "raises his sabre high and points it at the horizon",
             "holds the sabre pointed forward"),
@@ -377,19 +376,19 @@ def write(ep):
                     "cavalry": ("left_back", "right", "sitting on horses in the grass", ""),
                     "gunners": ("left", "right", GRASS, ""),
                     "riders": ("right_back", "left", "sitting on horses on the far ridge", "")})
-    sh("WS", 4, "The camp Murat found is already gone.", mode="establish", who=["murat"],
+    sh("WS", 4, "The camp Murat found is already gone.", narr="Murat found the khan's camp the next morning. It was empty.", claims=["I03"], mode="establish", who=["murat"],
        act=("murat", "rides into a ring of cold campfires", "pulls up and twists round in the saddle",
             "stares at the empty trampled grass"),
        rel=["black rings of old campfires lie on the trampled grass in front of him"], lead=("right", "where he looks"),
        height={"murat": "third"}, foley=["a horse blowing"])
-    sh("MS", 4, "The fires are warm: they were just here.", who=["murat"], on={"murat": "kneeling on the trampled grass"},
+    sh("MS", 4, "The fires are warm: they were just here.", narr="Gone. The ashes were still warm.", who=["murat"], on={"murat": "kneeling on the trampled grass"},
        act=("murat", "kneels beside a ring of ashes", "pushes his bare hand into the ashes", "holds the hand in the ashes",
             "his eyes widen"),
-       line=("murat", "self", "Gone. And the ashes are warm.", "puzzled, low"), lead=("none", ""))
-    sh("INSERT", 3, "An arrow from nowhere.", mode="insert",
+       lead=("none", ""))
+    sh("INSERT", 3, "An arrow from nowhere.", narr="Then the arrows came, from nowhere.", mode="insert",
        act=("riders", "a black-feathered arrow drops out of the sky", "the arrow slams into the turf beside a riding boot",
             "the arrow quivers upright"), loud="a hard thud")
-    sh("EWS", 4, "They were watching all along, out of range.", mode="establish", who=["riders"], place="ridge",
+    sh("EWS", 4, "They were watching all along, out of range.", narr="The archers stood on a ridge, far out of musket range.", claims=["C06", "C09"], mode="establish", who=["riders"], place="ridge",
        src="keyframe", act=("riders", "sit their horses far away on the skyline", "raise their bows and loose a volley high",
                              "hold the bows up against the sky"),
        lead=("above", "where the arrows rise"), height={"riders": "quarter"}, foley=["many bowstrings at once"])
@@ -398,7 +397,7 @@ def write(ep):
        react=[("infantry", "duck behind their packs")], line=("brun", "room", "Down! Get down!", "a bellow"),
        rel=["the column of infantry stands behind the grenadier"], lead=("below", "where he will fall"),
        loud="arrows hissing down")
-    sh("INSERT", 3, "A pinned pack.", mode="insert",
+    sh("INSERT", 3, "A pinned pack.", narr="They came down almost straight.", claims=["C09"], mode="insert",
        act=("riders", "arrows rain down onto a soldier's pack on the grass", "an arrow pins the pack to the ground",
             "the pack lies pinned, the arrow shaking"), foley=["arrows thudding into canvas"])
     sh("MS", 4, "How far?", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"}, src="keyframe",
@@ -406,19 +405,19 @@ def write(ep):
        act=("napoleon", "lowers his telescope", "points the telescope at the ridge", "keeps it pointed"),
        react=[("kemal", "squints hard at the ridge")],
        line=("napoleon", "kemal", "How far are they?", "calm, fast"), lead=("left", "where he points"))
-    sh("MS", 4, "Too far.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"},
+    sh("MS", 4, "Too far.", narr="The archers were four hundred metres away, maybe more.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"},
        facing={"kemal": "napoleon", "napoleon": "kemal"},
        act=("kemal", "shades his eyes with one hand", "points at the far ridge", "holds the point"),
-       claims=["C09"], line=("kemal", "napoleon", "Four hundred metres, Sire. Maybe more.", "careful"), lead=("left", "where he points"))
+       claims=["C09"], lead=("left", "where he points"))
     sh("MS", 5, "Kemal names the trick.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"}, facing={"kemal": "napoleon", "napoleon": "kemal"}, 
        act=("kemal", "watches the sky", "points straight up at the falling arrows", "keeps the arm up"),
-       line=("kemal", "napoleon", "They shoot high, Sire. The arrows drop on us.", "quick, low"), lead=("none", ""))
-    sh("INSERT", 3, "They keep falling.", mode="insert",
+       line=("kemal", "napoleon", "They shoot high. The arrows drop on us.", "quick, low"), lead=("none", ""))
+    sh("INSERT", 3, "They keep falling.", narr="And they kept coming down.", mode="insert",
        act=("riders", "an arrow drops out of the sky", "the arrow slams into the turf beside a cannon wheel",
             "the arrow quivers upright"), loud="a hard thud")
-    sh("CU", 4, "He does the arithmetic.", who=["napoleon"],
+    sh("CU", 4, "He does the arithmetic.", narr="French muskets reached about a hundred metres.", who=["napoleon"],
        act=("napoleon", "stares at the ridge", "shakes his head once", "holds his head still", "his jaw tightens"),
-       claims=["C06"], line=("napoleon", "self", "Our muskets reach a hundred.", "flat, to himself"), lead=("none", ""))
+       claims=["C06"], lead=("none", ""))
     sh("MS", 4, "The reflex: charge.", who=["murat", "napoleon"], where={"murat": "left", "napoleon": "right"},
        facing={"murat": "napoleon", "napoleon": "murat"},
        act=("napoleon", "swings round to the marshal", "flings his arm toward the ridge", "keeps the arm out"),
@@ -427,32 +426,32 @@ def write(ep):
     sh("MCU", 4, "Murat's favourite order.", who=["murat"],
        act=("murat", "grins under his plumes", "draws his sabre and raises it high", "holds the sabre up"),
        line=("murat", "room", "With pleasure!", "joyful"), lead=("above", "where the sabre goes"), foley=["steel ringing"])
-    sh("WS", 4, "The French charge.", mode="establish", who=["cavalry"], src="keyframe",
+    sh("WS", 4, "The French charge.", narr="The French cavalry charged straight up the ridge.", mode="establish", who=["cavalry"], src="keyframe",
        act=("cavalry", "sit in a long line of big horses", "lunge forward together in a charge",
             "thunder across the grass in a wall of steel"),
        lead=("right", "where they charge"), height={"cavalry": "third"}, loud="hundreds of hooves")
-    sh("WS", 4, "The Mongols turn away and shoot backwards.", mode="establish", who=["riders"], place="ridge", src="keyframe",
+    sh("WS", 4, "The Mongols turn away and shoot backwards.", narr="The Mongols turned away and shot backwards as they rode.", mode="establish", who=["riders"], place="ridge", src="keyframe",
        act=("riders", "wheel their horses round", "twist in their saddles and loose arrows backward",
             "ride on, still twisting round"),
        lead=("right", "where they ride"), height={"riders": "third"}, foley=["bowstrings snapping"])
-    sh("MS", 4, "The French horses are spent.", who=["murat"],
+    sh("MS", 4, "The French horses are spent.", narr="Within the hour, the French horses were blown.", who=["murat"],
        act=("murat", "sits a horse with foam on its neck", "the horse stumbles and jerks its head down",
             "the horse stands, blowing hard"), lead=("none", ""), foley=["a horse wheezing"])
-    sh("WS", 4, "The Mongols' horses are not.", mode="establish", who=["riders"], place="ridge",
+    sh("WS", 4, "The Mongols' horses are not.", narr="The Mongols changed to fresh ones and rode on.", claims=["C08"], mode="establish", who=["riders"], place="ridge",
        act=("riders", "ride up beside a herd of fresh horses", "leap from their saddles onto the fresh horses",
             "sit the fresh horses, rested"), lead=("right", "where they ride"), height={"riders": "third"})
     sh("MS", 5, "Murat reports the impossible.", who=["murat", "napoleon"], where={"murat": "left", "napoleon": "right"},
        facing={"murat": "napoleon", "napoleon": "murat"}, on={"murat": "standing in the dry steppe grass"},
        act=("murat", "stands beside his foaming horse", "throws his plumed hat down on the grass",
             "stands with empty hands, panting"),
-       claims=["C08"], line=("murat", "napoleon", "They change horses, Sire! Like shirts! We can't catch them.", "shouting, out of breath"),
+       claims=["C08"], line=("murat", "napoleon", "They change horses like shirts, Sire!", "shouting, out of breath"),
        lead=("below", "where the hat lands"))
     sh("MS", 4, "Napoleon changes the plan in one breath.", who=["murat", "napoleon"],
        where={"murat": "left", "napoleon": "right"}, facing={"murat": "napoleon", "napoleon": "murat"},
        on={"murat": "standing in the dry steppe grass"},
        act=("napoleon", "turns from the marshal", "points back at the column", "keeps pointing"),
        line=("napoleon", "murat", "Then stop chasing. Bring up the guns.", "quiet, decided"), lead=("right", "the column"))
-    sh("WS", 4, "The guns come up.", mode="establish", who=["gunners"], src="keyframe",
+    sh("WS", 4, "The guns come up.", narr="The guns came up the slope by hand.", mode="establish", who=["gunners"], src="keyframe",
        act=("gunners", "drag a bronze cannon up the slope by ropes", "heave the cannon wheels over the crest",
             "set the cannon facing the ridge"), lead=("right", "where the gun will point"),
        height={"gunners": "third"}, foley=["wheels grinding", "ropes creaking"])
@@ -464,11 +463,11 @@ def write(ep):
     sh("CU", 3, "One word.", who=["napoleon"],
        act=("napoleon", "raises one hand", "drops the hand down sharp", "holds the hand down"),
        line=("napoleon", "room", "Fire.", "barely loud"), lead=("below", "where his hand drops"))
-    sh("MWS", 3, "The gun fires.", mode="scene", who=["gunners"],
+    sh("MWS", 3, "The gun fires.", narr="The gun bucked.", mode="scene", who=["gunners"],
        act=("gunners", "crouch beside the cannon with hands over their ears",
             "the cannon jerks back in a burst of smoke", "the crew stand up in the drifting smoke"),
        lead=("right", "where the smoke blows"), loud="one cannon shot")
-    sh("EWS", 4, "Nine hundred metres away, the ridge breaks.", mode="establish", who=["riders"], place="ridge",
+    sh("EWS", 4, "Nine hundred metres away, the ridge breaks.", narr="The round shot crossed the whole valley and hit the ridge.", claims=["C05"], mode="establish", who=["riders"], place="ridge",
        act=("riders", "sit their horses on the far ridge", "scatter as a cannonball throws up a fountain of earth",
             "spread out across the slope"), lead=("left", "where they scatter"), height={"riders": "quarter"},
        loud="a far thud of earth")
@@ -479,7 +478,7 @@ def write(ep):
     sh("MCU", 4, "The soldier's verdict.", who=["brun"], on={"brun": "lying flat in the dry steppe grass"},
        act=("brun", "lies flat in the grass", "lifts his head and spits out a stalk of grass", "props himself on his elbows"),
        line=("brun", "self", "First thing we've hit all week.", "dry"), lead=("none", ""))
-    sh("EWS", 3, "Out of range, they form again.", mode="establish", tier="light", who=["riders"], place="ridge",
+    sh("EWS", 3, "Out of range, they form again.", narr="The riders formed again, further out.", mode="establish", tier="light", who=["riders"], place="ridge",
        act=("riders", "ride back over the far crest", "wheel round into a new line, farther away",
             "sit their horses in the new line"),
        lead=("left", "where they wait"), height={"riders": "quarter"}, foley=["far-off hooves"])
@@ -515,7 +514,7 @@ def write(ep):
        act=("brun", "holds up a hard biscuit", "snaps the biscuit in two and pushes half into the drummer's hand",
             "keeps his own half in his fist"),
        react=[("drummer", "stares at his half")],
-       line=("brun", "drummer", "Last biscuit. Half each, and don't argue.", "gruff, kind"),
+       line=("brun", "drummer", "Last biscuit. Half each.", "gruff, kind"),
        lead=("right", "the drummer's hand"), foley=["a biscuit cracking"])
     sh("OTS", 4, "The boy's question.", who=["brun", "drummer"], over="brun",
        act=("drummer", "holds the half biscuit", "lifts his eyes to the dark hills", "keeps looking up"),
@@ -531,13 +530,13 @@ def write(ep):
     sh("WS", 4, "Stragglers.", mode="narrated", who=["infantry"], place="steppe", src="keyframe", light="blue dusk light",
        act=("infantry", "wander out of the camp with empty sacks", "stop and drop the sacks in the tall grass",
             "stand looking around in the tall grass"),
-       narr="Foragers who wandered off did not come back.", claims=["I03"], lead=("right", "the dark grass"),
+       narr="Foragers who wandered off into the grass did not come back.", claims=["I03"], lead=("right", "the dark grass"),
        height={"infantry": "third"})
     sh("MS", 4, "Napoleon rages at a plan that will not work.", mode="narrated", who=["napoleon"], place="tent",
        light="warm candlelight", src="keyframe",
        act=("napoleon", "sits alone at the table", "hurls the candlestick off the table", "stands breathing hard",
             "his face goes red and his teeth clench"),
-       narr="And Napoleon could not find his battle.", claims=["C04"],
+       narr="And still, Napoleon could not find his battle.", claims=["C04"],
        lead=("right", "where the candlestick flies"), on={"napoleon": "standing on the tent's wooden floor"},
        loud="a candlestick clattering")
     # ---- 8. scene 3, the other side acts (6:00-7:30): the khan's yurt ------------------------------------------
@@ -546,34 +545,34 @@ def write(ep):
                     "subutai": ("left", "right", "sitting on a carpet", ""),
                     "bars": ("center_back", "camera", "standing against the lattice wall", "holds his cap in his hands"),
                     "bayan": ("center", "right", "kneeling on the carpet", "")})
-    sh("WS", 4, "The scout who lost his horse.", mode="establish", who=["subutai", "bayan", "bars", "genghis"],
+    sh("WS", 5, "The scout who lost his horse.", narr="In the khan's tent that night, a scout came back on foot.", claims=["I03"], mode="establish", who=["subutai", "bayan", "bars", "genghis"],
        act=("bayan", "pushes through the felt door", "drops to his knees on the carpet", "kneels with his head bowed"),
        react=[("genghis", "leans forward over the fire"), ("subutai", "frowns")],
        rel=["the khan sits behind the low fire"], lead=("right", "where he kneels"),
        height={"bayan": "third"}, foley=["felt flapping"])
-    sh("OTS", 6, "He confesses.", who=["genghis", "bayan"], over="genghis",
+    sh("OTS", 5, "He confesses.", who=["genghis", "bayan"], over="genghis",
        act=("bayan", "kneels with his head low", "raises his head and spreads his empty hands", "keeps the hands open",
             "his eyes are wide and wet"),
-       line=("bayan", "genghis", "Great Khan. My horse is dead. An iron ball. I ran.", "breathless, fast"),
+       line=("bayan", "genghis", "My horse is dead, Khan. An iron ball. I ran.", "breathless, fast"),
        lead=("none", ""))
     sh("OTS", 5, "The khan's question.", who=["bayan", "genghis"], over="bayan",
        act=("genghis", "sits still", "leans forward and lifts one finger toward him", "holds the finger up"),
-       line=("genghis", "bayan", "You ran back to tell me the truth?", "slow, quiet"), lead=("none", ""))
-    sh("MS", 3, "Yes.", tier="light", who=["bayan", "genghis"], where={"bayan": "left_front", "genghis": "right"},
+       line=("genghis", "bayan", "You ran back to tell me?", "slow, quiet"), lead=("none", ""))
+    sh("MS", 4, "Yes.", narr="In most armies, that answer would cost him his life.", tier="light", who=["bayan", "genghis"], where={"bayan": "left_front", "genghis": "right"},
        facing={"bayan": "genghis", "genghis": "bayan"},
        act=("bayan", "kneels in front of the khan", "drops his eyes to the carpet", "keeps his eyes down"),
        lead=("none", ""))
-    sh("MCU", 6, "The khan rewards honesty.", who=["genghis"],
+    sh("MCU", 5, "The khan rewards honesty.", who=["genghis"],
        act=("genghis", "sits back on the carpet", "raises two fingers", "holds the two fingers up",
             "his eyes crease at the corners"),
-       claims=["C11"], line=("genghis", "room", "Then you are worth more than the horse. Give him two.", "warm, slow"), lead=("none", ""))
-    sh("MS", 3, "The scout cannot believe it.", tier="light", who=["bayan", "genghis"], where={"bayan": "left_front", "genghis": "right"}, facing={"bayan": "genghis", "genghis": "bayan"},
+       claims=["C11"], line=("genghis", "room", "You are worth more than a horse. Give him two.", "warm, slow"), lead=("none", ""))
+    sh("MS", 4, "The scout cannot believe it.", narr="The khan had once spared an archer who shot his horse.", claims=["C11"], tier="light", who=["bayan", "genghis"], where={"bayan": "left_front", "genghis": "right"}, facing={"bayan": "genghis", "genghis": "bayan"},
        act=("bayan", "kneels in front of the khan", "drops his forehead to the carpet", "stays bowed low"),
        lead=("none", ""))
-    sh("MS", 5, "The general's report.", who=["subutai", "genghis"], where={"subutai": "left", "genghis": "right"},
+    sh("MS", 5, "The general's report.", narr="Subutai had seen it: the French iron balls flew farther than Mongol arrows.", claims=["C05", "C09"], who=["subutai", "genghis"], where={"subutai": "left", "genghis": "right"},
        facing={"subutai": "genghis", "genghis": "subutai"},
        act=("subutai", "turns to the khan", "raises his open hand high to show a long arc", "drops the hand to his knee"),
-       line=("subutai", "genghis", "Their iron balls fly farther than our arrows.", "dry, factual"), lead=("above", "the arc"))
+       lead=("above", "the arc"))
     sh("MS", 5, "The khan's rule.", who=["subutai", "genghis"], where={"subutai": "left", "genghis": "right"},
        facing={"subutai": "genghis", "genghis": "subutai"},
        act=("genghis", "looks at the fire", "shrugs and throws his hands apart", "keeps the hands apart"),
@@ -581,10 +580,10 @@ def write(ep):
     sh("MCU", 4, "The khan's real question.", who=["genghis"],
        act=("genghis", "strokes his beard", "points one finger at the interpreter", "holds the finger out"),
        line=("genghis", "room", "What do they eat?", "curious"), lead=("left", "where he points"))
-    sh("MS", 6, "The interpreter has watched the French camp.", who=["bars"], on={"bars": "standing on the carpet"},
+    sh("MS", 5, "The interpreter has watched the French camp.", who=["bars"], on={"bars": "standing on the carpet"},
        act=("bars", "steps forward from the wall", "flings his arms wide", "holds the arms out"),
        line=("bars", "room", "Bread, Khan. From wagons. Many wagons, very few sheep.", "eager"), lead=("none", ""))
-    sh("WS", 3, "Out in the grass, his scouts count the wagons.", mode="establish", tier="light", who=["scouts"],
+    sh("WS", 4, "Out in the grass, his scouts count the wagons.", narr="His scouts had been counting the French wagons for days.", mode="establish", tier="light", who=["scouts"],
        place="wagons", light="blue dusk light", src="keyframe", on={"scouts": "lying flat in the tall grass"},
        act=("scouts", "lie flat in the tall grass", "lift their heads and stare at the wagon line",
             "sink back down into the grass"),
@@ -594,28 +593,28 @@ def write(ep):
        act=("genghis", "strokes his beard slowly", "drops his hand from his beard", "sits very still",
             "one corner of his mouth lifts"),
        line=("genghis", "self", "Then the wagons are the army.", "almost to himself"), lead=("none", ""))
-    sh("EWS", 4, "The French march: the fighting column ahead, the wagons falling behind.", mode="establish",
+    sh("EWS", 5, "The French march: the fighting column ahead, the wagons falling behind.", narr="The French fighting column marched ahead. The wagons fell further behind every day.", claims=["C16"], mode="establish",
        tier="light", who=["infantry"], place="steppe", light="hazy afternoon light", src="keyframe",
        act=("infantry", "march in a long blue column", "the column pulls away over a low rise",
             "the column marches on, small"),
        rel=["the covered wagons trail far behind the column on the left"], lead=("right", "where the column marches"),
        height={"infantry": "quarter"}, foley=["far-off wagon wheels creaking"])
-    sh("MS", 7, "Subutai offers the move that worked at the Kalka.", who=["subutai", "genghis"],
+    sh("MS", 5, "Subutai offers the move that worked at the Kalka.", who=["subutai", "genghis"],
        where={"subutai": "left", "genghis": "right"}, facing={"subutai": "genghis", "genghis": "subutai"},
        act=("subutai", "leans in toward the khan", "jabs a finger into the carpet nine times", "flattens his hand on the carpet"),
-       claims=["C10"], line=("subutai", "genghis", "Like at the river this spring. Run nine days. Turn on the tenth.", "confident"),
+       claims=["C10"], line=("subutai", "genghis", "Like the river. Run nine days, then turn.", "confident"),
        lead=("none", ""))
     sh("MS", 5, "The khan wants something cleverer.", who=["subutai", "genghis"],
        where={"subutai": "left", "genghis": "right"}, facing={"subutai": "genghis", "genghis": "subutai"},
        act=("genghis", "lifts his eyes from the fire", "shakes his head once", "keeps his eyes on the general"),
-       line=("genghis", "subutai", "No. This one wants a battle. Give him one.", "calm"), lead=("none", ""))
-    sh("MCU", 4, "Subutai does not follow.", tier="light", who=["subutai"],
+       line=("genghis", "subutai", "No. He wants a battle. Give him one.", "calm"), lead=("none", ""))
+    sh("MCU", 5, "Subutai does not follow.", narr="Subutai had won with that trick on the Kalka that spring.", claims=["C10"], tier="light", who=["subutai"],
        act=("subutai", "stares at the khan", "raises both eyebrows high", "holds the look"), lead=("right", "the khan"))
-    sh("OTS", 6, "The plan, in one sentence.", who=["subutai", "genghis"], over="subutai",
+    sh("OTS", 5, "The plan, in one sentence.", who=["subutai", "genghis"], over="subutai",
        act=("genghis", "leans toward the fire", "raises one finger and then sweeps his hand sideways", "rests the hand on his knee"),
-       line=("genghis", "subutai", "A small one. Let him win. While he wins, take his wagons.", "slow, pleased"),
+       line=("genghis", "subutai", "A small one. Let him win it. Take his wagons.", "slow, pleased"),
        lead=("none", ""))
-    sh("WS", 3, "That night, riders slip out of the camp.", mode="establish", tier="light", who=["riders"],
+    sh("WS", 4, "That night, riders slip out of the camp.", narr="That night, a few riders slipped out of the camp.", mode="establish", tier="light", who=["riders"],
        place="mgcamp", light="blue moonlight", src="keyframe", on={"riders": "standing on the trampled grass beside their horses"}, exit=True,
        act=("riders", "lead their horses out between the yurts", "swing up into the saddles one by one",
             "ride off into the dark in single file"),
@@ -627,11 +626,11 @@ def write(ep):
        facing={"subutai": "genghis", "genghis": "subutai"},
        act=("subutai", "turns to the khan", "jerks his head back in surprise", "holds his head back"),
        line=("subutai", "genghis", "Whole?", "blunt"), lead=("none", ""))
-    sh("OTS", 6, "The khan's creed.", who=["subutai", "genghis"], over="subutai",
+    sh("OTS", 5, "The khan's creed.", who=["subutai", "genghis"], over="subutai",
        act=("genghis", "holds a bowl of milk", "lifts the bowl toward the general", "holds the bowl out",
             "his eyes stay steady"),
        line=("genghis", "subutai", "Never break a thing you can learn from.", "a teacher's voice"), lead=("none", ""))
-    sh("WS", 4, "Subutai goes to do it.", mode="establish", who=["subutai", "bars", "genghis"], exit=True,
+    sh("WS", 4, "Subutai goes to do it.", narr="The khan collected engineers the way other men collect horses.", claims=["C11"], mode="establish", who=["subutai", "bars", "genghis"], exit=True,
        act=("subutai", "gets up from the carpet", "pushes out through the felt door", "the door flap swings shut"),
        lead=("left", "the door"), height={"subutai": "third"}, foley=["felt flapping"])
     # ---- 9. preparation (7:30-8:15): the trap is set ------------------------------------------------------------
@@ -643,7 +642,7 @@ def write(ep):
     sh("EWS", 4, "Riders on the skyline, every day.", mode="establish", tier="hold", who=["riders"], place="ridge",
        cam="pan_left", end="the riders small on the right edge of the frame",
        narr="For days, the khan gave Napoleon nothing to hit.", lead=("left", ""), height={"riders": "quarter"})
-    sh("WS", 4, "Shoot and gone.", mode="narrated", who=["riders"], place="ridge", src="keyframe",
+    sh("WS", 4, "Shoot and gone.", narr="A volley of arrows, then nothing but grass.", mode="narrated", who=["riders"], place="ridge", src="keyframe",
        act=("riders", "sit their horses on the crest", "swing their bows up and loose arrows high", "hold the bows up as the arrows fly"),
        lead=("right", "where they wheel"),
        height={"riders": "third"})
@@ -654,16 +653,16 @@ def write(ep):
        act=("brun", "marches with his head down", "stumbles and catches himself on his musket", "marches on, limping"),
        narr="Every day took them further from the fog.", claims=["I01"],
        lead=("right", "where he marches"))
-    sh("MCU", 4, "Napoleon decides.", mode="narrated", tier="light", who=["napoleon"],
+    sh("MCU", 5, "Napoleon decides.", narr="Then Napoleon stopped chasing the riders and started thinking.", mode="narrated", tier="light", who=["napoleon"],
        act=("napoleon", "rides with his eyes on the ridge", "lifts his chin sharply", "keeps his eyes on the ridge"),
        lead=("right", "the ridge"))
-    sh("MS", 6, "Napoleon finds his move.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"}, facing={"kemal": "napoleon", "napoleon": "kemal"}, 
+    sh("MS", 5, "Napoleon finds his move.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"}, facing={"kemal": "napoleon", "napoleon": "kemal"}, 
        act=("napoleon", "rides beside the mameluke", "jabs his riding crop toward a valley ahead", "holds the crop out"),
-       line=("napoleon", "kemal", "If he won't come to me, I'll give him a reason.", "a sudden grin in the voice"), lead=("none", ""))
+       line=("napoleon", "kemal", "Then I'll give him a reason to come.", "a sudden grin in the voice"), lead=("none", ""))
     sh("INSERT", 4, "A line drawn in the dust.", mode="insert", src="keyframe", place="tent", light="warm candlelight",
        act=("napoleon", "a gloved finger draws a curving line in the dust on a wagon board",
             "the finger stabs down hard at the end of the line", "the finger rests on the spot"),
-       narr="He set a trap.", foley=["a finger tapping wood"])
+       narr="So Napoleon set a trap of his own.", foley=["a finger tapping wood"])
     sh("WS", 5, "The bait: one division alone.", mode="establish", who=["infantry"], place="valley", src="keyframe",
        narr="One division as bait in an open valley. The guns hidden behind the hill.",
        rel=["bronze cannons stand hidden behind the low hill on the left", "the division stands in front of the low hill"],
@@ -672,14 +671,14 @@ def write(ep):
        act=("gunners", "crouch behind the crest beside a cannon", "pull a grey cloth over the barrel", "lie flat beside the wheels"),
        narr="To spring it, he took every fighting man out of camp.", lead=("right", "the crest"),
        rel=["the grassy crest rises in front of the cannon"])
-    sh("MS", 3, "Someone watches them hide the guns.", tier="light", who=["bayan"], place="valley", src="keyframe",
+    sh("MS", 3, "Someone watches them hide the guns.", narr="But the hills had eyes.", tier="light", who=["bayan"], place="valley", src="keyframe",
        on={"bayan": "lying flat in the tall grass"},
        act=("bayan", "lies flat in the tall grass on the far slope", "pushes the grass apart with both hands and stares",
             "lets the grass close again"), lead=("left", "the hidden guns"), foley=["grass rustling"])
     sh("WS", 4, "The wagons, nearly unguarded.", mode="establish", tier="light", who=["drummer"], place="wagons",
        src="keyframe", on={"drummer": "sitting on a wagon step"}, height={"drummer": "quarter"},
        narr="The wagons stayed behind, with a handful of guards.", rel=["the covered wagons stand behind the drummer"])
-    sh("WS", 3, "Far from the valley, riders walk their horses along a dry gully.", mode="establish", tier="light",
+    sh("WS", 3, "Far from the valley, riders walk their horses along a dry gully.", narr="Far from the valley, other riders moved.", mode="establish", tier="light",
        who=["riders"], place="steppe", light="hazy afternoon light", src="keyframe",
        on={"riders": "walking beside their horses in a dry gully"},
        act=("riders", "lead their horses along the bottom of a dry gully", "duck their heads below the rim",
@@ -700,7 +699,7 @@ def write(ep):
                     "riders": ("right", "left", "sitting on horses on the hillside", ""),
                     "genghis": ("right", "left", "sitting astride a short dun horse", ""),
                     "subutai": ("left", "right", "sitting astride a black horse", "")})
-    sh("EWS", 4, "At last, the khan comes.", mode="establish", who=["infantry", "riders"],
+    sh("EWS", 4, "At last, the khan comes.", narr="At last, the khan came, and he came in force.", claims=["I03"], mode="establish", who=["infantry", "riders"],
        act=("riders", "appear along both hilltops", "pour down the slopes in a brown flood", "spread out across the valley floor"),
        react=[("infantry", "brace their muskets")],
        rel=["the French division stands on the valley floor", "the low hills rise on both sides of the valley"],
@@ -709,20 +708,20 @@ def write(ep):
     sh("MS", 4, "The emperor's first order.", who=["napoleon"], src="keyframe",
        act=("napoleon", "sits his horse on the hill", "stands in his stirrups and flings his arm up", "holds the arm high"),
        line=("napoleon", "room", "Squares! Form squares!", "a parade-ground shout"), lead=("above", "where his arm goes"))
-    sh("WS", 4, "The square forms.", mode="establish", who=["infantry"], src="keyframe",
+    sh("WS", 4, "The square forms.", narr="The infantry formed a square, bayonets out on every side.", claims=["C07"], mode="establish", who=["infantry"], src="keyframe",
        act=("infantry", "hurry into a hollow square", "slam their musket butts down with bayonets out",
             "kneel in four walls of bayonets"),
        rel=["the square stands on the open grass"], lead=("none", ""), height={"infantry": "third"},
        foley=["bayonets clicking"])
-    sh("MS", 3, "At the wagons, the drummer hears hooves.", tier="light", who=["drummer"], place="wagons",
+    sh("MS", 3, "At the wagons, the drummer hears hooves.", narr="Back at the wagons, the drummer heard hooves.", tier="light", who=["drummer"], place="wagons",
        light="bright afternoon sun", src="keyframe", on={"drummer": "sitting on a wagon step"},
        act=("drummer", "sits on the wagon step polishing his drum", "jerks his head up toward the hills",
             "freezes with the cloth in his hand"), lead=("right", "the hills"), foley=["far-off hooves growing louder"])
-    sh("WS", 4, "The arrow storm.", mode="establish", who=["riders"], src="keyframe",
+    sh("WS", 4, "The arrow storm.", narr="The arrows came down on the square like rain.", mode="establish", who=["riders"], src="keyframe",
        act=("riders", "ride past the square at a distance", "swing their bows up and loose a dark cloud of arrows",
             "ride on, reaching for more arrows"), lead=("left", "where the arrows fly"), height={"riders": "third"},
        loud="hundreds of arrows hissing")
-    sh("INSERT", 3, "Inside the square.", mode="insert",
+    sh("INSERT", 3, "Inside the square.", narr="Men fell. The square closed up.", mode="insert",
        act=("infantry", "arrows rain down into the square", "an arrow knocks a shako off a soldier's head",
             "the shako rolls on the grass"), foley=["arrows thudding"])
     sh("MS", 4, "Brun closes the gap.", who=["brun"], src="keyframe",
@@ -731,16 +730,16 @@ def write(ep):
        rel=["a line of kneeling soldiers stands in front of the grenadier"])
     sh("MCU", 5, "Steady.", who=["brun"],
        act=("brun", "wipes sweat from his eyes", "raises his musket over his head", "holds the musket up"),
-       line=("brun", "room", "Steady, lads. They can't stay up there all day.", "loud, steady"), lead=("none", ""))
-    sh("WS", 3, "The camp guards fire one ragged volley.", mode="establish", who=["guards"], place="wagons",
+       line=("brun", "room", "Steady, lads. They can't shoot all day.", "loud, steady"), lead=("none", ""))
+    sh("WS", 3, "The camp guards fire one ragged volley.", narr="At the camp, a handful of guards fired.", mode="establish", who=["guards"], place="wagons",
        light="bright afternoon sun", src="keyframe",
        act=("guards", "stand between two wagons with their muskets up", "fire a thin ragged volley in a puff of smoke",
             "fumble with their ramrods to reload"), lead=("right", "where the riders come"), height={"guards": "third"},
        loud="a thin musket volley")
-    sh("MCU", 3, "A drum keeps the square together.", who=["drummer"],
+    sh("MCU", 3, "A drum keeps the square together.", narr="A drum kept the square together.", who=["drummer"],
        act=("drummer", "stands stiff with his drum", "slams his sticks down in a fast roll", "keeps the roll going"),
        lead=("none", ""), loud="a fast drum roll")
-    sh("EWS", 4, "The heavy riders form for the charge.", mode="establish", who=["riders"], src="keyframe",
+    sh("EWS", 4, "The heavy riders form for the charge.", narr="Then the heavy riders formed up to charge.", mode="establish", who=["riders"], src="keyframe",
        act=("riders", "lower long lances in a line", "kick their horses forward into a charge", "thunder toward the square"),
        lead=("left", "where they charge"), height={"riders": "quarter"}, loud="a wall of hooves")
     sh("MS", 4, "Front rank, kneel.", who=["brun"], 
@@ -749,16 +748,16 @@ def write(ep):
     sh("MS", 4, "Hold.", who=["brun"],
        act=("brun", "raises his hand high", "shakes the raised hand once", "keeps the hand up, trembling"),
        line=("brun", "room", "Hold your fire. Hold.", "low, tight"), lead=("none", ""))
-    sh("MWS", 3, "The front rank aims.", who=["infantry"], src="keyframe",
+    sh("MWS", 3, "The front rank aims.", narr="The front rank aimed low.", who=["infantry"], src="keyframe",
        act=("infantry", "aim their muskets over the bayonets", "jerk their cheeks down onto the stocks", "hold their aim"),
        lead=("right", "where they aim"))
     sh("CU", 3, "Fire.", who=["brun"],
        act=("brun", "holds his raised hand", "drops the hand like an axe", "keeps the hand down"),
        line=("brun", "room", "Fire!", "a bellow"), lead=("below", "where the hand drops"))
-    sh("WS", 4, "The volley at thirty metres.", mode="establish", who=["infantry"], src="keyframe",
+    sh("WS", 4, "The volley at thirty metres.", narr="A steady square held its fire until the last moment.", claims=["C07"], mode="establish", who=["infantry"], src="keyframe",
        act=("infantry", "kneel behind their bayonets", "fire one volley in a wall of white smoke",
             "lower the muskets in the smoke"), lead=("right", "where the smoke rolls"), loud="one huge musket volley")
-    sh("WS", 4, "The charge splits around the square.", mode="establish", who=["riders"], src="keyframe",
+    sh("WS", 4, "The charge splits around the square.", narr="The charge broke around it like water around a rock.", claims=["C07"], mode="establish", who=["riders"], src="keyframe",
        key="charge_split",
        act=("riders", "charge out of the smoke", "swerve around the corners of the square and pull up hard",
             "wheel away into the grass"), lead=("right", "where they wheel"), height={"riders": "third"})
@@ -770,17 +769,17 @@ def write(ep):
        act=("napoleon", "lowers his telescope", "points at the crest behind them", "keeps the arm out"),
        react=[("kemal", "spins toward the gunners")],
        line=("napoleon", "kemal", "Now. Signal the guns.", "calm, quick"), lead=("left", "the crest"))
-    sh("WS", 4, "The hidden guns roll over the crest.", mode="establish", who=["gunners"], src="keyframe",
+    sh("WS", 4, "The hidden guns roll over the crest.", narr="Then the hidden guns rolled over the crest.", mode="establish", who=["gunners"], src="keyframe",
        act=("gunners", "push a bronze cannon over the crest", "heave the wheels forward and swing the barrel down",
             "crouch beside the aimed cannon"), lead=("right", "where the barrel points"), height={"gunners": "third"},
        foley=["wheels grinding"])
     sh("CU", 4, "Canister.", who=["napoleon"], 
        act=("napoleon", "watches the riders come", "drops his hand down hard", "keeps the hand low"),
        claims=["C05"], line=("napoleon", "room", "Canister. Six hundred. Now!", "fast, hard"), lead=("none", ""))
-    sh("MWS", 3, "Canister.", who=["gunners"],
+    sh("MWS", 3, "Canister.", narr="The guns fired again.", who=["gunners"],
        act=("gunners", "crouch with hands over their ears", "the cannon jerks back in a blast of smoke",
             "the crew stand up in the smoke"), lead=("right", "where the smoke blows"), loud="a cannon blast")
-    sh("EWS", 4, "Six hundred metres: the Mongol mass breaks.", mode="establish", who=["riders"], src="keyframe",
+    sh("EWS", 4, "Six hundred metres: the Mongol mass breaks.", narr="Canister turned each gun into a giant shotgun.", claims=["C05"], mode="establish", who=["riders"], src="keyframe",
        key="canister_hit",
        act=("riders", "mass together on the slope", "break apart and scatter under a hail of shot",
             "spread out up the hill"), lead=("right", "where they scatter"), height={"riders": "quarter"},
@@ -789,7 +788,7 @@ def write(ep):
        act=("napoleon", "watches through the smoke", "slaps his gloved hand against his thigh", "sits back in the saddle",
             "a thin smile pulls at his mouth"),
        line=("napoleon", "room", "That is how Europe learned.", "quiet, chin high"), lead=("none", ""))
-    sh("WS", 4, "Behind the hills, other riders reach the wagons.", mode="establish", who=["riders"], place="wagons", key="wagons_burn",
+    sh("WS", 4, "Behind the hills, other riders reach the wagons.", narr="Behind the hills, other riders reached the wagons.", claims=["I03"], mode="establish", who=["riders"], place="wagons", key="wagons_burn",
        src="keyframe", act=("riders", "ride hard between the wagons", "hurl burning torches onto the canvas covers",
                              "wheel round as the canvas catches"),
        rel=["the covered wagons stand behind the riders"], lead=("right", "where they wheel"), height={"riders": "third"},
@@ -802,16 +801,16 @@ def write(ep):
     sh("MS", 5, "Murat smells the kill.", who=["murat", "napoleon"], where={"murat": "left", "napoleon": "right"},
        facing={"murat": "napoleon", "napoleon": "murat"},
        act=("murat", "rides up beside the emperor", "raises his sabre and points it at the hills", "keeps it pointed"),
-       line=("murat", "napoleon", "Let me finish them, Sire! Now, while they run!", "begging, loud"),
+       line=("murat", "napoleon", "Let me finish them, Sire! While they run!", "begging, loud"),
        lead=("right", "the hills"))
     sh("MS", 4, "Napoleon has learned the khan's lesson.", who=["murat", "napoleon"],
        where={"murat": "left", "napoleon": "right"}, facing={"murat": "napoleon", "napoleon": "murat"},
        act=("napoleon", "turns to the marshal", "grabs the marshal's bridle", "holds the bridle tight"),
        line=("napoleon", "murat", "No. They want you to chase.", "hard, low"), lead=("left", "the marshal's horse"))
-    sh("MCU", 4, "Murat hates it.", who=["murat"],
+    sh("MCU", 4, "Murat hates it.", narr="Murat stayed. He did not like it.", who=["murat"],
        act=("murat", "glares at the emperor", "tears off his plumed hat and slaps it against his knee",
             "holds the crushed hat"), lead=("none", ""))
-    sh("WS", 4, "On the far ridge, the khan watches.", mode="establish", who=["subutai", "genghis"], place="ridge",
+    sh("WS", 4, "On the far ridge, the khan watches.", narr="The khan had never wanted to win this battle.", claims=["I03"], mode="establish", who=["subutai", "genghis"], place="ridge",
        src="keyframe", where={"subutai": "left", "genghis": "right"}, facing={"subutai": "genghis", "genghis": "camera"},
        act=("genghis", "sits his horse on the far ridge", "raises his open hand to hold his riders back",
             "keeps the hand raised"),
@@ -820,11 +819,11 @@ def write(ep):
     sh("OTS", 4, "Subutai sees a defeat.", who=["genghis", "subutai"], over="genghis", place="ridge",
        act=("subutai", "watches the valley", "jabs a finger down at the smoke", "keeps the finger pointed"),
        line=("subutai", "genghis", "He is winning, Khan.", "tense"), lead=("none", ""))
-    sh("OTS", 6, "The khan sees the opposite.", who=["subutai", "genghis"], over="subutai", place="ridge",
+    sh("OTS", 5, "The khan sees the opposite.", who=["subutai", "genghis"], over="subutai", place="ridge",
        act=("genghis", "keeps his eyes on the valley", "drops his raised hand to the saddle", "rests the hand there",
             "his face stays perfectly calm"),
        line=("genghis", "subutai", "Let him. He is winning the wrong thing.", "slow, almost gentle"), lead=("none", ""))
-    sh("CU", 4, "The khan looks behind the French.", tier="light", who=["genghis"], place="ridge",
+    sh("CU", 5, "The khan looks behind the French.", narr="He was not looking at the battle. He was looking past it.", tier="light", who=["genghis"], place="ridge",
        act=("genghis", "looks at the valley", "lifts his chin toward the far smoke", "holds the look"),
        lead=("left", "where he looks"))
     sh("MS", 4, "Kemal sees it first.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"},
@@ -834,20 +833,20 @@ def write(ep):
     sh("CU", 3, "Napoleon turns.", who=["napoleon"],
        act=("napoleon", "faces the valley", "jerks round in the saddle", "stares back over the hills"),
        line=("napoleon", "self", "What is that?", "sharp"), lead=("left", "where he turns"))
-    sh("EWS", 4, "Black smoke where the camp was.", mode="establish", tier="hold", who=[], place="steppe",
+    sh("EWS", 4, "Black smoke where the camp was.", narr="Black smoke rose where the camp had been.", mode="establish", tier="hold", who=[], place="steppe",
        light="bright afternoon sun", src="keyframe", cam="push_in", end="the black smoke columns filling the sky",
        rel=["black smoke columns rise behind the low hills"])
     sh("MS", 4, "The name for it.", who=["kemal", "napoleon"], where={"kemal": "left", "napoleon": "right"},
        facing={"kemal": "napoleon", "napoleon": "kemal"},
        act=("kemal", "lowers his arm", "drops his head", "keeps his head down"),
        line=("kemal", "napoleon", "Sire. That is our camp. The wagons.", "barely audible"), lead=("none", ""))
-    sh("CU", 4, "The emperor understands.", tier="full", who=["napoleon"],
+    sh("CU", 4, "The emperor understands.", narr="Napoleon understood what the khan had done.", tier="full", who=["napoleon"],
        act=("napoleon", "stares at the smoke", "drops the reins from his hands", "sits with empty hands",
             "his mouth falls open and his eyes go flat"), lead=("none", ""))
     # ---- 11. turning point (10:45-11:15): the won field ---------------------------------------------------------
     ep.scene("S11", "valley", light="smoky amber light through drifting smoke", ambience="wind, a single crow, silence",
              stage={"napoleon": ("left", "right", GRASS, ""), "brun": ("right", "left", GRASS, ""), "murat": ("right", "left", GRASS, "")})
-    sh("WS", 5, "One still frame: the winner on his field.", mode="establish", tier="hold", who=["napoleon"],
+    sh("WS", 5, "One still frame: the winner on his field.", narr="Napoleon had his battle at last, and he had won it.", mode="establish", tier="hold", who=["napoleon"],
        cam="push_in", end="the general small and alone in the middle of the frame",
        rel=["smoke drifts behind the general"], height={"napoleon": "quarter"})
     sh("MCU", 5, "Two words.", who=["napoleon"],
@@ -856,19 +855,19 @@ def write(ep):
     sh("MS", 5, "What victory bought.", who=["napoleon", "brun"],
        act=("brun", "holds out a black burnt loaf with both hands", "breaks the loaf open and black crumbs fall",
             "holds the two halves out"),
-       line=("brun", "napoleon", "Sire. This is what's left of the bread.", "quiet"), lead=("below", "where the crumbs fall"))
+       line=("brun", "napoleon", "This is what's left of the bread.", "quiet"), lead=("below", "where the crumbs fall"))
     sh("MS", 4, "How much is left.", who=["napoleon", "brun"], 
        act=("napoleon", "looks at the loaf", "lifts his eyes to the grenadier", "holds the look"),
        line=("napoleon", "brun", "How much is left?", "flat"), lead=("none", ""))
     sh("MS", 4, "The answer.", who=["napoleon", "brun"], 
        act=("brun", "holds out the black loaf", "jerks his head toward the horse lines", "lowers his hands"),
        line=("brun", "napoleon", "That, Sire. And the horses.", "quiet"), lead=("none", ""))
-    sh("CU", 4, "The emperor looks down.", tier="light", who=["napoleon"],
+    sh("CU", 4, "The emperor looks down.", narr="Without wagons, an army on the steppe starves.", claims=["C16"], tier="light", who=["napoleon"],
        act=("napoleon", "looks at the loaf", "drops his eyes and closes them", "keeps the eyes shut"), lead=("none", ""))
     sh("MS", 4, "Murat says it at last.", who=["napoleon", "murat"], 
        act=("murat", "walks up beside the emperor", "pulls off his plumed hat", "holds the hat at his side"),
        line=("murat", "napoleon", "They never wanted the field, Sire.", "subdued, for once"), lead=("none", ""))
-    sh("EWS", 4, "The wagons, burned to their ribs.", mode="establish", tier="hold", who=[], place="wagons",
+    sh("EWS", 4, "The wagons, burned to their ribs.", narr="The wagons, and the bread in them, had burned.", mode="establish", tier="hold", who=[], place="wagons",
        light="smoky amber light through drifting smoke", src="keyframe", cam="pull_out",
        end="the rows of burnt wagon frames small on the steppe",
        rel=["thin smoke rises above the burnt wagon frames"])
@@ -879,7 +878,7 @@ def write(ep):
                     "napoleon": ("right", "left", GRASS, ""), "murat": ("left", "right", GRASS, ""),
                     "bars": ("right", "left", "sitting astride a short shaggy horse", "")})
     sh("EWS", 4, "The battlefield, quiet.", mode="establish", tier="hold", who=[], cam="pan_left",
-       end="the empty valley under the evening sky", narr="On paper, it was a victory.",
+       end="the empty valley under the evening sky", narr="On paper, it was a clean French victory.",
        rel=["dropped lances and arrows lie on the trampled grass"])
     sh("WS", 4, "The Mongol losses are real.", mode="narrated", tier="light", who=["riders"], place="mgcamp", src="keyframe",
        act=("riders", "ride slowly into camp leading riderless horses", "lift a wounded rider down from a saddle",
@@ -895,18 +894,18 @@ def write(ep):
        height={"infantry": "third"})
     sh("MS", 4, "The horses go into the pot.", mode="narrated", who=["infantry"], place="wagons",
        act=("infantry", "kneel beside a dead horse with knives", "pull the hide back from the meat", "work on with bent heads"),
-       narr="Within days, they were eating their horses.", claims=["I03"], lead=("none", ""),
+       narr="Within days, the French were eating their own horses.", claims=["I03"], lead=("none", ""),
        on={"infantry": "kneeling on the burnt grass"})
-    sh("MCU", 4, "The emperor, beaten by a won battle.", mode="narrated", tier="light", who=["napoleon"], place="tent",
+    sh("MCU", 4, "The emperor, beaten by a won battle.", narr="Napoleon had won his battle and lost his campaign.", mode="narrated", tier="light", who=["napoleon"], place="tent",
        light="one candle", src="keyframe",
        act=("napoleon", "sits by one candle", "drops his face into his hands", "stays bent over"),
        lead=("none", ""))
-    sh("WS", 4, "An invitation arrives.", mode="narrated", who=["bars"], place="camp", src="keyframe",
+    sh("WS", 4, "An invitation arrives.", narr="Then a rider brought an invitation from the khan.", claims=["I04"], mode="narrated", who=["bars"], place="camp", src="keyframe",
        act=("bars", "rides slowly into the camp", "raises a white felt banner on a pole", "sits holding the banner high"),
               lead=("left", "where he rides in"), height={"bars": "third"}, foley=["a banner flapping"])
     sh("MS", 5, "Murat smells a trap.", who=["murat", "napoleon"], place="camp", where={"murat": "left", "napoleon": "right"}, facing={"murat": "napoleon", "napoleon": "murat"}, 
        act=("murat", "steps between the emperor and the rider", "throws an arm out across his chest", "keeps the arm out"),
-       line=("murat", "napoleon", "It's a trap, Sire. He'll cut your throat.", "urgent"), lead=("none", ""))
+       line=("murat", "napoleon", "It's a trap, Sire.", "urgent"), lead=("none", ""))
     sh("MS", 5, "Napoleon goes anyway.", who=["murat", "napoleon"], place="camp", where={"murat": "left", "napoleon": "right"}, facing={"murat": "napoleon", "napoleon": "murat"}, 
        act=("napoleon", "puts on his hat", "pushes the marshal's arm aside", "steps past him"),
        line=("napoleon", "murat", "Everything here is a trap. I'm going.", "tired, certain"), lead=("none", ""))
@@ -916,36 +915,36 @@ def write(ep):
                     "kemal": ("center", "right", "standing on the carpet", "holds his hands behind his back"),
                     "genghis": ("right", "left", "sitting cross-legged on a carpet", ""),
                     "bars": ("right_back", "left", "standing against the lattice wall", "holds his cap in his hands")})
-    sh("WS", 4, "The emperor enters the khan's tent.", mode="establish", who=["napoleon", "kemal", "genghis", "bars"],
+    sh("WS", 5, "The emperor enters the khan's tent.", narr="That evening, the emperor walked into the khan's tent.", claims=["I04"], mode="establish", who=["napoleon", "kemal", "genghis", "bars"],
        act=("napoleon", "ducks in through the low felt door", "straightens up and pulls off his hat",
             "stands holding the hat at his side"),
        react=[("genghis", "watches him without a smile"), ("bars", "freezes with his cap in his hands")],
        rel=["the low fire burns in front of the khan"], lead=("right", "the khan"), height={"napoleon": "third"})
-    sh("OTS", 6, "The khan opens with a compliment.", who=["napoleon", "genghis"], over="napoleon",
+    sh("OTS", 5, "The khan opens with a compliment.", who=["napoleon", "genghis"], over="napoleon",
        act=("genghis", "sits cross-legged by the fire", "raises a bowl of mare's milk toward his guest", "holds the bowl out"),
        line=("genghis", "napoleon", "Your men stand like rocks, and your iron tubes sing.", "warm, slow"), lead=("none", ""))
     sh("OTS", 5, "Napoleon answers with the grievance.", who=["genghis", "napoleon"], over="genghis",
        act=("napoleon", "ignores the bowl", "jabs his hat toward the khan", "lowers the hat"),
        line=("napoleon", "genghis", "And still you burned my bread.", "cold"), lead=("none", ""))
-    sh("OTS", 6, "The khan names the difference between them.", who=["napoleon", "genghis"], over="napoleon",
+    sh("OTS", 5, "The khan names the difference between them.", who=["napoleon", "genghis"], over="napoleon",
        act=("genghis", "sets the bowl down", "lifts one finger and taps his own chest", "rests the hand on his knee"),
-       line=("genghis", "napoleon", "You came to fight a battle. I came to win a war.", "even, slow"), lead=("none", ""))
-    sh("CU", 4, "The hit lands.", tier="light", who=["napoleon"],
+       line=("genghis", "napoleon", "You came for a battle. I came for a war.", "even, slow"), lead=("none", ""))
+    sh("CU", 5, "The hit lands.", narr="The khan had read him in a single sentence.", tier="light", who=["napoleon"],
        act=("napoleon", "stares at the khan", "drops his eyes to the fire", "keeps his eyes down"), lead=("none", ""))
-    sh("OTS", 6, "The offer.", who=["napoleon", "genghis"], over="napoleon",
+    sh("OTS", 5, "The offer.", who=["napoleon", "genghis"], over="napoleon",
        act=("genghis", "leans forward", "throws both hands wide over the fire", "holds the hands open"),
-       claims=["C20"], line=("genghis", "napoleon", "Ride with me. I will give you a tumen. Ten thousand.", "generous, plain"),
+       claims=["C20"], line=("genghis", "napoleon", "Ride with me. I will give you a tumen.", "generous, plain"),
        lead=("none", ""))
-    sh("MS", 5, "Kemal: he means it.", who=["napoleon", "kemal"], where={"napoleon": "left", "kemal": "center"},
+    sh("MS", 5, "Kemal: he means it.", narr="He meant it. The khan gave armies to men he had just met.", claims=["C11"], who=["napoleon", "kemal"], where={"napoleon": "left", "kemal": "center"},
        facing={"napoleon": "genghis", "kemal": "napoleon"},
        act=("kemal", "leans in to the emperor's ear", "raises a hand beside his mouth", "keeps the hand up"),
-       line=("kemal", "napoleon", "Sire, he means it. He gives armies to strangers.", "a whisper"), lead=("none", ""))
-    sh("OTS", 6, "Napoleon will not serve.", who=["genghis", "napoleon"], over="genghis",
+       lead=("none", ""))
+    sh("OTS", 5, "Napoleon will not serve.", who=["genghis", "napoleon"], over="genghis",
        act=("napoleon", "pulls his hat against his chest", "lifts his chin high", "holds the chin up",
             "his mouth sets in a hard line"),
-       line=("napoleon", "genghis", "I have given orders to kings. I do not take them.", "clipped, chin high"),
+       line=("napoleon", "genghis", "I give orders to kings. I do not take them.", "clipped, chin high"),
        lead=("none", ""))
-    sh("MCU", 3, "The interpreter swallows.", tier="light", who=["bars"], on={"bars": "standing against the lattice wall"},
+    sh("MCU", 4, "The interpreter swallows.", narr="Bars swallowed hard before he translated that.", tier="light", who=["bars"], on={"bars": "standing against the lattice wall"},
        act=("bars", "stands against the lattice wall", "pulls his cap tight against his chest with both fists", "holds the cap tight"),
        lead=("none", ""))
     sh("OTS", 5, "Then go.", who=["napoleon", "genghis"], over="napoleon",
@@ -957,37 +956,37 @@ def write(ep):
     sh("OTS", 4, "Napoleon asks the real question.", who=["genghis", "napoleon"], over="genghis",
        act=("napoleon", "stares at the khan", "lifts one eyebrow and jabs his hat forward", "holds still"),
        line=("napoleon", "genghis", "And the price?", "suspicious"), lead=("none", ""))
-    sh("OTS", 6, "The price: the guns, and a teacher.", who=["napoleon", "genghis"], over="napoleon",
+    sh("OTS", 5, "The price: the guns, and a teacher.", who=["napoleon", "genghis"], over="napoleon",
        act=("genghis", "sets the bowl down", "raises two fingers", "holds the fingers up"),
-       line=("genghis", "napoleon", "Two of your iron tubes. And a gunner to teach mine.", "plain"), lead=("none", ""))
-    sh("CU", 4, "The longest silence of his life.", tier="light", who=["napoleon"],
+       line=("genghis", "napoleon", "Two iron tubes. And a gunner to teach mine.", "plain"), lead=("none", ""))
+    sh("CU", 5, "The longest silence of his life.", narr="Napoleon was an artillery officer. The guns were his trade.", claims=["C04"], tier="light", who=["napoleon"],
        act=("napoleon", "stands without moving", "lifts his eyes to the smoke hole above", "keeps the eyes up",
             "his jaw works once"), lead=("above", "where he looks"))
     sh("MS", 5, "Kemal says what the men cannot.", who=["napoleon", "kemal"], where={"napoleon": "left", "kemal": "center"},
        facing={"napoleon": "genghis", "kemal": "napoleon"},
        act=("kemal", "steps close to the emperor", "drops his voice and bends his head", "stays bent close"),
        line=("kemal", "napoleon", "Sire. The men are eating grass.", "very quiet"), lead=("none", ""))
-    sh("MS", 3, "Outside, they are.", tier="light", who=["brun", "drummer"], place="wagons", light="cold blue light",
+    sh("MS", 4, "Outside, they are.", narr="Outside, the soldiers were already chewing grass.", tier="light", who=["brun", "drummer"], place="wagons", light="cold blue light",
        src="keyframe", where={"brun": "left", "drummer": "right"}, facing={"brun": "drummer", "drummer": "brun"},
        on={"brun": "sitting on the burnt grass", "drummer": "sitting on the burnt grass"},
        act=("brun", "sits in the ash beside a cold fire", "pulls up a fistful of grass and chews it",
             "chews slowly, staring at nothing"), react=[("drummer", "watches him chew")], lead=("none", ""))
-    sh("OTS", 6, "The choice.", who=["genghis", "napoleon"], over="genghis",
+    sh("OTS", 5, "The choice.", who=["genghis", "napoleon"], over="genghis",
        act=("napoleon", "pulls off one glove", "slaps the glove down on the carpet", "stands with the bare hand open"),
        line=("napoleon", "genghis", "Two guns. Not one more.", "slow, each word paid for"), lead=("below", "where the glove lands"),
        foley=["leather on carpet"])
-    sh("MCU", 4, "The khan's smile.", tier="light", who=["genghis"],
+    sh("MCU", 5, "The khan's smile.", narr="The khan got exactly what he had come for.", tier="light", who=["genghis"],
        act=("genghis", "looks at the glove", "lifts the corner of his mouth into a slow smile", "holds the smile"),
        lead=("none", ""))
-    sh("OTS", 6, "The khan's last lesson.", who=["napoleon", "genghis"], over="napoleon",
+    sh("OTS", 5, "The khan's last lesson.", who=["napoleon", "genghis"], over="napoleon",
        act=("genghis", "picks up the glove", "lifts the glove and holds it out to its owner", "keeps holding it out"),
-       line=("genghis", "napoleon", "You lost nothing today but pride. Pride eats too much grass.", "kind, amused"),
+       line=("genghis", "napoleon", "You lost only pride. Pride eats too much grass.", "kind, amused"),
        lead=("none", ""))
-    sh("WS", 4, "Napoleon takes his glove and goes.", mode="establish", who=["napoleon", "kemal", "genghis", "bars"],
+    sh("WS", 5, "Napoleon takes his glove and goes.", narr="Napoleon took his glove and walked out.", mode="establish", who=["napoleon", "kemal", "genghis", "bars"],
        exit=True, act=("napoleon", "takes the glove and puts his hat on", "turns and pushes out through the felt door",
                        "the felt flap swings shut behind him"),
        lead=("left", "the door"), height={"napoleon": "third"}, foley=["felt flapping"])
-    sh("WS", 4, "The price, paid: two guns go to the khan.", mode="establish", who=["gunners", "riders"], place="steppe",
+    sh("WS", 4, "The price, paid: two guns go to the khan.", narr="The guns went to the khan, and a gunner went with them.", claims=["I04"], mode="establish", who=["gunners", "riders"], place="steppe",
        light="soft gold morning light", src="keyframe", where={"gunners": "left", "riders": "right"},
        facing={"gunners": "right", "riders": "right"},
        on={"gunners": GRASS, "riders": "sitting on horses on the grass"},
@@ -1037,7 +1036,7 @@ def write(ep):
     sh("MCU", 4, "The tsar refuses.", mode="narrated", tier="light", who=["napoleon"], place="moscow", light="orange firelight",
        src="keyframe", on={"napoleon": "standing at a tall window"},
        act=("napoleon", "stands at a tall window", "drops a folded letter onto the sill", "stares out at the flames"),
-       narr="The tsar refused to talk.", claims=["C12"], lead=("right", "the window"))
+       narr="The tsar refused to talk. There was no one to beat.", claims=["C12"], lead=("right", "the window"))
     sh("WS", 4, "The retreat.", mode="narrated", who=["infantry"], place="fog", light="cold blue snow light", src="keyframe",
        on={"infantry": "standing in deep snow"},
        act=("infantry", "trudge through falling snow", "stumble and pull each other up", "march on, bent over"),
@@ -1051,7 +1050,7 @@ def write(ep):
     ep.scene("S15", "moscow", light="orange firelight at night", ambience="a city burning, a far drum",
              stage={"napoleon": ("center", "right", "standing at a tall window", ""),
                     "drummer": ("center", "right", "standing on a wooden street", "")})
-    sh("INSERT", 3, "The drumstick stops, again.", mode="insert",
+    sh("INSERT", 3, "The drumstick stops, again.", narr="The drum stopped again.", mode="insert",
        act=("drummer", "a wooden drumstick hangs above a French drum", "the drumstick strikes the drum skin twice",
             "the drumstick stops in mid-air, shaking"), loud="two drum beats")
     sh("MCU", 4, "He has seen this fire.", mode="narrated", tier="light", who=["napoleon"], src="keyframe",
@@ -1059,7 +1058,7 @@ def write(ep):
        narr="He had seen a fire like this before.", lead=("right", "the flames"))
     sh("ECU", 5, "Burning wagons in his eyes.", mode="narrated", tier="light", who=["napoleon"],
        act=("napoleon", "stares without blinking", "narrows his eyes as the flames jump", "keeps the eyes narrowed"),
-       narr="Five hundred and eighty-nine years earlier.", claims=["C21", "I01"], lead=("none", ""))
+       narr="The same fire, five hundred and eighty-nine years earlier.", claims=["C21", "I01"], lead=("none", ""))
     # ---- 16. channel pointer (14:45-15:00) ----------------------------------------------------------------------
     ep.scene("S16", "stoneage", light="warm campfire light", ambience="a crackling campfire",
              stage={"geniuses": ("center", "camera", "sitting on rocks around the fire", ""),
