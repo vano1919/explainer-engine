@@ -693,12 +693,10 @@ def look_collage(root: Path, *, cell_w: int = 960) -> Path:
 
 def look_report(root: Path) -> dict:
     """Per look: steady s/frame per scene, the ratio to B_light on the same runner (over 2x is flagged, plan 3.7: shown, not
-    excluded), the line width against BP-173's band, and the knobs. Written to ``root/look_round_summary.json`` + a Markdown table."""
-    from explainer_engine.standards import sourced_rules as SR
+    excluded), the line width's CN-17 (BP-173) finding from the render, and the knobs. Written to ``root/look_round_summary.json`` + a Markdown table."""
     root = Path(root)
     rows = _look_rows(root)
     base = baseline_seconds(rows)
-    lo, hi = SR.T("BP-173", "weight_px_1440")
     out = []
     for vid in [v for v in ["B_light", *look_ids()] if any(r["variant"] == v for r in rows)]:
         rs = [r for r in rows if r["variant"] == vid]
@@ -710,7 +708,9 @@ def look_report(root: Path) -> dict:
         out.append({"variant": vid, "label": rs[0]["label"], "slider": a.get("slider"), "seconds_per_frame": secs,
                     "ratio_to_b_light": ratio, "over_2x": sorted(sc for sc, x in ratio.items() if x > 2),
                     "line_mode": line, "line_px": px,
-                    "bp173": "none drawn" if px is None else ("inside" if lo <= px <= hi else f"outside {lo:g}-{hi:g} px (REVIEW)"),
+                    # BP-173's band is read where the registry lists it (CN-17 on every spec): its finding, if any, is the verdict
+                    "bp173": "none drawn" if px is None else next((f"{f['severity']}: {f['detail']}" for r in rs for f in r.get("findings", [])
+                                                                  if f.get("rule") == "CN-17"), "inside"),
                     "frames": {r["scene"]: r["frames"] for r in rs}, "clips": [r["mp4_rel"] for r in rs if r.get("mp4_rel")],
                     "knobs": {k: a[k] for k in ("shade_mode", "light_rig", "bg_mode", "sky", "kuwahara", "plate_kuwahara", "paper",
                                                 "grain", "palette_map") if k in a}})
