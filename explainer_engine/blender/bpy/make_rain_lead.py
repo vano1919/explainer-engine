@@ -61,7 +61,7 @@ def weighted(name, me, mat_name, rig, top, collection, subdiv=1):
         p.use_smooth = True
     ob = bpy.data.objects.new(name, me)
     collection.objects.link(ob)
-    me.materials.append(bpy.data.materials.new(mat_name))
+    me.materials.append(bpy.data.materials.get(mat_name) or bpy.data.materials.new(mat_name))
     dt = ob.modifiers.new("WeightsFromTop", "DATA_TRANSFER")
     dt.object = top
     dt.use_vert_data = True

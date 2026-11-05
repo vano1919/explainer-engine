@@ -25,6 +25,9 @@ POSES = Path(__file__).with_name("viseme_poses_rain.json")
 CREDIT = "Rain Rig © Blender Foundation | cloud.blender.org"
 SKIN_TEXTURE = 0.0   # 0.2 left hard stripes on the cheeks in the first frames: the texture is flat-field, judged on the clip
 LATTICE = "HLP-rain-lattice-head"
+# C2 (Fable, 2026-11-05): the body keeps Blender Studio's own shading; only the clothes are re-made by the style
+KEEP_OWN = ("MAT-rain.body", "MAT-rain.hands", "MAT-rain.hair", "MAT-rain.eyebrows", "MAT-rain.eyelashes", "MAT-rain.eyes",
+            "MAT-rain.eyedot", "MAT-rain.cornea", "MAT-rain.teeth", "MAT-rain.gums", "MAT-rain.tongue")
 # toon material name -> StyleEngine.material kwargs; the blend's own material names map onto them (slot class by name suffix)
 MATERIAL_MAP = {
     "MAT-rain.body": "rain_skin", "MAT-rain.hands": "rain_skin", "MAT-rain.hair": "rain_hair", "MAT-rain.eyebrows": "rain_hair",
@@ -79,10 +82,10 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
 
 
 def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | None = None, angular: float = 0.0,
-          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea", "GEO-rain-top"), push: bool = True, wall: bool = True, framing: str = "cu") -> dict:
+          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea", "GEO-rain-top"), push: bool = True, wall: bool = True, framing: str = "cu", keep: tuple = KEEP_OWN) -> dict:
     """{objects, camera, materials, frames_total}: Rain facing the camera in front of a plain wall, a slow push-in."""
     visemes = rigs.ActionVisemes(poses()).tracks_for(list(lip["shapes"])) if lip else None
-    rb = {"path": str(blend), "collection": "CH-rain", "rig": "RIG-rain", "materials": MATERIAL_MAP, "hide": list(hide),
+    rb = {"path": str(blend), "collection": "CH-rain", "rig": "RIG-rain", "materials": MATERIAL_MAP, "hide": list(hide), "keep": list(keep),
           "pose": {}, "lattice": {"object": LATTICE, "deltas": lattice_deltas(angular)} if angular else None, "visemes": visemes}
     objs = [{"name": "rain", "rig_blend": rb}]
     if wall:   # without it the camera sees the sky of the look (an HDRI behind the head)
@@ -100,7 +103,7 @@ def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | 
 
 def run(blend: Path, out: Path, *, variant: str = "q1_lit_pbrn_cinematic", frames: int = 24, scale: float = 1.0, samples: int = 16,
         cues: Path | None = None, angular: float = 0.0, binary: str | None = None, device: str = "auto", light_preset: str | None = None,
-        sky: str | None = None, wall: bool = True, framing: str = "cu", log=print) -> dict:
+        sky: str | None = None, wall: bool = True, framing: str = "cu", own_skin: bool = True, log=print) -> dict:
     from explainer_engine.blender import render as R
     from explainer_engine.blender.project import BlenderProject
     from explainer_engine.core import shot_cache
@@ -109,7 +112,8 @@ def run(blend: Path, out: Path, *, variant: str = "q1_lit_pbrn_cinematic", frame
     out.mkdir(parents=True, exist_ok=True)
     paths = SS.fetch()
     lip, cue_file = SS.lipsync_for(frames, cues=cues, out=out) if cues else (None, None)
-    sc = scene(Path(blend), frames, tex_dir=Path(blend).parent / "textures", lip=lip, angular=angular, wall=wall, framing=framing)
+    sc = scene(Path(blend), frames, tex_dir=Path(blend).parent / "textures", lip=lip, angular=angular, wall=wall, framing=framing,
+              keep=KEEP_OWN if own_skin else ())
     path, tokens = SS.style_for(variant)
     if light_preset or sky:   # WP-Q1's named light presets and the HDRI sky (Wing It!'s rule), over the chosen q1 look
         art = S.replace(tokens.art, **{k: v for k, v in (("light_preset", light_preset), ("sky", sky)) if v})
@@ -157,11 +161,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--light-preset", choices=sorted(S.light_presets()))
     ap.add_argument("--sky", choices=list(S.SKIES))
     ap.add_argument("--no-wall", action="store_true")
+    ap.add_argument("--style-skin", action="store_true", help="re-make the skin, hair and eyes through the style (C1) instead of C2")
     ap.add_argument("--framing", choices=("cu", "bust"), default="cu")
     ap.add_argument("--binary")
     a = ap.parse_args(argv)
     run(a.blend, a.out, variant=a.variant, frames=a.frames, scale=a.scale, samples=a.samples, cues=a.cues, angular=a.angular,
-        binary=a.binary, light_preset=a.light_preset, sky=a.sky, wall=not a.no_wall, framing=a.framing)
+        binary=a.binary, light_preset=a.light_preset, sky=a.sky, wall=not a.no_wall, framing=a.framing, own_skin=not a.style_skin)
     return 0
 
 

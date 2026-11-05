@@ -465,6 +465,8 @@ def build_rig_blend(o, pending, report):
         for i, ms in enumerate(ob.material_slots):
             if ms.material is None:
                 continue
+            if ms.material.name in rb.get("keep", ()):   # C2: the rig's own shading stays (Blender Studio's SSS skin, eyes, hair)
+                continue
             if ms.material.name not in rb["materials"]:
                 raise RuntimeError(f"{ob.name}: material {ms.material.name!r} has no toon material in the rig_blend map")
             slots[i] = rb["materials"][ms.material.name]
