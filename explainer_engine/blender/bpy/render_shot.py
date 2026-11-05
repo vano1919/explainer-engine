@@ -131,6 +131,12 @@ def _terrain(o, report):
     me = bpy.data.meshes.new(o["name"])
     me.from_pydata(verts, [], faces)
     me.update()
+    uvm = float(g.get("uv_m", 8.0))   # planar UVs: one texture repeat per uv_m metres
+    uv = me.uv_layers.new(name="UVMap")
+    for poly in me.polygons:
+        for li in poly.loop_indices:
+            v = me.vertices[me.loops[li].vertex_index].co
+            uv.data[li].uv = (v.x / uvm, v.y / uvm)
     ob = bpy.data.objects.new(o["name"], me)
     bpy.context.scene.collection.objects.link(ob)
     for _ in range(max(int(k) for k in o["material"]) + 1):

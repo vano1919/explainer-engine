@@ -310,3 +310,19 @@ def test_a_derived_rebuild_is_checked_by_source_and_fingerprint_not_bytes(tmp_pa
 def _write(p, data):
     p.write_bytes(data)
     return p
+
+
+def test_terrain_blocks_carry_ground_textures_and_uv_scale(tmp_path):
+    img = tmp_path / "g.jpg"
+    img.write_bytes(b"x")
+    doc = W.layouts()
+    wanted = {t for b in doc["layouts"]["hill_castle"]["blocks"] if b["type"] == "terrain" for t in b["textures"].values()}
+    assert wanted and all(t.startswith("texture.ph_") for t in wanted)
+    from unittest import mock
+    with mock.patch.object(W, "_mean", return_value=[0.3, 0.4, 0.2]), \
+            mock.patch.object(W, "kit_material", return_value=("kit_x", {"base": "#ffffff"})):
+        objs, mats = W.expand("hill_castle", {a["id"]: tmp_path / "x.glb" for a in W.table()["assets"]},
+                               ground_textures={t: img for t in wanted}, doc=doc)
+    m = mats["terrain_ground_grass"]
+    assert m["texture"] == str(img) and m["tile"] == 1.0
+    assert [o for o in objs if o.get("terrain")][0]["terrain"]["uv_m"] == 8

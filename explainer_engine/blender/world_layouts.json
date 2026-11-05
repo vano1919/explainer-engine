@@ -257,7 +257,16 @@
     },
     "snow_line": 1000000000.0,
     "rock_line": 1000000000.0,
-    "rock_slope": 0.75
+    "rock_slope": 0.75,
+    "flat": [
+     [
+      0,
+      72,
+      12.5,
+      14.0,
+      9
+     ]
+    ]
    },
    "blocks": [
     {
@@ -280,7 +289,15 @@
       "road": "#B58E5B",
       "rock": "#7B766E",
       "snow": "#EEF1F4"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8
     },
     {
      "type": "terrain",
@@ -310,7 +327,15 @@
       "road": "#B58E5B",
       "rock": "#8A8378",
       "snow": "#F1F3F5"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40
     },
     {
      "type": "shape",
@@ -357,11 +382,13 @@
      "pos": [
       0,
       72,
-      13.97
+      0
      ],
      "yaw_deg": 0.0,
-     "scale": 1.4,
-     "role": "landmark"
+     "scale": 1.25,
+     "role": "landmark",
+     "terrain": true,
+     "dz": -0.4
     },
     {
      "type": "row",
@@ -1495,7 +1522,15 @@
       "road": "#A89878",
       "rock": "#7B766E",
       "snow": "#EEF1F4"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8
     },
     {
      "type": "terrain",
@@ -1525,7 +1560,15 @@
       "road": "#A89878",
       "rock": "#8A8378",
       "snow": "#F1F3F5"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40
     },
     {
      "type": "shape",
@@ -3153,7 +3196,15 @@
       "road": "#A89878",
       "rock": "#7B766E",
       "snow": "#EEF1F4"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_coast_sand_01_diff",
+      "meadow": "texture.ph_coast_sand_01_diff",
+      "forest": "texture.ph_grass_ground_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8
     },
     {
      "type": "terrain",
@@ -3183,7 +3234,15 @@
       "road": "#A89878",
       "rock": "#8A8378",
       "snow": "#F1F3F5"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_coast_sand_01_diff",
+      "meadow": "texture.ph_coast_sand_01_diff",
+      "forest": "texture.ph_grass_ground_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40
     },
     {
      "type": "shape",
@@ -4266,7 +4325,15 @@
       "road": "#B58E5B",
       "rock": "#7B766E",
       "snow": "#EEF1F4"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8
     },
     {
      "type": "terrain",
@@ -4296,7 +4363,15 @@
       "road": "#B58E5B",
       "rock": "#8A8378",
       "snow": "#F1F3F5"
-     }
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40
     },
     {
      "type": "shape",

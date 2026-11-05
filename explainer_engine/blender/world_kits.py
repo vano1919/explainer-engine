@@ -325,6 +325,12 @@ HOUSE_SIZES = {"small": (2, 2), "medium": (3, 2), "large": (4, 3)}   # wall modu
 WALL_H = 3.0   # a plaster wall module is 3.125 m high; the roof sits on its top edge
 
 
+def ground_textures() -> dict[str, Path]:
+    """The Poly Haven ground maps (texture.ph_*, registered in style_sheet_assets.json): cache, vault, else the source URL."""
+    from explainer_engine.blender import style_sheets as SS
+    return {k: v for k, v in SS.fetch().items() if k.startswith("texture.ph_")}
+
+
 def terrain_for(spec: dict):
     """The layout's ``Terrain`` (explainer_engine.blender.terrain) or None."""
     if not spec.get("terrain"):
@@ -497,7 +503,8 @@ def kit_material(glb: Path, a: dict, *, strength: float | None = None, repo: Pat
 
 
 def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc: dict | None = None,
-           repo: Path | None = None, pbr: bool = False) -> tuple[list[dict], dict[str, dict]]:
+           repo: Path | None = None, pbr: bool = False,
+           ground_textures: dict[str, Path] | None = None) -> tuple[list[dict], dict[str, dict]]:
     """(``described`` objects, toon materials) of a layout. ``paths`` is ``fetch()``'s answer. Pieces of one asset share one
     material; a piece the layout does not place costs nothing."""
     t = t or table()
@@ -513,8 +520,14 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         slots = {}
         for ci, cname in enumerate(TR.CLASSES):
             mname = f"terrain_{b['name']}_{cname}"
-            mats[mname] = {"base": b["colours"][cname]}
+            tex = (b.get("textures") or {}).get(cname)
+            if tex and ground_textures is not None:   # a Poly Haven ground map, a trace over the class colour (D-102)
+                img = ground_textures[tex]
+                mats[mname] = {"base": b["colours"][cname], "texture": str(img), "texture_mean": _mean(img), "tile": 1.0, "strength": 0.85}
+            else:
+                mats[mname] = {"base": b["colours"][cname]}
             slots[str(ci)] = mname
+        grid["uv_m"] = b.get("uv_m", 8.0)
         objs.append({"name": b["name"], "terrain": grid, "location": [0, 0, b.get("z", 0.0)], "material": slots, "smooth": True})
     for p in placements(layout_id, t=t, doc=doc):
         if p["asset"] is None:   # a primitive of the layout
@@ -619,7 +632,7 @@ def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: i
     A layout with its own ``shots`` (E1-E4, hill_castle) uses them: ``[camera, camera_to|null, look_at, look_at_to|null, lens, frames]``
     (frames 0 = the run's ``frames``); its ``cast`` rows put characters in the set."""
     from explainer_engine.blender import style_sheets as SS
-    kit, kit_mats = expand(layout, paths, pbr=pbr)
+    kit, kit_mats = expand(layout, paths, pbr=pbr, ground_textures=ground_textures())
     doc = layouts()["layouts"][layout]
     if layout == "hill_castle" or "shots" in doc:
         shots = doc.get("shots") or {k: list(v) for k, v in HILL_SHOTS.items()}
