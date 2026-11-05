@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_blender_frame_job_types_exist_and_are_empty():
     jobs = json.loads((ROOT / "config" / "job_speeds.json").read_text(encoding="utf-8"))["jobs"]
     blender = {k: v for k, v in jobs.items() if k.startswith("blender_frame_")}
-    assert set(blender) == {"blender_frame_eevee_fast_1440", "blender_frame_eevee_full_1440", "blender_frame_cycles_hero_1440"}
+    assert set(blender) == {"blender_frame_eevee_fast_1440", "blender_frame_eevee_full_1440",
+                           "blender_frame_eevee_painterly_1440", "blender_frame_cycles_hero_1440"}
     assert all(v["unit"] == "frame" and v["rows"] == {} for v in blender.values())
 
 

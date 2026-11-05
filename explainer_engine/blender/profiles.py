@@ -7,6 +7,10 @@ wins over the defaults for that shot. The numbers are the roadmap's, every one H
 - ``eevee_full``: EEVEE, 64 samples, ambient occlusion and screen-space ray tracing (12.3 scenario B); a series above 10 s/frame at
   1440p stops and reports (12.4 rule 5);
 - ``cycles_hero``: Cycles, 64 samples with denoise (12.4 scene S6), only with a written ``why`` (CN-17).
+- ``eevee_painterly`` (WP-Q1, 2026-11-05; INTEGRATION_PLAN WP-Q1, every value HYP): EEVEE, 32 samples, cast shadows on, no
+  screen-space ray tracing, Fast GI as AO (the style graph keeps it only on the ``lit`` shade path: Shader to RGB is unreliable
+  with AO), motion blur on with one step. Its stop rule waits for ICW-09's OR-23 plan: the research proposes a share of the
+  episode budget per GPU price instead of a fixed 10 s, a formula the creator has not settled, so it is ``None`` here.
 
 Settings the roadmap leaves open (ambient occlusion on ``eevee_fast``, a time budget for ``eevee_fast`` and ``cycles_hero``) are
 ``None`` here: Blender keeps its own default and ICW-09's pod plan (OR-23) names the value before a paid run. ``SMOKE`` is not a
@@ -30,6 +34,9 @@ class RenderProfile:
     raytracing: bool | None           # EEVEE's screen-space ray tracing (the SSR of older EEVEE)
     denoise: bool
     max_s_per_frame_1440: float | None  # a series slower than this stops and reports (12.4 rule 5); None = no stop rule yet
+    shadows: bool | None = None       # EEVEE cast shadows (None = Blender's default)
+    motion_blur_steps: int | None = None
+    motion_blur_default: bool = False  # the shot spec's render.motion_blur wins
 
     def job_type(self, tier: str = "1440") -> str:
         """The ``config/job_speeds.json`` job type this profile's measured rows live under."""
@@ -38,11 +45,15 @@ class RenderProfile:
     def settings(self, render: dict | None = None) -> dict:
         """What ``bpy/render_shot.py`` applies: the profile's switches, with the shot spec's ``render`` block over them."""
         out = asdict(self)
+        default_blur = out.pop("motion_blur_default")
+        for k in ("shadows", "motion_blur_steps"):   # added by WP-Q1: the older profiles' settings keep their keys
+            if out[k] is None:
+                out.pop(k)
         r = render or {}
         for k in ("samples", "denoise", "motion_blur"):
             if k in r:
                 out[k] = r[k]
-        out.setdefault("motion_blur", False)
+        out.setdefault("motion_blur", default_blur)
         return out
 
 
@@ -50,6 +61,8 @@ PROFILES = {
     "eevee_fast": RenderProfile("eevee_fast", "eevee", "blender_eevee/1", 16, None, False, False, None),
     "eevee_full": RenderProfile("eevee_full", "eevee", "blender_eevee/1", 64, True, True, False, 10.0),
     "cycles_hero": RenderProfile("cycles_hero", "cycles", "blender_cycles/1", 64, None, None, True, None),
+    "eevee_painterly": RenderProfile("eevee_painterly", "eevee", "blender_eevee/1", 32, True, False, False, None,
+                                     shadows=True, motion_blur_steps=1, motion_blur_default=True),
 }
 
 
