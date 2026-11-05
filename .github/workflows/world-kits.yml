@@ -98,6 +98,11 @@ jobs:
         run: |
           python -m explainer_engine.blender.world_kits poc --layout hill_castle --shots castle_still --out epic --binary "${{ steps.install.outputs.bin }}" \
             --scale 1.0 --variants "v01_reference_soft3d,B_light" --device cpu
+      - name: Render the C5 still (Cycles 48 samples + denoise, the kit's own glTF materials, PBR Neutral)
+        continue-on-error: true
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout hill_castle --shots castle_still --out epic_c5 --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "C5_cycles_pbr" --device cpu
       - name: Render the 24-frame slow push
         run: |
           python -m explainer_engine.blender.world_kits poc --layout hill_castle --shots castle_push --out epic_push --binary "${{ steps.install.outputs.bin }}" \
@@ -107,8 +112,9 @@ jobs:
         run: |
           mkdir -p epic_artifact/push
           cp -r epic/looks.json epic/frames epic_artifact/ 2>/dev/null || true
+          mkdir -p epic_artifact/c5 && cp -r epic_c5/looks.json epic_c5/frames epic_artifact/c5/ 2>/dev/null || true
           cp -r epic_push/looks.json epic_push/frames epic_push/clips epic_artifact/push/ 2>/dev/null || true
-          for d in epic/work/*/ epic_push/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "epic_artifact/$(basename "$d").blender.log"; done || true
+          for d in epic/work/*/ epic_c5/work/*/ epic_push/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "epic_artifact/$(basename "$d").blender.log"; done || true
           ls -la epic_artifact
       - name: Upload the epic set
         if: always()
