@@ -180,8 +180,42 @@ def _house(name: str, x: float, y: float, w: float, d: float, h: float, *, roof:
              "material": roof}]
 
 
-def scenes(paths: dict[str, Path]) -> dict[str, dict]:
-    """Scene id -> {objects, camera, materials}. ``paths`` maps asset ids to local files (``fetch``)."""
+CASTS = ("real", "mannequin")
+# The real cast of the clip scenes (ICW-06; ვანო picks the style on real characters, 2026-11-05 14:58 UTC): character, costume,
+# tint (the stand-ins' colours: coat = support_blue, cloak = answer_coral, the two battle lines faction_a / faction_b), clip.
+DIALOGUE_CAST = (("speaker_a", "ink_test_m", "costume.mco_male_ranger", "support_blue", (-0.95, 0.85), 62.0, "Idle_Talking_Loop", 0),
+                 ("speaker_b", "ink_test_f", "costume.mco_female_peasant", "answer_coral", (0.95, 0.95), -62.0, "Idle_Loop", 17))
+
+
+def _cast_member(name, char_id, costume_id, tint, xy, yaw, action, offset, cpaths, *, lipsync=None):
+    from explainer_engine.blender import characters as C
+    obj, mats = C.scene_object(name, char_id, costume_id, cpaths, location=(xy[0], xy[1], 0.0), yaw_deg=yaw, action=action,
+                               action_offset=offset, tint=tint, lipsync=lipsync)
+    obj["_materials"] = mats
+    return obj
+
+
+def _battle_cast(i: int, side: str, x: float, y: float, cpaths) -> dict:
+    """One soldier of a battle line: the near line (a) walks forward (its clip in place, the root moved by the clip motion),
+    the far line (b) waits with drawn swords; men and long-haired men alternate, every cycle offset so no two step together."""
+    char_id = "ink_test_m" if i % 2 == 0 else "ink_test_m2"
+    if side == "a":
+        return _cast_member(f"a{i}", char_id, "costume.mco_male_peasant", "faction_a", (x, y), 180.0, "Walk_Formal_Loop", (i * 7) % 32, cpaths)
+    return _cast_member(f"b{i}", char_id, "costume.mco_male_ranger", "faction_b", (x, y), 0.0, "Sword_Idle", (i * 11) % 40, cpaths)
+
+
+def scenes(paths: dict[str, Path], *, cast: str = "mannequin", cpaths: dict[str, Path] | None = None,
+           lipsync: dict | None = None) -> dict[str, dict]:
+    """Scene id -> {objects, camera, materials}. ``paths`` maps asset ids to local files (``fetch``). ``cast="real"`` puts the
+    ICW-06 characters (``characters.py``; ``cpaths`` = ``characters.fetch()``) in the two clip scenes instead of the
+    stand-in mannequins; the other three sheets keep the mannequins (they judge sets, not people). ``lipsync``
+    (``rigs.LipSync.plan``) moves speaker_a's mouth in the dialogue clip."""
+    if cast not in CASTS:
+        raise ValueError(f"unknown cast {cast!r} (known: {', '.join(CASTS)})")
+    real = cast == "real"
+    if real and cpaths is None:
+        from explainer_engine.blender import characters as C
+        cpaths = C.fetch()
     p = {k: str(v) for k, v in paths.items()}
     tex = lambda aid, **kw: {"base": "paper", "texture": p[aid], "texture_mean": texture_mean(Path(p[aid])), **kw}  # noqa: E731
     mats = {
@@ -215,14 +249,20 @@ def scenes(paths: dict[str, Path]) -> dict[str, dict]:
         "objects": [ground, {"name": "wall", "add": "cube", "params": {"size": 1}, "location": [0, 3.2, 2.0], "scale": [9, 0.3, 4],
                              "material": "brick"},
                     table("table", 0, 0.9, 0, 2.6), crate("crate", 2.1, 2.2, 0, 1.4, 12),
-                    *_figure("speaker_a", -0.95, 0.85, "coat"), *_figure("speaker_b", 0.95, 0.95, "cloak")],
-        "camera": {"location": [-1.0, -3.4, 1.5], "look_at": [0.15, 0.9, 1.05], "lens_mm": 40, "focus_distance_m": 4.5},
+                    *([_cast_member(*m, cpaths, lipsync=lipsync if m[0] == "speaker_a" else None) for m in DIALOGUE_CAST] if real else
+                      [*_figure("speaker_a", -0.95, 0.85, "coat"), *_figure("speaker_b", 0.95, 0.95, "cloak")])],
+        "camera": ({"location": [-1.0, -3.4, 1.72], "look_at": [0.12, 0.9, 1.42], "lens_mm": 40, "focus_distance_m": 4.5} if real else
+                   {"location": [-1.0, -3.4, 1.5], "look_at": [0.15, 0.9, 1.05], "lens_mm": 40, "focus_distance_m": 4.5}),
     }
     # 2 battle wide: two lines and their cannons on a field
     battle = [{"name": "field", "add": "plane", "params": {"size": 160}, "material": "grass"}]
     for i in range(9):
-        battle += _figure(f"a{i}", -7 + i * 1.3, -3.0 + (i % 2) * 0.5, "side_a")
-        battle += _figure(f"b{i}", -7.5 + i * 1.4, 7.0 - (i % 2) * 0.5, "side_b")
+        if real:
+            battle += [_battle_cast(i, "a", -7 + i * 1.3, -3.0 + (i % 2) * 0.5, cpaths),
+                       _battle_cast(i, "b", -7.5 + i * 1.4, 7.0 - (i % 2) * 0.5, cpaths)]
+        else:
+            battle += _figure(f"a{i}", -7 + i * 1.3, -3.0 + (i % 2) * 0.5, "side_a")
+            battle += _figure(f"b{i}", -7.5 + i * 1.4, 7.0 - (i % 2) * 0.5, "side_b")
     battle += [cannon("cannon_a1", -4.5, -5.0, 0), cannon("cannon_a2", 3.5, -5.2, 0), cannon("cannon_b1", -1.0, 9.5, 180),
                {"name": "ridge", "add": "uv_sphere", "params": {"radius": 1, "segments": 48, "ring_count": 24},
                 "location": [0, 40, -6], "scale": [60, 14, 12], "material": "hill", "smooth": True}]
@@ -279,6 +319,11 @@ def scenes(paths: dict[str, Path]) -> dict[str, dict]:
     for sid, sc in out.items():
         used = {o["material"] for o in sc["objects"] if o.get("material")}
         sc["materials"] = {k: v for k, v in mats.items() if k in used}
+        for o in sc["objects"]:
+            for k, v in o.pop("_materials", {}).items():
+                if sc["materials"].get(k, v) != v:
+                    raise ValueError(f"{sid}: two cast members define material {k} differently")
+                sc["materials"][k] = v
     return out
 
 
@@ -295,8 +340,10 @@ def motion(scene_id: str, sc: dict, frames: int = CLIP_FRAMES) -> dict:
     """The round-2 clip of a scene: the same set with a ``to`` block on what moves (render_shot.build_described keys it)."""
     sc = json.loads(json.dumps(sc))
     sc["frames_total"] = frames
+    real = any("character" in o for o in sc["objects"])
     if scene_id == "dialogue_cu":      # a slow push in on the two speakers (ease in and out)
-        sc["camera"]["to"] = {"location": [-0.62, -2.15, 1.4], "look_at": [0.1, 0.9, 1.08]}
+        sc["camera"]["to"] = ({"location": [-0.62, -2.15, 1.66], "look_at": [0.08, 0.9, 1.46]} if real else
+                              {"location": [-0.62, -2.15, 1.4], "look_at": [0.1, 0.9, 1.08]})
     elif scene_id == "battle_wide":    # the near line advances 1.6 m while the camera dollies left
         for o in sc["objects"]:
             if o["name"].startswith("a") and o["name"][1:2].isdigit():
@@ -319,7 +366,7 @@ def scene_sha256(scene: dict) -> str:
 
 
 def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: int = 16, scene: dict | None = None,
-             frames: int = 1) -> dict:
+             frames: int = 1, cues: Path | None = None) -> dict:
     """A shot_spec/2 of the master: one frame = a STILL_3D sheet; ``frames`` > 1 = a VIDEO_3D clip (round 2), its camera rig named
     from the scene's motion. Asset refs carry the registered sha256s."""
     lib = L.load()
@@ -349,6 +396,9 @@ def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: 
     if frames > 1:
         spec["scene"]["camera"]["rig"] = {"dialogue_cu": "push", "battle_wide": "dolly"}.get(scene_id, "dolly")
         spec["scene"]["camera"]["ease"] = "ease_in_out"
+    if cues is not None:   # the dialogue clip's speaker is lip-synced: CN-17 wants the cue file and an on-screen mouth
+        spec["performance"].update(lipsync=True, rhubarb={"path": Path(cues).name, "sha256": L.sha256_file(cues)},
+                                   dialogue_cover="on_screen")
     if profile == "cycles_hero":
         spec["why"] = "ICW-05 style sheet: the Cycles-safe variant beside the EEVEE look (roadmap 9.1), never an episode shot"
     return spec
@@ -448,15 +498,35 @@ def mp4(frames_dir: Path, dest: Path, *, fps: int = 24, run=None) -> dict:
     return {"path": str(dest), "sha256": hashlib.sha256(dest.read_bytes()).hexdigest()}
 
 
+def lipsync_for(frames: int, *, cues: Path | None = None, wav: Path | None = None, rhubarb: str = "rhubarb",
+                offset_s: float | None = None, out: Path | None = None) -> tuple[dict | None, Path | None]:
+    """(``rigs.LipSync.plan`` of the clip's speaker, the cue file) from a Rhubarb cue JSON, or from a WAV that Rhubarb reads
+    first (no dialog file: a reused take, PoC 2's note); the busiest window of the line when ``offset_s`` is None."""
+    from explainer_engine.blender import rigs
+    if cues is None and wav is None:
+        return None, None
+    if cues is None:
+        cues = Path(out or ".") / (Path(wav).stem + ".rhubarb.json")
+        rigs.run_rhubarb(wav, cues, exe=rhubarb)
+    ls = rigs.LipSync(24)
+    off = ls.busiest(cues, frames) if offset_s is None else offset_s
+    return ls.plan(cues, frames, offset_s=off), Path(cues)
+
+
 def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, variant_ids=tuple(CLIP_VARIANTS),
-          frames: int = CLIP_FRAMES, samples: int = 16, scale: float = 1.0, device: str = "auto", log=print) -> list[dict]:
+          frames: int = CLIP_FRAMES, samples: int = 16, scale: float = 1.0, device: str = "auto", cast: str = "real",
+          cues: Path | None = None, wav: Path | None = None, rhubarb: str = "rhubarb", offset_s: float | None = None,
+          log=print) -> list[dict]:
     """Round 2: every clip scene x clip variant as a ``frames``-long VIDEO_3D shot through HeadlessRender, an MP4 review copy
-    each, and ``out/style_clips.json`` (rows written as they finish, so a stop keeps what is done)."""
+    each, and ``out/style_clips.json`` (rows written as they finish, so a stop keeps what is done). ICW-06: the real cast by
+    default; ``cues`` (a Rhubarb JSON) or ``wav`` (Rhubarb runs on it) lip-syncs the dialogue clip's speaker_a."""
     from explainer_engine.blender import render as R
     from explainer_engine.blender.project import BlenderProject
     out = Path(out)
     paths = fetch()
-    base = scenes(paths)
+    out.mkdir(parents=True, exist_ok=True)
+    lip, cue_file = lipsync_for(frames, cues=cues, wav=wav, rhubarb=rhubarb, offset_s=offset_s, out=out) if cast == "real" else (None, None)
+    base = scenes(paths, cast=cast, lipsync=lip)
     b = BlenderProject().resolve(binary, device=device)
     vault = R.LocalVault(out / "vault")
     rows = []
@@ -465,7 +535,8 @@ def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, varian
         for vid in variant_ids:
             _, tokens = style_for(vid)
             scene, graph = job_scene(sid, vid, sc, paths)
-            spec = spec_for(sid, vid, tokens, samples=samples, scene=scene, frames=frames)
+            spec = spec_for(sid, vid, tokens, samples=samples, scene=scene, frames=frames,
+                            cues=cue_file if sid == "dialogue_cu" and lip else None)
             if scale != 1.0:
                 spec["frame"]["render_scale"] = scale
             t0 = time.time()
@@ -483,7 +554,9 @@ def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, varian
                    "engine": m["engine"], "seconds_per_frame": m["seconds_per_frame"], "times": frame_times(sdir),
                    "wall_seconds": round(time.time() - t0, 2), "blender": m["blender"], "gpu_backend": rep.get("gpu_backend"),
                    "device": m.get("device"), "motion": rep.get("motion"), "applied": rep.get("style", {}).get("applied"),
-                   "style_sha256": graph["sha256"], "scaled": scale != 1.0,
+                   "style_sha256": graph["sha256"], "scaled": scale != 1.0, "cast": cast,
+                   "characters": rep.get("characters"), "lipsync": (rep.get("lipsync") and {**rep["lipsync"], "shapes_per_frame": lip["shapes"],
+                                                                   "offset_s": lip["offset_s"]}) if lip and sid == "dialogue_cu" else None,
                    "mp4": mp4(sdir / "frames", out / "clips" / f"{sid}_{vid}.mp4"),
                    "findings": [f for f in m["_findings"] if f["severity"] == "FAIL"]}
             rows.append(row)
@@ -616,6 +689,11 @@ def main(argv: list[str] | None = None) -> int:
     cl.add_argument("--variants", default=",".join(CLIP_VARIANTS))
     cl.add_argument("--frames", type=int, default=CLIP_FRAMES)
     cl.add_argument("--scale", type=float, default=1.0)
+    cl.add_argument("--cast", default="real", choices=CASTS)
+    cl.add_argument("--cues", default=None, help="a Rhubarb cue JSON for speaker_a's mouth")
+    cl.add_argument("--wav", default=None, help="a voiced line: Rhubarb makes the cues first")
+    cl.add_argument("--rhubarb", default="rhubarb", help="the Rhubarb executable (1.14.0)")
+    cl.add_argument("--lipsync-offset", type=float, default=None, help="seconds into the line (default: its busiest window)")
     for sp in (rd, cl):
         sp.add_argument("--device", default="auto", choices=("auto", "cpu", "gpu"))
     a = ap.parse_args(argv)
@@ -633,7 +711,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "clips":
         clips(Path(a.out), binary=a.binary, scene_ids=a.scenes.split(","), variant_ids=a.variants.split(","), frames=a.frames,
-              scale=a.scale, device=a.device)
+              scale=a.scale, device=a.device, cast=a.cast, cues=Path(a.cues) if a.cues else None,
+              wav=Path(a.wav) if a.wav else None, rhubarb=a.rhubarb, offset_s=a.lipsync_offset)
         print(clip_collage(Path(a.out)))
         return 0
     print(collage(Path(a.out)))

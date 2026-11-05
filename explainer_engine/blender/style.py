@@ -253,12 +253,15 @@ class StyleEngine:
         return rgba(h)
 
     def material(self, name: str, base: str | list[float], *, path: str = "eevee", texture: str | None = None,
-                 texture_mean: list[float] | None = None, tile: float | None = None) -> dict:
+                 texture_mean: list[float] | None = None, tile: float | None = None, strength: float | None = None) -> dict:
         """One toon material. ``base`` is a palette token, a hex or a linear RGBA; ``texture`` (an image path, the library file of
         a converted asset) is kept at ``texture_strength`` over ``texture_mean`` (its mean colour, linear), so a photo texture
         becomes a flat colour field with a trace of its grain (no raw PBR look, D-102); ``tile`` repeats it over the UVs (a
-        ground plane), else the asset's own UVs are used."""
+        ground plane), else the asset's own UVs are used. ``strength`` overrides the token's ``texture_strength`` for this material
+        (a character's costume atlas keeps more of its own parts than a photo ground does; ICW-06)."""
         t = self.t
+        if strength is not None and not 0 <= strength <= 1:
+            raise ValueError(f"{name}: texture strength {strength} is not a share 0..1")
         if isinstance(base, str):
             base_rgba = self.colour(base)
         else:
@@ -271,7 +274,7 @@ class StyleEngine:
             mean = [round(float(x), 6) for x in (texture_mean or base_rgba[:3])][:3] + [1.0]
             nodes += [{"id": "tex", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": texture},
                       {"id": "flatten", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
-                       "inputs": {"Factor": t.texture_strength, 6: mean}}]
+                       "inputs": {"Factor": t.texture_strength if strength is None else round(float(strength), 6), 6: mean}}]
             links += [["tex", "Color", "flatten", 7], ["flatten", 2, "base", 6]]
             if tile is not None:
                 nodes += [{"id": "uv", "type": "ShaderNodeTexCoord"},

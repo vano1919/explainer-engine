@@ -16,11 +16,16 @@ S is 1 and T is 0 on frame f-1, and S is 0 and T is 1 on frame f (``blend_frames
 interpolation). Eyes, brows and head come from the animation layer, not from Rhubarb (roadmap 21.5 #9).
 
 **RigAdapter.plan** decides from the library records alone whether an animation plays on a rig as it is (the same
-``three_d.skeleton_id``) or needs a retarget; the retarget itself (Quaternius UAL onto UBC, or onto an MPFB2/Rigify body)
-is built by ICW-06 on PoC 1's measured bone maps, so ``plan`` never invents a bone map.
+``three_d.skeleton_id``) or needs a retarget. ICW-06 (PoC 1, measured 2026-11-05): the Universal Animation Library and every
+Universal Base Characters body, hair and Modular Outfits costume carry the same 65-joint skeleton, joint for joint by name
+(``bone_map`` on the GLBs' joint lists: 65 of 65, no rename), so a UAL clip plays on the character's armature directly (an NLA
+strip, ``bpy/render_shot.py``); a rig whose ``three_d`` is in a model or costume record (the UBC GLBs carry their armature)
+is a rig for ``plan``. A different skeleton (an MPFB2/Rigify body, PoC 1b) gets a ``retarget`` plan with the measured name map
+and the unmatched joints; the retarget solver itself is not built (out of scope unless PoC 1 fails, roadmap 21.10).
 
-The shape-key names default to ``mouth_A`` .. ``mouth_X``: the channel's own heads are modelled with those names (no head
-exists yet; ICW-06 may pass another mapping).
+The shape-key names default to ``mouth_A`` .. ``mouth_X``: the ICW-06 heads carry them (``characters.json`` mouth keys).
+**LipSync.plan** caps a lip-synced shot at BP-108 ``dialogue_shot_max_s`` (a visible voiced line is at most that long; a
+longer line is cut into shots by the planner, never keyed past the cap).
 """
 from __future__ import annotations
 
@@ -29,6 +34,7 @@ import math
 from pathlib import Path
 
 from explainer_engine.assets import library as L
+from explainer_engine.standards import sourced_rules as SR
 
 BASIC = ("A", "B", "C", "D", "E", "F")
 EXTENDED = ("G", "H", "X")
@@ -38,14 +44,27 @@ RECOGNIZERS = ("pocketSphinx", "phonetic")
 EPS = 1e-9
 
 
-def rhubarb_argv(wav: Path | str, dialog: Path | str, out: Path | str, *, exe: str = "rhubarb",
+def rhubarb_argv(wav: Path | str, dialog: Path | str | None, out: Path | str, *, exe: str = "rhubarb",
                  recognizer: str = "pocketSphinx", extended: str = "GHX") -> list[str]:
-    """The Rhubarb command for one voiced line: JSON out, the line's text as the dialog file, the input file last."""
+    """The Rhubarb command for one voiced line: JSON out, the line's text as the dialog file, the input file last. An episode
+    line always has its text (the script); ``dialog=None`` is only for a reused take whose text is not on record (a test
+    clip): Rhubarb then recognises the words itself (README: less precise)."""
     if recognizer not in RECOGNIZERS:
         raise ValueError(f"recognizer is one of {RECOGNIZERS}")
     if any(c not in EXTENDED for c in extended):
         raise ValueError(f"extended shapes are a subset of {''.join(EXTENDED)}")
-    return [exe, "-r", recognizer, "-f", "json", "--extendedShapes", extended, "-d", str(dialog), "-o", str(out), str(wav)]
+    d = ["-d", str(dialog)] if dialog is not None else []
+    return [exe, "-r", recognizer, "-f", "json", "--extendedShapes", extended, *d, "-o", str(out), str(wav)]
+
+
+def run_rhubarb(wav: Path | str, out: Path | str, *, dialog: Path | str | None = None, exe: str = "rhubarb", run=None) -> dict:
+    """Rhubarb as a subprocess (an external MIT tool, never imported); returns the checked cues of ``load_cues``."""
+    import subprocess
+    run = run or subprocess.run
+    p = run(rhubarb_argv(wav, dialog, out, exe=exe), capture_output=True, text=True)
+    if p.returncode != 0:
+        raise RuntimeError(f"rhubarb failed on {Path(wav).name}: {(p.stderr or '').strip()[-400:]}")
+    return load_cues(Path(out))
 
 
 def load_cues(doc: dict | Path | str) -> dict:
@@ -121,6 +140,37 @@ class LipSync:
     def tracks(self, cues: dict | Path | str, frames: int | None = None) -> dict[str, list[list]]:
         return tracks(self.frames(cues, frames), blend_frames=self.blend_frames, shape_keys=self.shape_keys)
 
+    def plan(self, cues: dict | Path | str, frames: int, *, offset_s: float = 0.0) -> dict:
+        """The ``lipsync`` block of a cast member (``characters.scene_object``): the shot's ``frames`` from ``offset_s`` into the
+        line, one shape per frame, the tracks. Refuses a shot longer than BP-108 ``dialogue_shot_max_s``."""
+        cap = SR.T("BP-108", "dialogue_shot_max_s")
+        if frames / self.fps > cap + EPS:
+            raise ValueError(f"a lip-synced shot of {frames / self.fps:.2f} s is over BP-108's {cap} s for a visible voiced line")
+        c = load_cues(cues)
+        if offset_s:
+            c = {"duration": max(c["duration"] - offset_s, 0.0),
+                 "cues": [(s - offset_s, e - offset_s, v) for s, e, v in c["cues"] if e - offset_s > EPS]}
+            c["cues"] = [(max(s, 0.0), e, v) for s, e, v in c["cues"]]
+        shapes = shape_per_frame(c, self.fps, frames, self.rest)
+        return {"fps": self.fps, "frames": frames, "offset_s": offset_s, "shapes": "".join(shapes),
+                "tracks": tracks(shapes, blend_frames=self.blend_frames, shape_keys=self.shape_keys)}
+
+    def busiest(self, cues: dict | Path | str, frames: int, *, step_s: float = 0.25) -> float:
+        """The offset (s) of the ``frames``-long window of a line with the most mouth changes (a reused take's clip shows
+        speech, not the breath before it); windows start every ``step_s`` and stay inside the line."""
+        c = load_cues(cues)
+        span = frames / self.fps
+        best, best_n = 0.0, -1
+        t = 0.0
+        while t + span <= c["duration"] + EPS:
+            shapes = shape_per_frame({"duration": c["duration"], "cues": [(s - t, e - t, v) for s, e, v in c["cues"] if e > t]},
+                                     self.fps, frames, self.rest)
+            n = sum(1 for a, b in zip(shapes, shapes[1:]) if a != b) + sum(1 for x in shapes if x != self.rest) / 1000
+            if n > best_n + EPS:
+                best, best_n = t, n
+            t = round(t + step_s, 6)
+        return best
+
     @staticmethod
     def apply(track_map: dict[str, list[list]], key_blocks, start_frame: int = 1) -> int:
         """Key every value on the head's shape keys (``key_blocks``: name -> a Blender ShapeKey, or anything with
@@ -144,9 +194,11 @@ class RigAdapter:
     def __init__(self, lib: dict | None = None):
         self.lib = lib if lib is not None else L.load()
 
+    RIG_KINDS = ("rig", "model", "costume")  # a UBC GLB carries its armature: a model or costume record is a rig for plan
+
     @staticmethod
     def plan(animation: dict, rig: dict) -> dict:
-        if animation["kind"] != "animation" or rig["kind"] != "rig":
+        if animation["kind"] != "animation" or rig["kind"] not in RigAdapter.RIG_KINDS:
             raise ValueError(f"plan takes an animation and a rig, not a {animation['kind']} and a {rig['kind']}")
         a, r = (animation.get("three_d") or {}), (rig.get("three_d") or {})
         if not r.get("skeleton_id"):
@@ -155,10 +207,20 @@ class RigAdapter:
             return {"action": "play", "animation": animation["id"], "rig": rig["id"], "skeleton": r["skeleton_id"]}
         return {"action": "retarget", "animation": animation["id"], "rig": rig["id"], "from": a.get("skeleton_id"),
                 "to": r["skeleton_id"], "rig_profile": r.get("rig_profile"),
-                "note": "no bone map yet: ICW-06 builds the retarget on PoC 1 (roadmap 21.6)"}
+                "note": "no retarget solver: the UBC/UAL set shares one skeleton (PoC 1); a foreign skeleton needs bone_map first"}
 
     def playable(self, rig_id: str, tags: list[str] | None = None) -> list[dict]:
         """The usable animations authored for this rig's skeleton."""
         rig = L.get(rig_id, lib=self.lib)
         sk = (rig.get("three_d") or {}).get("skeleton_id")
         return L.find(kind="animation", skeleton_id=sk, tags=tags, lib=self.lib) if sk else []
+
+
+def bone_map(source_joints: list[str], target_joints: list[str]) -> dict:
+    """The joint-name map of two skeletons (PoC 1): {map, unmatched_source, unmatched_target, identical}. Exact names only:
+    the map is measured, never guessed (no fuzzy matching); ``identical`` = same names in the same order."""
+    tgt = set(target_joints)
+    m = {j: j for j in source_joints if j in tgt}
+    return {"map": m, "unmatched_source": [j for j in source_joints if j not in tgt],
+            "unmatched_target": [j for j in target_joints if j not in set(source_joints)],
+            "identical": list(source_joints) == list(target_joints)}
