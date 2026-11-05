@@ -87,6 +87,11 @@ jobs:
           python -m explainer_engine.blender.project resolve --binary "$bin"
       - name: Render the 8-frame Workbench smoke (320x180)
         run: python -m explainer_engine.blender.render smoke --out smoke --binary "${{ steps.install.outputs.bin }}"
+      - name: EEVEE API names on the pinned Blender (WP-Q0; BLENDER_EEVEE, use_fast_gi, no use_gtao)
+        run: |
+          "${{ steps.install.outputs.bin }}" --background --factory-startup --python-exit-code 1 \
+            --python explainer_engine/blender/bpy/check_eevee_api.py | tee eevee_api.txt
+          grep -q '^APPLIED ' eevee_api.txt
       - name: Check the frames
         run: |
           python - <<'PY'
