@@ -4198,3 +4198,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
   (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
   `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
+
+## 2026-11-05 — WP-Q7b `camera_setups resolve` CLI for the overnight render matrix
+
+- `python -m explainer_engine.blender.camera_setups resolve NAME --a x,y,z [--b x,y,z] [--bearing D] [--frames N] [--head-m M --eye-m M]`
+  prints the `scene.camera` block (setup, fstop, rig_kind), the framed and focus points and the sampled path as JSON, so a render
+  runner can feed `push_in_reveal` (24 frames) to any cast without knowing the internals. Distances scale with `--head-m` / `--eye-m`
+  (the lead character's head height and eye line; the defaults are the UBC's). Test: `test_the_resolve_cli_...`. Cost $0.
