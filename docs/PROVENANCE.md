@@ -37,7 +37,7 @@ Tests adapted from `tests/unit/test_timings.py`, `test_celestial.py` (viseme par
 | `explainer_engine/cloud/runpod.py` | TMR `cloud/rp.py` at `f0abe62` (branch `claude/master-directive-prompt-5rmv2y`) | one retrying HTTP layer; create never re-POSTed after an unclear answer (found by unique name); verified, idempotent stop/delete; per-pod session files instead of one `pod_meta.json`; guard enforces the name's lifetime, stays blind-safe, stops instead of deleting; `config/spend_caps.json` preflight; `check`, `cost` (billing API), `PodSession`; the in-pod side (bootstrap, conductor, painters) stays in TMR |
 | `explainer_engine/cloud/store.py` | TMR `cloud/store.py` at `1c33878` | the durable store of the Guardian (2026-10-22): stdlib backend switch (`EXPLAINER_STORE_LOCAL` folder or the HF dataset), sha256 sidecar on every push, `verify` reports and never deletes, `store_job` for the job record; env names `EXPLAINER_STORE_*` |
 
-## Third-party code copied from public repositories (D-115 draft, WP-Q8)
+## Third-party code copied from public repositories (rule drafted in the Fable quality report, WP-Q8)
 
 | File here | Source | What changed |
 |---|---|---|
