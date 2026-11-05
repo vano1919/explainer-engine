@@ -237,6 +237,8 @@ Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "
                "native_classes": (), "skin_lift": (), "pn_converge": 0.0, "character_key": False,
                "haze": 0.0, "haze_start_m": 10.0, "haze_depth_m": 120.0, "haze_colour": (0.8, 0.76, 0.7)}
 CHARACTER_CLASSES = ("skin", "hair", "eyes", "costume")
+HAZE_MAX = 0.75          # Fable 2026-11-05: the far end of the haze keeps about 25 % of its contrast
+HAZE_SKY_M = 100000.0    # a depth beyond this is the world background (EEVEE writes ~1e10 there): no haze on the sky
 FRONT_KEY_BAND = (30.0, 45.0)   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
 LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
 
@@ -403,9 +405,10 @@ class Look:
             raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
         if any(c not in CHARACTER_CLASSES for c in self.native_classes) or len(set(self.native_classes)) != len(self.native_classes):
             raise ValueError(f"{self.id}: native_classes {self.native_classes} (character classes: {', '.join(CHARACTER_CLASSES)})")
-        if not 0 <= self.haze <= 1 or not 0 <= self.haze_start_m <= 500 or not 1 <= self.haze_depth_m <= 5000 \
+        if not 0 <= self.haze <= HAZE_MAX or not 0 <= self.haze_start_m <= 500 or not 1 <= self.haze_depth_m <= 5000 \
                 or len(self.haze_colour) != 3 or not all(0 <= c <= 1.5 for c in self.haze_colour):
-            raise ValueError(f"{self.id}: haze share 0..1, start 0..500 m, depth 1..5000 m, colour rgb 0..1.5")
+            raise ValueError(f"{self.id}: haze share 0..{HAZE_MAX} (the far end keeps a quarter of its contrast), "
+                             "start 0..500 m, depth 1..5000 m, colour rgb 0..1.5")
         if self.character_key and self.light_preset is None:
             raise ValueError(f"{self.id}: character_key replaces a light preset's key and fill (name a light_preset)")
         if (self.native_classes or self.skin_lift or self.pn_converge) and not self.lit_rig:
@@ -1075,12 +1078,23 @@ class StyleEngine:
             cur, sock = "plate_mix", 2
         mist = None
         if a.haze > 0:   # depth haze (Fable 2026-11-05: the E2 cells fail on the world): the mist pass mixes in a warm grey
-            passes.append("mist")
+            passes += [x for x in ("z",) if x not in passes]
             mist = {"start_m": round(a.haze_start_m, 4), "depth_m": round(a.haze_depth_m, 4), "falloff": "QUADRATIC"}
-            nodes += [{"id": "haze_amt", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(a.haze, 6)}},
+            # geometry only (Fable 22:33 UTC): the haze is built from the depth pass alone (the mist pass cost +4.5 s/frame at
+            # 1440p): a clamped map of the camera distance over [start, start + depth], squared (Blender's QUADRATIC mist), times
+            # the share (<= 0.75 keeps a quarter of the far contrast), times a sky mask (EEVEE writes ~1e10 on the background)
+            far = round(a.haze_start_m + a.haze_depth_m, 4)
+            nodes += [{"id": "haze_ramp", "type": "ShaderNodeMapRange",
+                       "inputs": {"From Min": round(a.haze_start_m, 4), "From Max": far, "To Min": 0.0, "To Max": 1.0}},
+                      {"id": "haze_sq", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}},
+                      {"id": "haze_geo", "type": "ShaderNodeMath", "props": {"operation": "LESS_THAN"}, "inputs": {1: HAZE_SKY_M}},
+                      {"id": "haze_amt", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(a.haze, 6)}},
+                      {"id": "haze_fac", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}},
                       {"id": "haze_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
                        "inputs": {7: [round(c, 6) for c in a.haze_colour] + [1.0]}}]
-            links += [["render", "Mist", "haze_amt", 0], ["haze_amt", "Value", "haze_mix", "Factor"], [cur, sock, "haze_mix", 6]]
+            links += [["render", "Depth", "haze_ramp", "Value"], ["haze_ramp", "Result", "haze_sq", 0], ["haze_ramp", "Result", "haze_sq", 1],
+                      ["haze_sq", "Value", "haze_amt", 0], ["render", "Depth", "haze_geo", 0], ["haze_amt", "Value", "haze_fac", 0],
+                      ["haze_geo", "Value", "haze_fac", 1], ["haze_fac", "Value", "haze_mix", "Factor"], [cur, sock, "haze_mix", 6]]
             cur, sock = "haze_mix", 2
         if a.bleed:
             nodes.append({"id": "bleed", "type": "CompositorNodeBilateralblur", "inputs": {"Size": int(a.bleed), "Threshold": 0.12}})
