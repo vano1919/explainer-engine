@@ -1,0 +1,81 @@
+name: Character benchmark (WP-Q4)
+
+# WP-Q4: the Blender Studio rig Rain v3.3 (CC-BY 4.0, "Rain Rig © Blender Foundation | cloud.blender.org") rendered through the Q1 style
+# graph as a lip-synced face close-up (explainer_engine/blender/character_benchmark.py). The rig is fetched from its public Blender
+# Studio URL at the recorded sha256 (assets/licence_sources.json, blender_studio_cc_by) and never committed. Free (D-114): no pod, no
+# paid call. A CPU runner takes about 45 s per 1440p frame; the Mac is faster (ICG-3).
+
+on:
+  workflow_dispatch:
+    inputs:
+      frames: {description: "frames", default: "48", type: string}
+      scale: {description: "render scale (1.0, 0.75 or 0.5)", default: "1.0", type: string}
+      light_preset: {description: "WP-Q1 light preset", default: "golden_hour", type: string}
+      angular: {description: "head lattice amount (0 = Rain as made)", default: "0.6", type: string}
+  push:
+    branches: ["wpq/04-**"]
+    paths: ["explainer_engine/blender/character_benchmark.py", ".github/workflows/character-benchmark.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  rain:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: {python-version: "3.12"}
+      - name: Install libraries
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow>=10.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - uses: actions/cache@v4
+        with: {path: ~/blender-archive, key: "blender-${{ steps.pin.outputs.sha256 }}"}
+      - name: Download and install Blender (refused unless the archive is the pin)
+        id: install
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" --archive "$f" | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+      - name: Fetch the style-sheet CC0 assets
+        run: python -m explainer_engine.blender.style_sheets fetch
+      - name: Fetch Rain v3.3 (sha256-checked)
+        run: |
+          curl --fail --location --retry 3 --silent --show-error -o rain.zip \
+            https://studio.blender.org/download-source/files/ee/a7/eea73e55dba1cea31c09848df6a794b2-4.zip
+          echo "80217f163f6392dc829233d63c2cfb5e1376775bc34101ad14f39631fea70d24  rain.zip" | sha256sum --check
+          mkdir rain && unzip -q rain.zip -d rain
+      - name: Render the clip
+        run: |
+          python -m explainer_engine.blender.character_benchmark --blend "rain/Rain v3.3/rain_v3.2.blend" --out rain_out \
+            --frames "${{ github.event.inputs.frames || '48' }}" --scale "${{ github.event.inputs.scale || '1.0' }}" \
+            --cues explainer_engine/blender/rain_cues_synthetic.json --angular "${{ github.event.inputs.angular || '0.6' }}" \
+            --light-preset "${{ github.event.inputs.light_preset || 'golden_hour' }}" --sky hdri --no-wall --binary "${{ steps.install.outputs.bin }}"
+      - name: Keep the clip, the report and the Blender log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rain-benchmark
+          path: |
+            rain_out/*.mp4
+            rain_out/rain_benchmark.json
+            rain_out/work/*/bpy_report.json
+            rain_out/work/*/frames/frame_000000.png
+            rain_out/work/*/frames/frame_000024.png

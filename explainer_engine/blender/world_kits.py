@@ -33,6 +33,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 import math
 import sys
 import urllib.parse
@@ -499,20 +500,36 @@ HILL_SHOTS = {"castle_still": ([-38.0, -30.0, 26.0], None, [0.0, 60.0, 16.0], No
               "castle_push": ([-38.0, -30.0, 26.0], [-26.0, -14.0, 20.0], [0.0, 60.0, 16.0], [0.0, 60.0, 16.0], 28, 0)}
 
 
-def _layout_cast(layout: str, cpaths) -> list[dict]:
-    """The characters a layout stands in its scene (``cast`` rows: name, character, costume, tint, [x, y(, z)], yaw, action, offset)."""
+RAIN_LEAD_SCALE = 1.8 / 1.63   # Rain stands 1.63 m; the UBC cast ~1.8 m (Q4's cast-lead handoff)
+
+
+def _layout_cast(layout: str, cpaths, rain_blend: Path | None = None) -> tuple[list[dict], dict[str, dict]]:
+    """(objects, extra toon materials): the characters a layout stands in its scene (``cast`` rows: name, character, costume, tint,
+    [x, y(, z)], yaw, action, offset). A row whose character is ``rain_lead`` is Rain v3.3 adapted (WP-Q4: ``rig_blend``), placed only
+    when ``rain_blend`` is given (the .blend is not in the repo); she faces -Y, so yaw 0 faces a camera that looks along +Y."""
     from explainer_engine.blender import style_sheets as SS
-    out = []
+    out, mats = [], {}
     for n, c, co, tint, xyz, yaw, act, off in layouts()["layouts"][layout].get("cast", []):
+        if c == "rain_lead":
+            if rain_blend is None:
+                continue
+            from explainer_engine.blender import character_benchmark as CB
+            sc = CB.scene(Path(rain_blend), 1, tex_dir=Path(rain_blend).parent / "textures", wall=False, push=False)
+            o = next(x for x in sc["objects"] if "rig_blend" in x)
+            o.update({"name": n, "location": [xyz[0], xyz[1], xyz[2] if len(xyz) > 2 else 0.0], "rotation_deg": [0, 0, yaw],
+                      "scale": RAIN_LEAD_SCALE})
+            mats.update({k: v for k, v in sc["materials"].items() if k != "wall"})
+            out.append(o)
+            continue
         o = SS._cast_member(n, c, co, tint, tuple(xyz[:2]), yaw, act, off, cpaths)
         if len(xyz) > 2:
             o["location"][2] = xyz[2]
         out.append(o)
-    return out
+    return out, mats
 
 
 def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: int = POC_FRAMES,
-               layout: str = "castle_courtyard", pbr: bool = False) -> dict[str, dict]:
+               layout: str = "castle_courtyard", pbr: bool = False, rain_blend: Path | None = None) -> dict[str, dict]:
     """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs.
     A layout with its own ``shots`` (E1-E4, hill_castle) uses them: ``[camera, camera_to|null, look_at, look_at_to|null, lens, frames]``
     (frames 0 = the run's ``frames``); its ``cast`` rows put characters in the set."""
@@ -521,8 +538,9 @@ def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: i
     doc = layouts()["layouts"][layout]
     if layout == "hill_castle" or "shots" in doc:
         shots = doc.get("shots") or {k: list(v) for k, v in HILL_SHOTS.items()}
-        cast = _layout_cast(layout, cpaths) if doc.get("cast") and cpaths else []   # no character files = a set-only scene
+        cast, extra = _layout_cast(layout, cpaths, rain_blend) if doc.get("cast") and cpaths else ([], {})   # no character files = a set-only scene
         mats = dict(kit_mats)
+        mats.update(extra)
         if cast:
             mats.update({"skin": {"base": "kit_card"}, "night": {"base": "night"}})
             for o in cast:
@@ -555,7 +573,7 @@ def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: i
 
 
 def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frames: int = POC_FRAMES, scale: float = 1.0,
-        device: str = "auto", layout: str = "castle_courtyard", shots=None, log=print) -> list[dict]:
+        device: str = "auto", layout: str = "castle_courtyard", shots=None, rain_blend: Path | None = None, log=print) -> list[dict]:
     """Render the three courtyard shots in each look as 24 fps clips (frames, MP4 review copy, s/frame) under ``out``; rows go to
     ``out/looks.json`` as they finish. Free: Blender on a CPU runner or the Mac, no paid call."""
     import time
@@ -575,7 +593,7 @@ def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frame
     for vid in variant_ids:
         pbr = vid in SS.PBR_VARIANTS   # C5: the kit's own glTF materials under Cycles, no toon replacement
         if pbr not in scn_cache:
-            scn_cache[pbr] = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" or layouts()["layouts"][layout].get("cast") else None, frames, layout, pbr=pbr)
+            scn_cache[pbr] = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" or layouts()["layouts"][layout].get("cast") else None, frames, layout, pbr=pbr, rain_blend=rain_blend)
         for sid, sc in scn_cache[pbr].items():
             if shots and sid not in shots:
                 continue
@@ -625,6 +643,7 @@ def main(argv: list[str] | None = None) -> int:
     pc.add_argument("--shots", default="", help="comma-separated shot ids (empty = all of the layout)")
     pc.add_argument("--frames", type=int, default=POC_FRAMES)
     pc.add_argument("--scale", type=float, default=1.0)
+    pc.add_argument("--rain-blend", default=os.environ.get("WORLD_KITS_RAIN_BLEND"), help="rain_lead.blend: places Rain as the lead (else the layouts stand without her)")
     pc.add_argument("--device", default="auto", choices=("auto", "cpu", "gpu"))
     a = ap.parse_args(argv)
     if a.cmd == "register":
@@ -633,7 +652,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({k: str(v) for k, v in fetch(packs_dir=Path(a.packs) if a.packs else None).items()}, indent=1))
     elif a.cmd == "poc":
         poc(Path(a.out), binary=a.binary, variant_ids=a.variants.split(","), frames=a.frames, scale=a.scale, device=a.device,
-            layout=a.layout, shots=[x for x in a.shots.split(",") if x] or None)
+            layout=a.layout, shots=[x for x in a.shots.split(",") if x] or None, rain_blend=Path(a.rain_blend) if a.rain_blend else None)
     elif a.cmd == "list":
         t = table()
         for x in t["assets"]:

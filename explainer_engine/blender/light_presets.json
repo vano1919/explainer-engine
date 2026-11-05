@@ -1,0 +1,46 @@
+{
+  "schema": "light_presets/1",
+  "_doc": "WP-Q1 named light presets (coordinator/Fable 2026-11-05, after the creator's 'historical, epic, rich world' note): Blender Studio's Wing It! rule as data, shared by WP-Q1 (shading), WP-Q4 (the character benchmark) and WP-Q8 (the world kits). Only the key SUN casts a shadow; two colourable rims (rim_a, rim_b) light the cast only (light linking), shadowless, specular <= 0.3; an optional shadowless fill; one world tint per sequence (the ambient light's colour and strength; camera rays still see the look's sky). Rim aims are relative to the camera (elevation, azimuth offset from straight behind the subject); the key's azimuth is world-fixed so a set keeps its light across shots. Sun strength 1 = a white surface facing it shows 1.0. Every number is HYP until the creator judges the clips; colours are RGB multipliers, never palette hex.",
+  "presets": {
+    "golden_hour": {
+      "feel": "low warm sun, a hot orange rim on one side and a cool sky rim on the other, warm-blue air",
+      "key": {"colour": [1.0, 0.82, 0.6], "energy": 3.0, "elevation_deg": 22.0, "azimuth_deg": 55.0, "angle_deg": 8.0},
+      "fill": {"colour": [0.6, 0.7, 1.0], "energy": 0.6},
+      "rims": [{"name": "rim_a", "colour": [1.0, 0.7, 0.42], "energy": 3.2, "elevation_deg": 25.0, "azimuth_offset_deg": 35.0},
+               {"name": "rim_b", "colour": [0.62, 0.76, 1.0], "energy": 1.6, "elevation_deg": 40.0, "azimuth_offset_deg": -40.0}],
+      "world_tint": {"colour": [0.72, 0.78, 1.0], "strength": 0.35}
+    },
+    "noon_epic": {
+      "feel": "high bright sun for battle and establishing shots, a warm rim, clear blue sky air",
+      "key": {"colour": [1.0, 0.95, 0.86], "energy": 3.4, "elevation_deg": 55.0, "azimuth_deg": 35.0, "angle_deg": 6.0},
+      "fill": {"colour": [0.66, 0.76, 1.0], "energy": 0.7},
+      "rims": [{"name": "rim_a", "colour": [1.0, 0.86, 0.66], "energy": 2.4, "elevation_deg": 35.0, "azimuth_offset_deg": 25.0},
+               {"name": "rim_b", "colour": [0.8, 0.88, 1.0], "energy": 1.0, "elevation_deg": 45.0, "azimuth_offset_deg": -30.0}],
+      "world_tint": {"colour": [0.7, 0.8, 1.0], "strength": 0.45}
+    },
+    "overcast_day": {
+      "feel": "soft cool daylight, gentle rims, grey-blue air: rain, mourning, sieges",
+      "key": {"colour": [0.92, 0.94, 1.0], "energy": 2.0, "elevation_deg": 60.0, "azimuth_deg": 20.0, "angle_deg": 10.0},
+      "fill": {"colour": [0.8, 0.84, 0.92], "energy": 0.9},
+      "rims": [{"name": "rim_a", "colour": [0.9, 0.92, 1.0], "energy": 1.4, "elevation_deg": 40.0, "azimuth_offset_deg": 25.0},
+               {"name": "rim_b", "colour": [0.95, 0.9, 0.85], "energy": 0.8, "elevation_deg": 40.0, "azimuth_offset_deg": -30.0}],
+      "world_tint": {"colour": [0.78, 0.82, 0.9], "strength": 0.6}
+    },
+    "interior_hearth": {
+      "feel": "a hall by firelight: warm side key, a fire-orange rim and a cold window rim, deep warm air",
+      "key": {"colour": [1.0, 0.72, 0.45], "energy": 2.6, "elevation_deg": 18.0, "azimuth_deg": 80.0, "angle_deg": 10.0},
+      "fill": {"colour": [0.5, 0.56, 0.8], "energy": 0.35},
+      "rims": [{"name": "rim_a", "colour": [1.0, 0.62, 0.32], "energy": 2.6, "elevation_deg": 15.0, "azimuth_offset_deg": 40.0},
+               {"name": "rim_b", "colour": [0.55, 0.68, 1.0], "energy": 1.2, "elevation_deg": 35.0, "azimuth_offset_deg": -35.0}],
+      "world_tint": {"colour": [0.62, 0.48, 0.4], "strength": 0.25}
+    },
+    "night_moon": {
+      "feel": "cool moonlight key, a warm torch rim, deep blue air",
+      "key": {"colour": [0.66, 0.76, 1.0], "energy": 1.6, "elevation_deg": 40.0, "azimuth_deg": -30.0, "angle_deg": 7.0},
+      "fill": {"colour": [0.36, 0.42, 0.7], "energy": 0.3},
+      "rims": [{"name": "rim_a", "colour": [1.0, 0.64, 0.36], "energy": 2.2, "elevation_deg": 15.0, "azimuth_offset_deg": 35.0},
+               {"name": "rim_b", "colour": [0.6, 0.72, 1.0], "energy": 1.4, "elevation_deg": 45.0, "azimuth_offset_deg": -35.0}],
+      "world_tint": {"colour": [0.36, 0.42, 0.66], "strength": 0.3}
+    }
+  }
+}

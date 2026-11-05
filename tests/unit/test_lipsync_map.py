@@ -164,3 +164,47 @@ def test_lipsync_measure_offset_in_frames_and_open_mouth_on_silence():
     late = R.lipsync_measure(cues, [{"start": 0.3, "end": 0.45}, {"start": 1.0, "end": 1.1}])
     assert late["mean_abs_offset_frames"] > R.POC2_OFFSET_FRAMES and late["longest_open_silence_run"] > R.POC2_OPEN_SILENCE
     assert not late["passed"]
+
+
+# --- WP-Q4: bone-pose visemes for the Blender Studio rigs (mouth = CloudRig controls, no shape keys) ---
+POSES = {s: {"MSTR-Jaw": {"rot": [0, 0, 0]}} for s in R.SHAPES}
+POSES["D"] = {"MSTR-Jaw": {"rot": [25, 0, 0]}, "MSTR-Mouth": {"scale": [1, 1, 1.2]}}
+POSES["B"] = {"ACT-Lips_Corner.L": {"loc": [0.01, 0, 0]}}
+
+
+def test_action_visemes_key_each_change_with_the_previous_value_on_the_frame_before():
+    av = R.ActionVisemes(POSES)
+    shapes = av.lip.frames(HI)
+    tr = av.tracks(HI)
+    jaw = dict(map(tuple, tr["MSTR-Jaw|rotation_euler|0"]))
+    f = shapes.index("D")
+    assert jaw[f - 1] == 0.0 and abs(jaw[f] - 0.436332) < 1e-5          # 25 degrees in radians
+    assert jaw[0] == 0.0 and jaw[len(shapes) - 1] == 0.0                # first and last frame always keyed
+    assert tr["MSTR-Mouth|scale|2"][-1][1] == 1.0                        # a shape that leaves a channel out rests it
+    assert tr["ACT-Lips_Corner.L|location|0"][0][1] == 0.0
+
+
+def test_action_visemes_refuse_a_table_without_a_shape_or_with_a_bad_channel():
+    with pytest.raises(ValueError, match="no pose for"):
+        R.ActionVisemes({k: v for k, v in POSES.items() if k != "H"})
+    bad = {**POSES, "A": {"MSTR-Jaw": {"rot": [1, 2]}}}
+    with pytest.raises(ValueError, match="three numbers"):
+        R.ActionVisemes(bad)
+
+
+def test_action_visemes_apply_keys_pose_bones_and_names_a_missing_bone():
+    class PB:
+        def __init__(self):
+            self.rotation_euler, self.location, self.scale, self.keys = [0, 0, 0], [0, 0, 0], [1, 1, 1], []
+
+        def keyframe_insert(self, data_path, index, frame):
+            self.keys.append((data_path, index, frame, list(getattr(self, data_path))[index]))
+
+    av = R.ActionVisemes(POSES)
+    tr = av.tracks(HI)
+    bones = {"MSTR-Jaw": PB(), "MSTR-Mouth": PB(), "ACT-Lips_Corner.L": PB()}
+    n = R.ActionVisemes.apply(tr, bones, start_frame=101)
+    assert n == sum(len(v) for v in tr.values())
+    assert min(k[2] for k in bones["MSTR-Jaw"].keys) == 101
+    with pytest.raises(KeyError, match="MSTR-Mouth"):
+        R.ActionVisemes.apply(tr, {k: v for k, v in bones.items() if k != "MSTR-Mouth"})

@@ -327,10 +327,11 @@ def scenes(paths: dict[str, Path], *, cast: str = "mannequin", cpaths: dict[str,
     return out
 
 
-def look_ids(*, twins: bool = True) -> list[str]:
-    """The look round's variant ids (``look_variants.json``), the ten first, then the swatch twins."""
+def look_ids(*, twins: bool = True, q1: bool = False) -> list[str]:
+    """The look round's variant ids (``look_variants.json``), the ten first, then the swatch twins; ``q1`` adds WP-Q1's."""
     doc = S.look_variants()
-    return [v["id"] for v in doc["variants"]] + ([t + S.SWATCH_SUFFIX for t in doc.get("swatch_twins", [])] if twins else [])
+    return ([v["id"] for v in doc["variants"]] + ([t + S.SWATCH_SUFFIX for t in doc.get("swatch_twins", [])] if twins else [])
+            + ([v["id"] for v in doc.get("q1_variants", [])] if q1 else []))
 
 
 PBR_VARIANTS = ("C5_cycles_pbr",)   # world-kit overnight matrix C5: Cycles, the kit's own glTF materials, PBR Neutral
@@ -339,7 +340,7 @@ PBR_VARIANTS = ("C5_cycles_pbr",)   # world-kit overnight matrix C5: Cycles, the
 def style_for(variant_id: str) -> tuple[str, S.StyleTokens]:
     if variant_id in PBR_VARIANTS:
         return "cycles_safe", replace(S.variant("B"), view_transform="Khronos PBR Neutral", look="None")
-    if variant_id.startswith("v") and variant_id[1:3].isdigit():   # a look-round variant (ICW-05c)
+    if variant_id.startswith(("v", "q")) and variant_id[1:3].isdigit() or variant_id.startswith("q1_"):   # ICW-05c / WP-Q1
         return "eevee", S.look_tokens(variant_id)
     if variant_id == "S":
         return "cycles_safe", S.variant("B")
@@ -413,6 +414,19 @@ def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: 
     if cues is not None:   # the dialogue clip's speaker is lip-synced: CN-17 wants the cue file and an on-screen mouth
         spec["performance"].update(lipsync=True, rhubarb={"path": Path(cues).name, "sha256": L.sha256_file(cues)},
                                    dialogue_cover="on_screen")
+    art = tokens.art
+    if art is not None and art.lit_rig:   # WP-Q1: shot_spec/3 records the look's view transform, shade and line mode
+        spec["schema"] = "shot_spec/3"
+        spec["render"]["profile"] = "eevee_painterly"
+        view = art.view_transform or tokens.view_transform
+        look = spec["look"]
+        look.update(view_transform=view, grade_look=tokens.look if view == "AgX" else "None", shade_mode=art.shade_mode,
+                    shade_path=art.shade_path, line_mode=art.line_mode)
+        if art.line_mode == "none":
+            look.pop("line_weight_px")
+        else:
+            look["line_weight_px"] = art.line_px
+        spec["scene"]["light_rig"] = art.light_rig
     if profile == "cycles_hero":
         spec["why"] = "ICW-05 style sheet: the Cycles-safe variant beside the EEVEE look (roadmap 9.1), never an episode shot"
     return spec

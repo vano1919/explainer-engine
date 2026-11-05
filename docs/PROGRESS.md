@@ -4213,3 +4213,53 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Layouts `antique_forum` (E1), `hill_castle` (E2, cast on the bridge, `bridge_medium` shot), `harbour_square` (E3), `field_camp` (E4): 7-8 characters each, shots in the layout file (`cast`, `shots`); 12 more Poly Haven pieces registered (vault copies). The frames are not judged yet; the earlier hill_castle still read as a game render (camera in the trees, foliage shards), the camera, tree size and normals were changed and are unseen.
 - C5 `C5_cycles_pbr`: Cycles 48 samples + denoise, the kit's own glTF materials, PBR Neutral (`style_sheets.PBR_VARIANTS`); its cost is measured by CI, not claimed.
 - Fable's hash policy: a repacked GLB is a derived build. `world_kits.json` keeps the source hash (pack zip sha256, or the sha256 of the Poly Haven file md5s), `derived: true`, the packer id and the structural fingerprint (nodes, meshes, primitives, images); `fetch` accepts a rebuild with other bytes only when the source and the fingerprint match and keeps it under `derived/`; byte-identical rebuilds and cache or vault copies are used as before. Test `test_a_derived_rebuild_is_checked_by_source_and_fingerprint_not_bytes`.
+
+## 2026-11-05 — WP-Q1: soft painterly shading, coloured light rigs, colour transform (branch `claude/project-thread-ekz0dc`)
+- Principle (the creator, 19:19 UTC): synthesis of existing techniques and code. Re-implemented from public documents, no code
+  copied (so no provenance row): Blender Studio's Wing It! shading write-up and the Blender 5.2 manual / API pages for Shader to RGB,
+  Light Linking, Light Objects, SceneEEVEE and Displays and Views. API names checked in the pinned Blender 5.2.3 itself.
+- `blender/style.py`: the soft mode gets two new node paths (`Look.shade_path`): `lit` (a matte BSDF lit by real lights, no
+  Emission: Diffuse, or a Principled with Specular IOR Level 0, Roughness 1, no coat, no metal, subsurface on skin) and `rgb_soft`
+  (Shader to RGB keeps the light's colour: mix(shadow tint x albedo, albedo x light, tone), a LINEAR/EASE ramp of the half-lambert
+  lifted luminance, shadow tints per material class skin / hair / eyes / costume / set). `StyleEngine.lights()`: the rigs
+  `cinematic` (warm key SUN 5-10 degrees, PCF blur 2.5, no jitter; cool shadowless fill, specular 0; warm rim aimed from behind the
+  subject relative to the camera, shadowless, specular 0.3, light-linked to the cast), `key_rim`, `flat_key`, `ambient_only`.
+  `Look.view_transform` Standard | Khronos PBR Neutral (no look), `Look.ao` (Fast GI AO, lit path only), `Look.normal_soften`.
+  Every new knob at its default keeps the look round's graphs byte for byte (`Q1_DEFAULTS`).
+- `blender/light_presets.json` (`light_presets/1`, shared with WP-Q4 and WP-Q8): golden_hour, noon_epic, overcast_day,
+  interior_hearth, night_moon. Wing It!'s rule as data: only the key sun casts a shadow, two colourable rims on the cast, an
+  optional fill, one world tint per sequence. `Look.light_preset` picks one.
+- `style.check()`: a Principled BSDF passes only as the matte one on the lit path (narrower, not weaker); the lit path ends in a
+  matte BSDF; Fast GI only as AO and only without Shader to RGB; fill and rims shadowless with specular <= 0.3, rims linked to the
+  cast, only the key casts a shadow, a shadowed key has a 5-10 degree disc.
+- `bpy/render_shot.py`: `build_lights` (light linking through `Object.light_linking.receiver_collection`; a rim with no cast in the
+  shot is left out and reported), `_camera_aim`, `soften_normals` (a Geometry Nodes modifier after the armature: Blur Attribute on
+  the normals into Set Mesh Normal, FREE, point domain), profile `shadows` / `motion_blur_steps`.
+- `blender/profiles.py` `eevee_painterly` (32 samples, shadows, Fast GI AO, motion blur 1 step; stop rule None: the research's
+  budget-share formula is not settled, ICW-09's OR-23 plan names it); `config/job_speeds.json` row; render manifest enum.
+- `shot_spec/3` (docs/CONTRACTS.md): view transform, shade mode and path, line mode; `style_sheets.spec_for` writes /3 for the
+  `q1_*` looks (`look_variants.json` `q1_variants`, kept apart from the round's ten).
+- `blender/grade.py views` -> `view_palette_match.json` (Blender 5.2.3 OCIO): palette mean CIE76 dE raw Standard 0.0, Khronos PBR
+  Neutral 6.73 (max 17.1, `night`; matched 0.5), against AgX MHC 12.98 (matched 2.25). `palette_match` uses it on the new paths.
+- Tests: `tests/unit/test_light_rigs.py` (new), additions to `test_blender_style.py`, `test_agx_grade.py`, `test_shot_cache.py`
+  (/3 validates, /2 unchanged), `test_job_speeds_rows.py` (the new row). Cost $0.
+- Local check (this container, Blender 5.2.3 CPU / Mesa, 1280x720): lights, light linking (20 cast meshes) and the normal blur
+  applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
+  heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
+
+
+## 2026-11-05 — WP-Q4: Blender Studio Rain as the appeal benchmark (draft PR #135, branch wpq/04-character-benchmark)
+- Done: Rain v3.3 (CC-BY 4.0, free anonymous download, 64.4 MB, sha256 `80217f16...ea70d24`, fetched 2026-11-05) recorded as the
+  `blender_studio_cc_by` row of `assets/licence_sources.json`; the zip stays out of git (D-110; vault copy still to do, no HF
+  credentials in the cloud session; CI fetches it from the public URL at the sha256). Storm's page says "Login to Download": not
+  fetched. Rain opens in Blender 5.2.3 with scripts off (the embedded cloudrig.py/rain_shading.py are not run); the face works.
+- Code: `rigs.ActionVisemes` (Rhubarb shapes to pose-bone tracks, X on silence, same timing rule as `LipSync`), `viseme_poses_rain.json`
+  (jaw, mouth scale: three poses measured by render, the rest interpolated), `bpy/render_shot.py` object kind `rig_blend` (a `.blend` rig
+  appended whole, helper meshes hidden, head-lattice deltas, viseme keys, toon re-materialing by slot), `character_benchmark.py` (glue to the
+  Q1 style graph, `light_preset`, HDRI sky), `.github/workflows/character-benchmark.yml`, tests `test_lipsync_map.py` + `test_character_benchmark.py`.
+- Findings (direct): Rain under Blender Studio's own shading has the appeal the reference wants; under the Q1 graph at 720p/4 samples the
+  face is dark brown, the golden_hour key leaves it in shadow, a skin texture strength of 0.2 leaves hard cheek stripes. Verdict "not there",
+  not offered for a pick. 10.5-11.8 s/frame at 1280x720 on a CPU sandbox (not Mac/GPU figures). The head's shared 2x2x3 lattice lengthens the
+  jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
+  only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
+- Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.

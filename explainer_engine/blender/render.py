@@ -314,8 +314,8 @@ class HeadlessRender:
             allow_black: bool = False, max_seconds: float | None = None, cache: shot_cache.ShotCache | None = None) -> dict:
         """Render ``spec`` (shot_spec/2) under ``work``; returns the render manifest (validated: schema, CN-18). ``scene`` is the
         scene to open (``{"kind": "blend", "path", "sha256"}``, written by the scene builder of ICW-06); the smoke builds its own."""
-        if spec.get("schema") != "shot_spec/2":
-            raise ContractError("HeadlessRender renders shot_spec/2 only (Blender lanes, D-96)")
+        if spec.get("schema") not in C.BLENDER_SPECS:
+            raise ContractError("HeadlessRender renders shot_spec/2 and /3 only (Blender lanes, D-96)")
         C.validate(spec)
         if scene is None and smoke is None:
             raise ContractError("no scene: a production shot opens the .blend of its scene builder (ICW-06)")

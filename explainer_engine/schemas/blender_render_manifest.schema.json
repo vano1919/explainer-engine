@@ -95,6 +95,7 @@
       "enum": [
         "eevee_fast",
         "eevee_full",
+        "eevee_painterly",
         "cycles_hero"
       ]
     },
