@@ -98,19 +98,37 @@ def tube_mesh(rings, cols, centre_fn, closed=True):
     return me
 
 
+def panel_mesh(sign, rows=10, cols=8):
+    """A flat, slightly curved hip-length panel hanging from the shoulders over the chest (sign -1) or the back (sign +1)."""
+    bm = bmesh.new()
+    for r in range(rows + 1):
+        t = r / rows
+        z = 1.27 - 0.47 * t
+        half = 0.10 + 0.035 * t
+        for c in range(cols + 1):
+            x = half * (2 * c / cols - 1)
+            y = sign * (0.128 * math.sqrt(max(0.0, 1 - (x / 0.2) ** 2)) + 0.012) + 0.01
+            bm.verts.new((x, y, z))
+    bm.verts.ensure_lookup_table()
+    for r in range(rows):
+        for c in range(cols):
+            i = r * (cols + 1) + c
+            bm.faces.new((bm.verts[i], bm.verts[i + 1], bm.verts[i + cols + 2], bm.verts[i + cols + 1]))
+    me = bpy.data.meshes.new("panel")
+    bm.to_mesh(me)
+    bm.free()
+    return me
+
+
 def tunic(rig, top, collection):
-    """Knee-length sleeveless tunic body (a tube from the shoulders, a flared hem) and a belt; Rain's own top shows as the undershirt
-    and its sleeves; weights from Rain's top."""
-    def body(t, a):
-        z = 1.30 - 0.78 * t
-        rx = 0.19 + 0.01 * t + 0.08 * t ** 2.5
-        ry = 0.135 + 0.01 * t + 0.07 * t ** 2.5
-        w = 1 + 0.03 * math.sin(a * 5) * t
-        return (rx * w * math.sin(a), ry * w * math.cos(a) + 0.01, z)
-    weighted("GEO-lead-tunic", tube_mesh(12, 28, body), "MAT-lead.tunic", rig, top, collection)
-    def belt(t, a):   # an elliptical strip at the waist (z about 1.02), a thin tube around the tunic
+    """A narrow open-sided tabard: two flat panels (front and back, hip-length) and a belt over Rain's own top and trousers (which
+    keep her silhouette and arm motion); weights from Rain's top."""
+    weighted("GEO-lead-tabard-front", panel_mesh(-1), "MAT-lead.tunic", rig, top, collection, subdiv=1)
+    weighted("GEO-lead-tabard-back", panel_mesh(1), "MAT-lead.tunic", rig, top, collection, subdiv=1)
+
+    def belt(t, a):   # an elliptical strip at the waist, a thin tube around the body outside the panels
         u = 2 * math.pi * t
-        rx, ry = 0.205, 0.142
+        rx, ry = 0.195, 0.138
         r = 0.014
         return ((rx + r * math.cos(a)) * math.sin(u), (ry + r * math.cos(a)) * math.cos(u) + 0.01, 1.02 + r * math.sin(a) * 1.6)
     weighted("GEO-lead-belt", tube_mesh(40, 8, belt), "MAT-lead.belt", rig, top, collection, subdiv=0)
