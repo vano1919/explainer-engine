@@ -759,7 +759,10 @@ def perfectly_normal(meshes, spec, missing):
     if not all(n in bpy.data.node_groups for n in names):
         with bpy.data.libraries.load(path, link=False) as (src, dst):
             dst.node_groups = [n for n in src.node_groups if n.startswith("Manip Verts") or n == "Perform Tweak"]
-    steps = ((names[0], {}), (names[1], {"Converge": float(spec["converge"])}), (names[2], {"Ready to Apply": True}))
+    # PN's Converge pulls each face's manip verts towards the face (a positive share turns the normals inward: measured on a UV
+    # sphere in 5.2.3, mean dot with the outward normal 0.971 flat, -0.911 at +0.6, the C4 cast rendered black); a negative share
+    # pushes them out of the face, i.e. spherizes (0.984 at -0.6). The look's pn_converge is that outward share.
+    steps = ((names[0], {}), (names[1], {"Converge": -float(spec["converge"])}), (names[2], {"Ready to Apply": True}))
     for ob in meshes:
         for name, values in steps:
             g = bpy.data.node_groups[name]

@@ -506,8 +506,31 @@ def look_variants(path: Path | None = None) -> dict:
     return doc
 
 
+LIGHT_TAG = "@"   # "<look>@<era or light preset>[+cu]": the overnight matrix's light per era on any look that takes a preset
+
+
+def _lit_variant(variant_id: str, doc: dict | None) -> StyleTokens:
+    """``q1_c2_native_skin@E1`` = that look under the era's light preset (combo_profiles.json eras), ``...@noon_epic`` under a
+    named preset, ``...@E2+cu`` with the close-up character key. Every CLI that takes a look id (style_sheets, world_kits poc)
+    takes these, so a runner never relies on a look's default preset."""
+    base, tag = variant_id.split(LIGHT_TAG, 1)
+    where, _, extra = tag.partition("+")
+    if extra not in ("", "cu"):
+        raise KeyError(f"{variant_id!r}: after '+' only 'cu' (the close-up character key)")
+    eras = json.loads((Path(__file__).resolve().parent / "combo_profiles.json").read_text(encoding="utf-8"))["eras"]
+    preset = eras[where]["light_preset"] if where in eras else where
+    if preset not in light_presets():
+        raise KeyError(f"{variant_id!r}: {where!r} is neither an era ({', '.join(eras)}) nor a light preset ({', '.join(light_presets())})")
+    t = look_tokens(base, doc=doc)
+    if t.art is None or t.art.light_preset is None:
+        raise KeyError(f"{variant_id!r}: look {base} takes no light preset (only the lit / rgb_soft looks with a preset do)")
+    return replace(t, art=replace(t.art, id=variant_id, light_preset=preset, character_key=extra == "cu"))
+
+
 def look_tokens(variant_id: str, *, doc: dict | None = None) -> StyleTokens:
     """StyleTokens for one look variant: the ICW-05 B tokens with the look attached (its line width as ``line_px``)."""
+    if LIGHT_TAG in variant_id:
+        return _lit_variant(variant_id, doc)
     doc = doc or look_variants()
     twin = variant_id.endswith(SWATCH_SUFFIX)
     vid = variant_id[: -len(SWATCH_SUFFIX)] if twin else variant_id

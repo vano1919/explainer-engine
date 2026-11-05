@@ -4249,4 +4249,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   (`Look.character_key`, `combos.tokens(..., close_up=True)`) the preset's key and fill give way to a warm key 35 degrees off the
   camera axis, 10.4 degrees up (above the eye line), and a cool shadowless fill opposite at a quarter of its energy; the era's rims
   and world tint stay. The loader holds the band (30-45 degrees, fill opposite, share <= 0.5).
+- Era light by look id (`style.LIGHT_TAG`): `q1_c2_native_skin@E1` (era key -> its preset), `...@noon_epic` (a preset name),
+  `...@E2+cu` (the close-up character key). Every CLI that takes a look id (`style_sheets looks`, `world_kits poc --variants`)
+  passes the era's light this way; a look without a preset refuses the tag. Perfectly Normal's Converge turned out inward for a
+  positive share (UV sphere in 5.2.3: mean dot with the outward normal 0.971 flat, -0.911 at +0.6; the first C4 frame's cast went
+  black), so `render_shot.perfectly_normal` passes the outward share as a negative Converge (0.984 at -0.6).
 

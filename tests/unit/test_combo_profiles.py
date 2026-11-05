@@ -172,3 +172,17 @@ def test_the_character_key_stays_front_biased_with_its_fill_opposite(tmp_path):
     p.write_text(json.dumps(doc), encoding="utf-8")
     with pytest.raises(ValueError, match="opposite"):
         S.character_key(p)
+
+
+def test_a_look_id_carries_the_era_light_for_every_cli():
+    from explainer_engine.blender import style_sheets as SS
+    path, t = SS.style_for("q1_c2_native_skin@E1")
+    assert path == "eevee" and t.art.light_preset == "noon_epic" and not t.art.character_key
+    assert S.look_tokens("q1_c2_native_skin@overcast_day+cu").art.light_preset == "overcast_day"
+    assert S.look_tokens("q1_c2_native_skin@E3+cu").art.character_key is True
+    assert S.look_tokens("q1_c1_lit_preset@E4").art.light_preset == CB.load()["eras"]["E4"]["light_preset"]
+    for bad in ("q1_c2_native_skin@E9", "q1_c2_native_skin@E1+wide", "q1_lit_pbrn_cinematic@E1"):
+        with pytest.raises(KeyError):
+            S.look_tokens(bad)
+    spec = SS.spec_for("dialogue_cu", "q1_c2_native_skin@E1", t)
+    assert spec["schema"] == "shot_spec/3" and spec["render"]["profile"] == "eevee_painterly"
