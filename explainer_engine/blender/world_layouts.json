@@ -1,0 +1,36 @@
+{
+ "schema": "world_layout/1",
+ "_doc": "WP-Q8: layouts of world-kit pieces (world_kits.py). Blender frame, metres: x right, y forward, z up. A Quaternius wall module is 2 m wide and looks to -Y at yaw 0; `ring` turns every side's front inward, so a camera at -Y sees the north wall's face. Block types: ring (nx*ny modules of `wall` on the rectangle centre line, `replace` {side:i -> asset}, `open_sides`, `corner`), floor (nx*ny tiles), row (one asset repeated every `step` m from `from` to `to`), piece (one placement). The same layout is reused by any number of shots; `landmarks` name pieces the scene_set marks.",
+ "layouts": {
+  "castle_courtyard": {
+   "label": "A walled castle courtyard, 8 x 6 m, south side open for the camera, a gate and a fort behind it",
+   "landmarks": ["gate_door", "fort"],
+   "axis": {"deg": 0, "origin": [0, 0]},
+   "blocks": [
+    {"type": "floor", "name": "cobble", "asset": "model.mvk_floor_uneven_brick", "nx": 4, "ny": 3},
+    {"type": "ring", "name": "wall", "wall": "model.mvk_wall_uneven_brick_straight", "nx": 4, "ny": 3, "open_sides": ["south"],
+     "corner": "model.mvk_corner_exterior_brick",
+     "replace": {"north:1": "model.mvk_wall_uneven_brick_door_round", "north:3": "model.mvk_wall_uneven_brick_window_wide_round",
+                 "west:1": "model.mvk_wall_uneven_brick_window_thin_round", "east:1": "model.mvk_wall_uneven_brick_window_wide_round"}},
+    {"type": "piece", "name": "gate_door", "asset": "model.ph_large_castle_door", "pos": [-1.0, 2.86, 0.0], "yaw_deg": 0.0, "scale": 0.55, "role": "gate"},
+    {"type": "piece", "name": "fort", "asset": "model.ph_modular_fort_01", "pos": [2.0, 16.0, 0.0], "yaw_deg": 180.0, "role": "landmark"},
+    {"type": "piece", "name": "wagon", "asset": "model.mvk_prop_wagon", "pos": [-2.6, 0.4, 0.0], "yaw_deg": 80.0},
+    {"type": "piece", "name": "crate_a", "asset": "model.ph_wooden_crate_02", "pos": [2.9, 1.9, 0.0], "yaw_deg": 20.0},
+    {"type": "piece", "name": "crate_b", "asset": "model.mvk_prop_crate", "pos": [3.1, 0.9, 0.0], "yaw_deg": -15.0},
+    {"type": "piece", "name": "barrel", "asset": "model.ph_wine_barrel_01", "pos": [3.0, -0.4, 0.0], "yaw_deg": 0.0},
+    {"type": "piece", "name": "lantern", "asset": "model.ph_wooden_lantern_01", "pos": [0.8, 0.8, 0.0], "yaw_deg": 0.0}
+   ]
+  },
+  "village_street": {
+   "label": "A plaster village street, a row of house fronts on each side",
+   "landmarks": [],
+   "axis": {"deg": 0, "origin": [0, 0]},
+   "blocks": [
+    {"type": "floor", "name": "road", "asset": "model.mvk_floor_brick", "nx": 2, "ny": 8, "centre": [0, 8]},
+    {"type": "row", "name": "left", "asset": "model.mvk_wall_plaster_straight", "from": [-3.0, 1.0, 0.0], "to": [-3.0, 15.0, 0.0], "step": 2.0, "yaw_deg": 90.0},
+    {"type": "row", "name": "right", "asset": "model.mvk_wall_plaster_window_wide_round", "from": [3.0, 1.0, 0.0], "to": [3.0, 15.0, 0.0], "step": 2.0, "yaw_deg": -90.0},
+    {"type": "piece", "name": "door", "asset": "model.mvk_wall_plaster_door_round", "pos": [-3.0, 7.0, 0.0], "yaw_deg": 90.0}
+   ]
+  }
+ }
+}

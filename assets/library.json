@@ -586,6 +586,1931 @@
       "height": 1024
     },
     {
+      "id": "model.mvk_corner_exterior_brick",
+      "kind": "model",
+      "file": "tools/assets_cache/19c7c4747684ba32fcd97095c64b2cbd935d486c777d016af093907e3cd94bce/mvk_corner_exterior_brick.glb",
+      "sha256": "19c7c4747684ba32fcd97095c64b2cbd935d486c777d016af093907e3cd94bce",
+      "bytes": 765976,
+      "tags": [
+        "brick",
+        "corner",
+        "medieval_village",
+        "quaternius",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a brick exterior corner post. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Corner_Exterior_Brick.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_RockTrim_Normal.png",
+            "T_RockTrim_ORM.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:03",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Corner_Exterior_Brick.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_corner_exterior_brick/mvk_corner_exterior_brick.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 3102,
+        "bounds_m": [
+          0.531,
+          0.576,
+          3.016
+        ],
+        "units": "m",
+        "materials": [
+          "MI_RockTrim"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_door_1_round",
+      "kind": "model",
+      "file": "tools/assets_cache/71ce967b11a6a5c9d6b28985353c523f00052f4f6383ba1a6c35d0c07b2a00e1/mvk_door_1_round.glb",
+      "sha256": "71ce967b11a6a5c9d6b28985353c523f00052f4f6383ba1a6c35d0c07b2a00e1",
+      "bytes": 773972,
+      "tags": [
+        "door",
+        "medieval_village",
+        "quaternius",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a round-top wooden door leaf. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Door_1_Round.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:06",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Door_1_Round.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_door_1_round/mvk_door_1_round.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 470,
+        "bounds_m": [
+          1.12,
+          0.121,
+          2.318
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_WindowGlass"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_floor_brick",
+      "kind": "model",
+      "file": "tools/assets_cache/57707e3d0bfb4bd37a683bb011c02d6ff3eef5d6d6bfae6150c87d080187d25f/mvk_floor_brick.glb",
+      "sha256": "57707e3d0bfb4bd37a683bb011c02d6ff3eef5d6d6bfae6150c87d080187d25f",
+      "bytes": 794348,
+      "tags": [
+        "brick",
+        "floor",
+        "medieval_village",
+        "quaternius",
+        "street",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a 2x2 m brick floor tile. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Floor_Brick.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Brick_Normal.png",
+            "T_Brick_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:05",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Floor_Brick.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_floor_brick/mvk_floor_brick.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 4,
+        "bounds_m": [
+          2,
+          2,
+          0.02
+        ],
+        "units": "m",
+        "materials": [
+          "MI_Brick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_floor_uneven_brick",
+      "kind": "model",
+      "file": "tools/assets_cache/570ccd1fd7d72b234dd71ada8834f2cc9fa3d797b6e3a8c63cf258936a495095/mvk_floor_uneven_brick.glb",
+      "sha256": "570ccd1fd7d72b234dd71ada8834f2cc9fa3d797b6e3a8c63cf258936a495095",
+      "bytes": 909632,
+      "tags": [
+        "brick",
+        "cobble",
+        "courtyard",
+        "floor",
+        "medieval_village",
+        "quaternius",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a 2x2 m uneven brick floor tile. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Floor_UnevenBrick.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_UnevenBrick_Normal.png",
+            "T_UnevenBrick_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:04",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Floor_UnevenBrick.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_floor_uneven_brick/mvk_floor_uneven_brick.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 4,
+        "bounds_m": [
+          2,
+          2,
+          0.02
+        ],
+        "units": "m",
+        "materials": [
+          "MI_UnevenBrick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_overhang_unevenbrick_long",
+      "kind": "model",
+      "file": "tools/assets_cache/f7443fe62d2856456f23e5bfb8d01941c228f32e8209638b8f6f2b56f59c88ca/mvk_overhang_unevenbrick_long.glb",
+      "sha256": "f7443fe62d2856456f23e5bfb8d01941c228f32e8209638b8f6f2b56f59c88ca",
+      "bytes": 2588692,
+      "tags": [
+        "brick",
+        "medieval_village",
+        "overhang",
+        "quaternius",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a long brick overhang. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Overhang_UnevenBrick_Long.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_UnevenBrick_Normal.png",
+            "T_UnevenBrick_Roughness.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:13",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Overhang_UnevenBrick_Long.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_overhang_unevenbrick_long/mvk_overhang_unevenbrick_long.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 196,
+        "bounds_m": [
+          2.0,
+          2.2,
+          3.028
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_UnevenBrick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_prop_chimney",
+      "kind": "model",
+      "file": "tools/assets_cache/23f6732c8b7a143706835cf88288c0f7201bfaa167a287a4e2d5f049257b6599/mvk_prop_chimney.glb",
+      "sha256": "23f6732c8b7a143706835cf88288c0f7201bfaa167a287a4e2d5f049257b6599",
+      "bytes": 1483992,
+      "tags": [
+        "chimney",
+        "medieval_village",
+        "prop",
+        "quaternius",
+        "roof",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a brick chimney stack. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Prop_Chimney.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Brick_Normal.png",
+            "T_Brick_Roughness.png",
+            "T_RockTrim_Normal.png",
+            "T_RockTrim_ORM.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:11",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Prop_Chimney.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_prop_chimney/mvk_prop_chimney.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 618,
+        "bounds_m": [
+          0.946,
+          1.0,
+          3.178
+        ],
+        "units": "m",
+        "materials": [
+          "MI_RockTrim",
+          "MI_Brick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_prop_crate",
+      "kind": "model",
+      "file": "tools/assets_cache/3843f0c1bf699c88622e313c8e730fe5cd00b7edbaf0d6ede9223ed4d742a5ec/mvk_prop_crate.glb",
+      "sha256": "3843f0c1bf699c88622e313c8e730fe5cd00b7edbaf0d6ede9223ed4d742a5ec",
+      "bytes": 755132,
+      "tags": [
+        "crate",
+        "medieval_village",
+        "prop",
+        "quaternius",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a wooden crate. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Prop_Crate.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:09",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Prop_Crate.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_prop_crate/mvk_prop_crate.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 230,
+        "bounds_m": [
+          1.084,
+          1.084,
+          1.06
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_prop_metalfence_simple",
+      "kind": "model",
+      "file": "tools/assets_cache/a0de129621bca7a91ed62a32e343339311a782b93abc3cf61bfd322d9577be0c/mvk_prop_metalfence_simple.glb",
+      "sha256": "a0de129621bca7a91ed62a32e343339311a782b93abc3cf61bfd322d9577be0c",
+      "bytes": 829960,
+      "tags": [
+        "fence",
+        "iron",
+        "medieval_village",
+        "prop",
+        "quaternius",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a simple iron fence section. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Prop_MetalFence_Simple.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_MetalOrnaments_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:10",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Prop_MetalFence_Simple.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_prop_metalfence_simple/mvk_prop_metalfence_simple.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 2744,
+        "bounds_m": [
+          1.949,
+          0.156,
+          2.868
+        ],
+        "units": "m",
+        "materials": [
+          "MI_MetalOrnaments"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_prop_wagon",
+      "kind": "model",
+      "file": "tools/assets_cache/7ea63193d61d468618f122523f3cef6db541bce94f407a6658718f7b9b570628/mvk_prop_wagon.glb",
+      "sha256": "7ea63193d61d468618f122523f3cef6db541bce94f407a6658718f7b9b570628",
+      "bytes": 842464,
+      "tags": [
+        "cart",
+        "medieval_village",
+        "prop",
+        "quaternius",
+        "wagon",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a wooden wagon. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Prop_Wagon.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:08",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Prop_Wagon.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_prop_wagon/mvk_prop_wagon.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 1672,
+        "bounds_m": [
+          1.951,
+          4.024,
+          1.529
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim_Wear"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_prop_woodenfence_single",
+      "kind": "model",
+      "file": "tools/assets_cache/aaa84e9ce73339057e740c0631e260af131454500fff4ce03154a565d52e189c/mvk_prop_woodenfence_single.glb",
+      "sha256": "aaa84e9ce73339057e740c0631e260af131454500fff4ce03154a565d52e189c",
+      "bytes": 741836,
+      "tags": [
+        "fence",
+        "medieval_village",
+        "prop",
+        "quaternius",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a single wooden fence section. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Prop_WoodenFence_Single.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:09",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Prop_WoodenFence_Single.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_prop_woodenfence_single/mvk_prop_woodenfence_single.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 40,
+        "bounds_m": [
+          2.064,
+          0.12,
+          0.838
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_roof_roundtiles_6x6",
+      "kind": "model",
+      "file": "tools/assets_cache/5b5460373d104dcdae122a5b3a172354dadb8c5710822ebfa3019fb850c42682/mvk_roof_roundtiles_6x6.glb",
+      "sha256": "5b5460373d104dcdae122a5b3a172354dadb8c5710822ebfa3019fb850c42682",
+      "bytes": 1915260,
+      "tags": [
+        "medieval_village",
+        "quaternius",
+        "roof",
+        "tiles",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a round-tile roof, 6x6 modules. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Roof_RoundTiles_6x6.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_RoundTiles_Normal.png",
+            "T_RoundTiles_Roughness.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:12",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Roof_RoundTiles_6x6.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_roof_roundtiles_6x6/mvk_roof_roundtiles_6x6.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 3244,
+        "bounds_m": [
+          8.25,
+          8.032,
+          5.672
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_RoundTiles"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_stairs_exterior_straight",
+      "kind": "model",
+      "file": "tools/assets_cache/5f0c5bcc9a34a18ee5723359955460293a9e1cd135216b1ea0d010a8eba8ca59/mvk_stairs_exterior_straight.glb",
+      "sha256": "5f0c5bcc9a34a18ee5723359955460293a9e1cd135216b1ea0d010a8eba8ca59",
+      "bytes": 1467632,
+      "tags": [
+        "exterior",
+        "medieval_village",
+        "quaternius",
+        "stairs",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a straight exterior stair, 2 m wide. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Stairs_Exterior_Straight.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Brick_Normal.png",
+            "T_Brick_Roughness.png",
+            "T_RockTrim_Normal.png",
+            "T_RockTrim_ORM.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:06",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Stairs_Exterior_Straight.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_stairs_exterior_straight/mvk_stairs_exterior_straight.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 62,
+        "bounds_m": [
+          2.0,
+          2.078,
+          1.204
+        ],
+        "units": "m",
+        "materials": [
+          "MI_RockTrim",
+          "MI_Brick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_arch",
+      "kind": "model",
+      "file": "tools/assets_cache/9a444ca695365e6c30127889126eb7d0788d9d3e07a60d96c80000d56d6c138c/mvk_wall_arch.glb",
+      "sha256": "9a444ca695365e6c30127889126eb7d0788d9d3e07a60d96c80000d56d6c138c",
+      "bytes": 748480,
+      "tags": [
+        "arch",
+        "gate",
+        "medieval_village",
+        "quaternius",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a free-standing round arch, 2 m wide. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_Arch.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:03",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_Arch.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_arch/mvk_wall_arch.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 196,
+        "bounds_m": [
+          2,
+          0.064,
+          3.0
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_plaster_door_round",
+      "kind": "model",
+      "file": "tools/assets_cache/eba112749a1bf671756741467515c9c4d3edd03c9f98653139f870241f2d8c78/mvk_wall_plaster_door_round.glb",
+      "sha256": "eba112749a1bf671756741467515c9c4d3edd03c9f98653139f870241f2d8c78",
+      "bytes": 2346876,
+      "tags": [
+        "door",
+        "medieval_village",
+        "plaster",
+        "quaternius",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a plaster wall module with a round door opening. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Door_Round.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_RockTrim_Normal.png",
+            "T_RockTrim_ORM.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:01",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Door_Round.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_plaster_door_round/mvk_wall_plaster_door_round.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 137,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.123
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_RockTrim"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_plaster_straight",
+      "kind": "model",
+      "file": "tools/assets_cache/c29ae1b97df392303f557dbb626f3d382033909715bcc0f2ca0967ad1c630d27/mvk_wall_plaster_straight.glb",
+      "sha256": "c29ae1b97df392303f557dbb626f3d382033909715bcc0f2ca0967ad1c630d27",
+      "bytes": 1674448,
+      "tags": [
+        "medieval_village",
+        "plaster",
+        "quaternius",
+        "village",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a 2 m plaster wall module. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Straight.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:27:59",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Straight.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_plaster_straight/mvk_wall_plaster_straight.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 86,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.125
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_plaster_window_wide_round",
+      "kind": "model",
+      "file": "tools/assets_cache/979c2a14ef792bbf5a003366984625808dbf5ec5fd80e4f204cb5400299d1362/mvk_wall_plaster_window_wide_round.glb",
+      "sha256": "979c2a14ef792bbf5a003366984625808dbf5ec5fd80e4f204cb5400299d1362",
+      "bytes": 2469072,
+      "tags": [
+        "medieval_village",
+        "plaster",
+        "quaternius",
+        "wall",
+        "window",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a plaster wall module with a wide round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Window_Wide_Round.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Brick_Normal.png",
+            "T_Brick_Roughness.png",
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:02",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Window_Wide_Round.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_plaster_window_wide_round/mvk_wall_plaster_window_wide_round.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 124,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.123
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_Brick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_uneven_brick_door_round",
+      "kind": "model",
+      "file": "tools/assets_cache/ff1a8552a8a77eecb3ac485b515ab3134047f1ff03abd63a3e0834c37e6b09b9/mvk_wall_uneven_brick_door_round.glb",
+      "sha256": "ff1a8552a8a77eecb3ac485b515ab3134047f1ff03abd63a3e0834c37e6b09b9",
+      "bytes": 2582612,
+      "tags": [
+        "brick",
+        "door",
+        "gate",
+        "medieval_village",
+        "quaternius",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a brick wall module with a round-arch door opening. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Door_Round.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_UnevenBrick_Normal.png",
+            "T_UnevenBrick_Roughness.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:27:55",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Door_Round.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_uneven_brick_door_round/mvk_wall_uneven_brick_door_round.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 136,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.123
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_UnevenBrick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_uneven_brick_straight",
+      "kind": "model",
+      "file": "tools/assets_cache/b73f994baf238d648b0b14ca3a33e03a74a2d320419a0b912a497cb90a53e83a/mvk_wall_uneven_brick_straight.glb",
+      "sha256": "b73f994baf238d648b0b14ca3a33e03a74a2d320419a0b912a497cb90a53e83a",
+      "bytes": 2579996,
+      "tags": [
+        "brick",
+        "castle",
+        "courtyard",
+        "medieval_village",
+        "quaternius",
+        "wall",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a 2 m brick wall module. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Straight.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_UnevenBrick_Normal.png",
+            "T_UnevenBrick_Roughness.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:27:53",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Straight.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_uneven_brick_straight/mvk_wall_uneven_brick_straight.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 56,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.123
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_UnevenBrick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_uneven_brick_window_thin_round",
+      "kind": "model",
+      "file": "tools/assets_cache/ef38156b41dea79f60691cfca36190574de04569664f7dfb98022109ed437330/mvk_wall_uneven_brick_window_thin_round.glb",
+      "sha256": "ef38156b41dea79f60691cfca36190574de04569664f7dfb98022109ed437330",
+      "bytes": 2585232,
+      "tags": [
+        "brick",
+        "medieval_village",
+        "quaternius",
+        "wall",
+        "window",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a brick wall module with a thin round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Thin_Round.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_UnevenBrick_Normal.png",
+            "T_UnevenBrick_Roughness.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:27:58",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Thin_Round.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_uneven_brick_window_thin_round/mvk_wall_uneven_brick_window_thin_round.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 158,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.123
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_UnevenBrick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_wall_uneven_brick_window_wide_round",
+      "kind": "model",
+      "file": "tools/assets_cache/572c97a2dbbde4618f02e1f284604c67d93884d9c3e3137162ef98de33f79541/mvk_wall_uneven_brick_window_wide_round.glb",
+      "sha256": "572c97a2dbbde4618f02e1f284604c67d93884d9c3e3137162ef98de33f79541",
+      "bytes": 2583576,
+      "tags": [
+        "brick",
+        "medieval_village",
+        "quaternius",
+        "wall",
+        "window",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a brick wall module with a wide round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Wide_Round.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_Plaster_Normal.png",
+            "T_Plaster_ORM.png",
+            "T_UnevenBrick_Normal.png",
+            "T_UnevenBrick_Roughness.png",
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:27:56",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Wide_Round.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_wall_uneven_brick_window_wide_round/mvk_wall_uneven_brick_window_wide_round.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 116,
+        "bounds_m": [
+          2.0,
+          0.406,
+          3.123
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim",
+          "MI_Plaster",
+          "MI_UnevenBrick"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_window_wide_round1",
+      "kind": "model",
+      "file": "tools/assets_cache/e3c7aa3a83629d665e57b46dde36567c9581567a490de6da05b705b79973023f/mvk_window_wide_round1.glb",
+      "sha256": "e3c7aa3a83629d665e57b46dde36567c9581567a490de6da05b705b79973023f",
+      "bytes": 762088,
+      "tags": [
+        "medieval_village",
+        "quaternius",
+        "window",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: a wide round window frame. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/Window_Wide_Round1.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:07",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/Window_Wide_Round1.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_window_wide_round1/mvk_window_wide_round1.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 354,
+        "bounds_m": [
+          1.365,
+          0.53,
+          1.726
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim_Wear",
+          "MI_WindowGlass"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.mvk_windowshutters_wide_round_open",
+      "kind": "model",
+      "file": "tools/assets_cache/d69103d26dfbeccacc17692eb259044604edd4721d507f8d3461bb9e5fd3f14d/mvk_windowshutters_wide_round_open.glb",
+      "sha256": "d69103d26dfbeccacc17692eb259044604edd4721d507f8d3461bb9e5fd3f14d",
+      "bytes": 750728,
+      "tags": [
+        "medieval_village",
+        "quaternius",
+        "shutters",
+        "window",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Quaternius Medieval Village MegaKit: open shutters for a wide round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Medieval Village MegaKit[Standard]/glTF/WindowShutters_Wide_Round_Open.gltf",
+          "pack_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+          "dropped_images": [
+            "T_WoodTrim_Normal.png",
+            "T_WoodTrim_Roughness.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Medieval Village MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:08",
+        "source": "import quaternius_medieval_village_megakit https://quaternius.itch.io/medieval-village-megakit :: Medieval Village MegaKit[Standard]/glTF/WindowShutters_Wide_Round_Open.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.mvk_windowshutters_wide_round_open/mvk_windowshutters_wide_round_open.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 136,
+        "bounds_m": [
+          2.303,
+          0.472,
+          1.647
+        ],
+        "units": "m",
+        "materials": [
+          "MI_WoodTrim_Wear"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
       "id": "model.ph_cannon_01",
       "kind": "model",
       "file": "tools/assets_cache/51fb00d2544af0d2e1362d9a933598a9b1753ffef2757e38dcabb0454161ba5e/cannon_01_1k.blend",
@@ -657,6 +2582,379 @@
           "cannon_01"
         ],
         "up_axis": "Z"
+      }
+    },
+    {
+      "id": "model.ph_gothiccabinet_01",
+      "kind": "model",
+      "file": "tools/assets_cache/86b9b4c5071bec1c29200a1dfee6bdd4d98b5178017e63afa2f9b29bfbc6583d/ph_gothiccabinet_01.glb",
+      "sha256": "86b9b4c5071bec1c29200a1dfee6bdd4d98b5178017e63afa2f9b29bfbc6583d",
+      "bytes": 627836,
+      "tags": [
+        "furniture",
+        "gothic",
+        "interior",
+        "polyhaven",
+        "world_kit"
+      ],
+      "description": "Poly Haven GothicCabinet_01: a gothic cabinet. glTF 1k packed to one GLB with the base-colour image only.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "polyhaven_slug": "GothicCabinet_01",
+          "files_md5": {
+            "GothicCabinet_01.bin": "4c2f20b4b5fbf8c33b86b04dcf805c5f",
+            "GothicCabinet_01_1k.gltf": "d6ec468ab981336f76f35f10d566e460",
+            "textures/GothicCabinet_01_arm_1k.jpg": "8f88a6ca9bde9970644ba65086a33f39",
+            "textures/GothicCabinet_01_diff_1k.jpg": "67ce3b2ce0a43cd209114084d49de35c",
+            "textures/GothicCabinet_01_nor_gl_1k.jpg": "a2912d1111ac0a4877af75280e539763"
+          },
+          "dropped_images": [
+            "textures/GothicCabinet_01_arm_1k.jpg",
+            "textures/GothicCabinet_01_nor_gl_1k.jpg"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/GothicCabinet_01",
+        "revision_or_version": "GothicCabinet_01 1k gltf, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:14",
+        "source": "import polyhaven https://polyhaven.com/a/GothicCabinet_01 :: GothicCabinet_01 1k gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ph_gothiccabinet_01/ph_gothiccabinet_01.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 12170,
+        "bounds_m": [
+          1.719,
+          1.016,
+          2.81
+        ],
+        "units": "m",
+        "materials": [
+          "GothicCabinet_01"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ph_large_castle_door",
+      "kind": "model",
+      "file": "tools/assets_cache/b92b548ce11db553dafe90328228616c8c52ca6e6ee94b7109314b5006fd433f/ph_large_castle_door.glb",
+      "sha256": "b92b548ce11db553dafe90328228616c8c52ca6e6ee94b7109314b5006fd433f",
+      "bytes": 1229012,
+      "tags": [
+        "castle",
+        "door",
+        "gate",
+        "polyhaven",
+        "world_kit"
+      ],
+      "description": "Poly Haven large_castle_door: a large castle door. glTF 1k packed to one GLB with the base-colour image only.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "polyhaven_slug": "large_castle_door",
+          "files_md5": {
+            "large_castle_door.bin": "ed0cee2626677b1a520de7bd868d09cc",
+            "large_castle_door_1k.gltf": "40c7debfb0e9f51826b294d642bc0bfe",
+            "textures/large_castle_door_arm_1k.jpg": "e742bcceba429ca946edc788dac922ff",
+            "textures/large_castle_door_diff_1k.jpg": "641c090895f68f3be02f8db278385174",
+            "textures/large_castle_door_nor_gl_1k.jpg": "4a0e452157d95c0d18a2f79429ec471d"
+          },
+          "dropped_images": [
+            "textures/large_castle_door_arm_1k.jpg",
+            "textures/large_castle_door_nor_gl_1k.jpg"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/large_castle_door",
+        "revision_or_version": "large_castle_door 1k gltf, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:14",
+        "source": "import polyhaven https://polyhaven.com/a/large_castle_door :: large_castle_door 1k gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ph_large_castle_door/ph_large_castle_door.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 12640,
+        "bounds_m": [
+          2.012,
+          0.176,
+          4.062
+        ],
+        "units": "m",
+        "materials": [
+          "large_castle_door"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ph_modular_fort_01",
+      "kind": "model",
+      "file": "tools/assets_cache/0bd50101a42ddbb3de3ce48853108250c6c8a6bfeecb0e6c6ac916c430d0423c/ph_modular_fort_01.glb",
+      "sha256": "0bd50101a42ddbb3de3ce48853108250c6c8a6bfeecb0e6c6ac916c430d0423c",
+      "bytes": 4248120,
+      "tags": [
+        "castle",
+        "fort",
+        "keep",
+        "landmark",
+        "polyhaven",
+        "world_kit"
+      ],
+      "description": "Poly Haven modular_fort_01: a modular stone fort (walls, trim, plaster). glTF 1k packed to one GLB with the base-colour image only.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "polyhaven_slug": "modular_fort_01",
+          "files_md5": {
+            "modular_fort_01.bin": "49bfa2a55e65c997840799099ad6ffa5",
+            "modular_fort_01_1k.gltf": "340e7883860599c6b17ab73a893ff9b3",
+            "textures/modular_fort_01_plaster_arm_1k.jpg": "a367aa0d7b6307df5b961f4d339c593c",
+            "textures/modular_fort_01_plaster_diff_1k.jpg": "c2b8f298926cb63a8d926cffcab863c8",
+            "textures/modular_fort_01_plaster_nor_gl_1k.jpg": "b76724f4bb1ec196728c1a4d704f322c",
+            "textures/modular_fort_01_trim_arm_1k.jpg": "2ad72ca33693932204ffe68ee7232120",
+            "textures/modular_fort_01_trim_diff_1k.jpg": "1e5e6e32e599ebaa6471c4c1ce3023fd",
+            "textures/modular_fort_01_trim_nor_gl_1k.jpg": "4e87ba7c3ac854d64a6d0de56362f76a",
+            "textures/modular_fort_01_wall_arm_1k.jpg": "9e667ae75549188caa03da56aa276fdb",
+            "textures/modular_fort_01_wall_diff_1k.jpg": "c3958a33d456a5f2b776dde465024072",
+            "textures/modular_fort_01_wall_nor_gl_1k.jpg": "2164dad0582c2ec60e757e6565b1f257"
+          },
+          "dropped_images": [
+            "textures/modular_fort_01_plaster_arm_1k.jpg",
+            "textures/modular_fort_01_plaster_nor_gl_1k.jpg",
+            "textures/modular_fort_01_trim_arm_1k.jpg",
+            "textures/modular_fort_01_trim_nor_gl_1k.jpg",
+            "textures/modular_fort_01_wall_arm_1k.jpg",
+            "textures/modular_fort_01_wall_nor_gl_1k.jpg"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/modular_fort_01",
+        "revision_or_version": "modular_fort_01 1k gltf, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:13",
+        "source": "import polyhaven https://polyhaven.com/a/modular_fort_01 :: modular_fort_01 1k gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ph_modular_fort_01/ph_modular_fort_01.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 28218,
+        "bounds_m": [
+          15.838,
+          22.738,
+          13.667
+        ],
+        "units": "m",
+        "materials": [
+          "modular_fort_01_wall_1",
+          "modular_fort_01_trim_1",
+          "modular_fort_01_plaster_1"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ph_wine_barrel_01",
+      "kind": "model",
+      "file": "tools/assets_cache/e890bb0dbfd4d206cb43ce1cb25b149e3aa07f40280f935630f6ba70e504da29/ph_wine_barrel_01.glb",
+      "sha256": "e890bb0dbfd4d206cb43ce1cb25b149e3aa07f40280f935630f6ba70e504da29",
+      "bytes": 585512,
+      "tags": [
+        "barrel",
+        "polyhaven",
+        "prop",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Poly Haven wine_barrel_01: a wine barrel. glTF 1k packed to one GLB with the base-colour image only.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "polyhaven_slug": "wine_barrel_01",
+          "files_md5": {
+            "textures/wine_barrel_01_arm_1k.jpg": "2f0cc81ac07fdbe8c22927feac722927",
+            "textures/wine_barrel_01_diff_1k.jpg": "fdea9538acf01a04a61626919a84b3fb",
+            "textures/wine_barrel_01_nor_gl_1k.jpg": "6b3ce558fa74d3760fa0192dfc4564a3",
+            "wine_barrel_01.bin": "84f578460020912056a1e3fbe3ec1b97",
+            "wine_barrel_01_1k.gltf": "5397e6d959dd3ef20d1fc14436d0eb70"
+          },
+          "dropped_images": [
+            "textures/wine_barrel_01_arm_1k.jpg",
+            "textures/wine_barrel_01_nor_gl_1k.jpg"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/wine_barrel_01",
+        "revision_or_version": "wine_barrel_01 1k gltf, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:14",
+        "source": "import polyhaven https://polyhaven.com/a/wine_barrel_01 :: wine_barrel_01 1k gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ph_wine_barrel_01/ph_wine_barrel_01.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 10820,
+        "bounds_m": [
+          0.742,
+          0.756,
+          0.871
+        ],
+        "units": "m",
+        "materials": [
+          "wine_barrel_01"
+        ],
+        "up_axis": "Y"
       }
     },
     {
@@ -735,6 +3033,192 @@
           "wooden_crate_01"
         ],
         "up_axis": "Z"
+      }
+    },
+    {
+      "id": "model.ph_wooden_crate_02",
+      "kind": "model",
+      "file": "tools/assets_cache/80bb5a5d6d909b8f1c8bbe367b9a4ec8371f8b7169231d8a120b37cb759ac809/ph_wooden_crate_02.glb",
+      "sha256": "80bb5a5d6d909b8f1c8bbe367b9a4ec8371f8b7169231d8a120b37cb759ac809",
+      "bytes": 868352,
+      "tags": [
+        "crate",
+        "polyhaven",
+        "prop",
+        "wood",
+        "world_kit"
+      ],
+      "description": "Poly Haven wooden_crate_02: a wooden crate. glTF 1k packed to one GLB with the base-colour image only.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "polyhaven_slug": "wooden_crate_02",
+          "files_md5": {
+            "textures/wooden_crate_02_arm_1k.jpg": "a7537612dbfb7fd25e756074eec5624e",
+            "textures/wooden_crate_02_diff_1k.jpg": "45bca8f49da9d541e06bc926ab001c81",
+            "textures/wooden_crate_02_nor_gl_1k.jpg": "314226b31765168cd8070898f8a7e18e",
+            "wooden_crate_02.bin": "08d98507231cdeda1070d1a2d0646254",
+            "wooden_crate_02_1k.gltf": "a69eb62fd20e6badb6bb56f052930e06"
+          },
+          "dropped_images": [
+            "textures/wooden_crate_02_arm_1k.jpg",
+            "textures/wooden_crate_02_nor_gl_1k.jpg"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/wooden_crate_02",
+        "revision_or_version": "wooden_crate_02 1k gltf, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:14",
+        "source": "import polyhaven https://polyhaven.com/a/wooden_crate_02 :: wooden_crate_02 1k gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ph_wooden_crate_02/ph_wooden_crate_02.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 5176,
+        "bounds_m": [
+          0.529,
+          1.166,
+          0.469
+        ],
+        "units": "m",
+        "materials": [
+          "wooden_crate_02"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ph_wooden_lantern_01",
+      "kind": "model",
+      "file": "tools/assets_cache/1fa2ea980315b6bab1438e8108c19a05fd9b2ed316f45ce72ddd97c747f70235/ph_wooden_lantern_01.glb",
+      "sha256": "1fa2ea980315b6bab1438e8108c19a05fd9b2ed316f45ce72ddd97c747f70235",
+      "bytes": 1396204,
+      "tags": [
+        "lantern",
+        "light",
+        "polyhaven",
+        "prop",
+        "world_kit"
+      ],
+      "description": "Poly Haven wooden_lantern_01: a wooden lantern. glTF 1k packed to one GLB with the base-colour image only.",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "polyhaven_slug": "wooden_lantern_01",
+          "files_md5": {
+            "textures/wooden_lantern_01_arm_1k.jpg": "87b5bdc9f3d5853caef38a00589541ae",
+            "textures/wooden_lantern_01_diff_1k.jpg": "8f9f537ab312b1ec85acb1f5aaf7ad17",
+            "textures/wooden_lantern_01_glass_arm_1k.jpg": "890c1dd6ad9c37521f9f0a0d9d08fba2",
+            "textures/wooden_lantern_01_glass_diff_1k.jpg": "c1e45d48f344f86726d02c81679af6a4",
+            "textures/wooden_lantern_01_glass_nor_gl_1k.jpg": "38549e36957f90dc61587010c3a8ff3a",
+            "textures/wooden_lantern_01_nor_gl_1k.jpg": "9db1fa975880b3cf6da5e6c30853e0cf",
+            "wooden_lantern_01.bin": "3784667126369ce5c21db3c7436409cb",
+            "wooden_lantern_01_1k.gltf": "e31edca6461023e076183cb74721b0b9"
+          },
+          "dropped_images": [
+            "textures/wooden_lantern_01_arm_1k.jpg",
+            "textures/wooden_lantern_01_glass_arm_1k.jpg",
+            "textures/wooden_lantern_01_glass_nor_gl_1k.jpg",
+            "textures/wooden_lantern_01_nor_gl_1k.jpg"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/wooden_lantern_01",
+        "revision_or_version": "wooden_lantern_01 1k gltf, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:28:14",
+        "source": "import polyhaven https://polyhaven.com/a/wooden_lantern_01 :: wooden_lantern_01 1k gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ph_wooden_lantern_01/ph_wooden_lantern_01.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 8321,
+        "bounds_m": [
+          0.245,
+          0.221,
+          0.547
+        ],
+        "units": "m",
+        "materials": [
+          "wooden_lantern_01",
+          "wooden_lantern_01_glass"
+        ],
+        "up_axis": "Y"
       }
     },
     {

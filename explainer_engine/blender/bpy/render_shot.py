@@ -145,6 +145,35 @@ def _append(o, report):
     return [c for c in root.children]
 
 
+def _gltf(o, report):
+    """A library glTF/GLB (a world-kit piece, WP-Q8) under one empty, placed like an appended .blend: its mesh objects keep their
+    own transforms, armatures and non-mesh nodes are dropped (a set piece is drawn at its rest pose), the caller's material
+    replaces every slot (no raw PBR reaches the frame)."""
+    src = o["gltf"]
+    new = _import_glb(src["path"])
+    root = bpy.data.objects.new(o["name"], None)
+    bpy.context.scene.collection.objects.link(root)
+    kept, meshes = 0, []
+    for ob in new:
+        if ob.type == "MESH" and len(ob.data.polygons) > 0:
+            meshes.append(ob)
+    for ob in new:
+        if ob not in meshes:
+            bpy.data.objects.remove(ob, do_unlink=True)
+    for ob in meshes:
+        world = ob.matrix_world.copy()
+        ob.parent = None
+        ob.matrix_world = world
+        ob.parent = root
+        ob.matrix_parent_inverse = root.matrix_world.inverted()
+        kept += 1
+    report.setdefault("gltf", {})[o["name"]] = kept
+    if kept == 0:
+        raise RuntimeError(f"{src['path']}: no mesh object to place")
+    _place(root, o)
+    return [c for c in root.children]
+
+
 def _assign(obs, material, smooth=None):
     for ob in obs:
         if smooth is not None:
@@ -465,13 +494,16 @@ def build_described(scene, sc, report):
         elif "append" in o:
             obs = _append(o, report)
             handle = bpy.data.objects[o["name"]]
+        elif "gltf" in o:
+            obs = _gltf(o, report)
+            handle = bpy.data.objects[o["name"]]
         elif "character" in o:
             handle = build_character(o, int(sc.get("frames_total", 1)), pending, report)
             if o.get("to"):
                 moving.append((handle, o))
             continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add, append nor character")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf nor character")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))
