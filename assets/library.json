@@ -6080,6 +6080,68 @@
       "height": 1024
     },
     {
+      "id": "texture.ph_cobblestone_floor_04_diff",
+      "kind": "texture",
+      "file": "tools/assets_cache/b0662eaec38a2056ef00abc66d1a0e8da421d704ed3ff8f9e268ad4c7b2aa58c/cobblestone_floor_04_diff_1k.jpg",
+      "sha256": "b0662eaec38a2056ef00abc66d1a0e8da421d704ed3ff8f9e268ad4c7b2aa58c",
+      "bytes": 575440,
+      "tags": [
+        "cobble",
+        "diffuse",
+        "ground",
+        "polyhaven",
+        "world_kit"
+      ],
+      "description": "Poly Haven cobblestone_floor_04 diffuse map (1k): cobble surface of the WP-Q8 harbour; the only map the toon conversion reads",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {},
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/cobblestone_floor_04",
+        "revision_or_version": "1k jpg, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T23:33:36",
+        "source": "import polyhaven https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cobblestone_floor_04/cobblestone_floor_04_diff_1k.jpg"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/texture/texture.ph_cobblestone_floor_04_diff/cobblestone_floor_04_diff_1k.jpg"
+      },
+      "width": 1024,
+      "height": 1024
+    },
+    {
       "id": "texture.ph_dirt_floor_diff",
       "kind": "texture",
       "file": "tools/assets_cache/6c2e7f1c5eab8239fec561f255c607d0e3a86046925ba3a8b9340805efc1ab62/dirt_floor_diff_1k.jpg",
@@ -6509,6 +6571,68 @@
       "storage": {
         "location": "external",
         "external_path": "assets/3d/texture/texture.ph_stone_wall_diff/stone_wall_diff_1k.jpg"
+      },
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "id": "texture.ph_weathered_planks_diff",
+      "kind": "texture",
+      "file": "tools/assets_cache/01c9a372cfd7a7bf471b59c2458ed3ccecc93448aebf7ba0cc5b3b5b6ed24349/weathered_planks_diff_1k.jpg",
+      "sha256": "01c9a372cfd7a7bf471b59c2458ed3ccecc93448aebf7ba0cc5b3b5b6ed24349",
+      "bytes": 599581,
+      "tags": [
+        "diffuse",
+        "ground",
+        "planks",
+        "polyhaven",
+        "world_kit"
+      ],
+      "description": "Poly Haven weathered_planks diffuse map (1k): planks surface of the WP-Q8 harbour; the only map the toon conversion reads",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {},
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/weathered_planks",
+        "revision_or_version": "1k jpg, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T23:33:36",
+        "source": "import polyhaven https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_diff_1k.jpg"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/texture/texture.ph_weathered_planks_diff/weathered_planks_diff_1k.jpg"
       },
       "width": 1024,
       "height": 1024

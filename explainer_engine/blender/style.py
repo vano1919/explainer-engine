@@ -597,6 +597,19 @@ def _blend_textures(doc: dict, blend: dict) -> None:
         else:
             nodes[-1]["inputs"] = {7: [*[float(x) for x in ly["colour"]][:3], 1.0]}
         prev, prev_sock = f"{i}_mix", 2
+    fog = blend.get("fog")
+    if fog:   # distance haze: a blue-grey mix by camera depth, so far ground and mountains recede
+        nodes += [{"id": "fog_cam", "type": "ShaderNodeCameraData"},
+                  {"id": "fog_ramp", "type": "ShaderNodeValToRGB",
+                   "ramp": {"interpolation": "LINEAR", "stops": [[0.0, [0.0, 0.0, 0.0, 1.0]], [1.0, [1.0, 1.0, 1.0, 1.0]]]}},
+                  {"id": "fog_div", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY", "use_clamp": True},
+                   "inputs": {1: round(float(fog["amount"]) / max(float(fog["end"]) - float(fog["start"]), 1.0), 8)}},
+                  {"id": "fog_off", "type": "ShaderNodeMath", "props": {"operation": "SUBTRACT"}, "inputs": {1: float(fog["start"])}},
+                  {"id": "fog_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                   "inputs": {7: [*[float(x) for x in fog["colour"]][:3], 1.0]}}]
+        links += [["fog_cam", "View Z Depth", "fog_off", 0], ["fog_off", "Value", "fog_div", 0], ["fog_div", "Value", "fog_mix", "Factor"],
+                  [prev, prev_sock, "fog_mix", 6]]
+        prev, prev_sock = "fog_mix", 2
     doc["links"] = [l for l in doc["links"] if not (l[0] == "tex" and l[2] == "flatten")] + links + [[prev, prev_sock, "flatten", 7]]
     doc["nodes"] += nodes
     _keys(doc)

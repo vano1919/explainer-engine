@@ -199,7 +199,7 @@ class Ranges:
                          abs(hs[min(j + 1, ny - 1)][i] - hs[max(j - 1, 0)][i]) / (ys[min(j + 1, ny - 1)] - ys[max(j - 1, 0)]))
                 n = fbm(xs[i] / 30, ys[j] / 30, c["seed"] + 8, 3)
                 sn = c["snow_line"] + 12 * (n - 0.5)
-                w["snow"].append(round(smoothstep(sn - 4, sn + 4, z), 3))
+                w["snow"].append(round(smoothstep(sn - 4, sn + 4, z) * (1.0 - smoothstep(0.55, 0.95, sl)), 3))   # steep faces stay rock
                 w["rock"].append(round(max(smoothstep(c["rock_line"] - 4, c["rock_line"] + 4, z),
                                            smoothstep(c.get("rock_slope", 0.8) - 0.15, c.get("rock_slope", 0.8) + 0.2, sl)), 3))
                 w["forest"].append(round(smoothstep(0.45, 0.58, n), 3))

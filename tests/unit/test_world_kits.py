@@ -329,7 +329,7 @@ def test_terrain_blocks_carry_ground_textures_and_uv_scale(tmp_path):
                                ground_textures=__import__("collections").defaultdict(lambda: img), doc=doc)
     m = mats["terrain_ground_ground"]
     assert m["texture"] == str(img) and m["tile"] == 1.0
-    assert [l["attr"] for l in m["blend"]["layers"]] == ["w_meadow", "w_forest", "w_rock", "w_road", "w_snow"]
+    assert [l["attr"] for l in m["blend"]["layers"]] == ["w_meadow", "w_forest", "w_snow", "w_rock", "w_road"]
     grid = [o for o in objs if o.get("terrain")][0]["terrain"]
     assert set(grid["weights"]) == {"meadow", "forest", "rock", "road", "snow"} and len(grid["weights"]["road"]) == grid["nx"] * grid["ny"]
     assert len(set(next(o for o in objs if o.get("terrain"))["material"].values())) == 1

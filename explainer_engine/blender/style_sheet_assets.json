@@ -360,6 +360,44 @@
     "world_kit"
    ],
    "description": "Poly Haven stone_wall diffuse map (1k): the stone class of the WP-Q8 terrain; the only map the toon conversion reads"
+  },
+  {
+   "id": "texture.ph_weathered_planks_diff",
+   "kind": "texture",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/weathered_planks",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_diff_1k.jpg",
+   "name": "weathered_planks_diff_1k.jpg",
+   "sha256": "01c9a372cfd7a7bf471b59c2458ed3ccecc93448aebf7ba0cc5b3b5b6ed24349",
+   "bytes": 599581,
+   "version": "1k jpg, downloaded 2026-11-05",
+   "tags": [
+    "polyhaven",
+    "ground",
+    "planks",
+    "diffuse",
+    "world_kit"
+   ],
+   "description": "Poly Haven weathered_planks diffuse map (1k): planks surface of the WP-Q8 harbour; the only map the toon conversion reads"
+  },
+  {
+   "id": "texture.ph_cobblestone_floor_04_diff",
+   "kind": "texture",
+   "source": "polyhaven",
+   "page": "https://polyhaven.com/a/cobblestone_floor_04",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cobblestone_floor_04/cobblestone_floor_04_diff_1k.jpg",
+   "name": "cobblestone_floor_04_diff_1k.jpg",
+   "sha256": "b0662eaec38a2056ef00abc66d1a0e8da421d704ed3ff8f9e268ad4c7b2aa58c",
+   "bytes": 575440,
+   "version": "1k jpg, downloaded 2026-11-05",
+   "tags": [
+    "polyhaven",
+    "ground",
+    "cobble",
+    "diffuse",
+    "world_kit"
+   ],
+   "description": "Poly Haven cobblestone_floor_04 diffuse map (1k): cobble surface of the WP-Q8 harbour; the only map the toon conversion reads"
   }
  ]
 }

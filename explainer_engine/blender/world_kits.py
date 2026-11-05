@@ -584,10 +584,12 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         tx = b.get("textures") or {}
         if tx and ground_textures is not None:   # one material, the classes blended per pixel by the vertex weights (Fable 2026-11-05)
             img = {c: ground_textures[t] for c, t in tx.items()}
-            layers = [{"attr": "w_" + c, "image": str(img[c])} for c in ("meadow", "forest", "rock", "road") if c in img]
-            layers.append({"attr": "w_snow", "colour": [0.94, 0.95, 0.97]})
+            layers = [{"attr": "w_" + c, "image": str(img[c])} for c in ("meadow", "forest") if c in img]
+            layers.append({"attr": "w_snow", "colour": [0.80, 0.84, 0.90]})   # a cool, not paper-white, snow; steep faces stay rock below
+            layers += [{"attr": "w_" + c, "image": str(img[c])} for c in ("rock", "road") if c in img]
             mats[mname] = {"base": b["colours"]["grass"], "texture": str(img["grass"]), "texture_mean": _mean(img["grass"]),
-                           "tile": 1.0, "strength": 0.85, "blend": {"noise": b.get("blend", 0.045), "layers": layers}}
+                           "tile": 1.0, "strength": 0.85, "blend": {"noise": b.get("blend", 0.045), "layers": layers,
+                                                     **({"fog": b["fog"]} if b.get("fog") else {})}}
         else:
             mats[mname] = {"base": b["colours"]["grass"]}
         for ci in range(len(TR.CLASSES)):
