@@ -1,0 +1,118 @@
+name: Blender smoke
+
+# ICW-04 (roadmap 12.4 step 1, BP-175): the pinned Blender 5.2.3 LTS starts headless on a CPU-only runner and renders an 8-frame
+# shot_spec/2 with the Workbench engine at 320x180 through the production adapter (explainer_engine/blender/render.py): the
+# archive is checked against the sha256 of config/cloud_pins.json, every frame goes RENDERED -> DURABLY_STORED -> COMMITTED on a
+# local stand-in vault, and the frames, the render manifest and the Blender log are kept as an artifact. Free: no pod, no paid call.
+
+on:
+  push:
+    branches:
+      - "icw/**"
+      - "opus/ink-chronicle-**"
+    paths:
+      - "explainer_engine/blender/**"
+      - "explainer_engine/core/contracts.py"
+      - "explainer_engine/schemas/shot_spec.schema.json"
+      - "explainer_engine/schemas/blender_render_manifest.schema.json"
+      - "explainer_engine/schemas/render_checkpoint.schema.json"
+      - "config/cloud_pins.json"
+      - ".github/workflows/blender-smoke.yml"
+  pull_request:
+    paths:
+      - "explainer_engine/blender/**"
+      - "explainer_engine/core/contracts.py"
+      - "explainer_engine/schemas/shot_spec.schema.json"
+      - "explainer_engine/schemas/blender_render_manifest.schema.json"
+      - "explainer_engine/schemas/render_checkpoint.schema.json"
+      - "config/cloud_pins.json"
+      - ".github/workflows/blender-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blender-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the contract validator and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+          ls -l "$f"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Render the 8-frame Workbench smoke (320x180)
+        run: python -m explainer_engine.blender.render smoke --out smoke --binary "${{ steps.install.outputs.bin }}"
+      - name: Check the frames
+        run: |
+          python - <<'PY'
+          import glob, json
+          from explainer_engine.blender.render import check_png
+          s = json.load(open("smoke/smoke_summary.json"))
+          frames = sorted(glob.glob(s["frames_dir"] + "/frame_*.png"))
+          assert len(frames) == 8, frames
+          bad = {f: check_png(f, 320, 180) for f in frames if check_png(f, 320, 180)}
+          assert not bad, bad
+          assert len({open(f, "rb").read() for f in frames}) == 8, "the camera moves: no two frames are equal"
+          assert s["engine"] == "workbench" and s["frames_written"] == 8 and s["output"]["codec"] == "png", s
+          assert all(f["rule"] == "CN-17" and "master" in f["detail"] for f in s["findings"] if f["severity"] == "FAIL"), s["findings"]
+          print(json.dumps(s, indent=1))
+          PY
+      - name: Collect the outputs
+        if: always()
+        run: |
+          mkdir -p smoke_artifact
+          cp -r smoke/work/*/frames smoke_artifact/ 2>/dev/null || true
+          cp smoke/smoke_summary.json smoke/work/*/render_manifest.json smoke/work/*/render_checkpoint.json smoke/work/*/blender.log \
+             smoke/work/*/bpy_report.json smoke_artifact/ 2>/dev/null || true
+          ls -la smoke_artifact
+      - name: Upload the smoke outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-smoke-${{ steps.pin.outputs.version }}-${{ github.sha }}
+          path: smoke_artifact/
+          if-no-files-found: error
+          retention-days: 14
