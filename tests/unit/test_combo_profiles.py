@@ -226,3 +226,23 @@ def test_perfectly_normal_runs_outward_between_the_material_index_guards(tmp_pat
     assert ob.modifiers[3].properties.inputs["S_Ready to Apply"]["value"] is True
     monkeypatch.delenv("EE_PERFECTLY_NORMAL_BLEND")
     assert rs["perfectly_normal"]([ob], {"converge": 0.6}, missing) == 0 and "EE_PERFECTLY_NORMAL_BLEND" in missing[0]
+
+
+@pytest.mark.parametrize("cid", ["C1", "C2", "C3", "C4"])
+def test_every_cell_gets_the_depth_haze_from_the_mist_pass(cid):
+    p = graph(cid)["paper"]
+    assert "mist" in p["passes"] and p["mist"]["falloff"] == "QUADRATIC" and 0 < p["mist"]["start_m"] < p["mist"]["depth_m"]
+    ids = [n["id"] for n in p["nodes"]]
+    assert ids.index("haze_mix") > ids.index("kuwahara")   # the painted frame fades into the haze, not the other way round
+    assert ["render", "Mist", "haze_amt", "0"] in p["links"] or ["render", "Mist", "haze_amt", 0] in p["links"]
+    mix = next(n for n in p["nodes"] if n["id"] == "haze_mix")
+    assert mix["inputs"]["7"][:3] == list(CB.tokens(cid, "E2").art.haze_colour)
+
+
+def test_haze_is_off_by_default_and_bounded():
+    assert "mist" not in S.StyleEngine(S.look_tokens("q1_lit_pbrn_cinematic")).graph(
+        "eevee", camera=CAM, materials=MATS, hdri=None, paper_texture=None)["paper"]["passes"]
+    a = CB.tokens("C2", "E2").art
+    for bad in ({"haze": 1.5}, {"haze_depth_m": 0.0}, {"haze_colour": (2.0, 0.5, 0.5)}):
+        with pytest.raises(ValueError, match="haze"):
+            S.replace(a, **bad)

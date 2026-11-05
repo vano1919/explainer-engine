@@ -950,6 +950,11 @@ def apply_style(scene, style, pending, report):
     if paper.get("enabled"):
         if "z" in paper.get("passes", []):   # the painted plate mixes by depth
             bpy.context.view_layer.use_pass_z = True
+        if "mist" in paper.get("passes", []):   # depth haze: the world's mist range drives the compositor's warm-grey mix
+            bpy.context.view_layer.use_pass_mist = True
+            ms = scene.world.mist_settings
+            ms.start, ms.depth, ms.falloff = paper["mist"]["start_m"], paper["mist"]["depth_m"], paper["mist"]["falloff"]
+            applied["haze"] = {"start_m": ms.start, "depth_m": ms.depth, "falloff": ms.falloff}
         ng = bpy.data.node_groups.new("ink_paper", "CompositorNodeTree")
         ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
         build_tree(ng, paper, missing, "paper")

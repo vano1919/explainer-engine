@@ -234,7 +234,8 @@ MATERIAL_CLASSES = ("skin", "hair", "eyes", "costume", "set")
 Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "half_lambert": 0.0, "ramp_interp": None,
                "shadow_tints": (), "view_transform": None, "rim_mode": "shader", "key_colour": None, "fill_colour": None,
                "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0, "light_preset": None,
-               "native_classes": (), "skin_lift": (), "pn_converge": 0.0, "character_key": False}
+               "native_classes": (), "skin_lift": (), "pn_converge": 0.0, "character_key": False,
+               "haze": 0.0, "haze_start_m": 10.0, "haze_depth_m": 120.0, "haze_colour": (0.8, 0.76, 0.7)}
 CHARACTER_CLASSES = ("skin", "hair", "eyes", "costume")
 FRONT_KEY_BAND = (30.0, 45.0)   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
 LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
@@ -329,6 +330,10 @@ class Look:
     skin_lift: tuple = ()                                   # ((character id, lift 0..1), ...): a front fill linked to that cast
     pn_converge: float = 0.0                                # Perfectly Normal (GPL-3, GN assets): spherize the cast's normals 0..1
     character_key: bool = False                             # close-ups: the preset's key + fill give way to light_presets character_key
+    haze: float = 0.0                                       # depth haze: the mist pass tints the far world, share at full mist
+    haze_start_m: float = 10.0                              # mist starts this far from the camera (world mist_settings.start)
+    haze_depth_m: float = 120.0                             # ... and is full this much further (mist_settings.depth, quadratic)
+    haze_colour: tuple = (0.8, 0.76, 0.7)                   # warm grey (an RGB multiplier of 1 = white light)
 
     def __post_init__(self) -> None:
         for name, val, known in (("shade_mode", self.shade_mode, SHADE_MODES), ("light_rig", self.light_rig, LIGHT_RIGS),
@@ -398,6 +403,9 @@ class Look:
             raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
         if any(c not in CHARACTER_CLASSES for c in self.native_classes) or len(set(self.native_classes)) != len(self.native_classes):
             raise ValueError(f"{self.id}: native_classes {self.native_classes} (character classes: {', '.join(CHARACTER_CLASSES)})")
+        if not 0 <= self.haze <= 1 or not 0 <= self.haze_start_m <= 500 or not 1 <= self.haze_depth_m <= 5000 \
+                or len(self.haze_colour) != 3 or not all(0 <= c <= 1.5 for c in self.haze_colour):
+            raise ValueError(f"{self.id}: haze share 0..1, start 0..500 m, depth 1..5000 m, colour rgb 0..1.5")
         if self.character_key and self.light_preset is None:
             raise ValueError(f"{self.id}: character_key replaces a light preset's key and fill (name a light_preset)")
         if (self.native_classes or self.skin_lift or self.pn_converge) and not self.lit_rig:
@@ -411,7 +419,7 @@ class Look:
     @classmethod
     def from_dict(cls, d: dict) -> "Look":
         kw = {k: v for k, v in d.items() if k not in ("label",)}
-        for k in ("ramp", "shadow_tint", "light_tint", "rim_tint", "key_colour", "fill_colour"):
+        for k in ("ramp", "shadow_tint", "light_tint", "rim_tint", "key_colour", "fill_colour", "haze_colour"):
             if kw.get(k) is not None:
                 kw[k] = _tup(kw[k])
         if isinstance(kw.get("shadow_tints"), dict):
@@ -1065,6 +1073,15 @@ class StyleEngine:
             links += [["render", "Depth", "far", "Value"], ["far", "Result", "plate_mix", "Factor"], [cur, sock, "plate_mix", 6],
                       ["plate", "Image", "plate_mix", 7]]
             cur, sock = "plate_mix", 2
+        mist = None
+        if a.haze > 0:   # depth haze (Fable 2026-11-05: the E2 cells fail on the world): the mist pass mixes in a warm grey
+            passes.append("mist")
+            mist = {"start_m": round(a.haze_start_m, 4), "depth_m": round(a.haze_depth_m, 4), "falloff": "QUADRATIC"}
+            nodes += [{"id": "haze_amt", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(a.haze, 6)}},
+                      {"id": "haze_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                       "inputs": {7: [round(c, 6) for c in a.haze_colour] + [1.0]}}]
+            links += [["render", "Mist", "haze_amt", 0], ["haze_amt", "Value", "haze_mix", "Factor"], [cur, sock, "haze_mix", 6]]
+            cur, sock = "haze_mix", 2
         if a.bleed:
             nodes.append({"id": "bleed", "type": "CompositorNodeBilateralblur", "inputs": {"Size": int(a.bleed), "Threshold": 0.12}})
             links += [[cur, sock, "bleed", "Image"], [cur, sock, "bleed", "Determinator"]]
@@ -1106,8 +1123,11 @@ class StyleEngine:
             cur, sock = "vig_mul", 2
         nodes.append({"id": "out", "type": "NodeGroupOutput"})
         links.append([cur, sock, "out", "Image"])
-        return _keys({"enabled": True, "opacity": a.paper, "texture": texture if a.paper > 0 else None, "passes": passes,
-                      "nodes": nodes, "links": links})
+        doc = {"enabled": True, "opacity": a.paper, "texture": texture if a.paper > 0 else None, "passes": passes,
+               "nodes": nodes, "links": links}
+        if mist:
+            doc["mist"] = mist
+        return _keys(doc)
 
     # -- world, line, paper, scene --
     def world(self, *, hdri: str | None = None) -> dict:

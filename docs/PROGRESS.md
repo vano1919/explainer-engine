@@ -4258,4 +4258,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   [0, 1] -> [1, 2]), so the kit cast drew in the wrong slots. Two small GN groups around PN store the index as a face attribute and
   set it back; the cast's imported custom normals are cleared and shaded smooth first. Local C4 frame now renders the cast in its
   own colours (14.5 s/frame at 1280x720).
+- Depth haze (Fable 22:30 UTC: the E2 cells fail on the world, C3's plate is invisible at that distance): `Look.haze` (share at full
+  mist), `haze_start_m`, `haze_depth_m`, `haze_colour` (warm grey 0.8/0.76/0.7). The finish mixes the colour in by the mist pass
+  (after Kuwahara and the plate, before bleed/paper/grain); `render_shot` turns the view layer's mist pass on and sets the world's
+  mist range (QUADRATIC). Every C look carries haze 0.45 from 12 m to 162 m. Local establishing A/B (1280x720): the far ground,
+  the castle's back and the horizon fade to warm grey; the sky washes too (the mist pass is 1 on the background), +1.9 s/frame.
 

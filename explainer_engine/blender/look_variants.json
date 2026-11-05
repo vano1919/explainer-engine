@@ -727,7 +727,7 @@
       "id": "q1_c1_lit_preset",
       "slider": 1,
       "label": "C1  lit matte, PBR Neutral, preset light, Kuwahara + DoF",
-      "feel": "the overnight C1: our matte lit shading on every surface, the era's light preset (front-biased key, two rims), a light Kuwahara over the frame, painted blur behind",
+      "feel": "the overnight C1: our matte lit shading on every surface, the era's light preset (front-biased key, two rims), a light Kuwahara over the frame, painted blur behind; depth haze: the far world fades into warm grey",
       "shade_mode": "soft",
       "ramp": [
         [
@@ -794,13 +794,21 @@
       "ambient": 0.35,
       "light_preset": "golden_hour",
       "kuwahara": 4,
-      "kuwahara_scope": "frame"
+      "kuwahara_scope": "frame",
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
     },
     {
       "id": "q1_c2_native_skin",
       "slider": 1,
       "label": "C2  C1 light and finish, characters keep their own shading",
-      "feel": "the overnight C2 (Fable: the default character path): Blender Studio's own SSS skin and cloth on the cast under C1's light and finish; the set stays matte lit",
+      "feel": "the overnight C2 (Fable: the default character path): Blender Studio's own SSS skin and cloth on the cast under C1's light and finish; the set stays matte lit; depth haze: the far world fades into warm grey",
       "shade_mode": "soft",
       "ramp": [
         [
@@ -876,13 +884,21 @@
       ],
       "skin_lift": {
         "rain": 0.2
-      }
+      },
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
     },
     {
       "id": "q1_c3_far_plate",
       "slider": 1,
       "label": "C3  C2 + far ground painted as a plate",
-      "feel": "the overnight C3: C2 with the far ground painted (a strong Kuwahara on the depth-far plate), the close plane kept sharp",
+      "feel": "the overnight C3: C2 with the far ground painted (a strong Kuwahara on the depth-far plate), the close plane kept sharp; depth haze: the far world fades into warm grey",
       "shade_mode": "soft",
       "ramp": [
         [
@@ -959,13 +975,21 @@
       ],
       "skin_lift": {
         "rain": 0.2
-      }
+      },
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
     },
     {
       "id": "q1_c4_pn_faces",
       "slider": 1,
       "label": "C4  lit matte body + Perfectly Normal spherized faces",
-      "feel": "the overnight C4: C1's light and finish with Perfectly Normal (GPL-3) spherizing the cast's normals; the nikolaj3d body shader is not in (its Gumroad checkout needs an email)",
+      "feel": "the overnight C4: C1's light and finish with Perfectly Normal (GPL-3) spherizing the cast's normals; the nikolaj3d body shader is not in (its Gumroad checkout needs an email); depth haze: the far world fades into warm grey",
       "shade_mode": "soft",
       "ramp": [
         [
@@ -1033,7 +1057,15 @@
       "light_preset": "golden_hour",
       "kuwahara": 4,
       "kuwahara_scope": "frame",
-      "pn_converge": 0.6
+      "pn_converge": 0.6,
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
     }
   ]
 }
