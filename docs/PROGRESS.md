@@ -4025,3 +4025,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   (it needs downloads). The ICW-07 notes are in the PR and the handoff.
 - Results: `docs_lint` 0 findings; fast suite 2658 passed, 0 failed (`test_seams` is the inherited ffprobe failure).
 - Cost: $0. No download, no pod, no paid call.
+
+### 2026-11-05 — Mac render environment and runbook (D-113)
+- Blender 5.2.3 LTS installed on the creator's M4 Pro Mac; the image's sha256 matches `config/cloud_pins.json`, no pin change.
+- New: `docs/RUNBOOK_mac_render.md` (install, run, measured speeds, known limits), with its row in `docs/INDEX.md`.
+- Measured on Metal: the ICW-04 smoke and the ICW-05b round-2 clips; numbers in the runbook. Stand-in figures only.
+- Found: `style_sheets.mp4()` at efbcc17 leaves the colour matrix to ffmpeg (BT.601 values, untagged), reported to ICW-05b; the manifest's `device` says `cpu` on the Mac while EEVEE runs on Metal.
+- Docs only, no code or test changes. Results: `docs_lint` 0 findings. Cost: $0.
