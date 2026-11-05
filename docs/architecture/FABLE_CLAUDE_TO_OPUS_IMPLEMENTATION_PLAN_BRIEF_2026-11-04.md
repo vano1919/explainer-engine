@@ -272,6 +272,94 @@ Benchmark at least three representative scenes: character/dialogue close-up, int
 
 Use current primary sources for current prices, hardware specs, Blender version/engine features, marketplace conditions and license terms. Include source date, exact claim and URL. Distinguish measured / vendor claim / estimate / hypothesis. Do not reuse unsupported seconds-per-frame claims from research as measured facts. Do not start paid GPU/API jobs.
 
+### 8.1 Cost-reduction hypothesis A — AI-assisted asset creation on top of Blender graybox/proxy scenes
+
+The creator has proposed an exploratory alternative, not an approved architecture:
+
+- Blender creates the deterministic scene structure: proxy/graybox characters, basic body geometry, scene blocking, camera, lighting layout, scale, positions, timing and animation.
+- AI may help create or refine clothing, costumes, surface materials, textures, props, architecture and environmental assets.
+- The resulting content is imported into Blender, normalized, fitted, rigged or attached as required, validated, stored in the reusable asset library and rendered by Blender.
+
+Investigate this as a bounded cost-reduction hypothesis. Do not assume that an AI-generated image of clothing is a usable 3D garment, or that an AI-generated mesh is animation-ready.
+
+Compare at least these alternatives:
+1. **Conventional 3D asset workflow:** manually authored or licensed production-ready meshes, garments, props and environments.
+2. **AI-assisted 3D asset workflow:** AI-generated or AI-assisted meshes, clothing, materials and environment assets, followed by required cleanup and Blender integration.
+3. **Selective hybrid workflow:** keep hero characters, animation-critical clothing, hands/faces and interaction-critical geometry as controlled rigged 3D; use AI-assisted assets for suitable costumes, materials, props, set dressing, architecture modules and background/environment components; use simpler geometry, textures, projections or 2.5D only where camera movement and continuity permit.
+
+For clothing, explicitly distinguish and evaluate:
+- AI-created concept/reference images or texture-only dressing;
+- texture/material projection onto an existing 3D garment or body;
+- an actual separate 3D clothing mesh fitted to the character;
+- rigged/skinned clothing and cloth simulation or controlled deformation.
+
+For environment creation, distinguish:
+- AI-generated 2D background plates or projected textures;
+- AI-generated 3D meshes that require cleanup/retopology/material normalization;
+- modular reusable 3D environment assets;
+- procedural Blender geometry and ordinary licensed asset libraries.
+
+For each approach measure or estimate separately:
+- generation/licensing cost per asset;
+- artist/engineering cleanup time;
+- retopology, UV, material, rig/weight-transfer and cloth setup time;
+- clipping and deformation defects during representative animation;
+- visual consistency with Ink Chronicle and across camera angles;
+- asset reuse rate and amortized cost across episodes;
+- iteration/rejection rate, storage and pipeline complexity;
+- commercial license, provenance and redistribution restrictions.
+
+Use representative tests: one hero character with at least two costume variants, one secondary/background character, one interior environment, one exterior environment and one modular prop set. Test rotation, close-up, broad camera movement and representative body motion. A static front-view image is not evidence of animation readiness.
+
+Recommend which asset categories should be hand-authored, AI-assisted, procedurally generated, licensed or kept as simple proxies. Provide a cost/quality/reuse matrix and a migration path that reuses the existing asset library and Blender architecture rather than introducing a parallel system.
+
+### 8.2 Cost-reduction hypothesis B — adaptive render resolution plus upscaling
+
+The creator has also proposed testing low-resolution Blender rendering followed by upscaling to the fixed 2560×1440 / 24 fps master output. This is a hypothesis only. Do not lower the final output resolution or assume that the lowest render resolution is cheapest after upscaling and QA.
+
+Compare at minimum these 16:9 source resolutions:
+- 854×480 (480p);
+- 1280×720 (720p);
+- 1920×1080 (1080p);
+- 2560×1440 native.
+
+Also inspect Blender's percentage-scale rendering where appropriate. Distinguish actual render time and total pipeline cost from pixel-count ratios; render cost does not necessarily scale linearly with pixel count.
+
+Evaluate:
+- deterministic/non-AI spatial upscaling;
+- temporally consistent video upscaling;
+- AI/ML upscalers suitable for rendered CG and line-art content;
+- native-resolution rendering for close-ups, faces, hands, text, fine ink contours and hero shots;
+- per-shot or per-lane adaptive quality tiers rather than one global resolution.
+
+Test 480p→1440p, 720p→1440p, 1080p→1440p and native 1440p on the same representative scenes: (a) character/dialogue close-up, (b) wide environment/tableau and (c) action/battle with camera and subject motion. Evaluate a sufficiently long moving sequence, not only still frames.
+
+Measure:
+- Blender render time, peak memory and actual compute cost;
+- upscale time, hardware requirements, tool/API cost and storage/transfer;
+- final encoded output size and end-to-end wall time;
+- perceived sharpness, facial/cloth detail, geometry edges, ink-line integrity, small text/labels, texture stability and temporal flicker/ghosting;
+- frame-to-frame identity and costume consistency;
+- failed-frame/retry rate and manual QA/correction time.
+
+The final quality check must inspect the 24 fps sequence in motion at normal viewing size and representative 1440p crops. A still-frame score alone is insufficient. AI upscaling must not silently invent or alter factual labels, faces, costumes or important scene details.
+
+Recommend resolution tiers by shot purpose only when evidence supports them. It is acceptable to reject 480p for some or all production shots. State exactly which shots can safely use each tier, which must remain native, and the measured or unverified savings.
+
+### 8.3 Combined cost model and decision
+
+Evaluate hypotheses A and B both independently and in combination. Include interaction effects: AI-created assets may need higher render resolution; low-resolution rendering may hide defects during preview but reveal them after upscale; reusable assets may reduce future creation costs but increase initial preparation costs.
+
+Compare the full existing approach against the AI-assisted asset approach, adaptive-resolution approach and combined selective-hybrid approach. Use both:
+- first-episode/full setup cost, including asset creation and integration;
+- amortized recurring cost across multiple episodes after assets are reused.
+
+For each alternative report quality risks, human correction time, technical dependencies, licensing/provenance, operational complexity, confidence and the evidence needed before adoption. Do not force a single approach across all assets or shots.
+
+End with one recommended, evidence-backed cost-optimization strategy and explicit KEEP / CHANGE / REJECT / DEFER-BEHIND-TEST dispositions for both hypotheses. The recommended strategy must preserve the creator's fixed Ink Chronicle style and 1440p/24 fps delivery target unless the creator explicitly approves a change.
+
+No paid generation, cloud GPU job or external render benchmark may be started in this planning phase. If valid measurements require paid execution, provide a small, bounded benchmark plan with exact scenes, settings, estimated spend cap, pass/fail thresholds and approval gate; do not run it.
+
 ## 9. Asset system, licensing and style acceptance
 
 Assess reusable humanoid meshes, rigging, retargetable cycles, hand/face rigs, shape keys, visemes, costume layers, era variants, modular props/architecture, terrain, foliage, crowd instances, lighting/camera rigs, shot templates and Geometry Nodes.
