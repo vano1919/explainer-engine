@@ -10,6 +10,10 @@ pose, the cut and the video always say the same thing in each model's own gramma
 rhythm, clip length, animation tiers, camera moves, narration blocks, the outro, the cold open's teasers, cutaways out of
 one place, runs of spoken lines, and a claim behind every number.
 
+``film_shots/3`` (the Ink Chronicle Blender path, D-96/D-97; docs/CONTRACTS.md) keeps every card and episode rule but has no
+per-shot picture or video prompt: the shot becomes a Blender scene (``shot_spec/2``), so ``compose`` refuses it and ``check``
+skips the prompt lints (KP-01..KP-14, KP-44, KP-45, LT-65/LT-66), checking the cards' world-bible version instead (CN-17).
+
     python -m explainer_engine.scripting.film_shots check <film_shots.json>
     python -m explainer_engine.scripting.film_shots compose <film_shots.json> [--out prompts.json]
     python -m explainer_engine.scripting.film_shots script <film_shots.json> [--out script.md]
@@ -50,6 +54,9 @@ LANE_TOLERANCE = sourced_rules.T("BP-109", "lane_tolerance")
 STILL_SHOT_MAX_S = sourced_rules.T("BP-109", "still_shot_max_s")
 HELPER_LANES = {"MAP", "COMPENSATOR", "GRAPHICS"}  # Python-made helper visuals (maps, progress, calculations, counters)
 STILL_ARCHETYPES = {8}  # PARALLAX_25D_TABLEAU: the heroes composed and moved by Python on one picture = a still with moves
+STILL_CATALOGUE = {"PARALLAX_25D_TABLEAU"}  # the same archetype by its catalogue id (edit/archetypes.json), as film_shots/2 names it
+V3 = "film_shots/3"
+LANE_OF_3 = {"VIDEO_3D": "video", "STILL_3D": "still", "HELPER": "helper"}  # D-97: the /3 lanes are the BP-109 lanes
 CAMERA_MOVE_SHARE_MAX = sourced_rules.T("BP-110", "camera_move_share_max")  # KP-38
 NARRATION_BLOCK_MAX_S = sourced_rules.T("BP-104", "narration_block_max_s")  # KP-39
 NARRATOR_SHARE = tuple(sourced_rules.T("BP-105", "narrator_share"))
@@ -450,7 +457,11 @@ def video_prompt(doc: dict, shot: dict) -> str:
 
 def compose(doc: dict) -> list[dict]:
     """Every prompt of every shot, in the prompt lint's shape (``shot_prompt_lint``): the first frame (keyframe, next
-    pose or cut), the last frame when guided, and the video."""
+    pose or cut), the last frame when guided, and the video. The legacy image-generation route only (film_shots/1 and /2):
+    a film_shots/3 shot is a Blender scene, never a prompt (D-100, D-105)."""
+    if doc.get("schema") == V3:
+        raise ValueError("film_shots/3 has no per-shot prompts: the shot is a Blender scene (shot_spec/2, D-96); "
+                         "reference-art prompts belong to the style sheets (ICW-05)")
     style = doc["style"]
     by_id = {s["id"]: s for s in doc["shots"]}
     out: list[dict] = []
@@ -687,16 +698,30 @@ def check(doc: dict, allow: list[dict] | None = None) -> list[dict]:
             add("KP-26", "REVIEW", scene, "an exchange without a close shot: the turn of the scene plays on a face")
     if doc.get("engine") == ENGINE:
         out += episode_check(doc)
-    # the composed prompts go through the prompt lint (KP-01..KP-14 and its KP-17..KP-25 checks), names included (KP-22)
-    for found in lint.check([p for p in compose(doc) if p["kind"] != "reuse"], names=names):
-        out.append(found)
-    out += style_check(doc)
-    out += absent_check(doc)
-    out += moment_check(doc)
+    if doc["schema"] == V3:
+        out += ink_style_check(doc)
+    else:
+        # the composed prompts go through the prompt lint (KP-01..KP-14 and its KP-17..KP-25 checks), names included (KP-22)
+        for found in lint.check([p for p in compose(doc) if p["kind"] != "reuse"], names=names):
+            out.append(found)
+        out += style_check(doc)
+        out += absent_check(doc)
+        out += moment_check(doc)
     from explainer_engine.scripting import register_lint  # KP-46: the AI register of the words the viewer hears or reads
     for found in register_lint.film_shots_findings(doc, allow=allow):
         out.append(dict(found, rule="KP-46 " + found["rule"]))
     return out
+
+
+def ink_style_check(doc: dict) -> list[dict]:
+    """CN-17 (film_shots/3, D-96; docs/CONTRACTS.md): the cards are planned under the current world bible; a stale bible
+    version is REVIEW (the look may have moved since the cards were written). The house look itself is the schema's."""
+    from explainer_engine.world import bible as world_bible
+    have = world_bible.load()["version"]
+    if doc["style"]["bible_version"] != have:
+        return [{"rule": "CN-17", "severity": "REVIEW", "where": "style.bible_version",
+                 "detail": f"planned under bible {doc['style']['bible_version']}, the world bible is {have}: re-read the look"}]
+    return []
 
 
 def moment_check(doc: dict) -> list[dict]:
@@ -779,11 +804,21 @@ def style_check(doc: dict) -> list[dict]:
     return out
 
 
-def visual_lane(shot: dict) -> str:
-    """The BP-109 lane of a shot or a plan block: ``helper`` (a Python helper visual: map, graphic, compensator archetype),
-    ``still`` (a still frame on which Python adds and moves objects: tier hold, the STILL_HOLD lane, the parallax tableau) or
-    ``video`` (an LTX clip: every other shot)."""
+def visual_lane(shot: dict, schema: str | None = None) -> str:
+    """The BP-109 lane of a shot or a plan block, by the contract version (roadmap 10.3): ``film_shots/3`` names it
+    (``VIDEO_3D`` video, ``STILL_3D`` still, ``HELPER`` helper; D-97); ``film_shots/2`` reads its lane field (MAP and
+    COMPENSATOR helper, except the parallax tableau, which is a still; STILL_HOLD or tier hold still; the LTX lanes video);
+    a plan block or a /1 card keeps the older reading: ``helper`` (a Python helper visual: map, graphic, compensator
+    archetype), ``still`` (tier hold, the STILL_HOLD lane, the parallax tableau) or ``video`` (every other shot)."""
     lane, arch = shot.get("lane"), shot.get("archetype")
+    if schema == V3 or lane in LANE_OF_3:
+        if lane not in LANE_OF_3:
+            raise ValueError(f"film_shots/3 shot {shot.get('id')!r}: lane {lane!r} is not one of {sorted(LANE_OF_3)}")
+        return LANE_OF_3[lane]
+    if schema == "film_shots/2":
+        if lane in HELPER_LANES:
+            return "still" if arch in STILL_CATALOGUE else "helper"
+        return "still" if shot.get("tier") == "hold" or lane == "STILL_HOLD" else "video"
     if arch is not None and int(arch) in STILL_ARCHETYPES:
         return "still"
     if lane in HELPER_LANES or shot.get("category") == "map_pure" or arch is not None:
@@ -793,12 +828,12 @@ def visual_lane(shot: dict) -> str:
     return "video"
 
 
-def lane_shares(items: list[dict]) -> dict[str, float]:
-    """Runtime share of each BP-109 lane over shots or plan blocks (``seconds`` each)."""
+def lane_shares(items: list[dict], schema: str | None = None) -> dict[str, float]:
+    """Runtime share of each BP-109 lane over shots or plan blocks (``seconds`` each); ``schema`` the cards' contract."""
     total = sum(float(x["seconds"]) for x in items)
     secs = {k: 0.0 for k in LANE_SHARE}
     for x in items:
-        secs[visual_lane(x)] += float(x["seconds"])
+        secs[visual_lane(x, schema)] += float(x["seconds"])
     return {k: (v / total if total else 0.0) for k, v in secs.items()}
 
 
@@ -838,7 +873,7 @@ def episode_check(doc: dict) -> list[dict]:
         if s.get("dialogue") and s["seconds"] > DIALOGUE_SHOT_MAX_S:
             add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s dialogue/lip-sync coverage shot: keep this shot at "
                                         f"{DIALOGUE_SHOT_MAX_S:g} s or less (BP-108); use motivated coverage, not arbitrary cuts")
-        elif visual_lane(s) == "video" and s["seconds"] > NON_DIALOGUE_VIDEO_MAX_S:
+        elif visual_lane(s, doc.get("schema")) == "video" and s["seconds"] > NON_DIALOGUE_VIDEO_MAX_S:
             add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s non-dialogue VIDEO shot: above the "
                                         f"{NON_DIALOGUE_VIDEO_MAX_S:g} s planning ceiling (BP-108); check model limits and split only if needed")
         if s["seconds"] > KEYPOSE_AFTER_S and s.get("action") and tier != "hold" and not s.get("last_frame"):
@@ -863,10 +898,10 @@ def episode_check(doc: dict) -> list[dict]:
         median = lengths[mid] if len(lengths) % 2 else (lengths[mid - 1] + lengths[mid]) / 2
         if not MEDIAN_SHOT_S[0] <= median <= MEDIAN_SHOT_S[1]:
             add("KP-35", "REVIEW", "episode", f"median shot {median:g} s (aim {MEDIAN_SHOT_S[0]:g}-{MEDIAN_SHOT_S[1]:g} s, BP-107)")
-    for lane, detail in lane_share_findings(lane_shares(shots), helper_known=doc.get("schema") != "film_shots/1"):
+    for lane, detail in lane_share_findings(lane_shares(shots, doc.get("schema")), helper_known=doc.get("schema") != "film_shots/1"):
         add("KP-37", "REVIEW", "episode", detail)
     for s in shots:
-        if visual_lane(s) == "still" and s["seconds"] > STILL_SHOT_MAX_S:
+        if visual_lane(s, doc.get("schema")) == "still" and s["seconds"] > STILL_SHOT_MAX_S:
             add("KP-37", "REVIEW", s["id"], f"a still of {s['seconds']:g} s: cut it or move objects on it within "
                                             f"{STILL_SHOT_MAX_S:g} s so it never reads as a slideshow (BP-109)")
     moving = sum(1 for s in shots if s["frame"].get("camera", "static") != "static") / len(shots)
@@ -980,9 +1015,51 @@ def script(doc: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def shotlist_3(doc: dict) -> str:
+    """The film_shots/3 shot list: the script with each shot's lane, render profile, still mode and lip-sync under it, what
+    the creator reads before anything is built in Blender. No prompts: a Blender shot is a scene (D-96)."""
+    lines = [f"# {doc['episode']}: shot list (Ink Chronicle, film_shots/3)", "",
+             f"Look: {doc['style']['house_look']}, world bible {doc['style']['bible_version']}; {doc['fps']} fps."]
+    shares = lane_shares(doc["shots"], V3)
+    lines.append("Runtime by lane: " + ", ".join(f"{k} {v:.0%}" for k, v in shares.items()) + " (BP-109).")
+    t, scene = 0.0, None
+    for s in doc["shots"]:
+        if s["scene"] != scene:
+            scene = s["scene"]
+            lines += ["", f"## {scene}", ""]
+        clock = f"{int(t // 60)}:{t % 60:04.1f}"
+        f = s["frame"]
+        how = [s["lane"]]
+        if s["lane"] == "HELPER":
+            how.append(s["helper_archetype"])
+        else:
+            how.append(s["render_profile"])
+        if s["lane"] == "STILL_3D":
+            how.append(f"still {s['still_mode']}")
+        if s.get("lipsync"):
+            how.append("lip-sync")
+        if s.get("archetype") is not None:
+            how.append(f"archetype {s['archetype']}")
+        lines.append(f"\n### `{clock}` {s['id']} {f['size']}, {s['seconds']:g} s ({s['duration_frames']} frames), "
+                     f"{', '.join(how)}: {s['beat']}")
+        if s.get("dialogue"):
+            d = s["dialogue"]
+            cover = "" if s.get("dialogue_cover") == "on_screen" else " (off screen)"
+            lines.append(f"- **{(doc['cast'].get(d['who'], {}).get('name') or d['who']).upper()}**{cover}: \"{d['text']}\"")
+        if s.get("narration"):
+            lines.append(f"- NARRATOR: {s['narration']}")
+        if s.get("why"):
+            lines.append(f"- Why: {s['why']}")
+        t += s["seconds"]
+    return "\n".join(lines) + "\n"
+
+
 def shotlist(doc: dict) -> str:
     """The script with every prompt under its shot: what the creator reads to judge the pictures before anything is
-    drawn. The prompts are the composer's own (ZI-01), never retyped; a teaser names the clip it is cut from."""
+    drawn. The prompts are the composer's own (ZI-01), never retyped; a teaser names the clip it is cut from. A
+    film_shots/3 document gets its Blender shot list instead (``shotlist_3``)."""
+    if doc.get("schema") == V3:
+        return shotlist_3(doc)
     prompts: dict[str, list[dict]] = {}
     for p in compose(doc):
         prompts.setdefault(p["id"].rsplit(".", 1)[0], []).append(p)
@@ -1038,6 +1115,9 @@ def main(argv: list[str]) -> int:
             print(text)
         return 0
     if argv[0] == "compose":
+        if doc.get("schema") == V3:
+            print("film_shots/3 has no per-shot prompts: the shot is a Blender scene (shot_spec/2, D-96)")
+            return 2
         errors = schema_errors(doc)
         if errors:
             print("\n".join(errors))

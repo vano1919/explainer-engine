@@ -4,10 +4,14 @@ import copy
 import json
 from pathlib import Path
 
+import pytest
+
 from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import film_shots as F
 from explainer_engine.scripting.shot_prompt_lint import check_shot
 from explainer_engine.training import lora_rules
+
+from _napoleon import legacy_cards
 
 ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE = ROOT / "examples" / "film_shots" / "bus_in_the_ice_age.json"
@@ -237,7 +241,7 @@ def test_composition_goes_to_the_gate_card_and_the_cut_prompt_not_the_keyframe_w
 
 
 def test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once():
-    d = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    d = legacy_cards()  # the legacy prompt composer's worked example (the committed cards are film_shots/3 since ICW-02)
     style = [p for p in F.compose(d) + F.sheet_prompts(d) if p["kind"] == "keyframe"]  # moments and sheets (LT-65)
     assert style and not [f for p in style for f in style_prompt.check(p["prompt"])]  # LT-65
     for p in style:  # LY-09: a repeated tag drew a twin
@@ -567,7 +571,7 @@ def test_a_picture_word_that_names_an_absent_thing_is_flagged():
 
 
 def test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions():
-    d = F.load(ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json")
+    d = legacy_cards()  # the legacy prompt composer's worked example (the committed cards are film_shots/3 since ICW-02)
     for sid in ("S04-01", "S08-01", "S13-01"):  # the LoRA thread: these dropped a hero (KP-45)
         s = next(x for x in d["shots"] if x["id"] == sid)
         k = F.keyframe_prompt(d, s)
@@ -579,3 +583,31 @@ def test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions(
     assert not [f for f in F.check(d) if f["rule"] == "KP-45"]
     del s["reactions"]
     assert ("KP-45", "S06-07") in {(f["rule"], f["where"]) for f in F.moment_check(d)}  # nobody reacts
+
+
+# ---- film_shots/3 (ICW-02, D-97): visual_lane dispatches on the contract version --------------------------------------
+@pytest.mark.parametrize("lane,share", [("VIDEO_3D", "video"), ("STILL_3D", "still"), ("HELPER", "helper")])
+def test_visual_lane_reads_the_three_ink_chronicle_lanes_directly(lane, share):
+    assert F.visual_lane({"lane": lane, "archetype": None}, "film_shots/3") == share
+    assert F.visual_lane({"lane": lane, "archetype": 7}) == share  # a /3 lane needs no schema hint
+
+
+def test_visual_lane_refuses_an_unknown_film_shots_3_lane():
+    with pytest.raises(ValueError):
+        F.visual_lane({"lane": "KEYFRAME_LTX", "archetype": None}, "film_shots/3")
+
+
+def test_a_film_shots_2_string_archetype_no_longer_crashes_the_share_count():
+    assert F.visual_lane({"lane": "COMPENSATOR", "archetype": "PARALLAX_25D_TABLEAU"}, "film_shots/2") == "still"
+    assert F.visual_lane({"lane": "MAP", "archetype": "LOGISTICS_TETHER_AND_ATTRITION"}, "film_shots/2") == "helper"
+    assert F.visual_lane({"lane": "KEYFRAME_LTX", "archetype": "scene_wide", "tier": "hold"}, "film_shots/2") == "still"
+    assert F.visual_lane({"lane": "KEYFRAME_LTX", "archetype": "scene_wide", "tier": "full"}, "film_shots/2") == "video"
+
+
+def test_film_shots_3_has_no_prompt_composer():
+    doc = json.loads((ROOT / "tests" / "fixtures" / "contracts" / "film_shots_3" / "valid.json").read_text(encoding="utf-8"))
+    with pytest.raises(ValueError, match="film_shots/3"):
+        F.compose(doc)
+    assert "VIDEO_3D" in F.shotlist(doc)
+    napoleon = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    assert not [f for f in F.check(napoleon) if f["severity"] == "FAIL"]  # the staging checks still run, the prompt lints do not

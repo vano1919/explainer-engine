@@ -19,8 +19,11 @@ ROOT = Path(__file__).resolve().parents[2]
 FIX = ROOT / "tests" / "fixtures" / "contracts"
 NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "audio_spine", "sound_mix_manifest",
        "visual_comp_manifest", "comp_spec", "scene_set", "shot_spec", "pod_heartbeat", "edit_and_grade_manifest", "qa_report",
-       "editorial_review", "distribution_package", "shot_route"]
-V2 = ["audio_spine", "sound_mix_manifest"]  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
+       "editorial_review", "distribution_package", "shot_route",
+       # the Ink Chronicle contracts (ICW-02, D-96, roadmap section 10)
+       "blender_scene_manifest", "blender_render_manifest", "render_checkpoint", "speech_mix_report", "asset_library"]
+V2 = ["audio_spine", "sound_mix_manifest",  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
+      "shot_spec", "shot_route", "asset_library"]  # ICW-02: the Blender spec and route, the 3D asset library (D-110)
 
 
 def load(path: Path) -> dict:
@@ -37,6 +40,7 @@ def test_every_new_contract_has_a_schema_and_fixtures():
         assert (FIX / name / "valid.json").exists(), name
         assert len(list((FIX / name).glob("invalid__*.json"))) >= 2, name
     assert (FIX / "film_shots_2" / "valid.json").exists()
+    assert (FIX / "film_shots_3" / "valid.json").exists() and len(list((FIX / "film_shots_3").glob("invalid__*.json"))) >= 8
     for name in V2:
         assert (FIX / name / "valid_v2.json").exists(), name
         assert len(list((FIX / name).glob("invalid__v2_*.json"))) >= 3, name
@@ -275,3 +279,101 @@ def test_refused_lanes_cannot_reach_a_renderer(name, cite, capsys):
             C.validate(load(path))
         assert C.main(["check", str(path)]) == 1
         assert cite in capsys.readouterr().out
+
+
+# ---- the Ink Chronicle contracts (ICW-02, D-96; roadmap section 10) -------------------------------------------------------
+@pytest.mark.parametrize("lane", ["DRAMA_BLOCKED_3D", "HOST_COMMENTARY", "KEYFRAME_LTX", "DIALOGUE_CU", "STILL_HOLD", "MAP"])
+def test_film_shots_3_has_only_the_three_ink_chronicle_lanes(lane):
+    doc = load(FIX / "film_shots_3" / "valid.json")
+    doc["shots"][0]["lane"] = lane  # the refused lanes (D-89, D-106) and every legacy lane are outside the /3 enum
+    with pytest.raises(ContractError, match="VIDEO_3D"):
+        C.validate(doc)
+
+
+def test_film_shots_2_keeps_its_lanes_and_refuses_the_3_fields():
+    doc = load(FIX / "film_shots_2" / "valid.json")
+    C.validate(doc)  # /2 stays readable (roadmap 10.3)
+    for field, value in (("lane", "VIDEO_3D"), ("render_profile", "eevee_full"), ("still_mode", "hold"), ("lipsync", False)):
+        bad = copy.deepcopy(doc)
+        bad["shots"][0][field] = value
+        with pytest.raises(ContractError):
+            C.validate(bad)
+    bad = copy.deepcopy(doc)
+    bad["style"] = {"house_look": "ink_chronicle", "bible_version": "1.5"}
+    with pytest.raises(ContractError):
+        C.validate(bad)
+
+
+def test_film_shots_3_lane_fields_follow_the_lane():
+    doc = load(FIX / "film_shots_3" / "valid.json")
+    still = copy.deepcopy(doc)
+    still["shots"][1]["lipsync"] = False  # a still never lip-syncs
+    off = copy.deepcopy(doc)
+    off["shots"][0]["dialogue_cover"] = "off_screen"  # a lip-synced line is on screen
+    cover = copy.deepcopy(doc)
+    cover["shots"][1]["dialogue_cover"] = "off_screen"  # a cover belongs to a spoken line
+    for bad in (still, off, cover):
+        with pytest.raises(ContractError):
+            C.validate(bad)
+    hero = copy.deepcopy(doc)
+    hero["shots"][0].update(render_profile="cycles_hero", why="the khan's reveal: firelight through smoke needs path tracing")
+    C.validate(hero)  # Cycles with its written reason (D-96)
+
+
+def test_film_shots_3_master_is_bp167_and_a_stale_bible_is_review(monkeypatch):
+    doc = load(FIX / "film_shots_3" / "valid.json")
+    doc["fps"] = 30
+    found = {f["rule"]: f["severity"] for f in C.errors(doc)}
+    assert found["CN-09"] == SR.level("BP-167") == "FAIL"  # D-104: 24 everywhere on the Blender lanes; BP-167 is binding
+    doc = load(FIX / "film_shots_3" / "valid.json")
+    doc["style"]["bible_version"] = "1.4"
+    assert [(f["rule"], f["severity"]) for f in C.errors(doc)] == [("CN-17", "REVIEW")]
+
+
+def test_cn08_binds_only_the_recipes_bp139_names():
+    """D-105: 8k+1 frames and sizes in 32 are LTX's; a keyframe still or a Blender shot is outside them."""
+    assert SR.T("BP-139", "applies_to_recipes") == ["ltx_i2v/*"]
+    assert C.ltx_recipe("ltx_i2v/1") and not C.ltx_recipe("qwen_image_keyframe/1") and not C.ltx_recipe("blender_eevee/1")
+    spec = load(FIX / "shot_spec" / "review__frames_not_8k1.json")
+    assert {f["rule"] for f in C.errors(spec)} == {"CN-08"}
+    spec["recipe"] = "qwen_image_keyframe/1"
+    assert C.errors(spec) == []
+    v2 = load(FIX / "shot_spec" / "valid_v2.json")
+    v2["clock"]["frames"] = 240  # not 8k+1, and not an LTX clip
+    assert C.errors(v2) == []
+    fs = load(FIX / "film_shots_3" / "valid.json")
+    assert not [f for f in C.errors(fs) if f["rule"] == "CN-08"]  # 96 frames on a Blender lane: no LTX rule
+
+
+def test_one_frame_rate_reads_the_blender_clock():
+    manifest = load(FIX / "job_manifest" / "valid.json")
+    spec = load(FIX / "shot_spec" / "valid_v2.json")
+    assert C.cross_fps(manifest, specs=[spec]) == [] if manifest["fps"] == 24 else True
+    spec["clock"]["fps"] = manifest["fps"] + 1
+    assert [f["rule"] for f in C.cross_fps(manifest, specs=[spec])] == ["CN-09"]
+
+
+def test_a_checkpoint_counts_a_frame_only_when_it_is_verified_remotely():
+    """Roadmap 10.4 (OR-03, OR-33): RENDERED has no remote copy; DURABLY_STORED and COMMITTED carry the same remote hash."""
+    doc = load(FIX / "render_checkpoint" / "valid.json")
+    C.validate(doc)
+    doc["frames"][1]["stored_at"] = None
+    with pytest.raises(ContractError, match="CN-18"):
+        C.validate(doc)
+
+
+def test_asset_library_1_reads_as_before_and_2_adds_the_3d_kinds():
+    lib1 = json.loads((ROOT / "assets" / "library.json").read_text(encoding="utf-8"))
+    assert lib1["schema"] == "asset_library/1" and C.errors(lib1) == []  # the real library is untouched (ICW-05 moves it)
+    v2 = load(FIX / "asset_library" / "valid_v2.json")
+    kinds = {it["kind"] for it in v2["items"]}
+    assert kinds >= {"model", "rig", "costume", "animation"}
+    schema = load(ROOT / "explainer_engine" / "schemas" / "asset_library.schema.json")
+    v2_kinds = set(schema["$defs"]["v2"]["properties"]["items"]["items"]["properties"]["kind"]["enum"])
+    assert v2_kinds >= {"model", "rig", "animation", "material", "texture", "hdri", "blend_collection", "scene_template"}  # D-110
+
+
+def test_the_speech_report_holds_no_band_number():
+    doc = load(FIX / "speech_mix_report" / "valid.json")
+    assert doc["rule"] == "BP-105" and SR.T("BP-105", "nominal_narrator_share") == 0.7  # the band lives in the registry (D-99)
+    assert not any(k.endswith("band") or k == "nominal" for k in doc)

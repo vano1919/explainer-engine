@@ -1,12 +1,9 @@
 {
- "schema": "film_shots/1",
+ "schema": "film_shots/3",
+ "fps": 24,
  "engine": "script_engine/1",
  "episode": "What If Napoleon Marched Into Genghis Khan? (15-minute animated docudrama, template D)",
  "script": "script.md",
- "style": {
-  "trigger": "xworld style",
-  "video_sentence": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves."
- },
  "cast": {
   "napoleon": {
    "name": "Napoleon",
@@ -217,6 +214,10 @@
    "source": "the episode's story"
   }
  },
+ "style": {
+  "house_look": "ink_chronicle",
+  "bible_version": "1.5"
+ },
  "shots": [
   {
    "id": "S01-01",
@@ -249,7 +250,21 @@
     "ambience": "a slow marching drum in the fog",
     "loudest": "two sharp drum beats"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-02",
@@ -289,7 +304,21 @@
    },
    "tier": "full",
    "source": "keyframe",
-   "teaser_of": "S10-23"
+   "teaser_of": "S10-23",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-03",
@@ -328,7 +357,21 @@
    },
    "tier": "full",
    "source": "keyframe",
-   "teaser_of": "S10-17"
+   "teaser_of": "S10-17",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-04",
@@ -371,7 +414,21 @@
    },
    "tier": "full",
    "source": "keyframe",
-   "teaser_of": "S10-25"
+   "teaser_of": "S10-25",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-05",
@@ -416,7 +473,21 @@
      "horses snorting"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-01",
@@ -463,7 +534,21 @@
      "boots stamping to a halt"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S02-02",
@@ -509,7 +594,21 @@
      "a horse shifting its hooves"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-03",
@@ -549,7 +648,21 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-04",
@@ -589,7 +702,21 @@
     "ambience": "wind over open grass"
    },
    "source": "cut",
-   "master": "S02-03"
+   "master": "S02-03",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-05",
@@ -618,7 +745,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-06",
@@ -669,7 +810,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S03-01",
@@ -714,7 +869,21 @@
      "a ramrod thumping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S03-02",
@@ -764,7 +933,21 @@
     ]
    },
    "source": "cut",
-   "master": "S03-01"
+   "master": "S03-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S03-03",
@@ -808,7 +991,21 @@
     "loudest": "one cannon shot"
    },
    "source": "cut",
-   "master": "S03-01"
+   "master": "S03-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S03-04",
@@ -851,7 +1048,21 @@
     "ambience": "a busy army camp, distant shouted orders",
     "loudest": "one musket volley"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S03-05",
@@ -891,7 +1102,21 @@
      "many hooves on turf"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S03-06",
@@ -936,7 +1161,21 @@
      "a saddle creaking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S03-07",
@@ -981,7 +1220,21 @@
      "bowstrings snapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S03-08",
@@ -1024,7 +1277,21 @@
    "sound": {
     "ambience": "horses grazing, a far-off horn"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S03-09",
@@ -1056,7 +1323,21 @@
      "mud sucking at a wheel"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S03-10",
@@ -1110,7 +1391,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S04-01",
@@ -1193,7 +1488,21 @@
      "a horse snorting"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S04-02",
@@ -1247,7 +1556,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-03",
@@ -1301,7 +1625,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-04",
@@ -1359,7 +1698,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-05",
@@ -1403,7 +1757,21 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S04-06",
@@ -1456,7 +1824,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-07",
@@ -1510,7 +1893,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-08",
@@ -1564,7 +1962,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-09",
@@ -1608,7 +2021,21 @@
     ]
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S04-10",
@@ -1662,7 +2089,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-11",
@@ -1714,7 +2156,21 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S04-12",
@@ -1767,7 +2223,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-13",
@@ -1814,7 +2285,21 @@
     ]
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S04-14",
@@ -1867,7 +2352,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-15",
@@ -1920,7 +2420,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-16",
@@ -1974,7 +2489,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-17",
@@ -2016,7 +2546,21 @@
      "wind over the ridge"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S04-18",
@@ -2076,7 +2620,21 @@
    },
    "source": "cut",
    "master": "S04-17",
-   "exit": true
+   "exit": true,
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S04-19",
@@ -2129,7 +2687,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-17"
+   "master": "S04-17",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-20",
@@ -2173,7 +2746,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-17"
+   "master": "S04-17",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-21",
@@ -2218,7 +2806,22 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-17"
+   "master": "S04-17",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S05-01",
@@ -2247,7 +2850,21 @@
      "a harness jingling"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S05-02",
@@ -2277,7 +2894,21 @@
     "ambience": "wind over open grass, a wagon creaking"
    },
    "source": "cut",
-   "master": "S05-01"
+   "master": "S05-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S05-03",
@@ -2306,7 +2937,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S05-04",
@@ -2346,7 +2991,21 @@
     "ambience": "a candle guttering, canvas creaking",
     "loudest": "a fist on wood"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S05-05",
@@ -2404,7 +3063,21 @@
      "sabre ringing"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-01",
@@ -2452,7 +3125,21 @@
      "a horse blowing"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-02",
@@ -2492,7 +3179,21 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-01"
+   "master": "S06-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-03",
@@ -2523,7 +3224,21 @@
     "loudest": "a hard thud"
    },
    "source": "cut",
-   "master": "S06-01"
+   "master": "S06-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-04",
@@ -2569,7 +3284,21 @@
      "many bowstrings at once"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-05",
@@ -2630,7 +3359,22 @@
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "arrows hissing down"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-06",
@@ -2666,7 +3410,21 @@
     ]
    },
    "source": "cut",
-   "master": "S06-05"
+   "master": "S06-05",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-07",
@@ -2723,7 +3481,22 @@
    "sound": {
     "ambience": "wind in dry grass, far-off hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-08",
@@ -2773,7 +3546,21 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "nextpose",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-09",
@@ -2824,7 +3611,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "nextpose",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-10",
@@ -2855,7 +3657,21 @@
     "loudest": "a hard thud"
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-11",
@@ -2898,7 +3714,21 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-12",
@@ -2950,7 +3780,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-13",
@@ -2998,7 +3843,22 @@
     ]
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-14",
@@ -3038,7 +3898,21 @@
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "hundreds of hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-15",
@@ -3080,7 +3954,21 @@
      "bowstrings snapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-16",
@@ -3122,7 +4010,21 @@
     ]
    },
    "source": "cut",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-17",
@@ -3165,7 +4067,21 @@
     "ambience": "wind over the ridge"
    },
    "source": "nextpose",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-18",
@@ -3220,7 +4136,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-19",
@@ -3272,7 +4203,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-20",
@@ -3315,7 +4261,21 @@
      "ropes creaking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-21",
@@ -3366,7 +4326,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-22",
@@ -3411,7 +4386,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-23",
@@ -3452,7 +4442,21 @@
     "loudest": "one cannon shot"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-24",
@@ -3496,7 +4500,21 @@
     "loudest": "a far thud of earth"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-25",
@@ -3544,7 +4562,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-26",
@@ -3588,7 +4621,22 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-27",
@@ -3631,7 +4679,21 @@
     ]
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S07-01",
@@ -3675,7 +4737,21 @@
    "sound": {
     "ambience": "campfires crackling, a horse coughing"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S07-02",
@@ -3721,7 +4797,21 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-01"
+   "master": "S07-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S07-03",
@@ -3765,7 +4855,22 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-01"
+   "master": "S07-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-04",
@@ -3798,7 +4903,21 @@
     ]
    },
    "source": "cut",
-   "master": "S07-01"
+   "master": "S07-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S07-05",
@@ -3844,7 +4963,21 @@
      "a whip cracking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S07-06",
@@ -3904,7 +5037,22 @@
      "a biscuit cracking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-07",
@@ -3956,7 +5104,22 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-06"
+   "master": "S07-06",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-08",
@@ -4008,7 +5171,22 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-06"
+   "master": "S07-06",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-09",
@@ -4060,7 +5238,22 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-06"
+   "master": "S07-06",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-10",
@@ -4081,7 +5274,21 @@
    "sound": {
     "ambience": "campfires crackling, a horse coughing"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S07-11",
@@ -4123,7 +5330,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S07-12",
@@ -4167,7 +5388,21 @@
     "ambience": "a candle guttering, canvas creaking",
     "loudest": "a candlestick clattering"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S08-01",
@@ -4247,7 +5482,21 @@
      "felt flapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S08-02",
@@ -4300,7 +5549,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-03",
@@ -4352,7 +5616,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-04",
@@ -4398,7 +5677,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-05",
@@ -4446,7 +5739,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-06",
@@ -4495,7 +5803,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-07",
@@ -4546,7 +5868,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S08-08",
@@ -4597,7 +5933,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-09",
@@ -4642,7 +5993,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-10",
@@ -4686,7 +6052,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-11",
@@ -4731,7 +6112,21 @@
      "grass rustling"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-12",
@@ -4776,7 +6171,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-11"
+   "master": "S08-11",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-13",
@@ -4824,7 +6234,21 @@
      "far-off wagon wheels creaking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-14",
@@ -4878,7 +6302,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13"
+   "master": "S08-13",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-15",
@@ -4929,7 +6368,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13"
+   "master": "S08-13",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-16",
@@ -4972,7 +6426,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13"
+   "master": "S08-13",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-17",
@@ -5024,7 +6492,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13"
+   "master": "S08-13",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-18",
@@ -5067,7 +6550,21 @@
     ]
    },
    "source": "keyframe",
-   "exit": true
+   "exit": true,
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-19",
@@ -5111,7 +6608,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-18"
+   "master": "S08-18",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-20",
@@ -5162,7 +6674,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-18"
+   "master": "S08-18",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-21",
@@ -5215,7 +6742,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-18"
+   "master": "S08-18",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-22",
@@ -5277,7 +6819,21 @@
    },
    "source": "cut",
    "master": "S08-18",
-   "exit": true
+   "exit": true,
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-01",
@@ -5310,7 +6866,21 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S09-02",
@@ -5349,7 +6919,21 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-03",
@@ -5393,7 +6977,22 @@
     "ambience": "wind, far-off hooves"
    },
    "source": "cut",
-   "master": "S09-02"
+   "master": "S09-02",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S09-04",
@@ -5435,7 +7034,21 @@
    "sound": {
     "ambience": "wind, far-off hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-05",
@@ -5475,7 +7088,21 @@
     "ambience": "wind, far-off hooves"
    },
    "source": "cut",
-   "master": "S09-04"
+   "master": "S09-04",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S09-06",
@@ -5526,7 +7153,22 @@
     "ambience": "wind, far-off hooves"
    },
    "source": "cut",
-   "master": "S09-04"
+   "master": "S09-04",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S09-07",
@@ -5558,7 +7200,21 @@
      "a finger tapping wood"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-08",
@@ -5591,7 +7247,21 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-09",
@@ -5634,7 +7304,21 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S09-08"
+   "master": "S09-08",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-10",
@@ -5676,7 +7360,21 @@
      "grass rustling"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S09-11",
@@ -5708,7 +7406,21 @@
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S09-12",
@@ -5750,7 +7462,21 @@
      "hooves on dry earth"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S09-13",
@@ -5789,7 +7515,21 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S10-01",
@@ -5849,7 +7589,21 @@
     "ambience": "wind, distant horns, horses",
     "loudest": "a horn blast"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-02",
@@ -5893,7 +7647,22 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-03",
@@ -5940,7 +7709,21 @@
      "bayonets clicking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-04",
@@ -5982,7 +7765,21 @@
      "far-off hooves growing louder"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S10-05",
@@ -6022,7 +7819,21 @@
     "ambience": "wind, distant horns, horses",
     "loudest": "hundreds of arrows hissing"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-06",
@@ -6055,7 +7866,21 @@
     ]
    },
    "source": "cut",
-   "master": "S10-05"
+   "master": "S10-05",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-07",
@@ -6102,7 +7927,22 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-08",
@@ -6146,7 +7986,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-07"
+   "master": "S10-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-09",
@@ -6186,7 +8041,21 @@
     "ambience": "wind, a wagon creaking",
     "loudest": "a thin musket volley"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-10",
@@ -6226,7 +8095,21 @@
     "loudest": "a fast drum roll"
    },
    "source": "cut",
-   "master": "S10-09"
+   "master": "S10-09",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-11",
@@ -6266,7 +8149,21 @@
     "ambience": "wind, distant horns, horses",
     "loudest": "a wall of hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-12",
@@ -6310,7 +8207,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-11"
+   "master": "S10-11",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-13",
@@ -6354,7 +8266,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-11"
+   "master": "S10-11",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-14",
@@ -6393,7 +8320,21 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-15",
@@ -6438,7 +8379,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-14"
+   "master": "S10-14",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-16",
@@ -6481,7 +8437,21 @@
     "ambience": "wind, distant horns, horses",
     "loudest": "one huge musket volley"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-17",
@@ -6523,7 +8493,21 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-18",
@@ -6567,7 +8551,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-17"
+   "master": "S10-17",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-19",
@@ -6624,7 +8623,22 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-20",
@@ -6666,7 +8680,21 @@
      "wheels grinding"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-21",
@@ -6713,7 +8741,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-20"
+   "master": "S10-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-22",
@@ -6754,7 +8797,21 @@
     "loudest": "a cannon blast"
    },
    "source": "cut",
-   "master": "S10-20"
+   "master": "S10-20",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-23",
@@ -6797,7 +8854,21 @@
     "ambience": "wind, distant horns, horses",
     "loudest": "a crack of shot"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-24",
@@ -6842,7 +8913,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-23"
+   "master": "S10-23",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-25",
@@ -6888,7 +8974,21 @@
     "ambience": "wind, a wagon creaking",
     "loudest": "fire roaring up"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-26",
@@ -6933,7 +9033,22 @@
     "ambience": "wind, a wagon creaking",
     "loudest": "a drum alarm"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-27",
@@ -6985,7 +9100,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-26"
+   "master": "S10-26",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-28",
@@ -7037,7 +9167,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-26"
+   "master": "S10-26",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-29",
@@ -7076,7 +9221,21 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-26"
+   "master": "S10-26",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-30",
@@ -7133,7 +9292,21 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-31",
@@ -7185,7 +9358,22 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-32",
@@ -7238,7 +9426,22 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-33",
@@ -7278,7 +9481,21 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S10-34",
@@ -7330,7 +9547,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-35",
@@ -7375,7 +9607,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-36",
@@ -7399,7 +9646,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S10-37",
@@ -7450,7 +9711,22 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-36"
+   "master": "S10-36",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-38",
@@ -7490,7 +9766,21 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-36"
+   "master": "S10-36",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S11-01",
@@ -7523,7 +9813,21 @@
    "sound": {
     "ambience": "wind, a single crow, silence"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S11-02",
@@ -7567,7 +9871,22 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-03",
@@ -7619,7 +9938,22 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-04",
@@ -7670,7 +10004,22 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-05",
@@ -7721,7 +10070,22 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-06",
@@ -7763,7 +10127,21 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S11-07",
@@ -7814,7 +10192,22 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-08",
@@ -7838,7 +10231,21 @@
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S12-01",
@@ -7862,7 +10269,21 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S12-02",
@@ -7904,7 +10325,21 @@
    "sound": {
     "ambience": "horses grazing, a far-off horn"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S12-03",
@@ -7947,7 +10382,21 @@
     "ambience": "horses grazing, a far-off horn"
    },
    "source": "cut",
-   "master": "S12-02"
+   "master": "S12-02",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S12-04",
@@ -7985,7 +10434,21 @@
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S12-05",
@@ -8027,7 +10490,21 @@
     "ambience": "wind, a wagon creaking"
    },
    "source": "cut",
-   "master": "S12-04"
+   "master": "S12-04",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S12-06",
@@ -8065,7 +10542,21 @@
    "sound": {
     "ambience": "a candle guttering, canvas creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S12-07",
@@ -8110,7 +10601,21 @@
      "a banner flapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S12-08",
@@ -8161,7 +10666,22 @@
     "ambience": "a busy army camp, distant shouted orders"
    },
    "source": "cut",
-   "master": "S12-07"
+   "master": "S12-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S12-09",
@@ -8212,7 +10732,22 @@
     "ambience": "a busy army camp, distant shouted orders"
    },
    "source": "cut",
-   "master": "S12-07"
+   "master": "S12-07",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-01",
@@ -8290,7 +10825,21 @@
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S13-02",
@@ -8342,7 +10891,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-03",
@@ -8394,7 +10958,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-04",
@@ -8446,7 +11025,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-05",
@@ -8485,7 +11079,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S13-06",
@@ -8540,7 +11148,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-07",
@@ -8589,7 +11212,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S13-08",
@@ -8642,7 +11279,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-09",
@@ -8681,7 +11333,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S13-10",
@@ -8733,7 +11399,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-11",
@@ -8777,7 +11458,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-12",
@@ -8829,7 +11525,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-13",
@@ -8881,7 +11592,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-14",
@@ -8925,7 +11651,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S13-15",
@@ -8976,7 +11716,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-16",
@@ -9027,7 +11782,21 @@
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S13-17",
@@ -9083,7 +11852,22 @@
     ]
    },
    "source": "cut",
-   "master": "S13-16"
+   "master": "S13-16",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-18",
@@ -9122,7 +11906,21 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-16"
+   "master": "S13-16",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S13-19",
@@ -9174,7 +11972,22 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-16"
+   "master": "S13-16",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-20",
@@ -9241,7 +12054,21 @@
    },
    "source": "cut",
    "master": "S13-16",
-   "exit": true
+   "exit": true,
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S13-21",
@@ -9301,7 +12128,21 @@
     ]
    },
    "source": "keyframe",
-   "exit": true
+   "exit": true,
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S14-01",
@@ -9340,7 +12181,21 @@
    "sound": {
     "ambience": "wind, then a city's distant bells"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S14-02",
@@ -9385,7 +12240,21 @@
     "loudest": "a musket volley"
    },
    "source": "nextpose",
-   "master": "S14-01"
+   "master": "S14-01",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S14-03",
@@ -9424,7 +12293,21 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S14-04",
@@ -9482,7 +12365,21 @@
    "sound": {
     "ambience": "a slow marching drum in the fog"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S14-05",
@@ -9506,7 +12403,21 @@
    "sound": {
     "ambience": "a city burning, timbers cracking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S14-06",
@@ -9549,7 +12460,21 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "cut",
-   "master": "S14-05"
+   "master": "S14-05",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S14-07",
@@ -9600,7 +12525,22 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "cut",
-   "master": "S14-05"
+   "master": "S14-05",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S14-08",
@@ -9651,7 +12591,22 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "cut",
-   "master": "S14-05"
+   "master": "S14-05",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S14-09",
@@ -9693,7 +12648,21 @@
    "sound": {
     "ambience": "a city burning, timbers cracking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S14-10",
@@ -9738,7 +12707,21 @@
      "boots in snow"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S14-11",
@@ -9777,7 +12760,21 @@
     "ambience": "a slow marching drum in the fog"
    },
    "source": "cut",
-   "master": "S14-10"
+   "master": "S14-10",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S15-01",
@@ -9807,7 +12804,21 @@
     "ambience": "a city burning, a far drum",
     "loudest": "two drum beats"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S15-02",
@@ -9846,7 +12857,21 @@
    "sound": {
     "ambience": "a city burning, a far drum"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S15-03",
@@ -9889,7 +12914,21 @@
     "ambience": "a city burning, a far drum"
    },
    "source": "cut",
-   "master": "S15-02"
+   "master": "S15-02",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S16-01",
@@ -9930,7 +12969,21 @@
    "sound": {
     "ambience": "a crackling campfire"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S16-02",
@@ -9971,7 +13024,21 @@
    "sound": {
     "ambience": "an icy wind howling"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S16-03",
@@ -10011,7 +13078,21 @@
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": null,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": false
   }
  ]
 }

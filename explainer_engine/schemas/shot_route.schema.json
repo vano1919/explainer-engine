@@ -1,59 +1,336 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "shot_route.schema.json",
-  "title": "Shot route: which renderable specs and compensator items each shot of film_shots/2 became (docs/CONTRACTS.md, edit/router.py)",
+  "title": "Shot route: which renderable specs and compensator items each shot became (docs/CONTRACTS.md, edit/router.py); /1 from film_shots/2, /2 from film_shots/3",
   "type": "object",
-  "required": ["schema", "job_id", "fps", "derived_from", "routes"],
-  "additionalProperties": false,
+  "required": [
+    "schema"
+  ],
   "properties": {
-    "schema": {"const": "shot_route/1"},
-    "job_id": {"type": "string", "minLength": 1},
-    "fps": {"type": "integer", "minimum": 1},
-    "derived_from": {
-      "type": "object",
-      "required": ["film_shots"],
-      "additionalProperties": false,
-      "properties": {
-        "film_shots": {"$ref": "#/$defs/fileref"},
-        "visual_comp_manifest": {"$ref": "#/$defs/fileref"},
-        "audio_spine": {"$ref": "#/$defs/fileref"}
-      }
-    },
-    "routes": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["shot_id", "lane", "specs", "comp_items"],
-        "additionalProperties": false,
-        "properties": {
-          "shot_id": {"type": "string", "minLength": 1},
-          "lane": {"enum": ["KEYFRAME_LTX", "DIALOGUE_CU", "ATMOS_BROLL", "MAP", "COMPENSATOR", "STILL_HOLD"]},
-          "specs": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["role", "path", "sha256", "cache_key"],
-              "additionalProperties": false,
-              "properties": {
-                "role": {"enum": ["still", "video"]},
-                "path": {"type": "string", "minLength": 1},
-                "sha256": {"$ref": "#/$defs/sha256"},
-                "cache_key": {"$ref": "#/$defs/sha256"}
-              }
-            }
-          },
-          "comp_items": {"type": "array", "items": {"type": "string", "minLength": 1}}
-        }
-      }
+    "schema": {
+      "enum": [
+        "shot_route/1",
+        "shot_route/2"
+      ]
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema": {
+            "const": "shot_route/1"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/v1"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema": {
+            "const": "shot_route/2"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/v2"
+      }
+    }
+  ],
   "$defs": {
-    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "fileref": {
       "type": "object",
-      "required": ["path", "sha256"],
+      "required": [
+        "path",
+        "sha256"
+      ],
       "additionalProperties": false,
-      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "v1": {
+      "type": "object",
+      "required": [
+        "schema",
+        "job_id",
+        "fps",
+        "derived_from",
+        "routes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "shot_route/1"
+        },
+        "job_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "derived_from": {
+          "type": "object",
+          "required": [
+            "film_shots"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "film_shots": {
+              "$ref": "#/$defs/fileref"
+            },
+            "visual_comp_manifest": {
+              "$ref": "#/$defs/fileref"
+            },
+            "audio_spine": {
+              "$ref": "#/$defs/fileref"
+            }
+          }
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "shot_id",
+              "lane",
+              "specs",
+              "comp_items"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "shot_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lane": {
+                "enum": [
+                  "KEYFRAME_LTX",
+                  "DIALOGUE_CU",
+                  "ATMOS_BROLL",
+                  "MAP",
+                  "COMPENSATOR",
+                  "STILL_HOLD"
+                ]
+              },
+              "specs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "role",
+                    "path",
+                    "sha256",
+                    "cache_key"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "role": {
+                      "enum": [
+                        "still",
+                        "video"
+                      ]
+                    },
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "$ref": "#/$defs/sha256"
+                    },
+                    "cache_key": {
+                      "$ref": "#/$defs/sha256"
+                    }
+                  }
+                }
+              },
+              "comp_items": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "shot_route/1: the legacy route of film_shots/2 (Qwen keyframes, LTX clips)"
+    },
+    "v2": {
+      "description": "shot_route/2: the Blender route of film_shots/3 (D-96): one shot_spec/2 per VIDEO_3D or STILL_3D shot, compensator items per HELPER shot",
+      "type": "object",
+      "required": [
+        "schema",
+        "job_id",
+        "fps",
+        "derived_from",
+        "pins",
+        "routes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "shot_route/2"
+        },
+        "job_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "derived_from": {
+          "type": "object",
+          "required": [
+            "film_shots"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "film_shots": {
+              "$ref": "#/$defs/fileref"
+            },
+            "visual_comp_manifest": {
+              "$ref": "#/$defs/fileref"
+            },
+            "audio_spine": {
+              "$ref": "#/$defs/fileref"
+            }
+          }
+        },
+        "pins": {
+          "type": "object",
+          "required": [
+            "blender"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "blender": {
+              "type": "object",
+              "required": [
+                "version",
+                "series",
+                "archive_sha256",
+                "image"
+              ],
+              "additionalProperties": false,
+              "description": "the blender entry of config/cloud_pins.json the route was written against (BP-175)",
+              "properties": {
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "series": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "archive_sha256": {
+                  "$ref": "#/$defs/sha256"
+                },
+                "image": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "shot_id",
+              "lane",
+              "recipe",
+              "specs",
+              "comp_items"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "shot_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lane": {
+                "enum": [
+                  "VIDEO_3D",
+                  "STILL_3D",
+                  "HELPER"
+                ]
+              },
+              "recipe": {
+                "enum": [
+                  "blender_eevee/1",
+                  "blender_cycles/1",
+                  "python_helper/1"
+                ]
+              },
+              "specs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "role",
+                    "path",
+                    "sha256",
+                    "cache_key"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "role": {
+                      "enum": [
+                        "still",
+                        "video"
+                      ]
+                    },
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "$ref": "#/$defs/sha256"
+                    },
+                    "cache_key": {
+                      "$ref": "#/$defs/sha256"
+                    }
+                  }
+                }
+              },
+              "comp_items": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

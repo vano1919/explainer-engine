@@ -1,0 +1,246 @@
+{
+ "schema": "film_shots/2",
+ "episode": "napoleon",
+ "fps": 24,
+ "style": {
+  "trigger": "xworld",
+  "video_sentence": "Hand-drawn cartoon."
+ },
+ "cast": {
+  "nap": {
+   "tag": "a short man in a green coat with a bicorne hat"
+  }
+ },
+ "places": {
+  "tent": "a canvas command tent"
+ },
+ "shots": [
+  {
+   "id": "s1",
+   "scene": "S01",
+   "mode": "scene",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "full",
+   "lane": "KEYFRAME_LTX",
+   "archetype": "scene_wide",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "blocking": [
+    {
+     "who": "nap",
+     "where": "center",
+     "facing": "camera"
+    }
+   ],
+   "action": {
+    "who": "nap",
+    "start": "stands at the table",
+    "peak": "slams his fist on the map",
+    "settle": "leans on the table"
+   }
+  },
+  {
+   "id": "s2",
+   "scene": "S01",
+   "mode": "scene",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "MCU",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "full",
+   "lane": "DIALOGUE_CU",
+   "archetype": "scene_close",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "blocking": [
+    {
+     "who": "nap",
+     "where": "center",
+     "facing": "camera"
+    }
+   ],
+   "dialogue": {
+    "who": "nap",
+    "to": "room",
+    "text": "We march at dawn."
+   }
+  },
+  {
+   "id": "s3",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "EWS",
+    "place": "tent",
+    "camera": "pan_left"
+   },
+   "source": "keyframe",
+   "tier": "light",
+   "lane": "ATMOS_BROLL",
+   "archetype": "scene_wide",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  },
+  {
+   "id": "s4",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "KEYFRAME_LTX",
+   "archetype": "scene_wide",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  },
+  {
+   "id": "s5",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "WS",
+    "place": "tent",
+    "camera": "push_in"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "STILL_HOLD",
+   "archetype": "scene_wide",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  },
+  {
+   "id": "s6",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "MAP",
+   "archetype": "LOGISTICS_TETHER_AND_ATTRITION",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  },
+  {
+   "id": "s7",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "COMPENSATOR",
+   "archetype": "PARALLAX_25D_TABLEAU",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  },
+  {
+   "id": "s8",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 5,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "COMPENSATOR",
+   "archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD",
+   "duration_frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  }
+ ]
+}
