@@ -156,6 +156,20 @@
       "weights_vs_code_note": "code only; a render made with it is not a derivative of the extension",
       "outputs_note": "frames rendered with a rig carry no licence of the extension",
       "per_pack_check": false
+    },
+    "perfectly_normal": {
+      "label": "Perfectly Normal 0.0.3 (Blender extension by Seth Trowbridge: Manip Verts GN tools for custom face-corner normals)",
+      "status": "gpl-tool-only",
+      "commercial_use": "yes",
+      "source_url": "https://extensions.blender.org/add-ons/perfectly-normal/",
+      "evidence": "extensions.blender.org API list 2026-11-05: id perfectly_normal, version 0.0.3, license SPDX:GPL-3.0-or-later, blender_version_min 4.5.0; zip sha256 477d5735c3f11e03111ee78ffcb61875d829ca31be5aaa7bef8feeca1f0cfd0a (156617 bytes), pinned in config/cloud_pins.json blender_extensions",
+      "redistribution": "GPL-3.0-or-later: used as shipped, fetched by sha256 at run time, never copied into our package",
+      "derivatives": "none made: its node groups are appended into the render's scene, unchanged",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": "node groups (data) only; the add-on's Python is never run",
+      "outputs_note": "frames rendered with its normals carry no licence of the extension",
+      "per_pack_check": false
     }
   }
 }

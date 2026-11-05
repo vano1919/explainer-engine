@@ -233,7 +233,10 @@ MATERIAL_CLASSES = ("skin", "hair", "eyes", "costume", "set")
 # Knobs WP-Q1 added: a look that leaves them at their default keeps the look round's graph and hash byte for byte.
 Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "half_lambert": 0.0, "ramp_interp": None,
                "shadow_tints": (), "view_transform": None, "rim_mode": "shader", "key_colour": None, "fill_colour": None,
-               "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0, "light_preset": None}
+               "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0, "light_preset": None,
+               "native_classes": (), "skin_lift": (), "pn_converge": 0.0}
+CHARACTER_CLASSES = ("skin", "hair", "eyes", "costume")
+FRONT_KEY_BAND = (30.0, 45.0)   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
 LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
 
 
@@ -242,6 +245,11 @@ def light_presets(path: Path | None = None) -> dict:
     doc = json.loads(Path(path or LIGHT_PRESETS_PATH).read_text(encoding="utf-8"))
     if doc.get("schema") != "light_presets/1":
         raise ValueError(f"{path or LIGHT_PRESETS_PATH} is not a light_presets/1 document")
+    for name, pr in doc["presets"].items():
+        off = pr["key"].get("front_offset_deg")
+        if off is None or not FRONT_KEY_BAND[0] <= abs(off) <= FRONT_KEY_BAND[1]:
+            raise ValueError(f"light preset {name}: key.front_offset_deg {off} outside the front-biased band "
+                             f"{FRONT_KEY_BAND[0]:g}-{FRONT_KEY_BAND[1]:g} degrees (|offset|)")
     return doc["presets"]
 
 
@@ -305,6 +313,9 @@ class Look:
     ambient: float | None = None                            # world light strength (None = the tokens' 0.05)
     normal_soften: int = 0                                  # cast meshes: Blur Attribute iterations on the normals (GN), 0 = off
     light_preset: str | None = None                         # a light_presets.json name: replaces the rig's lights and the ambient
+    native_classes: tuple = ()                              # character classes that keep the asset's own shading (C2: Rain's SSS)
+    skin_lift: tuple = ()                                   # ((character id, lift 0..1), ...): a front fill linked to that cast
+    pn_converge: float = 0.0                                # Perfectly Normal (GPL-3, GN assets): spherize the cast's normals 0..1
 
     def __post_init__(self) -> None:
         for name, val, known in (("shade_mode", self.shade_mode, SHADE_MODES), ("light_rig", self.light_rig, LIGHT_RIGS),
@@ -372,6 +383,15 @@ class Look:
                 raise ValueError(f"{self.id}: unknown light preset {self.light_preset!r} (known: {', '.join(light_presets())})")
         if self.ambient is not None and not 0 <= self.ambient <= 2:
             raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
+        if any(c not in CHARACTER_CLASSES for c in self.native_classes) or len(set(self.native_classes)) != len(self.native_classes):
+            raise ValueError(f"{self.id}: native_classes {self.native_classes} (character classes: {', '.join(CHARACTER_CLASSES)})")
+        if (self.native_classes or self.skin_lift or self.pn_converge) and not self.lit_rig:
+            raise ValueError(f"{self.id}: native shading, skin lift and Perfectly Normal need real lights (the lit or rgb_soft path)")
+        for who, lift in self.skin_lift:
+            if not isinstance(who, str) or not who or not 0 < lift <= 1:
+                raise ValueError(f"{self.id}: skin lift {who!r} {lift} (a character id, lift 0..1)")
+        if not 0 <= self.pn_converge <= 1 or self.pn_converge and self.normal_soften:
+            raise ValueError(f"{self.id}: pn_converge is a share 0..1, and one face-normal method at a time (normal_soften or it)")
 
     @classmethod
     def from_dict(cls, d: dict) -> "Look":
@@ -381,6 +401,10 @@ class Look:
                 kw[k] = _tup(kw[k])
         if isinstance(kw.get("shadow_tints"), dict):
             kw["shadow_tints"] = tuple((c, tuple(v)) for c, v in sorted(kw["shadow_tints"].items()))
+        if isinstance(kw.get("skin_lift"), dict):
+            kw["skin_lift"] = tuple(sorted(kw["skin_lift"].items()))
+        if kw.get("native_classes") is not None:
+            kw["native_classes"] = tuple(kw["native_classes"])
         return cls(**kw)
 
     def to_dict(self) -> dict:
@@ -390,7 +414,13 @@ class Look:
                 d.pop(k)
         if "shadow_tints" in d:
             d["shadow_tints"] = {c: list(v) for c, v in self.shadow_tints}
+        if "skin_lift" in d:
+            d["skin_lift"] = dict(self.skin_lift)
         return d
+
+    def lift_of(self, material_name: str) -> float:
+        """The skin lift of the character a ``{char}_skin`` material belongs to (0 when none is listed)."""
+        return next((v for who, v in self.skin_lift if material_name == f"{who}_skin"), 0.0)
 
     def shadow_tint_of(self, cls: str) -> tuple:
         tints = dict(self.shadow_tints)
@@ -548,6 +578,9 @@ class StyleEngine:
         if self.t.art is not None:
             if path != "eevee":
                 raise ValueError(f"{name}: the look round's graphs are EEVEE-only (Shader to RGB)")
+            cls = material_class(name, slot)
+            if cls in self.t.art.native_classes:   # C2: the asset's own shading (Blender Studio SSS skin, cloth) under our light
+                return {"name": name, "native": True, "class": cls, "nodes": [], "links": []}
             return self._art_material(name, base, texture=texture, texture_mean=texture_mean, tile=tile, strength=strength, slot=slot)
         t = self.t
         if strength is not None and not 0 <= strength <= 1:
@@ -782,7 +815,10 @@ class StyleEngine:
             links.append(["bsdf", "BSDF", "out", "Surface"])
             return _keys({"name": name, "path": "eevee", "shade_path": "lit", "class": cls, "nodes": nodes, "links": links})
         # rgb_soft: the light's colour survives (Shader to RGB colour), only its value is reshaped by the ramp
-        tint = [round(c, 6) for c in a.shadow_tint_of(cls)] + [1.0]
+        tint = list(a.shadow_tint_of(cls))
+        if cls == "skin" and a.lift_of(name):   # a per-character skin lift: its shadow tint moves towards white
+            tint = _lerp(tint, [1.0, 1.0, 1.0], a.lift_of(name))
+        tint = [round(c, 6) for c in tint] + [1.0]
         nodes += [{"id": "diffuse", "type": "ShaderNodeBsdfDiffuse", "inputs": {"Color": [1.0, 1.0, 1.0, 1.0], "Roughness": 0.0}},
                   {"id": "to_rgb", "type": "ShaderNodeShaderToRGB"},
                   {"id": "luma", "type": "ShaderNodeRGBToBW"}]
@@ -818,6 +854,12 @@ class StyleEngine:
         return _keys({"name": name, "path": "eevee", "shade_path": "rgb_soft", "class": cls, "nodes": nodes, "links": links})
 
     def lights(self) -> list[dict]:
+        """The rig's lights plus one linked front fill per lifted character (``Look.skin_lift``, Fable 2026-11-05)."""
+        out = self._rig_lights()
+        key = next((x for x in out if x["name"] == "key"), None)
+        return out + self._lift_lights(key["energy"] if key else self.t.art.key_energy)
+
+    def _rig_lights(self) -> list[dict]:
         """WP-Q1 light rigs (real, coloured lights; every number a HYP until the clips are judged):
 
         - ``cinematic``: a warm key SUN with a 5-10 degree disc and a PCF-blurred shadow (``shadow_filter_radius``, no jitter: the
@@ -860,7 +902,10 @@ class StyleEngine:
         out = [{"name": "key", "type": "SUN", "energy": round(k["energy"], 6), "color": [round(c, 6) for c in k["colour"]],
                 "angle_rad": round(math.radians(min(10.0, max(5.0, k["angle_deg"]))), 6), "rotation_euler": list(kl.rotation_euler()),
                 "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
-                "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None}]
+                "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None,
+                # a character shot turns the key to the camera's side (30-45 degrees off its axis); a set-only shot keeps the world sun
+                "aim_with_cast": {"relative_to": "camera", "from": "front", "elevation_deg": k["elevation_deg"],
+                                  "azimuth_offset_deg": k["front_offset_deg"]}}]
         if p.get("fill"):
             el, az = 22.0, k["azimuth_deg"] + 160.0
             out.append({"name": "fill", "type": "SUN", "energy": round(p["fill"]["energy"], 6),
@@ -873,6 +918,14 @@ class StyleEngine:
                                 "azimuth_offset_deg": r["azimuth_offset_deg"]},
                         "use_shadow": False, "specular_factor": 0.3, "link": "cast"})
         return out
+
+    def _lift_lights(self, key_energy: float) -> list[dict]:
+        """One shadowless, specular-free front fill per lifted character, linked to that character's meshes only: the skin's
+        shadow side opens up without touching the set (works on toon and on native skin alike)."""
+        return [{"name": f"lift_{who}", "type": "SUN", "energy": round(key_energy * lift, 6), "color": [1.0, 0.94, 0.88],
+                 "aim": {"relative_to": "camera", "from": "front", "elevation_deg": 10.0, "azimuth_offset_deg": 0.0},
+                 "use_shadow": False, "specular_factor": 0.0, "link": f"char:{who}"}
+                for who, lift in self.t.art.skin_lift]
 
     def _art_world(self, hdri: str | None) -> dict:
         """Lighting = the weak paper ambient (as the toon world); camera rays see the look's sky: the paper, a painted gradient
@@ -1120,6 +1173,11 @@ class StyleEngine:
                 doc.pop("fill_light", None)
                 if a.normal_soften:
                     doc["normal_soften"] = {"iterations": int(a.normal_soften), "applies_to": "cast"}
+                if a.pn_converge:   # Perfectly Normal 0.0.3's GN groups as modifiers: (Re)create -> Tweak(Converge) -> Apply
+                    doc["perfectly_normal"] = {"converge": round(a.pn_converge, 6), "applies_to": "cast",
+                                               "extension": "perfectly_normal", "version": "0.0.3"}
+                if a.native_classes:
+                    doc["native_classes"] = list(a.native_classes)
             if a.bg_mode in ("dof", "plate") and a.fstop:
                 doc["camera_dof"] = {"use_dof": True, "focus_distance_m": round(camera["focus_distance_m"], 4),
                                      "fstop": round(a.fstop, 4)}
@@ -1142,7 +1200,11 @@ def check(doc: dict) -> list[str]:
         return [f"not a {SCHEMA} document"]
     if doc.get("sha256") != digest(doc):
         out.append("sha256 does not match the document (edited after it was made)")
-    trees = [(f"material {m['name']}", m) for m in doc["materials"]] + [("world", doc["world"])]
+    art0 = doc["tokens"].get("art") or {}
+    for m in doc["materials"]:
+        if m.get("native") and (m.get("class") not in art0.get("native_classes", ()) or m["nodes"] or m["links"]):
+            out.append(f"material {m['name']}: native only for a class the look lists, and it carries no nodes")
+    trees = [(f"material {m['name']}", m) for m in doc["materials"] if not m.get("native")] + [("world", doc["world"])]
     if doc["paper"].get("enabled"):
         trees.append(("paper", doc["paper"]))
     for where, g in trees:
@@ -1155,6 +1217,8 @@ def check(doc: dict) -> list[str]:
     art = doc["tokens"].get("art")
     lit_path = art is not None and art.get("shade_path") == "lit"
     for m in doc["materials"]:
+        if m.get("native"):
+            continue
         types = {n["type"] for n in m["nodes"]}
         if doc["path"] == "cycles_safe" and "ShaderNodeShaderToRGB" in types:
             out.append(f"material {m['name']}: Shader to RGB on the Cycles-safe path (EEVEE-only, 9.1)")
@@ -1188,6 +1252,8 @@ def check(doc: dict) -> list[str]:
             out.append(f"light {lt['name']}: fill and rim cast no shadow and keep specular <= 0.3")
         if rim and lt.get("link") != "cast":
             out.append(f"light {lt['name']}: light-linked to the cast only")
+        if lt["name"].startswith("lift_") and (lt["use_shadow"] or lt["specular_factor"] > 0 or lt.get("link") != f"char:{lt['name'][5:]}"):
+            out.append(f"light {lt['name']}: a skin lift is shadowless, without specular and linked to its character")
         if lt["name"] != "key" and lt["use_shadow"]:
             out.append(f"light {lt['name']}: only the key sun casts a shadow (Wing It!)")
         if lt["name"] == "key" and lt["use_shadow"] and not math.radians(5) - 1e-6 <= lt["angle_rad"] <= math.radians(10) + 1e-6:

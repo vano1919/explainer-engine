@@ -1,0 +1,27 @@
+{
+  "schema": "combo_profiles/1",
+  "_doc": "The overnight matrix's Q1 combinations C1-C4 (OVERNIGHT_PLAN.md, Fable 2026-11-05 22:05 UTC; the creator's brief 19:55 UTC). Each names a WP-Q1 look (look_variants.json q1_variants) and the render profile; the era picks the light preset (light_presets.json), so every combination renders the same four scenes under the same light. C2 is the default character path for every era cell (Fable 22:06 UTC: Q4's toon Rain frame is not there); C1's toon skin is its own cell. Extensions are used as data (their node groups appended from the shipped .blend; no add-on Python runs). Everything is HYP until Fable and the creator judge the cells.",
+  "default": "C2",
+  "eras": {
+    "E1": {"name": "antiquity: Greco-Roman forum", "light_preset": "noon_epic"},
+    "E2": {"name": "medieval: hill_castle", "light_preset": "golden_hour"},
+    "E3": {"name": "early modern: harbour town square", "light_preset": "overcast_day"},
+    "E4": {"name": "nineteenth century: field camp or street", "light_preset": "golden_hour"}
+  },
+  "combos": {
+    "C1": {"look": "q1_c1_lit_preset", "profile": "eevee_painterly", "characters": "toon",
+           "what": "Q1 lit matte shading on cast and set, PBR Neutral, the era preset (front-biased key, two linked rims), Kuwahara 4 + DoF"},
+    "C2": {"look": "q1_c2_native_skin", "profile": "eevee_painterly", "characters": "native",
+           "what": "C1's light and finish; the cast keeps its own Blender Studio skin/cloth shading (native_classes), a per-character skin lift"},
+    "C3": {"look": "q1_c3_far_plate", "profile": "eevee_painterly", "characters": "native",
+           "what": "C2 with the far ground painted by depth (plate Kuwahara 10, frame Kuwahara 3)",
+           "not_in": ["Brushstroke Tools on the close plane: its operators are add-on Python, refused in the cloud container; the GN-only route (append .brushstroke_tools.surface_fill + curves_to_brushstrokes) is not built yet"]},
+    "C4": {"look": "q1_c4_pn_faces", "profile": "eevee_painterly", "characters": "toon",
+           "what": "C1 with Perfectly Normal spherized face normals (converge 0.6) instead of the blur soften",
+           "extensions": [{"id": "perfectly_normal", "version": "0.0.3", "licence": "GPL-3.0-or-later",
+                           "url": "https://extensions.blender.org/download/sha256:477d5735c3f11e03111ee78ffcb61875d829ca31be5aaa7bef8feeca1f0cfd0a/add-on-perfectly-normal-v0.0.3.zip",
+                           "sha256": "477d5735c3f11e03111ee78ffcb61875d829ca31be5aaa7bef8feeca1f0cfd0a", "env": "EE_PERFECTLY_NORMAL_BLEND",
+                           "file": "assets/perfectly_normal.blend"}],
+           "not_in": ["nikolaj3d Stylized Painterly Shader: $0 on Gumroad, but the download goes through a checkout that takes an email; not done overnight (no new accounts)"]}
+  }
+}

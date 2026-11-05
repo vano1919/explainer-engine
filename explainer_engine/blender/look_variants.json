@@ -722,6 +722,318 @@
       "fill": 0.9,
       "rim_strength": 2.8,
       "ambient": 0.3
+    },
+    {
+      "id": "q1_c1_lit_preset",
+      "slider": 1,
+      "label": "C1  lit matte, PBR Neutral, preset light, Kuwahara + DoF",
+      "feel": "the overnight C1: our matte lit shading on every surface, the era's light preset (front-biased key, two rims), a light Kuwahara over the frame, painted blur behind",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 4,
+      "kuwahara_scope": "frame"
+    },
+    {
+      "id": "q1_c2_native_skin",
+      "slider": 1,
+      "label": "C2  C1 light and finish, characters keep their own shading",
+      "feel": "the overnight C2 (Fable: the default character path): Blender Studio's own SSS skin and cloth on the cast under C1's light and finish; the set stays matte lit",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 0,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 4,
+      "kuwahara_scope": "frame",
+      "native_classes": [
+        "skin",
+        "hair",
+        "eyes",
+        "costume"
+      ],
+      "skin_lift": {
+        "rain": 0.2
+      }
+    },
+    {
+      "id": "q1_c3_far_plate",
+      "slider": 1,
+      "label": "C3  C2 + far ground painted as a plate",
+      "feel": "the overnight C3: C2 with the far ground painted (a strong Kuwahara on the depth-far plate), the close plane kept sharp",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "plate",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 0,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 3,
+      "kuwahara_scope": "frame",
+      "plate_kuwahara": 10,
+      "native_classes": [
+        "skin",
+        "hair",
+        "eyes",
+        "costume"
+      ],
+      "skin_lift": {
+        "rain": 0.2
+      }
+    },
+    {
+      "id": "q1_c4_pn_faces",
+      "slider": 1,
+      "label": "C4  lit matte body + Perfectly Normal spherized faces",
+      "feel": "the overnight C4: C1's light and finish with Perfectly Normal (GPL-3) spherizing the cast's normals; the nikolaj3d body shader is not in (its Gumroad checkout needs an email)",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 0,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 4,
+      "kuwahara_scope": "frame",
+      "pn_converge": 0.6
     }
   ]
 }

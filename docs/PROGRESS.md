@@ -4231,4 +4231,18 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Local check (this container, Blender 5.2.3 CPU / Mesa, 1280x720): lights, light linking (20 cast meshes) and the normal blur
   applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
   heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
+- Overnight matrix C1-C4 (Fable's OVERNIGHT_PLAN 22:05 UTC, the creator's brief 19:55 UTC): `blender/combo_profiles.json`
+  (`combo_profiles/1`, read by `blender/combos.py`) names each combination's look (`q1_c1_lit_preset`, `q1_c2_native_skin`,
+  `q1_c3_far_plate`, `q1_c4_pn_faces`), render profile and character path; each era brings its light preset (E1 noon_epic, E2
+  golden_hour, E3 overcast_day, E4 golden_hour). C2 is the default character path (Fable 22:06 UTC: Q4's toon Rain is not there).
+  New look knobs (defaults keep every older graph byte for byte): `native_classes` (those character classes keep the asset's own
+  material, e.g. Blender Studio's SSS skin; `apply_style` leaves the slot alone, `check` accepts a native entry only for a listed
+  class), `skin_lift` (per character: a shadowless, specular-free front fill linked to that character's meshes, and on rgb_soft its
+  skin shadow tint lerped to white), `pn_converge` (Perfectly Normal 0.0.3, GPL-3.0-or-later: its Manip Verts GN groups appended
+  from the extension's own .blend as data, (Re)create -> Tweak Converge -> Apply; one face-normal method at a time). Presets: every
+  key carries `front_offset_deg` (30-45 degrees, enforced): with a cast in the shot the key turns to the camera's side.
+  Perfectly Normal pinned in `config/cloud_pins.json` and `assets/licence_sources.json`, fetched by `blender/face_normals.py`.
+  Not in (stated, not hidden): Brushstroke Tools on C3's close plane (its operators are add-on Python, refused in the cloud
+  container; the GN-only route is not built) and nikolaj3d's shader for C4 (the $0 Gumroad download needs a checkout with an
+  email). Tests: `tests/unit/test_combo_profiles.py`.
 
