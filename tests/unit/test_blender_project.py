@@ -87,3 +87,33 @@ def test_a_pin_without_hashes_is_refused():
     pins["blender"]["archives"]["linux-x64"]["sha256"] = ""
     with pytest.raises(BlenderPinError, match="needs an https url and a sha256"):
         BlenderProject(pins)
+
+
+class P:
+    def __init__(self, out, rc=0):
+        self.stdout, self.stderr, self.returncode = out, "", rc
+
+
+def test_gpu_name_knows_nvidia_and_apple_silicon(monkeypatch):
+    from explainer_engine.blender import project as PR
+    monkeypatch.setattr(PR.shutil, "which", lambda name: None)  # no nvidia-smi
+    apple = lambda cmd, t: P("Apple M4 Pro\n") if cmd[0] == "sysctl" else P("")  # noqa: E731
+    assert PR.gpu_name(apple, system="Darwin", machine="arm64") == "Apple M4 Pro"
+    assert PR.gpu_name(apple, system="Darwin", machine="x86_64") is None
+    assert PR.gpu_name(apple, system="Linux", machine="x86_64") is None
+    monkeypatch.setattr(PR.shutil, "which", lambda name: "/usr/bin/nvidia-smi")
+    nv = lambda cmd, t: P("NVIDIA RTX A5000\n")  # noqa: E731
+    assert PR.gpu_name(nv, system="Linux", machine="x86_64") == "NVIDIA RTX A5000"
+
+
+def test_resolve_auto_picks_gpu_only_when_there_is_one(monkeypatch):
+    from explainer_engine.blender import project as PR
+    proj = BlenderProject()
+    ver = lambda cmd, t: P("Blender 5.2.3\n")  # noqa: E731
+    monkeypatch.setattr(PR, "gpu_name", lambda run=None, **kw: "Apple M4 Pro")
+    b = proj.resolve("/opt/blender", device="auto", run=ver)
+    assert (b.device, b.gpu) == ("gpu", "Apple M4 Pro")
+    monkeypatch.setattr(PR, "gpu_name", lambda run=None, **kw: None)
+    assert proj.resolve("/opt/blender", device="auto", run=ver).device == "cpu"
+    with pytest.raises(BlenderPinError, match="Apple silicon"):
+        proj.resolve("/opt/blender", device="gpu", run=ver)

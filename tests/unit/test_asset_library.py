@@ -30,9 +30,13 @@ def test_committed_library_verifies_clean():
     assert L.verify() == []
     lib = L.load()
     assert lib["schema"] == "asset_library/2" and len(lib["items"]) >= 9  # moved to /2 by ICW-05 (D-110)
-    assert all(i["storage"] == {"location": "git", "external_path": None} and i["deps"] == [] for i in lib["items"])
-    assert all(i["licence"]["commercial_use"] == "unknown" for i in lib["items"])  # Gemini output, terms never verified
-    assert all(i["approval"]["status"] == "superseded" for i in lib["items"])  # look v1 sprites, kept for lineage only
+    raster = [i for i in lib["items"] if i["kind"] in L.KINDS_V1]  # the look v1 records; ICW-05b added the PoC 3 CC0 files
+    assert len(raster) >= 9
+    assert all(i["storage"] == {"location": "git", "external_path": None} and i["deps"] == [] for i in raster)
+    assert all(i["licence"]["commercial_use"] == "unknown" for i in raster)  # Gemini output, terms never verified
+    assert all(i["approval"]["status"] == "superseded" for i in raster)  # look v1 sprites, kept for lineage only
+    three_d = [i for i in lib["items"] if i["kind"] not in L.KINDS_V1]
+    assert all(i["storage"]["location"] == "external" and i["licence"]["commercial_use"] == "yes" for i in three_d)  # CC0, out of git
 
 
 def test_record_checks_id_kind_and_file(repo):
