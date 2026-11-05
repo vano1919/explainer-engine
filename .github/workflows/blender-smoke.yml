@@ -3,7 +3,9 @@ name: Blender smoke
 # ICW-04 (roadmap 12.4 step 1, BP-175): the pinned Blender 5.2.3 LTS starts headless on a CPU-only runner and renders an 8-frame
 # shot_spec/2 with the Workbench engine at 320x180 through the production adapter (explainer_engine/blender/render.py): the
 # archive is checked against the sha256 of config/cloud_pins.json, every frame goes RENDERED -> DURABLY_STORED -> COMMITTED on a
-# local stand-in vault, and the frames, the render manifest and the Blender log are kept as an artifact. Free: no pod, no paid call.
+# local stand-in vault, and the frames, the render manifest and the Blender log are kept as an artifact. ICW-06 adds a second
+# smoke: one rigged character (the free CC0 Quaternius packs, fetched by their sha256 from itch.io) walking under a camera rail,
+# with its blender_scene_manifest/1. Free: no pod, no paid call.
 
 on:
   push:
@@ -47,9 +49,9 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Install the contract validator and Blender's runtime libraries (Mesa EGL, no GPU)
+      - name: Install the contract validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
         run: |
-          python -m pip install "jsonschema==4.26.0"
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0"  # pillow: the character smoke reads texture means
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
             libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6
@@ -100,11 +102,38 @@ jobs:
           assert all(f["rule"] == "CN-17" and "master" in f["detail"] for f in s["findings"] if f["severity"] == "FAIL"), s["findings"]
           print(json.dumps(s, indent=1))
           PY
+      - name: Cache the free CC0 character packs (keyed by their sha256)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache/packs
+          key: character-packs-${{ hashFiles('explainer_engine/blender/character_assets.json') }}
+      - name: Render the character smoke (ICW-06; one rigged character on a camera rail, Workbench, 8 frames, 320x180)
+        run: |
+          python -m explainer_engine.blender.characters fetch
+          python -m explainer_engine.blender.scene_builder smoke --out char_smoke --binary "${{ steps.install.outputs.bin }}"
+      - name: Check the character frames and the scene manifest
+        run: |
+          python - <<'PY'
+          import glob, json
+          from explainer_engine.blender.render import check_png
+          s = json.load(open("char_smoke/smoke_summary.json"))
+          frames = sorted(glob.glob(s["frames_dir"] + "/frame_*.png"))
+          assert len(frames) == 8 and not any(check_png(f, 320, 180) for f in frames), frames
+          assert len({open(f, "rb").read() for f in frames}) == 8, "the rail moves the camera: no two frames are equal"
+          assert list(s["characters"]) == ["walker"] and s["actions"], s
+          assert s["objects"]["armatures"] == 1 and s["camera_keys"] == 3 and not s["findings"], s
+          m = json.load(open(s["scene_manifest"]))
+          assert m["schema"] == "blender_scene_manifest/1" and any(a["id"] == "animation.ual1_standard" for a in m["assets"])
+          print(json.dumps(s, indent=1))
+          PY
       - name: Collect the outputs
         if: always()
         run: |
           mkdir -p smoke_artifact
           cp -r smoke/work/*/frames smoke_artifact/ 2>/dev/null || true
+          mkdir -p smoke_artifact/character
+          cp -r char_smoke/work/*/frames char_smoke/smoke_summary.json char_smoke/work/*/scene_manifest.json \
+             char_smoke/work/*/bpy_report.json char_smoke/work/*/blender.log smoke_artifact/character/ 2>/dev/null || true
           cp smoke/smoke_summary.json smoke/work/*/render_manifest.json smoke/work/*/render_checkpoint.json smoke/work/*/blender.log \
              smoke/work/*/bpy_report.json smoke_artifact/ 2>/dev/null || true
           ls -la smoke_artifact

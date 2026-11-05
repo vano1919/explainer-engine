@@ -2,6 +2,407 @@
   "schema": "asset_library/2",
   "items": [
     {
+      "id": "animation.ual1_standard",
+      "kind": "animation",
+      "file": "tools/assets_cache/69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997/ual1_standard.glb",
+      "sha256": "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
+      "bytes": 7618436,
+      "tags": [
+        "animation",
+        "combat",
+        "idle",
+        "locomotion",
+        "quaternius",
+        "talk",
+        "ual"
+      ],
+      "description": "Quaternius Universal Animation Library 1, 43 in-place clips (root motion off) on the UBC skeleton",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Animation Library[Standard]/Unreal-Godot/UAL1_Standard.glb",
+          "pack_sha256": "cc73fc4e495b82958207316596317a3f40b9fa38065bde1027937452da537724",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Animation Library: VENDOR page: CC0, same sentence as the Universal Base Characters page; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-animation-library",
+        "revision_or_version": "Standard (free) zip, UAL1, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "FBX/GLB free, .blend in the paid Source kit; root motion vs in-place is not stated on the page"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:03",
+        "source": "import quaternius_ual https://quaternius.itch.io/universal-animation-library :: Universal Animation Library[Standard]/Unreal-Godot/UAL1_Standard.glb"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/animation/animation.ual1_standard/ual1_standard.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 13744,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "M_Main",
+          "M_Joints"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "costume.mco_female_peasant",
+      "kind": "costume",
+      "file": "tools/assets_cache/82e8c8ae38062b91eb9dc31cf176c9d402557a40b26397d4c292b5a84380f504/mco_female_peasant.glb",
+      "sha256": "82e8c8ae38062b91eb9dc31cf176c9d402557a40b26397d4c292b5a84380f504",
+      "bytes": 29749992,
+      "tags": [
+        "costume",
+        "female",
+        "mco",
+        "peasant",
+        "quaternius"
+      ],
+      "description": "Quaternius Modular Character Outfits (Fantasy) female peasant outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Peasant.gltf",
+          "pack_sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Modular Character Outfits - Fantasy: VENDOR page (read 2026-11-05): 'Free to use in personal, educational and commercial projects. (CC0 License)'; the pack's License_Standard.txt: CC0 1.0 Universal; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+        "revision_or_version": "Standard (free) zip, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard download holds four outfits (male/female peasant and ranger) on the Universal Base Characters skeleton; separate parts and the rest are in the paid Source version, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": "model.ubc_superhero_female"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:02",
+        "source": "import quaternius_mco https://quaternius.itch.io/modular-character-outfits-fantasy :: Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Peasant.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/costume/costume.mco_female_peasant/mco_female_peasant.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 13568,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Peasant"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "costume.mco_female_ranger",
+      "kind": "costume",
+      "file": "tools/assets_cache/b0196c91e0145ad363ff310be06c226ad3fb449ae1b2c963f7da6e06576b8669/mco_female_ranger.glb",
+      "sha256": "b0196c91e0145ad363ff310be06c226ad3fb449ae1b2c963f7da6e06576b8669",
+      "bytes": 40665808,
+      "tags": [
+        "costume",
+        "female",
+        "mco",
+        "quaternius",
+        "ranger"
+      ],
+      "description": "Quaternius Modular Character Outfits (Fantasy) female ranger outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.gltf",
+          "pack_sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Modular Character Outfits - Fantasy: VENDOR page (read 2026-11-05): 'Free to use in personal, educational and commercial projects. (CC0 License)'; the pack's License_Standard.txt: CC0 1.0 Universal; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+        "revision_or_version": "Standard (free) zip, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard download holds four outfits (male/female peasant and ranger) on the Universal Base Characters skeleton; separate parts and the rest are in the paid Source version, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": "model.ubc_superhero_female"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:03",
+        "source": "import quaternius_mco https://quaternius.itch.io/modular-character-outfits-fantasy :: Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/costume/costume.mco_female_ranger/mco_female_ranger.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 26966,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Ranger",
+          "MI_Regular_Female"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "costume.mco_male_peasant",
+      "kind": "costume",
+      "file": "tools/assets_cache/b0e792a24ee9f3a966996ea44dfee18a674e88f85a4e860034900df9e7167949/mco_male_peasant.glb",
+      "sha256": "b0e792a24ee9f3a966996ea44dfee18a674e88f85a4e860034900df9e7167949",
+      "bytes": 38308988,
+      "tags": [
+        "costume",
+        "male",
+        "mco",
+        "peasant",
+        "quaternius"
+      ],
+      "description": "Quaternius Modular Character Outfits (Fantasy) male peasant outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Peasant.gltf",
+          "pack_sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Modular Character Outfits - Fantasy: VENDOR page (read 2026-11-05): 'Free to use in personal, educational and commercial projects. (CC0 License)'; the pack's License_Standard.txt: CC0 1.0 Universal; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+        "revision_or_version": "Standard (free) zip, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard download holds four outfits (male/female peasant and ranger) on the Universal Base Characters skeleton; separate parts and the rest are in the paid Source version, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": "model.ubc_superhero_male"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:01",
+        "source": "import quaternius_mco https://quaternius.itch.io/modular-character-outfits-fantasy :: Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Peasant.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/costume/costume.mco_male_peasant/mco_male_peasant.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 12894,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Peasant",
+          "MI_Regular_Male"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "costume.mco_male_ranger",
+      "kind": "costume",
+      "file": "tools/assets_cache/4004ea07152fb74d7d0e07f3a4c88c9b82f4ae9dc4d4572f4eb0cc0c06df89f2/mco_male_ranger.glb",
+      "sha256": "4004ea07152fb74d7d0e07f3a4c88c9b82f4ae9dc4d4572f4eb0cc0c06df89f2",
+      "bytes": 40454300,
+      "tags": [
+        "costume",
+        "male",
+        "mco",
+        "quaternius",
+        "ranger"
+      ],
+      "description": "Quaternius Modular Character Outfits (Fantasy) male ranger outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.gltf",
+          "pack_sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Modular Character Outfits - Fantasy: VENDOR page (read 2026-11-05): 'Free to use in personal, educational and commercial projects. (CC0 License)'; the pack's License_Standard.txt: CC0 1.0 Universal; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+        "revision_or_version": "Standard (free) zip, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free Standard download holds four outfits (male/female peasant and ranger) on the Universal Base Characters skeleton; separate parts and the rest are in the paid Source version, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": "model.ubc_superhero_male"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:02",
+        "source": "import quaternius_mco https://quaternius.itch.io/modular-character-outfits-fantasy :: Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/costume/costume.mco_male_ranger/mco_male_ranger.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 26982,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Ranger",
+          "MI_Regular_Male"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
       "id": "hdri.ph_kloofendal_48d_partly_cloudy_puresky",
       "kind": "hdri",
       "file": "tools/assets_cache/fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
@@ -416,6 +817,487 @@
           "WoodenTable_02"
         ],
         "up_axis": "Z"
+      }
+    },
+    {
+      "id": "model.ubc_hair_beard",
+      "kind": "model",
+      "file": "tools/assets_cache/eb4b2ab3dec157aa8e5de77eb5827bc320f8b8393394966e8a2805d7efc479e5/ubc_hair_beard.glb",
+      "sha256": "eb4b2ab3dec157aa8e5de77eb5827bc320f8b8393394966e8a2805d7efc479e5",
+      "bytes": 5954488,
+      "tags": [
+        "beard",
+        "hair",
+        "quaternius",
+        "ubc"
+      ],
+      "description": "Quaternius UBC full beard, rigged to the Head bone of the UBC skeleton",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Beard.gltf",
+          "pack_sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Base Characters: VENDOR page: CC0, 'Free to use in personal, educational and commercial projects'; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-base-characters",
+        "revision_or_version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free download is OBJ/FBX/glTF (60-70 % of the pack); the .blend Source kit is a paid Patreon item, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:01",
+        "source": "import quaternius_ubc https://quaternius.itch.io/universal-base-characters :: Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Beard.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ubc_hair_beard/ubc_hair_beard.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 1034,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Hair_1"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ubc_hair_buns",
+      "kind": "model",
+      "file": "tools/assets_cache/483f247b62ad73011c39be864eebcd9a51309d0f36575d02c7e800231985806d/ubc_hair_buns.glb",
+      "sha256": "483f247b62ad73011c39be864eebcd9a51309d0f36575d02c7e800231985806d",
+      "bytes": 6662612,
+      "tags": [
+        "buns",
+        "hair",
+        "quaternius",
+        "ubc"
+      ],
+      "description": "Quaternius UBC hair in buns, rigged to the Head bone of the UBC skeleton",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Buns.gltf",
+          "pack_sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Base Characters: VENDOR page: CC0, 'Free to use in personal, educational and commercial projects'; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-base-characters",
+        "revision_or_version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free download is OBJ/FBX/glTF (60-70 % of the pack); the .blend Source kit is a paid Patreon item, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:00",
+        "source": "import quaternius_ubc https://quaternius.itch.io/universal-base-characters :: Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Buns.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ubc_hair_buns/ubc_hair_buns.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 3284,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Hair_2"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ubc_hair_long",
+      "kind": "model",
+      "file": "tools/assets_cache/e6d27f55ee7299b931ed95122d3d032020781c0a883664c913ea52a480ff3374/ubc_hair_long.glb",
+      "sha256": "e6d27f55ee7299b931ed95122d3d032020781c0a883664c913ea52a480ff3374",
+      "bytes": 6638456,
+      "tags": [
+        "hair",
+        "long",
+        "quaternius",
+        "ubc"
+      ],
+      "description": "Quaternius UBC long hair, rigged to the Head bone of the UBC skeleton",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Long.gltf",
+          "pack_sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Base Characters: VENDOR page: CC0, 'Free to use in personal, educational and commercial projects'; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-base-characters",
+        "revision_or_version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free download is OBJ/FBX/glTF (60-70 % of the pack); the .blend Source kit is a paid Patreon item, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:01",
+        "source": "import quaternius_ubc https://quaternius.itch.io/universal-base-characters :: Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Long.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ubc_hair_long/ubc_hair_long.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 2906,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Hair_2"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ubc_hair_simpleparted",
+      "kind": "model",
+      "file": "tools/assets_cache/c454e1044fca834634dd043b7f71aba79d85196bdbaa948744be60e30bcf834a/ubc_hair_simpleparted.glb",
+      "sha256": "c454e1044fca834634dd043b7f71aba79d85196bdbaa948744be60e30bcf834a",
+      "bytes": 5964464,
+      "tags": [
+        "hair",
+        "quaternius",
+        "simpleparted",
+        "ubc"
+      ],
+      "description": "Quaternius UBC short parted hair, rigged to the Head bone of the UBC skeleton",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_SimpleParted.gltf",
+          "pack_sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Base Characters: VENDOR page: CC0, 'Free to use in personal, educational and commercial projects'; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-base-characters",
+        "revision_or_version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free download is OBJ/FBX/glTF (60-70 % of the pack); the .blend Source kit is a paid Patreon item, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:00",
+        "source": "import quaternius_ubc https://quaternius.itch.io/universal-base-characters :: Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_SimpleParted.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ubc_hair_simpleparted/ubc_hair_simpleparted.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 1301,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Hair_1"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ubc_superhero_female",
+      "kind": "model",
+      "file": "tools/assets_cache/38672e4da740e4aabb647a077d3e585a41e855f2d2af9c3e761ac647ec534f0e/ubc_superhero_female.glb",
+      "sha256": "38672e4da740e4aabb647a077d3e585a41e855f2d2af9c3e761ac647ec534f0e",
+      "bytes": 16026248,
+      "tags": [
+        "body",
+        "character",
+        "female",
+        "head",
+        "quaternius",
+        "ubc"
+      ],
+      "description": "Quaternius UBC female base body (head, eyes, eyebrows) on the UBC skeleton",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.gltf",
+          "pack_sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+          "dropped_images": [
+            "T_Eye_Normal_png.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Base Characters: VENDOR page: CC0, 'Free to use in personal, educational and commercial projects'; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-base-characters",
+        "revision_or_version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free download is OBJ/FBX/glTF (60-70 % of the pack); the .blend Source kit is a paid Patreon item, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:00",
+        "source": "import quaternius_ubc https://quaternius.itch.io/universal-base-characters :: Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ubc_superhero_female/ubc_superhero_female.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 15060,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Hair_2",
+          "MI_Eyes",
+          "MI_Superhero_Female"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.ubc_superhero_male",
+      "kind": "model",
+      "file": "tools/assets_cache/01bdad57f58d69b4764672a933aad627c8edaad6775c414bb28a22cf23fb60b6/ubc_superhero_male.glb",
+      "sha256": "01bdad57f58d69b4764672a933aad627c8edaad6775c414bb28a22cf23fb60b6",
+      "bytes": 11138112,
+      "tags": [
+        "body",
+        "character",
+        "head",
+        "male",
+        "quaternius",
+        "ubc"
+      ],
+      "description": "Quaternius UBC male base body (head, eyes, eyebrows) on the 65-bone UBC skeleton; the head of a character, the body under a costume is cut away",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.gltf",
+          "pack_sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+          "dropped_images": [
+            "T_Hair_1_Normal_png.png",
+            "T_Eye_Normal_png.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Universal Base Characters: VENDOR page: CC0, 'Free to use in personal, educational and commercial projects'; check this pack's own page",
+        "source_url": "https://quaternius.itch.io/universal-base-characters",
+        "revision_or_version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "the free download is OBJ/FBX/glTF (60-70 % of the pack); the .blend Source kit is a paid Patreon item, not covered here"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T16:55:00",
+        "source": "import quaternius_ubc https://quaternius.itch.io/universal-base-characters :: Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.ubc_superhero_male/ubc_superhero_male.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": "skeleton.ubc_humanoid_v1",
+        "rig_profile": "ubc_humanoid",
+        "compatible_animation_sets": [
+          "ual1"
+        ],
+        "poly_count": 14318,
+        "bounds_m": null,
+        "units": "m",
+        "materials": [
+          "MI_Hair_1",
+          "MI_Eyes",
+          "MI_Superhero_Male"
+        ],
+        "up_axis": "Y"
       }
     },
     {

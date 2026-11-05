@@ -256,3 +256,12 @@ def test_the_light_profile_is_the_default_and_shadows_are_one_switch():
     heavy = S.StyleEngine(S.StyleTokens(shadows=True)).graph("eevee", camera={"lens_mm": 35, "focus_distance_m": 5.0})
     assert heavy["scene"]["eevee"]["use_shadows"] is True and heavy["key_light"]["use_shadow"] is True
     assert light["scene"]["eevee"]["use_raytracing"] is False and light["scene"]["eevee"]["use_fast_gi"] is False
+
+
+def test_a_material_may_override_the_texture_strength_inside_0_to_1():
+    eng = S.StyleEngine()
+    dflt = json.dumps(eng.material("c", "paper", texture=TEX, texture_mean=[0.5, 0.5, 0.5]))
+    half = json.dumps(eng.material("c", "paper", texture=TEX, texture_mean=[0.5, 0.5, 0.5], strength=0.5))
+    assert '"Factor": 0.5' in half and dflt != half
+    with pytest.raises(ValueError, match="share 0..1"):
+        eng.material("c", "paper", texture=TEX, strength=1.5)

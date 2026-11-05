@@ -31,6 +31,20 @@
       "outputs_note": "FBX/GLB free, .blend in the paid Source kit; root motion vs in-place is not stated on the page",
       "per_pack_check": true
     },
+    "quaternius_mco": {
+      "label": "Quaternius Modular Character Outfits - Fantasy",
+      "status": "cc0",
+      "commercial_use": "yes",
+      "source_url": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+      "evidence": "VENDOR page (read 2026-11-05): 'Free to use in personal, educational and commercial projects. (CC0 License)'; the pack's License_Standard.txt: CC0 1.0 Universal",
+      "redistribution": "allowed (CC0 1.0)",
+      "derivatives": "allowed (CC0 1.0)",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "the free Standard download holds four outfits (male/female peasant and ranger) on the Universal Base Characters skeleton; separate parts and the rest are in the paid Source version, not covered here",
+      "per_pack_check": true
+    },
     "kaykit_medieval_builder": {
       "label": "KayKit Medieval Builder pack (Kay Lousberg)",
       "status": "cc0",
