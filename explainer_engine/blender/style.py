@@ -37,7 +37,6 @@ import math
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
-from explainer_engine.standards import sourced_rules as SR
 
 SCHEMA = "style_graph/1"
 PATHS = ("eevee", "cycles_safe")
@@ -108,9 +107,10 @@ class StyleTokens:
     key_light: KeyLight = field(default_factory=KeyLight)
 
     def __post_init__(self) -> None:
-        lo, hi = band()
-        if not lo <= self.line_px <= hi:
-            raise ValueError(f"line weight {self.line_px} px is outside BP-173's band {lo}-{hi} px at 1440p")
+        # BP-173's weight band is enforced where the registry lists it (core/contracts.py, CN-17 on every shot_spec/2 the
+        # tokens go into); this module reads no threshold until ICW-07 adds it to BP-173's enforced_by.
+        if not self.line_px > 0:
+            raise ValueError(f"line weight {self.line_px} px is not a width")
         if len(self.tones) != self.steps or len(self.thresholds) != self.steps - 1:
             raise ValueError(f"{self.steps} steps need {self.steps} tones and {self.steps - 1} thresholds")
         if list(self.thresholds) != sorted(self.thresholds) or not all(0 < t < 1 for t in self.thresholds):
@@ -163,11 +163,6 @@ class StyleTokens:
         d = asdict(self)
         d["tones"], d["thresholds"] = list(self.tones), list(self.thresholds)
         return d
-
-
-def band() -> tuple[float, float]:
-    lo, hi = SR.T("BP-173", "weight_px_1440")
-    return float(lo), float(hi)
 
 
 # The collage variants (invariant 6: a new style is one collage of variants for the creator's choice). Every variant stays inside
@@ -392,9 +387,8 @@ def check(doc: dict) -> list[str]:
         ee = doc["scene"]["eevee"]
         if ee.get("use_raytracing") or ee.get("use_gtao") or ee.get("use_fast_gi"):
             out.append("EEVEE ray tracing / AO on under Shader to RGB (unreliable, 9.1)")
-    lo, hi = band()
-    if not lo <= doc["line_art"]["line_px_1440"] <= hi:
-        out.append(f"line weight {doc['line_art']['line_px_1440']} px outside {lo}-{hi} (BP-173)")
+    if not doc["line_art"]["line_px_1440"] > 0:
+        out.append(f"line weight {doc['line_art']['line_px_1440']} px is not a width")
     return out
 
 

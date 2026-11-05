@@ -12,6 +12,7 @@ from explainer_engine.blender import style as S
 from explainer_engine.blender import style_sheets as SS
 from explainer_engine.core import contracts as C
 from explainer_engine.core import shot_cache
+from explainer_engine.standards import sourced_rules as SR
 
 
 def fake_paths(tmp_path):
@@ -119,3 +120,10 @@ def test_collage_has_a_row_per_variant_and_a_column_per_scene(tmp_path):
     with Image.open(path) as im:
         assert im.width == 360 + 2 * (320 + 12) + 12 and im.height == 70 + 2 * (180 + 12) + 12
     assert (tmp_path / "collage_preview.jpg").exists()
+
+
+def test_a_line_outside_bp173_fails_the_spec_contract():
+    lo, hi = SR.T("BP-173", "weight_px_1440")
+    for px in (lo - 0.5, hi + 0.5):
+        spec = SS.spec_for("travel", "B", S.StyleTokens(line_px=px), scene={"objects": []})
+        assert any(f["severity"] == "FAIL" and "BP-173" in f["detail"] for f in C.errors(spec)), px

@@ -84,12 +84,9 @@ def test_line_art_radius_from_pixels_and_crease_from_bp173():
     assert S.line_radius(2.0, 10, 70) == pytest.approx(S.line_radius(2.0, 5, 35), rel=1e-4)
 
 
-def test_tokens_refuse_a_line_outside_the_band_and_wrong_step_counts():
-    lo, hi = SR.T("BP-173", "weight_px_1440")
-    with pytest.raises(ValueError, match="BP-173"):
-        S.StyleTokens(line_px=hi + 0.5)
-    with pytest.raises(ValueError, match="BP-173"):
-        S.StyleTokens(line_px=lo - 0.5)
+def test_tokens_refuse_a_non_width_and_wrong_step_counts():
+    with pytest.raises(ValueError, match="width"):
+        S.StyleTokens(line_px=0)
     with pytest.raises(ValueError, match="tones"):
         S.StyleTokens(tones=(0.5, 1.0))
     with pytest.raises(ValueError, match="look"):
@@ -98,7 +95,7 @@ def test_tokens_refuse_a_line_outside_the_band_and_wrong_step_counts():
 
 def test_variants_stay_inside_the_bible_fixed_tokens():
     base = S.StyleTokens()
-    lo, hi = S.band()
+    lo, hi = SR.T("BP-173", "weight_px_1440")
     for name in S.VARIANTS:
         t = S.variant(name)
         assert lo <= t.line_px <= hi
