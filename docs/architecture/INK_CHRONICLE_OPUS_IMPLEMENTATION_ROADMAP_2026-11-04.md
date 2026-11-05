@@ -2,7 +2,7 @@
 
 **Status:** authoritative planning deliverable of the Fable master task ([FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md)).
 **Branch:** `opus/ink-chronicle-blender-visual-system-2026-11-04` (the ONLY working branch). Audited HEAD before this document: `bb1243e5c7d8bf7935f2a2fd59ef24dede920c4c`.
-**Written:** 2026-11-05 by the Fable planning thread. Documentation only; no runtime, test, pod, paid call or `main` change.
+**Written:** 2026-11-05 by the Fable planning thread; **revision 2** the same day after the creator's independent review (section 19). Documentation only; no runtime, test, pod, paid call or `main` change.
 **One home rule:** this file is the one roadmap. Older branch documents stay as evidence and are linked, never copied (section 3).
 
 Evidence labels used throughout: **REPO** = verified repository fact (path, symbol, line at HEAD `bb1243e`), **EXT** = verified external fact (source + access date 2026-11-05), **CREATOR** = creator-approved requirement, **MEASURED** = measured in this repository or on CI, **VENDOR** = vendor claim, **EST** = estimate (arithmetic over stated assumptions), **HYP** = hypothesis, **OPEN** = open creator decision, **NOT FOUND** = searched, does not exist.
@@ -17,7 +17,7 @@ Dispositions: KEEP / CHANGE / REMOVE / ADD / DEFER-BEHIND-TEST / REJECT. Approva
 
 Ten work packages (section 15) land in six phases; the critical path is ICW-00 → ICW-02 → ICW-04 → ICW-06 → ICW-07 → ICW-09 → ICW-10. The first paid step is one bounded benchmark pod (ICW-09, cap proposed US$3) after the OR-34 Fable audit; nothing before it costs money.
 
-**Verdict: OPUS READY** (updated 2026-11-05 07:45 UTC) — the three creator answers of section 17 are recorded: ICG-1 = A (70/30 nominal, REVIEW band 65-75), ICG-2 = A in substance (a small RunPod cost test; the money figure is confirmed in the OR-23 pod plan before the pod starts), ICG-3 = A (the M4 Pro Mac renders the local visual tests). No evidence gate blocks; every technical decision is closed in sections 5-13. OPUS READY is not permission to launch Opus: the creator's explicit word is still required (section 18, item 12).
+**Verdict: OPUS READY** (updated 2026-11-05 07:45 UTC) — the three creator answers of section 17 are recorded: ICG-1 = A (70/30 nominal, REVIEW band 65-75), ICG-2 = A in substance (a small RunPod cost test; the money figure is confirmed in the OR-23 pod plan before the pod starts), ICG-3 = A (the M4 Pro Mac renders the local visual tests). Revision 2 (section 19) closed the review's findings in the plan itself: a durable frame-recovery contract (10.4), the benchmark protocol the brief actually asked for (12.4, with the money figure raised to a proposed ≤ US$6 for the creator's word in the OR-23 plan), the full AI-asset PoC matrix (9.4), the four-tier resolution test (9.5), a final-mix speech check (13) and per-package effort/uncertainty (15). No evidence gate blocks Opus's first packages (ICW-00..08 cost $0); every technical decision is closed in sections 5-13. OPUS READY is not permission to launch Opus: the creator's explicit word is still required (section 18, item 12).
 
 What this roadmap does NOT claim: that Blender is production-ready (the PoC never produced a verified render, section 3.5), that US$10-15 is achievable (section 12 shows it is plausible only below about 3-4 s per 1440p frame on a 4090-class card, HYP), or that any upscale tier is safe (section 8.2, DEFER-BEHIND-TEST).
 
@@ -297,6 +297,8 @@ Source libraries (EXT, read 2026-11-05 unless marked): Poly Haven CC0 (models, t
 | Concept / reference art for the collage | KEEP under D-50 | already how the creator picks a look |
 | Everything primary | CC0/CC-BY libraries + MPFB2 + Mixamo + hand-built hero assets | licences verified, outputs owned |
 
+AI-asset PoC matrix (brief 8.1, the representative set, run inside ICW-05/ICW-09; rev. 2): one hero character with **two costume variants**, one secondary/background character, one interior environment, one exterior environment and one modular prop set; each tested under rotation (turntable 360°), close-up, a broad camera move and a representative body motion (walk cycle + one gesture). Pass criteria per asset: no clipping of costume through body in the motion test, identity CLIP distance within the ICW-05 threshold across the three lighting setups, UV/texture seams invisible at 1440p close-up, licence recorded in the library. A static front view is not evidence (brief 8.1). AI-generated candidates are compared against the library/hand-built one on the same matrix; "DEFER-BEHIND-TEST" rows above are promoted only on a full-row PASS.
+
 ### 9.5 Adaptive resolution and upscale (brief 8.2)
 
 | Tier | Disposition | Rule |
@@ -304,7 +306,7 @@ Source libraries (EXT, read 2026-11-05 unless marked): Poly Haven CC0 (models, t
 | Native 2560x1440 | KEEP (default) | faces, close-ups, any on-screen text, hero reveals, STILL_3D plates |
 | 1920x1080 → Lanczos (`finish/upscale.py`, REPO, ffmpeg) | DEFER-BEHIND-TEST | wide / action VIDEO_3D only; promoted per `render_profile` if ICW-09's line-stability and SSIM checks pass against the native render |
 | 1280x720 → upscale | DEFER-BEHIND-TEST, narrow | distant atmosphere / weather only; same test |
-| 854x480 → upscale | REJECT | line art at ~2.5 px cannot survive a 3x scale; never for an illustrated look |
+| 854x480 → upscale | REJECT (HYPOTHESIS, to be confirmed by the test) | expected: line art at ~2.5 px cannot survive a 3x scale; the brief asks for 480p→1440p in the comparison, so it is rendered in ICW-09 on the three scenes (close-up, wide tableau, action) as a moving sequence and the rejection is confirmed or revised by the line-stability, SSIM and identity checks (rev. 2) |
 | AI upscalers (Real-ESRGAN etc.) | DEFER-BEHIND-TEST | compare against Lanczos in the same benchmark; only free, local, licence-checked tools |
 
 The combined model (9.4 + 9.5) changes nothing in the cost model's baseline (section 12 scenario rows are native 1440p); it is an upside recorded as scenario "D" there.
@@ -342,9 +344,21 @@ film_shots/3: lane enum `VIDEO_3D|STILL_3D|HELPER`, new fields of 7.1; everythin
 2. `scripts/migrate_film_shots_2_to_3.py`: KEYFRAME_LTX/ATMOS_BROLL/DIALOGUE_CU → VIDEO_3D (DIALOGUE_CU sets `lipsync: true`), STILL_HOLD → STILL_3D/hold, archetype 8 → STILL_3D/parallax_25d, MAP/COMPENSATOR/GRAPHICS → HELPER, HOST_COMMENTARY and DRAMA_BLOCKED_3D → refuse with the D-89/D-77 message. Dry-run report first; fixtures under `tests/fixtures` regenerated with `--write` and diffed in review.
 3. The Napoleon fixture and `script_variants.json` are regenerated in the same package (they are already stale, section 4.1).
 
+### 10.4 Frame-level durable recovery (`render_checkpoint/1`, rev. 2)
+
+The existing guards are necessary but not sufficient (REPO): `core/shot_cache.py` verifies a *finished* shot output by hash; the RunPod heartbeat (LT-17) proves the pod is alive, not that a frame is safe; the vault (`explainer_engine/vault.py`, D-73, `docs/VAULT.md` VT-01..05) proves that *final* outputs reached Hugging Face with the same sha256 before a pod stops. OR-03 ("a stop loses nothing") and OR-33 ("a paid path without step-by-step saving proven by a test does not run") therefore require a per-frame protocol for Blender, which this contract defines.
+
+| Frame state | Meaning | Who sets it |
+|---|---|---|
+| `RENDERED` | the frame file exists in the pod's work dir and passed the local check (decodes, expected size, expected index, not black unless declared) | `bpy/render_shot.py` after each frame (or each chunk of ≤ 8 frames) |
+| `DURABLY_STORED` | the frame (or chunk archive) was uploaded outside the pod to the vault prefix `blender/<job_id>/<shot_key>/frames/` and the remote sha256 equals the local one (`vault.check_uploaded` semantics, per file) | `blender/render.py` uploader thread |
+| `COMMITTED` | the atomic checkpoint file `render_checkpoint.json` (written with `core/store.write_json_atomic`, then uploaded) lists the frame with its sha256 and `DURABLY_STORED` time | `blender/render.py` after the remote verify |
+
+Rules: (1) at job start `render.py` downloads the remote checkpoint, verifies every `COMMITTED` frame's remote hash, and renders **only the missing or mismatching frames**; (2) a frame counts for recovery only in `COMMITTED`; (3) the final MKV is built only when every frame is `COMMITTED`, is ffprobe-checked, hashed, uploaded, verified, and only then enters the shot cache; (4) the pod script ends with `python -m explainer_engine.vault check-uploaded` on the shot dir (VT-01) and the `DONE` heartbeat that lets the pod self-stop (D-74) is sent **after** that check and never before; (5) a failed upload or verify keeps the pod STOPPED, never deleted (VT-02); (6) the ledger line records frames committed per dollar, so a cap stop at 350/500 frames keeps 350 paid frames. Upload cost: a 1440p PNG frame is ~3-6 MB (EST); chunked archives of 8 frames keep the upload count at ~1,300 per episode on HF (acceptable; the exact figure is measured in ICW-09 and compared with a per-shot MKV-chunk alternative). Tests (ICW-04, before any paid run per OR-33): a fake renderer + fake vault in `tests/unit/test_blender_render.py` prove kill-at-frame-N → resume renders only N+1.., a corrupted remote frame is re-rendered, a failed upload blocks `DONE`, and the checkpoint write is atomic.
+
 ## 11. Minimal module and class tree (status: every class TODO until its ICW lands)
 
-Task-complexity estimator: **FOUND** — `config/model_routing.json` (`classes` with `level` S0-S4 and `model`; `governance/__init__.py::LEVELS`). Sizes below use it: S1 mechanical-change, S2 straightforward-code / phase-from-plan, S3 architecture / new-method-code / pod-plan. The estimator never assigns Fable to code (`code.never_models`), so Opus (S3) takes the design-heavy packages and Sonnet (S1-S2) the mechanical ones.
+Task-complexity estimator: **FOUND** — `config/model_routing.json` (`classes` with `level` S0-S4 and `model`; `governance/__init__.py::LEVELS`). Sizes below use it: S1 mechanical-change, S2 straightforward-code / phase-from-plan, S3 architecture / new-method-code / pod-plan. The estimator never assigns Fable to code (`code.never_models`), so Opus (S3) takes the design-heavy packages and Sonnet (S1-S2) the mechanical ones. It is a *routing* estimator (which model, which effort), not a calendar or person-hours estimator (NOT FOUND in the repository); section 15 therefore adds an explicit effort and uncertainty line per package (rev. 2).
 
 ```
 explainer_engine/visual/                              (ICW-03)
@@ -359,7 +373,8 @@ explainer_engine/blender/                             (ICW-04/05/06)
   scene_builder.py SceneBuilder.build(shot_spec) -> blender_scene_manifest/1 (writes the bpy job json)
   rigs.py         RigAdapter.retarget(mixamo_fbx, rig_asset); LipSync.apply(rhubarb_json, shape_keys)
   render.py       HeadlessRender.run(spec, out_dir) -> blender_render_manifest/1 (subprocess: --background --factory-startup
-                  --python-exit-code 1 --python bpy/render_shot.py -- <job.json>; streams frames; resumable per frame, OR-33)
+                  --python-exit-code 1 --python bpy/render_shot.py -- <job.json>; per-frame RENDERED -> DURABLY_STORED ->
+                  COMMITTED protocol of 10.4 with the vault uploader; resume renders only uncommitted frames, OR-03/OR-33)
   bpy/render_shot.py   the only script that imports bpy; reads job.json, builds, renders, writes manifest
   cost.py         CostModel.estimate(frames, profile, gpu_class, job_speeds) -> ledger line (ESTIMATE until rows exist)
   validate.py     RenderValidator.check(out_dir, spec) -> qa findings (frames, size, fps, black/frozen/flicker, line stability)
@@ -399,16 +414,17 @@ Twelve classes, no Pydantic (the repo validates with JSON Schema in `core/contra
 | C heavy (Line Art on dense scenes, crowds, volumetrics) | 6.0 | 17.3 | $5.9 | $15.4 | — |
 | D with 9.5 tiers (half the VIDEO frames at 1080p ≈ 0.56x cost on those) | B x 0.78 | 6.7 | $2.3 | $6.0 | — |
 
-Add per episode: pod boot and asset sync ~10-15 min, 10-20 % re-renders after QA, Cycles hero shots (if any: ~30-60 s/frame, EST, so one 5-second hero shot ≈ 1-2 GPU-h ≈ $1-2 on a secure 4090), STILL plates (~1 min of GPU), storage $1.4-4/mo. **Conclusion:** US$10-15 holds for scenarios A, B and D on either tier and for C only on community pricing; a 1440p EEVEE frame slower than ~4 s on a 4090 breaks the target on secure pricing. Line Art is the known cost risk (the manual notes bake/no-cache and instancing costs; EXT). None of this is measured yet.
+Add per episode: pod boot and asset sync ~10-15 min, 10-20 % re-renders after QA, Cycles hero shots (if any: ~30-60 s/frame, EST, so one 5-second hero shot ≈ 1-2 GPU-h ≈ $1-2 on a secure 4090), STILL plates (~1 min of GPU), storage $1.4-4/mo. **Benchmark cost (EST, rev. 2):** the cloud pass of 12.4 is ~6 scenes x 2 profiles x 3 repeats x 48 frames at 1440p plus the tier and asset rows ≈ 2.5-3 GPU-hours on a 4090 and ≈ 4-6 on an A5000 at the HYP frame times, i.e. ≈ US$2.5-3 (4090 secure) + US$1.5-2 (A5000 secure) + boot and storage ≈ **US$4-6**; hence the proposed cap of US$6 (the creator saw this figure as option B of ICG-2; the single-pod US$3 answer covered the brief's minimum of one GPU without repeats, so the figure goes back to his word in the OR-23 plan). **Conclusion:** US$10-15 holds for scenarios A, B and D on either tier and for C only on community pricing; a 1440p EEVEE frame slower than ~4 s on a 4090 breaks the target on secure pricing. Line Art is the known cost risk (the manual notes bake/no-cache and instancing costs; EXT). None of this is measured yet.
 
 ### 12.4 Benchmark protocol (ICW-09; the OR-23 plan is written from this)
 
 1. **Free preflight (no money):** CI smoke (Workbench engine, 8 frames, 320x180) proves the headless path, `--python-exit-code 1`, manifest output and the validator. Local CPU/Apple-GPU run of the same five shots if ICG-3 allows, to size the first pod.
-2. **Paid benchmark, one pod**, RTX 4090 (secure if community stock is short; the OR-23 plan names price, hours cap 1.5 h, money cap per ICG-2), Blender 5.2.3 LTS pinned image. Five shots, 48 frames each at 2560x1440: (S1) dialogue CU with lip-sync and Line Art; (S2) crowd battle wide with Geometry Nodes instancing + dust volume; (S3) travel dolly over a Poly Haven terrain + sky HDRI; (S4) STILL_3D plate with a 48-frame camera drift; (S5) the same CU under `cycles_hero` 64 samples with denoise. Each in `eevee_fast` and `eevee_full` (S5 Cycles only). Plus the 9.5 test: S2 and S3 at 1080p and 720p, upscaled by `finish/upscale.py`. Plus the 9.4 test: S3 once with an AI-generated prop set, once with KayKit/Poly Haven.
-3. **Measured outputs:** s/frame per shot x profile x resolution (→ `config/job_speeds.json` rows `blender_frame_{profile}_{res}`), VRAM peak, frames written, validator findings, output size; the ledger line closes the pod (`runpod check`, sweep, stop).
-4. **Stop conditions:** pod wall-clock cap 1.5 h; any shot above 10 s/frame in `eevee_full` stops the series and reports; the Haiku watchdog every 5 min (project rule).
-5. **What the creator sees:** a contact sheet per shot (native vs upscaled, EEVEE vs Cycles, AI props vs library), the s/frame table, the recomputed section 12.3 with measured numbers, and the GO/NO-GO against US$10-15.
-6. **Promotion rules:** a profile or tier enters an episode only if its visual matrix row (section 13) PASSes and its measured cost keeps scenario B under $15 on the chosen tier.
+2. **Local pass first (free, ICG-3 = M4 Pro Mac):** the same scene set as the cloud pass, Blender 5.2.3 LTS, Metal; this is the brief's "local M4 Pro preview and final-render suitability" measurement and it sizes the cloud pass.
+3. **Paid cloud pass, two GPU classes** (brief §7: "at least one cloud NVIDIA GPU, ideally two, with at least three repeats"): RTX 4090 and A5000 (RTX 3090 if the A5000 is out of stock), Blender 5.2.3 LTS pinned image, each pod under its own OR-23 plan line, wall-clock cap 1.5 h per pod, money cap per the creator's word (proposed total ≤ US$6, see 12.3 "benchmark cost"). Scenes, 48 frames each (a moving sequence, never a single frame): (S1) dialogue CU with lip-sync and Line Art; (S2) **interior / establishing council tableau** (the brief's second mandatory scene); (S3) crowd battle wide with Geometry Nodes instancing + dust volume; (S4) travel dolly over a Poly Haven terrain + sky HDRI; (S5) STILL_3D plate with a 48-frame camera drift; (S6) S1 under `cycles_hero` 64 samples with denoise. Profiles `eevee_fast` and `eevee_full` (S6 Cycles only). **Three repeats** of every scene x profile x GPU at native 1440p; the record keeps median, spread (min-max) and failure rate, never a single number. Resolution tiers (9.5): S1, S3 and S4 (close-up, action, wide) also at 854x480, 1280x720 and 1920x1080, one repeat each, upscaled to 1440p by `finish/upscale.py`, judged on the moving sequence. AI-asset rows (9.4): S2 and S4 once with the AI-assisted set, once with the library set.
+4. **Measured outputs per configuration:** Blender version, scene complexity (objects, triangles, instances), engine/profile, resolution, samples, GPU and VRAM peak, s/frame, wall time including boot and asset sync, output size, failed frames and retries, storage and egress, the actual bill from `runpod cost` (→ `config/job_speeds.json` rows `blender_frame_{profile}_{res}_{gpu}` and the ledger). A cost pass is invalid when the visual row fails (brief §7).
+5. **Stop conditions:** per-pod wall-clock cap 1.5 h; any scene above 10 s/frame in `eevee_full` at 1440p stops that series and reports; the Haiku watchdog every 5 min (project rule); every frame follows 10.4, so a stop keeps what was paid.
+6. **What the creator sees:** a contact sheet and a 48-frame sequence per configuration (native vs each upscaled tier, EEVEE vs Cycles, AI assets vs library, M4 Pro vs each cloud GPU), the median/spread table, the recomputed section 12.3 with measured numbers, and the GO/NO-GO against US$10-15.
+7. **Promotion rules:** a profile or tier enters an episode only if its visual matrix row (section 13) PASSes and its measured cost keeps scenario B under $15 on the chosen tier.
 
 ## 13. QA strategy
 
@@ -416,7 +432,8 @@ Add per episode: pod boot and asset sync ~10-15 min, 10-20 % re-renders after QA
 |---|---|---|---|
 | Render validator (ICW-08) | frames == spec.frames, 2560x1440 (or declared tier), 24 fps, no black frame > 2, no frozen run > 12 frames unless `still_mode: hold`, flicker (mean-luma delta > 0.08 between neighbours) REVIEW, Line Art stability (edge-pixel count variance > 25 % between neighbours) REVIEW | `blender/validate.py` (numpy + ffprobe, same style as `qa/frame_review.py`) | FAIL/REVIEW |
 | Lane runtime | shares vs BP-109 band | `film_shots.lane_share_findings` (REPO) | REVIEW (ICD-02) |
-| Speech mix | words vs BP-105 band; seconds column informational | `qa/speech_mix.py` | per ICG-1 |
+| Speech mix | words vs BP-105 band; seconds column informational | `qa/speech_mix.py` | REVIEW outside 65-75 (ICG-1 = A) |
+| Final-mix speech delivery (rev. 2) | every narrator and voiced-dialogue word window of `audio_spine/2` is checked on the **final mixed stem**: RMS above the ED-12 dropout floor inside the window (missing / muted / cut word), no window overlapping another speaker's (duplicated line), no `voiced:false` segment with speech energy, total voiced seconds within 10 % of the spine; uses the spine's word timings and the existing `audio/dropouts.py` scan, **no ASR dependency** | `qa/speech_mix.py::delivery_findings` over `build_audio_v2` output | FAIL on a missing or duplicated line, REVIEW on a cut word |
 | Shot rhythm | BP-108/109/169 caps, KP-36 | `film_shots.episode_check` (REPO) | as today |
 | Identity | CU frames vs approved turnaround sheet, CLIP distance | `qa/identity.py` (REPO) | REVIEW |
 | Style conformance | palette histogram within the era's grade, paper layer present, no photoreal cue (specular highlight ratio) | `blender/validate.py::style_findings` | REVIEW |
@@ -443,7 +460,21 @@ Visual acceptance matrix (used by ICW-05/09/10): line weight visible at 1440p an
 
 ## 15. Phases and Opus work packages
 
-Dependency order and the critical path: **ICW-00 → ICW-02 → ICW-04 → ICW-06 → ICW-07 → ICW-09 → ICW-10**. ICW-01, ICW-03, ICW-05, ICW-08 run in parallel lanes. Integration owner of every merge into the working branch: the Opus thread that runs ICW-07. Complexity uses `config/model_routing.json` levels; "effort" is the agent effort ceiling of that class.
+Dependency order and the critical path: **ICW-00 → ICW-02 → ICW-04 → ICW-06 → ICW-07 → ICW-09 → ICW-10**. ICW-01, ICW-03, ICW-05, ICW-08 run in parallel lanes. Integration owner of every merge into the working branch: the Opus thread that runs ICW-07. Complexity uses `config/model_routing.json` levels; "effort" is the agent effort ceiling of that class. Rev. 2 adds an explicit size and uncertainty per package (EST, Fable's judgement, not measured): size S = under ~300 changed lines and one session, M = ~300-1,000 lines or two to three sessions, L = above that or dependent on an external tool; uncertainty L/M/H says how likely the acceptance line moves once the work starts.
+
+| Package | Size | Uncertainty | Why |
+|---|---|---|---|
+| ICW-00 | M (296 files, comment-only) | L | mechanical, proof by AST compare |
+| ICW-01 | S | L | docs and registry rows |
+| ICW-02 | M | M | fixture churn, /2 compatibility |
+| ICW-03 | M | M | planner heuristics may need two rounds on real scripts |
+| ICW-04 | L | H | first real Blender code in the repo; CI download/time; 10.4 protocol tests |
+| ICW-05 | L | H | style engine + creator collage; licences; storage decision |
+| ICW-06 | L | H | rigs, retarget, lip-sync quality |
+| ICW-07 | M | L | assembly already consumes clips |
+| ICW-08 | M | M | thresholds need the benchmark's frames |
+| ICW-09 | M code, paid | H | stock, frame times unknown |
+| ICW-10 | M | H | depends on ICW-09 GO and the creator's script |
 
 | Phase | Packages | Money |
 |---|---|---|
@@ -513,7 +544,9 @@ All three items were answered on 2026-11-05 (07:37, 07:42, 07:45 UTC); ICW-01 mo
 | 3 | Code-path audit with file/line evidence (section 4) | done |
 | 4 | Decision matrix ICD-01..17 (section 6) | done; ICD-03/06/15 wait on the creator (money/collage/band) |
 | 5 | Contracts and module tree (sections 10, 11) | done |
-| 6 | Cost model with labelled numbers and a benchmark protocol (section 12) | done; every s/frame is HYP |
+| 6 | Cost model with labelled numbers and a benchmark protocol (section 12) | done (rev. 2: M4 Pro + two cloud GPUs, 3 repeats, 6 scenes, 4 tiers); every s/frame is HYP |
+| 6a | Frame-level durable recovery contract (10.4) and its OR-33 tests in ICW-04 | specified (rev. 2); proven only when ICW-04's tests pass |
+| 6b | Independent review of 2026-11-05 answered finding by finding (section 19) | done |
 | 7 | TODO register (section 14) | done |
 | 8 | Work packages with tests and acceptance (section 15) | done |
 | 9 | Test suite baseline recorded (section 4.1) | done; red on the base, green on `main` |
@@ -524,3 +557,26 @@ All three items were answered on 2026-11-05 (07:37, 07:42, 07:45 UTC); ICW-01 mo
 Safe checks run for this document: `git status`/`git log`/`git diff` across the five branches; `python -m pytest -m "not system and not media"` on FINAL and on a `main` worktree (removed after); `python -m explainer_engine.docs_lint` (one pre-existing finding, D-96); `git diff --check`. Not run: anything paid, any pod, any Blender render, `main` changes, PRs.
 
 **OPUS READY — creator decisions resolved; no blocking unknowns remain.**
+
+
+## 19. Independent review of 2026-11-05 — finding-by-finding response (rev. 2)
+
+The creator forwarded an independent technical review of revision 1 (2026-11-05 08:02 UTC). Each finding was checked against the brief and the repository before this revision. Verdicts: **ACCEPT** (the review is right; fixed above), **PARTIAL** (right in part; what changed and what did not), **REJECT** (not supported; evidence).
+
+| # | Review finding | Verdict | Evidence and what changed |
+|---|---|---|---|
+| R1 | Frame-level recovery after a pod loss is not specified; the shot cache is not frame-level durability | **ACCEPT** | REPO: `core/shot_cache.py` hashes finished outputs only; the vault (`vault.py`, VT-01) checks final uploads; the heartbeat (LT-17) is liveness. OR-03 and OR-33 require step-by-step saving proven by a test. Added 10.4 (`render_checkpoint/1`, states RENDERED / DURABLY_STORED / COMMITTED, resume renders only uncommitted frames, DONE only after `vault check-uploaded`, tests in ICW-04) |
+| R2 | Benchmark must use the M4 Pro and at least one, ideally two, cloud GPU classes | **ACCEPT** | brief §7 line 271 says exactly that; rev. 1 planned one 4090 pod. 12.4 now has a free local pass (ICG-3 = Mac) and two cloud classes (4090 + A5000/3090) |
+| R3 | Three repeats per configuration with median, spread, failure rate | **ACCEPT** | brief §7 "at least three repeats"; added |
+| R4 | Interior / establishing tableau missing from the scenes | **ACCEPT** | brief §7 names it as the second mandatory scene; added as S2 |
+| R5 | AI-asset workflow does not cover the hero with two costumes, secondary character, interior, exterior, modular props, rotation/close-up/camera/motion | **ACCEPT** | brief §8.1 line 312; added the matrix in 9.4 |
+| R6 | 480p must be in the comparison; its rejection was premature | **ACCEPT** | brief §8.2 lines 321-347 ask for 480p→1440p on three scenes and allow rejecting it afterwards; 9.5 marks 480p REJECT as a HYPOTHESIS confirmed by the test, and 12.4 renders it |
+| R7 | Final-mix audio QA (missing, muted, cut, duplicated words) is not covered by script or spine counts | **ACCEPT** | NOT FOUND in rev. 1; the repo has ED-12 `audio/dropouts.py` and spine word windows but no per-word check on the mixed stem. Added to section 13 without an ASR dependency, as the review asked |
+| R8 | The complexity estimator is a routing table, not an effort/uncertainty estimate | **ACCEPT** | `config/model_routing.json` routes models; section 11 now says so and section 15 adds size and uncertainty per package |
+| R9 | The $10-15 target is a hypothesis until measured | **ACCEPT (already stated)** | rev. 1 labelled every s/frame HYP and the conclusion EST; unchanged, restated in 12.3 |
+| R10 | The Blender PoC proves only headless start and scene preparation | **ACCEPT (already stated)** | section 3.5 says the same; unchanged |
+| R11 | Nothing from the new Blender architecture should be removed; legacy only after caller/test proof | **ACCEPT (already stated)** | sections 5 and 14 say so; unchanged |
+| R12 | OPUS READY must not be read as implementation permission; the review would not start Opus until the gaps are specified with testable acceptance criteria | **PARTIAL** | agreed on the reading: READY was never permission (section 18 item 12). The gaps named by the review are now specified with acceptance lines (10.4 tests, 12.4 records, 9.4 pass criteria, 13 severities). What this revision cannot do is prove them: proof comes from ICW-04's tests and ICW-09's measurements. The verdict therefore stays READY for ICW-00..08 (US$0) and the paid benchmark keeps its two gates: the OR-34 Fable audit and the creator's money word on the OR-23 plan |
+| R13 | "Vault specification" and "Vault implementation" were not used by the roadmap | **ACCEPT** | rev. 1 never cited `docs/VAULT.md`, `explainer_engine/vault.py` or `config/vault.json` (REPO, D-73); 10.4 now builds on them instead of inventing a store |
+
+Money consequence of R2/R3: the benchmark's proposed cap moves from US$3 (one pod) to US$6 (two classes, three repeats; 12.3 "benchmark cost"). The creator's ICG-2 answer approved the principle (cost measured on a small RunPod test); the figure is his word on the OR-23 plan before ICW-09, as before.
