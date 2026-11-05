@@ -22,9 +22,9 @@ for i in range(12):
     x, z = i % 2, i // 4
     sx = -1.0 if x == 0 else 1.0
     if z == 0:
-        LATTICE_DELTAS[i] = (-0.12 * sx * 0.6, 0.0, -0.18 * 0.6)
+        LATTICE_DELTAS[i] = (-0.12 * sx * 0.9, 0.0, -0.18 * 0.9)
     elif z == 1:
-        LATTICE_DELTAS[i] = (-0.06 * sx * 0.6, 0.0, 0.0)
+        LATTICE_DELTAS[i] = (-0.06 * sx * 0.9, 0.0, 0.0)
 
 
 def gauss(d2, r):
@@ -54,6 +54,66 @@ def angular_key(head):
         moved += d.length > 1e-6
     key.value = 1.0
     print("ANGULAR_KEY moved", moved)
+
+
+def weighted(name, me, mat_name, rig, top, collection, subdiv=1):
+    for p in me.polygons:
+        p.use_smooth = True
+    ob = bpy.data.objects.new(name, me)
+    collection.objects.link(ob)
+    me.materials.append(bpy.data.materials.new(mat_name))
+    dt = ob.modifiers.new("WeightsFromTop", "DATA_TRANSFER")
+    dt.object = top
+    dt.use_vert_data = True
+    dt.data_types_verts = {"VGROUP_WEIGHTS"}
+    dt.vert_mapping = "POLYINTERP_NEAREST"
+    bpy.context.view_layer.objects.active = ob
+    ob.select_set(True)
+    for g in top.vertex_groups:
+        ob.vertex_groups.new(name=g.name)
+    bpy.ops.object.datalayout_transfer(modifier=dt.name)
+    bpy.ops.object.modifier_apply(modifier=dt.name)
+    am = ob.modifiers.new("Armature", "ARMATURE")
+    am.object = rig
+    ob.parent = rig
+    if subdiv:
+        sm = ob.modifiers.new("Subdivision", "SUBSURF")
+        sm.levels = sm.render_levels = subdiv
+    return ob
+
+
+def tube_mesh(rings, cols, centre_fn, closed=True):
+    bm = bmesh.new()
+    for r in range(rings + 1):
+        for c in range(cols):
+            bm.verts.new(centre_fn(r / rings, 2 * math.pi * c / cols))
+    bm.verts.ensure_lookup_table()
+    for r in range(rings):
+        for c in range(cols):
+            a, b = r * cols + c, r * cols + (c + 1) % cols
+            bm.faces.new((bm.verts[a], bm.verts[b], bm.verts[b + cols], bm.verts[a + cols]))
+    me = bpy.data.meshes.new("tube")
+    bm.to_mesh(me)
+    bm.free()
+    return me
+
+
+def tunic(rig, top, collection):
+    """Knee-length tunic body (an open tube from the shoulders, a flared hem) with short sleeves along the T-pose arms; weights from Rain's top."""
+    def body(t, a):
+        z = 1.30 - 0.78 * t
+        rx = 0.165 + 0.035 * t + 0.07 * t ** 2.5
+        ry = 0.105 + 0.03 * t + 0.06 * t ** 2.5
+        w = 1 + 0.03 * math.sin(a * 5) * t
+        return (rx * w * math.sin(a), ry * w * math.cos(a) + 0.01, z)
+    weighted("GEO-lead-tunic", tube_mesh(12, 28, body), "MAT-lead.tunic", rig, top, collection)
+    for side in (1, -1):
+        def sleeve(t, a, side=side):
+            x = side * (0.14 + 0.2 * t)
+            r = 0.062 + 0.012 * t
+            return (x, r * math.cos(a) + 0.0, 1.265 + r * math.sin(a))
+        weighted(f"GEO-lead-sleeve{'L' if side > 0 else 'R'}", tube_mesh(4, 12, sleeve), "MAT-lead.tunic", rig, top, collection)
+    print("TUNIC built")
 
 
 def cloak(rig, top, collection):
@@ -109,6 +169,7 @@ def main():
         co = lat.points[i].co_deform
         lat.points[i].co_deform = (co[0] + d[0], co[1] + d[1], co[2] + d[2])
     angular_key(bpy.data.objects["GEO-rain-head"])
+    tunic(bpy.data.objects["RIG-rain"], bpy.data.objects["GEO-rain-top"], bpy.data.collections["rain-clothes"])
     cloak(bpy.data.objects["RIG-rain"], bpy.data.objects["GEO-rain-top"], bpy.data.collections["rain-clothes"])
     bpy.ops.wm.save_as_mainfile(filepath=dst, compress=True)
     print("SAVED", dst)

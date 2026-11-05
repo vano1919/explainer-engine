@@ -4164,6 +4164,30 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   ~1.9x from cast shadows); one runner per job, so ratios under ~1.3x are runner noise. `look-report` takes the line verdict from
   the render's CN-17 finding (no second BP-173 reader). Waiting for the creator's pick; ICW-07 writes it into bible v1.5.
 
+## 2026-11-05 — WP-Q7 camera grammar and Add Camera Rigs (branch wpq/07-cameras, base icw/05c-ink-round)
+
+- Why: flat cameras. The engine had six rig names (static, push, dolly, rail, orbit, dramatic_curve) sampled into plain keys, but no
+  shot grammar: no low-angle hero close-up, no over-the-shoulder, no thirds, no f-stop, no real dolly or crane object to move.
+- Synthesis, not new code: the official **Add Camera Rigs 1.9.2** extension (GPL-3.0-or-later, 15 KB zip) is pinned by sha256 in
+  `config/cloud_pins.json` (`blender_extensions`), fetched and verified by `blender/camera_rigs.py`, installed into the render's own
+  Blender with `bpy.ops.extensions.package_install_files`, and built with its own operator (Dolly or Crane). None of its code is copied
+  (licence row `assets/licence_sources.json` add_camera_rigs; so no PROVENANCE row). Installs offline on 5.2.3 (checked with the
+  `bpy` 5.2.3 wheel, which is the pinned build).
+- `blender/camera_setups.json` + `camera_setups.py`: six setups (establishing wide on a crane, over-the-shoulder A and B =
+  `shot_reverse_shot`, low-angle hero close-up, push-in reveal, profile two-shot). Each: lens, height and distance in head heights,
+  a thirds target, f-stop, focus target. `resolve()` places the camera from the subjects' feet and aims it so the framed point lands
+  on the thirds target (pinhole); `framing()` projects any point; `check_camera()`.
+- `shot_spec/2` `scene.camera` gains optional `setup`, `fstop`, `rig_kind` (an additive amendment: documents without them are
+  unchanged). `scene_builder.camera_job` / `build` carry `fstop`, `rig_kind`, `focus_at` and the extension path.
+- `bpy/render_shot.py`: `build_rig` / `key_rig` / `set_dof` / `frame_probe`: Root under the camera on the floor, Camera and Aim bones
+  keyed from the same LINEAR camera path as before (so the path in the manifest is still the truth), the focus distance follows
+  `focus_at`, the aperture is the rig's `aperture_fstop`; the style's DoF fills what the job did not name. Without `rig_kind` the bare
+  camera path is byte-for-byte the old one. The 2D rig is not mapped yet (it belongs to the painted plates, WP-Q3).
+- Check on real Blender 5.2.3 (bpy wheel, Workbench, 960x540, 48 frames, 0.26-0.31 s/frame): for all six setups the framing Blender
+  measures with `world_to_camera_view` equals the pure-Python pinhole to 4 decimals at the first and the last frame.
+  `blender/camera_smoke.py` repeats this on CI (`blender-smoke.yml`, new step; tolerance 0.002 frame widths).
+- Tests: `tests/unit/test_camera_setups.py` (24). Cost: $0. Not done here: the clips on the real cast (they need the character GLBs from
+  the vault: Mac or CI) and an A/B of the 2D rig.
 ## 2026-11-05 — WP-Q0: Blender 5.x API names in `render_shot.py` (branch `wpq/00-api`)
 - `ENGINE_IDS["eevee"]` is now `("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT")` (5.0 renamed EEVEE Next back; the old id stays as fallback).
 - `apply_settings`: `ambient_occlusion` maps to `eevee.use_fast_gi` plus `eevee.fast_gi_method = 'AMBIENT_OCCLUSION_ONLY'` (5.x has no

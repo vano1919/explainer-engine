@@ -156,6 +156,20 @@
       "weights_vs_code_note": null,
       "outputs_note": "Rain v3.3 zip: rain_v3.2.blend + textures, 64.4 MB, sha256 80217f163f6392dc829233d63c2cfb5e1376775bc34101ad14f39631fea70d24, fetched 2026-11-05 from https://studio.blender.org/download-source/files/ee/a7/eea73e55dba1cea31c09848df6a794b2-4.zip; over 5 MB so it lives in the vault, never in git (D-110). The .blend carries Python (cloudrig.py, rain_shading.py): open it with scripts disabled; the face works without them",
       "per_pack_check": true
+    },
+    "add_camera_rigs": {
+      "label": "Add Camera Rigs 1.9.2 (Blender extension: Dolly, Crane and 2D camera rigs)",
+      "status": "gpl-tool-only",
+      "commercial_use": "yes",
+      "source_url": "https://extensions.blender.org/add-ons/add-camera-rigs/",
+      "evidence": "extensions.blender.org API list 2026-11-05: id add_camera_rigs, version 1.9.2, license SPDX:GPL-3.0-or-later, maintainer WayneDixon; zip sha256 548ecf6372563948f5b3cf292dd01a3209f77ef730eb38b0197cd50ffd7377cd (15062 bytes), pinned in config/cloud_pins.json blender_extensions",
+      "redistribution": "GPL-3.0-or-later: used as shipped, fetched by sha256 at run time, never copied into our package",
+      "derivatives": "none made",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": "code only; a render made with it is not a derivative of the extension",
+      "outputs_note": "frames rendered with a rig carry no licence of the extension",
+      "per_pack_check": false
     }
   }
 }

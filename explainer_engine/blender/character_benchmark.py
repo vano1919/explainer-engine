@@ -31,7 +31,7 @@ MATERIAL_MAP = {
     "MAT-rain.eyelashes": "rain_hair", "MAT-rain.eyes": "rain_eyes", "MAT-rain.eyedot": "rain_pupil", "MAT-rain.cornea": "rain_cornea",
     "MAT-rain.teeth": "rain_teeth", "MAT-rain.gums": "rain_gums", "MAT-rain.tongue": "rain_gums",
     "MAT-rain.top": "rain_costume", "MAT-rain.scarf": "rain_cloak", "MAT-rain.jeans": "rain_costume", "MAT-rain.hairband": "rain_cloak",
-    "MAT-lead.cloak": "rain_cloak", "MAT-rain.shoes": "rain_leather", "MAT-rain.socks": "rain_costume", "MAT-rain.laces": "rain_leather", "MAT-rain.metal": "rain_leather",
+    "MAT-lead.cloak": "rain_cloak", "MAT-lead.tunic": "rain_costume", "MAT-rain.shoes": "rain_leather", "MAT-rain.socks": "rain_costume", "MAT-rain.laces": "rain_leather", "MAT-rain.metal": "rain_leather",
 }
 
 
@@ -79,7 +79,7 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
 
 
 def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | None = None, angular: float = 0.0,
-          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea"), push: bool = True, wall: bool = True, framing: str = "cu") -> dict:
+          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea", "GEO-rain-top"), push: bool = True, wall: bool = True, framing: str = "cu") -> dict:
     """{objects, camera, materials, frames_total}: Rain facing the camera in front of a plain wall, a slow push-in."""
     visemes = rigs.ActionVisemes(poses()).tracks_for(list(lip["shapes"])) if lip else None
     rb = {"path": str(blend), "collection": "CH-rain", "rig": "RIG-rain", "materials": MATERIAL_MAP, "hide": list(hide),
