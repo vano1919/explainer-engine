@@ -267,7 +267,16 @@
     "castle",
     "courtyard"
    ],
-   "sha256": "b73f994baf238d648b0b14ca3a33e03a74a2d320419a0b912a497cb90a53e83a"
+   "sha256": "b73f994baf238d648b0b14ca3a33e03a74a2d320419a0b912a497cb90a53e83a",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.mvk_wall_uneven_brick_door_round",
@@ -285,7 +294,16 @@
     "door",
     "gate"
    ],
-   "sha256": "ff1a8552a8a77eecb3ac485b515ab3134047f1ff03abd63a3e0834c37e6b09b9"
+   "sha256": "ff1a8552a8a77eecb3ac485b515ab3134047f1ff03abd63a3e0834c37e6b09b9",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.mvk_wall_uneven_brick_window_wide_round",
@@ -302,7 +320,16 @@
     "brick",
     "window"
    ],
-   "sha256": "572c97a2dbbde4618f02e1f284604c67d93884d9c3e3137162ef98de33f79541"
+   "sha256": "572c97a2dbbde4618f02e1f284604c67d93884d9c3e3137162ef98de33f79541",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.mvk_wall_uneven_brick_window_thin_round",
@@ -319,7 +346,16 @@
     "brick",
     "window"
    ],
-   "sha256": "ef38156b41dea79f60691cfca36190574de04569664f7dfb98022109ed437330"
+   "sha256": "ef38156b41dea79f60691cfca36190574de04569664f7dfb98022109ed437330",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.mvk_wall_plaster_straight",
@@ -336,7 +372,16 @@
     "plaster",
     "village"
    ],
-   "sha256": "c29ae1b97df392303f557dbb626f3d382033909715bcc0f2ca0967ad1c630d27"
+   "sha256": "c29ae1b97df392303f557dbb626f3d382033909715bcc0f2ca0967ad1c630d27",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.mvk_wall_plaster_door_round",
@@ -353,7 +398,16 @@
     "plaster",
     "door"
    ],
-   "sha256": "eba112749a1bf671756741467515c9c4d3edd03c9f98653139f870241f2d8c78"
+   "sha256": "eba112749a1bf671756741467515c9c4d3edd03c9f98653139f870241f2d8c78",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.mvk_wall_plaster_window_wide_round",
@@ -370,7 +424,16 @@
     "plaster",
     "window"
    ],
-   "sha256": "979c2a14ef792bbf5a003366984625808dbf5ec5fd80e4f204cb5400299d1362"
+   "sha256": "979c2a14ef792bbf5a003366984625808dbf5ec5fd80e4f204cb5400299d1362",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.mvk_wall_arch",
@@ -387,7 +450,16 @@
     "gate",
     "wall"
    ],
-   "sha256": "9a444ca695365e6c30127889126eb7d0788d9d3e07a60d96c80000d56d6c138c"
+   "sha256": "9a444ca695365e6c30127889126eb7d0788d9d3e07a60d96c80000d56d6c138c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_corner_exterior_brick",
@@ -404,7 +476,16 @@
     "brick",
     "wall"
    ],
-   "sha256": "19c7c4747684ba32fcd97095c64b2cbd935d486c777d016af093907e3cd94bce"
+   "sha256": "19c7c4747684ba32fcd97095c64b2cbd935d486c777d016af093907e3cd94bce",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_floor_uneven_brick",
@@ -422,7 +503,16 @@
     "brick",
     "courtyard"
    ],
-   "sha256": "570ccd1fd7d72b234dd71ada8834f2cc9fa3d797b6e3a8c63cf258936a495095"
+   "sha256": "570ccd1fd7d72b234dd71ada8834f2cc9fa3d797b6e3a8c63cf258936a495095",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_floor_brick",
@@ -439,7 +529,16 @@
     "brick",
     "street"
    ],
-   "sha256": "57707e3d0bfb4bd37a683bb011c02d6ff3eef5d6d6bfae6150c87d080187d25f"
+   "sha256": "57707e3d0bfb4bd37a683bb011c02d6ff3eef5d6d6bfae6150c87d080187d25f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_stairs_exterior_straight",
@@ -455,7 +554,16 @@
     "stairs",
     "exterior"
    ],
-   "sha256": "5f0c5bcc9a34a18ee5723359955460293a9e1cd135216b1ea0d010a8eba8ca59"
+   "sha256": "5f0c5bcc9a34a18ee5723359955460293a9e1cd135216b1ea0d010a8eba8ca59",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.mvk_door_1_round",
@@ -471,7 +579,16 @@
     "door",
     "wood"
    ],
-   "sha256": "71ce967b11a6a5c9d6b28985353c523f00052f4f6383ba1a6c35d0c07b2a00e1"
+   "sha256": "71ce967b11a6a5c9d6b28985353c523f00052f4f6383ba1a6c35d0c07b2a00e1",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_window_wide_round1",
@@ -487,7 +604,16 @@
     "window",
     "wood"
    ],
-   "sha256": "e3c7aa3a83629d665e57b46dde36567c9581567a490de6da05b705b79973023f"
+   "sha256": "e3c7aa3a83629d665e57b46dde36567c9581567a490de6da05b705b79973023f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_windowshutters_wide_round_open",
@@ -504,7 +630,16 @@
     "shutters",
     "wood"
    ],
-   "sha256": "d69103d26dfbeccacc17692eb259044604edd4721d507f8d3461bb9e5fd3f14d"
+   "sha256": "d69103d26dfbeccacc17692eb259044604edd4721d507f8d3461bb9e5fd3f14d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_prop_wagon",
@@ -522,7 +657,16 @@
     "prop",
     "wood"
    ],
-   "sha256": "7ea63193d61d468618f122523f3cef6db541bce94f407a6658718f7b9b570628"
+   "sha256": "7ea63193d61d468618f122523f3cef6db541bce94f407a6658718f7b9b570628",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_prop_crate",
@@ -539,7 +683,16 @@
     "prop",
     "wood"
    ],
-   "sha256": "3843f0c1bf699c88622e313c8e730fe5cd00b7edbaf0d6ede9223ed4d742a5ec"
+   "sha256": "3843f0c1bf699c88622e313c8e730fe5cd00b7edbaf0d6ede9223ed4d742a5ec",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_prop_woodenfence_single",
@@ -556,7 +709,16 @@
     "wood",
     "prop"
    ],
-   "sha256": "aaa84e9ce73339057e740c0631e260af131454500fff4ce03154a565d52e189c"
+   "sha256": "aaa84e9ce73339057e740c0631e260af131454500fff4ce03154a565d52e189c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_prop_metalfence_simple",
@@ -573,7 +735,16 @@
     "iron",
     "prop"
    ],
-   "sha256": "a0de129621bca7a91ed62a32e343339311a782b93abc3cf61bfd322d9577be0c"
+   "sha256": "a0de129621bca7a91ed62a32e343339311a782b93abc3cf61bfd322d9577be0c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.mvk_prop_chimney",
@@ -590,7 +761,16 @@
     "roof",
     "prop"
    ],
-   "sha256": "23f6732c8b7a143706835cf88288c0f7201bfaa167a287a4e2d5f049257b6599"
+   "sha256": "23f6732c8b7a143706835cf88288c0f7201bfaa167a287a4e2d5f049257b6599",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.mvk_roof_roundtiles_6x6",
@@ -606,7 +786,16 @@
     "roof",
     "tiles"
    ],
-   "sha256": "5b5460373d104dcdae122a5b3a172354dadb8c5710822ebfa3019fb850c42682"
+   "sha256": "5b5460373d104dcdae122a5b3a172354dadb8c5710822ebfa3019fb850c42682",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.mvk_overhang_unevenbrick_long",
@@ -623,7 +812,16 @@
     "brick",
     "wall"
    ],
-   "sha256": "f7443fe62d2856456f23e5bfb8d01941c228f32e8209638b8f6f2b56f59c88ca"
+   "sha256": "f7443fe62d2856456f23e5bfb8d01941c228f32e8209638b8f6f2b56f59c88ca",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.ph_modular_fort_01",
@@ -640,7 +838,16 @@
     "landmark",
     "keep"
    ],
-   "sha256": "0bd50101a42ddbb3de3ce48853108250c6c8a6bfeecb0e6c6ac916c430d0423c"
+   "sha256": "0bd50101a42ddbb3de3ce48853108250c6c8a6bfeecb0e6c6ac916c430d0423c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "14624fec1571746723ce24d2e429980002bc3d8331f540bb282c1622c7bc8b9c",
+   "fingerprint": {
+    "nodes": 22,
+    "meshes": 22,
+    "primitives": 45,
+    "images": 3
+   }
   },
   {
    "id": "model.ph_large_castle_door",
@@ -656,7 +863,16 @@
     "castle",
     "gate"
    ],
-   "sha256": "b92b548ce11db553dafe90328228616c8c52ca6e6ee94b7109314b5006fd433f"
+   "sha256": "b92b548ce11db553dafe90328228616c8c52ca6e6ee94b7109314b5006fd433f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "fb8bef25935dc53db290ce5a8433a1d85ba61cca4a9a3d2a7e3286a5c5177242",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 3,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_wine_barrel_01",
@@ -672,7 +888,16 @@
     "prop",
     "wood"
    ],
-   "sha256": "e890bb0dbfd4d206cb43ce1cb25b149e3aa07f40280f935630f6ba70e504da29"
+   "sha256": "e890bb0dbfd4d206cb43ce1cb25b149e3aa07f40280f935630f6ba70e504da29",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "ed7af3c10bbf73b2897aaf945dbeca571ccdec492cb79be4fc8a67c22acdb64c",
+   "fingerprint": {
+    "nodes": 4,
+    "meshes": 4,
+    "primitives": 4,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_wooden_crate_02",
@@ -688,7 +913,16 @@
     "prop",
     "wood"
    ],
-   "sha256": "80bb5a5d6d909b8f1c8bbe367b9a4ec8371f8b7169231d8a120b37cb759ac809"
+   "sha256": "80bb5a5d6d909b8f1c8bbe367b9a4ec8371f8b7169231d8a120b37cb759ac809",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "67ed2bfb00c87e647e6a1dc24dd6c9260e18d2babf64aba1a2087dc20cb98c72",
+   "fingerprint": {
+    "nodes": 2,
+    "meshes": 2,
+    "primitives": 2,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_wooden_lantern_01",
@@ -704,7 +938,16 @@
     "light",
     "prop"
    ],
-   "sha256": "1fa2ea980315b6bab1438e8108c19a05fd9b2ed316f45ce72ddd97c747f70235"
+   "sha256": "1fa2ea980315b6bab1438e8108c19a05fd9b2ed316f45ce72ddd97c747f70235",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "aa8d66d2b0be63ee7062696f4dd823cfd166efe2542eb4d163a556772c5def42",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 5,
+    "images": 2
+   }
   },
   {
    "id": "model.ph_gothiccabinet_01",
@@ -720,7 +963,16 @@
     "gothic",
     "interior"
    ],
-   "sha256": "86b9b4c5071bec1c29200a1dfee6bdd4d98b5178017e63afa2f9b29bfbc6583d"
+   "sha256": "86b9b4c5071bec1c29200a1dfee6bdd4d98b5178017e63afa2f9b29bfbc6583d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "c78c9c7995675d23b872c33d7f8de63ca075871282381cbb1fc929318d98b3c0",
+   "fingerprint": {
+    "nodes": 5,
+    "meshes": 5,
+    "primitives": 5,
+    "images": 1
+   }
   },
   {
    "id": "model.snm_pine_1",
@@ -738,7 +990,16 @@
     "tree",
     "conifer"
    ],
-   "sha256": "c2b4db2bad1d41effc14d4a8a5145f5b9a476f769cf14ac3946c57dcc9b1f0c9"
+   "sha256": "c2b4db2bad1d41effc14d4a8a5145f5b9a476f769cf14ac3946c57dcc9b1f0c9",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.snm_pine_3",
@@ -756,7 +1017,16 @@
     "tree",
     "conifer"
    ],
-   "sha256": "03def6d49446f2a54a5014a26ad8d7ba182a7134ad5562b710423f00466cc8e1"
+   "sha256": "03def6d49446f2a54a5014a26ad8d7ba182a7134ad5562b710423f00466cc8e1",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.snm_commontree_1",
@@ -773,7 +1043,16 @@
     "tree",
     "broadleaf"
    ],
-   "sha256": "76c6c5a22d3106688be2cb9a7781f64c5c39271f95590cd5a0d58888fccb37f8"
+   "sha256": "76c6c5a22d3106688be2cb9a7781f64c5c39271f95590cd5a0d58888fccb37f8",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.snm_commontree_3",
@@ -790,7 +1069,16 @@
     "tree",
     "broadleaf"
    ],
-   "sha256": "b8e5c29bd00cff8060bea179f317951981d22a19a2ec15e2d7b55414e053e821"
+   "sha256": "b8e5c29bd00cff8060bea179f317951981d22a19a2ec15e2d7b55414e053e821",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
   },
   {
    "id": "model.snm_rock_medium_1",
@@ -807,7 +1095,16 @@
     "rock",
     "stone"
    ],
-   "sha256": "ef242ad51bb73931f212140df5cb6e3dcc25f70ec9d3dbb8c2466daa0af6b14a"
+   "sha256": "ef242ad51bb73931f212140df5cb6e3dcc25f70ec9d3dbb8c2466daa0af6b14a",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.snm_bush_common",
@@ -824,7 +1121,16 @@
     "bush",
     "plant"
    ],
-   "sha256": "a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726"
+   "sha256": "a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_modular_wooden_pier",
@@ -841,7 +1147,16 @@
     "wood",
     "harbour"
    ],
-   "sha256": "442fc3997b757963b6b7b3d7d910f38144aeea645573fb6f12371910b26d7259"
+   "sha256": "442fc3997b757963b6b7b3d7d910f38144aeea645573fb6f12371910b26d7259",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "6d57b1905aad25d2f4f92fbadc413837fa30b2ffade5a305cf2e136e9963f86f",
+   "fingerprint": {
+    "nodes": 7,
+    "meshes": 7,
+    "primitives": 12,
+    "images": 2
+   }
   },
   {
    "id": "model.ph_dutch_ship_medium",
@@ -857,7 +1172,16 @@
     "dutch",
     "harbour"
    ],
-   "sha256": "efadd4ca4349420764d6a322ee87828b238954fe032519272c40fd5d5e1b02b6"
+   "sha256": "efadd4ca4349420764d6a322ee87828b238954fe032519272c40fd5d5e1b02b6",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "4dcfc4b619cf97afe3273f5744566a9de740fbb46d3ce352c35ef7f90ac2bb26",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 3,
+    "images": 3
+   }
   },
   {
    "id": "model.ph_ship_pinnace",
@@ -873,7 +1197,16 @@
     "pinnace",
     "harbour"
    ],
-   "sha256": "dc4e276ff246ac756ab38b6f636b15cecc77ee0e053d5f71f62e00e77af17a92"
+   "sha256": "dc4e276ff246ac756ab38b6f636b15cecc77ee0e053d5f71f62e00e77af17a92",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "3a84767ef7647ab5dab04aab9ebda9ab3fee7f7b757b8a15508a8b798a6ab847",
+   "fingerprint": {
+    "nodes": 7,
+    "meshes": 7,
+    "primitives": 7,
+    "images": 7
+   }
   },
   {
    "id": "model.ph_wooden_barrels_01",
@@ -889,7 +1222,16 @@
     "wood",
     "harbour"
    ],
-   "sha256": "c54a7246d73583641a9fee37fdb5464501b6258df00d0e4e99ad142798f6cbe0"
+   "sha256": "c54a7246d73583641a9fee37fdb5464501b6258df00d0e4e99ad142798f6cbe0",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "f8031ef8996d0f4cd2ee73749cee18bda15d7bb066b4e1f5972e45daf0f14619",
+   "fingerprint": {
+    "nodes": 19,
+    "meshes": 19,
+    "primitives": 19,
+    "images": 3
+   }
   },
   {
    "id": "model.ph_marble_bust_01",
@@ -906,7 +1248,16 @@
     "antiquity",
     "statue"
    ],
-   "sha256": "749adb0d77d2ab54f72e5be35701dbd266cab00ca1b8fe67ae14b954e2888623"
+   "sha256": "749adb0d77d2ab54f72e5be35701dbd266cab00ca1b8fe67ae14b954e2888623",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "27b2a81176f14a73d908c7ae4ad6690a1e222e24764e98e2c3816ff9a83dcd65",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_horse_statue_01",
@@ -922,7 +1273,16 @@
     "horse",
     "antiquity"
    ],
-   "sha256": "6ed829e1fd4af505aa60fb48153222baa37fa80d80276d9de9679e8fa3b7db1d"
+   "sha256": "6ed829e1fd4af505aa60fb48153222baa37fa80d80276d9de9679e8fa3b7db1d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "04fd85e1310c8b27e432b821d4fe4bf4d4daafabe8dfdac0e92c9cee1514a595",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_kite_shield",
@@ -938,7 +1298,16 @@
     "medieval",
     "camp"
    ],
-   "sha256": "0e785219c4669beff75eeef979f7da24d7e2a693b10a3765da2f6791de76a907"
+   "sha256": "0e785219c4669beff75eeef979f7da24d7e2a693b10a3765da2f6791de76a907",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "ae3bf0df343c42a8681bd7bb11fd661d336260807440c544cda05c4eb37ab36e",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 3,
+    "images": 2
+   }
   },
   {
    "id": "model.ph_street_lamp_01",
@@ -954,7 +1323,16 @@
     "street",
     "nineteenth_century"
    ],
-   "sha256": "0294137639acb0476ae03703609572a987e63d0807550fa2bd28e44627decdc8"
+   "sha256": "0294137639acb0476ae03703609572a987e63d0807550fa2bd28e44627decdc8",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "399e3f0c8fa2c8eadb2a94e835af0fbdb1257e0afbdc3800c1c22b99119d7ef6",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 2
+   }
   },
   {
    "id": "model.ph_antique_ceramic_vase_01",
@@ -970,7 +1348,16 @@
     "ceramic",
     "antiquity"
    ],
-   "sha256": "98536988093a7bb4a0ebd355c3cd85432f1f975d8dfb450924601f8fd6926104"
+   "sha256": "98536988093a7bb4a0ebd355c3cd85432f1f975d8dfb450924601f8fd6926104",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "6ff1b8576465ca66505a5d963bee68c7e2dbf898153acfd53853280726443468",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_treasure_chest",
@@ -986,7 +1373,16 @@
     "wood",
     "harbour"
    ],
-   "sha256": "26e807b3c3a8b2695ffd5a9463a96ee3a22c8844f5f5830aec0232fa51057d4f"
+   "sha256": "26e807b3c3a8b2695ffd5a9463a96ee3a22c8844f5f5830aec0232fa51057d4f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "188b814c4e7e61b128d807215a073248622a212c3432ba095cd56229a0d9f228",
+   "fingerprint": {
+    "nodes": 5,
+    "meshes": 5,
+    "primitives": 5,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_wooden_bucket_01",
@@ -1001,7 +1397,16 @@
     "bucket",
     "wood"
    ],
-   "sha256": "bb6d98ec190ebf08547cfffe6e41fad7303fcc8ff3cf7bc65693942d20fe8c73"
+   "sha256": "bb6d98ec190ebf08547cfffe6e41fad7303fcc8ff3cf7bc65693942d20fe8c73",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "3b475be0e9e0dd307f6f8183f6ca05028ba801fa31d5e7ccd61324d75f20bcc8",
+   "fingerprint": {
+    "nodes": 2,
+    "meshes": 2,
+    "primitives": 2,
+    "images": 1
+   }
   },
   {
    "id": "model.ph_gothic_statue",
@@ -1017,7 +1422,16 @@
     "gothic",
     "stone"
    ],
-   "sha256": "ece8f0f02d0290837e18e6d452d56407893877625b7d5ca8a1615da3fb181e1e"
+   "sha256": "ece8f0f02d0290837e18e6d452d56407893877625b7d5ca8a1615da3fb181e1e",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "a45c0e58ab8c228faac3404e0e771ba4a9c61cf920bf38819c77227e9403a358",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
   }
  ]
 }

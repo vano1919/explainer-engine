@@ -136,6 +136,34 @@ def pack_polyhaven_dir(main: Path, max_px: int) -> tuple[bytes, dict]:
     return pack_piece(gltf, read, max_px)
 
 
+PACKER = "world_kits.pack_piece/1"
+
+
+def fingerprint(data: bytes) -> dict:
+    """The structure of a packed GLB (glTF JSON chunk only): node, mesh, primitive and image counts. Image re-encoding differs
+    byte-wise between platforms and Pillow builds; the structure does not."""
+    doc, _ = C.read_glb(data)
+    return {"nodes": len(doc.get("nodes", [])), "meshes": len(doc.get("meshes", [])),
+            "primitives": sum(len(m["primitives"]) for m in doc.get("meshes", [])), "images": len(doc.get("images", []))}
+
+
+def source_sha256(a: dict, t: dict) -> str:
+    """The hash of what a piece is built from: the pack zip's sha256, or for a Poly Haven piece the sha256 of its recorded file md5s."""
+    if a["source"] == "polyhaven":
+        return hashlib.sha256(json.dumps(t["polyhaven"][a["slug"]]["files_md5"], sort_keys=True).encode()).hexdigest()
+    return t["packs"][a["source"]]["sha256"]
+
+
+def annotate(t: dict, paths: dict[str, Path]) -> dict:
+    """Mark every piece derived (a repack is a build, not the registered artefact) with its source hash, packer id and the
+    fingerprint of the registered GLB. Called by ``register`` and, once, for pieces registered before this rule."""
+    for a in t["assets"]:
+        if a["id"] in paths:
+            a.update({"derived": True, "packer": PACKER, "source_sha256": source_sha256(a, t),
+                      "fingerprint": fingerprint(Path(paths[a["id"]]).read_bytes())})
+    return t
+
+
 def glb_extent(data: bytes) -> list[float]:
     """[width x, depth y, height z] in metres of the packed mesh in Blender's frame (glTF is Y-up: x, -z, y), from the POSITION
     accessors' min/max, nodes' own transforms ignored (a kit piece is one untransformed node)."""
@@ -199,6 +227,7 @@ def register(downloads: Path, *, polyhaven_dir: Path | None = None, path: Path |
                           made_with={"provider": "third_party", "params": params}, source=src_line, licence=licence)
         f.unlink()
         a["sha256"] = rec["sha256"]
+        a.update({"derived": True, "packer": PACKER, "source_sha256": source_sha256(a, t), "fingerprint": fingerprint(data)})
         out.append({"id": rec["id"], "sha256": rec["sha256"], "bytes": rec["bytes"], "triangles": summ["triangles"],
                     "extent_m": three_d["bounds_m"]})
     if update_table:
@@ -220,10 +249,18 @@ def _download_polyhaven(slug: str, src: dict, dest: Path) -> None:
         raise WorldKitError(f"{slug}: no {src['resolution']} glTF - {PH.available(files, 'models')}")
 
 
+def _check_polyhaven_files(d: Path, src: dict) -> None:
+    for rel, md5 in src["files_md5"].items():
+        f = d / rel
+        if not f.is_file() or hashlib.md5(f.read_bytes()).hexdigest() != md5:
+            raise WorldKitError(f"{d.name}/{rel}: not the recorded Poly Haven file (md5); nothing kept")
+
+
 def fetch(*, repo: Path | None = None, packs_dir: Path | None = None, t: dict | None = None, vault_first: bool = True,
           download_pack=None, download_polyhaven=None) -> dict[str, Path]:
     """Asset id -> the cached GLB at its registered sha256: the cache, else the vault, else rebuilt from the pack zip / the
-    Poly Haven files (free). A rebuild that does not give the registered bytes is refused and nothing is kept."""
+    Poly Haven files (free). A rebuild is a derived build: its source hash and its structural fingerprint must match the registered ones (bytes may differ
+    by platform, a derived rebuild is kept under ``derived/``); anything else is refused and nothing is kept."""
     repo = Path(repo or L.REPO)
     t = t or table()
     lib = L.load()
@@ -257,12 +294,17 @@ def fetch(*, repo: Path | None = None, packs_dir: Path | None = None, t: dict | 
                 d = pdir / "polyhaven" / a["slug"]
                 if not (d / f"{a['slug']}_{src['resolution']}.gltf").exists():
                     (download_polyhaven or _download_polyhaven)(a["slug"], src, d)
+                _check_polyhaven_files(d, src)
                 data, _ = pack_polyhaven_dir(d / f"{a['slug']}_{src['resolution']}.gltf", t["max_texture_px"])
             else:
                 data, _ = pack_pack_member(C.pack_path(t["packs"][a["source"]], pdir), a["member"], t["max_texture_px"])
-            if hashlib.sha256(data).hexdigest() != rec["sha256"]:
-                raise WorldKitError(f"{a['id']}: packing the source gave other bytes than the registered file")
-            dest = repo / rec["file"]
+            if hashlib.sha256(data).hexdigest() == rec["sha256"]:   # byte-identical to the registered build
+                dest = repo / rec["file"]
+            else:   # a derived build: the source hash was checked above, the structure must match the registered fingerprint
+                if not a.get("derived") or fingerprint(data) != a.get("fingerprint"):
+                    raise WorldKitError(f"{a['id']}: the rebuilt GLB differs from the registered file and its fingerprint "
+                                        f"{fingerprint(data)} is not {a.get('fingerprint')}; nothing kept")
+                dest = repo / L.CACHE / "derived" / source_sha256(a, t)[:16] / a["name"]
             dest.parent.mkdir(parents=True, exist_ok=True)
             tmp = dest.with_name(dest.name + ".part")
             tmp.write_bytes(data)

@@ -259,3 +259,33 @@ def test_overnight_layouts_have_six_characters_and_valid_pieces_and_shots():
         for sid, (c0, c1, a0, a1, lens, n) in doc[lid]["shots"].items():
             assert len(c0) == 3 and len(a0) == 3 and lens > 0 and n >= 0 and (c1 is None) == (a1 is None), (lid, sid)
         assert W.scene_set(lid)
+
+
+def test_a_derived_rebuild_is_checked_by_source_and_fingerprint_not_bytes(tmp_path, monkeypatch):
+    gltf, files = synthetic()
+    reg, _ = W.pack_piece(gltf, files.get, 32)
+    other, _ = W.pack_piece(gltf, files.get, 16)   # same structure, other image bytes (a platform's encoder)
+    assert reg != other and W.fingerprint(reg) == W.fingerprint(other)
+    a = {"id": "model.mvk_x", "source": "mvk", "member": "m.gltf", "name": "x.glb", "role": "wall", "sha256": hashlib.sha256(reg).hexdigest()}
+    t = {"packs": {"mvk": {"sha256": "ab" * 32}}, "polyhaven": {}, "max_texture_px": 32, "assets": [a]}
+    W.annotate(t, {"model.mvk_x": _write(tmp_path / "reg.glb", reg)})
+    assert a["derived"] and a["packer"] == W.PACKER and a["source_sha256"] == "ab" * 32 and a["fingerprint"] == W.fingerprint(reg)
+    rec = {"sha256": a["sha256"], "file": "tools/assets_cache/xx/x.glb"}
+    monkeypatch.setattr(W.L, "get", lambda i, lib=None: rec)
+    monkeypatch.setattr(W.L, "load", lambda *x, **k: {})
+    monkeypatch.setattr(W.L, "cached", lambda r, repo=None: None)
+    monkeypatch.setattr(W.L, "fetch", lambda *x, **k: (_ for _ in ()).throw(RuntimeError("no vault")))
+    monkeypatch.setattr(W.C, "pack_path", lambda pack, d: tmp_path / "pack.zip")
+    (tmp_path / "pack.zip").write_bytes(b"z")
+    monkeypatch.setattr(W.L, "sha256_file", lambda f: "ab" * 32 if str(f).endswith("pack.zip") else hashlib.sha256(Path(f).read_bytes()).hexdigest())
+    monkeypatch.setattr(W, "pack_pack_member", lambda *x, **k: (other, {}))
+    got = W.fetch(repo=tmp_path, t=t)
+    assert got["model.mvk_x"].read_bytes() == other and "derived" in got["model.mvk_x"].parts   # kept apart from the registered bytes
+    a["fingerprint"] = {**a["fingerprint"], "primitives": 99}   # another structure: refused
+    with pytest.raises(W.WorldKitError, match="fingerprint"):
+        W.fetch(repo=tmp_path / "second", t=t)
+
+
+def _write(p, data):
+    p.write_bytes(data)
+    return p
