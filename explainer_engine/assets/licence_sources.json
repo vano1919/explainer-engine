@@ -142,6 +142,20 @@
       "weights_vs_code_note": null,
       "outputs_note": "REJECTED for production (roadmap 21.9): the videos are global; technical reference only",
       "per_pack_check": false
+    },
+    "blender_studio_cc_by": {
+      "label": "Blender Studio character rigs (Rain v3.3; Storm, Sprite Fright characters if fetched later)",
+      "status": "cc-by-4.0",
+      "commercial_use": "yes",
+      "source_url": "https://studio.blender.org/characters/rain/v3/",
+      "evidence": "VENDOR page (read 2026-11-05): 'free to use, provided that you respect the CC-BY license and include the credit: Rain Rig © Blender Foundation | cloud.blender.org'. Storm page (read 2026-11-05) states CC-BY with the credit 'Storm Rig (CC) Blender Foundation | studio.blender.org' but its download needs a Blender Studio login",
+      "redistribution": "allowed with the credit (CC-BY)",
+      "derivatives": "allowed with the credit (CC-BY)",
+      "attribution": "Rain Rig © Blender Foundation | cloud.blender.org (in every video description that shows the character)",
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "Rain v3.3 zip: rain_v3.2.blend + textures, 64.4 MB, sha256 80217f163f6392dc829233d63c2cfb5e1376775bc34101ad14f39631fea70d24, fetched 2026-11-05 from https://studio.blender.org/download-source/files/ee/a7/eea73e55dba1cea31c09848df6a794b2-4.zip; over 5 MB so it lives in the vault, never in git (D-110). The .blend carries Python (cloudrig.py, rain_shading.py): open it with scripts disabled; the face works without them",
+      "per_pack_check": true
     }
   }
 }
