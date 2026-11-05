@@ -7,7 +7,7 @@ screen height, soldiers as Geometry Nodes instances, never thousands of armature
 | T1 mid | FAR_PX < h, or a hero beyond ``hero_max`` | route A: a baked mesh-frame collection per template, GN Instance on Points + Pick Instance |
 | T2 far | h <= FAR_PX | an animated yaw billboard: a quad facing the camera (yaw only), cell of an atlas (yaw bucket x frame) |
 
-Synthesis of documented parts (D-115): the ICW-06 cast (Quaternius UBC + MCO, CC0) plays UAL1 clips through render_shot's NLA
+Synthesis of documented parts (the creator's rule, 2026-11-05 19:19 UTC): the ICW-06 cast (Quaternius UBC + MCO, CC0) plays UAL1 clips through render_shot's NLA
 code; ``bpy/crowd_bake.py`` bakes them with ``evaluated_get`` + ``meshes.new_from_object`` (Blender API) and renders the atlas with
 the shot's own look; the GN tree uses the 5.2 manual's Instance on Points (Pick Instance), Collection Info, Scene Time, Object Info
 and the Attribute node's Instancer lookup. The bake-a-loop-into-a-collection idea is the forum workaround m5 Q1 cites; the yaw

@@ -4264,3 +4264,32 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   mist range (QUADRATIC). Every C look carries haze 0.45 from 12 m to 162 m. Local establishing A/B (1280x720): the far ground,
   the castle's back and the horizon fade to warm grey; the sky washes too (the mist pass is 1 on the background), +1.9 s/frame.
 
+
+## 2026-11-05 — T-E crowd proof: thousands of soldiers as Geometry Nodes tiers, a battle set, a 30 s battle (branch `claude/project-thread-u1fc5g`, PR #139)
+- Overnight plan T-E (Fable 22:05 UTC; the creator's brief 19:55 UTC: "cheap ways to generate thousands of fighters"), built to
+  MOTION_RESEARCH.md Group 7. Synthesis of documented parts (the creator 19:19 UTC), no add-on and no copied code: the ICW-06 cast (Quaternius UBC +
+  MCO, CC0) plays its UAL1 clips; `Object.evaluated_get` + `meshes.new_from_object` bake them; Instance on Points (Pick Instance),
+  Collection Info, Scene Time, Object Info, Align Rotation to Vector and the Attribute node's Instancer lookup draw them.
+- `blender/crowd.py` (pure Python, schema `crowd_gn/1`): formations (line, phalanx, cohort, shield wall, wedge, rout) seeded by shot
+  + crowd id; tiers by screen height (h = focal_px x 1.8 m / d; T0 rig above 250 px, the nearest 12; T1 baked mesh frames; T2 a yaw
+  billboard at 60 px and below); closed-form motion (advance from a delay, a stop after `stop_m`, a clip switch at a time), so any
+  frame renders alone (RULE-R1). `bpy/crowd_bake.py`: the bake (32 frames per clip, full + decimated to 2,000 tris), the atlas (8
+  yaw x 16 frames per far template, EXR, the shot's own look), the T1 bands near (full meshes, only for the slots seen near the
+  camera), shadow (< 40 m) and far (no shadow), the T2 billboards, banners, dust cards, smoke puffs and ballistic arrows; every
+  crowd object off Line Art; baked soldiers join the lights' receiver collections. `render_shot.build_crowd` runs it after the style.
+- Compositions: `field` (the first proof's parade), `battle` (24 f: a wedge charging a shield wall, the camera low behind the near
+  line, Poly Haven dirt field and grass ridges, Q1 haze `q1_c2_native_skin@E2`, dust over the far ranks, banners) and `battle30`
+  (720 f = 30 s, the creator 22:46 UTC via the coordinator, Fable's spec: the wedge stops at the wall at 13 s and turns to cuts,
+  the wall's front ranks cut, the main line walks up from 17 s, five volleys of 2,150 arrows, three smoke columns over a village on
+  the ridge, timed dust, the WP-Q7 crane rig on one eased curve from establishing into a push). `crowd preview --at` renders
+  single frames alone. No shot_spec bump: `scene.crowds` rides WP-Q1's shot_spec/3 (Fable). CI: `.github/workflows/crowd-proof.yml`.
+- Measured (free; this container's 4-core Mesa CPU, 1280x720, 16 samples): 5,000 soldiers on the field, 29.2 s/frame steady
+  (atlas 422 s, bake 47 s once per run); tiers at frame 1 = 859 near-shadow + 1,135 far T1 + 2,994 billboards + 12 rigs. CI run
+  42122490710 (same clip) green. A/B with `--far-px 1` (everything as T1): the billboard army matches in colour, size and place
+  (Fable accepted it as the Group 7 proof). 30 s battle preview at 400 soldiers (4 samples): five frames 10-20 s each after a
+  ~8 min bake + atlas; a first run was OOM-killed at ~14 GB (all full meshes kept) -> only near slots keep them.
+- Defaults taken tonight on Group 7's OR-22 questions (the creator's to confirm in the morning): billboards for the far tier,
+  5,000 soldiers, UAL1 clips only, 2,000 mid tris, shadows only on T1 within 40 m, cohort / phalanx / wedge / shield wall.
+- Not done / open: the 2560x1440 clips (the Mac, T-C, on Fable's go); the billboards keep one elevation per shot (a crane from
+  24 m to 2 m shows them from the `view_frame` pose); arrows are instanced meshes, not curves; dust and smoke are cards, not
+  volumes. Tests: `tests/unit/test_crowd.py` (37, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.

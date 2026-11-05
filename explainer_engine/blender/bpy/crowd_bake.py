@@ -118,6 +118,23 @@ def _collection(name, meshes_by_slot):
     return col
 
 
+def _receivers():
+    """The light-linking receiver collections of the style's lights (render_shot.build_lights: the rims and fills light only the
+    cast). A baked soldier is cast too: without this the far tiers get the key alone and read as silhouettes against the sun."""
+    return [o.light_linking.receiver_collection for o in bpy.data.objects
+            if o.type == "LIGHT" and o.light_linking.receiver_collection is not None]
+
+
+def _receive(obs):
+    n = 0
+    for coll in _receivers():
+        for ob in obs:
+            if ob.name not in coll.objects:
+                coll.objects.link(ob)
+                n += 1
+    return n
+
+
 def bake_atlas(scene, far_meshes, n, atlas, centre, workdir):
     """The T2 atlas image: ``far_meshes`` = [(far_slot, [n full meshes])]. One render per (far slot, atlas frame) of ``yaw`` copies
     side by side. Returns (image, info)."""
@@ -150,6 +167,7 @@ def bake_atlas(scene, far_meshes, n, atlas, centre, workdir):
         ob.location = base + right * ((k - (yaw_n - 1) / 2) * mw)
         ob.rotation_euler = (0.0, 0.0, phi + 2 * math.pi * k / yaw_n + math.pi)
         copies.append(ob)
+    _receive(copies)
     r = scene.render
     keep = {"camera": scene.camera, "x": r.resolution_x, "y": r.resolution_y, "pct": r.resolution_percentage,
             "transparent": r.film_transparent, "comp": r.use_compositing, "fmt": r.image_settings.file_format,
@@ -771,6 +789,7 @@ def build(scene, block, workdir, report):
     for o in objs.values():
         o.lineart.usage = "EXCLUDE"
     extras = build_props(scene, block, pts, holder)
+    linked = _receive([o for k, o in objs.items() if k.startswith("t1")])
 
     def census(frame):
         scene.frame_set(frame)
@@ -797,5 +816,6 @@ def build(scene, block, workdir, report):
                        "shadow": {k: o.visible_shadow for k, o in objs.items()},
                        "lineart": {k: o.lineart.usage for k, o in dict(objs, **extras).items()},
                        "props": {k: allc[k] for k in extras}, "near_slots": sorted(near_slots), "full_meshes_freed": freed,
+                       "light_links": {"receiver_collections": len(_receivers()), "links": linked},
                        "seconds": round(time.perf_counter() - t0, 2)}
     return objs

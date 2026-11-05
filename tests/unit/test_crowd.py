@@ -314,7 +314,7 @@ def test_render_shot_builds_the_crowd_after_the_style():
     bake = (BPY / "crowd_bake.py").read_text(encoding="utf-8")
     for name in ("GeometryNodeInstanceOnPoints", "GeometryNodeCollectionInfo", "Pick Instance", "INSTANCER", "lineart.usage",
                  "visible_shadow = False", "EE_Crowd", "new_from_object", "evaluated_get", "EE_Crowd_T1_full", "tree_banner",
-                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame", "near_slots"):
+                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame", "near_slots", "receiver_collection"):
         assert name in bake
     for col in K.COLUMNS:   # every plan column the points mesh needs is read by the bpy side
         assert f'"{col}"' in bake
