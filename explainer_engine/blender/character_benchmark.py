@@ -61,7 +61,7 @@ def textures(root: Path, names=("body_diffuse", "eyes")) -> dict[str, Path]:
 
 def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
     """The toon materials of the rig's classes (names end in the class the shadow tints are chosen by)."""
-    m = {"rain_skin": {"base": [0.62, 0.36, 0.22, 1.0]}, "rain_hair": {"base": [0.08, 0.045, 0.03, 1.0]},
+    m = {"rain_skin": {"base": [0.8, 0.5, 0.34, 1.0]}, "rain_hair": {"base": [0.08, 0.045, 0.03, 1.0]},
          "rain_eyes": {"base": [0.9, 0.9, 0.88, 1.0]}, "rain_pupil": {"base": [0.02, 0.02, 0.02, 1.0]},
          "rain_cornea": {"base": [0.9, 0.9, 0.9, 1.0]}, "rain_teeth": {"base": [0.92, 0.88, 0.8, 1.0]},
          "rain_gums": {"base": [0.62, 0.22, 0.22, 1.0]}, "rain_leather": {"base": [0.16, 0.09, 0.05, 1.0]},
@@ -70,7 +70,7 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
         t = textures(tex_dir)
         if t["body_diffuse"].exists():
             mean = SS.texture_mean(t["body_diffuse"])
-            m["rain_skin"] = {"base": mean + [1.0], "texture": str(t["body_diffuse"]), "texture_mean": mean, "strength": 0.5}
+            m["rain_skin"] = {"base": mean + [1.0], "texture": str(t["body_diffuse"]), "texture_mean": mean, "strength": 0.2}
         if t["eyes"].exists():
             mean = SS.texture_mean(t["eyes"])
             m["rain_eyes"] = {"base": mean + [1.0], "texture": str(t["eyes"]), "texture_mean": mean, "strength": 1.0}
@@ -78,14 +78,14 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
 
 
 def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | None = None, angular: float = 0.0,
-          hide: tuple = ("GEO-rain-eyes_viewport",), push: bool = True) -> dict:
+          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea"), push: bool = True) -> dict:
     """{objects, camera, materials, frames_total}: Rain facing the camera in front of a plain wall, a slow push-in."""
     visemes = rigs.ActionVisemes(poses()).tracks_for(list(lip["shapes"])) if lip else None
     rb = {"path": str(blend), "collection": "CH-rain", "rig": "RIG-rain", "materials": MATERIAL_MAP, "hide": list(hide),
           "pose": {}, "lattice": {"object": LATTICE, "deltas": lattice_deltas(angular)} if angular else None, "visemes": visemes}
     objs = [{"name": "wall", "add": "cube", "params": {"size": 1}, "location": [0, 1.0, 1.4], "scale": [6, 0.2, 4], "material": "wall"},
             {"name": "rain", "rig_blend": rb}]
-    cam = {"location": [0.0, -1.75, 1.47], "look_at": [0.0, 0.0, 1.43], "lens_mm": 85, "focus_distance_m": 1.75}
+    cam = {"location": [0.0, -1.75, 1.47], "look_at": [0.0, 0.0, 1.43], "lens_mm": 85, "focus_distance_m": 1.45}
     if push:
         cam["to"] = {"location": [0.0, -1.35, 1.46], "look_at": [0.0, 0.0, 1.43]}
     mats = {"wall": {"base": "grey_mid"}, **toon_materials(tex_dir)}
