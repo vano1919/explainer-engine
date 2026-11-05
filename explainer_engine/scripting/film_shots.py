@@ -59,7 +59,8 @@ V3 = "film_shots/3"
 LANE_OF_3 = {"VIDEO_3D": "video", "STILL_3D": "still", "HELPER": "helper"}  # D-97: the /3 lanes are the BP-109 lanes
 CAMERA_MOVE_SHARE_MAX = sourced_rules.T("BP-110", "camera_move_share_max")  # KP-38
 NARRATION_BLOCK_MAX_S = sourced_rules.T("BP-104", "narration_block_max_s")  # KP-39
-NARRATOR_SHARE = tuple(sourced_rules.T("BP-105", "narrator_share"))
+NARRATOR_SHARE = tuple(sourced_rules.T("BP-105", "narrator_share"))  # the REVIEW band (D-99, ICG-1 = A)
+NARRATOR_NOMINAL = sourced_rules.T("BP-105", "nominal_narrator_share")  # the planner's target inside it (roadmap 8.2)
 NARRATION_WPM_MAX = sourced_rules.T("BP-01", "wpm_max")
 OUTRO_WORLDS_MIN = sourced_rules.T("BP-106", "worlds_on_min"), sourced_rules.T("BP-106", "worlds_coming_min")  # KP-40
 SIGN_OFF = [x.lower() for x in sourced_rules.T("BP-43", "lexicon")]
@@ -934,8 +935,8 @@ def episode_check(doc: dict) -> list[dict]:
     if n_words + d_words and total >= 60:
         share = n_words / (n_words + d_words)
         if not NARRATOR_SHARE[0] <= share <= NARRATOR_SHARE[1]:
-            add("KP-39", "REVIEW", "episode", f"the narrator has {share:.0%} of the words (aim {NARRATOR_SHARE[0]:.0%}-"
-                                              f"{NARRATOR_SHARE[1]:.0%}, BP-105)")
+            add("KP-39", "REVIEW", "episode", f"the narrator has {share:.0%} of the words (aim {NARRATOR_NOMINAL:.0%}, band "
+                                              f"{NARRATOR_SHARE[0]:.0%}-{NARRATOR_SHARE[1]:.0%}, BP-105)")
     # KP-41: the cold open shows pieces of the conflict to come, cut from the later shots themselves
     by_id = {s["id"]: i for i, s in enumerate(shots)}
     t, teasers = 0.0, 0

@@ -51,6 +51,10 @@ LANES: dict[str, dict] = {
     "DIALOGUE_CU": {"available": False, "phase": "P6"},
     "DRAMA_BLOCKED_3D": {"available": False, "phase": "P6"},
     "ATMOS_BROLL": {"available": False, "phase": "P6", "note": "UNVERIFIED which phase owns it; P6 is 'shot router, lanes'"},
+    # film_shots/3 (D-97): the Blender lanes; the runtime, the scenes and the router land in ICW-04, ICW-06 and ICW-07 (the
+    # Ink Chronicle roadmap, section 15), the Blueprint's P6 "shot router, lanes"; a HELPER shot reads its catalogue lane above
+    "VIDEO_3D": {"available": False, "phase": "P6", "note": "the Blender clip lane: no Blender renderer in code until ICW-04/ICW-06"},
+    "STILL_3D": {"available": False, "phase": "P6", "note": "the Blender plate lane: no Blender renderer in code until ICW-04/ICW-06"},
 }
 _ARCHETYPE_KEY = {a: k for k, v in LANES.items() for a in v.get("archetypes", [])}
 
@@ -75,7 +79,7 @@ def category(block: dict, cast=None) -> str:
         return block["category"]
     lane, who = block.get("lane"), block.get("who")
     cast_ok = bool(who) if cast is None else who in cast
-    if block.get("tier") == "hold" or lane == "STILL_HOLD":
+    if block.get("tier") == "hold" or lane in ("STILL_HOLD", "STILL_3D"):
         return "hold"
     if lane == "MAP":
         return "map_pure"
@@ -96,8 +100,14 @@ def category(block: dict, cast=None) -> str:
 
 
 def segments_from_film_shots(doc: dict) -> list[dict]:
-    """The shot cards grouped by scene: one block per shot, its category by ``category`` (film_shots/1 has no lanes)."""
+    """The shot cards grouped by scene: one block per shot, its category by ``category`` (film_shots/1 has no lanes). On
+    film_shots/3 a HELPER shot is placed by its catalogue visual (``helper_archetype``: its lane MAP or COMPENSATOR and its
+    catalogue number, the archetype the rotation rules VP-06/VP-07 count); the Ink Chronicle archetype 1-20 of a Blender
+    shot is another numbering (roadmap 7.3) and never enters them."""
+    from explainer_engine.edit import visual_compensator as VC
+
     cast = set(doc.get("cast", {}))
+    v3 = doc.get("schema") == film_shots.V3
     order: list[str] = []
     segs: dict[str, dict] = {}
     for s in doc["shots"]:
@@ -107,7 +117,11 @@ def segments_from_film_shots(doc: dict) -> list[dict]:
         who = (s.get("action") or {}).get("who")
         block = {"id": s["id"], "seconds": float(s["seconds"]), "tier": s.get("tier"), "mode": s.get("mode"), "who": who,
                  "lane": s.get("lane"), "shots": 1}
-        if s.get("archetype") is not None:
+        if v3 and s.get("lane") == "HELPER":
+            block["tier"] = None  # a HELPER card's tier is ``hold`` by the migration; its category is its catalogue lane's
+            block["lane"] = VC.lane_of(s["helper_archetype"])
+            block["archetype"] = VC.archetype(s["helper_archetype"])["number"]
+        elif not v3 and s.get("archetype") is not None:
             block["archetype"] = s["archetype"]
         block["category"] = category(block, cast)
         narr = len((s.get("narration") or "").split())
@@ -265,8 +279,9 @@ def checks(dyn: dict, prof: dict) -> list[dict]:
            sev("BP-141"))
     lo, hi = SR.T("BP-105", "narrator_share")
     if dyn["narrator_share"] is not None and not lo <= dyn["narrator_share"] <= hi:
-        _f(out, "VP-16", "narrator", f"the narrator has about {dyn['narrator_share']:.0%} ({dyn['narrator_basis']}); aim {lo:.0%}-{hi:.0%} "
-           "(BP-105, a template D band: a tactical profile narrates more by design)", sev("BP-105"))
+        _f(out, "VP-16", "narrator", f"the narrator has about {dyn['narrator_share']:.0%} ({dyn['narrator_basis']}); aim "
+           f"{SR.T('BP-105', 'nominal_narrator_share'):.0%}, band {lo:.0%}-{hi:.0%} (BP-105, a template D band: a tactical "
+           "profile narrates more by design)", sev("BP-105"))
     if dyn["central"] and dyn["turn_played_s"]:
         top = max(dyn["turn_played_s"], key=dyn["turn_played_s"].get)
         c = dyn["central"][0]

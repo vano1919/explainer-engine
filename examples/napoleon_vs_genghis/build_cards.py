@@ -4,9 +4,10 @@ Each shot is one call; this file fills the card structure the schema asks for (b
 heights from the shot size, the drawn source and master, the last frame of a long acted shot) so the shot list stays
 readable. The cards are written as ``film_shots/3`` (the Ink Chronicle Blender path, D-96; 2026-11-05, ICW-02): the
 ``film_shots/1`` cards ``legacy_cards()`` builds from episode.py go through ``scripts/migrate_film_shots_2_to_3.py``, the one
-migration, so the example is exactly what the migration makes of it. ``legacy_cards()`` stays the legacy route's worked
-example (the Qwen/LTX prompt composer, D-80) for its tests; it is never written to disk. Run it, then
-`python -m explainer_engine.scripting.film_shots check film_shots.json`.
+migration, and then through the lane planner (``explainer_engine/visual/lanes.py``, ICW-03), which gives every shot its
+Ink Chronicle archetype (1-20) and its lane so the runtime meets BP-109's 60 / 30 / 10; ``lane_plan.md`` is its report.
+``legacy_cards()`` stays the legacy route's worked example (the Qwen/LTX prompt composer, D-80) for its tests; it is never
+written to disk. Run it, then `python -m explainer_engine.scripting.film_shots check film_shots.json`.
 
     python examples/napoleon_vs_genghis/build_cards.py
 """
@@ -152,11 +153,27 @@ def legacy_cards() -> dict:
     return ep.doc
 
 
+def planned() -> tuple[dict, dict, dict]:
+    """(the film_shots/3 cards, the migration report, the lane plan): the legacy cards through the one migration, then the
+    lane planner (ICW-03): lanes by beat intensity and BP-109's shares, an archetype on every shot."""
+    import migrate_film_shots_2_to_3 as migration
+    from explainer_engine.visual import lanes
+
+    migrated, report = migration.migrate(legacy_cards())
+    doc, plan = lanes.plan(migrated)
+    return doc, report, plan
+
+
 def cards() -> tuple[dict, dict]:
     """(the film_shots/3 cards, the migration report)."""
-    import migrate_film_shots_2_to_3 as migration
+    doc, report, _plan = planned()
+    return doc, report
 
-    return migration.migrate(legacy_cards())
+
+def lane_plan(plan: dict) -> str:
+    from explainer_engine.visual import lanes
+
+    return lanes.report_md(plan, title="Napoleon vs Genghis Khan: lane plan (ICW-03)")
 
 
 def migration_report(report: dict) -> str:
@@ -172,11 +189,12 @@ def migration_report(report: dict) -> str:
 def main() -> int:
     from explainer_engine.scripting import film_shots
 
-    doc, report = cards()
+    doc, report, plan = planned()
     out = HERE / "film_shots.json"
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (HERE / "shotlist.md").write_text(film_shots.shotlist(doc), encoding="utf-8")
     (HERE / "migration_report.md").write_text(migration_report(report), encoding="utf-8")
+    (HERE / "lane_plan.md").write_text(lane_plan(plan), encoding="utf-8")
     total = sum(s["seconds"] for s in doc["shots"])
     by_scene: dict[str, float] = {}
     for s in doc["shots"]:
@@ -185,7 +203,8 @@ def main() -> int:
     for sc, secs in by_scene.items():
         print(f"{sc}  {int(t // 60)}:{t % 60:04.1f}  {secs:5.1f} s")
         t += secs
-    print(f"{len(doc['shots'])} shots, {total:.1f} s -> {out.name} ({doc['schema']}, lanes unchanged: {report['shares_unchanged']})")
+    print(f"{len(doc['shots'])} shots, {total:.1f} s -> {out.name} ({doc['schema']}, migration kept the lanes: "
+          f"{report['shares_unchanged']}; planned: " + ", ".join(f"{k} {v:.1%}" for k, v in plan["shares"].items()) + ")")
     return 0
 
 

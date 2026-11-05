@@ -3973,3 +3973,34 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Results: `docs_lint` 0 findings; fast suite (`-m "not system and not media"`, Python 3.13, with cv2): 2566 collected, 0 failed
   (2 skipped, 1 xfail, as at the base).
 - Cost: $0. No pod, no paid API call.
+
+### 2026-11-05 — ICW-03 lane planner, archetype registry, speech report (Ink Chronicle, roadmap sections 7, 8 and 15)
+
+- Work package ICW-03, branch `icw/03-lane-planner` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c4926d9), PR #124;
+  Fable accepted it 2026-11-05.
+- New modules:
+  - `explainer_engine/visual/archetypes_ic.json` + `schemas/archetypes_ic.schema.json` (`archetypes_ic/1`): 20 visual
+    archetypes and the 23 sub-categories of roadmap 7.4 (H1-H6, S1-S7, V1-V10), each with the twelve required attributes.
+  - `visual/shot_design.py`: the archetype, helper pick, still mode and rig of each shot; a seen line over BP-108's cap is
+    split onto an off-screen cover with no word lost.
+  - `visual/lanes.py`: the lane plan into BP-109's band, with REVIEW-only findings (KP-37 out of band, the new KP-48 for a
+    long VIDEO_3D run); the script is never rewritten.
+  - `qa/speech_mix.py`: `speech_mix_report/1` (BP-105, with KP-39 and KP-36 REVIEWs).
+- Napoleon example planned:
+  - lanes 62.0 / 30.6 / 7.4 (was 95.4 / 4.6 / 0);
+  - narrator 70.1 %;
+  - archetypes 1-20 on every shot;
+  - new `lane_plan.md`; `film_shots.json`, `shotlist.md` and `script_variants.json` regenerated; variant v1 scores 70.
+- Stale text reported (precedence rule): the roadmap prose says "26" sub-categories; the lists in 7.4 have 23 (for ICW-07).
+- For ICW-07 (shared files left untouched):
+  - `sourced_rules.json` `enforced_by` for BP-105, BP-108 and BP-109 (the new modules read them through `scripting/film_shots`);
+  - a row for KP-48's run limit (`planner.video_run_max` 3, a hypothesis), or keep it as a hypothesis;
+  - a CONTRACTS/INDEX row for `archetypes_ic/1`;
+  - optional `camera_rig` / `intensity` card fields.
+- For ICW-08: the scorecard row and the final-mix delivery check.
+- Tests: new `test_visual_lanes.py` (32) and `test_speech_mix.py` (9) on three fixture scripts (`tests/unit/_lane_fixtures.py`)
+  plus Napoleon; the pins in `test_variant_plan.py` and `test_film_shots.py` now hold the planned episode's real values.
+- Results: `docs_lint` 0 findings; fast suite (`-m "not system and not media"`): 2604 passed, 2 skipped, 1 xfail. CI `quality`
+  fails only `test_seams.py::test_duration_of_an_mp3_is_its_decoded_length` (it depends on the runner's ffmpeg build); the same
+  test fails on ICW-00/01/02 too, and this PR does not cause it.
+- Cost: $0. No pod, no paid API call.
