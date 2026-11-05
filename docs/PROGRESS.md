@@ -4060,3 +4060,23 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   - eevee_full's missing `use_gtao` belongs to ICW-09.
 - Results: `docs_lint` 0 findings; fast suite 2705 passed (`test_seams` is the inherited ffprobe failure).
 - Cost: $0. No pod and no paid call.
+
+### 2026-11-05 — ICW-08: Blender render validator (Ink Chronicle, roadmap section 13)
+
+- Work package ICW-08, branch `icw/08-render-validator` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c4c7223, after
+  the PR #127 merge). Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw08_2026-11-05/HANDOFF_ICW-08.md`.
+- `blender/validate.py`: `RenderValidator.check(shot_dir, spec, still_mode=)` reads a `blender/render.py` shot folder and returns
+  `qa_report/1` rows: RV-FRAMES, RV-SIZE, RV-FPS (FAIL); RV-BLACK, RV-FROZEN (FAIL, BP-174, `still_mode` hold exempts the frozen
+  row); RV-FLICKER, RV-LINE (REVIEW, BP-174); RV-LINE-WEIGHT (REVIEW, BP-173, the stroke width scaled to 1440 rows); RV-CAL-* (INFO,
+  calibration numbers for ICW-09). `report()` makes one `qa_report/1` of stage `clip` (no retry directive: a failed FAIL row is
+  ESCALATE_TO_HUMAN); the CLI writes `<job>/qa/clip.qa_report.json`, which the review bundle already copies.
+- Definitions without numbers of their own: black = no lit pixel (as `render.check_png`), frozen = identical pixels, an edge pixel
+  = luma nearer the `ink` token than the `paper` token. Near-black luma and the smallest neighbour change are reported for ICW-09.
+- `style_findings`: palette dE to the nearest token, paper grain and specular share as INFO rows (no BP row exists for them yet).
+- `qa/scorecard.py` check 5 reads the render report (`render_qa`, `render_report`): a failed FAIL row fails it, a REVIEW row makes it
+  REVIEW; the legacy route's clip report is not read.
+- Registry: `blender/validate.py` added to BP-173 and BP-174 `enforced_by` (thresholds unchanged; the sync test requires it).
+- Tests: `tests/unit/test_blender_validate.py` (18): each synthetic defect (black run, frozen run, flicker, edge jump, missing frame,
+  wrong size, wrong clip rate, stroke width) triggers exactly its row.
+- Results: `docs_lint` 0 findings; fast suite 2723 passed, 2 skipped, 2 xfailed (`test_seams` deselected: the inherited ffprobe failure).
+- Cost: $0. No pod and no paid call.
