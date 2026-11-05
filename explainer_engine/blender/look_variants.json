@@ -388,5 +388,340 @@
     "v01_reference_soft3d",
     "v05_gouache",
     "v09_painted_matte"
+  ],
+  "q1_variants_doc": "WP-Q1 (2026-11-05, INTEGRATION_PLAN WP-Q1): the soft shade mode's lit and rgb_soft paths with the coloured cinematic / key_rim rigs (style.StyleEngine.lights) and the Standard / Khronos PBR Neutral view transforms. Kept apart from the round's ten so its table stays the one home of those; every value HYP until the creator judges the clips.",
+  "q1_variants": [
+    {
+      "id": "q1_lit_pbrn_cinematic",
+      "slider": 1,
+      "label": "Q1a  lit matte, PBR Neutral, cinematic",
+      "feel": "real matte light: warm key with a soft cast shadow, cool fill, warm rim on the cast only, soft faces, painted blur behind",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35
+    },
+    {
+      "id": "q1_lit_std_keyrim",
+      "slider": 2,
+      "label": "Q1b  lit matte, Standard, no cast shadows",
+      "feel": "the same matte light without cast shadows (the light profile), palette hex exact under Standard",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Standard",
+      "light_rig": "key_rim",
+      "key_energy": 2.2,
+      "fill": 0.8,
+      "rim_strength": 2.5,
+      "ao": true,
+      "ambient": 0.3
+    },
+    {
+      "id": "q1_rgbsoft_pbrn_cinematic",
+      "slider": 2,
+      "label": "Q1c  painted soft light, PBR Neutral, cinematic",
+      "feel": "light keeps its colour, the shadow side is a painted warm or cool tint per material, a soft lifted ramp",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "rgb_soft",
+      "half_lambert": 0.3,
+      "ramp_interp": "LINEAR",
+      "shadow_tints": {
+        "skin": [
+          0.82,
+          0.52,
+          0.46
+        ],
+        "hair": [
+          0.6,
+          0.5,
+          0.58
+        ],
+        "eyes": [
+          0.8,
+          0.8,
+          0.9
+        ],
+        "costume": [
+          0.58,
+          0.58,
+          0.78
+        ],
+        "set": [
+          0.66,
+          0.68,
+          0.86
+        ]
+      },
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 2.4,
+      "fill": 0.9,
+      "rim_strength": 2.8,
+      "ambient": 0.3
+    },
+    {
+      "id": "q1_rgbsoft_pbrn_keyrim",
+      "slider": 3,
+      "label": "Q1d  painted soft light, PBR Neutral, no cast shadows",
+      "feel": "the painted soft light with no shadow pass: the cheapest of the four",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "rgb_soft",
+      "half_lambert": 0.3,
+      "ramp_interp": "LINEAR",
+      "shadow_tints": {
+        "skin": [
+          0.82,
+          0.52,
+          0.46
+        ],
+        "hair": [
+          0.6,
+          0.5,
+          0.58
+        ],
+        "eyes": [
+          0.8,
+          0.8,
+          0.9
+        ],
+        "costume": [
+          0.58,
+          0.58,
+          0.78
+        ],
+        "set": [
+          0.66,
+          0.68,
+          0.86
+        ]
+      },
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "key_rim",
+      "key_energy": 2.4,
+      "fill": 0.9,
+      "rim_strength": 2.8,
+      "ambient": 0.3
+    }
   ]
 }

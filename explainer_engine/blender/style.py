@@ -42,7 +42,7 @@ SCHEMA = "style_graph/1"
 PATHS = ("eevee", "cycles_safe")
 MASTER_W, MASTER_H = 2560, 1440
 LINE_PX_PER_RADIUS = 0.955          # measured, see the module docstring
-LOOK_IDS = {"Medium High Contrast": ("AgX - Medium High Contrast", "Medium High Contrast"), "None": ("None",)}
+LOOK_IDS = {"Medium High Contrast": ("AgX - Medium High Contrast", "Medium High Contrast"), "None": ("None", "NONE")}
 PALETTE_PATH = Path(__file__).resolve().parents[1] / "design" / "palette.json"
 
 
@@ -303,7 +303,8 @@ class Look:
                                  ("kuwahara_scope", self.kuwahara_scope, KUWAHARA_SCOPES)):
             if val not in known:
                 raise ValueError(f"{self.id}: unknown {name} {val!r} (known: {', '.join(known)})")
-        for name in ("brush", "halftone", "warmth", "paper", "grain", "vignette", "line_opacity", "feather", "rim_strength"):
+        shares = ("brush", "halftone", "warmth", "paper", "grain", "vignette", "line_opacity", "feather")
+        for name in shares + (() if self.rim_mode == "light" else ("rim_strength",)):
             if not 0 <= getattr(self, name) <= 1:
                 raise ValueError(f"{self.id}: {name} {getattr(self, name)} is not a share 0..1")
         for name in ("texture_keep", "costume_keep"):
@@ -350,6 +351,8 @@ class Look:
         for cls, tint in self.shadow_tints:
             if cls not in MATERIAL_CLASSES or len(tint) != 3 or not all(0 < c <= 1.5 for c in tint):
                 raise ValueError(f"{self.id}: shadow tint {cls!r} {tint} (classes: {', '.join(MATERIAL_CLASSES)}; rgb 0..1.5)")
+        if self.rim_mode == "light" and not 0 <= self.rim_strength <= 10:   # a rim light's strength is its sun energy
+            raise ValueError(f"{self.id}: rim light energy {self.rim_strength} outside 0..10")
         if not 0 < self.key_energy <= 10 or not 0 <= self.shadow_filter <= 10 or not 0 <= self.normal_soften <= 40:
             raise ValueError(f"{self.id}: key_energy 0..10, shadow_filter 0..10, normal_soften 0..40")
         if self.ambient is not None and not 0 <= self.ambient <= 2:
@@ -448,13 +451,14 @@ def look_tokens(variant_id: str, *, doc: dict | None = None) -> StyleTokens:
     doc = doc or look_variants()
     twin = variant_id.endswith(SWATCH_SUFFIX)
     vid = variant_id[: -len(SWATCH_SUFFIX)] if twin else variant_id
-    v = next((x for x in doc["variants"] if x["id"] == vid), None)
+    v = next((x for x in doc["variants"] + doc.get("q1_variants", []) if x["id"] == vid), None)
     if twin and vid not in doc.get("swatch_twins", []):
         v = None
     if v is not None and twin:
         v = {**v, "id": variant_id, "palette_map": "reference_swatches", "label": v["label"] + ", reference swatches"}
     if v is None:
-        raise KeyError(f"unknown look variant {variant_id!r} (known: {', '.join(x['id'] for x in doc['variants'])})")
+        known = [x["id"] for x in doc["variants"] + doc.get("q1_variants", [])]
+        raise KeyError(f"unknown look variant {variant_id!r} (known: {', '.join(known)})")
     art = Look.from_dict(v)
     base = variant("B")
     return replace(base, line_px=art.line_px if art.line_mode != "none" else base.line_px, shadows=art.casts_shadows,
