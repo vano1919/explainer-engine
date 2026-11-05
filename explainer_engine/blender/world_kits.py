@@ -396,7 +396,8 @@ def _placements(block: dict, name: str, t: dict, T=None) -> list[dict]:
         return [{"name": name, "asset": block["asset"], "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0),
                  "scale": block.get("scale", 1.0), "role": block.get("role", "piece")}]
     if kind == "shape":   # a primitive (hill, river, mountain) in a flat tone: {add, params, pos, scale, yaw_deg, colour}
-        return [{"name": name, "asset": None, "shape": {"add": block["add"], "params": block.get("params", {}), "colour": block["colour"]},
+        return [{"name": name, "asset": None, "shape": {"add": block["add"], "params": block.get("params", {}), "colour": block["colour"],
+                           "texture": block.get("texture"), "tile": block.get("tile", 1.0)},
                  "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0), "scale": block.get("scale", 1.0), "role": "shape"}]
     if kind == "scatter":   # deterministic: the same seed gives the same wood in every shot
         import random
@@ -534,6 +535,10 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
             sh = p["shape"]
             mname = "shape_" + sh["colour"].lstrip("#").lower()
             mats[mname] = {"base": sh["colour"]}
+            if sh.get("texture") and ground_textures is not None:   # marble / stone: a trace of the Poly Haven map over the tone
+                mname += "_" + sh["texture"].split(".", 1)[1]
+                mats[mname] = {"base": sh["colour"], "texture": str(ground_textures[sh["texture"]]), "texture_mean": _mean(ground_textures[sh["texture"]]),
+                               "tile": sh["tile"], "strength": 0.55}
             objs.append({"name": p["name"], "add": sh["add"], "params": sh["params"], "location": p["pos"],
                          "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": mname, "smooth": True})
             continue

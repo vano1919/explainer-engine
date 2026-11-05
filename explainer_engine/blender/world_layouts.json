@@ -1616,7 +1616,9 @@
       2.0,
       0.175
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1633,7 +1635,9 @@
       2.0,
       0.35
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1650,7 +1654,9 @@
       2.0,
       0.525
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1671,7 +1677,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1692,7 +1700,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1713,7 +1723,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1734,7 +1746,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1755,7 +1769,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1776,7 +1792,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1797,7 +1815,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1818,7 +1838,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1835,7 +1857,9 @@
       1.7,
       0.6
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1869,7 +1893,9 @@
       4.0,
       3.8
      ],
-     "colour": "#DCCDAE"
+     "colour": "#DCCDAE",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1908,7 +1934,9 @@
       0.22,
       1
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1929,7 +1957,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1950,7 +1980,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1971,7 +2003,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -1992,7 +2026,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2009,7 +2045,9 @@
       11.5,
       0.45
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2030,7 +2068,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2051,7 +2091,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2072,7 +2114,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2093,7 +2137,9 @@
       1,
       1
      ],
-     "colour": "#EFE6D2"
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2110,7 +2156,9 @@
       11.5,
       0.45
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "shape",
@@ -2127,7 +2175,9 @@
       1.6,
       0.6
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "piece",
@@ -2157,7 +2207,9 @@
       0.55,
       0.8
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "piece",
@@ -2187,7 +2239,9 @@
       0.55,
       0.8
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "piece",
@@ -2217,7 +2271,9 @@
       0.55,
       0.8
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "piece",
@@ -2247,7 +2303,9 @@
       0.55,
       0.8
      ],
-     "colour": "#E6DCC4"
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
     },
     {
      "type": "piece",
@@ -2916,10 +2974,10 @@
     },
     {
      "type": "scatter",
-     "name": "pine",
+     "name": "broadleaf",
      "assets": [
-      "model.snm_pine_1",
-      "model.snm_pine_3"
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
      ],
      "count": 24,
      "rect": [
@@ -2975,6 +3033,666 @@
      "terrain": true,
      "min_z": -1.5,
      "road_clear": 0.0
+    },
+    {
+     "type": "shape",
+     "name": "cypress0",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      -4,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress1",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      4,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress2",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      12,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress3",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      20,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress4",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      28,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress5",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      36,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress6",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      -4,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress7",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      4,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress8",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      12,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress9",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      20,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress10",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      28,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress11",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      36,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress12",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      -4,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress13",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      4,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress14",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      12,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress15",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      20,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress16",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      28,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress17",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      36,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress18",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      -4,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress19",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      4,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress20",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      12,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress21",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      20,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress22",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      28,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress23",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      36,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress24",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      -18,
+      48,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress25",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -10,
+      50,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress26",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      10,
+      50,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress27",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      18,
+      48,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress28",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      -24,
+      44,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress29",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      24,
+      44,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
     }
    ],
    "cast": [
@@ -3301,7 +4019,7 @@
      "pos": [
       0,
       40,
-      0.0
+      -0.15
      ],
      "yaw_deg": 0.0,
      "scale": 1.6,
@@ -3314,7 +4032,7 @@
      "pos": [
       0,
       50,
-      0.0
+      -0.15
      ],
      "yaw_deg": 0.0,
      "scale": 1.6,
@@ -3327,7 +4045,7 @@
      "pos": [
       22,
       62,
-      0.0
+      -1.35
      ],
      "yaw_deg": 70.0,
      "scale": 1.0,
@@ -3340,7 +4058,7 @@
      "pos": [
       -30,
       85,
-      0.0
+      -1.35
      ],
      "yaw_deg": 100.0,
      "scale": 1.2,
@@ -4112,6 +4830,44 @@
      "terrain": true,
      "min_z": -1.5,
      "road_clear": 0.0
+    },
+    {
+     "type": "shape",
+     "name": "quay_wall",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      39.6,
+      -1.1
+     ],
+     "scale": [
+      62,
+      0.7,
+      1.2
+     ],
+     "colour": "#8D8678",
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0
+    },
+    {
+     "type": "shape",
+     "name": "quay_cap",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      39.4,
+      0.06
+     ],
+     "scale": [
+      62,
+      1.0,
+      0.12
+     ],
+     "colour": "#A39B8A",
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0
     }
    ],
    "cast": [
@@ -4277,14 +5033,14 @@
      [
       0,
       14,
-      30,
+      26,
       0.0,
-      16
+      6
      ]
     ],
     "sea": {
-     "y0": 34,
-     "y1": 44,
+     "y0": 36,
+     "y1": 46,
      "drop": 5.0
     },
     "snow_line": 1000000000.0,
