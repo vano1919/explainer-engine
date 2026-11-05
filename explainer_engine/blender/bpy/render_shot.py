@@ -38,12 +38,16 @@ def write_json(path, payload):
     os.replace(tmp, path)
 
 
-def engine_id(engine):
-    items = {e.identifier for e in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items}
+def set_engine(scene, engine):
+    """Set the render engine by trying its known ids: the RNA enum lists only the built-in items (5.2.3 shows just
+    BLENDER_EEVEE), while Workbench and Cycles are registered at run time, so the enum cannot be read up front."""
     for cand in ENGINE_IDS[engine]:
-        if cand in items:
-            return cand
-    raise RuntimeError(f"this Blender has no {engine} engine (has: {sorted(items)})")
+        try:
+            scene.render.engine = cand
+        except TypeError:
+            continue
+        return cand
+    raise RuntimeError(f"this Blender has no {engine} engine (tried {ENGINE_IDS[engine]})")
 
 
 def set_attr(obj, name, value, applied, missing, label):
@@ -93,7 +97,7 @@ def build_smoke(scene, frames_total):
 def apply_settings(scene, job):
     applied, missing = {}, []
     s, eng = job["settings"], job["engine"]
-    scene.render.engine = engine_id(eng)
+    set_engine(scene, eng)
     applied["engine_id"] = scene.render.engine
     if eng == "eevee":
         ee = scene.eevee
