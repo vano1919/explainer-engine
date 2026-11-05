@@ -25,6 +25,9 @@ import bmesh
 import bpy
 from mathutils import Matrix, Vector
 
+DUST_NAMES = ("x", "y", "z", "w", "h", "vx", "vy", "seed", "t_in")          # crowd.DUST_COLUMNS
+ARROW_NAMES = ("x", "y", "z", "vx", "vy", "vz", "t0", "flight")            # crowd.ARROW_COLUMNS
+SMOKE_NAMES = ("x", "y", "z", "phase", "period", "height", "lean", "size0", "size1", "seed")   # crowd.SMOKE_COLUMNS
 TIERS_T1 = (("t1_near", True), ("t1_shadow", True), ("t1_far", False))   # near: the full baked meshes; the others the decimated ones
 
 
@@ -275,7 +278,9 @@ def _points(name, block, rates):
     me.from_pydata([(p["x"][i], p["y"][i], 0.0) for i in range(n)], [], [])
     cols = {"yaw": p["yaw"], "slot": [float(s) for s in p["slot"]], "far_slot": [float(s) for s in p["far_slot"]],
             "phase": p["phase"], "rate": [p["speed"][i] * rates[p["slot"][i]] for i in range(n)], "vx": p["vx"], "vy": p["vy"],
-            "delay": p["delay"], "banner": [float(b) for b in p["banner"]]}
+            "delay": p["delay"], "banner": [float(b) for b in p["banner"]], "stop": p["stop"],
+            "slot2": [float(s) for s in p["slot2"]], "far_slot2": [float(s) for s in p["far_slot2"]], "switch": p["switch"],
+            "rate2": [p["speed"][i] * rates[p["slot2"][i]] for i in range(n)]}
     for k, vals in cols.items():
         at = me.attributes.new(k, "FLOAT", "POINT")
         at.data.foreach_set("value", [float(v) for v in vals])
@@ -364,7 +369,7 @@ def _common(t, cam, dmin, dmax):
     """Set Position (closed-form advance), the camera distance and the tier's selection; returns (geometry, selection, pos, camloc)."""
     st = t.node("GeometryNodeInputSceneTime")
     secs = t.sock(st.outputs, "Seconds")
-    walk = t.math("MAXIMUM", t.math("SUBTRACT", secs, t.attr("delay")), 0.0)
+    walk = t.math("MINIMUM", t.math("MAXIMUM", t.math("SUBTRACT", secs, t.attr("delay")), 0.0), t.attr("stop"))   # stops at the clash
     off = t.xyz(t.math("MULTIPLY", t.attr("vx"), walk), t.math("MULTIPLY", t.attr("vy"), walk), 0.0)
     sp = t.node("GeometryNodeSetPosition")
     t.link(t.gin.outputs[0], t.sock(sp.inputs, "Geometry"))
@@ -378,14 +383,16 @@ def _common(t, cam, dmin, dmax):
     return t.sock(sp.outputs, "Geometry"), sel, pos, camloc, t.sock(st.outputs, "Frame")
 
 
-def _instance(t, geom, sel, instance, rot_z, *, pick=None, scale=None):
-    eu = t.node("FunctionNodeEulerToRotation")
-    t.val(eu, "Euler", t.xyz(0.0, 0.0, rot_z))
+def _instance(t, geom, sel, instance, rot_z, *, pick=None, scale=None, rotation=None):
+    if rotation is None:
+        eu = t.node("FunctionNodeEulerToRotation")
+        t.val(eu, "Euler", t.xyz(0.0, 0.0, rot_z))
+        rotation = t.sock(eu.outputs, "Rotation")
     iop = t.node("GeometryNodeInstanceOnPoints")
     t.link(geom, t.sock(iop.inputs, "Points"))
     t.val(iop, "Selection", sel)
     t.link(instance, t.sock(iop.inputs, "Instance"))
-    t.link(t.sock(eu.outputs, "Rotation"), t.sock(iop.inputs, "Rotation"))
+    t.link(rotation, t.sock(iop.inputs, "Rotation"))
     if scale is not None:
         t.val(iop, "Scale", scale)
     if pick is not None:
@@ -394,8 +401,16 @@ def _instance(t, geom, sel, instance, rot_z, *, pick=None, scale=None):
     t.link(t.sock(iop.outputs, "Instances"), t.gout.inputs[0])
 
 
-def _frame_t(t, frame, n):
-    return t.math("WRAP", t.math("ADD", t.math("MULTIPLY", frame, t.attr("rate")), t.attr("phase")), float(n), 0.0)
+def _frame_t(t, frame, n, rate=None):
+    rate = t.attr("rate") if rate is None else rate
+    return t.math("WRAP", t.math("ADD", t.math("MULTIPLY", frame, rate), t.attr("phase")), float(n), 0.0)
+
+
+def _switched(t, a, b):
+    """``a`` before the soldier's clip switch, ``b`` from it on (the shot time against the ``switch`` column; closed form)."""
+    st = t.node("GeometryNodeInputSceneTime")
+    on = t.compare("GREATER_EQUAL", t.sock(st.outputs, "Seconds"), t.attr("switch"))
+    return t.math("ADD", t.attr(a), t.math("MULTIPLY", t.math("SUBTRACT", t.attr(b), t.attr(a)), on))
 
 
 def tree_t1(name, cam, col, n, dmin, dmax):
@@ -405,7 +420,8 @@ def tree_t1(name, cam, col, n, dmin, dmax):
     t.sock(ci.inputs, "Collection").default_value = col
     t.sock(ci.inputs, "Separate Children").default_value = True
     t.sock(ci.inputs, "Reset Children").default_value = True
-    idx = t.math("ADD", t.math("MULTIPLY", t.attr("slot"), float(n)), t.math("FLOOR", _frame_t(t, frame, n)))
+    idx = t.math("ADD", t.math("MULTIPLY", _switched(t, "slot", "slot2"), float(n)),
+                 t.math("FLOOR", _frame_t(t, frame, n, _switched(t, "rate", "rate2"))))
     rot = t.math("ADD", t.math("RADIANS", t.attr("yaw")), math.pi)
     _instance(t, geom, sel, ci.outputs[0], rot, pick=idx)
     return t.ng
@@ -419,8 +435,10 @@ def tree_t2(name, cam, quad, n, atlas, dmin):
     rel = t.math("SUBTRACT", t.math("RADIANS", t.attr("yaw")), theta)
     step = 2 * math.pi / atlas["yaw"]
     bucket = t.math("FLOOR", t.math("DIVIDE", t.math("WRAP", t.math("ADD", rel, step / 2), 2 * math.pi, 0.0), step))
-    col = t.math("ADD", t.math("MULTIPLY", t.attr("far_slot"), float(atlas["yaw"])), t.math("MINIMUM", bucket, atlas["yaw"] - 1.0))
-    row = t.math("MINIMUM", t.math("FLOOR", t.math("MULTIPLY", _frame_t(t, frame, n), atlas["frames"] / n)), atlas["frames"] - 1.0)
+    col = t.math("ADD", t.math("MULTIPLY", _switched(t, "far_slot", "far_slot2"), float(atlas["yaw"])),
+                 t.math("MINIMUM", bucket, atlas["yaw"] - 1.0))
+    row = t.math("MINIMUM", t.math("FLOOR", t.math("MULTIPLY", _frame_t(t, frame, n, _switched(t, "rate", "rate2")), atlas["frames"] / n)),
+                 atlas["frames"] - 1.0)
     for name_, value in (("atlas_col", col), ("atlas_row", row)):
         s = t.node("GeometryNodeStoreNamedAttribute", data_type="FLOAT", domain="POINT")
         t.link(geom, t.sock(s.inputs, "Geometry"))
@@ -474,10 +492,10 @@ def tree_banner(name, cam, ob, k):
     return t.ng
 
 
-def _dust_material(dust):
-    """Soft dust: a 4D noise (W = the card's seed, read from the instancer) under a radial falloff, lit by the shot's own lights
-    (diffuse + translucent, so a sun behind it glows through), blended."""
-    mat = bpy.data.materials.new("EE_Crowd_dust")
+def _dust_material(dust, name="EE_Crowd_dust"):
+    """Soft dust or smoke: a 4D noise (W = the card's seed, read from the instancer) under a radial falloff, times the card's
+    ``fade`` (stored by its tree from the shot time), lit by the shot's own lights (diffuse + translucent), blended."""
+    mat = bpy.data.materials.new(name)
     mat.use_nodes = True
     nt = mat.node_tree
     for n in list(nt.nodes):
@@ -501,11 +519,15 @@ def _dust_material(dust):
     fall.interpolation_type = "SMOOTHSTEP"
     fall.inputs["From Min"].default_value, fall.inputs["From Max"].default_value = 0.5, 0.12
     L.new(dist.outputs["Value"], fall.inputs["Value"])
-    m1, m2 = N.new("ShaderNodeMath"), N.new("ShaderNodeMath")
-    m1.operation = m2.operation = "MULTIPLY"
+    m1, m2, m3 = N.new("ShaderNodeMath"), N.new("ShaderNodeMath"), N.new("ShaderNodeMath")
+    m1.operation = m2.operation = m3.operation = "MULTIPLY"
+    fade = N.new("ShaderNodeAttribute")
+    fade.attribute_type, fade.attribute_name = "INSTANCER", "fade"
     L.new(ramp.outputs["Result"], m1.inputs[0])
     L.new(fall.outputs["Result"], m1.inputs[1])
-    L.new(m1.outputs[0], m2.inputs[0])
+    L.new(m1.outputs[0], m3.inputs[0])
+    L.new(fade.outputs["Fac"], m3.inputs[1])
+    L.new(m3.outputs[0], m2.inputs[0])
     m2.inputs[1].default_value = float(dust["alpha"])
     rgb = (*dust["rgb"], 1.0)
     dif, trl, add = N.new("ShaderNodeBsdfDiffuse"), N.new("ShaderNodeBsdfTranslucent"), N.new("ShaderNodeAddShader")
@@ -525,33 +547,107 @@ def _dust_material(dust):
     return mat
 
 
-def _dust_points(dust):
-    cards = dust["cards"]
-    me = bpy.data.meshes.new("EE_Crowd_dust_points")
-    me.from_pydata([(c[0], c[1], c[2]) for c in cards], [], [])
-    for i, k in enumerate(("w", "h", "vx", "vy", "seed")):
+def _rows_points(name, rows, names):
+    """One vertex per row at its first three values; the rest become float point attributes named ``names[3:]``."""
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([(r[0], r[1], r[2]) for r in rows], [], [])
+    for i, k in enumerate(names[3:]):
         at = me.attributes.new(k, "FLOAT", "POINT")
-        at.data.foreach_set("value", [float(c[3 + i]) for c in cards])
+        at.data.foreach_set("value", [float(r[3 + i]) for r in rows])
     return me
 
 
+def _store(t, geom, name, value):
+    s = t.node("GeometryNodeStoreNamedAttribute", data_type="FLOAT", domain="POINT")
+    t.link(geom, t.sock(s.inputs, "Geometry"))
+    t.sock(s.inputs, "Name").default_value = name
+    t.val(s, "Value", value)
+    return t.sock(s.outputs, "Geometry")
+
+
+def _facing(t, cam, pos):
+    oi = t.node("GeometryNodeObjectInfo", transform_space="RELATIVE")
+    t.sock(oi.inputs, "Object").default_value = cam
+    dx, dy, _ = t.sep(t.vmath("SUBTRACT", t.sock(oi.outputs, "Location"), pos))[:3]
+    return t.math("ARCTAN2", t.math("MULTIPLY", dx, -1.0), dy)
+
+
+def _clamp01(t, v):
+    return t.math("MINIMUM", t.math("MAXIMUM", v, 0.0), 1.0)
+
+
 def tree_dust(name, cam, quad):
-    """Cards drift (closed form, no delay) and turn to the camera about Z; scaled by their own w x h."""
+    """Cards drift (closed form) and turn to the camera about Z, scaled by their own w x h; ``fade`` rises over 2.5 s from t_in."""
     t = _Tree(name)
     st = t.node("GeometryNodeInputSceneTime")
     secs = t.sock(st.outputs, "Seconds")
     sp = t.node("GeometryNodeSetPosition")
     t.link(t.gin.outputs[0], t.sock(sp.inputs, "Geometry"))
     t.val(sp, "Offset", t.xyz(t.math("MULTIPLY", t.attr("vx"), secs), t.math("MULTIPLY", t.attr("vy"), secs), 0.0))
-    oi = t.node("GeometryNodeObjectInfo", transform_space="RELATIVE")
-    t.sock(oi.inputs, "Object").default_value = cam
     pos = t.sock(t.node("GeometryNodeInputPosition").outputs, "Position")
-    dx, dy, _ = t.sep(t.vmath("SUBTRACT", t.sock(oi.outputs, "Location"), pos))[:3]
-    theta = t.math("ARCTAN2", t.math("MULTIPLY", dx, -1.0), dy)
+    geom = _store(t, t.sock(sp.outputs, "Geometry"), "fade", _clamp01(t, t.math("DIVIDE", t.math("SUBTRACT", secs, t.attr("t_in")), 2.5)))
     qi = t.node("GeometryNodeObjectInfo", transform_space="ORIGINAL")
     t.sock(qi.inputs, "Object").default_value = quad
-    _instance(t, t.sock(sp.outputs, "Geometry"), True, t.sock(qi.outputs, "Geometry"), theta,
-              scale=t.xyz(t.attr("w"), 1.0, t.attr("h")))
+    _instance(t, geom, True, t.sock(qi.outputs, "Geometry"), _facing(t, cam, pos), scale=t.xyz(t.attr("w"), 1.0, t.attr("h")))
+    return t.ng
+
+
+def tree_smoke(name, cam, quad):
+    """Smoke columns: puff k rises in a loop (life = fract(t / period + phase)), leans with the wind, grows from size0 to size1
+    and fades in and out as sin(pi life). Every frame is a function of the shot time alone (chunk-safe)."""
+    t = _Tree(name)
+    st = t.node("GeometryNodeInputSceneTime")
+    life = t.math("FRACT", t.math("ADD", t.math("DIVIDE", t.sock(st.outputs, "Seconds"), t.attr("period")), t.attr("phase")))
+    rise = t.math("MULTIPLY", life, t.attr("height"))
+    sp = t.node("GeometryNodeSetPosition")
+    t.link(t.gin.outputs[0], t.sock(sp.inputs, "Geometry"))
+    t.val(sp, "Offset", t.xyz(t.math("MULTIPLY", rise, t.attr("lean")), 0.0, rise))
+    pos = t.sock(t.node("GeometryNodeInputPosition").outputs, "Position")
+    geom = _store(t, t.sock(sp.outputs, "Geometry"), "fade", t.math("SINE", t.math("MULTIPLY", life, math.pi)))
+    size = t.math("ADD", t.attr("size0"), t.math("MULTIPLY", t.math("SUBTRACT", t.attr("size1"), t.attr("size0")), life))
+    qi = t.node("GeometryNodeObjectInfo", transform_space="ORIGINAL")
+    t.sock(qi.inputs, "Object").default_value = quad
+    _instance(t, geom, True, t.sock(qi.outputs, "Geometry"), _facing(t, cam, pos), scale=t.xyz(size, 1.0, size))
+    return t.ng
+
+
+def _arrow(mats, scale):
+    """A shaft along +X (the tip at x = 0) with a two-vane fletch at the back, ``scale`` x a 0.85 m arrow."""
+    bm = bmesh.new()
+    L_ = 0.85 * scale
+    bmesh.ops.create_cone(bm, segments=5, radius1=0.012 * scale, radius2=0.012 * scale, depth=L_,
+                          matrix=Matrix.Translation((-L_ / 2, 0, 0)) @ Matrix.Rotation(math.pi / 2, 4, "Y"))
+    for a, b in (((0, 0.05), (0, -0.05)), ((0.05, 0), (-0.05, 0))):
+        vs = [bm.verts.new((-L_ + 0.02 * scale, a[0] * scale, a[1] * scale)), bm.verts.new((-L_ + 0.17 * scale, 0, 0)),
+              bm.verts.new((-L_ + 0.02 * scale, b[0] * scale, b[1] * scale))]
+        bm.faces.new(vs)
+    me = bpy.data.meshes.new("EE_Crowd_arrow")
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(mats.get("night"))
+    return bpy.data.objects.new("EE_Crowd_arrow", me)
+
+
+def tree_arrows(name, ob, g):
+    """Ballistic arrows: tau = clamp(t - t0, 0, flight); p = p0 + v tau - g tau^2 / 2 along -Z; the shaft along the velocity
+    (Align Rotation to Vector, X axis). An arrow appears at its launch and stays where it lands."""
+    t = _Tree(name)
+    st = t.node("GeometryNodeInputSceneTime")
+    secs = t.sock(st.outputs, "Seconds")
+    tau = t.math("MINIMUM", t.math("MAXIMUM", t.math("SUBTRACT", secs, t.attr("t0")), 0.0), t.attr("flight"))
+    drop = t.math("MULTIPLY", t.math("MULTIPLY", tau, tau), -0.5 * g)
+    sp = t.node("GeometryNodeSetPosition")
+    t.link(t.gin.outputs[0], t.sock(sp.inputs, "Geometry"))
+    t.val(sp, "Offset", t.xyz(t.math("MULTIPLY", t.attr("vx"), tau), t.math("MULTIPLY", t.attr("vy"), tau),
+                              t.math("ADD", t.math("MULTIPLY", t.attr("vz"), tau), drop)))
+    vel = t.xyz(t.attr("vx"), t.attr("vy"), t.math("SUBTRACT", t.attr("vz"), t.math("MULTIPLY", tau, g)))
+    al = t.node("FunctionNodeAlignRotationToVector")
+    al.axis = "X"
+    t.val(al, "Vector", vel)
+    oi = t.node("GeometryNodeObjectInfo", transform_space="ORIGINAL")
+    t.sock(oi.inputs, "Object").default_value = ob
+    _instance(t, t.sock(sp.outputs, "Geometry"), t.compare("GREATER_EQUAL", secs, t.attr("t0")), t.sock(oi.outputs, "Geometry"),
+              None, rotation=t.sock(al.outputs, "Rotation"))
     return t.ng
 
 
@@ -580,11 +676,31 @@ def build_props(scene, block, pts, holder):
         quad = _dust_quad()
         quad.data.materials.append(_dust_material(dust))
         holder.objects.link(quad)
-        inst = bpy.data.objects.new("EE_Crowd_dust", _dust_points(dust))
+        inst = bpy.data.objects.new("EE_Crowd_dust", _rows_points("EE_Crowd_dust_points", dust["cards"], DUST_NAMES))
         scene.collection.objects.link(inst)
         inst.modifiers.new("EE_Crowd", "NODES").node_group = tree_dust("EE_Crowd_dust", cam, quad)
         inst.visible_shadow = False
         out["dust"] = inst
+    smoke = props.get("smoke")
+    if smoke:
+        quad = _dust_quad()
+        quad.name = "EE_Crowd_smoke_quad"
+        quad.data.materials.append(_dust_material(smoke, "EE_Crowd_smoke"))
+        holder.objects.link(quad)
+        inst = bpy.data.objects.new("EE_Crowd_smoke", _rows_points("EE_Crowd_smoke_points", smoke["puffs"], SMOKE_NAMES))
+        scene.collection.objects.link(inst)
+        inst.modifiers.new("EE_Crowd", "NODES").node_group = tree_smoke("EE_Crowd_smoke", cam, quad)
+        inst.visible_shadow = False
+        out["smoke"] = inst
+    arrows = props.get("arrows")
+    if arrows:
+        ob = _arrow(mats, float(arrows.get("scale", 1.0)))
+        holder.objects.link(ob)
+        inst = bpy.data.objects.new("EE_Crowd_arrows", _rows_points("EE_Crowd_arrow_points", arrows["rows"], ARROW_NAMES))
+        scene.collection.objects.link(inst)
+        inst.modifiers.new("EE_Crowd", "NODES").node_group = tree_arrows("EE_Crowd_arrows", ob, float(arrows.get("gravity", 9.81)))
+        inst.visible_shadow = False
+        out["arrows"] = inst
     for o in out.values():
         o.lineart.usage = "EXCLUDE"
     return out
@@ -614,7 +730,11 @@ def build(scene, block, workdir, report):
     p = block["points"]
     centre = (sum(p["x"]) / max(len(p["x"]), 1), sum(p["y"]) / max(len(p["y"]), 1))
     far = [(ft["far_slot"], full_of[ft["slot"]]) for ft in sorted(block["far_templates"], key=lambda x: x["far_slot"])]
+    vf = block["atlas"].get("view_frame")
+    if vf is not None:      # a moving camera: the atlas is drawn from its pose at this frame (the billboards' elevation)
+        scene.frame_set(scene.frame_start + int(vf))
     img, ainfo = bake_atlas(scene, far, n, block["atlas"], centre, workdir)
+    scene.frame_set(scene.frame_start)
     quad = _quad(block["atlas"], ainfo["elevation_deg"])
     quad.data.materials.append(_atlas_material(img, *ainfo["cells"]))
     holder = bpy.data.collections.new("EE_Crowd_quad")   # out of the scene: drawn only through the instancer

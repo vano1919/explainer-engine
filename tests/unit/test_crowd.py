@@ -216,6 +216,82 @@ def test_an_unknown_composition_is_refused():
         K.scene({}, {}, composition="parade")
 
 
+# the 30-second battle: close, clash, every motion a function of the shot time (RULE-R1 chunks) -----------------------------------
+
+def _b30(count=5000):
+    cam = K.battle30_camera()
+    end = {"location": cam["keys"][-1]["location"], "lens_mm": cam["lens_mm"]}
+    props = {"banners": [dict(b) for b in K.BANNERS], "dust": K.battle30_dust("s30", (0.2, 0.16, 0.1)),
+             "arrows": K.battle30_arrows("s30"), "smoke": K.battle30_smoke("s30")}
+    return cam, K.plan(K.battle30_formations(count), end, shot_id="s30", hero_max=K.PROOF_HEROES, props=props)
+
+
+def test_the_30s_battle_passes_the_check_and_keeps_its_heroes_still():
+    cam, b = _b30()
+    assert K.check(b) == [] and b["count"] + len(b["heroes"]) == 5000 and len(b["heroes"]) == K.PROOF_HEROES
+    assert all(h["switch"] >= K.NEVER and not (h["vx"] or h["vy"]) for h in b["heroes"])   # a rig keyed at two frames only
+
+
+def test_the_wedge_stops_at_the_wall_and_switches_to_the_fight_when_it_arrives():
+    _, b = _b30()
+    p = b["points"]
+    wedge = [i for i, s in enumerate(p["stop"]) if s < K.NEVER]
+    assert wedge
+    for i in wedge:
+        x, y = K.position(p["x"][i], p["y"][i], p["vx"][i], p["vy"][i], p["delay"][i], 29.9, p["stop"][i])
+        assert y > 0.4                                         # never runs through the front rank (y = 0)
+        assert p["delay"][i] + p["stop"][i] <= p["switch"][i] <= p["delay"][i] + p["stop"][i] + 0.4 + 1e-6
+        assert K.position(p["x"][i], p["y"][i], p["vx"][i], p["vy"][i], p["delay"][i], 29.9, p["stop"][i]) == \
+            K.position(p["x"][i], p["y"][i], p["vx"][i], p["vy"][i], p["delay"][i], 20.0, p["stop"][i])   # stopped stays stopped
+    tips = [K.position(p["x"][i], p["y"][i], p["vx"][i], p["vy"][i], p["delay"][i], K.T_CLASH + 0.2, p["stop"][i])[1] for i in wedge]
+    assert min(tips) < 1.5                                     # the point is at the wall at the clash
+    acts = {b["templates"][p["slot2"][i]]["action"] for i in wedge}
+    assert acts == {"Sword_Attack", "Sword_Idle"}
+
+
+def test_the_main_line_holds_then_walks_from_seventeen_seconds():
+    _, b = _b30()
+    p = b["points"]
+    line = [i for i, s in enumerate(p["slot"]) if b["templates"][s]["action"] == "Sword_Idle" and p["vy"][i] < 0]
+    assert line
+    for i in line[:200]:
+        assert p["delay"][i] >= 17.0 and p["switch"][i] == pytest.approx(p["delay"][i], abs=1e-3)
+        assert b["templates"][p["slot2"][i]]["action"] == "Walk_Formal_Loop"
+        assert K.position(p["x"][i], p["y"][i], p["vx"][i], p["vy"][i], p["delay"][i], 16.0) == (p["x"][i], p["y"][i])
+
+
+def test_arrows_land_on_the_ground_where_they_were_aimed():
+    a = K.battle30_arrows("s30")
+    assert len(a["rows"]) == 2150 and a == K.battle30_arrows("s30")
+    for x, y, z, vx, vy, vz, t0, fl in a["rows"][::37]:
+        zl = z + vz * fl - 0.5 * a["gravity"] * fl * fl
+        assert abs(zl) < 1e-2 and 2.0 <= fl <= 4.0
+        assert 5.0 <= vz * vz / (2 * a["gravity"]) + z <= 40.0  # an archer's arc, not a laser
+
+
+def test_the_village_smoke_rises_from_the_ridge():
+    sm = K.battle30_smoke("s30")
+    assert len(sm["puffs"]) == 78 and all(r[2] > 15 for r in sm["puffs"]) and all(0 <= r[3] < 1.1 for r in sm["puffs"])
+    assert K.ridge_z(*K.VILLAGE[0][:2]) > 10
+
+
+def test_the_camera_cranes_down_into_a_push_without_stopping():
+    cam = K.battle30_camera()
+    ks = cam["keys"]
+    assert ks[0]["frame"] == 0 and ks[-1]["frame"] == K.BATTLE30_FRAMES - 1 and cam["rig_kind"] == "crane"
+    assert ks[0]["location"][2] > 15 and ks[-1]["location"][2] < 2.5 and ks[-1]["location"][1] < -5   # high and wide -> behind the wall
+    steps = [math.dist(a["location"], b["location"]) / (b["frame"] - a["frame"]) for a, b in zip(ks, ks[1:])]
+    mid = steps[len(steps) // 4: 3 * len(steps) // 4]
+    assert min(mid) > 0.25 * max(steps)                     # no pause at the crane/push joint (one eased curve)
+
+
+def test_dust_arrives_with_the_wedge_and_the_clash():
+    d = K.battle30_dust("s30", (0.2, 0.16, 0.1))
+    late = [c for c in d["cards"] if c[8] >= K.T_CLASH]
+    assert len(late) == 12 and all(-2 <= c[1] <= 9 for c in late)
+    assert all(len(c) == len(K.DUST_COLUMNS) for c in d["cards"])
+
+
 # the Blender side: the hook and the module stay in step with the host ----------------------------------------------------------
 
 BPY = Path(K.__file__).resolve().parent / "bpy"
@@ -229,7 +305,7 @@ def test_render_shot_builds_the_crowd_after_the_style():
     bake = (BPY / "crowd_bake.py").read_text(encoding="utf-8")
     for name in ("GeometryNodeInstanceOnPoints", "GeometryNodeCollectionInfo", "Pick Instance", "INSTANCER", "lineart.usage",
                  "visible_shadow = False", "EE_Crowd", "new_from_object", "evaluated_get", "EE_Crowd_T1_full", "tree_banner",
-                 "tree_dust", '"BLENDED"'):
+                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame"):
         assert name in bake
     for col in K.COLUMNS:   # every plan column the points mesh needs is read by the bpy side
         assert f'"{col}"' in bake
