@@ -72,6 +72,8 @@ class Terrain:
         self.road = [tuple(p) for p in cfg.get("road", [])]
         self.causeway = cfg.get("causeway")
         self.rolling = cfg.get("rolling", 1.6)
+        self.flat = [tuple(f) for f in cfg.get("flat", [])]   # [x, y, r, z, falloff]: level ground (a camp, a forum, a quay)
+        self.sea = cfg.get("sea")                              # {"y0", "y1", "drop"}: the ground falls away to a sea bed
 
     # -- the ground ----------------------------------------------------------------------------------------------------------
     def river_x(self, y: float) -> float:
@@ -95,11 +97,16 @@ class Terrain:
             r = self.river
             dist = abs(x - self.river_x(y))
             h -= r["depth"] * (1.0 - smoothstep(r["width"], r["width"] * 2.6, dist))
+        if self.sea:
+            h -= self.sea["drop"] * smoothstep(self.sea["y0"], self.sea["y1"], y)
         if self.causeway:
             w = self.causeway
             near = ((1.0 - smoothstep(w["half_y"], w["half_y"] * 2.2, abs(y - w["y"]))) * (1.0 - smoothstep(w["x0"], w["x1"], abs(x)))
                     * smoothstep(w.get("x_in", 6.5), w.get("x_in", 6.5) + 2.5, abs(x)))   # not across the river under the bridge
             h = h + (w["z"] - h) * near
+        for fx, fy, fr, fz, fo in self.flat:
+            w = 1.0 - smoothstep(fr, fr + fo, math.hypot(x - fx, y - fy))
+            h += (fz - h) * w
         return round(h, 3)
 
     # -- what a face is made of ----------------------------------------------------------------------------------------------
