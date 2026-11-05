@@ -4171,3 +4171,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   `None` still sets nothing; `False` switches Fast GI off. `RenderProfile.ambient_occlusion` unchanged. `profiles.py` docstring updated.
 - Tests: `tests/unit/test_blender_render.py` (first engine id tried, `eevee_full` applies `use_fast_gi` and no `use_gtao`, None/False cases).
   Blender/docs/hygiene/governance subset: 188 passed. Cost $0. Not run: a real Blender 5.2 CI render (the `applied` block should show `use_fast_gi`).
+- WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
+  (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
+  `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
