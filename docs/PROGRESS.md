@@ -4162,3 +4162,11 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   against B_light in the round's REPORT.md (project folder `ink_chronicle_ink_round_2026-11-05/`); none over 2x (largest: 1, 8, 10 at
   ~1.9x from cast shadows); one runner per job, so ratios under ~1.3x are runner noise. `look-report` takes the line verdict from
   the render's CN-17 finding (no second BP-173 reader). Waiting for the creator's pick; ICW-07 writes it into bible v1.5.
+
+## 2026-11-05 WP-Q8: world kits (Quaternius MegaKit, Poly Haven, Blender-MCP import code)
+
+- Why: the creator's principle (19:19 UTC): synthesis of existing libraries and code, ours is glue. A real mid-ground and props instead of primitives.
+- `blender/polyhaven.py`: the Poly Haven search/download/side-file/HDRI-world code of Blender-MCP (MIT, @2e4b0bc) with the D-115 header and a PROVENANCE row; urllib instead of requests; nothing of its server, telemetry or paid generators.
+- `blender/world_kits.py`, `world_kits.json`, `world_layouts.json`: 22 MegaKit pieces (itch.io CC0 page; quaternius.com now shows a no-redistribution licence) and 6 Poly Haven models packed with `characters.pack_glb` to one GLB each (base-colour image only, <=1024 px: `style.py` replaces every material), registered external (`model.mvk_*`, `model.ph_*`), vault copy under `assets/3d/model/`, rebuildable from the pack/URLs. Layouts `castle_courtyard` and `village_street` expand to `described` objects and a `scene_set/1`.
+- `bpy/render_shot.py`: object kind `gltf`. `world-kits.yml` + `world_kits poc`: three moving courtyard shots with the real cast.
+- Tests: `test_world_kits.py`, `test_repo_hygiene.py` (any `# from owner/repo@commit` header needs a PROVENANCE row). Cost: $0.

@@ -401,6 +401,87 @@ def scene_set(layout_id: str, *, t: dict | None = None, doc: dict | None = None,
     return doc_out
 
 
+# --- the $0 proof (roadmap 21.6 PoC 3 with the kit): one courtyard layout, three moving shots, the real cast --------------------------
+
+POC_JOB_ID = "world_kits_wpq8"
+POC_FRAMES = 48
+POC_VARIANTS = ("v01_reference_soft3d", "B_light")   # the reference look of the round and its cost yardstick
+POC_CAST = (("guard", "ink_test_m", "costume.mco_male_ranger", "support_blue", (-1.6, 0.4), 150.0, "Idle_Talking_Loop", 0),
+            ("traveller", "ink_test_f", "costume.mco_female_peasant", "answer_coral", (0.6, -1.0), -30.0, "Idle_Loop", 17),
+            ("walker", "ink_test_m2", "costume.mco_male_peasant", "faction_a", (-3.0, -2.4), 20.0, "Walk_Formal_Loop", 5))
+# (shot id, camera start, camera end, look-at start, look-at end, lens): a push in, a side dolly, a reverse from the east wall
+POC_SHOTS = {
+    "courtyard_wide": ([0.0, -10.5, 3.4], [0.0, -6.4, 2.5], [0.0, 4.0, 1.9], [0.0, 3.0, 1.7], 30),
+    "courtyard_medium": ([-6.4, -3.2, 1.7], [-4.0, -5.0, 1.7], [-0.4, 0.2, 1.3], [-0.6, 0.0, 1.3], 40),
+    "courtyard_reverse": ([6.4, -2.4, 2.3], [5.8, 1.6, 2.0], [-3.0, 1.2, 1.5], [-3.0, 1.2, 1.5], 34),
+}
+
+
+def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path], frames: int = POC_FRAMES) -> dict[str, dict]:
+    """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs."""
+    from explainer_engine.blender import style_sheets as SS
+    kit, kit_mats = expand("castle_courtyard", paths)
+    cast = [SS._cast_member(n, c, co, tint, xy, yaw, act, off, cpaths) for n, c, co, tint, xy, yaw, act, off in POC_CAST]
+    mats = dict(kit_mats)
+    mats.update({"skin": {"base": "kit_card"}, "night": {"base": "night"}})
+    for o in cast:
+        for k, v in o.pop("_materials", {}).items():
+            if mats.get(k, v) != v:
+                raise WorldKitError(f"two cast members define material {k} differently")
+            mats[k] = v
+    out = {}
+    for sid, (c0, c1, a0, a1, lens) in POC_SHOTS.items():
+        out[sid] = {"objects": [*kit, *json.loads(json.dumps(cast))], "materials": mats, "frames_total": frames,
+                    "camera": {"location": c0, "look_at": a0, "lens_mm": lens, "focus_distance_m": round(math.dist(c0, a0), 2),
+                               "to": {"location": c1, "look_at": a1}}}
+    return out
+
+
+def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frames: int = POC_FRAMES, scale: float = 1.0,
+        device: str = "auto", log=print) -> list[dict]:
+    """Render the three courtyard shots in each look as 24 fps clips (frames, MP4 review copy, s/frame) under ``out``; rows go to
+    ``out/looks.json`` as they finish. Free: Blender on a CPU runner or the Mac, no paid call."""
+    import time
+    from explainer_engine.blender import render as R
+    from explainer_engine.blender import style as S
+    from explainer_engine.blender import style_sheets as SS
+    from explainer_engine.blender.project import BlenderProject
+    from explainer_engine.core.store import write_json_atomic
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    kit = fetch()
+    paths = {**SS.fetch(), **kit}
+    scn = poc_scenes(paths, C.fetch(), frames)
+    b = BlenderProject().resolve(binary, device=device)
+    vault = R.LocalVault(out / "vault")
+    rows = []
+    for vid in variant_ids:
+        for sid, sc in scn.items():
+            scene, graph = SS.job_scene(sid, vid, sc, paths)
+            _, tokens = SS.style_for(vid)
+            spec = SS.spec_for(sid, vid, tokens, scene=scene, frames=frames)
+            spec["job_id"] = POC_JOB_ID
+            if scale != 1.0:
+                spec["frame"]["render_scale"] = scale
+            t0 = time.time()
+            try:
+                m = R.HeadlessRender(b, vault).run(spec, out / "work", scene=scene)
+            except ContractError as e:   # a scaled review render is not a master (CN-17): keep its frames, as the look round does
+                if scale == 1.0 or "master" not in str(e):
+                    raise
+                from explainer_engine.core import shot_cache
+                m = dict(json.loads((out / "work" / shot_cache.key(spec) / "render_manifest.json").read_text(encoding="utf-8")),
+                         _findings=[])
+            sdir = out / "work" / m["cache_key"]
+            rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
+            row = SS._look_row(out, sid, vid, m, sdir, rep, graph, t0, frames, scale, clip=True)
+            row["kit"] = {"layout": "castle_courtyard", "pieces": len(placements("castle_courtyard")), "gltf_objects": rep.get("gltf")}
+            rows.append(row)
+            log(f"{sid}/{vid}: {row['times']['steady_median_s']} s/frame, first {row['times']['first_s']} s, {frames} frames")
+            write_json_atomic(out / "looks.json", {"schema": "look_round/1", "job_id": POC_JOB_ID, "rows": rows})
+    return rows
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.blender.world_kits", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -411,11 +492,20 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("list")
     ly = sub.add_parser("layout")
     ly.add_argument("id")
+    pc = sub.add_parser("poc", help="three moving courtyard shots in the reference look and B_light (free)")
+    pc.add_argument("--out", required=True)
+    pc.add_argument("--binary", default=None)
+    pc.add_argument("--variants", default=",".join(POC_VARIANTS))
+    pc.add_argument("--frames", type=int, default=POC_FRAMES)
+    pc.add_argument("--scale", type=float, default=1.0)
+    pc.add_argument("--device", default="auto", choices=("auto", "cpu", "gpu"))
     a = ap.parse_args(argv)
     if a.cmd == "register":
         print(json.dumps(register(Path(a.downloads), polyhaven_dir=Path(a.polyhaven_dir) if a.polyhaven_dir else None), indent=1))
     elif a.cmd == "fetch":
         print(json.dumps({k: str(v) for k, v in fetch(packs_dir=Path(a.packs) if a.packs else None).items()}, indent=1))
+    elif a.cmd == "poc":
+        poc(Path(a.out), binary=a.binary, variant_ids=a.variants.split(","), frames=a.frames, scale=a.scale, device=a.device)
     elif a.cmd == "list":
         t = table()
         for x in t["assets"]:
