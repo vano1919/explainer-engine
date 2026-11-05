@@ -3938,3 +3938,38 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Stale text reported (precedence rule): `examples/napoleon_vs_genghis/script.md` is the earlier draft and does not carry the new
   narration; the cards are the source.
 - Cost: $0.
+
+### 2026-11-05 — ICW-02 contracts (Ink Chronicle, roadmap sections 10 and 15)
+
+- Work package ICW-02, branch `icw/02-contracts` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (00c7fcd). No stage
+  writes the new files yet (the later work packages do, roadmap section 11); this package writes the contracts, their checks, the migration and the tests.
+- Schemas (`explainer_engine/schemas/`): `film_shots/3` (same file as /1 and /2, dispatched on `schema`), `shot_spec/2`,
+  `shot_route/2`, `asset_library/2` (each in its file's `$defs` beside /1), new `blender_scene_manifest/1`,
+  `blender_render_manifest/1`, `render_checkpoint/1` (roadmap 10.4), `speech_mix_report/1`. Field lists and owners:
+  [CONTRACTS](CONTRACTS.md) "Ink Chronicle contracts (ICW-02)".
+- Checks (`core/contracts.py`): CN-08 binds only the recipes BP-139 names (`ltx_recipe`, D-105); new CN-17 (master, profile/recipe,
+  lip-sync, BP-173 line weight, BP-175 route pin, stale bible = REVIEW), CN-18 (render checkpoint and render manifest), CN-19
+  (asset library /2), CN-20 (speech-mix counts). `sourced_rules.json` `enforced_by` gains the readers of BP-167, BP-173, BP-175;
+  `SOURCED_RULES.md` regenerated. No new number in code: the 5 MB storage line and a chunk maximum the roadmap names have no BP row
+  yet and are not enforced (D-59).
+- `scripting/film_shots.py`: `visual_lane(shot, schema)` dispatches on the version (/3 = its lane; /2 keeps its mapping, and no
+  longer crashes on the string archetypes of MAP/COMPENSATOR shots); `check` runs the staging checks on /3 and not the prompt
+  lints; `compose` refuses /3; `shotlist` writes a /3 sheet. `core/shot_cache.py` keys `shot_spec/2` (without `clock.start_frame`,
+  assets by sha256, cue file by hash).
+- Migration: `scripts/migrate_film_shots_2_to_3.py` (/1 and /2 -> /3; BP-109 shares kept and reported; refused lanes refused with
+  D-89 / D-106; output validated); checked-in dry run `docs/architecture/ICW-02_MIGRATION_DRY_RUN_2026-11-05.md`.
+- Napoleon example: `film_shots.json` is /3 (204 VIDEO_3D, 10 STILL_3D, 84 lip-synced shots, shares unchanged), `shotlist.md` and
+  `migration_report.md` from `build_cards.py`; `script_variants.json` regenerated (blocks carry the /3 lane; scores v1 40, v2 30
+  unchanged; `script_variants.schema.json` lane enum gains the three /3 lanes). The legacy composer tests keep the real 214-shot
+  episode through `tests/unit/_napoleon.legacy_cards()` (the same cards as /1, built in memory).
+- Stale text reported (precedence rule): `examples/napoleon_vs_genghis/prompts.json` and `PROMPT_PACKAGE.md` are the D-80 record
+  of the legacy cards, not of the /3 cards; `examples/film_shots/bus_in_the_ice_age.json` stays /1 as the legacy fixture.
+- Choices the roadmap did not spell out (for the Fable check): a /2 shot at tier hold becomes STILL_3D (BP-109 shares kept);
+  /1 cards migrate too (Napoleon is /1); `archetype` null until ICW-03; `still_mode` hold for a static camera, else
+  camera_move_3d (the 2.5D tableau = parallax_25d); profile light -> eevee_fast, else eevee_full; `clock.start_frame` not in the key.
+- Tests: `test_contracts` (+ /3, refused and legacy lanes refused on /3, CN-08 by recipe, the new contracts' fixtures),
+  `test_film_shots` (+ the version dispatch), `test_shot_cache` (+ /2: every input moves the key, a job rename, clock place, cue path
+  and asset order do not), new `test_migrate_film_shots.py`.
+- Results: `docs_lint` 0 findings; fast suite (`-m "not system and not media"`, Python 3.13, with cv2): 2566 collected, 0 failed
+  (2 skipped, 1 xfail, as at the base).
+- Cost: $0. No pod, no paid API call.

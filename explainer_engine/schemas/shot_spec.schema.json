@@ -1,199 +1,45 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "shot_spec.schema.json",
- "title": "Shot spec: everything one render of one shot depends on, hashed into the cache key (docs/CONTRACTS.md)",
+ "title": "Shot spec: everything one render of one shot depends on, hashed into the cache key (docs/CONTRACTS.md); /1 the legacy route, /2 the Blender route",
  "type": "object",
+ "required": [
+  "schema"
+ ],
  "properties": {
   "schema": {
-   "const": "shot_spec/1"
-  },
-  "shot_id": {
-   "type": "string",
-   "minLength": 1
-  },
-  "job_id": {
-   "type": "string",
-   "minLength": 1
-  },
-  "lane": {
    "enum": [
-    "KEYFRAME_LTX",
-    "DIALOGUE_CU",
-    "HOST_COMMENTARY",
-    "DRAMA_BLOCKED_3D",
-    "ATMOS_BROLL",
-    "MAP",
-    "COMPENSATOR",
-    "STILL_HOLD"
+    "shot_spec/1",
+    "shot_spec/2"
    ]
-  },
-  "prompt": {
-   "type": "string",
-   "minLength": 1
-  },
-  "negative": {
-   "type": "string"
-  },
-  "seed": {
-   "type": "integer"
-  },
-  "model": {
-   "type": "object",
-   "properties": {
-    "id": {
-     "type": "string",
-     "minLength": 1
-    },
-    "sha256": {
-     "anyOf": [
-      {
-       "$ref": "#/$defs/sha256"
-      },
-      {
-       "type": "null"
-      }
-     ]
-    },
-    "revision": {
-     "anyOf": [
-      {
-       "type": "string",
-       "minLength": 1
-      },
-      {
-       "type": "null"
-      }
-     ]
-    }
-   },
-   "required": [
-    "id",
-    "sha256",
-    "revision"
-   ],
-   "additionalProperties": false
-  },
-  "loras": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "id": {
-      "type": "string",
-      "minLength": 1
-     },
-     "sha256": {
-      "$ref": "#/$defs/sha256"
-     },
-     "weight": {
-      "type": "number"
-     }
-    },
-    "required": [
-     "id",
-     "sha256",
-     "weight"
-    ],
-    "additionalProperties": false
-   }
-  },
-  "width": {
-   "type": "integer",
-   "minimum": 1
-  },
-  "height": {
-   "type": "integer",
-   "minimum": 1
-  },
-  "frames": {
-   "anyOf": [
-    {
-     "type": "integer",
-     "minimum": 1
-    },
-    {
-     "type": "null"
-    }
-   ]
-  },
-  "fps": {
-   "type": "integer",
-   "minimum": 1
-  },
-  "audio_slice_sha256": {
-   "anyOf": [
-    {
-     "$ref": "#/$defs/sha256"
-    },
-    {
-     "type": "null"
-    }
-   ]
-  },
-  "refs": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "role": {
-      "type": "string",
-      "minLength": 1
-     },
-     "path": {
-      "type": "string",
-      "minLength": 1
-     },
-     "sha256": {
-      "$ref": "#/$defs/sha256"
-     }
-    },
-    "required": [
-     "role",
-     "path",
-     "sha256"
-    ],
-    "additionalProperties": false
-   }
-  },
-  "blocking_sha256": {
-   "anyOf": [
-    {
-     "$ref": "#/$defs/sha256"
-    },
-    {
-     "type": "null"
-    }
-   ]
-  },
-  "recipe": {
-   "type": "string",
-   "minLength": 1
-  },
-  "params": {
-   "type": "object"
   }
  },
- "required": [
-  "schema",
-  "shot_id",
-  "job_id",
-  "lane",
-  "prompt",
-  "negative",
-  "seed",
-  "model",
-  "loras",
-  "width",
-  "height",
-  "frames",
-  "fps",
-  "audio_slice_sha256",
-  "refs",
-  "blocking_sha256",
-  "recipe",
-  "params"
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "shot_spec/1"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/v1"
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "shot_spec/2"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/v2"
+   }
+  }
  ],
- "additionalProperties": false,
  "$defs": {
   "sha256": {
    "type": "string",
@@ -261,6 +107,645 @@
   "time": {
    "type": "string",
    "minLength": 10
+  },
+  "assetref": {
+   "type": "object",
+   "required": [
+    "id",
+    "sha256"
+   ],
+   "additionalProperties": false,
+   "description": "an asset_library record named by id and the sha256 of its file: the cache key changes when the asset does",
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z_]+\\.[a-z0-9_]+(\\.[a-z0-9_]+)?$"
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   }
+  },
+  "pose": {
+   "type": "object",
+   "required": [
+    "pos",
+    "yaw_deg",
+    "pitch_deg"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "pos": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 3,
+     "maxItems": 3
+    },
+    "yaw_deg": {
+     "type": "number"
+    },
+    "pitch_deg": {
+     "type": "number"
+    }
+   }
+  },
+  "v1": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "shot_spec/1"
+    },
+    "shot_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "job_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lane": {
+     "enum": [
+      "KEYFRAME_LTX",
+      "DIALOGUE_CU",
+      "HOST_COMMENTARY",
+      "DRAMA_BLOCKED_3D",
+      "ATMOS_BROLL",
+      "MAP",
+      "COMPENSATOR",
+      "STILL_HOLD"
+     ]
+    },
+    "prompt": {
+     "type": "string",
+     "minLength": 1
+    },
+    "negative": {
+     "type": "string"
+    },
+    "seed": {
+     "type": "integer"
+    },
+    "model": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "sha256": {
+       "anyOf": [
+        {
+         "$ref": "#/$defs/sha256"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "revision": {
+       "anyOf": [
+        {
+         "type": "string",
+         "minLength": 1
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     },
+     "required": [
+      "id",
+      "sha256",
+      "revision"
+     ],
+     "additionalProperties": false
+    },
+    "loras": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "sha256": {
+        "$ref": "#/$defs/sha256"
+       },
+       "weight": {
+        "type": "number"
+       }
+      },
+      "required": [
+       "id",
+       "sha256",
+       "weight"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "width": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "height": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "frames": {
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fps": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "audio_slice_sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "refs": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "role": {
+        "type": "string",
+        "minLength": 1
+       },
+       "path": {
+        "type": "string",
+        "minLength": 1
+       },
+       "sha256": {
+        "$ref": "#/$defs/sha256"
+       }
+      },
+      "required": [
+       "role",
+       "path",
+       "sha256"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "blocking_sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "recipe": {
+     "type": "string",
+     "minLength": 1
+    },
+    "params": {
+     "type": "object"
+    }
+   },
+   "required": [
+    "schema",
+    "shot_id",
+    "job_id",
+    "lane",
+    "prompt",
+    "negative",
+    "seed",
+    "model",
+    "loras",
+    "width",
+    "height",
+    "frames",
+    "fps",
+    "audio_slice_sha256",
+    "refs",
+    "blocking_sha256",
+    "recipe",
+    "params"
+   ],
+   "additionalProperties": false,
+   "description": "shot_spec/1: one render of one shot on the legacy image-generation route (Qwen keyframe, LTX clip; D-80)"
+  },
+  "v2": {
+   "description": "shot_spec/2: one Blender render of one VIDEO_3D or STILL_3D shot (D-96, roadmap 10.1); cache key as CN-07, clock.start_frame left out of it",
+   "type": "object",
+   "required": [
+    "schema",
+    "job_id",
+    "shot_id",
+    "lane",
+    "recipe",
+    "clock",
+    "frame",
+    "scene",
+    "performance",
+    "look",
+    "render",
+    "seed"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "schema": {
+     "const": "shot_spec/2"
+    },
+    "job_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "shot_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lane": {
+     "enum": [
+      "VIDEO_3D",
+      "STILL_3D"
+     ]
+    },
+    "recipe": {
+     "enum": [
+      "blender_eevee/1",
+      "blender_cycles/1"
+     ]
+    },
+    "clock": {
+     "type": "object",
+     "required": [
+      "fps",
+      "frames",
+      "start_frame"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "fps": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "frames": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "start_frame": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "where the shot sits on the episode clock; not part of the cache key (the pixels do not depend on it)"
+      }
+     }
+    },
+    "frame": {
+     "type": "object",
+     "required": [
+      "width",
+      "height",
+      "render_scale"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "width": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "height": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "render_scale": {
+       "enum": [
+        1.0,
+        0.75,
+        0.5
+       ],
+       "description": "1.0 = native 2560x1440; below it is DEFER-BEHIND-TEST (roadmap 9.5)"
+      }
+     }
+    },
+    "scene": {
+     "type": "object",
+     "required": [
+      "template_asset",
+      "era",
+      "set_assets",
+      "characters",
+      "camera",
+      "light_rig",
+      "weather",
+      "props"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "template_asset": {
+       "$ref": "#/$defs/assetref"
+      },
+      "era": {
+       "type": "string",
+       "minLength": 1,
+       "description": "an era id of world/eras.json"
+      },
+      "set_assets": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/assetref"
+       }
+      },
+      "characters": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "cast_id",
+         "asset",
+         "rig",
+         "animation",
+         "position",
+         "facing_deg"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "cast_id": {
+          "type": "string",
+          "minLength": 1
+         },
+         "asset": {
+          "$ref": "#/$defs/assetref"
+         },
+         "rig": {
+          "$ref": "#/$defs/assetref"
+         },
+         "animation": {
+          "anyOf": [
+           {
+            "$ref": "#/$defs/assetref"
+           },
+           {
+            "type": "null"
+           }
+          ]
+         },
+         "position": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+         },
+         "facing_deg": {
+          "type": "number"
+         }
+        }
+       }
+      },
+      "camera": {
+       "type": "object",
+       "required": [
+        "rig",
+        "start",
+        "end",
+        "lens_mm",
+        "ease"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "rig": {
+         "enum": [
+          "static",
+          "push",
+          "dolly",
+          "rail",
+          "orbit",
+          "dramatic_curve"
+         ]
+        },
+        "start": {
+         "$ref": "#/$defs/pose"
+        },
+        "end": {
+         "$ref": "#/$defs/pose"
+        },
+        "lens_mm": {
+         "type": "number",
+         "exclusiveMinimum": 0
+        },
+        "ease": {
+         "enum": [
+          "linear",
+          "ease_in",
+          "ease_out",
+          "ease_in_out"
+         ]
+        }
+       }
+      },
+      "light_rig": {
+       "type": "string",
+       "minLength": 1,
+       "description": "a named light rig preset (ICW-05)"
+      },
+      "weather": {
+       "anyOf": [
+        {
+         "type": "string",
+         "minLength": 1
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "props": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/assetref"
+       }
+      }
+     }
+    },
+    "performance": {
+     "type": "object",
+     "required": [
+      "lipsync",
+      "rhubarb",
+      "mouth_shapes",
+      "dialogue_cover"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "lipsync": {
+       "type": "boolean"
+      },
+      "rhubarb": {
+       "anyOf": [
+        {
+         "$ref": "#/$defs/fileref"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "the Rhubarb mouth-cue JSON of the voiced line; only its sha256 enters the cache key"
+      },
+      "mouth_shapes": {
+       "const": 8
+      },
+      "dialogue_cover": {
+       "anyOf": [
+        {
+         "enum": [
+          "on_screen",
+          "off_screen"
+         ]
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    "look": {
+     "type": "object",
+     "required": [
+      "bible_version",
+      "line_weight_px",
+      "crease_deg",
+      "shading_steps",
+      "view_transform",
+      "grade_look",
+      "paper"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "bible_version": {
+       "type": "string",
+       "pattern": "^[0-9]+\\.[0-9]+$"
+      },
+      "line_weight_px": {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "description": "Line Art weight at 1440p (BP-173)"
+      },
+      "crease_deg": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 180
+      },
+      "shading_steps": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "view_transform": {
+       "const": "AgX"
+      },
+      "grade_look": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Blender's look name without the 'AgX - ' prefix (roadmap 9.1)"
+      },
+      "paper": {
+       "type": "object",
+       "required": [
+        "asset",
+        "opacity"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "asset": {
+         "$ref": "#/$defs/assetref"
+        },
+        "opacity": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        }
+       }
+      }
+     }
+    },
+    "render": {
+     "type": "object",
+     "required": [
+      "profile",
+      "samples",
+      "motion_blur",
+      "denoise",
+      "output"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "profile": {
+       "enum": [
+        "eevee_fast",
+        "eevee_full",
+        "cycles_hero"
+       ]
+      },
+      "samples": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "motion_blur": {
+       "type": "boolean"
+      },
+      "denoise": {
+       "type": "boolean"
+      },
+      "output": {
+       "enum": [
+        "mkv_ffv1",
+        "png_seq"
+       ]
+      }
+     }
+    },
+    "seed": {
+     "type": "integer"
+    },
+    "why": {
+     "type": "string",
+     "minLength": 1,
+     "description": "creator-readable justification; required on cycles_hero"
+    }
+   },
+   "allOf": [
+    {
+     "if": {
+      "properties": {
+       "render": {
+        "properties": {
+         "profile": {
+          "const": "cycles_hero"
+         }
+        }
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "why"
+      ]
+     }
+    }
+   ]
   }
  }
 }

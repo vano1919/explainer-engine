@@ -2,7 +2,7 @@
 """The shot cache (docs/CONTRACTS.md, CN-07): a rendered shot is stored under the SHA-256 of everything its render depends on,
 so a shot is paid for once. Editing shot 05 of a 60-shot episode changes only shot 05's key; the other 59 resolve from disk.
 
-    key = sha256(canonical JSON of the shot_spec/1 without file paths)
+    key = sha256(canonical JSON of the shot_spec/1 or /2 without file paths)
 
 ``params`` is hashed whole, so it holds the renderer's numbers and names and no file paths (a path there is a new key on
 every machine). The key covers the prompt, negative, seed, model hash or revision, LoRA hashes and weights, size, frames, fps, the audio slice
@@ -43,12 +43,31 @@ def _round(obj):
     return obj
 
 
+def _canonical_v2(spec: dict) -> dict:
+    """``shot_spec/2`` (the Blender shot, roadmap 10.1): assets are named by id and sha256, so an asset change re-renders exactly
+    the shots that use it; the Rhubarb cues count by their hash, not their path; the shot's place on the episode clock
+    (``clock.start_frame``) is left out (moving a shot in the edit does not change a pixel); sets of assets are sorted."""
+    doc = {k: v for k, v in spec.items() if k not in NOT_IN_KEY}
+    doc["clock"] = {k: v for k, v in spec["clock"].items() if k != "start_frame"}
+    scene = dict(spec["scene"])
+    for k in ("set_assets", "props"):
+        scene[k] = sorted(scene[k], key=lambda a: (a["id"], a["sha256"]))
+    scene["characters"] = sorted(scene["characters"], key=lambda c: c["cast_id"])
+    doc["scene"] = scene
+    rh = spec["performance"]["rhubarb"]
+    doc["performance"] = dict(spec["performance"], rhubarb=rh["sha256"] if rh else None)
+    return doc
+
+
 def canonical(spec: dict) -> bytes:
     """The spec as the cache sees it: validated, without who asked and where files lie, lists in a fixed order, floats rounded."""
     contracts.validate(spec)
-    doc = {k: v for k, v in spec.items() if k not in NOT_IN_KEY}
-    doc["refs"] = sorted(({"role": r["role"], "sha256": r["sha256"]} for r in spec["refs"]), key=lambda r: (r["role"], r["sha256"]))
-    doc["loras"] = sorted(spec["loras"], key=lambda r: r["id"])
+    if spec["schema"] == "shot_spec/2":
+        doc = _canonical_v2(spec)
+    else:
+        doc = {k: v for k, v in spec.items() if k not in NOT_IN_KEY}
+        doc["refs"] = sorted(({"role": r["role"], "sha256": r["sha256"]} for r in spec["refs"]), key=lambda r: (r["role"], r["sha256"]))
+        doc["loras"] = sorted(spec["loras"], key=lambda r: r["id"])
     try:
         return json.dumps(_round(doc), sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
     except ValueError as exc:  # inf / NaN has no JSON form, so no stable key

@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "blender_render_manifest.schema.json",
+  "title": "Blender render manifest: how one shot was rendered (roadmap 10.1; written by blender/render.py, ICW-04); feeds config/job_speeds.json and the ledger",
+  "type": "object",
+  "required": [
+    "schema",
+    "job_id",
+    "shot_id",
+    "spec",
+    "cache_key",
+    "blender",
+    "engine",
+    "device",
+    "gpu",
+    "profile",
+    "frames_expected",
+    "frames_written",
+    "seconds_total",
+    "seconds_per_frame",
+    "output",
+    "log",
+    "started_at",
+    "finished_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "blender_render_manifest/1"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "spec": {
+      "$ref": "#/$defs/fileref"
+    },
+    "cache_key": {
+      "$ref": "#/$defs/sha256"
+    },
+    "blender": {
+      "type": "object",
+      "required": [
+        "version",
+        "build_hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "engine": {
+      "enum": [
+        "eevee",
+        "cycles",
+        "workbench"
+      ]
+    },
+    "device": {
+      "enum": [
+        "cpu",
+        "gpu"
+      ]
+    },
+    "gpu": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile": {
+      "enum": [
+        "eevee_fast",
+        "eevee_full",
+        "cycles_hero"
+      ]
+    },
+    "frames_expected": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "frames_written": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "seconds_total": {
+      "type": "number",
+      "minimum": 0
+    },
+    "seconds_per_frame": {
+      "anyOf": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256",
+            "codec",
+            "width",
+            "height",
+            "fps"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "codec": {
+              "enum": [
+                "ffv1",
+                "png"
+              ]
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "fps": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "log": {
+      "$ref": "#/$defs/fileref"
+    },
+    "started_at": {
+      "$ref": "#/$defs/time"
+    },
+    "finished_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fileref": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "time": {
+      "type": "string",
+      "minLength": 10
+    }
+  }
+}

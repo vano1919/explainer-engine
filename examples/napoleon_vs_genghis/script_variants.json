@@ -1,7 +1,7 @@
 {
  "schema": "script_variants/2",
  "episode_slug": "napoleon_vs_genghis",
- "dossier_sha256": "faf07675b16a68ca5f0804e8ed2f5367ddcfc2a7b05ed20cf29a56f1a883e948",
+ "dossier_sha256": "2cdf5f753d5cd67757e5f4d433bb6de850acbe1a843d0972a91dcd4a094c7eed",
  "variants": [
   {
    "id": "v1",
@@ -24,6 +24,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -37,6 +38,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -50,6 +52,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -63,6 +66,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -76,6 +80,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -95,6 +100,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -108,6 +114,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -121,6 +128,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -134,6 +142,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -147,6 +156,7 @@
        "tier": "light",
        "mode": "insert",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -159,6 +169,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -178,6 +189,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -191,6 +203,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -204,6 +217,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -217,6 +231,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -229,6 +244,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -242,6 +258,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -255,6 +272,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -268,6 +286,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -281,6 +300,7 @@
        "tier": "light",
        "mode": "insert",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -293,6 +313,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "narrated",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -312,6 +333,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -325,6 +347,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -338,6 +361,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -351,6 +375,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -364,6 +389,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -377,6 +403,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -390,6 +417,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -403,6 +431,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -416,6 +445,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -429,6 +459,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -442,6 +473,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -455,6 +487,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -468,6 +501,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -481,6 +515,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -494,6 +529,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -507,6 +543,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -520,6 +557,7 @@
        "tier": "light",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -533,6 +571,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -546,6 +585,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -559,6 +599,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -572,6 +613,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -590,6 +632,7 @@
        "seconds": 5.0,
        "tier": "light",
        "mode": "establish",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -603,6 +646,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -616,6 +660,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "cavalry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -629,6 +674,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -642,6 +688,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -661,6 +708,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -674,6 +722,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -687,6 +736,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -700,6 +750,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -713,6 +764,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -726,6 +778,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -739,6 +792,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -752,6 +806,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -765,6 +820,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -778,6 +834,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -791,6 +848,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -804,6 +862,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -817,6 +876,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -830,6 +890,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "cavalry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -843,6 +904,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -856,6 +918,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -869,6 +932,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -882,6 +946,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -895,6 +960,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -908,6 +974,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -921,6 +988,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -934,6 +1002,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -947,6 +1016,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -960,6 +1030,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -973,6 +1044,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -986,6 +1058,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -999,6 +1072,7 @@
        "tier": "light",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1018,6 +1092,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1031,6 +1106,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1044,6 +1120,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1057,6 +1134,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1070,6 +1148,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1083,6 +1162,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1096,6 +1176,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1109,6 +1190,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1122,6 +1204,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1134,6 +1217,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -1147,6 +1231,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1160,6 +1245,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1179,6 +1265,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "bayan",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1192,6 +1279,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bayan",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1205,6 +1293,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1218,6 +1307,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "bayan",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1231,6 +1321,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1244,6 +1335,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "bayan",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1257,6 +1349,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1270,6 +1363,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1283,6 +1377,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1296,6 +1391,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1309,6 +1405,7 @@
        "tier": "light",
        "mode": "establish",
        "who": "scouts",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1322,6 +1419,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1335,6 +1433,7 @@
        "tier": "light",
        "mode": "establish",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1348,6 +1447,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1361,6 +1461,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1374,6 +1475,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "subutai",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1387,6 +1489,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1400,6 +1503,7 @@
        "tier": "light",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1413,6 +1517,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1426,6 +1531,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1439,6 +1545,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1452,6 +1559,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "subutai",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1470,6 +1578,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -1483,6 +1592,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1496,6 +1606,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1509,6 +1620,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1522,6 +1634,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1535,6 +1648,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1548,6 +1662,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1560,6 +1675,7 @@
        "seconds": 5.0,
        "tier": "full",
        "mode": "establish",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1573,6 +1689,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1586,6 +1703,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "bayan",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1598,6 +1716,7 @@
        "seconds": 4.0,
        "tier": "light",
        "mode": "establish",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1611,6 +1730,7 @@
        "tier": "light",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1624,6 +1744,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1643,6 +1764,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1656,6 +1778,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1669,6 +1792,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1682,6 +1806,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "drummer",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1695,6 +1820,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1708,6 +1834,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1721,6 +1848,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1734,6 +1862,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1747,6 +1876,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "guards",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1760,6 +1890,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1773,6 +1904,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1786,6 +1918,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1799,6 +1932,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1812,6 +1946,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1825,6 +1960,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1838,6 +1974,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1851,6 +1988,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1864,6 +2002,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1877,6 +2016,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1890,6 +2030,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1903,6 +2044,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1916,6 +2058,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "gunners",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1929,6 +2072,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1942,6 +2086,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1955,6 +2100,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -1968,6 +2114,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "drummer",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1981,6 +2128,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -1994,6 +2142,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2007,6 +2156,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2020,6 +2170,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -2033,6 +2184,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "subutai",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2046,6 +2198,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2059,6 +2212,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2072,6 +2226,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2085,6 +2240,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2097,6 +2253,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -2110,6 +2267,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2123,6 +2281,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2141,6 +2300,7 @@
        "seconds": 5.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -2154,6 +2314,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2167,6 +2328,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2180,6 +2342,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2193,6 +2356,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2206,6 +2370,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2219,6 +2384,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2231,6 +2397,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -2249,6 +2416,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -2262,6 +2430,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2275,6 +2444,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2288,6 +2458,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2301,6 +2472,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2314,6 +2486,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2327,6 +2500,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2340,6 +2514,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "murat",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2353,6 +2528,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2372,6 +2548,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -2385,6 +2562,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2398,6 +2576,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2411,6 +2590,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2424,6 +2604,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2437,6 +2618,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2450,6 +2632,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2463,6 +2646,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2476,6 +2660,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "bars",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2489,6 +2674,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2502,6 +2688,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2515,6 +2702,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2528,6 +2716,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2541,6 +2730,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2554,6 +2744,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2567,6 +2758,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2580,6 +2772,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2593,6 +2786,7 @@
        "tier": "light",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2606,6 +2800,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2619,6 +2814,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -2632,6 +2828,7 @@
        "tier": "full",
        "mode": "establish",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "compensator",
        "words": {
@@ -2651,6 +2848,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2664,6 +2862,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2677,6 +2876,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "riders",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2690,6 +2890,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2702,6 +2903,7 @@
        "seconds": 4.0,
        "tier": "hold",
        "mode": "establish",
+       "lane": "STILL_3D",
        "shots": 1,
        "category": "hold",
        "words": {
@@ -2715,6 +2917,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2728,6 +2931,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "kemal",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2741,6 +2945,7 @@
        "tier": "full",
        "mode": "scene",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2754,6 +2959,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2767,6 +2973,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "infantry",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2780,6 +2987,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "brun",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2799,6 +3007,7 @@
        "tier": "full",
        "mode": "insert",
        "who": "drummer",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2812,6 +3021,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2825,6 +3035,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "napoleon",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2844,6 +3055,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "geniuses",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2857,6 +3069,7 @@
        "tier": "light",
        "mode": "narrated",
        "who": "stranded",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {
@@ -2870,6 +3083,7 @@
        "tier": "full",
        "mode": "narrated",
        "who": "genghis",
+       "lane": "VIDEO_3D",
        "shots": 1,
        "category": "scene",
        "words": {

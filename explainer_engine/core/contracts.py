@@ -8,11 +8,18 @@ geometry, derived-file freshness, index ranges). jsonschema only (plan decision 
     python -m explainer_engine.core.contracts check <file>... [--base <job folder>]
 
 A finding is FAIL for a schema or invariant breach, and takes its level from the registry (``sourced_rules.level``) when a
-hypothesis rule drives it (BP-139: video-model clip geometry), so a hypothesis never FAILs (D-59, CN-11).
+hypothesis rule drives it (BP-139: video-model clip geometry), so a hypothesis never FAILs (D-59, CN-11). BP-139 applies only to
+the recipes it names (``applies_to_recipes``, D-105): the legacy LTX clips of film_shots/2 and shot_spec/1, never a Blender shot.
+
+The Ink Chronicle contracts (D-96, roadmap section 10; ICW-02): ``film_shots/3`` and ``shot_spec/2`` (CN-17: the 24 fps master
+clock and the 2560x1440 frame of BP-167, lane and render-profile agreement), ``shot_route/2`` (the Blender pin of BP-175),
+``blender_scene_manifest/1``, ``blender_render_manifest/1``, ``render_checkpoint/1`` (CN-18, the frame-recovery protocol of
+roadmap 10.4), ``asset_library/2`` (CN-19) and ``speech_mix_report/1`` (CN-20).
 """
 
 from __future__ import annotations
 
+import fnmatch
 import hashlib
 import json
 import sys
@@ -23,7 +30,11 @@ from explainer_engine.core.errors import ContractError
 from explainer_engine.standards import sourced_rules as SR
 
 SCHEMAS = Path(__file__).resolve().parents[1] / "schemas"
-VIDEO_LANES = {"KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL"}
+VIDEO_LANES = {"KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL"}  # film_shots/2: LTX clips
+LANES_3 = ("VIDEO_3D", "STILL_3D", "HELPER")  # film_shots/3 (D-97)
+BLENDER_LANES = {"VIDEO_3D", "STILL_3D"}  # rendered by Blender (shot_spec/2); HELPER stays with the Python renderers
+BLENDER_RECIPES = {"eevee_fast": "blender_eevee/1", "eevee_full": "blender_eevee/1", "cycles_hero": "blender_cycles/1"}
+BIBLE = Path(__file__).resolve().parents[1] / "world" / "bible.json"
 
 
 def sha256_file(path: Path | str) -> str:
@@ -53,6 +64,11 @@ def contract_name(doc: dict) -> str:
 
 def _f(rule: str, where: str, detail: str, severity: str = "FAIL") -> dict:
     return {"rule": rule, "severity": severity, "where": where, "detail": detail}
+
+
+def ltx_recipe(recipe: str | None) -> bool:
+    """D-105: CN-08 / BP-139 bind only the recipes BP-139 names (``ltx_i2v/*``); a Blender or keyframe recipe is outside them."""
+    return recipe is not None and any(fnmatch.fnmatchcase(recipe, pat) for pat in SR.T("BP-139", "applies_to_recipes"))
 
 
 def _geometry(width, height, frames, where: str) -> list[dict]:
@@ -86,6 +102,8 @@ def _refused_lane(lane: str, where: str) -> list[dict]:
 
 
 def _film_shots(doc: dict, base) -> list[dict]:
+    if doc.get("schema") == "film_shots/3":
+        return _film_shots_3(doc)
     if doc.get("schema") != "film_shots/2":
         return []
     out = []
@@ -105,15 +123,217 @@ def _film_shots(doc: dict, base) -> list[dict]:
     return out
 
 
+def _master(where: str, width, height, fps) -> list[dict]:
+    """CN-17 on a Blender-path document: the master frame and clock of BP-167 (2560x1440 at 24 fps, D-104); never a pulldown."""
+    out, lvl = [], SR.level("BP-167")
+    want_w, want_h, want_fps = SR.T("BP-167", "width"), SR.T("BP-167", "height"), SR.T("BP-167", "fps")
+    if fps is not None and fps != want_fps:
+        out.append(_f("CN-09", where, f"fps {fps} is not the master's {want_fps} (BP-167, D-104)", lvl))
+    if width is not None and (width, height) != (want_w, want_h):
+        out.append(_f("CN-17", where, f"{width}x{height} is not the {want_w}x{want_h} master (BP-167)", lvl))
+    return out
+
+
+def _bible_version() -> str | None:
+    try:
+        return json.loads(BIBLE.read_text(encoding="utf-8")).get("version")
+    except (OSError, ValueError):
+        return None
+
+
+def _film_shots_3(doc: dict) -> list[dict]:
+    """CN-17 on ``film_shots/3`` (D-97): the master clock and frame, exact frame counts (Blender renders the frames it is
+    asked for: round(seconds x fps), no 8k+1 rounding), a HELPER shot names a catalogue archetype (CN-15), and the cards are
+    planned under the current world bible (a stale version is REVIEW: the look may have moved)."""
+    fps = doc["fps"]
+    out = _master("fps", None, None, fps)
+    have = _bible_version()
+    if have is not None and doc["style"]["bible_version"] != have:
+        out.append(_f("CN-17", "style.bible_version", f"planned under bible {doc['style']['bible_version']}, the bible is {have}",
+                      "REVIEW"))
+    for s in doc["shots"]:
+        out += _master(s["id"], s["width"], s["height"], None)
+        want = round(s["seconds"] * fps)
+        if s["duration_frames"] != want:
+            out.append(_f("CN-17", s["id"], f"{s['duration_frames']} frames is not {s['seconds']:g} s at {fps} fps ({want})"))
+        if s["lane"] == "HELPER":
+            out += _catalogue_findings(s["id"], s["helper_archetype"])
+    return out
+
+
 def _shot_spec(doc: dict, base) -> list[dict]:
+    if doc["schema"] == "shot_spec/2":
+        return _shot_spec_2(doc)
     out = []
     out += _refused_lane(doc["lane"], doc["shot_id"])
     m = doc["model"]
     if not (m["sha256"] or m["revision"]):
         out.append(_f("CN-07", "model", "a model is named by its sha256 or revision: a name alone changes under the cache"))
-    if doc["lane"] in VIDEO_LANES and doc["frames"] is not None:
+    if doc["lane"] in VIDEO_LANES and doc["frames"] is not None and ltx_recipe(doc["recipe"]):
         out += _geometry(doc["width"], doc["height"], doc["frames"], doc["shot_id"])
     return out
+
+
+def _shot_spec_2(doc: dict) -> list[dict]:
+    """CN-17 on ``shot_spec/2``: BP-167's master at render_scale 1.0 (a lower scale is the declared tier of roadmap 9.5), the
+    recipe matches the render profile (Cycles only for ``cycles_hero``), a lip-synced shot is a VIDEO_3D shot with its
+    Rhubarb cues and an on-screen mouth, and the Line Art weight is inside BP-173's band."""
+    sid, out = doc["shot_id"], []
+    out += _master(sid, doc["frame"]["width"], doc["frame"]["height"], doc["clock"]["fps"])
+    profile = doc["render"]["profile"]
+    if BLENDER_RECIPES[profile] != doc["recipe"]:
+        out.append(_f("CN-17", sid, f"recipe {doc['recipe']} does not render profile {profile} ({BLENDER_RECIPES[profile]})"))
+    perf = doc["performance"]
+    if perf["lipsync"]:
+        if doc["lane"] != "VIDEO_3D":
+            out.append(_f("CN-17", sid, f"a lip-synced shot is VIDEO_3D, not {doc['lane']}"))
+        if perf["rhubarb"] is None:
+            out.append(_f("CN-17", sid, "a lip-synced shot needs its Rhubarb mouth cues (performance.rhubarb)"))
+        if perf["dialogue_cover"] != "on_screen":
+            out.append(_f("CN-17", sid, "a lip-synced shot shows the mouth: dialogue_cover is on_screen"))
+    elif perf["rhubarb"] is not None or perf["dialogue_cover"] == "on_screen":
+        out.append(_f("CN-17", sid, "mouth cues or an on-screen mouth on a shot that is not lip-synced"))
+    lo, hi = SR.T("BP-173", "weight_px_1440")
+    if not lo <= doc["look"]["line_weight_px"] <= hi:
+        out.append(_f("CN-17", sid, f"Line Art weight {doc['look']['line_weight_px']:g} px is outside {lo:g}-{hi:g} px at 1440p (BP-173)",
+                      SR.level("BP-173")))
+    return out
+
+
+def _shot_route(doc: dict, base) -> list[dict]:
+    """CN-17 on ``shot_route/2``: the route was written against the Blender pin of BP-175; a HELPER shot is drawn by the Python
+    renderers from compensator items (no spec), a VIDEO_3D/STILL_3D shot is one Blender spec of its role and no item."""
+    if doc["schema"] != "shot_route/2":
+        return []
+    out, pin = [], doc["pins"]["blender"]
+    want = SR.T("BP-175", "blender_version"), SR.T("BP-175", "series")
+    if (pin["version"], pin["series"]) != want:
+        out.append(_f("CN-17", "pins.blender", f"Blender {pin['version']} {pin['series']} is not the pinned {want[0]} {want[1]} (BP-175)",
+                      SR.level("BP-175")))
+    seen: set[str] = set()
+    for r in doc["routes"]:
+        sid = r["shot_id"]
+        if sid in seen:
+            out.append(_f("CN-17", sid, "the shot is routed twice"))
+        seen.add(sid)
+        if r["lane"] == "HELPER":
+            if r["recipe"] != "python_helper/1" or r["specs"] or not r["comp_items"]:
+                out.append(_f("CN-17", sid, "a HELPER shot is python_helper/1 with its compensator items and no Blender spec"))
+        else:
+            role = "video" if r["lane"] == "VIDEO_3D" else "still"
+            if r["recipe"] == "python_helper/1" or r["comp_items"] or [s["role"] for s in r["specs"]] != [role]:
+                out.append(_f("CN-17", sid, f"a {r['lane']} shot is one Blender spec of role {role} and no compensator item"))
+    return out
+
+
+def _blender_scene(doc: dict, base) -> list[dict]:
+    out = []
+    frames = [c["frame"] for c in doc["camera_path"]]
+    if frames != sorted(set(frames)):
+        out.append(_f("CN-01", "camera_path", "camera samples are in frame order, one per frame"))
+    for k, b in enumerate(doc["bounds"]):
+        if any(lo > hi for lo, hi in zip(b["min"], b["max"])):
+            out.append(_f("CN-01", f"bounds[{k}]", f"{b['object']}: min is above max"))
+    ids = [a["id"] for a in doc["assets"]]
+    if len(ids) != len(set(ids)):
+        out.append(_f("CN-01", "assets", "an asset is listed twice"))
+    o = doc["objects"]
+    if o["total"] < o["meshes"] + o["armatures"] + o["lights"] + o["cameras"]:
+        out.append(_f("CN-01", "objects", "the total is below the sum of its kinds"))
+    return out
+
+
+def _blender_render(doc: dict, base) -> list[dict]:
+    """CN-18 on ``blender_render_manifest/1``: a clip exists only when every frame was written (roadmap 10.4 rule 3), at the
+    master's clock and size, and the measured seconds per frame is the total over the frames written (it feeds job_speeds)."""
+    out, sid = [], doc["shot_id"]
+    n, want = doc["frames_written"], doc["frames_expected"]
+    if n > want:
+        out.append(_f("CN-18", sid, f"{n} frames written of {want} expected"))
+    if (doc["output"] is not None) != (n == want):
+        out.append(_f("CN-18", sid, "the clip is built only when every frame is written, and then it must be recorded"))
+    if doc["output"] is not None:
+        o = doc["output"]
+        out += _master(sid, o["width"], o["height"], o["fps"])
+    spf = doc["seconds_per_frame"]
+    if (spf is None) != (n == 0) or (spf is not None and abs(spf - doc["seconds_total"] / n) > max(0.01, 0.01 * spf)):
+        out.append(_f("CN-18", sid, "seconds_per_frame is seconds_total / frames_written (null when nothing was written)"))
+    return out
+
+
+def _render_checkpoint(doc: dict, base) -> list[dict]:
+    """CN-18 on ``render_checkpoint/1`` (roadmap 10.4): a frame index once, inside the shot; a RENDERED frame has no remote copy
+    yet; a DURABLY_STORED or COMMITTED frame was verified remotely (the same sha256 as the local file) at a recorded time; the
+    vault prefix is ``blender/<job_id>/<shot_key>/frames/``. Only COMMITTED frames count for a resume."""
+    out = []
+    want = f"blender/{doc['job_id']}/{doc['shot_key']}/frames/"
+    if doc["vault_prefix"] != want:
+        out.append(_f("CN-18", "vault_prefix", f"{doc['vault_prefix']} is not {want}"))
+    seen: set[int] = set()
+    for fr in doc["frames"]:
+        where = f"frames[{fr['index']}]"
+        if fr["index"] in seen or fr["index"] >= doc["frames_expected"]:
+            out.append(_f("CN-18", where, f"index {fr['index']} is repeated or outside the shot's {doc['frames_expected']} frames"))
+        seen.add(fr["index"])
+        if fr["state"] == "RENDERED":
+            if fr["remote_sha256"] is not None or fr["stored_at"] is not None:
+                out.append(_f("CN-18", where, "a RENDERED frame has no verified remote copy yet"))
+        elif fr["remote_sha256"] != fr["local_sha256"] or fr["stored_at"] is None:
+            out.append(_f("CN-18", where, f"a {fr['state']} frame's remote sha256 equals the local one, with the time it was stored"))
+    return out
+
+
+THIRD_PARTY = {"licensed", "cc0", "cc-by-4.0", "mit-tool", "gpl-tool-only", "vendor-terms", "community-licence-revenue-capped",
+               "restricted-territory"}
+
+
+def _asset_library(doc: dict, base) -> list[dict]:
+    """CN-19 on ``asset_library/2`` (D-110, roadmap 21.4-21.5): ids are unique; a dependency is a record of the library with
+    the same sha256; external storage names its path and git storage none; a third-party licence records where and when it was
+    read; ``commercial_use: unknown`` blocks approval; a costume derives from a model (the identity carrier, D-101); an
+    animation names the skeleton it plays on. ``asset_library/1`` keeps its schema-only reading."""
+    if doc["schema"] != "asset_library/2":
+        return []
+    out = []
+    by_id: dict[str, dict] = {}
+    for it in doc["items"]:
+        if it["id"] in by_id:
+            out.append(_f("CN-19", it["id"], "the id is used twice"))
+        by_id[it["id"]] = it
+    for it in doc["items"]:
+        aid, lic = it["id"], it["licence"]
+        for d in it["deps"]:
+            dep = by_id.get(d["asset_id"])
+            if dep is None:
+                out.append(_f("CN-19", aid, f"depends on {d['asset_id']}, which is not in the library"))
+            elif dep["sha256"] != d["sha256"]:
+                out.append(_f("CN-19", aid, f"depends on {d['asset_id']} at another sha256: re-link it"))
+        st = it["storage"]
+        if (st["location"] == "external") != (st["external_path"] is not None):
+            out.append(_f("CN-19", aid, "external storage names its vault path; git storage names none"))
+        if lic["status"] in THIRD_PARTY:
+            for k in ("source_url", "revision_or_version", "inspected_on"):
+                if not lic.get(k):
+                    out.append(_f("CN-19", aid, f"a third-party licence ({lic['status']}) records {k}"))
+        if it["approval"]["status"] == "approved" and lic["commercial_use"] == "unknown":
+            out.append(_f("CN-19", aid, "commercial use is unknown: the asset cannot be approved (roadmap 21.4)"))
+        if it["kind"] == "costume":
+            parent = by_id.get(it["lineage"]["parent"] or "")
+            if parent is None or parent["kind"] != "model":
+                out.append(_f("CN-19", aid, "a costume derives from its character's model (lineage.parent, D-101)"))
+        if it["kind"] == "animation" and not (it.get("three_d") or {}).get("skeleton_id"):
+            out.append(_f("CN-19", aid, "an animation names the skeleton it was authored for (three_d.skeleton_id)"))
+    return out
+
+
+def _speech_mix(doc: dict, base) -> list[dict]:
+    """CN-20 on ``speech_mix_report/1``: the share is the narrator's words over the audible words (``voiced: false`` excluded,
+    D-99); the band itself is BP-105's and is judged by its reader, never stored here."""
+    n, d = doc["narrator_words"], doc["dialogue_words"]
+    want = n / (n + d) if n + d else 0.0
+    if abs(doc["narrator_share_words"] - want) > 0.0005:
+        return [_f("CN-20", "narrator_share_words", f"{doc['narrator_share_words']} is not {n} / ({n} + {d}) = {want:.3f}")]
+    return []
 
 
 def _audio_spine(doc: dict, base) -> list[dict]:
@@ -338,7 +558,9 @@ def _script_variants(doc: dict, base) -> list[dict]:
 
 SEMANTIC = {"film_shots": _film_shots, "script_variants": _script_variants, "shot_spec": _shot_spec, "audio_spine": _audio_spine, "visual_comp_manifest": _visual_comp,
             "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
-            "job_manifest": _job_manifest}
+            "job_manifest": _job_manifest, "shot_route": _shot_route, "blender_scene_manifest": _blender_scene,
+            "blender_render_manifest": _blender_render, "render_checkpoint": _render_checkpoint, "asset_library": _asset_library,
+            "speech_mix_report": _speech_mix}
 
 
 def derived_findings(doc: dict, base) -> list[dict]:
@@ -378,15 +600,20 @@ def validate(doc: dict, base: Path | str | None = None) -> list[dict]:
     return found
 
 
+def spec_fps(spec: dict) -> int:
+    """The frame rate of a shot spec: ``fps`` in /1, ``clock.fps`` in /2."""
+    return spec["clock"]["fps"] if spec.get("schema") == "shot_spec/2" else spec["fps"]
+
+
 def cross_fps(manifest: dict, film_shots: dict | None = None, specs: list[dict] | None = None) -> list[dict]:
-    """CN-09: one frame rate across the job manifest, the shot cards and every video lane's shot spec."""
+    """CN-09: one frame rate across the job manifest, the shot cards and every video lane's (or Blender lane's) shot spec."""
     fps = manifest["fps"]
     out = []
     if film_shots is not None and film_shots.get("fps") not in (None, fps):
         out.append(_f("CN-09", "film_shots.fps", f"{film_shots['fps']} differs from the job's {fps}"))
     for s in specs or []:
-        if s["lane"] in VIDEO_LANES and s["fps"] != fps:
-            out.append(_f("CN-09", s["shot_id"], f"shot spec fps {s['fps']} differs from the job's {fps}"))
+        if s["lane"] in VIDEO_LANES | BLENDER_LANES and spec_fps(s) != fps:
+            out.append(_f("CN-09", s["shot_id"], f"shot spec fps {spec_fps(s)} differs from the job's {fps}"))
     return out
 
 

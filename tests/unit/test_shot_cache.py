@@ -99,3 +99,52 @@ def test_a_non_finite_number_is_a_contract_error_not_a_crash():
     for bad in (float("inf"), float("nan")):
         with pytest.raises(ContractError):
             SC.key(variant(params={"steps": 8, "cfg": bad}))
+
+
+# ---- shot_spec/2: the Blender shot (ICW-02, roadmap 10.1) ---------------------------------------------------------------
+SPEC2 = json.loads((ROOT / "tests" / "fixtures" / "contracts" / "shot_spec" / "valid_v2.json").read_text(encoding="utf-8"))
+
+
+def v2(edit):
+    s = copy.deepcopy(SPEC2)
+    edit(s)
+    return s
+
+
+@pytest.mark.parametrize("edit", [
+    lambda s: s["render"].update(profile="eevee_fast"),  # a profile change re-renders (roadmap 10.1)
+    lambda s: s["render"].update(samples=128),
+    lambda s: s["clock"].update(frames=72),
+    lambda s: s["frame"].update(render_scale=0.75),
+    lambda s: s["scene"]["characters"][0]["asset"].update(sha256=H[9]),  # an asset change re-renders exactly its shots (21.5 #11)
+    lambda s: s["scene"]["set_assets"][0].update(sha256=H[8]),
+    lambda s: s["scene"]["camera"].update(lens_mm=35),
+    lambda s: s["look"].update(bible_version="1.6"),
+    lambda s: s["look"]["paper"].update(opacity=0.1),
+    lambda s: s["performance"]["rhubarb"].update(sha256=H[2]),
+    lambda s: s.update(seed=2),
+])
+def test_v2_every_render_input_changes_the_key(edit):
+    assert SC.key(v2(edit)) != SC.key(SPEC2)
+
+
+def test_v2_job_rename_clock_position_cue_path_and_asset_order_keep_the_key():
+    def move(s):
+        s.update(job_id="job-777", shot_id="s99")
+        s["clock"]["start_frame"] = 9000  # the shot moved in the edit: no pixel changes
+        s["performance"]["rhubarb"]["path"] = "elsewhere/s1.json"
+        s["scene"]["set_assets"] = [{"id": "model.camp_stool", "sha256": H[1]}, *s["scene"]["set_assets"]]
+    moved = v2(move)
+    reordered = copy.deepcopy(moved)
+    reordered["scene"]["set_assets"].reverse()
+    assert SC.key(moved) == SC.key(reordered)
+    plain = v2(lambda s: s.update(job_id="job-777"))
+    assert SC.key(plain) == SC.key(SPEC2)
+    assert SC.key(v2(lambda s: s["clock"].update(start_frame=9000))) == SC.key(SPEC2)
+    assert SC.key(v2(lambda s: s["performance"]["rhubarb"].update(path="x/y.json"))) == SC.key(SPEC2)
+
+
+def test_v2_and_v1_keys_never_collide_and_a_broken_v2_has_no_key():
+    assert SC.key(SPEC2) != SC.key(SPEC)
+    with pytest.raises(ContractError):
+        SC.key(v2(lambda s: s.update(recipe="blender_cycles/1")))  # CN-17: the recipe is not the profile's

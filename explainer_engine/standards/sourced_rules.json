@@ -6305,7 +6305,8 @@
    "sources": [],
    "enforced_by": [
     "explainer_engine/core/delivery.py",
-    "explainer_engine/core/store.py"
+    "explainer_engine/core/store.py",
+    "explainer_engine/core/contracts.py:_master"
    ],
    "supersedes": [],
    "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC; long_minutes 15 -> 12 on the creator's 12-minute (720 s) episode brief of 2026-11-01 (BP-169's episode_s is the same 720 s: tests/unit/test_delivery_defaults.py ties them)",
@@ -6796,7 +6797,9 @@
     "crease_deg": 134
    },
    "sources": [],
-   "enforced_by": [],
+   "enforced_by": [
+    "explainer_engine/core/contracts.py:_shot_spec_2"
+   ],
    "supersedes": [],
    "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
    "next_step": "measured on the ICW-05 style sheets and the ICW-09 benchmark frames"
@@ -6836,7 +6839,9 @@
      "url": "https://download.blender.org/release/Blender5.2/blender-5.2.3.sha256"
     }
    ],
-   "enforced_by": [],
+   "enforced_by": [
+    "explainer_engine/core/contracts.py:_shot_route"
+   ],
    "supersedes": [],
    "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
    "next_step": "ICW-04 reads the pin in blender/project.py and the CI smoke verifies the archive hash"
