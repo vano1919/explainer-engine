@@ -142,6 +142,20 @@
       "weights_vs_code_note": null,
       "outputs_note": "REJECTED for production (roadmap 21.9): the videos are global; technical reference only",
       "per_pack_check": false
+    },
+    "add_camera_rigs": {
+      "label": "Add Camera Rigs 1.9.2 (Blender extension: Dolly, Crane and 2D camera rigs)",
+      "status": "gpl-tool-only",
+      "commercial_use": "yes",
+      "source_url": "https://extensions.blender.org/add-ons/add-camera-rigs/",
+      "evidence": "extensions.blender.org API list 2026-11-05: id add_camera_rigs, version 1.9.2, license SPDX:GPL-3.0-or-later, maintainer WayneDixon; zip sha256 548ecf6372563948f5b3cf292dd01a3209f77ef730eb38b0197cd50ffd7377cd (15062 bytes), pinned in config/cloud_pins.json blender_extensions",
+      "redistribution": "GPL-3.0-or-later: used as shipped, fetched by sha256 at run time, never copied into our package",
+      "derivatives": "none made",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": "code only; a render made with it is not a derivative of the extension",
+      "outputs_note": "frames rendered with a rig carry no licence of the extension",
+      "per_pack_check": false
     }
   }
 }

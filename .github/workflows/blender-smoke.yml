@@ -131,6 +131,8 @@ jobs:
           assert m["schema"] == "blender_scene_manifest/1" and any(a["id"] == "animation.ual1_standard" for a in m["assets"])
           print(json.dumps(s, indent=1))
           PY
+      - name: Render the six camera setups as Add Camera Rigs clips (WP-Q7; 48 frames each, Workbench, 960x540)
+        run: python -m explainer_engine.blender.camera_smoke --out camera_smoke --binary "${{ steps.install.outputs.bin }}" --frames 48
       - name: Collect the outputs
         if: always()
         run: |
@@ -141,6 +143,8 @@ jobs:
              char_smoke/work/*/bpy_report.json char_smoke/work/*/blender.log smoke_artifact/character/ 2>/dev/null || true
           cp smoke/smoke_summary.json smoke/work/*/render_manifest.json smoke/work/*/render_checkpoint.json smoke/work/*/blender.log \
              smoke/work/*/bpy_report.json smoke_artifact/ 2>/dev/null || true
+          mkdir -p smoke_artifact/cameras
+          cp -r camera_smoke/* smoke_artifact/cameras/ 2>/dev/null || true
           ls -la smoke_artifact
       - name: Upload the smoke outputs
         if: always()
