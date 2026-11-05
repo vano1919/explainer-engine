@@ -553,6 +553,30 @@
           "ease_out",
           "ease_in_out"
          ]
+        },
+        "setup": {
+         "enum": [
+          "establishing_wide",
+          "low_angle_hero_cu",
+          "ots_a",
+          "ots_b",
+          "profile_two_shot",
+          "push_in_reveal"
+         ],
+         "description": "WP-Q7: the named camera setup (blender/camera_setups.json) the start and end poses came from; optional"
+        },
+        "fstop": {
+         "type": "number",
+         "minimum": 1.0,
+         "maximum": 22.0,
+         "description": "WP-Q7: the aperture of the depth of field (the camera rig's aperture_fstop); absent = the style's"
+        },
+        "rig_kind": {
+         "enum": [
+          "dolly",
+          "crane"
+         ],
+         "description": "WP-Q7: the Add Camera Rigs rig the camera is built on; absent = the bare camera"
         }
        }
       },

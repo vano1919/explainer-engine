@@ -146,5 +146,18 @@
     },
     "image": null,
     "smoke_verified": false
+  },
+  "blender_extensions": {
+    "_doc": "Blender extensions the render lanes use as shipped, never copied into our package (WP-Q7; GPL-3.0-or-later code stays in its own zip, run by Blender). Looked up 2026-11-05 in the official platform's API list (extensions.blender.org/api/v1/extensions/, id add_camera_rigs) and verified by sha256 before every use (explainer_engine/blender/camera_rigs.py). Licence row: assets/licence_sources.json add_camera_rigs.",
+    "add_camera_rigs": {
+      "version": "1.9.2",
+      "blender_version_min": "4.2.0",
+      "licence": "SPDX:GPL-3.0-or-later",
+      "url": "https://extensions.blender.org/download/sha256:548ecf6372563948f5b3cf292dd01a3209f77ef730eb38b0197cd50ffd7377cd/add-on-add-camera-rigs-v1.9.2.zip",
+      "sha256": "548ecf6372563948f5b3cf292dd01a3209f77ef730eb38b0197cd50ffd7377cd",
+      "bytes": 15062,
+      "looked_up": "2026-11-05",
+      "package_id": "add_camera_rigs"
+    }
   }
 }

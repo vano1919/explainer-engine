@@ -117,8 +117,11 @@ def camera_path(cam: dict, frames: int, *, pivot=None) -> list[dict]:
     return out
 
 
-def camera_job(path: list[dict], lens_mm: float, focus_m: float) -> dict:
-    """The ``camera`` block of a described scene from a sampled path (LINEAR keys)."""
+def camera_job(path: list[dict], lens_mm: float, focus_m: float, *, fstop: float | None = None, rig_kind: str | None = None,
+               focus_at=None, extension: str | None = None) -> dict:
+    """The ``camera`` block of a described scene from a sampled path (LINEAR keys). WP-Q7: ``rig_kind`` (dolly | crane) builds the
+    Add Camera Rigs rig from ``extension`` (the zip) and keys it with the same path; ``fstop`` is its aperture and ``focus_at`` a
+    world point the focus distance follows (else ``focus_m`` holds)."""
     keys = []
     for k in path:
         f = forward(k["yaw_deg"], k["pitch_deg"])
@@ -127,6 +130,14 @@ def camera_job(path: list[dict], lens_mm: float, focus_m: float) -> dict:
     cam = {"location": first["location"], "look_at": first["look_at"], "lens_mm": lens_mm, "focus_distance_m": focus_m}
     if len(keys) > 1:
         cam.update(keys=keys, interp="LINEAR")
+    if fstop is not None:
+        cam["fstop"] = fstop
+    if focus_at is not None:
+        cam["focus_at"] = [float(x) for x in focus_at]
+    if rig_kind is not None:
+        if extension is None:
+            raise ContractError(f"camera rig {rig_kind!r} needs the extension zip (camera_rigs.ensure())")
+        cam.update(rig_kind=rig_kind, extension=str(extension))
     return cam
 
 
@@ -175,7 +186,8 @@ class SceneBuilder:
         return objs, mats, pivot
 
     def build(self, spec: dict, *, cast: dict[str, dict] | None = None, set_objects: list[dict] | None = None,
-              materials: dict[str, dict] | None = None, focus_m: float | None = None) -> tuple[dict, list[dict]]:
+              materials: dict[str, dict] | None = None, focus_m: float | None = None, focus_at=None,
+              extension: str | None = None) -> tuple[dict, list[dict]]:
         """(described scene without its style graph, camera path). ``set_objects``/``materials`` are the set (primitives and
         library .blend appends, the style-sheet vocabulary); the style graph is added by the caller (``style_sheets.job_scene``)."""
         objs, mats, pivot = self.cast_objects(spec, cast or {})
@@ -183,7 +195,8 @@ class SceneBuilder:
         path = camera_path(spec["scene"]["camera"], frames, pivot=pivot)
         focus = focus_m or (math.dist(path[0]["pos"], pivot) if pivot else ORBIT_PIVOT_M)
         sc = {"objects": [*(set_objects or []), *objs], "materials": {**(materials or {}), **mats},
-              "camera": camera_job(path, spec["scene"]["camera"]["lens_mm"], round(focus, 3))}
+              "camera": camera_job(path, spec["scene"]["camera"]["lens_mm"], round(focus, 3), fstop=spec["scene"]["camera"].get("fstop"),
+                                   rig_kind=spec["scene"]["camera"].get("rig_kind"), focus_at=focus_at, extension=extension)}
         if frames > 1:
             sc["frames_total"] = frames
         return sc, path
