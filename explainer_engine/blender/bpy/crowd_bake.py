@@ -83,6 +83,12 @@ def _decimated(me, ratio, name):
     dg = bpy.context.evaluated_depsgraph_get()
     out = bpy.data.meshes.new_from_object(tmp.evaluated_get(dg), depsgraph=dg)
     out.name = name
+    # the full mesh carries the soft-normals modifier's custom normals; collapsed by the decimation they turn the mid tier dark
+    # under the lit looks (the first 30 s preview): the decimated copy keeps plain smooth normals instead
+    if "custom_normal" in out.attributes:
+        out.attributes.remove(out.attributes["custom_normal"])
+    for poly in out.polygons:
+        poly.use_smooth = True
     for i, m in enumerate(me.materials):   # new_from_object keeps the slots; make sure they are the toon materials
         if i < len(out.materials):
             out.materials[i] = m

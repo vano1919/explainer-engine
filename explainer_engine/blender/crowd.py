@@ -493,7 +493,7 @@ def battle30_arrows(shot_id: str) -> dict:
             v = [(p1[i] - p0[i]) / fl for i in range(3)]
             v[2] += 0.5 * GRAVITY * fl
             rows.append([round(c, 4) for c in (*p0, *v, t0, fl)])
-    return {"rows": rows, "gravity": GRAVITY, "scale": 1.5}
+    return {"rows": rows, "gravity": GRAVITY, "scale": 1.0}
 
 
 def ridge_z(x: float, y: float) -> float:
