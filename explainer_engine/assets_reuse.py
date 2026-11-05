@@ -11,9 +11,15 @@ Free generator (D8, BP-162): the order is library -> an admitted free generator 
 needs ``--why`` naming what the free take could not do, with or without library matches, and the hook refuses a paid
 call without it. With no admission (today) nothing changes.
 
+3D assets (D-110, Ink Chronicle roadmap 21.5 #7, ICW-05): the kinds model, rig, animation, material, texture, hdri,
+blend_collection, scene_template and costume are searched in the asset library (``assets/library.find``, asset_library/2)
+and recorded the same way before a new one is built, bought or generated; ``--skeleton`` narrows rigs and animations to
+one skeleton (the clips that play without a retarget).
+
 CLI (search and record in one step):
     python -m explainer_engine.assets_reuse <episode folder> --kind music --tags tense,heist
         [--decide reuse|generate_free|generate_new] [--why "..."]
+    python -m explainer_engine.assets_reuse <episode folder> --kind animation --tags walk --skeleton skeleton.ubc_humanoid_v1
 
 Without ``--decide`` it only prints the matches. ``generate_new`` with matches present (or with a generator admitted for
 the kind) needs ``--why``.
@@ -30,7 +36,8 @@ from explainer_engine.core.store import write_json_atomic
 
 REPO = Path(__file__).resolve().parents[1]
 SOUND_LIB = REPO / "assets" / "audio" / "library"
-KINDS = ("music", "sfx", "vocal", "picture")
+LIBRARY_KINDS = ("model", "rig", "animation", "material", "texture", "hdri", "blend_collection", "scene_template", "costume")
+KINDS = ("music", "sfx", "vocal", "picture") + LIBRARY_KINDS
 _SOUND_CATEGORY = {"music": "music", "sfx": "foley", "vocal": "vocal"}
 RECORD_NAME = "asset_reuse.json"
 DECISIONS = ("reuse", "generate_free", "generate_new")
@@ -43,10 +50,15 @@ def free_generator(kind: str) -> dict | None:
     return generator_gate.admitted({"music": "music", "sfx": "sfx"}.get(kind, ""))
 
 
-def lookup(kind: str, tags: list[str], *, sound_root: Path | None = None, picture_root: Path | None = None) -> list[dict]:
-    """Usable library entries having ALL the tags: the sound library for music/sfx/vocal, the picture library for picture."""
+def lookup(kind: str, tags: list[str], *, sound_root: Path | None = None, picture_root: Path | None = None,
+           library_path: Path | None = None, skeleton_id: str | None = None) -> list[dict]:
+    """Usable library entries having ALL the tags: the sound library for music/sfx/vocal, the picture library for picture,
+    the asset library (asset_library/2) for the 3D kinds, optionally on one skeleton."""
     if kind not in KINDS:
         raise ValueError(f"unknown kind {kind!r}; known: {KINDS}")
+    if kind in LIBRARY_KINDS:
+        from explainer_engine.assets import library
+        return library.find(kind=kind, tags=tags, skeleton_id=skeleton_id, path=library_path)
     if kind == "picture":
         from explainer_engine.imagegen import picture_library
         return picture_library.find(picture_root or picture_library.ROOT, tags=tags)
@@ -101,9 +113,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tags", required=True, help="comma-separated")
     p.add_argument("--decide", choices=list(DECISIONS))
     p.add_argument("--why", default="")
+    p.add_argument("--skeleton", default=None, help="3D kinds: only records authored for this skeleton id")
     a = p.parse_args(argv)
     tags = [t for t in a.tags.split(",") if t]
-    matches = lookup(a.kind, tags)
+    matches = lookup(a.kind, tags, skeleton_id=a.skeleton)
     for m in matches:
         print(f"{m['id']:40} {m.get('category') or m.get('kind'):10} {','.join(m['tags'])}")
     print(f"{len(matches)} match(es) for {a.kind} {tags}")

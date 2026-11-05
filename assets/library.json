@@ -1,5 +1,5 @@
 {
-  "schema": "asset_library/1",
+  "schema": "asset_library/2",
   "items": [
     {
       "id": "reference.analyst_idle",
@@ -28,7 +28,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -45,7 +46,12 @@
         "source": "assets/characters/crossworld_cast_v0/generation_ledger_all.jsonl"
       },
       "width": 537,
-      "height": 859
+      "height": 859,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_archimedes",
@@ -80,7 +86,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -97,7 +104,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_curie",
@@ -132,7 +144,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -149,7 +162,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_darwin",
@@ -184,7 +202,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -201,7 +220,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_einstein",
@@ -236,7 +260,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -253,7 +278,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_franklin",
@@ -288,7 +318,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -305,7 +336,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_nansen",
@@ -340,7 +376,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -357,7 +394,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_newton",
@@ -392,7 +434,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -409,7 +452,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     },
     {
       "id": "sprite.sci_tesla",
@@ -444,7 +492,8 @@
       },
       "licence": {
         "status": "generated_terms_unverified",
-        "note": "Gemini output; the provider's output terms were not verified in a record"
+        "note": "Gemini output; the provider's output terms were not verified in a record",
+        "commercial_use": "unknown"
       },
       "approval": {
         "status": "superseded",
@@ -461,7 +510,12 @@
         "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
       },
       "width": 896,
-      "height": 1200
+      "height": 1200,
+      "deps": [],
+      "storage": {
+        "location": "git",
+        "external_path": null
+      }
     }
   ]
 }

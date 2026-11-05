@@ -336,8 +336,8 @@
             "properties": {
               "id": {
                 "type": "string",
-                "pattern": "^[a-z]+\\.[a-z0-9_]+(\\.[a-z0-9_]+)?$",
-                "description": "<kind>.<name>[.<variant>] (P-66)"
+                "pattern": "^[a-z_]+\\.[a-z0-9_]+(\\.[a-z0-9_]+)?$",
+                "description": "<kind>.<name>[.<variant>] (P-66); the kind may hold an underscore (blend_collection, scene_template)"
               },
               "kind": {
                 "enum": [

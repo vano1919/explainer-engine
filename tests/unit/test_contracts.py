@@ -364,7 +364,11 @@ def test_a_checkpoint_counts_a_frame_only_when_it_is_verified_remotely():
 
 def test_asset_library_1_reads_as_before_and_2_adds_the_3d_kinds():
     lib1 = json.loads((ROOT / "assets" / "library.json").read_text(encoding="utf-8"))
-    assert lib1["schema"] == "asset_library/1" and C.errors(lib1) == []  # the real library is untouched (ICW-05 moves it)
+    assert lib1["schema"] == "asset_library/2" and C.errors(lib1) == []  # the real library, moved to /2 by ICW-05
+    old = {"schema": "asset_library/1", "items": [{k: v for k, v in it.items() if k not in ("deps", "storage")} for it in lib1["items"]]}
+    for it in old["items"]:
+        it["licence"] = {k: it["licence"][k] for k in ("status", "note")}
+    assert C.errors(old) == []  # an asset_library/1 document still reads as before
     v2 = load(FIX / "asset_library" / "valid_v2.json")
     kinds = {it["kind"] for it in v2["items"]}
     assert kinds >= {"model", "rig", "costume", "animation"}
