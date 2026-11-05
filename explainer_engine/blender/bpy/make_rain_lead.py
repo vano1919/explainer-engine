@@ -99,20 +99,21 @@ def tube_mesh(rings, cols, centre_fn, closed=True):
 
 
 def tunic(rig, top, collection):
-    """Knee-length tunic body (an open tube from the shoulders, a flared hem) with short sleeves along the T-pose arms; weights from Rain's top."""
+    """Knee-length sleeveless tunic body (a tube from the shoulders, a flared hem) and a belt; Rain's own top shows as the undershirt
+    and its sleeves; weights from Rain's top."""
     def body(t, a):
         z = 1.30 - 0.78 * t
-        rx = 0.165 + 0.035 * t + 0.07 * t ** 2.5
-        ry = 0.105 + 0.03 * t + 0.06 * t ** 2.5
+        rx = 0.19 + 0.01 * t + 0.08 * t ** 2.5
+        ry = 0.135 + 0.01 * t + 0.07 * t ** 2.5
         w = 1 + 0.03 * math.sin(a * 5) * t
         return (rx * w * math.sin(a), ry * w * math.cos(a) + 0.01, z)
     weighted("GEO-lead-tunic", tube_mesh(12, 28, body), "MAT-lead.tunic", rig, top, collection)
-    for side in (1, -1):
-        def sleeve(t, a, side=side):
-            x = side * (0.14 + 0.2 * t)
-            r = 0.062 + 0.012 * t
-            return (x, r * math.cos(a) + 0.0, 1.265 + r * math.sin(a))
-        weighted(f"GEO-lead-sleeve{'L' if side > 0 else 'R'}", tube_mesh(4, 12, sleeve), "MAT-lead.tunic", rig, top, collection)
+    def belt(t, a):   # an elliptical strip at the waist (z about 1.02), a thin tube around the tunic
+        u = 2 * math.pi * t
+        rx, ry = 0.205, 0.142
+        r = 0.014
+        return ((rx + r * math.cos(a)) * math.sin(u), (ry + r * math.cos(a)) * math.cos(u) + 0.01, 1.02 + r * math.sin(a) * 1.6)
+    weighted("GEO-lead-belt", tube_mesh(40, 8, belt), "MAT-lead.belt", rig, top, collection, subdiv=0)
     print("TUNIC built")
 
 
@@ -123,9 +124,9 @@ def cloak(rig, top, collection):
     for r in range(rows + 1):
         t = r / rows
         z = z0 + (z1 - z0) * t
-        rx, ry = 0.19 + 0.13 * t ** 1.3, 0.125 + 0.10 * t ** 1.3
+        rx, ry = 0.215 + 0.12 * t ** 1.3, 0.14 + 0.10 * t ** 1.3
         for c in range(cols + 1):
-            a = math.radians(-148 + 296 * c / cols)                  # open at the front (the face looks to -Y; the back is +Y)
+            a = math.radians(-35 + 185 * c / cols)                   # one shoulder only: from the back over the +X shoulder and down its side
             hem = 0.025 * math.sin(c * 1.7) * t * t
             bm.verts.new((rx * math.sin(a) * (1 + hem), ry * math.cos(a) * (1 + hem) + 0.015, z - abs(hem) * 0.6))
     bm.verts.ensure_lookup_table()

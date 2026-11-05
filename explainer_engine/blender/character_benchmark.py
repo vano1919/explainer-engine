@@ -25,6 +25,9 @@ POSES = Path(__file__).with_name("viseme_poses_rain.json")
 CREDIT = "Rain Rig © Blender Foundation | cloud.blender.org"
 SKIN_TEXTURE = 0.0   # 0.2 left hard stripes on the cheeks in the first frames: the texture is flat-field, judged on the clip
 LATTICE = "HLP-rain-lattice-head"
+# a relaxed A-pose on the CloudRig FK arm controls (measured 2026-11-05: local Z, mirrored sign; IK/FK switches set to FK)
+ARMS_DOWN = {"FK-Upperarm.L": [0, 0, -62], "FK-Upperarm.R": [0, 0, 62]}
+CALM_FACE = {"EyelidsClose.L": 0.18, "EyelidsClose.R": 0.18, "EyebrowsDown.L": 0.25, "EyebrowsDown.R": 0.25}
 # C2 (Fable, 2026-11-05): the body keeps Blender Studio's own shading; only the clothes are re-made by the style
 KEEP_OWN = ("MAT-rain.body", "MAT-rain.hands", "MAT-rain.hair", "MAT-rain.eyebrows", "MAT-rain.eyelashes", "MAT-rain.eyes",
             "MAT-rain.eyedot", "MAT-rain.cornea", "MAT-rain.teeth", "MAT-rain.gums", "MAT-rain.tongue")
@@ -33,8 +36,8 @@ MATERIAL_MAP = {
     "MAT-rain.body": "rain_skin", "MAT-rain.hands": "rain_skin", "MAT-rain.hair": "rain_hair", "MAT-rain.eyebrows": "rain_hair",
     "MAT-rain.eyelashes": "rain_hair", "MAT-rain.eyes": "rain_eyes", "MAT-rain.eyedot": "rain_pupil", "MAT-rain.cornea": "rain_cornea",
     "MAT-rain.teeth": "rain_teeth", "MAT-rain.gums": "rain_gums", "MAT-rain.tongue": "rain_gums",
-    "MAT-rain.top": "rain_costume", "MAT-rain.scarf": "rain_cloak", "MAT-rain.jeans": "rain_costume", "MAT-rain.hairband": "rain_cloak",
-    "MAT-lead.cloak": "rain_cloak", "MAT-lead.tunic": "rain_costume", "MAT-rain.shoes": "rain_leather", "MAT-rain.socks": "rain_costume", "MAT-rain.laces": "rain_leather", "MAT-rain.metal": "rain_leather",
+    "MAT-rain.top": "rain_under", "MAT-rain.scarf": "rain_cloak", "MAT-rain.jeans": "rain_costume", "MAT-rain.hairband": "rain_cloak",
+    "MAT-lead.cloak": "rain_cloak", "MAT-lead.tunic": "rain_costume", "MAT-lead.belt": "rain_leather", "MAT-rain.shoes": "rain_leather", "MAT-rain.socks": "rain_costume", "MAT-rain.laces": "rain_leather", "MAT-rain.metal": "rain_leather",
 }
 
 
@@ -69,7 +72,7 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
          "rain_eyes": {"base": [0.9, 0.9, 0.88, 1.0]}, "rain_pupil": {"base": [0.02, 0.02, 0.02, 1.0]},
          "rain_cornea": {"base": [0.9, 0.9, 0.9, 1.0]}, "rain_teeth": {"base": [0.92, 0.88, 0.8, 1.0]},
          "rain_gums": {"base": [0.62, 0.22, 0.22, 1.0]}, "rain_leather": {"base": [0.16, 0.09, 0.05, 1.0]},
-         "rain_costume": {"base": [0.42, 0.30, 0.18, 1.0], "slot": "costume"}, "rain_cloak": {"base": [0.16, 0.03, 0.025, 1.0], "slot": "costume"}}
+         "rain_costume": {"base": [0.42, 0.30, 0.18, 1.0], "slot": "costume"}, "rain_under": {"base": [0.62, 0.55, 0.42, 1.0], "slot": "costume"}, "rain_cloak": {"base": [0.16, 0.03, 0.025, 1.0], "slot": "costume"}}
     if tex_dir is not None:
         t = textures(tex_dir)
         if t["body_diffuse"].exists():
@@ -82,11 +85,12 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
 
 
 def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | None = None, angular: float = 0.0,
-          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea", "GEO-rain-top"), push: bool = True, wall: bool = True, framing: str = "cu", keep: tuple = KEEP_OWN) -> dict:
+          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea"), push: bool = True, wall: bool = True, framing: str = "cu", keep: tuple = KEEP_OWN) -> dict:
     """{objects, camera, materials, frames_total}: Rain facing the camera in front of a plain wall, a slow push-in."""
     visemes = rigs.ActionVisemes(poses()).tracks_for(list(lip["shapes"])) if lip else None
     rb = {"path": str(blend), "collection": "CH-rain", "rig": "RIG-rain", "materials": MATERIAL_MAP, "hide": list(hide), "keep": list(keep),
-          "pose": {}, "lattice": {"object": LATTICE, "deltas": lattice_deltas(angular)} if angular else None, "visemes": visemes}
+          "pose": ARMS_DOWN, "props": {"Properties_IKFK": {"ik_arm_left": 0.0, "ik_arm_right": 0.0}},
+          "shape_keys": {"GEO-rain-head": CALM_FACE}, "lattice": {"object": LATTICE, "deltas": lattice_deltas(angular)} if angular else None, "visemes": visemes}
     objs = [{"name": "rain", "rig_blend": rb}]
     if wall:   # without it the camera sees the sky of the look (an HDRI behind the head)
         objs.insert(0, {"name": "wall", "add": "cube", "params": {"size": 1}, "location": [0, 1.0, 1.4], "scale": [6, 0.2, 4],

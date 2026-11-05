@@ -490,6 +490,13 @@ def build_rig_blend(o, pending, report):
                 pb.keyframe_insert(prop, index=int(idx), frame=bpy.context.scene.frame_start + int(f))
                 n += 1
         report.setdefault("visemes", {})[o["name"]] = {"keys": n, "channels": len(vis)}
+    for b, props in (rb.get("props") or {}).items():   # rig switches (CloudRig IK/FK) and other custom properties
+        for k, v in props.items():
+            rig.pose.bones[b][k] = v
+    for oname, keys in (rb.get("shape_keys") or {}).items():   # held shape-key values (a calmer eyelid, a lowered brow)
+        kb = bpy.data.objects[oname].data.shape_keys.key_blocks
+        for k, v in keys.items():
+            kb[k].value = v
     for b, pose in (rb.get("pose") or {}).items():   # a held pose (arms down), degrees
         pb = rig.pose.bones[b]
         pb.rotation_mode = "XYZ"
