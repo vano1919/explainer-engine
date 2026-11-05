@@ -481,6 +481,96 @@ def _tracked(scene, frame, tr, loc, at):
     return list(carry @ Vector(loc)), list(carry @ Vector(at))
 
 
+# --- camera rigs (WP-Q7): the Add Camera Rigs extension, installed from the pinned zip and keyed with the engine's camera path ----
+
+RIG = {}   # {"rig": armature object, "camera": camera object} when the camera is a rig
+
+
+def install_extension(path, report):
+    """The pinned Add Camera Rigs zip into this Blender (a user repository, enabled), once per process."""
+    if "bl_ext.user_default.add_camera_rigs" in bpy.context.preferences.addons:
+        return
+    res = bpy.ops.extensions.package_install_files(filepath=path, repo="user_default", enable_on_install=True)
+    if "FINISHED" not in res:
+        raise RuntimeError(f"the camera rig extension {path} did not install: {res}")
+    report["camera_rig_extension"] = os.path.basename(path)
+
+
+def _bone_world(rig, name, world):
+    """The pose bone ``name`` on the world point (parents first: the caller updates the view layer between bones)."""
+    from mathutils import Matrix
+    rig.pose.bones[name].matrix = rig.matrix_world.inverted() @ Matrix.Translation(Vector(world))
+    bpy.context.view_layer.update()
+
+
+def build_rig(scene, cam, report):
+    """The camera of a described scene as a Dolly or Crane rig of the extension: its camera object becomes ``scene.camera``,
+    its lens, aperture and focus are the rig's bone properties (drivers feed them to the camera data)."""
+    install_extension(cam["extension"], report)
+    kind = cam["rig_kind"].upper()
+    bpy.ops.object.build_camera_rig(mode=kind)
+    rig = bpy.data.objects[kind.capitalize() + "_Rig"]
+    ob = bpy.data.objects[kind.capitalize() + "_Camera"]
+    ob.name = "camera"
+    ob.data.sensor_width, ob.data.clip_end = cam.get("sensor_mm", 36.0), cam.get("clip_end", 500.0)
+    scene.camera = ob
+    pb = rig.pose.bones["Camera"]
+    pb["lens"] = float(cam["lens_mm"])
+    RIG.update(rig=rig, camera=ob)
+    return rig, ob
+
+
+def set_dof(scene, focus_m, fstop):
+    """The depth of field of the scene camera: through the rig's properties when it is a rig, else on the camera data."""
+    cd = scene.camera.data.dof
+    cd.use_dof = True
+    if RIG:
+        pb = RIG["rig"].pose.bones["Camera"]
+        pb["focus_distance"], pb["aperture_fstop"] = float(focus_m), float(fstop)
+    else:
+        cd.focus_distance, cd.aperture_fstop = focus_m, fstop
+
+
+def key_rig(scene, cam, first, last, interp):
+    """The engine's camera keys on the rig: Root under the camera on the floor, the Camera bone at the camera, Aim at the look-at
+    point; the focus distance follows ``focus_at`` and the aperture holds ``fstop``."""
+    rig = RIG["rig"]
+    pbs = rig.pose.bones
+    keys = cam.get("keys") or [{"frame": 0, "location": cam["location"], "look_at": cam["look_at"]}]
+    bpy.context.preferences.edit.keyframe_new_interpolation_type = interp
+    for k in keys:
+        loc, at = k["location"], k["look_at"]
+        frame = first + int(k["frame"])
+        pbs["Root"].location = (loc[0], loc[1], 0.0)
+        bpy.context.view_layer.update()
+        _bone_world(rig, "Aim", at)
+        _bone_world(rig, "Camera", loc)
+        for name in ("Root", "Aim", "Camera"):
+            pbs[name].keyframe_insert("location", frame=frame)
+        # a property the job names is keyed (the focus follows ``focus_at``, the aperture holds ``fstop``); one it does not name
+        # stays the style's (apply_style -> set_dof writes it later)
+        if cam.get("focus_at"):
+            pbs["Camera"]["focus_distance"] = float((Vector(cam["focus_at"]) - Vector(loc)).length)
+            pbs["Camera"].keyframe_insert('["focus_distance"]', frame=frame)
+        if cam.get("fstop") is not None:
+            pbs["Camera"]["aperture_fstop"] = float(cam["fstop"])
+            pbs["Camera"].keyframe_insert('["aperture_fstop"]', frame=frame)
+    scene.frame_set(first)
+
+
+def frame_probe(scene, cam, first, last, report):
+    """Where the probe points land in the frame at the first and the last frame (0..1 from the left / bottom; the bpy side of
+    ``camera_setups.framing``): the CI cross-check of the pure-Python pinhole."""
+    from bpy_extras.object_utils import world_to_camera_view
+    out = {}
+    for f in sorted({first, last}):
+        scene.frame_set(f)
+        out[str(f - first)] = {p["name"]: [round(v, 5) for v in world_to_camera_view(scene, scene.camera, Vector(p["at"]))[:2]]
+                               for p in cam["probe"]}
+    scene.frame_set(first)
+    report["framing"] = out
+
+
 def build_described(scene, sc, report):
     """Objects, camera and (optional) motion of a ``described`` scene. Motion: an object or the camera with a ``to`` block
     ({location[, rotation_deg]} / {location, look_at}) is keyed at the first and the last frame of ``frames_total``;
@@ -512,13 +602,19 @@ def build_described(scene, sc, report):
         if o.get("to"):
             moving.append((handle, o))
     cam = sc["camera"]
-    data = bpy.data.cameras.new("camera")
-    data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
-    data.clip_end = cam.get("clip_end", 500.0)
-    ob = bpy.data.objects.new("camera", data)
-    scene.collection.objects.link(ob)
-    _aim(ob, cam["location"], cam["look_at"])
-    scene.camera = ob
+    if cam.get("rig_kind"):
+        build_rig(scene, cam, report)
+        ob, data = scene.camera, scene.camera.data
+        data.lens = cam["lens_mm"]
+    else:
+        RIG.clear()
+        data = bpy.data.cameras.new("camera")
+        data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
+        data.clip_end = cam.get("clip_end", 500.0)
+        ob = bpy.data.objects.new("camera", data)
+        scene.collection.objects.link(ob)
+        _aim(ob, cam["location"], cam["look_at"])
+        scene.camera = ob
     first = scene.frame_start
     last = first + int(sc.get("frames_total", 1)) - 1
     if last > first:
@@ -528,11 +624,13 @@ def build_described(scene, sc, report):
             if "rotation_deg" in o["to"]:
                 h.rotation_euler = _rad(o["to"]["rotation_deg"])
             _key(h, ("location", "rotation_euler"), last, o.get("interp", "LINEAR"))
+        if cam.get("to") and RIG:
+            raise RuntimeError("a camera rig is keyed from camera.keys, not from a to block")
         if cam.get("to"):
             _key(ob, ("location", "rotation_euler"), first, cam.get("interp", "BEZIER"))
             _aim(ob, cam["to"]["location"], cam["to"]["look_at"], ob.rotation_euler.copy())
             _key(ob, ("location", "rotation_euler"), last, cam.get("interp", "BEZIER"))
-        if cam.get("keys"):   # a camera rig of several poses (scene_builder: rail, orbit, dramatic curve; a turnaround's views)
+        if cam.get("keys") and not RIG:   # a camera path of several poses (scene_builder: rail, orbit, dramatic curve; a turnaround's views)
             for k in cam["keys"]:
                 loc, at = k["location"], k["look_at"]
                 if k.get("track"):   # aim at a point of a posed bone (a face close-up follows the head the clip moves)
@@ -543,6 +641,11 @@ def build_described(scene, sc, report):
                     data.keyframe_insert("lens", frame=first + int(k["frame"]))
                 _key(ob, ("location", "rotation_euler"), first + int(k["frame"]), cam.get("interp", "BEZIER"))
         report["motion"] = {"frames": [first, last], "objects": len(moving), "camera": bool(cam.get("to") or cam.get("keys"))}
+    if RIG:
+        key_rig(scene, cam, first, last, cam.get("interp", "LINEAR"))
+        report["camera_rig"] = {"kind": cam["rig_kind"], "rig": RIG["rig"].name, "bones": sorted(b.name for b in RIG["rig"].pose.bones)}
+    if cam.get("probe"):
+        frame_probe(scene, cam, first, last, report)
     return pending
 
 
@@ -657,8 +760,11 @@ def apply_style(scene, style, pending, report):
             gm.grease_pencil.color = la["ink_rgba"]
     dof = style.get("camera_dof")
     if dof:
-        cd = scene.camera.data.dof
-        cd.use_dof, cd.focus_distance, cd.aperture_fstop = True, dof["focus_distance_m"], dof["fstop"]
+        if RIG:   # WP-Q7: keyed properties of the rig win at render time; the style fills the ones the job did not name
+            set_dof(scene, dof["focus_distance_m"], dof["fstop"])
+        else:
+            cd = scene.camera.data.dof
+            cd.use_dof, cd.focus_distance, cd.aperture_fstop = True, dof["focus_distance_m"], dof["fstop"]
     st = style["scene"]
     vs = scene.view_settings
     vs.view_transform = st["view_transform"]
