@@ -409,6 +409,7 @@
     "peak": "raise their bows all at once",
     "settle": "hold the bows high against the sky"
    },
+   "narration": "Out of the fog came something else.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
@@ -452,7 +453,7 @@
     "peak": "jerk to a halt, row after row",
     "settle": "stand frozen with muskets on their shoulders"
    },
-   "narration": "They came out of it in the year 1223.",
+   "narration": "When they came out of it, the year was 1223.",
    "claims": [
     "I01"
    ],
@@ -583,7 +584,7 @@
     "peak": "swallows hard and raises his chin",
     "settle": "holds still, eyes wide"
    },
-   "narration": "And it will be his worst victory.",
+   "narration": "And it will be the worst victory of his life.",
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -664,6 +665,7 @@
      "does": "wait on their shaggy horses"
     }
    ],
+   "narration": "The emperor's army here. The khan's army there.",
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -702,7 +704,7 @@
     "peak": "ram a cannonball down the barrel and jump clear",
     "settle": "freeze in their places beside the wheels"
    },
-   "narration": "Napoleon had trained as an artillery officer.",
+   "narration": "Napoleon had trained as an artillery officer, a gunner first.",
    "claims": [
     "C04"
    ],
@@ -841,7 +843,7 @@
     "peak": "swing the muskets down and fire one volley",
     "settle": "lower the muskets in a cloud of white smoke"
    },
-   "narration": "His muskets reached about a hundred.",
+   "narration": "His infantry muskets reached about a hundred metres.",
    "claims": [
     "C06"
    ],
@@ -882,7 +884,7 @@
      "height": "quarter"
     }
    ],
-   "narration": "Genghis Khan built his army to move.",
+   "narration": "Genghis Khan built his army to move, and to keep moving.",
    "sound": {
     "ambience": "horses grazing, a far-off horn",
     "foley": [
@@ -1047,6 +1049,7 @@
     "peak": "a horse's hoof stamps down beside it and lifts away",
     "settle": "the wheel stays stuck in the mud"
    },
+   "narration": "Guns against horses. Weight against speed. Battle against campaign.",
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
@@ -1103,6 +1106,7 @@
      "does": "trot slowly closer"
     }
    ],
+   "narration": "Sooner or later, these machines would have to meet.",
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -1113,7 +1117,7 @@
    "scene": "S04",
    "mode": "establish",
    "beat": "A lone rider comes to the emperor's tents.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -1178,6 +1182,10 @@
      "does": "leans in to listen"
     }
    ],
+   "narration": "Then a rider came to the emperor's tents. He came alone.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -1232,7 +1240,7 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "Sire. Let me knock that ghost off his pony.",
+    "text": "Let me knock that ghost off his pony.",
     "delivery": "eager, too loud"
    },
    "sound": {
@@ -1246,7 +1254,7 @@
    "scene": "S04",
    "mode": "scene",
    "beat": "Napoleon wants information first.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -1286,15 +1294,14 @@
    "dialogue": {
     "who": "napoleon",
     "to": "murat",
-    "text": "Not yet. A man who rides in alone wants to talk.",
+    "text": "Not yet. He rode in alone to talk.",
     "delivery": "quiet, clipped"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01",
-   "last_frame": true
+   "master": "S04-01"
   },
   {
    "id": "S04-04",
@@ -1341,7 +1348,7 @@
    "dialogue": {
     "who": "kemal",
     "to": "napoleon",
-    "text": "Sire. He speaks the old Tatar tongue. My grandmother's.",
+    "text": "He speaks Tatar, Sire. My grandmother's tongue.",
     "delivery": "hushed, amazed"
    },
    "claims": [
@@ -1359,7 +1366,7 @@
    "scene": "S04",
    "mode": "scene",
    "beat": "Napoleon registers the impossible and moves on.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -1387,6 +1394,11 @@
     "peak": "raises one eyebrow sharply",
     "settle": "holds the look"
    },
+   "narration": "Napoleon had brought a Tatar speaker without knowing it.",
+   "claims": [
+    "C14",
+    "C15"
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
@@ -1451,7 +1463,7 @@
    "scene": "S04",
    "mode": "scene",
    "beat": "The khan's terms.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1491,22 +1503,21 @@
    "dialogue": {
     "who": "bars",
     "to": "kemal",
-    "text": "The khan of all who live in felt tents says: kneel.",
+    "text": "The khan of the felt tents says: kneel.",
     "delivery": "formal, chanted"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01",
-   "last_frame": true
+   "master": "S04-01"
   },
   {
    "id": "S04-08",
    "scene": "S04",
    "mode": "scene",
    "beat": "The price of living.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1546,22 +1557,21 @@
    "dialogue": {
     "who": "bars",
     "to": "kemal",
-    "text": "Give him your horses and your guns, and you will live.",
+    "text": "Give him your horses and guns, and live.",
     "delivery": "flat, rehearsed"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01",
-   "last_frame": true
+   "master": "S04-01"
   },
   {
    "id": "S04-09",
    "scene": "S04",
    "mode": "scene",
    "beat": "Murat finds it funny.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -1590,6 +1600,7 @@
     "settle": "shakes with laughter",
     "face": "his mouth opens wide and his eyes squeeze shut"
    },
+   "narration": "Murat had never even heard the name of this khan.",
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -1604,7 +1615,7 @@
    "scene": "S04",
    "mode": "scene",
    "beat": "Napoleon answers with his whole biography.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1644,15 +1655,14 @@
    "dialogue": {
     "who": "napoleon",
     "to": "bars",
-    "text": "Tell your khan I kneel to nobody. We meet in battle.",
+    "text": "Tell your khan I kneel to nobody.",
     "delivery": "slow, cold, every word clear"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01",
-   "last_frame": true
+   "master": "S04-01"
   },
   {
    "id": "S04-11",
@@ -1696,12 +1706,7 @@
     "peak": "points back toward the west",
     "settle": "holds the pointing arm still"
    },
-   "dialogue": {
-    "who": "bars",
-    "to": "napoleon",
-    "text": "This spring, princes on the river killed the khan's envoys.",
-    "delivery": "low, almost kind"
-   },
+   "narration": "That spring, Rus princes had killed the khan's envoys.",
    "claims": [
     "C10"
    ],
@@ -1769,7 +1774,7 @@
    "scene": "S04",
    "mode": "scene",
    "beat": "Murat goes for his pistol.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -1798,6 +1803,10 @@
     "settle": "freezes with it half drawn",
     "face": "his teeth bare"
    },
+   "narration": "To the Mongols, killing an envoy meant war without mercy.",
+   "claims": [
+    "C10"
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -2000,6 +2009,7 @@
     "peak": "turn their heads together toward the camp",
     "settle": "sit still, watching"
    },
+   "narration": "The khan's riders had been there all along.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
@@ -2057,6 +2067,7 @@
     "peak": "kicks the horse into a trot up the slope",
     "settle": "rides small toward the horizon"
    },
+   "narration": "Then the steppe was empty again.",
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -2155,7 +2166,7 @@
    "dialogue": {
     "who": "murat",
     "to": "room",
-    "text": "Tomorrow, Sire. You'll have him by lunch.",
+    "text": "You'll have him by lunch, Sire.",
     "delivery": "cocky"
    },
    "sound": {
@@ -2200,7 +2211,7 @@
    "dialogue": {
     "who": "brun",
     "to": "self",
-    "text": "Wherever it is, I hope it has bread.",
+    "text": "I hope it has bread.",
     "delivery": "a grumble under his breath"
    },
    "sound": {
@@ -2261,7 +2272,7 @@
     "peak": "the hand shakes the sack upside down",
     "settle": "a little white dust falls onto the grass"
    },
-   "narration": "On this steppe, there were no farms.",
+   "narration": "On this steppe, there were no farms to take from.",
    "sound": {
     "ambience": "wind over open grass, a wagon creaking"
    },
@@ -2330,7 +2341,7 @@
     "settle": "leans on both fists, breathing hard",
     "face": "his brows crush down over his eyes"
    },
-   "narration": "So he needed his battle, and he needed it fast.",
+   "narration": "So he needed his battle, and he needed it before the bread ran out.",
    "sound": {
     "ambience": "a candle guttering, canvas creaking",
     "loudest": "a fist on wood"
@@ -2386,6 +2397,7 @@
      "does": "spur their big horses forward"
     }
    ],
+   "narration": "Murat rode out at dawn to find the khan.",
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
@@ -2430,6 +2442,10 @@
     "peak": "pulls up and twists round in the saddle",
     "settle": "stares at the empty trampled grass"
    },
+   "narration": "Murat found the khan's camp the next morning. It was empty.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -2471,12 +2487,7 @@
     "settle": "holds the hand in the ashes",
     "face": "his eyes widen"
    },
-   "dialogue": {
-    "who": "murat",
-    "to": "self",
-    "text": "Gone. And the ashes are warm.",
-    "delivery": "puzzled, low"
-   },
+   "narration": "Gone. The ashes were still warm.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves"
    },
@@ -2506,6 +2517,7 @@
     "peak": "the arrow slams into the turf beside a riding boot",
     "settle": "the arrow quivers upright"
    },
+   "narration": "Then the arrows came, from nowhere.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "a hard thud"
@@ -2546,6 +2558,11 @@
     "peak": "raise their bows and loose a volley high",
     "settle": "hold the bows up against the sky"
    },
+   "narration": "The archers stood on a ridge, far out of musket range.",
+   "claims": [
+    "C06",
+    "C09"
+   ],
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
@@ -2638,6 +2655,10 @@
     "peak": "an arrow pins the pack to the ground",
     "settle": "the pack lies pinned, the arrow shaking"
    },
+   "narration": "They came down almost straight.",
+   "claims": [
+    "C09"
+   ],
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -2744,12 +2765,7 @@
     "peak": "points at the far ridge",
     "settle": "holds the point"
    },
-   "dialogue": {
-    "who": "kemal",
-    "to": "napoleon",
-    "text": "Four hundred metres, Sire. Maybe more.",
-    "delivery": "careful"
-   },
+   "narration": "The archers were four hundred metres away, maybe more.",
    "claims": [
     "C09"
    ],
@@ -2801,7 +2817,7 @@
    "dialogue": {
     "who": "kemal",
     "to": "napoleon",
-    "text": "They shoot high, Sire. The arrows drop on us.",
+    "text": "They shoot high. The arrows drop on us.",
     "delivery": "quick, low"
    },
    "sound": {
@@ -2833,6 +2849,7 @@
     "peak": "the arrow slams into the turf beside a cannon wheel",
     "settle": "the arrow quivers upright"
    },
+   "narration": "And they kept coming down.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "a hard thud"
@@ -2873,12 +2890,7 @@
     "settle": "holds his head still",
     "face": "his jaw tightens"
    },
-   "dialogue": {
-    "who": "napoleon",
-    "to": "self",
-    "text": "Our muskets reach a hundred.",
-    "delivery": "flat, to himself"
-   },
+   "narration": "French muskets reached about a hundred metres.",
    "claims": [
     "C06"
    ],
@@ -3021,6 +3033,7 @@
     "peak": "lunge forward together in a charge",
     "settle": "thunder across the grass in a wall of steel"
    },
+   "narration": "The French cavalry charged straight up the ridge.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "hundreds of hooves"
@@ -3060,6 +3073,7 @@
     "peak": "twist in their saddles and loose arrows backward",
     "settle": "ride on, still twisting round"
    },
+   "narration": "The Mongols turned away and shot backwards as they rode.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
@@ -3100,6 +3114,7 @@
     "peak": "the horse stumbles and jerks its head down",
     "settle": "the horse stands, blowing hard"
    },
+   "narration": "Within the hour, the French horses were blown.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -3142,6 +3157,10 @@
     "peak": "leap from their saddles onto the fresh horses",
     "settle": "sit the fresh horses, rested"
    },
+   "narration": "The Mongols changed to fresh ones and rode on.",
+   "claims": [
+    "C08"
+   ],
    "sound": {
     "ambience": "wind over the ridge"
    },
@@ -3191,7 +3210,7 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "They change horses, Sire! Like shirts! We can't catch them.",
+    "text": "They change horses like shirts, Sire!",
     "delivery": "shouting, out of breath"
    },
    "claims": [
@@ -3288,6 +3307,7 @@
     "peak": "heave the cannon wheels over the crest",
     "settle": "set the cannon facing the ridge"
    },
+   "narration": "The guns came up the slope by hand.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -3426,6 +3446,7 @@
     "peak": "the cannon jerks back in a burst of smoke",
     "settle": "the crew stand up in the drifting smoke"
    },
+   "narration": "The gun bucked.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "one cannon shot"
@@ -3466,6 +3487,10 @@
     "peak": "scatter as a cannonball throws up a fountain of earth",
     "settle": "spread out across the slope"
    },
+   "narration": "The round shot crossed the whole valley and hit the ridge.",
+   "claims": [
+    "C05"
+   ],
    "sound": {
     "ambience": "wind over the ridge",
     "loudest": "a far thud of earth"
@@ -3598,6 +3623,7 @@
     "peak": "wheel round into a new line, farther away",
     "settle": "sit their horses in the new line"
    },
+   "narration": "The riders formed again, further out.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
@@ -3869,7 +3895,7 @@
    "dialogue": {
     "who": "brun",
     "to": "drummer",
-    "text": "Last biscuit. Half each, and don't argue.",
+    "text": "Last biscuit. Half each.",
     "delivery": "gruff, kind"
    },
    "sound": {
@@ -4090,7 +4116,7 @@
     "peak": "stop and drop the sacks in the tall grass",
     "settle": "stand looking around in the tall grass"
    },
-   "narration": "Foragers who wandered off did not come back.",
+   "narration": "Foragers who wandered off into the grass did not come back.",
    "claims": [
     "I03"
    ],
@@ -4133,7 +4159,7 @@
     "settle": "stands breathing hard",
     "face": "his face goes red and his teeth clench"
    },
-   "narration": "And Napoleon could not find his battle.",
+   "narration": "And still, Napoleon could not find his battle.",
    "claims": [
     "C04"
    ],
@@ -4148,7 +4174,7 @@
    "scene": "S08",
    "mode": "establish",
    "beat": "The scout who lost his horse.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -4211,6 +4237,10 @@
      "does": "frowns"
     }
    ],
+   "narration": "In the khan's tent that night, a scout came back on foot.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
@@ -4224,7 +4254,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "He confesses.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -4263,15 +4293,14 @@
    "dialogue": {
     "who": "bayan",
     "to": "genghis",
-    "text": "Great Khan. My horse is dead. An iron ball. I ran.",
+    "text": "My horse is dead, Khan. An iron ball. I ran.",
     "delivery": "breathless, fast"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01",
-   "last_frame": true
+   "master": "S08-01"
   },
   {
    "id": "S08-03",
@@ -4316,7 +4345,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "bayan",
-    "text": "You ran back to tell me the truth?",
+    "text": "You ran back to tell me?",
     "delivery": "slow, quiet"
    },
    "sound": {
@@ -4330,7 +4359,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "Yes.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4364,6 +4393,7 @@
     "peak": "drops his eyes to the carpet",
     "settle": "keeps his eyes down"
    },
+   "narration": "In most armies, that answer would cost him his life.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -4375,7 +4405,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "The khan rewards honesty.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -4406,7 +4436,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "room",
-    "text": "Then you are worth more than the horse. Give him two.",
+    "text": "You are worth more than a horse. Give him two.",
     "delivery": "warm, slow"
    },
    "claims": [
@@ -4416,15 +4446,14 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01",
-   "last_frame": true
+   "master": "S08-01"
   },
   {
    "id": "S08-06",
    "scene": "S08",
    "mode": "scene",
    "beat": "The scout cannot believe it.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4458,6 +4487,10 @@
     "peak": "drops his forehead to the carpet",
     "settle": "stays bowed low"
    },
+   "narration": "The khan had once spared an archer who shot his horse.",
+   "claims": [
+    "C11"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -4504,12 +4537,11 @@
     "peak": "raises his open hand high to show a long arc",
     "settle": "drops the hand to his knee"
    },
-   "dialogue": {
-    "who": "subutai",
-    "to": "genghis",
-    "text": "Their iron balls fly farther than our arrows.",
-    "delivery": "dry, factual"
-   },
+   "narration": "Subutai had seen it: the French iron balls flew farther than Mongol arrows.",
+   "claims": [
+    "C05",
+    "C09"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -4617,7 +4649,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "The interpreter has watched the French camp.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4654,15 +4686,14 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01",
-   "last_frame": true
+   "master": "S08-01"
   },
   {
    "id": "S08-11",
    "scene": "S08",
    "mode": "establish",
    "beat": "Out in the grass, his scouts count the wagons.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -4693,6 +4724,7 @@
     "peak": "lift their heads and stare at the wagon line",
     "settle": "sink back down into the grass"
    },
+   "narration": "His scouts had been counting the French wagons for days.",
    "sound": {
     "ambience": "wind, a wagon creaking",
     "foley": [
@@ -4751,7 +4783,7 @@
    "scene": "S08",
    "mode": "establish",
    "beat": "The French march: the fighting column ahead, the wagons falling behind.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "EWS",
     "angle": "eye",
@@ -4782,6 +4814,10 @@
     "peak": "the column pulls away over a low rise",
     "settle": "the column marches on, small"
    },
+   "narration": "The French fighting column marched ahead. The wagons fell further behind every day.",
+   "claims": [
+    "C16"
+   ],
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
@@ -4795,7 +4831,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "Subutai offers the move that worked at the Kalka.",
-   "seconds": 7,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4832,7 +4868,7 @@
    "dialogue": {
     "who": "subutai",
     "to": "genghis",
-    "text": "Like at the river this spring. Run nine days. Turn on the tenth.",
+    "text": "Like the river. Run nine days, then turn.",
     "delivery": "confident"
    },
    "claims": [
@@ -4842,8 +4878,7 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13",
-   "last_frame": true
+   "master": "S08-13"
   },
   {
    "id": "S08-15",
@@ -4887,7 +4922,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "subutai",
-    "text": "No. This one wants a battle. Give him one.",
+    "text": "No. He wants a battle. Give him one.",
     "delivery": "calm"
    },
    "sound": {
@@ -4901,7 +4936,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "Subutai does not follow.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -4929,6 +4964,10 @@
     "peak": "raises both eyebrows high",
     "settle": "holds the look"
    },
+   "narration": "Subutai had won with that trick on the Kalka that spring.",
+   "claims": [
+    "C10"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -4940,7 +4979,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "The plan, in one sentence.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -4978,22 +5017,21 @@
    "dialogue": {
     "who": "genghis",
     "to": "subutai",
-    "text": "A small one. Let him win. While he wins, take his wagons.",
+    "text": "A small one. Let him win it. Take his wagons.",
     "delivery": "slow, pleased"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13",
-   "last_frame": true
+   "master": "S08-13"
   },
   {
    "id": "S08-18",
    "scene": "S08",
    "mode": "establish",
    "beat": "That night, riders slip out of the camp.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -5021,6 +5059,7 @@
     "peak": "swing up into the saddles one by one",
     "settle": "ride off into the dark in single file"
    },
+   "narration": "That night, a few riders slipped out of the camp.",
    "sound": {
     "ambience": "horses grazing, a far-off horn",
     "foley": [
@@ -5130,7 +5169,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "The khan's creed.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -5176,8 +5215,7 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-18",
-   "last_frame": true
+   "master": "S08-18"
   },
   {
    "id": "S08-22",
@@ -5227,6 +5265,10 @@
     "peak": "pushes out through the felt door",
     "settle": "the door flap swings shut"
    },
+   "narration": "The khan collected engineers the way other men collect horses.",
+   "claims": [
+    "C11"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
@@ -5303,6 +5345,7 @@
     "peak": "swing their bows up and loose arrows high",
     "settle": "hold the bows up as the arrows fly"
    },
+   "narration": "A volley of arrows, then nothing but grass.",
    "sound": {
     "ambience": "wind over the ridge"
    },
@@ -5399,7 +5442,7 @@
    "scene": "S09",
    "mode": "narrated",
    "beat": "Napoleon decides.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -5427,6 +5470,7 @@
     "peak": "lifts his chin sharply",
     "settle": "keeps his eyes on the ridge"
    },
+   "narration": "Then Napoleon stopped chasing the riders and started thinking.",
    "sound": {
     "ambience": "wind, far-off hooves"
    },
@@ -5438,7 +5482,7 @@
    "scene": "S09",
    "mode": "scene",
    "beat": "Napoleon finds his move.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -5475,15 +5519,14 @@
    "dialogue": {
     "who": "napoleon",
     "to": "kemal",
-    "text": "If he won't come to me, I'll give him a reason.",
+    "text": "Then I'll give him a reason to come.",
     "delivery": "a sudden grin in the voice"
    },
    "sound": {
     "ambience": "wind, far-off hooves"
    },
    "source": "cut",
-   "master": "S09-04",
-   "last_frame": true
+   "master": "S09-04"
   },
   {
    "id": "S09-07",
@@ -5508,7 +5551,7 @@
     "peak": "the finger stabs down hard at the end of the line",
     "settle": "the finger rests on the spot"
    },
-   "narration": "He set a trap.",
+   "narration": "So Napoleon set a trap of his own.",
    "sound": {
     "ambience": "a candle guttering, canvas creaking",
     "foley": [
@@ -5626,6 +5669,7 @@
     "peak": "pushes the grass apart with both hands and stares",
     "settle": "lets the grass close again"
    },
+   "narration": "But the hills had eyes.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
@@ -5699,6 +5743,7 @@
     "peak": "duck their heads below the rim",
     "settle": "walk on in single file"
    },
+   "narration": "Far from the valley, other riders moved.",
    "sound": {
     "ambience": "wind, far-off hooves",
     "foley": [
@@ -5796,6 +5841,10 @@
      "does": "brace their muskets"
     }
    ],
+   "narration": "At last, the khan came, and he came in force.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a horn blast"
@@ -5881,6 +5930,10 @@
     "peak": "slam their musket butts down with bayonets out",
     "settle": "kneel in four walls of bayonets"
    },
+   "narration": "The infantry formed a square, bayonets out on every side.",
+   "claims": [
+    "C07"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
@@ -5922,6 +5975,7 @@
     "peak": "jerks his head up toward the hills",
     "settle": "freezes with the cloth in his hand"
    },
+   "narration": "Back at the wagons, the drummer heard hooves.",
    "sound": {
     "ambience": "wind, a wagon creaking",
     "foley": [
@@ -5963,6 +6017,7 @@
     "peak": "swing their bows up and loose a dark cloud of arrows",
     "settle": "ride on, reaching for more arrows"
    },
+   "narration": "The arrows came down on the square like rain.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "hundreds of arrows hissing"
@@ -5992,6 +6047,7 @@
     "peak": "an arrow knocks a shako off a soldier's head",
     "settle": "the shako rolls on the grass"
    },
+   "narration": "Men fell. The square closed up.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
@@ -6083,7 +6139,7 @@
    "dialogue": {
     "who": "brun",
     "to": "room",
-    "text": "Steady, lads. They can't stay up there all day.",
+    "text": "Steady, lads. They can't shoot all day.",
     "delivery": "loud, steady"
    },
    "sound": {
@@ -6125,6 +6181,7 @@
     "peak": "fire a thin ragged volley in a puff of smoke",
     "settle": "fumble with their ramrods to reload"
    },
+   "narration": "At the camp, a handful of guards fired.",
    "sound": {
     "ambience": "wind, a wagon creaking",
     "loudest": "a thin musket volley"
@@ -6163,6 +6220,7 @@
     "peak": "slams his sticks down in a fast roll",
     "settle": "keeps the roll going"
    },
+   "narration": "A drum kept the square together.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a fast drum roll"
@@ -6203,6 +6261,7 @@
     "peak": "kick their horses forward into a charge",
     "settle": "thunder toward the square"
    },
+   "narration": "Then the heavy riders formed up to charge.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a wall of hooves"
@@ -6330,6 +6389,7 @@
     "peak": "jerk their cheeks down onto the stocks",
     "settle": "hold their aim"
    },
+   "narration": "The front rank aimed low.",
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
@@ -6413,6 +6473,10 @@
     "peak": "fire one volley in a wall of white smoke",
     "settle": "lower the muskets in the smoke"
    },
+   "narration": "A steady square held its fire until the last moment.",
+   "claims": [
+    "C07"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "one huge musket volley"
@@ -6452,6 +6516,10 @@
     "peak": "swerve around the corners of the square and pull up hard",
     "settle": "wheel away into the grass"
    },
+   "narration": "The charge broke around it like water around a rock.",
+   "claims": [
+    "C07"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
@@ -6591,6 +6659,7 @@
     "peak": "heave the wheels forward and swing the barrel down",
     "settle": "crouch beside the aimed cannon"
    },
+   "narration": "Then the hidden guns rolled over the crest.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
@@ -6679,6 +6748,7 @@
     "peak": "the cannon jerks back in a blast of smoke",
     "settle": "the crew stand up in the smoke"
    },
+   "narration": "The guns fired again.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a cannon blast"
@@ -6719,6 +6789,10 @@
     "peak": "break apart and scatter under a hail of shot",
     "settle": "spread out up the hill"
    },
+   "narration": "Canister turned each gun into a giant shotgun.",
+   "claims": [
+    "C05"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a crack of shot"
@@ -6806,6 +6880,10 @@
     "peak": "hurl burning torches onto the canvas covers",
     "settle": "wheel round as the canvas catches"
    },
+   "narration": "Behind the hills, other riders reached the wagons.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind, a wagon creaking",
     "loudest": "fire roaring up"
@@ -6900,7 +6978,7 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "Let me finish them, Sire! Now, while they run!",
+    "text": "Let me finish them, Sire! While they run!",
     "delivery": "begging, loud"
    },
    "sound": {
@@ -6993,6 +7071,7 @@
     "peak": "tears off his plumed hat and slaps it against his knee",
     "settle": "holds the crushed hat"
    },
+   "narration": "Murat stayed. He did not like it.",
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
@@ -7046,6 +7125,10 @@
      "who": "subutai",
      "does": "grips his reins and waits"
     }
+   ],
+   "narration": "The khan had never wanted to win this battle.",
+   "claims": [
+    "I03"
    ],
    "sound": {
     "ambience": "wind over the ridge"
@@ -7109,7 +7192,7 @@
    "scene": "S10",
    "mode": "scene",
    "beat": "The khan sees the opposite.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -7155,15 +7238,14 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-30",
-   "last_frame": true
+   "master": "S10-30"
   },
   {
    "id": "S10-33",
    "scene": "S10",
    "mode": "scene",
    "beat": "The khan looks behind the French.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -7191,6 +7273,7 @@
     "peak": "lifts his chin toward the far smoke",
     "settle": "holds the look"
    },
+   "narration": "He was not looking at the battle. He was looking past it.",
    "sound": {
     "ambience": "wind over the ridge"
    },
@@ -7312,6 +7395,7 @@
     ]
    },
    "tier": "hold",
+   "narration": "Black smoke rose where the camp had been.",
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -7401,6 +7485,7 @@
     "settle": "sits with empty hands",
     "face": "his mouth falls open and his eyes go flat"
    },
+   "narration": "Napoleon understood what the khan had done.",
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
@@ -7434,6 +7519,7 @@
      "height": "quarter"
     }
    ],
+   "narration": "Napoleon had his battle at last, and he had won it.",
    "sound": {
     "ambience": "wind, a single crow, silence"
    },
@@ -7526,7 +7612,7 @@
    "dialogue": {
     "who": "brun",
     "to": "napoleon",
-    "text": "Sire. This is what's left of the bread.",
+    "text": "This is what's left of the bread.",
     "delivery": "quiet"
    },
    "sound": {
@@ -7669,6 +7755,10 @@
     "peak": "drops his eyes and closes them",
     "settle": "keeps the eyes shut"
    },
+   "narration": "Without wagons, an army on the steppe starves.",
+   "claims": [
+    "C16"
+   ],
    "sound": {
     "ambience": "wind, a single crow, silence"
    },
@@ -7744,6 +7834,7 @@
     ]
    },
    "tier": "hold",
+   "narration": "The wagons, and the bread in them, had burned.",
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
@@ -7767,7 +7858,7 @@
     ]
    },
    "tier": "hold",
-   "narration": "On paper, it was a victory.",
+   "narration": "On paper, it was a clean French victory.",
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -7928,7 +8019,7 @@
     "peak": "pull the hide back from the meat",
     "settle": "work on with bent heads"
    },
-   "narration": "Within days, they were eating their horses.",
+   "narration": "Within days, the French were eating their own horses.",
    "claims": [
     "I03"
    ],
@@ -7970,6 +8061,7 @@
     "peak": "drops his face into his hands",
     "settle": "stays bent over"
    },
+   "narration": "Napoleon had won his battle and lost his campaign.",
    "sound": {
     "ambience": "a candle guttering, canvas creaking"
    },
@@ -8008,6 +8100,10 @@
     "peak": "raises a white felt banner on a pole",
     "settle": "sits holding the banner high"
    },
+   "narration": "Then a rider brought an invitation from the khan.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "a busy army camp, distant shouted orders",
     "foley": [
@@ -8058,7 +8154,7 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "It's a trap, Sire. He'll cut your throat.",
+    "text": "It's a trap, Sire.",
     "delivery": "urgent"
    },
    "sound": {
@@ -8123,7 +8219,7 @@
    "scene": "S13",
    "mode": "establish",
    "beat": "The emperor enters the khan's tent.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -8187,6 +8283,10 @@
      "does": "freezes with his cap in his hands"
     }
    ],
+   "narration": "That evening, the emperor walked into the khan's tent.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -8197,7 +8297,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan opens with a compliment.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8242,8 +8342,7 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01",
-   "last_frame": true
+   "master": "S13-01"
   },
   {
    "id": "S13-03",
@@ -8302,7 +8401,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan names the difference between them.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8340,22 +8439,21 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "You came to fight a battle. I came to win a war.",
+    "text": "You came for a battle. I came for a war.",
     "delivery": "even, slow"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01",
-   "last_frame": true
+   "master": "S13-01"
   },
   {
    "id": "S13-05",
    "scene": "S13",
    "mode": "scene",
    "beat": "The hit lands.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -8382,6 +8480,7 @@
     "peak": "drops his eyes to the fire",
     "settle": "keeps his eyes down"
    },
+   "narration": "The khan had read him in a single sentence.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -8393,7 +8492,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "The offer.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8431,7 +8530,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "Ride with me. I will give you a tumen. Ten thousand.",
+    "text": "Ride with me. I will give you a tumen.",
     "delivery": "generous, plain"
    },
    "claims": [
@@ -8441,8 +8540,7 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01",
-   "last_frame": true
+   "master": "S13-01"
   },
   {
    "id": "S13-07",
@@ -8483,12 +8581,10 @@
     "peak": "raises a hand beside his mouth",
     "settle": "keeps the hand up"
    },
-   "dialogue": {
-    "who": "kemal",
-    "to": "napoleon",
-    "text": "Sire, he means it. He gives armies to strangers.",
-    "delivery": "a whisper"
-   },
+   "narration": "He meant it. The khan gave armies to men he had just met.",
+   "claims": [
+    "C11"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -8500,7 +8596,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "Napoleon will not serve.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8539,22 +8635,21 @@
    "dialogue": {
     "who": "napoleon",
     "to": "genghis",
-    "text": "I have given orders to kings. I do not take them.",
+    "text": "I give orders to kings. I do not take them.",
     "delivery": "clipped, chin high"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01",
-   "last_frame": true
+   "master": "S13-01"
   },
   {
    "id": "S13-09",
    "scene": "S13",
    "mode": "scene",
    "beat": "The interpreter swallows.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -8581,6 +8676,7 @@
     "peak": "pulls his cap tight against his chest with both fists",
     "settle": "holds the cap tight"
    },
+   "narration": "Bars swallowed hard before he translated that.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -8740,7 +8836,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "The price: the guns, and a teacher.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8778,22 +8874,21 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "Two of your iron tubes. And a gunner to teach mine.",
+    "text": "Two iron tubes. And a gunner to teach mine.",
     "delivery": "plain"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01",
-   "last_frame": true
+   "master": "S13-01"
   },
   {
    "id": "S13-14",
    "scene": "S13",
    "mode": "scene",
    "beat": "The longest silence of his life.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -8822,6 +8917,10 @@
     "settle": "keeps the eyes up",
     "face": "his jaw works once"
    },
+   "narration": "Napoleon was an artillery officer. The guns were his trade.",
+   "claims": [
+    "C04"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -8884,7 +8983,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "Outside, they are.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -8924,6 +9023,7 @@
      "does": "watches him chew"
     }
    ],
+   "narration": "Outside, the soldiers were already chewing grass.",
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
@@ -8934,7 +9034,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "The choice.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8983,15 +9083,14 @@
     ]
    },
    "source": "cut",
-   "master": "S13-16",
-   "last_frame": true
+   "master": "S13-16"
   },
   {
    "id": "S13-18",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan's smile.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -9018,6 +9117,7 @@
     "peak": "lifts the corner of his mouth into a slow smile",
     "settle": "holds the smile"
    },
+   "narration": "The khan got exactly what he had come for.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -9029,7 +9129,7 @@
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan's last lesson.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -9067,22 +9167,21 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "You lost nothing today but pride. Pride eats too much grass.",
+    "text": "You lost only pride. Pride eats too much grass.",
     "delivery": "kind, amused"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-16",
-   "last_frame": true
+   "master": "S13-16"
   },
   {
    "id": "S13-20",
    "scene": "S13",
    "mode": "establish",
    "beat": "Napoleon takes his glove and goes.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -9133,6 +9232,7 @@
     "peak": "turns and pushes out through the felt door",
     "settle": "the felt flap swings shut behind him"
    },
+   "narration": "Napoleon took his glove and walked out.",
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
@@ -9188,6 +9288,10 @@
      "who": "gunners",
      "does": "stand watching with their caps in their hands"
     }
+   ],
+   "narration": "The guns went to the khan, and a gunner went with them.",
+   "claims": [
+    "I04"
    ],
    "sound": {
     "ambience": "wind over open grass",
@@ -9582,7 +9686,7 @@
     "peak": "drops a folded letter onto the sill",
     "settle": "stares out at the flames"
    },
-   "narration": "The tsar refused to talk.",
+   "narration": "The tsar refused to talk. There was no one to beat.",
    "claims": [
     "C12"
    ],
@@ -9698,6 +9802,7 @@
     "peak": "the drumstick strikes the drum skin twice",
     "settle": "the drumstick stops in mid-air, shaking"
    },
+   "narration": "The drum stopped again.",
    "sound": {
     "ambience": "a city burning, a far drum",
     "loudest": "two drum beats"
@@ -9775,7 +9880,7 @@
     "peak": "narrows his eyes as the flames jump",
     "settle": "keeps the eyes narrowed"
    },
-   "narration": "Five hundred and eighty-nine years earlier.",
+   "narration": "The same fire, five hundred and eighty-nine years earlier.",
    "claims": [
     "C21",
     "I01"

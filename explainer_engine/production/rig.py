@@ -107,7 +107,6 @@ def squash(vy: float, k: float = 0.35, limit: float = 0.22) -> tuple[float, floa
     return 1.0 / s, s
 
 
-# TODO [CLAUDE-CLASS-SYNC: Spring] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Spring` (methods: series) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 @dataclass
 class Spring:
     """A damped spring that follows a target angle: follow-through for a scarf, hair or a coat tail. Simulated at a fixed
@@ -169,7 +168,6 @@ def mouth_at(words: list[dict], t: float, rate: float = 12.0) -> str:
 
 
 # --- the puppet ------------------------------------------------------------------------------------------------------
-# TODO [CLAUDE-CLASS-SYNC: Piece] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Piece` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 @dataclass
 class Piece:
     image: Image.Image            # RGBA, drawn upright at rest
@@ -181,7 +179,6 @@ class Piece:
     rest: float = 0.0             # resting angle (degrees)
 
 
-# TODO [CLAUDE-CLASS-SYNC: Puppet] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Puppet` (methods: order, world, draw) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 @dataclass
 class Puppet:
     pieces: dict[str, Piece]

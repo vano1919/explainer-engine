@@ -1,37 +1,3 @@
-# =============================================================================
-# TODO [CLAUDE-MASTER-MOLD-SYNC] — BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0): Synchronous Master Mold v2.1.0 Alignment for `explainer_engine/core/ledger.py`
-# Target Module : explainer_engine/core/ledger.py
-# Target Classes/Symbols : class CapReached (methods: ), class AllowanceReached (methods: ), class LedgerConflict (methods: ), class Run (methods: __init__, open, open_test, _stamp, save, approve, approved, spent), class Attempts (methods: __init__, rows, add), def retry_multiplier(), def count_renders(), def renders_made(), def add_review_minutes(), def review_minutes_total(), def pilot_measures(), def pilot_verdict(), def morning_rows(), def main()
-# Reference Guide : docs/wip/CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md
-# Roadmap Reference : docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md
-# =============================================================================
-#
-# 1. რა ცვლილება უნდა გაკეთდეს (EXACT SYNCHRONOUS CHANGE SPECIFICATION):
-#    Synchronize this core module with `production_script/4` (`schema_version.py`, `mold_contract.py`), the 4-tier visual router (`tier_router.py`), the 6-stage `D-81` voice chain (`voice_chain.py`), and the 24 fps rational-time `bounded_timeline.py` solver so all CLI commands, config loaders, and package exports operate seamlessly across `/1`, `/2`, `/3`, and `/4` scripts.
-#
-# 2. რა ნაკლოვანება აქვს ამჟამინდელ კოდს (CURRENT CODE FLAW / DEFICIT AT 5013a55a):
-#    Currently this core module defaults to v2/v3 assumptions and does not expose or wire the new Master Mold v2.1.0 subsystems.
-#
-# 3. რატომაა უახლესი გადაწყვეტა უკეთესი (WHY THE NEW SOLUTION IS SUPERIOR):
-#    Ensures end-to-end synchronous behavior from CLI invocation through script validation, audio synthesis, 4-tier rendering, OTIO export, and final QA verification.
-#
-# 4. დამადასტურებელი ვებ-წყაროები — მინიმუმ 5 წყარო (VERIFIED WEB SOURCES >= 5):
-#    [1] JSON Schema Draft 2020-12 Official Specification
-#        URL: https://json-schema.org/draft/2020-12
-#        Rationale: Defines canonical $schema URI resolution, discriminator dispatch, additionalProperties: false enforcement, and backwards-compatible schema evolution across versioned contracts.
-#    [2] JSON Schema Core Validation Spec (2020-12)
-#        URL: https://json-schema.org/draft/2020-12/json-schema-core
-#        Rationale: Establishes structural validation guarantees so versioned payloads (/1, /2, /3, /4) cannot silently fall back to incompatible schema validators.
-#    [3] Python jsonschema Library Documentation
-#        URL: https://python-jsonschema.readthedocs.io/en/stable/
-#        Rationale: Reference implementation used by explainer_engine for Draft202012Validator dispatch and strict contract validation.
-#    [4] Anthropic Claude Code Costs & Prompt Caching
-#        URL: https://code.claude.com/docs/en/costs
-#        Rationale: Demonstrates why deterministic offline schema/contract validation (BATCH-M0/M2) must precede paid LLM/API calls to avoid wasted token and GPU spend.
-#    [5] OpenTimelineIO File Format Specification
-#        URL: https://opentimelineio.readthedocs.io/en/v0.13/tutorials/otio-file-format-specification.html
-#        Rationale: Defines timeline metadata and rational-time contract serialization that downstream edit/render stages consume from production_script/4.
-# =============================================================================
 
 """The run ledger (docs/ORCHESTRATION.md OR-02..OR-04): caps in code, reservations before paid calls, paid items recorded
 as they are made so a stop loses nothing. One JSON file per run (``run.json``), written atomically. stdlib only.
@@ -60,23 +26,19 @@ STOP_FRACTION = 0.8
 MAX_FAILURES = 3
 
 
-# TODO [CLAUDE-CLASS-SYNC: CapReached] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `CapReached` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class CapReached(RuntimeError):
     """A reservation would pass 80 % of a cap: stop this phase, report, wait for the creator."""
 
 
-# TODO [CLAUDE-CLASS-SYNC: AllowanceReached] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `AllowanceReached` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class AllowanceReached(CapReached):
     """A reservation under a tool's allowance (config/spend_caps.json ``allowances``) would pass it: the tool stops and asks."""
 
 
-# TODO [CLAUDE-CLASS-SYNC: LedgerConflict] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `LedgerConflict` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class LedgerConflict(RuntimeError):
     """``run.json`` changed on disk since this process read or wrote it: another process uses the same run. Writing now
     would erase its reservations, so this process stops (audit 2026-10-19 H3)."""
 
 
-# TODO [CLAUDE-CLASS-SYNC: Run] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Run` (methods: __init__, open, open_test, _stamp, save, approve, approved, spent, reserve, _reserve, reserve_allowance, allowance_used, refund, settle, rename_reservation, done, _done, pending, fail, _fail, phase, passed, settled_total, reserved_open, report) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Run:
     def __init__(self, path: Path, data: dict):
         self.path = Path(path)
@@ -285,7 +247,6 @@ class Run:
                 "failures": {k: len(v) for k, v in self.data["failures"].items()}}
 
 
-# TODO [CLAUDE-CLASS-SYNC: Attempts] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Attempts` (methods: __init__, rows, add) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Attempts:
     """Code attempts per phase (OR-04, P0b): attempts 1-2 run at the assigned level, the 3rd only escalated (or on its plan), a
     4th stops the item with NeedsReview. File ``jobs/<phase>/attempts.json``."""

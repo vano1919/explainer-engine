@@ -1,44 +1,3 @@
-# =============================================================================
-# TODO [CLAUDE-MASTER-MOLD-SYNC] — BATCH-M8A & BATCH-M8B: RunPod Pod Lifecycle Manager, Dry-Run Entrypoint & `CD-05` Multi-Zone Runtime Telemetry (`D-78`, `BP-148`)
-# Target Module : explainer_engine/cloud/runpod.py
-# Target Classes/Symbols : def cuda_from(), class RunPodError (methods: __init__), class NotFound (methods: ), class Unclear (methods: ), def api_key(), def _urllib(), def norm(), class Api (methods: __init__, _headers, request, graphql, pod, _pages, pods, action), def speeds(), def pick_gpus(), def only_cards(), def create_flag_problems(), def pod_name(), def until_of(), def expired(), def disk_per_hour(), def spent_estimate(), def sess_path(), def sess_write(), def sess_read(), def new_session(), def parse_beat(), def deadline_of(), def is_wrapper_script(), def lint_pod_script(), def lint_own_upload_loop(), def heartbeat_of_script(), def stall_minutes_of_script(), def self_stop_sh(), def hf_heartbeat(), def hf_text(), def heartbeat_step(), def beat_stall(), def _job_of(), def wait_status(), def stop(), def delete(), def find_by_name(), def preflight_stamp(), def create(), def adopt_pending(), def _post_once(), def _find_after_unclear(), def ready(), def wait_ready(), def guard_check(), def status_page(), def notify_topic(), def notify(), def failed_pushes(), def end_pod(), def guard(), def guard_detached(), def auto_delete_due(), def auto_delete_stopped(), def sweep(), def settle(), def cost_report(), def settle_due(), class PodSession (methods: __init__, _term, __enter__, close, __exit__), def live_guard(), def _quiet(), def check(), def preflight_create(), def secret(), def pod_env(), def boot_cmd(), def script_cmd(), def hf_target(), def wrapper_env(), def create_body(), def _opt(), def parse_wait(), def wait_for_stock(), def main()
-# Reference Guide : docs/wip/CLAUDE_SYNCHRONIZED_TODO_EXECUTION_GUIDE_2026-11-04.md
-# Roadmap Reference : docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md
-# =============================================================================
-#
-# 1. რა ცვლილება უნდა გაკეთდეს (EXACT SYNCHRONOUS CHANGE SPECIFICATION):
-#    1. Add a `--dry-run` CLI entrypoint in `explainer_engine/cloud/runpod.py` (and/or thin module alias `explainer_engine/cloud/dryrun.py`) so the roadmap's `BATCH-M8A` command (`python -m explainer_engine.cloud.runpod --dry-run` and `python -m explainer_engine.cloud.dryrun`) validates `config/cloud_pins.json`, `8k+1` LTX buckets, `xworld_v2` weight `0.7` (`CD-02`), and pod budget caps offline at `$0.00` spend.
-#    2. Enforce `CD-05` (Option A):
-#       - Preserve the 2-segment `D-67` smoke test (`GATE-P2` / `GATE-P3` on `seg_01` + `seg_02` at `$5.00` hard ceiling).
-#       - Add per-zone (`cold_open`, `grounding`, `escalation`, `climax`, `coda`) wall-clock and VRAM telemetry logging (`PodTelemetry.record_segment_timing(segment_id, tension_zone, visual_tier, ltx_bucket_frames, cold_start_sec, denoise_sec, cost_usd)`) so the separate post-`GATE-P3` `210–240s` multi-zone measurement extension can empirically resolve `OPEN_PENDING_MEASUREMENT` before locking a hard full-episode minute target.
-#    3. Enforce hard `try ... finally` pod termination (`remove_pod` / `runpodctl remove pod`, `D-78` / `BP-148`) so pods are NEVER left in a stopped state incurring volume storage charges.
-#
-# 2. რა ნაკლოვანება აქვს ამჟამინდელ კოდს (CURRENT CODE FLAW / DEFICIT AT 5013a55a):
-#    `explainer_engine/cloud/dryrun.py` does not exist (causing `python -m explainer_engine.cloud.dryrun` in `BATCH-M8A` to fail with `ModuleNotFoundError`), and `runpod.py` does not record per-`tension_zone` / per-`8k+1`-bucket telemetry needed to close `OPEN_PENDING_MEASUREMENT` (`CD-05`).
-#
-# 3. რატომაა უახლესი გადაწყვეტა უკეთესი (WHY THE NEW SOLUTION IS SUPERIOR):
-#    Provides zero-cost offline dry-run verification for `BATCH-M8A`, guarantees zero orphaned RunPod storage billing (`D-78`), and captures exact per-zone timing telemetry to resolve `CD-05` empirically.
-#
-# 4. დამადასტურებელი ვებ-წყაროები — მინიმუმ 5 წყარო (VERIFIED WEB SOURCES >= 5):
-#    [1] RunPod Pods Pricing & Per-Second Billing
-#        URL: https://docs.runpod.io/pods/pricing
-#        Rationale: Details per-second GPU billing for RTX PRO 6000 Blackwell ($1.89/hr Secure Cloud) and H200 SXM ($3.59/hr), requiring hard budget caps and empirical runtime measurement.
-#    [2] RunPod Account Billing & Storage Costs
-#        URL: https://docs.runpod.io/accounts-billing/billing
-#        Rationale: Documents that stopped pods still incur container/volume storage charges until terminated (`runpodctl remove pod`), grounding D-78 / BP-148 auto-teardown.
-#    [3] PyTorch torch.compile Tutorial & Cold-Start Behavior
-#        URL: https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html
-#        Rationale: Explains why compilation overhead is avoided (`compile_mode: none` for <=2 segments in cloud_pins.json) and why cold-start must be amortized.
-#    [4] GitHub Docs — About Protected Branches
-#        URL: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches
-#        Rationale: Specifies required status checks (`quality`), PR-only merge enforcement, and branch protection rules required by GATE-EXT-MAIN-PROTECT.
-#    [5] GitHub Docs — Managing Rulesets for a Repository
-#        URL: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
-#        Rationale: Specifies ruleset protections preventing force-pushes, accidental branch deletion, and unreviewed merges into main.
-#    [6] Python 3.12 What's New — PEP 701 Syntactic Formalization of f-strings
-#        URL: https://docs.python.org/3/whatsnew/3.12.html#pep-701-syntactic-formalization-of-f-strings
-#        Rationale: Explains why nested double-quotes inside an f-string expression (`blind_check.py:36`) raise SyntaxError on Python 3.11 even though Python 3.12+ permits them.
-# =============================================================================
 
 # from vano1919/tmr-video-script-engine@f0abe62:cloud/rp.py
 """RunPod pod manager: create, wait, guard, stop, sweep and settle the cost. stdlib only. REST v2 (api.runpod.io/v2).
@@ -129,19 +88,16 @@ GONE = ("TERMINATED",)
 ENDED = ("EXITED", "ERROR")  # not billing compute; ERROR is reported to the creator (its disk may still bill)
 
 
-# TODO [CLAUDE-CLASS-SYNC: RunPodError] (BATCH-M8A & BATCH-M8B): Synchronize class `RunPodError` (methods: __init__) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class RunPodError(RuntimeError):
     def __init__(self, msg, status=None):
         super().__init__(msg)
         self.status = status
 
 
-# TODO [CLAUDE-CLASS-SYNC: NotFound] (BATCH-M8A & BATCH-M8B): Synchronize class `NotFound` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class NotFound(RunPodError):
     pass
 
 
-# TODO [CLAUDE-CLASS-SYNC: Unclear] (BATCH-M8A & BATCH-M8B): Synchronize class `Unclear` (methods: dataclass fields) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Unclear(RunPodError):
     """The request may or may not have happened (timeout, 5xx, lost connection)."""
 
@@ -182,7 +138,6 @@ def norm(pod):
             "util": (max(g.get("util") or 0 for g in gpus) if gpus else None), "uptime": rt.get("uptime")}
 
 
-# TODO [CLAUDE-CLASS-SYNC: Api] (BATCH-M8A & BATCH-M8B): Synchronize class `Api` (methods: __init__, _headers, request, graphql, pod, _pages, pods, action, network_volumes, global_volumes, endpoints, delete_global_volume, delete_network_volume, balance, billing_total, billing, catalog, logs) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Api:
     """RunPod REST v2 + GraphQL. ``transport(method, url, body, headers, timeout) -> (status, text)``; it raises OSError (incl.
     timeouts) when no answer came. Reads, stop and delete are retried with backoff; create is not."""
@@ -1419,7 +1374,6 @@ def settle_due(api, *, now=None, after_s=SETTLE_AFTER_S, fetch=None):
     return out
 
 
-# TODO [CLAUDE-CLASS-SYNC: PodSession] (BATCH-M8A & BATCH-M8B): Synchronize class `PodSession` (methods: __init__, _term, __enter__, close, __exit__) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class PodSession:
     """``with PodSession(api, pid): ...``: the pod is stopped when the block ends, on an exception, on exit and on SIGTERM."""
 

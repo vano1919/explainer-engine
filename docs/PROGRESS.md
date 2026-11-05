@@ -3915,3 +3915,26 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Tests: new `test_icw01_rule_rewrite.py` (the section 20 grep), `test_world_resolver_bans.py`, `test_orchestration_docs.py`, `test_job_speeds_rows.py`, `test_rulebook_blender_gate.py`, one new case in `test_vault.py`; pins updated for the changed rules: `test_sourced_rules` (BP-105 band), `test_universe_boards` (photoreal instead of 3d render), `test_story_engine` (fixture inside the new band, plus the counted-voiced case).
 - Results: `docs_lint` 0 findings. Fast suite (`-m "not system and not media"`, Python 3.13): base branch 12 failed / 2440 passed; this change 10 failed / 2458 passed. The 10 remaining failures are the inherited ICW-00 set (Master Mold docstrings, stale Napoleon fixtures, three undefined BP citations inside `docs/wip` evidence files, a loudness-literal check), unchanged by ICW-01.
 - Cost: $0. No pod, no paid API call.
+
+### 2026-11-05 — ICW-00 branch hygiene (Ink Chronicle, roadmap section 15)
+
+- Work package ICW-00, no behaviour change. Removed the `CLAUDE-MASTER-MOLD-SYNC` header blocks from 295 `.py` files and the `CLAUDE-CLASS-SYNC` lines; proof = `ast.dump` of every module equal before and after (script run in the thread, no module differed).
+- Deleted 37 empty "Stub specification module" files (36 modules in `pacing/`, `cast/`, `map/`, `edit/`, `scripting/`, `audio/`, `qa/`, `video/`, `validate.py`, `pipeline.py`, plus `scripts/validate_mold_compliance.py`); importer grep over code, tests, scripts, `.claude`, docs found none, `compileall` clean. Kept `video/__init__.py` with the four Ink Chronicle planning stubs (`video/generator.py`, `keyframes.py`, `scene_builder.py`, `tier_router.py`), replaced by ICW-04/06/07.
+- The three undefined BP citations (BP 68, BP 79, BP 155; roadmap section 16): the two Master Mold copies under `docs/wip/` cite `ZI-02`, `PV-37` and `BP-43`/`BP-106` as the roadmap table names them; the historical audit texts that talk about the dangling ids write them as "BP 68" etc.
+- `docs/PRODUCTION_RULES.md` rows 7.5/7.6 name their cells `**keyframes**` / `**clips**` again (the `production_gate` row names, pinned by `test_repo_hygiene`).
+- Napoleon example rebuilt to the current rules (the creator's choice A, 2026-11-05 09:54 and 09:57 UTC): in
+  `examples/napoleon_vs_genghis/episode.py` the 19 dialogue shots of 6-7 s are 5 s (BP-108, D-95), the freed 20 s go to silent
+  shots of the same scenes; 68 silent shots got narration of the story (no new numbers; claims from the existing claim map,
+  I01-I04 for invented events), 6 expository lines became narration, 29 lines were tightened. Narrator share by audible words
+  45 % -> 70.1 % (1192 narrator / 509 character words, BP-105 70/30). 214 shots, 900 s, cast, story and style text unchanged.
+  `film_shots.json` and `shotlist.md` regenerated (`build_cards.py`, `film_shots shotlist`); `film_shots check`: 0 FAIL, only the
+  two KP-37 visual-mix REVIEWs the test expects. `prompts.json` left as it was (it was already not reproducible at the base).
+- `variant_v2.json`: each planned block carries `words` = seconds x BP-01 `wpm_target` / 60 (scene = character, the rest =
+  narrator), so v2's narrator share is computed (63.8 %, a VP-16 REVIEW by design for the tactical profile) and the schema holds;
+  `script_variants.json` regenerated (`variant_plan napoleon --write`): v1 code score 40 (was 30, no VP-16), v2 30.
+- `tests/unit/test_variant_plan.py`: only the fixture pins moved to the rebuilt values (scene 0.793, compensator 0.161, hold
+  0.046, narrator 0.701, non-scene run 9 s, turn shares S04 0.88 / S08 0.79 / S13 0.86, S13 played 87 s, v1 score 40 and its
+  risk list without VP-16); no threshold, rule, schema or test meaning changed, no xfail.
+- Stale text reported (precedence rule): `examples/napoleon_vs_genghis/script.md` is the earlier draft and does not carry the new
+  narration; the cards are the source.
+- Cost: $0.
