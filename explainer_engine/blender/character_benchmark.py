@@ -23,6 +23,7 @@ from explainer_engine.core.store import write_json_atomic
 
 POSES = Path(__file__).with_name("viseme_poses_rain.json")
 CREDIT = "Rain Rig © Blender Foundation | cloud.blender.org"
+SKIN_TEXTURE = 0.0   # 0.2 left hard stripes on the cheeks in the first frames: the texture is flat-field, judged on the clip
 LATTICE = "HLP-rain-lattice-head"
 # toon material name -> StyleEngine.material kwargs; the blend's own material names map onto them (slot class by name suffix)
 MATERIAL_MAP = {
@@ -70,7 +71,7 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
         t = textures(tex_dir)
         if t["body_diffuse"].exists():
             mean = SS.texture_mean(t["body_diffuse"])
-            m["rain_skin"] = {"base": mean + [1.0], "texture": str(t["body_diffuse"]), "texture_mean": mean, "strength": 0.2}
+            m["rain_skin"] = {"base": mean + [1.0], "texture": str(t["body_diffuse"]), "texture_mean": mean, "strength": SKIN_TEXTURE}
         if t["eyes"].exists():
             mean = SS.texture_mean(t["eyes"])
             m["rain_eyes"] = {"base": mean + [1.0], "texture": str(t["eyes"]), "texture_mean": mean, "strength": 1.0}
@@ -78,13 +79,15 @@ def toon_materials(tex_dir: Path | None) -> dict[str, dict]:
 
 
 def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | None = None, angular: float = 0.0,
-          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea"), push: bool = True) -> dict:
+          hide: tuple = ("GEO-rain-eyes_viewport", "GEO-rain-eye_cornea"), push: bool = True, wall: bool = True) -> dict:
     """{objects, camera, materials, frames_total}: Rain facing the camera in front of a plain wall, a slow push-in."""
     visemes = rigs.ActionVisemes(poses()).tracks_for(list(lip["shapes"])) if lip else None
     rb = {"path": str(blend), "collection": "CH-rain", "rig": "RIG-rain", "materials": MATERIAL_MAP, "hide": list(hide),
           "pose": {}, "lattice": {"object": LATTICE, "deltas": lattice_deltas(angular)} if angular else None, "visemes": visemes}
-    objs = [{"name": "wall", "add": "cube", "params": {"size": 1}, "location": [0, 1.0, 1.4], "scale": [6, 0.2, 4], "material": "wall"},
-            {"name": "rain", "rig_blend": rb}]
+    objs = [{"name": "rain", "rig_blend": rb}]
+    if wall:   # without it the camera sees the sky of the look (an HDRI behind the head)
+        objs.insert(0, {"name": "wall", "add": "cube", "params": {"size": 1}, "location": [0, 1.0, 1.4], "scale": [6, 0.2, 4],
+                        "material": "wall"})
     cam = {"location": [0.0, -1.75, 1.47], "look_at": [0.0, 0.0, 1.43], "lens_mm": 85, "focus_distance_m": 1.45}
     if push:
         cam["to"] = {"location": [0.0, -1.35, 1.46], "look_at": [0.0, 0.0, 1.43]}
@@ -93,7 +96,8 @@ def scene(blend: Path, frames: int, *, tex_dir: Path | None = None, lip: dict | 
 
 
 def run(blend: Path, out: Path, *, variant: str = "q1_lit_pbrn_cinematic", frames: int = 24, scale: float = 1.0, samples: int = 16,
-        cues: Path | None = None, angular: float = 0.0, binary: str | None = None, device: str = "auto", log=print) -> dict:
+        cues: Path | None = None, angular: float = 0.0, binary: str | None = None, device: str = "auto", light_preset: str | None = None,
+        sky: str | None = None, wall: bool = True, log=print) -> dict:
     from explainer_engine.blender import render as R
     from explainer_engine.blender.project import BlenderProject
     from explainer_engine.core import shot_cache
@@ -102,9 +106,18 @@ def run(blend: Path, out: Path, *, variant: str = "q1_lit_pbrn_cinematic", frame
     out.mkdir(parents=True, exist_ok=True)
     paths = SS.fetch()
     lip, cue_file = SS.lipsync_for(frames, cues=cues, out=out) if cues else (None, None)
-    sc = scene(Path(blend), frames, tex_dir=Path(blend).parent / "textures", lip=lip, angular=angular)
-    _, tokens = SS.style_for(variant)
-    jscene, graph = SS.job_scene("dialogue_cu", variant, sc, paths)
+    sc = scene(Path(blend), frames, tex_dir=Path(blend).parent / "textures", lip=lip, angular=angular, wall=wall)
+    path, tokens = SS.style_for(variant)
+    if light_preset or sky:   # WP-Q1's named light presets and the HDRI sky (Wing It!'s rule), over the chosen q1 look
+        art = S.replace(tokens.art, **{k: v for k, v in (("light_preset", light_preset), ("sky", sky)) if v})
+        tokens = S.replace(tokens, art=art)
+    graph = S.StyleEngine(tokens).graph(path, camera=sc["camera"], materials=sc["materials"],
+                                        hdri=str(paths["hdri.ph_kloofendal_48d_partly_cloudy_puresky"]),
+                                        paper_texture=str(paths["texture.acg_paper003"]))
+    problems = S.check(graph)
+    if problems:
+        raise ValueError(f"rain/{variant}: style graph problems: {problems}")
+    jscene = {"kind": "described", "objects": sc["objects"], "camera": sc["camera"], "style": graph, "frames_total": frames}
     spec = SS.spec_for("dialogue_cu", variant, tokens, samples=samples, scene=jscene, frames=frames, cues=cue_file)
     spec["shot_id"] = f"rain_cu_{variant}"
     if scale != 1.0:
@@ -138,10 +151,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--samples", type=int, default=16)
     ap.add_argument("--cues", type=Path)
     ap.add_argument("--angular", type=float, default=0.0)
+    ap.add_argument("--light-preset", choices=sorted(S.light_presets()))
+    ap.add_argument("--sky", choices=list(S.SKIES))
+    ap.add_argument("--no-wall", action="store_true")
     ap.add_argument("--binary")
     a = ap.parse_args(argv)
     run(a.blend, a.out, variant=a.variant, frames=a.frames, scale=a.scale, samples=a.samples, cues=a.cues, angular=a.angular,
-        binary=a.binary)
+        binary=a.binary, light_preset=a.light_preset, sky=a.sky, wall=not a.no_wall)
     return 0
 
 
