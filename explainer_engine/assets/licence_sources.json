@@ -145,7 +145,7 @@
     },
     "add_camera_rigs": {
       "label": "Add Camera Rigs 1.9.2 (Blender extension: Dolly, Crane and 2D camera rigs)",
-      "status": "open_source_code",
+      "status": "gpl-tool-only",
       "commercial_use": "yes",
       "source_url": "https://extensions.blender.org/add-ons/add-camera-rigs/",
       "evidence": "extensions.blender.org API list 2026-11-05: id add_camera_rigs, version 1.9.2, license SPDX:GPL-3.0-or-later, maintainer WayneDixon; zip sha256 548ecf6372563948f5b3cf292dd01a3209f77ef730eb38b0197cd50ffd7377cd (15062 bytes), pinned in config/cloud_pins.json blender_extensions",
