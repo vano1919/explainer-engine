@@ -56,7 +56,7 @@ def angular_key(head):
     print("ANGULAR_KEY moved", moved)
 
 
-def weighted(name, me, mat_name, rig, top, collection, subdiv=1):
+def weighted(name, me, mat_name, rig, top, collection, subdiv=1, thickness=0.0):
     for p in me.polygons:
         p.use_smooth = True
     ob = bpy.data.objects.new(name, me)
@@ -76,6 +76,10 @@ def weighted(name, me, mat_name, rig, top, collection, subdiv=1):
     am = ob.modifiers.new("Armature", "ARMATURE")
     am.object = rig
     ob.parent = rig
+    if thickness:
+        so = ob.modifiers.new("Solidify", "SOLIDIFY")
+        so.thickness = thickness
+        so.offset = 1.0
     if subdiv:
         sm = ob.modifiers.new("Subdivision", "SUBSURF")
         sm.levels = sm.render_levels = subdiv
@@ -98,22 +102,29 @@ def tube_mesh(rings, cols, centre_fn, closed=True):
     return me
 
 
-def panel_mesh(sign, rows=10, cols=8):
-    """A flat, slightly curved hip-length panel hanging from the shoulders over the chest (sign -1) or the back (sign +1)."""
+def panel_mesh(sign, rows=26, cols=14, xr=(0.0, 1.0), tr=(0.0, 1.0), lift=0.0):
+    """A hip-length panel hanging from the shoulders over the chest (sign -1) or the back (sign +1), curved around the body with a
+    soft drape: gentle vertical folds that deepen towards the hem, a flared and slightly wavy hem. ``xr``/``tr`` cut a strip
+    (fractions of the width and the length) and ``lift`` stands it off the cloth: the trim strips are made this way."""
     bm = bmesh.new()
-    for r in range(rows + 1):
-        t = r / rows
-        z = 1.27 - 0.47 * t
-        half = 0.10 + 0.035 * t
-        for c in range(cols + 1):
-            x = half * (2 * c / cols - 1)
-            y = sign * (0.128 * math.sqrt(max(0.0, 1 - (x / 0.2) ** 2)) + 0.012) + 0.01
-            bm.verts.new((x, y, z))
+    nc = max(1, int(round(cols * (xr[1] - xr[0]))))
+    nr = max(1, int(round(rows * (tr[1] - tr[0]))))
+    for r in range(nr + 1):
+        t = tr[0] + (tr[1] - tr[0]) * r / nr
+        z = 1.27 - 0.47 * t - 0.012 * math.sin(7 * t + 3 * (1 if sign > 0 else 0)) * t ** 2
+        half = 0.10 + 0.05 * t ** 1.5
+        for c in range(nc + 1):
+            u = xr[0] + (xr[1] - xr[0]) * c / nc
+            x = half * (2 * u - 1)
+            fold = 0.011 * t ** 1.2 * math.sin(u * 7.5 * math.pi + (0.8 if sign > 0 else 0)) + 0.006 * t ** 2 * math.sin(u * 13)
+            y = sign * (0.128 * math.sqrt(max(0.0, 1 - (x / 0.2) ** 2)) + 0.012 + fold + lift) + 0.01
+            z2 = z - 0.014 * t ** 3 * math.sin(u * 5 * math.pi)
+            bm.verts.new((x, y, z2))
     bm.verts.ensure_lookup_table()
-    for r in range(rows):
-        for c in range(cols):
-            i = r * (cols + 1) + c
-            bm.faces.new((bm.verts[i], bm.verts[i + 1], bm.verts[i + cols + 2], bm.verts[i + cols + 1]))
+    for r in range(nr):
+        for c in range(nc):
+            i = r * (nc + 1) + c
+            bm.faces.new((bm.verts[i], bm.verts[i + 1], bm.verts[i + nc + 2], bm.verts[i + nc + 1]))
     me = bpy.data.meshes.new("panel")
     bm.to_mesh(me)
     bm.free()
@@ -123,8 +134,11 @@ def panel_mesh(sign, rows=10, cols=8):
 def tunic(rig, top, collection):
     """A narrow open-sided tabard: two flat panels (front and back, hip-length) and a belt over Rain's own top and trousers (which
     keep her silhouette and arm motion); weights from Rain's top."""
-    weighted("GEO-lead-tabard-front", panel_mesh(-1), "MAT-lead.tunic", rig, top, collection, subdiv=1)
-    weighted("GEO-lead-tabard-back", panel_mesh(1), "MAT-lead.tunic", rig, top, collection, subdiv=1)
+    for sign, nm in ((-1, "front"), (1, "back")):
+        weighted("GEO-lead-tabard-" + nm, panel_mesh(sign), "MAT-lead.tunic", rig, top, collection, subdiv=1, thickness=0.007)
+        for tag, kw in (("hem", dict(tr=(0.93, 1.0))), ("edgeL", dict(xr=(0.0, 0.07))), ("edgeR", dict(xr=(0.93, 1.0)))):
+            weighted("GEO-lead-trim-%s-%s" % (nm, tag), panel_mesh(sign, lift=0.004, **kw), "MAT-lead.trim", rig, top, collection,
+                     subdiv=0, thickness=0.004)
 
     def belt(t, a):   # an elliptical strip at the waist, a thin tube around the body outside the panels
         u = 2 * math.pi * t
@@ -183,7 +197,7 @@ def cloak(rig, top, collection):
 # the lead's own look, baked so that every consumer of the .blend sees it (a world renderer that never calls character_benchmark.scene())
 OUTFIT = {"MAT-lead.tunic": (0.42, 0.30, 0.18), "MAT-lead.belt": (0.16, 0.09, 0.05), "MAT-lead.cloak": (0.16, 0.03, 0.025),
           "MAT-rain.top": (0.62, 0.55, 0.42), "MAT-rain.jeans": (0.09, 0.055, 0.035),
-          "MAT-rain.scarf": (0.16, 0.03, 0.025), "MAT-rain.hairband": (0.16, 0.03, 0.025)}   # undyed linen top, dark brown trousers
+          "MAT-lead.trim": (0.16, 0.03, 0.025), "MAT-rain.scarf": (0.16, 0.03, 0.025), "MAT-rain.hairband": (0.16, 0.03, 0.025)}   # undyed linen top, dark brown trousers
 ARMS_DOWN = {"FK-Upperarm.L": (0, 0, -62), "FK-Upperarm.R": (0, 0, 62), "FK-Forearm.L": (8, 0, 0), "FK-Forearm.R": (8, 0, 0)}
 CALM_FACE = {"EyelidsClose.L": 0.18, "EyelidsClose.R": 0.18, "EyebrowsDown.L": 0.25, "EyebrowsDown.R": 0.25}
 
@@ -204,7 +218,21 @@ def flat_cloth(name, rgb):
     mat.diffuse_color = (*rgb, 1.0)
 
 
+def darker_brows(rgb=(0.03, 0.02, 0.012)):
+    """The eyebrow cards take their colour from a vertex-colour mix that renders faint: unlink it and set a dark brown."""
+    mat = bpy.data.materials.get("MAT-rain.eyebrows")
+    if mat is None or not mat.use_nodes:
+        return
+    for n in mat.node_tree.nodes:
+        if n.bl_idname == "ShaderNodeBsdfPrincipled":
+            inp = n.inputs["Base Color"]
+            for l in list(inp.links):
+                mat.node_tree.links.remove(l)
+            inp.default_value = (*rgb, 1.0)
+
+
 def bake_look(rig):
+    darker_brows()
     for name, rgb in OUTFIT.items():
         flat_cloth(name, rgb)
     pb = rig.pose.bones["Properties_IKFK"]
