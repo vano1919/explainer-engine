@@ -97,7 +97,7 @@
     },
     "historical_grounding_and_claim_registry_rules": {
       "factual_claim_id_required": true,
-      "rule": "Every historical date, troop count, weapon range, economic figure, or doctrinal fact in the script must reference a verified `claim_id` in `claims.json` (`BP-68`, `SC-05`). Counterfactual episodes ('What If X fought Y') must ground both belligerents' real historical capabilities, logistics, and commanders in verified historical records before projecting the clash (`BP-155`)."
+      "rule": "Every historical date, troop count, weapon range, economic figure, or doctrinal fact in the script must reference a verified `claim_id` in `claims.json` (`ZI-02`, `PV-37`, `SC-05`). Counterfactual episodes ('What If X fought Y') must ground both belligerents' real historical capabilities, logistics, and commanders in verified historical records before projecting the clash (`ZI-02`)."
     },
     "immersion_and_anti_anachronism_laws": {
       "mandatory_bp_rules": [
@@ -391,7 +391,7 @@
           690.0,
           720.0
         ],
-        "narrative_function": "One final lingering historical takeaway + 12s next-episode bridge (`708–720s`) ending on a hard cut (`BP-79`).",
+        "narrative_function": "One final lingering historical takeaway + 12s next-episode bridge (`708–720s`) ending on a hard cut (`BP-43`, `BP-106`).",
         "opening_promise_link": "Leaves zero dead runtime or slow fade-out.",
         "qa_gate": "no_farewell_slowdown_before_708s"
       }

@@ -121,7 +121,6 @@ def music_fades(m: dict) -> tuple[float, float]:
             float(m.get("fade_out_s", one if one is not None else RULES.T("BP-62", "fade_out_s"))))
 
 
-# TODO [CLAUDE-CLASS-SYNC: Sounds] (BATCH-M0..M7 (Core Package & Configuration Synchronization with Master Mold v2.1.0)): Synchronize class `Sounds` (methods: __init__, path, exists, load, loopable) with the module-top TODO specification (sections 1-4: exact change, current flaw, superiority rationale, and >=5 verified web sources).
 class Sounds:
     """Resolves a sound name: ``<dir>/<name>.mp3|.wav`` in the sound dirs, else the library manifest id."""
 
