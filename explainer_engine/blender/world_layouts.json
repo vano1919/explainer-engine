@@ -297,7 +297,8 @@
       "road": "texture.ph_dirt_floor_diff",
       "rock": "texture.ph_rocky_terrain_diff"
      },
-     "uv_m": 8
+     "uv_m": 8,
+     "blend": 0.045
     },
     {
      "type": "terrain",
@@ -1530,7 +1531,8 @@
       "road": "texture.ph_stone_wall_diff",
       "rock": "texture.ph_rocky_terrain_diff"
      },
-     "uv_m": 8
+     "uv_m": 8,
+     "blend": 0.045
     },
     {
      "type": "terrain",
@@ -3922,7 +3924,8 @@
       "road": "texture.ph_stone_wall_diff",
       "rock": "texture.ph_rocky_terrain_diff"
      },
-     "uv_m": 8
+     "uv_m": 8,
+     "blend": 0.045
     },
     {
      "type": "terrain",
@@ -3998,7 +4001,8 @@
       150,
       1
      ],
-     "colour": "#4F7F95"
+     "colour": "#4F7F95",
+     "raw": "ocean"
     },
     {
      "type": "floor",
@@ -5089,7 +5093,8 @@
       "road": "texture.ph_dirt_floor_diff",
       "rock": "texture.ph_rocky_terrain_diff"
      },
-     "uv_m": 8
+     "uv_m": 8,
+     "blend": 0.045
     },
     {
      "type": "terrain",
@@ -5805,6 +5810,50 @@
      "terrain": true,
      "min_z": -1.5,
      "road_clear": 0.0
+    },
+    {
+     "type": "shape",
+     "name": "smoke0",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0.0,
+      12.0,
+      6.5
+     ],
+     "yaw_deg": 0,
+     "pitch": 90.0,
+     "scale": [
+      4.5,
+      13.0,
+      1
+     ],
+     "colour": "#666666",
+     "raw": "smoke"
+    },
+    {
+     "type": "shape",
+     "name": "smoke1",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0.0,
+      12.0,
+      6.5
+     ],
+     "yaw_deg": 90,
+     "pitch": 90.0,
+     "scale": [
+      4.5,
+      13.0,
+      1
+     ],
+     "colour": "#666666",
+     "raw": "smoke"
     }
    ],
    "cast": [

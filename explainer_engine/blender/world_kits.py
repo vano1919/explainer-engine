@@ -325,6 +325,58 @@ HOUSE_SIZES = {"small": (2, 2), "medium": (3, 2), "large": (4, 3)}   # wall modu
 WALL_H = 3.0   # a plaster wall module is 3.125 m high; the roof sits on its top edge
 
 
+def _n(i, t, **kw):
+    return {"id": i, "type": t, **kw}
+
+
+def raw_graph(name: str) -> dict:
+    """Node graphs outside the toon path (Fable's order, 2026-11-05): ``ocean`` = a deep blue-green emission with a lighter band at
+    the plane's near edge and a glossy (roughness 0.1) noise-normal ripple mixed in by Fresnel; ``smoke`` = a soft grey card
+    (Emission + Transparent) that thins upwards and to the sides, broken up by noise."""
+    ramp = lambda stops: {"interpolation": "LINEAR", "stops": stops}
+    if name == "ocean":
+        nodes = [_n("co", "ShaderNodeTexCoord"),
+                 _n("rip", "ShaderNodeTexNoise", inputs={"Scale": 420.0, "Detail": 4.0, "Roughness": 0.55}),
+                 _n("var", "ShaderNodeTexNoise", inputs={"Scale": 45.0, "Detail": 2.0}),
+                 _n("bump", "ShaderNodeBump", inputs={"Strength": 0.35, "Distance": 0.004}),
+                 _n("sep", "ShaderNodeSeparateXYZ"),
+                 _n("band", "ShaderNodeValToRGB", ramp=ramp([[0.0, [1, 1, 1, 1]], [0.07, [0, 0, 0, 1]]])),
+                 _n("deep", "ShaderNodeValToRGB", ramp=ramp([[0.3, [0.012, 0.13, 0.17, 1]], [0.7, [0.02, 0.2, 0.24, 1]]])),
+                 _n("lite", "ShaderNodeMix", props={"data_type": "RGBA", "blend_type": "MIX"}, inputs={7: [0.30, 0.55, 0.55, 1.0]}),
+                 _n("emit", "ShaderNodeEmission", inputs={"Strength": 1.0}),
+                 _n("gloss", "ShaderNodeBsdfGlossy", inputs={"Roughness": 0.1, "Color": [0.75, 0.88, 0.92, 1.0]}),
+                 _n("fres", "ShaderNodeFresnel", inputs={"IOR": 1.33}),
+                 _n("mixs", "ShaderNodeMixShader"),
+                 _n("out", "ShaderNodeOutputMaterial")]
+        links = [["co", "Object", "rip", "Vector"], ["co", "Object", "var", "Vector"], ["rip", "Fac", "bump", "Height"],
+                 ["co", "Generated", "sep", "Vector"], ["sep", "Y", "band", "Fac"], ["var", "Fac", "deep", "Fac"],
+                 ["band", "Color", "lite", "Factor"], ["deep", "Color", "lite", 6], ["lite", 2, "emit", "Color"],
+                 ["bump", "Normal", "gloss", "Normal"], ["bump", "Normal", "fres", "Normal"], ["fres", "Fac", "mixs", "Fac"],
+                 ["emit", "Emission", "mixs", 1], ["gloss", "BSDF", "mixs", 2], ["mixs", "Shader", "out", "Surface"]]
+    elif name == "smoke":
+        nodes = [_n("co", "ShaderNodeTexCoord"), _n("sep", "ShaderNodeSeparateXYZ"),
+                 _n("nz", "ShaderNodeTexNoise", inputs={"Scale": 5.0, "Detail": 4.0}),
+                 _n("up", "ShaderNodeMath", props={"operation": "SUBTRACT"}, inputs={0: 1.0}),
+                 _n("dx", "ShaderNodeMath", props={"operation": "SUBTRACT"}, inputs={1: 0.5}),
+                 _n("ax", "ShaderNodeMath", props={"operation": "ABSOLUTE"}),
+                 _n("sx", "ShaderNodeMath", props={"operation": "MULTIPLY"}, inputs={1: 2.0}),
+                 _n("ex", "ShaderNodeMath", props={"operation": "SUBTRACT"}, inputs={0: 1.0}),
+                 _n("a1", "ShaderNodeMath", props={"operation": "MULTIPLY"}),
+                 _n("a2", "ShaderNodeMath", props={"operation": "MULTIPLY"}),
+                 _n("sh", "ShaderNodeValToRGB", ramp=ramp([[0.05, [0, 0, 0, 1]], [0.55, [0.55, 0.55, 0.55, 1]]])),
+                 _n("emit", "ShaderNodeEmission", inputs={"Color": [0.40, 0.37, 0.35, 1.0], "Strength": 1.0}),
+                 _n("clear", "ShaderNodeBsdfTransparent"), _n("mixs", "ShaderNodeMixShader"),
+                 _n("out", "ShaderNodeOutputMaterial")]
+        links = [["co", "Generated", "sep", "Vector"], ["co", "Generated", "nz", "Vector"], ["sep", "Y", "up", 1],
+                 ["sep", "X", "dx", 0], ["dx", "Value", "ax", 0], ["ax", "Value", "sx", 0], ["sx", "Value", "ex", 1],
+                 ["up", "Value", "a1", 0], ["ex", "Value", "a1", 1], ["a1", "Value", "a2", 0], ["nz", "Fac", "a2", 1],
+                 ["a2", "Value", "sh", "Fac"], ["sh", "Color", "mixs", "Fac"], ["clear", "BSDF", "mixs", 1],
+                 ["emit", "Emission", "mixs", 2], ["mixs", "Shader", "out", "Surface"]]
+    else:
+        raise WorldKitError(f"no raw graph {name!r}")
+    return {"nodes": nodes, "links": links}
+
+
 def ground_textures() -> dict[str, Path]:
     """The Poly Haven ground maps (texture.ph_*, registered in style_sheet_assets.json): cache, vault, else the source URL."""
     from explainer_engine.blender import style_sheets as SS
@@ -397,7 +449,8 @@ def _placements(block: dict, name: str, t: dict, T=None) -> list[dict]:
                  "scale": block.get("scale", 1.0), "role": block.get("role", "piece")}]
     if kind == "shape":   # a primitive (hill, river, mountain) in a flat tone: {add, params, pos, scale, yaw_deg, colour}
         return [{"name": name, "asset": None, "shape": {"add": block["add"], "params": block.get("params", {}), "colour": block["colour"],
-                           "texture": block.get("texture"), "tile": block.get("tile", 1.0)},
+                           "texture": block.get("texture"), "tile": block.get("tile", 1.0), "raw": block.get("raw"),
+                           "pitch": block.get("pitch", 0.0)},
                  "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0), "scale": block.get("scale", 1.0), "role": "shape"}]
     if kind == "scatter":   # deterministic: the same seed gives the same wood in every shot
         import random
@@ -522,9 +575,14 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         for ci, cname in enumerate(TR.CLASSES):
             mname = f"terrain_{b['name']}_{cname}"
             tex = (b.get("textures") or {}).get(cname)
-            if tex and ground_textures is not None:   # a Poly Haven ground map, a trace over the class colour (D-102)
+            if cname in ("meadow", "forest") and b.get("blend") and ground_textures is not None:   # one smooth field (see "grass")
+                mname = f"terrain_{b['name']}_grass"
+            elif tex and ground_textures is not None:   # a Poly Haven ground map, a trace over the class colour (D-102)
                 img = ground_textures[tex]
                 mats[mname] = {"base": b["colours"][cname], "texture": str(img), "texture_mean": _mean(img), "tile": 1.0, "strength": 0.85}
+                if cname == "grass" and b.get("blend"):   # grass + meadow + forest maps mixed by a world-space noise (Fable 2026-11-05)
+                    mats[mname]["blend"] = {"images": [str(ground_textures[b["textures"][c]]) for c in ("meadow", "forest")],
+                                            "noise": b["blend"]}
             else:
                 mats[mname] = {"base": b["colours"][cname]}
             slots[str(ci)] = mname
@@ -535,12 +593,15 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
             sh = p["shape"]
             mname = "shape_" + sh["colour"].lstrip("#").lower()
             mats[mname] = {"base": sh["colour"]}
-            if sh.get("texture") and ground_textures is not None:   # marble / stone: a trace of the Poly Haven map over the tone
+            if sh.get("raw"):
+                mname = "raw_" + sh["raw"]
+                mats[mname] = {"raw": raw_graph(sh["raw"])}
+            elif sh.get("texture") and ground_textures is not None:   # marble / stone: a trace of the Poly Haven map over the tone
                 mname += "_" + sh["texture"].split(".", 1)[1]
                 mats[mname] = {"base": sh["colour"], "texture": str(ground_textures[sh["texture"]]), "texture_mean": _mean(ground_textures[sh["texture"]]),
                                "tile": sh["tile"], "strength": 0.55}
             objs.append({"name": p["name"], "add": sh["add"], "params": sh["params"], "location": p["pos"],
-                         "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": mname, "smooth": True})
+                         "rotation_deg": [sh.get("pitch", 0.0), 0, p["yaw"]], "scale": p["scale"], "material": mname, "smooth": True})
             continue
         a = by_id[p["asset"]]
         if a["id"] not in made:
