@@ -290,6 +290,6 @@ def test_profiles_match_the_contract_recipes_and_job_speed_rows():
 def test_only_the_bpy_script_imports_bpy():
     root = Path(__file__).resolve().parents[2] / "explainer_engine"
     hits = [p.relative_to(root).as_posix() for p in root.rglob("*.py") if "import bpy" in p.read_text(encoding="utf-8")]
-    assert hits == ["blender/bpy/render_shot.py"]
+    assert sorted(hits) == ["blender/bpy/measure_clips.py", "blender/bpy/render_shot.py"]  # the Blender-side scripts, nothing else
     text = R.SCRIPT.read_text(encoding="utf-8")
     assert "progress" in text and "os.replace" in text and "fsync" in text and "pin_version" in text
