@@ -4268,4 +4268,13 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   compositor chain isolates it: at 1 sample haze adds ~0.2 s (the nodes), at 16 samples ~+2 s, so the cost is the depth pass
   accumulated per EEVEE sample on this software GL, not the nodes. The under-0.3 s target is NOT met here; the Mac's GPU timing
   is still to be measured by T-C.
+- E2 golden hour reads in the world (Fable 22:51 UTC: the world_kits poc's E2 hero showed no low warm sun and no shadows). Cause
+  found on a local 720p render of `hill_castle/castle_hero` in `q1_c2_native_skin@E2`: the preset key turned to the camera's side on
+  every shot with a cast (the front-biased key meant for character shots), so a 49 m world shot was front-lit and flat, and the
+  sky was the noon HDRI. Now: the front-biased key only on a character shot (camera focus within `style.CHARACTER_SHOT_M`, 12 m);
+  a world shot under a preset with `key.world_offset_deg` aims the sun per shot from the camera's side (golden_hour: 110 degrees,
+  12 degrees up, warm 1.0/0.74/0.46, energy 3.4, shadows on); an optional preset `sky` block tints the HDRI and lays a warm band
+  over the horizon (golden_hour: tint 0.86/0.66/0.5, horizon 1.0/0.7/0.44, band 0.6, glow 0.7). Presets without these keys
+  (noon_epic, overcast_day, interior_hearth, night_moon) keep their bytes. Local A/B at 720p: before = flat front light, blue sky;
+  after = warm side light from the right, long shadows to the left, warmer sky. 3 tests in `test_combo_profiles.py`.
 
