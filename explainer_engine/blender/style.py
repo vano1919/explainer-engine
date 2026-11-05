@@ -257,6 +257,8 @@ def light_presets(path: Path | None = None) -> dict:
         wo = pr["key"].get("world_offset_deg")
         if wo is not None and not 0 <= abs(wo) <= 180:
             raise ValueError(f"light preset {name}: key.world_offset_deg {wo} outside -180..180")
+        if not 0.5 <= pr["key"].get("shadow_filter", 1.0) <= 8:
+            raise ValueError(f"light preset {name}: key.shadow_filter outside 0.5..8")
         if not -2 <= pr.get("world_exposure_ev", 0) <= 2:
             raise ValueError(f"light preset {name}: world_exposure_ev outside -2..2")
         sky = pr.get("sky")
@@ -977,7 +979,7 @@ class StyleEngine:
         kl = KeyLight(elevation_deg=k["elevation_deg"], azimuth_deg=k["azimuth_deg"])
         out = [{"name": "key", "type": "SUN", "energy": round(k["energy"], 6), "color": [round(c, 6) for c in k["colour"]],
                 "angle_rad": round(math.radians(min(10.0, max(5.0, k["angle_deg"]))), 6), "rotation_euler": list(kl.rotation_euler()),
-                "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
+                "use_shadow": cast, "shadow_filter_radius": round(k.get("shadow_filter", a.shadow_filter), 6) if cast else None,
                 "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None}]
         if focus_m is None or focus_m <= CHARACTER_SHOT_M:
             # a character shot turns the key to the camera's side (30-45 degrees off its axis); a set-only shot keeps the world sun

@@ -261,15 +261,15 @@ def _graph_at(look_id, focus_m):
 def test_golden_hour_is_a_low_warm_shadowed_sun_that_rakes_a_world_shot_and_fronts_a_character_shot():
     """Fable 2026-11-05 22:51 UTC: E2's sun must read in the world shot (low, warm, shadows on), not turn to the camera."""
     k = S.light_presets()["golden_hour"]["key"]
-    assert k["elevation_deg"] <= 12.0 and k["colour"][0] > k["colour"][1] > k["colour"][2]
+    assert 18.0 <= k["elevation_deg"] <= 24.0 and k["colour"][0] > k["colour"][1] > k["colour"][2]
     world = {x["name"]: x for x in _graph_at("q1_c2_native_skin@E2", 49.0)["lights"]}["key"]
     assert world["use_shadow"] and "aim_with_cast" not in world
     assert world["aim"] == {"relative_to": "camera", "elevation_deg": k["elevation_deg"], "azimuth_offset_deg": k["world_offset_deg"]}
-    assert 90.0 <= abs(k["world_offset_deg"]) <= 135.0          # from the camera's side: the long shadows run across the frame
+    assert 120.0 <= abs(k["world_offset_deg"]) <= 150.0   # from behind the camera's shoulder: the slope facing it is lit, shadows run across
     close = {x["name"]: x for x in _graph_at("q1_c2_native_skin@E2", S.CHARACTER_SHOT_M - 0.5)["lights"]}["key"]
     assert close["aim_with_cast"]["from"] == "front" and "aim" not in close
-    noon = {x["name"]: x for x in _graph_at("q1_c2_native_skin@E1", 49.0)["lights"]}["key"]
-    assert "aim" not in noon and "aim_with_cast" not in noon   # a preset without world_offset_deg keeps its world-fixed sun
+    hearth = {x["name"]: x for x in _graph_at("q1_c2_native_skin@interior_hearth", 49.0)["lights"]}["key"]
+    assert "aim" not in hearth and "aim_with_cast" not in hearth   # a preset without world_offset_deg keeps its world-fixed sun
 
 
 def test_golden_hour_warms_the_hdri_sky_with_a_band_over_the_horizon():
@@ -302,3 +302,18 @@ def test_golden_hour_opens_a_world_shot_by_half_a_stop_and_leaves_a_close_up_alo
     assert ev == 0.5 and _graph_at("q1_c2_native_skin@E2", 49.0)["scene"]["exposure"] == ev
     assert "exposure" not in _graph_at("q1_c2_native_skin@E2", 3.0)["scene"]
     assert "exposure" not in _graph_at("q1_c2_native_skin@E1", 49.0)["scene"]
+
+
+@pytest.mark.parametrize("era, elevation, filt", [("E3", 35.0, 5.0), ("E1", 55.0, 1.0)])
+def test_overcast_and_noon_rake_world_shots_with_their_own_shadow_softness(era, elevation, filt):
+    """Fable 2026-11-05 23:24 UTC: overcast_day a soft sun 35 degrees up, noon_epic 55 degrees with strong shadows."""
+    key = {x["name"]: x for x in _graph_at(f"q1_c2_native_skin@{era}", 40.0)["lights"]}["key"]
+    assert key["use_shadow"] and key["aim"]["elevation_deg"] == elevation and key["shadow_filter_radius"] == filt
+    assert 90.0 <= abs(key["aim"]["azimuth_offset_deg"]) <= 135.0
+
+
+def test_overcast_greys_the_sky_and_noon_keeps_its_blue():
+    ids = {n["id"]: n for n in _graph_at("q1_c2_native_skin@E3", 40.0)["world"]["nodes"]}
+    tint = ids["sky_warm"]["inputs"]["7"][:3]
+    assert max(tint) - min(tint) < 0.1 and "glow_mix" in ids     # a near-neutral grey over the HDRI
+    assert "glow_mix" not in {n["id"] for n in _graph_at("q1_c2_native_skin@E1", 40.0)["world"]["nodes"]}
