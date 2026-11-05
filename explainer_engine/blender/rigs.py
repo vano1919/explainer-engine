@@ -188,6 +188,83 @@ class LipSync:
         return n
 
 
+class ActionVisemes:
+    """Rhubarb shapes -> pose-bone channel tracks, for a rig whose mouth is bones, not shape keys (WP-Q4: the Blender Studio
+    characters Rain and Storm, CloudRig face with MSTR/ACT controls). ``poses`` maps each shape to the bones it moves::
+
+        {"A": {"MSTR-Jaw": {"rot": [0, 0, 0]}}, "D": {"MSTR-Jaw": {"rot": [25, 0, 0]}, "MSTR-Mouth": {"scale": [1, 1, 1.1]}}}
+
+    ``rot`` is degrees (XYZ euler), ``loc`` a bone-local offset in metres, ``scale`` a multiplier; anything a shape leaves out is
+    the rest value (rot 0, loc 0, scale 1), so a pose never inherits the previous shape. Timing is ``LipSync.frames`` (the same
+    cue-per-frame rule, X on silence); keys sit on the first and last frame and on every change, previous value on frame f-1
+    and new value on frame f, exactly as the shape-key tracks do. ``apply`` runs inside Blender on a posed armature.
+    """
+
+    REST = {"rot": 0.0, "loc": 0.0, "scale": 1.0}
+    PROPS = {"rot": "rotation_euler", "loc": "location", "scale": "scale"}
+
+    def __init__(self, poses: dict, fps: int = 24, *, extended: str = "GHX"):
+        missing = sorted(set(SHAPES) - set(poses)) if "X" in extended else sorted(set(BASIC) - set(poses))
+        if missing:
+            raise ValueError(f"the pose table has no pose for {', '.join(missing)}")
+        for shape, bones in poses.items():
+            for bone, ch in bones.items():
+                bad = sorted(set(ch) - set(self.PROPS))
+                if bad or any(len(v) != 3 for v in ch.values()):
+                    raise ValueError(f"pose {shape}/{bone}: channels are rot, loc, scale with three numbers each")
+        self.poses, self.fps = poses, fps
+        self.lip = LipSync(fps, extended=extended)
+
+    def channels(self) -> list[tuple]:
+        """Every (bone, prop, index) any shape touches, sorted; each is keyed on every key frame so a shape that leaves it out
+        returns it to rest."""
+        return sorted({(b, p, i) for bones in self.poses.values() for b, ch in bones.items() for p in ch for i in range(3)})
+
+    def value(self, shape: str, chan: tuple) -> float:
+        b, p, i = chan
+        v = self.poses[shape].get(b, {}).get(p)
+        return float(v[i]) if v is not None else self.REST[p]
+
+    def tracks(self, cues: dict | Path | str, frames: int | None = None) -> dict[str, list[list]]:
+        """{"bone|prop|index": [[frame, value], ...]} (prop is the Blender property: rotation_euler is in radians)."""
+        shapes = self.lip.frames(cues, frames)
+        return self.tracks_for(shapes)
+
+    def tracks_for(self, shapes: list[str]) -> dict[str, list[list]]:
+        out: dict[str, list[list]] = {}
+        if not shapes:
+            return out
+        keyed = {0, len(shapes) - 1}
+        for f in range(1, len(shapes)):
+            if shapes[f] != shapes[f - 1]:
+                keyed.update((f - 1, f))
+        for chan in self.channels():
+            b, p, i = chan
+            k = f"{b}|{self.PROPS[p]}|{i}"
+            out[k] = [[f, round(math.radians(self.value(shapes[f], chan)) if p == "rot" else self.value(shapes[f], chan), 6)]
+                      for f in sorted(keyed)]
+        return out
+
+    @staticmethod
+    def apply(track_map: dict[str, list[list]], pose_bones, start_frame: int = 1) -> int:
+        """Key every channel on the armature's pose bones (``pose_bones``: name -> a Blender PoseBone); runs inside Blender.
+        Returns the key count."""
+        missing = sorted({k.split("|")[0] for k in track_map} - set(pose_bones))
+        if missing:
+            raise KeyError(f"the rig has no pose bones {', '.join(missing)}")
+        n = 0
+        for key, pts in sorted(track_map.items()):
+            bone, prop, idx = key.split("|")
+            pb = pose_bones[bone]
+            for frame, value in pts:
+                vec = list(getattr(pb, prop))
+                vec[int(idx)] = value
+                setattr(pb, prop, vec)
+                pb.keyframe_insert(data_path=prop, index=int(idx), frame=start_frame + frame)
+                n += 1
+        return n
+
+
 class RigAdapter:
     """Which animations a rig plays as they are, and which need a retarget (21.5 #4); from library records only."""
 
