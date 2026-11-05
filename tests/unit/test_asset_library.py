@@ -29,7 +29,9 @@ def test_committed_library_verifies_clean():
     """Every record's file is present and unchanged, every parent exists, every bible version existed."""
     assert L.verify() == []
     lib = L.load()
-    assert lib["schema"] == "asset_library/1" and len(lib["items"]) >= 9
+    assert lib["schema"] == "asset_library/2" and len(lib["items"]) >= 9  # moved to /2 by ICW-05 (D-110)
+    assert all(i["storage"] == {"location": "git", "external_path": None} and i["deps"] == [] for i in lib["items"])
+    assert all(i["licence"]["commercial_use"] == "unknown" for i in lib["items"])  # Gemini output, terms never verified
     assert all(i["approval"]["status"] == "superseded" for i in lib["items"])  # look v1 sprites, kept for lineage only
 
 
@@ -99,7 +101,8 @@ def test_lineage_and_verify(repo):
     lib["items"][1]["approval"] = {"status": "approved", "by": None, "at": None, "note": ""}
     Image.new("RGB", (8, 8)).save(repo / "assets" / "refs" / "valley.png")
     found = L.verify(lib=lib, repo=repo, versions=["1.0", "1.1"])
-    assert sorted(x.split(":")[1].strip()[:12] for x in found) == sorted(["parent refer", "bible versio", "approved wit", "file assets/"])
+    assert sorted(x.split(":")[1].strip()[:12] for x in found) == sorted(["parent refer", "bible versio", "approved wit", "file assets/",
+                                                                         "CN-19 commer"])  # /2: unknown commercial use
     assert L.verify(lib={"schema": "asset_library/1", "items": [{"id": "x"}]}, repo=repo, versions=["1.0"])[0].startswith("library:")
 
 

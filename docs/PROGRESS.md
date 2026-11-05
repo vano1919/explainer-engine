@@ -4004,3 +4004,24 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   fails only `test_seams.py::test_duration_of_an_mp3_is_its_decoded_length` (it depends on the runner's ffmpeg build); the same
   test fails on ICW-00/01/02 too, and this PR does not cause it.
 - Cost: $0. No pod, no paid API call.
+
+### 2026-11-05 — ICW-05 part 1: asset library v2, 3D reuse gate, Blender asset and lip-sync adapters (Ink Chronicle, roadmap 9.3, 11, 21.4-21.5)
+
+- Work package ICW-05 (part 1, the asset pipeline in the coordinator's scope), branch `icw/05-assets` from
+  `opus/ink-chronicle-blender-visual-system-2026-11-04` (67e1bc3), PR #126; Fable accepted it 2026-11-05.
+- `assets/library.py` on asset_library/2 (D-110):
+  - the 9 3D kinds, `deps` by hash, git storage up to 5 MB and external above (`tools/assets_cache/<sha256>/`, vault `assets/3d/`);
+  - a `three_d` block, CN-19 inside `validate`, and approval refused on unknown commercial use unless the approver records it;
+  - `find` by skeleton, and `import` / `fetch` / `upgrade` on the CLI.
+- `assets/library.json` migrated to /2 (9 superseded Gemini records, commercial use `unknown`).
+- `assets/licence_sources.json` holds the licence rows per source (roadmap 21.3/21.4).
+- `assets_reuse` searches the asset library for the 3D kinds.
+- `blender/assets.py`: `AssetResolver` and the fixed Blender 5.2.3 import settings, with a twice-import determinism check.
+- `blender/rigs.py`: Rhubarb cues to shape-key tracks (X on silence, a one-frame blend) and `RigAdapter.plan`.
+- Schema: the asset_library/2 id pattern now allows underscore kinds (`blend_collection`, `scene_template`).
+- Tests: new `test_asset_library_v2`, `test_blender_assets`, `test_lipsync_map`; the /1 → /2 pins moved in
+  `test_asset_library` and `test_contracts`.
+- Not done, waiting for the creator: part 2 (`blender/style.py`, `edit/style_bridge.py`, the style sheets and the collage) and PoC 3
+  (it needs downloads). The ICW-07 notes are in the PR and the handoff.
+- Results: `docs_lint` 0 findings; fast suite 2658 passed, 0 failed (`test_seams` is the inherited ffprobe failure).
+- Cost: $0. No download, no pod, no paid call.
