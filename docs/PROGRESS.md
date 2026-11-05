@@ -4158,3 +4158,11 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - BP-173: v04's faint contour is 1.5 px at 40 % opacity (the band's floor; 1 px fails CN-17). Looks without a line carry the B
   token's 2.25 px in shot_spec/2 (`look.line_weight_px` has no "none"; proposed to ICW-07).
 - Tests: `tests/unit/test_look_variants.py` (20). Cost: $0.
+
+## 2026-11-05 — WP-Q0: Blender 5.x API names in `render_shot.py` (branch `wpq/00-api`)
+- `ENGINE_IDS["eevee"]` is now `("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT")` (5.0 renamed EEVEE Next back; the old id stays as fallback).
+- `apply_settings`: `ambient_occlusion` maps to `eevee.use_fast_gi` plus `eevee.fast_gi_method = 'AMBIENT_OCCLUSION_ONLY'` (5.x has no
+  `use_gtao`; `eevee_full` used to land it under `missing`/silently without AO). Mapped switches are recorded under `applied`.
+  `None` still sets nothing; `False` switches Fast GI off. `RenderProfile.ambient_occlusion` unchanged. `profiles.py` docstring updated.
+- Tests: `tests/unit/test_blender_render.py` (first engine id tried, `eevee_full` applies `use_fast_gi` and no `use_gtao`, None/False cases).
+  Blender/docs/hygiene/governance subset: 188 passed. Cost $0. Not run: a real Blender 5.2 CI render (the `applied` block should show `use_fast_gi`).

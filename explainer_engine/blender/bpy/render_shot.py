@@ -26,7 +26,8 @@ import time
 import bpy  # noqa: E402  (Blender's own module; this file never runs outside Blender)
 from mathutils import Vector  # noqa: E402  (ships with Blender)
 
-ENGINE_IDS = {"eevee": ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE"), "cycles": ("CYCLES",), "workbench": ("BLENDER_WORKBENCH",)}
+# 5.0 renamed EEVEE Next back to BLENDER_EEVEE (5.0 EEVEE release notes); the _NEXT id is the pre-5.0 fallback
+ENGINE_IDS = {"eevee": ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"), "cycles": ("CYCLES",), "workbench": ("BLENDER_WORKBENCH",)}
 
 
 def job_path():
@@ -669,7 +670,10 @@ def apply_settings(scene, job):
         ee = scene.eevee
         set_attr(ee, "taa_render_samples", s.get("samples"), applied, missing, "eevee.taa_render_samples")
         set_attr(ee, "use_raytracing", s.get("raytracing"), applied, missing, "eevee.use_raytracing")
-        set_attr(ee, "use_gtao", s.get("ambient_occlusion"), applied, missing, "eevee.use_gtao")
+        ao = s.get("ambient_occlusion")   # 5.x has no use_gtao: AO is Fast GI in its AO-only method (SceneEEVEE API 5.2)
+        set_attr(ee, "use_fast_gi", ao, applied, missing, "eevee.use_fast_gi")
+        if ao:
+            set_attr(ee, "fast_gi_method", "AMBIENT_OCCLUSION_ONLY", applied, missing, "eevee.fast_gi_method")
     elif eng == "cycles":
         cy = scene.cycles
         set_attr(cy, "samples", s.get("samples"), applied, missing, "cycles.samples")
