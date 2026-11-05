@@ -265,3 +265,84 @@ def test_a_material_may_override_the_texture_strength_inside_0_to_1():
     assert '"Factor": 0.5' in half and dflt != half
     with pytest.raises(ValueError, match="share 0..1"):
         eng.material("c", "paper", texture=TEX, strength=1.5)
+
+
+# ---- WP-Q1: the soft shade mode's lit and rgb_soft paths ----------------------------------------------------------------------
+
+def _q1(vid, **over):
+    t = S.look_tokens(vid)
+    if over:
+        t = S.replace(t, art=S.replace(t.art, **over))
+    mats = {"ink_test_m_skin": {"base": "kit_card"}, "coat": {"base": "support_blue"}}
+    return S.StyleEngine(t).graph("eevee", camera=CAM, materials=mats, hdri="/c/sky.hdr", paper_texture="/c/paper.jpg")
+
+
+def test_soft_mode_keeps_light_colour_and_uses_a_linear_ramp():
+    g = _q1("q1_rgbsoft_pbrn_cinematic")
+    skin = by_id(next(m for m in g["materials"] if m["name"] == "ink_test_m_skin"))
+    coat = by_id(next(m for m in g["materials"] if m["name"] == "coat"))
+    for n in (skin, coat):
+        assert n["tone"]["ramp"]["interpolation"] == "LINEAR"
+        assert [s[1][0] for s in n["tone"]["ramp"]["stops"]][0] == 0.0 and n["tone"]["ramp"]["stops"][-1][1][0] == 1.0
+        assert n["lift"]["inputs"]["To Min"] == 0.3 and n["lift"]["inputs"]["To Max"] == 1.0   # half-lambert
+        assert n["shade"]["props"]["blend_type"] == "MIX"
+    m = next(x for x in g["materials"] if x["name"] == "coat")
+    assert ["to_rgb", "Color", "lit", 7] in m["links"]        # the lit side is albedo x the light's own colour, never its grey
+    assert ["tone", "Color", "shade", "Factor"] in m["links"] and ["luma", "Val", "lift", "Value"] in m["links"]
+    assert by_id(m)["shadow"]["inputs"]["7"][:3] == [0.66, 0.68, 0.86]    # the set's cool shadow tint
+    assert skin["shadow"]["inputs"]["7"][:3] == [0.82, 0.52, 0.46]        # skin shadows lean red-brown
+    assert all(n["type"] != "ShaderNodeLayerWeight" for n in m["nodes"])  # the rim is a light now
+
+
+def test_soft_lit_allows_only_matte_principled():
+    g = _q1("q1_lit_pbrn_cinematic")
+    assert S.check(g) == []
+    for m in g["materials"]:
+        n = by_id(m)
+        assert n["bsdf"]["type"] == "ShaderNodeBsdfPrincipled" and ["bsdf", "BSDF", "out", "Surface"] in m["links"]
+        assert not {"ShaderNodeEmission", "ShaderNodeShaderToRGB"} & {x["type"] for x in m["nodes"]}
+    skin = by_id(next(m for m in g["materials"] if m["name"] == "ink_test_m_skin"))
+    assert skin["bsdf"]["inputs"]["Subsurface Weight"] == 0.3
+    assert "Subsurface Weight" not in by_id(next(m for m in g["materials"] if m["name"] == "coat"))["bsdf"]["inputs"]
+    for key, val in (("Roughness", 0.5), ("Specular IOR Level", 0.5), ("Coat Weight", 0.2), ("Metallic", 1.0)):
+        bad = json.loads(json.dumps(g))
+        for n in bad["materials"][0]["nodes"]:
+            if n["id"] == "bsdf":
+                n["inputs"][key] = val
+        bad["sha256"] = S.digest(bad)
+        assert any("raw PBR look" in p for p in S.check(bad)), key
+    toon = graph()
+    toon["materials"] = g["materials"]   # the same matte Principled outside the lit path is still the raw PBR look
+    assert any("raw PBR look" in p for p in S.check(toon))
+    assert S.check(_q1("q1_lit_std_keyrim", lit_bsdf="diffuse", subsurface=0.0)) == []
+
+
+def test_lit_path_refuses_shader_rims_halftone_and_ao_off_it():
+    base = S.Look.from_dict(next(v for v in S.look_variants()["q1_variants"] if v["id"] == "q1_lit_pbrn_cinematic"))
+    for over in ({"rim_mode": "shader"}, {"halftone": 0.2}, {"shade_path": "rgb_soft"}, {"shade_mode": "flat"},
+                 {"subsurface": 0.3, "lit_bsdf": "diffuse"}, {"view_transform": "Filmic"}):
+        with pytest.raises(ValueError):
+            S.replace(base, **over)
+    g = _q1("q1_rgbsoft_pbrn_keyrim")
+    bad = json.loads(json.dumps(g))
+    bad["scene"]["eevee"].update(use_fast_gi=True, fast_gi_method="AMBIENT_OCCLUSION_ONLY")
+    bad["sha256"] = S.digest(bad)
+    assert any("AO on under Shader to RGB" in p for p in S.check(bad))
+
+
+def test_q1_knobs_at_their_defaults_keep_the_look_round_bytes():
+    for v in S.look_variants()["variants"]:
+        d = S.Look.from_dict(v).to_dict()
+        assert not set(S.Q1_DEFAULTS) & set(d), v["id"]
+    g = S.StyleEngine(S.look_tokens("v01_reference_soft3d")).graph("eevee", camera=CAM, materials={"coat": {"base": "support_blue"}})
+    assert "lights" not in g and "fill_light" in g and g["scene"]["view_transform"] == "AgX"
+
+
+def test_normal_softening_is_planned_for_the_cast_only_when_asked():
+    assert _q1("q1_lit_pbrn_cinematic")["normal_soften"] == {"iterations": 6, "applies_to": "cast"}
+    assert "normal_soften" not in _q1("q1_lit_pbrn_cinematic", normal_soften=0)
+
+
+def test_material_class_comes_from_the_slot_or_the_name():
+    assert S.material_class("ink_test_m_skin") == "skin" and S.material_class("ink_test_f_hair") == "hair"
+    assert S.material_class("mco_male_ranger_support_blue", "costume") == "costume" and S.material_class("brick") == "set"

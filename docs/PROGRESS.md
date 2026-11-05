@@ -4174,3 +4174,37 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
   (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
   `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
+
+## 2026-11-05 — WP-Q1: soft painterly shading, coloured light rigs, colour transform (branch `claude/project-thread-ekz0dc`)
+- Principle (the creator, 19:19 UTC): synthesis of existing techniques and code. Re-implemented from public documents, no code
+  copied (so no provenance row): Blender Studio's Wing It! shading write-up and the Blender 5.2 manual / API pages for Shader to RGB,
+  Light Linking, Light Objects, SceneEEVEE and Displays and Views. API names checked in the pinned Blender 5.2.3 itself.
+- `blender/style.py`: the soft mode gets two new node paths (`Look.shade_path`): `lit` (a matte BSDF lit by real lights, no
+  Emission: Diffuse, or a Principled with Specular IOR Level 0, Roughness 1, no coat, no metal, subsurface on skin) and `rgb_soft`
+  (Shader to RGB keeps the light's colour: mix(shadow tint x albedo, albedo x light, tone), a LINEAR/EASE ramp of the half-lambert
+  lifted luminance, shadow tints per material class skin / hair / eyes / costume / set). `StyleEngine.lights()`: the rigs
+  `cinematic` (warm key SUN 5-10 degrees, PCF blur 2.5, no jitter; cool shadowless fill, specular 0; warm rim aimed from behind the
+  subject relative to the camera, shadowless, specular 0.3, light-linked to the cast), `key_rim`, `flat_key`, `ambient_only`.
+  `Look.view_transform` Standard | Khronos PBR Neutral (no look), `Look.ao` (Fast GI AO, lit path only), `Look.normal_soften`.
+  Every new knob at its default keeps the look round's graphs byte for byte (`Q1_DEFAULTS`).
+- `blender/light_presets.json` (`light_presets/1`, shared with WP-Q4 and WP-Q8): golden_hour, noon_epic, overcast_day,
+  interior_hearth, night_moon. Wing It!'s rule as data: only the key sun casts a shadow, two colourable rims on the cast, an
+  optional fill, one world tint per sequence. `Look.light_preset` picks one.
+- `style.check()`: a Principled BSDF passes only as the matte one on the lit path (narrower, not weaker); the lit path ends in a
+  matte BSDF; Fast GI only as AO and only without Shader to RGB; fill and rims shadowless with specular <= 0.3, rims linked to the
+  cast, only the key casts a shadow, a shadowed key has a 5-10 degree disc.
+- `bpy/render_shot.py`: `build_lights` (light linking through `Object.light_linking.receiver_collection`; a rim with no cast in the
+  shot is left out and reported), `_camera_aim`, `soften_normals` (a Geometry Nodes modifier after the armature: Blur Attribute on
+  the normals into Set Mesh Normal, FREE, point domain), profile `shadows` / `motion_blur_steps`.
+- `blender/profiles.py` `eevee_painterly` (32 samples, shadows, Fast GI AO, motion blur 1 step; stop rule None: the research's
+  budget-share formula is not settled, ICW-09's OR-23 plan names it); `config/job_speeds.json` row; render manifest enum.
+- `shot_spec/3` (docs/CONTRACTS.md): view transform, shade mode and path, line mode; `style_sheets.spec_for` writes /3 for the
+  `q1_*` looks (`look_variants.json` `q1_variants`, kept apart from the round's ten).
+- `blender/grade.py views` -> `view_palette_match.json` (Blender 5.2.3 OCIO): palette mean CIE76 dE raw Standard 0.0, Khronos PBR
+  Neutral 6.73 (max 17.1, `night`; matched 0.5), against AgX MHC 12.98 (matched 2.25). `palette_match` uses it on the new paths.
+- Tests: `tests/unit/test_light_rigs.py` (new), additions to `test_blender_style.py`, `test_agx_grade.py`, `test_shot_cache.py`
+  (/3 validates, /2 unchanged), `test_job_speeds_rows.py` (the new row). Cost $0.
+- Local check (this container, Blender 5.2.3 CPU / Mesa, 1280x720): lights, light linking (20 cast meshes) and the normal blur
+  applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
+  heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
+
