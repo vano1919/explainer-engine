@@ -233,7 +233,16 @@ MATERIAL_CLASSES = ("skin", "hair", "eyes", "costume", "set")
 # Knobs WP-Q1 added: a look that leaves them at their default keeps the look round's graph and hash byte for byte.
 Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "half_lambert": 0.0, "ramp_interp": None,
                "shadow_tints": (), "view_transform": None, "rim_mode": "shader", "key_colour": None, "fill_colour": None,
-               "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0}
+               "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0, "light_preset": None}
+LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
+
+
+def light_presets(path: Path | None = None) -> dict:
+    """The named light presets (``light_presets.json``, schema light_presets/1): Wing It!'s rule as data, shared by WP-Q1/Q4/Q8."""
+    doc = json.loads(Path(path or LIGHT_PRESETS_PATH).read_text(encoding="utf-8"))
+    if doc.get("schema") != "light_presets/1":
+        raise ValueError(f"{path or LIGHT_PRESETS_PATH} is not a light_presets/1 document")
+    return doc["presets"]
 
 
 def _tup(x) -> tuple:
@@ -295,6 +304,7 @@ class Look:
     ao: bool = False                                        # lit only: EEVEE Fast GI as ambient occlusion
     ambient: float | None = None                            # world light strength (None = the tokens' 0.05)
     normal_soften: int = 0                                  # cast meshes: Blur Attribute iterations on the normals (GN), 0 = off
+    light_preset: str | None = None                         # a light_presets.json name: replaces the rig's lights and the ambient
 
     def __post_init__(self) -> None:
         for name, val, known in (("shade_mode", self.shade_mode, SHADE_MODES), ("light_rig", self.light_rig, LIGHT_RIGS),
@@ -355,6 +365,11 @@ class Look:
             raise ValueError(f"{self.id}: rim light energy {self.rim_strength} outside 0..10")
         if not 0 < self.key_energy <= 10 or not 0 <= self.shadow_filter <= 10 or not 0 <= self.normal_soften <= 40:
             raise ValueError(f"{self.id}: key_energy 0..10, shadow_filter 0..10, normal_soften 0..40")
+        if self.light_preset is not None:
+            if self.shade_path == "luma":
+                raise ValueError(f"{self.id}: a light preset needs the lit or rgb_soft path")
+            if self.light_preset not in light_presets():
+                raise ValueError(f"{self.id}: unknown light preset {self.light_preset!r} (known: {', '.join(light_presets())})")
         if self.ambient is not None and not 0 <= self.ambient <= 2:
             raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
 
@@ -578,7 +593,11 @@ class StyleEngine:
         if a.palette_map == "reference_swatches" and name_or_hex in self.swatches:
             return rgba(self.swatches[name_or_hex])
         h = self.pal.get(name_or_hex, name_or_hex)
-        return rgba(_warm_neutral(h) if a.palette_map == "warm_cinematic" else h)
+        h = _warm_neutral(h) if a.palette_map == "warm_cinematic" else h
+        if a.lit_rig and self.t.palette_match:   # WP-Q1: the value whose display under the look's view is the hex
+            from explainer_engine.blender import grade
+            return [*grade.matched_view(h, a.view_transform or self.t.view_transform), 1.0]
+        return rgba(h)
 
     def _art_ramp(self) -> dict:
         a = self.t.art
@@ -808,6 +827,8 @@ class StyleEngine:
         - ``flat_key``: the key alone, shadowless; ``ambient_only``: no light, the world's ambient only.
         Fill and rim are suns as well (they do not depend on where the set's objects stand); an AREA rim is a later option."""
         a, kl = self.t.art, self.t.key_light
+        if a.light_preset is not None:
+            return self._preset_lights(light_presets()[a.light_preset])
         if a.light_rig == "ambient_only":
             return []
         key_col = [round(c, 6) for c in (a.key_colour or a.light_tint)]
@@ -830,13 +851,40 @@ class StyleEngine:
                         "use_shadow": False, "specular_factor": 0.3, "link": "cast"})
         return out
 
+    def _preset_lights(self, p: dict) -> list[dict]:
+        """A named preset (Wing It!'s rule): only the key SUN casts a shadow; two colourable rims linked to the cast, shadowless,
+        specular 0.3; a shadowless fill without specular. The key's shadow follows the look's light rig (cinematic casts)."""
+        a, k = self.t.art, p["key"]
+        cast = a.light_rig == "cinematic"
+        kl = KeyLight(elevation_deg=k["elevation_deg"], azimuth_deg=k["azimuth_deg"])
+        out = [{"name": "key", "type": "SUN", "energy": round(k["energy"], 6), "color": [round(c, 6) for c in k["colour"]],
+                "angle_rad": round(math.radians(min(10.0, max(5.0, k["angle_deg"]))), 6), "rotation_euler": list(kl.rotation_euler()),
+                "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
+                "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None}]
+        if p.get("fill"):
+            el, az = 22.0, k["azimuth_deg"] + 160.0
+            out.append({"name": "fill", "type": "SUN", "energy": round(p["fill"]["energy"], 6),
+                        "color": [round(c, 6) for c in p["fill"]["colour"]],
+                        "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)],
+                        "use_shadow": False, "specular_factor": 0.0, "link": None})
+        for r in p["rims"]:
+            out.append({"name": r["name"], "type": "SUN", "energy": round(r["energy"], 6), "color": [round(c, 6) for c in r["colour"]],
+                        "aim": {"relative_to": "camera", "elevation_deg": r["elevation_deg"],
+                                "azimuth_offset_deg": r["azimuth_offset_deg"]},
+                        "use_shadow": False, "specular_factor": 0.3, "link": "cast"})
+        return out
+
     def _art_world(self, hdri: str | None) -> dict:
         """Lighting = the weak paper ambient (as the toon world); camera rays see the look's sky: the paper, a painted gradient
         sky (warm horizon to a soft blue, with noise clouds) or the HDRI's own sky, warmed."""
         t, a = self.t, self.t.art
         paper = rgba(self.pal[t.paper])
         amb = t.ambient if a.ambient is None else round(a.ambient, 6)
-        nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": amb}},
+        air = paper
+        if a.light_preset is not None:   # the sequence's world tint: the ambient light's colour and strength
+            wt = light_presets()[a.light_preset]["world_tint"]
+            air, amb = [*[round(c, 6) for c in wt["colour"]], 1.0], round(wt["strength"], 6)
+        nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": air, "Strength": amb}},
                  {"id": "backdrop", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": 1.0}},
                  {"id": "is_cam", "type": "ShaderNodeLightPath"},
                  {"id": "mix", "type": "ShaderNodeMixShader"},
@@ -1135,10 +1183,13 @@ def check(doc: dict) -> list[str]:
         elif ee.get("use_fast_gi") and (stl or not lit_path or ee.get("fast_gi_method") != "AMBIENT_OCCLUSION_ONLY"):
             out.append("EEVEE ray tracing / AO on under Shader to RGB (unreliable, 9.1)")
     for lt in doc.get("lights", []):
-        if lt["name"] in ("fill", "rim") and (lt["use_shadow"] or lt["specular_factor"] > 0.3):
+        rim = lt["name"].startswith("rim")
+        if (rim or lt["name"] == "fill") and (lt["use_shadow"] or lt["specular_factor"] > 0.3):
             out.append(f"light {lt['name']}: fill and rim cast no shadow and keep specular <= 0.3")
-        if lt["name"] == "rim" and lt.get("link") != "cast":
-            out.append("light rim: light-linked to the cast only")
+        if rim and lt.get("link") != "cast":
+            out.append(f"light {lt['name']}: light-linked to the cast only")
+        if lt["name"] != "key" and lt["use_shadow"]:
+            out.append(f"light {lt['name']}: only the key sun casts a shadow (Wing It!)")
         if lt["name"] == "key" and lt["use_shadow"] and not math.radians(5) - 1e-6 <= lt["angle_rad"] <= math.radians(10) + 1e-6:
             out.append("light key: a shadow-casting key has a 5-10 degree disc")
     if doc["line_art"].get("enabled", True) and not doc["line_art"]["line_px_1440"] > 0:

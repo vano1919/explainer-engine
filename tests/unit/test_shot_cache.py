@@ -148,3 +148,41 @@ def test_v2_and_v1_keys_never_collide_and_a_broken_v2_has_no_key():
     assert SC.key(SPEC2) != SC.key(SPEC)
     with pytest.raises(ContractError):
         SC.key(v2(lambda s: s.update(recipe="blender_cycles/1")))  # CN-17: the recipe is not the profile's
+
+
+# ---- shot_spec/3 (WP-Q1): /2 plus the look's view transform, shade mode and line mode ---------------------------------
+def v3(**look):
+    s = copy.deepcopy(SPEC2)
+    s["schema"] = "shot_spec/3"
+    s["render"]["profile"] = "eevee_painterly"
+    s["look"].pop("line_weight_px")
+    s["look"].update({"view_transform": "Khronos PBR Neutral", "grade_look": "None", "shade_mode": "soft", "shade_path": "lit",
+                      "line_mode": "none", **look})
+    return s
+
+
+def test_v3_validates_with_no_line_and_a_soft_view_and_v2_still_validates():
+    from explainer_engine.core import contracts as C
+    assert C.errors(v3()) == [] and C.errors(SPEC2) == []
+    assert C.errors(v3(view_transform="Standard")) == []
+    assert C.errors(v3(line_mode="faint", line_weight_px=1.5)) == []
+    assert SC.key(v3()) != SC.key(SPEC2) and SC.key(v3()) != SC.key(v3(shade_path="rgb_soft"))
+
+
+@pytest.mark.parametrize("look", [
+    {"line_mode": "ink"},                               # a drawn line needs its weight
+    {"line_weight_px": 2.0},                            # no line, no weight
+    {"view_transform": "Filmic"},
+    {"view_transform": "Standard", "grade_look": "Medium High Contrast"},   # a look belongs to AgX only
+    {"shade_mode": "glossy"},
+])
+def test_v3_refuses_what_its_look_cannot_mean(look):
+    with pytest.raises(ContractError):
+        SC.key(v3(**look))
+
+
+def test_v2_keeps_its_agx_pin_and_its_profiles():
+    with pytest.raises(ContractError):
+        SC.key(v2(lambda s: s["look"].update(view_transform="Standard")))
+    with pytest.raises(ContractError):
+        SC.key(v2(lambda s: s["render"].update(profile="eevee_painterly")))
