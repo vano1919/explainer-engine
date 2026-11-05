@@ -3,6 +3,7 @@
 
     SceneBuilder(paths, cpaths).build(spec, cast=..., set_objects=..., materials=...) -> (described scene, camera path)
     SceneBuilder.manifest(spec, sdir, camera_path) -> blender_scene_manifest/1 (from the bpy report of the render)
+    python -m explainer_engine.blender.scene_builder smoke --out D [--binary B]   # CI: one rigged character, a camera rail
 
 **Camera rigs (10.1):** ``static``, ``push``, ``dolly``, ``rail``, ``orbit``, ``dramatic_curve``, each from the spec's ``start`` and
 ``end`` poses ({pos, yaw_deg, pitch_deg}; yaw 0 looks along +Y, positive yaw turns towards -X, pitch positive looks up) and
@@ -32,6 +33,7 @@ from explainer_engine.assets import library as L
 from explainer_engine.blender import characters as C
 from explainer_engine.blender import assets as A
 from explainer_engine.core.errors import ContractError
+from explainer_engine.core.store import write_json_atomic
 
 RIGS = ("static", "push", "dolly", "rail", "orbit", "dramatic_curve")
 EASES = ("linear", "ease_in", "ease_out", "ease_in_out")
@@ -215,3 +217,66 @@ class SceneBuilder:
         from explainer_engine.core import contracts
         contracts.validate(doc)
         return doc
+
+
+# --- the CI smoke (roadmap 15 ICW-06: one rigged character, one camera rail, Workbench) ----------------------------------------
+
+SMOKE_CAST = {"walker": {"character": "ink_test_m", "costume": "costume.mco_male_peasant", "action": "Walk_Loop", "tint": "faction_a",
+                         "offset": 0, "to": None, "lipsync": None}}
+
+
+def smoke_spec(frames: int = 8) -> dict:
+    """The ICW-04 smoke spec with one cast member (the walker, its clip from the UAL set) and a ``rail`` camera."""
+    from explainer_engine.blender import render as R
+    lib, reg = L.load(), C.registry()
+    ref = lambda i: {"id": i, "sha256": L.get(i, lib=lib)["sha256"]}  # noqa: E731
+    spec = R.smoke_spec("smoke_character", frames)
+    spec["shot_id"] = "smoke_character_01"
+    head = C.get("ink_test_m", reg=reg)["head"]
+    spec["scene"]["characters"] = [{"cast_id": "walker", "asset": ref(head), "rig": ref(head), "animation": ref(reg["animation_asset"]),
+                                    "position": [0.0, 0.0, 0.0], "facing_deg": 0.0}]
+    spec["scene"]["camera"] = {"rig": "rail", "start": {"pos": [-1.6, -4.0, 1.3], "yaw_deg": -12.0, "pitch_deg": -4.0},
+                               "end": {"pos": [1.6, -4.0, 1.3], "yaw_deg": -12.0, "pitch_deg": -4.0}, "lens_mm": 40, "ease": "linear"}
+    return spec
+
+
+def smoke(out: Path, *, binary: str | None = None, frames: int = 8, log=print) -> dict:
+    """Render the character smoke with the Workbench override (320x180) and write its scene manifest; returns a summary."""
+    from explainer_engine.blender import profiles as P
+    from explainer_engine.blender import render as R
+    from explainer_engine.blender.project import BlenderProject
+    out = Path(out)
+    spec = smoke_spec(frames)
+    b = SceneBuilder(C.fetch())
+    sc, path = b.build(spec, cast=SMOKE_CAST, set_objects=[{"name": "ground", "add": "plane", "params": {"size": 20}}])
+    scene = {"kind": "described", **sc}
+    m = R.HeadlessRender(BlenderProject().resolve(binary), R.LocalVault(out / "vault")).run(spec, out / "work", scene=scene,
+                                                                                          smoke=P.SMOKE)
+    sdir = out / "work" / m["cache_key"]
+    manifest = b.manifest(spec, sdir, path)
+    write_json_atomic(sdir / "scene_manifest.json", manifest)
+    rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
+    summary = {"engine": m["engine"], "frames_written": m["frames_written"], "seconds_per_frame": m["seconds_per_frame"],
+               "frames_dir": str(sdir / "frames"), "characters": rep.get("characters"), "actions": rep.get("actions"),
+               "objects": manifest["objects"], "camera_keys": len(path), "scene_manifest": str(sdir / "scene_manifest.json"),
+               "findings": [f for f in m["_findings"] if f["severity"] == "FAIL" and not (f["rule"] == "CN-17" and "master" in f["detail"])]}
+    write_json_atomic(out / "smoke_summary.json", summary)
+    log(json.dumps(summary, indent=1))
+    return summary
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(prog="python -m explainer_engine.blender.scene_builder", description=__doc__.split("\n")[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sm = sub.add_parser("smoke")
+    sm.add_argument("--out", required=True)
+    sm.add_argument("--binary", default=None)
+    sm.add_argument("--frames", type=int, default=8)
+    a = ap.parse_args(argv)
+    s = smoke(Path(a.out), binary=a.binary, frames=a.frames)
+    return 1 if s["findings"] or s["frames_written"] != a.frames else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

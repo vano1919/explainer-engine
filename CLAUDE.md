@@ -46,6 +46,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
    (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
    The creator's M4 Pro Mac may run free Blender renders for review, style sheets and benchmark preflight (ICG-3, D-113);
    paid work stays cloud-first; the PC reviews and uploads.
+   Free runs, a test render on the Mac and a GitHub Actions run, start without asking (D-114); anything that bills still waits
+   for the OR-23 plan, the OR-34 audit and his word.
 2. Budget caps are ceilings, not targets; the numbers live only in `config/spend_caps.json` (invariant 1; vidIQ and ElevenLabs
    credits are counted in the ledger until they have a line there). Estimate and log before every paid call
    (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.

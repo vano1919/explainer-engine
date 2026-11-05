@@ -94,3 +94,32 @@ def test_rig_adapter_plays_the_same_skeleton_and_plans_a_retarget_otherwise():
         dict(walk, tags=["walk"], approval={"status": "not_looked"}, bible_version="1.5"),
         dict(wave, tags=["wave"], approval={"status": "not_looked"}, bible_version="1.5")]}
     assert [a["id"] for a in R.RigAdapter(lib).playable("rig.ubc")] == ["animation.walk"]
+
+
+def test_run_rhubarb_without_a_dialog_file_and_its_failure_text(tmp_path):
+    out = tmp_path / "cues.json"
+    seen = {}
+
+    class P:
+        returncode, stderr = 0, ""
+
+    def run(argv, **kw):
+        seen["argv"] = argv
+        out.write_text(__import__("json").dumps(HI), encoding="utf-8")
+        return P()
+    got = R.run_rhubarb(tmp_path / "line.wav", out, exe="rh", run=run)
+    assert "-d" not in seen["argv"] and seen["argv"][0] == "rh" and seen["argv"][-1].endswith("line.wav")
+    assert got["cues"][1] == (0.05, 0.27, "D")
+
+    class Bad:
+        returncode, stderr = 1, "Error: cannot read file"
+    with pytest.raises(RuntimeError, match="cannot read file"):
+        R.run_rhubarb(tmp_path / "line.wav", out, run=lambda *a, **k: Bad())
+
+
+def test_bone_map_is_exact_names_only():
+    same = R.bone_map(["root", "pelvis", "Head"], ["root", "pelvis", "Head"])
+    assert same["identical"] and same["unmatched_source"] == [] and same["map"]["Head"] == "Head"
+    other = R.bone_map(["root", "Hips", "Head"], ["root", "pelvis", "head"])
+    assert not other["identical"] and other["map"] == {"root": "root"}
+    assert other["unmatched_source"] == ["Hips", "Head"] and other["unmatched_target"] == ["pelvis", "head"]

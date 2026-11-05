@@ -4080,3 +4080,46 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   wrong size, wrong clip rate, stroke width) triggers exactly its row.
 - Results: `docs_lint` 0 findings; fast suite 2723 passed, 2 skipped, 2 xfailed (`test_seams` deselected: the inherited ffprobe failure).
 - Cost: $0. No pod and no paid call.
+
+### 2026-11-05 — ICW-06: characters, rigs, lip-sync, scene builder, camera rigs (Ink Chronicle, roadmap 10.1, 11, 15)
+
+- Work package ICW-06, branch `icw/06-characters` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c35678d, after the
+  PR #129 merge). Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw06_2026-11-05/HANDOFF_ICW-06.md`.
+- Assets (PoC 1, all CC0, $0): Quaternius Universal Base Characters, Universal Animation Library 1 (43 clips) and Modular Character
+  Outfits Fantasy, fetched by `assets/itch.py` (the page's own free-download button; refuses a pack whose minimum price is not 0).
+  `blender/characters.py` packs the glTF members into deterministic GLBs (a missing `*_png.png` normal map is dropped with its
+  slot) and registers 11 external records (`character_assets.json`; `licence_sources.json` row `quaternius_mco`); the GLBs are on
+  the vault under `assets/3d/**`, 11 of 11 with the same hash. PoC 1 finding: body, hair, outfits and clips share one 65-joint
+  skeleton with identical names, so every clip plays without a retarget (`rigs.bone_map` measures it; no fuzzy matching).
+- `characters.json` (character/1): three test characters (two men, one woman), four costumes, slot materials (skin always the
+  head's flat mean colour, so hands match the face; costume tint = a palette token; hair tint), the mouth (Rhubarb A-H + X).
+- `bpy/render_shot.py`: `character` objects: the parts merged onto the first part's armature, the body cut to the head bones, one
+  UAL clip per member as an NLA strip (offset, speed), the mouth as jaw shape keys plus a dark opening lens (the UBC lips are one
+  closed surface), lip-sync keys; rig copies share their meshes in a crowd; camera `keys` (several poses, optional bone tracking);
+  world bounds per object in the report.
+- `blender/turnaround.py` (D-101): 4 body views + 9 mouth close-ups tracked on the posed head, the sheet registered as
+  `sheet.<character>_<costume>_turnaround` with the head as its parent.
+- `blender/rigs.py`: `run_rhubarb` (no dialog file only for a reused take), `LipSync.plan` (refuses a shot over BP-108
+  `dialogue_shot_max_s`; registry `enforced_by` updated, table regenerated), `LipSync.busiest` (the window with the most mouth
+  changes), `bone_map`.
+- `blender/scene_builder.py`: the six camera rigs of 10.1 (static, push, dolly, rail, orbit, dramatic_curve; four eases) sampled
+  into LINEAR keys every 4 frames; the cast checked against the library (head asset, animation set, sha256);
+  `blender_scene_manifest/1` from the bpy report; `smoke`: one rigged character under a rail, Workbench (added to the Blender smoke
+  workflow, packs cached by their sha256).
+- `blender/benchmark_shots.py`: S1-S6 of 12.4 as shot_spec/2 + described scenes. All six built and rendered headless here (2 frames,
+  half scale, CPU EEVEE / Cycles): S1 10.8, S2 14.0, S3 19.1 (18 characters, 258 objects), S4 8.4, S5 6.8, S6 12.8 s/frame. Deviations:
+  S3 without Geometry Nodes instancing and the dust volume, S4 on the primitive hills (no Poly Haven terrain registered); both go to
+  the ICW-09 preflight list.
+- `style_sheets clips`: the real cast by default (`--cast real`), speaker_a lip-synced from Rhubarb cues (`--cues`, or `--wav` +
+  `--rhubarb`); the spec then carries `performance.rhubarb` (CN-17). `style.material(strength=)` overrides a material's texture share.
+- Not done here: Rhubarb could not run in this cloud session (an external binary); the Mac runs it on an existing ElevenLabs take
+  (PoC 2's offset and silence lines are measured there). The MPFB2 body and a foreign-skeleton retarget are out of scope (PoC 1
+  passed natively). For ICW-07: a costume and clip field in shot_spec/2 `characters` (the cast table carries them today).
+- Tests: `test_characters.py` (7), `test_scene_builder.py` (10), additions to `test_lipsync_map.py`, `test_style_sheets.py`,
+  `test_blender_style.py`.
+- Cost: $0. No pod and no paid call.
+- Rule D-114 (creator 2026-11-05 17:31 UTC): free runs (a Mac test render, a GitHub Actions run) start without asking; paid runs
+  keep the OR-23 plan, the OR-34 audit and his word. CLAUDE.md invariant 1 carries the line.
+- Results: `docs_lint` 0 findings; fast suite 2727 passed, 7 skipped, 2 xfailed; 5 failed only for the missing `cv2` in this
+  container (`test_lora_training`, `test_xworld_v1_score`; the same 5 fail on the base without these changes; `test_seams`
+  deselected as before).
