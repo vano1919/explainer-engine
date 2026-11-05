@@ -2,7 +2,7 @@
 
 **Status:** authoritative planning deliverable of the Fable master task ([FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md)).
 **Branch:** `opus/ink-chronicle-blender-visual-system-2026-11-04` (the ONLY working branch). Audited HEAD before this document: `bb1243e5c7d8bf7935f2a2fd59ef24dede920c4c`.
-**Written:** 2026-11-05 by the Fable planning thread; revisions 2-5 the same day (section 19: creator's independent review; section 20: rule rewrite first; section 21: reuse-first audit; rev. 5: the Fable xhigh verification's fixes M1-M4, m1-m6, see 22). Documentation only; no runtime, test, pod, paid call or `main` change.
+**Written:** 2026-11-05 by the Fable planning thread; revisions 2-6 the same day (section 19: creator's independent review; section 20: rule rewrite first; section 21: reuse-first audit; rev. 5: the Fable xhigh verification's fixes M1-M4, m1-m6, see 22). Documentation only; no runtime, test, pod, paid call or `main` change.
 **One home rule:** this file is the one roadmap. Older branch documents stay as evidence and are linked, never copied (section 3).
 
 Evidence labels used throughout: **REPO** = verified repository fact (path, symbol, line at HEAD `bb1243e`), **EXT** = verified external fact (source + access date 2026-11-05), **CREATOR** = creator-approved requirement, **MEASURED** = measured in this repository or on CI, **VENDOR** = vendor claim, **EST** = estimate (arithmetic over stated assumptions), **HYP** = hypothesis, **OPEN** = open creator decision, **NOT FOUND** = searched, does not exist.
@@ -489,6 +489,23 @@ Dependency order and the critical path (rev. 3, creator 2026-11-05 08:13 UTC: "t
 | 3 Scenes and integration | ICW-06, ICW-07, ICW-08 | $0 |
 | 4 Benchmark | ICW-09 | ICG-2 line (proposed ≤ US$6 for two GPU classes with repeats, 12.3; the creator's word on the OR-23 plan), after the OR-34 Fable audit |
 | 5 Pilot | ICW-10 | render of the first two parts: estimated from measured rows, approved per OR-19/OR-23 |
+
+### 15.1 Parallel execution plan and file ownership (rev. 6, creator 2026-11-05 08:39 UTC: "several threads or one by one, so that we have no race condition")
+
+Three packages run alone because they touch files every other package needs; the rest run in waves of at most two threads with disjoint file ownership. More than three concurrent threads gain nothing: every later package waits on ICW-02 or ICW-04.
+
+| Step | Threads | Packages | Why alone / why parallel |
+|---|---|---|---|
+| 1 | 1 | ICW-01 | rewrites rule docs, registry, bible, agents; everything rebases on it |
+| 2 | 1 | ICW-00 | comment cleanup across ~297 files; any parallel branch would conflict on every file |
+| 3 | 1 | ICW-02 | contracts and fixtures that every renderer, planner and validator imports |
+| 4 | 2 | ICW-03 ‖ ICW-04 | disjoint: `visual/`, `qa/speech_mix.py`, KP/VP lines ‖ `blender/{project,profiles,render,cost}.py`, `bpy/`, `training/pods/blender_render.py`, `.github/workflows/blender-smoke.yml`, `config/cloud_pins.json`, `config/job_speeds.json` |
+| 5 | 2 | ICW-05 ‖ ICW-08 | disjoint: `blender/{style,assets}.py`, `assets/library.py`, `assets_reuse.py`, `edit/style_bridge.py`, `config/vault.json`, `world/` ‖ `blender/validate.py`, `qa/scorecard.py` rows, `tests/unit/test_blender_validate.py` |
+| 6 | 1 | ICW-06 | needs ICW-04 and ICW-05 merged; owns `blender/{scene_builder,rigs}.py` |
+| 7 | 1 | ICW-07 | the integration owner: `edit/router.py`, the end-to-end test, `cloud_pins` legacy marks; the only thread that merges others' PRs into the working branch |
+| 8 | 1 | ICW-09, then ICW-10 | paid; one pod at a time (OR-23, watchdog) |
+
+Rules that prevent races: (a) every package works on its own branch `icw/<nn>-<slug>` cut from the working branch after the previous step merged, and returns by PR into the working branch (never into `main`); (b) a file has one owner per wave (table above); a package that must touch a file outside its list stops and reports (invariant 12) instead of editing it; (c) shared files `core/contracts.py`, `edit/router.py`, `production/assemble.py`, `standards/sourced_rules.json`, `docs/DECISIONS_AND_OPEN_QUESTIONS.md`, `docs/INDEX.md`, `docs/CONTRACTS.md` are owned by ICW-02 (step 3) and ICW-07 (step 7) only; waves 4-5 propose changes to them as a note in their PR for ICW-07 to apply; (d) `docs/PROGRESS.md` is appended only at merge time by the thread that merges, so two threads never edit it at once; (e) each PR must be rebased on the working branch and green on the fast checks (`pytest -m "not system and not media"` minus the `cv2` set, `docs_lint`) before merge; (f) the model/effort per thread follows `config/model_routing.json` (section 15 sizes), and the creator's usage-limit rule (over 90 % → Sonnet medium) applies per thread.
 
 **ICW-00 Branch hygiene and green baseline** — S1 (mechanical-change, Sonnet). Objective: remove the Master Mold header blocks (293 `.py` files, 297 files in all) and class lines, delete the 33 proven-orphan stubs and `scripts/validate_mold_compliance.py`, regenerate the stale sourced-rules table and the Napoleon fixtures (`python -m explainer_engine.standards.sourced_rules write`; `python -m explainer_engine.scripting.variant_plan napoleon --write`), fix the three undefined BP citations. Non-goals: any behaviour change. Prerequisites: none. Paths: the files listed by `grep -rl CLAUDE-MASTER-MOLD-SYNC explainer_engine tests scripts docs` (297 at HEAD), `docs/SOURCED_RULES.md`, `tests/fixtures/**napoleon**`. Reused: `tests/unit/test_repo_hygiene.py`. Sequence: AST snapshot → strip → AST compare → delete stubs → regenerate → full suite. Contracts: none. Tests/commands: `python -m pytest -m "not system and not media"` (expect only the 6 `cv2` failures where cv2 is absent), `python -m explainer_engine.docs_lint`. Acceptance: the 11 inherited failures are gone; `git diff --stat` touches comments, stubs, generated docs and fixtures only. Risks: a stub that a `.claude` agent page names (checked by `test_agent_governance`) — the test will say so; rollback = revert the single commit. Confidence H. Parallel: none (everything rebases on it).
 
