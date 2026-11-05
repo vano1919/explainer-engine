@@ -6798,7 +6798,8 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/core/contracts.py:_shot_spec_2"
+    "explainer_engine/core/contracts.py:_shot_spec_2",
+    "explainer_engine/blender/validate.py"
    ],
    "supersedes": [],
    "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
@@ -6817,7 +6818,9 @@
     "line_edge_variance": 0.25
    },
    "sources": [],
-   "enforced_by": [],
+   "enforced_by": [
+    "explainer_engine/blender/validate.py"
+   ],
    "supersedes": [],
    "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
    "next_step": "blender/validate.py (ICW-08) reads these keys; thresholds revisited on the ICW-09 frames"
