@@ -231,8 +231,18 @@ def darker_brows(rgb=(0.03, 0.02, 0.012)):
             inp.default_value = (*rgb, 1.0)
 
 
+def shrink_top(mm=4.0):
+    """Rain's linen top is the undershirt: pull its surface in a few mm so it never pokes through the tabard or the trousers."""
+    top = bpy.data.objects["GEO-rain-top"]
+    d = top.modifiers.new("ShrinkUnderTabard", "DISPLACE")
+    d.direction = "NORMAL"
+    d.mid_level = 0.0
+    d.strength = -mm / 1000.0
+
+
 def bake_look(rig):
     darker_brows()
+    shrink_top()
     for name, rgb in OUTFIT.items():
         flat_cloth(name, rgb)
     pb = rig.pose.bones["Properties_IKFK"]
