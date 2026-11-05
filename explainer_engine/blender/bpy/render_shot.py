@@ -354,7 +354,7 @@ def apply_settings(scene, job):
         set_attr(cy, "seed", job.get("seed"), applied, missing, "cycles.seed")
         if job["device"] == "gpu":
             prefs = bpy.context.preferences.addons["cycles"].preferences
-            for kind in ("OPTIX", "CUDA"):
+            for kind in ("OPTIX", "CUDA", "METAL"):  # METAL: Apple silicon (the creator's Mac, ICG-3)
                 try:
                     prefs.compute_device_type = kind
                     prefs.get_devices()
@@ -363,7 +363,7 @@ def apply_settings(scene, job):
                 except TypeError:
                     continue
             else:
-                raise RuntimeError("device gpu: Cycles finds no OPTIX or CUDA device")
+                raise RuntimeError("device gpu: Cycles finds no OPTIX, CUDA or METAL device")
             for d in prefs.devices:
                 d.use = d.type == prefs.compute_device_type
             cy.device = "GPU"

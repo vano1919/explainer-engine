@@ -179,8 +179,12 @@ def test_mp4_is_a_review_copy_from_the_frames(tmp_path):
     rec = SS.mp4(tmp_path / "frames", tmp_path / "clips" / "x.mp4", run=run)
     assert rec["path"].endswith("x.mp4") and (tmp_path / "clips" / "x.mp4").read_bytes() == b"mp4"
     cmd = calls[0]
-    assert cmd[cmd.index("-c:v") + 1] == "libx264" and cmd[cmd.index("-pix_fmt") + 1] == "yuv420p"
-    assert cmd[cmd.index("-framerate") + 1] == "24"
+    assert cmd[cmd.index("-c:v") + 1] == "libx264" and cmd[cmd.index("-framerate") + 1] == "24"
+    # BT.709 tagged and converted (untagged BT.601 read as BT.709 shifted green by 3 levels on the Mac)
+    vf = cmd[cmd.index("-vf") + 1]
+    assert "out_color_matrix=bt709" in vf and "in_range=pc:out_range=tv" in vf and vf.endswith("format=yuv420p")
+    tags = {k: cmd[cmd.index(k) + 1] for k in ("-colorspace", "-color_primaries", "-color_trc", "-color_range")}
+    assert tags == {"-colorspace": "bt709", "-color_primaries": "bt709", "-color_trc": "iec61966-2-1", "-color_range": "tv"}
 
 
 def test_clip_collage_has_a_row_per_clip_variant(tmp_path):
@@ -194,3 +198,9 @@ def test_clip_collage_has_a_row_per_clip_variant(tmp_path):
     path = SS.clip_collage(tmp_path, cell_w=320)
     with Image.open(path) as im:
         assert im.width == 360 + 2 * (320 + 12) + 12 and im.height == 70 + 2 * (180 + 12) + 12
+
+
+def test_collage_labels_never_fall_back_to_the_tiny_bitmap_font(monkeypatch):
+    monkeypatch.setattr(SS, "FONTS", ("no-such-font.ttf",))
+    f = SS._font(80)
+    assert f.getbbox("B")[3] > 40  # a scalable font at the asked size (the Mac collage had 11 px labels)

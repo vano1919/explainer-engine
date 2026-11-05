@@ -369,7 +369,7 @@ def job_scene(scene_id: str, variant_id: str, sc: dict, paths: dict[str, Path]) 
 
 
 def render(out: Path, *, binary: str | None = None, scene_ids=SCENE_IDS, variant_ids=VARIANT_IDS, samples: int = 16,
-           scale: float = 1.0, log=print) -> list[dict]:
+           scale: float = 1.0, device: str = "auto", log=print) -> list[dict]:
     """Every scene x variant through HeadlessRender; frames go to a LocalVault under ``out``. ``scale`` < 1 renders a smaller
     test frame (the shot spec stays the 1440p master; the row is then marked ``scaled`` and never shown as a sheet)."""
     from explainer_engine.blender import render as R
@@ -377,7 +377,7 @@ def render(out: Path, *, binary: str | None = None, scene_ids=SCENE_IDS, variant
     out = Path(out)
     paths = fetch()
     scs = scenes(paths)
-    b = BlenderProject().resolve(binary)
+    b = BlenderProject().resolve(binary, device=device)
     vault = R.LocalVault(out / "vault")
     rows = []
     for sid in scene_ids:
@@ -422,8 +422,15 @@ def frame_times(sdir: Path) -> dict:
             "mean_s": round(sum(ordered) / len(ordered), 3) if ordered else None, "frames": len(ordered)}
 
 
+# The review copy's colour: the sRGB PNGs go to limited-range BT.709 Y'CbCr and the stream says so (matrix, primaries, transfer,
+# range). Without this ffmpeg writes untagged BT.601 that players read as BT.709 (measured on the Mac, 2026-11-05: green +3.15
+# levels; tagged as here, about 0.47).
+MP4_COLOUR = ["-vf", "scale=in_range=pc:out_range=tv:out_color_matrix=bt709:flags=accurate_rnd+full_chroma_int,format=yuv420p",
+              "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "iec61966-2-1", "-color_range", "tv"]
+
+
 def mp4(frames_dir: Path, dest: Path, *, fps: int = 24, run=None) -> dict:
-    """An H.264 review copy of a committed clip (yuv420p, CRF 16: for watching, never the master). None without ffmpeg."""
+    """An H.264 review copy of a committed clip (BT.709 tagged, CRF 16: for watching, never the master). None without ffmpeg."""
     import shutil
     import subprocess
     run = run or subprocess.run
@@ -432,8 +439,8 @@ def mp4(frames_dir: Path, dest: Path, *, fps: int = 24, run=None) -> dict:
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_suffix(".part.mp4")
     cmd = ["ffmpeg", "-nostdin", "-y", "-loglevel", "error", "-framerate", str(fps), "-start_number", "0",
-           "-i", str(Path(frames_dir) / "frame_%06d.png"), "-c:v", "libx264", "-preset", "slow", "-crf", "16",
-           "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(tmp)]
+           "-i", str(Path(frames_dir) / "frame_%06d.png"), *MP4_COLOUR, "-c:v", "libx264", "-preset", "slow", "-crf", "16",
+           "-movflags", "+faststart", str(tmp)]
     p = run(cmd, capture_output=True, text=True)
     if p.returncode != 0:
         raise RuntimeError(f"ffmpeg could not make {dest.name}: {(p.stderr or '').strip()[:300]}")
@@ -442,7 +449,7 @@ def mp4(frames_dir: Path, dest: Path, *, fps: int = 24, run=None) -> dict:
 
 
 def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, variant_ids=tuple(CLIP_VARIANTS),
-          frames: int = CLIP_FRAMES, samples: int = 16, scale: float = 1.0, log=print) -> list[dict]:
+          frames: int = CLIP_FRAMES, samples: int = 16, scale: float = 1.0, device: str = "auto", log=print) -> list[dict]:
     """Round 2: every clip scene x clip variant as a ``frames``-long VIDEO_3D shot through HeadlessRender, an MP4 review copy
     each, and ``out/style_clips.json`` (rows written as they finish, so a stop keeps what is done)."""
     from explainer_engine.blender import render as R
@@ -450,7 +457,7 @@ def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, varian
     out = Path(out)
     paths = fetch()
     base = scenes(paths)
-    b = BlenderProject().resolve(binary)
+    b = BlenderProject().resolve(binary, device=device)
     vault = R.LocalVault(out / "vault")
     rows = []
     for sid in scene_ids:
@@ -486,6 +493,21 @@ def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, varian
     return rows
 
 
+FONTS = ("DejaVuSans.ttf", "/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/Supplemental/Arial.ttf")
+
+
+def _font(size: int):
+    """A label font at ``size`` px: DejaVu (Linux), the Mac's Helvetica or Arial, else Pillow's own scalable font (never the
+    tiny bitmap default, which made the Mac collage labels unreadable)."""
+    from PIL import ImageFont
+    for name in FONTS:
+        try:
+            return ImageFont.truetype(name, size)
+        except OSError:
+            continue
+    return ImageFont.load_default(size=size)
+
+
 def _grid(rows, variants, scene_ids, label, path: Path, *, cell_w: int) -> Path:
     from PIL import Image, ImageDraw, ImageFont
     cell_h = cell_w * 9 // 16
@@ -494,10 +516,7 @@ def _grid(rows, variants, scene_ids, label, path: Path, *, cell_w: int) -> Path:
     pal = S.palette()
     sheet = Image.new("RGB", (W, H), pal["paper"])
     d = ImageDraw.Draw(sheet)
-    try:
-        font, small, big = (ImageFont.truetype("DejaVuSans.ttf", n) for n in (30, 22, 80))
-    except OSError:
-        font = small = big = ImageFont.load_default()
+    font, small, big = (_font(n) for n in (30, 22, 80))
     for j, sid in enumerate(scene_ids):
         d.text((side + pad + j * (cell_w + pad), 20), LABELS[sid], fill=pal["ink"], font=font)
     for i, vid in enumerate(variants):
@@ -551,10 +570,7 @@ def collage(out: Path, *, cell_w: int = 960) -> Path:
     pal = S.palette()
     sheet = Image.new("RGB", (W, H), pal["paper"])
     d = ImageDraw.Draw(sheet)
-    try:
-        font, small, big = (ImageFont.truetype("DejaVuSans.ttf", n) for n in (30, 22, 80))
-    except OSError:
-        font = small = big = ImageFont.load_default()
+    font, small, big = (_font(n) for n in (30, 22, 80))
     for j, sid in enumerate(scene_ids):
         d.text((side + pad + j * (cell_w + pad), 20), LABELS[sid], fill=pal["ink"], font=font)
     for i, vid in enumerate(variants):
@@ -600,6 +616,8 @@ def main(argv: list[str] | None = None) -> int:
     cl.add_argument("--variants", default=",".join(CLIP_VARIANTS))
     cl.add_argument("--frames", type=int, default=CLIP_FRAMES)
     cl.add_argument("--scale", type=float, default=1.0)
+    for sp in (rd, cl):
+        sp.add_argument("--device", default="auto", choices=("auto", "cpu", "gpu"))
     a = ap.parse_args(argv)
     if a.cmd == "register":
         for rec in register(Path(a.downloads)):
@@ -611,11 +629,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "render":
         render(Path(a.out), binary=a.binary, scene_ids=a.scenes.split(","), variant_ids=a.variants.split(","), samples=a.samples,
-               scale=a.scale)
+               scale=a.scale, device=a.device)
         return 0
     if a.cmd == "clips":
         clips(Path(a.out), binary=a.binary, scene_ids=a.scenes.split(","), variant_ids=a.variants.split(","), frames=a.frames,
-              scale=a.scale)
+              scale=a.scale, device=a.device)
         print(clip_collage(Path(a.out)))
         return 0
     print(collage(Path(a.out)))

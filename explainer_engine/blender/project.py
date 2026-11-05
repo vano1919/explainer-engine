@@ -16,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import platform
 import re
 import shutil
 import subprocess
@@ -66,16 +67,25 @@ def _run(cmd: list[str], timeout: float) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
 
 
-def gpu_name(run=_run) -> str | None:
-    """The first NVIDIA card's name, or None when there is none (``nvidia-smi`` missing or failing within 20 s)."""
-    if shutil.which("nvidia-smi") is None:
-        return None
-    try:
-        p = run(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], 20)
-    except (OSError, subprocess.SubprocessError):
-        return None
-    name = (p.stdout or "").strip().splitlines()
-    return name[0].strip() if p.returncode == 0 and name and name[0].strip() else None
+def gpu_name(run=_run, *, system: str | None = None, machine: str | None = None) -> str | None:
+    """The GPU a render can use, or None: the first NVIDIA card (``nvidia-smi``), else on Apple silicon the chip (its GPU is
+    on the chip; Blender uses it through Metal: EEVEE always, Cycles with compute type METAL), named by ``sysctl``."""
+    if shutil.which("nvidia-smi") is not None:
+        try:
+            p = run(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], 20)
+            name = (p.stdout or "").strip().splitlines()
+            if p.returncode == 0 and name and name[0].strip():
+                return name[0].strip()
+        except (OSError, subprocess.SubprocessError):
+            pass
+    if (system or platform.system()) == "Darwin" and (machine or platform.machine()) == "arm64":
+        try:
+            p = run(["sysctl", "-n", "machdep.cpu.brand_string"], 20)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        name = (p.stdout or "").strip()
+        return name if p.returncode == 0 and name.startswith("Apple") else None
+    return None
 
 
 class BlenderProject:
@@ -146,9 +156,10 @@ class BlenderProject:
 
     def resolve(self, binary: Path | str | None = None, *, device: str = "cpu", run=_run) -> BlenderBinary:
         """The binary a render runs on, held to the pin: ``--version`` must print ``Blender <pinned version>``. ``device`` gpu
-        needs an NVIDIA card (``nvidia-smi``); its name goes into the render manifest."""
-        if device not in ("cpu", "gpu"):
-            raise BlenderPinError(f"device {device!r} is cpu or gpu")
+        needs an NVIDIA card or Apple silicon (``gpu_name``); its name goes into the render manifest. ``auto`` = gpu when there
+        is one, else cpu (a CI runner: EEVEE then draws through Mesa's software OpenGL, which is the CPU)."""
+        if device not in ("cpu", "gpu", "auto"):
+            raise BlenderPinError(f"device {device!r} is cpu, gpu or auto")
         path = self.find(binary)
         try:
             p = run([path, "--factory-startup", "--version"], 120)
@@ -162,9 +173,11 @@ class BlenderProject:
             raise BlenderPinError(f"{path} is Blender {m.group(1)}, not the pinned {self.version} (BP-175); the pin moves only "
                                   "by a decision-log row")
         h = HASH_LINE.search(text)
-        gpu = gpu_name() if device == "gpu" else None
+        gpu = gpu_name(run) if device in ("gpu", "auto") else None
         if device == "gpu" and gpu is None:
-            raise BlenderPinError("device gpu asked for, but nvidia-smi names no card")
+            raise BlenderPinError("device gpu asked for, but there is no NVIDIA card (nvidia-smi) and no Apple silicon GPU")
+        if device == "auto":
+            device = "gpu" if gpu else "cpu"
         return BlenderBinary(path=path, version=m.group(1), build_hash=h.group(1) if h else None, device=device, gpu=gpu)
 
 
