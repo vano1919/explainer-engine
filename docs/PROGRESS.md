@@ -4025,3 +4025,38 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   (it needs downloads). The ICW-07 notes are in the PR and the handoff.
 - Results: `docs_lint` 0 findings; fast suite 2658 passed, 0 failed (`test_seams` is the inherited ffprobe failure).
 - Cost: $0. No download, no pod, no paid call.
+
+### 2026-11-05 — ICW-05b: style engine, style bridge, PoC 3 CC0 assets, style sheets and motion clips (Ink Chronicle, roadmap 9.1, 21.6)
+
+- Work package ICW-05b (the rest of ICW-05), branch `icw/05b-style` from `opus/ink-chronicle-blender-visual-system-2026-11-04`
+  (d605b81), PR #127. Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw05b_2026-11-05/HANDOFF_ICW-05b.md`.
+- `blender/style.py` builds `style_graph/1` as data:
+  - the EEVEE path: Shader to RGB, a three-step ramp, rim, Emission;
+  - the Cycles-safe path: an N·L ramp;
+  - shared by both: Line Art, the paper pass and AgX.
+- The light profile is the default (the creator, 2026-11-05: palette and frame quality first, shadows and reflections secondary).
+  There are no cast shadows and no ray tracing, AO or fast GI; `StyleTokens.shadows` and `palette_match` are switches.
+- `blender/grade.py` and `agx_palette_match.json` invert AgX Medium High Contrast for each colour (OCIO). The palette's mean dE
+  drops from 12.98 to 2.25. Amber, teal and faction_b stay out of AgX's reach.
+- `bpy/render_shot.py` gains described scenes and motion keys. It is still the only bpy importer.
+- `edit/style_bridge.py` covers HELPER frames.
+- `blender/project.py` recognises an Apple silicon GPU (`device=auto`), and Cycles uses METAL there.
+- PoC 3: 9 CC0 records (Poly Haven, ambientCG), stored external and hash-verified on the vault. No binary is in git.
+- Renders, all free:
+  - 5 style sheets × A/B/C/S at 1440p, with EEVEE on the GitHub runner;
+  - 8 clips of 48 frames (2 scenes × B_shadow / B_light / B_match / A_match) on the creator's Mac M4 Pro, 0.33-0.73 s/frame;
+  - without shadows a frame is about 35 % faster, and the palette match costs nothing.
+- **Creator pick deferred:** ვანო (2026-11-05 14:58 UTC) picks the look on real-character frames in ICW-06. Every variant stays
+  selectable and the bible v1.5 `style` block is not written yet. The Mac is for tests only; production renders run on RunPod.
+- Open question, a contract matter for ICW-07 and the bible: an exact palette needs the Standard view transform, but shot_spec/2 pins
+  `view_transform` to AgX.
+- For ICW-07:
+  - add style.py to BP-173's `enforced_by` (style.py reads no threshold until then);
+  - `style_graph/1` in CONTRACTS;
+  - a described-scene field in shot_spec/2;
+  - INDEX rows;
+  - the AgX look-id note in roadmap 9.1;
+  - palette tokens for terrain (`SCENE_COLOURS`);
+  - eevee_full's missing `use_gtao` belongs to ICW-09.
+- Results: `docs_lint` 0 findings; fast suite 2705 passed (`test_seams` is the inherited ffprobe failure).
+- Cost: $0. No pod and no paid call.
