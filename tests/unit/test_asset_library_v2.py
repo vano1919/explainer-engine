@@ -36,7 +36,7 @@ def test_the_committed_library_is_v2_and_clean_under_cn19():
 
 
 def test_a_v1_document_upgrades_with_git_storage_and_commercial_use_by_definition():
-    v1 = {"schema": "asset_library/1", "items": [json.loads(json.dumps(i)) for i in L.load()["items"]]}
+    v1 = {"schema": "asset_library/1", "items": [json.loads(json.dumps(i)) for i in L.load()["items"] if i["kind"] in L.KINDS_V1]}
     for it in v1["items"]:
         it.pop("deps"), it.pop("storage"), it["licence"].pop("commercial_use")
     v2 = L.upgrade(v1)
