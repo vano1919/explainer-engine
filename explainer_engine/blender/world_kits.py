@@ -386,7 +386,7 @@ def kit_material(glb: Path, a: dict, *, strength: float | None = None, repo: Pat
 
 
 def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc: dict | None = None,
-           repo: Path | None = None) -> tuple[list[dict], dict[str, dict]]:
+           repo: Path | None = None, pbr: bool = False) -> tuple[list[dict], dict[str, dict]]:
     """(``described`` objects, toon materials) of a layout. ``paths`` is ``fetch()``'s answer. Pieces of one asset share one
     material; a piece the layout does not place costs nothing."""
     t = t or table()
@@ -406,7 +406,7 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         mname, spec = made[a["id"]]
         mats[mname] = spec
         objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"]}, "location": p["pos"],
-                     "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": mname, "smooth": False})
+                     "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": None if pbr else mname, "smooth": False})
     return objs, mats
 
 
@@ -451,16 +451,18 @@ POC_SHOTS = {
 
 
 # The static epic set (the creator, 2026-11-05: a rich world is the main character): a 1440p still and a slow push of the same set.
+C5_SAMPLES = 48   # C5 Cycles profile: low samples + denoise (the overnight plan); the cost per frame is the finding
+
 HILL_SHOTS = {"castle_still": ([-38.0, -30.0, 26.0], None, [0.0, 60.0, 16.0], None, 28, 1),
               "castle_push": ([-38.0, -30.0, 26.0], [-26.0, -14.0, 20.0], [0.0, 60.0, 16.0], [0.0, 60.0, 16.0], 28, 0)}
 
 
 def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: int = POC_FRAMES,
-               layout: str = "castle_courtyard") -> dict[str, dict]:
+               layout: str = "castle_courtyard", pbr: bool = False) -> dict[str, dict]:
     """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs.
     ``hill_castle`` is static (no cast): a still (1 frame) and a push (``frames``)."""
     from explainer_engine.blender import style_sheets as SS
-    kit, kit_mats = expand(layout, paths)
+    kit, kit_mats = expand(layout, paths, pbr=pbr)
     if layout == "hill_castle":
         out = {}
         for sid, (c0, c1, a0, a1, lens, n) in HILL_SHOTS.items():
@@ -499,12 +501,15 @@ def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frame
     out.mkdir(parents=True, exist_ok=True)
     kit = fetch()
     paths = {**SS.fetch(), **kit}
-    scn = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" else None, frames, layout)
+    scn_cache = {}
     b = BlenderProject().resolve(binary, device=device)
     vault = R.LocalVault(out / "vault")
     rows = []
     for vid in variant_ids:
-        for sid, sc in scn.items():
+        pbr = vid in SS.PBR_VARIANTS   # C5: the kit's own glTF materials under Cycles, no toon replacement
+        if pbr not in scn_cache:
+            scn_cache[pbr] = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" else None, frames, layout, pbr=pbr)
+        for sid, sc in scn_cache[pbr].items():
             if shots and sid not in shots:
                 continue
             scene, graph = SS.job_scene(sid, vid, sc, paths)
@@ -512,6 +517,8 @@ def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frame
             n = scene.get("frames_total", 1)
             spec = SS.spec_for(sid, vid, tokens, scene=scene, frames=n)
             spec["job_id"] = POC_JOB_ID
+            if pbr:
+                spec["render"].update({"samples": C5_SAMPLES, "denoise": True})
             if scale != 1.0:
                 spec["frame"]["render_scale"] = scale
             t0 = time.time()

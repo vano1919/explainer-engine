@@ -92,6 +92,162 @@
     "textures/GothicCabinet_01_diff_1k.jpg": "67ce3b2ce0a43cd209114084d49de35c",
     "textures/GothicCabinet_01_nor_gl_1k.jpg": "a2912d1111ac0a4877af75280e539763"
    }
+  },
+  "modular_wooden_pier": {
+   "resolution": "1k",
+   "files_md5": {
+    "modular_wooden_pier.bin": "dbdbeca4676a3012a64b4daa75d1f97c",
+    "modular_wooden_pier_1k.gltf": "5a5c75c7711b8804c680970a60bd382f",
+    "textures/modular_wooden_pier_planks_arm_1k.jpg": "e6ffdf7314cc015aaa5c0899326b42a7",
+    "textures/modular_wooden_pier_planks_diff_1k.jpg": "f3fef39b0ec16e4006678c846d3601ab",
+    "textures/modular_wooden_pier_planks_nor_gl_1k.jpg": "b752108fe7504d5dd4ae0f4701b1218b",
+    "textures/modular_wooden_pier_poles_arm_1k.jpg": "feb305e6fc0f59f48c57e0e5e591b637",
+    "textures/modular_wooden_pier_poles_diff_1k.jpg": "7aade157e5892017ee86a6e13074b727",
+    "textures/modular_wooden_pier_poles_nor_gl_1k.jpg": "2a6f536ed9057bb8e2a813b7755cc534"
+   }
+  },
+  "dutch_ship_medium": {
+   "resolution": "1k",
+   "files_md5": {
+    "dutch_ship_medium.bin": "f73e0108855bc3aef1a65a737a37f575",
+    "dutch_ship_medium_1k.gltf": "ade58c8bbbc75ebcafd5f7f9bbd5cfea",
+    "textures/dutch_ship_medium_hull_arm_1k.jpg": "0f24fc5c2234c69a532f4d6c7ed743d8",
+    "textures/dutch_ship_medium_hull_diff_1k.jpg": "ea6a1429fc1f457d080ddd0a84d0b1d3",
+    "textures/dutch_ship_medium_hull_nor_gl_1k.jpg": "db1b09ba5e9456a24ca75a04fcdec460",
+    "textures/dutch_ship_medium_rigging_arm_1k.jpg": "ef43b6361c191488cf38e9dc3ae2ff2c",
+    "textures/dutch_ship_medium_rigging_diff_1k.jpg": "9be03bbd49b2351bf876cff4151d885e",
+    "textures/dutch_ship_medium_rigging_nor_gl_1k.jpg": "9c80020acc0933c64d1d1cafabfe4355",
+    "textures/dutch_ship_medium_sails_arm_1k.jpg": "841c9af726ee8fb3fa412cae8cb94068",
+    "textures/dutch_ship_medium_sails_diff_1k.jpg": "bc208c775eb005386d089ad5dc1eec00",
+    "textures/dutch_ship_medium_sails_nor_gl_1k.jpg": "dd9c9577f8e63071c62448b56f2951f5"
+   }
+  },
+  "ship_pinnace": {
+   "resolution": "1k",
+   "files_md5": {
+    "ship_pinnace.bin": "154e557f7ecc84a31a213bf176581801",
+    "ship_pinnace_1k.gltf": "dca97c677eadc565d7efa4e4c29863ef",
+    "textures/ship_pinnace_aft_arm_1k.jpg": "f479e1318044e212e235d5b2625ddb7d",
+    "textures/ship_pinnace_aft_diff_1k.jpg": "841f0a07cb7fea4fb727f6a3452f8f0d",
+    "textures/ship_pinnace_aft_nor_gl_1k.jpg": "ee37386069785283142a080d9ecf477e",
+    "textures/ship_pinnace_deck_arm_1k.jpg": "6d78da350d090ae4a62319c487f04bf8",
+    "textures/ship_pinnace_deck_diff_1k.jpg": "5b64def85f9d91987ba566844cb938c0",
+    "textures/ship_pinnace_deck_nor_gl_1k.jpg": "ce3817091f2d897004dcca0f8bda0aa0",
+    "textures/ship_pinnace_details_arm_1k.jpg": "3e6f0571f7d895b1038c471e201dbd10",
+    "textures/ship_pinnace_details_diff_1k.jpg": "a25e4b635ae110293e93e479517dfea2",
+    "textures/ship_pinnace_details_nor_gl_1k.jpg": "18801519aeb1aa41cfe36210598bfba0",
+    "textures/ship_pinnace_hull_arm_1k.jpg": "e66f12a1d8700b97e971ac41710a3a20",
+    "textures/ship_pinnace_hull_diff_1k.jpg": "b4ace551dddf3c75e06477100cba81b9",
+    "textures/ship_pinnace_hull_nor_gl_1k.jpg": "f60d615eabb763ee530df82699e84c52",
+    "textures/ship_pinnace_interior_arm_1k.jpg": "b01d9f8cd8a1cd5ad23b4c65219cb700",
+    "textures/ship_pinnace_interior_diff_1k.jpg": "6ff83361fc0837e45bb38e9bc9bfac9d",
+    "textures/ship_pinnace_interior_nor_gl_1k.jpg": "dfc90577fbd4a4d547eaa03482c30721",
+    "textures/ship_pinnace_rigging_arm_1k.jpg": "f6451ed77f4be15c6e179ea61245bb80",
+    "textures/ship_pinnace_rigging_diff_1k.jpg": "0797c0f985407feb2038f57ad876c333",
+    "textures/ship_pinnace_rigging_nor_gl_1k.jpg": "e904eee86b8ecd0c8d4839e526184de6",
+    "textures/ship_pinnace_sails_arm_1k.jpg": "2d95993394aae8895084fbaab158fbec",
+    "textures/ship_pinnace_sails_diff_1k.jpg": "5cc1a091d4296bb93990f9856f7492c0",
+    "textures/ship_pinnace_sails_nor_gl_1k.jpg": "0475784a0c33f5a8d1855b5e0fbaf972"
+   }
+  },
+  "wooden_barrels_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_barrels_01_barrel01_arm_1k.jpg": "19e643936381b9ff0b5d3a17f41f590f",
+    "textures/wooden_barrels_01_barrel01_diff_1k.jpg": "8387b4843c9331f8dd7935a5034d3d38",
+    "textures/wooden_barrels_01_barrel01_nor_gl_1k.jpg": "21c030448f574a298f22a7edd2b5e176",
+    "textures/wooden_barrels_01_barrel02_arm_1k.jpg": "20a7bccad7bf899a8a4b18c73cd74dc9",
+    "textures/wooden_barrels_01_barrel02_diff_1k.jpg": "5b3f9026ba99f55e3f9397e2e8818945",
+    "textures/wooden_barrels_01_barrel02_nor_gl_1k.jpg": "21e88f8d945b0a3b6861debe9db58a9f",
+    "textures/wooden_barrels_01_pieces_arm_1k.jpg": "4dc69d91b60da91029acf8e0706e4b33",
+    "textures/wooden_barrels_01_pieces_diff_1k.jpg": "9469a5822acae4616d98ca5fc2af97d2",
+    "textures/wooden_barrels_01_pieces_nor_gl_1k.jpg": "1f580f7f8ce6fa21694c6048bad318c4",
+    "wooden_barrels_01.bin": "6c1dbd45bc5f0b1e726a7343fae0fbdb",
+    "wooden_barrels_01_1k.gltf": "1228b95423a5430d74d238284fad724e"
+   }
+  },
+  "marble_bust_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "marble_bust_01.bin": "1c62c1189a0e8985618c1662e1bd25a3",
+    "marble_bust_01_1k.gltf": "599d6dd71c2dcdffa064b1c1d85882f4",
+    "textures/marble_bust_01_diff_1k.jpg": "aede40cc2b092d91a5f72598c911da4f",
+    "textures/marble_bust_01_nor_gl_1k.jpg": "134149a7e8f142fcb605f0bde52b3ff6",
+    "textures/marble_bust_01_rough_1k.jpg": "9fdff7b2b17d12fcc478de3021f561dd"
+   }
+  },
+  "horse_statue_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "horse_statue_01.bin": "f240dd187e04807481bc422b5a9596c3",
+    "horse_statue_01_1k.gltf": "3cca65f1d964c30947ca3c473ddbadff",
+    "textures/horse_statue_01_arm_1k.jpg": "5e5f6cfaa0d8c8b7394f82b31951f9ac",
+    "textures/horse_statue_01_diff_1k.jpg": "a0aa4ddcc70e6223279cbbb4e031c1a6",
+    "textures/horse_statue_01_nor_gl_1k.jpg": "5d39dedc6a58786c9d68f80037fb9513"
+   }
+  },
+  "kite_shield": {
+   "resolution": "1k",
+   "files_md5": {
+    "kite_shield.bin": "98ad5003efb79db22fa25035fb216565",
+    "kite_shield_1k.gltf": "bba20187ab75fefa531830097ba8e014",
+    "textures/kite_shield_body_arm_1k.jpg": "1263267f8c82e09fb08a4800fed8d097",
+    "textures/kite_shield_body_diff_1k.jpg": "61c83755bd51734169d4bfbd2ea745d5",
+    "textures/kite_shield_body_nor_gl_1k.jpg": "9e13405518029733eb35bbc23a054333",
+    "textures/kite_shield_clamps_trim_arm_1k.jpg": "21fc1dcea3229435059feaa3738adc87",
+    "textures/kite_shield_clamps_trim_diff_1k.jpg": "966bd203b385be489a336a2a2637be57",
+    "textures/kite_shield_clamps_trim_nor_gl_1k.jpg": "5f061062760d9fb381c34ab98e2e86e5"
+   }
+  },
+  "street_lamp_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "street_lamp_01.bin": "324bc6295e3962322514ddcfc7037b23",
+    "street_lamp_01_1k.gltf": "d29d1fc30bbdad99a58371754f144e65",
+    "textures/street_lamp_01_arm_1k.jpg": "63d980174db10cf22a1b175743c465c9",
+    "textures/street_lamp_01_diff_1k.jpg": "82efb7531a25cda3ef8af2aff8ecccf7",
+    "textures/street_lamp_01_nor_gl_1k.jpg": "c27d8102c7e851a8f0f654bb959b9d67"
+   }
+  },
+  "antique_ceramic_vase_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "antique_ceramic_vase_01.bin": "0758bc04ce9826b1ae61c931aed19715",
+    "antique_ceramic_vase_01_1k.gltf": "b5a82c883c3a29b54eccd2f8400bd479",
+    "textures/antique_ceramic_vase_01_arm_1k.jpg": "ca1d7269913774a351bdf10058d7f06f",
+    "textures/antique_ceramic_vase_01_diff_1k.jpg": "a3de8212967f9e230364c5948e1581a5",
+    "textures/antique_ceramic_vase_01_nor_gl_1k.jpg": "07fef9d384b8e73d1b03604103ed0b65"
+   }
+  },
+  "treasure_chest": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/treasure_chest_arm_1k.jpg": "ffb1a453af7e91fb63c1ec51da29832a",
+    "textures/treasure_chest_diff_1k.jpg": "59a684377b91eed5cb0cf44fad6b1089",
+    "textures/treasure_chest_nor_gl_1k.jpg": "5ce2977f7417f17575b92873a56a3c4f",
+    "treasure_chest.bin": "c955b1084bb3f7c8cea414bdf1a89845",
+    "treasure_chest_1k.gltf": "7bfc4b335cff3e2641c8b9e55dbee0a2"
+   }
+  },
+  "wooden_bucket_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_bucket_01_arm_1k.jpg": "9f42842024b3117b557348ec265cfeee",
+    "textures/wooden_bucket_01_diff_1k.jpg": "d6296adf55e03bb1acc5de3e5fc8b10f",
+    "textures/wooden_bucket_01_nor_gl_1k.jpg": "68ad3de3f685798a8d46c070da840e5a",
+    "wooden_bucket_01.bin": "a93114e5fadd149de908464de7b42550",
+    "wooden_bucket_01_1k.gltf": "d3a6ff00895b69406b203dc417113d9a"
+   }
+  },
+  "gothic_statue": {
+   "resolution": "1k",
+   "files_md5": {
+    "gothic_statue.bin": "64ff6a07591c56042e01c780dce7685b",
+    "gothic_statue_1k.gltf": "4fb49ae8f4278a0f5f1c7ca89a416f69",
+    "textures/gothic_statue_arm_1k.jpg": "0403abefbd62dfc03eb6b237d6d82119",
+    "textures/gothic_statue_diff_1k.jpg": "a8110eba7602d4d3ff00b05abf25397e",
+    "textures/gothic_statue_nor_gl_1k.jpg": "ecba6e86dc6dd8195710765f4889c895"
+   }
   }
  },
  "assets": [
@@ -669,6 +825,199 @@
     "plant"
    ],
    "sha256": "a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726"
+  },
+  {
+   "id": "model.ph_modular_wooden_pier",
+   "source": "polyhaven",
+   "slug": "modular_wooden_pier",
+   "name": "ph_modular_wooden_pier.glb",
+   "role": "structure",
+   "description": "Poly Haven modular_wooden_pier: a modular wooden pier section. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "pier",
+    "dock",
+    "wood",
+    "harbour"
+   ],
+   "sha256": "442fc3997b757963b6b7b3d7d910f38144aeea645573fb6f12371910b26d7259"
+  },
+  {
+   "id": "model.ph_dutch_ship_medium",
+   "source": "polyhaven",
+   "slug": "dutch_ship_medium",
+   "name": "ph_dutch_ship_medium.glb",
+   "role": "landmark",
+   "description": "Poly Haven dutch_ship_medium: a medium Dutch sailing ship. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "ship",
+    "dutch",
+    "harbour"
+   ],
+   "sha256": "efadd4ca4349420764d6a322ee87828b238954fe032519272c40fd5d5e1b02b6"
+  },
+  {
+   "id": "model.ph_ship_pinnace",
+   "source": "polyhaven",
+   "slug": "ship_pinnace",
+   "name": "ph_ship_pinnace.glb",
+   "role": "landmark",
+   "description": "Poly Haven ship_pinnace: a pinnace, a small sailing ship. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "ship",
+    "pinnace",
+    "harbour"
+   ],
+   "sha256": "dc4e276ff246ac756ab38b6f636b15cecc77ee0e053d5f71f62e00e77af17a92"
+  },
+  {
+   "id": "model.ph_wooden_barrels_01",
+   "source": "polyhaven",
+   "slug": "wooden_barrels_01",
+   "name": "ph_wooden_barrels_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_barrels_01: a stack of wooden barrels. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "barrel",
+    "wood",
+    "harbour"
+   ],
+   "sha256": "c54a7246d73583641a9fee37fdb5464501b6258df00d0e4e99ad142798f6cbe0"
+  },
+  {
+   "id": "model.ph_marble_bust_01",
+   "source": "polyhaven",
+   "slug": "marble_bust_01",
+   "name": "ph_marble_bust_01.glb",
+   "role": "prop",
+   "description": "Poly Haven marble_bust_01: a marble portrait bust. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "bust",
+    "marble",
+    "antiquity",
+    "statue"
+   ],
+   "sha256": "749adb0d77d2ab54f72e5be35701dbd266cab00ca1b8fe67ae14b954e2888623"
+  },
+  {
+   "id": "model.ph_horse_statue_01",
+   "source": "polyhaven",
+   "slug": "horse_statue_01",
+   "name": "ph_horse_statue_01.glb",
+   "role": "prop",
+   "description": "Poly Haven horse_statue_01: a horse statue. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "statue",
+    "horse",
+    "antiquity"
+   ],
+   "sha256": "6ed829e1fd4af505aa60fb48153222baa37fa80d80276d9de9679e8fa3b7db1d"
+  },
+  {
+   "id": "model.ph_kite_shield",
+   "source": "polyhaven",
+   "slug": "kite_shield",
+   "name": "ph_kite_shield.glb",
+   "role": "prop",
+   "description": "Poly Haven kite_shield: a kite shield. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "shield",
+    "medieval",
+    "camp"
+   ],
+   "sha256": "0e785219c4669beff75eeef979f7da24d7e2a693b10a3765da2f6791de76a907"
+  },
+  {
+   "id": "model.ph_street_lamp_01",
+   "source": "polyhaven",
+   "slug": "street_lamp_01",
+   "name": "ph_street_lamp_01.glb",
+   "role": "prop",
+   "description": "Poly Haven street_lamp_01: a street lamp. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "lamp",
+    "street",
+    "nineteenth_century"
+   ],
+   "sha256": "0294137639acb0476ae03703609572a987e63d0807550fa2bd28e44627decdc8"
+  },
+  {
+   "id": "model.ph_antique_ceramic_vase_01",
+   "source": "polyhaven",
+   "slug": "antique_ceramic_vase_01",
+   "name": "ph_antique_ceramic_vase_01.glb",
+   "role": "prop",
+   "description": "Poly Haven antique_ceramic_vase_01: an antique ceramic vase. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "vase",
+    "ceramic",
+    "antiquity"
+   ],
+   "sha256": "98536988093a7bb4a0ebd355c3cd85432f1f975d8dfb450924601f8fd6926104"
+  },
+  {
+   "id": "model.ph_treasure_chest",
+   "source": "polyhaven",
+   "slug": "treasure_chest",
+   "name": "ph_treasure_chest.glb",
+   "role": "prop",
+   "description": "Poly Haven treasure_chest: a treasure chest. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "chest",
+    "wood",
+    "harbour"
+   ],
+   "sha256": "26e807b3c3a8b2695ffd5a9463a96ee3a22c8844f5f5830aec0232fa51057d4f"
+  },
+  {
+   "id": "model.ph_wooden_bucket_01",
+   "source": "polyhaven",
+   "slug": "wooden_bucket_01",
+   "name": "ph_wooden_bucket_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_bucket_01: a wooden bucket. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "bucket",
+    "wood"
+   ],
+   "sha256": "bb6d98ec190ebf08547cfffe6e41fad7303fcc8ff3cf7bc65693942d20fe8c73"
+  },
+  {
+   "id": "model.ph_gothic_statue",
+   "source": "polyhaven",
+   "slug": "gothic_statue",
+   "name": "ph_gothic_statue.glb",
+   "role": "prop",
+   "description": "Poly Haven gothic_statue: a gothic stone statue. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "statue",
+    "gothic",
+    "stone"
+   ],
+   "sha256": "ece8f0f02d0290837e18e6d452d56407893877625b7d5ca8a1615da3fb181e1e"
   }
  ]
 }
