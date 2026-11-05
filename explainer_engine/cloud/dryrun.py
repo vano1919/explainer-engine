@@ -223,6 +223,50 @@ def repo_ids(text):
     return sorted(found.items())
 
 
+def job_repo_ids(text, folder):
+    """The Hub repos the job files of a script name (audit 2026-11-01 #15: p12b.sh fetches only its own job files, every weight repo is
+    in p12b.json, so ``repo_ids`` of the script text alone proved nothing about them). Reads the json files of ``folder`` whose name the
+    script mentions; every dict with a ``repo`` or ``hf`` id counts. Type: an explicit ``repo_type``; else by the dict's OWN keys:
+    ``path``/``paths``/``dir`` = dataset, ``file``/``files``/``revision`` = model; else dataset when a nested ``path`` exists."""
+    found = {}
+    if folder is None or not Path(folder).is_dir():
+        return []
+
+    def has_path(o):
+        if isinstance(o, dict):
+            return any(k in ("path", "paths", "dir") or has_path(v) for k, v in o.items())
+        return isinstance(o, list) and any(has_path(v) for v in o)
+
+    def walk(o):
+        if isinstance(o, dict):
+            rid = o.get("repo") if isinstance(o.get("repo"), str) else o.get("hf") if isinstance(o.get("hf"), str) else None
+            if rid and re.fullmatch(REPO_ID, rid):
+                own = set(o)
+                kind = (o.get("repo_type") or ("dataset" if own & {"path", "paths", "dir"} else
+                        "model" if own & {"file", "files", "revision"} else "dataset" if has_path(o) else "model"))
+                found.setdefault(rid, kind)
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    for f in sorted(Path(folder).glob("*.json")):
+        if f.name in (text or ""):
+            try:
+                walk(json.loads(f.read_text(encoding="utf-8")))
+            except ValueError:
+                continue
+    return sorted(found.items())
+
+
+def all_repo_ids(text, folder=None):
+    """``repo_ids`` of the script text plus ``job_repo_ids`` of its job files (a model beats a dataset on the same id)."""
+    merged = dict(job_repo_ids(text, folder))
+    merged.update(dict(repo_ids(text)))
+    return sorted(merged.items())
+
+
 def hf_exists(repo_id, repo_type):
     """Default existence check against the Hub (HfApi.repo_info with HF_TOKEN when set): (ok, note)."""
     try:
@@ -230,16 +274,20 @@ def hf_exists(repo_id, repo_type):
         from huggingface_hub.errors import GatedRepoError, RepositoryNotFoundError
     except ImportError as e:
         return False, f"huggingface_hub is not installed here ({e})"
+    token = os.environ.get("HF_TOKEN") or None
+    api = HfApi(token=token)
     try:
-        info = HfApi(token=os.environ.get("HF_TOKEN") or None).repo_info(repo_id, repo_type=repo_type)
+        info = api.repo_info(repo_id, repo_type=repo_type)
+        if getattr(info, "gated", False):
+            # repo_info of a gated repo succeeds without access: only auth_check (a file-level probe) says whether THIS token may download
+            api.auth_check(repo_id, repo_type=repo_type, token=token)
     except RepositoryNotFoundError:
         return False, "no such repo (or private and this token cannot see it)"
     except GatedRepoError:
-        return True, "gated: the token must have been granted access"
+        return False, "gated: this token has not been granted access (a pod would bill its install and then fail the download)"
     except Exception as e:  # noqa: BLE001 - network, auth: the check could not run, which is not a pass
         return False, f"could not be checked ({str(e)[:80]})"
-    gated = getattr(info, "gated", False)
-    return True, "gated: the token must have been granted access" if gated else ""
+    return True, "gated: access proved with this token" if getattr(info, "gated", False) else ""
 
 
 def bash_syntax(text):
@@ -253,7 +301,7 @@ def bash_syntax(text):
         os.unlink(name)
 
 
-def run(text, *, exists=None, pins=None, offline=False, now=None):
+def run(text, *, exists=None, pins=None, offline=False, now=None, folder=None):
     """The dry run of a script text: a record ``{sha256, ok, problems, repos, pins_sha, at}``. ``offline`` skips the Hub check and
     can never produce an ``ok`` record (a script whose repos were not seen is not proved)."""
     from explainer_engine.cloud import runpod
@@ -263,7 +311,7 @@ def run(text, *, exists=None, pins=None, offline=False, now=None):
     problems += static_problems(text, pins)
     problems += [f"needs: {p}" for p in needs_problems(text)]
     repos = []
-    for rid, kind in repo_ids(text):
+    for rid, kind in all_repo_ids(text, folder):
         if offline:
             repos.append({"id": rid, "type": kind, "ok": None, "note": "not checked (--offline)"})
             continue
@@ -282,6 +330,22 @@ def record(rec):
     DIR.mkdir(parents=True, exist_ok=True)
     store.write_json_atomic(DIR / f"{rec['sha256']}.json", rec)
     return DIR / f"{rec['sha256']}.json"
+
+
+PLACEHOLDER = re.compile(r"\bPLACEHOLDER\w*")
+
+
+def placeholder_problems(text, folder=None):
+    """A pod must never start on a pin that was never filled (audit 2026-11-01: a sha256 line read PLACEHOLDER_SHA_*, so the pod would
+    bill its install and then exit at ``sha256sum -c``). Looks in the script text and, when ``folder`` is given, in every file of that
+    folder (not below it) whose name the script mentions: the job files it fetches. Empty = no placeholder left."""
+    out = [f"script: {m.group(0)} (a pin that was never filled)" for m in PLACEHOLDER.finditer(text or "")]
+    if folder is not None and Path(folder).is_dir():
+        for f in sorted(Path(folder).iterdir()):
+            if f.is_file() and f.suffix in (".py", ".json", ".sh", ".yaml", ".toml") and f.name in (text or "") and f.read_text(encoding="utf-8", errors="replace") != text:
+                hits = sorted({m.group(0) for m in PLACEHOLDER.finditer(f.read_text(encoding="utf-8", errors="replace"))})
+                out += [f"{f.name}: {h} (a pin that was never filled)" for h in hits]
+    return out
 
 
 def passed(text, *, pins_path=None):

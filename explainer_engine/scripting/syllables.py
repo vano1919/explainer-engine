@@ -57,12 +57,16 @@ def _weights(text: str, cal: dict) -> float:
     return total
 
 
-def seconds(text: str, *, pause_after: float | None = None) -> float:
+def seconds(text: str, *, pause_after: float | None = None, zone: str | None = None, wpm: float | None = None) -> float:
     """Estimated heard seconds of ``text``: the units of ``_weights`` scaled so that the calibration corpus's average word lasts
-    ``60 / BP-01 wpm_target`` seconds (the pace comes from the registry, the shape from the calibration). ``pause_after`` adds a
-    planned silence after the line."""
+    ``60 / pace`` seconds (the pace comes from the registry, the shape from the calibration). The pace is BP-01's ``wpm_target``,
+    or ``wpm``, or the heard pace of a rhythm ``zone`` (BP-169, ``edit/rhythm_profile.py``). ``pause_after`` adds a planned
+    silence after the line."""
     cal = calibration()
-    unit_s = (60.0 / SR.T("BP-01", "wpm_target")) / cal["mean_units_per_word"]
+    if wpm is None and zone is not None:
+        from explainer_engine.edit import rhythm_profile
+        wpm = rhythm_profile.zone_wpm(zone)
+    unit_s = (60.0 / (float(wpm) if wpm is not None else SR.T("BP-01", "wpm_target"))) / cal["mean_units_per_word"]
     return round(_weights(text, cal) * unit_s + (pause_after or 0.0), 3)
 
 

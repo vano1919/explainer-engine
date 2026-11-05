@@ -62,3 +62,24 @@ remain human work.
 ## Time log
 `jobs/<slug>/time_log.json` records minutes per activity per video (research, scripting, storyboard, assets, narration
 fixes, QA, revisions, packaging, upload) and the machine time per stage; the cadence decision (D-06) reads it.
+
+## The rhythm profile's effect on one 12-minute episode (estimate, 2026-11-01; D-94)
+
+Argon's roadmap priced it on a B200 at $4.99/h; our measured prices are an A40/A6000 at about $0.59/h for a pod and about
+$1.4/h for the LTX work measured earlier, so this is recomputed here. Nothing below is a measurement of LTX-2.5.
+
+| item | calm profile | zoned profile (BP-169) | basis |
+|---|---|---|---|
+| shots | about 171 | about 254 | the zones' shots per minute against BP-107 |
+| LTX clips (60 % of the runtime) | about 96 | about 152 | shorter clips in the hyped zones |
+| LTX GPU time | 96 x ~200 s = 5.3 h | 152 x ~145 s = 6.1 h | ~200 s per 121-frame clip measured on an earlier LTX; a 69-frame clip assumed 0.57 x that plus ~30 s fixed |
+| LTX GPU cost at ~$1.4/h | about $7.5 | about $8.5 | the line above |
+| Qwen pictures | about 144 | about 276 (195 with reuse where it is simple) | ~$2 per 214 pictures measured |
+| Qwen cost | about $1.3 | about $2.6 | |
+| ElevenLabs credits (1 per character, tags included) | about 9,800 | about 12,000 | 2,067 words (zone paces) x ~5.3 characters + about one tag per line; Argon counted a tag per clause and got 12,950 |
+| one-time narrator audition | none | about 1,050 credits | three 350-character reads, only with the creator's word |
+
+The episode's RunPod cap is the creator's number in `config/spend_caps.json`; this estimate is well inside it. The 5.3 h and 6.1 h are
+GPU hours of one card and are not wall-clock under a pod's time cap: P12 measures the real LTX-2.5 clip time and replaces the
+145 s guess.
+

@@ -115,12 +115,16 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
                 targets[k] = float(line["pause_after"])
     padded, words, rep = pause_pad.pad_pauses(aligned["words"], pcm, sr, targets=targets)
     voice_layer.write_wav(out / "narration.wav", padded, sr)
+    polish = None
+    if not S.has_dialogue(doc):  # the channel narrator's standard polish (2026-11-01), after the drift check (raw timbre) and the timings
+        from explainer_engine.audio import narrator_polish
+        polish = narrator_polish.polish_in_place(out / "narration.wav")
     from explainer_engine.audio import dropouts
     cuts = dropouts.scan(np.asarray(padded, dtype=float), sr)  # ED-12: no word may be cut by a padded pause
     seam_spread = (getattr(join_reads, "report", None) or {}).get("spread_after_db", 0.0)
     doc_w = {"source": f"{source}; aligned by scribe_words (coverage {aligned['coverage']}, {aligned['status']}); "
                        f"pause_pad +{rep['added_seconds']} s", "duration": round(len(padded) / sr, 3),
-             "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift,
+             "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift, "narrator_polish": polish,
              "seams": getattr(join_reads, "report", None), "dropouts": cuts, "words": words}
     write_text_atomic(out / "words.json", json.dumps(doc_w, indent=0))
     n_cut = len(cuts["cut_into_sound"])

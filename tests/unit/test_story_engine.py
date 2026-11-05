@@ -508,3 +508,14 @@ def test_stage_guard_cli_forms_and_the_old_form_still_work(tmp_path, capsys):
     a = tmp_path / "a.json"
     a.write_text(json.dumps({"segments": []}), encoding="utf-8")
     assert G.main(["writer", str(a), str(a)]) == 0
+
+
+def test_the_architect_owns_a_segments_rhythm_zone_and_nobody_else():
+    """WP-R6 (BP-169): the zone a segment starts in is a story-structure field."""
+    before = storied()
+    seg = next(s for s in before["segments"] if s.get("lines"))
+    after = copy.deepcopy(before)
+    next(s for s in after["segments"] if s["id"] == seg["id"])["rhythm_zone"] = "hook_0_30s"
+    assert G.violations("architect", before, after) == []
+    for stage in ("writer", "beats", "performer", "editor", "caster", "shorts"):
+        assert any(f"{seg['id']}.rhythm_zone" in v for v in G.violations(stage, before, after)), stage

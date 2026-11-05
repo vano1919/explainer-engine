@@ -187,3 +187,11 @@ def test_gate_row_clips_waits_blocks_and_passes(tmp_path):
 
 def test_a_still_picture_episode_gets_neither_row(tmp_path):
     assert row(tmp_path, "keyframes") is None and row(tmp_path, "clips") is None
+
+
+def test_check_fast_action_rhythm_flags_a_clip_that_holds_too_much():
+    from explainer_engine.training import video_qa as V
+    bad = V.check_fast_action_rhythm({"rhythm": {"hold_share": 0.48}, "frozen_run_frames": 20})
+    assert [f["rule"] for f in bad] == ["LT-80", "LT-80"] and all(f["status"] == "REVIEW" for f in bad)
+    assert V.check_fast_action_rhythm({"rhythm": {"hold_share": 0.30}, "frozen_run_frames": 6}) == []
+    assert V.check_fast_action_rhythm({"rhythm": {"hold_share": 0.9}}, zone_mode="calm_story") == []

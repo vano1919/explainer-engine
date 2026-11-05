@@ -71,6 +71,10 @@ SMOOTH = re.compile(r"\b(smooth|fluid|natural|realistic|lifelike)\b[^.]{0,20}\b(
 # BP-102: a video prompt is one paragraph of four to eight sentences, not a page
 VIDEO_WORDS = sourced_rules.T("BP-102", "video_words")
 # BP-100: lip-sync budget of a spoken line
+# KP-47 (BP-172): a clip of a hyped zone names a fast action verb, not a slow gesture
+FAST_ACTION_VERBS = tuple(sourced_rules.T("BP-172", "fast_action_verbs"))
+SLOW_MODIFIERS = re.compile(r"\b(slow|slowly|gently|unhurried|leisurely|quietly|calmly)\b", re.I)
+HYPED_ZONES = frozenset({"hook_0_30s", "early_30_90s", "late_third_480_660s", "climax_660_720s"})
 SPEECH_WPS = sourced_rules.T("BP-100", "words_per_second")
 SPEECH_SETTLE_S = sourced_rules.T("BP-100", "settle_s")
 QUOTE = re.compile(r'"([^"]+)"')
@@ -176,6 +180,15 @@ def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
         if SMOOTH.search(first):
             add("KP-24", "REVIEW", f"'{SMOOTH.search(first).group(0)}' in the style sentence asks for floaty motion; our "
                                    "cartoons hold poses between quick moves")
+        if shot.get("rhythm_zone") in HYPED_ZONES or shot.get("fast_action") is True:
+            body = _action(prompt)
+            if not any(re.search(rf"\b{v}\b", body, re.I) for v in FAST_ACTION_VERBS):
+                add("KP-47", sourced_rules.level("BP-172", "REVIEW"),
+                    "a hyped-zone clip names no fast action verb (" + ", ".join(FAST_ACTION_VERBS[:5]) + " ...): one brisk "
+                    "action with a start, a peak and a settle")
+            if SLOW_MODIFIERS.search(body):
+                add("KP-47", sourced_rules.level("BP-172", "REVIEW"),
+                    f"'{SLOW_MODIFIERS.search(body).group(0)}' asks for a slow read in a hyped zone")
         lo, hi = VIDEO_WORDS
         n_words = len(prompt.split())
         if not lo <= n_words <= hi:

@@ -47,7 +47,7 @@ the critic's.
 | ID | Check | Severity |
 |---|---|---|
 | VP-01 | the blocks of every segment add up to its window and the shares to 1 (a contract fault) | FAIL (invariant 7) |
-| VP-02 | pure map share at most [BP-141](SOURCED_RULES.md)'s `map_pure_max` | REVIEW |
+| VP-02 | pure map share at most [BP-109](SOURCED_RULES.md)'s helper lane plus its tolerance (a map is a helper visual, D-93) | REVIEW |
 | VP-03 | the non-character share at most the profile's `non_character_max` | REVIEW |
 | VP-04 | the longest run of pure map at most `map_run_max_s` | REVIEW |
 | VP-05 | the longest run without a played block at most [BP-127](SOURCED_RULES.md)'s `non_character_run_max_s` | REVIEW |
@@ -63,7 +63,7 @@ the critic's.
 | VP-15 | drift from the choice: seconds per segment beyond [BP-146](SOURCED_RULES.md)'s `seconds_drift` or cost beyond `usd_drift` of the planned price: REVIEW; cost above the `usd_worst` the creator approved: FAIL (invariant 2) | REVIEW / FAIL |
 | VP-16 | the estimated narrator share outside [BP-105](SOURCED_RULES.md)'s band | REVIEW |
 | VP-17 | the central scene (slot 10) has the most played seconds (ST-18) | REVIEW |
-| VP-18 | planned shots per minute outside [BP-107](SOURCED_RULES.md)'s band, or the planned hold share above [BP-109](SOURCED_RULES.md)'s | REVIEW |
+| VP-18 | planned shots per minute outside [BP-107](SOURCED_RULES.md)'s band, or a planned lane share (video / still / helper) outside [BP-109](SOURCED_RULES.md)'s 60 / 30 / 10 plus or minus its tolerance (D-93) | REVIEW |
 
 Costs come only from `config/job_speeds.json` (pod work, measured by P12b) and the API price tables (`imagegen`); a row with no
 measurement is `unknown` and is shown as such, never filled in. A pod row waits for its measurement, an API row does not.
@@ -88,7 +88,7 @@ measurement is `unknown` and is shown as such, never filled in. A pod row waits 
 | Acting fallback (KP-43) | a line whose take fails the acting check twice: over the speaker's shoulder onto the listener (the line plays on the reaction), or the speaker's hands for a line said to the room | redraw the same shot a third time | `film_shots._acting` |
 | Dialogue audio | a fixed ElevenLabs voice per speaking character (cast card `voice_id`), the line read first and the take given to LTX as its audio input (D-90; the wiring is P6/P7, not built yet) | LTX native audio with the voice described in words (superseded by D-90, card A3) | the cast cards, D-90 |
 | Narrator | ElevenLabs, the script's narrator lines, first take | - | skill `elevenlabs-voice` |
-| Tier shares | hold at most 10 %, light about a sixth, full the rest | the critic's 40 / 35 / 25 % on the test film | BP-109 |
+| Visual mix | by runtime 60 % video (light and full), 30 % stills with objects Python adds and moves (hold), 10 % Python helper visuals | the creator's call 2026-11-01 (D-93); superseded: hold at most 10 % | BP-109 |
 
 ### History (banned by D-80)
 Cells that were "in use" before 2026-10-26 and are retired, kept so a reader can tell where an old prompt came from:

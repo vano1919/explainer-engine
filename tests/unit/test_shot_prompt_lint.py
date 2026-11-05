@@ -88,3 +88,23 @@ def test_the_video_lora_validation_prompts_pass():
                                "thud, gasps."}
     assert not rules(disco, "FAIL")
     assert rules({"id": "k", "kind": "pose", "prompt": "x"}) == {"KP-00"}
+
+
+def test_hyped_zone_video_prompt_with_fast_verb_passes_kp47():
+    shot = {"id": "h", "kind": "video", "rhythm_zone": "hook_0_30s",
+            "prompt": STYLE + "The short man in the dark coat slams his palm onto the map, then snaps his head up and stays in "
+                              "frame. Static camera."}
+    assert "KP-47" not in rules(shot)
+
+
+def test_hyped_zone_video_prompt_with_slow_breath_fails_kp47():
+    shot = {"id": "h", "kind": "video", "rhythm_zone": "hook_0_30s",
+            "prompt": STYLE + "The short man in the dark coat draws a slow breath and looks across the tent, stays in frame. "
+                              "Static camera."}
+    found = [f for f in check_shot(shot) if f["rule"] == "KP-47"]
+    assert len(found) == 2 and all(f["severity"] == "REVIEW" for f in found)  # no fast verb and a slow modifier
+    # the calm middle and legacy shots (no zone) are not touched
+    assert "KP-47" not in rules(dict(shot, rhythm_zone="middle_calm_90_480s"))
+    legacy = {k: v for k, v in shot.items() if k != "rhythm_zone"}
+    assert "KP-47" not in rules(legacy)
+    assert "KP-47" in rules(dict(legacy, fast_action=True))
