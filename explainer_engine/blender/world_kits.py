@@ -329,28 +329,36 @@ def _n(i, t, **kw):
     return {"id": i, "type": t, **kw}
 
 
-def raw_graph(name: str) -> dict:
+def raw_graph(name: str, scale=None) -> dict:
     """Node graphs outside the toon path (Fable's order, 2026-11-05): ``ocean`` = a deep blue-green emission with a lighter band at
-    the plane's near edge and a glossy (roughness 0.1) noise-normal ripple mixed in by Fresnel; ``smoke`` = a soft grey card
+    the plane's near edge, haze towards its far edge and a glossy (roughness 0.1) noise-normal ripple mixed in by Fresnel;
+    ``scale`` = the plane's (x, y) size in metres, so ripples are ~1.4 m wide whatever the plane; ``smoke`` = a soft grey card
     (Emission + Transparent) that thins upwards and to the sides, broken up by noise."""
     ramp = lambda stops: {"interpolation": "LINEAR", "stops": stops}
     if name == "ocean":
+        sx, sy = (float(scale[0]), float(scale[1])) if scale else (500.0, 150.0)
         nodes = [_n("co", "ShaderNodeTexCoord"),
-                 _n("rip", "ShaderNodeTexNoise", inputs={"Scale": 420.0, "Detail": 4.0, "Roughness": 0.55}),
-                 _n("var", "ShaderNodeTexNoise", inputs={"Scale": 45.0, "Detail": 2.0}),
+                 _n("map", "ShaderNodeMapping", inputs={"Scale": [sx * 0.7, sy * 0.7, 1.0]}),
+                 _n("map2", "ShaderNodeMapping", inputs={"Scale": [sx / 60.0, sy / 60.0, 1.0]}),
+                 _n("rip", "ShaderNodeTexNoise", inputs={"Scale": 1.0, "Detail": 4.0, "Roughness": 0.55}),
+                 _n("var", "ShaderNodeTexNoise", inputs={"Scale": 1.0, "Detail": 2.0}),
                  _n("bump", "ShaderNodeBump", inputs={"Strength": 0.35, "Distance": 0.004}),
                  _n("sep", "ShaderNodeSeparateXYZ"),
-                 _n("band", "ShaderNodeValToRGB", ramp=ramp([[0.0, [1, 1, 1, 1]], [0.07, [0, 0, 0, 1]]])),
+                 _n("band", "ShaderNodeValToRGB", ramp=ramp([[0.0, [1, 1, 1, 1]], [round(5.0 / sy, 5), [0, 0, 0, 1]]])),
+                 _n("hz", "ShaderNodeValToRGB", ramp=ramp([[0.25, [0, 0, 0, 1]], [1.0, [1, 1, 1, 1]]])),
                  _n("deep", "ShaderNodeValToRGB", ramp=ramp([[0.3, [0.012, 0.13, 0.17, 1]], [0.7, [0.02, 0.2, 0.24, 1]]])),
                  _n("lite", "ShaderNodeMix", props={"data_type": "RGBA", "blend_type": "MIX"}, inputs={7: [0.30, 0.55, 0.55, 1.0]}),
+                 _n("haze", "ShaderNodeMix", props={"data_type": "RGBA", "blend_type": "MIX"}, inputs={7: [0.55, 0.68, 0.75, 1.0]}),
                  _n("emit", "ShaderNodeEmission", inputs={"Strength": 1.0}),
                  _n("gloss", "ShaderNodeBsdfGlossy", inputs={"Roughness": 0.1, "Color": [0.75, 0.88, 0.92, 1.0]}),
                  _n("fres", "ShaderNodeFresnel", inputs={"IOR": 1.33}),
                  _n("mixs", "ShaderNodeMixShader"),
                  _n("out", "ShaderNodeOutputMaterial")]
-        links = [["co", "Object", "rip", "Vector"], ["co", "Object", "var", "Vector"], ["rip", "Fac", "bump", "Height"],
-                 ["co", "Generated", "sep", "Vector"], ["sep", "Y", "band", "Fac"], ["var", "Fac", "deep", "Fac"],
-                 ["band", "Color", "lite", "Factor"], ["deep", "Color", "lite", 6], ["lite", 2, "emit", "Color"],
+        links = [["co", "Object", "map", "Vector"], ["co", "Object", "map2", "Vector"], ["map", "Vector", "rip", "Vector"],
+                 ["map2", "Vector", "var", "Vector"], ["rip", "Fac", "bump", "Height"],
+                 ["co", "Generated", "sep", "Vector"], ["sep", "Y", "band", "Fac"], ["sep", "Y", "hz", "Fac"], ["var", "Fac", "deep", "Fac"],
+                 ["band", "Color", "lite", "Factor"], ["deep", "Color", "lite", 6], ["hz", "Color", "haze", "Factor"],
+                 ["lite", 2, "haze", 6], ["haze", 2, "emit", "Color"],
                  ["bump", "Normal", "gloss", "Normal"], ["bump", "Normal", "fres", "Normal"], ["fres", "Fac", "mixs", "Fac"],
                  ["emit", "Emission", "mixs", 1], ["gloss", "BSDF", "mixs", 2], ["mixs", "Shader", "out", "Surface"]]
     elif name == "smoke":
@@ -572,19 +580,17 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         from explainer_engine.blender import terrain as TR
         grid = (TR.Ranges(b["range"]).mesh(*b["res"]) if "range" in b else T.mesh(*b["rect"], *b["res"]))
         slots = {}
-        for ci, cname in enumerate(TR.CLASSES):
-            mname = f"terrain_{b['name']}_{cname}"
-            tex = (b.get("textures") or {}).get(cname)
-            if cname in ("meadow", "forest") and b.get("blend") and ground_textures is not None:   # one smooth field (see "grass")
-                mname = f"terrain_{b['name']}_grass"
-            elif tex and ground_textures is not None:   # a Poly Haven ground map, a trace over the class colour (D-102)
-                img = ground_textures[tex]
-                mats[mname] = {"base": b["colours"][cname], "texture": str(img), "texture_mean": _mean(img), "tile": 1.0, "strength": 0.85}
-                if cname == "grass" and b.get("blend"):   # grass + meadow + forest maps mixed by a world-space noise (Fable 2026-11-05)
-                    mats[mname]["blend"] = {"images": [str(ground_textures[b["textures"][c]]) for c in ("meadow", "forest")],
-                                            "noise": b["blend"]}
-            else:
-                mats[mname] = {"base": b["colours"][cname]}
+        mname = f"terrain_{b['name']}_ground"
+        tx = b.get("textures") or {}
+        if tx and ground_textures is not None:   # one material, the classes blended per pixel by the vertex weights (Fable 2026-11-05)
+            img = {c: ground_textures[t] for c, t in tx.items()}
+            layers = [{"attr": "w_" + c, "image": str(img[c])} for c in ("meadow", "forest", "rock", "road") if c in img]
+            layers.append({"attr": "w_snow", "colour": [0.94, 0.95, 0.97]})
+            mats[mname] = {"base": b["colours"]["grass"], "texture": str(img["grass"]), "texture_mean": _mean(img["grass"]),
+                           "tile": 1.0, "strength": 0.85, "blend": {"noise": b.get("blend", 0.045), "layers": layers}}
+        else:
+            mats[mname] = {"base": b["colours"]["grass"]}
+        for ci in range(len(TR.CLASSES)):
             slots[str(ci)] = mname
         grid["uv_m"] = b.get("uv_m", 8.0)
         objs.append({"name": b["name"], "terrain": grid, "location": [0, 0, b.get("z", 0.0)], "material": slots, "smooth": True})
@@ -595,7 +601,7 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
             mats[mname] = {"base": sh["colour"]}
             if sh.get("raw"):
                 mname = "raw_" + sh["raw"]
-                mats[mname] = {"raw": raw_graph(sh["raw"])}
+                mats[mname] = {"raw": raw_graph(sh["raw"], p["scale"])}
             elif sh.get("texture") and ground_textures is not None:   # marble / stone: a trace of the Poly Haven map over the tone
                 mname += "_" + sh["texture"].split(".", 1)[1]
                 mats[mname] = {"base": sh["colour"], "texture": str(ground_textures[sh["texture"]]), "texture_mean": _mean(ground_textures[sh["texture"]]),

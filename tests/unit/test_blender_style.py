@@ -351,14 +351,14 @@ def test_material_class_comes_from_the_slot_or_the_name():
 def test_raw_graphs_and_noise_blended_ground_pass_the_style_check():
     from explainer_engine.blender import world_kits as W
     tiled = {"base": "#6F9A47", "texture": "/c/a.jpg", "texture_mean": [0.2, 0.3, 0.1], "tile": 1.0, "strength": 0.85,
-             "blend": {"images": ["/c/b.jpg", "/c/c.jpg"], "noise": 0.045}}
+             "blend": {"noise": 0.045, "layers": [{"attr": "w_meadow", "image": "/c/b.jpg"}, {"attr": "w_snow", "colour": [0.9, 0.9, 0.9]}]}}
     for path in ("eevee", "cycles_safe"):
         doc = S.StyleEngine().graph(path, camera=CAM, paper_texture="/cache/p/paper.jpg",
                                     materials={"ground": tiled, "sea": {"raw": W.raw_graph("ocean")}, "smoke": {"raw": W.raw_graph("smoke")}})
         assert S.check(doc) == [], S.check(doc)
     ground = next(m for m in doc["materials"] if m["name"] == "ground")
     ids = {n["id"] for n in ground["nodes"]}
-    assert {"tex_b", "tex_c", "ntex_a", "bmix_b"} <= ids and ["bmix_b", 2, "flatten", 7] in ground["links"]
+    assert {"L0_img", "L1_mix", "wnoise", "L0_attr"} <= ids and ["L1_mix", 2, "flatten", 7] in ground["links"]
     assert not [l for l in ground["links"] if l[0] == "tex" and l[2] == "flatten"]
     bad = {"nodes": [{"id": "out", "type": "ShaderNodeOutputMaterial"}, {"id": "p", "type": "ShaderNodeBsdfPrincipled"}], "links": []}
     assert any("Principled" in x for x in S.check(S.StyleEngine().graph("eevee", camera=CAM, materials={"x": {"raw": bad}}, paper_texture="/p.jpg")))

@@ -322,7 +322,11 @@ def test_terrain_blocks_carry_ground_textures_and_uv_scale(tmp_path):
     with mock.patch.object(W, "_mean", return_value=[0.3, 0.4, 0.2]), \
             mock.patch.object(W, "kit_material", return_value=("kit_x", {"base": "#ffffff"})):
         objs, mats = W.expand("hill_castle", {a["id"]: tmp_path / "x.glb" for a in W.table()["assets"]},
-                               ground_textures={t: img for t in wanted}, doc=doc)
-    m = mats["terrain_ground_grass"]
+                               ground_textures=__import__("collections").defaultdict(lambda: img), doc=doc)
+    m = mats["terrain_ground_ground"]
     assert m["texture"] == str(img) and m["tile"] == 1.0
+    assert [l["attr"] for l in m["blend"]["layers"]] == ["w_meadow", "w_forest", "w_rock", "w_road", "w_snow"]
+    grid = [o for o in objs if o.get("terrain")][0]["terrain"]
+    assert set(grid["weights"]) == {"meadow", "forest", "rock", "road", "snow"} and len(grid["weights"]["road"]) == grid["nx"] * grid["ny"]
+    assert len(set(next(o for o in objs if o.get("terrain"))["material"].values())) == 1
     assert [o for o in objs if o.get("terrain")][0]["terrain"]["uv_m"] == 8

@@ -570,29 +570,34 @@ def _keys(graph: dict) -> dict:
 
 
 def _blend_textures(doc: dict, blend: dict) -> None:
-    """Splice two more photo textures into a textured material (nodes ``tex`` -> ``flatten``): mixed by a world-space (object
-    coordinates) noise, so the ground reads as one field of grass, leaf litter and dirt instead of per-face patches."""
+    """Layer more ground textures over a textured material (nodes ``tex`` -> ``flatten``), each by a per-vertex weight attribute
+    (``w_<class>``, written by bpy/render_shot.py ``_terrain``) broken up by a world-space noise: the ground blends per pixel,
+    never per face. ``blend`` = {noise, jitter, layers: [{attr, image | colour}]}, painted in order over the base texture."""
     ids = {n["id"] for n in doc["nodes"]}
     if not {"tex", "flatten", "tiling"} <= ids:
         return
-    sc = float(blend.get("noise", 0.045))
-    ramp = lambda a, b: {"interpolation": "LINEAR", "stops": [[a, [0.0, 0.0, 0.0, 1.0]], [b, [1.0, 1.0, 1.0, 1.0]]]}
+    ramp = {"interpolation": "LINEAR", "stops": [[0.38, [0.0, 0.0, 0.0, 1.0]], [0.62, [1.0, 1.0, 1.0, 1.0]]]}
     nodes = [{"id": "wcoord", "type": "ShaderNodeTexCoord"},
-             {"id": "ntex_a", "type": "ShaderNodeTexNoise", "inputs": {"Scale": sc, "Detail": 3.0}},
-             {"id": "ntex_b", "type": "ShaderNodeTexNoise", "inputs": {"Scale": sc * 2.3, "Detail": 2.0}},
-             {"id": "nramp_a", "type": "ShaderNodeValToRGB", "ramp": ramp(0.38, 0.62)},
-             {"id": "nramp_b", "type": "ShaderNodeValToRGB", "ramp": ramp(0.40, 0.60)},
-             {"id": "tex_b", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": blend["images"][0]},
-             {"id": "tex_c", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": blend["images"][1]},
-             {"id": "bmix_a", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"}},
-             {"id": "bmix_b", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"}}]
-    links = [["wcoord", "Object", "ntex_a", "Vector"], ["wcoord", "Object", "ntex_b", "Vector"],
-             ["ntex_a", "Fac", "nramp_a", "Fac"], ["ntex_b", "Fac", "nramp_b", "Fac"],
-             ["tiling", "Vector", "tex_b", "Vector"], ["tiling", "Vector", "tex_c", "Vector"],
-             ["nramp_a", "Color", "bmix_a", "Factor"], ["tex", "Color", "bmix_a", 6], ["tex_b", "Color", "bmix_a", 7],
-             ["nramp_b", "Color", "bmix_b", "Factor"], ["bmix_a", 2, "bmix_b", 6], ["tex_c", "Color", "bmix_b", 7],
-             ["bmix_b", 2, "flatten", 7]]
-    doc["links"] = [l for l in doc["links"] if not (l[0] == "tex" and l[2] == "flatten")] + links
+             {"id": "wnoise", "type": "ShaderNodeTexNoise", "inputs": {"Scale": float(blend.get("noise", 0.045)), "Detail": 3.0}},
+             {"id": "wcen", "type": "ShaderNodeMath", "props": {"operation": "SUBTRACT"}, "inputs": {1: 0.5}},
+             {"id": "wjit", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: float(blend.get("jitter", 0.6))}}]
+    links = [["wcoord", "Object", "wnoise", "Vector"], ["wnoise", "Fac", "wcen", 0], ["wcen", "Value", "wjit", 0]]
+    prev, prev_sock = "tex", "Color"
+    for k, ly in enumerate(blend["layers"]):
+        i = f"L{k}"
+        nodes += [{"id": f"{i}_attr", "type": "ShaderNodeAttribute", "props": {"attribute_name": ly["attr"]}},
+                  {"id": f"{i}_add", "type": "ShaderNodeMath", "props": {"operation": "ADD"}},
+                  {"id": f"{i}_ramp", "type": "ShaderNodeValToRGB", "ramp": ramp},
+                  {"id": f"{i}_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"}}]
+        links += [[f"{i}_attr", "Fac", f"{i}_add", 0], ["wjit", "Value", f"{i}_add", 1], [f"{i}_add", "Value", f"{i}_ramp", "Fac"],
+                  [f"{i}_ramp", "Color", f"{i}_mix", "Factor"], [prev, prev_sock, f"{i}_mix", 6]]
+        if ly.get("image"):
+            nodes.append({"id": f"{i}_img", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": ly["image"]})
+            links += [["tiling", "Vector", f"{i}_img", "Vector"], [f"{i}_img", "Color", f"{i}_mix", 7]]
+        else:
+            nodes[-1]["inputs"] = {7: [*[float(x) for x in ly["colour"]][:3], 1.0]}
+        prev, prev_sock = f"{i}_mix", 2
+    doc["links"] = [l for l in doc["links"] if not (l[0] == "tex" and l[2] == "flatten")] + links + [[prev, prev_sock, "flatten", 7]]
     doc["nodes"] += nodes
     _keys(doc)
 

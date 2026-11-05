@@ -135,7 +135,33 @@ class Terrain:
                 sl = max(abs(hs[j][i + 1] - hs[j][i]) / (xs[1] - xs[0]), abs(hs[j + 1][i] - hs[j][i]) / (ys[1] - ys[0]))
                 fc.append(self.face_class((xs[i] + xs[i + 1]) / 2, (ys[j] + ys[j + 1]) / 2, z, sl))
         return {"x0": x0, "x1": x1, "y0": y0, "y1": y1, "nx": nx, "ny": ny, "heights": [round(v, 2) for row in hs for v in row],
-                "face_class": fc}
+                "face_class": fc, "weights": self.weights(xs, ys, hs)}
+
+    def weights(self, xs, ys, hs) -> dict:
+        """Per-VERTEX class weights (0..1, the shader interpolates them): the ground blends per pixel instead of per face."""
+        c, s = self.cfg, self.seed
+        nx, ny = len(xs), len(ys)
+        w = {k: [] for k in ("meadow", "forest", "rock", "road", "snow")}
+        for j in range(ny):
+            for i in range(nx):
+                x, y, z = xs[i], ys[j], hs[j][i]
+                sl = max(abs(hs[j][min(i + 1, nx - 1)] - hs[j][max(i - 1, 0)]) / (xs[min(i + 1, nx - 1)] - xs[max(i - 1, 0)]),
+                         abs(hs[min(j + 1, ny - 1)][i] - hs[max(j - 1, 0)][i]) / (ys[min(j + 1, ny - 1)] - ys[max(j - 1, 0)]))
+                n = fbm(x / 18.0, y / 18.0, s + 6, 3)
+                inside = 1.0
+                if self.hill:
+                    d = ((x - self.hill["x"]) / self.hill["rx"]) ** 2 + ((y - self.hill["y"]) / self.hill["ry"]) ** 2
+                    inside = 1.0 - smoothstep(0.9, 1.3, d)
+                jit = 1.2 * (fbm(x / 3.0, y / 3.0, s + 3, 2) - 0.5)
+                rh = c.get("road_half", 2.0)
+                w["road"].append(round(1.0 - smoothstep(rh - 0.4, rh + 1.2, self.road_dist(x, y) + jit), 3) if self.road else 0.0)
+                sn = c.get("snow_line", 1e9) + 6 * (fbm(x / 20.0, y / 20.0, s + 4, 3) - 0.5)
+                w["snow"].append(round(smoothstep(sn - 2.5, sn + 2.5, z), 3))
+                w["rock"].append(round(max(smoothstep(c.get("rock_slope", 0.9) - 0.15, c.get("rock_slope", 0.9) + 0.2, sl),
+                                           smoothstep(c.get("rock_line", 1e9) - 3, c.get("rock_line", 1e9) + 3, z)), 3))
+                w["meadow"].append(round(smoothstep(0.42, 0.56, n), 3))
+                w["forest"].append(round(smoothstep(0.54, 0.66, n) * inside if self.hill else 0.0, 3))
+        return w
 
 
 class Ranges:
@@ -165,5 +191,19 @@ class Ranges:
                 fc.append(CLASSES.index("snow") if z > c["snow_line"] + 12 * (n - 0.5) else
                           CLASSES.index("rock") if z > c["rock_line"] or sl > c.get("rock_slope", 0.8) else
                           CLASSES.index("forest") if n > 0.5 else CLASSES.index("grass"))
+        w = {k: [] for k in ("meadow", "forest", "rock", "road", "snow")}
+        for j in range(ny):
+            for i in range(nx):
+                z = hs[j][i]
+                sl = max(abs(hs[j][min(i + 1, nx - 1)] - hs[j][max(i - 1, 0)]) / (xs[min(i + 1, nx - 1)] - xs[max(i - 1, 0)]),
+                         abs(hs[min(j + 1, ny - 1)][i] - hs[max(j - 1, 0)][i]) / (ys[min(j + 1, ny - 1)] - ys[max(j - 1, 0)]))
+                n = fbm(xs[i] / 30, ys[j] / 30, c["seed"] + 8, 3)
+                sn = c["snow_line"] + 12 * (n - 0.5)
+                w["snow"].append(round(smoothstep(sn - 4, sn + 4, z), 3))
+                w["rock"].append(round(max(smoothstep(c["rock_line"] - 4, c["rock_line"] + 4, z),
+                                           smoothstep(c.get("rock_slope", 0.8) - 0.15, c.get("rock_slope", 0.8) + 0.2, sl)), 3))
+                w["forest"].append(round(smoothstep(0.45, 0.58, n), 3))
+                w["meadow"].append(0.0)
+                w["road"].append(0.0)
         return {"x0": c["x0"], "x1": c["x1"], "y0": c["y0"], "y1": c["y1"], "nx": nx, "ny": ny,
-                "heights": [round(v, 1) for row in hs for v in row], "face_class": fc}
+                "heights": [round(v, 1) for row in hs for v in row], "face_class": fc, "weights": w}

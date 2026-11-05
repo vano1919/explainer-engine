@@ -262,7 +262,7 @@
      [
       0,
       72,
-      12.5,
+      17,
       14.0,
       9
      ]
@@ -386,7 +386,7 @@
       0
      ],
      "yaw_deg": 0.0,
-     "scale": 1.25,
+     "scale": 1.0,
      "role": "landmark",
      "terrain": true,
      "dz": -0.4
@@ -1315,6 +1315,291 @@
      "terrain": true,
      "min_z": 0.5,
      "road_clear": 4.5
+    },
+    {
+     "type": "shape",
+     "name": "curtain-1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -10.5,
+      60,
+      16.2
+     ],
+     "scale": [
+      5.75,
+      0.8,
+      2.75
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "gate_tower-1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -4.3,
+      60,
+      18.0
+     ],
+     "scale": [
+      1.8,
+      1.8,
+      4.5
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "gate_cap-1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -4.3,
+      60,
+      22.8
+     ],
+     "scale": [
+      2.1,
+      2.1,
+      0.35
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon-1_0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -6.6,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon-1_1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -9.5,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon-1_2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -12.399999999999999,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon-1_3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -15.299999999999999,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "curtain1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      10.5,
+      60,
+      16.2
+     ],
+     "scale": [
+      5.75,
+      0.8,
+      2.75
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "gate_tower1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      4.3,
+      60,
+      18.0
+     ],
+     "scale": [
+      1.8,
+      1.8,
+      4.5
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "gate_cap1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      4.3,
+      60,
+      22.8
+     ],
+     "scale": [
+      2.1,
+      2.1,
+      0.35
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon1_0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      6.6,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon1_1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      9.5,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon1_2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      12.399999999999999,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon1_3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      15.299999999999999,
+      60,
+      19.35
+     ],
+     "scale": [
+      0.8,
+      0.85,
+      0.6
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "gate_lintel",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      60,
+      20.6
+     ],
+     "scale": [
+      2.6,
+      1.6,
+      1.3
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
     }
    ],
    "cast": [
@@ -1468,12 +1753,12 @@
      [
       18.76,
       16.12,
-      1.75
+      1.45
      ],
      [
       18.63,
       17.71,
-      1.7
+      1.45
      ],
      [
       0.0,
@@ -3931,21 +4216,21 @@
      "type": "terrain",
      "name": "range",
      "range": {
-      "x0": -420,
-      "x1": 420,
-      "y0": 185,
-      "y1": 330,
-      "ramp": 45,
-      "scale": 75,
+      "x0": -1300,
+      "x1": 1300,
+      "y0": 685,
+      "y1": 830,
+      "ramp": 60,
+      "scale": 110,
       "seed": 17,
       "floor": 0.0,
-      "peak": 140.0,
-      "snow_line": 60,
-      "rock_line": 34,
+      "peak": 49.0,
+      "snow_line": 21,
+      "rock_line": 12,
       "rock_slope": 0.7
      },
      "res": [
-      168,
+      220,
       58
      ],
      "colours": {
@@ -3963,7 +4248,7 @@
       "road": "texture.ph_stone_wall_diff",
       "rock": "texture.ph_rocky_terrain_diff"
      },
-     "uv_m": 40
+     "uv_m": 60
     },
     {
      "type": "shape",
@@ -3974,12 +4259,12 @@
      },
      "pos": [
       0,
-      200,
+      400,
       -6.0
      ],
      "scale": [
-      1800,
-      1500,
+      4000,
+      2600,
       1
      ],
      "colour": "#8FA262"
@@ -3993,12 +4278,12 @@
      },
      "pos": [
       0,
-      110,
+      385,
       -0.9
      ],
      "scale": [
-      500,
-      150,
+      2600,
+      700,
       1
      ],
      "colour": "#4F7F95",
@@ -4872,6 +5157,32 @@
      "colour": "#A39B8A",
      "texture": "texture.ph_stone_wall_diff",
      "tile": 6.0
+    },
+    {
+     "type": "piece",
+     "name": "ship3",
+     "asset": "model.ph_dutch_ship_medium",
+     "pos": [
+      -70,
+      260,
+      -2.2
+     ],
+     "yaw_deg": 80.0,
+     "scale": 1.6,
+     "role": "landmark"
+    },
+    {
+     "type": "piece",
+     "name": "ship4",
+     "asset": "model.ph_ship_pinnace",
+     "pos": [
+      110,
+      360,
+      -2.6
+     ],
+     "yaw_deg": 250.0,
+     "scale": 2.0,
+     "role": "landmark"
     }
    ],
    "cast": [

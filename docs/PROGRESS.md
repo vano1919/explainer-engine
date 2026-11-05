@@ -4295,3 +4295,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
   only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
 - Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.
+
+## 2026-11-05 WP-Q8 (night, Fable orders): smooth ground, castle wall, harbour horizon
+
+- Terrain is shade-smooth and has no per-face classes in the shader: `terrain.py` writes per-vertex weights (meadow, forest, rock, road, snow), `_terrain` stores them as point attributes `w_*`, and one ground material layers the Poly Haven maps by them, broken up by a world-space noise (`style._blend_textures`). The face classes stay in the data for the tests.
+- Raw graphs outside the toon path (`raw` in `StyleEngine.material`, `S.check` wants an output and no Principled): `ocean` (glossy 0.1 ripple, quay band, far haze) and `smoke` cards.
+- E2: castle scale 1.0, level crest radius 17, front curtain walls, gatehouse with two towers and a lintel (primitives with the Poly Haven stone map; placement not yet seen in a frame). E3: mountains 0.35 x height, 500 m further back, sea plane to the horizon, two more distant ships. Not verified in a render yet.

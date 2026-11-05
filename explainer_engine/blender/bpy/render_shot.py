@@ -143,6 +143,11 @@ def _terrain(o, report):
         me.materials.append(None)
     for poly, c in zip(me.polygons, g["face_class"]):
         poly.material_index = c
+    for poly in me.polygons:
+        poly.use_smooth = True   # shade-smooth: the ground has no facets
+    for cname, vals in (g.get("weights") or {}).items():   # per-vertex class weights: the ground shader blends per pixel
+        at = me.attributes.new(name="w_" + cname, type="FLOAT", domain="POINT")
+        at.data.foreach_set("value", vals)
     ob["is_terrain"] = True
     report.setdefault("terrain", {})[o["name"]] = {"verts": len(verts), "faces": len(faces)}
     _place(ob, o)
