@@ -393,10 +393,11 @@ class HeadlessRender:
         report_path = tdir / "bpy_report.json"
         report_path.unlink(missing_ok=True)
         job = {"job": "render_shot/1", "pin_version": self.binary.version, "shot_id": spec["shot_id"], "frames": todo,
-               "frame_start": 1, "fps": fps, "width": width, "height": height, "percent": percent, "engine": engine,
+               "frame_start": 1, "fps": fps, "width": out_w, "height": out_h, "percent": 100, "engine": engine,
                "device": self.binary.device, "settings": prof.settings(spec["render"]), "seed": spec["seed"],
                "scene": scene or {"kind": "smoke", "frames_total": spec["clock"]["frames"]},
                "frames_dir": str(sdir / "frames"), "frame_name": FRAME_NAME, "progress": str(progress), "report": str(report_path)}
+        # the output size goes to Blender directly at 100 %: resolution_percentage is an integer, so 12.5 % would render 307x172
         job_path = tdir / "job.json"
         write_json_atomic(job_path, job)
         want = set(todo)

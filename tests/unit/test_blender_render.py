@@ -71,6 +71,8 @@ def test_a_smoke_render_commits_every_frame_and_writes_a_valid_manifest(fake, tm
     assert m["output"]["codec"] == "png" and (m["output"]["width"], m["output"]["height"]) == (320, 180)
     assert m["seconds_per_frame"] == pytest.approx(0.5) and m["blender"]["version"] == "5.2.3"
     assert calls()[0]["frames"] == list(range(6))
+    job = json.loads((tmp_path / "work" / ".cache" / m["cache_key"] / "job.json").read_text(encoding="utf-8"))
+    assert (job["width"], job["height"], job["percent"]) == (320, 180, 100)  # Blender's percentage is an integer: 12.5 -> 307x172
     sdir = tmp_path / "work" / m["cache_key"]
     ck = json.loads((sdir / "render_checkpoint.json").read_text(encoding="utf-8"))
     assert C.errors(ck) == [] and [f["state"] for f in ck["frames"]] == ["COMMITTED"] * 6
