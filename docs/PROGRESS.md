@@ -4208,3 +4208,19 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
   heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
 
+
+## 2026-11-05 — WP-Q4: Blender Studio Rain as the appeal benchmark (draft PR #135, branch wpq/04-character-benchmark)
+- Done: Rain v3.3 (CC-BY 4.0, free anonymous download, 64.4 MB, sha256 `80217f16...ea70d24`, fetched 2026-11-05) recorded as the
+  `blender_studio_cc_by` row of `assets/licence_sources.json`; the zip stays out of git (D-110; vault copy still to do, no HF
+  credentials in the cloud session; CI fetches it from the public URL at the sha256). Storm's page says "Login to Download": not
+  fetched. Rain opens in Blender 5.2.3 with scripts off (the embedded cloudrig.py/rain_shading.py are not run); the face works.
+- Code: `rigs.ActionVisemes` (Rhubarb shapes to pose-bone tracks, X on silence, same timing rule as `LipSync`), `viseme_poses_rain.json`
+  (jaw, mouth scale: three poses measured by render, the rest interpolated), `bpy/render_shot.py` object kind `rig_blend` (a `.blend` rig
+  appended whole, helper meshes hidden, head-lattice deltas, viseme keys, toon re-materialing by slot), `character_benchmark.py` (glue to the
+  Q1 style graph, `light_preset`, HDRI sky), `.github/workflows/character-benchmark.yml`, tests `test_lipsync_map.py` + `test_character_benchmark.py`.
+- Findings (direct): Rain under Blender Studio's own shading has the appeal the reference wants; under the Q1 graph at 720p/4 samples the
+  face is dark brown, the golden_hour key leaves it in shadow, a skin texture strength of 0.2 leaves hard cheek stripes. Verdict "not there",
+  not offered for a pick. 10.5-11.8 s/frame at 1280x720 on a CPU sandbox (not Mac/GPU figures). The head's shared 2x2x3 lattice lengthens the
+  jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
+  only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
+- Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.
