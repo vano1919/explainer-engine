@@ -253,6 +253,23 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
             "props": props or {"banners": [], "dust": None}}
 
 
+def near_slots(block: dict, camera: dict, *, margin_m: float = 3.0) -> list[int]:
+    """The template slots a soldier plays while it is within the near border (+ ``margin_m``) of the camera at one of its keys
+    (or its start and end): only those keep their full baked meshes in Blender. Keys are every 12 frames, a soldier moves at most
+    5.3 m/s, so the margin covers the time between keys."""
+    keys = camera.get("keys") or [{"frame": 0, "location": camera["location"]}] + (
+        [{"frame": camera.get("frames", 0), "location": camera["to"]["location"]}] if camera.get("to") else [])
+    lim = block["borders"]["hero_max_m"] + margin_m
+    p, out = block["points"], set()
+    for i in range(block["count"]):
+        for k in keys:
+            t = k["frame"] / 24.0
+            x, y = position(p["x"][i], p["y"][i], p["vx"][i], p["vy"][i], p["delay"][i], t, p["stop"][i])
+            if math.dist((x, y, 0.0), k["location"]) < lim:
+                out.add(p["slot2"][i] if t >= p["switch"][i] else p["slot"][i])     # the clip it plays at that moment
+    return sorted(out)
+
+
 def check(block: dict) -> list[str]:
     """Problems of a crowds block (empty = fine): the bpy side trusts what passes."""
     out = []
@@ -546,11 +563,10 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     if battle:
         grass, dirt = "material.ph_aerial_grass_rock", "material.ph_dry_ground_01"
         tex = lambda aid, **kw: {"base": "paper", "texture": str(paths[aid]), "texture_mean": SS.texture_mean(Path(paths[aid])), **kw}  # noqa: E731
-        extra = {"field_grass": tex(grass, tile=120.0), "field_dirt": tex(dirt, tile=10.0)}
-        objs.append({"name": "field", "add": "plane", "params": {"size": 900}, "material": "field_grass"})
-        for i, (x, y, sx, sy, yaw) in enumerate(((2, 16, 90, 15, 2), (-30, 22, 50, 11, -9), (36, 20, 48, 12, 11), (8, 44, 70, 13, -4))):
-            objs.append({"name": f"dirt_{i}", "add": "plane", "params": {"size": 1}, "location": [x, y, 0.012 + i * 0.004],
-                         "scale": [sx, sy, 1], "rotation_deg": [0, 0, yaw], "material": "field_dirt"})
+        extra = {"field_grass": tex(grass, tile=40.0), "field_dirt": tex(dirt, tile=140.0)}
+        # the trampled field between the armies is dirt; the ridges around it are grass (a flat patch of one texture on the other
+        # showed a hard rectangle edge in the first battle preview, so the two meet at the foot of the ridges)
+        objs.append({"name": "field", "add": "plane", "params": {"size": 900}, "material": "field_dirt"})
         mean = extra["field_dirt"]["texture_mean"]
         if long:
             props = {"banners": [dict(b) for b in BANNERS], "dust": battle30_dust(shot_id, mean), "arrows": battle30_arrows(shot_id),
@@ -569,10 +585,11 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     else:
         objs.append(next(dict(o, params={"size": 900}) for o in base["objects"] if o["name"] == "field"))
         block = plan(default_formations(count), camera, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px)
-    objs += [dict(o, location=[0, 190, -14], scale=[240, 50, 34]) for o in base["objects"] if o["name"] == "ridge"]
+    hill = "field_grass" if battle else "hill"
+    objs += [dict(o, location=[0, 190, -14], scale=[240, 50, 34], material=hill) for o in base["objects"] if o["name"] == "ridge"]
     for i, (x, y, r) in enumerate(((-170, 120, 70), (190, 140, 80), (-60, 260, 95), (110, 300, 110))):
         objs.append({"name": f"ridge_{i}", "add": "uv_sphere", "params": {"radius": 1, "segments": 48, "ring_count": 24},
-                     "location": [x, y, -r * 0.55], "scale": [r, r * 0.7, r * 0.6], "material": "hill", "smooth": True})
+                     "location": [x, y, -r * 0.55], "scale": [r, r * 0.7, r * 0.6], "material": hill, "smooth": True})
     guns = ((-24, 112, 180), (30, 114, 176)) if battle else ((-34, 18, 0), (-20, 17, 6), (16, 18, -4), (30, 17, 3), (-8, 60, 180),
                                                             (12, 61, 176))
     for i, (x, y, yaw) in enumerate(guns):
@@ -581,7 +598,8 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     used = {o.get("material") for o in objs} | {m for b in block["props"]["banners"] for m in (b["material"], b["pole_material"])}
     if block["props"].get("arrows"):
         used.add("night")
-    mats = {k: v for k, v in base["materials"].items() if k in used}
+    pool = {k: v for sc_ in SS.scenes(paths, cast="mannequin").values() for k, v in sc_["materials"].items()}   # the village's brick, roof
+    mats = {k: v for k, v in pool.items() if k in used}
     mats.update(extra)
 
     def cast(name, char, costume, tint, xyz, yaw, action, offset):
@@ -606,6 +624,7 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     cam = dict(camera, clip_end=2000.0)
     if frames > 1 and camera_to is not None:
         cam["to"] = dict(camera_to)
+    block["near_slots"] = near_slots(block, dict(cam, frames=frames - 1))
     return {"objects": objs, "camera": cam, "materials": mats, "frames_total": frames, "crowds": block, "composition": composition}
 
 

@@ -726,7 +726,6 @@ def build(scene, block, workdir, report):
         for o in [bpy.data.objects[tpl["name"]]] + list(bpy.data.objects[tpl["name"]].children_recursive):
             o.hide_render = True
     col = _collection("EE_Crowd_T1", sorted(by_slot.items()))
-    col_full = _collection("EE_Crowd_T1_full", sorted(full_of.items()))   # the near band: the bake's own full meshes
     p = block["points"]
     centre = (sum(p["x"]) / max(len(p["x"]), 1), sum(p["y"]) / max(len(p["y"]), 1))
     far = [(ft["far_slot"], full_of[ft["slot"]]) for ft in sorted(block["far_templates"], key=lambda x: x["far_slot"])]
@@ -735,6 +734,17 @@ def build(scene, block, workdir, report):
         scene.frame_set(scene.frame_start + int(vf))
     img, ainfo = bake_atlas(scene, far, n, block["atlas"], centre, workdir)
     scene.frame_set(scene.frame_start)
+    # the near band draws the full meshes only of the slots a soldier wears near the camera (``near_slots``, planned on the host);
+    # every other slot gets its decimated meshes there (the Pick Instance order stays slot x N + f) and its full ones are freed
+    near_slots = set(block.get("near_slots", full_of))
+    col_full = _collection("EE_Crowd_T1_full", [(k, full_of[k] if k in near_slots else by_slot[k]) for k in sorted(full_of)])
+    freed = 0
+    for k in sorted(full_of):
+        if k not in near_slots:
+            for me in full_of[k]:
+                if me.users == 0:
+                    bpy.data.meshes.remove(me)
+                    freed += 1
     quad = _quad(block["atlas"], ainfo["elevation_deg"])
     quad.data.materials.append(_atlas_material(img, *ainfo["cells"]))
     holder = bpy.data.collections.new("EE_Crowd_quad")   # out of the scene: drawn only through the instancer
@@ -786,6 +796,6 @@ def build(scene, block, workdir, report):
                        "instances_second_frame": inst, "t1_changed_share": round(changed, 4), "borders": b, "bands_m": bands,
                        "shadow": {k: o.visible_shadow for k, o in objs.items()},
                        "lineart": {k: o.lineart.usage for k, o in dict(objs, **extras).items()},
-                       "props": {k: allc[k] for k in extras},
+                       "props": {k: allc[k] for k in extras}, "near_slots": sorted(near_slots), "full_meshes_freed": freed,
                        "seconds": round(time.perf_counter() - t0, 2)}
     return objs

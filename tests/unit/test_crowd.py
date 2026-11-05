@@ -292,6 +292,15 @@ def test_dust_arrives_with_the_wedge_and_the_clash():
     assert all(len(c) == len(K.DUST_COLUMNS) for c in d["cards"])
 
 
+def test_only_the_slots_seen_near_the_camera_keep_full_meshes():
+    cam, b = _b30()
+    near = K.near_slots(b, cam)
+    assert near and set(near) < {t["slot"] for t in b["templates"]}
+    assert all(b["templates"][k]["tint"] == "faction_a" or b["templates"][k]["action"] in ("Sword_Attack", "Sword_Idle") for k in near)
+    jog = {t["slot"] for t in b["templates"] if t["action"] == "Jog_Fwd_Loop"}
+    assert not jog & set(near)        # the charge is never near the camera's keys: its full meshes are freed
+
+
 # the Blender side: the hook and the module stay in step with the host ----------------------------------------------------------
 
 BPY = Path(K.__file__).resolve().parent / "bpy"
@@ -305,7 +314,7 @@ def test_render_shot_builds_the_crowd_after_the_style():
     bake = (BPY / "crowd_bake.py").read_text(encoding="utf-8")
     for name in ("GeometryNodeInstanceOnPoints", "GeometryNodeCollectionInfo", "Pick Instance", "INSTANCER", "lineart.usage",
                  "visible_shadow = False", "EE_Crowd", "new_from_object", "evaluated_get", "EE_Crowd_T1_full", "tree_banner",
-                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame"):
+                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame", "near_slots"):
         assert name in bake
     for col in K.COLUMNS:   # every plan column the points mesh needs is read by the bpy side
         assert f'"{col}"' in bake
