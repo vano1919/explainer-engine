@@ -257,6 +257,8 @@ def light_presets(path: Path | None = None) -> dict:
         wo = pr["key"].get("world_offset_deg")
         if wo is not None and not 0 <= abs(wo) <= 180:
             raise ValueError(f"light preset {name}: key.world_offset_deg {wo} outside -180..180")
+        if not -2 <= pr.get("world_exposure_ev", 0) <= 2:
+            raise ValueError(f"light preset {name}: world_exposure_ev outside -2..2")
         sky = pr.get("sky")
         if sky is not None and (set(sky) - {"tint", "horizon", "top", "horizon_band", "glow"}
                                 or any(len(sky[c]) != 3 or not all(0 <= v <= 1.5 for v in sky[c])
@@ -1228,13 +1230,16 @@ class StyleEngine:
             links += [["render", "Image", "overlay", 6], ["stretch", 0, "overlay", 7], ["overlay", 2, "out", "Image"]]
         return _keys({"enabled": True, "opacity": t.paper_opacity, "texture": texture, "nodes": nodes, "links": links})
 
-    def scene_settings(self, path: str) -> dict:
+    def scene_settings(self, path: str, focus_m: float | None = None) -> dict:
         t, a = self.t, self.t.art
         if a is not None and a.lit_rig:   # WP-Q1: the look's own view transform; Standard and PBR Neutral take no look
             view = a.view_transform or t.view_transform
             look = t.look if view == "AgX" else "None"
             out = {"view_transform": view, "look": look, "look_ids": list(LOOK_IDS[look]), "film_transparent": False,
                    "engine": "eevee"}
+            ev = light_presets()[a.light_preset].get("world_exposure_ev") if a.light_preset else None
+            if ev and focus_m is not None and focus_m > CHARACTER_SHOT_M:   # a raking world sun leaves half the set in shadow
+                out["exposure"] = round(ev, 6)
             ee = {"use_raytracing": False, "use_fast_gi": a.ao, "use_shadows": a.casts_shadows}
             if a.ao:
                 ee["fast_gi_method"] = "AMBIENT_OCCLUSION_ONLY"
@@ -1260,7 +1265,7 @@ class StyleEngine:
             raise ValueError(f"unknown style path {path!r} (known: {', '.join(PATHS)})")
         kl = self.t.key_light
         doc = {"schema": SCHEMA, "path": path, "tokens": self.t.to_dict(),
-               "scene": self.scene_settings(path),
+               "scene": self.scene_settings(path, focus_m=camera["focus_distance_m"]),
                "key_light": {"type": "SUN", "energy": kl.energy, "angle_rad": round(math.radians(kl.angle_deg), 6),
                              "rotation_euler": list(kl.rotation_euler()), "direction": list(kl.direction()),
                              "use_shadow": self.t.shadows},

@@ -929,6 +929,9 @@ def apply_style(scene, style, pending, report):
         raise RuntimeError(f"this Blender has no look {st['look']!r} (tried {st['look_ids']})")
     applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius if mod else None,
                "crease_threshold": mod.crease_threshold if mod else None}
+    if st.get("exposure") is not None:   # a preset's world-shot exposure (golden_hour: a raking sun)
+        vs.exposure = st["exposure"]
+        applied["exposure"] = vs.exposure
     if fill:
         applied["fill_light"] = fill["energy"]
     if lights_applied is not None:

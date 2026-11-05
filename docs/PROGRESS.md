@@ -4277,4 +4277,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   over the horizon (golden_hour: tint 0.86/0.66/0.5, horizon 1.0/0.7/0.44, band 0.6, glow 0.7). Presets without these keys
   (noon_epic, overcast_day, interior_hearth, night_moon) keep their bytes. Local A/B at 720p: before = flat front light, blue sky;
   after = warm side light from the right, long shadows to the left, warmer sky. 3 tests in `test_combo_profiles.py`.
+  Fable's tweaks (23:24 UTC): `world_exposure_ev` +0.5 on world shots only (`scene.exposure`, set by `render_shot` on the view
+  settings; close-ups keep 0), and a stronger warm band (tint 0.95/0.72/0.52, horizon 1.0/0.74/0.48, band 0.85, glow 0.95): the
+  720p hero is half a stop brighter and the sky over the ridge reads warm peach.
 

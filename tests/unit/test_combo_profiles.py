@@ -295,3 +295,10 @@ def test_a_bad_preset_sky_or_world_offset_is_refused(tmp_path):
     (tmp_path / "b.json").write_text(json.dumps(bad), encoding="utf-8")
     with pytest.raises(ValueError):
         S.light_presets(tmp_path / "b.json")
+
+
+def test_golden_hour_opens_a_world_shot_by_half_a_stop_and_leaves_a_close_up_alone():
+    ev = S.light_presets()["golden_hour"]["world_exposure_ev"]
+    assert ev == 0.5 and _graph_at("q1_c2_native_skin@E2", 49.0)["scene"]["exposure"] == ev
+    assert "exposure" not in _graph_at("q1_c2_native_skin@E2", 3.0)["scene"]
+    assert "exposure" not in _graph_at("q1_c2_native_skin@E1", 49.0)["scene"]
