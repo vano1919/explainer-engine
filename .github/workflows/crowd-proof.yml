@@ -10,6 +10,9 @@ name: Crowd proof (T-E)
 on:
   workflow_dispatch:
     inputs:
+      composition:
+        description: "battle (a wedge against a shield wall, the Mac clip's set) or field (the first proof's parade)"
+        default: "battle"
       count:
         description: "soldiers in total"
         default: "5000"
@@ -20,8 +23,8 @@ on:
         description: "render scale of the 2560x1440 master (1.0, 0.75 or 0.5)"
         default: "0.5"
       look:
-        description: "look variant (blender/look_variants.json id, or B_light)"
-        default: "v01_reference_soft3d"
+        description: "look id; empty = the composition's own (battle q1_c2_native_skin@E2, field v01_reference_soft3d)"
+        default: ""
   push:
     branches:
       - "claude/project-thread-u1fc5g"
@@ -36,7 +39,7 @@ permissions:
 
 concurrency:
   group: crowd-proof-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false   # a long proof run is never cancelled by the next push; the newer one waits
 
 jobs:
   crowd:
@@ -99,7 +102,8 @@ jobs:
         run: |
           python -m explainer_engine.blender.crowd render --out crowd --binary "${{ steps.install.outputs.bin }}" \
             --count "${{ github.event.inputs.count || '5000' }}" --frames "${{ github.event.inputs.frames || '24' }}" \
-            --scale "${{ github.event.inputs.scale || '0.5' }}" --look "${{ github.event.inputs.look || 'v01_reference_soft3d' }}"
+            --scale "${{ github.event.inputs.scale || '0.5' }}" --composition "${{ github.event.inputs.composition || 'battle' }}" \
+            ${{ github.event.inputs.look && format('--look "{0}"', github.event.inputs.look) || '' }}
       - name: Collect the outputs
         if: always()
         run: |

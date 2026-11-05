@@ -45,9 +45,11 @@ MID_TRIS = 2000          # T1 decimation target per soldier
 MID_SHADOW_MAX_M = 40.0  # T1 soldiers nearer than this cast shadows; beyond, none (T2 never)
 HERO_MAX = 30
 WALK_MPS = 0.77          # Walk_Formal_Loop's natural speed, MEASURED (PROGRESS ICW-06, rigs.foot_slide): the advance is stride-matched
+JOG_MPS = 5.2955         # Jog_Fwd_Loop's natural speed, MEASURED (ICW-06 poc1_clips.json, slide 0.18 cm): a charge, stride-matched
 TEMPLATE_Y = -400.0      # templates are built behind the camera and hidden after the bake
 FORMATIONS = ("line", "phalanx", "cohort", "shield_wall", "wedge", "rout")
-COLUMNS = ("x", "y", "yaw", "slot", "far_slot", "phase", "speed", "vx", "vy", "delay")
+COLUMNS = ("x", "y", "yaw", "slot", "far_slot", "phase", "speed", "vx", "vy", "delay", "banner")
+DUST_COLUMNS = ("x", "y", "z", "w", "h", "vx", "vy", "seed")   # a dust card: centre, size (m), drift (m/s), noise seed
 
 
 class CrowdError(ValueError):
@@ -74,6 +76,8 @@ class Formation:
     speed_mps: float = 0.0
     rank_delay_s: float = 0.0
     speed_range: tuple[float, float] = (0.92, 1.08)
+    banner: int = 0            # the banner a standard-bearer of this block carries (1, 2, ...: crowds.props.banners); 0 = none
+    banner_every: int = 0      # one standard-bearer in this many soldiers, never in the front rank
 
     @property
     def ranks(self) -> int:
@@ -160,7 +164,7 @@ def _pick(rng: random.Random, clips) -> int:
 
 
 def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_frames: int = BAKE_FRAMES,
-         hero_max: int = HERO_MAX, far_px: float = FAR_PX) -> dict:
+         hero_max: int = HERO_MAX, far_px: float = FAR_PX, props: dict | None = None) -> dict:
     """The ``crowds`` block of a described scene: T1 templates (formation x character x clip), T2 far templates (formation x
     clip, first character), the heroes (T0 soldiers taken out of the points) and one column per point attribute."""
     if bake_frames < 4:
@@ -185,13 +189,12 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
                 far_of[key] = len(far)
                 far.append({"far_slot": len(far), "slot": slot_of[key]})
     cam, lens = camera["location"], camera["lens_mm"]
-    cols = {k: [] for k in COLUMNS}
-    heroes = []
+    rows = []
     for fm in formations:
         rng = random.Random(seed_for(shot_id, fm.crowd_id))
         f = math.radians(fm.facing_deg)
         fwd, right = (-math.sin(f), math.cos(f)), (math.cos(f), math.sin(f))
-        for u, v, rank in fm.offsets(rng):
+        for n, (u, v, rank) in enumerate(fm.offsets(rng)):
             u += rng.uniform(-fm.jitter_m, fm.jitter_m)
             v += rng.uniform(-fm.jitter_m, fm.jitter_m)
             x, y = fm.origin[0] + u * right[0] + v * fwd[0], fm.origin[1] + u * right[1] + v * fwd[1]
@@ -202,19 +205,21 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
             vel, phase = fm.speed_mps * s, rng.uniform(0, bake_frames)
             row = {"x": round(x, 4), "y": round(y, 4), "yaw": round(yaw, 3), "slot": slot_of[(fm.chars[ci], fm.costume, fm.tint, fm.clips[ki][0])],
                    "far_slot": far_of[(fm.chars[0], fm.costume, fm.tint, fm.clips[ki][0])], "phase": round(phase, 4), "speed": round(s, 4),
-                   "vx": round(fwd[0] * vel, 4), "vy": round(fwd[1] * vel, 4), "delay": round(rank * fm.rank_delay_s, 4)}
-            if len(heroes) < hero_max and tier_of(math.dist((x, y, 0.0), cam), lens) == "hero":
-                heroes.append(dict(row, crowd_id=fm.crowd_id, char=fm.chars[ci], costume=fm.costume, tint=fm.tint,
-                                   action=fm.clips[ki][0], offset=int(phase * 2) % 64))
-                continue
-            for k in COLUMNS:
-                cols[k].append(row[k])
+                   "vx": round(fwd[0] * vel, 4), "vy": round(fwd[1] * vel, 4), "delay": round(rank * fm.rank_delay_s, 4),
+                   "banner": fm.banner if fm.banner_every and rank > 0 and n % fm.banner_every == fm.banner_every // 2 else 0}
+            rows.append((math.dist((x, y, 0.0), cam), row, dict(crowd_id=fm.crowd_id, char=fm.chars[ci], costume=fm.costume,
+                                                               tint=fm.tint, action=fm.clips[ki][0], offset=int(phase * 2) % 64)))
+    near = sorted((i for i, (d, r, _) in enumerate(rows) if tier_of(d, lens) == "hero" and not r["banner"]), key=lambda i: rows[i][0])
+    hero_ids = set(near[:hero_max])          # the nearest soldiers become full rigs; the rest of the near ones stay T1 (full mesh)
+    heroes = [dict(rows[i][1], **rows[i][2]) for i in sorted(hero_ids)]
+    cols = {k: [r[k] for i, (_, r, _) in enumerate(rows) if i not in hero_ids] for k in COLUMNS}
     return {"schema": SCHEMA, "shot_id": shot_id, "bake_frames": bake_frames, "lens_mm": lens, "focal_px": round(focal_px(lens), 4),
             "soldier_m": SOLDIER_M, "far_px": far_px, "hero_px": HERO_PX, "borders": borders(lens, far_px=far_px), "mid_tris": MID_TRIS,
             "mid_shadow_max_m": MID_SHADOW_MAX_M,
             "atlas": {"frames": ATLAS_FRAMES, "yaw": ATLAS_YAW, "cell_px": list(ATLAS_CELL), "cell_m": [1.6, 2.4]},
             "templates": templates, "far_templates": far, "heroes": heroes, "count": len(cols["x"]), "points": cols,
-            "formations": [{"crowd_id": fm.crowd_id, "type": fm.type, "size": fm.size, "files": fm.files} for fm in formations]}
+            "formations": [{"crowd_id": fm.crowd_id, "type": fm.type, "size": fm.size, "files": fm.files} for fm in formations],
+            "props": props or {"banners": [], "dust": None}}
 
 
 def check(block: dict) -> list[str]:
@@ -237,6 +242,19 @@ def check(block: dict) -> list[str]:
         out.append("borders must satisfy 0 < hero_max_m < far_min_m")
     if len(block.get("heroes", [])) > HERO_MAX:
         out.append(f"more than {HERO_MAX} heroes")
+    props = block.get("props") or {}
+    ids = {bn.get("id") for bn in props.get("banners", [])}
+    if any(k and k not in ids for k in pts.get("banner", [])):
+        out.append("a point carries a banner that props.banners does not define")
+    for bn in props.get("banners", []):
+        if not (isinstance(bn.get("id"), int) and bn["id"] > 0 and bn.get("material") and 2.0 <= bn.get("pole_m", 0) <= 6.0):
+            out.append(f"banner {bn.get('id')!r}: needs an id > 0, a material and a pole of 2-6 m")
+    dust = props.get("dust")
+    if dust:
+        if not dust.get("cards") or any(len(c) != len(DUST_COLUMNS) for c in dust["cards"]):
+            out.append(f"dust cards need {len(DUST_COLUMNS)} values each ({', '.join(DUST_COLUMNS)})")
+        if not 0 < dust.get("alpha", 0) <= 1 or len(dust.get("rgb", ())) != 3:
+            out.append("dust needs an alpha in 0..1 and an rgb colour")
     return out
 
 
@@ -277,27 +295,94 @@ def default_formations(count: int = 5000) -> tuple[Formation, ...]:
                       (("Sword_Idle", 0.5), ("Sword_Attack", 0.5)), (fb * 0.5 + 18.0, 40.0), 200.0))
 
 
-def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000, frames: int = 24, shot_id: str = SHOT_ID,
-          far_px: float = FAR_PX) -> dict:
-    """Objects, camera, materials and the crowds block of the proof: a field between ridges, cannons, the armies. The T1/T2
-    templates and the heroes are ordinary cast members (render_shot's character path); templates are parked behind the camera."""
+# --- the battle (Fable 2026-11-05, for the Mac clip): a wedge charging a shield wall, the camera low behind the near line ----------
+
+BATTLE_SHOT_ID = "crowd_battle_5k"
+BATTLE_CAMERA = {"location": [-5.0, -9.2, 1.9], "look_at": [5.0, 40.0, 2.4], "lens_mm": 32, "focus_distance_m": 30.0}
+BATTLE_CAMERA_TO = {"location": [-4.1, -8.9, 1.86], "look_at": [5.8, 40.0, 2.4]}    # a slow creep along the back rank
+BATTLE_LOOK = "q1_c2_native_skin@E2"     # combo_profiles default C2 (native characters, Q1 depth haze) under E2's golden hour
+COMPOSITIONS = ("battle", "field")
+BANNERS = ({"id": 1, "material": "side_a", "pole_material": "night", "pole_m": 3.6, "flag_m": [0.95, 1.25]},
+           {"id": 2, "material": "side_b", "pole_material": "night", "pole_m": 3.6, "flag_m": [0.95, 1.25]})
+
+
+def battle_formations(count: int = 5000) -> tuple[Formation, ...]:
+    """Side A: a shield wall six ranks deep, holding (guard, some cuts), the camera behind it. Side B: a wedge charging at the
+    jog clip's own speed, the main line holding behind it, a reserve walking up; standard-bearers in every block."""
+    if count < 8:
+        raise CrowdError("a battle needs at least eight soldiers")
+    wall, wedge, line = round(count * 0.3), round(count * 0.15), round(count * 0.37)
+    reserve = count - wall - wedge - line
+    chars = ("ink_test_m", "ink_test_m2")
+    ranger, peasant = "costume.mco_male_ranger", "costume.mco_male_peasant"
+    return (Formation("wall_a", "shield_wall", wall, max(1, round(wall / 6)), ranger, "faction_a", chars,
+                      (("Sword_Idle", 0.8), ("Sword_Attack", 0.2)), (0.0, 0.0), 0.0, jitter_m=0.12, yaw_jitter_deg=5.0,
+                      banner=1, banner_every=70),
+            Formation("wedge_b", "wedge", wedge, 1, peasant, "faction_b", chars, (("Jog_Fwd_Loop", 1.0),), (6.0, 26.0), 180.0,
+                      spacing_m=1.4, jitter_m=0.3, speed_mps=JOG_MPS, speed_range=(0.97, 1.03), banner=2, banner_every=45),
+            Formation("line_b", "phalanx", line, max(1, round(line / 8)), ranger, "faction_b", chars, (("Sword_Idle", 1.0),),
+                      (0.0, 72.0), 180.0, banner=2, banner_every=90),
+            Formation("reserve_b", "line", reserve, max(1, round(reserve / 5)), ranger, "faction_b", chars,
+                      (("Walk_Formal_Loop", 1.0),), (14.0, 98.0), 180.0, spacing_m=1.6, speed_mps=WALK_MPS, banner=2,
+                      banner_every=80))
+
+
+def battle_dust(shot_id: str, rgb) -> dict:
+    """Dust cards: a bank over the far ranks (drifting across with the wind) and the cloud the wedge kicks up behind its point."""
+    rng = random.Random(seed_for(shot_id, "dust"))
+    cards = []
+    for _ in range(22):      # over the main line and the reserve
+        w = rng.uniform(16, 30)
+        h = w * rng.uniform(0.3, 0.42)
+        cards.append([rng.uniform(-70, 80), rng.uniform(66, 118), h * 0.38, w, h, rng.uniform(0.4, 0.9), 0.0, rng.uniform(0, 100)])
+    for _ in range(12):      # behind the charge, low, trailing it
+        w = rng.uniform(7, 14)
+        h = w * rng.uniform(0.32, 0.45)
+        cards.append([rng.uniform(-14, 28), rng.uniform(32, 62), h * 0.4, w, h, rng.uniform(0.2, 0.5),
+                      -JOG_MPS * rng.uniform(0.25, 0.45), rng.uniform(0, 100)])
+    return {"cards": [[round(v, 4) for v in c] for c in cards], "rgb": [round(min(1.0, c * 1.6), 4) for c in rgb], "alpha": 0.42}
+
+
+def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000, frames: int = 24, shot_id: str | None = None,
+          far_px: float = FAR_PX, composition: str = "battle") -> dict:
+    """Objects, camera, materials and the crowds block. ``battle``: grass with a trampled dirt strip between the armies, ridges
+    behind, a wedge charging a shield wall, banners and dust (the Mac clip). ``field``: the first proof's parade on a flat plane
+    (kept for the A/B and the CI timing). Templates and heroes are ordinary cast members (render_shot's character path);
+    templates are parked behind the camera."""
     from explainer_engine.blender import characters as C
     from explainer_engine.blender import style_sheets as SS
-    block = plan(default_formations(count), CAMERA, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px)
+    if composition not in COMPOSITIONS:
+        raise CrowdError(f"unknown composition {composition!r} (known: {', '.join(COMPOSITIONS)})")
+    battle = composition == "battle"
+    shot_id = shot_id or (BATTLE_SHOT_ID if battle else SHOT_ID)
+    camera, camera_to = (BATTLE_CAMERA, BATTLE_CAMERA_TO) if battle else (CAMERA, CAMERA_TO)
     base = SS.scenes(paths, cast="mannequin")["battle_wide"]
-    objs = []
-    for o in base["objects"]:
-        if o["name"] == "field":
-            objs.append(dict(o, params={"size": 900}))
-        elif o["name"] == "ridge":
-            objs.append(dict(o, location=[0, 190, -14], scale=[240, 50, 34]))
+    objs, extra = [], {}
+    if battle:
+        grass, dirt = "material.ph_aerial_grass_rock", "material.ph_dry_ground_01"
+        tex = lambda aid, **kw: {"base": "paper", "texture": str(paths[aid]), "texture_mean": SS.texture_mean(Path(paths[aid])), **kw}  # noqa: E731
+        extra = {"field_grass": tex(grass, tile=120.0), "field_dirt": tex(dirt, tile=10.0)}
+        objs.append({"name": "field", "add": "plane", "params": {"size": 900}, "material": "field_grass"})
+        for i, (x, y, sx, sy, yaw) in enumerate(((2, 16, 90, 15, 2), (-30, 22, 50, 11, -9), (36, 20, 48, 12, 11), (8, 44, 70, 13, -4))):
+            objs.append({"name": f"dirt_{i}", "add": "plane", "params": {"size": 1}, "location": [x, y, 0.012 + i * 0.004],
+                         "scale": [sx, sy, 1], "rotation_deg": [0, 0, yaw], "material": "field_dirt"})
+        props = {"banners": [dict(b) for b in BANNERS], "dust": battle_dust(shot_id, extra["field_dirt"]["texture_mean"])}
+        block = plan(battle_formations(count), camera, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px, props=props)
+    else:
+        objs.append(next(dict(o, params={"size": 900}) for o in base["objects"] if o["name"] == "field"))
+        block = plan(default_formations(count), camera, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px)
+    objs += [dict(o, location=[0, 190, -14], scale=[240, 50, 34]) for o in base["objects"] if o["name"] == "ridge"]
     for i, (x, y, r) in enumerate(((-170, 120, 70), (190, 140, 80), (-60, 260, 95), (110, 300, 110))):
         objs.append({"name": f"ridge_{i}", "add": "uv_sphere", "params": {"radius": 1, "segments": 48, "ring_count": 24},
                      "location": [x, y, -r * 0.55], "scale": [r, r * 0.7, r * 0.6], "material": "hill", "smooth": True})
-    for i, (x, y, yaw) in enumerate(((-34, 18, 0), (-20, 17, 6), (16, 18, -4), (30, 17, 3), (-8, 60, 180), (12, 61, 176))):
+    guns = ((-24, 112, 180), (30, 114, 176)) if battle else ((-34, 18, 0), (-20, 17, 6), (16, 18, -4), (30, 17, 3), (-8, 60, 180),
+                                                            (12, 61, 176))
+    for i, (x, y, yaw) in enumerate(guns):
         objs.append({"name": f"cannon_{i}", "append": {"path": str(paths["model.ph_cannon_01"])}, "location": [x, y, 0],
                      "scale": 1.0, "rotation_deg": [0, 0, yaw], "material": "cannon"})
-    mats = {k: v for k, v in base["materials"].items() if k in {o.get("material") for o in objs}}
+    used = {o.get("material") for o in objs} | {m for b in block["props"]["banners"] for m in (b["material"], b["pole_material"])}
+    mats = {k: v for k, v in base["materials"].items() if k in used}
+    mats.update(extra)
 
     def cast(name, char, costume, tint, xyz, yaw, action, offset):
         obj, tm = C.scene_object(name, char, costume, cpaths, location=xyz, yaw_deg=yaw + 180.0, action=action,
@@ -318,14 +403,15 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
             end = position(h["x"], h["y"], h["vx"], h["vy"], h["delay"], (frames - 1) / 24.0)
             obj["to"], obj["interp"] = {"location": [end[0], end[1], 0.0]}, "LINEAR"
         objs.append(obj)
-    cam = dict(CAMERA, clip_end=2000.0)
+    cam = dict(camera, clip_end=2000.0)
     if frames > 1:
-        cam["to"] = dict(CAMERA_TO)
-    return {"objects": objs, "camera": cam, "materials": mats, "frames_total": frames, "crowds": block}
+        cam["to"] = dict(camera_to)
+    return {"objects": objs, "camera": cam, "materials": mats, "frames_total": frames, "crowds": block, "composition": composition}
 
 
-def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_soft3d", count: int = 5000, frames: int = 24,
-           scale: float = 0.5, samples: int = 16, device: str = "auto", far_px: float = FAR_PX, log=print) -> dict:
+def render(out: Path, *, binary: str | None = None, look: str | None = None, count: int = 5000, frames: int = 24,
+           scale: float = 0.5, samples: int = 16, device: str = "auto", far_px: float = FAR_PX, composition: str = "battle",
+           log=print) -> dict:
     """The proof clip through the ICW-04 adapter (HeadlessRender: checkpointed frames, a manifest). A scaled render is a test
     (CN-17 refuses anything but the master as a deliverable): its frames are kept and the row marked scaled. The spec stays
     shot_spec/2 with the crowd in the template hash; the ``scene.crowds`` fields ride WP-Q1's shot_spec/3 (Fable, 22:11 UTC)."""
@@ -338,7 +424,9 @@ def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_s
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     paths, cpaths = SS.fetch(), C.fetch()
-    sc = scene(paths, cpaths, count=count, frames=frames, far_px=far_px)
+    look = look or (BATTLE_LOOK if composition == "battle" else "v01_reference_soft3d")
+    sc = scene(paths, cpaths, count=count, frames=frames, far_px=far_px, composition=composition)
+    shot = BATTLE_SHOT_ID if composition == "battle" else SHOT_ID
     problems = check(sc["crowds"])
     if problems:
         raise CrowdError("; ".join(problems))
@@ -347,8 +435,9 @@ def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_s
     scene_doc, _ = SS.job_scene("battle_wide", look, sc, paths)
     scene_doc["crowds"] = sc["crowds"]
     spec = SS.spec_for("battle_wide", look, tokens, samples=samples, scene=scene_doc, frames=frames)
-    spec["job_id"], spec["shot_id"] = JOB_ID, f"{SHOT_ID}_{count}_{look}"
-    spec["scene"]["template_asset"] = {"id": f"scene_template.crowd_proof_{count}", "sha256": SS.scene_sha256(scene_doc)}
+    tag = look.replace("@", "_at_").replace("+", "_")
+    spec["job_id"], spec["shot_id"] = JOB_ID, f"{shot}_{count}_{tag}"
+    spec["scene"]["template_asset"] = {"id": f"scene_template.crowd_{composition}_{count}", "sha256": SS.scene_sha256(scene_doc)}
     if scale != 1.0:
         spec["frame"]["render_scale"] = scale
     b = BlenderProject().resolve(binary, device=device)
@@ -362,13 +451,13 @@ def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_s
     sdir = out / "work" / m["cache_key"]
     rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
     times = SS.frame_times(sdir)
-    clip = SS.mp4(sdir / "frames", out / f"crowd_{count}_{look}_{frames}f.mp4")
+    clip = SS.mp4(sdir / "frames", out / f"crowd_{composition}_{count}_{tag}_{frames}f.mp4")
     import shutil
     (out / "frames").mkdir(exist_ok=True)
     for i in sorted({0, frames // 2, frames - 1}):     # stills for review: first, middle, last
         f = sdir / "frames" / R.FRAME_NAME.format(index=i)
         if f.exists():
-            shutil.copyfile(f, out / "frames" / f"crowd_{count}_{i:03d}.png")
+            shutil.copyfile(f, out / "frames" / f"crowd_{composition}_{count}_{i:03d}.png")
     prev = (rep.get("crowd") or {}).get("atlas", {}).get("preview")
     if prev and Path(prev).exists():
         shutil.copyfile(prev, out / "crowd_atlas_preview.png")
@@ -377,7 +466,7 @@ def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_s
            "heroes": len(blk["heroes"]), "templates": len(blk["templates"]), "far_templates": len(blk["far_templates"]),
            "borders": blk["borders"], "tiers_first_frame": tier_counts(blk, sc["camera"]["location"]),
            "tiers_last_frame": tier_counts(blk, sc["camera"].get("to", sc["camera"])["location"], seconds=(frames - 1) / 24.0),
-           "look": look, "frames": frames, "scale": scale, "size": [round(2560 * scale), round(1440 * scale)], "samples": samples,
+           "composition": composition, "props": (rep.get("crowd") or {}).get("props"), "look": look, "frames": frames, "scale": scale, "size": [round(2560 * scale), round(1440 * scale)], "samples": samples,
            "engine": m["engine"], "seconds_per_frame": m["seconds_per_frame"], "times": times,
            "wall_seconds": round(time.time() - t0, 1), "blender": m["blender"], "gpu_backend": rep.get("gpu_backend"),
            "crowd_report": rep.get("crowd"), "mp4": clip, "frames_dir": str(sdir / "frames"), "machine": sys.platform}
@@ -395,7 +484,8 @@ def main(argv: list[str] | None = None) -> int:
     r = sub.add_parser("render", help="render the proof clip")
     r.add_argument("--out", type=Path, required=True)
     r.add_argument("--binary")
-    r.add_argument("--look", default="v01_reference_soft3d")
+    r.add_argument("--composition", choices=COMPOSITIONS, default="battle")
+    r.add_argument("--look", help=f"look id (default {BATTLE_LOOK} for the battle, v01_reference_soft3d for the field)")
     r.add_argument("--count", type=int, default=5000)
     r.add_argument("--frames", type=int, default=24)
     r.add_argument("--scale", type=float, default=0.5)
@@ -410,7 +500,7 @@ def main(argv: list[str] | None = None) -> int:
                           "problems": check(b)}, indent=1))
         return 0
     row = render(a.out, binary=a.binary, look=a.look, count=a.count, frames=a.frames, scale=a.scale, samples=a.samples,
-                 device=a.device, far_px=a.far_px)
+                 device=a.device, far_px=a.far_px, composition=a.composition)
     print(json.dumps({k: row[k] for k in ("count", "seconds_per_frame", "times", "size", "engine", "tiers_first_frame")}, indent=1))
     return 0
 

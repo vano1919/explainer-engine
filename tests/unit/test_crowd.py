@@ -108,6 +108,9 @@ def test_heroes_are_the_nearest_and_capped():
     cam = K.CAMERA["location"]
     assert all(math.dist((h["x"], h["y"], 0.0), cam) <= b["borders"]["hero_max_m"] for h in b["heroes"])
     assert K.tier_counts(b, cam)["hero"] == 12
+    far_hero = max(math.dist((h["x"], h["y"], 0.0), cam) for h in b["heroes"])
+    rest = [math.dist((x, y, 0.0), cam) for x, y, k in zip(b["points"]["x"], b["points"]["y"], b["points"]["banner"]) if not k]
+    assert min(rest) >= far_hero - 1e-9                # no plain soldier nearer than the farthest hero
 
 
 # 4. closed-form motion (chunk safety, RULE-R1) ------------------------------------------------------------------------------------
@@ -162,6 +165,57 @@ def test_bad_formations_are_refused():
         K.default_formations(2)
 
 
+# the battle composition (Fable 2026-11-05: a wedge against a shield wall, the camera low behind the near line) -------------------
+
+def _battle(count=5000):
+    props = {"banners": [dict(b) for b in K.BANNERS], "dust": K.battle_dust(K.BATTLE_SHOT_ID, (0.2, 0.16, 0.1))}
+    return K.plan(K.battle_formations(count), K.BATTLE_CAMERA, shot_id=K.BATTLE_SHOT_ID, hero_max=K.PROOF_HEROES, props=props)
+
+
+def test_the_battle_places_every_soldier_and_passes_the_check():
+    b = _battle()
+    assert K.check(b) == [] and b["count"] + len(b["heroes"]) == 5000
+    assert {f["type"] for f in b["formations"]} == {"shield_wall", "wedge", "phalanx", "line"}
+
+
+def test_the_camera_stands_low_behind_the_shield_wall_and_the_wedge_charges_at_the_jog_speed():
+    b = _battle()
+    cam = K.BATTLE_CAMERA["location"]
+    assert 1.5 <= cam[2] <= 2.2
+    wall = [y for y, s in zip(b["points"]["y"], b["points"]["slot"]) if b["templates"][s]["tint"] == "faction_a"]
+    assert cam[1] < min(wall) < 0.5 and min(wall) - cam[1] < 6.0       # just behind the last rank
+    jog = [i for i, s in enumerate(b["points"]["slot"]) if b["templates"][s]["action"] == "Jog_Fwd_Loop"]
+    assert jog and all(b["points"]["vy"][i] < 0 for i in jog)            # towards the wall
+    v = [math.hypot(b["points"]["vx"][i], b["points"]["vy"][i]) / b["points"]["speed"][i] for i in jog]
+    assert all(x == pytest.approx(K.JOG_MPS, rel=2e-4) for x in v)       # stride-matched to the measured clip speed (4-decimal rows)
+
+
+def test_standard_bearers_never_stand_in_the_front_rank_and_banners_are_defined():
+    b = _battle()
+    carried = [k for k in b["points"]["banner"] if k]
+    assert carried and set(carried) <= {bn["id"] for bn in b["props"]["banners"]}
+    bad = dict(b, points=dict(b["points"], banner=[9] * b["count"]))
+    assert any("banner" in p for p in K.check(bad))
+    wall = [y for y, s, k in zip(b["points"]["y"], b["points"]["slot"], b["points"]["banner"])
+            if k and b["templates"][s]["tint"] == "faction_a"]
+    assert wall and max(wall) < -0.4          # the wall's front rank stands at y = 0 (jitter 0.12 m): no flag there
+
+
+def test_dust_sits_over_the_far_ranks_and_is_seeded():
+    d = K.battle_dust("s", (0.2, 0.16, 0.1))
+    assert d == K.battle_dust("s", (0.2, 0.16, 0.1)) and d != K.battle_dust("t", (0.2, 0.16, 0.1))
+    far_min = K.borders(K.BATTLE_CAMERA["lens_mm"])["far_min_m"]
+    cam = K.BATTLE_CAMERA["location"]
+    assert sum(math.dist((c[0], c[1], 0.0), cam) > far_min * 0.8 for c in d["cards"]) >= 15
+    bad = dict(_battle(400), props={"banners": [], "dust": dict(d, cards=[[1, 2, 3]])})
+    assert any("dust" in p for p in K.check(bad))
+
+
+def test_an_unknown_composition_is_refused():
+    with pytest.raises(K.CrowdError):
+        K.scene({}, {}, composition="parade")
+
+
 # the Blender side: the hook and the module stay in step with the host ----------------------------------------------------------
 
 BPY = Path(K.__file__).resolve().parent / "bpy"
@@ -174,7 +228,8 @@ def test_render_shot_builds_the_crowd_after_the_style():
     assert style_at < crowd_at
     bake = (BPY / "crowd_bake.py").read_text(encoding="utf-8")
     for name in ("GeometryNodeInstanceOnPoints", "GeometryNodeCollectionInfo", "Pick Instance", "INSTANCER", "lineart.usage",
-                 "visible_shadow = False", "EE_Crowd", "new_from_object", "evaluated_get"):
+                 "visible_shadow = False", "EE_Crowd", "new_from_object", "evaluated_get", "EE_Crowd_T1_full", "tree_banner",
+                 "tree_dust", '"BLENDED"'):
         assert name in bake
     for col in K.COLUMNS:   # every plan column the points mesh needs is read by the bpy side
         assert f'"{col}"' in bake
@@ -189,5 +244,5 @@ def test_a_small_crowd_renders_in_blender(tmp_path):
     assert sum(rep["instances_second_frame"].values()) == rep["points"]
     assert rep["t1_changed_share"] > 0.5
     assert set(rep["lineart"].values()) == {"EXCLUDE"}
-    assert rep["shadow"] == {"t1_shadow": True, "t1_far": False, "t2": False}
+    assert rep["shadow"] == {"t1_near": True, "t1_shadow": True, "t1_far": False, "t2": False}
     assert rep["atlas"]["alpha_cover"] > 0.02

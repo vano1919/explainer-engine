@@ -23,9 +23,9 @@ import time
 
 import bmesh
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
-TIERS_T1 = (("t1_shadow", True), ("t1_far", False))
+TIERS_T1 = (("t1_near", True), ("t1_shadow", True), ("t1_far", False))   # near: the full baked meshes; the others the decimated ones
 
 
 def _tris(me):
@@ -275,7 +275,7 @@ def _points(name, block, rates):
     me.from_pydata([(p["x"][i], p["y"][i], 0.0) for i in range(n)], [], [])
     cols = {"yaw": p["yaw"], "slot": [float(s) for s in p["slot"]], "far_slot": [float(s) for s in p["far_slot"]],
             "phase": p["phase"], "rate": [p["speed"][i] * rates[p["slot"][i]] for i in range(n)], "vx": p["vx"], "vy": p["vy"],
-            "delay": p["delay"]}
+            "delay": p["delay"], "banner": [float(b) for b in p["banner"]]}
     for k, vals in cols.items():
         at = me.attributes.new(k, "FLOAT", "POINT")
         at.data.foreach_set("value", [float(v) for v in vals])
@@ -378,7 +378,7 @@ def _common(t, cam, dmin, dmax):
     return t.sock(sp.outputs, "Geometry"), sel, pos, camloc, t.sock(st.outputs, "Frame")
 
 
-def _instance(t, geom, sel, instance, rot_z, *, pick=None):
+def _instance(t, geom, sel, instance, rot_z, *, pick=None, scale=None):
     eu = t.node("FunctionNodeEulerToRotation")
     t.val(eu, "Euler", t.xyz(0.0, 0.0, rot_z))
     iop = t.node("GeometryNodeInstanceOnPoints")
@@ -386,6 +386,8 @@ def _instance(t, geom, sel, instance, rot_z, *, pick=None):
     t.val(iop, "Selection", sel)
     t.link(instance, t.sock(iop.inputs, "Instance"))
     t.link(t.sock(eu.outputs, "Rotation"), t.sock(iop.inputs, "Rotation"))
+    if scale is not None:
+        t.val(iop, "Scale", scale)
     if pick is not None:
         t.sock(iop.inputs, "Pick Instance").default_value = True
         t.val(iop, "Instance Index", pick)
@@ -430,6 +432,163 @@ def tree_t2(name, cam, quad, n, atlas, dmin):
     _instance(t, geom, sel, t.sock(oi.outputs, "Geometry"), theta)
     return t.ng
 
+# --- props: banners carried by standard-bearers, dust cards over the far ranks --------------------------------------------------
+
+def _banner(bn, mats):
+    """A pole in the soldier's right hand and a flag at its top (two material slots), in the soldier's frame (rest pose faces -Y)."""
+    bm = bmesh.new()
+    pole, (fw, fh), x0 = bn["pole_m"], bn["flag_m"], 0.32
+    bmesh.ops.create_cone(bm, segments=8, radius1=0.03, radius2=0.03, depth=pole,
+                          matrix=Matrix.Translation((x0, 0.0, pole / 2)))
+    for f in bm.faces:
+        f.material_index = 0
+    cols, rows = 8, 4
+    vs = []
+    for j in range(rows + 1):
+        for i in range(cols + 1):
+            u = i / cols
+            vs.append(bm.verts.new((x0 + u * fw, 0.12 * u * math.sin(u * math.pi * 1.6), pole - 0.05 - (1 - j / rows) * fh)))
+    for j in range(rows):
+        for i in range(cols):
+            a = j * (cols + 1) + i
+            f = bm.faces.new((vs[a], vs[a + 1], vs[a + cols + 2], vs[a + cols + 1]))
+            f.material_index, f.smooth = 1, True
+    me = bpy.data.meshes.new(f"EE_Crowd_banner_{bn['id']}")
+    bm.to_mesh(me)
+    bm.free()
+    for key in (bn.get("pole_material"), bn["material"]):
+        me.materials.append(mats.get(key))
+    return bpy.data.objects.new(f"EE_Crowd_banner_{bn['id']}", me)
+
+
+def tree_banner(name, cam, ob, k):
+    t = _Tree(name)
+    geom, sel, _, _, _ = _common(t, cam, 0.0, 1.0e9)
+    sel = t.band(sel, t.compare("EQUAL", t.attr("banner"), float(k)))
+    st = t.node("GeometryNodeInputSceneTime")
+    sway = t.math("MULTIPLY", t.math("SINE", t.math("ADD", t.math("MULTIPLY", t.sock(st.outputs, "Seconds"), 1.3), t.attr("phase"))), 0.1)
+    rot = t.math("ADD", t.math("ADD", t.math("RADIANS", t.attr("yaw")), math.pi), sway)
+    oi = t.node("GeometryNodeObjectInfo", transform_space="ORIGINAL")
+    t.sock(oi.inputs, "Object").default_value = ob
+    _instance(t, geom, sel, t.sock(oi.outputs, "Geometry"), rot)
+    return t.ng
+
+
+def _dust_material(dust):
+    """Soft dust: a 4D noise (W = the card's seed, read from the instancer) under a radial falloff, lit by the shot's own lights
+    (diffuse + translucent, so a sun behind it glows through), blended."""
+    mat = bpy.data.materials.new("EE_Crowd_dust")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    for n in list(nt.nodes):
+        nt.nodes.remove(n)
+    N, L = nt.nodes, nt.links
+    tc, seed = N.new("ShaderNodeTexCoord"), N.new("ShaderNodeAttribute")
+    seed.attribute_type, seed.attribute_name = "INSTANCER", "seed"
+    noise = N.new("ShaderNodeTexNoise")
+    noise.noise_dimensions = "4D"
+    noise.inputs["Scale"].default_value, noise.inputs["Detail"].default_value = 2.2, 4.0
+    L.new(tc.outputs["UV"], noise.inputs["Vector"])
+    L.new(seed.outputs["Fac"], noise.inputs["W"])
+    ramp = N.new("ShaderNodeMapRange")
+    ramp.inputs["From Min"].default_value, ramp.inputs["From Max"].default_value = 0.38, 0.72
+    L.new(noise.outputs["Fac"], ramp.inputs["Value"])
+    dist = N.new("ShaderNodeVectorMath")
+    dist.operation = "DISTANCE"
+    L.new(tc.outputs["UV"], dist.inputs[0])
+    dist.inputs[1].default_value = (0.5, 0.5, 0.0)
+    fall = N.new("ShaderNodeMapRange")
+    fall.interpolation_type = "SMOOTHSTEP"
+    fall.inputs["From Min"].default_value, fall.inputs["From Max"].default_value = 0.5, 0.12
+    L.new(dist.outputs["Value"], fall.inputs["Value"])
+    m1, m2 = N.new("ShaderNodeMath"), N.new("ShaderNodeMath")
+    m1.operation = m2.operation = "MULTIPLY"
+    L.new(ramp.outputs["Result"], m1.inputs[0])
+    L.new(fall.outputs["Result"], m1.inputs[1])
+    L.new(m1.outputs[0], m2.inputs[0])
+    m2.inputs[1].default_value = float(dust["alpha"])
+    rgb = (*dust["rgb"], 1.0)
+    dif, trl, add = N.new("ShaderNodeBsdfDiffuse"), N.new("ShaderNodeBsdfTranslucent"), N.new("ShaderNodeAddShader")
+    dif.inputs["Color"].default_value = trl.inputs["Color"].default_value = rgb
+    L.new(dif.outputs[0], add.inputs[0])
+    L.new(trl.outputs[0], add.inputs[1])
+    tr, mix = N.new("ShaderNodeBsdfTransparent"), N.new("ShaderNodeMixShader")
+    L.new(m2.outputs[0], mix.inputs[0])
+    L.new(tr.outputs[0], mix.inputs[1])
+    L.new(add.outputs[0], mix.inputs[2])
+    out = N.new("ShaderNodeOutputMaterial")
+    L.new(mix.outputs[0], out.inputs["Surface"])
+    if hasattr(mat, "surface_render_method"):
+        mat.surface_render_method = "BLENDED"
+    if hasattr(mat, "use_transparency_overlap"):
+        mat.use_transparency_overlap = True
+    return mat
+
+
+def _dust_points(dust):
+    cards = dust["cards"]
+    me = bpy.data.meshes.new("EE_Crowd_dust_points")
+    me.from_pydata([(c[0], c[1], c[2]) for c in cards], [], [])
+    for i, k in enumerate(("w", "h", "vx", "vy", "seed")):
+        at = me.attributes.new(k, "FLOAT", "POINT")
+        at.data.foreach_set("value", [float(c[3 + i]) for c in cards])
+    return me
+
+
+def tree_dust(name, cam, quad):
+    """Cards drift (closed form, no delay) and turn to the camera about Z; scaled by their own w x h."""
+    t = _Tree(name)
+    st = t.node("GeometryNodeInputSceneTime")
+    secs = t.sock(st.outputs, "Seconds")
+    sp = t.node("GeometryNodeSetPosition")
+    t.link(t.gin.outputs[0], t.sock(sp.inputs, "Geometry"))
+    t.val(sp, "Offset", t.xyz(t.math("MULTIPLY", t.attr("vx"), secs), t.math("MULTIPLY", t.attr("vy"), secs), 0.0))
+    oi = t.node("GeometryNodeObjectInfo", transform_space="RELATIVE")
+    t.sock(oi.inputs, "Object").default_value = cam
+    pos = t.sock(t.node("GeometryNodeInputPosition").outputs, "Position")
+    dx, dy, _ = t.sep(t.vmath("SUBTRACT", t.sock(oi.outputs, "Location"), pos))[:3]
+    theta = t.math("ARCTAN2", t.math("MULTIPLY", dx, -1.0), dy)
+    qi = t.node("GeometryNodeObjectInfo", transform_space="ORIGINAL")
+    t.sock(qi.inputs, "Object").default_value = quad
+    _instance(t, t.sock(sp.outputs, "Geometry"), True, t.sock(qi.outputs, "Geometry"), theta,
+              scale=t.xyz(t.attr("w"), 1.0, t.attr("h")))
+    return t.ng
+
+
+def _dust_quad():
+    me = bpy.data.meshes.new("EE_Crowd_dust_quad")
+    me.from_pydata([(-0.5, 0, -0.5), (0.5, 0, -0.5), (0.5, 0, 0.5), (-0.5, 0, 0.5)], [], [(0, 1, 2, 3)])
+    uv = me.uv_layers.new(name="UVMap")
+    for li, (u, v) in zip(range(4), ((1, 0), (0, 0), (0, 1), (1, 1))):
+        uv.data[li].uv = (u, v)
+    return bpy.data.objects.new("EE_Crowd_dust_quad", me)
+
+
+def build_props(scene, block, pts, holder):
+    """Banner and dust objects (none when the block has no props); every one off Line Art, dust casts no shadow."""
+    props, cam, out = block.get("props") or {}, scene.camera, {}
+    mats = {m.name: m for m in bpy.data.materials}
+    for bn in props.get("banners", []):
+        ob = _banner(bn, mats)
+        holder.objects.link(ob)
+        inst = bpy.data.objects.new(f"EE_Crowd_banners_{bn['id']}", pts)
+        scene.collection.objects.link(inst)
+        inst.modifiers.new("EE_Crowd", "NODES").node_group = tree_banner(f"EE_Crowd_banners_{bn['id']}", cam, ob, bn["id"])
+        out[f"banners_{bn['id']}"] = inst
+    dust = props.get("dust")
+    if dust:
+        quad = _dust_quad()
+        quad.data.materials.append(_dust_material(dust))
+        holder.objects.link(quad)
+        inst = bpy.data.objects.new("EE_Crowd_dust", _dust_points(dust))
+        scene.collection.objects.link(inst)
+        inst.modifiers.new("EE_Crowd", "NODES").node_group = tree_dust("EE_Crowd_dust", cam, quad)
+        inst.visible_shadow = False
+        out["dust"] = inst
+    for o in out.values():
+        o.lineart.usage = "EXCLUDE"
+    return out
+
 
 def build(scene, block, workdir, report):
     """The whole crowd of a crowds block on the built, styled scene; the templates are hidden afterwards."""
@@ -451,6 +610,7 @@ def build(scene, block, workdir, report):
         for o in [bpy.data.objects[tpl["name"]]] + list(bpy.data.objects[tpl["name"]].children_recursive):
             o.hide_render = True
     col = _collection("EE_Crowd_T1", sorted(by_slot.items()))
+    col_full = _collection("EE_Crowd_T1_full", sorted(full_of.items()))   # the near band: the bake's own full meshes
     p = block["points"]
     centre = (sum(p["x"]) / max(len(p["x"]), 1), sum(p["y"]) / max(len(p["y"]), 1))
     far = [(ft["far_slot"], full_of[ft["slot"]]) for ft in sorted(block["far_templates"], key=lambda x: x["far_slot"])]
@@ -463,12 +623,14 @@ def build(scene, block, workdir, report):
     cam = scene.camera
     b = block["borders"]
     objs = {}
-    bands = {"t1_shadow": (0.0, min(block["mid_shadow_max_m"], b["far_min_m"])),
-             "t1_far": (min(block["mid_shadow_max_m"], b["far_min_m"]), b["far_min_m"])}
+    near = min(b["hero_max_m"], block["mid_shadow_max_m"])
+    shadow_to = min(block["mid_shadow_max_m"], b["far_min_m"])
+    bands = {"t1_near": (0.0, near), "t1_shadow": (near, shadow_to), "t1_far": (shadow_to, b["far_min_m"])}
     for tier, shadow in TIERS_T1:
         ob = bpy.data.objects.new(f"EE_Crowd_{tier}", pts)
         scene.collection.objects.link(ob)
-        ob.modifiers.new("EE_Crowd", "NODES").node_group = tree_t1(f"EE_Crowd_{tier}", cam, col, n, *bands[tier])
+        ob.modifiers.new("EE_Crowd", "NODES").node_group = tree_t1(f"EE_Crowd_{tier}", cam, col_full if tier == "t1_near" else col,
+                                                                   n, *bands[tier])
         ob.visible_shadow = shadow
         objs[tier] = ob
     ob = bpy.data.objects.new("EE_Crowd_t2", pts)
@@ -478,11 +640,14 @@ def build(scene, block, workdir, report):
     objs["t2"] = ob
     for o in objs.values():
         o.lineart.usage = "EXCLUDE"
+    extras = build_props(scene, block, pts, holder)
+
     def census(frame):
         scene.frame_set(frame)
         dg = bpy.context.evaluated_depsgraph_get()
-        counts, shown = {k: 0 for k in objs}, []
-        names = {o.name: k for k, o in objs.items()}
+        every = dict(objs, **extras)
+        counts, shown = {k: 0 for k in every}, []
+        names = {o.name: k for k, o in every.items()}
         for di in dg.object_instances:
             if di.is_instance and di.parent is not None and di.parent.original.name in names:
                 k = names[di.parent.original.name]
@@ -491,7 +656,8 @@ def build(scene, block, workdir, report):
                     shown.append(di.instance_object.original.name)
         return counts, shown
 
-    inst, shown0 = census(scene.frame_start + 1)
+    allc, shown0 = census(scene.frame_start + 1)
+    inst = {k: v for k, v in allc.items() if k in objs}
     _, shown1 = census(scene.frame_start + 2)
     changed = sum(a != b for a, b in zip(shown0, shown1)) / max(len(shown0), 1)
     scene.frame_set(scene.frame_start)
@@ -499,6 +665,7 @@ def build(scene, block, workdir, report):
                        "bake_frames": n, "templates": rows, "bake_seconds": round(bake_s, 2), "atlas": ainfo,
                        "instances_second_frame": inst, "t1_changed_share": round(changed, 4), "borders": b, "bands_m": bands,
                        "shadow": {k: o.visible_shadow for k, o in objs.items()},
-                       "lineart": {k: o.lineart.usage for k, o in objs.items()},
+                       "lineart": {k: o.lineart.usage for k, o in dict(objs, **extras).items()},
+                       "props": {k: allc[k] for k in extras},
                        "seconds": round(time.perf_counter() - t0, 2)}
     return objs
