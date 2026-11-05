@@ -4280,4 +4280,12 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   Fable's tweaks (23:24 UTC): `world_exposure_ev` +0.5 on world shots only (`scene.exposure`, set by `render_shot` on the view
   settings; close-ups keep 0), and a stronger warm band (tint 0.95/0.72/0.52, horizon 1.0/0.74/0.48, band 0.85, glow 0.95): the
   720p hero is half a stop brighter and the sky over the ridge reads warm peach.
+  golden_hour v3 (Fable 23:33/23:37 UTC: the village sat in the hill's shadow and the sky went white): sun 21 degrees up and turned
+  to 138 degrees (from behind the camera's shoulder), so the slope and the market are lit and shadows run across them; HDRI tint
+  0.72/0.68/0.64 keeps the sky blue, the warm band only near the horizon (band 0.22, glow 0.9).
+- overcast_day and noon_epic on the same logic (Fable 23:24 UTC): overcast_day key 35 degrees up, world offset 100, shadow filter 5
+  (new optional `key.shadow_filter`, 0.5..8, instead of the look's), grey sky (tint 0.8/0.82/0.86, band 0.85), +0.3 EV on world
+  shots; noon_epic key 55 degrees, slightly warm 1.0/0.93/0.82, disc 5 degrees, shadow filter 1, world offset 120, its HDRI blue
+  unchanged. Local 720p: `harbour_square/harbour_wide@E3` soft shadows, grey air (the depth haze greys the cliff wall heavily);
+  `antique_forum/forum_wide@E1` hard shadows, blue sky. Tests in `test_combo_profiles.py`.
 
