@@ -33,8 +33,9 @@ def load(path: Path | None = None) -> dict:
     return doc
 
 
-def tokens(cid: str, era: str, *, doc: dict | None = None) -> S.StyleTokens:
-    """The combination's look tokens with the era's light preset (one world tint and one light per era)."""
+def tokens(cid: str, era: str, *, close_up: bool = False, doc: dict | None = None) -> S.StyleTokens:
+    """The combination's look tokens with the era's light preset (one world tint and one light per era); ``close_up`` swaps the
+    preset's key and fill for the character key (``light_presets.json`` character_key: WP-Q4's front_key, Fable 2026-11-05)."""
     doc = doc or load()
     t = S.look_tokens(doc["combos"][cid]["look"])
-    return replace(t, art=replace(t.art, light_preset=doc["eras"][era]["light_preset"]))
+    return replace(t, art=replace(t.art, light_preset=doc["eras"][era]["light_preset"], character_key=close_up))

@@ -4245,4 +4245,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   Not in (stated, not hidden): Brushstroke Tools on C3's close plane (its operators are add-on Python, refused in the cloud
   container; the GN-only route is not built) and nikolaj3d's shader for C4 (the $0 Gumroad download needs a checkout with an
   email). Tests: `tests/unit/test_combo_profiles.py`.
+- `character_key` (light_presets.json; WP-Q4's front_key(), the lead close-up accepted by Fable 22:17 UTC): on a close-up
+  (`Look.character_key`, `combos.tokens(..., close_up=True)`) the preset's key and fill give way to a warm key 35 degrees off the
+  camera axis, 10.4 degrees up (above the eye line), and a cool shadowless fill opposite at a quarter of its energy; the era's rims
+  and world tint stay. The loader holds the band (30-45 degrees, fill opposite, share <= 0.5).
 

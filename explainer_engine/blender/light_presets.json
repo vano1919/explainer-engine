@@ -1,6 +1,11 @@
 {
   "schema": "light_presets/1",
   "_doc": "WP-Q1 named light presets (coordinator/Fable 2026-11-05, after the creator's 'historical, epic, rich world' note): Blender Studio's Wing It! rule as data, shared by WP-Q1 (shading), WP-Q4 (the character benchmark) and WP-Q8 (the world kits). Only the key SUN casts a shadow; two colourable rims (rim_a, rim_b) light the cast only (light linking), shadowless, specular <= 0.3; an optional shadowless fill; one world tint per sequence (the ambient light's colour and strength; camera rays still see the look's sky). Rim aims are relative to the camera (elevation, azimuth offset from straight behind the subject); the key's azimuth is world-fixed so a set keeps its light across shots; on a character shot the key turns to front_offset_deg off the camera axis (30-45 degrees, Fable 2026-11-05: a front-biased key reads faces), the set-only shot keeps the world sun. Sun strength 1 = a white surface facing it shows 1.0. Every number is HYP until the creator judges the clips; colours are RGB multipliers, never palette hex.",
+  "character_key": {
+    "_doc": "WP-Q4's front_key() (character_benchmark.py, the lead close-up rain_lead_cu_v3_front_key_720p.png accepted by Fable 2026-11-05 22:17 UTC) as data: on a close-up the preset's key and fill give way to a warm key 35 degrees off the camera axis and above the eye line (front_key: 0.55 m above the head at 3 m = 10.4 degrees) and a cool shadowless fill opposite at a quarter of its energy; the era preset's rims and world tint stay. Look.character_key turns it on.",
+    "key": {"colour": [1.0, 0.88, 0.72], "energy": 2.6, "front_offset_deg": 35.0, "elevation_deg": 10.4, "angle_deg": 8.0},
+    "fill": {"colour": [0.82, 0.88, 1.0], "ratio": 0.25, "front_offset_deg": -35.0, "elevation_deg": 1.9}
+  },
   "presets": {
     "golden_hour": {
       "feel": "low warm sun, a hot orange rim on one side and a cool sky rim on the other, warm-blue air",

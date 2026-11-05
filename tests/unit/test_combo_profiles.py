@@ -150,3 +150,25 @@ def test_perfectly_normal_is_pinned_licensed_and_unpacked_by_sha(tmp_path):
         z.writestr(FN.MEMBER, b"BLENDER-fake")
     with pytest.raises(ConfigError, match="differs from the pin"):   # a fake zip never passes the pin
         FN.ensure(tmp_path, download=lambda url, dst: dst.write_bytes(buf.getvalue()))
+
+
+def test_a_close_up_takes_the_character_key_and_keeps_the_era_rims():
+    t = CB.tokens("C2", "E2", close_up=True)
+    g = S.StyleEngine(t).graph("eevee", camera=CAM, materials=MATS, hdri=None, paper_texture=None)
+    L = {x["name"]: x for x in g["lights"]}
+    ck = S.character_key()
+    assert L["key"]["energy"] == ck["key"]["energy"] and L["key"]["aim"]["azimuth_offset_deg"] == 35.0
+    assert L["key"]["aim"]["from"] == "front" and L["key"]["aim"]["elevation_deg"] > 0
+    assert L["fill"]["energy"] == round(ck["key"]["energy"] * 0.25, 6) and L["fill"]["aim"]["azimuth_offset_deg"] == -35.0
+    assert not L["fill"]["use_shadow"] and {"rim_a", "rim_b", "lift_rain"} <= set(L) and S.check(g) == []
+    with pytest.raises(ValueError, match="names? a light_preset"):
+        S.replace(S.look_tokens("q1_lit_pbrn_cinematic").art, character_key=True)
+
+
+def test_the_character_key_stays_front_biased_with_its_fill_opposite(tmp_path):
+    doc = json.loads(S.LIGHT_PRESETS_PATH.read_text(encoding="utf-8"))
+    doc["character_key"]["fill"]["front_offset_deg"] = 35.0
+    p = tmp_path / "p.json"
+    p.write_text(json.dumps(doc), encoding="utf-8")
+    with pytest.raises(ValueError, match="opposite"):
+        S.character_key(p)

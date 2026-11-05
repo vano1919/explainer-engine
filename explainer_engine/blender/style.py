@@ -234,7 +234,7 @@ MATERIAL_CLASSES = ("skin", "hair", "eyes", "costume", "set")
 Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "half_lambert": 0.0, "ramp_interp": None,
                "shadow_tints": (), "view_transform": None, "rim_mode": "shader", "key_colour": None, "fill_colour": None,
                "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0, "light_preset": None,
-               "native_classes": (), "skin_lift": (), "pn_converge": 0.0}
+               "native_classes": (), "skin_lift": (), "pn_converge": 0.0, "character_key": False}
 CHARACTER_CLASSES = ("skin", "hair", "eyes", "costume")
 FRONT_KEY_BAND = (30.0, 45.0)   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
 LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
@@ -251,6 +251,18 @@ def light_presets(path: Path | None = None) -> dict:
             raise ValueError(f"light preset {name}: key.front_offset_deg {off} outside the front-biased band "
                              f"{FRONT_KEY_BAND[0]:g}-{FRONT_KEY_BAND[1]:g} degrees (|offset|)")
     return doc["presets"]
+
+
+def character_key(path: Path | None = None) -> dict:
+    """The close-up key (``light_presets.json`` ``character_key``; WP-Q4's front_key(), accepted by Fable 2026-11-05 22:17 UTC):
+    a warm key off the camera axis and above the eye line, a cool shadowless fill opposite at a fixed share of it."""
+    ck = json.loads(Path(path or LIGHT_PRESETS_PATH).read_text(encoding="utf-8"))["character_key"]
+    k, f = ck["key"], ck["fill"]
+    if not FRONT_KEY_BAND[0] <= abs(k["front_offset_deg"]) <= FRONT_KEY_BAND[1] or not 0 < k["elevation_deg"] < 45:
+        raise ValueError(f"character_key: key {k['front_offset_deg']} deg off axis / {k['elevation_deg']} deg up (band 30-45, above the eyes)")
+    if not 0 < f["ratio"] <= 0.5 or k["front_offset_deg"] * f["front_offset_deg"] >= 0:
+        raise ValueError("character_key: the fill sits opposite the key at a share 0..0.5 of its energy")
+    return ck
 
 
 def _tup(x) -> tuple:
@@ -316,6 +328,7 @@ class Look:
     native_classes: tuple = ()                              # character classes that keep the asset's own shading (C2: Rain's SSS)
     skin_lift: tuple = ()                                   # ((character id, lift 0..1), ...): a front fill linked to that cast
     pn_converge: float = 0.0                                # Perfectly Normal (GPL-3, GN assets): spherize the cast's normals 0..1
+    character_key: bool = False                             # close-ups: the preset's key + fill give way to light_presets character_key
 
     def __post_init__(self) -> None:
         for name, val, known in (("shade_mode", self.shade_mode, SHADE_MODES), ("light_rig", self.light_rig, LIGHT_RIGS),
@@ -385,6 +398,8 @@ class Look:
             raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
         if any(c not in CHARACTER_CLASSES for c in self.native_classes) or len(set(self.native_classes)) != len(self.native_classes):
             raise ValueError(f"{self.id}: native_classes {self.native_classes} (character classes: {', '.join(CHARACTER_CLASSES)})")
+        if self.character_key and self.light_preset is None:
+            raise ValueError(f"{self.id}: character_key replaces a light preset's key and fill (name a light_preset)")
         if (self.native_classes or self.skin_lift or self.pn_converge) and not self.lit_rig:
             raise ValueError(f"{self.id}: native shading, skin lift and Perfectly Normal need real lights (the lit or rgb_soft path)")
         for who, lift in self.skin_lift:
@@ -898,6 +913,20 @@ class StyleEngine:
         specular 0.3; a shadowless fill without specular. The key's shadow follows the look's light rig (cinematic casts)."""
         a, k = self.t.art, p["key"]
         cast = a.light_rig == "cinematic"
+        if a.character_key:   # the close-up: the warm key and its quarter fill, both from the camera's side; rims + tint stay
+            ck = character_key()
+            ck_k, ck_f = ck["key"], ck["fill"]
+            aim = lambda x: {"relative_to": "camera", "from": "front", "elevation_deg": x["elevation_deg"],  # noqa: E731
+                             "azimuth_offset_deg": x["front_offset_deg"]}
+            out = [{"name": "key", "type": "SUN", "energy": round(ck_k["energy"], 6), "color": [round(c, 6) for c in ck_k["colour"]],
+                    "angle_rad": round(math.radians(min(10.0, max(5.0, ck_k["angle_deg"]))), 6),
+                    "rotation_euler": list(KeyLight(elevation_deg=k["elevation_deg"], azimuth_deg=k["azimuth_deg"]).rotation_euler()),
+                    "aim": aim(ck_k), "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
+                    "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None},
+                   {"name": "fill", "type": "SUN", "energy": round(ck_k["energy"] * ck_f["ratio"], 6),
+                    "color": [round(c, 6) for c in ck_f["colour"]], "aim": aim(ck_f),
+                    "use_shadow": False, "specular_factor": 0.0, "link": None}]
+            return out + self._preset_rims(p)
         kl = KeyLight(elevation_deg=k["elevation_deg"], azimuth_deg=k["azimuth_deg"])
         out = [{"name": "key", "type": "SUN", "energy": round(k["energy"], 6), "color": [round(c, 6) for c in k["colour"]],
                 "angle_rad": round(math.radians(min(10.0, max(5.0, k["angle_deg"]))), 6), "rotation_euler": list(kl.rotation_euler()),
@@ -912,6 +941,10 @@ class StyleEngine:
                         "color": [round(c, 6) for c in p["fill"]["colour"]],
                         "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)],
                         "use_shadow": False, "specular_factor": 0.0, "link": None})
+        return out + self._preset_rims(p)
+
+    def _preset_rims(self, p: dict) -> list[dict]:
+        out = []
         for r in p["rims"]:
             out.append({"name": r["name"], "type": "SUN", "energy": round(r["energy"], 6), "color": [round(c, 6) for c in r["colour"]],
                         "aim": {"relative_to": "camera", "elevation_deg": r["elevation_deg"],
