@@ -12,6 +12,15 @@
    "sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
    "bytes": 161003471,
    "version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05"
+  },
+  "snm": {
+   "source": "quaternius_stylized_nature_megakit",
+   "page": "https://quaternius.itch.io/stylized-nature-megakit",
+   "match": "Standard",
+   "file": "Stylized Nature MegaKit[Standard].zip",
+   "sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "bytes": 104088529,
+   "version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05"
   }
  },
  "polyhaven": {
@@ -556,6 +565,110 @@
     "interior"
    ],
    "sha256": "86b9b4c5071bec1c29200a1dfee6bdd4d98b5178017e63afa2f9b29bfbc6583d"
+  },
+  {
+   "id": "model.snm_pine_1",
+   "source": "snm",
+   "member": "glTF/Pine_1.gltf",
+   "name": "snm_pine_1.glb",
+   "role": "nature",
+   "flat": "#4F6B45",
+   "description": "Quaternius Stylized Nature MegaKit: a pine tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "pine",
+    "tree",
+    "conifer"
+   ],
+   "sha256": "c2b4db2bad1d41effc14d4a8a5145f5b9a476f769cf14ac3946c57dcc9b1f0c9"
+  },
+  {
+   "id": "model.snm_pine_3",
+   "source": "snm",
+   "member": "glTF/Pine_3.gltf",
+   "name": "snm_pine_3.glb",
+   "role": "nature",
+   "flat": "#44603F",
+   "description": "Quaternius Stylized Nature MegaKit: a pine tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "pine",
+    "tree",
+    "conifer"
+   ],
+   "sha256": "03def6d49446f2a54a5014a26ad8d7ba182a7134ad5562b710423f00466cc8e1"
+  },
+  {
+   "id": "model.snm_commontree_1",
+   "source": "snm",
+   "member": "glTF/CommonTree_1.gltf",
+   "name": "snm_commontree_1.glb",
+   "role": "nature",
+   "flat": "#7A9A52",
+   "description": "Quaternius Stylized Nature MegaKit: a broadleaf tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "tree",
+    "broadleaf"
+   ],
+   "sha256": "76c6c5a22d3106688be2cb9a7781f64c5c39271f95590cd5a0d58888fccb37f8"
+  },
+  {
+   "id": "model.snm_commontree_3",
+   "source": "snm",
+   "member": "glTF/CommonTree_3.gltf",
+   "name": "snm_commontree_3.glb",
+   "role": "nature",
+   "flat": "#6E8F4B",
+   "description": "Quaternius Stylized Nature MegaKit: a broadleaf tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "tree",
+    "broadleaf"
+   ],
+   "sha256": "b8e5c29bd00cff8060bea179f317951981d22a19a2ec15e2d7b55414e053e821"
+  },
+  {
+   "id": "model.snm_rock_medium_1",
+   "source": "snm",
+   "member": "glTF/Rock_Medium_1.gltf",
+   "name": "snm_rock_medium_1.glb",
+   "role": "nature",
+   "flat": "#8A8A82",
+   "description": "Quaternius Stylized Nature MegaKit: a medium rock. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "rock",
+    "stone"
+   ],
+   "sha256": "ef242ad51bb73931f212140df5cb6e3dcc25f70ec9d3dbb8c2466daa0af6b14a"
+  },
+  {
+   "id": "model.snm_bush_common",
+   "source": "snm",
+   "member": "glTF/Bush_Common.gltf",
+   "name": "snm_bush_common.glb",
+   "role": "nature",
+   "flat": "#6B8A48",
+   "description": "Quaternius Stylized Nature MegaKit: a bush. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "bush",
+    "plant"
+   ],
+   "sha256": "a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726"
   }
  ]
 }

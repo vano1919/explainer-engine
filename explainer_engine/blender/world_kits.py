@@ -283,6 +283,28 @@ def _placements(block: dict, name: str, t: dict) -> list[dict]:
     if kind == "piece":
         return [{"name": name, "asset": block["asset"], "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0),
                  "scale": block.get("scale", 1.0), "role": block.get("role", "piece")}]
+    if kind == "shape":   # a primitive (hill, river, mountain) in a flat tone: {add, params, pos, scale, yaw_deg, colour}
+        return [{"name": name, "asset": None, "shape": {"add": block["add"], "params": block.get("params", {}), "colour": block["colour"]},
+                 "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0), "scale": block.get("scale", 1.0), "role": "shape"}]
+    if kind == "scatter":   # deterministic: the same seed gives the same wood in every shot
+        import random
+        rng = random.Random(block["seed"])
+        x0, y0, x1, y1 = block["rect"]
+        out = []
+        while len(out) < block["count"]:
+            x, y = rng.uniform(x0, x1), rng.uniform(y0, y1)
+            if abs(x) < 7.5 and -40 < y < 60:   # the river bed
+                continue
+            if any(math.hypot(x - cx, y - cy) < r for cx, cy, r in block.get("avoid", [])):
+                continue
+            z = 0.0
+            if "hill" in block.get("z_of", {}):   # the surface of the ellipsoid hill (cx, cy, cz, rx, ry, rz), never below the ground
+                cx, cy, cz, rx, ry, rz = block["z_of"]["hill"]
+                q = 1 - ((x - cx) / rx) ** 2 - ((y - cy) / ry) ** 2
+                z = round(max(0.0, cz + rz * math.sqrt(q)) if q > 0 else 0.0, 3)
+            out.append({"name": f"{name}_{len(out)}", "asset": rng.choice(block["assets"]), "pos": [round(x, 3), round(y, 3), z],
+                        "yaw": round(rng.uniform(0, 360), 1), "scale": round(rng.uniform(*block.get("scale", [1.0, 1.0])), 3), "role": "scatter"})
+        return out
     if kind == "row":
         (x0, y0, z0), (x1, y1, z1) = block["from"], block["to"]
         n = int(round(math.dist((x0, y0), (x1, y1)) / block["step"])) + 1
@@ -332,7 +354,7 @@ def placements(layout_id: str, *, t: dict | None = None, doc: dict | None = None
     out = []
     for i, block in enumerate(doc["layouts"][layout_id]["blocks"]):
         for p in _placements(block, block.get("name", f"{block['type']}{i}"), t):
-            if p["asset"] not in known:
+            if p["asset"] is not None and p["asset"] not in known:
                 raise WorldKitError(f"{layout_id}/{p['name']}: {p['asset']} is not in world_kits.json")
             out.append(p)
     names = [p["name"] for p in out]
@@ -348,6 +370,8 @@ def _mean(path: Path) -> list[float]:
 def kit_material(glb: Path, a: dict, *, strength: float | None = None, repo: Path | None = None) -> tuple[str, dict]:
     """(toon material name, ``StyleEngine.material`` kwargs) for one kit piece: its first material's base-colour image kept at
     ``strength`` over its own mean colour (D-102: a trace of the photo, no raw PBR)."""
+    if a.get("flat"):   # foliage and rock: one palette-free flat tone (a single material replaces every slot)
+        return f"kit_{a['id'].split('.', 1)[1]}", {"base": a["flat"]}
     doc, _ = C.read_glb(Path(glb).read_bytes())
     mats = [m["name"] for m in doc.get("materials", []) if (m.get("pbrMetallicRoughness") or {}).get("baseColorTexture")]
     if not mats:
@@ -369,6 +393,13 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
     by_id = {a["id"]: a for a in t["assets"]}
     objs, mats, made = [], {}, {}
     for p in placements(layout_id, t=t, doc=doc):
+        if p["asset"] is None:   # a primitive of the layout
+            sh = p["shape"]
+            mname = "shape_" + sh["colour"].lstrip("#").lower()
+            mats[mname] = {"base": sh["colour"]}
+            objs.append({"name": p["name"], "add": sh["add"], "params": sh["params"], "location": p["pos"],
+                         "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": mname, "smooth": True})
+            continue
         a = by_id[p["asset"]]
         if a["id"] not in made:
             made[a["id"]] = kit_material(paths[a["id"]], a, strength=a.get("texture_strength"), repo=repo)
@@ -387,6 +418,8 @@ def scene_set(layout_id: str, *, t: dict | None = None, doc: dict | None = None,
     spec = doc["layouts"][layout_id]
     objects = []
     for p in placements(layout_id, t=t, doc=doc):
+        if p["asset"] is None:
+            continue
         w, d, h = L.get(p["asset"], lib=lib)["three_d"]["bounds_m"]
         s = p["scale"] if isinstance(p["scale"], (int, float)) else 1.0
         swap = abs(p["yaw"]) % 180 == 90   # a quarter turn trades the extents
@@ -417,10 +450,25 @@ POC_SHOTS = {
 }
 
 
-def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path], frames: int = POC_FRAMES) -> dict[str, dict]:
-    """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs."""
+# The static epic set (the creator, 2026-11-05: a rich world is the main character): a 1440p still and a slow push of the same set.
+HILL_SHOTS = {"castle_still": ([-34.0, -26.0, 9.0], None, [0.0, 58.0, 17.0], None, 24, 1),
+              "castle_push": ([-34.0, -26.0, 9.0], [-24.0, -12.0, 7.5], [0.0, 58.0, 17.0], [0.0, 58.0, 17.0], 24, 0)}
+
+
+def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: int = POC_FRAMES,
+               layout: str = "castle_courtyard") -> dict[str, dict]:
+    """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs.
+    ``hill_castle`` is static (no cast): a still (1 frame) and a push (``frames``)."""
     from explainer_engine.blender import style_sheets as SS
-    kit, kit_mats = expand("castle_courtyard", paths)
+    kit, kit_mats = expand(layout, paths)
+    if layout == "hill_castle":
+        out = {}
+        for sid, (c0, c1, a0, a1, lens, n) in HILL_SHOTS.items():
+            cam = {"location": c0, "look_at": a0, "lens_mm": lens, "focus_distance_m": round(math.dist(c0, a0), 2), "clip_end": 900.0}
+            if c1:
+                cam["to"] = {"location": c1, "look_at": a1}
+            out[sid] = {"objects": json.loads(json.dumps(kit)), "materials": dict(kit_mats), "camera": cam, "frames_total": n or frames}
+        return out
     cast = [SS._cast_member(n, c, co, tint, xy, yaw, act, off, cpaths) for n, c, co, tint, xy, yaw, act, off in POC_CAST]
     mats = dict(kit_mats)
     mats.update({"skin": {"base": "kit_card"}, "night": {"base": "night"}})
@@ -438,7 +486,7 @@ def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path], frames: int = PO
 
 
 def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frames: int = POC_FRAMES, scale: float = 1.0,
-        device: str = "auto", log=print) -> list[dict]:
+        device: str = "auto", layout: str = "castle_courtyard", shots=None, log=print) -> list[dict]:
     """Render the three courtyard shots in each look as 24 fps clips (frames, MP4 review copy, s/frame) under ``out``; rows go to
     ``out/looks.json`` as they finish. Free: Blender on a CPU runner or the Mac, no paid call."""
     import time
@@ -451,15 +499,18 @@ def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frame
     out.mkdir(parents=True, exist_ok=True)
     kit = fetch()
     paths = {**SS.fetch(), **kit}
-    scn = poc_scenes(paths, C.fetch(), frames)
+    scn = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" else None, frames, layout)
     b = BlenderProject().resolve(binary, device=device)
     vault = R.LocalVault(out / "vault")
     rows = []
     for vid in variant_ids:
         for sid, sc in scn.items():
+            if shots and sid not in shots:
+                continue
             scene, graph = SS.job_scene(sid, vid, sc, paths)
             _, tokens = SS.style_for(vid)
-            spec = SS.spec_for(sid, vid, tokens, scene=scene, frames=frames)
+            n = scene.get("frames_total", 1)
+            spec = SS.spec_for(sid, vid, tokens, scene=scene, frames=n)
             spec["job_id"] = POC_JOB_ID
             if scale != 1.0:
                 spec["frame"]["render_scale"] = scale
@@ -474,10 +525,10 @@ def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frame
                          _findings=[])
             sdir = out / "work" / m["cache_key"]
             rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
-            row = SS._look_row(out, sid, vid, m, sdir, rep, graph, t0, frames, scale, clip=True)
-            row["kit"] = {"layout": "castle_courtyard", "pieces": len(placements("castle_courtyard")), "gltf_objects": rep.get("gltf")}
+            row = SS._look_row(out, sid, vid, m, sdir, rep, graph, t0, n, scale, clip=n > 1)
+            row["kit"] = {"layout": layout, "pieces": len(placements(layout)), "gltf_objects": rep.get("gltf")}
             rows.append(row)
-            log(f"{sid}/{vid}: {row['times']['steady_median_s']} s/frame, first {row['times']['first_s']} s, {frames} frames")
+            log(f"{sid}/{vid}: {row['times']['steady_median_s']} s/frame, first {row['times']['first_s']} s, {n} frames")
             write_json_atomic(out / "looks.json", {"schema": "look_round/1", "job_id": POC_JOB_ID, "rows": rows})
     return rows
 
@@ -496,6 +547,8 @@ def main(argv: list[str] | None = None) -> int:
     pc.add_argument("--out", required=True)
     pc.add_argument("--binary", default=None)
     pc.add_argument("--variants", default=",".join(POC_VARIANTS))
+    pc.add_argument("--layout", default="castle_courtyard", choices=("castle_courtyard", "hill_castle"))
+    pc.add_argument("--shots", default="", help="comma-separated shot ids (empty = all of the layout)")
     pc.add_argument("--frames", type=int, default=POC_FRAMES)
     pc.add_argument("--scale", type=float, default=1.0)
     pc.add_argument("--device", default="auto", choices=("auto", "cpu", "gpu"))
@@ -505,7 +558,8 @@ def main(argv: list[str] | None = None) -> int:
     elif a.cmd == "fetch":
         print(json.dumps({k: str(v) for k, v in fetch(packs_dir=Path(a.packs) if a.packs else None).items()}, indent=1))
     elif a.cmd == "poc":
-        poc(Path(a.out), binary=a.binary, variant_ids=a.variants.split(","), frames=a.frames, scale=a.scale, device=a.device)
+        poc(Path(a.out), binary=a.binary, variant_ids=a.variants.split(","), frames=a.frames, scale=a.scale, device=a.device,
+            layout=a.layout, shots=[x for x in a.shots.split(",") if x] or None)
     elif a.cmd == "list":
         t = table()
         for x in t["assets"]:

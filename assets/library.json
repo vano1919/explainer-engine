@@ -3304,6 +3304,506 @@
       }
     },
     {
+      "id": "model.snm_bush_common",
+      "kind": "model",
+      "file": "tools/assets_cache/a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726/snm_bush_common.glb",
+      "sha256": "a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726",
+      "bytes": 163748,
+      "tags": [
+        "bush",
+        "plant",
+        "quaternius",
+        "stylized_nature",
+        "world_kit"
+      ],
+      "description": "Quaternius Stylized Nature MegaKit: a bush. Packed to one GLB with the base-colour image only (1024 px max).",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "glTF/Bush_Common.gltf",
+          "pack_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Stylized Nature MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there); check this pack's own page",
+        "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:47:27",
+        "source": "import quaternius_stylized_nature_megakit https://quaternius.itch.io/stylized-nature-megakit :: glTF/Bush_Common.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.snm_bush_common/snm_bush_common.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 900,
+        "bounds_m": [
+          1.915,
+          1.965,
+          1.582
+        ],
+        "units": "m",
+        "materials": [
+          "Leaves_TwistedTree"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.snm_commontree_1",
+      "kind": "model",
+      "file": "tools/assets_cache/76c6c5a22d3106688be2cb9a7781f64c5c39271f95590cd5a0d58888fccb37f8/snm_commontree_1.glb",
+      "sha256": "76c6c5a22d3106688be2cb9a7781f64c5c39271f95590cd5a0d58888fccb37f8",
+      "bytes": 1731168,
+      "tags": [
+        "broadleaf",
+        "quaternius",
+        "stylized_nature",
+        "tree",
+        "world_kit"
+      ],
+      "description": "Quaternius Stylized Nature MegaKit: a broadleaf tree. Packed to one GLB with the base-colour image only (1024 px max).",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "glTF/CommonTree_1.gltf",
+          "pack_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+          "dropped_images": [
+            "Bark_NormalTree_Normal.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Stylized Nature MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there); check this pack's own page",
+        "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:47:26",
+        "source": "import quaternius_stylized_nature_megakit https://quaternius.itch.io/stylized-nature-megakit :: glTF/CommonTree_1.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.snm_commontree_1/snm_commontree_1.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 6265,
+        "bounds_m": [
+          4.311,
+          4.578,
+          7.265
+        ],
+        "units": "m",
+        "materials": [
+          "Bark_NormalTree",
+          "Leaves_NormalTree"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.snm_commontree_3",
+      "kind": "model",
+      "file": "tools/assets_cache/b8e5c29bd00cff8060bea179f317951981d22a19a2ec15e2d7b55414e053e821/snm_commontree_3.glb",
+      "sha256": "b8e5c29bd00cff8060bea179f317951981d22a19a2ec15e2d7b55414e053e821",
+      "bytes": 1536572,
+      "tags": [
+        "broadleaf",
+        "quaternius",
+        "stylized_nature",
+        "tree",
+        "world_kit"
+      ],
+      "description": "Quaternius Stylized Nature MegaKit: a broadleaf tree. Packed to one GLB with the base-colour image only (1024 px max).",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "glTF/CommonTree_3.gltf",
+          "pack_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+          "dropped_images": [
+            "Bark_NormalTree_Normal.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Stylized Nature MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there); check this pack's own page",
+        "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:47:26",
+        "source": "import quaternius_stylized_nature_megakit https://quaternius.itch.io/stylized-nature-megakit :: glTF/CommonTree_3.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.snm_commontree_3/snm_commontree_3.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 3505,
+        "bounds_m": [
+          4.063,
+          4.241,
+          9.425
+        ],
+        "units": "m",
+        "materials": [
+          "Bark_NormalTree",
+          "Leaves_NormalTree"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.snm_pine_1",
+      "kind": "model",
+      "file": "tools/assets_cache/c2b4db2bad1d41effc14d4a8a5145f5b9a476f769cf14ac3946c57dcc9b1f0c9/snm_pine_1.glb",
+      "sha256": "c2b4db2bad1d41effc14d4a8a5145f5b9a476f769cf14ac3946c57dcc9b1f0c9",
+      "bytes": 1408856,
+      "tags": [
+        "conifer",
+        "pine",
+        "quaternius",
+        "stylized_nature",
+        "tree",
+        "world_kit"
+      ],
+      "description": "Quaternius Stylized Nature MegaKit: a pine tree. Packed to one GLB with the base-colour image only (1024 px max).",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "glTF/Pine_1.gltf",
+          "pack_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+          "dropped_images": [
+            "Bark_NormalTree_Normal.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Stylized Nature MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there); check this pack's own page",
+        "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:47:24",
+        "source": "import quaternius_stylized_nature_megakit https://quaternius.itch.io/stylized-nature-megakit :: glTF/Pine_1.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.snm_pine_1/snm_pine_1.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 3947,
+        "bounds_m": [
+          4.945,
+          4.538,
+          7.317
+        ],
+        "units": "m",
+        "materials": [
+          "Bark_NormalTree",
+          "Leaves_Pine"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.snm_pine_3",
+      "kind": "model",
+      "file": "tools/assets_cache/03def6d49446f2a54a5014a26ad8d7ba182a7134ad5562b710423f00466cc8e1/snm_pine_3.glb",
+      "sha256": "03def6d49446f2a54a5014a26ad8d7ba182a7134ad5562b710423f00466cc8e1",
+      "bytes": 1478648,
+      "tags": [
+        "conifer",
+        "pine",
+        "quaternius",
+        "stylized_nature",
+        "tree",
+        "world_kit"
+      ],
+      "description": "Quaternius Stylized Nature MegaKit: a pine tree. Packed to one GLB with the base-colour image only (1024 px max).",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "glTF/Pine_3.gltf",
+          "pack_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+          "dropped_images": [
+            "Bark_NormalTree_Normal.png"
+          ]
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Stylized Nature MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there); check this pack's own page",
+        "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:47:25",
+        "source": "import quaternius_stylized_nature_megakit https://quaternius.itch.io/stylized-nature-megakit :: glTF/Pine_3.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.snm_pine_3/snm_pine_3.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 4964,
+        "bounds_m": [
+          3.611,
+          3.996,
+          7.392
+        ],
+        "units": "m",
+        "materials": [
+          "Bark_NormalTree",
+          "Leaves_Pine"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
+      "id": "model.snm_rock_medium_1",
+      "kind": "model",
+      "file": "tools/assets_cache/ef242ad51bb73931f212140df5cb6e3dcc25f70ec9d3dbb8c2466daa0af6b14a/snm_rock_medium_1.glb",
+      "sha256": "ef242ad51bb73931f212140df5cb6e3dcc25f70ec9d3dbb8c2466daa0af6b14a",
+      "bytes": 995564,
+      "tags": [
+        "quaternius",
+        "rock",
+        "stone",
+        "stylized_nature",
+        "world_kit"
+      ],
+      "description": "Quaternius Stylized Nature MegaKit: a medium rock. Packed to one GLB with the base-colour image only (1024 px max).",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {
+          "packed_from": "glTF/Rock_Medium_1.gltf",
+          "pack_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+          "dropped_images": []
+        },
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Quaternius Stylized Nature MegaKit (Standard, free): itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there); check this pack's own page",
+        "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+        "revision_or_version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": null,
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": null,
+        "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered"
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T19:47:27",
+        "source": "import quaternius_stylized_nature_megakit https://quaternius.itch.io/stylized-nature-megakit :: glTF/Rock_Medium_1.gltf"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/model/model.snm_rock_medium_1/snm_rock_medium_1.glb"
+      },
+      "three_d": {
+        "format": "glb",
+        "skeleton_id": null,
+        "rig_profile": null,
+        "compatible_animation_sets": [],
+        "poly_count": 342,
+        "bounds_m": [
+          3.225,
+          2.989,
+          2.26
+        ],
+        "units": "m",
+        "materials": [
+          "Rocks"
+        ],
+        "up_axis": "Y"
+      }
+    },
+    {
       "id": "model.ubc_hair_beard",
       "kind": "model",
       "file": "tools/assets_cache/eb4b2ab3dec157aa8e5de77eb5827bc320f8b8393394966e8a2805d7efc479e5/ubc_hair_beard.glb",

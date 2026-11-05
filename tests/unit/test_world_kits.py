@@ -220,3 +220,31 @@ def test_expand_makes_gltf_objects_with_toon_materials(tmp_path, monkeypatch):
 def test_the_bpy_job_script_knows_the_gltf_object_kind():
     src = (ROOT / "explainer_engine/blender/bpy/render_shot.py").read_text(encoding="utf-8")
     assert '"gltf" in o' in src and "def _gltf(" in src
+
+
+def test_hill_castle_is_a_static_epic_set_with_a_deterministic_wood():
+    ps = W.placements("hill_castle")
+    assert ps == W.placements("hill_castle")
+    names = [p["name"] for p in ps]
+    assert {"castle", "hill", "river", "ground"} <= set(names) and sum(n.startswith("house") for n in names) >= 8 * 4
+    trees = [p for p in ps if p["role"] == "scatter"]
+    assert len(trees) == 124 and all(abs(p["pos"][0]) >= 7.5 or not -40 < p["pos"][1] < 60 for p in trees)   # none in the river bed
+    assert any(p["pos"][2] > 1.0 for p in trees)   # trees on the hill follow its surface
+    ss = W.scene_set("hill_castle")
+    assert ss["set_id"] == "hill_castle" and any(o["landmark"] and o["id"] == "castle" for o in ss["objects"])
+
+
+def test_hill_shots_have_a_still_and_a_push_and_shapes_become_flat_toon_primitives(tmp_path):
+    gltf, files = synthetic()
+    data, _ = W.pack_piece(gltf, files.get, 32)
+    paths = {}
+    for a in W.table()["assets"]:
+        f = tmp_path / a["name"]
+        f.write_bytes(data)
+        paths[a["id"]] = f
+    sc = W.poc_scenes(paths, None, 24, "hill_castle")
+    assert sc["castle_still"]["frames_total"] == 1 and sc["castle_push"]["frames_total"] == 24 and "to" in sc["castle_push"]["camera"]
+    hill = next(o for o in sc["castle_push"]["objects"] if o["name"] == "hill")
+    assert hill["add"] == "uv_sphere" and sc["castle_push"]["materials"][hill["material"]] == {"base": "#8FA262"}
+    tree = next(o for o in sc["castle_push"]["objects"] if o["name"].startswith("pine_"))
+    assert sc["castle_push"]["materials"][tree["material"]]["base"].startswith("#")   # foliage: one flat tone, no raw PBR
