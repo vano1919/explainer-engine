@@ -7,6 +7,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [BRANCH_HANDOFF_README_2026-11-04](architecture/BRANCH_HANDOFF_README_2026-11-04.md) | entry point and scope for the new Ink Chronicle Blender planning branch | |
 | [INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04](architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md) | creator-approved new visual direction, 10/30/60 lanes, 70/30 speech target, style, render target and migration intent | |
 | [FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md) | controlling Fable master task: branch reconciliation, evidence-closed decisions, one authoritative Opus roadmap and launch gate | |
+| [INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) | the authoritative Opus implementation roadmap: branch dispositions, decision matrix (ICD), work packages (ICW), cost model, creator decision gate (ICG) and launch verdict | |
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
 | [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) | every decision, open questions, approval gates | D- |
