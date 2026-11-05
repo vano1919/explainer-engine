@@ -1,6 +1,6 @@
 {
   "schema": "light_presets/1",
-  "_doc": "WP-Q1 named light presets (coordinator/Fable 2026-11-05, after the creator's 'historical, epic, rich world' note): Blender Studio's Wing It! rule as data, shared by WP-Q1 (shading), WP-Q4 (the character benchmark) and WP-Q8 (the world kits). Only the key SUN casts a shadow; two colourable rims (rim_a, rim_b) light the cast only (light linking), shadowless, specular <= 0.3; an optional shadowless fill; one world tint per sequence (the ambient light's colour and strength; camera rays still see the look's sky). Rim aims are relative to the camera (elevation, azimuth offset from straight behind the subject); the key's azimuth is world-fixed so a set keeps its light across shots; on a character shot the key turns to front_offset_deg off the camera axis (30-45 degrees, Fable 2026-11-05: a front-biased key reads faces), the set-only shot keeps the world sun. Sun strength 1 = a white surface facing it shows 1.0. Every number is HYP until the creator judges the clips; colours are RGB multipliers, never palette hex.",
+  "_doc": "WP-Q1 named light presets (coordinator/Fable 2026-11-05, after the creator's 'historical, epic, rich world' note): Blender Studio's Wing It! rule as data, shared by WP-Q1 (shading), WP-Q4 (the character benchmark) and WP-Q8 (the world kits). Only the key SUN casts a shadow; two colourable rims (rim_a, rim_b) light the cast only (light linking), shadowless, specular <= 0.3; an optional shadowless fill; one world tint per sequence (the ambient light's colour and strength; camera rays still see the look's sky). Rim aims are relative to the camera (elevation, azimuth offset from straight behind the subject); the key's azimuth is world-fixed so a set keeps its light across shots; on a character shot the key turns to front_offset_deg off the camera axis (30-45 degrees, Fable 2026-11-05: a front-biased key reads faces), the set-only shot keeps the world sun. A character shot = a camera focused nearer than style.CHARACTER_SHOT_M (12 m); a world shot with key.world_offset_deg aims the sun per shot from behind the camera's side at that offset (Fable 2026-11-05 22:51 UTC: the E2 hero's sun direction must read in its shadows). Optional sky: tint (HDRI multiplier), horizon (below-horizon haze and a warm band over the horizon), top (gradient sky), horizon_band (height of the band, 0..1 of the up axis), glow (its share at the horizon). Optional world_exposure_ev: the view's exposure on a world shot only (a raking sun leaves half the set in shadow). Sun strength 1 = a white surface facing it shows 1.0. Every number is HYP until the creator judges the clips; colours are RGB multipliers, never palette hex.",
   "character_key": {
     "_doc": "WP-Q4's front_key() (character_benchmark.py, the lead close-up rain_lead_cu_v3_front_key_720p.png accepted by Fable 2026-11-05 22:17 UTC) as data: on a close-up the preset's key and fill give way to a warm key 35 degrees off the camera axis and above the eye line (front_key: 0.55 m above the head at 3 m = 10.4 degrees) and a cool shadowless fill opposite at a quarter of its energy; the era preset's rims and world tint stay. Look.character_key turns it on.",
     "key": {"colour": [1.0, 0.88, 0.72], "energy": 2.6, "front_offset_deg": 35.0, "elevation_deg": 10.4, "angle_deg": 8.0},
@@ -9,11 +9,14 @@
   "presets": {
     "golden_hour": {
       "feel": "low warm sun, a hot orange rim on one side and a cool sky rim on the other, warm-blue air",
-      "key": {"colour": [1.0, 0.82, 0.6], "energy": 3.0, "elevation_deg": 22.0, "azimuth_deg": 55.0, "angle_deg": 8.0, "front_offset_deg": 35.0},
+      "key": {"colour": [1.0, 0.74, 0.46], "energy": 3.4, "elevation_deg": 12.0, "azimuth_deg": 55.0, "angle_deg": 8.0, "front_offset_deg": 35.0,
+              "world_offset_deg": 110.0},
       "fill": {"colour": [0.6, 0.7, 1.0], "energy": 0.6},
       "rims": [{"name": "rim_a", "colour": [1.0, 0.7, 0.42], "energy": 3.2, "elevation_deg": 25.0, "azimuth_offset_deg": 35.0},
                {"name": "rim_b", "colour": [0.62, 0.76, 1.0], "energy": 1.6, "elevation_deg": 40.0, "azimuth_offset_deg": -40.0}],
-      "world_tint": {"colour": [0.72, 0.78, 1.0], "strength": 0.35}
+      "world_tint": {"colour": [0.72, 0.78, 1.0], "strength": 0.35},
+      "sky": {"tint": [0.95, 0.72, 0.52], "horizon": [1.0, 0.74, 0.48], "horizon_band": 0.85, "glow": 0.95},
+      "world_exposure_ev": 0.5
     },
     "noon_epic": {
       "feel": "high bright sun for battle and establishing shots, a warm rim, clear blue sky air",

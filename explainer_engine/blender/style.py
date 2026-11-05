@@ -237,7 +237,10 @@ Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "
                "native_classes": (), "skin_lift": (), "pn_converge": 0.0, "character_key": False,
                "haze": 0.0, "haze_start_m": 10.0, "haze_depth_m": 120.0, "haze_colour": (0.8, 0.76, 0.7)}
 CHARACTER_CLASSES = ("skin", "hair", "eyes", "costume")
-FRONT_KEY_BAND = (30.0, 45.0)   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
+HAZE_MAX = 0.75          # Fable 2026-11-05: the far end of the haze keeps about 25 % of its contrast
+HAZE_SKY_M = 100000.0    # a depth beyond this is the world background (EEVEE writes ~1e10 there): no haze on the sky
+FRONT_KEY_BAND = (30.0, 45.0)
+CHARACTER_SHOT_M = 12.0  # a camera focused nearer than this is a character shot: the preset key turns to the camera's side   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
 LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
 
 
@@ -251,6 +254,17 @@ def light_presets(path: Path | None = None) -> dict:
         if off is None or not FRONT_KEY_BAND[0] <= abs(off) <= FRONT_KEY_BAND[1]:
             raise ValueError(f"light preset {name}: key.front_offset_deg {off} outside the front-biased band "
                              f"{FRONT_KEY_BAND[0]:g}-{FRONT_KEY_BAND[1]:g} degrees (|offset|)")
+        wo = pr["key"].get("world_offset_deg")
+        if wo is not None and not 0 <= abs(wo) <= 180:
+            raise ValueError(f"light preset {name}: key.world_offset_deg {wo} outside -180..180")
+        if not -2 <= pr.get("world_exposure_ev", 0) <= 2:
+            raise ValueError(f"light preset {name}: world_exposure_ev outside -2..2")
+        sky = pr.get("sky")
+        if sky is not None and (set(sky) - {"tint", "horizon", "top", "horizon_band", "glow"}
+                                or any(len(sky[c]) != 3 or not all(0 <= v <= 1.5 for v in sky[c])
+                                       for c in ("tint", "horizon", "top") if c in sky)
+                                or not 0 < sky.get("horizon_band", 0.3) <= 1 or not 0 <= sky.get("glow", 0.0) <= 1):
+            raise ValueError(f"light preset {name}: sky {{tint, horizon, top: rgb 0..1.5, horizon_band 0..1, glow 0..1}}")
     return doc["presets"]
 
 
@@ -403,9 +417,10 @@ class Look:
             raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
         if any(c not in CHARACTER_CLASSES for c in self.native_classes) or len(set(self.native_classes)) != len(self.native_classes):
             raise ValueError(f"{self.id}: native_classes {self.native_classes} (character classes: {', '.join(CHARACTER_CLASSES)})")
-        if not 0 <= self.haze <= 1 or not 0 <= self.haze_start_m <= 500 or not 1 <= self.haze_depth_m <= 5000 \
+        if not 0 <= self.haze <= HAZE_MAX or not 0 <= self.haze_start_m <= 500 or not 1 <= self.haze_depth_m <= 5000 \
                 or len(self.haze_colour) != 3 or not all(0 <= c <= 1.5 for c in self.haze_colour):
-            raise ValueError(f"{self.id}: haze share 0..1, start 0..500 m, depth 1..5000 m, colour rgb 0..1.5")
+            raise ValueError(f"{self.id}: haze share 0..{HAZE_MAX} (the far end keeps a quarter of its contrast), "
+                             "start 0..500 m, depth 1..5000 m, colour rgb 0..1.5")
         if self.character_key and self.light_preset is None:
             raise ValueError(f"{self.id}: character_key replaces a light preset's key and fill (name a light_preset)")
         if (self.native_classes or self.skin_lift or self.pn_converge) and not self.lit_rig:
@@ -899,13 +914,14 @@ class StyleEngine:
         links += [[last, 2, "emit", "Color"], ["emit", "Emission", "out", "Surface"]]
         return _keys({"name": name, "path": "eevee", "shade_path": "rgb_soft", "class": cls, "nodes": nodes, "links": links})
 
-    def lights(self) -> list[dict]:
-        """The rig's lights plus one linked front fill per lifted character (``Look.skin_lift``, Fable 2026-11-05)."""
-        out = self._rig_lights()
+    def lights(self, focus_m: float | None = None) -> list[dict]:
+        """The rig's lights plus one linked front fill per lifted character (``Look.skin_lift``, Fable 2026-11-05). ``focus_m``
+        (the camera's focus distance) tells a character shot (nearer than ``CHARACTER_SHOT_M``) from a world shot."""
+        out = self._rig_lights(focus_m)
         key = next((x for x in out if x["name"] == "key"), None)
         return out + self._lift_lights(key["energy"] if key else self.t.art.key_energy)
 
-    def _rig_lights(self) -> list[dict]:
+    def _rig_lights(self, focus_m: float | None = None) -> list[dict]:
         """WP-Q1 light rigs (real, coloured lights; every number a HYP until the clips are judged):
 
         - ``cinematic``: a warm key SUN with a 5-10 degree disc and a PCF-blurred shadow (``shadow_filter_radius``, no jitter: the
@@ -916,7 +932,7 @@ class StyleEngine:
         Fill and rim are suns as well (they do not depend on where the set's objects stand); an AREA rim is a later option."""
         a, kl = self.t.art, self.t.key_light
         if a.light_preset is not None:
-            return self._preset_lights(light_presets()[a.light_preset])
+            return self._preset_lights(light_presets()[a.light_preset], focus_m)
         if a.light_rig == "ambient_only":
             return []
         key_col = [round(c, 6) for c in (a.key_colour or a.light_tint)]
@@ -939,7 +955,7 @@ class StyleEngine:
                         "use_shadow": False, "specular_factor": 0.3, "link": "cast"})
         return out
 
-    def _preset_lights(self, p: dict) -> list[dict]:
+    def _preset_lights(self, p: dict, focus_m: float | None = None) -> list[dict]:
         """A named preset (Wing It!'s rule): only the key SUN casts a shadow; two colourable rims linked to the cast, shadowless,
         specular 0.3; a shadowless fill without specular. The key's shadow follows the look's light rig (cinematic casts)."""
         a, k = self.t.art, p["key"]
@@ -962,10 +978,15 @@ class StyleEngine:
         out = [{"name": "key", "type": "SUN", "energy": round(k["energy"], 6), "color": [round(c, 6) for c in k["colour"]],
                 "angle_rad": round(math.radians(min(10.0, max(5.0, k["angle_deg"]))), 6), "rotation_euler": list(kl.rotation_euler()),
                 "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
-                "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None,
-                # a character shot turns the key to the camera's side (30-45 degrees off its axis); a set-only shot keeps the world sun
-                "aim_with_cast": {"relative_to": "camera", "from": "front", "elevation_deg": k["elevation_deg"],
-                                  "azimuth_offset_deg": k["front_offset_deg"]}}]
+                "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None}]
+        if focus_m is None or focus_m <= CHARACTER_SHOT_M:
+            # a character shot turns the key to the camera's side (30-45 degrees off its axis); a set-only shot keeps the world sun
+            out[0]["aim_with_cast"] = {"relative_to": "camera", "from": "front", "elevation_deg": k["elevation_deg"],
+                                       "azimuth_offset_deg": k["front_offset_deg"]}
+        elif k.get("world_offset_deg") is not None:
+            # a world shot (Fable 22:51 UTC, E2): the low sun rakes across the set from behind the camera's side, so its
+            # direction reads in the long shadows; aimed per shot like the rims
+            out[0]["aim"] = {"relative_to": "camera", "elevation_deg": k["elevation_deg"], "azimuth_offset_deg": k["world_offset_deg"]}
         if p.get("fill"):
             el, az = 22.0, k["azimuth_deg"] + 160.0
             out.append({"name": "fill", "type": "SUN", "energy": round(p["fill"]["energy"], 6),
@@ -997,10 +1018,12 @@ class StyleEngine:
         t, a = self.t, self.t.art
         paper = rgba(self.pal[t.paper])
         amb = t.ambient if a.ambient is None else round(a.ambient, 6)
-        air = paper
+        air, psky = paper, {}
         if a.light_preset is not None:   # the sequence's world tint: the ambient light's colour and strength
-            wt = light_presets()[a.light_preset]["world_tint"]
+            pr = light_presets()[a.light_preset]
+            wt, psky = pr["world_tint"], pr.get("sky") or {}
             air, amb = [*[round(c, 6) for c in wt["colour"]], 1.0], round(wt["strength"], 6)
+        col = lambda c: [*[round(v, 6) for v in c], 1.0]   # noqa: E731
         nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": air, "Strength": amb}},
                  {"id": "backdrop", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": 1.0}},
                  {"id": "is_cam", "type": "ShaderNodeLightPath"},
@@ -1009,8 +1032,9 @@ class StyleEngine:
         links = [["is_cam", "Is Camera Ray", "mix", "Fac"], ["light", "Background", "mix", 1], ["backdrop", "Background", "mix", 2],
                  ["mix", "Shader", "out", "Surface"]]
         if a.sky == "gradient" or a.sky == "hdri" and hdri is None:
-            top = rgba(_hex_scaled(self.pal["support_blue"], 0.62, 0.86))
-            horizon = _lerp(rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97)), top, 0.3)   # a warm haze already leaning blue
+            top = col(psky["top"]) if "top" in psky else rgba(_hex_scaled(self.pal["support_blue"], 0.62, 0.86))
+            horizon = col(psky["horizon"]) if "horizon" in psky else \
+                _lerp(rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97)), top, 0.3)   # a warm haze already leaning blue
             cloud = rgba(self.pal[t.paper])
             nodes += [{"id": "dir", "type": "ShaderNodeTexCoord"},
                       {"id": "dir_xyz", "type": "ShaderNodeSeparateXYZ"},
@@ -1026,17 +1050,27 @@ class StyleEngine:
                       ["dir", "Generated", "clouds", "Vector"], ["clouds", "Fac", "cloud_cut", "Value"],
                       ["cloud_cut", "Result", "sky_mix", "Factor"], ["sky", "Color", "sky_mix", 6], ["sky_mix", 2, "backdrop", "Color"]]
         elif a.sky == "hdri":   # the HDRI's sky above the horizon, a warm haze below it (a "puresky" HDRI is blank down there)
-            haze = rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97))
+            haze = col(psky["horizon"]) if "horizon" in psky else rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97))
             nodes += [{"id": "env", "type": "ShaderNodeTexEnvironment", "image": hdri},
                       {"id": "sky_warm", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
-                       "inputs": {"Factor": 1.0, 7: [0.62, 0.56, 0.48, 1.0]}},
+                       "inputs": {"Factor": 1.0, 7: col(psky["tint"]) if "tint" in psky else [0.62, 0.56, 0.48, 1.0]}},
                       {"id": "dir", "type": "ShaderNodeTexCoord"},
                       {"id": "dir_xyz", "type": "ShaderNodeSeparateXYZ"},
                       {"id": "above", "type": "ShaderNodeMapRange", "inputs": {"From Min": -0.01, "From Max": 0.03}},
                       {"id": "sky_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
                        "inputs": {6: haze}}]
             links += [["env", "Color", "sky_warm", 6], ["dir", "Generated", "dir_xyz", "Vector"], ["dir_xyz", "Z", "above", "Value"],
-                      ["above", "Result", "sky_mix", "Factor"], ["sky_warm", 2, "sky_mix", 7], ["sky_mix", 2, "backdrop", "Color"]]
+                      ["above", "Result", "sky_mix", "Factor"], ["sky_mix", 2, "backdrop", "Color"]]
+            if psky.get("glow"):   # a low sun's warm band over the horizon, fading up the sky (the HDRI stays above it)
+                nodes += [{"id": "glow_h", "type": "ShaderNodeMapRange",
+                           "inputs": {"From Min": 0.0, "From Max": round(psky.get("horizon_band", 0.3), 6), "To Min": round(psky["glow"], 6),
+                                      "To Max": 0.0}},
+                          {"id": "glow_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                           "inputs": {7: haze}}]
+                links += [["dir_xyz", "Z", "glow_h", "Value"], ["glow_h", "Result", "glow_mix", "Factor"],
+                          ["sky_warm", 2, "glow_mix", 6], ["glow_mix", 2, "sky_mix", 7]]
+            else:
+                links += [["sky_warm", 2, "sky_mix", 7]]
         return _keys({"nodes": nodes, "links": links})
 
     def _art_line(self, distance_m: float, lens_mm: float, sensor_mm: float) -> dict:
@@ -1075,12 +1109,23 @@ class StyleEngine:
             cur, sock = "plate_mix", 2
         mist = None
         if a.haze > 0:   # depth haze (Fable 2026-11-05: the E2 cells fail on the world): the mist pass mixes in a warm grey
-            passes.append("mist")
+            passes += [x for x in ("z",) if x not in passes]
             mist = {"start_m": round(a.haze_start_m, 4), "depth_m": round(a.haze_depth_m, 4), "falloff": "QUADRATIC"}
-            nodes += [{"id": "haze_amt", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(a.haze, 6)}},
+            # geometry only (Fable 22:33 UTC): the haze is built from the depth pass alone (the mist pass cost +4.5 s/frame at
+            # 1440p): a clamped map of the camera distance over [start, start + depth], squared (Blender's QUADRATIC mist), times
+            # the share (<= 0.75 keeps a quarter of the far contrast), times a sky mask (EEVEE writes ~1e10 on the background)
+            far = round(a.haze_start_m + a.haze_depth_m, 4)
+            nodes += [{"id": "haze_ramp", "type": "ShaderNodeMapRange",
+                       "inputs": {"From Min": round(a.haze_start_m, 4), "From Max": far, "To Min": 0.0, "To Max": 1.0}},
+                      {"id": "haze_sq", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}},
+                      {"id": "haze_geo", "type": "ShaderNodeMath", "props": {"operation": "LESS_THAN"}, "inputs": {1: HAZE_SKY_M}},
+                      {"id": "haze_amt", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(a.haze, 6)}},
+                      {"id": "haze_fac", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}},
                       {"id": "haze_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
                        "inputs": {7: [round(c, 6) for c in a.haze_colour] + [1.0]}}]
-            links += [["render", "Mist", "haze_amt", 0], ["haze_amt", "Value", "haze_mix", "Factor"], [cur, sock, "haze_mix", 6]]
+            links += [["render", "Depth", "haze_ramp", "Value"], ["haze_ramp", "Result", "haze_sq", 0], ["haze_ramp", "Result", "haze_sq", 1],
+                      ["haze_sq", "Value", "haze_amt", 0], ["render", "Depth", "haze_geo", 0], ["haze_amt", "Value", "haze_fac", 0],
+                      ["haze_geo", "Value", "haze_fac", 1], ["haze_fac", "Value", "haze_mix", "Factor"], [cur, sock, "haze_mix", 6]]
             cur, sock = "haze_mix", 2
         if a.bleed:
             nodes.append({"id": "bleed", "type": "CompositorNodeBilateralblur", "inputs": {"Size": int(a.bleed), "Threshold": 0.12}})
@@ -1185,13 +1230,16 @@ class StyleEngine:
             links += [["render", "Image", "overlay", 6], ["stretch", 0, "overlay", 7], ["overlay", 2, "out", "Image"]]
         return _keys({"enabled": True, "opacity": t.paper_opacity, "texture": texture, "nodes": nodes, "links": links})
 
-    def scene_settings(self, path: str) -> dict:
+    def scene_settings(self, path: str, focus_m: float | None = None) -> dict:
         t, a = self.t, self.t.art
         if a is not None and a.lit_rig:   # WP-Q1: the look's own view transform; Standard and PBR Neutral take no look
             view = a.view_transform or t.view_transform
             look = t.look if view == "AgX" else "None"
             out = {"view_transform": view, "look": look, "look_ids": list(LOOK_IDS[look]), "film_transparent": False,
                    "engine": "eevee"}
+            ev = light_presets()[a.light_preset].get("world_exposure_ev") if a.light_preset else None
+            if ev and focus_m is not None and focus_m > CHARACTER_SHOT_M:   # a raking world sun leaves half the set in shadow
+                out["exposure"] = round(ev, 6)
             ee = {"use_raytracing": False, "use_fast_gi": a.ao, "use_shadows": a.casts_shadows}
             if a.ao:
                 ee["fast_gi_method"] = "AMBIENT_OCCLUSION_ONLY"
@@ -1217,7 +1265,7 @@ class StyleEngine:
             raise ValueError(f"unknown style path {path!r} (known: {', '.join(PATHS)})")
         kl = self.t.key_light
         doc = {"schema": SCHEMA, "path": path, "tokens": self.t.to_dict(),
-               "scene": self.scene_settings(path),
+               "scene": self.scene_settings(path, focus_m=camera["focus_distance_m"]),
                "key_light": {"type": "SUN", "energy": kl.energy, "angle_rad": round(math.radians(kl.angle_deg), 6),
                              "rotation_euler": list(kl.rotation_euler()), "direction": list(kl.direction()),
                              "use_shadow": self.t.shadows},
@@ -1241,7 +1289,7 @@ class StyleEngine:
                 doc["fill_light"] = {"type": "SUN", "energy": round(a.fill, 6), "use_shadow": False,
                                      "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)]}
             if a.lit_rig:   # WP-Q1: the rig is real coloured lights; key_light stays as the key's record
-                doc["lights"] = self.lights()
+                doc["lights"] = self.lights(focus_m=camera["focus_distance_m"])
                 key = next((x for x in doc["lights"] if x["name"] == "key"), None)
                 kd.update(energy=key["energy"] if key else 0.0, use_shadow=bool(key and key["use_shadow"]))
                 if key:

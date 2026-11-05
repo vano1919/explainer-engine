@@ -231,18 +231,74 @@ def test_perfectly_normal_runs_outward_between_the_material_index_guards(tmp_pat
 @pytest.mark.parametrize("cid", ["C1", "C2", "C3", "C4"])
 def test_every_cell_gets_the_depth_haze_from_the_mist_pass(cid):
     p = graph(cid)["paper"]
-    assert "mist" in p["passes"] and p["mist"]["falloff"] == "QUADRATIC" and 0 < p["mist"]["start_m"] < p["mist"]["depth_m"]
+    assert p["passes"] == ["z"] and p["mist"]["falloff"] == "QUADRATIC" and 0 < p["mist"]["start_m"] < p["mist"]["depth_m"]
     ids = [n["id"] for n in p["nodes"]]
     assert ids.index("haze_mix") > ids.index("kuwahara")   # the painted frame fades into the haze, not the other way round
-    assert ["render", "Mist", "haze_amt", "0"] in p["links"] or ["render", "Mist", "haze_amt", 0] in p["links"]
+    assert ["render", "Depth", "haze_ramp", "Value"] in p["links"] and not any(x[1] == "Mist" for x in p["links"])
+    geo = next(n for n in p["nodes"] if n["id"] == "haze_geo")   # the sky (depth ~1e10) is masked out, geometry gets the haze
+    assert geo["props"]["operation"] == "LESS_THAN" and geo["inputs"]["1"] == S.HAZE_SKY_M and "z" in p["passes"]
+    ramp = next(n for n in p["nodes"] if n["id"] == "haze_ramp")["inputs"]
+    assert ramp["From Max"] == p["mist"]["start_m"] + p["mist"]["depth_m"]
     mix = next(n for n in p["nodes"] if n["id"] == "haze_mix")
     assert mix["inputs"]["7"][:3] == list(CB.tokens(cid, "E2").art.haze_colour)
 
 
 def test_haze_is_off_by_default_and_bounded():
     assert "mist" not in S.StyleEngine(S.look_tokens("q1_lit_pbrn_cinematic")).graph(
-        "eevee", camera=CAM, materials=MATS, hdri=None, paper_texture=None)["paper"]["passes"]
+        "eevee", camera=CAM, materials=MATS, hdri=None, paper_texture=None)["paper"]
     a = CB.tokens("C2", "E2").art
-    for bad in ({"haze": 1.5}, {"haze_depth_m": 0.0}, {"haze_colour": (2.0, 0.5, 0.5)}):
+    for bad in ({"haze": 0.8}, {"haze_depth_m": 0.0}, {"haze_colour": (2.0, 0.5, 0.5)}):
         with pytest.raises(ValueError, match="haze"):
             S.replace(a, **bad)
+
+
+def _graph_at(look_id, focus_m):
+    cam = {"lens_mm": 26, "focus_distance_m": focus_m}
+    return S.StyleEngine(S.look_tokens(look_id)).graph("eevee", camera=cam, materials=MATS, hdri="/c/sky.hdr",
+                                                       paper_texture="/c/paper.jpg")
+
+
+def test_golden_hour_is_a_low_warm_shadowed_sun_that_rakes_a_world_shot_and_fronts_a_character_shot():
+    """Fable 2026-11-05 22:51 UTC: E2's sun must read in the world shot (low, warm, shadows on), not turn to the camera."""
+    k = S.light_presets()["golden_hour"]["key"]
+    assert k["elevation_deg"] <= 12.0 and k["colour"][0] > k["colour"][1] > k["colour"][2]
+    world = {x["name"]: x for x in _graph_at("q1_c2_native_skin@E2", 49.0)["lights"]}["key"]
+    assert world["use_shadow"] and "aim_with_cast" not in world
+    assert world["aim"] == {"relative_to": "camera", "elevation_deg": k["elevation_deg"], "azimuth_offset_deg": k["world_offset_deg"]}
+    assert 90.0 <= abs(k["world_offset_deg"]) <= 135.0          # from the camera's side: the long shadows run across the frame
+    close = {x["name"]: x for x in _graph_at("q1_c2_native_skin@E2", S.CHARACTER_SHOT_M - 0.5)["lights"]}["key"]
+    assert close["aim_with_cast"]["from"] == "front" and "aim" not in close
+    noon = {x["name"]: x for x in _graph_at("q1_c2_native_skin@E1", 49.0)["lights"]}["key"]
+    assert "aim" not in noon and "aim_with_cast" not in noon   # a preset without world_offset_deg keeps its world-fixed sun
+
+
+def test_golden_hour_warms_the_hdri_sky_with_a_band_over_the_horizon():
+    w = _graph_at("q1_c2_native_skin@E2", 49.0)["world"]
+    sky = S.light_presets()["golden_hour"]["sky"]
+    ids = {n["id"]: n for n in w["nodes"]}
+    assert ids["sky_warm"]["inputs"]["7"][:3] == sky["tint"] and ids["glow_mix"]["inputs"]["7"][:3] == sky["horizon"]
+    assert ids["glow_h"]["inputs"]["To Min"] == sky["glow"] and ids["glow_h"]["inputs"]["To Max"] == 0.0
+    assert ["glow_mix", 2, "sky_mix", 7] in w["links"] and ["sky_warm", 2, "sky_mix", 7] not in w["links"]
+    plain = _graph_at("q1_c2_native_skin@E1", 49.0)["world"]      # noon_epic has no sky block: the HDRI path as before
+    assert "glow_mix" not in {n["id"] for n in plain["nodes"]} and ["sky_warm", 2, "sky_mix", 7] in plain["links"]
+
+
+def test_a_bad_preset_sky_or_world_offset_is_refused(tmp_path):
+    doc = json.loads(S.LIGHT_PRESETS_PATH.read_text(encoding="utf-8"))
+    bad = json.loads(json.dumps(doc))
+    bad["presets"]["golden_hour"]["sky"]["glow"] = 2.0
+    (tmp_path / "a.json").write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(ValueError):
+        S.light_presets(tmp_path / "a.json")
+    bad = json.loads(json.dumps(doc))
+    bad["presets"]["golden_hour"]["key"]["world_offset_deg"] = 270.0
+    (tmp_path / "b.json").write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(ValueError):
+        S.light_presets(tmp_path / "b.json")
+
+
+def test_golden_hour_opens_a_world_shot_by_half_a_stop_and_leaves_a_close_up_alone():
+    ev = S.light_presets()["golden_hour"]["world_exposure_ev"]
+    assert ev == 0.5 and _graph_at("q1_c2_native_skin@E2", 49.0)["scene"]["exposure"] == ev
+    assert "exposure" not in _graph_at("q1_c2_native_skin@E2", 3.0)["scene"]
+    assert "exposure" not in _graph_at("q1_c2_native_skin@E1", 49.0)["scene"]
