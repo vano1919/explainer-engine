@@ -763,14 +763,55 @@ def perfectly_normal(meshes, spec, missing):
     # sphere in 5.2.3, mean dot with the outward normal 0.971 flat, -0.911 at +0.6, the C4 cast rendered black); a negative share
     # pushes them out of the face, i.e. spherizes (0.984 at -0.6). The look's pn_converge is that outward share.
     steps = ((names[0], {}), (names[1], {"Converge": -float(spec["converge"])}), (names[2], {"Ready to Apply": True}))
+    keep, restore = _material_index_guard()
     for ob in meshes:
+        # the kit's glTF meshes carry imported custom normals: PN on top of them wrote black faces (C4's first frames), so the
+        # cast starts from plain smooth normals (custom ones cleared, shade smooth)
+        me = ob.data
+        if getattr(me, "has_custom_normals", False):
+            with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob]):
+                bpy.ops.mesh.customdata_custom_splitnormals_clear()
+        if hasattr(me, "shade_smooth"):
+            me.shade_smooth()
+        ob.modifiers.new("pn_keep_material_index", "NODES").node_group = keep
         for name, values in steps:
             g = bpy.data.node_groups[name]
             g.is_modifier = True
             mod = ob.modifiers.new(f"pn_{name.split(': ')[1].strip('()').lower()}", "NODES")
             mod.node_group = g
             _gn_inputs(mod, values)
+        ob.modifiers.new("pn_restore_material_index", "NODES").node_group = restore
     return len(meshes)
+
+
+def _material_index_guard():
+    """PN 0.0.3's rebuild shifts every face's material index by one (measured in 5.2.3: [0, 1] -> [1, 2]; the kit cast rendered
+    in the wrong slots, black). Two small GN groups keep it: the index stored as a face attribute before PN, set back after."""
+    made = []
+    for gname in ("wpq1_pn_keep_matidx", "wpq1_pn_restore_matidx"):
+        ng = bpy.data.node_groups.get(gname)
+        if ng is None:
+            ng = bpy.data.node_groups.new(gname, "GeometryNodeTree")
+            ng.is_modifier = True
+            ng.interface.new_socket("Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
+            ng.interface.new_socket("Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+            gin, gout = ng.nodes.new("NodeGroupInput"), ng.nodes.new("NodeGroupOutput")
+            if gname.endswith("keep_matidx"):
+                st, idx = ng.nodes.new("GeometryNodeStoreNamedAttribute"), ng.nodes.new("GeometryNodeInputMaterialIndex")
+                st.data_type, st.domain = "INT", "FACE"
+                st.inputs["Name"].default_value = "ee_material_index"
+                ng.links.new(gin.outputs[0], st.inputs["Geometry"])
+                ng.links.new(idx.outputs[0], st.inputs["Value"])
+                ng.links.new(st.outputs["Geometry"], gout.inputs[0])
+            else:
+                na, sm = ng.nodes.new("GeometryNodeInputNamedAttribute"), ng.nodes.new("GeometryNodeSetMaterialIndex")
+                na.data_type = "INT"
+                na.inputs["Name"].default_value = "ee_material_index"
+                ng.links.new(gin.outputs[0], sm.inputs["Geometry"])
+                ng.links.new(na.outputs["Attribute"], sm.inputs["Material Index"])
+                ng.links.new(sm.outputs["Geometry"], gout.inputs[0])
+        made.append(ng)
+    return made
 
 
 def soften_normals(meshes, iterations, missing):

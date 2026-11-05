@@ -186,3 +186,43 @@ def test_a_look_id_carries_the_era_light_for_every_cli():
             S.look_tokens(bad)
     spec = SS.spec_for("dialogue_cu", "q1_c2_native_skin@E1", t)
     assert spec["schema"] == "shot_spec/3" and spec["render"]["profile"] == "eevee_painterly"
+
+
+def test_perfectly_normal_runs_outward_between_the_material_index_guards(tmp_path, monkeypatch):
+    rs = load_render_shot()
+    blend = tmp_path / "pn.blend"
+    blend.write_bytes(b"x")
+    monkeypatch.setenv("EE_PERFECTLY_NORMAL_BLEND", str(blend))
+
+    class Inputs(dict):
+        pass
+
+    def group(name, sockets=()):
+        items = [types.SimpleNamespace(in_out="INPUT", name=n, identifier=f"S_{n}") for n in sockets]
+        return types.SimpleNamespace(name=name, is_modifier=False, interface=types.SimpleNamespace(items_tree=items))
+
+    groups = {n: group(n, s) for n, s in (("Manip Verts: (Re)create", ()), ("Manip Verts: Tweak", ("Converge",)),
+                                          ("Manip Verts: Apply", ("Ready to Apply",)),
+                                          ("wpq1_pn_keep_matidx", ()), ("wpq1_pn_restore_matidx", ()))}
+
+    class Mods(list):
+        def new(self, name, kind):
+            m = types.SimpleNamespace(name=name, node_group=None, properties=types.SimpleNamespace(
+                inputs=Inputs({f"S_{n}": {"value": None} for n in ("Converge", "Ready to Apply")})))
+            self.append(m)
+            return m
+
+    class Groups(dict):
+        def __contains__(self, k):
+            return dict.__contains__(self, k)
+
+    rs["bpy"] = types.SimpleNamespace(data=types.SimpleNamespace(node_groups=Groups(groups)))
+    ob = types.SimpleNamespace(modifiers=Mods(), data=types.SimpleNamespace(has_custom_normals=False, shade_smooth=lambda: None))
+    missing = []
+    assert rs["perfectly_normal"]([ob], {"converge": 0.6}, missing) == 1 and missing == []
+    assert [m.node_group.name for m in ob.modifiers] == ["wpq1_pn_keep_matidx", "Manip Verts: (Re)create", "Manip Verts: Tweak",
+                                                          "Manip Verts: Apply", "wpq1_pn_restore_matidx"]
+    assert ob.modifiers[2].properties.inputs["S_Converge"]["value"] == -0.6   # outward: PN's positive Converge points inward
+    assert ob.modifiers[3].properties.inputs["S_Ready to Apply"]["value"] is True
+    monkeypatch.delenv("EE_PERFECTLY_NORMAL_BLEND")
+    assert rs["perfectly_normal"]([ob], {"converge": 0.6}, missing) == 0 and "EE_PERFECTLY_NORMAL_BLEND" in missing[0]
