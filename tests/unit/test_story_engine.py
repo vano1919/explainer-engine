@@ -448,11 +448,13 @@ def test_template_d_spoken_share_ignores_unvoiced_character_lines():
     d = storied()
     d["drama"]["template"] = "D"
     d["segments"][0]["lines"] = [
-        {"text": " ".join(["narration"] * 70)},
-        {"speaker": "invented_hero", "voiced": True, "text": " ".join(["dialogue"] * 30)},
+        {"text": " ".join(["narration"] * 65)},  # D-99: inside the 65-75 % band with the fixture's other lines (was 70/30 under D-95)
+        {"speaker": "invented_hero", "voiced": True, "text": " ".join(["dialogue"] * 35)},
         {"speaker": "historical_figure", "voiced": False, "text": " ".join(["silent_bubble"] * 100)}
     ]
     assert not _st(d, "ST-19")
+    d["segments"][0]["lines"][2]["voiced"] = True  # the same words counted as voiced would leave the band
+    assert _st(d, "ST-19", "REVIEW")
 
 
 def test_template_d_docudrama_rules():

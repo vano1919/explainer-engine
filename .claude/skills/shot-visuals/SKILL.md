@@ -5,6 +5,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
+**Ink Chronicle route (D-96, D-97, 2026-11-05), read first:** on the Blender path a shot is a `shot_spec/2` scene (scene template, set assets, characters with rig and animation, camera rig, light rig, archetype of the roadmap's section 7.3; contracts in ICW-02, builder in ICW-06), not a picture prompt; image prompts are written only for reference art (style sheets, D-100). The still-picture route (D-43) and the animated Qwen/LTX route (D-77/D-80) below are the legacy image-generation routes; their stakes, named-hero and one-universe rules (UR-16..UR-22) still decide what a Blender shot shows.
+
 > **Route note:** a still-picture episode (D-43) uses the sprite/plate rules below; an animated episode (D-77, D-80) uses docs/SHOT_CONTINUITY.md (continuity_card/1, film_shots/2) and docs/SHOT_PROMPTS.md on Qwen-Image-2.1 + xworld_v2 — never both in one episode.
 
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.

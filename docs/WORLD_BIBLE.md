@@ -1,5 +1,7 @@
 # World Bible and asset library
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force. Asset library v2 adds the 3D kinds (D-110, ICW-05).
+
 The two registers that carry one visual world across episodes (D-70 stage C, the creator's brief of 2026-10-22): the
 **World Bible** (`explainer_engine/world/bible.json`, code `world/bible.py`, schema `schemas/world_bible.schema.json`)
 versions the look; the **asset library** (`assets/library.json`, code `explainer_engine/assets/library.py`, schema

@@ -1,5 +1,7 @@
 # LoRA training control (LT-)
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted. LoRA training is not on the Blender path.
+
 Scope since 2026-10-25 (LT-69): only the photo style LoRA is trained; the sections on the other two stay as history.
 How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-Image-2512, ai-toolkit), the image-edit
 "next pose" LoRA (Qwen-Image-Edit-2511, paired data) and the video motion LoRA (LTX-2.5, ltx-trainer). Decision

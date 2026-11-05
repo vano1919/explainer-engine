@@ -1,3 +1,5 @@
+> **HISTORICAL (moved to docs/archive/ on 2026-11-05 by ICW-01, D-108).** The Master Mold handoff (CD-01..06 and its imported proposals) was never the plan for the Ink Chronicle branch. It is kept as evidence and is not an active instruction. The rules in force are the decision log (D-96..D-113) and the Ink Chronicle roadmap (`docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md`).
+
 # Claude handoff: Gemini Master Mold package (2026-11-04)
 
 **Branch:** `claude/master-mold-ready-2026-11-04`

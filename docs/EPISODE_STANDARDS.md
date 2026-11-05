@@ -25,7 +25,7 @@ uncertainty goes to REVIEW, and to qualified legal review when the creator wants
 | `provisional` | topic and format known | identity, jurisdictions, first risks; REVIEW items may stay open |
 | `final` | premise, people and characters, asset sources and approach known; before the script is committed | status `final`, no open BLOCK, every role has its instructions |
 | `script_lock` | the script is approved (approval #1) | ADAPT items that change the script are applied (`resolved`); the stamp matches this script |
-| `paid_assets` | before any paid or high-cost generation (voice, pictures, music) | no open REVIEW or ADAPT, every exception decided, sources fresh; the stamp matches this script |
+| `paid_assets` | before any paid or high-cost generation (voice, pictures, music, and a Blender render pod: since D-96 the render pod must pass this same gate before `runpod create`; the text is ICW-01, the code check lands with the pod script in ICW-04) | no open REVIEW or ADAPT, every exception decided, sources fresh; the stamp matches this script |
 | `final_qa` | technical and editorial QA, before approval #2 | licences verified, no placeholder credits; the stamp matches the final script |
 
 A changed script or a new rulebook version makes the last stamp stale (ES-16). The agent then re-checks only the rules the change
@@ -144,7 +144,7 @@ another country (UK, EU) adds it. The agent does not apply one country's excepti
 | Originality / reused / inauthentic content | documented, manual | QA policy checklist, RR-12; now ES-13/14 with a comparison against earlier rulebooks |
 | Licence register for every asset | documented, partly implemented | Q-T16, `audio/sfx_library.py` (sounds only); `test_committed_sound_library` fails on this branch because the WAVs are not committed; pictures and music have no licence record; now ES-09 |
 | Synthetic voice of a real person | implemented for the narrator | PV-10 (voice described as a sound, never a person), D-39; nothing for character voices; now ES-08 |
-| Paid steps gated on rights | missing | `production/paint.py` checked only money caps; now refuses a paid run when the rulebook's `paid_assets` gate fails |
+| Paid steps gated on rights | missing | `production/paint.py` checked only money caps; now refuses a paid run when the rulebook's `paid_assets` gate fails; the Blender render pod is held to the same gate (D-96; code in ICW-04) |
 | Rechecks after a script change | missing | no link between a rights check and the script version; now ES-16 (script hash in every stamp) |
 | Downstream agents share one rule set | missing | the orchestrator passed CLAUDE.md and PRODUCTION_RULES only; skills carried their own copies of rights hints; now `standards brief --role` |
 | Universal negative prompt | not a problem found | `compile.POD_NEGATIVE` is a model-specific style control, not a safety list (4.4) |

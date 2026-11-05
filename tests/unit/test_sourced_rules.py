@@ -97,7 +97,9 @@ def test_bp141_a_and_d_non_character_max_follows_the_d93_lane_mix():
 def test_d95_speech_mix_and_video_duration_rules_are_independent_from_visual_lanes():
     speech = SR.rule("BP-105")
     assert speech["status"] == "house"
-    assert SR.T("BP-105", "narrator_share") == [0.70, 0.80]
+    assert SR.T("BP-105", "narrator_share") == [0.65, 0.75]  # D-99: ICG-1 = A, REVIEW band (was D-95's 70-80)
+    assert SR.T("BP-105", "nominal_narrator_share") == 0.70
+    assert speech["severity"] == "REVIEW"
     video = SR.rule("BP-108")
     assert video["status"] == "house"
     assert SR.T("BP-108", "dialogue_shot_max_s") == 5.0
@@ -105,6 +107,7 @@ def test_d95_speech_mix_and_video_duration_rules_are_independent_from_visual_lan
     lanes = SR.T("BP-109", "lane_share")
     assert lanes == {"video": 0.6, "still": 0.3, "helper": 0.1}
     assert SR.T("BP-109", "lane_tolerance") == 0.05
+    assert not set(speech["thresholds"]) & set(SR.rule("BP-109")["thresholds"])  # two axes, no shared key (D-96)
 
 
 def _schema(name):

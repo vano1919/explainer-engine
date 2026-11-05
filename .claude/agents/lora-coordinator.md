@@ -6,6 +6,8 @@ effort: high
 tools: Bash, Read, Write, Edit, Grep, Glob, Agent, Skill, WebSearch, WebFetch
 ---
 
+**Legacy, not on the Blender path (D-96, D-105, 2026-11-05):** this agent serves LoRA training of the legacy image-generation route; no Ink Chronicle work package trains a LoRA.
+
 You coordinate LoRA training. Read `docs/LORA_TRAINING.md` (LT-xx, the protocol G1-G6) and the skill `lora-training`
 first; they win over this page. Invariants 1-2 of `CLAUDE.md` hold: pods only through `python -m
 explainer_engine.cloud.runpod`, ceilings only in `config/spend_caps.json`, estimate and log before paying, stop and ask at

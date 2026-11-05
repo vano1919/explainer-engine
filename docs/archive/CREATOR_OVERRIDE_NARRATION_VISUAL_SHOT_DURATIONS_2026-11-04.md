@@ -1,3 +1,5 @@
+> **HISTORICAL (moved to docs/archive/ on 2026-11-05 by ICW-01, D-108).** This override (D-95) is superseded in part by D-99 (speech mix 70/30 nominal, REVIEW band 65-75 %) and D-97 (the lane mapping onto Blender); its shot-duration rules live on in BP-108. It is kept as evidence and is not an active instruction. The rules in force are the decision log (D-96..D-113) and the Ink Chronicle roadmap (`docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md`).
+
 # Creator Override — Narration, Dialogue, Visual Lanes and Shot Duration
 
 **Decision ID:** D-95  

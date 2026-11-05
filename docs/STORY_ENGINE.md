@@ -1,5 +1,7 @@
 # Story engine: story, dialogue, motion, sound layers, voices, Shorts (D-48)
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 The creator's notes of 2026-10-19:
 - The first video told a less interesting story than it could have and missed what viewers want. Facts and people's basic needs must be balanced.
 - The edit was slow, not animated and boring. It needs frequent picture changes, not only photos joined by standard transitions.
@@ -86,7 +88,7 @@ all-is-lost ~75 %, break-into-three ~80 %, finale to the end. Suits episodes who
 
 **D. Historical docudrama (historical 15-minute reference map; current production target is 12 minutes under BP-167).** An animated docudrama: a narrator plus characters who talk to each other. Voiced dialogue/lip-sync coverage shots use the 5 s cap; non-dialogue VIDEO action may run 10-15 s where continuous choreography benefits the scene. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
 ending on the next question. Set `drama.template` to "D"; ST-17..ST-19 then apply. Times are for 15:00 and scale with
-length; the borders are guides, not a stopwatch. Speech mix is BP-105 (70-80 % narration / 20-30 % voiced character dialogue by audible words), independent from D-93/BP-109 visual runtime lanes. Evidence and what was not verified:
+length; the borders are guides, not a stopwatch. Speech mix is BP-105 (nominal 70 % narration / 30 % voiced character dialogue by audible words, REVIEW outside 65-75 %, D-99), independent from D-93/BP-109 visual runtime lanes. Evidence and what was not verified:
 [research/DOCUDRAMA_CONSTITUTION_2026-10-24.md](research/DOCUDRAMA_CONSTITUTION_2026-10-24.md).
 
 | # | Time | Segment (`function`) | What happens |

@@ -8,6 +8,9 @@
     "ltx_clip": {"unit": "clip", "rows": {}},
     "lora_train": {"unit": "step", "rows": {}},
     "captions": {"unit": "row", "rows": {}},
-    "smoke": {"unit": "pod", "rows": {}}
+    "smoke": {"unit": "pod", "rows": {}},
+    "blender_frame_eevee_fast_1440": {"unit": "frame", "rows": {}},
+    "blender_frame_eevee_full_1440": {"unit": "frame", "rows": {}},
+    "blender_frame_cycles_hero_1440": {"unit": "frame", "rows": {}}
   }
 }

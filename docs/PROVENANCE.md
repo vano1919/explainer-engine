@@ -1,5 +1,7 @@
 # Provenance of copied code
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 Source: `vano1919/tmr-video-script-engine` at commit `d88ba8f` (2026-10-15), same owner. Copied files carry a
 `# from vano1919/tmr-video-script-engine@d88ba8f:<path>` header. They evolve independently; nothing imports
 `tmr_engine` at run time (`tests/unit/test_repo_hygiene.py` enforces both rules).

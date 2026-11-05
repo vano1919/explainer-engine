@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep, ToolSearch
 ---
 
+**Ink Chronicle note (D-96, 2026-11-05):** one fixed ElevenLabs voice per character stays (D-90); on the Blender path its take drives the lip-sync (mouth shapes) instead of conditioning an LTX clip; the LTX wording below is the legacy image-generation route (D-105).
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start caster --job <job> --page .claude/agents/voice-caster.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh caster --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You fill `voice` and `cast.<id>.voice` only (stage guard `caster`). Read `docs/STORY_ENGINE.md` (VC rules) and

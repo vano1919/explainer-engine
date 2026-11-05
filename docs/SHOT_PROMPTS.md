@@ -1,5 +1,7 @@
 # Shot prompts for animated shots
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 > **Retired in part by [D-80](DECISIONS_AND_OPEN_QUESTIONS.md) (2026-10-26):** Qwen-Image-2512, Edit-2511 and every `wldnk_*` LoRA are banned; keyframes come from Qwen-Image-2.1 (draws and edits with references) with the new LoRA learned from Rick and Morty. Since N-09 (2026-10-30) the kind table, the model rows and the prompt shape below are on Qwen-Image-2.1 and the xworld_v2 LoRA, the trigger is read from `training/lora_rules.json`; the retired rows stay as marked History, and their Helps and Hurts lists are not yet re-measured on 2.1.
 
 How the prompts of an animated shot are written: the keyframe (Qwen-Image-2.1 + the xworld_v2 LoRA, D-80), the next pose of the same

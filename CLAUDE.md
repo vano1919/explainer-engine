@@ -1,31 +1,26 @@
-# NEW CREATOR DIRECTION — 2026-11-04 (PLANNING BRANCH OVERRIDE)
+# Ink Chronicle (D-96) — read first
 
-> This branch is a dedicated planning branch for the creator-approved Ink Chronicle + Blender direction. Read these first:
-> 1. [Branch handoff](docs/architecture/BRANCH_HANDOFF_README_2026-11-04.md)
-> 2. [Ink Chronicle visual production direction](docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md)
-> 3. [Fable/Claude brief for the Opus plan](docs/architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md)
+> The channel's direction since 2026-11-04 is **Ink Chronicle**: one 3D-to-illustrated universe rendered in Blender and assembled by FFmpeg ([direction](docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md), decision D-96 and D-97..D-113 in [the decision log](docs/DECISIONS_AND_OPEN_QUESTIONS.md)). The one plan is the [Opus implementation roadmap](docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md): work packages ICW-00..ICW-10 on the branch `opus/ink-chronicle-blender-visual-system-2026-11-04`, each on its own branch and back by PR (roadmap section 15.1); the creator gave the launch word on 2026-11-05 08:42 UTC. Paid steps still need the OR-23 plan, the Fable full-repo audit (rule below) and his word.
 >
-> **Important:** This is a new decision direction and intentionally conflicts with older rules and implementation mappings, including D-93, D-95, D-70, D-41, look_v2.json, world/bible.json, old LTX/Qwen TODOs and related schemas/tests. These conflicts must be explicitly audited and migrated. Do not treat older instructions as silently overriding this new creator direction. Do not silently delete old history either.
+> **Precedence (ICW-01, 2026-11-05):** where an older text still conflicts with D-96 after the rule rewrite, the thread follows the decision log, reports the stale text in its reply and in `docs/PROGRESS.md`, and continues; it does not refuse and it does not silently delete the old text. Texts about Qwen keyframes, LTX clips, sprites and the painted still route carry a dated legacy banner: they describe the legacy image-generation route (D-43, D-80), which stays readable for the episodes already made.
 >
-> **Planning only:** no Blender implementation, paid GPU/API work, destructive cleanup, production rollout, merge or publish is authorized in this branch yet. Fable/Claude must produce the complete Opus implementation plan and TODO disposition first. Opus must independently verify repository facts and external prices.
->
-> The new visual runtime target is 10% HELPER / 30% STILL / 60% VIDEO. The new spoken-word planning target is nominal 70% narrator / 30% voiced character dialogue. These are separate axes. Final visual pixels must belong to the Ink Chronicle 3D-to-illustrated universe and be rendered through Blender. Master target: 2560×1440 at 24 fps. Recurring render/compute target: US$10–15 per 12–15-minute episode, unproven until benchmarked.
+> Two separate axes: visual runtime 60 % VIDEO_3D / 30 % STILL_3D / 10 % HELPER, ±5 pp at REVIEW (D-97, D-98, BP-109); spoken words nominal 70 % narrator / 30 % voiced dialogue, REVIEW band 65-75 % (D-99, BP-105). Master 2560x1440 at 24 fps (BP-167). Recurring render target US$10-15 per 12-15-minute episode, unproven until the ICW-09 benchmark.
 
 ---
 
 # CLAUDE.md — explainer-engine
 
-A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
+A solo creator's explainer channel in the Ink Chronicle look, one 3D-to-illustrated universe rendered in Blender and assembled by FFmpeg (D-96) ("worlds collide": history, science and money meeting other
 eras, D-25; analysis episodes of other people's fictional worlds under the RR rules, D-26) and its production
 pipeline: topic → research dossier + claim map → short scenario → **creator approval** (OR-15) → script → **creator approval** → schema-validated storyboard →
-paint plan + **creator's provider choice** → pictures and ElevenLabs narration for the **first two parts only**, stitched into
-a sample the creator watches and approves before the rest is paid (OR-19, D-67; `production/sample.py`) → the rest's pictures +
-narration + Scribe word timings → PIL/ffmpeg assembly
-(`production/assemble.py`) → Shorts → thumbnail + metadata (`qa/publish_check.py`) →
+film_shots (VIDEO_3D / STILL_3D / HELPER, D-97) → ElevenLabs narration + the 24 fps audio spine → Blender VIDEO_3D / STILL_3D clips and Python HELPER graphics for the **first two parts only**, stitched into
+a sample the creator watches and approves before the rest is paid (OR-19, D-67; `production/sample.py`) → the rest's clips +
+narration + Scribe word timings → FFmpeg assembly
+(`production/assemble.py` `build_video_v2`; the legacy still route keeps its paint plan and PIL/ffmpeg `assemble`) → Shorts → thumbnail + metadata (`qa/publish_check.py`) →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
 link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
 
-**2026-11-04 creator override (D-95):** read [`docs/wip/CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md`](docs/wip/CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md) first. It supersedes conflicting older narration/dialogue ratios and generic shot-duration rules only within its explicit scope; D-93 visual 60/30/10 remains unchanged. Then read [`docs/wip/CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md`](docs/wip/CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md). The imported execution guide and TODO annotations remain unverified proposals except for the specific D-95 scope explicitly approved by the creator.
+**Speech and visual mixes (D-99, D-97):** the 2026-11-04 override (D-95) is superseded in part: its shot-duration rules stay (BP-108), its 70-80 % narrator band and 75/25 midpoint give way to the 70/30 nominal with the 65-75 % REVIEW band (D-99); the 60/30/10 shares stay and are mapped onto Blender per D-97. The override note and the Master Mold handoff are history in [`docs/archive/`](docs/archive/) (D-108).
 
 **Rule one (creator, 2026-10-26, OR-22):** never take a system decision on an assumption (base model, LoRA and checkpoint, data, settings, test design, rule wording, spend); every detail his words do not settle is put to the creator first, also in auto mode. **Before every pod (OR-23):** a detailed plan item by item (purpose, model and checkpoint, data, every setting, outputs and HF paths, GPU and price, time and money caps, stop condition, what he sees, what follows), agreed before `runpod create`; never a general summary.
 **Higher thread decides (creator, 2026-10-26, OR-24):** before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning, so the answer is not biased.
@@ -49,7 +44,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 1. Production is cloud-first (D-31): the cloud session + RunPod pods. Money ceilings live only in
    `config/spend_caps.json` and are enforced by code (D-56): pods only via `python -m explainer_engine.cloud.runpod`
    (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
-   The creator's PC only reviews and uploads.
+   The creator's M4 Pro Mac may run free Blender renders for review, style sheets and benchmark preflight (ICG-3, D-113);
+   paid work stays cloud-first; the PC reviews and uploads.
 2. Budget caps are ceilings, not targets; the numbers live only in `config/spend_caps.json` (invariant 1; vidIQ and ElevenLabs
    credits are counted in the ledger until they have a line there). Estimate and log before every paid call
    (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
@@ -59,8 +55,9 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
    D-57 (`publish/`), run after the creator's OK; going public is the creator's click in Studio.
 5. No unsupported claims, fabricated research, invented metrics, or copied protected IP. Every factual sentence maps
    to a claim with a source; say exactly what was and was not verified.
-6. The original character/visual identity stays stable (hero references and expression sheets, D-55; never redraw from
-   scratch; a new character or environment style is one collage of variants for the creator's choice).
+6. The original character/visual identity stays stable: the approved `model` + `rig` + `material` assets with their
+   turnaround sheet carry it (D-101; the legacy still route keeps its hero references and expression sheets, D-55); never
+   rebuild a hero from scratch; a new character or set is one collage of variants for the creator's choice.
 7. Versioned schema contracts are authoritative; never bypass or weaken validation to make a render pass.
 8. No destructive command, broad deletion, credential exposure, or unrelated refactor without approval. Cleanup
    deletes only job directories via `core/jobs.clean_jobs`.
@@ -75,12 +72,12 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 **How we work (creator, 2026-10-17):** a change request goes in this order: (1) study the process and the real output (open files, measure, find the cause); (2) research when the topic needs it and write the findings into a skill; (3) ask the creator the questions that are truly his to answer; (4) update rules, skills, agents and tests; (5) only then produce. Never produce before steps 1-4. Creator notes become rules with a test (OR-09).
 **Reusable before fast (creator, 2026-10-25, OR-21):** between a quick one-off and a reusable tool in the repo, always the reusable one at the same money cost, even when slower (a cheaper one-off goes to the creator); pods start only through `cloud/runpod.py create` with their script and config committed under `explainer_engine/training/pods/`.
 
-**Long renders (RULE-R1, 2026-10-17):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
+**Long renders (RULE-R1, 2026-10-17; a local Blender render on the Mac too, D-113):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
 
 **Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
-`python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style bridge,
-sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
-show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
+`python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style sheets, asset set, render pod, sample, full read,
+render validator, assembly, QA; the legacy still route keeps its style bridge, sprite and picture gates). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
+show). Entertainment first, facts second; stakes and named heroes in every frame; one Ink Chronicle world; limits computed from
 measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply to the creator in Georgian.
 **Strict storytelling (creator, 2026-10-20, D-61):** show, don't tell (no trait statements, ratings or biographies from the
 narrator, SC-12) and full immersion (no meta disclaimers or hedges on the story, SC-11); the creator approves the finished
@@ -107,9 +104,9 @@ thumbnail, sign-in by a fresh link per upload session.
 
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
-Pictures: the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini
+Pictures (legacy still-picture route and reference art only, D-100; Blender VIDEO/STILL shots are rendered, not bought per picture): the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini
 batch tier only"); on Gemini the batch tier and the tiers draft/standard/premium pick the model (`imagegen/routing.py`, D-52); audio: ElevenLabs for narration and sound effects, music from ElevenLabs or a per-track verified free library (D-52), guarded by the `.claude/settings.json` PreToolUse hook.
-Filler pictures (type A/C, no person, used once, low-stakes beat, at most 30 %) may come from Canva once its terms are verified (D-53, PV-43).
+Filler pictures on the legacy still route (type A/C, no person, used once, low-stakes beat, at most 30 %) may come from Canva once its terms are verified (D-53, PV-43).
 Main market: US (D-52). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 
