@@ -50,7 +50,7 @@ def test_prompts_name_no_other_work_and_carry_no_child_cues():
         for q in UB.prompts(d):
             assert UB.lint(q["prompt"]) == [], (d["id"], q["slot"])
     assert "spongebob" in UB.lint("square yellow hero like spongebob")
-    assert "big head" in UB.lint("a big head figure") and "3d render" in UB.lint("a 3D render of a street")
+    assert "big head" in UB.lint("a big head figure") and "photoreal" in UB.lint("a photoreal street")  # D-102: the ban is photoreal, not 3D
 
 
 def test_plan_prices_every_picture_and_binds_a_hash():

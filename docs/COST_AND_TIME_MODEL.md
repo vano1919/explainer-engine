@@ -1,5 +1,7 @@
 # Cost and time model
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force. Blender render cost rows come from measured `blender_frame_*` job speeds (D-111).
+
 All prices are estimates unless a source and date are given. Budget caps are ceilings, not targets (invariant 2);
 before any paid call the ledger below is updated with the estimate, and at 80 % of a cap work stops for a decision.
 

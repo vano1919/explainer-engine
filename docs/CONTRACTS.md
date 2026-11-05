@@ -5,6 +5,8 @@ phase P2; Blueprint phase 3). A contract says what the file holds, who writes it
 written by hand (by an agent or a person) or **derived** by code from other contracts. A derived file is never edited
 by hand: it carries the sha256 of every input it was made from, and a stale one is refused.
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96, D-105):** `film_shots/2` (lanes KEYFRAME_LTX, DIALOGUE_CU, ...), `shot_spec/1` and the shot-router table below describe the legacy route (Qwen keyframes, LTX clips; D-80). They stay readable and validated for the inputs already written. The Ink Chronicle contracts that replace them on the Blender path are listed under "Planned Ink Chronicle contracts" below; they are written in ICW-02.
+
 - Schemas: `explainer_engine/schemas/<name>.schema.json`; a document names its contract in `"schema": "<name>/<N>"`.
 - Validation: `explainer_engine/core/contracts.py` (`errors(doc, base)`, `validate(doc, base)` raises `ContractError`,
   CLI `python -m explainer_engine.core.contracts check <file>...`): the JSON Schema first, then the contract's
@@ -180,6 +182,16 @@ Nth of `router.SEEDS` (BP-165 `max_tries` tries, then the item stops).
 
 Every spec `fps` is the cards' `fps` (CN-09; a `job_manifest.json` in the folder must agree). `route.json` names its inputs by sha256: a
 changed card makes it stale (CN-02).
+
+## Planned Ink Chronicle contracts (ICW-02, D-96)
+
+Specified in the [roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 10; none exists in code until ICW-02 lands (planned, not yet validated):
+
+- **film_shots/3**: lanes `VIDEO_3D`, `STILL_3D`, `HELPER` (D-97); per shot `archetype`, `still_mode` (STILL_3D), `render_profile`, `lipsync` (VIDEO_3D) and `dialogue_cover`; everything else of /2 unchanged. `film_shots.visual_lane` dispatches on the contract version, so /2 keeps its mapping.
+- **shot_spec/2**: the Blender shot (recipe `blender_eevee/1` or `blender_cycles/1`, clock at 24 fps, 2560x1440 frame, scene with template, assets, characters and camera rig, performance, look, render profile, seed, `why`); cache key as today (`core/shot_cache.key`). CN-08 becomes lane-conditional: only `ltx_i2v/*` recipes (D-105).
+- **shot_route/2**: `recipe` adds `blender_eevee/1`, `blender_cycles/1`, `python_helper/1`; pins read the `blender` entry of `config/cloud_pins.json` (BP-175).
+- **blender_scene_manifest/1**, **blender_render_manifest/1**, **render_checkpoint/1** (the frame-recovery protocol, OR-33), **speech_mix_report/1** (D-99), **asset_library/2** (D-110).
+- History: `DRAMA_BLOCKED_3D` stays refused on /2 (D-75/D-77, D-106); it is not a /3 lane, its intent is `VIDEO_3D` + archetype.
 
 ## Rules
 

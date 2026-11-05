@@ -19,7 +19,8 @@
       "size_gb": 6.58,
       "pull_mb_per_s": null,
       "smoke_verified": false,
-      "decision": "paid plan §3: P12b (the combined P12 pod) runs on the aitoolkit image (round 2-3b used :latest, now pinned)"
+      "decision": "paid plan §3: P12b (the combined P12 pod) runs on the aitoolkit image (round 2-3b used :latest, now pinned)",
+      "legacy": true
     },
     "smoke": {
       "repo": "runpod/pytorch",
@@ -55,7 +56,8 @@
     "Lightricks/LTX-2": {
       "url": "https://github.com/Lightricks/LTX-2",
       "sha": "e98f6d927d83c92ef2be6aec76c8440b19306e39",
-      "smoke_verified": false
+      "smoke_verified": false,
+      "legacy": true
     }
   },
   "pip": {
@@ -72,14 +74,18 @@
       "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
       "sha256": null,
       "smoke_verified": false,
-      "note": "D-80/KG-16: the only keyframe base; 2512 is retired (qa/keyframe_gate.RETIRED)"
+      "note": "D-80/KG-16: the only keyframe base; 2512 is retired (qa/keyframe_gate.RETIRED)",
+      "legacy": true,
+      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
     },
     "keyframe_angles": {
       "id": "fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA",
       "revision": null,
       "sha256": null,
       "smoke_verified": false,
-      "note": "named in the creator's brief 2026-10-31; retired by KG-16 for keyframes; no lane uses it"
+      "note": "named in the creator's brief 2026-10-31; retired by KG-16 for keyframes; no lane uses it",
+      "legacy": true,
+      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
     },
     "video_ltx": {
       "id": "Lightricks/LTX-2.5",
@@ -87,7 +93,9 @@
       "sha256": null,
       "params": null,
       "smoke_verified": false,
-      "note": "LTX-2.5 22B, the combined P12 pod's video model (creator 2026-11-01 08:23-08:26 UTC: measurement + Qwen + LTX in one pod); replaces the 2026-10-31 brief's LTX-Video-0.9.8-13B-distilled, which serves neither the Layout IC LoRA nor audio-driven clips (docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md); revision as in training/pods/p12/p12b.json ltx; files listed there; a gated repo, so sha256 stays null as for the keyframe base"
+      "note": "LTX-2.5 22B, the combined P12 pod's video model (creator 2026-11-01 08:23-08:26 UTC: measurement + Qwen + LTX in one pod); replaces the 2026-10-31 brief's LTX-Video-0.9.8-13B-distilled, which serves neither the Layout IC LoRA nor audio-driven clips (docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md); revision as in training/pods/p12/p12b.json ltx; files listed there; a gated repo, so sha256 stays null as for the keyframe base",
+      "legacy": true,
+      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
     },
     "video_wan": {
       "id": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
@@ -95,7 +103,9 @@
       "sha256": null,
       "params": null,
       "smoke_verified": false,
-      "note": "creator's brief 2026-10-31; revision = HF main sha read from the HF API 2026-10-31 (lastModified 2025-08-09); no lane uses it yet (fallback)"
+      "note": "creator's brief 2026-10-31; revision = HF main sha read from the HF API 2026-10-31 (lastModified 2025-08-09); no lane uses it yet (fallback)",
+      "legacy": true,
+      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
     },
     "loras": {
       "xworld_v2": {
@@ -104,7 +114,8 @@
         "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
         "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
         "weight": 0.7,
-        "note": "checkpoint-3000 (LT-79), weight 0.7 per the creator's brief 2026-10-31; the same hf repo, path and sha256 as style_lora in training/pods/p12/p12b.json (a test keeps the two together)"
+        "note": "checkpoint-3000 (LT-79), weight 0.7 per the creator's brief 2026-10-31; the same hf repo, path and sha256 as style_lora in training/pods/p12/p12b.json (a test keeps the two together)",
+        "legacy": true
       }
     },
     "video_ltx_layout_lora": {
@@ -113,7 +124,27 @@
       "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
       "sha256": null,
       "smoke_verified": false,
-      "note": "the Layout-To-Render IC-LoRA of stage L2 (model card revision bd765d55, read 2026-11-01); gated"
+      "note": "the Layout-To-Render IC-LoRA of stage L2 (model card revision bd765d55, read 2026-11-01); gated",
+      "legacy": true,
+      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
     }
+  },
+  "blender": {
+    "_doc": "The Blender binary of the Ink Chronicle render lanes (D-96, BP-175; roadmap 10.2): version and the official archives' sha256, read from download.blender.org/release/Blender5.2/blender-5.2.3.sha256 on 2026-11-05. image null = no pod image decided yet (ICW-04 decides it; create refuses an image that is not pinned). The pin moves only by a decision-log row.",
+    "version": "5.2.3",
+    "series": "LTS",
+    "released": "2026-10-22",
+    "archives": {
+      "linux-x64": {
+        "url": "https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz",
+        "sha256": "78486c018b4443efe5e75ab54c290ed8c15abafd249b862c2c9ce2530a918eec"
+      },
+      "macos-arm64": {
+        "url": "https://download.blender.org/release/Blender5.2/blender-5.2.3-macos-arm64.dmg",
+        "sha256": "acc05374485a272342d4b323c15ac01953e7f697da2f1bad8af9c3bf087267a4"
+      }
+    },
+    "image": null,
+    "smoke_verified": false
   }
 }

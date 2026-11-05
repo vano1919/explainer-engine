@@ -1,5 +1,7 @@
 # Script engine v1 (2026-10-24)
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 **What it is.** The one path from a topic to every prompt of an animated episode, with nothing left to improvise: each
 dimension of a prompt or a script is either set by a rule with a source or marked as a variant under test. ვანო asked for
 it on 2026-10-24 ("zero improvisation; where a rule is missing, research it, then write it"). The first episode written
@@ -88,7 +90,7 @@ measurement is `unknown` and is shown as such, never filled in. A pod row waits 
 | Acting fallback (KP-43) | a line whose take fails the acting check twice: over the speaker's shoulder onto the listener (the line plays on the reaction), or the speaker's hands for a line said to the room | redraw the same shot a third time | `film_shots._acting` |
 | Dialogue audio | a fixed ElevenLabs voice per speaking character (cast card `voice_id`), the line read first and the take given to LTX as its audio input (D-90; the wiring is P6/P7, not built yet) | LTX native audio with the voice described in words (superseded by D-90, card A3) | the cast cards, D-90 |
 | Narrator | ElevenLabs, the script's narrator lines, first take | - | skill `elevenlabs-voice` |
-| Spoken mix | 70-80 % narrator / 20-30 % voiced character dialogue by audible spoken words; midpoint 75/25; `voiced:false` lines are excluded | old 25-45 % narrator mix | BP-105 / D-95 |
+| Spoken mix | nominal 70 % narrator / 30 % voiced character dialogue by audible spoken words, REVIEW outside 65-75 % narrator (D-99, 2026-11-05); `voiced:false` lines are excluded | old 25-45 % narrator mix; D-95's 70-80 % band and 75/25 midpoint | BP-105 / D-99 |
 | Visual mix | by runtime 60 % VIDEO (light and full, including non-dialogue action), 30 % STILL (Python adds/moves objects), 10 % HELPER visuals (maps, graphics, calculations); independent from the spoken mix | the creator's call 2026-11-01 (D-93); tolerance ±5 pp | BP-109 / D-93 |
 
 ### History (banned by D-80)

@@ -5,6 +5,8 @@ description: Design the maps of a Crossworld Theories episode (campaign maps, fr
 
 # Cartography: maps the eye reads in one look
 
+**Ink Chronicle (D-97, D-112, 2026-11-05):** maps are the HELPER lane, drawn by the Python map renderer through the Ink Chronicle style bridge; a Blender terrain map is a benchmark shot only; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Department page of the craft curriculum (P3b, [CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)). The map code comes in P5

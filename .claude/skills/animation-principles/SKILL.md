@@ -5,6 +5,8 @@ description: Judge and direct the character animation of a Crossworld Theories e
 
 # Animation principles: characters that move like they think
 
+**Ink Chronicle (D-96, 2026-11-05):** the twelve principles are medium-neutral and stay; on the Blender path they are keyed into the rig's animation and checked on the rendered clip; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Department page of the craft curriculum (P3b, [CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)). Our animation is a

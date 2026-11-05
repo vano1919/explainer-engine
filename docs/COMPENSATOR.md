@@ -1,5 +1,7 @@
 # The visual compensator: maps, HUD and tableaux (CMP-)
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted. The map and HUD renderers stay the HELPER lane (D-97); a Blender terrain map is a benchmark shot only (D-112).
+
 Blueprint plan v2, phase P5. While the narrator speaks and no character is on screen, the picture still has to move with the
 words. The compensator fills those stretches with free, deterministic frames that code draws from a spec: no model, no pod, no
 paid call (CMP-14). This page is the one home of the `CMP-` ids; the contracts are in [CONTRACTS](CONTRACTS.md), the numbers in

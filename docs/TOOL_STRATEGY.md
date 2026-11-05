@@ -1,5 +1,7 @@
 # Tool strategy (D-28)
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 Which tool makes which part of a video, what it costs, and what was measured versus assumed. Evidence comes from the
 TMR repository (read-only, `vano1919/tmr-video-script-engine@d88ba8f`): `render/imagegen.py`, `render/owl_pair.py`,
 `render/owl_camp.py`, `render/localimages.py`, `cloud/rp.py`, `cloud/models.json`, `docs/INCIDENTS_RUNPOD.md`.

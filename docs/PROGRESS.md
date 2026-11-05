@@ -1,5 +1,7 @@
 # Progress log
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force. Entries before 2026-11-05 are history and keep their words.
+
 Append one entry per phase boundary: completed work, state, files changed, test results, decisions, blockers,
 cost (estimate/actual), next step, recovery instructions.
 
@@ -3901,3 +3903,15 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - No paid calls, pods, renders, or publishing actions. `git diff --check` passed. `python -m explainer_engine.docs_lint`
   reported one pre-existing undefined decision-ID reference in the unchanged historical `PROGRESS.md` text; the same
   reference exists at `HEAD`, so it was not altered as part of this task.
+
+### 2026-11-05 — ICW-01 rule rewrite (Ink Chronicle, roadmap section 20)
+
+- Work package ICW-01 of `docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md` (launch word of the creator 2026-11-05 08:42 UTC). Docs, registry, config and test-pin changes only; no runtime code changed.
+- RW-06: decision rows D-96 (Ink Chronicle direction, the precedence rule; clears the docs_lint D-96 finding) and D-97..D-112 (ICD-01..16), D-113 (ICG-3, the M4 Pro Mac); D-31, D-41, D-50, D-75, D-77, D-80, D-87, D-93, D-95 carry their supersession notes.
+- RW-07: BP-105 nominal 0.70 and REVIEW band [0.65, 0.75] (D-99, ICG-1 = A); BP-139 scoped to `ltx_i2v/*`; legacy-recipe prefixes on BP-100/101/102/110/164/165/172; new house rows BP-173 (line weight), BP-174 (render validator thresholds), BP-175 (Blender 5.2.3 LTS pin); SOURCED_RULES table regenerated.
+- RW-08: world bible v1.5 (house look wording, bans re-worded, motion default per lane; rehashed by `bible bump`), look_v2 bans photoreal / raw cgi / pbr instead of 3d render.
+- RW-01..05, RW-09..13, RW-18..20: CLAUDE.md header, precedence banner, invariants 1 and 6, picture-provider scope; PRODUCTION_RULES gates 4-8; ORCHESTRATION OR-21/OR-23/OR-33; VAULT VT-01 and `config/vault.json` critical `blender/**`, `assets/3d/**`; CONTRACTS planned /3 contracts; VIDEO_PARAMETER_SPEC P-12/P-13/P-60; `config/cloud_pins.json` blender pin (sha256 from download.blender.org) and legacy marks; `config/job_speeds.json` empty `blender_frame_*` job types; EPISODE_STANDARDS `paid_assets` names the render pod.
+- RW-14..17: dated legacy banners on 23 docs, the skills and agents; the D-95 override and the two Master Mold guides moved to `docs/archive/` (INDEX row added). RW-19: `config/model_routing.json` unchanged (recorded in D-96).
+- Tests: new `test_icw01_rule_rewrite.py` (the section 20 grep), `test_world_resolver_bans.py`, `test_orchestration_docs.py`, `test_job_speeds_rows.py`, `test_rulebook_blender_gate.py`, one new case in `test_vault.py`; pins updated for the changed rules: `test_sourced_rules` (BP-105 band), `test_universe_boards` (photoreal instead of 3d render), `test_story_engine` (fixture inside the new band, plus the counted-voiced case).
+- Results: `docs_lint` 0 findings. Fast suite (`-m "not system and not media"`, Python 3.13): base branch 12 failed / 2440 passed; this change 10 failed / 2458 passed. The 10 remaining failures are the inherited ICW-00 set (Master Mold docstrings, stale Napoleon fixtures, three undefined BP citations inside `docs/wip` evidence files, a loudness-literal check), unchanged by ICW-01.
+- Cost: $0. No pod, no paid API call.

@@ -6,6 +6,8 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep
 ---
 
+**Ink Chronicle note (D-96, 2026-11-05):** speech mix nominal 70/30, REVIEW outside 65-75 % narrator words (D-99); visible voiced coverage stays ≤ 5 s (BP-108); where this page names LTX shots it describes the legacy image-generation route (D-105).
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start writer --job <job> --page .claude/agents/scene-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh writer --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You write the words of one segment: its `lines` (text, `speaker`, `claims`, and on every dialogue line `to`, plus

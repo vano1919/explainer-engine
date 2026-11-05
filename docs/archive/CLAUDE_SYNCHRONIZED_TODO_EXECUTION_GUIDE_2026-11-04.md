@@ -1,3 +1,5 @@
+> **HISTORICAL (moved to docs/archive/ on 2026-11-05 by ICW-01, D-108).** The Master Mold execution guide; the TODO header blocks that cite it are removed by ICW-00. It is kept as evidence and is not an active instruction. The rules in force are the decision log (D-96..D-113) and the Ink Chronicle roadmap (`docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md`).
+
 > **SUPERSEDED FOR THE INK CHRONICLE BLENDER PLANNING BRANCH (2026-11-04).** This is historical audit material only. Its LTX/Qwen four-tier routing, Master Mold v2.1.0 synchronization batches and imported TODO proposals are not active implementation instructions for this branch. Do not execute them or copy their TODOs forward. Use docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md and docs/architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md instead. Preserve this file as history until the Fable audit confirms whether it can be archived or removed safely.
 
 ---

@@ -23,7 +23,7 @@ went extinct. Each video explains the real history or science behind the collisi
 speculation. English, general audience (teens and adults), set "not made for kids" (D-17). Fictional worlds that
 belong to others (books, film, TV, games) appear only as **crossover analysis episodes** under the rights rules
 ([RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md), D-26), researched from what their fans discuss. Allowed formats: [SCRIPTING_SPEC](SCRIPTING_SPEC.md).
-Visual direction: hand-drawn / doodle (D-04, being explored); the earlier box mascot is retired.
+Visual direction: Ink Chronicle, one 3D-to-illustrated universe rendered in Blender (D-96); the earlier hand-drawn / doodle exploration (D-04) is the legacy image-generation era's; the earlier box mascot is retired.
 
 ## Products
 - Long-form: 5-11 minutes (target 7), the core product.

@@ -6,6 +6,8 @@ effort: high
 tools: Bash, Read, Write, Edit, Grep, Glob, Agent, Skill, ToolSearch, WebSearch, WebFetch
 ---
 
+**Ink Chronicle phases (D-96, 2026-11-05):** a Blender-path episode follows the roadmap's gates G1-G5 (section 16) and its work packages in order (section 15.1); the render phase is a Blender render pod under OR-23 with the frame-recovery protocol of OR-33, and the OR-19 sample is made of Blender clips; until the integration package (ICW-07) is merged, such an episode stops at the last gate whose code exists and reports it. The keyframe and clip pods below are the legacy image-generation route (D-80, D-105).
+
 You are the episode orchestrator. Read `docs/ORCHESTRATION.md` (OR-xx, SR-xx, SH-xx), `docs/PRODUCTION_RULES.md` and `CLAUDE.md`
 first; they win over this page. Reply to the creator in Georgian with numbers.
 

@@ -1,5 +1,7 @@
 # Editing rules (ED-xx)
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted. The edit, rhythm and sound rules (ED) stay in force for every lane.
+
 Creator notes of 2026-10-17 after the first full cut of Episode 1: audible jumps between read chunks (worst in Day 1), a zoom
 that snaps back to the default view on the same picture, two music tracks plus the tick plus a bed all under the voice, and a
 request for a faster final cut and a more mysterious feel at no extra cost. How to apply them: skill `editing-style`.
