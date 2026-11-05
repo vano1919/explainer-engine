@@ -227,8 +227,12 @@ def test_hill_castle_is_a_static_epic_set_on_a_terrain_with_complete_houses_and_
     ps = W.placements("hill_castle")
     assert ps == W.placements("hill_castle")
     T = W.terrain_for(W.layouts()["layouts"]["hill_castle"])
-    castle = next(p for p in ps if p["name"] == "castle")
-    assert abs(castle["pos"][2] - (T.height(0, 72) - 0.4)) < 0.01   # the castle stands on the crown of the hill, not a fixed height
+    towers = [p for p in ps if p["name"].startswith("tower_")]   # the fort kit sheet is split into modules and assembled as a ring
+    assert len(towers) == 4 and all(p["nodes"] == ["modular_fort_01_tower_round"] for p in towers)
+    for p in towers:   # each stands on the levelled crest, not at the height of a fixed point
+        assert abs(p["pos"][2] - (T.height(p["pos"][0], p["pos"][1]) - 0.3)) < 0.01
+    walls = [p for p in ps if p["name"].startswith("wall_") and p.get("nodes")]
+    assert len(walls) == 9 and any("gate" in p["nodes"][0] for p in walls)
     houses = sorted({p["name"].rsplit("_", 2)[0] for p in ps if p["role"] == "wall"})
     assert len(houses) >= 8
     for h in houses:   # a complete house: walls on every side, a door, corner posts and a roof, all standing on the ground
@@ -240,7 +244,7 @@ def test_hill_castle_is_a_static_epic_set_on_a_terrain_with_complete_houses_and_
     assert all(p["pos"][2] == T.height(p["pos"][0], p["pos"][1]) >= 0.5 and T.road_dist(p["pos"][0], p["pos"][1]) >= 4.5 for p in trees)
     assert any(p["pos"][2] > 3.0 for p in trees)   # trees on the slope follow the surface
     ss = W.scene_set("hill_castle")
-    assert ss["set_id"] == "hill_castle" and any(o["landmark"] and o["id"] == "castle" for o in ss["objects"])
+    assert ss["set_id"] == "hill_castle" and any(o["landmark"] and o["id"] == "wall_s_gate" for o in ss["objects"])
     assert TR.CLASSES[T.face_class(0, 56, T.height(0, 56), 0.1)] == "road"   # the road reaches the gate
 
 

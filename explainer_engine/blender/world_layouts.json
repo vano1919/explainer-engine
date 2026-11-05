@@ -195,7 +195,11 @@
   "hill_castle": {
    "label": "E2 Medieval: a castle on a hill above a river, a stone bridge, a village along the road, pines and a snow range",
    "landmarks": [
-    "castle"
+    "tower_sw",
+    "tower_se",
+    "tower_ne",
+    "tower_nw",
+    "wall_s_gate"
    ],
    "axis": {
     "deg": 0,
@@ -260,11 +264,11 @@
     "rock_slope": 0.75,
     "flat": [
      [
-      0,
-      72,
-      17,
+      0.0,
+      72.0,
+      29,
       14.0,
-      9
+      10
      ]
     ]
    },
@@ -312,9 +316,9 @@
       "scale": 75,
       "seed": 3,
       "floor": 0.0,
-      "peak": 150.0,
-      "snow_line": 62,
-      "rock_line": 34,
+      "peak": 95.0,
+      "snow_line": 60,
+      "rock_line": 30,
       "rock_slope": 0.7
      },
      "res": [
@@ -375,21 +379,6 @@
       1
      ],
      "colour": "#5F8FA8"
-    },
-    {
-     "type": "piece",
-     "name": "castle",
-     "asset": "model.ph_modular_fort_01",
-     "pos": [
-      0,
-      72,
-      0
-     ],
-     "yaw_deg": 0.0,
-     "scale": 1.0,
-     "role": "landmark",
-     "terrain": true,
-     "dz": -0.4
     },
     {
      "type": "row",
@@ -1317,19 +1306,253 @@
      "road_clear": 4.5
     },
     {
+     "type": "piece",
+     "name": "tower_sw",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      -18.0,
+      54.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "tower_se",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      18.0,
+      54.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "tower_ne",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      18.0,
+      90.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "tower_nw",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      -18.0,
+      90.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_e0",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      19.0,
+      59.8,
+      0
+     ],
+     "yaw_deg": 180.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_e1",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      19.0,
+      71.64,
+      0
+     ],
+     "yaw_deg": 180.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_n0",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      12.2,
+      91.0,
+      0
+     ],
+     "yaw_deg": 270.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_n1",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      0.36,
+      91.0,
+      0
+     ],
+     "yaw_deg": 270.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_w0",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      -19.0,
+      84.2,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_w1",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      -19.0,
+      72.36,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_s_l",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      -14.8,
+      55.0,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_s_gate",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_gate_01"
+     ],
+     "pos": [
+      -2.96,
+      55.0,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_s_r",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      2.96,
+      55.0,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
      "type": "shape",
-     "name": "curtain-1",
+     "name": "keep",
      "add": "cube",
      "params": {},
      "pos": [
-      -10.5,
-      60,
-      16.2
+      0.0,
+      76.0,
+      20.7
      ],
      "scale": [
-      5.75,
-      0.8,
-      2.75
+      4.5,
+      4.5,
+      7.0
      ],
      "texture": "texture.ph_stone_wall_diff",
      "tile": 6.0,
@@ -1337,269 +1560,26 @@
     },
     {
      "type": "shape",
-     "name": "gate_tower-1",
-     "add": "cube",
-     "params": {},
+     "name": "keep_roof",
+     "add": "cone",
+     "params": {
+      "radius1": 4.9,
+      "radius2": 0.0,
+      "depth": 5.0,
+      "vertices": 4
+     },
      "pos": [
-      -4.3,
-      60,
-      18.0
+      0.0,
+      76.0,
+      30.2
      ],
+     "yaw_deg": 45.0,
      "scale": [
-      1.8,
-      1.8,
-      4.5
+      1,
+      1,
+      1
      ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "gate_cap-1",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      -4.3,
-      60,
-      22.8
-     ],
-     "scale": [
-      2.1,
-      2.1,
-      0.35
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon-1_0",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      -6.6,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon-1_1",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      -9.5,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon-1_2",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      -12.399999999999999,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon-1_3",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      -15.299999999999999,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "curtain1",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      10.5,
-      60,
-      16.2
-     ],
-     "scale": [
-      5.75,
-      0.8,
-      2.75
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "gate_tower1",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      4.3,
-      60,
-      18.0
-     ],
-     "scale": [
-      1.8,
-      1.8,
-      4.5
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "gate_cap1",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      4.3,
-      60,
-      22.8
-     ],
-     "scale": [
-      2.1,
-      2.1,
-      0.35
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon1_0",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      6.6,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon1_1",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      9.5,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon1_2",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      12.399999999999999,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "merlon1_3",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      15.299999999999999,
-      60,
-      19.35
-     ],
-     "scale": [
-      0.8,
-      0.85,
-      0.6
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
-    },
-    {
-     "type": "shape",
-     "name": "gate_lintel",
-     "add": "cube",
-     "params": {},
-     "pos": [
-      0,
-      60,
-      20.6
-     ],
-     "scale": [
-      2.6,
-      1.6,
-      1.3
-     ],
-     "texture": "texture.ph_stone_wall_diff",
-     "tile": 6.0,
-     "colour": "#9A9488"
+     "colour": "#8A3B2E"
     }
    ],
    "cast": [

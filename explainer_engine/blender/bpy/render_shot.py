@@ -190,8 +190,9 @@ def _gltf(o, report):
     root = bpy.data.objects.new(o["name"], None)
     bpy.context.scene.collection.objects.link(root)
     kept, meshes = 0, []
+    only = set(src.get("nodes") or ())   # one module of a kit sheet (the fort GLB lays all its pieces out side by side)
     for ob in new:
-        if ob.type == "MESH" and len(ob.data.polygons) > 0:
+        if ob.type == "MESH" and len(ob.data.polygons) > 0 and (not only or ob.name.split(".")[0] in only):
             meshes.append(ob)
     for ob in new:
         if ob not in meshes:
@@ -202,6 +203,8 @@ def _gltf(o, report):
         ob.matrix_world = world
         ob.parent = root
         ob.matrix_parent_inverse = root.matrix_world.inverted()
+        if only:
+            ob.location = (0.0, 0.0, 0.0)   # the module stands at the piece's own origin, not where the sheet put it
         if ob.data.has_custom_normals:   # imported split normals make foliage cards shade as shards under the toon ramp
             with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob]):
                 bpy.ops.mesh.customdata_custom_splitnormals_clear()

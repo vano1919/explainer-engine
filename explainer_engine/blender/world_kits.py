@@ -454,7 +454,7 @@ def _placements(block: dict, name: str, t: dict, T=None) -> list[dict]:
         if block.get("terrain") and T is not None:
             block = {**block, "pos": [block["pos"][0], block["pos"][1], round(T.height(block["pos"][0], block["pos"][1]) + block.get("dz", 0.0), 3)]}
         return [{"name": name, "asset": block["asset"], "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0),
-                 "scale": block.get("scale", 1.0), "role": block.get("role", "piece")}]
+                 "scale": block.get("scale", 1.0), "role": block.get("role", "piece"), "nodes": block.get("nodes")}]
     if kind == "shape":   # a primitive (hill, river, mountain) in a flat tone: {add, params, pos, scale, yaw_deg, colour}
         return [{"name": name, "asset": None, "shape": {"add": block["add"], "params": block.get("params", {}), "colour": block["colour"],
                            "texture": block.get("texture"), "tile": block.get("tile", 1.0), "raw": block.get("raw"),
@@ -614,7 +614,7 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
             made[a["id"]] = kit_material(paths[a["id"]], a, strength=a.get("texture_strength"), repo=repo)
         mname, spec = made[a["id"]]
         mats[mname] = spec
-        objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"]}, "location": p["pos"],
+        objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"], **({"nodes": p["nodes"]} if p.get("nodes") else {})}, "location": p["pos"],
                      "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": None if pbr else mname, "smooth": False})
     return objs, mats
 
