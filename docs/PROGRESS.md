@@ -4158,3 +4158,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - BP-173: v04's faint contour is 1.5 px at 40 % opacity (the band's floor; 1 px fails CN-17). Looks without a line carry the B
   token's 2.25 px in shot_spec/2 (`look.line_weight_px` has no "none"; proposed to ICW-07).
 - Tests: `tests/unit/test_look_variants.py` (20). Cost: $0.
+- Result (CI run 42084774093, head 8f302a5, 49 min): all ten looks + three twins + B_light rendered at 2560x1440; s/frame per look
+  against B_light in the round's REPORT.md (project folder `ink_chronicle_ink_round_2026-11-05/`); none over 2x (largest: 1, 8, 10 at
+  ~1.9x from cast shadows); one runner per job, so ratios under ~1.3x are runner noise. `look-report` takes the line verdict from
+  the render's CN-17 finding (no second BP-173 reader). Waiting for the creator's pick; ICW-07 writes it into bible v1.5.
