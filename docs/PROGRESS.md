@@ -4248,3 +4248,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
   only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
 - Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.
+
+## 2026-11-05 — WP-Q12: test_seams MP3 duration test no longer depends on the ffmpeg version
+- `test_duration_of_an_mp3_is_its_decoded_length` asserted `duration() < ffprobe container duration`; newer ffmpeg honours the
+  LAME header and reports the gapless length, so the strict `<` failed on CI. Now one definition: decoded samples with delay and
+  padding trimmed; the expected value is derived from the fixture (seconds x rate), the container length is only an upper bound.
+- `seams.duration` unchanged. `tests/unit/test_seams.py`: 3 passed locally. No render branch touched. Cost $0.
