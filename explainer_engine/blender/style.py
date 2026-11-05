@@ -42,7 +42,7 @@ SCHEMA = "style_graph/1"
 PATHS = ("eevee", "cycles_safe")
 MASTER_W, MASTER_H = 2560, 1440
 LINE_PX_PER_RADIUS = 0.955          # measured, see the module docstring
-LOOK_IDS = {"Medium High Contrast": ("AgX - Medium High Contrast", "Medium High Contrast")}
+LOOK_IDS = {"Medium High Contrast": ("AgX - Medium High Contrast", "Medium High Contrast"), "None": ("None", "NONE")}
 PALETTE_PATH = Path(__file__).resolve().parents[1] / "design" / "palette.json"
 
 
@@ -217,6 +217,53 @@ BG_MODES = ("set", "dof", "plate", "flat")
 SKIES = ("paper", "gradient", "hdri")
 PALETTE_MAPS = ("raw", "warm_cinematic", "reference_swatches")
 KUWAHARA_SCOPES = ("frame", "background")
+# WP-Q1 (2026-11-05, INTEGRATION_PLAN.md WP-Q1; the Wing It! shading write-up of Blender Studio and the Blender 5.2 manual pages
+# for Shader to RGB, Light Linking, Light Objects and Displays and Views, re-implemented here, no code copied):
+#   shade_path "luma"     = the look round's soft mode as it was (Shader to RGB -> luminance -> ramp x base, an emission);
+#   shade_path "lit"      = a real matte BSDF (Diffuse, or a Principled with no specular, roughness 1 and no coat) lit by real
+#                           lights: the light's colour, cast shadows and Fast GI AO reach the surface (no Emission);
+#   shade_path "rgb_soft" = Shader to RGB keeps the light's COLOUR: colour = mix(shadow_tint x albedo, albedo x light, tone), the
+#                           tone a LINEAR/EASE ramp of the lifted luminance (half-lambert), the shadow tint per material class.
+SHADE_PATHS = ("luma", "lit", "rgb_soft")
+LIT_BSDFS = ("diffuse", "principled_matte")
+RIM_MODES = ("shader", "light")
+VIEW_TRANSFORMS = ("AgX", "Standard", "Khronos PBR Neutral")
+RAMP_INTERPS = ("LINEAR", "EASE")
+MATERIAL_CLASSES = ("skin", "hair", "eyes", "costume", "set")
+# Knobs WP-Q1 added: a look that leaves them at their default keeps the look round's graph and hash byte for byte.
+Q1_DEFAULTS = {"shade_path": "luma", "lit_bsdf": "diffuse", "subsurface": 0.0, "half_lambert": 0.0, "ramp_interp": None,
+               "shadow_tints": (), "view_transform": None, "rim_mode": "shader", "key_colour": None, "fill_colour": None,
+               "key_energy": 1.0, "shadow_filter": 2.5, "ao": False, "ambient": None, "normal_soften": 0, "light_preset": None,
+               "native_classes": (), "skin_lift": (), "pn_converge": 0.0, "character_key": False,
+               "haze": 0.0, "haze_start_m": 10.0, "haze_depth_m": 120.0, "haze_colour": (0.8, 0.76, 0.7)}
+CHARACTER_CLASSES = ("skin", "hair", "eyes", "costume")
+FRONT_KEY_BAND = (30.0, 45.0)   # Fable 2026-11-05: on a character shot the key sits 30-45 degrees off the camera axis
+LIGHT_PRESETS_PATH = Path(__file__).resolve().parent / "light_presets.json"
+
+
+def light_presets(path: Path | None = None) -> dict:
+    """The named light presets (``light_presets.json``, schema light_presets/1): Wing It!'s rule as data, shared by WP-Q1/Q4/Q8."""
+    doc = json.loads(Path(path or LIGHT_PRESETS_PATH).read_text(encoding="utf-8"))
+    if doc.get("schema") != "light_presets/1":
+        raise ValueError(f"{path or LIGHT_PRESETS_PATH} is not a light_presets/1 document")
+    for name, pr in doc["presets"].items():
+        off = pr["key"].get("front_offset_deg")
+        if off is None or not FRONT_KEY_BAND[0] <= abs(off) <= FRONT_KEY_BAND[1]:
+            raise ValueError(f"light preset {name}: key.front_offset_deg {off} outside the front-biased band "
+                             f"{FRONT_KEY_BAND[0]:g}-{FRONT_KEY_BAND[1]:g} degrees (|offset|)")
+    return doc["presets"]
+
+
+def character_key(path: Path | None = None) -> dict:
+    """The close-up key (``light_presets.json`` ``character_key``; WP-Q4's front_key(), accepted by Fable 2026-11-05 22:17 UTC):
+    a warm key off the camera axis and above the eye line, a cool shadowless fill opposite at a fixed share of it."""
+    ck = json.loads(Path(path or LIGHT_PRESETS_PATH).read_text(encoding="utf-8"))["character_key"]
+    k, f = ck["key"], ck["fill"]
+    if not FRONT_KEY_BAND[0] <= abs(k["front_offset_deg"]) <= FRONT_KEY_BAND[1] or not 0 < k["elevation_deg"] < 45:
+        raise ValueError(f"character_key: key {k['front_offset_deg']} deg off axis / {k['elevation_deg']} deg up (band 30-45, above the eyes)")
+    if not 0 < f["ratio"] <= 0.5 or k["front_offset_deg"] * f["front_offset_deg"] >= 0:
+        raise ValueError("character_key: the fill sits opposite the key at a share 0..0.5 of its energy")
+    return ck
 
 
 def _tup(x) -> tuple:
@@ -262,6 +309,31 @@ class Look:
     grain: float = 0.0                                      # fine paint grain, share
     vignette: float = 0.0
     feel: str = ""
+    # WP-Q1 knobs (Q1_DEFAULTS): see SHADE_PATHS above
+    shade_path: str = "luma"
+    lit_bsdf: str = "diffuse"
+    subsurface: float = 0.0                                 # principled_matte: Subsurface Weight (Wing It!: SSS washes out light)
+    half_lambert: float = 0.0                               # rgb_soft: the ramp's input lifted from 0..1 to half_lambert..1
+    ramp_interp: str | None = None                          # rgb_soft: LINEAR or EASE (None = EASE, the soft mode's)
+    shadow_tints: tuple = ()                                # rgb_soft: ((material class, rgb multiplier), ...); "set" = default
+    view_transform: str | None = None                       # None = the tokens' AgX; Standard / Khronos PBR Neutral (no look)
+    rim_mode: str = "shader"                                # shader = the Layer Weight add; light = a light-linked rim light
+    key_colour: tuple | None = None                         # lit / rgb_soft rigs: the key light's colour (None = light_tint)
+    fill_colour: tuple | None = None                        # the fill light's colour (None = shadow_tint)
+    key_energy: float = 1.0                                 # sun strength 1 = a white surface facing it shows 1.0
+    shadow_filter: float = 2.5                              # the key's shadow_filter_radius (PCF blur) when it casts shadows
+    ao: bool = False                                        # lit only: EEVEE Fast GI as ambient occlusion
+    ambient: float | None = None                            # world light strength (None = the tokens' 0.05)
+    normal_soften: int = 0                                  # cast meshes: Blur Attribute iterations on the normals (GN), 0 = off
+    light_preset: str | None = None                         # a light_presets.json name: replaces the rig's lights and the ambient
+    native_classes: tuple = ()                              # character classes that keep the asset's own shading (C2: Rain's SSS)
+    skin_lift: tuple = ()                                   # ((character id, lift 0..1), ...): a front fill linked to that cast
+    pn_converge: float = 0.0                                # Perfectly Normal (GPL-3, GN assets): spherize the cast's normals 0..1
+    character_key: bool = False                             # close-ups: the preset's key + fill give way to light_presets character_key
+    haze: float = 0.0                                       # depth haze: the mist pass tints the far world, share at full mist
+    haze_start_m: float = 10.0                              # mist starts this far from the camera (world mist_settings.start)
+    haze_depth_m: float = 120.0                             # ... and is full this much further (mist_settings.depth, quadratic)
+    haze_colour: tuple = (0.8, 0.76, 0.7)                   # warm grey (an RGB multiplier of 1 = white light)
 
     def __post_init__(self) -> None:
         for name, val, known in (("shade_mode", self.shade_mode, SHADE_MODES), ("light_rig", self.light_rig, LIGHT_RIGS),
@@ -270,7 +342,8 @@ class Look:
                                  ("kuwahara_scope", self.kuwahara_scope, KUWAHARA_SCOPES)):
             if val not in known:
                 raise ValueError(f"{self.id}: unknown {name} {val!r} (known: {', '.join(known)})")
-        for name in ("brush", "halftone", "warmth", "paper", "grain", "vignette", "line_opacity", "feather", "rim_strength"):
+        shares = ("brush", "halftone", "warmth", "paper", "grain", "vignette", "line_opacity", "feather")
+        for name in shares + (() if self.rim_mode == "light" else ("rim_strength",)):
             if not 0 <= getattr(self, name) <= 1:
                 raise ValueError(f"{self.id}: {name} {getattr(self, name)} is not a share 0..1")
         for name in ("texture_keep", "costume_keep"):
@@ -290,21 +363,111 @@ class Look:
         for name in ("kuwahara", "plate_kuwahara", "bleed"):
             if not 0 <= getattr(self, name) <= 40:
                 raise ValueError(f"{self.id}: {name} {getattr(self, name)} px outside 0..40")
+        for name, val, known in (("shade_path", self.shade_path, SHADE_PATHS), ("lit_bsdf", self.lit_bsdf, LIT_BSDFS),
+                                 ("rim_mode", self.rim_mode, RIM_MODES)):
+            if val not in known:
+                raise ValueError(f"{self.id}: unknown {name} {val!r} (known: {', '.join(known)})")
+        if self.view_transform is not None and self.view_transform not in VIEW_TRANSFORMS:
+            raise ValueError(f"{self.id}: unknown view transform {self.view_transform!r} (known: {', '.join(VIEW_TRANSFORMS)})")
+        if self.ramp_interp is not None and self.ramp_interp not in RAMP_INTERPS:
+            raise ValueError(f"{self.id}: ramp_interp is one of {', '.join(RAMP_INTERPS)}")
+        if self.shade_path != "luma" and self.shade_mode != "soft":
+            raise ValueError(f"{self.id}: shade_path {self.shade_path} belongs to the soft shade mode")
+        if self.shade_path == "lit":
+            if self.halftone > 0:
+                raise ValueError(f"{self.id}: the lit path has no light value to place halftone dots on")
+            if self.rim_strength > 0 and self.rim_mode != "light":
+                raise ValueError(f"{self.id}: a rim on the lit path is a light (rim_mode light), never an added emission")
+        if self.lit_bsdf != "diffuse" and self.shade_path != "lit":
+            raise ValueError(f"{self.id}: lit_bsdf belongs to the lit path")
+        if self.rim_mode == "light" and self.shade_path == "luma":
+            raise ValueError(f"{self.id}: a rim light needs the lit or rgb_soft path (luma reads the key as an N.L probe)")
+        if self.ao and self.shade_path != "lit":
+            raise ValueError(f"{self.id}: Fast GI AO only on the lit path (Shader to RGB is unreliable with AO, 9.1)")
+        for name in ("subsurface", "half_lambert"):
+            if not 0 <= getattr(self, name) < 1 or (name == "subsurface" and getattr(self, name) and self.lit_bsdf != "principled_matte"):
+                raise ValueError(f"{self.id}: {name} {getattr(self, name)} is a share 0..1 (subsurface on principled_matte only)")
+        for cls, tint in self.shadow_tints:
+            if cls not in MATERIAL_CLASSES or len(tint) != 3 or not all(0 < c <= 1.5 for c in tint):
+                raise ValueError(f"{self.id}: shadow tint {cls!r} {tint} (classes: {', '.join(MATERIAL_CLASSES)}; rgb 0..1.5)")
+        if self.rim_mode == "light" and not 0 <= self.rim_strength <= 10:   # a rim light's strength is its sun energy
+            raise ValueError(f"{self.id}: rim light energy {self.rim_strength} outside 0..10")
+        if not 0 < self.key_energy <= 10 or not 0 <= self.shadow_filter <= 10 or not 0 <= self.normal_soften <= 40:
+            raise ValueError(f"{self.id}: key_energy 0..10, shadow_filter 0..10, normal_soften 0..40")
+        if self.light_preset is not None:
+            if self.shade_path == "luma":
+                raise ValueError(f"{self.id}: a light preset needs the lit or rgb_soft path")
+            if self.light_preset not in light_presets():
+                raise ValueError(f"{self.id}: unknown light preset {self.light_preset!r} (known: {', '.join(light_presets())})")
+        if self.ambient is not None and not 0 <= self.ambient <= 2:
+            raise ValueError(f"{self.id}: ambient {self.ambient} outside 0..2")
+        if any(c not in CHARACTER_CLASSES for c in self.native_classes) or len(set(self.native_classes)) != len(self.native_classes):
+            raise ValueError(f"{self.id}: native_classes {self.native_classes} (character classes: {', '.join(CHARACTER_CLASSES)})")
+        if not 0 <= self.haze <= 1 or not 0 <= self.haze_start_m <= 500 or not 1 <= self.haze_depth_m <= 5000 \
+                or len(self.haze_colour) != 3 or not all(0 <= c <= 1.5 for c in self.haze_colour):
+            raise ValueError(f"{self.id}: haze share 0..1, start 0..500 m, depth 1..5000 m, colour rgb 0..1.5")
+        if self.character_key and self.light_preset is None:
+            raise ValueError(f"{self.id}: character_key replaces a light preset's key and fill (name a light_preset)")
+        if (self.native_classes or self.skin_lift or self.pn_converge) and not self.lit_rig:
+            raise ValueError(f"{self.id}: native shading, skin lift and Perfectly Normal need real lights (the lit or rgb_soft path)")
+        for who, lift in self.skin_lift:
+            if not isinstance(who, str) or not who or not 0 < lift <= 1:
+                raise ValueError(f"{self.id}: skin lift {who!r} {lift} (a character id, lift 0..1)")
+        if not 0 <= self.pn_converge <= 1 or self.pn_converge and self.normal_soften:
+            raise ValueError(f"{self.id}: pn_converge is a share 0..1, and one face-normal method at a time (normal_soften or it)")
 
     @classmethod
     def from_dict(cls, d: dict) -> "Look":
         kw = {k: v for k, v in d.items() if k not in ("label",)}
-        for k in ("ramp", "shadow_tint", "light_tint", "rim_tint"):
-            if k in kw:
+        for k in ("ramp", "shadow_tint", "light_tint", "rim_tint", "key_colour", "fill_colour", "haze_colour"):
+            if kw.get(k) is not None:
                 kw[k] = _tup(kw[k])
+        if isinstance(kw.get("shadow_tints"), dict):
+            kw["shadow_tints"] = tuple((c, tuple(v)) for c, v in sorted(kw["shadow_tints"].items()))
+        if isinstance(kw.get("skin_lift"), dict):
+            kw["skin_lift"] = tuple(sorted(kw["skin_lift"].items()))
+        if kw.get("native_classes") is not None:
+            kw["native_classes"] = tuple(kw["native_classes"])
         return cls(**kw)
 
     def to_dict(self) -> dict:
-        return json.loads(json.dumps(asdict(self)))
+        d = json.loads(json.dumps(asdict(self)))
+        for k, default in Q1_DEFAULTS.items():   # a look-round variant keeps its bytes (and its graph hash)
+            if getattr(self, k) == default:
+                d.pop(k)
+        if "shadow_tints" in d:
+            d["shadow_tints"] = {c: list(v) for c, v in self.shadow_tints}
+        if "skin_lift" in d:
+            d["skin_lift"] = dict(self.skin_lift)
+        return d
+
+    def lift_of(self, material_name: str) -> float:
+        """The skin lift of the character a ``{char}_skin`` material belongs to (0 when none is listed)."""
+        return next((v for who, v in self.skin_lift if material_name == f"{who}_skin"), 0.0)
+
+    def shadow_tint_of(self, cls: str) -> tuple:
+        tints = dict(self.shadow_tints)
+        return tuple(tints.get(cls, tints.get("set", self.shadow_tint)))
 
     @property
     def casts_shadows(self) -> bool:
         return self.light_rig == "cinematic" or self.shade_mode == "flat" and self.light_rig != "ambient_only"
+
+    @property
+    def lit_rig(self) -> bool:
+        """WP-Q1 paths light the frame with real, coloured lights (``StyleEngine.lights``) instead of the N.L probe."""
+        return self.shade_path != "luma"
+
+
+def material_class(name: str, slot: str | None = None) -> str:
+    """The material class a shadow tint is chosen by: a character slot (``{char}_skin``, ``_hair``, ``_eyes``, a costume) or a set
+    surface (everything else)."""
+    if slot == "costume":
+        return "costume"
+    for cls in ("skin", "hair", "eyes"):
+        if name == cls or name.endswith("_" + cls):
+            return cls
+    return "set"
 
 
 def _mul(a, b) -> list[float]:
@@ -351,18 +514,42 @@ def look_variants(path: Path | None = None) -> dict:
     return doc
 
 
+LIGHT_TAG = "@"   # "<look>@<era or light preset>[+cu]": the overnight matrix's light per era on any look that takes a preset
+
+
+def _lit_variant(variant_id: str, doc: dict | None) -> StyleTokens:
+    """``q1_c2_native_skin@E1`` = that look under the era's light preset (combo_profiles.json eras), ``...@noon_epic`` under a
+    named preset, ``...@E2+cu`` with the close-up character key. Every CLI that takes a look id (style_sheets, world_kits poc)
+    takes these, so a runner never relies on a look's default preset."""
+    base, tag = variant_id.split(LIGHT_TAG, 1)
+    where, _, extra = tag.partition("+")
+    if extra not in ("", "cu"):
+        raise KeyError(f"{variant_id!r}: after '+' only 'cu' (the close-up character key)")
+    eras = json.loads((Path(__file__).resolve().parent / "combo_profiles.json").read_text(encoding="utf-8"))["eras"]
+    preset = eras[where]["light_preset"] if where in eras else where
+    if preset not in light_presets():
+        raise KeyError(f"{variant_id!r}: {where!r} is neither an era ({', '.join(eras)}) nor a light preset ({', '.join(light_presets())})")
+    t = look_tokens(base, doc=doc)
+    if t.art is None or t.art.light_preset is None:
+        raise KeyError(f"{variant_id!r}: look {base} takes no light preset (only the lit / rgb_soft looks with a preset do)")
+    return replace(t, art=replace(t.art, id=variant_id, light_preset=preset, character_key=extra == "cu"))
+
+
 def look_tokens(variant_id: str, *, doc: dict | None = None) -> StyleTokens:
     """StyleTokens for one look variant: the ICW-05 B tokens with the look attached (its line width as ``line_px``)."""
+    if LIGHT_TAG in variant_id:
+        return _lit_variant(variant_id, doc)
     doc = doc or look_variants()
     twin = variant_id.endswith(SWATCH_SUFFIX)
     vid = variant_id[: -len(SWATCH_SUFFIX)] if twin else variant_id
-    v = next((x for x in doc["variants"] if x["id"] == vid), None)
+    v = next((x for x in doc["variants"] + doc.get("q1_variants", []) if x["id"] == vid), None)
     if twin and vid not in doc.get("swatch_twins", []):
         v = None
     if v is not None and twin:
         v = {**v, "id": variant_id, "palette_map": "reference_swatches", "label": v["label"] + ", reference swatches"}
     if v is None:
-        raise KeyError(f"unknown look variant {variant_id!r} (known: {', '.join(x['id'] for x in doc['variants'])})")
+        known = [x["id"] for x in doc["variants"] + doc.get("q1_variants", [])]
+        raise KeyError(f"unknown look variant {variant_id!r} (known: {', '.join(known)})")
     art = Look.from_dict(v)
     base = variant("B")
     return replace(base, line_px=art.line_px if art.line_mode != "none" else base.line_px, shadows=art.casts_shadows,
@@ -437,6 +624,9 @@ class StyleEngine:
         if self.t.art is not None:
             if path != "eevee":
                 raise ValueError(f"{name}: the look round's graphs are EEVEE-only (Shader to RGB)")
+            cls = material_class(name, slot)
+            if cls in self.t.art.native_classes:   # C2: the asset's own shading (Blender Studio SSS skin, cloth) under our light
+                return {"name": name, "native": True, "class": cls, "nodes": [], "links": []}
             return self._art_material(name, base, texture=texture, texture_mean=texture_mean, tile=tile, strength=strength, slot=slot)
         t = self.t
         if strength is not None and not 0 <= strength <= 1:
@@ -482,7 +672,11 @@ class StyleEngine:
         if a.palette_map == "reference_swatches" and name_or_hex in self.swatches:
             return rgba(self.swatches[name_or_hex])
         h = self.pal.get(name_or_hex, name_or_hex)
-        return rgba(_warm_neutral(h) if a.palette_map == "warm_cinematic" else h)
+        h = _warm_neutral(h) if a.palette_map == "warm_cinematic" else h
+        if a.lit_rig and self.t.palette_match:   # WP-Q1: the value whose display under the look's view is the hex
+            from explainer_engine.blender import grade
+            return [*grade.matched_view(h, a.view_transform or self.t.view_transform), 1.0]
+        return rgba(h)
 
     def _art_ramp(self) -> dict:
         a = self.t.art
@@ -508,6 +702,8 @@ class StyleEngine:
         if not 0 <= keep <= 1:
             raise ValueError(f"{name}: texture strength {keep} is not a share 0..1")
         base_rgba = self._art_colour(base) if isinstance(base, str) else [round(float(x), 6) for x in base][:3] + [1.0]
+        if a.lit_rig:
+            return self._q1_material(name, base_rgba, keep, texture=texture, texture_mean=texture_mean, tile=tile, slot=slot)
         if a.shade_mode == "painted_light":   # light painted onto the form: a soft top-to-bottom gradient, no live light
             nodes = [{"id": "coords", "type": "ShaderNodeTexCoord"},
                      {"id": "xyz", "type": "ShaderNodeSeparateXYZ"},
@@ -593,12 +789,219 @@ class StyleEngine:
         links += [[last, out_sock, "emit", "Color"], ["emit", "Emission", "out", "Surface"]]
         return _keys({"name": name, "path": "eevee", "nodes": nodes, "links": links})
 
+    # -- WP-Q1: the lit and rgb_soft paths --
+    def _albedo(self, base_rgba, keep, *, texture, texture_mean, tile) -> tuple[list[dict], list[list], str, object]:
+        """The surface colour before any light: base (x the flattened texture) -> brush -> hue/saturation/value -> warmth.
+        Returns (nodes, links, last node id, its output socket)."""
+        a = self.t.art
+        nodes = [{"id": "albedo", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                  "inputs": {"Factor": 1.0, 6: base_rgba, 7: [1.0, 1.0, 1.0, 1.0]}}]
+        links: list[list] = []
+        if texture is not None:
+            mean = [round(float(x), 6) for x in (texture_mean or base_rgba[:3])][:3] + [1.0]
+            nodes += [{"id": "tex", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": texture},
+                      {"id": "flatten", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                       "inputs": {"Factor": round(keep, 6), 6: mean}}]
+            links += [["tex", "Color", "flatten", 7], ["flatten", 2, "albedo", 6]]
+            if tile is not None:
+                nodes += [{"id": "uv", "type": "ShaderNodeTexCoord"},
+                          {"id": "tiling", "type": "ShaderNodeMapping", "inputs": {"Scale": [float(tile), float(tile), 1.0]}}]
+                links += [["uv", "UV", "tiling", "Vector"], ["tiling", "Vector", "tex", "Vector"]]
+        last, sock = "albedo", 2
+        if a.brush > 0:
+            b = round(a.brush, 6)
+            nodes += [{"id": "brush_uv", "type": "ShaderNodeTexCoord"},
+                      {"id": "brush_dir", "type": "ShaderNodeMapping", "inputs": {"Scale": [3.0, 3.0, 18.0]}},
+                      {"id": "brush_noise", "type": "ShaderNodeTexNoise", "inputs": {"Scale": 4.0, "Detail": 3.0, "Roughness": 0.6}},
+                      {"id": "brush_gain", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY_ADD"},
+                       "inputs": {1: round(2 * b, 6), 2: round(1 - b, 6)}},
+                      {"id": "brush", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                       "inputs": {"Factor": 1.0}}]
+            links += [["brush_uv", "Object", "brush_dir", "Vector"], ["brush_dir", "Vector", "brush_noise", "Vector"],
+                      ["brush_noise", "Fac", "brush_gain", 0], [last, sock, "brush", 6], ["brush_gain", "Value", "brush", 7]]
+            last, sock = "brush", 2
+        if a.palette_map == "warm_cinematic" or a.saturation != 1 or a.value != 1:
+            nodes.append({"id": "grade", "type": "ShaderNodeHueSaturation",
+                          "inputs": {"Hue": 0.5, "Saturation": round(a.saturation, 6), "Value": round(a.value, 6), "Fac": 1.0}})
+            links.append([last, sock, "grade", "Color"])
+            last, sock = "grade", "Color"
+        if a.warmth > 0:
+            nodes.append({"id": "warm", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                          "inputs": {"Factor": round(a.warmth, 6), 7: [1.0, 0.86, 0.68, 1.0]}})
+            links.append([last, sock, "warm", 6])
+            last, sock = "warm", 2
+        return nodes, links, last, sock
+
+    def _tone_ramp(self) -> dict:
+        """rgb_soft: the look's ramp positions with its tones stretched to a 0..1 mix factor (darkest stop = the shadow colour,
+        brightest = the lit colour); LINEAR or EASE, never the CONSTANT steps of the toon graph."""
+        a = self.t.art
+        vals = [v for _, v in a.ramp]
+        lo, hi = min(vals), max(vals)
+        f = (lambda v: (v - lo) / (hi - lo)) if hi > lo else (lambda v: 1.0)  # noqa: E731
+        return {"interpolation": a.ramp_interp or "EASE",
+                "stops": [[round(p, 6), [round(f(v), 6)] * 3 + [1.0]] for p, v in a.ramp]}
+
+    def _q1_material(self, name, base_rgba, keep, *, texture, texture_mean, tile, slot) -> dict:
+        a = self.t.art
+        nodes, links, last, sock = self._albedo(base_rgba, keep, texture=texture, texture_mean=texture_mean, tile=tile)
+        cls = material_class(name, slot)
+        if a.shade_path == "lit":
+            if a.lit_bsdf == "diffuse":
+                nodes.append({"id": "bsdf", "type": "ShaderNodeBsdfDiffuse", "inputs": {"Roughness": 0.0}})
+                links.append([last, sock, "bsdf", "Color"])
+            else:   # matte Principled: no specular, fully rough, no coat, no metal (style.check holds it to that)
+                ins = {"Roughness": 1.0, "Specular IOR Level": 0.0, "Coat Weight": 0.0, "Metallic": 0.0, "Sheen Weight": 0.0}
+                if a.subsurface and cls == "skin":   # Wing It!: subsurface washes the light out of faces and hands
+                    ins.update({"Subsurface Weight": round(a.subsurface, 6), "Subsurface Radius": [0.9, 0.35, 0.2],
+                                "Subsurface Scale": 0.02})
+                nodes.append({"id": "bsdf", "type": "ShaderNodeBsdfPrincipled", "inputs": ins})
+                links.append([last, sock, "bsdf", "Base Color"])
+            nodes.append({"id": "out", "type": "ShaderNodeOutputMaterial"})
+            links.append(["bsdf", "BSDF", "out", "Surface"])
+            return _keys({"name": name, "path": "eevee", "shade_path": "lit", "class": cls, "nodes": nodes, "links": links})
+        # rgb_soft: the light's colour survives (Shader to RGB colour), only its value is reshaped by the ramp
+        tint = list(a.shadow_tint_of(cls))
+        if cls == "skin" and a.lift_of(name):   # a per-character skin lift: its shadow tint moves towards white
+            tint = _lerp(tint, [1.0, 1.0, 1.0], a.lift_of(name))
+        tint = [round(c, 6) for c in tint] + [1.0]
+        nodes += [{"id": "diffuse", "type": "ShaderNodeBsdfDiffuse", "inputs": {"Color": [1.0, 1.0, 1.0, 1.0], "Roughness": 0.0}},
+                  {"id": "to_rgb", "type": "ShaderNodeShaderToRGB"},
+                  {"id": "luma", "type": "ShaderNodeRGBToBW"}]
+        links += [["diffuse", "BSDF", "to_rgb", "Shader"], ["to_rgb", "Color", "luma", "Color"]]
+        src, ssock = "luma", "Val"
+        if a.half_lambert > 0:
+            nodes.append({"id": "lift", "type": "ShaderNodeMapRange",
+                          "inputs": {"From Min": 0.0, "From Max": 1.0, "To Min": round(a.half_lambert, 6), "To Max": 1.0}})
+            links.append(["luma", "Val", "lift", "Value"])
+            src, ssock = "lift", "Result"
+        nodes += [{"id": "tone", "type": "ShaderNodeValToRGB", "ramp": self._tone_ramp()},
+                  {"id": "shadow", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                   "inputs": {"Factor": 1.0, 7: tint}},
+                  {"id": "lit", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                   "inputs": {"Factor": 1.0}},
+                  {"id": "shade", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"}}]
+        links += [[src, ssock, "tone", "Fac"], [last, sock, "shadow", 6], [last, sock, "lit", 6], ["to_rgb", "Color", "lit", 7],
+                  ["tone", "Color", "shade", "Factor"], ["shadow", 2, "shade", 6], ["lit", 2, "shade", 7]]
+        last = "shade"
+        if a.rim_strength > 0 and a.rim_mode == "shader":
+            t = self.t
+            rim = [round(a.rim_strength * c, 6) for c in a.rim_tint] + [1.0]
+            nodes += [{"id": "facing", "type": "ShaderNodeLayerWeight", "inputs": {"Blend": t.rim_width}},
+                      {"id": "rim_cut", "type": "ShaderNodeValToRGB",
+                       "ramp": {"interpolation": "LINEAR", "stops": [[round(max(0.0, t.rim_cut - a.rim_soft), 6), [0.0, 0.0, 0.0, 1.0]],
+                                                                       [t.rim_cut, [1.0, 1.0, 1.0, 1.0]]]}},
+                      {"id": "rim", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "ADD"}, "inputs": {7: rim}}]
+            links += [["facing", "Facing", "rim_cut", "Fac"], ["rim_cut", "Color", "rim", "Factor"], [last, 2, "rim", 6]]
+            last = "rim"
+        nodes += [{"id": "emit", "type": "ShaderNodeEmission", "inputs": {"Strength": 1.0}},
+                  {"id": "out", "type": "ShaderNodeOutputMaterial"}]
+        links += [[last, 2, "emit", "Color"], ["emit", "Emission", "out", "Surface"]]
+        return _keys({"name": name, "path": "eevee", "shade_path": "rgb_soft", "class": cls, "nodes": nodes, "links": links})
+
+    def lights(self) -> list[dict]:
+        """The rig's lights plus one linked front fill per lifted character (``Look.skin_lift``, Fable 2026-11-05)."""
+        out = self._rig_lights()
+        key = next((x for x in out if x["name"] == "key"), None)
+        return out + self._lift_lights(key["energy"] if key else self.t.art.key_energy)
+
+    def _rig_lights(self) -> list[dict]:
+        """WP-Q1 light rigs (real, coloured lights; every number a HYP until the clips are judged):
+
+        - ``cinematic``: a warm key SUN with a 5-10 degree disc and a PCF-blurred shadow (``shadow_filter_radius``, no jitter: the
+          manual's "high performance impact"), a cool shadowless fill with no specular, a warm shadowless rim from behind the
+          subject relative to the camera, specular <= 0.3, light-linked to the cast only (sets get no rim);
+        - ``key_rim``: the same three lights, nothing casts a shadow (the light profile);
+        - ``flat_key``: the key alone, shadowless; ``ambient_only``: no light, the world's ambient only.
+        Fill and rim are suns as well (they do not depend on where the set's objects stand); an AREA rim is a later option."""
+        a, kl = self.t.art, self.t.key_light
+        if a.light_preset is not None:
+            return self._preset_lights(light_presets()[a.light_preset])
+        if a.light_rig == "ambient_only":
+            return []
+        key_col = [round(c, 6) for c in (a.key_colour or a.light_tint)]
+        cast = a.light_rig == "cinematic"
+        out = [{"name": "key", "type": "SUN", "energy": round(a.key_energy, 6), "color": key_col,
+                "angle_rad": round(math.radians(min(10.0, max(5.0, a.shadow_softness_deg))), 6),
+                "rotation_euler": list(kl.rotation_euler()), "use_shadow": cast,
+                "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None, "use_shadow_jitter": False if cast else None,
+                "specular_factor": 1.0, "link": None}]
+        if a.light_rig == "flat_key":
+            return out
+        el, az = 22.0, kl.azimuth_deg + 160.0
+        out.append({"name": "fill", "type": "SUN", "energy": round(a.fill, 6),
+                    "color": [round(c, 6) for c in (a.fill_colour or a.shadow_tint)],
+                    "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)],
+                    "use_shadow": False, "specular_factor": 0.0, "link": None})
+        if a.rim_strength > 0 and a.rim_mode == "light":
+            out.append({"name": "rim", "type": "SUN", "energy": round(a.rim_strength, 6), "color": [round(c, 6) for c in a.rim_tint],
+                        "aim": {"relative_to": "camera", "elevation_deg": 35.0, "azimuth_offset_deg": 25.0},
+                        "use_shadow": False, "specular_factor": 0.3, "link": "cast"})
+        return out
+
+    def _preset_lights(self, p: dict) -> list[dict]:
+        """A named preset (Wing It!'s rule): only the key SUN casts a shadow; two colourable rims linked to the cast, shadowless,
+        specular 0.3; a shadowless fill without specular. The key's shadow follows the look's light rig (cinematic casts)."""
+        a, k = self.t.art, p["key"]
+        cast = a.light_rig == "cinematic"
+        if a.character_key:   # the close-up: the warm key and its quarter fill, both from the camera's side; rims + tint stay
+            ck = character_key()
+            ck_k, ck_f = ck["key"], ck["fill"]
+            aim = lambda x: {"relative_to": "camera", "from": "front", "elevation_deg": x["elevation_deg"],  # noqa: E731
+                             "azimuth_offset_deg": x["front_offset_deg"]}
+            out = [{"name": "key", "type": "SUN", "energy": round(ck_k["energy"], 6), "color": [round(c, 6) for c in ck_k["colour"]],
+                    "angle_rad": round(math.radians(min(10.0, max(5.0, ck_k["angle_deg"]))), 6),
+                    "rotation_euler": list(KeyLight(elevation_deg=k["elevation_deg"], azimuth_deg=k["azimuth_deg"]).rotation_euler()),
+                    "aim": aim(ck_k), "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
+                    "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None},
+                   {"name": "fill", "type": "SUN", "energy": round(ck_k["energy"] * ck_f["ratio"], 6),
+                    "color": [round(c, 6) for c in ck_f["colour"]], "aim": aim(ck_f),
+                    "use_shadow": False, "specular_factor": 0.0, "link": None}]
+            return out + self._preset_rims(p)
+        kl = KeyLight(elevation_deg=k["elevation_deg"], azimuth_deg=k["azimuth_deg"])
+        out = [{"name": "key", "type": "SUN", "energy": round(k["energy"], 6), "color": [round(c, 6) for c in k["colour"]],
+                "angle_rad": round(math.radians(min(10.0, max(5.0, k["angle_deg"]))), 6), "rotation_euler": list(kl.rotation_euler()),
+                "use_shadow": cast, "shadow_filter_radius": round(a.shadow_filter, 6) if cast else None,
+                "use_shadow_jitter": False if cast else None, "specular_factor": 1.0, "link": None,
+                # a character shot turns the key to the camera's side (30-45 degrees off its axis); a set-only shot keeps the world sun
+                "aim_with_cast": {"relative_to": "camera", "from": "front", "elevation_deg": k["elevation_deg"],
+                                  "azimuth_offset_deg": k["front_offset_deg"]}}]
+        if p.get("fill"):
+            el, az = 22.0, k["azimuth_deg"] + 160.0
+            out.append({"name": "fill", "type": "SUN", "energy": round(p["fill"]["energy"], 6),
+                        "color": [round(c, 6) for c in p["fill"]["colour"]],
+                        "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)],
+                        "use_shadow": False, "specular_factor": 0.0, "link": None})
+        return out + self._preset_rims(p)
+
+    def _preset_rims(self, p: dict) -> list[dict]:
+        out = []
+        for r in p["rims"]:
+            out.append({"name": r["name"], "type": "SUN", "energy": round(r["energy"], 6), "color": [round(c, 6) for c in r["colour"]],
+                        "aim": {"relative_to": "camera", "elevation_deg": r["elevation_deg"],
+                                "azimuth_offset_deg": r["azimuth_offset_deg"]},
+                        "use_shadow": False, "specular_factor": 0.3, "link": "cast"})
+        return out
+
+    def _lift_lights(self, key_energy: float) -> list[dict]:
+        """One shadowless, specular-free front fill per lifted character, linked to that character's meshes only: the skin's
+        shadow side opens up without touching the set (works on toon and on native skin alike)."""
+        return [{"name": f"lift_{who}", "type": "SUN", "energy": round(key_energy * lift, 6), "color": [1.0, 0.94, 0.88],
+                 "aim": {"relative_to": "camera", "from": "front", "elevation_deg": 10.0, "azimuth_offset_deg": 0.0},
+                 "use_shadow": False, "specular_factor": 0.0, "link": f"char:{who}"}
+                for who, lift in self.t.art.skin_lift]
+
     def _art_world(self, hdri: str | None) -> dict:
         """Lighting = the weak paper ambient (as the toon world); camera rays see the look's sky: the paper, a painted gradient
         sky (warm horizon to a soft blue, with noise clouds) or the HDRI's own sky, warmed."""
         t, a = self.t, self.t.art
         paper = rgba(self.pal[t.paper])
-        nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": t.ambient}},
+        amb = t.ambient if a.ambient is None else round(a.ambient, 6)
+        air = paper
+        if a.light_preset is not None:   # the sequence's world tint: the ambient light's colour and strength
+            wt = light_presets()[a.light_preset]["world_tint"]
+            air, amb = [*[round(c, 6) for c in wt["colour"]], 1.0], round(wt["strength"], 6)
+        nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": air, "Strength": amb}},
                  {"id": "backdrop", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": 1.0}},
                  {"id": "is_cam", "type": "ShaderNodeLightPath"},
                  {"id": "mix", "type": "ShaderNodeMixShader"},
@@ -670,6 +1073,15 @@ class StyleEngine:
             links += [["render", "Depth", "far", "Value"], ["far", "Result", "plate_mix", "Factor"], [cur, sock, "plate_mix", 6],
                       ["plate", "Image", "plate_mix", 7]]
             cur, sock = "plate_mix", 2
+        mist = None
+        if a.haze > 0:   # depth haze (Fable 2026-11-05: the E2 cells fail on the world): the mist pass mixes in a warm grey
+            passes.append("mist")
+            mist = {"start_m": round(a.haze_start_m, 4), "depth_m": round(a.haze_depth_m, 4), "falloff": "QUADRATIC"}
+            nodes += [{"id": "haze_amt", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: round(a.haze, 6)}},
+                      {"id": "haze_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                       "inputs": {7: [round(c, 6) for c in a.haze_colour] + [1.0]}}]
+            links += [["render", "Mist", "haze_amt", 0], ["haze_amt", "Value", "haze_mix", "Factor"], [cur, sock, "haze_mix", 6]]
+            cur, sock = "haze_mix", 2
         if a.bleed:
             nodes.append({"id": "bleed", "type": "CompositorNodeBilateralblur", "inputs": {"Size": int(a.bleed), "Threshold": 0.12}})
             links += [[cur, sock, "bleed", "Image"], [cur, sock, "bleed", "Determinator"]]
@@ -711,8 +1123,11 @@ class StyleEngine:
             cur, sock = "vig_mul", 2
         nodes.append({"id": "out", "type": "NodeGroupOutput"})
         links.append([cur, sock, "out", "Image"])
-        return _keys({"enabled": True, "opacity": a.paper, "texture": texture if a.paper > 0 else None, "passes": passes,
-                      "nodes": nodes, "links": links})
+        doc = {"enabled": True, "opacity": a.paper, "texture": texture if a.paper > 0 else None, "passes": passes,
+               "nodes": nodes, "links": links}
+        if mist:
+            doc["mist"] = mist
+        return _keys(doc)
 
     # -- world, line, paper, scene --
     def world(self, *, hdri: str | None = None) -> dict:
@@ -771,7 +1186,17 @@ class StyleEngine:
         return _keys({"enabled": True, "opacity": t.paper_opacity, "texture": texture, "nodes": nodes, "links": links})
 
     def scene_settings(self, path: str) -> dict:
-        t = self.t
+        t, a = self.t, self.t.art
+        if a is not None and a.lit_rig:   # WP-Q1: the look's own view transform; Standard and PBR Neutral take no look
+            view = a.view_transform or t.view_transform
+            look = t.look if view == "AgX" else "None"
+            out = {"view_transform": view, "look": look, "look_ids": list(LOOK_IDS[look]), "film_transparent": False,
+                   "engine": "eevee"}
+            ee = {"use_raytracing": False, "use_fast_gi": a.ao, "use_shadows": a.casts_shadows}
+            if a.ao:
+                ee["fast_gi_method"] = "AMBIENT_OCCLUSION_ONLY"
+            out["eevee"] = ee
+            return out
         out = {"view_transform": t.view_transform, "look": t.look, "look_ids": list(LOOK_IDS[t.look]),
                "film_transparent": False}
         if path == "eevee":
@@ -815,11 +1240,28 @@ class StyleEngine:
                 el, az = 22.0, kl.azimuth_deg + 160.0
                 doc["fill_light"] = {"type": "SUN", "energy": round(a.fill, 6), "use_shadow": False,
                                      "rotation_euler": [round(math.radians(90.0 - el), 6), 0.0, round(math.radians(az), 6)]}
+            if a.lit_rig:   # WP-Q1: the rig is real coloured lights; key_light stays as the key's record
+                doc["lights"] = self.lights()
+                key = next((x for x in doc["lights"] if x["name"] == "key"), None)
+                kd.update(energy=key["energy"] if key else 0.0, use_shadow=bool(key and key["use_shadow"]))
+                if key:
+                    kd["angle_rad"] = key["angle_rad"]
+                doc.pop("fill_light", None)
+                if a.normal_soften:
+                    doc["normal_soften"] = {"iterations": int(a.normal_soften), "applies_to": "cast"}
+                if a.pn_converge:   # Perfectly Normal 0.0.3's GN groups as modifiers: (Re)create -> Tweak(Converge) -> Apply
+                    doc["perfectly_normal"] = {"converge": round(a.pn_converge, 6), "applies_to": "cast",
+                                               "extension": "perfectly_normal", "version": "0.0.3"}
+                if a.native_classes:
+                    doc["native_classes"] = list(a.native_classes)
             if a.bg_mode in ("dof", "plate") and a.fstop:
                 doc["camera_dof"] = {"use_dof": True, "focus_distance_m": round(camera["focus_distance_m"], 4),
                                      "fstop": round(a.fstop, 4)}
         doc["sha256"] = digest(doc)
         return doc
+
+
+MATTE_BSDFS = ("ShaderNodeBsdfDiffuse", "ShaderNodeBsdfPrincipled")
 
 
 def digest(doc: dict) -> str:
@@ -834,7 +1276,11 @@ def check(doc: dict) -> list[str]:
         return [f"not a {SCHEMA} document"]
     if doc.get("sha256") != digest(doc):
         out.append("sha256 does not match the document (edited after it was made)")
-    trees = [(f"material {m['name']}", m) for m in doc["materials"]] + [("world", doc["world"])]
+    art0 = doc["tokens"].get("art") or {}
+    for m in doc["materials"]:
+        if m.get("native") and (m.get("class") not in art0.get("native_classes", ()) or m["nodes"] or m["links"]):
+            out.append(f"material {m['name']}: native only for a class the look lists, and it carries no nodes")
+    trees = [(f"material {m['name']}", m) for m in doc["materials"] if not m.get("native")] + [("world", doc["world"])]
     if doc["paper"].get("enabled"):
         trees.append(("paper", doc["paper"]))
     for where, g in trees:
@@ -844,21 +1290,52 @@ def check(doc: dict) -> list[str]:
         for a, _, b, _ in g["links"]:
             if a not in ids or b not in ids:
                 out.append(f"{where}: link {a} -> {b} names a node that is not in the graph")
+    art = doc["tokens"].get("art")
+    lit_path = art is not None and art.get("shade_path") == "lit"
     for m in doc["materials"]:
+        if m.get("native"):
+            continue
         types = {n["type"] for n in m["nodes"]}
         if doc["path"] == "cycles_safe" and "ShaderNodeShaderToRGB" in types:
             out.append(f"material {m['name']}: Shader to RGB on the Cycles-safe path (EEVEE-only, 9.1)")
-        if "ShaderNodeOutputMaterial" not in types or "ShaderNodeEmission" not in types:
+        if lit_path:   # WP-Q1 lit: a matte BSDF into the output, never an emission (the light must reach it)
+            surface = [a for a, _, b, sock in m["links"] if b == "out" and sock == "Surface"]
+            kinds = {n["id"]: n["type"] for n in m["nodes"]}
+            if "ShaderNodeOutputMaterial" not in types or not surface or kinds.get(surface[0]) not in MATTE_BSDFS:
+                out.append(f"material {m['name']}: the lit path ends in a matte BSDF")
+            if "ShaderNodeShaderToRGB" in types or "ShaderNodeEmission" in types:
+                out.append(f"material {m['name']}: Shader to RGB or an emission on the lit path")
+        elif "ShaderNodeOutputMaterial" not in types or "ShaderNodeEmission" not in types:
             out.append(f"material {m['name']}: no emission output")
-        if "ShaderNodeBsdfPrincipled" in types:
-            out.append(f"material {m['name']}: a Principled BSDF is the raw PBR look (D-102)")
+        for n in m["nodes"]:
+            if n["type"] != "ShaderNodeBsdfPrincipled":
+                continue
+            ins = n.get("inputs", {})
+            matte = (lit_path and art.get("lit_bsdf") == "principled_matte" and ins.get("Roughness") == 1.0
+                     and ins.get("Specular IOR Level") == 0.0 and ins.get("Coat Weight") == 0.0 and ins.get("Metallic") == 0.0)
+            if not matte:   # narrower, not weaker: only a matte Principled on the soft/lit path (WP-Q1)
+                out.append(f"material {m['name']}: a Principled BSDF is the raw PBR look (D-102)")
     if doc["path"] == "eevee":
         ee = doc["scene"]["eevee"]
-        if ee.get("use_raytracing") or ee.get("use_gtao") or ee.get("use_fast_gi"):
+        stl = any(n["type"] == "ShaderNodeShaderToRGB" for m in doc["materials"] for n in m["nodes"])
+        if ee.get("use_raytracing") or ee.get("use_gtao"):
             out.append("EEVEE ray tracing / AO on under Shader to RGB (unreliable, 9.1)")
+        elif ee.get("use_fast_gi") and (stl or not lit_path or ee.get("fast_gi_method") != "AMBIENT_OCCLUSION_ONLY"):
+            out.append("EEVEE ray tracing / AO on under Shader to RGB (unreliable, 9.1)")
+    for lt in doc.get("lights", []):
+        rim = lt["name"].startswith("rim")
+        if (rim or lt["name"] == "fill") and (lt["use_shadow"] or lt["specular_factor"] > 0.3):
+            out.append(f"light {lt['name']}: fill and rim cast no shadow and keep specular <= 0.3")
+        if rim and lt.get("link") != "cast":
+            out.append(f"light {lt['name']}: light-linked to the cast only")
+        if lt["name"].startswith("lift_") and (lt["use_shadow"] or lt["specular_factor"] > 0 or lt.get("link") != f"char:{lt['name'][5:]}"):
+            out.append(f"light {lt['name']}: a skin lift is shadowless, without specular and linked to its character")
+        if lt["name"] != "key" and lt["use_shadow"]:
+            out.append(f"light {lt['name']}: only the key sun casts a shadow (Wing It!)")
+        if lt["name"] == "key" and lt["use_shadow"] and not math.radians(5) - 1e-6 <= lt["angle_rad"] <= math.radians(10) + 1e-6:
+            out.append("light key: a shadow-casting key has a 5-10 degree disc")
     if doc["line_art"].get("enabled", True) and not doc["line_art"]["line_px_1440"] > 0:
         out.append(f"line weight {doc['line_art']['line_px_1440']} px is not a width")
-    art = doc["tokens"].get("art")
     if art is not None:
         if doc["path"] != "eevee":
             out.append("a look-round graph off the EEVEE path")

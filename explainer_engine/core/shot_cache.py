@@ -62,7 +62,7 @@ def _canonical_v2(spec: dict) -> dict:
 def canonical(spec: dict) -> bytes:
     """The spec as the cache sees it: validated, without who asked and where files lie, lists in a fixed order, floats rounded."""
     contracts.validate(spec)
-    if spec["schema"] == "shot_spec/2":
+    if spec["schema"] in contracts.BLENDER_SPECS:   # /3 keys the same way (its extra look fields are part of the doc)
         doc = _canonical_v2(spec)
     else:
         doc = {k: v for k, v in spec.items() if k not in NOT_IN_KEY}

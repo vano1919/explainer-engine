@@ -10,7 +10,12 @@ saturated colour at all. The table ``agx_palette_match.json`` is generated, neve
 sha256 and the OCIO config's, so a palette change makes it stale (the style engine then refuses to build a matched graph).
 
     python -m explainer_engine.blender.grade match --config <blender>/5.2/datafiles/colormanagement/config.ocio
+    python -m explainer_engine.blender.grade views --config <blender>/5.2/datafiles/colormanagement/config.ocio
     python -m explainer_engine.blender.grade show
+
+WP-Q1 (2026-11-05): ``views`` measures the same palette under the view transforms the soft looks may use (``Standard`` and
+``Khronos PBR Neutral``, no look) into the sibling table ``view_palette_match.json``: per view the raw dE (the hex emitted as
+its linear value) and the matched value, stamped like the AgX table.
 
 ``match`` needs PyOpenColorIO (``pip install opencolorio``, a build-time tool only); ``show`` and the style engine read the table.
 """
@@ -29,6 +34,9 @@ TABLE = HERE / "agx_palette_match.json"
 PALETTE = HERE.parent / "design" / "palette.json"
 SCHEMA = "agx_palette_match/1"
 VIEW, LOOK = "AgX", "AgX - Medium High Contrast"
+VIEWS_TABLE = HERE / "view_palette_match.json"
+VIEWS_SCHEMA = "view_palette_match/1"
+SOFT_VIEWS = ("Standard", "Khronos PBR Neutral")
 
 
 def _sha(path: Path) -> str:
@@ -59,14 +67,15 @@ def delta_e(a: list[float], b: list[float]) -> float:
     return sum((p - q) ** 2 for p, q in zip(lab(a), lab(b))) ** 0.5
 
 
-def processor(config: Path):
-    """The CPU processor of Blender's display pipeline: Linear Rec.709 -> sRGB display through the AgX view and the look."""
+def processor(config: Path, view: str = VIEW, look: str | None = LOOK):
+    """The CPU processor of Blender's display pipeline: Linear Rec.709 -> sRGB display through ``view`` and ``look`` (the AgX
+    view and its Medium High Contrast look by default; ``look=None`` = no look)."""
     import PyOpenColorIO as ocio
     cfg = ocio.Config.CreateFromFile(str(config))
     p = ocio.LegacyViewingPipeline()
-    p.setDisplayViewTransform(ocio.DisplayViewTransform(src="Linear Rec.709", display="sRGB", view=VIEW))
+    p.setDisplayViewTransform(ocio.DisplayViewTransform(src="Linear Rec.709", display="sRGB", view=view))
     p.setLooksOverrideEnabled(True)
-    p.setLooksOverride(LOOK)
+    p.setLooksOverride(look or "")
     return p.getProcessor(cfg).getDefaultCPUProcessor()
 
 
@@ -115,6 +124,46 @@ def build(config: Path, extra: dict[str, str] | None = None, *, blender_version:
             "config_sha256": _sha(config), "palette_sha256": _sha(PALETTE), "colours": colours}
 
 
+def build_views(config: Path, extra: dict[str, str] | None = None, *, views=SOFT_VIEWS, blender_version: str = "5.2.3") -> dict:
+    """The palette under each of ``views`` (no look): raw and matched dE per colour, the mean over the palette tokens."""
+    tokens = {k: v["hex"] for k, v in json.loads(PALETTE.read_text(encoding="utf-8"))["tokens"].items() if k != "chroma_key"}
+    by_hex: dict[str, list[str]] = {}
+    for name, h in {**tokens, **(extra or {})}.items():
+        by_hex.setdefault(h.upper(), []).append(name)
+    out = {}
+    for view in views:
+        forward = processor(config, view, None).applyRGB
+        colours = {}
+        for h, names in sorted(by_hex.items()):
+            target = _srgb(h)
+            raw = list(forward([_linear(c) for c in target]))
+            lin, got = invert(forward, target)
+            colours[h] = {"names": sorted(names), "linear": lin, "delta_e": round(delta_e(got, target), 2),
+                          "raw_delta_e": round(delta_e(raw, target), 2), "in_palette": any(n in tokens for n in names)}
+        rows = [r for r in colours.values() if r["in_palette"]]
+        out[view] = {"look": None, "mean_delta_e_raw": round(sum(r["raw_delta_e"] for r in rows) / len(rows), 2),
+                     "max_delta_e_raw": max(r["raw_delta_e"] for r in rows), "colours": colours}
+    return {"schema": VIEWS_SCHEMA, "blender_version": blender_version, "config_sha256": _sha(config),
+            "palette_sha256": _sha(PALETTE), "views": out}
+
+
+def load_views(path: Path | None = None) -> dict:
+    return json.loads(Path(path or VIEWS_TABLE).read_text(encoding="utf-8"))
+
+
+def matched_view(hex_color: str, view: str, doc: dict | None = None) -> tuple[float, float, float]:
+    """The emission/albedo value for ``hex_color`` under ``view`` (AgX goes to the AgX table); stale or unknown is refused."""
+    if view == VIEW:
+        return matched(hex_color)
+    doc = doc if doc is not None else load_views()
+    if stale(doc):
+        raise ValueError("view_palette_match.json is stale: palette.json changed (python -m explainer_engine.blender.grade views)")
+    rec = doc["views"].get(view, {}).get("colours", {}).get(hex_color.upper())
+    if rec is None:
+        raise KeyError(f"{hex_color} has no {view} match (regenerate with: grade views)")
+    return tuple(rec["linear"])
+
+
 def load(path: Path | None = None) -> dict:
     return json.loads(Path(path or TABLE).read_text(encoding="utf-8"))
 
@@ -150,6 +199,9 @@ def main(argv: list[str] | None = None) -> int:
     m = sub.add_parser("match")
     m.add_argument("--config", required=True, help="Blender's colormanagement/config.ocio")
     m.add_argument("--blender-version", default="5.2.3")
+    vw = sub.add_parser("views")
+    vw.add_argument("--config", required=True)
+    vw.add_argument("--blender-version", default="5.2.3")
     sub.add_parser("show")
     a = ap.parse_args(argv)
     if a.cmd == "match":
@@ -157,6 +209,12 @@ def main(argv: list[str] | None = None) -> int:
         doc = build(Path(a.config), SS.SCENE_COLOURS, blender_version=a.blender_version)
         write_json_atomic(TABLE, doc)
         print(TABLE)
+    if a.cmd == "views":
+        from explainer_engine.blender import style_sheets as SS
+        doc = build_views(Path(a.config), SS.SCENE_COLOURS, blender_version=a.blender_version)
+        write_json_atomic(VIEWS_TABLE, doc)
+        print(VIEWS_TABLE)
+        print(json.dumps({v: {k: r[k] for k in ("mean_delta_e_raw", "max_delta_e_raw")} for v, r in doc["views"].items()}, indent=1))
     print(json.dumps(summary(), indent=1))
     return 0
 

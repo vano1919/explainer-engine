@@ -4198,3 +4198,69 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
   (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
   `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
+
+## 2026-11-05 — WP-Q1: soft painterly shading, coloured light rigs, colour transform (branch `claude/project-thread-ekz0dc`)
+- Principle (the creator, 19:19 UTC): synthesis of existing techniques and code. Re-implemented from public documents, no code
+  copied (so no provenance row): Blender Studio's Wing It! shading write-up and the Blender 5.2 manual / API pages for Shader to RGB,
+  Light Linking, Light Objects, SceneEEVEE and Displays and Views. API names checked in the pinned Blender 5.2.3 itself.
+- `blender/style.py`: the soft mode gets two new node paths (`Look.shade_path`): `lit` (a matte BSDF lit by real lights, no
+  Emission: Diffuse, or a Principled with Specular IOR Level 0, Roughness 1, no coat, no metal, subsurface on skin) and `rgb_soft`
+  (Shader to RGB keeps the light's colour: mix(shadow tint x albedo, albedo x light, tone), a LINEAR/EASE ramp of the half-lambert
+  lifted luminance, shadow tints per material class skin / hair / eyes / costume / set). `StyleEngine.lights()`: the rigs
+  `cinematic` (warm key SUN 5-10 degrees, PCF blur 2.5, no jitter; cool shadowless fill, specular 0; warm rim aimed from behind the
+  subject relative to the camera, shadowless, specular 0.3, light-linked to the cast), `key_rim`, `flat_key`, `ambient_only`.
+  `Look.view_transform` Standard | Khronos PBR Neutral (no look), `Look.ao` (Fast GI AO, lit path only), `Look.normal_soften`.
+  Every new knob at its default keeps the look round's graphs byte for byte (`Q1_DEFAULTS`).
+- `blender/light_presets.json` (`light_presets/1`, shared with WP-Q4 and WP-Q8): golden_hour, noon_epic, overcast_day,
+  interior_hearth, night_moon. Wing It!'s rule as data: only the key sun casts a shadow, two colourable rims on the cast, an
+  optional fill, one world tint per sequence. `Look.light_preset` picks one.
+- `style.check()`: a Principled BSDF passes only as the matte one on the lit path (narrower, not weaker); the lit path ends in a
+  matte BSDF; Fast GI only as AO and only without Shader to RGB; fill and rims shadowless with specular <= 0.3, rims linked to the
+  cast, only the key casts a shadow, a shadowed key has a 5-10 degree disc.
+- `bpy/render_shot.py`: `build_lights` (light linking through `Object.light_linking.receiver_collection`; a rim with no cast in the
+  shot is left out and reported), `_camera_aim`, `soften_normals` (a Geometry Nodes modifier after the armature: Blur Attribute on
+  the normals into Set Mesh Normal, FREE, point domain), profile `shadows` / `motion_blur_steps`.
+- `blender/profiles.py` `eevee_painterly` (32 samples, shadows, Fast GI AO, motion blur 1 step; stop rule None: the research's
+  budget-share formula is not settled, ICW-09's OR-23 plan names it); `config/job_speeds.json` row; render manifest enum.
+- `shot_spec/3` (docs/CONTRACTS.md): view transform, shade mode and path, line mode; `style_sheets.spec_for` writes /3 for the
+  `q1_*` looks (`look_variants.json` `q1_variants`, kept apart from the round's ten).
+- `blender/grade.py views` -> `view_palette_match.json` (Blender 5.2.3 OCIO): palette mean CIE76 dE raw Standard 0.0, Khronos PBR
+  Neutral 6.73 (max 17.1, `night`; matched 0.5), against AgX MHC 12.98 (matched 2.25). `palette_match` uses it on the new paths.
+- Tests: `tests/unit/test_light_rigs.py` (new), additions to `test_blender_style.py`, `test_agx_grade.py`, `test_shot_cache.py`
+  (/3 validates, /2 unchanged), `test_job_speeds_rows.py` (the new row). Cost $0.
+- Local check (this container, Blender 5.2.3 CPU / Mesa, 1280x720): lights, light linking (20 cast meshes) and the normal blur
+  applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
+  heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
+- Overnight matrix C1-C4 (Fable's OVERNIGHT_PLAN 22:05 UTC, the creator's brief 19:55 UTC): `blender/combo_profiles.json`
+  (`combo_profiles/1`, read by `blender/combos.py`) names each combination's look (`q1_c1_lit_preset`, `q1_c2_native_skin`,
+  `q1_c3_far_plate`, `q1_c4_pn_faces`), render profile and character path; each era brings its light preset (E1 noon_epic, E2
+  golden_hour, E3 overcast_day, E4 golden_hour). C2 is the default character path (Fable 22:06 UTC: Q4's toon Rain is not there).
+  New look knobs (defaults keep every older graph byte for byte): `native_classes` (those character classes keep the asset's own
+  material, e.g. Blender Studio's SSS skin; `apply_style` leaves the slot alone, `check` accepts a native entry only for a listed
+  class), `skin_lift` (per character: a shadowless, specular-free front fill linked to that character's meshes, and on rgb_soft its
+  skin shadow tint lerped to white), `pn_converge` (Perfectly Normal 0.0.3, GPL-3.0-or-later: its Manip Verts GN groups appended
+  from the extension's own .blend as data, (Re)create -> Tweak Converge -> Apply; one face-normal method at a time). Presets: every
+  key carries `front_offset_deg` (30-45 degrees, enforced): with a cast in the shot the key turns to the camera's side.
+  Perfectly Normal pinned in `config/cloud_pins.json` and `assets/licence_sources.json`, fetched by `blender/face_normals.py`.
+  Not in (stated, not hidden): Brushstroke Tools on C3's close plane (its operators are add-on Python, refused in the cloud
+  container; the GN-only route is not built) and nikolaj3d's shader for C4 (the $0 Gumroad download needs a checkout with an
+  email). Tests: `tests/unit/test_combo_profiles.py`.
+- `character_key` (light_presets.json; WP-Q4's front_key(), the lead close-up accepted by Fable 22:17 UTC): on a close-up
+  (`Look.character_key`, `combos.tokens(..., close_up=True)`) the preset's key and fill give way to a warm key 35 degrees off the
+  camera axis, 10.4 degrees up (above the eye line), and a cool shadowless fill opposite at a quarter of its energy; the era's rims
+  and world tint stay. The loader holds the band (30-45 degrees, fill opposite, share <= 0.5).
+- Era light by look id (`style.LIGHT_TAG`): `q1_c2_native_skin@E1` (era key -> its preset), `...@noon_epic` (a preset name),
+  `...@E2+cu` (the close-up character key). Every CLI that takes a look id (`style_sheets looks`, `world_kits poc --variants`)
+  passes the era's light this way; a look without a preset refuses the tag. Perfectly Normal's Converge turned out inward for a
+  positive share (UV sphere in 5.2.3: mean dot with the outward normal 0.971 flat, -0.911 at +0.6; the first C4 frame's cast went
+  black), so `render_shot.perfectly_normal` passes the outward share as a negative Converge (0.984 at -0.6).
+  The black cast had a second cause: PN 0.0.3's rebuild shifts every face's material index by one (5.2.3, a two-slot sphere:
+  [0, 1] -> [1, 2]), so the kit cast drew in the wrong slots. Two small GN groups around PN store the index as a face attribute and
+  set it back; the cast's imported custom normals are cleared and shaded smooth first. Local C4 frame now renders the cast in its
+  own colours (14.5 s/frame at 1280x720).
+- Depth haze (Fable 22:30 UTC: the E2 cells fail on the world, C3's plate is invisible at that distance): `Look.haze` (share at full
+  mist), `haze_start_m`, `haze_depth_m`, `haze_colour` (warm grey 0.8/0.76/0.7). The finish mixes the colour in by the mist pass
+  (after Kuwahara and the plate, before bleed/paper/grain); `render_shot` turns the view layer's mist pass on and sets the world's
+  mist range (QUADRATIC). Every C look carries haze 0.45 from 12 m to 162 m. Local establishing A/B (1280x720): the far ground,
+  the castle's back and the horizon fade to warm grey; the sky washes too (the mist pass is 1 on the background), +1.9 s/frame.
+

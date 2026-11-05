@@ -57,3 +57,20 @@ def test_a_stale_table_or_an_unknown_colour_is_refused(monkeypatch):
     monkeypatch.setattr(G, "_sha", lambda path: "0" * 64)
     with pytest.raises(ValueError, match="stale"):
         G.matched(S.palette()["ink"], doc)
+
+
+def test_standard_and_pbr_neutral_rows_exist_and_are_not_stale():
+    """WP-Q1: the palette measured under the soft looks' view transforms (grade.py views, Blender 5.2.3's OCIO config)."""
+    doc = G.load_views()
+    assert doc["schema"] == G.VIEWS_SCHEMA and not G.stale(doc)
+    assert set(doc["views"]) == set(G.SOFT_VIEWS)
+    std, pbrn = doc["views"]["Standard"], doc["views"]["Khronos PBR Neutral"]
+    assert std["mean_delta_e_raw"] < 1.0                      # Standard shows the hex as it is
+    assert pbrn["mean_delta_e_raw"] < G.summary()["mean_delta_e_raw"]   # PBR Neutral moves the palette less than AgX does
+    tokens = {k for k in S.palette() if k != "chroma_key"}
+    for view in doc["views"].values():
+        assert tokens <= {n for r in view["colours"].values() for n in r["names"]}
+    h = S.palette()["support_blue"]
+    assert G.matched_view(h, "Khronos PBR Neutral") == tuple(pbrn["colours"][h.upper()]["linear"])
+    with pytest.raises(KeyError):
+        G.matched_view("#123457", "Standard")

@@ -11,6 +11,7 @@
     "smoke": {"unit": "pod", "rows": {}},
     "blender_frame_eevee_fast_1440": {"unit": "frame", "rows": {}},
     "blender_frame_eevee_full_1440": {"unit": "frame", "rows": {}},
+    "blender_frame_eevee_painterly_1440": {"unit": "frame", "rows": {}},
     "blender_frame_cycles_hero_1440": {"unit": "frame", "rows": {}}
   }
 }
