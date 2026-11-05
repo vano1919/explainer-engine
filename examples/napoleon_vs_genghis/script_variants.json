@@ -1,7 +1,7 @@
 {
  "schema": "script_variants/2",
  "episode_slug": "napoleon_vs_genghis",
- "dossier_sha256": "2cdf5f753d5cd67757e5f4d433bb6de850acbe1a843d0972a91dcd4a094c7eed",
+ "dossier_sha256": "9c61bc3d2a194119736e9e3261e2f3fc55f0c64968fb78a9237c1991639c385d",
  "variants": [
   {
    "id": "v1",
@@ -97,12 +97,12 @@
       {
        "id": "S02-01",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 9,
+       "category": "compensator",
        "words": {
         "narrator": 10,
         "character": 0
@@ -125,12 +125,12 @@
       {
        "id": "S02-03",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "genghis",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -139,12 +139,12 @@
       {
        "id": "S02-04",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "brun",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -167,11 +167,11 @@
       {
        "id": "S02-06",
        "seconds": 4.0,
-       "tier": "hold",
        "mode": "establish",
-       "lane": "STILL_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "hold",
+       "archetype": 1,
+       "category": "map_pure",
        "words": {
         "narrator": 8,
         "character": 0
@@ -186,12 +186,12 @@
       {
        "id": "S03-01",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "gunners",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 6,
+       "category": "compensator",
        "words": {
         "narrator": 10,
         "character": 0
@@ -228,12 +228,12 @@
       {
        "id": "S03-04",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 5,
+       "category": "compensator",
        "words": {
         "narrator": 8,
         "character": 0
@@ -255,12 +255,12 @@
       {
        "id": "S03-06",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "narrated",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 7,
         "character": 0
@@ -269,12 +269,12 @@
       {
        "id": "S03-07",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 5,
+       "category": "compensator",
        "words": {
         "narrator": 10,
         "character": 0
@@ -283,12 +283,12 @@
       {
        "id": "S03-08",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "genghis",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 11,
         "character": 0
@@ -297,12 +297,12 @@
       {
        "id": "S03-09",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "insert",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -330,12 +330,12 @@
       {
        "id": "S04-01",
        "seconds": 5.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "bars",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 11,
         "character": 0
@@ -386,12 +386,12 @@
       {
        "id": "S04-05",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -442,12 +442,12 @@
       {
        "id": "S04-09",
        "seconds": 5.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "murat",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -498,12 +498,12 @@
       {
        "id": "S04-13",
        "seconds": 5.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "murat",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -554,12 +554,12 @@
       {
        "id": "S04-17",
        "seconds": 3.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -568,12 +568,12 @@
       {
        "id": "S04-18",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "bars",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 6,
         "character": 0
@@ -630,11 +630,11 @@
       {
        "id": "S05-01",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 12,
         "character": 0
@@ -643,12 +643,12 @@
       {
        "id": "S05-02",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "insert",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -657,12 +657,12 @@
       {
        "id": "S05-03",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "insert",
        "who": "cavalry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -705,12 +705,12 @@
       {
        "id": "S06-01",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "murat",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 11,
         "character": 0
@@ -747,12 +747,12 @@
       {
        "id": "S06-04",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "compensator",
+       "archetype": 2,
+       "category": "map_pure",
        "words": {
         "narrator": 11,
         "character": 0
@@ -775,12 +775,12 @@
       {
        "id": "S06-06",
        "seconds": 3.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "insert",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 5,
         "character": 0
@@ -803,12 +803,12 @@
       {
        "id": "S06-08",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "kemal",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -845,12 +845,12 @@
       {
        "id": "S06-11",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 7,
         "character": 0
@@ -887,12 +887,12 @@
       {
        "id": "S06-14",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "cavalry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -929,12 +929,12 @@
       {
        "id": "S06-17",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -971,12 +971,12 @@
       {
        "id": "S06-20",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "gunners",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -1027,12 +1027,12 @@
       {
        "id": "S06-24",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "compensator",
+       "archetype": 2,
+       "category": "map_pure",
        "words": {
         "narrator": 11,
         "character": 0
@@ -1069,12 +1069,12 @@
       {
        "id": "S06-27",
        "seconds": 3.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 6,
         "character": 0
@@ -1089,12 +1089,12 @@
       {
        "id": "S07-01",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -1103,12 +1103,12 @@
       {
        "id": "S07-02",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "murat",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -1131,12 +1131,12 @@
       {
        "id": "S07-04",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "insert",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -1145,12 +1145,12 @@
       {
        "id": "S07-05",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 7,
+       "category": "compensator",
        "words": {
         "narrator": 8,
         "character": 0
@@ -1228,12 +1228,12 @@
       {
        "id": "S07-11",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 11,
         "character": 0
@@ -1262,12 +1262,12 @@
       {
        "id": "S08-01",
        "seconds": 5.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "bayan",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 12,
         "character": 0
@@ -1304,12 +1304,12 @@
       {
        "id": "S08-04",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "bayan",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -1346,12 +1346,12 @@
       {
        "id": "S08-07",
        "seconds": 5.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "subutai",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 13,
         "character": 0
@@ -1402,12 +1402,12 @@
       {
        "id": "S08-11",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
        "who": "scouts",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -1430,12 +1430,12 @@
       {
        "id": "S08-13",
        "seconds": 5.0,
-       "tier": "light",
        "mode": "establish",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "compensator",
+       "archetype": 1,
+       "category": "map_pure",
        "words": {
         "narrator": 13,
         "character": 0
@@ -1472,12 +1472,12 @@
       {
        "id": "S08-16",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "subutai",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 11,
         "character": 0
@@ -1500,12 +1500,12 @@
       {
        "id": "S08-18",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -1556,12 +1556,12 @@
       {
        "id": "S08-22",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "subutai",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -1631,12 +1631,12 @@
       {
        "id": "S09-05",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -1659,12 +1659,12 @@
       {
        "id": "S09-07",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "insert",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -1673,11 +1673,11 @@
       {
        "id": "S09-08",
        "seconds": 5.0,
-       "tier": "full",
        "mode": "establish",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "compensator",
+       "archetype": 2,
+       "category": "map_pure",
        "words": {
         "narrator": 14,
         "character": 0
@@ -1714,11 +1714,11 @@
       {
        "id": "S09-11",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -1727,12 +1727,12 @@
       {
        "id": "S09-12",
        "seconds": 3.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 7,
         "character": 0
@@ -1741,12 +1741,12 @@
       {
        "id": "S09-13",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "genghis",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -1803,12 +1803,12 @@
       {
        "id": "S10-04",
        "seconds": 3.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "drummer",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -1831,12 +1831,12 @@
       {
        "id": "S10-06",
        "seconds": 3.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "insert",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 6,
         "character": 0
@@ -1943,12 +1943,12 @@
       {
        "id": "S10-14",
        "seconds": 3.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 5,
         "character": 0
@@ -1985,12 +1985,12 @@
       {
        "id": "S10-17",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "compensator",
+       "archetype": 3,
+       "category": "map_pure",
        "words": {
         "narrator": 10,
         "character": 0
@@ -2027,12 +2027,12 @@
       {
        "id": "S10-20",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "gunners",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -2153,12 +2153,12 @@
       {
        "id": "S10-29",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "scene",
        "who": "murat",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 7,
         "character": 0
@@ -2209,12 +2209,12 @@
       {
        "id": "S10-33",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "genghis",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 12,
         "character": 0
@@ -2367,12 +2367,12 @@
       {
        "id": "S11-06",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -2427,12 +2427,12 @@
       {
        "id": "S12-02",
        "seconds": 4.0,
-       "tier": "light",
        "mode": "narrated",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 11,
+       "category": "compensator",
        "words": {
         "narrator": 9,
         "character": 0
@@ -2469,12 +2469,12 @@
       {
        "id": "S12-05",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -2483,12 +2483,12 @@
       {
        "id": "S12-06",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -2545,12 +2545,12 @@
       {
        "id": "S13-01",
        "seconds": 5.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "establish",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "compensator",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -2601,12 +2601,12 @@
       {
        "id": "S13-05",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -2657,12 +2657,12 @@
       {
        "id": "S13-09",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "bars",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 7,
         "character": 0
@@ -2727,12 +2727,12 @@
       {
        "id": "S13-14",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 10,
         "character": 0
@@ -2783,12 +2783,12 @@
       {
        "id": "S13-18",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "scene",
        "who": "genghis",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -2825,12 +2825,12 @@
       {
        "id": "S13-21",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "establish",
        "who": "riders",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "compensator",
+       "archetype": 2,
+       "category": "map_pure",
        "words": {
         "narrator": 12,
         "character": 0
@@ -2859,12 +2859,12 @@
       {
        "id": "S14-02",
        "seconds": 5.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "scene",
+       "archetype": 12,
+       "category": "compensator",
        "words": {
         "narrator": 12,
         "character": 0
@@ -2901,11 +2901,11 @@
       {
        "id": "S14-05",
        "seconds": 4.0,
-       "tier": "hold",
        "mode": "establish",
-       "lane": "STILL_3D",
+       "lane": "COMPENSATOR",
        "shots": 1,
-       "category": "hold",
+       "archetype": 9,
+       "category": "compensator",
        "words": {
         "narrator": 14,
         "character": 0
@@ -2914,12 +2914,12 @@
       {
        "id": "S14-06",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "narrated",
        "who": "brun",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 14,
         "character": 0
@@ -2956,12 +2956,12 @@
       {
        "id": "S14-09",
        "seconds": 4.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 11,
         "character": 0
@@ -2970,12 +2970,12 @@
       {
        "id": "S14-10",
        "seconds": 4.0,
-       "tier": "full",
        "mode": "narrated",
        "who": "infantry",
-       "lane": "VIDEO_3D",
+       "lane": "MAP",
        "shots": 1,
-       "category": "scene",
+       "archetype": 1,
+       "category": "map_pure",
        "words": {
         "narrator": 12,
         "character": 0
@@ -3032,12 +3032,12 @@
       {
        "id": "S15-03",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "napoleon",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 9,
         "character": 0
@@ -3052,12 +3052,12 @@
       {
        "id": "S16-01",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "geniuses",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 15,
         "character": 0
@@ -3066,12 +3066,12 @@
       {
        "id": "S16-02",
        "seconds": 5.0,
-       "tier": "light",
+       "tier": "hold",
        "mode": "narrated",
        "who": "stranded",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 17,
         "character": 0
@@ -3080,12 +3080,12 @@
       {
        "id": "S16-03",
        "seconds": 4.0,
-       "tier": "full",
+       "tier": "hold",
        "mode": "narrated",
        "who": "genghis",
-       "lane": "VIDEO_3D",
+       "lane": "STILL_3D",
        "shots": 1,
-       "category": "scene",
+       "category": "hold",
        "words": {
         "narrator": 8,
         "character": 0
@@ -3142,15 +3142,15 @@
     }
    ],
    "dynamics": {
-    "share_scene": 0.793,
-    "share_map_pure": 0.0,
-    "share_compensator": 0.161,
+    "share_scene": 0.564,
+    "share_map_pure": 0.038,
+    "share_compensator": 0.092,
     "share_host": 0.0,
-    "share_hold": 0.046,
-    "non_character": 0.207,
+    "share_hold": 0.306,
+    "non_character": 0.436,
     "narrator_share": 0.701,
-    "map_run_max_s": 0.0,
-    "non_scene_run_max_s": 9.0,
+    "map_run_max_s": 5.0,
+    "non_scene_run_max_s": 33.0,
     "shots_per_min": 14.3
    },
    "cost": {
@@ -3223,15 +3223,12 @@
     ]
    },
    "risks": [
-    "REVIEW VP-18 video",
-    "REVIEW VP-18 still",
-    "REVIEW VP-18 helper",
-    "REVIEW VP-11 KEYFRAME_LTX:full",
-    "REVIEW VP-11 KEYFRAME_LTX:light",
+    "REVIEW VP-11 VIDEO_3D",
+    "REVIEW VP-11 STILL_3D",
     "REVIEW VP-12 cost"
    ],
    "scores": {
-    "code": 40,
+    "code": 70,
     "critic": null
    }
   },

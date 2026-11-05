@@ -405,12 +405,18 @@ def test_sheet_prompts_for_named_heroes_only():
                 if f["severity"] == "FAIL"]
 
 
-def test_the_napoleon_episode_is_clean_under_the_engine_except_the_new_visual_mix():
+def test_the_napoleon_episode_is_clean_under_the_engine_except_its_held_reactions():
     ep = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
     assert ep["engine"] == F.ENGINE
-    # the fixture predates BP-109's 60/30/10 (the creator, 2026-11-01): ~95 % video, no stills; only that mix is flagged
+    # since ICW-03 the lane planner meets BP-109's 60/30/10 (no episode-level KP-37 mix finding any more); what is left is
+    # KP-37's REVIEW on the played reaction shots the planner held as STILL_3D plates (mostly archetype 5, solitary emotion,
+    # whose default lane is the still): a still cannot act the card's action, so a reviewer looks at each one
     found = F.check(ep)
-    assert found and all(f["rule"] == "KP-37" and f["where"] == "episode" and f["severity"] == "REVIEW" for f in found)
+    by = {s["id"]: s for s in ep["shots"]}
+    assert not [f for f in found if f["where"] == "episode"]
+    assert found and all(f["rule"] == "KP-37" and f["severity"] == "REVIEW" and by[f["where"]]["lane"] == "STILL_3D"
+                         and by[f["where"]]["mode"] == "scene" and "acted peak" in f["detail"] for f in found)
+    assert len(found) == 17
     assert sum(s["seconds"] for s in ep["shots"]) == 900
 
 

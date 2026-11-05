@@ -252,7 +252,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 18,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -306,7 +306,7 @@
    "source": "keyframe",
    "teaser_of": "S10-23",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 18,
    "duration_frames": 48,
    "width": 2560,
    "height": 1440,
@@ -359,7 +359,7 @@
    "source": "keyframe",
    "teaser_of": "S10-17",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 18,
    "duration_frames": 48,
    "width": 2560,
    "height": 1440,
@@ -416,7 +416,7 @@
    "source": "keyframe",
    "teaser_of": "S10-25",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 18,
    "duration_frames": 48,
    "width": 2560,
    "height": 1440,
@@ -475,7 +475,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 18,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -508,7 +508,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -535,8 +535,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 17,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -547,8 +547,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "PRIMARY_SOURCE_DOSSIER_CARD"
   },
   {
    "id": "S02-02",
@@ -596,7 +595,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 9,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -627,7 +626,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -649,8 +648,8 @@
     "ambience": "wind over the ridge"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -662,7 +661,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S02-04",
@@ -681,7 +680,7 @@
      "for": "where he stares"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "brun",
@@ -703,8 +702,8 @@
    },
    "source": "cut",
    "master": "S02-03",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -716,7 +715,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S02-05",
@@ -747,7 +746,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 6,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -811,8 +810,8 @@
     "ambience": "wind over open grass"
    },
    "source": "keyframe",
-   "lane": "STILL_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -823,8 +822,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "still_mode": "camera_move_3d"
+   "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
    "id": "S03-01",
@@ -843,7 +841,7 @@
      "for": "where the barrel points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -870,8 +868,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 17,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -882,8 +880,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "WEAPON_AND_MATERIAL_CUTAWAY"
   },
   {
    "id": "S03-02",
@@ -935,7 +932,7 @@
    "source": "cut",
    "master": "S03-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 2,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -993,7 +990,7 @@
    "source": "cut",
    "master": "S03-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 1,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -1024,7 +1021,7 @@
      "for": "where they fire"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -1049,8 +1046,8 @@
     "loudest": "one musket volley"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 13,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1061,8 +1058,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD"
   },
   {
    "id": "S03-05",
@@ -1104,7 +1100,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 15,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1135,7 +1131,7 @@
      "for": "where they ride"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -1162,8 +1158,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1175,7 +1171,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S03-07",
@@ -1194,7 +1190,7 @@
      "for": "where the arrows fly"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -1221,8 +1217,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 13,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1233,8 +1229,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD"
   },
   {
    "id": "S03-08",
@@ -1253,7 +1248,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -1278,8 +1273,8 @@
     "ambience": "horses grazing, a far-off horn"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1291,7 +1286,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S03-09",
@@ -1309,7 +1304,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "a heavy supply wagon wheel sinks in soft mud",
@@ -1324,8 +1319,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1337,7 +1332,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S03-10",
@@ -1393,7 +1388,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 15,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1427,7 +1422,7 @@
      "for": "where he rides in"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -1489,8 +1484,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1502,7 +1497,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S04-02",
@@ -1558,7 +1553,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1627,7 +1622,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1700,7 +1695,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1732,7 +1727,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -1758,8 +1753,8 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1771,7 +1766,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S04-06",
@@ -1826,7 +1821,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -1895,7 +1890,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1964,7 +1959,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -1996,7 +1991,7 @@
      "for": "where his head goes"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -2022,8 +2017,8 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 2,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2035,7 +2030,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S04-10",
@@ -2091,7 +2086,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2158,7 +2153,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2225,7 +2220,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2257,7 +2252,7 @@
      "for": "where the pistol points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -2286,8 +2281,8 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 2,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2299,7 +2294,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S04-14",
@@ -2354,7 +2349,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2422,7 +2417,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2491,7 +2486,7 @@
    "source": "cut",
    "master": "S04-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2523,7 +2518,7 @@
      "for": "the camp below"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -2547,8 +2542,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 11,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -2560,7 +2555,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S04-18",
@@ -2579,7 +2574,7 @@
      "for": "where he rides off"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -2621,8 +2616,8 @@
    "source": "cut",
    "master": "S04-17",
    "exit": true,
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2634,7 +2629,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S04-19",
@@ -2689,7 +2684,7 @@
    "source": "cut",
    "master": "S04-17",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2748,7 +2743,7 @@
    "source": "cut",
    "master": "S04-17",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2808,7 +2803,7 @@
    "source": "cut",
    "master": "S04-17",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2839,7 +2834,7 @@
      "the covered wagons stand in a long line on the grass"
     ]
    },
-   "tier": "light",
+   "tier": "hold",
    "narration": "Napoleon's army ate from wagons, and from the farms along the road.",
    "claims": [
     "C16"
@@ -2851,8 +2846,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -2864,7 +2859,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S05-02",
@@ -2882,7 +2877,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "an empty flour sack hangs from a soldier's hand",
@@ -2895,8 +2890,8 @@
    },
    "source": "cut",
    "master": "S05-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2908,7 +2903,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S05-03",
@@ -2926,7 +2921,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "cavalry",
     "start": "a French cavalry horse tears up a mouthful of grass",
@@ -2938,8 +2933,8 @@
     "ambience": "wind over open grass"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -2951,7 +2946,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S05-04",
@@ -2993,7 +2988,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -3065,7 +3060,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 7,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3099,7 +3094,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -3126,8 +3121,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3139,7 +3134,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S06-02",
@@ -3181,7 +3176,7 @@
    "source": "cut",
    "master": "S06-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3226,7 +3221,7 @@
    "source": "cut",
    "master": "S06-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 6,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -3257,7 +3252,7 @@
      "for": "where the arrows rise"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -3285,8 +3280,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3297,8 +3292,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S06-05",
@@ -3361,7 +3355,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3392,7 +3386,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "riders",
     "start": "arrows rain down onto a soldier's pack on the grass",
@@ -3411,8 +3405,8 @@
    },
    "source": "cut",
    "master": "S06-05",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -3424,7 +3418,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S06-07",
@@ -3483,7 +3477,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3515,7 +3509,7 @@
      "for": "where he points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "kemal",
@@ -3547,8 +3541,8 @@
    },
    "source": "nextpose",
    "master": "S06-07",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3560,7 +3554,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S06-09",
@@ -3613,7 +3607,7 @@
    "source": "nextpose",
    "master": "S06-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -3659,7 +3653,7 @@
    "source": "cut",
    "master": "S06-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 6,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -3689,7 +3683,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -3715,8 +3709,8 @@
    },
    "source": "cut",
    "master": "S06-07",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3728,7 +3722,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S06-12",
@@ -3782,7 +3776,7 @@
    "source": "cut",
    "master": "S06-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3845,7 +3839,7 @@
    "source": "cut",
    "master": "S06-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3877,7 +3871,7 @@
      "for": "where they charge"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "cavalry",
@@ -3899,8 +3893,8 @@
     "loudest": "hundreds of hooves"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 1,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -3912,7 +3906,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S06-15",
@@ -3956,7 +3950,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 10,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4012,7 +4006,7 @@
    "source": "cut",
    "master": "S06-15",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4043,7 +4037,7 @@
      "for": "where they ride"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -4068,8 +4062,8 @@
    },
    "source": "nextpose",
    "master": "S06-15",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4081,7 +4075,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S06-18",
@@ -4138,7 +4132,7 @@
    "source": "cut",
    "master": "S06-15",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -4205,7 +4199,7 @@
    "source": "cut",
    "master": "S06-15",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4237,7 +4231,7 @@
      "for": "where the gun will point"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -4262,8 +4256,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 1,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4275,7 +4269,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S06-21",
@@ -4328,7 +4322,7 @@
    "source": "cut",
    "master": "S06-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4388,7 +4382,7 @@
    "source": "cut",
    "master": "S06-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -4444,7 +4438,7 @@
    "source": "cut",
    "master": "S06-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 1,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -4475,7 +4469,7 @@
      "for": "where they scatter"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -4501,8 +4495,8 @@
    },
    "source": "cut",
    "master": "S06-20",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4513,8 +4507,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S06-25",
@@ -4564,7 +4557,7 @@
    "source": "cut",
    "master": "S06-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4623,7 +4616,7 @@
    "source": "cut",
    "master": "S06-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4655,7 +4648,7 @@
      "for": "where they wait"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -4680,8 +4673,8 @@
    },
    "source": "cut",
    "master": "S06-20",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 15,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -4693,7 +4686,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S07-01",
@@ -4714,7 +4707,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -4738,8 +4731,8 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 11,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4751,7 +4744,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S07-02",
@@ -4773,7 +4766,7 @@
      "for": "the thin horse"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -4798,8 +4791,8 @@
    },
    "source": "cut",
    "master": "S07-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4811,7 +4804,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S07-03",
@@ -4857,7 +4850,7 @@
    "source": "cut",
    "master": "S07-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4888,7 +4881,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "a black pot bubbles over a small fire",
@@ -4904,8 +4897,8 @@
    },
    "source": "cut",
    "master": "S07-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4917,7 +4910,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S07-05",
@@ -4936,7 +4929,7 @@
      "for": "where the herd runs"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -4964,8 +4957,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 13,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -4976,8 +4969,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "SPLIT_SCREEN_SPEED_RACE"
   },
   {
    "id": "S07-06",
@@ -5039,7 +5031,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5106,7 +5098,7 @@
    "source": "cut",
    "master": "S07-06",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5173,7 +5165,7 @@
    "source": "cut",
    "master": "S07-06",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5240,7 +5232,7 @@
    "source": "cut",
    "master": "S07-06",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5276,7 +5268,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 11,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5307,7 +5299,7 @@
      "for": "the dark grass"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -5331,8 +5323,8 @@
     "ambience": "wind over open grass"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5344,7 +5336,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S07-12",
@@ -5390,7 +5382,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 2,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5424,7 +5416,7 @@
      "for": "where he kneels"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -5483,8 +5475,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5496,7 +5488,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S08-02",
@@ -5551,7 +5543,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5618,7 +5610,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5649,7 +5641,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "bayan",
@@ -5678,8 +5670,8 @@
    },
    "source": "cut",
    "master": "S08-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5691,7 +5683,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S08-05",
@@ -5741,7 +5733,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5805,7 +5797,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -5836,7 +5828,7 @@
      "for": "the arc"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -5869,8 +5861,8 @@
    },
    "source": "cut",
    "master": "S08-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5882,7 +5874,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S08-08",
@@ -5935,7 +5927,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -5995,7 +5987,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6054,7 +6046,7 @@
    "source": "cut",
    "master": "S08-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6089,7 +6081,7 @@
      "for": "the wagons"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "scouts",
@@ -6113,8 +6105,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6126,7 +6118,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S08-12",
@@ -6173,7 +6165,7 @@
    "source": "cut",
    "master": "S08-11",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6208,7 +6200,7 @@
      "for": "where the column marches"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -6235,8 +6227,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6247,8 +6239,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_fast",
-   "lipsync": false
+   "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
    "id": "S08-14",
@@ -6304,7 +6295,7 @@
    "source": "cut",
    "master": "S08-13",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6370,7 +6361,7 @@
    "source": "cut",
    "master": "S08-13",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6402,7 +6393,7 @@
      "for": "the khan"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -6427,8 +6418,8 @@
    },
    "source": "cut",
    "master": "S08-13",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6440,7 +6431,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S08-17",
@@ -6494,7 +6485,7 @@
    "source": "cut",
    "master": "S08-13",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6526,7 +6517,7 @@
      "for": "where they ride off"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -6551,8 +6542,8 @@
    },
    "source": "keyframe",
    "exit": true,
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6564,7 +6555,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S08-19",
@@ -6610,7 +6601,7 @@
    "source": "cut",
    "master": "S08-18",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6676,7 +6667,7 @@
    "source": "cut",
    "master": "S08-18",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6744,7 +6735,7 @@
    "source": "cut",
    "master": "S08-18",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -6776,7 +6767,7 @@
      "for": "the door"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -6820,8 +6811,8 @@
    "source": "cut",
    "master": "S08-18",
    "exit": true,
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 4,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6833,7 +6824,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S09-01",
@@ -6868,7 +6859,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 14,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6921,7 +6912,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 1,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -6979,7 +6970,7 @@
    "source": "cut",
    "master": "S09-02",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7036,7 +7027,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 10,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7067,7 +7058,7 @@
      "for": "the ridge"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -7089,8 +7080,8 @@
    },
    "source": "cut",
    "master": "S09-04",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -7102,7 +7093,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S09-06",
@@ -7155,7 +7146,7 @@
    "source": "cut",
    "master": "S09-04",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -7186,7 +7177,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "napoleon",
     "start": "a gloved finger draws a curving line in the dust on a wagon board",
@@ -7201,8 +7192,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7214,7 +7205,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S09-08",
@@ -7233,7 +7224,7 @@
      "the division stands in front of the low hill"
     ]
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -7248,8 +7239,8 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -7260,8 +7251,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S09-09",
@@ -7306,7 +7296,7 @@
    "source": "cut",
    "master": "S09-08",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 1,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -7362,7 +7352,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 8,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -7392,7 +7382,7 @@
      "the covered wagons stand behind the drummer"
     ]
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "drummer",
@@ -7407,8 +7397,8 @@
     "ambience": "wind, a wagon creaking"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7420,7 +7410,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S09-12",
@@ -7439,7 +7429,7 @@
      "for": "where they walk"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -7463,8 +7453,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 7,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -7476,7 +7466,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S09-13",
@@ -7495,7 +7485,7 @@
      "for": "the valley"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -7516,8 +7506,8 @@
     "ambience": "wind over the ridge"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 9,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7529,7 +7519,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S10-01",
@@ -7591,7 +7581,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7649,7 +7639,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7711,7 +7701,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 1,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7742,7 +7732,7 @@
      "for": "the hills"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "drummer",
@@ -7766,8 +7756,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -7779,7 +7769,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S10-05",
@@ -7821,7 +7811,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7851,7 +7841,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "arrows rain down into the square",
@@ -7867,8 +7857,8 @@
    },
    "source": "cut",
    "master": "S10-05",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 6,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -7880,7 +7870,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S10-07",
@@ -7929,7 +7919,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -7988,7 +7978,7 @@
    "source": "cut",
    "master": "S10-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -8043,7 +8033,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -8097,7 +8087,7 @@
    "source": "cut",
    "master": "S10-09",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -8151,7 +8141,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8209,7 +8199,7 @@
    "source": "cut",
    "master": "S10-11",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8268,7 +8258,7 @@
    "source": "cut",
    "master": "S10-11",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8300,7 +8290,7 @@
      "for": "where they aim"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -8321,8 +8311,8 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 1,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -8334,7 +8324,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S10-15",
@@ -8381,7 +8371,7 @@
    "source": "cut",
    "master": "S10-14",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -8439,7 +8429,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8470,7 +8460,7 @@
      "for": "where they wheel"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -8494,8 +8484,8 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8506,8 +8496,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "FORMATION_MICRO_MECHANICS"
   },
   {
    "id": "S10-18",
@@ -8553,7 +8542,7 @@
    "source": "cut",
    "master": "S10-17",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8625,7 +8614,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8657,7 +8646,7 @@
      "for": "where the barrel points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -8681,8 +8670,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8694,7 +8683,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S10-21",
@@ -8743,7 +8732,7 @@
    "source": "cut",
    "master": "S10-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8799,7 +8788,7 @@
    "source": "cut",
    "master": "S10-20",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -8856,7 +8845,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8915,7 +8904,7 @@
    "source": "cut",
    "master": "S10-23",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -8976,7 +8965,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 19,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9035,7 +9024,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9102,7 +9091,7 @@
    "source": "cut",
    "master": "S10-26",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -9169,7 +9158,7 @@
    "source": "cut",
    "master": "S10-26",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9200,7 +9189,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -9222,8 +9211,8 @@
    },
    "source": "cut",
    "master": "S10-26",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 2,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9235,7 +9224,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S10-30",
@@ -9294,7 +9283,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9360,7 +9349,7 @@
    "source": "cut",
    "master": "S10-30",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9428,7 +9417,7 @@
    "source": "cut",
    "master": "S10-30",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -9460,7 +9449,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -9482,8 +9471,8 @@
    },
    "source": "cut",
    "master": "S10-30",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -9495,7 +9484,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S10-34",
@@ -9549,7 +9538,7 @@
    "source": "cut",
    "master": "S10-30",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9609,7 +9598,7 @@
    "source": "cut",
    "master": "S10-30",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -9648,7 +9637,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9713,7 +9702,7 @@
    "source": "cut",
    "master": "S10-36",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9768,7 +9757,7 @@
    "source": "cut",
    "master": "S10-36",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -9815,7 +9804,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 9,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -9873,7 +9862,7 @@
    "source": "cut",
    "master": "S11-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -9940,7 +9929,7 @@
    "source": "cut",
    "master": "S11-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10006,7 +9995,7 @@
    "source": "cut",
    "master": "S11-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10072,7 +10061,7 @@
    "source": "cut",
    "master": "S11-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10103,7 +10092,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -10128,8 +10117,8 @@
    },
    "source": "cut",
    "master": "S11-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10141,7 +10130,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S11-07",
@@ -10194,7 +10183,7 @@
    "source": "cut",
    "master": "S11-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10233,7 +10222,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10271,7 +10260,7 @@
    },
    "source": "keyframe",
    "lane": "STILL_3D",
-   "archetype": null,
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10302,7 +10291,7 @@
      "for": "where they ride in"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -10326,8 +10315,8 @@
     "ambience": "horses grazing, a far-off horn"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 13,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10338,8 +10327,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_fast",
-   "lipsync": false
+   "helper_archetype": "ORDER_OF_BATTLE_TELEMETRY_HUD"
   },
   {
    "id": "S12-03",
@@ -10384,7 +10372,7 @@
    "source": "cut",
    "master": "S12-02",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 8,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10436,7 +10424,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 16,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10466,7 +10454,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -10491,8 +10479,8 @@
    },
    "source": "cut",
    "master": "S12-04",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10504,7 +10492,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S12-06",
@@ -10522,7 +10510,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -10543,8 +10531,8 @@
     "ambience": "a candle guttering, canvas creaking"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10556,7 +10544,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S12-07",
@@ -10603,7 +10591,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 9,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -10668,7 +10656,7 @@
    "source": "cut",
    "master": "S12-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10734,7 +10722,7 @@
    "source": "cut",
    "master": "S12-07",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10769,7 +10757,7 @@
      "for": "the khan"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -10826,8 +10814,8 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 4,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10839,7 +10827,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S13-02",
@@ -10893,7 +10881,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -10960,7 +10948,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11027,7 +11015,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11058,7 +11046,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -11080,8 +11068,8 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 2,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11093,7 +11081,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "hold"
   },
   {
    "id": "S13-06",
@@ -11150,7 +11138,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11214,7 +11202,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11281,7 +11269,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11312,7 +11300,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "bars",
@@ -11334,8 +11322,8 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -11347,7 +11335,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S13-10",
@@ -11401,7 +11389,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11460,7 +11448,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11527,7 +11515,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -11594,7 +11582,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11626,7 +11614,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -11652,8 +11640,8 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11665,7 +11653,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S13-15",
@@ -11718,7 +11706,7 @@
    "source": "cut",
    "master": "S13-01",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11784,7 +11772,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -11854,7 +11842,7 @@
    "source": "cut",
    "master": "S13-16",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11885,7 +11873,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -11907,8 +11895,8 @@
    },
    "source": "cut",
    "master": "S13-16",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -11920,7 +11908,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S13-19",
@@ -11974,7 +11962,7 @@
    "source": "cut",
    "master": "S13-16",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12056,7 +12044,7 @@
    "master": "S13-16",
    "exit": true,
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 7,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12087,7 +12075,7 @@
      "for": "where they drag them"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -12129,8 +12117,8 @@
    },
    "source": "keyframe",
    "exit": true,
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12141,8 +12129,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S14-01",
@@ -12183,7 +12170,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 14,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12214,7 +12201,7 @@
      "for": "where the smoke rolls"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -12241,8 +12228,8 @@
    },
    "source": "nextpose",
    "master": "S14-01",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 13,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12253,8 +12240,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "MULTI_SCENARIO_VERDICT_MATRIX"
   },
   {
    "id": "S14-03",
@@ -12295,7 +12281,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 1,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12367,7 +12353,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 7,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12404,8 +12390,8 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "keyframe",
-   "lane": "STILL_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 17,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12416,8 +12402,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "still_mode": "camera_move_3d"
+   "helper_archetype": "PRIMARY_SOURCE_DOSSIER_CARD"
   },
   {
    "id": "S14-06",
@@ -12436,7 +12421,7 @@
      "for": "the empty street"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "brun",
@@ -12461,8 +12446,8 @@
    },
    "source": "cut",
    "master": "S14-05",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 16,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12474,7 +12459,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S14-07",
@@ -12527,7 +12512,7 @@
    "source": "cut",
    "master": "S14-05",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12593,7 +12578,7 @@
    "source": "cut",
    "master": "S14-05",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 3,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12625,7 +12610,7 @@
      "for": "the window"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -12649,8 +12634,8 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12662,7 +12647,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S14-10",
@@ -12681,7 +12666,7 @@
      "for": "where they march"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -12708,8 +12693,8 @@
     ]
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "HELPER",
+   "archetype": 12,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12720,8 +12705,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
-   "render_profile": "eevee_full",
-   "lipsync": false
+   "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
    "id": "S14-11",
@@ -12762,7 +12746,7 @@
    "source": "cut",
    "master": "S14-10",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12806,7 +12790,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 6,
    "duration_frames": 72,
    "width": 2560,
    "height": 1440,
@@ -12859,7 +12843,7 @@
    },
    "source": "keyframe",
    "lane": "VIDEO_3D",
-   "archetype": null,
+   "archetype": 8,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -12889,7 +12873,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -12915,8 +12899,8 @@
    },
    "source": "cut",
    "master": "S15-02",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 5,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12928,7 +12912,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S16-01",
@@ -12946,7 +12930,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "geniuses",
@@ -12970,8 +12954,8 @@
     "ambience": "a crackling campfire"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 20,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -12983,7 +12967,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S16-02",
@@ -13001,7 +12985,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "stranded",
@@ -13025,8 +13009,8 @@
     "ambience": "an icy wind howling"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 20,
    "duration_frames": 120,
    "width": 2560,
    "height": 1440,
@@ -13038,7 +13022,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_fast",
-   "lipsync": false
+   "still_mode": "drift"
   },
   {
    "id": "S16-03",
@@ -13057,7 +13041,7 @@
      "for": "where the ball goes"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -13079,8 +13063,8 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "keyframe",
-   "lane": "VIDEO_3D",
-   "archetype": null,
+   "lane": "STILL_3D",
+   "archetype": 20,
    "duration_frames": 96,
    "width": 2560,
    "height": 1440,
@@ -13092,7 +13076,7 @@
    "continuity_ref": null,
    "blocking_ref": null,
    "render_profile": "eevee_full",
-   "lipsync": false
+   "still_mode": "drift"
   }
  ]
 }
