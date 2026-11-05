@@ -196,10 +196,16 @@ def bake_atlas(scene, far_meshes, n, atlas, centre, workdir):
     img.file_format = "OPEN_EXR"
     img.save()
     img.pack()
+    prev = img.copy()   # a small PNG for review (the save applies the scene's view transform to the linear pixels)
+    prev.scale(max(1, W // 3), max(1, H // 3))
+    prev.filepath_raw, prev.file_format = os.path.join(workdir, "crowd_atlas_preview.png"), "PNG"
+    prev.save()
+    bpy.data.images.remove(prev)
     cover = float((px[..., 3] > 0.5).mean())
     return img, {"size": [W, H], "cells": [cols, rows], "seconds": round(time.perf_counter() - t0, 2),
                  "renders": len(far_meshes) * frames, "elevation_deg": round(math.degrees(elev), 2),
-                 "view_yaw_deg": round(math.degrees(phi), 2), "alpha_cover": round(cover, 4), "file": img.filepath_raw}
+                 "view_yaw_deg": round(math.degrees(phi), 2), "alpha_cover": round(cover, 4), "file": img.filepath_raw,
+                 "preview": os.path.join(workdir, "crowd_atlas_preview.png")}
 
 
 def _quad(atlas, elev_deg):

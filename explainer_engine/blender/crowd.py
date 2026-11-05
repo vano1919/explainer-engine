@@ -124,17 +124,17 @@ def screen_px(distance_m: float, lens_mm: float) -> float:
     return focal_px(lens_mm) * SOLDIER_M / max(distance_m, 1e-6)
 
 
-def borders(lens_mm: float) -> dict[str, float]:
-    """The tier borders in metres: a soldier is HERO_PX tall at ``hero_max_m`` and FAR_PX tall at ``far_min_m``."""
+def borders(lens_mm: float, *, hero_px: float = HERO_PX, far_px: float = FAR_PX) -> dict[str, float]:
+    """The tier borders in metres: a soldier is ``hero_px`` tall at ``hero_max_m`` and ``far_px`` tall at ``far_min_m``."""
     f = focal_px(lens_mm)
-    return {"hero_max_m": round(f * SOLDIER_M / HERO_PX, 4), "far_min_m": round(f * SOLDIER_M / FAR_PX, 4)}
+    return {"hero_max_m": round(f * SOLDIER_M / hero_px, 4), "far_min_m": round(f * SOLDIER_M / far_px, 4)}
 
 
-def tier_of(distance_m: float, lens_mm: float, *, hero: bool = True) -> str:
+def tier_of(distance_m: float, lens_mm: float, *, hero: bool = True, hero_px: float = HERO_PX, far_px: float = FAR_PX) -> str:
     h = screen_px(distance_m, lens_mm)
-    if h > HERO_PX and hero:
+    if h > hero_px and hero:
         return "hero"
-    return "mid" if h > FAR_PX else "far"
+    return "mid" if h > far_px else "far"
 
 
 def position(x: float, y: float, vx: float, vy: float, delay: float, seconds: float) -> tuple[float, float]:
@@ -160,7 +160,7 @@ def _pick(rng: random.Random, clips) -> int:
 
 
 def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_frames: int = BAKE_FRAMES,
-         hero_max: int = HERO_MAX) -> dict:
+         hero_max: int = HERO_MAX, far_px: float = FAR_PX) -> dict:
     """The ``crowds`` block of a described scene: T1 templates (formation x character x clip), T2 far templates (formation x
     clip, first character), the heroes (T0 soldiers taken out of the points) and one column per point attribute."""
     if bake_frames < 4:
@@ -210,7 +210,7 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
             for k in COLUMNS:
                 cols[k].append(row[k])
     return {"schema": SCHEMA, "shot_id": shot_id, "bake_frames": bake_frames, "lens_mm": lens, "focal_px": round(focal_px(lens), 4),
-            "soldier_m": SOLDIER_M, "far_px": FAR_PX, "hero_px": HERO_PX, "borders": borders(lens), "mid_tris": MID_TRIS,
+            "soldier_m": SOLDIER_M, "far_px": far_px, "hero_px": HERO_PX, "borders": borders(lens, far_px=far_px), "mid_tris": MID_TRIS,
             "mid_shadow_max_m": MID_SHADOW_MAX_M,
             "atlas": {"frames": ATLAS_FRAMES, "yaw": ATLAS_YAW, "cell_px": list(ATLAS_CELL), "cell_m": [1.6, 2.4]},
             "templates": templates, "far_templates": far, "heroes": heroes, "count": len(cols["x"]), "points": cols,
@@ -246,7 +246,7 @@ def tier_counts(block: dict, camera_xyz, *, seconds: float = 0.0) -> dict[str, i
     out = {"hero": len(block.get("heroes", [])), "mid": 0, "far": 0}
     for x, y, vx, vy, d in zip(p["x"], p["y"], p["vx"], p["vy"], p["delay"]):
         px, py = position(x, y, vx, vy, d, seconds)
-        out[tier_of(math.dist((px, py, 0.0), camera_xyz), lens, hero=False)] += 1
+        out[tier_of(math.dist((px, py, 0.0), camera_xyz), lens, hero=False, far_px=block.get("far_px", FAR_PX))] += 1
     return out
 
 
@@ -277,12 +277,13 @@ def default_formations(count: int = 5000) -> tuple[Formation, ...]:
                       (("Sword_Idle", 0.5), ("Sword_Attack", 0.5)), (fb * 0.5 + 18.0, 40.0), 200.0))
 
 
-def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000, frames: int = 24, shot_id: str = SHOT_ID) -> dict:
+def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000, frames: int = 24, shot_id: str = SHOT_ID,
+          far_px: float = FAR_PX) -> dict:
     """Objects, camera, materials and the crowds block of the proof: a field between ridges, cannons, the armies. The T1/T2
     templates and the heroes are ordinary cast members (render_shot's character path); templates are parked behind the camera."""
     from explainer_engine.blender import characters as C
     from explainer_engine.blender import style_sheets as SS
-    block = plan(default_formations(count), CAMERA, shot_id=shot_id, hero_max=PROOF_HEROES)
+    block = plan(default_formations(count), CAMERA, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px)
     base = SS.scenes(paths, cast="mannequin")["battle_wide"]
     objs = []
     for o in base["objects"]:
@@ -324,7 +325,7 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
 
 
 def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_soft3d", count: int = 5000, frames: int = 24,
-           scale: float = 0.5, samples: int = 16, device: str = "auto", log=print) -> dict:
+           scale: float = 0.5, samples: int = 16, device: str = "auto", far_px: float = FAR_PX, log=print) -> dict:
     """The proof clip through the ICW-04 adapter (HeadlessRender: checkpointed frames, a manifest). A scaled render is a test
     (CN-17 refuses anything but the master as a deliverable): its frames are kept and the row marked scaled. The spec stays
     shot_spec/2 with the crowd in the template hash; the ``scene.crowds`` fields ride WP-Q1's shot_spec/3 (Fable, 22:11 UTC)."""
@@ -337,7 +338,7 @@ def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_s
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     paths, cpaths = SS.fetch(), C.fetch()
-    sc = scene(paths, cpaths, count=count, frames=frames)
+    sc = scene(paths, cpaths, count=count, frames=frames, far_px=far_px)
     problems = check(sc["crowds"])
     if problems:
         raise CrowdError("; ".join(problems))
@@ -362,6 +363,15 @@ def render(out: Path, *, binary: str | None = None, look: str = "v01_reference_s
     rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
     times = SS.frame_times(sdir)
     clip = SS.mp4(sdir / "frames", out / f"crowd_{count}_{look}_{frames}f.mp4")
+    import shutil
+    (out / "frames").mkdir(exist_ok=True)
+    for i in sorted({0, frames // 2, frames - 1}):     # stills for review: first, middle, last
+        f = sdir / "frames" / R.FRAME_NAME.format(index=i)
+        if f.exists():
+            shutil.copyfile(f, out / "frames" / f"crowd_{count}_{i:03d}.png")
+    prev = (rep.get("crowd") or {}).get("atlas", {}).get("preview")
+    if prev and Path(prev).exists():
+        shutil.copyfile(prev, out / "crowd_atlas_preview.png")
     blk = sc["crowds"]
     row = {"schema": "crowd_proof/1", "count": blk["count"] + len(blk["heroes"]), "points": blk["count"],
            "heroes": len(blk["heroes"]), "templates": len(blk["templates"]), "far_templates": len(blk["far_templates"]),
@@ -391,6 +401,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--scale", type=float, default=0.5)
     r.add_argument("--samples", type=int, default=16)
     r.add_argument("--device", default="auto")
+    r.add_argument("--far-px", type=float, default=FAR_PX, help="the T2 border in px (a tiny value draws every soldier as T1: the A/B)")
     a = p.parse_args(argv)
     if a.cmd == "plan":
         b = plan(default_formations(a.count), CAMERA, shot_id=SHOT_ID, hero_max=PROOF_HEROES)
@@ -399,7 +410,7 @@ def main(argv: list[str] | None = None) -> int:
                           "problems": check(b)}, indent=1))
         return 0
     row = render(a.out, binary=a.binary, look=a.look, count=a.count, frames=a.frames, scale=a.scale, samples=a.samples,
-                 device=a.device)
+                 device=a.device, far_px=a.far_px)
     print(json.dumps({k: row[k] for k in ("count", "seconds_per_frame", "times", "size", "engine", "tiers_first_frame")}, indent=1))
     return 0
 
