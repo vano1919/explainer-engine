@@ -2795,62 +2795,28 @@
      "role": "prop"
     },
     {
-     "type": "ring",
+     "type": "house",
      "name": "villa0",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "medium",
      "centre": [
       -26,
       22
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
-    },
-    {
-     "type": "piece",
-     "name": "roof_villa0",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -26,
-      22,
-      3.1
-     ],
      "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
+     "z": 0.0,
+     "terrain": false
     },
     {
-     "type": "ring",
+     "type": "house",
      "name": "villa1",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "large",
      "centre": [
       28,
       20
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
-    },
-    {
-     "type": "piece",
-     "name": "roof_villa1",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      28,
-      20,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
     },
     {
      "type": "scatter",
@@ -3286,178 +3252,76 @@
      "role": "landmark"
     },
     {
-     "type": "ring",
+     "type": "house",
      "name": "house0",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "medium",
      "centre": [
       -26,
       30
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
-    },
-    {
-     "type": "piece",
-     "name": "roof_house0",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -26,
-      30,
-      3.1
-     ],
      "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
+     "z": 0.0,
+     "terrain": false
     },
     {
-     "type": "ring",
+     "type": "house",
      "name": "house1",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "large",
      "centre": [
       -14,
       34
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
     },
     {
-     "type": "piece",
-     "name": "roof_house1",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -14,
-      34,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house2",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "small",
      "centre": [
       -26,
       18
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
     },
     {
-     "type": "piece",
-     "name": "roof_house2",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      -26,
-      18,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house3",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "medium",
      "centre": [
       26,
       26
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
-    },
-    {
-     "type": "piece",
-     "name": "roof_house3",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      26,
-      26,
-      3.1
-     ],
      "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
+     "z": 0.0,
+     "terrain": false
     },
     {
-     "type": "ring",
+     "type": "house",
      "name": "house4",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "large",
      "centre": [
       16,
       34
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
     },
     {
-     "type": "piece",
-     "name": "roof_house4",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      16,
-      34,
-      3.1
-     ],
-     "yaw_deg": 90.0,
-     "scale": 0.62,
-     "role": "roof"
-    },
-    {
-     "type": "ring",
+     "type": "house",
      "name": "house5",
-     "wall": "model.mvk_wall_plaster_straight",
-     "nx": 2,
-     "ny": 2,
+     "size": "small",
      "centre": [
       28,
       14
      ],
-     "corner": "model.mvk_corner_exterior_brick",
-     "replace": {
-      "south:0": "model.mvk_wall_plaster_door_round",
-      "north:1": "model.mvk_wall_plaster_window_wide_round"
-     }
-    },
-    {
-     "type": "piece",
-     "name": "roof_house5",
-     "asset": "model.mvk_roof_roundtiles_6x6",
-     "pos": [
-      28,
-      14,
-      3.1
-     ],
      "yaw_deg": 0.0,
-     "scale": 0.62,
-     "role": "roof"
+     "z": 0.0,
+     "terrain": false
     },
     {
      "type": "shape",
