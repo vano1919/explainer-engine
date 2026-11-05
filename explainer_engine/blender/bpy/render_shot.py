@@ -573,6 +573,84 @@ def build_tree(nt, graph, missing, where):
     return made
 
 
+def _camera_aim(scene, elevation_deg, azimuth_offset_deg):
+    """A sun rotation whose light travels from behind the subject towards the camera (seen at the shot's first frame), coming
+    down at ``elevation_deg`` and turned ``azimuth_offset_deg`` to the side: the film rim cheat, the same for every shot."""
+    scene.frame_set(scene.frame_start)
+    fwd = scene.camera.matrix_world.to_3x3() @ Vector((0.0, 0.0, -1.0))
+    flat = Vector((fwd.x, fwd.y, 0.0))
+    if flat.length < 1e-6:
+        flat = Vector((0.0, 1.0, 0.0))
+    flat.normalize()
+    az = math.radians(azimuth_offset_deg)
+    toward = Vector((-flat.x * math.cos(az) + flat.y * math.sin(az), -flat.y * math.cos(az) - flat.x * math.sin(az), 0.0))
+    el = math.radians(elevation_deg)
+    travel = Vector((toward.x * math.cos(el), toward.y * math.cos(el), -math.sin(el)))
+    return travel.to_track_quat("-Z", "Y").to_euler()
+
+
+def build_lights(scene, specs, cast, missing):
+    """The WP-Q1 rig: each light as listed; ``link: "cast"`` light-links it to the character meshes only (Blender 5.2
+    ``Object.light_linking.receiver_collection``; a rim with no cast in the shot is left out and reported)."""
+    done = []
+    for lt in specs:
+        if lt.get("link") == "cast" and not cast:
+            done.append({"name": lt["name"], "skipped": "no cast in the shot"})
+            continue
+        data = bpy.data.lights.new(lt["name"], lt["type"])
+        data.energy, data.color, data.use_shadow = lt["energy"], lt["color"], lt["use_shadow"]
+        for k in ("angle_rad", "shadow_filter_radius", "use_shadow_jitter", "specular_factor", "diffuse_factor"):
+            if lt.get(k) is None:
+                continue
+            attr = "angle" if k == "angle_rad" else k
+            if hasattr(data, attr):
+                setattr(data, attr, lt[k])
+            else:
+                missing.append(f"light {lt['name']}.{attr}")
+        ob = bpy.data.objects.new(lt["name"], data)
+        scene.collection.objects.link(ob)
+        if "aim" in lt:
+            ob.rotation_euler = _camera_aim(scene, lt["aim"]["elevation_deg"], lt["aim"]["azimuth_offset_deg"])
+        else:
+            ob.rotation_euler = lt["rotation_euler"]
+        row = {"name": lt["name"], "energy": data.energy, "shadow": data.use_shadow}
+        if lt.get("link") == "cast":
+            coll = bpy.data.collections.new(f"{lt['name']}_receivers")
+            for m in cast:
+                coll.objects.link(m)
+            ob.light_linking.receiver_collection = coll
+            row["receivers"] = len(coll.objects)
+        done.append(row)
+    return done
+
+
+def soften_normals(meshes, iterations, missing):
+    """Wing It!'s soft faces: a Geometry Nodes modifier after the armature blurs the vertex normals (Blur Attribute on Normal)
+    and writes them back as free custom normals (Set Mesh Normal), so the shading reads rounder and flatter than the mesh."""
+    ng = bpy.data.node_groups.get("wpq1_soft_normals")
+    if ng is None:
+        ng = bpy.data.node_groups.new("wpq1_soft_normals", "GeometryNodeTree")
+        ng.interface.new_socket("Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
+        ng.interface.new_socket("Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+        gin, gout = ng.nodes.new("NodeGroupInput"), ng.nodes.new("NodeGroupOutput")
+        nrm, blur, setn = ng.nodes.new("GeometryNodeInputNormal"), ng.nodes.new("GeometryNodeBlurAttribute"), ng.nodes.new("GeometryNodeSetMeshNormal")
+        blur.data_type = "FLOAT_VECTOR"
+        blur.inputs["Iterations"].default_value = int(iterations)
+        setn.mode = "FREE"
+        setn.domain = "POINT"
+        ng.links.new(nrm.outputs[0], blur.inputs["Value"])
+        custom = next((x for x in setn.inputs if x.name in ("Custom Normal", "Normal") and x.enabled), None)
+        if custom is None:
+            missing.append("GeometryNodeSetMeshNormal.FREE input")
+            return
+        ng.links.new(gin.outputs[0], setn.inputs["Mesh"])
+        ng.links.new(blur.outputs[0], custom)
+        ng.links.new(setn.outputs[0], gout.inputs[0])
+    for ob in meshes:
+        mod = ob.modifiers.new("soft_normals", "NODES")
+        mod.node_group = ng
+
+
 def apply_style(scene, style, pending, report):
     """The style_graph/1 document on the built scene: materials, world, key light, Line Art, paper pass, colour management."""
     missing = []
@@ -596,14 +674,22 @@ def apply_style(scene, style, pending, report):
     if scene.world is None:
         scene.world = bpy.data.worlds.new("world")
     build_tree(scene.world.node_tree, style["world"], missing, "world")
-    kl = style["key_light"]
-    sun = bpy.data.lights.new("key", "SUN")
-    sun.energy, sun.angle = kl["energy"], kl["angle_rad"]
-    sun.use_shadow = kl.get("use_shadow", True)  # the light profile turns cast shadows off (style.StyleTokens.shadows)
-    ob = bpy.data.objects.new("key", sun)
-    scene.collection.objects.link(ob)
-    ob.rotation_euler = kl["rotation_euler"]
-    fill = style.get("fill_light")   # ICW-05c looks: a cool fill from the other side, never a shadow caster
+    cast = [ob for obs, name, _ in pending if isinstance(name, dict) for ob in obs]   # the character meshes
+    if "lights" in style:   # WP-Q1: real coloured lights (style.StyleEngine.lights); key_light is only their record
+        lights_applied = build_lights(scene, style["lights"], cast, missing)
+        fill = None
+    else:
+        lights_applied = None
+        kl = style["key_light"]
+        sun = bpy.data.lights.new("key", "SUN")
+        sun.energy, sun.angle = kl["energy"], kl["angle_rad"]
+        sun.use_shadow = kl.get("use_shadow", True)  # the light profile turns cast shadows off (style.StyleTokens.shadows)
+        ob = bpy.data.objects.new("key", sun)
+        scene.collection.objects.link(ob)
+        ob.rotation_euler = kl["rotation_euler"]
+        fill = style.get("fill_light")   # ICW-05c looks: a cool fill from the other side, never a shadow caster
+    if style.get("normal_soften"):
+        soften_normals(cast, style["normal_soften"]["iterations"], missing)
     if fill:
         fl = bpy.data.lights.new("fill", "SUN")
         fl.energy, fl.use_shadow = fill["energy"], fill.get("use_shadow", False)
@@ -639,6 +725,10 @@ def apply_style(scene, style, pending, report):
                "crease_threshold": mod.crease_threshold if mod else None}
     if fill:
         applied["fill_light"] = fill["energy"]
+    if lights_applied is not None:
+        applied["lights"] = lights_applied
+    if style.get("normal_soften"):
+        applied["normal_soften"] = {"iterations": style["normal_soften"]["iterations"], "meshes": len(cast)}
     if dof:
         applied["dof_fstop"] = scene.camera.data.dof.aperture_fstop
     for k, v in st.get("eevee", {}).items():
@@ -674,6 +764,8 @@ def apply_settings(scene, job):
         set_attr(ee, "use_fast_gi", ao, applied, missing, "eevee.use_fast_gi")
         if ao:
             set_attr(ee, "fast_gi_method", "AMBIENT_OCCLUSION_ONLY", applied, missing, "eevee.fast_gi_method")
+        set_attr(ee, "use_shadows", s.get("shadows"), applied, missing, "eevee.use_shadows")
+        set_attr(ee, "motion_blur_steps", s.get("motion_blur_steps"), applied, missing, "eevee.motion_blur_steps")
     elif eng == "cycles":
         cy = scene.cycles
         set_attr(cy, "samples", s.get("samples"), applied, missing, "cycles.samples")
