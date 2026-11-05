@@ -33,8 +33,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: world-kits-${{ github.ref }}
-  cancel-in-progress: true
+  group: world-kits-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   epic:
@@ -200,5 +200,91 @@ jobs:
         with:
           name: world-kits-courtyard-${{ github.sha }}
           path: poc_artifact/
+          if-no-files-found: error
+          retention-days: 30
+
+  eras:
+    # E1-E4 of the overnight matrix: the same set + cast, a 1440p still of the wide and the medium shot per era (v01 look)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {layout: antique_forum, shots: "forum_wide,forum_medium"}
+          - {layout: hill_castle, shots: "bridge_medium"}
+          - {layout: harbour_square, shots: "harbour_wide,harbour_medium"}
+          - {layout: field_camp, shots: "camp_wide,camp_medium"}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core ffmpeg
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: world-kit-assets-${{ hashFiles('explainer_engine/blender/world_kits.json', 'explainer_engine/blender/style_sheet_assets.json', 'explainer_engine/blender/character_assets.json') }}
+      - name: Fetch the look assets, the characters and the kit pieces (kept only at the registered sha256)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # the vault is private; without it the pieces are rebuilt from the free packs (pillow is pinned for it)
+        run: |
+          python -m explainer_engine.blender.style_sheets fetch
+          python -m explainer_engine.blender.characters fetch
+          python -m explainer_engine.blender.world_kits fetch
+      - name: Render the era stills (1440p, one frame of each shot's start)
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout ${{ matrix.layout }} --shots "${{ matrix.shots }}" --frames 1 --out era --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "v01_reference_soft3d" --device cpu
+      - name: Collect the outputs
+        if: always()
+        run: |
+          mkdir -p era_artifact
+          cp -r era/looks.json era/frames era_artifact/ 2>/dev/null || true
+          for d in era/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "era_artifact/$(basename "$d").blender.log"; done || true
+          ls -la era_artifact
+      - name: Upload the stills
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: world-kits-era-${{ matrix.layout }}-${{ github.sha }}
+          path: era_artifact/
           if-no-files-found: error
           retention-days: 30

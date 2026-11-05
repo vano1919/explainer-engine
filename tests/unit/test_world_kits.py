@@ -248,3 +248,14 @@ def test_hill_shots_have_a_still_and_a_push_and_shapes_become_flat_toon_primitiv
     assert hill["add"] == "uv_sphere" and sc["castle_push"]["materials"][hill["material"]] == {"base": "#8FA262"}
     tree = next(o for o in sc["castle_push"]["objects"] if o["name"].startswith("pine_"))
     assert sc["castle_push"]["materials"][tree["material"]]["base"].startswith("#")   # foliage: one flat tone, no raw PBR
+
+
+def test_overnight_layouts_have_six_characters_and_valid_pieces_and_shots():
+    doc = W.layouts()["layouts"]
+    for lid, era in (("antique_forum", "E1"), ("hill_castle", "E2"), ("harbour_square", "E3"), ("field_camp", "E4")):
+        assert W.placements(lid)   # every asset is in world_kits.json, no two names alike
+        cast = doc[lid]["cast"]
+        assert len(cast) >= 6 and len({r[0] for r in cast}) == len(cast), lid
+        for sid, (c0, c1, a0, a1, lens, n) in doc[lid]["shots"].items():
+            assert len(c0) == 3 and len(a0) == 3 and lens > 0 and n >= 0 and (c1 is None) == (a1 is None), (lid, sid)
+        assert W.scene_set(lid)

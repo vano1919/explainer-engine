@@ -293,7 +293,7 @@ def _placements(block: dict, name: str, t: dict) -> list[dict]:
         out = []
         while len(out) < block["count"]:
             x, y = rng.uniform(x0, x1), rng.uniform(y0, y1)
-            if abs(x) < 7.5 and -40 < y < 60:   # the river bed
+            if block.get("river", True) and abs(x) < 7.5 and -40 < y < 60:   # the river bed (hill_castle)
                 continue
             if any(math.hypot(x - cx, y - cy) < r for cx, cy, r in block.get("avoid", [])):
                 continue
@@ -457,19 +457,44 @@ HILL_SHOTS = {"castle_still": ([-38.0, -30.0, 26.0], None, [0.0, 60.0, 16.0], No
               "castle_push": ([-38.0, -30.0, 26.0], [-26.0, -14.0, 20.0], [0.0, 60.0, 16.0], [0.0, 60.0, 16.0], 28, 0)}
 
 
+def _layout_cast(layout: str, cpaths) -> list[dict]:
+    """The characters a layout stands in its scene (``cast`` rows: name, character, costume, tint, [x, y(, z)], yaw, action, offset)."""
+    from explainer_engine.blender import style_sheets as SS
+    out = []
+    for n, c, co, tint, xyz, yaw, act, off in layouts()["layouts"][layout].get("cast", []):
+        o = SS._cast_member(n, c, co, tint, tuple(xyz[:2]), yaw, act, off, cpaths)
+        if len(xyz) > 2:
+            o["location"][2] = xyz[2]
+        out.append(o)
+    return out
+
+
 def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: int = POC_FRAMES,
                layout: str = "castle_courtyard", pbr: bool = False) -> dict[str, dict]:
     """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs.
-    ``hill_castle`` is static (no cast): a still (1 frame) and a push (``frames``)."""
+    A layout with its own ``shots`` (E1-E4, hill_castle) uses them: ``[camera, camera_to|null, look_at, look_at_to|null, lens, frames]``
+    (frames 0 = the run's ``frames``); its ``cast`` rows put characters in the set."""
     from explainer_engine.blender import style_sheets as SS
     kit, kit_mats = expand(layout, paths, pbr=pbr)
-    if layout == "hill_castle":
+    doc = layouts()["layouts"][layout]
+    if layout == "hill_castle" or "shots" in doc:
+        shots = doc.get("shots") or {k: list(v) for k, v in HILL_SHOTS.items()}
+        cast = _layout_cast(layout, cpaths) if doc.get("cast") and cpaths else []   # no character files = a set-only scene
+        mats = dict(kit_mats)
+        if cast:
+            mats.update({"skin": {"base": "kit_card"}, "night": {"base": "night"}})
+            for o in cast:
+                for k, v in o.pop("_materials", {}).items():
+                    if mats.get(k, v) != v:
+                        raise WorldKitError(f"two cast members define material {k} differently")
+                    mats[k] = v
         out = {}
-        for sid, (c0, c1, a0, a1, lens, n) in HILL_SHOTS.items():
+        for sid, (c0, c1, a0, a1, lens, n) in shots.items():
             cam = {"location": c0, "look_at": a0, "lens_mm": lens, "focus_distance_m": round(math.dist(c0, a0), 2), "clip_end": 900.0}
             if c1:
                 cam["to"] = {"location": c1, "look_at": a1}
-            out[sid] = {"objects": json.loads(json.dumps(kit)), "materials": dict(kit_mats), "camera": cam, "frames_total": n or frames}
+            out[sid] = {"objects": [*json.loads(json.dumps(kit)), *json.loads(json.dumps(cast))], "materials": mats, "camera": cam,
+                        "frames_total": n or frames}
         return out
     cast = [SS._cast_member(n, c, co, tint, xy, yaw, act, off, cpaths) for n, c, co, tint, xy, yaw, act, off in POC_CAST]
     mats = dict(kit_mats)
@@ -508,7 +533,7 @@ def poc(out: Path, *, binary: str | None = None, variant_ids=POC_VARIANTS, frame
     for vid in variant_ids:
         pbr = vid in SS.PBR_VARIANTS   # C5: the kit's own glTF materials under Cycles, no toon replacement
         if pbr not in scn_cache:
-            scn_cache[pbr] = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" else None, frames, layout, pbr=pbr)
+            scn_cache[pbr] = poc_scenes(paths, C.fetch() if layout == "castle_courtyard" or layouts()["layouts"][layout].get("cast") else None, frames, layout, pbr=pbr)
         for sid, sc in scn_cache[pbr].items():
             if shots and sid not in shots:
                 continue
@@ -554,7 +579,7 @@ def main(argv: list[str] | None = None) -> int:
     pc.add_argument("--out", required=True)
     pc.add_argument("--binary", default=None)
     pc.add_argument("--variants", default=",".join(POC_VARIANTS))
-    pc.add_argument("--layout", default="castle_courtyard", choices=("castle_courtyard", "hill_castle"))
+    pc.add_argument("--layout", default="castle_courtyard", choices=tuple(layouts()["layouts"]))
     pc.add_argument("--shots", default="", help="comma-separated shot ids (empty = all of the layout)")
     pc.add_argument("--frames", type=int, default=POC_FRAMES)
     pc.add_argument("--scale", type=float, default=1.0)
