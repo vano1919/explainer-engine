@@ -127,3 +127,70 @@ def test_a_line_outside_bp173_fails_the_spec_contract():
     for px in (lo - 0.5, hi + 0.5):
         spec = SS.spec_for("travel", "B", S.StyleTokens(line_px=px), scene={"objects": []})
         assert any(f["severity"] == "FAIL" and "BP-173" in f["detail"] for f in C.errors(spec)), px
+
+
+# --- round 2: clips, the light profile, the palette under AgX -------------------------------------------------------------------
+
+def test_clips_are_valid_video_specs_with_motion_and_their_own_cache_keys(tmp_path):
+    paths = fake_paths(tmp_path)
+    base = SS.scenes(paths)
+    keys = set()
+    for sid in SS.CLIP_SCENES:
+        sc = SS.motion(sid, base[sid])
+        assert sc["camera"]["to"] and sc["frames_total"] == SS.CLIP_FRAMES
+        for vid in SS.CLIP_VARIANTS:
+            scene, graph = SS.job_scene(sid, vid, sc, paths)
+            assert scene["frames_total"] == SS.CLIP_FRAMES and S.check(graph) == []
+            _, tokens = SS.style_for(vid)
+            spec = SS.spec_for(sid, vid, tokens, scene=scene, frames=SS.CLIP_FRAMES)
+            assert [f for f in C.errors(spec) if f["severity"] == "FAIL"] == [], (sid, vid)
+            assert spec["lane"] == "VIDEO_3D" and spec["clock"]["frames"] == 48 and spec["clock"]["fps"] == 24
+            assert spec["scene"]["camera"]["rig"] in ("push", "dolly")
+            keys.add(shot_cache.key(spec))
+    assert len(keys) == len(SS.CLIP_SCENES) * len(SS.CLIP_VARIANTS)
+    battle = SS.motion("battle_wide", base["battle_wide"])
+    movers = [o for o in battle["objects"] if o.get("to")]
+    assert movers and all(o["interp"] == "LINEAR" and o["name"].startswith("a") for o in movers)
+    assert not any(o.get("to") for o in base["battle_wide"]["objects"])  # motion() copies, the sheets stay still
+
+
+def test_clip_variants_show_shadows_on_against_the_light_default():
+    on, light = SS.style_for("B_shadow")[1], SS.style_for("B_light")[1]
+    assert on.shadows and not light.shadows and not light.palette_match
+    assert SS.style_for("B_match")[1].palette_match and SS.style_for("A_match")[1].line_px == S.variant("A").line_px
+
+
+def test_frame_times_split_the_first_frame_from_the_steady_rest(tmp_path):
+    (tmp_path / "render_times.json").write_text(json.dumps({"0": 30.0, "1": 5.0, "2": 6.0, "3": 4.0}), encoding="utf-8")
+    t = SS.frame_times(tmp_path)
+    assert t == {"first_s": 30.0, "steady_median_s": 5.0, "mean_s": 11.25, "frames": 4}
+
+
+def test_mp4_is_a_review_copy_from_the_frames(tmp_path):
+    calls = []
+
+    class Done:
+        returncode, stderr = 0, ""
+
+    def run(cmd, **kw):
+        calls.append(cmd)
+        Path(cmd[-1]).write_bytes(b"mp4")
+        return Done()
+    rec = SS.mp4(tmp_path / "frames", tmp_path / "clips" / "x.mp4", run=run)
+    assert rec["path"].endswith("x.mp4") and (tmp_path / "clips" / "x.mp4").read_bytes() == b"mp4"
+    cmd = calls[0]
+    assert cmd[cmd.index("-c:v") + 1] == "libx264" and cmd[cmd.index("-pix_fmt") + 1] == "yuv420p"
+    assert cmd[cmd.index("-framerate") + 1] == "24"
+
+
+def test_clip_collage_has_a_row_per_clip_variant(tmp_path):
+    rows = []
+    for vid in ("B_shadow", "B_light"):
+        for sid in SS.CLIP_SCENES:
+            f = tmp_path / f"{sid}_{vid}.png"
+            Image.new("RGB", (256, 144), (90, 120, 200)).save(f)
+            rows.append({"scene": sid, "variant": vid, "frame": str(f), "times": {"steady_median_s": 3.0}})
+    (tmp_path / "style_clips.json").write_text(json.dumps({"rows": rows}), encoding="utf-8")
+    path = SS.clip_collage(tmp_path, cell_w=320)
+    with Image.open(path) as im:
+        assert im.width == 360 + 2 * (320 + 12) + 12 and im.height == 70 + 2 * (180 + 12) + 12

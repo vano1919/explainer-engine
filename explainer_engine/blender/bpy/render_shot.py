@@ -152,31 +152,64 @@ def _assign(obs, material, smooth=None):
         ob.data.materials.append(material)
 
 
+def _aim(ob, location, look_at, compat=None):
+    ob.location = location
+    q = (Vector(look_at) - Vector(location)).to_track_quat("-Z", "Y")
+    ob.rotation_euler = q.to_euler("XYZ", compat) if compat is not None else q.to_euler()
+
+
+def _key(ob, paths, frame, interp):
+    """One keyframe of ``paths`` at ``frame``; the new key's interpolation is the preference at insert time (Blender 5.x
+    layered actions have no per-call argument), so it is set first."""
+    bpy.context.preferences.edit.keyframe_new_interpolation_type = interp
+    for p in paths:
+        ob.keyframe_insert(p, frame=frame)
+
+
 def build_described(scene, sc, report):
+    """Objects, camera and (optional) motion of a ``described`` scene. Motion: an object or the camera with a ``to`` block
+    ({location[, rotation_deg]} / {location, look_at}) is keyed at the first and the last frame of ``frames_total``;
+    ``interp`` is LINEAR (a march, a cart) or BEZIER (a camera push that eases in and out, the default for the camera)."""
     for ob in list(bpy.data.objects):
         bpy.data.objects.remove(ob, do_unlink=True)
-    pending = []
+    pending, moving = [], []
     for o in sc["objects"]:
         if "add" in o:
             getattr(bpy.ops.mesh, PRIMITIVES[o["add"]])(**o.get("params", {}))
             ob = bpy.context.active_object
             ob.name = o["name"]
             _place(ob, o)
-            obs = [ob]
+            obs, handle = [ob], ob
         elif "append" in o:
             obs = _append(o, report)
+            handle = bpy.data.objects[o["name"]]
         else:
             raise RuntimeError(f"object {o.get('name')!r}: neither add nor append")
         pending.append((obs, o.get("material"), o.get("smooth")))
+        if o.get("to"):
+            moving.append((handle, o))
     cam = sc["camera"]
     data = bpy.data.cameras.new("camera")
     data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
     data.clip_end = cam.get("clip_end", 500.0)
     ob = bpy.data.objects.new("camera", data)
     scene.collection.objects.link(ob)
-    ob.location = cam["location"]
-    ob.rotation_euler = (Vector(cam["look_at"]) - Vector(cam["location"])).to_track_quat("-Z", "Y").to_euler()
+    _aim(ob, cam["location"], cam["look_at"])
     scene.camera = ob
+    first = scene.frame_start
+    last = first + int(sc.get("frames_total", 1)) - 1
+    if last > first:
+        for h, o in moving:
+            _key(h, ("location", "rotation_euler"), first, o.get("interp", "LINEAR"))
+            h.location = o["to"]["location"]
+            if "rotation_deg" in o["to"]:
+                h.rotation_euler = _rad(o["to"]["rotation_deg"])
+            _key(h, ("location", "rotation_euler"), last, o.get("interp", "LINEAR"))
+        if cam.get("to"):
+            _key(ob, ("location", "rotation_euler"), first, cam.get("interp", "BEZIER"))
+            _aim(ob, cam["to"]["location"], cam["to"]["look_at"], ob.rotation_euler.copy())
+            _key(ob, ("location", "rotation_euler"), last, cam.get("interp", "BEZIER"))
+        report["motion"] = {"frames": [first, last], "objects": len(moving), "camera": bool(cam.get("to"))}
     return pending
 
 
@@ -261,6 +294,7 @@ def apply_style(scene, style, pending, report):
     kl = style["key_light"]
     sun = bpy.data.lights.new("key", "SUN")
     sun.energy, sun.angle = kl["energy"], kl["angle_rad"]
+    sun.use_shadow = kl.get("use_shadow", True)  # the light profile turns cast shadows off (style.StyleTokens.shadows)
     ob = bpy.data.objects.new("key", sun)
     scene.collection.objects.link(ob)
     ob.rotation_euler = kl["rotation_euler"]

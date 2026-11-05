@@ -6,6 +6,8 @@ frames through the ICW-04 adapter (``render.HeadlessRender``) in each style vari
     python -m explainer_engine.blender.style_sheets fetch                       # the registered files into tools/assets_cache
     python -m explainer_engine.blender.style_sheets render --out O [--binary B] [--scenes a,b] [--variants A,B,C,S] [--scale 1.0]
     python -m explainer_engine.blender.style_sheets collage --out O              # O/collage.png + collage_preview.jpg
+    python -m explainer_engine.blender.style_sheets clips --out O [--binary B] [--scenes a,b] [--variants B_shadow,...] [--frames 48]
+                                                                                 # round 2: moving clips, MP4s, s/frame, first-frame collage
 
 Scenes: ``dialogue_cu`` (two figures across a table, close), ``battle_wide`` (two lines and their cannons, wide and high),
 ``travel`` (a cart road receding to hills), ``establishing`` (a walled town from above the road), ``map_tableau`` (a war table
@@ -13,6 +15,15 @@ seen from above, pieces on a map sheet). Figures are stand-in mannequins (charac
 style.py toon material, the imported Poly Haven props and grounds are converted (their diffuse map kept at the token's
 ``texture_strength`` over its mean colour). Variants ``A``/``B``/``C`` are ``style.VARIANTS`` on the EEVEE path; ``S`` is B on the
 Cycles-safe path, shown beside them for reference (roadmap 9.1: compared before any Cycles shot is allowed).
+
+Round 2 (the creator, 2026-11-05: stills cannot show how it moves; the style must not make the video renders heavy; shadows and
+reflections are secondary, frame quality and the colour palette come first): ``clips`` renders ``CLIP_SCENES`` as 48-frame
+VIDEO_3D shots at 24 fps (a camera push in the dialogue close-up; the near line advancing under a camera dolly in the battle) in
+``CLIP_VARIANTS``: B with cast shadows (the old heavy setting, for the cost), B light (no shadows: the new default), B and A with
+the palette matched under AgX (``grade.py``). Reflections are not a switch here: every toon material is emission-only, nothing in
+the frame is specular. Each clip gets an MP4 review copy (H.264, from the committed frames), its seconds per frame (first frame and
+the steady rest apart), and one collage of first frames. The clips can be rendered on the creator's Mac (ICG-3, D-113) with the
+same command; CI keeps them as a manual fallback (``style-sheets.yml``, mode clips).
 
 Assets come from ``assets/library.json`` by id (the PoC 3 records, external storage: ``tools/assets_cache/<sha256>/``); ``fetch``
 fills the cache from the vault, else from the source URL in ``style_sheet_assets.json``, and keeps a file only at its registered
@@ -29,6 +40,7 @@ import sys
 import time
 import urllib.request
 import zipfile
+from dataclasses import replace
 from pathlib import Path
 
 from explainer_engine.assets import library as L
@@ -43,6 +55,17 @@ JOB_ID = "style_sheets_icw05b"
 UA = {"User-Agent": "explainer-engine-asset-import/1"}  # Poly Haven's CDN refuses Python's default agent
 SCENE_IDS = ("dialogue_cu", "battle_wide", "travel", "establishing", "map_tableau")
 VARIANT_IDS = ("A", "B", "C", "S")
+# Scene colours the palette has no token for yet (terrain and metal): listed here so grade.py matches them too; ICW-07 / the bible
+# decide whether they become palette tokens.
+SCENE_COLOURS = {"scene_cannon": "#6B6F78", "scene_grass": "#9DAA6A", "scene_hill": "#B9B98A"}
+CLIP_SCENES = ("dialogue_cu", "battle_wide")
+CLIP_FRAMES = 48
+CLIP_VARIANTS = {  # id -> (collage variant, token overrides, label)
+    "B_shadow": ("B", {"shadows": True}, "B, cast shadows on"),
+    "B_light": ("B", {}, "B light, no shadows"),
+    "B_match": ("B", {"palette_match": True}, "B light, AgX palette match"),
+    "A_match": ("A", {"palette_match": True}, "A light, fine ink, AgX palette match"),
+}
 LABELS = {"dialogue_cu": "dialogue close-up", "battle_wide": "battle wide", "travel": "travel", "establishing": "establishing",
           "map_tableau": "map-adjacent tableau"}
 
@@ -166,7 +189,7 @@ def scenes(paths: dict[str, Path]) -> dict[str, dict]:
         "brick": tex("material.ph_brick_wall_001", tile=3.0),
         "table": tex("texture.ph_wooden_table_02_diff"),
         "crate": tex("texture.ph_wooden_crate_01_diff"),
-        "cannon": {"base": "#6B6F78"},
+        "cannon": {"base": SCENE_COLOURS["scene_cannon"]},
         "skin": {"base": "kit_card"},
         "night": {"base": "night"},
         "side_a": {"base": "faction_a"},
@@ -174,8 +197,8 @@ def scenes(paths: dict[str, Path]) -> dict[str, dict]:
         "coat": {"base": "support_blue"},
         "cloak": {"base": "answer_coral"},
         "roof": {"base": "kit_shadow"},
-        "grass": {"base": "#9DAA6A"},
-        "hill": {"base": "#B9B98A"},
+        "grass": {"base": SCENE_COLOURS["scene_grass"]},
+        "hill": {"base": SCENE_COLOURS["scene_hill"]},
         "map": {"base": "paper"},
         "stone": {"base": "grey_mid"},
     }
@@ -262,7 +285,28 @@ def scenes(paths: dict[str, Path]) -> dict[str, dict]:
 def style_for(variant_id: str) -> tuple[str, S.StyleTokens]:
     if variant_id == "S":
         return "cycles_safe", S.variant("B")
+    if variant_id in CLIP_VARIANTS:
+        base, over, _ = CLIP_VARIANTS[variant_id]
+        return "eevee", replace(S.variant(base), **over)
     return "eevee", S.variant(variant_id)
+
+
+def motion(scene_id: str, sc: dict, frames: int = CLIP_FRAMES) -> dict:
+    """The round-2 clip of a scene: the same set with a ``to`` block on what moves (render_shot.build_described keys it)."""
+    sc = json.loads(json.dumps(sc))
+    sc["frames_total"] = frames
+    if scene_id == "dialogue_cu":      # a slow push in on the two speakers (ease in and out)
+        sc["camera"]["to"] = {"location": [-0.62, -2.15, 1.4], "look_at": [0.1, 0.9, 1.08]}
+    elif scene_id == "battle_wide":    # the near line advances 1.6 m while the camera dollies left
+        for o in sc["objects"]:
+            if o["name"].startswith("a") and o["name"][1:2].isdigit():
+                x, y, z = o["location"]
+                o["to"] = {"location": [x, y + 1.6, z]}
+                o["interp"] = "LINEAR"
+        sc["camera"]["to"] = {"location": [3.2, -13.2, 4.0], "look_at": [-1.6, 3.0, 0.9]}
+    else:
+        raise ValueError(f"{scene_id} has no clip motion (clips: {', '.join(CLIP_SCENES)})")
+    return sc
 
 
 def scene_sha256(scene: dict) -> str:
@@ -274,18 +318,20 @@ def scene_sha256(scene: dict) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: int = 16, scene: dict | None = None) -> dict:
-    """A one-frame shot_spec/2 of the master (the style sheet is a STILL_3D plate). Asset refs carry the registered sha256s."""
+def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: int = 16, scene: dict | None = None,
+             frames: int = 1) -> dict:
+    """A shot_spec/2 of the master: one frame = a STILL_3D sheet; ``frames`` > 1 = a VIDEO_3D clip (round 2), its camera rig named
+    from the scene's motion. Asset refs carry the registered sha256s."""
     lib = L.load()
     ref = lambda i: {"id": i, "sha256": L.get(i, lib=lib)["sha256"]}  # noqa: E731
     path, _ = style_for(variant_id)
     profile = "cycles_hero" if path == "cycles_safe" else "eevee_fast"
     spec = {
-        "schema": "shot_spec/2", "job_id": JOB_ID, "shot_id": f"{scene_id}_{variant_id}", "lane": "STILL_3D",
+        "schema": "shot_spec/2", "job_id": JOB_ID, "shot_id": f"{scene_id}_{variant_id}", "lane": "STILL_3D" if frames == 1 else "VIDEO_3D",
         "recipe": "blender_cycles/1" if profile == "cycles_hero" else "blender_eevee/1",
-        "clock": {"fps": 24, "frames": 1, "start_frame": 0},
+        "clock": {"fps": 24, "frames": frames, "start_frame": 0},
         "frame": {"width": S.MASTER_W, "height": S.MASTER_H, "render_scale": 1.0},
-        "scene": {"template_asset": {"id": f"scene_template.style_sheet_{scene_id}",
+        "scene": {"template_asset": {"id": f"scene_template.style_{'sheet' if frames == 1 else 'clip'}_{scene_id}",
                                      "sha256": scene_sha256(scene) if scene is not None else "0" * 64},
                   "era": "style_sheet",
                   "set_assets": [ref(a["id"]) for a in sources() if a["kind"] in ("model", "material", "hdri")],
@@ -300,6 +346,9 @@ def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: 
         "render": {"profile": profile, "samples": samples, "motion_blur": False, "denoise": False, "output": "png_seq"},
         "seed": 1,
     }
+    if frames > 1:
+        spec["scene"]["camera"]["rig"] = {"dialogue_cu": "push", "battle_wide": "dolly"}.get(scene_id, "dolly")
+        spec["scene"]["camera"]["ease"] = "ease_in_out"
     if profile == "cycles_hero":
         spec["why"] = "ICW-05 style sheet: the Cycles-safe variant beside the EEVEE look (roadmap 9.1), never an episode shot"
     return spec
@@ -313,7 +362,10 @@ def job_scene(scene_id: str, variant_id: str, sc: dict, paths: dict[str, Path]) 
     problems = S.check(graph)
     if problems:
         raise ValueError(f"{scene_id}/{variant_id}: style graph problems: {problems}")
-    return {"kind": "described", "objects": sc["objects"], "camera": sc["camera"], "style": graph}, graph
+    scene = {"kind": "described", "objects": sc["objects"], "camera": sc["camera"], "style": graph}
+    if sc.get("frames_total", 1) > 1:
+        scene["frames_total"] = sc["frames_total"]
+    return scene, graph
 
 
 def render(out: Path, *, binary: str | None = None, scene_ids=SCENE_IDS, variant_ids=VARIANT_IDS, samples: int = 16,
@@ -358,6 +410,131 @@ def render(out: Path, *, binary: str | None = None, scene_ids=SCENE_IDS, variant
             log(f"{sid}/{vid}: {row['seconds_per_frame']} s/frame ({row['engine']}, {row['path']})")
             write_json_atomic(out / "style_sheets.json", {"schema": "style_sheets/1", "job_id": JOB_ID, "rows": rows})
     return rows
+
+
+def frame_times(sdir: Path) -> dict:
+    """Seconds per frame of a rendered clip: the first frame (it carries the shader compile) and the steady rest apart."""
+    times = {int(k): float(v) for k, v in json.loads((Path(sdir) / "render_times.json").read_text(encoding="utf-8")).items()}
+    ordered = [times[i] for i in sorted(times)]
+    rest = sorted(ordered[1:])
+    return {"first_s": round(ordered[0], 3) if ordered else None,
+            "steady_median_s": round(rest[len(rest) // 2], 3) if rest else None,
+            "mean_s": round(sum(ordered) / len(ordered), 3) if ordered else None, "frames": len(ordered)}
+
+
+def mp4(frames_dir: Path, dest: Path, *, fps: int = 24, run=None) -> dict:
+    """An H.264 review copy of a committed clip (yuv420p, CRF 16: for watching, never the master). None without ffmpeg."""
+    import shutil
+    import subprocess
+    run = run or subprocess.run
+    if shutil.which("ffmpeg") is None and run is subprocess.run:
+        return {"path": None, "why": "ffmpeg is not installed (brew install ffmpeg); the PNG frames are the clip"}
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.with_suffix(".part.mp4")
+    cmd = ["ffmpeg", "-nostdin", "-y", "-loglevel", "error", "-framerate", str(fps), "-start_number", "0",
+           "-i", str(Path(frames_dir) / "frame_%06d.png"), "-c:v", "libx264", "-preset", "slow", "-crf", "16",
+           "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(tmp)]
+    p = run(cmd, capture_output=True, text=True)
+    if p.returncode != 0:
+        raise RuntimeError(f"ffmpeg could not make {dest.name}: {(p.stderr or '').strip()[:300]}")
+    tmp.replace(dest)
+    return {"path": str(dest), "sha256": hashlib.sha256(dest.read_bytes()).hexdigest()}
+
+
+def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, variant_ids=tuple(CLIP_VARIANTS),
+          frames: int = CLIP_FRAMES, samples: int = 16, scale: float = 1.0, log=print) -> list[dict]:
+    """Round 2: every clip scene x clip variant as a ``frames``-long VIDEO_3D shot through HeadlessRender, an MP4 review copy
+    each, and ``out/style_clips.json`` (rows written as they finish, so a stop keeps what is done)."""
+    from explainer_engine.blender import render as R
+    from explainer_engine.blender.project import BlenderProject
+    out = Path(out)
+    paths = fetch()
+    base = scenes(paths)
+    b = BlenderProject().resolve(binary)
+    vault = R.LocalVault(out / "vault")
+    rows = []
+    for sid in scene_ids:
+        sc = motion(sid, base[sid], frames)
+        for vid in variant_ids:
+            _, tokens = style_for(vid)
+            scene, graph = job_scene(sid, vid, sc, paths)
+            spec = spec_for(sid, vid, tokens, samples=samples, scene=scene, frames=frames)
+            if scale != 1.0:
+                spec["frame"]["render_scale"] = scale
+            t0 = time.time()
+            try:
+                m = R.HeadlessRender(b, vault).run(spec, out / "work", scene=scene)
+            except ContractError as e:
+                if scale == 1.0 or "master" not in str(e):
+                    raise
+                m = dict(json.loads((out / "work" / shot_cache.key(spec) / "render_manifest.json").read_text(encoding="utf-8")),
+                         _findings=[])
+            sdir = out / "work" / m["cache_key"]
+            rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
+            row = {"scene": sid, "variant": vid, "label": CLIP_VARIANTS[vid][2], "tokens": tokens.to_dict(),
+                   "frames_dir": str(sdir / "frames"), "frame": str(sdir / "frames" / R.FRAME_NAME.format(index=0)),
+                   "engine": m["engine"], "seconds_per_frame": m["seconds_per_frame"], "times": frame_times(sdir),
+                   "wall_seconds": round(time.time() - t0, 2), "blender": m["blender"], "gpu_backend": rep.get("gpu_backend"),
+                   "device": m.get("device"), "motion": rep.get("motion"), "applied": rep.get("style", {}).get("applied"),
+                   "style_sha256": graph["sha256"], "scaled": scale != 1.0,
+                   "mp4": mp4(sdir / "frames", out / "clips" / f"{sid}_{vid}.mp4"),
+                   "findings": [f for f in m["_findings"] if f["severity"] == "FAIL"]}
+            rows.append(row)
+            log(f"{sid}/{vid}: {row['times']['steady_median_s']} s/frame steady, first {row['times']['first_s']} s "
+                f"({row['engine']}, {row['gpu_backend']})")
+            write_json_atomic(out / "style_clips.json", {"schema": "style_clips/1", "job_id": JOB_ID, "frames": frames, "rows": rows})
+    return rows
+
+
+def _grid(rows, variants, scene_ids, label, path: Path, *, cell_w: int) -> Path:
+    from PIL import Image, ImageDraw, ImageFont
+    cell_h = cell_w * 9 // 16
+    head, side, pad = 70, 360, 12
+    W, H = side + len(scene_ids) * (cell_w + pad) + pad, head + len(variants) * (cell_h + pad) + pad
+    pal = S.palette()
+    sheet = Image.new("RGB", (W, H), pal["paper"])
+    d = ImageDraw.Draw(sheet)
+    try:
+        font, small, big = (ImageFont.truetype("DejaVuSans.ttf", n) for n in (30, 22, 80))
+    except OSError:
+        font = small = big = ImageFont.load_default()
+    for j, sid in enumerate(scene_ids):
+        d.text((side + pad + j * (cell_w + pad), 20), LABELS[sid], fill=pal["ink"], font=font)
+    for i, vid in enumerate(variants):
+        y = head + pad + i * (cell_h + pad)
+        title, text = label(vid)
+        d.text((pad, y + 10), title, fill=pal["ink"], font=big)
+        d.multiline_text((pad, y + 110), text, fill=pal["ink"], font=small, spacing=6)
+        for j, sid in enumerate(scene_ids):
+            r = next((r for r in rows if r["scene"] == sid and r["variant"] == vid), None)
+            x = side + pad + j * (cell_w + pad)
+            if r is None:
+                d.rectangle([x, y, x + cell_w, y + cell_h], outline=pal["grey_mid"], width=2)
+                continue
+            with Image.open(r["frame"]) as im:
+                sheet.paste(im.convert("RGB").resize((cell_w, cell_h), Image.Resampling.LANCZOS), (x, y))
+    sheet.save(path, optimize=True)
+    sheet.resize((W // 2, H // 2), Image.Resampling.LANCZOS).save(path.with_name(path.stem + "_preview.jpg"), quality=88)
+    return path
+
+
+def clip_collage(out: Path, *, cell_w: int = 960) -> Path:
+    """First frames of the clips: a row per clip variant (with its steady seconds per frame), a column per scene."""
+    out = Path(out)
+    rows = json.loads((out / "style_clips.json").read_text(encoding="utf-8"))["rows"]
+    variants = [v for v in CLIP_VARIANTS if any(r["variant"] == v for r in rows)]
+    scene_ids = [s for s in CLIP_SCENES if any(r["scene"] == s for r in rows)]
+
+    def label(vid):
+        t = style_for(vid)[1]
+        secs = [r["times"]["steady_median_s"] for r in rows if r["variant"] == vid and r["times"]["steady_median_s"]]
+        lines = CLIP_VARIANTS[vid][2].replace(": ", ":\n").replace(", ", ",\n").split("\n")
+        lines += [f"line {t.line_px:g} px", f"shadows {'on' if t.shadows else 'off'}",
+                  f"palette {'matched' if t.palette_match else 'raw hex'}"]
+        if secs:
+            lines.append(f"{max(secs):.1f} s/frame max")
+        return str(list(CLIP_VARIANTS).index(vid) + 1), "\n".join(lines)
+    return _grid(rows, variants, scene_ids, label, out / "clips_collage.png", cell_w=cell_w)
 
 
 def collage(out: Path, *, cell_w: int = 960) -> Path:
@@ -416,6 +593,13 @@ def main(argv: list[str] | None = None) -> int:
     rd.add_argument("--scale", type=float, default=1.0)
     c = sub.add_parser("collage")
     c.add_argument("--out", required=True)
+    cl = sub.add_parser("clips")
+    cl.add_argument("--out", required=True)
+    cl.add_argument("--binary", default=None)
+    cl.add_argument("--scenes", default=",".join(CLIP_SCENES))
+    cl.add_argument("--variants", default=",".join(CLIP_VARIANTS))
+    cl.add_argument("--frames", type=int, default=CLIP_FRAMES)
+    cl.add_argument("--scale", type=float, default=1.0)
     a = ap.parse_args(argv)
     if a.cmd == "register":
         for rec in register(Path(a.downloads)):
@@ -428,6 +612,11 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "render":
         render(Path(a.out), binary=a.binary, scene_ids=a.scenes.split(","), variant_ids=a.variants.split(","), samples=a.samples,
                scale=a.scale)
+        return 0
+    if a.cmd == "clips":
+        clips(Path(a.out), binary=a.binary, scene_ids=a.scenes.split(","), variant_ids=a.variants.split(","), frames=a.frames,
+              scale=a.scale)
+        print(clip_collage(Path(a.out)))
         return 0
     print(collage(Path(a.out)))
     return 0

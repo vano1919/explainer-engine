@@ -5,16 +5,23 @@ name: Ink Chronicle style sheets
 # (explainer_engine/blender/render.py), EEVEE with the toon path in variants A/B/C and the Cycles-safe path as S, then one collage.
 # The CC0 assets (Poly Haven, ambientCG) are fetched from their source URLs and kept only at the sha256 registered in
 # assets/library.json (nothing third-party is committed). Free: no pod, no paid call. CPU runner, OpenGL through Mesa EGL.
+# Round 2 (mode "clips", manual only): the 48-frame clips of style_sheets.CLIP_VARIANTS with MP4 review copies. They are rendered
+# on the creator's Mac first (ICG-3); this mode is the fallback when the Mac is not there (a CPU runner takes hours for all eight).
 
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: "sheets (single frames) or clips (round-2 48-frame clips)"
+        default: "sheets"
+        type: choice
+        options: ["sheets", "clips"]
       variants:
-        description: "comma-separated variants (A,B,C,S)"
-        default: "A,B,C,S"
+        description: "comma-separated variants (sheets: A,B,C,S; clips: B_shadow,B_light,B_match,A_match; empty = all)"
+        default: ""
       scenes:
-        description: "comma-separated scenes"
-        default: "dialogue_cu,battle_wide,travel,establishing,map_tableau"
+        description: "comma-separated scenes (empty = all of the mode)"
+        default: ""
   push:
     branches:
       - "icw/05b-**"
@@ -22,6 +29,8 @@ on:
       - "explainer_engine/blender/style.py"
       - "explainer_engine/blender/style_sheets.py"
       - "explainer_engine/blender/style_sheet_assets.json"
+      - "explainer_engine/blender/grade.py"
+      - "explainer_engine/blender/agx_palette_match.json"
       - "explainer_engine/blender/bpy/render_shot.py"
       - ".github/workflows/style-sheets.yml"
 
@@ -35,7 +44,7 @@ concurrency:
 jobs:
   sheets:
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: ${{ github.event.inputs.mode == 'clips' && 340 || 120 }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -86,11 +95,20 @@ jobs:
       - name: Fetch the CC0 assets (kept only at the registered sha256)
         run: python -m explainer_engine.blender.style_sheets fetch
       - name: Render the style sheets (2560x1440, one frame each)
+        if: github.event.inputs.mode != 'clips'
         run: |
           python -m explainer_engine.blender.style_sheets render --out sheets --binary "${{ steps.install.outputs.bin }}" \
             --variants "${{ github.event.inputs.variants || 'A,B,C,S' }}" \
             --scenes "${{ github.event.inputs.scenes || 'dialogue_cu,battle_wide,travel,establishing,map_tableau' }}"
+      - name: Render the round-2 clips (48 frames each, MP4 review copies)
+        if: github.event.inputs.mode == 'clips'
+        run: |
+          sudo apt-get install --yes --no-install-recommends ffmpeg
+          python -m explainer_engine.blender.style_sheets clips --out sheets --binary "${{ steps.install.outputs.bin }}" \
+            --variants "${{ github.event.inputs.variants || 'B_shadow,B_light,B_match,A_match' }}" \
+            --scenes "${{ github.event.inputs.scenes || 'dialogue_cu,battle_wide' }}"
       - name: Check the frames and build the collage
+        if: github.event.inputs.mode != 'clips'
         run: |
           python - <<'PY'
           import json
@@ -109,11 +127,15 @@ jobs:
           mkdir -p sheets_artifact/frames
           python - <<'PY' || true
           import json, shutil
-          d = json.load(open("sheets/style_sheets.json"))
-          for r in d["rows"]:
-              shutil.copyfile(r["frame"], f"sheets_artifact/frames/{r['scene']}_{r['variant']}.png")
+          import os
+          for name in ("style_sheets.json", "style_clips.json"):
+              if os.path.exists(f"sheets/{name}"):
+                  for r in json.load(open(f"sheets/{name}"))["rows"]:
+                      shutil.copyfile(r["frame"], f"sheets_artifact/frames/{r['scene']}_{r['variant']}.png")
           PY
           cp sheets/style_sheets.json sheets/collage.png sheets/collage_preview.jpg sheets_artifact/ 2>/dev/null || true
+          cp sheets/style_clips.json sheets/clips_collage.png sheets/clips_collage_preview.jpg sheets_artifact/ 2>/dev/null || true
+          [ -d sheets/clips ] && cp -r sheets/clips sheets_artifact/ || true
           for d in sheets/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "sheets_artifact/$(basename "$d").blender.log"; done || true
           ls -la sheets_artifact
       - name: Upload the style sheets

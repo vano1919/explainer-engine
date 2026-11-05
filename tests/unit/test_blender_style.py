@@ -248,3 +248,11 @@ class _Nodes:
 
     def remove(self, n):
         pass
+
+
+def test_the_light_profile_is_the_default_and_shadows_are_one_switch():
+    light = S.StyleEngine().graph("eevee", camera={"lens_mm": 35, "focus_distance_m": 5.0})
+    assert light["scene"]["eevee"]["use_shadows"] is False and light["key_light"]["use_shadow"] is False
+    heavy = S.StyleEngine(S.StyleTokens(shadows=True)).graph("eevee", camera={"lens_mm": 35, "focus_distance_m": 5.0})
+    assert heavy["scene"]["eevee"]["use_shadows"] is True and heavy["key_light"]["use_shadow"] is True
+    assert light["scene"]["eevee"]["use_raytracing"] is False and light["scene"]["eevee"]["use_fast_gi"] is False

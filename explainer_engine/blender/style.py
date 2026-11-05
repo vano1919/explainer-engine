@@ -105,6 +105,11 @@ class StyleTokens:
     paper: str = "paper"                                    # palette token of the backdrop
     ambient: float = 0.05                                   # world light strength (the backdrop colour is for camera rays only)
     key_light: KeyLight = field(default_factory=KeyLight)
+    # The light profile (the creator, 2026-11-05: frame quality and palette first, shadows and reflections secondary, nothing that
+    # makes the video renders heavy): no cast shadows by default; the steps come from the key light's angle alone.
+    shadows: bool = False
+    # Emit the colours AgX turns back into the palette hex (grade.py, agx_palette_match.json) instead of the raw hex.
+    palette_match: bool = False
 
     def __post_init__(self) -> None:
         # BP-173's weight band is enforced where the registry lists it (core/contracts.py, CN-17 on every shot_spec/2 the
@@ -238,6 +243,15 @@ class StyleEngine:
             raise ValueError(f"unknown style path {path!r} (known: {', '.join(PATHS)})")
         return nodes, links, "tone"
 
+    def colour(self, name_or_hex: str) -> list[float]:
+        """A palette token or hex as the RGBA the frame emits: the hex in linear RGB, or (``palette_match``) the value whose AgX
+        display is the hex (grade.matched; a stale or missing table entry is refused)."""
+        h = self.pal.get(name_or_hex, name_or_hex)
+        if self.t.palette_match:
+            from explainer_engine.blender import grade
+            return [*grade.matched(h), 1.0]
+        return rgba(h)
+
     def material(self, name: str, base: str | list[float], *, path: str = "eevee", texture: str | None = None,
                  texture_mean: list[float] | None = None, tile: float | None = None) -> dict:
         """One toon material. ``base`` is a palette token, a hex or a linear RGBA; ``texture`` (an image path, the library file of
@@ -246,7 +260,7 @@ class StyleEngine:
         ground plane), else the asset's own UVs are used."""
         t = self.t
         if isinstance(base, str):
-            base_rgba = rgba(self.pal[base] if base in self.pal else base)
+            base_rgba = self.colour(base)
         else:
             base_rgba = [round(float(x), 6) for x in base][:3] + [1.0]
         nodes, links, tone = self._tone_nodes(path)
@@ -282,9 +296,9 @@ class StyleEngine:
     def world(self, *, hdri: str | None = None) -> dict:
         """Camera rays see the paper colour; lighting is a weak ambient (or the HDRI at the same strength, for its colour only)."""
         t = self.t
-        paper = rgba(self.pal[t.paper])
+        paper = rgba(self.pal[t.paper])  # the ambient light keeps the plain paper value (a matched one is a display target)
         nodes = [{"id": "light", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": t.ambient}},
-                 {"id": "backdrop", "type": "ShaderNodeBackground", "inputs": {"Color": paper, "Strength": 1.0}},
+                 {"id": "backdrop", "type": "ShaderNodeBackground", "inputs": {"Color": self.colour(t.paper), "Strength": 1.0}},
                  {"id": "is_cam", "type": "ShaderNodeLightPath"},
                  {"id": "mix", "type": "ShaderNodeMixShader"},
                  {"id": "out", "type": "ShaderNodeOutputWorld"}]
@@ -299,11 +313,13 @@ class StyleEngine:
         t = self.t
         return {"radius": line_radius(t.line_px, distance_m, lens_mm, sensor_mm=sensor_mm), "line_px_1440": t.line_px,
                 "focus_distance_m": round(distance_m, 4), "crease_threshold_rad": round(math.radians(t.crease_deg), 6),
-                "crease_deg": t.crease_deg, "ink_rgba": rgba(self.pal[t.ink]), "opacity": 1.0}
+                "crease_deg": t.crease_deg, "ink_rgba": self.colour(t.ink), "opacity": 1.0}
 
     def paper(self, texture: str | None) -> dict:
         """The frame-wide paper: the compositor stretches the texture's grain to 0..1 (Normalize: a paper scan is ~3 % grey
-        variation) and overlays it at ``paper_opacity``. Without a texture there is no paper pass (never a fake grain)."""
+        variation) and overlays it at ``paper_opacity``. With ``palette_match`` the frame holds values above 1 (AgX's white needs
+        them), where Overlay breaks, so the grain is a gain instead: frame x (1 + opacity x (2 x grain - 1)), the same +-opacity
+        around the paper. Without a texture there is no paper pass (never a fake grain)."""
         t = self.t
         if texture is None:
             return {"enabled": False, "opacity": t.paper_opacity}
@@ -312,11 +328,20 @@ class StyleEngine:
                  {"id": "fit", "type": "CompositorNodeScale", "inputs": {"Type": "Render Size", "Frame Type": "Crop"}},  # 5.2: menu inputs
                  {"id": "grey", "type": "CompositorNodeRGBToBW"},
                  {"id": "stretch", "type": "CompositorNodeNormalize"},
-                 {"id": "overlay", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "OVERLAY"},
-                  "inputs": {"Factor": t.paper_opacity}},
                  {"id": "out", "type": "NodeGroupOutput"}]
-        links = [["paper", "Image", "fit", "Image"], ["fit", "Image", "grey", "Image"], ["grey", "Val", "stretch", 0],
-                 ["render", "Image", "overlay", 6], ["stretch", 0, "overlay", 7], ["overlay", 2, "out", "Image"]]
+        links = [["paper", "Image", "fit", "Image"], ["fit", "Image", "grey", "Image"], ["grey", "Val", "stretch", 0]]
+        if t.palette_match:
+            o = round(t.paper_opacity, 6)
+            nodes[-1:-1] = [{"id": "gain", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY_ADD"},
+                             "inputs": {1: round(2 * o, 6), 2: round(1 - o, 6)}},
+                            {"id": "overlay", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                             "inputs": {"Factor": 1.0}}]
+            links += [["stretch", 0, "gain", 0], ["render", "Image", "overlay", 6], ["gain", "Value", "overlay", 7],
+                      ["overlay", 2, "out", "Image"]]
+        else:
+            nodes[-1:-1] = [{"id": "overlay", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "OVERLAY"},
+                             "inputs": {"Factor": t.paper_opacity}}]
+            links += [["render", "Image", "overlay", 6], ["stretch", 0, "overlay", 7], ["overlay", 2, "out", "Image"]]
         return _keys({"enabled": True, "opacity": t.paper_opacity, "texture": texture, "nodes": nodes, "links": links})
 
     def scene_settings(self, path: str) -> dict:
@@ -327,7 +352,7 @@ class StyleEngine:
             out["engine"] = "eevee"
             # 9.1: no screen-space ray tracing / AO under Shader to RGB (EEVEE 5.2 has no separate AO switch: ``use_gtao`` is gone,
             # its horizon scan belongs to ray tracing and fast GI)
-            out["eevee"] = {"use_raytracing": False, "use_fast_gi": False, "use_shadows": True}
+            out["eevee"] = {"use_raytracing": False, "use_fast_gi": False, "use_shadows": t.shadows}
         else:
             out["engine"] = "cycles"
             out["cycles"] = {"max_bounces": 0, "use_denoising": False}  # emission-only shading: no light bounces to compute
@@ -343,7 +368,8 @@ class StyleEngine:
         doc = {"schema": SCHEMA, "path": path, "tokens": self.t.to_dict(),
                "scene": self.scene_settings(path),
                "key_light": {"type": "SUN", "energy": kl.energy, "angle_rad": round(math.radians(kl.angle_deg), 6),
-                             "rotation_euler": list(kl.rotation_euler()), "direction": list(kl.direction())},
+                             "rotation_euler": list(kl.rotation_euler()), "direction": list(kl.direction()),
+                             "use_shadow": self.t.shadows},
                "world": self.world(hdri=hdri),
                "line_art": self.line_art(distance_m=camera["focus_distance_m"], lens_mm=camera["lens_mm"],
                                          sensor_mm=camera.get("sensor_mm", 36.0)),
