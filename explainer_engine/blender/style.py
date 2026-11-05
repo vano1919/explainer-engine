@@ -606,12 +606,12 @@ class StyleEngine:
         links = [["is_cam", "Is Camera Ray", "mix", "Fac"], ["light", "Background", "mix", 1], ["backdrop", "Background", "mix", 2],
                  ["mix", "Shader", "out", "Surface"]]
         if a.sky == "gradient" or a.sky == "hdri" and hdri is None:
-            horizon = rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97))
             top = rgba(_hex_scaled(self.pal["support_blue"], 0.62, 0.86))
+            horizon = _lerp(rgba(_hex_scaled(self.pal[t.paper], 2.2, 0.97)), top, 0.3)   # a warm haze already leaning blue
             cloud = rgba(self.pal[t.paper])
             nodes += [{"id": "dir", "type": "ShaderNodeTexCoord"},
                       {"id": "dir_xyz", "type": "ShaderNodeSeparateXYZ"},
-                      {"id": "height", "type": "ShaderNodeMapRange", "inputs": {"From Min": 0.0, "From Max": 0.3}},
+                      {"id": "height", "type": "ShaderNodeMapRange", "inputs": {"From Min": -0.02, "From Max": 0.14}},
                       {"id": "sky", "type": "ShaderNodeValToRGB",
                        "ramp": {"interpolation": "EASE", "stops": [[0.0, horizon], [1.0, top]]}},
                       {"id": "clouds", "type": "ShaderNodeTexNoise", "inputs": {"Scale": 2.2, "Detail": 4.0, "Roughness": 0.55}},
