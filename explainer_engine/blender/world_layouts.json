@@ -2516,21 +2516,21 @@
      "type": "terrain",
      "name": "range",
      "range": {
-      "x0": -420,
-      "x1": 420,
-      "y0": 185,
-      "y1": 330,
-      "ramp": 45,
-      "scale": 75,
+      "x0": -1300,
+      "x1": 1300,
+      "y0": 685,
+      "y1": 830,
+      "ramp": 60,
+      "scale": 110,
       "seed": 13,
       "floor": 0.0,
-      "peak": 140.0,
-      "snow_line": 60,
-      "rock_line": 34,
+      "peak": 49.0,
+      "snow_line": 21,
+      "rock_line": 12,
       "rock_slope": 0.7
      },
      "res": [
-      168,
+      220,
       58
      ],
      "colours": {
@@ -2548,7 +2548,7 @@
       "road": "texture.ph_stone_wall_diff",
       "rock": "texture.ph_rocky_terrain_diff"
      },
-     "uv_m": 40,
+     "uv_m": 60,
      "fog": {
       "colour": [
        0.3,
@@ -2569,12 +2569,12 @@
      },
      "pos": [
       0,
-      200,
+      400,
       -1.4
      ],
      "scale": [
-      1800,
-      1500,
+      4000,
+      2600,
       1
      ],
      "colour": "#8FA262"
