@@ -174,6 +174,22 @@ def identity_refs(char_id: str, costume_id: str, *, out: Path) -> list[Path]:
     return [Path(out) / "views" / f"{v}.png" for v in ("front", "three_quarter")]
 
 
+def compare(a: Path, b: Path) -> dict:
+    """PoC 1's "same identity across costumes", the free part: the same character's mouth close-ups (tracked on the head, so the
+    costume is nearly out of frame) of two sheets, as the RMS difference of their pixels (0 = identical, 0..1) per view and the
+    mean. INFO only: no calibrated number exists (BP-133's CLIP row needs ``qa/identity.py``'s embedder); the creator's read
+    of the two sheets side by side is the judgement."""
+    import numpy as np
+    from PIL import Image
+    rows = {}
+    for m in MOUTHS:
+        pa, pb = Path(a) / "views" / f"mouth_{m}.png", Path(b) / "views" / f"mouth_{m}.png"
+        x = np.asarray(Image.open(pa).convert("RGB"), dtype=np.float64) / 255.0
+        y = np.asarray(Image.open(pb).convert("RGB").resize(Image.open(pa).size), dtype=np.float64) / 255.0
+        rows[f"mouth_{m}"] = round(float(np.sqrt(((x - y) ** 2).mean())), 5)
+    return {"a": str(a), "b": str(b), "views": rows, "mean_rms": round(sum(rows.values()) / len(rows), 5), "severity": "INFO"}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.blender.turnaround", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -187,7 +203,13 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--scale", type=float, default=1.0)
     r.add_argument("--device", default="auto")
     r.add_argument("--register", action="store_true")
+    c = sub.add_parser("compare")
+    c.add_argument("a")
+    c.add_argument("b")
     args = ap.parse_args(argv)
+    if args.cmd == "compare":
+        print(json.dumps(compare(Path(args.a), Path(args.b)), indent=1))
+        return 0
     doc = render(Path(args.out), args.character, args.costume, variant=args.variant, tint=args.tint, binary=args.binary,
                  scale=args.scale, device=args.device, register=args.register)
     print(json.dumps({k: doc[k] for k in ("sheet", "seconds_per_frame")}, indent=1))

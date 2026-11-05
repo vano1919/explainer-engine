@@ -4123,3 +4123,11 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Results: `docs_lint` 0 findings; fast suite 2727 passed, 7 skipped, 2 xfailed; 5 failed only for the missing `cv2` in this
   container (`test_lora_training`, `test_xworld_v1_score`; the same 5 fail on the base without these changes; `test_seams`
   deselected as before).
+- PoC 1 measured (Fable's review of PR #130): `characters measure-clips` (Blender samples every frame on the UAL armature,
+  `rigs.foot_slide`): 7 of 8 clips under the 2 cm foot-slide line (walk 0.45 cm at its natural 0.77 m/s, formal walk the same,
+  jog 0.18 cm, idle/talking/sit/dance 0); `Sword_Attack` drags its rear foot 0.55 m (a sliding lunge in the clip itself), so a
+  planted combat shot uses `Sword_Idle`. The pass line is 6 of 8. Identity across costumes: `turnaround compare` (mouth close-ups'
+  pixel RMS, INFO; same man in two costumes against a different person) runs on the Mac with the third sheet, and ვანო reads them.
+- PoC 2: `rigs.lipsync_measure` (mean |offset| of mouth openings to word starts in frames, open mouth outside every word window)
+  and `rigs measure-lipsync`; the words come from `audio/local_words.py` (faster-whisper, free) on the Mac with Rhubarb's cues.
+- CI: the Blender smoke installs `pillow==12.3.0` for the character smoke (`characters._mean`).

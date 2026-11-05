@@ -32,6 +32,7 @@ import zipfile
 from pathlib import Path
 
 from explainer_engine.assets import library as L
+from explainer_engine.core.store import write_json_atomic
 
 HERE = Path(__file__).resolve().parent
 ASSETS = HERE / "character_assets.json"
@@ -403,6 +404,50 @@ def _mean(path: Path) -> list[float]:
     return style_sheets.texture_mean(path)
 
 
+# --- PoC 1: the clips' foot slide (roadmap 21.6) ---------------------------------------------------------------------------------
+
+POC1_CLIPS = {  # the 8 clips of PoC 1 (walk, run, idle, turn, combat, sit, emote + the formal walk of the battle shots); UAL1 has
+    # no turn-in-place clip, so the talking idle stands in for it
+    "Walk_Loop": "walk", "Jog_Fwd_Loop": "run", "Idle_Loop": "idle", "Idle_Talking_Loop": "idle (talking)",
+    "Sword_Attack": "combat", "Sitting_Idle_Loop": "sit", "Dance_Loop": "emote", "Walk_Formal_Loop": "walk (formal)"}
+FOOT_BONES = ("root", "pelvis", "foot_l", "foot_r", "ball_l", "ball_r")
+
+
+def measure_clips(out: Path, *, binary: str | None = None, actions=tuple(POC1_CLIPS), run=None, cpaths=None) -> dict:
+    """PoC 1's foot-slide line: Blender samples every frame of each clip on the UAL armature (``bpy/measure_clips.py``),
+    ``rigs.foot_slide`` reads the planted feet. Writes ``out/poc1_clips.json``; free (a local Blender run)."""
+    import subprocess
+    from explainer_engine.blender import rigs
+    from explainer_engine.blender.project import BlenderProject
+    run = run or subprocess.run
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    cpaths = cpaths or fetch()
+    reg = registry()
+    glb = cpaths[reg["animation_asset"]]
+    samples = out / "clip_samples.json"
+    job = out / "measure_job.json"
+    write_json_atomic(job, {"glb": str(glb), "actions": list(actions), "bones": list(FOOT_BONES), "out": str(samples)})
+    b = BlenderProject().resolve(binary)
+    script = Path(__file__).resolve().parent / "bpy" / "measure_clips.py"
+    p = run([b.path, "--background", "--factory-startup", "--python-exit-code", "1", "--python", str(script), "--", str(job)],
+            capture_output=True, text=True)
+    if p.returncode != 0:
+        raise CharacterError(f"measure_clips failed: {(p.stderr or p.stdout or '').strip()[-600:]}")
+    data = json.loads(samples.read_text(encoding="utf-8"))
+    rows = {}
+    for name, a in data["actions"].items():
+        moving = POC1_CLIPS.get(name, "").startswith(("walk", "run"))   # a stationary clip is judged with the body standing still
+        r = rigs.foot_slide(a["samples"], data["fps"], root_speed_mps=None if moving else 0.0)
+        rows[name] = {"kind": POC1_CLIPS.get(name, ""), "frames": len(a["samples"]), **{k: r[k] for k in
+                      ("natural_speed_mps", "root_speed_mps", "root_travel_m", "in_place", "slide_m", "passed")}}
+    doc = {"schema": "poc1_clips/1", "blender": b.version, "animation_asset": reg["animation_asset"],
+           "sha256": L.get(reg["animation_asset"])["sha256"], "line_m": rigs.POC1_SLIDE_M,
+           "usable": sum(1 for r in rows.values() if r["passed"]), "of": len(rows), "clips": rows}
+    write_json_atomic(out / "poc1_clips.json", doc)
+    return doc
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.blender.characters", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -410,7 +455,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--packs", required=True)
     sub.add_parser("fetch").add_argument("--packs")
     sub.add_parser("list")
+    mc = sub.add_parser("measure-clips")
+    mc.add_argument("--out", required=True)
+    mc.add_argument("--binary")
     args = ap.parse_args(argv)
+    if args.cmd == "measure-clips":
+        doc = measure_clips(Path(args.out), binary=args.binary)
+        print(json.dumps(doc, indent=1))
+        return 0 if doc["usable"] >= 6 else 1
     if args.cmd == "prepare":
         print(json.dumps(prepare(Path(args.packs)), indent=1))
     elif args.cmd == "fetch":

@@ -123,3 +123,44 @@ def test_bone_map_is_exact_names_only():
     other = R.bone_map(["root", "Hips", "Head"], ["root", "pelvis", "head"])
     assert not other["identical"] and other["map"] == {"root": "root"}
     assert other["unmatched_source"] == ["Hips", "Head"] and other["unmatched_target"] == ["pelvis", "head"]
+
+
+def _walk(n=32, fps=24, speed=0.8, slip=0.0):
+    """An in-place walk: each foot planted for half the cycle and moving back at ``speed`` (plus ``slip`` m extra per contact)."""
+    rows = []
+    for f in range(n):
+        ph = f / n
+        row = {"root": [0, 0, 0], "pelvis": [0, 0, 1]}
+        for foot, shift in (("foot_l", 0.0), ("foot_r", 0.5)):
+            q = (ph + shift) % 1.0
+            if q < 0.5:   # planted: slides back
+                y = 0.3 - (speed + slip * fps / (n / 2)) * q * n / fps
+                z = 0.1
+            else:         # swing: lifted, goes forward
+                y = 0.0
+                z = 0.25
+            row[foot] = [0.1 if foot == "foot_l" else -0.1, y, z]
+        rows.append(row)
+    return rows
+
+
+def test_foot_slide_finds_the_natural_speed_and_a_stationary_slide():
+    r = R.foot_slide(_walk(), 24)
+    assert r["in_place"] and abs(r["natural_speed_mps"] - 0.8) < 1e-6 and r["slide_m"] < R.POC1_SLIDE_M and r["passed"]
+    off = R.foot_slide(_walk(), 24, root_speed_mps=0.4)   # the body moved at half the clip's speed: the feet skate
+    assert off["slide_m"] > R.POC1_SLIDE_M and not off["passed"]
+    still = [{"root": [0, 0, 0], "foot_l": [0.1, 0, 0.1], "foot_r": [-0.1, 0.01 * k, 0.1]} for k in range(10)]
+    s = R.foot_slide(still, 24, root_speed_mps=0.0)
+    assert s["slide_m"] == 0.09 and not s["passed"]   # a dragged foot while standing is a slide
+
+
+def test_lipsync_measure_offset_in_frames_and_open_mouth_on_silence():
+    cues = {"metadata": {"duration": 2.0}, "mouthCues": [
+        {"start": 0.0, "end": 0.5, "value": "X"}, {"start": 0.5, "end": 0.8, "value": "D"}, {"start": 0.8, "end": 1.2, "value": "X"},
+        {"start": 1.2, "end": 1.5, "value": "C"}, {"start": 1.5, "end": 2.0, "value": "X"}]}
+    words = [{"start": 0.5 - 1 / 24, "end": 0.8}, {"start": 1.2, "end": 1.5}]
+    m = R.lipsync_measure(cues, words)
+    assert m["mean_abs_offset_frames"] == 0.5 and m["open_on_silence_frames"] == 0 and m["passed"]
+    late = R.lipsync_measure(cues, [{"start": 0.3, "end": 0.45}, {"start": 1.0, "end": 1.1}])
+    assert late["mean_abs_offset_frames"] > R.POC2_OFFSET_FRAMES and late["longest_open_silence_run"] > R.POC2_OPEN_SILENCE
+    assert not late["passed"]

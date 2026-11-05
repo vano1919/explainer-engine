@@ -179,3 +179,31 @@ def test_itch_refuses_a_paid_pack_and_retries_a_rate_limit(tmp_path):
             return super().open(req, timeout)
     s = itch.Session(Flaky([("https://q.itch.io/pack", PAGE)]), backoff_s=0)
     assert "tok1" in s.get("https://q.itch.io/pack") and n["k"] == 2
+
+
+def test_turnaround_compare_is_zero_for_the_same_sheet_and_grows_with_a_change(tmp_path):
+    from PIL import Image
+    for d, shade in (("a", 100), ("b", 100), ("c", 160)):
+        (tmp_path / d / "views").mkdir(parents=True)
+        for m in T.MOUTHS:
+            Image.new("RGB", (8, 8), (shade, shade, shade)).save(tmp_path / d / "views" / f"mouth_{m}.png")
+    assert T.compare(tmp_path / "a", tmp_path / "b")["mean_rms"] == 0.0
+    c = T.compare(tmp_path / "a", tmp_path / "c")
+    assert c["mean_rms"] > 0.2 and c["severity"] == "INFO" and len(c["views"]) == 9
+
+
+def test_measure_clips_reads_the_blender_samples_into_the_poc1_line(tmp_path, monkeypatch):
+    from explainer_engine.blender import project as PJ
+    from test_lipsync_map import _walk
+    reg, paths = fake_cast(tmp_path, monkeypatch)
+    monkeypatch.setattr(PJ.BlenderProject, "resolve", lambda self, b=None, **k: PJ.BlenderBinary("blender", "5.2.3", None, "cpu", None))
+
+    def run(argv, **kw):
+        job = json.loads(open(argv[-1]).read())
+        still = [{"root": [0, 0, 0], "pelvis": [0, 0, 1], "foot_l": [0.1, 0, 0.1], "foot_r": [-0.1, 0, 0.1]}] * 20
+        acts = {a: {"frames": [0, 31], "samples": _walk() if "Walk" in a or "Jog" in a else still} for a in job["actions"]}
+        open(job["out"], "w").write(json.dumps({"fps": 24, "actions": acts}))
+        return type("P", (), {"returncode": 0, "stderr": "", "stdout": ""})()
+    doc = C.measure_clips(tmp_path / "m", run=run, cpaths=paths)
+    assert doc["of"] == 8 and doc["usable"] == 8 and doc["clips"]["Walk_Loop"]["natural_speed_mps"] == 0.8
+    assert doc["clips"]["Idle_Loop"]["root_speed_mps"] == 0.0 and (tmp_path / "m" / "poc1_clips.json").exists()

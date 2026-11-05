@@ -224,3 +224,120 @@ def bone_map(source_joints: list[str], target_joints: list[str]) -> dict:
     return {"map": m, "unmatched_source": [j for j in source_joints if j not in tgt],
             "unmatched_target": [j for j in target_joints if j not in set(source_joints)],
             "identical": list(source_joints) == list(target_joints)}
+
+
+# --- PoC 1 and PoC 2 measurements (roadmap 21.6) ----------------------------------------------------------------------------------
+
+POC1_SLIDE_M = 0.02      # roadmap 21.6 PoC 1 pass line: foot slide under 2 cm per cycle
+POC2_OFFSET_FRAMES = 1.0  # PoC 2 pass lines: mean |offset| at most 1 frame,
+POC2_OPEN_SILENCE = 2     # and no open mouth on silence for more than 2 frames
+CONTACT_BAND_M = 0.015    # analysis constant: a foot is planted while within 1.5 cm of its lowest height in the clip
+
+
+def _runs(flags: list[bool], *, wrap: bool = True) -> list[tuple[int, int]]:
+    """(start, end) of each run of True, end exclusive; a run that wraps the loop's end joins its start."""
+    n, out, i = len(flags), [], 0
+    while i < n:
+        if flags[i]:
+            j = i
+            while j < n and flags[j]:
+                j += 1
+            out.append((i, j))
+            i = j
+        else:
+            i += 1
+    if wrap and len(out) > 1 and out[0][0] == 0 and out[-1][1] == n:
+        s, _ = out.pop()
+        out[0] = (s, n + out[0][1])
+    return out
+
+
+def foot_slide(samples: list[dict], fps: int, *, feet=("foot_l", "foot_r"), root: str = "root",
+               root_speed_mps: float | None = None, loop: bool = True) -> dict:
+    """PoC 1's foot-slide line on one clip (``bpy/measure_clips.py`` samples: per frame {bone: [x, y, z]}). A foot is planted
+    while within ``CONTACT_BAND_M`` of its lowest height; its slide is how far it travels on the ground while planted, after
+    taking away the body's own travel at ``root_speed_mps`` (None = the clip's natural speed: the planted feet's mean ground
+    speed when the clip is in place, else its root's). Returns {feet: {foot: {runs, slide_m}}, natural_speed_mps, root_travel_m,
+    in_place, slide_m (worst), passed}."""
+    n = len(samples)
+    if n < 2:
+        raise ValueError("a clip needs at least two frames")
+    r0, r1 = samples[0][root], samples[-1][root]
+    root_travel = math.hypot(r1[0] - r0[0], r1[1] - r0[1])
+    in_place = root_travel < POC1_SLIDE_M
+    per, speeds = {}, []
+    for foot in feet:
+        z = [s[foot][2] for s in samples]
+        low = min(z)
+        flags = [h <= low + CONTACT_BAND_M for h in z]
+        runs = _runs(flags, wrap=loop)
+        rows = []
+        for a, b in runs:
+            idx = [k % n for k in range(a, b)]
+            p, q = samples[idx[0]][foot], samples[idx[-1]][foot]
+            rp, rq = samples[idx[0]][root], samples[idx[-1]][root]
+            d = math.hypot((q[0] - p[0]) - (rq[0] - rp[0]), (q[1] - p[1]) - (rq[1] - rp[1]))   # foot travel against the root
+            t = (len(idx) - 1) / fps
+            rows.append({"frames": [idx[0], idx[-1]], "seconds": round(t, 4), "travel_m": round(d, 4)})
+            if t > 0:
+                speeds.append(d / t)
+        per[foot] = rows
+    natural = (sum(speeds) / len(speeds) if speeds else 0.0) if in_place else root_travel / ((n - 1) / fps)
+    v = natural if root_speed_mps is None else root_speed_mps
+    worst = 0.0
+    for foot, rows in per.items():
+        for r in rows:
+            r["slide_m"] = round(abs(r["travel_m"] - v * r["seconds"]) if in_place else r["travel_m"], 4)
+            worst = max(worst, r["slide_m"])
+    return {"feet": per, "natural_speed_mps": round(natural, 4), "root_speed_mps": round(v, 4), "root_travel_m": round(root_travel, 4),
+            "in_place": in_place, "slide_m": round(worst, 4), "passed": worst < POC1_SLIDE_M}
+
+
+def lipsync_measure(cues: dict | Path | str, words: list[dict], fps: int = 24, *, rest: str = "X") -> dict:
+    """PoC 2's two lines on a voiced line: ``words`` = [{start, end}, ...] in seconds (word timings of the same take, e.g.
+    ``audio/local_words.py``). Offset: for each word, the nearest mouth opening (a cue other than the rest shape and A, the
+    closed lips) to the word's start; its mean |offset| in frames. Silence: frames outside every word window whose shape is
+    open; the longest such run in frames. Pass lines POC2_OFFSET_FRAMES and POC2_OPEN_SILENCE."""
+    c = load_cues(cues)
+    closed = {rest, "A", "X"}
+    opens = [s for s, e, v in c["cues"] if v not in closed]
+    offs = []
+    for w in words:
+        if opens:
+            near = min(opens, key=lambda s: abs(s - w["start"]))
+            offs.append((near - w["start"]) * fps)
+    shapes = shape_per_frame(c, fps, None, rest)
+    silent_open = []
+    for f, s in enumerate(shapes):
+        t = f / fps
+        spoken = any(w["start"] - EPS <= t <= w["end"] + EPS for w in words)
+        silent_open.append(not spoken and s not in closed)
+    runs = _runs(silent_open, wrap=False)
+    longest = max((b - a for a, b in runs), default=0)
+    mean_abs = sum(abs(o) for o in offs) / len(offs) if offs else None
+    return {"words": len(words), "cues": len(c["cues"]), "mean_abs_offset_frames": round(mean_abs, 3) if mean_abs is not None else None,
+            "mean_offset_frames": round(sum(offs) / len(offs), 3) if offs else None, "open_on_silence_frames": sum(silent_open),
+            "longest_open_silence_run": longest,
+            "passed": mean_abs is not None and mean_abs <= POC2_OFFSET_FRAMES and longest <= POC2_OPEN_SILENCE}
+
+
+def main(argv: list[str] | None = None) -> int:
+    """``measure-lipsync --cues C --words W``: PoC 2's lines (W = a JSON list of {start, end} or {"words": [...]})."""
+    import argparse
+    import sys
+    ap = argparse.ArgumentParser(prog="python -m explainer_engine.blender.rigs")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    m = sub.add_parser("measure-lipsync")
+    m.add_argument("--cues", required=True)
+    m.add_argument("--words", required=True)
+    a = ap.parse_args(argv)
+    w = json.loads(Path(a.words).read_text(encoding="utf-8"))
+    words = w["words"] if isinstance(w, dict) else w
+    res = lipsync_measure(Path(a.cues), words)
+    json.dump(res, sys.stdout, indent=1)
+    print()
+    return 0 if res["passed"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
