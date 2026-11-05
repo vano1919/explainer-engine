@@ -180,6 +180,46 @@ def cloak(rig, top, collection):
     print("CLOAK groups", len(ob.vertex_groups), "verts", len(me.vertices))
 
 
+# the lead's own look, baked so that every consumer of the .blend sees it (a world renderer that never calls character_benchmark.scene())
+OUTFIT = {"MAT-lead.tunic": (0.42, 0.30, 0.18), "MAT-lead.belt": (0.16, 0.09, 0.05), "MAT-lead.cloak": (0.16, 0.03, 0.025),
+          "MAT-rain.top": (0.62, 0.55, 0.42), "MAT-rain.jeans": (0.09, 0.055, 0.035),
+          "MAT-rain.scarf": (0.16, 0.03, 0.025), "MAT-rain.hairband": (0.16, 0.03, 0.025)}   # undyed linen top, dark brown trousers
+ARMS_DOWN = {"FK-Upperarm.L": (0, 0, -62), "FK-Upperarm.R": (0, 0, 62), "FK-Forearm.L": (8, 0, 0), "FK-Forearm.R": (8, 0, 0)}
+CALM_FACE = {"EyelidsClose.L": 0.18, "EyelidsClose.R": 0.18, "EyebrowsDown.L": 0.25, "EyebrowsDown.R": 0.25}
+
+
+def flat_cloth(name, rgb):
+    """Replace a material's node tree by one Principled cloth so no white original texture survives."""
+    mat = bpy.data.materials.get(name)
+    if mat is None:
+        return
+    mat.use_nodes = True
+    nt = mat.node_tree
+    nt.nodes.clear()
+    out = nt.nodes.new("ShaderNodeOutputMaterial")
+    bsdf = nt.nodes.new("ShaderNodeBsdfPrincipled")
+    bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
+    bsdf.inputs["Roughness"].default_value = 0.85
+    nt.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
+    mat.diffuse_color = (*rgb, 1.0)
+
+
+def bake_look(rig):
+    for name, rgb in OUTFIT.items():
+        flat_cloth(name, rgb)
+    pb = rig.pose.bones["Properties_IKFK"]
+    pb["ik_arm_left"] = 0.0
+    pb["ik_arm_right"] = 0.0
+    for b, deg in ARMS_DOWN.items():
+        bone = rig.pose.bones[b]
+        bone.rotation_mode = "XYZ"
+        bone.rotation_euler = tuple(math.radians(a) for a in deg)
+    kb = bpy.data.objects["GEO-rain-head"].data.shape_keys.key_blocks
+    for k, v in CALM_FACE.items():
+        kb[k].value = v
+    print("LOOK baked", sorted(OUTFIT))
+
+
 def main():
     src, dst = sys.argv[sys.argv.index("--") + 1:][:2]
     bpy.ops.wm.open_mainfile(filepath=src)
@@ -190,6 +230,7 @@ def main():
     angular_key(bpy.data.objects["GEO-rain-head"])
     tunic(bpy.data.objects["RIG-rain"], bpy.data.objects["GEO-rain-top"], bpy.data.collections["rain-clothes"])
     cloak(bpy.data.objects["RIG-rain"], bpy.data.objects["GEO-rain-top"], bpy.data.collections["rain-clothes"])
+    bake_look(bpy.data.objects["RIG-rain"])
     bpy.ops.wm.save_as_mainfile(filepath=dst, compress=True)
     print("SAVED", dst)
 

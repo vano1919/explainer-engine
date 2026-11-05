@@ -39,7 +39,7 @@ def front_key(off_axis_deg: float = 35.0, above_m: float = 0.55, dist: float = 3
             {"name": "front_fill", "energy": 0.65, "color": [0.82, 0.88, 1.0], "direction_from": fill_from, "look_at": HEAD, "shadow": False}]
 
 # a relaxed A-pose on the CloudRig FK arm controls (measured 2026-11-05: local Z, mirrored sign; IK/FK switches set to FK)
-ARMS_DOWN = {"FK-Upperarm.L": [0, 0, -62], "FK-Upperarm.R": [0, 0, 62], "FK-Forearm.L": [-20, 0, 0], "FK-Forearm.R": [-20, 0, 0]}
+ARMS_DOWN = {"FK-Upperarm.L": [0, 0, -62], "FK-Upperarm.R": [0, 0, 62], "FK-Forearm.L": [8, 0, 0], "FK-Forearm.R": [8, 0, 0]}
 CALM_FACE = {"EyelidsClose.L": 0.18, "EyelidsClose.R": 0.18, "EyebrowsDown.L": 0.25, "EyebrowsDown.R": 0.25}
 # C2 (Fable, 2026-11-05): the body keeps Blender Studio's own shading; only the clothes are re-made by the style
 KEEP_OWN = ("MAT-rain.body", "MAT-rain.hands", "MAT-rain.hair", "MAT-rain.eyebrows", "MAT-rain.eyelashes", "MAT-rain.eyes",
