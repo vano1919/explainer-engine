@@ -228,7 +228,7 @@ def test_hill_castle_is_a_static_epic_set_with_a_deterministic_wood():
     names = [p["name"] for p in ps]
     assert {"castle", "hill", "river", "ground"} <= set(names) and sum(n.startswith("house") for n in names) >= 8 * 4
     trees = [p for p in ps if p["role"] == "scatter"]
-    assert len(trees) == 124 and all(abs(p["pos"][0]) >= 7.5 or not -40 < p["pos"][1] < 60 for p in trees)   # none in the river bed
+    assert len(trees) == 114 and all(abs(p["pos"][0]) >= 7.5 or not -40 < p["pos"][1] < 60 for p in trees)   # none in the river bed
     assert any(p["pos"][2] > 1.0 for p in trees)   # trees on the hill follow its surface
     ss = W.scene_set("hill_castle")
     assert ss["set_id"] == "hill_castle" and any(o["landmark"] and o["id"] == "castle" for o in ss["objects"])

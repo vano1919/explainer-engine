@@ -167,6 +167,9 @@ def _gltf(o, report):
         ob.matrix_world = world
         ob.parent = root
         ob.matrix_parent_inverse = root.matrix_world.inverted()
+        if ob.data.has_custom_normals:   # imported split normals make foliage cards shade as shards under the toon ramp
+            with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob]):
+                bpy.ops.mesh.customdata_custom_splitnormals_clear()
         kept += 1
     report.setdefault("gltf", {})[o["name"]] = kept
     if kept == 0:

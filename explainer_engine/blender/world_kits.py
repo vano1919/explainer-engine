@@ -451,8 +451,8 @@ POC_SHOTS = {
 
 
 # The static epic set (the creator, 2026-11-05: a rich world is the main character): a 1440p still and a slow push of the same set.
-HILL_SHOTS = {"castle_still": ([-34.0, -26.0, 9.0], None, [0.0, 58.0, 17.0], None, 24, 1),
-              "castle_push": ([-34.0, -26.0, 9.0], [-24.0, -12.0, 7.5], [0.0, 58.0, 17.0], [0.0, 58.0, 17.0], 24, 0)}
+HILL_SHOTS = {"castle_still": ([-38.0, -30.0, 26.0], None, [0.0, 60.0, 16.0], None, 28, 1),
+              "castle_push": ([-38.0, -30.0, 26.0], [-26.0, -14.0, 20.0], [0.0, 60.0, 16.0], [0.0, 60.0, 16.0], 28, 0)}
 
 
 def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: int = POC_FRAMES,
