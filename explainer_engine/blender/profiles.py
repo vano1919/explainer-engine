@@ -4,7 +4,8 @@ A profile is the engine and its default quality switches; the shot spec's own ``
 wins over the defaults for that shot. The numbers are the roadmap's, every one HYP until the ICW-09 benchmark measures it:
 
 - ``eevee_fast``: EEVEE, 16 samples, no screen-space ray tracing (12.3 scenario A);
-- ``eevee_full``: EEVEE, 64 samples, ambient occlusion and screen-space ray tracing (12.3 scenario B); a series above 10 s/frame at
+- ``eevee_full``: EEVEE, 64 samples, ambient occlusion (Blender 5.x Fast GI, ambient-occlusion-only method; ``use_gtao`` no longer exists) and
+  screen-space ray tracing (12.3 scenario B); a series above 10 s/frame at
   1440p stops and reports (12.4 rule 5);
 - ``cycles_hero``: Cycles, 64 samples with denoise (12.4 scene S6), only with a written ``why`` (CN-17).
 
