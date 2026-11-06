@@ -4182,7 +4182,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. A spoken line in a video clip (KP-18): at most words_per_second words a second of the clip after a settle of settle_s at each end (the face settles before the line and after it), so a 4 s shot carries about 7 words and a 10 s shot about 22. The model lip-syncs what fits; a longer line is split over two shots or given to the narrator.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. A spoken line in a video clip (KP-18): at most words_per_second words a second of the clip after a settle of settle_s at each end (the face settles before the line and after it), so a 4 s shot carries about 7 words and a 10 s shot about 22. The model lip-syncs what fits; a longer line is split over two shots or given to the narrator.",
    "thresholds": {
     "words_per_second": 2.5,
     "settle_s": 0.5
@@ -4210,7 +4210,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. Faces in a medium or closer shot (KP-19): at most close_faces_max people in an MS, MCU, CU, ECU or OTS shot; more faces merge in the video model, and the creator's cartoons show 2 or fewer people in 78 % of their shots (120 shots hand-labelled 2026-10-24, docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md). A group is a wide; the acting is a medium.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Faces in a medium or closer shot (KP-19): at most close_faces_max people in an MS, MCU, CU, ECU or OTS shot; more faces merge in the video model, and the creator's cartoons show 2 or fewer people in 78 % of their shots (120 shots hand-labelled 2026-10-24, docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md). A group is a wide; the acting is a medium.",
    "thresholds": {
     "close_faces_max": 2
    },
@@ -4231,7 +4231,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. A video prompt is one present-tense paragraph of four to eight sentences (KP-25): video_words is its word range. Shorter prompts leave the action and the sound to chance; longer ones re-describe the picture, which drifts the identity in image-to-video.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. A video prompt is one present-tense paragraph of four to eight sentences (KP-25): video_words is its word range. Shorter prompts leave the action and the sound to chance; longer ones re-describe the picture, which drifts the identity in image-to-video.",
    "thresholds": {
     "video_words": [
      30,
@@ -4416,7 +4416,7 @@
    "area": "film",
    "status": "house",
    "severity": "REVIEW",
-   "statement": "Since D-96/D-97 (2026-11-05) a VIDEO shot is a Blender clip; the LTX wording of the sources is the legacy route's evidence. Shot duration by intent (KP-06/KP-36, D-95): a visible voiced dialogue or lip-sync coverage shot is at most dialogue_shot_max_s; a non-dialogue VIDEO-lane action shot may run up to non_dialogue_video_max_s when a continuous battle, overhead move, task or camera choreography benefits from it. Do not split a 10-15 s non-dialogue action just to meet a dialogue limit. The 15 s value is a planning ceiling, not a promise that every model, resolution or frame rate supports it; the generation adapter must enforce the selected model's actual constraints. keypose_after_s requests a guided last frame for a pose-changing action when useful; it is not an edit-cut limit. STILL and HELPER lanes use their own rules.",
+   "statement": "A VIDEO shot by any route (J2, J4 or J5, D-116). These are SCENE durations (the creator, 2026-11-06): one LTX generation inside a scene is bounded by BP-172, not by this rule. Shot duration by intent (KP-06/KP-36, D-95): a visible voiced dialogue or lip-sync coverage shot is at most dialogue_shot_max_s; a non-dialogue VIDEO-lane action shot may run up to non_dialogue_video_max_s when a continuous battle, overhead move, task or camera choreography benefits from it. Do not split a 10-15 s non-dialogue action just to meet a dialogue limit. The 15 s value is a planning ceiling, not a promise that every model, resolution or frame rate supports it; the generation adapter must enforce the selected model's actual constraints. keypose_after_s requests a guided last frame for a pose-changing action when useful; it is not an edit-cut limit. STILL and HELPER lanes use their own rules.",
    "thresholds": {
     "dialogue_shot_max_s": 5.0,
     "non_dialogue_video_max_s": 15.0,
@@ -4446,14 +4446,14 @@
    "supersedes": [
     "universal 10 s / 8 s video-shot cap (KP-06) and pre-D-95 universal 10 s clip cap"
    ],
-   "decided": "the creator, 2026-11-04 (D-95): 5 s dialogue coverage; non-dialogue VIDEO action up to 15 s when justified; provider limits still apply"
+   "decided": "the creator, 2026-11-04 (D-95): 5 s dialogue coverage; non-dialogue VIDEO action up to 15 s when justified; provider limits still apply; the creator, 2026-11-06 07:14 UTC (scene level): BP-108 is the whole scene's duration, BP-172 the single LTX clip"
   },
   {
    "id": "BP-109",
    "area": "film",
    "status": "house",
    "severity": "REVIEW",
-   "statement": "Since D-97 (2026-11-05) the lanes are VIDEO_3D (Blender clip), STILL_3D (Blender plate) and HELPER (Python renderers); the shares and the tolerance are unchanged (D-98) and the LTX/Python wording below is the legacy mapping. Visual mix by runtime (the creator's rule of 2026-11-01, D-93): lane_share.video is generated video (including non-dialogue LTX action), lane_share.still is still frames on which Python adds objects and moves them, and lane_share.helper is Python-made maps, progress bars, calculations and counters; each share stays within tolerance. The still_shot_max_s guard applies to the STILL lane only. It is independent from the spoken narration/dialogue mix (BP-105) and the VIDEO-lane duration rules (BP-108).",
+   "statement": "The lanes are VIDEO_3D (a moving shot by route J2, J4 or J5), STILL_3D (a J5 plate with camera motion) and HELPER (Python renderers) (D-97 as amended by D-116, 2026-11-06); the shares and the tolerance are unchanged (D-98). Visual mix by runtime (the creator's rule of 2026-11-01, D-93): lane_share.video is generated video (including non-dialogue LTX action), lane_share.still is still frames on which Python adds objects and moves them, and lane_share.helper is Python-made maps, progress bars, calculations and counters; each share stays within tolerance. The still_shot_max_s guard applies to the STILL lane only. It is independent from the spoken narration/dialogue mix (BP-105) and the VIDEO-lane duration rules (BP-108).",
    "thresholds": {
     "lane_share": {
      "video": 0.6,
@@ -4489,7 +4489,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. Camera moves (KP-38): at most camera_move_share_max of the shots move the camera; the creator's cartoons keep the camera still on 81 % of shots (moving 9-19 %) and LTX moves the camera on its own when it is not told to stay.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Camera moves (KP-38): at most camera_move_share_max of the shots move the camera; the creator's cartoons keep the camera still on 81 % of shots (moving 9-19 %) and LTX moves the camera on its own when it is not told to stay.",
    "thresholds": {
     "camera_move_share_max": 0.2
    },
@@ -5568,7 +5568,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05: applies only to lanes whose recipe is ltx_i2v/*, never to a Blender lane). Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-85).",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06): the recipes ltx_i2v/*, ltx_layout/* and ltx_restyle/*; never to a J5 or Blender-rendered shot. Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-85).",
    "thresholds": {
     "frames_step": 8,
     "frames_offset": 1,
@@ -5586,7 +5586,9 @@
      257
     ],
     "applies_to_recipes": [
-     "ltx_i2v/*"
+     "ltx_i2v/*",
+     "ltx_layout/*",
+     "ltx_restyle/*"
     ]
    },
    "sources": [
@@ -6217,7 +6219,7 @@
    "area": "qa",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. Clip container, audio and frame checks (CLIP-02..12 of `video-qa`): the clip's audio length against its picture, spoken words in a shot that should be silent, the share of the dialogue heard, silence in a dialogue shot, black, blown or flat frames, a frozen tail, and the first frame against its keyframe. The numbers are proposals read from the two Argon audits; none becomes FAIL before two source types (A/B/C) or the creator's dated word back it (D-59).",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Clip container, audio and frame checks (CLIP-02..12 of `video-qa`): the clip's audio length against its picture, spoken words in a shot that should be silent, the share of the dialogue heard, silence in a dialogue shot, black, blown or flat frames, a frozen tail, and the first frame against its keyframe. The numbers are proposals read from the two Argon audits; none becomes FAIL before two source types (A/B/C) or the creator's dated word back it (D-59).",
    "thresholds": {
     "av_duration_tol_frames": 1,
     "spoken_words_max_in_silent_shot": 3,
@@ -6249,7 +6251,7 @@
    "area": "qa",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. Keyframe gate: tries per shot and the retrain trigger (KG-14, KG-15). A failing shot is drawn again with a new seed at most max_tries times, then the prompt is fixed; at retrain_at cases of one error type on one LoRA a retraining is proposed to the creator. The creator's own sentence behind KG-14 (\"regenerate only on a fail; spend nothing blind\", 2026-10-24) names no number, so 3 and 15 are the project's own starting values, recorded as a hypothesis; the gate stops a shot (`fix_prompt`) or proposes, it does not FAIL a picture on them.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Keyframe gate: tries per shot and the retrain trigger (KG-14, KG-15). A failing shot is drawn again with a new seed at most max_tries times, then the prompt is fixed; at retrain_at cases of one error type on one LoRA a retraining is proposed to the creator. The creator's own sentence behind KG-14 (\"regenerate only on a fail; spend nothing blind\", 2026-10-24) names no number, so 3 and 15 are the project's own starting values, recorded as a hypothesis; the gate stops a shot (`fix_prompt`) or proposes, it does not FAIL a picture on them.",
    "thresholds": {
     "max_tries": 3,
     "retrain_at": 15
@@ -6731,9 +6733,9 @@
   {
    "id": "BP-172",
    "area": "video",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Legacy recipe rule (D-105, 2026-11-05): it applies to video-model clips of the legacy image-generation route (D-80, D-93), not to Blender shots. LTX clips and their prompts follow the zone: short clips with one clear physical action (start, peak, settle) in the hyped zones, longer clips in the calm middle, a bounded share of frames that hold, and a prompt names a fast action verb instead of a slow gesture. The numbers are the project's first values for a fast cartoon and are untested on LTX-2.5 until the P12 pod runs.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Single LTX clip limit (the creator, 2026-11-06: BP-108 is the scene, this rule one LTX generation; a longer scene is cut or chained into clips): clip_target_s_band is the planned length of every J2/J4 clip, middle_clip_s_band's upper end its hard limit. LTX clips and their prompts follow the zone: short clips with one clear physical action (start, peak, settle) in the hyped zones, longer clips in the calm middle, a bounded share of frames that hold, and a prompt names a fast action verb instead of a slow gesture. The numbers are the project's first values for a fast cartoon and are untested on LTX-2.5 until the P12 pod runs.",
    "thresholds": {
     "hyped_clip_s_band": [
      2.0,
@@ -6742,6 +6744,10 @@
     "middle_clip_s_band": [
      4.0,
      8.0
+    ],
+    "clip_target_s_band": [
+     3.0,
+     6.0
     ],
     "hyped_hold_share_max": 0.35,
     "hyped_frozen_run_frames_max": 12,
@@ -6777,13 +6783,17 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/shot_prompt_lint.py",
+    "explainer_engine/scripting/film_shots.py:LTX_CLIP_TARGET_S",
+    "explainer_engine/scripting/film_shots.py:LTX_CLIP_MAX_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:LTX_CLIP_TARGET_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:LTX_CLIP_MAX_S",
     "explainer_engine/training/video_qa.py",
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
-   "next_step": "scripting/shot_prompt_lint.py takes over enforced_by when it reads this row; measure on the P12 pod",
-   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)"
+   "next_step": "measure on the step-3 route-test pod (D-116); the hyped and middle bands stay the MrBeast-rhythm values",
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)",
+   "decided": "the creator, 2026-11-06 07:14 UTC: one LTX generation 3-6 s (clip_target_s_band); BP-108 stays the scene limit"
   },
   {
    "id": "BP-173",

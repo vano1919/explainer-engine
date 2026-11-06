@@ -49,6 +49,10 @@ MEDIAN_SHOT_S = tuple(sourced_rules.T("BP-107", "median_shot_s"))
 DIALOGUE_SHOT_MAX_S = sourced_rules.T("BP-108", "dialogue_shot_max_s")  # KP-36 / D-95
 NON_DIALOGUE_VIDEO_MAX_S = sourced_rules.T("BP-108", "non_dialogue_video_max_s")
 KEYPOSE_AFTER_S = sourced_rules.T("BP-108", "keypose_after_s")
+# BP-108 above is the SCENE level; BP-172 bounds one LTX generation of a J2/J4 shot (the creator, 2026-11-06, D-116)
+LTX_CLIP_TARGET_S = tuple(sourced_rules.T("BP-172", "clip_target_s_band"))
+LTX_CLIP_MAX_S = sourced_rules.T("BP-172", "middle_clip_s_band")[1]
+LTX_ROUTES = frozenset({"J2", "J4"})  # D-116: the routes whose pixels an LTX generation makes; J5 and H never
 LANE_SHARE = sourced_rules.T("BP-109", "lane_share")  # KP-37: video / still / helper by runtime (the creator, 2026-11-01)
 LANE_TOLERANCE = sourced_rules.T("BP-109", "lane_tolerance")
 STILL_SHOT_MAX_S = sourced_rules.T("BP-109", "still_shot_max_s")
@@ -856,6 +860,37 @@ def lane_share_findings(shares: dict[str, float], *, helper_known: bool = True) 
     return out
 
 
+def ltx_clips(shot: dict) -> list[dict]:
+    """The LTX generations a shot is planned as (D-116): its ``ltx_clips`` when written, else the whole shot as one clip; none for a
+    J5 or H shot (and for a shot with no route, the film_shots/1 and /2 cards)."""
+    if shot.get("route") not in LTX_ROUTES:
+        return []
+    return list(shot.get("ltx_clips") or [{"seconds": float(shot["seconds"])}])
+
+
+def ltx_clip_findings(shot: dict) -> list[tuple[str, str, str]]:
+    """KP-49 (BP-172): every LTX clip written in a J2/J4 shot's ``ltx_clips`` is LTX_CLIP_TARGET_S long (REVIEW outside it) and
+    never longer than LTX_CLIP_MAX_S (FAIL, the creator's dated limit). A J2/J4 shot with no ``ltx_clips`` yet is one planned
+    clip: outside the band it is a REVIEW (cut or chain it into clips). A J5 or H shot is exempt; BP-108 stays the scene's ceiling."""
+    lo, hi = LTX_CLIP_TARGET_S
+    out = []
+    written = bool(shot.get("ltx_clips"))
+    for n, clip in enumerate(ltx_clips(shot), 1):
+        sec = float(clip["seconds"])
+        if lo <= sec <= hi:
+            continue
+        if written and sec > LTX_CLIP_MAX_S:
+            out.append(("KP-49", sourced_rules.level("BP-172"), f"LTX clip {n} of this {shot['route']} shot is {sec:g} s: one generation "
+                        f"is at most {LTX_CLIP_MAX_S:g} s (BP-172); cut or chain the scene into clips of {lo:g}-{hi:g} s"))
+        elif written:
+            out.append(("KP-49", "REVIEW", f"LTX clip {n} of this {shot['route']} shot is {sec:g} s: the planned length of one "
+                        f"generation is {lo:g}-{hi:g} s (BP-172, D-116)"))
+        else:
+            out.append(("KP-49", "REVIEW", f"a {sec:g} s {shot['route']} shot with no ltx_clips is one LTX generation: plan its clips "
+                        f"of {lo:g}-{hi:g} s (at most {LTX_CLIP_MAX_S:g} s, BP-172, D-116)"))
+    return out
+
+
 def episode_check(doc: dict) -> list[dict]:
     """The episode rules of the script engine v1: rhythm (KP-35), clip length (KP-36), tiers (KP-37), camera moves
     (KP-38), narration blocks and the narrator's share (KP-39), the outro (KP-40), a tier on every shot (ZI-03) and a
@@ -877,6 +912,7 @@ def episode_check(doc: dict) -> list[dict]:
         elif visual_lane(s, doc.get("schema")) == "video" and s["seconds"] > NON_DIALOGUE_VIDEO_MAX_S:
             add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s non-dialogue VIDEO shot: above the "
                                         f"{NON_DIALOGUE_VIDEO_MAX_S:g} s planning ceiling (BP-108); check model limits and split only if needed")
+        out += [{"rule": r, "severity": sev, "where": sid, "detail": d} for r, sev, d in ltx_clip_findings(s)]
         if s["seconds"] > KEYPOSE_AFTER_S and s.get("action") and tier != "hold" and not s.get("last_frame"):
             add("KP-36", "REVIEW", sid, f"{s['seconds']:g} s of pose-changing action without a guided last frame: add one "
                                         "when the action has a discrete landing pose. This is a continuity aid, not an edit-cut limit (BP-108)")

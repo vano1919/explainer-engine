@@ -332,9 +332,12 @@ def test_film_shots_3_master_is_bp167_and_a_stale_bible_is_review(monkeypatch):
 
 
 def test_cn08_binds_only_the_recipes_bp139_names():
-    """D-105: 8k+1 frames and sizes in 32 are LTX's; a keyframe still or a Blender shot is outside them."""
-    assert SR.T("BP-139", "applies_to_recipes") == ["ltx_i2v/*"]
+    """D-105, D-116: 8k+1 frames and sizes in 32 are LTX's (the J2/J4 recipes too); a keyframe still, a J5 2.5D assembly or a
+    Blender shot is outside them."""
+    assert SR.T("BP-139", "applies_to_recipes") == ["ltx_i2v/*", "ltx_layout/*", "ltx_restyle/*"]
     assert C.ltx_recipe("ltx_i2v/1") and not C.ltx_recipe("qwen_image_keyframe/1") and not C.ltx_recipe("blender_eevee/1")
+    assert C.ltx_recipe("ltx_layout/1") and C.ltx_recipe("ltx_restyle/1") and not C.ltx_recipe("assemble_25d/1")
+    assert not C.ltx_recipe("python_helper/1")
     spec = load(FIX / "shot_spec" / "review__frames_not_8k1.json")
     assert {f["rule"] for f in C.errors(spec)} == {"CN-08"}
     spec["recipe"] = "qwen_image_keyframe/1"
