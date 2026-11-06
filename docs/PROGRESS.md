@@ -4026,6 +4026,13 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Results: `docs_lint` 0 findings; fast suite 2658 passed, 0 failed (`test_seams` is the inherited ffprobe failure).
 - Cost: $0. No download, no pod, no paid call.
 
+### 2026-11-05 — Mac render environment and runbook (D-113)
+- Blender 5.2.3 LTS installed on the creator's M4 Pro Mac; the image's sha256 matches `config/cloud_pins.json`, no pin change.
+- New: `docs/RUNBOOK_mac_render.md` (install, run, measured speeds, known limits), with its row in `docs/INDEX.md`.
+- Measured on Metal: the ICW-04 smoke and the ICW-05b round-2 clips; numbers in the runbook. Stand-in figures only.
+- Found: `style_sheets.mp4()` at efbcc17 leaves the colour matrix to ffmpeg (BT.601 values, untagged), reported to ICW-05b; the manifest's `device` says `cpu` on the Mac while EEVEE runs on Metal.
+- Docs only, no code or test changes. Results: `docs_lint` 0 findings. Cost: $0.
+
 ### 2026-11-05 — ICW-05b: style engine, style bridge, PoC 3 CC0 assets, style sheets and motion clips (Ink Chronicle, roadmap 9.1, 21.6)
 
 - Work package ICW-05b (the rest of ICW-05), branch `icw/05b-style` from `opus/ink-chronicle-blender-visual-system-2026-11-04`
@@ -4334,3 +4341,37 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   LAME header and reports the gapless length, so the strict `<` failed on CI. Now one definition: decoded samples with delay and
   padding trimmed; the expected value is derived from the fixture (seconds x rate), the container length is only an upper bound.
 - `seams.duration` unchanged. `tests/unit/test_seams.py`: 3 passed locally. No render branch touched. Cost $0.
+
+## 2026-11-05 — D-115: outside code allowed, licences recorded not gating; quality research delivered
+- The creator's word (18:42 UTC): quality first, then efficiency; "on GitHub all the code we need is written: find, combine,
+  fill in, adapt"; the rule against bringing outside code into the repo is lifted. Recorded as D-115 in the decision log;
+  roadmap 21.9 rewritten (rev. 6) and the 21.1/21.3/21.8 GPL-boundary phrases amended; Hunyuan3D-2.1 moves REJECT -> OPTIONAL
+  (licence facts stay recorded). The free-Mac-and-CI-runs rule (the creator, 17:31 UTC) is carried by the ICW-06 PR as its own decision row and is not on this branch yet.
+- Quality research (Opus high, deep research, outside the ICW packages, $0): report, integration plan WP-Q0..Q10, Georgian
+  summary and research notes q1-q6 in the project files folder `ink_chronicle_quality_research_2026-11-05/`. Verified by the
+  Fable thread: code-defect claims (luminance -> CONSTANT ramp -> Emission chain, grey rim, `use_gtao` gone in 5.2,
+  `BLENDER_EEVEE_NEXT` tried first) confirmed on `icw/05c-ink-round`; Blender 5.0 engine-id rename and Brushstroke Tools
+  1.2.3 GPL-3.0-or-later confirmed at their sources. Nothing rendered or measured by the research; every s/frame is EST.
+- Stale text reported, not deleted (CLAUDE.md precedence rule): roadmap 21.1 and 21.7 still describe the GPL boundary in
+  places not quoted above; the decision log wins. ICW-07 to-do: widen `test_repo_hygiene` provenance check to any
+  `# from <owner>/<repo>@` header; shot_spec/2 `view_transform` const AgX and `line_weight_px > 0` need a version step before
+  WP-Q1 lands.
+- Results: `docs_lint` (see the PR). Cost: $0.
+
+## 2026-11-06 — words_to_mouth_cues: Rhubarb-shaped cues from Scribe word timings (overnight test, $0 code)
+- Why: Rhubarb Lip Sync 1.14.0 ships x86_64 only; the creator's M4 Mac has no Rosetta (a system change, not taken at night) and the
+  cloud session's policy does not run a downloaded binary. The two ElevenLabs dialogue lines of the Ink Chronicle 5 s test still
+  needed mouth cues for `blender.rigs.LipSync` and Q4's `rain_dialogue`.
+- `explainer_engine/audio/words_to_mouth_cues.py` (stdlib): Scribe `{"text","start","end"}` words -> Rhubarb JSON (`mouthCues`,
+  `metadata.estimated: true`): each word's span shared among its letters, letter -> Preston Blair shape by spelling (m/b/p -> A,
+  a -> D, e -> C, i/y -> B, o -> E, u/w -> F, f/v -> G, l -> H, else B), equal neighbours merged, cues under 0.04 s folded, X in the
+  gaps and the tail. A spelling approximation, REVIEW for an episode; the real tool stays Rhubarb (`rigs.rhubarb_argv`).
+- Tests: `tests/unit/test_words_to_mouth_cues.py` (4): spelling shapes, rest in gaps and tail, contiguous non-repeating cues
+  that `LipSync.frames` accepts, the CLI on a WAV.
+- Used on: `winners/audio/rain_line1.wav` (44 cues, 3.68 s) and `villager_line2.wav` (36 cues, 4.08 s) in the overnight folder;
+  word timings from ElevenLabs Scribe (42 credits) next to them as `*.scribe_words.json`.
+- Cost: ElevenLabs 121 credits for the two lines + 42 for the two transcripts = 163 of the 100,000 cap; no pod, $0 otherwise.
+- CI follow-up (00:55 UTC): `test_video_qa_clip_rows.py::test_real_clips_probe_and_rows` raised CLIP-05 on the runner's newer ffmpeg
+  (the fixture fed an endless lavfi tone and relied on `-shortest`; AAC priming left the audio more than one frame longer than the
+  49-frame picture). The fixture's tone is now bounded to frames / fps; the CLIP-05 rule and its tolerance are unchanged. Local
+  ffmpeg 6.1 never showed it; the inherited CLIP-05 red that Q4 and Q8 reported on their PRs is this same fixture.
