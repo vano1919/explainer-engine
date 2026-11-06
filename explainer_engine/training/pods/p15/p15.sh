@@ -41,7 +41,7 @@ from huggingface_hub import hf_hub_download
 hf_hub_download('vano1919/tmr-artifacts', 'code/p15/ee_src.tar.gz', repo_type='dataset', local_dir='$JOB/dl')
 " || { ev job_files_failed; exit 1; }
 cp "$JOB/dl/code/p15/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
-printf '%s  %s\n' PLACEHOLDER_SHA_EE_SRC_TAR_GZ "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' 0ac0125c37529146a25a89082c2b94ecfac3a8989d0b090599b16bc96ed3bc37 "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
 ee_needs_check   # CR-18
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || { ev bundle_unpack_failed; exit 1; }
