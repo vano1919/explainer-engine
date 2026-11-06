@@ -86,48 +86,80 @@ def pod_config() -> dict:
     cfg["extra_jobs_file"] = "ltx_extra.json"
     # X5 (2560x1472): the 1920x1088 colour pass scaled to cover the 2K grid size and cut from the centre (1920 * 1472 / 1088 = 2597.6)
     cfg["controls"]["scale_2k_vf"] = "scale=2598:1472:flags=lanczos,crop=2560:1472"
+    cfg["clip_timeout_s"] = 600   # E per job 10 min (fix 2, the schedule's E maxes are 10 min x jobs)
     return cfg
 
 
-POD1 = "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/)"
-# stage: (lane, true consumers' inputs, expected min, max min, basis, source). Max = the stage's own timeout or budget; "measured"
-# only where a run timed it. E's needs are per job (its layout clip, its first frame): listed as the stages that make them.
-SCHEDULE = {
-    "install": ("pod", [], 2.5, 20, "measured", f"{POD1}: script_start 14:25:02 -> runner 14:27:30"),
-    "weights": ("net", ["install"], 5.5, 90, "measured", f"{POD1}: 14:27:30 -> 14:33:00 (both LTX bases, sha256 checked)"),
-    "weights_qwen": ("net", ["install"], 5, 60, "estimated", f"{POD1}: done before 14:40, not timed alone"),
-    "A.preflight": ("cpu", ["install"], 0.5, 2, "estimated", "duel line frame 0: 8.3 s on the pod CPU (measured), card unmeasured"),
-    "A.frame0.duel": ("cpu", ["A.preflight"], 0.15, 10, "measured", f"{POD1}: duel/line 1 frame in 8.3 s (CPU)"),
-    "A.frame0.battle": ("cpu", ["A.frame0.duel"], 10, 10, "measured",
-                        f"{POD1}: killed by the kernel (-9, memory) after ~13 min on the CPU; now cut at 600 s"),
-    "A.duel": ("cpu", ["A.frame0.battle"], 1.6, 90, "measured", f"{POD1}: clay 121 frames 14:40:26 -> 14:42:02"),
-    "A.battle": ("cpu", ["A.duel"], 30, 90, "estimated", "colour + depth, 282 frames each: never finished on any machine"),
-    "A.battle.line": ("cpu", ["A.battle", "A.frame0.battle"], 60, 60, "estimated",
-                      "runs only when frame 0's seconds x 282 fit 3600 s; pod 1's frame 0 did not finish"),
-    "X6.move": ("cpu", ["qwen1"], 1, 15, "estimated", "FFmpeg zoompan of one still"),
-    "G": ("cpu", ["D"], 133, None, "measured",
-          "8 s/frame x 996 frames on 4 vCPU (this container, assemble_25d 1440p EEVEE 16); pod scaling unmeasured; stops at the reserve"),
-    "qwen1": ("gpu", ["weights_qwen"], 2.9, 60, "measured", f"{POD1}: load 61 s + C, C, X6 at 33.5-38.5 s each"),
-    "D": ("gpu", ["qwen1"], 2, 30, "estimated", f"{POD1}: failed in 22 s on a float16 input (fixed); 12 pictures"),
-    "qwen2": ("gpu", ["D", "A.frame0.duel"], 2.2, 60, "estimated", "Qwen load 61 s + 2 edits at ~35 s (pod 1's Qwen speed)"),
-    "E": ("gpu", ["qwen2", "weights", "A.duel", "A.battle", "A.battle.line"], 25, 150, "estimated",
-          "5 core clips at ~5 min (docs: the 22B takes >200 s per clip on RunPod), 30 min cap per clip"),
-    "E.extras": ("gpu", ["E", "qwen1", "G"], 25, 150, "estimated", "X1, X2, X5 (2560x1472), X3 (G's frame), X6: ~5 min each"),
-    "X4": ("gpu", ["E.extras", "G"], 1.7, 60, "estimated", "Qwen load + 1 edit"),
-    "F": ("gpu", ["X4"], 0.1, 5, "estimated", "speeds.json from the records"),
-}
+POD1 = "pod ygg2ztmflr8pv2 (H100 NVL, 2026-11-06 14:25-14:48 UTC; HF route_test_2026-11/step3/stages.txt, logs/)"
+HERE_C = "this container (4 vCPU Xeon 2.1 GHz)"
+# The step-3 pod's stage graph for RP-11 (cloud/schedule.py, pod_schedule/1). (id, needs, {lane: (expected, max)}, measured, source).
+# A max is the stage's own timeout in the code (p14_stages.json / p14.json), about 3x the expected (Fable thread 15:07 UTC); minutes
+# on the gpu lane are for the H100 NVL (gpu_speed 1.0). Blender stages list the cpu lane first (the lane the code runs them on: a
+# thread beside the card) and a gpu entry for when A.preflight puts EEVEE on the card. E is split per input (the LTX jobs of
+# ``E_STAGES``); G runs on the pod only on the card (``G.on_pod``), else free on CI or the PC (D-114).
+GRAPH = [
+    ("weights_qwen", [], {"net": (5, 15)}, False, f"{POD1}: done before 14:40, not timed alone (Qwen-Image-2.1, LoRA, BiRefNet)"),
+    ("weights", ["weights_qwen"], {"net": (5.5, 15)}, True, f"{POD1}: 14:27:30 -> 14:33:00 (both LTX bases, sha256 checked)"),
+    ("A.preflight", [], {"cpu": (0.5, 2), "gpu": (0.5, 2)}, False, "the duel's line frame 0 on the card, PREFLIGHT_S 120"),
+    ("A.frame0.duel", ["A.preflight"], {"cpu": (0.15, 2), "gpu": (0.1, 2)}, True, f"{POD1}: duel/line 1 frame in 8.3 s (CPU)"),
+    ("A.frame0.battle", ["A.frame0.duel"], {"cpu": (6, 10), "gpu": (3, 10)}, False,
+     f"{POD1}: killed -9 (memory) after ~13 min on the CPU; cut at 600 s"),
+    ("A.duel", ["A.frame0.battle"], {"cpu": (1.6, 5), "gpu": (1, 3)}, True, f"{POD1}: clay 121 frames in 96 s (CPU)"),
+    ("A.battle", ["A.duel"], {"cpu": (15, 45), "gpu": (5, 15)}, False, "colour + depth, 282 frames each: never finished anywhere"),
+    ("A.battle.line", ["A.battle"], {"cpu": (10, 30), "gpu": (10, 30)}, False,
+     "282 frames, runs only when frame 0 x 282 fits its budget; the crowd's memory decides"),
+    ("X6.move", ["qwen1"], {"cpu": (1, 3)}, False, "FFmpeg zoompan of one still"),
+    ("qwen1", ["weights_qwen"], {"gpu": (2.9, 6)}, True, f"{POD1}: load 61 s + C, C, X6 at 33.5-38.5 s each"),
+    ("D", ["weights_qwen"], {"gpu": (2, 5)}, False, f"{POD1}: failed in 22 s on a float16 input (fixed); 12 pictures"),
+    ("B.duel", ["weights_qwen", "A.frame0.duel"], {"gpu": (2, 6)}, False, "Qwen load 61 s + 1 edit at ~35 s (pod 1's speed)"),
+    ("B.battle", ["weights_qwen", "A.frame0.battle"], {"gpu": (2, 6)}, False, "Qwen load 61 s + 1 edit at ~35 s"),
+    ("E.duel", ["weights", "B.duel", "A.duel"], {"gpu": (8, 20)}, False, "2 LTX clips at ~4 min, 10 min cap each (unmeasured)"),
+    ("X6.ltx", ["weights", "qwen1"], {"gpu": (4, 10)}, False, "1 LTX i2v clip"),
+    ("E.battle", ["weights", "B.battle", "A.battle"], {"gpu": (16, 40)}, False, "4 LTX clips (c1 colour, canny, c2 chained, X5 2K)"),
+    ("E.battle_line", ["weights", "B.battle", "A.battle.line"], {"gpu": (8, 20)}, False, "2 LTX clips (line_foremid, X2)"),
+    ("G", ["D", "A.preflight"], {"gpu": (15, 20)}, False,
+     f"996 frames; 8 s/frame on {HERE_C} (CPU), the card unmeasured: on the pod only on the card at <= 1.5 s/frame, cut at 20 min"),
+    ("X3", ["weights", "G"], {"gpu": (4, 10)}, False, "1 LTX i2v clip of G's frame"),
+    ("X4", ["G"], {"gpu": (2, 6)}, False, "Qwen load + 1 edit of G's frame"),
+    ("F", ["E.duel", "X6.ltx", "E.battle", "E.battle_line", "X3", "X4", "X6.move", "A.battle.line"], {"gpu": (0.1, 1)}, False,
+     "speeds.json from the records"),
+]
+BATTLE_STAGES = ("A.frame0.battle", "A.battle", "A.battle.line", "B.battle", "E.battle", "E.battle_line")
 
 
-def schedule() -> dict:
-    """``p14_schedule.json``: the stage graph a scheduler reads (lane, needs, expected and max minutes, measured or estimated)."""
-    from explainer_engine.training.pods.p14 import p14_pod
-    return {"schema": "p14_schedule/1",
-            "_doc": ("The lean step-3 pod's stages after the 14:44 UTC fix. lane: pod (p14.sh before the runner), net, cpu (Blender "
-                     "on the card when A.preflight finds NVIDIA's EGL, then cpu means 'the Blender lane'), gpu (Qwen, BiRefNet, "
-                     "LTX). needs: the stages whose output the stage reads (E's per job). max_min null: runs to the end reserve."),
-            "end_reserve_min": stages()["end_reserve_min"], "preflight_s": p14_pod.PREFLIGHT_S,
-            "stages": {k: {"lane": v[0], "needs": v[1], "expected_min": v[2], "max_min": v[3], "basis": v[4], "source": v[5]}
-                       for k, v in SCHEDULE.items()}}
+def graph(st: dict | None = None, *, full: bool = False) -> list[tuple]:
+    """GRAPH cut to what this pod runs (p14_stages.json ``pod``, fix 2): without the battle while ``battle_on_pod`` is false and
+    without the ``off`` stages (G, X3, X4 ride the next pod); a need on a dropped stage goes with it, and the duel's clay then
+    follows the duel's own frame 0. ``full`` keeps every stage (the code paths stay, tested on the whole graph)."""
+    pod = (st or stages())["pod"]
+    drop = set() if full else set(pod["off"]) | (set() if pod["battle_on_pod"] else set(BATTLE_STAGES))
+    out = []
+    for i, n, on, meas, src in GRAPH:
+        if i in drop:
+            continue
+        n = [x for x in n if x not in drop]
+        if i == "A.duel" and "A.frame0.battle" in drop:
+            n = ["A.frame0.duel"]
+        out.append((i, n, on, meas, src))
+    return out
+
+
+CARDS = [{"name": "H100 NVL", "cloud": "COMMUNITY", "price_h": 2.59, "gpu_speed": 1.0},
+         {"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6}]
+LIMITS = {"max_usd": 8, "max_hours": 3.5, "max_idle_gpu_share": 0.15}   # the balance caps max-usd at 8.04 (Fable thread 14:16 UTC)
+SETUP_MIN = 8   # create -> the runner: boot (unmeasured) + p14.sh's install (pod 1: 14:25:02 -> 14:27:30)
+
+
+def schedule(*, full: bool = False) -> dict:
+    """``p14_schedule.json`` (pod_schedule/1, cloud/schedule.py): what ``runpod create --schedule`` costs, and the graph the pod's
+    GPU lane follows (p14_pod.py reads its needs)."""
+    return {"schema": "pod_schedule/1",
+            "_doc": ("The lean step-3 pod after fix 2 (Fable thread 15:07 UTC). Generated by lean.py build; the pod's GPU lane runs "
+                     "these needs in p14_stages.json gpu_order; every max is that stage's timeout in the code."),
+            "setup_min": SETUP_MIN, "end_reserve_min": stages()["end_reserve_min"], "lanes": {"gpu": 1, "cpu": 1, "net": 1},
+            "stages": [{"id": i, "needs": n, "on": {k: {"expected_min": e, "max_min": m} for k, (e, m) in on.items()},
+                        "measured": meas, "note": src} for i, n, on, meas, src in graph(full=full)],
+            "cards": CARDS, "limits": LIMITS}
 
 
 def bundle(out: Path, ref: str | None = None) -> str:

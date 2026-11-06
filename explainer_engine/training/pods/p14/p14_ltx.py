@@ -432,20 +432,36 @@ def main():
     out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     deadline = float(os.environ["EE_DEADLINE"])
-    rows = run_all(cfg, jobs_doc, out, deadline, log)
+    want = [x for x in os.environ.get("P14_JOBS", "").split(",") if x]   # the pod's E stage: only its jobs (p14_pod.Pod.ltx)
+    if want:
+        jobs_doc = dict(jobs_doc, jobs=[j for j in jobs_doc["jobs"] if j["id"] in want])
+    rows = run_all(cfg, jobs_doc, out, deadline, log, want=want, tag=os.environ.get("P14_TAG", ""))
     log.ev("ltx_exit", ok=sum(r["status"] == "ok" for r in rows), jobs=len(rows))
     return 0
 
 
-def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, **kw):
+def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, want=(), tag="", **kw):
     """The core jobs, then the extras; a job that reads an input the pod still makes (a layout pass, a frame of stage G) waits,
     and runs as soon as its inputs exist or their stage has ended (in the core-then-extras order), until the end reserve."""
     extra = HERE / cfg.get("extra_jobs_file", "")
     xdoc = json.loads(extra.read_text(encoding="utf-8")) if (cfg.get("extra_jobs_file") and extra.is_file()
                                                              and os.environ.get("P14_EXTRAS", "1") == "1") else None
-    done, later = {}, {"core": [], "extra": []}
-    rows = run(cfg, jobs_doc, out, deadline, log, deferred=later["core"], done=done, **kw)
-    xrows = run(cfg, xdoc, out, deadline, log, speeds_name="speeds_extra.json", deferred=later["extra"], done=done, **kw) if xdoc else []
+    if xdoc and want:
+        xdoc = dict(xdoc, jobs=[j for j in xdoc["jobs"] if j["id"] in want])
+    if want:   # a chained job of this stage reads a clip an earlier stage made: the pod's own copy of it
+        prior = {j["chain_from"]["job"] for j in jobs_doc["jobs"] if j.get("chain_from")} - set(want)
+        if prior:
+            core_all = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))["jobs"]
+            kw.setdefault("done", {})
+            for j in core_all:
+                clip = Path(out) / "ltx" / f"{j['id']}.mp4"
+                if j["id"] in prior and clip.exists():
+                    kw["done"][j["id"]], kw["done"][("frames", j["id"])] = clip, j["frames"]
+    core_name = f"speeds.{tag}.json" if tag else "speeds.json"
+    extra_name = f"speeds_extra.{tag}.json" if tag else "speeds_extra.json"
+    done, later = kw.pop("done", {}), {"core": [], "extra": []}
+    rows = run(cfg, jobs_doc, out, deadline, log, deferred=later["core"], done=done, speeds_name=core_name, **kw) if jobs_doc["jobs"] else []
+    xrows = run(cfg, xdoc, out, deadline, log, speeds_name=extra_name, deferred=later["extra"], done=done, **kw) if xdoc and xdoc["jobs"] else []
     reserve, roots = cfg["end_reserve_min"] * 60, local_roots()
     while later["core"] or later["extra"]:
         ready = {k: [j for j in v if not any(waits(x, roots) for x in inputs(j))] for k, v in later.items()}
@@ -458,9 +474,9 @@ def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, *
         for k in ("core", "extra"):
             later[k] = [j for j in later[k] if j not in ready[k]]
         if ready["core"]:
-            rows = run(cfg, dict(jobs_doc, jobs=ready["core"]), out, deadline, log, prior=rows, done=done, **kw)
+            rows = run(cfg, dict(jobs_doc, jobs=ready["core"]), out, deadline, log, prior=rows, done=done, speeds_name=core_name, **kw)
         if ready["extra"]:
-            xrows = run(cfg, dict(xdoc, jobs=ready["extra"]), out, deadline, log, speeds_name="speeds_extra.json", prior=xrows,
+            xrows = run(cfg, dict(xdoc, jobs=ready["extra"]), out, deadline, log, speeds_name=extra_name, prior=xrows,
                         done=done, **kw)
     if xdoc:
         log.ev("ltx_extra_exit", ok=sum(r["status"] == "ok" for r in xrows), jobs=len(xrows))

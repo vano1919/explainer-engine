@@ -51,11 +51,14 @@ def layout_frame(layouts: Path, scene: str, kind: str, frame: int) -> Path:
     return Path(layouts) / scene / kind / "frames" / from_name
 
 
-def jobs(cfg: dict, stages: list[str]) -> list[dict]:
-    """The pictures of the asked stages as dicts: name, stage, prompt, seed, cfg, size, refs [(label, path key)], kind."""
+def jobs(cfg: dict, stages: list[str], scene: str | None = None) -> list[dict]:
+    """The pictures of the asked stages as dicts: name, stage, prompt, seed, cfg, size, refs [(label, path key)], kind. ``scene``
+    keeps only B's edits of that layout scene (the pod runs B per scene, as each scene's frame 0 lands)."""
     q, out = cfg["qwen"], []
     if "B" in stages:
         for j in cfg["B"]["jobs"]:
+            if scene and j["layout"]["scene"] != scene:
+                continue
             out.append({"name": j["name"], "stage": "B", "prompt": j["prompt"], "seed": q["seed"], "cfg": q["cfg_edit"],
                         "size": q["size"], "kind": "edit", "clip": j["clip"],
                         "refs": [("layout", j["layout"])] + [("hero", h) for h in j["heroes"]]})
@@ -175,7 +178,7 @@ def resolve_ref(cfg, label, key, layouts: Path, assets: Path):
     return p, got
 
 
-def run(stages, out: Path, layouts: Path, assets: Path) -> int:
+def run(stages, out: Path, layouts: Path, assets: Path, scene: str | None = None) -> int:
     cfg = load_cfg()
     out = Path(out)
     qd = out / "qwen"
@@ -197,7 +200,7 @@ def run(stages, out: Path, layouts: Path, assets: Path) -> int:
     pipe = style_lora(t, pipe, tr, cfg, say)
     say("loaded in", round(time.time() - t0), "s")
     made = failed = 0
-    for j in jobs(cfg, stages):
+    for j in jobs(cfg, stages, scene):
         p = qd / f"{j['name']}.png"
         if p.exists():
             continue
@@ -244,13 +247,14 @@ def main(argv=None) -> int:
     ap.add_argument("--layouts", type=Path, required=True)
     ap.add_argument("--assets", type=Path, required=True)
     ap.add_argument("--list", action="store_true", help="print the pictures, no GPU")
+    ap.add_argument("--scene", help="B: only the edits of this layout scene")
     a = ap.parse_args(argv)
     st = a.stages.split(",")
     if a.list:
-        for j in jobs(load_cfg(), st):
+        for j in jobs(load_cfg(), st, a.scene):
             print(j["stage"], j["name"], j["kind"], j["size"], len(j["prompt"].split()), "words", [r[1] for r in j["refs"]])
         return 0
-    return run(st, a.out, a.layouts, a.assets)
+    return run(st, a.out, a.layouts, a.assets, a.scene)
 
 
 if __name__ == "__main__":

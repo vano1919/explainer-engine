@@ -70,7 +70,7 @@
     "enabled": false,
     "vf": "crop=1920:1080:(in_w-out_w)/2:(in_h-out_h)/2,scale=2560:1440:flags=lanczos,cas=0.4,noise=alls=6:allf=t,fps=24"
   },
-  "clip_timeout_s": 1800,
+  "clip_timeout_s": 600,
   "end_reserve_min": 10,
   "extra_jobs_file": "ltx_extra.json"
 }
