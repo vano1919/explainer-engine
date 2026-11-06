@@ -215,7 +215,7 @@ def register(downloads: Path, *, polyhaven_dir: Path | None = None, path: Path |
             src = t["polyhaven"][a["slug"]]
             src_line = f"import polyhaven {PH.asset_url(a['slug'])} :: {a['slug']} {src['resolution']} gltf"
             licence = L.licence_from_source("polyhaven", url=PH.asset_url(a["slug"]),
-                                            version=f"{a['slug']} {src['resolution']} gltf, downloaded {t['downloaded_on']}")
+                                            version=f"{a['slug']} {src['resolution']} gltf, downloaded {src.get('downloaded_on', t['downloaded_on'])}")
             params = {"polyhaven_slug": a["slug"], "files_md5": src.get("files_md5"), "dropped_images": rep["dropped_images"]}
         else:
             pack = t["packs"][a["source"]]
@@ -458,6 +458,8 @@ def _placements(block: dict, name: str, t: dict, T=None) -> list[dict]:
             block = {**block, "pos": [block["pos"][0], block["pos"][1], round(T.height(block["pos"][0], block["pos"][1]) + block.get("dz", 0.0), 3)]}
         return [{"name": name, "asset": block["asset"], "pos": block["pos"], "yaw": block.get("yaw_deg", 0.0),
                  "scale": block.get("scale", 1.0), "role": block.get("role", "piece"), "nodes": block.get("nodes")}]
+    if kind == "light":   # a lamp of the set (a stove's glow, a candle): {light: {type, energy, color, radius_m, shadow}, pos}
+        return [{"name": name, "asset": None, "light": block["light"], "pos": block["pos"], "yaw": 0.0, "scale": 1.0, "role": "light"}]
     if kind == "shape":   # a primitive (hill, river, mountain) in a flat tone: {add, params, pos, scale, yaw_deg, colour}
         return [{"name": name, "asset": None, "shape": {"add": block["add"], "params": block.get("params", {}), "colour": block["colour"],
                            "texture": block.get("texture"), "tile": block.get("tile", 1.0), "raw": block.get("raw"),
@@ -523,7 +525,7 @@ def _placements(block: dict, name: str, t: dict, T=None) -> list[dict]:
                 out.append({"name": f"{name}_corner_{k}", "asset": block["corner"], "pos": [round(cx + sx * hx, 4), round(cy + sy * hy, 4), 0.0],
                             "yaw": 90.0 * k, "scale": 1.0, "role": "corner"})
         return out
-    raise WorldKitError(f"layout block {name!r}: unknown type {kind!r} (ring, floor, row, piece)")
+    raise WorldKitError(f"layout block {name!r}: unknown type {kind!r} (ring, floor, row, piece, shape, light, ...)")
 
 
 def placements(layout_id: str, *, t: dict | None = None, doc: dict | None = None) -> list[dict]:
@@ -602,6 +604,9 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         grid["uv_m"] = b.get("uv_m", 8.0)
         objs.append({"name": b["name"], "terrain": grid, "location": [0, 0, b.get("z", 0.0)], "material": slots, "smooth": True})
     for p in placements(layout_id, t=t, doc=doc):
+        if p.get("light"):
+            objs.append({"name": p["name"], "light": dict(p["light"]), "location": p["pos"]})
+            continue
         if p["asset"] is None:   # a primitive of the layout
             sh = p["shape"]
             mname = "shape_" + sh["colour"].lstrip("#").lower()
@@ -617,13 +622,18 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
                          "rotation_deg": [sh.get("pitch", 0.0), 0, p["yaw"]], "scale": p["scale"], "material": mname, "smooth": True})
             continue
         a = by_id[p["asset"]]
+        drop = {"drop_materials": a["drop_materials"]} if a.get("drop_materials") else {}   # e.g. a clock's glass over its dial
+        if a.get("own_materials") and not pbr:   # a piece whose look needs its glTF materials (a clock dial behind its glass)
+            objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"], **drop, **({"nodes": p["nodes"]} if p.get("nodes") else {})},
+                         "location": p["pos"], "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": None, "smooth": False})
+            continue
         if a["id"] not in made:
             made[a["id"]] = kit_material(paths[a["id"]], a, strength=a.get("texture_strength"), repo=repo)
         mname, spec = made[a["id"]]
         if a["id"] in FLOOR_TONE:   # the plaza tiles: a mid grey-brown, not cream
             spec = {**spec, "base": [round(c * f, 6) for c, f in zip(spec["base"][:3], FLOOR_TONE[a["id"]])] + [1.0]}
         mats[mname] = spec
-        objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"], **({"nodes": p["nodes"]} if p.get("nodes") else {})}, "location": p["pos"],
+        objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"], **drop, **({"nodes": p["nodes"]} if p.get("nodes") else {})}, "location": p["pos"],
                      "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": None if pbr else mname, "smooth": False})
     return objs, mats
 
@@ -707,6 +717,44 @@ def _layout_cast(layout: str, cpaths, rain_blend: Path | None = None) -> tuple[l
     return out, mats
 
 
+STRUCTURE_ROLES = ("wall", "corner", "floor", "roof", "light")   # the room itself: in every shot, never a prop
+
+
+def structure(layout_id: str, *, doc: dict | None = None) -> set[str]:
+    """The names a shot's dressing never has to list: walls, corners, floor tiles, roofs, the set's lamps and the layout's own
+    ``structure`` shapes (a floor plane, a ceiling)."""
+    doc = doc or layouts()
+    spec = doc["layouts"][layout_id]
+    return {p["name"] for p in placements(layout_id, doc=doc) if p["role"] in STRUCTURE_ROLES} | set(spec.get("structure", []))
+
+
+def dressing(layout_id: str, shot_id: str, *, doc: dict | None = None) -> dict[str, str] | None:
+    """The shot's ``in_shot`` list (name -> why it is in the still: it acts in the shot's LTX clip or sets its place; the creator
+    2026-11-06 15:53 UTC: every still is the first frame of a planned clip, so it holds only what that clip needs), or None for a
+    layout that does not dress its shots. Unknown names are refused."""
+    doc = doc or layouts()
+    spec = doc["layouts"][layout_id]
+    d = (spec.get("in_shot") or {}).get(shot_id)
+    if d is None:
+        return None
+    known = {p["name"] for p in placements(layout_id, doc=doc)} | {r[0] for r in spec.get("cast", [])}
+    bad = sorted(set(d) - known)
+    if bad:
+        raise WorldKitError(f"{layout_id}/{shot_id}: in_shot names {bad}, which the layout does not place")
+    if not all(isinstance(v, str) and v.strip() for v in d.values()):
+        raise WorldKitError(f"{layout_id}/{shot_id}: every in_shot entry needs its reason")
+    return d
+
+
+def dress(objects: list[dict], layout_id: str, shot_id: str, *, doc: dict | None = None) -> list[dict]:
+    """``objects`` cut to the shot's dressing: the room's structure plus the listed props and cast (all of them without a list)."""
+    d = dressing(layout_id, shot_id, doc=doc)
+    if d is None:
+        return objects
+    keep = structure(layout_id, doc=doc) | set(d)
+    return [o for o in objects if o["name"] in keep]
+
+
 def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: int = POC_FRAMES,
                layout: str = "castle_courtyard", pbr: bool = False, rain_blend: Path | None = None) -> dict[str, dict]:
     """Shot id -> {objects, materials, camera, frames_total}: the SAME kit objects and cast in every shot, only the camera differs.
@@ -732,8 +780,8 @@ def poc_scenes(paths: dict[str, Path], cpaths: dict[str, Path] | None, frames: i
             cam = {"location": c0, "look_at": a0, "lens_mm": lens, "focus_distance_m": round(math.dist(c0, a0), 2), "clip_end": 900.0}
             if c1:
                 cam["to"] = {"location": c1, "look_at": a1}
-            out[sid] = {"objects": [*json.loads(json.dumps(kit)), *json.loads(json.dumps(cast))], "materials": mats, "camera": cam,
-                        "frames_total": n or frames}
+            out[sid] = {"objects": dress([*json.loads(json.dumps(kit)), *json.loads(json.dumps(cast))], layout, sid), "materials": mats,
+                        "camera": cam, "frames_total": n or frames}
         return out
     cast = [SS._cast_member(n, c, co, tint, xy, yaw, act, off, cpaths) for n, c, co, tint, xy, yaw, act, off in POC_CAST]
     mats = dict(kit_mats)
