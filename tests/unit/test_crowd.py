@@ -291,6 +291,22 @@ def test_the_camera_opens_beside_the_charge_frames_the_clash_from_behind_the_wal
     assert max(jumps) < 0.25 * max(steps)                                                       # a continuous speed (no kink at a beat)
 
 
+def test_the_push_flies_clear_of_soldiers_and_banners():
+    cam, b = _b30()
+    p = b["points"]
+    pts = list(zip(p["x"], p["y"], p["banner"], p["vx"], p["vy"], p["delay"], p["stop"]))
+    for k in cam["keys"]:
+        x, y, z = k["location"]
+        if z > 6.5:
+            continue
+        t = k["frame"] / 24.0
+        for px, py, bn, vx, vy, dl, st in pts:
+            qx, qy = K.position(px, py, vx, vy, dl, t, st)
+            gap = 3.0 if bn else 1.2
+            assert math.hypot(qx - x, qy - y) > gap or z > (4.9 if bn else 2.4), (k["frame"], px, py)
+    assert any(-34 < y < -24 for y in p["y"])        # side A's archers stand where its volleys leave from
+
+
 def test_dust_arrives_with_the_wedge_and_the_clash():
     d = K.battle30_dust("s30", (0.2, 0.16, 0.1))
     late = [c for c in d["cards"] if c[8] >= K.T_CLASH]

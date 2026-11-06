@@ -441,7 +441,7 @@ T_CLASH = 13.0            # the wedge's point meets the shield wall (seconds)
 B30_LENS = 28
 # camera beats (Fable 23:52 UTC): 0 s 25 m off the charging wedge at its level, both armies filling ~40 % of the frame; a crane over
 # the field; 13 s the clash framed from 60 m behind the shield wall; 30 s over the shoulders of the back rank
-B30_BEATS = ((0.0, (-24.0, 88.0, 3.2), (12.0, 52.0, 1.4)),
+B30_BEATS = ((0.0, (-14.0, 78.0, 1.9), (6.0, 64.0, 1.5)),
              (6.5, (-44.0, 24.0, 19.0), (8.0, 22.0, 0.8)),
              (13.0, (-12.0, -60.0, 8.0), (5.0, 2.0, 1.2)),
              (30.0, (-3.4, -6.6, 2.0), (4.5, 3.0, 1.5)))
@@ -502,8 +502,8 @@ def battle30_formations(count: int = 5000) -> tuple[Formation, ...]:
     neighbours match (Fable 23:52 UTC: two armies that read as two, helmets on everyone)."""
     if count < 8:
         raise CrowdError("a battle needs at least eight soldiers")
-    wall, wedge, line = round(count * 0.3), round(count * 0.15), round(count * 0.37)
-    reserve = count - wall - wedge - line
+    wall, wedge, line, archers = round(count * 0.3), round(count * 0.15), round(count * 0.37), round(count * 0.08)
+    reserve = count - wall - wedge - line - archers
     chars = ("ink_test_m", "ink_test_m2")
     ranger, peasant = "costume.mco_male_ranger", "costume.mco_male_peasant"
     return (Formation("wall_a", "shield_wall", wall, max(1, round(wall / 6)), ranger, "faction_a", chars, (("Sword_Idle", 1.0),),
@@ -517,6 +517,11 @@ def battle30_formations(count: int = 5000) -> tuple[Formation, ...]:
             Formation("line_b", "phalanx", line, max(1, round(line / 8)), ranger, "faction_b", chars, (("Sword_Idle", 1.0),),
                       (0.0, 125.0), 180.0, banner=2, banner_every=90, speed_mps=WALK_MPS, start_s=17.0, rank_delay_s=0.05,
                       after=(("Walk_Formal_Loop", 1.0),), switch_at="start", looks=ARMY_B),
+            # side A's archers where its volleys leave from (battle30_arrows: y -26..-34), the clash shots' foreground: two blocks
+            # with a lane at x -9..3 that the push flies down at 3.4 m (frames 550-630), clear of their banners
+            *(Formation(f"archers_a{i}", "line", n, max(1, round(n / 5)), ranger, "faction_a", chars, (("Sword_Idle", 1.0),),
+                        (x, -27.0), 0.0, spacing_m=1.15, jitter_m=0.15, banner=1, banner_every=60, looks=ARMY_A)
+              for i, (x, n) in enumerate(((-32.0, archers // 2), (26.0, archers - archers // 2)))),
             Formation("reserve_b", "line", reserve, max(1, round(reserve / 5)), ranger, "faction_b", chars,
                       (("Sword_Idle", 1.0),), (14.0, 134.0), 180.0, spacing_m=1.6, banner=2, banner_every=80, looks=ARMY_B))
 
@@ -721,7 +726,7 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     if block["props"].get("arrows"):
         used.add("night")
     if any(t.get("helmet") for t in block["templates"]):
-        used |= {"night", "stone"}      # the helmets' iron (bpy/crowd_bake.HELMET_MATERIALS)
+        used.add("night")      # the helmets' iron (bpy/crowd_bake.HELMET_MATERIALS)
     pool = {k: v for sc_ in SS.scenes(paths, cast="mannequin").values() for k, v in sc_["materials"].items()}   # the village's brick, roof
     mats = {k: v for k, v in pool.items() if k in used}
     mats.update(extra)

@@ -134,8 +134,8 @@ def _helmet_mesh(kind, rx, ry, rz):
 
 
 HELMET_DROPS = ("hair", "hood")
-# the helmets' iron: blackened (kettle) and bright (conical); the scene's cannon tone read tan under the golden-hour key
-HELMET_MATERIALS = {"kettle": "night", "conical": "stone"}
+# the helmets' iron: the scene's cannon tone read tan and grey_mid read pale under the golden-hour key; night reads dark iron
+HELMET_MATERIALS = {"kettle": "night", "conical": "night"}
 
 
 def put_helmet(scene, root, kind, material):
@@ -165,7 +165,7 @@ def put_helmet(scene, root, kind, material):
     xs, ys = [p.x for p in cap], [p.y for p in cap]
     cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
     rx, ry = max((max(xs) - min(xs)) / 2 * 1.18, 0.09), max((max(ys) - min(ys)) / 2 * 1.18, 0.1)
-    rz = 0.17 if kind == "kettle" else 0.2
+    rz = 0.17 if kind == "kettle" else 0.16
     ob = bpy.data.objects.new(f"{root.name}_helmet", _helmet_mesh(kind, rx, ry, rz))
     ob.data.materials.append(material)
     scene.collection.objects.link(ob)
