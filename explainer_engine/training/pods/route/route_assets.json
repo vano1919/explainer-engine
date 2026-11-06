@@ -1,0 +1,48 @@
+{
+  "_doc": "Route-test Qwen asset pod (2026-11-06). Plan: the Fable thread's OR-23 plan (creator 'კი' 07:37 UTC), brief ASSET_POD_BRIEF.md. Every setting is fixed by the creator or by qa/style_prompt.INFERENCE; nothing here is a new choice.",
+  "base": {"repo": "Qwen/Qwen-Image-2.1", "dtype": "bf16", "gpu_mode": "model_cpu_offload"},
+  "style_lora": {
+    "hf": "vano1919/tmr-artifacts",
+    "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
+    "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
+    "weight": 0.7,
+    "trigger": "xworld style"
+  },
+  "pano_lora": {
+    "repo": "nomadoor/qwen-image-2.1-360-panorama-outpaint-lora",
+    "file": "qwen_image_2_1_360_panorama_outpaint_lora_v0_1.safetensors",
+    "weight": 0.8,
+    "licence": "qwen-research (derivative of Qwen-Image-2.1; LICENSE.md in the repo)",
+    "trigger": "Fill the green areas to complete a seamless 360° equirectangular panorama.",
+    "own_settings": "LoRA strength 0.8, 25 steps, CFG 1, 2048x1024 (model card)",
+    "canvas": [2048, 1024],
+    "view_box": [384, 152, 1664, 872]
+  },
+  "sampler": {"steps": 30, "cfg_text": 4.0, "cfg_edit": 2.5, "seed": 11, "size": [1280, 720], "erp_size": [2048, 1024],
+              "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render"},
+  "seeds_pair": [11, 23],
+  "wait_picks_s": 1200,
+  "flat": "flat ambient lighting, no cast shadows, plain neutral background",
+  "heroes": {
+    "H1": {"name": "commander", "look": "a middle-aged commander, broad shoulders, grey-streaked beard, scarred chin, steel breastplate over a dark red tunic, fur-collared cloak."},
+    "H2": {"name": "scout", "look": "a young scout, wiry, freckled, messy short hair, hooded green cloak, leather jerkin, short bow in hand."},
+    "H3": {"name": "elder", "look": "an old council elder, thin and stooped, long white beard, deep blue robe with gold trim, round spectacles."}
+  },
+  "angles": [["front", "front view"], ["left34", "three-quarter view left"],
+             ["right34", "three-quarter view right"], ["back", "back view"]],
+  "backdrops": [
+    ["A1_tent", "xworld style, empty tent camp at dusk, canvas tents in rings around a dying fire, banners on poles, hills fading into purple haze, warm firelight and a low orange sun."],
+    ["A2_courtyard", "xworld style, empty castle courtyard at noon, stone keep and wall towers, a well and a cart of hay, banners hanging, hard sun straight above."],
+    ["A3_field", "xworld style, empty open battlefield on an overcast morning, trampled mud and broken spears, drifting mist, a dark forest line far away, cold low light from the east."],
+    ["A4_ship", "xworld style, empty wooden ship deck at sea, tall mast with a patched sail, coiled ropes and barrels, rolling waves to the horizon, golden afternoon sun low over the water."]
+  ],
+  "scenes": [
+    ["D1_ford", "xworld style, two armies clash at a river ford, a knight on a rearing horse swings his sword, spray flying, banners falling, thin smoke, low red sun behind the hills."],
+    ["D2_duel", "xworld style, two swordsmen duel in a castle courtyard, one lunges while the other parries with sparks flying, soldiers watching, harsh noon sun, a toppled barrel."],
+    ["D3_tent", "xworld style, inside a tent a commander seen from behind faces a young scout who pleads with open hands, a map on a table, one oil lamp glowing warm."],
+    ["D4_rain", "xworld style, a long column of tired soldiers marches along a muddy road in heavy rain, cloaks soaked, horses with bowed heads, a limp banner, storm clouds with one weak gold break."],
+    ["D5_after", "xworld style, a quiet battlefield after the fight, broken shields and spears in the mud, smoke drifting over the field, one soldier sitting with his helmet, crows landing, red dawn."],
+    ["D6_eyes", "xworld style, a commander's face filling the picture, eyes narrowed and fixed on something off to the side, a torch flame flickering on his beard, one drop of sweat, dark tent behind him."]
+  ],
+  "hero_in_place": "xworld style, Image 1 is the {name}: keep his face, build and clothes exactly. Image 2 is the place: keep it as it is. Draw the {name} standing in that place in a relaxed pose, lit by the light of the place."
+}
