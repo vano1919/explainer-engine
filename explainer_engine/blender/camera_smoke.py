@@ -1,4 +1,4 @@
-"""CI and local smoke of the camera setups (WP-Q7): all six named setups on two stand-in figures, each a 48-frame Workbench clip
+"""CI and local smoke of the camera setups (WP-Q7): all the named setups on two stand-in figures, each a 48-frame Workbench clip
 through the pinned Blender and ``bpy/render_shot.py``, camera built as the Add Camera Rigs rig. Free.
 
     python -m explainer_engine.blender.camera_smoke --out D [--binary B] [--frames 48] [--size 960x540] [--only a,b]

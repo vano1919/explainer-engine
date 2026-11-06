@@ -148,6 +148,15 @@
       "smoke_verified": false,
       "legacy": false,
       "note": "the J4 restyle control LoRA (ltx_restyle/1, D-116): Union conditioning canny + depth + pose, reference at 0.5x the output (model card read 2026-11-06; licence ltx-2-community-license, recorded, never gating, D-115). Trained on LTX-2.3-22b, NOT on LTX-2.5 (models.video_ltx): the Hub lists no LTX-2.5 Union-Control (Lightricks models searched 2026-11-06), so the J4 base (an LTX-2.3 download, or J4 through the 2.5 Layout-To-Render LoRA) is an open item of the step-3 OR-23 plan; nothing is decided here"
+    },
+    "cutout_birefnet": {
+      "id": "ZhengPeng7/BiRefNet",
+      "revision": "e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4",
+      "file": "model.safetensors",
+      "sha256": "9ab37426bf4de0567af6b5d21b16151357149139362e6e8992021b8ce356a154",
+      "licence": "SPDX:MIT",
+      "legacy": false,
+      "note": "the cut-out matte of the scene assets (edit/cutout.py, J5 route, D-116; the model of the 2026-10-25 composition test). Runs with trust_remote_code (birefnet.py of this revision) where torch runs (the asset pod); model card and licence read 2026-11-06 (D-115: recorded, never gating)"
     }
   },
   "blender": {

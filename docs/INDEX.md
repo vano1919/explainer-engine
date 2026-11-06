@@ -9,6 +9,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md) | controlling Fable master task: branch reconciliation, evidence-closed decisions, one authoritative Opus roadmap and launch gate | |
 | [INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) | the authoritative Opus implementation roadmap: branch dispositions, decision matrix (ICD), work packages (ICW), cost model, creator decision gate (ICG) and launch verdict | |
 | [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md) | the creator-approved route plan (D-116): Qwen the look, Blender space and time, LTX motion; routes J2/J4/J5/H per sub-category; English copy of sections 1-6, 9 of FINAL_HIGH_LEVEL_PLAN_ka.md | |
+| [SCENE_ASSETS](SCENE_ASSETS.md) | the drawn scene assets (`scene_assets/1`), cut-outs and the J5 2.5D assembly in Blender (D-116, ICW-11) | SA- |
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
 | [archive/](archive/) | history moved out of `docs/wip/` by ICW-01 (2026-11-05, D-108): the D-95 override note, the Master Mold handoff and its execution guide; evidence only, never an active instruction | |
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
