@@ -109,6 +109,18 @@ BP-172 (2026-11-01): an LTX clip is 2-4 s in a hyped zone, 4-8 s in the middle. 
 | G12 | the craft report's blueprint is on 75/25 and is rewritten to 70/30; the registry's 12 attributes are HYP; camera and transition choice narrow | planning | the Opus plan |
 | G13 | WP-Q2/Q3/Q5/Q6/Q9/Q10 and ICW-06/07/09/10 not started; the Blender parts (camera, crowd, world, shading) stay the foundation of J5/J2/J4 | — | the roadmap rewrite (step 5) |
 
+### 5a. Layout passes for J2 and J4 (step 2.3, built 2026-11-06)
+
+`python -m explainer_engine.blender.layout_passes plan | render --scene battle|duel | upload` (module
+`explainer_engine/blender/layout_passes.py`, Blender side `explainer_engine/blender/bpy/layout_pass.py`, run last by
+`bpy/render_shot.py` on the scene as built, so geometry, motion and camera are the beauty render's). J2 takes `clay` (Workbench, one
+grey); J4 takes `colour` (EEVEE, every surface its own base colour unlit, textures and cut-out alpha kept), `depth` (normalised inverse
+depth, near white, written Raw) and `line` (Freestyle silhouette/border/crease; the battle's background crowd and fx cards excluded, so
+lines fall on the fore and mid planes only). Geometry is CN-08's: 1920x1088 at 24 fps; the battle is 282 frames cut into two 145-frame
+clips that share 8 frames, the duel one 121-frame clip. A full render writes per pass the PNG frames, one H.264 mp4 per clip and
+`layout_manifest.json` (`layout_passes/1`, sha256 per frame and clip); only a full-size, full-length render goes to HF
+`route_test_2026-11/layouts/<scene>/`, checked against the vault's hashes. Tests: `tests/unit/test_layout_passes.py`.
+
 ## 6. Phases
 
 | Phase | What | Cost | Gate |
