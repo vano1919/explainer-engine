@@ -328,6 +328,66 @@ def _scene_assets(doc: dict, base) -> list[dict]:
     return out
 
 
+LTX_BASES = {"ltx25": "video_ltx", "ltx23": "video_ltx_23"}   # ltx_job/1 base -> its config/cloud_pins.json models key
+LTX_ROUTE_RECIPE = {"J2": "ltx_layout/1", "J4": "ltx_restyle/1"}
+LTX_PASSES = {("J2", "ltx25"): ({"clay"}, {"clay"}), ("J4", "ltx25"): ({"colour"}, {"colour"}),
+              ("J4", "ltx23"): (set(), {"line", "canny_full", "depth"})}   # (required, allowed) conditioning passes
+LTX_MAX_GENERATIONS = 12   # the step-3 matrix of the Opus guide (section 3): at most 12 generations in one test pod
+
+
+def _ltx_job(doc: dict, base) -> list[dict]:
+    """LJ-01..LJ-07 on ``ltx_job/1`` (D-116, docs/LTX_JOBS.md): a LoRA only into its own base and every weight pinned; the recipe,
+    the base and the conditioning passes of the route; CN-08 geometry; unique ids and outputs; a chained clip names an earlier
+    job of the same shot; the matrix size (LJ-06, the half-size Union reference, is CN-08's two-stage multiple of 64)."""
+    pins = json.loads((Path(__file__).resolve().parents[2] / "config" / "cloud_pins.json").read_text(encoding="utf-8"))["models"]
+    out, seen, outputs = [], {}, set()
+    if len(doc["jobs"]) > LTX_MAX_GENERATIONS:
+        out.append(_f("LJ-07", "jobs", f"{len(doc['jobs'])} generations: the test pod plans at most {LTX_MAX_GENERATIONS}", "REVIEW"))
+    for n, j in enumerate(doc["jobs"]):
+        w = j["id"]
+        if w in seen:
+            out.append(_f("LJ-04", w, "the job id is used twice"))
+        if j["output"] in outputs:
+            out.append(_f("LJ-04", w, f"the output {j['output']} is written by two jobs"))
+        seen[w], _ = j, outputs.add(j["output"])
+        key = LTX_BASES[j["base"]]
+        pin = pins.get(key) or {}
+        if j["model"]["key"] != key or j["model"]["id"] != pin.get("id"):
+            out.append(_f("LJ-01", w, f"base {j['base']} is models.{key} ({pin.get('id')}), not {j['model']['key']} ({j['model']['id']})"))
+        lpin = pins.get(j["lora"]["key"]) or {}
+        if lpin.get("base") != pin.get("id"):
+            out.append(_f("LJ-01", w, f"the LoRA {j['lora']['id']} was trained on {lpin.get('base')}, not on {pin.get('id')}: a LoRA "
+                                      "only goes into its own base"))
+        te = j.get("text_encoder")
+        if bool(te) != bool(pin.get("text_encoder")) or (te and te["key"] != pin.get("text_encoder")):
+            out.append(_f("LJ-01", w, f"base {j['base']} needs text encoder {pin.get('text_encoder')!r}, the job names "
+                                      f"{(te or {}).get('key')!r}"))
+        unpinned = [x["id"] for x in (j["model"], j["lora"], te) if x and not x.get("sha256")]
+        if unpinned:
+            out.append(_f("LJ-01", w, f"not pinned yet (no sha256): {', '.join(unpinned)}: the pod refuses this job until it is",
+                          "REVIEW"))
+        if LTX_ROUTE_RECIPE[j["route"]] != j["recipe"]:
+            out.append(_f("LJ-02", w, f"route {j['route']} is recipe {LTX_ROUTE_RECIPE[j['route']]}, not {j['recipe']}"))
+        rule = LTX_PASSES.get((j["route"], j["base"]))
+        passes = [c["pass"] for c in j["conditioning"]]
+        if rule is None:
+            out.append(_f("LJ-02", w, f"route {j['route']} does not run on base {j['base']}"))
+        else:
+            need, allowed = rule
+            if not need <= set(passes) or not set(passes) <= allowed or len(passes) != len(set(passes)):
+                out.append(_f("LJ-02", w, f"conditioning {passes}: route {j['route']} on {j['base']} takes "
+                                          f"{sorted(allowed)}{' and needs ' + str(sorted(need)) if need else ''}, each once"))
+        out += [dict(f, rule="LJ-03") if f["rule"] == "CN-08" else f for f in _geometry(j["width"], j["height"], j["frames"], w)]
+        ch = j.get("chain_from")
+        if ch:
+            prev = seen.get(ch["job"]) if ch["job"] != w else None
+            if prev is None or list(seen).index(ch["job"]) >= n:
+                out.append(_f("LJ-05", w, f"chain_from {ch['job']!r} is not an earlier job of this document"))
+            elif prev["shot_id"] != j["shot_id"] or ch["frames"] >= prev["frames"]:
+                out.append(_f("LJ-05", w, f"chain_from {ch['job']}: another shot, or {ch['frames']} frames is not less than its clip"))
+    return out
+
+
 def _asset_library(doc: dict, base) -> list[dict]:
     """CN-19 on ``asset_library/2`` (D-110, roadmap 21.4-21.5): ids are unique; a dependency is a record of the library with
     the same sha256; external storage names its path and git storage none; a third-party licence records where and when it was
@@ -601,7 +661,8 @@ SEMANTIC = {"film_shots": _film_shots, "script_variants": _script_variants, "sho
             "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
             "job_manifest": _job_manifest, "shot_route": _shot_route, "blender_scene_manifest": _blender_scene,
             "blender_render_manifest": _blender_render, "render_checkpoint": _render_checkpoint, "asset_library": _asset_library,
-            "speech_mix_report": _speech_mix, "scene_assets": _scene_assets}
+            "speech_mix_report": _speech_mix, "scene_assets": _scene_assets,
+            "ltx_job": _ltx_job}
 
 
 def derived_findings(doc: dict, base) -> list[dict]:

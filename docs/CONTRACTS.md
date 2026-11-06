@@ -58,6 +58,7 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `render_checkpoint/1` | `render_checkpoint.json` in the shot's render folder (+ its vault copy, roadmap 10.4) | `blender/render.py` | code, atomic, after each remote verify (OR-33) | resume after a lost pod (OR-03) |
 | `speech_mix_report/1` | `audio/speech_mix_report.json` | `qa/speech_mix.py` | **derived** from the script (+ spine, cards) | REVIEW (BP-105, D-99), the review bundle |
 | `scene_assets/1` | `assets/scene_assets.json` | the scene-asset writer (ICW-11, [SCENE_ASSETS](SCENE_ASSETS.md)) | hand (prompts) + the asset pod (files, sha256) | `blender/assemble_25d.py` (J5), the step-3 first frames (J2/J4) |
+| `ltx_job/1` | `ltx_jobs.json` (vault `route_test_2026-11/`) | `edit/ltx_jobs.py` (the J2/J4 spec writer, [LTX_JOBS](LTX_JOBS.md)) | derived from the route shots + layout manifests; never by hand | the route-test pod (`training/pods/p14`) |
 | `asset_library/1` | `assets/library.json` | `assets/library.py` ([WORLD_BIBLE](WORLD_BIBLE.md)) | hand (approved assets) | `library verify`, the shot writers |
 | `asset_library/2` | `assets/library.json` (once `assets/library.py` moves to it) | `assets/library.py` | hand (approved 3D assets, licences) | the Blender router, `library verify` |
 

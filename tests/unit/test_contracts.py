@@ -23,7 +23,8 @@ NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "
        "editorial_review", "distribution_package", "shot_route",
        # the Ink Chronicle contracts (ICW-02, D-96, roadmap section 10)
        "blender_scene_manifest", "blender_render_manifest", "render_checkpoint", "speech_mix_report", "asset_library",
-       "scene_assets"]  # the drawn assets of the J5 / J2 / J4 routes (D-116, ICW-11)
+       "scene_assets",  # the drawn assets of the J5 / J2 / J4 routes (D-116, ICW-11)
+       "ltx_job"]  # the LTX generations of the J2 / J4 shots (D-116, guide step 3)
 V2 = ["audio_spine", "sound_mix_manifest",  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
       "shot_spec", "shot_route", "asset_library"]  # ICW-02: the Blender spec and route, the 3D asset library (D-110)
 
