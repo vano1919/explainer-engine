@@ -1,0 +1,4 @@
+{"schema": "pod_schedule/1", "_doc": "A tiny schedule that passes RP-11 under the create tests' caps (down to $0.07, 1 h): one GPU stage, no waits.",
+ "setup_min": 1, "end_reserve_min": 1, "lanes": {"gpu": 1},
+ "stages": [{"id": "work", "needs": [], "on": {"gpu": {"expected_min": 5, "max_min": 10}}}],
+ "cards": [{"name": "test card", "price_h": 0.1, "gpu_speed": 1.0}]}
