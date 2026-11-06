@@ -1,0 +1,8 @@
+{
+ "_note": "SYNTHETIC two-line dialogue for the Rain lead (no audio): both lines reuse rain_cues_synthetic.json; replace each cues path by Rhubarb on the real ElevenLabs line, nothing else changes.",
+ "frames": 150,
+ "lines": [
+  {"cues": "rain_cues_synthetic.json", "start_s": 0.0, "turn_deg": 10, "gesture": "explain"},
+  {"cues": "rain_cues_synthetic.json", "start_s": 3.4, "turn_deg": -12, "gesture": "nod"}
+ ]
+}

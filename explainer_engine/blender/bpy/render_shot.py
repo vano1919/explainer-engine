@@ -437,6 +437,83 @@ def build_character(o, frames_total, pending, report):
     return root
 
 
+def build_rig_blend(o, pending, report):
+    """WP-Q4: a rigged character that ships as a ``.blend`` (the Blender Studio rigs, CC-BY) appended whole under one empty. The
+    named top collection is linked with its children, helper meshes are hidden from the render, ``lattice`` moves lattice points
+    (a shared deformer of the face: longer jaw, narrower head), ``visemes`` keys bone poses (rigs.ActionVisemes tracks), and
+    ``materials`` (blend material name -> toon material name, slot by slot) is handed to the style like a character's. The file is
+    opened with scripts off: the face works without the rig's own Python."""
+    rb = o["rig_blend"]
+    with bpy.data.libraries.load(rb["path"], link=False) as (src, dst):
+        dst.collections = list(src.collections)
+        dst.objects = list(src.objects)
+    top = bpy.data.collections[rb["collection"]]
+    bpy.context.scene.collection.children.link(top)
+    root = bpy.data.objects.new(o["name"], None)
+    bpy.context.scene.collection.objects.link(root)
+    rig = bpy.data.objects[rb["rig"]]
+    rig.parent = root
+    for ob in dst.objects:
+        if ob is None:
+            continue
+        if ob.name.startswith(tuple(rb.get("hide_prefixes", ("WGT",)))) or ob.name in rb.get("hide", ()):
+            ob.hide_render = True
+            ob.hide_viewport = True
+    meshes = [ob for ob in top.all_objects if ob.type == "MESH" and not ob.hide_render]
+    for ob in meshes:
+        slots = {}
+        for i, ms in enumerate(ob.material_slots):
+            if ms.material is None:
+                continue
+            if ms.material.name in rb.get("keep", ()):   # C2: the rig's own shading stays (Blender Studio's SSS skin, eyes, hair)
+                continue
+            if ms.material.name not in rb["materials"]:
+                raise RuntimeError(f"{ob.name}: material {ms.material.name!r} has no toon material in the rig_blend map")
+            slots[i] = rb["materials"][ms.material.name]
+        pending.append(([ob], slots, True))
+    lat = rb.get("lattice")
+    if lat:
+        pts = bpy.data.objects[lat["object"]].data.points
+        for idx, d in lat["deltas"].items():
+            co = pts[int(idx)].co_deform
+            pts[int(idx)].co_deform = (co[0] + d[0], co[1] + d[1], co[2] + d[2])
+    vis = rb.get("visemes")
+    if vis:
+        n = 0
+        for key, keys in sorted(vis.items()):
+            bone, prop, idx = key.split("|")
+            pb = rig.pose.bones[bone]
+            for f, v in keys:
+                vec = list(getattr(pb, prop))
+                vec[int(idx)] = v
+                setattr(pb, prop, vec)
+                pb.keyframe_insert(prop, index=int(idx), frame=bpy.context.scene.frame_start + int(f))
+                n += 1
+        report.setdefault("visemes", {})[o["name"]] = {"keys": n, "channels": len(vis)}
+    for L in rb.get("lights") or ():   # own lights (WP-Q4 front key): a sun that points at ``look_at`` from ``direction_from``
+        sun = bpy.data.lights.new(L["name"], "SUN")
+        sun.energy, sun.color, sun.use_shadow = L["energy"], L["color"], L.get("shadow", False)
+        lob = bpy.data.objects.new(L["name"], sun)
+        bpy.context.scene.collection.objects.link(lob)
+        d = Vector(L["look_at"]) - Vector(L["direction_from"])
+        lob.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+        report.setdefault("own_lights", []).append(L["name"])
+    for b, props in (rb.get("props") or {}).items():   # rig switches (CloudRig IK/FK) and other custom properties
+        for k, v in props.items():
+            rig.pose.bones[b][k] = v
+    for oname, keys in (rb.get("shape_keys") or {}).items():   # held shape-key values (a calmer eyelid, a lowered brow)
+        kb = bpy.data.objects[oname].data.shape_keys.key_blocks
+        for k, v in keys.items():
+            kb[k].value = v
+    for b, pose in (rb.get("pose") or {}).items():   # a held pose (arms down), degrees
+        pb = rig.pose.bones[b]
+        pb.rotation_mode = "XYZ"
+        pb.rotation_euler = tuple(math.radians(d) for d in pose)
+    report.setdefault("rig_blend", {})[o["name"]] = {"meshes": len(meshes), "bones": len(rig.data.bones)}
+    _place(root, o)
+    return root
+
+
 def _tracked(scene, frame, tr, loc, at):
     """``loc``/``at`` are given in the rest pose; both are carried by the bone (``track``: {rig, bone}) from its rest frame to its
     posed frame at ``frame``."""
@@ -561,8 +638,13 @@ def build_described(scene, sc, report):
             if o.get("to"):
                 moving.append((handle, o))
             continue
+        elif "rig_blend" in o:
+            handle = build_rig_blend(o, pending, report)
+            if o.get("to"):
+                moving.append((handle, o))
+            continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add, append nor character")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, character nor rig_blend")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))
