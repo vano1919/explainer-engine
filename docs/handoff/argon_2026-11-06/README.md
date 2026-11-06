@@ -1,6 +1,6 @@
 # Argon handoff, 2026-11-06
 
-For the Gemini "Argon" session. Read this first, then `PRS.md`, `PLANS.md`, `MATERIAL.md` (open every image), `LTX_HELPERS.md`,
+For the Gemini "Argon" session. Your task is [`docs/J5_ARGON_PROMPT.md`](../../J5_ARGON_PROMPT.md) (the main prompt). Read this first, then `PRS.md`, `PLANS.md`, `MATERIAL.md` (open every image), `LTX_HELPERS.md`,
 `REUSE.md`, `OPEN_QUESTIONS.md`, and the task in `ARGON_PROMPT.md`. A Georgian page for the creator is `README_ka.md`.
 
 Branch `argon/handoff-2026-11-06` (from `icw/19-pilot-pod`, plus five merged PRs, see `PRS.md`). Nothing here is on `main`; this branch
@@ -86,6 +86,7 @@ seconds: **60 % video / 30 % stills with Python motion / 10 % helper graphics** 
 | `REUSE.md` | reuse tooling that exists, and the reuse plan rows R0-R5 |
 | `OPEN_QUESTIONS.md` | what waits for the creator or is unmeasured |
 | `handoffs/` | the handoff notes of the threads whose work is on this branch |
-| `ARGON_PROMPT.md` | the prompt to paste into Argon |
+| [`../../J5_ARGON_PROMPT.md`](../../J5_ARGON_PROMPT.md) | **the main prompt for Argon since 2026-11-06 22:25 UTC** (the creator's strict Gemini prompt: minimise LTX realistically, plan the Python / Blender / FFmpeg limits, write the code, prove it on the one-minute film). It names its own required reading and a branch to start from; read this handoff tree as the context behind it |
+| `ARGON_PROMPT.md` | the earlier, broader prompt (audit, cost model, `visual_script/1` builder, reuse planner); kept as the second task, to be run after the main prompt's job or when the creator says so |
 | `README_ka.md` | the Georgian map for the creator |
 | [`../../J5_ARGON_REVIEW.md`](../../J5_ARGON_REVIEW.md) | a second, separate review request for Argon from the J5 thread (PR #151): dialogue cutting, montage rules BP-176..181, local animation of stills, hero rigs; exact source links and its own prompt. Read it with `../../J5_DIALOGUE_COLLAGE.md` sections 7d-7j |

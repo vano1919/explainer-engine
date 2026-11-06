@@ -4747,6 +4747,8 @@ One pod (RTX PRO 6000 Blackwell COMMUNITY, 40 min, balance $10.17 -> $9.09) drew
 - Refresh (~22:00 UTC, peer request from the J5 thread): merged PR #151 head 7007d7d (BP-176..181, `j5_montage`, `j5_minute` v1/v2, D-119,
   `docs/J5_ARGON_REVIEW.md`) and `icw/19-pilot-pod` head 0e7e030; `docs/J5_ARGON_REVIEW.md` is listed in the handoff README; PRS and
   OPEN_QUESTIONS (section E) updated. Conflicts only in PROGRESS and the decision log, all rows kept. No pod, no paid call.
+- Second refresh (~22:30 UTC, coordinator relay): merged PR #151 head 9752721 (`docs/J5_ARGON_PROMPT.md`); the handoff README links it as the
+  main prompt and keeps `ARGON_PROMPT.md` as the second task. No pod, no paid call.
 - Handoff merge fix: `test_route_assets.py::test_prompt_check_allows_ninety_words_only_in_d2` expected 75 words to fail in group D
   (PR #140, 90-word cap); the newer LT-65 band is 40-150 words (b8ef1c5, creator 2026-11-06 12:27 UTC), so the assertion now uses a
   prompt above the band; the D2 limit assertion is unchanged. Full `tests/unit` on the merged tree before this fix: 3156 passed, 1 failed (this one).
