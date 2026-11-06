@@ -290,3 +290,29 @@ the creator's complaint stands and a same-angle cut is allowed only as a declare
 | Mouth-only movement | the body stays one drawing, only the mouth and blink change | the variant sheet (D-119) |
 | Camera move over a still | a pan or push on one drawing | the J5 cards already do this |
 Limits: a punch-in on a bad crop loses sharpness (scale stays modest); reuse that needs a cut-out or compositing is only done when it works simply (the creator, 2026-11-01).
+
+## 7j. A minute of several scenes: non-dialogue editing, transitions and the still lane (creator, 20:17 UTC; BP-179, BP-180, BP-181)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+**What was read (2026-11-06, Wikipedia, full pages):** Film editing, Cut (filmmaking), Montage, Match cut, Continuity editing, Dissolve, Fade, Jump cut, Cross-cutting, Ken Burns effect, Multiplane camera, Twelve basic principles of animation,
+Shot reverse shot, Kuleshov effect, Establishing shot, Cutaway, Split edit, Shot (filmmaking), Rule of thirds, Headroom, Animatic, Cutout animation, Parallax scrolling, Limited animation, Camera coverage, 30-degree rule. The Wipe and Pan pages and the
+Soviet-montage pages gave nothing usable. This is about 25 pages, not "all of Wikipedia"; one source type (article), so BP-179..181 are hypotheses: REVIEW lines, never FAIL, until a book or a video backs them.
+
+| Need | Rule (registry id) | What the lint checks (`j5_montage.lint_montage`) |
+|---|---|---|
+| Transition between photos | the straight cut is the default; a dissolve = another place or time (0.5-2.0 s); a fade to black only closes the film or a chapter; no wipes; a match cut needs a shared tag; a cutaway shows something related (BP-179) | dissolve inside one scene, dissolve length, fade spacing, match tag |
+| New scene | opens with an establishing wide shot, then closer coverage (BP-180) | first shot of a scene is wide or declared establishing |
+| Order and rhythm | cross-cut two lines of action with a reason; screen direction of a travelling subject stays; no undeclared jump cut; stills at most 5 s, video by BP-108 (BP-180) | direction flips, `j5_cuts.lint` per scene, durations, runtime minus dissolve overlaps |
+| 30 % still lane keeping the animated look | a still always moves: Ken Burns push, pull or pan of scale 1.04-1.25, or parallax of 3 or more depth layers; limited animation moves only what must (BP-181) | still without motion, scale range, layer count |
+| Style preservation | one plate brightness inside a scene (ratio at most 1.25); the subject on a third with headroom (BP-181) | luma ratio between neighbouring shots; thirds and headroom are a craft check at the picture, not yet code |
+
+**The minute (plan, nothing rendered or billed):** `explainer_engine/blender/j5_minute.py`, five scenes, 14 shots, 60.0 s, three heroes (commander H1, scout H2, elder H3) plus the crowds of the existing D pictures.
+1. Title map (helper, 3 s) then the rain march: D4 wide with a push-in, a close-up of the drummer boy cut from the same picture (declared axial cut-in, reuse), H1 from behind leading the column over the A3 field.
+2. Dissolve (1 s) to the tent: A1 wide with parallax, then the dialogue as cut in 4f (two-shot, commander, scout), the elder H3 as a cutaway, and the D6 face close-up as the decision.
+3. Straight cut to the ford (D1, parallax) and the courtyard duel (D2): the battle that follows the decision.
+4. Dissolve (1.5 s) to D5 at dawn (pull-back), a fade to black (1 s) under a title card.
+The plan passes `plan_check` for the dialogue slice and has no cut without a reason. **Open, reported by the lint:** the lane shares are 36 % video / 53 % still / 11 % helper against 60 / 30 / 10 +-5 (BP-109), because the J5 cards animate only the heroes; the crowd
+pictures are stills with camera motion. Options for the creator: accept for a test minute, or animate the D pictures' crowds with Blender cut-out layers (more work and a new check), or shorten the stills.
+**Steps to make it (all free, on the PC or CI):** (1) fetch the 11 pictures from HF; (2) per picture a plate or layer split for the parallax shots (depth map, 3 layers) and the Ken Burns paths; (3) the dialogue shots again from 4f with S2 cut to 5 s (BP-108); (4) H1 walking card and H3 card from their sheets;
+(5) helper map and title card in Python; (6) FFmpeg cuts, two dissolves and the final fade, voice and ambience on the tracks (J and L cuts); (7) lint, look at the frames, then the creator watches. No paid step.

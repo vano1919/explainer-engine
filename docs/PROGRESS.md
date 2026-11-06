@@ -4566,3 +4566,8 @@ S2 and S4 merged into one 6 s commander shot with a push-in (the same man only c
 
 ## 2026-11-06 J5 dialogue rules (BP-176, BP-177)
 Re-checked sources in three types, two binding rules in the registry (cut reason; plan before generation), `j5_cuts.plan_check` + `lint` read their thresholds from it, docs 7h. vidIQ: 5 credits (one transcript). Not verified: the UChicago dialogue-cut study (PDF unreadable).
+
+## 2026-11-06 20:40 UTC - J5 montage rules and the one-minute plan (thread "Test J5 dialogue with existing photos")
+- Read about 25 Wikipedia film-editing, transition and still-lane pages; registered BP-179 (transitions), BP-180 (non-dialogue order and rhythm), BP-181 (still lane and style continuity) as hypotheses (REVIEW only; one source type).
+- `blender/j5_montage.py` (`lint_montage`), `blender/j5_minute.py` (14 shots, five scenes, 60 s, three heroes plus crowds from existing HF pictures), `tests/unit/test_j5_montage.py`; docs/J5_DIALOGUE_COLLAGE.md 7j.
+- Reported by the lint, not hidden: lane shares 36/53/11 against 60/30/10 because the cards animate only the heroes. No render, no paid call.

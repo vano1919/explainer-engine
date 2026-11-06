@@ -6982,6 +6982,155 @@
     "explainer_engine/blender/j5_cuts.py:plan_check"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-179",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Transitions between shots of a J5 montage (the creator, 2026-11-06 20:17 UTC: transitions between photos). The default is the straight cut; the creator removed the dip to black (19:14). A dissolve marks a change of place or passage of time, never a cut inside one scene, and lasts dissolve_min_s to dissolve_max_s; a fade to black closes the film or a chapter, at most one per fade_gap_min_s and never between two shots of one scene; wipes and graphic transitions are not used. A match cut is declared with a shared match_tag (shape, motion or gaze that carries over) and is used rarely. A cutaway shows something related to the scene it interrupts. One page-level source type only (Wikipedia, whose pages cite film-editing textbooks), so REVIEW.",
+   "thresholds": {
+    "dissolve_min_s": 0.5,
+    "dissolve_max_s": 2.0,
+    "fade_gap_min_s": 20.0,
+    "transitions": [
+     "cut",
+     "dissolve",
+     "fade_black",
+     "match"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Cut (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cut_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Dissolve (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Dissolve_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Fade (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Fade_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Match cut (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Match_cut"
+    },
+    {
+     "type": "A",
+     "title": "Cutaway (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cutaway_(filmmaking)"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_montage.py:lint_montage"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-180",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Order and rhythm of a non-dialogue J5 montage (the creator, 2026-11-06 20:17 UTC). A new scene opens with an establishing wide shot (or a declared establishing helper), then closer coverage; cross-cutting alternates two lines of action and each cut says why (motivation); a jump cut (same subject, same angle, a small step) is avoided unless declared (BP-176, BP-178); travelling subjects keep their screen direction through the scene (180-degree rule); montage shots are short, a still is held at most the still_shot_max_s of BP-109 and a video shot at most the BP-108 limits; the runtime is the clips minus the dissolve overlaps. Wikipedia pages (Film editing, Montage, Continuity editing, Establishing shot, Cross-cutting, Jump cut, Shot) are one source type, so REVIEW.",
+   "thresholds": {
+    "runtime_tolerance_s": 1.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Film editing (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Film_editing"
+    },
+    {
+     "type": "A",
+     "title": "Montage (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Montage_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Continuity editing (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Continuity_editing"
+    },
+    {
+     "type": "A",
+     "title": "Establishing shot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Establishing_shot"
+    },
+    {
+     "type": "A",
+     "title": "Cross-cutting (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cross-cutting"
+    },
+    {
+     "type": "A",
+     "title": "Jump cut (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Jump_cut"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_montage.py:lint_montage"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-181",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A still (or 2.5D collage) lane keeps the Ink Chronicle look alive without redrawing (the creator, 2026-11-06 20:17 UTC: the 30 % photo-collage lane and keeping the animated style). A still shot always moves: a slow push, pull or pan over the picture (Ken Burns effect) whose total scale change stays within still_move_min to still_move_max, or a parallax of at least parallax_layers_min depth layers where the near layer travels faster than the far one (multiplane camera, parallax scrolling); limited animation reuses drawings and moves only what must move. The subject sits on a third and keeps headroom (rule of thirds, headroom). Neighbouring shots of one scene keep the plate brightness within luma_ratio_max of each other (the creator, 19:28: background continuity). Wikipedia is one source type, so REVIEW.",
+   "thresholds": {
+    "still_move_min": 1.04,
+    "still_move_max": 1.25,
+    "parallax_layers_min": 3,
+    "luma_ratio_max": 1.25
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Ken Burns effect (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Ken_Burns_effect"
+    },
+    {
+     "type": "A",
+     "title": "Multiplane camera (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Multiplane_camera"
+    },
+    {
+     "type": "A",
+     "title": "Parallax scrolling (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Parallax_scrolling"
+    },
+    {
+     "type": "A",
+     "title": "Limited animation (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Limited_animation"
+    },
+    {
+     "type": "A",
+     "title": "Cutout animation (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cutout_animation"
+    },
+    {
+     "type": "A",
+     "title": "Rule of thirds (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Rule_of_thirds"
+    },
+    {
+     "type": "A",
+     "title": "Headroom (photographic framing) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Headroom_(photographic_framing)"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_montage.py:lint_montage"
+   ],
+   "supersedes": []
   }
  ]
 }
