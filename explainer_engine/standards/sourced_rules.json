@@ -4441,7 +4441,8 @@
     "explainer_engine/scripting/shot_prompt_lint.py:DIALOGUE_SHOT_MAX_S",
     "explainer_engine/scripting/shot_prompt_lint.py:NON_DIALOGUE_VIDEO_MAX_S",
     "explainer_engine/blender/rigs.py:LipSync.plan",
-    "explainer_engine/blender/rain_dialogue.py:main"
+    "explainer_engine/blender/rain_dialogue.py:main",
+    "explainer_engine/blender/j5_montage.py:lint_montage"
    ],
    "supersedes": [
     "universal 10 s / 8 s video-shot cap (KP-06) and pre-D-95 universal 10 s clip cap"
@@ -4474,7 +4475,8 @@
     "explainer_engine/scripting/film_shots.py:LANE_SHARE",
     "explainer_engine/scripting/film_shots.py:visual_lane",
     "explainer_engine/scripting/variant_plan.py:checks",
-    "explainer_engine/edit/dramatic_still.py"
+    "explainer_engine/edit/dramatic_still.py",
+    "explainer_engine/blender/j5_montage.py:lint_montage"
    ],
    "supersedes": [
     "the critic's plan review 2026-10-23: 40 % still + camera",

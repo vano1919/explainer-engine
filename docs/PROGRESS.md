@@ -4571,3 +4571,4 @@ Re-checked sources in three types, two binding rules in the registry (cut reason
 - Read about 25 Wikipedia film-editing, transition and still-lane pages; registered BP-179 (transitions), BP-180 (non-dialogue order and rhythm), BP-181 (still lane and style continuity) as hypotheses (REVIEW only; one source type).
 - `blender/j5_montage.py` (`lint_montage`), `blender/j5_minute.py` (14 shots, five scenes, 60 s, three heroes plus crowds from existing HF pictures), `tests/unit/test_j5_montage.py`; docs/J5_DIALOGUE_COLLAGE.md 7j.
 - Reported by the lint, not hidden: lane shares 36/53/11 against 60/30/10 because the cards animate only the heroes. No render, no paid call.
+- 2026-11-06 20:45 UTC: first render of the one-minute film (v1, 60.0 s, 1080p, free): HF route_test_2026-11/j5_minute/v1/. Plan timing adjusted (M3 7.5 s, S1 3.5, elder 2.0, eyes 5.0); lane shares 34/54/12 still outside BP-109 (REVIEW). BP-108/109 enforced_by now list j5_montage.
