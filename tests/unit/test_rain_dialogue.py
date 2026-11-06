@@ -72,3 +72,12 @@ def test_cli_writes_both_speakers(tmp_path):
                    "--shape-speaker", "villager"]) == 0
     j = json.loads(out.read_text(encoding="utf-8"))
     assert "visemes" in j["rain"] and "lipsync" in j["villager"]
+
+
+def test_a_cut_window_shifts_every_line_and_keeps_a_lipsync_shot_under_the_cap():
+    j = json.loads((HERE / "rain_dialogue_two_speakers_synthetic.json").read_text(encoding="utf-8"))
+    lines = [{**l, "cues": HERE / l["cues"]} for l in j["lines"]]
+    plan = D.lipsync_plan(lines, 120, "villager", window_s=2.0)          # his line (2.6 s) starts 0.6 s into the cut
+    assert plan["shapes"][:14] == "X" * 14 and set(plan["shapes"][15:60]) - {"X"}
+    with pytest.raises(ValueError):                                       # BP-108: a lip-synced shot is at most 5 s
+        D.lipsync_plan(lines, 200, "villager")

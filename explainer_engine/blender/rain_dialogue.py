@@ -35,13 +35,14 @@ def _line_end_s(cues) -> float:
     return float(rigs.load_cues(cues)["duration"])
 
 
-def _lines(lines: list[dict]) -> list[dict]:
+def _lines(lines: list[dict], window_s: float = 0.0) -> list[dict]:
+    """``window_s``: the shot starts that many seconds into the dialogue (a cut), so every line starts that much earlier."""
     out = []
     for i, ln in enumerate(lines):
         g = ln.get("gesture", "none")
         if g not in GESTURES:
             raise ValueError(f"line {i}: gesture {g!r} is not one of {', '.join(GESTURES)}")
-        start = float(ln.get("start_s", 0.0))
+        start = float(ln.get("start_s", 0.0)) - window_s
         out.append({"speaker": ln.get("speaker"), "cues": ln["cues"], "start": start, "end": start + _line_end_s(ln["cues"]),
                     "turn": float(ln.get("turn_deg", 0.0)), "gesture": g})
     out.sort(key=lambda d: d["start"])
@@ -83,10 +84,11 @@ def _nod_deg(t: float, ls: list[dict]) -> float:
     return v
 
 
-def dialogue(lines: list[dict], frames: int, fps: int = 24, poses: dict | None = None, speaker: str | None = None) -> dict:
+def dialogue(lines: list[dict], frames: int, fps: int = 24, poses: dict | None = None, speaker: str | None = None,
+             window_s: float = 0.0) -> dict:
     """{"visemes": merged track map, "report": {...}}: mouth for every line (X, the closed mouth, between them) + head and gesture."""
     import json
-    ls = _lines(lines)
+    ls = _lines(lines, window_s)
     if not ls:
         raise ValueError("a dialogue needs at least one line")
     ap = rigs.ActionVisemes(poses or json.loads(POSES.read_text(encoding="utf-8"))["poses"], fps)
@@ -114,10 +116,10 @@ def dialogue(lines: list[dict], frames: int, fps: int = 24, poses: dict | None =
         {k: l[k] for k in ("start", "end", "turn", "gesture")} for l in ls], "channels": len(tracks)}}
 
 
-def lipsync_plan(lines: list[dict], frames: int, speaker: str, fps: int = 24) -> dict:
+def lipsync_plan(lines: list[dict], frames: int, speaker: str, fps: int = 24, window_s: float = 0.0) -> dict:
     """The ``lipsync`` block (``rigs.LipSync.plan``) of a shape-key mouth (the UBC characters, ``characters.json`` ``mouth``) for the
     one line ``speaker`` says: the cue file starts ``start_s`` into the shot, the mouth rests (X) before it and after it."""
-    mine = [l for l in _lines(lines) if l["speaker"] == speaker]
+    mine = [l for l in _lines(lines, window_s) if l["speaker"] == speaker]
     if len(mine) != 1:
         raise ValueError(f"{speaker!r} must have exactly one line in this shot, found {len(mine)}")
     return rigs.LipSync(fps).plan(mine[0]["cues"], frames, offset_s=-mine[0]["start"])
@@ -132,15 +134,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dialogue", required=True, type=Path)
     ap.add_argument("--frames", type=int, default=120)
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument("--window-start-s", type=float, default=0.0, help="the shot is a cut starting this many seconds into the dialogue")
     ap.add_argument("--bone-speaker", default="rain", help="the speaker whose mouth is Rain's bones (default rain)")
     ap.add_argument("--shape-speaker", help="a speaker with a shape-key mouth (the UBC villager)")
     a = ap.parse_args(argv)
     dj = json.loads(a.dialogue.read_text(encoding="utf-8"))
     lines = [{**l, "cues": a.dialogue.parent / l["cues"]} for l in dj["lines"]]
-    out = {a.bone_speaker: dialogue(lines, a.frames, speaker=a.bone_speaker)["visemes"]}
+    out = {a.bone_speaker: dialogue(lines, a.frames, speaker=a.bone_speaker, window_s=a.window_start_s)["visemes"]}
     out = {a.bone_speaker: {"visemes": out[a.bone_speaker]}}
     if a.shape_speaker:
-        out[a.shape_speaker] = {"lipsync": lipsync_plan(lines, a.frames, a.shape_speaker)}
+        out[a.shape_speaker] = {"lipsync": lipsync_plan(lines, a.frames, a.shape_speaker, window_s=a.window_start_s)}
     a.out.write_text(json.dumps(out), encoding="utf-8")
     print(f"wrote {a.out}: {', '.join(out)}")
     return 0
