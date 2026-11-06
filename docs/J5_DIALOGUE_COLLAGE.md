@@ -125,6 +125,8 @@ The creator's note on the step-2 clip: the cuts between shots are too abrupt, an
   `xfade` blends it into the first 10 frames of the next. The cuts stay on the nominal clock (3.5 / 3.0 / 3.0 / 3.0 s); the fire is in
   every shot at about the same screen height, so the light carries over the blend. The ambience is one continuous track and does not
   restart at a cut.
+- **Next render (creator 18:11 UTC):** make the dip slower (try 16-18 frames, about 0.7 s); `DISSOLVE` and the bound in
+  `test_dissolve_is_short_and_the_cut_order_stays_on_the_nominal_clock` change together. Not re-rendered yet.
 - **Not done:** an L- or J-cut (the next shot's sound arriving before its picture) needs a voice; there is none until the creator's yes
   to a new take. The commander's proportions come from his belt-up sheets and are not fixed by motion.
 
