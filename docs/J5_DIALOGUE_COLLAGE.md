@@ -227,3 +227,8 @@ score (gradient-orientation descriptor outside the moving parts, a proxy, not a 
 eyes into the hero sheet through the feathered mask (pixels outside the mask stay the sheet's own); `blend_sheet` mixes them with the cue
 weights (`j5_face.cue_weights`, 55 ms). Tested on a synthetic sheet only: no real Qwen sheet exists yet, so the real registration error and identity
 numbers are still to be measured. Wiring `blend_sheet` into the card renderer waits for the real sheets.
+
+Two layouts are comparable by one constant (2026-11-06 19:46 UTC): `LAYOUTS` holds "A" (4x2 cells of 512 px on 2208x1120, about 2.5 MP) and "B" (4x2 cells of
+304 px on 1280x720), `LAYOUT` picks the default, every function takes `layout=`, and `cut_cells` finds the layout from the image size, so the cutter does not
+depend on which one the pod drew. The first mouth pod draws one H1 sheet in each at the same seed; the winner is chosen by the per-cell identity score and the
+registration error, then H2 is drawn in the winner.

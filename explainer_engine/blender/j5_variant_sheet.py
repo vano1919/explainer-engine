@@ -18,10 +18,19 @@ import numpy as np
 
 ORDER = ("A", "B", "C", "D", "E", "F", "blink_half", "blink_full")      # reading order, left to right, top to bottom
 COLS, ROWS = 4, 2
-CELL = (512, 512)                                                        # px, a square window on the head
-GUTTER = 32
+# The two layouts the first mouth pod compares (the other thread, 2026-11-06 19:46 UTC): "A" = 4x2 cells of 512 px on a 2208x1120 canvas (about
+# 2.5 MP, above Qwen's usual range: watch for failures), "B" = 4x2 cells of 304 px on a 1280x720 canvas (the size of the pilot's pictures).
+# ONE constant picks the layout for everything here (``LAYOUT``); every function also takes ``layout=`` and ``cut_cells`` finds it from the
+# image size, so the cutter does not depend on which one the pod drew. Margins centre the grid; sizes are multiples of 16.
+LAYOUTS = {
+    "A": {"size": (2208, 1120), "cell": (512, 512), "gutter": 32},
+    "B": {"size": (1280, 720), "cell": (304, 304), "gutter": 16},
+}
+LAYOUT = "A"
+CELL = LAYOUTS["A"]["cell"]                                              # layout A's numbers, kept as names for the first version's users
+GUTTER = LAYOUTS["A"]["gutter"]
 MARGIN = 32
-SHEET_SIZE = (2 * MARGIN + COLS * CELL[0] + (COLS - 1) * GUTTER, 2 * MARGIN + ROWS * CELL[1] + (ROWS - 1) * GUTTER)   # 2208 x 1120, both /16
+SHEET_SIZE = LAYOUTS["A"]["size"]
 IN_NAME = "{hero}__variants_in.png"
 OUT_NAME = "{hero}__variants.png"
 HEAD_SIDE = 2.2          # the head window is HEAD_SIDE x the face height (brow line to chin), square
@@ -29,11 +38,30 @@ STABLE = (0.0, 0.40)     # rows of the cell (fractions) used to align: hair and 
 SCALES = tuple(np.round(np.arange(0.94, 1.0601, 0.01), 3))
 
 
-def cell_box(i: int) -> tuple[int, int, int, int]:
+def layout_of(layout: str | None = None, size: tuple[int, int] | None = None) -> dict:
+    """The layout dict for a name, or found from an image size (w, h); default is the module constant ``LAYOUT``."""
+    if size is not None:
+        for name, L in LAYOUTS.items():
+            if tuple(L["size"]) == tuple(size):
+                return dict(L, name=name)
+        raise ValueError(f"no variant-sheet layout is {size[0]}x{size[1]}; known: " + ", ".join(f"{n} {L['size'][0]}x{L['size'][1]}" for n, L in LAYOUTS.items()))
+    return dict(LAYOUTS[layout or LAYOUT], name=layout or LAYOUT)
+
+
+def _layout_of_cell(cell: np.ndarray) -> str:
+    for name, L in LAYOUTS.items():
+        if tuple(L["cell"]) == (cell.shape[1], cell.shape[0]):
+            return name
+    raise ValueError(f"no variant-sheet layout has {cell.shape[1]}x{cell.shape[0]} cells")
+
+
+def cell_box(i: int, layout: str | None = None) -> tuple[int, int, int, int]:
+    L = layout_of(layout)
+    (W, H), (cw, ch), g = L["size"], L["cell"], L["gutter"]
+    mx, my = (W - COLS * cw - (COLS - 1) * g) // 2, (H - ROWS * ch - (ROWS - 1) * g) // 2
     r, c = divmod(i, COLS)
-    x0 = MARGIN + c * (CELL[0] + GUTTER)
-    y0 = MARGIN + r * (CELL[1] + GUTTER)
-    return x0, y0, x0 + CELL[0], y0 + CELL[1]
+    x0, y0 = mx + c * (cw + g), my + r * (ch + g)
+    return x0, y0, x0 + cw, y0 + ch
 
 
 def face_height(feat: dict) -> float:
@@ -67,24 +95,27 @@ def moving_mask(feat: dict, kind: str, shape=(704, 1280)) -> np.ndarray:
     return m
 
 
-def build_input_sheet(sheet_rgb: np.ndarray, feat: dict) -> np.ndarray:
+def build_input_sheet(sheet_rgb: np.ndarray, feat: dict, layout: str | None = None) -> np.ndarray:
     """The hero's neutral head, upscaled to a cell, in all 8 cells on a flat grey ground: the picture Qwen is asked to vary."""
     import cv2
+    L = layout_of(layout)
     x0, y0, s = head_window(feat, sheet_rgb.shape[:2])
-    head = cv2.resize(sheet_rgb[y0:y0 + s, x0:x0 + s], CELL, interpolation=cv2.INTER_CUBIC)
-    out = np.full((SHEET_SIZE[1], SHEET_SIZE[0], 3), 128, np.uint8)
+    head = cv2.resize(sheet_rgb[y0:y0 + s, x0:x0 + s], L["cell"], interpolation=cv2.INTER_CUBIC)
+    out = np.full((L["size"][1], L["size"][0], 3), 128, np.uint8)
     for i in range(len(ORDER)):
-        a, b, c, d = cell_box(i)
+        a, b, c, d = cell_box(i, L["name"])
         out[b:d, a:c] = head
     return out
 
 
-def cut_cells(sheet: np.ndarray) -> dict[str, np.ndarray]:
-    if sheet.shape[1] != SHEET_SIZE[0] or sheet.shape[0] != SHEET_SIZE[1]:
-        raise ValueError(f"variant sheet is {sheet.shape[1]}x{sheet.shape[0]}, expected {SHEET_SIZE[0]}x{SHEET_SIZE[1]}")
+def cut_cells(sheet: np.ndarray, layout: str | None = None) -> dict[str, np.ndarray]:
+    """The 8 cells; the layout is found from the image size unless named (a size that is no layout is an error)."""
+    L = layout_of(layout) if layout else layout_of(size=(sheet.shape[1], sheet.shape[0]))
+    if (sheet.shape[1], sheet.shape[0]) != tuple(L["size"]):
+        raise ValueError(f"variant sheet is {sheet.shape[1]}x{sheet.shape[0]}, layout {L['name']} is {L['size'][0]}x{L['size'][1]}")
     out = {}
     for i, tag in enumerate(ORDER):
-        a, b, c, d = cell_box(i)
+        a, b, c, d = cell_box(i, L["name"])
         out[tag] = sheet[b:d, a:c].copy()
     return out
 
@@ -100,7 +131,7 @@ def align(ref: np.ndarray, cell: np.ndarray) -> dict:
     g0, g1 = _gray(ref), _gray(cell)
     h = g0.shape[0]
     r0, r1 = int(STABLE[0] * h), int(STABLE[1] * h)
-    m = 24                                                           # template margin, so shifts up to +-m px are searched
+    m = max(8, round(h * 24 / 512))                                  # template margin, so shifts up to +-m px (~5 % of the cell) are searched
     tpl = g0[r0 + m:r1, m:-m].astype(np.float32)
     best = None
     for sc in SCALES:
@@ -146,20 +177,22 @@ def descriptor(a: np.ndarray, hole: np.ndarray | None = None) -> np.ndarray:
     return v / (np.linalg.norm(v) + 1e-9)
 
 
-def cell_hole(feat: dict) -> np.ndarray:
+def cell_hole(feat: dict, layout: str | None = None) -> np.ndarray:
     """Bool mask in cell pixels of the parts that are allowed to differ (mouth/chin, both eyes)."""
     import cv2
     x0, y0, s = head_window(feat)
     sheet_h, sheet_w = 704, 1280
     m = np.maximum(moving_mask(feat, "mouth", (sheet_h, sheet_w)), moving_mask(feat, "blink", (sheet_h, sheet_w)))[y0:y0 + s, x0:x0 + s]
-    hole = (cv2.resize(m, CELL, interpolation=cv2.INTER_LINEAR) > 0.0).astype(np.uint8)
-    return cv2.dilate(hole, np.ones((13, 13), np.uint8)) > 0       # the edges of a changed part spill a few px into the gradients
+    cell = layout_of(layout)["cell"]
+    hole = (cv2.resize(m, cell, interpolation=cv2.INTER_LINEAR) > 0.0).astype(np.uint8)
+    k = max(5, round(cell[0] * 13 / 512) | 1)
+    return cv2.dilate(hole, np.ones((k, k), np.uint8)) > 0       # the edges of a changed part spill a few px into the gradients
 
 
-def check_cell(ref: np.ndarray, cell: np.ndarray, feat: dict, embed=None) -> dict:
+def check_cell(ref: np.ndarray, cell: np.ndarray, feat: dict, embed=None, layout: str | None = None) -> dict:
     """Align one cell to the neutral head and report {"identity", "reg_error_px", "score", "scale", "dx", "dy", "aligned"}."""
     a = align(ref, cell)
-    hole = cell_hole(feat)
+    hole = cell_hole(feat, layout or _layout_of_cell(cell))
     emb = embed or (lambda im: descriptor(im, hole))
     e0, e1 = emb(ref), emb(a["aligned"])
     a["identity"] = float(np.dot(e0, e1) / (np.linalg.norm(e0) * np.linalg.norm(e1) + 1e-9))

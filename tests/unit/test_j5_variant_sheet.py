@@ -83,3 +83,26 @@ def test_variant_sheet_changes_only_the_masked_part_and_blend_follows_the_weight
     half = V.blend_sheet(sheet, vs, {"A": 0.5, "C": 0.5})
     full = V.blend_sheet(sheet, vs, {"C": 1.0})
     assert np.array_equal(full, vs["C"]) and np.abs(half.astype(int) - sheet.astype(int)).max() <= np.abs(full.astype(int) - sheet.astype(int)).max() / 2 + 1
+
+
+@pytest.mark.parametrize("layout", ["A", "B"])
+def test_both_layouts_cut_align_and_check_the_same_way(layout):
+    sheet = head_sheet()
+    ins = V.build_input_sheet(sheet, FEAT, layout)
+    L = V.LAYOUTS[layout]
+    assert ins.shape[:2] == (L["size"][1], L["size"][0]) and all(n % 16 == 0 for n in L["size"]) and V.layout_of(size=L["size"])["name"] == layout
+    boxes = [V.cell_box(i, layout) for i in range(8)]
+    assert all(0 <= b[0] and b[2] <= L["size"][0] and 0 <= b[1] and b[3] <= L["size"][1] for b in boxes)
+    for i, a in enumerate(boxes):
+        for b in boxes[i + 1:]:
+            assert a[2] + L["gutter"] <= b[0] or b[2] + L["gutter"] <= a[0] or a[3] + L["gutter"] <= b[1] or b[3] + L["gutter"] <= a[1]
+    cells = V.cut_cells(ins)                                                    # found from the image size, no layout named
+    assert cells["A"].shape[:2] == (L["cell"][1], L["cell"][0])
+    r = V.check_cell(cells["A"], cells["F"], FEAT)
+    assert r["reg_error_px"] < 1.0 and r["identity"] > 0.99 and r["score"] > 0.99
+
+
+def test_an_unknown_sheet_size_is_refused_and_the_default_layout_is_one_constant():
+    with pytest.raises(ValueError):
+        V.cut_cells(np.zeros((700, 1200, 3), np.uint8))
+    assert V.LAYOUT in V.LAYOUTS and set(V.LAYOUTS) == {"A", "B"}
