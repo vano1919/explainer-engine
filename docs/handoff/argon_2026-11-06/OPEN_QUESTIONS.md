@@ -5,7 +5,7 @@ Questions for the creator go to the Fable thread as four options each (the creat
 ## A. Waiting on the creator
 
 1. **The p15 pilot pod** (Qwen-only mode: 24 restyled pictures, A100, cap $3.4 / 2 h, RP-10 placement watch, D-118). On the files of this
-   branch (`icw/19-pilot-pod` @3e8f994) it has not run; the launch worker was still retrying placement ("no instances available") when
+   branch (`icw/19-pilot-pod` @3e8f994, its head 0e7e030 merged in the refresh adds p15q: 48 GB cards, a 3-failure stop and new pins; still no pod result seen) it has not run; the launch worker was still retrying placement ("no instances available") when
    this branch was cut, and I did not see its later state. Until it runs, **nobody has seen a Qwen restyle of a Blender still of the
    pilot**, so the pilot's central question (does Qwen keep places and props across the room's angles?) is unanswered.
 2. **P1 (the 60-second paid pilot minute)** is paused by the creator (16:54 UTC) until everything else is finished (`handoffs/
@@ -54,3 +54,13 @@ Questions for the creator go to the Fable thread as four options each (the creat
   that row (the test's own rule). The earlier local run of the merge before the handoff files: 3156 passed, 1 failed (`test_route_assets`,
   fixed, see section C). The final-head run is reported in the thread.
 - Not run: any pod, any render, Blender (not installed here), the `system`/`media` tests. The p14/p15 bundle pins were not rebuilt.
+
+## E. Refresh (2026-11-06 ~22:00 UTC)
+
+- Merged again: PR #151 head 7007d7d (adds BP-176..181, `j5_montage`, `j5_minute*`, docs 7g-7j, D-119, `docs/J5_ARGON_REVIEW.md`) and
+  `icw/19-pilot-pod` head 0e7e030. Conflicts were only in `docs/PROGRESS.md` and the decision log (D-117/D-118 rows from the base and the
+  D-119 row from #151, all kept; no numbering clash). The J5 verdicts of the creator for steps 4c-4f and the minute film v1/v2 are in
+  `docs/J5_ARGON_REVIEW.md` (his 21:56 UTC scope verdict: worth it for dialogue and the 30 % still lane; action shots need LTX); the
+  clips live only on HF (`route_test_2026-11/j5_minute/`, `j5_dialogue/step4f/`) and have no row in `MATERIAL.md`: not added, because their
+  frames were not on this branch (not verified by me).
+

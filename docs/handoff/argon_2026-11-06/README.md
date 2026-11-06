@@ -88,3 +88,4 @@ seconds: **60 % video / 30 % stills with Python motion / 10 % helper graphics** 
 | `handoffs/` | the handoff notes of the threads whose work is on this branch |
 | `ARGON_PROMPT.md` | the prompt to paste into Argon |
 | `README_ka.md` | the Georgian map for the creator |
+| [`../../J5_ARGON_REVIEW.md`](../../J5_ARGON_REVIEW.md) | a second, separate review request for Argon from the J5 thread (PR #151): dialogue cutting, montage rules BP-176..181, local animation of stills, hero rigs; exact source links and its own prompt. Read it with `../../J5_DIALOGUE_COLLAGE.md` sections 7d-7j |
