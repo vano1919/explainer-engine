@@ -4539,3 +4539,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   shadow in these frames), H2 has no left-facing card (his right34 looks nearly at the camera, so his eye-line to H1 is weak), no mouth or
   eyes-closed variants exist yet (step 2 needs them), H1's back card is the sheet mirrored for the reverse shot.
 - Tests: `tests/unit/test_j5_collage.py` (4). Cost $0.
+- Step 2 (creator 17:25 and 17:26 UTC: animate the background as much as possible in Python; shadow on the face; document every step): `blender/j5_background.py`,
+  a 12.5 s clip at 2560x1440/24 fps (S1 3.5 s, S2 3.0 s, S4 3.0 s, S3 3.0 s) with a synthesised camp ambience (no voice, nothing paid): one shared fire flicker on the
+  flame, the ground glow, embers, smoke and the heroes' warm side; banners waving, ground fog, dust bokeh, a push-in/truck per shot with parallax 0.3 : 0.65 : 1.0
+  and breathing. `j5_collage.face_shadow` adds the form shadow of the face (cool terminator away from the fire, brow, the chin's shadow on the collar); the stills
+  were re-rendered (v2). 1.3 s per frame, 2.5 min for the clip on 4 cores. HF `route_test_2026-11/j5_dialogue/step2/`. The step-by-step record for a later standard
+  is `docs/J5_DIALOGUE_COLLAGE.md`. Tests: `tests/unit/test_j5_background.py` (5), `test_j5_collage.py` (4). Cost $0. Still missing: mouth/blink/brow variants,
+  a full-body commander, a left-facing scout (see the doc, section 10).

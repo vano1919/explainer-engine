@@ -48,6 +48,12 @@ HAZE_BLACK = np.array([0.09, 0.065, 0.14])  # A1's darkest tone: the cards' blac
 # H2 is a whole figure (1.65 m). H1's sheets end at the belt (head 41 % of the bust, a four-head figure = 1.9 m), so the bust card is
 # 0.85 m tall (its head then measures 0.27 m against the scout's 0.23 m, as rendered) and its bottom stands 0.91 m above the ground,
 # so his eyes (z about 1.62) and the scout's (about 1.56) both sit on the camera's eye-line.
+SHADE_TINT = np.array([0.60, 0.56, 0.82])   # the cool dusk colour the form shadow on a face takes
+# face geometry of the sheets that show a face, in card pixels (measured on the 1280x704 cut-outs): ellipse of the head (hair and beard
+# included), the eye row and the chin row. ``face_shadow`` reads it; a sheet without an entry (the back views) gets no face shadow.
+FACE = {"B_H1_left34": {"cx": 598, "cy": 165, "rx": 92, "ry": 125, "eye_y": 130, "chin_y": 285, "neck_cx": 585},
+        "B_H2_right34": {"cx": 655, "cy": 118, "rx": 62, "ry": 62, "eye_y": 121, "chin_y": 172, "neck_cx": 640}}
+
 HERO = {"H2": {"height": 1.65, "z0": 0.0}, "H1": {"height": 0.85, "z0": 0.91}}
 
 SHOTS = {
@@ -126,7 +132,31 @@ def smoothstep(x):
     return x * x * (3 - 2 * x)
 
 
-def grade_card(rgba: np.ndarray, lateral: float, *, dark: float = 1.0) -> np.ndarray:
+def face_shadow(rgb: np.ndarray, a: np.ndarray, face: dict, lateral: float) -> np.ndarray:
+    """The form shadow of a face (what a 3D head would get from the fire at ``lateral``): the half of the head that turns from the
+    fire falls into a cool shade with a soft terminator, a shadow sits under the brow, and the chin throws a soft shadow down onto the
+    collar or the fur, away from the fire. Returns the new rgb; alpha is untouched."""
+    cv2 = _cv2()
+    h, w = a.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    cx, cy, rx, ry = face["cx"], face["cy"], face["rx"], face["ry"]
+    ell = np.clip(1.25 - np.hypot((xx - cx) / rx, (yy - cy) / ry), 0, 1)        # 1 inside the head, soft 25 % rim outside
+    side = 0.5 + 0.5 * lateral * np.clip((xx - cx) / rx, -1.2, 1.2)               # 1 toward the fire, 0 away from it
+    shade = (1 - smoothstep(side * 1.6 - 0.45)) * ell * a
+    out = rgb * (1 - 0.72 * shade[..., None] * (1 - SHADE_TINT))                   # multiply toward the cool shade colour
+    out *= (1 - 0.26 * shade[..., None])
+    brow = np.exp(-(((yy - (face["eye_y"] - 0.17 * ry)) / (0.10 * ry)) ** 2) - (((xx - cx) / (0.85 * rx)) ** 2)) * a
+    out *= (1 - 0.20 * brow[..., None])                                            # the brow ridge shades the eye socket
+    sgn = -np.sign(lateral) if lateral else 0.0                                    # the chin shadow falls away from the fire
+    ccx = face["neck_cx"] + sgn * 0.22 * rx
+    chin = np.exp(-(((xx - ccx) / (0.95 * rx)) ** 2) - (((yy - (face["chin_y"] + 0.16 * ry)) / (0.22 * ry)) ** 2))
+    below = smoothstep((yy - (face["chin_y"] - 0.04 * ry)) / (0.06 * ry))          # only on what lies under the chin
+    cast = cv2.GaussianBlur((chin * below * a).astype(np.float32), (0, 0), max(2.0, 0.05 * ry))
+    out *= (1 - 0.55 * cast[..., None] * (1 - 0.5 * SHADE_TINT))
+    return out
+
+
+def grade_card(rgba: np.ndarray, lateral: float, *, dark: float = 1.0, face: dict | None = None) -> np.ndarray:
     """The card as the fire at ``lateral`` (-1 camera-left .. +1 camera-right) and the dusk would light it (items 1 and 2 above).
     Returns RGBA float with the same alpha."""
     cv2 = _cv2()
@@ -140,6 +170,8 @@ def grade_card(rgba: np.ndarray, lateral: float, *, dark: float = 1.0) -> np.nda
     lit = smoothstep(side * 1.15 - 0.10)[..., None]
     mult = AMBIENT * 0.86 * (1 - lit) + (AMBIENT * 0.95 + WARM * 0.50) * lit
     out = rgb * mult
+    if face:
+        out = face_shadow(out, a, face, lateral)
     # ground bounce: the firelit ground warms the lower quarter
     out += WARM * 0.10 * smoothstep((v - 0.72) / 0.28)[..., None] * (0.4 + 0.6 * lit)
     # rims: the inner band of the figure, by the direction its edge faces
@@ -212,7 +244,7 @@ def blender_layers(shot: dict, work: Path, *, inputs: Path, size, launcher, pin:
         px, _, _ = project(cam, shot["aim"], shot["lens"], (c["pos"][0], c["pos"][1], hero["z0"] + hero["height"] / 2))
         lateral = float(np.clip((fx - px) / 0.5, -1, 1))
         c["lateral"] = round(lateral, 3)
-        graded = save_rgba(grade_card(cut, lateral, dark=c["dark"]), work / f"card_{c['id']}_{c['img']}.png")
+        graded = save_rgba(grade_card(cut, lateral, dark=c["dark"], face=None if c.get("mirror") else FACE.get(c["img"])), work / f"card_{c['id']}_{c['img']}.png")
         cd = card_dict(f"card_{c['id']}", graded, (c["pos"][0], c["pos"][1], hero["z0"]), hero["height"], cam=cam)
         passes.append((c["id"], [cd], True))
     for name, cards, transparent in passes:
