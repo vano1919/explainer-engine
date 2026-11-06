@@ -290,7 +290,8 @@ def test_profiles_match_the_contract_recipes_and_job_speed_rows():
 def test_only_the_bpy_script_imports_bpy():
     root = Path(__file__).resolve().parents[2] / "explainer_engine"
     hits = [p.relative_to(root).as_posix() for p in root.rglob("*.py") if "import bpy" in p.read_text(encoding="utf-8")]
-    assert sorted(hits) == ["blender/bpy/assemble_25d.py", "blender/bpy/check_eevee_api.py", "blender/bpy/crowd_bake.py", "blender/bpy/make_rain_lead.py",
+    assert sorted(hits) == ["blender/bpy/assemble_25d.py", "blender/bpy/check_eevee_api.py", "blender/bpy/crowd_bake.py",
+                    "blender/bpy/layout_pass.py", "blender/bpy/make_rain_lead.py",
                     "blender/bpy/measure_clips.py",
                     "blender/bpy/render_shot.py"]  # the Blender-side scripts, nothing else
     text = R.SCRIPT.read_text(encoding="utf-8")

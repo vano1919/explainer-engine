@@ -1203,6 +1203,16 @@ def build_crowd(scene, block, workdir, report):
     return crowd_bake.build(scene, block, workdir, report)
 
 
+def apply_layout_pass(scene, block, report):
+    """A ``layout_pass`` block (``blender/layout_passes.py``, D-116 guide step 2.3): ``layout_pass.py`` (beside this file) redraws
+    the built scene as clay, depth, line or flat colour; geometry, motion and camera stay as built."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import layout_pass
+    return layout_pass.apply(scene, block, report)
+
+
 def main():
     path = job_path()
     with open(path, encoding="utf-8") as f:
@@ -1241,6 +1251,8 @@ def main():
         apply_style(scene, sc["style"], pending, built)  # after the profile: the style's EEVEE switches win (roadmap 9.1)
     if sc.get("crowds"):
         build_crowd(scene, sc["crowds"], os.path.dirname(job["report"]), built)  # after the style: the bake keeps its materials
+    if sc.get("layout_pass"):
+        apply_layout_pass(scene, sc["layout_pass"], built)  # last: the built scene is drawn as a clay/depth/line/colour pass (D-116)
     os.makedirs(job["frames_dir"], exist_ok=True)
     with open(job["progress"], "a", encoding="utf-8") as prog:
         for idx in job["frames"]:
