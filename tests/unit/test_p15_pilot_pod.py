@@ -214,8 +214,8 @@ def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_two_a100
     sch = RP.load(DIR / "p15q_schedule.json")
     assert {s["id"] for s in sch["stages"]} == {*p15_pod.QWEN_LANES["net"], *p15_pod.QWEN_LANES["gpu"]}
     assert B.schedule_qwen() == json.loads((DIR / "p15q_schedule.json").read_text(encoding="utf-8"))   # generated, never hand-edited
-    assert sch["limits"]["max_usd"] == 3.4 and [(c["name"], c["cloud"]) for c in sch["cards"]] == [
-        ("A40", "SECURE"), ("RTX A6000", "SECURE"), ("L40S", "SECURE"), ("A100 80GB", "COMMUNITY"), ("A100 80GB", "SECURE")]
+    assert sch["limits"]["max_usd"] == 3.4 and len(sch["cards"]) == 11   # the creator 20:09 UTC: every card that passes RP-01 with a worst-case money under the cap
+    assert {c["name"] for c in sch["cards"]} == {"RTX A5000", "A40", "RTX A6000", "L4", "RTX 5090", "RTX 4090", "RTX 6000 Ada", "L40S", "A100 80GB"}
     assert not any("Blackwell" in c["name"] for c in sch["cards"])   # torch on sm_120 is not verified for this image
     assert not any("H100" in c["name"] for c in sch["cards"])   # no H100: its 15.4 min of work fails RP-01
     r = next(s for s in sch["stages"] if s["id"] == "qwen_restyle")["on"]["gpu"]
@@ -228,7 +228,7 @@ def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_two_a100
         if c["name"] == "A100 80GB":
             assert best["fits"] and best["worst"]["pod_min"] <= 120
         else:   # estimated speeds: the 2 h cap (guard) bounds the A40/A6000 (worst 3.4 h of work) and the L40S (127 min); money stays under 3.4
-            assert c["name"] in ("A40", "RTX A6000", "L40S")
+            assert c["name"] != "H100 NVL"   # estimated speeds; the 2 h guard bounds the slow cards, money stays under $3.4
         assert batching.rp01(round(best["expected"]["gpu_busy_min"]), 8) == []   # the A100's work, 26 min, is over 3 x the 8 min setup
     h100 = copy.deepcopy(sch)
     h100["cards"] = [{"name": "H100 NVL", "cloud": "COMMUNITY", "price_h": 2.59, "gpu_speed": 1.0}]

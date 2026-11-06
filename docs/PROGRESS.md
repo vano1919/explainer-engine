@@ -4643,3 +4643,9 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   L40S (127 min) is over the 2 h cap, so the guard's 2 h bounds them and a stop leaves the saved pictures (step-by-step uploads). Blackwell stays out.
 - `p15_qwen.run` ends the stage after `MAX_FAIL_STREAK` = 3 pictures failing in a row (a card that cannot hold the model would only bill).
 - Tests: schedule card list, no Blackwell/H100, per-card worst money; the failure-streak stop. Cost $0.
+
+## 2026-11-06 20:20 UTC — p15q: every card that passes RP-01 and stays under $3.4 in the worst case (the creator 20:09 UTC: "try every possible card, in turn")
+- `CARDS_QWEN` = RTX A5000, A40, RTX A6000, L4, RTX 5090 (COMMUNITY + SECURE), RTX 4090, RTX 6000 Ada, L40S, A100 (COMMUNITY + SECURE); all speeds below the A100
+  ESTIMATED (`runpod.SPEED` / 1.8). Out: H100 (17 min work) and RTX PRO 6000 Blackwell (21 min) fail RP-01; A100 PCIe worst $3.65 / 122 min; RTX PRO 4000/4500
+  Blackwell have no speed. Qwen-Image-2.1 = 13.3 GB transformer + 16.3 GB text encoder (model_cpu_offload, one at a time): 24 GB cards may fit, unproven;
+  the 3-failure stop bounds an OOM. Time worst over 2 h (guard-bounded, pictures upload as made): A5000 276, L4 316, A40/A6000 203, 4090 139, Ada 133, L40S 127 min.

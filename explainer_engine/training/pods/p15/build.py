@@ -137,11 +137,21 @@ LIMITS_QWEN = {"max_usd": 3.4, "max_hours": 2.0, "max_idle_gpu_share": 0.5}   # 
 # gpu_speed is relative to the H100 NVL (1.0). A100 0.6: the first plan. The 48 GB cards (SECURE rows of `runpod cards --vram 48`,
 # 2026-11-06 19:40 UTC) are ESTIMATED from runpod.SPEED ratios (A40/A6000 0.5, L40S 0.9, H100 NVL 1.8), never measured: the asset pod's
 # 33-41 s per 1280x720 picture came from an RTX PRO 6000 Blackwell (96 GB, $1.69/h), not from a 48 GB card.
-CARDS_QWEN = [{"name": "A40", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.28},
-              {"name": "RTX A6000", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.28},
+# speeds of the cards below the A100 are ALL ESTIMATED: gpu_speed = runpod.SPEED / 1.8 (H100 NVL = 1.0); prices are the live catalog rows of
+# 2026-11-06 20:15 UTC. Out on purpose: H100 (17 min of work) and RTX PRO 6000 Blackwell (21 min; measured ~1.0 on the asset pod) fail RP-01
+# (work >= 3 x the 8 min setup); A100 80GB PCIe (worst $3.65 / 122 min) is over both caps; RTX PRO 4000/4500 Blackwell have no speed in runpod.SPEED. Qwen-Image-2.1 is a 13.3 GB transformer + 16.3 GB text
+# encoder + 1.3 GB VAE, drawn with model_cpu_offload: one part on the GPU at a time, so 24 GB cards may fit; the fit at 1280x720 with 3 images is unknown.
+CARDS_QWEN = [{"name": "RTX A5000", "cloud": "SECURE", "price_h": 0.27, "gpu_speed": 0.194},
+              {"name": "A40", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.278},
+              {"name": "RTX A6000", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.278},
+              {"name": "L4", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.167},
+              {"name": "RTX 5090", "cloud": "COMMUNITY", "price_h": 0.69, "gpu_speed": 0.611},
+              {"name": "RTX 4090", "cloud": "SECURE", "price_h": 0.89, "gpu_speed": 0.444},
+              {"name": "RTX 6000 Ada", "cloud": "SECURE", "price_h": 0.99, "gpu_speed": 0.472},
               {"name": "L40S", "cloud": "SECURE", "price_h": 1.09, "gpu_speed": 0.5},
+              {"name": "RTX 5090", "cloud": "SECURE", "price_h": 1.19, "gpu_speed": 0.611},
               {"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6},
-              {"name": "A100 80GB", "cloud": "SECURE", "price_h": 1.79, "gpu_speed": 0.6}]   # no H100: 15.5 min of work fails RP-01
+              {"name": "A100 80GB", "cloud": "SECURE", "price_h": 1.79, "gpu_speed": 0.6}]
 
 
 def schedule_qwen() -> dict:

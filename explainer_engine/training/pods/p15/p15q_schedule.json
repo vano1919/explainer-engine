@@ -8,22 +8,58 @@
   },
   "cards": [
     {
+      "name": "RTX A5000",
+      "cloud": "SECURE",
+      "price_h": 0.27,
+      "gpu_speed": 0.194
+    },
+    {
       "name": "A40",
       "cloud": "SECURE",
       "price_h": 0.59,
-      "gpu_speed": 0.28
+      "gpu_speed": 0.278
     },
     {
       "name": "RTX A6000",
       "cloud": "SECURE",
       "price_h": 0.59,
-      "gpu_speed": 0.28
+      "gpu_speed": 0.278
+    },
+    {
+      "name": "L4",
+      "cloud": "SECURE",
+      "price_h": 0.59,
+      "gpu_speed": 0.167
+    },
+    {
+      "name": "RTX 5090",
+      "cloud": "COMMUNITY",
+      "price_h": 0.69,
+      "gpu_speed": 0.611
+    },
+    {
+      "name": "RTX 4090",
+      "cloud": "SECURE",
+      "price_h": 0.89,
+      "gpu_speed": 0.444
+    },
+    {
+      "name": "RTX 6000 Ada",
+      "cloud": "SECURE",
+      "price_h": 0.99,
+      "gpu_speed": 0.472
     },
     {
       "name": "L40S",
       "cloud": "SECURE",
       "price_h": 1.09,
       "gpu_speed": 0.5
+    },
+    {
+      "name": "RTX 5090",
+      "cloud": "SECURE",
+      "price_h": 1.19,
+      "gpu_speed": 0.611
     },
     {
       "name": "A100 80GB",
