@@ -61,7 +61,7 @@ def fetch_still(cfg: dict, still: dict, work: Path) -> Path:
     return p
 
 
-def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in"), variants: bool = False) -> int:
+def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in"), variants: bool = False, mouth: bool = False) -> int:
     cfg = load_cfg()
     out = Path(out)
     qd = out / "qwen"
@@ -122,6 +122,10 @@ def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in"), varia
         made += 1
         say("made", j["name"], side["seconds"], "s")
     say("qwen done", made, "made", failed, "failed")
+    if mouth and made and streak < MAX_FAIL_STREAK:   # J5 mouth variants: the same loaded pipeline, 16 more edits
+        from explainer_engine.training.pods.p15 import p15_mouth
+        mm, mf = p15_mouth.run_all(pipe, cfg, out, work, say, Q.draw, MAX_FAIL_STREAK)
+        say("mouth variants done", mm, "made", mf, "failed")
     return 0 if made else 1
 
 
@@ -130,13 +134,14 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, default=Path(os.environ.get("EE_OUT", "/workspace/out")))
     ap.add_argument("--assets", type=Path, default=Path("/workspace/assets"))
     ap.add_argument("--list", action="store_true", help="print the pictures, no GPU")
+    ap.add_argument("--mouth", action="store_true", help="after the pictures, the 16 J5 mouth variants (p15_mouth) with the same pipeline")
     ap.add_argument("--variants", action="store_true", help="three look variants per still (S1, S2, S3), 24 pictures")
     a = ap.parse_args(argv)
     if a.list:
         for j in jobs(load_cfg(), a.variants):
             print(j["name"], j["size"], len(j["prompt"].split()), "words", j["still"]["path"], [r[1] for r in j["refs"]])
         return 0
-    return run(a.out, a.assets, variants=a.variants)
+    return run(a.out, a.assets, variants=a.variants, mouth=a.mouth)
 
 
 if __name__ == "__main__":

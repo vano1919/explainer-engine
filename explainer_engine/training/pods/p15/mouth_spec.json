@@ -1,0 +1,22 @@
+{
+ "_doc": "J5 mouth variants (ვანო 2026-11-06 19:36 UTC: attach to the p15 pod). Inputs: HF vano1919/tmr-artifacts route_test_2026-11/j5_dialogue/mouth_variants_input/, held to the sha256 below. Boxes: spec.json of the J5 thread (mouth_box_xy_w_line_jaw, chin_y, eyes).",
+ "hf": "route_test_2026-11/j5_dialogue/mouth_variants_input",
+ "sheets": {
+  "B_H2_right34": {"png_sha256": "327ff5d588113b9f2f6bbc16f706ed29fbc3542008a4b8f422d53fac02dd0bf7",
+   "prompt": "xworld style, model sheet of one person, three-quarter view right, neutral pose, flat ambient lighting, no cast shadows, plain neutral background. a young scout, wiry, freckled, messy short hair, hooded green cloak, leather jerkin, short bow in hand.",
+   "mouth_box_xy_w_line_jaw": [672.0, 161.0, 26, 3.0, 4.5], "chin_y": 172, "eyes": [[644.0, 122.5, 23, 19], [685.5, 121.0, 20, 17]]},
+  "B_H1_left34": {"png_sha256": "9b14f533ac82d56af807f000389e6bd88ae9cf37995d3a352dfa77ffc7c5aaff",
+   "prompt": "xworld style, model sheet of one person, three-quarter view left, neutral pose, flat ambient lighting, no cast shadows, plain neutral background. a middle-aged commander, broad shoulders, grey-streaked beard, scarred chin, steel breastplate over a dark red tunic, fur-collared cloak.",
+   "mouth_box_xy_w_line_jaw": [548.0, 225.5, 40, 4.5, 5.5], "chin_y": 285, "eyes": [[523.5, 157.0, 25, 12], [581.0, 156.0, 34, 13]]}
+ },
+ "shapes": {
+  "A": "lips closed in a thin straight line",
+  "B": "lips slightly parted, a thin gap showing teeth",
+  "C": "mouth open, medium, the tongue just visible",
+  "D": "mouth wide open, as when shouting",
+  "E": "mouth small and round, like saying oh",
+  "F": "lips pushed forward, puckered"
+ },
+ "blinks": {"blink1": "both eyes half closed", "blink2": "both eyes fully closed"},
+ "seed": 11, "cfg": 2.5, "size": [1280, 704]
+}

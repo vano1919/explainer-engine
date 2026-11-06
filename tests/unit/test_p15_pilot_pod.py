@@ -309,3 +309,29 @@ def test_the_qwen_stage_ends_after_three_pictures_fail_in_a_row_so_a_card_that_c
     monkeypatch.setattr(p15_qwen, "fetch_still", boom)
     assert p15_qwen.run(tmp_path, tmp_path, tmp_path, True) == 1
     assert len(calls) == p15_qwen.MAX_FAIL_STREAK == 3
+
+
+def test_the_mouth_variants_are_16_masked_edits_whose_outside_pixels_stay_identical(tmp_path):
+    import numpy as np
+    from PIL import Image
+    from explainer_engine.training.pods.p15 import p15_mouth as M
+    spec = M.load_spec()
+    js = M.jobs(spec)
+    assert len(js) == 16 == B.MOUTH_EDITS and {j["sheet"] for j in js} == {"B_H2_right34", "B_H1_left34"}
+    assert sorted(j["name"].split("__")[1] for j in js[:8]) == ["A", "B", "C", "D", "E", "F", "blink1", "blink2"]
+    assert all(len(j["prompt"].split()) <= 90 for j in js)
+    src = Image.fromarray(np.random.default_rng(1).integers(0, 255, (704, 1280, 3), dtype=np.uint8))
+    drawn = Image.fromarray(np.full((704, 1280, 3), 7, np.uint8))
+    box = js[0]["box"]
+    out, diff = M.composite(src, drawn, box)
+    assert diff == 0 and np.asarray(out)[box[1] + 8, box[0] + 8].tolist() == [7, 7, 7]   # inside: the drawn mouth; outside: the sheet's own pixels
+    assert M.mask(box, (1280, 704)).sum() > 0 and M.mask(box, (1280, 704))[0, 0] == 0
+
+
+def test_the_mouth_package_needs_its_own_schedule_and_the_default_qwen_pod_has_no_mouth_stage():
+    two, one = json.loads((DIR / "p15qm_schedule.json").read_text()), json.loads((DIR / "p15q_schedule.json").read_text())
+    assert B.schedule_qwen(True) == two and B.schedule_qwen() == one
+    g = lambda sc: next(s for s in sc["stages"] if s["id"] == "qwen_restyle")["on"]["gpu"]["expected_min"]
+    assert g(one) == 15.4 and g(two) == 25.0   # 61 s + 24 x 36 s vs 61 s + 40 x 36 s
+    assert RP.rp11(DIR / "p15q_schedule.json") == [] and RP.rp11(DIR / "p15qm_schedule.json", max_usd=3.4, max_hours=2.0) != []   # the 2 h / $3.4 cap does not cover both in the 3x worst case
+    assert p15_pod.load_schedule("qwen", True) == two and p15_pod.load_schedule("qwen") == one

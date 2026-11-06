@@ -4643,3 +4643,12 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   L40S (127 min) is over the 2 h cap, so the guard's 2 h bounds them and a stop leaves the saved pictures (step-by-step uploads). Blackwell stays out.
 - `p15_qwen.run` ends the stage after `MAX_FAIL_STREAK` = 3 pictures failing in a row (a card that cannot hold the model would only bill).
 - Tests: schedule card list, no Blackwell/H100, per-card worst money; the failure-streak stop. Cost $0.
+
+## 2026-11-06 19:55 UTC — p15 mouth variants (J5) as a second package, branch `icw/19-mouth` (off icw/19-pilot-pod 8b94f46)
+- `p15_mouth.py` + `mouth_spec.json` (sheet sha256 pins, boxes from the J5 spec, prompts = the sheet's own + "only the mouth/eyes change"): 16 edits
+  (2 sheets x 6 Rhubarb shapes A-F + 2 blinks) with the SAME loaded pipeline after the 24 pictures (`p15_qwen --mouth`, `p15_pod --only qwen --mouth`).
+  Each edit is composited through a feathered box mask; pixels outside the box must equal the sheet (`outside_diff_max` 0, else the variant fails).
+- `p15qm_schedule.json` (generated): 24 + 16 edits = 25.0 min on the H100 reference. RP-11 at $3.4 / 2 h: NO combination fits in the 3x worst case
+  (cheapest worst: A40/A6000 $2.99 but 304 min; L40S $3.36 / 185 min; A100 COMMUNITY $3.70 / 160 min; A100 SECURE $4.76 / 160 min). The live
+  `p15q_schedule.json` (24 pictures only) is unchanged and still passes. The higher cap is the creator's call; nothing is wired to the probe.
+- Tests: mouth jobs/mask/composite, the two schedules, RP-11 on the combined one. Cost $0.
