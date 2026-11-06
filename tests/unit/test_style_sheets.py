@@ -42,8 +42,11 @@ def test_sources_match_the_library_and_stay_out_of_git():
 
 
 def test_poc3_set_is_three_models_two_materials_one_hdri_and_the_paper():
-    kinds = [a["kind"] for a in SS.sources()]
+    poc3 = [a for a in SS.sources() if "crowd_battle" not in a["tags"]]   # the T-E battle field's two ground materials ride along
+    kinds = [a["kind"] for a in poc3]
     assert kinds.count("model") == 3 and kinds.count("material") == 2 and kinds.count("hdri") == 1
+    assert sorted(a["id"] for a in SS.sources() if "crowd_battle" in a["tags"]) == ["material.ph_aerial_grass_rock",
+                                                                                      "material.ph_dry_ground_01"]
     assert "texture.acg_paper003" in {a["id"] for a in SS.sources()}
 
 

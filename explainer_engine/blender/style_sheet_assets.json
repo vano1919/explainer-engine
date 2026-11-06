@@ -224,7 +224,8 @@
     "ground",
     "grass",
     "rock",
-    "terrain"
+    "terrain",
+    "crowd_battle"
    ],
    "description": "Poly Haven Aerial Grass Rock diffuse (1k): the battlefield's grass (T-E crowd battle)"
   },
@@ -242,7 +243,8 @@
     "polyhaven",
     "ground",
     "dirt",
-    "terrain"
+    "terrain",
+    "crowd_battle"
    ],
    "description": "Poly Haven Dry Ground 01 diffuse (1k): the trampled dirt between the battle lines (T-E crowd battle)"
   }
