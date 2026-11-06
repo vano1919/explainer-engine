@@ -4581,3 +4581,25 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   the scene as before.
 - RP-11 on the cut graph: A100 80GB $1.27 expected / $2.62 worst (1.88 h), 0 idle GPU minutes; H100 NVL $1.81 / $3.50.
 - Tests: `tests/unit/test_p14_lean.py` (+3: the cut pod and its reasons, the vault layouts, a changed vault file renders).
+
+## 2026-11-06 — Pilot stills: a furnished room from the libraries + the soldiers scene (thread: ICW-16 lean pod; branch `icw/18-pilot-room`)
+
+- The creator (15:25 UTC, Fable thread): build the Blender frames from the libraries with the whole room furnished (a clock, a table,
+  everything), a scene of a few minutes in that room, then a shot with many soldiers; then test one 8 s single-scene LTX shot.
+- Layout `pilot_room` (`blender/world_layouts.json`): an 8 x 6 m plaster room of the Quaternius MegaKit (four closed sides, three
+  arched windows, a door), a planks floor and a wooden ceiling; 16 new Poly Haven CC0 pieces (18 after the fix round) registered in `world_kits.json` and
+  `assets/library.json` (md5 per file, sha256, fingerprint; `polyhaven.<slug>.downloaded_on` 2026-11-06, read by `register`):
+  grandfather and wall clock, plain table (`model.ph_plain_wooden_table_02`: the style sheets' `model.ph_wooden_table_02` .blend
+  keeps its id), two chairs, stool, bench, bookshelf, masonry stove, drawers, picture frame, jug, plates, bowl, candlestick, basket;
+  three of the cast (host and guest face each other, the elder by the shelf); seven static cameras (establishing, two-shot, the
+  over-the-shoulder pair on one side of the line, reverse, two inserts).
+- `own_materials` (a kit row flag, `world_kits.expand`): the wall clock keeps its glTF materials (one toon material painted its glass
+  over the dial). The grandfather clock stays toon (its own materials rendered black under the toon rig's light links).
+- `blender/pilot_stills.py`: the camera list, the `pilot_stills/1` manifest (file, sha256, s/frame, camera) and the HF upload
+  (sha256-checked); CI `.github/workflows/pilot-stills.yml` re-renders the same stills for free.
+- Rendered free in the cloud container (Blender 5.2.3 pin, EEVEE on 4 CPU cores, 2560x1440, look v01): 37.5-48.5 s per still.
+  Uploaded to HF `route_test_2026-11/pilot/blender/` (7 PNGs + `pilot_room_layout.json` + `pilot_stills.json`). The battle stills
+  (5,000 soldiers, frames 0 and 200, colour + depth, 1920x1088) follow in this entry's next line when they finish.
+- Known flaws: the wall clock reads modern, the bookshelf pale, the grandfather clock's face dark, the windows bright.
+- Tests: `tests/unit/test_pilot_stills.py` (7). Cost $0. Plan for the paid part: `PILOT_1MIN_PLAN.md` v2 (project files), run-plan
+  schedules (PR #147) in `pilot_1min/` (A100: $1.25 expected / $2.95 worst with Qwen on the pod; $0.98 / $2.12 with Qwen on the PC).

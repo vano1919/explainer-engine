@@ -197,6 +197,18 @@ def _gltf(o, report):
     for ob in new:
         if ob not in meshes:
             bpy.data.objects.remove(ob, do_unlink=True)
+    drop = set(src.get("drop_materials") or ())   # faces of these glTF materials go (a clock's glass hid its dial under the toon fill)
+    if drop:
+        import bmesh
+        for ob in meshes:
+            idx = {i for i, s in enumerate(ob.material_slots) if s.material and s.material.name.split(".")[0] in drop}
+            if idx:
+                bm = bmesh.new()
+                bm.from_mesh(ob.data)
+                bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.material_index in idx], context="FACES")
+                bm.to_mesh(ob.data)
+                bm.free()
+                report.setdefault("gltf_dropped", {})[o["name"]] = sorted(drop)
     for ob in meshes:
         world = ob.matrix_world.copy()
         ob.parent = None
@@ -709,6 +721,17 @@ def build_described(scene, sc, report):
         elif "terrain" in o:
             obs = _terrain(o, report)
             handle = obs[0]
+        elif "light" in o:   # a lamp of the set (world_kits ``light`` block): placed, never re-shaded
+            lt = o["light"]
+            data = bpy.data.lights.new(o["name"], lt.get("type", "POINT"))
+            data.energy, data.color, data.use_shadow = lt["energy"], lt.get("color", (1.0, 1.0, 1.0)), lt.get("shadow", True)
+            if hasattr(data, "shadow_soft_size"):
+                data.shadow_soft_size = lt.get("radius_m", 0.1)
+            lob = bpy.data.objects.new(o["name"], data)
+            scene.collection.objects.link(lob)
+            lob.location = o["location"]
+            report.setdefault("set_lights", []).append(o["name"])
+            continue
         elif "character" in o:
             handle = build_character(o, int(sc.get("frames_total", 1)), pending, report)
             if o.get("to"):
@@ -720,7 +743,7 @@ def build_described(scene, sc, report):
                 moving.append((handle, o))
             continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf, terrain, character nor rig_blend")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf, terrain, light, character nor rig_blend")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))

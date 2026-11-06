@@ -68,6 +68,14 @@ Read it before starting any video; update the feedback log (section 3) whenever 
 13. **A two-part sample before the rest** (creator, 2026-10-21): after the script approval, voice and pictures are paid for
    the first two parts only, stitched into one sample the creator watches; his notes are fixed and only his recorded word
    opens the rest ([OR-19](ORCHESTRATION.md), gate 6.5 below, `production/sample.py`).
+14. **A still holds only what its clip needs** (creator, 2026-11-06 15:53 UTC, Fable thread: "when we make the Qwen picture and
+   the Blender still we must know it is material for a future LTX video; if the table, say, is not to be part of the video, better
+   not to generate it"). Every Blender still or Qwen frame is the first frame of a planned LTX shot. The shot's `in_shot` list in
+   the layout (`blender/world_layouts.json`) names each character and prop that acts in that clip or sets its place, each with its
+   reason; the still renders only those plus the room itself (walls, floor, ceiling, doors and windows, the set's lamps:
+   `world_kits.structure`, `world_kits.dress`). The shot's Qwen and LTX prompts are generated from its shot card (start, motion,
+   settle; Fable, 15:57 UTC), never written by hand: only the `in_shot` names, each tag once, no camera words, at most 90 words,
+   clean under `qa/style_prompt.check` (`blender/pilot_stills.prompts`). Enforced by `tests/unit/test_pilot_stills.py`.
 
 ## 2. The gates, in order (a video does not skip one)
 
