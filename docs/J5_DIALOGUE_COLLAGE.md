@@ -267,3 +267,26 @@ picture is the WIDE two-shot of both heroes; the hero on the left looks right an
 only what its clip needs (standing order 14). A picture needs a sheet whose view fits the angle (the scout has no 3/4-left sheet: a shot needing it is replanned or the sheet is drawn first).
 **At the cut (`j5_cuts.lint`, BP-176):** the subject changes (speaker change, reaction) or the angle on the same hero changes by 30 degrees or more together with a full size step; the same hero closer from the same side is a push-in inside one shot.
 **At the sound:** the line starts after the cut or the sound leads or trails it (J and L cuts, ED-14, BP-117).
+
+## 7i. How well the rules are verified, and cheap cuts that reuse pictures (creator, 20:13 UTC; BP-178)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+**What is verified, what is not (2026-11-06).** Read in full: the 30-degree rule page and the camera coverage page (Wikipedia), the transcript of the AI-dialogue video, Murch's own words
+in an interview ("Emotion, Story and Rhythm are the top three"; "let go from the bottom of the list up"; "2D is just the 180 degree rule"; among the top three sacrifice rhythm first), the limited-animation page (Wikipedia).
+Seen only through search summaries: Mascelli's book (screen direction, eyeline, continuity cutting) and the book text of Murch. Not verified: the UChicago dialogue-cut study (unreadable PDF), the claims of a dialogue-editing guide that reads auto-generated, every retention number for
+punch-ins (creator tutorials, anecdotal), and any animation-studio source (only an anecdotal comment that breaking the 180-degree rule is taboo in animated features). So BP-176 and BP-177 have article + book + video; BP-178 is a hypothesis (REVIEW only).
+Nuance found: the camera coverage page lists the cut-in (a tighter shot from the master's angle) as ordinary coverage and the 30-degree page names the axial cut as an established classical exception (20 mm rule), so BP-176 is stricter than the books on purpose:
+the creator's complaint stands and a same-angle cut is allowed only as a declared axial cut-in of two size steps (wide to close).
+
+**Cheap cuts and reuse (all checked by `j5_cuts.lint` / `plan_check`):**
+| Technique | What it is | Rule |
+|---|---|---|
+| Push-in inside one shot | the camera moves closer on the same hero, no cut | free, preferred for a speaking hero (BP-176) |
+| Punch-in | cut to the same subject, same angle, frame scaled 1.06-1.15, declared `cut: punch_in`, one per 3 s at most | a deliberate jump (BP-178, REVIEW); hides a cut, adds rhythm; use rarely |
+| Axial cut-in | same angle, wide to close | declared `cut: axial`, two size steps (BP-176) |
+| Reuse of a picture | a later shot shows an earlier picture with another crop, zoom or slight angle | `reuse_of: <earlier shot>`, same subject and sheet view (BP-178; the creator, 2026-10-25: a new picture only when the shot needs one) |
+| Hold / reaction | the picture stays while the other hero speaks; cut to the listener on the line's end | free; no new picture |
+| Mouth-only movement | the body stays one drawing, only the mouth and blink change | the variant sheet (D-119) |
+| Camera move over a still | a pan or push on one drawing | the J5 cards already do this |
+Limits: a punch-in on a bad crop loses sharpness (scale stays modest); reuse that needs a cut-out or compositing is only done when it works simply (the creator, 2026-11-01).

@@ -36,3 +36,29 @@ def test_the_thresholds_come_from_the_registry_and_the_plan_check_gates_generati
     assert "missing eyeline" in C.plan_check(bad)[0]
     assert C.plan_check([]) == ["the plan is empty"]
     assert any("jump" in p for p in C.plan_check(C.SEQUENCE_4E))
+
+
+def test_punch_in_is_a_declared_jump_with_a_bounded_scale_and_spacing_and_a_reuse_names_an_earlier_shot():
+    a = {"name": "a", "subject": "H1", "view": "left34", "size": "medium", "start": 0.0}
+    p1 = {"name": "p1", "subject": "H1", "view": "left34", "size": "medium", "cut": "punch_in", "scale": 1.10, "start": 3.0}
+    p2 = dict(p1, name="p2", start=7.0)
+    assert C.lint([a, p1, p2]) == []
+    assert "outside" in C.lint([a, dict(p1, scale=1.4)])[0]
+    assert "closer than" in C.lint([a, p1, dict(p2, start=4.0)])[0]
+    assert "same subject" in C.lint([a, dict(p1, view="front")])[0]
+    undeclared = dict(p1)
+    del undeclared["cut"]
+    assert "jump" in C.lint([a, undeclared])[0]                                      # without the declaration it is the flagged jump
+    plan = [dict(s) for s in C.SEQUENCE]
+    plan.append(dict(plan[1], name="S5_reuse_h1", reuse_of="S2_ots_h2_to_h1", motivation="the commander speaks again"))
+    assert C.plan_check(plan) == []
+    plan[-1]["reuse_of"] = "nope"
+    assert any("EARLIER" in p for p in C.plan_check(plan))
+
+
+def test_a_declared_axial_cut_in_needs_a_wide_to_close_step():
+    wide = {"name": "w", "subject": "H1", "view": "left34", "size": "wide"}
+    close = {"name": "c", "subject": "H1", "view": "left34", "size": "close", "cut": "axial"}
+    assert C.lint([wide, close]) == []
+    assert "jump" in C.lint([wide, dict(close, size="medium")])[0]              # medium from the same side is still the flagged jump
+    assert "jump" in C.lint([wide, {k: v for k, v in close.items() if k != "cut"}])[0]

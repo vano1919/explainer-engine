@@ -6867,10 +6867,11 @@
    "area": "film",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A cut in a dialogue has a reason: it changes the SUBJECT (the other speaker or a reaction) or the ANGLE on the same subject by at least angle_min_deg degrees together with a full shot-size step; a size change on the same subject and the same angle is a push-in inside one shot, never a cut (the 'same man, only closer' jump). Both speakers keep their side of the frame and their eyeline in every shot (the 180-degree rule); when a cut cannot satisfy all of emotion, story, rhythm, eye trace, plane and space, the cut gives up the lowest first (Murch). Checked on the J5 shot sequence by j5_cuts.lint.",
+   "statement": "A cut in a dialogue has a reason: it changes the SUBJECT (the other speaker or a reaction) or the ANGLE on the same subject by at least angle_min_deg degrees together with a full shot-size step; a size change on the same subject and the same angle is a push-in inside one shot, never a cut (the 'same man, only closer' jump); the one exception is a declared axial cut-in (cut = axial, the classical cut-in to a tighter shot from the master's angle) of at least axial_size_step_min size steps (wide to close), a house choice stricter than the textbooks after the creator's 2026-11-06 19:52 UTC complaint. Both speakers keep their side of the frame and their eyeline in every shot (the 180-degree rule); when a cut cannot satisfy all of emotion, story, rhythm, eye trace, plane and space, the cut gives up the lowest first (Murch). Checked on the J5 shot sequence by j5_cuts.lint.",
    "thresholds": {
     "angle_min_deg": 30,
-    "size_step_min": 1
+    "size_step_min": 1,
+    "axial_size_step_min": 2
    },
    "sources": [
     {
@@ -6949,6 +6950,35 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:plan_check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-178",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Reusing a picture inside a dialogue (the creator, 2026-10-25: reuse an existing keyframe with a zoom, crop or slight angle when the script returns to a view; a new picture only when the shot needs one) uses two cheap cuts. A punch-in is a cut to the same subject at the same angle with the frame scaled by punch_scale_min to punch_scale_max, at most one per punch_gap_min_s seconds; it is a deliberate jump cut (it does not satisfy BP-176's angle rule) and every use is declared as cut = punch_in. A reused picture names the earlier shot it comes from (reuse_of) and that shot has the same subject and sheet view. Limited-animation practice (holds, reused drawings, mouth-only movement over a still body) is the base; the punch-in numbers come from creator tutorials and the project's own editing skill, not from a study.",
+   "thresholds": {
+    "punch_scale_min": 1.06,
+    "punch_scale_max": 1.15,
+    "punch_gap_min_s": 3.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Limited animation (Wikipedia): reused drawings, cels over still backgrounds, mouth movement over a still body",
+     "url": "https://en.wikipedia.org/wiki/Limited_animation"
+    },
+    {
+     "type": "A",
+     "title": "YouTube Video Retention Editing (Pixflow): punch-in zoom on a jump cut, modest, zoom back out at the next break (creator tutorial)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:lint",
     "explainer_engine/blender/j5_cuts.py:plan_check"
    ],
    "supersedes": []
