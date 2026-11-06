@@ -1176,6 +1176,16 @@ def gpu_backend():
         return None
 
 
+def gl_info():
+    """The GPU module's vendor and renderer strings ("NVIDIA Corporation" / "NVIDIA H100 ..." on the card, "Mesa" / "llvmpipe"
+    on the CPU): what the step-3 pod's preflight reads to tell where EEVEE drew."""
+    try:
+        import gpu
+        return {"vendor": gpu.platform.vendor_get(), "renderer": gpu.platform.renderer_get(), "version": gpu.platform.version_get()}
+    except Exception:  # noqa: BLE001  (informational only)
+        return None
+
+
 def bounds(scene, names):
     """World bounding box of each named top-level object and its mesh descendants, at the shot's first frame."""
     scene.frame_set(scene.frame_start)
@@ -1279,7 +1289,7 @@ def main():
         "blender_version": bpy.app.version_string,
         "build_hash": bpy.app.build_hash.decode("ascii", "replace") if isinstance(bpy.app.build_hash, bytes) else str(bpy.app.build_hash),
         "engine_id": scene.render.engine, "applied": applied, "missing": missing, "objects": kinds,
-        "frames": len(job["frames"]), "gpu_backend": gpu_backend(), **built,
+        "frames": len(job["frames"]), "gpu_backend": gpu_backend(), "gl": gl_info(), **built,
     })
 
 

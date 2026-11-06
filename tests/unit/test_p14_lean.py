@@ -30,6 +30,15 @@ LEAN_IDS = ["S02-02.c1.ltx25.colour.s42", "S02-02.c1.ltx23.canny_full.s42", "S02
             "S02-02.c2.ltx25.colour.s42", "S03-02.ltx25.clay.s42"]
 
 
+GPU_ENV = p14_pod.gpu_env   # the real one, for the vendor test (the fixture below stands it in everywhere else)
+
+
+@pytest.fixture(autouse=True)
+def _no_card(monkeypatch):
+    """No test reads this machine's EGL vendors: Blender stays on the CPU unless a test gives the pod a card."""
+    monkeypatch.setattr(p14_pod, "gpu_env", lambda base, work: (None, {"vendor_files": []}))
+
+
 def _ltx(tmp_path, monkeypatch):
     monkeypatch.setenv("P14_MODELS", str(tmp_path / "models"))
     spec = importlib.util.spec_from_file_location("p14_ltx_lean", DIR / "p14_ltx.py")
@@ -43,10 +52,12 @@ def _ltx(tmp_path, monkeypatch):
 def test_the_stage_order_and_the_lanes():
     assert ST["order"] == ["A", "B", "C", "D", "E", "X", "G", "F"]
     gpu = p14_pod.LANES["gpu"]
-    assert gpu.index("B") < gpu.index("D") < gpu.index("E") < gpu.index("X1") < gpu.index("X2") < gpu.index("X5") < gpu.index("X3")
+    # the 14:44 UTC fix: C and X6.still at once, D, then B when the frames 0 exist, then E
+    assert gpu.index("C") < gpu.index("X6.still") < gpu.index("D") < gpu.index("B") < gpu.index("E")
+    assert gpu.index("E") < gpu.index("X1") < gpu.index("X2") < gpu.index("X5") < gpu.index("X3")
     assert gpu.index("X3") < gpu.index("X6.ltx") < gpu.index("X4") < gpu.index("F")
     assert p14_pod.LANES["cpu"] == ["A", "X6.move", "G"] and p14_pod.NEEDS["G"] == ["D"] and p14_pod.NEEDS["B"] == ["A.frame0"]
-    assert ST["gpu_order"][:5] == ["B", "C", "X6.still", "D", "E"]
+    assert ST["gpu_order"][:5] == ["C", "X6.still", "D", "B", "E"]
 
 
 def test_the_five_lean_ltx_jobs_in_the_plan_s_order():
@@ -302,3 +313,282 @@ def test_pin_writes_the_one_sha_line(tmp_path):
     assert ("a" * 64) in sh.read_text() and lean.PLACE not in sh.read_text()
     lean.pin("b" * 64, sh)
     assert ("b" * 64) in sh.read_text() and ("a" * 64) not in sh.read_text()
+
+
+# --- the 14:44 UTC fix (pod ygg2ztmflr8pv2: the battle's line frame 0 held the card idle) ---------------------------------------
+
+class SlowBattle(FakeRun):
+    """A FakeRun whose battle line frame 0 never finishes in time (it 'times out'), while the duel's frame 0 is written; records the
+    order the stages started in and whether qwen1 started while the battle frame 0 still ran."""
+
+    def __init__(self, pod_dirs, **kw):
+        super().__init__(**kw)
+        self.lay_f0, self.qwen1_started, self.qwen1_during_battle = pod_dirs, threading.Event(), False
+
+    def __call__(self, cmd, *, timeout=None, env=None, log_path=None, deadline=None):
+        name = Path(log_path).stem if log_path else "?"
+        if name == "A.frame0.duel":
+            f = self.lay_f0 / "duel" / "line" / "frames" / "frame_000000.png"
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_bytes(b"png")
+        if name == "A.frame0.battle":
+            self.calls.append(name)
+            self.qwen1_during_battle = self.qwen1_started.wait(10)   # the card is busy while Blender draws
+            return "timeout", float(timeout)
+        if name == "qwen1":
+            self.qwen1_started.set()
+        if name == "E":
+            self.e_env = env
+        return super().__call__(cmd, timeout=timeout, env=env, log_path=log_path, deadline=deadline)
+
+
+def test_the_card_works_while_the_battle_frame_0_is_drawn_and_b_goes_on_with_the_duel(tmp_path, monkeypatch):
+    lay = tmp_path / "lay"
+    run = SlowBattle(Path(str(lay) + "_f0"))
+    pod = p14_pod.Pod(ST, tmp_path / "out", binary="blender", deadline=time.time() + 3600, run=run, layouts_work=lay,
+                      assets=tmp_path / "assets")
+    monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
+    monkeypatch.setattr(p14_pod.Pod, "g_frames", lambda self, sid, d: None)
+    monkeypatch.setattr(p14_j5, "run", lambda *a, **k: 0)
+    pod.main()
+    rows = pod.book.rows
+    assert run.qwen1_during_battle                                    # C and X6.still did not wait for the battle frame 0
+    assert run.calls.index("qwen1") < run.calls.index("qwen2") and run.calls.index("D") < run.calls.index("qwen2")
+    assert rows["A.frame0.duel"]["status"] == "ok" and rows["A.frame0.battle"]["rc"] == "timeout"
+    assert rows["A.frame0"]["scenes"] == ["duel"] and rows["A.frame0"]["missing"] == ["battle"]
+    assert ST["A"]["frame0_timeout_s"] == 600
+    assert "qwen2" in run.calls                                       # B ran on the duel alone
+    line = rows["A.battle.line"]
+    assert line["status"] == "skipped" and "did not finish" in line["reason"] and "A.battle.line" not in run.calls
+    assert run.calls.index("A.battle") < run.calls.index("E")         # E waited for the core passes only
+    assert run.e_env["P14_PENDING"] == str(pod.pending) and not pod.pending.exists()   # no promise left once the CPU lane ended
+
+
+def test_the_battle_line_runs_only_when_frame_0_s_time_fits_its_budget(tmp_path, monkeypatch):
+    lay = tmp_path / "lay"
+    secs = {"A.frame0.duel": 5.0, "A.frame0.battle": 30.0}
+
+    class Run(FakeRun):
+        def __call__(self, cmd, *, timeout=None, env=None, log_path=None, deadline=None):
+            name = Path(log_path).stem
+            if name in secs:
+                scene = name.split(".")[-1]
+                f = Path(str(lay) + "_f0") / scene / "line" / "frames" / "frame_000000.png"
+                f.parent.mkdir(parents=True, exist_ok=True)
+                f.write_bytes(b"png")
+                self.calls.append(name)
+                return 0, secs[name]
+            return super().__call__(cmd, timeout=timeout, env=env, log_path=log_path, deadline=deadline)
+
+    monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
+    budget = next(r for r in ST["A"]["renders"] if not r["core"])
+    assert budget["frames"] == 282 and budget["passes"] == ["line"]   # the battle's two 145-frame clips, 8 shared
+    for f0, ran in ((30.0, False), (budget["budget_s"] / budget["frames"] - 1, True)):
+        secs["A.frame0.battle"] = f0
+        run = Run()
+        pod = p14_pod.Pod(ST, tmp_path / f"out{f0}", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay,
+                          assets=tmp_path / "a")
+        pod.stage_a()
+        assert ("A.battle.line" in run.calls) is ran
+        if not ran:
+            assert "over the 3600 s budget" in pod.book.rows["A.battle.line"]["reason"]
+
+
+def test_ltx_jobs_that_read_the_battle_line_wait_at_the_end_of_the_queue(tmp_path, monkeypatch):
+    m = _ltx(tmp_path, monkeypatch)
+    lay, flag = tmp_path / "layouts", tmp_path / "pending.json"
+    for name in ("battle/colour/battle_c1_colour.mp4", "battle/colour/battle_c2_colour.mp4", "battle/depth/battle_c1_depth.mp4",
+                 "duel/clay/duel_c1_clay.mp4"):
+        (lay / name).parent.mkdir(parents=True, exist_ok=True)
+        (lay / name).write_bytes(b"x")
+    flag.write_text(json.dumps({"prefixes": [f"{LJ.HF_ROOT}/layouts/"]}))
+    monkeypatch.setenv("P14_LOCAL_ROOTS", json.dumps([[f"{LJ.HF_ROOT}/layouts", str(lay)]]))
+    monkeypatch.setenv("P14_PENDING", str(flag))
+    order = []
+
+    def fetch(cfg, path, want, work):
+        p = Path(work) / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(b"x")
+        return p, "0" * 64
+
+    def runner(cmd, timeout, log, label):
+        order.append(label)
+        if len(order) == 6:   # the last job that does not need the line: stage A ends, the line clip lands
+            (lay / "battle/line").mkdir(parents=True, exist_ok=True)
+            (lay / "battle/line/battle_c1_line.mp4").write_bytes(b"x")
+            flag.unlink()
+        Path(cmd[cmd.index("--output-path") + 1]).write_bytes(b"clip")
+        return 0, ""
+
+    def sh(cmd, check=False):
+        Path(cmd[-1].replace("%d", "0")).parent.mkdir(parents=True, exist_ok=True)
+        Path(cmd[-1].replace("%d", "0")).write_bytes(b"x")
+        return SimpleNamespace(returncode=0)
+
+    out = tmp_path / "o"
+    m.run_all(CFG, JOBS, out, time.time() + 3600, m.Log(out), runner=runner, fetch=fetch, download=lambda *a: [], sh=sh,
+              sleep=lambda s: pytest.fail("nothing to wait for: the line clip landed before the queue ran dry"))
+    line = ["S02-02.c1.ltx23.line_foremid.s42", "X2.S02-02.c1.ltx25.line_inv.s42"]
+    assert order[-2:] == line and len(order) == len(JOBS["jobs"]) + len(EXTRA["jobs"])
+    assert order.index("X1.S03-02.ltx25.i2v.s42") < order.index(line[0])     # the extras did not wait behind the line
+    core = json.loads((out / "ltx" / "speeds.json").read_text())
+    extra = json.loads((out / "ltx" / "speeds_extra.json").read_text())
+    assert [r["job"] for r in core["rows"]] == [j for j in LEAN_IDS if j != line[0]] + [line[0]]
+    assert len(extra["rows"]) == len(EXTRA["jobs"]) and all(r["status"] == "ok" for r in core["rows"] + extra["rows"])
+
+
+def test_a_timed_out_stage_kills_its_whole_process_group(tmp_path):
+    import os
+    pidf = tmp_path / "pid"
+    t0 = time.time()
+    rc, _ = p14_pod.run_proc(["bash", "-c", f"sleep 60 & echo $! > {pidf}; wait"], timeout=1.5, log_path=tmp_path / "l.log")
+    assert rc == "timeout" and time.time() - t0 < 30
+    pid = int(pidf.read_text())
+    time.sleep(0.3)
+    try:
+        os.kill(pid, 0)
+        with open(f"/proc/{pid}/stat") as f:
+            gone = f.read().split()[2] == "Z"
+    except (ProcessLookupError, FileNotFoundError):
+        gone = True
+    assert gone                                                       # the grandchild (Blender's stand-in) died with it
+
+
+def test_the_blender_log_tails_land_in_the_uploaded_logs(tmp_path):
+    src, dst = tmp_path / "blender.log", tmp_path / "logs" / "A.battle.line.blender_tail.txt"
+    src.write_text("".join(f"line {i}\n" for i in range(500)))
+    with p14_pod.Tailer([(src, dst)], every=0.05):
+        time.sleep(0.2)
+        assert dst.exists()
+    got = dst.read_text().splitlines()
+    assert len(got) == p14_pod.TAIL_LINES and got[-1] == "line 499"
+
+
+# --- Blender on the card (the creator 2026-11-06 14:49 UTC) and the BiRefNet dtype (pod ygg2ztmflr8pv2, D failed 12/12) ----------
+
+def test_the_egl_vendor_for_the_card_is_nvidia_s_only(tmp_path):
+    d = tmp_path / "egl"
+    d.mkdir()
+    (d / "50_mesa.json").write_text("{}")
+    env, seen = GPU_ENV({"CUDA_VISIBLE_DEVICES": "", "X": "1"}, tmp_path / "w", dirs=(str(d),), ldconfig=lambda: "")
+    assert env is None and seen["vendor_files"] == [str(d / "50_mesa.json")]          # Mesa alone: Blender stays on the CPU
+    lib = "\tlibEGL_nvidia.so.0 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libEGL_nvidia.so.0\n"
+    env, seen = GPU_ENV({"CUDA_VISIBLE_DEVICES": ""}, tmp_path / "w", dirs=(str(d),), ldconfig=lambda: lib)
+    written = tmp_path / "w" / "10_nvidia.json"
+    assert env["__EGL_VENDOR_LIBRARY_FILENAMES"] == str(written) and "CUDA_VISIBLE_DEVICES" not in env
+    assert json.loads(written.read_text())["ICD"]["library_path"] == "libEGL_nvidia.so.0"
+    (d / "10_nvidia.json").write_text("{}")
+    env, seen = GPU_ENV({}, tmp_path / "w2", dirs=(str(d),), ldconfig=lambda: "")
+    assert env["__EGL_VENDOR_LIBRARY_FILENAMES"] == str(d / "10_nvidia.json")       # never the Mesa file: it cannot shadow
+    assert p14_pod.cpu_env({})["__EGL_VENDOR_LIBRARY_FILENAMES"].endswith("50_mesa.json")
+
+
+@pytest.mark.parametrize("renderer,on_card", [("NVIDIA H100 NVL/PCIe/SSE2", True), ("llvmpipe (LLVM 15.0.7, 256 bits)", False)])
+def test_the_preflight_frame_decides_card_or_cpu_and_only_a_and_g_follow_it(tmp_path, monkeypatch, renderer, on_card):
+    lay = tmp_path / "lay"
+    gpu = {"__EGL_VENDOR_LIBRARY_FILENAMES": "/x/10_nvidia.json", "MARK": "gpu"}
+    monkeypatch.setattr(p14_pod, "gpu_env", lambda base, work: (dict(base, **gpu), {"used": "/x/10_nvidia.json"}))
+    monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
+    monkeypatch.setattr(p14_pod.Pod, "g_frames", lambda self, sid, d: None)
+    g_env = {}
+    monkeypatch.setattr(p14_j5, "run", lambda *a, **k: g_env.update(k.get("env") or {}) or 0)
+
+    class Run(FakeRun):
+        envs = {}
+
+        def __call__(self, cmd, *, timeout=None, env=None, log_path=None, deadline=None):
+            name = Path(log_path).stem
+            self.envs[name] = env
+            if name in ("A.preflight", "A.frame0.duel"):
+                d = Path(str(lay) + "_f0") / "duel" / "line"
+                (d / "frames").mkdir(parents=True, exist_ok=True)
+                (d / "frames" / "frame_000000.png").write_bytes(b"png")
+                gl = renderer if name == "A.preflight" else "llvmpipe"
+                (d / "bpy_report.json").write_text(json.dumps({"gl": {"vendor": gl.split()[0], "renderer": gl}}))
+                assert name != "A.preflight" or timeout == p14_pod.PREFLIGHT_S == 120
+            return super().__call__(cmd, timeout=timeout, env=env, log_path=log_path, deadline=deadline)
+
+    run = Run()
+    pod = p14_pod.Pod(ST, tmp_path / "out", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay, assets=tmp_path / "a")
+    pod.main()
+    pre = pod.book.rows["A.preflight"]
+    assert pre["chosen"] == ("gpu" if on_card else "cpu") and pre["budget_s"] == 120 and "s_per_frame" in pre
+    assert ("A.frame0.duel" in run.calls) is not on_card                 # a frame drawn on the card is kept, not drawn twice
+    assert pod.book.rows["A.frame0.duel"]["status"] == "ok"
+    want = "gpu" if on_card else None
+    assert run.envs["A.battle"].get("MARK") == want and run.envs["A.frame0.battle"].get("MARK") == want
+    assert g_env.get("MARK") == want
+    if not on_card:
+        assert run.envs["A.battle"]["CUDA_VISIBLE_DEVICES"] == "" and g_env["__EGL_VENDOR_LIBRARY_FILENAMES"].endswith("50_mesa.json")
+    assert run.envs["qwen1"].get("MARK") is None and "__EGL_VENDOR_LIBRARY_FILENAMES" not in run.envs["E"]   # Qwen/LTX untouched
+
+
+def test_the_birefnet_input_takes_the_dtype_of_the_weights():
+    from explainer_engine.edit import cutout as CUT
+
+    class X:
+        def to(self, device=None, dtype=None):
+            return ("moved", device, dtype)
+
+    class Model:
+        def parameters(self):
+            return iter([SimpleNamespace(dtype="float16")])
+
+    assert CUT.model_input(Model(), X(), "cuda") == ("moved", "cuda", "float16")
+
+
+def test_a_job_waits_for_g_s_frame_and_runs_when_g_settles_it_or_is_skipped_at_the_reserve(tmp_path, monkeypatch):
+    m = _ltx(tmp_path, monkeypatch)
+    step3, flag = tmp_path / "step3", tmp_path / "pending.json"
+    x3 = f"{LJ.HF_ROOT}/step3/first_frames/S01-02.j5.png"
+    flag.write_text(json.dumps({"prefixes": [x3]}))
+    monkeypatch.setenv("P14_LOCAL_ROOTS", json.dumps([[f"{LJ.HF_ROOT}/step3", str(step3)]]))
+    monkeypatch.setenv("P14_PENDING", str(flag))
+    monkeypatch.setenv("P14_EXTRAS", "0")
+    doc = dict(EXTRA, schema="ltx_job/1", jobs=[j for j in EXTRA["jobs"] if j["id"].startswith(("X1.", "X3."))])
+    order, sleeps = [], []
+
+    def fetch(cfg, path, want, work):
+        p = Path(work) / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(b"x")
+        return p, "0" * 64
+
+    def runner(cmd, timeout, log, label):
+        order.append(label)
+        Path(cmd[cmd.index("--output-path") + 1]).write_bytes(b"clip")
+        return 0, ""
+
+    def sleep(s):   # G draws S01-02 while E waits: the frame lands and the promise is dropped
+        sleeps.append(s)
+        (step3 / "first_frames").mkdir(parents=True, exist_ok=True)
+        (step3 / "first_frames" / "S01-02.j5.png").write_bytes(b"png")
+        flag.unlink()
+
+    out = tmp_path / "o"
+    m.run_all(CFG, doc, out, time.time() + 3600, m.Log(out), runner=runner, fetch=fetch, download=lambda *a: [], sleep=sleep)
+    assert order == ["X1.S03-02.ltx25.i2v.s42", "X3.S01-02.ltx25.i2v.s42"] and len(sleeps) == 1
+    flag.write_text(json.dumps({"prefixes": [x3]}))
+    (step3 / "first_frames" / "S01-02.j5.png").unlink()
+    order.clear()
+    rows = m.run_all(CFG, doc, out, time.time() + CFG["end_reserve_min"] * 60 - 1, m.Log(out), runner=runner, fetch=fetch,
+                     download=lambda *a: [], sleep=lambda s: pytest.fail("no waiting inside the end reserve"))
+    assert order == [] and {r["job"]: r.get("reason") for r in rows}["X3.S01-02.ltx25.i2v.s42"] == "inside the end reserve"
+
+
+def test_the_schedule_file_is_the_stage_graph_and_is_regenerated_not_hand_edited():
+    sch = json.loads((DIR / "p14_schedule.json").read_text(encoding="utf-8"))
+    assert sch == json.loads(json.dumps(lean.schedule()))
+    st = sch["stages"]
+    for lane in ("cpu", "gpu"):
+        for s in p14_pod.LANES[lane]:
+            base = {"B": "qwen2", "C": "qwen1", "X6.still": "qwen1", "X1": "E.extras", "X2": "E.extras", "X5": "E.extras",
+                    "X3": "E.extras", "X6.ltx": "E.extras", "A": "A.battle.line"}.get(s, s)
+            assert base in st, s
+    for k, v in st.items():
+        assert v["lane"] in ("pod", "net", "cpu", "gpu") and v["basis"] in ("measured", "estimated") and v["source"]
+        assert all(n in st for n in v["needs"]), k
+        assert v["max_min"] is None or v["max_min"] >= v["expected_min"], k
+    assert st["A.frame0.battle"]["max_min"] == ST["A"]["frame0_timeout_s"] / 60
+    assert "A.frame0.battle" not in st["qwen1"]["needs"] and "A" not in st["E"]["needs"]   # the card never waits for the battle

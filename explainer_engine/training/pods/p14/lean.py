@@ -89,6 +89,47 @@ def pod_config() -> dict:
     return cfg
 
 
+POD1 = "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/)"
+# stage: (lane, true consumers' inputs, expected min, max min, basis, source). Max = the stage's own timeout or budget; "measured"
+# only where a run timed it. E's needs are per job (its layout clip, its first frame): listed as the stages that make them.
+SCHEDULE = {
+    "install": ("pod", [], 2.5, 20, "measured", f"{POD1}: script_start 14:25:02 -> runner 14:27:30"),
+    "weights": ("net", ["install"], 5.5, 90, "measured", f"{POD1}: 14:27:30 -> 14:33:00 (both LTX bases, sha256 checked)"),
+    "weights_qwen": ("net", ["install"], 5, 60, "estimated", f"{POD1}: done before 14:40, not timed alone"),
+    "A.preflight": ("cpu", ["install"], 0.5, 2, "estimated", "duel line frame 0: 8.3 s on the pod CPU (measured), card unmeasured"),
+    "A.frame0.duel": ("cpu", ["A.preflight"], 0.15, 10, "measured", f"{POD1}: duel/line 1 frame in 8.3 s (CPU)"),
+    "A.frame0.battle": ("cpu", ["A.frame0.duel"], 10, 10, "measured",
+                        f"{POD1}: killed by the kernel (-9, memory) after ~13 min on the CPU; now cut at 600 s"),
+    "A.duel": ("cpu", ["A.frame0.battle"], 1.6, 90, "measured", f"{POD1}: clay 121 frames 14:40:26 -> 14:42:02"),
+    "A.battle": ("cpu", ["A.duel"], 30, 90, "estimated", "colour + depth, 282 frames each: never finished on any machine"),
+    "A.battle.line": ("cpu", ["A.battle", "A.frame0.battle"], 60, 60, "estimated",
+                      "runs only when frame 0's seconds x 282 fit 3600 s; pod 1's frame 0 did not finish"),
+    "X6.move": ("cpu", ["qwen1"], 1, 15, "estimated", "FFmpeg zoompan of one still"),
+    "G": ("cpu", ["D"], 133, None, "measured",
+          "8 s/frame x 996 frames on 4 vCPU (this container, assemble_25d 1440p EEVEE 16); pod scaling unmeasured; stops at the reserve"),
+    "qwen1": ("gpu", ["weights_qwen"], 2.9, 60, "measured", f"{POD1}: load 61 s + C, C, X6 at 33.5-38.5 s each"),
+    "D": ("gpu", ["qwen1"], 2, 30, "estimated", f"{POD1}: failed in 22 s on a float16 input (fixed); 12 pictures"),
+    "qwen2": ("gpu", ["D", "A.frame0.duel"], 2.2, 60, "estimated", "Qwen load 61 s + 2 edits at ~35 s (pod 1's Qwen speed)"),
+    "E": ("gpu", ["qwen2", "weights", "A.duel", "A.battle", "A.battle.line"], 25, 150, "estimated",
+          "5 core clips at ~5 min (docs: the 22B takes >200 s per clip on RunPod), 30 min cap per clip"),
+    "E.extras": ("gpu", ["E", "qwen1", "G"], 25, 150, "estimated", "X1, X2, X5 (2560x1472), X3 (G's frame), X6: ~5 min each"),
+    "X4": ("gpu", ["E.extras", "G"], 1.7, 60, "estimated", "Qwen load + 1 edit"),
+    "F": ("gpu", ["X4"], 0.1, 5, "estimated", "speeds.json from the records"),
+}
+
+
+def schedule() -> dict:
+    """``p14_schedule.json``: the stage graph a scheduler reads (lane, needs, expected and max minutes, measured or estimated)."""
+    from explainer_engine.training.pods.p14 import p14_pod
+    return {"schema": "p14_schedule/1",
+            "_doc": ("The lean step-3 pod's stages after the 14:44 UTC fix. lane: pod (p14.sh before the runner), net, cpu (Blender "
+                     "on the card when A.preflight finds NVIDIA's EGL, then cpu means 'the Blender lane'), gpu (Qwen, BiRefNet, "
+                     "LTX). needs: the stages whose output the stage reads (E's per job). max_min null: runs to the end reserve."),
+            "end_reserve_min": stages()["end_reserve_min"], "preflight_s": p14_pod.PREFLIGHT_S,
+            "stages": {k: {"lane": v[0], "needs": v[1], "expected_min": v[2], "max_min": v[3], "basis": v[4], "source": v[5]}
+                       for k, v in SCHEDULE.items()}}
+
+
 def bundle(out: Path, ref: str | None = None) -> str:
     """The byte-stable code tarball (see the module text); returns its sha256."""
     names = subprocess.run(["git", "-C", str(ROOT), "ls-files" if ref is None else "ls-tree", *([] if ref is None else ["-r",
@@ -127,6 +168,7 @@ def build(bundle_out: Path) -> dict:
     write_json_atomic(HERE / "ltx_jobs.json", core)
     write_json_atomic(HERE / "ltx_extra.json", extra_jobs(core, stages()))
     write_json_atomic(HERE / "p14.json", pod_config())
+    write_json_atomic(HERE / "p14_schedule.json", schedule())
     sha = bundle(bundle_out)
     pin(sha)
     return {"bundle": str(bundle_out), "sha256": sha, "jobs": [j["id"] for j in core["jobs"]],

@@ -16,12 +16,12 @@
   "what": "Blender layout passes on the pod CPU (PR #143 code, Blender 5.2.3 as in the CI smoke)",
   "first_frames": [
    {
-    "scene": "battle",
+    "scene": "duel",
     "pass": "line",
     "frame": 0
    },
    {
-    "scene": "duel",
+    "scene": "battle",
     "pass": "line",
     "frame": 0
    }
@@ -31,18 +31,30 @@
     "scene": "duel",
     "passes": [
      "clay"
-    ]
+    ],
+    "core": true
    },
    {
     "scene": "battle",
     "passes": [
      "colour",
-     "depth",
+     "depth"
+    ],
+    "core": true
+   },
+   {
+    "scene": "battle",
+    "passes": [
      "line"
-    ]
+    ],
+    "core": false,
+    "budget_s": 3600,
+    "frames": 282
    }
   ],
-  "timeout_s": 5400
+  "timeout_s": 5400,
+  "frame0_timeout_s": 600,
+  "_fix_2026-11-06": "pod ygg2ztmflr8pv2 (14:44 UTC): the battle line frame 0 (Freestyle over the fore and mid tiers) held the GPU lane. Now: the duel's frame 0 first, each frame 0 killed at frame0_timeout_s (B then draws the duel alone); the core passes (duel clay, battle colour and depth) release E; the battle line runs last and only when frame 0's seconds x its frames fit budget_s (frame 0 includes the scene build, so the estimate is pessimistic); the LTX jobs that read it wait for it at the end of the queue."
  },
  "qwen": {
   "base": "Qwen/Qwen-Image-2.1",
@@ -460,10 +472,10 @@
  },
  "end_reserve_min": 10,
  "gpu_order": [
-  "B",
   "C",
   "X6.still",
   "D",
+  "B",
   "E",
   "X1",
   "X2",

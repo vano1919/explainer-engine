@@ -3,6 +3,10 @@
 # extras X1-X6 13:33 UTC): ONE pod runs, in order, A Blender layout passes (CPU), B Qwen line-drawing edits, C 150-word pictures,
 # D BiRefNet cut-outs, E the five lean LTX jobs, then X1/X2/X5/X3/X6 on the card, G the J5 shots of the pilot window (CPU, beside E),
 # X4 the fix edit and F speeds.json. Every stage is its own process and one failed stage never ends the pod (p14_pod.py).
+# Fix 2026-11-06 14:44/14:49 UTC (pod ygg2ztmflr8pv2): the card never waits for the battle's line frame 0 (C, X6, D at once; B
+# when the frames 0 exist, the duel alone if the battle's was cut at 600 s; E's jobs as their own inputs land); A.preflight
+# puts Blender (A, G) on the card when NVIDIA's EGL draws its frame within 120 s, else on the CPU; the stage graph is
+# p14_schedule.json.
 # No upscale on the pod (p14.json upscale.enabled false). Caps, card loop and the OR-23 plan are the Fable thread's; create only after
 # the OR-34 audit and the creator's word. Runs inside pod_wrapper.sh: the wrapper owns beat.txt, the upload loop of $EE_OUT (every
 # output lands on HF as it is written: OR-33), the money dead-man, the end word and the stop. $EE_OUT/layouts -> route_test_2026-11/
@@ -42,7 +46,7 @@ from huggingface_hub import hf_hub_download
 hf_hub_download('vano1919/tmr-artifacts', 'code/p14/ee_src.tar.gz', repo_type='dataset', local_dir='$JOB/dl')
 " || { ev job_files_failed; exit 1; }
 cp "$JOB/dl/code/p14/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
-printf '%s  %s\n' 7fc135cdd244d8f00e057dd06c8455e25b6969ed758de26e7115cc6fd794446a "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' 251bf12ffc0e6cbf261422ec1ab0c384558c4c1f57b13cfcb93cabf3c1dd24d4 "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
 ee_needs_check   # CR-18
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || { ev bundle_unpack_failed; exit 1; }

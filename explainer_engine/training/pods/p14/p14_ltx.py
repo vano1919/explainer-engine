@@ -292,14 +292,42 @@ def may_start(now, deadline, reserve_s):
     return now < deadline - reserve_s
 
 
+def pending():
+    """The vault paths (prefixes) the pod's CPU lane still makes: ``P14_PENDING`` names its JSON file ({"prefixes": [...]});
+    p14_pod.py drops a prefix when its stage ends (the layouts when A ends, X3's first frame when G has drawn it or ends)."""
+    f = os.environ.get("P14_PENDING")
+    try:
+        return json.loads(Path(f).read_text(encoding="utf-8")).get("prefixes", []) if f else []
+    except (OSError, ValueError):
+        return []
+
+
+def waits(path, roots):
+    """An input the pod itself is still making: promised (``pending``) and not on the pod's disk yet."""
+    return any(path.startswith(pre) for pre in pending()) and local_copy(path, roots) is None
+
+
+def inputs(job):
+    return [c["path"] for c in job["conditioning"]] + ([job["first_frame"]["path"]] if not job.get("chain_from") else [])
+
+
 def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input, download=download_base, sh=subprocess.run,
-        speeds_name="speeds.json"):
+        speeds_name="speeds.json", deferred=None, prior=(), done=None):
+    """The jobs in order; one that reads a layout clip still being drawn goes into ``deferred`` (when given) instead of being
+    skipped, so the caller runs it after the others (``prior``: the rows of the earlier call that the speeds file keeps)."""
     out, work = Path(out), MODELS / "p14"
     (out / "ltx").mkdir(parents=True, exist_ok=True)
     jobs = jobs_doc["jobs"]
     broken = {b: download(cfg, b, log) for b in bases_wanted(jobs)}
-    rows, done, fails_in_row = [], {}, 0
+    rows, fails_in_row = list(prior), 0
+    done = {} if done is None else done
+    roots = local_roots()
     for job in jobs:
+        if deferred is not None and any(waits(x, roots) for x in inputs(job)):
+            deferred.append(job)
+            log.stage_line(f"later {job['id']} (an input the pod still makes: {', '.join(x for x in inputs(job) if waits(x, roots))})")
+            log.ev("job_deferred", job=job["id"])
+            continue
         jid = job["id"]
         row = {"job": jid, "base": job["base"], "variant": job.get("variant"), "status": "skipped"}
         rows.append(row)
@@ -337,7 +365,7 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
             prev, n = done[job["chain_from"]["job"]], job["chain_from"]["frames"]
             pat = work / "chain" / jid / "f_%d.png"
             pat.parent.mkdir(parents=True, exist_ok=True)
-            total = next(j["frames"] for j in jobs if j["id"] == job["chain_from"]["job"])
+            total = done[("frames", job["chain_from"]["job"])]
             try:
                 sh(chain_cmd(prev, n, total, pat), check=True)
                 paths["images"] = [(pat.parent / f"f_{k}.png", k) for k in range(n)]
@@ -367,7 +395,7 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
         fails_in_row = 0 if row["status"] == "ok" else fails_in_row + 1
         if row["status"] == "ok":
             side["sha256"] = sha256_file(paths["out"])
-            done[jid] = paths["out"]
+            done[jid], done[("frames", jid)] = paths["out"], job["frames"]
         if row["status"] == "ok" and (cfg.get("upscale") or {}).get("enabled"):
             up = out / "ltx_up" / f"{jid}.mp4"
             up.parent.mkdir(parents=True, exist_ok=True)
@@ -404,14 +432,39 @@ def main():
     out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     deadline = float(os.environ["EE_DEADLINE"])
-    rows = run(cfg, jobs_doc, out, deadline, log)
+    rows = run_all(cfg, jobs_doc, out, deadline, log)
     log.ev("ltx_exit", ok=sum(r["status"] == "ok" for r in rows), jobs=len(rows))
-    extra = HERE / cfg.get("extra_jobs_file", "")
-    if cfg.get("extra_jobs_file") and extra.is_file() and os.environ.get("P14_EXTRAS", "1") == "1":
-        xrows = run(cfg, json.loads(extra.read_text(encoding="utf-8")), out, deadline, log, speeds_name="speeds_extra.json")
-        log.ev("ltx_extra_exit", ok=sum(r["status"] == "ok" for r in xrows), jobs=len(xrows))
     return 0
 
+
+def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, **kw):
+    """The core jobs, then the extras; a job that reads an input the pod still makes (a layout pass, a frame of stage G) waits,
+    and runs as soon as its inputs exist or their stage has ended (in the core-then-extras order), until the end reserve."""
+    extra = HERE / cfg.get("extra_jobs_file", "")
+    xdoc = json.loads(extra.read_text(encoding="utf-8")) if (cfg.get("extra_jobs_file") and extra.is_file()
+                                                             and os.environ.get("P14_EXTRAS", "1") == "1") else None
+    done, later = {}, {"core": [], "extra": []}
+    rows = run(cfg, jobs_doc, out, deadline, log, deferred=later["core"], done=done, **kw)
+    xrows = run(cfg, xdoc, out, deadline, log, speeds_name="speeds_extra.json", deferred=later["extra"], done=done, **kw) if xdoc else []
+    reserve, roots = cfg["end_reserve_min"] * 60, local_roots()
+    while later["core"] or later["extra"]:
+        ready = {k: [j for j in v if not any(waits(x, roots) for x in inputs(j))] for k, v in later.items()}
+        if not (ready["core"] or ready["extra"]):
+            if not may_start(time.time(), deadline, reserve):
+                ready = {k: list(v) for k, v in later.items()}   # the end reserve: run() records each one as skipped, with that reason
+            else:
+                sleep(poll)
+                continue
+        for k in ("core", "extra"):
+            later[k] = [j for j in later[k] if j not in ready[k]]
+        if ready["core"]:
+            rows = run(cfg, dict(jobs_doc, jobs=ready["core"]), out, deadline, log, prior=rows, done=done, **kw)
+        if ready["extra"]:
+            xrows = run(cfg, dict(xdoc, jobs=ready["extra"]), out, deadline, log, speeds_name="speeds_extra.json", prior=xrows,
+                        done=done, **kw)
+    if xdoc:
+        log.ev("ltx_extra_exit", ok=sum(r["status"] == "ok" for r in xrows), jobs=len(xrows))
+    return rows
 
 if __name__ == "__main__":
     sys.exit(main())

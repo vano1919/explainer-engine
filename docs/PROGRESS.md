@@ -4502,6 +4502,24 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Checks: 6 focused tests (an end-to-end 1440p assembly); docs_lint 0; CI green. Open: exact-length J5/helper renders have no
   handles (BP-128 REVIEW); the step-3 plan renders them with 12 frames on each side.
 
+## 2026-11-06 — ICW-16 fix after pod 1 (ygg2ztmflr8pv2): the card no longer waits for Blender; Blender on the card; BiRefNet dtype
+- Why: pod 1 (H100, 14:25-14:48 UTC, ~$1.0, stopped) sat idle: the GPU lane waited for the battle's line frame 0, which the kernel
+  killed (-9, memory) after ~13 min, and every cut-out failed on a float16 checkpoint fed a float32 input (D, 12 of 12). Fable
+  thread's asks 14:44 UTC and the creator's 14:49 UTC (Blender on the pod GPU with a 2-minute preflight; a stage graph file).
+- `p14_pod.py`: C + X6 still and D run at once; B (its own Qwen process) when the frames 0 are done, the duel alone if the battle's
+  was cut at `frame0_timeout_s` 600; the battle's line pass runs last and only when frame 0's seconds x 282 frames fit its
+  3600 s budget; E no longer waits for A: `p14_ltx.run_all` defers a job whose input the pod still makes (a layout clip until A
+  ends, X3's first frame until G draws it; `P14_PENDING`) and runs it as soon as it lands. A timeout kills the stage's whole
+  process group (Blender too); Blender log tails go to `step3/logs/` every minute; layout clips are published atomically.
+  `A.preflight` draws the duel's line frame 0 with EEVEE on NVIDIA's EGL vendor (only that vendor file, so Mesa cannot shadow it;
+  written from `libEGL_nvidia.so.0` when the driver mounts no file) within 120 s: kept, and A and G render on the card, when the
+  report's GL renderer is NVIDIA's (`render_shot.py` now records `gl`); else Blender stays on Mesa/CPU. No Cycles fallback was
+  built: it would change the passes' renderer and needs a comparison first.
+- `edit/cutout.py`: the BiRefNet input takes the weights' dtype (float on the CPU). `p14_schedule.json` (`lean.py schedule`): lane,
+  needs, expected and max minutes, measured (pod 1's records, this container) or estimated, per stage.
+- Open: the battle's frame 0 is a memory problem, not a speed one: on the CPU or the card it may die again; fewer soldiers or lines
+  only on the near tiers is the creator's call (plan section 9). Blender on the card shares its memory with LTX (unmeasured).
+
 ## 2026-11-06 — ICW-16 the lean step-3 pod package: one pod, stages A-G + the six extras (PR pending, nothing uploaded, no pod)
 - Why: the creator's word 13:21 UTC ("one lean pod", STEP3_POD_PLAN_LEAN_ka.md: every run answers a question, no upscale on the
   pod, no every-combination), stage G 13:25 UTC (the J5 shots of the pilot window on the pod CPU beside LTX) and the six extras

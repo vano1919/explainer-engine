@@ -73,13 +73,17 @@ def fetch_backdrops(cfg: dict, assets: Path, dest: Path) -> None:
         shutil.copyfile(src, dest / f"{ref['name']}.png")
 
 
-def render_shot(body: dict, d: Path, launcher: list[str], pin: str, *, deadline: float | None, nice: int, popen=subprocess.Popen) -> dict:
+MESA_ENV = {"CUDA_VISIBLE_DEVICES": "", "__EGL_VENDOR_LIBRARY_FILENAMES": "/usr/share/glvnd/egl_vendor.d/50_mesa.json"}
+
+
+def render_shot(body: dict, d: Path, launcher: list[str], pin: str, *, deadline: float | None, nice: int, popen=subprocess.Popen,
+                env: dict | None = None) -> dict:
     """One shot through bpy/assemble_25d.py, killed at ``deadline`` (frames already written stay: the job writes frame by frame)."""
     from explainer_engine.blender import assemble_25d as A
     from explainer_engine.core.store import write_json_atomic
     d.mkdir(parents=True, exist_ok=True)
     write_json_atomic(d / "job.json", A.job(body, d, pin))
-    env = dict(os.environ, CUDA_VISIBLE_DEVICES="", __EGL_VENDOR_LIBRARY_FILENAMES="/usr/share/glvnd/egl_vendor.d/50_mesa.json")
+    env = dict(env) if env is not None else dict(os.environ, **MESA_ENV)   # the pod's preflight chooses (p14_pod.Pod.preflight)
     cmd = ["nice", "-n", str(nice), *A.command(launcher, d / "job.json")]
     t0 = time.time()
     with open(d / "blender.log", "w", encoding="utf-8") as lf:
@@ -95,7 +99,8 @@ def render_shot(body: dict, d: Path, launcher: list[str], pin: str, *, deadline:
             "s_per_frame": round((time.time() - t0) / max(len(frames), 1), 2), "stopped_at_deadline": bool(deadline and time.time() > deadline)}
 
 
-def run(out: Path, assets: Path, binary: str, *, deadline: float | None = None, render=render_shot, on_shot=None) -> int:
+def run(out: Path, assets: Path, binary: str, *, deadline: float | None = None, render=render_shot, on_shot=None,
+        env: dict | None = None) -> int:
     from explainer_engine.blender import assemble_25d as A
     from explainer_engine.blender.project import BlenderProject
     from explainer_engine.core.store import write_json_atomic
@@ -126,7 +131,7 @@ def run(out: Path, assets: Path, binary: str, *, deadline: float | None = None, 
             continue
         write_json_atomic(jd / sid / "handles.json", {"head": g["handles_frames"], "tail": g["handles_frames"], "fps": 24,
                                                       "shot_seconds": g["seconds"][sid]})
-        r = render(body, jd / sid, launcher, pin, deadline=deadline, nice=g["nice"])
+        r = render(body, jd / sid, launcher, pin, deadline=deadline, nice=g["nice"], **({"env": env} if env is not None else {}))
         row.update(r, status="ok" if r["frames"] == body["frames"] else "partial")
         write_json_atomic(jd / "report.json", report)
         if on_shot:

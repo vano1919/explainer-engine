@@ -8,11 +8,22 @@ which uploads ``$EE_OUT`` as files land (OR-33): ``$EE_OUT/layouts/`` -> HF ``ro
 Three lanes, so the card is never idle while the CPU works and the paid time is not stretched:
 
 - net (from the start): the LTX weights of both bases, checked by sha256 once (``p14_ltx.py --prefetch``), Qwen-Image-2.1 and BiRefNet;
-- cpu: A (Blender layout passes: first the line frame 0 of both scenes for B, then the duel's clay and the battle's colour, depth and
-  line), X6.move (the still's FFmpeg camera move), then G (the J5 shots of the pilot window, ``nice``d, stopped at the deadline
+- cpu: A (Blender layout passes: first the line frame 0 of the duel, then of the battle, each killed at ``frame0_timeout_s``; then the
+  core passes, the duel's clay and the battle's colour and depth; last the battle's line, only when frame 0's time x its frames fits
+  its budget), X6.move (the still's FFmpeg camera move), then G (the J5 shots of the pilot window, ``nice``d, stopped at the deadline
   reserve; it starts when D's cut-outs exist);
-- gpu: B + C + X6.still (one Qwen process) -> D (BiRefNet) -> E (the five core LTX jobs, then the extras X1, X2, X5, X3, X6.ltx in one
-  LTX process) -> X4 (a second Qwen process, when stage G has the frame) -> F (speeds.json).
+- gpu: C + X6.still (one Qwen process, at once) -> D (BiRefNet) -> B (a second Qwen process, when the frames 0 are done; the duel
+  alone when the battle's frame 0 did not finish) -> E when the core passes exist (the five core LTX jobs, then the extras X1, X2,
+  X5, X3, X6.ltx in one LTX process; a job whose layout clip is the battle line still being drawn waits at the end of the queue
+  for it, ``P14_PENDING``) -> X4 (a Qwen process, when stage G has the frame) -> F (speeds.json).
+
+Blender's device (the creator 2026-11-06 14:49 UTC): ``A.preflight`` draws the duel's line frame 0 with EEVEE on the card (NVIDIA's
+EGL vendor, ``PREFLIGHT_S`` at most); when the report's GL renderer is NVIDIA's, A and G render there beside Qwen and LTX, else on the
+CPU (Mesa's software EGL, the card hidden), as before. Nothing waits for the preflight but A itself.
+
+Fix of 2026-11-06 14:44 UTC (pod ygg2ztmflr8pv2): the GPU lane used to wait for the battle's line frame 0 before any Qwen picture and
+E for every A pass; a timed-out stage now kills its whole process group (Blender too), and the Blender logs' tails are copied into
+``step3/logs/`` every minute while a pass runs.
 
 Records: ``step3/stages.json`` (per stage: status, rc, seconds, reason), ``step3/stages.txt`` and ``step3/t.jsonl``.
 
@@ -35,7 +46,12 @@ HERE = Path(__file__).resolve().parent
 PY = sys.executable
 PKG = "explainer_engine.training.pods.p14"
 LANES = {"net": ["weights"], "cpu": ["A", "X6.move", "G"],
-         "gpu": ["B", "C", "X6.still", "D", "E", "X1", "X2", "X5", "X3", "X6.ltx", "X4", "F"]}
+         "gpu": ["C", "X6.still", "D", "B", "E", "X1", "X2", "X5", "X3", "X6.ltx", "X4", "F"]}
+TAIL_LINES = 200
+TAIL_EVERY_S = 60
+PREFLIGHT_S = 120          # the creator 2026-11-06 14:49 UTC: a 2-minute preflight frame decides card or CPU for Blender
+MESA_JSON = "/usr/share/glvnd/egl_vendor.d/50_mesa.json"
+EGL_DIRS = ("/usr/share/glvnd/egl_vendor.d", "/etc/glvnd/egl_vendor.d")
 NEEDS = {   # stage -> the stages whose output it reads (a failed one skips it with that reason)
     # E needs nothing as a whole: p14_ltx skips each job whose layout clip or first frame is missing, with that reason
     "B": ["A.frame0"], "C": [], "X6.still": [], "D": [], "E": [], "X4": ["G"], "X6.move": ["X6.still"],
@@ -55,7 +71,7 @@ class Book:
         self.d.mkdir(parents=True, exist_ok=True)
         self.rows: dict[str, dict] = {}
         self.lock = threading.Lock()
-        self.events = {k: threading.Event() for k in ("A.frame0", "A", "B", "weights", "D", "G", "X6.still", "cpu_done")}
+        self.events = {k: threading.Event() for k in ("A.frame0", "A.core", "A", "B", "weights", "D", "G", "X6.still", "cpu_done")}
 
     def _write(self):
         tmp = self.d / "stages.json.tmp"
@@ -83,19 +99,77 @@ class Book:
 
 
 def run_proc(cmd, *, timeout=None, env=None, log_path=None, deadline=None) -> tuple[object, float]:
-    """(return code or 'timeout'/'oserror', seconds) of one stage process; never raises."""
+    """(return code or 'timeout'/'oserror', seconds) of one stage process; never raises. The process gets its own session, so a
+    timeout kills the whole group: a Blender that layout_passes started dies with it instead of eating the CPU on."""
     t0 = time.time()
     if deadline:
         left = deadline - time.time()
         timeout = max(1.0, min(timeout or left, left))
     try:
         with open(log_path or os.devnull, "a", encoding="utf-8") as lf:
-            rc = subprocess.run(cmd, stdout=lf, stderr=subprocess.STDOUT, timeout=timeout, env=env).returncode
-    except subprocess.TimeoutExpired:
-        rc = "timeout"
+            pr = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT, env=env, start_new_session=True)
+            try:
+                rc = pr.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                kill_group(pr)
+                rc = "timeout"
     except OSError as e:
         rc = f"oserror {e}"[:120]
     return rc, round(time.time() - t0, 1)
+
+
+def kill_group(pr):
+    import signal
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        try:
+            os.killpg(pr.pid, sig)
+        except (ProcessLookupError, PermissionError):
+            return
+        try:
+            pr.wait(timeout=20)
+            return
+        except subprocess.TimeoutExpired:
+            continue
+
+
+def tail(src: Path, dst: Path, n: int = TAIL_LINES):
+    """The last ``n`` lines of a log into ``dst`` (the wrapper uploads ``dst``); a missing log writes nothing."""
+    try:
+        with open(src, "rb") as f:
+            f.seek(0, 2)
+            f.seek(max(0, f.tell() - 256 * 1024))
+            lines = f.read().decode("utf-8", "replace").splitlines()[-n:]
+    except OSError:
+        return
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dst.with_name(dst.name + ".tmp")
+    tmp.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    os.replace(tmp, dst)
+
+
+class Tailer:
+    """While a Blender pass runs: every ``every`` s the tails of its ``blender.log`` files into ``step3/logs/`` (and once at the end)."""
+
+    def __init__(self, pairs, every: float = TAIL_EVERY_S):
+        self.pairs, self.every, self.stop = list(pairs), every, threading.Event()
+        self.t = threading.Thread(target=self._loop, daemon=True)
+
+    def _copy(self):
+        for src, dst in self.pairs:
+            tail(src, dst)
+
+    def _loop(self):
+        while not self.stop.wait(self.every):
+            self._copy()
+
+    def __enter__(self):
+        self.t.start()
+        return self
+
+    def __exit__(self, *exc):
+        self.stop.set()
+        self.t.join(timeout=5)
+        self._copy()
 
 
 class Pod:
@@ -110,13 +184,14 @@ class Pod:
             [f"{cfg['hf_root']}/layouts", str(self.lay_out)], [f"{cfg['hf_root']}/step3", str(self.step3)]]))
         self.logs = self.step3 / "logs"
         self.logs.mkdir(parents=True, exist_ok=True)
+        self.blender_env = cpu_env(self.env)   # until the preflight puts Blender on the card
 
     # --- helpers -------------------------------------------------------------------------------------------------------------
     def missing(self, name: str) -> str | None:
         bad = [n for n in NEEDS.get(name, []) if not self.book.ok(n)]
         return f"needs {', '.join(bad)}, which did not finish" if bad else None
 
-    def stage(self, name: str, cmd, *, timeout=None, env=None, need=True) -> bool:
+    def stage(self, name: str, cmd, *, timeout=None, env=None, need=True, tails=()) -> bool:
         why = self.missing(name) if need else None
         if why is None and time.time() > self.deadline - self.reserve:
             why = "inside the end reserve"
@@ -125,8 +200,9 @@ class Pod:
             self.book.done(name)
             return False
         self.book.mark(name, "running")
-        rc, sec = self.run(cmd, timeout=timeout, env=env or self.env, log_path=self.logs / f"{name}.log",
-                           deadline=self.deadline - self.reserve)
+        with Tailer(tails):
+            rc, sec = self.run(cmd, timeout=timeout, env=env or self.env, log_path=self.logs / f"{name}.log",
+                               deadline=self.deadline - self.reserve)
         self.book.mark(name, "ok" if rc == 0 else "failed", rc=rc, seconds=sec)
         self.book.done(name)
         return rc == 0
@@ -148,32 +224,121 @@ class Pod:
         self.run([PY, "-c", code], timeout=3600, env=self.env, log_path=self.logs / "weights_qwen.log", deadline=self.deadline)
         self.stage("weights", [PY, str(HERE / "p14_ltx.py"), "--prefetch"], timeout=5400, need=False)
 
+    def blender_tails(self, root: Path, scene: str, passes, label: str):
+        return [(Path(root) / scene / k / "blender.log", self.logs / f"{label}.{k}.blender_tail.txt") for k in passes]
+
     def stage_a(self):
         a = self.cfg["A"]
         lp = ["-m", "explainer_engine.blender.layout_passes", "render", "--binary", self.binary]
-        ok0 = True
-        for f in a["first_frames"]:
-            rc, sec = self.run([PY, *lp, "--scene", f["scene"], "--out", self.lay_f0, "--passes", f["pass"], "--only-frames",
-                                str(f["frame"])], timeout=1800, env=self.env, log_path=self.logs / "A.frame0.log",
-                               deadline=self.deadline - self.reserve)
+        got, f0_seconds = [], {}
+        pre = self.preflight(lp, a["first_frames"][0])
+        for f in a["first_frames"]:   # the duel first (seconds), then the battle; each one killed at frame0_timeout_s
+            name = f"A.frame0.{f['scene']}"
+            if pre and f is a["first_frames"][0]:   # the preflight drew it on the card: the same frame, kept
+                rc, sec = 0, pre["seconds"]
+            else:
+                self.book.mark(name, "running")
+                with Tailer(self.blender_tails(self.lay_f0, f["scene"], [f["pass"]], name)):
+                    rc, sec = self.run([PY, *lp, "--scene", f["scene"], "--out", self.lay_f0, "--passes", f["pass"], "--only-frames",
+                                        str(f["frame"])], timeout=a["frame0_timeout_s"], env=self.blender_env,
+                                       log_path=self.logs / f"{name}.log", deadline=self.deadline - self.reserve)
             src = self.lay_f0 / f["scene"] / f["pass"] / "frames" / f"frame_{f['frame']:06d}.png"
-            ok0 = ok0 and rc == 0 and src.exists()
+            ok = rc == 0 and src.exists()
             if src.exists():
                 dst = self.lay_out / f["scene"] / f["pass"] / f"frame0_{f['frame']:06d}.png"
                 dst.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(src, dst)
-        self.book.mark("A.frame0", "ok" if ok0 else "failed")
+            if ok:
+                got.append(f["scene"])
+                f0_seconds[f["scene"]] = sec
+            self.book.mark(name, "ok" if ok else "failed", rc=rc, seconds=sec)
+        missing = [f["scene"] for f in a["first_frames"] if f["scene"] not in got]
+        self.book.mark("A.frame0", "ok" if got else "failed", scenes=got, missing=missing)
         self.book.done("A.frame0")
         ok = True
         for r in a["renders"]:
-            name = f"A.{r['scene']}"
-            done = self.stage(name, [PY, *lp, "--scene", r["scene"], "--out", self.lay_work, "--passes", ",".join(r["passes"])],
-                              timeout=a["timeout_s"], need=False)
+            if not r.get("core", True):
+                self.release_core(ok)   # the core passes are done: E may start while the battle line is drawn
+            name = f"A.{r['scene']}" + ("" if r.get("core", True) else "." + "+".join(r["passes"]))
+            why = None
+            if r.get("budget_s"):
+                s0 = f0_seconds.get(r["scene"])
+                if s0 is None:
+                    why = f"the {r['scene']} frame 0 did not finish inside {a['frame0_timeout_s']} s"
+                elif s0 * r["frames"] > r["budget_s"]:
+                    why = (f"the {r['scene']} frame 0 took {s0} s: {r['frames']} frames would take ~{round(s0 * r['frames'])} s, "
+                           f"over the {r['budget_s']} s budget")
+            if why:
+                self.book.mark(name, "skipped", reason=why)
+                done = False
+            else:
+                timeout = min(a["timeout_s"], r["budget_s"]) if r.get("budget_s") else a["timeout_s"]
+                done = self.stage(name, [PY, *lp, "--scene", r["scene"], "--out", self.lay_work, "--passes", ",".join(r["passes"])],
+                                  timeout=timeout, need=False, env=self.blender_env,
+                                  tails=self.blender_tails(self.lay_work, r["scene"], r["passes"], name))
             ok = ok and done
             if done:
                 self.publish_layout(r["scene"])
+        self.release_core(ok)
+        self.clear_pending()
         self.book.mark("A", "ok" if ok else "failed")
         self.book.done("A")
+
+    def preflight(self, lp: list[str], f: dict) -> dict | None:
+        """A.preflight: the first frame 0 (the duel's line) with EEVEE on the card, at most ``PREFLIGHT_S``. Kept (and
+        ``blender_env`` switched to the card) only when it rendered and its report's GL renderer is NVIDIA's; else Blender stays on
+        the CPU and the frame is drawn again there. Returns the kept row or None."""
+        env, egl = gpu_env(self.env, self.lay_work.parent / "egl")
+        row = {"mode_tried": "gpu", "egl": egl, "budget_s": PREFLIGHT_S}
+        if env is None:
+            self.book.mark("A.preflight", "ok", chosen="cpu", reason="no NVIDIA EGL vendor on this pod", **row)
+            return None
+        self.book.mark("A.preflight", "running", **row)
+        with Tailer(self.blender_tails(self.lay_f0, f["scene"], [f["pass"]], "A.preflight")):
+            rc, sec = self.run([PY, *lp, "--scene", f["scene"], "--out", self.lay_f0, "--passes", f["pass"], "--only-frames",
+                                str(f["frame"])], timeout=PREFLIGHT_S, env=env, log_path=self.logs / "A.preflight.log",
+                               deadline=self.deadline - self.reserve)
+        d = self.lay_f0 / f["scene"] / f["pass"]
+        frame = d / "frames" / f"frame_{f['frame']:06d}.png"
+        gl = ((read_json(d / "bpy_report.json") or {}).get("gl") or {})
+        on_card = "nvidia" in f"{gl.get('vendor', '')} {gl.get('renderer', '')}".lower()
+        keep = rc == 0 and frame.exists() and on_card
+        if keep:
+            self.blender_env = env
+        elif frame.exists():
+            frame.unlink()   # drawn by Mesa after all: the CPU loop draws it again under its own record
+        self.book.mark("A.preflight", "ok", chosen="gpu" if keep else "cpu", rc=rc, seconds=sec, s_per_frame=sec, gl=gl,
+                       reason="" if keep else ("not drawn on the NVIDIA renderer" if rc == 0 else f"rc {rc}"), **row)
+        return {"seconds": sec} if keep else None
+
+    def release_core(self, ok: bool):
+        if not self.book.events["A.core"].is_set():
+            self.book.mark("A.core", "ok" if ok else "failed")
+            self.book.done("A.core")
+
+    @property
+    def pending(self) -> Path:
+        return Path(str(self.lay_work) + ".pending.json")   # on the pod's disk, not in the upload
+
+    def promised(self) -> list[str]:
+        """The vault prefixes the CPU lane makes for E: every layout clip (until A ends) and X3's first frame (until G draws it)."""
+        root = self.cfg["hf_root"]
+        return [f"{root}/layouts/", f"{root}/step3/{self.cfg['X']['X3']['first_frame']}"]
+
+    def settle(self, prefix: str | None = None):
+        """Drop one promise (all of them when ``prefix`` is None): E stops waiting for it."""
+        with self.book.lock:
+            left = [] if prefix is None else [x for x in ((read_json(self.pending) or {}).get("prefixes") or []) if x != prefix]
+            if left:
+                write_side(self.pending, {"prefixes": left})
+            else:
+                try:
+                    self.pending.unlink()
+                except FileNotFoundError:
+                    pass
+
+    def clear_pending(self):
+        self.settle(f"{self.cfg['hf_root']}/layouts/")
 
     def publish_layout(self, scene: str):
         """The clip mp4s and the manifest of one scene into ``$EE_OUT/layouts/<scene>/<pass>/`` (the PNG frames stay on the pod's
@@ -182,11 +347,17 @@ class Pod:
         man = json.loads((d / "layout_manifest.json").read_text(encoding="utf-8"))
         dst = self.lay_out / scene
         dst.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(d / "layout_manifest.json", dst / "layout_manifest.json")
+        old = dst / "layout_manifest.json"   # the battle comes in two renders (core, then line): one manifest with every pass
+        if old.exists():
+            prev = json.loads(old.read_text(encoding="utf-8"))
+            man["passes"] = {**prev.get("passes", {}), **man["passes"]}
+        write_side(old, man)
         for kind, row in man["passes"].items():
             (dst / kind).mkdir(parents=True, exist_ok=True)
             for c in row.get("clips", {}).values():
-                shutil.copyfile(d / kind / c["path"], dst / kind / c["path"])
+                tmp = dst / kind / f".{c['path']}.tmp"
+                shutil.copyfile(d / kind / c["path"], tmp)
+                os.replace(tmp, dst / kind / c["path"])   # whole, before E reads it
 
     def stage_x6_move(self):
         x = self.cfg["X"]["X6"]
@@ -207,7 +378,10 @@ class Pod:
             if src.exists():
                 ff = self.step3 / self.cfg["X"]["X3"]["first_frame"]
                 ff.parent.mkdir(parents=True, exist_ok=True)
-                first_frame(Image.open(src), (self.cfg["X"]["X3"]["width"], self.cfg["X"]["X3"]["height"])).save(ff)
+                tmp = ff.with_name(ff.stem + ".tmp.png")
+                first_frame(Image.open(src), (self.cfg["X"]["X3"]["width"], self.cfg["X"]["X3"]["height"])).save(tmp)
+                os.replace(tmp, ff)   # whole, before E reads it
+            self.settle(f"{self.cfg['hf_root']}/step3/{self.cfg['X']['X3']['first_frame']}")
 
     def stage_g(self):
         self.wait("D", self.deadline - self.reserve)
@@ -219,7 +393,7 @@ class Pod:
             t0 = time.time()
             try:
                 from explainer_engine.training.pods.p14 import p14_j5
-                rc = p14_j5.run(self.step3, self.assets, self.binary, deadline=dl, on_shot=self.g_frames)
+                rc = p14_j5.run(self.step3, self.assets, self.binary, deadline=dl, on_shot=self.g_frames, env=self.blender_env)
             except Exception as e:   # noqa: BLE001 - G failing never stops the GPU lane
                 rc = f"error {e!r}"[:200]
             self.book.mark("G", "ok" if rc == 0 else "failed", rc=rc, seconds=round(time.time() - t0, 1))
@@ -232,31 +406,38 @@ class Pod:
             self.stage_x6_move()
             self.stage_g()
         finally:
+            self.settle()   # whatever happened, E waits for nothing more from this lane
             self.book.done("A.frame0")
+            self.book.done("A.core")
             self.book.done("A")
             self.book.done("G")
             self.book.done("cpu_done")
 
-    def gpu(self):
+    def qwen(self, name: str, stages: list[str], labels) -> bool:
         q = self.cfg["qwen"]
-        self.wait("A.frame0", self.deadline - self.reserve)
-        stages = ["C", "X6"] + (["B"] if self.book.ok("A.frame0") else [])
-        if not self.book.ok("A.frame0"):
-            self.book.mark("B", "skipped", reason=self.missing("B"))
-        name = "qwen1"
         ok = self.stage(name, self.mod("p14_qwen", "--stages", ",".join(stages), "--out", self.step3, "--layouts", self.lay_f0,
                                        "--assets", self.assets), timeout=q["timeout_s"], need=False)
         man = read_manifest(self.step3 / "qwen" / "manifest.jsonl")
-        for st, label in (("B", "B"), ("C", "C"), ("X6", "X6.still")):
-            if st in stages:
-                got = [r for r in man if r.get("stage") == st]
-                self.book.mark(label, "ok" if got and all(r.get("status") == "ok" for r in got) else "failed",
-                               pictures=len([r for r in got if r.get("status") == "ok"]), process_ok=ok)
+        for st, label in labels:
+            got = [r for r in man if r.get("stage") == st]
+            good = [r for r in got if r.get("status") == "ok"]
+            self.book.mark(label, "ok" if got and len(good) == len(got) else "partial" if good else "failed",
+                           pictures=len(good), names=[r.get("name") for r in good], process_ok=ok)
             self.book.done(label)
+        return ok
+
+    def gpu(self):
+        q = self.cfg["qwen"]
+        self.qwen("qwen1", ["C", "X6"], (("C", "C"), ("X6", "X6.still")))   # at once: neither reads a layout frame
         self.stage("D", self.mod("p14_cutout", "--out", self.step3, "--assets", self.assets), timeout=self.cfg["D"]["timeout_s"])
-        self.wait("A", self.deadline - self.reserve)
-        self.wait("weights", self.deadline - self.reserve)
-        self.stage("E", [PY, str(HERE / "p14_ltx.py")], timeout=None)
+        self.wait("A.frame0", self.deadline - self.reserve)
+        if self.book.ok("A.frame0"):
+            self.qwen("qwen2", ["B"], (("B", "B"),))
+        else:
+            self.book.mark("B", "skipped", reason=self.missing("B"))
+            self.book.done("B")
+        self.wait("weights", self.deadline - self.reserve)   # not A: a job whose layout clip is not drawn yet waits inside E
+        self.stage("E", [PY, str(HERE / "p14_ltx.py")], timeout=None, env=dict(self.env, P14_PENDING=str(self.pending)))
         core = self.step3 / "ltx" / "speeds.json"
         if core.exists():
             sp = json.loads(core.read_text(encoding="utf-8"))
@@ -289,6 +470,7 @@ class Pod:
             self.book.mark("F", "failed", reason=repr(e)[:200])
 
     def main(self) -> int:
+        write_side(self.pending, {"prefixes": self.promised()})   # before the lanes start: E reads it
         lanes = [threading.Thread(target=self.net, daemon=True), threading.Thread(target=self.cpu, daemon=True)]
         for t in lanes:
             t.start()
@@ -300,6 +482,50 @@ class Pod:
         self.stage_f()
         ok = [k for k, v in self.book.rows.items() if v.get("status") == "ok"]
         return 0 if ok else 1
+
+
+def read_json(p: Path):
+    try:
+        return json.loads(Path(p).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def cpu_env(base: dict) -> dict:
+    """Blender on the CPU: Mesa's software EGL, the card hidden (so it stays Qwen's and LTX's)."""
+    return dict(base, CUDA_VISIBLE_DEVICES="", __EGL_VENDOR_LIBRARY_FILENAMES=MESA_JSON)
+
+
+def gpu_env(base: dict, work: Path, *, dirs=EGL_DIRS, ldconfig=None) -> tuple[dict | None, dict]:
+    """Blender on the card: glvnd pointed at NVIDIA's EGL vendor file only, so the Mesa vendor p14.sh installs cannot be picked
+    instead. The file is the driver's (``*nvidia*.json`` in the glvnd folders) or, when the container mounts ``libEGL_nvidia.so.0``
+    without one, written to ``work``. (None, what was seen) when neither exists."""
+    seen = {"vendor_files": sorted(str(f) for d in dirs for f in Path(d).glob("*.json")) if dirs else []}
+    nv = [f for f in seen["vendor_files"] if "nvidia" in Path(f).name.lower()]
+    if not nv:
+        lib = find_lib("libEGL_nvidia.so.0", ldconfig)
+        seen["libEGL_nvidia"] = lib
+        if not lib:
+            return None, seen
+        work.mkdir(parents=True, exist_ok=True)
+        f = work / "10_nvidia.json"
+        f.write_text(json.dumps({"file_format_version": "1.0.0", "ICD": {"library_path": "libEGL_nvidia.so.0"}}), encoding="utf-8")
+        nv = [str(f)]
+    seen["used"] = nv[0]
+    env = dict(base, __EGL_VENDOR_LIBRARY_FILENAMES=nv[0])
+    env.pop("CUDA_VISIBLE_DEVICES", None)
+    return env, seen
+
+
+def find_lib(name: str, ldconfig=None) -> str | None:
+    try:
+        out = ldconfig() if ldconfig else subprocess.run(["ldconfig", "-p"], capture_output=True, text=True, timeout=30).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    for ln in out.splitlines():
+        if name in ln and "=>" in ln:
+            return ln.split("=>", 1)[1].strip()
+    return None
 
 
 def read_manifest(p: Path) -> list[dict]:
