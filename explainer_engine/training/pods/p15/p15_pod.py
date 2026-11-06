@@ -41,9 +41,8 @@ def load_cfg() -> dict:
     return json.loads((HERE / "p15.json").read_text(encoding="utf-8"))
 
 
-def load_schedule(only: str | None = None, mouth: bool = False) -> dict:
-    name = ("p15qm_schedule.json" if mouth else "p15q_schedule.json") if only == "qwen" else "p15_schedule.json"
-    return json.loads((HERE / name).read_text(encoding="utf-8"))
+def load_schedule(only: str | None = None) -> dict:
+    return json.loads((HERE / ("p15q_schedule.json" if only == "qwen" else "p15_schedule.json")).read_text(encoding="utf-8"))
 
 
 def timeouts(schedule: dict) -> dict[str, float]:
@@ -56,8 +55,8 @@ def timeouts(schedule: dict) -> dict[str, float]:
 
 
 class Pod:
-    def __init__(self, cfg: dict, schedule: dict, out: Path, *, deadline: float, run=P.run_proc, only: str | None = None, mouth: bool = False):
-        self.cfg, self.out, self.deadline, self.run, self.only, self.mouth = cfg, Path(out), deadline, run, only, mouth
+    def __init__(self, cfg: dict, schedule: dict, out: Path, *, deadline: float, run=P.run_proc, only: str | None = None):
+        self.cfg, self.out, self.deadline, self.run, self.only = cfg, Path(out), deadline, run, only
         self.book = P.Book(self.out)
         self.book.events = {k: threading.Event() for k in ("weights_qwen", "weights_ltx25")}
         self.reserve = schedule["end_reserve_min"] * 60
@@ -96,7 +95,7 @@ class Pod:
     def gpu(self):
         until = self.deadline - self.reserve
         self.book.events["weights_qwen"].wait(max(0.0, until - time.time()))
-        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants"] if self.only == "qwen" else []), *(["--mouth"] if self.mouth else [])),
+        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants", "--mouth"] if self.only == "qwen" else [])),
                    why=None if self.book.ok("weights_qwen") else "the Qwen weights did not download")
         if self.only == "qwen":
             return
@@ -143,14 +142,13 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--plan", action="store_true")
     ap.add_argument("--only", choices=["qwen"], help="run only the Qwen restyle (no LTX weights, no clips)")
-    ap.add_argument("--mouth", action="store_true", help="with --only qwen: also the 16 J5 mouth variants (schedule p15qm_schedule.json)")
     a = ap.parse_args(argv)
-    cfg, sch = load_cfg(), load_schedule(a.only, a.mouth)
+    cfg, sch = load_cfg(), load_schedule(a.only)
     if a.plan:
         print(json.dumps({"lanes": QWEN_LANES if a.only else LANES, "timeouts_s": timeouts(sch), "clips": {} if a.only else cfg["clips"]}, indent=1))
         return 0
     out = Path(os.environ.get("EE_OUT", "/workspace/out"))
-    return Pod(cfg, sch, out, deadline=float(os.environ["EE_DEADLINE"]), only=a.only, mouth=a.mouth).main()
+    return Pod(cfg, sch, out, deadline=float(os.environ["EE_DEADLINE"]), only=a.only).main()
 
 
 if __name__ == "__main__":
