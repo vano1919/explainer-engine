@@ -1173,6 +1173,7 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
                             push("Pod job needs a hand", f"{pid}: stalled with unstored outputs; not stopped", "urgent")
         if on_look:
             on_look(pod, action, why)
+        guard_beat(pid, now)
         if why != last_line:
             log(f"{time.strftime('%H:%M:%S')} {pid}: {action} {why}")
             last_line = why
@@ -1185,6 +1186,17 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             last_report = now
             push("Pod status", f"{pid}: {(now - sess['started']) / 60:.0f} min, {why}", "default")
         sleep(poll)
+
+
+GUARD_BEAT_STALE_S = 300   # the guard looks every 30 s (poll); 10 missed looks = a hung or dead guard (asset pod, 2026-11-06 11:41)
+
+
+def guard_beat(pid, now=None):
+    """The guard's own sign of life: ``sessions/<pod>.guard.beat`` = the time of its last look (``live_guard`` reads it)."""
+    try:
+        (RP / "sessions" / f"{pid}.guard.beat").write_text(f"{time.time() if now is None else now:.0f}\n")
+    except OSError:
+        pass
 
 
 def guard_detached(pid):
@@ -1408,14 +1420,41 @@ class PodSession:
 
 
 # --- the creator's ceilings and the account check (D-56) -------------------------------------------------------------
-def live_guard(pid):
-    """True when this machine runs a guard for the pod."""
+def guard_state(pid, now=None):
+    """("alive" | "dead" | "hung", why) of this machine's guard for the pod. Dead: no process behind the lock. Hung: the process is
+    there but its beat (``guard_beat``) is older than GUARD_BEAT_STALE_S, or a guard started before the beat file existed is
+    unknown and counts as alive only while its process lives (the asset pod's guard died silently at 11:41 UTC on 2026-11-06 and
+    only the next `check` at 12:11 saw it)."""
+    now = time.time() if now is None else now
     lock = RP / "sessions" / f"{pid}.guard"
     try:
         os.kill(int(lock.read_text()), 0)
-        return True
     except (OSError, ValueError):
-        return False
+        return "dead", "its guard process is gone"
+    beat = RP / "sessions" / f"{pid}.guard.beat"
+    try:
+        age = now - float(beat.read_text().strip())
+    except (OSError, ValueError):
+        return "alive", "no beat file yet"
+    if age > GUARD_BEAT_STALE_S:
+        return "hung", f"its guard has not looked for {age / 60:.0f} min"
+    return "alive", f"last look {age:.0f} s ago"
+
+
+def live_guard(pid):
+    """True when this machine runs a guard for the pod that is still looking."""
+    return guard_state(pid)[0] == "alive"
+
+
+def restart_guard(pid):
+    """A dead or hung guard is replaced: the old process (if any) is ended, the lock dropped, a new detached guard started."""
+    lock = RP / "sessions" / f"{pid}.guard"
+    try:
+        os.kill(int(lock.read_text()), signal.SIGTERM)
+    except (OSError, ValueError):
+        pass
+    lock.unlink(missing_ok=True)
+    return guard_detached(pid)
 
 
 def _quiet(call):
@@ -1426,7 +1465,7 @@ def _quiet(call):
         return [], f"{type(e).__name__}: {str(e)[:60]}"
 
 
-def check(api, now=None):
+def check(api, now=None, *, restart=None, push=None):
     """The account as it bills now: problems (anything spending money that nobody approved or guards) and info lines.
     Run at the start and end of every session and after every pod job; the session hooks run it (cloud/hooks.py).
     A live pod without a session on this machine (the sandbox was recycled, or the pod was made elsewhere) is a problem:
@@ -1448,7 +1487,14 @@ def check(api, now=None):
                 problems.append(f"{line}: no session here guards it (made elsewhere, or this machine restarted); "
                                 f"`runpod adopt {pid} --max-usd X --max-hours H` or stop it")
             elif not sess.get("closed") and not live_guard(pid):
-                problems.append(f"{line}: its guard is not running here; `runpod guard {pid}` or stop it")
+                state, why = guard_state(pid, now)
+                try:
+                    new_pid = (restart or restart_guard)(pid)
+                    problems.append(f"{line}: {why} ({state}); a new guard was started (pid {new_pid}): check its log "
+                                    f"tools/runpod/sessions/{pid}.guard.log")
+                except OSError as e:
+                    problems.append(f"{line}: {why} ({state}) and the restart failed ({e}); `runpod guard {pid}` or stop it")
+                (push or notify)("Guard was " + state, f"{pid}: {why}; restarted by `runpod check`", "urgent")
             else:
                 info.append(f"{line}, approved until {time.strftime('%H:%M UTC', time.gmtime(until_of(name)))}")
         elif st in ENDED:

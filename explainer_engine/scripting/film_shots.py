@@ -99,7 +99,7 @@ CAMERA = {"static": "Static camera.", "push_in": "The camera pushes in slowly", 
 # that drew the approved look: the trigger, then a short story of the moment (a place, an action at its peak, someone's
 # reaction, the bodies' caricature words, a light source), at most MOMENT_WORDS_MAX words, no camera, size or position
 # words (those are the layout's: boxes, the composition of assets, ASSET_COMPOSE.md). The caption tail is retired.
-MOMENT_WORDS_MAX = style_prompt.MAX_WORDS
+MOMENT_WORDS_MAX = style_prompt.MOMENT_WORDS   # the composer's default moment; the band's top is style_prompt.MAX_WORDS
 BODY_WORDS = "thin-limbed and bulging-eyed"  # the caricature words a moment gives its lead (a card may set style.body)
 # D-80 (N-09): one stack, Qwen-Image-2.1 + the xworld LoRA, for every picture: a next pose and a cut are the same LoRA in
 # edit mode with references, so they open with the same trigger (training/lora_rules.json); the retired Edit-2511 scene LoRA
