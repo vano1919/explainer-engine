@@ -4625,3 +4625,10 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   expected $1.13 / worst $2.59, A100 SECURE $1.79/h $1.46 / $3.33 (pod worst 112 min). No H100: its 15.4 min of work fails RP-01
   (>= 3 x the 8 min setup); the A100's 26 min passes. Disk 110 GB.
 - Tests: `tests/unit/test_p15_pilot_pod.py` (15). Nothing launched; cost $0.
+
+## 2026-11-06 18:40 UTC — RP-10 placement watch (D-118, the creator 18:28 UTC)
+- `batching.is_placement_failure` + `rp10(..., placement_failures, watch, watch_reason)`; `create` records an HTTP 400 "no instances
+  available" as `placement:<job>` (not `hw:`), and reads `--placement-watch --placement-watch-reason <his message id>`: such tries count
+  toward 60 only; BAD_HOST pods, made-then-failed pods and script failures keep the old limit. Without both flags nothing changes.
+- Tests: `test_cloud_economy.py` (+2): flag on/off, reason missing, 400 vs BAD_HOST, flags known to create. Docs: RP-10 row in CLOUD_RUNBOOK,
+  D-118 in the decision log. Cost $0.

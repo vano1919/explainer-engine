@@ -394,9 +394,9 @@ CLOUDS = ("COMMUNITY", "SECURE")
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
 CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--schedule", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
+                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--placement-watch-reason", "--ref-hours", "--rules", "--schedule", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
-CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
+CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--placement-watch", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
 
 
@@ -1886,7 +1886,9 @@ def main(argv=None, api=None, live=None):
             batch_why += _sched.rp11(_opt(rest, "--schedule"), max_usd=max_usd, max_hours=max_hours, measure="--measure" in rest,
                                      test=led.data.get("meta", {}).get("test"))
             batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base,
-                                      extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""))
+                                      extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""),
+                                      placement_failures=len(fails.get(f"placement:{job_base}", [])), watch="--placement-watch" in rest,
+                                      watch_reason=_opt(rest, "--placement-watch-reason", ""))
             if not _opt(rest, "--disk"):
                 batch_why.append("--disk GB is required for a script pod: state the container disk (weights + outputs + margin); there is no default")
         drill = _opt(rest, "--drill")
@@ -1977,7 +1979,9 @@ def main(argv=None, api=None, live=None):
             if spec is not None:
                 lv.drop_spec(name)
             Run.open(ledger).settle("runpod_usd", "pod:pending", 0.0)
-            Run.open(ledger).fail(f"hw:{job_base}", f"create: {str(e)[:200]}")  # RP-10: no capacity / an API refusal is the hardware try
+            from explainer_engine.cloud import batching as _batching
+            Run.open(ledger).fail(f"placement:{job_base}" if _batching.is_placement_failure(str(e)) else f"hw:{job_base}",
+                                  f"create: {str(e)[:200]}")  # RP-10: "no instances available" (no pod, $0) is a placement try, any other refusal the hardware try
             job.move("FAILED", f"create: {str(e)[:200]}")
             from explainer_engine.cloud import incidents
             incidents.record(incidents.fingerprint("runpod", "pod", "create", text=str(e)), f"create failed: {str(e)[:200]}",
