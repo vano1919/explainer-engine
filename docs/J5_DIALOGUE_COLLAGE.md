@@ -120,8 +120,9 @@ The creator's note on the step-2 clip: the cuts between shots are too abrupt, an
   card's bottom move under 0.3 px.
 - **Camera on an ease-in-out curve**: the shot's push and truck follow smoothstep, so each shot starts and ends slowly and the cut does
   not land in the middle of a move.
-- **Dissolve** (`DISSOLVE` = 10 frames, 0.42 s): the earlier shot is drawn 10 frames longer with the camera at rest (its `tail`), and ffmpeg's
-  `xfade=fade` blends it into the first 10 frames of the next. The cuts stay on the nominal clock (3.5 / 3.0 / 3.0 / 3.0 s); the fire is in
+- **Dip to black** (`DIP` = `fadeblack`, the creator's pick over the cross-dissolve, 18:11 UTC; `--transition fade` gives the dissolve, which
+  shows a ghost of the other shot's figure for a moment). `DISSOLVE` = 10 frames, 0.42 s: the earlier shot is drawn 10 frames longer with the camera at rest (its `tail`), and ffmpeg's
+  `xfade` blends it into the first 10 frames of the next. The cuts stay on the nominal clock (3.5 / 3.0 / 3.0 / 3.0 s); the fire is in
   every shot at about the same screen height, so the light carries over the blend. The ambience is one continuous track and does not
   restart at a cut.
 - **Not done:** an L- or J-cut (the next shot's sound arriving before its picture) needs a voice; there is none until the creator's yes

@@ -43,6 +43,7 @@ FIRE_BOX_A1 = (920, 490, 1135, 700)           # where the flame colour is looked
 BANNERS = [((262, 290, 380, 480), 258, "right"), ((505, 212, 578, 342), 502, "right"), ((1775, 245, 1880, 390), 1772, "right"),
            ((1448, 290, 1525, 414), 1446, "right"), ((1318, 270, 1366, 346), 1362, "left")]
 PARALLAX = {"plate": 0.3, "mid": 0.65, "fg": 1.0}
+DIP = "fadeblack"                             # the creator chose the dip to black over the cross-dissolve (2026-11-06 18:11 UTC)
 DISSOLVE = 10                                 # frames of the dissolve between two shots (0.42 s); the earlier shot carries them as a tail
 # idle motion of a figure, as shares of its card's height (so it scales with the shot): sway of the top, head turn, nod, breath, cloth
 IDLE = {"sway": 0.0050, "head_dx": 0.0030, "nod": 0.0022, "breath": 0.0020, "cloth": 0.0012}
@@ -536,7 +537,7 @@ def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2
     return mp4
 
 
-def join(out: Path, names: list[str], *, fps=FPS, transition: str = "fade", crf: int = 14, name: str = "j5_dialogue_step3.mp4") -> Path:
+def join(out: Path, names: list[str], *, fps=FPS, transition: str = DIP, crf: int = 14, name: str = "j5_dialogue_step3.mp4") -> Path:
     import wave
     total = sum(SECONDS[n] for n in names)
     amb = ambience(total)
@@ -574,7 +575,7 @@ def main(argv=None) -> int:
     r.add_argument("--shots", default=None)
     r.add_argument("--seconds", type=float, default=None)
     r.add_argument("--no-join", action="store_true")
-    r.add_argument("--transition", default="fade", help="ffmpeg xfade type between shots: fade, fadeblack, fadegrays, ...")
+    r.add_argument("--transition", default=DIP, help="ffmpeg xfade type between shots: fade, fadeblack, fadegrays, ...")
     r.add_argument("--crf", type=int, default=14)
     r.add_argument("--name", default="j5_dialogue_step3.mp4")
     a = ap.parse_args(argv)
