@@ -4490,3 +4490,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   over 90 on the crowd sub-categories V1/S3; the composer's default moment stays 40 words. ROUTE_PLAN 5b/5c: measured facts.
 - Checks: full suite 3019 passed; docs_lint 0; governance ok; CI quality + smoke green. Open: the battle line pass (Freestyle over
   the whole crowd) is killed for memory on the cloud container; where it renders is the creator's card.
+
+## 2026-11-06 — ICW-15 step-6 code: the one-minute multi-scene pilot assembly (PR #145)
+- Why: guide step 6 as code only (the creator, 11:58 UTC; 11:42 UTC: 1-minute multi-scene videos at the end). Merged into
+  icw/05c-ink-round after Fable's PASS (12:44 UTC) and green CI.
+- `production/pilot.py`: whole shots up to 60 s (the route test's S01, S02, S03-01..03: 59.5 s, three scenes, routes J5/H/J4/J2)
+  -> each shot's clip by route (J5/H mp4 or an assemble_25d frame folder; J2/J4 the pod's upscaled take of a job that ran, a chained
+  clip without its 8 shared frames) -> the 2560x1440/24 master -> film_shots/3 (validated) + audio_spine/2 + straight-cut
+  edit_and_grade_manifest/1 -> `build_video_v2`; narration muxed under it when given. A missing clip stops it; `--slates` gives a
+  timing preview marked `preview` (never a sample). ROUTE_PLAN 5d.
+- Checks: 6 focused tests (an end-to-end 1440p assembly); docs_lint 0; CI green. Open: exact-length J5/helper renders have no
+  handles (BP-128 REVIEW); the step-3 plan renders them with 12 frames on each side.
