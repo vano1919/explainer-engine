@@ -9,9 +9,11 @@ The bundle is ``p14/lean.bundle`` (every git-tracked file under explainer_engine
 without ``p15.sh``, which pins it. The worker uploads it to HF ``code/p15/ee_src.tar.gz`` from the OR-34-audited commit; this module
 never uploads.
 
-What goes on the pod (PILOT_1MIN_PLAN.md v3): the Qwen restyle of the 7 room stills and the battle colour frame 0 (frame 200 and the
-depth pass are no clip's first frame, so they are not restyled), then two LTX-2.5 distilled i2v clips of 185 frames (7.71 s, BP-172):
-the room two-shot and the battle frame 0, seed 42, 1920x1088, prompts from the same cards.
+What goes on the pod (PILOT_1MIN_PLAN.md v5): the Qwen restyle of five room stills, the battle colour frame 0 and the three new
+environments' stills (RESTYLE; frame 200 and the depth pass are no clip's first frame, so they are not restyled), then eight LTX-2.5
+distilled i2v clips of 185 frames (7.71 s, BP-172), seed 42, 1920x1088, prompts from the same cards (CLIPS). v5 (the creator's card
+2026-11-06 17:17 UTC, same price): clips c5, c6 and c8 start from the march column, the castle courtyard and the night camp
+(``pilot_stills.ENV_LAYOUTS``) instead of the battle's second variant, the wide room and the clock.
 """
 from __future__ import annotations
 
@@ -31,26 +33,32 @@ SH = HERE / "p15.sh"
 SH_Q = HERE / "p15q.sh"   # the Qwen-only script (the creator 2026-11-06 17:34 UTC): same bundle pin, no LTX
 HF_ROOT = "route_test_2026-11/pilot"
 QUESTION = ("does LTX-2.5 distilled i2v hold one 7.7 s single-scene shot from a Blender-composed, Qwen-styled frame (a furnished "
-            "room, many soldiers), and do places and props stay put across the room's angles once Qwen restyles each still?")
-RESTYLE = ("room_establishing", "room_two_shot", "room_close_host", "room_close_guest", "room_reverse", "room_insert_table",
-           "room_insert_clock", "battle_f000_colour")
+            "room, a castle courtyard, a marching column, a night camp, many soldiers), and do places and props stay put across the "
+            "room's angles once Qwen restyles each still?")
+# v5: nine restyles (v4 had eight). The wide room and the clock insert lost their clips (c6, c8); the three new environments gained
+# theirs. Every clip's first frame is restyled; the room's other three angles stay for the angle-consistency question.
+RESTYLE = ("room_two_shot", "room_close_host", "room_close_guest", "room_reverse", "room_insert_table", "battle_f000_colour",
+           "courtyard_cross", "march_side", "camp_fire")
 FRAMES, SEED, SIZE = 185, 42, (1920, 1088)
 ROOM_AUDIO = "We hear a quiet room tone, a candle crackling and low voices."
 # v4 (the creator 2026-11-06 16:42 UTC: one start-up buys 30 s and more answers, 2-3 prompt styles for video and audio, other
 # settings; Fable's list 16:42 UTC). (stage, shot, video style, audio sentence, spoken line, question). The run order puts c5 and c8
-# last: Fable's drop order when the worst case does not fit.
+# last: Fable's drop order when the worst case does not fit. v5 (card 17:17 UTC): c5 = the march column (S1, as c5 was), c6 = the
+# castle courtyard (S2, as c6 was), c8 = the night camp (S2, as c8 was); the stage ids and the run order stay.
 CLIPS = [
     ("ltx_c1", "room_two_shot", "S1", ROOM_AUDIO, None, "which style sentence keeps our look? S1, our film sentence"),
     ("ltx_c2", "room_two_shot", "S2", ROOM_AUDIO, None, "which style sentence keeps our look? S2, the xworld captions' look words"),
     ("ltx_c3", "room_two_shot", "S3", ROOM_AUDIO, None, "which style sentence keeps our look? S3, no style sentence"),
     ("ltx_c4", "battle_f000_colour", "S2", "We hear a roaring battle cry and thundering feet.", None,
      "do the crowd's direction and the camera hold? (S2; audio A: battle roar)"),
-    ("ltx_c6", "room_establishing", "S2", ROOM_AUDIO, None, "do the wide room's props stay put over 7.7 s?"),
+    ("ltx_c6", "courtyard_cross", "S2", "We hear boots on cobblestones, cloaks rustling and a distant bell.", None,
+     "does an outdoor castle set hold its walls and gate while two heroes cross it? (environment 1: courtyard, day)"),
     ("ltx_c7", "room_close_host", "S2", "We hear his low voice and a candle crackling.", ("host", "We ride at first light."),
      "can LTX's native voice and lips carry a dialogue close-up, or does dialogue stay ElevenLabs + J5?"),
-    ("ltx_c8", "room_insert_clock", "S2", "We hear a slow clock ticking.", None, "does a small object move without drift?"),
-    ("ltx_c5", "battle_f000_colour", "S1", "We hear distant war drums and the wind.", None,
-     "do the crowd's direction and the camera hold? (S1; audio B: distant drums)"),
+    ("ltx_c8", "camp_fire", "S2", "We hear a crackling fire, crickets and low voices.", None,
+     "does a night scene lit by a fire keep its glow, its flicker and its two seated heroes? (environment 3: night camp)"),
+    ("ltx_c5", "march_side", "S1", "We hear marching boots, clinking armour and a slow drum.", None,
+     "does a side-on marching column keep its direction, spacing and banner? (environment 2: road; S1; audio B: drum)"),
 ]
 DROP_ORDER = ("ltx_c5", "ltx_c8")   # Fable 16:42 UTC: if the worst case does not fit the cap, drop clip 5 first, then 8
 CLIP_MAX_MIN = 12.0   # per clip on the H100: 2x the ~5.8 min estimate (193 frames ~6 min, scaled); see the plan for the 17.5 case
@@ -111,10 +119,12 @@ def config(stills: dict) -> dict:
 def schedule(clips=None) -> dict:
     """``p15_schedule.json`` (pod_schedule/1): the net lane's two downloads, the restyle, one stage per clip, F."""
     ids = [c[0] for c in (clips or CLIPS)]
+    n = len(RESTYLE)
+    qe = round((n * 36 + 61) / 60, 1)   # 8 edits: 5.8 min expected, 17.5 max (3x), as v4; each edit 33.5-38.5 s measured + 61 s load
     st = [{"id": "weights_qwen", "needs": [], "on": {"net": {"expected_min": 5, "max_min": 15}}, "measured": False,
            "note": "Qwen-Image-2.1 + xworld_v2 ck3000 (step-3 pod 1 had it before 14:40 UTC, not timed alone)"},
-          {"id": "qwen_restyle", "needs": ["weights_qwen"], "on": {"gpu": {"expected_min": 5.8, "max_min": 17.5}}, "measured": True,
-           "note": "8 edits at 33.5-38.5 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"},
+          {"id": "qwen_restyle", "needs": ["weights_qwen"], "on": {"gpu": {"expected_min": qe, "max_min": round(3 * qe, 1)}}, "measured": True,
+           "note": f"{n} edits at 33.5-38.5 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"},
           {"id": "weights_ltx25", "needs": ["weights_qwen"], "on": {"net": {"expected_min": 4, "max_min": 12}}, "measured": False,
            "note": "LTX-2.5 distilled (pod 1: both LTX bases in 5.5 min, measured)"}]
     for c in clips or CLIPS:

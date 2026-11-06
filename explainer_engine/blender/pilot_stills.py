@@ -11,6 +11,14 @@ this container, the PC or CI (D-114).
 
 ``R`` is a ``world_kits poc --layout pilot_room --frames 1 --scale 1.0`` output, ``B`` a ``layout_passes render --scene battle
 --passes colour,depth --only-frames ...`` output. The same set, props and cast stand in every room shot; only the camera moves.
+
+Three more environments (the creator's card, 2026-11-06 17:17 UTC: several different environments in one pilot, same price): the castle
+courtyard with the commander and the scout crossing it, a column marching on a dirt road, a night camp at a forest edge
+(``ENV_LAYOUTS``: layouts ``pilot_courtyard`` / ``pilot_march`` / ``pilot_camp``, one shot each, built clip-first like the room: each
+holds only its ``in_shot`` list). ``extend`` adds their stills to an existing manifest without re-rendering the room or the battle:
+
+    python -m explainer_engine.blender.pilot_stills extend --base pilot_stills.json --env pilot_courtyard=DIR ... --out D
+    python -m explainer_engine.blender.pilot_stills sheet --base pilot_stills.json --stills DIR --out sheet.png   # contact sheet
 """
 from __future__ import annotations
 
@@ -54,6 +62,14 @@ LTX_STYLES = {"S1": VIDEO_SENTENCE,
 QWEN_LOOK = {"S1": ["bold ink outlines", "bright colours", "big bulging eyes"],
              "S2": ["chalky painterly background", "muted earthy colours", "vivid glowing accents", "bold uneven ink outlines"],
              "S3": []}
+
+# the three more environments: layout id -> (scene name in the manifest, the look the CI renders it in)
+ENV_LAYOUTS = {"pilot_courtyard": ("courtyard", "v01_reference_soft3d"),
+               "pilot_march": ("march", "v01_reference_soft3d"),
+               "pilot_camp": ("camp", "q1_c2_native_skin@night_camp")}
+ENV_ROLE = {"courtyard_cross": "the commander and the scout cross the castle courtyard, side-on, towards the gate",
+            "march_side": "a column marches along a dirt road from left to right, seen side-on from the road's edge",
+            "camp_fire": "the commander and the scout sit either side of a campfire at a forest edge, at night"}
 QWEN_MAX_WORDS = 90     # Fable, 2026-11-06 15:57 UTC: a pilot still's prompt is at most 90 words
 # the soldiers scene (``layout_passes`` battle, frame 0: the near army from behind, the far army under its banners across a plain):
 # one card like the room's; the still is the crowd composition itself, so everything in it acts in the clip
@@ -108,17 +124,37 @@ def _fov_deg(lens_mm: float) -> float:
     return round(math.degrees(2 * math.atan(SENSOR_MM / (2 * lens_mm))), 2)
 
 
-def cameras(layout: dict | None = None) -> dict[str, dict]:
-    """Shot id -> {role, location, look_at, lens_mm, horizontal_fov_deg, size}: the room layout's ``shots`` rows."""
+def cameras(layout: dict | None = None, *, layout_id: str = LAYOUT) -> dict[str, dict]:
+    """Shot id -> {role, location, look_at, lens_mm, horizontal_fov_deg, size}: the layout's ``shots`` rows (the room's by default)."""
     from explainer_engine.blender import world_kits as WK
-    spec = layout or WK.layouts()["layouts"][LAYOUT]
+    spec = layout or WK.layouts()["layouts"][layout_id]
     out = {}
     for sid, (c0, c1, a0, a1, lens, n) in spec["shots"].items():
         if c1 or a1 or n != 1:
             raise ContractError(f"{sid}: a pilot still is one frame of a static camera")
-        out[sid] = {"role": ROLE.get(sid, ""), "location": c0, "look_at": a0, "lens_mm": lens, "horizontal_fov_deg": _fov_deg(lens),
-                    "size": list(ROOM_SIZE)}
+        out[sid] = {"role": {**ROLE, **ENV_ROLE}.get(sid, ""), "location": c0, "look_at": a0, "lens_mm": lens,
+                    "horizontal_fov_deg": _fov_deg(lens), "size": list(ROOM_SIZE)}
     return out
+
+
+def all_cameras() -> dict[str, dict]:
+    """The room's cameras and the three environments' (one still each)."""
+    out = cameras()
+    for lid in ENV_LAYOUTS:
+        out.update(cameras(layout_id=lid))
+    return out
+
+
+def layout_of(sid: str) -> str:
+    """The layout (or ``battle``) a shot id belongs to."""
+    from explainer_engine.blender import world_kits as WK
+    if sid.startswith("battle"):
+        return "battle"
+    lay = WK.layouts()["layouts"]
+    for lid in (LAYOUT, *ENV_LAYOUTS):
+        if sid in lay[lid]["shots"]:
+            return lid
+    raise ContractError(f"{sid}: no pilot layout has this shot")
 
 
 def _short(tag: str) -> str:
@@ -138,12 +174,13 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
     ``qa/style_prompt.check``. LTX: the style sentence, the motion, then the settle at the end, and a static camera."""
     from explainer_engine.blender import world_kits as WK
     from explainer_engine.qa import style_prompt as SP
+    owner = layout_of(sid) if layout is None else None
     if sid.startswith("battle"):
         spec = layout or battle_card(sid)
         card, tags, keep = spec["card"], spec["tags"], spec["in_shot"]
     else:
-        spec = layout or WK.layouts()["layouts"][LAYOUT]
-        card, tags, keep = spec["cards"][sid], spec["tags"], WK.dressing(LAYOUT, sid) if layout is None else spec["in_shot"][sid]
+        spec = layout or WK.layouts()["layouts"][owner]
+        card, tags, keep = spec["cards"][sid], spec["tags"], WK.dressing(owner, sid) if layout is None else spec["in_shot"][sid]
     light = card.get("light", spec["light"])
     start_names = _names(card["start"]) + _names(light)
     used = start_names + _names(card["motion"]) + _names(card["settle"])
@@ -211,7 +248,8 @@ def ltx_prompt(sid: str, *, style: str = "S1", audio: str | None = None, line: t
         if name not in p["names"]:
             raise ContractError(f"{sid}: {name} speaks but is not in the shot's card")
         from explainer_engine.blender import world_kits as WK
-        tags = (BATTLE if sid.startswith("battle") else WK.layouts()["layouts"][LAYOUT])["tags"]
+        owner = layout_of(sid)
+        tags = (BATTLE if owner == "battle" else WK.layouts()["layouts"][owner])["tags"]
         body = f'{motion}. The {_short(tags[name])} says, "{text}" Then {p["settle"]}. Static camera.'
     else:
         body = f"{motion}, then {p['settle']}. Static camera."
@@ -219,7 +257,55 @@ def ltx_prompt(sid: str, *, style: str = "S1", audio: str | None = None, line: t
     return " ".join(x for x in (head, body, audio) if x)
 
 
-def manifest(room: Path, battle: Path | None, out: Path, *, battle_count: int = 5000) -> dict:
+def _env_shots(envs: dict[str, Path], out: Path) -> tuple[dict, dict]:
+    """(shots, layout files) of the environment stills: each ``world_kits poc --layout <id> --frames 1`` output copied to
+    ``out/<shot>.png`` with its camera, ``in_shot`` list, prompts and the layout written beside it as ``<id>_layout.json``."""
+    from explainer_engine.blender import world_kits as WK
+    shots, files = {}, {}
+    for lid, src in envs.items():
+        if lid not in ENV_LAYOUTS:
+            raise ContractError(f"{lid}: not a pilot environment (known: {', '.join(ENV_LAYOUTS)})")
+        scene, _look = ENV_LAYOUTS[lid]
+        cams = cameras(layout_id=lid)
+        looks = json.loads((Path(src) / "looks.json").read_text(encoding="utf-8"))
+        for row in looks["rows"]:
+            sid = row["scene"]
+            if sid not in cams:
+                continue
+            dest = Path(out) / f"{sid}.png"
+            shutil.copyfile(Path(src) / row["frame_rel"], dest)
+            shots[sid] = {"scene": scene, "layout": lid, "file": dest.name, "sha256": C.sha256_file(dest), "look": row["variant"],
+                          "engine": row["engine"], "seconds_per_frame": row["seconds_per_frame"], "camera": cams[sid],
+                          "in_shot": WK.dressing(lid, sid), "prompts": prompts(sid)}
+        missing = sorted(set(cams) - set(shots))
+        if missing:
+            raise ContractError(f"{lid} shots without a still: {missing}")
+        files[lid] = f"{lid}_layout.json"
+        write_json_atomic(Path(out) / files[lid], {"layout_id": lid, **WK.layouts()["layouts"][lid]})
+    return shots, files
+
+
+def extend(base: dict, envs: dict[str, Path], out: Path) -> dict:
+    """``base`` (a ``pilot_stills/1`` manifest already on the vault: the room and the battle) plus the environments' stills: the base's
+    shots keep their files and hashes (nothing is re-rendered), the new ones are copied to ``out`` with their layout files, and
+    ``out/pilot_stills.json`` is the merged manifest (``carried`` names the base's shots, whose files are not in ``out``)."""
+    if base.get("schema") != SCHEMA:
+        raise ContractError(f"not a {SCHEMA} manifest")
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    shots, files = _env_shots(envs, out)
+    clash = sorted(set(shots) & set(base["shots"]))
+    if clash:
+        raise ContractError(f"shots already in the base manifest: {clash}")
+    doc = json.loads(json.dumps(base))
+    doc["carried"] = sorted(base["shots"])
+    doc["shots"].update(shots)
+    doc["layouts"] = {**doc.get("layouts", {}), **files}
+    write_json_atomic(out / "pilot_stills.json", doc)
+    return doc
+
+
+def manifest(room: Path, battle: Path | None, out: Path, *, battle_count: int = 5000, envs: dict[str, Path] | None = None) -> dict:
     """Copy the stills to ``out/<shot>.png`` (the HF names), with the layout, the cameras and the measured seconds per frame."""
     from explainer_engine.blender import world_kits as WK
     room, out = Path(room), Path(out)
@@ -251,12 +337,16 @@ def manifest(room: Path, battle: Path | None, out: Path, *, battle_count: int = 
                 shots[sid] = {"scene": "battle", "file": dest.name, "sha256": C.sha256_file(dest), "pass": kind, "frame": idx,
                               "engine": row["engine"], "seconds_per_frame": row["seconds_per_frame"],
                               "wall_seconds": row["wall_seconds"]}
+    env_shots, env_files = _env_shots(envs or {}, out)
+    shots.update(env_shots)
     layout = WK.layouts()["layouts"][LAYOUT]
     write_json_atomic(out / "pilot_room_layout.json", {"layout_id": LAYOUT, **layout})
     doc = {"schema": SCHEMA, "layout": "pilot_room_layout.json", "room_cast": [r[0] for r in layout["cast"]],
            "battle": {"composition": "battle", "count": None if battle is None else battle_count,
                       "passes": None if battle is None else sorted(bm["passes"]), "size": None if battle is None else bm["plan"]["size"]},
            "shots": shots, "hf_prefix": HF_PREFIX}
+    if env_files:
+        doc["layouts"] = env_files
     write_json_atomic(out / "pilot_stills.json", doc)
     return doc
 
@@ -313,13 +403,54 @@ def upload_extra(out: Path, *, vault=None) -> list[str]:
     return [r for _, r in pairs]
 
 
+def clip_labels(clips) -> dict[str, str]:
+    """Shot id -> "c1 S1 · c2 S2": which clips start from this still (``clips`` = ``p15.build.CLIPS`` rows)."""
+    out: dict[str, list[str]] = {}
+    for stage, sid, style, *_ in clips:
+        out.setdefault(sid, []).append(f"{stage[4:]} {style}")
+    return {k: " · ".join(v) for k, v in out.items()}
+
+
+def sheet(doc: dict, dirs: list[Path], labels: dict[str, str], out: Path, *, cols: int = 3, tile: tuple[int, int] = (800, 450)) -> Path:
+    """A contact sheet of the stills that start a clip, one tile per still with its place and the clips that use it. ``dirs`` are
+    searched in order for ``<file>`` (the new stills first, then the base's on the vault)."""
+    from PIL import Image, ImageDraw, ImageFont
+    cap, pad = 44, 12
+    shots = [k for k in labels if k in doc["shots"]]
+    if len(shots) != len(labels):
+        raise ContractError(f"stills without a manifest row: {sorted(set(labels) - set(doc['shots']))}")
+    rows = -(-len(shots) // cols)
+    W, H = cols * (tile[0] + pad) + pad, rows * (tile[1] + cap + pad) + pad
+    img = Image.new("RGB", (W, H), (24, 24, 28))
+    dr = ImageDraw.Draw(img)
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 22)
+    except OSError:
+        font = ImageFont.load_default()
+    for i, sid in enumerate(shots):
+        f = next((Path(d) / doc["shots"][sid]["file"] for d in dirs if (Path(d) / doc["shots"][sid]["file"]).is_file()), None)
+        if f is None:
+            raise ContractError(f"{sid}: {doc['shots'][sid]['file']} is in none of {[str(d) for d in dirs]}")
+        im = Image.open(f).convert("RGB").resize(tile, Image.LANCZOS)
+        x, y = pad + (i % cols) * (tile[0] + pad), pad + (i // cols) * (tile[1] + cap + pad)
+        img.paste(im, (x, y))
+        dr.text((x + 6, y + tile[1] + 8), f"{sid}   [{labels[sid]}]", fill=(235, 235, 235), font=font)
+    out = Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    img.save(out, "PNG", optimize=True)
+    return out
+
+
 def upload(out: Path, *, vault=None) -> list[str]:
     """Every still, the layout and the manifest to ``HF_PREFIX``, checked by sha256 against the vault's listing."""
     from explainer_engine.blender import layout_passes as LP
     from explainer_engine.blender import render as R
     out = Path(out)
     doc = json.loads((out / "pilot_stills.json").read_text(encoding="utf-8"))
-    names = [s["file"] for s in doc["shots"].values()] + [doc["layout"], "pilot_stills.json"]
+    carried = set(doc.get("carried", ()))   # an ``extend`` manifest: the base's files are already on the vault
+    names = [s["file"] for k, s in doc["shots"].items() if k not in carried] + list(doc.get("layouts", {}).values()) + ["pilot_stills.json"]
+    if not carried:
+        names.append(doc["layout"])
     pairs = [(out / n, f"{HF_PREFIX}/{n}") for n in names]
     vault = vault or R.HFVault()
     vault.upload_many(pairs, f"pilot stills ({len(doc['shots'])} shots)")
@@ -328,6 +459,16 @@ def upload(out: Path, *, vault=None) -> list[str]:
     if bad:
         raise ContractError(f"not on the vault with the local hashes: {bad}")
     return [r for _, r in pairs]
+
+
+def _envs(pairs: list[str]) -> dict[str, Path]:
+    out = {}
+    for p in pairs:
+        lid, _, d = p.partition("=")
+        if not d:
+            raise ContractError(f"--env {p!r}: LAYOUT=DIR")
+        out[lid] = Path(d)
+    return out
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -340,6 +481,15 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--battle", type=Path)
     m.add_argument("--out", type=Path, required=True)
     m.add_argument("--battle-count", type=int, default=5000)
+    m.add_argument("--env", action="append", default=[], metavar="LAYOUT=DIR", help="a pilot environment's poc output")
+    e = sub.add_parser("extend")
+    e.add_argument("--base", type=Path, required=True)
+    e.add_argument("--env", action="append", default=[], metavar="LAYOUT=DIR", required=True)
+    e.add_argument("--out", type=Path, required=True)
+    sh = sub.add_parser("sheet")
+    sh.add_argument("--base", type=Path, required=True, help="the merged pilot_stills.json")
+    sh.add_argument("--stills", type=Path, action="append", required=True, help="a folder holding the PNGs (repeat; searched in order)")
+    sh.add_argument("--out", type=Path, required=True)
     u = sub.add_parser("upload")
     u.add_argument("--out", type=Path, required=True)
     e = sub.add_parser("extra", help="the P1 battle stills of the named cameras -> pilot_stills_p16.json")
@@ -353,7 +503,7 @@ def main(argv: list[str] | None = None) -> int:
     elif a.cmd == "prompts":
         print(json.dumps({sid: prompts(sid) for sid in cameras()}, indent=1, ensure_ascii=False))
     elif a.cmd == "manifest":
-        doc = manifest(a.room, a.battle, a.out, battle_count=a.battle_count)
+        doc = manifest(a.room, a.battle, a.out, battle_count=a.battle_count, envs=_envs(a.env))
         print(json.dumps({k: v["seconds_per_frame"] for k, v in doc["shots"].items()}, indent=1))
     elif a.cmd == "extra":
         dirs, picks = {}, {}
@@ -365,6 +515,13 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({k: v["seconds_per_frame"] for k, v in doc["shots"].items()}, indent=1))
     elif a.cmd == "upload-extra":
         print("\n".join(upload_extra(a.out)))
+
+    elif a.cmd == "extend":
+        doc = extend(json.loads(a.base.read_text(encoding="utf-8")), _envs(a.env), a.out)
+        print(json.dumps({k: v["seconds_per_frame"] for k, v in doc["shots"].items() if k not in doc["carried"]}, indent=1))
+    elif a.cmd == "sheet":
+        from explainer_engine.training.pods.p15 import build as B
+        print(sheet(json.loads(a.base.read_text(encoding="utf-8")), a.stills, clip_labels(B.CLIPS), a.out))
     else:
         print("\n".join(upload(a.out)))
     return 0

@@ -19,13 +19,13 @@ DIR = Path(B.__file__).resolve().parent
 
 
 def manifest():
-    shots = {sid: {"file": f"{sid}.png", "sha256": "a" * 64, "prompts": PS.prompts(sid)} for sid in PS.cameras()}
+    shots = {sid: {"file": f"{sid}.png", "sha256": "a" * 64, "prompts": PS.prompts(sid)} for sid in PS.all_cameras()}
     for k in ("battle_f000_colour", "battle_f000_depth", "battle_f200_colour"):
         shots[k] = {"file": f"{k}.png", "sha256": "b" * 64}
     return {"schema": PS.SCHEMA, "hf_prefix": PS.HF_PREFIX, "shots": shots}
 
 
-def test_the_config_restyles_every_room_still_and_the_battle_frame_0_and_animates_eight_185_frame_clips():
+def test_the_config_restyles_every_first_frame_and_animates_eight_185_frame_clips_over_five_environments():
     cfg = B.config(manifest())
     assert [j["shot"] for j in cfg["qwen_jobs"]] == list(B.RESTYLE)
     assert "battle_f200_colour" not in {j["shot"] for j in cfg["qwen_jobs"]}   # no clip starts there, so it is not restyled
@@ -36,7 +36,10 @@ def test_the_config_restyles_every_room_still_and_the_battle_frame_0_and_animate
     assert all(len(refs[h]["sha256"]) == 64 for j in cfg["qwen_jobs"] for h in j["hero_refs"])
     assert [(j["shot_id"], j["style"]) for j in cfg["ltx_jobs"]] == [
         ("room_two_shot", "S1"), ("room_two_shot", "S2"), ("room_two_shot", "S3"), ("battle_f000_colour", "S2"),
-        ("room_establishing", "S2"), ("room_close_host", "S2"), ("room_insert_clock", "S2"), ("battle_f000_colour", "S1")]
+        ("courtyard_cross", "S2"), ("room_close_host", "S2"), ("camp_fire", "S2"), ("march_side", "S1")]   # v5 (card 17:17 UTC): c6, c8, c5
+    firsts = {j["shot_id"] for j in cfg["ltx_jobs"]}
+    assert firsts <= set(B.RESTYLE) and {"courtyard_cross", "march_side", "camp_fire"} <= firsts   # every clip starts from a restyled still
+    assert {PS.layout_of(sid) for sid in firsts} == {"pilot_room", "battle", "pilot_courtyard", "pilot_march", "pilot_camp"}   # five environments
     assert list(cfg["clips"]) == p15_pod.CLIP_STAGES and p15_pod.CLIP_STAGES[-2:] == ["ltx_c8", "ltx_c5"]   # Fable's drop order last
     assert len({j["id"] for j in cfg["ltx_jobs"]}) == 8 and len({j["output"] for j in cfg["ltx_jobs"]}) == 8
     assert all(j["question"] for j in cfg["ltx_jobs"]) and cfg["audio"] == {"in_mp4": True, "wav_sidecar": True}
@@ -59,7 +62,7 @@ def test_the_three_styles_differ_only_in_the_head_and_the_line_is_said_in_quotes
     p = PS.ltx_prompt("room_close_host", style="S2", line=("host", "We ride at first light."))
     assert 'says, "We ride at first light."' in p and p.count('"') == 2
     with pytest.raises(ContractError, match="not in the shot"):
-        PS.ltx_prompt("room_insert_clock", line=("host", "Hello."))
+        PS.ltx_prompt("room_insert_table", line=("host", "Hello."))
 
 
 def test_the_worst_case_fits_6_5_only_on_the_h100_and_the_launch_line_uses_the_cli_s_flags():
@@ -107,7 +110,7 @@ def test_a_manifest_whose_prompt_is_not_the_card_s_is_refused():
     with pytest.raises(ContractError, match="not the card"):
         B.config(m)
     m = manifest()
-    del m["shots"]["room_insert_clock"]
+    del m["shots"]["camp_fire"]
     with pytest.raises(ContractError, match="lacks"):
         B.config(m)
 
@@ -175,7 +178,8 @@ def test_the_card_restyles_then_animates_and_a_clip_without_its_first_frame_is_s
     assert rows["ltx_c4"]["status"] == "skipped" and "first frame" in rows["ltx_c4"]["reason"]
     assert rows["F"]["status"] == "ok" and (tmp_path / "speeds.json").is_file()
     t = dict(run.calls)
-    assert t["ltx_c1"] == 12 * 60 and t["qwen_restyle"] == 17.5 * 60   # every timeout is the schedule's max
+    qmax = next(x for x in sch["stages"] if x["id"] == "qwen_restyle")["on"]["gpu"]["max_min"]
+    assert t["ltx_c1"] == 12 * 60 and t["qwen_restyle"] == qmax * 60   # every timeout is the schedule's max
 
 
 def test_two_ltx_failures_stop_the_stage_and_nothing_starts_in_the_end_reserve(tmp_path):
@@ -184,7 +188,7 @@ def test_two_ltx_failures_stop_the_stage_and_nothing_starts_in_the_end_reserve(t
     sch = RP.load(DIR / "p15_schedule.json")
     run = FakeRun(tmp_path, fail={"ltx_c1"})
     (tmp_path / "first_frames").mkdir()
-    (tmp_path / "first_frames" / "battle_f000_colour.png").write_bytes(b"x")
+    (tmp_path / "first_frames" / "march_side.png").write_bytes(b"x")   # c5's first frame
     pod = p15_pod.Pod(cfg, sch, tmp_path, deadline=__import__("time").time() + 7200, run=run)
     assert pod.main() == 1
     rows = json.loads((tmp_path / "stages.json").read_text())["stages"]
