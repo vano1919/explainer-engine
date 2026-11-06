@@ -177,6 +177,17 @@ def _mp4(frames: list[Path], dest: Path, fps: int = FPS) -> dict:
     return {"path": dest.name, "sha256": C.sha256_file(dest), "frames": len(frames)}
 
 
+def finished(d: Path, frames: list[int]) -> bool:
+    """Every asked frame is in the job's progress file and the report is written: the render is complete even when Blender then
+    crashed on exit (Mesa's software EGL segfaults at teardown on a headless CPU host, seen 2026-11-06 after all frames were saved)."""
+    from explainer_engine.blender import render as R
+    prog, rep = Path(d) / "progress.jsonl", Path(d) / "bpy_report.json"
+    if not (prog.exists() and rep.exists()):
+        return False
+    done = {int(json.loads(ln)["index"]) for ln in prog.read_text(encoding="utf-8").splitlines() if ln.strip()}
+    return set(frames) <= done and all((Path(d) / "frames" / R.FRAME_NAME.format(index=i)).exists() for i in frames)
+
+
 def render(scene: str, out: Path | str, *, binary: str | None = None, passes: list[str] | None = None, scale: float = 1.0,
            only_frames: list[int] | None = None, count: int = 5000, log=print) -> dict:
     """Render the scene's passes, cut the clips, write the manifest. ``only_frames`` renders a review subset (no clips)."""
@@ -202,11 +213,11 @@ def render(scene: str, out: Path | str, *, binary: str | None = None, passes: li
         cmd = R.HeadlessRender(b, R.LocalVault(out / "vault")).command(d / "job.json")
         with open(d / "blender.log", "w", encoding="utf-8") as lf:
             rc = subprocess.run(cmd, stdout=lf, stderr=subprocess.STDOUT).returncode
-        if rc:
+        if rc and not finished(d, want):
             raise ContractError(f"{scene}/{kind}: Blender exited {rc} (see {d / 'blender.log'})")
         rep = json.loads((d / "bpy_report.json").read_text(encoding="utf-8"))
         files = sorted((d / "frames").glob("frame_*.png"))
-        row = {"engine": j["engine"], "frames": len(files), "wall_seconds": round(time.time() - t0, 1),
+        row = {"engine": j["engine"], "frames": len(files), "exit_code": rc, "wall_seconds": round(time.time() - t0, 1),
                "seconds_per_frame": round((time.time() - t0) / max(len(files), 1), 3), "layout_pass": rep.get("layout_pass"),
                "frame_sha256": {f.name: C.sha256_file(f) for f in files}}
         if only_frames is None:

@@ -103,6 +103,17 @@ def test_a_clip_is_an_h264_of_exactly_its_frames(tmp_path):
     assert not (tmp_path / ".c_list").exists()
 
 
+def test_a_crash_on_exit_after_every_frame_is_saved_still_counts_as_finished(tmp_path):
+    (tmp_path / "frames").mkdir()
+    assert not LP.finished(tmp_path, [0, 1])
+    (tmp_path / "bpy_report.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "progress.jsonl").write_text('{"index": 0}\n{"index": 1}\n', encoding="utf-8")
+    (tmp_path / "frames" / R.FRAME_NAME.format(index=0)).write_bytes(b"png")
+    assert not LP.finished(tmp_path, [0, 1])                     # frame 1 is listed but its file is missing
+    (tmp_path / "frames" / R.FRAME_NAME.format(index=1)).write_bytes(b"png")
+    assert LP.finished(tmp_path, [0, 1]) and not LP.finished(tmp_path, [0, 1, 2])
+
+
 def _manifest(d: Path, *, subset=False, scale=1.0):
     (d / "line").mkdir(parents=True)
     (d / "line" / "battle_c1_line.mp4").write_bytes(b"clip")
@@ -293,5 +304,6 @@ def test_the_blender_side_knows_the_same_passes_as_the_host(lp):
     assert tuple(lp.KINDS) == LP.PASSES
     text = (ROOT / "explainer_engine/blender/bpy/layout_pass.py").read_text(encoding="utf-8")
     assert '"Raw" if kind == "depth"' in text and "collection_negation" in text and "dither_intensity = 0.0" in text
+    assert "compositing_node_group = None" in text and "use_compositing = False" in text   # no paper or haze over a pass
     rs = (ROOT / "explainer_engine/blender/bpy/render_shot.py").read_text(encoding="utf-8")
     assert rs.index("build_crowd(scene, sc[\"crowds\"]") < rs.index("apply_layout_pass(scene, sc[\"layout_pass\"]")

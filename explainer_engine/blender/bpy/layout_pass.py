@@ -9,7 +9,7 @@ D-116, guide step 2.3): the built scene, its camera and its motion stay exactly 
   (plan 9.3); background objects also get ``pass_index`` 2, the rest 1 (the object-index pass).
 - ``colour``: every surface emits its own base colour, unlit (flat colour; textures kept), the world kept: the J4 colour layout.
 
-Each material keeps its alpha: the surface becomes mix(transparent, pass emission, alpha), with alpha taken from the material's
+The look's compositor finish (paper, depth haze) is switched off. Each material keeps its alpha: the surface becomes mix(transparent, pass emission, alpha), with alpha taken from the material's
 own transparent mix or its Principled alpha, so billboards and cards keep their silhouettes. stdlib + bpy only.
 """
 import bpy  # noqa: E402  (Blender's own module)
@@ -153,6 +153,10 @@ def apply(scene, lp, report):
     vs.view_transform, vs.look, vs.exposure, vs.gamma = "Raw" if kind == "depth" else "Standard", "None", 0.0, 1.0
     scene.render.use_freestyle = False
     scene.render.dither_intensity = 0.0   # a control image carries no film-grain dither
+    # the look's finish (paper overlay and depth haze, a compositor tree) is a picture layer, not geometry: off for every pass
+    if hasattr(scene, "compositing_node_group"):
+        scene.compositing_node_group = None
+    scene.render.use_compositing = False
     out = {"kind": kind, "materials": 0, "shaders": {}, "no_line": []}
     background = [ob for ob in scene.objects if any(ob.name.startswith(p) for p in lp.get("no_line", []))]
     for ob in scene.objects:
