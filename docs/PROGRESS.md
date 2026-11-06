@@ -4691,3 +4691,11 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
 
 ## 2026-11-06 — Route-test Qwen asset pod: run report
 One pod (RTX PRO 6000 Blackwell COMMUNITY, 40 min, balance $10.17 -> $9.09) drew 42 pictures (D 6, D2 6 = 90-word twins, A 4, B 12, C 8, P 2, redraws 2, fix-edits 2); 2 rejected. Question C: identity held (CLIP .70-.82 vs .93-.98 own angles). Guard process died at 11:41 and was restarted at 12:11. Report and cards page: /mnt/project-files/explainer-engine/route_test_2026-11/assets/ (HANDOFF.md, index.html). Qwen routes only; no change to rules.
+
+
+## 2026-11-05 — WP-Q7b `camera_setups resolve` CLI for the overnight render matrix
+
+- `python -m explainer_engine.blender.camera_setups resolve NAME --a x,y,z [--b x,y,z] [--bearing D] [--frames N] [--head-m M --eye-m M]`
+  prints the `scene.camera` block (setup, fstop, rig_kind), the framed and focus points and the sampled path as JSON, so a render
+  runner can feed `push_in_reveal` (24 frames) to any cast without knowing the internals. Distances scale with `--head-m` / `--eye-m`
+  (the lead character's head height and eye line; the defaults are the UBC's). Test: `test_the_resolve_cli_...`. Cost $0.

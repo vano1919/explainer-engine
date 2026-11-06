@@ -3,7 +3,7 @@
     resolve("ots_a", {"a": {"pos": [..]}, "b": {"pos": [..]}}, bearing_deg=0) -> {"camera": {rig, start, end, lens_mm, ease, setup,
                                                                                     fstop, rig_kind}, "focus_at": [x, y, z], ...}
     framing(camera_block, point) -> (x, y)     # where a world point lands in the frame, 0..1 from the left / from the bottom
-    python -m explainer_engine.blender.camera_setups [--list]
+    python -m explainer_engine.blender.camera_setups [list | resolve NAME --a x,y,z [--b x,y,z] [--bearing D] [--frames N]]
 
 The setups are data (``camera_setups.json``: lens, height and distance in head heights, a thirds target, an f-stop, a focus target).
 This module is the glue: it places the camera from the subjects' positions, then aims it so that the framed point lands on the
@@ -192,6 +192,29 @@ def check_camera(cam: dict) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """``--list`` (default) prints the table; ``resolve NAME --a x,y,z [--b x,y,z] [--bearing DEG] [--frames N]`` prints the
+    ``scene.camera`` block, the framed and focus points and the sampled path as JSON (what a render runner feeds a shot)."""
+    import argparse
+    ap = argparse.ArgumentParser(description="camera setups of the Blender lanes (WP-Q7)")
+    sub = ap.add_subparsers(dest="cmd")
+    sub.add_parser("list")
+    r = sub.add_parser("resolve")
+    r.add_argument("name")
+    r.add_argument("--a", required=True, help="feet position of subject a: x,y,z")
+    r.add_argument("--b", default=None, help="feet position of subject b: x,y,z")
+    r.add_argument("--bearing", type=float, default=0.0)
+    r.add_argument("--frames", type=int, default=24)
+    r.add_argument("--head-m", type=float, default=HEAD_M)
+    r.add_argument("--eye-m", type=float, default=EYE_M)
+    a = ap.parse_args(argv)
+    if a.cmd == "resolve":
+        pos = lambda t: {"pos": [float(x) for x in t.split(",")]}  # noqa: E731
+        subj = {"a": pos(a.a), **({"b": pos(a.b)} if a.b else {})}
+        res = resolve(a.name, subj, bearing_deg=a.bearing, head_m=a.head_m, eye_m=a.eye_m)
+        res["frames"] = a.frames
+        res["path"] = SB.camera_path(res["camera"], a.frames)
+        print(json.dumps(res, indent=1))
+        return 0
     for n in names():
         s = setups()[n]
         print(f"{n:20s} {s['lens_mm']:>3} mm  f/{s['fstop']:<4} {s['rig']:7s} {s['rig_kind']:6s} thirds {s['thirds']}  {s['label']}")
