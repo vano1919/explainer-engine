@@ -44,6 +44,13 @@ SCENES = {
     "battle": {"route": "J4", "clip_frames": 145, "clips": 2, "overlap": 8, "near_m": 2.0, "far_m": 400.0, "no_line": NO_LINE},
     "duel": {"route": "J2", "clip_frames": 121, "clips": 1, "overlap": 0, "near_m": 3.0, "far_m": 40.0, "no_line": ()},
 }
+# Extra static cameras of the battle for the pilot's stills (P1, 2026-11-06): the default camera creeps behind the near line, so a
+# wide high view and a front-line view need their own. Units are metres: the shield wall stands on y = 0 facing +y, the charging
+# wedge starts at (6, 26) and runs at JOG_MPS (5.3 m/s) toward it, so contact comes near frame 118; stills are taken just before.
+BATTLE_CAMERAS = {
+    "wide_high": {"location": [-30.0, -22.0, 14.0], "look_at": [4.0, 14.0, 1.5], "lens_mm": 30, "focus_distance_m": 48.0},
+    "front_mid": {"location": [-9.0, 7.5, 1.7], "look_at": [3.0, 1.0, 1.5], "lens_mm": 40, "focus_distance_m": 14.0},
+}
 HF_PREFIX = "route_test_2026-11/layouts"
 SCHEMA = "layout_passes/1"
 
@@ -96,13 +103,16 @@ def engine_of(kind: str) -> str:
 
 # --- the two scenes (built by the existing builders, D-115: nothing new is modelled here) -------------------------------------
 
-def battle_scene(frames: int, *, count: int = 5000) -> tuple[dict, dict]:
+def battle_scene(frames: int, *, count: int = 5000, camera: str | None = None) -> tuple[dict, dict]:
     """The overnight battle (crowd.py composition ``battle``: a wedge charging a shield wall, 5,000 soldiers as GN tiers)."""
     from explainer_engine.blender import characters as CH
     from explainer_engine.blender import crowd as CR
     from explainer_engine.blender import style_sheets as SS
     paths, cpaths = SS.fetch(), CH.fetch()
-    sc = CR.scene(paths, cpaths, count=count, frames=frames, composition="battle")
+    if camera is not None and camera not in BATTLE_CAMERAS:
+        raise ContractError(f"unknown battle camera {camera!r} (known: {', '.join(BATTLE_CAMERAS)})")
+    sc = CR.scene(paths, cpaths, count=count, frames=frames, composition="battle",
+                  camera_override=BATTLE_CAMERAS[camera] if camera else None)
     problems = CR.check(sc["crowds"])
     if problems:
         raise ContractError("; ".join(problems))
@@ -189,7 +199,7 @@ def finished(d: Path, frames: list[int]) -> bool:
 
 
 def render(scene: str, out: Path | str, *, binary: str | None = None, passes: list[str] | None = None, scale: float = 1.0,
-           only_frames: list[int] | None = None, count: int = 5000, log=print) -> dict:
+           only_frames: list[int] | None = None, count: int = 5000, camera: str | None = None, log=print) -> dict:
     """Render the scene's passes, cut the clips, write the manifest. ``only_frames`` renders a review subset (no clips)."""
     from explainer_engine.blender import render as R
     from explainer_engine.blender.project import BlenderProject
@@ -200,7 +210,9 @@ def render(scene: str, out: Path | str, *, binary: str | None = None, passes: li
         if k not in PASSES:
             raise ContractError(f"unknown pass {k!r}")
     frames = p["frames"]
-    doc, spec = battle_scene(frames, count=count) if scene == "battle" else duel_scene(frames)
+    if camera and scene != "battle":
+        raise ContractError("a named camera belongs to the battle scene")
+    doc, spec = battle_scene(frames, count=count, camera=camera) if scene == "battle" else duel_scene(frames)
     b = BlenderProject().resolve(binary)
     want = sorted(only_frames) if only_frames else list(range(frames))
     rows = {}
@@ -229,7 +241,7 @@ def render(scene: str, out: Path | str, *, binary: str | None = None, passes: li
         rows[kind] = row
         log(f"{scene}/{kind}: {len(files)} frames in {row['wall_seconds']} s ({j['width']}x{j['height']}, {j['engine']})")
     man = {"schema": SCHEMA, "scene": scene, "route": p["route"], "plan": p, "scale": scale, "subset": bool(only_frames),
-           "blender": b.version, "passes": rows, "hf_prefix": f"{HF_PREFIX}/{scene}"}
+           "blender": b.version, "camera": camera, "passes": rows, "hf_prefix": f"{HF_PREFIX}/{scene}"}
     write_json_atomic(out / scene / "layout_manifest.json", man)
     return man
 
@@ -276,6 +288,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--scale", type=float, default=1.0)
     r.add_argument("--only-frames")
     r.add_argument("--count", type=int, default=5000)
+    r.add_argument("--camera", choices=sorted(BATTLE_CAMERAS), help="a named static battle camera instead of the creeping one")
     u = sub.add_parser("upload")
     u.add_argument("--out", type=Path, required=True)
     u.add_argument("--scene", choices=sorted(SCENES), required=True)
@@ -287,7 +300,7 @@ def main(argv: list[str] | None = None) -> int:
         print("\n".join(upload(a.out, a.scene)))
         return 0
     m = render(a.scene, a.out, binary=a.binary, passes=a.passes.split(",") if a.passes else None, scale=a.scale,
-               only_frames=[int(x) for x in a.only_frames.split(",")] if a.only_frames else None, count=a.count)
+               only_frames=[int(x) for x in a.only_frames.split(",")] if a.only_frames else None, count=a.count, camera=a.camera)
     print(json.dumps({k: {x: v[x] for x in v if x != "frame_sha256"} for k, v in m["passes"].items()}, indent=1))
     return 0
 

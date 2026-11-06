@@ -4663,3 +4663,23 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
 - Step 4 (creator 18:34 UTC: voice and mouth, credit cap 5000): three dialogue lines in two ElevenLabs voices, one take each, 155 credits (estimate first); Rhubarb Lip Sync 1.14.0 (MIT)
   gives the mouth shapes; `blender/j5_face.py` draws blinks, brows and a mouth that follows the cues on the graded cards (exact sheet-to-frame projection, no model); `mix_voice` puts the
   lines over the camp ambience. Tests: `tests/unit/test_j5_face.py` (5). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7c. Real mouth/eye variants per sheet (SA-06) still open (paid Qwen edit, the creator's call).
+
+## 2026-11-06 — P1: the rest of the 60 s pilot minute (branch `claude/project-thread-9hpm56`, on `icw/19-pilot-pod`)
+
+- The creator (16:18 UTC): Qwen and LTX are not proven yet; make about one minute of video. Plan: EXEC_QUEUE.md P1 (project files,
+  `ltx_gap_review_2026-11-06/`). The p15 pod (Fable thread, 2 clips, 8 restyles) runs first; P1 adds only what it did not make, and
+  reuses its first frames from HF `route_test_2026-11/pilot/first_frames/` (no second payment for the two-shot or battle frame 0).
+- Free, done: two new static battle cameras (`layout_passes.BATTLE_CAMERAS`: `wide_high`, `front_mid`; `crowd.scene(camera_override=)`
+  plans the crowd for them), rendered in the container (Blender 5.2.3, 5,000 soldiers, 1920x1088, frame 112, 160-185 s per frame
+  after the bake) and uploaded with sha256 to HF `route_test_2026-11/pilot/blender/` (`battle_wide_high_f112_colour.png`,
+  `battle_front_mid_f112_colour.png`, `pilot_stills_p16.json`; the pinned `pilot_stills.json` is untouched). Three new soldiers cards
+  in `pilot_stills.BATTLE_CARDS` (frame 200, wide high, front mid), prompts generated from them, clean under `qa/style_prompt.check`.
+- `training/pods/p16/`: `build.py` (config + RP-11 schedule from p15's pins, the extra manifest and, later, p15's measured first frames
+  and LTX speed), `p16_pod.py` (net: LTX weights then Qwen's; gpu: five room clips from p15's first frames, then the three restyles,
+  then the three battle clips; two LTX failures stop; timeouts = schedule max), `p16.sh` (the p15 stack, heartbeat `.../pilot/p16/beat.txt`,
+  bundle `code/p16/ee_src.tar.gz`, sha256 pinned by `build.py bundle`), `p16.json`, `p16_schedule.json`. Eight clips, 1,088 frames: room
+  establishing/close host/close guest/reverse 145 f, insert table 97 f; battle wide high/front mid 145 f, frame 200 121 f.
+- `production/pilot_minute.py`: after the pods, the ten clips and the clock insert (J5-style push-in on its Qwen still) cut to one
+  2560x1440 video of about 63 s (ROUTE_TEST chain, each clip trimmed to its shot), plus `compare.html` (Blender | Qwen | clip per shot).
+- Tests: `test_pilot_stills.py` (+3), `test_p16_pod.py` (11), `test_pilot_minute.py` (5). Cost $0. Nothing paid launched; the pod
+  waits for the p15 pod (measured LTX speed), the OR-23 plan, the OR-34 audit and the creator's word.

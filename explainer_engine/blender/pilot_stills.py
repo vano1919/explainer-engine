@@ -65,6 +65,42 @@ BATTLE = {"tags": {"near_army": "a dense army of lanky soldiers in green tunics,
           "card": {"start": "{near_army} stands ready, facing {far_army} across the field, {banner} above them",
                    "motion": "the near army charges forward across the plain, dust rises and the banners flap",
                    "settle": "the two armies meet in a cloud of dust", "refs": []}}
+# P1 (the 60 s pilot, 2026-11-06): three more soldiers stills. ``f200`` is the existing camera 200 frames in (the wedge has run into
+# the wall); ``wide_high`` and ``front_mid`` are the static cameras of ``layout_passes.BATTLE_CAMERAS`` just before contact. The
+# wedge wears tan leather and orange banners, the shield wall green tunics and blue banners (crowd.battle_formations). Same rule as
+# the room: the card names only what is in the still, each tag once, nothing about the camera.
+_BATTLE_BASE = {"place": BATTLE["place"], "light": BATTLE["light"], "sub_category": "V1", "hero_refs": {}}
+_WALL = "a long shield wall of lanky soldiers in green tunics under blue banners"
+_WEDGE = "a charging wedge of soldiers in tan leather tunics"
+BATTLE_CARDS = {
+    "f000": BATTLE,
+    "f200": dict(_BATTLE_BASE, tags={"near_army": BATTLE["tags"]["near_army"], "raiders": "soldiers in tan leather tunics",
+                                      "banner": BATTLE["tags"]["banner"]},
+                 in_shot={"near_army": "the line that breaks", "raiders": "have broken into it", "banner": "above them, flaps"},
+                 card={"start": "{raiders} have broken into {near_army}, {banner} above them",
+                       "motion": "the line breaks, men stagger and fall back, smoke drifts over them",
+                       "settle": "the dust hangs over the field", "refs": []}),
+    "wide_high": dict(_BATTLE_BASE, tags={"wall": _WALL, "wedge": _WEDGE, "far_army": BATTLE["tags"]["far_army"]},
+                      in_shot={"wall": "the line that holds", "wedge": "charges at it", "far_army": "waits behind the wedge"},
+                      card={"start": "{wall} holds the field while {wedge} runs at it, {far_army} behind them",
+                            "motion": "the wedge runs into the shield wall, dust rises and the banners sway",
+                            "settle": "the two lines are locked together", "refs": []}),
+    "front_mid": dict(_BATTLE_BASE, tags={"wall": "a shield wall of lanky soldiers in green tunics under a blue banner",
+                                          "wedge": "soldiers in tan leather tunics"},
+                      in_shot={"wall": "the line that holds", "wedge": "run into it"},
+                      card={"start": "{wall} stands shoulder to shoulder as {wedge} run at it",
+                            "motion": "shields push and swords thrust, men stagger",
+                            "settle": "the wall holds", "refs": []}),
+}
+_BATTLE_ID = re.compile(r"^battle_(?:(wide_high|front_mid)_)?f(\d+)_")
+
+
+def battle_card(sid: str) -> dict:
+    """The soldiers card of a battle still id (``battle_f000_colour``, ``battle_wide_high_f096_colour``...)."""
+    m = _BATTLE_ID.match(sid)
+    if not m:
+        raise ContractError(f"{sid}: not a battle still id")
+    return BATTLE_CARDS[m.group(1) or ("f200" if int(m.group(2)) >= 150 else "f000")]
 _NAME = re.compile(r"\{(\w+)\}")
 
 
@@ -103,7 +139,7 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
     from explainer_engine.blender import world_kits as WK
     from explainer_engine.qa import style_prompt as SP
     if sid.startswith("battle"):
-        spec = layout or BATTLE
+        spec = layout or battle_card(sid)
         card, tags, keep = spec["card"], spec["tags"], spec["in_shot"]
     else:
         spec = layout or WK.layouts()["layouts"][LAYOUT]
@@ -225,6 +261,58 @@ def manifest(room: Path, battle: Path | None, out: Path, *, battle_count: int = 
     return doc
 
 
+EXTRA_SCHEMA = "pilot_stills_extra/1"
+EXTRA_FILE = "pilot_stills_p16.json"
+
+
+def extra_manifest(dirs: dict[str, Path], picks: dict[str, list[int]], out: Path, *, battle_count: int = 5000) -> dict:
+    """The P1 battle stills of the named static cameras (``layout_passes render --scene battle --camera NAME --out DIR``): the picked
+    colour frames copied to ``out/battle_<camera>_f<NNN>_colour.png`` with camera, sha256, seconds per frame and the generated
+    prompts. A file of its own (``pilot_stills_p16.json``): ``pilot_stills.json`` is pinned by the running p15 pod and stays as it is."""
+    from explainer_engine.blender import layout_passes as LP
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    shots = {}
+    for name, d in dirs.items():
+        if name not in LP.BATTLE_CAMERAS:
+            raise ContractError(f"unknown battle camera {name!r}")
+        bm = json.loads((Path(d) / "battle" / "layout_manifest.json").read_text(encoding="utf-8"))
+        if bm.get("camera") != name:
+            raise ContractError(f"{d}: rendered with camera {bm.get('camera')!r}, not {name!r}")
+        row = bm["passes"]["colour"]
+        for idx in picks[name]:
+            fname = f"frame_{idx:06d}.png"
+            if fname not in row["frame_sha256"]:
+                raise ContractError(f"{name}: frame {idx} was not rendered")
+            sid = f"battle_{name}_f{idx:03d}_colour"
+            dest = out / f"{sid}.png"
+            shutil.copyfile(Path(d) / "battle" / "colour" / "frames" / fname, dest)
+            shots[sid] = {"scene": "battle", "file": dest.name, "sha256": C.sha256_file(dest), "pass": "colour", "frame": idx,
+                          "camera_name": name, "camera": LP.BATTLE_CAMERAS[name], "engine": row["engine"],
+                          "seconds_per_frame": row["seconds_per_frame"], "wall_seconds": row["wall_seconds"],
+                          "prompts": prompts(sid)}
+    doc = {"schema": EXTRA_SCHEMA, "battle": {"composition": "battle", "count": battle_count, "size": [1920, 1088]},
+           "shots": shots, "hf_prefix": HF_PREFIX}
+    write_json_atomic(out / EXTRA_FILE, doc)
+    return doc
+
+
+def upload_extra(out: Path, *, vault=None) -> list[str]:
+    """The P1 stills and ``pilot_stills_p16.json`` to ``HF_PREFIX``, checked by sha256; no existing file is touched."""
+    from explainer_engine.blender import layout_passes as LP
+    from explainer_engine.blender import render as R
+    out = Path(out)
+    doc = json.loads((out / EXTRA_FILE).read_text(encoding="utf-8"))
+    pairs = [(out / s["file"], f"{HF_PREFIX}/{s['file']}") for s in doc["shots"].values()] + [(out / EXTRA_FILE, f"{HF_PREFIX}/{EXTRA_FILE}")]
+    vault = vault or R.HFVault()
+    vault.upload_many(pairs, f"pilot stills P1 ({len(doc['shots'])} battle shots)")
+    listed = vault.listing(f"{HF_PREFIX}/")
+    bad = [r for loc, r in pairs if not LP._same(listed.get(r), loc)]
+    if bad:
+        raise ContractError(f"not on the vault with the local hashes: {bad}")
+    return [r for _, r in pairs]
+
+
 def upload(out: Path, *, vault=None) -> list[str]:
     """Every still, the layout and the manifest to ``HF_PREFIX``, checked by sha256 against the vault's listing."""
     from explainer_engine.blender import layout_passes as LP
@@ -254,6 +342,11 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--battle-count", type=int, default=5000)
     u = sub.add_parser("upload")
     u.add_argument("--out", type=Path, required=True)
+    e = sub.add_parser("extra", help="the P1 battle stills of the named cameras -> pilot_stills_p16.json")
+    e.add_argument("--camera", action="append", required=True, metavar="NAME=DIR:FRAMES", help="e.g. wide_high=/tmp/wh:96")
+    e.add_argument("--out", type=Path, required=True)
+    ue = sub.add_parser("upload-extra")
+    ue.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     if a.cmd == "cameras":
         print(json.dumps(cameras(), indent=1))
@@ -262,6 +355,16 @@ def main(argv: list[str] | None = None) -> int:
     elif a.cmd == "manifest":
         doc = manifest(a.room, a.battle, a.out, battle_count=a.battle_count)
         print(json.dumps({k: v["seconds_per_frame"] for k, v in doc["shots"].items()}, indent=1))
+    elif a.cmd == "extra":
+        dirs, picks = {}, {}
+        for spec in a.camera:
+            name, rest = spec.split("=", 1)
+            d, frames = rest.rsplit(":", 1)
+            dirs[name], picks[name] = Path(d), [int(x) for x in frames.split(",")]
+        doc = extra_manifest(dirs, picks, a.out)
+        print(json.dumps({k: v["seconds_per_frame"] for k, v in doc["shots"].items()}, indent=1))
+    elif a.cmd == "upload-extra":
+        print("\n".join(upload_extra(a.out)))
     else:
         print("\n".join(upload(a.out)))
     return 0
