@@ -560,6 +560,14 @@ def build_rig_blend(o, pending, report):
                 pb.keyframe_insert(prop, index=int(idx), frame=bpy.context.scene.frame_start + int(f))
                 n += 1
         report.setdefault("visemes", {})[o["name"]] = {"keys": n, "channels": len(vis)}
+    for L in rb.get("lights") or ():   # own lights (WP-Q4 front key): a sun that points at ``look_at`` from ``direction_from``
+        sun = bpy.data.lights.new(L["name"], "SUN")
+        sun.energy, sun.color, sun.use_shadow = L["energy"], L["color"], L.get("shadow", False)
+        lob = bpy.data.objects.new(L["name"], sun)
+        bpy.context.scene.collection.objects.link(lob)
+        d = Vector(L["look_at"]) - Vector(L["direction_from"])
+        lob.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+        report.setdefault("own_lights", []).append(L["name"])
     for b, props in (rb.get("props") or {}).items():   # rig switches (CloudRig IK/FK) and other custom properties
         for k, v in props.items():
             rig.pose.bones[b][k] = v

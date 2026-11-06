@@ -11,13 +11,16 @@ on:
       frames: {description: "frames", default: "48", type: string}
       scale: {description: "render scale (1.0, 0.75 or 0.5)", default: "1.0", type: string}
       light_preset: {description: "WP-Q1 light preset", default: "golden_hour", type: string}
-      angular: {description: "head lattice amount (0 = Rain as made)", default: "0.6", type: string}
   push:
     branches: ["wpq/04-**"]
-    paths: ["explainer_engine/blender/character_benchmark.py", ".github/workflows/character-benchmark.yml"]
+    paths: ["explainer_engine/blender/character_benchmark.py", "explainer_engine/blender/bpy/make_rain_lead.py", ".github/workflows/character-benchmark.yml"]
 
 permissions:
   contents: read
+
+concurrency:
+  group: character-benchmark-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   rain:
@@ -62,11 +65,15 @@ jobs:
             https://studio.blender.org/download-source/files/ee/a7/eea73e55dba1cea31c09848df6a794b2-4.zip
           echo "80217f163f6392dc829233d63c2cfb5e1376775bc34101ad14f39631fea70d24  rain.zip" | sha256sum --check
           mkdir rain && unzip -q rain.zip -d rain
+      - name: Build the cast lead (lattice, angular key, tabard, belt, cloak) from Rain
+        run: |
+          "${{ steps.install.outputs.bin }}" -b --factory-startup --python-exit-code 1 --python explainer_engine/blender/bpy/make_rain_lead.py \
+            -- "rain/Rain v3.3/rain_v3.2.blend" "rain/Rain v3.3/rain_lead.blend"
       - name: Render the clip
         run: |
-          python -m explainer_engine.blender.character_benchmark --blend "rain/Rain v3.3/rain_v3.2.blend" --out rain_out \
+          python -m explainer_engine.blender.character_benchmark --blend "rain/Rain v3.3/rain_lead.blend" --out rain_out \
             --frames "${{ github.event.inputs.frames || '48' }}" --scale "${{ github.event.inputs.scale || '1.0' }}" \
-            --cues explainer_engine/blender/rain_cues_synthetic.json --angular "${{ github.event.inputs.angular || '0.6' }}" \
+            --cues explainer_engine/blender/rain_cues_synthetic.json --angular 0 \
             --light-preset "${{ github.event.inputs.light_preset || 'golden_hour' }}" --sky hdri --no-wall --binary "${{ steps.install.outputs.bin }}"
       - name: Keep the clip, the report and the Blender log
         if: always()

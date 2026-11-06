@@ -4440,7 +4440,8 @@
     "explainer_engine/scripting/film_shots.py:KEYPOSE_AFTER_S",
     "explainer_engine/scripting/shot_prompt_lint.py:DIALOGUE_SHOT_MAX_S",
     "explainer_engine/scripting/shot_prompt_lint.py:NON_DIALOGUE_VIDEO_MAX_S",
-    "explainer_engine/blender/rigs.py:LipSync.plan"
+    "explainer_engine/blender/rigs.py:LipSync.plan",
+    "explainer_engine/blender/rain_dialogue.py:main"
    ],
    "supersedes": [
     "universal 10 s / 8 s video-shot cap (KP-06) and pre-D-95 universal 10 s clip cap"

@@ -4336,11 +4336,20 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - E2: castle scale 1.0, level crest radius 17, front curtain walls, gatehouse with two towers and a lintel (primitives with the Poly Haven stone map; placement not yet seen in a frame). E3: mountains 0.35 x height, 500 m further back, sea plane to the horizon, two more distant ships. Not verified in a render yet.
 - 2026-11-05 (from the 66aafbe Mac frames): `model.ph_modular_fort_01` is a kit SHEET (22 modules laid out over 42 x 71 m), not an assembled castle; placing it whole made towers float over the slope and the dark block above the hero camera. The castle is now assembled from single modules (`nodes` on a piece: one tower_round per corner, thin straight walls, a gate, a keep of primitives), scale 0.8, on a levelled crest of radius 29. E2 mountains lowered (peak 95).
 - 2026-11-06 tone only (Fable): ground layers get per-layer tints (olive grass, ochre dirt road, grey-brown sand and cobbles), the plaza floor tiles a grey-brown multiplier, and every stall awning the same faded canvas palette. No geometry changed. The hero camera has no roll in the data (it is aimed with world Z up); the tilt seen in the frame is the hill and the 17 degree yaw, not roll.
+
 ## 2026-11-05 — WP-Q12: test_seams MP3 duration test no longer depends on the ffmpeg version
 - `test_duration_of_an_mp3_is_its_decoded_length` asserted `duration() < ffprobe container duration`; newer ffmpeg honours the
   LAME header and reports the gapless length, so the strict `<` failed on CI. Now one definition: decoded samples with delay and
   padding trimmed; the expected value is derived from the fixture (seconds x rate), the container length is only an upper bound.
 - `seams.duration` unchanged. `tests/unit/test_seams.py`: 3 passed locally. No render branch touched. Cost $0.
+
+## 2026-11-06 — WP-Q4 follow-up: the Rain cast lead v3b/v4b, dialogue tracks, CI clip (thread: Benchmark Rain and Storm characters)
+
+- `bpy/make_rain_lead.py` now bakes the lead's look into the .blend (a plain open shows it): draped solidified tabard + red trim + belt + one-shoulder cloak, Rain's top recoloured undyed linen (flat Principled) and pulled in 4 mm, trousers dark brown, scarf and hairband cloak red, arms down on the CloudRig FK controls, calm face shape keys held, darker eyebrows. Exported to `ink_chronicle_overnight_2026-11-05/cast_lead/` (README v2..v4b). Not fixed: small white flecks at the tabard hem (not the top; cause unknown); the belt reads as a bar; the elbow sign is unverified (forearm +8 deg is nearly straight).
+- `blender/rain_dialogue.py` (pure Python, `tests/unit/test_rain_dialogue.py`): N lines -> the `rig_blend` "visemes" track map: mouth from each line's Rhubarb cues (`rigs.ActionVisemes`), head+neck turn, an explain gesture (right forearm/upperarm) or a nod per line. Synthetic fixture `rain_dialogue_synthetic.json`; real cue files swap in without other changes. CLI `character_benchmark --dialogue`. Poses checked in Blender at two frames; the full motion has not been judged.
+- `MAT-lead.trim` maps to `rain_cloak` in `character_benchmark.MATERIAL_MAP` (T-C's render refused the unmapped material).
+- CI clip (run 42120108247, v3 lead, 48 frames, 1440p, EEVEE on a CPU runner): 64.9 s/frame, wall 52 min, style missing none; face appealing but soft focus and a hard cheek shadow from the key. Synthetic cues only; real Rhubarb on an ElevenLabs line is a Mac step.
+- Stale text found: none new. Skin shading stays Rain's own (C2).
 
 ## 2026-11-05 — D-115: outside code allowed, licences recorded not gating; quality research delivered
 - The creator's word (18:42 UTC): quality first, then efficiency; "on GitHub all the code we need is written: find, combine,
