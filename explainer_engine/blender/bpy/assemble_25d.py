@@ -318,10 +318,11 @@ def main():
             build_shadow(c)
     r = scene.render
     r.resolution_x, r.resolution_y, r.resolution_percentage = job["width"], job["height"], 100
-    r.film_transparent = False
+    transparent = bool(job.get("transparent"))   # a layer pass (J5 dialogue test): the cards alone on alpha, the world not drawn
+    r.film_transparent = transparent
     r.use_file_extension = False
     r.image_settings.file_format = "PNG"
-    r.image_settings.color_mode = "RGB"
+    r.image_settings.color_mode = "RGBA" if transparent else "RGB"
     r.image_settings.color_depth = "8"
     os.makedirs(job["frames_dir"], exist_ok=True)
     secs = []

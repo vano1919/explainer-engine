@@ -4523,3 +4523,19 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Known flaws: the wall clock reads modern, the bookshelf pale, the grandfather clock's face dark, the windows bright.
 - Tests: `tests/unit/test_pilot_stills.py` (7). Cost $0. Plan for the paid part: `PILOT_1MIN_PLAN.md` v2 (project files), run-plan
   schedules (PR #147) in `pilot_1min/` (A100: $1.25 expected / $2.95 worst with Qwen on the pod; $0.98 / $2.12 with Qwen on the PC).
+
+## 2026-11-06 — J5 dialogue collage, step 1 (thread: "Test J5 dialogue with existing photos"; branch `claude/project-thread-4nebmi` off `icw/05c-ink-round`)
+
+- The creator (16:44 UTC): test J5 now with the existing pictures, a dialogue photo-collage first, then voice, emotion, mouth and background motion;
+  16:55 UTC: maximum realism. Free only (no pod, no paid call, no ElevenLabs).
+- `blender/j5_collage.py`: BiRefNet cut-outs of the B sheets (CPU, with the dtype fix of `icw/16-lean-pod` 0fa738b taken for `edit/cutout.py`),
+  a flat plate cropped from A1_tent per shot (a 2048-px equirect would be ~10x soft at a 44-degree frame), each card graded by the fire (warm wrap and
+  rim on the side that faces it, dusk ambient, black lifted to the backdrop's), rendered alone on alpha by Blender 5.2.3 (`transparent` job flag added to
+  `bpy/assemble_25d.py`), then depth blur (backdrop and foreground shoulder), fire bloom, vignette and one shared grain/paper layer.
+- Four frames, 2560x1440: S1 medium two-shot, S2 over H2's shoulder (H1 speaks), S3 reverse over H1's shoulder (H2 listens), S4 close-up H1.
+  H2 stays screen-left of H1 in all four, all cameras on one side of the line. EEVEE on 4 CPU cores: 3.4-5.8 s per pass; whole sheet 95 s.
+- HF: `route_test_2026-11/j5_dialogue/step1/` (frames, contact sheet, report.json, graded cards, `compare/` frame-vs-backdrop-only).
+- What the sheets could not give (reported to the creator): H1's sheets end at the belt (no legs, so no standing wide shot and no feet contact
+  shadow in these frames), H2 has no left-facing card (his right34 looks nearly at the camera, so his eye-line to H1 is weak), no mouth or
+  eyes-closed variants exist yet (step 2 needs them), H1's back card is the sheet mirrored for the reverse shot.
+- Tests: `tests/unit/test_j5_collage.py` (4). Cost $0.
