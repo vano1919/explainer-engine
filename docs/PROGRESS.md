@@ -4659,3 +4659,13 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   2 clips A100 COMM $1.58 (68) / $3.51 (152), A100 SEC $2.03 / $4.53, H100 NVL $2.16 (50) / $4.50 (104). Neither fits $3.4 / 2 h. Caps written in the files are PROPOSED
   (8 clips $6.4 / 4.6 h; 2 clips $3.6 / 2.6 h, both on the A100 COMMUNITY), the creator's card decides; the ledger cap needs max_usd / 0.8.
 - Tests: pod runs for both sets, first-frame names, schedules, scripts. Cost $0.
+
+## 2026-11-06 19:55 UTC — p15 mouth SHEETS (J5), branch `icw/19-mouth` (off icw/19-pilot-pod 8b94f46); NOT in the live bundle
+- ვანო 19:41 UTC: one picture per hero holding all variants, not 16 HD edits. `mouth_grid.py` = the one layout constant (4x2 cells on 1280x720,
+  A-F + blink1/2, `cut`/`cut_files` for the free J5 cut-and-align). `p15_mouth.py`: 2 sheets (edit with the hero's own sheet as Image 1, seed 11, prompt
+  built from the sheet's description, <= 90 words, `xworld style` once), redrawn with seed 12/13 when `cells_ok` (structure only) fails: at most 6 pictures.
+  Free host-side identity: `python -m ...p15_mouth --check <mouth_variants> --sheets <dir>` = cosine of every cut cell to the sheet (qa/identity), `identity.json`.
+- `p15q_schedule.json` on this branch = 24 + 2 sheets (expected 16.6 min on the H100 reference; retries inside the 3x): RP-11 rc 0 at $3.4 / 2 h.
+  Per card (expected / worst): A40 and A6000 $0.81 / $2.11 (214 min, over the 2 h guard), L40S $1.03 / $2.45, A100 COMMUNITY $1.18 / $2.73,
+  A100 SECURE $1.52 / $3.51 (over $3.4 by 3 %; the guard stops at $3.4). The live pod (8b94f46) is 24 pictures only (the creator's GO 19:43 UTC).
+- Tests: layout/prompts, structure check + seed retries, identity check, schedule. Cost $0.

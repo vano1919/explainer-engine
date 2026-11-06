@@ -99,7 +99,7 @@ class Pod:
     def gpu(self):
         until = self.deadline - self.reserve
         self.book.events["weights_qwen"].wait(max(0.0, until - time.time()))
-        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants"] if self.only == "qwen" else [])),
+        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants", "--mouth"] if self.only == "qwen" else [])),
                    why=None if self.book.ok("weights_qwen") else "the Qwen weights did not download")
         if self.only == "qwen" and not self.clips:
             return

@@ -27,8 +27,8 @@
     }
   ],
   "limits": {
-    "max_usd": 6.4,
-    "max_hours": 4.6,
+    "max_usd": 6.5,
+    "max_hours": 4.7,
     "max_idle_gpu_share": 0.15
   },
   "stages": [
@@ -51,12 +51,12 @@
       ],
       "on": {
         "gpu": {
-          "expected_min": 15.4,
-          "max_min": 46.2
+          "expected_min": 16.6,
+          "max_min": 49.8
         }
       },
       "measured": true,
-      "note": "24 edits (8 stills x S1/S2/S3) at 36 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"
+      "note": "24 edits (8 stills x S1/S2/S3) + 2 J5 mouth sheets at 36 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"
     },
     {
       "id": "weights_ltx25",
