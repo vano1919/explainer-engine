@@ -42,6 +42,12 @@ ROLE = {"room_establishing": "establishing wide from the stove corner",
 # the LTX style sentence of every film shot (examples/film_shots/*.json "video_sentence"), word for word
 VIDEO_SENTENCE = ("Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon "
                   "timing, poses hold between quick moves.")
+# the video style sentences one start-up compares (Fable 16:42 UTC): S1 our film sentence, S2 the xworld captions' look words
+# (qa/style_prompt.STYLE_TAIL from "bold uneven"), S3 none (motion and settle only)
+LTX_STYLES = {"S1": VIDEO_SENTENCE,
+              "S2": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy "
+                    "colours with vivid glowing accents.",
+              "S3": ""}
 QWEN_MAX_WORDS = 90     # Fable, 2026-11-06 15:57 UTC: a pilot still's prompt is at most 90 words
 # the soldiers scene (``layout_passes`` battle, frame 0: the near army from behind, the far army under its banners across a plain):
 # one card like the room's; the still is the crowd composition itself, so everything in it acts in the clip
@@ -136,7 +142,27 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
     motion, settle = fill(card["motion"], seen2), fill(card["settle"], seen2)
     ltx = f"{VIDEO_SENTENCE} {motion[0].upper() + motion[1:]}, then {settle}. Static camera."
     return {"qwen": qwen, "qwen_words": n, "ltx": ltx, "card": card, "names": sorted(set(used)),
-            "hero_refs": [spec["hero_refs"][r] for r in refs]}
+            "hero_refs": [spec["hero_refs"][r] for r in refs], "motion": motion, "settle": settle}
+
+
+def ltx_prompt(sid: str, *, style: str = "S1", audio: str | None = None, line: tuple[str, str] | None = None) -> str:
+    """The LTX prompt of one clip from the shot card (the creator 2026-11-06 16:42 UTC: several prompt styles per start-up):
+    ``LTX_STYLES[style]`` (S3 = none), the motion (``line``: one spoken sentence, in quotes, after the motion), the settle, a static
+    camera, then ``audio`` ("We hear ...": LTX-2.5 distilled draws its native audio from the same prompt, distilled.py:563-573).
+    ``line`` = (cast name, one sentence): "The <noun> says, "..."" between the motion and the settle."""
+    p = prompts(sid)
+    motion = p["motion"][0].upper() + p["motion"][1:]
+    if line:
+        name, text = line
+        if name not in p["names"]:
+            raise ContractError(f"{sid}: {name} speaks but is not in the shot's card")
+        from explainer_engine.blender import world_kits as WK
+        tags = (BATTLE if sid.startswith("battle") else WK.layouts()["layouts"][LAYOUT])["tags"]
+        body = f'{motion}. The {_short(tags[name])} says, "{text}" Then {p["settle"]}. Static camera.'
+    else:
+        body = f"{motion}, then {p['settle']}. Static camera."
+    head = LTX_STYLES[style]
+    return " ".join(x for x in (head, body, audio) if x)
 
 
 def manifest(room: Path, battle: Path | None, out: Path, *, battle_count: int = 5000) -> dict:

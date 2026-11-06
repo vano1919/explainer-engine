@@ -1,11 +1,11 @@
-"""The pilot pod's runner (PILOT_1MIN_PLAN.md v3; the creator 2026-11-06 15:25 / 16:05 UTC; Fable 15:52 UTC: option A only, 185
+"""The pilot pod's runner (PILOT_1MIN_PLAN.md v4; the creator 2026-11-06 15:25 / 16:05 UTC; Fable 15:52 UTC: option A only, 185
 frames, the room clip is the two-shot). No Blender on the pod: the stills were rendered free and are on HF, pinned in ``p15.json``.
 Two lanes, as ``p15_schedule.json`` (the file ``runpod create --schedule`` costs under RP-11) draws them, so the card never waits on
 a download it does not need:
 
 - net: Qwen-Image-2.1 + the xworld_v2 LoRA (``weights_qwen``), then the LTX-2.5 weights checked by sha256 (``weights_ltx25``);
-- gpu: ``qwen_restyle`` (``p15_qwen``: the 8 edits) as soon as Qwen's weights are in, then ``ltx_room`` and ``ltx_battle``
-  (``p15_ltx``, one process per clip, each started when its first frame exists and the LTX weights are checked), then ``F``.
+- gpu: ``qwen_restyle`` (``p15_qwen``: the 8 edits) as soon as Qwen's weights are in, then the 8 clips ``ltx_c1`` ..
+  ``ltx_c8`` (v4: run order c1-c4, c6, c7, c8, c5; ``p15_ltx``, one process per clip, each started when its first frame exists and the LTX weights are checked), then ``F``.
 
 Each stage is its own process with its schedule max as timeout; a failed stage is recorded and the next one runs (a clip whose first
 frame was not drawn is skipped with that reason). Records: ``stages.json``, ``stages.txt``, ``t.jsonl`` under ``$EE_OUT`` (the wrapper
@@ -29,7 +29,8 @@ from explainer_engine.training.pods.p14 import p14_pod as P
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
 PKG = "explainer_engine.training.pods.p15"
-LANES = {"net": ["weights_qwen", "weights_ltx25"], "gpu": ["qwen_restyle", "ltx_room", "ltx_battle", "F"]}
+CLIP_STAGES = ["ltx_c1", "ltx_c2", "ltx_c3", "ltx_c4", "ltx_c6", "ltx_c7", "ltx_c8", "ltx_c5"]   # v4: build.CLIPS order, c5 + c8 last
+LANES = {"net": ["weights_qwen", "weights_ltx25"], "gpu": ["qwen_restyle", *CLIP_STAGES, "F"]}
 
 
 def load_cfg() -> dict:
@@ -110,7 +111,8 @@ class Pod:
                 ltx[f.stem[len("speeds_"):]] = json.loads(f.read_text(encoding="utf-8"))
             qwen = [json.loads(x) for x in (self.out / "qwen" / "manifest.jsonl").read_text(encoding="utf-8").splitlines()
                     if x.strip()] if (self.out / "qwen" / "manifest.jsonl").is_file() else []
-            P.write_side(self.out / "speeds.json", {"schema": "p15_speeds/1", "stages": rows, "ltx": ltx,
+            audio = {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in sorted((self.out / "ltx").glob("*.audio.json"))}
+            P.write_side(self.out / "speeds.json", {"schema": "p15_speeds/1", "stages": rows, "ltx": ltx, "audio": audio,
                                                     "qwen_s": [q.get("seconds") for q in qwen if q.get("status") == "ok"]})
             self.book.mark("F", "ok")
         except Exception as e:   # noqa: BLE001

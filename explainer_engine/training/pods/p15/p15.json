@@ -187,17 +187,20 @@
         }
       }
     },
-    "clip_timeout_s": 1050,
+    "clip_timeout_s": 720,
     "end_reserve_min": 10
   },
   "ltx_jobs": [
     {
-      "id": "pilot.room_two_shot.ltx25.i2v.f185.s42",
-      "question": "does LTX-2.5 distilled i2v hold one 7.7 s single-scene shot from a Blender-composed, Qwen-styled frame (a furnished room, many soldiers), and do places and props stay put across the room's angles once Qwen restyles each still?",
+      "id": "pilot.c1.room_two_shot.S1.ltx25.i2v.f185.s42",
+      "question": "which style sentence keeps our look? S1, our film sentence",
       "recipe": "ltx_i2v/1",
       "pipeline": "distilled",
       "shot_id": "room_two_shot",
       "clip_id": "room_two_shot",
+      "style": "S1",
+      "audio_prompt": "We hear a quiet room tone, a candle crackling and low voices.",
+      "spoken_line": null,
       "base": "ltx25",
       "variant": "i2v",
       "model": {
@@ -221,17 +224,94 @@
       "conditioning": [],
       "attention_mask": null,
       "chain_from": null,
-      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The broad commander with a grey beard and a red cloak talks and gestures with both hands; the young scout in a green hood listens and nods once; the candle flame flickers, then both hold still, eyes on each other. Static camera.",
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The broad commander with a grey beard and a red cloak talks and gestures with both hands; the young scout in a green hood listens and nods once; the candle flame flickers, then both hold still, eyes on each other. Static camera. We hear a quiet room tone, a candle crackling and low voices.",
       "stage2_ic": false,
-      "output": "route_test_2026-11/pilot/ltx/pilot.room_two_shot.ltx25.i2v.f185.s42.mp4"
+      "output": "route_test_2026-11/pilot/ltx/pilot.c1.room_two_shot.S1.ltx25.i2v.f185.s42.mp4"
     },
     {
-      "id": "pilot.battle_f000_colour.ltx25.i2v.f185.s42",
-      "question": "does LTX-2.5 distilled i2v hold one 7.7 s single-scene shot from a Blender-composed, Qwen-styled frame (a furnished room, many soldiers), and do places and props stay put across the room's angles once Qwen restyles each still?",
+      "id": "pilot.c2.room_two_shot.S2.ltx25.i2v.f185.s42",
+      "question": "which style sentence keeps our look? S2, the xworld captions' look words",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_two_shot",
+      "clip_id": "room_two_shot",
+      "style": "S2",
+      "audio_prompt": "We hear a quiet room tone, a candle crackling and low voices.",
+      "spoken_line": null,
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 185,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_two_shot.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents. The broad commander with a grey beard and a red cloak talks and gestures with both hands; the young scout in a green hood listens and nods once; the candle flame flickers, then both hold still, eyes on each other. Static camera. We hear a quiet room tone, a candle crackling and low voices.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/ltx/pilot.c2.room_two_shot.S2.ltx25.i2v.f185.s42.mp4"
+    },
+    {
+      "id": "pilot.c3.room_two_shot.S3.ltx25.i2v.f185.s42",
+      "question": "which style sentence keeps our look? S3, no style sentence",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_two_shot",
+      "clip_id": "room_two_shot",
+      "style": "S3",
+      "audio_prompt": "We hear a quiet room tone, a candle crackling and low voices.",
+      "spoken_line": null,
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 185,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_two_shot.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "The broad commander with a grey beard and a red cloak talks and gestures with both hands; the young scout in a green hood listens and nods once; the candle flame flickers, then both hold still, eyes on each other. Static camera. We hear a quiet room tone, a candle crackling and low voices.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/ltx/pilot.c3.room_two_shot.S3.ltx25.i2v.f185.s42.mp4"
+    },
+    {
+      "id": "pilot.c4.battle_f000_colour.S2.ltx25.i2v.f185.s42",
+      "question": "do the crowd's direction and the camera hold? (S2; audio A: battle roar)",
       "recipe": "ltx_i2v/1",
       "pipeline": "distilled",
       "shot_id": "battle_f000_colour",
       "clip_id": "battle_f000_colour",
+      "style": "S2",
+      "audio_prompt": "We hear a roaring battle cry and thundering feet.",
+      "spoken_line": null,
       "base": "ltx25",
       "variant": "i2v",
       "model": {
@@ -255,20 +335,202 @@
       "conditioning": [],
       "attention_mask": null,
       "chain_from": null,
-      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The near army charges forward across the plain, dust rises and the banners flap, then the two armies meet in a cloud of dust. Static camera.",
+      "prompt": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents. The near army charges forward across the plain, dust rises and the banners flap, then the two armies meet in a cloud of dust. Static camera. We hear a roaring battle cry and thundering feet.",
       "stage2_ic": false,
-      "output": "route_test_2026-11/pilot/ltx/pilot.battle_f000_colour.ltx25.i2v.f185.s42.mp4"
+      "output": "route_test_2026-11/pilot/ltx/pilot.c4.battle_f000_colour.S2.ltx25.i2v.f185.s42.mp4"
+    },
+    {
+      "id": "pilot.c6.room_establishing.S2.ltx25.i2v.f185.s42",
+      "question": "do the wide room's props stay put over 7.7 s?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_establishing",
+      "clip_id": "room_establishing",
+      "style": "S2",
+      "audio_prompt": "We hear a quiet room tone, a candle crackling and low voices.",
+      "spoken_line": null,
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 185,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_establishing.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents. The broad commander with a grey beard and a red cloak talks with small gestures, the young scout in a green hood listens; nothing else moves, then the room holds still. Static camera. We hear a quiet room tone, a candle crackling and low voices.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/ltx/pilot.c6.room_establishing.S2.ltx25.i2v.f185.s42.mp4"
+    },
+    {
+      "id": "pilot.c7.room_close_host.S2.ltx25.i2v.f185.s42",
+      "question": "can LTX's native voice and lips carry a dialogue close-up, or does dialogue stay ElevenLabs + J5?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_close_host",
+      "clip_id": "room_close_host",
+      "style": "S2",
+      "audio_prompt": "We hear his low voice and a candle crackling.",
+      "spoken_line": "We ride at first light.",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 185,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_close_host.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents. The broad commander with a grey beard and a red cloak speaks and turns his raised hand over; the young scout in a green hood stays still. The commander says, \"We ride at first light.\" Then his hand comes to rest on the table. Static camera. We hear his low voice and a candle crackling.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/ltx/pilot.c7.room_close_host.S2.ltx25.i2v.f185.s42.mp4"
+    },
+    {
+      "id": "pilot.c8.room_insert_clock.S2.ltx25.i2v.f185.s42",
+      "question": "does a small object move without drift?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_insert_clock",
+      "clip_id": "room_insert_clock",
+      "style": "S2",
+      "audio_prompt": "We hear a slow clock ticking.",
+      "spoken_line": null,
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 185,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_insert_clock.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents. The minute hand ticks forward once; the lantern light trembles, then the clock is still. Static camera. We hear a slow clock ticking.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/ltx/pilot.c8.room_insert_clock.S2.ltx25.i2v.f185.s42.mp4"
+    },
+    {
+      "id": "pilot.c5.battle_f000_colour.S1.ltx25.i2v.f185.s42",
+      "question": "do the crowd's direction and the camera hold? (S1; audio B: distant drums)",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "battle_f000_colour",
+      "clip_id": "battle_f000_colour",
+      "style": "S1",
+      "audio_prompt": "We hear distant war drums and the wind.",
+      "spoken_line": null,
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 185,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/battle_f000_colour.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The near army charges forward across the plain, dust rises and the banners flap, then the two armies meet in a cloud of dust. Static camera. We hear distant war drums and the wind.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/ltx/pilot.c5.battle_f000_colour.S1.ltx25.i2v.f185.s42.mp4"
     }
   ],
   "clips": {
-    "ltx_room": {
-      "job": "pilot.room_two_shot.ltx25.i2v.f185.s42",
+    "ltx_c1": {
+      "job": "pilot.c1.room_two_shot.S1.ltx25.i2v.f185.s42",
       "first_frame_of": "room_two_shot"
     },
-    "ltx_battle": {
-      "job": "pilot.battle_f000_colour.ltx25.i2v.f185.s42",
+    "ltx_c2": {
+      "job": "pilot.c2.room_two_shot.S2.ltx25.i2v.f185.s42",
+      "first_frame_of": "room_two_shot"
+    },
+    "ltx_c3": {
+      "job": "pilot.c3.room_two_shot.S3.ltx25.i2v.f185.s42",
+      "first_frame_of": "room_two_shot"
+    },
+    "ltx_c4": {
+      "job": "pilot.c4.battle_f000_colour.S2.ltx25.i2v.f185.s42",
+      "first_frame_of": "battle_f000_colour"
+    },
+    "ltx_c6": {
+      "job": "pilot.c6.room_establishing.S2.ltx25.i2v.f185.s42",
+      "first_frame_of": "room_establishing"
+    },
+    "ltx_c7": {
+      "job": "pilot.c7.room_close_host.S2.ltx25.i2v.f185.s42",
+      "first_frame_of": "room_close_host"
+    },
+    "ltx_c8": {
+      "job": "pilot.c8.room_insert_clock.S2.ltx25.i2v.f185.s42",
+      "first_frame_of": "room_insert_clock"
+    },
+    "ltx_c5": {
+      "job": "pilot.c5.battle_f000_colour.S1.ltx25.i2v.f185.s42",
       "first_frame_of": "battle_f000_colour"
     }
   },
-  "max_ltx_failures": 2
+  "max_ltx_failures": 2,
+  "audio": {
+    "in_mp4": true,
+    "wav_sidecar": true
+  },
+  "launch": {
+    "cmd": "python -m explainer_engine.cloud.runpod create --yes --vram 80 --only \"H100 NVL\" --cloud COMMUNITY --max-usd 6.5 --max-hours 2.5 --disk 200 --boot-minutes 25 --setup-min 8 --work-min 130 --script explainer_engine/training/pods/p15/p15.sh --script-url <HF url of p15.sh> --schedule explainer_engine/training/pods/p15/p15_schedule.json --heartbeat datasets/vano1919/tmr-artifacts:route_test_2026-11/pilot/beat.txt --ledger <run.json>",
+    "upload_first": "HF code/p15/ee_src.tar.gz = python -m explainer_engine.training.pods.p15.build bundle --ref <the audited commit>",
+    "disk_gb": 200,
+    "why_h100_only": "worst case on the A100 SECURE $1.79/h is $6.68 (3.7 h at speed 0.6), over the $6.5 cap; the H100 NVL $2.59/h worst is $6.37 in 2.46 h (expected $3.25)"
+  }
 }

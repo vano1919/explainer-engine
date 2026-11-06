@@ -4594,3 +4594,23 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   worst, 0 idle GPU minutes; limits max-usd 3.5, max-hours 2.5).
 - Tests: `tests/unit/test_p15_pilot_pod.py` (8). Nothing launched; cost $0. The pod waits for Fable's OR-34 audit and then launches
   through the worker thread.
+
+## 2026-11-06 — Pilot pod v4: eight clips with native audio, three prompt styles (branch `icw/19-pilot-pod`)
+
+The creator (16:42 UTC: a start-up costs so much that one pod should buy 30 s and more answers, with 2-3 prompt styles for the
+picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still no Blender on the pod; the 8 Qwen restyles stay.
+- `pilot_stills.ltx_prompt(sid, style, audio, line)`: S1 = today's film sentence, S2 = the xworld captions' look words ("bold uneven
+  black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents"), S3 = no style
+  sentence (motion and settle only); an audio sentence ("We hear ...") drives LTX-2.5's native audio; a spoken line is said in
+  quotes by a name the card lists (a name outside the card is refused).
+- `p15/build.py`: 8 clips of 185 frames, 1920x1088, seed 42, each with its own question: c1-c3 the two-shot in S1/S2/S3 (same room
+  audio), c4/c5 battle frame 0 in S2/S1 with audio A (battle roar) / B (distant drums), c6 the wide room (props stay put?), c7 the
+  commander's close-up saying "We ride at first light." (native voice and lips), c8 the clock insert (small motion without drift).
+  Run order c1-c4, c6, c7, c8, c5 (Fable's drop order last). `p15_schedule.json` is generated from the clips.
+- `p15_ltx.audio_sidecar`: the audio stays in the mp4, plus `<job>.wav` (PCM 16-bit) and `<job>.audio.json` (has_audio, streams,
+  wav sha256); F folds them into `speeds.json`.
+- Money (RP-11 rc 0, cap $6.5 under the $7.99 balance): per clip 5.8 min expected, 12 min max (2x). H100 NVL COMMUNITY $2.59/h:
+  $3.25 expected / $6.37 worst (2.46 h pod). A100 SECURE $1.79/h: $3.29 / $6.68 worst, over the cap, so the launch line names the
+  H100 only. At a 17.5 min clip max no drop fits (8 clips $8.27, 7 $7.51, 6 $6.76 worst on the H100); that is why the max is 12.
+  Disk 200 GB (Qwen 33.1 GB + LTX-2.5 86.5 GB + pip + outputs ~140 GB).
+- Tests: `tests/unit/test_p15_pilot_pod.py` (11). Nothing launched; cost $0.
