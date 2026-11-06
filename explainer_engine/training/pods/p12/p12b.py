@@ -123,10 +123,13 @@ def ltx_download_fits(free_bytes, cfg):
     return free_bytes >= (float(v["expected_gb"]) + float(v["margin_gb"])) * 2 ** 30
 
 
+UNFILLED = "PLACEHOLDER"   # dryrun: detector word (the word an unfilled pin carries), not a pin
+
+
 def av_takes_real(cfg):
-    """True when every AV take has a real sha256 and voice id (no PLACEHOLDER): only then are the 51 GB audio-driven files worth fetching."""
+    """True when every AV take has a real sha256 and voice id (no unfilled pin): only then are the 51 GB audio-driven files worth fetching."""
     takes = cfg["ltx"].get("av", {}).get("takes", {})
-    return bool(takes) and all("PLACEHOLDER" not in str(v.get(k, "PLACEHOLDER")) for v in takes.values() for k in ("sha256", "voice_id"))
+    return bool(takes) and all(UNFILLED not in str(v.get(k, UNFILLED)) for v in takes.values() for k in ("sha256", "voice_id"))
 
 
 def ltx_download_jobs(cfg):

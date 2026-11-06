@@ -31,13 +31,17 @@ def test_runpod_create_asks_for_it_before_any_money():
 
 def test_the_p12_pod_has_no_placeholder_left():
     """WP-1e: p12b.json was filled on 2026-11-01 (clay, keyframes, AV takes) and the three script sha lines of p12b.sh on 2026-11-06
-    (the D-116 rules PR): the dry run finds no unfilled pin in the script or the config; test_p12b_pod_script checks the lines are
-    the committed files' sha256. What it still reports is p12b.py's own detector word (``"PLACEHOLDER" not in ...``, line ~129), not
-    a pin: an open item for the step-3 pod plan, since ``runpod create`` refuses on any report."""
+    (the D-116 rules PR): the dry run finds no unfilled pin in the script or the job files. p12b.py's own detector word (its
+    ``UNFILLED`` line, marked ``# dryrun: detector``) is no pin and no longer reported (the step-2 report's open item, fixed
+    2026-11-06 on icw/14-route-test)."""
     script = (P12 / "p12b.sh").read_text(encoding="utf-8")
-    probs = D.placeholder_problems(script, P12)
-    assert not [p for p in probs if p.startswith(("script:", "p12b.json:", "p12c_ltx.py:"))], probs
-    assert probs == ["p12b.py: PLACEHOLDER (a pin that was never filled)"]
+    assert D.placeholder_problems(script, P12) == []
+
+
+def test_only_a_marked_detector_line_is_skipped(tmp_path):
+    (tmp_path / "job.py").write_text('UNFILLED = "PLACEHOLDER"   # dryrun: detector\nx = "PLACEHOLDER_SHA"\n', encoding="utf-8")
+    assert D.placeholder_problems("python3 job.py\n", tmp_path) == ["job.py: PLACEHOLDER_SHA (a pin that was never filled)"]
+    assert D.placeholder_problems('x = "PLACEHOLDER"  # dryrun: detector\n') == []
 
 
 # audit 2026-11-01 #15: the weight repos are in p12b.json, not in the script text; a gated repo needs a proof of access
