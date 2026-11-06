@@ -4501,3 +4501,23 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   timing preview marked `preview` (never a sample). ROUTE_PLAN 5d.
 - Checks: 6 focused tests (an end-to-end 1440p assembly); docs_lint 0; CI green. Open: exact-length J5/helper renders have no
   handles (BP-128 REVIEW); the step-3 plan renders them with 12 frames on each side.
+
+## 2026-11-06 — ICW-16 the lean step-3 pod package: one pod, stages A-G + the six extras (PR pending, nothing uploaded, no pod)
+- Why: the creator's word 13:21 UTC ("one lean pod", STEP3_POD_PLAN_LEAN_ka.md: every run answers a question, no upscale on the
+  pod, no every-combination), stage G 13:25 UTC (the J5 shots of the pilot window on the pod CPU beside LTX) and the six extras
+  13:33 UTC (caps $10 / ledger $12.5 / 3.5 h), relayed by the Fable thread. Built free on icw/16-lean-pod for the OR-34 audit.
+- `training/pods/p14`: `p14.sh` installs Blender 5.2.3 (the CI smoke's pin), Qwen (VideoX-Fun at the asset pod's commit), LTX-2
+  @e98f6d9 and fetches ONE sha256-pinned code bundle (`lean.py bundle`: byte-stable tar of explainer_engine/, config/, assets/
+  without p14.sh); `p14_pod.py` runs three lanes (net: weights prefetch; cpu: A layout passes -> X6 camera move -> G; gpu: B+C+X6
+  still -> D cut-outs -> E five LTX jobs + extras X1/X2/X5/X3/X6 -> X4 fix edit -> F speeds.json), each stage its own process, a
+  failed one recorded and skipped past (`step3/stages.json`). `p14_qwen.py` (B line-drawing edits with a line-match measure and the
+  LTX first frames; C 150-word pictures; X6 still; X4), `p14_cutout.py` (D: 12 PASS sheets, BiRefNet, edge width, halo),
+  `p14_j5.py` (G: scene_assets/1 from the backdrops + cut-outs, 9 shots at 2560x1440 with 12-frame handles, nice'd on Mesa EGL,
+  killed at the deadline reserve), `p14_stages.json` (every prompt, question and setting).
+- `edit/ltx_jobs.py`: `LEAN` (E1-E5 in the plan's order, seed 42, c2 chained on LTX-2.5), `--out-root step3`; `p14.json`
+  `upscale.enabled: false`. `p14_ltx.py`: the pod's own inputs before the vault, two failures in a row end the stage, a bad
+  derived control skips only its job (a crash found by the new test), the distilled i2v pipeline for X1/X3/X6, a verified-weights
+  stamp. `production/pilot.py` honours a J5 folder's `handles.json`.
+- Measured here (free): `assemble_25d` at 2560x1440, EEVEE 16 samples, 4 vCPU Xeon 2.1 GHz: 7.8-8.3 s per frame with cards, 3.7
+  s without (the smoke shots). Stale text: none found. Open: `config/spend_caps.json` per_pod_usd 6.9 is below the card's $10, so
+  `create --max-usd 10` is refused until the creator moves that ceiling; the H shot S02-01 needs no GPU and is not on the pod.

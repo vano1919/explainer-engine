@@ -1,9 +1,11 @@
-"""Guide step 3 (D-116): the route-test LTX pod (p14.sh + p14_ltx.py + p14.json + ltx_jobs.json) passes the free dry-run rules,
-builds every ic_lora command from the flags table, derives the controls, chains clip B from clip A, skips what is not pinned and
-upscales each clip with finish/upscale's chain. No network, no pod, no money."""
+"""Guide step 3 (D-116): the route-test LTX part of the lean pod (p14_ltx.py + p14.json + ltx_jobs.json, run by p14.sh through
+p14_pod.py) passes the free dry-run rules, builds every ic_lora command from the flags table, derives the controls, chains clip B
+from clip A, skips what is not pinned and upscales a clip with finish/upscale's chain only when p14.json turns it on (the lean plan
+turns it off). No network, no pod, no money. The lean pod's own stages: test_p14_lean.py."""
 import hashlib
 import importlib.util
 import json
+import re
 import subprocess
 from pathlib import Path
 from types import SimpleNamespace
@@ -31,20 +33,23 @@ def test_the_script_passes_the_dryrun_rules_and_declares_heartbeat_stall_and_nee
     assert subprocess.run(["bash", "-n", str(DIR / "p14.sh")]).returncode == 0
     assert R.is_wrapper_script(t) and R.lint_pod_script(t) == [] and D.static_problems(t, pins.load()) == []
     assert D.needs_problems(t) == [] and D.placeholder_problems(t, DIR) == []
-    assert R.heartbeat_of_script(t) == "datasets/vano1919/tmr-artifacts:runs/p14/beat.txt"
-    assert R.stall_minutes_of_script(t) == 25
-    assert "ee_needs_check" in t and 'python3 "$JOB/p14_ltx.py"' in t and "DRY" in t
+    assert R.heartbeat_of_script(t) == "datasets/vano1919/tmr-artifacts:route_test_2026-11/beat.txt"
+    assert R.stall_minutes_of_script(t) == 30
+    assert "ee_needs_check" in t and "explainer_engine.training.pods.p14.p14_pod" in t and "DRY" in t
     body = "\n".join(ln for ln in t.splitlines() if not ln.lstrip().startswith("#")).lower()
     assert "runpod create" not in body and "beat.txt" not in body      # the pod never starts a pod; the wrapper owns the beat
+    rec = D.run(t, offline=True, folder=DIR)   # the offline dry run: only the "repos not looked at" line is left (never a pass)
+    assert rec["problems"] == ["the Hugging Face repos were not checked (--offline): a dry run that did not look is not a pass"]
 
 
-def test_the_three_job_files_are_sha256_pinned_to_the_committed_files():
+def test_the_code_bundle_is_sha256_pinned_in_the_script():
     t = (DIR / "p14.sh").read_text(encoding="utf-8")
-    for f in ("p14_ltx.py", "p14.json", "ltx_jobs.json"):
-        assert hashlib.sha256((DIR / f).read_bytes()).hexdigest() in t, f
+    lines = [ln for ln in t.splitlines() if "ee_src.tar.gz\" > \"$JOB/sha.txt\"" in ln]
+    assert len(lines) == 1 and re.search(r"\b[0-9a-f]{64}\b", lines[0]) and "sha256sum -c" in t
 
 
-def test_the_upscale_on_the_pod_is_finish_upscale_s_route_test_chain():
+def test_the_upscale_filter_is_finish_upscale_s_route_test_chain_and_off_on_the_lean_pod():
+    assert CFG["upscale"]["enabled"] is False     # the lean plan: no upscale on the pod (free on the PC, only the picked clip)
     assert CFG["upscale"]["vf"] == U.video_filter(1920, 1088, **U.ROUTE_TEST)
     assert "crop=1920:1080" in CFG["upscale"]["vf"] and "cas=" in CFG["upscale"]["vf"] and "noise=" in CFG["upscale"]["vf"]
     assert JOBS["code"]["sha"] == CFG["code"]["sha"] and {j["width"] for j in JOBS["jobs"]} == {1920}
@@ -97,7 +102,8 @@ def test_a_whole_run_with_fakes_skips_the_unpinned_base_chains_b_from_a_and_reco
         return SimpleNamespace(returncode=0)
 
     import time
-    rows = m.run(CFG, JOBS, out, time.time() + 3600, m.Log(out), runner=runner, fetch=fetch,
+    on = {**CFG, "upscale": {**CFG["upscale"], "enabled": True}}   # the upscale path itself, turned on for this test only
+    rows = m.run(on, JOBS, out, time.time() + 3600, m.Log(out), runner=runner, fetch=fetch,
                  download=lambda cfg, base, log: [], sh=sh)
     status = {r["job"]: r["status"] for r in rows}
     gemma_pinned = all(j["text_encoder"]["sha256"] for j in JOBS["jobs"] if j["base"] == "ltx23")
