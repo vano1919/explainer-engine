@@ -91,12 +91,15 @@ def test_layout_shas_come_from_the_layout_manifest(tmp_path):
 
 def test_the_committed_pod_files_are_what_the_writer_makes_now():
     """The committed pod files are the lean pod's (training/pods/p14/lean.py build: the LEAN matrix under step3/, and p14.json =
-    ltx_jobs.pod_config() + the extras' file and the 2K scale filter)."""
+    ltx_jobs.pod_config() + the extras' file, the 2K scale filter and the lean pod's 10-minute clip cap of its RP-11 schedule)."""
     from explainer_engine.training.pods.p14 import lean
     pod = LJ.POD_DIR
     cfg = json.loads((pod / "p14.json").read_text(encoding="utf-8"))
     assert cfg == lean.pod_config()
-    assert {k: v for k, v in cfg.items() if k != "extra_jobs_file"} | {"controls": {"canny_vf": LJ.CANNY_VF}} == LJ.pod_config()
+    assert cfg["clip_timeout_s"] == 600
+    base = LJ.pod_config()
+    assert {k: v for k, v in cfg.items() if k != "extra_jobs_file"} | {"controls": {"canny_vf": LJ.CANNY_VF},
+                                                                      "clip_timeout_s": base["clip_timeout_s"]} == base
     committed = json.loads((pod / "ltx_jobs.json").read_text(encoding="utf-8"))
 
     def bare(doc):   # the layout hashes come from the layout manifests (--layouts) once the renders are on the vault

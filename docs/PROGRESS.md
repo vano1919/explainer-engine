@@ -4516,6 +4516,19 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   $7.08 worst, idle GPU 0 min.
 - Tests: `test_cloud_schedule.py` (13); the create tests carry `tests/fixtures/pod_schedule_ok.json`. Cost $0.
 
+## 2026-11-06 — ICW-16 fix 2: the step-3 pod passes RP-11 (its stage graph costed before the pod)
+- Why: the Fable thread's fix-1 audit (15:07 UTC): the code read fine but its graph failed RP-11 (PR #147, D-117): G 133 min on the
+  pod CPU with X3/X4 behind it, loose timeouts as maxes, E as one block behind every pass; no card fitted $6.9 / 3.5 h.
+- `p14_schedule.json` is now `pod_schedule/1` (`lean.py schedule`): 21 stages, E split per input (E.duel, X6.ltx, E.battle,
+  E.battle_line, X3) and B per scene, Blender stages on cpu and gpu, cards H100 NVL $2.59 and A100 80GB $1.39 (x0.6), caps $8 /
+  3.5 h / 15 % idle. `python -m explainer_engine.cloud.schedule check` passes: H100 NVL $3.84 expected, $7.90 worst (3.05 h),
+  idle GPU 1 min; the pod's own order too (9 % idle in its worst case).
+- `p14_pod.py`: the GPU lane is a ready-queue over `gpu_order` with the schedule's needs (what the RP-11 simulation assumes); every
+  timeout is the stage's max in the schedule on its device (LTX 10 min a clip, `p14.json clip_timeout_s` 600); G runs on the pod
+  only when Blender is on the card and the preflight frame (its own seconds, from `progress.jsonl`) took at most 1.5 s, cut at
+  20 min; else G, X3 and X4 render free on CI or the PC (D-114). `p14_ltx.py` runs one E stage's jobs (`P14_JOBS`) into tagged
+  speeds files; `p14_qwen.py --scene`. The battle crowd is untouched (the creator gets a card on the line pass).
+
 ## 2026-11-06 — ICW-16 fix after pod 1 (ygg2ztmflr8pv2): the card no longer waits for Blender; Blender on the card; BiRefNet dtype
 - Why: pod 1 (H100, 14:25-14:48 UTC, ~$1.0, stopped) sat idle: the GPU lane waited for the battle's line frame 0, which the kernel
   killed (-9, memory) after ~13 min, and every cut-out failed on a float16 checkpoint fed a float32 input (D, 12 of 12). Fable
