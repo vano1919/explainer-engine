@@ -385,6 +385,9 @@ def raw_graph(name: str, scale=None) -> dict:
     return {"nodes": nodes, "links": links}
 
 
+FLOOR_TONE = {"model.mvk_floor_uneven_brick": (0.62, 0.56, 0.48)}   # tone-only multiplier of the tile's mean colour
+
+
 def ground_textures() -> dict[str, Path]:
     """The Poly Haven ground maps (texture.ph_*, registered in style_sheet_assets.json): cache, vault, else the source URL."""
     from explainer_engine.blender import style_sheets as SS
@@ -584,12 +587,14 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         tx = b.get("textures") or {}
         if tx and ground_textures is not None:   # one material, the classes blended per pixel by the vertex weights (Fable 2026-11-05)
             img = {c: ground_textures[t] for c, t in tx.items()}
-            layers = [{"attr": "w_" + c, "image": str(img[c])} for c in ("meadow", "forest") if c in img]
+            tint = b.get("tints") or {}
+            layers = [{"attr": "w_" + c, "image": str(img[c]), **({"tint": tint[c]} if c in tint else {})} for c in ("meadow", "forest") if c in img]
             layers.append({"attr": "w_snow", "colour": [0.80, 0.84, 0.90]})   # a cool, not paper-white, snow; steep faces stay rock below
-            layers += [{"attr": "w_" + c, "image": str(img[c])} for c in ("rock", "road") if c in img]
+            layers += [{"attr": "w_" + c, "image": str(img[c]), **({"tint": tint[c]} if c in tint else {})} for c in ("rock", "road") if c in img]
             mats[mname] = {"base": b["colours"]["grass"], "texture": str(img["grass"]), "texture_mean": _mean(img["grass"]),
                            "tile": 1.0, "strength": 0.85, "blend": {"noise": b.get("blend", 0.045), "layers": layers,
-                                                     **({"fog": b["fog"]} if b.get("fog") else {})}}
+                                                     **({"fog": b["fog"]} if b.get("fog") else {}),
+                                                     **({"base_tint": tint["grass"]} if "grass" in tint else {})}}
         else:
             mats[mname] = {"base": b["colours"]["grass"]}
         for ci in range(len(TR.CLASSES)):
@@ -615,6 +620,8 @@ def expand(layout_id: str, paths: dict[str, Path], *, t: dict | None = None, doc
         if a["id"] not in made:
             made[a["id"]] = kit_material(paths[a["id"]], a, strength=a.get("texture_strength"), repo=repo)
         mname, spec = made[a["id"]]
+        if a["id"] in FLOOR_TONE:   # the plaza tiles: a mid grey-brown, not cream
+            spec = {**spec, "base": [round(c * f, 6) for c, f in zip(spec["base"][:3], FLOOR_TONE[a["id"]])] + [1.0]}
         mats[mname] = spec
         objs.append({"name": p["name"], "gltf": {"path": str(paths[a["id"]]), "asset": a["id"], **({"nodes": p["nodes"]} if p.get("nodes") else {})}, "location": p["pos"],
                      "rotation_deg": [0, 0, p["yaw"]], "scale": p["scale"], "material": None if pbr else mname, "smooth": False})

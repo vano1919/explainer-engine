@@ -302,7 +302,34 @@
       "rock": "texture.ph_rocky_terrain_diff"
      },
      "uv_m": 8,
-     "blend": 0.045
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
     },
     {
      "type": "terrain",
@@ -2510,7 +2537,34 @@
       "rock": "texture.ph_rocky_terrain_diff"
      },
      "uv_m": 8,
-     "blend": 0.045
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
     },
     {
      "type": "terrain",
@@ -3377,7 +3431,7 @@
       1.1,
       0.07
      ],
-     "colour": "#B5403A"
+     "colour": "#8F5A4B"
     },
     {
      "type": "shape",
@@ -3521,7 +3575,7 @@
       1.1,
       0.07
      ],
-     "colour": "#3F6FA0"
+     "colour": "#D5C9AE"
     },
     {
      "type": "shape",
@@ -3665,7 +3719,7 @@
       1.1,
       0.07
      ],
-     "colour": "#C9A23A"
+     "colour": "#A9803F"
     },
     {
      "type": "shape",
@@ -3809,7 +3863,7 @@
       1.1,
       0.07
      ],
-     "colour": "#7A8F4A"
+     "colour": "#8E8A5A"
     },
     {
      "type": "shape",
@@ -4913,7 +4967,34 @@
       "rock": "texture.ph_rocky_terrain_diff"
      },
      "uv_m": 8,
-     "blend": 0.045
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.62,
+       0.55,
+       0.46
+      ],
+      "meadow": [
+       0.62,
+       0.55,
+       0.46
+      ],
+      "forest": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "road": [
+       0.72,
+       0.66,
+       0.58
+      ],
+      "rock": [
+       0.8,
+       0.78,
+       0.74
+      ]
+     }
     },
     {
      "type": "terrain",
@@ -5153,7 +5234,7 @@
       1.1,
       0.07
      ],
-     "colour": "#8E4A3A"
+     "colour": "#90594A"
     },
     {
      "type": "shape",
@@ -6581,7 +6662,34 @@
       "rock": "texture.ph_rocky_terrain_diff"
      },
      "uv_m": 8,
-     "blend": 0.045
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
     },
     {
      "type": "terrain",

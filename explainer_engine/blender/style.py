@@ -583,6 +583,11 @@ def _blend_textures(doc: dict, blend: dict) -> None:
              {"id": "wjit", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: float(blend.get("jitter", 0.6))}}]
     links = [["wcoord", "Object", "wnoise", "Vector"], ["wnoise", "Fac", "wcen", 0], ["wcen", "Value", "wjit", 0]]
     prev, prev_sock = "tex", "Color"
+    if blend.get("base_tint"):   # tone only: the base texture multiplied by a tint (olive grass, grey-brown sand)
+        nodes.append({"id": "base_tint", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                      "inputs": {"Factor": 1.0, 7: [*[float(x) for x in blend["base_tint"]][:3], 1.0]}})
+        links.append(["tex", "Color", "base_tint", 6])
+        prev, prev_sock = "base_tint", 2
     for k, ly in enumerate(blend["layers"]):
         i = f"L{k}"
         nodes += [{"id": f"{i}_attr", "type": "ShaderNodeAttribute", "props": {"attribute_name": ly["attr"]}},
@@ -593,7 +598,13 @@ def _blend_textures(doc: dict, blend: dict) -> None:
                   [f"{i}_ramp", "Color", f"{i}_mix", "Factor"], [prev, prev_sock, f"{i}_mix", 6]]
         if ly.get("image"):
             nodes.append({"id": f"{i}_img", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": ly["image"]})
-            links += [["tiling", "Vector", f"{i}_img", "Vector"], [f"{i}_img", "Color", f"{i}_mix", 7]]
+            links += [["tiling", "Vector", f"{i}_img", "Vector"]]
+            if ly.get("tint"):
+                nodes.append({"id": f"{i}_tint", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                              "inputs": {"Factor": 1.0, 7: [*[float(x) for x in ly["tint"]][:3], 1.0]}})
+                links += [[f"{i}_img", "Color", f"{i}_tint", 6], [f"{i}_tint", 2, f"{i}_mix", 7]]
+            else:
+                links.append([f"{i}_img", "Color", f"{i}_mix", 7])
         else:
             nodes[-1]["inputs"] = {7: [*[float(x) for x in ly["colour"]][:3], 1.0]}
         prev, prev_sock = f"{i}_mix", 2
