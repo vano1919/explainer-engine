@@ -232,3 +232,21 @@ Two layouts are comparable by one constant (2026-11-06 19:46 UTC): `LAYOUTS` hol
 304 px on 1280x720), `LAYOUT` picks the default, every function takes `layout=`, and `cut_cells` finds the layout from the image size, so the cutter does not
 depend on which one the pod drew. The first mouth pod draws one H1 sheet in each at the same seed; the winner is chosen by the per-cell identity score and the
 registration error, then H2 is drawn in the winner.
+
+## 7g. Cutting a multi-angle dialogue (creator, 19:52-19:57 UTC)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+Finding: step 4e cut S2 -> S4, the same commander from the same side, only closer: a jump, not a change of angle. The repository already has the rule
+(BP-30: the shot size changes by a full step, never the same framing twice; a direction change over 90 degrees needs a neutral picture between; BP-103: two cuts of nearly the same
+size and angle read as a jump, the 30-degree rule; ED-14 / BP-117: J and L cuts), but `dialogue-scenes` and the J5 shot table did not apply it to a hero's angle. The Blender and LTX rule
+files hold no dialogue-coverage rule. Practice found on the web (a vendor glossary and one practitioner article, so a rule of thumb, not a study): shot / reverse shot with matching
+eyelines, the camera stays on one side of the axis (180-degree rule), at least 30 degrees or a full size step when the same subject is cut to again, cut on action, and for generated video
+"log each character's eyeline direction per shot" (HackerNoon, screen-direction workflow); a January 2026 paper (arXiv 2601.17737) plans shots from dialogue and carries identity with first and last frames.
+
+The standard for J5 dialogue, as code in `explainer_engine/blender/j5_cuts.py` (`lint`, tested):
+1. A cut changes the SUBJECT (the other hero, motivated by the speaker change or a reaction) or the ANGLE of the same hero by 30 degrees or more (another sheet: front, 3/4 left, 3/4 right, back) and also a full size step.
+2. A size change on the same hero and the same sheet is a camera move INSIDE one shot (a slow push-in), never a cut.
+3. The two heroes keep their sides of the frame in every shot (180-degree rule); eyelines point at each other.
+4. Sound leads or trails the picture at the cut (J and L cuts); the line starts after the cut, not on it.
+Available angles today: the commander has front, back, 3/4 left and 3/4 right sheets; the scout has front, back and 3/4 right (no 3/4 left). Step 4f cuts S1 (two-shot, scout speaking) -> S2 (commander, one 6 s shot with a push-in) -> S3 (scout's answer from the reverse side) and passes the lint.

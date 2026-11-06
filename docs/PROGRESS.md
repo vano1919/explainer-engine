@@ -4560,3 +4560,6 @@ Straight cuts (no dip), young scout voice, per-line RMS levelling, smoother face
 
 ## 2026-11-06 J5 dialogue: variant sheets (D-119), chin fix, background gain
 New `j5_variant_sheet.py` (layout constant, cut, align, per-cell checks, variant sheets, blend) with tests on a synthetic sheet; D-119 in the decision log. Step 4d chin movement scaled (commander 0.12, scout 0.4); step 4e plate gain per close shot (1.28-1.30) and a smaller foreground shift. Real sheets are not drawn yet: real registration and identity numbers are unmeasured.
+
+## 2026-11-06 J5 dialogue step 4f: cuts with a reason
+S2 and S4 merged into one 6 s commander shot with a push-in (the same man only closer was a jump); `j5_cuts.py` lints cuts (subject or 30-degree angle change plus size step, 180-degree rule); docs 7g records the rules and sources.

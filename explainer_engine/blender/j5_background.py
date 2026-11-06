@@ -54,11 +54,14 @@ IDLE = {"sway": 0.0050, "head_dx": 0.0030, "nod": 0.0022, "breath": 0.0020, "clo
 # a listener's brows stay a little raised
 EXPR = {"speak_brow": -0.35, "speak_lift": 0.55, "listen_brow": 0.40, "squint": 0.14, "bob": 0.0028}   # bob: the head dips with every open sound (share of card height)
 HEAD_M = 0.24                                 # a head is about 0.24 m tall; the head share of a card is HEAD_M / the card's height in metres
-SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 3.0, "S4_close_up_h1": 3.0, "S3_ots_h1_to_h2": 3.0}   # the cut order of the dialogue
+# The cut order of the dialogue. A cut changes the ANGLE or the PERSON, never only the size of the same man (creator, 19:52 UTC: S2 -> S4 was the
+# same man from the same side, only closer: a jump). So the commander gets ONE shot while he speaks and the camera pushes in on him inside it
+# (S2, 6 s); the cut to S3 is the scout's answer from the reverse side, a change of person and angle. S4 stays defined for other cuts.
+SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 6.0, "S3_ots_h1_to_h2": 3.0}
 # camera per shot: plate zoom, card zoom (start, end), the foreground card's shift in px at 2560 (end - start, x and y) and the pivot
 CAMERA = {
     "S1_two_shot": {"zoom_plate": (1.0, 1.04), "zoom_card": (1.0, 1.09), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
-    "S2_ots_h2_to_h1": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (-50, 0), "pivot": (0.5, 1.0)},
+    "S2_ots_h2_to_h1": {"zoom_plate": (1.0, 1.10), "zoom_card": (1.0, 1.30), "shift_fg": (-140, 0), "pivot": (0.46, 0.42)},   # the slow push-in on the speaking commander
     "S4_close_up_h1": {"zoom_plate": (1.0, 1.05), "zoom_card": (1.0, 1.10), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
     "S3_ots_h1_to_h2": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (50, 0), "pivot": (0.5, 1.0)},
 }
