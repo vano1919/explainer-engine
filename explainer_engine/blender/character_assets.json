@@ -1,0 +1,227 @@
+{
+ "_doc": "ICW-06 (roadmap 21.6 PoC 1): the character assets, each a self-contained GLB packed by characters.pack_glb from one member of a free CC0 itch.io pack (packs below: page, file, sha256). The GLBs are registered external in assets/library.json (vault assets/3d/<kind>/<id>/); characters.fetch rebuilds one from its pack when the vault is out of reach. Nothing here is committed as a binary.",
+ "downloaded_on": "2026-11-05",
+ "animation_set": "ual1",
+ "packs": {
+  "ubc": {
+   "source": "quaternius_ubc",
+   "page": "https://quaternius.itch.io/universal-base-characters",
+   "match": "Standard",
+   "file": "Universal Base Characters[Standard].zip",
+   "sha256": "fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40",
+   "bytes": 128968391,
+   "version": "Standard (free) zip, files dated 2025-12-16, downloaded 2026-11-05"
+  },
+  "ual": {
+   "source": "quaternius_ual",
+   "page": "https://quaternius.itch.io/universal-animation-library",
+   "match": "Standard",
+   "file": "Universal Animation Library[Standard].zip",
+   "sha256": "cc73fc4e495b82958207316596317a3f40b9fa38065bde1027937452da537724",
+   "bytes": 15904933,
+   "version": "Standard (free) zip, UAL1, downloaded 2026-11-05"
+  },
+  "mco": {
+   "source": "quaternius_mco",
+   "page": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+   "match": "Standard",
+   "file": "Modular Character Outfits - Fantasy[Standard].zip",
+   "sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+   "bytes": 294347394,
+   "version": "Standard (free) zip, downloaded 2026-11-05"
+  }
+ },
+ "assets": [
+  {
+   "id": "model.ubc_superhero_male",
+   "kind": "model",
+   "pack": "ubc",
+   "member": "Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.gltf",
+   "name": "ubc_superhero_male.glb",
+   "sha256": "01bdad57f58d69b4764672a933aad627c8edaad6775c414bb28a22cf23fb60b6",
+   "tags": [
+    "quaternius",
+    "ubc",
+    "character",
+    "body",
+    "head",
+    "male"
+   ],
+   "description": "Quaternius UBC male base body (head, eyes, eyebrows) on the 65-bone UBC skeleton; the head of a character, the body under a costume is cut away",
+   "bytes": 11138112
+  },
+  {
+   "id": "model.ubc_superhero_female",
+   "kind": "model",
+   "pack": "ubc",
+   "member": "Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.gltf",
+   "name": "ubc_superhero_female.glb",
+   "sha256": "38672e4da740e4aabb647a077d3e585a41e855f2d2af9c3e761ac647ec534f0e",
+   "tags": [
+    "quaternius",
+    "ubc",
+    "character",
+    "body",
+    "head",
+    "female"
+   ],
+   "description": "Quaternius UBC female base body (head, eyes, eyebrows) on the UBC skeleton",
+   "bytes": 16026248
+  },
+  {
+   "id": "model.ubc_hair_simpleparted",
+   "kind": "model",
+   "pack": "ubc",
+   "member": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_SimpleParted.gltf",
+   "name": "ubc_hair_simpleparted.glb",
+   "sha256": "c454e1044fca834634dd043b7f71aba79d85196bdbaa948744be60e30bcf834a",
+   "tags": [
+    "quaternius",
+    "ubc",
+    "hair",
+    "simpleparted"
+   ],
+   "description": "Quaternius UBC short parted hair, rigged to the Head bone of the UBC skeleton",
+   "bytes": 5964464
+  },
+  {
+   "id": "model.ubc_hair_buns",
+   "kind": "model",
+   "pack": "ubc",
+   "member": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Buns.gltf",
+   "name": "ubc_hair_buns.glb",
+   "sha256": "483f247b62ad73011c39be864eebcd9a51309d0f36575d02c7e800231985806d",
+   "tags": [
+    "quaternius",
+    "ubc",
+    "hair",
+    "buns"
+   ],
+   "description": "Quaternius UBC hair in buns, rigged to the Head bone of the UBC skeleton",
+   "bytes": 6662612
+  },
+  {
+   "id": "model.ubc_hair_long",
+   "kind": "model",
+   "pack": "ubc",
+   "member": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Long.gltf",
+   "name": "ubc_hair_long.glb",
+   "sha256": "e6d27f55ee7299b931ed95122d3d032020781c0a883664c913ea52a480ff3374",
+   "tags": [
+    "quaternius",
+    "ubc",
+    "hair",
+    "long"
+   ],
+   "description": "Quaternius UBC long hair, rigged to the Head bone of the UBC skeleton",
+   "bytes": 6638456
+  },
+  {
+   "id": "model.ubc_hair_beard",
+   "kind": "model",
+   "pack": "ubc",
+   "member": "Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone/glTF (Godot -Unreal)/Hair_Beard.gltf",
+   "name": "ubc_hair_beard.glb",
+   "sha256": "eb4b2ab3dec157aa8e5de77eb5827bc320f8b8393394966e8a2805d7efc479e5",
+   "tags": [
+    "quaternius",
+    "ubc",
+    "hair",
+    "beard"
+   ],
+   "description": "Quaternius UBC full beard, rigged to the Head bone of the UBC skeleton",
+   "bytes": 5954488
+  },
+  {
+   "id": "costume.mco_male_peasant",
+   "kind": "costume",
+   "pack": "mco",
+   "member": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Peasant.gltf",
+   "name": "mco_male_peasant.glb",
+   "sha256": "b0e792a24ee9f3a966996ea44dfee18a674e88f85a4e860034900df9e7167949",
+   "tags": [
+    "quaternius",
+    "mco",
+    "costume",
+    "male",
+    "peasant"
+   ],
+   "description": "Quaternius Modular Character Outfits (Fantasy) male peasant outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+   "parent": "model.ubc_superhero_male",
+   "bytes": 38308988
+  },
+  {
+   "id": "costume.mco_male_ranger",
+   "kind": "costume",
+   "pack": "mco",
+   "member": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.gltf",
+   "name": "mco_male_ranger.glb",
+   "sha256": "4004ea07152fb74d7d0e07f3a4c88c9b82f4ae9dc4d4572f4eb0cc0c06df89f2",
+   "tags": [
+    "quaternius",
+    "mco",
+    "costume",
+    "male",
+    "ranger"
+   ],
+   "description": "Quaternius Modular Character Outfits (Fantasy) male ranger outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+   "parent": "model.ubc_superhero_male",
+   "bytes": 40454300
+  },
+  {
+   "id": "costume.mco_female_peasant",
+   "kind": "costume",
+   "pack": "mco",
+   "member": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Peasant.gltf",
+   "name": "mco_female_peasant.glb",
+   "sha256": "82e8c8ae38062b91eb9dc31cf176c9d402557a40b26397d4c292b5a84380f504",
+   "tags": [
+    "quaternius",
+    "mco",
+    "costume",
+    "female",
+    "peasant"
+   ],
+   "description": "Quaternius Modular Character Outfits (Fantasy) female peasant outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+   "parent": "model.ubc_superhero_female",
+   "bytes": 29749992
+  },
+  {
+   "id": "costume.mco_female_ranger",
+   "kind": "costume",
+   "pack": "mco",
+   "member": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.gltf",
+   "name": "mco_female_ranger.glb",
+   "sha256": "b0196c91e0145ad363ff310be06c226ad3fb449ae1b2c963f7da6e06576b8669",
+   "tags": [
+    "quaternius",
+    "mco",
+    "costume",
+    "female",
+    "ranger"
+   ],
+   "description": "Quaternius Modular Character Outfits (Fantasy) female ranger outfit on the UBC skeleton (arms, body, legs, feet; skin parts included)",
+   "parent": "model.ubc_superhero_female",
+   "bytes": 40665808
+  },
+  {
+   "id": "animation.ual1_standard",
+   "kind": "animation",
+   "pack": "ual",
+   "member": "Universal Animation Library[Standard]/Unreal-Godot/UAL1_Standard.glb",
+   "name": "ual1_standard.glb",
+   "sha256": "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
+   "tags": [
+    "quaternius",
+    "ual",
+    "animation",
+    "locomotion",
+    "idle",
+    "talk",
+    "combat"
+   ],
+   "description": "Quaternius Universal Animation Library 1, 43 in-place clips (root motion off) on the UBC skeleton",
+   "bytes": 7618436
+  }
+ ]
+}

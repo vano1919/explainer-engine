@@ -11,20 +11,23 @@ the host side commits frames from those lines while Blender keeps rendering (roa
 
 Scene kinds: ``smoke`` (a few primitives under a moving camera, built here: the CI smoke of roadmap 12.4 step 1), ``blend``
 (a .blend file written by the scene builder, ICW-06, opened as it is) and ``described`` (primitives and objects appended from
-library .blend files, placed as the job lists them: the ICW-05 style sheets). Any kind may carry ``style``, a ``style_graph/1``
+library .blend files, placed as the job lists them: the ICW-05 style sheets; since ICW-06 also ``character`` objects: rigged cast
+members assembled from library GLBs, see ``build_character``). Any kind may carry ``style``, a ``style_graph/1``
 document of ``blender/style.py``: its node trees, Line Art, paper pass and colour management are built here exactly as written
 (the graph is data; this file only interprets it). stdlib + bpy (+ Blender's own mathutils) only.
 """
 import json
 import math
 import os
+import re
 import sys
 import time
 
 import bpy  # noqa: E402  (Blender's own module; this file never runs outside Blender)
 from mathutils import Vector  # noqa: E402  (ships with Blender)
 
-ENGINE_IDS = {"eevee": ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE"), "cycles": ("CYCLES",), "workbench": ("BLENDER_WORKBENCH",)}
+# 5.0 renamed EEVEE Next back to BLENDER_EEVEE (5.0 EEVEE release notes); the _NEXT id is the pre-5.0 fallback
+ENGINE_IDS = {"eevee": ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"), "cycles": ("CYCLES",), "workbench": ("BLENDER_WORKBENCH",)}
 
 
 def job_path():
@@ -166,6 +169,376 @@ def _key(ob, paths, frame, interp):
         ob.keyframe_insert(p, frame=frame)
 
 
+# --- characters (ICW-06; the data comes from blender/characters.py, the mouth shapes from characters.json) ------------------------
+
+SUFFIX = re.compile(r"\.\d{3}$")  # Blender renames a second "MI_Hair_1" to "MI_Hair_1.001"
+_ANIM = {}       # GLB path -> {action name: action}: the animation library is imported once per scene
+_TEMPLATES = {}  # (character, costume, materials, parts) -> built rig, copied for crowds (meshes shared)
+
+
+def _import_glb(path):
+    """The objects one glTF import adds (the importer's own defaults: blender/assets.py IMPORT_SETTINGS records them)."""
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=path)
+    return [o for o in bpy.data.objects if o not in before]
+
+
+def _remove(objs):
+    for ob in objs:
+        bpy.data.objects.remove(ob, do_unlink=True)
+
+
+def _cut_to_bones(ob, bones, min_weight=0.5):
+    """Delete the vertices of ``ob`` that ``bones`` do not carry (summed weight below ``min_weight``): the base body under a
+    costume goes, the head and neck stay (no skin pokes through the cloth)."""
+    import bmesh
+    idx = {g.index for g in ob.vertex_groups if g.name in bones}
+    if not idx:
+        raise RuntimeError(f"{ob.name}: none of the bones {bones} weights this mesh")
+    drop = [v.index for v in ob.data.vertices if sum(g.weight for g in v.groups if g.group in idx) < min_weight]
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.verts.ensure_lookup_table()
+    bmesh.ops.delete(bm, geom=[bm.verts[i] for i in drop], context="VERTS")
+    bm.to_mesh(ob.data)
+    bm.free()
+    return len(drop)
+
+
+def _smooth(x):
+    x = min(max(x, 0.0), 1.0)
+    return x * x * (3 - 2 * x)
+
+
+def _mouth_keys(ob, mouth):
+    """The eight Rhubarb mouth shapes (A-H) and the rest (X) as shape keys on the head mesh: each shape is an opening of the
+    jaw region below the lip line, a widening or a rounding of the lips, weighted by a smooth falloff around the mouth
+    centre (object space of the rest pose). The shape table is data (characters.json, ``mouth.shapes``)."""
+    mw = ob.matrix_world.copy()
+    back = mw.inverted().to_3x3()
+    c = Vector(mouth["center"])
+    r, jaw_r = mouth["radius_m"], mouth["jaw_radius_m"]
+    drop, lift = mouth["open_drop_m"], mouth["open_lift_m"]
+    if ob.data.shape_keys is None:
+        ob.shape_key_add(name="Basis", from_mix=False)
+    basis = [v.co.copy() for v in ob.data.vertices]
+    world = [mw @ co for co in basis]
+    made = []
+    for name, sh in sorted(mouth["shapes"].items()):
+        kb = ob.shape_key_add(name=mouth["keys"][name], from_mix=False)
+        for i, co in enumerate(basis):
+            d = world[i] - c
+            if d.y > mouth["front_y_m"]:   # the back of the head never moves (the face looks along -Y)
+                continue
+            w = 1.0 - _smooth(math.hypot(d.x, d.z) / r)
+            wj = 1.0 - _smooth(math.hypot(d.x * 0.8, d.z) / jaw_r)
+            if w <= 0 and wj <= 0:
+                continue
+            below = d.z < 0
+            dz = -sh["open"] * drop * max(wj, 0.0) if below else sh["open"] * lift * max(w, 0.0)
+            dx = d.x * (sh["wide"] - sh["round"]) * mouth["wide_gain"] * max(w, 0.0)
+            dy = -sh["round"] * mouth["round_push_m"] * max(w, 0.0)
+            kb.data[i].co = co + back @ Vector((dx, dy, dz))
+        kb.value = 0.0
+        made.append(kb.name)
+    return made
+
+
+def _mouth_opening(arm, mouth, mat_name, pending):
+    """The open mouth as a drawn shape (the UBC head's lips are one closed surface, so the jaw shape keys stretch the face but
+    cannot part the lips): a thin dark lens on the lip line, riding the Head bone, with one shape key per mouth shape (width
+    from ``wide``/``round``, height from ``open``, sunk to the middle of the jaw drop). Closed shapes (A, X) shrink it to a
+    sliver hidden under the line art. Line Art draws its outline, like an inked mouth."""
+    import bmesh
+    c = Vector(mouth["center"]) + Vector(mouth["opening_offset_m"])
+    w0, t = mouth["opening_half_width_m"], mouth["opening_depth_m"]
+    me = bpy.data.meshes.new(f"{arm.name}_mouth")
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=10, radius=1.0)
+    bm.to_mesh(me)
+    bm.free()
+    unit = [v.co.copy() for v in me.vertices]
+    closed = mouth["opening_closed_m"]
+
+    def shape(sh):
+        hw = w0 * (1.0 + (sh["wide"] - sh["round"]) * mouth["wide_gain"] * 1.6)
+        hh = max(sh["open"] * mouth["open_drop_m"] * mouth["opening_height_share"], closed)
+        dz = -sh["open"] * mouth["open_drop_m"] * 0.45
+        return [Vector((u.x * hw, u.y * t, u.z * hh + dz * (1 - abs(u.x) * 0.15))) for u in unit]
+    rest = shape(mouth["shapes"][mouth.get("rest", "X")])
+    for v, co in zip(me.vertices, rest):
+        v.co = co
+    ob = bpy.data.objects.new(f"{arm.name}_mouth", me)
+    bpy.context.scene.collection.objects.link(ob)
+    ob.shape_key_add(name="Basis", from_mix=False)
+    for name, sh in sorted(mouth["shapes"].items()):
+        kb = ob.shape_key_add(name=mouth["keys"][name], from_mix=False)
+        for i, co in enumerate(shape(sh)):
+            kb.data[i].co = co - rest[i] + me.vertices[i].co
+        kb.value = 0.0
+    bone = arm.data.bones[mouth["bone"]]
+    ob.parent = arm
+    ob.parent_type = "BONE"
+    ob.parent_bone = mouth["bone"]
+    from mathutils import Matrix  # Blender's own; imported here so the fake-bpy tests load this file
+    ob.matrix_world = arm.matrix_world @ Matrix.Translation(c)
+    pending.append(([ob], mat_name, True))
+    return ob
+
+
+def _actions(path):
+    if path not in _ANIM:
+        new = _import_glb(path)
+        acts = {}
+        for a in bpy.data.actions:
+            if a.name not in acts:
+                a.use_fake_user = True
+                acts[SUFFIX.sub("", a.name)] = a
+        _remove(new)
+        _ANIM[path] = acts
+    return _ANIM[path]
+
+
+def _play(arm, anim, frames_total, report):
+    """The clip on the rig as one NLA strip repeated over the shot; ``offset`` shifts the cycle (a crowd never steps in sync)."""
+    acts = _actions(anim["path"])
+    act = acts.get(anim["action"])
+    if act is None:
+        raise RuntimeError(f"no action {anim['action']!r} in {os.path.basename(anim['path'])} (have {sorted(acts)[:12]}...)")
+    ad = arm.animation_data_create()
+    ad.action = None
+    track = ad.nla_tracks.new()
+    start = bpy.context.scene.frame_start - int(anim.get("offset", 0))
+    strip = track.strips.new(anim["action"], start, act)
+    if hasattr(strip, "action_slot") and act.slots:
+        strip.action_slot = act.slots[0]
+    length = max(act.frame_range[1] - act.frame_range[0], 1.0)
+    speed = float(anim.get("speed", 1.0))   # < 1 slows the clip; a turnaround holds a pose with a tiny speed
+    strip.scale = 1.0 / speed
+    strip.repeat = max(1.0, math.ceil((frames_total + int(anim.get("offset", 0)) + 1) * speed / length))
+    report.setdefault("actions", {})[arm.name] = {"action": anim["action"], "frames": round(length, 3), "offset": int(anim.get("offset", 0))}
+
+
+def _lipsync(head, lip, report):
+    """Rhubarb tracks (rigs.LipSync.plan: shape-key name -> [[frame, value], ...]) keyed on the head's shape keys."""
+    meshes = [head] + ([bpy.data.objects[head["mouth_opening"]]] if head.get("mouth_opening") else [])
+    n = 0
+    for me in meshes:
+        keys = me.data.shape_keys.key_blocks
+        for name, pts in lip["tracks"].items():
+            if name not in keys:
+                raise RuntimeError(f"lip sync names the shape key {name!r}; {me.name} has {[k.name for k in keys]}")
+            kb = keys[name]
+            for f, v in pts:
+                kb.value = v
+                kb.keyframe_insert("value", frame=bpy.context.scene.frame_start + int(f))
+                n += 1
+    report.setdefault("lipsync", {})[head.name] = {"keys": n, "shapes": sorted(lip["tracks"])}
+
+
+def _assemble(o, pending, report):
+    """Import the parts, merge them onto the first part's armature (one 65-bone UBC skeleton), cut the base body to its head,
+    build the mouth, assign the slot materials. Returns (armature, meshes, head mesh)."""
+    ch = o["character"]
+    arm, meshes, head = None, [], None
+    for k, part in enumerate(ch["parts"]):
+        new = _import_glb(part["path"])
+        rigs = [x for x in new if x.type == "ARMATURE"]
+        if len(rigs) != 1:
+            raise RuntimeError(f"{part['path']}: {len(rigs)} armatures (one expected)")
+        drop = set(part.get("drop", []))
+        part_meshes = []
+        for x in new:
+            if x.type != "MESH":
+                continue
+            mods = [m for m in x.modifiers if m.type == "ARMATURE"]
+            if not mods or x.name in drop or SUFFIX.sub("", x.name) in drop:
+                bpy.data.objects.remove(x, do_unlink=True)   # the importer's stray Icosphere, or a part left out (a hood)
+                continue
+            part_meshes.append(x)
+        if arm is None:
+            arm = rigs[0]
+            arm.name = f"{o['name']}_rig"
+        else:
+            for x in part_meshes:
+                mw = x.matrix_world.copy()
+                x.parent = arm
+                x.matrix_world = mw
+                for m in x.modifiers:
+                    if m.type == "ARMATURE":
+                        m.object = arm
+            bpy.data.objects.remove(rigs[0], do_unlink=True)
+        if part.get("keep_bones"):
+            body = max(part_meshes, key=lambda x: len(x.data.vertices))
+            report.setdefault("cut", {})[o["name"]] = _cut_to_bones(body, part["keep_bones"])
+            head = body
+        meshes += part_meshes
+    for x in meshes:
+        slots = {}
+        for i, ms in enumerate(x.material_slots):
+            base = SUFFIX.sub("", ms.material.name) if ms.material else None
+            if base not in ch["materials"]:
+                raise RuntimeError(f"{x.name}: material {base!r} has no toon material in the character's map")
+            slots[i] = ch["materials"][base]
+        pending.append(([x], slots, True))
+    if head is not None and ch.get("mouth"):
+        report.setdefault("mouth", {})[o["name"]] = _mouth_keys(head, ch["mouth"])
+        opening = _mouth_opening(arm, ch["mouth"], ch["mouth"]["interior_material"], pending)
+        head["mouth_opening"] = opening.name
+    return arm, meshes, head
+
+
+def _copy_rig(src_arm, src_meshes, name, pending, slots_of):
+    """A crowd member: a new armature (its own pose and clip) over the same mesh data."""
+    arm = src_arm.copy()
+    arm.data = src_arm.data
+    arm.animation_data_clear()
+    arm.name = f"{name}_rig"
+    bpy.context.scene.collection.objects.link(arm)
+    meshes = []
+    for x in src_meshes:
+        y = x.copy()
+        bpy.context.scene.collection.objects.link(y)
+        y.parent = arm
+        for m in y.modifiers:
+            if m.type == "ARMATURE":
+                m.object = arm
+        meshes.append(y)
+        pending.append(([y], slots_of[x.name], True))
+    return arm, meshes
+
+
+def build_character(o, frames_total, pending, report):
+    """One cast member under an empty named ``o['name']`` (placed and moved like any described object). A rig without lip
+    sync is built once per (character, costume, materials) and copied for the next crowd member."""
+    ch = o["character"]
+    key = json.dumps([ch["id"], ch["costume"], ch["materials"], ch["parts"], ch.get("mouth")], sort_keys=True)
+    root = bpy.data.objects.new(o["name"], None)
+    bpy.context.scene.collection.objects.link(root)
+    if ch.get("lipsync") or key not in _TEMPLATES:
+        start = len(pending)
+        arm, meshes, head = _assemble(o, pending, report)
+        if not ch.get("lipsync"):
+            _TEMPLATES[key] = (arm, meshes, {x.name: s for (obs, s, _) in pending[start:] for x in obs if isinstance(s, dict)})
+    else:
+        src_arm, src_meshes, slots_of = _TEMPLATES[key]
+        arm, meshes = _copy_rig(src_arm, src_meshes, o["name"], pending, slots_of)
+        head = None
+    arm.parent = root
+    if ch.get("animation"):
+        _play(arm, ch["animation"], frames_total, report)
+    if ch.get("lipsync"):
+        if head is None:
+            raise RuntimeError(f"{o['name']}: lip sync needs the head mesh")
+        _lipsync(head, ch["lipsync"], report)
+    report.setdefault("characters", {})[o["name"]] = {"id": ch["id"], "costume": ch["costume"], "assets": ch["assets"],
+                                                      "meshes": len(meshes), "bones": len(arm.data.bones)}
+    _place(root, o)
+    return root
+
+
+def _tracked(scene, frame, tr, loc, at):
+    """``loc``/``at`` are given in the rest pose; both are carried by the bone (``track``: {rig, bone}) from its rest frame to its
+    posed frame at ``frame``."""
+    arm = bpy.data.objects[tr["rig"]]
+    scene.frame_set(frame)
+    bpy.context.view_layer.update()
+    rest = arm.matrix_world @ arm.data.bones[tr["bone"]].matrix_local
+    posed = arm.matrix_world @ arm.pose.bones[tr["bone"]].matrix
+    carry = posed @ rest.inverted()   # the camera rides rigidly with the bone: a close-up stays frontal when the head tilts
+    return list(carry @ Vector(loc)), list(carry @ Vector(at))
+
+
+# --- camera rigs (WP-Q7): the Add Camera Rigs extension, installed from the pinned zip and keyed with the engine's camera path ----
+
+RIG = {}   # {"rig": armature object, "camera": camera object} when the camera is a rig
+
+
+def install_extension(path, report):
+    """The pinned Add Camera Rigs zip into this Blender (a user repository, enabled), once per process."""
+    if "bl_ext.user_default.add_camera_rigs" in bpy.context.preferences.addons:
+        return
+    res = bpy.ops.extensions.package_install_files(filepath=path, repo="user_default", enable_on_install=True)
+    if "FINISHED" not in res:
+        raise RuntimeError(f"the camera rig extension {path} did not install: {res}")
+    report["camera_rig_extension"] = os.path.basename(path)
+
+
+def _bone_world(rig, name, world):
+    """The pose bone ``name`` on the world point (parents first: the caller updates the view layer between bones)."""
+    from mathutils import Matrix
+    rig.pose.bones[name].matrix = rig.matrix_world.inverted() @ Matrix.Translation(Vector(world))
+    bpy.context.view_layer.update()
+
+
+def build_rig(scene, cam, report):
+    """The camera of a described scene as a Dolly or Crane rig of the extension: its camera object becomes ``scene.camera``,
+    its lens, aperture and focus are the rig's bone properties (drivers feed them to the camera data)."""
+    install_extension(cam["extension"], report)
+    kind = cam["rig_kind"].upper()
+    bpy.ops.object.build_camera_rig(mode=kind)
+    rig = bpy.data.objects[kind.capitalize() + "_Rig"]
+    ob = bpy.data.objects[kind.capitalize() + "_Camera"]
+    ob.name = "camera"
+    ob.data.sensor_width, ob.data.clip_end = cam.get("sensor_mm", 36.0), cam.get("clip_end", 500.0)
+    scene.camera = ob
+    pb = rig.pose.bones["Camera"]
+    pb["lens"] = float(cam["lens_mm"])
+    RIG.update(rig=rig, camera=ob)
+    return rig, ob
+
+
+def set_dof(scene, focus_m, fstop):
+    """The depth of field of the scene camera: through the rig's properties when it is a rig, else on the camera data."""
+    cd = scene.camera.data.dof
+    cd.use_dof = True
+    if RIG:
+        pb = RIG["rig"].pose.bones["Camera"]
+        pb["focus_distance"], pb["aperture_fstop"] = float(focus_m), float(fstop)
+    else:
+        cd.focus_distance, cd.aperture_fstop = focus_m, fstop
+
+
+def key_rig(scene, cam, first, last, interp):
+    """The engine's camera keys on the rig: Root under the camera on the floor, the Camera bone at the camera, Aim at the look-at
+    point; the focus distance follows ``focus_at`` and the aperture holds ``fstop``."""
+    rig = RIG["rig"]
+    pbs = rig.pose.bones
+    keys = cam.get("keys") or [{"frame": 0, "location": cam["location"], "look_at": cam["look_at"]}]
+    bpy.context.preferences.edit.keyframe_new_interpolation_type = interp
+    for k in keys:
+        loc, at = k["location"], k["look_at"]
+        frame = first + int(k["frame"])
+        pbs["Root"].location = (loc[0], loc[1], 0.0)
+        bpy.context.view_layer.update()
+        _bone_world(rig, "Aim", at)
+        _bone_world(rig, "Camera", loc)
+        for name in ("Root", "Aim", "Camera"):
+            pbs[name].keyframe_insert("location", frame=frame)
+        # a property the job names is keyed (the focus follows ``focus_at``, the aperture holds ``fstop``); one it does not name
+        # stays the style's (apply_style -> set_dof writes it later)
+        if cam.get("focus_at"):
+            pbs["Camera"]["focus_distance"] = float((Vector(cam["focus_at"]) - Vector(loc)).length)
+            pbs["Camera"].keyframe_insert('["focus_distance"]', frame=frame)
+        if cam.get("fstop") is not None:
+            pbs["Camera"]["aperture_fstop"] = float(cam["fstop"])
+            pbs["Camera"].keyframe_insert('["aperture_fstop"]', frame=frame)
+    scene.frame_set(first)
+
+
+def frame_probe(scene, cam, first, last, report):
+    """Where the probe points land in the frame at the first and the last frame (0..1 from the left / bottom; the bpy side of
+    ``camera_setups.framing``): the CI cross-check of the pure-Python pinhole."""
+    from bpy_extras.object_utils import world_to_camera_view
+    out = {}
+    for f in sorted({first, last}):
+        scene.frame_set(f)
+        out[str(f - first)] = {p["name"]: [round(v, 5) for v in world_to_camera_view(scene, scene.camera, Vector(p["at"]))[:2]]
+                               for p in cam["probe"]}
+    scene.frame_set(first)
+    report["framing"] = out
+
+
 def build_described(scene, sc, report):
     """Objects, camera and (optional) motion of a ``described`` scene. Motion: an object or the camera with a ``to`` block
     ({location[, rotation_deg]} / {location, look_at}) is keyed at the first and the last frame of ``frames_total``;
@@ -183,19 +556,30 @@ def build_described(scene, sc, report):
         elif "append" in o:
             obs = _append(o, report)
             handle = bpy.data.objects[o["name"]]
+        elif "character" in o:
+            handle = build_character(o, int(sc.get("frames_total", 1)), pending, report)
+            if o.get("to"):
+                moving.append((handle, o))
+            continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add nor append")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append nor character")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))
     cam = sc["camera"]
-    data = bpy.data.cameras.new("camera")
-    data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
-    data.clip_end = cam.get("clip_end", 500.0)
-    ob = bpy.data.objects.new("camera", data)
-    scene.collection.objects.link(ob)
-    _aim(ob, cam["location"], cam["look_at"])
-    scene.camera = ob
+    if cam.get("rig_kind"):
+        build_rig(scene, cam, report)
+        ob, data = scene.camera, scene.camera.data
+        data.lens = cam["lens_mm"]
+    else:
+        RIG.clear()
+        data = bpy.data.cameras.new("camera")
+        data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
+        data.clip_end = cam.get("clip_end", 500.0)
+        ob = bpy.data.objects.new("camera", data)
+        scene.collection.objects.link(ob)
+        _aim(ob, cam["location"], cam["look_at"])
+        scene.camera = ob
     first = scene.frame_start
     last = first + int(sc.get("frames_total", 1)) - 1
     if last > first:
@@ -205,11 +589,28 @@ def build_described(scene, sc, report):
             if "rotation_deg" in o["to"]:
                 h.rotation_euler = _rad(o["to"]["rotation_deg"])
             _key(h, ("location", "rotation_euler"), last, o.get("interp", "LINEAR"))
+        if cam.get("to") and RIG:
+            raise RuntimeError("a camera rig is keyed from camera.keys, not from a to block")
         if cam.get("to"):
             _key(ob, ("location", "rotation_euler"), first, cam.get("interp", "BEZIER"))
             _aim(ob, cam["to"]["location"], cam["to"]["look_at"], ob.rotation_euler.copy())
             _key(ob, ("location", "rotation_euler"), last, cam.get("interp", "BEZIER"))
-        report["motion"] = {"frames": [first, last], "objects": len(moving), "camera": bool(cam.get("to"))}
+        if cam.get("keys") and not RIG:   # a camera path of several poses (scene_builder: rail, orbit, dramatic curve; a turnaround's views)
+            for k in cam["keys"]:
+                loc, at = k["location"], k["look_at"]
+                if k.get("track"):   # aim at a point of a posed bone (a face close-up follows the head the clip moves)
+                    loc, at = _tracked(scene, first + int(k["frame"]), k["track"], loc, at)
+                _aim(ob, loc, at, ob.rotation_euler.copy())
+                if "lens_mm" in k:
+                    data.lens = k["lens_mm"]
+                    data.keyframe_insert("lens", frame=first + int(k["frame"]))
+                _key(ob, ("location", "rotation_euler"), first + int(k["frame"]), cam.get("interp", "BEZIER"))
+        report["motion"] = {"frames": [first, last], "objects": len(moving), "camera": bool(cam.get("to") or cam.get("keys"))}
+    if RIG:
+        key_rig(scene, cam, first, last, cam.get("interp", "LINEAR"))
+        report["camera_rig"] = {"kind": cam["rig_kind"], "rig": RIG["rig"].name, "bones": sorted(b.name for b in RIG["rig"].pose.bones)}
+    if cam.get("probe"):
+        frame_probe(scene, cam, first, last, report)
     return pending
 
 
@@ -284,7 +685,14 @@ def apply_style(scene, style, pending, report):
         build_tree(mat.node_tree, m, missing, f"material {m['name']}")
         mats[m["name"]] = mat
     for obs, name, smooth in pending:
-        if name is not None:
+        if isinstance(name, dict):   # a character mesh: material slot index -> toon material name
+            for ob in obs:
+                for i, mname in name.items():
+                    if mname not in mats:
+                        raise RuntimeError(f"the style graph has no material {mname!r}")
+                    ob.material_slots[int(i)].link = "OBJECT"
+                    ob.material_slots[int(i)].material = mats[mname]
+        elif name is not None:
             if name not in mats:
                 raise RuntimeError(f"the style graph has no material {name!r}")
             _assign(obs, mats[name], smooth)
@@ -298,14 +706,30 @@ def apply_style(scene, style, pending, report):
     ob = bpy.data.objects.new("key", sun)
     scene.collection.objects.link(ob)
     ob.rotation_euler = kl["rotation_euler"]
+    fill = style.get("fill_light")   # ICW-05c looks: a cool fill from the other side, never a shadow caster
+    if fill:
+        fl = bpy.data.lights.new("fill", "SUN")
+        fl.energy, fl.use_shadow = fill["energy"], fill.get("use_shadow", False)
+        fob = bpy.data.objects.new("fill", fl)
+        scene.collection.objects.link(fob)
+        fob.rotation_euler = fill["rotation_euler"]
     la = style["line_art"]
-    bpy.ops.object.grease_pencil_add(type="LINEART_SCENE", location=(0, 0, 0))
-    gp = bpy.context.active_object
-    gp.name = "line_art"
-    mod = [m for m in gp.modifiers if m.type == "LINEART"][0]
-    mod.radius, mod.crease_threshold, mod.opacity = la["radius"], la["crease_threshold_rad"], la["opacity"]
-    for gm in gp.data.materials:
-        gm.grease_pencil.color = la["ink_rgba"]
+    mod = None
+    if la.get("enabled", True):   # a look without lines has no Line Art at all (and saves its CPU time)
+        bpy.ops.object.grease_pencil_add(type="LINEART_SCENE", location=(0, 0, 0))
+        gp = bpy.context.active_object
+        gp.name = "line_art"
+        mod = [m for m in gp.modifiers if m.type == "LINEART"][0]
+        mod.radius, mod.crease_threshold, mod.opacity = la["radius"], la["crease_threshold_rad"], la["opacity"]
+        for gm in gp.data.materials:
+            gm.grease_pencil.color = la["ink_rgba"]
+    dof = style.get("camera_dof")
+    if dof:
+        if RIG:   # WP-Q7: keyed properties of the rig win at render time; the style fills the ones the job did not name
+            set_dof(scene, dof["focus_distance_m"], dof["fstop"])
+        else:
+            cd = scene.camera.data.dof
+            cd.use_dof, cd.focus_distance, cd.aperture_fstop = True, dof["focus_distance_m"], dof["fstop"]
     st = style["scene"]
     vs = scene.view_settings
     vs.view_transform = st["view_transform"]
@@ -317,8 +741,12 @@ def apply_style(scene, style, pending, report):
             continue
     else:
         raise RuntimeError(f"this Blender has no look {st['look']!r} (tried {st['look_ids']})")
-    applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius,
-               "crease_threshold": mod.crease_threshold}
+    applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius if mod else None,
+               "crease_threshold": mod.crease_threshold if mod else None}
+    if fill:
+        applied["fill_light"] = fill["energy"]
+    if dof:
+        applied["dof_fstop"] = scene.camera.data.dof.aperture_fstop
     for k, v in st.get("eevee", {}).items():
         set_attr(scene.eevee, k, v, applied, missing, f"eevee.{k}")
     for k, v in st.get("cycles", {}).items():
@@ -326,6 +754,8 @@ def apply_style(scene, style, pending, report):
             set_attr(scene.cycles, k, v, applied, missing, f"cycles.{k}")
     paper = style["paper"]
     if paper.get("enabled"):
+        if "z" in paper.get("passes", []):   # the painted plate mixes by depth
+            bpy.context.view_layer.use_pass_z = True
         ng = bpy.data.node_groups.new("ink_paper", "CompositorNodeTree")
         ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
         build_tree(ng, paper, missing, "paper")
@@ -346,7 +776,10 @@ def apply_settings(scene, job):
         ee = scene.eevee
         set_attr(ee, "taa_render_samples", s.get("samples"), applied, missing, "eevee.taa_render_samples")
         set_attr(ee, "use_raytracing", s.get("raytracing"), applied, missing, "eevee.use_raytracing")
-        set_attr(ee, "use_gtao", s.get("ambient_occlusion"), applied, missing, "eevee.use_gtao")
+        ao = s.get("ambient_occlusion")   # 5.x has no use_gtao: AO is Fast GI in its AO-only method (SceneEEVEE API 5.2)
+        set_attr(ee, "use_fast_gi", ao, applied, missing, "eevee.use_fast_gi")
+        if ao:
+            set_attr(ee, "fast_gi_method", "AMBIENT_OCCLUSION_ONLY", applied, missing, "eevee.fast_gi_method")
     elif eng == "cycles":
         cy = scene.cycles
         set_attr(cy, "samples", s.get("samples"), applied, missing, "cycles.samples")
@@ -382,6 +815,23 @@ def gpu_backend():
         return gpu.platform.backend_type_get()
     except Exception:  # noqa: BLE001  (informational only: a missing field never fails a render)
         return None
+
+
+def bounds(scene, names):
+    """World bounding box of each named top-level object and its mesh descendants, at the shot's first frame."""
+    scene.frame_set(scene.frame_start)
+    out = []
+    for n in names:
+        ob = bpy.data.objects.get(n)
+        if ob is None:
+            continue
+        obs = [ob] + list(ob.children_recursive)
+        pts = [x.matrix_world @ Vector(c) for x in obs if x.type == "MESH" for c in x.bound_box]
+        if not pts:
+            continue
+        out.append({"object": n, "min": [round(min(p[i] for p in pts), 4) for i in range(3)],
+                    "max": [round(max(p[i] for p in pts), 4) for i in range(3)]})
+    return out
 
 
 def main():
@@ -440,6 +890,8 @@ def main():
     kinds = {}
     for ob in scene.objects:
         kinds[ob.type] = kinds.get(ob.type, 0) + 1
+    if sc["kind"] == "described":
+        built["bounds"] = bounds(scene, [o["name"] for o in sc["objects"]])
     write_json(job["report"], {
         "blender_version": bpy.app.version_string,
         "build_hash": bpy.app.build_hash.decode("ascii", "replace") if isinstance(bpy.app.build_hash, bytes) else str(bpy.app.build_hash),

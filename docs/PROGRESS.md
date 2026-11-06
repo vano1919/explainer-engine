@@ -4088,6 +4088,130 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Results: `docs_lint` 0 findings; fast suite 2723 passed, 2 skipped, 2 xfailed (`test_seams` deselected: the inherited ffprobe failure).
 - Cost: $0. No pod and no paid call.
 
+### 2026-11-05 — ICW-06: characters, rigs, lip-sync, scene builder, camera rigs (Ink Chronicle, roadmap 10.1, 11, 15)
+
+- Work package ICW-06, branch `icw/06-characters` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c35678d, after the
+  PR #129 merge). Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw06_2026-11-05/HANDOFF_ICW-06.md`.
+- Assets (PoC 1, all CC0, $0): Quaternius Universal Base Characters, Universal Animation Library 1 (43 clips) and Modular Character
+  Outfits Fantasy, fetched by `assets/itch.py` (the page's own free-download button; refuses a pack whose minimum price is not 0).
+  `blender/characters.py` packs the glTF members into deterministic GLBs (a missing `*_png.png` normal map is dropped with its
+  slot) and registers 11 external records (`character_assets.json`; `licence_sources.json` row `quaternius_mco`); the GLBs are on
+  the vault under `assets/3d/**`, 11 of 11 with the same hash. PoC 1 finding: body, hair, outfits and clips share one 65-joint
+  skeleton with identical names, so every clip plays without a retarget (`rigs.bone_map` measures it; no fuzzy matching).
+- `characters.json` (character/1): three test characters (two men, one woman), four costumes, slot materials (skin always the
+  head's flat mean colour, so hands match the face; costume tint = a palette token; hair tint), the mouth (Rhubarb A-H + X).
+- `bpy/render_shot.py`: `character` objects: the parts merged onto the first part's armature, the body cut to the head bones, one
+  UAL clip per member as an NLA strip (offset, speed), the mouth as jaw shape keys plus a dark opening lens (the UBC lips are one
+  closed surface), lip-sync keys; rig copies share their meshes in a crowd; camera `keys` (several poses, optional bone tracking);
+  world bounds per object in the report.
+- `blender/turnaround.py` (D-101): 4 body views + 9 mouth close-ups tracked on the posed head, the sheet registered as
+  `sheet.<character>_<costume>_turnaround` with the head as its parent.
+- `blender/rigs.py`: `run_rhubarb` (no dialog file only for a reused take), `LipSync.plan` (refuses a shot over BP-108
+  `dialogue_shot_max_s`; registry `enforced_by` updated, table regenerated), `LipSync.busiest` (the window with the most mouth
+  changes), `bone_map`.
+- `blender/scene_builder.py`: the six camera rigs of 10.1 (static, push, dolly, rail, orbit, dramatic_curve; four eases) sampled
+  into LINEAR keys every 4 frames; the cast checked against the library (head asset, animation set, sha256);
+  `blender_scene_manifest/1` from the bpy report; `smoke`: one rigged character under a rail, Workbench (added to the Blender smoke
+  workflow, packs cached by their sha256).
+- `blender/benchmark_shots.py`: S1-S6 of 12.4 as shot_spec/2 + described scenes. All six built and rendered headless here (2 frames,
+  half scale, CPU EEVEE / Cycles): S1 10.8, S2 14.0, S3 19.1 (18 characters, 258 objects), S4 8.4, S5 6.8, S6 12.8 s/frame. Deviations:
+  S3 without Geometry Nodes instancing and the dust volume, S4 on the primitive hills (no Poly Haven terrain registered); both go to
+  the ICW-09 preflight list.
+- `style_sheets clips`: the real cast by default (`--cast real`), speaker_a lip-synced from Rhubarb cues (`--cues`, or `--wav` +
+  `--rhubarb`); the spec then carries `performance.rhubarb` (CN-17). `style.material(strength=)` overrides a material's texture share.
+- Not done here: Rhubarb could not run in this cloud session (an external binary); the Mac runs it on an existing ElevenLabs take
+  (PoC 2's offset and silence lines are measured there). The MPFB2 body and a foreign-skeleton retarget are out of scope (PoC 1
+  passed natively). For ICW-07: a costume and clip field in shot_spec/2 `characters` (the cast table carries them today).
+- Tests: `test_characters.py` (7), `test_scene_builder.py` (10), additions to `test_lipsync_map.py`, `test_style_sheets.py`,
+  `test_blender_style.py`.
+- Cost: $0. No pod and no paid call.
+- Rule D-114 (creator 2026-11-05 17:31 UTC): free runs (a Mac test render, a GitHub Actions run) start without asking; paid runs
+  keep the OR-23 plan, the OR-34 audit and his word. CLAUDE.md invariant 1 carries the line.
+- Results: `docs_lint` 0 findings; fast suite 2727 passed, 7 skipped, 2 xfailed; 5 failed only for the missing `cv2` in this
+  container (`test_lora_training`, `test_xworld_v1_score`; the same 5 fail on the base without these changes; `test_seams`
+  deselected as before).
+- PoC 1 measured (Fable's review of PR #130): `characters measure-clips` (Blender samples every frame on the UAL armature,
+  `rigs.foot_slide`): 7 of 8 clips under the 2 cm foot-slide line (walk 0.45 cm at its natural 0.77 m/s, formal walk the same,
+  jog 0.18 cm, idle/talking/sit/dance 0); `Sword_Attack` drags its rear foot 0.55 m (a sliding lunge in the clip itself), so a
+  planted combat shot uses `Sword_Idle`. The pass line is 6 of 8. Identity across costumes: `turnaround compare` (mouth close-ups'
+  pixel RMS, INFO; same man in two costumes against a different person) runs on the Mac with the third sheet, and ვანო reads them.
+- PoC 2: `rigs.lipsync_measure` (mean |offset| of mouth openings to word starts in frames, open mouth outside every word window)
+  and `rigs measure-lipsync`; the words come from `audio/local_words.py` (faster-whisper, free) on the Mac with Rhubarb's cues.
+- CI: the Blender smoke installs `pillow==12.3.0` for the character smoke (`characters._mean`).
+
+## 2026-11-05 — ICW-05c look round: ten looks from the creator's reference to a flat painting of it (branch icw/05c-ink-round)
+
+- Why: ვანო read the ICW-06 test frames as "a very poor world, a completely different style, not ink" (17:45 UTC) and sent a
+  reference sheet at 17:54 UTC ("like this, but less 3D"): a stylized 3D-animation look with soft painted light, a warm key and a
+  bright rim, matte painted materials, soft-focus painted backgrounds and a warm limited palette. Fable's plan rev. 2
+  (`/mnt/project-files/explainer-engine/ink_chronicle_ink_round_2026-11-05/PLAN_INK_ROUND.md`) turned that into ten variants
+  along one slider; this entry implements it. No variant is chosen; the bible is not touched (ICW-07 writes v1.5's style block
+  after the pick).
+- `blender/style.py`: `Look` (the knobs: shade mode toon/soft/feathered/flat/painted_light, ramp with a cool shadow tint and a
+  warm light tint, brush texture, halftone, light rig cinematic/key_rim/flat_key/ambient_only with a cool fill sun and a warm rim,
+  line mode none/faint/dark/ink, background set/dof/plate/flat, sky paper/gradient/hdri, Kuwahara on the frame or on the far
+  background by depth, bleed, paper as a multiply base, screen-space grain, vignette, palette maps warm_cinematic and
+  reference_swatches, `texture_keep` for set photos and `costume_keep` for a costume's own painted atlas over the shot's tint).
+  `StyleTokens.art` carries it; without it every ICW-05 graph keeps its bytes (`to_dict` drops the field). EEVEE only.
+- `blender/look_variants.json` (`look_variants/1`): the ten variants (slider 1-10) and three swatch twins (1, 5, 9 with the six
+  swatches sampled from the reference sheet as proposal colours; `design/palette.json` stays the house palette's home).
+- `bpy/render_shot.py`: the fill light, camera depth of field, the depth pass for the painted plate, and no Line Art object when a
+  look draws no line. `characters.materials` marks costume slots (`slot: costume`; the toon path ignores it).
+- `style_sheets looks / look-collage / look-report`: per look 24-frame clips of the dialogue close-up (real cast) and the battle
+  wide, a still of the establishing shot, MP4 review copies, `looks.json` rows written as they finish; the collage and the
+  summary (s/frame per scene, ratio to B_light on the same runner, over 2x flagged, BP-173 band) from every job's folder.
+- CI: `style-sheets.yml` job `looks` (matrix: B_light + one job per look, the swatch twins in their parent's job) and
+  `look-collage` (merges the artifacts). Runs on push to `icw/05c-**`; free (D-114).
+- BP-173: v04's faint contour is 1.5 px at 40 % opacity (the band's floor; 1 px fails CN-17). Looks without a line carry the B
+  token's 2.25 px in shot_spec/2 (`look.line_weight_px` has no "none"; proposed to ICW-07).
+- Tests: `tests/unit/test_look_variants.py` (20). Cost: $0.
+
+- Result (CI run 42084774093, head 8f302a5, 49 min): all ten looks + three twins + B_light rendered at 2560x1440; s/frame per look
+  against B_light in the round's REPORT.md (project folder `ink_chronicle_ink_round_2026-11-05/`); none over 2x (largest: 1, 8, 10 at
+  ~1.9x from cast shadows); one runner per job, so ratios under ~1.3x are runner noise. `look-report` takes the line verdict from
+  the render's CN-17 finding (no second BP-173 reader). Waiting for the creator's pick; ICW-07 writes it into bible v1.5.
+
+## 2026-11-05 — WP-Q7 camera grammar and Add Camera Rigs (branch wpq/07-cameras, base icw/05c-ink-round)
+
+- Why: flat cameras. The engine had six rig names (static, push, dolly, rail, orbit, dramatic_curve) sampled into plain keys, but no
+  shot grammar: no low-angle hero close-up, no over-the-shoulder, no thirds, no f-stop, no real dolly or crane object to move.
+- Synthesis, not new code: the official **Add Camera Rigs 1.9.2** extension (GPL-3.0-or-later, 15 KB zip) is pinned by sha256 in
+  `config/cloud_pins.json` (`blender_extensions`), fetched and verified by `blender/camera_rigs.py`, installed into the render's own
+  Blender with `bpy.ops.extensions.package_install_files`, and built with its own operator (Dolly or Crane). None of its code is copied
+  (licence row `assets/licence_sources.json` add_camera_rigs; so no PROVENANCE row). Installs offline on 5.2.3 (checked with the
+  `bpy` 5.2.3 wheel, which is the pinned build).
+- `blender/camera_setups.json` + `camera_setups.py`: six setups (establishing wide on a crane, over-the-shoulder A and B =
+  `shot_reverse_shot`, low-angle hero close-up, push-in reveal, profile two-shot). Each: lens, height and distance in head heights,
+  a thirds target, f-stop, focus target. `resolve()` places the camera from the subjects' feet and aims it so the framed point lands
+  on the thirds target (pinhole); `framing()` projects any point; `check_camera()`.
+- `shot_spec/2` `scene.camera` gains optional `setup`, `fstop`, `rig_kind` (an additive amendment: documents without them are
+  unchanged). `scene_builder.camera_job` / `build` carry `fstop`, `rig_kind`, `focus_at` and the extension path.
+- `bpy/render_shot.py`: `build_rig` / `key_rig` / `set_dof` / `frame_probe`: Root under the camera on the floor, Camera and Aim bones
+  keyed from the same LINEAR camera path as before (so the path in the manifest is still the truth), the focus distance follows
+  `focus_at`, the aperture is the rig's `aperture_fstop`; the style's DoF fills what the job did not name. Without `rig_kind` the bare
+  camera path is byte-for-byte the old one. The 2D rig is not mapped yet (it belongs to the painted plates, WP-Q3).
+- Check on real Blender 5.2.3 (bpy wheel, Workbench, 960x540, 48 frames, 0.26-0.31 s/frame): for all six setups the framing Blender
+  measures with `world_to_camera_view` equals the pure-Python pinhole to 4 decimals at the first and the last frame.
+  `blender/camera_smoke.py` repeats this on CI (`blender-smoke.yml`, new step; tolerance 0.002 frame widths).
+- Tests: `tests/unit/test_camera_setups.py` (24). Cost: $0. Not done here: the clips on the real cast (they need the character GLBs from
+  the vault: Mac or CI) and an A/B of the 2D rig.
+## 2026-11-05 — WP-Q0: Blender 5.x API names in `render_shot.py` (branch `wpq/00-api`)
+- `ENGINE_IDS["eevee"]` is now `("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT")` (5.0 renamed EEVEE Next back; the old id stays as fallback).
+- `apply_settings`: `ambient_occlusion` maps to `eevee.use_fast_gi` plus `eevee.fast_gi_method = 'AMBIENT_OCCLUSION_ONLY'` (5.x has no
+  `use_gtao`; `eevee_full` used to land it under `missing`/silently without AO). Mapped switches are recorded under `applied`.
+  `None` still sets nothing; `False` switches Fast GI off. `RenderProfile.ambient_occlusion` unchanged. `profiles.py` docstring updated.
+- Tests: `tests/unit/test_blender_render.py` (first engine id tried, `eevee_full` applies `use_fast_gi` and no `use_gtao`, None/False cases).
+  Blender/docs/hygiene/governance subset: 188 passed. Cost $0. Not run: a real Blender 5.2 CI render (the `applied` block should show `use_fast_gi`).
+- WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
+  (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
+  `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
+
+## 2026-11-05 — WP-Q12: test_seams MP3 duration test no longer depends on the ffmpeg version
+- `test_duration_of_an_mp3_is_its_decoded_length` asserted `duration() < ffprobe container duration`; newer ffmpeg honours the
+  LAME header and reports the gapless length, so the strict `<` failed on CI. Now one definition: decoded samples with delay and
+  padding trimmed; the expected value is derived from the fixture (seconds x rate), the container length is only an upper bound.
+- `seams.duration` unchanged. `tests/unit/test_seams.py`: 3 passed locally. No render branch touched. Cost $0.
+
 ## 2026-11-05 — D-115: outside code allowed, licences recorded not gating; quality research delivered
 - The creator's word (18:42 UTC): quality first, then efficiency; "on GitHub all the code we need is written: find, combine,
   fill in, adapt"; the rule against bringing outside code into the repo is lifted. Recorded as D-115 in the decision log;

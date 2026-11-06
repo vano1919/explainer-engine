@@ -1,0 +1,392 @@
+{
+  "schema": "look_variants/1",
+  "_doc": "ICW-05c look round (plan rev. 2, Fable 2026-11-05 18:00 UTC; the creator's reference sheet of 17:54 UTC: 'like this, but less 3D'). Ten spots on a slider from the reference's stylized 3D (slider 1) to a flat painting of it (slider 10), every knob independent (style.Look): a blend is one more entry. Rendered by style_sheets looks on the EEVEE light path; cast shadows only where a variant says so (cinematic rig, or the flat cast-shadow shape), their cost measured. No variant is chosen: the creator picks, then ICW-07 writes the bible v1.5 style block. Ramp positions are the key light's N.L (key energy 1 in these graphs), tones are light multipliers. The swatch twins (suffix _swatch) are variants 1, 5 and 9 with the reference sheet's six swatches as their palette map.",
+  "swatch_map_doc": "Proposal colours, not palette tokens: the six swatches of the creator's reference sheet (sampled from REFERENCE_creator_2026-11-05_1754.png, 3x3 mean at each swatch centre), mapped onto the bible tokens they would replace. design/palette.json stays the only home of the house hex values; if the creator picks a swatch variant, ICW-07 moves these into the palette as tokens and this map then names them.",
+  "swatch_map": {
+    "kit_card": "#E9A981",
+    "kit_shadow": "#603827",
+    "answer_coral": "#8E322A",
+    "faction_b": "#8E322A",
+    "support_blue": "#424D61",
+    "faction_a": "#424D61",
+    "night": "#3F4450",
+    "ink": "#3F4450",
+    "grey_mid": "#746D70"
+  },
+  "variants": [
+    {
+      "id": "v01_reference_soft3d",
+      "slider": 1,
+      "label": "1  reference, soft 3D",
+      "feel": "the reference as it is: soft rounded light, warm key and a bright rim, a softly blurred world behind",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "shadow_tint": [
+        0.8,
+        0.84,
+        1.0
+      ],
+      "light_tint": [
+        1.0,
+        0.95,
+        0.86
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.92,
+      "warmth": 0.22,
+      "light_rig": "cinematic",
+      "shadow_softness_deg": 8.0,
+      "fill": 0.35,
+      "rim_strength": 0.45,
+      "rim_soft": 0.12,
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.4,
+      "sky": "hdri",
+      "grain": 0.06
+    },
+    {
+      "id": "v02_painterly_3d",
+      "slider": 2,
+      "label": "2  painterly 3D",
+      "feel": "the same light, but every surface turns into soft brush strokes",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "shadow_tint": [
+        0.8,
+        0.84,
+        1.0
+      ],
+      "light_tint": [
+        1.0,
+        0.95,
+        0.86
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.92,
+      "warmth": 0.22,
+      "light_rig": "cinematic",
+      "shadow_softness_deg": 8.0,
+      "fill": 0.35,
+      "rim_strength": 0.45,
+      "rim_soft": 0.12,
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.4,
+      "sky": "hdri",
+      "kuwahara": 6,
+      "grain": 0.08
+    },
+    {
+      "id": "v03_soft_cel_warm",
+      "slider": 3,
+      "label": "3  soft cel, warm",
+      "feel": "four soft-edged tones, warm and clean, no cast shadows",
+      "shade_mode": "feathered",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.2,
+          0.66
+        ],
+        [
+          0.45,
+          0.84
+        ],
+        [
+          0.75,
+          1.0
+        ]
+      ],
+      "feather": 0.08,
+      "texture_keep": 0.35,
+      "costume_keep": 0.85,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.25,
+      "light_rig": "key_rim",
+      "fill": 0.4,
+      "rim_strength": 0.35,
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 2.8,
+      "sky": "gradient",
+      "grain": 0.12
+    },
+    {
+      "id": "v04_painted_cel",
+      "slider": 4,
+      "label": "4  painted cel",
+      "feel": "three soft tones under brush strokes, a faint warm contour",
+      "shade_mode": "feathered",
+      "ramp": [
+        [
+          0.0,
+          0.52
+        ],
+        [
+          0.25,
+          0.78
+        ],
+        [
+          0.6,
+          1.0
+        ]
+      ],
+      "feather": 0.06,
+      "texture_keep": 0.3,
+      "costume_keep": 0.85,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.25,
+      "light_rig": "key_rim",
+      "fill": 0.4,
+      "rim_strength": 0.3,
+      "line_mode": "faint",
+      "line_px": 1.5,
+      "line_opacity": 0.4,
+      "line_colour": "kit_shadow",
+      "bg_mode": "dof",
+      "fstop": 4.0,
+      "sky": "gradient",
+      "kuwahara": 8,
+      "grain": 0.15
+    },
+    {
+      "id": "v05_gouache",
+      "slider": 5,
+      "label": "5  gouache",
+      "feel": "flat opaque paint with visible brush texture, the far wall a painted backdrop",
+      "shade_mode": "toon",
+      "ramp": [
+        [
+          0.0,
+          0.58
+        ],
+        [
+          0.22,
+          0.8
+        ],
+        [
+          0.55,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.25,
+      "costume_keep": 0.8,
+      "brush": 0.3,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.88,
+      "warmth": 0.25,
+      "light_rig": "flat_key",
+      "fill": 0.0,
+      "rim_strength": 0.25,
+      "rim_soft": 0.0,
+      "line_mode": "none",
+      "bg_mode": "plate",
+      "fstop": 4.0,
+      "plate_kuwahara": 14,
+      "sky": "gradient",
+      "grain": 0.2,
+      "vignette": 0.25
+    },
+    {
+      "id": "v06_storybook",
+      "slider": 6,
+      "label": "6  storybook",
+      "feel": "a picture book: two soft tones, watercolour paper, a thin coloured line",
+      "shade_mode": "feathered",
+      "ramp": [
+        [
+          0.0,
+          0.68
+        ],
+        [
+          0.3,
+          1.0
+        ]
+      ],
+      "feather": 0.35,
+      "texture_keep": 0.2,
+      "costume_keep": 0.8,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.85,
+      "warmth": 0.2,
+      "light_rig": "flat_key",
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "faint",
+      "line_px": 1.5,
+      "line_opacity": 0.7,
+      "line_colour": "kit_shadow",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "paper": 0.35
+    },
+    {
+      "id": "v07_graphic_poster",
+      "slider": 7,
+      "label": "7  graphic poster",
+      "feel": "bold shapes in two tones, print dots in the shadows, a dark contour",
+      "shade_mode": "toon",
+      "ramp": [
+        [
+          0.0,
+          0.55
+        ],
+        [
+          0.32,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.1,
+      "costume_keep": 0.7,
+      "halftone": 0.35,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.15,
+      "light_rig": "flat_key",
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "dark",
+      "line_px": 2.0,
+      "line_colour": "night",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "grain": 0.2
+    },
+    {
+      "id": "v08_flat_illustration",
+      "slider": 8,
+      "label": "8  flat illustration",
+      "feel": "flat fills, one cast-shadow shape per figure, a warm brown contour",
+      "shade_mode": "flat",
+      "ramp": [
+        [
+          0.0,
+          0.78
+        ],
+        [
+          0.06,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.1,
+      "costume_keep": 0.75,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.2,
+      "light_rig": "flat_key",
+      "shadow_softness_deg": 1.5,
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "dark",
+      "line_px": 2.0,
+      "line_opacity": 0.9,
+      "line_colour": "kit_shadow",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "paper": 0.2
+    },
+    {
+      "id": "v09_painted_matte",
+      "slider": 9,
+      "label": "9  painted matte",
+      "feel": "no live light: one painting, the light brushed onto the forms",
+      "shade_mode": "painted_light",
+      "ramp": [
+        [
+          0.0,
+          0.78
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.25,
+      "costume_keep": 0.8,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.25,
+      "light_rig": "ambient_only",
+      "fill": 0.0,
+      "rim_strength": 0.2,
+      "line_mode": "none",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "kuwahara": 12,
+      "grain": 0.22
+    },
+    {
+      "id": "v10_ink_accent",
+      "slider": 10,
+      "label": "10  ink accent",
+      "feel": "the flat illustration with today's strong black line, for comparison",
+      "shade_mode": "flat",
+      "ramp": [
+        [
+          0.0,
+          0.78
+        ],
+        [
+          0.06,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.1,
+      "costume_keep": 0.75,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.2,
+      "light_rig": "flat_key",
+      "shadow_softness_deg": 1.5,
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "ink",
+      "line_px": 2.5,
+      "line_colour": "ink",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "paper": 0.3
+    }
+  ],
+  "swatch_twins": [
+    "v01_reference_soft3d",
+    "v05_gouache",
+    "v09_painted_matte"
+  ]
+}

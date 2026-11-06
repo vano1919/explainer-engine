@@ -1,0 +1,59 @@
+{
+  "schema": "camera_setups/1",
+  "_doc": "Named camera setups of the Blender lanes (WP-Q7, roadmap 10.1). Distances and heights are in HEAD HEIGHTS of the framed character (camera_setups.HEAD_M), so a setup scales with the cast. thirds = [x, y] of the framed point on the frame, 0..1 from the left / from the bottom; thirds_tol is the allowed miss in frame widths. 'from' = the camera stands behind that subject (over-the-shoulder), 'target' = the subject framed. view: 'bearing' = the camera looks along the shot's bearing, 'along_ab' = from 'from' towards 'target', 'perp_ab' = at right angles to the A-B axis. f-stops are pinned inside the DoF range of the finish round (fstop_min..fstop_max).",
+  "fstop_min": 1.4,
+  "fstop_max": 11.0,
+  "setups": {
+    "establishing_wide": {
+      "label": "establishing wide: the group on the right third, a slow rise on a crane",
+      "view": "bearing", "target": "group", "focus": "group", "target_z_eye": 0.5,
+      "rig": "dolly", "rig_kind": "crane", "ease": "ease_in_out",
+      "lens_mm": 24, "fstop": 8.0,
+      "start": {"height_heads": 14, "distance_heads": 62}, "end": {"height_heads": 20, "distance_heads": 56},
+      "thirds": [0.6667, 0.40], "thirds_tol": 0.03
+    },
+    "ots_a": {
+      "label": "over A's shoulder onto B: B on the right third, eyes on the upper third",
+      "view": "along_ab", "from": "a", "target": "b", "focus": "b", "target_z_eye": 1.0,
+      "rig": "static", "rig_kind": "dolly", "ease": "linear",
+      "lens_mm": 50, "fstop": 2.8,
+      "start": {"height_heads": 6.9, "distance_heads": 20, "side_heads": 2.2}, "end": null,
+      "thirds": [0.6667, 0.6667], "thirds_tol": 0.03
+    },
+    "ots_b": {
+      "label": "the reverse of ots_a: over B's shoulder onto A",
+      "view": "along_ab", "from": "b", "target": "a", "focus": "a", "target_z_eye": 1.0,
+      "rig": "static", "rig_kind": "dolly", "ease": "linear",
+      "lens_mm": 50, "fstop": 2.8,
+      "start": {"height_heads": 6.9, "distance_heads": 20, "side_heads": 2.2}, "end": null,
+      "thirds": [0.6667, 0.6667], "thirds_tol": 0.03
+    },
+    "low_angle_hero_cu": {
+      "label": "low-angle hero close-up: a long lens from knee height, eyes on the upper third, a slow push",
+      "view": "bearing", "target": "a", "focus": "a", "target_z_eye": 1.0,
+      "rig": "push", "rig_kind": "dolly", "ease": "ease_in_out",
+      "lens_mm": 85, "fstop": 2.0,
+      "start": {"height_heads": 2.2, "distance_heads": 13}, "end": {"height_heads": 2.6, "distance_heads": 10.5},
+      "thirds": [0.3333, 0.6667], "thirds_tol": 0.03
+    },
+    "push_in_reveal": {
+      "label": "push-in reveal: the subject small on the left third, the camera walks in to a medium shot",
+      "view": "bearing", "target": "a", "focus": "a", "target_z_eye": 0.8,
+      "rig": "push", "rig_kind": "dolly", "ease": "ease_in_out",
+      "lens_mm": 40, "fstop": 4.0,
+      "start": {"height_heads": 6.0, "distance_heads": 34}, "end": {"height_heads": 6.2, "distance_heads": 15},
+      "thirds": [0.3333, 0.5], "thirds_tol": 0.03
+    },
+    "profile_two_shot": {
+      "label": "profile two-shot: both in side view, the eye line on the upper third, centred by design",
+      "view": "perp_ab", "target": "mid", "focus": "mid", "target_z_eye": 1.0,
+      "rig": "dolly", "rig_kind": "dolly", "ease": "linear",
+      "lens_mm": 50, "fstop": 5.6,
+      "start": {"height_heads": 6.7, "distance_heads": 40, "side_heads": 0}, "end": {"height_heads": 6.7, "distance_heads": 40, "side_heads": 6},
+      "thirds": [0.5, 0.6667], "thirds_tol": 0.03
+    }
+  },
+  "sequences": {
+    "shot_reverse_shot": ["ots_a", "ots_b"]
+  }
+}

@@ -204,3 +204,27 @@ def test_collage_labels_never_fall_back_to_the_tiny_bitmap_font(monkeypatch):
     monkeypatch.setattr(SS, "FONTS", ("no-such-font.ttf",))
     f = SS._font(80)
     assert f.getbbox("B")[3] > 40  # a scalable font at the asked size (the Mac collage had 11 px labels)
+
+
+def test_real_cast_clip_lip_syncs_speaker_a_and_the_spec_carries_its_cues(tmp_path, monkeypatch):
+    from test_characters import fake_cast
+    _, cpaths = fake_cast(tmp_path, monkeypatch)
+    cues = tmp_path / "line.rhubarb.json"
+    cues.write_text(json.dumps({"metadata": {"duration": 3.0}, "mouthCues": [
+        {"start": 0.0, "end": 0.8, "value": "X"}, {"start": 0.8, "end": 1.1, "value": "D"},
+        {"start": 1.1, "end": 1.4, "value": "F"}, {"start": 1.4, "end": 3.0, "value": "X"}]}), encoding="utf-8")
+    lip, cue_file = SS.lipsync_for(SS.CLIP_FRAMES, cues=cues)
+    assert cue_file == cues and len(lip["shapes"]) == 48 and "D" in lip["shapes"]
+    paths = fake_paths(tmp_path)
+    base = SS.scenes(paths, cast="real", cpaths=cpaths, lipsync=lip)
+    chars = {o["name"]: o for o in base["dialogue_cu"]["objects"] if "character" in o}
+    assert set(chars) == {"speaker_a", "speaker_b"}
+    assert chars["speaker_a"]["character"]["lipsync"] == lip and chars["speaker_b"]["character"]["lipsync"] is None
+    assert sum(1 for o in base["battle_wide"]["objects"] if "character" in o) == 18
+    sc = SS.motion("dialogue_cu", base["dialogue_cu"])
+    scene, _ = SS.job_scene("dialogue_cu", "B_light", sc, paths)
+    _, tokens = SS.style_for("B_light")
+    spec = SS.spec_for("dialogue_cu", "B_light", tokens, scene=scene, frames=SS.CLIP_FRAMES, cues=cue_file)
+    assert [f for f in C.errors(spec) if f["severity"] == "FAIL"] == []
+    assert spec["performance"]["lipsync"] and spec["performance"]["rhubarb"]["sha256"] == L.sha256_file(cues)
+    assert SS.lipsync_for(48) == (None, None)

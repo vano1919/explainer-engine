@@ -290,6 +290,67 @@ def test_profiles_match_the_contract_recipes_and_job_speed_rows():
 def test_only_the_bpy_script_imports_bpy():
     root = Path(__file__).resolve().parents[2] / "explainer_engine"
     hits = [p.relative_to(root).as_posix() for p in root.rglob("*.py") if "import bpy" in p.read_text(encoding="utf-8")]
-    assert hits == ["blender/bpy/render_shot.py"]
+    assert sorted(hits) == ["blender/bpy/check_eevee_api.py", "blender/bpy/measure_clips.py",
+                    "blender/bpy/render_shot.py"]  # the Blender-side scripts, nothing else
     text = R.SCRIPT.read_text(encoding="utf-8")
     assert "progress" in text and "os.replace" in text and "fsync" in text and "pin_version" in text
+
+
+# ---- WP-Q0: Blender 5.x API names in bpy/render_shot.py (apply_settings, set_engine) ----------------------------------------------
+
+def _load_render_shot():
+    from pathlib import Path
+    src = (Path(R.SCRIPT)).read_text(encoding="utf-8")
+    src = src.replace("import bpy  #", "bpy = None  #").replace("from mathutils import Vector  #", "Vector = None  #")
+    ns = {"__name__": "render_shot_under_test"}
+    exec(compile(src.rstrip()[:-len("main()")], "render_shot.py", "exec"), ns)  # noqa: S102  (our own file, without its main())
+    return ns
+
+
+class _Strict:
+    """An object that knows only the attributes it was given, as Blender's RNA: setting an unknown one is a missing switch."""
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
+
+
+def test_the_first_eevee_engine_id_tried_is_blender_eevee():
+    rs = _load_render_shot()
+    assert rs["ENGINE_IDS"]["eevee"] == ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT")
+    tried = []
+
+    class Render:
+        @property
+        def engine(self):
+            return tried[-1]
+
+        @engine.setter
+        def engine(self, v):
+            tried.append(v)
+
+    assert rs["set_engine"](_Strict(render=Render()), "eevee") == "BLENDER_EEVEE"
+    assert tried == ["BLENDER_EEVEE"]
+
+
+def _apply(ao):
+    rs = _load_render_shot()
+    ee = _Strict(taa_render_samples=0, use_raytracing=False, use_fast_gi=False, fast_gi_method="GLOBAL_ILLUMINATION")
+    scene = _Strict(render=_Strict(engine="", use_motion_blur=False), eevee=ee)
+    job = {"engine": "eevee", "settings": {"samples": 64, "raytracing": True, "ambient_occlusion": ao}}
+    applied, missing = rs["apply_settings"](scene, job)
+    return ee, applied, missing
+
+
+def test_eevee_full_ambient_occlusion_is_fast_gi_ao_only_and_not_use_gtao():
+    ee, applied, missing = _apply(P.get("eevee_full").ambient_occlusion)
+    assert P.get("eevee_full").ambient_occlusion is True
+    assert ee.use_fast_gi is True and ee.fast_gi_method == "AMBIENT_OCCLUSION_ONLY"
+    assert applied["eevee.use_fast_gi"] is True and applied["eevee.fast_gi_method"] == "AMBIENT_OCCLUSION_ONLY"
+    assert applied["engine_id"] == "BLENDER_EEVEE"
+    assert missing == [] and not hasattr(ee, "use_gtao") and "eevee.use_gtao" not in applied
+
+
+def test_ambient_occlusion_none_sets_nothing_and_false_switches_fast_gi_off():
+    ee, applied, missing = _apply(None)
+    assert ee.use_fast_gi is False and "eevee.use_fast_gi" not in applied and missing == []
+    ee, applied, missing = _apply(False)
+    assert applied["eevee.use_fast_gi"] is False and "eevee.fast_gi_method" not in applied and missing == []
