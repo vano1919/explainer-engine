@@ -4473,3 +4473,20 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   Blender's exit -11 after the last frame (Mesa EGL teardown) is accepted only when every frame, the progress file and the report exist.
 - Checks: 14 focused tests; CI quality + smoke green. Open: the full-size renders and their HF upload under
   `route_test_2026-11/layouts/` (free CPU, running next), then `ltx_jobs --layouts` carries their shas.
+
+## 2026-11-06 — ICW-14 step-3 code: LTX jobs on both bases, the p14 route-test pod, the upscale chain, the verdict page (PR #144)
+- Why: guide step 3 as code only (the creator, 11:58 UTC: every code item that needs no test run; every test goes into one later
+  pod whose OR-23 plan the Fable thread writes). Merged into icw/05c-ink-round after Fable's PASS (12:39 UTC) and green CI.
+- `edit/ltx_jobs.py` + `ltx_job/1` (LJ-01..LJ-07, docs/LTX_JOBS.md): the J2/J4 generations on LTX-2.5 + Layout-To-Render and
+  LTX-2.3 + Union-Control (the creator's card 11:11 UTC), 10 by default; pins `video_ltx_23` and `text_encoder_gemma3` (the creator
+  accepted the Gemma licence 12:16 UTC; LFS shas read from the Hub and checked by Fable).
+- `training/pods/p14` (p14.sh + p14_ltx.py + p14.json + ltx_jobs.json, sha-pinned): derived line/canny controls, clip B chained
+  from A's last 8 frames, sidecars, speeds.json, upscaled copies. Nothing uploaded to HF, no pod.
+- `finish/upscale.py`: optional cas/unsharp + grain after the crop to 16:9 and Lanczos (`ROUTE_TEST`), `compare()`; the WP-5b
+  default is unchanged. `qa/verdict_page.py` (guide step 4 tooling), `qa/fix_diff.py` (what a fix-edit changed outside its defect).
+- `cloud/runpod`: the guard writes a beat file every look; `check` replaces a dead or hung guard and pushes (the asset pod's guard
+  died silently at 11:41 UTC). `cloud/dryrun`: a marked detector line is not a placeholder (p12b.py's own word).
+- LT-65: the creator's band of 40-150 words (12:27 UTC, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWQ83nahs7XqJbJiNjko9vuk): FAIL over 150, REVIEW
+  over 90 on the crowd sub-categories V1/S3; the composer's default moment stays 40 words. ROUTE_PLAN 5b/5c: measured facts.
+- Checks: full suite 3019 passed; docs_lint 0; governance ok; CI quality + smoke green. Open: the battle line pass (Freestyle over
+  the whole crowd) is killed for memory on the cloud container; where it renders is the creator's card.
