@@ -4297,6 +4297,23 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   unchanged. Local 720p: `harbour_square/harbour_wide@E3` soft shadows, grey air (the depth haze greys the cliff wall heavily);
   `antique_forum/forum_wide@E1` hard shadows, blue sky. Tests in `test_combo_profiles.py`.
 
+
+## 2026-11-05 — WP-Q4: Blender Studio Rain as the appeal benchmark (draft PR #135, branch wpq/04-character-benchmark)
+- Done: Rain v3.3 (CC-BY 4.0, free anonymous download, 64.4 MB, sha256 `80217f16...ea70d24`, fetched 2026-11-05) recorded as the
+  `blender_studio_cc_by` row of `assets/licence_sources.json`; the zip stays out of git (D-110; vault copy still to do, no HF
+  credentials in the cloud session; CI fetches it from the public URL at the sha256). Storm's page says "Login to Download": not
+  fetched. Rain opens in Blender 5.2.3 with scripts off (the embedded cloudrig.py/rain_shading.py are not run); the face works.
+- Code: `rigs.ActionVisemes` (Rhubarb shapes to pose-bone tracks, X on silence, same timing rule as `LipSync`), `viseme_poses_rain.json`
+  (jaw, mouth scale: three poses measured by render, the rest interpolated), `bpy/render_shot.py` object kind `rig_blend` (a `.blend` rig
+  appended whole, helper meshes hidden, head-lattice deltas, viseme keys, toon re-materialing by slot), `character_benchmark.py` (glue to the
+  Q1 style graph, `light_preset`, HDRI sky), `.github/workflows/character-benchmark.yml`, tests `test_lipsync_map.py` + `test_character_benchmark.py`.
+- Findings (direct): Rain under Blender Studio's own shading has the appeal the reference wants; under the Q1 graph at 720p/4 samples the
+  face is dark brown, the golden_hour key leaves it in shadow, a skin texture strength of 0.2 leaves hard cheek stripes. Verdict "not there",
+  not offered for a pick. 10.5-11.8 s/frame at 1280x720 on a CPU sandbox (not Mac/GPU figures). The head's shared 2x2x3 lattice lengthens the
+  jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
+  only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
+- Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.
+
 ## 2026-11-05 — WP-Q12: test_seams MP3 duration test no longer depends on the ffmpeg version
 - `test_duration_of_an_mp3_is_its_decoded_length` asserted `duration() < ffprobe container duration`; newer ffmpeg honours the
   LAME header and reports the gapless length, so the strict `<` failed on CI. Now one definition: decoded samples with delay and
@@ -4345,6 +4362,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Not done / open: the 2560x1440 clips (the Mac, T-C, on Fable's go); the billboards keep one elevation per shot (a crane from
   24 m to 2 m shows them from the `view_frame` pose); arrows are instanced meshes, not curves; dust and smoke are cards, not
   volumes. Tests: `tests/unit/test_crowd.py` (43, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.
+
+## 2026-11-06 — WP-Q4 follow-up: the Rain cast lead v3b/v4b, dialogue tracks, CI clip (thread: Benchmark Rain and Storm characters)
+
+- `bpy/make_rain_lead.py` now bakes the lead's look into the .blend (a plain open shows it): draped solidified tabard + red trim + belt + one-shoulder cloak, Rain's top recoloured undyed linen (flat Principled) and pulled in 4 mm, trousers dark brown, scarf and hairband cloak red, arms down on the CloudRig FK controls, calm face shape keys held, darker eyebrows. Exported to `ink_chronicle_overnight_2026-11-05/cast_lead/` (README v2..v4b). Not fixed: small white flecks at the tabard hem (not the top; cause unknown); the belt reads as a bar; the elbow sign is unverified (forearm +8 deg is nearly straight).
+- `blender/rain_dialogue.py` (pure Python, `tests/unit/test_rain_dialogue.py`): N lines -> the `rig_blend` "visemes" track map: mouth from each line's Rhubarb cues (`rigs.ActionVisemes`), head+neck turn, an explain gesture (right forearm/upperarm) or a nod per line. Synthetic fixture `rain_dialogue_synthetic.json`; real cue files swap in without other changes. CLI `character_benchmark --dialogue`. Poses checked in Blender at two frames; the full motion has not been judged.
+- `MAT-lead.trim` maps to `rain_cloak` in `character_benchmark.MATERIAL_MAP` (T-C's render refused the unmapped material).
+- CI clip (run 42120108247, v3 lead, 48 frames, 1440p, EEVEE on a CPU runner): 64.9 s/frame, wall 52 min, style missing none; face appealing but soft focus and a hard cheek shadow from the key. Synthetic cues only; real Rhubarb on an ElevenLabs line is a Mac step.
+- Stale text found: none new. Skin shading stays Rain's own (C2).
 
 ## 2026-11-05 — D-115: outside code allowed, licences recorded not gating; quality research delivered
 - The creator's word (18:42 UTC): quality first, then efficiency; "on GitHub all the code we need is written: find, combine,
