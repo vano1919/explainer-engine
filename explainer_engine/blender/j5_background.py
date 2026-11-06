@@ -27,6 +27,7 @@ import json
 import math
 import subprocess
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -42,6 +43,10 @@ FIRE_BOX_A1 = (920, 490, 1135, 700)           # where the flame colour is looked
 BANNERS = [((262, 290, 380, 480), 258, "right"), ((505, 212, 578, 342), 502, "right"), ((1775, 245, 1880, 390), 1772, "right"),
            ((1448, 290, 1525, 414), 1446, "right"), ((1318, 270, 1366, 346), 1362, "left")]
 PARALLAX = {"plate": 0.3, "mid": 0.65, "fg": 1.0}
+DISSOLVE = 10                                 # frames of the dissolve between two shots (0.42 s); the earlier shot carries them as a tail
+# idle motion of a figure, as shares of its card's height (so it scales with the shot): sway of the top, head turn, nod, breath, cloth
+IDLE = {"sway": 0.0050, "head_dx": 0.0030, "nod": 0.0022, "breath": 0.0020, "cloth": 0.0012}
+HEAD_M = 0.24                                 # a head is about 0.24 m tall; the head share of a card is HEAD_M / the card's height in metres
 SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 3.0, "S4_close_up_h1": 3.0, "S3_ots_h1_to_h2": 3.0}   # the cut order of the dialogue
 # camera per shot: plate zoom, card zoom (start, end), the foreground card's shift in px at 2560 (end - start, x and y) and the pivot
 CAMERA = {
@@ -197,7 +202,7 @@ class ShotAssets:
             pm = J._blur(pm, c["sigma"] * s)
             fg = c["sigma"] > 0
             self.cards.append({"id": c["id"], "pm": pm, "depth": PARALLAX["fg" if fg else "mid"], "fg": fg,
-                               "lateral": self._lateral(shot, c)})
+                               "lateral": self._lateral(shot, c), "idle": self._idle_setup(pm, c, fg, shot)})
         # static finishing: vignette, paper (mid + long grain)
         yy2, xx2 = np.mgrid[0:H, 0:W].astype(np.float32)
         r = np.hypot((xx2 / W - 0.5) * 1.1, (yy2 / H - 0.5) * 1.25)
@@ -207,6 +212,26 @@ class ShotAssets:
         long = cv2.GaussianBlur(rng.standard_normal((H, W)).astype(np.float32), (0, 0), 40.0 * s) * 0.26 * s
         self.paper = (mid + long).astype(np.float32)
         self.s = s
+
+    @staticmethod
+    def _idle_setup(pm: np.ndarray, c: dict, fg: bool, shot: dict) -> dict | None:
+        """The card's alpha box (padded) and, per row of it, the height above the card's bottom (0..1): what the idle motion needs."""
+        ys, xs = np.where(pm[..., 3] > 0.02)
+        if not len(ys):
+            return None
+        pad = 40
+        H, W = pm.shape[:2]
+        x0, x1, y0, y1 = max(0, xs.min() - pad), min(W, xs.max() + pad), max(0, ys.min() - pad), min(H, ys.max() + pad)
+        top, bot = ys.min(), ys.max()
+        h = np.clip((bot - np.arange(y0, y1)) / max(1.0, bot - top), -0.2, 1.2).astype(np.float32)
+        gy, gx = np.mgrid[y0:y1, x0:x1].astype(np.float32)
+        dist = math.hypot(c["pos"][0] - shot["cam"][0], c["pos"][1] - shot["cam"][1])
+        px_per_m = shot["lens"] / 36.0 * W / dist                                   # the card's pixels per metre in this shot
+        seen_m = min(J.HERO[c["id"]]["height"], (bot - top) / px_per_m)             # a card cut by the frame shows less than its height
+        head = min(0.45, HEAD_M / seen_m)
+        return {"box": (x0, y0, x1, y1), "crop": np.ascontiguousarray(pm[y0:y1, x0:x1]), "h": h[:, None], "gx": gx, "gy": gy,
+                "Hc": float(bot - top), "head": head, "amp": 0.55 if fg else 1.0,
+                "ph": (zlib.crc32(c["id"].encode()) % 628) / 100.0}
 
     @staticmethod
     def _layer_path(collage: Path, name: str, hero: str) -> Path:
@@ -348,6 +373,30 @@ def wave_banner(img: np.ndarray, A: ShotAssets, b: dict, t: float) -> np.ndarray
 
 # --- camera, cards, finishing ----------------------------------------------------------------------------------------------------------
 
+def idle(c: dict, t: float, f: float) -> np.ndarray:
+    """The card's premultiplied layer with its idle motion at time t (a function of t only): the body sways about its bottom edge, the
+    chest breathes, the head turns and nods a little, loose cloth and fur ripple with the fire's flicker. Shares of the card's height
+    (``IDLE``); two sines of unrelated frequencies per movement so nothing repeats visibly. Returns a card-sized layer."""
+    cv2 = _cv2()
+    d = c["idle"]
+    x0, y0, x1, y1 = d["box"]
+    H = d["Hc"] * d["amp"]
+    h, ph, tau = d["h"], d["ph"], 2 * math.pi
+    sway = math.sin(tau * 0.11 * t + ph) * 0.65 + math.sin(tau * 0.19 * t + 2 * ph) * 0.35
+    turn = math.sin(tau * 0.17 * t + 3 * ph) * 0.6 + math.sin(tau * 0.29 * t + ph) * 0.4
+    nod = math.sin(tau * 0.23 * t + 5 * ph) * 0.6 + math.sin(tau * 0.41 * t) * 0.4
+    breath = math.sin(tau * 0.27 * t + ph)
+    body = np.clip(h, 0, 1) ** 1.6
+    head = smooth((h - (1 - d["head"] * 1.25)) / (d["head"] * 0.6))                  # 0 on the body, 1 over the head
+    dx = IDLE["sway"] * H * sway * body + IDLE["head_dx"] * H * turn * head
+    chest = np.exp(-(((h - (1 - d["head"] * 2.6)) / 0.16) ** 2))                      # the shoulders and chest, below the head
+    dy = -IDLE["breath"] * H * breath * chest + IDLE["nod"] * H * nod * head
+    cloth = IDLE["cloth"] * H * (0.6 + 0.4 * f) * np.sin(tau * (0.8 * t + 3.2 * h) + ph) * (1 - head) * (h < 0.8)
+    mx = (d["gx"] - x0 - (dx + cloth)).astype(np.float32)
+    my = (d["gy"] - y0 - dy).astype(np.float32)
+    return cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
+
+
 def lerp(a, b, u):
     return a + (b - a) * u
 
@@ -376,12 +425,16 @@ def render_frame(A: ShotAssets, t: float, u: float, frame: int) -> np.ndarray:
     img = J._blur(plate, A.shot["sigma_plate"] * s)
     zc = lerp(*cam["zoom_card"], u)
     pivot = (cam["pivot"][0] * W, cam["pivot"][1] * H)
-    breath = 1 + 0.005 * math.sin(2 * math.pi * 0.25 * t)
     for c in A.cards:
         d = c["depth"]
         z = 1 + (zc - 1) * d
-        Mc = affine(z, z * breath, pivot, (sh[0] * d, sh[1] * d))
-        pm = cv2.warpAffine(c["pm"], Mc, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
+        Mc = affine(z, z, pivot, (sh[0] * d, sh[1] * d))
+        src = c["pm"]
+        if c["idle"]:
+            x0, y0, x1, y1 = c["idle"]["box"]
+            src = np.zeros_like(c["pm"])
+            src[y0:y1, x0:x1] = idle(c, t, f)
+        pm = cv2.warpAffine(src, Mc, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
         # the fire's flicker on the warm side of the card
         side = 0.5 + 0.5 * c["lateral"] * np.linspace(-1, 1, W, dtype=np.float32)[None, :, None]
         gain = 1 + 0.12 * f * smooth(side * 1.2 - 0.1)
@@ -459,7 +512,9 @@ def ambience(seconds: float, sr: int = 48000, seed: int = 4) -> np.ndarray:
 
 # --- render ---------------------------------------------------------------------------------------------------------------------------
 
-def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2560, 1440), fps=FPS, seconds=None) -> Path:
+def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2560, 1440), fps=FPS, seconds=None, tail: int = 0) -> Path:
+    """One shot as an mp4. ``tail`` frames more than the shot lasts are drawn with the camera at rest: the dissolve into the next shot
+    uses them. The camera moves on an ease-in-out curve, so every shot starts and ends slowly."""
     mp4 = out / "segments" / f"{name}.mp4"
     if mp4.exists():
         return mp4
@@ -471,8 +526,8 @@ def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{size[0]}x{size[1]}", "-r", str(fps),
            "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "14", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(tmp)]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
-    for i in range(n):
-        frame = render_frame(A, i / fps, i / max(1, n - 1), i)
+    for i in range(n + tail):
+        frame = render_frame(A, i / fps, float(smooth(min(1.0, i / max(1, n - 1)))), i)
         p.stdin.write(frame.tobytes())
     p.stdin.close()
     if p.wait():
@@ -481,7 +536,7 @@ def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2
     return mp4
 
 
-def join(out: Path, names: list[str], *, fps=FPS) -> Path:
+def join(out: Path, names: list[str], *, fps=FPS, transition: str = "fade", crf: int = 14, name: str = "j5_dialogue_step3.mp4") -> Path:
     import wave
     total = sum(SECONDS[n] for n in names)
     amb = ambience(total)
@@ -489,11 +544,22 @@ def join(out: Path, names: list[str], *, fps=FPS) -> Path:
     with wave.open(str(wav), "wb") as w:
         w.setnchannels(2), w.setsampwidth(2), w.setframerate(48000)
         w.writeframes((np.clip(amb, -1, 1) * 32767).astype("<i2").tobytes())
-    lst = out / "segments" / "list.txt"
-    lst.write_text("".join(f"file '{(out / 'segments' / (n + '.mp4')).resolve()}'\n" for n in names))
-    final = out / "j5_dialogue_step2.mp4"
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-i", str(wav), "-c:v", "copy",
-                    "-c:a", "aac", "-b:a", "192k", "-shortest", str(final)], check=True)
+    final = out / name
+    cmd = ["ffmpeg", "-y", "-loglevel", "error"]
+    for n in names:
+        cmd += ["-i", str(out / "segments" / (n + ".mp4"))]
+    cmd += ["-i", str(wav)]
+    d = DISSOLVE / fps
+    chain, last, at = [], "[0:v]", 0.0
+    for k in range(1, len(names)):
+        at += SECONDS[names[k - 1]]                     # each shot's tail carries the dissolve, so the cuts stay on the nominal clock
+        lab = f"[x{k}]"
+        chain.append(f"{last}[{k}:v]xfade=transition={transition}:duration={d:.4f}:offset={at:.4f}{lab}")
+        last = lab
+    cmd += ["-filter_complex", ";".join(chain) if chain else "[0:v]null[x0]", "-map", last if chain else "[x0]",
+            "-map", f"{len(names)}:a", "-c:v", "libx264", "-preset", "medium", "-crf", str(crf), "-pix_fmt", "yuv420p", "-c:a", "aac",
+            "-b:a", "192k", "-shortest", str(final)]
+    subprocess.run(cmd, check=True)
     return final
 
 
@@ -508,14 +574,19 @@ def main(argv=None) -> int:
     r.add_argument("--shots", default=None)
     r.add_argument("--seconds", type=float, default=None)
     r.add_argument("--no-join", action="store_true")
+    r.add_argument("--transition", default="fade", help="ffmpeg xfade type between shots: fade, fadeblack, fadegrays, ...")
+    r.add_argument("--crf", type=int, default=14)
+    r.add_argument("--name", default="j5_dialogue_step3.mp4")
     a = ap.parse_args(argv)
     W, H = (int(x) for x in a.size.split("x"))
     names = a.shots.split(",") if a.shots else list(SECONDS)
     out = Path(a.out)
+    join_names = list(SECONDS)
     for n in names:
-        print("segment", n, render_segment(n, Path(a.collage), Path(a.inputs), out, size=(W, H), seconds=a.seconds), flush=True)
-    if not a.no_join and not a.seconds and not a.shots:
-        print("final", join(out, names))
+        tail = DISSOLVE if n != list(SECONDS)[-1] else 0       # the last shot of the cut order has nothing to dissolve into
+        print("segment", n, render_segment(n, Path(a.collage), Path(a.inputs), out, size=(W, H), seconds=a.seconds, tail=tail), flush=True)
+    if not a.no_join and not a.seconds:
+        print("final", join(out, join_names, transition=a.transition, crf=a.crf, name=a.name))
     return 0
 
 

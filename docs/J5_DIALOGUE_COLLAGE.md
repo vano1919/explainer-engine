@@ -106,6 +106,27 @@ All of it a function of the time `t` only. The plate is built 12 % larger than t
 - Cut order of the 12.5 s clip: S1 3.5 s, S2 3.0 s, S4 3.0 s, S3 3.0 s. One mp4 segment per shot (a finished segment is skipped on a
   re-run, RULE-R1), joined with `ffmpeg -c:v copy` and AAC 192 kb/s. x264 crf 14, yuv420p.
 
+## 7b. Step 3: figures that breathe, shots that dissolve (creator 17:53 UTC)
+
+The creator's note on the step-2 clip: the cuts between shots are too abrupt, and the people stand stiff. Both are in `j5_background.py`.
+
+- **Idle motion of a figure** (`idle`, constants `IDLE`): a displacement field on each card, a function of `t` only, in shares of the card's
+  visible height `H` (so it scales with the shot): body sway about the card's bottom edge 0.50 % H at the top (weight `h^1.6`, `h` = height
+  above the bottom), head turn 0.30 % H, nod 0.22 % H, chest breath 0.20 % H (a Gaussian band just below the head), cloth and fur ripple
+  0.12 % H (a sine travelling up the body, strength 0.6 + 0.4 x the fire's flicker). Every movement is two sines of unrelated frequencies
+  (0.11/0.19, 0.17/0.29, 0.23/0.41, 0.27 Hz), phase per figure from its id, so the two men never move together. The head's share of the card is
+  `HEAD_M` (0.24 m) over the metres the frame shows of the card. A foreground shoulder moves at 0.55 of that. The old whole-card 0.5 %
+  scale breath is gone (it stretched the figure). Measured: the alpha mass changes by under 1.5 % (nothing stretches) and the rows at the
+  card's bottom move under 0.3 px.
+- **Camera on an ease-in-out curve**: the shot's push and truck follow smoothstep, so each shot starts and ends slowly and the cut does
+  not land in the middle of a move.
+- **Dissolve** (`DISSOLVE` = 10 frames, 0.42 s): the earlier shot is drawn 10 frames longer with the camera at rest (its `tail`), and ffmpeg's
+  `xfade=fade` blends it into the first 10 frames of the next. The cuts stay on the nominal clock (3.5 / 3.0 / 3.0 / 3.0 s); the fire is in
+  every shot at about the same screen height, so the light carries over the blend. The ambience is one continuous track and does not
+  restart at a cut.
+- **Not done:** an L- or J-cut (the next shot's sound arriving before its picture) needs a voice; there is none until the creator's yes
+  to a new take. The commander's proportions come from his belt-up sheets and are not fixed by motion.
+
 ## 8. Measured (cloud container, 4 CPU cores, no GPU)
 
 Cut-out: about 20 s per sheet. Blender layer passes: 3.4-5.8 s each, 95 s for the four shots. Motion: 1.3 s per frame, 300 frames in about

@@ -4546,3 +4546,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   were re-rendered (v2). 1.3 s per frame, 2.5 min for the clip on 4 cores. HF `route_test_2026-11/j5_dialogue/step2/`. The step-by-step record for a later standard
   is `docs/J5_DIALOGUE_COLLAGE.md`. Tests: `tests/unit/test_j5_background.py` (5), `test_j5_collage.py` (4). Cost $0. Still missing: mouth/blink/brow variants,
   a full-body commander, a left-facing scout (see the doc, section 10).
+- Step 3 (creator 17:53 UTC: the cuts are abrupt, the people stand stiff): `j5_background.idle` gives each card a small time-only displacement (body sway from the
+  bottom edge, head turn, nod, chest breath, cloth ripple; shares of the card height, two unrelated sines per movement, the old whole-card scale breath removed because
+  it stretched the figure); the camera follows an ease-in-out curve; the shots are joined by a 10-frame (0.42 s) `xfade` dissolve carried by a tail of the earlier shot, cuts
+  stay on the nominal clock. Tests: 3 more in `tests/unit/test_j5_background.py` (8). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7b. Cost $0. L/J-cut and lip-sync
+  still wait for a voice (no ElevenLabs without the creator's separate yes).
