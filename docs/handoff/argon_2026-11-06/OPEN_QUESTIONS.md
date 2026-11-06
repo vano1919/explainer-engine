@@ -45,3 +45,12 @@ Questions for the creator go to the Fable thread as four options each (the creat
   `tests/unit/test_route_assets.py::test_prompt_check_allows_ninety_words_only_in_d2` fail: its first assertion expected 75 words to
   fail in group D. Resolved towards the newer rule (D-77): the assertion now uses a prompt above the 150-word band; the D2 limit
   assertion is unchanged. This edits an assertion to a newer sourced rule, not to make a phase pass; Argon and the creator may veto it.
+
+## D. Verification (what was run, on which head)
+
+- `python -m explainer_engine.docs_lint`: 0 findings. `python -m explainer_engine.governance check`: ok.
+- Full `tests/unit` on the merged tree plus this handoff (CI `quality`, run 42278480125, head adca3ae): 3163 passed, 3 skipped,
+  1 xfailed, **1 failed**: `test_icw01_rule_rewrite` flagged the words LTX/Qwen on the INDEX row; fixed in the next commit by naming D-116 on
+  that row (the test's own rule). The earlier local run of the merge before the handoff files: 3156 passed, 1 failed (`test_route_assets`,
+  fixed, see section C). The final-head run is reported in the thread.
+- Not run: any pod, any render, Blender (not installed here), the `system`/`media` tests. The p14/p15 bundle pins were not rebuilt.
