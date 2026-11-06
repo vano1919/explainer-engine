@@ -48,6 +48,7 @@ def main(argv=None) -> int:
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--job")
     g.add_argument("--prefetch", action="store_true")
+    ap.add_argument("--variant-frames", action="store_true", help="the first frame is first_frames/<shot>__<style tag>.png (the 24 look variants)")
     a = ap.parse_args(argv)
     cfg = load_cfg()
     ltx = cfg["ltx"]
@@ -60,6 +61,10 @@ def main(argv=None) -> int:
     jobs = [j for j in cfg["ltx_jobs"] if j["id"] == a.job]
     if len(jobs) != 1:
         raise SystemExit(f"no LTX job {a.job!r} in p15.json")
+    if a.variant_frames:   # the pod drew <shot>__S1..S3: the clip starts from the picture of its own style tag
+        for j in jobs:
+            ff = j["first_frame"]
+            ff["path"] = ff["path"].replace(f"/{j['shot_id']}.png", f"/{j['shot_id']}__{j['style']}.png")
     rows = X.run(ltx, {"jobs": jobs}, out, float(os.environ["EE_DEADLINE"]), log, speeds_name=f"speeds_{a.job}.json")
     ok = bool(rows) and rows[-1]["status"] == "ok"
     mp4 = out / "ltx" / f"{a.job}.mp4"

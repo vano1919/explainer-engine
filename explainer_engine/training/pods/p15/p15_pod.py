@@ -41,8 +41,12 @@ def load_cfg() -> dict:
     return json.loads((HERE / "p15.json").read_text(encoding="utf-8"))
 
 
-def load_schedule(only: str | None = None) -> dict:
-    return json.loads((HERE / ("p15q_schedule.json" if only == "qwen" else "p15_schedule.json")).read_text(encoding="utf-8"))
+CLIP_SETS = {8: CLIP_STAGES, 2: ["ltx_c2", "ltx_c4"]}   # --only qwen --clips N: the look-variant pictures, then these clips (build.CLIP_SETS)
+
+
+def load_schedule(only: str | None = None, clips: int = 0) -> dict:
+    name = f"p15qc{clips}_schedule.json" if (only == "qwen" and clips) else "p15q_schedule.json" if only == "qwen" else "p15_schedule.json"
+    return json.loads((HERE / name).read_text(encoding="utf-8"))
 
 
 def timeouts(schedule: dict) -> dict[str, float]:
@@ -55,8 +59,8 @@ def timeouts(schedule: dict) -> dict[str, float]:
 
 
 class Pod:
-    def __init__(self, cfg: dict, schedule: dict, out: Path, *, deadline: float, run=P.run_proc, only: str | None = None):
-        self.cfg, self.out, self.deadline, self.run, self.only = cfg, Path(out), deadline, run, only
+    def __init__(self, cfg: dict, schedule: dict, out: Path, *, deadline: float, run=P.run_proc, only: str | None = None, clips: int = 0):
+        self.cfg, self.out, self.deadline, self.run, self.only, self.clips = cfg, Path(out), deadline, run, only, clips
         self.book = P.Book(self.out)
         self.book.events = {k: threading.Event() for k in ("weights_qwen", "weights_ltx25")}
         self.reserve = schedule["end_reserve_min"] * 60
@@ -89,7 +93,7 @@ class Pod:
                 f"snapshot_download({q['base']!r})\n"
                 f"hf_hub_download({q['style_lora']['hf']!r}, {q['style_lora']['path']!r}, repo_type='dataset')\n")
         self.stage("weights_qwen", [PY, "-c", code])
-        if self.only != "qwen":
+        if self.only != "qwen" or self.clips:
             self.stage("weights_ltx25", self.mod("p15_ltx", "--prefetch"))
 
     def gpu(self):
@@ -97,16 +101,18 @@ class Pod:
         self.book.events["weights_qwen"].wait(max(0.0, until - time.time()))
         self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants"] if self.only == "qwen" else [])),
                    why=None if self.book.ok("weights_qwen") else "the Qwen weights did not download")
-        if self.only == "qwen":
+        if self.only == "qwen" and not self.clips:
             return
         self.book.events["weights_ltx25"].wait(max(0.0, until - time.time()))
         fails = 0
-        for name, job in self.cfg["clips"].items():
-            ff = self.out / "first_frames" / f"{job['first_frame_of']}.png"
+        var = self.only == "qwen"   # the 24 look-variant pictures: a clip starts from <shot>__<its style tag>
+        for name, job in ((n, j) for n, j in self.cfg["clips"].items() if not self.clips or n in CLIP_SETS[self.clips]):
+            tag = job["job"].split(".")[3]
+            ff = self.out / "first_frames" / (f"{job['first_frame_of']}__{tag}.png" if var else f"{job['first_frame_of']}.png")
             why = ("the LTX-2.5 weights are missing or wrong" if not self.book.ok("weights_ltx25") else
                    f"no first frame {ff.name} (the restyle did not draw it)" if not ff.is_file() else
                    f"{fails} LTX failures (the plan's stop condition)" if fails >= self.cfg["max_ltx_failures"] else None)
-            if not self.stage(name, self.mod("p15_ltx", "--job", job["job"]), why=why) and why is None:
+            if not self.stage(name, self.mod("p15_ltx", "--job", job["job"], *(["--variant-frames"] if var else [])), why=why) and why is None:
                 fails += 1
 
     def stage_f(self):
@@ -133,7 +139,7 @@ class Pod:
         except Exception as e:   # noqa: BLE001 - the record says what broke; F still runs
             self.book.mark("gpu_lane", "failed", reason=repr(e)[:300])
         self.stage_f()
-        if self.only == "qwen":
+        if self.only == "qwen" and not self.clips:
             return 0 if self.book.ok("qwen_restyle") else 1
         return 0 if any(self.book.ok(n) for n in self.cfg["clips"]) else 1
 
@@ -142,13 +148,14 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--plan", action="store_true")
     ap.add_argument("--only", choices=["qwen"], help="run only the Qwen restyle (no LTX weights, no clips)")
+    ap.add_argument("--clips", type=int, choices=[2, 8], default=0, help="with --only qwen: after the 24 pictures also this many LTX clips (p15qc<N>_schedule.json)")
     a = ap.parse_args(argv)
-    cfg, sch = load_cfg(), load_schedule(a.only)
+    cfg, sch = load_cfg(), load_schedule(a.only, a.clips)
     if a.plan:
         print(json.dumps({"lanes": QWEN_LANES if a.only else LANES, "timeouts_s": timeouts(sch), "clips": {} if a.only else cfg["clips"]}, indent=1))
         return 0
     out = Path(os.environ.get("EE_OUT", "/workspace/out"))
-    return Pod(cfg, sch, out, deadline=float(os.environ["EE_DEADLINE"]), only=a.only).main()
+    return Pod(cfg, sch, out, deadline=float(os.environ["EE_DEADLINE"]), only=a.only, clips=a.clips).main()
 
 
 if __name__ == "__main__":

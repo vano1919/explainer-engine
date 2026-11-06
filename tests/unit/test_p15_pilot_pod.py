@@ -285,6 +285,7 @@ def test_the_qwen_only_script_has_no_ltx_and_pins_the_same_bundle_and_the_launch
         (tmp_path / n).write_text((DIR / n).read_text(encoding="utf-8"), encoding="utf-8")
     monkeypatch.setattr(B, "SH", tmp_path / "p15.sh")
     monkeypatch.setattr(B, "SH_Q", tmp_path / "p15q.sh")
+    monkeypatch.setattr(B, "SH_C", {})   # the committed clip scripts are pinned only by the real bundle command
     sha = B.bundle(tmp_path / "a.tgz")
     assert sha in (tmp_path / "p15.sh").read_text() and sha in (tmp_path / "p15q.sh").read_text()
     with tarfile.open(tmp_path / "a.tgz") as t:
@@ -309,3 +310,52 @@ def test_the_qwen_stage_ends_after_three_pictures_fail_in_a_row_so_a_card_that_c
     monkeypatch.setattr(p15_qwen, "fetch_still", boom)
     assert p15_qwen.run(tmp_path, tmp_path, tmp_path, True) == 1
     assert len(calls) == p15_qwen.MAX_FAIL_STREAK == 3
+
+
+# ---- 24 pictures + N clips (the creator 2026-11-06 21:41 UTC: video too)
+
+class FakeRunVariants(FakeRun):
+    def __call__(self, cmd, *, timeout=None, env=None, log_path=None, deadline=None):
+        name = Path(log_path).stem
+        if name == "qwen_restyle":
+            assert "--variants" in cmd
+            for shot in ("room_two_shot", "battle_f000_colour"):
+                for look in ("S1", "S2", "S3"):
+                    f = self.out / "first_frames" / f"{shot}__{look}.png"
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    f.write_bytes(b"x")
+        if name.startswith("ltx_c"):
+            assert "--variant-frames" in cmd
+        return super().__call__(cmd, timeout=timeout, env=env, log_path=log_path, deadline=deadline)
+
+
+def test_the_clip_variants_run_the_24_pictures_then_only_their_clips_from_the_variant_first_frames(tmp_path):
+    for n, ids in ((2, ["ltx_c2", "ltx_c4"]), (8, B.CLIP_SETS[8])):
+        cfg = B.config(manifest())
+        out = tmp_path / str(n)
+        run = FakeRunVariants(out)
+        pod = p15_pod.Pod(cfg, p15_pod.load_schedule("qwen", n), out, deadline=__import__("time").time() + 20000, run=run, only="qwen", clips=n)
+        rc = pod.main()
+        names = [c[0] for c in run.calls]
+        assert names[:3] == ["weights_qwen", "weights_ltx25", "qwen_restyle"] or set(names[:2]) == {"weights_qwen", "weights_ltx25"}
+        rows = json.loads((out / "stages.json").read_text())["stages"]
+        done = [k for k, v in rows.items() if k.startswith("ltx_c") and v["status"] == "ok"]
+        skipped = [k for k, v in rows.items() if k.startswith("ltx_c") and v["status"] == "skipped"]
+        assert set(done) | set(skipped) == set(ids)
+        # the shots with a drawn picture start; the others skip with the missing-first-frame reason
+        assert "ltx_c2" in done and "ltx_c4" in done and (n == 2 or "ltx_c6" in skipped) and rc == 0
+
+
+def test_the_clip_first_frames_follow_the_style_tag_and_the_schedules_state_their_proposed_caps():
+    assert B.clip_first_frame("ltx_c1") == "room_two_shot__S1" and B.clip_first_frame("ltx_c4") == "battle_f000_colour__S2"
+    assert B.clip_first_frame("ltx_c5") == "battle_f000_colour__S1" and B.clip_first_frame("ltx_c7") == "room_close_host__S2"
+    for n in (8, 2):
+        sch = json.loads((DIR / f"p15qc{n}_schedule.json").read_text())
+        assert B.schedule_qwen_clips(n) == sch and sch["limits"] == B.LIMITS_CLIPS[n]
+        assert [s["id"] for s in sch["stages"] if s["id"].startswith("ltx_c")] == B.CLIP_SETS[n]
+        assert RP.rp11(DIR / f"p15qc{n}_schedule.json") == []
+        assert RP.rp11(DIR / f"p15qc{n}_schedule.json", max_usd=3.4, max_hours=2.0) != []   # they do NOT fit the current cap
+        text = (DIR / f"p15c{n}.sh").read_text()
+        assert f"p15_pod --only qwen --clips {n}" in text and len(lean.SHA_LINE.findall(text)) == 1
+    p = json.loads((DIR / "p15.json").read_text())["clips"]
+    assert [c for c in B.CLIP_SETS[8] if c not in p] == []

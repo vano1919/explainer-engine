@@ -4649,3 +4649,13 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   ESTIMATED (`runpod.SPEED` / 1.8). Out: H100 (17 min work) and RTX PRO 6000 Blackwell (21 min) fail RP-01; A100 PCIe worst $3.65 / 122 min; RTX PRO 4000/4500
   Blackwell have no speed. Qwen-Image-2.1 = 13.3 GB transformer + 16.3 GB text encoder (model_cpu_offload, one at a time): 24 GB cards may fit, unproven;
   the 3-failure stop bounds an OOM. Time worst over 2 h (guard-bounded, pictures upload as made): A5000 276, L4 316, A40/A6000 203, 4090 139, Ada 133, L40S 127 min.
+
+## 2026-11-06 22:10 UTC — p15: 24 pictures + LTX clips as two prepared variants (scope card 21:41 UTC; branch `icw/19-ltx`, NOT launched)
+- `p15_pod --only qwen --clips 8|2` (scripts `p15c8.sh` / `p15c2.sh`, schedules `p15qc8_schedule.json` / `p15qc2_schedule.json`): the 24 look-variant pictures, the LTX-2.5
+  weights, then the clips; a clip starts from `first_frames/<shot>__<its style tag>.png` (`p15_ltx --variant-frames`): c1 room_two_shot__S1, c2 room_two_shot__S2,
+  c3 room_two_shot__S3, c4 battle_f000_colour__S2, c6 room_establishing__S2, c7 room_close_host__S2, c8 room_insert_clock__S2, c5 battle_f000_colour__S1. The 2-clip set
+  = c2 (dialogue two-shot) + c4 (battle). 80 GB cards only (A100 COMMUNITY/SECURE, H100 NVL); Blackwell out (LTX never ran on sm_120).
+- RP-11 per card, expected / worst: 8 clips A100 COMM $2.92 (126 min) / $6.29 (272 min), A100 SEC $3.76 / $8.11, H100 NVL $3.67 (85 min) / $7.61 (176 min);
+  2 clips A100 COMM $1.58 (68) / $3.51 (152), A100 SEC $2.03 / $4.53, H100 NVL $2.16 (50) / $4.50 (104). Neither fits $3.4 / 2 h. Caps written in the files are PROPOSED
+  (8 clips $6.4 / 4.6 h; 2 clips $3.6 / 2.6 h, both on the A100 COMMUNITY), the creator's card decides; the ledger cap needs max_usd / 0.8.
+- Tests: pod runs for both sets, first-frame names, schedules, scripts. Cost $0.
