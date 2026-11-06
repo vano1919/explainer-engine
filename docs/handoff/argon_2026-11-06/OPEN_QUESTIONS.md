@@ -65,7 +65,6 @@ Questions for the creator go to the Fable thread as four options each (the creat
   frames were not on this branch (not verified by me).
 - Second refresh (2026-11-06 ~22:30 UTC, coordinator relay): merged PR #151 head 9752721, which adds `docs/J5_ARGON_PROMPT.md`; the
   README now names it the main prompt. **Note for the creator:** that prompt tells Argon to start `argon/ltx-minimisation` from
-  `claude/project-thread-4nebmi`, which does not contain this handoff tree (PRS, plans, MATERIAL images, p14/p15/p16 material); to give
-  Argon both, its first line should name `argon/handoff-2026-11-06` instead. I did not edit the prompt's text; the creator or the
-  coordinator decides.
+  `claude/project-thread-4nebmi`, which does not contain this handoff tree. On the creator's word (22:34 UTC, via the coordinator) the
+  prompt now says `argon/handoff-2026-11-06` instead, on this branch and on #151, so Argon works from one branch.
 
