@@ -333,7 +333,8 @@ def raw_graph(name: str, scale=None) -> dict:
     """Node graphs outside the toon path (Fable's order, 2026-11-05): ``ocean`` = a deep blue-green emission with a lighter band at
     the plane's near edge, haze towards its far edge and a glossy (roughness 0.1) noise-normal ripple mixed in by Fresnel;
     ``scale`` = the plane's (x, y) size in metres, so ripples are ~1.4 m wide whatever the plane; ``smoke`` = a soft grey card
-    (Emission + Transparent) that thins upwards and to the sides, broken up by noise."""
+    (Emission + Transparent) that thins upwards and to the sides, broken up by noise; ``flame`` = a campfire's cone, an Emission ramp
+    from deep orange at its foot to yellow at its tip."""
     ramp = lambda stops: {"interpolation": "LINEAR", "stops": stops}
     if name == "ocean":
         sx, sy = (float(scale[0]), float(scale[1])) if scale else (500.0, 150.0)
@@ -380,6 +381,12 @@ def raw_graph(name: str, scale=None) -> dict:
                  ["up", "Value", "a1", 0], ["ex", "Value", "a1", 1], ["a1", "Value", "a2", 0], ["nz", "Fac", "a2", 1],
                  ["a2", "Value", "sh", "Fac"], ["sh", "Color", "mixs", "Fac"], ["clear", "BSDF", "mixs", 1],
                  ["emit", "Emission", "mixs", 2], ["mixs", "Shader", "out", "Surface"]]
+    elif name == "flame":   # a campfire's tongue (pilot_camp): a hot emission, deep orange at the foot, yellow at the tip, light-independent
+        nodes = [_n("co", "ShaderNodeTexCoord"), _n("sep", "ShaderNodeSeparateXYZ"),
+                 _n("heat", "ShaderNodeValToRGB", ramp=ramp([[0.0, [1.0, 0.22, 0.04, 1]], [0.55, [1.0, 0.58, 0.12, 1]], [1.0, [1.0, 0.86, 0.42, 1]]])),
+                 _n("emit", "ShaderNodeEmission", inputs={"Strength": 5.0}), _n("out", "ShaderNodeOutputMaterial")]
+        links = [["co", "Generated", "sep", "Vector"], ["sep", "Z", "heat", "Fac"], ["heat", "Color", "emit", "Color"],
+                 ["emit", "Emission", "out", "Surface"]]
     else:
         raise WorldKitError(f"no raw graph {name!r}")
     return {"nodes": nodes, "links": links}
@@ -717,7 +724,7 @@ def _layout_cast(layout: str, cpaths, rain_blend: Path | None = None) -> tuple[l
     return out, mats
 
 
-STRUCTURE_ROLES = ("wall", "corner", "floor", "roof", "light")   # the room itself: in every shot, never a prop
+STRUCTURE_ROLES = ("wall", "corner", "floor", "roof", "light", "scatter")   # the place itself: in every shot, never a prop (a wood is the place)
 
 
 def structure(layout_id: str, *, doc: dict | None = None) -> set[str]:

@@ -45,12 +45,12 @@
       ],
       "on": {
         "gpu": {
-          "expected_min": 5.8,
-          "max_min": 17.5
+          "expected_min": 6.4,
+          "max_min": 19.2
         }
       },
       "measured": true,
-      "note": "8 edits at 33.5-38.5 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"
+      "note": "9 edits at 33.5-38.5 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"
     },
     {
       "id": "weights_ltx25",
@@ -139,7 +139,7 @@
         }
       },
       "measured": false,
-      "note": "1 clip, 185 frames, 1920x1088, seed 42, room_establishing S2, native audio (unmeasured)"
+      "note": "1 clip, 185 frames, 1920x1088, seed 42, courtyard_cross S2, native audio (unmeasured)"
     },
     {
       "id": "ltx_c7",
@@ -169,7 +169,7 @@
         }
       },
       "measured": false,
-      "note": "1 clip, 185 frames, 1920x1088, seed 42, room_insert_clock S2, native audio (unmeasured)"
+      "note": "1 clip, 185 frames, 1920x1088, seed 42, camp_fire S2, native audio (unmeasured)"
     },
     {
       "id": "ltx_c5",
@@ -184,7 +184,7 @@
         }
       },
       "measured": false,
-      "note": "1 clip, 185 frames, 1920x1088, seed 42, battle_f000_colour S1, native audio (unmeasured)"
+      "note": "1 clip, 185 frames, 1920x1088, seed 42, march_side S1, native audio (unmeasured)"
     },
     {
       "id": "F",
