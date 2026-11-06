@@ -667,9 +667,10 @@ def battle30_dust(shot_id: str, rgb) -> dict:
 
 
 def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000, frames: int = 24, shot_id: str | None = None,
-          far_px: float = FAR_PX, composition: str = "battle") -> dict:
-    """Objects, camera, materials and the crowds block. ``battle``: grass with a trampled dirt strip between the armies, ridges
-    behind, a wedge charging a shield wall, banners and dust (the Mac clip). ``field``: the first proof's parade on a flat plane
+          far_px: float = FAR_PX, composition: str = "battle", camera_override: dict | None = None) -> dict:
+    """Objects, camera, materials and the crowds block. ``camera_override`` (battle only): a static camera that replaces the
+    composition's creeping one (the pilot's extra battle stills); the crowd plan is made for it, so its near soldiers are baked.
+    ``battle``: grass with a trampled dirt strip between the armies, ridges behind, a wedge charging a shield wall, banners and dust (the Mac clip). ``field``: the first proof's parade on a flat plane
     (kept for the A/B and the CI timing). Templates and heroes are ordinary cast members (render_shot's character path);
     templates are parked behind the camera."""
     from explainer_engine.blender import characters as C
@@ -679,6 +680,10 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     battle, long = composition in ("battle", "battle30"), composition == "battle30"
     shot_id = shot_id or {"battle": BATTLE_SHOT_ID, "battle30": BATTLE30_SHOT_ID}.get(composition, SHOT_ID)
     camera, camera_to = (BATTLE_CAMERA, BATTLE_CAMERA_TO) if battle else (CAMERA, CAMERA_TO)
+    if camera_override is not None:
+        if composition != "battle":
+            raise CrowdError("a camera override belongs to the 'battle' composition")
+        camera, camera_to = dict(camera_override), None
     if long:
         from explainer_engine.blender import camera_rigs
         camera = dict(battle30_camera(frames), extension=str(camera_rigs.ensure()))
