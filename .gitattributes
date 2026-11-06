@@ -1,1 +1,5 @@
 *.sh text eol=lf
+# the P12 job files are pinned by sha256 in p12b.sh (WP-1e): the same bytes on every checkout, Windows included
+explainer_engine/training/pods/p12/p12b.py text eol=lf
+explainer_engine/training/pods/p12/p12b.json text eol=lf
+explainer_engine/training/pods/p12/p12c_ltx.py text eol=lf

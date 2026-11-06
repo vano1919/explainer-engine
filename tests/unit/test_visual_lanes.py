@@ -193,3 +193,43 @@ def test_every_napoleon_shot_has_an_archetype_from_the_registry():
 def test_napoleons_lane_plan_page_is_current():
     _, _, plan = _builder().planned()
     assert (NAPOLEON / "lane_plan.md").read_text(encoding="utf-8") == _builder().lane_plan(plan)
+
+
+# --- D-116 routes (2026-11-06): archetypes_ic/2 -------------------------------------------------------------------------------
+DEFAULT_ROUTES = {"V1": "J4", "V6": "J4", "V2": "J2", "V5": "J2", "V8": "J2", "V3": "J5", "V4": "J5", "V7": "J5", "V9": "J5",
+                  "V10": "J5", **{f"S{i}": "J5" for i in range(1, 8)}, **{f"H{i}": "H" for i in range(1, 7)}}
+
+
+def test_every_sub_category_has_its_d116_route_and_the_default_mapping():
+    doc = _raw()
+    assert doc["schema"] == "archetypes_ic/2"
+    subs = {s["id"]: s for s in doc["sub_categories"]}
+    assert {sid: s["route"] for sid, s in subs.items()} == DEFAULT_ROUTES   # FINAL_HIGH_LEVEL_PLAN section 3
+    assert all(s["route_status"] == "T" for s in subs.values())            # T until the phase-3 route test (step 4 verdict)
+    assert subs["V3"]["route_alt"] == "LTX_A2V" and subs["V1"]["route_alt"] == "J2" and subs["V4"]["route_alt"] is None
+
+
+def test_a_sub_category_without_a_route_or_with_a_wrong_one_is_refused():
+    doc = _raw()
+    v1 = next(s for s in doc["sub_categories"] if s["id"] == "V1")
+    del v1["route"]
+    with pytest.raises(ContractError):
+        contracts.validate(doc)
+    doc = _raw()
+    next(s for s in doc["sub_categories"] if s["id"] == "S1")["route"] = "J4"
+    next(s for s in doc["sub_categories"] if s["id"] == "H1")["route"] = "J5"
+    bad = SD.registry_errors(doc)
+    assert any("S1" in b and "J5" in b for b in bad) and any("H1" in b and "route H" in b for b in bad)
+
+
+def test_the_planner_writes_a_route_into_every_planned_shot():
+    planned, report = lanes.plan(cards_v3())
+    contracts.validate(planned)
+    for s in planned["shots"]:
+        sid, route = SD.route_of(s["archetype"], s["lane"])
+        assert s["route"] == route and s.get("sub_category") == sid, s["id"]
+        assert (s["lane"] == "HELPER") == (s["route"] == "H")
+        assert s["lane"] != "STILL_3D" or s["route"] == "J5"
+    assert {r["route"] for r in report["rows"]} == {"J2", "J4", "J5", "H"}
+    assert SD.route_of(1, "VIDEO_3D") == ("V1", "J4") and SD.route_of(1, "STILL_3D") == (None, "J5")   # a battle held as a plate
+    assert SD.route_of(3, "VIDEO_3D") == ("V3", "J5") and SD.route_of(12, "HELPER") == ("H1", "H")

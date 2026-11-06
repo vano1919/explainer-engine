@@ -1,10 +1,11 @@
 """The shot designer of the Ink Chronicle path (roadmap 7.3, 7.4 and 11, ICW-03; D-97): reads one ``film_shots/3`` card and
 says which of the 20 archetypes it is, how intense its beat is, whether a Python helper visual could carry it, whether a
 spoken line is seen (``dialogue_cover``), and writes the lane fields once the lane planner (``visual/lanes.py``) has chosen
-the lane: ``archetype``, ``still_mode``, ``render_profile``, ``lipsync``, ``helper_archetype``, ``tier``. It never touches
+the lane: ``archetype``, ``still_mode``, ``render_profile``, ``lipsync``, ``helper_archetype``, ``tier``, and the D-116 ``route`` with its
+``sub_category``. It never touches
 the words (narration, dialogue, claims): the speech mix is the script's (BP-105, D-99), not the picture's.
 
-The archetypes and the lane sub-categories live in ``visual/archetypes_ic.json`` (``archetypes_ic/1``, validated against
+The archetypes and the lane sub-categories live in ``visual/archetypes_ic.json`` (``archetypes_ic/2``, validated against
 ``schemas/archetypes_ic.schema.json`` and by ``registry_errors``). Shot caps and shares are never copied here: they are read
 through ``scripting/film_shots`` (BP-108, BP-109), the module the registry lists as their reader.
 
@@ -116,6 +117,12 @@ def registry_errors(doc: dict) -> list[str]:
                 out.append(f"sub-category {s['id']} lists archetype {aid}, which does not name it")
         if s["lane"] != {"H": "HELPER", "S": "STILL_3D", "V": "VIDEO_3D"}[s["id"][0]]:
             out.append(f"sub-category {s['id']}: its letter does not match lane {s['lane']}")
+        if (s["lane"] == "HELPER") != (s["route"] == "H"):
+            out.append(f"sub-category {s['id']}: route H is the HELPER lane's and only its (D-116)")
+        if s["lane"] == "STILL_3D" and s["route"] != "J5":
+            out.append(f"sub-category {s['id']}: a STILL_3D plate is route J5 (D-116), not {s['route']}")
+        if s["route_alt"] is not None and s["route_alt"] == s["route"]:
+            out.append(f"sub-category {s['id']}: route_alt repeats its route")
     return out
 
 
@@ -125,6 +132,20 @@ def archetype(aid: int) -> dict:
 
 def sub_category(sid: str) -> dict:
     return next(s for s in registry()["sub_categories"] if s["id"] == sid)
+
+
+ROUTE_OF_LANE = {"STILL_3D": "J5", "HELPER": "H"}  # D-116: a lane whose every sub-category has the one route
+
+
+def route_of(aid: int, lane: str) -> tuple[str | None, str]:
+    """``(sub-category id, route)`` of a shot of archetype ``aid`` on ``lane`` (D-116): the archetype's first sub-category on
+    that lane and its registry route; an archetype with no sub-category on the lane (a fallback, e.g. a battle held as a
+    STILL_3D plate) takes the lane's one route, and a VIDEO_3D shot with none is J5 (no LTX unless the registry says so)."""
+    for sid in archetype(aid)["sub_categories"]:
+        s = sub_category(sid)
+        if s["lane"] == lane:
+            return sid, s["route"]
+    return None, ROUTE_OF_LANE.get(lane, "J5")
 
 
 def _text(shot: dict) -> str:
@@ -315,9 +336,12 @@ class ShotDesigner:
         if lane not in LANES:
             raise ValueError(f"lane {lane!r}")
         s = copy.deepcopy(shot)
-        for k in ("still_mode", "render_profile", "lipsync", "helper_archetype", "dialogue_cover"):
+        for k in ("still_mode", "render_profile", "lipsync", "helper_archetype", "dialogue_cover", "route", "sub_category", "ltx_clips"):
             s.pop(k, None)
         s["lane"], s["archetype"] = lane, aid
+        sid, s["route"] = route_of(aid, lane)   # D-116: the registry's route per sub-category
+        if sid is not None:
+            s["sub_category"] = sid
         cover = self.cover(shot)
         if lane == "HELPER":
             if shot.get("dialogue"):

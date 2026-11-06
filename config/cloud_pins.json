@@ -75,8 +75,8 @@
       "sha256": null,
       "smoke_verified": false,
       "note": "D-80/KG-16: the only keyframe base; 2512 is retired (qa/keyframe_gate.RETIRED)",
-      "legacy": true,
-      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
+      "legacy": false,
+      "legacy_note": "active since D-116 (2026-11-06): the look of route J5 assets and the J2/J4 first frames (D-96 amended); legacy:true 2026-11-05 (D-105) is history"
     },
     "keyframe_angles": {
       "id": "fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA",
@@ -90,12 +90,22 @@
     "video_ltx": {
       "id": "Lightricks/LTX-2.5",
       "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
-      "sha256": null,
+      "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
       "params": null,
       "smoke_verified": false,
-      "note": "LTX-2.5 22B, the combined P12 pod's video model (creator 2026-11-01 08:23-08:26 UTC: measurement + Qwen + LTX in one pod); replaces the 2026-10-31 brief's LTX-Video-0.9.8-13B-distilled, which serves neither the Layout IC LoRA nor audio-driven clips (docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md); revision as in training/pods/p12/p12b.json ltx; files listed there; a gated repo, so sha256 stays null as for the keyframe base",
-      "legacy": true,
-      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
+      "note": "LTX-2.5 22B, the combined P12 pod's video model (creator 2026-11-01 08:23-08:26 UTC: measurement + Qwen + LTX in one pod); replaces the 2026-10-31 brief's LTX-Video-0.9.8-13B-distilled, which serves neither the Layout IC LoRA nor audio-driven clips (docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md); revision as in training/pods/p12/p12b.json ltx; files listed there; sha256 of the distilled transformer (sha256_file) and of every file the P12 pod fetches (sha256_files) read from the Hub API (revision/main?blobs=true, LFS sha256) at revision 49b093a3 on 2026-11-06",
+      "legacy": false,
+      "legacy_note": "J2/J4 video model since D-116 (2026-11-06); legacy:true 2026-11-05 (D-105) is history",
+      "sha256_file": "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+      "sha256_files": {
+        "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+        "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+        "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3",
+        "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5",
+        "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8",
+        "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors": "792a2bad501ca03262c0bc2ce7a2949e85b142ce18e30894aad5bc849c8e7584",
+        "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": "86370bbf79a9eb4edaa158907e2b48a5188fe4c5dc8ce30c7eb8f2f131a9bbf5"
+      }
     },
     "video_wan": {
       "id": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
@@ -115,18 +125,29 @@
         "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
         "weight": 0.7,
         "note": "checkpoint-3000 (LT-79), weight 0.7 per the creator's brief 2026-10-31; the same hf repo, path and sha256 as style_lora in training/pods/p12/p12b.json (a test keeps the two together)",
-        "legacy": true
+        "legacy": false,
+        "legacy_note": "the look's LoRA since D-116 (2026-11-06, D-83 ck3000 at 0.7); qa/style_prompt.INFERENCE reads id and weight here"
       }
     },
     "video_ltx_layout_lora": {
       "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
       "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
       "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
-      "sha256": null,
+      "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
       "smoke_verified": false,
-      "note": "the Layout-To-Render IC-LoRA of stage L2 (model card revision bd765d55, read 2026-11-01); gated",
-      "legacy": true,
-      "legacy_note": "legacy image-generation route (D-96, D-105, 2026-11-05): no call path from film_shots/3; kept for the inputs already written and the P12 history"
+      "note": "the Layout-To-Render IC-LoRA of stage L2 (model card revision bd765d55, read 2026-11-01); gated; sha256 read from the Hub API (LFS sha256) at revision bd765d55 on 2026-11-06; the J2 route (ltx_layout/1, D-116)",
+      "legacy": false,
+      "legacy_note": "J2 route since D-116 (2026-11-06); legacy:true 2026-11-05 (D-105) is history"
+    },
+    "video_ltx_control": {
+      "id": "Lightricks/LTX-2.3-22b-IC-LoRA-Union-Control",
+      "revision": "20a580c8606c06a0988d40375a61309e0fe5893d",
+      "file": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+      "sha256": "a1b888a87f661d27f08b394ae559e8e1050be33900bcc36a5cdf659e48f88d18",
+      "base": "Lightricks/LTX-2.3",
+      "smoke_verified": false,
+      "legacy": false,
+      "note": "the J4 restyle control LoRA (ltx_restyle/1, D-116): Union conditioning canny + depth + pose, reference at 0.5x the output (model card read 2026-11-06; licence ltx-2-community-license, recorded, never gating, D-115). Trained on LTX-2.3-22b, NOT on LTX-2.5 (models.video_ltx): the Hub lists no LTX-2.5 Union-Control (Lightricks models searched 2026-11-06), so the J4 base (an LTX-2.3 download, or J4 through the 2.5 Layout-To-Render LoRA) is an open item of the step-3 OR-23 plan; nothing is decided here"
     }
   },
   "blender": {

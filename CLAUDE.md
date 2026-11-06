@@ -1,6 +1,6 @@
 # Ink Chronicle (D-96) — read first
 
-> The channel's direction since 2026-11-04 is **Ink Chronicle**: one 3D-to-illustrated universe rendered in Blender and assembled by FFmpeg ([direction](docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md), decision D-96 and D-97..D-113 in [the decision log](docs/DECISIONS_AND_OPEN_QUESTIONS.md)). The one plan is the [Opus implementation roadmap](docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md): work packages ICW-00..ICW-10 on the branch `opus/ink-chronicle-blender-visual-system-2026-11-04`, each on its own branch and back by PR (roadmap section 15.1); the creator gave the launch word on 2026-11-05 08:42 UTC. Paid steps still need the OR-23 plan, the Fable full-repo audit (rule below) and his word.
+> The channel's direction since 2026-11-04 is **Ink Chronicle**, amended 2026-11-06 by the role split (D-96 as amended, D-116): **Qwen-Image-2.1 + xworld_v2 draws the look** (scene assets and first frames), **Blender builds space and time** (scene, camera, 2.5D, crowds, rigs, layout passes) and renders the J5 shots, **LTX animates the J2/J4 shots**; the route per scene type is the registry's `route` field ([route plan](docs/architecture/ROUTE_PLAN_2026-11-06.md)); FFmpeg assembles ([direction](docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md), decision D-96 and D-97..D-116 in [the decision log](docs/DECISIONS_AND_OPEN_QUESTIONS.md)). The one plan is the [Opus implementation roadmap](docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md): work packages ICW-00..ICW-10 on the branch `opus/ink-chronicle-blender-visual-system-2026-11-04`, each on its own branch and back by PR (roadmap section 15.1); the creator gave the launch word on 2026-11-05 08:42 UTC. Paid steps still need the OR-23 plan, the Fable full-repo audit (rule below) and his word.
 >
 > **Precedence (ICW-01, 2026-11-05):** where an older text still conflicts with D-96 after the rule rewrite, the thread follows the decision log, reports the stale text in its reply and in `docs/PROGRESS.md`, and continues; it does not refuse and it does not silently delete the old text. Texts about Qwen keyframes, LTX clips, sprites and the painted still route carry a dated legacy banner: they describe the legacy image-generation route (D-43, D-80), which stays readable for the episodes already made.
 >
@@ -10,7 +10,7 @@
 
 # CLAUDE.md — explainer-engine
 
-A solo creator's explainer channel in the Ink Chronicle look, one 3D-to-illustrated universe rendered in Blender and assembled by FFmpeg (D-96) ("worlds collide": history, science and money meeting other
+A solo creator's explainer channel in the Ink Chronicle look: Qwen draws, Blender builds space and time, LTX moves what must move, FFmpeg assembles (D-96 as amended, D-116) ("worlds collide": history, science and money meeting other
 eras, D-25; analysis episodes of other people's fictional worlds under the RR rules, D-26) and its production
 pipeline: topic → research dossier + claim map → short scenario → **creator approval** (OR-15) → script → **creator approval** → schema-validated storyboard →
 film_shots (VIDEO_3D / STILL_3D / HELPER, D-97) → ElevenLabs narration + the 24 fps audio spine → Blender VIDEO_3D / STILL_3D clips and Python HELPER graphics for the **first two parts only**, stitched into
@@ -44,9 +44,9 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 1. Production is cloud-first (D-31): the cloud session + RunPod pods. Money ceilings live only in
    `config/spend_caps.json` and are enforced by code (D-56): pods only via `python -m explainer_engine.cloud.runpod`
    (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
-   The creator's M4 Pro Mac may run free Blender renders for review, style sheets and benchmark preflight (ICG-3, D-113);
-   paid work stays cloud-first; the PC reviews and uploads.
-   Free runs, a test render on the Mac and a GitHub Actions run, start without asking (D-114); anything that bills still waits
+   Free Blender renders (review, style sheets, J5 shots, layout passes, benchmark preflight) run on the creator's PC (RX 5700,
+   EEVEE) and on CI (D-113 as amended 2026-11-06; the Mac is out of every plan); paid work stays cloud-first; the PC also reviews
+   and uploads. Free runs, a test render on the PC and a GitHub Actions run, start without asking (D-114); anything that bills still waits
    for the OR-23 plan, the OR-34 audit and his word.
 2. Budget caps are ceilings, not targets; the numbers live only in `config/spend_caps.json` (invariant 1; vidIQ and ElevenLabs
    credits are counted in the ledger until they have a line there). Estimate and log before every paid call
@@ -74,7 +74,7 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 **How we work (creator, 2026-10-17):** a change request goes in this order: (1) study the process and the real output (open files, measure, find the cause); (2) research when the topic needs it and write the findings into a skill; (3) ask the creator the questions that are truly his to answer; (4) update rules, skills, agents and tests; (5) only then produce. Never produce before steps 1-4. Creator notes become rules with a test (OR-09).
 **Reusable before fast (creator, 2026-10-25, OR-21):** between a quick one-off and a reusable tool in the repo, always the reusable one at the same money cost, even when slower (a cheaper one-off goes to the creator); pods start only through `cloud/runpod.py create` with their script and config committed under `explainer_engine/training/pods/`.
 
-**Long renders (RULE-R1, 2026-10-17; a local Blender render on the Mac too, D-113):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
+**Long renders (RULE-R1, 2026-10-17; a local Blender render on the PC too, D-113):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
 
 **Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
 `python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style sheets, asset set, render pod, sample, full read,

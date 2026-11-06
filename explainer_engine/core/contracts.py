@@ -9,7 +9,8 @@ geometry, derived-file freshness, index ranges). jsonschema only (plan decision 
 
 A finding is FAIL for a schema or invariant breach, and takes its level from the registry (``sourced_rules.level``) when a
 hypothesis rule drives it (BP-139: video-model clip geometry), so a hypothesis never FAILs (D-59, CN-11). BP-139 applies only to
-the recipes it names (``applies_to_recipes``, D-105): the legacy LTX clips of film_shots/2 and shot_spec/1, never a Blender shot.
+the recipes it names (``applies_to_recipes``, D-105, D-116): the LTX clips (``ltx_i2v``, ``ltx_layout``, ``ltx_restyle``) of
+film_shots/2, shot_spec/1 and the J2/J4 shots of film_shots/3, never a J5 or Blender-rendered shot.
 
 The Ink Chronicle contracts (D-96, roadmap section 10; ICW-02): ``film_shots/3`` and ``shot_spec/2`` (CN-17: the 24 fps master
 clock and the 2560x1440 frame of BP-167, lane and render-profile agreement), ``shot_route/2`` (the Blender pin of BP-175),
@@ -69,7 +70,8 @@ def _f(rule: str, where: str, detail: str, severity: str = "FAIL") -> dict:
 
 
 def ltx_recipe(recipe: str | None) -> bool:
-    """D-105: CN-08 / BP-139 bind only the recipes BP-139 names (``ltx_i2v/*``); a Blender or keyframe recipe is outside them."""
+    """D-105, D-116: CN-08 / BP-139 bind only the recipes BP-139 names (``ltx_i2v/*``, ``ltx_layout/*``, ``ltx_restyle/*``); a
+    Blender, 2.5D or keyframe recipe is outside them."""
     return recipe is not None and any(fnmatch.fnmatchcase(recipe, pat) for pat in SR.T("BP-139", "applies_to_recipes"))
 
 
@@ -146,7 +148,8 @@ def _bible_version() -> str | None:
 def _film_shots_3(doc: dict) -> list[dict]:
     """CN-17 on ``film_shots/3`` (D-97): the master clock and frame, exact frame counts (Blender renders the frames it is
     asked for: round(seconds x fps), no 8k+1 rounding), a HELPER shot names a catalogue archetype (CN-15), and the cards are
-    planned under the current world bible (a stale version is REVIEW: the look may have moved)."""
+    planned under the current world bible (a stale version is REVIEW: the look may have moved). The LTX clips of a J2/J4
+    shot (``ltx_clips``, D-116) take CN-08's 8k+1 frames and sizes in 32."""
     fps = doc["fps"]
     out = _master("fps", None, None, fps)
     have = _bible_version()
@@ -160,6 +163,11 @@ def _film_shots_3(doc: dict) -> list[dict]:
             out.append(_f("CN-17", s["id"], f"{s['duration_frames']} frames is not {s['seconds']:g} s at {fps} fps ({want})"))
         if s["lane"] == "HELPER":
             out += _catalogue_findings(s["id"], s["helper_archetype"])
+        # D-116: a J2/J4 shot's LTX clips are LTX generations, so CN-08 / BP-139 bind them (ltx_layout/1, ltx_restyle/1);
+        # the shot itself stays on the Blender master clock and frame above
+        if s.get("route") in ("J2", "J4"):
+            for n, c in enumerate(s.get("ltx_clips") or [], 1):
+                out += _geometry(c["width"], c["height"], c["frames"], f"{s['id']}.clip{n}")
     return out
 
 

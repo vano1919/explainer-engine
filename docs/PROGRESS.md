@@ -4427,3 +4427,24 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   (the fixture fed an endless lavfi tone and relied on `-shortest`; AAC priming left the audio more than one frame longer than the
   49-frame picture). The fixture's tone is now bounded to frames / fps; the CLIP-05 rule and its tolerance are unchanged. Local
   ffmpeg 6.1 never showed it; the inherited CLIP-05 red that Q4 and Q8 reported on their PRs is this same fixture.
+
+## 2026-11-06 — ICW rules PR: route per scene type (D-116), D-96 role split, BP-108 scene / BP-172 clip (PR #141)
+- Why: the creator's decisions of 2026-11-06 07:14 and 07:19 UTC (FINAL_HIGH_LEVEL_PLAN_ka.md §7): Qwen-Image-2.1 + xworld_v2 draws
+  the look, Blender builds space and time and renders J5, LTX animates J2/J4; one LTX clip is 3-6 s under a 15 s scene; the Mac is out.
+  Step 1 of the Opus step-by-step guide (`ltx_gap_review_2026-11-06/OPUS_STEP_BY_STEP_GUIDE.md`), free, no pod.
+- Decision log: D-96, D-97, D-101, D-105 and D-113 amended (dated clauses, old text kept); D-116 new (routes J5/J2/J4/H, default
+  mapping of the 23 sub-categories, status T). Sourced rules: BP-108 and BP-109 renderer-neutral (BP-108 = scene duration); BP-172 =
+  one LTX clip (`clip_target_s_band` [3, 6], house); the LTX rules BP-100/101/102/110/139/164/165 route-scoped to J2/J4. KP-49 new.
+- Code: `film_shots.ltx_clip_findings` (KP-49: REVIEW outside the band, FAIL over 8 s on a written clip), `shot_prompt_lint` reads the
+  same symbols; `archetypes_ic/2` (route, route_alt, route_status) and `shot_design.route_of`; film_shots/3 `route`, `sub_category`,
+  `ltx_clips`; CN-08 on every J2/J4 clip; `edit/router.recipe_plan` (ltx_layout/1, ltx_restyle/1, assemble_25d/1, python_helper/1);
+  `style_prompt.INFERENCE["lora"]` read from `cloud_pins` (xworld_v2 0.7, one home); pins for LTX-2.5, Layout-To-Render and
+  Union-Control (LTX-2.3) with Hub LFS shas; p12b.sh placeholders filled; empty job_speeds rows for the new routes.
+- Docs: route-scoped banners on SHOT_PROMPTS, SHOT_CONTINUITY, KEYFRAME_GATE, LORA_TRAINING, SCRIPT_ENGINE; new
+  `docs/architecture/ROUTE_PLAN_2026-11-06.md`; CLAUDE.md banner and invariant 1 (PC + CI). The creator said "yes, all" (09:50 UTC) to
+  the five contentious finds (test_icw01, legacy pins test, CN-08 recipe list, BP-108-as-clip docs, the second home of 0.7).
+- Checks: fast suite 2950 passed; docs_lint 0; governance ok; CI quality + smoke green; Fable verification PASS (10:28 UTC, all 9 LTX
+  shas checked against the Hub). Merged on the creator's word (card, 11:11 UTC).
+- Open: the J4 base (Union-Control exists only for LTX-2.3: a step-3 OR-23 item); `dryrun.placeholder_problems` matches p12b.py's own
+  detector word, so `runpod create` would refuse the p12 pod; the HF copy of `code/p12/` still needs uploading; C1-C6 of the route-test
+  script stay the creator's.

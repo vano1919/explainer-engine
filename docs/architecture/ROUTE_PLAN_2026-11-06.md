@@ -1,0 +1,151 @@
+# Route plan: Qwen draws, Blender builds and animates in places, LTX animates in places
+
+> **Route-scoped since D-116 (2026-11-06):** the English copy of sections 1-6 and 9 of the creator-approved plan
+> `FINAL_HIGH_LEVEL_PLAN_ka.md` (Georgian, written by the Fable thread 2026-11-06 07:00 UTC; project files
+> `explainer-engine/ltx_gap_review_2026-11-06/`). Decisions live in the [decision log](../DECISIONS_AND_OPEN_QUESTIONS.md) (D-96 as
+> amended, D-97, D-101, D-105, D-113, D-116); numbers live in `explainer_engine/standards/sourced_rules.json`; the route of every
+> sub-category lives in `explainer_engine/visual/archetypes_ic.json`. This page explains; where it and those homes differ, they win.
+> Section 8 (the finding register F-01..F-40) stays in the Georgian file. Every unmeasured number is **EST**. The Mac is out of every
+> plan (the creator, 2026-11-06 07:19 UTC): where the Georgian text says "Mac" for a free render, read "the creator's PC (RX 5700,
+> EEVEE, D-113) or CI".
+
+Goal: maximum stability and quality; a 12-15 minute episode for about US$10-15 (EST).
+
+## 1. Principle (the creator's words, 2026-11-06)
+
+1. **Qwen-Image-2.1 + xworld_v2 draws everything the viewer sees:** the scene assets (a 360° backdrop, the heroes by angle, props)
+   and the first frame of each shot. Fixes go through Qwen's edit mode: "change nothing, fix this defect".
+2. **Blender builds space and time:** scene, camera, angles, depth, crowds, lighting. In places it **animates itself** (2.5D cards,
+   camera, mouth, crowds); in places it only gives LTX the **drawing** (a layout).
+3. **LTX animates only where motion is really needed:** battle, travel, duel, an emotional gesture, a discovery.
+4. **A scene seen once:** straight Qwen picture -> LTX. **A scene with several angles:** Qwen assets -> Blender assembly -> angles.
+5. **Dialogue:** cut-out heroes on the same backdrop, mouth and face cheaply in Blender/Python; LTX only if the cheap way fails.
+   Nobody watches one frame for more than 5 s.
+6. The "beautiful" Blender NPR render is the final picture nowhere (it failed three times: ICW-05b, ICW-05c, the overnight matrix).
+
+## 2. Tool roles
+
+| Tool | Does | Does not |
+|---|---|---|
+| Qwen-Image-2.1 + xworld_v2 ck3000 (0.7) | the look: assets, first frames, fixes (edit mode; references = the hero sheet + a clay frame) | motion; continuity with another shot by prompt (D-75: continuity by cards and structure) |
+| Blender 5.2.3 | scene, camera grammar, 360° backdrop projection, 2.5D cards, Geometry Nodes crowds, rigs (Quaternius CC0), Rhubarb mouth, clay/depth/line-art passes, lighting, the EEVEE render of 2.5D shots | the final painted look through a shader |
+| LTX-2.5 (pod) | Layout-To-Render (J2), restyle under depth/canny (J4), audio-driven dialogue where needed | inventing a background or a composition: always driven by a drawing or a picture |
+| Python / FFmpeg | HELPER graphics, assembly (`build_video_v2`), QA, cut-out (BiRefNet), mouth shapes swapped on a card | — |
+| ElevenLabs | narrator + the heroes' fixed voices (D-90), Scribe word timings | — |
+
+## 3. Matrix: which route for which scene
+
+Routes: **J5** = Qwen assets + Blender 2.5D (no LTX, about $0); **J2** = Blender clay layout -> Qwen first frame -> LTX
+Layout-To-Render; **J4** = Blender full layout (colour, depth, line) -> LTX restyle; **H** = Python. Status: ✔ = rests on an
+approved result; T = the test must confirm it (the registry's `route_status`).
+
+| Lane / sub-category (archetypes_ic) | Route | Alternative | Duration | Identity carrier | Status |
+|---|---|---|---|---|---|
+| **VIDEO** V1 battle / siege / formation | **J4** (thousands of GN soldiers, camera on a rail) | J2 | scene at most 15 s (BP-108), LTX clip 3-6 s (BP-172), by edit or chain | Blender structure + Qwen first frame | T |
+| V2 duel / action | **J2** (LTX adds the gestures) | J4 | scene at most 15 s, LTX clip 3-6 s, key pose at 5 s | Qwen frame + layout | T |
+| V3 dialogue (visible mouth) | **J5** (cut-out hero, Rhubarb mouth, 2-3 expressions, breathing) | LTX audio-driven (D-90) | at most 5 s | the Qwen sheet, one picture for all angles | T (cheap way) / ✔ (a2v code exists, never run) |
+| V4 council / group dialogue | **J5** | — | at most 5 s | the same | T |
+| V5 crafting (hands) | **J2** (loop 2-5 s) | J5 loop on a card | at most 5 s | Qwen insert | T |
+| V6 travel | **J4** (dolly, parallax, crowd) | J5 (cards + camera) | scene at most 15 s, LTX clip 3-6 s | Blender | T |
+| V7 discovery (push-in, fog) | **J5** (Blender camera + fog on cards) | J4 | short | Blender | T |
+| V8 emotional gesture | **J2** | J5 (2-3 poses) | the gesture's length | Qwen frame | T |
+| V9 aftermath (smoke, slow cycles) | **J5** (Blender smoke + cards) | J4 | at most 15 s | Blender | T |
+| V10 environment action (fog, sun) | **J5** (Blender fog and light on the 360° backdrop) | — | at most 15 s | Blender | T |
+| **STILL** S1-S7 (establishing, tableau, insert, aftermath, match, freeze) | **J5**: Qwen plate -> Blender camera / parallax / BP-170 curve | — | at most 5 s (BP-109) | Qwen 360° / plate | ✔ (+dpl 10-27, the parallax code exists) |
+| **HELPER** H1-H6 (map, timeline, counter, cutaway, comparison, callout) | **H** Python (D-87: 2D vector + 2.5D) | Blender terrain only by benchmark (D-112) | the narrator's sentence | — | ✔ |
+
+**Budget (EST):** of the 432 s of VIDEO, LTX is needed by V1, V2, V5, V6, V8, about 40-55 %, so about 30-45 clips an episode
+(instead of about 90); the rest is J5 on the creator's PC or CI ($0) or under $1 on RunPod. One LTX clip EST $0.05-0.15 + retries ->
+an episode $3-8 of LTX + $1-2 of Qwen assets + the narrator.
+
+**Stability rules for the matrix (already in force):** one 360° backdrop per place (+dpl); a hero from one sheet, an angle by cut-out and
+Qwen edit, never redrawn from zero (invariant 6, D-101's principle); a shot reused by zoom or crop when the script returns to the same
+angle (the creator's rule of 2026-10-25); a generated shot never becomes the base of the next (D-78); three VIDEO shots in a row are a
+REVIEW (KP-48).
+
+## 4. Rules in force (every route)
+
+| Axis | Rule | Home |
+|---|---|---|
+| Voice | 70 % narrator / 30 % dialogue, REVIEW 65-75 %; the narrator is the clock; a hero's voice is fixed, read first, then conditions the clip | D-99 / BP-105, D-88, D-90 |
+| Duration | dialogue at most 5 s; action 10-15 s, never cut artificially; a still at most 5 s; a shot at least 2.5 s; 8k+1 frames on LTX | BP-108, BP-109, BP-84, BP-139 |
+| Lanes | 60/30/10 ± 5 pp, measured in seconds, independent of the words | D-93 / BP-109, D-98 |
+| Rhythm | the MrBeast five zones, one narrator with tempo changes; short clips in the hyped zones | D-94, BP-169, BP-171, BP-172 |
+| Format | 2560x1440, 24 fps, 12 minutes, 5 Shorts | BP-167, D-85, D-104 |
+| Model | Qwen-Image-2.1 + xworld_v2 ck3000 0.7; wldnk_* and 2512 banned; licences never block | D-80, D-83 |
+| Continuity | only the style is learned; continuity by cards + structure; edit with references yes, an img2img chain no | D-75, D-78, the CT cards |
+| Assets | library first, new only when needed; every asset's licence recorded, never blocking | D-76, D-110, D-83 |
+| Money | caps only in `spend_caps.json`; pods only through `cloud.runpod`; the OR-23 plan + the OR-34 audit + the creator's word for anything paid; free CI and PC runs start on their own; a watchdog on every paid run; step-by-step saving | D-56, D-111, D-113, D-114, OR-33 |
+| Process | synthesis of existing code, nothing from zero; Opus plans, Sonnet works; the verdict is the creator's, on clips, not on pictures | D-115, OR-26, the creator 2026-11-05 |
+
+### 4a. Rules ICW-01 rewrote for Blender that are corrected now (one free PR: this step)
+- **D-96:** "Blender = final pixels" -> "Qwen the look, Blender space and time, LTX motion where needed; the route by scene type (section 3)". The creator's word.
+- **D-97 lane mapping:** VIDEO_3D -> VIDEO (by route J2/J4/J5), STILL_3D -> STILL (J5), HELPER unchanged.
+- **D-105:** the LTX rules (BP-100/101/102/110/139/164/165/172) go from "legacy" back to active on J2/J4 shots; not on J5 shots.
+- **D-101:** the identity carrier = the Qwen hero sheet + the Blender card or rig (both).
+- **BP-108 / BP-109 text:** renderer-neutral; the numbers unchanged.
+- **Banners** on five documents: "legacy" -> "route-scoped (J2/J4/J5)".
+- **`style_prompt.INFERENCE["lora"]`** None -> xworld_v2 0.7 (as D-83 says).
+
+### 4b. The internal conflict (closed by the creator, section 9)
+BP-172 (2026-11-01): an LTX clip is 2-4 s in a hyped zone, 4-8 s in the middle. BP-108 (2026-11-04): action 10-15 s. Closed on
+2026-11-06: both stay at different levels (section 9, 7.3).
+
+## 5. What is missing
+
+| # | Gap | Route | Who fills it |
+|---|---|---|---|
+| G1 | the D-96 amendment and the lane mapping (4a) | all | this PR |
+| G2 | router film_shots/3 -> the LTX recipes and a new `assemble_25d` recipe | J2/J4, J5 | this PR names them (`edit/router.recipe_plan`); spec writers in ICW-07 |
+| G3 | J5 code: the Qwen asset list per scene (360° backdrop, heroes by angle, props), BiRefNet cut-out, Blender projection + cards, Rhubarb mouth on a card, expression sheet; the old ASSET_COMPOSE code as the foundation | J5 | a new package (ICW-11) |
+| G4 | J4 pins: LTX Union-Control / Wan VACE, sha, smoke; depth/canny/line passes from Blender | J4 | this PR pins the control LoRA (`video_ltx_control`; its base is LTX-2.3, an open step-3 item); passes in step 2 |
+| G5 | the P12 pod: 3 sha lines, HF code upload, DRY gate | J2 | the sha lines in this PR; the HF upload before the pod |
+| G6 | a Mac route | — | closed: the Mac is out (section 9) |
+| G7 | speed and price: `job_speeds` empty; one LTX clip unknown | all | the test (rows added empty in this PR) |
+| G8 | upscale to 2560x1440 for LTX clips | J2/J4 | phase 3 (the free FFmpeg chain) |
+| G9 | QA on LTX clips: identity, flicker, LT-32 jitter never run; RenderValidator is on Blender | J2/J4 | ICW-08b |
+| G10 | audio-driven dialogue (D-90) never run; voice consistency between clips open | V3 fallback | the test |
+| G11 | Qwen identity across angles: the 10-25 cut-out way worked, the 10-27 +dpl backdrop worked, paint-over unconfirmed; baked shadows -> solved by Blender lighting and flat-lit sheets | J5 | the test |
+| G12 | the craft report's blueprint is on 75/25 and is rewritten to 70/30; the registry's 12 attributes are HYP; camera and transition choice narrow | planning | the Opus plan |
+| G13 | WP-Q2/Q3/Q5/Q6/Q9/Q10 and ICW-06/07/09/10 not started; the Blender parts (camera, crowd, world, shading) stay the foundation of J5/J2/J4 | — | the roadmap rewrite (step 5) |
+
+## 6. Phases
+
+| Phase | What | Cost | Gate |
+|---|---|---|---|
+| **0** | the creator's answers (section 9) | — | — |
+| **1 rules** | the 4a PR + D-116 + the section-3 matrix as the registry's `route` field + tests | free | Fable verification |
+| **2 free builds** | (a) J5 dialogue: two heroes cut out, a 360° backdrop, Blender cards, Rhubarb mouth, a 5 s reverse angle, on the creator's PC or CI; (b) Blender clay/depth/line layouts for the battle (12 s) and the duel (8 s) | $0 (Qwen assets: one cheap pod EST $0.3-0.5, OR-23) | the creator watches the J5 clip |
+| **3 paid test** | pod: J2 (duel, gesture) and J4 (battle 12 s, travel) x 2 seeds; audio-driven on one dialogue line; the time and price of one LTX clip measured | EST $3-6 | OR-23 -> Opus -> OR-34 -> the creator's word; watchdog |
+| **4 verdict** | one page: J5 / J2 / J4 / the overnight J3 side by side, numbers (identity, palette, hold, flicker, price); section 3's T -> ✔ or ✘ | free | the creator's choice |
+| **5 roadmap** | D-96 final, ICW-07/08b/09/10/11 rewritten with the matrix, the cost model with measured numbers, the upscale choice | free (Opus plan) | Fable |
+| **6 pilot** | the first two parts (D-67) by every route, the creator watches, then the rest | OR-23 | the creator's word |
+
+**What does not change:** nothing goes into `main`; branches are not deleted; no paid step without the three gates.
+
+## 9. The creator's answers and the critique (2026-11-06, 07:14 UTC)
+
+**Decisions (his 7.1-7.4):**
+- **7.1 yes:** D-96 is amended by roles: Qwen the look, Blender space, LTX motion; in code and rules at once (phase 1).
+- **7.2:** V1, V6 and the duel: one LTX generation **3-6 s**; a long scene by editing or a chain of clips (in J4 Blender's continuous
+  structure makes the seams easier: overlapping frames + the same depth; in J2 first+last frame or continuation, not run yet).
+- **7.3:** both rules stay at different levels: **BP-108 = the scene's duration (10-15 s)**, **BP-172 = one LTX clip's limit (2-8 s,
+  target 3-6)** (`film_shots.py`: the scene ceiling vs the clip limit).
+- **7.4:** the Mac only for a few seconds of tests (it is his work computer), and since 07:19 UTC out of every plan. On the RX 5700
+  16 GB PC: Blender EEVEE **yes** (2.5D assembly, clay/depth/line passes, J5 renders, free; D-113); Qwen-Image-2.1 (20B) and LTX
+  **no** (no CUDA). So: **Blender = the PC or CI, free; Qwen and LTX = RunPod.**
+- **7.5:** a cheap pod for the Qwen assets (EST $0.3-0.5, phase 2): answered yes at 07:37 UTC (a separate OR-23 plan).
+
+**The critique's five risks and what entered the plan:**
+1. LTX duration: removed by 7.2 / 7.3.
+2. **J5 "paper puppet":** the mouth in 3 states (closed / half / open) with a 2-frame cross-blend, not 8 shapes; part of the dialogue on
+   angles where the mouth is not seen (from behind, a reaction, an OTS listener, already in V3's design); the hero-sheet prompt says
+   **flat ambient lighting, no cast shadows**, so Blender's light does not give a double shadow. Phase 2(a)'s criterion: the creator
+   watches; if it is "a puppet", V3 moves to LTX audio-driven (`route_alt` becomes the route; about 15-25 more clips).
+3. **J4 style on a mass scene:** canny / line-art only on the fore and mid planes; the background GN army by depth + silhouette colour,
+   so the mass is painted as patches; control 0.5-0.7. Phase 3's battle shot in two variants (full canny vs cleaned).
+4. **Upscale inside phase 3:** a free FFmpeg chain (lanczos -> cas/unsharp -> light grain) on LTX's output up to 1440p, measured by line
+   share and palette; an AI upscale only if it fails.
+5. **360° geometry:** the qwen-360 LoRA at 0.8 (2026-10-25) closed its seam measurably (edge diff 8.3 vs 7.3); phase 2 checks the
+   horizon and the architecture lines on the projection in a wide pan; on wide moves the backdrop is 2-3 cards in depth (parallax),
+   not one sphere.
