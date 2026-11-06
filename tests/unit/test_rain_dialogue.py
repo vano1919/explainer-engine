@@ -50,3 +50,25 @@ def test_unknown_gesture_and_empty_dialogue_are_refused():
         D.dialogue([{**lines[0], "gesture": "wave"}], frames)
     with pytest.raises(ValueError):
         D.dialogue([], frames)
+
+
+def test_two_speakers_rain_mouth_only_on_her_line_and_villager_lipsync_offset():
+    j = json.loads((HERE / "rain_dialogue_two_speakers_synthetic.json").read_text(encoding="utf-8"))
+    lines = [{**l, "cues": HERE / l["cues"]} for l in j["lines"]]
+    out = D.dialogue(lines, 120, speaker="rain")["visemes"]
+    jaw = dict(out["MSTR-Jaw|rotation_euler|0"])
+    assert max(v for f, v in jaw.items() if f > 70) == 0.0                     # line 2 (from 2.6 s = frame 62.4) is not hers
+    assert max(v for f, v in jaw.items() if f < 50) > 0.0
+    plan = D.lipsync_plan(lines, 120, "villager")
+    assert plan["shapes"][:62] == "X" * 62 and set(plan["shapes"][63:110]) - {"X"}   # rests, then speaks from line 2's start
+    assert plan["frames"] == 120
+    with pytest.raises(ValueError):
+        D.lipsync_plan(lines, 120, "nobody")
+
+
+def test_cli_writes_both_speakers(tmp_path):
+    out = tmp_path / "t.json"
+    assert D.main(["--dialogue", str(HERE / "rain_dialogue_two_speakers_synthetic.json"), "--frames", "120", "--out", str(out),
+                   "--shape-speaker", "villager"]) == 0
+    j = json.loads(out.read_text(encoding="utf-8"))
+    assert "visemes" in j["rain"] and "lipsync" in j["villager"]
