@@ -113,7 +113,9 @@ def test_three_failed_jobs_in_a_row_abort_the_run(tmp_path):
 def test_prompt_check_allows_ninety_words_only_in_d2():
     assert RA.prompt_problems() == []
     cfg = json.loads(json.dumps(RA.CFG))
-    cfg["scenes"][0][1] = cfg["scenes_d2"][0][1]                              # 75 words in group D still fails
+    # since the LT-65 band became 40-150 words (creator 2026-11-06 12:27 UTC, commit b8ef1c5, newer than this pod's 90-word cap),
+    # group D no longer fails at 75 words; it still fails above the band
+    cfg["scenes"][0][1] = cfg["scenes_d2"][0][1] + " " + "more " * 80
     assert any(n == "D1_ford" for n, _ in RA.prompt_problems(cfg))
     cfg = json.loads(json.dumps(RA.CFG))
     cfg["scenes_d2"][0][1] += " " + "more " * 30                              # more than 90 words in D2 fails too

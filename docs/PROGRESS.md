@@ -4729,3 +4729,21 @@ One pod (RTX PRO 6000 Blackwell COMMUNITY, 40 min, balance $10.17 -> $9.09) drew
   runner can feed `push_in_reveal` (24 frames) to any cast without knowing the internals. Distances scale with `--head-m` / `--eye-m`
   (the lead character's head height and eye line; the defaults are the UBC's). Test: `test_the_resolve_cli_...`. Cost $0.
 
+
+## 2026-11-06 — Argon handoff branch `argon/handoff-2026-11-06` (thread: "Prepare Argon handoff branch"; free work, nothing paid)
+
+- The creator (18:54 UTC, Fable thread): one branch with every active change and every future plan, READMEs, the generated frames with
+  verdicts, the LTX helper material, and a prompt for Gemini "Argon" (LTX minimisation; shots from the script, pictures fitted to the
+  video; reuse; pictures from assets; everything measured). Brief: project files `argon_handoff_2026-11-06/BRIEF.md`.
+- Branch from `icw/19-pilot-pod` @3e8f994. Merged (merge commits with the PR number): #151 (twice, 362be4c then f7add32), #150, #152
+  (cancelled, kept), #140, #137, and #146 (`icw/16-lean-pod` @d29a769: icw/19 did not hold its fix-2 commits). Conflicts: PROGRESS.md
+  (both entries kept), `pilot_stills.py` (#150 vs #152, both sides kept). #119, #120, #112 listed as history, not merged.
+- `docs/handoff/argon_2026-11-06/`: README, PRS, PLANS (+ `plans/`: the Georgian plans with English summaries, audits, pilot plans,
+  cost note), MATERIAL.md + MATERIAL.json + 17 JPEG sheets (2.6 MB) with a verdict and reason per set, LTX_HELPERS, REUSE, OPEN_QUESTIONS,
+  ARGON_PROMPT, README_ka, `handoffs/`. Verdicts come from handoffs and the creator's relayed words; each row says what is not verified.
+- Test: `tests/unit/test_argon_handoff.py` (6): every material row has its picture, size budget, verdict and reason, no orphan image, the
+  prompt's documents exist, no secret-looking text. Cost $0. No pod, no paid call. Not done: p14/p15 bundle pins are not rebuilt for
+  the merged tree (do not launch a pod from this branch); the p15 pod result is not known.
+- Handoff merge fix: `test_route_assets.py::test_prompt_check_allows_ninety_words_only_in_d2` expected 75 words to fail in group D
+  (PR #140, 90-word cap); the newer LT-65 band is 40-150 words (b8ef1c5, creator 2026-11-06 12:27 UTC), so the assertion now uses a
+  prompt above the band; the D2 limit assertion is unchanged. Full `tests/unit` on the merged tree before this fix: 3156 passed, 1 failed (this one).
