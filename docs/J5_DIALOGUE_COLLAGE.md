@@ -1,5 +1,8 @@
 # J5 dialogue collage: the procedure, step by step
 
+> **Route-scoped since D-116 (2026-11-06):** this page belongs to route J5 (Qwen assets + Blender 2.5D, no LTX); the route decision is in the
+> [decision log](DECISIONS_AND_OPEN_QUESTIONS.md) (D-116).
+
 Source: the J5 dialogue test of 2026-11-06 (creator 16:44, 16:55, 17:25 and 17:26 UTC; thread "Test J5 dialogue with existing photos",
 PR #151). Everything here was done free (CPU Blender 5.2.3, BiRefNet on the CPU, numpy/OpenCV/ffmpeg) and every number below is the one
 that was used. It is a record to be turned into a standard, not a finished rule set: nothing in it is a validator threshold, and the
