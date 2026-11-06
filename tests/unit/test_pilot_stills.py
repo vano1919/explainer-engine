@@ -154,18 +154,23 @@ def test_every_shot_card_gives_a_clean_qwen_prompt_and_an_ltx_prompt():
     tags = ROOM["tags"]
     for sid in ROOM["shots"]:
         p = PS.prompts(sid)
-        q = p["qwen"]
+        q = p["qwen"].lower()
         assert q.startswith(SP.TRIGGER) and len(q.split()) <= PS.QWEN_MAX_WORDS, sid
         assert not [f for f in SP.check(q) if f["severity"] in ("FAIL", "REVIEW")], sid
         listed = set(W.dressing("pilot_room", sid))
         for name, tag in tags.items():
-            n = q.count(tag)
+            n = q.count(tag.lower())
             assert n <= 1, (sid, name)   # each tag said once
             if n:
                 assert name in listed, (sid, name)   # only what is in the still
         assert p["ltx"].startswith(PS.VIDEO_SENTENCE) and p["ltx"].endswith("Static camera."), sid
     two = PS.prompts("room_two_shot")
-    assert tags["host"] in two["qwen"] and tags["guest"] in two["qwen"] and "clock" not in two["qwen"]
+    q = two["qwen"].lower()
+    assert tags["host"] in q and tags["guest"] in q and "clock" not in q
+    assert two["hero_refs"] == ["B_H1_front", "B_H2_front"] and "image 2 is the commander. image 3 is the scout." in q
+    bat = PS.prompts("battle_f000_colour")   # the soldiers' card: a crowd prompt stays under the clone limit (CROWD_REVIEW_WORDS)
+    assert not [f for f in SP.check(bat["qwen"], sub_category="V1") if f["severity"] in ("FAIL", "REVIEW")]
+    assert bat["hero_refs"] == [] and bat["ltx"].startswith(PS.VIDEO_SENTENCE)
 
 
 def test_a_card_that_names_a_prop_outside_the_shot_is_refused():

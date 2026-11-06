@@ -8321,40 +8321,66 @@
     "room_two_shot": {
      "start": "{host} sits leaning forward with open hands mid-sentence, {guest} sits across {table} listening",
      "motion": "{host} talks and gestures with both hands; {guest} listens and nods once; the candle flame flickers",
-     "settle": "both hold still, eyes on each other"
+     "settle": "both hold still, eyes on each other",
+     "refs": [
+      "host",
+      "guest"
+     ]
     },
     "room_establishing": {
      "start": "{host} and {guest} sit at {table} in quiet talk, {clock} and {bookshelf} behind them",
      "motion": "{host} talks with small gestures, {guest} listens; nothing else moves",
-     "settle": "the room holds still"
+     "settle": "the room holds still",
+     "refs": [
+      "host",
+      "guest"
+     ]
     },
     "room_close_host": {
      "start": "{host} sits and speaks, one hand raised, to {guest} seen from behind",
      "motion": "{host} speaks and turns his raised hand over; {guest} stays still",
-     "settle": "his hand comes to rest on the table"
+     "settle": "his hand comes to rest on the table",
+     "refs": [
+      "host",
+      "guest"
+     ]
     },
     "room_close_guest": {
      "start": "{guest} sits and listens, chin raised, to {host} seen from behind",
      "motion": "{guest} listens, frowns, then nods slowly; {host} stays still",
-     "settle": "the scout holds the nod"
+     "settle": "the scout holds the nod",
+     "refs": [
+      "guest",
+      "host"
+     ]
     },
     "room_reverse": {
-     "start": "{elder} kneels at {stove} feeding it a log, {host} and {guest} sit far off at {table}",
+     "start": "{elder} kneels at {stove} feeding it a log, {host} and {guest} talk far off at {table}",
      "motion": "{elder} pushes the log into the stove and sparks rise; the two at the table talk quietly",
-     "settle": "the elder sits back on his heels"
+     "settle": "the elder sits back on his heels",
+     "refs": [
+      "elder"
+     ]
     },
     "room_insert_table": {
      "start": "{table} set with {jug}, {plate_n}, {plate_s}, {bowl} and {candle}",
      "motion": "the candle flame flickers and a thin thread of smoke rises",
      "settle": "the flame steadies",
-     "light": "warm firelight"
+     "light": "warm firelight",
+     "refs": []
     },
     "room_insert_clock": {
      "start": "{mantel_clock} on {drawers}, its hands near nine",
      "motion": "the minute hand ticks forward once; the lantern light trembles",
      "settle": "the clock is still",
-     "light": "the warm glow of {lantern}"
+     "light": "the warm glow of {lantern}",
+     "refs": []
     }
+   },
+   "hero_refs": {
+    "host": "B_H1_front",
+    "guest": "B_H2_front",
+    "elder": "B_H3_front"
    }
   }
  }

@@ -43,6 +43,16 @@ ROLE = {"room_establishing": "establishing wide from the stove corner",
 VIDEO_SENTENCE = ("Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon "
                   "timing, poses hold between quick moves.")
 QWEN_MAX_WORDS = 90     # Fable, 2026-11-06 15:57 UTC: a pilot still's prompt is at most 90 words
+# the soldiers scene (``layout_passes`` battle, frame 0: the near army from behind, the far army under its banners across a plain):
+# one card like the room's; the still is the crowd composition itself, so everything in it acts in the clip
+BATTLE = {"tags": {"near_army": "a dense army of lanky soldiers in green tunics, each with his own face and helmet",
+                   "far_army": "a far army under orange banners", "banner": "a big blue banner on a pole"},
+          "in_shot": {"near_army": "charges in the clip", "far_army": "what they charge at", "banner": "flaps as they run"},
+          "place": "a dusty plain below a grassy ridge in a medieval war", "light": "a low golden sun under drifting clouds",
+          "sub_category": "V1", "hero_refs": {},
+          "card": {"start": "{near_army} stands ready, facing {far_army} across the field, {banner} above them",
+                   "motion": "the near army charges forward across the plain, dust rises and the banners flap",
+                   "settle": "the two armies meet in a cloud of dust", "refs": []}}
 _NAME = re.compile(r"\{(\w+)\}")
 
 
@@ -63,6 +73,11 @@ def cameras(layout: dict | None = None) -> dict[str, dict]:
     return out
 
 
+def _short(tag: str) -> str:
+    """The noun of a tag ("the broad commander with a grey beard..." -> "commander"), for the second mention and the image list."""
+    return tag.split(" with ")[0].split(" in ")[0].split(",")[0].split()[-1]
+
+
 def _names(text: str) -> list[str]:
     return _NAME.findall(text)
 
@@ -75,8 +90,12 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
     ``qa/style_prompt.check``. LTX: the style sentence, the motion, then the settle at the end, and a static camera."""
     from explainer_engine.blender import world_kits as WK
     from explainer_engine.qa import style_prompt as SP
-    spec = layout or WK.layouts()["layouts"][LAYOUT]
-    card, tags, keep = spec["cards"][sid], spec["tags"], WK.dressing(LAYOUT, sid) if layout is None else spec["in_shot"][sid]
+    if sid.startswith("battle"):
+        spec = layout or BATTLE
+        card, tags, keep = spec["card"], spec["tags"], spec["in_shot"]
+    else:
+        spec = layout or WK.layouts()["layouts"][LAYOUT]
+        card, tags, keep = spec["cards"][sid], spec["tags"], WK.dressing(LAYOUT, sid) if layout is None else spec["in_shot"][sid]
     light = card.get("light", spec["light"])
     start_names = _names(card["start"]) + _names(light)
     used = start_names + _names(card["motion"]) + _names(card["settle"])
@@ -94,23 +113,30 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
         def one(m):
             n = m.group(1)
             if n in seen:   # said once: later mentions use the short noun of the tag
-                return "the " + tags[n].split(" with ")[0].split(" in ")[0].split()[-1]
+                return "the " + _short(tags[n])
             seen.add(n)
             return tags[n]
         return _NAME.sub(one, text)
     seen: set[str] = set()
     start = fill(card["start"], seen)
-    qwen = f"{SP.TRIGGER}, {start}, in {spec['place']}, lit by {fill(light, seen)}."
+    refs = list(card.get("refs", []))
+    if set(refs) - set(keep or ()):
+        raise ContractError(f"{sid}: a reference image of {sorted(set(refs) - set(keep or ()))}, who is not in the shot")
+    # the edit's images (p14_qwen B): Image 1 the Blender still carries places, sizes and poses; one hero sheet per listed name
+    who = "".join(f" Image {i} is the {_short(tags[n])}." for i, n in enumerate(refs, 2))
+    pre = f"Image 1 is the scene: keep every place, size and pose.{who}"
+    qwen = f"{SP.TRIGGER}, {pre} {start[0].upper() + start[1:]}, in {spec['place']}, lit by {fill(light, seen)}."
     n = len(qwen.split())
     if n > QWEN_MAX_WORDS:
         raise ContractError(f"{sid}: the Qwen prompt has {n} words, over {QWEN_MAX_WORDS}")
-    bad = [f for f in SP.check(qwen) if f["severity"] in ("FAIL", "REVIEW")]
+    bad = [f for f in SP.check(qwen, sub_category=spec.get("sub_category")) if f["severity"] in ("FAIL", "REVIEW")]
     if bad:
         raise ContractError(f"{sid}: the Qwen prompt fails the style check: {bad}")
     seen2: set[str] = set()
     motion, settle = fill(card["motion"], seen2), fill(card["settle"], seen2)
     ltx = f"{VIDEO_SENTENCE} {motion[0].upper() + motion[1:]}, then {settle}. Static camera."
-    return {"qwen": qwen, "qwen_words": n, "ltx": ltx, "card": card, "names": sorted(set(used))}
+    return {"qwen": qwen, "qwen_words": n, "ltx": ltx, "card": card, "names": sorted(set(used)),
+            "hero_refs": [spec["hero_refs"][r] for r in refs]}
 
 
 def manifest(room: Path, battle: Path | None, out: Path, *, battle_count: int = 5000) -> dict:
