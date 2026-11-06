@@ -4575,3 +4575,22 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Known flaws: the wall clock reads modern, the bookshelf pale, the grandfather clock's face dark, the windows bright.
 - Tests: `tests/unit/test_pilot_stills.py` (7). Cost $0. Plan for the paid part: `PILOT_1MIN_PLAN.md` v2 (project files), run-plan
   schedules (PR #147) in `pilot_1min/` (A100: $1.25 expected / $2.95 worst with Qwen on the pod; $0.98 / $2.12 with Qwen on the PC).
+
+## 2026-11-06 — The pilot pod package `training/pods/p15/` (thread: ICW-16 lean pod; branch `icw/19-pilot-pod`)
+
+- The creator (16:05 UTC, Fable thread): run the pilot with the current render, to settle whether Qwen restyles our Blender stills
+  in our style and whether LTX builds the video from them. Fable (15:52 UTC): option A only (Qwen on the pod), 185 frames, the room
+  clip is the two-shot.
+- `p15/build.py config --stills <pilot_stills.json>` writes `p15.json` from the uploaded stills manifest: 8 Qwen edits (the 7 room
+  stills and the battle colour frame 0, each pinned by sha256; frame 200 and the depth pass start no clip, so they are not
+  restyled), Image 1 the still plus the hero fronts the card names (B_H1, B_H2 as the step-3 pod pins them; B_H3 pinned here), the
+  prompts of `pilot_stills.prompts` (a manifest whose prompt differs from the card's is refused); two LTX-2.5 distilled i2v jobs
+  (the room two-shot, the battle frame 0), 185 frames (7.71 s, 8k+1, BP-172), 1920x1088, seed 42, no LoRA, no upscale.
+- `p15_qwen.py` (the step-3 pod's loader, LoRA merge and draw from `p14_qwen`), `p15_ltx.py` (one clip per process through
+  `p14_ltx.run`), `p15_pod.py` (net lane: the Qwen weights, then the LTX weights; gpu lane: the restyle, then each clip when its
+  first frame exists; two LTX failures stop; every timeout the schedule's max; F writes `speeds.json`), `p15.sh` (the step-3 stack
+  without Blender; the bundle `code/p15/ee_src.tar.gz` pinned by sha256; heartbeat `route_test_2026-11/pilot/beat.txt`, so
+  `$EE_OUT` lands in `route_test_2026-11/pilot/`), `p15_schedule.json` (RP-11 `check` rc 0: A100 80GB $1.21 expected / $2.83
+  worst, 0 idle GPU minutes; limits max-usd 3.5, max-hours 2.5).
+- Tests: `tests/unit/test_p15_pilot_pod.py` (8). Nothing launched; cost $0. The pod waits for Fable's OR-34 audit and then launches
+  through the worker thread.
