@@ -7661,6 +7661,727 @@
     "rock_line": 1000000000.0,
     "rock_slope": 0.7
    }
+  },
+  "pilot_room": {
+   "label": "Pilot room (the creator, 2026-11-06 15:25 UTC; fix round 15:52 UTC): a furnished plaster room, 8 x 6 m, a grandfather clock, a mantel clock, a table with two wooden armchairs, a bookshelf, a stove, a cabinet; host and guest seated at the table, the elder tending the stove. Each shot holds only what its LTX clip needs (in_shot, the creator 15:53 UTC)",
+   "landmarks": [
+    "clock",
+    "mantel_clock",
+    "table"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "structure": [
+    "floor",
+    "ceiling",
+    "window_n1",
+    "window_n2",
+    "window_e1",
+    "door"
+   ],
+   "blocks": [
+    {
+     "type": "shape",
+     "name": "floor",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      0,
+      0.0
+     ],
+     "scale": [
+      8.4,
+      6.4,
+      1
+     ],
+     "colour": "#8A6A4A",
+     "texture": "texture.ph_weathered_planks_diff",
+     "tile": 4.0
+    },
+    {
+     "type": "shape",
+     "name": "ceiling",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      0,
+      3.1
+     ],
+     "scale": [
+      8.4,
+      6.4,
+      1
+     ],
+     "pitch": 180.0,
+     "colour": "#6B4E35"
+    },
+    {
+     "type": "ring",
+     "name": "wall",
+     "wall": "model.mvk_wall_plaster_straight",
+     "nx": 4,
+     "ny": 3,
+     "replace": {
+      "north:1": "model.mvk_wall_plaster_window_wide_round",
+      "north:2": "model.mvk_wall_plaster_window_wide_round",
+      "west:2": "model.mvk_wall_plaster_door_round",
+      "east:1": "model.mvk_wall_plaster_window_wide_round"
+     }
+    },
+    {
+     "type": "piece",
+     "name": "window_n1",
+     "asset": "model.mvk_window_wide_round1",
+     "pos": [
+      -1.0,
+      3.0,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "window_n2",
+     "asset": "model.mvk_window_wide_round1",
+     "pos": [
+      1.0,
+      3.0,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "window_e1",
+     "asset": "model.mvk_window_wide_round1",
+     "pos": [
+      4.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg": -90.0
+    },
+    {
+     "type": "piece",
+     "name": "door",
+     "asset": "model.mvk_door_1_round",
+     "pos": [
+      -4.0,
+      2.0,
+      0.0
+     ],
+     "yaw_deg": 90.0
+    },
+    {
+     "type": "piece",
+     "name": "clock",
+     "asset": "model.ph_vintage_grandfather_clock_01",
+     "pos": [
+      3.1,
+      2.45,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "table",
+     "asset": "model.ph_plain_wooden_table_02",
+     "pos": [
+      0.0,
+      0.3,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "chair_n",
+     "asset": "model.ph_gallinera_chair",
+     "pos": [
+      0.0,
+      0.95,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "chair_s",
+     "asset": "model.ph_gallinera_chair",
+     "pos": [
+      0.0,
+      -0.35,
+      0.0
+     ],
+     "yaw_deg": 180.0
+    },
+    {
+     "type": "piece",
+     "name": "stool",
+     "asset": "model.ph_wooden_stool_01",
+     "pos": [
+      1.0,
+      0.95,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "bench",
+     "asset": "model.ph_painted_wooden_bench",
+     "pos": [
+      -3.45,
+      -0.6,
+      0.0
+     ],
+     "yaw_deg": 90.0
+    },
+    {
+     "type": "piece",
+     "name": "bookshelf",
+     "asset": "model.ph_wooden_bookshelf_worn",
+     "pos": [
+      -3.45,
+      0.95,
+      0.0
+     ],
+     "yaw_deg": 90.0
+    },
+    {
+     "type": "piece",
+     "name": "stove",
+     "asset": "model.ph_scandinavian_masonry_heater",
+     "pos": [
+      -3.05,
+      -2.1,
+      0.0
+     ],
+     "yaw_deg": 90.0
+    },
+    {
+     "type": "piece",
+     "name": "drawers",
+     "asset": "model.ph_vintage_wooden_drawer_01",
+     "pos": [
+      3.4,
+      -1.0,
+      0.0
+     ],
+     "yaw_deg": -90.0
+    },
+    {
+     "type": "piece",
+     "name": "mantel_clock",
+     "asset": "model.ph_mantel_clock_01",
+     "pos": [
+      3.42,
+      -1.15,
+      1.09
+     ],
+     "yaw_deg": -90.0
+    },
+    {
+     "type": "piece",
+     "name": "lantern",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      3.4,
+      -0.45,
+      1.09
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "cabinet",
+     "asset": "model.ph_gothiccabinet_01",
+     "pos": [
+      1.2,
+      -2.35,
+      0.0
+     ],
+     "yaw_deg": 180.0,
+     "scale": 0.8
+    },
+    {
+     "type": "piece",
+     "name": "barrel",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      3.25,
+      -2.3,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "bucket",
+     "asset": "model.ph_wooden_bucket_01",
+     "pos": [
+      -2.0,
+      -2.5,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "basket",
+     "asset": "model.ph_wicker_basket_02",
+     "pos": [
+      -2.7,
+      -1.3,
+      0.0
+     ],
+     "yaw_deg": 30.0
+    },
+    {
+     "type": "piece",
+     "name": "candle",
+     "asset": "model.ph_wooden_candlestick",
+     "pos": [
+      0.3,
+      0.3,
+      0.8
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "jug",
+     "asset": "model.ph_jug_01",
+     "pos": [
+      -0.35,
+      0.3,
+      0.8
+     ],
+     "yaw_deg": 20.0
+    },
+    {
+     "type": "piece",
+     "name": "plate_n",
+     "asset": "model.ph_carved_wooden_plate",
+     "pos": [
+      0.0,
+      0.52,
+      0.8
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "plate_s",
+     "asset": "model.ph_carved_wooden_plate",
+     "pos": [
+      0.0,
+      0.08,
+      0.8
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "bowl",
+     "asset": "model.ph_wooden_bowl_02",
+     "pos": [
+      0.35,
+      0.55,
+      0.8
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "light",
+     "name": "stove_glow",
+     "pos": [
+      -2.55,
+      -2.1,
+      0.55
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 120.0,
+      "color": [
+       1.0,
+       0.52,
+       0.22
+      ],
+      "radius_m": 0.25,
+      "shadow": true
+     }
+    },
+    {
+     "type": "light",
+     "name": "candle_flame",
+     "pos": [
+      0.3,
+      0.3,
+      1.08
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 18.0,
+      "color": [
+       1.0,
+       0.72,
+       0.42
+      ],
+      "radius_m": 0.03,
+      "shadow": true
+     }
+    },
+    {
+     "type": "light",
+     "name": "room_fill",
+     "pos": [
+      0.0,
+      0.0,
+      2.7
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 220.0,
+      "color": [
+       1.0,
+       0.9,
+       0.78
+      ],
+      "radius_m": 1.5,
+      "shadow": false
+     }
+    }
+   ],
+   "cast": [
+    [
+     "host",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_b",
+     [
+      0.0,
+      0.95
+     ],
+     0.0,
+     "Sitting_Talking_Loop",
+     0
+    ],
+    [
+     "guest",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_a",
+     [
+      0.0,
+      -0.35
+     ],
+     180.0,
+     "Sitting_Idle_Loop",
+     17
+    ],
+    [
+     "elder",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "support_blue",
+     [
+      -2.25,
+      -2.0
+     ],
+     -90.0,
+     "Fixing_Kneeling",
+     9
+    ]
+   ],
+   "shots": {
+    "room_establishing": [
+     [
+      -0.5,
+      -2.6,
+      2.3
+     ],
+     null,
+     [
+      0.6,
+      1.4,
+      0.9
+     ],
+     null,
+     16,
+     1
+    ],
+    "room_two_shot": [
+     [
+      2.3,
+      -1.3,
+      1.35
+     ],
+     null,
+     [
+      -0.1,
+      0.35,
+      1.0
+     ],
+     null,
+     30,
+     1
+    ],
+    "room_close_host": [
+     [
+      0.42,
+      -1.25,
+      1.22
+     ],
+     null,
+     [
+      0.0,
+      0.95,
+      1.15
+     ],
+     null,
+     50,
+     1
+    ],
+    "room_close_guest": [
+     [
+      0.42,
+      1.85,
+      1.22
+     ],
+     null,
+     [
+      0.0,
+      -0.35,
+      1.1
+     ],
+     null,
+     50,
+     1
+    ],
+    "room_reverse": [
+     [
+      -3.0,
+      2.4,
+      2.0
+     ],
+     null,
+     [
+      0.8,
+      -1.4,
+      0.9
+     ],
+     null,
+     18,
+     1
+    ],
+    "room_insert_table": [
+     [
+      0.75,
+      -0.45,
+      1.6
+     ],
+     null,
+     [
+      0.0,
+      0.3,
+      0.8
+     ],
+     null,
+     35,
+     1
+    ],
+    "room_insert_clock": [
+     [
+      2.55,
+      -1.15,
+      1.32
+     ],
+     null,
+     [
+      3.42,
+      -1.15,
+      1.2
+     ],
+     null,
+     60,
+     1
+    ]
+   },
+   "in_shot": {
+    "room_establishing": {
+     "host": "talks at the table: the scene's speaker",
+     "guest": "listens at the table: the scene's listener",
+     "table": "where the scene happens",
+     "chair_n": "the host sits on it",
+     "chair_s": "the guest sits on it",
+     "clock": "the room's landmark, seen again later",
+     "bookshelf": "sets the place: a home, not a hall",
+     "drawers": "holds the mantel clock",
+     "mantel_clock": "seen again in its insert",
+     "candle": "the table's light",
+     "jug": "on the table, seen again in the insert"
+    },
+    "room_two_shot": {
+     "host": "talks and gestures: the clip's motion",
+     "guest": "listens and answers with a nod",
+     "table": "between them; their hands rest on it",
+     "chair_n": "the host sits on it",
+     "chair_s": "the guest sits on it",
+     "candle": "lights both faces; its flame may flicker",
+     "jug": "on the table between them",
+     "plate_n": "the host's place",
+     "plate_s": "the guest's place",
+     "bookshelf": "the wall behind them: sets the place"
+    },
+    "room_close_host": {
+     "host": "speaks: the clip's motion",
+     "guest": "her shoulder frames the shot",
+     "chair_n": "the host sits on it",
+     "table": "the near edge under the frame",
+     "candle": "warm light on his face",
+     "bookshelf": "the wall behind him"
+    },
+    "room_close_guest": {
+     "guest": "listens and reacts: the clip's motion",
+     "host": "his shoulder frames the shot",
+     "chair_s": "the guest sits on it",
+     "table": "the near edge under the frame",
+     "candle": "warm light on her face",
+     "cabinet": "the wall behind her"
+    },
+    "room_reverse": {
+     "elder": "tends the stove: the clip's motion",
+     "stove": "he works at it; its glow",
+     "host": "at the table, far",
+     "guest": "at the table, far",
+     "table": "where the two sit",
+     "chair_n": "the host sits on it",
+     "chair_s": "the guest sits on it",
+     "cabinet": "the far wall",
+     "basket": "beside the stove: firewood",
+     "bucket": "beside the stove"
+    },
+    "room_insert_table": {
+     "table": "the insert's ground",
+     "jug": "the insert's subject",
+     "plate_n": "set for the host",
+     "plate_s": "set for the guest",
+     "bowl": "on the table",
+     "candle": "its flame is the clip's motion"
+    },
+    "room_insert_clock": {
+     "mantel_clock": "the insert's subject: its hands",
+     "drawers": "the clock stands on it",
+     "lantern": "beside the clock: warm light"
+    }
+   },
+   "heroes": {
+    "host": "H1",
+    "guest": "H2",
+    "elder": "H3"
+   },
+   "tags": {
+    "host": "the broad commander with a grey beard and a red cloak",
+    "guest": "the young scout in a green hood",
+    "elder": "the old elder with a long white beard and a blue robe",
+    "table": "a plain wooden table",
+    "chair_n": "a dark wooden armchair",
+    "chair_s": "a second armchair",
+    "candle": "a lit candle",
+    "jug": "a white jug",
+    "plate_n": "a wooden plate",
+    "plate_s": "another plate",
+    "bowl": "a wooden bowl",
+    "clock": "a tall grandfather clock",
+    "mantel_clock": "a wooden mantel clock",
+    "drawers": "a chest of drawers",
+    "lantern": "a small lantern",
+    "bookshelf": "a worn bookshelf",
+    "stove": "a tiled stove",
+    "cabinet": "a dark carved cabinet",
+    "basket": "a basket of firewood",
+    "bucket": "a wooden bucket"
+   },
+   "place": "a timber-framed farmhouse room in a medieval village at dusk",
+   "light": "warm firelight and the glow of one candle",
+   "cards": {
+    "room_two_shot": {
+     "start": "{host} sits leaning forward with open hands mid-sentence, {guest} sits across {table} listening",
+     "motion": "{host} talks and gestures with both hands; {guest} listens and nods once; the candle flame flickers",
+     "settle": "both hold still, eyes on each other",
+     "refs": [
+      "host",
+      "guest"
+     ]
+    },
+    "room_establishing": {
+     "start": "{host} and {guest} sit at {table} in quiet talk, {clock} and {bookshelf} behind them",
+     "motion": "{host} talks with small gestures, {guest} listens; nothing else moves",
+     "settle": "the room holds still",
+     "refs": [
+      "host",
+      "guest"
+     ]
+    },
+    "room_close_host": {
+     "start": "{host} sits and speaks, one hand raised, to {guest} seen from behind",
+     "motion": "{host} speaks and turns his raised hand over; {guest} stays still",
+     "settle": "his hand comes to rest on the table",
+     "refs": [
+      "host",
+      "guest"
+     ]
+    },
+    "room_close_guest": {
+     "start": "{guest} sits and listens, chin raised, to {host} seen from behind",
+     "motion": "{guest} listens, frowns, then nods slowly; {host} stays still",
+     "settle": "the scout holds the nod",
+     "refs": [
+      "guest",
+      "host"
+     ]
+    },
+    "room_reverse": {
+     "start": "{elder} kneels at {stove} feeding it a log, {host} and {guest} talk far off at {table}",
+     "motion": "{elder} pushes the log into the stove and sparks rise; the two at the table talk quietly",
+     "settle": "the elder sits back on his heels",
+     "refs": [
+      "elder"
+     ]
+    },
+    "room_insert_table": {
+     "start": "{table} set with {jug}, {plate_n}, {plate_s}, {bowl} and {candle}",
+     "motion": "the candle flame flickers and a thin thread of smoke rises",
+     "settle": "the flame steadies",
+     "light": "warm firelight",
+     "refs": []
+    },
+    "room_insert_clock": {
+     "start": "{mantel_clock} on {drawers}, its hands near nine",
+     "motion": "the minute hand ticks forward once; the lantern light trembles",
+     "settle": "the clock is still",
+     "light": "the warm glow of {lantern}",
+     "refs": []
+    }
+   },
+   "hero_refs": {
+    "host": "B_H1_front",
+    "guest": "B_H2_front",
+    "elder": "B_H3_front"
+   }
   }
  }
 }
