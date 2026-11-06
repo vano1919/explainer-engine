@@ -602,7 +602,8 @@
   "heartbeat": "datasets/vano1919/tmr-artifacts:route_test_2026-11/beat.txt",
   "upload_first": "HF code/p14/ee_src.tar.gz = python -m explainer_engine.training.pods.p14.lean bundle --ref <the audited commit> (its sha256 is the one in p14.sh)",
   "guards": "the money dead-man on the pod (pod_wrapper.sh), runpod guard + its beat locally, watchdog.yml dispatched within 60 min of create",
-  "known_refusal": "config/spend_caps.json per_pod_usd is 6.9 < max_usd 10: runpod create refuses --max-usd 10 until the creator moves that ceiling (a hook-guarded file, his word only)"
+  "known_refusal": "config/spend_caps.json per_pod_usd is 6.9 < max_usd 10: runpod create refuses --max-usd 10 until the creator moves that ceiling (a hook-guarded file, his word only)",
+  "cards_fix2": "RP-11 on the cut graph (fix 2, 2026-11-06 16:30 UTC): A100 80GB COMMUNITY is the cheapest, $1.27 expected / $2.62 worst (1.88 h), H100 NVL $1.81 / $3.50; the caps above predate the cut and are the Fable thread's to set"
  },
  "E_stages": {
   "E.duel": [
@@ -625,5 +626,36 @@
   "X3": [
    "X3.S01-02.ltx25.i2v.s42"
   ]
+ },
+ "pod": {
+  "_doc": "Fix 2 (Fable thread, 2026-11-06 15:07 and 16:23 UTC): what this pod runs. lean.py graph() drops the stages listed here from p14_schedule.json, and p14_pod.py runs only the stages the schedule names (the rest are recorded as skipped with these reasons).",
+  "battle_on_pod": false,
+  "battle_why": "battle.on_pod false until the creator's card: the battle's Blender passes never finished on a pod (pod 1: frame 0 killed for memory) and held the card idle; the pilot pod's battle i2v (training/pods/p15) answers what X7 asked",
+  "off": {
+   "G": "rides the next pod: the J5 shots render free on CI or the PC (D-114)",
+   "X3": "rides the next pod with G (its first frame is a G frame)",
+   "X4": "rides the next pod with G (it edits a G frame)"
+  }
+ },
+ "hf_first": {
+  "_doc": "layouts already on the vault (pod 1, 2026-11-06 14:25-14:48 UTC) are fetched and checked by sha256 instead of rendered; a missing or changed file renders the scene as before",
+  "duel": {
+   "frame0": {
+    "path": "route_test_2026-11/layouts/duel/line/frame0_000000.png",
+    "sha256": "8857414e9ec4ff6825c8f51855479f1ff0b1a5837dbf99957383a87f2c35ee72",
+    "pass": "line",
+    "frame": 0
+   },
+   "clips": [
+    {
+     "path": "route_test_2026-11/layouts/duel/clay/duel_c1_clay.mp4",
+     "sha256": "1b6b532c5dfed46d548e3231abf6d0a2504fdfd2ac5d48085fb607e351b9bad4"
+    }
+   ],
+   "manifest": {
+    "path": "route_test_2026-11/layouts/duel/layout_manifest.json",
+    "sha256": "8b7f09e21d5ba0fab2e677e5d9322009bb33cfcd8f3f35a329ee9ed7dac1a04b"
+   }
+  }
  }
 }

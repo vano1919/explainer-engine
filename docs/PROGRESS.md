@@ -4566,3 +4566,18 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Measured here (free): `assemble_25d` at 2560x1440, EEVEE 16 samples, 4 vCPU Xeon 2.1 GHz: 7.8-8.3 s per frame with cards, 3.7
   s without (the smoke shots). Stale text: none found. Open: `config/spend_caps.json` per_pod_usd 6.9 is below the card's $10, so
   `create --max-usd 10` is refused until the creator moves that ceiling; the H shot S02-01 needs no GPU and is not on the pod.
+
+## 2026-11-06 — ICW-16 fix 2: the step-3 pod without the battle and G, the duel's layouts from the vault (thread: ICW-16 lean pod)
+
+- Fable thread (15:07 / 16:23 UTC): `p14_stages.json` `pod`: `battle_on_pod` false until the creator's card (the battle's Blender
+  passes never finished on a pod and held the card idle), G, X3 and X4 off (they ride the next pod: the J5 shots render free on CI
+  or the PC, D-114); X7 dropped (the pilot pod's battle i2v, `training/pods/p15`, answers it).
+- `lean.graph()` cuts GRAPH to that (a need on a dropped stage goes with it; the duel's clay follows the duel's own frame 0);
+  `lean.schedule(full=True)` keeps the whole graph, and the tests of the battle, G, X3 and X4 paths run a pod on it. `p14_pod` runs
+  only the stages its schedule names and records the rest as skipped with their reasons (`off_pod`); A.preflight keeps Blender on
+  the CPU when G is not on the pod.
+- `hf_first` (`p14_stages.json`): the duel's line frame 0, clay clip and manifest from pod 1 are on HF; the pod fetches them and
+  checks each sha256 instead of rendering (frame 0 where B reads it; E fetches the clip by path). A missing or changed file renders
+  the scene as before.
+- RP-11 on the cut graph: A100 80GB $1.27 expected / $2.62 worst (1.88 h), 0 idle GPU minutes; H100 NVL $1.81 / $3.50.
+- Tests: `tests/unit/test_p14_lean.py` (+3: the cut pod and its reasons, the vault layouts, a changed vault file renders).

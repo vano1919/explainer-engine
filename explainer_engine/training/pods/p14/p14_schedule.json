@@ -70,27 +70,9 @@
       "note": "pod ygg2ztmflr8pv2 (H100 NVL, 2026-11-06 14:25-14:48 UTC; HF route_test_2026-11/step3/stages.txt, logs/): duel/line 1 frame in 8.3 s (CPU)"
     },
     {
-      "id": "A.frame0.battle",
-      "needs": [
-        "A.frame0.duel"
-      ],
-      "on": {
-        "cpu": {
-          "expected_min": 6,
-          "max_min": 10
-        },
-        "gpu": {
-          "expected_min": 3,
-          "max_min": 10
-        }
-      },
-      "measured": false,
-      "note": "pod ygg2ztmflr8pv2 (H100 NVL, 2026-11-06 14:25-14:48 UTC; HF route_test_2026-11/step3/stages.txt, logs/): killed -9 (memory) after ~13 min on the CPU; cut at 600 s"
-    },
-    {
       "id": "A.duel",
       "needs": [
-        "A.frame0.battle"
+        "A.frame0.duel"
       ],
       "on": {
         "cpu": {
@@ -104,42 +86,6 @@
       },
       "measured": true,
       "note": "pod ygg2ztmflr8pv2 (H100 NVL, 2026-11-06 14:25-14:48 UTC; HF route_test_2026-11/step3/stages.txt, logs/): clay 121 frames in 96 s (CPU)"
-    },
-    {
-      "id": "A.battle",
-      "needs": [
-        "A.duel"
-      ],
-      "on": {
-        "cpu": {
-          "expected_min": 15,
-          "max_min": 45
-        },
-        "gpu": {
-          "expected_min": 5,
-          "max_min": 15
-        }
-      },
-      "measured": false,
-      "note": "colour + depth, 282 frames each: never finished anywhere"
-    },
-    {
-      "id": "A.battle.line",
-      "needs": [
-        "A.battle"
-      ],
-      "on": {
-        "cpu": {
-          "expected_min": 10,
-          "max_min": 30
-        },
-        "gpu": {
-          "expected_min": 10,
-          "max_min": 30
-        }
-      },
-      "measured": false,
-      "note": "282 frames, runs only when frame 0 x 282 fits its budget; the crowd's memory decides"
     },
     {
       "id": "X6.move",
@@ -199,21 +145,6 @@
       "note": "Qwen load 61 s + 1 edit at ~35 s (pod 1's speed)"
     },
     {
-      "id": "B.battle",
-      "needs": [
-        "weights_qwen",
-        "A.frame0.battle"
-      ],
-      "on": {
-        "gpu": {
-          "expected_min": 2,
-          "max_min": 6
-        }
-      },
-      "measured": false,
-      "note": "Qwen load 61 s + 1 edit at ~35 s"
-    },
-    {
       "id": "E.duel",
       "needs": [
         "weights",
@@ -245,92 +176,11 @@
       "note": "1 LTX i2v clip"
     },
     {
-      "id": "E.battle",
-      "needs": [
-        "weights",
-        "B.battle",
-        "A.battle"
-      ],
-      "on": {
-        "gpu": {
-          "expected_min": 16,
-          "max_min": 40
-        }
-      },
-      "measured": false,
-      "note": "4 LTX clips (c1 colour, canny, c2 chained, X5 2K)"
-    },
-    {
-      "id": "E.battle_line",
-      "needs": [
-        "weights",
-        "B.battle",
-        "A.battle.line"
-      ],
-      "on": {
-        "gpu": {
-          "expected_min": 8,
-          "max_min": 20
-        }
-      },
-      "measured": false,
-      "note": "2 LTX clips (line_foremid, X2)"
-    },
-    {
-      "id": "G",
-      "needs": [
-        "D",
-        "A.preflight"
-      ],
-      "on": {
-        "gpu": {
-          "expected_min": 15,
-          "max_min": 20
-        }
-      },
-      "measured": false,
-      "note": "996 frames; 8 s/frame on this container (4 vCPU Xeon 2.1 GHz) (CPU), the card unmeasured: on the pod only on the card at <= 1.5 s/frame, cut at 20 min"
-    },
-    {
-      "id": "X3",
-      "needs": [
-        "weights",
-        "G"
-      ],
-      "on": {
-        "gpu": {
-          "expected_min": 4,
-          "max_min": 10
-        }
-      },
-      "measured": false,
-      "note": "1 LTX i2v clip of G's frame"
-    },
-    {
-      "id": "X4",
-      "needs": [
-        "G"
-      ],
-      "on": {
-        "gpu": {
-          "expected_min": 2,
-          "max_min": 6
-        }
-      },
-      "measured": false,
-      "note": "Qwen load + 1 edit of G's frame"
-    },
-    {
       "id": "F",
       "needs": [
         "E.duel",
         "X6.ltx",
-        "E.battle",
-        "E.battle_line",
-        "X3",
-        "X4",
-        "X6.move",
-        "A.battle.line"
+        "X6.move"
       ],
       "on": {
         "gpu": {

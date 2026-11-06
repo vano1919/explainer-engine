@@ -124,13 +124,33 @@ GRAPH = [
     ("F", ["E.duel", "X6.ltx", "E.battle", "E.battle_line", "X3", "X4", "X6.move", "A.battle.line"], {"gpu": (0.1, 1)}, False,
      "speeds.json from the records"),
 ]
+BATTLE_STAGES = ("A.frame0.battle", "A.battle", "A.battle.line", "B.battle", "E.battle", "E.battle_line")
+
+
+def graph(st: dict | None = None, *, full: bool = False) -> list[tuple]:
+    """GRAPH cut to what this pod runs (p14_stages.json ``pod``, fix 2): without the battle while ``battle_on_pod`` is false and
+    without the ``off`` stages (G, X3, X4 ride the next pod); a need on a dropped stage goes with it, and the duel's clay then
+    follows the duel's own frame 0. ``full`` keeps every stage (the code paths stay, tested on the whole graph)."""
+    pod = (st or stages())["pod"]
+    drop = set() if full else set(pod["off"]) | (set() if pod["battle_on_pod"] else set(BATTLE_STAGES))
+    out = []
+    for i, n, on, meas, src in GRAPH:
+        if i in drop:
+            continue
+        n = [x for x in n if x not in drop]
+        if i == "A.duel" and "A.frame0.battle" in drop:
+            n = ["A.frame0.duel"]
+        out.append((i, n, on, meas, src))
+    return out
+
+
 CARDS = [{"name": "H100 NVL", "cloud": "COMMUNITY", "price_h": 2.59, "gpu_speed": 1.0},
          {"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6}]
 LIMITS = {"max_usd": 8, "max_hours": 3.5, "max_idle_gpu_share": 0.15}   # the balance caps max-usd at 8.04 (Fable thread 14:16 UTC)
 SETUP_MIN = 8   # create -> the runner: boot (unmeasured) + p14.sh's install (pod 1: 14:25:02 -> 14:27:30)
 
 
-def schedule() -> dict:
+def schedule(*, full: bool = False) -> dict:
     """``p14_schedule.json`` (pod_schedule/1, cloud/schedule.py): what ``runpod create --schedule`` costs, and the graph the pod's
     GPU lane follows (p14_pod.py reads its needs)."""
     return {"schema": "pod_schedule/1",
@@ -138,7 +158,7 @@ def schedule() -> dict:
                      "these needs in p14_stages.json gpu_order; every max is that stage's timeout in the code."),
             "setup_min": SETUP_MIN, "end_reserve_min": stages()["end_reserve_min"], "lanes": {"gpu": 1, "cpu": 1, "net": 1},
             "stages": [{"id": i, "needs": n, "on": {k: {"expected_min": e, "max_min": m} for k, (e, m) in on.items()},
-                        "measured": meas, "note": src} for i, n, on, meas, src in GRAPH],
+                        "measured": meas, "note": src} for i, n, on, meas, src in graph(full=full)],
             "cards": CARDS, "limits": LIMITS}
 
 

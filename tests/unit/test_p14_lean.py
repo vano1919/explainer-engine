@@ -27,6 +27,15 @@ JOBS = json.loads((DIR / "ltx_jobs.json").read_text(encoding="utf-8"))
 EXTRA = json.loads((DIR / "ltx_extra.json").read_text(encoding="utf-8"))
 CFG = json.loads((DIR / "p14.json").read_text(encoding="utf-8"))
 SCH = {s["id"]: s for s in json.loads((DIR / "p14_schedule.json").read_text(encoding="utf-8"))["stages"]}
+# the whole graph (fix 2 keeps the battle, G, X3 and X4 code paths for the next pod): the tests of those paths run a pod on it
+FULL = lean.schedule(full=True)
+SCH_FULL = {s["id"]: s for s in FULL["stages"]}
+
+
+def full_pod(*a, **k):
+    k.setdefault("schedule", FULL)
+    return p14_pod.Pod(ST, *a, **k)
+
 LEAN_IDS = ["S02-02.c1.ltx25.colour.s42", "S02-02.c1.ltx23.canny_full.s42", "S02-02.c1.ltx23.line_foremid.s42",
             "S02-02.c2.ltx25.colour.s42", "S03-02.ltx25.clay.s42"]
 
@@ -38,6 +47,14 @@ GPU_ENV = p14_pod.gpu_env   # the real one, for the vendor test (the fixture bel
 def _no_card(monkeypatch):
     """No test reads this machine's EGL vendors: Blender stays on the CPU unless a test gives the pod a card."""
     monkeypatch.setattr(p14_pod, "gpu_env", lambda base, work: (None, {"vendor_files": []}))
+
+
+@pytest.fixture(autouse=True)
+def _no_vault(monkeypatch):
+    """No test reaches HF: the hf_first fetch finds nothing, so the scenes render as before unless a test gives it files."""
+    def nothing(path, dest):
+        raise FileNotFoundError(f"offline test: {path}")
+    monkeypatch.setattr(p14_pod, "hf_fetch", nothing)
 
 
 def _ltx(tmp_path, monkeypatch):
@@ -145,7 +162,7 @@ class FakeRun:
 
 def test_a_failed_stage_never_ends_the_pod(tmp_path, monkeypatch):
     run = FakeRun(fail={"D", "qwen1"})
-    pod = p14_pod.Pod(ST, tmp_path / "out", binary="blender", deadline=time.time() + 3600, run=run,
+    pod = full_pod(tmp_path / "out", binary="blender", deadline=time.time() + 3600, run=run,
                       layouts_work=tmp_path / "lay", assets=tmp_path / "assets")
     monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
     monkeypatch.setattr(p14_pod.Pod, "g_frames", lambda self, sid, d: None)
@@ -164,7 +181,7 @@ def test_a_failed_stage_never_ends_the_pod(tmp_path, monkeypatch):
 
 def test_nothing_starts_inside_the_end_reserve(tmp_path):
     run = FakeRun()
-    pod = p14_pod.Pod(ST, tmp_path / "out", binary="b", deadline=time.time() + 60, run=run, layouts_work=tmp_path / "l",
+    pod = full_pod(tmp_path / "out", binary="b", deadline=time.time() + 60, run=run, layouts_work=tmp_path / "l",
                       assets=tmp_path / "a")
     assert pod.stage("D", ["x"]) is False and pod.book.rows["D"]["reason"] == "inside the end reserve" and "D" not in run.calls
 
@@ -347,7 +364,7 @@ class SlowBattle(FakeRun):
 def test_the_card_works_while_the_battle_frame_0_is_drawn_and_b_goes_on_with_the_duel(tmp_path, monkeypatch):
     lay = tmp_path / "lay"
     run = SlowBattle(Path(str(lay) + "_f0"))
-    pod = p14_pod.Pod(ST, tmp_path / "out", binary="blender", deadline=time.time() + 3600, run=run, layouts_work=lay,
+    pod = full_pod(tmp_path / "out", binary="blender", deadline=time.time() + 3600, run=run, layouts_work=lay,
                       assets=tmp_path / "assets")
     monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
     monkeypatch.setattr(p14_pod.Pod, "g_frames", lambda self, sid, d: None)
@@ -359,7 +376,7 @@ def test_the_card_works_while_the_battle_frame_0_is_drawn_and_b_goes_on_with_the
     assert run.calls.index("B.duel") < run.calls.index("A.frame0.battle") or run.qwen1_during_battle   # the duel did not wait
     assert rows["A.frame0.duel"]["status"] == "ok" and rows["A.frame0.battle"]["rc"] == "timeout"
     assert rows["A.frame0"]["scenes"] == ["duel"] and rows["A.frame0"]["missing"] == ["battle"]
-    assert SCH["A.frame0.battle"]["on"]["cpu"]["max_min"] == 10 and SCH["A.frame0.duel"]["on"]["cpu"]["max_min"] == 2
+    assert SCH_FULL["A.frame0.battle"]["on"]["cpu"]["max_min"] == 10 and SCH_FULL["A.frame0.duel"]["on"]["cpu"]["max_min"] == 2
     assert pod.book.rows["B.battle"]["status"] == "skipped" and "B.battle" not in run.calls   # B went on with the duel alone
     line = rows["A.battle.line"]
     assert line["status"] == "skipped" and "did not finish" in line["reason"] and "A.battle.line" not in run.calls
@@ -386,11 +403,11 @@ def test_the_battle_line_runs_only_when_frame_0_s_time_fits_its_budget(tmp_path,
     monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
     budget = next(r for r in ST["A"]["renders"] if not r["core"])
     assert budget["frames"] == 282 and budget["passes"] == ["line"]   # the battle's two 145-frame clips, 8 shared
-    line_s = SCH["A.battle.line"]["on"]["cpu"]["max_min"] * 60          # its budget is its max in the schedule
+    line_s = SCH_FULL["A.battle.line"]["on"]["cpu"]["max_min"] * 60          # its budget is its max in the schedule
     for f0, ran in ((30.0, False), (line_s / budget["frames"] - 1, True)):
         secs["A.frame0.battle"] = f0
         run = Run()
-        pod = p14_pod.Pod(ST, tmp_path / f"out{f0}", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay,
+        pod = full_pod(tmp_path / f"out{f0}", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay,
                           assets=tmp_path / "a")
         pod.stage_a()
         assert ("A.battle.line" in run.calls) is ran
@@ -515,7 +532,7 @@ def test_the_preflight_frame_decides_card_or_cpu_and_only_a_and_g_follow_it(tmp_
             return super().__call__(cmd, timeout=timeout, env=env, log_path=log_path, deadline=deadline)
 
     run = Run()
-    pod = p14_pod.Pod(ST, tmp_path / "out", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay, assets=tmp_path / "a")
+    pod = full_pod(tmp_path / "out", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay, assets=tmp_path / "a")
     pod.main()
     pre = pod.book.rows["A.preflight"]
     assert pre["chosen"] == ("gpu" if on_card else "cpu") and pre["budget_s"] == 120 and "s_per_frame" in pre
@@ -525,7 +542,7 @@ def test_the_preflight_frame_decides_card_or_cpu_and_only_a_and_g_follow_it(tmp_
     assert run.envs["A.battle"].get("MARK") == want and run.envs["A.frame0.battle"].get("MARK") == want
     assert pre["s_per_frame"] == 0.9                                    # the frame's own seconds, not the scene build
     if on_card:
-        assert g_env.get("MARK") == "gpu" and pod.book.rows["G"]["cut_at_min"] == SCH["G"]["on"]["gpu"]["max_min"]
+        assert g_env.get("MARK") == "gpu" and pod.book.rows["G"]["cut_at_min"] == SCH_FULL["G"]["on"]["gpu"]["max_min"]
     else:                                                                # G renders free on CI or the PC, X3 and X4 with it
         assert run.envs["A.battle"]["CUDA_VISIBLE_DEVICES"] == "" and not g_env
         assert pod.book.rows["G"]["status"] == "skipped" and "D-114" in pod.book.rows["G"]["reason"]
@@ -589,14 +606,14 @@ def test_a_job_waits_for_g_s_frame_and_runs_when_g_settles_it_or_is_skipped_at_t
 def test_the_schedule_file_is_the_stage_graph_and_is_regenerated_not_hand_edited():
     from explainer_engine.cloud import schedule as S
     sch = json.loads((DIR / "p14_schedule.json").read_text(encoding="utf-8"))
-    assert sch == json.loads(json.dumps(lean.schedule())) and S.validate(sch) == []
-    ids = [s["id"] for s in sch["stages"]]
+    assert sch == json.loads(json.dumps(lean.schedule())) and S.validate(sch) == [] and S.validate(FULL) == []
+    ids = [s["id"] for s in FULL["stages"]]
     assert set(ids) == {s for lane in p14_pod.LANES.values() for s in lane}            # the pod's stages, every one
-    for s in sch["stages"]:
+    for s in FULL["stages"]:
         for lane, v in s["on"].items():
             assert v["max_min"] <= max(3.5 * v["expected_min"], 2), (s["id"], lane)   # maxes ~3x the expected (2 min floor)
-    assert {k for k in SCH["A.battle"]["on"]} == {"cpu", "gpu"} and list(SCH["G"]["on"]) == ["gpu"]
-    assert "A.frame0.battle" not in SCH["B.duel"]["needs"] and "A.battle.line" not in SCH["E.battle"]["needs"]
+    assert {k for k in SCH_FULL["A.battle"]["on"]} == {"cpu", "gpu"} and list(SCH_FULL["G"]["on"]) == ["gpu"]
+    assert "A.frame0.battle" not in SCH["B.duel"]["needs"] and "A.battle.line" not in SCH_FULL["E.battle"]["needs"]
 
 
 def test_rp11_passes_with_the_pod_s_own_order():
@@ -604,22 +621,22 @@ def test_rp11_passes_with_the_pod_s_own_order():
     from explainer_engine.cloud import schedule as S
     sch = S.load(DIR / "p14_schedule.json")
     res = S.plan(sch)
-    own = S.committed(sch, "H100 NVL", ST["gpu_order"])
+    own = S.committed(sch, res["best"]["card"], [x for x in ST["gpu_order"] if x in {st["id"] for st in sch["stages"]}])
     assert S.check(sch, res, own) == [], S.report(sch, res)
     assert own["worst"]["usd"] <= sch["limits"]["max_usd"] and own["worst"]["pod_min"] <= sch["limits"]["max_hours"] * 60
     assert own["worst"]["idle_share"] <= sch["limits"]["max_idle_gpu_share"]
 
 
 def test_every_timeout_in_the_code_is_the_schedule_s_max(tmp_path):
-    pod = p14_pod.Pod(ST, tmp_path / "out", binary="b", deadline=time.time() + 3600, run=FakeRun(), layouts_work=tmp_path / "l",
+    pod = full_pod(tmp_path / "out", binary="b", deadline=time.time() + 3600, run=FakeRun(), layouts_work=tmp_path / "l",
                       assets=tmp_path / "a")
     for sid in ("weights", "weights_qwen", "qwen1", "D", "B.duel", "E.battle", "G", "X4"):
-        lane = next(iter(SCH[sid]["on"]))
-        assert pod.max_s(sid) == SCH[sid]["on"][lane]["max_min"] * 60
-    assert pod.blender_max_s("A.battle") == SCH["A.battle"]["on"]["cpu"]["max_min"] * 60
+        lane = next(iter(SCH_FULL[sid]["on"]))
+        assert pod.max_s(sid) == SCH_FULL[sid]["on"][lane]["max_min"] * 60
+    assert pod.blender_max_s("A.battle") == SCH_FULL["A.battle"]["on"]["cpu"]["max_min"] * 60
     pod.blender_on = "gpu"
-    assert pod.blender_max_s("A.battle") == SCH["A.battle"]["on"]["gpu"]["max_min"] * 60
-    assert CFG["clip_timeout_s"] == 600 and SCH["E.battle"]["on"]["gpu"]["max_min"] == 10 * len(ST["E_stages"]["E.battle"])
+    assert pod.blender_max_s("A.battle") == SCH_FULL["A.battle"]["on"]["gpu"]["max_min"] * 60
+    assert CFG["clip_timeout_s"] == 600 and SCH_FULL["E.battle"]["on"]["gpu"]["max_min"] == 10 * len(ST["E_stages"]["E.battle"])
 
 
 def test_an_e_stage_runs_only_its_own_jobs_into_its_own_speeds_files(tmp_path, monkeypatch):
@@ -660,3 +677,60 @@ def test_b_runs_per_scene():
     assert [j["name"] for j in p14_qwen.jobs(cfg, ["B"], "duel")] == ["B_S03-02_duel"]
     assert [j["name"] for j in p14_qwen.jobs(cfg, ["B"], "battle")] == ["B_S02-02.c1_battle"]
     assert len(p14_qwen.jobs(cfg, ["B"])) == 2
+
+
+# --- fix 2 (Fable thread 15:07 / 16:23 UTC): the pod without the battle, G, X3, X4; the duel's layouts from the vault ------------
+
+def test_the_pod_runs_without_the_battle_and_g_and_says_why():
+    pod_ids = set(SCH)
+    assert not pod_ids & {*lean.BATTLE_STAGES, "G", "X3", "X4"}
+    assert pod_ids == {"weights_qwen", "weights", "A.preflight", "A.frame0.duel", "A.duel", "X6.move", "qwen1", "D", "B.duel",
+                       "E.duel", "X6.ltx", "F"}
+    assert SCH["A.duel"]["needs"] == ["A.frame0.duel"] and set(SCH["F"]["needs"]) == {"E.duel", "X6.ltx", "X6.move"}
+    assert ST["pod"]["battle_on_pod"] is False and set(ST["pod"]["off"]) == {"G", "X3", "X4"}
+    assert "X7" not in ST["X"]   # the pilot pod's battle i2v (p15) answers it
+
+
+def _vault(tmp_path, monkeypatch, *, bad=None):
+    spec = ST["hf_first"]["duel"]
+    files = {}
+    for f in [spec["frame0"], spec["manifest"], *spec["clips"]]:
+        files[f["path"]] = f["sha256"]
+
+    def fetch(path, dest):
+        p = Path(dest) / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(path.encode())
+        return p
+    monkeypatch.setattr(p14_pod, "hf_fetch", fetch)
+    monkeypatch.setattr(p14_pod, "sha256_file", lambda p: "0" * 64 if bad and str(p).endswith(bad) else
+                        files["route_test_2026-11/" + str(p).split("route_test_2026-11/", 1)[1]])
+
+
+def test_the_duel_s_layouts_come_from_the_vault_and_nothing_battle_or_g_starts(tmp_path, monkeypatch):
+    _vault(tmp_path, monkeypatch)
+    run = FakeRun()
+    lay = tmp_path / "l"
+    pod = p14_pod.Pod(ST, tmp_path / "out", binary="b", deadline=time.time() + 3600, run=run, layouts_work=lay,
+                      assets=tmp_path / "a")
+    monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: pytest.fail("a fetched scene is not republished"))
+    pod.main()
+    rows = pod.book.rows
+    assert rows["A.frame0.duel"]["source"] == rows["A.duel"]["source"] == "hf"
+    assert (Path(str(lay) + "_f0") / "duel" / "line" / "frames" / "frame_000000.png").is_file()   # where B reads it
+    assert not {"A.frame0.duel", "A.duel", "A.preflight", *lean.BATTLE_STAGES, "G", "X3", "X4"} & set(run.calls)
+    for s in (*lean.BATTLE_STAGES, "G", "X3", "X4"):
+        assert rows[s]["status"] == "skipped" and rows[s]["off_pod"], s
+    assert "creator's card" in rows["E.battle"]["reason"] and "next pod" in rows["G"]["reason"]
+    assert {"qwen1", "D", "B.duel", "E.duel", "X6.ltx"} <= set(run.calls) and rows["F"]["status"] == "ok"
+
+
+def test_a_changed_vault_file_renders_the_duel_as_before(tmp_path, monkeypatch):
+    _vault(tmp_path, monkeypatch, bad="duel_c1_clay.mp4")
+    run = FakeRun()
+    pod = p14_pod.Pod(ST, tmp_path / "out", binary="b", deadline=time.time() + 3600, run=run, layouts_work=tmp_path / "l",
+                      assets=tmp_path / "a")
+    monkeypatch.setattr(p14_pod.Pod, "publish_layout", lambda self, scene: None)
+    pod.main()
+    assert pod.book.rows["A.hf_first.duel"]["status"] == "failed" and "sha256" in pod.book.rows["A.hf_first.duel"]["reason"]
+    assert {"A.frame0.duel", "A.duel"} <= set(run.calls) and "A.frame0.battle" not in run.calls

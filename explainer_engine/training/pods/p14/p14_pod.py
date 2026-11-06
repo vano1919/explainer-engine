@@ -199,9 +199,25 @@ class Pod:
         self.logs.mkdir(parents=True, exist_ok=True)
         self.blender_env, self.blender_on = cpu_env(self.env), "cpu"   # until the preflight puts Blender on the card
         self.sched = {s["id"]: s for s in (schedule or load_schedule())["stages"]}
+        self.active = set(self.sched)   # fix 2: the pod runs only the stages its schedule names (lean.graph)
         self.pre_frame_s = None
 
     # --- helpers -------------------------------------------------------------------------------------------------------------
+    def off_reason(self, sid: str) -> str:
+        pod = self.cfg.get("pod") or {}
+        if sid in (pod.get("off") or {}):
+            return pod["off"][sid]
+        if ".battle" in sid or sid.endswith("battle"):
+            return pod.get("battle_why", "the battle is not on this pod")
+        return "not in this pod's schedule"
+
+    def mark_off(self):
+        """Every stage the lanes know that this pod's schedule leaves out: recorded as skipped with its reason, never waited for."""
+        for sid in [*LANES["cpu"], *LANES["gpu"], *LANES["net"]]:
+            if sid not in self.active:
+                self.book.mark(sid, "skipped", reason=self.off_reason(sid), off_pod=True)
+                self.book.done(sid)
+
     def missing(self, name: str) -> str | None:
         bad = [n for n in NEEDS.get(name, []) if not self.book.ok(n)]
         return f"needs {', '.join(bad)}, which did not finish" if bad else None
@@ -259,9 +275,14 @@ class Pod:
         a = self.cfg["A"]
         lp = ["-m", "explainer_engine.blender.layout_passes", "render", "--binary", self.binary]
         got, f0_seconds = [], {}
-        pre = self.preflight(lp, a["first_frames"][0])
-        for f in a["first_frames"]:   # the duel first (seconds), then the battle; each one killed at frame0_timeout_s
+        firsts = [f for f in a["first_frames"] if f"A.frame0.{f['scene']}" in self.active]
+        pre = self.preflight(lp, firsts[0]) if firsts else None
+        fetched = self.hf_first()   # layouts already on the vault: fetched and checked, not rendered (fix 2)
+        for f in firsts:   # the duel first (seconds), then the battle; each one killed at frame0_timeout_s
             name = f"A.frame0.{f['scene']}"
+            if f["scene"] in fetched:
+                got.append(f["scene"])
+                continue
             if pre and f is a["first_frames"][0]:   # the preflight drew it on the card: the same frame, kept
                 rc, sec = 0, pre["seconds"]
                 self.book.mark(name, "running")
@@ -282,11 +303,14 @@ class Pod:
                 f0_seconds[f["scene"]] = sec
             self.book.mark(name, "ok" if ok else "failed", rc=rc, seconds=sec, on=self.blender_on)
             self.book.done(name)
-        missing = [f["scene"] for f in a["first_frames"] if f["scene"] not in got]
+        missing = [f["scene"] for f in firsts if f["scene"] not in got]
         self.book.mark("A.frame0", "ok" if got else "failed", scenes=got, missing=missing)
         self.book.done("A.frame0")
         ok = True
         for r in a["renders"]:
+            name = f"A.{r['scene']}" + ("" if r.get("core", True) else "." + "+".join(r["passes"]))
+            if name not in self.active or (r["scene"] in fetched and r.get("core", True)):
+                continue
             if not r.get("core", True):
                 self.release_core(ok)   # the core passes are done: E may start while the battle line is drawn
             name = f"A.{r['scene']}" + ("" if r.get("core", True) else "." + "+".join(r["passes"]))
@@ -317,10 +341,46 @@ class Pod:
         self.book.mark("A", "ok" if ok else "failed")
         self.book.done("A")
 
+    def hf_first(self) -> set[str]:
+        """The scenes of ``hf_first`` (p14_stages.json) whose layout files are on the vault with their pinned sha256: frame 0 goes
+        where B reads it (``<layouts>_f0/<scene>/<pass>/frames/``), the clips stay on the vault (E fetches them by path and hash),
+        and A.frame0.<scene> and A.<scene> are recorded as fetched. Any missing or changed file: the scene renders as before."""
+        out = set()
+        for scene, spec in (self.cfg.get("hf_first") or {}).items():
+            if scene.startswith("_") or f"A.frame0.{scene}" not in self.active:
+                continue
+            t0 = time.time()
+            try:
+                got = {}
+                for f in [spec["frame0"], spec["manifest"], *spec["clips"]]:
+                    p = hf_fetch(f["path"], self.lay_work.parent / "hf_first")
+                    sha = sha256_file(p)
+                    if sha != f["sha256"]:
+                        raise ValueError(f"{f['path']}: sha256 {sha} is not the pinned {f['sha256']}")
+                    got[f["path"]] = p
+            except Exception as e:   # noqa: BLE001 - the vault copy is a shortcut, never a reason to lose the scene
+                self.book.mark(f"A.hf_first.{scene}", "failed", reason=repr(e)[:200])
+                continue
+            f0 = spec["frame0"]
+            dst = self.lay_f0 / scene / f0["pass"] / "frames" / f"frame_{f0['frame']:06d}.png"
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(got[f0["path"]], dst)
+            sec = round(time.time() - t0, 1)
+            for name in (f"A.frame0.{scene}", f"A.{scene}"):
+                if name in self.active:
+                    self.book.mark(name, "ok", source="hf", seconds=sec, files=sorted(got))
+                    self.book.done(name)
+            out.add(scene)
+        return out
+
     def preflight(self, lp: list[str], f: dict) -> dict | None:
         """A.preflight: the first frame 0 (the duel's line) with EEVEE on the card, at most ``PREFLIGHT_S``. Kept (and
         ``blender_env`` switched to the card) only when it rendered and its report's GL renderer is NVIDIA's; else Blender stays on
         the CPU and the frame is drawn again there. Returns the kept row or None."""
+        if "G" not in self.active:   # fix 2: only G needed Blender on the card; the duel's passes are small CPU work
+            self.book.mark("A.preflight", "ok", chosen="cpu", reason="G is not on this pod: Blender stays on the CPU")
+            self.book.done("A.preflight")
+            return None
         env, egl = gpu_env(self.env, self.lay_work.parent / "egl")
         row = {"mode_tried": "gpu", "egl": egl, "budget_s": PREFLIGHT_S}
         if env is None:
@@ -470,7 +530,7 @@ class Pod:
         """The card's stages in ``gpu_order`` (p14_stages.json, the order RP-11 costs): a free card takes the first stage whose
         inputs are done (the schedule's needs), so it waits only when nothing of its own is ready: list scheduling, as
         cloud/schedule.py simulates it."""
-        left = [s for s in self.cfg["gpu_order"] if s != "F"]
+        left = [s for s in self.cfg["gpu_order"] if s != "F" and s in self.active]
         until = self.deadline - self.reserve
         while left:
             ready = [s for s in left if all(self.book.is_done(n) for n in self.sched[s]["needs"])]
@@ -540,6 +600,7 @@ class Pod:
             self.book.mark("F", "failed", reason=repr(e)[:200])
 
     def main(self) -> int:
+        self.mark_off()
         lanes = [threading.Thread(target=self.net, daemon=True), threading.Thread(target=self.cpu, daemon=True)]
         for t in lanes:
             t.start()
@@ -551,6 +612,21 @@ class Pod:
         self.stage_f()
         ok = [k for k, v in self.book.rows.items() if v.get("status") == "ok"]
         return 0 if ok else 1
+
+
+def sha256_file(p) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def hf_fetch(path: str, dest: Path) -> Path:
+    """One vault file (``vano1919/tmr-artifacts``, the dataset every stage reads) under ``dest``."""
+    from huggingface_hub import hf_hub_download
+    return Path(hf_hub_download("vano1919/tmr-artifacts", path, repo_type="dataset", local_dir=str(dest)))
 
 
 def read_json(p: Path):
