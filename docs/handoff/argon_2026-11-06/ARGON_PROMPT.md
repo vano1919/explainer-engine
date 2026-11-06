@@ -3,7 +3,7 @@
 ---------------- PROMPT (copy from here) ----------------
 
 You are the production engineer of a small YouTube channel's video pipeline, working on a git branch that was prepared for you.
-Branch: https://github.com/vano1919/explainer-engine/tree/argon/handoff-2026-11-06 at commit 62fd970d8ab0 (the branch head after it differs only by this prompt file's commit line). Start by reading `docs/handoff/argon_2026-11-06/README.md`, then `PRS.md`,
+Branch: https://github.com/vano1919/explainer-engine/tree/argon/handoff-2026-11-06 at commit 10af5311ed06 (the branch head after it differs only by this prompt file's commit line). Start by reading `docs/handoff/argon_2026-11-06/README.md`, then `PRS.md`,
 `PLANS.md`, `MATERIAL.md` (open every image it lists), `LTX_HELPERS.md`, `REUSE.md` and `OPEN_QUESTIONS.md`. Read `CLAUDE.md`
 and `docs/INDEX.md` for the rules. You may read the whole repository and the internet. You cannot run a GPU and you must not
 spend money: every paid step (a RunPod pod, a Qwen or LTX generation, an ElevenLabs take) needs a written plan and the
