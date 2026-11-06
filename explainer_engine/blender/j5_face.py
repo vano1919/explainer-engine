@@ -206,3 +206,39 @@ def paint(out: np.ndarray, face: dict, box: tuple[int, int, int, int], T: float,
             band = inner * np.clip(1 - (yy - (ey - ay)) / max(1e-3, 0.62 * ay), 0, 1)
             band = band * np.clip((op - 0.28) / 0.25, 0, 1)
             out[..., :3] = out[..., :3] * (1 - band[..., None] * 0.9) + m["teeth_c"] * a * band[..., None] * 0.9
+
+
+# --- shape swap (drawn mouth variants) -------------------------------------------------------------------------------------------------
+# The drawn route: the sheet is redrawn once per Rhubarb shape (``j5_dialogue_mouth_variants``) and the card shows the variant of the current
+# cue, cross-faded over 55 ms like the painted mouth. Pure functions here; the wiring into ``paint`` waits for the real variants.
+SWAP_FOLD = {"G": "B", "H": "C", "X": "A"}          # shapes that have no drawing of their own use their nearest neighbour
+
+
+def cue_weights(T: float, line: dict | None) -> dict[str, float]:
+    """{drawn shape: weight} at clip time T, weights sum to 1: the previous cue's drawing fades into the current one over 55 ms."""
+    if not line:
+        return {"A": 1.0}
+    t = T - line["start"]
+    cues = line["cues"]
+    if t < -0.05 or t > cues[-1]["end"] + 0.1:
+        return {"A": 1.0}
+    for i, c in enumerate(cues):
+        if c["start"] <= t < c["end"]:
+            cur = SWAP_FOLD.get(c["value"], c["value"])
+            prev = SWAP_FOLD.get(cues[i - 1]["value"], cues[i - 1]["value"]) if i else "A"
+            u = float(smooth((t - c["start"]) / 0.055))
+            w: dict[str, float] = {}
+            w[prev] = w.get(prev, 0.0) + (1 - u)
+            w[cur] = w.get(cur, 0.0) + u
+            return {k: v for k, v in w.items() if v > 1e-4}
+    return {"A": 1.0}
+
+
+def blend_variants(patches: dict[str, np.ndarray], weights: dict[str, float], mask: np.ndarray) -> np.ndarray:
+    """The weighted mix of the drawn mouth patches (same size, float RGB), as a patch to composite through ``mask`` (0..1): outside the
+    mask the base card is untouched. Returns the premultiplied-by-mask patch and leaves the caller to ``base * (1 - mask) + patch``."""
+    acc = np.zeros_like(next(iter(patches.values())), dtype=np.float32)
+    tot = sum(weights.values()) or 1.0
+    for k, w in weights.items():
+        acc += patches[k].astype(np.float32) * (w / tot)
+    return acc * mask[..., None]
