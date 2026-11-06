@@ -4461,3 +4461,15 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   horizon bend check on a 30° pan (SA-08, 0.0037 measured on the smoke). Camera setup `mcu_front` (C4) with a framing test.
 - CI: the Blender smoke renders the 5-shot J5 set. Open: the 1440p dialogue needs the asset pod's Qwen assets; the PC seconds/frame
   row stays null (no PC measurement).
+
+## 2026-11-06 — ICW-13 layout passes for the J2/J4 routes (PR #143, guide step 2.2)
+- Why: J2 (clay -> LTX Layout-To-Render) and J4 (colour/depth/line -> LTX restyle) need Blender layout videos at the LTX geometry
+  (D-116); step 2.2 of the Opus step-by-step guide, free. Merged into icw/05c-ink-round after Fable's PASS (12:02 UTC) under the
+  creator's step-2 word (11:11 UTC card), rebased on #142 by a merge commit.
+- `blender/layout_passes.py` (plan / render / upload; 1920x1088 at 24 fps; battle = 282 frames as 2x145 with 8 overlap, J4; duel =
+  121 frames, J2) and `bpy/layout_pass.py` (clay = Workbench; depth = 1/z through MapRange, Raw view, dither 0; line = Freestyle with the
+  background crowd excluded; colour = flat emission; the style's compositor tree is off in every pass). `render_shot.apply_layout_pass`.
+- Fixes found by eye: duel cast behind the wall, duelists facing away, grey depth, depth noise, compositor haze in the depth pass;
+  Blender's exit -11 after the last frame (Mesa EGL teardown) is accepted only when every frame, the progress file and the report exist.
+- Checks: 14 focused tests; CI quality + smoke green. Open: the full-size renders and their HF upload under
+  `route_test_2026-11/layouts/` (free CPU, running next), then `ltx_jobs --layouts` carries their shas.
