@@ -299,6 +299,35 @@ THIRD_PARTY = {"licensed", "cc0", "cc-by-4.0", "mit-tool", "gpl-tool-only", "ven
                "restricted-territory"}
 
 
+def _scene_assets(doc: dict, base) -> list[dict]:
+    """SA-01..SA-03 and SA-05 on ``scene_assets/1`` (D-116, docs/SCENE_ASSETS.md): every hero prompt carries the flat-lighting
+    note; a 360 backdrop is equirectangular (width = 2 x height); a defect names an asset of its scene; the drawing stack is
+    ``qa/style_prompt.INFERENCE`` (one home)."""
+    from explainer_engine.qa import style_prompt
+    out = []
+    want = {k: style_prompt.INFERENCE[k] for k in ("base", "lora", "lora_weight")}
+    if doc["style"] != want:
+        out.append(_f("SA-05", "style", f"{doc['style']} differs from qa/style_prompt.INFERENCE {want}"))
+    for sid, sc in doc["scenes"].items():
+        bd = sc["backdrop_360"]
+        w, h = bd["size"]
+        if w != 2 * h:
+            out.append(_f("SA-02", f"{sid}.backdrop_360", f"{w}x{h} is not equirectangular (width = 2 x height)"))
+        ids = {bd["asset"]} | {p["id"] for p in sc["props"]}
+        seen = set()
+        for hero in sc["heroes"]:
+            if hero["lighting_note"].lower() not in hero["prompt"].lower():
+                out.append(_f("SA-01", f"{sid}.{hero['hero']}", f"the prompt lacks the lighting note {hero['lighting_note']!r}"))
+            if hero["hero"] in seen:
+                out.append(_f("SA-03", f"{sid}.{hero['hero']}", "the hero is listed twice"))
+            seen.add(hero["hero"])
+            ids |= {hero["hero"], hero["sheet"]}
+        for d in sc["defects"]:
+            if d["asset"] not in ids:
+                out.append(_f("SA-03", f"{sid}.defects", f"{d['asset']!r} is not an asset of the scene ({', '.join(sorted(ids))})"))
+    return out
+
+
 def _asset_library(doc: dict, base) -> list[dict]:
     """CN-19 on ``asset_library/2`` (D-110, roadmap 21.4-21.5): ids are unique; a dependency is a record of the library with
     the same sha256; external storage names its path and git storage none; a third-party licence records where and when it was
@@ -572,7 +601,7 @@ SEMANTIC = {"film_shots": _film_shots, "script_variants": _script_variants, "sho
             "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
             "job_manifest": _job_manifest, "shot_route": _shot_route, "blender_scene_manifest": _blender_scene,
             "blender_render_manifest": _blender_render, "render_checkpoint": _render_checkpoint, "asset_library": _asset_library,
-            "speech_mix_report": _speech_mix}
+            "speech_mix_report": _speech_mix, "scene_assets": _scene_assets}
 
 
 def derived_findings(doc: dict, base) -> list[dict]:

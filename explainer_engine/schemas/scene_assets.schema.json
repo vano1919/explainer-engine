@@ -1,0 +1,350 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "scene_assets.schema.json",
+ "title": "The drawn assets of the scenes of a J5 / J2 / J4 episode (scene_assets/1, D-116, docs/SCENE_ASSETS.md)",
+ "type": "object",
+ "required": [
+  "schema",
+  "episode",
+  "style",
+  "scenes"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "schema": {
+   "const": "scene_assets/1"
+  },
+  "episode": {
+   "type": "string",
+   "minLength": 1
+  },
+  "style": {
+   "type": "object",
+   "required": [
+    "base",
+    "lora",
+    "lora_weight"
+   ],
+   "additionalProperties": false,
+   "description": "the drawing stack; qa/style_prompt.INFERENCE is its one home (read, never typed in by hand)",
+   "properties": {
+    "base": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lora": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lora_weight": {
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "maximum": 2
+    }
+   }
+  },
+  "scenes": {
+   "type": "object",
+   "minProperties": 1,
+   "propertyNames": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+   },
+   "additionalProperties": {
+    "$ref": "#/$defs/scene"
+   }
+  }
+ },
+ "$defs": {
+  "file": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    }
+   }
+  },
+  "id": {
+   "type": "string",
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+  },
+  "scene": {
+   "type": "object",
+   "required": [
+    "backdrop_360",
+    "heroes",
+    "props",
+    "defects"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "backdrop_360": {
+     "type": "object",
+     "required": [
+      "asset",
+      "prompt",
+      "size",
+      "file"
+     ],
+     "additionalProperties": false,
+     "description": "one equirectangular backdrop (width = 2 x height, SA-02), drawn with the 360 LoRA",
+     "properties": {
+      "asset": {
+       "$ref": "#/$defs/id"
+      },
+      "prompt": {
+       "type": "string",
+       "minLength": 1
+      },
+      "size": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 64
+       },
+       "minItems": 2,
+       "maxItems": 2
+      },
+      "loras": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "id",
+         "weight"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "id": {
+          "type": "string",
+          "minLength": 1
+         },
+         "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2
+         }
+        }
+       }
+      },
+      "yaw_deg": {
+       "type": "number",
+       "minimum": -180,
+       "maximum": 180,
+       "description": "the backdrop's turn about the vertical axis in the shots of this scene"
+      },
+      "file": {
+       "$ref": "#/$defs/file"
+      }
+     }
+    },
+    "heroes": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/hero"
+     }
+    },
+    "props": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "prompt",
+       "height_m",
+       "file"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "prompt": {
+        "type": "string",
+        "minLength": 1
+       },
+       "height_m": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       },
+       "file": {
+        "$ref": "#/$defs/file"
+       }
+      }
+     }
+    },
+    "light_variant": {
+     "type": "string",
+     "minLength": 1
+    },
+    "defects": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "asset",
+       "fix",
+       "instruction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "asset": {
+        "$ref": "#/$defs/id"
+       },
+       "fix": {
+        "type": "string",
+        "minLength": 1
+       },
+       "instruction": {
+        "type": "string",
+        "pattern": "^change nothing( else)?[,;] fix: \\S",
+        "description": "the Qwen edit instruction (plan section 9): change nothing, fix: ..."
+       }
+      }
+     }
+    }
+   }
+  },
+  "hero": {
+   "type": "object",
+   "required": [
+    "hero",
+    "sheet",
+    "prompt",
+    "lighting_note",
+    "height_m",
+    "angles"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "hero": {
+     "$ref": "#/$defs/id"
+    },
+    "sheet": {
+     "$ref": "#/$defs/id"
+    },
+    "prompt": {
+     "type": "string",
+     "minLength": 1,
+     "description": "the front sheet's prompt; it carries the lighting note (SA-01)"
+    },
+    "lighting_note": {
+     "const": "flat ambient lighting, no cast shadows"
+    },
+    "height_m": {
+     "type": "number",
+     "minimum": 0.3,
+     "maximum": 4.0,
+     "description": "the figure's real height, feet to the top of the head"
+    },
+    "angles": {
+     "type": "object",
+     "minProperties": 1,
+     "additionalProperties": false,
+     "properties": {
+      "front": {
+       "type": "object",
+       "required": [
+        "base"
+       ],
+       "additionalProperties": false,
+       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "properties": {
+        "base": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_half": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_open": {
+         "$ref": "#/$defs/file"
+        },
+        "blink": {
+         "$ref": "#/$defs/file"
+        }
+       }
+      },
+      "3q_left": {
+       "type": "object",
+       "required": [
+        "base"
+       ],
+       "additionalProperties": false,
+       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "properties": {
+        "base": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_half": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_open": {
+         "$ref": "#/$defs/file"
+        },
+        "blink": {
+         "$ref": "#/$defs/file"
+        }
+       }
+      },
+      "3q_right": {
+       "type": "object",
+       "required": [
+        "base"
+       ],
+       "additionalProperties": false,
+       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "properties": {
+        "base": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_half": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_open": {
+         "$ref": "#/$defs/file"
+        },
+        "blink": {
+         "$ref": "#/$defs/file"
+        }
+       }
+      },
+      "back": {
+       "type": "object",
+       "required": [
+        "base"
+       ],
+       "additionalProperties": false,
+       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "properties": {
+        "base": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_half": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_open": {
+         "$ref": "#/$defs/file"
+        },
+        "blink": {
+         "$ref": "#/$defs/file"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
