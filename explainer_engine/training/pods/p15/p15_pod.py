@@ -14,7 +14,8 @@ uploads ``$EE_OUT`` to HF ``route_test_2026-11/pilot/`` as files land: OR-33).
     python3 -m explainer_engine.training.pods.p15.p15_pod            # on the pod (EE_OUT, EE_DEADLINE from the wrapper)
     python3 -m explainer_engine.training.pods.p15.p15_pod --plan     # the stages, their lanes and timeouts, no work
     python3 -m explainer_engine.training.pods.p15.p15_pod --only qwen   # the creator 2026-11-06 17:34 UTC: only the 8 Qwen pictures,
-                                                                     # no LTX weights, no clips (``p15q_schedule.json``, ``p15q.sh``)
+                                                                     # no LTX weights, no clips, three look variants per still = 24 pictures
+                                                                     # (``p15q_schedule.json``, ``p15q.sh``)
 """
 from __future__ import annotations
 
@@ -94,7 +95,7 @@ class Pod:
     def gpu(self):
         until = self.deadline - self.reserve
         self.book.events["weights_qwen"].wait(max(0.0, until - time.time()))
-        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out),
+        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants"] if self.only == "qwen" else [])),
                    why=None if self.book.ok("weights_qwen") else "the Qwen weights did not download")
         if self.only == "qwen":
             return

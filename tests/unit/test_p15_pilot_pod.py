@@ -207,19 +207,43 @@ def test_the_qwen_list_is_the_config_s(monkeypatch):
 
 # ---- --only qwen (the creator 2026-11-06 17:34 UTC: pictures first, no LTX on this pod)
 
-def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_cheapest_card():
+def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_two_a100s_and_rp01_on_the_work_min():
     import copy
+    from explainer_engine.cloud import batching
     assert RP.rp11(DIR / "p15q_schedule.json") == []
     sch = RP.load(DIR / "p15q_schedule.json")
     assert {s["id"] for s in sch["stages"]} == {*p15_pod.QWEN_LANES["net"], *p15_pod.QWEN_LANES["gpu"]}
     assert B.schedule_qwen() == json.loads((DIR / "p15q_schedule.json").read_text(encoding="utf-8"))   # generated, never hand-edited
-    by = {}
+    assert sch["limits"]["max_usd"] == 3.4 and [c["cloud"] for c in sch["cards"]] == ["COMMUNITY", "SECURE"]
+    assert all(c["name"] == "A100 80GB" for c in sch["cards"])   # no H100: its 15.4 min of work fails RP-01
+    r = next(s for s in sch["stages"] if s["id"] == "qwen_restyle")["on"]["gpu"]
+    assert r["expected_min"] == 15.4 and r["max_min"] == 46.2   # (61 s + 24 x 36 s), the usual 3x
     for c in sch["cards"]:
         one = copy.deepcopy(sch)
         one["cards"] = [c]
-        by[c["name"]] = RP.plan(one)["best"]
-    assert by["A100 80GB"]["fits"] and by["A100 80GB"]["worst"]["usd"] <= sch["limits"]["max_usd"] <= 2.0
-    assert by["A100 80GB"]["expected"]["usd"] < by["H100 NVL"]["expected"]["usd"]   # the cheapest expected cost
+        best = RP.plan(one)["best"]
+        assert best["fits"] and best["worst"]["usd"] <= 3.4 and best["worst"]["pod_min"] <= 120
+        assert batching.rp01(round(best["expected"]["gpu_busy_min"]), 8) == []   # the A100's work, 26 min, is over 3 x the 8 min setup
+    h100 = copy.deepcopy(sch)
+    h100["cards"] = [{"name": "H100 NVL", "cloud": "COMMUNITY", "price_h": 2.59, "gpu_speed": 1.0}]
+    assert batching.rp01(round(RP.plan(h100)["best"]["expected"]["gpu_busy_min"]), 8) != []
+
+
+def test_the_24_qwen_prompts_are_at_most_90_words_pass_the_style_check_and_differ_only_in_the_look_clauses():
+    from explainer_engine.qa import style_prompt as SP
+    cfg = json.loads((DIR / "p15.json").read_text(encoding="utf-8"))
+    js = p15_qwen.jobs(cfg, True)
+    assert len(js) == 24 and len({j["name"] for j in js}) == 24
+    for j in js:
+        assert len(j["prompt"].split()) <= 90, j["name"]
+        assert [f for f in SP.check(j["prompt"]) if f["severity"] in ("FAIL", "REVIEW")] == [], j["name"]
+        assert j["seed"] == cfg["qwen"]["seed"] and j["cfg"] == cfg["qwen"]["cfg_edit"]
+    for q in cfg["qwen_jobs"]:
+        s1, s2, s3 = (next(j for j in js if j["name"] == f"{q['shot']}__{s}")["prompt"] for s in ("S1", "S2", "S3"))
+        assert s3 == q["qwen_prompt"] and s1.startswith(s3) and s2.startswith(s3) and s1 != s2
+    for words in ("snappy", "timing", "poses hold", "quick moves"):
+        assert not any(words in j["prompt"] for j in js)   # the video words stay out of the pictures
+    assert p15_qwen.jobs(cfg) == p15_qwen.jobs(cfg, False) and len(p15_qwen.jobs(cfg)) == 8   # the full pod is unchanged
 
 
 def test_the_qwen_only_pod_downloads_only_the_qwen_weights_and_starts_no_clip(tmp_path):
@@ -232,7 +256,7 @@ def test_the_qwen_only_pod_downloads_only_the_qwen_weights_and_starts_no_clip(tm
     assert names == ["weights_qwen", "qwen_restyle"]   # no weights_ltx25, no ltx_c*
     rows = json.loads((tmp_path / "stages.json").read_text())["stages"]
     assert rows["F"]["status"] == "ok" and not any(k.startswith("ltx_") or k == "weights_ltx25" for k in rows)
-    assert dict(run.calls)["qwen_restyle"] == 17.5 * 60
+    assert dict(run.calls)["qwen_restyle"] == 46.2 * 60
     failed = FakeRun(tmp_path / "f", fail={"qwen_restyle"})
     assert p15_pod.Pod(cfg, sch, tmp_path / "f", deadline=__import__("time").time() + 7200, run=failed, only="qwen").main() == 1
 
@@ -247,7 +271,8 @@ def test_the_qwen_only_script_has_no_ltx_and_pins_the_same_bundle_and_the_launch
     assert lean.SHA_LINE.findall(text) == lean.SHA_LINE.findall((DIR / "p15.sh").read_text(encoding="utf-8"))   # one bundle, two scripts
     cmd = B.launch_qwen()["cmd"]
     assert R.create_flag_problems(shlex.split(cmd)[4:]) == []
-    assert "p15q.sh" in cmd and "p15q_schedule.json" in cmd and "--max-usd 2.0" in cmd and "ltx" not in cmd.lower()
+    assert "p15q.sh" in cmd and "p15q_schedule.json" in cmd and "--max-usd 3.4" in cmd and "--work-min 26" in cmd and "ltx" not in cmd.lower()
+    assert '--only "A100" --cloud COMMUNITY' in cmd
     # the bundle leaves both scripts out and pins both
     monkeypatch.setattr(lean, "BUNDLE_DIRS", ("explainer_engine/training/pods/p15",))
     for n in ("p15.sh", "p15q.sh"):

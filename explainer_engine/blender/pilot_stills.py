@@ -48,6 +48,12 @@ LTX_STYLES = {"S1": VIDEO_SENTENCE,
               "S2": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy "
                     "colours with vivid glowing accents.",
               "S3": ""}
+# the picture-only look clauses of the three Qwen prompt variants (Fable 2026-11-06 18:00 UTC: the word cap stays 90, video words go;
+# the LTX_STYLES text above is unchanged). Short clauses first; a variant adds clauses while they fit under QWEN_MAX_WORDS, so every still
+# keeps its cap: the 87-word establishing reverse gets three words, the short inserts get all of them. S3 = the card's prompt as is.
+QWEN_LOOK = {"S1": ["bold ink outlines", "bright colours", "big bulging eyes"],
+             "S2": ["chalky painterly background", "muted earthy colours", "vivid glowing accents", "bold uneven ink outlines"],
+             "S3": []}
 QWEN_MAX_WORDS = 90     # Fable, 2026-11-06 15:57 UTC: a pilot still's prompt is at most 90 words
 # the soldiers scene (``layout_passes`` battle, frame 0: the near army from behind, the far army under its banners across a plain):
 # one card like the room's; the still is the crowd composition itself, so everything in it acts in the clip
@@ -143,6 +149,18 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
     ltx = f"{VIDEO_SENTENCE} {motion[0].upper() + motion[1:]}, then {settle}. Static camera."
     return {"qwen": qwen, "qwen_words": n, "ltx": ltx, "card": card, "names": sorted(set(used)),
             "hero_refs": [spec["hero_refs"][r] for r in refs], "motion": motion, "settle": settle}
+
+
+def qwen_variant(sid: str, style: str) -> str:
+    """The Qwen prompt of one still in one look variant: the card's prompt, then the style's clauses that fit under ``QWEN_MAX_WORDS``
+    (S3: none). Same seed, same LoRA; only these words differ."""
+    base = prompts(sid)["qwen"]
+    room = QWEN_MAX_WORDS - len(base.split())
+    add: list[str] = []
+    for c in QWEN_LOOK[style]:
+        if len(" ".join([*add, c]).split()) <= room:
+            add.append(c)
+    return base if not add else base + " " + (", ".join(add)).capitalize() + "."
 
 
 def ltx_prompt(sid: str, *, style: str = "S1", audio: str | None = None, line: tuple[str, str] | None = None) -> str:
