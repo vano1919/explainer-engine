@@ -4448,3 +4448,16 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Open: the J4 base (Union-Control exists only for LTX-2.3: a step-3 OR-23 item); `dryrun.placeholder_problems` matches p12b.py's own
   detector word, so `runpod create` would refuse the p12 pod; the HF copy of `code/p12/` still needs uploading; C1-C6 of the route-test
   script stay the creator's.
+
+## 2026-11-06 — ICW-11 J5 route: scene_assets/1, cut-out finish, Blender 2.5D assembly, mcu_front (PR #142, guide step 2.1)
+- Why: route J5 (D-116) = Qwen assets on 2.5D cards rendered by Blender; step 2.1 of the Opus step-by-step guide, free. Merged into
+  icw/05c-ink-round after Fable's PASS (12:02 UTC) under the creator's step-2 word (11:11 UTC card).
+- Contract `scene_assets/1` (docs/SCENE_ASSETS.md, SA-01..SA-09): per scene a 360° backdrop (2:1), heroes by angle with mouth/blink
+  states and the flat-lighting note as a const, props, defects as "change nothing, fix:" edits; `core/contracts._scene_assets`.
+- `edit/cutout.py`: BiRefNet matte (pinned `models.cutout_birefnet`, MIT) + feather/defringe finish; halo 0.30-0.50 -> 0.0006 on the
+  10-25 comp_test cut-outs (SA-04 REVIEW above 0.06).
+- `blender/assemble_25d.py` + `bpy/assemble_25d.py`: equirect world, emission cards, 3 mouth states with a 2-frame cross-blend on
+  the mouth cues (LipSync, BP-108), blink 3-5 s, breathing 0.5 % at 0.25 Hz, flat contact shadow, no lights and no cast shadows;
+  horizon bend check on a 30° pan (SA-08, 0.0037 measured on the smoke). Camera setup `mcu_front` (C4) with a framing test.
+- CI: the Blender smoke renders the 5-shot J5 set. Open: the 1440p dialogue needs the asset pod's Qwen assets; the PC seconds/frame
+  row stays null (no PC measurement).
