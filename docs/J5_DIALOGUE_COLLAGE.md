@@ -214,3 +214,16 @@ chin that way: the mouth shape changes in place and the head nods a little. `FEA
 (commander 0.12, scout 0.4); the painted mouth opening keeps its full size. Techniques searched: GitHub search is limited to this session's
 repositories, so the rule is taken from 2D viseme practice (Rhubarb's own mouth-shape set: swap shapes, do not warp the face).
 Open: a true shape swap needs drawn mouth variants per sheet (paid Qwen edit, the creator's call); the whole-head nod is the remaining motion.
+
+## 7f. Variant sheets instead of a picture per mouth (creator, 19:41 UTC, D-119)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+One Qwen picture per hero holds the 8 variants of the moving part (A-F, two blinks) in a 4x2 grid of 512x512 cells, 32 px gutters and margins,
+2208x1120 (`j5_variant_sheet.py`, the layout constant both the pod job and the cutter import). `build_input_sheet` makes the picture Qwen
+is asked to vary (the neutral head, upscaled, in all cells); `cut_cells` cuts the answer; `align` finds translation and scale on the stable
+upper face (template search over scales 0.94-1.06 and +-24 px, sub-pixel, no warp); `check_cell` reports registration error, score and an identity
+score (gradient-orientation descriptor outside the moving parts, a proxy, not a face-embedding model); `variant_sheets` puts each cell's mouth or
+eyes into the hero sheet through the feathered mask (pixels outside the mask stay the sheet's own); `blend_sheet` mixes them with the cue
+weights (`j5_face.cue_weights`, 55 ms). Tested on a synthetic sheet only: no real Qwen sheet exists yet, so the real registration error and identity
+numbers are still to be measured. Wiring `blend_sheet` into the card renderer waits for the real sheets.

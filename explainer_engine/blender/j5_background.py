@@ -58,10 +58,13 @@ SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 3.0, "S4_close_up_h1": 3.0, "S
 # camera per shot: plate zoom, card zoom (start, end), the foreground card's shift in px at 2560 (end - start, x and y) and the pivot
 CAMERA = {
     "S1_two_shot": {"zoom_plate": (1.0, 1.04), "zoom_card": (1.0, 1.09), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
-    "S2_ots_h2_to_h1": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (-110, 0), "pivot": (0.5, 1.0)},
+    "S2_ots_h2_to_h1": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (-50, 0), "pivot": (0.5, 1.0)},
     "S4_close_up_h1": {"zoom_plate": (1.0, 1.05), "zoom_card": (1.0, 1.10), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
-    "S3_ots_h1_to_h2": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (110, 0), "pivot": (0.5, 1.0)},
+    "S3_ots_h1_to_h2": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (50, 0), "pivot": (0.5, 1.0)},
 }
+# the close shots use a crop below the sky of the plate and came out ~20 % darker than the two-shot (mean luma 42-44 vs 53 at step 4d):
+# a gain on the blurred plate brings them to the same night, so the cuts do not change the time of day
+PLATE_GAIN = {"S1_two_shot": 1.0, "S2_ots_h2_to_h1": 1.30, "S4_close_up_h1": 1.30, "S3_ots_h1_to_h2": 1.28}
 # which hero is the foreground shoulder (the one with sigma > 0), the rest are "mid"
 
 
@@ -474,6 +477,7 @@ def render_frame(A: ShotAssets, t: float, u: float, frame: int) -> np.ndarray:
     M = np.array([[1 / zp, 0, cxo - px - W / 2 / zp], [0, 1 / zp, cyo - py - H / 2 / zp]], np.float32)
     plate = cv2.warpAffine(base, M, (W, H), flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP, borderMode=cv2.BORDER_REPLICATE)
     img = J._blur(plate, A.shot["sigma_plate"] * s)
+    img = np.clip(img * PLATE_GAIN.get(A.name, 1.0), 0.0, 1.0)
     zc = lerp(*cam["zoom_card"], u)
     pivot = (cam["pivot"][0] * W, cam["pivot"][1] * H)
     for c in A.cards:
