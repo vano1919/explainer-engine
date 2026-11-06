@@ -136,6 +136,7 @@ def test_the_bundle_leaves_the_script_out(tmp_path, monkeypatch):
     sh.write_text((DIR / "p15.sh").read_text(encoding="utf-8"), encoding="utf-8")
     monkeypatch.setattr(B, "SH", sh)
     monkeypatch.setattr(B, "SH_Q", tmp_path / "p15q.sh")   # the bundle pins both scripts: never the committed one
+    monkeypatch.setattr(B, "SH_C", {})
     (tmp_path / "p15q.sh").write_text((DIR / "p15q.sh").read_text(encoding="utf-8"), encoding="utf-8")
     sha = B.bundle(tmp_path / "a.tgz")
     assert sha in sh.read_text() and B.bundle(tmp_path / "b.tgz") == sha
