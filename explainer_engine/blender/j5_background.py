@@ -52,15 +52,15 @@ DISSOLVE = 10                                 # frames of the dissolve between t
 IDLE = {"sway": 0.0050, "head_dx": 0.0030, "nod": 0.0022, "breath": 0.0020, "cloth": 0.0012}
 # emotion of the faces (brow lift in units of ~2 px at 2560; negative = down): the commander is stern and squints a little while he speaks,
 # a listener's brows stay a little raised
-EXPR = {"speak_brow": -0.35, "speak_lift": 0.55, "listen_brow": 0.40, "squint": 0.14}
+EXPR = {"speak_brow": -0.35, "speak_lift": 0.55, "listen_brow": 0.40, "squint": 0.14, "bob": 0.0045}   # bob: the head dips with every open sound (share of card height)
 HEAD_M = 0.24                                 # a head is about 0.24 m tall; the head share of a card is HEAD_M / the card's height in metres
 SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 3.0, "S4_close_up_h1": 3.0, "S3_ots_h1_to_h2": 3.0}   # the cut order of the dialogue
 # camera per shot: plate zoom, card zoom (start, end), the foreground card's shift in px at 2560 (end - start, x and y) and the pivot
 CAMERA = {
-    "S1_two_shot": {"zoom_plate": (1.0, 1.025), "zoom_card": (1.0, 1.055), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
-    "S2_ots_h2_to_h1": {"zoom_plate": (1.0, 1.02), "zoom_card": (1.0, 1.03), "shift_fg": (-70, 0), "pivot": (0.5, 1.0)},
-    "S4_close_up_h1": {"zoom_plate": (1.0, 1.03), "zoom_card": (1.0, 1.05), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
-    "S3_ots_h1_to_h2": {"zoom_plate": (1.0, 1.02), "zoom_card": (1.0, 1.03), "shift_fg": (70, 0), "pivot": (0.5, 1.0)},
+    "S1_two_shot": {"zoom_plate": (1.0, 1.04), "zoom_card": (1.0, 1.09), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
+    "S2_ots_h2_to_h1": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (-110, 0), "pivot": (0.5, 1.0)},
+    "S4_close_up_h1": {"zoom_plate": (1.0, 1.05), "zoom_card": (1.0, 1.10), "shift_fg": (0, 0), "pivot": (0.5, 1.0)},
+    "S3_ots_h1_to_h2": {"zoom_plate": (1.0, 1.035), "zoom_card": (1.0, 1.06), "shift_fg": (110, 0), "pivot": (0.5, 1.0)},
 }
 # which hero is the foreground shoulder (the one with sigma > 0), the rest are "mid"
 
@@ -447,7 +447,7 @@ def idle(c: dict, t: float, f: float, A: ShotAssets | None = None) -> np.ndarray
     close = max(F.closure(T, c["blinks"]), EXPR["squint"] if speaking and c["id"] == "H1" else 0.0)
     fdx, fdy = F.displacement(face, d["gx"], d["gy"], T, op, brow)
     DX = (dx + cloth) + fdx
-    DY = dy + fdy
+    DY = dy + fdy - EXPR["bob"] * H * op * head * (1 if speaking else 0.35)
     mx = (d["gx"] - x0 - DX).astype(np.float32)
     my = (d["gy"] - y0 - DY).astype(np.float32)
     out = cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))

@@ -11,7 +11,8 @@ def _face():
     skin = np.array([0.8, 0.55, 0.4], np.float32)
     return {"k": 2.0, "eyes": [{"x": 60.0, "y": 50.0, "w": 24.0, "h": 16.0, "skin": skin, "lash": F.LASH}],
             "brows": [(60.0, 30.0, 20.0, 10.0)],
-            "mouth": {"x": 60.0, "y": 110.0, "w": 50.0, "line": 6.0, "jaw": 12.0, "interior": F.INTERIOR, "lash": F.LASH}}
+            "mouth": {"x": 60.0, "y": 110.0, "w": 50.0, "line": 6.0, "jaw": 12.0, "interior": F.INTERIOR, "tongue": F.TONGUE,
+                      "teeth_c": F.TEETH, "teeth": True, "chin": 130.0, "lash": F.LASH}}
 
 
 def _layer():
@@ -46,9 +47,11 @@ def test_jaw_moves_only_below_the_mouth_line_and_a_raised_brow_moves_up():
     gy, gx = np.mgrid[0:160, 0:120].astype(np.float32)
     dx, dy = F.displacement(f, gx, gy, 0.0, 1.0, 0.0)
     assert dy[60, 60] == 0 and dy[100, 60] == 0              # above and at the mouth line: nothing
-    assert dy[140, 60] > 8                                   # the chin drops by almost the full jaw
+    assert dy[128, 60] > 8                                   # the chin drops by almost the full jaw
+    assert dy[158, 60] < 0.5                                  # a chin's height below it (neck, collar): nothing moves
+    assert dy[128, 5] < 0.6 * dy[128, 60]                     # and the jaw's pull fades sideways
     _, up = F.displacement(f, gx, gy, 0.0, 0.0, 1.0)
-    assert up[30, 60] < -3 and up[140, 60] == 0              # brow lifts, chin stays
+    assert up[30, 60] < -3 and abs(up[128, 60]) < 1e-6             # brow lifts, chin stays
     _, down = F.displacement(f, gx, gy, 0.0, 0.0, -1.0)
     assert down[30, 60] > 3
 
@@ -65,7 +68,8 @@ def test_paint_closes_the_eye_opens_the_mouth_and_leaves_a_still_face_alone():
     assert out[50, 60, :3].min() < 0.9 and abs(out[50, 60, 0] - 0.95) > 0.05
     out = still.copy()
     F.paint(out, f, (0, 0, 120, 160), 0.0, 0.0, 1.0, 1.0)
-    assert out[110 + 6, 60, :3].max() < 0.35                 # a dark opening where the mouth is
+    assert out[110 + 6, 60, :3].max() < 0.7 and out[116, 60, 0] > out[116, 60, 2] + 0.1   # an opening where the mouth is, warm inside (no black hole)
+    assert out[116, 60, :3].min() > 0.05
     assert np.array_equal(out[10, 10], still[10, 10])        # far away: untouched
 
 

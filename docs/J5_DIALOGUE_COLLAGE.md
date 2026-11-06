@@ -155,7 +155,13 @@ Code: `explainer_engine/blender/j5_face.py` (+ hooks in `j5_background.idle`, `m
   (+0.55 x opening) and squints 14 %; a listener's brows rise (+0.40, slowly alive). Brows move by a Gaussian bump of the image.
 - **Mix** (`mix_voice`): ambience x 0.55 lowered by 8 dB while anyone speaks, each line peak 0.85, the sum limited to 0.9. A review mix, not the
   audio spine's levelling.
-- **Honest limits**: the mouth is a dark ellipse on a flat painting, not a drawn mouth; teeth and tongue are missing; the lid on the scout's
+- **Fixes after the creator's first look (18:56 UTC: half the body moved with the jaw; the mouth was a black hole; the clip felt slow):**
+  the jaw weight now lives only between the lips and a chin's height below the chin (`chin_y` per sheet) and fades sideways within 1.25 mouth
+  widths, so neck, collar and armour stay; the opening is shaded (roof `INTERIOR`, lighter `TONGUE` toward the bottom, a strip of upper teeth on
+  wide openings for the scout, none for the bearded commander) and the commander's is smaller (40 px sheet width, jaw 5.5); for liveliness the head dips with every
+  open sound (`EXPR["bob"]`, 0.45 % of the card, a third of that for a listener) and the camera pushes harder (plate 3.5-5 %, cards 6-10 %, foreground
+  truck 110 px). Snappiness in the sense of cutting rhythm and exaggerated acting is not solved by this and stays open.
+- **Honest limits**: the mouth is a shaded ellipse on a flat painting, not a drawn mouth; the lid on the scout's
   cartoon eyes hides their black outline; no head turn on a vowel; the two eyes of the commander share one skin sample. A real fix is
   drawn mouth/eye variants per sheet (SA-06), which would be a paid Qwen edit.
 
