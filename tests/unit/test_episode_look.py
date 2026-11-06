@@ -57,8 +57,8 @@ def test_apply_keeps_prompt_valid():
     assert p2 == p                                                             # never added twice
     pn, _ = EL.apply(ERAS, look, "night")
     assert "indigo" in pn
-    long = f"{T}, " + " ".join(["word"] * 34)
-    assert any(f["severity"] == "FAIL" for f in EL.apply(long, look)[1])        # 40 words still binds
+    long = f"{T}, " + " ".join(["word"] * 144)
+    assert any(f["severity"] == "FAIL" for f in EL.apply(long, look)[1])        # the band's 150 words still bind (2026-11-06)
 
 
 def test_measure_drift_grade():

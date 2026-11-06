@@ -6,7 +6,7 @@ gentle, bounded colour match. ვანო, 2026-10-25 03:04 Tbilisi.
 
 Two parts:
 1. Words (AC-17): the episode's colour/light phrase (at most 10 words, colour and light vocabulary only) is added to every
-   style-LoRA prompt of the episode; the whole prompt must still pass `style_prompt.check` (40 words), so scene words
+   style-LoRA prompt of the episode; the whole prompt must still pass `style_prompt.check` (at most `MAX_WORDS`), so scene words
    shrink, never the absolutes. A scene may use one of the episode's named light variants (night, interior ...).
 2. Pixels (AC-18, AC-19): the look is MEASURED from the episode's approved key frame (Lab mean and spread, hue
    histogram, 6 palette colours; no hex is stored in code). Every new picture's colour distance to it is reported

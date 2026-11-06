@@ -121,6 +121,32 @@ clips that share 8 frames, the duel one 121-frame clip. A full render writes per
 `layout_manifest.json` (`layout_passes/1`, sha256 per frame and clip); only a full-size, full-length render goes to HF
 `route_test_2026-11/layouts/<scene>/`, checked against the vault's hashes. Tests: `tests/unit/test_layout_passes.py`.
 
+### 5b. LTX jobs, the route-test pod, the upscale chain and the verdict page (step 3 code, built 2026-11-06)
+
+`edit/ltx_jobs.py` writes the J2/J4 generations as `ltx_job/1` (rules LJ-01..LJ-07, [LTX_JOBS](../LTX_JOBS.md)) on both bases, the
+creator's card of 11:11 UTC: LTX-2.5 + Layout-To-Render and LTX-2.3 + Union-Control (`models.video_ltx_23`, Gemma 3 text encoder
+pinned after the creator accepted its licence at 12:16 UTC), same shots and first frames. The pod `training/pods/p14` (p14.sh +
+p14_ltx.py) runs them with sha256-checked weights and inputs, derives the line/canny controls, chains clip B from clip A's last 8
+frames and makes the 2560x1440 copy with `finish/upscale.video_filter(..., **ROUTE_TEST)` (crop 1088 -> 1080, Lanczos, cas 0.4,
+grain 6; both files kept). `qa/verdict_page.py` turns the pod's out folder, the J5 renders and the overnight frames into one card per
+clip with the same numbers (identity, dE, line share, holds, flicker, seconds and dollars, upscale before/after). No pod ran.
+
+### 5c. Measured facts from the asset pod (2026-11-06, its end report at 12:27 UTC; facts, not rules)
+
+- Identity by reference holds across environments: CLIP similarity 0.78-0.82 of a hero drawn by reference into other places.
+- A 90-word prompt draws every named prop; in crowd scenes it produced clone soldiers that neither a redraw nor a fix-edit removed.
+  So crowd shots stay J4 (Blender crowds under an LTX restyle), and single-figure prompts may use up to 90 words.
+- Prompt length (the creator's call, 2026-11-06 12:27 UTC): a band of 40 to 150 words; how long a scene's prompt is inside the band
+  is the prompt writer's choice by how much detail its proportions and setting need, not a validator's. `qa/style_prompt` FAILs
+  over 150 and keeps a REVIEW over 90 on the crowd and mass sub-categories (V1, S3) only; 150 words are untested, 337 broke the
+  style on 2026-10-24.
+- The battle's line pass (Freestyle over the whole crowd) did not finish on this machine: Blender was killed for memory (-9) before
+  frame 0 at quarter size; the colour and depth passes render. The `canny_full` variant (a canny of the colour pass) does not need it.
+- The worker judged the pictures by eye: the pod scripts do not yet ask the keyframe gate's VLM questions, and a fix-edit has no
+  pixel-diff mask report of what changed outside the defect (both open, ICW-14 follow-up).
+- The local money guard died silently at 11:41 UTC and only `runpod check` at 12:11 saw it: the guard now writes a beat file every
+  look and `check` replaces a dead or hung guard and pushes an urgent note (`cloud/runpod.guard_state`, `restart_guard`).
+
 ## 6. Phases
 
 | Phase | What | Cost | Gate |
