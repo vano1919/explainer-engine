@@ -4231,6 +4231,64 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Local check (this container, Blender 5.2.3 CPU / Mesa, 1280x720): lights, light linking (20 cast meshes) and the normal blur
   applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
   heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
+- Overnight matrix C1-C4 (Fable's OVERNIGHT_PLAN 22:05 UTC, the creator's brief 19:55 UTC): `blender/combo_profiles.json`
+  (`combo_profiles/1`, read by `blender/combos.py`) names each combination's look (`q1_c1_lit_preset`, `q1_c2_native_skin`,
+  `q1_c3_far_plate`, `q1_c4_pn_faces`), render profile and character path; each era brings its light preset (E1 noon_epic, E2
+  golden_hour, E3 overcast_day, E4 golden_hour). C2 is the default character path (Fable 22:06 UTC: Q4's toon Rain is not there).
+  New look knobs (defaults keep every older graph byte for byte): `native_classes` (those character classes keep the asset's own
+  material, e.g. Blender Studio's SSS skin; `apply_style` leaves the slot alone, `check` accepts a native entry only for a listed
+  class), `skin_lift` (per character: a shadowless, specular-free front fill linked to that character's meshes, and on rgb_soft its
+  skin shadow tint lerped to white), `pn_converge` (Perfectly Normal 0.0.3, GPL-3.0-or-later: its Manip Verts GN groups appended
+  from the extension's own .blend as data, (Re)create -> Tweak Converge -> Apply; one face-normal method at a time). Presets: every
+  key carries `front_offset_deg` (30-45 degrees, enforced): with a cast in the shot the key turns to the camera's side.
+  Perfectly Normal pinned in `config/cloud_pins.json` and `assets/licence_sources.json`, fetched by `blender/face_normals.py`.
+  Not in (stated, not hidden): Brushstroke Tools on C3's close plane (its operators are add-on Python, refused in the cloud
+  container; the GN-only route is not built) and nikolaj3d's shader for C4 (the $0 Gumroad download needs a checkout with an
+  email). Tests: `tests/unit/test_combo_profiles.py`.
+- `character_key` (light_presets.json; WP-Q4's front_key(), the lead close-up accepted by Fable 22:17 UTC): on a close-up
+  (`Look.character_key`, `combos.tokens(..., close_up=True)`) the preset's key and fill give way to a warm key 35 degrees off the
+  camera axis, 10.4 degrees up (above the eye line), and a cool shadowless fill opposite at a quarter of its energy; the era's rims
+  and world tint stay. The loader holds the band (30-45 degrees, fill opposite, share <= 0.5).
+- Era light by look id (`style.LIGHT_TAG`): `q1_c2_native_skin@E1` (era key -> its preset), `...@noon_epic` (a preset name),
+  `...@E2+cu` (the close-up character key). Every CLI that takes a look id (`style_sheets looks`, `world_kits poc --variants`)
+  passes the era's light this way; a look without a preset refuses the tag. Perfectly Normal's Converge turned out inward for a
+  positive share (UV sphere in 5.2.3: mean dot with the outward normal 0.971 flat, -0.911 at +0.6; the first C4 frame's cast went
+  black), so `render_shot.perfectly_normal` passes the outward share as a negative Converge (0.984 at -0.6).
+  The black cast had a second cause: PN 0.0.3's rebuild shifts every face's material index by one (5.2.3, a two-slot sphere:
+  [0, 1] -> [1, 2]), so the kit cast drew in the wrong slots. Two small GN groups around PN store the index as a face attribute and
+  set it back; the cast's imported custom normals are cleared and shaded smooth first. Local C4 frame now renders the cast in its
+  own colours (14.5 s/frame at 1280x720).
+- Depth haze (Fable 22:30 UTC: the E2 cells fail on the world, C3's plate is invisible at that distance): `Look.haze` (share at the
+  far end, at most `HAZE_MAX` 0.75 so the far world keeps a quarter of its contrast), `haze_start_m`, `haze_depth_m`, `haze_colour`
+  (warm grey 0.8/0.76/0.7). Second version (Fable 22:33 UTC): the finish builds the factor from the depth pass alone (Map Range
+  start..start+depth, squared, times the share) and masks the sky (`HAZE_SKY_M`: a depth beyond 1e5 m is the world background, EEVEE
+  writes ~1e10 there), so the sky stays as rendered; no mist pass, no world mist settings, no extra render layer, no denoise. Every C
+  look carries haze 0.45 from 12 m to 162 m. Cost, measured here (2560x1440, EEVEE on software GL, CPU compositor): the real
+  establishing shot 27.6/27.5 s without haze, 29.9/29.0 s with it (mist-pass version 31.8/32.3 s). A bare bench with the same
+  compositor chain isolates it: at 1 sample haze adds ~0.2 s (the nodes), at 16 samples ~+2 s, so the cost is the depth pass
+  accumulated per EEVEE sample on this software GL, not the nodes. The under-0.3 s target is not met on software GL. On the
+  creator's Mac GPU (T-C, E2 hero, C2, tree 4c149d8 with the 5efa45b light): haze ON (0.45) 1.502 s/frame, haze OFF
+  1.507 s/frame, i.e. no measurable cost there; the target is met on the machine that renders.
+- E2 golden hour reads in the world (Fable 22:51 UTC: the world_kits poc's E2 hero showed no low warm sun and no shadows). Cause
+  found on a local 720p render of `hill_castle/castle_hero` in `q1_c2_native_skin@E2`: the preset key turned to the camera's side on
+  every shot with a cast (the front-biased key meant for character shots), so a 49 m world shot was front-lit and flat, and the
+  sky was the noon HDRI. Now: the front-biased key only on a character shot (camera focus within `style.CHARACTER_SHOT_M`, 12 m);
+  a world shot under a preset with `key.world_offset_deg` aims the sun per shot from the camera's side (golden_hour: 110 degrees,
+  12 degrees up, warm 1.0/0.74/0.46, energy 3.4, shadows on); an optional preset `sky` block tints the HDRI and lays a warm band
+  over the horizon (golden_hour: tint 0.86/0.66/0.5, horizon 1.0/0.7/0.44, band 0.6, glow 0.7). Presets without these keys
+  (noon_epic, overcast_day, interior_hearth, night_moon) keep their bytes. Local A/B at 720p: before = flat front light, blue sky;
+  after = warm side light from the right, long shadows to the left, warmer sky. 3 tests in `test_combo_profiles.py`.
+  Fable's tweaks (23:24 UTC): `world_exposure_ev` +0.5 on world shots only (`scene.exposure`, set by `render_shot` on the view
+  settings; close-ups keep 0), and a stronger warm band (tint 0.95/0.72/0.52, horizon 1.0/0.74/0.48, band 0.85, glow 0.95): the
+  720p hero is half a stop brighter and the sky over the ridge reads warm peach.
+  golden_hour v3 (Fable 23:33/23:37 UTC: the village sat in the hill's shadow and the sky went white): sun 21 degrees up and turned
+  to 138 degrees (from behind the camera's shoulder), so the slope and the market are lit and shadows run across them; HDRI tint
+  0.72/0.68/0.64 keeps the sky blue, the warm band only near the horizon (band 0.22, glow 0.9).
+- overcast_day and noon_epic on the same logic (Fable 23:24 UTC): overcast_day key 35 degrees up, world offset 100, shadow filter 5
+  (new optional `key.shadow_filter`, 0.5..8, instead of the look's), grey sky (tint 0.8/0.82/0.86, band 0.85), +0.3 EV on world
+  shots; noon_epic key 55 degrees, slightly warm 1.0/0.93/0.82, disc 5 degrees, shadow filter 1, world offset 120, its HDRI blue
+  unchanged. Local 720p: `harbour_square/harbour_wide@E3` soft shadows, grey air (the depth haze greys the cliff wall heavily);
+  `antique_forum/forum_wide@E1` hard shadows, blue sky. Tests in `test_combo_profiles.py`.
 
 
 ## 2026-11-05 — WP-Q4: Blender Studio Rain as the appeal benchmark (draft PR #135, branch wpq/04-character-benchmark)

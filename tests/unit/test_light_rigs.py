@@ -106,7 +106,7 @@ def test_build_lights_links_the_rim_to_the_cast_and_leaves_it_out_without_one():
     rs["bpy"] = types.SimpleNamespace(data=types.SimpleNamespace(
         lights=types.SimpleNamespace(new=light), objects=types.SimpleNamespace(new=obj),
         collections=types.SimpleNamespace(new=lambda name: types.SimpleNamespace(name=name, objects=_Members()))))
-    rs["_camera_aim"] = lambda scene, el, az: ("aimed", el, az)
+    rs["_camera_aim"] = lambda scene, el, az, front=False: ("aimed", el, az) if not front else ("front", el, az)
     scene = types.SimpleNamespace(collection=types.SimpleNamespace(objects=_Members()))
     specs = graph("q1_lit_pbrn_cinematic")["lights"]
     missing = []

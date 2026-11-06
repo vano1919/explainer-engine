@@ -158,6 +158,17 @@
       "bytes": 15062,
       "looked_up": "2026-11-05",
       "package_id": "add_camera_rigs"
+    },
+    "perfectly_normal": {
+      "version": "0.0.3",
+      "blender_version_min": "4.5.0",
+      "licence": "SPDX:GPL-3.0-or-later",
+      "url": "https://extensions.blender.org/download/sha256:477d5735c3f11e03111ee78ffcb61875d829ca31be5aaa7bef8feeca1f0cfd0a/add-on-perfectly-normal-v0.0.3.zip",
+      "sha256": "477d5735c3f11e03111ee78ffcb61875d829ca31be5aaa7bef8feeca1f0cfd0a",
+      "bytes": 156617,
+      "looked_up": "2026-11-05",
+      "package_id": "perfectly_normal",
+      "used_as": "data: the four Manip Verts GN groups appended from assets/perfectly_normal.blend (WP-Q1 C4); no add-on Python runs"
     }
   }
 }
