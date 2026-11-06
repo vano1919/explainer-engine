@@ -53,6 +53,17 @@
       "rims": [{"name": "rim_a", "colour": [1.0, 0.64, 0.36], "energy": 2.2, "elevation_deg": 15.0, "azimuth_offset_deg": 35.0},
                {"name": "rim_b", "colour": [0.6, 0.72, 1.0], "energy": 1.4, "elevation_deg": 45.0, "azimuth_offset_deg": -35.0}],
       "world_tint": {"colour": [0.36, 0.42, 0.66], "strength": 0.3}
+    },
+    "night_camp": {
+      "feel": "a camp by its fire under a cold moon: a dim blue moon key, a fire-orange rim, a deep blue-black sky (pilot_camp, the creator's card 2026-11-06 17:17 UTC)",
+      "key": {"colour": [0.55, 0.66, 1.0], "energy": 0.5, "elevation_deg": 38.0, "azimuth_deg": -30.0, "angle_deg": 7.0, "front_offset_deg": -35.0,
+              "world_offset_deg": -120.0},
+      "fill": {"colour": [0.32, 0.38, 0.66], "energy": 0.12},
+      "rims": [{"name": "rim_a", "colour": [1.0, 0.58, 0.3], "energy": 2.4, "elevation_deg": 12.0, "azimuth_offset_deg": 35.0},
+               {"name": "rim_b", "colour": [0.55, 0.68, 1.0], "energy": 0.6, "elevation_deg": 45.0, "azimuth_offset_deg": -35.0}],
+      "world_tint": {"colour": [0.22, 0.28, 0.55], "strength": 0.12},
+      "sky": {"tint": [0.05, 0.08, 0.18], "horizon": [0.07, 0.10, 0.20], "top": [0.015, 0.025, 0.07], "horizon_band": 0.3, "glow": 0.25},
+      "world_exposure_ev": 0.4
     }
   }
 }

@@ -8382,6 +8382,1173 @@
     "guest": "B_H2_front",
     "elder": "B_H3_front"
    }
+  },
+  "pilot_courtyard": {
+   "label": "Pilot courtyard (the creator, 2026-11-06 17:15 UTC, card 17:17): the castle courtyard of the kit, 8 x 6 m, south side open, the gate in the north wall and the keep behind it; the commander and the scout cross it side-on towards the gate. No wagon, crates or barrel: the clip does not use them (in_shot)",
+   "landmarks": [
+    "gate_door",
+    "fort"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "structure": [
+    "ground"
+   ],
+   "blocks": [
+    {
+     "type": "shape",
+     "name": "ground",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      0,
+      -0.03
+     ],
+     "scale": [
+      140,
+      140,
+      1
+     ],
+     "colour": "#8A7F68"
+    },
+    {
+     "type": "floor",
+     "name": "cobble",
+     "asset": "model.mvk_floor_uneven_brick",
+     "nx": 4,
+     "ny": 3
+    },
+    {
+     "type": "ring",
+     "name": "wall",
+     "wall": "model.mvk_wall_uneven_brick_straight",
+     "nx": 4,
+     "ny": 3,
+     "open_sides": [
+      "south"
+     ],
+     "corner": "model.mvk_corner_exterior_brick",
+     "replace": {
+      "north:1": "model.mvk_wall_uneven_brick_door_round",
+      "north:3": "model.mvk_wall_uneven_brick_window_wide_round",
+      "west:1": "model.mvk_wall_uneven_brick_window_thin_round",
+      "east:1": "model.mvk_wall_uneven_brick_window_wide_round"
+     }
+    },
+    {
+     "type": "piece",
+     "name": "gate_door",
+     "asset": "model.ph_large_castle_door",
+     "pos": [
+      -1.0,
+      2.86,
+      0.0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.55,
+     "role": "gate"
+    },
+    {
+     "type": "piece",
+     "name": "fort",
+     "asset": "model.ph_modular_fort_01",
+     "pos": [
+      2.0,
+      16.0,
+      0.0
+     ],
+     "yaw_deg": 180.0,
+     "role": "landmark"
+    }
+   ],
+   "cast": [
+    [
+     "commander",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_b",
+     [
+      1.5,
+      -0.7
+     ],
+     -90.0,
+     "Walk_Formal_Loop",
+     0
+    ],
+    [
+     "scout",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_a",
+     [
+      3.0,
+      -0.5
+     ],
+     -90.0,
+     "Walk_Formal_Loop",
+     9
+    ]
+   ],
+   "shots": {
+    "courtyard_cross": [
+     [
+      2.6,
+      -7.4,
+      1.75
+     ],
+     null,
+     [
+      -0.3,
+      0.4,
+      1.25
+     ],
+     null,
+     26,
+     1
+    ]
+   },
+   "in_shot": {
+    "courtyard_cross": {
+     "commander": "strides across the courtyard: the clip's motion",
+     "scout": "walks beside him, a step behind",
+     "gate_door": "the gate they walk towards: sets the place",
+     "fort": "the keep behind the wall: a castle, not a yard"
+    }
+   },
+   "heroes": {
+    "commander": "H1",
+    "scout": "H2"
+   },
+   "tags": {
+    "commander": "the broad commander with a grey beard and a red cloak",
+    "scout": "the young scout in a green hood",
+    "gate_door": "a round-arched castle gate",
+    "fort": "a stone keep"
+   },
+   "place": "a cobbled stone castle courtyard in a medieval kingdom",
+   "light": "a low warm morning sun",
+   "cards": {
+    "courtyard_cross": {
+     "start": "{commander} and {scout} stride side by side across the courtyard towards {gate_door}",
+     "motion": "{commander} and {scout} stride on across the courtyard, cloaks swaying",
+     "settle": "they halt before the gate",
+     "refs": [
+      "commander",
+      "scout"
+     ]
+    }
+   },
+   "hero_refs": {
+    "commander": "B_H1_front",
+    "scout": "B_H2_front"
+   }
+  },
+  "pilot_march": {
+   "label": "Pilot march (the creator, 2026-11-06 17:15 UTC, card 17:17): fourteen soldiers marching in two files along a dirt road from left to right, a blue banner at the middle, a pine wood and low hills behind; the camera stands at the road's edge, side-on, 11 m from the near file",
+   "landmarks": [],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "structure": [
+    "land",
+    "range",
+    "under"
+   ],
+   "terrain": {
+    "seed": 5,
+    "rolling": 1.4,
+    "flat": [
+     [
+      -66,
+      9.0,
+      12,
+      0.0,
+      10
+     ],
+     [
+      -44,
+      9.0,
+      12,
+      0.0,
+      10
+     ],
+     [
+      -22,
+      9.0,
+      12,
+      0.0,
+      10
+     ],
+     [
+      0,
+      9.0,
+      12,
+      0.0,
+      10
+     ],
+     [
+      22,
+      9.0,
+      12,
+      0.0,
+      10
+     ],
+     [
+      44,
+      9.0,
+      12,
+      0.0,
+      10
+     ],
+     [
+      66,
+      9.0,
+      12,
+      0.0,
+      10
+     ]
+    ],
+    "road": [
+     [
+      -110,
+      9.0
+     ],
+     [
+      -50,
+      9.6
+     ],
+     [
+      0,
+      8.6
+     ],
+     [
+      50,
+      9.4
+     ],
+     [
+      110,
+      9.0
+     ]
+    ],
+    "road_half": 2.7,
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 0.9
+   },
+   "blocks": [
+    {
+     "type": "terrain",
+     "name": "land",
+     "rect": [
+      -100,
+      100,
+      -30,
+      100
+     ],
+     "res": [
+      160,
+      104
+     ],
+     "colours": {
+      "grass": "#6F9A47",
+      "meadow": "#9BB65A",
+      "forest": "#4E7A3A",
+      "road": "#B58E5B",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8,
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "range",
+     "range": {
+      "x0": -420,
+      "x1": 420,
+      "y0": 185,
+      "y1": 330,
+      "ramp": 45,
+      "scale": 75,
+      "seed": 5,
+      "floor": 0.0,
+      "peak": 60.0,
+      "snow_line": 1000000000.0,
+      "rock_line": 45.0,
+      "rock_slope": 0.7
+     },
+     "res": [
+      168,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#9BB65A",
+      "forest": "#466F3A",
+      "road": "#B58E5B",
+      "rock": "#8A8378",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40,
+     "fog": {
+      "colour": [
+       0.3,
+       0.38,
+       0.48
+      ],
+      "start": 150.0,
+      "end": 900.0,
+      "amount": 0.38
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      200,
+      -1.4
+     ],
+     "scale": [
+      1800,
+      1500,
+      1
+     ],
+     "colour": "#8FA262"
+    },
+    {
+     "type": "scatter",
+     "name": "treeline",
+     "assets": [
+      "model.snm_pine_1",
+      "model.snm_pine_3",
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "rect": [
+      -70,
+      70,
+      16,
+      46
+     ],
+     "count": 48,
+     "seed": 31,
+     "terrain": true,
+     "min_z": -5.0,
+     "road_clear": 4.0,
+     "river": false,
+     "scale": [
+      0.9,
+      1.5
+     ]
+    },
+    {
+     "type": "shape",
+     "name": "banner",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.045,
+      "depth": 4.2,
+      "vertices": 10
+     },
+     "pos": [
+      0.2,
+      7.15,
+      2.1
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3B2C"
+    },
+    {
+     "type": "shape",
+     "name": "banner_flag",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -0.55,
+      7.15,
+      3.5
+     ],
+     "scale": [
+      0.7,
+      0.015,
+      0.5
+     ],
+     "colour": "#2F6FD0"
+    }
+   ],
+   "cast": [
+    [
+     "near_0",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -6.4,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     0
+    ],
+    [
+     "near_1",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -4.3,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     5
+    ],
+    [
+     "near_2",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -2.2,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     10
+    ],
+    [
+     "bearer",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -0.1,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     15
+    ],
+    [
+     "near_4",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      2.0,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     20
+    ],
+    [
+     "near_5",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      4.1,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     25
+    ],
+    [
+     "column",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      6.2,
+      7.4
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     30
+    ],
+    [
+     "far_0",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -5.55,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     3
+    ],
+    [
+     "far_1",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -3.05,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     8
+    ],
+    [
+     "far_2",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -1.35,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     13
+    ],
+    [
+     "far_3",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      1.15,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     18
+    ],
+    [
+     "far_4",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      2.85,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     23
+    ],
+    [
+     "far_5",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      5.35,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     28
+    ],
+    [
+     "far_6",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      7.05,
+      10.6
+     ],
+     90.0,
+     "Walk_Formal_Loop",
+     1
+    ]
+   ],
+   "shots": {
+    "march_side": [
+     [
+      0.0,
+      -4.0,
+      1.55
+     ],
+     null,
+     [
+      0.0,
+      9.0,
+      1.35
+     ],
+     null,
+     26,
+     1
+    ]
+   },
+   "in_shot": {
+    "march_side": {
+     "near_0": "marches in the column: part of the clip's motion",
+     "near_1": "marches in the column: part of the clip's motion",
+     "near_2": "marches in the column: part of the clip's motion",
+     "bearer": "carries the banner at the column's middle",
+     "near_4": "marches in the column: part of the clip's motion",
+     "near_5": "marches in the column: part of the clip's motion",
+     "column": "the head of the column: the tag names the whole file",
+     "far_0": "marches in the column: part of the clip's motion",
+     "far_1": "marches in the column: part of the clip's motion",
+     "far_2": "marches in the column: part of the clip's motion",
+     "far_3": "marches in the column: part of the clip's motion",
+     "far_4": "marches in the column: part of the clip's motion",
+     "far_5": "marches in the column: part of the clip's motion",
+     "far_6": "marches in the column: part of the clip's motion",
+     "banner": "the column's banner: streams as they march",
+     "banner_flag": "the banner's cloth"
+    }
+   },
+   "heroes": {},
+   "tags": {
+    "column": "a column of lanky soldiers in green tunics",
+    "banner": "a big blue banner on a pole"
+   },
+   "place": "a pine wood below low hills in a medieval war",
+   "light": "a low golden sun under drifting clouds",
+   "sub_category": "V1",
+   "cards": {
+    "march_side": {
+     "start": "{column} marches in two files along a dirt road from left to right, {banner} streaming above them",
+     "motion": "{column} marches on across the frame from left to right, dust rising at their boots, {banner} streaming behind",
+     "settle": "the column keeps its steady pace",
+     "refs": []
+    }
+   },
+   "hero_refs": {}
+  },
+  "pilot_camp": {
+   "label": "Pilot camp (the creator, 2026-11-06 17:15 UTC, card 17:17): a night camp at the edge of a pine wood, a campfire in a clearing with a ring of stones and two logs, the commander and the scout seated on stools either side of it. Lit by the fire and a cold moon (light preset night_camp)",
+   "landmarks": [
+    "fire"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "structure": [
+    "land",
+    "range",
+    "under"
+   ],
+   "terrain": {
+    "seed": 21,
+    "rolling": 0.9,
+    "flat": [
+     [
+      0,
+      6,
+      8,
+      0.0,
+      8
+     ]
+    ],
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 0.9
+   },
+   "blocks": [
+    {
+     "type": "terrain",
+     "name": "land",
+     "rect": [
+      -60,
+      60,
+      -30,
+      70
+     ],
+     "res": [
+      120,
+      100
+     ],
+     "colours": {
+      "grass": "#6F9A47",
+      "meadow": "#9BB65A",
+      "forest": "#4E7A3A",
+      "road": "#B58E5B",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8,
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "range",
+     "range": {
+      "x0": -420,
+      "x1": 420,
+      "y0": 185,
+      "y1": 330,
+      "ramp": 45,
+      "scale": 75,
+      "seed": 23,
+      "floor": 0.0,
+      "peak": 40.0,
+      "snow_line": 1000000000.0,
+      "rock_line": 38.0,
+      "rock_slope": 0.7
+     },
+     "res": [
+      168,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#9BB65A",
+      "forest": "#466F3A",
+      "road": "#B58E5B",
+      "rock": "#8A8378",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40,
+     "fog": {
+      "colour": [
+       0.3,
+       0.38,
+       0.48
+      ],
+      "start": 150.0,
+      "end": 900.0,
+      "amount": 0.38
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      200,
+      -1.4
+     ],
+     "scale": [
+      1800,
+      1500,
+      1
+     ],
+     "colour": "#34402C"
+    },
+    {
+     "type": "scatter",
+     "name": "treeline",
+     "assets": [
+      "model.snm_pine_1",
+      "model.snm_pine_3",
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "rect": [
+      -50,
+      4,
+      11,
+      40
+     ],
+     "count": 44,
+     "seed": 9,
+     "terrain": true,
+     "min_z": -5.0,
+     "road_clear": 0.0,
+     "river": false,
+     "scale": [
+      0.9,
+      1.5
+     ]
+    },
+    {
+     "type": "scatter",
+     "name": "treeedge",
+     "assets": [
+      "model.snm_pine_1",
+      "model.snm_pine_3",
+      "model.snm_commontree_1"
+     ],
+     "rect": [
+      4,
+      50,
+      22,
+      45
+     ],
+     "count": 12,
+     "seed": 17,
+     "terrain": true,
+     "min_z": -5.0,
+     "road_clear": 0.0,
+     "river": false,
+     "scale": [
+      0.9,
+      1.4
+     ]
+    },
+    {
+     "type": "shape",
+     "name": "fire_ring",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.7,
+      "depth": 0.14,
+      "vertices": 14
+     },
+     "pos": [
+      0.0,
+      6.0,
+      0.05
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E5850"
+    },
+    {
+     "type": "shape",
+     "name": "log_a",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 0.9,
+      "vertices": 10
+     },
+     "pos": [
+      0.0,
+      6.0,
+      0.17
+     ],
+     "pitch": 90.0,
+     "yaw_deg": 35.0,
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4A3524"
+    },
+    {
+     "type": "shape",
+     "name": "log_b",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 0.9,
+      "vertices": 10
+     },
+     "pos": [
+      0.0,
+      6.0,
+      0.24
+     ],
+     "pitch": 90.0,
+     "yaw_deg": -40.0,
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#3E2C1E"
+    },
+    {
+     "type": "shape",
+     "name": "fire",
+     "add": "cone",
+     "params": {
+      "radius1": 0.36,
+      "radius2": 0.0,
+      "depth": 0.85,
+      "vertices": 8
+     },
+     "pos": [
+      0.0,
+      6.0,
+      0.62
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#F2A03A",
+     "raw": "flame"
+    },
+    {
+     "type": "shape",
+     "name": "fire_core",
+     "add": "cone",
+     "params": {
+      "radius1": 0.2,
+      "radius2": 0.0,
+      "depth": 0.55,
+      "vertices": 8
+     },
+     "pos": [
+      0.05,
+      5.95,
+      0.5
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#FFD27A",
+     "raw": "flame"
+    },
+    {
+     "type": "piece",
+     "name": "stool_a",
+     "asset": "model.ph_wooden_stool_01",
+     "pos": [
+      -1.6,
+      6.2,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "stool_b",
+     "asset": "model.ph_wooden_stool_01",
+     "pos": [
+      1.6,
+      6.2,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "light",
+     "name": "fire_glow",
+     "pos": [
+      0.0,
+      6.0,
+      0.7
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 700.0,
+      "color": [
+       1.0,
+       0.52,
+       0.2
+      ],
+      "radius_m": 0.3,
+      "shadow": true
+     }
+    },
+    {
+     "type": "light",
+     "name": "fire_lift",
+     "pos": [
+      0.0,
+      5.4,
+      1.8
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 140.0,
+      "color": [
+       1.0,
+       0.6,
+       0.3
+      ],
+      "radius_m": 0.5,
+      "shadow": false
+     }
+    }
+   ],
+   "cast": [
+    [
+     "commander",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_b",
+     [
+      -1.6,
+      6.2
+     ],
+     90.0,
+     "Sitting_Talking_Loop",
+     0
+    ],
+    [
+     "scout",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_a",
+     [
+      1.6,
+      6.2
+     ],
+     -90.0,
+     "Sitting_Idle_Loop",
+     17
+    ]
+   ],
+   "shots": {
+    "camp_fire": [
+     [
+      0.3,
+      0.2,
+      1.05
+     ],
+     null,
+     [
+      0.0,
+      6.0,
+      0.85
+     ],
+     null,
+     30,
+     1
+    ]
+   },
+   "in_shot": {
+    "camp_fire": {
+     "commander": "speaks with one open hand: the clip's motion",
+     "scout": "listens and nods",
+     "stool_a": "the commander's seat",
+     "stool_b": "the scout's seat",
+     "fire": "the clip's other motion: flames lick up, sparks rise",
+     "fire_core": "the flame's hot centre",
+     "fire_ring": "the stones round the fire",
+     "log_a": "the fire's fuel",
+     "log_b": "the fire's fuel"
+    }
+   },
+   "heroes": {
+    "commander": "H1",
+    "scout": "H2"
+   },
+   "tags": {
+    "commander": "the broad commander with a grey beard and a red cloak",
+    "scout": "the young scout in a green hood",
+    "fire": "a campfire"
+   },
+   "place": "a clearing at the edge of a pine forest in a medieval war, deep at night",
+   "light": "firelight under a cold moon",
+   "cards": {
+    "camp_fire": {
+     "start": "{commander} and {scout} sit on stools facing each other across {fire}, in quiet talk",
+     "motion": "{fire} crackles and its flames lick upward, sparks rising; {commander} speaks with one open hand, {scout} listens",
+     "settle": "the flames sink low and steady",
+     "refs": [
+      "commander",
+      "scout"
+     ]
+    }
+   },
+   "hero_refs": {
+    "commander": "B_H1_front",
+    "scout": "B_H2_front"
+   }
   }
  }
 }
