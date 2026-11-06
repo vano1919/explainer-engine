@@ -25,7 +25,7 @@ so the cost of a combination is (setup + makespan + reserve) x the card's price.
 
 The pick: among the combinations whose WORST case fits ``max_usd`` and ``max_hours``, the lowest expected cost (ties: lower worst
 cost, then less idle GPU). ``check`` refuses when nothing fits, when the pick's worst-case idle GPU share is over
-``max_idle_gpu_share`` (the card waiting on something), or when the pod's own committed order costs over ``ORDER_SLACK`` more than
+``max_idle_gpu_share`` of the minutes after the downloads (the card waiting on something a better plan could start), or when the pod's own committed order costs over ``ORDER_SLACK`` more than
 the pick. stdlib only.
 """
 from __future__ import annotations
@@ -155,11 +155,16 @@ def simulate(spec: dict, card: dict, lane_of: dict, order: list[str], case: str 
         t = min(nxt)
     span = max(done.values()) if done else 0.0
     gpu_slots = int(spec["lanes"].get("gpu", 0))
-    idle = max(gpu_slots * span - gpu_busy, 0.0)
+    # the idle that a better plan could remove: GPU minutes free after the downloads (net lane) are in; waiting for the
+    # weights themselves is fixed setup, the same in every combination
+    t_net = max((done[s] for s in done if lane_of.get(s) == "net"), default=0.0)
+    busy_after = sum(max(0.0, done[s] - max(start[s], t_net)) for s in done if lane_of.get(s) == "gpu")
+    idle = max(gpu_slots * max(span - t_net, 0.0) - busy_after, 0.0)
+    window = gpu_slots * max(span - t_net, 0.0)
     pod_min = float(spec["setup_min"]) + span + float(spec["end_reserve_min"])
     return {"span_min": round(span, 2), "pod_min": round(pod_min, 2), "usd": round(pod_min / 60 * float(card["price_h"]), 3),
             "gpu_busy_min": round(gpu_busy, 2), "gpu_idle_min": round(idle, 2),
-            "idle_share": round(idle / (gpu_slots * span), 3) if gpu_slots and span else 0.0,
+            "idle_share": round(idle / window, 3) if window else 0.0, "downloads_done_min": round(t_net, 2),
             "start": {k: round(v, 2) for k, v in start.items()}}
 
 
@@ -307,17 +312,19 @@ def check(spec: dict, result: dict | None = None, own: dict | None = None) -> li
     if not result["fitting"]:
         out.append(f"RP-11: no combination fits the caps in its worst case (cheapest worst ${best['worst']['usd']} / "
                    f"{best['worst']['pod_min'] / 60:.2f} h vs ${lim.get('max_usd')} / {lim.get('max_hours')} h)")
-    if int(spec["lanes"].get("gpu", 0)) and best["worst"]["idle_share"] > share + 1e-9:
-        out.append(f"RP-11: even the cheapest combination leaves the GPU idle {best['worst']['gpu_idle_min']:.0f} min in the worst case "
-                   f"({best['worst']['idle_share']:.0%} > {share:.0%}): move a stage onto the GPU, cut a wait, or split the pod")
+    for case in ("expected", "worst"):
+        if int(spec["lanes"].get("gpu", 0)) and best[case]["idle_share"] > share + 1e-9:
+            out.append(f"RP-11: even the cheapest combination leaves the GPU idle {best[case]['gpu_idle_min']:.0f} min in the {case} case "
+                       f"({best[case]['idle_share']:.0%} > {share:.0%}): move a stage onto the GPU, cut a wait, or split the pod")
     if own is not None:
         lim_usd = best["expected"]["usd"] * (1 + ORDER_SLACK)
         if own["expected"]["usd"] > lim_usd + 1e-9:
             out.append(f"RP-11: the pod's own order costs ${own['expected']['usd']} expected, over the cheapest ${best['expected']['usd']} "
                        f"+ {ORDER_SLACK:.0%}: use the computed order {best['gpu_order']} on {best['card']}")
-        if int(spec["lanes"].get("gpu", 0)) and own["worst"]["idle_share"] > share + 1e-9:
-            out.append(f"RP-11: the pod's own order leaves the GPU idle {own['worst']['gpu_idle_min']:.0f} min in the worst case "
-                       f"({own['worst']['idle_share']:.0%} > {share:.0%})")
+        for case in ("expected", "worst"):
+            if int(spec["lanes"].get("gpu", 0)) and own[case]["idle_share"] > share + 1e-9:
+                out.append(f"RP-11: the pod's own order leaves the GPU idle {own[case]['gpu_idle_min']:.0f} min in the {case} case "
+                           f"({own[case]['idle_share']:.0%} > {share:.0%})")
     return out
 
 
