@@ -2,6 +2,7 @@
 helpers measure what the report needs. The pod itself (route_assets.main) runs only on a pod."""
 import hashlib
 import importlib.util
+import json
 import re
 from pathlib import Path
 
@@ -21,10 +22,13 @@ def sha(p):
 
 def test_the_job_list_is_the_plan():
     js = RA.jobs()
-    groups = {g: [j for j in js if j["group"] == g] for g in "ABCD"}
-    assert [len(groups[g]) for g in "ABCD"] == [4, 12, 8, 6]
+    groups = {g: [j for j in js if j["group"] == g] for g in ("A", "B", "C", "D", "D2")}
+    assert [len(groups[g]) for g in "ABCD"] == [4, 12, 8, 6] and len(groups["D2"]) == 6
     assert len({j["name"] for j in js}) == len(js)
-    assert [j["group"] for j in js][:6] == ["D"] * 6                        # the useful scenes first
+    assert [j["group"] for j in js][:12] == ["D"] * 6 + ["D2"] * 6          # the useful scenes first, then the 90-word twins (creator test)
+    assert all(j["words_limit"] == 90 and j["seed"] == 11 and j["cfg"] == 4.0 and j["size"] == [1280, 720] for j in groups["D2"])
+    assert [j["name"].replace("_90", "")[:2] for j in groups["D2"]] == [j["name"][:2] for j in groups["D"]]
+    assert all(40 < len(j["prompt"].split()) <= 90 for j in groups["D2"])
     assert all(j["size"] == [2048, 1024] for j in groups["A"]) and all(j["size"] == [1280, 720] for j in groups["B"] + groups["C"] + groups["D"])
     assert {j["seed"] for j in groups["C"]} == {11, 23} and all(j["cfg"] == 2.5 for j in groups["C"])
     assert all(j["cfg"] == 4.0 and j["seed"] == 11 for j in groups["A"] + groups["B"] + groups["D"])
@@ -104,3 +108,13 @@ def test_three_failed_jobs_in_a_row_abort_the_run(tmp_path):
     RA.make(R, Boom(), None, j)
     with pytest.raises(RA.Abort):
         RA.make(R, Boom(), None, j)
+
+
+def test_prompt_check_allows_ninety_words_only_in_d2():
+    assert RA.prompt_problems() == []
+    cfg = json.loads(json.dumps(RA.CFG))
+    cfg["scenes"][0][1] = cfg["scenes_d2"][0][1]                              # 75 words in group D still fails
+    assert any(n == "D1_ford" for n, _ in RA.prompt_problems(cfg))
+    cfg = json.loads(json.dumps(RA.CFG))
+    cfg["scenes_d2"][0][1] += " " + "more " * 30                              # more than 90 words in D2 fails too
+    assert any(n == "D1_ford_90" for n, _ in RA.prompt_problems(cfg))

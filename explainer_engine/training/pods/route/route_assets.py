@@ -48,6 +48,9 @@ def jobs(cfg=CFG):
     for name, pr in cfg["scenes"]:
         out.append({"name": name, "group": "D", "prompt": pr, "seed": s["seed"], "cfg": s["cfg_text"], "size": s["size"], "refs": [],
                     "lora": "style", "kind": "t2i"})
+    for name, pr in cfg.get("scenes_d2", []):  # creator test 40 vs 90 words (card C2, 2026-11-06 11:11 UTC): same seed and settings as D
+        out.append({"name": name, "group": "D2", "prompt": pr, "seed": s["seed"], "cfg": s["cfg_text"], "size": s["size"], "refs": [],
+                    "lora": "style", "kind": "t2i", "words_limit": cfg["words_limit_d2"]})
     for name, pr in cfg["backdrops"]:
         out.append({"name": name, "group": "A", "prompt": pr, "seed": s["seed"], "cfg": s["cfg_text"], "size": s["erp_size"],
                     "refs": [], "lora": "style", "kind": "t2i"})
@@ -90,7 +93,18 @@ def prompt_problems(cfg=CFG):
     """The style-prompt check (qa/style_prompt.check) on the plain text prompts of groups A, B, D; the edit prompts name images by position and are not
     style prompts (their lead is the p2s one)."""
     from explainer_engine.qa import style_prompt
-    return [(j["name"], f) for j in jobs(cfg) if j["kind"] == "t2i" for f in style_prompt.check(j["prompt"])]
+    out = []
+    for j in jobs(cfg):
+        if j["kind"] != "t2i":
+            continue
+        lim = j.get("words_limit")  # group D2 only: every other rule stays, the word limit is raised for this group (not in qa/style_prompt)
+        for f in style_prompt.check(j["prompt"]):
+            if lim and "words;" in f["detail"]:
+                continue
+            out.append((j["name"], f))
+        if lim and len(j["prompt"].split()) > lim:
+            out.append((j["name"], {"rule": "LT-65", "severity": "FAIL", "detail": f"{len(j['prompt'].split())} words; D2 limit {lim}"}))
+    return out
 
 
 # ---------------------------------------------------------------- pure picture helpers (PIL / numpy only)
@@ -215,6 +229,8 @@ def make(R, loras, pipe, j):
     sec = round(time.time() - t)
     R.secs.append(sec)
     side = {k: j[k] for k in ("name", "group", "prompt", "seed", "cfg", "size", "refs", "lora", "kind")}
+    if j.get("words_limit"):
+        side["words_limit"] = j["words_limit"]
     side.update(steps=j.get("steps", SAMP["steps"]), negative=SAMP["negative"], seconds=sec, sha256=sha256_file(p))
     if j["group"] == "A" or j["group"] == "P":
         side["seam_score"] = seam_score(im)
