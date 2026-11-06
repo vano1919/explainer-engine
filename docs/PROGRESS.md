@@ -4266,8 +4266,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   look carries haze 0.45 from 12 m to 162 m. Cost, measured here (2560x1440, EEVEE on software GL, CPU compositor): the real
   establishing shot 27.6/27.5 s without haze, 29.9/29.0 s with it (mist-pass version 31.8/32.3 s). A bare bench with the same
   compositor chain isolates it: at 1 sample haze adds ~0.2 s (the nodes), at 16 samples ~+2 s, so the cost is the depth pass
-  accumulated per EEVEE sample on this software GL, not the nodes. The under-0.3 s target is NOT met here; the Mac's GPU timing
-  is still to be measured by T-C.
+  accumulated per EEVEE sample on this software GL, not the nodes. The under-0.3 s target is not met on software GL. On the
+  creator's Mac GPU (T-C, E2 hero, C2, tree 4c149d8 with the 5efa45b light): haze ON (0.45) 1.502 s/frame, haze OFF
+  1.507 s/frame, i.e. no measurable cost there; the target is met on the machine that renders.
 - E2 golden hour reads in the world (Fable 22:51 UTC: the world_kits poc's E2 hero showed no low warm sun and no shadows). Cause
   found on a local 720p render of `hill_castle/castle_hero` in `q1_c2_native_skin@E2`: the preset key turned to the camera's side on
   every shot with a cast (the front-biased key meant for character shots), so a 49 m world shot was front-lit and flat, and the
