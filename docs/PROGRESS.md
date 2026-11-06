@@ -4554,3 +4554,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Step 4 (creator 18:34 UTC: voice and mouth, credit cap 5000): three dialogue lines in two ElevenLabs voices, one take each, 155 credits (estimate first); Rhubarb Lip Sync 1.14.0 (MIT)
   gives the mouth shapes; `blender/j5_face.py` draws blinks, brows and a mouth that follows the cues on the graded cards (exact sheet-to-frame projection, no model); `mix_voice` puts the
   lines over the camp ambience. Tests: `tests/unit/test_j5_face.py` (5). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7c. Real mouth/eye variants per sheet (SA-06) still open (paid Qwen edit, the creator's call).
+
+## 2026-11-06 J5 dialogue step 4c
+Straight cuts (no dip), young scout voice, per-line RMS levelling, smoother face drive. Render: HF route_test_2026-11/j5_dialogue/step4c/. Docs: J5_DIALOGUE_COLLAGE.md section 7d. ElevenLabs +71 credits (226/5000).

@@ -45,14 +45,14 @@ BANNERS = [((262, 290, 380, 480), 258, "right"), ((505, 212, 578, 342), 502, "ri
            ((1448, 290, 1525, 414), 1446, "right"), ((1318, 270, 1366, 346), 1362, "left")]
 PARALLAX = {"plate": 0.3, "mid": 0.65, "fg": 1.0}
 # the spoken lines: (speaker, start in the 12.5 s clip, stem of <stem>.wav / <stem>.cues.json); the starts keep every line clear of the dips
-LINES = [("H2", 0.35, "l1_scout"), ("H1", 3.80, "l2_commander"), ("H2", 10.05, "l3_scout")]
-DIP = "fadeblack"                             # the creator chose the dip to black over the cross-dissolve (2026-11-06 18:11 UTC)
+LINES = [("H2", 0.35, "l1_scout"), ("H1", 3.65, "l2_commander"), ("H2", 10.05, "l3_scout")]
+DIP = "cut"                                   # between shots: "cut" (straight, as in a film; the creator, 19:14 UTC, dropped the dip to black), or an ffmpeg xfade type
 DISSOLVE = 10                                 # frames of the dissolve between two shots (0.42 s); the earlier shot carries them as a tail
 # idle motion of a figure, as shares of its card's height (so it scales with the shot): sway of the top, head turn, nod, breath, cloth
 IDLE = {"sway": 0.0050, "head_dx": 0.0030, "nod": 0.0022, "breath": 0.0020, "cloth": 0.0012}
 # emotion of the faces (brow lift in units of ~2 px at 2560; negative = down): the commander is stern and squints a little while he speaks,
 # a listener's brows stay a little raised
-EXPR = {"speak_brow": -0.35, "speak_lift": 0.55, "listen_brow": 0.40, "squint": 0.14, "bob": 0.0045}   # bob: the head dips with every open sound (share of card height)
+EXPR = {"speak_brow": -0.35, "speak_lift": 0.55, "listen_brow": 0.40, "squint": 0.14, "bob": 0.0028}   # bob: the head dips with every open sound (share of card height)
 HEAD_M = 0.24                                 # a head is about 0.24 m tall; the head share of a card is HEAD_M / the card's height in metres
 SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 3.0, "S4_close_up_h1": 3.0, "S3_ots_h1_to_h2": 3.0}   # the cut order of the dialogue
 # camera per shot: plate zoom, card zoom (start, end), the foreground card's shift in px at 2560 (end - start, x and y) and the pivot
@@ -433,21 +433,12 @@ def idle(c: dict, t: float, f: float, A: ShotAssets | None = None) -> np.ndarray
         my = (d["gy"] - y0 - dy).astype(np.float32)
         return cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
     T = A.start + t
-    mine = [ln for ln in A.lines if ln["hero"] == c["id"]]
-    ops = [F.mouth_state(T, ln) for ln in mine] or [(0.0, 1.0)]
-    op, wf = max(ops, key=lambda o: o[0])
-    speaking = any(ln["start"] - 0.1 <= T <= ln["start"] + ln["cues"][-1]["end"] + 0.1 for ln in mine)
-    other = any(ln["hero"] != c["id"] and ln["start"] - 0.1 <= T <= ln["start"] + ln["cues"][-1]["end"] + 0.1 for ln in A.lines)
-    if speaking:                                         # a speaker: a stern brow that lifts on stressed sounds
-        brow = EXPR["speak_brow"] + EXPR["speak_lift"] * op
-    elif other:                                          # a listener: brows a little raised, slowly alive
-        brow = EXPR["listen_brow"] * (0.6 + 0.4 * math.sin(tau * 0.35 * T + ph))
-    else:
-        brow = 0.0
-    close = max(F.closure(T, c["blinks"]), EXPR["squint"] if speaking and c["id"] == "H1" else 0.0)
-    fdx, fdy = F.displacement(face, d["gx"], d["gy"], T, op, brow)
+    dv = F.drive(A.lines, c["id"], T, ph, EXPR)
+    op, wf, brow = dv["op"], dv["wf"], dv["brow"]
+    close = max(F.closure(T, c["blinks"]), EXPR["squint"] * dv["spk"] if c["id"] == "H1" else 0.0)
+    fdx, fdy = F.displacement(face, d["gx"], d["gy"], T, 0.6 * op + 0.4 * dv["op_s"], brow)   # the chin follows a softened opening
     DX = (dx + cloth) + fdx
-    DY = dy + fdy - EXPR["bob"] * H * op * head * (1 if speaking else 0.35)
+    DY = dy + fdy - EXPR["bob"] * H * dv["bob"] * head
     mx = (d["gx"] - x0 - DX).astype(np.float32)
     my = (d["gy"] - y0 - DY).astype(np.float32)
     out = cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
@@ -596,8 +587,19 @@ def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2
     return mp4
 
 
+def _room_ir(sr: int) -> np.ndarray:
+    """A short synthetic room: exponentially decaying noise, 0.3 s tail, a few early reflections; unit energy (the same for every line)."""
+    rng = np.random.default_rng(3)
+    n = int(0.3 * sr)
+    ir = rng.standard_normal(n) * np.exp(-np.arange(n) / (0.07 * sr))
+    for d, g in ((0.011, 0.5), (0.019, 0.35), (0.031, 0.25)):
+        ir[int(d * sr)] += g * 8
+    ir[0] = 0.0
+    return (ir / np.sqrt((ir ** 2).sum())).astype(np.float64)
+
+
 def mix_voice(amb: np.ndarray, voice: Path, sr: int = 48000) -> np.ndarray:
-    """The camp ambience under the spoken lines: each line is placed at its start (``LINES``), the ambience is lowered by 8 dB while anyone
+    """The camp ambience under the spoken lines: each line is placed at its start (``LINES``), the ambience is lowered by 6 dB while anyone
     speaks (0.2 s ramps), the mix is peak-limited to 0.9. A rough mix for review, not the audio spine's levelling."""
     from math import gcd
     from scipy.io import wavfile
@@ -610,17 +612,25 @@ def mix_voice(amb: np.ndarray, voice: Path, sr: int = 48000) -> np.ndarray:
         x = x.astype(np.float64) / 32768.0
         g = gcd(sr, rate)
         x = resample_poly(x, sr // g, rate // g)
-        x *= 0.85 / (np.abs(x).max() + 1e-9)
+        act = x[np.abs(x) > 0.02 * np.abs(x).max()]                # every line to the same speech RMS: no level jump between speakers
+        x *= 0.16 / (np.sqrt((act ** 2).mean()) + 1e-9)
+        x = np.tanh(x * 1.2) / 1.2                              # soft limit instead of a hard peak scale
+        fade = int(0.02 * sr)                                    # 20 ms in and out: no click at the edges of a line
+        x[:fade] *= np.linspace(0, 1, fade)
+        x[-fade:] *= np.linspace(1, 0, fade)
         i = int(st * sr)
         n = min(len(x), len(voices) - i)
         voices[i:i + n, :] += x[:n, None]
-        ramp = int(0.2 * sr)
+        ramp = int(0.4 * sr)
         lo, hi = max(0, i - ramp), min(len(duck), i + n + ramp)
         env = np.ones(hi - lo)
-        env[:] = 10 ** (-8 / 20)
-        env[:ramp] = np.linspace(1, 10 ** (-8 / 20), ramp)[: len(env[:ramp])]
-        env[-ramp:] = np.linspace(10 ** (-8 / 20), 1, ramp)[-len(env[-ramp:]):]
+        env[:] = 10 ** (-6 / 20)
+        env[:ramp] = np.linspace(1, 10 ** (-6 / 20), ramp)[: len(env[:ramp])]
+        env[-ramp:] = np.linspace(10 ** (-6 / 20), 1, ramp)[-len(env[-ramp:]):]
         duck[lo:hi] = np.minimum(duck[lo:hi], env)
+    room = _room_ir(sr)                                          # one small room for every voice, so the lines share a space
+    wet = np.stack([np.convolve(voices[:, c], room)[: len(voices)] for c in range(2)], axis=1)
+    voices = voices * 0.88 + wet * 0.22
     out = mix * duck[:, None] + voices
     return (out / max(1.0, np.abs(out).max() / 0.9)).astype(np.float32)
 
@@ -637,6 +647,13 @@ def join(out: Path, names: list[str], *, fps=FPS, transition: str = DIP, crf: in
         w.setnchannels(2), w.setsampwidth(2), w.setframerate(48000)
         w.writeframes((np.clip(amb, -1, 1) * 32767).astype("<i2").tobytes())
     final = out / name
+    if transition == "cut":                                     # straight cuts: the segments are joined as they are
+        lst = out / "segments" / "list.txt"
+        lst.write_text("".join(f"file '{(out / 'segments' / (n + '.mp4')).resolve()}'\n" for n in names))
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-i", str(wav), "-c:v", "libx264",
+                        "-preset", "medium", "-crf", str(crf), "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", str(final)],
+                       check=True)
+        return final
     cmd = ["ffmpeg", "-y", "-loglevel", "error"]
     for n in names:
         cmd += ["-i", str(out / "segments" / (n + ".mp4"))]
@@ -676,7 +693,7 @@ def main(argv=None) -> int:
     out = Path(a.out)
     join_names = list(SECONDS)
     for n in names:
-        tail = DISSOLVE if n != list(SECONDS)[-1] else 0       # the last shot of the cut order has nothing to dissolve into
+        tail = DISSOLVE if (n != list(SECONDS)[-1] and a.transition != "cut") else 0       # the last shot of the cut order has nothing to dissolve into
         print("segment", n, render_segment(n, Path(a.collage), Path(a.inputs), out, size=(W, H), seconds=a.seconds, tail=tail,
                                            voice=Path(a.voice) if a.voice else None), flush=True)
     if not a.no_join and not a.seconds:

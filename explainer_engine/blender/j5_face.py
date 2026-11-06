@@ -85,6 +85,26 @@ def mouth_state(T: float, line: dict | None) -> tuple[float, float]:
     return 0.0, 1.0
 
 
+def _line_env(T: float, ln: dict) -> float:
+    """0..1 envelope of one spoken line: eases in over 0.35 s before it starts and out over 0.5 s after it ends (never a step)."""
+    s0, e0 = ln["start"], ln["start"] + ln["cues"][-1]["end"]
+    return float(smooth((T - (s0 - 0.2)) / 0.35) * (1 - smooth((T - e0) / 0.5)))
+
+
+def drive(lines: list[dict], hero: str, T: float, ph: float, expr: dict) -> dict:
+    """Everything that moves a face at clip time T, all of it continuous in T: the mouth (opening ``op`` and width, eased 55 ms per cue), a
+    150 ms low-passed opening ``op_s`` for the slow movements (head dip, brow lift), the speaker and listener envelopes, the brow, the
+    squint and the head dip weight. Nothing here switches on or off in one frame."""
+    mine = [ln for ln in lines if ln["hero"] == hero]
+    others = [ln for ln in lines if ln["hero"] != hero]
+    op, wf = max([mouth_state(T, ln) for ln in mine] or [(0.0, 1.0)], key=lambda o: o[0])
+    op_s = float(np.mean([max([mouth_state(T - i * 0.03, ln)[0] for ln in mine] or [0.0]) for i in range(6)]))
+    spk = max([_line_env(T, ln) for ln in mine] or [0.0])
+    lis = max([_line_env(T, ln) for ln in others] or [0.0]) * (1 - spk)
+    brow = spk * (expr["speak_brow"] + expr["speak_lift"] * op_s) + lis * expr["listen_brow"] * (0.6 + 0.4 * math.sin(2 * math.pi * 0.35 * T + ph))
+    return {"op": op, "wf": wf, "op_s": op_s, "spk": spk, "lis": lis, "brow": brow, "bob": op_s * (0.35 + 0.65 * spk)}
+
+
 def setup(pm: np.ndarray, sheet: str, mapper) -> dict | None:
     """Map the sheet's features into this layer with ``mapper(x, y) -> (X, Y)`` (the card's real projection: sheet pixel -> frame pixel,
     from the Blender job's geometry), and sample the card's own colours near the eyes and mouth (they are graded already)."""

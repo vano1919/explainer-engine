@@ -86,3 +86,16 @@ def test_mapper_puts_the_feet_where_the_camera_sees_them(tmp_path):
     assert m(50.0, 21.0)[1] < fy                              # the head is above the feet
     h_px = fy - m(50.0, 21.0)[1]
     assert abs(h_px - 1.65 * 60 / 36 * 2560 / 3.8) < 6        # and the figure is 1.65 m tall at 3.8 m
+
+
+def test_nothing_that_moves_a_head_or_brow_jumps_between_frames():
+    from pathlib import Path
+    cues = [{"start": 0.0, "end": 0.2, "value": "X"}, {"start": 0.2, "end": 0.5, "value": "D"}, {"start": 0.5, "end": 0.9, "value": "A"}]
+    lines = [{"hero": "H1", "start": 1.0, "cues": cues}, {"hero": "H2", "start": 3.0, "cues": cues}]
+    T = np.arange(0, 6, 1 / 24)
+    for hero in ("H1", "H2"):
+        d = [F.drive(lines, hero, t, 0.7, B.EXPR) for t in T]
+        for key, limit in (("brow", 0.2), ("bob", 0.25), ("spk", 0.25), ("lis", 0.25)):
+            v = np.array([x[key] for x in d])
+            assert np.abs(np.diff(v)).max() < limit, (hero, key)       # speaker and listener roles fade, they never switch in one frame
+    assert F.drive(lines, "H1", 0.0, 0.7, B.EXPR)["spk"] == 0 and F.drive(lines, "H1", 1.3, 0.7, B.EXPR)["spk"] > 0.95

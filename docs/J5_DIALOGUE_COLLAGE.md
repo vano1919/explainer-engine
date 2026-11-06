@@ -190,3 +190,17 @@ python -m explainer_engine.blender.j5_background render --collage OUT --inputs I
 - The ambience is synthesised and unmixed against a narrator; level and mix belong to the audio spine.
 - A one-pixel hairline in the painted A1 (row about 375, to the right of the middle) survives in the S2/S4 plates; it is in the source picture.
 - Not measured: how this reads to the creator against a Blender 3D set, and whether the flat plates need parallax from a real depth map.
+
+## 7d. Step 4c: straight cuts, young scout voice, one level (2026-11-06)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+- **Straight cuts (creator, 19:14 UTC).** The dip to black "does not suit it"; shots now cut directly, as in a film. `DIP = "cut"`: no
+  dissolve tail frames are rendered and `join` concatenates the segments. `fadeblack`/`fade` stay selectable with `--transition`.
+  The earlier "slower dip next time" note is void.
+- **Voice (19:13).** The scout is a boy, so his two lines were re-made with a young male voice (Ben Young Man, 2 takes, 71 credits;
+  ElevenLabs ledger total 226 of the 5000 cap). Rhubarb cues were regenerated for them.
+- **Sound jumps.** Lines were peak-normalised, so a quiet take sat 14 dB under the commander. Every line is now scaled to one speech RMS
+  with a soft limiter (measured: -18.8 to -21.5 dBFS RMS across the three lines), shared room reverb, 20 ms edge fades, 6 dB duck with 0.4 s ramps.
+- **Head jumps (19:12).** `F.drive` envelopes (0.35 s in, 0.5 s out) and a 150 ms low-passed mouth opening replace on/off toggles;
+  `test_j5_face` has a no-jump test.
