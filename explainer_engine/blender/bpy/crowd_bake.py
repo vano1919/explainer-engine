@@ -118,7 +118,7 @@ def _helmet_mesh(kind, rx, ry, rz):
                 bm.faces.new((lo[k], lo[(k + 1) % seg], hi[0]))
             else:
                 bm.faces.new((lo[k], lo[(k + 1) % seg], hi[(k + 1) % seg], hi[k]))
-    brim = 1.45 if kind == "kettle" else 1.08
+    brim = 1.3 if kind == "kettle" else 1.08
     lo = loops[0]
     out = [bm.verts.new((brim * rx * math.cos(k * math.tau / seg), brim * ry * math.sin(k * math.tau / seg), -0.02 * rz))
            for k in range(seg)]
@@ -133,12 +133,24 @@ def _helmet_mesh(kind, rx, ry, rz):
     return me
 
 
+HELMET_DROPS = ("hair", "hood")
+# the helmets' iron: blackened (kettle) and bright (conical); the scene's cannon tone read tan under the golden-hour key
+HELMET_MATERIALS = {"kettle": "night", "conical": "stone"}
+
+
 def put_helmet(scene, root, kind, material):
     """A helmet on the template's head bone, sized from the posed head-top vertices (hair included, so no hair shows above the
     rim; Fable 23:52 UTC: the white hair of identical clones was the first thing a viewer saw). Baked with the clip."""
     arm, meshes = _parts(root)
     if "Head" not in arm.data.bones:
         raise RuntimeError(f"crowd template {root.name}: no Head bone for the helmet")
+    # under a helmet the template's long hair and the ranger's hood go: the helmet sits on the scalp (the v2 frames showed the
+    # white hair hanging out under the rim and the hood pushing the helmet up)
+    dropped = 0
+    for ob in [o for o in meshes if any(k in o.name.lower() for k in HELMET_DROPS)]:
+        bpy.data.objects.remove(ob, do_unlink=True)
+        dropped += 1
+    arm, meshes = _parts(root)
     scene.frame_set(scene.frame_start)
     dg = bpy.context.evaluated_depsgraph_get()
     pts = []
@@ -149,18 +161,18 @@ def put_helmet(scene, root, kind, material):
         pts += [mw @ v.co for v in me.vertices]
         ev.to_mesh_clear()
     top = max(p.z for p in pts)
-    cap = [p for p in pts if p.z > top - 0.13]
+    cap = [p for p in pts if p.z > top - 0.12]
     xs, ys = [p.x for p in cap], [p.y for p in cap]
     cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
     rx, ry = max((max(xs) - min(xs)) / 2 * 1.18, 0.09), max((max(ys) - min(ys)) / 2 * 1.18, 0.1)
-    rz = 0.15 if kind == "kettle" else 0.17
+    rz = 0.17 if kind == "kettle" else 0.2
     ob = bpy.data.objects.new(f"{root.name}_helmet", _helmet_mesh(kind, rx, ry, rz))
     ob.data.materials.append(material)
     scene.collection.objects.link(ob)
     ob.parent, ob.parent_type, ob.parent_bone = arm, "BONE", "Head"
     bpy.context.view_layer.update()
-    ob.matrix_world = Matrix.Translation((cx, cy, top - 0.115))
-    return ob
+    ob.matrix_world = Matrix.Translation((cx, cy, top - 0.13))
+    return dropped
 
 
 def bake_clip(scene, root, n, mid_tris):
@@ -831,13 +843,13 @@ def build(scene, block, workdir, report):
     t0 = time.perf_counter()
     n = int(block["bake_frames"])
     by_slot, full_of, rates, rows = {}, {}, {}, []
-    helmets = 0
+    helmets = dropped = 0
     for tpl in block["templates"]:
         root = bpy.data.objects.get(tpl["name"])
         if root is None:
             raise RuntimeError(f"crowd template {tpl['name']} was not built")
         if tpl.get("helmet"):
-            put_helmet(scene, root, tpl["helmet"], bpy.data.materials.get("cannon"))
+            dropped += put_helmet(scene, root, tpl["helmet"], bpy.data.materials.get(HELMET_MATERIALS[tpl["helmet"]]))
             helmets += 1
         full, mid, length, action, t_full, t_mid = bake_clip(scene, root, n, block["mid_tris"])
         by_slot[tpl["slot"]], full_of[tpl["slot"]] = mid, full
@@ -922,7 +934,7 @@ def build(scene, block, workdir, report):
                        "instances_second_frame": inst, "t1_changed_share": round(changed, 4), "borders": b, "bands_m": bands,
                        "shadow": {k: o.visible_shadow for k, o in objs.items()},
                        "lineart": {k: o.lineart.usage for k, o in dict(objs, **extras).items()},
-                       "props": {k: allc[k] for k in extras}, "near_slots": sorted(near_slots), "full_meshes_freed": freed, "helmets": helmets,
+                       "props": {k: allc[k] for k in extras}, "near_slots": sorted(near_slots), "full_meshes_freed": freed, "helmets": helmets, "helmet_dropped_meshes": dropped,
                        "light_links": {"receiver_collections": len(_receivers()), "links": linked},
                        "seconds": round(time.perf_counter() - t0, 2)}
     return objs

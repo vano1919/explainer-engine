@@ -721,7 +721,7 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     if block["props"].get("arrows"):
         used.add("night")
     if any(t.get("helmet") for t in block["templates"]):
-        used.add("cannon")      # helmets are the cannons' iron
+        used |= {"night", "stone"}      # the helmets' iron (bpy/crowd_bake.HELMET_MATERIALS)
     pool = {k: v for sc_ in SS.scenes(paths, cast="mannequin").values() for k, v in sc_["materials"].items()}   # the village's brick, roof
     mats = {k: v for k, v in pool.items() if k in used}
     mats.update(extra)
