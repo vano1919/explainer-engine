@@ -12,7 +12,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [SCENE_ASSETS](SCENE_ASSETS.md) | the drawn scene assets (`scene_assets/1`), cut-outs and the J5 2.5D assembly in Blender (D-116, ICW-11) | SA- |
 | [J5_DIALOGUE_COLLAGE](J5_DIALOGUE_COLLAGE.md) | the J5 dialogue test as a step-by-step record: cut-out, scale and eye-line, fire light and face shadow, Blender layer passes, depth and grain, the animated background, ambience, commands, open items (2026-11-06; not yet a standard) | |
 | [J5_ARGON_REVIEW](J5_ARGON_REVIEW.md) | review request for Argon: where the J5 dialogue, montage and animation code is, the sources with exact links, the questions and the prompt (2026-11-06) | |
-| [J5_ARGON_PROMPT](J5_ARGON_PROMPT.md) | the demanding prompt for Argon: reading receipts, minimise LTX realistically, research table, Python / Blender / FFmpeg / Qwen / LTX limits, code, v3 proof (2026-11-06) | |
+| [J5_ARGON_PROMPT](J5_ARGON_PROMPT.md) | the demanding prompt for Argon: reading receipts, minimise LTX realistically (D-116), research table, Python / Blender / FFmpeg / Qwen / LTX limits, code, v3 proof (2026-11-06) | |
 | [LTX_JOBS](LTX_JOBS.md) | the LTX generations of the J2/J4 routes (`ltx_job/1`): bases, IC-LoRAs, layout conditioning, the test matrix (D-116, guide step 3) | LJ- |
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
 | [archive/](archive/) | history moved out of `docs/wip/` by ICW-01 (2026-11-05, D-108): the D-95 override note, the Master Mold handoff and its execution guide; evidence only, never an active instruction | |
