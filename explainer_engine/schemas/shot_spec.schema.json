@@ -1,7 +1,7 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "shot_spec.schema.json",
- "title": "Shot spec: everything one render of one shot depends on, hashed into the cache key (docs/CONTRACTS.md); /1 the legacy route, /2 the Blender route",
+ "title": "Shot spec: everything one render of one shot depends on, hashed into the cache key (docs/CONTRACTS.md); /1 the legacy route, /2 the Blender route, /3 the Blender route with the WP-Q1 look fields",
  "type": "object",
  "required": [
   "schema"
@@ -10,7 +10,8 @@
   "schema": {
    "enum": [
     "shot_spec/1",
-    "shot_spec/2"
+    "shot_spec/2",
+    "shot_spec/3"
    ]
   }
  },
@@ -37,6 +38,18 @@
    },
    "then": {
     "$ref": "#/$defs/v2"
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "shot_spec/3"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/v3"
    }
   }
  ],
@@ -720,6 +733,491 @@
        "enum": [
         "eevee_fast",
         "eevee_full",
+        "cycles_hero"
+       ]
+      },
+      "samples": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "motion_blur": {
+       "type": "boolean"
+      },
+      "denoise": {
+       "type": "boolean"
+      },
+      "output": {
+       "enum": [
+        "mkv_ffv1",
+        "png_seq"
+       ]
+      }
+     }
+    },
+    "seed": {
+     "type": "integer"
+    },
+    "why": {
+     "type": "string",
+     "minLength": 1,
+     "description": "creator-readable justification; required on cycles_hero"
+    }
+   },
+   "allOf": [
+    {
+     "if": {
+      "properties": {
+       "render": {
+        "properties": {
+         "profile": {
+          "const": "cycles_hero"
+         }
+        }
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "why"
+      ]
+     }
+    }
+   ]
+  },
+  "v3": {
+   "description": "shot_spec/3 (WP-Q1, 2026-11-05): shot_spec/2 with the look's view transform (AgX, Standard or Khronos PBR Neutral), its shade mode and path and its line mode; line_weight_px only when a line is drawn; render profile eevee_painterly. /2 documents keep validating unchanged (invariant 7)",
+   "type": "object",
+   "required": [
+    "schema",
+    "job_id",
+    "shot_id",
+    "lane",
+    "recipe",
+    "clock",
+    "frame",
+    "scene",
+    "performance",
+    "look",
+    "render",
+    "seed"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "schema": {
+     "const": "shot_spec/3"
+    },
+    "job_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "shot_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lane": {
+     "enum": [
+      "VIDEO_3D",
+      "STILL_3D"
+     ]
+    },
+    "recipe": {
+     "enum": [
+      "blender_eevee/1",
+      "blender_cycles/1"
+     ]
+    },
+    "clock": {
+     "type": "object",
+     "required": [
+      "fps",
+      "frames",
+      "start_frame"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "fps": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "frames": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "start_frame": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "where the shot sits on the episode clock; not part of the cache key (the pixels do not depend on it)"
+      }
+     }
+    },
+    "frame": {
+     "type": "object",
+     "required": [
+      "width",
+      "height",
+      "render_scale"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "width": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "height": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "render_scale": {
+       "enum": [
+        1.0,
+        0.75,
+        0.5
+       ],
+       "description": "1.0 = native 2560x1440; below it is DEFER-BEHIND-TEST (roadmap 9.5)"
+      }
+     }
+    },
+    "scene": {
+     "type": "object",
+     "required": [
+      "template_asset",
+      "era",
+      "set_assets",
+      "characters",
+      "camera",
+      "light_rig",
+      "weather",
+      "props"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "template_asset": {
+       "$ref": "#/$defs/assetref"
+      },
+      "era": {
+       "type": "string",
+       "minLength": 1,
+       "description": "an era id of world/eras.json"
+      },
+      "set_assets": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/assetref"
+       }
+      },
+      "characters": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "cast_id",
+         "asset",
+         "rig",
+         "animation",
+         "position",
+         "facing_deg"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "cast_id": {
+          "type": "string",
+          "minLength": 1
+         },
+         "asset": {
+          "$ref": "#/$defs/assetref"
+         },
+         "rig": {
+          "$ref": "#/$defs/assetref"
+         },
+         "animation": {
+          "anyOf": [
+           {
+            "$ref": "#/$defs/assetref"
+           },
+           {
+            "type": "null"
+           }
+          ]
+         },
+         "position": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+         },
+         "facing_deg": {
+          "type": "number"
+         }
+        }
+       }
+      },
+      "camera": {
+       "type": "object",
+       "required": [
+        "rig",
+        "start",
+        "end",
+        "lens_mm",
+        "ease"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "rig": {
+         "enum": [
+          "static",
+          "push",
+          "dolly",
+          "rail",
+          "orbit",
+          "dramatic_curve"
+         ]
+        },
+        "start": {
+         "$ref": "#/$defs/pose"
+        },
+        "end": {
+         "$ref": "#/$defs/pose"
+        },
+        "lens_mm": {
+         "type": "number",
+         "exclusiveMinimum": 0
+        },
+        "ease": {
+         "enum": [
+          "linear",
+          "ease_in",
+          "ease_out",
+          "ease_in_out"
+         ]
+        }
+       }
+      },
+      "light_rig": {
+       "type": "string",
+       "minLength": 1,
+       "description": "a named light rig preset (ICW-05)"
+      },
+      "weather": {
+       "anyOf": [
+        {
+         "type": "string",
+         "minLength": 1
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "props": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/assetref"
+       }
+      }
+     }
+    },
+    "performance": {
+     "type": "object",
+     "required": [
+      "lipsync",
+      "rhubarb",
+      "mouth_shapes",
+      "dialogue_cover"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "lipsync": {
+       "type": "boolean"
+      },
+      "rhubarb": {
+       "anyOf": [
+        {
+         "$ref": "#/$defs/fileref"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "the Rhubarb mouth-cue JSON of the voiced line; only its sha256 enters the cache key"
+      },
+      "mouth_shapes": {
+       "const": 8
+      },
+      "dialogue_cover": {
+       "anyOf": [
+        {
+         "enum": [
+          "on_screen",
+          "off_screen"
+         ]
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    "look": {
+     "type": "object",
+     "required": [
+      "bible_version",
+      "crease_deg",
+      "shading_steps",
+      "view_transform",
+      "grade_look",
+      "paper",
+      "shade_mode",
+      "line_mode"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "bible_version": {
+       "type": "string",
+       "pattern": "^[0-9]+\\.[0-9]+$"
+      },
+      "line_weight_px": {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "description": "Line Art weight at 1440p (BP-173)"
+      },
+      "crease_deg": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 180
+      },
+      "shading_steps": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "view_transform": {
+       "enum": [
+        "AgX",
+        "Standard",
+        "Khronos PBR Neutral"
+       ]
+      },
+      "grade_look": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Blender's look name without the 'AgX - ' prefix; 'None' under Standard and Khronos PBR Neutral"
+      },
+      "paper": {
+       "type": "object",
+       "required": [
+        "asset",
+        "opacity"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "asset": {
+         "$ref": "#/$defs/assetref"
+        },
+        "opacity": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        }
+       }
+      },
+      "shade_mode": {
+       "enum": [
+        "toon",
+        "soft",
+        "feathered",
+        "flat",
+        "painted_light"
+       ],
+       "description": "style.SHADE_MODES; toon = the ICW-05 three-step graph"
+      },
+      "shade_path": {
+       "enum": [
+        "luma",
+        "lit",
+        "rgb_soft"
+       ],
+       "description": "style.SHADE_PATHS (the soft mode's node path)"
+      },
+      "line_mode": {
+       "enum": [
+        "none",
+        "faint",
+        "dark",
+        "ink"
+       ]
+      }
+     },
+     "allOf": [
+      {
+       "if": {
+        "properties": {
+         "line_mode": {
+          "enum": [
+           "faint",
+           "dark",
+           "ink"
+          ]
+         }
+        }
+       },
+       "then": {
+        "required": [
+         "line_weight_px"
+        ]
+       }
+      },
+      {
+       "if": {
+        "properties": {
+         "line_mode": {
+          "const": "none"
+         }
+        }
+       },
+       "then": {
+        "not": {
+         "required": [
+          "line_weight_px"
+         ]
+        }
+       }
+      },
+      {
+       "if": {
+        "properties": {
+         "view_transform": {
+          "const": "AgX"
+         }
+        }
+       },
+       "else": {
+        "properties": {
+         "grade_look": {
+          "const": "None"
+         }
+        }
+       }
+      }
+     ]
+    },
+    "render": {
+     "type": "object",
+     "required": [
+      "profile",
+      "samples",
+      "motion_blur",
+      "denoise",
+      "output"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "profile": {
+       "enum": [
+        "eevee_fast",
+        "eevee_full",
+        "eevee_painterly",
         "cycles_hero"
        ]
       },

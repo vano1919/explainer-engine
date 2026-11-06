@@ -1,0 +1,464 @@
+{
+  "schema": "view_palette_match/1",
+  "blender_version": "5.2.3",
+  "config_sha256": "f10891fc7d34e78e71b535e3f92b3c612177320f990641283247cb84bb8d62ad",
+  "palette_sha256": "efd96afddd4211262c105fb0aaf33eaa06b910377bff82de749634c8196b6e26",
+  "views": {
+    "Standard": {
+      "look": null,
+      "mean_delta_e_raw": 0.0,
+      "max_delta_e_raw": 0.0,
+      "colours": {
+        "#1A73E8": {
+          "names": [
+            "faction_a"
+          ],
+          "linear": [
+            0.01033,
+            0.171441,
+            0.806947
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#1F2430": {
+          "names": [
+            "ink"
+          ],
+          "linear": [
+            0.013702,
+            0.017642,
+            0.029557
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#2B2D42": {
+          "names": [
+            "night"
+          ],
+          "linear": [
+            0.024158,
+            0.026241,
+            0.05448
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#2EC4B6": {
+          "names": [
+            "mechanism_teal"
+          ],
+          "linear": [
+            0.027321,
+            0.552017,
+            0.467787
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#4D9DE0": {
+          "names": [
+            "support_blue"
+          ],
+          "linear": [
+            0.074213,
+            0.337162,
+            0.745409
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#6B6F78": {
+          "names": [
+            "scene_cannon"
+          ],
+          "linear": [
+            0.147026,
+            0.158958,
+            0.187823
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": false
+        },
+        "#7BC950": {
+          "names": [
+            "true_green"
+          ],
+          "linear": [
+            0.19807,
+            0.584079,
+            0.080219
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#8D99AE": {
+          "names": [
+            "grey_mid"
+          ],
+          "linear": [
+            0.266357,
+            0.318543,
+            0.423265
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#9DAA6A": {
+          "names": [
+            "scene_grass"
+          ],
+          "linear": [
+            0.337162,
+            0.401977,
+            0.144128
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": false
+        },
+        "#B97A35": {
+          "names": [
+            "kit_shadow"
+          ],
+          "linear": [
+            0.485156,
+            0.194618,
+            0.035601
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#B9B98A": {
+          "names": [
+            "scene_hill"
+          ],
+          "linear": [
+            0.485156,
+            0.485156,
+            0.254152
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": false
+        },
+        "#E0A458": {
+          "names": [
+            "kit_card"
+          ],
+          "linear": [
+            0.745409,
+            0.371239,
+            0.097588
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#E5484D": {
+          "names": [
+            "false_red"
+          ],
+          "linear": [
+            0.783536,
+            0.064803,
+            0.074213
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#F55A24": {
+          "names": [
+            "faction_b"
+          ],
+          "linear": [
+            0.913093,
+            0.102242,
+            0.017642
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#FF6B5B": {
+          "names": [
+            "answer_coral"
+          ],
+          "linear": [
+            1.002766,
+            0.147026,
+            0.104617
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#FFC145": {
+          "names": [
+            "uncertain_amber"
+          ],
+          "linear": [
+            1.002766,
+            0.533283,
+            0.059511
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        },
+        "#FFF8EC": {
+          "names": [
+            "paper"
+          ],
+          "linear": [
+            0.999996,
+            0.938688,
+            0.838793
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 0.0,
+          "in_palette": true
+        }
+      }
+    },
+    "Khronos PBR Neutral": {
+      "look": null,
+      "mean_delta_e_raw": 6.73,
+      "max_delta_e_raw": 17.11,
+      "colours": {
+        "#1A73E8": {
+          "names": [
+            "faction_a"
+          ],
+          "linear": [
+            0.034584,
+            0.200032,
+            0.855121
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 1.51,
+          "in_palette": true
+        },
+        "#1F2430": {
+          "names": [
+            "ink"
+          ],
+          "linear": [
+            0.046182,
+            0.050235,
+            0.062008
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 11.09,
+          "in_palette": true
+        },
+        "#2B2D42": {
+          "names": [
+            "night"
+          ],
+          "linear": [
+            0.061453,
+            0.063652,
+            0.091548
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 17.11,
+          "in_palette": true
+        },
+        "#2EC4B6": {
+          "names": [
+            "mechanism_teal"
+          ],
+          "linear": [
+            0.066024,
+            0.58748,
+            0.503266
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 2.28,
+          "in_palette": true
+        },
+        "#4D9DE0": {
+          "names": [
+            "support_blue"
+          ],
+          "linear": [
+            0.113394,
+            0.378906,
+            0.791462
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 4.33,
+          "in_palette": true
+        },
+        "#6B6F78": {
+          "names": [
+            "scene_cannon"
+          ],
+          "linear": [
+            0.185804,
+            0.197715,
+            0.226712
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 5.76,
+          "in_palette": false
+        },
+        "#7BC950": {
+          "names": [
+            "true_green"
+          ],
+          "linear": [
+            0.236481,
+            0.619779,
+            0.119393
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 7.89,
+          "in_palette": true
+        },
+        "#8D99AE": {
+          "names": [
+            "grey_mid"
+          ],
+          "linear": [
+            0.304247,
+            0.357219,
+            0.460889
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 3.48,
+          "in_palette": true
+        },
+        "#9DAA6A": {
+          "names": [
+            "scene_grass"
+          ],
+          "linear": [
+            0.374741,
+            0.441367,
+            0.183021
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 5.09,
+          "in_palette": false
+        },
+        "#B97A35": {
+          "names": [
+            "kit_shadow"
+          ],
+          "linear": [
+            0.522058,
+            0.232579,
+            0.074495
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 10.0,
+          "in_palette": true
+        },
+        "#B9B98A": {
+          "names": [
+            "scene_hill"
+          ],
+          "linear": [
+            0.522685,
+            0.522685,
+            0.292403
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 3.2,
+          "in_palette": false
+        },
+        "#E0A458": {
+          "names": [
+            "kit_card"
+          ],
+          "linear": [
+            0.791462,
+            0.413977,
+            0.137393
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 6.68,
+          "in_palette": true
+        },
+        "#E5484D": {
+          "names": [
+            "false_red"
+          ],
+          "linear": [
+            0.83605,
+            0.103994,
+            0.113225
+          ],
+          "delta_e": 0.0,
+          "raw_delta_e": 10.57,
+          "in_palette": true
+        },
+        "#F55A24": {
+          "names": [
+            "faction_b"
+          ],
+          "linear": [
+            1.004831,
+            0.1012,
+            0.000967
+          ],
+          "delta_e": 2.02,
+          "raw_delta_e": 3.12,
+          "in_palette": true
+        },
+        "#FF6B5B": {
+          "names": [
+            "answer_coral"
+          ],
+          "linear": [
+            1.75038,
+            0.073694,
+            0.001813
+          ],
+          "delta_e": 2.0,
+          "raw_delta_e": 5.48,
+          "in_palette": true
+        },
+        "#FFC145": {
+          "names": [
+            "uncertain_amber"
+          ],
+          "linear": [
+            1.385392,
+            0.719766,
+            0.000744
+          ],
+          "delta_e": 2.86,
+          "raw_delta_e": 5.19,
+          "in_palette": true
+        },
+        "#FFF8EC": {
+          "names": [
+            "paper"
+          ],
+          "linear": [
+            35.922984,
+            22.464331,
+            0.294589
+          ],
+          "delta_e": 0.06,
+          "raw_delta_e": 5.48,
+          "in_palette": true
+        }
+      }
+    }
+  }
+}

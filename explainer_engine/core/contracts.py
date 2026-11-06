@@ -33,7 +33,9 @@ SCHEMAS = Path(__file__).resolve().parents[1] / "schemas"
 VIDEO_LANES = {"KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL"}  # film_shots/2: LTX clips
 LANES_3 = ("VIDEO_3D", "STILL_3D", "HELPER")  # film_shots/3 (D-97)
 BLENDER_LANES = {"VIDEO_3D", "STILL_3D"}  # rendered by Blender (shot_spec/2); HELPER stays with the Python renderers
-BLENDER_RECIPES = {"eevee_fast": "blender_eevee/1", "eevee_full": "blender_eevee/1", "cycles_hero": "blender_cycles/1"}
+BLENDER_RECIPES = {"eevee_fast": "blender_eevee/1", "eevee_full": "blender_eevee/1", "eevee_painterly": "blender_eevee/1",
+                   "cycles_hero": "blender_cycles/1"}
+BLENDER_SPECS = ("shot_spec/2", "shot_spec/3")  # /3 (WP-Q1): /2 plus the look's view transform, shade and line mode
 BIBLE = Path(__file__).resolve().parents[1] / "world" / "bible.json"
 
 
@@ -162,7 +164,7 @@ def _film_shots_3(doc: dict) -> list[dict]:
 
 
 def _shot_spec(doc: dict, base) -> list[dict]:
-    if doc["schema"] == "shot_spec/2":
+    if doc["schema"] in BLENDER_SPECS:
         return _shot_spec_2(doc)
     out = []
     out += _refused_lane(doc["lane"], doc["shot_id"])
@@ -194,6 +196,8 @@ def _shot_spec_2(doc: dict) -> list[dict]:
     elif perf["rhubarb"] is not None or perf["dialogue_cover"] == "on_screen":
         out.append(_f("CN-17", sid, "mouth cues or an on-screen mouth on a shot that is not lip-synced"))
     lo, hi = SR.T("BP-173", "weight_px_1440")
+    if doc["schema"] == "shot_spec/3" and doc["look"]["line_mode"] == "none":
+        return out   # /3: a look without a drawn line has no Line Art weight to hold to BP-173's band
     if not lo <= doc["look"]["line_weight_px"] <= hi:
         out.append(_f("CN-17", sid, f"Line Art weight {doc['look']['line_weight_px']:g} px is outside {lo:g}-{hi:g} px at 1440p (BP-173)",
                       SR.level("BP-173")))
@@ -601,8 +605,8 @@ def validate(doc: dict, base: Path | str | None = None) -> list[dict]:
 
 
 def spec_fps(spec: dict) -> int:
-    """The frame rate of a shot spec: ``fps`` in /1, ``clock.fps`` in /2."""
-    return spec["clock"]["fps"] if spec.get("schema") == "shot_spec/2" else spec["fps"]
+    """The frame rate of a shot spec: ``fps`` in /1, ``clock.fps`` in /2 and /3."""
+    return spec["clock"]["fps"] if spec.get("schema") in BLENDER_SPECS else spec["fps"]
 
 
 def cross_fps(manifest: dict, film_shots: dict | None = None, specs: list[dict] | None = None) -> list[dict]:
