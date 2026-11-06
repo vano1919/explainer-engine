@@ -57,6 +57,7 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `blender_render_manifest/1` | written next to the shot's render | `blender/render.py` | code (what was rendered, how fast) | `blender/validate.py`, `blender/cost.py` (job speeds) |
 | `render_checkpoint/1` | `render_checkpoint.json` in the shot's render folder (+ its vault copy, roadmap 10.4) | `blender/render.py` | code, atomic, after each remote verify (OR-33) | resume after a lost pod (OR-03) |
 | `speech_mix_report/1` | `audio/speech_mix_report.json` | `qa/speech_mix.py` | **derived** from the script (+ spine, cards) | REVIEW (BP-105, D-99), the review bundle |
+| `scene_assets/1` | `assets/scene_assets.json` | the scene-asset writer (ICW-11, [SCENE_ASSETS](SCENE_ASSETS.md)) | hand (prompts) + the asset pod (files, sha256) | `blender/assemble_25d.py` (J5), the step-3 first frames (J2/J4) |
 | `asset_library/1` | `assets/library.json` | `assets/library.py` ([WORLD_BIBLE](WORLD_BIBLE.md)) | hand (approved assets) | `library verify`, the shot writers |
 | `asset_library/2` | `assets/library.json` (once `assets/library.py` moves to it) | `assets/library.py` | hand (approved 3D assets, licences) | the Blender router, `library verify` |
 

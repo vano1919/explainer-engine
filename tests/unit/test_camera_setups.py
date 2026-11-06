@@ -1,4 +1,4 @@
-"""WP-Q7 camera grammar (roadmap 10.1): the six named setups resolve to a lens, a pose and a focus; the framed point lands on the
+"""WP-Q7 camera grammar (roadmap 10.1): the named setups (six of WP-Q7 + mcu_front of the J5 dialogue, D-116) resolve to a lens, a pose and a focus; the framed point lands on the
 setup's thirds target; a setup's f-stop is inside the DoF range; the shot_spec/2 enum, the scene job and the pinned Add Camera
 Rigs extension agree. No Blender: the bpy side is checked by blender/camera_smoke.py (CI) against the pinhole used here."""
 import json
@@ -20,7 +20,7 @@ def spec_s1():
     return BS.spec_for("S5", BS.plans(None)["S5"])
 
 
-SIX = ["establishing_wide", "low_angle_hero_cu", "ots_a", "ots_b", "profile_two_shot", "push_in_reveal"]
+SIX = ["establishing_wide", "low_angle_hero_cu", "mcu_front", "ots_a", "ots_b", "profile_two_shot", "push_in_reveal"]
 
 
 def test_the_six_setups_and_the_shot_reverse_shot_sequence():
@@ -76,11 +76,35 @@ def test_the_moves_move_and_the_still_setups_do_not():
     for name in ("establishing_wide", "low_angle_hero_cu", "push_in_reveal", "profile_two_shot"):
         c = C.resolve(name, SUBJ)["camera"]
         assert c["start"] != c["end"], name
-    for name in ("ots_a", "ots_b"):
+    for name in ("ots_a", "ots_b", "mcu_front"):
         c = C.resolve(name, SUBJ)["camera"]
         assert c["rig"] == "static" and c["start"] == c["end"]
     crane = C.resolve("establishing_wide", SUBJ)["camera"]
     assert crane["rig_kind"] == "crane" and crane["end"]["pos"][2] > crane["start"]["pos"][2]
+
+
+def test_mcu_front_frames_head_and_chest_of_b_from_a_side_and_the_reverse_swaps_the_subjects():
+    """J5 dialogue (D-116, route-test C4): a front medium close-up; A (the 'from' subject) stands behind the camera, so only B's
+    card is in the shot; the reverse MCU is the same setup with the subjects swapped."""
+    r = C.resolve("mcu_front", SUBJ)
+    cam, eye = r["camera"], r["target"]
+    head_top = [eye[0], eye[1], eye[2] + 0.6 * C.HEAD_M]
+    chest = [eye[0], eye[1], eye[2] - 1.5 * C.HEAD_M]
+    waist = [eye[0], eye[1], eye[2] - 3.0 * C.HEAD_M]
+    assert 0.0 < C.framing(cam, chest)[1] < 0.2 and 0.8 < C.framing(cam, head_top)[1] < 1.0
+    assert C.framing(cam, waist)[1] < 0.0   # head and chest, no waist
+    a_eye = [SUBJ["a"]["pos"][0], SUBJ["a"]["pos"][1], C.EYE_M]
+    with pytest.raises(ContractError):   # A is behind the camera: out of the shot
+        C.framing(cam, a_eye)
+    rev = C.resolve("mcu_front", {"a": SUBJ["b"], "b": SUBJ["a"]})
+    assert rev["target"][:2] == pytest.approx(SUBJ["a"]["pos"][:2]) and C.thirds_error(rev) <= rev["tolerance"]
+    assert abs(((cam["start"]["yaw_deg"] - rev["camera"]["start"]["yaw_deg"]) % 360) - 180) < 1e-3
+    near = C.resolve("ots_a", SUBJ)["camera"]["start"]["pos"]
+    assert SB_dist(cam["start"]["pos"], eye) < SB_dist(near, eye)   # closer than the over-the-shoulder
+
+
+def SB_dist(p, q):
+    return sum((p[i] - q[i]) ** 2 for i in range(3)) ** 0.5
 
 
 def test_setups_scale_with_the_cast_and_follow_the_bearing():

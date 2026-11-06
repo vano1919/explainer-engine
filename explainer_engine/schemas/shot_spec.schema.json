@@ -571,6 +571,7 @@
          "enum": [
           "establishing_wide",
           "low_angle_hero_cu",
+          "mcu_front",
           "ots_a",
           "ots_b",
           "profile_two_shot",

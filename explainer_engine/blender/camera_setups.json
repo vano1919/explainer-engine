@@ -12,6 +12,14 @@
       "start": {"height_heads": 14, "distance_heads": 62}, "end": {"height_heads": 20, "distance_heads": 56},
       "thirds": [0.6667, 0.40], "thirds_tol": 0.03
     },
+    "mcu_front": {
+      "label": "medium close-up, front (J5 dialogue, D-116): B seen from A's side, head and chest, eyes on the upper third; the reverse swaps the subjects",
+      "view": "along_ab", "from": "a", "target": "b", "focus": "b", "target_z_eye": 1.0,
+      "rig": "static", "rig_kind": "dolly", "ease": "linear",
+      "lens_mm": 50, "fstop": 2.8,
+      "start": {"height_heads": 6.67, "distance_heads": 6.9, "side_heads": 0}, "end": null,
+      "thirds": [0.5, 0.6667], "thirds_tol": 0.03
+    },
     "ots_a": {
       "label": "over A's shoulder onto B: B on the right third, eyes on the upper third",
       "view": "along_ab", "from": "a", "target": "b", "focus": "b", "target_z_eye": 1.0,
