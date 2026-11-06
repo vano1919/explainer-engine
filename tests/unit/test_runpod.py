@@ -1,6 +1,7 @@
 """The pod manager against a fake RunPod API (REST v2 shape): no network, no pod, no money."""
 import json
 import os
+from pathlib import Path
 
 import pytest
 
@@ -164,7 +165,8 @@ def script_pod(tmp, disk="40"):
     tests/unit/conftest.py; the plan's work/setup minutes and the container disk, P1c)."""
     sf = tmp / "job.sh"
     sf.write_text(NEW_SH)
-    return ["--script", str(sf), "--script-url", "https://huggingface.co/x/pod.sh", "--work-min", "60", "--setup-min", "10", "--disk", disk]
+    return ["--script", str(sf), "--script-url", "https://huggingface.co/x/pod.sh", "--work-min", "60", "--setup-min", "10", "--disk", disk,
+            "--schedule", str(Path(__file__).resolve().parents[1] / "fixtures" / "pod_schedule_ok.json")]
 
 
 def live_ok():

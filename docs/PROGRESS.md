@@ -4501,3 +4501,18 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   timing preview marked `preview` (never a sample). ROUTE_PLAN 5d.
 - Checks: 6 focused tests (an end-to-end 1440p assembly); docs_lint 0; CI green. Open: exact-length J5/helper renders have no
   handles (BP-128 REVIEW); the step-3 plan renders them with 12 frames on each side.
+
+## 2026-11-06 — RP-11: every combination of a pod's run costed before the pod (D-117, branch `icw/17-run-schedule`)
+- Why: the creator, 14:48 UTC, after the step-3 pod `ygg2ztmflr8pv2` (H100 NVL, $2.59/h) idled 14:33-14:48 UTC: its GPU lane waited for both
+  Blender first frames on the CPU (the battle line pass first, the one memory-killed on the container) before even the Qwen stages that
+  need no Blender, and its LTX clips waited for every Blender pass. Stopped by Fable at 14:48 (about $1.05, nothing paid made; balance $7.99).
+- Root cause of the miss: the OR-34 audit read hashes, prompts, tests and the offline dry run; none of them runs the clock, so the wait
+  chain (`p14_pod.gpu` waits for `A.frame0` although `NEEDS` says C and X6 need nothing) was never walked, and the known memory failure
+  of the battle line pass was not tied to the GPU's dependency.
+- `cloud/schedule.py`: `pod_schedule/1` files, list-scheduling simulation (expected and worst case), every card x lane x GPU order
+  (up to 20,000, else a fixed-seed sample + heuristics), the pick, `check` and `rp11`; `runpod create --schedule` (refused without one
+  for a script pod, exempt as RP-01). The step-3 graph as launched: no combination fits $8 / 3.5 h in its worst case, idle GPU 95 min
+  (41 %), refused; with each stage waiting only on its inputs and Blender allowed on the GPU: 324 combinations, cheapest $3.45 expected /
+  $7.08 worst, idle GPU 0 min.
+- Tests: `test_cloud_schedule.py` (13); the create tests carry `tests/fixtures/pod_schedule_ok.json`. Cost $0.
+
