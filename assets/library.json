@@ -6758,6 +6758,129 @@
       },
       "width": 1024,
       "height": 1024
+    },
+    {
+      "id": "material.ph_aerial_grass_rock",
+      "kind": "material",
+      "file": "tools/assets_cache/57b8041bfe0d0f01430e4dbaad45e7ddddf0a9fc97317f90dbc51f7b0d9e1b5d/aerial_grass_rock_diff_1k.jpg",
+      "sha256": "57b8041bfe0d0f01430e4dbaad45e7ddddf0a9fc97317f90dbc51f7b0d9e1b5d",
+      "bytes": 666655,
+      "tags": [
+        "grass",
+        "ground",
+        "polyhaven",
+        "rock",
+        "terrain"
+      ],
+      "description": "Poly Haven Aerial Grass Rock diffuse (1k): the battlefield's grass (T-E crowd battle)",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {},
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/aerial_grass_rock",
+        "revision_or_version": "1k jpg diffuse, published 2020-02-24",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T22:37:09",
+        "source": "import polyhaven https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_diff_1k.jpg"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/material/material.ph_aerial_grass_rock/aerial_grass_rock_diff_1k.jpg"
+      },
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "id": "material.ph_dry_ground_01",
+      "kind": "material",
+      "file": "tools/assets_cache/75222fc97a82b635a09cf8f2891dd58bc42e49599b9fda920b2c50193fe85e9f/dry_ground_01_diff_1k.jpg",
+      "sha256": "75222fc97a82b635a09cf8f2891dd58bc42e49599b9fda920b2c50193fe85e9f",
+      "bytes": 604799,
+      "tags": [
+        "dirt",
+        "ground",
+        "polyhaven",
+        "terrain"
+      ],
+      "description": "Poly Haven Dry Ground 01 diffuse (1k): the trampled dirt between the battle lines (T-E crowd battle)",
+      "bible_version": "1.5",
+      "made_with": {
+        "provider": "third_party",
+        "model": "",
+        "model_version": "",
+        "prompt": "",
+        "params": {},
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "cc0",
+        "commercial_use": "yes",
+        "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
+        "source_url": "https://polyhaven.com/a/dry_ground_01",
+        "revision_or_version": "1k jpg diffuse, published 2020-02-19",
+        "inspected_on": "2026-11-05",
+        "redistribution": "allowed (CC0 1.0)",
+        "derivatives": "allowed (CC0 1.0)",
+        "attribution": "none for downloaded assets; an app that calls the live API at run time shows 'Powered by Poly Haven'",
+        "geo_or_revenue_limits": null,
+        "weights_vs_code_note": "assets CC0, API code AGPL-3.0",
+        "outputs_note": null
+      },
+      "approval": {
+        "status": "not_looked",
+        "by": null,
+        "at": null,
+        "note": ""
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-11-05T22:37:09",
+        "source": "import polyhaven https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/dry_ground_01/dry_ground_01_diff_1k.jpg"
+      },
+      "deps": [],
+      "storage": {
+        "location": "external",
+        "external_path": "assets/3d/material/material.ph_dry_ground_01/dry_ground_01_diff_1k.jpg"
+      },
+      "width": 1024,
+      "height": 1024
     }
   ]
 }

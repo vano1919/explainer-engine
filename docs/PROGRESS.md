@@ -4343,6 +4343,49 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   padding trimmed; the expected value is derived from the fixture (seconds x rate), the container length is only an upper bound.
 - `seams.duration` unchanged. `tests/unit/test_seams.py`: 3 passed locally. No render branch touched. Cost $0.
 
+## 2026-11-05 — T-E crowd proof: thousands of soldiers as Geometry Nodes tiers, a battle set, a 30 s battle (branch `claude/project-thread-u1fc5g`, PR #139)
+- Overnight plan T-E (Fable 22:05 UTC; the creator's brief 19:55 UTC: "cheap ways to generate thousands of fighters"), built to
+  MOTION_RESEARCH.md Group 7. Synthesis of documented parts (the creator 19:19 UTC), no add-on and no copied code: the ICW-06 cast (Quaternius UBC +
+  MCO, CC0) plays its UAL1 clips; `Object.evaluated_get` + `meshes.new_from_object` bake them; Instance on Points (Pick Instance),
+  Collection Info, Scene Time, Object Info, Align Rotation to Vector and the Attribute node's Instancer lookup draw them.
+- `blender/crowd.py` (pure Python, schema `crowd_gn/1`): formations (line, phalanx, cohort, shield wall, wedge, rout) seeded by shot
+  + crowd id; tiers by screen height (h = focal_px x 1.8 m / d; T0 rig above 250 px, the nearest 12; T1 baked mesh frames; T2 a yaw
+  billboard at 60 px and below); closed-form motion (advance from a delay, a stop after `stop_m`, a clip switch at a time), so any
+  frame renders alone (RULE-R1). `bpy/crowd_bake.py`: the bake (32 frames per clip, full + decimated to 2,000 tris), the atlas (8
+  yaw x 16 frames per far template, EXR, the shot's own look), the T1 bands near (full meshes, only for the slots seen near the
+  camera), shadow (< 40 m) and far (no shadow), the T2 billboards, banners, dust cards, smoke puffs and ballistic arrows; every
+  crowd object off Line Art; baked soldiers join the lights' receiver collections. `render_shot.build_crowd` runs it after the style.
+- Compositions: `field` (the first proof's parade), `battle` (24 f: a wedge charging a shield wall, the camera low behind the near
+  line, Poly Haven dirt field and grass ridges, Q1 haze `q1_c2_native_skin@E2`, dust over the far ranks, banners) and `battle30`
+  (720 f = 30 s, the creator 22:46 UTC via the coordinator, Fable's spec: the wedge stops at the wall at 13 s and turns to cuts,
+  the wall's front ranks cut, the main line walks up from 17 s, five volleys of 2,150 arrows, three smoke columns over a village on
+  the ridge, timed dust, the WP-Q7 crane rig on one eased curve from establishing into a push). `crowd preview --at` renders
+  single frames alone. No shot_spec bump: `scene.crowds` rides WP-Q1's shot_spec/3 (Fable). CI: `.github/workflows/crowd-proof.yml`.
+- Measured (free; this container's 4-core Mesa CPU, 1280x720, 16 samples): 5,000 soldiers on the field, 29.2 s/frame steady
+  (atlas 422 s, bake 47 s once per run); tiers at frame 1 = 859 near-shadow + 1,135 far T1 + 2,994 billboards + 12 rigs. CI run
+  42122490710 (same clip) green. A/B with `--far-px 1` (everything as T1): the billboard army matches in colour, size and place
+  (Fable accepted it as the Group 7 proof). 30 s battle preview at 400 soldiers (4 samples): five frames 10-20 s each after a
+  ~8 min bake + atlas; a first run was OOM-killed at ~14 GB (all full meshes kept) -> only near slots keep them.
+- Defaults taken tonight on Group 7's OR-22 questions (the creator's to confirm in the morning): billboards for the far tier,
+  5,000 soldiers, UAL1 clips only, 2,000 mid tris, shadows only on T1 within 40 m, cohort / phalanx / wedge / shield wall.
+- v2 round (Fable 23:52 UTC on the 400-soldier preview: "not there as a video yet"): two armies by look, picked by place so no
+  side or front neighbours match (`Formation.looks`; side A blue `faction_a`/`support_blue`, side B vermilion `faction_b`/
+  `answer_coral`, three costume x colour x helmet looks each), the C1 look `q1_c1_lit_preset@E2` (C2 keeps native costume colours,
+  so faction tints did not show), an iron helmet (kettle or conical, sized from the posed head-top vertices) baked with every
+  template, no T0 heroes in the 30 s battle (so nobody is bare-headed), the light-linking receivers now also get the instanced
+  collection children (the near soldiers were silhouettes), a new camera on a time-parametrised Catmull-Rom through four beats
+  (25 m beside the wedge at its level, high and wide, 60 m behind the wall at the clash, over the shoulder), banners with cloth
+  folds, a swallowtail and a gold disc or chevron, thinner arrows (7 mm, `radius_m`) falling in 3-4 clusters per volley, and a
+  world: a castle on the ridge behind the enemy (four towers, curtain walls with merlons, a keep), pine lines on the ridge foot, its
+  top and behind side A, mounds on the flanks; the reserve moved out of the ridge slope.
+- v2b (the v2 frames at 5,000, `crowd/battle30_preview_v2b/`): helmets drop the template's long hair and hood and are dark iron
+  (`night`; the cannon tone read tan, grey_mid pale), the opening camera stands 20 m off the wedge's flank at 2.8 m, side A's
+  archers (two blocks where its volleys leave from) fill the clash shots' foreground with a lane the push flies down; a test keeps
+  every low camera key clear of soldiers and banner poles. 4 frames at 5,000 soldiers, 4 samples, 1280x720: 533 s with the setup.
+- Not done / open: the 2560x1440 clips (the Mac, T-C, on Fable's go); the billboards keep one elevation per shot (a crane from
+  24 m to 2 m shows them from the `view_frame` pose); arrows are instanced meshes, not curves; dust and smoke are cards, not
+  volumes. Tests: `tests/unit/test_crowd.py` (43, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.
+
 ## 2026-11-06 — WP-Q4 follow-up: the Rain cast lead v3b/v4b, dialogue tracks, CI clip (thread: Benchmark Rain and Storm characters)
 
 - `bpy/make_rain_lead.py` now bakes the lead's look into the .blend (a plain open shows it): draped solidified tabard + red trim + belt + one-shoulder cloak, Rain's top recoloured undyed linen (flat Principled) and pulled in 4 mm, trousers dark brown, scarf and hairband cloak red, arms down on the CloudRig FK controls, calm face shape keys held, darker eyebrows. Exported to `ink_chronicle_overnight_2026-11-05/cast_lead/` (README v2..v4b). Not fixed: small white flecks at the tabard hem (not the top; cause unknown); the belt reads as a bar; the elbow sign is unverified (forearm +8 deg is nearly straight).

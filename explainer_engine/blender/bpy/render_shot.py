@@ -1193,6 +1193,16 @@ def bounds(scene, names):
     return out
 
 
+def build_crowd(scene, block, workdir, report):
+    """A ``crowds`` block (crowd_gn/1, ``blender/crowd.py``; MOTION_RESEARCH Group 7): its templates are cast members of the
+    scene; ``crowd_bake.py`` (beside this file) bakes them and builds the Geometry Nodes tiers ``EE_Crowd_*``."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import crowd_bake
+    return crowd_bake.build(scene, block, workdir, report)
+
+
 def main():
     path = job_path()
     with open(path, encoding="utf-8") as f:
@@ -1229,6 +1239,8 @@ def main():
     applied, missing = apply_settings(scene, job)
     if sc.get("style"):
         apply_style(scene, sc["style"], pending, built)  # after the profile: the style's EEVEE switches win (roadmap 9.1)
+    if sc.get("crowds"):
+        build_crowd(scene, sc["crowds"], os.path.dirname(job["report"]), built)  # after the style: the bake keeps its materials
     os.makedirs(job["frames_dir"], exist_ok=True)
     with open(job["progress"], "a", encoding="utf-8") as prog:
         for idx in job["frames"]:
