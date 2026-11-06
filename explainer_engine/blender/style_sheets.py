@@ -427,8 +427,10 @@ def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: 
     return spec
 
 
-def job_scene(scene_id: str, variant_id: str, sc: dict, paths: dict[str, Path]) -> tuple[dict, dict]:
-    path, tokens = style_for(variant_id)
+def job_scene(scene_id: str, variant_id: str, sc: dict, paths: dict[str, Path], tokens=None) -> tuple[dict, dict]:
+    """``tokens`` overrides the look's own (a composition's data-only tweak, e.g. the crowd battle's lighter haze)."""
+    path, own = style_for(variant_id)
+    tokens = tokens or own
     graph = S.StyleEngine(tokens).graph(path, camera=sc["camera"], materials=sc["materials"],
                                         hdri=str(paths["hdri.ph_kloofendal_48d_partly_cloudy_puresky"]),
                                         paper_texture=str(paths["texture.acg_paper003"]))

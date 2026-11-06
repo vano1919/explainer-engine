@@ -761,6 +761,21 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     return {"objects": objs, "camera": cam, "materials": mats, "frames_total": frames, "crowds": block, "composition": composition}
 
 
+# the 30 s battle's lighter depth haze (Fable 00:53 UTC): the castle and pines at ~200 m keep contrast; the look's other tokens stay
+COMPOSITION_HAZE = {"battle30": {"haze": 0.25, "haze_start_m": 40.0}}
+
+
+def look_tokens(look: str, composition: str):
+    """The look's style tokens with the composition's haze override (data only: Q1's Look haze knobs)."""
+    from dataclasses import replace
+    from explainer_engine.blender import style_sheets as SS
+    _, tokens = SS.style_for(look)
+    over = COMPOSITION_HAZE.get(composition)
+    if over and tokens.art is not None and tokens.art.haze > 0:
+        tokens = replace(tokens, art=replace(tokens.art, **over))
+    return tokens
+
+
 def render(out: Path, *, binary: str | None = None, look: str | None = None, count: int = 5000, frames: int | None = None,
            scale: float = 0.5, samples: int = 16, device: str = "auto", far_px: float = FAR_PX, composition: str = "battle",
            log=print) -> dict:
@@ -784,8 +799,8 @@ def render(out: Path, *, binary: str | None = None, look: str | None = None, cou
     if problems:
         raise CrowdError("; ".join(problems))
     write_json_atomic(out / "crowd_points.json", sc["crowds"])
-    _, tokens = SS.style_for(look)
-    scene_doc, _ = SS.job_scene("battle_wide", look, sc, paths)
+    tokens = look_tokens(look, composition)
+    scene_doc, _ = SS.job_scene("battle_wide", look, sc, paths, tokens)
     scene_doc["crowds"] = sc["crowds"]
     spec = SS.spec_for("battle_wide", look, tokens, samples=samples, scene=scene_doc, frames=frames)
     tag = look.replace("@", "_at_").replace("+", "_")
@@ -853,8 +868,8 @@ def preview(out: Path, at: list[int], *, binary: str | None = None, look: str | 
     problems = check(sc["crowds"])
     if problems:
         raise CrowdError("; ".join(problems))
-    _, tokens = SS.style_for(look)
-    scene_doc, _ = SS.job_scene("battle_wide", look, sc, paths)
+    tokens = look_tokens(look, composition)
+    scene_doc, _ = SS.job_scene("battle_wide", look, sc, paths, tokens)
     scene_doc["crowds"] = sc["crowds"]
     spec = SS.spec_for("battle_wide", look, tokens, samples=samples, scene=scene_doc, frames=frames)
     b = BlenderProject().resolve(binary, device=device)

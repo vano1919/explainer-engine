@@ -307,6 +307,15 @@ def test_the_push_flies_clear_of_soldiers_and_banners():
     assert any(-34 < y < -24 for y in p["y"])        # side A's archers stand where its volleys leave from
 
 
+def test_the_30s_battle_lightens_the_looks_haze_and_nothing_else():
+    base = K.look_tokens(K.BATTLE_LOOK, "battle")
+    b30 = K.look_tokens(K.BATTLE_LOOK, "battle30")
+    assert base.art.haze > 0.25 and (b30.art.haze, b30.art.haze_start_m) == (0.25, 40.0)
+    from dataclasses import replace
+    assert replace(b30.art, haze=base.art.haze, haze_start_m=base.art.haze_start_m) == base.art
+    assert replace(b30, art=base.art) == base
+
+
 def test_dust_arrives_with_the_wedge_and_the_clash():
     d = K.battle30_dust("s30", (0.2, 0.16, 0.1))
     late = [c for c in d["cards"] if c[8] >= K.T_CLASH]
