@@ -147,6 +147,15 @@ clip with the same numbers (identity, dE, line share, holds, flicker, seconds an
 - The local money guard died silently at 11:41 UTC and only `runpod check` at 12:11 saw it: the guard now writes a beat file every
   look and `check` replaces a dead or hung guard and pushes an urgent note (`cloud/runpod.guard_state`, `restart_guard`).
 
+### 5d. The one-minute pilot assembly (step 6 code, built 2026-11-06)
+
+`python -m explainer_engine.production.pilot <route_shots.json> <out>` (module `explainer_engine/production/pilot.py`): whole
+shots in script order up to 60 s (the route test's S01, S02 and S03-01..03: 59.5 s, three scenes, routes J5, H, J4, J2), each
+shot's clip from its route (J5 and H: an mp4 or an `assemble_25d` frame folder; J2/J4: the pod's upscaled take, a chained clip
+without the frames it shares with the clip before), conformed to the 2560x1440 / 24 fps master, then a film_shots/3, a spine on
+the shots' clock (or the read's own), straight cuts and `build_video_v2`, with the narration laid under it when given. A missing
+clip stops it; `--slates` makes a timing preview with flat route-coloured cards, marked `preview` in `pilot.json`. No pod ran.
+
 ## 6. Phases
 
 | Phase | What | Cost | Gate |
