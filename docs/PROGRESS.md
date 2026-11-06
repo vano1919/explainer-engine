@@ -4331,6 +4331,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   folds, a swallowtail and a gold disc or chevron, thinner arrows (7 mm, `radius_m`) falling in 3-4 clusters per volley, and a
   world: a castle on the ridge behind the enemy (four towers, curtain walls with merlons, a keep), pine lines on the ridge foot, its
   top and behind side A, mounds on the flanks; the reserve moved out of the ridge slope.
+- v2b (the v2 frames at 5,000, `crowd/battle30_preview_v2b/`): helmets drop the template's long hair and hood and are dark iron
+  (`night`; the cannon tone read tan, grey_mid pale), the opening camera stands 20 m off the wedge's flank at 2.8 m, side A's
+  archers (two blocks where its volleys leave from) fill the clash shots' foreground with a lane the push flies down; a test keeps
+  every low camera key clear of soldiers and banner poles. 4 frames at 5,000 soldiers, 4 samples, 1280x720: 533 s with the setup.
 - Not done / open: the 2560x1440 clips (the Mac, T-C, on Fable's go); the billboards keep one elevation per shot (a crane from
   24 m to 2 m shows them from the `view_frame` pose); arrows are instanced meshes, not curves; dust and smoke are cards, not
-  volumes. Tests: `tests/unit/test_crowd.py` (41, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.
+  volumes. Tests: `tests/unit/test_crowd.py` (42, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.
