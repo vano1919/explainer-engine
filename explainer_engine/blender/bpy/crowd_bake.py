@@ -96,6 +96,73 @@ def _decimated(me, ratio, name):
     return out
 
 
+def _helmet_mesh(kind, rx, ry, rz):
+    """An iron helmet in its own frame (origin = the middle of the rim, +Z up): ``kettle`` = a dome with a wide brim, ``conical`` =
+    a spangenhelm cone with a nasal-less rim band. Low-poly and angular (12 sides), as a crowd far tier wants."""
+    bm = bmesh.new()
+    seg = 12
+    if kind == "kettle":
+        rings = [(1.0, 0.0), (0.97, 0.3), (0.86, 0.58), (0.66, 0.8), (0.38, 0.95), (0.0, 1.0)]
+    else:
+        rings = [(1.0, 0.0), (0.98, 0.18), (0.7, 0.55), (0.36, 0.85), (0.0, 1.32)]
+    loops = []
+    for a, h in rings:
+        if a == 0.0:
+            loops.append([bm.verts.new((0.0, 0.0, h * rz))])
+        else:
+            loops.append([bm.verts.new((a * rx * math.cos(k * math.tau / seg), a * ry * math.sin(k * math.tau / seg), h * rz))
+                          for k in range(seg)])
+    for lo, hi in zip(loops, loops[1:]):
+        for k in range(seg):
+            if len(hi) == 1:
+                bm.faces.new((lo[k], lo[(k + 1) % seg], hi[0]))
+            else:
+                bm.faces.new((lo[k], lo[(k + 1) % seg], hi[(k + 1) % seg], hi[k]))
+    brim = 1.45 if kind == "kettle" else 1.08
+    lo = loops[0]
+    out = [bm.verts.new((brim * rx * math.cos(k * math.tau / seg), brim * ry * math.sin(k * math.tau / seg), -0.02 * rz))
+           for k in range(seg)]
+    for k in range(seg):
+        bm.faces.new((out[k], out[(k + 1) % seg], lo[(k + 1) % seg], lo[k]))
+    bm.faces.new(out[::-1])
+    me = bpy.data.meshes.new(f"EE_Crowd_helmet_{kind}")
+    bm.to_mesh(me)
+    bm.free()
+    for p in me.polygons:
+        p.use_smooth = False
+    return me
+
+
+def put_helmet(scene, root, kind, material):
+    """A helmet on the template's head bone, sized from the posed head-top vertices (hair included, so no hair shows above the
+    rim; Fable 23:52 UTC: the white hair of identical clones was the first thing a viewer saw). Baked with the clip."""
+    arm, meshes = _parts(root)
+    if "Head" not in arm.data.bones:
+        raise RuntimeError(f"crowd template {root.name}: no Head bone for the helmet")
+    scene.frame_set(scene.frame_start)
+    dg = bpy.context.evaluated_depsgraph_get()
+    pts = []
+    for ob in meshes:
+        ev = ob.evaluated_get(dg)
+        me = ev.to_mesh()
+        mw = ob.matrix_world
+        pts += [mw @ v.co for v in me.vertices]
+        ev.to_mesh_clear()
+    top = max(p.z for p in pts)
+    cap = [p for p in pts if p.z > top - 0.13]
+    xs, ys = [p.x for p in cap], [p.y for p in cap]
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    rx, ry = max((max(xs) - min(xs)) / 2 * 1.18, 0.09), max((max(ys) - min(ys)) / 2 * 1.18, 0.1)
+    rz = 0.15 if kind == "kettle" else 0.17
+    ob = bpy.data.objects.new(f"{root.name}_helmet", _helmet_mesh(kind, rx, ry, rz))
+    ob.data.materials.append(material)
+    scene.collection.objects.link(ob)
+    ob.parent, ob.parent_type, ob.parent_bone = arm, "BONE", "Head"
+    bpy.context.view_layer.update()
+    ob.matrix_world = Matrix.Translation((cx, cy, top - 0.115))
+    return ob
+
+
 def bake_clip(scene, root, n, mid_tris):
     """The template's clip as ``n`` full meshes and ``n`` T1 meshes; returns (full, mid, cycle_frames, action, full_tris, mid_tris)."""
     arm, meshes = _parts(root)
@@ -484,21 +551,50 @@ def _banner(bn, mats):
                           matrix=Matrix.Translation((x0, 0.0, pole / 2)))
     for f in bm.faces:
         f.material_index = 0
-    cols, rows = 8, 4
+    cols, rows = 16, 8
+    top = pole - 0.05
+
+    def cloth(u, v):
+        """The flag's surface at (u along the fly, v down): a travelling wave plus vertical folds that deepen to the fly end,
+        so the toon ramp draws cloth (the first battle frames showed flat boards)."""
+        y = 0.12 * u * math.sin(u * math.pi * 1.6) + 0.045 * u * math.sin(u * math.pi * 7.0 + 0.6) + 0.02 * u * math.sin(v * 5.0)
+        return Vector((x0 + u * fw, y, top - v * fh))
+
+    def tail(u):          # a swallowtail: the fly end is cut back in a V (the middle of the edge 22 % shorter)
+        return 1.0 - 0.22 * max(0.0, u - 0.6) / 0.4
+
     vs = []
     for j in range(rows + 1):
+        v = j / rows
         for i in range(cols + 1):
-            u = i / cols
-            vs.append(bm.verts.new((x0 + u * fw, 0.12 * u * math.sin(u * math.pi * 1.6), pole - 0.05 - (1 - j / rows) * fh)))
+            u = i / cols * (tail(1.0) + (1 - tail(1.0)) * abs(2 * v - 1)) if i == cols else i / cols
+            vs.append(bm.verts.new(cloth(u, v)))
     for j in range(rows):
         for i in range(cols):
             a = j * (cols + 1) + i
             f = bm.faces.new((vs[a], vs[a + 1], vs[a + cols + 2], vs[a + cols + 1]))
             f.material_index, f.smooth = 1, True
+    emblem = bn.get("emblem")
+    if emblem:            # a gold device on both faces, 6 mm off the cloth (the cloth's own normal there)
+        cu, cv, r = 0.42, 0.5, 0.26 * min(fw, fh)
+        if emblem == "disc":
+            ring = [(cu + r / fw * math.cos(a), cv + r / fh * math.sin(a)) for a in (k * math.tau / 16 for k in range(16))]
+        else:             # a chevron pointing up
+            hw, th = r / fw, r / fh
+            ring = [(cu - hw, cv + th * 0.6), (cu, cv - th * 0.9), (cu + hw, cv + th * 0.6), (cu + hw, cv + th * 1.2),
+                    (cu, cv - th * 0.2), (cu - hw, cv + th * 1.2)]
+        for side in (1.0, -1.0):
+            pts = []
+            for u, v in ring:
+                p0 = cloth(u, v)
+                n = (cloth(u + 0.01, v) - p0).cross(cloth(u, v + 0.01) - p0).normalized()
+                pts.append(bm.verts.new(p0 + n * 0.006 * side))
+            f = bm.faces.new(pts if side > 0 else pts[::-1])
+            f.material_index = 2
     me = bpy.data.meshes.new(f"EE_Crowd_banner_{bn['id']}")
     bm.to_mesh(me)
     bm.free()
-    for key in (bn.get("pole_material"), bn["material"]):
+    for key in (bn.get("pole_material"), bn["material"], bn.get("emblem_material") or bn["material"]):
         me.materials.append(mats.get(key))
     return bpy.data.objects.new(f"EE_Crowd_banner_{bn['id']}", me)
 
@@ -635,11 +731,11 @@ def tree_smoke(name, cam, quad):
     return t.ng
 
 
-def _arrow(mats, scale):
-    """A shaft along +X (the tip at x = 0) with a two-vane fletch at the back, ``scale`` x a 0.85 m arrow."""
+def _arrow(mats, scale, radius=0.012):
+    """A shaft of ``radius`` m along +X (the tip at x = 0) with a two-vane fletch at the back, ``scale`` x a 0.85 m arrow."""
     bm = bmesh.new()
     L_ = 0.85 * scale
-    bmesh.ops.create_cone(bm, segments=5, radius1=0.012 * scale, radius2=0.012 * scale, depth=L_,
+    bmesh.ops.create_cone(bm, segments=5, radius1=radius * scale, radius2=radius * scale, depth=L_,
                           matrix=Matrix.Translation((-L_ / 2, 0, 0)) @ Matrix.Rotation(math.pi / 2, 4, "Y"))
     for a, b in (((0, 0.05), (0, -0.05)), ((0.05, 0), (-0.05, 0))):
         vs = [bm.verts.new((-L_ + 0.02 * scale, a[0] * scale, a[1] * scale)), bm.verts.new((-L_ + 0.17 * scale, 0, 0)),
@@ -718,7 +814,7 @@ def build_props(scene, block, pts, holder):
         out["smoke"] = inst
     arrows = props.get("arrows")
     if arrows:
-        ob = _arrow(mats, float(arrows.get("scale", 1.0)))
+        ob = _arrow(mats, float(arrows.get("scale", 1.0)), float(arrows.get("radius_m", 0.012)))
         holder.objects.link(ob)
         inst = bpy.data.objects.new("EE_Crowd_arrows", _rows_points("EE_Crowd_arrow_points", arrows["rows"], ARROW_NAMES))
         scene.collection.objects.link(inst)
@@ -735,10 +831,14 @@ def build(scene, block, workdir, report):
     t0 = time.perf_counter()
     n = int(block["bake_frames"])
     by_slot, full_of, rates, rows = {}, {}, {}, []
+    helmets = 0
     for tpl in block["templates"]:
         root = bpy.data.objects.get(tpl["name"])
         if root is None:
             raise RuntimeError(f"crowd template {tpl['name']} was not built")
+        if tpl.get("helmet"):
+            put_helmet(scene, root, tpl["helmet"], bpy.data.materials.get("cannon"))
+            helmets += 1
         full, mid, length, action, t_full, t_mid = bake_clip(scene, root, n, block["mid_tris"])
         by_slot[tpl["slot"]], full_of[tpl["slot"]] = mid, full
         rates[tpl["slot"]] = n / length
@@ -795,7 +895,8 @@ def build(scene, block, workdir, report):
     for o in objs.values():
         o.lineart.usage = "EXCLUDE"
     extras = build_props(scene, block, pts, holder)
-    linked = _receive([o for k, o in objs.items() if k.startswith("t1")])
+    # light linking reads the instanced objects themselves (the collection children), not only the instancer
+    linked = _receive([o for k, o in objs.items() if k.startswith("t1")] + list(col.objects) + list(col_full.objects))
 
     def census(frame):
         scene.frame_set(frame)
@@ -821,7 +922,7 @@ def build(scene, block, workdir, report):
                        "instances_second_frame": inst, "t1_changed_share": round(changed, 4), "borders": b, "bands_m": bands,
                        "shadow": {k: o.visible_shadow for k, o in objs.items()},
                        "lineart": {k: o.lineart.usage for k, o in dict(objs, **extras).items()},
-                       "props": {k: allc[k] for k in extras}, "near_slots": sorted(near_slots), "full_meshes_freed": freed,
+                       "props": {k: allc[k] for k in extras}, "near_slots": sorted(near_slots), "full_meshes_freed": freed, "helmets": helmets,
                        "light_links": {"receiver_collections": len(_receivers()), "links": linked},
                        "seconds": round(time.perf_counter() - t0, 2)}
     return objs

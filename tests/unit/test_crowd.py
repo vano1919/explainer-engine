@@ -275,14 +275,20 @@ def test_the_village_smoke_rises_from_the_ridge():
     assert K.ridge_z(*K.VILLAGE[0][:2]) > 10
 
 
-def test_the_camera_cranes_down_into_a_push_without_stopping():
+def test_the_camera_opens_beside_the_charge_frames_the_clash_from_behind_the_wall_and_ends_over_the_shoulder():
     cam = K.battle30_camera()
     ks = cam["keys"]
     assert ks[0]["frame"] == 0 and ks[-1]["frame"] == K.BATTLE30_FRAMES - 1 and cam["rig_kind"] == "crane"
-    assert ks[0]["location"][2] > 15 and ks[-1]["location"][2] < 2.5 and ks[-1]["location"][1] < -5   # high and wide -> behind the wall
+    at = {k["frame"]: k for k in ks}
+    start, clash, end = ks[0], at[312], ks[-1]
+    tip0 = (6.0, K.WEDGE_TIP_Y + 15.0)       # the wedge's middle at 0 s
+    assert 18 <= math.dist(start["location"][:2], tip0) <= 32 and start["location"][2] < 5     # ~25 m off the charge, at its level
+    assert 50 <= math.dist(clash["location"][:2], (5.0, 0.0)) <= 70 and clash["location"][1] < -40   # ~60 m behind the wall
+    assert end["location"][2] < 2.5 and -9 < end["location"][1] < -5                          # over the back rank's shoulders
     steps = [math.dist(a["location"], b["location"]) / (b["frame"] - a["frame"]) for a, b in zip(ks, ks[1:])]
-    mid = steps[len(steps) // 4: 3 * len(steps) // 4]
-    assert min(mid) > 0.25 * max(steps)                     # no pause at the crane/push joint (one eased curve)
+    assert min(steps[:-1]) > 0.01                                                               # it never stops on the way
+    jumps = [abs(a - b) for a, b in zip(steps, steps[1:])]
+    assert max(jumps) < 0.25 * max(steps)                                                       # a continuous speed (no kink at a beat)
 
 
 def test_dust_arrives_with_the_wedge_and_the_clash():
@@ -292,13 +298,55 @@ def test_dust_arrives_with_the_wedge_and_the_clash():
     assert all(len(c) == len(K.DUST_COLUMNS) for c in d["cards"])
 
 
+def test_every_soldier_of_the_30s_battle_wears_a_helmet_and_the_two_sides_differ():
+    _, b = _b30()
+    assert all(t.get("helmet") in K.HELMETS for t in b["templates"])
+    side = {lk[2] for lk in K.ARMY_A}, {lk[2] for lk in K.ARMY_B}
+    assert side[0] and side[1] and not side[0] & side[1]       # no colour is worn by both armies
+    assert len(set(K.ARMY_A)) == len(K.ARMY_A) >= 3 and len(set(K.ARMY_B)) == len(K.ARMY_B) >= 3
+
+
+def test_check_refuses_an_unknown_helmet_or_emblem():
+    _, b = _b30(400)
+    bad = dict(b, templates=[dict(b["templates"][0], helmet="crown")] + b["templates"][1:])
+    assert any("helmet" in p for p in K.check(bad))
+    props = dict(b["props"], banners=[dict(b["props"]["banners"][0], emblem="dragon")] + b["props"]["banners"][1:])
+    assert any("emblem" in p for p in K.check(dict(b, props=props)))
+    assert all(bn["emblem"] in K.EMBLEMS and bn["emblem_material"] for bn in K.BANNERS)
+
+
+def test_no_soldier_of_the_30s_battle_stands_inside_the_ridge():
+    _, b = _b30()
+    p = b["points"]
+    assert max(K.ridge_z(x, y) for x, y in zip(p["x"], p["y"])) < 0.3
+
+
+def test_the_30s_world_has_a_castle_on_the_ridge_and_trees_clear_of_the_armies():
+    _, b = _b30()
+    objs = K.battle30_world("s30")
+    assert objs == K.battle30_world("s30")                     # seeded
+    towers = [o for o in objs if o["name"].startswith("castle_tower") and not o["name"].endswith("roof")]
+    assert len(towers) == 4 and all(o["location"][2] > 10 for o in towers)
+    assert any(o["name"] == "castle_keep" for o in objs) and sum(o["name"].startswith("castle_wall") for o in objs) > 30
+    pts = b["points"]
+    x0, x1, y0, y1 = min(pts["x"]) - 3, max(pts["x"]) + 3, min(pts["y"]) - 3, max(pts["y"]) + 3
+    pines = [o for o in objs if o["name"].startswith("pine") and "trunk" not in o["name"]]
+    assert len(pines) > 120
+    assert not [o for o in pines if x0 < o["location"][0] < x1 and y0 < o["location"][1] < y1]
+    for o in objs:
+        if o["name"].startswith("mound"):
+            (x, y, _), (sx, sy, _) = o["location"], o["scale"]
+            near = [1 for px, py in zip(pts["x"][::7], pts["y"][::7]) if ((px - x) / sx) ** 2 + ((py - y) / sy) ** 2 < 1]
+            assert not near, o["name"]
+    assert {o["material"] for o in objs} <= {"stone", "roof", "forest", "field_grass"}
+
+
 def test_only_the_slots_seen_near_the_camera_keep_full_meshes():
     cam, b = _b30()
     near = K.near_slots(b, cam)
     assert near and set(near) < {t["slot"] for t in b["templates"]}
-    assert all(b["templates"][k]["tint"] == "faction_a" or b["templates"][k]["action"] in ("Sword_Attack", "Sword_Idle") for k in near)
-    jog = {t["slot"] for t in b["templates"] if t["action"] == "Jog_Fwd_Loop"}
-    assert not jog & set(near)        # the charge is never near the camera's keys: its full meshes are freed
+    walk = {t["slot"] for t in b["templates"] if t["action"] == "Walk_Formal_Loop"}
+    assert not walk & set(near)       # the main line's advance is never near the camera: its full meshes are freed
 
 
 # the Blender side: the hook and the module stay in step with the host ----------------------------------------------------------
@@ -314,7 +362,8 @@ def test_render_shot_builds_the_crowd_after_the_style():
     bake = (BPY / "crowd_bake.py").read_text(encoding="utf-8")
     for name in ("GeometryNodeInstanceOnPoints", "GeometryNodeCollectionInfo", "Pick Instance", "INSTANCER", "lineart.usage",
                  "visible_shadow = False", "EE_Crowd", "new_from_object", "evaluated_get", "EE_Crowd_T1_full", "tree_banner",
-                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame", "near_slots", "receiver_collection"):
+                 "tree_dust", '"BLENDED"', "tree_smoke", "tree_arrows", "FunctionNodeAlignRotationToVector", "view_frame", "near_slots", "receiver_collection",
+                 "put_helmet", '"Head"', 'arrows.get("radius_m"', 'bn.get("emblem")', "swallowtail"):
         assert name in bake
     for col in K.COLUMNS:   # every plan column the points mesh needs is read by the bpy side
         assert f'"{col}"' in bake

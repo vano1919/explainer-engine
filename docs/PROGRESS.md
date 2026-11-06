@@ -4320,6 +4320,16 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   ~8 min bake + atlas; a first run was OOM-killed at ~14 GB (all full meshes kept) -> only near slots keep them.
 - Defaults taken tonight on Group 7's OR-22 questions (the creator's to confirm in the morning): billboards for the far tier,
   5,000 soldiers, UAL1 clips only, 2,000 mid tris, shadows only on T1 within 40 m, cohort / phalanx / wedge / shield wall.
+- v2 round (Fable 23:52 UTC on the 400-soldier preview: "not there as a video yet"): two armies by look, picked by place so no
+  side or front neighbours match (`Formation.looks`; side A blue `faction_a`/`support_blue`, side B vermilion `faction_b`/
+  `answer_coral`, three costume x colour x helmet looks each), the C1 look `q1_c1_lit_preset@E2` (C2 keeps native costume colours,
+  so faction tints did not show), an iron helmet (kettle or conical, sized from the posed head-top vertices) baked with every
+  template, no T0 heroes in the 30 s battle (so nobody is bare-headed), the light-linking receivers now also get the instanced
+  collection children (the near soldiers were silhouettes), a new camera on a time-parametrised Catmull-Rom through four beats
+  (25 m beside the wedge at its level, high and wide, 60 m behind the wall at the clash, over the shoulder), banners with cloth
+  folds, a swallowtail and a gold disc or chevron, thinner arrows (7 mm, `radius_m`) falling in 3-4 clusters per volley, and a
+  world: a castle on the ridge behind the enemy (four towers, curtain walls with merlons, a keep), pine lines on the ridge foot, its
+  top and behind side A, mounds on the flanks; the reserve moved out of the ridge slope.
 - Not done / open: the 2560x1440 clips (the Mac, T-C, on Fable's go); the billboards keep one elevation per shot (a crane from
   24 m to 2 m shows them from the `view_frame` pose); arrows are instanced meshes, not curves; dust and smoke are cards, not
-  volumes. Tests: `tests/unit/test_crowd.py` (37, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.
+  volumes. Tests: `tests/unit/test_crowd.py` (41, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.

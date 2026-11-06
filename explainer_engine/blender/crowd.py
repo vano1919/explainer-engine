@@ -90,6 +90,8 @@ class Formation:
     after_front_ranks: int = 1_000_000
     switch_at: object = None   # None | "start" (when it starts to move) | "arrive" (when it stops) | seconds into the shot
     switch_jitter_s: float = 0.0
+    looks: tuple[tuple[str, str, str, str], ...] = ()   # (character, costume, tint, helmet) variants, picked by place so no two
+                                                         # side or front neighbours match; empty = chars x costume x tint, random
 
     @property
     def ranks(self) -> int:
@@ -122,6 +124,10 @@ class Formation:
             mid = sum(u for u, _, _ in out) / len(out)
             out = [(u - mid, v, r) for u, v, r in out]
         return out
+
+
+def _looks(fm: "Formation") -> list[tuple]:
+    return list(fm.looks) if fm.looks else [(c, fm.costume, fm.tint, None) for c in fm.chars]
 
 
 def seed_for(shot_id: str, crowd_id: str) -> int:
@@ -193,15 +199,15 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
         if fm.switch_at == "arrive" and not (fm.stop_m > 0 and fm.speed_mps > 0):
             raise CrowdError(f"{fm.crowd_id}: switch_at arrive needs a moving block that stops (stop_m > 0)")
         every = tuple(fm.clips) + tuple(fm.after) + tuple(fm.after_back)
-        for ci, ch in enumerate(fm.chars):      # one template per look x clip, shared by every formation that wears it
+        for look in _looks(fm):      # one template per look x clip, shared by every formation that wears it
             for ki, (action, _) in enumerate(every):
-                key = (ch, fm.costume, fm.tint, action)
+                key = (*look, action)
                 if key not in slot_of:
                     slot_of[key] = len(templates)
-                    templates.append({"slot": len(templates), "name": f"crowd_tpl_{len(templates)}", "char": ch,
-                                      "costume": fm.costume, "tint": fm.tint, "action": action})
+                    templates.append({"slot": len(templates), "name": f"crowd_tpl_{len(templates)}", "char": look[0],
+                                      "costume": look[1], "tint": look[2], "helmet": look[3], "action": action})
         for ki, (action, _) in enumerate(every):
-            key = (fm.chars[0], fm.costume, fm.tint, action)
+            key = (*_looks(fm)[0], action)
             if key not in far_of:
                 far_of[key] = len(far)
                 far.append({"far_slot": len(far), "slot": slot_of[key]})
@@ -211,11 +217,17 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
         rng = random.Random(seed_for(shot_id, fm.crowd_id))
         f = math.radians(fm.facing_deg)
         fwd, right = (-math.sin(f), math.cos(f)), (math.cos(f), math.sin(f))
+        lks = _looks(fm)
+        grid = fm.spacing_m * {"phalanx": 0.72, "shield_wall": 0.64}.get(fm.type, 1.0)
         for n, (u, v, rank) in enumerate(fm.offsets(rng)):
+            col = round(u / grid)
             u += rng.uniform(-fm.jitter_m, fm.jitter_m)
             v += rng.uniform(-fm.jitter_m, fm.jitter_m)
             x, y = fm.origin[0] + u * right[0] + v * fwd[0], fm.origin[1] + u * right[1] + v * fwd[1]
-            ci, ki = rng.randrange(len(fm.chars)), _pick(rng, fm.clips)
+            ci, ki = rng.randrange(len(lks)), _pick(rng, fm.clips)
+            if fm.looks:      # by place: (column + 2 x rank) mod k differs for side and front neighbours when k >= 3
+                ci = (col + 2 * rank) % len(lks)
+            look, look0 = lks[ci], lks[0]
             s = rng.uniform(*fm.speed_range)
             yaw = (fm.facing_deg + rng.uniform(-180, 180)) if fm.type == "rout" else fm.facing_deg + rng.uniform(
                 -fm.yaw_jitter_deg, fm.yaw_jitter_deg)
@@ -230,14 +242,14 @@ def plan(formations: tuple[Formation, ...], camera: dict, *, shot_id: str, bake_
                 sw = float(at) + rng.uniform(0, fm.switch_jitter_s)
                 if act == fm.clips[ki][0]:      # the same clip after the switch: no switch at all
                     sw = NEVER
-            row = {"x": round(x, 4), "y": round(y, 4), "yaw": round(yaw, 3), "slot": slot_of[(fm.chars[ci], fm.costume, fm.tint, fm.clips[ki][0])],
-                   "far_slot": far_of[(fm.chars[0], fm.costume, fm.tint, fm.clips[ki][0])], "phase": round(phase, 4), "speed": round(s, 4),
+            row = {"x": round(x, 4), "y": round(y, 4), "yaw": round(yaw, 3), "slot": slot_of[(*look, fm.clips[ki][0])],
+                   "far_slot": far_of[(*look0, fm.clips[ki][0])], "phase": round(phase, 4), "speed": round(s, 4),
                    "vx": round(fwd[0] * vel, 4), "vy": round(fwd[1] * vel, 4), "delay": round(delay, 4),
                    "banner": fm.banner if fm.banner_every and rank > 0 and n % fm.banner_every == fm.banner_every // 2 else 0,
-                   "stop": round(stop, 4), "slot2": slot_of[(fm.chars[ci], fm.costume, fm.tint, act)],
-                   "far_slot2": far_of[(fm.chars[0], fm.costume, fm.tint, act)], "switch": round(sw, 4)}
-            rows.append((math.dist((x, y, 0.0), cam), row, dict(crowd_id=fm.crowd_id, char=fm.chars[ci], costume=fm.costume,
-                                                               tint=fm.tint, action=fm.clips[ki][0], offset=int(phase * 2) % 64)))
+                   "stop": round(stop, 4), "slot2": slot_of[(*look, act)],
+                   "far_slot2": far_of[(*look0, act)], "switch": round(sw, 4)}
+            rows.append((math.dist((x, y, 0.0), cam), row, dict(crowd_id=fm.crowd_id, char=look[0], costume=look[1],
+                                                               tint=look[2], action=fm.clips[ki][0], offset=int(phase * 2) % 64)))
     # a hero is a plain rig keyed at the first and the last frame: one clip, standing or walking all shot long, no flag
     still = lambda r: not r["banner"] and r["switch"] >= NEVER and (r["stop"] >= NEVER or not (r["vx"] or r["vy"]))  # noqa: E731
     near = sorted((i for i, (d, r, _) in enumerate(rows) if tier_of(d, lens) == "hero" and still(r)), key=lambda i: rows[i][0])
@@ -301,6 +313,10 @@ def check(block: dict) -> list[str]:
     for bn in props.get("banners", []):
         if not (isinstance(bn.get("id"), int) and bn["id"] > 0 and bn.get("material") and 2.0 <= bn.get("pole_m", 0) <= 6.0):
             out.append(f"banner {bn.get('id')!r}: needs an id > 0, a material and a pole of 2-6 m")
+        if bn.get("emblem") not in (None, *EMBLEMS) or (bn.get("emblem") and not bn.get("emblem_material")):
+            out.append(f"banner {bn.get('id')!r}: the emblem is one of {', '.join(EMBLEMS)} with an emblem_material")
+    if any(t.get("helmet") not in (None, *HELMETS) for t in block.get("templates", [])):
+        out.append(f"a template's helmet is not one of {', '.join(HELMETS)}")
     dust = props.get("dust")
     if dust:
         if not dust.get("cards") or any(len(c) != len(DUST_COLUMNS) for c in dust["cards"]):
@@ -364,10 +380,17 @@ def default_formations(count: int = 5000) -> tuple[Formation, ...]:
 BATTLE_SHOT_ID = "crowd_battle_5k"
 BATTLE_CAMERA = {"location": [-5.0, -9.2, 1.9], "look_at": [5.0, 40.0, 2.4], "lens_mm": 32, "focus_distance_m": 30.0}
 BATTLE_CAMERA_TO = {"location": [-4.1, -8.9, 1.86], "look_at": [5.8, 40.0, 2.4]}    # a slow creep along the back rank
-BATTLE_LOOK = "q1_c2_native_skin@E2"     # combo_profiles default C2 (native characters, Q1 depth haze) under E2's golden hour
+BATTLE_LOOK = "q1_c1_lit_preset@E2"      # C1 (Q1 lit matte, depth haze) under E2's golden hour: C2 keeps the costumes' own colours,
+                                           # so the two sides could not wear their faction colours (Fable 23:52 UTC: two armies)
 COMPOSITIONS = ("battle", "battle30", "field")
-BANNERS = ({"id": 1, "material": "side_a", "pole_material": "night", "pole_m": 3.6, "flag_m": [0.95, 1.25]},
-           {"id": 2, "material": "side_b", "pole_material": "night", "pole_m": 3.6, "flag_m": [0.95, 1.25]})
+BANNERS = ({"id": 1, "material": "side_a", "pole_material": "night", "pole_m": 3.6, "flag_m": [0.95, 1.25], "emblem": "disc",
+            "emblem_material": "emblem"},
+           {"id": 2, "material": "side_b", "pole_material": "night", "pole_m": 3.6, "flag_m": [0.95, 1.25], "emblem": "chevron",
+            "emblem_material": "emblem"})
+EMBLEMS = ("disc", "chevron")
+HELMETS = ("kettle", "conical")
+# world tones the palette has no token for: the forest green of WP-Q8's E2 hill_castle terrain (world_layouts.json, PR #133)
+WORLD_COLOURS = {"scene_forest": "#4E7A3A"}
 
 
 def battle_formations(count: int = 5000) -> tuple[Formation, ...]:
@@ -416,8 +439,12 @@ BATTLE30_SHOT_ID = "crowd_battle30_5k"
 BATTLE30_FRAMES = 720
 T_CLASH = 13.0            # the wedge's point meets the shield wall (seconds)
 B30_LENS = 28
-B30_POS = ((-36.0, -50.0, 24.0), (-15.0, -24.0, 6.0), (-3.4, -6.6, 2.0))      # Bezier: high and wide -> down -> in behind the wall
-B30_AIM = ((2.0, 62.0, 0.0), (3.0, 22.0, 1.5), (4.5, 3.0, 1.5))
+# camera beats (Fable 23:52 UTC): 0 s 25 m off the charging wedge at its level, both armies filling ~40 % of the frame; a crane over
+# the field; 13 s the clash framed from 60 m behind the shield wall; 30 s over the shoulders of the back rank
+B30_BEATS = ((0.0, (-24.0, 88.0, 3.2), (12.0, 52.0, 1.4)),
+             (6.5, (-44.0, 24.0, 19.0), (8.0, 22.0, 0.8)),
+             (13.0, (-12.0, -60.0, 8.0), (5.0, 2.0, 1.2)),
+             (30.0, (-3.4, -6.6, 2.0), (4.5, 3.0, 1.5)))
 WEDGE_TIP_Y = 0.9 + JOG_MPS * T_CLASH
 VILLAGE = ((-96.0, 184.0, 7, 5, 5), (-88.0, 188.0, 6, 5, 6), (-80.0, 183.0, 5, 6, 5), (-72.0, 189.0, 6, 4, 4),
            (-104.0, 190.0, 5, 5, 6), (-84.0, 194.0, 7, 5, 7))
@@ -433,20 +460,46 @@ def _ease(u):
     return u * u * (3 - 2 * u)
 
 
+def _catmull(beats, t: float, k: int) -> list[float]:
+    """A centripetal-free, time-parametrised Catmull-Rom through the beats' ``k``-th vector (k 1 = position, 2 = aim): it passes
+    every beat with a continuous velocity, so the crane flows into the push without a stop."""
+    ts = [b[0] for b in beats]
+    i = max(0, min(len(beats) - 2, max(j for j in range(len(ts)) if ts[j] <= t)))
+    p = [beats[max(i - 1, 0)][k], beats[i][k], beats[i + 1][k], beats[min(i + 2, len(beats) - 1)][k]]
+    t0, t1 = ts[i], ts[i + 1]
+    tm, tp = ts[max(i - 1, 0)], ts[min(i + 2, len(ts) - 1)]
+    u = (t - t0) / (t1 - t0)
+    m1 = [(p[2][d] - p[0][d]) / max(t1 - tm, 1e-6) * (t1 - t0) for d in range(3)]
+    m2 = [(p[3][d] - p[1][d]) / max(tp - t0, 1e-6) * (t1 - t0) for d in range(3)]
+    h00, h10, h01, h11 = 2 * u ** 3 - 3 * u ** 2 + 1, u ** 3 - 2 * u ** 2 + u, -2 * u ** 3 + 3 * u ** 2, u ** 3 - u ** 2
+    return [h00 * p[1][d] + h10 * m1[d] + h01 * p[2][d] + h11 * m2[d] for d in range(3)]
+
+
 def battle30_camera(frames: int = BATTLE30_FRAMES, every: int = 12) -> dict:
-    """The camera keys (Q7 crane rig, LINEAR between keys every ``every`` frames) along one eased Bezier: an establishing crane
-    from high and wide behind side A down to the back rank, flowing into a push towards the clash; no stop at the joint."""
+    """The camera keys (Q7 crane rig, LINEAR between keys every ``every`` frames) along one spline through the beats (B30_BEATS),
+    the shot's own clock scaled to ``frames``: establishing beside the charge, a crane over the field, the clash from behind the
+    wall, a push in to over the shoulders."""
     keys = []
+    span = BATTLE30_FRAMES / 24.0
     for f in sorted(set(range(0, frames, every)) | {frames - 1}):
-        s = _ease(f / max(frames - 1, 1))
-        keys.append({"frame": f, "location": [round(v, 4) for v in _bezier(B30_POS, s)],
-                     "look_at": [round(v, 4) for v in _bezier(B30_AIM, s)]})
+        t = min(span, f / max(frames - 1, 1) * span)
+        keys.append({"frame": f, "location": [round(v, 4) for v in _catmull(B30_BEATS, t, 1)],
+                     "look_at": [round(v, 4) for v in _catmull(B30_BEATS, t, 2)]})
     return {"location": keys[0]["location"], "look_at": keys[0]["look_at"], "lens_mm": B30_LENS, "focus_distance_m": 30.0,
-            "keys": keys, "interp": "LINEAR", "fstop": 11.0, "focus_at": [4.5, 3.0, 1.5], "rig_kind": "crane",
+            "keys": keys, "interp": "LINEAR", "fstop": 11.0, "focus_at": [5.0, 6.0, 1.5], "rig_kind": "crane",
             "move": "establishing_wide (crane) into push_in_reveal (WP-Q7 grammar)"}
 
 
+ARMY_A = (("ink_test_m", "costume.mco_male_ranger", "faction_a", "kettle"), ("ink_test_m2", "costume.mco_male_peasant", "faction_a", "kettle"),
+          ("ink_test_m", "costume.mco_male_peasant", "support_blue", "conical"))
+ARMY_B = (("ink_test_m2", "costume.mco_male_ranger", "faction_b", "conical"), ("ink_test_m", "costume.mco_male_peasant", "faction_b", "conical"),
+          ("ink_test_m2", "costume.mco_male_peasant", "answer_coral", "kettle"))
+
+
 def battle30_formations(count: int = 5000) -> tuple[Formation, ...]:
+    """Side A (blue: faction_a, support_blue) holds a shield wall; side B (vermilion: faction_b, answer_coral) charges in a wedge,
+    its main line walks up from 17 s, a reserve behind. Three costume x colour x helmet looks per side, placed so no side or front
+    neighbours match (Fable 23:52 UTC: two armies that read as two, helmets on everyone)."""
     if count < 8:
         raise CrowdError("a battle needs at least eight soldiers")
     wall, wedge, line = round(count * 0.3), round(count * 0.15), round(count * 0.37)
@@ -456,17 +509,16 @@ def battle30_formations(count: int = 5000) -> tuple[Formation, ...]:
     return (Formation("wall_a", "shield_wall", wall, max(1, round(wall / 6)), ranger, "faction_a", chars, (("Sword_Idle", 1.0),),
                       (0.0, 0.0), 0.0, jitter_m=0.12, yaw_jitter_deg=5.0, banner=1, banner_every=70,
                       after=(("Sword_Attack", 0.75), ("Sword_Idle", 0.25)), after_back=(("Sword_Idle", 1.0),), after_front_ranks=2,
-                      switch_at=T_CLASH - 0.3, switch_jitter_s=1.2),
+                      switch_at=T_CLASH - 0.3, switch_jitter_s=1.2, looks=ARMY_A),
             Formation("wedge_b", "wedge", wedge, 1, peasant, "faction_b", chars, (("Jog_Fwd_Loop", 1.0),), (6.0, WEDGE_TIP_Y), 180.0,
                       spacing_m=1.4, jitter_m=0.3, speed_mps=JOG_MPS, speed_range=(1.0, 1.0), banner=2, banner_every=45,
                       stop_m=WEDGE_TIP_Y - 0.9, after=(("Sword_Attack", 0.8), ("Sword_Idle", 0.2)), after_back=(("Sword_Idle", 1.0),),
-                      after_front_ranks=4, switch_at="arrive", switch_jitter_s=0.4),
+                      after_front_ranks=4, switch_at="arrive", switch_jitter_s=0.4, looks=ARMY_B),
             Formation("line_b", "phalanx", line, max(1, round(line / 8)), ranger, "faction_b", chars, (("Sword_Idle", 1.0),),
                       (0.0, 125.0), 180.0, banner=2, banner_every=90, speed_mps=WALK_MPS, start_s=17.0, rank_delay_s=0.05,
-                      after=(("Walk_Formal_Loop", 1.0),), switch_at="start"),
+                      after=(("Walk_Formal_Loop", 1.0),), switch_at="start", looks=ARMY_B),
             Formation("reserve_b", "line", reserve, max(1, round(reserve / 5)), ranger, "faction_b", chars,
-                      (("Walk_Formal_Loop", 1.0),), (14.0, 152.0), 180.0, spacing_m=1.6, speed_mps=WALK_MPS, banner=2,
-                      banner_every=80))
+                      (("Sword_Idle", 1.0),), (14.0, 134.0), 180.0, spacing_m=1.6, banner=2, banner_every=80, looks=ARMY_B))
 
 
 def _wedge_tip_y(t: float) -> float:
@@ -474,32 +526,100 @@ def _wedge_tip_y(t: float) -> float:
 
 
 def battle30_arrows(shot_id: str) -> dict:
-    """Volleys: side A's archers (behind the camera's start, off frame) shoot over the wall into the charging wedge three times;
-    side B's line answers twice onto the wall. Each arrow lands where the target block is at its landing time."""
+    """Volleys: side A's archers (behind the wall, off frame) shoot over it into the charging wedge three times; side B's line
+    answers twice onto the wall. A volley lands in three or four clusters (sigma 2.5 m) where the target block is at landing time,
+    so the arrows left in the ground mark where volleys fell."""
     rng = random.Random(seed_for(shot_id, "arrows"))
     volleys = ((2.0, 450, (-45, 45, -34, -26), "wedge", (2.6, 3.1)), (5.5, 450, (-45, 45, -34, -26), "wedge", (2.6, 3.1)),
                (9.0, 450, (-45, 45, -34, -26), "wedge", (2.4, 2.8)), (7.5, 400, (-50, 50, 118, 124), "wall", (3.0, 3.6)),
                (15.5, 400, (-50, 50, 118, 124), "wall", (3.0, 3.6)))
     rows = []
     for t, n, (x0, x1, y0, y1), target, (f0, f1) in volleys:
+        fl_mid = (f0 + f1) / 2
+        if target == "wedge":
+            tip = _wedge_tip_y(t + fl_mid)
+            centres = [(6.0 + rng.uniform(-14, 14), tip + rng.uniform(4, 26)) for _ in range(rng.choice((3, 4)))]
+        else:
+            centres = [(rng.uniform(-30, 40), rng.uniform(-6.0, -1.0)) for _ in range(rng.choice((3, 4)))]
         for _ in range(n):
             t0, fl = t + rng.uniform(0, 0.7), rng.uniform(f0, f1)
             p0 = (rng.uniform(x0, x1), rng.uniform(y0, y1), 1.6)
-            if target == "wedge":
-                tip = _wedge_tip_y(t0 + fl)
-                p1 = (6.0 + rng.uniform(-24, 24), tip + rng.uniform(2, 32), 0.0)
-            else:
-                p1 = (rng.uniform(-35, 45), rng.uniform(-5.5, 0.5), 0.0)
+            cx, cy = rng.choice(centres)
+            p1 = (cx + rng.gauss(0, 2.5), cy + rng.gauss(0, 2.5), 0.0)
             v = [(p1[i] - p0[i]) / fl for i in range(3)]
             v[2] += 0.5 * GRAVITY * fl
             rows.append([round(c, 4) for c in (*p0, *v, t0, fl)])
-    return {"rows": rows, "gravity": GRAVITY, "scale": 1.0}
+    return {"rows": rows, "gravity": GRAVITY, "scale": 1.0, "radius_m": 0.007}
 
 
 def ridge_z(x: float, y: float) -> float:
     (cx, cy, cz), (ax, ay, az) = RIDGE
     q = 1 - ((x - cx) / ax) ** 2 - ((y - cy) / ay) ** 2
     return cz + az * math.sqrt(q) if q > 0 else 0.0
+
+
+CASTLE = (58.0, 196.0, 34.0, 24.0)       # centre x, y, width, depth: on the ridge top behind the enemy's right
+
+
+def battle30_world(shot_id: str) -> list[dict]:
+    """The backdrop of the 30 s battle (Fable 23:52 UTC: not a bare plain): a castle on the ridge behind the enemy (four round
+    towers, curtain walls with merlons, a keep), pine tree lines along the ridge foot, on its top and behind side A's wall for the
+    opening shot, and rolling mounds on the flanks clear of the armies. Primitives of render_shot's ``add`` path in the
+    ``style_sheets`` establishing town's vocabulary (cylinder towers, cone roofs, cube walls), angular and few-sided."""
+    rng = random.Random(seed_for(shot_id, "world"))
+    objs = []
+    cx, cy, w, d = CASTLE
+    base = lambda x, y: ridge_z(x, y) - 1.5   # noqa: E731  (sunk into the slope)
+    corners = [(cx - w / 2, cy - d / 2), (cx + w / 2, cy - d / 2), (cx + w / 2, cy + d / 2), (cx - w / 2, cy + d / 2)]
+    for i, (x, y) in enumerate(corners):
+        z = base(x, y)
+        objs += [{"name": f"castle_tower{i}", "add": "cylinder", "params": {"radius": 3.2, "depth": 15, "vertices": 10},
+                  "location": [x, y, z + 7.5], "material": "stone"},
+                 {"name": f"castle_tower{i}_roof", "add": "cone", "params": {"radius1": 3.9, "depth": 5.5, "vertices": 10},
+                  "location": [x, y, z + 15 + 2.75], "material": "roof"}]
+    for i, ((x0, y0), (x1, y1)) in enumerate(zip(corners, corners[1:] + corners[:1])):
+        mx, my, length = (x0 + x1) / 2, (y0 + y1) / 2, math.hypot(x1 - x0, y1 - y0)
+        along_x = abs(x1 - x0) > abs(y1 - y0)
+        z = base(mx, my)
+        objs.append({"name": f"castle_wall{i}", "add": "cube", "params": {"size": 1}, "location": [mx, my, z + 4.5],
+                     "scale": [length, 1.6, 9] if along_x else [1.6, length, 9], "material": "stone"})
+        for k in range(int(length // 2.4)):     # merlons every 2.4 m
+            u = (k + 0.5) / int(length // 2.4)
+            objs.append({"name": f"castle_wall{i}_m{k}", "add": "cube", "params": {"size": 1},
+                         "location": [x0 + (x1 - x0) * u, y0 + (y1 - y0) * u, z + 9.6], "scale": [1.1, 1.7, 1.2], "material": "stone"})
+    z = base(cx, cy)
+    objs += [{"name": "castle_keep", "add": "cube", "params": {"size": 1}, "location": [cx + 2, cy + 3, z + 10], "scale": [12, 11, 20],
+              "material": "stone"},
+             {"name": "castle_keep_roof", "add": "cone", "params": {"radius1": 9.0, "depth": 7, "vertices": 4},
+              "location": [cx + 2, cy + 3, z + 23.5], "rotation_deg": [0, 0, 45], "scale": [1.0, 0.92, 1.0], "material": "roof"}]
+
+    def pine(i, x, y, z, h):
+        r = h * rng.uniform(0.26, 0.34)
+        return [{"name": f"pine{i}", "add": "cone", "params": {"radius1": r, "depth": h * 0.82, "vertices": 7},
+                 "location": [x, y, z + h * 0.18 + h * 0.41], "rotation_deg": [0, 0, rng.uniform(0, 360)], "material": "forest"},
+                {"name": f"pine{i}_trunk", "add": "cylinder", "params": {"radius": h * 0.035, "depth": h * 0.22, "vertices": 6},
+                 "location": [x, y, z + h * 0.11], "material": "roof"}]
+
+    trees = []
+    for x in range(-230, 231, 7):              # along the ridge foot behind the enemy (its reserve stands at y 134..141)
+        y = rng.uniform(150.0, 166.0)
+        if abs(x - cx) > w / 2 + 6 or y < cy - d / 2 - 8:
+            trees.append((x + rng.uniform(-2.5, 2.5), y, rng.uniform(9.0, 15.0)))
+    for x in range(-220, 221, 11):             # a second, thinner line on the ridge top, broken by the village and the castle
+        y = rng.uniform(205.0, 222.0)
+        if not (-110 < x < -64) and abs(x - cx) > w / 2 + 4:
+            trees.append((x + rng.uniform(-4, 4), y, rng.uniform(10.0, 16.0)))
+    for x in range(-200, 201, 6):              # behind side A's wall, seen in the opening shot that looks back over the wedge
+        y = rng.uniform(-104.0, -82.0)
+        trees.append((x + rng.uniform(-2, 2), y, rng.uniform(8.0, 14.0)))
+    for i, (x, y, h) in enumerate(trees):
+        objs += pine(i, x, y, max(ridge_z(x, y), 0.0) - 0.3, h)
+    for i, (x, y, r, h) in enumerate(((-200, -40, 46, 7), (210, -30, 52, 9), (-215, 60, 40, 6), (230, 80, 44, 8),
+                                      (-120, -130, 60, 10), (90, -140, 70, 12))):
+        objs.append({"name": f"mound{i}", "add": "uv_sphere", "params": {"radius": 1, "segments": 32, "ring_count": 16},
+                     "location": [x, y, -r * 0.3 + h - r * 0.3], "scale": [r, r * 0.8, r * 0.6], "material": "field_grass",
+                     "smooth": True})
+    return objs
 
 
 def battle30_smoke(shot_id: str) -> dict:
@@ -572,13 +692,15 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
             props = {"banners": [dict(b) for b in BANNERS], "dust": battle30_dust(shot_id, mean), "arrows": battle30_arrows(shot_id),
                      "smoke": battle30_smoke(shot_id)}
             end = {"location": camera["keys"][-1]["location"], "lens_mm": camera["lens_mm"]}   # heroes: the nearest at the end of the push
-            block = plan(battle30_formations(count), end, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px, props=props)
+            # no T0 heroes in the 30 s battle: every near soldier is a baked full mesh, so all of them wear their look's helmet
+            block = plan(battle30_formations(count), end, shot_id=shot_id, hero_max=0, far_px=far_px, props=props)
             block["atlas"]["view_frame"] = round(frames * 0.75)      # the billboards' elevation: the low camera of the last quarter
             for i, (hx, hy, w, d, h) in enumerate(VILLAGE):
                 for o in SS._house(f"village{i}", hx, hy, w, d, h):
                     loc = list(o["location"])
                     loc[2] += ridge_z(hx, hy)
                     objs.append(dict(o, location=loc))
+            objs += battle30_world(shot_id)
         else:
             props = {"banners": [dict(b) for b in BANNERS], "dust": battle_dust(shot_id, mean)}
             block = plan(battle_formations(count), camera, shot_id=shot_id, hero_max=PROOF_HEROES, far_px=far_px, props=props)
@@ -598,9 +720,15 @@ def scene(paths: dict[str, Path], cpaths: dict[str, Path], *, count: int = 5000,
     used = {o.get("material") for o in objs} | {m for b in block["props"]["banners"] for m in (b["material"], b["pole_material"])}
     if block["props"].get("arrows"):
         used.add("night")
+    if any(t.get("helmet") for t in block["templates"]):
+        used.add("cannon")      # helmets are the cannons' iron
     pool = {k: v for sc_ in SS.scenes(paths, cast="mannequin").values() for k, v in sc_["materials"].items()}   # the village's brick, roof
     mats = {k: v for k, v in pool.items() if k in used}
     mats.update(extra)
+    if any(b.get("emblem") for b in block["props"]["banners"]):
+        mats["emblem"] = {"base": "kit_card"}         # the banners' gold emblem
+    if any(o.get("material") == "forest" for o in objs):
+        mats["forest"] = {"base": WORLD_COLOURS["scene_forest"]}
 
     def cast(name, char, costume, tint, xyz, yaw, action, offset):
         obj, tm = C.scene_object(name, char, costume, cpaths, location=xyz, yaw_deg=yaw + 180.0, action=action,
