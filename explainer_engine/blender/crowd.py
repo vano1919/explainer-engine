@@ -441,7 +441,7 @@ T_CLASH = 13.0            # the wedge's point meets the shield wall (seconds)
 B30_LENS = 28
 # camera beats (Fable 23:52 UTC): 0 s 25 m off the charging wedge at its level, both armies filling ~40 % of the frame; a crane over
 # the field; 13 s the clash framed from 60 m behind the shield wall; 30 s over the shoulders of the back rank
-B30_BEATS = ((0.0, (-14.0, 78.0, 1.9), (6.0, 64.0, 1.5)),
+B30_BEATS = ((0.0, (-14.0, 80.0, 2.8), (8.0, 82.0, 0.8)),
              (6.5, (-44.0, 24.0, 19.0), (8.0, 22.0, 0.8)),
              (13.0, (-12.0, -60.0, 8.0), (5.0, 2.0, 1.2)),
              (30.0, (-3.4, -6.6, 2.0), (4.5, 3.0, 1.5)))
