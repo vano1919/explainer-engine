@@ -8,6 +8,24 @@
   },
   "cards": [
     {
+      "name": "A40",
+      "cloud": "SECURE",
+      "price_h": 0.59,
+      "gpu_speed": 0.28
+    },
+    {
+      "name": "RTX A6000",
+      "cloud": "SECURE",
+      "price_h": 0.59,
+      "gpu_speed": 0.28
+    },
+    {
+      "name": "L40S",
+      "cloud": "SECURE",
+      "price_h": 1.09,
+      "gpu_speed": 0.5
+    },
+    {
       "name": "A100 80GB",
       "cloud": "COMMUNITY",
       "price_h": 1.39,

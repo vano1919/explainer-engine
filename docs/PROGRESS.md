@@ -4632,3 +4632,14 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   toward 60 only; BAD_HOST pods, made-then-failed pods and script failures keep the old limit. Without both flags nothing changes.
 - Tests: `test_cloud_economy.py` (+2): flag on/off, reason missing, 400 vs BAD_HOST, flags known to create. Docs: RP-10 row in CLOUD_RUNBOOK,
   D-118 in the decision log. Cost $0.
+
+## 2026-11-06 19:45 UTC — p15q: 48 GB cards added to the Qwen-only schedule (the creator 19:30 UTC: "only A100?")
+- Finding: the asset pod 0t2re35vf6f3sq was NOT a 48 GB card. Its record says RTX PRO 6000 Blackwell Workstation (96 GB, $1.69/h); the
+  33-41 s per 1280x720 picture (HF route_test_2026-11/assets/manifest.jsonl, B 34 s, C edits 39 s, D 35 s) are Blackwell numbers. No 48 GB
+  card has ever run this Qwen pipeline: its speed and its VRAM fit at 1280x720 with 2-3 reference images (`model_cpu_offload`) are unknown.
+  The restyle is drawn at 1280x720 too (first frames are scaled to 1920x1088 on the CPU afterwards), so no pixel scaling applies.
+- `CARDS_QWEN` += A40 SECURE $0.59/h, RTX A6000 SECURE $0.59/h (gpu_speed 0.28), L40S SECURE $1.09/h (0.5): ESTIMATED from `runpod.SPEED`
+  ratios, never measured. Worst money <= $3.4 for every card (A40 $1.98, L40S $2.31); the worst pod time of the A40/A6000 (201 min) and
+  L40S (127 min) is over the 2 h cap, so the guard's 2 h bounds them and a stop leaves the saved pictures (step-by-step uploads). Blackwell stays out.
+- `p15_qwen.run` ends the stage after `MAX_FAIL_STREAK` = 3 pictures failing in a row (a card that cannot hold the model would only bill).
+- Tests: schedule card list, no Blackwell/H100, per-card worst money; the failure-streak stop. Cost $0.

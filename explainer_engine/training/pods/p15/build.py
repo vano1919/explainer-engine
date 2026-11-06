@@ -134,7 +134,13 @@ QWEN_LOAD_S, QWEN_EDIT_S = 61, 36   # pod 1, H100 NVL: 61 s load, 33.5-38.5 s pe
 DISK_QWEN_GB = 110   # Qwen-Image-2.1 33.1 GB + pip ~15 GB + outputs < 2 GB = ~50 GB, the same ~60 GB margin that DISK_GB has over its ~137 GB
 LIMITS_QWEN = {"max_usd": 3.4, "max_hours": 2.0, "max_idle_gpu_share": 0.5}   # Fable 18:00 UTC: 24 pictures, usual 3x maxes, A100 only
 # the cards that could place at 16:33 UTC plus the COMMUNITY A100 the first plan priced (it had no stock then)
-CARDS_QWEN = [{"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6},
+# gpu_speed is relative to the H100 NVL (1.0). A100 0.6: the first plan. The 48 GB cards (SECURE rows of `runpod cards --vram 48`,
+# 2026-11-06 19:40 UTC) are ESTIMATED from runpod.SPEED ratios (A40/A6000 0.5, L40S 0.9, H100 NVL 1.8), never measured: the asset pod's
+# 33-41 s per 1280x720 picture came from an RTX PRO 6000 Blackwell (96 GB, $1.69/h), not from a 48 GB card.
+CARDS_QWEN = [{"name": "A40", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.28},
+              {"name": "RTX A6000", "cloud": "SECURE", "price_h": 0.59, "gpu_speed": 0.28},
+              {"name": "L40S", "cloud": "SECURE", "price_h": 1.09, "gpu_speed": 0.5},
+              {"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6},
               {"name": "A100 80GB", "cloud": "SECURE", "price_h": 1.79, "gpu_speed": 0.6}]   # no H100: 15.5 min of work fails RP-01
 
 

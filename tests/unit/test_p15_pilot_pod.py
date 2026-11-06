@@ -214,15 +214,21 @@ def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_two_a100
     sch = RP.load(DIR / "p15q_schedule.json")
     assert {s["id"] for s in sch["stages"]} == {*p15_pod.QWEN_LANES["net"], *p15_pod.QWEN_LANES["gpu"]}
     assert B.schedule_qwen() == json.loads((DIR / "p15q_schedule.json").read_text(encoding="utf-8"))   # generated, never hand-edited
-    assert sch["limits"]["max_usd"] == 3.4 and [c["cloud"] for c in sch["cards"]] == ["COMMUNITY", "SECURE"]
-    assert all(c["name"] == "A100 80GB" for c in sch["cards"])   # no H100: its 15.4 min of work fails RP-01
+    assert sch["limits"]["max_usd"] == 3.4 and [(c["name"], c["cloud"]) for c in sch["cards"]] == [
+        ("A40", "SECURE"), ("RTX A6000", "SECURE"), ("L40S", "SECURE"), ("A100 80GB", "COMMUNITY"), ("A100 80GB", "SECURE")]
+    assert not any("Blackwell" in c["name"] for c in sch["cards"])   # torch on sm_120 is not verified for this image
+    assert not any("H100" in c["name"] for c in sch["cards"])   # no H100: its 15.4 min of work fails RP-01
     r = next(s for s in sch["stages"] if s["id"] == "qwen_restyle")["on"]["gpu"]
     assert r["expected_min"] == 15.4 and r["max_min"] == 46.2   # (61 s + 24 x 36 s), the usual 3x
     for c in sch["cards"]:
         one = copy.deepcopy(sch)
         one["cards"] = [c]
         best = RP.plan(one)["best"]
-        assert best["fits"] and best["worst"]["usd"] <= 3.4 and best["worst"]["pod_min"] <= 120
+        assert best["worst"]["usd"] <= 3.4   # every card, in its worst case
+        if c["name"] == "A100 80GB":
+            assert best["fits"] and best["worst"]["pod_min"] <= 120
+        else:   # estimated speeds: the 2 h cap (guard) bounds the A40/A6000 (worst 3.4 h of work) and the L40S (127 min); money stays under 3.4
+            assert c["name"] in ("A40", "RTX A6000", "L40S")
         assert batching.rp01(round(best["expected"]["gpu_busy_min"]), 8) == []   # the A100's work, 26 min, is over 3 x the 8 min setup
     h100 = copy.deepcopy(sch)
     h100["cards"] = [{"name": "H100 NVL", "cloud": "COMMUNITY", "price_h": 2.59, "gpu_speed": 1.0}]
@@ -284,3 +290,22 @@ def test_the_qwen_only_script_has_no_ltx_and_pins_the_same_bundle_and_the_launch
     with tarfile.open(tmp_path / "a.tgz") as t:
         names = t.getnames()
     assert "explainer_engine/training/pods/p15/p15q_schedule.json" in names and not any(n.endswith(("p15.sh", "p15q.sh")) for n in names)
+
+
+def test_the_qwen_stage_ends_after_three_pictures_fail_in_a_row_so_a_card_that_cannot_hold_the_model_only_bills_a_moment(tmp_path, monkeypatch):
+    import sys
+    import types
+    fake = types.SimpleNamespace(load_pipeline=lambda: (object(), object()))
+    monkeypatch.setitem(sys.modules, "xworld_v1_test", fake)
+    cfg = {"qwen": {"gpu_mode": "model_cpu_offload"}}
+    monkeypatch.setattr(p15_qwen, "load_cfg", lambda: cfg)
+    monkeypatch.setattr(p15_qwen.Q, "style_lora", lambda t, pipe, tr, c, say: pipe)
+    monkeypatch.setattr(p15_qwen, "jobs", lambda c, v=False: [{"name": f"j{i}", "still": {}, "refs": [], "clip": f"j{i}"} for i in range(24)])
+    calls = []
+
+    def boom(c, still, work):
+        calls.append(1)
+        raise RuntimeError("CUDA out of memory")
+    monkeypatch.setattr(p15_qwen, "fetch_still", boom)
+    assert p15_qwen.run(tmp_path, tmp_path, tmp_path, True) == 1
+    assert len(calls) == p15_qwen.MAX_FAIL_STREAK == 3
