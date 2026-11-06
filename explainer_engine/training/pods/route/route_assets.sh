@@ -34,7 +34,7 @@ for f in ('route_assets.py', 'route_assets.json', 'xworld_v1_test.py'):
     hf_hub_download('vano1919/tmr-artifacts', 'code/route_assets/' + f, repo_type='dataset', local_dir='$JOB/dl')
 " || { ev job_files_failed; exit 1; }
 cp "$JOB/dl/code/route_assets/route_assets.py" "$JOB/dl/code/route_assets/route_assets.json" "$JOB/dl/code/route_assets/xworld_v1_test.py" "$JOB/"
-printf '%s  %s\n' 7bbd3bb8ad4665413f90e0938db2f9c97d341e8e5656a0e0d5101417cb152321 "$JOB/route_assets.py" cb9cdd78709a8f41a9f84a93dd88104bc32b0b0084107881daa8145a910716bd "$JOB/route_assets.json" 6bca3fe7df907d0aaf448b61e1f3f72b9a190ea49b8630389d6499ddee84f469 "$JOB/xworld_v1_test.py" > "$JOB/sha.txt"
+printf '%s  %s\n' b04900bc037da1c24cfb9ab773b612408109ce49ffeccf2438b9ee356d093822 "$JOB/route_assets.py" cb9cdd78709a8f41a9f84a93dd88104bc32b0b0084107881daa8145a910716bd "$JOB/route_assets.json" 6bca3fe7df907d0aaf448b61e1f3f72b9a190ea49b8630389d6499ddee84f469 "$JOB/xworld_v1_test.py" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
 ee_needs_check   # CR-18
 cd "$JOB" && python3 route_assets.py

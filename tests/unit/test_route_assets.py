@@ -90,3 +90,17 @@ def test_the_pod_script_pins_its_job_files():
     assert pinned["xworld_v1_test.py"] == sha(D / "xworld_v1_test.py")        # the working branch's copy, the one that drew round 3b
     assert "heartbeat: datasets/vano1919/tmr-artifacts:route_test_2026-11/assets/beat.txt" in sh
     assert "XW_GPU_MODE=model_cpu_offload" in sh
+
+
+def test_three_failed_jobs_in_a_row_abort_the_run(tmp_path):
+    import pytest
+    R = RA.Run(tmp_path)
+    j = RA.jobs()[0]
+
+    class Boom:
+        def __call__(self, key):
+            raise RuntimeError("cuda out of memory")
+    RA.make(R, Boom(), None, j)
+    RA.make(R, Boom(), None, j)
+    with pytest.raises(RA.Abort):
+        RA.make(R, Boom(), None, j)

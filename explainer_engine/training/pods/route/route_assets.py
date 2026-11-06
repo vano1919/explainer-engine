@@ -126,8 +126,16 @@ def sha256_file(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+MAX_CONSECUTIVE_FAILS = 3  # a broken pipeline (OOM, CUDA, a bad reference) must not walk through every job and bill the whole time
+
+
+class Abort(Exception):
+    pass
+
+
 class Run:
     def __init__(self, out):
+        self.fails = 0
         self.out = Path(out)
         self.out.mkdir(parents=True, exist_ok=True)
         self.t0 = time.time()
@@ -196,7 +204,11 @@ def make(R, loras, pipe, j):
         import traceback
         R.say("FAIL", j["name"], repr(e)[:300], traceback.format_exc()[-500:].replace("\n", " | "))
         R.event("job_failed", job=j["name"], err=repr(e)[:200])
+        R.fails += 1
+        if R.fails >= MAX_CONSECUTIVE_FAILS:
+            raise Abort(f"{R.fails} failed jobs in a row, last {j['name']}")
         return True
+    R.fails = 0
     p = R.path(j)
     p.parent.mkdir(parents=True, exist_ok=True)
     im.save(p)
@@ -285,6 +297,19 @@ def pod_loras(t, pipe, tr, say):
 
 
 def main():
+    try:
+        return run()
+    except Abort as e:
+        out = Path(os.environ.get("EE_OUT", "/workspace/out"))
+        with open(out / "t.jsonl", "a") as f:
+            f.write(json.dumps({"t": time.strftime("%FT%TZ", time.gmtime()), "ev": "abort_consecutive_failures", "why": str(e)}) + "\n")
+        n = len(list(out.glob("*/*.png")))
+        (out / "phase1_done.txt").write_text(time.strftime("%FT%TZ", time.gmtime()) + f" pictures={n} ABORTED {e}\n")
+        print("ABORT", e, flush=True)
+        return 2
+
+
+def run():
     sys.path.insert(0, str(HERE))
     import xworld_v1_test as t
     R = Run(os.environ.get("EE_OUT", "/workspace/out"))
@@ -324,6 +349,7 @@ def main():
     R.progress(f"done, {R.done} pictures")
     R.event("done", pictures=R.done)
     R.say("ROUTE ASSETS DONE")
+    return 0
 
 
 if __name__ == "__main__":
@@ -332,4 +358,4 @@ if __name__ == "__main__":
             print(j["group"], j["name"], j["size"], j["seed"], j["cfg"], len(j["prompt"].split()), "words |", j["prompt"][:100])
         print("prompt problems:", prompt_problems() or "none")
     else:
-        main()
+        sys.exit(main())
