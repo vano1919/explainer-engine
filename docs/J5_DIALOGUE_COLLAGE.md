@@ -190,3 +190,148 @@ python -m explainer_engine.blender.j5_background render --collage OUT --inputs I
 - The ambience is synthesised and unmixed against a narrator; level and mix belong to the audio spine.
 - A one-pixel hairline in the painted A1 (row about 375, to the right of the middle) survives in the S2/S4 plates; it is in the source picture.
 - Not measured: how this reads to the creator against a Blender 3D set, and whether the flat plates need parallax from a real depth map.
+
+## 7d. Step 4c: straight cuts, young scout voice, one level (2026-11-06)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+- **Straight cuts (creator, 19:14 UTC).** The dip to black "does not suit it"; shots now cut directly, as in a film. `DIP = "cut"`: no
+  dissolve tail frames are rendered and `join` concatenates the segments. `fadeblack`/`fade` stay selectable with `--transition`.
+  The earlier "slower dip next time" note is void.
+- **Voice (19:13).** The scout is a boy, so his two lines were re-made with a young male voice (Ben Young Man, 2 takes, 71 credits;
+  ElevenLabs ledger total 226 of the 5000 cap). Rhubarb cues were regenerated for them.
+- **Sound jumps.** Lines were peak-normalised, so a quiet take sat 14 dB under the commander. Every line is now scaled to one speech RMS
+  with a soft limiter (measured: -18.8 to -21.5 dBFS RMS across the three lines), shared room reverb, 20 ms edge fades, 6 dB duck with 0.4 s ramps.
+- **Head jumps (19:12).** `F.drive` envelopes (0.35 s in, 0.5 s out) and a 150 ms low-passed mouth opening replace on/off toggles;
+  `test_j5_face` has a no-jump test.
+
+## 7e. Step 4d: the jaw no longer slides (creator, 19:28 UTC)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+Cause: the chin zone was displaced by the full jaw drop, so a bearded chin slid down like a mask. Drawn 2D characters do not move the
+chin that way: the mouth shape changes in place and the head nods a little. `FEATURES[...]["move"]` now scales the chin displacement
+(commander 0.12, scout 0.4); the painted mouth opening keeps its full size. Techniques searched: GitHub search is limited to this session's
+repositories, so the rule is taken from 2D viseme practice (Rhubarb's own mouth-shape set: swap shapes, do not warp the face).
+Open: a true shape swap needs drawn mouth variants per sheet (paid Qwen edit, the creator's call); the whole-head nod is the remaining motion.
+
+## 7f. Variant sheets instead of a picture per mouth (creator, 19:41 UTC, D-119)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+One Qwen picture per hero holds the 8 variants of the moving part (A-F, two blinks) in a 4x2 grid of 512x512 cells, 32 px gutters and margins,
+2208x1120 (`j5_variant_sheet.py`, the layout constant both the pod job and the cutter import). `build_input_sheet` makes the picture Qwen
+is asked to vary (the neutral head, upscaled, in all cells); `cut_cells` cuts the answer; `align` finds translation and scale on the stable
+upper face (template search over scales 0.94-1.06 and +-24 px, sub-pixel, no warp); `check_cell` reports registration error, score and an identity
+score (gradient-orientation descriptor outside the moving parts, a proxy, not a face-embedding model); `variant_sheets` puts each cell's mouth or
+eyes into the hero sheet through the feathered mask (pixels outside the mask stay the sheet's own); `blend_sheet` mixes them with the cue
+weights (`j5_face.cue_weights`, 55 ms). Tested on a synthetic sheet only: no real Qwen sheet exists yet, so the real registration error and identity
+numbers are still to be measured. Wiring `blend_sheet` into the card renderer waits for the real sheets.
+
+Two layouts are comparable by one constant (2026-11-06 19:46 UTC): `LAYOUTS` holds "A" (4x2 cells of 512 px on 2208x1120, about 2.5 MP) and "B" (4x2 cells of
+304 px on 1280x720), `LAYOUT` picks the default, every function takes `layout=`, and `cut_cells` finds the layout from the image size, so the cutter does not
+depend on which one the pod drew. The first mouth pod draws one H1 sheet in each at the same seed; the winner is chosen by the per-cell identity score and the
+registration error, then H2 is drawn in the winner.
+
+## 7g. Cutting a multi-angle dialogue (creator, 19:52-19:57 UTC)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+Finding: step 4e cut S2 -> S4, the same commander from the same side, only closer: a jump, not a change of angle. The repository already has the rule
+(BP-30: the shot size changes by a full step, never the same framing twice; a direction change over 90 degrees needs a neutral picture between; BP-103: two cuts of nearly the same
+size and angle read as a jump, the 30-degree rule; ED-14 / BP-117: J and L cuts), but `dialogue-scenes` and the J5 shot table did not apply it to a hero's angle. The Blender and LTX rule
+files hold no dialogue-coverage rule. Practice found on the web (a vendor glossary and one practitioner article, so a rule of thumb, not a study): shot / reverse shot with matching
+eyelines, the camera stays on one side of the axis (180-degree rule), at least 30 degrees or a full size step when the same subject is cut to again, cut on action, and for generated video
+"log each character's eyeline direction per shot" (HackerNoon, screen-direction workflow); a January 2026 paper (arXiv 2601.17737) plans shots from dialogue and carries identity with first and last frames.
+
+The standard for J5 dialogue, as code in `explainer_engine/blender/j5_cuts.py` (`lint`, tested):
+1. A cut changes the SUBJECT (the other hero, motivated by the speaker change or a reaction) or the ANGLE of the same hero by 30 degrees or more (another sheet: front, 3/4 left, 3/4 right, back) and also a full size step.
+2. A size change on the same hero and the same sheet is a camera move INSIDE one shot (a slow push-in), never a cut.
+3. The two heroes keep their sides of the frame in every shot (180-degree rule); eyelines point at each other.
+4. Sound leads or trails the picture at the cut (J and L cuts); the line starts after the cut, not on it.
+Available angles today: the commander has front, back, 3/4 left and 3/4 right sheets; the scout has front, back and 3/4 right (no 3/4 left). Step 4f cuts S1 (two-shot, scout speaking) -> S2 (commander, one 6 s shot with a push-in) -> S3 (scout's answer from the reverse side) and passes the lint.
+
+## 7h. Final dialogue rules, from the first photo frame to the last cut (creator, 20:00 UTC; BP-176, BP-177)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+Sources re-checked on 2026-11-06 20:00-20:15 UTC, three types: article (Wikipedia, 30-degree rule, quoting Corrigan and White: "to emphasize the motivation for the cut by giving a substantially
+different view of the action"; Wikipedia, Camera coverage: master shot first, all coverage obeys the 180-degree rule, call-and-answer shots keep the same lens and distance); books (Mascelli, *The Five C's of
+Cinematography*: screen direction and eyeline; Murch, *In the Blink of an Eye*: the rule of six, cut by giving up the lowest first; both through secondary summaries, not the books themselves); a video
+(*Most AI Filmmakers Ignore This Rule*, transcript read through vidIQ, 5 credits: establish the two-shot first, derive every coverage picture from it, keep each hero on one side looking one way, move the camera
+at least 30 degrees, log the eyeline per shot before generating the performance). Not verified: a UChicago study on dialogue cut points (the PDF could not be read). Cost: 5 vidIQ credits.
+
+**At the plan (before any picture, `j5_cuts.plan_check`, BP-177):** every shot names subject, sheet view, size, sides of the frame, each hero's eyeline and, after the first, the motivation of the cut; the first
+picture is the WIDE two-shot of both heroes; the hero on the left looks right and the other looks left; no later shot changes sides or eyelines.
+**At picture generation:** the master two-shot is generated first; every over-the-shoulder, single or reaction picture is derived from it (the master as the reference image), keeps the sides and eyelines, and shows
+only what its clip needs (standing order 14). A picture needs a sheet whose view fits the angle (the scout has no 3/4-left sheet: a shot needing it is replanned or the sheet is drawn first).
+**At the cut (`j5_cuts.lint`, BP-176):** the subject changes (speaker change, reaction) or the angle on the same hero changes by 30 degrees or more together with a full size step; the same hero closer from the same side is a push-in inside one shot.
+**At the sound:** the line starts after the cut or the sound leads or trails it (J and L cuts, ED-14, BP-117).
+
+## 7i. How well the rules are verified, and cheap cuts that reuse pictures (creator, 20:13 UTC; BP-178)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+**What is verified, what is not (2026-11-06).** Read in full: the 30-degree rule page and the camera coverage page (Wikipedia), the transcript of the AI-dialogue video, Murch's own words
+in an interview ("Emotion, Story and Rhythm are the top three"; "let go from the bottom of the list up"; "2D is just the 180 degree rule"; among the top three sacrifice rhythm first), the limited-animation page (Wikipedia).
+Seen only through search summaries: Mascelli's book (screen direction, eyeline, continuity cutting) and the book text of Murch. Not verified: the UChicago dialogue-cut study (unreadable PDF), the claims of a dialogue-editing guide that reads auto-generated, every retention number for
+punch-ins (creator tutorials, anecdotal), and any animation-studio source (only an anecdotal comment that breaking the 180-degree rule is taboo in animated features). So BP-176 and BP-177 have article + book + video; BP-178 is a hypothesis (REVIEW only).
+Nuance found: the camera coverage page lists the cut-in (a tighter shot from the master's angle) as ordinary coverage and the 30-degree page names the axial cut as an established classical exception (20 mm rule), so BP-176 is stricter than the books on purpose:
+the creator's complaint stands and a same-angle cut is allowed only as a declared axial cut-in of two size steps (wide to close).
+
+**Cheap cuts and reuse (all checked by `j5_cuts.lint` / `plan_check`):**
+| Technique | What it is | Rule |
+|---|---|---|
+| Push-in inside one shot | the camera moves closer on the same hero, no cut | free, preferred for a speaking hero (BP-176) |
+| Punch-in | cut to the same subject, same angle, frame scaled 1.06-1.15, declared `cut: punch_in`, one per 3 s at most | a deliberate jump (BP-178, REVIEW); hides a cut, adds rhythm; use rarely |
+| Axial cut-in | same angle, wide to close | declared `cut: axial`, two size steps (BP-176) |
+| Reuse of a picture | a later shot shows an earlier picture with another crop, zoom or slight angle | `reuse_of: <earlier shot>`, same subject and sheet view (BP-178; the creator, 2026-10-25: a new picture only when the shot needs one) |
+| Hold / reaction | the picture stays while the other hero speaks; cut to the listener on the line's end | free; no new picture |
+| Mouth-only movement | the body stays one drawing, only the mouth and blink change | the variant sheet (D-119) |
+| Camera move over a still | a pan or push on one drawing | the J5 cards already do this |
+Limits: a punch-in on a bad crop loses sharpness (scale stays modest); reuse that needs a cut-out or compositing is only done when it works simply (the creator, 2026-11-01).
+
+## 7j. A minute of several scenes: non-dialogue editing, transitions and the still lane (creator, 20:17 UTC; BP-179, BP-180, BP-181)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+**What was read (2026-11-06, Wikipedia, full pages):** Film editing, Cut (filmmaking), Montage, Match cut, Continuity editing, Dissolve, Fade, Jump cut, Cross-cutting, Ken Burns effect, Multiplane camera, Twelve basic principles of animation,
+Shot reverse shot, Kuleshov effect, Establishing shot, Cutaway, Split edit, Shot (filmmaking), Rule of thirds, Headroom, Animatic, Cutout animation, Parallax scrolling, Limited animation, Camera coverage, 30-degree rule. The Wipe and Pan pages and the
+Soviet-montage pages gave nothing usable. This is about 25 pages, not "all of Wikipedia"; one source type (article), so BP-179..181 are hypotheses: REVIEW lines, never FAIL, until a book or a video backs them.
+
+| Need | Rule (registry id) | What the lint checks (`j5_montage.lint_montage`) |
+|---|---|---|
+| Transition between photos | the straight cut is the default; a dissolve = another place or time (0.5-2.0 s); a fade to black only closes the film or a chapter; no wipes; a match cut needs a shared tag; a cutaway shows something related (BP-179) | dissolve inside one scene, dissolve length, fade spacing, match tag |
+| New scene | opens with an establishing wide shot, then closer coverage (BP-180) | first shot of a scene is wide or declared establishing |
+| Order and rhythm | cross-cut two lines of action with a reason; screen direction of a travelling subject stays; no undeclared jump cut; stills at most 5 s, video by BP-108 (BP-180) | direction flips, `j5_cuts.lint` per scene, durations, runtime minus dissolve overlaps |
+| 30 % still lane keeping the animated look | a still always moves: Ken Burns push, pull or pan of scale 1.04-1.25, or parallax of 3 or more depth layers; limited animation moves only what must (BP-181) | still without motion, scale range, layer count |
+| Style preservation | one plate brightness inside a scene (ratio at most 1.25); the subject on a third with headroom (BP-181) | luma ratio between neighbouring shots; thirds and headroom are a craft check at the picture, not yet code |
+
+**The minute (plan, nothing rendered or billed):** `explainer_engine/blender/j5_minute.py`, five scenes, 14 shots, 60.0 s, three heroes (commander H1, scout H2, elder H3) plus the crowds of the existing D pictures.
+1. Title map (helper, 3 s) then the rain march: D4 wide with a push-in, a close-up of the drummer boy cut from the same picture (declared axial cut-in, reuse), H1 from behind leading the column over the A3 field.
+2. Dissolve (1 s) to the tent: A1 wide with parallax, then the dialogue as cut in 4f (two-shot, commander, scout), the elder H3 as a cutaway, and the D6 face close-up as the decision.
+3. Straight cut to the ford (D1, parallax) and the courtyard duel (D2): the battle that follows the decision.
+4. Dissolve (1.5 s) to D5 at dawn (pull-back), a fade to black (1 s) under a title card.
+The plan passes `plan_check` for the dialogue slice and has no cut without a reason. **Open, reported by the lint:** the lane shares are 36 % video / 53 % still / 11 % helper against 60 / 30 / 10 +-5 (BP-109), because the J5 cards animate only the heroes; the crowd
+pictures are stills with camera motion. Options for the creator: accept for a test minute, or animate the D pictures' crowds with Blender cut-out layers (more work and a new check), or shorten the stills.
+**Steps to make it (all free, on the PC or CI):** (1) fetch the 11 pictures from HF; (2) per picture a plate or layer split for the parallax shots (depth map, 3 layers) and the Ken Burns paths; (3) the dialogue shots again from 4f with S2 cut to 5 s (BP-108); (4) H1 walking card and H3 card from their sheets;
+(5) helper map and title card in Python; (6) FFmpeg cuts, two dissolves and the final fade, voice and ambience on the tracks (J and L cuts); (7) lint, look at the frames, then the creator watches. No paid step.
+
+**First render of the minute (v1, 20:40 UTC, free, in the cloud container, CPU):** 1920x1080 at 24 fps (not yet the 2560x1440 master), 60.0 s, HF `route_test_2026-11/j5_minute/v1/minute_j5_v1.mp4`. Only pictures with lora "style" on Qwen 2.1 (the creator, 20:30 UTC: nothing else).
+Built by `blender/j5_minute_render.py` (Python: Ken Burns, three-band parallax with sideways camera, fire flicker, rain streaks, a walking cut-out card, map and title helpers; the dialogue shots are cut from the 4f clip with S2 held to 5 s and the
+commander's last second carried over the elder cutaway as a J cut) and `j5_minute_ambience.py` (synthesised rain, fire, battle, wind beds), joined with FFmpeg (two dissolves, fade out at the end). Blender itself was not used in v1: the parallax
+here is a 2D band split, not a depth-based 2.5D camera. Not done: depth-map layers, drawn mouths (waiting for the variant sheets), proper music, loudness measurement, the 2560x1440 master.
+
+**v2 of the minute (21:35 UTC; creator 20:55: illogical cuts, nothing animated; 21:09: study the existing render techniques, do not invent).**
+*Order now follows time and place:* keep at noon (A2 courtyard wide, D2 duel) -> map "The road to the ford" -> rain march (D4, the drummer as a cut-in of the same picture) -> night camp (A1, dialogue, elder, D6 face) -> ford at sunset (D1) -> dawn after (D5) -> the commander
+walks the field (A3). v1 had a dry field in the rain and a noon duel at the sunset ford.
+*Animation (free):* `j5_minute_anim.py` moves what the picture shows, with colour and depth masks: a bob that travels down the marching column, waving flags, flowing water and smoke, a watching crowd, sword-clash flashes, fire and torch flames, breathing, drifting fog; embers and rain are screen-space overlays (`j5_minute_post.py`).
+*Camera:* `j5_minute_depth.py` (Depth Anything V2 Small) gives a depth map per picture; `j5_minute_depthcam.py` builds a relief mesh in Blender (Workbench, the animated texture changes every frame) and moves a real perspective camera over it. About 1 s per 1080p frame on 4 CPU cores.
+*Sound:* synthesised beds per place (`j5_minute_ambience.py`), the bed ducked under the dialogue, the mix normalised to BP-50: -14.0 LUFS, true peak -1.4 dBTP; voice against bed while speaking about 21 LU (13.8 raw, bed ducked by 7 dB; BP-52 asks 15).
+*Existing techniques found (2026-11-06, web search, not yet tried unless noted):* DepthFlow (BrokenSource, depth map + ray-marching parallax shader, AGPL-3.0; our Blender relief camera does the same job under our own licence); 3D Ken Burns Effect from a Single Image
+(Niklaus et al. 2019, `sniklaus/3d-ken-burns`: depth, point cloud, depth-aware inpainting of what the camera uncovers; the gap-fill we lack); Meta Animated Drawings (`facebookresearch/AnimatedDrawings`, MIT: detects, cuts and rigs a drawn figure and retargets BVH motion onto it:
+the free way to make walking and gesturing cards, next to try on the hero sheets); frame-interpolation and image-to-video models (LTX, Wan) remain the paid motion route. Wikipedia: Cutout animation, Limited animation, Multiplane camera, Parallax scrolling (already in BP-181).
+*Not good yet, honest:* the elder is a flat card on a blurred plate; the drummer cut-in is soft (a 2.4x crop of a 1280 px picture); the courtyard picture looks more 3D-render than the other xworld pictures (reported); the map is a plain Python drawing; no depth-aware inpainting, so a larger camera move
+would show stretched edges; masters are 1080p; drawn mouths still wait for the sheets; the figures in the crowd shots do not walk or fight, only bob and sway.
+
+**Existing code tried (2026-11-06 21:50 UTC, creator's word to install everything):** Meta Animated Drawings (MIT) installs in its own Python 3.12 venv with numpy 1.26 (numpy 2 breaks it) and renders headlessly through Mesa (`USE_MESA: True`, `CLEAR_COLOR` green for keying; the OpenCV mp4 writer has no encoder here, use `.gif`) at about 25 frames per second on 4 CPU cores; its sample character animates. The elder (B_H3_front, 292x659 cut-out, 16 hand-placed joints, `width` key added to the char config) renders but the pose collapses: the robe has no visible legs and the arms splay, with and without a retarget config that drops the legs; not usable yet. Next: place the joints from a detector instead of by eye, or draw a sheet with visible legs. The repository has no walking BVH (only dab, jumping, wave, zombie, jumping jacks, dance); a walk needs a CMU/Mixamo BVH. 3D Ken Burns needs CUDA (cupy) and does not run on CPU or on the RX 5700. DepthFlow is an OpenGL shader that does what the Blender relief camera already does.

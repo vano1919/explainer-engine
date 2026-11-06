@@ -25,9 +25,9 @@ import numpy as np
 # height, jaw drop at full opening). Measured on zoomed crops of the cut-outs (2026-11-06).
 FEATURES = {
     "B_H2_right34": {"eyes": [(644.0, 122.5, 23, 19), (685.5, 121.0, 20, 17)], "brows": [(641, 103, 15, 6), (688, 101, 12, 6)],
-                     "mouth": (672.0, 161.0, 26, 3.0, 4.5), "chin_y": 172, "teeth": True, "skin_dy": 12},
+                     "mouth": (672.0, 161.0, 26, 3.0, 4.5), "chin_y": 172, "teeth": True, "move": 0.4, "skin_dy": 12},
     "B_H1_left34": {"eyes": [(523.5, 157.0, 25, 12), (581.0, 156.0, 34, 13)], "brows": [(525, 141, 18, 6), (576, 139, 24, 6)],
-                    "mouth": (548.0, 225.5, 40, 4.5, 5.5), "chin_y": 285, "teeth": False, "skin_dy": 10},
+                    "mouth": (548.0, 225.5, 40, 4.5, 5.5), "chin_y": 285, "teeth": False, "move": 0.12, "skin_dy": 10},
 }
 # Rhubarb's shapes -> (opening 0..1, width factor): A closed (M, B, P), B teeth, C open, D wide, E round, F pucker, G F/V, H L, X rest
 SHAPES = {"A": (0.0, 1.0), "B": (0.18, 1.0), "C": (0.50, 0.95), "D": (0.90, 1.05), "E": (0.55, 0.72), "F": (0.35, 0.55),
@@ -85,6 +85,26 @@ def mouth_state(T: float, line: dict | None) -> tuple[float, float]:
     return 0.0, 1.0
 
 
+def _line_env(T: float, ln: dict) -> float:
+    """0..1 envelope of one spoken line: eases in over 0.35 s before it starts and out over 0.5 s after it ends (never a step)."""
+    s0, e0 = ln["start"], ln["start"] + ln["cues"][-1]["end"]
+    return float(smooth((T - (s0 - 0.2)) / 0.35) * (1 - smooth((T - e0) / 0.5)))
+
+
+def drive(lines: list[dict], hero: str, T: float, ph: float, expr: dict) -> dict:
+    """Everything that moves a face at clip time T, all of it continuous in T: the mouth (opening ``op`` and width, eased 55 ms per cue), a
+    150 ms low-passed opening ``op_s`` for the slow movements (head dip, brow lift), the speaker and listener envelopes, the brow, the
+    squint and the head dip weight. Nothing here switches on or off in one frame."""
+    mine = [ln for ln in lines if ln["hero"] == hero]
+    others = [ln for ln in lines if ln["hero"] != hero]
+    op, wf = max([mouth_state(T, ln) for ln in mine] or [(0.0, 1.0)], key=lambda o: o[0])
+    op_s = float(np.mean([max([mouth_state(T - i * 0.03, ln)[0] for ln in mine] or [0.0]) for i in range(6)]))
+    spk = max([_line_env(T, ln) for ln in mine] or [0.0])
+    lis = max([_line_env(T, ln) for ln in others] or [0.0]) * (1 - spk)
+    brow = spk * (expr["speak_brow"] + expr["speak_lift"] * op_s) + lis * expr["listen_brow"] * (0.6 + 0.4 * math.sin(2 * math.pi * 0.35 * T + ph))
+    return {"op": op, "wf": wf, "op_s": op_s, "spk": spk, "lis": lis, "brow": brow, "bob": op_s * (0.35 + 0.65 * spk)}
+
+
 def setup(pm: np.ndarray, sheet: str, mapper) -> dict | None:
     """Map the sheet's features into this layer with ``mapper(x, y) -> (X, Y)`` (the card's real projection: sheet pixel -> frame pixel,
     from the Blender job's geometry), and sample the card's own colours near the eyes and mouth (they are graded already)."""
@@ -112,7 +132,7 @@ def setup(pm: np.ndarray, sheet: str, mapper) -> dict | None:
     return {"k": k, "eyes": eyes, "brows": [(*mp(bx, by), sx * k, sy * k) for bx, by, sx, sy in feat["brows"]],
             "mouth": {"x": mx, "y": my, "w": feat["mouth"][2] * k, "line": feat["mouth"][3] * k, "jaw": feat["mouth"][4] * k,
                       "interior": INTERIOR * min(1.3, max(0.55, luma / 0.62)), "tongue": TONGUE * min(1.3, max(0.55, luma / 0.62)),
-                      "teeth_c": TEETH * min(1.2, max(0.6, luma / 0.62)), "teeth": feat["teeth"], "chin": mp(0.0, feat["chin_y"])[1], "lash": LASH * min(1.2, max(0.5, luma / 0.62))},
+                      "teeth_c": TEETH * min(1.2, max(0.6, luma / 0.62)), "teeth": feat["teeth"], "move": feat.get("move", 1.0), "chin": mp(0.0, feat["chin_y"])[1], "lash": LASH * min(1.2, max(0.5, luma / 0.62))},
             "skin_luma": luma}
 
 
@@ -129,7 +149,7 @@ def displacement(face: dict, gx: np.ndarray, gy: np.ndarray, T: float, op: float
         span = max(8 * k, m["chin"] - m["y"])
         below = smooth((gy - (m["y"] + m["line"] * 0.8)) / (3.5 * k)) * (1 - smooth((gy - m["chin"]) / (0.5 * span)))
         side = np.exp(-(((gx - m["x"]) / (m["w"] * 1.25)) ** 2))
-        dy += m["jaw"] * op * below * side
+        dy += m["jaw"] * m.get("move", 1.0) * op * below * side   # drawn artists move the mouth shape, not the whole chin: a bearded jaw barely shifts
     if abs(brow) > 1e-3:
         for bx, by, sx, sy in face["brows"]:
             dy -= brow * 2.2 * k * np.exp(-(((gx - bx) / sx) ** 2 + ((gy - by) / sy) ** 2))
@@ -186,3 +206,39 @@ def paint(out: np.ndarray, face: dict, box: tuple[int, int, int, int], T: float,
             band = inner * np.clip(1 - (yy - (ey - ay)) / max(1e-3, 0.62 * ay), 0, 1)
             band = band * np.clip((op - 0.28) / 0.25, 0, 1)
             out[..., :3] = out[..., :3] * (1 - band[..., None] * 0.9) + m["teeth_c"] * a * band[..., None] * 0.9
+
+
+# --- shape swap (drawn mouth variants) -------------------------------------------------------------------------------------------------
+# The drawn route: the sheet is redrawn once per Rhubarb shape (``j5_dialogue_mouth_variants``) and the card shows the variant of the current
+# cue, cross-faded over 55 ms like the painted mouth. Pure functions here; the wiring into ``paint`` waits for the real variants.
+SWAP_FOLD = {"G": "B", "H": "C", "X": "A"}          # shapes that have no drawing of their own use their nearest neighbour
+
+
+def cue_weights(T: float, line: dict | None) -> dict[str, float]:
+    """{drawn shape: weight} at clip time T, weights sum to 1: the previous cue's drawing fades into the current one over 55 ms."""
+    if not line:
+        return {"A": 1.0}
+    t = T - line["start"]
+    cues = line["cues"]
+    if t < -0.05 or t > cues[-1]["end"] + 0.1:
+        return {"A": 1.0}
+    for i, c in enumerate(cues):
+        if c["start"] <= t < c["end"]:
+            cur = SWAP_FOLD.get(c["value"], c["value"])
+            prev = SWAP_FOLD.get(cues[i - 1]["value"], cues[i - 1]["value"]) if i else "A"
+            u = float(smooth((t - c["start"]) / 0.055))
+            w: dict[str, float] = {}
+            w[prev] = w.get(prev, 0.0) + (1 - u)
+            w[cur] = w.get(cur, 0.0) + u
+            return {k: v for k, v in w.items() if v > 1e-4}
+    return {"A": 1.0}
+
+
+def blend_variants(patches: dict[str, np.ndarray], weights: dict[str, float], mask: np.ndarray) -> np.ndarray:
+    """The weighted mix of the drawn mouth patches (same size, float RGB), as a patch to composite through ``mask`` (0..1): outside the
+    mask the base card is untouched. Returns the premultiplied-by-mask patch and leaves the caller to ``base * (1 - mask) + patch``."""
+    acc = np.zeros_like(next(iter(patches.values())), dtype=np.float32)
+    tot = sum(weights.values()) or 1.0
+    for k, w in weights.items():
+        acc += patches[k].astype(np.float32) * (w / tot)
+    return acc * mask[..., None]

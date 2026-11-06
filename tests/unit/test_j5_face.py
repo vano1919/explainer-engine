@@ -86,3 +86,34 @@ def test_mapper_puts_the_feet_where_the_camera_sees_them(tmp_path):
     assert m(50.0, 21.0)[1] < fy                              # the head is above the feet
     h_px = fy - m(50.0, 21.0)[1]
     assert abs(h_px - 1.65 * 60 / 36 * 2560 / 3.8) < 6        # and the figure is 1.65 m tall at 3.8 m
+
+
+def test_nothing_that_moves_a_head_or_brow_jumps_between_frames():
+    from pathlib import Path
+    cues = [{"start": 0.0, "end": 0.2, "value": "X"}, {"start": 0.2, "end": 0.5, "value": "D"}, {"start": 0.5, "end": 0.9, "value": "A"}]
+    lines = [{"hero": "H1", "start": 1.0, "cues": cues}, {"hero": "H2", "start": 3.0, "cues": cues}]
+    T = np.arange(0, 6, 1 / 24)
+    for hero in ("H1", "H2"):
+        d = [F.drive(lines, hero, t, 0.7, B.EXPR) for t in T]
+        for key, limit in (("brow", 0.2), ("bob", 0.25), ("spk", 0.25), ("lis", 0.25)):
+            v = np.array([x[key] for x in d])
+            assert np.abs(np.diff(v)).max() < limit, (hero, key)       # speaker and listener roles fade, they never switch in one frame
+    assert F.drive(lines, "H1", 0.0, 0.7, B.EXPR)["spk"] == 0 and F.drive(lines, "H1", 1.3, 0.7, B.EXPR)["spk"] > 0.95
+
+
+def test_cue_weights_crossfade_and_fold():
+    line = {"start": 1.0, "cues": [{"start": 0.0, "end": 0.2, "value": "X"}, {"start": 0.2, "end": 0.5, "value": "G"},
+                                    {"start": 0.5, "end": 0.9, "value": "D"}]}
+    w = F.cue_weights(1.6, line)                          # 0.1 s into D: past the 55 ms fade
+    assert w == {"D": 1.0} or abs(w.get("D", 0) - 1.0) < 1e-6
+    w = F.cue_weights(1.5 + 0.0275, line)                 # half way through the fade from G (folded to B) to D
+    assert set(w) == {"B", "D"} and abs(sum(w.values()) - 1.0) < 1e-6 and abs(w["D"] - 0.5) < 0.02
+    assert F.cue_weights(0.0, line) == {"A": 1.0} and F.cue_weights(5.0, line) == {"A": 1.0}
+
+
+def test_blend_variants_leaves_the_outside_untouched():
+    a, b = np.zeros((4, 4, 3), np.float32), np.ones((4, 4, 3), np.float32)
+    mask = np.zeros((4, 4), np.float32)
+    mask[1:3, 1:3] = 1.0
+    out = F.blend_variants({"A": a, "C": b}, {"A": 0.25, "C": 0.75}, mask)
+    assert out[0, 0].max() == 0.0 and np.allclose(out[1, 1], 0.75)

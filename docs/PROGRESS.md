@@ -4747,3 +4747,23 @@ One pod (RTX PRO 6000 Blackwell COMMUNITY, 40 min, balance $10.17 -> $9.09) drew
 - Handoff merge fix: `test_route_assets.py::test_prompt_check_allows_ninety_words_only_in_d2` expected 75 words to fail in group D
   (PR #140, 90-word cap); the newer LT-65 band is 40-150 words (b8ef1c5, creator 2026-11-06 12:27 UTC), so the assertion now uses a
   prompt above the band; the D2 limit assertion is unchanged. Full `tests/unit` on the merged tree before this fix: 3156 passed, 1 failed (this one).
+
+## 2026-11-06 J5 dialogue step 4c
+Straight cuts (no dip), young scout voice, per-line RMS levelling, smoother face drive. Render: HF route_test_2026-11/j5_dialogue/step4c/. Docs: J5_DIALOGUE_COLLAGE.md section 7d. ElevenLabs +71 credits (226/5000).
+
+## 2026-11-06 J5 dialogue: variant sheets (D-119), chin fix, background gain
+New `j5_variant_sheet.py` (layout constant, cut, align, per-cell checks, variant sheets, blend) with tests on a synthetic sheet; D-119 in the decision log. Step 4d chin movement scaled (commander 0.12, scout 0.4); step 4e plate gain per close shot (1.28-1.30) and a smaller foreground shift. Real sheets are not drawn yet: real registration and identity numbers are unmeasured.
+
+## 2026-11-06 J5 dialogue step 4f: cuts with a reason
+S2 and S4 merged into one 6 s commander shot with a push-in (the same man only closer was a jump); `j5_cuts.py` lints cuts (subject or 30-degree angle change plus size step, 180-degree rule); docs 7g records the rules and sources.
+
+## 2026-11-06 J5 dialogue rules (BP-176, BP-177)
+Re-checked sources in three types, two binding rules in the registry (cut reason; plan before generation), `j5_cuts.plan_check` + `lint` read their thresholds from it, docs 7h. vidIQ: 5 credits (one transcript). Not verified: the UChicago dialogue-cut study (PDF unreadable).
+
+## 2026-11-06 20:40 UTC - J5 montage rules and the one-minute plan (thread "Test J5 dialogue with existing photos")
+- Read about 25 Wikipedia film-editing, transition and still-lane pages; registered BP-179 (transitions), BP-180 (non-dialogue order and rhythm), BP-181 (still lane and style continuity) as hypotheses (REVIEW only; one source type).
+- `blender/j5_montage.py` (`lint_montage`), `blender/j5_minute.py` (14 shots, five scenes, 60 s, three heroes plus crowds from existing HF pictures), `tests/unit/test_j5_montage.py`; docs/J5_DIALOGUE_COLLAGE.md 7j.
+- Reported by the lint, not hidden: lane shares 36/53/11 against 60/30/10 because the cards animate only the heroes. No render, no paid call.
+- 2026-11-06 20:45 UTC: first render of the one-minute film (v1, 60.0 s, 1080p, free): HF route_test_2026-11/j5_minute/v1/. Plan timing adjusted (M3 7.5 s, S1 3.5, elder 2.0, eyes 5.0); lane shares 34/54/12 still outside BP-109 (REVIEW). BP-108/109 enforced_by now list j5_montage.
+- 2026-11-06 21:35 UTC: minute v2 (HF route_test_2026-11/j5_minute/v2/): story order by time and place, depth-map relief camera in Blender, local picture animation, BP-50 loudness -14.0 LUFS. Found Animated Drawings, DepthFlow, 3D Ken Burns as existing techniques (docs 7j). Weak points listed there.
+- 2026-11-06 21:50 UTC: Animated Drawings installed in a separate venv and run headless; the first hand-rigged elder collapses (robe, no legs), not adopted. 3D Ken Burns needs CUDA, not run. Notes in docs 7j.
