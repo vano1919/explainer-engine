@@ -135,6 +135,8 @@ def test_the_bundle_leaves_the_script_out(tmp_path, monkeypatch):
     sh = tmp_path / "p15.sh"
     sh.write_text((DIR / "p15.sh").read_text(encoding="utf-8"), encoding="utf-8")
     monkeypatch.setattr(B, "SH", sh)
+    monkeypatch.setattr(B, "SH_Q", tmp_path / "p15q.sh")   # the bundle pins both scripts: never the committed one
+    (tmp_path / "p15q.sh").write_text((DIR / "p15q.sh").read_text(encoding="utf-8"), encoding="utf-8")
     sha = B.bundle(tmp_path / "a.tgz")
     assert sha in sh.read_text() and B.bundle(tmp_path / "b.tgz") == sha
     with tarfile.open(tmp_path / "a.tgz") as t:
@@ -201,3 +203,59 @@ def test_the_qwen_list_is_the_config_s(monkeypatch):
     assert [j["name"] for j in js] == list(B.RESTYLE) and all(j["kind"] == "edit" and j["size"] == [1280, 720] for j in js)
     two = next(j for j in js if j["name"] == "room_two_shot")
     assert two["refs"] == [("hero", "B_H1_front"), ("hero", "B_H2_front")] and two["cfg"] == cfg["qwen"]["cfg_edit"]
+
+
+# ---- --only qwen (the creator 2026-11-06 17:34 UTC: pictures first, no LTX on this pod)
+
+def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_cheapest_card():
+    import copy
+    assert RP.rp11(DIR / "p15q_schedule.json") == []
+    sch = RP.load(DIR / "p15q_schedule.json")
+    assert {s["id"] for s in sch["stages"]} == {*p15_pod.QWEN_LANES["net"], *p15_pod.QWEN_LANES["gpu"]}
+    assert B.schedule_qwen() == json.loads((DIR / "p15q_schedule.json").read_text(encoding="utf-8"))   # generated, never hand-edited
+    by = {}
+    for c in sch["cards"]:
+        one = copy.deepcopy(sch)
+        one["cards"] = [c]
+        by[c["name"]] = RP.plan(one)["best"]
+    assert by["A100 80GB"]["fits"] and by["A100 80GB"]["worst"]["usd"] <= sch["limits"]["max_usd"] <= 2.0
+    assert by["A100 80GB"]["expected"]["usd"] < by["H100 NVL"]["expected"]["usd"]   # the cheapest expected cost
+
+
+def test_the_qwen_only_pod_downloads_only_the_qwen_weights_and_starts_no_clip(tmp_path):
+    cfg = B.config(manifest())
+    sch = RP.load(DIR / "p15q_schedule.json")
+    run = FakeRun(tmp_path)
+    pod = p15_pod.Pod(cfg, sch, tmp_path, deadline=__import__("time").time() + 7200, run=run, only="qwen")
+    assert pod.main() == 0
+    names = [c[0] for c in run.calls]
+    assert names == ["weights_qwen", "qwen_restyle"]   # no weights_ltx25, no ltx_c*
+    rows = json.loads((tmp_path / "stages.json").read_text())["stages"]
+    assert rows["F"]["status"] == "ok" and not any(k.startswith("ltx_") or k == "weights_ltx25" for k in rows)
+    assert dict(run.calls)["qwen_restyle"] == 17.5 * 60
+    failed = FakeRun(tmp_path / "f", fail={"qwen_restyle"})
+    assert p15_pod.Pod(cfg, sch, tmp_path / "f", deadline=__import__("time").time() + 7200, run=failed, only="qwen").main() == 1
+
+
+def test_the_qwen_only_script_has_no_ltx_and_pins_the_same_bundle_and_the_launch_line_uses_the_cli_s_flags(tmp_path, monkeypatch):
+    import shlex
+    from explainer_engine.cloud import runpod as R
+    text = (DIR / "p15q.sh").read_text(encoding="utf-8")
+    code = "\n".join(ln for ln in text.splitlines() if not ln.lstrip().startswith("#"))
+    assert "ltx" not in code.lower() and "blender" not in code.lower()
+    assert "p15_pod --only qwen" in code and len(lean.SHA_LINE.findall(text)) == 1
+    assert lean.SHA_LINE.findall(text) == lean.SHA_LINE.findall((DIR / "p15.sh").read_text(encoding="utf-8"))   # one bundle, two scripts
+    cmd = B.launch_qwen()["cmd"]
+    assert R.create_flag_problems(shlex.split(cmd)[4:]) == []
+    assert "p15q.sh" in cmd and "p15q_schedule.json" in cmd and "--max-usd 2.0" in cmd and "ltx" not in cmd.lower()
+    # the bundle leaves both scripts out and pins both
+    monkeypatch.setattr(lean, "BUNDLE_DIRS", ("explainer_engine/training/pods/p15",))
+    for n in ("p15.sh", "p15q.sh"):
+        (tmp_path / n).write_text((DIR / n).read_text(encoding="utf-8"), encoding="utf-8")
+    monkeypatch.setattr(B, "SH", tmp_path / "p15.sh")
+    monkeypatch.setattr(B, "SH_Q", tmp_path / "p15q.sh")
+    sha = B.bundle(tmp_path / "a.tgz")
+    assert sha in (tmp_path / "p15.sh").read_text() and sha in (tmp_path / "p15q.sh").read_text()
+    with tarfile.open(tmp_path / "a.tgz") as t:
+        names = t.getnames()
+    assert "explainer_engine/training/pods/p15/p15q_schedule.json" in names and not any(n.endswith(("p15.sh", "p15q.sh")) for n in names)
