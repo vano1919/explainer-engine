@@ -4683,3 +4683,11 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   2560x1440 video of about 63 s (ROUTE_TEST chain, each clip trimmed to its shot), plus `compare.html` (Blender | Qwen | clip per shot).
 - Tests: `test_pilot_stills.py` (+3), `test_p16_pod.py` (11), `test_pilot_minute.py` (5). Cost $0. Nothing paid launched; the pod
   waits for the p15 pod (measured LTX speed), the OR-23 plan, the OR-34 audit and the creator's word.
+
+## 2026-11-06 — Route-test Qwen asset pod: script, prompt list, tests (no pod yet)
+- `training/pods/route/route_assets.{sh,py,json}`: one 48 GB card, Qwen-Image-2.1 + xworld_v2 ck3000 at 0.7 (pinned sha f5c420a1…), loader/merge/draw of `xworld_v1_test.py` (working branch copy, sha-pinned in the .sh). Phase 1 = 6 D scenes, 4 backdrops at 2048x1024 with the left/right seam score, 12 hero-sheet angles (flat-light line on every prompt), hero 1 front placed in the 4 backdrops by reference x 2 seeds, at most 2 pictures with the 2.1 panorama outpaint LoRA (experiment, dropped on failure), CLIP identity scores. Phase 2 waits up to 20 min for `e_picks.json` on HF (redraws with seeds 12/13, three fix edits). Every picture: file + sidecar + `manifest.jsonl` line, uploaded by the wrapper every five minutes (OR-33); time stops at 80 % of the cap.
+- Settings are the registered ones (`qa/style_prompt.INFERENCE`, `NEGATIVE`, cfg 2.5 for edit jobs as round 3b); the keyframe gate's 72B judge does not fit beside the image model on 48 GB, so the gate is answered by reading the pictures after phase 1.
+- `tests/unit/test_route_assets.py` (8): job list, style check of all text prompts, banned LoRA/base, LoRA pin, picks to jobs, seam score, panorama canvas, pinned hashes. `runpod dryrun` ok (sha256 f361be04…). Ledger `jobs/route_test_2026-11/assets_ledger.json` runpod_usd 1.5.
+
+## 2026-11-06 — Route-test Qwen asset pod: run report
+One pod (RTX PRO 6000 Blackwell COMMUNITY, 40 min, balance $10.17 -> $9.09) drew 42 pictures (D 6, D2 6 = 90-word twins, A 4, B 12, C 8, P 2, redraws 2, fix-edits 2); 2 rejected. Question C: identity held (CLIP .70-.82 vs .93-.98 own angles). Guard process died at 11:41 and was restarted at 12:11. Report and cards page: /mnt/project-files/explainer-engine/route_test_2026-11/assets/ (HANDOFF.md, index.html). Qwen routes only; no change to rules.
