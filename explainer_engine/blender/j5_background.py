@@ -34,6 +34,7 @@ import numpy as np
 from PIL import Image
 
 from explainer_engine.blender import j5_collage as J
+from explainer_engine.blender import j5_face as F
 
 FPS = 24
 OVER = 1.12                                   # the plate is built 12 % larger than the frame so the camera can move on it
@@ -43,10 +44,15 @@ FIRE_BOX_A1 = (920, 490, 1135, 700)           # where the flame colour is looked
 BANNERS = [((262, 290, 380, 480), 258, "right"), ((505, 212, 578, 342), 502, "right"), ((1775, 245, 1880, 390), 1772, "right"),
            ((1448, 290, 1525, 414), 1446, "right"), ((1318, 270, 1366, 346), 1362, "left")]
 PARALLAX = {"plate": 0.3, "mid": 0.65, "fg": 1.0}
+# the spoken lines: (speaker, start in the 12.5 s clip, stem of <stem>.wav / <stem>.cues.json); the starts keep every line clear of the dips
+LINES = [("H2", 0.35, "l1_scout"), ("H1", 3.80, "l2_commander"), ("H2", 10.05, "l3_scout")]
 DIP = "fadeblack"                             # the creator chose the dip to black over the cross-dissolve (2026-11-06 18:11 UTC)
 DISSOLVE = 10                                 # frames of the dissolve between two shots (0.42 s); the earlier shot carries them as a tail
 # idle motion of a figure, as shares of its card's height (so it scales with the shot): sway of the top, head turn, nod, breath, cloth
 IDLE = {"sway": 0.0050, "head_dx": 0.0030, "nod": 0.0022, "breath": 0.0020, "cloth": 0.0012}
+# emotion of the faces (brow lift in units of ~2 px at 2560; negative = down): the commander is stern and squints a little while he speaks,
+# a listener's brows stay a little raised
+EXPR = {"speak_brow": -0.35, "speak_lift": 0.55, "listen_brow": 0.40, "squint": 0.14}
 HEAD_M = 0.24                                 # a head is about 0.24 m tall; the head share of a card is HEAD_M / the card's height in metres
 SECONDS = {"S1_two_shot": 3.5, "S2_ots_h2_to_h1": 3.0, "S4_close_up_h1": 3.0, "S3_ots_h1_to_h2": 3.0}   # the cut order of the dialogue
 # camera per shot: plate zoom, card zoom (start, end), the foreground card's shift in px at 2560 (end - start, x and y) and the pivot
@@ -155,13 +161,20 @@ class ShotAssets:
     """Everything a shot needs that does not change with time: the over-sized plate with its masks (flame, banners, glow) in plate
     pixels, the cards' premultiplied layers (blurred by their depth sigma), the static finishing arrays."""
 
-    def __init__(self, name: str, collage: Path, inputs: Path, size):
+    def __init__(self, name: str, collage: Path, inputs: Path, size, voice: Path | None = None):
         cv2 = _cv2()
         shot = json.loads(json.dumps(J.SHOTS[name]))
         rep = json.loads((collage / "report.json").read_text(encoding="utf-8"))["shots"][name]["cards"]
         for c in shot["cards"]:
             c["lateral"] = next(x["lateral"] for x in rep if x["id"] == c["id"])   # the side the fire is on, from the collage run
         self.name, self.shot, self.size = name, shot, size
+        order_ = list(SECONDS)
+        self.start = sum(SECONDS[n] for n in order_[:order_.index(name)])             # where this shot begins in the clip
+        self.lines = []                                                               # [{"hero", "start", "cues"}] when a voice is given
+        if voice:
+            for hero, st, stem in LINES:
+                cues = F.load_cues(Path(voice) / f"{stem}.cues.json")
+                self.lines.append({"hero": hero, "start": st, "cues": cues})
         W, H = size
         self.Wp, self.Hp = int(round(W * OVER)), int(round(H * OVER))
         a1 = np.asarray(Image.open(inputs / "A1_tent.png").convert("RGB"))
@@ -203,7 +216,9 @@ class ShotAssets:
             pm = J._blur(pm, c["sigma"] * s)
             fg = c["sigma"] > 0
             self.cards.append({"id": c["id"], "pm": pm, "depth": PARALLAX["fg" if fg else "mid"], "fg": fg,
-                               "lateral": self._lateral(shot, c), "idle": self._idle_setup(pm, c, fg, shot)})
+                               "lateral": self._lateral(shot, c), "idle": self._idle_setup(pm, c, fg, shot),
+                               "face": None if fg else F.setup(pm, c["img"], self._mapper(shot, c, Path(inputs), W, H)),
+                               "blinks": F.blink_times(f"{name}:{c['id']}", self.start, SECONDS[name] + 0.5)})
         # static finishing: vignette, paper (mid + long grain)
         yy2, xx2 = np.mgrid[0:H, 0:W].astype(np.float32)
         r = np.hypot((xx2 / W - 0.5) * 1.1, (yy2 / H - 0.5) * 1.25)
@@ -213,6 +228,25 @@ class ShotAssets:
         long = cv2.GaussianBlur(rng.standard_normal((H, W)).astype(np.float32), (0, 0), 40.0 * s) * 0.26 * s
         self.paper = (mid + long).astype(np.float32)
         self.s = s
+
+    @staticmethod
+    def _mapper(shot: dict, c: dict, inputs: Path, W: int, H: int):
+        """Sheet pixel -> frame pixel for a hero card, from the same geometry the Blender job gets (``assemble_25d.card_geometry`` on the
+        graded card, the card turned to face the camera, then the camera's projection)."""
+        cut = J.clean_cut(inputs / f"{c['img']}.cut.png", mirror=c.get("mirror", False))
+        ys, xs = np.where(cut[..., 3] > 0.5)
+        x0, x1, y0, y1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
+        hero = J.HERO[c["id"]]
+        m = hero["height"] / (y1 - y0)
+        feet_x = (x0 + x1) / 2
+        yaw = math.radians(J.A._facing(c["pos"], shot["cam"]))
+        right = np.array([math.cos(yaw), math.sin(yaw)])
+
+        def mapper(x: float, y: float) -> tuple[float, float]:
+            wx, wy = np.array(c["pos"], float) + right * ((x - feet_x) * m)
+            ndcx, ndcy, _ = J.project(shot["cam"], shot["aim"], shot["lens"], (wx, wy, hero["z0"] + (y1 - y) * m))
+            return (ndcx + 1) / 2 * W, (1 - ndcy) / 2 * H
+        return mapper
 
     @staticmethod
     def _idle_setup(pm: np.ndarray, c: dict, fg: bool, shot: dict) -> dict | None:
@@ -374,7 +408,7 @@ def wave_banner(img: np.ndarray, A: ShotAssets, b: dict, t: float) -> np.ndarray
 
 # --- camera, cards, finishing ----------------------------------------------------------------------------------------------------------
 
-def idle(c: dict, t: float, f: float) -> np.ndarray:
+def idle(c: dict, t: float, f: float, A: ShotAssets | None = None) -> np.ndarray:
     """The card's premultiplied layer with its idle motion at time t (a function of t only): the body sways about its bottom edge, the
     chest breathes, the head turns and nods a little, loose cloth and fur ripple with the fire's flicker. Shares of the card's height
     (``IDLE``); two sines of unrelated frequencies per movement so nothing repeats visibly. Returns a card-sized layer."""
@@ -393,9 +427,34 @@ def idle(c: dict, t: float, f: float) -> np.ndarray:
     chest = np.exp(-(((h - (1 - d["head"] * 2.6)) / 0.16) ** 2))                      # the shoulders and chest, below the head
     dy = -IDLE["breath"] * H * breath * chest + IDLE["nod"] * H * nod * head
     cloth = IDLE["cloth"] * H * (0.6 + 0.4 * f) * np.sin(tau * (0.8 * t + 3.2 * h) + ph) * (1 - head) * (h < 0.8)
-    mx = (d["gx"] - x0 - (dx + cloth)).astype(np.float32)
-    my = (d["gy"] - y0 - dy).astype(np.float32)
-    return cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
+    face = c.get("face")
+    if face is None or A is None:
+        mx = (d["gx"] - x0 - (dx + cloth)).astype(np.float32)
+        my = (d["gy"] - y0 - dy).astype(np.float32)
+        return cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
+    T = A.start + t
+    mine = [ln for ln in A.lines if ln["hero"] == c["id"]]
+    ops = [F.mouth_state(T, ln) for ln in mine] or [(0.0, 1.0)]
+    op, wf = max(ops, key=lambda o: o[0])
+    speaking = any(ln["start"] - 0.1 <= T <= ln["start"] + ln["cues"][-1]["end"] + 0.1 for ln in mine)
+    other = any(ln["hero"] != c["id"] and ln["start"] - 0.1 <= T <= ln["start"] + ln["cues"][-1]["end"] + 0.1 for ln in A.lines)
+    if speaking:                                         # a speaker: a stern brow that lifts on stressed sounds
+        brow = EXPR["speak_brow"] + EXPR["speak_lift"] * op
+    elif other:                                          # a listener: brows a little raised, slowly alive
+        brow = EXPR["listen_brow"] * (0.6 + 0.4 * math.sin(tau * 0.35 * T + ph))
+    else:
+        brow = 0.0
+    close = max(F.closure(T, c["blinks"]), EXPR["squint"] if speaking and c["id"] == "H1" else 0.0)
+    fdx, fdy = F.displacement(face, d["gx"], d["gy"], T, op, brow)
+    DX = (dx + cloth) + fdx
+    DY = dy + fdy
+    mx = (d["gx"] - x0 - DX).astype(np.float32)
+    my = (d["gy"] - y0 - DY).astype(np.float32)
+    out = cv2.remap(d["crop"], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
+    iy = int(np.clip(face["mouth"]["y"] - y0, 0, DX.shape[0] - 1))
+    ix = int(np.clip(face["mouth"]["x"] - x0, 0, DX.shape[1] - 1))
+    F.paint(out, face, d["box"], T, close, op, wf, (float(DX[iy, ix]), float(DY[iy, ix])))
+    return out
 
 
 def lerp(a, b, u):
@@ -434,7 +493,7 @@ def render_frame(A: ShotAssets, t: float, u: float, frame: int) -> np.ndarray:
         if c["idle"]:
             x0, y0, x1, y1 = c["idle"]["box"]
             src = np.zeros_like(c["pm"])
-            src[y0:y1, x0:x1] = idle(c, t, f)
+            src[y0:y1, x0:x1] = idle(c, t, f, A)
         pm = cv2.warpAffine(src, Mc, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
         # the fire's flicker on the warm side of the card
         side = 0.5 + 0.5 * c["lateral"] * np.linspace(-1, 1, W, dtype=np.float32)[None, :, None]
@@ -513,14 +572,14 @@ def ambience(seconds: float, sr: int = 48000, seed: int = 4) -> np.ndarray:
 
 # --- render ---------------------------------------------------------------------------------------------------------------------------
 
-def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2560, 1440), fps=FPS, seconds=None, tail: int = 0) -> Path:
+def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2560, 1440), fps=FPS, seconds=None, tail: int = 0, voice: Path | None = None) -> Path:
     """One shot as an mp4. ``tail`` frames more than the shot lasts are drawn with the camera at rest: the dissolve into the next shot
     uses them. The camera moves on an ease-in-out curve, so every shot starts and ends slowly."""
     mp4 = out / "segments" / f"{name}.mp4"
     if mp4.exists():
         return mp4
     mp4.parent.mkdir(parents=True, exist_ok=True)
-    A = ShotAssets(name, collage, inputs, size)
+    A = ShotAssets(name, collage, inputs, size, voice)
     secs = seconds or SECONDS[name]
     n = round(secs * fps)
     tmp = mp4.with_suffix(".part.mp4")
@@ -537,11 +596,43 @@ def render_segment(name: str, collage: Path, inputs: Path, out: Path, *, size=(2
     return mp4
 
 
-def join(out: Path, names: list[str], *, fps=FPS, transition: str = DIP, crf: int = 14, name: str = "j5_dialogue_step3.mp4") -> Path:
+def mix_voice(amb: np.ndarray, voice: Path, sr: int = 48000) -> np.ndarray:
+    """The camp ambience under the spoken lines: each line is placed at its start (``LINES``), the ambience is lowered by 8 dB while anyone
+    speaks (0.2 s ramps), the mix is peak-limited to 0.9. A rough mix for review, not the audio spine's levelling."""
+    from math import gcd
+    from scipy.io import wavfile
+    from scipy.signal import resample_poly
+    mix = amb.astype(np.float64) * 0.55
+    duck = np.ones(len(amb))
+    voices = np.zeros_like(mix)
+    for hero, st, stem in LINES:
+        rate, x = wavfile.read(str(Path(voice) / f"{stem}.wav"))
+        x = x.astype(np.float64) / 32768.0
+        g = gcd(sr, rate)
+        x = resample_poly(x, sr // g, rate // g)
+        x *= 0.85 / (np.abs(x).max() + 1e-9)
+        i = int(st * sr)
+        n = min(len(x), len(voices) - i)
+        voices[i:i + n, :] += x[:n, None]
+        ramp = int(0.2 * sr)
+        lo, hi = max(0, i - ramp), min(len(duck), i + n + ramp)
+        env = np.ones(hi - lo)
+        env[:] = 10 ** (-8 / 20)
+        env[:ramp] = np.linspace(1, 10 ** (-8 / 20), ramp)[: len(env[:ramp])]
+        env[-ramp:] = np.linspace(10 ** (-8 / 20), 1, ramp)[-len(env[-ramp:]):]
+        duck[lo:hi] = np.minimum(duck[lo:hi], env)
+    out = mix * duck[:, None] + voices
+    return (out / max(1.0, np.abs(out).max() / 0.9)).astype(np.float32)
+
+
+def join(out: Path, names: list[str], *, fps=FPS, transition: str = DIP, crf: int = 14, name: str = "j5_dialogue_step3.mp4",
+         voice: Path | None = None) -> Path:
     import wave
     total = sum(SECONDS[n] for n in names)
     amb = ambience(total)
-    wav = out / "ambience.wav"
+    if voice:
+        amb = mix_voice(amb, Path(voice))
+    wav = out / ("dialogue_mix.wav" if voice else "ambience.wav")
     with wave.open(str(wav), "wb") as w:
         w.setnchannels(2), w.setsampwidth(2), w.setframerate(48000)
         w.writeframes((np.clip(amb, -1, 1) * 32767).astype("<i2").tobytes())
@@ -577,6 +668,7 @@ def main(argv=None) -> int:
     r.add_argument("--no-join", action="store_true")
     r.add_argument("--transition", default=DIP, help="ffmpeg xfade type between shots: fade, fadeblack, fadegrays, ...")
     r.add_argument("--crf", type=int, default=14)
+    r.add_argument("--voice", default=None, help="folder with <stem>.wav and <stem>.cues.json of the lines (LINES)")
     r.add_argument("--name", default="j5_dialogue_step3.mp4")
     a = ap.parse_args(argv)
     W, H = (int(x) for x in a.size.split("x"))
@@ -585,9 +677,10 @@ def main(argv=None) -> int:
     join_names = list(SECONDS)
     for n in names:
         tail = DISSOLVE if n != list(SECONDS)[-1] else 0       # the last shot of the cut order has nothing to dissolve into
-        print("segment", n, render_segment(n, Path(a.collage), Path(a.inputs), out, size=(W, H), seconds=a.seconds, tail=tail), flush=True)
+        print("segment", n, render_segment(n, Path(a.collage), Path(a.inputs), out, size=(W, H), seconds=a.seconds, tail=tail,
+                                           voice=Path(a.voice) if a.voice else None), flush=True)
     if not a.no_join and not a.seconds:
-        print("final", join(out, join_names, transition=a.transition, crf=a.crf, name=a.name))
+        print("final", join(out, join_names, transition=a.transition, crf=a.crf, name=a.name, voice=Path(a.voice) if a.voice else None))
     return 0
 
 

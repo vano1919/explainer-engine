@@ -130,6 +130,35 @@ The creator's note on the step-2 clip: the cuts between shots are too abrupt, an
 - **Not done:** an L- or J-cut (the next shot's sound arriving before its picture) needs a voice; there is none until the creator's yes
   to a new take. The commander's proportions come from his belt-up sheets and are not fixed by motion.
 
+## 7c. Step 4: voice, mouth, blinks, brows (creator 18:34 UTC: "1 and 2, go"; credit cap 5000)
+
+Code: `explainer_engine/blender/j5_face.py` (+ hooks in `j5_background.idle`, `mix_voice`). Test: `tests/unit/test_j5_face.py`.
+
+- **Voice** (paid, one take per line, `eleven_v4`, `generations_count` 1, estimate first): three lines written for the test, 155 credits in all
+  (cap 5000). The commander is Tucker Thomas (`EI3BL0ECeQayX8N4doHx`, old, deep, American), the scout is Cam (`GJr7Bxt1U0WeEWxRk8n6`, young,
+  American): both picked from `creative_list_voices` by description, not by listening (EL-01 asks for a listening test; this is a test
+  clip). Lines: scout "[quietly] The scouts are back, sir. The pass is open." (2.8 s, 53 credits); commander "[calmly] Then we march
+  before dawn. Tell the men to rest. Tomorrow will not be kind." (5.68 s, 84); scout "[softly] Yes, sir." (1.12 s, 18). Placed in the clip at
+  0.35 s, 3.80 s and 10.05 s (`LINES`) so each starts after the dip into its shot and ends before the dip out.
+- **Mouth shapes** from the audio by Rhubarb Lip Sync 1.14.0 (MIT, github.com/DanielSWolf/rhubarb-lip-sync, Linux release binary,
+  `rhubarb -f json -d <line text> --extendedShapes GHX`): shapes A-H and X per 10-150 ms. `F.mouth_state` eases over 55 ms.
+- **Where the face is** (`ShotAssets._mapper`): the exact projection of a sheet pixel into the frame, built from the same numbers the Blender
+  job gets (`card_geometry` of the graded card, the card turned to face the camera, `j5_collage.project`). A first try that matched alpha boxes
+  put the mouth on the nose (the box of a cut-off figure lies); the projection puts eyes and mouth on the drawing (checked with markers).
+- **Features** (`FEATURES`, sheet pixels, measured on zoomed crops): eyes, brows, mouth centre and lip band for `B_H1_left34` and
+  `B_H2_right34`. A face card without an entry (the back views) gets nothing.
+- **Mouth**: the part of the face below the mouth line is displaced down by the jaw (6 sheet px for the commander, 4.5 for the scout, times the
+  shape's opening), the beard goes with it; a dark opening (outline ring + inside, colour from the card's own brightness) is drawn between
+  the lips, width by the shape (E 0.72, F 0.55). **Blink**: a skin-coloured lid (sampled from the graded card under the eye) slides down over
+  an ellipse a little larger than the eye, with a lash line on its edge; 0.2 s, first blink 0.8-1.6 s into a shot, then every 1.5-2.6 s.
+- **Emotion** (`EXPR`): a speaking commander has his brows lowered (-0.35, about 0.7 px at 2560 per unit of 2 px) and lifts them with open sounds
+  (+0.55 x opening) and squints 14 %; a listener's brows rise (+0.40, slowly alive). Brows move by a Gaussian bump of the image.
+- **Mix** (`mix_voice`): ambience x 0.55 lowered by 8 dB while anyone speaks, each line peak 0.85, the sum limited to 0.9. A review mix, not the
+  audio spine's levelling.
+- **Honest limits**: the mouth is a dark ellipse on a flat painting, not a drawn mouth; teeth and tongue are missing; the lid on the scout's
+  cartoon eyes hides their black outline; no head turn on a vowel; the two eyes of the commander share one skin sample. A real fix is
+  drawn mouth/eye variants per sheet (SA-06), which would be a paid Qwen edit.
+
 ## 8. Measured (cloud container, 4 CPU cores, no GPU)
 
 Cut-out: about 20 s per sheet. Blender layer passes: 3.4-5.8 s each, 95 s for the four shots. Motion: 1.3 s per frame, 300 frames in about
@@ -150,8 +179,8 @@ python -m explainer_engine.blender.j5_background render --collage OUT --inputs I
   commander sheet is a Qwen edit (paid, the creator's call).
 - The scout has no left-facing card (his right-facing one nearly looks at the camera, so his eye-line to the commander is weak);
   `assets/E/E_B_H2_left34` exists and was not tried.
-- Mouth states and an eyes-closed patch do not exist for any card, so no lip-sync, blink or brow animation yet (SCENE_ASSETS SA-06 needs them).
-  The voice step uses an existing take only; no ElevenLabs call without the creator's separate yes.
+- Mouth states and an eyes-closed patch do not exist for any card (SCENE_ASSETS SA-06 needs them); step 4 draws them procedurally (7c), which
+  is a stand-in, not the asset.
 - The ambience is synthesised and unmixed against a narrator; level and mix belong to the audio spine.
 - A one-pixel hairline in the painted A1 (row about 375, to the right of the middle) survives in the S2/S4 plates; it is in the source picture.
 - Not measured: how this reads to the creator against a Blender 3D set, and whether the flat plates need parallax from a real depth map.

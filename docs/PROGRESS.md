@@ -4551,3 +4551,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   it stretched the figure); the camera follows an ease-in-out curve; the shots are joined by a 10-frame (0.42 s) `xfade` dissolve carried by a tail of the earlier shot, cuts
   stay on the nominal clock. Tests: 3 more in `tests/unit/test_j5_background.py` (8). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7b. Cost $0. L/J-cut and lip-sync
   still wait for a voice (no ElevenLabs without the creator's separate yes).
+- Step 4 (creator 18:34 UTC: voice and mouth, credit cap 5000): three dialogue lines in two ElevenLabs voices, one take each, 155 credits (estimate first); Rhubarb Lip Sync 1.14.0 (MIT)
+  gives the mouth shapes; `blender/j5_face.py` draws blinks, brows and a mouth that follows the cues on the graded cards (exact sheet-to-frame projection, no model); `mix_voice` puts the
+  lines over the camp ambience. Tests: `tests/unit/test_j5_face.py` (5). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7c. Real mouth/eye variants per sheet (SA-06) still open (paid Qwen edit, the creator's call).
