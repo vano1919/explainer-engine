@@ -1,0 +1,7666 @@
+{
+ "schema": "world_layout/1",
+ "_doc": "WP-Q8: layouts of world-kit pieces (world_kits.py). Blender frame, metres: x right, y forward, z up. A Quaternius wall module is 2 m wide and looks to -Y at yaw 0; `ring` turns every side's front inward, so a camera at -Y sees the north wall's face. Block types: ring (nx*ny modules of `wall` on the rectangle centre line, `replace` {side:i -> asset}, `open_sides`, `corner`), floor (nx*ny tiles), row (one asset repeated every `step` m from `from` to `to`), piece (one placement). The same layout is reused by any number of shots; `landmarks` name pieces the scene_set marks.",
+ "layouts": {
+  "castle_courtyard": {
+   "label": "A walled castle courtyard, 8 x 6 m, south side open for the camera, a gate and a fort behind it",
+   "landmarks": [
+    "gate_door",
+    "fort"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "blocks": [
+    {
+     "type": "floor",
+     "name": "cobble",
+     "asset": "model.mvk_floor_uneven_brick",
+     "nx": 4,
+     "ny": 3
+    },
+    {
+     "type": "ring",
+     "name": "wall",
+     "wall": "model.mvk_wall_uneven_brick_straight",
+     "nx": 4,
+     "ny": 3,
+     "open_sides": [
+      "south"
+     ],
+     "corner": "model.mvk_corner_exterior_brick",
+     "replace": {
+      "north:1": "model.mvk_wall_uneven_brick_door_round",
+      "north:3": "model.mvk_wall_uneven_brick_window_wide_round",
+      "west:1": "model.mvk_wall_uneven_brick_window_thin_round",
+      "east:1": "model.mvk_wall_uneven_brick_window_wide_round"
+     }
+    },
+    {
+     "type": "piece",
+     "name": "gate_door",
+     "asset": "model.ph_large_castle_door",
+     "pos": [
+      -1.0,
+      2.86,
+      0.0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.55,
+     "role": "gate"
+    },
+    {
+     "type": "piece",
+     "name": "fort",
+     "asset": "model.ph_modular_fort_01",
+     "pos": [
+      2.0,
+      16.0,
+      0.0
+     ],
+     "yaw_deg": 180.0,
+     "role": "landmark"
+    },
+    {
+     "type": "piece",
+     "name": "wagon",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      -2.6,
+      0.4,
+      0.0
+     ],
+     "yaw_deg": 80.0
+    },
+    {
+     "type": "piece",
+     "name": "crate_a",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      2.9,
+      1.9,
+      0.0
+     ],
+     "yaw_deg": 20.0,
+     "scale": 0.8
+    },
+    {
+     "type": "piece",
+     "name": "crate_b",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      3.1,
+      0.9,
+      0.0
+     ],
+     "yaw_deg": -15.0
+    },
+    {
+     "type": "piece",
+     "name": "barrel",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      3.0,
+      -0.4,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    },
+    {
+     "type": "piece",
+     "name": "lantern",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      0.8,
+      0.8,
+      0.0
+     ],
+     "yaw_deg": 0.0
+    }
+   ]
+  },
+  "village_street": {
+   "label": "A plaster village street, a row of house fronts on each side",
+   "landmarks": [],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "blocks": [
+    {
+     "type": "floor",
+     "name": "road",
+     "asset": "model.mvk_floor_brick",
+     "nx": 2,
+     "ny": 8,
+     "centre": [
+      0,
+      8
+     ]
+    },
+    {
+     "type": "row",
+     "name": "left",
+     "asset": "model.mvk_wall_plaster_straight",
+     "from": [
+      -3.0,
+      1.0,
+      0.0
+     ],
+     "to": [
+      -3.0,
+      15.0,
+      0.0
+     ],
+     "step": 2.0,
+     "yaw_deg": 90.0
+    },
+    {
+     "type": "row",
+     "name": "right",
+     "asset": "model.mvk_wall_plaster_window_wide_round",
+     "from": [
+      3.0,
+      1.0,
+      0.0
+     ],
+     "to": [
+      3.0,
+      15.0,
+      0.0
+     ],
+     "step": 2.0,
+     "yaw_deg": -90.0
+    },
+    {
+     "type": "piece",
+     "name": "door",
+     "asset": "model.mvk_wall_plaster_door_round",
+     "pos": [
+      -3.0,
+      7.0,
+      0.0
+     ],
+     "yaw_deg": 90.0
+    }
+   ]
+  },
+  "hill_castle": {
+   "label": "E2 Medieval: a castle on a hill above a river, a stone bridge, a village along the road, pines and a snow range",
+   "landmarks": [
+    "tower_sw",
+    "tower_se",
+    "tower_ne",
+    "tower_nw",
+    "wall_s_gate"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "terrain": {
+    "seed": 7,
+    "rolling": 1.6,
+    "hill": {
+     "x": 0,
+     "y": 72,
+     "rx": 50,
+     "ry": 42,
+     "h": 17
+    },
+    "river": {
+     "bend_x": -26,
+     "bend_y0": 12,
+     "bend_y1": 50,
+     "width": 4.5,
+     "depth": 2.6
+    },
+    "road": [
+     [
+      9,
+      14
+     ],
+     [
+      17,
+      19
+     ],
+     [
+      19,
+      28
+     ],
+     [
+      13,
+      38
+     ],
+     [
+      5,
+      47
+     ],
+     [
+      0,
+      56
+     ]
+    ],
+    "road_half": 2.0,
+    "causeway": {
+     "y": 14,
+     "half_y": 3.5,
+     "x0": 7,
+     "x1": 24,
+     "z": 2.95
+    },
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 1.3,
+    "flat": [
+     [
+      0,
+      72,
+      28,
+      14.0,
+      17
+     ]
+    ]
+   },
+   "blocks": [
+    {
+     "type": "terrain",
+     "name": "ground",
+     "rect": [
+      -220,
+      220,
+      -70,
+      200
+     ],
+     "res": [
+      176,
+      136
+     ],
+     "colours": {
+      "grass": "#6F9A47",
+      "meadow": "#9BB65A",
+      "forest": "#4E7A3A",
+      "road": "#B58E5B",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8,
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "mountains",
+     "range": {
+      "x0": -420,
+      "x1": 420,
+      "y0": 185,
+      "y1": 330,
+      "ramp": 45,
+      "scale": 75,
+      "seed": 3,
+      "floor": 0.0,
+      "peak": 95.0,
+      "snow_line": 60,
+      "rock_line": 30,
+      "rock_slope": 0.7
+     },
+     "res": [
+      168,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#9BB65A",
+      "forest": "#466F3A",
+      "road": "#B58E5B",
+      "rock": "#8A8378",
+      "snow": "#F1F3F5"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40,
+     "fog": {
+      "colour": [
+       0.3,
+       0.38,
+       0.48
+      ],
+      "start": 150.0,
+      "end": 900.0,
+      "amount": 0.38
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      200,
+      -1.4
+     ],
+     "scale": [
+      1800,
+      1500,
+      1
+     ],
+     "colour": "#8FA262"
+    },
+    {
+     "type": "shape",
+     "name": "river",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      60,
+      -0.75
+     ],
+     "scale": [
+      900,
+      600,
+      1
+     ],
+     "colour": "#5F8FA8"
+    },
+    {
+     "type": "row",
+     "name": "arches0",
+     "asset": "model.mvk_wall_arch",
+     "from": [
+      -4.0,
+      13.0,
+      -1.6
+     ],
+     "to": [
+      4.0,
+      13.0,
+      -1.6
+     ],
+     "step": 2.0,
+     "yaw_deg": 0.0,
+     "scale": 1.0
+    },
+    {
+     "type": "row",
+     "name": "arches1",
+     "asset": "model.mvk_wall_arch",
+     "from": [
+      -4.0,
+      14.0,
+      -1.6
+     ],
+     "to": [
+      4.0,
+      14.0,
+      -1.6
+     ],
+     "step": 2.0,
+     "yaw_deg": 0.0,
+     "scale": 1.0
+    },
+    {
+     "type": "row",
+     "name": "arches2",
+     "asset": "model.mvk_wall_arch",
+     "from": [
+      -4.0,
+      15.0,
+      -1.6
+     ],
+     "to": [
+      4.0,
+      15.0,
+      -1.6
+     ],
+     "step": 2.0,
+     "yaw_deg": 0.0,
+     "scale": 1.0
+    },
+    {
+     "type": "floor",
+     "name": "deck",
+     "asset": "model.mvk_floor_brick",
+     "nx": 8,
+     "ny": 2,
+     "centre": [
+      0.0,
+      14.0
+     ],
+     "z": 3.02
+    },
+    {
+     "type": "floor",
+     "name": "approach_l",
+     "asset": "model.mvk_floor_brick",
+     "nx": 2,
+     "ny": 2,
+     "centre": [
+      -10.0,
+      14.0
+     ],
+     "z": 3.0
+    },
+    {
+     "type": "floor",
+     "name": "approach_r",
+     "asset": "model.mvk_floor_brick",
+     "nx": 2,
+     "ny": 2,
+     "centre": [
+      10.0,
+      14.0
+     ],
+     "z": 3.0
+    },
+    {
+     "type": "house",
+     "name": "house0",
+     "size": "medium",
+     "centre": [
+      21.23,
+      38.86
+     ],
+     "yaw_deg": -59.0,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house1",
+     "size": "small",
+     "centre": [
+      18.38,
+      45.2
+     ],
+     "yaw_deg": -48.4,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house2",
+     "size": "large",
+     "centre": [
+      14.95,
+      51.01
+     ],
+     "yaw_deg": -48.4,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house3",
+     "size": "medium",
+     "centre": [
+      6.19,
+      34.37
+     ],
+     "yaw_deg": 131.6,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house4",
+     "size": "small",
+     "centre": [
+      0.82,
+      38.45
+     ],
+     "yaw_deg": 131.6,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house5",
+     "size": "large",
+     "centre": [
+      13.08,
+      53.25
+     ],
+     "yaw_deg": -60.9,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house6",
+     "size": "small",
+     "centre": [
+      8.06,
+      56.94
+     ],
+     "yaw_deg": -60.9,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house7",
+     "size": "medium",
+     "centre": [
+      -3.44,
+      44.08
+     ],
+     "yaw_deg": 119.1,
+     "terrain": true
+    },
+    {
+     "type": "house",
+     "name": "house8",
+     "size": "medium",
+     "centre": [
+      -7.33,
+      48.4
+     ],
+     "yaw_deg": 119.1,
+     "terrain": true
+    },
+    {
+     "type": "row",
+     "name": "fence_e",
+     "asset": "model.mvk_prop_woodenfence_single",
+     "from": [
+      26,
+      18,
+      -0.34
+     ],
+     "to": [
+      30,
+      40,
+      0.11
+     ],
+     "step": 2.0,
+     "yaw_deg": 79.7,
+     "scale": 1.0,
+     "role": "fence"
+    },
+    {
+     "type": "row",
+     "name": "fence_w",
+     "asset": "model.mvk_prop_woodenfence_single",
+     "from": [
+      -6,
+      24,
+      -3.09
+     ],
+     "to": [
+      -14,
+      40,
+      2.65
+     ],
+     "step": 2.0,
+     "yaw_deg": 116.6,
+     "scale": 1.0,
+     "role": "fence"
+    },
+    {
+     "type": "piece",
+     "name": "cart0",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      22,
+      34,
+      0
+     ],
+     "yaw_deg": 70.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "cart1",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      8,
+      31,
+      0
+     ],
+     "yaw_deg": 100.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels0",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      21,
+      23,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate0",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      22.3,
+      23.5,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels1",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      22.5,
+      24.5,
+      0
+     ],
+     "yaw_deg": 40.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate1",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      23.8,
+      25.0,
+      0
+     ],
+     "yaw_deg": 25.0,
+     "scale": 0.8,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels2",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      12,
+      33,
+      0
+     ],
+     "yaw_deg": 80.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate2",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      13.3,
+      33.5,
+      0
+     ],
+     "yaw_deg": 50.0,
+     "scale": 0.8,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels3",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      9.5,
+      35.5,
+      0
+     ],
+     "yaw_deg": 120.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate3",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      10.8,
+      36.0,
+      0
+     ],
+     "yaw_deg": 75.0,
+     "scale": 0.8,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "barrels4",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      15,
+      24,
+      0
+     ],
+     "yaw_deg": 160.0,
+     "scale": 1.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "crate4",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      16.3,
+      24.5,
+      0
+     ],
+     "yaw_deg": 100.0,
+     "scale": 0.8,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "shape",
+     "name": "hay0",
+     "add": "cone",
+     "params": {
+      "radius1": 1.3,
+      "radius2": 0.1,
+      "depth": 2.0,
+      "vertices": 9
+     },
+     "pos": [
+      24.5,
+      29,
+      0.64
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9B95A"
+    },
+    {
+     "type": "shape",
+     "name": "hay1",
+     "add": "cone",
+     "params": {
+      "radius1": 1.3,
+      "radius2": 0.1,
+      "depth": 2.0,
+      "vertices": 9
+     },
+     "pos": [
+      4,
+      26,
+      0.35
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9B95A"
+    },
+    {
+     "type": "shape",
+     "name": "hay2",
+     "add": "cone",
+     "params": {
+      "radius1": 1.3,
+      "radius2": 0.1,
+      "depth": 2.0,
+      "vertices": 9
+     },
+     "pos": [
+      2.5,
+      38,
+      4.61
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9B95A"
+    },
+    {
+     "type": "shape",
+     "name": "banner_pole0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.12,
+      "depth": 7.0,
+      "vertices": 6
+     },
+     "pos": [
+      -3.0,
+      55,
+      17.63
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5A4630"
+    },
+    {
+     "type": "shape",
+     "name": "banner0",
+     "add": "cube",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      -3.7,
+      55,
+      19.33
+     ],
+     "scale": [
+      0.6,
+      0.04,
+      1.5
+     ],
+     "colour": "#A8322D"
+    },
+    {
+     "type": "shape",
+     "name": "banner_pole1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.12,
+      "depth": 7.0,
+      "vertices": 6
+     },
+     "pos": [
+      3.0,
+      55,
+      17.64
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5A4630"
+    },
+    {
+     "type": "shape",
+     "name": "banner1",
+     "add": "cube",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      3.7,
+      55,
+      19.34
+     ],
+     "scale": [
+      0.6,
+      0.04,
+      1.5
+     ],
+     "colour": "#A8322D"
+    },
+    {
+     "type": "piece",
+     "name": "lantern0",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      13.5,
+      25,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "lantern1",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      16,
+      31,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "piece",
+     "name": "lantern2",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      6,
+      40,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop",
+     "terrain": true
+    },
+    {
+     "type": "scatter",
+     "name": "pine",
+     "assets": [
+      "model.snm_pine_1",
+      "model.snm_pine_3"
+     ],
+     "count": 230,
+     "rect": [
+      -110,
+      -5,
+      110,
+      150
+     ],
+     "seed": 11,
+     "scale": [
+      1.0,
+      1.8
+     ],
+     "avoid": [
+      [
+       21.23,
+       38.86,
+       7.5
+      ],
+      [
+       18.38,
+       45.2,
+       7.5
+      ],
+      [
+       14.95,
+       51.01,
+       7.5
+      ],
+      [
+       6.19,
+       34.37,
+       7.5
+      ],
+      [
+       0.82,
+       38.45,
+       7.5
+      ],
+      [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
+       31,
+       3.5
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
+    },
+    {
+     "type": "scatter",
+     "name": "tree",
+     "assets": [
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "count": 150,
+     "rect": [
+      -100,
+      -5,
+      100,
+      130
+     ],
+     "seed": 23,
+     "scale": [
+      0.9,
+      1.5
+     ],
+     "avoid": [
+      [
+       21.23,
+       38.86,
+       7.5
+      ],
+      [
+       18.38,
+       45.2,
+       7.5
+      ],
+      [
+       14.95,
+       51.01,
+       7.5
+      ],
+      [
+       6.19,
+       34.37,
+       7.5
+      ],
+      [
+       0.82,
+       38.45,
+       7.5
+      ],
+      [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
+       31,
+       3.5
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
+    },
+    {
+     "type": "scatter",
+     "name": "bush",
+     "assets": [
+      "model.snm_bush_common"
+     ],
+     "count": 70,
+     "rect": [
+      -60,
+      0,
+      60,
+      90
+     ],
+     "seed": 29,
+     "scale": [
+      1.0,
+      2.0
+     ],
+     "avoid": [
+      [
+       21.23,
+       38.86,
+       7.5
+      ],
+      [
+       18.38,
+       45.2,
+       7.5
+      ],
+      [
+       14.95,
+       51.01,
+       7.5
+      ],
+      [
+       6.19,
+       34.37,
+       7.5
+      ],
+      [
+       0.82,
+       38.45,
+       7.5
+      ],
+      [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
+       31,
+       3.5
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
+    },
+    {
+     "type": "scatter",
+     "name": "rock",
+     "assets": [
+      "model.snm_rock_medium_1"
+     ],
+     "count": 30,
+     "rect": [
+      -60,
+      10,
+      60,
+      100
+     ],
+     "seed": 5,
+     "scale": [
+      0.8,
+      2.2
+     ],
+     "avoid": [
+      [
+       21.23,
+       38.86,
+       7.5
+      ],
+      [
+       18.38,
+       45.2,
+       7.5
+      ],
+      [
+       14.95,
+       51.01,
+       7.5
+      ],
+      [
+       6.19,
+       34.37,
+       7.5
+      ],
+      [
+       0.82,
+       38.45,
+       7.5
+      ],
+      [
+       13.08,
+       53.25,
+       7.5
+      ],
+      [
+       8.06,
+       56.94,
+       7.5
+      ],
+      [
+       -3.44,
+       44.08,
+       7.5
+      ],
+      [
+       -7.33,
+       48.4,
+       7.5
+      ],
+      [
+       0,
+       72,
+       24
+      ],
+      [
+       22,
+       34,
+       3.5
+      ],
+      [
+       8,
+       31,
+       3.5
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": 0.5,
+     "road_clear": 4.5
+    },
+    {
+     "type": "piece",
+     "name": "tower_sw",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      -18.0,
+      54.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "tower_se",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      18.0,
+      54.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "tower_ne",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      18.0,
+      90.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "tower_nw",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_tower_round"
+     ],
+     "pos": [
+      -18.0,
+      90.0,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_e0",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      19.0,
+      59.8,
+      0
+     ],
+     "yaw_deg": 180.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_e1",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      19.0,
+      71.64,
+      0
+     ],
+     "yaw_deg": 180.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_n0",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      12.2,
+      91.0,
+      0
+     ],
+     "yaw_deg": 270.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_n1",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      0.36,
+      91.0,
+      0
+     ],
+     "yaw_deg": 270.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_w0",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      -19.0,
+      84.2,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_w1",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      -19.0,
+      72.36,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_s_l",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_01"
+     ],
+     "pos": [
+      -14.8,
+      55.0,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_s_gate",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_gate_01"
+     ],
+     "pos": [
+      -2.96,
+      55.0,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "wall_s_r",
+     "asset": "model.ph_modular_fort_01",
+     "nodes": [
+      "modular_fort_01_wall_thin_straight_02"
+     ],
+     "pos": [
+      2.96,
+      55.0,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 0.8,
+     "terrain": true,
+     "dz": -0.3,
+     "role": "structure"
+    },
+    {
+     "type": "shape",
+     "name": "keep",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0.0,
+      76.0,
+      20.7
+     ],
+     "scale": [
+      4.5,
+      4.5,
+      7.0
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "keep_roof",
+     "add": "cone",
+     "params": {
+      "radius1": 4.9,
+      "radius2": 0.0,
+      "depth": 5.0,
+      "vertices": 4
+     },
+     "pos": [
+      0.0,
+      76.0,
+      30.2
+     ],
+     "yaw_deg": 45.0,
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#8A3B2E"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      60.8,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      83.2,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      11.2,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      63.2,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      80.8,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      8.8,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      65.6,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      78.4,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      6.4,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      68.0,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      76.0,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      4.0,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e4",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      70.4,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w4",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      73.6,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n4",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      1.6,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e5",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      72.8,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w5",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      71.2,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n5",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -0.8,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e6",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      75.2,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w6",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      68.8,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n6",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -3.2,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e7",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      77.6,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w7",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      66.4,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n7",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -5.6,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e8",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      80.0,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w8",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      64.0,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n8",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -8.0,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_e9",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18.0,
+      82.4,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_w9",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -18.0,
+      61.6,
+      19.83
+     ],
+     "scale": [
+      0.6,
+      0.5,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_n9",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -10.4,
+      90.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -11.2,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -8.8,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -6.4,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -4.0,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s7",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      5.6,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s8",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      8.0,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    },
+    {
+     "type": "shape",
+     "name": "merlon_s9",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      10.4,
+      54.0,
+      19.83
+     ],
+     "scale": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0,
+     "colour": "#9A9488"
+    }
+   ],
+   "cast": [
+    [
+     "rain",
+     "rain_lead",
+     null,
+     null,
+     [
+      16.7,
+      23.0
+     ],
+     26.7,
+     null,
+     0
+    ],
+    [
+     "knight",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "support_blue",
+     [
+      16.31,
+      24.05
+     ],
+     -30.3,
+     "Idle_Talking_Loop",
+     0
+    ],
+    [
+     "lady",
+     "ink_test_f",
+     "costume.mco_female_ranger",
+     "answer_coral",
+     [
+      20.05,
+      23.75
+     ],
+     44.7,
+     "Idle_Loop",
+     7
+    ],
+    [
+     "squire",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      14.17,
+      25.68
+     ],
+     -15.3,
+     "Idle_Loop",
+     19
+    ],
+    [
+     "pilgrim_a",
+     "ink_test_f",
+     "costume.mco_female_peasant",
+     "answer_coral",
+     [
+      21.75,
+      27.5
+     ],
+     -175.3,
+     "Walk_Formal_Loop",
+     4
+    ],
+    [
+     "pilgrim_b",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      16.91,
+      31.42
+     ],
+     -175.3,
+     "Walk_Formal_Loop",
+     15
+    ],
+    [
+     "guard_a",
+     "ink_test_m2",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      18.18,
+      38.05
+     ],
+     4.7,
+     "Sword_Idle",
+     2
+    ],
+    [
+     "guard_b",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      15.1,
+      43.82
+     ],
+     4.7,
+     "Sword_Idle",
+     26
+    ]
+   ],
+   "shots": {
+    "castle_still": [
+     [
+      34.0,
+      -6.0,
+      12.0
+     ],
+     null,
+     [
+      0.0,
+      68.0,
+      22.0
+     ],
+     null,
+     26,
+     1
+    ],
+    "castle_push": [
+     [
+      34.0,
+      -6.0,
+      12.0
+     ],
+     [
+      26.0,
+      4.0,
+      9.5
+     ],
+     [
+      0.0,
+      68.0,
+      22.0
+     ],
+     [
+      0.0,
+      68.0,
+      22.0
+     ],
+     26,
+     0
+    ],
+    "castle_hero": [
+     [
+      18.76,
+      12.12,
+      1.45
+     ],
+     [
+      18.63,
+      13.71,
+      1.45
+     ],
+     [
+      0.0,
+      62.0,
+      12.0
+     ],
+     [
+      0.0,
+      62.0,
+      11.7
+     ],
+     26,
+     0
+    ]
+   }
+  },
+  "antique_forum": {
+   "label": "E1 Antiquity: a Greco-Roman forum in front of a columned temple, statues, market stalls and a crowd",
+   "landmarks": [
+    "temple"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "blocks": [
+    {
+     "type": "terrain",
+     "name": "land",
+     "rect": [
+      -220,
+      220,
+      -80,
+      200
+     ],
+     "res": [
+      176,
+      136
+     ],
+     "colours": {
+      "grass": "#B9A97F",
+      "meadow": "#C9B98F",
+      "forest": "#9AA06A",
+      "road": "#A89878",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8,
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "range",
+     "range": {
+      "x0": -1300,
+      "x1": 1300,
+      "y0": 685,
+      "y1": 830,
+      "ramp": 60,
+      "scale": 110,
+      "seed": 13,
+      "floor": 0.0,
+      "peak": 49.0,
+      "snow_line": 21,
+      "rock_line": 12,
+      "rock_slope": 0.7
+     },
+     "res": [
+      220,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#C9B98F",
+      "forest": "#466F3A",
+      "road": "#A89878",
+      "rock": "#8A8378",
+      "snow": "#F1F3F5"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 60,
+     "fog": {
+      "colour": [
+       0.3,
+       0.38,
+       0.48
+      ],
+      "start": 150.0,
+      "end": 900.0,
+      "amount": 0.38
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      400,
+      -1.4
+     ],
+     "scale": [
+      4000,
+      2600,
+      1
+     ],
+     "colour": "#8FA262"
+    },
+    {
+     "type": "floor",
+     "name": "forum",
+     "asset": "model.mvk_floor_uneven_brick",
+     "nx": 14,
+     "ny": 12,
+     "centre": [
+      0.0,
+      12.0
+     ],
+     "z": 0.02
+    },
+    {
+     "type": "shape",
+     "name": "step0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      32,
+      0.175
+     ],
+     "scale": [
+      12,
+      2.0,
+      0.175
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "step1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      35,
+      0.35
+     ],
+     "scale": [
+      11,
+      2.0,
+      0.35
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "step2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      38,
+      0.525
+     ],
+     "scale": [
+      10,
+      2.0,
+      0.525
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      -8.4,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      -6.0,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      -3.6000000000000005,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      -1.200000000000001,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column4",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      1.1999999999999993,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column5",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      3.5999999999999996,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column6",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      5.999999999999998,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "column7",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.6,
+      "depth": 7.2,
+      "vertices": 10
+     },
+     "pos": [
+      8.4,
+      38.5,
+      4.65
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "architrave",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      38.5,
+      8.7
+     ],
+     "scale": [
+      10.4,
+      1.7,
+      0.6
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "frieze",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      38.5,
+      9.6
+     ],
+     "scale": [
+      10.0,
+      1.5,
+      0.4
+     ],
+     "colour": "#C9805A"
+    },
+    {
+     "type": "shape",
+     "name": "cella",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      44,
+      4.8
+     ],
+     "scale": [
+      8.5,
+      4.0,
+      3.8
+     ],
+     "colour": "#DCCDAE",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "roof_slab",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      41.5,
+      10.9
+     ],
+     "scale": [
+      10.6,
+      4.4,
+      0.35
+     ],
+     "colour": "#B5603F"
+    },
+    {
+     "type": "shape",
+     "name": "pediment",
+     "add": "cone",
+     "params": {
+      "radius1": 5.3,
+      "radius2": 0.0,
+      "depth": 2.4,
+      "vertices": 3
+     },
+     "pos": [
+      0,
+      38.5,
+      11.9
+     ],
+     "scale": [
+      1,
+      0.22,
+      1
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade0_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      -15,
+      4,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade0_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      -15,
+      10,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade0_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      -15,
+      16,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade0_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      -15,
+      22,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade_beam0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -15,
+      13.0,
+      6.7
+     ],
+     "scale": [
+      0.9,
+      11.5,
+      0.45
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade1_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      15,
+      4,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade1_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      15,
+      10,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade1_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      15,
+      16,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade1_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.5,
+      "depth": 6.4,
+      "vertices": 10
+     },
+     "pos": [
+      15,
+      22,
+      3.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#EFE6D2",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "colonnade_beam1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      15,
+      13.0,
+      6.7
+     ],
+     "scale": [
+      0.9,
+      11.5,
+      0.45
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "shape",
+     "name": "plinth_horse",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      20,
+      0.6
+     ],
+     "scale": [
+      2.2,
+      1.6,
+      0.6
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "piece",
+     "name": "horse",
+     "asset": "model.ph_horse_statue_01",
+     "pos": [
+      0,
+      20,
+      1.2
+     ],
+     "yaw_deg": 90.0,
+     "scale": 13.0,
+     "role": "statue"
+    },
+    {
+     "type": "shape",
+     "name": "plinth0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -6,
+      24,
+      0.8
+     ],
+     "scale": [
+      0.55,
+      0.55,
+      0.8
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "piece",
+     "name": "bust0",
+     "asset": "model.ph_marble_bust_01",
+     "pos": [
+      -6,
+      24,
+      1.6
+     ],
+     "yaw_deg": 180.0,
+     "scale": 3.0,
+     "role": "statue"
+    },
+    {
+     "type": "shape",
+     "name": "plinth1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      6,
+      24,
+      0.8
+     ],
+     "scale": [
+      0.55,
+      0.55,
+      0.8
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "piece",
+     "name": "bust1",
+     "asset": "model.ph_marble_bust_01",
+     "pos": [
+      6,
+      24,
+      1.6
+     ],
+     "yaw_deg": 180.0,
+     "scale": 3.0,
+     "role": "statue"
+    },
+    {
+     "type": "shape",
+     "name": "plinth2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -9,
+      8,
+      0.8
+     ],
+     "scale": [
+      0.55,
+      0.55,
+      0.8
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "piece",
+     "name": "bust2",
+     "asset": "model.ph_marble_bust_01",
+     "pos": [
+      -9,
+      8,
+      1.6
+     ],
+     "yaw_deg": 0.0,
+     "scale": 3.0,
+     "role": "statue"
+    },
+    {
+     "type": "shape",
+     "name": "plinth3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      9,
+      8,
+      0.8
+     ],
+     "scale": [
+      0.55,
+      0.55,
+      0.8
+     ],
+     "colour": "#E6DCC4",
+     "texture": "texture.ph_marble_01_diff",
+     "tile": 2.0
+    },
+    {
+     "type": "piece",
+     "name": "bust3",
+     "asset": "model.ph_marble_bust_01",
+     "pos": [
+      9,
+      8,
+      1.6
+     ],
+     "yaw_deg": 0.0,
+     "scale": 3.0,
+     "role": "statue"
+    },
+    {
+     "type": "piece",
+     "name": "vase0",
+     "asset": "model.ph_antique_ceramic_vase_01",
+     "pos": [
+      -12,
+      14,
+      0.0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 3.2,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "vase1",
+     "asset": "model.ph_antique_ceramic_vase_01",
+     "pos": [
+      12,
+      14,
+      0.0
+     ],
+     "yaw_deg": 70.0,
+     "scale": 3.2,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "vase2",
+     "asset": "model.ph_antique_ceramic_vase_01",
+     "pos": [
+      -4,
+      29,
+      0.0
+     ],
+     "yaw_deg": 140.0,
+     "scale": 3.2,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "vase3",
+     "asset": "model.ph_antique_ceramic_vase_01",
+     "pos": [
+      4,
+      29,
+      0.0
+     ],
+     "yaw_deg": 210.0,
+     "scale": 3.2,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -10,
+      2,
+      2.5
+     ],
+     "scale": [
+      1.6,
+      1.1,
+      0.07
+     ],
+     "colour": "#8F5A4B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -10,
+      2,
+      0.55
+     ],
+     "scale": [
+      1.3,
+      0.8,
+      0.55
+     ],
+     "colour": "#8A6A44"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -11.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -8.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -11.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -8.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "piece",
+     "name": "stall_barrel0",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      -7.8,
+      2,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "stall_bucket0",
+     "asset": "model.ph_wooden_bucket_01",
+     "pos": [
+      -12.0,
+      2.3,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.5,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -6,
+      2,
+      2.5
+     ],
+     "scale": [
+      1.6,
+      1.1,
+      0.07
+     ],
+     "colour": "#D5C9AE"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -6,
+      2,
+      0.55
+     ],
+     "scale": [
+      1.3,
+      0.8,
+      0.55
+     ],
+     "colour": "#8A6A44"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -7.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -4.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -7.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      -4.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "piece",
+     "name": "stall_barrel1",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      -3.8,
+      2,
+      0
+     ],
+     "yaw_deg": 20.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "stall_bucket1",
+     "asset": "model.ph_wooden_bucket_01",
+     "pos": [
+      -8.0,
+      2.3,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.5,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      6,
+      2,
+      2.5
+     ],
+     "scale": [
+      1.6,
+      1.1,
+      0.07
+     ],
+     "colour": "#A9803F"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      6,
+      2,
+      0.55
+     ],
+     "scale": [
+      1.3,
+      0.8,
+      0.55
+     ],
+     "colour": "#8A6A44"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      4.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      7.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      4.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      7.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "piece",
+     "name": "stall_barrel2",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      8.2,
+      2,
+      0
+     ],
+     "yaw_deg": 40.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "stall_bucket2",
+     "asset": "model.ph_wooden_bucket_01",
+     "pos": [
+      4.0,
+      2.3,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.5,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      10,
+      2,
+      2.5
+     ],
+     "scale": [
+      1.6,
+      1.1,
+      0.07
+     ],
+     "colour": "#8E8A5A"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      10,
+      2,
+      0.55
+     ],
+     "scale": [
+      1.3,
+      0.8,
+      0.55
+     ],
+     "colour": "#8A6A44"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      8.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      11.5,
+      1.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      8.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.5,
+      "vertices": 6
+     },
+     "pos": [
+      11.5,
+      3.0,
+      1.25
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6B4F33"
+    },
+    {
+     "type": "piece",
+     "name": "stall_barrel3",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      12.2,
+      2,
+      0
+     ],
+     "yaw_deg": 60.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "stall_bucket3",
+     "asset": "model.ph_wooden_bucket_01",
+     "pos": [
+      8.0,
+      2.3,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.5,
+     "role": "prop"
+    },
+    {
+     "type": "house",
+     "name": "villa0",
+     "size": "medium",
+     "centre": [
+      -26,
+      22
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "house",
+     "name": "villa1",
+     "size": "large",
+     "centre": [
+      28,
+      20
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "scatter",
+     "name": "broadleaf",
+     "assets": [
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "count": 24,
+     "rect": [
+      -90,
+      52,
+      90,
+      120
+     ],
+     "seed": 31,
+     "scale": [
+      1.3,
+      2.2
+     ],
+     "avoid": [
+      [
+       0,
+       40,
+       30
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": -1.5,
+     "road_clear": 0.0
+    },
+    {
+     "type": "scatter",
+     "name": "tree",
+     "assets": [
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "count": 14,
+     "rect": [
+      -60,
+      -6,
+      60,
+      30
+     ],
+     "seed": 37,
+     "scale": [
+      1.0,
+      1.7
+     ],
+     "avoid": [
+      [
+       0,
+       14,
+       24
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": -1.5,
+     "road_clear": 0.0
+    },
+    {
+     "type": "shape",
+     "name": "cypress0",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      -4,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress1",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      4,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress2",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      12,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress3",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      20,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress4",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      28,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress5",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -36,
+      36,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress6",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      -4,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress7",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      4,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress8",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      12,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress9",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      20,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress10",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      28,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress11",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      -31,
+      36,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress12",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      -4,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress13",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      4,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress14",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      12,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress15",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      20,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress16",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      28,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress17",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      31,
+      36,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress18",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      -4,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress19",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      4,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress20",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      12,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress21",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      20,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress22",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      28,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress23",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      36,
+      36,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress24",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      -18,
+      48,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress25",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0,
+      "radius2": 0.12,
+      "depth": 9.0,
+      "vertices": 8
+     },
+     "pos": [
+      -10,
+      50,
+      4.3
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress26",
+     "add": "cone",
+     "params": {
+      "radius1": 1.175,
+      "radius2": 0.12,
+      "depth": 10.575000000000001,
+      "vertices": 8
+     },
+     "pos": [
+      10,
+      50,
+      5.088
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress27",
+     "add": "cone",
+     "params": {
+      "radius1": 1.35,
+      "radius2": 0.12,
+      "depth": 12.15,
+      "vertices": 8
+     },
+     "pos": [
+      18,
+      48,
+      5.875
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress28",
+     "add": "cone",
+     "params": {
+      "radius1": 1.0875,
+      "radius2": 0.12,
+      "depth": 9.7875,
+      "vertices": 8
+     },
+     "pos": [
+      -24,
+      44,
+      4.694
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    },
+    {
+     "type": "shape",
+     "name": "cypress29",
+     "add": "cone",
+     "params": {
+      "radius1": 1.2625,
+      "radius2": 0.12,
+      "depth": 11.362499999999999,
+      "vertices": 8
+     },
+     "pos": [
+      24,
+      44,
+      5.481
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#34502F"
+    }
+   ],
+   "cast": [
+    [
+     "orator",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "support_blue",
+     [
+      0.0,
+      12.0
+     ],
+     180.0,
+     "Idle_Talking_Loop",
+     0
+    ],
+    [
+     "listener_a",
+     "ink_test_f",
+     "costume.mco_female_peasant",
+     "answer_coral",
+     [
+      -1.8,
+      10.0
+     ],
+     20.0,
+     "Idle_Loop",
+     11
+    ],
+    [
+     "listener_b",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      1.9,
+      10.4
+     ],
+     -25.0,
+     "Idle_Loop",
+     23
+    ],
+    [
+     "merchant",
+     "ink_test_f",
+     "costume.mco_female_ranger",
+     "answer_coral",
+     [
+      -9.0,
+      4.4
+     ],
+     180.0,
+     "Idle_Talking_Loop",
+     5
+    ],
+    [
+     "walker_a",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -5.0,
+      7.0
+     ],
+     70.0,
+     "Walk_Formal_Loop",
+     3
+    ],
+    [
+     "walker_b",
+     "ink_test_m2",
+     "costume.mco_male_ranger",
+     "support_blue",
+     [
+      6.0,
+      6.0
+     ],
+     250.0,
+     "Walk_Formal_Loop",
+     17
+    ],
+    [
+     "guard_a",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      -3.0,
+      31.0
+     ],
+     0.0,
+     "Sword_Idle",
+     8
+    ],
+    [
+     "guard_b",
+     "ink_test_m2",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      3.0,
+      31.0
+     ],
+     0.0,
+     "Sword_Idle",
+     29
+    ],
+    [
+     "rain",
+     "rain_lead",
+     null,
+     null,
+     [
+      -1.0,
+      5.0
+     ],
+     0.0,
+     null,
+     0
+    ]
+   ],
+   "shots": {
+    "forum_wide": [
+     [
+      -7.0,
+      -9.0,
+      3.4
+     ],
+     [
+      -3.5,
+      -4.0,
+      2.8
+     ],
+     [
+      0.0,
+      22.0,
+      5.0
+     ],
+     [
+      0.0,
+      22.0,
+      5.0
+     ],
+     26,
+     0
+    ],
+    "forum_medium": [
+     [
+      -6.0,
+      0.0,
+      1.8
+     ],
+     [
+      -3.5,
+      2.0,
+      1.7
+     ],
+     [
+      0.0,
+      12.0,
+      1.5
+     ],
+     [
+      0.0,
+      12.0,
+      1.5
+     ],
+     38,
+     0
+    ]
+   },
+   "terrain": {
+    "seed": 13,
+    "rolling": 3.0,
+    "flat": [
+     [
+      0,
+      18,
+      44,
+      0.0,
+      30
+     ]
+    ],
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 0.7
+   }
+  },
+  "harbour_square": {
+   "label": "E3 Early modern: a harbour town square, timber-and-plaster houses, stalls, barrels, a pier and Dutch ships",
+   "landmarks": [
+    "ship"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "blocks": [
+    {
+     "type": "terrain",
+     "name": "land",
+     "rect": [
+      -220,
+      220,
+      -80,
+      200
+     ],
+     "res": [
+      176,
+      136
+     ],
+     "colours": {
+      "grass": "#B9A97F",
+      "meadow": "#C9B98F",
+      "forest": "#9AA06A",
+      "road": "#A89878",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_coast_sand_01_diff",
+      "meadow": "texture.ph_coast_sand_01_diff",
+      "forest": "texture.ph_grass_ground_diff",
+      "road": "texture.ph_cobblestone_floor_04_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8,
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.62,
+       0.55,
+       0.46
+      ],
+      "meadow": [
+       0.62,
+       0.55,
+       0.46
+      ],
+      "forest": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "road": [
+       0.72,
+       0.66,
+       0.58
+      ],
+      "rock": [
+       0.8,
+       0.78,
+       0.74
+      ]
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "range",
+     "range": {
+      "x0": -1300,
+      "x1": 1300,
+      "y0": 685,
+      "y1": 830,
+      "ramp": 60,
+      "scale": 110,
+      "seed": 17,
+      "floor": 0.0,
+      "peak": 95.0,
+      "snow_line": 70,
+      "rock_line": 32,
+      "rock_slope": 0.7
+     },
+     "res": [
+      220,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#C9B98F",
+      "forest": "#466F3A",
+      "road": "#A89878",
+      "rock": "#8A8378",
+      "snow": "#F1F3F5"
+     },
+     "textures": {
+      "grass": "texture.ph_coast_sand_01_diff",
+      "meadow": "texture.ph_coast_sand_01_diff",
+      "forest": "texture.ph_grass_ground_diff",
+      "road": "texture.ph_stone_wall_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 60,
+     "fog": {
+      "colour": [
+       0.3,
+       0.38,
+       0.48
+      ],
+      "start": 150.0,
+      "end": 900.0,
+      "amount": 0.38
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      400,
+      -6.0
+     ],
+     "scale": [
+      4000,
+      2600,
+      1
+     ],
+     "colour": "#8FA262"
+    },
+    {
+     "type": "shape",
+     "name": "sea",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      385,
+      -0.9
+     ],
+     "scale": [
+      2600,
+      700,
+      1
+     ],
+     "colour": "#4F7F95",
+     "raw": "ocean"
+    },
+    {
+     "type": "floor",
+     "name": "quay",
+     "asset": "model.mvk_floor_uneven_brick",
+     "nx": 16,
+     "ny": 10,
+     "centre": [
+      0.0,
+      10.0
+     ],
+     "z": 0.02
+    },
+    {
+     "type": "piece",
+     "name": "pier0",
+     "asset": "model.ph_modular_wooden_pier",
+     "pos": [
+      0,
+      40,
+      -0.15
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.6,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "pier1",
+     "asset": "model.ph_modular_wooden_pier",
+     "pos": [
+      0,
+      50,
+      -0.15
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.6,
+     "role": "structure"
+    },
+    {
+     "type": "piece",
+     "name": "ship",
+     "asset": "model.ph_dutch_ship_medium",
+     "pos": [
+      22,
+      62,
+      -1.35
+     ],
+     "yaw_deg": 70.0,
+     "scale": 1.0,
+     "role": "landmark"
+    },
+    {
+     "type": "piece",
+     "name": "ship2",
+     "asset": "model.ph_dutch_ship_medium",
+     "pos": [
+      -30,
+      85,
+      -1.35
+     ],
+     "yaw_deg": 100.0,
+     "scale": 1.2,
+     "role": "landmark"
+    },
+    {
+     "type": "house",
+     "name": "house0",
+     "size": "medium",
+     "centre": [
+      -26,
+      30
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "house",
+     "name": "house1",
+     "size": "large",
+     "centre": [
+      -14,
+      34
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "house",
+     "name": "house2",
+     "size": "small",
+     "centre": [
+      -26,
+      18
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "house",
+     "name": "house3",
+     "size": "medium",
+     "centre": [
+      26,
+      26
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "house",
+     "name": "house4",
+     "size": "large",
+     "centre": [
+      16,
+      34
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "house",
+     "name": "house5",
+     "size": "small",
+     "centre": [
+      28,
+      14
+     ],
+     "yaw_deg": 0.0,
+     "z": 0.0,
+     "terrain": false
+    },
+    {
+     "type": "shape",
+     "name": "stall_top0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -8,
+      6,
+      2.4
+     ],
+     "scale": [
+      1.7,
+      1.1,
+      0.07
+     ],
+     "colour": "#90594A"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -8,
+      6,
+      0.5
+     ],
+     "scale": [
+      1.4,
+      0.8,
+      0.5
+     ],
+     "colour": "#7A5A3A"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -9.6,
+      5.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -6.4,
+      5.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -9.6,
+      7.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post0_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -6.4,
+      7.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      8,
+      7,
+      2.4
+     ],
+     "scale": [
+      1.7,
+      1.1,
+      0.07
+     ],
+     "colour": "#CDBFA0"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      8,
+      7,
+      0.5
+     ],
+     "scale": [
+      1.4,
+      0.8,
+      0.5
+     ],
+     "colour": "#7A5A3A"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      6.4,
+      6.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      9.6,
+      6.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      6.4,
+      8.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post1_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      9.6,
+      8.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -4,
+      20,
+      2.4
+     ],
+     "scale": [
+      1.7,
+      1.1,
+      0.07
+     ],
+     "colour": "#D5C9AE"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -4,
+      20,
+      0.5
+     ],
+     "scale": [
+      1.4,
+      0.8,
+      0.5
+     ],
+     "colour": "#7A5A3A"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -5.6,
+      19.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -2.4,
+      19.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -5.6,
+      21.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post2_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      -2.4,
+      21.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_top3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      5,
+      22,
+      2.4
+     ],
+     "scale": [
+      1.7,
+      1.1,
+      0.07
+     ],
+     "colour": "#A9803F"
+    },
+    {
+     "type": "shape",
+     "name": "stall_table3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      5,
+      22,
+      0.5
+     ],
+     "scale": [
+      1.4,
+      0.8,
+      0.5
+     ],
+     "colour": "#7A5A3A"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      3.4,
+      21.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      6.6,
+      21.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      3.4,
+      23.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "shape",
+     "name": "stall_post3_3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.07,
+      "depth": 2.4,
+      "vertices": 6
+     },
+     "pos": [
+      6.6,
+      23.0,
+      1.2
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#5E452B"
+    },
+    {
+     "type": "piece",
+     "name": "barrels0",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      -12,
+      11,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate0",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -10.7,
+      11.6,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels1",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      12,
+      12,
+      0
+     ],
+     "yaw_deg": 30.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate1",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      13.3,
+      12.6,
+      0
+     ],
+     "yaw_deg": 15.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels2",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      -2,
+      28,
+      0
+     ],
+     "yaw_deg": 60.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate2",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -0.7,
+      28.6,
+      0
+     ],
+     "yaw_deg": 30.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels3",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      0,
+      3,
+      0
+     ],
+     "yaw_deg": 90.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate3",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      1.3,
+      3.6,
+      0
+     ],
+     "yaw_deg": 45.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels4",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      14,
+      24,
+      0
+     ],
+     "yaw_deg": 120.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate4",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      15.3,
+      24.6,
+      0
+     ],
+     "yaw_deg": 60.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "chest",
+     "asset": "model.ph_treasure_chest",
+     "pos": [
+      3.0,
+      14.0,
+      0
+     ],
+     "yaw_deg": 200.0,
+     "scale": 1.3,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "wagon",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      -18,
+      8,
+      0
+     ],
+     "yaw_deg": 60.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "lantern0",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      -4,
+      14,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "lantern1",
+     "asset": "model.ph_wooden_lantern_01",
+     "pos": [
+      6,
+      4,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 2.0,
+     "role": "prop"
+    },
+    {
+     "type": "scatter",
+     "name": "tree",
+     "assets": [
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "count": 10,
+     "rect": [
+      -80,
+      38,
+      80,
+      70
+     ],
+     "seed": 41,
+     "scale": [
+      1.1,
+      1.8
+     ],
+     "avoid": [
+      [
+       0,
+       50,
+       20
+      ],
+      [
+       -26,
+       30,
+       14
+      ],
+      [
+       26,
+       26,
+       14
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": -1.5,
+     "road_clear": 0.0
+    },
+    {
+     "type": "shape",
+     "name": "quay_wall",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      39.6,
+      -1.1
+     ],
+     "scale": [
+      62,
+      0.7,
+      1.2
+     ],
+     "colour": "#8D8678",
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0
+    },
+    {
+     "type": "shape",
+     "name": "quay_cap",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      39.4,
+      0.06
+     ],
+     "scale": [
+      62,
+      1.0,
+      0.12
+     ],
+     "colour": "#A39B8A",
+     "texture": "texture.ph_stone_wall_diff",
+     "tile": 6.0
+    },
+    {
+     "type": "piece",
+     "name": "ship3",
+     "asset": "model.ph_dutch_ship_medium",
+     "pos": [
+      -70,
+      260,
+      -2.2
+     ],
+     "yaw_deg": 80.0,
+     "scale": 1.6,
+     "role": "landmark"
+    },
+    {
+     "type": "piece",
+     "name": "ship4",
+     "asset": "model.ph_ship_pinnace",
+     "pos": [
+      110,
+      360,
+      -2.6
+     ],
+     "yaw_deg": 250.0,
+     "scale": 2.0,
+     "role": "landmark"
+    },
+    {
+     "type": "shape",
+     "name": "quay_deck",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      0,
+      37.2,
+      0.05
+     ],
+     "scale": [
+      30,
+      2.6,
+      0.07
+     ],
+     "colour": "#8A7A62",
+     "texture": "texture.ph_weathered_planks_diff",
+     "tile": 4.0
+    },
+    {
+     "type": "shape",
+     "name": "moor0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.22,
+      "depth": 1.1,
+      "vertices": 8
+     },
+     "pos": [
+      -24,
+      38.6,
+      0.55
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3A2A"
+    },
+    {
+     "type": "shape",
+     "name": "rope0",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.55,
+      "depth": 0.18,
+      "vertices": 12
+     },
+     "pos": [
+      -22.7,
+      37.2,
+      0.12
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#B59B6A"
+    },
+    {
+     "type": "shape",
+     "name": "moor1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.22,
+      "depth": 1.1,
+      "vertices": 8
+     },
+     "pos": [
+      -16,
+      38.6,
+      0.55
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3A2A"
+    },
+    {
+     "type": "shape",
+     "name": "rope1",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.55,
+      "depth": 0.18,
+      "vertices": 12
+     },
+     "pos": [
+      -14.7,
+      37.2,
+      0.12
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#B59B6A"
+    },
+    {
+     "type": "shape",
+     "name": "moor2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.22,
+      "depth": 1.1,
+      "vertices": 8
+     },
+     "pos": [
+      -8,
+      38.6,
+      0.55
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3A2A"
+    },
+    {
+     "type": "shape",
+     "name": "rope2",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.55,
+      "depth": 0.18,
+      "vertices": 12
+     },
+     "pos": [
+      -6.7,
+      37.2,
+      0.12
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#B59B6A"
+    },
+    {
+     "type": "shape",
+     "name": "moor3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.22,
+      "depth": 1.1,
+      "vertices": 8
+     },
+     "pos": [
+      8,
+      38.6,
+      0.55
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3A2A"
+    },
+    {
+     "type": "shape",
+     "name": "rope3",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.55,
+      "depth": 0.18,
+      "vertices": 12
+     },
+     "pos": [
+      9.3,
+      37.2,
+      0.12
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#B59B6A"
+    },
+    {
+     "type": "shape",
+     "name": "moor4",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.22,
+      "depth": 1.1,
+      "vertices": 8
+     },
+     "pos": [
+      16,
+      38.6,
+      0.55
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3A2A"
+    },
+    {
+     "type": "shape",
+     "name": "rope4",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.55,
+      "depth": 0.18,
+      "vertices": 12
+     },
+     "pos": [
+      17.3,
+      37.2,
+      0.12
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#B59B6A"
+    },
+    {
+     "type": "shape",
+     "name": "moor5",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.22,
+      "depth": 1.1,
+      "vertices": 8
+     },
+     "pos": [
+      24,
+      38.6,
+      0.55
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#4B3A2A"
+    },
+    {
+     "type": "shape",
+     "name": "rope5",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.55,
+      "depth": 0.18,
+      "vertices": 12
+     },
+     "pos": [
+      25.3,
+      37.2,
+      0.12
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#B59B6A"
+    },
+    {
+     "type": "piece",
+     "name": "crate_s0",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -20,
+      33,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "sack0",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.45
+     },
+     "pos": [
+      -18.8,
+      32.6,
+      0.3
+     ],
+     "scale": [
+      1,
+      0.8,
+      0.7
+     ],
+     "colour": "#B8A27C"
+    },
+    {
+     "type": "piece",
+     "name": "crate_s1",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -19,
+      34,
+      0
+     ],
+     "yaw_deg": 37.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "sack1",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.45
+     },
+     "pos": [
+      -17.8,
+      33.6,
+      0.3
+     ],
+     "scale": [
+      1,
+      0.8,
+      0.7
+     ],
+     "colour": "#B8A27C"
+    },
+    {
+     "type": "piece",
+     "name": "crate_s2",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      19,
+      33,
+      0
+     ],
+     "yaw_deg": 74.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "sack2",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.45
+     },
+     "pos": [
+      20.2,
+      32.6,
+      0.3
+     ],
+     "scale": [
+      1,
+      0.8,
+      0.7
+     ],
+     "colour": "#B8A27C"
+    },
+    {
+     "type": "piece",
+     "name": "crate_s3",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      21,
+      34,
+      0
+     ],
+     "yaw_deg": 111.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "sack3",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.45
+     },
+     "pos": [
+      22.2,
+      33.6,
+      0.3
+     ],
+     "scale": [
+      1,
+      0.8,
+      0.7
+     ],
+     "colour": "#B8A27C"
+    },
+    {
+     "type": "piece",
+     "name": "crate_s4",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -3,
+      36,
+      0
+     ],
+     "yaw_deg": 148.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "sack4",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.45
+     },
+     "pos": [
+      -1.8,
+      35.6,
+      0.3
+     ],
+     "scale": [
+      1,
+      0.8,
+      0.7
+     ],
+     "colour": "#B8A27C"
+    },
+    {
+     "type": "piece",
+     "name": "crate_s5",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      4,
+      35.5,
+      0
+     ],
+     "yaw_deg": 185.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "shape",
+     "name": "sack5",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.45
+     },
+     "pos": [
+      5.2,
+      35.1,
+      0.3
+     ],
+     "scale": [
+      1,
+      0.8,
+      0.7
+     ],
+     "colour": "#B8A27C"
+    }
+   ],
+   "cast": [
+    [
+     "captain",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "support_blue",
+     [
+      1.0,
+      11.0
+     ],
+     200.0,
+     "Idle_Talking_Loop",
+     0
+    ],
+    [
+     "sailor",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -1.2,
+      9.2
+     ],
+     20.0,
+     "Idle_Loop",
+     13
+    ],
+    [
+     "vendor",
+     "ink_test_f",
+     "costume.mco_female_peasant",
+     "answer_coral",
+     [
+      -8.0,
+      4.5
+     ],
+     180.0,
+     "Idle_Talking_Loop",
+     6
+    ],
+    [
+     "customer",
+     "ink_test_f",
+     "costume.mco_female_ranger",
+     "answer_coral",
+     [
+      -6.0,
+      2.6
+     ],
+     10.0,
+     "Idle_Loop",
+     21
+    ],
+    [
+     "porter_a",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -10.0,
+      12.0
+     ],
+     80.0,
+     "Walk_Formal_Loop",
+     2
+    ],
+    [
+     "porter_b",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_b",
+     [
+      9.0,
+      14.0
+     ],
+     260.0,
+     "Walk_Formal_Loop",
+     19
+    ],
+    [
+     "watch",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      6.0,
+      24.0
+     ],
+     180.0,
+     "Sword_Idle",
+     9
+    ],
+    [
+     "rain",
+     "rain_lead",
+     null,
+     null,
+     [
+      -1.0,
+      6.0
+     ],
+     0.0,
+     null,
+     0
+    ]
+   ],
+   "shots": {
+    "harbour_wide": [
+     [
+      -6.0,
+      -10.0,
+      3.6
+     ],
+     [
+      -3.0,
+      -5.0,
+      3.0
+     ],
+     [
+      2.0,
+      30.0,
+      6.0
+     ],
+     [
+      2.0,
+      30.0,
+      6.0
+     ],
+     26,
+     0
+    ],
+    "harbour_medium": [
+     [
+      -5.5,
+      0.0,
+      1.8
+     ],
+     [
+      -3.0,
+      2.0,
+      1.7
+     ],
+     [
+      0.0,
+      11.0,
+      1.5
+     ],
+     [
+      0.0,
+      11.0,
+      1.5
+     ],
+     38,
+     0
+    ]
+   },
+   "terrain": {
+    "seed": 17,
+    "rolling": 2.5,
+    "flat": [
+     [
+      0,
+      14,
+      26,
+      0.0,
+      6
+     ]
+    ],
+    "sea": {
+     "y0": 36,
+     "y1": 46,
+     "drop": 5.0
+    },
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 0.7
+   }
+  },
+  "field_camp": {
+   "label": "E4 Nineteenth century: a field camp, canvas tents, wagons, lamps and a campfire, pines and mountains behind",
+   "landmarks": [
+    "fire"
+   ],
+   "axis": {
+    "deg": 0,
+    "origin": [
+     0,
+     0
+    ]
+   },
+   "blocks": [
+    {
+     "type": "terrain",
+     "name": "land",
+     "rect": [
+      -220,
+      220,
+      -80,
+      200
+     ],
+     "res": [
+      176,
+      136
+     ],
+     "colours": {
+      "grass": "#6F9A47",
+      "meadow": "#9BB65A",
+      "forest": "#4E7A3A",
+      "road": "#B58E5B",
+      "rock": "#7B766E",
+      "snow": "#EEF1F4"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 8,
+     "blend": 0.045,
+     "tints": {
+      "grass": [
+       0.58,
+       0.8,
+       0.4
+      ],
+      "meadow": [
+       0.62,
+       0.82,
+       0.42
+      ],
+      "forest": [
+       0.5,
+       0.7,
+       0.38
+      ],
+      "road": [
+       1.0,
+       0.8,
+       0.42
+      ],
+      "rock": [
+       0.85,
+       0.8,
+       0.75
+      ]
+     }
+    },
+    {
+     "type": "terrain",
+     "name": "range",
+     "range": {
+      "x0": -420,
+      "x1": 420,
+      "y0": 185,
+      "y1": 330,
+      "ramp": 45,
+      "scale": 75,
+      "seed": 11,
+      "floor": 0.0,
+      "peak": 140.0,
+      "snow_line": 60,
+      "rock_line": 34,
+      "rock_slope": 0.7
+     },
+     "res": [
+      168,
+      58
+     ],
+     "colours": {
+      "grass": "#5E8A45",
+      "meadow": "#9BB65A",
+      "forest": "#466F3A",
+      "road": "#B58E5B",
+      "rock": "#8A8378",
+      "snow": "#F1F3F5"
+     },
+     "textures": {
+      "grass": "texture.ph_grass_ground_diff",
+      "meadow": "texture.ph_leafy_grass_diff",
+      "forest": "texture.ph_forrest_ground_01_diff",
+      "road": "texture.ph_dirt_floor_diff",
+      "rock": "texture.ph_rocky_terrain_diff"
+     },
+     "uv_m": 40,
+     "fog": {
+      "colour": [
+       0.3,
+       0.38,
+       0.48
+      ],
+      "start": 150.0,
+      "end": 900.0,
+      "amount": 0.38
+     }
+    },
+    {
+     "type": "shape",
+     "name": "under",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0,
+      200,
+      -1.4
+     ],
+     "scale": [
+      1800,
+      1500,
+      1
+     ],
+     "colour": "#8FA262"
+    },
+    {
+     "type": "shape",
+     "name": "tent0",
+     "add": "cone",
+     "params": {
+      "radius1": 2.6,
+      "radius2": 0.05,
+      "depth": 3.2,
+      "vertices": 4
+     },
+     "pos": [
+      -14,
+      24,
+      1.6
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#E8DFCB",
+     "yaw_deg": 45
+    },
+    {
+     "type": "shape",
+     "name": "tent_base0",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -14,
+      24,
+      0.55
+     ],
+     "scale": [
+      1.78,
+      1.78,
+      0.55
+     ],
+     "colour": "#E8DFCB"
+    },
+    {
+     "type": "shape",
+     "name": "tent1",
+     "add": "cone",
+     "params": {
+      "radius1": 2.6,
+      "radius2": 0.05,
+      "depth": 3.2,
+      "vertices": 4
+     },
+     "pos": [
+      -4,
+      30,
+      1.6
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9CBAE",
+     "yaw_deg": 65
+    },
+    {
+     "type": "shape",
+     "name": "tent_base1",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -4,
+      30,
+      0.55
+     ],
+     "scale": [
+      1.78,
+      1.78,
+      0.55
+     ],
+     "colour": "#D9CBAE",
+     "yaw_deg": 20
+    },
+    {
+     "type": "shape",
+     "name": "tent2",
+     "add": "cone",
+     "params": {
+      "radius1": 2.6,
+      "radius2": 0.05,
+      "depth": 3.2,
+      "vertices": 4
+     },
+     "pos": [
+      8,
+      26,
+      1.6
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#E8DFCB",
+     "yaw_deg": 30
+    },
+    {
+     "type": "shape",
+     "name": "tent_base2",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      8,
+      26,
+      0.55
+     ],
+     "scale": [
+      1.78,
+      1.78,
+      0.55
+     ],
+     "colour": "#E8DFCB",
+     "yaw_deg": -15
+    },
+    {
+     "type": "shape",
+     "name": "tent3",
+     "add": "cone",
+     "params": {
+      "radius1": 2.6,
+      "radius2": 0.05,
+      "depth": 3.2,
+      "vertices": 4
+     },
+     "pos": [
+      18,
+      34,
+      1.6
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#E8DFCB",
+     "yaw_deg": 55
+    },
+    {
+     "type": "shape",
+     "name": "tent_base3",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      18,
+      34,
+      0.55
+     ],
+     "scale": [
+      1.78,
+      1.78,
+      0.55
+     ],
+     "colour": "#E8DFCB",
+     "yaw_deg": 10
+    },
+    {
+     "type": "shape",
+     "name": "tent4",
+     "add": "cone",
+     "params": {
+      "radius1": 2.6,
+      "radius2": 0.05,
+      "depth": 3.2,
+      "vertices": 4
+     },
+     "pos": [
+      -22,
+      38,
+      1.6
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#D9CBAE",
+     "yaw_deg": 35
+    },
+    {
+     "type": "shape",
+     "name": "tent_base4",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      -22,
+      38,
+      0.55
+     ],
+     "scale": [
+      1.78,
+      1.78,
+      0.55
+     ],
+     "colour": "#D9CBAE",
+     "yaw_deg": -10
+    },
+    {
+     "type": "shape",
+     "name": "tent5",
+     "add": "cone",
+     "params": {
+      "radius1": 2.6,
+      "radius2": 0.05,
+      "depth": 3.2,
+      "vertices": 4
+     },
+     "pos": [
+      2,
+      44,
+      1.6
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#E8DFCB",
+     "yaw_deg": 45
+    },
+    {
+     "type": "shape",
+     "name": "tent_base5",
+     "add": "cube",
+     "params": {},
+     "pos": [
+      2,
+      44,
+      0.55
+     ],
+     "scale": [
+      1.78,
+      1.78,
+      0.55
+     ],
+     "colour": "#E8DFCB"
+    },
+    {
+     "type": "shape",
+     "name": "fire",
+     "add": "cone",
+     "params": {
+      "radius1": 0.45,
+      "radius2": 0.0,
+      "depth": 0.9,
+      "vertices": 6
+     },
+     "pos": [
+      0.0,
+      12.0,
+      0.45
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#F2A03A"
+    },
+    {
+     "type": "shape",
+     "name": "fire_ring",
+     "add": "cylinder",
+     "params": {
+      "radius": 0.85,
+      "depth": 0.16,
+      "vertices": 12
+     },
+     "pos": [
+      0.0,
+      12.0,
+      0.08
+     ],
+     "scale": [
+      1,
+      1,
+      1
+     ],
+     "colour": "#6E655B"
+    },
+    {
+     "type": "piece",
+     "name": "shield0",
+     "asset": "model.ph_kite_shield",
+     "pos": [
+      -8,
+      6,
+      0.0
+     ],
+     "yaw_deg": 30,
+     "scale": 0.6,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "shield1",
+     "asset": "model.ph_kite_shield",
+     "pos": [
+      -7,
+      7.4,
+      0.0
+     ],
+     "yaw_deg": 80,
+     "scale": 0.6,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "shield2",
+     "asset": "model.ph_kite_shield",
+     "pos": [
+      8,
+      4,
+      0.0
+     ],
+     "yaw_deg": -40,
+     "scale": 0.6,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "shield3",
+     "asset": "model.ph_kite_shield",
+     "pos": [
+      9,
+      6,
+      0.0
+     ],
+     "yaw_deg": 10,
+     "scale": 0.6,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "shield4",
+     "asset": "model.ph_kite_shield",
+     "pos": [
+      -3,
+      22,
+      0.0
+     ],
+     "yaw_deg": 0,
+     "scale": 0.6,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "shield5",
+     "asset": "model.ph_kite_shield",
+     "pos": [
+      4,
+      21,
+      0.0
+     ],
+     "yaw_deg": 15,
+     "scale": 0.6,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "wagon0",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      14,
+      12,
+      0
+     ],
+     "yaw_deg": 100.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "wagon1",
+     "asset": "model.mvk_prop_wagon",
+     "pos": [
+      -16,
+      10,
+      0
+     ],
+     "yaw_deg": 70.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "lamp0",
+     "asset": "model.ph_street_lamp_01",
+     "pos": [
+      5,
+      14,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "lamp1",
+     "asset": "model.ph_street_lamp_01",
+     "pos": [
+      -6,
+      16,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels0",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      3,
+      9,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate0",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      4.2,
+      9.5,
+      0
+     ],
+     "yaw_deg": 0.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels1",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      -4,
+      9,
+      0
+     ],
+     "yaw_deg": 25.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate1",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -2.8,
+      9.5,
+      0
+     ],
+     "yaw_deg": 20.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels2",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      7,
+      11,
+      0
+     ],
+     "yaw_deg": 50.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate2",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      8.2,
+      11.5,
+      0
+     ],
+     "yaw_deg": 40.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels3",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      12,
+      15,
+      0
+     ],
+     "yaw_deg": 75.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate3",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      13.2,
+      15.5,
+      0
+     ],
+     "yaw_deg": 60.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "barrels4",
+     "asset": "model.ph_wine_barrel_01",
+     "pos": [
+      -12,
+      16,
+      0
+     ],
+     "yaw_deg": 100.0,
+     "scale": 1.0,
+     "role": "prop"
+    },
+    {
+     "type": "piece",
+     "name": "crate4",
+     "asset": "model.mvk_prop_crate",
+     "pos": [
+      -10.8,
+      16.5,
+      0
+     ],
+     "yaw_deg": 80.0,
+     "scale": 0.8,
+     "role": "prop"
+    },
+    {
+     "type": "row",
+     "name": "fence",
+     "asset": "model.mvk_prop_woodenfence_single",
+     "from": [
+      -22.0,
+      2.0,
+      0.0
+     ],
+     "to": [
+      22.0,
+      2.0,
+      0.0
+     ],
+     "step": 2.0,
+     "yaw_deg": 0.0,
+     "scale": 1.0,
+     "role": "fence"
+    },
+    {
+     "type": "scatter",
+     "name": "pine",
+     "assets": [
+      "model.snm_pine_1",
+      "model.snm_pine_3"
+     ],
+     "count": 50,
+     "rect": [
+      -110,
+      40,
+      110,
+      140
+     ],
+     "seed": 53,
+     "scale": [
+      1.2,
+      2.0
+     ],
+     "avoid": [
+      [
+       0,
+       24,
+       26
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": -1.5,
+     "road_clear": 0.0
+    },
+    {
+     "type": "scatter",
+     "name": "tree",
+     "assets": [
+      "model.snm_commontree_1",
+      "model.snm_commontree_3"
+     ],
+     "count": 16,
+     "rect": [
+      -80,
+      20,
+      80,
+      90
+     ],
+     "seed": 59,
+     "scale": [
+      1.0,
+      1.7
+     ],
+     "avoid": [
+      [
+       0,
+       24,
+       26
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": -1.5,
+     "road_clear": 0.0
+    },
+    {
+     "type": "scatter",
+     "name": "rock",
+     "assets": [
+      "model.snm_rock_medium_1"
+     ],
+     "count": 10,
+     "rect": [
+      -30,
+      4,
+      30,
+      40
+     ],
+     "seed": 61,
+     "scale": [
+      0.8,
+      1.6
+     ],
+     "avoid": [
+      [
+       0,
+       12,
+       4
+      ]
+     ],
+     "river": false,
+     "terrain": true,
+     "min_z": -1.5,
+     "road_clear": 0.0
+    },
+    {
+     "type": "shape",
+     "name": "smoke0",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0.0,
+      12.0,
+      6.5
+     ],
+     "yaw_deg": 0,
+     "pitch": 90.0,
+     "scale": [
+      4.5,
+      13.0,
+      1
+     ],
+     "colour": "#666666",
+     "raw": "smoke"
+    },
+    {
+     "type": "shape",
+     "name": "smoke1",
+     "add": "plane",
+     "params": {
+      "size": 1
+     },
+     "pos": [
+      0.0,
+      12.0,
+      6.5
+     ],
+     "yaw_deg": 90,
+     "pitch": 90.0,
+     "scale": [
+      4.5,
+      13.0,
+      1
+     ],
+     "colour": "#666666",
+     "raw": "smoke"
+    }
+   ],
+   "cast": [
+    [
+     "officer",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "support_blue",
+     [
+      0.0,
+      14.8
+     ],
+     180.0,
+     "Idle_Talking_Loop",
+     0
+    ],
+    [
+     "aide",
+     "ink_test_m2",
+     "costume.mco_male_ranger",
+     "support_blue",
+     [
+      -1.6,
+      15.4
+     ],
+     -20.0,
+     "Idle_Loop",
+     9
+    ],
+    [
+     "cook",
+     "ink_test_f",
+     "costume.mco_female_peasant",
+     "answer_coral",
+     [
+      2.4,
+      10.4
+     ],
+     150.0,
+     "Idle_Loop",
+     14
+    ],
+    [
+     "scout",
+     "ink_test_m",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      -3.4,
+      10.0
+     ],
+     60.0,
+     "Idle_Loop",
+     22
+    ],
+    [
+     "sentry_a",
+     "ink_test_m2",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      -8.0,
+      3.2
+     ],
+     0.0,
+     "Sword_Idle",
+     4
+    ],
+    [
+     "sentry_b",
+     "ink_test_m",
+     "costume.mco_male_ranger",
+     "faction_b",
+     [
+      8.0,
+      3.4
+     ],
+     0.0,
+     "Sword_Idle",
+     31
+    ],
+    [
+     "courier",
+     "ink_test_f",
+     "costume.mco_female_ranger",
+     "answer_coral",
+     [
+      -6.0,
+      14.0
+     ],
+     60.0,
+     "Walk_Formal_Loop",
+     6
+    ],
+    [
+     "soldier",
+     "ink_test_m2",
+     "costume.mco_male_peasant",
+     "faction_a",
+     [
+      6.0,
+      9.0
+     ],
+     240.0,
+     "Walk_Formal_Loop",
+     18
+    ],
+    [
+     "rain",
+     "rain_lead",
+     null,
+     null,
+     [
+      -1.5,
+      7.0
+     ],
+     0.0,
+     null,
+     0
+    ]
+   ],
+   "shots": {
+    "camp_wide": [
+     [
+      -7.0,
+      -9.0,
+      3.2
+     ],
+     [
+      -3.0,
+      -4.0,
+      2.7
+     ],
+     [
+      0.0,
+      22.0,
+      3.0
+     ],
+     [
+      0.0,
+      22.0,
+      3.0
+     ],
+     26,
+     0
+    ],
+    "camp_medium": [
+     [
+      -5.0,
+      0.5,
+      1.8
+     ],
+     [
+      -3.0,
+      2.0,
+      1.7
+     ],
+     [
+      0.0,
+      12.0,
+      1.4
+     ],
+     [
+      0.0,
+      12.0,
+      1.4
+     ],
+     36,
+     0
+    ]
+   },
+   "terrain": {
+    "seed": 11,
+    "rolling": 3.0,
+    "flat": [
+     [
+      0,
+      14,
+      34,
+      0.0,
+      34
+     ]
+    ],
+    "road": [
+     [
+      0,
+      -30
+     ],
+     [
+      0,
+      14
+     ],
+     [
+      0,
+      70
+     ]
+    ],
+    "road_half": 2.2,
+    "snow_line": 1000000000.0,
+    "rock_line": 1000000000.0,
+    "rock_slope": 0.7
+   }
+  }
+ }
+}

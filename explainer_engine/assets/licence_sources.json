@@ -143,6 +143,34 @@
       "outputs_note": "REJECTED for production (roadmap 21.9): the videos are global; technical reference only",
       "per_pack_check": false
     },
+    "quaternius_medieval_village_megakit": {
+      "label": "Quaternius Medieval Village MegaKit (Standard, free)",
+      "status": "cc0",
+      "commercial_use": "yes",
+      "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+      "evidence": "itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only",
+      "redistribution": "allowed (CC0 1.0)",
+      "derivatives": "allowed (CC0 1.0)",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here",
+      "per_pack_check": true
+    },
+    "quaternius_stylized_nature_megakit": {
+      "label": "Quaternius Stylized Nature MegaKit (Standard, free)",
+      "status": "cc0",
+      "commercial_use": "yes",
+      "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+      "evidence": "itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there)",
+      "redistribution": "allowed (CC0 1.0)",
+      "derivatives": "allowed (CC0 1.0)",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered",
+      "per_pack_check": true
+    },
     "blender_studio_cc_by": {
       "label": "Blender Studio character rigs (Rain v3.3; Storm, Sprite Fright characters if fetched later)",
       "status": "cc-by-4.0",

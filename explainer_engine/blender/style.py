@@ -586,6 +586,63 @@ def _keys(graph: dict) -> dict:
     return graph
 
 
+def _blend_textures(doc: dict, blend: dict) -> None:
+    """Layer more ground textures over a textured material (nodes ``tex`` -> ``flatten``), each by a per-vertex weight attribute
+    (``w_<class>``, written by bpy/render_shot.py ``_terrain``) broken up by a world-space noise: the ground blends per pixel,
+    never per face. ``blend`` = {noise, jitter, layers: [{attr, image | colour}]}, painted in order over the base texture."""
+    ids = {n["id"] for n in doc["nodes"]}
+    if not {"tex", "flatten", "tiling"} <= ids:
+        return
+    ramp = {"interpolation": "LINEAR", "stops": [[0.38, [0.0, 0.0, 0.0, 1.0]], [0.62, [1.0, 1.0, 1.0, 1.0]]]}
+    nodes = [{"id": "wcoord", "type": "ShaderNodeTexCoord"},
+             {"id": "wnoise", "type": "ShaderNodeTexNoise", "inputs": {"Scale": float(blend.get("noise", 0.045)), "Detail": 3.0}},
+             {"id": "wcen", "type": "ShaderNodeMath", "props": {"operation": "SUBTRACT"}, "inputs": {1: 0.5}},
+             {"id": "wjit", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY"}, "inputs": {1: float(blend.get("jitter", 0.6))}}]
+    links = [["wcoord", "Object", "wnoise", "Vector"], ["wnoise", "Fac", "wcen", 0], ["wcen", "Value", "wjit", 0]]
+    prev, prev_sock = "tex", "Color"
+    if blend.get("base_tint"):   # tone only: the base texture multiplied by a tint (olive grass, grey-brown sand)
+        nodes.append({"id": "base_tint", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                      "inputs": {"Factor": 1.0, 7: [*[float(x) for x in blend["base_tint"]][:3], 1.0]}})
+        links.append(["tex", "Color", "base_tint", 6])
+        prev, prev_sock = "base_tint", 2
+    for k, ly in enumerate(blend["layers"]):
+        i = f"L{k}"
+        nodes += [{"id": f"{i}_attr", "type": "ShaderNodeAttribute", "props": {"attribute_name": ly["attr"]}},
+                  {"id": f"{i}_add", "type": "ShaderNodeMath", "props": {"operation": "ADD"}},
+                  {"id": f"{i}_ramp", "type": "ShaderNodeValToRGB", "ramp": ramp},
+                  {"id": f"{i}_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"}}]
+        links += [[f"{i}_attr", "Fac", f"{i}_add", 0], ["wjit", "Value", f"{i}_add", 1], [f"{i}_add", "Value", f"{i}_ramp", "Fac"],
+                  [f"{i}_ramp", "Color", f"{i}_mix", "Factor"], [prev, prev_sock, f"{i}_mix", 6]]
+        if ly.get("image"):
+            nodes.append({"id": f"{i}_img", "type": "ShaderNodeTexImage", "props": {"interpolation": "Linear"}, "image": ly["image"]})
+            links += [["tiling", "Vector", f"{i}_img", "Vector"]]
+            if ly.get("tint"):
+                nodes.append({"id": f"{i}_tint", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MULTIPLY"},
+                              "inputs": {"Factor": 1.0, 7: [*[float(x) for x in ly["tint"]][:3], 1.0]}})
+                links += [[f"{i}_img", "Color", f"{i}_tint", 6], [f"{i}_tint", 2, f"{i}_mix", 7]]
+            else:
+                links.append([f"{i}_img", "Color", f"{i}_mix", 7])
+        else:
+            nodes[-1]["inputs"] = {7: [*[float(x) for x in ly["colour"]][:3], 1.0]}
+        prev, prev_sock = f"{i}_mix", 2
+    fog = blend.get("fog")
+    if fog:   # distance haze: a blue-grey mix by camera depth, so far ground and mountains recede
+        nodes += [{"id": "fog_cam", "type": "ShaderNodeCameraData"},
+                  {"id": "fog_ramp", "type": "ShaderNodeValToRGB",
+                   "ramp": {"interpolation": "LINEAR", "stops": [[0.0, [0.0, 0.0, 0.0, 1.0]], [1.0, [1.0, 1.0, 1.0, 1.0]]]}},
+                  {"id": "fog_div", "type": "ShaderNodeMath", "props": {"operation": "MULTIPLY", "use_clamp": True},
+                   "inputs": {1: round(float(fog["amount"]) / max(float(fog["end"]) - float(fog["start"]), 1.0), 8)}},
+                  {"id": "fog_off", "type": "ShaderNodeMath", "props": {"operation": "SUBTRACT"}, "inputs": {1: float(fog["start"])}},
+                  {"id": "fog_mix", "type": "ShaderNodeMix", "props": {"data_type": "RGBA", "blend_type": "MIX"},
+                   "inputs": {7: [*[float(x) for x in fog["colour"]][:3], 1.0]}}]
+        links += [["fog_cam", "View Z Depth", "fog_off", 0], ["fog_off", "Value", "fog_div", 0], ["fog_div", "Value", "fog_mix", "Factor"],
+                  [prev, prev_sock, "fog_mix", 6]]
+        prev, prev_sock = "fog_mix", 2
+    doc["links"] = [l for l in doc["links"] if not (l[0] == "tex" and l[2] == "flatten")] + links + [[prev, prev_sock, "flatten", 7]]
+    doc["nodes"] += nodes
+    _keys(doc)
+
+
 def _ramp(positions: list[float], values: list[float]) -> dict:
     return {"interpolation": "CONSTANT", "stops": [[round(p, 6), [round(v, 6)] * 3 + [1.0]] for p, v in zip(positions, values)]}
 
@@ -629,9 +686,22 @@ class StyleEngine:
             return [*grade.matched(h), 1.0]
         return rgba(h)
 
-    def material(self, name: str, base: str | list[float], *, path: str = "eevee", texture: str | None = None,
-                 texture_mean: list[float] | None = None, tile: float | None = None, strength: float | None = None,
-                 slot: str | None = None) -> dict:
+    def material(self, name: str, base: str | list[float] = "#808080", *, raw: dict | None = None, blend: dict | None = None,
+                 path: str = "eevee", **kw) -> dict:
+        """``raw`` (WP-Q8, Fable's order 2026-11-05): a node graph {nodes, links} used as it is, outside the toon path (smoke cards,
+        the sea): ``check`` still wants an output node and no Principled BSDF. ``blend`` {images, noise}: the textured ground
+        material gets two more photo textures mixed by a world-space noise (a smooth blend, not per-face classes)."""
+        if raw is not None:
+            return _keys({"name": name, "path": path, "raw": True, "nodes": json.loads(json.dumps(raw["nodes"])),
+                          "links": json.loads(json.dumps(raw["links"]))})
+        doc = self._material(name, base, path=path, **kw)
+        if blend:
+            _blend_textures(doc, blend)
+        return doc
+
+    def _material(self, name: str, base: str | list[float], *, path: str = "eevee", texture: str | None = None,
+                  texture_mean: list[float] | None = None, tile: float | None = None, strength: float | None = None,
+                  slot: str | None = None) -> dict:
         """One toon material. ``base`` is a palette token, a hex or a linear RGBA; ``texture`` (an image path, the library file of
         a converted asset) is kept at ``texture_strength`` over ``texture_mean`` (its mean colour, linear), so a photo texture
         becomes a flat colour field with a trace of its grain (no raw PBR look, D-102); ``tile`` repeats it over the UVs (a
@@ -1344,6 +1414,11 @@ def check(doc: dict) -> list[str]:
     lit_path = art is not None and art.get("shade_path") == "lit"
     for m in doc["materials"]:
         if m.get("native"):
+            continue
+        if m.get("raw"):   # outside the toon path by order: it needs an output node and never a Principled BSDF
+            kinds = {n["type"] for n in m["nodes"]}
+            if "ShaderNodeOutputMaterial" not in kinds or "ShaderNodeBsdfPrincipled" in kinds:
+                out.append(f"material {m['name']}: a raw graph needs an output and no Principled BSDF")
             continue
         types = {n["type"] for n in m["nodes"]}
         if doc["path"] == "cycles_safe" and "ShaderNodeShaderToRGB" in types:

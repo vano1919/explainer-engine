@@ -119,6 +119,41 @@ def _place(ob, o):
     ob.scale = (sc, sc, sc) if isinstance(sc, (int, float)) else sc
 
 
+def _terrain(o, report):
+    """A height-field mesh (WP-Q8, ``blender/terrain.py``): a grid whose vertices carry the given heights, one material slot per
+    class, each quad assigned its class; the caller maps slot index -> toon material like a character's."""
+    g = o["terrain"]
+    nx, ny = g["nx"], g["ny"]
+    xs = [g["x0"] + (g["x1"] - g["x0"]) * i / (nx - 1) for i in range(nx)]
+    ys = [g["y0"] + (g["y1"] - g["y0"]) * j / (ny - 1) for j in range(ny)]
+    verts = [(xs[i], ys[j], g["heights"][j * nx + i]) for j in range(ny) for i in range(nx)]
+    faces = [(j * nx + i, j * nx + i + 1, (j + 1) * nx + i + 1, (j + 1) * nx + i) for j in range(ny - 1) for i in range(nx - 1)]
+    me = bpy.data.meshes.new(o["name"])
+    me.from_pydata(verts, [], faces)
+    me.update()
+    uvm = float(g.get("uv_m", 8.0))   # planar UVs: one texture repeat per uv_m metres
+    uv = me.uv_layers.new(name="UVMap")
+    for poly in me.polygons:
+        for li in poly.loop_indices:
+            v = me.vertices[me.loops[li].vertex_index].co
+            uv.data[li].uv = (v.x / uvm, v.y / uvm)
+    ob = bpy.data.objects.new(o["name"], me)
+    bpy.context.scene.collection.objects.link(ob)
+    for _ in range(max(int(k) for k in o["material"]) + 1):
+        me.materials.append(None)
+    for poly, c in zip(me.polygons, g["face_class"]):
+        poly.material_index = c
+    for poly in me.polygons:
+        poly.use_smooth = True   # shade-smooth: the ground has no facets
+    for cname, vals in (g.get("weights") or {}).items():   # per-vertex class weights: the ground shader blends per pixel
+        at = me.attributes.new(name="w_" + cname, type="FLOAT", domain="POINT")
+        at.data.foreach_set("value", vals)
+    ob["is_terrain"] = True
+    report.setdefault("terrain", {})[o["name"]] = {"verts": len(verts), "faces": len(faces)}
+    _place(ob, o)
+    return [ob]
+
+
 def _append(o, report):
     """Mesh objects of a library .blend under one empty (their own transforms kept), with every material replaced by the named
     toon material. Armatures, widgets and curves are left out (a prop is drawn at its rest pose), and so are their modifiers."""
@@ -142,6 +177,41 @@ def _append(o, report):
     report.setdefault("appended", {})[o["name"]] = kept
     if kept == 0:
         raise RuntimeError(f"{src['path']}: no mesh object to append")
+    _place(root, o)
+    return [c for c in root.children]
+
+
+def _gltf(o, report):
+    """A library glTF/GLB (a world-kit piece, WP-Q8) under one empty, placed like an appended .blend: its mesh objects keep their
+    own transforms, armatures and non-mesh nodes are dropped (a set piece is drawn at its rest pose), the caller's material
+    replaces every slot (no raw PBR reaches the frame)."""
+    src = o["gltf"]
+    new = _import_glb(src["path"])
+    root = bpy.data.objects.new(o["name"], None)
+    bpy.context.scene.collection.objects.link(root)
+    kept, meshes = 0, []
+    only = set(src.get("nodes") or ())   # one module of a kit sheet (the fort GLB lays all its pieces out side by side)
+    for ob in new:
+        if ob.type == "MESH" and len(ob.data.polygons) > 0 and (not only or ob.name.split(".")[0] in only):
+            meshes.append(ob)
+    for ob in new:
+        if ob not in meshes:
+            bpy.data.objects.remove(ob, do_unlink=True)
+    for ob in meshes:
+        world = ob.matrix_world.copy()
+        ob.parent = None
+        ob.matrix_world = world
+        ob.parent = root
+        ob.matrix_parent_inverse = root.matrix_world.inverted()
+        if only:
+            ob.location = (0.0, 0.0, 0.0)   # the module stands at the piece's own origin, not where the sheet put it
+        if ob.data.has_custom_normals:   # imported split normals make foliage cards shade as shards under the toon ramp
+            with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob]):
+                bpy.ops.mesh.customdata_custom_splitnormals_clear()
+        kept += 1
+    report.setdefault("gltf", {})[o["name"]] = kept
+    if kept == 0:
+        raise RuntimeError(f"{src['path']}: no mesh object to place")
     _place(root, o)
     return [c for c in root.children]
 
@@ -633,6 +703,12 @@ def build_described(scene, sc, report):
         elif "append" in o:
             obs = _append(o, report)
             handle = bpy.data.objects[o["name"]]
+        elif "gltf" in o:
+            obs = _gltf(o, report)
+            handle = bpy.data.objects[o["name"]]
+        elif "terrain" in o:
+            obs = _terrain(o, report)
+            handle = obs[0]
         elif "character" in o:
             handle = build_character(o, int(sc.get("frames_total", 1)), pending, report)
             if o.get("to"):
@@ -644,7 +720,7 @@ def build_described(scene, sc, report):
                 moving.append((handle, o))
             continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, character nor rig_blend")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf, terrain, character nor rig_blend")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))
@@ -953,12 +1029,12 @@ def apply_style(scene, style, pending, report):
     if scene.world is None:
         scene.world = bpy.data.worlds.new("world")
     build_tree(scene.world.node_tree, style["world"], missing, "world")
-    cast = [ob for obs, name, _ in pending if isinstance(name, dict) for ob in obs]   # the character meshes
+    cast = [ob for obs, name, _ in pending if isinstance(name, dict) for ob in obs if not ob.get("is_terrain")]   # the character meshes
     by_char = {}   # a character's meshes, by the id its slot materials carry ({char}_skin, {char}_hair, ...)
     for obs, name, _ in pending:
         if isinstance(name, dict):
             for who in {m.rsplit("_", 1)[0] for m in name.values() if "_" in m}:
-                by_char.setdefault(who, []).extend(ob for ob in obs if ob not in by_char.get(who, []))
+                by_char.setdefault(who, []).extend(ob for ob in obs if ob not in by_char.get(who, []) and not ob.get("is_terrain"))
     if "lights" in style:   # WP-Q1: real coloured lights (style.StyleEngine.lights); key_light is only their record
         lights_applied = build_lights(scene, style["lights"], cast, missing, by_char)
         fill = None
