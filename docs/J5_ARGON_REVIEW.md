@@ -1,5 +1,7 @@
 # J5 dialogue, montage and animation: review request for Argon (2026-11-06)
 
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX; LTX stays for the J2/J4 shots.
+
 For Gemini "Argon". Free work only: no pod, no paid call. Branch with everything: see "Where the code is". The creator's goal for this strand: the 30 % still / collage lane and the dialogue lane of a 12-15 minute Ink Chronicle episode
 (Qwen-Image-2.1 + xworld_v2 draws, Blender builds space and time, FFmpeg assembles, LTX only where motion is needed, D-96 as amended / D-116), all with pictures that exist already, tested on a one-minute, five-scene film.
 

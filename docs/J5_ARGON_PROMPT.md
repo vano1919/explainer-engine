@@ -1,5 +1,7 @@
 # Prompt for Argon (Gemini): minimise LTX realistically, plan the Python / Blender / FFmpeg limits, write the code (2026-11-06)
 
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX; LTX stays for the J2/J4 shots.
+
 Paste everything under the line into Argon. Written for the creator (22:01 UTC request). Free work only.
 
 ---
