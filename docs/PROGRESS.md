@@ -4767,3 +4767,20 @@ Re-checked sources in three types, two binding rules in the registry (cut reason
 - 2026-11-06 20:45 UTC: first render of the one-minute film (v1, 60.0 s, 1080p, free): HF route_test_2026-11/j5_minute/v1/. Plan timing adjusted (M3 7.5 s, S1 3.5, elder 2.0, eyes 5.0); lane shares 34/54/12 still outside BP-109 (REVIEW). BP-108/109 enforced_by now list j5_montage.
 - 2026-11-06 21:35 UTC: minute v2 (HF route_test_2026-11/j5_minute/v2/): story order by time and place, depth-map relief camera in Blender, local picture animation, BP-50 loudness -14.0 LUFS. Found Animated Drawings, DepthFlow, 3D Ken Burns as existing techniques (docs 7j). Weak points listed there.
 - 2026-11-06 21:50 UTC: Animated Drawings installed in a separate venv and run headless; the first hand-rigged elder collapses (robe, no legs), not adopted. 3D Ken Burns needs CUDA, not run. Notes in docs 7j.
+
+## 2026-11-06 19:45 UTC — p15q: 48 GB cards added to the Qwen-only schedule (the creator 19:30 UTC: "only A100?")
+- Finding: the asset pod 0t2re35vf6f3sq was NOT a 48 GB card. Its record says RTX PRO 6000 Blackwell Workstation (96 GB, $1.69/h); the
+  33-41 s per 1280x720 picture (HF route_test_2026-11/assets/manifest.jsonl, B 34 s, C edits 39 s, D 35 s) are Blackwell numbers. No 48 GB
+  card has ever run this Qwen pipeline: its speed and its VRAM fit at 1280x720 with 2-3 reference images (`model_cpu_offload`) are unknown.
+  The restyle is drawn at 1280x720 too (first frames are scaled to 1920x1088 on the CPU afterwards), so no pixel scaling applies.
+- `CARDS_QWEN` += A40 SECURE $0.59/h, RTX A6000 SECURE $0.59/h (gpu_speed 0.28), L40S SECURE $1.09/h (0.5): ESTIMATED from `runpod.SPEED`
+  ratios, never measured. Worst money <= $3.4 for every card (A40 $1.98, L40S $2.31); the worst pod time of the A40/A6000 (201 min) and
+  L40S (127 min) is over the 2 h cap, so the guard's 2 h bounds them and a stop leaves the saved pictures (step-by-step uploads). Blackwell stays out.
+- `p15_qwen.run` ends the stage after `MAX_FAIL_STREAK` = 3 pictures failing in a row (a card that cannot hold the model would only bill).
+- Tests: schedule card list, no Blackwell/H100, per-card worst money; the failure-streak stop. Cost $0.
+
+## 2026-11-06 20:20 UTC — p15q: every card that passes RP-01 and stays under $3.4 in the worst case (the creator 20:09 UTC: "try every possible card, in turn")
+- `CARDS_QWEN` = RTX A5000, A40, RTX A6000, L4, RTX 5090 (COMMUNITY + SECURE), RTX 4090, RTX 6000 Ada, L40S, A100 (COMMUNITY + SECURE); all speeds below the A100
+  ESTIMATED (`runpod.SPEED` / 1.8). Out: H100 (17 min work) and RTX PRO 6000 Blackwell (21 min) fail RP-01; A100 PCIe worst $3.65 / 122 min; RTX PRO 4000/4500
+  Blackwell have no speed. Qwen-Image-2.1 = 13.3 GB transformer + 16.3 GB text encoder (model_cpu_offload, one at a time): 24 GB cards may fit, unproven;
+  the 3-failure stop bounds an OOM. Time worst over 2 h (guard-bounded, pictures upload as made): A5000 276, L4 316, A40/A6000 203, 4090 139, Ada 133, L40S 127 min.

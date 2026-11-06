@@ -26,6 +26,7 @@ def load_cfg() -> dict:
     return json.loads((HERE / "p15.json").read_text(encoding="utf-8"))
 
 
+MAX_FAIL_STREAK = 3   # pictures failing in a row before the stage ends (a card that cannot hold the model fails every one)
 LOOKS = ("S1", "S2", "S3")   # the three look variants of --variants (pilot_stills.QWEN_LOOK), same seed and LoRA
 
 
@@ -81,7 +82,7 @@ def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in"), varia
     pipe, tr = t.load_pipeline()
     pipe = Q.style_lora(t, pipe, tr, cfg, say)
     say("loaded in", round(time.time() - t0), "s")
-    made = failed = 0
+    made = failed = streak = 0
     for j in jobs(cfg, variants):
         p = qd / f"{j['name']}.png"
         if p.exists():
@@ -97,10 +98,15 @@ def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in"), varia
             im = Q.draw(pipe, cfg, j, refs).convert("RGB")
         except Exception as e:   # noqa: BLE001 - one failed picture must not end the stage
             failed += 1
+            streak += 1
             say("FAIL", j["name"], repr(e)[:300])
             with open(qd / "manifest.jsonl", "a") as f:
                 f.write(json.dumps({"name": j["name"], "status": "failed", "error": repr(e)[:300]}) + "\n")
+            if streak >= MAX_FAIL_STREAK:   # e.g. 48 GB out of memory: every picture would fail, the card would only bill
+                say("STOP: ", streak, "pictures failed in a row; ending the stage so the pod can stop")
+                break
             continue
+        streak = 0
         im.save(p)
         ff = out / "first_frames" / f"{j['clip']}.png"
         ff.parent.mkdir(parents=True, exist_ok=True)
