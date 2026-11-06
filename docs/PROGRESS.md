@@ -4632,3 +4632,34 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   toward 60 only; BAD_HOST pods, made-then-failed pods and script failures keep the old limit. Without both flags nothing changes.
 - Tests: `test_cloud_economy.py` (+2): flag on/off, reason missing, 400 vs BAD_HOST, flags known to create. Docs: RP-10 row in CLOUD_RUNBOOK,
   D-118 in the decision log. Cost $0.
+
+## 2026-11-06 — J5 dialogue collage, step 1 (thread: "Test J5 dialogue with existing photos"; branch `claude/project-thread-4nebmi` off `icw/05c-ink-round`)
+
+- The creator (16:44 UTC): test J5 now with the existing pictures, a dialogue photo-collage first, then voice, emotion, mouth and background motion;
+  16:55 UTC: maximum realism. Free only (no pod, no paid call, no ElevenLabs).
+- `blender/j5_collage.py`: BiRefNet cut-outs of the B sheets (CPU, with the dtype fix of `icw/16-lean-pod` 0fa738b taken for `edit/cutout.py`),
+  a flat plate cropped from A1_tent per shot (a 2048-px equirect would be ~10x soft at a 44-degree frame), each card graded by the fire (warm wrap and
+  rim on the side that faces it, dusk ambient, black lifted to the backdrop's), rendered alone on alpha by Blender 5.2.3 (`transparent` job flag added to
+  `bpy/assemble_25d.py`), then depth blur (backdrop and foreground shoulder), fire bloom, vignette and one shared grain/paper layer.
+- Four frames, 2560x1440: S1 medium two-shot, S2 over H2's shoulder (H1 speaks), S3 reverse over H1's shoulder (H2 listens), S4 close-up H1.
+  H2 stays screen-left of H1 in all four, all cameras on one side of the line. EEVEE on 4 CPU cores: 3.4-5.8 s per pass; whole sheet 95 s.
+- HF: `route_test_2026-11/j5_dialogue/step1/` (frames, contact sheet, report.json, graded cards, `compare/` frame-vs-backdrop-only).
+- What the sheets could not give (reported to the creator): H1's sheets end at the belt (no legs, so no standing wide shot and no feet contact
+  shadow in these frames), H2 has no left-facing card (his right34 looks nearly at the camera, so his eye-line to H1 is weak), no mouth or
+  eyes-closed variants exist yet (step 2 needs them), H1's back card is the sheet mirrored for the reverse shot.
+- Tests: `tests/unit/test_j5_collage.py` (4). Cost $0.
+- Step 2 (creator 17:25 and 17:26 UTC: animate the background as much as possible in Python; shadow on the face; document every step): `blender/j5_background.py`,
+  a 12.5 s clip at 2560x1440/24 fps (S1 3.5 s, S2 3.0 s, S4 3.0 s, S3 3.0 s) with a synthesised camp ambience (no voice, nothing paid): one shared fire flicker on the
+  flame, the ground glow, embers, smoke and the heroes' warm side; banners waving, ground fog, dust bokeh, a push-in/truck per shot with parallax 0.3 : 0.65 : 1.0
+  and breathing. `j5_collage.face_shadow` adds the form shadow of the face (cool terminator away from the fire, brow, the chin's shadow on the collar); the stills
+  were re-rendered (v2). 1.3 s per frame, 2.5 min for the clip on 4 cores. HF `route_test_2026-11/j5_dialogue/step2/`. The step-by-step record for a later standard
+  is `docs/J5_DIALOGUE_COLLAGE.md`. Tests: `tests/unit/test_j5_background.py` (5), `test_j5_collage.py` (4). Cost $0. Still missing: mouth/blink/brow variants,
+  a full-body commander, a left-facing scout (see the doc, section 10).
+- Step 3 (creator 17:53 UTC: the cuts are abrupt, the people stand stiff): `j5_background.idle` gives each card a small time-only displacement (body sway from the
+  bottom edge, head turn, nod, chest breath, cloth ripple; shares of the card height, two unrelated sines per movement, the old whole-card scale breath removed because
+  it stretched the figure); the camera follows an ease-in-out curve; the shots are joined by a 10-frame (0.42 s) `xfade` dissolve carried by a tail of the earlier shot, cuts
+  stay on the nominal clock. Tests: 3 more in `tests/unit/test_j5_background.py` (8). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7b. Cost $0. L/J-cut and lip-sync
+  still wait for a voice (no ElevenLabs without the creator's separate yes).
+- Step 4 (creator 18:34 UTC: voice and mouth, credit cap 5000): three dialogue lines in two ElevenLabs voices, one take each, 155 credits (estimate first); Rhubarb Lip Sync 1.14.0 (MIT)
+  gives the mouth shapes; `blender/j5_face.py` draws blinks, brows and a mouth that follows the cues on the graded cards (exact sheet-to-frame projection, no model); `mix_voice` puts the
+  lines over the camp ambience. Tests: `tests/unit/test_j5_face.py` (5). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7c. Real mouth/eye variants per sheet (SA-06) still open (paid Qwen edit, the creator's call).
