@@ -1,0 +1,290 @@
+name: World kits
+
+# WP-Q8: the castle-courtyard layout of the Quaternius MegaKit + Poly Haven pieces (blender/world_kits.py), rendered as three moving
+# shots (a push, a side dolly, a reverse) with the real CC0 cast in the reference look (v01) and B_light, 24 frames each, with MP4
+# review copies and the seconds per frame. The pieces come from the vault when a token is there, else they are rebuilt from the free
+# itch.io pack and the Poly Haven files and kept only at the registered sha256. Free: no pod, no paid call (D-114).
+
+on:
+  workflow_dispatch:
+    inputs:
+      frames:
+        description: "frames per shot"
+        default: "24"
+      scale:
+        description: "render scale (1.0 = 2560x1440; the default keeps a CPU runner under its limit)"
+        default: "0.5"
+      variants:
+        description: "comma-separated look ids"
+        default: "v01_reference_soft3d,B_light"
+  push:
+    branches:
+      - "wpq/**"
+      - "claude/project-thread-**"
+    paths:
+      - "explainer_engine/blender/world_kits.py"
+      - "explainer_engine/blender/world_kits.json"
+      - "explainer_engine/blender/world_layouts.json"
+      - "explainer_engine/blender/polyhaven.py"
+      - "explainer_engine/blender/bpy/render_shot.py"
+      - ".github/workflows/world-kits.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: world-kits-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  epic:
+    # the static epic set (castle on a hill, bridge, town, trees, mountains): a 1440p still and a 24-frame slow push, s/frame recorded
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core ffmpeg
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: world-kit-assets-epic-${{ hashFiles('explainer_engine/blender/world_kits.json', 'explainer_engine/blender/style_sheet_assets.json') }}
+      - name: Fetch the look assets and the kit pieces (kept only at the registered sha256)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m explainer_engine.blender.style_sheets fetch
+          python -m explainer_engine.blender.world_kits fetch
+      - name: Render the 1440p still
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout hill_castle --shots castle_still --out epic --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "v01_reference_soft3d,B_light" --device cpu
+      - name: Render the C5 still (Cycles 48 samples + denoise, the kit's own glTF materials, PBR Neutral)
+        continue-on-error: true
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout hill_castle --shots castle_still --out epic_c5 --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "C5_cycles_pbr" --device cpu
+      - name: Render the 24-frame slow push
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout hill_castle --shots castle_push --out epic_push --binary "${{ steps.install.outputs.bin }}" \
+            --frames 24 --scale 0.5 --variants "v01_reference_soft3d" --device cpu
+      - name: Collect the outputs
+        if: always()
+        run: |
+          mkdir -p epic_artifact/push
+          cp -r epic/looks.json epic/frames epic_artifact/ 2>/dev/null || true
+          mkdir -p epic_artifact/c5 && cp -r epic_c5/looks.json epic_c5/frames epic_artifact/c5/ 2>/dev/null || true
+          cp -r epic_push/looks.json epic_push/frames epic_push/clips epic_artifact/push/ 2>/dev/null || true
+          for d in epic/work/*/ epic_c5/work/*/ epic_push/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "epic_artifact/$(basename "$d").blender.log"; done || true
+          ls -la epic_artifact
+      - name: Upload the epic set
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: world-kits-epic-${{ github.sha }}
+          path: epic_artifact/
+          if-no-files-found: error
+          retention-days: 30
+
+  courtyard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core ffmpeg
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: world-kit-assets-${{ hashFiles('explainer_engine/blender/world_kits.json', 'explainer_engine/blender/style_sheet_assets.json', 'explainer_engine/blender/character_assets.json') }}
+      - name: Fetch the look assets, the characters and the kit pieces (kept only at the registered sha256)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # the vault is private; without it the pieces are rebuilt from the free packs (pillow is pinned for it)
+        run: |
+          python -m explainer_engine.blender.style_sheets fetch
+          python -m explainer_engine.blender.characters fetch
+          python -m explainer_engine.blender.world_kits fetch
+      - name: Render the three courtyard shots
+        run: |
+          python -m explainer_engine.blender.world_kits poc --out poc --binary "${{ steps.install.outputs.bin }}" \
+            --frames "${{ github.event.inputs.frames || '24' }}" --scale "${{ github.event.inputs.scale || '0.5' }}" \
+            --variants "${{ github.event.inputs.variants || 'v01_reference_soft3d,B_light' }}" --device cpu
+      - name: Collect the outputs
+        if: always()
+        run: |
+          mkdir -p poc_artifact
+          cp -r poc/looks.json poc/frames poc/clips poc_artifact/ 2>/dev/null || true
+          for d in poc/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "poc_artifact/$(basename "$d").blender.log"; done || true
+          ls -la poc_artifact
+      - name: Upload the clips
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: world-kits-courtyard-${{ github.sha }}
+          path: poc_artifact/
+          if-no-files-found: error
+          retention-days: 30
+
+  eras:
+    # E1-E4 of the overnight matrix: the same set + cast, a 1440p still of the wide and the medium shot per era (v01 look)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {layout: antique_forum, shots: "forum_wide,forum_medium"}
+          - {layout: hill_castle, shots: "castle_hero,castle_still"}
+          - {layout: harbour_square, shots: "harbour_wide,harbour_medium"}
+          - {layout: field_camp, shots: "camp_wide,camp_medium"}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core ffmpeg
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: world-kit-assets-${{ hashFiles('explainer_engine/blender/world_kits.json', 'explainer_engine/blender/style_sheet_assets.json', 'explainer_engine/blender/character_assets.json') }}
+      - name: Fetch the look assets, the characters and the kit pieces (kept only at the registered sha256)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # the vault is private; without it the pieces are rebuilt from the free packs (pillow is pinned for it)
+        run: |
+          python -m explainer_engine.blender.style_sheets fetch
+          python -m explainer_engine.blender.characters fetch
+          python -m explainer_engine.blender.world_kits fetch
+      - name: Render the era stills (1440p, one frame of each shot's start)
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout ${{ matrix.layout }} --shots "${{ matrix.shots }}" --frames 1 --out era --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "v01_reference_soft3d" --device cpu
+      - name: Collect the outputs
+        if: always()
+        run: |
+          mkdir -p era_artifact
+          cp -r era/looks.json era/frames era_artifact/ 2>/dev/null || true
+          for d in era/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "era_artifact/$(basename "$d").blender.log"; done || true
+          ls -la era_artifact
+      - name: Upload the stills
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: world-kits-era-${{ matrix.layout }}-${{ github.sha }}
+          path: era_artifact/
+          if-no-files-found: error
+          retention-days: 30

@@ -4171,6 +4171,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   ~1.9x from cast shadows); one runner per job, so ratios under ~1.3x are runner noise. `look-report` takes the line verdict from
   the render's CN-17 finding (no second BP-173 reader). Waiting for the creator's pick; ICW-07 writes it into bible v1.5.
 
+## 2026-11-05 WP-Q8: world kits (Quaternius MegaKit, Poly Haven, Blender-MCP import code)
+
+- Why: the creator's principle (19:19 UTC): synthesis of existing libraries and code, ours is glue. A real mid-ground and props instead of primitives.
+- `blender/polyhaven.py`: the Poly Haven search/download/side-file/HDRI-world code of Blender-MCP (MIT, @2e4b0bc) with the third-party-copy header (rule drafted in the Fable quality report, no D-id yet) and a PROVENANCE row; urllib instead of requests; nothing of its server, telemetry or paid generators.
+- `blender/world_kits.py`, `world_kits.json`, `world_layouts.json`: 22 MegaKit pieces (itch.io CC0 page; quaternius.com now shows a no-redistribution licence) and 6 Poly Haven models packed with `characters.pack_glb` to one GLB each (base-colour image only, <=1024 px: `style.py` replaces every material), registered external (`model.mvk_*`, `model.ph_*`), vault copy under `assets/3d/model/`, rebuildable from the pack/URLs. Layouts `castle_courtyard` and `village_street` expand to `described` objects and a `scene_set/1`.
+- `bpy/render_shot.py`: object kind `gltf`. `world-kits.yml` + `world_kits poc`: three moving courtyard shots with the real cast.
+- Tests: `test_world_kits.py`, `test_repo_hygiene.py` (any `# from owner/repo@commit` header needs a PROVENANCE row). Cost: $0.
+
 ## 2026-11-05 — WP-Q7 camera grammar and Add Camera Rigs (branch wpq/07-cameras, base icw/05c-ink-round)
 
 - Why: flat cameras. The engine had six rig names (static, push, dolly, rail, orbit, dramatic_curve) sampled into plain keys, but no
@@ -4205,6 +4213,13 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
   (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
   `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
+- WP-Q8 addendum (the creator, 2026-11-05 19:44 UTC: a rich static epic historical 3D world is the main character; angular forms): layout `hill_castle` (castle fort on an ellipsoid hill, river, brick-arch bridge, 8 plaster houses with tiled roofs, 110 pines and broadleaf trees from the Quaternius Stylized Nature MegaKit (CC0, itch.io page) placed by a seeded scatter that follows the hill surface, 14 rocks, four mountains); block types `shape` and `scatter`; `world_kits poc --layout hill_castle` renders a 1440p still and a 24-frame push (CI job `epic`). Not yet judged against the Moklet reference. Cost: $0.
+
+## 2026-11-05 WP-Q8 overnight: layouts E1-E4, C5 profile, derived-build hash rule
+
+- Layouts `antique_forum` (E1), `hill_castle` (E2, cast on the bridge, `bridge_medium` shot), `harbour_square` (E3), `field_camp` (E4): 7-8 characters each, shots in the layout file (`cast`, `shots`); 12 more Poly Haven pieces registered (vault copies). The frames are not judged yet; the earlier hill_castle still read as a game render (camera in the trees, foliage shards), the camera, tree size and normals were changed and are unseen.
+- C5 `C5_cycles_pbr`: Cycles 48 samples + denoise, the kit's own glTF materials, PBR Neutral (`style_sheets.PBR_VARIANTS`); its cost is measured by CI, not claimed.
+- Fable's hash policy: a repacked GLB is a derived build. `world_kits.json` keeps the source hash (pack zip sha256, or the sha256 of the Poly Haven file md5s), `derived: true`, the packer id and the structural fingerprint (nodes, meshes, primitives, images); `fetch` accepts a rebuild with other bytes only when the source and the fingerprint match and keeps it under `derived/`; byte-identical rebuilds and cache or vault copies are used as before. Test `test_a_derived_rebuild_is_checked_by_source_and_fingerprint_not_bytes`.
 
 ## 2026-11-05 — WP-Q1: soft painterly shading, coloured light rigs, colour transform (branch `claude/project-thread-ekz0dc`)
 - Principle (the creator, 19:19 UTC): synthesis of existing techniques and code. Re-implemented from public documents, no code
@@ -4313,6 +4328,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
   only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
 - Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.
+
+## 2026-11-05 WP-Q8 (night, Fable orders): smooth ground, castle wall, harbour horizon
+
+- Terrain is shade-smooth and has no per-face classes in the shader: `terrain.py` writes per-vertex weights (meadow, forest, rock, road, snow), `_terrain` stores them as point attributes `w_*`, and one ground material layers the Poly Haven maps by them, broken up by a world-space noise (`style._blend_textures`). The face classes stay in the data for the tests.
+- Raw graphs outside the toon path (`raw` in `StyleEngine.material`, `S.check` wants an output and no Principled): `ocean` (glossy 0.1 ripple, quay band, far haze) and `smoke` cards.
+- E2: castle scale 1.0, level crest radius 17, front curtain walls, gatehouse with two towers and a lintel (primitives with the Poly Haven stone map; placement not yet seen in a frame). E3: mountains 0.35 x height, 500 m further back, sea plane to the horizon, two more distant ships. Not verified in a render yet.
+- 2026-11-05 (from the 66aafbe Mac frames): `model.ph_modular_fort_01` is a kit SHEET (22 modules laid out over 42 x 71 m), not an assembled castle; placing it whole made towers float over the slope and the dark block above the hero camera. The castle is now assembled from single modules (`nodes` on a piece: one tower_round per corner, thin straight walls, a gate, a keep of primitives), scale 0.8, on a levelled crest of radius 29. E2 mountains lowered (peak 95).
+- 2026-11-06 tone only (Fable): ground layers get per-layer tints (olive grass, ochre dirt road, grey-brown sand and cobbles), the plaza floor tiles a grey-brown multiplier, and every stall awning the same faded canvas palette. No geometry changed. The hero camera has no roll in the data (it is aimed with world Z up); the tilt seen in the frame is the hill and the 17 degree yaw, not roll.
 
 ## 2026-11-05 — WP-Q12: test_seams MP3 duration test no longer depends on the ffmpeg version
 - `test_duration_of_an_mp3_is_its_decoded_length` asserted `duration() < ffprobe container duration`; newer ffmpeg honours the
