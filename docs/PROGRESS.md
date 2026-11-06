@@ -4241,3 +4241,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Used on: `winners/audio/rain_line1.wav` (44 cues, 3.68 s) and `villager_line2.wav` (36 cues, 4.08 s) in the overnight folder;
   word timings from ElevenLabs Scribe (42 credits) next to them as `*.scribe_words.json`.
 - Cost: ElevenLabs 121 credits for the two lines + 42 for the two transcripts = 163 of the 100,000 cap; no pod, $0 otherwise.
+- CI follow-up (00:55 UTC): `test_video_qa_clip_rows.py::test_real_clips_probe_and_rows` raised CLIP-05 on the runner's newer ffmpeg
+  (the fixture fed an endless lavfi tone and relied on `-shortest`; AAC priming left the audio more than one frame longer than the
+  49-frame picture). The fixture's tone is now bounded to frames / fps; the CLIP-05 rule and its tolerance are unchanged. Local
+  ffmpeg 6.1 never showed it; the inherited CLIP-05 red that Q4 and Q8 reported on their PRs is this same fixture.
