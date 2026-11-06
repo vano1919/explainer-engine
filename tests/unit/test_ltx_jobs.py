@@ -48,11 +48,14 @@ def test_the_derived_controls_and_the_chain():
     assert c2["chain_from"] == {"job": "S02-02.c1.ltx25.colour.s42", "frames": LJ.CHAIN_FRAMES}
 
 
-def test_the_gated_gemma_leaves_the_ltx23_jobs_at_review_never_at_pass():
-    found = C.errors(LJ.build(RS))
-    pins = pins_mod.load()["models"]
-    if pins["text_encoder_gemma3"].get("sha256"):
-        pytest.skip("Gemma 3 is pinned now")
+def test_an_unpinned_weight_leaves_its_jobs_at_review_and_the_pinned_matrix_is_clean():
+    """Gemma 3 is gated: until its sha256 was read (the creator accepted the licence, 2026-11-06 12:16 UTC) the LTX-2.3 jobs were
+    REVIEW; with every weight pinned the default matrix has no finding."""
+    assert pins_mod.load()["models"]["text_encoder_gemma3"]["sha256"]
+    assert C.errors(LJ.build(RS)) == []
+    pins = pins_mod.load()
+    pins["models"]["text_encoder_gemma3"] = {**pins["models"]["text_encoder_gemma3"], "sha256": None}
+    found = C.errors(LJ.build(RS, pins=pins))
     review = {f["where"] for f in found if f["rule"] == "LJ-01" and f["severity"] == "REVIEW"}
     assert review == {j["id"] for j in LJ.build(RS)["jobs"] if j["base"] == "ltx23"}
     assert not [f for f in found if f["severity"] == "FAIL"]
