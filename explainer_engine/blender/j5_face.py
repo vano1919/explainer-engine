@@ -25,9 +25,9 @@ import numpy as np
 # height, jaw drop at full opening). Measured on zoomed crops of the cut-outs (2026-11-06).
 FEATURES = {
     "B_H2_right34": {"eyes": [(644.0, 122.5, 23, 19), (685.5, 121.0, 20, 17)], "brows": [(641, 103, 15, 6), (688, 101, 12, 6)],
-                     "mouth": (672.0, 161.0, 26, 3.0, 4.5), "chin_y": 172, "teeth": True, "skin_dy": 12},
+                     "mouth": (672.0, 161.0, 26, 3.0, 4.5), "chin_y": 172, "teeth": True, "move": 0.4, "skin_dy": 12},
     "B_H1_left34": {"eyes": [(523.5, 157.0, 25, 12), (581.0, 156.0, 34, 13)], "brows": [(525, 141, 18, 6), (576, 139, 24, 6)],
-                    "mouth": (548.0, 225.5, 40, 4.5, 5.5), "chin_y": 285, "teeth": False, "skin_dy": 10},
+                    "mouth": (548.0, 225.5, 40, 4.5, 5.5), "chin_y": 285, "teeth": False, "move": 0.12, "skin_dy": 10},
 }
 # Rhubarb's shapes -> (opening 0..1, width factor): A closed (M, B, P), B teeth, C open, D wide, E round, F pucker, G F/V, H L, X rest
 SHAPES = {"A": (0.0, 1.0), "B": (0.18, 1.0), "C": (0.50, 0.95), "D": (0.90, 1.05), "E": (0.55, 0.72), "F": (0.35, 0.55),
@@ -132,7 +132,7 @@ def setup(pm: np.ndarray, sheet: str, mapper) -> dict | None:
     return {"k": k, "eyes": eyes, "brows": [(*mp(bx, by), sx * k, sy * k) for bx, by, sx, sy in feat["brows"]],
             "mouth": {"x": mx, "y": my, "w": feat["mouth"][2] * k, "line": feat["mouth"][3] * k, "jaw": feat["mouth"][4] * k,
                       "interior": INTERIOR * min(1.3, max(0.55, luma / 0.62)), "tongue": TONGUE * min(1.3, max(0.55, luma / 0.62)),
-                      "teeth_c": TEETH * min(1.2, max(0.6, luma / 0.62)), "teeth": feat["teeth"], "chin": mp(0.0, feat["chin_y"])[1], "lash": LASH * min(1.2, max(0.5, luma / 0.62))},
+                      "teeth_c": TEETH * min(1.2, max(0.6, luma / 0.62)), "teeth": feat["teeth"], "move": feat.get("move", 1.0), "chin": mp(0.0, feat["chin_y"])[1], "lash": LASH * min(1.2, max(0.5, luma / 0.62))},
             "skin_luma": luma}
 
 
@@ -149,7 +149,7 @@ def displacement(face: dict, gx: np.ndarray, gy: np.ndarray, T: float, op: float
         span = max(8 * k, m["chin"] - m["y"])
         below = smooth((gy - (m["y"] + m["line"] * 0.8)) / (3.5 * k)) * (1 - smooth((gy - m["chin"]) / (0.5 * span)))
         side = np.exp(-(((gx - m["x"]) / (m["w"] * 1.25)) ** 2))
-        dy += m["jaw"] * op * below * side
+        dy += m["jaw"] * m.get("move", 1.0) * op * below * side   # drawn artists move the mouth shape, not the whole chin: a bearded jaw barely shifts
     if abs(brow) > 1e-3:
         for bx, by, sx, sy in face["brows"]:
             dy -= brow * 2.2 * k * np.exp(-(((gx - bx) / sx) ** 2 + ((gy - by) / sy) ** 2))

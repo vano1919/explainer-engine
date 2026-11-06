@@ -204,3 +204,13 @@ Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender car
   with a soft limiter (measured: -18.8 to -21.5 dBFS RMS across the three lines), shared room reverb, 20 ms edge fades, 6 dB duck with 0.4 s ramps.
 - **Head jumps (19:12).** `F.drive` envelopes (0.35 s in, 0.5 s out) and a 150 ms low-passed mouth opening replace on/off toggles;
   `test_j5_face` has a no-jump test.
+
+## 7e. Step 4d: the jaw no longer slides (creator, 19:28 UTC)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+Cause: the chin zone was displaced by the full jaw drop, so a bearded chin slid down like a mask. Drawn 2D characters do not move the
+chin that way: the mouth shape changes in place and the head nods a little. `FEATURES[...]["move"]` now scales the chin displacement
+(commander 0.12, scout 0.4); the painted mouth opening keeps its full size. Techniques searched: GitHub search is limited to this session's
+repositories, so the rule is taken from 2D viseme practice (Rhubarb's own mouth-shape set: swap shapes, do not warp the face).
+Open: a true shape swap needs drawn mouth variants per sheet (paid Qwen edit, the creator's call); the whole-head nod is the remaining motion.
