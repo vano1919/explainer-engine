@@ -4103,3 +4103,17 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   `# from <owner>/<repo>@` header; shot_spec/2 `view_transform` const AgX and `line_weight_px > 0` need a version step before
   WP-Q1 lands.
 - Results: `docs_lint` (see the PR). Cost: $0.
+
+## 2026-11-06 — words_to_mouth_cues: Rhubarb-shaped cues from Scribe word timings (overnight test, $0 code)
+- Why: Rhubarb Lip Sync 1.14.0 ships x86_64 only; the creator's M4 Mac has no Rosetta (a system change, not taken at night) and the
+  cloud session's policy does not run a downloaded binary. The two ElevenLabs dialogue lines of the Ink Chronicle 5 s test still
+  needed mouth cues for `blender.rigs.LipSync` and Q4's `rain_dialogue`.
+- `explainer_engine/audio/words_to_mouth_cues.py` (stdlib): Scribe `{"text","start","end"}` words -> Rhubarb JSON (`mouthCues`,
+  `metadata.estimated: true`): each word's span shared among its letters, letter -> Preston Blair shape by spelling (m/b/p -> A,
+  a -> D, e -> C, i/y -> B, o -> E, u/w -> F, f/v -> G, l -> H, else B), equal neighbours merged, cues under 0.04 s folded, X in the
+  gaps and the tail. A spelling approximation, REVIEW for an episode; the real tool stays Rhubarb (`rigs.rhubarb_argv`).
+- Tests: `tests/unit/test_words_to_mouth_cues.py` (4): spelling shapes, rest in gaps and tail, contiguous non-repeating cues
+  that `LipSync.frames` accepts, the CLI on a WAV.
+- Used on: `winners/audio/rain_line1.wav` (44 cues, 3.68 s) and `villager_line2.wav` (36 cues, 4.08 s) in the overnight folder;
+  word timings from ElevenLabs Scribe (42 credits) next to them as `*.scribe_words.json`.
+- Cost: ElevenLabs 121 credits for the two lines + 42 for the two transcripts = 163 of the 100,000 cap; no pod, $0 otherwise.
