@@ -81,3 +81,11 @@ def test_a_cut_window_shifts_every_line_and_keeps_a_lipsync_shot_under_the_cap()
     assert plan["shapes"][:14] == "X" * 14 and set(plan["shapes"][15:60]) - {"X"}
     with pytest.raises(ValueError):                                       # BP-108: a lip-synced shot is at most 5 s
         D.lipsync_plan(lines, 200, "villager")
+
+
+def test_cli_over_cap_shot_is_written_with_a_review_note(tmp_path):
+    out = tmp_path / "t.json"
+    assert D.main(["--dialogue", str(HERE / "rain_dialogue_two_speakers_synthetic.json"), "--frames", "200", "--out", str(out),
+                   "--shape-speaker", "villager"]) == 0
+    j = json.loads(out.read_text(encoding="utf-8"))
+    assert j["villager"]["lipsync"]["frames"] == 200 and "BP-108" in j["_review"]

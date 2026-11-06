@@ -116,13 +116,22 @@ def dialogue(lines: list[dict], frames: int, fps: int = 24, poses: dict | None =
         {k: l[k] for k in ("start", "end", "turn", "gesture")} for l in ls], "channels": len(tracks)}}
 
 
-def lipsync_plan(lines: list[dict], frames: int, speaker: str, fps: int = 24, window_s: float = 0.0) -> dict:
+def lipsync_plan(lines: list[dict], frames: int, speaker: str, fps: int = 24, window_s: float = 0.0,
+                  over_cap: bool = False) -> dict:
     """The ``lipsync`` block (``rigs.LipSync.plan``) of a shape-key mouth (the UBC characters, ``characters.json`` ``mouth``) for the
     one line ``speaker`` says: the cue file starts ``start_s`` into the shot, the mouth rests (X) before it and after it."""
     mine = [l for l in _lines(lines, window_s) if l["speaker"] == speaker]
     if len(mine) != 1:
         raise ValueError(f"{speaker!r} must have exactly one line in this shot, found {len(mine)}")
-    return rigs.LipSync(fps).plan(mine[0]["cues"], frames, offset_s=-mine[0]["start"])
+    ls = rigs.LipSync(fps)
+    if over_cap:   # the same block as ``plan`` without its BP-108 refusal (a REVIEW test clip; the caller records it)
+        c = rigs.load_cues(mine[0]["cues"])
+        off = -mine[0]["start"]
+        c = {"duration": max(c["duration"] - off, 0.0), "cues": [(max(s - off, 0.0), e - off, v) for s, e, v in c["cues"] if e - off > 1e-9]}
+        shapes = rigs.shape_per_frame(c, fps, frames, ls.rest)
+        return {"fps": fps, "frames": frames, "offset_s": off, "shapes": "".join(shapes),
+                "tracks": rigs.tracks(shapes, blend_frames=ls.blend_frames, shape_keys=ls.shape_keys)}
+    return ls.plan(mine[0]["cues"], frames, offset_s=-mine[0]["start"])
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -143,7 +152,12 @@ def main(argv: list[str] | None = None) -> int:
     out = {a.bone_speaker: dialogue(lines, a.frames, speaker=a.bone_speaker, window_s=a.window_start_s)["visemes"]}
     out = {a.bone_speaker: {"visemes": out[a.bone_speaker]}}
     if a.shape_speaker:
-        out[a.shape_speaker] = {"lipsync": lipsync_plan(lines, a.frames, a.shape_speaker, window_s=a.window_start_s)}
+        from explainer_engine.standards import sourced_rules as SR
+        over = a.frames / 24 > SR.T("BP-108", "dialogue_shot_max_s") + 1e-6
+        out[a.shape_speaker] = {"lipsync": lipsync_plan(lines, a.frames, a.shape_speaker, window_s=a.window_start_s, over_cap=over)}
+        if over:   # REVIEW, not a silent pass: the clip is a test, a final video cuts between the speakers instead
+            out["_review"] = f"{a.frames} frames = {a.frames / 24:.2f} s is over BP-108 dialogue_shot_max_s for a lip-synced shot"
+            print("REVIEW:", out["_review"])
     a.out.write_text(json.dumps(out), encoding="utf-8")
     print(f"wrote {a.out}: {', '.join(out)}")
     return 0
