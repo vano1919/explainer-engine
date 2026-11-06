@@ -250,3 +250,20 @@ The standard for J5 dialogue, as code in `explainer_engine/blender/j5_cuts.py` (
 3. The two heroes keep their sides of the frame in every shot (180-degree rule); eyelines point at each other.
 4. Sound leads or trails the picture at the cut (J and L cuts); the line starts after the cut, not on it.
 Available angles today: the commander has front, back, 3/4 left and 3/4 right sheets; the scout has front, back and 3/4 right (no 3/4 left). Step 4f cuts S1 (two-shot, scout speaking) -> S2 (commander, one 6 s shot with a push-in) -> S3 (scout's answer from the reverse side) and passes the lint.
+
+## 7h. Final dialogue rules, from the first photo frame to the last cut (creator, 20:00 UTC; BP-176, BP-177)
+
+Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX.
+
+Sources re-checked on 2026-11-06 20:00-20:15 UTC, three types: article (Wikipedia, 30-degree rule, quoting Corrigan and White: "to emphasize the motivation for the cut by giving a substantially
+different view of the action"; Wikipedia, Camera coverage: master shot first, all coverage obeys the 180-degree rule, call-and-answer shots keep the same lens and distance); books (Mascelli, *The Five C's of
+Cinematography*: screen direction and eyeline; Murch, *In the Blink of an Eye*: the rule of six, cut by giving up the lowest first; both through secondary summaries, not the books themselves); a video
+(*Most AI Filmmakers Ignore This Rule*, transcript read through vidIQ, 5 credits: establish the two-shot first, derive every coverage picture from it, keep each hero on one side looking one way, move the camera
+at least 30 degrees, log the eyeline per shot before generating the performance). Not verified: a UChicago study on dialogue cut points (the PDF could not be read). Cost: 5 vidIQ credits.
+
+**At the plan (before any picture, `j5_cuts.plan_check`, BP-177):** every shot names subject, sheet view, size, sides of the frame, each hero's eyeline and, after the first, the motivation of the cut; the first
+picture is the WIDE two-shot of both heroes; the hero on the left looks right and the other looks left; no later shot changes sides or eyelines.
+**At picture generation:** the master two-shot is generated first; every over-the-shoulder, single or reaction picture is derived from it (the master as the reference image), keeps the sides and eyelines, and shows
+only what its clip needs (standing order 14). A picture needs a sheet whose view fits the angle (the scout has no 3/4-left sheet: a shot needing it is replanned or the sheet is drawn first).
+**At the cut (`j5_cuts.lint`, BP-176):** the subject changes (speaker change, reaction) or the angle on the same hero changes by 30 degrees or more together with a full size step; the same hero closer from the same side is a push-in inside one shot.
+**At the sound:** the line starts after the cut or the sound leads or trails it (J and L cuts, ED-14, BP-117).

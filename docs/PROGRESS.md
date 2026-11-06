@@ -4563,3 +4563,6 @@ New `j5_variant_sheet.py` (layout constant, cut, align, per-cell checks, variant
 
 ## 2026-11-06 J5 dialogue step 4f: cuts with a reason
 S2 and S4 merged into one 6 s commander shot with a push-in (the same man only closer was a jump); `j5_cuts.py` lints cuts (subject or 30-degree angle change plus size step, 180-degree rule); docs 7g records the rules and sources.
+
+## 2026-11-06 J5 dialogue rules (BP-176, BP-177)
+Re-checked sources in three types, two binding rules in the registry (cut reason; plan before generation), `j5_cuts.plan_check` + `lint` read their thresholds from it, docs 7h. vidIQ: 5 credits (one transcript). Not verified: the UChicago dialogue-cut study (PDF unreadable).

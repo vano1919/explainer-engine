@@ -6861,6 +6861,97 @@
    "supersedes": [],
    "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
    "next_step": "ICW-04 reads the pin in blender/project.py and the CI smoke verifies the archive hash"
+  },
+  {
+   "id": "BP-176",
+   "area": "film",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A cut in a dialogue has a reason: it changes the SUBJECT (the other speaker or a reaction) or the ANGLE on the same subject by at least angle_min_deg degrees together with a full shot-size step; a size change on the same subject and the same angle is a push-in inside one shot, never a cut (the 'same man, only closer' jump). Both speakers keep their side of the frame and their eyeline in every shot (the 180-degree rule); when a cut cannot satisfy all of emotion, story, rhythm, eye trace, plane and space, the cut gives up the lowest first (Murch). Checked on the J5 shot sequence by j5_cuts.lint.",
+   "thresholds": {
+    "angle_min_deg": 30,
+    "size_step_min": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia, citing Corrigan and White)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule"
+    },
+    {
+     "type": "A",
+     "title": "Camera coverage (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Camera_coverage"
+    },
+    {
+     "type": "B",
+     "title": "The Five C's of Cinematography, Joseph V. Mascelli (screen direction, eyeline, continuity cutting)",
+     "url": "https://www.goodreads.com/book/show/139087290-five-cs-of-cinematography"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye, Walter Murch (the rule of six: emotion, story, rhythm, eye trace, planarity, spatial continuity)",
+     "url": "https://en.wikipedia.org/wiki/In_the_Blink_of_an_Eye_(Murch_book)"
+    },
+    {
+     "type": "C",
+     "title": "Most AI Filmmakers Ignore This Rule (YouTube, transcript read 2026-11-06): the 180-degree rule for generated dialogue, coverage from the establishing two-shot, eyeline logged per shot",
+     "url": "https://www.youtube.com/watch?v=0VxTJYZ2Hcc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:lint"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-177",
+   "area": "film",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A dialogue is planned before any picture is generated (the rules start at the first photo frame): the first picture is the establishing two-shot that fixes who stands on which side and which way each looks; every coverage picture (over-the-shoulder, single, reaction) is derived from that master and keeps the sides and eyelines; every shot of the plan carries its subject, sheet view, size, sides, each hero's eyeline and, after the first, the motivation of its cut, and a plan without them is refused before the paid picture is drawn (j5_cuts.plan_check).",
+   "thresholds": {
+    "required_fields": [
+     "name",
+     "subject",
+     "view",
+     "size",
+     "sides",
+     "eyeline"
+    ],
+    "establishing_size": "wide"
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia, citing Corrigan and White)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule"
+    },
+    {
+     "type": "A",
+     "title": "Camera coverage (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Camera_coverage"
+    },
+    {
+     "type": "B",
+     "title": "The Five C's of Cinematography, Joseph V. Mascelli (screen direction, eyeline, continuity cutting)",
+     "url": "https://www.goodreads.com/book/show/139087290-five-cs-of-cinematography"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye, Walter Murch (the rule of six: emotion, story, rhythm, eye trace, planarity, spatial continuity)",
+     "url": "https://en.wikipedia.org/wiki/In_the_Blink_of_an_Eye_(Murch_book)"
+    },
+    {
+     "type": "C",
+     "title": "Most AI Filmmakers Ignore This Rule (YouTube, transcript read 2026-11-06): the 180-degree rule for generated dialogue, coverage from the establishing two-shot, eyeline logged per shot",
+     "url": "https://www.youtube.com/watch?v=0VxTJYZ2Hcc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:plan_check"
+   ],
+   "supersedes": []
   }
  ]
 }
