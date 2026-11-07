@@ -1,0 +1,67 @@
+"""modal_p15d.py: the parts that need no Modal SDK and no GPU."""
+import pytest
+
+from explainer_engine.training.pods.p15 import modal_p15d as M
+
+
+def test_nothing_starts_without_the_creators_card(monkeypatch):
+    with pytest.raises(SystemExit):
+        M.go_gate({})
+    with pytest.raises(SystemExit):
+        M.go_gate({"EE_MODAL_GO": "yes"})
+    assert M.go_gate({"EE_MODAL_GO": "cmsg_abc"}) == "cmsg_abc"
+
+
+def test_link_hf_cache_builds_snapshots_from_volume_folders(tmp_path):
+    vol, home = tmp_path / "vol", tmp_path / "hf"
+    f = vol / "model" / "Qwen" / "Qwen-Image-2.1" / "transformer" / "a.safetensors"
+    f.parent.mkdir(parents=True)
+    f.write_bytes(b"x")
+    (vol / "model" / "Qwen" / "Qwen-Image-2.1" / ".cache").mkdir()
+    (vol / "model" / "Qwen" / "Qwen-Image-2.1" / ".cache" / "skip").write_bytes(b"y")
+    d = vol / "dataset" / "vano1919" / "tmr-artifacts" / "lora" / "l.safetensors"
+    d.parent.mkdir(parents=True)
+    d.write_bytes(b"z")
+    made = M.link_hf_cache(vol, home)
+    assert len(made) == 2
+    rev = "d26bb61231c349cf6b7896fa83353113880e1ba3"
+    base = home / "hub" / "models--Qwen--Qwen-Image-2.1"
+    assert (base / "refs" / "main").read_text() == rev
+    assert (base / "snapshots" / rev / "transformer" / "a.safetensors").read_bytes() == b"x"
+    assert (home / "hub" / "datasets--vano1919--tmr-artifacts" / "snapshots" / "local" / "lora" / "l.safetensors").is_symlink()
+    assert M.link_hf_cache(vol, home) == []   # idempotent
+
+
+def test_battle_frame_is_drawn_first_and_order_is_otherwise_kept():
+    jobs = [{"name": n} for n in ("a__S1", f"{M.FIRST}", "b__S2", "c__S3")]
+    out = M.reorder_first(jobs)
+    assert out[0]["name"] == M.FIRST and [j["name"] for j in out[1:]] == ["a__S1", "b__S2", "c__S3"]
+
+
+def test_upload_loop_sees_new_and_changed_files_once(tmp_path):
+    tmp_path = tmp_path / "out"
+    tmp_path.mkdir()
+    seen = {}
+    (tmp_path / "a.txt").write_text("1")
+    assert [p.name for p in M.new_files(tmp_path, seen)] == ["a.txt"]
+    assert M.new_files(tmp_path, seen) == []
+    (tmp_path / "a.txt").write_text("22")
+    (tmp_path / "sub").mkdir()
+    (tmp_path / "sub" / "b.txt").write_text("b")
+    assert sorted(p.name for p in M.new_files(tmp_path, seen)) == ["a.txt", "b.txt"]
+
+
+def test_pins_match_the_pilot_config_and_caps_fit():
+    import json
+    from pathlib import Path
+    root = Path(M.__file__).parent
+    cfg = json.loads((root / "p15.json").read_text())
+    assert M.LTX_JOB in [j["id"] for j in cfg["ltx_jobs"]]
+    assert any(j["shot"] == M.FIRST.split("__")[0] for j in cfg["qwen_jobs"])
+    bundle_line = [ln for ln in (root / "p15c1.sh").read_text().splitlines() if "ee_src.tar.gz" in ln and "printf" in ln][0]
+    assert M.BUNDLE_SHA in bundle_line
+    pins = json.loads((root.parents[3] / "config" / "cloud_pins.json").read_text())
+    assert M.BASE_IMAGE.endswith(pins["images"]["tmr_pod"]["digest"])
+    # the hard brakes (timeouts at list price + ~$0.4 CPU/RAM) stay under the cap
+    brakes = M.CAPS["qwen_timeout_s"] * 0.001097 + M.CAPS["ltx_timeout_s"] * 0.000694 + 0.4
+    assert brakes <= M.CAPS["max_usd"] and M.CAPS["stop_usd"] == pytest.approx(0.8 * M.CAPS["max_usd"])
