@@ -259,8 +259,9 @@ def launch() -> dict:
 
 def bundle(out: Path, ref: str | None = None) -> str:
     excl = LEAN.EXCLUDE
+    # every pinned script is excluded (a script cannot carry the sha of a bundle that contains itself): derived, so a new variant cannot be forgotten
     LEAN.EXCLUDE = (*excl, "explainer_engine/training/pods/p15/p15.sh", "explainer_engine/training/pods/p15/p15q.sh",
-                    "explainer_engine/training/pods/p15/p15c8.sh", "explainer_engine/training/pods/p15/p15c2.sh")
+                    *(f"explainer_engine/training/pods/p15/{p.name}" for p in SH_C.values()))
     try:
         sha = LEAN.bundle(out, ref)
     finally:
