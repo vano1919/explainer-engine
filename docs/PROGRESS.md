@@ -4643,3 +4643,13 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   L40S (127 min) is over the 2 h cap, so the guard's 2 h bounds them and a stop leaves the saved pictures (step-by-step uploads). Blackwell stays out.
 - `p15_qwen.run` ends the stage after `MAX_FAIL_STREAK` = 3 pictures failing in a row (a card that cannot hold the model would only bill).
 - Tests: schedule card list, no Blackwell/H100, per-card worst money; the failure-streak stop. Cost $0.
+
+
+## 2026-11-07 — cloud provider research and Claude policy (Hyperstack / Modal)
+- Scope: the active branch `icw/21-mouth-job`, not `main`; active D-116 pipeline only. Research covered Hyperstack GPU VMs, AI Studio Partner API, Dedicated Inference, VM state/billing, Pricebook/stock APIs, S3 storage and both agent MCP routes; Modal Functions, per-second GPU/CPU/RAM pricing, Starter credits, Volumes, Secrets, autoscaling and Claude Code skills; current RunPod official Claude plugin/agent documentation.
+- Added the consolidated agent policy `.claude/rules/cloud-platforms.md`, imported from `CLAUDE.md`. It preserves RunPod as the only currently implemented adapter and blocks Hyperstack/Modal resource actions until a provider adapter, ledger, lifecycle/stock handling, watchdog, hash-verified vault upload and recovery tests exist.
+- Added `docs/providers/HYPERSTACK_README.md`, `docs/providers/MODAL_README.md`, and `docs/providers/CLOUD_COST_MODEL_2026-11-07.md`. Updated root README and `docs/INDEX.md`.
+- Findings: Hyperstack AI Studio Partner API uses third-party model integrations, token billing for text/VLM and per-16×16-patch billing for images; it is not a self-hosted endpoint for our custom Qwen-Image-2.1 + xworld_v2 or LTX-2.5 pipeline. Hyperstack GPU VM is the relevant route for those custom workloads. Hyperstack `SHUTOFF` continues full compute billing; HIBERNATED releases GPU/CPU/RAM but storage/IP may still bill. Modal Starter has $30 monthly CPU/RAM/GPU compute credits, but Shared Endpoint token charges are excluded.
+- Cost status: public-list arithmetic only. Hyperstack A100 80 GB = $1.35/GPU-hour; Modal A100 80 GB = $2.4984/GPU-hour before CPU/RAM; Modal may win on bursty jobs through scale-to-zero and Starter credits. D-116 episode cost remains unproven until current Qwen/LTX stage seconds and peak VRAM are measured.
+- No cloud resource was created and no paid request was made. No provider adapter or `config/spend_caps.json` change was made. Existing RunPod budget was not reused.
+- Validation: documentation was committed to this branch through GitHub. Local `docs_lint`, pytest and CI were not run in this session; the next code/documentation validation should run them before merging.
