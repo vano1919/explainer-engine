@@ -26,6 +26,10 @@ SCENES = ("cave", "ice", "camp")
 WAYS = ("block", "flat3")   # KP-56 (creator 14:55 UTC, Argon Part 4): cc0 lost on the 6 photos and stays only as the record of that test
 PRESET = {"cave": "interior_hearth", "ice": "overcast_day", "camp": "night_camp"}   # light_presets.json
 SHOT = {"cave": "sa_cave_wide", "ice": "sa_ice_wide", "camp": "sa_camp_wide"}
+# the creator 2026-11-07 15:04 UTC, test A (KP-57): the same place from two more angles, every named figure still in frame
+ANGLES = {"cave": {"side": [[5.6, 1.6, 1.7], None, [-1.2, 6.8, 1.4], None, 20, 1], "low": [[-5.4, 1.2, 1.3], None, [1.6, 6.4, 1.6], None, 20, 1]},
+          "ice": {"side": [[-10.0, -1.0, 1.5], None, [9.0, 18.0, 2.0], None, 20, 1], "low": [[0.6, -1.6, 0.9], None, [3.0, 22.0, 2.4], None, 26, 1]},
+          "camp": {"side": [[6.8, 0.4, 1.7], None, [-1.6, 8.4, 1.4], None, 22, 1], "low": [[-6.8, 0.6, 1.4], None, [1.6, 8.2, 1.6], None, 22, 1]}}
 PLACE = {"cave": "a dark ice-age cave", "ice": "a wide snow plain at dusk in the ice age",
          "camp": "an ice-age camp in a night snowstorm"}
 LIGHT = {"cave": "orange firelight", "ice": "a low cold blue dusk glow", "camp": "firelight"}
@@ -270,8 +274,8 @@ def _camp(way):
             a = k * math.pi / 4
             blocks.append(dress(shape(f"ring_{k}", "uv_sphere", [0.8 * math.cos(a), 5.5 + 0.8 * math.sin(a), 0.08], [0.38, 0.38, 0.22], "#4A3B2C")))
         ivory, wood = "#E6DCC2", "#5C3A21"
-        blocks += [dress(shape("tusk_arch_l", "cone", [-9.9, 12.4, 1.3], [0.3, 0.3, 2.6], ivory, pitch=-14.0)),
-                   dress(shape("tusk_arch_r", "cone", [-7.1, 12.4, 1.3], [0.3, 0.3, 2.6], ivory, pitch=14.0)),
+        blocks += [dress(shape("tusk_arch_l", "cone", [-10.3, 12.6, 1.3], [0.3, 0.3, 2.6], ivory, pitch=-14.0)),
+                   dress(shape("tusk_arch_r", "cone", [-7.9, 12.6, 1.3], [0.3, 0.3, 2.6], ivory, pitch=14.0)),
                    dress(shape("rack_post_a", "cylinder", [-1.4, 15.6, 0.9], [0.12, 0.12, 1.8], wood)),
                    dress(shape("rack_post_b", "cylinder", [0.2, 15.6, 0.9], [0.12, 0.12, 1.8], wood)),
                    dress(shape("rack_hide", "cube", [-0.6, 15.6, 1.25], [1.4, 0.05, 0.95], "#C9A36B")),
@@ -384,32 +388,38 @@ def clutter_clashes(blocks: list, cast: list, cam: list, scene: str, structure: 
     for b in blocks:
         if not (b.get("type") == "piece" or b.get("dress")) or b["name"] in TAGS[scene] or b["name"] in ("fire_pit",) or b["name"].startswith("ring_"):   # the fire's own ring
             continue
-        px = project(cam, [b["pos"][0], b["pos"][1], 0.6])
+        px = project(cam, [b["pos"][0], b["pos"][1], max(0.6, b["pos"][2])])   # a hanging stalactite is judged where it hangs
         if px[2] <= 0 or not (-0.05 <= px[0] <= 1.05):
             continue
         for n, sp in subj:
-            if abs(px[0] - sp[0]) < 0.10 and abs(px[2] - sp[2]) < max(4.0, 0.25 * sp[2]):
+            if abs(px[0] - sp[0]) < 0.10 and abs(px[2] - sp[2]) < max(4.0, 0.25 * sp[2]) and abs(px[1] - sp[1]) < 0.3:
                 out.append(f"{b['name']} next to {n}")
     return out
 
 
-def layout(scene: str, way: str) -> dict:
+def shot_id(scene: str, angle: str = "wide") -> str:
+    return SHOT[scene] if angle == "wide" else f"sa_{scene}_{angle}"
+
+
+def layout(scene: str, way: str, angle: str = "wide") -> dict:
     blocks, cast, structure, cam = {"cave": _cave, "ice": _ice, "camp": _camp}[scene](way)
+    if angle != "wide":
+        cam = ANGLES[scene][angle]
     blocks = blocks + proxies(cast)
     if way != "cc0" and textured(blocks):
         raise ValueError(f"sa_{scene}_{way}: CC0 mesh or texture in a Qwen still (KP-56): {textured(blocks)}")
     clash = clutter_clashes(blocks, cast, cam, scene, structure)
     if clash:
-        raise ValueError(f"sa_{scene}_{way}: unnamed pieces next to named subjects (KP-53): {clash}")
+        raise ValueError(f"sa_{scene}_{way}_{angle}: unnamed pieces next to named subjects (KP-53): {clash}")
     names = [b["name"] for b in blocks]
     in_shot = {n: "the place or the story's prop: held identical in both ways except the place's own build" for n in names}
     tags = {**{c[0]: c[0].replace("_", " ") for c in cast}, **subject_tags(scene, blocks, cast, cam)}
     in_shot.update({c[0]: "a person of the scene" for c in cast})
     return {"label": f"Stone-age pilot test, scene {scene}, way {way} (the creator, 2026-11-07 12:48 UTC): {PLACE[scene]}",
             "landmarks": [], "axis": {"deg": 0, "origin": [0, 0]}, "structure": structure, "blocks": blocks, "cast": cast,
-            "shots": {SHOT[scene]: cam}, "in_shot": {SHOT[scene]: in_shot},
+            "shots": {shot_id(scene, angle): cam}, "in_shot": {shot_id(scene, angle): in_shot},
             "heroes": {c[0]: f"H{i + 1}" for i, c in enumerate(cast)}, "tags": tags,
-            "cards": {SHOT[scene]: CARDS[scene]}, "hero_refs": {}, "sub_category": "S1",
+            "cards": {shot_id(scene, angle): CARDS[scene]}, "hero_refs": {}, "sub_category": "S1",
             "place": PLACE[scene], "light": LIGHT[scene]}
 
 
@@ -417,13 +427,20 @@ def ids() -> list[str]:
     return [f"sa_{s}_{w}" for s in SCENES for w in WAYS]
 
 
+def angle_ids() -> list[str]:
+    """Test A (creator 15:04 UTC): the rich way (flat3, creator 15:05 UTC: always the rich Blender build) from the two more angles."""
+    return [f"sa_{s}_flat3_{a}" for s in SCENES for a in ANGLES[s]]
+
+
 def write() -> list[str]:
     doc = json.loads(LAYOUTS.read_text(encoding="utf-8"))
     for s in SCENES:
         for w in WAYS:
             doc["layouts"][f"sa_{s}_{w}"] = layout(s, w)
+        for a in ANGLES[s]:
+            doc["layouts"][f"sa_{s}_flat3_{a}"] = layout(s, "flat3", a)
     LAYOUTS.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    return ids()
+    return ids() + angle_ids()
 
 
 def main(argv: list[str] | None = None) -> int:

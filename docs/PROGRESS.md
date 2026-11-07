@@ -4652,3 +4652,14 @@ in the middle: west ledge with talismans, east fissure with a rim light, tusk ar
 lit back plane), `textured()` FAILs any CC0 mesh or texture in a Qwen way. KP-57: `pilot_stills.prompts(master=True)` puts the painted
 wide master as Image 2 behind the new angle's Blender still (Argon's prefix minus the word "camera", LT-65). All 6 stills (block, flat3)
 pass `qa/blender_gate.py` with 0 FAIL after two light fixes; inputs on HF `route_test_2026-11/sa_test/in_v2/`, outputs to `out_v2/`.
+
+## 2026-11-07 Run sa_v3: one Qwen run for the creator's three new tests (15:04-15:08 UTC)
+`training/pods/p15/qwen_jobs.py` (any list of text-to-image or edit jobs, refs to inputs or to pictures made earlier in the run, one
+LoRA weight per group/process, free `check_jobs`) + `modal_qwen_jobs.py` (the OR-37 launcher for a sha-pinned jobs file; cap 1.4,
+timeout 1733 s from it). `blender/stoneage_qwen_jobs.py` builds the jobs: flat3 masters at 0.7 and 1.0; test A, two more Blender angles
+per place (`stoneage_test_layouts.ANGLES`, every named figure kept in frame) drawn with the painted master as Image 2 (KP-57); test B,
+each place drawn by Qwen alone and then from three more sides as edits of that view, plus one turnaround per person (assets that
+Blender assembles afterwards); test C, codes drawn on the still (A people, B animals, C landmarks) and the prompt in codes, at LoRA
+1.0 (the creator: so the letters are not painted), in two forms: black on white boxes with the usual text ban, and magenta bold
+oblique mono with a negative that forbids only magenta codes (15:10 UTC: other text stays allowed). KP-53's clash check now judges a hanging piece where it hangs (screen y too).
+Tests: `test_qwen_jobs.py`.
