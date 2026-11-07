@@ -4624,3 +4624,6 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
 
 ## 2026-11-07 OR-37: environment proven free before the paid GPU
 First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New rule OR-37 (docs/ORCHESTRATION.md, test in test_api_audit_rules.py); `modal_sa_test.py` now has a free CPU `check` entrypoint and an import check as the first step of the GPU function.
+
+## 2026-11-07 Modal runner: smoke mode, 20-min timeout, traceback
+`modal_sa_test.py`: `modal run ...::smoke` (GPU, 8-min timeout, 1 step, 768x432, [still] then [still, still]) to prove the edit path before the 6-photo run; main timeout 20 min (cap-derived, OR-37); runner logs full tracebacks and stops at the first failure. Not run (waits for the investigation and the creator's new yes).
