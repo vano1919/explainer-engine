@@ -4586,3 +4586,6 @@ Re-checked sources in three types, two binding rules in the registry (cut reason
   cut down to the router, the v3 plan and the rig.
 - Result: on the one-minute film the router keeps LTX at 3.04 s (73 frames) in one duel insert against 21.0 s in the v2 video lane. This is a plan
   and a lint, not a render. No pictures or clips were made. Cost: $0.
+
+### 2026-11-07 09:50 UTC: voice search by age, root cause of the adult voice for the boy scout
+Root cause: the J5 dialogue test chose both voices by hand from `creative_list_voices` descriptions (J5_DIALOGUE_COLLAGE 7c), not through `audio/casting.py`; the scout got Cam, a library voice labelled `young`, which holds adults up to about 40, and the library has no child label. `casting.py` also had no child band, so a card saying boy gave `age_of` None and no age filter. Fix: VC-10 (STORY_ENGINE), `age_of` returns `child`, `child_problems` (a child voice must say child in its name or description and no adult, companion or other "boy"), `query` searches one plain word for a child, `design_description` for a child; tests in `test_casting_age.py`; skill `voice-search` (fields and blind spots, free preview measurement, first-take proof, credit guard); voice-caster page points to it. Free listing and preview measurement only; no paid take (ElevenLabs ledger unchanged at 226 of 5000).
