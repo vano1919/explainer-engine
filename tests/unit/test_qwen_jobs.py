@@ -86,9 +86,13 @@ class _FakeApi:
         self.committed += [o.path_in_repo for o in operations]
 
 
-def test_uploader_batches_one_commit_and_never_drops_a_file_under_429(tmp_path):
+def test_uploader_batches_one_commit_and_never_drops_a_file_under_429(tmp_path, monkeypatch):
     """HF limit (2026-11-07 15:33 UTC): one commit per tick with all new files; 429 is retried with backoff and Retry-After; the final
     flush retries a bounded number of times; a file that could not go stays unseen and goes with the next tick."""
+    import types
+    hub = types.ModuleType("huggingface_hub")   # CI has no huggingface_hub: the op is a plain record
+    hub.CommitOperationAdd = lambda path_in_repo, path_or_fileobj: types.SimpleNamespace(path_in_repo=path_in_repo)
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
     (tmp_path / "qwen").mkdir()
     for n in "abc":
         (tmp_path / "qwen" / f"{n}.png").write_bytes(b"x")
@@ -103,3 +107,25 @@ def test_uploader_batches_one_commit_and_never_drops_a_file_under_429(tmp_path):
     stuck = _FakeApi(fail_times=99)
     assert MJ._upload_batch(stuck, tmp_path, seen, sleep=lambda s: None) == 0 and stuck.calls == 2   # a tick tries twice, then waits for the next
     assert MJ._upload_batch(api, tmp_path, seen, sleep=waits.append) == 1 and api.committed[-1].endswith("qwen/d.png")
+
+
+def test_chain_prompts_name_only_visible_codes_and_the_twin_uses_words():
+    """Test D (15:29-15:31 UTC): heroes move and the view changes by code, codes stay along the chain, a last pass strips them;
+    the plain twin says the same in words. A move that names a code out of frame is refused."""
+    from explainer_engine.blender import stoneage_qwen_jobs as QJ
+    import re
+    for sc in QJ.S.SCENES:
+        pr = QJ.chain_prompts(sc)
+        assert re.search(r"\b[ABC]\d\b", pr["c1"]) and not re.search(r"\b[ABC]\d\b", pr["p1"] + pr["p2"])
+        assert "Image 2 is the painted master" in pr["c1"] and "Keep every magenta code" in pr["c2"] and "Remove every magenta code" in pr["c3"]
+    jobs = QJ.chain_jobs({"x": "0"})["groups"][0]
+    assert jobs["lora_weight"] == 1.0
+    by = {j["name"]: j for j in jobs["jobs"]}
+    assert by["cave_d2_codes"]["refs"][0] == "out:cave_d1_codes" and by["cave_d3_strip"]["negative"] == QJ.MAGENTA_NEGATIVE
+    assert "magenta" not in by["cave_d1_codes"]["negative"] and by["cave_d1_plain"]["refs"][0].startswith("in:sa_cave_flat3_side")
+    QJ.MOVES["ice"] = ("A1 runs over and stands beside C1.", "B1 walks away.")
+    try:
+        QJ.chain_prompts("ice")
+        raise AssertionError("an out-of-frame code was accepted")
+    except ValueError as e:
+        assert "C1" in str(e)
