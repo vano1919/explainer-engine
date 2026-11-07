@@ -27,6 +27,8 @@ EXIT = re.compile(r"\b(runs?|running|walks?|walking|gallops?|galloping|rides?|ri
                   r"\bheading\s+(into|to|toward|towards|off)\b|\bheads?\s+(into|off|away)\b|\b(flees|flee|fleeing|leaves|"
                   r"exits?|disappears?)\b|\bout of (the )?frame\b", re.I)
 IN_FRAME = re.compile(r"\b(stays?|remains?|keeps?|kept)\b[^.;]*\bin (the )?frame\b|\bin frame\b", re.I)
+# KP-55 (creator 2026-11-07, Argon's review): a settle that freezes the figures; REVIEW, unmeasured on our clips
+FROZEN_SETTLE = re.compile(r"\b(stands?|standing|kneels?|kneeling|sits?|sitting|holds?|waits?|stays?)\s+still\b", re.I)
 # KP-04: one camera sentence
 CAMERA = re.compile(r"\b(static|locked|locked-off|fixed|still) camera\b|\bcamera\s+(follows|tracks|pans|pushes|pulls|tilts|"
                     r"dollies|cranes|rises|travels|moves|holds|stays|orbits|trucks)\b|\b(slow )?(push-in|push in|pull-out|"
@@ -153,6 +155,8 @@ def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
                 add("KP-03", "FAIL", f"'{m.group(0)}' takes a hero out of the frame; set exit: true only when the story wants it")
             if not IN_FRAME.search(action) and shot.get("people", 1):
                 add("KP-03", "REVIEW", "say that the heroes stay in frame")
+        for m in FROZEN_SETTLE.finditer(action):
+            add("KP-55", "REVIEW", f"'{m.group(0)}' freezes the clip: name small motions (breathing, blinking, the fire flickering)")
         if not CAMERA.search(action):
             add("KP-04", "FAIL", "no camera sentence: write 'Static camera.' or the one move")
         elif len({m.group(0).lower() for m in MOVES.finditer(action)}) > 1:

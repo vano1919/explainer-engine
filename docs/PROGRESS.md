@@ -4614,3 +4614,82 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   H100 only. At a 17.5 min clip max no drop fits (8 clips $8.27, 7 $7.51, 6 $6.76 worst on the H100); that is why the max is 12.
   Disk 200 GB (Qwen 33.1 GB + LTX-2.5 86.5 GB + pip + outputs ~140 GB).
 - Tests: `tests/unit/test_p15_pilot_pod.py` (11). Nothing launched; cost $0.
+
+## 2026-11-07 — Stone-age pilot approach test: six Blender stills (creator 12:48 UTC)
+- `blender/stoneage_test_layouts.py` adds six layouts (`sa_cave|ice|camp_block|cc0`): three scenes built as flat primitives or from CC0 pieces (ten Poly Haven models registered in `world_kits.json` / `assets/library.json`); same props, cast, camera and Qwen prompt in both ways. Six stills rendered locally with Blender 5.2.3 (CPU, 2560x1440, 35-65 s each) and the six Qwen prompts pass `pilot_stills.prompts` and `qa/style_prompt.check`. Test `tests/unit/test_stoneage_test_layouts.py`. The Qwen photos are paid and wait for the creator. Costs $0.
+
+
+## 2026-11-07 Stone-age test: Modal runner for the six Qwen photos
+`training/pods/p15/modal_sa_test.py` + `sa_test_qwen.py`: one A100-80 function (25 min timeout, retries 0) draws the six blockout/CC0 stills as p15 edits (no hero refs), inputs sha256-pinned on HF `route_test_2026-11/sa_test/in/`, photos uploaded as drawn. Gate: `EE_MODAL_GO` = the creator's yes card id. Not run yet. Plan: OR23_SA_TEST_6_QWEN_PHOTOS.md.
+
+## 2026-11-07 OR-37: environment proven free before the paid GPU
+First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New rule OR-37 (docs/ORCHESTRATION.md, test in test_api_audit_rules.py); `modal_sa_test.py` now has a free CPU `check` entrypoint and an import check as the first step of the GPU function.
+
+## 2026-11-07 Modal runner: smoke mode, 20-min timeout, traceback
+`modal_sa_test.py`: `modal run ...::smoke` (GPU, 8-min timeout, 1 step, 768x432, [still] then [still, still]) to prove the edit path before the 6-photo run; main timeout 20 min (cap-derived, OR-37); runner logs full tracebacks and stops at the first failure. Not run (waits for the investigation and the creator's new yes).
+
+## 2026-11-07 Modal guard (OR-37 addendum)
+`cloud/modal_run.py` (ladder order, app id, stop by id), cost-derived timeout + in-container deadline + strict DONE in `modal_sa_test.py`, prompt-dict bug fixed in `sa_test_qwen.py` (sa_prompts.json holds {qwen, words, ltx}; the dict reached the pipeline as 3 prompts, the cause of "Expected 1 got 3"). Tests: tests/unit/test_modal_guard.py.
+
+## 2026-11-07 Blender-vs-Qwen test result (provisional note, NOT a binding rule)
+6 photos (one seed, eye judgement, not blind): Qwen restyles strongly but does not keep the Blender layout (4 huts -> 1, mammoth count/poses change, painted wall changes); blockout vs CC0 differ little. Provisional note: Blender gives colour, light, character count and rough placement; geometry is not guaranteed after Qwen; blockout is enough for that role. A binding rule waits for 2 more seeds per scene and a blind rating (`modal_sa_test.py::seeds`, 12 photos). Details: stoneage_pilot_2026-11-07/QWEN_TEST_COMPARISON_2026-11-07.md.
+
+## 2026-11-07 Argon's review of the 6-photo test applied (KP-50..55, creator 14:42 UTC)
+`docs/SHOT_PROMPTS.md` KP-50..55. `blender/stoneage_test_layouts.py`: screen sides come from the camera projection (never hand-written),
+counts are words ("four round huts"), every named person gets a distinct proxy in Image 1 (Ura's antler crown and cloak, Marcus's grey
+hood, fur-colour caps), unnamed clutter must keep clear of the subjects (a clash raises), cave/camp fill lights raised. Rich (CC0) frames
+stay: the creator prefers them, so Argon's "proxies only" was not taken. `qa/blender_gate.py` (BL-01 subject luma, BL-02 light colour
+vs the prompt's words, BL-03 clashes) runs on each still before any paid Qwen call; on the old stills it failed the cave's right hunter
+and all four camp figures (too dark). `shot_prompt_lint` KP-55 REVIEWs a frozen settle ("kneels still"). The Modal test now draws every
+frame at style LoRA 0.7 and 1.0, each weight in its own process (the merge is in place). Not taken: Argon's QWEN_MAX_WORDS 90/130 (it
+read an older 40). Tests: `test_stoneage_prompt_gates.py`, `test_modal_guard.py`.
+
+## 2026-11-07 Argon Part 4 applied (KP-56, KP-57, creator 14:55 UTC)
+Re-measured on our 6 photos (OpenCV, full-size): luma and RGB match Argon's table exactly; edge density and Laplacian variance are
+smaller at full size (cave 3.90 % vs 2.28 %, 366 vs 209) but point the same way; ice_cc0 kept 2 of 3 mammoths (seen). So CC0 leaves the
+Qwen stills (KP-56, KP-53 reworded): new way `flat3` in `stoneage_test_layouts` (dark teeth and drifts in front, asymmetric walls and huts
+in the middle: west ledge with talismans, east fissure with a rim light, tusk arch, hide rack, the chief's larger hut, a bone gate; a
+lit back plane), `textured()` FAILs any CC0 mesh or texture in a Qwen way. KP-57: `pilot_stills.prompts(master=True)` puts the painted
+wide master as Image 2 behind the new angle's Blender still (Argon's prefix minus the word "camera", LT-65). All 6 stills (block, flat3)
+pass `qa/blender_gate.py` with 0 FAIL after two light fixes; inputs on HF `route_test_2026-11/sa_test/in_v2/`, outputs to `out_v2/`.
+
+## 2026-11-07 Run sa_v3: one Qwen run for the creator's three new tests (15:04-15:08 UTC)
+`training/pods/p15/qwen_jobs.py` (any list of text-to-image or edit jobs, refs to inputs or to pictures made earlier in the run, one
+LoRA weight per group/process, free `check_jobs`) + `modal_qwen_jobs.py` (the OR-37 launcher for a sha-pinned jobs file; cap 1.4,
+timeout 1733 s from it). `blender/stoneage_qwen_jobs.py` builds the jobs: flat3 masters at 0.7 and 1.0; test A, two more Blender angles
+per place (`stoneage_test_layouts.ANGLES`, every named figure kept in frame) drawn with the painted master as Image 2 (KP-57); test B,
+each place drawn by Qwen alone and then from three more sides as edits of that view, plus one turnaround per person (assets that
+Blender assembles afterwards); test C, codes drawn on the still (A people, B animals, C landmarks) and the prompt in codes, at LoRA
+1.0 (the creator: so the letters are not painted), in two forms: black on white boxes with the usual text ban, and magenta bold
+oblique mono with a negative that forbids only magenta codes (15:10 UTC: other text stays allowed). KP-53's clash check now judges a hanging piece where it hangs (screen y too).
+Tests: `test_qwen_jobs.py`.
+
+## 2026-11-07 Fallback rule KP-58 (creator 16:41 UTC)
+If E4 and E5 do not fix the camera angle, one environment is never shown from a second angle in LTX/painted shots, and its dialogues are Blender close-ups with a blurred background (`docs/SHOT_PROMPTS.md` KP-58). Recorded as the last step of his review; no code change, so no test.
+
+## 2026-11-07 Test F/A: one Blender picture per call, fixed appearance text; two runs overlapped (17:00-17:45 UTC)
+creator 17:03/17:04: each Qwen call gets ONE Blender picture (no master, no second image); the picture says where everything is, a fixed text per person
+and thing (`stoneage_qwen_jobs.SPEC`, from the Qwen turnarounds) says what it looks like. Run F (PC session, LoRA 0.7, 9 photos, ~$0.27): style and
+identities held in all 9, layout did not (cave/camp figures in a row facing the camera, log gone). Test A (this thread, `specA`: SPEC + pose phrases and
+the facing of each figure taken from the layout's cast row + the place's colours; run sa_v8, `modal_qwen_jobs_v8.py`, LoRA 0.7). The PC session
+launched its own "v6" (scene words with positions) at the same moment because it could not be reached when the cloud thread started A (the relay to it
+failed): two A100 apps ran at once, a breach of the one-run-at-a-time order (rule 7a); caps $0.6 + $0.5, expected ~$0.6. Lesson: before starting a paid
+run check `modal app list` AND confirm the PC session has nothing queued.
+
+## 2026-11-07 One place, one picture (D-120, the creator 18:08 UTC)
+The creator's rule after the day's Qwen tests: a place is drawn more than once only with its background blurred or when the two
+drawings never sit in consecutive shots; no rendered (Blender) picture is a Qwen reference; staging comes from detailed scene words,
+identity from a verbatim cast registry plus the hero's approved reference picture. `docs/SCENE_REUSE_RULES.md` (LV-, RF-, HI-, DL-)
+merges the PC session's first version (9dccfcb on systemic/next-video, prefixes SR/RF/ID/DL; SR- was taken by ORCHESTRATION, so the
+families were renamed) and adds the reference map (RF-03), face words (HI-05), partial-figure words (HI-04), the dialogue render
+(DL-01..DL-10: hero close-up drawn on flat grey, cut out over the place's blurred crop, four mouth states from edits of the same
+drawing, breathing, blinks, eyelines, over-the-shoulder two-shots, overlaps). D-120 logged; KP-54/56/57/58 superseded; D-116 J2,
+D-101, CT-03, CT-07, ED-14 and standing order 14 amended; LT-65 scoped to the LoRA moment prompts. Open for the creator: LV-08 (one
+or two shots between two drawings in a scene), HI-08 (route prompt ceiling, proposal 280 words). Visual script v3 and the plan of the
+first 10 pictures are in project files (`stoneage_pilot_2026-11-07/VISUAL_SCRIPT_v3.md`, `one_place_2026-11-07/`); nothing paid ran.
+Test: `tests/unit/test_scene_reuse_docs.py`.
+
+## 2026-11-07 — One-place route, free part of the first 10 pictures (D-120)
+- Done (free): `production/scene_reuse.py` (LV-01 place register, RF-01/RF-04 references, HI-04/HI-01/HI-08 prompt shape), `qwen_jobs.check_jobs` now refuses an unknown ref type, launcher `modal_qwen_jobs_v11.py` (caps $0.75 main / $0.25 smoke, run `sa_v11`, jobs sha c64c82f6…, runner sha d7b74883…). Test: `tests/unit/test_scene_reuse_rules.py` (+ qwen_jobs, modal_guard, docs tests pass).
+- Cost: $0.00. Not started: the paid run needs the creator's new yes with the price (≈$0.40 expected, ≤$1.00 with smoke); photo renders stay off until then.
+- Next: upload `in_v11` to HF, OR-37 import check, smoke after his yes, then contact sheet with hero comparisons (HI-06).
