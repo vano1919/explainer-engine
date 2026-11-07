@@ -11,7 +11,8 @@ from explainer_engine.cloud import hf_live, hooks as H, jobs as J, runpod as R, 
 from explainer_engine.core.ledger import Run
 
 BEAT = "datasets/o/r:run/out/beat.txt"
-PLAN = ["--work-min", "60", "--setup-min", "10", "--disk", "40"]  # what an OR-23 plan states (P1c: RP-01, the container disk)
+SCHEDULE = str(Path(__file__).resolve().parents[1] / "fixtures" / "pod_schedule_ok.json")  # RP-11: the costed stage graph
+PLAN = ["--work-min", "60", "--setup-min", "10", "--disk", "40", "--schedule", SCHEDULE]  # what an OR-23 plan states (P1c: RP-01, the container disk; RP-11)
 
 
 @pytest.fixture

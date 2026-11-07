@@ -6,7 +6,7 @@
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
            [--vram GB [--ref-hours H] [--only <card id substring>[,<more>]] [--cloud COMMUNITY|SECURE] [--wait-stock 15m]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
-           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
+           [--script pod.sh --script-url <HF url of the same file> --schedule pod_schedule.json] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
     python -m explainer_engine.cloud.runpod dryrun --script pod.sh [--offline]   everything knowable before a pod bills (P1b, CR-18)
     python -m explainer_engine.cloud.runpod pins <pins.txt>   a pod's pins.txt against config/cloud_pins.json
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H] [--job <type> --units N [--setup-min M]]   what the job costs per card
@@ -394,7 +394,7 @@ CLOUDS = ("COMMUNITY", "SECURE")
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
 CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
+                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--schedule", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
 CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
@@ -1882,6 +1882,9 @@ def main(argv=None, api=None, live=None):
             fails = led.data.get("failures", {})
             batch_why += batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))
             batch_why += batching.rp02(weights, earlier, reason=_opt(rest, "--second-pod-reason", ""))
+            from explainer_engine.cloud import schedule as _sched
+            batch_why += _sched.rp11(_opt(rest, "--schedule"), max_usd=max_usd, max_hours=max_hours, measure="--measure" in rest,
+                                     test=led.data.get("meta", {}).get("test"))
             batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base,
                                       extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""))
             if not _opt(rest, "--disk"):

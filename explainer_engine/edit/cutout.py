@@ -184,12 +184,21 @@ def birefnet_mask(image, *, pins: dict | None = None, device: str = "cpu") -> Im
     pin = (pins or P.load())["models"][BIREFNET_PIN]
     model = AutoModelForImageSegmentation.from_pretrained(pin["id"], revision=pin["revision"], trust_remote_code=True)
     model.to(device).eval()
+    if device == "cpu":
+        model.float()   # half-precision convolutions are a GPU path; on the CPU the matte runs in float32
     im = (image if isinstance(image, Image.Image) else Image.open(image)).convert("RGB")
     tf = transforms.Compose([transforms.Resize((1024, 1024)), transforms.ToTensor(),
                              transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
     with torch.no_grad():
-        pred = model(tf(im).unsqueeze(0).to(device))[-1].sigmoid().cpu()[0].squeeze()
+        pred = model(model_input(model, tf(im).unsqueeze(0), device))[-1].sigmoid().float().cpu()[0].squeeze()
     return transforms.ToPILImage()(pred).resize(im.size, Image.BILINEAR)
+
+
+def model_input(model, x, device):
+    """``x`` on ``device`` in the dtype of the model's weights: the pinned BiRefNet checkpoint loads in float16 with the current
+    transformers, and a float32 input then fails ("Input type (float) and bias type (c10::Half) should be the same", the step-3
+    pod 2026-11-06 14:43 UTC, all twelve cut-outs)."""
+    return x.to(device=device, dtype=next(model.parameters()).dtype)
 
 
 def main(argv: list[str] | None = None) -> int:

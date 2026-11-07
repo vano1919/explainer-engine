@@ -9,9 +9,13 @@ huggingface_hub for the downloads. Nothing here decides the matrix: the jobs fil
 - Inputs are sha256-checked when the jobs file names a hash; derived controls (the inverted line pass, the canny of the colour pass)
   are made here and their hashes recorded in the clip's sidecar.
 - A chained clip (``chain_from``) takes the previous clip's last N frames as image conditions at frames 0..N-1.
-- Every clip: ``<out>/ltx/<job>.mp4`` + ``<job>.json`` (command, seconds, return code, input hashes), then the 2560x1440 copy
-  ``<out>/ltx_up/<job>.mp4`` (``finish/upscale.video_filter`` with ``ROUTE_TEST``: crop to
-  16:9, Lanczos, cas, grain; both files kept). ``<out>/ltx/speeds.json`` holds the
+- Every clip: ``<out>/ltx/<job>.mp4`` + ``<job>.json`` (command, seconds, return code, input hashes); only when
+  ``p14.json`` ``upscale.enabled`` is true also the 2560x1440 copy ``<out>/ltx_up/<job>.mp4`` (``finish/upscale.video_filter``
+  with ``ROUTE_TEST``). The lean pod sets it false: the upscale is free on the PC, later, only on the picked clip.
+- Inputs the same pod made (the lean pod's layout passes and first frames) are read from ``P14_LOCAL_ROOTS`` (JSON
+  ``[[vault prefix, local dir], ...]``) before the vault; their sha256 is recorded the same way.
+- Two failed generations in a row end the stage (the plan's stop condition): the rest are skipped with that reason.
+  ``<out>/ltx/speeds.json`` holds the
   measured seconds per clip (median, min-max, failure rate) for ``config/job_speeds.json`` ``ltx_clip_s_per_clip``.
 
 Every flag string is in ``FLAGS``, read at Lightricks/LTX-2@e98f6d9 (packages/ltx-pipelines/src/ltx_pipelines/utils/args.py and
@@ -32,6 +36,8 @@ CFG_NAME = "p14.json"
 MODELS = Path(os.environ.get("P14_MODELS", "/workspace/models"))
 CODE_DIR = Path("/workspace/LTX-2")
 MODULE = "ltx_pipelines.ic_lora"   # ic_lora.py:813 main(), :815 resolve_cli_params(distilled=True)
+MODULE_I2V = "ltx_pipelines.distilled"   # distilled.py: the two-stage distilled image/text-to-video (+ its native audio), same split flags
+MAX_FAILS_IN_ROW = 2               # STEP3_POD_PLAN_LEAN section 4: two LTX failures in a row stop the LTX stage
 
 FLAGS = {
     "transformer": "--transformer-path",           # args.py:710 (split layout: LTX-2.5)
@@ -110,7 +116,7 @@ def weight_paths(cfg, base):
 
 def unpinned(job):
     """LJ-01 at the pod: the weights of the job that carry no sha256 (the job is skipped while any is listed)."""
-    return [x["id"] for x in (job["model"], job["lora"], job.get("text_encoder")) if x and not x.get("sha256")]
+    return [x["id"] for x in (job["model"], job.get("lora"), job.get("text_encoder")) if x and not x.get("sha256")]
 
 
 def bases_wanted(jobs):
@@ -121,6 +127,10 @@ def download_base(cfg, base, log):
     """Fetches one base's files at their pinned revisions and checks every sha256 the config names; returns the bad names."""
     from huggingface_hub import hf_hub_download, snapshot_download
     w, root, bad = cfg["weights"][base], MODELS / base, []
+    stamp = root / ".verified.json"   # one full check per pod: a second call (the extras, a prefetch) does not hash ~60 GB again
+    if stamp.is_file() and json.loads(stamp.read_text(encoding="utf-8")).get("weights") == w:
+        log.ev("weights_verified_before", base=base)
+        return []
     items = [(w["repo"], w["revision"], f, sha) for f, sha in (w.get("files") or {}).items()]
     if base == "ltx23":
         items.append((w["repo"], w["revision"], w["checkpoint"]["file"], w["checkpoint"]["sha256"]))
@@ -148,13 +158,35 @@ def download_base(cfg, base, log):
         except Exception as e:   # noqa: BLE001
             bad.append("gemma")
             log.ev("download_failed", base=base, file="gemma", error=str(e)[:300])
+    if not bad:
+        write_json(stamp, {"weights": w, "t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
     return bad
 
 
 # --- inputs -------------------------------------------------------------------------------------------------------------------
 
+def local_roots():
+    return [tuple(x) for x in json.loads(os.environ.get("P14_LOCAL_ROOTS") or "[]")]
+
+
+def local_copy(path, roots):
+    """The pod's own copy of a vault path (``roots``: [(vault prefix, local dir)]), or None."""
+    for prefix, d in roots:
+        pre = prefix.rstrip("/") + "/"
+        if path.startswith(pre):
+            p = Path(d) / path[len(pre):]
+            if p.is_file():
+                return p
+    return None
+
+
 def fetch_input(cfg, path, want, work):
-    """One vault file (a layout clip, a first frame) into ``work``; (local path, sha256) or (None, reason)."""
+    """One input file (a layout clip, a first frame): the pod's own copy first, else the vault into ``work``; (local path, sha256)
+    or (None, reason)."""
+    p = local_copy(path, local_roots())
+    if p is not None:
+        got = sha256_file(p)
+        return (p, got) if not want or got == want else (None, f"sha256 of {path} is {got}, not the pinned {want}")
     from huggingface_hub import hf_hub_download
     try:
         p = Path(hf_hub_download(cfg["hf"]["repo"], path, repo_type=cfg["hf"]["repo_type"], local_dir=str(work)))
@@ -169,7 +201,9 @@ def fetch_input(cfg, path, want, work):
 def derive_cmd(cfg, kind, src, dst):
     """FFmpeg for a derived control: ``invert`` (the line pass, black ink on white -> white lines on black, like the canny maps
     the Union LoRA was trained on) or ``canny`` (FFmpeg's Canny edge detector over the colour pass, white edges on black)."""
-    vf = {"invert": "negate", "canny": cfg["controls"]["canny_vf"]}[kind]
+    vf = {"invert": "negate", "canny": cfg["controls"]["canny_vf"], "scale_2k": cfg["controls"].get("scale_2k_vf")}.get(kind)
+    if vf is None:
+        raise ValueError(f"no filter for derived control {kind!r} in p14.json controls")
     return ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-vf", vf, "-c:v", "libx264", "-crf", "12", "-pix_fmt", "yuv420p",
             str(dst)]
 
@@ -191,7 +225,8 @@ def command(job, cfg, paths):
     """The ic_lora argv of one job. ``paths``: images [(path, frame)], controls [(path, strength)], mask (path, strength) or
     None, out."""
     wp = weight_paths(cfg, job["base"])
-    cmd = [sys.executable, "-m", MODULE]
+    i2v = job.get("pipeline") == "distilled"   # the lean pod's extras X1/X3/X6: plain image-to-video, no IC-LoRA, no control video
+    cmd = [sys.executable, "-m", MODULE_I2V if i2v else MODULE]
     if job["base"] == "ltx25":
         for k in ("transformer", "text_encoder", "video_vae", "audio_vae"):
             _flag(cmd, k, wp[k])
@@ -199,7 +234,8 @@ def command(job, cfg, paths):
         _flag(cmd, "distilled_ckpt", wp["distilled_ckpt"])
         _flag(cmd, "gemma_root", wp["gemma_root"])
     _flag(cmd, "upsampler", wp["upsampler"])
-    _flag(cmd, "lora", wp["lora"], job["lora"]["strength"])
+    if not i2v:
+        _flag(cmd, "lora", wp["lora"], job["lora"]["strength"])
     for p, s in paths["controls"]:
         _flag(cmd, "video_cond", p, s)
     if paths.get("mask"):
@@ -256,13 +292,42 @@ def may_start(now, deadline, reserve_s):
     return now < deadline - reserve_s
 
 
-def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input, download=download_base, sh=subprocess.run):
+def pending():
+    """The vault paths (prefixes) the pod's CPU lane still makes: ``P14_PENDING`` names its JSON file ({"prefixes": [...]});
+    p14_pod.py drops a prefix when its stage ends (the layouts when A ends, X3's first frame when G has drawn it or ends)."""
+    f = os.environ.get("P14_PENDING")
+    try:
+        return json.loads(Path(f).read_text(encoding="utf-8")).get("prefixes", []) if f else []
+    except (OSError, ValueError):
+        return []
+
+
+def waits(path, roots):
+    """An input the pod itself is still making: promised (``pending``) and not on the pod's disk yet."""
+    return any(path.startswith(pre) for pre in pending()) and local_copy(path, roots) is None
+
+
+def inputs(job):
+    return [c["path"] for c in job["conditioning"]] + ([job["first_frame"]["path"]] if not job.get("chain_from") else [])
+
+
+def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input, download=download_base, sh=subprocess.run,
+        speeds_name="speeds.json", deferred=None, prior=(), done=None):
+    """The jobs in order; one that reads a layout clip still being drawn goes into ``deferred`` (when given) instead of being
+    skipped, so the caller runs it after the others (``prior``: the rows of the earlier call that the speeds file keeps)."""
     out, work = Path(out), MODELS / "p14"
     (out / "ltx").mkdir(parents=True, exist_ok=True)
     jobs = jobs_doc["jobs"]
     broken = {b: download(cfg, b, log) for b in bases_wanted(jobs)}
-    rows, done = [], {}
+    rows, fails_in_row = list(prior), 0
+    done = {} if done is None else done
+    roots = local_roots()
     for job in jobs:
+        if deferred is not None and any(waits(x, roots) for x in inputs(job)):
+            deferred.append(job)
+            log.stage_line(f"later {job['id']} (an input the pod still makes: {', '.join(x for x in inputs(job) if waits(x, roots))})")
+            log.ev("job_deferred", job=job["id"])
+            continue
         jid = job["id"]
         row = {"job": jid, "base": job["base"], "variant": job.get("variant"), "status": "skipped"}
         rows.append(row)
@@ -273,6 +338,8 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
             why = f"weights of {job['base']} missing or wrong: {', '.join(broken[job['base']])}"
         elif not may_start(time.time(), deadline, cfg["end_reserve_min"] * 60):
             why = "inside the end reserve"
+        elif fails_in_row >= MAX_FAILS_IN_ROW:
+            why = f"{fails_in_row} failed generations in a row (the plan's stop condition)"
         elif job.get("chain_from") and done.get(job["chain_from"]["job"]) is None:
             why = f"chained clip {job['chain_from']['job']} did not finish"
         paths, hashes = {"controls": [], "images": [], "mask": None, "out": out / "ltx" / f"{jid}.mp4"}, {}
@@ -286,17 +353,24 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
                 if c.get("derive"):
                     dst = work / "derived" / f"{jid}.{c['pass']}.mp4"
                     dst.parent.mkdir(parents=True, exist_ok=True)
-                    sh(derive_cmd(cfg, c["derive"], p, dst), check=True)
-                    hashes[f"derived:{c['pass']}"] = sha256_file(dst)
+                    try:
+                        sh(derive_cmd(cfg, c["derive"], p, dst), check=True)
+                        hashes[f"derived:{c['pass']}"] = sha256_file(dst)
+                    except Exception as e:   # noqa: BLE001 - one bad control skips its job, never the stage
+                        why = f"deriving {c['derive']} of {c['path']} failed: {str(e)[:160]}"
+                        break
                     p = dst
                 paths["controls"].append((p, c["strength"]))
         if why is None and job.get("chain_from"):
             prev, n = done[job["chain_from"]["job"]], job["chain_from"]["frames"]
             pat = work / "chain" / jid / "f_%d.png"
             pat.parent.mkdir(parents=True, exist_ok=True)
-            total = next(j["frames"] for j in jobs if j["id"] == job["chain_from"]["job"])
-            sh(chain_cmd(prev, n, total, pat), check=True)
-            paths["images"] = [(pat.parent / f"f_{k}.png", k) for k in range(n)]
+            total = done[("frames", job["chain_from"]["job"])]
+            try:
+                sh(chain_cmd(prev, n, total, pat), check=True)
+                paths["images"] = [(pat.parent / f"f_{k}.png", k) for k in range(n)]
+            except Exception as e:   # noqa: BLE001
+                why = f"cutting the last {n} frames of {job['chain_from']['job']} failed: {str(e)[:160]}"
         elif why is None:
             p, got = fetch(cfg, job["first_frame"]["path"], job["first_frame"]["sha256"], work / "in")
             if p is None:
@@ -314,11 +388,15 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
         t0 = time.time()
         rc, err = runner(cmd, cfg["clip_timeout_s"], log, jid)
         row.update(seconds=round(time.time() - t0, 1), rc=rc, status="ok" if rc == 0 and paths["out"].exists() else "failed")
-        side = {"job": jid, "cmd": [str(x) for x in cmd], "rc": rc, "seconds": row["seconds"], "inputs": hashes,
+        side = {"job": jid, "question": job.get("question"), "recipe": job.get("recipe"), "width": job["width"],
+                "height": job["height"], "frames": job["frames"], "cmd": [str(x) for x in cmd], "rc": rc, "seconds": row["seconds"],
+                "inputs": hashes,
                 "stderr_tail": err if rc != 0 else ""}
+        fails_in_row = 0 if row["status"] == "ok" else fails_in_row + 1
         if row["status"] == "ok":
             side["sha256"] = sha256_file(paths["out"])
-            done[jid] = paths["out"]
+            done[jid], done[("frames", jid)] = paths["out"], job["frames"]
+        if row["status"] == "ok" and (cfg.get("upscale") or {}).get("enabled"):
             up = out / "ltx_up" / f"{jid}.mp4"
             up.parent.mkdir(parents=True, exist_ok=True)
             u = sh(upscale_cmd(cfg, paths["out"], up))
@@ -326,24 +404,83 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
                                 "sha256": sha256_file(up) if up.exists() else None}
         write_json(out / "ltx" / f"{jid}.json", side)
         log.stage_line(f"{row['status']} {jid} {row['seconds']} s")
-        write_json(out / "ltx" / "speeds.json", {"rows": rows, **speeds(rows)})
-    write_json(out / "ltx" / "speeds.json", {"rows": rows, **speeds(rows)})
+        write_json(out / "ltx" / speeds_name, {"rows": rows, **speeds(rows)})
+    write_json(out / "ltx" / speeds_name, {"rows": rows, **speeds(rows)})
     log.progress("done")
     return rows
 
 
+def prefetch():
+    """Downloads and checks the weights of every base the jobs want (run beside the Blender passes, so the LTX stage starts on
+    checked weights)."""
+    cfg = json.loads((HERE / CFG_NAME).read_text(encoding="utf-8"))
+    jobs = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))["jobs"]
+    out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
+    log = Log(out)
+    bad = {b: download_base(cfg, b, log) for b in bases_wanted(jobs)}
+    log.ev("prefetch_done", bad=bad)
+    return 1 if any(bad.values()) else 0
+
+
 def main():
+    if sys.argv[1:2] == ["--prefetch"]:
+        return prefetch()
     cfg = json.loads((HERE / CFG_NAME).read_text(encoding="utf-8"))
     jobs_doc = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))
     if jobs_doc.get("schema") != "ltx_job/1" or jobs_doc["code"]["sha"] != cfg["code"]["sha"]:
         raise SystemExit("the jobs file is not ltx_job/1 at this pod's code pin")
-    out = Path(os.environ.get("EE_OUT", "/workspace/out"))
+    out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     deadline = float(os.environ["EE_DEADLINE"])
-    rows = run(cfg, jobs_doc, out, deadline, log)
+    want = [x for x in os.environ.get("P14_JOBS", "").split(",") if x]   # the pod's E stage: only its jobs (p14_pod.Pod.ltx)
+    if want:
+        jobs_doc = dict(jobs_doc, jobs=[j for j in jobs_doc["jobs"] if j["id"] in want])
+    rows = run_all(cfg, jobs_doc, out, deadline, log, want=want, tag=os.environ.get("P14_TAG", ""))
     log.ev("ltx_exit", ok=sum(r["status"] == "ok" for r in rows), jobs=len(rows))
     return 0
 
+
+def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, want=(), tag="", **kw):
+    """The core jobs, then the extras; a job that reads an input the pod still makes (a layout pass, a frame of stage G) waits,
+    and runs as soon as its inputs exist or their stage has ended (in the core-then-extras order), until the end reserve."""
+    extra = HERE / cfg.get("extra_jobs_file", "")
+    xdoc = json.loads(extra.read_text(encoding="utf-8")) if (cfg.get("extra_jobs_file") and extra.is_file()
+                                                             and os.environ.get("P14_EXTRAS", "1") == "1") else None
+    if xdoc and want:
+        xdoc = dict(xdoc, jobs=[j for j in xdoc["jobs"] if j["id"] in want])
+    if want:   # a chained job of this stage reads a clip an earlier stage made: the pod's own copy of it
+        prior = {j["chain_from"]["job"] for j in jobs_doc["jobs"] if j.get("chain_from")} - set(want)
+        if prior:
+            core_all = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))["jobs"]
+            kw.setdefault("done", {})
+            for j in core_all:
+                clip = Path(out) / "ltx" / f"{j['id']}.mp4"
+                if j["id"] in prior and clip.exists():
+                    kw["done"][j["id"]], kw["done"][("frames", j["id"])] = clip, j["frames"]
+    core_name = f"speeds.{tag}.json" if tag else "speeds.json"
+    extra_name = f"speeds_extra.{tag}.json" if tag else "speeds_extra.json"
+    done, later = kw.pop("done", {}), {"core": [], "extra": []}
+    rows = run(cfg, jobs_doc, out, deadline, log, deferred=later["core"], done=done, speeds_name=core_name, **kw) if jobs_doc["jobs"] else []
+    xrows = run(cfg, xdoc, out, deadline, log, speeds_name=extra_name, deferred=later["extra"], done=done, **kw) if xdoc and xdoc["jobs"] else []
+    reserve, roots = cfg["end_reserve_min"] * 60, local_roots()
+    while later["core"] or later["extra"]:
+        ready = {k: [j for j in v if not any(waits(x, roots) for x in inputs(j))] for k, v in later.items()}
+        if not (ready["core"] or ready["extra"]):
+            if not may_start(time.time(), deadline, reserve):
+                ready = {k: list(v) for k, v in later.items()}   # the end reserve: run() records each one as skipped, with that reason
+            else:
+                sleep(poll)
+                continue
+        for k in ("core", "extra"):
+            later[k] = [j for j in later[k] if j not in ready[k]]
+        if ready["core"]:
+            rows = run(cfg, dict(jobs_doc, jobs=ready["core"]), out, deadline, log, prior=rows, done=done, speeds_name=core_name, **kw)
+        if ready["extra"]:
+            xrows = run(cfg, dict(xdoc, jobs=ready["extra"]), out, deadline, log, speeds_name=extra_name, prior=xrows,
+                        done=done, **kw)
+    if xdoc:
+        log.ev("ltx_extra_exit", ok=sum(r["status"] == "ok" for r in xrows), jobs=len(xrows))
+    return rows
 
 if __name__ == "__main__":
     sys.exit(main())

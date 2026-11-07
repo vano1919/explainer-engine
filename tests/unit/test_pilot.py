@@ -108,3 +108,17 @@ def test_an_assemble_25d_frame_folder_is_a_j5_clip(tmp_path):
     subprocess.run(cmd, check=True)
     assert subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries", "stream=nb_read_frames",
                            "-of", "csv=p=0", str(tmp_path / "o.mp4")], capture_output=True, text=True).stdout.strip() == "3"
+
+
+def test_a_j5_render_with_handles_starts_after_its_head_frames(tmp_path):
+    """The lean pod's J5 renders carry 12-frame handles (handles.json beside frames/): the pilot's part skips the head."""
+    import json as _json
+    from PIL import Image
+    d = tmp_path / "j5" / "S01-06" / "frames"
+    d.mkdir(parents=True)
+    Image.new("RGB", (64, 36)).save(d / "frame_000000.png")
+    (d.parent / "handles.json").write_text(_json.dumps({"head": 12, "tail": 12, "fps": 24}))
+    row = P.sources([next(s for s in RS["shots"] if s["id"] == "S01-06")], j5=tmp_path / "j5")[0]
+    assert row["parts"][0]["skip"] == 12
+    cmd = P.conform_cmd(row["parts"], tmp_path / "o.mp4", 24)
+    assert "trim=start_frame=12" in cmd[cmd.index("-filter_complex") + 1]

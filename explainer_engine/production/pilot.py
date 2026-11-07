@@ -6,7 +6,8 @@ narration track laid under it when one is given. Free and local; it renders noth
            [--j5 <dir of <shot>.mp4>] [--helper <dir of <shot>.mp4>] [--ltx <pod out dir>] [--base ltx25|ltx23]
            [--pick S02-02.c1=<job id>,...] [--audio narration.wav] [--slates]
 
-- J5 and H: ``<dir>/<shot>.mp4``, or an ``assemble_25d`` render folder ``<dir>/<shot>/frames/frame_NNNNNN.png``.
+- J5 and H: ``<dir>/<shot>.mp4``, or an ``assemble_25d`` render folder ``<dir>/<shot>/frames/frame_NNNNNN.png`` (with a
+  ``handles.json`` beside ``frames/``, as the lean pod writes, the shot starts after its ``head`` frames).
 - The window: whole shots in script order while they fit ``--seconds`` (60 by default; the route test's first 59.5 s are S01,
   S02 and S03-01..03: J5, H, J4 and J2 shots, three scenes), or the shots ``--shots`` names.
 - J2/J4: the upscaled copy ``ltx_up/<job>.mp4`` of the pod (``finish/upscale`` ROUTE_TEST chain), else its raw clip; per clip the
@@ -166,7 +167,9 @@ def sources(chosen: list[dict], *, j5: Path | None = None, helper: Path | None =
             if p is not None and p.exists():
                 row["parts"].append({"path": p, "skip": 0})
             elif seq is not None and any(seq.glob("frame_*.png")):
-                row["parts"].append({"path": seq / "frame_%06d.png", "skip": 0, "frames": True})
+                hd = seq.parent / "handles.json"   # the lean pod's J5 renders carry 12-frame handles (BP-128): the shot starts after them
+                head = int(json.loads(hd.read_text(encoding="utf-8")).get("head", 0)) if hd.exists() else 0
+                row["parts"].append({"path": seq / "frame_%06d.png", "skip": head, "frames": True})
             else:
                 row["missing"] = f"no {s['route']} clip {s['id']}.mp4 or {s['id']}/frames/ in {folder}"
         else:

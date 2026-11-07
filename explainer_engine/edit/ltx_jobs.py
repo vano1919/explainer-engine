@@ -46,6 +46,16 @@ MATRIX = [
     {"clip": "S02-02.c2", "base": "ltx25", "variant": "colour", "seeds": [SEEDS[0]], "chain": "S02-02.c1"},
     {"clip": "S03-02", "base": "ltx25", "variant": "clay", "seeds": list(SEEDS)},
 ]
+# The lean step-3 pod (STEP3_POD_PLAN_LEAN_ka.md, the creator 2026-11-06 12:59 + 13:21 UTC: "every run answers a question, no
+# every-combination"): five generations, one seed, in the order the plan's questions are asked (E1..E5); c2 chains on E1's base.
+LEAN = [
+    {"clip": "S02-02.c1", "base": "ltx25", "variant": "colour", "seeds": [SEEDS[0]]},
+    {"clip": "S02-02.c1", "base": "ltx23", "variant": "canny_full", "seeds": [SEEDS[0]]},
+    {"clip": "S02-02.c1", "base": "ltx23", "variant": "line_foremid", "seeds": [SEEDS[0]]},
+    {"clip": "S02-02.c2", "base": "ltx25", "variant": "colour", "seeds": [SEEDS[0]], "chain": "S02-02.c1"},
+    {"clip": "S03-02", "base": "ltx25", "variant": "clay", "seeds": [SEEDS[0]]},
+]
+MATRICES = {"full": MATRIX, "lean": LEAN}
 # variant -> conditioning rows (pass, derive); depth rides with both Union variants
 VARIANTS = {
     "clay": [("clay", None)],
@@ -111,12 +121,15 @@ def frames_of(clip_id: str, row: dict) -> int:
 
 
 def build(route_shots: dict, *, layouts: Path | str | None = None, matrix: list[dict] | None = None, pins: dict | None = None,
-          job_id: str = "route_test_2026-11", code: dict | None = None) -> dict:
+          job_id: str = "route_test_2026-11", code: dict | None = None, out_root: str = "") -> dict:
+    """The ltx_job/1 document; ``out_root`` puts the outputs and first frames under ``route_test_2026-11/<out_root>/`` (the lean pod:
+    ``step3``)."""
     from explainer_engine.cloud import pins as pins_mod
     pins = pins if pins is not None else pins_mod.load()
     code = code or _code_pin()
     rows = clips(route_shots)
     jobs, first_of = [], {}
+    root = f"{HF_ROOT}/{out_root}" if out_root else HF_ROOT
     for m in matrix if matrix is not None else MATRIX:
         cid = m["clip"]
         if cid not in rows:
@@ -143,11 +156,11 @@ def build(route_shots: dict, *, layouts: Path | str | None = None, matrix: list[
                 "lora": {"key": lora_key, "id": lp["id"], "revision": lp.get("revision"), "file": lp["file"], "sha256": lp.get("sha256"),
                          "strength": 1.0},
                 "frames": frames_of(cid, r), "fps": r["fps"], "width": r["size"][0], "height": r["size"][1], "seed": seed,
-                "first_frame": {"path": f"{HF_ROOT}/first_frames/{cid}.png", "sha256": None, "pose": "start",
+                "first_frame": {"path": f"{root}/first_frames/{cid}.png", "sha256": None, "pose": "start",
                                 "prompt": r["first_frame_prompt"]},
                 "conditioning": conditioning(m["variant"], cid, Path(layouts) if layouts else None),
                 "attention_mask": None, "chain_from": chain, "prompt": r["prompt"], "stage2_ic": r["route"] == "J4",
-                "output": f"{HF_ROOT}/ltx/{jid}.mp4"})
+                "output": f"{root}/ltx/{jid}.mp4"})
             first_of.setdefault((cid, base, m["variant"]), jid)
     doc = {"schema": SCHEMA, "job_id": job_id, "episode": route_shots.get("episode", ""), "code": code, "jobs": jobs}
     C.validate(doc)
@@ -183,7 +196,9 @@ def pod_config(pins: dict | None = None) -> dict:
                       "lora": lora("video_ltx_control"),
                       "text_encoder": {"repo": te["id"], "revision": te["revision"], "files": te.get("sha256_files")}}},
         "controls": {"canny_vf": CANNY_VF},
-        "upscale": {"vf": upscale.video_filter(1920, 1088, **upscale.ROUTE_TEST)},
+        # the lean plan: no upscale on the pod (free with FFmpeg on the PC, only on the clip the creator picks); the filter stays
+        # recorded so the PC runs the same chain
+        "upscale": {"enabled": False, "vf": upscale.video_filter(1920, 1088, **upscale.ROUTE_TEST)},
         "clip_timeout_s": 1800, "end_reserve_min": 10,
     }
 
@@ -198,13 +213,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("route_shots", type=Path)
     ap.add_argument("out", type=Path)
     ap.add_argument("--layouts", type=Path)
-    ap.add_argument("--matrix", type=Path)
+    ap.add_argument("--matrix", help="a matrix JSON file, or a named one: " + ", ".join(MATRICES))
+    ap.add_argument("--out-root", default="", help="outputs under route_test_2026-11/<out-root>/ (the lean pod: step3)")
     ap.add_argument("--job-id", default="route_test_2026-11")
     ap.add_argument("--pod", action="store_true", help="also write training/pods/p14/p14.json and the jobs copy beside it")
     a = ap.parse_args(argv)
     rs = json.loads(a.route_shots.read_text(encoding="utf-8"))
-    matrix = json.loads(a.matrix.read_text(encoding="utf-8")) if a.matrix else None
-    doc = build(rs, layouts=a.layouts, matrix=matrix, job_id=a.job_id)
+    matrix = (MATRICES[a.matrix] if a.matrix in MATRICES else json.loads(Path(a.matrix).read_text(encoding="utf-8"))) if a.matrix else None
+    doc = build(rs, layouts=a.layouts, matrix=matrix, job_id=a.job_id, out_root=a.out_root)
     write_json_atomic(a.out, doc)
     if a.pod:
         write_json_atomic(POD_DIR / "p14.json", pod_config())

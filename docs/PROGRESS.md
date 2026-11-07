@@ -4502,6 +4502,86 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Checks: 6 focused tests (an end-to-end 1440p assembly); docs_lint 0; CI green. Open: exact-length J5/helper renders have no
   handles (BP-128 REVIEW); the step-3 plan renders them with 12 frames on each side.
 
+## 2026-11-06 — RP-11: every combination of a pod's run costed before the pod (D-117, branch `icw/17-run-schedule`)
+- Why: the creator, 14:48 UTC, after the step-3 pod `ygg2ztmflr8pv2` (H100 NVL, $2.59/h) idled 14:33-14:48 UTC: its GPU lane waited for both
+  Blender first frames on the CPU (the battle line pass first, the one memory-killed on the container) before even the Qwen stages that
+  need no Blender, and its LTX clips waited for every Blender pass. Stopped by Fable at 14:48 (about $1.05, nothing paid made; balance $7.99).
+- Root cause of the miss: the OR-34 audit read hashes, prompts, tests and the offline dry run; none of them runs the clock, so the wait
+  chain (`p14_pod.gpu` waits for `A.frame0` although `NEEDS` says C and X6 need nothing) was never walked, and the known memory failure
+  of the battle line pass was not tied to the GPU's dependency.
+- `cloud/schedule.py`: `pod_schedule/1` files, list-scheduling simulation (expected and worst case), every card x lane x GPU order
+  (up to 20,000, else a fixed-seed sample + heuristics), the pick, `check` and `rp11`; `runpod create --schedule` (refused without one
+  for a script pod, exempt as RP-01). The step-3 graph as launched: no combination fits $8 / 3.5 h in its worst case, idle GPU 95 min
+  (41 %), refused; with each stage waiting only on its inputs and Blender allowed on the GPU: 324 combinations, cheapest $3.45 expected /
+  $7.08 worst, idle GPU 0 min.
+- Tests: `test_cloud_schedule.py` (13); the create tests carry `tests/fixtures/pod_schedule_ok.json`. Cost $0.
+
+## 2026-11-06 — ICW-16 fix 2: the step-3 pod passes RP-11 (its stage graph costed before the pod)
+- Why: the Fable thread's fix-1 audit (15:07 UTC): the code read fine but its graph failed RP-11 (PR #147, D-117): G 133 min on the
+  pod CPU with X3/X4 behind it, loose timeouts as maxes, E as one block behind every pass; no card fitted $6.9 / 3.5 h.
+- `p14_schedule.json` is now `pod_schedule/1` (`lean.py schedule`): 21 stages, E split per input (E.duel, X6.ltx, E.battle,
+  E.battle_line, X3) and B per scene, Blender stages on cpu and gpu, cards H100 NVL $2.59 and A100 80GB $1.39 (x0.6), caps $8 /
+  3.5 h / 15 % idle. `python -m explainer_engine.cloud.schedule check` passes: H100 NVL $3.84 expected, $7.90 worst (3.05 h),
+  idle GPU 1 min; the pod's own order too (9 % idle in its worst case).
+- `p14_pod.py`: the GPU lane is a ready-queue over `gpu_order` with the schedule's needs (what the RP-11 simulation assumes); every
+  timeout is the stage's max in the schedule on its device (LTX 10 min a clip, `p14.json clip_timeout_s` 600); G runs on the pod
+  only when Blender is on the card and the preflight frame (its own seconds, from `progress.jsonl`) took at most 1.5 s, cut at
+  20 min; else G, X3 and X4 render free on CI or the PC (D-114). `p14_ltx.py` runs one E stage's jobs (`P14_JOBS`) into tagged
+  speeds files; `p14_qwen.py --scene`. The battle crowd is untouched (the creator gets a card on the line pass).
+
+## 2026-11-06 — ICW-16 fix after pod 1 (ygg2ztmflr8pv2): the card no longer waits for Blender; Blender on the card; BiRefNet dtype
+- Why: pod 1 (H100, 14:25-14:48 UTC, ~$1.0, stopped) sat idle: the GPU lane waited for the battle's line frame 0, which the kernel
+  killed (-9, memory) after ~13 min, and every cut-out failed on a float16 checkpoint fed a float32 input (D, 12 of 12). Fable
+  thread's asks 14:44 UTC and the creator's 14:49 UTC (Blender on the pod GPU with a 2-minute preflight; a stage graph file).
+- `p14_pod.py`: C + X6 still and D run at once; B (its own Qwen process) when the frames 0 are done, the duel alone if the battle's
+  was cut at `frame0_timeout_s` 600; the battle's line pass runs last and only when frame 0's seconds x 282 frames fit its
+  3600 s budget; E no longer waits for A: `p14_ltx.run_all` defers a job whose input the pod still makes (a layout clip until A
+  ends, X3's first frame until G draws it; `P14_PENDING`) and runs it as soon as it lands. A timeout kills the stage's whole
+  process group (Blender too); Blender log tails go to `step3/logs/` every minute; layout clips are published atomically.
+  `A.preflight` draws the duel's line frame 0 with EEVEE on NVIDIA's EGL vendor (only that vendor file, so Mesa cannot shadow it;
+  written from `libEGL_nvidia.so.0` when the driver mounts no file) within 120 s: kept, and A and G render on the card, when the
+  report's GL renderer is NVIDIA's (`render_shot.py` now records `gl`); else Blender stays on Mesa/CPU. No Cycles fallback was
+  built: it would change the passes' renderer and needs a comparison first.
+- `edit/cutout.py`: the BiRefNet input takes the weights' dtype (float on the CPU). `p14_schedule.json` (`lean.py schedule`): lane,
+  needs, expected and max minutes, measured (pod 1's records, this container) or estimated, per stage.
+- Open: the battle's frame 0 is a memory problem, not a speed one: on the CPU or the card it may die again; fewer soldiers or lines
+  only on the near tiers is the creator's call (plan section 9). Blender on the card shares its memory with LTX (unmeasured).
+
+## 2026-11-06 — ICW-16 the lean step-3 pod package: one pod, stages A-G + the six extras (PR pending, nothing uploaded, no pod)
+- Why: the creator's word 13:21 UTC ("one lean pod", STEP3_POD_PLAN_LEAN_ka.md: every run answers a question, no upscale on the
+  pod, no every-combination), stage G 13:25 UTC (the J5 shots of the pilot window on the pod CPU beside LTX) and the six extras
+  13:33 UTC (caps $10 / ledger $12.5 / 3.5 h), relayed by the Fable thread. Built free on icw/16-lean-pod for the OR-34 audit.
+- `training/pods/p14`: `p14.sh` installs Blender 5.2.3 (the CI smoke's pin), Qwen (VideoX-Fun at the asset pod's commit), LTX-2
+  @e98f6d9 and fetches ONE sha256-pinned code bundle (`lean.py bundle`: byte-stable tar of explainer_engine/, config/, assets/
+  without p14.sh); `p14_pod.py` runs three lanes (net: weights prefetch; cpu: A layout passes -> X6 camera move -> G; gpu: B+C+X6
+  still -> D cut-outs -> E five LTX jobs + extras X1/X2/X5/X3/X6 -> X4 fix edit -> F speeds.json), each stage its own process, a
+  failed one recorded and skipped past (`step3/stages.json`). `p14_qwen.py` (B line-drawing edits with a line-match measure and the
+  LTX first frames; C 150-word pictures; X6 still; X4), `p14_cutout.py` (D: 12 PASS sheets, BiRefNet, edge width, halo),
+  `p14_j5.py` (G: scene_assets/1 from the backdrops + cut-outs, 9 shots at 2560x1440 with 12-frame handles, nice'd on Mesa EGL,
+  killed at the deadline reserve), `p14_stages.json` (every prompt, question and setting).
+- `edit/ltx_jobs.py`: `LEAN` (E1-E5 in the plan's order, seed 42, c2 chained on LTX-2.5), `--out-root step3`; `p14.json`
+  `upscale.enabled: false`. `p14_ltx.py`: the pod's own inputs before the vault, two failures in a row end the stage, a bad
+  derived control skips only its job (a crash found by the new test), the distilled i2v pipeline for X1/X3/X6, a verified-weights
+  stamp. `production/pilot.py` honours a J5 folder's `handles.json`.
+- Measured here (free): `assemble_25d` at 2560x1440, EEVEE 16 samples, 4 vCPU Xeon 2.1 GHz: 7.8-8.3 s per frame with cards, 3.7
+  s without (the smoke shots). Stale text: none found. Open: `config/spend_caps.json` per_pod_usd 6.9 is below the card's $10, so
+  `create --max-usd 10` is refused until the creator moves that ceiling; the H shot S02-01 needs no GPU and is not on the pod.
+
+## 2026-11-06 — ICW-16 fix 2: the step-3 pod without the battle and G, the duel's layouts from the vault (thread: ICW-16 lean pod)
+
+- Fable thread (15:07 / 16:23 UTC): `p14_stages.json` `pod`: `battle_on_pod` false until the creator's card (the battle's Blender
+  passes never finished on a pod and held the card idle), G, X3 and X4 off (they ride the next pod: the J5 shots render free on CI
+  or the PC, D-114); X7 dropped (the pilot pod's battle i2v, `training/pods/p15`, answers it).
+- `lean.graph()` cuts GRAPH to that (a need on a dropped stage goes with it; the duel's clay follows the duel's own frame 0);
+  `lean.schedule(full=True)` keeps the whole graph, and the tests of the battle, G, X3 and X4 paths run a pod on it. `p14_pod` runs
+  only the stages its schedule names and records the rest as skipped with their reasons (`off_pod`); A.preflight keeps Blender on
+  the CPU when G is not on the pod.
+- `hf_first` (`p14_stages.json`): the duel's line frame 0, clay clip and manifest from pod 1 are on HF; the pod fetches them and
+  checks each sha256 instead of rendering (frame 0 where B reads it; E fetches the clip by path). A missing or changed file renders
+  the scene as before.
+- RP-11 on the cut graph: A100 80GB $1.27 expected / $2.62 worst (1.88 h), 0 idle GPU minutes; H100 NVL $1.81 / $3.50.
+- Tests: `tests/unit/test_p14_lean.py` (+3: the cut pod and its reasons, the vault layouts, a changed vault file renders).
+
 ## 2026-11-06 — Pilot stills: a furnished room from the libraries + the soldiers scene (thread: ICW-16 lean pod; branch `icw/18-pilot-room`)
 
 - The creator (15:25 UTC, Fable thread): build the Blender frames from the libraries with the whole room furnished (a clock, a table,

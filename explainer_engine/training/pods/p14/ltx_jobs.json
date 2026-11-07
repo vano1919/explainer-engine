@@ -8,31 +8,26 @@
   },
   "jobs": [
     {
-      "id": "S02-02.c1.ltx23.line_foremid.s42",
+      "id": "S02-02.c1.ltx25.colour.s42",
       "shot_id": "S02-02",
       "clip_id": "S02-02.c1",
       "route": "J4",
       "recipe": "ltx_restyle/1",
-      "base": "ltx23",
-      "variant": "line_foremid",
+      "base": "ltx25",
+      "variant": "colour",
       "model": {
-        "key": "video_ltx_23",
-        "id": "Lightricks/LTX-2.3",
-        "revision": "c1521179de480464f366a98a9d9b2acc4cc097b9",
-        "sha256": "b33b7fe4bbfe084f484be4aaf90b0f1d95dca20d403ac4c0e037eb8c4f0af7cc"
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
       },
-      "text_encoder": {
-        "key": "text_encoder_gemma3",
-        "id": "google/gemma-3-12b-it-qat-q4_0-unquantized",
-        "revision": "68f7ee4fbd59087436ada77ed2d62f373fdd4482",
-        "sha256": "e6fb899db428481aafb45a20130457df6e247e7cb03b7d9f01ee4bc2a9a08138"
-      },
+      "text_encoder": null,
       "lora": {
-        "key": "video_ltx_control",
-        "id": "Lightricks/LTX-2.3-22b-IC-LoRA-Union-Control",
-        "revision": "20a580c8606c06a0988d40375a61309e0fe5893d",
-        "file": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
-        "sha256": "a1b888a87f661d27f08b394ae559e8e1050be33900bcc36a5cdf659e48f88d18",
+        "key": "video_ltx_layout_lora",
+        "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
         "strength": 1.0
       },
       "frames": 145,
@@ -41,91 +36,24 @@
       "height": 1088,
       "seed": 42,
       "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c1.png",
+        "path": "route_test_2026-11/step3/first_frames/S02-02.c1.png",
         "sha256": null,
         "pose": "start",
         "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
       },
       "conditioning": [
         {
-          "pass": "line",
-          "path": "route_test_2026-11/layouts/battle/line/battle_c1_line.mp4",
+          "pass": "colour",
+          "path": "route_test_2026-11/layouts/battle/colour/battle_c1_colour.mp4",
           "sha256": null,
-          "strength": 0.7,
-          "derive": "invert"
-        },
-        {
-          "pass": "depth",
-          "path": "route_test_2026-11/layouts/battle/depth/battle_c1_depth.mp4",
-          "sha256": null,
-          "strength": 0.7
+          "strength": 1.0
         }
       ],
       "attention_mask": null,
       "chain_from": null,
       "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
       "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c1.ltx23.line_foremid.s42.mp4"
-    },
-    {
-      "id": "S02-02.c1.ltx23.line_foremid.s1337",
-      "shot_id": "S02-02",
-      "clip_id": "S02-02.c1",
-      "route": "J4",
-      "recipe": "ltx_restyle/1",
-      "base": "ltx23",
-      "variant": "line_foremid",
-      "model": {
-        "key": "video_ltx_23",
-        "id": "Lightricks/LTX-2.3",
-        "revision": "c1521179de480464f366a98a9d9b2acc4cc097b9",
-        "sha256": "b33b7fe4bbfe084f484be4aaf90b0f1d95dca20d403ac4c0e037eb8c4f0af7cc"
-      },
-      "text_encoder": {
-        "key": "text_encoder_gemma3",
-        "id": "google/gemma-3-12b-it-qat-q4_0-unquantized",
-        "revision": "68f7ee4fbd59087436ada77ed2d62f373fdd4482",
-        "sha256": "e6fb899db428481aafb45a20130457df6e247e7cb03b7d9f01ee4bc2a9a08138"
-      },
-      "lora": {
-        "key": "video_ltx_control",
-        "id": "Lightricks/LTX-2.3-22b-IC-LoRA-Union-Control",
-        "revision": "20a580c8606c06a0988d40375a61309e0fe5893d",
-        "file": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
-        "sha256": "a1b888a87f661d27f08b394ae559e8e1050be33900bcc36a5cdf659e48f88d18",
-        "strength": 1.0
-      },
-      "frames": 145,
-      "fps": 24,
-      "width": 1920,
-      "height": 1088,
-      "seed": 1337,
-      "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c1.png",
-        "sha256": null,
-        "pose": "start",
-        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
-      },
-      "conditioning": [
-        {
-          "pass": "line",
-          "path": "route_test_2026-11/layouts/battle/line/battle_c1_line.mp4",
-          "sha256": null,
-          "strength": 0.7,
-          "derive": "invert"
-        },
-        {
-          "pass": "depth",
-          "path": "route_test_2026-11/layouts/battle/depth/battle_c1_depth.mp4",
-          "sha256": null,
-          "strength": 0.7
-        }
-      ],
-      "attention_mask": null,
-      "chain_from": null,
-      "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
-      "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c1.ltx23.line_foremid.s1337.mp4"
+      "output": "route_test_2026-11/step3/ltx/S02-02.c1.ltx25.colour.s42.mp4"
     },
     {
       "id": "S02-02.c1.ltx23.canny_full.s42",
@@ -161,7 +89,7 @@
       "height": 1088,
       "seed": 42,
       "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c1.png",
+        "path": "route_test_2026-11/step3/first_frames/S02-02.c1.png",
         "sha256": null,
         "pose": "start",
         "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
@@ -185,168 +113,12 @@
       "chain_from": null,
       "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
       "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c1.ltx23.canny_full.s42.mp4"
+      "output": "route_test_2026-11/step3/ltx/S02-02.c1.ltx23.canny_full.s42.mp4"
     },
     {
-      "id": "S02-02.c1.ltx23.canny_full.s1337",
+      "id": "S02-02.c1.ltx23.line_foremid.s42",
       "shot_id": "S02-02",
       "clip_id": "S02-02.c1",
-      "route": "J4",
-      "recipe": "ltx_restyle/1",
-      "base": "ltx23",
-      "variant": "canny_full",
-      "model": {
-        "key": "video_ltx_23",
-        "id": "Lightricks/LTX-2.3",
-        "revision": "c1521179de480464f366a98a9d9b2acc4cc097b9",
-        "sha256": "b33b7fe4bbfe084f484be4aaf90b0f1d95dca20d403ac4c0e037eb8c4f0af7cc"
-      },
-      "text_encoder": {
-        "key": "text_encoder_gemma3",
-        "id": "google/gemma-3-12b-it-qat-q4_0-unquantized",
-        "revision": "68f7ee4fbd59087436ada77ed2d62f373fdd4482",
-        "sha256": "e6fb899db428481aafb45a20130457df6e247e7cb03b7d9f01ee4bc2a9a08138"
-      },
-      "lora": {
-        "key": "video_ltx_control",
-        "id": "Lightricks/LTX-2.3-22b-IC-LoRA-Union-Control",
-        "revision": "20a580c8606c06a0988d40375a61309e0fe5893d",
-        "file": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
-        "sha256": "a1b888a87f661d27f08b394ae559e8e1050be33900bcc36a5cdf659e48f88d18",
-        "strength": 1.0
-      },
-      "frames": 145,
-      "fps": 24,
-      "width": 1920,
-      "height": 1088,
-      "seed": 1337,
-      "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c1.png",
-        "sha256": null,
-        "pose": "start",
-        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
-      },
-      "conditioning": [
-        {
-          "pass": "canny_full",
-          "path": "route_test_2026-11/layouts/battle/colour/battle_c1_colour.mp4",
-          "sha256": null,
-          "strength": 0.7,
-          "derive": "canny"
-        },
-        {
-          "pass": "depth",
-          "path": "route_test_2026-11/layouts/battle/depth/battle_c1_depth.mp4",
-          "sha256": null,
-          "strength": 0.7
-        }
-      ],
-      "attention_mask": null,
-      "chain_from": null,
-      "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
-      "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c1.ltx23.canny_full.s1337.mp4"
-    },
-    {
-      "id": "S02-02.c1.ltx25.colour.s42",
-      "shot_id": "S02-02",
-      "clip_id": "S02-02.c1",
-      "route": "J4",
-      "recipe": "ltx_restyle/1",
-      "base": "ltx25",
-      "variant": "colour",
-      "model": {
-        "key": "video_ltx",
-        "id": "Lightricks/LTX-2.5",
-        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
-        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
-      },
-      "text_encoder": null,
-      "lora": {
-        "key": "video_ltx_layout_lora",
-        "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
-        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
-        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
-        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
-        "strength": 1.0
-      },
-      "frames": 145,
-      "fps": 24,
-      "width": 1920,
-      "height": 1088,
-      "seed": 42,
-      "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c1.png",
-        "sha256": null,
-        "pose": "start",
-        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
-      },
-      "conditioning": [
-        {
-          "pass": "colour",
-          "path": "route_test_2026-11/layouts/battle/colour/battle_c1_colour.mp4",
-          "sha256": null,
-          "strength": 1.0
-        }
-      ],
-      "attention_mask": null,
-      "chain_from": null,
-      "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
-      "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c1.ltx25.colour.s42.mp4"
-    },
-    {
-      "id": "S02-02.c1.ltx25.colour.s1337",
-      "shot_id": "S02-02",
-      "clip_id": "S02-02.c1",
-      "route": "J4",
-      "recipe": "ltx_restyle/1",
-      "base": "ltx25",
-      "variant": "colour",
-      "model": {
-        "key": "video_ltx",
-        "id": "Lightricks/LTX-2.5",
-        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
-        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
-      },
-      "text_encoder": null,
-      "lora": {
-        "key": "video_ltx_layout_lora",
-        "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
-        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
-        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
-        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
-        "strength": 1.0
-      },
-      "frames": 145,
-      "fps": 24,
-      "width": 1920,
-      "height": 1088,
-      "seed": 1337,
-      "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c1.png",
-        "sha256": null,
-        "pose": "start",
-        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
-      },
-      "conditioning": [
-        {
-          "pass": "colour",
-          "path": "route_test_2026-11/layouts/battle/colour/battle_c1_colour.mp4",
-          "sha256": null,
-          "strength": 1.0
-        }
-      ],
-      "attention_mask": null,
-      "chain_from": null,
-      "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
-      "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c1.ltx25.colour.s1337.mp4"
-    },
-    {
-      "id": "S02-02.c2.ltx23.line_foremid.s42",
-      "shot_id": "S02-02",
-      "clip_id": "S02-02.c2",
       "route": "J4",
       "recipe": "ltx_restyle/1",
       "base": "ltx23",
@@ -377,34 +149,31 @@
       "height": 1088,
       "seed": 42,
       "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c2.png",
+        "path": "route_test_2026-11/step3/first_frames/S02-02.c1.png",
         "sha256": null,
         "pose": "start",
-        "prompt": "xworld style, two armies of lanky soldiers locked together in a shallow river, spears splintering, a horse rearing, spray and mud flying, low golden sun through grey clouds"
+        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
       },
       "conditioning": [
         {
           "pass": "line",
-          "path": "route_test_2026-11/layouts/battle/line/battle_c2_line.mp4",
+          "path": "route_test_2026-11/layouts/battle/line/battle_c1_line.mp4",
           "sha256": null,
           "strength": 0.7,
           "derive": "invert"
         },
         {
           "pass": "depth",
-          "path": "route_test_2026-11/layouts/battle/depth/battle_c2_depth.mp4",
+          "path": "route_test_2026-11/layouts/battle/depth/battle_c1_depth.mp4",
           "sha256": null,
           "strength": 0.7
         }
       ],
       "attention_mask": null,
-      "chain_from": {
-        "job": "S02-02.c1.ltx23.line_foremid.s42",
-        "frames": 8
-      },
+      "chain_from": null,
       "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
       "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c2.ltx23.line_foremid.s42.mp4"
+      "output": "route_test_2026-11/step3/ltx/S02-02.c1.ltx23.line_foremid.s42.mp4"
     },
     {
       "id": "S02-02.c2.ltx25.colour.s42",
@@ -435,7 +204,7 @@
       "height": 1088,
       "seed": 42,
       "first_frame": {
-        "path": "route_test_2026-11/first_frames/S02-02.c2.png",
+        "path": "route_test_2026-11/step3/first_frames/S02-02.c2.png",
         "sha256": null,
         "pose": "start",
         "prompt": "xworld style, two armies of lanky soldiers locked together in a shallow river, spears splintering, a horse rearing, spray and mud flying, low golden sun through grey clouds"
@@ -455,7 +224,7 @@
       },
       "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
       "stage2_ic": true,
-      "output": "route_test_2026-11/ltx/S02-02.c2.ltx25.colour.s42.mp4"
+      "output": "route_test_2026-11/step3/ltx/S02-02.c2.ltx25.colour.s42.mp4"
     },
     {
       "id": "S03-02.ltx25.clay.s42",
@@ -486,7 +255,7 @@
       "height": 1088,
       "seed": 42,
       "first_frame": {
-        "path": "route_test_2026-11/first_frames/S03-02.png",
+        "path": "route_test_2026-11/step3/first_frames/S03-02.png",
         "sha256": null,
         "pose": "start",
         "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak circles a crouching young scout, broadsword raised, both with bulging eyes, courtyard well behind them, hard noon sunlight"
@@ -503,55 +272,7 @@
       "chain_from": null,
       "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The broad commander circles with the sword raised, then swings the broadsword down in a wide arc, and holds the sword low after the swing. His teeth are bared shows on the face. The young scout ducks under the blade and steps back. Nobody speaks. Boots scrape on stone.",
       "stage2_ic": false,
-      "output": "route_test_2026-11/ltx/S03-02.ltx25.clay.s42.mp4"
-    },
-    {
-      "id": "S03-02.ltx25.clay.s1337",
-      "shot_id": "S03-02",
-      "clip_id": "S03-02",
-      "route": "J2",
-      "recipe": "ltx_layout/1",
-      "base": "ltx25",
-      "variant": "clay",
-      "model": {
-        "key": "video_ltx",
-        "id": "Lightricks/LTX-2.5",
-        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
-        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
-      },
-      "text_encoder": null,
-      "lora": {
-        "key": "video_ltx_layout_lora",
-        "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
-        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
-        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
-        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
-        "strength": 1.0
-      },
-      "frames": 121,
-      "fps": 24,
-      "width": 1920,
-      "height": 1088,
-      "seed": 1337,
-      "first_frame": {
-        "path": "route_test_2026-11/first_frames/S03-02.png",
-        "sha256": null,
-        "pose": "start",
-        "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak circles a crouching young scout, broadsword raised, both with bulging eyes, courtyard well behind them, hard noon sunlight"
-      },
-      "conditioning": [
-        {
-          "pass": "clay",
-          "path": "route_test_2026-11/layouts/duel/clay/duel_c1_clay.mp4",
-          "sha256": null,
-          "strength": 1.0
-        }
-      ],
-      "attention_mask": null,
-      "chain_from": null,
-      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The broad commander circles with the sword raised, then swings the broadsword down in a wide arc, and holds the sword low after the swing. His teeth are bared shows on the face. The young scout ducks under the blade and steps back. Nobody speaks. Boots scrape on stone.",
-      "stage2_ic": false,
-      "output": "route_test_2026-11/ltx/S03-02.ltx25.clay.s1337.mp4"
+      "output": "route_test_2026-11/step3/ltx/S03-02.ltx25.clay.s42.mp4"
     }
   ]
 }
