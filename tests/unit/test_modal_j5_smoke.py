@@ -38,3 +38,23 @@ def test_renderer_cli_accepts_the_flags_at_the_pinned_commit(tmp_path):
 def test_pip_list_covers_the_renderer_imports():
     assert {"numpy", "pillow", "opencv-python-headless", "scipy"} <= {p.split("==")[0] for p in J.PIP}
     assert any(p.startswith("jsonschema") for p in J.PIP)   # explainer_engine.assets.library imports it (found by a local run)
+
+
+def test_pip_has_every_third_party_import_of_the_function_body():
+    import ast
+    import inspect
+    import textwrap
+    names = set()
+    for n in ast.walk(ast.parse(textwrap.dedent(inspect.getsource(J.smoke_body)))):
+        if isinstance(n, ast.ImportFrom) and n.module:
+            names.add(n.module.split(".")[0])
+        elif isinstance(n, ast.Import):
+            names |= {a.name.split(".")[0] for a in n.names}
+    third = names - set(sys.stdlib_module_names)
+    pip = {p.split("==")[0].replace("-", "_").lower() for p in J.PIP}
+    assert third == {"huggingface_hub"} and third <= pip, (third, pip)
+    # the module-level imports must be stdlib or modal (modal is only inside the Modal image by the SDK)
+    mod = ast.parse(Path(J.__file__).read_text())
+    top = {n.names[0].name.split(".")[0] for n in mod.body if isinstance(n, ast.Import)} | \
+          {n.module.split(".")[0] for n in mod.body if isinstance(n, ast.ImportFrom) and n.module}
+    assert top - set(sys.stdlib_module_names) - {"modal"} == set(), top

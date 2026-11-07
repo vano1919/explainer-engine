@@ -34,7 +34,7 @@ CODE_COMMIT = "38cfff1"
 SHOTS = ("S1_two_shot", "S2_ots_h2_to_h1", "S3_ots_h1_to_h2")
 CAPS = {"max_usd": 0.15, "timeout_s": 20 * 60, "cores": 2, "mem_gib": 8}
 CPU_CORE_S, MEM_GIB_S = 0.0000131, 0.00000222     # modal.com/pricing, 2026-11-07
-PIP = ["numpy", "pillow", "opencv-python-headless", "scipy", "jsonschema==4.26.0"]
+PIP = ["numpy", "pillow", "opencv-python-headless", "scipy", "jsonschema==4.26.0", "huggingface_hub==1.33.0"]
 
 
 def go_gate(env=os.environ) -> str:
