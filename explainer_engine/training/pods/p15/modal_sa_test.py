@@ -27,7 +27,7 @@ BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 SECRET_NAME = "huggingface-secret"
 USD_PER_H = 2.5      # A100-80 list price, modal.com/pricing, checked 2026-11-07 (CPU/RAM extra, covered by the 0.9 factor)
-CAP_USD, SMOKE_CAP_USD, COLD_START_S = 1.0, 0.25, 90
+CAP_USD, SMOKE_CAP_USD, COLD_START_S = 0.75, 0.25, 90   # smoke + main together stay within the creator's $1.0 (14:42 UTC)
 
 
 def cost_timeout(cap_usd, usd_per_h=USD_PER_H, cold_start_s=COLD_START_S):

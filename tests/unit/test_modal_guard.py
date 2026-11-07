@@ -74,3 +74,7 @@ def test_style_strength_trial_names_both_weights():
     assert [M.wtag(w) for w in M.WEIGHTS] == ["_w07", "_w10"]
     runner = (Path(M.__file__).parent / "sa_test_qwen.py").read_text()
     assert "--lora-weight" in runner and 'weight=a.lora_weight' in runner
+
+
+def test_smoke_and_main_together_stay_within_one_dollar():
+    assert M.CAP_USD + M.SMOKE_CAP_USD <= 1.0
