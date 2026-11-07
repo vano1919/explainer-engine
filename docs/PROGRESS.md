@@ -3760,3 +3760,5 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-07 — Three register checks added (creator 12:17 UTC)
 - `speech.py` (PV-46): optional `cast.<id>.speech.max_contractions` and `mlu_range` (schema fields added), checked against the hero's lines as REVIEW. `scene_lint` SC-05: `episode.short_form` (a pilot of about three minutes) asks BP-70's new threshold `min_exchange_lines_short` = 2 and only REVIEWs; the registry row and `docs/SOURCED_RULES.md` regenerated. `validate` PV-12 now runs the narration lint on `narrator_tts_text`, so N-05/N-06/N-12 read the narrator only when heroes speak (their turns stay under DW-11 and SC-09). Test: `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+- Stone-age pilot VISUAL_SCRIPT_v2 (SCRIPT_v4.6, 55 shots, about 189 s estimated, 6 LTX clips 510 frames) saved under docs/research/stoneage_pilot_2026-11-07/; awaits the creator on duration and handprint type. Costs $0.
