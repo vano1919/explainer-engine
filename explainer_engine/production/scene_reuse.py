@@ -34,7 +34,8 @@ def check_prompts(doc: dict) -> list[tuple]:
             p, n = j["prompt"], j["name"]
             if j.get("refs"):
                 continue
-            if not p.startswith(STYLE_HEAD):
+            head = p[p.find(STYLE_HEAD):] if p.startswith("Style:") and STYLE_HEAD in p else p  # HI-04: a leading scene-style sentence
+            if not head.startswith(STYLE_HEAD):
                 out.append(("HI-04", "FAIL", f"{n}: the prompt must start with the style line"))
             i = p.find("Scene:")
             if i < 0:

@@ -37,6 +37,8 @@ def test_prompt_shape():
     assert S.check_prompts(doc([job("a", ok)])) == []
     assert S.check_prompts(doc([job("a", "Scene: x")]))[0][0] == "HI-04"
     assert S.check_prompts(doc([job("a", f"xworld style. {REG['ura']} Scene: x")]))[0][0] == "HI-04"
+    styled = f"Style: an exciting adventure style; this scene: violet dusk. xworld style, flat. Scene: two people. {REG['marcus']} {REG['ura']}"
+    assert not [f for f in S.check_prompts(doc([job("s", styled)])) if f[1] == "FAIL"]
     assert S.check_prompts(doc([job("a", ok + " w" * 300)]))[-1][0] == "HI-08"
 
 
