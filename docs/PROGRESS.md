@@ -4666,3 +4666,12 @@ Tests: `test_qwen_jobs.py`.
 
 ## 2026-11-07 Fallback rule KP-58 (creator 16:41 UTC)
 If E4 and E5 do not fix the camera angle, one environment is never shown from a second angle in LTX/painted shots, and its dialogues are Blender close-ups with a blurred background (`docs/SHOT_PROMPTS.md` KP-58). Recorded as the last step of his review; no code change, so no test.
+
+## 2026-11-07 Test F/A: one Blender picture per call, fixed appearance text; two runs overlapped (17:00-17:45 UTC)
+creator 17:03/17:04: each Qwen call gets ONE Blender picture (no master, no second image); the picture says where everything is, a fixed text per person
+and thing (`stoneage_qwen_jobs.SPEC`, from the Qwen turnarounds) says what it looks like. Run F (PC session, LoRA 0.7, 9 photos, ~$0.27): style and
+identities held in all 9, layout did not (cave/camp figures in a row facing the camera, log gone). Test A (this thread, `specA`: SPEC + pose phrases and
+the facing of each figure taken from the layout's cast row + the place's colours; run sa_v8, `modal_qwen_jobs_v8.py`, LoRA 0.7). The PC session
+launched its own "v6" (scene words with positions) at the same moment because it could not be reached when the cloud thread started A (the relay to it
+failed): two A100 apps ran at once, a breach of the one-run-at-a-time order (rule 7a); caps $0.6 + $0.5, expected ~$0.6. Lesson: before starting a paid
+run check `modal app list` AND confirm the PC session has nothing queued.

@@ -245,14 +245,188 @@ def chain_build(stills: Path, masters: Path, out: Path) -> dict:
     return doc
 
 
+# the creator 2026-11-07 16:13 UTC (test E): Qwen's own empty places and character sheets (the assets run sa_v3b) are given to Qwen itself:
+# Image 1 = the empty place, Image 2 = the courier's sheet, Image 3 = the sorcerer's sheet; it composes the scene. No Blender.
+_EMPTY = ("xworld style, Image 1 is the empty place: keep it exactly as it is, add no other objects. Image 2 is the courier's character "
+          "sheet and Image 3 is the sorcerer's: copy their faces, outfits and colours exactly, and draw each of them only once.")
+COMPOSE = {"cave": ("The sorcerer stands in the middle by the fire and speaks, the courier stands on the left and looks at the painted wall.",
+                    "The courier kneels by the fire on the left; the sorcerer stands behind the fire on the right, seen from the side, one arm raised."),
+           "ice": ("The courier stands in the middle of the snow with his back to us; the sorcerer stands on the right and faces him.",
+                   "The courier runs across the snow from the left; the sorcerer stands still on the right, seen in three-quarter view."),
+           "camp": ("The courier sits on the log on the left; the sorcerer stands on the right beside the big hut.",
+                    "The sorcerer stands by the fire in the middle; the courier stands next to him on the left; both are seen in three-quarter view.")}
+
+
+def compose_jobs(inputs: dict) -> dict:
+    groups = []
+    for w in (1.0, 0.7):
+        g = []
+        for sc in S.SCENES:
+            for k, text in zip(("a", "b"), COMPOSE[sc]):
+                prompt = f"{_EMPTY} {text}"
+                if _words(prompt) > 90:
+                    raise ValueError(f"{sc}_{k}: {_words(prompt)} words")
+                g.append({"name": f"{sc}_e{k}_w{int(w * 10):02d}", "prompt": prompt, "size": [1280, 720],
+                          "refs": [f"in:env_{sc}_front.png", "in:char_marcus.png", "in:char_ura.png"]})
+        groups.append({"lora_weight": w, "jobs": g})
+    return {"run": "sa_v5", "out": OUT_HF.replace("out_v3", "out_v5"), "inputs": inputs, "groups": groups}
+
+
+def compose_build(assets: Path, out: Path) -> dict:
+    out.mkdir(parents=True, exist_ok=True)
+    names = [f"env_{sc}_front.png" for sc in S.SCENES] + ["char_marcus.png", "char_ura.png"]
+    for n in names:
+        (out / n).write_bytes((assets / n).read_bytes())
+    doc = compose_jobs({n: hashlib.sha256((out / n).read_bytes()).hexdigest() for n in names})
+    (out / "sa_v5_jobs.json").write_text(json.dumps(doc, indent=1) + "\n")
+    return doc
+
+
+
+# the creator 17:03 / 17:04 UTC (test F): ONE Blender picture per call, no second image. The picture says WHERE everything is (no place
+# words in the prompt); the prompt says WHAT each person and thing is, in a fixed block that is word for word the same in every shot.
+# Drafted from the turnarounds Qwen drew (marcus_*.png, ura_*.png), the hunters/animals from the layout tags: the creator approves the text.
+SPEC = {
+    "marcus": "the young courier: a slim man about 1.8 m tall, short dark brown hair, light brown skin, a plain grey hooded sweatshirt with a "
+              "front pocket and white drawstrings, dark navy jeans, white sneakers",
+    "ura": "the old sorcerer: a stooped man about 1.7 m tall, a pale bone deer-skull mask with brown antlers and red ear tips, a dark grey "
+           "beard, a blue tunic with a brown leather belt and straps, a heavy dark brown fur cloak with a cream fur edge, dark trousers, "
+           "brown fur boots",
+    "hunter_a": "a hunter about 1.75 m tall in a coat of grey fur with a rope belt",
+    "hunter_b": "a hunter about 1.75 m tall in a coat of brown fur with a rope belt",
+    "hunter_c": "a hunter about 1.75 m tall in a coat of spotted tan fur with a rope belt",
+    "torch_a": "a hunter about 1.75 m tall in a coat of grey fur, holding a burning torch",
+    "torch_b": "a hunter about 1.75 m tall in a coat of brown fur, holding a burning torch",
+    "mammoth_0_body": "the big adult woolly mammoth, 3.3 m high, dark brown shaggy fur, long curved ivory tusks",
+    "mammoth_1_body": "the medium woolly mammoth, 2.8 m high, dark brown shaggy fur, curved ivory tusks",
+    "mammoth_2_body": "the small young woolly mammoth, 1.6 m high, dark brown shaggy fur, short tusks",
+    "hearth_flame": "the fire, orange flames in a ring of grey stones",
+    "paint_panel": "the back wall painted with gold towers and red handprints",
+    "west_ledge": "the stone ledge with hanging bone talismans",
+    "ochre_bowl": "the red ochre bowl",
+    "hut_0_wall": "the round hut with a pointed roof and an arch of mammoth tusks",
+    "hut_1_wall": "the round hut with a pointed roof and a hide drying rack",
+    "hut_2_wall": "the chief's big round hut with a pointed roof",
+    "hut_3_wall": "the round hut with a pointed roof beside a gate of mammoth bones",
+    "camp_flame": "the campfire in a ring of grey stones",
+    "log_seat": "a log seat",
+    "ice_block_0": "a square block of blue-white ice",
+    "drift_l": "an ice-blue snowdrift"}
+SPEC_ANGLES = ("wide", "side", "low")
+_SPEC_HEAD = ("xworld style, Image 1 is the whole scene: copy its layout, every place, size and pose, and the camera view exactly from "
+              "Image 1. Paint it in the style. In this scene: ")
+
+
+def _spec_visible(scene: str, angle: str) -> list[str]:
+    blocks, cast, _, cam = getattr(S, "_" + scene)("flat3")
+    cam = cam if angle == "wide" else S.ANGLES[scene][angle]
+    blocks = blocks + S.proxies(cast)
+    out = []
+    for n in CODES[scene]:
+        sx, sy, _ = S.project(cam, S._subject_point(blocks, cast, n))
+        if 0.03 < sx < 0.97 and 0.05 < sy < 0.97:
+            out.append(n)
+    return out
+
+
+def spec_prompt(scene: str, angle: str) -> str:
+    """Scene by picture, people and things by the fixed SPEC text (no place words); the light is the place's."""
+    items = "; ".join(SPEC[n] for n in _spec_visible(scene, angle))
+    return f"{_SPEC_HEAD}{items}. Lit by {S.LIGHT[scene]}."
+
+
+def spec_build(stills: Path, out: Path) -> dict:
+    out.mkdir(parents=True, exist_ok=True)
+    names, g = [], []
+    for sc in S.SCENES:
+        for a in SPEC_ANGLES:
+            n = f"sa_{sc}_flat3.png" if a == "wide" else f"sa_{sc}_flat3_{a}.png"
+            (out / n).write_bytes((stills / n).read_bytes()); names.append(n)
+            g.append({"name": f"{sc}_{a}_spec", "prompt": spec_prompt(sc, a), "refs": [f"in:{n}"], "size": [1280, 720]})
+    for j in g:
+        if _words(j["prompt"]) > 220:
+            raise ValueError(f"{j['name']}: {_words(j['prompt'])} words")
+    doc = {"run": "sa_v7", "out": OUT_HF.replace("out_v3", "out_v7"),
+           "inputs": {n: hashlib.sha256((out / n).read_bytes()).hexdigest() for n in names}, "groups": [{"lora_weight": 1.0, "jobs": g}]}
+    (out / "sa_v7_jobs.json").write_text(json.dumps(doc, indent=1) + "\n")
+    return doc
+
+
+
+# test A (creator 17:25 UTC, "both"): the same fixed appearance text, plus a short POSE phrase taken from the layout itself (what the figure
+# does and which way it faces the camera of THIS angle; never where it stands), and the place's colours as the Blender still has them.
+POSE = {"Idle_Loop": "standing", "Idle_Talking_Loop": "standing and talking with one hand raised", "Sitting_Idle_Loop": "sitting",
+        "Fixing_Kneeling": "kneeling on one knee", "Idle_Torch_Loop": "standing"}
+ENV_LOOK = {"cave": "warm brown rock walls and floor lit orange by the fire, a dark ceiling, no blue",
+            "ice": "a pale snow plain with ice-blue drifts",
+            "camp": "a dark navy night sky, bare dark earth warmed orange by the fire, huts of dark brown hide"}
+
+
+def _facing(cam: list, x: float, y: float, yaw: float) -> str:
+    """Which way a figure at (x, y) with this yaw faces, seen from the camera: toward it, away from it, or in profile."""
+    import math
+    fx, fy = math.sin(math.radians(yaw)), -math.cos(math.radians(yaw))   # yaw 0 faces -Y (toward the wide camera), 180 faces +Y
+    tx, ty = cam[0][0] - x, cam[0][1] - y
+    n = math.hypot(tx, ty) or 1.0
+    dot = (fx * tx + fy * ty) / n
+    if dot > 0.8:
+        return "facing the camera"
+    if dot < -0.8:
+        return "facing away from the camera, back to us"
+    right = (cam[2][1] - cam[0][1], -(cam[2][0] - cam[0][0]))   # the camera's right on the floor plane (as project())
+    side = "right" if fx * right[0] + fy * right[1] > 0 else "left"
+    if dot > 0.3:
+        return f"turned three-quarters toward the camera, facing {side}"
+    if dot < -0.3:
+        return f"turned three-quarters away from the camera, facing {side}"
+    return f"in profile, facing {side}"
+
+
+def spec_prompt_poses(scene: str, angle: str) -> str:
+    blocks, cast, _, cam = getattr(S, "_" + scene)("flat3")
+    cam = cam if angle == "wide" else S.ANGLES[scene][angle]
+    row = {c[0]: c for c in cast}
+    parts = []
+    for n in _spec_visible(scene, angle):
+        t = SPEC[n]
+        if n in row:
+            _n, _ch, _co, _fa, (x, y), yaw, anim, _off = row[n]
+            t += f", {POSE[anim]}, {_facing(cam, x, y, yaw)}"
+        parts.append(t)
+    return (f"{_SPEC_HEAD}{'; '.join(parts)}. The place: {ENV_LOOK[scene]}. Lit by {S.LIGHT[scene]}.")
+
+
+def spec_a_build(stills: Path, out: Path) -> dict:
+    out.mkdir(parents=True, exist_ok=True)
+    names, g = [], []
+    for sc in S.SCENES:
+        for a in SPEC_ANGLES:
+            n = f"sa_{sc}_flat3.png" if a == "wide" else f"sa_{sc}_flat3_{a}.png"
+            (out / n).write_bytes((stills / n).read_bytes()); names.append(n)
+            g.append({"name": f"{sc}_{a}_specA", "prompt": spec_prompt_poses(sc, a), "refs": [f"in:{n}"], "size": [1280, 720]})
+    for j in g:
+        if _words(j["prompt"]) > 300:
+            raise ValueError(f"{j['name']}: {_words(j['prompt'])} words")
+    doc = {"run": "sa_v8", "out": OUT_HF.replace("out_v3", "out_v8"),
+           "inputs": {n: hashlib.sha256((out / n).read_bytes()).hexdigest() for n in names}, "groups": [{"lora_weight": 0.7, "jobs": g}]}
+    (out / "sa_v8_jobs.json").write_text(json.dumps(doc, indent=1) + "\n")
+    return doc
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="stoneage_qwen_jobs")
-    ap.add_argument("cmd", choices=["build", "assets", "chain"]); ap.add_argument("--stills", type=Path); ap.add_argument("--masters", type=Path); ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("cmd", choices=["build", "assets", "chain", "compose", "spec", "specA"]); ap.add_argument("--stills", type=Path); ap.add_argument("--masters", type=Path); ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     if a.cmd == "assets":
         a.out.mkdir(parents=True, exist_ok=True)
         doc = asset_jobs()
         (a.out / "sa_v3b_jobs.json").write_text(json.dumps(doc, indent=1) + "\n")
+    elif a.cmd == "compose":
+        doc = compose_build(a.stills, a.out)
+    elif a.cmd == "specA":
+        doc = spec_a_build(a.stills, a.out)
+    elif a.cmd == "spec":
+        doc = spec_build(a.stills, a.out)
     elif a.cmd == "chain":
         doc = chain_build(a.stills, a.masters, a.out)
     else:

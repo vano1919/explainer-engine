@@ -65,13 +65,13 @@ def main():
     def say(*x):
         line = time.strftime("%H:%M:%S ") + " ".join(map(str, x)); print(line, flush=True); log.write(line + "\n"); log.flush()
     t0 = time.time(); pipe, tr = t.load_pipeline(); pipe = Q.style_lora(t, pipe, tr, cfg, say); say("loaded", round(time.time() - t0), "s")
-    if a.smoke:   # OR-37: 1 step, small: text-to-image, one ref, two refs (the three paths the run uses)
+    if a.smoke:   # OR-37: 1 step, small: text-to-image, one, two and three refs (the paths the runs use)
         first = next((j for j in g["jobs"] if any(r.startswith("in:") for r in j.get("refs", []))), g["jobs"][0])
         ins = [r for r in first.get("refs", []) if r.startswith("in:")]
         ref = (Image.open(resolve(ins[0], a.inputs, qd)).convert("RGB").resize((768, 432)) if ins
                else Image.new("RGB", (768, 432), (128, 128, 128)))   # a run without input files (Qwen-first assets) smokes on grey
         base, res = dict(cfg, qwen=dict(q, steps=1)), {}
-        for label, refs in (("t2i", []), ("one_ref", [ref]), ("two_refs", [ref, ref])):
+        for label, refs in (("t2i", []), ("one_ref", [ref]), ("two_refs", [ref, ref]), ("three_refs", [ref, ref, ref])):
             try:
                 j = {"name": label, "prompt": first["prompt"], "seed": q["seed"], "cfg": q["cfg_edit"] if refs else q["cfg_text"], "size": [768, 432], "kind": "edit"}
                 res[label] = f"ok {Q.draw(pipe, base, j, refs).size}"
