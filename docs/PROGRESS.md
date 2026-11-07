@@ -3746,3 +3746,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-07 — DW-11 registers: every hero speaks from character, with few-shot examples (creator 11:22-11:23 UTC)
+- `docs/STORY_ENGINE.md` DW-11 now fixes the hero's register (rustic, child, noble ...) for words and delivery; skill `narration-script` got the section "Speech registers" with five same-idea examples and one bad example. Test `tests/unit/test_speech_registers_fewshot.py`. Costs $0.

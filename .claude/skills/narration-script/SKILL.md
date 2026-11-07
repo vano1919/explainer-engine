@@ -251,3 +251,16 @@ wants them "not monotone, the way he would say it". Rules, each with its sources
 
 Story cards (`design/cards.py`): the intro asks the episode's question over the heroes' heads; a recap names where each
 hero stands, then one NEXT line that opens the coming chapter (a hook, never a summary of the end).
+
+## Speech registers (DW-11, creator 2026-11-07): few-shot for the writer
+Rule: every speaking hero has one `speech` card (register, sentence length, habits, `avoid`). It decides the written words AND the delivery tags. Test every line: if another hero could say it unchanged, rewrite it. Put these pairs in the writer prompt; the pairs are style demonstrations, not lines to reuse.
+
+Same idea ("I will not help you"), five heroes:
+- Narrator (dry, short): "Nobody in the camp argues. The old man has already decided."
+- Rustic elder (no contractions, concrete images, repeats a word, inverted order): "Help you, I will not. The river does not carry a stone uphill, and neither do I."
+- City wiseguy (contractions, slang, jokes as armour, trails off): "Yeah, no. I'm not, uh... look, you guys are gonna have to do this one yourselves."
+- Child (tiny words, literal, asks): "You don't want to? But why? Is it because of the dark?"
+- Noble (long courteous sentences, titles, formal verbs): "I regret, sir, that my honour permits me no part in this, however much it grieves me to refuse."
+
+Bad (all heroes sound alike, and sound like a model): "I understand your request, but I must respectfully decline, as it would not be right." Fails RG register and DW-11.
+Delivery follows the card: elder = slow, rough, long pauses; wiseguy = fast, breathy, cracks under stress; child = high, curious; noble = measured, clear consonants. No disclaimers, no stepping outside the story (SC-11).
