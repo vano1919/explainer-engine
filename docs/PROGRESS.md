@@ -4574,3 +4574,15 @@ Re-checked sources in three types, two binding rules in the registry (cut reason
 - 2026-11-06 20:45 UTC: first render of the one-minute film (v1, 60.0 s, 1080p, free): HF route_test_2026-11/j5_minute/v1/. Plan timing adjusted (M3 7.5 s, S1 3.5, elder 2.0, eyes 5.0); lane shares 34/54/12 still outside BP-109 (REVIEW). BP-108/109 enforced_by now list j5_montage.
 - 2026-11-06 21:35 UTC: minute v2 (HF route_test_2026-11/j5_minute/v2/): story order by time and place, depth-map relief camera in Blender, local picture animation, BP-50 loudness -14.0 LUFS. Found Animated Drawings, DepthFlow, 3D Ken Burns as existing techniques (docs 7j). Weak points listed there.
 - 2026-11-06 21:50 UTC: Animated Drawings installed in a separate venv and run headless; the first hand-rigged elder collapses (robe, no legs), not adopted. 3D Ken Burns needs CUDA, not run. Notes in docs 7j.
+
+## 2026-11-07 — Argon's J5 LTX minimisation (`argon/ltx-minimisation`, thread "Review and merge Gemini cloud providers work")
+- Source: ვანო's upload `apply_j5_ltx_minimisation.sh`, decoded without running it. Taken: `blender/j5_limits.py` (shot router, BP-184
+  limits), `blender/j5_action_rig.py` (depth-relief, billboard-crowd and hinged-action frames), `blender/j5_minute_v3.py` (v3 one-minute
+  plan; adapted to read `j5_minute.PLAN`), the three new rule rows BP-182..184 added to `sourced_rules.json` (the creator's BP-176..181
+  untouched), `docs/J5_LTX_MINIMISATION_REPORT.md`, and a test for what was taken (7 tests).
+- Not taken: the script's versions of `j5_background`, `j5_face`, `j5_variant_sheet`, `j5_cuts`, `j5_montage`, `j5_minute*` (stubs that replace
+  the real modules, e.g. `j5_background` 40 KB -> 0.9 KB, `j5_face` 14 KB -> 1.7 KB), the rewritten BP-100..181 rows (they undo the creator's
+  D-116 scoping and 2026-11-06 house rows), and the full-file PROGRESS, SOURCED_RULES and INDEX. Its original test imports those stubs, so it was
+  cut down to the router, the v3 plan and the rig.
+- Result: on the one-minute film the router keeps LTX at 3.04 s (73 frames) in one duel insert against 21.0 s in the v2 video lane. This is a plan
+  and a lint, not a render. No pictures or clips were made. Cost: $0.
