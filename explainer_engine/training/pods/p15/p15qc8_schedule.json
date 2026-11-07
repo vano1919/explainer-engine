@@ -24,6 +24,12 @@
       "cloud": "COMMUNITY",
       "price_h": 2.59,
       "gpu_speed": 1.0
+    },
+    {
+      "name": "A100 80GB PCIe",
+      "cloud": "COMMUNITY",
+      "price_h": 1.19,
+      "gpu_speed": 0.57
     }
   ],
   "limits": {
