@@ -4627,3 +4627,6 @@ First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New
 
 ## 2026-11-07 Modal runner: smoke mode, 20-min timeout, traceback
 `modal_sa_test.py`: `modal run ...::smoke` (GPU, 8-min timeout, 1 step, 768x432, [still] then [still, still]) to prove the edit path before the 6-photo run; main timeout 20 min (cap-derived, OR-37); runner logs full tracebacks and stops at the first failure. Not run (waits for the investigation and the creator's new yes).
+
+## 2026-11-07 Modal guard (OR-37 addendum)
+`cloud/modal_run.py` (ladder order, app id, stop by id), cost-derived timeout + in-container deadline + strict DONE in `modal_sa_test.py`, prompt-dict bug fixed in `sa_test_qwen.py` (sa_prompts.json holds {qwen, words, ltx}; the dict reached the pipeline as 3 prompts, the cause of "Expected 1 got 3"). Tests: tests/unit/test_modal_guard.py.

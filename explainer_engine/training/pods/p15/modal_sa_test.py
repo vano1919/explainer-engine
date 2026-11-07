@@ -22,12 +22,28 @@ SHAS = {
  "sa_ice_block.png": "543eb2f1ec7685da411a4325bfb7a0086b1ac4db0dd5cef294a3742e2365158d",
  "sa_ice_cc0.png": "8ca83e3d218d3089af415c605298453a4dd7acb75c9f03c01db7adb4f3eb8ab8",
  "sa_prompts.json": "ab9c2a1e15ad4de0c50a0aa7e098cc7ce3f48edea4ce2a16990cdc2b53f164f3",
- "sa_test_qwen.py": "17e65f63b26f0931deb9ee01cc126f747afbb8c2ffb72c8a4a14827cb73ce4f3"}
+ "sa_test_qwen.py": "f27adebee2e74331a35ab80fb3900e41177f6979482069aa654e6a8bb1a19cba"}
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 SECRET_NAME = "huggingface-secret"
-TIMEOUT_S = 20 * 60   # 20 min x $2.5/h = $0.83 + CPU/RAM < $1.0 (OR-37: the timeout is derived from the cap)
-SMOKE_TIMEOUT_S = 8 * 60
+USD_PER_H = 2.5      # A100-80 list price, modal.com/pricing, checked 2026-11-07 (CPU/RAM extra, covered by the 0.9 factor)
+CAP_USD, SMOKE_CAP_USD, COLD_START_S = 1.0, 0.25, 90
+
+
+def cost_timeout(cap_usd, usd_per_h=USD_PER_H, cold_start_s=COLD_START_S):
+    """OR-37: the function timeout comes from the cap, never by hand: floor(0.9 * (cap - cold start cost) / price per hour * 3600)."""
+    startup = cold_start_s * usd_per_h / 3600
+    return int(0.9 * (cap_usd - startup) / usd_per_h * 3600)
+
+
+def check_timeout(timeout_s, cap_usd, usd_per_h=USD_PER_H, cold_start_s=COLD_START_S):
+    if timeout_s * usd_per_h / 3600 + cold_start_s * usd_per_h / 3600 > cap_usd:
+        raise ValueError(f"timeout {timeout_s}s costs more than the cap ${cap_usd}")
+    return timeout_s
+
+
+TIMEOUT_S = check_timeout(cost_timeout(CAP_USD), CAP_USD)
+SMOKE_TIMEOUT_S = check_timeout(cost_timeout(SMOKE_CAP_USD), SMOKE_CAP_USD)
 HF_LINKS = [("Qwen/Qwen-Image-2.1", "model", "d26bb61231c349cf6b7896fa83353113880e1ba3"),
             ("Lightricks/LTX-2.5", "model", "49b093a39c19169a8a81721dcc541e07e945232f"),
             ("vano1919/tmr-artifacts", "dataset", None)]
@@ -104,6 +120,32 @@ def import_check():
     return r.returncode
 
 
+def deadline_guard(seconds, on_fire):
+    """in-container wall: fires ``on_fire`` after ``seconds`` (a daemon timer); the caller's on_fire writes the beat, flushes and exits."""
+    t = threading.Timer(seconds, on_fire)
+    t.daemon = True
+    t.start()
+    return t
+
+
+def verdict(out, expected):
+    """DONE only if every expected output exists, is non-empty and (for png) opens; anything less is FAILED with n_ok/n_expected."""
+    ok = []
+    for name in expected:
+        p = Path(out) / name
+        try:
+            good = p.is_file() and p.stat().st_size > 0
+            if good and p.suffix == ".png":
+                from PIL import Image
+                with Image.open(p) as im:
+                    im.verify()
+        except Exception:  # noqa: BLE001
+            good = False
+        if good:
+            ok.append(name)
+    return {"state": "DONE" if len(ok) == len(expected) else "FAILED", "n_ok": len(ok), "n_expected": len(expected)}
+
+
 def body(smoke=False):
     if import_check() != 0:
         raise SystemExit("OR-37: the image lacks a module the run imports; stopped before any weight was read")
@@ -130,10 +172,21 @@ def body(smoke=False):
     stop = threading.Event()
     th = threading.Thread(target=_uploader, args=(out, stop), daemon=True)
     th.start()
+
+    def _fire():
+        (out / "beat_sa.txt").write_text("TIMEOUT: the in-container deadline fired\n")
+        stop.set()
+        th.join(timeout=40)
+        os._exit(3)
+    deadline_guard((SMOKE_TIMEOUT_S if smoke else TIMEOUT_S) - 60, _fire)
     with open(out / "modal_sa.log", "a") as f:
         rc = subprocess.run(["python3", str(inp / "sa_test_qwen.py"), "--out", str(out), "--inputs", str(inp)] + (["--smoke"] if smoke else []), env=env,
                             cwd="/workspace/ee", stdout=f, stderr=subprocess.STDOUT).returncode
-    (out / "beat_sa.txt").write_text(f"{'DONE' if rc == 0 else 'FAILED'} rc={rc} seconds={int(time.time() - t0)}\n")
+    expected = ["qwen/smoke.json"] if smoke else [f"qwen/{n}.png" for n in json.loads((inp / "sa_prompts.json").read_text())]
+    v = verdict(out, expected)
+    if rc != 0:
+        v["state"] = "FAILED"
+    (out / "beat_sa.txt").write_text(f"{v['state']} rc={rc} ok={v['n_ok']}/{v['n_expected']} seconds={int(time.time() - t0)}\n")
     stop.set()
     th.join(timeout=300)
     return {"rc": rc, "seconds": int(time.time() - t0)}

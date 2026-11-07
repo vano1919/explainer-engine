@@ -9,7 +9,9 @@ from explainer_engine.training.pods.p15 import p15_qwen as P
 ap = argparse.ArgumentParser(); ap.add_argument("--out", type=Path); ap.add_argument("--inputs", type=Path); ap.add_argument("--smoke", action="store_true")
 a = ap.parse_args()
 cfg = P.load_cfg(); q = cfg["qwen"]
-prompts = json.loads((a.inputs / "sa_prompts.json").read_text())
+raw = json.loads((a.inputs / "sa_prompts.json").read_text())
+prompts = {k: (v["qwen"] if isinstance(v, dict) else v) for k, v in raw.items()}   # the file holds {qwen, words, ltx} per name
+assert all(isinstance(v, str) and v for v in prompts.values()), "every prompt must be a non-empty str (a dict made the pipeline read 3 prompts)"
 sys.path.insert(0, str(P.HERE.parent))
 import xworld_v1_test as t
 from PIL import Image
@@ -34,6 +36,7 @@ if a.smoke:   # OR-37 smoke: 1 step, tiny size, [still] then [still, still]: sho
         say("smoke", label, res[label])
     (qd / "smoke.json").write_text(json.dumps(res, indent=1))
     sys.exit(0 if all(v.startswith("ok") for v in res.values()) else 1)
+status = {}
 fail = 0
 for name in sorted(prompts):
     p = qd / f"{name}.png"
@@ -44,9 +47,9 @@ for name in sorted(prompts):
         j = {"name": name, "prompt": prompts[name], "seed": q["seed"], "cfg": q["cfg_edit"], "size": q["size"], "kind": "edit"}
         im = Q.draw(pipe, cfg, j, [still]).convert("RGB"); im.save(p)
         (qd / f"{name}.json").write_text(json.dumps({**j, "seconds": round(time.time() - t1, 1), "sha256": Q.sha256_file(p)}, indent=1))
-        say("made", name, round(time.time() - t1), "s")
+        say("made", name, round(time.time() - t1), "s"); status[name] = {"status": "ok"}; (qd / "status.json").write_text(json.dumps(status, indent=1))
     except Exception as e:
-        fail += 1; say("FAIL", name, repr(e)[:300]); say(traceback.format_exc()[-1800:])
+        fail += 1; say("FAIL", name, repr(e)[:300]); say(traceback.format_exc()[-1800:]); status[name] = {"status": "error", "traceback": traceback.format_exc()[-1800:]}; (qd / "status.json").write_text(json.dumps(status, indent=1))
         if fail >= 1: say("STOP: first failure"); break
 say("done", fail, "failed")
 sys.exit(1 if fail else 0)
