@@ -72,3 +72,62 @@ def test_token_comes_from_the_secret_env_and_the_secret_name_is_the_existing_one
     assert M._tok({"HF_TOKEN": "a"}) == "a" and M._tok({"HUGGING_FACE_HUB_TOKEN": "b"}) == "b"
     with pytest.raises(SystemExit):
         M._tok({})
+
+
+# ---- the in-container code must run against the PINNED bundle (commit 5ed640c), which does not contain modal_p15d.py ----
+import py_compile
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+PINNED = "5ed640c"
+REPO = Path(M.__file__).resolve().parents[4]
+
+
+def _unpack_pinned(tmp_path):
+    ok = subprocess.run(["git", "-C", str(REPO), "cat-file", "-e", PINNED + "^{commit}"], capture_output=True).returncode == 0
+    if not ok:
+        pytest.skip("pinned commit not in this clone")
+    dest = tmp_path / "bundle"
+    dest.mkdir()
+    ar = subprocess.run(["git", "-C", str(REPO), "archive", PINNED], capture_output=True, check=True).stdout
+    subprocess.run(["tar", "-x", "-C", str(dest)], input=ar, check=True)
+    return dest
+
+
+def test_runner_script_imports_nothing_from_this_file_and_compiles(tmp_path):
+    assert "modal_p15d" not in M.QWEN_RUNNER
+    f = tmp_path / "runner.py"
+    f.write_text(M.QWEN_RUNNER)
+    py_compile.compile(str(f), doraise=True)
+
+
+def test_runner_runs_against_the_pinned_bundle_and_draws_the_battle_frame_first(tmp_path):
+    root = _unpack_pinned(tmp_path)
+    assert not (root / "explainer_engine/training/pods/p15/modal_p15d.py").exists()   # what the container really has
+    env = {"PATH": "/usr/bin:/bin:/usr/local/bin", "EE_BUNDLE_ROOT": str(root), "HOME": str(tmp_path)}
+    r = subprocess.run([sys.executable, "-c", M.QWEN_RUNNER, str(tmp_path / "out"), "--variants", "--list"], env=env, cwd=str(root),
+                       capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0, r.stderr[-800:]
+    names = [ln.split()[0] for ln in r.stdout.splitlines() if ln.strip()]
+    assert names[0] == M.FIRST and len(names) == 24, names[:3]
+
+
+def test_every_module_the_container_runs_is_in_the_pinned_bundle(tmp_path):
+    root = _unpack_pinned(tmp_path)
+    src = (Path(M.__file__)).read_text()
+    mods = set(re.findall(r'"(explainer_engine\.[a-z0-9_.]+)"', src)) | set(re.findall(r"import (explainer_engine[a-z0-9_.]+)", M.QWEN_RUNNER))
+    mods -= {"explainer_engine.training.pods.p15.modal_p15d"}
+    assert mods, "no module names found"
+    for m in mods:
+        assert (root / (m.replace(".", "/") + ".py")).is_file(), m + " is not in the pinned bundle"
+    # the bundle's own p15.json is what _prepare reads
+    assert (root / "explainer_engine/training/pods/p15/p15.json").is_file()
+
+
+def test_failed_signal_ends_the_video_function(monkeypatch):
+    import inspect
+    body = inspect.getsource(M.ltx_body)
+    assert '"failed" not in signal' in body
+    assert 'signal["failed"]' in inspect.getsource(M.qwen_body)

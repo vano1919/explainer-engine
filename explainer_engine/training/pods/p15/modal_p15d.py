@@ -150,10 +150,15 @@ def _finish(out: Path, name: str, rc: int, started: float):
     (out / f"beat_{name}.txt").write_text(f"{'DONE' if rc == 0 else 'FAILED'} rc={rc} seconds={int(time.time() - started)}\n")
 
 
-QWEN_RUNNER = ("import sys; sys.path.insert(0, '/workspace/ee'); import runpy; "
-               "import explainer_engine.training.pods.p15.p15_qwen as Q; import explainer_engine.training.pods.p15.modal_p15d as M; "
-               "o = Q.jobs; Q.jobs = lambda cfg, variants=False: M.reorder_first(o(cfg, variants)); "
-               "sys.exit(Q.main(['--out', sys.argv[1], '--variants', '--mouth']))")
+# runs INSIDE the container against the pinned bundle only: it imports nothing from this file (the bundle does not contain it)
+QWEN_RUNNER = (
+    "import os, sys; root = os.environ.get('EE_BUNDLE_ROOT', '/workspace/ee'); sys.path.insert(0, root); "
+    "import explainer_engine.training.pods.p15.p15_qwen as Q; "
+    "assert Q.__file__.startswith(root), Q.__file__; "
+    "o = Q.jobs; "
+    "Q.jobs = lambda cfg, variants=False: sorted(o(cfg, variants), key=lambda j: j['name'] != 'battle_f000_colour__S2'); "
+    "a = sys.argv[2:] or ['--variants', '--mouth']; "
+    "sys.exit(Q.main(['--out', sys.argv[1], *a]))")
 
 
 def qwen_body(signal):
@@ -173,6 +178,8 @@ def qwen_body(signal):
             time.sleep(5)
     threading.Thread(target=watch, daemon=True).start()
     rc = _run(["python3", "-c", QWEN_RUNNER, str(out)], env, out / "qwen_modal.log")
+    if not (out / "first_frames" / f"{FIRST}.png").is_file():
+        signal["failed"] = time.time()      # the video function ends at once instead of idling on the A100
     stop.set()
     th.join(timeout=300)
     _finish(out, "qwen", rc, t0)
@@ -188,8 +195,8 @@ def ltx_body(signal):
     th.start()
     rc = _run(["python3", "-m", "explainer_engine.training.pods.p15.p15_ltx", "--prefetch"], env, out / "ltx_modal.log")  # sha256 check of the weights
     if rc == 0:
-        deadline = time.time() + CAPS["ltx_timeout_s"] - 600
-        while "first_frame" not in signal and time.time() < deadline:
+        deadline = time.time() + 20 * 60   # the picture is drawn first: it exists within ~10 min or the run has failed
+        while "first_frame" not in signal and "failed" not in signal and time.time() < deadline:
             time.sleep(5)
         if "first_frame" in signal:
             p = hf_hub_download(HF_REPO, f"{HF_PREFIX}/first_frames/{FIRST}.png", repo_type="dataset", token=_tok())
