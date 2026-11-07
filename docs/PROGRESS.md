@@ -4614,3 +4614,6 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   H100 only. At a 17.5 min clip max no drop fits (8 clips $8.27, 7 $7.51, 6 $6.76 worst on the H100); that is why the max is 12.
   Disk 200 GB (Qwen 33.1 GB + LTX-2.5 86.5 GB + pip + outputs ~140 GB).
 - Tests: `tests/unit/test_p15_pilot_pod.py` (11). Nothing launched; cost $0.
+
+## 2026-11-07 — Stone-age pilot approach test: six Blender stills (creator 12:48 UTC)
+- `blender/stoneage_test_layouts.py` adds six layouts (`sa_cave|ice|camp_block|cc0`): three scenes built as flat primitives or from CC0 pieces (ten Poly Haven models registered in `world_kits.json` / `assets/library.json`); same props, cast, camera and Qwen prompt in both ways. Six stills rendered locally with Blender 5.2.3 (CPU, 2560x1440, 35-65 s each) and the six Qwen prompts pass `pilot_stills.prompts` and `qa/style_prompt.check`. Test `tests/unit/test_stoneage_test_layouts.py`. The Qwen photos are paid and wait for the creator. Costs $0.
