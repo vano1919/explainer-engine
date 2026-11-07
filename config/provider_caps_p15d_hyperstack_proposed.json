@@ -1,0 +1,14 @@
+{
+  "_note": "PROPOSED for the creator's number, NOT approved, NOT read by any code (config/spend_caps.json is the only live ceiling file, D-56): p15d on a Hyperstack n3-A100x1 VM. enabled=false until his recorded word.",
+  "hyperstack_p15d": {
+    "enabled": false,
+    "approved_by": null,
+    "per_vm_usd": 3.1,
+    "max_hours_per_vm": 2.5,
+    "max_price_per_hour": 1.5,
+    "flavors": ["n3-A100x1"],
+    "regions": ["CANADA-1"],
+    "why_3_1": "RP-11 worst case on A100 PCIe at $1.357/h all-in is $3.07 / 136 min; the provider_caps_proposed.json value of $3.0 is 7 cents short",
+    "termination": "DELETE only (never stop / SHUTOFF); external guard hyperstack_p15d.sweep"
+  }
+}
