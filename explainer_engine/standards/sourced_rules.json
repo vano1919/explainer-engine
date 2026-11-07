@@ -7133,6 +7133,96 @@
     "explainer_engine/blender/j5_montage.py:lint_montage"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-182",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Python and Blender 2.5D depth-relief and ARAP mesh-warp bounds: depth-relief parallax factor stays at most parallax_factor_max, camera yaw offset at most relief_yaw_max_deg with Telea disocclusion inpaint radius inpaint_radius_px, ARAP handle displacement at most arap_disp_frac_max of card height, and Workbench/EEVEE render time within cpu_sec_per_frame_max on 4-core CPU CI (pc_rx5700_sec_per_frame_max on RX 5700).",
+   "thresholds": {
+    "parallax_factor_max": 0.08,
+    "relief_yaw_max_deg": 8.0,
+    "inpaint_radius_px": 4,
+    "arap_disp_frac_max": 0.06,
+    "cpu_sec_per_frame_max": 1.5,
+    "pc_rx5700_sec_per_frame_max": 0.4
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Simon Niklaus et al., 3D Ken Burns Effect from a Single Image (ACM TOG 2019, arXiv:1909.05483)",
+     "url": "https://arxiv.org/abs/1909.05483"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_limits.py",
+    "explainer_engine/blender/j5_action_rig.py",
+    "tests/unit/test_j5_ltx_minimisation.py",
+    "explainer_engine/blender/j5_minute_depthcam.py",
+    "explainer_engine/blender/j5_minute_depth.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-183",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Multi-plane billboard crowd and hinged cut-out action bounds without LTX: a marching or massed crowd uses at least min_crowd_planes depth planes with stride bob in bob_freq_hz_band (amplitude <= bob_amp_px_max) and plane parallax speed ratio >= plane_speed_ratio_min; hinged upper-body/weapon cut-outs rotate at most hinge_angle_max_deg with impact flashes <= impact_flash_frames_max and camera shake <= camera_shake_amp_px_max.",
+   "thresholds": {
+    "min_crowd_planes": 3,
+    "bob_freq_hz_band": [
+     1.2,
+     2.2
+    ],
+    "bob_amp_px_max": 6.0,
+    "plane_speed_ratio_min": 1.35,
+    "hinge_angle_max_deg": 22.0,
+    "impact_flash_frames_max": 3,
+    "camera_shake_amp_px_max": 10.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Wikipedia: Multiplane camera and Cutout animation",
+     "url": "https://en.wikipedia.org/wiki/Multiplane_camera"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_limits.py",
+    "explainer_engine/blender/j5_action_rig.py",
+    "tests/unit/test_j5_ltx_minimisation.py",
+    "explainer_engine/blender/j5_minute_anim.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-184",
+   "area": "video",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Realistic LTX minimisation ceiling: LTX is restricted to close-range multi-limb weapon/body contact (capped at action_ltx_clip_max_s = 3.04 s, 73 frames) and wide uneven-terrain crowd clashes (capped at crowd_ltx_clip_max_s = 5.04 s, 121 frames), keeping the total LTX share of an episode at most episode_ltx_share_max (15%, target 12.5% = 90 s in 12 min) while J5 animated shots + LTX together satisfy moving_lane_min_share (55%).",
+   "thresholds": {
+    "action_ltx_clip_max_s": 3.04,
+    "crowd_ltx_clip_max_s": 5.04,
+    "episode_ltx_share_max": 0.15,
+    "moving_lane_min_share": 0.55
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Wikipedia: Limited animation and planned animation holds",
+     "url": "https://en.wikipedia.org/wiki/Limited_animation"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_limits.py",
+    "explainer_engine/blender/j5_minute_v3.py",
+    "tests/unit/test_j5_ltx_minimisation.py",
+    "explainer_engine/blender/j5_minute.py"
+   ],
+   "supersedes": []
   }
  ]
 }
