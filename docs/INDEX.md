@@ -9,6 +9,10 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md) | controlling Fable master task: branch reconciliation, evidence-closed decisions, one authoritative Opus roadmap and launch gate | |
 | [INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) | the authoritative Opus implementation roadmap: branch dispositions, decision matrix (ICD), work packages (ICW), cost model, creator decision gate (ICG) and launch verdict | |
 | [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md) | the creator-approved route plan (D-116): Qwen the look, Blender space and time, LTX motion; routes J2/J4/J5/H per sub-category; English copy of sections 1-6, 9 of FINAL_HIGH_LEVEL_PLAN_ka.md | |
+| [HYPERSTACK_README](providers/HYPERSTACK_README.md) | Hyperstack GPU VM, AI Studio token/image API, Dedicated Inference, storage, lifecycle, agent MCP and migration fit | |
+| [MODAL_README](providers/MODAL_README.md) | Modal Functions, serverless GPU, credits, volumes, secrets, agent skills and migration fit | |
+| [CLOUD_COST_MODEL_2026-11-07](providers/CLOUD_COST_MODEL_2026-11-07.md) | dated RunPod/Hyperstack/Modal GPU, AI Studio token and compute-credit arithmetic; D-116 cost assumptions | |
+| [cloud-platforms](../.claude/rules/cloud-platforms.md) | canonical Claude execution rules for RunPod, Hyperstack and Modal; approval gates and adapter contract | |
 | [SCENE_ASSETS](SCENE_ASSETS.md) | the drawn scene assets (`scene_assets/1`), cut-outs and the J5 2.5D assembly in Blender (D-116, ICW-11) | SA- |
 | [LTX_JOBS](LTX_JOBS.md) | the LTX generations of the J2/J4 routes (`ltx_job/1`): bases, IC-LoRAs, layout conditioning, the test matrix (D-116, guide step 3) | LJ- |
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
