@@ -4701,4 +4701,5 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 ## 2026-11-07 — The PC session may not start paid runs
 - The creator's word 19:32 UTC: paid runs only from the cloud thread (docs/SCENE_REUSE_RULES.md section 7). A duplicate LTX app of the PC session was stopped the same minute.
 - LTX failure cause (first run, 59 s, ≈$0.07): the first-frame root mapped to the wrong vault prefix. Fixed: `first_frames_resolve` pre-flight in `modal_ltx_jobs_v1.py`, tested in `tests/unit/test_modal_ltx.py`.
+- The creator's word 19:33 UTC: the 3-photo comparison with the added style sentence looked better; the style line carries a per-scene style description that fits the one channel style (HI-04 updated). LTX c1/c2 ran on Modal (1920x1088, 4.4 s and 4.7 s with audio, 118 s each, ≈$0.2 with cold start); clips and `ltx1_sheet.jpg` in `stoneage_pilot_2026-11-07/ltx_first_minute/`.
 
