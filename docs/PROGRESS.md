@@ -4523,3 +4523,23 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Known flaws: the wall clock reads modern, the bookshelf pale, the grandfather clock's face dark, the windows bright.
 - Tests: `tests/unit/test_pilot_stills.py` (7). Cost $0. Plan for the paid part: `PILOT_1MIN_PLAN.md` v2 (project files), run-plan
   schedules (PR #147) in `pilot_1min/` (A100: $1.25 expected / $2.95 worst with Qwen on the pod; $0.98 / $2.12 with Qwen on the PC).
+
+## 2026-11-07 — Gemini Argon's cloud providers work, merged in part (thread "Review and merge Gemini cloud providers work")
+- Source: ვანო's upload `apply_and_push_argon_ltx_minimisation.py` (32 files as a base64+zlib payload). It was decoded without
+  running it and checked file by file against `argon/handoff-2026-11-06` (its base) and `icw/05c-ink-round`.
+- Merged (new files only): `explainer_engine/cloud/providers/` (provider-neutral adapters: Hyperstack, Modal, RunPod read
+  adapter, selector, a dry-run CLI `python -m explainer_engine.cloud.providers --workload <id>`), `tests/unit/test_cloud_providers.py`
+  (18 pass), `docs/providers/*` (7 docs, indexed), skills `hyperstack-operations`, `modal-operations`, `cloud-provider-selection`,
+  `cloud-cost-audit`, Argon's reports `docs/handoff/argon_2026-11-06/argon/` (A-E) and one line in `paid-run-watchdog`.
+  Live submission stays behind `ApprovalGate` (dry-run by default); Modal's live path is a stub. It does not yet go through
+  `config/spend_caps.json` or the ledger, so no live provider run happens until it is wired to them (invariant 1).
+- Fixed on review: Argon's proposed provider caps were numbers in `base.py` (D-56 test failed); they moved to
+  `config/provider_caps_proposed.json` (all disabled, not approved). Four skills got the D-116 route banner; docs no longer cite
+  BP ids that the registry does not define. Full suite: 3053 passed, 4 skipped, 1 xfailed; docs_lint 0 findings.
+- Not merged: the payload's full-file versions of `docs/PROGRESS.md` (dropped ~1000 lines), `docs/SOURCED_RULES.md` (reverted
+  the D-116 J2/J4 scoping, BP-105/108/172 house rows, deleted three ICW rows and reused the IDs of the creator's 2026-11-06 J5 rows
+  for new meanings), `docs/INDEX.md` and `sourced_rules.py`. They were written on an older base. The J5 LTX minimisation part
+  is missing from the payload: `explainer_engine/blender/{j5_limits,j5_action_rig,j5_minute_v3}.py`, `explainer_engine/visual/
+  {still_needs,visual_script}.py`, its three new rule rows in `sourced_rules.json` and its report, so its tests
+  (`test_j5_ltx_minimisation.py`, `test_still_needs.py`) cannot run and were left out. Argon is asked to resend those files.
+- Cost: $0. Nothing paid was run.
