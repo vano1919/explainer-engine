@@ -4617,3 +4617,7 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
 
 ## 2026-11-07 — Stone-age pilot approach test: six Blender stills (creator 12:48 UTC)
 - `blender/stoneage_test_layouts.py` adds six layouts (`sa_cave|ice|camp_block|cc0`): three scenes built as flat primitives or from CC0 pieces (ten Poly Haven models registered in `world_kits.json` / `assets/library.json`); same props, cast, camera and Qwen prompt in both ways. Six stills rendered locally with Blender 5.2.3 (CPU, 2560x1440, 35-65 s each) and the six Qwen prompts pass `pilot_stills.prompts` and `qa/style_prompt.check`. Test `tests/unit/test_stoneage_test_layouts.py`. The Qwen photos are paid and wait for the creator. Costs $0.
+
+
+## 2026-11-07 Stone-age test: Modal runner for the six Qwen photos
+`training/pods/p15/modal_sa_test.py` + `sa_test_qwen.py`: one A100-80 function (25 min timeout, retries 0) draws the six blockout/CC0 stills as p15 edits (no hero refs), inputs sha256-pinned on HF `route_test_2026-11/sa_test/in/`, photos uploaded as drawn. Gate: `EE_MODAL_GO` = the creator's yes card id. Not run yet. Plan: OR23_SA_TEST_6_QWEN_PHOTOS.md.
