@@ -4621,3 +4621,6 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
 
 ## 2026-11-07 Stone-age test: Modal runner for the six Qwen photos
 `training/pods/p15/modal_sa_test.py` + `sa_test_qwen.py`: one A100-80 function (25 min timeout, retries 0) draws the six blockout/CC0 stills as p15 edits (no hero refs), inputs sha256-pinned on HF `route_test_2026-11/sa_test/in/`, photos uploaded as drawn. Gate: `EE_MODAL_GO` = the creator's yes card id. Not run yet. Plan: OR23_SA_TEST_6_QWEN_PHOTOS.md.
+
+## 2026-11-07 OR-37: environment proven free before the paid GPU
+First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New rule OR-37 (docs/ORCHESTRATION.md, test in test_api_audit_rules.py); `modal_sa_test.py` now has a free CPU `check` entrypoint and an import check as the first step of the GPU function.

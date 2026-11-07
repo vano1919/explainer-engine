@@ -87,7 +87,25 @@ def _uploader(out, stop):
         stop.wait(20)
 
 
+CHECK = ("import sys; sys.path.insert(0, '/workspace/VideoX-Fun'); "
+         "import importlib; mods = ['torch', 'diffusers', 'peft', 'huggingface_hub', 'PIL', 'einops', 'timm', 'omegaconf', 'cv2', 'kornia', "
+         "'videox_fun.models', 'videox_fun.pipeline', 'videox_fun.utils']; bad = []\n"
+         "for m in mods:\n"
+         "    try: importlib.import_module(m); print('ok', m)\n"
+         "    except Exception as e: bad.append(m); print('MISSING', m, repr(e)[:150])\n"
+         "sys.exit(1 if bad else 0)")
+
+
+def import_check():
+    """OR-37: every module the run imports, on the container's own python; fails in seconds, before any weight is read."""
+    r = subprocess.run(["python3", "-c", CHECK], capture_output=True, text=True)
+    print(r.stdout, r.stderr[-500:], flush=True)
+    return r.returncode
+
+
 def body():
+    if import_check() != 0:
+        raise SystemExit("OR-37: the image lacks a module the run imports; stopped before any weight was read")
     from huggingface_hub import hf_hub_download
     t0, out, inp = time.time(), Path("/workspace/out"), Path("/workspace/in")
     out.mkdir(parents=True, exist_ok=True)
@@ -138,6 +156,15 @@ if modal is not None:
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
     def sa_photos():
         return body()
+
+    @app.function(image=image, cpu=2, memory=4096, timeout=300, retries=0)
+    def env_check():
+        """FREE (CPU only, no GPU, no weights): OR-37 proof of the image before the paid GPU run."""
+        return import_check()
+
+    @app.local_entrypoint()
+    def check():
+        print("env_check rc", env_check.remote())
 
     @app.local_entrypoint()
     def main():
