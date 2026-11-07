@@ -34,3 +34,11 @@ def test_few_shot_pairs_run_through_the_register_lint():
         assert not [f for f in RL.findings(line) if f["severity"] == "FAIL"], line
     for line in bad:
         assert any(f["severity"] == "FAIL" for f in RL.findings(line)), line
+
+
+def test_revision_rules_are_in_the_skill():
+    text = (ROOT / ".claude" / "skills" / "narration-script" / "SKILL.md").read_text(encoding="utf-8")
+    block = text.split("### Six revision rules", 1)[1].split("### Few-shot test pairs", 1)[0]
+    for key in ("not X, but Y", "anachronistic", "echo", "stock similes", "overlap must answer", "moral",
+                "physical cause", "after the speaker's colon"):
+        assert key.lower() in block.lower(), key

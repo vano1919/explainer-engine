@@ -3752,3 +3752,5 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-07 — Spoken-storytelling research (Gemini) into the writer rules, few-shot tested (creator 11:40 UTC)
 - Report saved as `docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md`; `narration-script` skill got the zone ceilings, register matrix, overlap notation and a 5-point audit as HYPOTHESES (some of the report's sources are weak; no new FAIL). Few-shot good/bad pairs are run through `register_lint` by `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+- Same day, 11:50 UTC: six revision rules from the stone-age pilot v4.1 -> v4.2 (no disguised "not X but Y", no spoilers, no anachronistic nouns, no narrator echo, no stock similes, overlaps answer the other hero, show realisation, tags after the colon) added to the `narration-script` skill with a test.

@@ -273,6 +273,14 @@ Source quality: the report mixes books, studies and video transcripts and some o
 - **Overlap notation (TTS timing):** `[CUT: -0.25s]` next clip starts 250 ms early over a cut-off tail; `[OVERLAP: -0.45s]`; `[LATCH: -0.08s]`; `<break time="0.7s" />`; spell numbers out.
 - **Pre-render audit:** blackout test (can you tell the speaker without the name), turn-length spread of at least 35 % between a fast and a slow speaker, at least half of the questions not answered straight away, a reversal every 6-10 lines, every narrator sentence matches what moves on screen.
 
+### Six revision rules learned from the stone-age pilot (creator 2026-11-07, v4.1 -> v4.2)
+1. **No disguised "not X, but Y"** ("He didn't capture him. He called him here."): write the physical action. **Never spoil a later reveal** in the setup narration; plant only the visual mystery (an empty space on the wall).
+2. **No anachronistic nouns** in a period hero's mouth (a stone-age shaman does not say "city"): use the hero's own images. **Never echo a character's line in narration**; the narrator adds a concrete fact or a scale jump instead.
+3. **A visual noun the viewer cannot place yet is clarified in the same line** ("sticky little fingers on the screen", not "fingers on glass"). **No stock similes** ("like water in a desert"): use a concrete number. **An overlap must answer what was just said**: the interrupter reacts to the other hero's words, not to a whisper at a phone.
+4. **Show the realisation, do not state the moral**: let a hero notice the object that carries it. A big-city hero speaks in whole conditionals ("If you keep me here, all you get is..."), not telegraphese.
+5. **Show the physical cause, not what characters think** ("A dead black glass. A fake god. The hunters raise their spears."), and tactile words instead of trailer lines ("Wet red clay. His palm beside Ura's.").
+6. **Tags sit inside the spoken text, after the speaker's colon** (`URA: <break time="0.7s" /> Quiet.`), never on the speaker name.
+
 ### Few-shot test pairs (run by tests/unit/test_speech_registers_fewshot.py)
 GOOD (register lint must pass):
     He does the one thing he can. Phone light. On.
