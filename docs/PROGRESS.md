@@ -4663,3 +4663,6 @@ Blender assembles afterwards); test C, codes drawn on the still (A people, B ani
 1.0 (the creator: so the letters are not painted), in two forms: black on white boxes with the usual text ban, and magenta bold
 oblique mono with a negative that forbids only magenta codes (15:10 UTC: other text stays allowed). KP-53's clash check now judges a hanging piece where it hangs (screen y too).
 Tests: `test_qwen_jobs.py`.
+
+## 2026-11-07 Fallback rule KP-58 (creator 16:41 UTC)
+If E4 and E5 do not fix the camera angle, one environment is never shown from a second angle in LTX/painted shots, and its dialogues are Blender close-ups with a blurred background (`docs/SHOT_PROMPTS.md` KP-58). Recorded as the last step of his review; no code change, so no test.
