@@ -65,3 +65,10 @@ def test_pins_match_the_pilot_config_and_caps_fit():
     # the hard brakes (timeouts at list price + ~$0.4 CPU/RAM) stay under the cap
     brakes = M.CAPS["qwen_timeout_s"] * 0.001097 + M.CAPS["ltx_timeout_s"] * 0.000694 + 0.4
     assert brakes <= M.CAPS["max_usd"] and M.CAPS["stop_usd"] == pytest.approx(0.8 * M.CAPS["max_usd"])
+
+
+def test_token_comes_from_the_secret_env_and_the_secret_name_is_the_existing_one():
+    assert M.SECRET_NAME == "huggingface-secret"
+    assert M._tok({"HF_TOKEN": "a"}) == "a" and M._tok({"HUGGING_FACE_HUB_TOKEN": "b"}) == "b"
+    with pytest.raises(SystemExit):
+        M._tok({})

@@ -2,7 +2,7 @@
 ONE LTX-2.5 battle clip (121 f), photos and video as two concurrent Modal functions. The same stages as p15c1.sh (``p15_qwen`` and
 ``p15_ltx``, bundle sha pinned), on weights read from the Volume ``ee-weights`` (``modal_load_weights.py``).
 
-Run (creator's PC, after the weight load is verified, the OR-23 card is answered "yes" and ``EE_MODAL_GO`` is set to his yes):
+Run (creator's PC, after the weight load is verified; ``EE_MODAL_GO`` = the card id of his yes, cmsg_01Hnu5zB86sjUj5GtTgaUkPWHit5eXz4BEWSaXTXKcyDcM, 2026-11-07 09:36 UTC):
     EE_MODAL_GO=<the card id> modal run explainer_engine/training/pods/p15/modal_p15d.py
 
 Design (docs/providers/ and OR23_P15D_ON_MODAL_PLAN_2026-11-07.md, the schedule pick of ``cloud/modal_schedule.py``):
@@ -29,6 +29,7 @@ except ImportError:      # the tests and a plain import need no Modal SDK
     modal = None
 
 HF_REPO = "vano1919/tmr-artifacts"
+SECRET_NAME = "huggingface-secret"   # the Modal secret that really exists (the load used it)
 HF_PREFIX = "route_test_2026-11/pilot"
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
@@ -40,6 +41,14 @@ VOL_NAME = "ee-weights"
 HF_LINKS = [("Qwen/Qwen-Image-2.1", "model", "d26bb61231c349cf6b7896fa83353113880e1ba3"),
             ("Lightricks/LTX-2.5", "model", "49b093a39c19169a8a81721dcc541e07e945232f"),
             ("vano1919/tmr-artifacts", "dataset", None)]
+
+
+def _tok(env=os.environ) -> str:
+    """the HF token from the Modal secret (key HF_TOKEN, or HUGGING_FACE_HUB_TOKEN); never printed."""
+    t = env.get("HF_TOKEN") or env.get("HUGGING_FACE_HUB_TOKEN")
+    if not t:
+        raise SystemExit(f"Modal secret {SECRET_NAME} has neither HF_TOKEN nor HUGGING_FACE_HUB_TOKEN")
+    return t
 
 
 def go_gate(env=os.environ) -> str:
@@ -93,7 +102,7 @@ def new_files(out: Path, seen: dict) -> list[Path]:
 
 def _uploader(out: Path, stop: threading.Event, every: float = 30.0):
     from huggingface_hub import HfApi
-    api, seen = HfApi(token=os.environ["HF_TOKEN"]), {}
+    api, seen = HfApi(token=_tok()), {}
     while True:
         done = stop.is_set()
         for p in new_files(out, seen):
@@ -117,7 +126,7 @@ def _prepare(out: Path) -> dict:
     hf_home = Path("/tmp/hf")
     n = link_hf_cache(Path("/w"), hf_home)
     print("linked", len(n), "weight files from the Volume", flush=True)
-    p = hf_hub_download(HF_REPO, "code/p15/ee_src.tar.gz", repo_type="dataset", local_dir="/tmp/job", token=os.environ["HF_TOKEN"])
+    p = hf_hub_download(HF_REPO, "code/p15/ee_src.tar.gz", repo_type="dataset", local_dir="/tmp/job", token=_tok())
     sha = subprocess.run(["sha256sum", p], capture_output=True, text=True).stdout.split()[0]
     if sha != BUNDLE_SHA:
         raise SystemExit(f"bundle sha mismatch {sha}")
@@ -183,7 +192,7 @@ def ltx_body(signal):
         while "first_frame" not in signal and time.time() < deadline:
             time.sleep(5)
         if "first_frame" in signal:
-            p = hf_hub_download(HF_REPO, f"{HF_PREFIX}/first_frames/{FIRST}.png", repo_type="dataset", token=os.environ["HF_TOKEN"])
+            p = hf_hub_download(HF_REPO, f"{HF_PREFIX}/first_frames/{FIRST}.png", repo_type="dataset", token=_tok())
             (out / "first_frames").mkdir(parents=True, exist_ok=True)
             (out / "first_frames" / f"{FIRST}.png").write_bytes(Path(p).read_bytes())
             rc = _run(["python3", "-m", "explainer_engine.training.pods.p15.p15_ltx", "--job", LTX_JOB, "--variant-frames"], env,
@@ -212,7 +221,7 @@ if modal is not None:
                  "git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && "
                  "git -C /workspace/LTX-2 checkout -q e98f6d927d83c92ef2be6aec76c8440b19306e39 && "
                  "pip install -q -e /workspace/LTX-2/packages/ltx-core -e /workspace/LTX-2/packages/ltx-pipelines"))
-    secrets = [modal.Secret.from_name("hf-token")]
+    secrets = [modal.Secret.from_name(SECRET_NAME)]
     signal = modal.Dict.from_name("ee-p15d-signal", create_if_missing=True)
 
     @app.function(image=image, gpu="H100", cpu=2, memory=49152, timeout=CAPS["qwen_timeout_s"], retries=0,
