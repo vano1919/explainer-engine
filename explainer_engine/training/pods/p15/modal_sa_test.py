@@ -124,11 +124,15 @@ if modal is not None:
     app = modal.App("ee-sa-test")
     vol = modal.Volume.from_name("ee-weights", version=2)
     image = (modal.Image.from_registry(BASE_IMAGE, add_python="3.12")
-             .apt_install("git")
+             .apt_install("ffmpeg", "git")
              .run_commands(
                  'pip install -q "huggingface_hub==1.33.0" "jsonschema==4.26.0" '
                  '"git+https://github.com/huggingface/diffusers@d8c1b13c756df0059bcdb6e477a1eafcd502098d" '
-                 '"git+https://github.com/huggingface/peft@ebf159f74d80a0d406f7afa943ede73b3901c20e"'))
+                 '"git+https://github.com/huggingface/peft@ebf159f74d80a0d406f7afa943ede73b3901c20e"',
+                 "git clone -q https://github.com/aigc-apps/VideoX-Fun.git /workspace/VideoX-Fun && "
+                 "git -C /workspace/VideoX-Fun checkout -q e8c314fbfa494d0429bbef605c9f6112b79a7ead",
+                 "pip install -q einops timm tomesd torchdiffeq torchsde omegaconf SentencePiece ftfy func_timeout 'imageio[ffmpeg]' "
+                 "opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations kornia"))
 
     @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=TIMEOUT_S, retries=0, volumes={"/w": vol},
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
