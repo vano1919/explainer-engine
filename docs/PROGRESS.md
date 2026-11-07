@@ -4669,3 +4669,7 @@ picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still
   Per card (expected / worst): A40 and A6000 $0.81 / $2.11 (214 min, over the 2 h guard), L40S $1.03 / $2.45, A100 COMMUNITY $1.18 / $2.73,
   A100 SECURE $1.52 / $3.51 (over $3.4 by 3 %; the guard stops at $3.4). The live pod (8b94f46) is 24 pictures only (the creator's GO 19:43 UTC).
 - Tests: layout/prompts, structure check + seed retries, identity check, schedule. Cost $0.
+
+## 2026-11-07 06:30 UTC — combo pod window 2: A100 80GB PCIe COMMUNITY added, pod max 2.8 h
+- The creator's card (2026-11-07 06:04 UTC, "yes, 2.8 h"): pod `max_hours` 2.7 -> 2.8, cost cap stays $3.7, ledger cap 4.70. `build.py` CARDS_CLIPS gains A100 80GB PCIe COMMUNITY $1.19/h (speed ESTIMATED 0.6 x 0.95 = 0.57) and LIMITS_CLIPS[2] max_hours 2.8; `p15qc2_schedule.json` and `p15qc8_schedule.json` regenerated.
+- RP-11 per card at $3.7 / 2.8 h: A100 SXM COMM pass ($1.63 expected / $3.65 worst, 158 min), A100 PCIe COMM pass ($1.44 / $3.26, 164 min = 2.74 h); A100 SECURE and H100 NVL fail (worst $4.70 / $4.65). H100 PCIe and H100 HBM3 are not in the schedule (not chosen). Speeds are estimates; no LTX speed is measured on any card.
