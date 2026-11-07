@@ -4693,3 +4693,7 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 - Done (free): `production/scene_reuse.py` (LV-01 place register, RF-01/RF-04 references, HI-04/HI-01/HI-08 prompt shape), `qwen_jobs.check_jobs` now refuses an unknown ref type, launcher `modal_qwen_jobs_v11.py` (caps $0.75 main / $0.25 smoke, run `sa_v11`, jobs sha c64c82f6…, runner sha d7b74883…). Test: `tests/unit/test_scene_reuse_rules.py` (+ qwen_jobs, modal_guard, docs tests pass).
 - Cost: $0.00. Not started: the paid run needs the creator's new yes with the price (≈$0.40 expected, ≤$1.00 with smoke); photo renders stay off until then.
 - Next: upload `in_v11` to HF, OR-37 import check, smoke after his yes, then contact sheet with hero comparisons (HI-06).
+
+## 2026-11-07 — First-minute pictures, voices, LTX launcher; LoRA weight 1.0 (HI-07)
+- The creator's word 19:25 UTC: the Qwen LoRA weight is 1.0, not 0.7 (HI-07 in docs/SCENE_REUSE_RULES.md updated). Done (paid): 10 first-minute pictures `sa_v12` (Modal, ≈$0.27 + smoke ≈$0.11, HF `route_test_2026-11/sa_test/out_v12`); ElevenLabs first-minute voices, one take each, 19 lines, 1142 of 5000 credits (project files `voices_minute1/`); LTX launcher `modal_ltx_jobs_v1.py` (free check passed; the first paid attempt failed after 59 s ≈$0.07, cause: first-frame path mapping, fixed; the second attempt was stopped on purpose at the creator's word to make 3 style-sentence photos first, ≈$0.1). Test: `tests/unit/test_scene_reuse_rules.py`.
+- Next: the creator's yes on the 3-photo comparison, then the two LTX clips (c1 105, c2 113 frames, cap $1.00).

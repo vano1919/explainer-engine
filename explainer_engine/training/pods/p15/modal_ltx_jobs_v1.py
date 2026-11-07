@@ -13,7 +13,7 @@ except ImportError:
 HF_REPO = "vano1919/tmr-artifacts"
 IN = "route_test_2026-11/sa_test/in_ltx1"
 JOBS = "sa_ltx1_jobs.json"   # c1, c2 of the first minute
-SHAS = {JOBS: "9a5f8480a9535fe1bab2b42df4c7eda41c335b1e4a1e095dc9767d1aa0b8db2f", "ltx_jobs.py": "fab0a52321dd589733b4747f5f9d33edb640e8b1ce12721da48ac490ac779abc",
+SHAS = {JOBS: "550eca679a99800b3f66006914f4b7a08ff64d2a22c3166dc0c1f56b06e4bb56", "ltx_jobs.py": "fab0a52321dd589733b4747f5f9d33edb640e8b1ce12721da48ac490ac779abc",
         "ff_i01_puddle.png": "9e1410020f4840ae5490c2561cb0b69ab106a4220ccfacde331c0d74b8f90c80", "ff_m_tundra.png": "fa3d09ae314689a76e5115525cbd499a3c428c83366e1162d8aba46df37b7fa2"}
 OUT = "route_test_2026-11/sa_test/out_ltx1"   # must equal the jobs file's "out" (checked at start)
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
@@ -217,7 +217,7 @@ def body(smoke=False):
     cfg = json.loads(Path("/workspace/ee/explainer_engine/training/pods/p15/p15.json").read_text())
     timeout = SMOKE_TIMEOUT_S if smoke else TIMEOUT_S
     env = dict(os.environ, HF_HOME=str(hf_home), EE_OUT=str(out), PYTHONUNBUFFERED="1", XW_GPU_MODE=cfg["qwen"]["gpu_mode"],
-               EE_DEADLINE=str(time.time() + timeout), P14_LOCAL_ROOTS=json.dumps([[cfg["hf_root"], str(out)]]), PYTHONPATH="/workspace/ee")
+               EE_DEADLINE=str(time.time() + timeout), P14_LOCAL_ROOTS=json.dumps([[IN.replace("in_ltx1", "ltx1"), str(out)]]), PYTHONPATH="/workspace/ee")
     stop = threading.Event()
     th = threading.Thread(target=_uploader, args=(out, stop), daemon=True)
     th.start()
