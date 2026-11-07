@@ -42,3 +42,12 @@ def test_revision_rules_are_in_the_skill():
     for key in ("not X, but Y", "anachronistic", "echo", "stock similes", "overlap must answer", "moral",
                 "physical cause", "left of the colon"):
         assert key.lower() in block.lower(), key
+
+
+def test_register_lint_reads_only_the_spoken_lines_of_a_markdown_script():
+    from explainer_engine.scripting import register_lint as RL
+    md = ("# Title — draft\nNotation: [OVERLAP] -- here\n\n## S01\nNARRATOR (Odom): He lands in snow.\n"
+          "MARCUS [OVERLAP: -0.45s]: Out of what?\n\n## Measured\nWords 9 — a note — another — more\n")
+    text = RL.script_text(md)
+    assert "—" not in text and "Measured" not in text and "NARRATOR" not in text
+    assert "He lands in snow." in text and "Out of what?" in text

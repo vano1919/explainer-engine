@@ -3754,3 +3754,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Report saved as `docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md`; `narration-script` skill got the zone ceilings, register matrix, overlap notation and a 5-point audit as HYPOTHESES (some of the report's sources are weak; no new FAIL). Few-shot good/bad pairs are run through `register_lint` by `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
 
 - Same day, 11:50 UTC: six revision rules from the stone-age pilot v4.1 -> v4.2 (no disguised "not X but Y", no spoilers, no anachronistic nouns, no narrator echo, no stock similes, overlaps answer the other hero, show realisation, tags after the colon) added to the `narration-script` skill with a test.
+
+## 2026-11-07 — Rule sync after the Gemini audit, research-trust rule (creator 12:14 UTC)
+- `narration-script` skill: rule 6 corrected (no SSML on v3/v4, BP-14; delays are `[DELAY: +Ns]` on the label), per-line word boxes and seven traps, scope notes (D-68 vs D-90, BP-40 already scoped); `register_lint` reads only the spoken lines of a `.md` script (`script_text`); CLAUDE.md "Research trust" line. Not changed, open for the creator: SC-05 exchange length for a 165 s pilot, narrator-only N-06/N-12, `speech.py` contraction rate. Test `tests/unit/test_speech_registers_fewshot.py`. Costs $0.

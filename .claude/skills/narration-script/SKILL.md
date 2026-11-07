@@ -279,7 +279,7 @@ Source quality: the report mixes books, studies and video transcripts and some o
 3. **A visual noun the viewer cannot place yet is clarified in the same line** ("sticky little fingers on the screen", not "fingers on glass"). **No stock similes** ("like water in a desert"): use a concrete number. **An overlap must answer what was just said**: the interrupter reacts to the other hero's words, not to a whisper at a phone.
 4. **Show the realisation, do not state the moral**: let a hero notice the object that carries it. A big-city hero speaks in whole conditionals ("If you keep me here, all you get is..."), not telegraphese.
 5. **Show the physical cause, not what characters think** ("A dead black glass. A fake god. The hunters raise their spears."), and tactile words instead of trailer lines ("Wet red clay. His palm beside Ura's.").
-6. **SSML `<break>` sits inside the spoken text, after the speaker's colon** (`URA: <break time="0.7s" /> Quiet.`). `[OVERLAP: ..]`/`[CUT: ..]` are edit instructions, not ElevenLabs tags: they stay on the speaker label, left of the colon, and the TTS builder strips them (the model could read them aloud). A cut-off line is written the same way everywhere (`--`). The narrator uses no em dash: a period or a comma (creator 2026-11-07, v4.3).
+6. **No SSML on v3/v4 (BP-14).** Silences before a line are `[DELAY: +Ns]`, `[OVERLAP: ..]`, `[CUT: ..]` on the speaker label, left of the colon; the TTS builder strips them so the model never reads them aloud. Inside a line only `...` and the model's audio tags (`[sighs]`) are allowed. A cut-off line is written the same way everywhere (`--`). The narrator uses no em dash (creator 2026-11-07, v4.3, synced 12:20 UTC).
 
 ### Few-shot test pairs (run by tests/unit/test_speech_registers_fewshot.py)
 GOOD (register lint must pass):
@@ -289,3 +289,15 @@ GOOD (register lint must pass):
     Is light inside the stone-thing? Can I eat it?
 BAD (register lint must flag):
     Moreover, it is crucial to delve into the tapestry of this pivotal moment.
+
+### Per-line boxes and mechanical traps (Gemini audit 2026-11-07 12:14 UTC, taken where it checks out)
+| Speaker | Words per line | Contractions | Formula |
+|---|---|---|---|
+| Narrator, hook | 3-8 | allowed | noun + active present verb + physical object |
+| Narrator, calm middle | 10-15 | allowed | join two physical actions with and / so / while |
+| Narrator, finale | 3-7 | allowed | staccato subject, verb, object |
+| Hero A (city, fast) | 3-8 (about 6.5 on average) | at least one per line | drop subjects, street nouns, interrupt with `--` |
+| Hero B (ancient, ritual) | 10-16 (about 11 or more) | none | object-fronting or two balanced clauses, period nouns only |
+| Child | 3-6 | allowed | literal physical question |
+Traps: (1) a noun the narrator just named is not repeated by the next speaker (the narrator names the sensory part, the hero names the whole); (2) no "X, but no Y" / "didn't X, he Y" pivot, write two positive actions; (3) before the reveal scene the narrator describes only what is visible, never who it is for; (4) a line before an overlap or cut ends with `--` and the interrupter answers it; (5) edit tags on the label, never SSML; (6) no em dash or `--` in a markdown title (register_lint now reads only the spoken lines of a `.md` script); (7) handprint (positive) and stencil (negative) are never mixed in script and visual script.
+Scope notes: D-68 (one narrator voices everyone) applies to narrated real-person episodes only; animated full-cast episodes use D-90 (each hero a fixed voice). BP-40's picture rate is already scoped to still-picture episodes; animated episodes take BP-107. Open for the creator (not changed here): SC-05 asks for a run of 4 hero lines (BP-70) which a 165 s pilot with 9-12 s segments cannot give; N-06/N-12 count questions and "you" on the narrator alone, wrong for a third-person drama; speech.py checks only that a signature word appears, not contraction rate or turn length.
