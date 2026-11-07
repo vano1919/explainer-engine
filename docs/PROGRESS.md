@@ -3749,3 +3749,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-07 — DW-11 registers: every hero speaks from character, with few-shot examples (creator 11:22-11:23 UTC)
 - `docs/STORY_ENGINE.md` DW-11 now fixes the hero's register (rustic, child, noble ...) for words and delivery; skill `narration-script` got the section "Speech registers" with five same-idea examples and one bad example. Test `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+## 2026-11-07 — Spoken-storytelling research (Gemini) into the writer rules, few-shot tested (creator 11:40 UTC)
+- Report saved as `docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md`; `narration-script` skill got the zone ceilings, register matrix, overlap notation and a 5-point audit as HYPOTHESES (some of the report's sources are weak; no new FAIL). Few-shot good/bad pairs are run through `register_lint` by `tests/unit/test_speech_registers_fewshot.py`. Costs $0.

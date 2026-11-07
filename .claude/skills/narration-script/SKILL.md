@@ -264,3 +264,20 @@ Same idea ("I will not help you"), five heroes:
 
 Bad (all heroes sound alike, and sound like a model): "I understand your request, but I must respectfully decline, as it would not be right." Fails RG register and DW-11.
 Delivery follows the card: elder = slow, rough, long pauses; wiseguy = fast, breathy, cracks under stress; child = high, curious; noble = measured, clear consonants. No disclaimers, no stepping outside the story (SC-11).
+
+## Zones, matrix, notation, audit (from docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md; hypotheses, not law)
+Source quality: the report mixes books, studies and video transcripts and some of its links are weak; treat every number as a hypothesis (REVIEW) until it has two source types (D-59). Use as writer guidance and test pairs, not as a new FAIL.
+- **Zone ceilings (narrator sentences):** hook 4-9 words, calm middle 10-16, fast finale 3-7; a silence line of 1.5-2.5 s before a 4-8 word deadpan landing.
+- **Never-AI filter:** the register lint already fails the word list (RG-01); also avoid triplets, "not X but Y", "-ing" explanations, summarising closers.
+- **Register matrix (words per turn / contractions):** rustic elder 8-14 / about 60 %; child 4-7 / about 85 %; noble 14-24 / under 5 %; city wiseguy 5-11 / about 90 %; ancient sorcerer 7-13 / 0 %; soldier or hunter 1-6 / about 70 %; scientist 12-20 / about 50 %; teenager 4-10 / over 95 %.
+- **Overlap notation (TTS timing):** `[CUT: -0.25s]` next clip starts 250 ms early over a cut-off tail; `[OVERLAP: -0.45s]`; `[LATCH: -0.08s]`; `<break time="0.7s" />`; spell numbers out.
+- **Pre-render audit:** blackout test (can you tell the speaker without the name), turn-length spread of at least 35 % between a fast and a slow speaker, at least half of the questions not answered straight away, a reversal every 6-10 lines, every narrator sentence matches what moves on screen.
+
+### Few-shot test pairs (run by tests/unit/test_speech_registers_fewshot.py)
+GOOD (register lint must pass):
+    He does the one thing he can. Phone light. On.
+    Mountains of light I saw, in my sleep. Out of them, you walked.
+    Okay. Sticks. I rub sticks. Nothing's happening!
+    Is light inside the stone-thing? Can I eat it?
+BAD (register lint must flag):
+    Moreover, it is crucial to delve into the tapestry of this pivotal moment.
