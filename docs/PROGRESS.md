@@ -4633,3 +4633,13 @@ First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New
 
 ## 2026-11-07 Blender-vs-Qwen test result (provisional note, NOT a binding rule)
 6 photos (one seed, eye judgement, not blind): Qwen restyles strongly but does not keep the Blender layout (4 huts -> 1, mammoth count/poses change, painted wall changes); blockout vs CC0 differ little. Provisional note: Blender gives colour, light, character count and rough placement; geometry is not guaranteed after Qwen; blockout is enough for that role. A binding rule waits for 2 more seeds per scene and a blind rating (`modal_sa_test.py::seeds`, 12 photos). Details: stoneage_pilot_2026-11-07/QWEN_TEST_COMPARISON_2026-11-07.md.
+
+## 2026-11-07 Argon's review of the 6-photo test applied (KP-50..55, creator 14:42 UTC)
+`docs/SHOT_PROMPTS.md` KP-50..55. `blender/stoneage_test_layouts.py`: screen sides come from the camera projection (never hand-written),
+counts are words ("four round huts"), every named person gets a distinct proxy in Image 1 (Ura's antler crown and cloak, Marcus's grey
+hood, fur-colour caps), unnamed clutter must keep clear of the subjects (a clash raises), cave/camp fill lights raised. Rich (CC0) frames
+stay: the creator prefers them, so Argon's "proxies only" was not taken. `qa/blender_gate.py` (BL-01 subject luma, BL-02 light colour
+vs the prompt's words, BL-03 clashes) runs on each still before any paid Qwen call; on the old stills it failed the cave's right hunter
+and all four camp figures (too dark). `shot_prompt_lint` KP-55 REVIEWs a frozen settle ("kneels still"). The Modal test now draws every
+frame at style LoRA 0.7 and 1.0, each weight in its own process (the merge is in place). Not taken: Argon's QWEN_MAX_WORDS 90/130 (it
+read an older 40). Tests: `test_stoneage_prompt_gates.py`, `test_modal_guard.py`.

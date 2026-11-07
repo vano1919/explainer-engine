@@ -6,9 +6,13 @@ sys.path.insert(0, "/workspace/ee")
 from explainer_engine.training.pods.p14 import p14_qwen as Q
 from explainer_engine.training.pods.p15 import p15_qwen as P
 
-ap = argparse.ArgumentParser(); ap.add_argument("--out", type=Path); ap.add_argument("--inputs", type=Path); ap.add_argument("--smoke", action="store_true"); ap.add_argument("--seeds", default="")
+ap = argparse.ArgumentParser(); ap.add_argument("--out", type=Path); ap.add_argument("--inputs", type=Path); ap.add_argument("--smoke", action="store_true"); ap.add_argument("--seeds", default=""); ap.add_argument("--lora-weight", type=float, default=None)
 a = ap.parse_args()
-cfg = P.load_cfg(); q = cfg["qwen"]
+cfg = P.load_cfg()
+if a.lora_weight is not None:   # creator 2026-11-07 14:42 UTC: every frame once also at style strength 1; the merge is in place, so one weight per process
+    cfg["qwen"]["style_lora"] = dict(cfg["qwen"]["style_lora"], weight=a.lora_weight)
+q = cfg["qwen"]
+wtag = "" if a.lora_weight is None else f"_w{int(round(a.lora_weight * 10)):02d}"
 raw = json.loads((a.inputs / "sa_prompts.json").read_text())
 prompts = {k: (v["qwen"] if isinstance(v, dict) else v) for k, v in raw.items()}   # the file holds {qwen, words, ltx} per name
 assert all(isinstance(v, str) and v for v in prompts.values()), "every prompt must be a non-empty str (a dict made the pipeline read 3 prompts)"
@@ -41,13 +45,13 @@ fail = 0
 seeds = [int(x) for x in a.seeds.split(",") if x] or [q["seed"]]
 jobs = [(name, s) for s in seeds for name in sorted(prompts)]
 for name, seed in jobs:
-    tag = name if not a.seeds else f"{name}_s{seed}"
+    tag = (name if not a.seeds else f"{name}_s{seed}") + wtag
     p = qd / f"{tag}.png"
     if p.exists(): continue
     t1 = time.time()
     try:
         still = Image.open(a.inputs / f"sa_{name}.png").convert("RGB")
-        j = {"name": tag, "prompt": prompts[name], "seed": seed, "cfg": q["cfg_edit"], "size": q["size"], "kind": "edit"}
+        j = {"name": tag, "prompt": prompts[name], "seed": seed, "cfg": q["cfg_edit"], "size": q["size"], "kind": "edit", "lora_weight": q["style_lora"]["weight"]}
         im = Q.draw(pipe, cfg, j, [still]).convert("RGB"); im.save(p)
         (qd / f"{tag}.json").write_text(json.dumps({**j, "seconds": round(time.time() - t1, 1), "sha256": Q.sha256_file(p)}, indent=1))
         say("made", tag, round(time.time() - t1), "s"); status[tag] = {"status": "ok"}; (qd / "status.json").write_text(json.dumps(status, indent=1))

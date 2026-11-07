@@ -9566,7 +9566,8 @@
     "wall_l",
     "wall_r",
     "ceiling",
-    "cave_fill"
+    "cave_fill",
+    "cave_fill_r"
    ],
    "blocks": [
     {
@@ -10078,6 +10079,245 @@
       "radius_m": 1.2,
       "shadow": false
      }
+    },
+    {
+     "type": "light",
+     "name": "cave_fill_r",
+     "pos": [
+      3.6,
+      1.2,
+      2.6
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 260.0,
+      "color": [
+       1.0,
+       0.7,
+       0.48
+      ],
+      "radius_m": 1.0,
+      "shadow": false
+     }
+    },
+    {
+     "type": "shape",
+     "name": "ura_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -1.0,
+      5.6,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#C8B598"
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -1.16,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": -25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -1.304,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": -60
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -0.84,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": 25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -0.696,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": 60
+    },
+    {
+     "type": "shape",
+     "name": "ura_cloak",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -1.0,
+      5.6,
+      0.778
+     ],
+     "scale": [
+      0.95,
+      0.95,
+      1.49
+     ],
+     "colour": "#5B3F2A"
+    },
+    {
+     "type": "shape",
+     "name": "marcus_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      1.0,
+      4.0,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#7A7F85"
+    },
+    {
+     "type": "shape",
+     "name": "hunter_a_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -3.6,
+      4.6,
+      1.1
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#5A5E63"
+    },
+    {
+     "type": "shape",
+     "name": "hunter_b_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -2.6,
+      3.4,
+      1.1
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#6E4726"
+    },
+    {
+     "type": "shape",
+     "name": "hunter_c_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      3.2,
+      3.2,
+      1.1
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#C2A675"
     }
    ],
    "cast": [
@@ -10193,6 +10433,17 @@
      "hearth_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "hearth_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "cave_fill_r": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_cloak": "the place or the story's prop: held identical in both ways except the place's own build",
+     "marcus_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "hunter_a_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "hunter_b_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "hunter_c_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura": "a person of the scene",
      "marcus": "a person of the scene",
      "hunter_a": "a person of the scene",
@@ -10208,26 +10459,26 @@
     "hunter_c": "H5"
    },
    "tags": {
-    "ura": "the old sorcerer in a deer-antler mask and a fur cloak",
-    "marcus": "the young courier in a grey hoodie and white sneakers",
-    "hunter_a": "the hunter in grey fur",
-    "hunter_b": "the hunter in brown fur",
-    "hunter_c": "the hunter in spotted fur",
-    "hearth_flame": "a hearth fire",
+    "ura": "the old sorcerer in a deer-antler mask and a fur cloak in the middle",
+    "marcus": "the young courier in a grey hoodie and white sneakers in the middle",
+    "hunter_a": "the hunter in grey fur on the left",
+    "hunter_b": "the hunter in brown fur on the left",
+    "hunter_c": "the hunter in spotted fur on the right",
+    "hearth_flame": "a fire",
     "paint_panel": "a wall painted with gold towers and red handprints"
    },
    "cards": {
     "sa_cave_wide": {
      "start": "{ura} speaks by {hearth_flame}, {marcus} stares at {paint_panel}, {hunter_a}, {hunter_b} and {hunter_c} kneel",
      "motion": "the fire flickers and {ura} lifts one hand",
-     "settle": "everyone stays in frame and holds still",
+     "settle": "everyone stays in frame, breathing and blinking",
      "refs": []
     }
    },
    "hero_refs": {},
    "sub_category": "S1",
    "place": "a dark ice-age cave",
-   "light": "the orange glow of a hearth fire"
+   "light": "orange firelight"
   },
   "sa_cave_cc0": {
    "label": "Stone-age pilot test, scene cave, way cc0 (the creator, 2026-11-07 12:48 UTC): a dark ice-age cave",
@@ -10256,7 +10507,8 @@
     "ceiling",
     "boulder_l",
     "boulder_r",
-    "cave_fill"
+    "cave_fill",
+    "cave_fill_r"
    ],
    "blocks": [
     {
@@ -10469,12 +10721,12 @@
      "name": "boulder_l",
      "asset": "model.ph_boulder_01",
      "pos": [
-      -5.0,
-      7.5,
+      -5.6,
+      9.8,
       0.0
      ],
      "yaw_deg": 30.0,
-     "scale": 1.6
+     "scale": 1.4
     },
     {
      "type": "piece",
@@ -10914,6 +11166,245 @@
       "radius_m": 1.2,
       "shadow": false
      }
+    },
+    {
+     "type": "light",
+     "name": "cave_fill_r",
+     "pos": [
+      3.6,
+      1.2,
+      2.6
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 260.0,
+      "color": [
+       1.0,
+       0.7,
+       0.48
+      ],
+      "radius_m": 1.0,
+      "shadow": false
+     }
+    },
+    {
+     "type": "shape",
+     "name": "ura_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -1.0,
+      5.6,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#C8B598"
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -1.16,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": -25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -1.304,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": -60
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -0.84,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": 25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -0.696,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": 60
+    },
+    {
+     "type": "shape",
+     "name": "ura_cloak",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      -1.0,
+      5.6,
+      0.778
+     ],
+     "scale": [
+      0.95,
+      0.95,
+      1.49
+     ],
+     "colour": "#5B3F2A"
+    },
+    {
+     "type": "shape",
+     "name": "marcus_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      1.0,
+      4.0,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#7A7F85"
+    },
+    {
+     "type": "shape",
+     "name": "hunter_a_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -3.6,
+      4.6,
+      1.1
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#5A5E63"
+    },
+    {
+     "type": "shape",
+     "name": "hunter_b_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -2.6,
+      3.4,
+      1.1
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#6E4726"
+    },
+    {
+     "type": "shape",
+     "name": "hunter_c_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      3.2,
+      3.2,
+      1.1
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#C2A675"
     }
    ],
    "cast": [
@@ -11041,6 +11532,17 @@
      "hearth_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "fire_pit": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "cave_fill_r": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_cloak": "the place or the story's prop: held identical in both ways except the place's own build",
+     "marcus_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "hunter_a_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "hunter_b_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "hunter_c_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura": "a person of the scene",
      "marcus": "a person of the scene",
      "hunter_a": "a person of the scene",
@@ -11056,26 +11558,26 @@
     "hunter_c": "H5"
    },
    "tags": {
-    "ura": "the old sorcerer in a deer-antler mask and a fur cloak",
-    "marcus": "the young courier in a grey hoodie and white sneakers",
-    "hunter_a": "the hunter in grey fur",
-    "hunter_b": "the hunter in brown fur",
-    "hunter_c": "the hunter in spotted fur",
-    "hearth_flame": "a hearth fire",
+    "ura": "the old sorcerer in a deer-antler mask and a fur cloak in the middle",
+    "marcus": "the young courier in a grey hoodie and white sneakers in the middle",
+    "hunter_a": "the hunter in grey fur on the left",
+    "hunter_b": "the hunter in brown fur on the left",
+    "hunter_c": "the hunter in spotted fur on the right",
+    "hearth_flame": "a fire",
     "paint_panel": "a wall painted with gold towers and red handprints"
    },
    "cards": {
     "sa_cave_wide": {
      "start": "{ura} speaks by {hearth_flame}, {marcus} stares at {paint_panel}, {hunter_a}, {hunter_b} and {hunter_c} kneel",
      "motion": "the fire flickers and {ura} lifts one hand",
-     "settle": "everyone stays in frame and holds still",
+     "settle": "everyone stays in frame, breathing and blinking",
      "refs": []
     }
    },
    "hero_refs": {},
    "sub_category": "S1",
    "place": "a dark ice-age cave",
-   "light": "the orange glow of a hearth fire"
+   "light": "orange firelight"
   },
   "sa_ice_block": {
    "label": "Stone-age pilot test, scene ice, way block (the creator, 2026-11-07 12:48 UTC): a wide snow plain at dusk in the ice age",
@@ -11848,6 +12350,27 @@
      ],
      "colour": "#47301F",
      "yaw_deg": 80.0
+    },
+    {
+     "type": "shape",
+     "name": "marcus_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      1.4,
+      1.6,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#7A7F85"
     }
    ],
    "cast": [
@@ -11919,6 +12442,7 @@
      "mammoth_2_leg_1": "the place or the story's prop: held identical in both ways except the place's own build",
      "mammoth_2_leg_2": "the place or the story's prop: held identical in both ways except the place's own build",
      "mammoth_2_leg_3": "the place or the story's prop: held identical in both ways except the place's own build",
+     "marcus_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "marcus": "a person of the scene"
     }
    },
@@ -11926,7 +12450,7 @@
     "marcus": "H1"
    },
    "tags": {
-    "marcus": "the young courier in a grey hoodie and white sneakers",
+    "marcus": "the young courier in a grey hoodie and white sneakers on the right",
     "mammoth_0_body": "the big woolly mammoth with long curved tusks on the left",
     "mammoth_1_body": "the woolly mammoth in the middle",
     "mammoth_2_body": "the small woolly mammoth on the right"
@@ -12057,8 +12581,8 @@
      "name": "rock_c",
      "asset": "model.ph_boulder_01",
      "pos": [
-      -3,
-      24,
+      -16,
+      27,
       0
      ],
      "yaw_deg": 80,
@@ -12786,6 +13310,27 @@
      ],
      "colour": "#47301F",
      "yaw_deg": 80.0
+    },
+    {
+     "type": "shape",
+     "name": "marcus_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      1.4,
+      1.6,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#7A7F85"
     }
    ],
    "cast": [
@@ -12863,6 +13408,7 @@
      "mammoth_2_leg_1": "the place or the story's prop: held identical in both ways except the place's own build",
      "mammoth_2_leg_2": "the place or the story's prop: held identical in both ways except the place's own build",
      "mammoth_2_leg_3": "the place or the story's prop: held identical in both ways except the place's own build",
+     "marcus_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "marcus": "a person of the scene"
     }
    },
@@ -12870,7 +13416,7 @@
     "marcus": "H1"
    },
    "tags": {
-    "marcus": "the young courier in a grey hoodie and white sneakers",
+    "marcus": "the young courier in a grey hoodie and white sneakers on the right",
     "mammoth_0_body": "the big woolly mammoth with long curved tusks on the left",
     "mammoth_1_body": "the woolly mammoth in the middle",
     "mammoth_2_body": "the small woolly mammoth on the right"
@@ -12889,7 +13435,7 @@
    "light": "a low cold blue dusk glow"
   },
   "sa_camp_block": {
-   "label": "Stone-age pilot test, scene camp, way block (the creator, 2026-11-07 12:48 UTC): an ice-age camp of round huts in a snowstorm at night",
+   "label": "Stone-age pilot test, scene camp, way block (the creator, 2026-11-07 12:48 UTC): an ice-age camp in a night snowstorm",
    "landmarks": [],
    "axis": {
     "deg": 0,
@@ -12900,7 +13446,8 @@
    },
    "structure": [
     "ground",
-    "storm_fill"
+    "storm_fill",
+    "fire_key"
    ],
    "blocks": [
     {
@@ -13236,7 +13783,7 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 700.0,
+      "energy": 2400.0,
       "color": [
        0.55,
        0.65,
@@ -13245,6 +13792,224 @@
       "radius_m": 2.0,
       "shadow": false
      }
+    },
+    {
+     "type": "light",
+     "name": "fire_key",
+     "pos": [
+      0.0,
+      3.0,
+      2.2
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 900.0,
+      "color": [
+       1.0,
+       0.6,
+       0.3
+      ],
+      "radius_m": 0.6,
+      "shadow": false
+     }
+    },
+    {
+     "type": "shape",
+     "name": "marcus_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -1.8,
+      5.2,
+      1.25
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#7A7F85"
+    },
+    {
+     "type": "shape",
+     "name": "ura_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      1.8,
+      5.6,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#C8B598"
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.64,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": -25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.496,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": -60
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.96,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": 25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      2.104,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": 60
+    },
+    {
+     "type": "shape",
+     "name": "ura_cloak",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.8,
+      5.6,
+      0.778
+     ],
+     "scale": [
+      0.95,
+      0.95,
+      1.49
+     ],
+     "colour": "#5B3F2A"
+    },
+    {
+     "type": "shape",
+     "name": "torch_a_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -4.2,
+      8.4,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#5A5E63"
+    },
+    {
+     "type": "shape",
+     "name": "torch_b_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      4.6,
+      8.2,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#6E4726"
     }
    ],
    "cast": [
@@ -13337,6 +14102,16 @@
      "camp_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "camp_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "storm_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "fire_key": "the place or the story's prop: held identical in both ways except the place's own build",
+     "marcus_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_cloak": "the place or the story's prop: held identical in both ways except the place's own build",
+     "torch_a_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "torch_b_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "marcus": "a person of the scene",
      "ura": "a person of the scene",
      "torch_a": "a person of the scene",
@@ -13350,28 +14125,29 @@
     "torch_b": "H4"
    },
    "tags": {
-    "marcus": "the young courier in a grey hoodie and white sneakers",
-    "ura": "the old sorcerer in a deer-antler mask and a fur cloak",
-    "torch_a": "the hunter in grey fur with a torch",
-    "torch_b": "the hunter in brown fur with a torch",
+    "marcus": "the young courier in a grey hoodie and white sneakers on the left",
+    "ura": "the old sorcerer in a deer-antler mask and a fur cloak on the right",
+    "torch_a": "the hunter in grey fur with a torch on the left",
+    "torch_b": "the hunter in brown fur with a torch on the right",
     "camp_flame": "a campfire",
-    "hut_1_wall": "a round hut with a pointed roof"
+    "log_seat": "a log",
+    "hut_0_wall": "four round huts with pointed roofs"
    },
    "cards": {
     "sa_camp_wide": {
-     "start": "{marcus} sits by {camp_flame}, {ura} speaks, {torch_a} and {torch_b} stand before {hut_1_wall}",
+     "start": "{marcus} sits on {log_seat} by {camp_flame}, {ura} speaks, {torch_a} and {torch_b} stand before {hut_0_wall}",
      "motion": "the flames flicker and {ura} lifts one hand",
-     "settle": "everyone stays in frame and holds still",
+     "settle": "everyone stays in frame, breathing and blinking",
      "refs": []
     }
    },
    "hero_refs": {},
    "sub_category": "S1",
-   "place": "an ice-age camp of round huts in a snowstorm at night",
-   "light": "firelight under a stormy night sky"
+   "place": "an ice-age camp in a night snowstorm",
+   "light": "firelight"
   },
   "sa_camp_cc0": {
-   "label": "Stone-age pilot test, scene camp, way cc0 (the creator, 2026-11-07 12:48 UTC): an ice-age camp of round huts in a snowstorm at night",
+   "label": "Stone-age pilot test, scene camp, way cc0 (the creator, 2026-11-07 12:48 UTC): an ice-age camp in a night snowstorm",
    "landmarks": [],
    "axis": {
     "deg": 0,
@@ -13389,7 +14165,8 @@
     "trunk_a",
     "trunk_b",
     "fire_pit",
-    "storm_fill"
+    "storm_fill",
+    "fire_key"
    ],
    "blocks": [
     {
@@ -13428,8 +14205,8 @@
      "name": "stump_a",
      "asset": "model.ph_tree_stump_01",
      "pos": [
-      2.4,
-      6.4,
+      7.6,
+      5.4,
       0.0
      ],
      "yaw_deg": 0,
@@ -13787,7 +14564,7 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 700.0,
+      "energy": 2400.0,
       "color": [
        0.55,
        0.65,
@@ -13796,6 +14573,224 @@
       "radius_m": 2.0,
       "shadow": false
      }
+    },
+    {
+     "type": "light",
+     "name": "fire_key",
+     "pos": [
+      0.0,
+      3.0,
+      2.2
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 900.0,
+      "color": [
+       1.0,
+       0.6,
+       0.3
+      ],
+      "radius_m": 0.6,
+      "shadow": false
+     }
+    },
+    {
+     "type": "shape",
+     "name": "marcus_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -1.8,
+      5.2,
+      1.25
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#7A7F85"
+    },
+    {
+     "type": "shape",
+     "name": "ura_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      1.8,
+      5.6,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#C8B598"
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.64,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": -25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_0",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.496,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": -60
+    },
+    {
+     "type": "shape",
+     "name": "ura_antler_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.96,
+      5.6,
+      1.94
+     ],
+     "scale": [
+      0.07,
+      0.07,
+      0.5
+     ],
+     "colour": "#C8B598",
+     "pitch": 25
+    },
+    {
+     "type": "shape",
+     "name": "ura_tine_1",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      2.104,
+      5.6,
+      2.0
+     ],
+     "scale": [
+      0.05,
+      0.05,
+      0.3
+     ],
+     "colour": "#C8B598",
+     "pitch": 60
+    },
+    {
+     "type": "shape",
+     "name": "ura_cloak",
+     "add": "cone",
+     "params": {
+      "radius1": 0.5,
+      "radius2": 0,
+      "depth": 1,
+      "vertices": 20
+     },
+     "pos": [
+      1.8,
+      5.6,
+      0.778
+     ],
+     "scale": [
+      0.95,
+      0.95,
+      1.49
+     ],
+     "colour": "#5B3F2A"
+    },
+    {
+     "type": "shape",
+     "name": "torch_a_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      -4.2,
+      8.4,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#5A5E63"
+    },
+    {
+     "type": "shape",
+     "name": "torch_b_head_proxy",
+     "add": "uv_sphere",
+     "params": {
+      "radius": 0.5,
+      "segments": 24,
+      "ring_count": 12
+     },
+     "pos": [
+      4.6,
+      8.2,
+      1.67
+     ],
+     "scale": [
+      0.3,
+      0.3,
+      0.28
+     ],
+     "colour": "#6E4726"
     }
    ],
    "cast": [
@@ -13894,6 +14889,16 @@
      "camp_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "camp_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "storm_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "fire_key": "the place or the story's prop: held identical in both ways except the place's own build",
+     "marcus_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_0": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_antler_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_tine_1": "the place or the story's prop: held identical in both ways except the place's own build",
+     "ura_cloak": "the place or the story's prop: held identical in both ways except the place's own build",
+     "torch_a_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
+     "torch_b_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "marcus": "a person of the scene",
      "ura": "a person of the scene",
      "torch_a": "a person of the scene",
@@ -13907,25 +14912,26 @@
     "torch_b": "H4"
    },
    "tags": {
-    "marcus": "the young courier in a grey hoodie and white sneakers",
-    "ura": "the old sorcerer in a deer-antler mask and a fur cloak",
-    "torch_a": "the hunter in grey fur with a torch",
-    "torch_b": "the hunter in brown fur with a torch",
+    "marcus": "the young courier in a grey hoodie and white sneakers on the left",
+    "ura": "the old sorcerer in a deer-antler mask and a fur cloak on the right",
+    "torch_a": "the hunter in grey fur with a torch on the left",
+    "torch_b": "the hunter in brown fur with a torch on the right",
     "camp_flame": "a campfire",
-    "hut_1_wall": "a round hut with a pointed roof"
+    "log_seat": "a log",
+    "hut_0_wall": "four round huts with pointed roofs"
    },
    "cards": {
     "sa_camp_wide": {
-     "start": "{marcus} sits by {camp_flame}, {ura} speaks, {torch_a} and {torch_b} stand before {hut_1_wall}",
+     "start": "{marcus} sits on {log_seat} by {camp_flame}, {ura} speaks, {torch_a} and {torch_b} stand before {hut_0_wall}",
      "motion": "the flames flicker and {ura} lifts one hand",
-     "settle": "everyone stays in frame and holds still",
+     "settle": "everyone stays in frame, breathing and blinking",
      "refs": []
     }
    },
    "hero_refs": {},
    "sub_category": "S1",
-   "place": "an ice-age camp of round huts in a snowstorm at night",
-   "light": "firelight under a stormy night sky"
+   "place": "an ice-age camp in a night snowstorm",
+   "light": "firelight"
   }
  }
 }

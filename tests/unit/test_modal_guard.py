@@ -66,3 +66,11 @@ def test_sa_prompts_are_strings_and_the_runner_unwraps_the_dict():
     raw = {"a": {"qwen": "xworld style, one two", "words": 4, "ltx": "x"}, "b": "plain"}
     prompts = {k: (v["qwen"] if isinstance(v, dict) else v) for k, v in raw.items()}
     assert all(isinstance(v, str) for v in prompts.values())
+
+
+def test_style_strength_trial_names_both_weights():
+    """creator 2026-11-07 14:42 UTC: every frame once at 0.7 and once at 1.0; each weight gets its own file name."""
+    assert M.WEIGHTS == (0.7, 1.0)
+    assert [M.wtag(w) for w in M.WEIGHTS] == ["_w07", "_w10"]
+    runner = (Path(M.__file__).parent / "sa_test_qwen.py").read_text()
+    assert "--lora-weight" in runner and 'weight=a.lora_weight' in runner

@@ -27,25 +27,30 @@ WAYS = ("block", "cc0")
 PRESET = {"cave": "interior_hearth", "ice": "overcast_day", "camp": "night_camp"}   # light_presets.json
 SHOT = {"cave": "sa_cave_wide", "ice": "sa_ice_wide", "camp": "sa_camp_wide"}
 PLACE = {"cave": "a dark ice-age cave", "ice": "a wide snow plain at dusk in the ice age",
-         "camp": "an ice-age camp of round huts in a snowstorm at night"}
-LIGHT = {"cave": "the orange glow of a hearth fire", "ice": "a low cold blue dusk glow", "camp": "firelight under a stormy night sky"}
+         "camp": "an ice-age camp in a night snowstorm"}
+LIGHT = {"cave": "orange firelight", "ice": "a low cold blue dusk glow", "camp": "firelight"}
 # the shot cards: tags (two visible traits each, KP-15) and the clip's start / motion / settle (prompts() composes the Qwen and LTX prompts)
 MARCUS = "the young courier in a grey hoodie and white sneakers"
 URA = "the old sorcerer in a deer-antler mask and a fur cloak"
 TAGS = {"cave": {"ura": URA, "marcus": MARCUS, "hunter_a": "the hunter in grey fur", "hunter_b": "the hunter in brown fur",
-                 "hunter_c": "the hunter in spotted fur", "hearth_flame": "a hearth fire",
+                 "hunter_c": "the hunter in spotted fur", "hearth_flame": "a fire",
                  "paint_panel": "a wall painted with gold towers and red handprints"},
-        "ice": {"marcus": MARCUS, "mammoth_0_body": "the big woolly mammoth with long curved tusks on the left",
-                "mammoth_1_body": "the woolly mammoth in the middle", "mammoth_2_body": "the small woolly mammoth on the right"},
+        "ice": {"marcus": MARCUS, "mammoth_0_body": "the big woolly mammoth with long curved tusks",
+                "mammoth_1_body": "the woolly mammoth", "mammoth_2_body": "the small woolly mammoth"},
         "camp": {"marcus": MARCUS, "ura": URA, "torch_a": "the hunter in grey fur with a torch",
-                 "torch_b": "the hunter in brown fur with a torch", "camp_flame": "a campfire",
-                 "hut_1_wall": "a round hut with a pointed roof"}}
+                 "torch_b": "the hunter in brown fur with a torch", "camp_flame": "a campfire", "log_seat": "a log",
+                 "hut_0_wall": "round huts with pointed roofs"}}
 CARDS = {"cave": {"start": "{ura} speaks by {hearth_flame}, {marcus} stares at {paint_panel}, {hunter_a}, {hunter_b} and {hunter_c} kneel",
-                  "motion": "the fire flickers and {ura} lifts one hand", "settle": "everyone stays in frame and holds still", "refs": []},
+                  "motion": "the fire flickers and {ura} lifts one hand", "settle": "everyone stays in frame, breathing and blinking", "refs": []},
          "ice": {"start": "{mammoth_0_body}, {mammoth_1_body} and {mammoth_2_body} walk across the snow while {marcus} stands with his back to us",
                  "motion": "the mammoths stride heavily and {marcus} flinches", "settle": "the herd keeps walking and everyone stays in frame", "refs": []},
-         "camp": {"start": "{marcus} sits by {camp_flame}, {ura} speaks, {torch_a} and {torch_b} stand before {hut_1_wall}",
-                  "motion": "the flames flicker and {ura} lifts one hand", "settle": "everyone stays in frame and holds still", "refs": []}}
+         "camp": {"start": "{marcus} sits on {log_seat} by {camp_flame}, {ura} speaks, {torch_a} and {torch_b} stand before {hut_0_wall}",
+                  "motion": "the flames flicker and {ura} lifts one hand", "settle": "everyone stays in frame, breathing and blinking", "refs": []}}
+SUBJECTS = {"cave": ("ura", "marcus", "hunter_a", "hunter_b", "hunter_c"), "ice": ("marcus", "mammoth_0_body", "mammoth_1_body", "mammoth_2_body"),
+            "camp": ("marcus", "ura", "torch_a", "torch_b")}   # KP-50: the named figures and animals that get a screen side
+COUNTED = {"camp": {"hut_0_wall": "hut_"}}   # KP-51: tag key -> name prefix of the set pieces it counts
+NUMBERS = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight"}
+SENSOR_MM = 36.0
 
 
 PRIM = {"cube": {"size": 1}, "uv_sphere": {"radius": 0.5, "segments": 24, "ring_count": 12},
@@ -152,14 +157,15 @@ def _cave(way):
             structure += [f"left_rock_{k}", f"right_rock_{k}"]
         blocks += [shape("ceiling", "cube", [0, 5, 6.2], [15, 17, 0.7], "#2E2620")]
         structure.append("ceiling")
-        blocks += [piece("boulder_l", "model.ph_boulder_01", [-5.0, 7.5, 0.0], 30.0, 1.6), piece("boulder_r", "model.ph_namaqualand_boulder_04", [5.0, 8.0, 0.0], -40.0, 0.9)]
+        blocks += [piece("boulder_l", "model.ph_boulder_01", [-5.6, 9.8, 0.0], 30.0, 1.4), piece("boulder_r", "model.ph_namaqualand_boulder_04", [5.0, 8.0, 0.0], -40.0, 0.9)]
         structure += ["boulder_l", "boulder_r"]
     blocks += painted_wall(0.0, 10.4 if way == "block" else 8.9, 0.2)
     blocks += fire("hearth", 0.0, 5.0)
     if way == "cc0":
         blocks.append(piece("fire_pit", "model.ph_stone_fire_pit", [0.0, 5.0, 0.0], 0.0, 1.2))
-    blocks += [lamp("cave_fill", [0.0, 3.0, 4.2], 520.0, [1.0, 0.72, 0.5], 1.2, False)]
-    structure += ["cave_fill"]
+    blocks += [lamp("cave_fill", [0.0, 3.0, 4.2], 520.0, [1.0, 0.72, 0.5], 1.2, False),
+               lamp("cave_fill_r", [3.6, 1.2, 2.6], 260.0, [1.0, 0.7, 0.48], 1.0, False)]   # BL-01: the right hunter was too dark
+    structure += ["cave_fill", "cave_fill_r"]
     return blocks, cast, structure, [[0.0, -1.8, 1.7], None, [0.0, 6.0, 1.5], None, 22, 1]
 
 
@@ -178,7 +184,7 @@ def _ice(way):
                    shape("hill_r", "uv_sphere", [40, 110, 0], [110, 70, 30], "#C1CBD4")]
         structure = ["ground", "hill_l", "hill_r"]
         spots = [("rock_a", "model.ph_namaqualand_boulder_02", [-9, 14, 0], 20, 2.2), ("rock_b", "model.ph_namaqualand_boulder_04", [12, 20, 0], -30, 1.5),
-                 ("rock_c", "model.ph_boulder_01", [-3, 24, 0], 80, 2.4), ("rock_d", "model.ph_namaqualand_boulder_02", [24, 34, 0], 10, 3.0),
+                 ("rock_c", "model.ph_boulder_01", [-16, 27, 0], 80, 2.4), ("rock_d", "model.ph_namaqualand_boulder_02", [24, 34, 0], 10, 3.0),
                  ("trunk_a", "model.ph_dead_tree_trunk", [-14, 8, 0], 70, 1.4), ("trunk_b", "model.ph_dead_tree_trunk", [8, 6, 0], -20, 1.0),
                  ("stump_a", "model.ph_tree_stump_01", [-6, 6, 0], 0, 1.3)]
         for n, a, p, yw, sc in spots:
@@ -202,7 +208,7 @@ def _camp(way):
     else:
         blocks += [shape("ground", "plane", [0, 20, 0], [900, 900, 1], "#59606A")]
         structure = ["ground"]
-        for n, a, p, yw, sc in (("log_seat", "model.ph_dead_tree_trunk", [-2.6, 5.2, 0.0], 90, 0.7), ("stump_a", "model.ph_tree_stump_01", [2.4, 6.4, 0.0], 0, 1.0),
+        for n, a, p, yw, sc in (("log_seat", "model.ph_dead_tree_trunk", [-2.6, 5.2, 0.0], 90, 0.7), ("stump_a", "model.ph_tree_stump_01", [7.6, 5.4, 0.0], 0, 1.0),
                                 ("rock_a", "model.ph_boulder_01", [-9.0, 11.0, 0.0], 30, 1.8), ("rock_b", "model.ph_namaqualand_boulder_04", [10.0, 12.0, 0.0], -50, 1.3),
                                 ("trunk_a", "model.ph_dead_tree_trunk", [-7.0, 15.0, 0.0], 15, 1.6), ("trunk_b", "model.ph_dead_tree_trunk", [8.5, 16.0, 0.0], -25, 1.6),
                                 ("fire_pit", "model.ph_stone_fire_pit", [0.0, 5.5, 0.0], 0.0, 1.3)):
@@ -211,16 +217,113 @@ def _camp(way):
     for k, (x, y, r) in enumerate(((-8.5, 14.0, 1.8), (-3.0, 17.0, 1.6), (3.5, 18.0, 1.7), (9.0, 14.5, 1.8))):
         blocks += hut(f"hut_{k}", x, y, r)
     blocks += fire("camp", 0.0, 5.5)
-    blocks += [lamp("storm_fill", [0.0, 4.0, 6.0], 700.0, [0.55, 0.65, 0.95], 2.0, False)]
-    structure += ["storm_fill"]
+    blocks += [lamp("storm_fill", [0.0, 4.0, 6.0], 2400.0, [0.55, 0.65, 0.95], 2.0, False),   # BL-01: the camp measured luma 0.06-0.09
+               lamp("fire_key", [0.0, 3.0, 2.2], 900.0, [1.0, 0.6, 0.3], 0.6, False)]
+    structure += ["storm_fill", "fire_key"]
     return blocks, cast, structure, [[0.0, -3.4, 1.6], None, [0.0, 8.0, 1.5], None, 24, 1]
+
+
+def project(cam: list, point: list) -> tuple[float, float, float]:
+    """(screen x 0..1 left->right, screen y 0..1 top->bottom, depth m) of a world point seen by the shot's camera
+    [pos, _, look_at, _, lens_mm, frames] on a 36 mm wide sensor at 16:9 (pinhole, Blender's convention)."""
+    import math
+    c, t, lens = cam[0], cam[2], cam[4]
+    f = [t[i] - c[i] for i in range(3)]
+    n = math.sqrt(sum(v * v for v in f))
+    f = [v / n for v in f]
+    r = [f[1], -f[0], 0.0]
+    rn = math.sqrt(r[0] ** 2 + r[1] ** 2) or 1.0
+    r = [v / rn for v in r]
+    u = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]]
+    d = [point[i] - c[i] for i in range(3)]
+    z = sum(d[i] * f[i] for i in range(3))
+    x = sum(d[i] * r[i] for i in range(3)) / z * lens / SENSOR_MM
+    y = sum(d[i] * u[i] for i in range(3)) / z * lens / (SENSOR_MM * 9 / 16)
+    return 0.5 + x, 0.5 - y, z
+
+
+def screen_side(sx: float) -> str:
+    """KP-50: the side word of a screen x."""
+    return "on the left" if sx < 0.38 else ("in the middle" if sx <= 0.62 else "on the right")
+
+
+def _subject_point(blocks: list, cast: list, name: str) -> list:
+    for c in cast:
+        if c[0] == name:
+            return [c[4][0], c[4][1], 1.1]
+    b = next(b for b in blocks if b.get("name") == name)
+    return list(b["pos"])
+
+
+def subject_tags(scene: str, blocks: list, cast: list, cam: list) -> dict:
+    """KP-50/51: the scene's tags with each named subject's screen side from the camera and each counted piece's number word."""
+    tags = dict(TAGS[scene])
+    for n in SUBJECTS[scene]:
+        sx = project(cam, _subject_point(blocks, cast, n))[0]
+        tags[n] = f"{tags[n]} {screen_side(sx)}"
+    for key, prefix in COUNTED.get(scene, {}).items():
+        k = len({b["name"].split("_")[1] for b in blocks if b.get("name", "").startswith(prefix)})
+        if k >= 2:
+            tags[key] = f"{NUMBERS[k]} {tags[key]}"
+    missing = [n for n in SUBJECTS[scene] if not any(w in tags[n] for w in ("on the left", "in the middle", "on the right"))]
+    if missing:
+        raise ValueError(f"{scene}: no screen side for {missing} (KP-50)")
+    return tags
+
+
+def count_words(tags: dict, scene: str) -> dict:
+    return {k: tags[k] for k in COUNTED.get(scene, {})}
+
+
+PROXY = {"ura": ("antlers", "#C8B598", "#5B3F2A"), "marcus": ("hood", "#7A7F85", None), "hunter_a": ("cap", "#5A5E63", None),
+         "hunter_b": ("cap", "#6E4726", None), "hunter_c": ("cap", "#C2A675", None), "torch_a": ("cap", "#5A5E63", None),
+         "torch_b": ("cap", "#6E4726", None)}
+HEAD_Z = {"Idle_Loop": 1.62, "Idle_Talking_Loop": 1.62, "Idle_Torch_Loop": 1.62, "Fixing_Kneeling": 1.05, "Sitting_Idle_Loop": 1.2}
+
+
+def proxies(cast: list) -> list:
+    """KP-52: a head proxy per named person so no two share a head in Image 1: the sorcerer an antler crown and a cloak cone,
+    the courier a grey hood, each hunter a cap in his fur colour (positions from the cast row and the pose's head height)."""
+    out = []
+    for name, _ch, _co, _fa, (x, y), _yaw, anim, _off in cast:
+        if name not in PROXY:
+            continue
+        kind, col, extra = PROXY[name]
+        z = HEAD_Z.get(anim, 1.6)
+        out.append(shape(f"{name}_head_proxy", "uv_sphere", [x, y, z + 0.05], [0.3, 0.3, 0.28], col))
+        if kind == "antlers":
+            for k, sx in enumerate((-0.16, 0.16)):
+                out.append(shape(f"{name}_antler_{k}", "cone", [x + sx, y, z + 0.32], [0.07, 0.07, 0.5], col, 0.0, pitch=(-25 if sx < 0 else 25)))
+                out.append(shape(f"{name}_tine_{k}", "cone", [x + sx * 1.9, y, z + 0.38], [0.05, 0.05, 0.3], col, 0.0, pitch=(-60 if sx < 0 else 60)))
+            out.append(shape(f"{name}_cloak", "cone", [x, y, z * 0.48], [0.95, 0.95, z * 0.92], extra))
+    return out
+
+
+def clutter_clashes(blocks: list, cast: list, cam: list, scene: str, structure: list) -> list[str]:
+    """KP-53: unnamed CC0 pieces within 0.10 of the frame width and max(4 m, a quarter of its depth) of a named subject (Qwen merges them)."""
+    subj = [(n, project(cam, _subject_point(blocks, cast, n))) for n in SUBJECTS[scene]]
+    out = []
+    for b in blocks:
+        if b.get("type") != "piece" or b["name"] in TAGS[scene] or b["name"] in ("fire_pit",):
+            continue
+        px = project(cam, [b["pos"][0], b["pos"][1], 0.6])
+        if px[2] <= 0 or not (-0.05 <= px[0] <= 1.05):
+            continue
+        for n, sp in subj:
+            if abs(px[0] - sp[0]) < 0.10 and abs(px[2] - sp[2]) < max(4.0, 0.25 * sp[2]):
+                out.append(f"{b['name']} next to {n}")
+    return out
 
 
 def layout(scene: str, way: str) -> dict:
     blocks, cast, structure, cam = {"cave": _cave, "ice": _ice, "camp": _camp}[scene](way)
+    blocks = blocks + proxies(cast)
+    clash = clutter_clashes(blocks, cast, cam, scene, structure)
+    if clash:
+        raise ValueError(f"sa_{scene}_{way}: unnamed pieces next to named subjects (KP-53): {clash}")
     names = [b["name"] for b in blocks]
     in_shot = {n: "the place or the story's prop: held identical in both ways except the place's own build" for n in names}
-    tags = {**{c[0]: c[0].replace("_", " ") for c in cast}, **TAGS[scene]}
+    tags = {**{c[0]: c[0].replace("_", " ") for c in cast}, **subject_tags(scene, blocks, cast, cam)}
     in_shot.update({c[0]: "a person of the scene" for c in cast})
     return {"label": f"Stone-age pilot test, scene {scene}, way {way} (the creator, 2026-11-07 12:48 UTC): {PLACE[scene]}",
             "landmarks": [], "axis": {"deg": 0, "origin": [0, 0]}, "structure": structure, "blocks": blocks, "cast": cast,

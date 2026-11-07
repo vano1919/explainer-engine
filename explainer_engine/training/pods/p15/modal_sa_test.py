@@ -146,7 +146,14 @@ def verdict(out, expected):
     return {"state": "DONE" if len(ok) == len(expected) else "FAILED", "n_ok": len(ok), "n_expected": len(expected)}
 
 
-def body(smoke=False, seeds=""):
+WEIGHTS = (0.7, 1.0)   # creator 2026-11-07 14:42 UTC: the house 0.7 and once at 1.0, each in a fresh process (the merge is in place)
+
+
+def wtag(w):
+    return f"_w{int(round(w * 10)):02d}"
+
+
+def body(smoke=False, seeds="", weights=()):
     if import_check() != 0:
         raise SystemExit("OR-37: the image lacks a module the run imports; stopped before any weight was read")
     from huggingface_hub import hf_hub_download
@@ -179,11 +186,16 @@ def body(smoke=False, seeds=""):
         th.join(timeout=40)
         os._exit(3)
     deadline_guard((SMOKE_TIMEOUT_S if smoke else TIMEOUT_S) - 60, _fire)
+    base = ["python3", str(inp / "sa_test_qwen.py"), "--out", str(out), "--inputs", str(inp)] + (["--smoke"] if smoke else []) + (["--seeds", seeds] if seeds else [])
+    rc = 0
     with open(out / "modal_sa.log", "a") as f:
-        rc = subprocess.run(["python3", str(inp / "sa_test_qwen.py"), "--out", str(out), "--inputs", str(inp)] + (["--smoke"] if smoke else []) + (["--seeds", seeds] if seeds else []), env=env,
-                            cwd="/workspace/ee", stdout=f, stderr=subprocess.STDOUT).returncode
+        for extra in ([["--lora-weight", str(w)] for w in weights] or [[]]):
+            rc = subprocess.run(base + extra, env=env, cwd="/workspace/ee", stdout=f, stderr=subprocess.STDOUT).returncode
+            if rc != 0:
+                break   # one attempt: the first failure stops the run (OR-37)
     names = list(json.loads((inp / "sa_prompts.json").read_text()))
-    expected = ["qwen/smoke.json"] if smoke else ([f"qwen/{n}_s{s}.png" for s in seeds.split(",") for n in names] if seeds else [f"qwen/{n}.png" for n in names])
+    stems = [f"{n}_s{s}" for s in seeds.split(",") for n in names] if seeds else list(names)
+    expected = ["qwen/smoke.json"] if smoke else [f"qwen/{s}{wtag(w)}.png" for w in weights for s in stems] or [f"qwen/{s}.png" for s in stems]
     v = verdict(out, expected)
     if rc != 0:
         v["state"] = "FAILED"
@@ -210,7 +222,7 @@ if modal is not None:
     @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=TIMEOUT_S, retries=0, volumes={"/w": vol},
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
     def sa_photos():
-        return body()
+        return body(weights=WEIGHTS)   # 12 photos: 2 x (~60 s load + 6 x ~40 s) = ~10 min, inside the cost-derived timeout
 
     @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=SMOKE_TIMEOUT_S, retries=0, volumes={"/w": vol},
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
