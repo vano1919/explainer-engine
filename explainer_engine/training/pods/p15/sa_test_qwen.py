@@ -6,7 +6,7 @@ sys.path.insert(0, "/workspace/ee")
 from explainer_engine.training.pods.p14 import p14_qwen as Q
 from explainer_engine.training.pods.p15 import p15_qwen as P
 
-ap = argparse.ArgumentParser(); ap.add_argument("--out", type=Path); ap.add_argument("--inputs", type=Path); ap.add_argument("--smoke", action="store_true")
+ap = argparse.ArgumentParser(); ap.add_argument("--out", type=Path); ap.add_argument("--inputs", type=Path); ap.add_argument("--smoke", action="store_true"); ap.add_argument("--seeds", default="")
 a = ap.parse_args()
 cfg = P.load_cfg(); q = cfg["qwen"]
 raw = json.loads((a.inputs / "sa_prompts.json").read_text())
@@ -38,18 +38,21 @@ if a.smoke:   # OR-37 smoke: 1 step, tiny size, [still] then [still, still]: sho
     sys.exit(0 if all(v.startswith("ok") for v in res.values()) else 1)
 status = {}
 fail = 0
-for name in sorted(prompts):
-    p = qd / f"{name}.png"
+seeds = [int(x) for x in a.seeds.split(",") if x] or [q["seed"]]
+jobs = [(name, s) for s in seeds for name in sorted(prompts)]
+for name, seed in jobs:
+    tag = name if not a.seeds else f"{name}_s{seed}"
+    p = qd / f"{tag}.png"
     if p.exists(): continue
     t1 = time.time()
     try:
         still = Image.open(a.inputs / f"sa_{name}.png").convert("RGB")
-        j = {"name": name, "prompt": prompts[name], "seed": q["seed"], "cfg": q["cfg_edit"], "size": q["size"], "kind": "edit"}
+        j = {"name": tag, "prompt": prompts[name], "seed": seed, "cfg": q["cfg_edit"], "size": q["size"], "kind": "edit"}
         im = Q.draw(pipe, cfg, j, [still]).convert("RGB"); im.save(p)
-        (qd / f"{name}.json").write_text(json.dumps({**j, "seconds": round(time.time() - t1, 1), "sha256": Q.sha256_file(p)}, indent=1))
-        say("made", name, round(time.time() - t1), "s"); status[name] = {"status": "ok"}; (qd / "status.json").write_text(json.dumps(status, indent=1))
+        (qd / f"{tag}.json").write_text(json.dumps({**j, "seconds": round(time.time() - t1, 1), "sha256": Q.sha256_file(p)}, indent=1))
+        say("made", tag, round(time.time() - t1), "s"); status[tag] = {"status": "ok"}; (qd / "status.json").write_text(json.dumps(status, indent=1))
     except Exception as e:
-        fail += 1; say("FAIL", name, repr(e)[:300]); say(traceback.format_exc()[-1800:]); status[name] = {"status": "error", "traceback": traceback.format_exc()[-1800:]}; (qd / "status.json").write_text(json.dumps(status, indent=1))
+        fail += 1; say("FAIL", tag, repr(e)[:300]); say(traceback.format_exc()[-1800:]); status[tag] = {"status": "error", "traceback": traceback.format_exc()[-1800:]}; (qd / "status.json").write_text(json.dumps(status, indent=1))
         if fail >= 1: say("STOP: first failure"); break
 say("done", fail, "failed")
 sys.exit(1 if fail else 0)

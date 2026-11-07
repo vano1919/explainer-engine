@@ -4630,3 +4630,6 @@ First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New
 
 ## 2026-11-07 Modal guard (OR-37 addendum)
 `cloud/modal_run.py` (ladder order, app id, stop by id), cost-derived timeout + in-container deadline + strict DONE in `modal_sa_test.py`, prompt-dict bug fixed in `sa_test_qwen.py` (sa_prompts.json holds {qwen, words, ltx}; the dict reached the pipeline as 3 prompts, the cause of "Expected 1 got 3"). Tests: tests/unit/test_modal_guard.py.
+
+## 2026-11-07 Blender-vs-Qwen test result (provisional note, NOT a binding rule)
+6 photos (one seed, eye judgement, not blind): Qwen restyles strongly but does not keep the Blender layout (4 huts -> 1, mammoth count/poses change, painted wall changes); blockout vs CC0 differ little. Provisional note: Blender gives colour, light, character count and rough placement; geometry is not guaranteed after Qwen; blockout is enough for that role. A binding rule waits for 2 more seeds per scene and a blind rating (`modal_sa_test.py::seeds`, 12 photos). Details: stoneage_pilot_2026-11-07/QWEN_TEST_COMPARISON_2026-11-07.md.

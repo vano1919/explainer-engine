@@ -22,7 +22,7 @@ SHAS = {
  "sa_ice_block.png": "543eb2f1ec7685da411a4325bfb7a0086b1ac4db0dd5cef294a3742e2365158d",
  "sa_ice_cc0.png": "8ca83e3d218d3089af415c605298453a4dd7acb75c9f03c01db7adb4f3eb8ab8",
  "sa_prompts.json": "ab9c2a1e15ad4de0c50a0aa7e098cc7ce3f48edea4ce2a16990cdc2b53f164f3",
- "sa_test_qwen.py": "f27adebee2e74331a35ab80fb3900e41177f6979482069aa654e6a8bb1a19cba"}
+ "sa_test_qwen.py": "9558462c0f95f6f39e2015a73063b3306277e7a6d4a2257ff5daa19f1a332219"}
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 SECRET_NAME = "huggingface-secret"
@@ -146,7 +146,7 @@ def verdict(out, expected):
     return {"state": "DONE" if len(ok) == len(expected) else "FAILED", "n_ok": len(ok), "n_expected": len(expected)}
 
 
-def body(smoke=False):
+def body(smoke=False, seeds=""):
     if import_check() != 0:
         raise SystemExit("OR-37: the image lacks a module the run imports; stopped before any weight was read")
     from huggingface_hub import hf_hub_download
@@ -180,9 +180,10 @@ def body(smoke=False):
         os._exit(3)
     deadline_guard((SMOKE_TIMEOUT_S if smoke else TIMEOUT_S) - 60, _fire)
     with open(out / "modal_sa.log", "a") as f:
-        rc = subprocess.run(["python3", str(inp / "sa_test_qwen.py"), "--out", str(out), "--inputs", str(inp)] + (["--smoke"] if smoke else []), env=env,
+        rc = subprocess.run(["python3", str(inp / "sa_test_qwen.py"), "--out", str(out), "--inputs", str(inp)] + (["--smoke"] if smoke else []) + (["--seeds", seeds] if seeds else []), env=env,
                             cwd="/workspace/ee", stdout=f, stderr=subprocess.STDOUT).returncode
-    expected = ["qwen/smoke.json"] if smoke else [f"qwen/{n}.png" for n in json.loads((inp / "sa_prompts.json").read_text())]
+    names = list(json.loads((inp / "sa_prompts.json").read_text()))
+    expected = ["qwen/smoke.json"] if smoke else ([f"qwen/{n}_s{s}.png" for s in seeds.split(",") for n in names] if seeds else [f"qwen/{n}.png" for n in names])
     v = verdict(out, expected)
     if rc != 0:
         v["state"] = "FAILED"
@@ -215,6 +216,16 @@ if modal is not None:
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
     def sa_smoke():
         return body(smoke=True)
+
+    @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=TIMEOUT_S, retries=0, volumes={"/w": vol},
+                  secrets=[modal.Secret.from_name(SECRET_NAME)])
+    def sa_seeds():
+        return body(seeds="12,13")   # 12 photos: 44 s load + 12 x ~40 s = ~9 min, inside the cost-derived timeout
+
+    @app.local_entrypoint()
+    def seeds():
+        print("GO card", go_gate(), "timeout", TIMEOUT_S, "s", flush=True)
+        print("result", sa_seeds.remote())
 
     @app.local_entrypoint()
     def smoke():
