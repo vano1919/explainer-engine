@@ -173,6 +173,15 @@ def verdict(out, expected):
 
 
 LOCAL_IN = "/in_local"
+LOCAL_SRC = "/home/user/in_v15"   # the local folder baked into the image as LOCAL_IN
+
+def preflight():
+    """Free rule check of the jobs file before any paid call (production/paid_preflight.py, the creator 2026-11-07 22:23 UTC)."""
+    from explainer_engine.production import paid_preflight
+    paid_preflight.refuse("qwen", Path(LOCAL_SRC) / JOBS)
+
+
+
 VOL_OUT = "/w/out_v15"   # a copy of every output on the Volume too: modal volume get ee-weights out_v3 .
 
 
@@ -264,7 +273,7 @@ if modal is not None:
                  "git -C /workspace/VideoX-Fun checkout -q e8c314fbfa494d0429bbef605c9f6112b79a7ead",
                  "pip install -q einops timm tomesd torchdiffeq torchsde omegaconf SentencePiece ftfy func_timeout 'imageio[ffmpeg]' "
                  "opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations kornia")
-             .add_local_dir("/home/user/in_v15", LOCAL_IN))
+             .add_local_dir(LOCAL_SRC, LOCAL_IN))
 
     @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=TIMEOUT_S, retries=0, volumes={"/w": vol},
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
@@ -278,6 +287,7 @@ if modal is not None:
 
     @app.local_entrypoint()
     def smoke():
+        preflight()
         print("GO card", go_gate(), "smoke timeout", SMOKE_TIMEOUT_S, "s", flush=True)
         print("result", qwen_smoke.remote())
 
@@ -292,5 +302,6 @@ if modal is not None:
 
     @app.local_entrypoint()
     def main():
+        preflight()
         print("GO card", go_gate(), "timeout", TIMEOUT_S, "s", flush=True)
         print("result", qwen_jobs.remote())

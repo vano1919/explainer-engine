@@ -1,4 +1,4 @@
-# One place, one picture: scene reuse, references, identity, dialogue (LV- / RF- / HI- / DL-)
+# One place, one picture: scene reuse, references, identity, dialogue, cut assembly (LV- / RF- / HI- / DL- / AS-)
 
 > Route-scoped since D-116 (2026-11-06: J2 and J5 use Qwen and LTX), amended by D-120 (2026-11-07).
 
@@ -50,35 +50,61 @@ view), RF- (references), HI- (hero identity) and DL- (dialogue). Research: [E0 a
 | RF-02 | References are **our own pictures in the house style**, approved by the creator (AC-02): a hero's first approved close-up or sheet, a place's picture, a prop picture. A photo, a render or an older look is never a reference. | FAIL |
 | RF-03 | **Which picture serves which shot** (the reference map; measured rows are marked): (1) a place's picture is Image 1 **only** for a change of itself that keeps the composition (the wall with a second handprint, the fire lit or dead): Qwen edit keeps composition (test B, measured); (2) a place's picture is the **blurred background** of that place's dialogue close-ups by a free crop, never a Qwen input (no cost, no drift); (3) a hero's approved close-up is Image 1 for **that same drawing's** mouth, blink and expression variants (untested; picture 10 of the first batch tests it); (4) a hero's close-up or sheet as Image 2 for a new pose is **not used** until a test shows it helps (run 3: sheets in a full scene were lost); (5) a place's picture as Image 2 for a new view is **not used** (E4b over-saturated). | REVIEW until each row is measured |
 | RF-04 | At most 3 images per picture (CT-05). Order: the drawing being changed first, then people in the order the prompt names them. | FAIL |
-| RF-05 | A generated **scene** picture is never the base of the next scene picture (CT-09). RF-03 (1) and (3) are edits of one approved drawing into its own variants, one step deep, never chained. | FAIL |
+| RF-05 | A generated **scene** picture is never the base of the next scene picture (CT-09). RF-03 (1) and (3) are edits of one approved drawing into its own variants, one step deep, never chained. Code: a job that uses a generated picture (`out:X`) says `variant_of: X` (D-121). | FAIL |
 
 ## 3. Hero identity (HI-)
 
 | ID | Rule | Severity |
 |---|---|---|
-| HI-01 | **Cast registry, verbatim.** Every person, animal and recurring prop has one appearance text: age, height in metres, build, the face (HI-05), hair, skin, each garment with its colour, shoes, the one mark (HI-03). Every prompt copies it word for word, never rewritten per shot (CT-02). It lives in the episode's visual script, one block per entity. | FAIL |
+| HI-01 | **Cast registry, verbatim.** Every person, animal and recurring prop has one appearance text: age, height in metres, build, the face (HI-05), hair, skin, each garment with its colour, shoes, the one mark (HI-03). Every prompt copies it word for word, never rewritten per shot (CT-02). It lives in the episode's visual script, one block per entity. Every jobs entry carries its `in_shot` list (D-121); the code checks that each listed entity's block is in the prompt word for word, that no other entity is described, and fails a job without the list. | FAIL |
 | HI-02 | Registry text names colours with plain words and sizes in metres, so two pictures can be compared (Marcus 1.75 m, Ura 1.80 m, hunters 1.70 m, child 1.10 m, mammoths 3.5 / 3 / 2 m). | REVIEW |
 | HI-03 | Distinct silhouettes: no two cast members share hair, garment colour and headgear; every hero has one unmistakable mark (Ura's antlered half-mask, Marcus's grey hoodie and white sneakers, the grey / brown / spotted furs). | REVIEW |
 | HI-04 | **The prompt has three parts in a fixed order:** the style line (the LoRA trigger first, then one sentence that describes THIS scene's style in plain words, e.g. "Style: an exciting adventure style, varied colourful environments, rich detailed backgrounds."; it is written per scene and must fit the channel's one drawn world; creator 2026-11-07 19:33, after the 3-photo comparison where the new sentence looked better), the **scene** (shot size and camera height in plain words, who stands where left to right and near to far, who sits, kneels, turns away, what each hand holds, the landmarks, the light and its direction), then the **appearance** blocks of HI-01 for exactly the people in the shot. Nobody who is not in the shot is described; a person seen only in part (feet, a hand, the mask) gets only the registry words for that part, verbatim. | FAIL |
 | HI-05 | **Faces are written.** Every hero's text names face shape, nose, brows and beard (or clean-shaven); every extra gets two face words. A hero whose face, hair or beard changes on the contact sheet is redrawn with a new seed, never accepted. | REVIEW |
 | HI-06 | **Identity check per batch:** every picture with a hero goes on one contact sheet next to that hero's approved reference; the creator sees it before any picture is used; `qa/identity.py` scores are written as INFO until calibrated on these sheets (BP-133). | REVIEW |
 | HI-07 | One LoRA weight per episode, recorded: **1.0** (the creator, 2026-11-07 19:25 UTC, replacing D-116's 0.7; every first-minute picture v8-v13 was drawn at 1.0; 1.2 drew no extra style and worse staging, run 6). | REVIEW |
-| HI-08 | (proposal, the creator to decide) A route prompt of this kind may hold up to 280 words: the scene part needs positions and the appearance part is fixed, and the face words of HI-05 add about 15 words per hero (v6's best pictures were 139-215 words; the first batch's cave picture, 273 words with five people, tests the top). LT-65's 150-word ceiling and its no-camera, no-position REVIEW stay for the LoRA "moment" prompts. | FAIL above the ceiling |
+| HI-08 | **A route prompt holds at most 280 words** (the creator, 2026-11-07 22:23 UTC, answer 4a, D-121): the scene part needs positions and the appearance part is fixed, and the face words of HI-05 add about 15 words per hero (v6's best pictures were 139-215 words; the first batch's cave picture, 273 words with five people, tested the top). LT-65's 150-word ceiling and its no-camera, no-position REVIEW stay for the LoRA "moment" prompts. Code: `scene_reuse.check_prompts`. | FAIL above 280 words |
 
 ## 4. Dialogue shots (DL-) — extends ED-14, KP-43, AC-15, BP-113
 
 | ID | Rule | Severity |
 |---|---|---|
-| DL-01 | **Source of the figure:** a dialogue close-up is the hero's own close-up picture (MCU, chest up), drawn on a plain flat light-grey background in the scene's light colour and direction, then cut out (BiRefNet, `edit/cutout.py`). One drawing per hero per place and light; its variants (mouth, blink, 2-3 expressions) come from RF-03 (3). | FAIL |
+| DL-01 | **Source of the figure:** a dialogue close-up is the hero's own close-up picture (MCU, chest up), drawn on a plain flat light-grey background in the scene's light colour and direction, then cut out (BiRefNet, `edit/cutout.py`). One drawing per hero per place and light; its variants (mouth, blink, 2-3 expressions) come from RF-03 (3). In the cut plan: `framing: "MCU"`, `h` >= 1.35 and `drop` >= 0.30 (D-121; v1's full figures at h 0.95 were too small to read a mouth). | FAIL |
 | DL-02 | **Background:** the place's own picture, cropped on the side the hero faces from (the listener's side behind the camera, CT-06), blurred so no landmark reads (Gaussian sigma about 2 % of the frame width; a hypothesis until the free test), and its light colour matches the figure's (bounded grade, AC-19). The background moves at about half the figure's speed on a push (2.5D parallax). | FAIL |
 | DL-03 | **Proportions on every cut-out:** scaled uniformly by the registry height and the shot size, never squashed or stretched; the head is the same size in every shot of the same size in a scene (2 % tolerance); the frame cuts at the chest or waist, never at a joint; no edge halo (matte feather 1-2 px, edge colour decontaminated); no piece of the drawn background stays on the figure (AC-15). | FAIL |
-| DL-04 | **Mouth:** at least four states: rest with the lips closed (also used for M/B/P), half-open, wide and round (O/U), all from the same drawing (RF-03 (3)), switched on the read's word and phoneme timings (`audio/words_to_mouth_cues.py`, Scribe timings); the lips close on m/b/p; the mouth never moves on silence or on another speaker's line; the mouth patch keeps the face's position to the pixel (registered by the face box). A take whose lip-sync check fails twice uses a mouth-hidden fallback (KP-43). | FAIL |
+| DL-04 | **Mouth:** at least four states: rest with the lips closed (also used for M/B/P), half-open, wide and round (O/U), all from the same drawing (RF-03 (3)), switched on the read's word and phoneme timings (`audio/words_to_mouth_cues.py`, Scribe timings); the lips close on m/b/p; the mouth never moves on silence or on another speaker's line; the mouth patch keeps the face's position to the pixel (registered by the face box). A take whose lip-sync check fails twice uses a mouth-hidden fallback (KP-43). Code (D-121): `cut_plan.check_dialogue` fails a speaking cut-out without the four `mouth` states and a `mouth_cues` file; `blender/bpy/cut_render.py` switches them by `cut_plan.mouth_track`. **A talking figure without a moving mouth is never rendered.** | FAIL |
 | DL-05 | **The body never freezes:** a breathing cycle of 3-5 s (1-2 % scale on the chest, anchored at the frame's bottom edge), a blink every 2-6 s placed in pauses, never in a stressed word, a head tilt or nod of 1-3 degrees on stressed words, at most one gesture variant per line, and a slow push of the camera that is at rest at the cut (ED-08). | REVIEW |
 | DL-06 | **Eyelines:** the speaker looks off-frame toward the listener's side, and the two speakers of one exchange face opposite sides of the frame (180-degree rule, CT-06, CT-11). A mirrored drawing is allowed only for a three-quarter view (AC-03). | FAIL |
 | DL-07 | **Listener reactions** on every 2nd-4th line and always on news, an insult or a reveal (ED-14); at most BP-113's run of spoken lines before a silent reaction, an insert or a cutaway. | REVIEW |
 | DL-08 | **Two-shots** are a place picture (LV-02) or an over-the-shoulder: the near hero's back or shoulder from their own approved drawing, blurred, in the frame's foreground edge; never a new sharp drawing of the place. | FAIL |
 | DL-09 | **Overlaps and interruptions** ([OVERLAP], [CUT] in the script) cut to the new speaker on the overlap's first frame, the first speaker's mouth stops at the cut; a [DELAY] holds on the listener, not on a frozen speaker. | REVIEW |
 | DL-10 | **Free test first:** one dialogue exchange (two lines, two heroes) is assembled from the first batch's pictures with every DL rule before any other dialogue picture is paid. | FAIL |
+
+## 4b. Cut assembly (AS-) — the creator, 2026-11-07 22:23 UTC (D-121)
+
+The Gemini review of the stone-age minute-1 test (v1, c1, c2, c3b; package `route_test_2026-11/gemini_review/`) and the creator's answers 1a-8a
+(msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWH3yBwffdTpnyWVr339uFoN`): "the point of generating this video and of the review is to optimise the code; update the code with the advice and make
+sure a test checks every rule." Rules of 21:01-21:03 (a lone talking hero and a conversation's start are LTX, then close-ups; actions are
+LTX, never a blurred-background still; collage only for general narration; ambience per place; hard cuts; no mouth-less talking stills)
+now have code. Every rule is checked by `production/cut_plan.py` (`CHECKS` names the function) before anything is rendered, and
+`tests/unit/test_cut_plan.py` proves each one fails on a bad plan.
+
+| ID | Rule | Severity |
+|---|---|---|
+| AS-01 | **An action is an LTX clip.** A line marked `action` (fire fails, a foot in the snow, the drum, spears at a throat) is carried by a V shot, never a still or a cut-out on a blurred plate. | FAIL |
+| AS-02 | **No talking still.** A hero's line is carried by an LTX clip or by a cut-out with a moving mouth (DL-04); never by a graphic (H). | FAIL |
+| AS-03 | **A conversation opens on an LTX two-shot of 4-8 s** (a scene with two or more speakers: type V, `two_shot`), then the close-ups (ED-14, DL-08). v1's cave dialogue had none. | FAIL |
+| AS-04 | **Collage only for narration.** A collage still (C) carries narrator lines or none; a hero's line on a collage fails. | FAIL |
+| AS-05 | **Ambience per place.** Every place on screen has its looping ambience bed in the plan; the assembly mixes it over that place's shots (about 18 dB under the voice, short fades). v1 had none. | FAIL |
+| AS-06 | **Whoever speaks is shown.** A shot that carries a hero's line shows that hero (`shows`, or the cut-out's `who`). v1 put Ura's line at 00:46-00:50 on Marcus's face. | FAIL |
+| AS-07 | **Cuts sit in pauses**, or within 100 ms of a line's start; a cut inside a line is marked `l_cut` on purpose. | REVIEW |
+| AS-08 | **What the line names is on screen.** A line's `must_show` items ("spears", "hunters") are in the shot's `shows`. v1's "Spears. Right at his throat." showed no spear. | FAIL |
+| AS-09 | **Subtitles carry words, not names** (no "MARCUS:" prefix): the face says who speaks. | FAIL |
+| AS-10 | **An LTX clip keeps its own sound** (its native audio, under the voice) unless `mute_reason` is written. v1 dropped it (`-an`). | FAIL |
+| AS-11 | **Clips are never squeezed:** cover the frame and crop centred (`cut_plan.fit_filter`); v1 scaled 1920x1088 to 1280x704 (3.5 % squash). | FAIL |
+| AS-12 | **Graphics are drawn in the house style** by `production/cards.py` (paper, hand ink line, ComicNeue, palette tokens); a flat UI mock-up fails. | FAIL |
+| AS-13 | **A place's state changes only on an event shot** (the fire burning -> embers -> out): a state that changes between shots with no `event` naming it is flagged. | REVIEW |
+| AS-14 | **No paid LTX run on a prompt FAIL:** every Modal launcher runs `production/paid_preflight.py` before `.remote()` (KP-04, KP-11, KP-22, KP-55, KP-59..KP-62 for LTX; RF-/HI- for Qwen). The c3 prompt broke KP-04, KP-22, KP-55 and KP-59 and was paid anyway. | FAIL |
 
 ## 5. Conflicts with existing rules and how they are resolved (D-120)
 
@@ -99,7 +125,7 @@ view), RF- (references), HI- (hero identity) and DL- (dialogue). Research: [E0 a
 ## 6. Open (the creator's)
 
 1. LV-08: one shot or two between two drawings of a place in the same scene.
-2. HI-08: the word ceiling of the route prompt (proposal 280, measured on the first batch).
+2. (decided 2026-11-07 22:23 UTC, D-121) HI-08: 280 words, FAIL.
 3. RF-03 (3)-(4): measured by the first batch (pictures 4, 7, 8, 10 of the plan).
 
 ## 7. Who starts paid runs (creator, 2026-11-07 19:32 UTC)

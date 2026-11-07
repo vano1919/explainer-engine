@@ -4703,3 +4703,29 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 - LTX failure cause (first run, 59 s, ≈$0.07): the first-frame root mapped to the wrong vault prefix. Fixed: `first_frames_resolve` pre-flight in `modal_ltx_jobs_v1.py`, tested in `tests/unit/test_modal_ltx.py`.
 - The creator's word 19:33 UTC: the 3-photo comparison with the added style sentence looked better; the style line carries a per-scene style description that fits the one channel style (HI-04 updated). LTX c1/c2 ran on Modal (1920x1088, 4.4 s and 4.7 s with audio, 118 s each, ≈$0.2 with cold start); clips and `ltx1_sheet.jpg` in `stoneage_pilot_2026-11-07/ltx_first_minute/`.
 
+
+## 2026-11-07 — D-121: every rule has a code check; the cut is gated before it is drawn (Gemini review of minute 1)
+- The creator, 22:23 UTC (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWH3yBwffdTpnyWVr339uFoN`), answers 1a-8a to the Gemini review of the
+  stone-age minute-1 test: "the point of the video and the review is to optimise the code; update the code with the advice and make
+  sure a test checks every rule". The review package and the merged action plan: HF `route_test_2026-11/gemini_review/`.
+- New `production/cut_plan.py`: the cut plan gate (LV-01/02/04/06/07/08, DL-01..09, ED-04, ED-14, AS-01..AS-13) and the FFmpeg
+  assembly that keeps each LTX clip's own sound (v1 used `-an`), mixes one looping ambience bed per place, crops instead of
+  squeezing, and writes subtitles without speaker names. `CHECKS` names the checker of every SCENE_REUSE row; `MANUAL` says why
+  the rest need a person. `blender/bpy/cut_render.py` (moved in from the PC's one-off `minute1_render_plan.py`): gate first,
+  chest-up cut-outs, four mouth states switched by `cut_plan.mouth_track`, `flip_x`, texture edges clipped.
+  `production/cutout_prep.py` trims the matte (v1's white top line); `production/cards.py` draws the phone and number cards in the
+  house style (AS-12).
+- LTX prompts (`scripting/shot_prompt_lint.py`): KP-59 no time labels (answer 1a), KP-60 held props kept, KP-61 one continuous
+  shot, KP-62 a move names its end; KP-04 (two moves), KP-11, KP-55 now FAIL; "stands completely still" is caught.
+- `production/paid_preflight.py` runs before `.remote()` in `modal_ltx_jobs_v1.py` and `modal_qwen_jobs_v15.py` (AS-14): the
+  c3 prompt that was paid fails it (KP-22, KP-49, KP-55, KP-59, KP-61, KP-62, KP-11); a jobs file without `names` fails.
+- `scene_reuse.py`: HI-08 FAIL at 280 words (answer 4a), HI-01 needs each job's `in_shot` list, RF-05 needs `variant_of`,
+  HI-02/HI-05 registry checks, HI-07 one LoRA weight. The pre-D-121 `sa_v11_jobs.json` now fails only HI-01 (no `in_shot`) and
+  RF-05 and must be migrated by its builder before it runs again.
+- Tests: `test_cut_plan` (a good plan passes; a bad plan per rule, 30 rules), `test_rule_coverage`, `test_paid_preflight`,
+  `test_cards_and_cutout_prep`, updated `test_shot_prompt_lint`, `test_scene_reuse_rules`, `test_scene_reuse_docs`. An FFmpeg
+  end-to-end run of the test plan (two 1920x1088 clips with sound, three ambience beds) wrote a 1280x704 cut with sound. Not run
+  here: Blender (not installed in the cloud sandbox), so the renderer is checked by source only.
+- Not done here (other threads): re-generating c3b/c2/the cave two-shot (paid, the pilot thread with the creator's yes) and
+  fixing v1's edit; the pilot's plan and job builders must be brought onto the new fields (`in_shot`, `variant_of`, `names`,
+  `held_props`, cut plan fields) before anything runs. Spend: $0.

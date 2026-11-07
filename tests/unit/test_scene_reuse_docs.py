@@ -9,7 +9,7 @@ DOCS = Path(__file__).resolve().parents[2] / "docs"
 
 
 def test_families_have_one_home_and_every_row_is_defined():
-    for fam in ("LV", "RF", "HI", "DL"):
+    for fam in ("LV", "RF", "HI", "DL", "AS"):
         assert docs_lint.HOMES[fam] == "SCENE_REUSE_RULES.md"
     text = (DOCS / "SCENE_REUSE_RULES.md").read_text(encoding="utf-8")
     rows = set(re.findall(r"^\| ((?:LV|RF|HI|DL)-\d\d) \|", text, re.M))
@@ -33,3 +33,13 @@ def test_decision_logged_and_old_rows_superseded():
     for row in ("KP-54", "KP-56", "KP-57", "KP-58"):
         line = next(l for l in kp.splitlines() if l.startswith(f"| {row} |"))
         assert "superseded 2026-11-07 by D-120" in line
+
+
+def test_cut_assembly_rows_and_the_creator_message():
+    """D-121 (2026-11-07 22:23 UTC): AS-01..AS-14, decided HI-08, the decision logged."""
+    text = (DOCS / "SCENE_REUSE_RULES.md").read_text(encoding="utf-8")
+    assert set(re.findall(r"^\| (AS-\d\d) \|", text, re.M)) == {f"AS-{i:02d}" for i in range(1, 15)}
+    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPWH3yBwffdTpnyWVr339uFoN" in text
+    hi08 = next(l for l in text.splitlines() if l.startswith("| HI-08 |"))
+    assert "280" in hi08 and hi08.rstrip().endswith("FAIL above 280 words |") and "proposal" not in hi08
+    assert "| D-121 |" in (DOCS / "DECISIONS_AND_OPEN_QUESTIONS.md").read_text(encoding="utf-8")

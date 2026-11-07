@@ -65,10 +65,10 @@ def test_blender_gate_luma_and_colour():
     assert G.check(ok, {}, "", None, ["rock next to mammoth"])[0]["id"] == "BL-03"
 
 
-def test_frozen_settle_is_review():
+def test_frozen_settle_fails():   # D-121 (the creator 2026-11-07 22:23 UTC): KP-55 is FAIL
     shot = {"id": "x", "kind": "video", "prompt": "The hunter in grey fur kneels still. Everyone stays in frame. Static camera."}
     found = SPL.check_shot(shot)
-    assert any(f["rule"] == "KP-55" and f["severity"] == "REVIEW" for f in found)
+    assert any(f["rule"] == "KP-55" and f["severity"] == "FAIL" for f in found)
     for sc in S.SCENES:
         assert not SPL.FROZEN_SETTLE.search(S.CARDS[sc]["settle"])
 

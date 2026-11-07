@@ -1,5 +1,5 @@
 
-"""Shot prompts for animated shots: keyframe, next pose, cut and video (KP-01..KP-14, docs/SHOT_PROMPTS.md). stdlib only.
+"""Shot prompts for animated shots: keyframe, next pose, cut and video (KP-01..KP-62, docs/SHOT_PROMPTS.md). stdlib only.
 
 Every rule comes from a picture or clip we made and measured (2026-10-22..24); hypotheses only give REVIEW. A shot is
 ``{"id", "kind": keyframe|nextpose|cut|video, "prompt", "neg"?, "seconds"?, "source"?, "exit"?}``.
@@ -28,7 +28,8 @@ EXIT = re.compile(r"\b(runs?|running|walks?|walking|gallops?|galloping|rides?|ri
                   r"exits?|disappears?)\b|\bout of (the )?frame\b", re.I)
 IN_FRAME = re.compile(r"\b(stays?|remains?|keeps?|kept)\b[^.;]*\bin (the )?frame\b|\bin frame\b", re.I)
 # KP-55 (creator 2026-11-07, Argon's review): a settle that freezes the figures; REVIEW, unmeasured on our clips
-FROZEN_SETTLE = re.compile(r"\b(stands?|standing|kneels?|kneeling|sits?|sitting|holds?|waits?|stays?)\s+still\b", re.I)
+FROZEN_SETTLE = re.compile(r"\b(stands?|standing|kneels?|kneeling|sits?|sitting|holds?|waits?|stays?)\s+(?:\w+ly\s+)?still\b",
+                           re.I)   # D-121: "stands completely still" (c3) too
 # KP-04: one camera sentence
 CAMERA = re.compile(r"\b(static|locked|locked-off|fixed|still) camera\b|\bcamera\s+(follows|tracks|pans|pushes|pulls|tilts|"
                     r"dollies|cranes|rises|travels|moves|holds|stays|orbits|trucks)\b|\b(slow )?(push-in|push in|pull-out|"
@@ -86,6 +87,22 @@ NON_DIALOGUE_VIDEO_MAX_S = sourced_rules.T("BP-108", "non_dialogue_video_max_s")
 LTX_CLIP_TARGET_S = tuple(sourced_rules.T("BP-172", "clip_target_s_band"))
 LTX_CLIP_MAX_S = sourced_rules.T("BP-172", "middle_clip_s_band")[1]
 QUOTE = re.compile(r'"([^"]+)"')
+# KP-59 (the creator 2026-11-07 22:23, answer 1a; Gemini review of c3b): time labels split an LTX clip into separate shots; c3 said
+# "In the first three seconds ... In the last two seconds" and came back with two jump cuts at ~2 s and ~6 s
+TIMESTAMP = re.compile(r"\b\d+(?:\.\d+)?\s*(?:-|\u2013|to)\s*\d+(?:\.\d+)?\s*(?:s|secs?|seconds?)\b|"
+                       r"\b(?:at|by|after|until)\s+\d+(?:\.\d+)?\s*(?:s|secs?|seconds?)\b|\b\d+(?:\.\d+)?\s*s\s*:|"
+                       r"\bthe\s+(?:first|last|final|next|opening|closing)\s+(?:\w+\s+)?(?:seconds?|frames?)\b", re.I)
+# KP-61: one LTX clip is one continuous shot; words that ask for an edit inside it
+CONTINUOUS = re.compile(r"\bsingle,?\s+continuous\b|\bone\s+continuous\b|\bcontinuous,?\s+unbroken\b", re.I)
+EDIT_ASK = re.compile(r"\b(cut|cuts|cutting)\s+to\b|\bnew shot\b|\bnext shot\b|\bscene changes\b|\bsmash cut\b|"
+                      r"\bjump cut\b|\bmontage\b", re.I)
+# KP-60: a held prop is named as kept in the hand (c3b: Marcus put the phone down at ~9 s)
+KEEP_WORDS = re.compile(r"\b(keeps?|keeping|still|holds?|holding|raised|clutch\w*|grips?|gripping)\b", re.I)
+DROP_WORDS = re.compile(r"\b(drops?|dropping|lowers?|lowering|puts?\s+(?:it\s+)?down|sets?\s+(?:it\s+)?down|lets?\s+go|"
+                        r"pockets?|throws?\s+away)\b", re.I)
+# KP-62: a camera move names the frame it ends on (LTX completes a move it can see the end of)
+CAMERA_END = re.compile(r"\b(ends?|ending|settles?|settling|comes? to rest|stops?|stopping|arrives?|lands?)\s+(on|at|in)\b|"
+                        r"\bfinal framing\b|\buntil\b[^.]*\bframe", re.I)
 
 
 def _sentences(text: str) -> list[str]:
@@ -156,11 +173,30 @@ def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
             if not IN_FRAME.search(action) and shot.get("people", 1):
                 add("KP-03", "REVIEW", "say that the heroes stay in frame")
         for m in FROZEN_SETTLE.finditer(action):
-            add("KP-55", "REVIEW", f"'{m.group(0)}' freezes the clip: name small motions (breathing, blinking, the fire flickering)")
+            add("KP-55", "FAIL", f"'{m.group(0)}' freezes the clip: name small motions (breathing, blinking, the fire flickering)")
         if not CAMERA.search(action):
             add("KP-04", "FAIL", "no camera sentence: write 'Static camera.' or the one move")
         elif len({m.group(0).lower() for m in MOVES.finditer(action)}) > 1:
-            add("KP-04", "REVIEW", "more than one camera move: one shot, one move")
+            add("KP-04", "FAIL", "more than one camera move: one shot, one move")
+        for m in TIMESTAMP.finditer(prompt):
+            add("KP-59", "FAIL", f"'{m.group(0)}' is a time label: LTX reads it as a new shot; write one flowing paragraph")
+        if shot.get("route") in ("J2", "J4") or shot.get("ltx"):
+            if not CONTINUOUS.search(prompt):
+                add("KP-61", "FAIL", "say 'a single continuous unbroken shot': one LTX clip is one shot")
+            for m in EDIT_ASK.finditer(action):
+                add("KP-61", "FAIL", f"'{m.group(0)}' asks for an edit inside one clip")
+            moves = {m.group(0).lower() for m in MOVES.finditer(action)}
+            if moves and not (CAMERA_END.search(action) or shot.get("camera_end")):
+                add("KP-62", "FAIL", f"the camera move ({', '.join(sorted(moves))}) names no end framing ('... ends on ...')")
+        for prop in shot.get("held_props", []):
+            kept = [s for s in _sentences(action) if prop.lower() in s.lower() and KEEP_WORDS.search(s)]
+            if not kept:
+                add("KP-60", "FAIL", f"held prop '{prop}': say it stays in the hand ('keeps the {prop} raised in his right hand')")
+            if not shot.get("prop_change"):
+                drop = re.compile(DROP_WORDS.pattern + r"\s+(?:the\s+|his\s+|her\s+|their\s+|its\s+)?(?:\w+\s+)?"
+                                  + re.escape(prop) + r"\b", re.I)
+                for m in drop.finditer(action):
+                    add("KP-60", "FAIL", f"'{m.group(0)}': a held prop is not put down unless prop_change says so")
         if VEHICLE.search(action) and not FOLLOW.search(action):
             add("KP-05", "REVIEW", "a fast vehicle: let the camera travel with it and keep the heroes large")
         seconds = float(shot.get("seconds", 0) or 0)
@@ -178,7 +214,7 @@ def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
                 add("KP-49", "REVIEW", f"{clip:g} s for one LTX clip: plan {lo:g}-{hi:g} s (BP-172, D-116)")
         sounds = SOUNDS.search(prompt)
         if sounds and len([s for s in re.split(r"[,;]", sounds.group(1)) if s.strip(" .")]) > 3:
-            add("KP-11", "REVIEW", "more than three sounds: keep three, the loudest once")
+            add("KP-11", "FAIL", "more than three sounds: keep three, the loudest once")
         if not STRONG.search(action) and shot.get("mode") not in ("insert", "establish"):
             add("KP-12", "REVIEW", "no big action verb: give the actor a start, a peak and a settle with body parts")
         if spoken and seconds:

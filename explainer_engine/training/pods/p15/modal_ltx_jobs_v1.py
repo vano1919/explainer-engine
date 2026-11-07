@@ -186,6 +186,15 @@ def verdict(out, expected):
 
 
 LOCAL_IN = "/in_local"
+LOCAL_SRC = "/home/user/in_ltx1"   # the local folder baked into the image as LOCAL_IN
+
+def preflight():
+    """Free rule check of the jobs file before any paid call (production/paid_preflight.py, the creator 2026-11-07 22:23 UTC)."""
+    from explainer_engine.production import paid_preflight
+    paid_preflight.refuse("ltx", Path(LOCAL_SRC) / JOBS)
+
+
+
 VOL_OUT = "/w/out_ltx1"   # a copy of every output on the Volume too: modal volume get ee-weights out_v3 .
 
 
@@ -272,7 +281,7 @@ if modal is not None:
                  "git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C /workspace/LTX-2 checkout -q "
                  "e98f6d927d83c92ef2be6aec76c8440b19306e39 && pip install -q -e /workspace/LTX-2/packages/ltx-core "
                  "-e /workspace/LTX-2/packages/ltx-pipelines")
-             .add_local_dir("/home/user/in_ltx1", LOCAL_IN))
+             .add_local_dir(LOCAL_SRC, LOCAL_IN))
 
     @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=TIMEOUT_S, retries=0, volumes={"/w": vol},
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
@@ -286,6 +295,7 @@ if modal is not None:
 
     @app.local_entrypoint()
     def smoke():
+        preflight()
         print("GO card", go_gate(), "smoke timeout", SMOKE_TIMEOUT_S, "s", flush=True)
         print("result", ltx_smoke.remote())
 
@@ -300,5 +310,6 @@ if modal is not None:
 
     @app.local_entrypoint()
     def main():
+        preflight()
         print("GO card", go_gate(), "timeout", TIMEOUT_S, "s", flush=True)
         print("result", ltx_jobs.remote())
