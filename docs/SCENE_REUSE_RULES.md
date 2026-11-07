@@ -101,3 +101,11 @@ view), RF- (references), HI- (hero identity) and DL- (dialogue). Research: [E0 a
 1. LV-08: one shot or two between two drawings of a place in the same scene.
 2. HI-08: the word ceiling of the route prompt (proposal 280, measured on the first batch).
 3. RF-03 (3)-(4): measured by the first batch (pictures 4, 7, 8, 10 of the plan).
+
+## 7. Who starts paid runs (creator, 2026-11-07 19:32 UTC)
+
+The PC Remote Control session never starts a paid run (no `modal run`, no ElevenLabs or other paid call, no pod): it does the free
+Blender assembly and runs only sha-checked handoffs. Every paid run is started by the cloud thread, with a price, a cap, the
+creator's yes and one Modal app at a time (the app id goes to the watchdog). Why: the PC session started duplicate A100 apps four
+times on 2026-11-07, doubling the spend and breaking the one-app rule.
+

@@ -143,6 +143,21 @@ def import_check():
     return r.returncode
 
 
+def first_frames_resolve(doc, roots, inputs_dir):
+    """Free pre-flight (the 19:21 failure: P14_LOCAL_ROOTS did not cover the first-frame path, so p14_ltx went to the HF vault and 404'd):
+    every job's first frame must map through ``roots`` ([(vault prefix, local dir)]) to a file that exists in ``inputs_dir`` (by name),
+    or the run stops before any weight is read. Returns the problems."""
+    bad = []
+    for j in doc["jobs"]:
+        path = j["first_frame"]["path"]
+        hit = [pre for pre, _ in roots if path.startswith(pre.rstrip("/") + "/")]
+        if not hit:
+            bad.append(f"{j['id']}: {path} is under none of the local roots")
+        if not (Path(inputs_dir) / Path(path).name).is_file():
+            bad.append(f"{j['id']}: {Path(path).name} is not in the inputs")
+    return bad
+
+
 def deadline_guard(seconds, on_fire):
     """in-container wall: fires ``on_fire`` after ``seconds`` (a daemon timer); the caller's on_fire writes the beat, flushes and exits."""
     t = threading.Timer(seconds, on_fire)
@@ -215,9 +230,13 @@ def body(smoke=False):
     with tarfile.open(b) as t:
         t.extractall("/workspace/ee")
     cfg = json.loads(Path("/workspace/ee/explainer_engine/training/pods/p15/p15.json").read_text())
+    roots = [[IN.replace("in_ltx1", "ltx1"), str(out)]]
+    bad = first_frames_resolve(doc, roots, inp)
+    if bad:
+        raise SystemExit("OR-37: first frames do not resolve: " + "; ".join(bad))
     timeout = SMOKE_TIMEOUT_S if smoke else TIMEOUT_S
     env = dict(os.environ, HF_HOME=str(hf_home), EE_OUT=str(out), PYTHONUNBUFFERED="1", XW_GPU_MODE=cfg["qwen"]["gpu_mode"],
-               EE_DEADLINE=str(time.time() + timeout), P14_LOCAL_ROOTS=json.dumps([[IN.replace("in_ltx1", "ltx1"), str(out)]]), PYTHONPATH="/workspace/ee")
+               EE_DEADLINE=str(time.time() + timeout), P14_LOCAL_ROOTS=json.dumps(roots), PYTHONPATH="/workspace/ee")
     stop = threading.Event()
     th = threading.Thread(target=_uploader, args=(out, stop), daemon=True)
     th.start()

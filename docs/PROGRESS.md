@@ -4697,3 +4697,8 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 ## 2026-11-07 — First-minute pictures, voices, LTX launcher; LoRA weight 1.0 (HI-07)
 - The creator's word 19:25 UTC: the Qwen LoRA weight is 1.0, not 0.7 (HI-07 in docs/SCENE_REUSE_RULES.md updated). Done (paid): 10 first-minute pictures `sa_v12` (Modal, ≈$0.27 + smoke ≈$0.11, HF `route_test_2026-11/sa_test/out_v12`); ElevenLabs first-minute voices, one take each, 19 lines, 1142 of 5000 credits (project files `voices_minute1/`); LTX launcher `modal_ltx_jobs_v1.py` (free check passed; the first paid attempt failed after 59 s ≈$0.07, cause: first-frame path mapping, fixed; the second attempt was stopped on purpose at the creator's word to make 3 style-sentence photos first, ≈$0.1). Test: `tests/unit/test_scene_reuse_rules.py`.
 - Next: the creator's yes on the 3-photo comparison, then the two LTX clips (c1 105, c2 113 frames, cap $1.00).
+
+## 2026-11-07 — The PC session may not start paid runs
+- The creator's word 19:32 UTC: paid runs only from the cloud thread (docs/SCENE_REUSE_RULES.md section 7). A duplicate LTX app of the PC session was stopped the same minute.
+- LTX failure cause (first run, 59 s, ≈$0.07): the first-frame root mapped to the wrong vault prefix. Fixed: `first_frames_resolve` pre-flight in `modal_ltx_jobs_v1.py`, tested in `tests/unit/test_modal_ltx.py`.
+
