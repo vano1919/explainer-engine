@@ -45,7 +45,7 @@ What the tests showed (measured, not assumed):
 | ID-03 | **Distinct silhouettes.** No two cast members share hair colour, garment colour and headgear; every hero has one unmistakable mark (Ura's deer-skull mask with antlers, Marcus's grey hoodie and white sneakers, the hunters' grey / brown / spotted furs). | REVIEW |
 | ID-04 | **Prompt in two parts** (the creator 17:04 and 17:30): the **scene** (camera size and height, who is where, who sits / kneels / stands / turns away, near is large and far is small, the landmarks and light) and the **appearance** block (ID-01, identical in every picture). The style line opens it (UR-22). | FAIL |
 | ID-05 | **Faces.** Every hero's text names the face (shape, nose, brows, beard or none) so faces stop drifting; extras get one face word each. Faces are checked on the contact sheet (CT-14) and a hero who changes face is redrawn. | REVIEW |
-| ID-06 | LoRA weight is one per episode and recorded; the day's tests used 0.7 (v5/v6) and 1.0 (v7). 1.2 is untested. | REVIEW |
+| ID-06 | LoRA weight is one per episode and recorded. **Standard: xworld_v2 at 1.0** (the creator 2026-11-07 19:25 UTC: "0.7 -> 1"); the day's earlier tests used 0.7 (v1, v5, v6), v7-v10 used 1.0. 1.2 is untested. | REVIEW |
 
 ## 4. Dialogue shots (DL-) — extends ED-14, BP-113, AC-15
 
