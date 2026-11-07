@@ -35,5 +35,5 @@ def test_the_rows_follow_or33_in_order():
 def test_or37_environment_is_proven_free_before_the_paid_gpu():
     r = row("OR-37")
     assert r.startswith("| OR-37 | **A paid run's environment is proven before the paid GPU starts**")
-    for item in ("FREE", "cheapest CPU", "every module the run imports", "never first tried on a GPU", "fails fast"):
+    for item in ("FREE", "cheapest CPU", "every module the run imports", "never first tried on a GPU", "fails fast", "cost_timeout", "app ID", "non-empty `str`", "smoke"):
         assert item in r, item
