@@ -181,7 +181,10 @@ CARDS_CLIPS = [{"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu
                {"name": "A100 80GB", "cloud": "SECURE", "price_h": 1.79, "gpu_speed": 0.6},
                {"name": "H100 NVL", "cloud": "COMMUNITY", "price_h": 2.59, "gpu_speed": 1.0},
                # window 2 (the creator's card 2026-11-07 06:04 UTC: 2.8 h): speed ESTIMATED = A100 0.6 x SPEED 0.95
-               {"name": "A100 80GB PCIe", "cloud": "COMMUNITY", "price_h": 1.19, "gpu_speed": 0.57}]
+               {"name": "A100 80GB PCIe", "cloud": "COMMUNITY", "price_h": 1.19, "gpu_speed": 0.57},
+               # window 3 (the creator 2026-11-07 06:08 UTC "4.7 cap"): the other 80 GB LTX-safe cards that pass RP-11 at $4.71 / 2.8 h, speeds ESTIMATED = SPEED / 1.8-style
+               {"name": "H100 PCIe", "cloud": "COMMUNITY", "price_h": 1.99, "gpu_speed": 0.89},
+               {"name": "H100 80GB HBM3", "cloud": "COMMUNITY", "price_h": 2.69, "gpu_speed": 1.11}]
 
 
 def clip_first_frame(clip_id: str) -> str:
@@ -192,7 +195,7 @@ def clip_first_frame(clip_id: str) -> str:
 
 
 LIMITS_CLIPS = {8: {"max_usd": 6.5, "max_hours": 4.7, "max_idle_gpu_share": 0.15},   # PROPOSED, the creator's card decides: A100 COMMUNITY worst $6.43 / 278 min (with the 2 mouth sheets)
-                2: {"max_usd": 3.7, "max_hours": 2.8, "max_idle_gpu_share": 0.15}}   # 2.8 h = the creator 2026-11-07 06:04 (A100 PCIe worst 2.74 h); PROPOSED: A100 COMMUNITY worst $3.65 / 158 min (24 + 2 mouth sheets + 2 clips); 4 sheets $3.79, 6 sheets $3.93
+                2: {"max_usd": 4.71, "max_hours": 2.8, "max_idle_gpu_share": 0.15}}   # 2.8 h = the creator 2026-11-07 06:04 (A100 PCIe worst 2.74 h); PROPOSED: A100 COMMUNITY worst $3.65 / 158 min (24 + 2 mouth sheets + 2 clips); 4 sheets $3.79, 6 sheets $3.93
 
 
 def schedule_qwen_clips(n: int, limits: dict | None = None) -> dict:
