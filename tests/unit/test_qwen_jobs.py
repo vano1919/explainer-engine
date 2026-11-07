@@ -21,7 +21,7 @@ def test_the_run_has_every_test_and_refs_resolve_in_order():
     w07, w10 = ({j["name"] for j in g["jobs"]} for g in doc["groups"])
     assert [g["lora_weight"] for g in doc["groups"]] == [0.7, 1.0]
     assert {f"{s}_wide_w07" for s in S.SCENES} <= w07 and {f"{s}_wide_w10" for s in S.SCENES} <= w10
-    assert {f"{s}_codes_w10" for s in S.SCENES} <= w10          # 15:08 UTC: the code test at LoRA 1.0
+    assert {f"{s}_{k}_w10" for s in S.SCENES for k in ("codes", "magenta", "plainedit")} <= w10   # 15:08-15:29 UTC: code test at LoRA 1.0
     assert {f"{s}_{a}_w07" for s in S.SCENES for a in S.ANGLES[s]} <= w07
     b = J.asset_jobs()                                            # 15:12 UTC: the Qwen-first assets run on their own, first
     assert QJ.check_jobs(b) == [] and b["out"].endswith("out_v3b") and b["inputs"] == {}
@@ -45,9 +45,15 @@ def test_check_refuses_a_ref_made_later_or_an_unpinned_input_or_a_dict_prompt():
     assert "out:b is not made before it" in bad and "not pinned" in bad and "non-empty str" in bad and "divisible" in bad
 
 
-def test_code_prompt_names_codes_not_sides_and_asks_for_no_letters():
+def test_code_prompt_removes_by_code_and_the_plain_twin_removes_the_same_things():
+    """15:29 UTC: a code only proves itself when an edit follows it (the same removal in codes and in plain words)."""
     p = J.code_prompt("ice")
-    assert "B1 is the big woolly mammoth" in p and "paint no codes or letters" in p and "on the left" not in p
+    assert "B1 is the big woolly mammoth" in p and "paint no codes or letters" in p and "Remove B2 and C2 completely" in p
+    for sc, (a, b) in J.REMOVE.items():
+        codes = J.CODES[sc]
+        assert a in codes and b in codes and f"Remove {codes[a]} and {codes[b]}" in J.code_prompt(sc)
+        plain = J.code_prompt(sc, plain=True)
+        assert J._words_of(sc, a) in plain and J._words_of(sc, b) in plain and not any(c in plain for c in codes.values())
 
 
 def test_launcher_timeout_from_cap_and_expected_outputs():
@@ -65,3 +71,35 @@ def test_magenta_variant_forbids_only_the_magenta_codes():
     j = next(j for j in doc["groups"][1]["jobs"] if j["name"] == "cave_magenta_w10")
     assert "magenta" in j["negative"] and "text" not in j["negative"] and "lettering" not in j["negative"]
     assert "remove every magenta code" in j["prompt"]
+
+
+class _FakeApi:
+    def __init__(self, fail_times, headers=None):
+        self.fail, self.calls, self.committed, self.headers = fail_times, 0, [], headers or {}
+
+    def create_commit(self, repo_id, repo_type, operations, commit_message):
+        self.calls += 1
+        if self.calls <= self.fail:
+            err = RuntimeError("429 Client Error: Too Many Requests, rate limit")
+            err.response = type("R", (), {"headers": self.headers})()
+            raise err
+        self.committed += [o.path_in_repo for o in operations]
+
+
+def test_uploader_batches_one_commit_and_never_drops_a_file_under_429(tmp_path):
+    """HF limit (2026-11-07 15:33 UTC): one commit per tick with all new files; 429 is retried with backoff and Retry-After; the final
+    flush retries a bounded number of times; a file that could not go stays unseen and goes with the next tick."""
+    (tmp_path / "qwen").mkdir()
+    for n in "abc":
+        (tmp_path / "qwen" / f"{n}.png").write_bytes(b"x")
+    waits, seen = [], set()
+    api = _FakeApi(fail_times=3, headers={"Retry-After": "40"})
+    n = len([f for f in tmp_path.rglob("*") if f.is_file()])
+    assert MJ._upload_batch(api, tmp_path, seen, sleep=waits.append, final=True) == n >= 3
+    assert api.calls == 4 and len(api.committed) == n and waits[0] >= 40 and waits == sorted(waits)
+    assert MJ._upload_batch(api, tmp_path, seen, sleep=waits.append) == 0        # nothing new: no commit at all
+    assert api.calls == 4
+    (tmp_path / "qwen" / "d.png").write_bytes(b"y")
+    stuck = _FakeApi(fail_times=99)
+    assert MJ._upload_batch(stuck, tmp_path, seen, sleep=lambda s: None) == 0 and stuck.calls == 2   # a tick tries twice, then waits for the next
+    assert MJ._upload_batch(api, tmp_path, seen, sleep=waits.append) == 1 and api.committed[-1].endswith("qwen/d.png")

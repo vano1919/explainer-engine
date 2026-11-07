@@ -80,21 +80,53 @@ def _sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
-def _uploader(out, stop):
-    from huggingface_hub import HfApi
-    api, seen = HfApi(token=_tok()), set()
+def _is_limit(e):
+    t = repr(e).lower()
+    return "429" in t or "rate limit" in t or "too many requests" in t or "503" in t or "502" in t
+
+
+def _retry_after(e, default):
+    r = getattr(getattr(e, "response", None), "headers", None) or {}
+    try:
+        return max(float(r.get("Retry-After", 0)), default)
+    except (TypeError, ValueError):
+        return default
+
+
+def _upload_batch(api, out, seen, sleep=time.sleep, base=15.0, tries=6, final=False):
+    """One commit with every new file (HF caps commits per hour, 128 for us on 2026-11-07: one commit per file ran into it and lost
+    the last photos). A 429 or 5xx is retried with exponential backoff that honours Retry-After; a file is never dropped: it stays
+    unseen and the next tick sends it. At the final flush the retries are bounded and the Volume copy (persist) is the safety net."""
+    from huggingface_hub import CommitOperationAdd
+    new = [p for p in sorted(Path(out).rglob("*")) if p.is_file() and p.stat().st_size > 0 and (str(p), p.stat().st_size) not in seen]
+    if not new:
+        return 0
+    ops = [CommitOperationAdd(path_in_repo=f"{OUT}/{p.relative_to(out)}", path_or_fileobj=str(p)) for p in new]
+    keys = [(str(p), p.stat().st_size) for p in new]
+    for k in range(tries if final else 2):
+        try:
+            api.create_commit(repo_id=HF_REPO, repo_type="dataset", operations=ops, commit_message=f"{OUT}: {len(new)} files")
+            seen.update(keys)
+            return len(new)
+        except Exception as e:  # noqa: BLE001
+            print("upload failed", len(new), "files", repr(e)[:160], flush=True)
+            if not _is_limit(e):
+                return 0
+            sleep(_retry_after(e, base * 2 ** k))
+    return 0
+
+
+def _uploader(out, stop, api=None, interval=60.0):
+    if api is None:
+        from huggingface_hub import HfApi
+        api = HfApi(token=_tok())
+    seen = set()
     while True:
         done = stop.is_set()
-        for p in sorted(Path(out).rglob("*")):
-            if p.is_file() and p.stat().st_size > 0 and (str(p), p.stat().st_size) not in seen:
-                try:
-                    api.upload_file(path_or_fileobj=str(p), path_in_repo=f"{OUT}/{p.relative_to(out)}", repo_id=HF_REPO, repo_type="dataset")
-                    seen.add((str(p), p.stat().st_size))
-                except Exception as e:  # noqa: BLE001
-                    print("upload failed", p.name, repr(e)[:120], flush=True)
+        _upload_batch(api, out, seen, final=done)
         if done:
             return
-        stop.wait(20)
+        stop.wait(interval)
 
 
 CHECK = ("import sys; sys.path.insert(0, '/workspace/VideoX-Fun'); "

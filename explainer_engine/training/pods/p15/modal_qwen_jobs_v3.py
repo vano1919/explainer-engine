@@ -14,13 +14,13 @@ except ImportError:
 HF_REPO = "vano1919/tmr-artifacts"
 IN = "route_test_2026-11/sa_test/in_v3"
 JOBS = "sa_v3_jobs.json"   # run 2: masters at 0.7/1.0, test A angles, test C codes (the assets, test B, ran first as v3b)
-SHAS = {JOBS: "30385cf1b37f9b9f86930797209158f12bc4374bfb3e943671f1cce13da8ee90", "qwen_jobs.py": "179d1d0ee57009bdf3113385d5ea220bae9e69f785809a1e3e7c759293b378bd"}
+SHAS = {JOBS: "a488f18f20b2bd83bdabb42b66bea81574ac5b90610bb80931d6148cc2ab04eb", "qwen_jobs.py": "179d1d0ee57009bdf3113385d5ea220bae9e69f785809a1e3e7c759293b378bd"}
 OUT = "route_test_2026-11/sa_test/out_v3"   # must equal the jobs file's "out" (checked at start)
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 SECRET_NAME = "huggingface-secret"
 USD_PER_H = 2.5      # A100-80 list price, modal.com/pricing, checked 2026-11-07 (CPU/RAM extra, covered by the 0.9 factor)
-CAP_USD, SMOKE_CAP_USD, COLD_START_S = 0.9, 0.25, 90   # 18 pictures in two processes, ~15 min expected (~$0.65); needs the creator's yes
+CAP_USD, SMOKE_CAP_USD, COLD_START_S = 1.0, 0.25, 90   # 21 pictures in two processes, ~17 min expected (~$0.72); the creator said yes to the plan 15:23 UTC
 
 
 def cost_timeout(cap_usd, usd_per_h=USD_PER_H, cold_start_s=COLD_START_S):
@@ -80,21 +80,53 @@ def _sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
-def _uploader(out, stop):
-    from huggingface_hub import HfApi
-    api, seen = HfApi(token=_tok()), set()
+def _is_limit(e):
+    t = repr(e).lower()
+    return "429" in t or "rate limit" in t or "too many requests" in t or "503" in t or "502" in t
+
+
+def _retry_after(e, default):
+    r = getattr(getattr(e, "response", None), "headers", None) or {}
+    try:
+        return max(float(r.get("Retry-After", 0)), default)
+    except (TypeError, ValueError):
+        return default
+
+
+def _upload_batch(api, out, seen, sleep=time.sleep, base=15.0, tries=6, final=False):
+    """One commit with every new file (HF caps commits per hour, 128 for us on 2026-11-07: one commit per file ran into it and lost
+    the last photos). A 429 or 5xx is retried with exponential backoff that honours Retry-After; a file is never dropped: it stays
+    unseen and the next tick sends it. At the final flush the retries are bounded and the Volume copy (persist) is the safety net."""
+    from huggingface_hub import CommitOperationAdd
+    new = [p for p in sorted(Path(out).rglob("*")) if p.is_file() and p.stat().st_size > 0 and (str(p), p.stat().st_size) not in seen]
+    if not new:
+        return 0
+    ops = [CommitOperationAdd(path_in_repo=f"{OUT}/{p.relative_to(out)}", path_or_fileobj=str(p)) for p in new]
+    keys = [(str(p), p.stat().st_size) for p in new]
+    for k in range(tries if final else 2):
+        try:
+            api.create_commit(repo_id=HF_REPO, repo_type="dataset", operations=ops, commit_message=f"{OUT}: {len(new)} files")
+            seen.update(keys)
+            return len(new)
+        except Exception as e:  # noqa: BLE001
+            print("upload failed", len(new), "files", repr(e)[:160], flush=True)
+            if not _is_limit(e):
+                return 0
+            sleep(_retry_after(e, base * 2 ** k))
+    return 0
+
+
+def _uploader(out, stop, api=None, interval=60.0):
+    if api is None:
+        from huggingface_hub import HfApi
+        api = HfApi(token=_tok())
+    seen = set()
     while True:
         done = stop.is_set()
-        for p in sorted(Path(out).rglob("*")):
-            if p.is_file() and p.stat().st_size > 0 and (str(p), p.stat().st_size) not in seen:
-                try:
-                    api.upload_file(path_or_fileobj=str(p), path_in_repo=f"{OUT}/{p.relative_to(out)}", repo_id=HF_REPO, repo_type="dataset")
-                    seen.add((str(p), p.stat().st_size))
-                except Exception as e:  # noqa: BLE001
-                    print("upload failed", p.name, repr(e)[:120], flush=True)
+        _upload_batch(api, out, seen, final=done)
         if done:
             return
-        stop.wait(20)
+        stop.wait(interval)
 
 
 CHECK = ("import sys; sys.path.insert(0, '/workspace/VideoX-Fun'); "
@@ -140,6 +172,19 @@ def verdict(out, expected):
 
 
 
+LOCAL_IN = "/in_local"
+VOL_OUT = "/w/out_v3"   # a copy of every output on the Volume too: modal volume get ee-weights out_v3 .
+
+
+def persist(out):
+    import shutil
+    try:
+        shutil.copytree(out, VOL_OUT, dirs_exist_ok=True)
+        vol.commit()
+    except Exception as e:  # noqa: BLE001
+        print("volume copy failed", repr(e)[:200], flush=True)
+
+
 def expected_outputs(doc, smoke=False):
     return ["qwen/smoke.json"] if smoke else [f"qwen/{j['name']}.png" for g in doc["groups"] for j in g["jobs"]]
 
@@ -155,7 +200,8 @@ def body(smoke=False):
     print("linked", link_hf_cache("/w", hf_home), "weight files", flush=True)
 
     def fetch(name, sha):
-        p = hf_hub_download(HF_REPO, f"{IN}/{name}", repo_type="dataset", local_dir="/tmp/dl", token=_tok())
+        local = Path(LOCAL_IN) / name   # inputs baked into the image (HF commits were rate-limited 15:30 UTC); the sha pin still holds
+        p = local if local.is_file() else hf_hub_download(HF_REPO, f"{IN}/{name}", repo_type="dataset", local_dir="/tmp/dl", token=_tok())
         if _sha(p) != sha:
             raise SystemExit(f"{name}: sha256 mismatch")
         (inp / name).write_bytes(Path(p).read_bytes())
@@ -182,6 +228,7 @@ def body(smoke=False):
 
     def _fire():
         (out / "beat.txt").write_text("TIMEOUT: the in-container deadline fired\n")
+        persist(out)
         stop.set()
         th.join(timeout=40)
         os._exit(3)
@@ -198,6 +245,7 @@ def body(smoke=False):
     if rc != 0:
         v["state"] = "FAILED"
     (out / "beat.txt").write_text(f"{v['state']} rc={rc} ok={v['n_ok']}/{v['n_expected']} seconds={int(time.time() - t0)}\n")
+    persist(out)
     stop.set()
     th.join(timeout=300)
     return {"rc": rc, "seconds": int(time.time() - t0), **v}
@@ -215,7 +263,8 @@ if modal is not None:
                  "git clone -q https://github.com/aigc-apps/VideoX-Fun.git /workspace/VideoX-Fun && "
                  "git -C /workspace/VideoX-Fun checkout -q e8c314fbfa494d0429bbef605c9f6112b79a7ead",
                  "pip install -q einops timm tomesd torchdiffeq torchsde omegaconf SentencePiece ftfy func_timeout 'imageio[ffmpeg]' "
-                 "opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations kornia"))
+                 "opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations kornia")
+             .add_local_dir("/home/user/in_v3", LOCAL_IN))
 
     @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=TIMEOUT_S, retries=0, volumes={"/w": vol},
                   secrets=[modal.Secret.from_name(SECRET_NAME)])
