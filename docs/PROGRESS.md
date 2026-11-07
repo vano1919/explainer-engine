@@ -4543,3 +4543,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   {still_needs,visual_script}.py`, its three new rule rows in `sourced_rules.json` and its report, so its tests
   (`test_j5_ltx_minimisation.py`, `test_still_needs.py`) cannot run and were left out. Argon is asked to resend those files.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-07 — Kids get kids' voices: VC-10 and the `voice-search` skill (thread "Pick voices for dialogue")
+- Cause found: on 2026-11-06 the J5 scout (a boy of about 13 on his card) was cast from the library with age `young`, which in
+  ElevenLabs is a young adult (Cam, then "Ben Young Man", labelled `young`). `casting.py` had only young / middle_aged / old,
+  and "teen" mapped to `young`, so nothing could tell a boy from a 30-year-old.
+- Fix (`audio/casting.py`): ages `child` and `teen`; `age_of` reads them before `young`; a kid is searched without the age
+  filter by `kid_search` words; `kid_bands` reads the voice's own description and labels (audience phrases struck out,
+  adult words and ages 18+ refuse); `kid_clash` makes `eligible`/`score` refuse an adult voice for a kid and a kid voice for an
+  adult. Rule VC-10 in `docs/STORY_ENGINE.md`; skill `voice-search` (the free procedure and the casting card).
+- Tests: `tests/unit/test_casting_kids.py` (4) on voices copied from the free library listing of 2026-11-07.
+- Cost: $0, no audio generated (free `creative_list_voices` listings only).
