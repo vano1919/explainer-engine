@@ -4643,3 +4643,12 @@ vs the prompt's words, BL-03 clashes) runs on each still before any paid Qwen ca
 and all four camp figures (too dark). `shot_prompt_lint` KP-55 REVIEWs a frozen settle ("kneels still"). The Modal test now draws every
 frame at style LoRA 0.7 and 1.0, each weight in its own process (the merge is in place). Not taken: Argon's QWEN_MAX_WORDS 90/130 (it
 read an older 40). Tests: `test_stoneage_prompt_gates.py`, `test_modal_guard.py`.
+
+## 2026-11-07 Argon Part 4 applied (KP-56, KP-57, creator 14:55 UTC)
+Re-measured on our 6 photos (OpenCV, full-size): luma and RGB match Argon's table exactly; edge density and Laplacian variance are
+smaller at full size (cave 3.90 % vs 2.28 %, 366 vs 209) but point the same way; ice_cc0 kept 2 of 3 mammoths (seen). So CC0 leaves the
+Qwen stills (KP-56, KP-53 reworded): new way `flat3` in `stoneage_test_layouts` (dark teeth and drifts in front, asymmetric walls and huts
+in the middle: west ledge with talismans, east fissure with a rim light, tusk arch, hide rack, the chief's larger hut, a bone gate; a
+lit back plane), `textured()` FAILs any CC0 mesh or texture in a Qwen way. KP-57: `pilot_stills.prompts(master=True)` puts the painted
+wide master as Image 2 behind the new angle's Blender still (Argon's prefix minus the word "camera", LT-65). All 6 stills (block, flat3)
+pass `qa/blender_gate.py` with 0 FAIL after two light fixes; inputs on HF `route_test_2026-11/sa_test/in_v2/`, outputs to `out_v2/`.

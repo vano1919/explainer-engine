@@ -23,7 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 LAYOUTS = HERE / "world_layouts.json"
 SCENES = ("cave", "ice", "camp")
-WAYS = ("block", "cc0")
+WAYS = ("block", "flat3")   # KP-56 (creator 14:55 UTC, Argon Part 4): cc0 lost on the 6 photos and stays only as the record of that test
 PRESET = {"cave": "interior_hearth", "ice": "overcast_day", "camp": "night_camp"}   # light_presets.json
 SHOT = {"cave": "sa_cave_wide", "ice": "sa_ice_wide", "camp": "sa_camp_wide"}
 PLACE = {"cave": "a dark ice-age cave", "ice": "a wide snow plain at dusk in the ice age",
@@ -68,6 +68,24 @@ def shape(name, add, pos, dims, colour, yaw=0.0, pitch=0.0, texture=None, tile=1
     if texture:
         b["texture"], b["tile"] = texture, tile
     return b
+
+
+def dress(b):
+    """KP-56 flat3 dressing: an unnamed flat-coloured shape that KP-53's clash check watches like a CC0 piece."""
+    b["dress"] = True
+    return b
+
+
+def flat_tooth(name, x, y, h, w, colour, down=False, top=0.0):
+    """A jagged rock tooth (stalagmite, or a stalactite hanging from ``top`` when ``down``): a cone of 5 sides, flat colour."""
+    b = shape(name, "cone", [x, y, (top - h / 2) if down else h / 2], [w, w * 0.8, h], colour, yaw=17.0 * (x + y), pitch=180.0 if down else 0.0)
+    b["params"] = dict(b["params"], vertices=5)
+    return dress(b)
+
+
+def textured(blocks: list) -> list[str]:
+    """KP-56: CC0 meshes and texture maps in a still (none allowed in a Qwen way)."""
+    return [b["name"] for b in blocks if b.get("type") == "piece" or b.get("texture")]
 
 
 def piece(name, asset, pos, yaw=0.0, scale=1.0):
@@ -141,6 +159,31 @@ def _cave(way):
                    shape("wall_r", "cube", [7.2, 5, 2.6], [1.4, 16, 5.2], "#443A32"),
                    shape("ceiling", "cube", [0, 5, 5.5], [15, 17, 0.7], "#392F28")]
         structure = ["floor", "back_wall", "wall_l", "wall_r", "ceiling"]
+    elif way == "flat3":   # KP-56: three flat planes, dark teeth in front, asymmetric walls, a lit back wall
+        blocks += [shape("floor", "plane", [0, 5, 0], [14, 16, 1], "#3A3028"),
+                   shape("wall_l", "cube", [-7.2, 5, 2.6], [1.4, 16, 5.2], "#54473B"),
+                   shape("ceiling", "cube", [0, 5, 5.5], [15, 17, 0.7], "#392F28")]
+        structure = ["floor", "wall_l", "ceiling"]
+        for k, (x, h, yw) in enumerate(((-5.6, 5.2, 6.0), (-2.6, 6.0, -4.0), (0.4, 5.6, 3.0), (3.2, 6.4, -7.0), (6.0, 5.0, 5.0))):
+            blocks.append(shape(f"back_slab_{k}", "cube", [x, 11.3 + 0.25 * (k % 2), h / 2], [3.2, 1.2, h], "#7A6450", yaw=yw))
+            structure.append(f"back_slab_{k}")
+        blocks += [shape("wall_r_front", "cube", [7.2, 2.6, 2.6], [1.4, 5.2, 5.2], "#54473B"),   # the east wall's fissure at y ~ 6
+                   shape("wall_r_back", "cube", [7.2, 9.0, 2.6], [1.4, 5.6, 5.2], "#54473B"),
+                   shape("west_ledge", "cube", [-6.1, 9.8, 2.3], [1.0, 2.6, 0.3], "#6A5745", yaw=4.0)]
+        structure += ["wall_r_front", "wall_r_back", "west_ledge"]
+        for k, y in enumerate((9.0, 9.8, 10.6)):
+            blocks.append(dress(shape(f"talisman_{k}", "cylinder", [-5.8, y, 1.85], [0.08, 0.08, 0.55], "#E6DCC2")))
+        for k, (x, y, h, w) in enumerate(((-4.0, 3.0, 1.4, 0.7), (3.4, 2.4, 1.2, 0.6), (-4.6, 8.6, 1.5, 0.7), (4.4, 8.8, 1.3, 0.6))):
+            blocks.append(flat_tooth(f"stalactite_{k}", x, y, h, w, "#2E2620", down=True, top=5.15))
+        for k, (x, y, h, w) in enumerate(((-2.3, 0.6, 2.6, 0.9), (2.5, 0.5, 2.2, 0.8), (-1.6, 0.2, 1.3, 0.6))):
+            blocks.append(flat_tooth(f"tooth_{k}", x, y, h, w, "#2A221C"))
+        import math
+        for k in range(8):
+            a = k * math.pi / 4
+            blocks.append(dress(shape(f"ring_{k}", "uv_sphere", [0.75 * math.cos(a), 5.0 + 0.75 * math.sin(a), 0.08], [0.36, 0.36, 0.2], "#4A3B2C")))
+        blocks += [dress(shape("ochre_bowl", "cylinder", [2.8, 8.6, 0.1], [0.42, 0.42, 0.2], "#B8332A")),
+                   lamp("fissure_rim", [8.6, 6.0, 2.6], 300.0, [1.0, 0.62, 0.32], 0.4, False)]
+        structure.append("fissure_rim")
     else:
         tex = "texture.ph_rocky_terrain_diff"
         blocks += [shape("floor", "plane", [0, 5, 0], [14, 16, 1], "#5A5148", texture=tex, tile=6.0)]
@@ -159,7 +202,7 @@ def _cave(way):
         structure.append("ceiling")
         blocks += [piece("boulder_l", "model.ph_boulder_01", [-5.6, 9.8, 0.0], 30.0, 1.4), piece("boulder_r", "model.ph_namaqualand_boulder_04", [5.0, 8.0, 0.0], -40.0, 0.9)]
         structure += ["boulder_l", "boulder_r"]
-    blocks += painted_wall(0.0, 10.4 if way == "block" else 8.9, 0.2)
+    blocks += painted_wall(0.0, 8.9 if way == "cc0" else 10.4, 0.2)
     blocks += fire("hearth", 0.0, 5.0)
     if way == "cc0":
         blocks.append(piece("fire_pit", "model.ph_stone_fire_pit", [0.0, 5.0, 0.0], 0.0, 1.2))
@@ -178,19 +221,31 @@ def _ice(way):
                    shape("hill_r", "uv_sphere", [40, 110, 0], [110, 70, 30], "#C1CBD4"),
                    shape("ridge", "cube", [0, 150, 16], [700, 12, 32], "#AEB9C4")]
         structure = ["ground", "hill_l", "hill_r", "ridge"]
+    elif way == "flat3":   # KP-56: ice-blue drifts in front (never brown rocks), jagged ice blocks in the middle, hills and a ridge behind
+        blocks += [shape("ground", "plane", [0, 40, 0], [220, 220, 1], "#DDE4EA"),
+                   shape("hill_l", "uv_sphere", [-45, 90, 0], [90, 60, 24], "#C9D3DB"),
+                   shape("hill_r", "uv_sphere", [40, 110, 0], [110, 70, 30], "#C1CBD4")]
+        structure = ["ground", "hill_l", "hill_r"]
+        for k, (x, w, h, yw) in enumerate(((-60, 40, 18, 8), (-20, 30, 26, -6), (15, 36, 22, 10), (55, 44, 30, -4))):
+            blocks.append(shape(f"ridge_{k}", "cube", [x, 150 + 6 * (k % 2), h / 2], [w, 10, h], "#A9BDD0", yaw=yw))
+            structure.append(f"ridge_{k}")
+        for n, x, y, d in (("drift_l", -7.0, 5.0, [7.0, 3.2, 1.3]), ("drift_r", 9.5, 6.0, [8.0, 3.6, 1.5]), ("drift_c", -2.8, 2.2, [3.0, 1.6, 0.5])):
+            blocks.append(dress(shape(n, "uv_sphere", [x, y, 0], d, "#B8D0E8")))
+        for k, (x, y, h, w, yw) in enumerate(((-20, 36, 3.6, 3.0, 20), (-23, 38, 2.4, 2.2, -15), (32, 46, 4.0, 3.4, 10))):
+            blocks.append(dress(shape(f"ice_block_{k}", "cube", [x, y, h / 2], [w, w * 0.8, h], "#9FBBD6", yaw=yw)))
     else:
         blocks += [shape("ground", "plane", [0, 40, 0], [220, 220, 1], "#DDE4EA"),
                    shape("hill_l", "uv_sphere", [-45, 90, 0], [90, 60, 24], "#C9D3DB"),
                    shape("hill_r", "uv_sphere", [40, 110, 0], [110, 70, 30], "#C1CBD4")]
         structure = ["ground", "hill_l", "hill_r"]
         spots = [("rock_a", "model.ph_namaqualand_boulder_02", [-9, 14, 0], 20, 2.2), ("rock_b", "model.ph_namaqualand_boulder_04", [12, 20, 0], -30, 1.5),
-                 ("rock_c", "model.ph_boulder_01", [-16, 27, 0], 80, 2.4), ("rock_d", "model.ph_namaqualand_boulder_02", [24, 34, 0], 10, 3.0),
+                 ("rock_c", "model.ph_boulder_01", [-16, 27, 0], 80, 2.4), ("rock_d", "model.ph_namaqualand_boulder_02", [-24, 40, 0], 10, 3.0),
                  ("trunk_a", "model.ph_dead_tree_trunk", [-14, 8, 0], 70, 1.4), ("trunk_b", "model.ph_dead_tree_trunk", [8, 6, 0], -20, 1.0),
                  ("stump_a", "model.ph_tree_stump_01", [-6, 6, 0], 0, 1.3)]
         for n, a, p, yw, sc in spots:
             blocks.append(piece(n, a, p, yw, sc))
             structure.append(n)
-    for k, (x, y, yw, big) in enumerate(((-6.0, 19.0, 70.0, 1.0), (3.0, 25.0, 100.0, 1.1), (13.0, 31.0, 80.0, 0.9))):
+    for k, (x, y, yw, big) in enumerate(((-6.0, 19.0, 70.0, 1.25), (3.0, 25.0, 100.0, 1.0), (18.0, 30.0, 80.0, 0.9))):
         blocks += mammoth(f"mammoth_{k}", x, y, yw, big)
     return blocks, cast, structure, [[-1.5, -6.0, 1.3], None, [3.0, 18.0, 2.2], None, 24, 1]
 
@@ -205,6 +260,26 @@ def _camp(way):
         blocks += [shape("ground", "plane", [0, 20, 0], [900, 900, 1], "#59606A")]
         structure = ["ground"]
         blocks += [shape("log_seat", "cylinder", [-2.4, 5.2, 0.25], [0.5, 0.5, 2.0], "#4A3524", 0.0, pitch=90.0)]
+    elif way == "flat3":   # KP-56: log and fire ring in front, four different huts (tusk arch, hide rack, the chief's, the bone gate)
+        blocks += [shape("ground", "plane", [0, 20, 0], [900, 900, 1], "#59606A"),
+                   shape("horizon_band", "cube", [0, 160, 5], [900, 1, 10], "#3A506B")]
+        structure = ["ground", "horizon_band"]
+        blocks += [shape("log_seat", "cylinder", [-2.4, 5.2, 0.25], [0.5, 0.5, 2.0], "#5C3A21", 0.0, pitch=90.0)]
+        import math
+        for k in range(8):
+            a = k * math.pi / 4
+            blocks.append(dress(shape(f"ring_{k}", "uv_sphere", [0.8 * math.cos(a), 5.5 + 0.8 * math.sin(a), 0.08], [0.38, 0.38, 0.22], "#4A3B2C")))
+        ivory, wood = "#E6DCC2", "#5C3A21"
+        blocks += [dress(shape("tusk_arch_l", "cone", [-9.9, 12.4, 1.3], [0.3, 0.3, 2.6], ivory, pitch=-14.0)),
+                   dress(shape("tusk_arch_r", "cone", [-7.1, 12.4, 1.3], [0.3, 0.3, 2.6], ivory, pitch=14.0)),
+                   dress(shape("rack_post_a", "cylinder", [-1.4, 15.6, 0.9], [0.12, 0.12, 1.8], wood)),
+                   dress(shape("rack_post_b", "cylinder", [0.2, 15.6, 0.9], [0.12, 0.12, 1.8], wood)),
+                   dress(shape("rack_hide", "cube", [-0.6, 15.6, 1.25], [1.4, 0.05, 0.95], "#C9A36B")),
+                   dress(shape("gate_post_a", "cone", [11.4, 12.0, 1.6], [0.34, 0.34, 3.2], ivory)),
+                   dress(shape("gate_post_b", "cone", [13.0, 12.0, 1.6], [0.34, 0.34, 3.2], ivory)),
+                   dress(shape("gate_bar", "cylinder", [12.2, 12.0, 3.0], [0.16, 0.16, 2.0], ivory, 90.0, pitch=90.0)),
+                   dress(shape("spear_a", "cylinder", [10.4, 10.8, 1.1], [0.07, 0.07, 2.4], wood, 0.0, pitch=22.0)),
+                   dress(shape("spear_b", "cylinder", [10.4, 10.8, 1.1], [0.07, 0.07, 2.4], wood, 0.0, pitch=-22.0))]
     else:
         blocks += [shape("ground", "plane", [0, 20, 0], [900, 900, 1], "#59606A")]
         structure = ["ground"]
@@ -215,11 +290,14 @@ def _camp(way):
             blocks.append(piece(n, a, p, yw, sc))
             structure.append(n)
     for k, (x, y, r) in enumerate(((-8.5, 14.0, 1.8), (-3.0, 17.0, 1.6), (3.5, 18.0, 1.7), (9.0, 14.5, 1.8))):
-        blocks += hut(f"hut_{k}", x, y, r)
+        big = way == "flat3" and k == 2   # KP-56: the chief's hut is the largest
+        blocks += hut(f"hut_{k}", x, y, 2.3 if big else r, 3.0 if big else 2.2)
     blocks += fire("camp", 0.0, 5.5)
     blocks += [lamp("storm_fill", [0.0, 4.0, 6.0], 2400.0, [0.55, 0.65, 0.95], 2.0, False),   # BL-01: the camp measured luma 0.06-0.09
-               lamp("fire_key", [0.0, 3.0, 2.2], 900.0, [1.0, 0.6, 0.3], 0.6, False)]
-    structure += ["storm_fill", "fire_key"]
+               lamp("fire_key", [0.0, 3.0, 2.2], 900.0, [1.0, 0.6, 0.3], 0.6, False),
+               lamp("torch_fill", [4.0, 6.6, 2.4], 260.0, [1.0, 0.62, 0.32], 0.6, False),   # BL-01: torch_b measured 0.144
+               lamp("torch_fill_l", [-3.6, 6.8, 2.4], 300.0, [1.0, 0.62, 0.32], 0.6, False)]   # BL-01: then torch_a 0.140
+    structure += ["storm_fill", "fire_key", "torch_fill", "torch_fill_l"]
     return blocks, cast, structure, [[0.0, -3.4, 1.6], None, [0.0, 8.0, 1.5], None, 24, 1]
 
 
@@ -304,7 +382,7 @@ def clutter_clashes(blocks: list, cast: list, cam: list, scene: str, structure: 
     subj = [(n, project(cam, _subject_point(blocks, cast, n))) for n in SUBJECTS[scene]]
     out = []
     for b in blocks:
-        if b.get("type") != "piece" or b["name"] in TAGS[scene] or b["name"] in ("fire_pit",):
+        if not (b.get("type") == "piece" or b.get("dress")) or b["name"] in TAGS[scene] or b["name"] in ("fire_pit",) or b["name"].startswith("ring_"):   # the fire's own ring
             continue
         px = project(cam, [b["pos"][0], b["pos"][1], 0.6])
         if px[2] <= 0 or not (-0.05 <= px[0] <= 1.05):
@@ -318,6 +396,8 @@ def clutter_clashes(blocks: list, cast: list, cam: list, scene: str, structure: 
 def layout(scene: str, way: str) -> dict:
     blocks, cast, structure, cam = {"cave": _cave, "ice": _ice, "camp": _camp}[scene](way)
     blocks = blocks + proxies(cast)
+    if way != "cc0" and textured(blocks):
+        raise ValueError(f"sa_{scene}_{way}: CC0 mesh or texture in a Qwen still (KP-56): {textured(blocks)}")
     clash = clutter_clashes(blocks, cast, cam, scene, structure)
     if clash:
         raise ValueError(f"sa_{scene}_{way}: unnamed pieces next to named subjects (KP-53): {clash}")

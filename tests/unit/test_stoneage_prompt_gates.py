@@ -23,14 +23,14 @@ def test_every_named_subject_has_a_side_and_counts_are_words():
                 assert any(x in L["tags"][n] for x in ("on the left", "in the middle", "on the right")), (sc, w, n)
             q = PS.prompts(S.SHOT[sc], layout=L)["qwen"]
             assert q.count(" on the ") + q.count(" in the middle") >= len(S.SUBJECTS[sc])
-    camp = S.layout("camp", "cc0")
+    camp = S.layout("camp", "flat3")
     assert camp["tags"]["hut_0_wall"].startswith("four ")
     assert "a round hut" not in PS.prompts(S.SHOT["camp"], layout=camp)["qwen"]
 
 
 def test_people_get_distinct_proxies():
     for sc in ("cave", "camp"):
-        L = S.layout(sc, "cc0")
+        L = S.layout(sc, "flat3")
         cols = {}
         for b in L["blocks"]:
             if b.get("name", "").endswith("_head_proxy"):
@@ -71,3 +71,30 @@ def test_frozen_settle_is_review():
     assert any(f["rule"] == "KP-55" and f["severity"] == "REVIEW" for f in found)
     for sc in S.SCENES:
         assert not SPL.FROZEN_SETTLE.search(S.CARDS[sc]["settle"])
+
+
+def test_flat3_has_no_cc0_and_refuses_one():
+    """KP-56 (creator 14:55 UTC, Argon Part 4): richness from flat silhouette planes, never CC0 meshes or textures."""
+    for sc in S.SCENES:
+        L = S.layout(sc, "flat3")
+        assert S.textured(L["blocks"]) == []
+        assert any(b.get("dress") for b in L["blocks"])
+    assert S.textured(S._cave("cc0")[0])
+    huts = {b["name"]: b["scale"][0] for b in S.layout("camp", "flat3")["blocks"] if b["name"].endswith("_wall") and b["name"].startswith("hut_")}
+    assert max(huts, key=huts.get) == "hut_2_wall"
+
+
+def test_flat3_layout_raises_on_a_cc0_piece(monkeypatch):
+    real = S._ice
+    monkeypatch.setattr(S, "_ice", lambda way: (lambda r: (r[0] + [S.piece("rock_x", "model.ph_boulder_01", [-30.0, 60.0, 0.0])],) + r[1:])(real(way)))
+    import pytest
+    with pytest.raises(ValueError, match="KP-56"):
+        S.layout("ice", "flat3")
+
+
+def test_secondary_angle_puts_the_painted_master_second():
+    """KP-57: Image 1 = the new angle's Blender still, Image 2 = the painted master; the fixed prefix is not counted."""
+    L = S.layout("cave", "flat3")
+    p = PS.prompts(S.SHOT["cave"], layout=L, master=True)
+    assert p["qwen"].startswith("xworld style, " + PS.MASTER_PREFIX)
+    assert p["qwen_words"] == PS.prompts(S.SHOT["cave"], layout=L)["qwen_words"] <= PS.QWEN_MAX_WORDS

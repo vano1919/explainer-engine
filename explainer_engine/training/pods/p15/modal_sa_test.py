@@ -2,8 +2,8 @@
 2026-11-07 13:16 UTC). One A100-80 function, hard timeout 25 min, retries 0. Run on the creator's PC:
     set EE_MODAL_GO=cmsg_01Hnu5zB86sjUj5GtTgaUkPWKzpwThjB1xvJu5yyAbzP6j   (PowerShell: $env:EE_MODAL_GO="...")
     modal run modal_sa_test.py
-Inputs (6 stills, prompts, runner) come from HF vano1919/tmr-artifacts route_test_2026-11/sa_test/in/ held to the sha256 below; photos go to
-.../sa_test/out/qwen/ as they are drawn (OR-33). Weights come from the Volume ee-weights; nothing is downloaded from outside."""
+Inputs (6 stills, prompts, runner) come from HF vano1919/tmr-artifacts route_test_2026-11/sa_test/in_v2/ held to the sha256 below; photos go to
+.../sa_test/out_v2/qwen/ as they are drawn (OR-33). Weights come from the Volume ee-weights; nothing is downloaded from outside."""
 import hashlib, json, os, subprocess, tarfile, threading, time
 from pathlib import Path
 try:
@@ -12,17 +12,17 @@ except ImportError:
     modal = None
 
 HF_REPO = "vano1919/tmr-artifacts"
-IN = "route_test_2026-11/sa_test/in"
-OUT = "route_test_2026-11/sa_test/out"
+IN = "route_test_2026-11/sa_test/in_v2"   # Argon review re-render (KP-50..55); in/ keeps the first test
+OUT = "route_test_2026-11/sa_test/out_v2"
 SHAS = {
- "sa_camp_block.png": "78a9470037b1095d5fe65acf03b44c170cecbada362a43de72ef044882836917",
- "sa_camp_cc0.png": "94bb50ff599d82139755935dcdd06a193a5c06ec0c1f87592ab6e4b70f7f01cd",
- "sa_cave_block.png": "39e7097bbd01191a536b93688514791ceba62920d1cd3bb39a628f5d7d7ef172",
- "sa_cave_cc0.png": "6d6f453107e52dc93abf654bcbc1712779e21f79cd5303ba79cce120c2b8edc1",
- "sa_ice_block.png": "543eb2f1ec7685da411a4325bfb7a0086b1ac4db0dd5cef294a3742e2365158d",
- "sa_ice_cc0.png": "8ca83e3d218d3089af415c605298453a4dd7acb75c9f03c01db7adb4f3eb8ab8",
- "sa_prompts.json": "ab9c2a1e15ad4de0c50a0aa7e098cc7ce3f48edea4ce2a16990cdc2b53f164f3",
- "sa_test_qwen.py": "9558462c0f95f6f39e2015a73063b3306277e7a6d4a2257ff5daa19f1a332219"}
+ "sa_camp_block.png": "db5e6c9f8814c3b1a99f81086dcb6bbe39ecb6ad55d1badf0c1498d9a33ed9f6",
+ "sa_camp_flat3.png": "e909321cb9ddbef2427dba0718921a4fbdb2dbade8d0467c8f902a8762538e3b",
+ "sa_cave_block.png": "b3aff0e9a09f06c82a4a249e02d6fe18ad02e996b4c1c0fb4c455db37466ae42",
+ "sa_cave_flat3.png": "f619ffcb370f14e9ac785c7d4a61ca5c752b8d1ddf1a94a2a9adf9fadb673cae",
+ "sa_ice_block.png": "94f36f95f8573558c65e81caaccdab8392b960da9f1211307875fb4740f1018d",
+ "sa_ice_flat3.png": "ee61f371f4391a532a7b1719d46f3f1a11949ee7b35bfd7d64dd271c907cce1a",
+ "sa_prompts.json": "7ca6620dd46916b26d1f5fae36cd07c00f1bb4d4ee1075003f3b49b1fff715ba",
+ "sa_test_qwen.py": "03d8a86c64c11fd1c8aee19218d33b4afd93968ffd4e3c8b17f933adbd1e2622"}
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 SECRET_NAME = "huggingface-secret"

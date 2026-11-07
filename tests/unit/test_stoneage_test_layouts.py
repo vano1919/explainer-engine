@@ -17,7 +17,7 @@ def test_six_layouts_are_in_world_layouts_and_dress_their_shot():
 
 def test_both_ways_hold_the_same_story_props_cast_and_camera():
     for scene in ST.SCENES:
-        a, b = ST.layout(scene, "block"), ST.layout(scene, "cc0")
+        a, b = ST.layout(scene, "block"), ST.layout(scene, "flat3")
         assert a["cast"] == b["cast"] and a["shots"] == b["shots"] and a["cards"] == b["cards"] and a["tags"] == b["tags"]
         story = {n for n in (x["name"] for x in a["blocks"]) if n.startswith(("mammoth_", "hut_", "paint_", "sky_", "hand_", "hearth_", "camp_"))}
         assert story <= {x["name"] for x in b["blocks"]}

@@ -123,12 +123,17 @@ def _names(text: str) -> list[str]:
     return _NAME.findall(text)
 
 
-def prompts(sid: str, layout: dict | None = None) -> dict:
+MASTER_PREFIX = ("Image 1 is this shot's layout: keep every place, size and pose from Image 1. Image 2 is the master scene of the "
+                 "same place: copy the exact rock style, colours, lighting and character outfits from Image 2.")   # KP-57 (Argon Part 4)
+
+
+def prompts(sid: str, layout: dict | None = None, master: bool = False) -> dict:
     """The shot card -> the Qwen prompt and the LTX prompt (Fable, 2026-11-06 15:57 UTC: generated, never written by hand).
 
     Qwen: the trigger, the clip's START (only the shot's ``in_shot`` names, each tag said once), the place and era, the light; no
     camera or layout words (Image 1, the Blender still, carries the layout); at most QWEN_MAX_WORDS and no FAIL or REVIEW from
-    ``qa/style_prompt.check``. LTX: the style sentence, the motion, then the settle at the end, and a static camera."""
+    ``qa/style_prompt.check``. ``master``: a secondary angle (KP-57): Image 2 is the environment's painted wide master, hero
+    sheets follow from Image 3, and the fixed MASTER_PREFIX does not count towards QWEN_MAX_WORDS. LTX: the style sentence, the motion, then the settle at the end, and a static camera."""
     from explainer_engine.blender import world_kits as WK
     from explainer_engine.qa import style_prompt as SP
     owner = layout_of(sid) if layout is None else None
@@ -165,10 +170,10 @@ def prompts(sid: str, layout: dict | None = None) -> dict:
     if set(refs) - set(keep or ()):
         raise ContractError(f"{sid}: a reference image of {sorted(set(refs) - set(keep or ()))}, who is not in the shot")
     # the edit's images (p14_qwen B): Image 1 the Blender still carries places, sizes and poses; one hero sheet per listed name
-    who = "".join(f" Image {i} is the {_short(tags[n])}." for i, n in enumerate(refs, 2))
-    pre = f"Image 1 is the scene: keep every place, size and pose.{who}"
+    who = "".join(f" Image {i} is the {_short(tags[n])}." for i, n in enumerate(refs, 3 if master else 2))
+    pre = (MASTER_PREFIX if master else "Image 1 is the scene: keep every place, size and pose.") + who
     qwen = f"{SP.TRIGGER}, {pre} {start[0].upper() + start[1:]}, in {spec['place']}, lit by {fill(light, seen)}."
-    n = len(qwen.split())
+    n = len(qwen.split()) - (len(MASTER_PREFIX.split()) - len("Image 1 is the scene: keep every place, size and pose.".split()) if master else 0)
     if n > QWEN_MAX_WORDS:
         raise ContractError(f"{sid}: the Qwen prompt has {n} words, over {QWEN_MAX_WORDS}")
     bad = [f for f in SP.check(qwen, sub_category=spec.get("sub_category")) if f["severity"] in ("FAIL", "REVIEW")]
