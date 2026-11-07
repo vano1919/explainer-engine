@@ -279,7 +279,7 @@ Source quality: the report mixes books, studies and video transcripts and some o
 3. **A visual noun the viewer cannot place yet is clarified in the same line** ("sticky little fingers on the screen", not "fingers on glass"). **No stock similes** ("like water in a desert"): use a concrete number. **An overlap must answer what was just said**: the interrupter reacts to the other hero's words, not to a whisper at a phone.
 4. **Show the realisation, do not state the moral**: let a hero notice the object that carries it. A big-city hero speaks in whole conditionals ("If you keep me here, all you get is..."), not telegraphese.
 5. **Show the physical cause, not what characters think** ("A dead black glass. A fake god. The hunters raise their spears."), and tactile words instead of trailer lines ("Wet red clay. His palm beside Ura's.").
-6. **Tags sit inside the spoken text, after the speaker's colon** (`URA: <break time="0.7s" /> Quiet.`), never on the speaker name.
+6. **SSML `<break>` sits inside the spoken text, after the speaker's colon** (`URA: <break time="0.7s" /> Quiet.`). `[OVERLAP: ..]`/`[CUT: ..]` are edit instructions, not ElevenLabs tags: they stay on the speaker label, left of the colon, and the TTS builder strips them (the model could read them aloud). A cut-off line is written the same way everywhere (`--`). The narrator uses no em dash: a period or a comma (creator 2026-11-07, v4.3).
 
 ### Few-shot test pairs (run by tests/unit/test_speech_registers_fewshot.py)
 GOOD (register lint must pass):
