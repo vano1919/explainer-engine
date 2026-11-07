@@ -34,6 +34,8 @@ def check_jobs(doc: dict) -> list[str]:
                     bad.append(f"{j['name']}: input {name} is not pinned in inputs")
                 if kind == "out" and name not in made and name not in doc.get("inputs", {}):
                     bad.append(f"{j['name']}: out:{name} is not made before it")
+                if kind not in ("in", "out"):
+                    bad.append(f"{j['name']}: ref type {kind!r} is unknown (use in: or out:)")
             made.add(j["name"])
     return bad
 

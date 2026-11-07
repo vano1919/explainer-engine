@@ -4688,3 +4688,8 @@ D-101, CT-03, CT-07, ED-14 and standing order 14 amended; LT-65 scoped to the Lo
 or two shots between two drawings in a scene), HI-08 (route prompt ceiling, proposal 280 words). Visual script v3 and the plan of the
 first 10 pictures are in project files (`stoneage_pilot_2026-11-07/VISUAL_SCRIPT_v3.md`, `one_place_2026-11-07/`); nothing paid ran.
 Test: `tests/unit/test_scene_reuse_docs.py`.
+
+## 2026-11-07 — One-place route, free part of the first 10 pictures (D-120)
+- Done (free): `production/scene_reuse.py` (LV-01 place register, RF-01/RF-04 references, HI-04/HI-01/HI-08 prompt shape), `qwen_jobs.check_jobs` now refuses an unknown ref type, launcher `modal_qwen_jobs_v11.py` (caps $0.75 main / $0.25 smoke, run `sa_v11`, jobs sha c64c82f6…, runner sha d7b74883…). Test: `tests/unit/test_scene_reuse_rules.py` (+ qwen_jobs, modal_guard, docs tests pass).
+- Cost: $0.00. Not started: the paid run needs the creator's new yes with the price (≈$0.40 expected, ≤$1.00 with smoke); photo renders stay off until then.
+- Next: upload `in_v11` to HF, OR-37 import check, smoke after his yes, then contact sheet with hero comparisons (HI-06).
