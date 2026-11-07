@@ -110,5 +110,5 @@ creator's yes and one Modal app at a time (the app id goes to the watchdog). Why
 times on 2026-11-07, doubling the spend and breaking the one-app rule.
 
 **Links of finished material (creator, 2026-11-07 20:16):** every finished item (picture, voice, clip, sheet, video) is reported to the
-creator with its exact Hugging Face link (`https://huggingface.co/datasets/vano1919/tmr-artifacts/blob/main/<path>`), always, in the same message.
+creator with its exact Hugging Face link (`https://huggingface.co/datasets/vano1919/tmr-artifacts/blob/main/<path>`), always, in the same message; only NEW items, never links already sent (creator 20:18).
 
