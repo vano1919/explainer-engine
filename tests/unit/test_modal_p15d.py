@@ -131,3 +131,13 @@ def test_failed_signal_ends_the_video_function(monkeypatch):
     body = inspect.getsource(M.ltx_body)
     assert '"failed" not in signal' in body
     assert 'signal["failed"]' in inspect.getsource(M.qwen_body)
+
+
+def test_split_entrypoints_are_gated_and_video_takes_the_chosen_first_frame():
+    import inspect
+    src = Path(M.__file__).read_text()
+    for name in ("def photos", "def video", "def main"):
+        i = src.index(name)
+        assert "go_gate()" in src[i:i + 400], name
+    assert inspect.signature(M.ltx_body).parameters["first"].default == M.FIRST
+    assert M.ltx_body.__defaults__[0] is None   # alone: no signal, the first frame is already on HF

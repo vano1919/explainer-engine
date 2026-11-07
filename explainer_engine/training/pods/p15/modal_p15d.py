@@ -161,7 +161,8 @@ QWEN_RUNNER = (
     "sys.exit(Q.main(['--out', sys.argv[1], *a]))")
 
 
-def qwen_body(signal):
+def qwen_body(signal=None):
+    signal = {} if signal is None else signal
     t0, out = time.time(), Path("/workspace/out")
     env = _prepare(out)
     stop = threading.Event()
@@ -186,8 +187,11 @@ def qwen_body(signal):
     return {"rc": rc, "seconds": int(time.time() - t0)}
 
 
-def ltx_body(signal):
+def ltx_body(signal=None, first=FIRST, job=LTX_JOB):
+    """``signal`` None = the photos were drawn in an earlier run: the first frame is already on HF."""
     from huggingface_hub import hf_hub_download
+    if signal is None:
+        signal = {"first_frame": 0}
     t0, out = time.time(), Path("/workspace/out")
     env = _prepare(out)
     stop = threading.Event()
@@ -199,10 +203,10 @@ def ltx_body(signal):
         while "first_frame" not in signal and "failed" not in signal and time.time() < deadline:
             time.sleep(5)
         if "first_frame" in signal:
-            p = hf_hub_download(HF_REPO, f"{HF_PREFIX}/first_frames/{FIRST}.png", repo_type="dataset", token=_tok())
+            p = hf_hub_download(HF_REPO, f"{HF_PREFIX}/first_frames/{first}.png", repo_type="dataset", token=_tok())
             (out / "first_frames").mkdir(parents=True, exist_ok=True)
-            (out / "first_frames" / f"{FIRST}.png").write_bytes(Path(p).read_bytes())
-            rc = _run(["python3", "-m", "explainer_engine.training.pods.p15.p15_ltx", "--job", LTX_JOB, "--variant-frames"], env,
+            (out / "first_frames" / f"{first}.png").write_bytes(Path(p).read_bytes())
+            rc = _run(["python3", "-m", "explainer_engine.training.pods.p15.p15_ltx", "--job", job, "--variant-frames"], env,
                       out / "ltx_clip_modal.log")
         else:
             rc = 2
@@ -240,6 +244,23 @@ if modal is not None:
                   volumes={"/w": vol}, secrets=secrets)
     def ltx_clip():
         return ltx_body(signal)
+
+    @app.function(image=image, gpu="A100-80GB", cpu=2, memory=65536, timeout=CAPS["ltx_timeout_s"], retries=0,
+                  volumes={"/w": vol}, secrets=secrets)
+    def ltx_clip_alone(first: str = FIRST, job: str = LTX_JOB):
+        return ltx_body(None, first, job)
+
+    @app.local_entrypoint()
+    def photos():
+        """stage 2 alone (the creator, 2026-11-07: render -> photos -> video, a check after each)."""
+        print("GO card", go_gate(), flush=True)
+        print("qwen", qwen_pictures.remote())
+
+    @app.local_entrypoint()
+    def video(first: str = FIRST, job: str = LTX_JOB):
+        """stage 3 alone: the clip starts from the first frame the creator chose (default: the S2 battle frame)."""
+        print("GO card", go_gate(), flush=True)
+        print("ltx", ltx_clip_alone.remote(first, job))
 
     @app.local_entrypoint()
     def main():
