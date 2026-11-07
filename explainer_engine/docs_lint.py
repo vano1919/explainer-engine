@@ -50,6 +50,10 @@ HOMES = {
     "KG": "KEYFRAME_GATE.md",
     "LY": "KEYFRAME_GATE.md",  # shot layout from real sizes and the camera (2026-10-24)  # keyframe gate: picture checks, cause log, LoRA/base pairing (2026-10-24)
     "AC": "ASSET_COMPOSE.md",  # shots composed from reusable assets (2026-10-25)
+    "LV": "SCENE_REUSE_RULES.md",  # one place, one picture (D-120, 2026-11-07)
+    "RF": "SCENE_REUSE_RULES.md",
+    "HI": "SCENE_REUSE_RULES.md",
+    "DL": "SCENE_REUSE_RULES.md",
     "CT": "SHOT_CONTINUITY.md",  # continuity cards of the shots of one scene (D-75, 2026-10-25)
     "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
     "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)

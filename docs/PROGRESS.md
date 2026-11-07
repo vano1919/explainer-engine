@@ -4675,3 +4675,16 @@ the facing of each figure taken from the layout's cast row + the place's colours
 launched its own "v6" (scene words with positions) at the same moment because it could not be reached when the cloud thread started A (the relay to it
 failed): two A100 apps ran at once, a breach of the one-run-at-a-time order (rule 7a); caps $0.6 + $0.5, expected ~$0.6. Lesson: before starting a paid
 run check `modal app list` AND confirm the PC session has nothing queued.
+
+## 2026-11-07 One place, one picture (D-120, the creator 18:08 UTC)
+The creator's rule after the day's Qwen tests: a place is drawn more than once only with its background blurred or when the two
+drawings never sit in consecutive shots; no rendered (Blender) picture is a Qwen reference; staging comes from detailed scene words,
+identity from a verbatim cast registry plus the hero's approved reference picture. `docs/SCENE_REUSE_RULES.md` (LV-, RF-, HI-, DL-)
+merges the PC session's first version (9dccfcb on systemic/next-video, prefixes SR/RF/ID/DL; SR- was taken by ORCHESTRATION, so the
+families were renamed) and adds the reference map (RF-03), face words (HI-05), partial-figure words (HI-04), the dialogue render
+(DL-01..DL-10: hero close-up drawn on flat grey, cut out over the place's blurred crop, four mouth states from edits of the same
+drawing, breathing, blinks, eyelines, over-the-shoulder two-shots, overlaps). D-120 logged; KP-54/56/57/58 superseded; D-116 J2,
+D-101, CT-03, CT-07, ED-14 and standing order 14 amended; LT-65 scoped to the LoRA moment prompts. Open for the creator: LV-08 (one
+or two shots between two drawings in a scene), HI-08 (route prompt ceiling, proposal 280 words). Visual script v3 and the plan of the
+first 10 pictures are in project files (`stoneage_pilot_2026-11-07/VISUAL_SCRIPT_v3.md`, `one_place_2026-11-07/`); nothing paid ran.
+Test: `tests/unit/test_scene_reuse_docs.py`.
