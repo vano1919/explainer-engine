@@ -9567,6 +9567,7 @@
     "wall_r",
     "ceiling",
     "cave_fill",
+    "cave_fill_l",
     "cave_fill_r"
    ],
    "blocks": [
@@ -10070,13 +10071,33 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 520.0,
+      "energy": 700.0,
       "color": [
        1.0,
        0.72,
        0.5
       ],
       "radius_m": 1.2,
+      "shadow": false
+     }
+    },
+    {
+     "type": "light",
+     "name": "cave_fill_l",
+     "pos": [
+      -4.6,
+      2.4,
+      2.4
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 240.0,
+      "color": [
+       1.0,
+       0.7,
+       0.48
+      ],
+      "radius_m": 1.0,
       "shadow": false
      }
     },
@@ -10090,7 +10111,7 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 260.0,
+      "energy": 300.0,
       "color": [
        1.0,
        0.7,
@@ -10433,6 +10454,7 @@
      "hearth_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "hearth_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "cave_fill_l": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill_r": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
@@ -11695,7 +11717,7 @@
       5.0,
       3.0
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -11717,7 +11739,7 @@
       2.375,
       1.875
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -11739,7 +11761,7 @@
       2.0,
       2.25
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -11761,7 +11783,7 @@
       0.562,
       2.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0,
      "pitch": 20.0
     },
@@ -11832,7 +11854,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -11854,7 +11876,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -11876,7 +11898,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -11898,7 +11920,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -11920,7 +11942,7 @@
       4.0,
       2.4
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -11942,7 +11964,7 @@
       1.9,
       1.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -11964,7 +11986,7 @@
       1.6,
       1.8
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -11986,7 +12008,7 @@
       0.45,
       2.0
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0,
      "pitch": 20.0
     },
@@ -12057,7 +12079,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -12079,7 +12101,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -12101,7 +12123,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -12123,7 +12145,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -12145,7 +12167,7 @@
       3.6,
       2.16
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -12167,7 +12189,7 @@
       1.71,
       1.35
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -12189,7 +12211,7 @@
       1.44,
       1.62
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -12211,7 +12233,7 @@
       0.405,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0,
      "pitch": 20.0
     },
@@ -12282,7 +12304,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -12304,7 +12326,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -12326,7 +12348,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -12348,7 +12370,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -15023,6 +15045,7 @@
     "west_ledge",
     "fissure_rim",
     "cave_fill",
+    "cave_fill_l",
     "cave_fill_r"
    ],
    "blocks": [
@@ -16102,13 +16125,33 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 520.0,
+      "energy": 700.0,
       "color": [
        1.0,
        0.72,
        0.5
       ],
       "radius_m": 1.2,
+      "shadow": false
+     }
+    },
+    {
+     "type": "light",
+     "name": "cave_fill_l",
+     "pos": [
+      -4.6,
+      2.4,
+      2.4
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 240.0,
+      "color": [
+       1.0,
+       0.7,
+       0.48
+      ],
+      "radius_m": 1.0,
       "shadow": false
      }
     },
@@ -16122,7 +16165,7 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 260.0,
+      "energy": 300.0,
       "color": [
        1.0,
        0.7,
@@ -16491,6 +16534,7 @@
      "hearth_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "hearth_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "cave_fill_l": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill_r": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
@@ -16847,7 +16891,7 @@
       5.0,
       3.0
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -16869,7 +16913,7 @@
       2.375,
       1.875
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -16891,7 +16935,7 @@
       2.0,
       2.25
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -16913,7 +16957,7 @@
       0.562,
       2.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0,
      "pitch": 20.0
     },
@@ -16984,7 +17028,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -17006,7 +17050,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -17028,7 +17072,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -17050,7 +17094,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -17072,7 +17116,7 @@
       4.0,
       2.4
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -17094,7 +17138,7 @@
       1.9,
       1.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -17116,7 +17160,7 @@
       1.6,
       1.8
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -17138,7 +17182,7 @@
       0.45,
       2.0
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0,
      "pitch": 20.0
     },
@@ -17209,7 +17253,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -17231,7 +17275,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -17253,7 +17297,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -17275,7 +17319,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -17297,7 +17341,7 @@
       3.6,
       2.16
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -17319,7 +17363,7 @@
       1.71,
       1.35
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -17341,7 +17385,7 @@
       1.44,
       1.62
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -17363,7 +17407,7 @@
       0.405,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0,
      "pitch": 20.0
     },
@@ -17434,7 +17478,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -17456,7 +17500,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -17478,7 +17522,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -17500,7 +17544,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -18852,6 +18896,7 @@
     "west_ledge",
     "fissure_rim",
     "cave_fill",
+    "cave_fill_l",
     "cave_fill_r"
    ],
    "blocks": [
@@ -19931,13 +19976,33 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 520.0,
+      "energy": 700.0,
       "color": [
        1.0,
        0.72,
        0.5
       ],
       "radius_m": 1.2,
+      "shadow": false
+     }
+    },
+    {
+     "type": "light",
+     "name": "cave_fill_l",
+     "pos": [
+      -4.6,
+      2.4,
+      2.4
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 240.0,
+      "color": [
+       1.0,
+       0.7,
+       0.48
+      ],
+      "radius_m": 1.0,
       "shadow": false
      }
     },
@@ -19951,7 +20016,7 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 260.0,
+      "energy": 300.0,
       "color": [
        1.0,
        0.7,
@@ -20320,6 +20385,7 @@
      "hearth_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "hearth_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "cave_fill_l": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill_r": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
@@ -20391,6 +20457,7 @@
     "west_ledge",
     "fissure_rim",
     "cave_fill",
+    "cave_fill_l",
     "cave_fill_r"
    ],
    "blocks": [
@@ -21470,13 +21537,33 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 520.0,
+      "energy": 700.0,
       "color": [
        1.0,
        0.72,
        0.5
       ],
       "radius_m": 1.2,
+      "shadow": false
+     }
+    },
+    {
+     "type": "light",
+     "name": "cave_fill_l",
+     "pos": [
+      -4.6,
+      2.4,
+      2.4
+     ],
+     "light": {
+      "type": "POINT",
+      "energy": 240.0,
+      "color": [
+       1.0,
+       0.7,
+       0.48
+      ],
+      "radius_m": 1.0,
       "shadow": false
      }
     },
@@ -21490,7 +21577,7 @@
      ],
      "light": {
       "type": "POINT",
-      "energy": 260.0,
+      "energy": 300.0,
       "color": [
        1.0,
        0.7,
@@ -21859,6 +21946,7 @@
      "hearth_log_b": "the place or the story's prop: held identical in both ways except the place's own build",
      "hearth_glow": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill": "the place or the story's prop: held identical in both ways except the place's own build",
+     "cave_fill_l": "the place or the story's prop: held identical in both ways except the place's own build",
      "cave_fill_r": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_head_proxy": "the place or the story's prop: held identical in both ways except the place's own build",
      "ura_antler_0": "the place or the story's prop: held identical in both ways except the place's own build",
@@ -22215,7 +22303,7 @@
       5.0,
       3.0
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -22237,7 +22325,7 @@
       2.375,
       1.875
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -22259,7 +22347,7 @@
       2.0,
       2.25
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -22281,7 +22369,7 @@
       0.562,
       2.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0,
      "pitch": 20.0
     },
@@ -22352,7 +22440,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -22374,7 +22462,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -22396,7 +22484,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -22418,7 +22506,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -22440,7 +22528,7 @@
       4.0,
       2.4
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -22462,7 +22550,7 @@
       1.9,
       1.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -22484,7 +22572,7 @@
       1.6,
       1.8
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -22506,7 +22594,7 @@
       0.45,
       2.0
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0,
      "pitch": 20.0
     },
@@ -22577,7 +22665,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -22599,7 +22687,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -22621,7 +22709,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -22643,7 +22731,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -22665,7 +22753,7 @@
       3.6,
       2.16
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -22687,7 +22775,7 @@
       1.71,
       1.35
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -22709,7 +22797,7 @@
       1.44,
       1.62
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -22731,7 +22819,7 @@
       0.405,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0,
      "pitch": 20.0
     },
@@ -22802,7 +22890,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -22824,7 +22912,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -22846,7 +22934,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -22868,7 +22956,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -23306,7 +23394,7 @@
       5.0,
       3.0
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -23328,7 +23416,7 @@
       2.375,
       1.875
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -23350,7 +23438,7 @@
       2.0,
       2.25
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 70.0
     },
     {
@@ -23372,7 +23460,7 @@
       0.562,
       2.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0,
      "pitch": 20.0
     },
@@ -23443,7 +23531,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -23465,7 +23553,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -23487,7 +23575,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -23509,7 +23597,7 @@
       0.875,
       2.25
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 70.0
     },
     {
@@ -23531,7 +23619,7 @@
       4.0,
       2.4
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -23553,7 +23641,7 @@
       1.9,
       1.5
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -23575,7 +23663,7 @@
       1.6,
       1.8
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 100.0
     },
     {
@@ -23597,7 +23685,7 @@
       0.45,
       2.0
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0,
      "pitch": 20.0
     },
@@ -23668,7 +23756,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -23690,7 +23778,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -23712,7 +23800,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -23734,7 +23822,7 @@
       0.7,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 100.0
     },
     {
@@ -23756,7 +23844,7 @@
       3.6,
       2.16
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -23778,7 +23866,7 @@
       1.71,
       1.35
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -23800,7 +23888,7 @@
       1.44,
       1.62
      ],
-     "colour": "#5A3E2B",
+     "colour": "#6B4A33",
      "yaw_deg": 80.0
     },
     {
@@ -23822,7 +23910,7 @@
       0.405,
       1.8
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0,
      "pitch": 20.0
     },
@@ -23893,7 +23981,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -23915,7 +24003,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -23937,7 +24025,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {
@@ -23959,7 +24047,7 @@
       0.63,
       1.62
      ],
-     "colour": "#47301F",
+     "colour": "#56392A",
      "yaw_deg": 80.0
     },
     {

@@ -59,8 +59,10 @@ def gate(png: Path, layout_id: str, prompt: str) -> list[dict]:
     import numpy as np
     from PIL import Image
     from explainer_engine.blender import stoneage_test_layouts as S
-    _sa, scene, way = layout_id.split("_")
+    _sa, scene, way, *angle = layout_id.split("_")   # sa_<scene>_<way>[_<angle>] (test A angles, 15:04 UTC)
     blocks, cast, structure, cam = {"cave": S._cave, "ice": S._ice, "camp": S._camp}[scene](way)
+    if angle:
+        cam = S.ANGLES[scene][angle[0]]
     arr = np.asarray(Image.open(png).convert("RGB"), dtype=np.float32) / 255.0
     subj = {n: S.project(cam, S._subject_point(blocks, cast, n))[:2] for n in S.SUBJECTS[scene]}
     flame = next((b for b in blocks if b.get("name", "").endswith("_flame")), None)

@@ -108,7 +108,7 @@ def mammoth(tag, x, y, yaw, big=1.0):
 
     def at(dx, dy, dz):   # local (right, forward, up) -> world
         return [x + (dx * c - dy * s) * big, y + (dx * s + dy * c) * big, dz * big]
-    fur, dark, ivory = "#5A3E2B", "#47301F", "#E6DCC2"
+    fur, dark, ivory = "#6B4A33", "#56392A", "#E6DCC2"   # BL-01: the side angle measured mammoth_0 at 0.143
     out = [shape(f"{tag}_body", "uv_sphere", at(0, 0, 2.0), [2.3 * big, 4.0 * big, 2.4 * big], fur, yaw),
            shape(f"{tag}_hump", "uv_sphere", at(0, 0.7, 3.0), [1.7 * big, 1.9 * big, 1.5 * big], dark, yaw),
            shape(f"{tag}_head", "uv_sphere", at(0, 2.0, 2.2), [1.6 * big, 1.6 * big, 1.8 * big], fur, yaw),
@@ -210,9 +210,10 @@ def _cave(way):
     blocks += fire("hearth", 0.0, 5.0)
     if way == "cc0":
         blocks.append(piece("fire_pit", "model.ph_stone_fire_pit", [0.0, 5.0, 0.0], 0.0, 1.2))
-    blocks += [lamp("cave_fill", [0.0, 3.0, 4.2], 520.0, [1.0, 0.72, 0.5], 1.2, False),
-               lamp("cave_fill_r", [3.6, 1.2, 2.6], 260.0, [1.0, 0.7, 0.48], 1.0, False)]   # BL-01: the right hunter was too dark
-    structure += ["cave_fill", "cave_fill_r"]
+    blocks += [lamp("cave_fill", [0.0, 3.0, 4.2], 700.0, [1.0, 0.72, 0.5], 1.2, False),
+               lamp("cave_fill_l", [-4.6, 2.4, 2.4], 240.0, [1.0, 0.7, 0.48], 1.0, False),   # BL-01: hunter_a from the side angle 0.148
+               lamp("cave_fill_r", [3.6, 1.2, 2.6], 300.0, [1.0, 0.7, 0.48], 1.0, False)]   # BL-01: the right hunter was too dark
+    structure += ["cave_fill", "cave_fill_l", "cave_fill_r"]
     return blocks, cast, structure, [[0.0, -1.8, 1.7], None, [0.0, 6.0, 1.5], None, 22, 1]
 
 
