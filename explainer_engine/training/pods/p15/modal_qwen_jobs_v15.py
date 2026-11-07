@@ -14,7 +14,7 @@ except ImportError:
 HF_REPO = "vano1919/tmr-artifacts"
 IN = "route_test_2026-11/sa_test/in_v15"
 JOBS = "sa_v15_jobs.json"   # first minute (S01-S05), the 6 missing pictures, LoRA 1.0
-SHAS = {JOBS: "70fc9a22563263c6feb5be83e01b45a84f8465aca24880a7c71349cfb80f4bfd", "qwen_jobs.py": "d7b748832ad34fb9baa236b83ac246d99b11c9e169d9e0cc02cfeecfb9d937f2"}
+SHAS = {JOBS: "604f76540d71015ac3091520c4674378bcf35b31372982053a9f0d593e90bc24", "qwen_jobs.py": "d7b748832ad34fb9baa236b83ac246d99b11c9e169d9e0cc02cfeecfb9d937f2"}
 OUT = "route_test_2026-11/sa_test/out_v15"   # must equal the jobs file's "out" (checked at start)
 BUNDLE_SHA = "53eb909ef3a0c37a332dbb582bc62bdd194733eeba867eb7f5467a84679d0681"
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
