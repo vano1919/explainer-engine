@@ -26,7 +26,8 @@ import time
 import bpy  # noqa: E402  (Blender's own module; this file never runs outside Blender)
 from mathutils import Vector  # noqa: E402  (ships with Blender)
 
-ENGINE_IDS = {"eevee": ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE"), "cycles": ("CYCLES",), "workbench": ("BLENDER_WORKBENCH",)}
+# 5.0 renamed EEVEE Next back to BLENDER_EEVEE (5.0 EEVEE release notes); the _NEXT id is the pre-5.0 fallback
+ENGINE_IDS = {"eevee": ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"), "cycles": ("CYCLES",), "workbench": ("BLENDER_WORKBENCH",)}
 
 
 def job_path():
@@ -118,6 +119,41 @@ def _place(ob, o):
     ob.scale = (sc, sc, sc) if isinstance(sc, (int, float)) else sc
 
 
+def _terrain(o, report):
+    """A height-field mesh (WP-Q8, ``blender/terrain.py``): a grid whose vertices carry the given heights, one material slot per
+    class, each quad assigned its class; the caller maps slot index -> toon material like a character's."""
+    g = o["terrain"]
+    nx, ny = g["nx"], g["ny"]
+    xs = [g["x0"] + (g["x1"] - g["x0"]) * i / (nx - 1) for i in range(nx)]
+    ys = [g["y0"] + (g["y1"] - g["y0"]) * j / (ny - 1) for j in range(ny)]
+    verts = [(xs[i], ys[j], g["heights"][j * nx + i]) for j in range(ny) for i in range(nx)]
+    faces = [(j * nx + i, j * nx + i + 1, (j + 1) * nx + i + 1, (j + 1) * nx + i) for j in range(ny - 1) for i in range(nx - 1)]
+    me = bpy.data.meshes.new(o["name"])
+    me.from_pydata(verts, [], faces)
+    me.update()
+    uvm = float(g.get("uv_m", 8.0))   # planar UVs: one texture repeat per uv_m metres
+    uv = me.uv_layers.new(name="UVMap")
+    for poly in me.polygons:
+        for li in poly.loop_indices:
+            v = me.vertices[me.loops[li].vertex_index].co
+            uv.data[li].uv = (v.x / uvm, v.y / uvm)
+    ob = bpy.data.objects.new(o["name"], me)
+    bpy.context.scene.collection.objects.link(ob)
+    for _ in range(max(int(k) for k in o["material"]) + 1):
+        me.materials.append(None)
+    for poly, c in zip(me.polygons, g["face_class"]):
+        poly.material_index = c
+    for poly in me.polygons:
+        poly.use_smooth = True   # shade-smooth: the ground has no facets
+    for cname, vals in (g.get("weights") or {}).items():   # per-vertex class weights: the ground shader blends per pixel
+        at = me.attributes.new(name="w_" + cname, type="FLOAT", domain="POINT")
+        at.data.foreach_set("value", vals)
+    ob["is_terrain"] = True
+    report.setdefault("terrain", {})[o["name"]] = {"verts": len(verts), "faces": len(faces)}
+    _place(ob, o)
+    return [ob]
+
+
 def _append(o, report):
     """Mesh objects of a library .blend under one empty (their own transforms kept), with every material replaced by the named
     toon material. Armatures, widgets and curves are left out (a prop is drawn at its rest pose), and so are their modifiers."""
@@ -141,6 +177,53 @@ def _append(o, report):
     report.setdefault("appended", {})[o["name"]] = kept
     if kept == 0:
         raise RuntimeError(f"{src['path']}: no mesh object to append")
+    _place(root, o)
+    return [c for c in root.children]
+
+
+def _gltf(o, report):
+    """A library glTF/GLB (a world-kit piece, WP-Q8) under one empty, placed like an appended .blend: its mesh objects keep their
+    own transforms, armatures and non-mesh nodes are dropped (a set piece is drawn at its rest pose), the caller's material
+    replaces every slot (no raw PBR reaches the frame)."""
+    src = o["gltf"]
+    new = _import_glb(src["path"])
+    root = bpy.data.objects.new(o["name"], None)
+    bpy.context.scene.collection.objects.link(root)
+    kept, meshes = 0, []
+    only = set(src.get("nodes") or ())   # one module of a kit sheet (the fort GLB lays all its pieces out side by side)
+    for ob in new:
+        if ob.type == "MESH" and len(ob.data.polygons) > 0 and (not only or ob.name.split(".")[0] in only):
+            meshes.append(ob)
+    for ob in new:
+        if ob not in meshes:
+            bpy.data.objects.remove(ob, do_unlink=True)
+    drop = set(src.get("drop_materials") or ())   # faces of these glTF materials go (a clock's glass hid its dial under the toon fill)
+    if drop:
+        import bmesh
+        for ob in meshes:
+            idx = {i for i, s in enumerate(ob.material_slots) if s.material and s.material.name.split(".")[0] in drop}
+            if idx:
+                bm = bmesh.new()
+                bm.from_mesh(ob.data)
+                bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.material_index in idx], context="FACES")
+                bm.to_mesh(ob.data)
+                bm.free()
+                report.setdefault("gltf_dropped", {})[o["name"]] = sorted(drop)
+    for ob in meshes:
+        world = ob.matrix_world.copy()
+        ob.parent = None
+        ob.matrix_world = world
+        ob.parent = root
+        ob.matrix_parent_inverse = root.matrix_world.inverted()
+        if only:
+            ob.location = (0.0, 0.0, 0.0)   # the module stands at the piece's own origin, not where the sheet put it
+        if ob.data.has_custom_normals:   # imported split normals make foliage cards shade as shards under the toon ramp
+            with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob]):
+                bpy.ops.mesh.customdata_custom_splitnormals_clear()
+        kept += 1
+    report.setdefault("gltf", {})[o["name"]] = kept
+    if kept == 0:
+        raise RuntimeError(f"{src['path']}: no mesh object to place")
     _place(root, o)
     return [c for c in root.children]
 
@@ -436,6 +519,83 @@ def build_character(o, frames_total, pending, report):
     return root
 
 
+def build_rig_blend(o, pending, report):
+    """WP-Q4: a rigged character that ships as a ``.blend`` (the Blender Studio rigs, CC-BY) appended whole under one empty. The
+    named top collection is linked with its children, helper meshes are hidden from the render, ``lattice`` moves lattice points
+    (a shared deformer of the face: longer jaw, narrower head), ``visemes`` keys bone poses (rigs.ActionVisemes tracks), and
+    ``materials`` (blend material name -> toon material name, slot by slot) is handed to the style like a character's. The file is
+    opened with scripts off: the face works without the rig's own Python."""
+    rb = o["rig_blend"]
+    with bpy.data.libraries.load(rb["path"], link=False) as (src, dst):
+        dst.collections = list(src.collections)
+        dst.objects = list(src.objects)
+    top = bpy.data.collections[rb["collection"]]
+    bpy.context.scene.collection.children.link(top)
+    root = bpy.data.objects.new(o["name"], None)
+    bpy.context.scene.collection.objects.link(root)
+    rig = bpy.data.objects[rb["rig"]]
+    rig.parent = root
+    for ob in dst.objects:
+        if ob is None:
+            continue
+        if ob.name.startswith(tuple(rb.get("hide_prefixes", ("WGT",)))) or ob.name in rb.get("hide", ()):
+            ob.hide_render = True
+            ob.hide_viewport = True
+    meshes = [ob for ob in top.all_objects if ob.type == "MESH" and not ob.hide_render]
+    for ob in meshes:
+        slots = {}
+        for i, ms in enumerate(ob.material_slots):
+            if ms.material is None:
+                continue
+            if ms.material.name in rb.get("keep", ()):   # C2: the rig's own shading stays (Blender Studio's SSS skin, eyes, hair)
+                continue
+            if ms.material.name not in rb["materials"]:
+                raise RuntimeError(f"{ob.name}: material {ms.material.name!r} has no toon material in the rig_blend map")
+            slots[i] = rb["materials"][ms.material.name]
+        pending.append(([ob], slots, True))
+    lat = rb.get("lattice")
+    if lat:
+        pts = bpy.data.objects[lat["object"]].data.points
+        for idx, d in lat["deltas"].items():
+            co = pts[int(idx)].co_deform
+            pts[int(idx)].co_deform = (co[0] + d[0], co[1] + d[1], co[2] + d[2])
+    vis = rb.get("visemes")
+    if vis:
+        n = 0
+        for key, keys in sorted(vis.items()):
+            bone, prop, idx = key.split("|")
+            pb = rig.pose.bones[bone]
+            for f, v in keys:
+                vec = list(getattr(pb, prop))
+                vec[int(idx)] = v
+                setattr(pb, prop, vec)
+                pb.keyframe_insert(prop, index=int(idx), frame=bpy.context.scene.frame_start + int(f))
+                n += 1
+        report.setdefault("visemes", {})[o["name"]] = {"keys": n, "channels": len(vis)}
+    for L in rb.get("lights") or ():   # own lights (WP-Q4 front key): a sun that points at ``look_at`` from ``direction_from``
+        sun = bpy.data.lights.new(L["name"], "SUN")
+        sun.energy, sun.color, sun.use_shadow = L["energy"], L["color"], L.get("shadow", False)
+        lob = bpy.data.objects.new(L["name"], sun)
+        bpy.context.scene.collection.objects.link(lob)
+        d = Vector(L["look_at"]) - Vector(L["direction_from"])
+        lob.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+        report.setdefault("own_lights", []).append(L["name"])
+    for b, props in (rb.get("props") or {}).items():   # rig switches (CloudRig IK/FK) and other custom properties
+        for k, v in props.items():
+            rig.pose.bones[b][k] = v
+    for oname, keys in (rb.get("shape_keys") or {}).items():   # held shape-key values (a calmer eyelid, a lowered brow)
+        kb = bpy.data.objects[oname].data.shape_keys.key_blocks
+        for k, v in keys.items():
+            kb[k].value = v
+    for b, pose in (rb.get("pose") or {}).items():   # a held pose (arms down), degrees
+        pb = rig.pose.bones[b]
+        pb.rotation_mode = "XYZ"
+        pb.rotation_euler = tuple(math.radians(d) for d in pose)
+    report.setdefault("rig_blend", {})[o["name"]] = {"meshes": len(meshes), "bones": len(rig.data.bones)}
+    _place(root, o)
+    return root
+
+
 def _tracked(scene, frame, tr, loc, at):
     """``loc``/``at`` are given in the rest pose; both are carried by the bone (``track``: {rig, bone}) from its rest frame to its
     posed frame at ``frame``."""
@@ -446,6 +606,96 @@ def _tracked(scene, frame, tr, loc, at):
     posed = arm.matrix_world @ arm.pose.bones[tr["bone"]].matrix
     carry = posed @ rest.inverted()   # the camera rides rigidly with the bone: a close-up stays frontal when the head tilts
     return list(carry @ Vector(loc)), list(carry @ Vector(at))
+
+
+# --- camera rigs (WP-Q7): the Add Camera Rigs extension, installed from the pinned zip and keyed with the engine's camera path ----
+
+RIG = {}   # {"rig": armature object, "camera": camera object} when the camera is a rig
+
+
+def install_extension(path, report):
+    """The pinned Add Camera Rigs zip into this Blender (a user repository, enabled), once per process."""
+    if "bl_ext.user_default.add_camera_rigs" in bpy.context.preferences.addons:
+        return
+    res = bpy.ops.extensions.package_install_files(filepath=path, repo="user_default", enable_on_install=True)
+    if "FINISHED" not in res:
+        raise RuntimeError(f"the camera rig extension {path} did not install: {res}")
+    report["camera_rig_extension"] = os.path.basename(path)
+
+
+def _bone_world(rig, name, world):
+    """The pose bone ``name`` on the world point (parents first: the caller updates the view layer between bones)."""
+    from mathutils import Matrix
+    rig.pose.bones[name].matrix = rig.matrix_world.inverted() @ Matrix.Translation(Vector(world))
+    bpy.context.view_layer.update()
+
+
+def build_rig(scene, cam, report):
+    """The camera of a described scene as a Dolly or Crane rig of the extension: its camera object becomes ``scene.camera``,
+    its lens, aperture and focus are the rig's bone properties (drivers feed them to the camera data)."""
+    install_extension(cam["extension"], report)
+    kind = cam["rig_kind"].upper()
+    bpy.ops.object.build_camera_rig(mode=kind)
+    rig = bpy.data.objects[kind.capitalize() + "_Rig"]
+    ob = bpy.data.objects[kind.capitalize() + "_Camera"]
+    ob.name = "camera"
+    ob.data.sensor_width, ob.data.clip_end = cam.get("sensor_mm", 36.0), cam.get("clip_end", 500.0)
+    scene.camera = ob
+    pb = rig.pose.bones["Camera"]
+    pb["lens"] = float(cam["lens_mm"])
+    RIG.update(rig=rig, camera=ob)
+    return rig, ob
+
+
+def set_dof(scene, focus_m, fstop):
+    """The depth of field of the scene camera: through the rig's properties when it is a rig, else on the camera data."""
+    cd = scene.camera.data.dof
+    cd.use_dof = True
+    if RIG:
+        pb = RIG["rig"].pose.bones["Camera"]
+        pb["focus_distance"], pb["aperture_fstop"] = float(focus_m), float(fstop)
+    else:
+        cd.focus_distance, cd.aperture_fstop = focus_m, fstop
+
+
+def key_rig(scene, cam, first, last, interp):
+    """The engine's camera keys on the rig: Root under the camera on the floor, the Camera bone at the camera, Aim at the look-at
+    point; the focus distance follows ``focus_at`` and the aperture holds ``fstop``."""
+    rig = RIG["rig"]
+    pbs = rig.pose.bones
+    keys = cam.get("keys") or [{"frame": 0, "location": cam["location"], "look_at": cam["look_at"]}]
+    bpy.context.preferences.edit.keyframe_new_interpolation_type = interp
+    for k in keys:
+        loc, at = k["location"], k["look_at"]
+        frame = first + int(k["frame"])
+        pbs["Root"].location = (loc[0], loc[1], 0.0)
+        bpy.context.view_layer.update()
+        _bone_world(rig, "Aim", at)
+        _bone_world(rig, "Camera", loc)
+        for name in ("Root", "Aim", "Camera"):
+            pbs[name].keyframe_insert("location", frame=frame)
+        # a property the job names is keyed (the focus follows ``focus_at``, the aperture holds ``fstop``); one it does not name
+        # stays the style's (apply_style -> set_dof writes it later)
+        if cam.get("focus_at"):
+            pbs["Camera"]["focus_distance"] = float((Vector(cam["focus_at"]) - Vector(loc)).length)
+            pbs["Camera"].keyframe_insert('["focus_distance"]', frame=frame)
+        if cam.get("fstop") is not None:
+            pbs["Camera"]["aperture_fstop"] = float(cam["fstop"])
+            pbs["Camera"].keyframe_insert('["aperture_fstop"]', frame=frame)
+    scene.frame_set(first)
+
+
+def frame_probe(scene, cam, first, last, report):
+    """Where the probe points land in the frame at the first and the last frame (0..1 from the left / bottom; the bpy side of
+    ``camera_setups.framing``): the CI cross-check of the pure-Python pinhole."""
+    from bpy_extras.object_utils import world_to_camera_view
+    out = {}
+    for f in sorted({first, last}):
+        scene.frame_set(f)
+        out[str(f - first)] = {p["name"]: [round(v, 5) for v in world_to_camera_view(scene, scene.camera, Vector(p["at"]))[:2]]
+                               for p in cam["probe"]}
+    scene.frame_set(first)
+    report["framing"] = out
 
 
 def build_described(scene, sc, report):
@@ -465,24 +715,52 @@ def build_described(scene, sc, report):
         elif "append" in o:
             obs = _append(o, report)
             handle = bpy.data.objects[o["name"]]
+        elif "gltf" in o:
+            obs = _gltf(o, report)
+            handle = bpy.data.objects[o["name"]]
+        elif "terrain" in o:
+            obs = _terrain(o, report)
+            handle = obs[0]
+        elif "light" in o:   # a lamp of the set (world_kits ``light`` block): placed, never re-shaded
+            lt = o["light"]
+            data = bpy.data.lights.new(o["name"], lt.get("type", "POINT"))
+            data.energy, data.color, data.use_shadow = lt["energy"], lt.get("color", (1.0, 1.0, 1.0)), lt.get("shadow", True)
+            if hasattr(data, "shadow_soft_size"):
+                data.shadow_soft_size = lt.get("radius_m", 0.1)
+            lob = bpy.data.objects.new(o["name"], data)
+            scene.collection.objects.link(lob)
+            lob.location = o["location"]
+            report.setdefault("set_lights", []).append(o["name"])
+            continue
         elif "character" in o:
             handle = build_character(o, int(sc.get("frames_total", 1)), pending, report)
             if o.get("to"):
                 moving.append((handle, o))
             continue
+        elif "rig_blend" in o:
+            handle = build_rig_blend(o, pending, report)
+            if o.get("to"):
+                moving.append((handle, o))
+            continue
         else:
-            raise RuntimeError(f"object {o.get('name')!r}: neither add, append nor character")
+            raise RuntimeError(f"object {o.get('name')!r}: neither add, append, gltf, terrain, light, character nor rig_blend")
         pending.append((obs, o.get("material"), o.get("smooth")))
         if o.get("to"):
             moving.append((handle, o))
     cam = sc["camera"]
-    data = bpy.data.cameras.new("camera")
-    data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
-    data.clip_end = cam.get("clip_end", 500.0)
-    ob = bpy.data.objects.new("camera", data)
-    scene.collection.objects.link(ob)
-    _aim(ob, cam["location"], cam["look_at"])
-    scene.camera = ob
+    if cam.get("rig_kind"):
+        build_rig(scene, cam, report)
+        ob, data = scene.camera, scene.camera.data
+        data.lens = cam["lens_mm"]
+    else:
+        RIG.clear()
+        data = bpy.data.cameras.new("camera")
+        data.lens, data.sensor_width = cam["lens_mm"], cam.get("sensor_mm", 36.0)
+        data.clip_end = cam.get("clip_end", 500.0)
+        ob = bpy.data.objects.new("camera", data)
+        scene.collection.objects.link(ob)
+        _aim(ob, cam["location"], cam["look_at"])
+        scene.camera = ob
     first = scene.frame_start
     last = first + int(sc.get("frames_total", 1)) - 1
     if last > first:
@@ -492,11 +770,13 @@ def build_described(scene, sc, report):
             if "rotation_deg" in o["to"]:
                 h.rotation_euler = _rad(o["to"]["rotation_deg"])
             _key(h, ("location", "rotation_euler"), last, o.get("interp", "LINEAR"))
+        if cam.get("to") and RIG:
+            raise RuntimeError("a camera rig is keyed from camera.keys, not from a to block")
         if cam.get("to"):
             _key(ob, ("location", "rotation_euler"), first, cam.get("interp", "BEZIER"))
             _aim(ob, cam["to"]["location"], cam["to"]["look_at"], ob.rotation_euler.copy())
             _key(ob, ("location", "rotation_euler"), last, cam.get("interp", "BEZIER"))
-        if cam.get("keys"):   # a camera rig of several poses (scene_builder: rail, orbit, dramatic curve; a turnaround's views)
+        if cam.get("keys") and not RIG:   # a camera path of several poses (scene_builder: rail, orbit, dramatic curve; a turnaround's views)
             for k in cam["keys"]:
                 loc, at = k["location"], k["look_at"]
                 if k.get("track"):   # aim at a point of a posed bone (a face close-up follows the head the clip moves)
@@ -507,6 +787,11 @@ def build_described(scene, sc, report):
                     data.keyframe_insert("lens", frame=first + int(k["frame"]))
                 _key(ob, ("location", "rotation_euler"), first + int(k["frame"]), cam.get("interp", "BEZIER"))
         report["motion"] = {"frames": [first, last], "objects": len(moving), "camera": bool(cam.get("to") or cam.get("keys"))}
+    if RIG:
+        key_rig(scene, cam, first, last, cam.get("interp", "LINEAR"))
+        report["camera_rig"] = {"kind": cam["rig_kind"], "rig": RIG["rig"].name, "bones": sorted(b.name for b in RIG["rig"].pose.bones)}
+    if cam.get("probe"):
+        frame_probe(scene, cam, first, last, report)
     return pending
 
 
@@ -572,11 +857,180 @@ def build_tree(nt, graph, missing, where):
     return made
 
 
+def _camera_aim(scene, elevation_deg, azimuth_offset_deg, front=False):
+    """A sun rotation whose light travels from behind the subject towards the camera (seen at the shot's first frame), coming
+    down at ``elevation_deg`` and turned ``azimuth_offset_deg`` to the side: the film rim cheat, the same for every shot.
+    ``front``: the light travels the camera's way instead (from the camera's side onto the faces: the front-biased key and the
+    skin lifts)."""
+    scene.frame_set(scene.frame_start)
+    fwd = scene.camera.matrix_world.to_3x3() @ Vector((0.0, 0.0, -1.0))
+    flat = Vector((fwd.x, fwd.y, 0.0))
+    if flat.length < 1e-6:
+        flat = Vector((0.0, 1.0, 0.0))
+    flat.normalize()
+    az = math.radians(azimuth_offset_deg)
+    toward = Vector((-flat.x * math.cos(az) + flat.y * math.sin(az), -flat.y * math.cos(az) - flat.x * math.sin(az), 0.0))
+    if front:
+        toward = -toward
+    el = math.radians(elevation_deg)
+    travel = Vector((toward.x * math.cos(el), toward.y * math.cos(el), -math.sin(el)))
+    return travel.to_track_quat("-Z", "Y").to_euler()
+
+
+def build_lights(scene, specs, cast, missing, by_char=None):
+    """The WP-Q1 rig: each light as listed; ``link: "cast"`` light-links it to the character meshes only (Blender 5.2
+    ``Object.light_linking.receiver_collection``; a rim with no cast in the shot is left out and reported); ``link:
+    "char:<id>"`` to that character's meshes (a skin lift). ``aim_with_cast`` turns the key to the camera's side when a cast is
+    in the shot (the front-biased key)."""
+    done = []
+    by_char = by_char or {}
+    for lt in specs:
+        link = lt.get("link")
+        receivers = cast if link == "cast" else by_char.get(link[5:], []) if link and link.startswith("char:") else None
+        if link and not receivers:
+            done.append({"name": lt["name"], "skipped": "no cast in the shot" if link == "cast" else f"no {link[5:]} in the shot"})
+            continue
+        data = bpy.data.lights.new(lt["name"], lt["type"])
+        data.energy, data.color, data.use_shadow = lt["energy"], lt["color"], lt["use_shadow"]
+        for k in ("angle_rad", "shadow_filter_radius", "use_shadow_jitter", "specular_factor", "diffuse_factor"):
+            if lt.get(k) is None:
+                continue
+            attr = "angle" if k == "angle_rad" else k
+            if hasattr(data, attr):
+                setattr(data, attr, lt[k])
+            else:
+                missing.append(f"light {lt['name']}.{attr}")
+        ob = bpy.data.objects.new(lt["name"], data)
+        scene.collection.objects.link(ob)
+        aim = lt.get("aim") or (lt.get("aim_with_cast") if cast else None)
+        if aim:
+            ob.rotation_euler = _camera_aim(scene, aim["elevation_deg"], aim["azimuth_offset_deg"], aim.get("from") == "front")
+        else:
+            ob.rotation_euler = lt["rotation_euler"]
+        row = {"name": lt["name"], "energy": data.energy, "shadow": data.use_shadow}
+        if aim and "aim_with_cast" in lt:
+            row["front_offset_deg"] = aim["azimuth_offset_deg"]
+        if link:
+            coll = bpy.data.collections.new(f"{lt['name']}_receivers")
+            for m in receivers:
+                coll.objects.link(m)
+            ob.light_linking.receiver_collection = coll
+            row["receivers"] = len(coll.objects)
+        done.append(row)
+    return done
+
+
+def _gn_inputs(mod, values):
+    """Set a Geometry Nodes modifier's inputs by socket name (Blender 5.2 keeps them in ``modifier.properties.inputs``)."""
+    for it in mod.node_group.interface.items_tree:
+        if getattr(it, "in_out", "") == "INPUT" and it.name in values:
+            mod.properties.inputs[it.identifier]["value"] = values[it.name]
+
+
+def perfectly_normal(meshes, spec, missing):
+    """C4's faces: Perfectly Normal 0.0.3 (Seth Trowbridge, GPL-3.0-or-later, extensions.blender.org) used as data, its four GN
+    groups appended from the extension's own ``assets/perfectly_normal.blend`` (no add-on code runs). On each cast mesh, after the
+    armature: Manip Verts (Re)create -> Tweak (Converge = spherize the corner normals) -> Apply (Ready to Apply). The file comes
+    from ``$EE_PERFECTLY_NORMAL_BLEND`` (the unpacked extension; sha256 of the zip in docs/PROVENANCE.md)."""
+    path = os.environ.get("EE_PERFECTLY_NORMAL_BLEND", "")
+    if not path or not os.path.exists(path):
+        missing.append("perfectly_normal: EE_PERFECTLY_NORMAL_BLEND is not set to the extension's perfectly_normal.blend")
+        return 0
+    names = ("Manip Verts: (Re)create", "Manip Verts: Tweak", "Manip Verts: Apply")
+    if not all(n in bpy.data.node_groups for n in names):
+        with bpy.data.libraries.load(path, link=False) as (src, dst):
+            dst.node_groups = [n for n in src.node_groups if n.startswith("Manip Verts") or n == "Perform Tweak"]
+    # PN's Converge pulls each face's manip verts towards the face (a positive share turns the normals inward: measured on a UV
+    # sphere in 5.2.3, mean dot with the outward normal 0.971 flat, -0.911 at +0.6, the C4 cast rendered black); a negative share
+    # pushes them out of the face, i.e. spherizes (0.984 at -0.6). The look's pn_converge is that outward share.
+    steps = ((names[0], {}), (names[1], {"Converge": -float(spec["converge"])}), (names[2], {"Ready to Apply": True}))
+    keep, restore = _material_index_guard()
+    for ob in meshes:
+        # the kit's glTF meshes carry imported custom normals: PN on top of them wrote black faces (C4's first frames), so the
+        # cast starts from plain smooth normals (custom ones cleared, shade smooth)
+        me = ob.data
+        if getattr(me, "has_custom_normals", False):
+            with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob]):
+                bpy.ops.mesh.customdata_custom_splitnormals_clear()
+        if hasattr(me, "shade_smooth"):
+            me.shade_smooth()
+        ob.modifiers.new("pn_keep_material_index", "NODES").node_group = keep
+        for name, values in steps:
+            g = bpy.data.node_groups[name]
+            g.is_modifier = True
+            mod = ob.modifiers.new(f"pn_{name.split(': ')[1].strip('()').lower()}", "NODES")
+            mod.node_group = g
+            _gn_inputs(mod, values)
+        ob.modifiers.new("pn_restore_material_index", "NODES").node_group = restore
+    return len(meshes)
+
+
+def _material_index_guard():
+    """PN 0.0.3's rebuild shifts every face's material index by one (measured in 5.2.3: [0, 1] -> [1, 2]; the kit cast rendered
+    in the wrong slots, black). Two small GN groups keep it: the index stored as a face attribute before PN, set back after."""
+    made = []
+    for gname in ("wpq1_pn_keep_matidx", "wpq1_pn_restore_matidx"):
+        ng = bpy.data.node_groups.get(gname)
+        if ng is None:
+            ng = bpy.data.node_groups.new(gname, "GeometryNodeTree")
+            ng.is_modifier = True
+            ng.interface.new_socket("Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
+            ng.interface.new_socket("Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+            gin, gout = ng.nodes.new("NodeGroupInput"), ng.nodes.new("NodeGroupOutput")
+            if gname.endswith("keep_matidx"):
+                st, idx = ng.nodes.new("GeometryNodeStoreNamedAttribute"), ng.nodes.new("GeometryNodeInputMaterialIndex")
+                st.data_type, st.domain = "INT", "FACE"
+                st.inputs["Name"].default_value = "ee_material_index"
+                ng.links.new(gin.outputs[0], st.inputs["Geometry"])
+                ng.links.new(idx.outputs[0], st.inputs["Value"])
+                ng.links.new(st.outputs["Geometry"], gout.inputs[0])
+            else:
+                na, sm = ng.nodes.new("GeometryNodeInputNamedAttribute"), ng.nodes.new("GeometryNodeSetMaterialIndex")
+                na.data_type = "INT"
+                na.inputs["Name"].default_value = "ee_material_index"
+                ng.links.new(gin.outputs[0], sm.inputs["Geometry"])
+                ng.links.new(na.outputs["Attribute"], sm.inputs["Material Index"])
+                ng.links.new(sm.outputs["Geometry"], gout.inputs[0])
+        made.append(ng)
+    return made
+
+
+def soften_normals(meshes, iterations, missing):
+    """Wing It!'s soft faces: a Geometry Nodes modifier after the armature blurs the vertex normals (Blur Attribute on Normal)
+    and writes them back as free custom normals (Set Mesh Normal), so the shading reads rounder and flatter than the mesh."""
+    ng = bpy.data.node_groups.get("wpq1_soft_normals")
+    if ng is None:
+        ng = bpy.data.node_groups.new("wpq1_soft_normals", "GeometryNodeTree")
+        ng.interface.new_socket("Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
+        ng.interface.new_socket("Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+        gin, gout = ng.nodes.new("NodeGroupInput"), ng.nodes.new("NodeGroupOutput")
+        nrm, blur, setn = ng.nodes.new("GeometryNodeInputNormal"), ng.nodes.new("GeometryNodeBlurAttribute"), ng.nodes.new("GeometryNodeSetMeshNormal")
+        blur.data_type = "FLOAT_VECTOR"
+        blur.inputs["Iterations"].default_value = int(iterations)
+        setn.mode = "FREE"
+        setn.domain = "POINT"
+        ng.links.new(nrm.outputs[0], blur.inputs["Value"])
+        custom = next((x for x in setn.inputs if x.name in ("Custom Normal", "Normal") and x.enabled), None)
+        if custom is None:
+            missing.append("GeometryNodeSetMeshNormal.FREE input")
+            return
+        ng.links.new(gin.outputs[0], setn.inputs["Mesh"])
+        ng.links.new(blur.outputs[0], custom)
+        ng.links.new(setn.outputs[0], gout.inputs[0])
+    for ob in meshes:
+        mod = ob.modifiers.new("soft_normals", "NODES")
+        mod.node_group = ng
+
+
 def apply_style(scene, style, pending, report):
     """The style_graph/1 document on the built scene: materials, world, key light, Line Art, paper pass, colour management."""
     missing = []
     mats = {}
+    native = 0
     for m in style["materials"]:
+        if m.get("native"):   # C2: the slot keeps the asset's own material (Blender Studio SSS skin, cloth) under our lights
+            mats[m["name"]] = None
+            continue
         mat = bpy.data.materials.new(m["name"])
         build_tree(mat.node_tree, m, missing, f"material {m['name']}")
         mats[m["name"]] = mat
@@ -586,6 +1040,9 @@ def apply_style(scene, style, pending, report):
                 for i, mname in name.items():
                     if mname not in mats:
                         raise RuntimeError(f"the style graph has no material {mname!r}")
+                    if mats[mname] is None:
+                        native += ob.material_slots[int(i)].material is not None
+                        continue
                     ob.material_slots[int(i)].link = "OBJECT"
                     ob.material_slots[int(i)].material = mats[mname]
         elif name is not None:
@@ -595,21 +1052,51 @@ def apply_style(scene, style, pending, report):
     if scene.world is None:
         scene.world = bpy.data.worlds.new("world")
     build_tree(scene.world.node_tree, style["world"], missing, "world")
-    kl = style["key_light"]
-    sun = bpy.data.lights.new("key", "SUN")
-    sun.energy, sun.angle = kl["energy"], kl["angle_rad"]
-    sun.use_shadow = kl.get("use_shadow", True)  # the light profile turns cast shadows off (style.StyleTokens.shadows)
-    ob = bpy.data.objects.new("key", sun)
-    scene.collection.objects.link(ob)
-    ob.rotation_euler = kl["rotation_euler"]
+    cast = [ob for obs, name, _ in pending if isinstance(name, dict) for ob in obs if not ob.get("is_terrain")]   # the character meshes
+    by_char = {}   # a character's meshes, by the id its slot materials carry ({char}_skin, {char}_hair, ...)
+    for obs, name, _ in pending:
+        if isinstance(name, dict):
+            for who in {m.rsplit("_", 1)[0] for m in name.values() if "_" in m}:
+                by_char.setdefault(who, []).extend(ob for ob in obs if ob not in by_char.get(who, []) and not ob.get("is_terrain"))
+    if "lights" in style:   # WP-Q1: real coloured lights (style.StyleEngine.lights); key_light is only their record
+        lights_applied = build_lights(scene, style["lights"], cast, missing, by_char)
+        fill = None
+    else:
+        lights_applied = None
+        kl = style["key_light"]
+        sun = bpy.data.lights.new("key", "SUN")
+        sun.energy, sun.angle = kl["energy"], kl["angle_rad"]
+        sun.use_shadow = kl.get("use_shadow", True)  # the light profile turns cast shadows off (style.StyleTokens.shadows)
+        ob = bpy.data.objects.new("key", sun)
+        scene.collection.objects.link(ob)
+        ob.rotation_euler = kl["rotation_euler"]
+        fill = style.get("fill_light")   # ICW-05c looks: a cool fill from the other side, never a shadow caster
+    if style.get("normal_soften"):
+        soften_normals(cast, style["normal_soften"]["iterations"], missing)
+    pn_done = perfectly_normal(cast, style["perfectly_normal"], missing) if style.get("perfectly_normal") else None
+    if fill:
+        fl = bpy.data.lights.new("fill", "SUN")
+        fl.energy, fl.use_shadow = fill["energy"], fill.get("use_shadow", False)
+        fob = bpy.data.objects.new("fill", fl)
+        scene.collection.objects.link(fob)
+        fob.rotation_euler = fill["rotation_euler"]
     la = style["line_art"]
-    bpy.ops.object.grease_pencil_add(type="LINEART_SCENE", location=(0, 0, 0))
-    gp = bpy.context.active_object
-    gp.name = "line_art"
-    mod = [m for m in gp.modifiers if m.type == "LINEART"][0]
-    mod.radius, mod.crease_threshold, mod.opacity = la["radius"], la["crease_threshold_rad"], la["opacity"]
-    for gm in gp.data.materials:
-        gm.grease_pencil.color = la["ink_rgba"]
+    mod = None
+    if la.get("enabled", True):   # a look without lines has no Line Art at all (and saves its CPU time)
+        bpy.ops.object.grease_pencil_add(type="LINEART_SCENE", location=(0, 0, 0))
+        gp = bpy.context.active_object
+        gp.name = "line_art"
+        mod = [m for m in gp.modifiers if m.type == "LINEART"][0]
+        mod.radius, mod.crease_threshold, mod.opacity = la["radius"], la["crease_threshold_rad"], la["opacity"]
+        for gm in gp.data.materials:
+            gm.grease_pencil.color = la["ink_rgba"]
+    dof = style.get("camera_dof")
+    if dof:
+        if RIG:   # WP-Q7: keyed properties of the rig win at render time; the style fills the ones the job did not name
+            set_dof(scene, dof["focus_distance_m"], dof["fstop"])
+        else:
+            cd = scene.camera.data.dof
+            cd.use_dof, cd.focus_distance, cd.aperture_fstop = True, dof["focus_distance_m"], dof["fstop"]
     st = style["scene"]
     vs = scene.view_settings
     vs.view_transform = st["view_transform"]
@@ -621,8 +1108,23 @@ def apply_style(scene, style, pending, report):
             continue
     else:
         raise RuntimeError(f"this Blender has no look {st['look']!r} (tried {st['look_ids']})")
-    applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius,
-               "crease_threshold": mod.crease_threshold}
+    applied = {"view_transform": vs.view_transform, "look": vs.look, "line_art_radius": mod.radius if mod else None,
+               "crease_threshold": mod.crease_threshold if mod else None}
+    if st.get("exposure") is not None:   # a preset's world-shot exposure (golden_hour: a raking sun)
+        vs.exposure = st["exposure"]
+        applied["exposure"] = vs.exposure
+    if fill:
+        applied["fill_light"] = fill["energy"]
+    if lights_applied is not None:
+        applied["lights"] = lights_applied
+    if style.get("normal_soften"):
+        applied["normal_soften"] = {"iterations": style["normal_soften"]["iterations"], "meshes": len(cast)}
+    if style.get("perfectly_normal"):
+        applied["perfectly_normal"] = {"converge": style["perfectly_normal"]["converge"], "meshes": pn_done}
+    if style.get("native_classes"):
+        applied["native"] = {"classes": style["native_classes"], "slots_kept": native}
+    if dof:
+        applied["dof_fstop"] = scene.camera.data.dof.aperture_fstop
     for k, v in st.get("eevee", {}).items():
         set_attr(scene.eevee, k, v, applied, missing, f"eevee.{k}")
     for k, v in st.get("cycles", {}).items():
@@ -630,6 +1132,10 @@ def apply_style(scene, style, pending, report):
             set_attr(scene.cycles, k, v, applied, missing, f"cycles.{k}")
     paper = style["paper"]
     if paper.get("enabled"):
+        if "z" in paper.get("passes", []):   # the painted plate mixes by depth
+            bpy.context.view_layer.use_pass_z = True
+        if paper.get("mist"):   # depth haze: built from the depth pass in the finish (no mist pass, no extra render layer)
+            applied["haze"] = {**paper["mist"], "passes": sorted(paper.get("passes", []))}
         ng = bpy.data.node_groups.new("ink_paper", "CompositorNodeTree")
         ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
         build_tree(ng, paper, missing, "paper")
@@ -650,7 +1156,12 @@ def apply_settings(scene, job):
         ee = scene.eevee
         set_attr(ee, "taa_render_samples", s.get("samples"), applied, missing, "eevee.taa_render_samples")
         set_attr(ee, "use_raytracing", s.get("raytracing"), applied, missing, "eevee.use_raytracing")
-        set_attr(ee, "use_gtao", s.get("ambient_occlusion"), applied, missing, "eevee.use_gtao")
+        ao = s.get("ambient_occlusion")   # 5.x has no use_gtao: AO is Fast GI in its AO-only method (SceneEEVEE API 5.2)
+        set_attr(ee, "use_fast_gi", ao, applied, missing, "eevee.use_fast_gi")
+        if ao:
+            set_attr(ee, "fast_gi_method", "AMBIENT_OCCLUSION_ONLY", applied, missing, "eevee.fast_gi_method")
+        set_attr(ee, "use_shadows", s.get("shadows"), applied, missing, "eevee.use_shadows")
+        set_attr(ee, "motion_blur_steps", s.get("motion_blur_steps"), applied, missing, "eevee.motion_blur_steps")
     elif eng == "cycles":
         cy = scene.cycles
         set_attr(cy, "samples", s.get("samples"), applied, missing, "cycles.samples")
@@ -705,6 +1216,26 @@ def bounds(scene, names):
     return out
 
 
+def build_crowd(scene, block, workdir, report):
+    """A ``crowds`` block (crowd_gn/1, ``blender/crowd.py``; MOTION_RESEARCH Group 7): its templates are cast members of the
+    scene; ``crowd_bake.py`` (beside this file) bakes them and builds the Geometry Nodes tiers ``EE_Crowd_*``."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import crowd_bake
+    return crowd_bake.build(scene, block, workdir, report)
+
+
+def apply_layout_pass(scene, block, report):
+    """A ``layout_pass`` block (``blender/layout_passes.py``, D-116 guide step 2.3): ``layout_pass.py`` (beside this file) redraws
+    the built scene as clay, depth, line or flat colour; geometry, motion and camera stay as built."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import layout_pass
+    return layout_pass.apply(scene, block, report)
+
+
 def main():
     path = job_path()
     with open(path, encoding="utf-8") as f:
@@ -741,6 +1272,10 @@ def main():
     applied, missing = apply_settings(scene, job)
     if sc.get("style"):
         apply_style(scene, sc["style"], pending, built)  # after the profile: the style's EEVEE switches win (roadmap 9.1)
+    if sc.get("crowds"):
+        build_crowd(scene, sc["crowds"], os.path.dirname(job["report"]), built)  # after the style: the bake keeps its materials
+    if sc.get("layout_pass"):
+        apply_layout_pass(scene, sc["layout_pass"], built)  # last: the built scene is drawn as a clay/depth/line/colour pass (D-116)
     os.makedirs(job["frames_dir"], exist_ok=True)
     with open(job["progress"], "a", encoding="utf-8") as prog:
         for idx in job["frames"]:

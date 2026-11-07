@@ -52,9 +52,9 @@ def test_the_job_files_are_sha256_pinned_in_the_script_text_and_the_pins_are_fil
         assert not re.search(r"\b[0-9a-f]{64}\s+\"\$JOB/" + re.escape(f), t) or real in t, f
 
 
-@pytest.mark.xfail(strict=True, reason="WP-1e: sha256 lines of p12b.sh, the clay and the AV takes of p12b.json are still PLACEHOLDER; remove "
-                   "this marker when the DRY gate has filled them (strict: it fails the day they are all real, as a reminder)")
 def test_the_pod_is_runnable_only_when_no_placeholder_is_left():
+    """WP-1e (D-116 rules PR, 2026-11-06): the three sha256 lines of p12b.sh are the committed files' (the test above checks them);
+    the HF copy under code/p12/ must be uploaded from this commit before any pod (OR-23, OR-34)."""
     text = "".join((DIR / f).read_text(encoding="utf-8") for f in ("p12b.sh", "p12b.json", "p12c_ltx.py"))
     assert "PLACEHOLDER" not in text
 

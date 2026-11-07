@@ -263,6 +263,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -317,6 +319,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -370,6 +374,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -427,6 +433,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -486,6 +494,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -547,6 +557,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H6",
    "helper_archetype": "PRIMARY_SOURCE_DOSSIER_CARD"
   },
   {
@@ -606,6 +618,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -660,6 +674,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -714,6 +730,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -757,6 +775,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -822,6 +842,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
@@ -880,6 +902,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H6",
    "helper_archetype": "WEAPON_AND_MATERIAL_CUTAWAY"
   },
   {
@@ -943,6 +967,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -1001,6 +1027,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -1058,6 +1086,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
    "helper_archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD"
   },
   {
@@ -1111,6 +1141,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -1170,6 +1202,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "parallax_25d"
   },
@@ -1229,6 +1262,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
    "helper_archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD"
   },
   {
@@ -1285,6 +1320,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -1331,6 +1367,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_fast",
    "still_mode": "hold"
   },
@@ -1399,6 +1437,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -1496,6 +1536,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "parallax_25d"
   },
@@ -1564,6 +1605,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -1633,6 +1676,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -1706,6 +1751,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -1765,6 +1812,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -1832,6 +1881,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -1901,6 +1952,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -1970,6 +2023,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2029,6 +2084,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -2097,6 +2154,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2164,6 +2223,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -2231,6 +2292,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2293,6 +2356,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -2360,6 +2425,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2428,6 +2495,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2497,6 +2566,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2554,6 +2625,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S1",
    "render_profile": "eevee_fast",
    "still_mode": "parallax_25d"
   },
@@ -2628,6 +2701,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "parallax_25d"
   },
@@ -2695,6 +2769,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2754,6 +2830,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2814,6 +2892,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -2858,6 +2938,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_fast",
    "still_mode": "parallax_25d"
   },
@@ -2902,6 +2983,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -2945,6 +3028,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -2999,6 +3084,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V8",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -3071,6 +3158,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V6",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -3133,6 +3222,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   },
@@ -3187,6 +3277,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -3232,6 +3324,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -3292,6 +3386,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
@@ -3366,6 +3462,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -3417,6 +3515,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -3488,6 +3588,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -3553,6 +3655,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -3618,6 +3722,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -3664,6 +3770,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -3721,6 +3829,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   },
@@ -3787,6 +3897,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -3850,6 +3962,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -3905,6 +4019,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "dramatic_curve"
   },
@@ -3961,6 +4076,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -4017,6 +4134,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V9",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -4074,6 +4193,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "parallax_25d"
   },
@@ -4143,6 +4263,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4210,6 +4332,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4268,6 +4392,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "dramatic_curve"
   },
@@ -4333,6 +4458,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4393,6 +4520,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4449,6 +4578,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -4507,6 +4638,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
@@ -4568,6 +4701,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4627,6 +4762,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4685,6 +4822,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -4743,6 +4882,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S1",
    "render_profile": "eevee_fast",
    "still_mode": "parallax_25d"
   },
@@ -4803,6 +4944,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -4861,6 +5004,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -4909,6 +5054,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -4969,6 +5116,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
    "helper_archetype": "SPLIT_SCREEN_SPEED_RACE"
   },
   {
@@ -5042,6 +5191,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5109,6 +5260,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5176,6 +5329,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5243,6 +5398,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5279,6 +5436,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S1",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -5335,6 +5494,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   },
@@ -5393,6 +5554,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -5487,6 +5650,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "parallax_25d"
   },
@@ -5554,6 +5718,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5621,6 +5787,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5682,6 +5850,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "hold"
   },
@@ -5744,6 +5914,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5808,6 +5980,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -5873,6 +6047,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -5938,6 +6114,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -5998,6 +6176,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6057,6 +6237,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6117,6 +6299,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -6176,6 +6359,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6239,6 +6424,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
@@ -6306,6 +6493,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6372,6 +6561,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6430,6 +6621,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -6496,6 +6689,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6554,6 +6749,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_fast",
    "still_mode": "parallax_25d"
   },
@@ -6612,6 +6808,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6678,6 +6876,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6746,6 +6946,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -6823,6 +7025,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -6870,6 +7074,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S6",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -6923,6 +7129,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -6981,6 +7189,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -7038,6 +7248,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -7092,6 +7304,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -7157,6 +7371,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -7204,6 +7420,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -7251,6 +7469,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
@@ -7307,6 +7527,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -7363,6 +7585,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -7409,6 +7633,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -7465,6 +7691,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_fast",
    "still_mode": "parallax_25d"
   },
@@ -7518,6 +7745,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
    "render_profile": "eevee_fast",
    "still_mode": "dramatic_curve"
   },
@@ -7592,6 +7821,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -7650,6 +7881,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -7712,6 +7945,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -7768,6 +8003,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -7822,6 +8059,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -7869,6 +8108,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -7930,6 +8171,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -7989,6 +8232,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8044,6 +8289,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -8098,6 +8345,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -8152,6 +8401,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -8210,6 +8461,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8269,6 +8522,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8323,6 +8578,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "dramatic_curve"
   },
@@ -8382,6 +8638,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8440,6 +8698,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -8496,6 +8756,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "FORMATION_MICRO_MECHANICS"
   },
   {
@@ -8553,6 +8815,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8625,6 +8889,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8682,6 +8948,7 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   },
@@ -8743,6 +9010,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8799,6 +9068,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -8856,6 +9127,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -8915,6 +9188,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -8976,6 +9251,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -9035,6 +9312,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9102,6 +9381,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9169,6 +9450,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9223,6 +9506,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -9294,6 +9579,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -9360,6 +9647,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9428,6 +9717,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9483,6 +9774,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -9549,6 +9842,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9609,6 +9904,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9648,6 +9945,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -9713,6 +10012,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9768,6 +10069,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V8",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -9815,6 +10118,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -9873,6 +10178,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -9940,6 +10247,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10006,6 +10315,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10072,6 +10383,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10129,6 +10442,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -10194,6 +10509,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10233,6 +10550,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -10271,6 +10590,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "camera_move_3d"
   },
@@ -10327,6 +10648,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
    "helper_archetype": "ORDER_OF_BATTLE_TELEMETRY_HUD"
   },
   {
@@ -10383,6 +10706,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -10435,6 +10760,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V9",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -10491,6 +10818,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   },
@@ -10543,6 +10872,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -10602,6 +10933,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -10667,6 +11000,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10733,6 +11068,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10826,6 +11163,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
    "render_profile": "eevee_full",
    "still_mode": "hold"
   },
@@ -10892,6 +11231,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -10959,6 +11300,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11026,6 +11369,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11080,6 +11425,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
    "render_profile": "eevee_fast",
    "still_mode": "hold"
   },
@@ -11149,6 +11496,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11213,6 +11562,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -11280,6 +11631,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11334,6 +11687,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -11400,6 +11755,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11459,6 +11816,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11526,6 +11885,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11593,6 +11954,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11652,6 +12015,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -11717,6 +12082,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11783,6 +12150,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V9",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -11853,6 +12222,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -11907,6 +12278,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -11973,6 +12346,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -12055,6 +12430,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V6",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -12129,6 +12506,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
@@ -12181,6 +12560,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V10",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -12240,6 +12621,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
    "helper_archetype": "MULTI_SCENARIO_VERDICT_MATRIX"
   },
   {
@@ -12292,6 +12675,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -12364,6 +12749,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V6",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -12402,6 +12789,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H6",
    "helper_archetype": "PRIMARY_SOURCE_DOSSIER_CARD"
   },
   {
@@ -12458,6 +12847,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   },
@@ -12523,6 +12914,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -12589,6 +12982,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
    "render_profile": "eevee_full",
    "lipsync": true,
    "dialogue_cover": "on_screen"
@@ -12646,6 +13041,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -12705,6 +13102,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
    "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
@@ -12757,6 +13156,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -12801,6 +13202,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
    "render_profile": "eevee_full",
    "lipsync": false
   },
@@ -12854,6 +13257,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
    "render_profile": "eevee_fast",
    "lipsync": false
   },
@@ -12911,6 +13316,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -12966,6 +13373,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -13021,6 +13430,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_fast",
    "still_mode": "drift"
   },
@@ -13075,6 +13486,8 @@
    ],
    "continuity_ref": null,
    "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
    "render_profile": "eevee_full",
    "still_mode": "drift"
   }

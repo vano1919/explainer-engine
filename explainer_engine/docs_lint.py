@@ -61,6 +61,8 @@ HOMES = {
     "SD": "AUDIO_SYSTEM.md",  # the sound director checks (Blueprint P4, 2026-10-30)
     "CN": "CONTRACTS.md",  # the data contracts, the episode lifecycle and the shot cache (Blueprint P2, 2026-10-29)
     "CMP": "COMPENSATOR.md",  # the visual compensator: maps, HUD, tableaux, the eight map laws (Blueprint P5, 2026-10-30)
+    "SA": "SCENE_ASSETS.md",  # the drawn scene assets and the J5 2.5D assembly (D-116, ICW-11, 2026-11-06)
+    "LJ": "LTX_JOBS.md",  # the LTX generations of the J2/J4 routes (ltx_job/1, D-116, guide step 3, 2026-11-06)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

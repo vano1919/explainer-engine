@@ -8,6 +8,17 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04](architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md) | creator-approved new visual direction, 10/30/60 lanes, 70/30 speech target, style, render target and migration intent | |
 | [FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md) | controlling Fable master task: branch reconciliation, evidence-closed decisions, one authoritative Opus roadmap and launch gate | |
 | [INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) | the authoritative Opus implementation roadmap: branch dispositions, decision matrix (ICD), work packages (ICW), cost model, creator decision gate (ICG) and launch verdict | |
+| [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md) | the creator-approved route plan (D-116): Qwen the look, Blender space and time, LTX motion; routes J2/J4/J5/H per sub-category; English copy of sections 1-6, 9 of FINAL_HIGH_LEVEL_PLAN_ka.md | |
+| [providers/PROVIDER_COMPARISON.md](providers/PROVIDER_COMPARISON.md) | 18-provider GPU cloud comparison (RunPod, Hyperstack, Modal, Vast, TensorDock, Lambda, Nebius, CoreWeave, Crusoe, Fluidstack, Paperspace, Salad, CUDO, Vultr, Genesis, AWS, GCP, Azure) |
+| [providers/GPU_AVAILABILITY_RESEARCH.md](providers/GPU_AVAILABILITY_RESEARCH.md) | GPU stock APIs, shortage behavior, TOCTOU race analysis, and zero-cost polling specification |
+| [providers/HYPERSTACK_README.md](providers/HYPERSTACK_README.md) | Hyperstack deep-dive: GPU VMs vs AI Studio vs Dedicated Inference, `/v1/core/stocks`, `/v1/pricebook`, and the `SHUTOFF` vs `HIBERNATED` billing trap |
+| [providers/MODAL_README.md](providers/MODAL_README.md) | Modal serverless GPU deep-dive: per-second rates, `$30/mo` Starter credit scope, Volumes, preemption, and multi-GPU fallback |
+| [providers/CLOUD_COST_MODEL.md](providers/CLOUD_COST_MODEL.md) | Comparable total-cost model across Workloads A, B, C, D and 12-minute episode projections |
+| [providers/PROVIDER_ADAPTER_DESIGN.md](providers/PROVIDER_ADAPTER_DESIGN.md) | Provider-neutral adapter design reusing `explainer_engine/cloud/jobs.py` and enforcing `OR-22..36` |
+| [providers/PROVIDER_DECISION.md](providers/PROVIDER_DECISION.md) | Final 10-criterion provider scorecard, category rankings, and approval gates |
+| [handoff/argon_2026-11-06/argon/](handoff/argon_2026-11-06/argon/README.md) | Gemini Argon's 2026-11-06/07 audit (A), cost model (B), design (C), implementation notes (D) and paid-test proposal (E); evidence and proposals, not active rules | |
+| [SCENE_ASSETS](SCENE_ASSETS.md) | the drawn scene assets (`scene_assets/1`), cut-outs and the J5 2.5D assembly in Blender (D-116, ICW-11) | SA- |
+| [LTX_JOBS](LTX_JOBS.md) | the LTX generations of the J2/J4 routes (`ltx_job/1`): bases, IC-LoRAs, layout conditioning, the test matrix (D-116, guide step 3) | LJ- |
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
 | [archive/](archive/) | history moved out of `docs/wip/` by ICW-01 (2026-11-05, D-108): the D-95 override note, the Master Mold handoff and its execution guide; evidence only, never an active instruction | |
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
@@ -51,6 +62,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [VAULT](VAULT.md) | where every trained file, dataset and branch is kept, the second copy, restore, the pod upload check; D-73 | VT- |
 | [LLM_API](LLM_API.md) | the Claude API client: routing by task class, prices, caps and ledger, response cache, batch, fallbacks, secret refusal, read-only repo tools; P0d | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
+| [RUNBOOK_mac_render](RUNBOOK_mac_render.md) | free local Blender renders on the creator's Mac: install, run, measured speeds, known limits (D-113) | |
 | [CLOUD_RUNBOOK](CLOUD_RUNBOOK.md) | how a RunPod pod ends: the three stop paths (in-pod wrapper, guard, GitHub watchdog), beat.txt, the key probe, the money dead-man, what create refuses; P1a; P1b CR-18 (dry run, pins); P1c RP-01..10 (batching, card choice, the bill) | CR-, RP- |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
 | [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |

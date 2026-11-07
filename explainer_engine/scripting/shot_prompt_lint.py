@@ -80,6 +80,9 @@ SPEECH_WPS = sourced_rules.T("BP-100", "words_per_second")
 SPEECH_SETTLE_S = sourced_rules.T("BP-100", "settle_s")
 DIALOGUE_SHOT_MAX_S = sourced_rules.T("BP-108", "dialogue_shot_max_s")
 NON_DIALOGUE_VIDEO_MAX_S = sourced_rules.T("BP-108", "non_dialogue_video_max_s")
+# BP-108 is the scene; BP-172 one LTX generation of a J2/J4 shot (D-116): the same symbols as scripting/film_shots.py
+LTX_CLIP_TARGET_S = tuple(sourced_rules.T("BP-172", "clip_target_s_band"))
+LTX_CLIP_MAX_S = sourced_rules.T("BP-172", "middle_clip_s_band")[1]
 QUOTE = re.compile(r'"([^"]+)"')
 
 
@@ -162,6 +165,13 @@ def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
             add("KP-06", "REVIEW", f"{seconds:g} s dialogue/lip-sync shot: aim for at most {DIALOGUE_SHOT_MAX_S:g} s; do not split a non-dialogue action to meet this cap")
         elif not spoken and seconds > NON_DIALOGUE_VIDEO_MAX_S:
             add("KP-06", "REVIEW", f"{seconds:g} s non-dialogue video shot: above the {NON_DIALOGUE_VIDEO_MAX_S:g} s planning ceiling")
+        if shot.get("route") in ("J2", "J4"):   # D-116: a video prompt of a J2/J4 shot drives one LTX clip (BP-172)
+            lo, hi = LTX_CLIP_TARGET_S
+            clip = float(shot.get("clip_seconds", seconds) or 0)
+            if clip > LTX_CLIP_MAX_S:
+                add("KP-49", sourced_rules.level("BP-172"), f"{clip:g} s for one LTX clip: at most {LTX_CLIP_MAX_S:g} s (BP-172)")
+            elif clip and not lo <= clip <= hi:
+                add("KP-49", "REVIEW", f"{clip:g} s for one LTX clip: plan {lo:g}-{hi:g} s (BP-172, D-116)")
         sounds = SOUNDS.search(prompt)
         if sounds and len([s for s in re.split(r"[,;]", sounds.group(1)) if s.strip(" .")]) > 3:
             add("KP-11", "REVIEW", "more than three sounds: keep three, the loudest once")

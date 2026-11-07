@@ -51,6 +51,7 @@ from PIL import Image
 
 from explainer_engine.blender import style as S
 from explainer_engine.blender.render import FRAME_NAME
+from explainer_engine.core.contracts import BLENDER_SPECS
 from explainer_engine.core.errors import ContractError
 from explainer_engine.qa import retry_router as RR
 from explainer_engine.standards import sourced_rules as SR
@@ -143,8 +144,8 @@ class RenderValidator:
 
     def check(self, shot_dir: Path | str, spec: dict, *, still_mode: str | None = None) -> list[dict]:
         """Every row for one rendered shot. ``still_mode`` is the film_shots/3 shot's (``hold`` exempts RV-FROZEN)."""
-        if spec.get("schema") != "shot_spec/2":
-            raise ContractError("the render validator checks shot_spec/2 renders only (Blender lanes, D-96)")
+        if spec.get("schema") not in BLENDER_SPECS:
+            raise ContractError("the render validator checks shot_spec/2 and /3 renders only (Blender lanes, D-96)")
         shot_dir = Path(shot_dir)
         sid = spec["shot_id"]
         n, fps = spec["clock"]["frames"], spec["clock"]["fps"]

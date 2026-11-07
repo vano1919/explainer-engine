@@ -1,7 +1,7 @@
 {
  "schema": "script_variants/2",
  "episode_slug": "napoleon_vs_genghis",
- "dossier_sha256": "9c61bc3d2a194119736e9e3261e2f3fc55f0c64968fb78a9237c1991639c385d",
+ "dossier_sha256": "16d5f8a0406b6e0d6263effe9bb856359b79b0efc1778e42b0cf8361a6a10f10",
  "variants": [
   {
    "id": "v1",

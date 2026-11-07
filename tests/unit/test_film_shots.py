@@ -414,6 +414,11 @@ def test_the_napoleon_episode_is_clean_under_the_engine_except_its_held_reaction
     found = F.check(ep)
     by = {s["id"]: s for s in ep["shots"]}
     assert not [f for f in found if f["where"] == "episode"]
+    # D-116 (2026-11-06): the planner now writes each shot's route; the three 2 s J4 shots (one LTX clip each, no ltx_clips yet)
+    # are under BP-172's 3-6 s clip band, a KP-49 REVIEW the step-3 plan answers (cut them as J5 or plan longer clips)
+    clips = [f for f in found if f["rule"] == "KP-49"]
+    assert [(f["severity"], by[f["where"]]["route"], by[f["where"]]["seconds"]) for f in clips] == [("REVIEW", "J4", 2)] * 3
+    found = [f for f in found if f["rule"] != "KP-49"]
     assert found and all(f["rule"] == "KP-37" and f["severity"] == "REVIEW" and by[f["where"]]["lane"] == "STILL_3D"
                          and by[f["where"]]["mode"] == "scene" and "acted peak" in f["detail"] for f in found)
     assert len(found) == 17
@@ -617,3 +622,20 @@ def test_film_shots_3_has_no_prompt_composer():
     assert "VIDEO_3D" in F.shotlist(doc)
     napoleon = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
     assert not [f for f in F.check(napoleon) if f["severity"] == "FAIL"]  # the staging checks still run, the prompt lints do not
+
+
+def test_kp49_bounds_one_ltx_clip_of_a_j2_or_j4_shot_and_bp108_stays_the_scene():
+    """D-116 (the creator, 2026-11-06): BP-108 is the scene (10-15 s), BP-172 one LTX generation (target 3-6 s, at most 8 s)."""
+    assert F.LTX_CLIP_TARGET_S == (3.0, 6.0) and F.LTX_CLIP_MAX_S == 8.0 and F.NON_DIALOGUE_VIDEO_MAX_S == 15.0
+    assert F.lint.LTX_CLIP_TARGET_S == F.LTX_CLIP_TARGET_S and F.lint.LTX_CLIP_MAX_S == F.LTX_CLIP_MAX_S   # one home, two readers
+    clip = lambda s: {"seconds": s, "frames": 8 * round(s * 3) + 1, "width": 1920, "height": 1088}  # noqa: E731
+    battle = {"id": "b", "route": "J4", "seconds": 12, "ltx_clips": [clip(6), clip(6)]}
+    assert F.ltx_clip_findings(battle) == []
+    battle["ltx_clips"] = [clip(2.5), clip(9)]
+    assert [(r, sev) for r, sev, _ in F.ltx_clip_findings(battle)] == [("KP-49", "REVIEW"), ("KP-49", "FAIL")]
+    # no ltx_clips yet: the whole shot is one planned clip, a REVIEW outside the band (never a FAIL before the clips are planned)
+    assert [(r, sev) for r, sev, _ in F.ltx_clip_findings({"id": "d", "route": "J2", "seconds": 12})] == [("KP-49", "REVIEW")]
+    assert F.ltx_clip_findings({"id": "d", "route": "J2", "seconds": 5}) == []
+    # a J5 or H shot, and a card with no route (film_shots/1, /2), is never an LTX generation
+    for shot in ({"id": "t", "route": "J5", "seconds": 14}, {"id": "m", "route": "H", "seconds": 9}, {"id": "o", "seconds": 12}):
+        assert F.ltx_clips(shot) == [] and F.ltx_clip_findings(shot) == []

@@ -142,6 +142,76 @@
       "weights_vs_code_note": null,
       "outputs_note": "REJECTED for production (roadmap 21.9): the videos are global; technical reference only",
       "per_pack_check": false
+    },
+    "quaternius_medieval_village_megakit": {
+      "label": "Quaternius Medieval Village MegaKit (Standard, free)",
+      "status": "cc0",
+      "commercial_use": "yes",
+      "source_url": "https://quaternius.itch.io/medieval-village-megakit",
+      "evidence": "itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal' ('Can be used in personal, educational, and commercial projects. CC0'); the pack's License_Standard.txt: CC0 1.0 Universal. quaternius.com itself now shows the Quaternius Asset License v1.0 (no redistribution of the assets): take the pack from the itch.io CC0 page only",
+      "redistribution": "allowed (CC0 1.0)",
+      "derivatives": "allowed (CC0 1.0)",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "the free Standard zip holds 176 of the MegaKit's pieces (glTF/FBX/OBJ with 2K PNG textures); the PRO and Source versions are paid and not covered here",
+      "per_pack_check": true
+    },
+    "quaternius_stylized_nature_megakit": {
+      "label": "Quaternius Stylized Nature MegaKit (Standard, free)",
+      "status": "cc0",
+      "commercial_use": "yes",
+      "source_url": "https://quaternius.itch.io/stylized-nature-megakit",
+      "evidence": "itch.io page (read 2026-11-05): Asset license 'Creative Commons Zero v1.0 Universal'; the pack's License_Standard.txt (CC0 1.0). Taken from the itch.io page, not quaternius.com (no-redistribution licence there)",
+      "redistribution": "allowed (CC0 1.0)",
+      "derivatives": "allowed (CC0 1.0)",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "free Standard zip: glTF/FBX/OBJ trees, rocks, plants; PRO and Source are paid and not covered",
+      "per_pack_check": true
+    },
+    "blender_studio_cc_by": {
+      "label": "Blender Studio character rigs (Rain v3.3; Storm, Sprite Fright characters if fetched later)",
+      "status": "cc-by-4.0",
+      "commercial_use": "yes",
+      "source_url": "https://studio.blender.org/characters/rain/v3/",
+      "evidence": "VENDOR page (read 2026-11-05): 'free to use, provided that you respect the CC-BY license and include the credit: Rain Rig © Blender Foundation | cloud.blender.org'. Storm page (read 2026-11-05) states CC-BY with the credit 'Storm Rig (CC) Blender Foundation | studio.blender.org' but its download needs a Blender Studio login",
+      "redistribution": "allowed with the credit (CC-BY)",
+      "derivatives": "allowed with the credit (CC-BY)",
+      "attribution": "Rain Rig © Blender Foundation | cloud.blender.org (in every video description that shows the character)",
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": null,
+      "outputs_note": "Rain v3.3 zip: rain_v3.2.blend + textures, 64.4 MB, sha256 80217f163f6392dc829233d63c2cfb5e1376775bc34101ad14f39631fea70d24, fetched 2026-11-05 from https://studio.blender.org/download-source/files/ee/a7/eea73e55dba1cea31c09848df6a794b2-4.zip; over 5 MB so it lives in the vault, never in git (D-110). The .blend carries Python (cloudrig.py, rain_shading.py): open it with scripts disabled; the face works without them",
+      "per_pack_check": true
+    },
+    "add_camera_rigs": {
+      "label": "Add Camera Rigs 1.9.2 (Blender extension: Dolly, Crane and 2D camera rigs)",
+      "status": "gpl-tool-only",
+      "commercial_use": "yes",
+      "source_url": "https://extensions.blender.org/add-ons/add-camera-rigs/",
+      "evidence": "extensions.blender.org API list 2026-11-05: id add_camera_rigs, version 1.9.2, license SPDX:GPL-3.0-or-later, maintainer WayneDixon; zip sha256 548ecf6372563948f5b3cf292dd01a3209f77ef730eb38b0197cd50ffd7377cd (15062 bytes), pinned in config/cloud_pins.json blender_extensions",
+      "redistribution": "GPL-3.0-or-later: used as shipped, fetched by sha256 at run time, never copied into our package",
+      "derivatives": "none made",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": "code only; a render made with it is not a derivative of the extension",
+      "outputs_note": "frames rendered with a rig carry no licence of the extension",
+      "per_pack_check": false
+    },
+    "perfectly_normal": {
+      "label": "Perfectly Normal 0.0.3 (Blender extension by Seth Trowbridge: Manip Verts GN tools for custom face-corner normals)",
+      "status": "gpl-tool-only",
+      "commercial_use": "yes",
+      "source_url": "https://extensions.blender.org/add-ons/perfectly-normal/",
+      "evidence": "extensions.blender.org API list 2026-11-05: id perfectly_normal, version 0.0.3, license SPDX:GPL-3.0-or-later, blender_version_min 4.5.0; zip sha256 477d5735c3f11e03111ee78ffcb61875d829ca31be5aaa7bef8feeca1f0cfd0a (156617 bytes), pinned in config/cloud_pins.json blender_extensions",
+      "redistribution": "GPL-3.0-or-later: used as shipped, fetched by sha256 at run time, never copied into our package",
+      "derivatives": "none made: its node groups are appended into the render's scene, unchanged",
+      "attribution": null,
+      "geo_or_revenue_limits": null,
+      "weights_vs_code_note": "node groups (data) only; the add-on's Python is never run",
+      "outputs_note": "frames rendered with its normals carry no licence of the extension",
+      "per_pack_check": false
     }
   }
 }

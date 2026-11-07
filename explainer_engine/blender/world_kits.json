@@ -1,0 +1,2129 @@
+{
+ "schema": "world_kits/1",
+ "_doc": "WP-Q8: the world-kit pieces (packs, member files, Poly Haven slugs), each packed by world_kits.pack_piece into one self-contained GLB (base-colour image only, scaled to max_texture_px) and registered external in assets/library.json (vault assets/3d/model/<id>/). `sha256` is the packed file's hash, written by `world_kits register`; `fetch` rebuilds a missing file from the pack zip or the Poly Haven URLs and refuses other bytes. Licences: licence_sources.json rows quaternius_medieval_village_megakit and polyhaven.",
+ "downloaded_on": "2026-11-05",
+ "max_texture_px": 1024,
+ "packs": {
+  "mvk": {
+   "source": "quaternius_medieval_village_megakit",
+   "page": "https://quaternius.itch.io/medieval-village-megakit",
+   "match": "Standard",
+   "file": "Medieval Village MegaKit[Standard].zip",
+   "sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "bytes": 161003471,
+   "version": "Standard (free) zip, itch.io page licence line 'Creative Commons Zero v1.0 Universal' and the pack's License_Standard.txt (CC0 1.0), downloaded 2026-11-05"
+  },
+  "snm": {
+   "source": "quaternius_stylized_nature_megakit",
+   "page": "https://quaternius.itch.io/stylized-nature-megakit",
+   "match": "Standard",
+   "file": "Stylized Nature MegaKit[Standard].zip",
+   "sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "bytes": 104088529,
+   "version": "Standard (free) zip, itch.io page licence 'Creative Commons Zero v1.0 Universal', downloaded 2026-11-05"
+  }
+ },
+ "polyhaven": {
+  "modular_fort_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "modular_fort_01.bin": "49bfa2a55e65c997840799099ad6ffa5",
+    "modular_fort_01_1k.gltf": "340e7883860599c6b17ab73a893ff9b3",
+    "textures/modular_fort_01_plaster_arm_1k.jpg": "a367aa0d7b6307df5b961f4d339c593c",
+    "textures/modular_fort_01_plaster_diff_1k.jpg": "c2b8f298926cb63a8d926cffcab863c8",
+    "textures/modular_fort_01_plaster_nor_gl_1k.jpg": "b76724f4bb1ec196728c1a4d704f322c",
+    "textures/modular_fort_01_trim_arm_1k.jpg": "2ad72ca33693932204ffe68ee7232120",
+    "textures/modular_fort_01_trim_diff_1k.jpg": "1e5e6e32e599ebaa6471c4c1ce3023fd",
+    "textures/modular_fort_01_trim_nor_gl_1k.jpg": "4e87ba7c3ac854d64a6d0de56362f76a",
+    "textures/modular_fort_01_wall_arm_1k.jpg": "9e667ae75549188caa03da56aa276fdb",
+    "textures/modular_fort_01_wall_diff_1k.jpg": "c3958a33d456a5f2b776dde465024072",
+    "textures/modular_fort_01_wall_nor_gl_1k.jpg": "2164dad0582c2ec60e757e6565b1f257"
+   }
+  },
+  "large_castle_door": {
+   "resolution": "1k",
+   "files_md5": {
+    "large_castle_door.bin": "ed0cee2626677b1a520de7bd868d09cc",
+    "large_castle_door_1k.gltf": "40c7debfb0e9f51826b294d642bc0bfe",
+    "textures/large_castle_door_arm_1k.jpg": "e742bcceba429ca946edc788dac922ff",
+    "textures/large_castle_door_diff_1k.jpg": "641c090895f68f3be02f8db278385174",
+    "textures/large_castle_door_nor_gl_1k.jpg": "4a0e452157d95c0d18a2f79429ec471d"
+   }
+  },
+  "wine_barrel_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wine_barrel_01_arm_1k.jpg": "2f0cc81ac07fdbe8c22927feac722927",
+    "textures/wine_barrel_01_diff_1k.jpg": "fdea9538acf01a04a61626919a84b3fb",
+    "textures/wine_barrel_01_nor_gl_1k.jpg": "6b3ce558fa74d3760fa0192dfc4564a3",
+    "wine_barrel_01.bin": "84f578460020912056a1e3fbe3ec1b97",
+    "wine_barrel_01_1k.gltf": "5397e6d959dd3ef20d1fc14436d0eb70"
+   }
+  },
+  "wooden_crate_02": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_crate_02_arm_1k.jpg": "a7537612dbfb7fd25e756074eec5624e",
+    "textures/wooden_crate_02_diff_1k.jpg": "45bca8f49da9d541e06bc926ab001c81",
+    "textures/wooden_crate_02_nor_gl_1k.jpg": "314226b31765168cd8070898f8a7e18e",
+    "wooden_crate_02.bin": "08d98507231cdeda1070d1a2d0646254",
+    "wooden_crate_02_1k.gltf": "a69eb62fd20e6badb6bb56f052930e06"
+   }
+  },
+  "wooden_lantern_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_lantern_01_arm_1k.jpg": "87b5bdc9f3d5853caef38a00589541ae",
+    "textures/wooden_lantern_01_diff_1k.jpg": "8f9f537ab312b1ec85acb1f5aaf7ad17",
+    "textures/wooden_lantern_01_glass_arm_1k.jpg": "890c1dd6ad9c37521f9f0a0d9d08fba2",
+    "textures/wooden_lantern_01_glass_diff_1k.jpg": "c1e45d48f344f86726d02c81679af6a4",
+    "textures/wooden_lantern_01_glass_nor_gl_1k.jpg": "38549e36957f90dc61587010c3a8ff3a",
+    "textures/wooden_lantern_01_nor_gl_1k.jpg": "9db1fa975880b3cf6da5e6c30853e0cf",
+    "wooden_lantern_01.bin": "3784667126369ce5c21db3c7436409cb",
+    "wooden_lantern_01_1k.gltf": "e31edca6461023e076183cb74721b0b9"
+   }
+  },
+  "GothicCabinet_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "GothicCabinet_01.bin": "4c2f20b4b5fbf8c33b86b04dcf805c5f",
+    "GothicCabinet_01_1k.gltf": "d6ec468ab981336f76f35f10d566e460",
+    "textures/GothicCabinet_01_arm_1k.jpg": "8f88a6ca9bde9970644ba65086a33f39",
+    "textures/GothicCabinet_01_diff_1k.jpg": "67ce3b2ce0a43cd209114084d49de35c",
+    "textures/GothicCabinet_01_nor_gl_1k.jpg": "a2912d1111ac0a4877af75280e539763"
+   }
+  },
+  "modular_wooden_pier": {
+   "resolution": "1k",
+   "files_md5": {
+    "modular_wooden_pier.bin": "dbdbeca4676a3012a64b4daa75d1f97c",
+    "modular_wooden_pier_1k.gltf": "5a5c75c7711b8804c680970a60bd382f",
+    "textures/modular_wooden_pier_planks_arm_1k.jpg": "e6ffdf7314cc015aaa5c0899326b42a7",
+    "textures/modular_wooden_pier_planks_diff_1k.jpg": "f3fef39b0ec16e4006678c846d3601ab",
+    "textures/modular_wooden_pier_planks_nor_gl_1k.jpg": "b752108fe7504d5dd4ae0f4701b1218b",
+    "textures/modular_wooden_pier_poles_arm_1k.jpg": "feb305e6fc0f59f48c57e0e5e591b637",
+    "textures/modular_wooden_pier_poles_diff_1k.jpg": "7aade157e5892017ee86a6e13074b727",
+    "textures/modular_wooden_pier_poles_nor_gl_1k.jpg": "2a6f536ed9057bb8e2a813b7755cc534"
+   }
+  },
+  "dutch_ship_medium": {
+   "resolution": "1k",
+   "files_md5": {
+    "dutch_ship_medium.bin": "f73e0108855bc3aef1a65a737a37f575",
+    "dutch_ship_medium_1k.gltf": "ade58c8bbbc75ebcafd5f7f9bbd5cfea",
+    "textures/dutch_ship_medium_hull_arm_1k.jpg": "0f24fc5c2234c69a532f4d6c7ed743d8",
+    "textures/dutch_ship_medium_hull_diff_1k.jpg": "ea6a1429fc1f457d080ddd0a84d0b1d3",
+    "textures/dutch_ship_medium_hull_nor_gl_1k.jpg": "db1b09ba5e9456a24ca75a04fcdec460",
+    "textures/dutch_ship_medium_rigging_arm_1k.jpg": "ef43b6361c191488cf38e9dc3ae2ff2c",
+    "textures/dutch_ship_medium_rigging_diff_1k.jpg": "9be03bbd49b2351bf876cff4151d885e",
+    "textures/dutch_ship_medium_rigging_nor_gl_1k.jpg": "9c80020acc0933c64d1d1cafabfe4355",
+    "textures/dutch_ship_medium_sails_arm_1k.jpg": "841c9af726ee8fb3fa412cae8cb94068",
+    "textures/dutch_ship_medium_sails_diff_1k.jpg": "bc208c775eb005386d089ad5dc1eec00",
+    "textures/dutch_ship_medium_sails_nor_gl_1k.jpg": "dd9c9577f8e63071c62448b56f2951f5"
+   }
+  },
+  "ship_pinnace": {
+   "resolution": "1k",
+   "files_md5": {
+    "ship_pinnace.bin": "154e557f7ecc84a31a213bf176581801",
+    "ship_pinnace_1k.gltf": "dca97c677eadc565d7efa4e4c29863ef",
+    "textures/ship_pinnace_aft_arm_1k.jpg": "f479e1318044e212e235d5b2625ddb7d",
+    "textures/ship_pinnace_aft_diff_1k.jpg": "841f0a07cb7fea4fb727f6a3452f8f0d",
+    "textures/ship_pinnace_aft_nor_gl_1k.jpg": "ee37386069785283142a080d9ecf477e",
+    "textures/ship_pinnace_deck_arm_1k.jpg": "6d78da350d090ae4a62319c487f04bf8",
+    "textures/ship_pinnace_deck_diff_1k.jpg": "5b64def85f9d91987ba566844cb938c0",
+    "textures/ship_pinnace_deck_nor_gl_1k.jpg": "ce3817091f2d897004dcca0f8bda0aa0",
+    "textures/ship_pinnace_details_arm_1k.jpg": "3e6f0571f7d895b1038c471e201dbd10",
+    "textures/ship_pinnace_details_diff_1k.jpg": "a25e4b635ae110293e93e479517dfea2",
+    "textures/ship_pinnace_details_nor_gl_1k.jpg": "18801519aeb1aa41cfe36210598bfba0",
+    "textures/ship_pinnace_hull_arm_1k.jpg": "e66f12a1d8700b97e971ac41710a3a20",
+    "textures/ship_pinnace_hull_diff_1k.jpg": "b4ace551dddf3c75e06477100cba81b9",
+    "textures/ship_pinnace_hull_nor_gl_1k.jpg": "f60d615eabb763ee530df82699e84c52",
+    "textures/ship_pinnace_interior_arm_1k.jpg": "b01d9f8cd8a1cd5ad23b4c65219cb700",
+    "textures/ship_pinnace_interior_diff_1k.jpg": "6ff83361fc0837e45bb38e9bc9bfac9d",
+    "textures/ship_pinnace_interior_nor_gl_1k.jpg": "dfc90577fbd4a4d547eaa03482c30721",
+    "textures/ship_pinnace_rigging_arm_1k.jpg": "f6451ed77f4be15c6e179ea61245bb80",
+    "textures/ship_pinnace_rigging_diff_1k.jpg": "0797c0f985407feb2038f57ad876c333",
+    "textures/ship_pinnace_rigging_nor_gl_1k.jpg": "e904eee86b8ecd0c8d4839e526184de6",
+    "textures/ship_pinnace_sails_arm_1k.jpg": "2d95993394aae8895084fbaab158fbec",
+    "textures/ship_pinnace_sails_diff_1k.jpg": "5cc1a091d4296bb93990f9856f7492c0",
+    "textures/ship_pinnace_sails_nor_gl_1k.jpg": "0475784a0c33f5a8d1855b5e0fbaf972"
+   }
+  },
+  "wooden_barrels_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_barrels_01_barrel01_arm_1k.jpg": "19e643936381b9ff0b5d3a17f41f590f",
+    "textures/wooden_barrels_01_barrel01_diff_1k.jpg": "8387b4843c9331f8dd7935a5034d3d38",
+    "textures/wooden_barrels_01_barrel01_nor_gl_1k.jpg": "21c030448f574a298f22a7edd2b5e176",
+    "textures/wooden_barrels_01_barrel02_arm_1k.jpg": "20a7bccad7bf899a8a4b18c73cd74dc9",
+    "textures/wooden_barrels_01_barrel02_diff_1k.jpg": "5b3f9026ba99f55e3f9397e2e8818945",
+    "textures/wooden_barrels_01_barrel02_nor_gl_1k.jpg": "21e88f8d945b0a3b6861debe9db58a9f",
+    "textures/wooden_barrels_01_pieces_arm_1k.jpg": "4dc69d91b60da91029acf8e0706e4b33",
+    "textures/wooden_barrels_01_pieces_diff_1k.jpg": "9469a5822acae4616d98ca5fc2af97d2",
+    "textures/wooden_barrels_01_pieces_nor_gl_1k.jpg": "1f580f7f8ce6fa21694c6048bad318c4",
+    "wooden_barrels_01.bin": "6c1dbd45bc5f0b1e726a7343fae0fbdb",
+    "wooden_barrels_01_1k.gltf": "1228b95423a5430d74d238284fad724e"
+   }
+  },
+  "marble_bust_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "marble_bust_01.bin": "1c62c1189a0e8985618c1662e1bd25a3",
+    "marble_bust_01_1k.gltf": "599d6dd71c2dcdffa064b1c1d85882f4",
+    "textures/marble_bust_01_diff_1k.jpg": "aede40cc2b092d91a5f72598c911da4f",
+    "textures/marble_bust_01_nor_gl_1k.jpg": "134149a7e8f142fcb605f0bde52b3ff6",
+    "textures/marble_bust_01_rough_1k.jpg": "9fdff7b2b17d12fcc478de3021f561dd"
+   }
+  },
+  "horse_statue_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "horse_statue_01.bin": "f240dd187e04807481bc422b5a9596c3",
+    "horse_statue_01_1k.gltf": "3cca65f1d964c30947ca3c473ddbadff",
+    "textures/horse_statue_01_arm_1k.jpg": "5e5f6cfaa0d8c8b7394f82b31951f9ac",
+    "textures/horse_statue_01_diff_1k.jpg": "a0aa4ddcc70e6223279cbbb4e031c1a6",
+    "textures/horse_statue_01_nor_gl_1k.jpg": "5d39dedc6a58786c9d68f80037fb9513"
+   }
+  },
+  "kite_shield": {
+   "resolution": "1k",
+   "files_md5": {
+    "kite_shield.bin": "98ad5003efb79db22fa25035fb216565",
+    "kite_shield_1k.gltf": "bba20187ab75fefa531830097ba8e014",
+    "textures/kite_shield_body_arm_1k.jpg": "1263267f8c82e09fb08a4800fed8d097",
+    "textures/kite_shield_body_diff_1k.jpg": "61c83755bd51734169d4bfbd2ea745d5",
+    "textures/kite_shield_body_nor_gl_1k.jpg": "9e13405518029733eb35bbc23a054333",
+    "textures/kite_shield_clamps_trim_arm_1k.jpg": "21fc1dcea3229435059feaa3738adc87",
+    "textures/kite_shield_clamps_trim_diff_1k.jpg": "966bd203b385be489a336a2a2637be57",
+    "textures/kite_shield_clamps_trim_nor_gl_1k.jpg": "5f061062760d9fb381c34ab98e2e86e5"
+   }
+  },
+  "street_lamp_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "street_lamp_01.bin": "324bc6295e3962322514ddcfc7037b23",
+    "street_lamp_01_1k.gltf": "d29d1fc30bbdad99a58371754f144e65",
+    "textures/street_lamp_01_arm_1k.jpg": "63d980174db10cf22a1b175743c465c9",
+    "textures/street_lamp_01_diff_1k.jpg": "82efb7531a25cda3ef8af2aff8ecccf7",
+    "textures/street_lamp_01_nor_gl_1k.jpg": "c27d8102c7e851a8f0f654bb959b9d67"
+   }
+  },
+  "antique_ceramic_vase_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "antique_ceramic_vase_01.bin": "0758bc04ce9826b1ae61c931aed19715",
+    "antique_ceramic_vase_01_1k.gltf": "b5a82c883c3a29b54eccd2f8400bd479",
+    "textures/antique_ceramic_vase_01_arm_1k.jpg": "ca1d7269913774a351bdf10058d7f06f",
+    "textures/antique_ceramic_vase_01_diff_1k.jpg": "a3de8212967f9e230364c5948e1581a5",
+    "textures/antique_ceramic_vase_01_nor_gl_1k.jpg": "07fef9d384b8e73d1b03604103ed0b65"
+   }
+  },
+  "treasure_chest": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/treasure_chest_arm_1k.jpg": "ffb1a453af7e91fb63c1ec51da29832a",
+    "textures/treasure_chest_diff_1k.jpg": "59a684377b91eed5cb0cf44fad6b1089",
+    "textures/treasure_chest_nor_gl_1k.jpg": "5ce2977f7417f17575b92873a56a3c4f",
+    "treasure_chest.bin": "c955b1084bb3f7c8cea414bdf1a89845",
+    "treasure_chest_1k.gltf": "7bfc4b335cff3e2641c8b9e55dbee0a2"
+   }
+  },
+  "wooden_bucket_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_bucket_01_arm_1k.jpg": "9f42842024b3117b557348ec265cfeee",
+    "textures/wooden_bucket_01_diff_1k.jpg": "d6296adf55e03bb1acc5de3e5fc8b10f",
+    "textures/wooden_bucket_01_nor_gl_1k.jpg": "68ad3de3f685798a8d46c070da840e5a",
+    "wooden_bucket_01.bin": "a93114e5fadd149de908464de7b42550",
+    "wooden_bucket_01_1k.gltf": "d3a6ff00895b69406b203dc417113d9a"
+   }
+  },
+  "gothic_statue": {
+   "resolution": "1k",
+   "files_md5": {
+    "gothic_statue.bin": "64ff6a07591c56042e01c780dce7685b",
+    "gothic_statue_1k.gltf": "4fb49ae8f4278a0f5f1c7ca89a416f69",
+    "textures/gothic_statue_arm_1k.jpg": "0403abefbd62dfc03eb6b237d6d82119",
+    "textures/gothic_statue_diff_1k.jpg": "a8110eba7602d4d3ff00b05abf25397e",
+    "textures/gothic_statue_nor_gl_1k.jpg": "ecba6e86dc6dd8195710765f4889c895"
+   }
+  },
+  "vintage_grandfather_clock_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/vintage_grandfather_clock_01_arm_1k.jpg": "3ec5c1e3facd0cdad5fb8879eabd26b3",
+    "textures/vintage_grandfather_clock_01_diff_1k.jpg": "8cbc3cc8f787da9ab3f251ee2be1ad25",
+    "textures/vintage_grandfather_clock_01_nor_gl_1k.jpg": "59d8c7699450fe8fb995defdda657911",
+    "vintage_grandfather_clock_01.bin": "4f5932b271405233d3b7ce175d0030e1",
+    "vintage_grandfather_clock_01_1k.gltf": "4d2f771bb5d436d90a51a3898fca91d7"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wall_clock": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wall_clock_arm_1k.jpg": "6d962d1263bd5b34e16a69fa5473e8ac",
+    "textures/wall_clock_diff_1k.jpg": "32e8346296eebf4776e7e917f0080c7f",
+    "textures/wall_clock_glass_arm_1k.jpg": "5e84b53fb7e087f4114de28d70787f5c",
+    "textures/wall_clock_nor_gl_1k.jpg": "d6404c2ffb48b17fbeed2cb9bf187a29",
+    "wall_clock.bin": "f1399287d9ad2fa2cfb303e95bbdbc45",
+    "wall_clock_1k.gltf": "86c50202813c717074d1bc72ddad9109"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "painted_wooden_bench": {
+   "resolution": "1k",
+   "files_md5": {
+    "painted_wooden_bench.bin": "ed331b50f955852f007313c1a75c2e2d",
+    "painted_wooden_bench_1k.gltf": "784a49250144aa5299a93c1f3b6968d7",
+    "textures/painted_wooden_bench_arm_1k.jpg": "754ecc7f47b1e5d032e45e22334954f1",
+    "textures/painted_wooden_bench_diff_1k.jpg": "60c7d0f34f52b1003345d318e35f468d",
+    "textures/painted_wooden_bench_nor_gl_1k.jpg": "08b74bebcff262c14beae35a4f7b3405"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wooden_bookshelf_worn": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_bookshelf_worn_arm_1k.jpg": "7252efe4bd18f6dfdc014a9f4ccdf065",
+    "textures/wooden_bookshelf_worn_diff_1k.jpg": "8f92c92e6473010e7df9b11f32d1234a",
+    "textures/wooden_bookshelf_worn_nor_gl_1k.jpg": "0e6f33c00eec432dd17178a4e5feb4f2",
+    "wooden_bookshelf_worn.bin": "3842de1943f58cdafb3a25d384b2400f",
+    "wooden_bookshelf_worn_1k.gltf": "f8bb25dfb3c646e5c4f420d800276928"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wooden_candlestick": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_candlestick_arm_1k.jpg": "5415bd35901d9f9fd088501c6dfcdfc6",
+    "textures/wooden_candlestick_diff_1k.jpg": "8255433d6733f67ccb22261a762387b7",
+    "textures/wooden_candlestick_nor_gl_1k.jpg": "a38b0c3b142db55c9bc827f22d890b6a",
+    "wooden_candlestick.bin": "7558341c1d272937b6ca9e18ccee8ce2",
+    "wooden_candlestick_1k.gltf": "26894e96c7c914a995c3a5151c875a4e"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "jug_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "jug_01.bin": "f4818dd15e25681e1fcf718c9c488998",
+    "jug_01_1k.gltf": "b8b3c0c9faf48e2370485a04288da9c4",
+    "textures/jug_01_arm_1k.jpg": "ca8d04eb674fb6c77582383cde180319",
+    "textures/jug_01_diff_1k.jpg": "ffe6e4999d473e6969c1432fa1ea5e21",
+    "textures/jug_01_nor_gl_1k.jpg": "51321fce3679b61a41c9267f18d5ef12"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wooden_bowl_02": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_bowl_02_arm_1k.jpg": "a416eec6afe81cfc5b2a94cabe241f69",
+    "textures/wooden_bowl_02_diff_1k.jpg": "69dfe9fa89f7458fbeb03300267a279d",
+    "textures/wooden_bowl_02_nor_gl_1k.jpg": "76dedcb76919daaed23a3d7510c43257",
+    "wooden_bowl_02.bin": "92850bb8ba7e6dfd53f4b157276a8536",
+    "wooden_bowl_02_1k.gltf": "7e1269b42d3cf9e96d3a7a43784a9fc5"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "carved_wooden_plate": {
+   "resolution": "1k",
+   "files_md5": {
+    "carved_wooden_plate.bin": "70499c8019359d859577d9f7eef46091",
+    "carved_wooden_plate_1k.gltf": "c4866bc4fcdf070b992f9b35acf8d13e",
+    "textures/carved_wooden_plate_arm_1k.jpg": "e9a523f6b0a9851b7b9e9855fa83f896",
+    "textures/carved_wooden_plate_diff_1k.jpg": "f4c0f569c128db22906a209905cf3e90",
+    "textures/carved_wooden_plate_nor_gl_1k.jpg": "b492a0465ff80fc5aff3433991fdc554"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wicker_basket_02": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wicker_basket_02_arm_1k.jpg": "2967de2f99b85ee52d6bab63978c003a",
+    "textures/wicker_basket_02_diff_1k.jpg": "61471823114f02ca04197e7e2af13e8f",
+    "textures/wicker_basket_02_nor_gl_1k.jpg": "502447f7dc5687b386f8c417c31feb07",
+    "wicker_basket_02.bin": "32a855c75791b16826530611f9199e82",
+    "wicker_basket_02_1k.gltf": "aed62a99730dec42ef32e51c36187f37"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "lantern_chandelier_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "lantern_chandelier_01.bin": "5a341ffae56b0f2defcad4c3f37bb35d",
+    "lantern_chandelier_01_1k.gltf": "1692aed50765a13f631d65cb64bf9a4f",
+    "textures/lantern_chandelier_01_arm_1k.jpg": "c3f81f516235c19f5529db8eeed82967",
+    "textures/lantern_chandelier_01_diff_1k.jpg": "37d15a3440e919c20a6dfb4f8a9e68c9",
+    "textures/lantern_chandelier_01_glass_alpha_1k.jpg": "4baa22e6d91bdfc1784828914bb99410",
+    "textures/lantern_chandelier_01_glass_arm_1k.jpg": "034728b008419f7e58c3100519d42c77",
+    "textures/lantern_chandelier_01_glass_diff_1k.jpg": "3d1c653ffd71bad4cd59ac3c7b323faa",
+    "textures/lantern_chandelier_01_glass_nor_gl_1k.jpg": "ae5f7fddd9b158f308e092216fcce457",
+    "textures/lantern_chandelier_01_nor_gl_1k.jpg": "dc586af8f1abf9950241eac67e5a6ba5"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "scandinavian_masonry_heater": {
+   "resolution": "1k",
+   "files_md5": {
+    "scandinavian_masonry_heater.bin": "e6f9c4f58ccf736e794ae0cde6cdf531",
+    "scandinavian_masonry_heater_1k.gltf": "4536c2353acebadfa04ea4b7508dc8cd",
+    "textures/scandinavian_masonry_heater_arm_1k.jpg": "25d9c0d87442d71f71a491f8408c7a53",
+    "textures/scandinavian_masonry_heater_diff_1k.jpg": "71076427e565b5d0a5e95ac5b70afabb",
+    "textures/scandinavian_masonry_heater_nor_gl_1k.jpg": "240af26d7fef992b427afdd06f7b38f3"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "vintage_wooden_drawer_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/vintage_wooden_drawer_01_arm_1k.jpg": "c51e23395d1dac759b4e433a54e8f934",
+    "textures/vintage_wooden_drawer_01_diff_1k.jpg": "983becd2ca5b299d5ff79b25cafbd78e",
+    "textures/vintage_wooden_drawer_01_nor_gl_1k.jpg": "7210d2ca1ee093feb03758e21589c04f",
+    "vintage_wooden_drawer_01.bin": "61ea9192d2199cd76f54623942b5bde4",
+    "vintage_wooden_drawer_01_1k.gltf": "88e36661f5a778b4b5b2c4a3715c4e11"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "hanging_picture_frame_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "hanging_picture_frame_01.bin": "ed2c512ea5e3dcdcfc70c53b4de24099",
+    "hanging_picture_frame_01_1k.gltf": "54726d9c81e19d8745b3d26d18b89c89",
+    "textures/hanging_picture_frame_01_arm_1k.jpg": "8d9dd625ec0705f3ac0a2ec2b402844e",
+    "textures/hanging_picture_frame_01_artwork_diff_1k.jpg": "bf926c376e335ac3272564924f9d4e52",
+    "textures/hanging_picture_frame_01_artwork_nor_gl_1k.jpg": "6c3858a15263cfd9621d88c2eabe9d71",
+    "textures/hanging_picture_frame_01_artwork_roughness_1k.jpg": "b8e5b8431b0c53b20d83ec0bcff51747",
+    "textures/hanging_picture_frame_01_diff_1k.jpg": "4311cd03620cafa59976f9e8b7b26f88",
+    "textures/hanging_picture_frame_01_nor_gl_1k.jpg": "2ff7cca9a9b2918b5476d39c13592214"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wooden_table_02": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_table_02_arm_1k.jpg": "8ee06c71a226e7f53b2ba53da79a55be",
+    "textures/wooden_table_02_diff_1k.jpg": "07075a87918208594260c86c727e4396",
+    "textures/wooden_table_02_nor_gl_1k.jpg": "63ac7819b624149e77ae9459472ded6d",
+    "wooden_table_02.bin": "a17c24e5366a0f7ad5522b88a4a9ea85",
+    "wooden_table_02_1k.gltf": "957c5d94784eed976cb4c6f0256a85e7"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "painted_wooden_chair_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "painted_wooden_chair_01.bin": "7fd011acaef4730770108a7932191768",
+    "painted_wooden_chair_01_1k.gltf": "28e739db9799cdadf820ead2b486d463",
+    "textures/painted_wooden_chair_01_arm_1k.jpg": "2ee02ed8f2dda4303428eaf6443f928a",
+    "textures/painted_wooden_chair_01_diff_1k.jpg": "94c34f4a211eec5bd30017564e09be4c",
+    "textures/painted_wooden_chair_01_nor_gl_1k.jpg": "5150e3034d2f69b0d7f0576955e51e3e"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "wooden_stool_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "textures/wooden_stool_01_diff_1k.jpg": "11e0ab4da421bf248e8d9de2c34a95fb",
+    "textures/wooden_stool_01_nor_gl_1k.jpg": "99541327d77d7f8a740aad45ff86760f",
+    "textures/wooden_stool_01_rough_1k.jpg": "339c0ab3c8c1618a0ebcd281004ea5ba",
+    "wooden_stool_01.bin": "883e9617a69e90be7e19447dca83041c",
+    "wooden_stool_01_1k.gltf": "6a3c9169ce7ade1796efca8b88c75c50"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "gallinera_chair": {
+   "resolution": "1k",
+   "files_md5": {
+    "gallinera_chair.bin": "6d859113c6157ee9f8153fbc50260a05",
+    "gallinera_chair_1k.gltf": "60a61e7a479b8e9f9a0ec1ba5fef26bd",
+    "textures/gallinera_chair_arm_1k.jpg": "73a530b8a58e477e2e18381bc9b9f6bc",
+    "textures/gallinera_chair_diff_1k.jpg": "2a1254d88dcf9ff1cd2a2baf800be6aa",
+    "textures/gallinera_chair_nor_gl_1k.jpg": "5bb34558c38df109f61b890144757349"
+   },
+   "downloaded_on": "2026-11-06"
+  },
+  "mantel_clock_01": {
+   "resolution": "1k",
+   "files_md5": {
+    "mantel_clock_01.bin": "200740e20c08d0c370b608af6a17e9f9",
+    "mantel_clock_01_1k.gltf": "768ccf9a56c73b0ef542c93922fdb5db",
+    "textures/mantel_clock_01_arm_1k.jpg": "a52929305a9a0f5cbe6c840f9ee9fc6c",
+    "textures/mantel_clock_01_diff_1k.jpg": "a012d80ace15cc37f75e8679702bb92f",
+    "textures/mantel_clock_01_nor_gl_1k.jpg": "ebc20f1198b1972c10d71c5960280f97"
+   },
+   "downloaded_on": "2026-11-06"
+  }
+ },
+ "assets": [
+  {
+   "id": "model.mvk_wall_uneven_brick_straight",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Straight.gltf",
+   "name": "mvk_wall_uneven_brick_straight.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a 2 m brick wall module. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "brick",
+    "castle",
+    "courtyard"
+   ],
+   "sha256": "b73f994baf238d648b0b14ca3a33e03a74a2d320419a0b912a497cb90a53e83a",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.mvk_wall_uneven_brick_door_round",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Door_Round.gltf",
+   "name": "mvk_wall_uneven_brick_door_round.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a brick wall module with a round-arch door opening. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "brick",
+    "door",
+    "gate"
+   ],
+   "sha256": "ff1a8552a8a77eecb3ac485b515ab3134047f1ff03abd63a3e0834c37e6b09b9",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.mvk_wall_uneven_brick_window_wide_round",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Wide_Round.gltf",
+   "name": "mvk_wall_uneven_brick_window_wide_round.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a brick wall module with a wide round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "brick",
+    "window"
+   ],
+   "sha256": "572c97a2dbbde4618f02e1f284604c67d93884d9c3e3137162ef98de33f79541",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.mvk_wall_uneven_brick_window_thin_round",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Thin_Round.gltf",
+   "name": "mvk_wall_uneven_brick_window_thin_round.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a brick wall module with a thin round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "brick",
+    "window"
+   ],
+   "sha256": "ef38156b41dea79f60691cfca36190574de04569664f7dfb98022109ed437330",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.mvk_wall_plaster_straight",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Straight.gltf",
+   "name": "mvk_wall_plaster_straight.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a 2 m plaster wall module. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "plaster",
+    "village"
+   ],
+   "sha256": "c29ae1b97df392303f557dbb626f3d382033909715bcc0f2ca0967ad1c630d27",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.mvk_wall_plaster_door_round",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Door_Round.gltf",
+   "name": "mvk_wall_plaster_door_round.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a plaster wall module with a round door opening. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "plaster",
+    "door"
+   ],
+   "sha256": "eba112749a1bf671756741467515c9c4d3edd03c9f98653139f870241f2d8c78",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.mvk_wall_plaster_window_wide_round",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Window_Wide_Round.gltf",
+   "name": "mvk_wall_plaster_window_wide_round.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a plaster wall module with a wide round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wall",
+    "plaster",
+    "window"
+   ],
+   "sha256": "979c2a14ef792bbf5a003366984625808dbf5ec5fd80e4f204cb5400299d1362",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.mvk_wall_arch",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Wall_Arch.gltf",
+   "name": "mvk_wall_arch.glb",
+   "role": "wall",
+   "description": "Quaternius Medieval Village MegaKit: a free-standing round arch, 2 m wide. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "arch",
+    "gate",
+    "wall"
+   ],
+   "sha256": "9a444ca695365e6c30127889126eb7d0788d9d3e07a60d96c80000d56d6c138c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_corner_exterior_brick",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Corner_Exterior_Brick.gltf",
+   "name": "mvk_corner_exterior_brick.glb",
+   "role": "corner",
+   "description": "Quaternius Medieval Village MegaKit: a brick exterior corner post. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "corner",
+    "brick",
+    "wall"
+   ],
+   "sha256": "19c7c4747684ba32fcd97095c64b2cbd935d486c777d016af093907e3cd94bce",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_floor_uneven_brick",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Floor_UnevenBrick.gltf",
+   "name": "mvk_floor_uneven_brick.glb",
+   "role": "floor",
+   "description": "Quaternius Medieval Village MegaKit: a 2x2 m uneven brick floor tile. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "floor",
+    "cobble",
+    "brick",
+    "courtyard"
+   ],
+   "sha256": "570ccd1fd7d72b234dd71ada8834f2cc9fa3d797b6e3a8c63cf258936a495095",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_floor_brick",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Floor_Brick.gltf",
+   "name": "mvk_floor_brick.glb",
+   "role": "floor",
+   "description": "Quaternius Medieval Village MegaKit: a 2x2 m brick floor tile. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "floor",
+    "brick",
+    "street"
+   ],
+   "sha256": "57707e3d0bfb4bd37a683bb011c02d6ff3eef5d6d6bfae6150c87d080187d25f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_stairs_exterior_straight",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Stairs_Exterior_Straight.gltf",
+   "name": "mvk_stairs_exterior_straight.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a straight exterior stair, 2 m wide. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "stairs",
+    "exterior"
+   ],
+   "sha256": "5f0c5bcc9a34a18ee5723359955460293a9e1cd135216b1ea0d010a8eba8ca59",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.mvk_door_1_round",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Door_1_Round.gltf",
+   "name": "mvk_door_1_round.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a round-top wooden door leaf. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "door",
+    "wood"
+   ],
+   "sha256": "71ce967b11a6a5c9d6b28985353c523f00052f4f6383ba1a6c35d0c07b2a00e1",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_window_wide_round1",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Window_Wide_Round1.gltf",
+   "name": "mvk_window_wide_round1.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a wide round window frame. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "window",
+    "wood"
+   ],
+   "sha256": "e3c7aa3a83629d665e57b46dde36567c9581567a490de6da05b705b79973023f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_windowshutters_wide_round_open",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/WindowShutters_Wide_Round_Open.gltf",
+   "name": "mvk_windowshutters_wide_round_open.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: open shutters for a wide round window. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "window",
+    "shutters",
+    "wood"
+   ],
+   "sha256": "d69103d26dfbeccacc17692eb259044604edd4721d507f8d3461bb9e5fd3f14d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_prop_wagon",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Prop_Wagon.gltf",
+   "name": "mvk_prop_wagon.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a wooden wagon. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "wagon",
+    "cart",
+    "prop",
+    "wood"
+   ],
+   "sha256": "7ea63193d61d468618f122523f3cef6db541bce94f407a6658718f7b9b570628",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_prop_crate",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Prop_Crate.gltf",
+   "name": "mvk_prop_crate.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a wooden crate. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "crate",
+    "prop",
+    "wood"
+   ],
+   "sha256": "3843f0c1bf699c88622e313c8e730fe5cd00b7edbaf0d6ede9223ed4d742a5ec",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_prop_woodenfence_single",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Prop_WoodenFence_Single.gltf",
+   "name": "mvk_prop_woodenfence_single.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a single wooden fence section. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "fence",
+    "wood",
+    "prop"
+   ],
+   "sha256": "aaa84e9ce73339057e740c0631e260af131454500fff4ce03154a565d52e189c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_prop_metalfence_simple",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Prop_MetalFence_Simple.gltf",
+   "name": "mvk_prop_metalfence_simple.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a simple iron fence section. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "fence",
+    "iron",
+    "prop"
+   ],
+   "sha256": "a0de129621bca7a91ed62a32e343339311a782b93abc3cf61bfd322d9577be0c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.mvk_prop_chimney",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Prop_Chimney.gltf",
+   "name": "mvk_prop_chimney.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a brick chimney stack. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "chimney",
+    "roof",
+    "prop"
+   ],
+   "sha256": "23f6732c8b7a143706835cf88288c0f7201bfaa167a287a4e2d5f049257b6599",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.mvk_roof_roundtiles_6x6",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Roof_RoundTiles_6x6.gltf",
+   "name": "mvk_roof_roundtiles_6x6.glb",
+   "role": "roof",
+   "description": "Quaternius Medieval Village MegaKit: a round-tile roof, 6x6 modules. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "roof",
+    "tiles"
+   ],
+   "sha256": "5b5460373d104dcdae122a5b3a172354dadb8c5710822ebfa3019fb850c42682",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.mvk_overhang_unevenbrick_long",
+   "source": "mvk",
+   "member": "Medieval Village MegaKit[Standard]/glTF/Overhang_UnevenBrick_Long.gltf",
+   "name": "mvk_overhang_unevenbrick_long.glb",
+   "role": "prop",
+   "description": "Quaternius Medieval Village MegaKit: a long brick overhang. Packed to one GLB with the base-colour image only (1024 px max); the original zip is untouched on the vault.",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "medieval_village",
+    "overhang",
+    "brick",
+    "wall"
+   ],
+   "sha256": "f7443fe62d2856456f23e5bfb8d01941c228f32e8209638b8f6f2b56f59c88ca",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e60dea67c10f30dccccfbff92a7933f5ea5cfe99be0e2a0fa5118cceabeec5c4",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.ph_modular_fort_01",
+   "source": "polyhaven",
+   "slug": "modular_fort_01",
+   "name": "ph_modular_fort_01.glb",
+   "role": "fort",
+   "description": "Poly Haven modular_fort_01: a modular stone fort (walls, trim, plaster). glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "fort",
+    "castle",
+    "landmark",
+    "keep"
+   ],
+   "sha256": "0bd50101a42ddbb3de3ce48853108250c6c8a6bfeecb0e6c6ac916c430d0423c",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "14624fec1571746723ce24d2e429980002bc3d8331f540bb282c1622c7bc8b9c",
+   "fingerprint": {
+    "nodes": 22,
+    "meshes": 22,
+    "primitives": 45,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.ph_large_castle_door",
+   "source": "polyhaven",
+   "slug": "large_castle_door",
+   "name": "ph_large_castle_door.glb",
+   "role": "prop",
+   "description": "Poly Haven large_castle_door: a large castle door. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "door",
+    "castle",
+    "gate"
+   ],
+   "sha256": "b92b548ce11db553dafe90328228616c8c52ca6e6ee94b7109314b5006fd433f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "fb8bef25935dc53db290ce5a8433a1d85ba61cca4a9a3d2a7e3286a5c5177242",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 3,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wine_barrel_01",
+   "source": "polyhaven",
+   "slug": "wine_barrel_01",
+   "name": "ph_wine_barrel_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wine_barrel_01: a wine barrel. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "barrel",
+    "prop",
+    "wood"
+   ],
+   "sha256": "e890bb0dbfd4d206cb43ce1cb25b149e3aa07f40280f935630f6ba70e504da29",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "ed7af3c10bbf73b2897aaf945dbeca571ccdec492cb79be4fc8a67c22acdb64c",
+   "fingerprint": {
+    "nodes": 4,
+    "meshes": 4,
+    "primitives": 4,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wooden_crate_02",
+   "source": "polyhaven",
+   "slug": "wooden_crate_02",
+   "name": "ph_wooden_crate_02.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_crate_02: a wooden crate. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "crate",
+    "prop",
+    "wood"
+   ],
+   "sha256": "80bb5a5d6d909b8f1c8bbe367b9a4ec8371f8b7169231d8a120b37cb759ac809",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "67ed2bfb00c87e647e6a1dc24dd6c9260e18d2babf64aba1a2087dc20cb98c72",
+   "fingerprint": {
+    "nodes": 2,
+    "meshes": 2,
+    "primitives": 2,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wooden_lantern_01",
+   "source": "polyhaven",
+   "slug": "wooden_lantern_01",
+   "name": "ph_wooden_lantern_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_lantern_01: a wooden lantern. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "lantern",
+    "light",
+    "prop"
+   ],
+   "sha256": "1fa2ea980315b6bab1438e8108c19a05fd9b2ed316f45ce72ddd97c747f70235",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "aa8d66d2b0be63ee7062696f4dd823cfd166efe2542eb4d163a556772c5def42",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 5,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.ph_gothiccabinet_01",
+   "source": "polyhaven",
+   "slug": "GothicCabinet_01",
+   "name": "ph_gothiccabinet_01.glb",
+   "role": "prop",
+   "description": "Poly Haven GothicCabinet_01: a gothic cabinet. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "furniture",
+    "gothic",
+    "interior"
+   ],
+   "sha256": "86b9b4c5071bec1c29200a1dfee6bdd4d98b5178017e63afa2f9b29bfbc6583d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "c78c9c7995675d23b872c33d7f8de63ca075871282381cbb1fc929318d98b3c0",
+   "fingerprint": {
+    "nodes": 5,
+    "meshes": 5,
+    "primitives": 5,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.snm_pine_1",
+   "source": "snm",
+   "member": "glTF/Pine_1.gltf",
+   "name": "snm_pine_1.glb",
+   "role": "nature",
+   "flat": "#4F6B45",
+   "description": "Quaternius Stylized Nature MegaKit: a pine tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "pine",
+    "tree",
+    "conifer"
+   ],
+   "sha256": "c2b4db2bad1d41effc14d4a8a5145f5b9a476f769cf14ac3946c57dcc9b1f0c9",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.snm_pine_3",
+   "source": "snm",
+   "member": "glTF/Pine_3.gltf",
+   "name": "snm_pine_3.glb",
+   "role": "nature",
+   "flat": "#44603F",
+   "description": "Quaternius Stylized Nature MegaKit: a pine tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "pine",
+    "tree",
+    "conifer"
+   ],
+   "sha256": "03def6d49446f2a54a5014a26ad8d7ba182a7134ad5562b710423f00466cc8e1",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.snm_commontree_1",
+   "source": "snm",
+   "member": "glTF/CommonTree_1.gltf",
+   "name": "snm_commontree_1.glb",
+   "role": "nature",
+   "flat": "#7A9A52",
+   "description": "Quaternius Stylized Nature MegaKit: a broadleaf tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "tree",
+    "broadleaf"
+   ],
+   "sha256": "76c6c5a22d3106688be2cb9a7781f64c5c39271f95590cd5a0d58888fccb37f8",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.snm_commontree_3",
+   "source": "snm",
+   "member": "glTF/CommonTree_3.gltf",
+   "name": "snm_commontree_3.glb",
+   "role": "nature",
+   "flat": "#6E8F4B",
+   "description": "Quaternius Stylized Nature MegaKit: a broadleaf tree. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "tree",
+    "broadleaf"
+   ],
+   "sha256": "b8e5c29bd00cff8060bea179f317951981d22a19a2ec15e2d7b55414e053e821",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.snm_rock_medium_1",
+   "source": "snm",
+   "member": "glTF/Rock_Medium_1.gltf",
+   "name": "snm_rock_medium_1.glb",
+   "role": "nature",
+   "flat": "#8A8A82",
+   "description": "Quaternius Stylized Nature MegaKit: a medium rock. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "rock",
+    "stone"
+   ],
+   "sha256": "ef242ad51bb73931f212140df5cb6e3dcc25f70ec9d3dbb8c2466daa0af6b14a",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.snm_bush_common",
+   "source": "snm",
+   "member": "glTF/Bush_Common.gltf",
+   "name": "snm_bush_common.glb",
+   "role": "nature",
+   "flat": "#6B8A48",
+   "description": "Quaternius Stylized Nature MegaKit: a bush. Packed to one GLB with the base-colour image only (1024 px max).",
+   "tags": [
+    "world_kit",
+    "quaternius",
+    "stylized_nature",
+    "bush",
+    "plant"
+   ],
+   "sha256": "a3d85725e1e813a28444482faa81d536af56728a85ac9ad040717e544650f726",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_modular_wooden_pier",
+   "source": "polyhaven",
+   "slug": "modular_wooden_pier",
+   "name": "ph_modular_wooden_pier.glb",
+   "role": "structure",
+   "description": "Poly Haven modular_wooden_pier: a modular wooden pier section. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "pier",
+    "dock",
+    "wood",
+    "harbour"
+   ],
+   "sha256": "442fc3997b757963b6b7b3d7d910f38144aeea645573fb6f12371910b26d7259",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "6d57b1905aad25d2f4f92fbadc413837fa30b2ffade5a305cf2e136e9963f86f",
+   "fingerprint": {
+    "nodes": 7,
+    "meshes": 7,
+    "primitives": 12,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.ph_dutch_ship_medium",
+   "source": "polyhaven",
+   "slug": "dutch_ship_medium",
+   "name": "ph_dutch_ship_medium.glb",
+   "role": "landmark",
+   "description": "Poly Haven dutch_ship_medium: a medium Dutch sailing ship. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "ship",
+    "dutch",
+    "harbour"
+   ],
+   "sha256": "efadd4ca4349420764d6a322ee87828b238954fe032519272c40fd5d5e1b02b6",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "4dcfc4b619cf97afe3273f5744566a9de740fbb46d3ce352c35ef7f90ac2bb26",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 3,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.ph_ship_pinnace",
+   "source": "polyhaven",
+   "slug": "ship_pinnace",
+   "name": "ph_ship_pinnace.glb",
+   "role": "landmark",
+   "description": "Poly Haven ship_pinnace: a pinnace, a small sailing ship. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "ship",
+    "pinnace",
+    "harbour"
+   ],
+   "sha256": "dc4e276ff246ac756ab38b6f636b15cecc77ee0e053d5f71f62e00e77af17a92",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "3a84767ef7647ab5dab04aab9ebda9ab3fee7f7b757b8a15508a8b798a6ab847",
+   "fingerprint": {
+    "nodes": 7,
+    "meshes": 7,
+    "primitives": 7,
+    "images": 7
+   }
+  },
+  {
+   "id": "model.ph_wooden_barrels_01",
+   "source": "polyhaven",
+   "slug": "wooden_barrels_01",
+   "name": "ph_wooden_barrels_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_barrels_01: a stack of wooden barrels. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "barrel",
+    "wood",
+    "harbour"
+   ],
+   "sha256": "c54a7246d73583641a9fee37fdb5464501b6258df00d0e4e99ad142798f6cbe0",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "f8031ef8996d0f4cd2ee73749cee18bda15d7bb066b4e1f5972e45daf0f14619",
+   "fingerprint": {
+    "nodes": 19,
+    "meshes": 19,
+    "primitives": 19,
+    "images": 3
+   }
+  },
+  {
+   "id": "model.ph_marble_bust_01",
+   "source": "polyhaven",
+   "slug": "marble_bust_01",
+   "name": "ph_marble_bust_01.glb",
+   "role": "prop",
+   "description": "Poly Haven marble_bust_01: a marble portrait bust. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "bust",
+    "marble",
+    "antiquity",
+    "statue"
+   ],
+   "sha256": "749adb0d77d2ab54f72e5be35701dbd266cab00ca1b8fe67ae14b954e2888623",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "27b2a81176f14a73d908c7ae4ad6690a1e222e24764e98e2c3816ff9a83dcd65",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_horse_statue_01",
+   "source": "polyhaven",
+   "slug": "horse_statue_01",
+   "name": "ph_horse_statue_01.glb",
+   "role": "prop",
+   "description": "Poly Haven horse_statue_01: a horse statue. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "statue",
+    "horse",
+    "antiquity"
+   ],
+   "sha256": "6ed829e1fd4af505aa60fb48153222baa37fa80d80276d9de9679e8fa3b7db1d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "04fd85e1310c8b27e432b821d4fe4bf4d4daafabe8dfdac0e92c9cee1514a595",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 2,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_kite_shield",
+   "source": "polyhaven",
+   "slug": "kite_shield",
+   "name": "ph_kite_shield.glb",
+   "role": "prop",
+   "description": "Poly Haven kite_shield: a kite shield. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "shield",
+    "medieval",
+    "camp"
+   ],
+   "sha256": "0e785219c4669beff75eeef979f7da24d7e2a693b10a3765da2f6791de76a907",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "ae3bf0df343c42a8681bd7bb11fd661d336260807440c544cda05c4eb37ab36e",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 3,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.ph_street_lamp_01",
+   "source": "polyhaven",
+   "slug": "street_lamp_01",
+   "name": "ph_street_lamp_01.glb",
+   "role": "prop",
+   "description": "Poly Haven street_lamp_01: a street lamp. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "lamp",
+    "street",
+    "nineteenth_century"
+   ],
+   "sha256": "0294137639acb0476ae03703609572a987e63d0807550fa2bd28e44627decdc8",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "399e3f0c8fa2c8eadb2a94e835af0fbdb1257e0afbdc3800c1c22b99119d7ef6",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.ph_antique_ceramic_vase_01",
+   "source": "polyhaven",
+   "slug": "antique_ceramic_vase_01",
+   "name": "ph_antique_ceramic_vase_01.glb",
+   "role": "prop",
+   "description": "Poly Haven antique_ceramic_vase_01: an antique ceramic vase. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "vase",
+    "ceramic",
+    "antiquity"
+   ],
+   "sha256": "98536988093a7bb4a0ebd355c3cd85432f1f975d8dfb450924601f8fd6926104",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "6ff1b8576465ca66505a5d963bee68c7e2dbf898153acfd53853280726443468",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_treasure_chest",
+   "source": "polyhaven",
+   "slug": "treasure_chest",
+   "name": "ph_treasure_chest.glb",
+   "role": "prop",
+   "description": "Poly Haven treasure_chest: a treasure chest. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "chest",
+    "wood",
+    "harbour"
+   ],
+   "sha256": "26e807b3c3a8b2695ffd5a9463a96ee3a22c8844f5f5830aec0232fa51057d4f",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "188b814c4e7e61b128d807215a073248622a212c3432ba095cd56229a0d9f228",
+   "fingerprint": {
+    "nodes": 5,
+    "meshes": 5,
+    "primitives": 5,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wooden_bucket_01",
+   "source": "polyhaven",
+   "slug": "wooden_bucket_01",
+   "name": "ph_wooden_bucket_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_bucket_01: a wooden bucket. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "bucket",
+    "wood"
+   ],
+   "sha256": "bb6d98ec190ebf08547cfffe6e41fad7303fcc8ff3cf7bc65693942d20fe8c73",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "3b475be0e9e0dd307f6f8183f6ca05028ba801fa31d5e7ccd61324d75f20bcc8",
+   "fingerprint": {
+    "nodes": 2,
+    "meshes": 2,
+    "primitives": 2,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_gothic_statue",
+   "source": "polyhaven",
+   "slug": "gothic_statue",
+   "name": "ph_gothic_statue.glb",
+   "role": "prop",
+   "description": "Poly Haven gothic_statue: a gothic stone statue. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "statue",
+    "gothic",
+    "stone"
+   ],
+   "sha256": "ece8f0f02d0290837e18e6d452d56407893877625b7d5ca8a1615da3fb181e1e",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "a45c0e58ab8c228faac3404e0e771ba4a9c61cf920bf38819c77227e9403a358",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_vintage_grandfather_clock_01",
+   "source": "polyhaven",
+   "slug": "vintage_grandfather_clock_01",
+   "name": "ph_vintage_grandfather_clock_01.glb",
+   "role": "prop",
+   "description": "Poly Haven vintage_grandfather_clock_01: a vintage grandfather clock. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "clock",
+    "wood",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "3bf4d7db5b5c19783893e8ff5433d90df267124ac06fd8fb1cda95a3c2d92f92",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "e42a59b62a8f0d76c0294c568ba137da2ccb61c96ac4d62aa01eb166bfd2846d",
+   "fingerprint": {
+    "nodes": 3,
+    "meshes": 3,
+    "primitives": 4,
+    "images": 2
+   },
+   "drop_materials": [
+    "vintage_grandfather_clock_01_glass"
+   ],
+   "texture_strength": 0.8
+  },
+  {
+   "id": "model.ph_wall_clock",
+   "source": "polyhaven",
+   "slug": "wall_clock",
+   "name": "ph_wall_clock.glb",
+   "role": "prop",
+   "description": "Poly Haven wall_clock: a round wall clock. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "clock",
+    "wall_decoration",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "817bfd2760cedfa2adc8c8f36eca3dd2cb7130fd1f98052126bae58f164eaf3d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "d497fe3fc43757782a895bba0988d537cf6e920169d6eac45d3a06379924c4c4",
+   "fingerprint": {
+    "nodes": 4,
+    "meshes": 4,
+    "primitives": 5,
+    "images": 1
+   },
+   "own_materials": true
+  },
+  {
+   "id": "model.ph_painted_wooden_bench",
+   "source": "polyhaven",
+   "slug": "painted_wooden_bench",
+   "name": "ph_painted_wooden_bench.glb",
+   "role": "prop",
+   "description": "Poly Haven painted_wooden_bench: a painted wooden bench. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "bench",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "e87867250dbe6ab55d750b51f2667b8de80a89c3e4b6881ab7d5ee7121e12474",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "ca54b56e4465cafa9f49cede6bb27a1e73a57d0e200f118ad5bda90c180c9689",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wooden_bookshelf_worn",
+   "source": "polyhaven",
+   "slug": "wooden_bookshelf_worn",
+   "name": "ph_wooden_bookshelf_worn.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_bookshelf_worn: a worn wooden bookshelf. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "shelf",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "1cb8a8f6c24a539a1c8d83811afcdae1011f4523840283b6e09f426bb70ac28e",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "0fce3efcb0af8c933574d658224dc9f6f8b6cb73cb2d66c45f1b66d96b022ae0",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   },
+   "texture_strength": 0.8
+  },
+  {
+   "id": "model.ph_wooden_candlestick",
+   "source": "polyhaven",
+   "slug": "wooden_candlestick",
+   "name": "ph_wooden_candlestick.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_candlestick: a wooden candlestick. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "candle",
+    "lighting",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "f97d9af6b11f404e3e7a38399948b30bf7b365e40c25c40573e42727d23700ed",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "c07a99444f293c6968e34b7d10b17c9b0aaba325e30ab80bc4c72387529f556a",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_jug_01",
+   "source": "polyhaven",
+   "slug": "jug_01",
+   "name": "ph_jug_01.glb",
+   "role": "prop",
+   "description": "Poly Haven jug_01: a ceramic jug. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "jug",
+    "dishes",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "a47b71a54e89a9268b0ea120e7d7d9c737a6838e3f2cefe7a9135be23a7fb8b1",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "1947458493427bba5462e97863a8788e53532e0a9b7ba152f1d301cc615f8655",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wooden_bowl_02",
+   "source": "polyhaven",
+   "slug": "wooden_bowl_02",
+   "name": "ph_wooden_bowl_02.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_bowl_02: a wooden bowl. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "bowl",
+    "dishes",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "868f2faa013815b076f439746e636d1eac117b750df98bb93dd3dba71ec25356",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "704f35462e22504844c13d266b574ca3ce51aac35f74a17a6d63689ce98c9147",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_carved_wooden_plate",
+   "source": "polyhaven",
+   "slug": "carved_wooden_plate",
+   "name": "ph_carved_wooden_plate.glb",
+   "role": "prop",
+   "description": "Poly Haven carved_wooden_plate: a carved wooden plate. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "plate",
+    "dishes",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "01587836f9fb1dc587dce6ad1718c9dcb18ee481dc91b42bf74665c8f830bd84",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "f834668f583e051b3bad0283bb0bfcc0c45e9ed2d43e0199ea56ed987561aaf7",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wicker_basket_02",
+   "source": "polyhaven",
+   "slug": "wicker_basket_02",
+   "name": "ph_wicker_basket_02.glb",
+   "role": "prop",
+   "description": "Poly Haven wicker_basket_02: a wicker basket. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "basket",
+    "container",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "92e4824173f83dacefc0efbc956d8ea3dfe78e88b99c5a136eca698b88be3020",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "cdcefe62215798f778bef2d16c824640281f1d02ba64b2cf9bccbb5ad609a66d",
+   "fingerprint": {
+    "nodes": 2,
+    "meshes": 2,
+    "primitives": 2,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_lantern_chandelier_01",
+   "source": "polyhaven",
+   "slug": "lantern_chandelier_01",
+   "name": "ph_lantern_chandelier_01.glb",
+   "role": "prop",
+   "description": "Poly Haven lantern_chandelier_01: a lantern chandelier. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "chandelier",
+    "lighting",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "43f96d9f370a3ca59d1bbe559353309012be7a84db1336d2702ae70b02c37888",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "719e59f92ea2aeb5356cc65a518ecebc107201aea1ada778ae79007f1244e931",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 2
+   }
+  },
+  {
+   "id": "model.ph_scandinavian_masonry_heater",
+   "source": "polyhaven",
+   "slug": "scandinavian_masonry_heater",
+   "name": "ph_scandinavian_masonry_heater.glb",
+   "role": "prop",
+   "description": "Poly Haven scandinavian_masonry_heater: a masonry stove. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "stove",
+    "hearth",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "f43434dbe29d29acfa0f1bce93d50d2af7e6657a1d20f25b11625494962f1bd7",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "263e3419e4e97417cdbda415574ec0551a05a940cbe94413fe7114f245d53cc9",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_vintage_wooden_drawer_01",
+   "source": "polyhaven",
+   "slug": "vintage_wooden_drawer_01",
+   "name": "ph_vintage_wooden_drawer_01.glb",
+   "role": "prop",
+   "description": "Poly Haven vintage_wooden_drawer_01: a vintage wooden chest of drawers. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "drawers",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "378c70869de8153c6d210b145a74857710390ca73492461c1d5151facc4c5bec",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "57c35aecc3922e6f00637b6a62cbad28ac0b2920f3d09a9ea29aea0d183f648d",
+   "fingerprint": {
+    "nodes": 7,
+    "meshes": 7,
+    "primitives": 7,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_hanging_picture_frame_01",
+   "source": "polyhaven",
+   "slug": "hanging_picture_frame_01",
+   "name": "ph_hanging_picture_frame_01.glb",
+   "role": "prop",
+   "description": "Poly Haven hanging_picture_frame_01: a hanging picture frame. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "picture_frame",
+    "wall_decoration",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "697dc820b65d19bd626040f722329f7251d05086bac2b3d2cb499bbc17b02e4d",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "50d919298ab781edd3ebbc4f64b5d20e0c4ff2f9e1e798e2f0c37ff0f35e05d8",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 3,
+    "images": 3
+   },
+   "texture_strength": 0.8
+  },
+  {
+   "id": "model.ph_plain_wooden_table_02",
+   "source": "polyhaven",
+   "slug": "wooden_table_02",
+   "name": "ph_plain_wooden_table_02.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_table_02: a plain wooden table. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "table",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "3a1f708dc0392b8d067585684cf0a35f1ef942c60421e4001f5a2ef8dd80f3ff",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "82fc10fc0fa578f1cce15032846cea9df8b02ee1bd4480d6db53e2c02b64c88e",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_painted_wooden_chair_01",
+   "source": "polyhaven",
+   "slug": "painted_wooden_chair_01",
+   "name": "ph_painted_wooden_chair_01.glb",
+   "role": "prop",
+   "description": "Poly Haven painted_wooden_chair_01: a painted wooden chair. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "chair",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "4f7d90482d108a9257841a51a9c476364d7531fce1fa0fee4a3fa2243cba3a32",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "3e088f4e36529a22bab7f73d02fdf8373b354107d09ba5248463e4a8f23de7fe",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_wooden_stool_01",
+   "source": "polyhaven",
+   "slug": "wooden_stool_01",
+   "name": "ph_wooden_stool_01.glb",
+   "role": "prop",
+   "description": "Poly Haven wooden_stool_01: a wooden stool. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "stool",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "51bebf0ae2a19187080cd385a0298af49d026703048c9d30189525adb9b41df5",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "2e76eb0a134710369e6c6b561b0ace7230f61b45cc5f1241a1db5dd8630f7331",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_gallinera_chair",
+   "source": "polyhaven",
+   "slug": "gallinera_chair",
+   "name": "ph_gallinera_chair.glb",
+   "role": "prop",
+   "description": "Poly Haven gallinera_chair: a dark wooden armchair. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "chair",
+    "wood",
+    "furniture",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "f913d70166e302ca547cabae9dc01527af240cfef3513d03080d71488aaa8514",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "3a459337154adf67ad15615326a6203566874ac0ec0dbdb3a4d6597cf0965bba",
+   "fingerprint": {
+    "nodes": 1,
+    "meshes": 1,
+    "primitives": 1,
+    "images": 1
+   }
+  },
+  {
+   "id": "model.ph_mantel_clock_01",
+   "source": "polyhaven",
+   "slug": "mantel_clock_01",
+   "name": "ph_mantel_clock_01.glb",
+   "role": "prop",
+   "description": "Poly Haven mantel_clock_01: a wooden mantel clock. glTF 1k packed to one GLB with the base-colour image only.",
+   "tags": [
+    "world_kit",
+    "polyhaven",
+    "clock",
+    "wood",
+    "interior",
+    "pilot_room"
+   ],
+   "sha256": "d2d84218eb6a26cd540470f0685c3c30f72ca59111a6cc06a716a1df572e1ccf",
+   "derived": true,
+   "packer": "world_kits.pack_piece/1",
+   "source_sha256": "a1b807ea79365973ecd46e704ad2e47a7d7b924aafce2860c69a75b1c5cc77ee",
+   "fingerprint": {
+    "nodes": 2,
+    "meshes": 2,
+    "primitives": 2,
+    "images": 1
+   },
+   "drop_materials": [
+    "mantel_clock_01_glass"
+   ],
+   "texture_strength": 0.8
+  }
+ ]
+}

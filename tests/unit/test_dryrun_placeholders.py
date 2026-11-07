@@ -29,13 +29,19 @@ def test_runpod_create_asks_for_it_before_any_money():
     assert "dryrun.placeholder_problems(script, Path(script_file).parent)" in t and 'f"placeholder: {w}"' in t
 
 
-def test_the_p12_pod_is_refused_until_its_pins_are_filled():
-    """True today: p12b.json is filled (clay, keyframes, AV takes: WP-1e, 2026-11-01), the three script sha lines of p12b.sh are
-    the last pins, set once the code is final. When this fails the pins are filled and it is deleted with the xfail of test_p12b_pod_script."""
+def test_the_p12_pod_has_no_placeholder_left():
+    """WP-1e: p12b.json was filled on 2026-11-01 (clay, keyframes, AV takes) and the three script sha lines of p12b.sh on 2026-11-06
+    (the D-116 rules PR): the dry run finds no unfilled pin in the script or the job files. p12b.py's own detector word (its
+    ``UNFILLED`` line, marked ``# dryrun: detector``) is no pin and no longer reported (the step-2 report's open item, fixed
+    2026-11-06 on icw/14-route-test)."""
     script = (P12 / "p12b.sh").read_text(encoding="utf-8")
-    probs = D.placeholder_problems(script, P12)
-    assert any(p.startswith("script: PLACEHOLDER_SHA_P12B_PY") for p in probs)
-    assert not any(p.startswith("p12b.json:") for p in probs), probs
+    assert D.placeholder_problems(script, P12) == []
+
+
+def test_only_a_marked_detector_line_is_skipped(tmp_path):
+    (tmp_path / "job.py").write_text('UNFILLED = "PLACEHOLDER"   # dryrun: detector\nx = "PLACEHOLDER_SHA"\n', encoding="utf-8")
+    assert D.placeholder_problems("python3 job.py\n", tmp_path) == ["job.py: PLACEHOLDER_SHA (a pin that was never filled)"]
+    assert D.placeholder_problems('x = "PLACEHOLDER"  # dryrun: detector\n') == []
 
 
 # audit 2026-11-01 #15: the weight repos are in p12b.json, not in the script text; a gated repo needs a proof of access

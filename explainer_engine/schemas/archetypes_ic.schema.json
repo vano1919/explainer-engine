@@ -6,7 +6,7 @@
   "required": ["schema", "about", "planner", "archetypes", "sub_categories"],
   "additionalProperties": false,
   "properties": {
-    "schema": {"const": "archetypes_ic/1"},
+    "schema": {"const": "archetypes_ic/2"},
     "about": {"type": "string", "minLength": 1},
     "planner": {
       "type": "object",
@@ -79,13 +79,16 @@
       "items": {
         "type": "object",
         "description": "one lane sub-category of roadmap 7.4; the twelve attributes of brief section 5 are all required",
-        "required": ["id", "lane", "name", "purpose_and_trigger", "when_not", "required_metadata", "shot_design", "motion", "look",
+        "required": ["id", "lane", "route", "route_alt", "route_status", "name", "purpose_and_trigger", "when_not", "required_metadata", "shot_design", "motion", "look",
                      "duration", "blender_strategy", "render_profile_and_cost_class", "audio_and_continuity", "qa",
                      "archetype_examples"],
         "additionalProperties": false,
         "properties": {
           "id": {"$ref": "#/$defs/sub_id"},
           "lane": {"$ref": "#/$defs/lane"},
+          "route": {"enum": ["J2", "J4", "J5", "H"], "description": "D-116: J5 Qwen assets + Blender 2.5D; J2 Blender clay layout -> Qwen first frame -> LTX Layout-To-Render; J4 Blender full layout -> LTX restyle; H Python helper"},
+          "route_alt": {"anyOf": [{"enum": ["J2", "J4", "J5", "LTX_A2V"]}, {"type": "null"}], "description": "D-116: the fallback route (FINAL_HIGH_LEVEL_PLAN section 3); LTX_A2V = the D-90 audio-driven clip"},
+          "route_status": {"enum": ["T", "confirmed", "rejected"], "description": "T until the phase-3 route test, then the creator's verdict (step 4)"},
           "name": {"type": "string", "minLength": 1},
           "purpose_and_trigger": {"type": "string", "minLength": 1},
           "when_not": {"type": "string", "minLength": 1},

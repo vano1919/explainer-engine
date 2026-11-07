@@ -327,7 +327,21 @@ def scenes(paths: dict[str, Path], *, cast: str = "mannequin", cpaths: dict[str,
     return out
 
 
+def look_ids(*, twins: bool = True, q1: bool = False) -> list[str]:
+    """The look round's variant ids (``look_variants.json``), the ten first, then the swatch twins; ``q1`` adds WP-Q1's."""
+    doc = S.look_variants()
+    return ([v["id"] for v in doc["variants"]] + ([t + S.SWATCH_SUFFIX for t in doc.get("swatch_twins", [])] if twins else [])
+            + ([v["id"] for v in doc.get("q1_variants", [])] if q1 else []))
+
+
+PBR_VARIANTS = ("C5_cycles_pbr",)   # world-kit overnight matrix C5: Cycles, the kit's own glTF materials, PBR Neutral
+
+
 def style_for(variant_id: str) -> tuple[str, S.StyleTokens]:
+    if variant_id in PBR_VARIANTS:
+        return "cycles_safe", replace(S.variant("B"), view_transform="Khronos PBR Neutral", look="None")
+    if variant_id.startswith(("v", "q")) and variant_id[1:3].isdigit() or variant_id.startswith("q1_"):   # ICW-05c / WP-Q1
+        return "eevee", S.look_tokens(variant_id)
     if variant_id == "S":
         return "cycles_safe", S.variant("B")
     if variant_id in CLIP_VARIANTS:
@@ -389,7 +403,8 @@ def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: 
         "performance": {"lipsync": False, "rhubarb": None, "mouth_shapes": 8, "dialogue_cover": None},
         "look": {"bible_version": "1.5", "line_weight_px": tokens.line_px, "crease_deg": tokens.crease_deg,
                  "shading_steps": tokens.steps, "view_transform": tokens.view_transform, "grade_look": tokens.look,
-                 "paper": {"asset": ref("texture.acg_paper003"), "opacity": tokens.paper_opacity}},
+                 "paper": {"asset": ref("texture.acg_paper003"),
+                           "opacity": tokens.art.paper if tokens.art is not None else tokens.paper_opacity}},
         "render": {"profile": profile, "samples": samples, "motion_blur": False, "denoise": False, "output": "png_seq"},
         "seed": 1,
     }
@@ -399,13 +414,28 @@ def spec_for(scene_id: str, variant_id: str, tokens: S.StyleTokens, *, samples: 
     if cues is not None:   # the dialogue clip's speaker is lip-synced: CN-17 wants the cue file and an on-screen mouth
         spec["performance"].update(lipsync=True, rhubarb={"path": Path(cues).name, "sha256": L.sha256_file(cues)},
                                    dialogue_cover="on_screen")
+    art = tokens.art
+    if art is not None and art.lit_rig:   # WP-Q1: shot_spec/3 records the look's view transform, shade and line mode
+        spec["schema"] = "shot_spec/3"
+        spec["render"]["profile"] = "eevee_painterly"
+        view = art.view_transform or tokens.view_transform
+        look = spec["look"]
+        look.update(view_transform=view, grade_look=tokens.look if view == "AgX" else "None", shade_mode=art.shade_mode,
+                    shade_path=art.shade_path, line_mode=art.line_mode)
+        if art.line_mode == "none":
+            look.pop("line_weight_px")
+        else:
+            look["line_weight_px"] = art.line_px
+        spec["scene"]["light_rig"] = art.light_rig
     if profile == "cycles_hero":
         spec["why"] = "ICW-05 style sheet: the Cycles-safe variant beside the EEVEE look (roadmap 9.1), never an episode shot"
     return spec
 
 
-def job_scene(scene_id: str, variant_id: str, sc: dict, paths: dict[str, Path]) -> tuple[dict, dict]:
-    path, tokens = style_for(variant_id)
+def job_scene(scene_id: str, variant_id: str, sc: dict, paths: dict[str, Path], tokens=None) -> tuple[dict, dict]:
+    """``tokens`` overrides the look's own (a composition's data-only tweak, e.g. the crowd battle's lighter haze)."""
+    path, own = style_for(variant_id)
+    tokens = tokens or own
     graph = S.StyleEngine(tokens).graph(path, camera=sc["camera"], materials=sc["materials"],
                                         hdri=str(paths["hdri.ph_kloofendal_48d_partly_cloudy_puresky"]),
                                         paper_texture=str(paths["texture.acg_paper003"]))
@@ -566,6 +596,158 @@ def clips(out: Path, *, binary: str | None = None, scene_ids=CLIP_SCENES, varian
     return rows
 
 
+# --- the look round (ICW-05c, plan rev. 2): ten looks on the real cast, clips + stills, one collage ------------------------------
+LOOK_SCENES = ("dialogue_cu", "battle_wide", "establishing")
+LOOK_CLIP_SCENES = ("dialogue_cu", "battle_wide")
+LOOK_FRAMES = 24
+LOOK_JOB_ID = "look_round_icw05c"
+LABELS["establishing"] = "establishing"
+
+
+def _look_row(out: Path, sid: str, vid: str, m: dict, sdir: Path, rep: dict, graph: dict, t0: float, frames: int, scale: float,
+              *, clip: bool) -> dict:
+    import shutil
+    from explainer_engine.blender import render as R
+    art = graph["tokens"].get("art") or {"id": vid, "slider": -1}   # B_light: the ICW-05b yardstick, no look knobs
+    first = sdir / "frames" / R.FRAME_NAME.format(index=0)
+    (out / "frames").mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(first, out / "frames" / f"{sid}_{vid}.png")
+    row = {"scene": sid, "variant": vid, "label": next((v["label"] for v in S.look_variants()["variants"] if vid.startswith(v["id"])),
+                                                       CLIP_VARIANTS.get(vid, ("", "", vid))[2]),
+           "slider": art["slider"], "frames": frames, "frame_rel": f"frames/{sid}_{vid}.png", "engine": m["engine"],
+           "seconds_per_frame": m["seconds_per_frame"], "times": frame_times(sdir), "wall_seconds": round(time.time() - t0, 2),
+           "blender": m["blender"], "gpu_backend": rep.get("gpu_backend"), "applied": rep.get("style", {}).get("applied"),
+           "style_sha256": graph["sha256"], "scaled": scale != 1.0, "art": art,
+           "findings": [f for f in m["_findings"] if f["severity"] in ("FAIL", "REVIEW")]}
+    if clip:
+        row["mp4"] = mp4(sdir / "frames", out / "clips" / f"{sid}_{vid}.mp4")
+        if row["mp4"].get("path"):
+            row["mp4_rel"] = f"clips/{sid}_{vid}.mp4"
+    return row
+
+
+def looks(out: Path, *, binary: str | None = None, variant_ids=None, scene_ids=LOOK_SCENES, frames: int = LOOK_FRAMES,
+          samples: int = 16, scale: float = 1.0, device: str = "auto", cast: str = "real", log=print) -> list[dict]:
+    """The look round: per variant a ``frames``-long clip of the dialogue close-up (real cast) and the battle wide, and a still
+    of the establishing shot; the swatch twins render stills only (dialogue and establishing). Rows go to ``out/looks.json`` as
+    they finish (a stop keeps what is done); first frames to ``out/frames``, MP4 review copies to ``out/clips``."""
+    from explainer_engine.blender import render as R
+    from explainer_engine.blender.project import BlenderProject
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    variant_ids = list(variant_ids or look_ids())
+    paths = fetch()
+    base = scenes(paths, cast=cast)
+    b = BlenderProject().resolve(binary, device=device)
+    vault = R.LocalVault(out / "vault")
+    rows = []
+    for vid in variant_ids:
+        twin = vid.endswith(S.SWATCH_SUFFIX)
+        for sid in scene_ids:
+            if twin and sid == "battle_wide":
+                continue
+            clip = sid in LOOK_CLIP_SCENES and not twin and frames > 1
+            sc = motion(sid, base[sid], frames) if clip else base[sid]
+            _, tokens = style_for(vid)
+            scene, graph = job_scene(sid, vid, sc, paths)
+            spec = spec_for(sid, vid, tokens, samples=samples, scene=scene, frames=frames if clip else 1)
+            spec["job_id"] = LOOK_JOB_ID
+            if scale != 1.0:
+                spec["frame"]["render_scale"] = scale
+            t0 = time.time()
+            try:
+                m = R.HeadlessRender(b, vault).run(spec, out / "work", scene=scene)
+            except ContractError as e:
+                if scale == 1.0 or "master" not in str(e):
+                    raise
+                m = dict(json.loads((out / "work" / shot_cache.key(spec) / "render_manifest.json").read_text(encoding="utf-8")),
+                         _findings=[])
+            sdir = out / "work" / m["cache_key"]
+            rep = json.loads((sdir / "bpy_report.json").read_text(encoding="utf-8"))
+            row = _look_row(out, sid, vid, m, sdir, rep, graph, t0, frames if clip else 1, scale, clip=clip)
+            rows.append(row)
+            log(f"{sid}/{vid}: {row['times']['steady_median_s'] or row['times']['first_s']} s/frame "
+                f"({'clip' if clip else 'still'}, first {row['times']['first_s']} s)")
+            write_json_atomic(out / "looks.json", {"schema": "look_round/1", "job_id": LOOK_JOB_ID, "rows": rows})
+    return rows
+
+
+def _look_rows(root: Path) -> list[dict]:
+    """Every row of every ``looks.json`` under ``root`` (the CI matrix: one folder per variant), frame paths made absolute."""
+    rows = []
+    for f in sorted(Path(root).rglob("looks.json")):
+        for r in json.loads(f.read_text(encoding="utf-8"))["rows"]:
+            r = dict(r, frame=str(f.parent / r["frame_rel"]))
+            if r.get("mp4_rel"):
+                r["mp4_abs"] = str(f.parent / r["mp4_rel"])
+            rows.append(r)
+    return rows
+
+
+def baseline_seconds(rows: list[dict]) -> dict[str, float]:
+    """B_light's steady s/frame per scene, when the round rendered it beside the looks (the cost yardstick of plan 3.7)."""
+    return {r["scene"]: r["times"]["steady_median_s"] or r["times"]["first_s"] for r in rows if r["variant"] == "B_light"}
+
+
+def look_collage(root: Path, *, cell_w: int = 960) -> Path:
+    """One collage of the round: a row per look (slider order, swatch twins after their parent), a column per scene, each row
+    labelled with its knobs and its steady s/frame."""
+    root = Path(root)
+    rows = [r for r in _look_rows(root) if r["variant"] != "B_light"]
+    order = [v for v in look_ids() if any(r["variant"] == v for r in rows)]
+    order.sort(key=lambda v: (next(r["slider"] for r in rows if r["variant"] == v), v.endswith(S.SWATCH_SUFFIX)))
+    scene_ids = [s for s in LOOK_SCENES if any(r["scene"] == s for r in rows)]
+
+    def label(vid):
+        a = next(r["art"] for r in rows if r["variant"] == vid)
+        lab = next(r["label"] for r in rows if r["variant"] == vid)
+        secs = [r["times"]["steady_median_s"] for r in rows if r["variant"] == vid and r["frames"] > 1 and r["times"]["steady_median_s"]]
+        num, name = (lab.split("  ", 1) + [""])[:2]
+        lines = [name.replace(", ", ",\n"), f"shade {a['shade_mode']}", f"light {a['light_rig']}",
+                 f"line {a['line_mode']}" + (f" {a['line_px']:g}px" if a["line_mode"] != "none" else ""),
+                 f"finish k{a['kuwahara'] or a['plate_kuwahara']} p{a['paper']:g} g{a['grain']:g}", f"bg {a['bg_mode']}, sky {a['sky']}"]
+        if secs:
+            lines.append(f"{max(secs):.1f} s/frame")
+        return num + ("s" if vid.endswith(S.SWATCH_SUFFIX) else ""), "\n".join(lines)
+    return _grid(rows, order, scene_ids, label, root / "collage.png", cell_w=cell_w)
+
+
+def look_report(root: Path) -> dict:
+    """Per look: steady s/frame per scene, the ratio to B_light on the same runner (over 2x is flagged, plan 3.7: shown, not
+    excluded), the line width's CN-17 (BP-173) finding from the render, and the knobs. Written to ``root/look_round_summary.json`` + a Markdown table."""
+    root = Path(root)
+    rows = _look_rows(root)
+    base = baseline_seconds(rows)
+    out = []
+    for vid in [v for v in ["B_light", *look_ids()] if any(r["variant"] == v for r in rows)]:
+        rs = [r for r in rows if r["variant"] == vid]
+        a = rs[0]["art"]
+        secs = {r["scene"]: r["times"]["steady_median_s"] or r["times"]["first_s"] for r in rs}
+        ratio = {sc: round(secs[sc] / base[sc], 2) for sc in secs if base.get(sc)}
+        line = a.get("line_mode", "ink")
+        px = a.get("line_px", 2.25) if line != "none" else None
+        out.append({"variant": vid, "label": rs[0]["label"], "slider": a.get("slider"), "seconds_per_frame": secs,
+                    "ratio_to_b_light": ratio, "over_2x": sorted(sc for sc, x in ratio.items() if x > 2),
+                    "line_mode": line, "line_px": px,
+                    # BP-173's band is read where the registry lists it (CN-17 on every spec): its finding, if any, is the verdict
+                    "bp173": "none drawn" if px is None else next((f"{f['severity']}: {f['detail']}" for r in rs for f in r.get("findings", [])
+                                                                  if f.get("rule") == "CN-17"), "inside"),
+                    "frames": {r["scene"]: r["frames"] for r in rs}, "clips": [r["mp4_rel"] for r in rs if r.get("mp4_rel")],
+                    "knobs": {k: a[k] for k in ("shade_mode", "light_rig", "bg_mode", "sky", "kuwahara", "plate_kuwahara", "paper",
+                                                "grain", "palette_map") if k in a}})
+    doc = {"schema": "look_round_summary/1", "baseline": base, "variants": out}
+    write_json_atomic(root / "look_round_summary.json", doc)
+    lines = ["| # | look | s/frame dialogue | battle | establishing | x B_light (max) | line (BP-173) |", "|---|---|---|---|---|---|---|"]
+    for v in out:
+        f = lambda sc: f"{v['seconds_per_frame'][sc]:.1f}" if sc in v["seconds_per_frame"] else "-"  # noqa: E731
+        mx = max(v["ratio_to_b_light"].values()) if v["ratio_to_b_light"] else None
+        flag = " **over 2x**" if v["over_2x"] else ""
+        lines.append(f"| {v['slider'] if v['slider'] is not None and v['slider'] >= 0 else '-'} | {v['label']} | {f('dialogue_cu')} | "
+                     f"{f('battle_wide')} | {f('establishing')} | {'-' if mx is None else f'{mx:.2f}'}{flag} | {v['bp173']} |")
+    (root / "look_round_table.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return doc
+
+
 FONTS = ("DejaVuSans.ttf", "/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/Supplemental/Arial.ttf")
 
 
@@ -694,7 +876,19 @@ def main(argv: list[str] | None = None) -> int:
     cl.add_argument("--wav", default=None, help="a voiced line: Rhubarb makes the cues first")
     cl.add_argument("--rhubarb", default="rhubarb", help="the Rhubarb executable (1.14.0)")
     cl.add_argument("--lipsync-offset", type=float, default=None, help="seconds into the line (default: its busiest window)")
-    for sp in (rd, cl):
+    lk = sub.add_parser("looks", help="ICW-05c look round: clips + stills per look variant")
+    lk.add_argument("--out", required=True)
+    lk.add_argument("--binary", default=None)
+    lk.add_argument("--variants", default="", help="comma-separated look ids (empty = all ten + the swatch twins)")
+    lk.add_argument("--scenes", default=",".join(LOOK_SCENES))
+    lk.add_argument("--frames", type=int, default=LOOK_FRAMES)
+    lk.add_argument("--scale", type=float, default=1.0)
+    lk.add_argument("--cast", default="real", choices=CASTS)
+    lc = sub.add_parser("look-collage", help="the round's collage from every looks.json under --root")
+    lc.add_argument("--root", required=True)
+    lr = sub.add_parser("look-report", help="s/frame per look vs B_light, BP-173 line band, knobs (look_round_summary.json)")
+    lr.add_argument("--root", required=True)
+    for sp in (rd, cl, lk):
         sp.add_argument("--device", default="auto", choices=("auto", "cpu", "gpu"))
     a = ap.parse_args(argv)
     if a.cmd == "register":
@@ -714,6 +908,16 @@ def main(argv: list[str] | None = None) -> int:
               scale=a.scale, device=a.device, cast=a.cast, cues=Path(a.cues) if a.cues else None,
               wav=Path(a.wav) if a.wav else None, rhubarb=a.rhubarb, offset_s=a.lipsync_offset)
         print(clip_collage(Path(a.out)))
+        return 0
+    if a.cmd == "looks":
+        looks(Path(a.out), binary=a.binary, variant_ids=[v for v in a.variants.split(",") if v] or None,
+              scene_ids=a.scenes.split(","), frames=a.frames, scale=a.scale, device=a.device, cast=a.cast)
+        return 0
+    if a.cmd == "look-collage":
+        print(look_collage(Path(a.root)))
+        return 0
+    if a.cmd == "look-report":
+        print(json.dumps(look_report(Path(a.root))["variants"], indent=1))
         return 0
     print(collage(Path(a.out)))
     return 0

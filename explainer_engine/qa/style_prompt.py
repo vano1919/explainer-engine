@@ -4,7 +4,14 @@
 body words) was measured on the banned wldnk look and stays as written until the 2.1 prompt-type test rewrites it; the eras
 sheet comparison (A10, KG-22) stays suspended. LT-65 (docs/LORA_TRAINING.md): a prompt for the style LoRA has the shape of the prompts that drew the approved look: the
 trigger, then a short story of the moment (a place, an action at its peak, someone's reaction, the bodies' caricature words,
-a light source, one or two props), at most 40 words, with no camera, sizes or positions in the words. stdlib only.
+a light source, one or two props), with no camera, sizes or positions in the words. stdlib only.
+
+Word band (the creator, 2026-11-06 12:27 UTC, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWQ83nahs7XqJbJiNjko9vuk: "40 to 150 words, as much as
+the scene's proportions and setting need"): a prompt over MAX_WORDS (150) FAILs; how long a scene's prompt is inside the band is
+the prompt writer's choice, not this validator's. One measured exception stays a REVIEW: on the crowd and mass sub-categories
+(CROWD_SUB_CATEGORIES) a prompt over CROWD_REVIEW_WORDS (90) drew clone soldiers that neither a redraw nor a fix-edit removed (asset
+pod, 2026-11-06); 150 words are untested, and 337 broke the style on 2026-10-24. The composer's default moment stays
+MOMENT_WORDS (40, the eras shape below).
 
 Evidence (free analysis 2026-10-25, https://claude.ai/artifact/BCfwRAUtF34g9xcS1bjk6D):
 - the 20 approved eras prompts are 19-29 words in that shape, and the v5 training samples drew the film's own heroes in the
@@ -23,13 +30,17 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.cloud import pins as _pins
 from explainer_engine.training import lora_rules
 
 TRIGGER = lora_rules.trigger()  # one home (N-09, D-80)
 # word for word the end of every v5 training caption (dataset_style_v5/*.txt, 164 of 164); kept to recognise it
 STYLE_TAIL = ("lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold "
               "uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents")
-MAX_WORDS = 40          # approved eras 19-29 words, v5 samples 19-33, captions' scene part median 19
+MAX_WORDS = 150         # the creator's band 40-150 (2026-11-06 12:27 UTC); was 40 (2026-10-25 analysis below)
+MOMENT_WORDS = 40       # the composer's default moment: approved eras 19-29 words, v5 samples 19-33, captions' scene part median 19
+CROWD_REVIEW_WORDS = 90   # measured 2026-11-06 (asset pod): 90 words drew clone soldiers in a crowd scene
+CROWD_SUB_CATEGORIES = ("V1", "S3")   # battle / siege / formation and group tableau (visual/archetypes_ic.json sub_categories)
 # light and colour words that wash the look out (the bus prompt's "flat grey daylight" on an "empty white" plain)
 DULL = re.compile(r"\b(flat|overcast|dull|grey|gray|pale|washed[- ]out)(\s+(grey|gray|white|pale))?\s+(day)?light\b|"
                   r"\bempty white\b|\bplain (white|grey|gray) (snow|plain|sky|field)\b", re.I)
@@ -46,15 +57,18 @@ STYLE_CLASH = re.compile(r"\b(photo(graph)?|photoreal\w*|realistic|hyper-?real\w
 # LT-66: the absolutes. No episode look, scene, thread or test run changes them; only the creator's word does, and then
 # this table, its test (tests/unit/test_style_prompt.py) and docs/LORA_TRAINING.md change together.
 NEGATIVE = "text, lettering, letters, words, watermark, signature, photo, 3d render"
-INFERENCE = {"base": "Qwen/Qwen-Image-2.1", "lora": None, "lora_weight": 0.7, "dtype": "bfloat16",
-             "size": [1280, 720], "steps": 30, "true_cfg": 4.0}  # D-80: one stack; no LoRA until the creator rates the new one
+# D-83 / D-116 (2026-11-06): the LoRA and its weight come from config/cloud_pins.json models.loras.xworld_v2, their one home
+_LORA = _pins.load()["models"]["loras"]["xworld_v2"]
+INFERENCE = {"base": "Qwen/Qwen-Image-2.1", "lora": _LORA["id"], "lora_weight": _LORA["weight"], "dtype": "bfloat16",
+             "size": [1280, 720], "steps": 30, "true_cfg": 4.0}  # D-80: one stack
 ABSOLUTES = (
     ("A1", f"the prompt starts with the trigger '{TRIGGER}', once"),
-    ("A2", f"the creator-rated LoRA (none yet, D-80) at weight 0.7 (creator 2026-10-31), only on {INFERENCE['base']} in bf16, 30 steps, true_cfg 4; "
+    ("A2", f"the LoRA {INFERENCE['lora']} (checkpoint 3000, D-83) at weight {INFERENCE['lora_weight']:g} (creator 2026-10-31), only on {INFERENCE['base']} in bf16, 30 steps, true_cfg 4; "
            "plain or in its edit mode with references (D-80)"),
     ("A3", "the negative prompt is exactly NEGATIVE"),
-    ("A4", f"at most {MAX_WORDS} words: a place, an action at its peak, a reaction, caricature body words, a light source, "
-           "one or two props"),
+    ("A4", f"at most {MAX_WORDS} words, as many as the scene's proportions and setting need (the creator's band 40-150, "
+           f"2026-11-06): a place, an action at its peak, a reaction, caricature body words, a light source, the props; a crowd "
+           f"scene over {CROWD_REVIEW_WORDS} words is a REVIEW"),
     ("A5", "no caption tail"),
     ("A6", "no camera, shot size, position, measurement or number in the words: layout lives in boxes and composition"),
     ("A7", "every figure's full tag is said once"),
@@ -75,13 +89,17 @@ def shaped(prompt: str) -> str:
 with_tail = shaped      # the composer's old name (PR #24); it now returns the approved shape without the tail
 
 
-def check(prompt: str) -> list[dict]:
+def check(prompt: str, *, sub_category: str | None = None) -> list[dict]:
     out = []
     if not prompt.lower().startswith(TRIGGER):
         out.append({"rule": "LT-65", "severity": "FAIL", "detail": f"does not start with '{TRIGGER}'"})
     n = len(prompt.split())
     if n > MAX_WORDS:
-        out.append({"rule": "LT-65", "severity": "FAIL", "detail": f"{n} words; the approved prompts have {MAX_WORDS} at most"})
+        out.append({"rule": "LT-65", "severity": "FAIL", "detail": f"{n} words; the creator's band ends at {MAX_WORDS}"})
+    elif n > CROWD_REVIEW_WORDS and sub_category in CROWD_SUB_CATEGORIES:
+        out.append({"rule": "LT-65", "severity": "REVIEW",
+                    "detail": f"{n} words on a crowd scene ({sub_category}): over {CROWD_REVIEW_WORDS} words drew clone soldiers "
+                              "(asset pod 2026-11-06); shorten it or keep the crowd to Blender (J4)"})
     if STYLE_TAIL in prompt:
         out.append({"rule": "LT-65", "severity": "REVIEW", "detail": "the caption tail over-caricatures and adds long-nosed extras"})
     m = STYLE_CLASH.search(prompt)

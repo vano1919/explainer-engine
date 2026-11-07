@@ -22,7 +22,9 @@ NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "
        "visual_comp_manifest", "comp_spec", "scene_set", "shot_spec", "pod_heartbeat", "edit_and_grade_manifest", "qa_report",
        "editorial_review", "distribution_package", "shot_route",
        # the Ink Chronicle contracts (ICW-02, D-96, roadmap section 10)
-       "blender_scene_manifest", "blender_render_manifest", "render_checkpoint", "speech_mix_report", "asset_library"]
+       "blender_scene_manifest", "blender_render_manifest", "render_checkpoint", "speech_mix_report", "asset_library",
+       "scene_assets",  # the drawn assets of the J5 / J2 / J4 routes (D-116, ICW-11)
+       "ltx_job"]  # the LTX generations of the J2 / J4 shots (D-116, guide step 3)
 V2 = ["audio_spine", "sound_mix_manifest",  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
       "shot_spec", "shot_route", "asset_library"]  # ICW-02: the Blender spec and route, the 3D asset library (D-110)
 
@@ -332,9 +334,12 @@ def test_film_shots_3_master_is_bp167_and_a_stale_bible_is_review(monkeypatch):
 
 
 def test_cn08_binds_only_the_recipes_bp139_names():
-    """D-105: 8k+1 frames and sizes in 32 are LTX's; a keyframe still or a Blender shot is outside them."""
-    assert SR.T("BP-139", "applies_to_recipes") == ["ltx_i2v/*"]
+    """D-105, D-116: 8k+1 frames and sizes in 32 are LTX's (the J2/J4 recipes too); a keyframe still, a J5 2.5D assembly or a
+    Blender shot is outside them."""
+    assert SR.T("BP-139", "applies_to_recipes") == ["ltx_i2v/*", "ltx_layout/*", "ltx_restyle/*"]
     assert C.ltx_recipe("ltx_i2v/1") and not C.ltx_recipe("qwen_image_keyframe/1") and not C.ltx_recipe("blender_eevee/1")
+    assert C.ltx_recipe("ltx_layout/1") and C.ltx_recipe("ltx_restyle/1") and not C.ltx_recipe("assemble_25d/1")
+    assert not C.ltx_recipe("python_helper/1")
     spec = load(FIX / "shot_spec" / "review__frames_not_8k1.json")
     assert {f["rule"] for f in C.errors(spec)} == {"CN-08"}
     spec["recipe"] = "qwen_image_keyframe/1"

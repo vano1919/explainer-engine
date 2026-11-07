@@ -1,0 +1,14 @@
+{
+  "_doc": "Rain's mouth as bone poses per Rhubarb shape (rigs.ActionVisemes). Bones are CloudRig controls of the 'Face Main' collection. rot is degrees, loc metres, scale a multiplier. Calibrated 2026-11-05 on Blender 5.2.3 by render: MSTR-Jaw rot X +25 opens the jaw with teeth and tongue; MSTR-Mouth scale X 1.6 widens the lips (gum artefacts appear above ~1.4), 0.5 purses them; ACT-Lips_Corner loc X +-0.01 does nothing (its limit constraints clamp it); MSTR-LowerLip loc Z -0.01 drops the lower lip. The in-between values are interpolated from those three measurements, not each rendered: re-judge on the clip.",
+  "poses": {
+    "A": {},
+    "B": {"MSTR-Jaw": {"rot": [5, 0, 0]}, "MSTR-Mouth": {"scale": [1.2, 1, 1]}},
+    "C": {"MSTR-Jaw": {"rot": [14, 0, 0]}, "MSTR-Mouth": {"scale": [1.25, 1, 1]}},
+    "D": {"MSTR-Jaw": {"rot": [25, 0, 0]}},
+    "E": {"MSTR-Jaw": {"rot": [12, 0, 0]}, "MSTR-Mouth": {"scale": [0.65, 1, 1]}},
+    "F": {"MSTR-Jaw": {"rot": [4, 0, 0]}, "MSTR-Mouth": {"scale": [0.5, 1, 1]}},
+    "G": {"MSTR-Jaw": {"rot": [6, 0, 0]}, "MSTR-Mouth": {"scale": [1.1, 1, 1]}, "MSTR-LowerLip": {"loc": [0, 0, -0.004]}},
+    "H": {"MSTR-Jaw": {"rot": [14, 0, 0]}},
+    "X": {}
+  }
+}

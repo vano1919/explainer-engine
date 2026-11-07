@@ -9,7 +9,8 @@ geometry, derived-file freshness, index ranges). jsonschema only (plan decision 
 
 A finding is FAIL for a schema or invariant breach, and takes its level from the registry (``sourced_rules.level``) when a
 hypothesis rule drives it (BP-139: video-model clip geometry), so a hypothesis never FAILs (D-59, CN-11). BP-139 applies only to
-the recipes it names (``applies_to_recipes``, D-105): the legacy LTX clips of film_shots/2 and shot_spec/1, never a Blender shot.
+the recipes it names (``applies_to_recipes``, D-105, D-116): the LTX clips (``ltx_i2v``, ``ltx_layout``, ``ltx_restyle``) of
+film_shots/2, shot_spec/1 and the J2/J4 shots of film_shots/3, never a J5 or Blender-rendered shot.
 
 The Ink Chronicle contracts (D-96, roadmap section 10; ICW-02): ``film_shots/3`` and ``shot_spec/2`` (CN-17: the 24 fps master
 clock and the 2560x1440 frame of BP-167, lane and render-profile agreement), ``shot_route/2`` (the Blender pin of BP-175),
@@ -33,7 +34,9 @@ SCHEMAS = Path(__file__).resolve().parents[1] / "schemas"
 VIDEO_LANES = {"KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL"}  # film_shots/2: LTX clips
 LANES_3 = ("VIDEO_3D", "STILL_3D", "HELPER")  # film_shots/3 (D-97)
 BLENDER_LANES = {"VIDEO_3D", "STILL_3D"}  # rendered by Blender (shot_spec/2); HELPER stays with the Python renderers
-BLENDER_RECIPES = {"eevee_fast": "blender_eevee/1", "eevee_full": "blender_eevee/1", "cycles_hero": "blender_cycles/1"}
+BLENDER_RECIPES = {"eevee_fast": "blender_eevee/1", "eevee_full": "blender_eevee/1", "eevee_painterly": "blender_eevee/1",
+                   "cycles_hero": "blender_cycles/1"}
+BLENDER_SPECS = ("shot_spec/2", "shot_spec/3")  # /3 (WP-Q1): /2 plus the look's view transform, shade and line mode
 BIBLE = Path(__file__).resolve().parents[1] / "world" / "bible.json"
 
 
@@ -67,7 +70,8 @@ def _f(rule: str, where: str, detail: str, severity: str = "FAIL") -> dict:
 
 
 def ltx_recipe(recipe: str | None) -> bool:
-    """D-105: CN-08 / BP-139 bind only the recipes BP-139 names (``ltx_i2v/*``); a Blender or keyframe recipe is outside them."""
+    """D-105, D-116: CN-08 / BP-139 bind only the recipes BP-139 names (``ltx_i2v/*``, ``ltx_layout/*``, ``ltx_restyle/*``); a
+    Blender, 2.5D or keyframe recipe is outside them."""
     return recipe is not None and any(fnmatch.fnmatchcase(recipe, pat) for pat in SR.T("BP-139", "applies_to_recipes"))
 
 
@@ -144,7 +148,8 @@ def _bible_version() -> str | None:
 def _film_shots_3(doc: dict) -> list[dict]:
     """CN-17 on ``film_shots/3`` (D-97): the master clock and frame, exact frame counts (Blender renders the frames it is
     asked for: round(seconds x fps), no 8k+1 rounding), a HELPER shot names a catalogue archetype (CN-15), and the cards are
-    planned under the current world bible (a stale version is REVIEW: the look may have moved)."""
+    planned under the current world bible (a stale version is REVIEW: the look may have moved). The LTX clips of a J2/J4
+    shot (``ltx_clips``, D-116) take CN-08's 8k+1 frames and sizes in 32."""
     fps = doc["fps"]
     out = _master("fps", None, None, fps)
     have = _bible_version()
@@ -158,11 +163,16 @@ def _film_shots_3(doc: dict) -> list[dict]:
             out.append(_f("CN-17", s["id"], f"{s['duration_frames']} frames is not {s['seconds']:g} s at {fps} fps ({want})"))
         if s["lane"] == "HELPER":
             out += _catalogue_findings(s["id"], s["helper_archetype"])
+        # D-116: a J2/J4 shot's LTX clips are LTX generations, so CN-08 / BP-139 bind them (ltx_layout/1, ltx_restyle/1);
+        # the shot itself stays on the Blender master clock and frame above
+        if s.get("route") in ("J2", "J4"):
+            for n, c in enumerate(s.get("ltx_clips") or [], 1):
+                out += _geometry(c["width"], c["height"], c["frames"], f"{s['id']}.clip{n}")
     return out
 
 
 def _shot_spec(doc: dict, base) -> list[dict]:
-    if doc["schema"] == "shot_spec/2":
+    if doc["schema"] in BLENDER_SPECS:
         return _shot_spec_2(doc)
     out = []
     out += _refused_lane(doc["lane"], doc["shot_id"])
@@ -194,6 +204,8 @@ def _shot_spec_2(doc: dict) -> list[dict]:
     elif perf["rhubarb"] is not None or perf["dialogue_cover"] == "on_screen":
         out.append(_f("CN-17", sid, "mouth cues or an on-screen mouth on a shot that is not lip-synced"))
     lo, hi = SR.T("BP-173", "weight_px_1440")
+    if doc["schema"] == "shot_spec/3" and doc["look"]["line_mode"] == "none":
+        return out   # /3: a look without a drawn line has no Line Art weight to hold to BP-173's band
     if not lo <= doc["look"]["line_weight_px"] <= hi:
         out.append(_f("CN-17", sid, f"Line Art weight {doc['look']['line_weight_px']:g} px is outside {lo:g}-{hi:g} px at 1440p (BP-173)",
                       SR.level("BP-173")))
@@ -285,6 +297,95 @@ def _render_checkpoint(doc: dict, base) -> list[dict]:
 
 THIRD_PARTY = {"licensed", "cc0", "cc-by-4.0", "mit-tool", "gpl-tool-only", "vendor-terms", "community-licence-revenue-capped",
                "restricted-territory"}
+
+
+def _scene_assets(doc: dict, base) -> list[dict]:
+    """SA-01..SA-03 and SA-05 on ``scene_assets/1`` (D-116, docs/SCENE_ASSETS.md): every hero prompt carries the flat-lighting
+    note; a 360 backdrop is equirectangular (width = 2 x height); a defect names an asset of its scene; the drawing stack is
+    ``qa/style_prompt.INFERENCE`` (one home)."""
+    from explainer_engine.qa import style_prompt
+    out = []
+    want = {k: style_prompt.INFERENCE[k] for k in ("base", "lora", "lora_weight")}
+    if doc["style"] != want:
+        out.append(_f("SA-05", "style", f"{doc['style']} differs from qa/style_prompt.INFERENCE {want}"))
+    for sid, sc in doc["scenes"].items():
+        bd = sc["backdrop_360"]
+        w, h = bd["size"]
+        if w != 2 * h:
+            out.append(_f("SA-02", f"{sid}.backdrop_360", f"{w}x{h} is not equirectangular (width = 2 x height)"))
+        ids = {bd["asset"]} | {p["id"] for p in sc["props"]}
+        seen = set()
+        for hero in sc["heroes"]:
+            if hero["lighting_note"].lower() not in hero["prompt"].lower():
+                out.append(_f("SA-01", f"{sid}.{hero['hero']}", f"the prompt lacks the lighting note {hero['lighting_note']!r}"))
+            if hero["hero"] in seen:
+                out.append(_f("SA-03", f"{sid}.{hero['hero']}", "the hero is listed twice"))
+            seen.add(hero["hero"])
+            ids |= {hero["hero"], hero["sheet"]}
+        for d in sc["defects"]:
+            if d["asset"] not in ids:
+                out.append(_f("SA-03", f"{sid}.defects", f"{d['asset']!r} is not an asset of the scene ({', '.join(sorted(ids))})"))
+    return out
+
+
+LTX_BASES = {"ltx25": "video_ltx", "ltx23": "video_ltx_23"}   # ltx_job/1 base -> its config/cloud_pins.json models key
+LTX_ROUTE_RECIPE = {"J2": "ltx_layout/1", "J4": "ltx_restyle/1"}
+LTX_PASSES = {("J2", "ltx25"): ({"clay"}, {"clay"}), ("J4", "ltx25"): ({"colour"}, {"colour"}),
+              ("J4", "ltx23"): (set(), {"line", "canny_full", "depth"})}   # (required, allowed) conditioning passes
+LTX_MAX_GENERATIONS = 12   # the step-3 matrix of the Opus guide (section 3): at most 12 generations in one test pod
+
+
+def _ltx_job(doc: dict, base) -> list[dict]:
+    """LJ-01..LJ-07 on ``ltx_job/1`` (D-116, docs/LTX_JOBS.md): a LoRA only into its own base and every weight pinned; the recipe,
+    the base and the conditioning passes of the route; CN-08 geometry; unique ids and outputs; a chained clip names an earlier
+    job of the same shot; the matrix size (LJ-06, the half-size Union reference, is CN-08's two-stage multiple of 64)."""
+    pins = json.loads((Path(__file__).resolve().parents[2] / "config" / "cloud_pins.json").read_text(encoding="utf-8"))["models"]
+    out, seen, outputs = [], {}, set()
+    if len(doc["jobs"]) > LTX_MAX_GENERATIONS:
+        out.append(_f("LJ-07", "jobs", f"{len(doc['jobs'])} generations: the test pod plans at most {LTX_MAX_GENERATIONS}", "REVIEW"))
+    for n, j in enumerate(doc["jobs"]):
+        w = j["id"]
+        if w in seen:
+            out.append(_f("LJ-04", w, "the job id is used twice"))
+        if j["output"] in outputs:
+            out.append(_f("LJ-04", w, f"the output {j['output']} is written by two jobs"))
+        seen[w], _ = j, outputs.add(j["output"])
+        key = LTX_BASES[j["base"]]
+        pin = pins.get(key) or {}
+        if j["model"]["key"] != key or j["model"]["id"] != pin.get("id"):
+            out.append(_f("LJ-01", w, f"base {j['base']} is models.{key} ({pin.get('id')}), not {j['model']['key']} ({j['model']['id']})"))
+        lpin = pins.get(j["lora"]["key"]) or {}
+        if lpin.get("base") != pin.get("id"):
+            out.append(_f("LJ-01", w, f"the LoRA {j['lora']['id']} was trained on {lpin.get('base')}, not on {pin.get('id')}: a LoRA "
+                                      "only goes into its own base"))
+        te = j.get("text_encoder")
+        if bool(te) != bool(pin.get("text_encoder")) or (te and te["key"] != pin.get("text_encoder")):
+            out.append(_f("LJ-01", w, f"base {j['base']} needs text encoder {pin.get('text_encoder')!r}, the job names "
+                                      f"{(te or {}).get('key')!r}"))
+        unpinned = [x["id"] for x in (j["model"], j["lora"], te) if x and not x.get("sha256")]
+        if unpinned:
+            out.append(_f("LJ-01", w, f"not pinned yet (no sha256): {', '.join(unpinned)}: the pod refuses this job until it is",
+                          "REVIEW"))
+        if LTX_ROUTE_RECIPE[j["route"]] != j["recipe"]:
+            out.append(_f("LJ-02", w, f"route {j['route']} is recipe {LTX_ROUTE_RECIPE[j['route']]}, not {j['recipe']}"))
+        rule = LTX_PASSES.get((j["route"], j["base"]))
+        passes = [c["pass"] for c in j["conditioning"]]
+        if rule is None:
+            out.append(_f("LJ-02", w, f"route {j['route']} does not run on base {j['base']}"))
+        else:
+            need, allowed = rule
+            if not need <= set(passes) or not set(passes) <= allowed or len(passes) != len(set(passes)):
+                out.append(_f("LJ-02", w, f"conditioning {passes}: route {j['route']} on {j['base']} takes "
+                                          f"{sorted(allowed)}{' and needs ' + str(sorted(need)) if need else ''}, each once"))
+        out += [dict(f, rule="LJ-03") if f["rule"] == "CN-08" else f for f in _geometry(j["width"], j["height"], j["frames"], w)]
+        ch = j.get("chain_from")
+        if ch:
+            prev = seen.get(ch["job"]) if ch["job"] != w else None
+            if prev is None or list(seen).index(ch["job"]) >= n:
+                out.append(_f("LJ-05", w, f"chain_from {ch['job']!r} is not an earlier job of this document"))
+            elif prev["shot_id"] != j["shot_id"] or ch["frames"] >= prev["frames"]:
+                out.append(_f("LJ-05", w, f"chain_from {ch['job']}: another shot, or {ch['frames']} frames is not less than its clip"))
+    return out
 
 
 def _asset_library(doc: dict, base) -> list[dict]:
@@ -560,7 +661,8 @@ SEMANTIC = {"film_shots": _film_shots, "script_variants": _script_variants, "sho
             "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
             "job_manifest": _job_manifest, "shot_route": _shot_route, "blender_scene_manifest": _blender_scene,
             "blender_render_manifest": _blender_render, "render_checkpoint": _render_checkpoint, "asset_library": _asset_library,
-            "speech_mix_report": _speech_mix}
+            "speech_mix_report": _speech_mix, "scene_assets": _scene_assets,
+            "ltx_job": _ltx_job}
 
 
 def derived_findings(doc: dict, base) -> list[dict]:
@@ -601,8 +703,8 @@ def validate(doc: dict, base: Path | str | None = None) -> list[dict]:
 
 
 def spec_fps(spec: dict) -> int:
-    """The frame rate of a shot spec: ``fps`` in /1, ``clock.fps`` in /2."""
-    return spec["clock"]["fps"] if spec.get("schema") == "shot_spec/2" else spec["fps"]
+    """The frame rate of a shot spec: ``fps`` in /1, ``clock.fps`` in /2 and /3."""
+    return spec["clock"]["fps"] if spec.get("schema") in BLENDER_SPECS else spec["fps"]
 
 
 def cross_fps(manifest: dict, film_shots: dict | None = None, specs: list[dict] | None = None) -> list[dict]:

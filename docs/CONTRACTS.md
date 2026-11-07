@@ -57,6 +57,8 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `blender_render_manifest/1` | written next to the shot's render | `blender/render.py` | code (what was rendered, how fast) | `blender/validate.py`, `blender/cost.py` (job speeds) |
 | `render_checkpoint/1` | `render_checkpoint.json` in the shot's render folder (+ its vault copy, roadmap 10.4) | `blender/render.py` | code, atomic, after each remote verify (OR-33) | resume after a lost pod (OR-03) |
 | `speech_mix_report/1` | `audio/speech_mix_report.json` | `qa/speech_mix.py` | **derived** from the script (+ spine, cards) | REVIEW (BP-105, D-99), the review bundle |
+| `scene_assets/1` | `assets/scene_assets.json` | the scene-asset writer (ICW-11, [SCENE_ASSETS](SCENE_ASSETS.md)) | hand (prompts) + the asset pod (files, sha256) | `blender/assemble_25d.py` (J5), the step-3 first frames (J2/J4) |
+| `ltx_job/1` | `ltx_jobs.json` (vault `route_test_2026-11/`) | `edit/ltx_jobs.py` (the J2/J4 spec writer, [LTX_JOBS](LTX_JOBS.md)) | derived from the route shots + layout manifests; never by hand | the route-test pod (`training/pods/p14`) |
 | `asset_library/1` | `assets/library.json` | `assets/library.py` ([WORLD_BIBLE](WORLD_BIBLE.md)) | hand (approved assets) | `library verify`, the shot writers |
 | `asset_library/2` | `assets/library.json` (once `assets/library.py` moves to it) | `assets/library.py` | hand (approved 3D assets, licences) | the Blender router, `library verify` |
 
@@ -219,6 +221,11 @@ BP-139, BP-167, BP-173, BP-175; D-59), never from this page.
   `render{profile, samples, motion_blur, denoise, output mkv_ffv1|png_seq}`, `seed`, `why` (required for cycles_hero).
   Cache key: everything but `job_id`, `shot_id` and `clock.start_frame` (the shot's place on the episode clock moves no pixel);
   assets count by sha256, the Rhubarb cues by their hash, never their path; asset lists are sorted.
+- **shot_spec/3** (WP-Q1, 2026-11-05): shot_spec/2 with a wider `look` and one more profile; /2 documents validate unchanged.
+  `look.view_transform` AgX | Standard | Khronos PBR Neutral (`grade_look` "None" off AgX), `look.shade_mode` (style.SHADE_MODES),
+  optional `look.shade_path` luma | lit | rgb_soft, `look.line_mode` none | faint | dark | ink with `line_weight_px` required when a
+  line is drawn and absent when not (CN-17 holds the weight to BP-173 only then); `render.profile` adds `eevee_painterly`. Keyed,
+  rendered and validated as /2 (`contracts.BLENDER_SPECS`).
 - **shot_route/2**: `job_id`, `fps`, `derived_from` (as /1), `pins.blender{version, series, archive_sha256, image|null}` (BP-175) and
   `routes[]{shot_id, lane, recipe blender_eevee/1|blender_cycles/1|python_helper/1, specs[], comp_items[]}`: a HELPER route is
   `python_helper/1` with comp items and no spec; a VIDEO_3D or STILL_3D route has exactly one spec (role video or still) and no comp

@@ -115,7 +115,8 @@ def make(tmp_path, name, *, fps=24, frames=49, audio=True, size="320x192"):
     out = tmp_path / name
     cmd = ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"testsrc2=size={size}:rate={fps}"]
     if audio:
-        cmd += ["-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000"]
+        cmd += ["-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={frames / fps:.6f}"]  # a bounded tone: with an
+        # endless source, -shortest cuts the AAC stream a frame or more after the picture on newer ffmpeg builds (CI CLIP-05)
     cmd += ["-frames:v", str(frames), "-c:v", "mpeg4", "-pix_fmt", "yuv420p"] + (["-c:a", "aac", "-shortest"] if audio else ["-an"]) + [str(out)]
     subprocess.run(cmd, check=True)
     return out
