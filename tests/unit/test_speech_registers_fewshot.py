@@ -51,3 +51,25 @@ def test_register_lint_reads_only_the_spoken_lines_of_a_markdown_script():
     text = RL.script_text(md)
     assert "—" not in text and "Measured" not in text and "NARRATOR" not in text
     assert "He lands in snow." in text and "Out of what?" in text
+
+
+def test_register_checks_short_form_and_narrator_only_text():
+    import copy
+    from explainer_engine.production import script as S
+    from explainer_engine.scripting import speech as SP
+    base = {"schema": "production_script/3", "episode": {"id": "x", "title": "X pilot", "short_form": True},
+            "cast": {"m": {"names": ["m"], "card": "a courier", "speech": {
+                "basis": "personality", "style": "wry, fast, short turns", "words": ["look", "okay", "man"],
+                "max_contractions": 0.02, "mlu_range": [3, 5]}}},
+            "segments": [{"id": "S01", "lines": [
+                {"text": "The rain falls hard tonight."},
+                {"text": "I can't do it, and I won't. We don't know why it's so loud, do we?", "speaker": "m", "to": "room"}]}]}
+    found = SP.check(base)
+    assert sorted(x["detail"].split()[2] for x in found if x["severity"] == "REVIEW")  # both register checks fire
+    assert any("contractions" in x["detail"] for x in found) and any("average" in x["detail"] for x in found)
+    ok = copy.deepcopy(base)
+    ok["cast"]["m"]["speech"].update(max_contractions=0.5, mlu_range=[3, 30])
+    assert not [x for x in SP.check(ok) if "contractions" in x["detail"] or "average" in x["detail"]]
+    assert "can't" not in S.narrator_tts_text(base) and "rain" in S.narrator_tts_text(base)
+    plain = {"segments": [{"lines": [{"text": "Only narration."}]}]}
+    assert S.narrator_tts_text(plain) == S.tts_text(plain)

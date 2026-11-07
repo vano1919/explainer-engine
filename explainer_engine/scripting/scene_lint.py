@@ -33,6 +33,7 @@ MAX_SPEECHES = SR.T("BP-72", "speeches_per_scene_max")  # SC-09: one speech per 
 REVIEW_TURN_WORDS = SR.T("BP-73", "turn_words_review")  # SC-09: the default spoken turn is 5-15 words
 MAX_QA_CHAIN = SR.T("BP-73", "qa_chain_max")  # SC-09/DW-12: more consecutive ?-turns read as an interview
 MIN_EXCHANGE = SR.T("BP-70", "min_exchange_lines")  # SC-05: at least one run of this many character lines
+MIN_EXCHANGE_SHORT = SR.T("BP-70", "min_exchange_lines_short")  # episode.short_form (a pilot of about 3 minutes): REVIEW only
 MIN_EXCHANGE_SPEAKERS = SR.T("BP-70", "min_exchange_speakers")  # SC-05: ... from at least this many speakers
 MAX_DISCLAIMER_SEGMENTS = SR.T("BP-71", "disclaimer_segments_max")  # SC-08: no spoken honesty beat since BP-88 (0)
 GREETING = re.compile(r"^\s*(hello|hi there|hi[,.! ]|hey there|hey[,.! ]|good (morning|evening|afternoon)|welcome)\b", re.I)
@@ -240,12 +241,14 @@ def lint(doc: dict) -> list[dict]:
         # D-63 / BP-70: the narrator may report the exchange instead (the creator, 2026-10-20 21:14/21:17)
         from explainer_engine.scripting.story_lint import reported_turns
         told = [h for ln in lines if not ln.get("speaker") for h in reported_turns(ln["text"], cast, sorted(present))]
-        reported = len(told) >= MIN_EXCHANGE and len(set(told)) >= MIN_EXCHANGE_SPEAKERS
-        if len(present) >= 2 and not reported and (best_run < MIN_EXCHANGE or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
+        short = bool(doc.get("episode", {}).get("short_form"))
+        need = MIN_EXCHANGE_SHORT if short else MIN_EXCHANGE
+        reported = len(told) >= need and len(set(told)) >= MIN_EXCHANGE_SPEAKERS
+        if len(present) >= 2 and not reported and (best_run < need or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
             _f(out, "SC-05", sid, f"no real exchange: the longest unbroken run is {best_run} character line(s) "
-               f"({len(best_speakers)} speaker(s)); a scene plays at least {MIN_EXCHANGE} character lines in a row, "
-               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside, or the narrator reports at least {MIN_EXCHANGE} turns "
-               f"of {MIN_EXCHANGE_SPEAKERS} named speakers (found {len(told)}; BP-70)", sev("BP-70"))
+               f"({len(best_speakers)} speaker(s)); a scene plays at least {need} character lines in a row, "
+               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside, or the narrator reports at least {need} turns "
+               f"of {MIN_EXCHANGE_SPEAKERS} named speakers (found {len(told)}; BP-70)", "REVIEW" if short else sev("BP-70"))
         silent = present - speakers_seen - {b.get("who") for ln in lines for b in (ln.get("visual_beats") or [])
                                             if b["kind"] == "expression"}
         if silent:

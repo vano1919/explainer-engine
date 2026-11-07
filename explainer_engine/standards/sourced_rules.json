@@ -3093,6 +3093,7 @@
    "thresholds": {
     "min_exchange_lines": 4,
     "min_exchange_speakers": 2,
+    "min_exchange_lines_short": 2,
     "speech_verbs": [
      "says",
      "asks",

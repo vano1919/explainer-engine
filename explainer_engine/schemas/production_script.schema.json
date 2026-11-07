@@ -63,6 +63,10 @@
         "notes": {
           "type": "string"
         },
+        "short_form": {
+          "type": "boolean",
+          "description": "a pilot of about three minutes: SC-05 asks BP-70's min_exchange_lines_short (2) and only REVIEWs (creator 2026-11-07)"
+        },
         "gemini_exception": {
           "type": "object",
           "additionalProperties": false,
@@ -548,6 +552,22 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "max_contractions": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "DW-11 register: contractions per word this hero may use at most (0 = none); over it is a REVIEW"
+              },
+              "mlu_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 1
+                },
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "DW-11 register: [min, max] mean words per turn; outside it is a REVIEW"
               },
               "sources": {
                 "type": "array",

@@ -68,6 +68,15 @@ def tts_text(doc: dict) -> str:
                      for seg in doc["segments"]) + "\n"
 
 
+def narrator_tts_text(doc: dict) -> str:
+    """``tts_text`` of the narrator's lines only when the script has heroes who speak (third-person drama): N-05/N-06/N-12
+    are the narrator's register (sentence length, questions, 'you'), a hero's turns are held to DW-11 and SC-09 instead."""
+    if not any(ln.get("speaker") for seg in doc["segments"] for ln in seg["lines"]):
+        return tts_text(doc)
+    return "\n".join(" ".join(tts_line(ln) for ln in seg["lines"] if ln.get("voiced", True) and not ln.get("speaker"))
+                     for seg in doc["segments"]) + "\n"
+
+
 NARRATOR = "narrator"
 
 

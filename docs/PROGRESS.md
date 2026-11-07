@@ -3757,3 +3757,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-07 — Rule sync after the Gemini audit, research-trust rule (creator 12:14 UTC)
 - `narration-script` skill: rule 6 corrected (no SSML on v3/v4, BP-14; delays are `[DELAY: +Ns]` on the label), per-line word boxes and seven traps, scope notes (D-68 vs D-90, BP-40 already scoped); `register_lint` reads only the spoken lines of a `.md` script (`script_text`); CLAUDE.md "Research trust" line. Not changed, open for the creator: SC-05 exchange length for a 165 s pilot, narrator-only N-06/N-12, `speech.py` contraction rate. Test `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+## 2026-11-07 — Three register checks added (creator 12:17 UTC)
+- `speech.py` (PV-46): optional `cast.<id>.speech.max_contractions` and `mlu_range` (schema fields added), checked against the hero's lines as REVIEW. `scene_lint` SC-05: `episode.short_form` (a pilot of about three minutes) asks BP-70's new threshold `min_exchange_lines_short` = 2 and only REVIEWs; the registry row and `docs/SOURCED_RULES.md` regenerated. `validate` PV-12 now runs the narration lint on `narrator_tts_text`, so N-05/N-06/N-12 read the narrator only when heroes speak (their turns stay under DW-11 and SC-09). Test: `tests/unit/test_speech_registers_fewshot.py`. Costs $0.

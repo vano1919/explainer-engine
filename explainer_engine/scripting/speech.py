@@ -61,4 +61,18 @@ def check(doc: dict) -> list[dict]:
                 re.search(r"\b" + re.escape(w.lower()) + r"\b", text) for w in words):
             f(who, f"none of {who}'s signature words ({', '.join(words[:4])}...) appears in their {len(lines)} lines: "
                    "the written voice ignores the declared manner (DW-11)", "REVIEW")
+        # DW-11 registers (creator 2026-11-07): declared rates are checked, hypotheses only (REVIEW)
+        toks = re.findall(r"[A-Za-z]+(?:'[A-Za-z]+)*", " ".join(lines))
+        cmax = sp.get("max_contractions")
+        if cmax is not None and toks:
+            rate = sum(1 for w in toks if "'" in w and not w.lower().endswith("'s")) / len(toks)
+            if rate > cmax:
+                f(who, f"{who} uses contractions at {rate:.1%} of words, over their declared {cmax:.1%}: "
+                       "their register is stiffer than the lines (DW-11)", "REVIEW")
+        mlu = sp.get("mlu_range")
+        if mlu and len(mlu) == 2 and lines:
+            avg = sum(len(re.findall(r"[A-Za-z0-9]+(?:'[A-Za-z]+)?", ln)) for ln in lines) / len(lines)
+            if not mlu[0] <= avg <= mlu[1]:
+                f(who, f"{who}'s turns average {avg:.1f} words, outside their declared {mlu[0]:g}-{mlu[1]:g}: "
+                       "length is part of the voice (DW-11)", "REVIEW")
     return out
