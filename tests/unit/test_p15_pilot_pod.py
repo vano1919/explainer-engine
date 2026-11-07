@@ -41,7 +41,8 @@ def test_the_config_restyles_every_room_still_and_the_battle_frame_0_and_animate
     assert len({j["id"] for j in cfg["ltx_jobs"]}) == 8 and len({j["output"] for j in cfg["ltx_jobs"]}) == 8
     assert all(j["question"] for j in cfg["ltx_jobs"]) and cfg["audio"] == {"in_mp4": True, "wav_sidecar": True}
     for j in cfg["ltx_jobs"]:
-        assert j["frames"] == 185 and (j["frames"] - 1) % 8 == 0 and j["frames"] / j["fps"] <= 8.0   # LTX 8k+1, BP-172
+        assert j["frames"] == B.clip_frames("ltx_" + j["id"].split(".")[1]) and (j["frames"] - 1) % 8 == 0 and j["frames"] / j["fps"] <= 8.0   # LTX 8k+1, BP-172
+        assert (j["frames"] == 121) == (j["shot_id"] == "battle_f000_colour")   # PR #155 / BP-184: the crowd clash is capped at 5.04 s = 121 frames
         assert j["pipeline"] == "distilled" and j["lora"] is None and j["model"]["sha256"] and j["seed"] == 42
         assert j["first_frame"]["path"] == f"route_test_2026-11/pilot/first_frames/{j['shot_id']}.png"
         line = (("host", j["spoken_line"]) if j["spoken_line"] else None)
@@ -420,3 +421,20 @@ def test_the_default_qwen_pod_draws_the_24_pictures_and_the_two_mouth_sheets_ins
     assert r["expected_min"] == 16.6 and r["max_min"] == 49.8   # 61 s + 26 x 36 s, the usual 3x (retries of the sheets are inside it)
     assert RP.rp11(DIR / "p15q_schedule.json", max_usd=3.4, max_hours=2.0) == [] and not (DIR / "p15qm_schedule.json").exists()
     assert B.schedule_qwen() == sch
+
+
+def test_the_one_clip_pilot_is_the_battle_clip_at_121_frames_and_three_cards_pass_rp11_at_the_original_caps():
+    """p15d (the creator 2026-11-07 07:46 UTC): 24 pictures + 2 mouth sheets + ONE battle clip of 121 frames (BP-184 crowd cap 5.04 s, dialogue = 0 s LTX)."""
+    import copy
+    from explainer_engine.cloud import schedule as S
+    assert B.CLIP_SETS[1] == ["ltx_c4"] and p15_pod.CLIP_SETS[1] == ["ltx_c4"] and B.SH_C[1].name == "p15c1.sh"
+    sch = B.schedule_qwen_clips(1)
+    assert [s["id"] for s in sch["stages"]] == ["weights_qwen", "qwen_restyle", "weights_ltx25", "ltx_c4", "F"]
+    assert sch["limits"]["max_usd"] == 3.7 and sch["limits"]["max_hours"] == 2.7
+    assert sch["stages"][3]["on"]["gpu"] == {"expected_min": 3.8, "max_min": 7.8}   # 5.8 / 12 min of 185 frames, scaled to 121
+    assert S.rp11(B.HERE / "p15qc1_schedule.json", max_usd=3.7, max_hours=2.7) == []
+    assert {c["name"] for c in sch["cards"]} == {"A100 80GB", "A100 80GB PCIe", "H100 PCIe"}
+    for card in sch["cards"]:   # every card passes RP-11 on its own, no 2.8 h and no 4.71 needed
+        one = copy.deepcopy(sch); one["cards"] = [card]
+        assert S.check(one) == [], card
+    assert "--clips 1" in B.SH_C[1].read_text() and "p15qc1_schedule" in B.SH_C[1].read_text()

@@ -41,7 +41,7 @@ def load_cfg() -> dict:
     return json.loads((HERE / "p15.json").read_text(encoding="utf-8"))
 
 
-CLIP_SETS = {8: CLIP_STAGES, 2: ["ltx_c2", "ltx_c4"]}   # --only qwen --clips N: the look-variant pictures, then these clips (build.CLIP_SETS)
+CLIP_SETS = {8: CLIP_STAGES, 2: ["ltx_c2", "ltx_c4"], 1: ["ltx_c4"]}   # --only qwen --clips N: the look-variant pictures, then these clips (build.CLIP_SETS)
 
 
 def load_schedule(only: str | None = None, clips: int = 0) -> dict:
@@ -148,7 +148,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--plan", action="store_true")
     ap.add_argument("--only", choices=["qwen"], help="run only the Qwen restyle (no LTX weights, no clips)")
-    ap.add_argument("--clips", type=int, choices=[2, 8], default=0, help="with --only qwen: after the 24 pictures also this many LTX clips (p15qc<N>_schedule.json)")
+    ap.add_argument("--clips", type=int, choices=[1, 2, 8], default=0, help="with --only qwen: after the 24 pictures also this many LTX clips (p15qc<N>_schedule.json)")
     a = ap.parse_args(argv)
     cfg, sch = load_cfg(), load_schedule(a.only, a.clips)
     if a.plan:

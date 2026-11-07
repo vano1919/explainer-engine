@@ -28,7 +28,7 @@ from explainer_engine.training.pods.p14 import lean as LEAN
 
 HERE = Path(__file__).resolve().parent
 SH = HERE / "p15.sh"
-SH_C = {8: HERE / "p15c8.sh", 2: HERE / "p15c2.sh"}   # 24 pictures + N clips (the creator 2026-11-06 21:41 UTC): same bundle pin
+SH_C = {8: HERE / "p15c8.sh", 2: HERE / "p15c2.sh", 1: HERE / "p15c1.sh"}   # 24 pictures + N clips (the creator 2026-11-06 21:41 UTC): same bundle pin
 SH_Q = HERE / "p15q.sh"   # the Qwen-only script (the creator 2026-11-06 17:34 UTC): same bundle pin, no LTX
 HF_ROOT = "route_test_2026-11/pilot"
 QUESTION = ("does LTX-2.5 distilled i2v hold one 7.7 s single-scene shot from a Blender-composed, Qwen-styled frame (a furnished "
@@ -36,6 +36,12 @@ QUESTION = ("does LTX-2.5 distilled i2v hold one 7.7 s single-scene shot from a 
 RESTYLE = ("room_establishing", "room_two_shot", "room_close_host", "room_close_guest", "room_reverse", "room_insert_table",
            "room_insert_clock", "battle_f000_colour")
 FRAMES, SEED, SIZE = 185, 42, (1920, 1088)
+# PR #155 (j5_limits, BP-184: crowd clash <= 5.04 s = 121 frames, dialogue = 0 s LTX): the battle clips are 121 frames, the rest stay 185.
+CLIP_FRAMES = {"ltx_c4": 121, "ltx_c5": 121}
+
+
+def clip_frames(stage: str) -> int:
+    return CLIP_FRAMES.get(stage, FRAMES)
 ROOM_AUDIO = "We hear a quiet room tone, a candle crackling and low voices."
 # v4 (the creator 2026-11-06 16:42 UTC: one start-up buys 30 s and more answers, 2-3 prompt styles for video and audio, other
 # settings; Fable's list 16:42 UTC). (stage, shot, video style, audio sentence, spoken line, question). The run order puts c5 and c8
@@ -86,11 +92,12 @@ def config(stills: dict) -> dict:
     e1 = next(j for j in _p14("ltx_jobs.json")["jobs"] if j["base"] == "ltx25")
     ljobs, clips = [], {}
     for stage, sid, style, audio, line, question in CLIPS:
-        jid = f"pilot.{stage[4:]}.{sid}.{style}.ltx25.i2v.f{FRAMES}.s{SEED}"
+        nf = clip_frames(stage)
+        jid = f"pilot.{stage[4:]}.{sid}.{style}.ltx25.i2v.f{nf}.s{SEED}"
         ljobs.append({"id": jid, "question": question, "recipe": "ltx_i2v/1", "pipeline": "distilled", "shot_id": sid, "clip_id": sid,
                       "style": style, "audio_prompt": audio, "spoken_line": line[1] if line else None,
                       "base": "ltx25", "variant": "i2v", "model": copy.deepcopy(e1["model"]), "text_encoder": copy.deepcopy(e1["text_encoder"]),
-                      "lora": None, "frames": FRAMES, "fps": 24, "width": SIZE[0], "height": SIZE[1], "seed": SEED,
+                      "lora": None, "frames": nf, "fps": 24, "width": SIZE[0], "height": SIZE[1], "seed": SEED,
                       "first_frame": {"path": f"{HF_ROOT}/first_frames/{sid}.png", "sha256": None, "pose": "start"},
                       "conditioning": [], "attention_mask": None, "chain_from": None,
                       "prompt": PS.ltx_prompt(sid, style=style, audio=audio, line=line),
@@ -120,8 +127,9 @@ def schedule(clips=None) -> dict:
            "note": "LTX-2.5 distilled (pod 1: both LTX bases in 5.5 min, measured)"}]
     for c in clips or CLIPS:
         st.append({"id": c[0], "needs": ["weights_ltx25", "qwen_restyle"],
-                   "on": {"gpu": {"expected_min": CLIP_EXPECTED_MIN, "max_min": CLIP_MAX_MIN}}, "measured": False,
-                   "note": f"1 clip, {FRAMES} frames, {SIZE[0]}x{SIZE[1]}, seed {SEED}, {c[1]} {c[2]}, native audio (unmeasured)"})
+                   "on": {"gpu": {"expected_min": round(CLIP_EXPECTED_MIN * clip_frames(c[0]) / FRAMES, 1),
+                                  "max_min": round(CLIP_MAX_MIN * clip_frames(c[0]) / FRAMES, 1)}}, "measured": False,
+                   "note": f"1 clip, {clip_frames(c[0])} frames, {SIZE[0]}x{SIZE[1]}, seed {SEED}, {c[1]} {c[2]}, native audio (unmeasured)"})
     st.append({"id": "F", "needs": ids, "on": {"gpu": {"expected_min": 0.1, "max_min": 1}}, "measured": False,
                "note": "speeds.json + the last uploads"})
     return {"schema": "pod_schedule/1", "setup_min": 8, "end_reserve_min": 10, "lanes": {"gpu": 1, "net": 1}, "cards": CARDS,
@@ -174,7 +182,8 @@ def schedule_qwen() -> dict:
 
 
 CLIP_SETS = {8: ["ltx_c1", "ltx_c2", "ltx_c3", "ltx_c4", "ltx_c6", "ltx_c7", "ltx_c8", "ltx_c5"],   # the v4 order, all eight jobs
-             2: ["ltx_c2", "ltx_c4"]}   # one dialogue shot (room_two_shot, look S2) and one action shot (battle frame 0, look S2)
+             2: ["ltx_c2", "ltx_c4"],
+             1: ["ltx_c4"]}   # PR #155 pilot (the creator 2026-11-07 07:46 UTC "yes"): the one battle clip at 121 frames, no dialogue clip   # one dialogue shot (room_two_shot, look S2) and one action shot (battle frame 0, look S2)
 # 80 GB cards only (the creator's scope card 21:41 UTC). Speeds relative to the H100 NVL; ESTIMATED except the H100 NVL's Qwen part (pod 1).
 # RTX PRO 6000 Blackwell is out: the LTX stack never ran on sm_120 (the asset pod ran Qwen only).
 CARDS_CLIPS = [{"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6},
@@ -187,6 +196,12 @@ CARDS_CLIPS = [{"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu
                {"name": "H100 80GB HBM3", "cloud": "COMMUNITY", "price_h": 2.69, "gpu_speed": 1.11}]
 
 
+# set 1 (p15d): the three 80 GB LTX-safe cards that pass RP-11 at the ORIGINAL $3.7 / 2.7 h; speeds ESTIMATED.
+CARDS_ONE = [{"name": "A100 80GB", "cloud": "COMMUNITY", "price_h": 1.39, "gpu_speed": 0.6},
+             {"name": "A100 80GB PCIe", "cloud": "COMMUNITY", "price_h": 1.19, "gpu_speed": 0.57},
+             {"name": "H100 PCIe", "cloud": "COMMUNITY", "price_h": 1.99, "gpu_speed": 0.89}]
+
+
 def clip_first_frame(clip_id: str) -> str:
     """The restyle picture an LTX clip starts from when the pod draws the 24 look variants: ``<shot>__<look>`` with the look equal to the clip's
     own style tag (c1 room_two_shot S1 -> room_two_shot__S1). The tag was a prompt style in v4; here it also picks the look variant."""
@@ -195,7 +210,8 @@ def clip_first_frame(clip_id: str) -> str:
 
 
 LIMITS_CLIPS = {8: {"max_usd": 6.5, "max_hours": 4.7, "max_idle_gpu_share": 0.15},   # PROPOSED, the creator's card decides: A100 COMMUNITY worst $6.43 / 278 min (with the 2 mouth sheets)
-                2: {"max_usd": 4.71, "max_hours": 2.8, "max_idle_gpu_share": 0.15}}   # 2.8 h = the creator 2026-11-07 06:04 (A100 PCIe worst 2.74 h); PROPOSED: A100 COMMUNITY worst $3.65 / 158 min (24 + 2 mouth sheets + 2 clips); 4 sheets $3.79, 6 sheets $3.93
+                2: {"max_usd": 4.71, "max_hours": 2.8, "max_idle_gpu_share": 0.15},
+                1: {"max_usd": 3.7, "max_hours": 2.7, "max_idle_gpu_share": 0.15}}   # 2.8 h = the creator 2026-11-07 06:04 (A100 PCIe worst 2.74 h); PROPOSED: A100 COMMUNITY worst $3.65 / 158 min (24 + 2 mouth sheets + 2 clips); 4 sheets $3.79, 6 sheets $3.93
 
 
 def schedule_qwen_clips(n: int, limits: dict | None = None) -> dict:
@@ -210,7 +226,7 @@ def schedule_qwen_clips(n: int, limits: dict | None = None) -> dict:
     st.sort(key=lambda s: (["weights_qwen", "qwen_restyle", "weights_ltx25"] + ids).index(s["id"]))
     st.append({"id": "F", "needs": ids, "on": {"gpu": {"expected_min": 0.1, "max_min": 1}}, "measured": False, "note": "speeds.json + the last uploads"})
     return {"schema": "pod_schedule/1", "setup_min": full["setup_min"], "end_reserve_min": full["end_reserve_min"], "lanes": full["lanes"],
-            "cards": CARDS_CLIPS, "limits": limits or LIMITS_CLIPS[n], "stages": st,
+            "cards": CARDS_ONE if n == 1 else CARDS_CLIPS, "limits": limits or LIMITS_CLIPS[n], "stages": st,
             "_doc": (f"Pilot: the 24 Qwen look-variant pictures + {n} LTX-2.5 i2v clips (the creator 2026-11-06 21:41 UTC: video too, because a pod is hard to get). "
                      "Clip first frames: " + ", ".join(f"{i} <- {clip_first_frame(i)}" for i in ids) + ". Generated by build.py.")}
 

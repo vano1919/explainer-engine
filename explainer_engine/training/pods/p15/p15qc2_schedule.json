@@ -113,12 +113,12 @@
       ],
       "on": {
         "gpu": {
-          "expected_min": 5.8,
-          "max_min": 12.0
+          "expected_min": 3.8,
+          "max_min": 7.8
         }
       },
       "measured": false,
-      "note": "1 clip, 185 frames, 1920x1088, seed 42, battle_f000_colour S2, native audio (unmeasured)"
+      "note": "1 clip, 121 frames, 1920x1088, seed 42, battle_f000_colour S2, native audio (unmeasured)"
     },
     {
       "id": "F",
