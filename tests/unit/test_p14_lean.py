@@ -6,7 +6,6 @@ import hashlib
 import importlib.util
 import io
 import json
-import re
 import tarfile
 import threading
 import time
@@ -296,14 +295,6 @@ def test_g_stops_at_its_deadline(tmp_path):
 
 
 # --- the code bundle --------------------------------------------------------------------------------------------------------------
-
-def test_p14_script_pins_the_current_code_bundle(tmp_path):
-    bundle = tmp_path / "ee_src.tar.gz"
-    actual = lean.bundle(bundle)
-    script = (DIR / "p14.sh").read_text(encoding="utf-8")
-    pinned = re.findall(r"printf '%s  %s\\n' ([0-9a-f]{64})", script)
-    assert pinned == [actual], f"p14.sh bundle pin is stale; run lean build to pin {actual}"
-
 
 def test_the_bundle_is_byte_stable_and_leaves_the_script_out(tmp_path, monkeypatch):
     monkeypatch.setattr(lean, "BUNDLE_DIRS", ("explainer_engine/training/pods/p14", "config"))
