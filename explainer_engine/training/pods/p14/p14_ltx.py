@@ -410,11 +410,25 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
     return rows
 
 
+def require_d120_compliance(jobs_doc: dict) -> None:
+    """D-120: the historical J2 clay-conditioned recipe is not a production route."""
+    blocked = []
+    for job in jobs_doc.get("jobs", []):
+        passes = {row.get("pass") for row in job.get("conditioning", [])}
+        if job.get("route") == "J2" or "clay" in passes:
+            blocked.append(job.get("id", "<unnamed>"))
+    if blocked:
+        raise SystemExit("D-120 preflight refused legacy J2/clay jobs; migrate to Qwen text-first frames -> LTX I2V before any paid run: "
+                         + ", ".join(blocked))
+
+
 def prefetch():
     """Downloads and checks the weights of every base the jobs want (run beside the Blender passes, so the LTX stage starts on
     checked weights)."""
     cfg = json.loads((HERE / CFG_NAME).read_text(encoding="utf-8"))
-    jobs = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))["jobs"]
+    jobs_doc = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))
+    require_d120_compliance(jobs_doc)
+    jobs = jobs_doc["jobs"]
     out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     bad = {b: download_base(cfg, b, log) for b in bases_wanted(jobs)}
@@ -429,6 +443,7 @@ def main():
     jobs_doc = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))
     if jobs_doc.get("schema") != "ltx_job/1" or jobs_doc["code"]["sha"] != cfg["code"]["sha"]:
         raise SystemExit("the jobs file is not ltx_job/1 at this pod's code pin")
+    require_d120_compliance(jobs_doc)
     out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     deadline = float(os.environ["EE_DEADLINE"])
@@ -440,9 +455,12 @@ def main():
 def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, **kw):
     """The core jobs, then the extras; a job that reads an input the pod still makes (a layout pass, a frame of stage G) waits,
     and runs as soon as its inputs exist or their stage has ended (in the core-then-extras order), until the end reserve."""
+    require_d120_compliance(jobs_doc)
     extra = HERE / cfg.get("extra_jobs_file", "")
     xdoc = json.loads(extra.read_text(encoding="utf-8")) if (cfg.get("extra_jobs_file") and extra.is_file()
                                                              and os.environ.get("P14_EXTRAS", "1") == "1") else None
+    if xdoc:
+        require_d120_compliance(xdoc)
     done, later = {}, {"core": [], "extra": []}
     rows = run(cfg, jobs_doc, out, deadline, log, deferred=later["core"], done=done, **kw)
     xrows = run(cfg, xdoc, out, deadline, log, speeds_name="speeds_extra.json", deferred=later["extra"], done=done, **kw) if xdoc else []
