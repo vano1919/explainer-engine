@@ -2,6 +2,7 @@
 ``blender/assemble_25d.py`` (SA-06..SA-09). No Blender here: the bpy side runs in the CI smoke and on the creator's PC."""
 import json
 import math
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -192,6 +193,55 @@ def test_closeup_world_is_blurred_from_the_same_approved_panorama_without_mutati
     assert ImageChops.difference(derived, original).getbbox() is not None
     assert rendered["world"]["source_image"] == str((d / "grid360.png").resolve())
     assert len(rendered["world"]["derived_sha256"]) == 64
+
+
+def test_run_passes_the_blurred_derivative_to_the_actual_render_job(smoke_assets, tmp_path, monkeypatch):
+    import json
+    from PIL import Image
+    doc, d = smoke_assets
+    body = A.plan(doc, A.smoke_shots(0.5)[2], base=d, width=320, height=180)
+
+    def fake_blender(command, **_kwargs):
+        job = json.loads(Path(command[-1]).read_text(encoding="utf-8"))
+        assert job["world"]["image"].endswith("background_blurred.png")
+        assert Path(job["world"]["image"]).exists()
+        assert job["world"]["source_sha256"] == A.C.sha256_file(d / "grid360.png")
+        assert job["world"]["derived_sha256"] == A.C.sha256_file(job["world"]["image"])
+        frames = Path(job["frames_dir"])
+        frames.mkdir(parents=True)
+        Image.new("RGB", (320, 180), "white").save(frames / "frame_000000.png")
+        Path(job["report"]).write_text(json.dumps({"blender_version": "5.2.3 LTS", "engine_id": "BLENDER_EEVEE",
+                                                   "frames": 1, "framing": {}}), encoding="utf-8")
+        return A.subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(A.subprocess, "run", fake_blender)
+    rep = A.run(body, tmp_path / "shot", ["/fake/blender"], "5.2.3")
+    job = json.loads((tmp_path / "shot" / "job.json").read_text(encoding="utf-8"))
+    assert job["world"]["image"] == rep["world"]["image"]
+    assert job["world"]["derived_sha256"] == rep["world"]["derived_sha256"]
+
+
+def test_mouth_region_projection_bounds_are_screen_space_and_fail_closed():
+    bounds = A._mouth_region_bounds({"framing": {"first": {
+        "mouth_tl": [0.45, 0.60], "mouth_tr": [0.55, 0.60],
+        "mouth_br": [0.55, 0.50], "mouth_bl": [0.45, 0.50]}}}, 320, 180)
+    assert bounds == (141, 69, 179, 93)
+    assert A._mouth_region_bounds({"framing": {"first": {}}}, 320, 180) is None
+
+
+def test_mouth_probe_world_points_and_scene_geometry_are_stable_across_states(smoke_assets):
+    doc, d = smoke_assets
+    geometry = []
+    points = []
+    for shot in (s for s in A.smoke_shots(0.5) if s.get("mouth_state_probe")):
+        body = A.plan(doc, shot, base=d, width=320, height=180)
+        card = next(c for c in body["cards"] if c["name"] == "card_H3")
+        geometry.append((body["camera"], [(c["name"], c["pos"], c["yaw_deg"], c["width_m"], c["height_m"])
+                                           for c in body["cards"]]))
+        points.append(A._mouth_probe_points(card))
+    assert all(item == geometry[0] for item in geometry[1:])
+    assert all(item == points[0] for item in points[1:])
+    assert {p["name"] for p in points[0]} == {"mouth_tl", "mouth_tr", "mouth_br", "mouth_bl"}
 
 
 @pytest.mark.parametrize("state,shape", [("rest", "X"), ("half", "C"), ("wide", "D"), ("round", "E")])

@@ -3,6 +3,7 @@ each owned rule has a bad plan that trips exactly that rule; the assembly keeps 
 crops instead of squeezing and writes subtitles without names."""
 import copy
 import json
+from pathlib import Path
 
 import pytest
 
@@ -100,6 +101,21 @@ def test_conversation_opener_duration_is_not_a_hardcoded_gate(duration):
     assert "AS-03" not in {f["rule"] for f in C.check_conversations(p)}
 
 
+@pytest.mark.parametrize("change", [
+    {"place": "street"}, {"clip": None}, {"drawing": None}, {"shows": ["marcus"]},
+])
+def test_a_two_shot_opener_must_be_grounded_in_the_dialogue_place_and_show_both_speakers(change):
+    p = good()
+    opener = {"id": "opening", "type": "V", "start": 5.5, "dur": 0.5, "lines": [], "place": "cave",
+              "drawing": "p6", "clip": "opening.mp4", "two_shot": True, "shows": ["marcus", "ura"]}
+    p["shots"].insert(2, opener)
+    if "place" in change:
+        opener["place"] = "street"
+    else:
+        opener.update(change)
+    assert "AS-03" in {f["rule"] for f in C.check_conversations(p)}
+
+
 @pytest.mark.parametrize("rule", sorted(MUTATIONS))
 def test_each_rule_trips_on_its_bad_plan(rule):
     p = copy.deepcopy(good())
@@ -115,6 +131,25 @@ def test_final_cut_entrypoint_rejects_an_invalid_plan_before_creating_outputs(tm
     assert "nothing was rendered" in capsys.readouterr().out
     assert not (tmp_path / "seg").exists()
     assert not (tmp_path / "cut.mp4").exists()
+
+
+def test_a_valid_cut_plan_reaches_final_assembly_only_after_the_gate(tmp_path, monkeypatch, capsys):
+    p = good()
+    (tmp_path / "plan.json").write_text(json.dumps(p), encoding="utf-8")
+    calls = []
+
+    def fake_ffmpeg(command, **_kwargs):
+        calls.append(command)
+        output = Path(command[-1])
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(b"assembled")
+        return C.subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(C.subprocess, "run", fake_ffmpeg)
+    assert C.main(["assemble", str(tmp_path)]) == 0
+    assert len(calls) == len(p["shots"]) + 3
+    assert (tmp_path / "cut.mp4").read_bytes() == b"assembled"
+    assert "wrote" in capsys.readouterr().out
 
 
 def test_every_rule_owned_by_the_gate_has_a_bad_plan():

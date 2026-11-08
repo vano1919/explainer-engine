@@ -5,9 +5,10 @@ Scope: free local code and documentation changes before any paid Qwen/LTX/Modal 
 ## A. Architecture audit
 
 - PR #161 provides the D-121 four-state J5 card contract and renderer mapping.
-- PR #162 fixes the 0.5-second cue false-green at the planner level and records per-state active frames. Its latest Quality CI failed in `test_icw01_rule_rewrite`; the Blender smoke passed. The failure is a documentation banner mismatch, not an observed renderer regression.
-- `cut_plan.gate()` is called by the final `cut_plan assemble` entrypoint. The route-comparison `pilot.build()` accepts a different schema and currently marks a complete clip set non-preview, despite bypassing that gate.
-- The J5 renderer previously used a sharp panorama for close-ups. This continuation derives a blurred copy from the same approved panorama for MCU/OTS close-up setups and retains file-hash provenance.
+- In the implementation reviewed here, `cut_plan.main assemble` calls `gate(plan)` before creating `seg/`, subtitles, or invoking FFmpeg; the Blender cut renderer also checks the gate before `bpy.ops.render.render`. Invalid plans stop before outputs; a valid plan reaches the assembly commands.
+- `pilot.build()` takes `route_shots/1`, not `cut_plan/1`, so it cannot claim to have passed that gate. It now always writes `preview: true` and states this in `preview_reason`, even with every route clip present. This is the route-comparison preview, not the validated final-cut builder.
+- Conversation opening duration is not gated. The LTX opener requires a clip, place/drawing provenance for the same place as the dialogue coverage, and declared coverage of both conversation speakers. The route then remains free to choose later coverage.
+- The J5 renderer derives a blurred copy from the same approved panorama for MCU/OTS close-ups, records source and derived hashes, and places the derived file path in the Blender render job.
 - The earlier D-116 J5-only dialogue default conflicts with AS-03's LTX conversation opener. D-122 resolves this: LTX leads; Blender J5 is an optional measured extension.
 - D-120 and D-121 remain in force. No rendered frame is sent to Qwen; J2's historical clay path and the production P14 worker are outside this change.
 
@@ -21,26 +22,27 @@ If LTX gives enough usable dialogue footage, use it directly and create no chara
 
 ## C. Existing assets and benchmark feasibility
 
-The local `route_test_assets/` handoff contains creator-reviewed Qwen images, including approved character references, scene images and environment panoramas. It contains no LTX dialogue clip, no paired dialogue audio with verified timings, and no four-state close-up cut-outs. The repository's tracked scientist assets are unrelated to that story. Blender is not installed on this Windows host. No free/local resource set is currently sufficient for a fair end-to-end LTX-only versus LTX+Blender dialogue comparison.
+The original checkout's `route_test_assets/` handoff was rechecked: it contains the reviewed PNG images, `verdicts.json`, and `HANDOFF.md`, but no LTX dialogue video, verified paired dialogue audio/timing, or approved four-state close-up cut-outs. No Blender executable is available on this Windows host, and the repository has no pinned Windows archive. The tracked scientist assets are unrelated to this story. A complete free/local end-to-end LTX-only versus LTX+Blender benchmark is not currently possible.
 
 Therefore the real visual benchmark is **BLOCKED**, not successful. The benchmark protocol is in [DIALOGUE_BENCHMARK_TEMPLATE_2026-11-08](DIALOGUE_BENCHMARK_TEMPLATE_2026-11-08.md). No paid generation job was launched. A paid LTX dialogue sample or additional LTX coverage would require explicit approval before submission; if a later benchmark also needs generated MCU assets, that operation must be separately priced and approved.
 
 ## D. Test and smoke evidence
 
-The previous CI run for PR #162 (head `c8354f97144c463abaf7ffa7b234385bf6b6e83e`) reported:
+The latest completed PR CI run at head `0c2d1c7404f2b208aa0c5787217aac5a836d8ed3` reported:
 
-- Quality checks: **failed**, 1 failed, 3,208 passed, 3 skipped, 3 deselected, 1 xfailed. Failure: `tests/unit/test_icw01_rule_rewrite.py::test_old_route_words_appear_only_under_a_dated_legacy_banner_or_marked_legacy`; route-scoped document banners did not meet the test's exact date check.
-- Blender smoke: **passed** on Blender 5.2.3 LTS, EEVEE, CPU runner, 320x180, 12 frames per shot, 24 fps, 4 samples. Its figures and grid are synthetic; this is not a quality benchmark.
+- Quality checks: **passed** (run [42483006822](https://github.com/vano1919/explainer-engine/actions/runs/42483006822)), including the repository's non-system test job, documentation lint and palette check. Its pytest totals are available in the workflow log.
+- Blender smoke: **failed** at the smoke validator (run [42483006765](https://github.com/vano1919/explainer-engine/actions/runs/42483006765)); Blender 5.2.3 LTS EEVEE rendered all nine 320x180, 12-frame shots. The failure was that the validator incorrectly required every separate single-state probe to exercise all three active visemes. The speaking shot itself reported half=2, wide=3, round=3. The artifact was downloaded from this run (whose head SHA is `0c2d1c7`) and inspected: the synthetic rest/half/wide/round mouth appearances are visible and differ. This is engineering evidence only, not character-quality proof.
 
-This continuation adds source-level checks for a derived same-source background blur, removes the hardcoded 4-8 second conversation-opener gate, makes the route pilot preview-only regardless of clip completeness, tests cut-plan gate refusal on an invalid final cut, and adds actual rendered-image hashes for separate rest/half/wide/round Blender smoke probes. Those probes share identical camera and body-motion seeds so the decoded image differences come from the mouth images. They still need to run in Blender CI before their render evidence can be accepted.
+The smoke validator is being strengthened to distinguish the speaking-shot cue coverage from each state probe and to compare a projected mouth-region crop, check that active mouths differ from rest and from one another, and confirm stable camera/card geometry and unchanged pixels outside the mouth region. That updated validator has not yet run in Blender CI.
 
 Local verification on this Windows host:
 
-- Python 3.14.7 with Pillow 13.0.0 ran the relevant cut-plan, pilot, J5 assembly, video assembly, ICW-01 documentation and scene-reuse documentation tests: **101 passed**.
-- `python -m explainer_engine.docs_lint`: **0 findings**. `python -m explainer_engine.design.palette`: **passed**.
+- Python 3.14 ran the relevant cut-plan, pilot, J5 assembly, video assembly, ICW-01 documentation and scene-reuse documentation tests after the review fixes: **110 passed**.
+- The FFmpeg 9 `-fps_mode passthrough` frame-reader change now has a focused test that encodes a 24-frame clip and reads every frame. The targeted suite passed locally.
 - The full non-system/non-media suite did not complete on this host. Windows required Git's `which.exe` for POSIX-only test decorators; after that workaround, pytest exited during collection/execution at 13% without a summary. Its last-failed rerun isolated `test_a_pid_of_another_user_is_not_a_crash`, which assumes Linux `PermissionError` semantics for PID 1.
-- Blender is not installed and the repository has no pinned Windows archive. The updated Blender smoke has not run locally. The previous CI Blender smoke is evidence only for the prior revision.
-- FFmpeg 9.0.2 is installed. A route-pilot integration test initially exposed that FFmpeg 9 removed `-vsync`; `production/assemble.py` now uses `-fps_mode passthrough`, and its video-assembly tests passed in the 101-test run.
+- The prior successful full CI quality run predates the current review patch. New Quality and Blender runs are required after pushing it; do not treat the successful old run as proof for those unpushed changes.
+- Blender is unavailable locally. The updated mouth-region probe has not yet run in Blender CI.
+- FFmpeg 9 is installed. The route-pilot integration exposed its removal of `-vsync`; `production/assemble.py` uses `-fps_mode passthrough`, now exercised by the local focused video-assembly suite.
 
 ## E. Remaining benchmark work
 

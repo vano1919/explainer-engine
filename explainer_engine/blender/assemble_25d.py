@@ -338,6 +338,38 @@ def horizon_bend(png: Path | str, *, median: int = 9) -> float:
 # --- the free smoke: synthetic flat assets, the four dialogue shots and the pan check ---------------------------------------
 
 SMOKE_CAST = {"H1": [-1.1, 2.0, 0.0], "H3": [1.1, 2.6, 0.0]}
+SMOKE_MOUTH_REGION_PX = (160.0, 196.0, 240.0, 264.0)  # synthetic sheet: surrounds the widest drawn mouth, with padding
+
+
+def _mouth_probe_points(card: dict) -> list[dict]:
+    """Project the synthetic H3 mouth's source-image bounds through its card transform into Blender's camera probe."""
+    x0, y0, x1, y1 = SMOKE_MOUTH_REGION_PX
+    w, h = card["px"]
+    yaw = math.radians(card["yaw_deg"])
+    points = []
+    for name, x, y in (("mouth_tl", x0, y0), ("mouth_tr", x1, y0),
+                       ("mouth_br", x1, y1), ("mouth_bl", x0, y1)):
+        local_x = card["left_m"] + x / w * card["width_m"]
+        local_z = card["bottom_m"] + (h - y) / h * card["height_m"]
+        points.append({"name": name, "at": [card["pos"][0] + local_x * math.cos(yaw),
+                                              card["pos"][1] + local_x * math.sin(yaw),
+                                              card["pos"][2] + local_z]})
+    return points
+
+
+def _mouth_region_bounds(rep: dict, width: int, height: int, pad: int = 3) -> tuple[int, int, int, int] | None:
+    """Return the projected mouth ROI in image pixels; frame coordinates are top-left-origin."""
+    try:
+        projected = rep["framing"]["first"]
+        pts = [projected[name] for name in ("mouth_tl", "mouth_tr", "mouth_br", "mouth_bl")]
+        xs = [p[0] * width for p in pts]
+        ys = [(1.0 - p[1]) * height for p in pts]
+    except (KeyError, TypeError, IndexError):
+        return None
+    bounds = (max(0, math.floor(min(xs)) - pad), max(0, math.floor(min(ys)) - pad),
+              min(width, math.ceil(max(xs)) + pad), min(height, math.ceil(max(ys)) + pad))
+    x0, y0, x1, y1 = bounds
+    return bounds if x0 < x1 and y0 < y1 and all(0.0 <= v <= 1.0 for p in pts for v in p[:2]) else None
 
 
 def _smoke_assets(d: Path) -> dict:
@@ -444,9 +476,17 @@ def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int,
     out = Path(out)
     assets = _smoke_assets(out / "assets")
     write_json_atomic(out / "scene_assets.json", assets)
-    rows, failures, mouth_state_pixels = {}, [], {}
+    rows, failures, mouth_state_pixels, mouth_regions, mouth_full_frames, probe_geometry = {}, [], {}, {}, {}, {}
     for sh in smoke_shots(seconds):
         body = plan(assets, sh, base=out / "assets", width=width, height=height, engine=engine, samples=samples)
+        state = sh.get("mouth_state_probe")
+        if state:
+            card = next(c for c in body["cards"] if c["name"] == "card_H3")
+            body["probe"].extend(_mouth_probe_points(card))
+            geometry = {"camera": body["camera"], "cards": [
+                {k: c[k] for k in ("name", "pos", "yaw_deg", "width_m", "height_m", "left_m", "bottom_m", "px")}
+                for c in body["cards"]]}
+            probe_geometry[state] = hashlib.sha256(json.dumps(geometry, sort_keys=True).encode()).hexdigest()
         rep = run(body, out / sh["id"], launcher, pin_version)
         files = rep["frame_files"]
         row = {"frames": len(files), "seconds_per_frame": rep.get("seconds_per_frame"), "cards": rep.get("cards"),
@@ -472,29 +512,72 @@ def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int,
                         for name in ("half", "wide", "round")}
             row["mouth_frames_active"] = active
             row["mouth_frames_by_state"] = by_state
-            missing = [name for name, count in by_state.items() if count == 0]
-            if missing:
-                failures.append(f"{sh['id']}: dialogue smoke did not exercise mouth states {', '.join(missing)}")
-            if active == 0:
-                failures.append(f"{sh['id']}: speaking shot has no active mouth frames")
-        if sh.get("mouth_state_probe"):
+            if state:
+                expected_active = state != "rest"
+                if (expected_active and by_state[state] == 0) or (not expected_active and active != 0):
+                    failures.append(f"{sh['id']}: cue plan does not match its {state} mouth-state probe")
+            else:
+                missing = [name for name, count in by_state.items() if count == 0]
+                if missing:
+                    failures.append(f"{sh['id']}: dialogue smoke did not exercise mouth states {', '.join(missing)}")
+                if active == 0:
+                    failures.append(f"{sh['id']}: speaking shot has no active mouth frames")
+        if state:
             from PIL import Image
             frame = files[min(5, len(files) - 1)] if files else None
             if frame is None:
                 failures.append(f"{sh['id']}: no frame available for the mouth-state pixel probe")
             else:
-                pixels = Image.open(frame).convert("RGB").tobytes()
+                im = Image.open(frame).convert("RGB")
+                pixels = im.tobytes()
                 digest = hashlib.sha256(pixels).hexdigest()
-                mouth_state_pixels[sh["mouth_state_probe"]] = digest
-                row["mouth_state_probe"] = sh["mouth_state_probe"]
+                bounds = _mouth_region_bounds(rep, width, height)
+                if bounds is None:
+                    failures.append(f"{sh['id']}: projected mouth region is outside the frame or missing from the render report")
+                else:
+                    crop = im.crop(bounds)
+                    mouth_regions[state] = crop.copy()
+                    mouth_full_frames[state] = im.copy()
+                    row["mouth_region_bounds"] = list(bounds)
+                    row["mouth_region_sha256"] = hashlib.sha256(crop.tobytes()).hexdigest()
+                mouth_state_pixels[state] = digest
+                row["mouth_state_probe"] = state
                 row["probe_frame_sha256"] = digest
         rows[sh["id"]] = row
     if set(mouth_state_pixels) != set(STATES):
         failures.append("rendered mouth-state probes are incomplete")
     elif len(set(mouth_state_pixels.values())) != len(STATES):
         failures.append("mouth-state probes did not produce four distinct rendered frames")
+    if set(probe_geometry) == set(STATES) and len(set(probe_geometry.values())) != 1:
+        failures.append("mouth-state probes changed camera or character card placement")
+    if set(mouth_regions) == set(STATES):
+        rest = mouth_regions["rest"]
+        region_hashes = {state: hashlib.sha256(im.tobytes()).hexdigest() for state, im in mouth_regions.items()}
+        if len(set(region_hashes.values())) != len(STATES):
+            failures.append("mouth-region probes do not show four distinguishable rendered appearances")
+        if any(region_hashes[state] == region_hashes["rest"] for state in ("half", "wide", "round")):
+            failures.append("one or more active mouth overlays are invisible in the rendered mouth region")
+        outside_equal = {}
+        bounds = rows["J5-mouth-rest"].get("mouth_region_bounds")
+        if bounds:
+            import numpy as np
+            x0, y0, x1, y1 = bounds
+            mask = np.ones((height, width), dtype=bool)
+            mask[y0:y1, x0:x1] = False
+            ref_pixels = np.asarray(mouth_full_frames["rest"])
+            for state in STATES[1:]:
+                same = np.array_equal(ref_pixels[mask], np.asarray(mouth_full_frames[state])[mask])
+                outside_equal[state] = same
+                if not same:
+                    failures.append(f"J5-mouth-{state}: pixels outside the mouth region changed; camera/character placement is unstable")
+        summary_regions = {state: {"sha256": region_hashes[state], "bounds": rows[f"J5-mouth-{state}"]["mouth_region_bounds"]}
+                           for state in STATES if rows[f"J5-mouth-{state}"].get("mouth_region_bounds")}
+    else:
+        outside_equal, summary_regions = {}, {}
     summary = {"schema": "assemble_25d_smoke/1", "shots": rows, "failures": failures, "size": [width, height],
-               "engine": engine, "engine_requested": engine, "mouth_state_render_sha256": mouth_state_pixels}
+               "engine": engine, "engine_requested": engine, "mouth_state_render_sha256": mouth_state_pixels,
+               "mouth_region_render": summary_regions, "mouth_state_probe_geometry_sha256": probe_geometry,
+               "mouth_region_outside_pixels_identical": outside_equal}
     write_json_atomic(out / "smoke_summary.json", summary)
     return summary
 
