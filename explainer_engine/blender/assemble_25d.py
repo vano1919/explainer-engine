@@ -20,7 +20,8 @@ What Blender builds (all of it from the plan below; the bpy side interprets the 
 - the camera from ``camera_setups`` (OTS, MCU, profile two-shot, ...; ``mcu_front`` with the subjects swapped is the reverse),
   sampled by ``scene_builder.camera_path``.
 
-The numbers of the mouth, the blink and the breathing are the plan's (FINAL_HIGH_LEVEL_PLAN_ka.md section 9, the creator's
+The J5 card mouth uses the D-121 states (rest, half, wide, round); the 2-frame image cross-blend is local to this renderer.
+The numbers of the blink and breathing are the plan's (FINAL_HIGH_LEVEL_PLAN_ka.md section 9, the creator's
 07:14 UTC acceptance, D-116); they make the picture, they are not validator thresholds.
 """
 from __future__ import annotations
