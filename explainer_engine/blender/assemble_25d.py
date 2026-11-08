@@ -371,8 +371,8 @@ def _smoke_cues(seconds: float) -> dict:
     from explainer_engine.audio import words_to_mouth_cues as W
     words = [
         {"text": "A", "start": round(seconds * 0.10, 3), "end": round(seconds * 0.30, 3)},
-        {"text": "O", "start": round(seconds * 0.40, 3), "end": round(seconds * 0.60, 3)},
-        {"text": "Me", "start": round(seconds * 0.70, 3), "end": round(seconds * 0.90, 3)},
+        {"text": "O", "start": round(seconds * 0.34, 3), "end": round(seconds * 0.54, 3)},
+        {"text": "Me", "start": round(seconds * 0.60, 3), "end": round(seconds, 3)},
     ]
     return {"metadata": {"soundFile": "smoke", "duration": seconds}, "mouthCues": W.mouth_cues(words, duration=seconds)}
 
