@@ -119,6 +119,8 @@ def label_still(scene: str, src: Path, dst: Path, magenta: bool = False, angle: 
     return where
 
 
+# Historical research only: this builder feeds Blender flat3 renders to Qwen and fails D-120/RF-01.
+# Its output must remain blocked by production.paid_preflight; do not run it on Modal.
 def jobs(inputs: dict) -> dict:
     g07, g10 = [], []
     for sc in S.SCENES:   # masters first: test A needs them
@@ -142,6 +144,7 @@ def jobs(inputs: dict) -> dict:
             "groups": [{"lora_weight": 0.7, "jobs": g07}, {"lora_weight": 1.0, "jobs": g10}]}
 
 
+# Historical research only: generated place views are chained without variant_of and jobs lack in_shot; D-121 blocks them.
 def asset_jobs() -> dict:
     """Test B alone (the creator 15:12 UTC: the assets need no Blender, so they run first): places and people drawn by Qwen."""
     g = []
