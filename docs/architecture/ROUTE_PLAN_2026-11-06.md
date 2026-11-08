@@ -37,8 +37,8 @@ Goal: maximum stability and quality; a 12-15 minute episode for about US$10-15 (
 | Tool | Does | Does not |
 |---|---|---|
 | Qwen-Image-2.1 + xworld_v2 ck3000 (0.7) | the look: assets, first frames, fixes (edit mode; references = the creator-approved hero reference only; no Blender or other rendered frame) | motion; continuity with another shot by prompt (D-75: continuity by cards and structure) |
-| Blender 5.2.3 | scene, camera grammar, 360° backdrop projection, 2.5D cards, Geometry Nodes crowds, rigs (Quaternius CC0), Rhubarb mouth, clay/depth/line-art passes, lighting, the EEVEE render of 2.5D shots | the final painted look through a shader |
-| LTX-2.5 (pod) | Layout-To-Render (J2), restyle under depth/canny (J4), audio-driven dialogue where needed | inventing a background or a composition: always driven by a drawing or a picture |
+| Blender 5.2.3 | scene, camera grammar, 360° backdrop projection, 2.5D cards, Geometry Nodes crowds, rigs (Quaternius CC0), Rhubarb mouth, J4 colour/depth/line-art passes, lighting, the EEVEE render of J5 shots; the old J2 clay pass is historical only | the final painted look through a shader |
+| LTX-2.5 (pod) | J2 image-to-video from a Qwen text-first frame (migration pending); J4 restyle under depth/canny; audio-driven dialogue where needed | using the superseded J2 clay-conditioned recipe or inventing a background/composition without a source picture |
 | Python / FFmpeg | HELPER graphics, assembly (`build_video_v2`), QA, cut-out (BiRefNet), mouth shapes swapped on a card | — |
 | ElevenLabs | narrator + the heroes' fixed voices (D-90), Scribe word timings | — |
 
@@ -50,8 +50,8 @@ Routes: **J5** = approved Qwen assets + Blender 2.5D (no LTX in the J5 shot); **
 |---|---|---|---|---|---|
 | **VIDEO** V1 battle / siege / formation | **J4** (thousands of GN soldiers, camera on a rail) | J2 | scene at most 15 s (BP-108), LTX clip 3-6 s (BP-172), by edit or chain | Blender layout -> LTX; no Blender render is sent to Qwen | T |
 | V2 duel / action | **J2** (LTX adds the gestures) | J4 | scene at most 15 s, LTX clip 3-6 s, key pose at 5 s | Qwen text-first frame + scene words | T (J2 migration blocked) |
-| V3 dialogue (visible mouth) | **J5** (cut-out hero, Rhubarb mouth, 2-3 expressions, breathing) | LTX audio-driven (D-90) | at most 5 s | the Qwen sheet, one picture for all angles | T (cheap way) / ✔ (a2v code exists, never run) |
-| V4 council / group dialogue | **J5** | — | at most 5 s | the same | T |
+| V3 dialogue (visible mouth) | **J5 close-ups** (approved cut-out, four-state mouth, expressions, breathing; conversation opening is separately governed by AS-03) | LTX audio-driven (D-90) | at most 5 s | one creator-approved drawing; variants from that same drawing (RF-03) | T (cheap way) / ✔ (a2v code exists, never run) |
+| V4 council / group dialogue | **J5 close-ups after the AS-03 opening shot** | — | at most 5 s | approved drawings only; no untested new angles | T |
 | V5 crafting (hands) | **J2** (loop 2-5 s) | J5 loop on a card | at most 5 s | Qwen insert | T |
 | V6 travel | **J4** (dolly, parallax, crowd) | J5 (cards + camera) | scene at most 15 s, LTX clip 3-6 s | Blender | T |
 | V7 discovery (push-in, fog) | **J5** (Blender camera + fog on cards) | J4 | short | Blender | T |
@@ -60,6 +60,8 @@ Routes: **J5** = approved Qwen assets + Blender 2.5D (no LTX in the J5 shot); **
 | V10 environment action (fog, sun) | **J5** (Blender fog and light on the 360° backdrop) | — | at most 15 s | Blender | T |
 | **STILL** S1-S7 (establishing, tableau, insert, aftermath, match, freeze) | **J5**: Qwen plate -> Blender camera / parallax / BP-170 curve | — | at most 5 s (BP-109) | Qwen 360° / plate | ✔ (+dpl 10-27, the parallax code exists) |
 | **HELPER** H1-H6 (map, timeline, counter, cutaway, comparison, callout) | **H** Python (D-87: 2D vector + 2.5D) | Blender terrain only by benchmark (D-112) | the narrator's sentence | — | ✔ |
+
+**Dialogue route boundary (D-121, open for creator confirmation):** AS-03 requires an LTX two-shot at the start of a conversation (4–8 s); the J5 rows above therefore describe the close-up/reaction coverage, not a complete dialogue scene. See Q1 in the [Phase 3/4/5 readiness record](../research/stoneage_pilot_2026-11-07/PHASE3_4_5_READINESS_2026-11-08.md). The J5 free smoke is a renderer-component test only until this boundary is confirmed.
 
 **Budget (EST):** of the 432 s of VIDEO, LTX is needed by V1, V2, V5, V6, V8, about 40-55 %, so about 30-45 clips an episode
 (instead of about 90); the rest is J5 on the creator's PC or CI ($0) or under $1 on RunPod. One LTX clip EST $0.05-0.15 + retries ->
