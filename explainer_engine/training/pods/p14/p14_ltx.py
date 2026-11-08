@@ -1,5 +1,6 @@
-"""Route-test pod, the LTX part (guide step 3, D-116): every job of ``ltx_jobs.json`` (``ltx_job/1``, written by
-``edit/ltx_jobs.py``) as one ``ltx_pipelines.ic_lora`` call at the pinned LTX-2 code, then the free FFmpeg upscale of each clip.
+"""Route-test pod, the LTX part (guide step 3, D-116/D-120): every approved job of ``ltx_jobs.json`` (``ltx_job/1``) as one
+``ltx_pipelines.ic_lora`` call at the pinned LTX-2 code, then the free FFmpeg upscale of each clip. D-120 rejects historical J2/clay
+jobs before prefetch or generation; J2 remains blocked until the Qwen text-first I2V recipe is implemented.
 
 Runs on the pod under ``p14.sh`` (inside pod_wrapper.sh, which uploads ``$EE_OUT`` as files land: OR-33), stdlib + ffmpeg +
 huggingface_hub for the downloads. Nothing here decides the matrix: the jobs file does, and its sha256 is pinned in ``p14.json``.
