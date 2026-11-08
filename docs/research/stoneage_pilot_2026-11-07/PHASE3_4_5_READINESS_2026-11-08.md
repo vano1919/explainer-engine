@@ -26,7 +26,7 @@ The previous J5 scene-assets implementation only supported three mouth states (c
 3. Inspect the actual video for face identity, mouth readability, chest-up framing, card edges/halos, backdrop stability, camera reverse, breathing/blinks, and whether it reads as a puppet.
 4. Record the output hashes, machine, render time, and creator's visual verdict.
 
-Status: **software smoke exists; real-asset dialogue review is not complete**. No asset pod or GPU was started in this step.
+Status: **software smoke exists; real-asset dialogue review is not complete**. No asset pod or GPU was started in this step.\n\n### Additional D-121 integration gap\n\n`production/cut_plan.py` contains the D-121 AS/DL gates, but the route-test `production/pilot.py::build()` currently constructs `film_shots/3` and calls `assemble.build_video_v2()` without invoking `cut_plan.gate()`. The two inputs are not interchangeable: `cut_plan` expects a `plan.json` with line/audio, ambience, cast, and dialogue-shot metadata, while `pilot.py` accepts `route_shots`. A deliberate adapter or a separate validated cut-plan artifact is required; do not add a fake call that cannot validate the required data. This remains a D-121 blocker for treating the route pilot as a fully gated final cut.\n
 
 ## 4. Formal Phase 3 benchmark
 
