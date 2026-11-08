@@ -48,6 +48,26 @@ def test_the_code_bundle_is_sha256_pinned_in_the_script():
     assert len(lines) == 1 and re.search(r"\b[0-9a-f]{64}\b", lines[0]) and "sha256sum -c" in t
 
 
+def test_d120_refuses_legacy_j2_and_any_clay_conditioning_before_pod_work(tmp_path, monkeypatch):
+    m = _load(tmp_path, monkeypatch)
+    with pytest.raises(SystemExit, match="D-120"):
+        m.require_d120_compliance(JOBS)
+    j4_only = {**JOBS, "jobs": [j for j in JOBS["jobs"] if j.get("route") == "J4"]}
+    assert j4_only["jobs"]
+    m.require_d120_compliance(j4_only)
+    bad = {**j4_only, "jobs": [{**j4_only["jobs"][0], "conditioning": [{"pass": "clay"}]}]}
+    with pytest.raises(SystemExit, match="D-120"):
+        m.require_d120_compliance(bad)
+
+
+def test_p14_checks_d120_before_prefetch_and_generation():
+    source = (DIR / "p14_ltx.py").read_text(encoding="utf-8")
+    main = source[source.index("def main():"):source.index("def run_all(")]
+    prefetch = source[source.index("def prefetch():"):source.index("def main():")]
+    assert main.index("require_d120_compliance(jobs_doc)") < main.index("run_all(cfg, jobs_doc")
+    assert prefetch.index("require_d120_compliance(jobs_doc)") < prefetch.index("download_base(cfg")
+
+
 def test_the_upscale_filter_is_finish_upscale_s_route_test_chain_and_off_on_the_lean_pod():
     assert CFG["upscale"]["enabled"] is False     # the lean plan: no upscale on the pod (free on the PC, only the picked clip)
     assert CFG["upscale"]["vf"] == U.video_filter(1920, 1088, **U.ROUTE_TEST)
