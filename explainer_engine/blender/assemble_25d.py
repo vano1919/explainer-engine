@@ -466,9 +466,10 @@ def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int,
         for card in body["cards"]:
             if "mouth" not in card:
                 continue
-            factors = card["mouth"]["factors"]
-            active = sum(1 for f in factors if any(v > 0.5 for v in f))
-            by_state = {name: sum(1 for f in factors if f[i] > 0.5) for i, name in enumerate(("half", "wide", "round"))}
+            shapes = card["mouth"]["shapes"]
+            active = sum(1 for shape in shapes if MOUTH_STATE[shape] != "rest")
+            by_state = {name: sum(1 for shape in shapes if MOUTH_STATE[shape] == name)
+                        for name in ("half", "wide", "round")}
             row["mouth_frames_active"] = active
             row["mouth_frames_by_state"] = by_state
             missing = [name for name, count in by_state.items() if count == 0]
