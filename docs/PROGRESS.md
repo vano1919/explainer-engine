@@ -1,6 +1,6 @@
 # Progress log
 
-> **Route-scoped note (updated 2026-11-08; D-116/D-120).** Current routes: J2 = Qwen text-first frame -> LTX image-to-video; J4 = Blender colour/depth/line layout -> LTX restyle; J5 = approved Qwen assets -> Blender 2.5D; H = Python helpers. Older entries preserve the historical route decisions of their date; current decisions in `DECISIONS_AND_OPEN_QUESTIONS.md` take precedence.
+> **Route-scoped note (updated 2026-11-08; D-116/D-120).** Target routes: J2 = Qwen text-first frame -> LTX image-to-video (**migration pending; blocked**); J4 = Blender colour/depth/line layout -> LTX restyle; J5 = approved Qwen assets -> Blender 2.5D; H = Python helpers. Older entries preserve the historical route decisions of their date; current decisions in `DECISIONS_AND_OPEN_QUESTIONS.md` take precedence.
 
 Append one entry per phase boundary: completed work, state, files changed, test results, decisions, blockers,
 cost (estimate/actual), next step, recovery instructions.
