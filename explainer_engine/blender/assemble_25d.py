@@ -367,7 +367,7 @@ def _smoke_assets(d: Path) -> dict:
 
 
 def _smoke_cues(seconds: float) -> dict:
-    """A spoken line's cues for the smoke: the words of a short sentence spread over the shot (audio.words_to_mouth_cues)."""
+    """Synthetic phoneme cues for the smoke; the timed words deliberately exercise rest, half, wide and round at low resolution."""
     from explainer_engine.audio import words_to_mouth_cues as W
     words = [
         {"text": "A", "start": round(seconds * 0.10, 3), "end": round(seconds * 0.30, 3)},
