@@ -2,7 +2,7 @@
 
 > **D-120 amendment (2026-11-08):** J4 remains the Blender-layout-conditioned LTX route. The J2 clay-conditioned recipe below is historical only and is rejected by the current P14 worker before prefetch or generation. D-120's J2 route is Qwen text-first frame -> LTX image-to-video; its writer/schema/pod migration is not complete. Do not launch the legacy J2 matrix. J5 is [SCENE_ASSETS](SCENE_ASSETS.md).
 
-Guide step 3 (code only; every test runs in one later pod, whose OR-23 plan the Fable thread writes). `edit/ltx_jobs.py` still writes the historical J2/J4 `ltx_job/1` format; J2 rows are not valid production work after D-120. The current P14 runner fails closed on any J2 route or `clay` conditioning before prefetch or generation. `edit/ltx_jobs.py` writes one
+Guide step 3 (code only; every test runs in one later pod, whose OR-23 plan the Fable thread writes). `edit/ltx_jobs.py` still writes the historical J2/J4 `ltx_job/1` format; J2 rows are not valid production work after D-120. The P14 source now fails closed on any J2 route or `clay` conditioning before prefetch or generation; the cloud pod is not protected until `lean.py build` refreshes the sha-pinned bundle and the new bundle is uploaded. `edit/ltx_jobs.py` writes one
 `ltx_job/1` document ([CONTRACTS](CONTRACTS.md), `schemas/ltx_job.schema.json`) from the route shots and the layout manifests of
 `blender/layout_passes.py`; the route-test pod (`training/pods/p14`) reads nothing else.
 
