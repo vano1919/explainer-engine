@@ -99,6 +99,8 @@ def test_four_mouth_states_cross_blend_and_reconstruct_all_state_weights():
         weights = ((1 - fh) * (1 - fw) * (1 - fr), fh * (1 - fw) * (1 - fr), fw * (1 - fr), fr)
         assert weights == pytest.approx(tuple(x[k] for k in A.STATES))
     assert set(A.MOUTH_STATE) == set("ABCDEFGHX") and set(A.MOUTH_STATE.values()) == set(A.STATES)
+    from explainer_engine.production import cut_plan
+    assert A.MOUTH_STATE == cut_plan.CUE_TO_STATE
 
 
 def test_smoke_cues_exercise_rest_half_wide_and_round_at_low_resolution():
