@@ -84,17 +84,20 @@ def test_a_hero_without_the_flat_lighting_note_fails():
 
 # --- the planner -----------------------------------------------------------------------------------------------------------------
 
-def test_mouth_states_cross_blend_over_two_frames_and_the_mixes_reproduce_them():
-    shapes = list("XXDDDBBAX")
+def test_four_mouth_states_cross_blend_and_reconstruct_all_state_weights():
+    shapes = list("XXDDBBEFX")
     w = A.mouth_weights(shapes)
-    assert w[1] == {"closed": 1.0, "half": 0.0, "open": 0.0}
-    assert w[2] == {"closed": 0.5, "half": 0.0, "open": 0.5} and w[3]["open"] == 1.0   # full on the second frame
-    assert w[5] == {"closed": 0.0, "half": 0.5, "open": 0.5}
+    assert w[1] == {"closed": 1.0, "half": 0.0, "wide": 0.0, "round": 0.0}
+    assert w[2] == {"closed": 0.5, "half": 0.0, "wide": 0.5, "round": 0.0}
+    assert w[3]["wide"] == 1.0
+    assert w[4] == {"closed": 0.0, "half": 0.5, "wide": 0.5, "round": 0.0}
+    assert w[6] == {"closed": 0.0, "half": 0.5, "wide": 0.0, "round": 0.5}
+    assert w[7]["round"] == 1.0
     for x in w:
         assert sum(x.values()) == pytest.approx(1.0)
-        fh, fo = A.mix_factors(x)
-        closed, half, opn = (1 - fh) * (1 - fo), fh * (1 - fo), fo   # mix(mix(closed, half, fh), open, fo)
-        assert (closed, half, opn) == pytest.approx((x["closed"], x["half"], x["open"]))
+        fh, fw, fr = A.mix_factors(x)
+        weights = ((1 - fh) * (1 - fw) * (1 - fr), fh * (1 - fw) * (1 - fr), fw * (1 - fr), fr)
+        assert weights == pytest.approx(tuple(x[k] for k in A.STATES))
     assert set(A.MOUTH_STATE) == set("ABCDEFGHX") and set(A.MOUTH_STATE.values()) == set(A.STATES)
 
 
@@ -148,7 +151,7 @@ def test_the_four_dialogue_shots_plan_cards_facing_the_camera_and_one_speaking_m
             assert "blink" in c
     speaking = [c for b in bodies.values() for c in b["cards"] if "mouth" in c]
     assert [c["name"] for c in speaking] == ["card_H3"] and len(speaking[0]["mouth"]["factors"]) == 24
-    assert any(f[1] > 0.5 for f in speaking[0]["mouth"]["factors"])   # the mouth opens on the line
+    assert any(any(v > 0.5 for v in f) for f in speaking[0]["mouth"]["factors"])   # a mouth state opens on the line
     mcu, rev = bodies["J5-03_mcu_b_speaks"], bodies["J5-04_mcu_a_reacts"]
     assert mcu["camera"]["setup"] == rev["camera"]["setup"] == "mcu_front"
     assert mcu["probe"][0]["at"][:2] == pytest.approx(A.SMOKE_CAST["H3"][:2])
@@ -174,11 +177,11 @@ def test_the_planner_refuses_what_is_not_drawn_or_not_the_drawn_file(smoke_asset
         A.plan(doc, {**shot, "cast": {"H9": {"pos": [0, 2, 0], "angle": "front"}}}, base=d)
 
 
-def test_a_speaking_card_needs_three_mouth_states_and_a_lip_synced_shot_keeps_bp108(smoke_assets):
+def test_a_speaking_card_needs_four_mouth_states_and_a_lip_synced_shot_keeps_bp108(smoke_assets):
     doc, d = smoke_assets
     speak = A.smoke_shots(1.0)[2]
     bad = json.loads(json.dumps(doc))
-    del bad["scenes"]["S01"]["heroes"][1]["angles"]["front"]["mouth_open"]
+    del bad["scenes"]["S01"]["heroes"][1]["angles"]["front"]["mouth_round"]
     with pytest.raises(ContractError, match="SA-06"):
         A.plan(bad, speak, base=d)
     from explainer_engine.standards import sourced_rules as SR
