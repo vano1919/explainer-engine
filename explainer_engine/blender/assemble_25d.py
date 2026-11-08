@@ -44,9 +44,9 @@ from explainer_engine.core.store import write_json_atomic
 SCRIPT = Path(__file__).with_name("bpy") / "assemble_25d.py"
 JOB = "assemble_25d/1"
 FPS = 24
-MOUTH_STATE = {"A": "closed", "X": "closed", "B": "half", "C": "half", "G": "half", "H": "half",
+MOUTH_STATE = {"A": "rest", "X": "rest", "B": "half", "C": "half", "G": "half", "H": "half",
                "D": "wide", "E": "round", "F": "round"}
-STATES = ("closed", "half", "wide", "round")
+STATES = ("rest", "half", "wide", "round")
 CROSS_BLEND_FRAMES = 2           # D-121: four mouth states + a 2-frame cross-blend
 BLINK_EVERY_S = (3.0, 5.0)       # guide 2.1 item 3: a blink every 3-5 s
 BLINK_WEIGHTS = (0.5, 1.0, 0.5)  # the eyes-closed overlay over three frames
@@ -73,9 +73,9 @@ def mouth_weights(shapes: list[str], *, blend: int = CROSS_BLEND_FRAMES) -> list
 def mix_factors(w: dict) -> tuple[float, float, float]:
     """(half, wide, round) factors for sequential closed -> half -> wide -> round image mixes."""
     f_round = w["round"]
-    prior = w["closed"] + w["half"] + w["wide"]
+    prior = w["rest"] + w["half"] + w["wide"]
     f_wide = w["wide"] / prior if prior > 1e-9 else 0.0
-    rest = w["closed"] + w["half"]
+    rest = w["rest"] + w["half"]
     f_half = w["half"] / rest if rest > 1e-9 else 0.0
     return round(f_half, 6), round(f_wide, 6), round(f_round, 6)
 
@@ -368,9 +368,11 @@ def _smoke_assets(d: Path) -> dict:
 def _smoke_cues(seconds: float) -> dict:
     """A spoken line's cues for the smoke: the words of a short sentence spread over the shot (audio.words_to_mouth_cues)."""
     from explainer_engine.audio import words_to_mouth_cues as W
-    text = "He will cross the river at dawn".split()
-    step = seconds / (len(text) + 1)
-    words = [{"text": t, "start": round(0.2 + i * step, 3), "end": round(0.2 + (i + 0.8) * step, 3)} for i, t in enumerate(text)]
+    words = [
+        {"text": "A", "start": round(seconds * 0.10, 3), "end": round(seconds * 0.30, 3)},
+        {"text": "O", "start": round(seconds * 0.40, 3), "end": round(seconds * 0.60, 3)},
+        {"text": "Me", "start": round(seconds * 0.70, 3), "end": round(seconds * 0.90, 3)},
+    ]
     return {"metadata": {"soundFile": "smoke", "duration": seconds}, "mouthCues": W.mouth_cues(words, duration=seconds)}
 
 
@@ -414,8 +416,19 @@ def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int,
             row["horizon_bend"] = [round(b, 5) for b in bends]
             if max(bends) > HORIZON_BEND_REVIEW:
                 failures.append(f"{sh['id']}: the horizon bends {max(bends):.3%} of the frame height (SA-08)")
-        if "mouth" in json.dumps(body["cards"]):
-            row["mouth_frames_open"] = sum(1 for c in body["cards"] if "mouth" in c for f in c["mouth"]["factors"] if f[1] > 0.5)
+        for card in body["cards"]:
+            if "mouth" not in card:
+                continue
+            factors = card["mouth"]["factors"]
+            active = sum(1 for f in factors if any(v > 0.5 for v in f))
+            by_state = {name: sum(1 for f in factors if f[i] > 0.5) for i, name in enumerate(("half", "wide", "round"))}
+            row["mouth_frames_active"] = active
+            row["mouth_frames_by_state"] = by_state
+            missing = [name for name, count in by_state.items() if count == 0]
+            if missing:
+                failures.append(f"{sh['id']}: dialogue smoke did not exercise mouth states {', '.join(missing)}")
+            if active == 0:
+                failures.append(f"{sh['id']}: speaking shot has no active mouth frames")
         rows[sh["id"]] = row
     summary = {"schema": "assemble_25d_smoke/1", "shots": rows, "failures": failures, "size": [width, height], "engine": engine}
     write_json_atomic(out / "smoke_summary.json", summary)
