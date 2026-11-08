@@ -1,6 +1,6 @@
 # Progress log
 
-> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force. Entries before 2026-11-05 are history and keep their words.
+> **Route-scoped note (updated 2026-11-08; D-116/D-120).** Current routes: J2 = Qwen text-first frame -> LTX image-to-video; J4 = Blender colour/depth/line layout -> LTX restyle; J5 = approved Qwen assets -> Blender 2.5D; H = Python helpers. Older entries preserve the historical route decisions of their date; current decisions in `DECISIONS_AND_OPEN_QUESTIONS.md` take precedence.
 
 Append one entry per phase boundary: completed work, state, files changed, test results, decisions, blockers,
 cost (estimate/actual), next step, recovery instructions.
