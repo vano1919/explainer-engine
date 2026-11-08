@@ -74,3 +74,31 @@ def test_launchers_run_the_preflight_before_the_go_gate(name):
     for fn in entry:
         calls = [c.func.id for c in ast.walk(fn) if isinstance(c, ast.Call) and isinstance(c.func, ast.Name)]
         assert calls.index("preflight") < calls.index("go_gate"), fn.name
+
+
+LEGACY_LAUNCHERS = [
+    "modal_qwen_jobs.py",
+    "modal_qwen_jobs_v3.py",
+    "modal_qwen_jobs_v5.py",
+    "modal_qwen_jobs_v6.py",
+    "modal_qwen_jobs_v8.py",
+    "modal_qwen_jobs_v9.py",
+    "modal_qwen_jobs_v10.py",
+    "modal_qwen_jobs_v11.py",
+    "modal_qwen_jobs_v12.py",
+    "modal_qwen_jobs_v13.py",
+    "modal_sa_test.py",
+]
+
+
+@pytest.mark.parametrize("name", LEGACY_LAUNCHERS)
+def test_superseded_paid_launchers_refuse_before_any_remote_call(name):
+    src = (Path(__file__).resolve().parents[2] / "explainer_engine/training/pods/p15" / name).read_text()
+    tree = ast.parse(src)
+    for entry_name in ("smoke", "main"):
+        entry = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == entry_name)
+        first = entry.body[0]
+        assert isinstance(first, ast.Expr)
+        assert isinstance(first.value, ast.Call)
+        assert isinstance(first.value.func, ast.Name)
+        assert first.value.func.id == "retired_launcher"
