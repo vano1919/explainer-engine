@@ -1,5 +1,5 @@
 """Historical J2/J4 spec writer (D-116, guide step 3): the route shots' LTX clips x the test matrix -> one ``ltx_job/1`` document.
-D-120 supersedes its J2 clay-conditioned recipe. The P14 worker rejects every J2/clay job before prefetch or generation; this writer
+D-120 supersedes its J2 clay-conditioned recipe. The P14 source rejects every J2/clay job before prefetch or generation once its sha-pinned bundle is rebuilt and uploaded; this writer
 remains for historical reproduction and J4 until the text-first J2 writer/schema migration is implemented. Free; no weights are touched here.
 
     python -m explainer_engine.edit.ltx_jobs <route_shots.json> <out ltx_jobs.json> [--layouts DIR] [--matrix M.json] [--job-id ID]
