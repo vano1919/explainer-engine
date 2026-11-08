@@ -1,6 +1,5 @@
 """Historical J2/J4 spec writer (D-116, guide step 3): the route shots' LTX clips x the test matrix -> one ``ltx_job/1`` document.
-D-120 supersedes its J2 clay-conditioned recipe. The P14 source rejects every J2/clay job before prefetch or generation once its sha-pinned bundle is rebuilt and uploaded; this writer
-remains for historical reproduction and J4 until the text-first J2 writer/schema migration is implemented. Free; no weights are touched here.
+D-120 supersedes its J2 clay-conditioned recipe. This writer still emits the historical J2 job shape; the current P14 worker has no D-120-specific fail-closed gate. Do not use its J2 output for a paid run. Migrate the J2 writer/schema/pod path to Qwen text-first frames -> LTX image-to-video in a separately reviewed change. Free; no weights are touched here.
 
     python -m explainer_engine.edit.ltx_jobs <route_shots.json> <out ltx_jobs.json> [--layouts DIR] [--matrix M.json] [--job-id ID]
 
