@@ -1,10 +1,8 @@
 # LTX jobs of the J2 and J4 routes
 
-> **Route-scoped since D-116 (2026-11-06):** this page belongs to the LTX routes J2 (Blender clay layout -> LTX Layout-To-Render) and
-> J4 (Blender colour, depth and line layouts -> LTX restyle). The routes live in the [decision log](DECISIONS_AND_OPEN_QUESTIONS.md)
-> (D-116) and the [route plan](architecture/ROUTE_PLAN_2026-11-06.md); J5 is [SCENE_ASSETS](SCENE_ASSETS.md).
+> **D-120 amendment (2026-11-08):** J4 remains the Blender-layout-conditioned LTX route. The J2 clay-conditioned recipe below is historical only and is rejected by the current P14 worker before prefetch or generation. D-120's J2 route is Qwen text-first frame -> LTX image-to-video; its writer/schema/pod migration is not complete. Do not launch the legacy J2 matrix. J5 is [SCENE_ASSETS](SCENE_ASSETS.md).
 
-Guide step 3 (code only; every test runs in one later pod, whose OR-23 plan the Fable thread writes). `edit/ltx_jobs.py` writes one
+Guide step 3 (code only; every test runs in one later pod, whose OR-23 plan the Fable thread writes). `edit/ltx_jobs.py` still writes the historical J2/J4 `ltx_job/1` format; J2 rows are not valid production work after D-120. The current P14 runner fails closed on any J2 route or `clay` conditioning before prefetch or generation. `edit/ltx_jobs.py` writes one
 `ltx_job/1` document ([CONTRACTS](CONTRACTS.md), `schemas/ltx_job.schema.json`) from the route shots and the layout manifests of
 `blender/layout_passes.py`; the route-test pod (`training/pods/p14`) reads nothing else.
 
@@ -15,7 +13,7 @@ layout clip(s) as `--video-conditioning PATH STRENGTH`, the Qwen first frame as 
 creator's C1 by route, 2026-11-06 11:12 UTC), the prompt from the route shots, a seed, the clip's frames and size. Two bases (the
 creator's card 2026-11-06 11:11 UTC: J4 on both, same shots and first frames):
 
-| base | model (`config/cloud_pins.json` models) | IC-LoRA | text encoder | J2 | J4 |
+| base | model (`config/cloud_pins.json` models) | IC-LoRA | text encoder | historical J2 (blocked) | J4 (current) |
 |---|---|---|---|---|---|
 | `ltx25` | `video_ltx` (LTX-2.5, split files) | `video_ltx_layout_lora` (Layout-To-Render) | in the split files | clay | colour |
 | `ltx23` | `video_ltx_23` (LTX-2.3 distilled 1.1 monolith) | `video_ltx_control` (Union-Control, reference 0.5x) | `text_encoder_gemma3` (gated) | — | line (inverted) or a canny of colour, + depth |
