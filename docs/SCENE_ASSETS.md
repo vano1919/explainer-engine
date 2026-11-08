@@ -12,7 +12,7 @@ Work package ICW-11 (guide step 2.1). Qwen-Image-2.1 + xworld_v2 draws each scen
 
 1. **The manifest** `scene_assets/1` ([CONTRACTS](CONTRACTS.md), `schemas/scene_assets.schema.json`): per scene the backdrop
    (`backdrop_360`: asset id, prompt, size, LoRAs, turn, file), the heroes (sheet id, prompt, `lighting_note`, real height, card
-   files per angle front / 3q_left / 3q_right / back: `base` = mouth closed, `mouth_half`, `mouth_wide`, `mouth_round`, optional legacy `mouth_open`, `blink` = an eyes-closed
+   files for each supplied approved angle (front / 3q_left / 3q_right / back; an angle is not required unless a shot uses it): `base` = rest/closed, `mouth_half`, `mouth_wide`, `mouth_round`, optional legacy `mouth_open`, `blink` = an eyes-closed
    overlay patch), the props (prompt, real height, file), the light variant and the defects with their Qwen edit instruction. A
    file is `{path, sha256}`, or null until the asset pod has drawn it. The drawing stack is `qa/style_prompt.INFERENCE`.
 2. **Drawing** (the asset pod, paid, OR-23): the prompts go through `qa/style_prompt.check`; every image passes the keyframe gate
@@ -42,6 +42,10 @@ angle, and for the speaker the line's mouth cues: `audio/words_to_mouth_cues.py`
 | SA-07 | No light in the scene and no card casts a shadow: a card emits its drawn colours (view transform Standard); the only shadow is the flat contact ellipse under the feet | FAIL (smoke) | `bpy/assemble_25d.py` report, `assemble_25d.smoke` |
 | SA-08 | On a 30-degree pan a straight horizontal line of the backdrop bends by at most 1 % of the frame height (measured on the smoke's 360 test grid; a real backdrop's seam and horizon are the creator's eye) | REVIEW | `assemble_25d.horizon_bend` |
 | SA-09 | Life on a held card: a blink every 3-5 s (seeded per shot and hero, three frames, only when the sheet has the eyes-closed patch) and breathing of 0.5 % vertical scale at 0.25 Hz about the feet (plan 9) | - | `assemble_25d.blink_track`, `breath_track` |
+
+## D-120 / DL-02 integration boundary
+
+The current J5 renderer uses the 360° panorama as a sharp world texture for every shot. That is valid for wide/establishing shots but does **not** satisfy DL-02 for dialogue close-ups, which require the same place picture as a blurred background crop with no readable landmark. A derived blurred background from the same approved place image is the proposed fix; it is not implemented yet. Do not label J5 dialogue compliant with DL-02 until the renderer and a frame-level test prove the blur.
 
 ## D-121 update (2026-11-08)
 
