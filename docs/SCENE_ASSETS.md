@@ -5,9 +5,7 @@
 > in `explainer_engine/visual/archetypes_ic.json`; the plan is [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md)
 > (D-121: flat-lit sheets, four mouth states (closed, half, wide, round) with a two-frame cross-blend, the horizon check on a 30-degree pan).
 
-Work package ICW-11 (guide step 2.1). Qwen-Image-2.1 + xworld_v2 draws each scene's assets once: one 360 backdrop, every hero
-from the angles the shots need, the props. A J5 shot is then assembled from them in Blender: no picture is drawn per shot and no
-video model runs. The creator judges the result with his eyes; if he calls it "paper puppet", V3/V4 move to LTX a2v
+Work package ICW-11 (guide step 2.1). Qwen-Image-2.1 + xworld_v2 draws each scene's assets: one 360 backdrop, the approved hero drawings actually needed by the shots, and props. Do not automatically generate every angle from a hero sheet: RF-03 (3)-(4) keeps mouth/blink/expression variants on the same approved drawing and leaves a new pose/angle reference unapproved until measured. No Blender/3D render is ever a Qwen input (D-120/RF-01). A J5 shot is assembled from approved assets in Blender: no picture is drawn per shot and no video model runs. The creator judges the result with his eyes; if he calls it "paper puppet", V3/V4 move to LTX a2v
 (`route_alt` becomes `route` in the registry) and step 3 adds the a2v shot.
 
 ## The flow
@@ -40,7 +38,7 @@ angle, and for the speaker the line's mouth cues: `audio/words_to_mouth_cues.py`
 | SA-03 | A defect names an asset of its own scene, and its instruction starts "change nothing, fix: ..." (an edit of the drawn image, never a redraw); a hero is listed once per scene | FAIL | `core/contracts._scene_assets`, the schema |
 | SA-04 | A card is an RGBA PNG of the figure alone (AC-15); its rim carries the figure's own edge colour: a halo score (mean luma gap between the semi-transparent rim and the nearest opaque pixel, share of 255) over 0.06 is a REVIEW. The threshold is an engineering default: on the four 10-25 BiRefNet cut-outs the straight cut scored 0.30-0.50 and `finish` 0.0005-0.0006 | FAIL (mode, AC-15), REVIEW (halo) | `edit/cutout.check` |
 | SA-05 | The manifest's drawing stack is `qa/style_prompt.INFERENCE` (base, LoRA, weight), which reads `cloud_pins` (one home) | FAIL | `core/contracts._scene_assets` |
-| SA-06 | A speaking card has four mouth states (base = closed, half, wide, round), all the size of the base card; Rhubarb shapes map A/X to closed, B/C/G/H to half, D to wide, E/F to round, with a two-frame cross-blend; a lip-synced shot keeps BP-108's dialogue limit | FAIL (planner refuses) | `blender/assemble_25d.plan`, `rigs.LipSync.plan` |
+| SA-06 | A speaking card has four mouth states (base = rest/closed, half, wide, round), all the size of the base card; Rhubarb shapes map A/X to rest, B/C/G/H to half, D to wide, E/F to round, with a two-frame cross-blend; a lip-synced shot keeps BP-108's dialogue limit | FAIL (planner refuses) | `blender/assemble_25d.plan`, `rigs.LipSync.plan` |
 | SA-07 | No light in the scene and no card casts a shadow: a card emits its drawn colours (view transform Standard); the only shadow is the flat contact ellipse under the feet | FAIL (smoke) | `bpy/assemble_25d.py` report, `assemble_25d.smoke` |
 | SA-08 | On a 30-degree pan a straight horizontal line of the backdrop bends by at most 1 % of the frame height (measured on the smoke's 360 test grid; a real backdrop's seam and horizon are the creator's eye) | REVIEW | `assemble_25d.horizon_bend` |
 | SA-09 | Life on a held card: a blink every 3-5 s (seeded per shot and hero, three frames, only when the sheet has the eyes-closed patch) and breathing of 0.5 % vertical scale at 0.25 Hz about the feet (plan 9) | - | `assemble_25d.blink_track`, `breath_track` |
