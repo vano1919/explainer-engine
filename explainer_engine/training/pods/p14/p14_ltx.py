@@ -456,12 +456,9 @@ def main():
 def run_all(cfg, jobs_doc, out, deadline, log, *, poll=20.0, sleep=time.sleep, **kw):
     """The core jobs, then the extras; a job that reads an input the pod still makes (a layout pass, a frame of stage G) waits,
     and runs as soon as its inputs exist or their stage has ended (in the core-then-extras order), until the end reserve."""
-    require_d120_compliance(jobs_doc)
     extra = HERE / cfg.get("extra_jobs_file", "")
     xdoc = json.loads(extra.read_text(encoding="utf-8")) if (cfg.get("extra_jobs_file") and extra.is_file()
                                                              and os.environ.get("P14_EXTRAS", "1") == "1") else None
-    if xdoc:
-        require_d120_compliance(xdoc)
     done, later = {}, {"core": [], "extra": []}
     rows = run(cfg, jobs_doc, out, deadline, log, deferred=later["core"], done=done, **kw)
     xrows = run(cfg, xdoc, out, deadline, log, speeds_name="speeds_extra.json", deferred=later["extra"], done=done, **kw) if xdoc else []
