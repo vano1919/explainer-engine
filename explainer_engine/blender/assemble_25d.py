@@ -356,8 +356,8 @@ def _smoke_assets(d: Path) -> dict:
     for hid, f in figs.items():
         heroes.append({"hero": hid, "sheet": f"sheet.{hid.lower()}", "height_m": 1.75, "lighting_note": L,
                        "prompt": f"xworld style, smoke figure {hid}, seen from the front, {L}, plain neutral background",
-                       "angles": {a: {"base": ref(f["base"]), "mouth_half": ref(f["mouth_half"]), "mouth_open": ref(f["mouth_open"]),
-                                      "blink": ref(f["blink"])} for a in ANGLES}})
+                       "angles": {a: {"base": ref(f["base"]), "mouth_half": ref(f["mouth_half"]), "mouth_wide": ref(f["mouth_wide"]),
+                                      "mouth_round": ref(f["mouth_round"]), "blink": ref(f["blink"])} for a in ANGLES}})
     return {"schema": "scene_assets/1", "episode": "assemble_25d_smoke",
             "style": {k: style_prompt.INFERENCE[k] for k in ("base", "lora", "lora_weight")},
             "scenes": {"S01": {"backdrop_360": {"asset": "grid360", "size": [W, H], "prompt": "smoke test grid", "yaw_deg": 0,
