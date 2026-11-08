@@ -87,11 +87,11 @@ def test_a_hero_without_the_flat_lighting_note_fails():
 def test_four_mouth_states_cross_blend_and_reconstruct_all_state_weights():
     shapes = list("XXDDBBEFX")
     w = A.mouth_weights(shapes)
-    assert w[1] == {"closed": 1.0, "half": 0.0, "wide": 0.0, "round": 0.0}
-    assert w[2] == {"closed": 0.5, "half": 0.0, "wide": 0.5, "round": 0.0}
+    assert w[1] == {"rest": 1.0, "half": 0.0, "wide": 0.0, "round": 0.0}
+    assert w[2] == {"rest": 0.5, "half": 0.0, "wide": 0.5, "round": 0.0}
     assert w[3]["wide"] == 1.0
-    assert w[4] == {"closed": 0.0, "half": 0.5, "wide": 0.5, "round": 0.0}
-    assert w[6] == {"closed": 0.0, "half": 0.5, "wide": 0.0, "round": 0.5}
+    assert w[4] == {"rest": 0.0, "half": 0.5, "wide": 0.5, "round": 0.0}
+    assert w[6] == {"rest": 0.0, "half": 0.5, "wide": 0.0, "round": 0.5}
     assert w[7]["round"] == 1.0
     for x in w:
         assert sum(x.values()) == pytest.approx(1.0)
@@ -99,6 +99,15 @@ def test_four_mouth_states_cross_blend_and_reconstruct_all_state_weights():
         weights = ((1 - fh) * (1 - fw) * (1 - fr), fh * (1 - fw) * (1 - fr), fw * (1 - fr), fr)
         assert weights == pytest.approx(tuple(x[k] for k in A.STATES))
     assert set(A.MOUTH_STATE) == set("ABCDEFGHX") and set(A.MOUTH_STATE.values()) == set(A.STATES)
+
+
+def test_smoke_cues_exercise_rest_half_wide_and_round_at_low_resolution():
+    cues = A._smoke_cues(0.5)
+    planned = A.LipSync(fps=24).plan(cues, frames=12)
+    states = set(planned["shapes"])
+    assert {"A", "C", "D", "E", "X"} <= states
+    mapped = {A.MOUTH_STATE[s] for s in states}
+    assert mapped == set(A.STATES)
 
 
 def test_blinks_come_every_three_to_five_seconds_and_breathing_is_half_a_percent_at_a_quarter_hertz():
