@@ -12,7 +12,7 @@ What Blender builds (all of it from the plan below; the bpy side interprets the 
   the figure (the alpha box of the base image) is ``height_m`` tall; the image's own colours are emitted as they are (flat, the
   sheets are drawn flat-lit, plan section 9): no light, no cast shadow from or onto a card (SA-07);
 - a flat contact shadow under each hero's feet (a soft dark ellipse, baked, not a light);
-- the mouth: three states from the sheet (base = closed, ``mouth_half``, ``mouth_open``) on the cues of the line
+- the mouth: four states from the sheet (base = closed, ``mouth_half``, ``mouth_wide``, ``mouth_round``) on the cues of the line
   (``audio.words_to_mouth_cues`` or Rhubarb, read by ``rigs.LipSync``), with a ``CROSS_BLEND_FRAMES``-frame cross-blend; the
   shapes map to states by ``MOUTH_STATE``; a lip-synced shot is at most BP-108's ``dialogue_shot_max_s`` (``LipSync.plan``);
 - a blink every ``BLINK_EVERY_S`` (an eyes-closed overlay patch, when the sheet has one) and breathing: a ``BREATH_SCALE``
@@ -44,10 +44,10 @@ from explainer_engine.core.store import write_json_atomic
 SCRIPT = Path(__file__).with_name("bpy") / "assemble_25d.py"
 JOB = "assemble_25d/1"
 FPS = 24
-MOUTH_STATE = {"A": "closed", "X": "closed", "B": "half", "E": "half", "F": "half", "G": "half", "H": "half",
-               "C": "open", "D": "open"}
-STATES = ("closed", "half", "open")
-CROSS_BLEND_FRAMES = 2           # plan 9: 3 mouth states + a 2-frame cross-blend
+MOUTH_STATE = {"A": "closed", "X": "closed", "B": "half", "C": "half", "G": "half", "H": "half",
+               "D": "wide", "E": "round", "F": "round"}
+STATES = ("closed", "half", "wide", "round")
+CROSS_BLEND_FRAMES = 2           # D-121: four mouth states + a 2-frame cross-blend
 BLINK_EVERY_S = (3.0, 5.0)       # guide 2.1 item 3: a blink every 3-5 s
 BLINK_WEIGHTS = (0.5, 1.0, 0.5)  # the eyes-closed overlay over three frames
 BREATH_SCALE = 0.005             # breathing: 0.5 % vertical scale ...
@@ -61,8 +61,7 @@ def _rng(*keys: str) -> random.Random:
 
 
 def mouth_weights(shapes: list[str], *, blend: int = CROSS_BLEND_FRAMES) -> list[dict]:
-    """Per frame the weights of the three mouth states (they sum to 1): the one-hot state of each frame's shape, averaged over
-    the last ``blend`` frames, so a change reaches the new state fully on its ``blend``-th frame."""
+    """Per frame the weights of the four mouth states (they sum to 1), cross-blended over the last ``blend`` frames."""
     hot = [{s: 1.0 if MOUTH_STATE[sh] == s else 0.0 for s in STATES} for sh in shapes]
     out = []
     for f in range(len(hot)):
@@ -71,12 +70,14 @@ def mouth_weights(shapes: list[str], *, blend: int = CROSS_BLEND_FRAMES) -> list
     return out
 
 
-def mix_factors(w: dict) -> tuple[float, float]:
-    """(half, open) factors of the card material's two mixes, mix(mix(closed, half, f_half), open, f_open), that reproduce the
-    state weights ``w``."""
-    f_open = w["open"]
-    rest = w["half"] + w["closed"]
-    return (round(w["half"] / rest, 6) if rest > 1e-9 else 0.0), round(f_open, 6)
+def mix_factors(w: dict) -> tuple[float, float, float]:
+    """(half, wide, round) factors for sequential closed -> half -> wide -> round image mixes."""
+    f_round = w["round"]
+    prior = w["closed"] + w["half"] + w["wide"]
+    f_wide = w["wide"] / prior if prior > 1e-9 else 0.0
+    rest = w["closed"] + w["half"]
+    f_half = w["half"] / rest if rest > 1e-9 else 0.0
+    return round(f_half, 6), round(f_wide, 6), round(f_round, 6)
 
 
 def blink_track(frames: int, fps: int, seed: str) -> list[float]:
@@ -202,20 +203,21 @@ def plan(assets: dict, shot: dict, *, base: Path | str = ".", fps: int = FPS, wi
                            "alpha": SHADOW["alpha"]}}
         line = c.get("line")
         if line:
-            for st in ("mouth_half", "mouth_open"):
+            mouth_states = ("mouth_half", "mouth_wide", "mouth_round")
+            for st in mouth_states:
                 if not ang.get(st):
-                    raise ContractError(f"{sid}: {hid} speaks but its {angle} card has no {st} (SA-06: three mouth states)")
-            states = {st: _file(ang[st], base, f"{sid}.{hid}.{angle}.{st}") for st in ("mouth_half", "mouth_open")}
+                    raise ContractError(f"{sid}: {hid} speaks but its {angle} card has no {st} (SA-06: four mouth states)")
+            states = {st: _file(ang[st], base, f"{sid}.{hid}.{angle}.{st}") for st in mouth_states}
             for st, p in states.items():
                 if alpha_box(p)["size"] != geo["px"]:
                     raise ContractError(f"{sid}: {hid} {st} is not the size of its base card")
             cues = line["cues"]
             if isinstance(cues, str) and cues_base is not None and not Path(cues).is_absolute():
                 cues = str(Path(cues_base) / cues)
-            lp = lip.plan(cues, frames, offset_s=line.get("offset_s", 0.0))   # refuses a lip-synced shot over BP-108
+            lp = lip.plan(cues, frames, offset_s=line.get("offset_s", 0.0))
             w = mouth_weights(list(lp["shapes"]))
-            card["mouth"] = {"half": states["mouth_half"], "open": states["mouth_open"], "shapes": lp["shapes"],
-                             "factors": [list(mix_factors(x)) for x in w]}
+            card["mouth"] = {"half": states["mouth_half"], "wide": states["mouth_wide"], "round": states["mouth_round"],
+                             "shapes": lp["shapes"], "factors": [list(mix_factors(x)) for x in w]}
         if ang.get("blink"):
             card["blink"] = {"image": _file(ang["blink"], base, f"{sid}.{hid}.{angle}.blink"),
                              "track": blink_track(frames, fps, f"{sid}/{hid}")}
@@ -309,7 +311,7 @@ SMOKE_CAST = {"H1": [-1.1, 2.0, 0.0], "H3": [1.1, 2.6, 0.0]}
 
 
 def _smoke_assets(d: Path) -> dict:
-    """A 360 test grid (blue sky, green ground, black posts every 15 degrees) and two inked flat figures with three mouth states
+    """A 360 test grid (blue sky, green ground, black posts every 15 degrees) and two inked flat figures with four mouth states
     and an eyes-closed patch, all drawn here with numpy; returns the scene_assets/1 document naming them."""
     import numpy as np
     from PIL import Image, ImageDraw
@@ -325,7 +327,7 @@ def _smoke_assets(d: Path) -> dict:
 
     def figure(name, body, skin):
         out = {}
-        for st, mh in (("base", 0), ("mouth_half", 10), ("mouth_open", 22)):
+        for st, mh in (("base", 0), ("mouth_half", 8), ("mouth_wide", 16), ("mouth_round", 24)):
             im = Image.new("RGBA", (400, 1000), (0, 0, 0, 0))
             dr = ImageDraw.Draw(im)
             dr.rounded_rectangle((90, 300, 310, 990), 60, fill=body + (255,), outline=(0, 0, 0, 255), width=8)
