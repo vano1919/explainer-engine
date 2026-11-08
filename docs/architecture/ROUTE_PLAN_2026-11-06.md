@@ -15,7 +15,7 @@ This correction is authoritative over the earlier J2 descriptions below. J2 no l
 
 The older J2 clay path is still present in `layout_passes.py`, `edit/ltx_jobs.py`, `core/contracts.py`, and `docs/LTX_JOBS.md`. Those are known migration debt, not permission to launch the old matrix. Phase 3 is blocked until the writer, schema, contract, pod job, and tests agree on the text-first J2 recipe. See [Phase 3/4/5 readiness](../research/stoneage_pilot_2026-11-07/PHASE3_4_5_READINESS_2026-11-08.md).
 
-D-121 also supersedes the older three-mouth-state J5 description: the current J5 dialogue contract is closed/rest + half + wide + round. The scene-assets schema, planner, renderer, and tests are being brought into line.
+D-121 also supersedes the older three-mouth-state J5 description: the current J5 dialogue contract is closed/rest + half + wide + round. The scene-assets schema, planner, renderer, and tests are updated on the Phase 3 dialogue branch; CI must verify them before merge.
 
 
 Goal: maximum stability and quality; a 12-15 minute episode for about US$10-15 (EST).
