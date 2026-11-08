@@ -1,177 +1,271 @@
-# Gemini Handoff — Full Storytelling Engine Migration (Test Branch)
+# Gemini Brief — Create the High-Level Migration Plan for Explainer Engine
 Date: 2026-11-09
 
-## Mission — implement a new engine, not another audit
+## IMPORTANT: Your role is planning only
 
-This branch is a **full migration/test branch**. Your job is to research, choose and implement a new end-to-end video-generation engine for Explainer Engine. The objective is to make a coherent, directed storytelling video reliably — not to preserve the current architecture or merely add another model adapter.
+There are three separate roles:
 
-Inspect the repository yourself, identify every conflict, stale rule, broken assumption, incompatible schema, obsolete route and dependent file, then decide and fix them as part of the migration. **Do not return a list of inconsistencies for the creator to resolve. Do not ask which files should change. Trace the dependencies and update every file that needs to change.**
+1. **ChatGPT (this handoff):** establishes the product goals, selects the research direction and defines the high-level scope.
+2. **Gemini (you):** reviews the two research reports and the current repository, resolves architectural questions, and produces a detailed, file-by-file implementation plan for Codex.
+3. **Codex:** implements the approved plan and writes the code, schemas, tests and production documentation.
 
-This is a substantial migration. Make the necessary changes across code, schemas, configuration, prompts, workflow definitions, tests, documentation, examples, command entrypoints and progress records. Do not artificially limit the work to a few files or to a thin adapter. Keep the scope focused on the story-to-video production system; do not rewrite unrelated publishing, research, narration or audio subsystems unless the selected engine requires a specific integration change.
+**Do not write application code. Do not implement the migration. Do not edit Python/TypeScript/JSON schemas/configuration or production workflows. Do not start model generation.**
 
-Work only on this branch. Do not merge or rewrite other branches.
+Your deliverable is a detailed, executable plan that Codex can follow without having to repeat your research or make architectural decisions from scratch. You may create/update planning documents on this branch only. The implementation will be performed by Codex after the plan is reviewed.
 
-## Product goal
+## Read these materials first
 
-Explainer Engine creates approximately **12-minute English-language historical What-If documentary / cinematic docudrama** episodes for a general audience.
+1. This brief.
+2. [Research decision digest](../research/AI_VIDEO_WORKFLOW_DECISION_2026-11-09.md).
+3. The two supplied research files:
+   - Explainer_Engine_AI_Video_Workflows_Report.pdf
+   - AI Documentary Video Production Workflows.md
+4. Inspect the actual current repository at this branch, especially:
+   - docs/PROJECT_BRIEF.md
+   - docs/PRODUCTION_SCRIPT.md
+   - docs/SCRIPT_ENGINE.md
+   - docs/STORY_ENGINE.md
+   - docs/SHOT_PROMPTS.md
+   - docs/SCENE_ASSETS.md
+   - docs/SCENE_REUSE_RULES.md
+   - docs/EDITING.md
+   - docs/ORCHESTRATION.md
+   - docs/PRODUCTION_RULES.md
+   - docs/TOOL_STRATEGY.md
+   - docs/LTX_JOBS.md
+   - docs/CONTRACTS.md
+   - docs/DECISIONS_AND_OPEN_QUESTIONS.md
+   - explainer_engine/schemas/production_script.schema.json
+   - explainer_engine/production/
+   - explainer_engine/imagegen/
+   - explainer_engine/edit/
+   - explainer_engine/blender/
+   - tests/
+5. Inspect existing local ComfyUI integration, model/workflow registries and environment-variable usage. A tracked root .env.example was not found through the GitHub contents lookup; the creator may have a local, ignored .env file. Do not assume it is absent locally.
 
-Visual direction: cinematic, stylized 2.5D / Ink Chronicle.
+## The decision already made
 
-**Hyperrealism is not the goal.** Do not choose a heavyweight model just because it produces more realistic faces, skin or environments. That advantage has low value here unless it also gives a measurable improvement in control, continuity or reliability.
+The high-level decision is **Hybrid B → C as the primary workflow**:
 
-Priorities, in order:
+- **B — Scene/Shot-to-Storyboard:** prepare and approve images/keyframes that define the characters, location, composition, camera angle and important action states.
+- **C — Image-to-Video per Shot:** generate each short shot independently from its approved start image, and use a second/end image only when that shot needs a specific destination state.
+- Do not make pure end-to-end multi-shot text-to-video the default.
+- Do not build a 7+ stage pipeline with multiple simultaneous references, depth/canny, middle keyframes and multiple LoRAs.
+- Keep composed illustrations/maps out of video diffusion by default; animate them locally with deterministic 2.5D pan/parallax/zoom.
+- Use a separate control-video route only for difficult actions where the normal image-to-video route cannot execute the shot.
 
-1. Logical story progression and readable actions.
-2. Consistent characters and environments across shots.
-3. Reliable control of scene descriptions, composition, framing, camera and action.
-4. Repeatable results with low failure and retry rates.
-5. Simple production workflow and manageable cost.
-6. Sufficient visual quality for a cinematic stylized documentary.
+### Primary combination to plan
 
-Prefer an efficient, smaller or specialized model when it meets these requirements. Evaluate models by scene-description compliance, controllability, continuity and usable output rate — not parameter count or photorealism.
+- Qwen image editing/keyframe workflow, with Qwen-Image-Edit-2511 + its Multiple-Angles LoRA and ComfyUI multi-angle camera node as the main candidate.
+- Wan 2.2 Fun InP / I2V for per-shot video.
+- Start by testing the 5B option for the local workflow; compare 14B only if the 5B route cannot meet the agreed quality/control bar. The 14B + LightX2V 4-step route must be tested for lost motion dynamics rather than assumed to be a free speed improvement.
+- Local DepthFlow or an already-supported local 2.5D renderer for stills and maps.
+- Reuse the existing audio/TTS/timing and assembly capabilities where they fit.
 
-## Episode structure
+### Secondary combination to plan
 
-- Target duration: approximately **12 minutes**.
-- 16 segments (S01–S16), arranged into five narrative phases:
+- Same approved keyframe stage.
+- Wan 2.2 Fun Control / Camera per shot, with exactly one selected control input for that shot (OpenPose, Depth, Canny, camera preset or supported trajectory).
+- Treat Wan-Move/ATI as optional only after verifying exact checkpoint, weights, wrapper, model compatibility and local execution path.
+
+This secondary route is a selective fallback for shots that need stronger action or camera control. It is not a second full production engine running for every shot.
+
+### Explicitly do not select as the default
+
+- Blender clay playblast + LTX-2.5 22B Layout-to-Render. The PDF presents it as an alternative, but it reintroduces the heavy Blender/LTX approach the creator is trying to simplify.
+- StoryMem, ShotDirector or MultiShotMaster as the production default. The supplied reports identify significant operational/weight/code limitations.
+- A pipeline that stacks all references, multiple LoRAs, 3D passes and multi-keyframes into a single video job.
+
+### Technical caveats you must retain
+
+- Qwen-Image-Edit-2511 is a 20B-class image model, not a small model. Its only justification is a demonstrated gain in editing, camera framing or character consistency — not extra photorealism. Compare against the existing Qwen-Image-2.1 path and choose the smallest local option that passes.
+- The existing xworld_v2 LoRA was made for the current Qwen path. Do not assume it is compatible with Qwen-Image-Edit-2511.
+- The Next-Scene LoRA's published base is Qwen-Image-Edit-2509. Do not assume compatibility with 2511 or stack it into the baseline without a controlled test.
+- The Multiple-Angles LoRA and ComfyUI node provide learned camera-prompt control, not deterministic physical 3D camera rendering. Do not promise exact geometry.
+- Wan 2.2 Fun InP is appropriate for controlled start/end transitions; not every shot needs both frames.
+- 4-step LightX2V acceleration may reduce motion dynamics. Benchmark it against the unaccelerated option.
+- The two reports' retry-rate and cost-per-minute numbers are estimates, not measured Explainer Engine outcomes. Treat them as hypotheses and specify how Codex will measure actual local time, retries and accepted outputs.
+
+See the decision digest for source links and further caveats.
+
+## Product context
+
+Explainer Engine creates approximately **12-minute English historical What-If documentary / cinematic docudrama** episodes.
+
+Narrative structure:
+- 16 segments: S01–S16.
+- Five phases:
   - Z1, 0:00–2:00, S01–S03: hook and historical setup.
-  - Z2, 2:00–4:00, S04–S06: point of divergence and immediate consequences.
-  - Z3, 4:00–7:00, S07–S10: escalation, reactions and turning point.
-  - Z4, 7:00–10:00, S11–S14: wider consequences and climax.
+  - Z2, 2:00–4:00, S04–S06: point of divergence.
+  - Z3, 4:00–7:00, S07–S10: escalation and turning point.
+  - Z4, 7:00–10:00, S11–S14: consequences and climax.
   - Z5, 10:00–12:00, S15–S16: resolution and reflection.
-- Narration carries roughly 70–80% of spoken content; character dialogue roughly 20–30%.
-- Flexible visual target: around 60% cinematic video, 30% composed stills/illustrations/collage, 10% maps/explanatory visuals. These are guidelines, not hard quotas.
-- Use purposeful establishing wides, two-shots, medium shots, close-ups, OTS, shot/reverse-shot and action coverage where they help the story.
-- Clearly distinguish historical facts, the hypothetical divergence and speculative consequences.
+- Spoken content target: roughly 70–80% narration and 20–30% character dialogue.
+- Flexible visual target: approximately 60% cinematic video, 30% composed illustrations/collages, 10% maps/explanatory visuals.
+- Visual direction: stylized cinematic 2.5D / Ink Chronicle. Hyperrealism is not the objective.
+- The video must feel like one logically directed story, not an AI clip compilation.
 
-Update the project brief and every dependent duration/format specification to this current target. Do not leave conflicting 5–11 minute / 7-minute defaults.
+Resolve the current contradiction: docs/PROJECT_BRIEF.md still contains a 5–11 minute range with a 7-minute target. The new canonical project brief must use the current 12-minute target and update dependent specifications.
 
-## Choose the production method
+## Local-only / free-by-default constraint
 
-Research and compare these three approaches:
+The intended engine is a **local workflow**:
+- Run image and video inference through the local ComfyUI installation and local scripts.
+- Use local model weights and local workflow JSON files.
+- Read the existing local .env variable names and service paths where available. Never reveal, copy, commit or print secret values.
+- Do not call hosted fal.ai, hosted image/video APIs, paid inference endpoints or paid cloud GPUs by default.
+- Do not assume an API key means that inference is free.
+- If a chosen model cannot run through the current local stack, the plan must identify the exact limitation and propose a free local fallback. Do not silently change the architecture to a paid endpoint.
+- Keep model weights outside Git. Include only model identifiers, file names, revisions, licence notes and expected local paths in the repository.
+- Check the base model, every adapter/LoRA, custom node and utility licence separately.
+- Use local/free TTS where possible; keep existing audio timing, mixing and assembly code where it remains useful. Any paid audio service must remain explicitly opt-in.
 
-A. **Text → Video:** provide a story/scene description and let the engine create a sequence of shots.
+Do not include hardware specifications in your recommendation. Instead, make Codex verify local resource requirements from the installed environment and model files.
 
-B. **Scene image → Multi-shot:** provide a scene/reference image and generate several connected shots from it.
+## Your task — produce a high-level plan that becomes a detailed Codex plan
 
-C. **Image per shot → Video per shot:** prepare a still for each shot, generate individual 5–10 second clips, then edit them together.
+Do not write code. Analyse the current repository and create a plan with the following phases and sections.
 
-A simple hybrid is acceptable only if evidence shows it is materially better. Do not combine every possible technique into one pipeline. Choose one primary production mode and implement it as the new default.
+### Phase 0 — Repository and decision audit
+- Map the current topic/script → visual script → image assets → video jobs → audio → assembly → QA path.
+- Identify every active and legacy route.
+- Trace schemas, CLI entrypoints, model registries, workflows, docs, prompts and tests.
+- Identify contradictions between D-80, D-96, D-116, D-120, D-121, D-122 and the new selected B→C direction.
+- Identify which existing work remains reusable and which route assumptions must be retired.
+- Do not ask the creator to resolve routine inconsistencies; make a recommendation and explain the trade-off.
 
-## Research — practical evidence only
+### Phase 1 — Validate the two selected local combinations
+- Confirm the exact downloadable model/checkpoint names and current revisions.
+- Confirm that the required ComfyUI nodes and workflows exist and are locally runnable.
+- Confirm model/adapter compatibility: Qwen-Image-Edit-2511 with Multiple-Angles LoRA; xworld_v2 compatibility; Next-Scene 2509 compatibility; Wan 2.2 Fun InP 5B/14B; LightX2V compatibility; Fun Control and trajectory options.
+- Separate official features from community nodes and experimental work.
+- Record model sizes, actual local runtime/memory, licences and known failure modes.
+- Choose the smallest configuration that passes the visual/control pilot. Do not prefer 14B/20B/22B models for realism alone.
+- Recommend exactly one primary route and one selective fallback.
 
-Investigate working implementations, not only papers, model announcements or attractive demos. Check:
+### Phase 2 — Target architecture and minimal contracts
+Design a simple pipeline with no more than four major production stages:
+1. **Script and visual plan:** structured story/script and per-shot visual script.
+2. **Approved visual assets/keyframes:** character/location references, shot start frames and optional end frames.
+3. **Per-shot video generation:** local Wan I2V/FLF2V; optional single-control fallback for difficult shots.
+4. **Assembly and review:** still/map motion, narration/dialogue, music/foley, edit and QA.
 
-- GitHub repositories, actual inference code, Releases, Issues and Discussions.
-- Model cards, workflow examples and licensing terms.
-- ComfyUI workflows and practical user reports.
-- YouTube creators who demonstrate complete AI storytelling workflows. Watch the actual demonstrations and inspect relevant comments for repeatable techniques, failures and cost information.
-- Reddit and other community feedback where it reveals real operating experience.
+Define the exact data flow, state transitions, folder outputs, IDs, manifests, retry handling and required metadata. Keep the story and shot plan as the single source of truth; avoid duplicate scripts/shotlists that can drift apart.
 
-Start with LTX, Wan, StoryMem, ShotDirector, MultiShotMaster and other relevant projects you find. Do not assume any of these is the winner.
+### Phase 3 — Documentation and specification restructure
 
-Compare by:
-- character and environment consistency between shots;
-- scene description and action accuracy;
-- camera, composition, pose and motion control;
-- support for start/end frames, reference images and multi-shot sequences;
-- practical workflow simplicity;
-- successful/accepted output rate and retry burden;
-- inference requirements, cost and licensing.
+Give Codex an exact file-by-file TODO list. At minimum, plan these documentation groups:
 
-Return exactly **two** evidence-backed combinations:
-1. Best overall: simplest reliable workflow for this project.
-2. Best alternative: a materially different workflow with a clear control or reliability advantage.
+**A. Project and episode format**
+- Update docs/PROJECT_BRIEF.md and dependent episode standards to the 12-minute S01–S16 / Z1–Z5 format.
+- Keep the 60/30/10 visual mix flexible, not a forced quota.
 
-Then select one primary combination and proceed with the migration. Do not stop after research or ask the creator to choose between options.
+**B. ChatGPT main production method**
+- Create one canonical, self-contained docs/MAIN_METHOD.md.
+- This is the document ChatGPT will follow when preparing a new episode.
+- It must be easy to open and understand without searching dozens of unrelated rules.
+- It should link to machine schemas only where necessary, and it must not contradict them.
 
-## Existing system — inspect it, but do not preserve it by default
+**C. Story and script rules**
+- Reconcile docs/STORY_ENGINE.md, docs/SCRIPT_ENGINE.md and docs/PRODUCTION_SCRIPT.md.
+- Define one canonical script format and remove duplicate/conflicting rules.
+- Preserve fact checking, citations, factual-vs-speculative distinction, character motivation, cause/effect and dialogue register rules.
 
-The current system has included:
+**D. Visual script, assets and image generation**
+- Reconcile docs/SHOT_PROMPTS.md, docs/SCENE_ASSETS.md and docs/SCENE_REUSE_RULES.md.
+- Define the visual-script contract and the character/location/prop reference contract.
+- Create or consolidate a clear image/keyframe generation guide.
 
-- Qwen-Image-2.1 with the `xworld_v2` style LoRA.
-- Blender/J5 for scene layout, 2.5D assembly and optional dialogue coverage.
-- LTX for video generation and dialogue openers.
-- Shot plans, scene/reference rules, validators, cut-plan gates and regeneration logic.
+**E. Video generation**
+- Replace obsolete LTX multi-keyframe/default instructions with the selected Wan B→C workflow.
+- Create a clear local video-generation guide: I2V vs FLF2V selection, start/end frame rules, prompt format, clip duration, allowed controls, ComfyUI workflow, model settings and retry rules.
+- Keep the secondary control-video route separate and explicitly optional.
 
-Despite substantial work, the creator has not reliably produced one coherent, acceptable 60-second video. Treat this as a reason to reassess the production design, not as a reason to add more layers of control.
+**F. Local runtime and model setup**
+- Define a single local model/workflow registry and safe .env configuration.
+- Keep model weights out of Git.
+- Document install/update/check commands and how the engine validates a local ComfyUI endpoint.
+- No paid provider routes in the default execution path.
 
-The current code is a starting point and a source of reusable components — **not a binding architecture**. Keep only the components that genuinely help the selected workflow. Do not preserve Qwen, its LoRA, Blender/J5 or LTX as active defaults merely because they already exist. Conversely, do not remove a component that demonstrably remains useful.
+**G. Audio, editing, orchestration and QA**
+- Preserve and reconcile docs/AUDIO_SYSTEM.md, docs/EDITING.md, docs/ORCHESTRATION.md, docs/PRODUCTION_RULES.md, docs/CONTRACTS.md and docs/TOOL_STRATEGY.md.
+- Remove route-specific LTX/J5/Blender rules that no longer apply to the default, but retain optional/legacy notes where useful.
+- Do not rewrite unrelated publishing or research features.
 
-The old path may remain isolated as a legacy comparison/rollback route where that is inexpensive and technically sensible. It must not remain an equally active, competing default that makes the migrated system ambiguous. The new selected engine must be the clear default for this test branch.
+### Phase 4 — Define docs/MAIN_METHOD.md in detail
 
-## Branch snapshot and known repository context
+The Codex plan must define the exact outline, required instructions, templates and examples for this ChatGPT-facing guide.
 
-This branch was created from `fix/j5-free-render-contracts` at remote commit `21a4e36d59ae0c951e88b4430b1fc60ae83db847`. The remote branch `codex/j5-ltx-first-pr162` was identical to that source at the time of preparation. Commit `0c2d1c7404f2b208aa0c5787217aac5a836d8ed3` is an ancestor of the source head.
+It must explain the work in this order:
 
-The short SHA `20b218e` from the creator's earlier local note could not be resolved in GitHub when this branch was prepared. Check whether the corresponding changes exist in the current checkout or another reachable commit. If they do, incorporate the relevant information. If they do not, proceed using verified repository state; do not block the migration or assume the missing commit is present.
+1. **Episode brief:** what information ChatGPT needs from the creator (What-If premise, historical period, key event, audience, target duration, tone, existing constraints).
+2. **Historical research dossier:** source-backed facts, timeline, key figures, real-world outcome, point of divergence, uncertain claims and explicit speculation boundaries.
+3. **12-minute story structure:** 16 segments and five phases; dramatic question, hook, setup, divergence, cause/effect escalation, climax, resolution and final reflection.
+4. **Script-writing guide:** mandatory story beats; narration/dialogue balance; character voice/register; readable dialogue; factual vs speculative phrasing; transitions; pacing; no filler; every important line must advance the story.
+5. **Visual-script guide:** how to translate every relevant story beat into a shot. Define shot IDs, segment IDs, target duration, narrative purpose, location, cast, props, action start/end, camera shot size/angle/movement, screen positions/composition, lighting/time, continuity references, audio line IDs, visual type, generation mode, start/end frame needs, image prompt, video prompt and transition.
+6. **Character/location/prop bible:** fixed appearance descriptions, approved references, costume/prop continuity, location identity and scene state. Do not invent a new design for every shot.
+7. **Image generation guide:** when an image is actually needed; when to reuse an approved asset; how to create a master anchor; how to request a new angle; when to create an end frame; how to repair a bad still before video generation. Give a reusable prompt template.
+8. **Video generation guide:** when to choose I2V vs FLF2V; how to write one clear motion/action prompt; one main action and at most one camera move per simple clip; how to specify subject, action, environment, camera, temporal progression and continuity; how to avoid contradictory instructions and over-conditioning; how to select optional control input.
+9. **Dialogue/audio guide:** narration, dialogue, speaker, intended addressee, delivery, audio file/timing and when lip-sync is actually required. Keep narrator audio as the spine of the edit.
+10. **Stills/maps guide:** how to create composed visuals and animate them locally with deterministic parallax/pan/zoom instead of video diffusion.
+11. **Assembly and QA guide:** continuity, shot order, transitions, captions, audio mix, 24fps/target output, fact-check and creator review.
+12. **Output package:** exact files ChatGPT must produce and the one canonical machine-readable source consumed by the engine. Avoid parallel duplicate shotlists.
 
-The source branch includes the current remote PR #160–#162 stack and the D-120/D-121/D-122 decisions. These are historical inputs to review, not untouchable constraints. Re-evaluate them against the chosen engine and update/retire any rule that no longer applies.
+For every stage, the guide must state:
+- required inputs;
+- mandatory output fields;
+- reusable prompt/template;
+- validation checklist;
+- what ChatGPT must not invent or overcomplicate;
+- what gets passed to the local engine.
 
-Relevant existing work outside this branch stack:
-- PR #157 / branch `claude/project-thread-a6ccn6`: character-specific speech registers and script validation.
-- `argon/ltx-minimisation` and `argon/handoff-2026-11-06`: LTX simplification/handoff work.
-- `systemic/next-video`: earlier scene-reuse direction.
+ChatGPT writes the script, visual script and generation instructions. The local engine executes the image/video workflows. ChatGPT does not claim that it has rendered or approved a clip.
 
-Inspect their useful ideas and changes. Do not merge whole branches blindly.
+### Phase 5 — Detailed Codex implementation plan
 
-## Migration requirements — change all dependent files
+Create one detailed plan file, recommended path:
+docs/architecture/CODEX_IMPLEMENTATION_PLAN_2026-11-09.md
 
-After selecting the new engine, perform the migration end to end.
+The plan must be executable by Codex and contain:
+1. Final selected architecture and why.
+2. Explicit KEEP / CHANGE / REMOVE decisions.
+3. A dependency-ordered TODO list.
+4. Exact files to create, modify, consolidate, deprecate or delete.
+5. Exact schemas/contracts and example payloads.
+6. Local ComfyUI integration and .env variable requirements (names only, never values).
+7. Model/workflow registry changes and pinning/version rules.
+8. CLI/entrypoint changes and example commands.
+9. Unit, integration, schema, dry-run and local smoke tests.
+10. A controlled 60-second visual benchmark and scoring rubric.
+11. Acceptance criteria for each phase.
+12. Risks, rollback path and unresolved blockers.
 
-1. Map the current story-to-video path: inputs, data contracts, schemas, prompts, configuration, model calls, asset/reference handling, editing/assembly, validation, CLI/jobs and tests.
-2. Define the new minimal production flow (ideally 3–5 meaningful stages). Each stage must have a real responsibility and supported controls. Remove redundant intermediate representations and controls that confuse the selected model or duplicate the same decision.
-3. Implement the selected model/toolchain as the **new default**, including real provider/model configuration, prompt construction, reference handling, job execution, output normalization and editing/assembly integration.
-4. Update every affected caller, schema, validator, test fixture, config file, workflow, example, CLI entrypoint, documentation page and project decision. Search the whole repository for stale model names, old route assumptions, obsolete contracts and contradictory instructions. Do not leave half-migrated paths.
-5. Retire or isolate the superseded route. Keep a legacy baseline only if useful for comparison or rollback; clearly mark it as legacy and prevent accidental selection as the default.
-6. Preserve unrelated working capabilities: story research/fact checking, script structure, narration/dialogue, audio, captions, licensing/provenance, spend limits, creator approval and final edit/review. Adapt interfaces only where required.
-7. Add only controls that are genuinely supported by the chosen model. Do not claim character memory, reference strength, camera movement, start/end frame or pose control unless the implementation actually supports it.
-8. Simplify validators to check real failure modes in the new workflow. Remove duplicate or speculative gates that do not improve output quality or safety. Keep essential correctness, provenance, budget and creator-approval safeguards.
-9. Keep documentation and progress records synchronized with the actual code. Mark old research and decisions as superseded where appropriate; do not silently delete useful history.
+Every TODO must say what changes, why, expected result and how it is tested. No vague tasks such as "improve continuity" or "fix prompts".
 
-This is not a request to patch a few mismatches. It is an explicit authorization to make a broad, coherent migration throughout the files required by the selected new test engine.
+### Phase 6 — Pilot and validation plan
+- Use a single, historically checked 60-second story and the same character references.
+- Target approximately 12 shots: 7 video shots / 4 composed illustrations / 1 map shot, subject to actual story needs.
+- Test the primary workflow first and the secondary workflow only on shots requiring additional control.
+- Measure character consistency, scene/action accuracy, camera compliance, continuity, accepted/rejected jobs, retries, local generation time and manual effort.
+- Code-level tests and dry-runs are not visual proof. State clearly which results require a real local model run.
+- Do not authorize or start paid jobs; do not create paid cloud resources.
 
-## Required end-to-end acceptance test
+## Gemini deliverables — planning documents only
 
-Implement a reproducible **60-second storytelling pilot** using the new default engine. Use approximately 6–8 shots and the same story, characters, references and shot intent throughout.
+Create/update only these planning artifacts on this branch:
+1. A concise decision record, if the digest above needs a correction based on the repository audit.
+2. docs/architecture/CODEX_IMPLEMENTATION_PLAN_2026-11-09.md — the detailed implementation plan for Codex.
 
-The sequence must include:
-- an establishing shot;
-- a two-character interaction;
-- dialogue coverage (shot/reverse-shot or a suitable alternative);
-- a visible action with a clear cause and result;
-- a location or time transition;
-- a concluding shot that follows logically from the preceding action.
+Do not implement code or change runtime configuration. Do not modify application source files. Do not create a new branch. Do not merge PRs. Do not launch model inference.
 
-Evaluate:
-- character identity and environment consistency;
-- whether the described action actually happens;
-- scene/composition and camera compliance;
-- continuity across shot boundaries;
-- accepted vs rejected generations and retry count;
-- generation cost and operator effort per accepted 60 seconds.
+## Quality bar for your plan
 
-The goal is a coherent, directed story in the intended stylized 2.5D look. Do not grade it primarily on hyperrealism.
+The plan is successful only if Codex can implement it without having to:
+- choose the model architecture again;
+- guess what ChatGPT should produce;
+- invent script/visual-script fields;
+- guess the local model/workflow setup;
+- decide which legacy rules are still active;
+- rediscover which tests and acceptance criteria matter.
 
-Run code-level tests and free/dry-run validation. If a genuine model generation is necessary to validate visual quality, prepare the exact job, price and required inputs, but do not submit a paid job or create billable cloud resources without the creator's explicit approval. Clearly distinguish code tests from a visually validated generation.
-
-## Autonomy and safeguards
-
-- Make implementation decisions independently within this objective. Do not ask the creator to identify every conflict or approve routine file-level changes.
-- Do not wait for permission to update dependent files, schemas, tests and documentation required by this migration.
-- Do not merge other branches, merge PRs, deploy, publish, alter credentials/secrets or start paid jobs without explicit approval.
-- Do not overwrite user work that is not present in the branch. Inspect the available worktree and remote refs first.
-- Do not hide failed tests, incomplete integration, missing credentials, unavailable hardware or unverified visual claims.
-- Avoid unrelated refactoring.
-
-## Final report
-
-Be concise and decisive. Report:
-1. the two researched combinations and why the selected one won;
-2. the new default architecture and exact end-to-end path;
-3. the files/contracts/configs changed and old paths retired or retained;
-4. tests run, with exact results;
-5. the 60-second pilot result or the precise blocker to visual generation;
-6. known limitations, cost implications and the next action.
-
-**Deliver a working migrated test engine, not just a proposal, research document, adapter or architecture diagram.**
+Be specific, critical and concise. The purpose is to end the architecture debate and give Codex an unambiguous implementation sequence.
