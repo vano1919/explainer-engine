@@ -56,6 +56,12 @@ The creator has not obtained a reliable, coherent 60-second finished video despi
 
 Keep the existing LoRA and working components available as a baseline until a replacement is demonstrated. Do not train another LoRA by default. Do not discard Blender, Qwen or LTX merely because a new model is available.
 
+## Branch snapshot and completeness
+
+This handoff branch was created from `fix/j5-free-render-contracts` at remote commit `21a4e36d59ae0c951e88b4430b1fc60ae83db847`. The remote branch `codex/j5-ltx-first-pr162` was identical to that source at the time of preparation. Commit `0c2d1c7404f2b208aa0c5787217aac5a836d8ed3` is an ancestor of the source head, so its J5 smoke changes are included.
+
+The previously mentioned local short SHA `20b218e` could not be resolved in the GitHub repository. It is not included in this branch unless it was subsequently pushed under another commit. Do not claim that its readiness-document changes are present. Check the creator's local worktree/patch and reconcile it if available before overwriting the related readiness record.
+
 ## Current repository decisions and limitations
 
 The current branch already contains the remote work from the stacked PR chain:
