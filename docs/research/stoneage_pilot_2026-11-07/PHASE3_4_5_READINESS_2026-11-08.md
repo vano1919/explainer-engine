@@ -99,7 +99,7 @@ The previous J2 implementation still contains a Blender clay-conditioned route:
 
 D-120 amends D-116: J2 must start from a Qwen image generated from scene words, with no Blender/3D render supplied to Qwen. The intended current route is Qwen text-first frame -> LTX image-to-video. J4 retains Blender colour/depth/line conditioning for LTX restyle. J5 remains approved Qwen assets -> Blender 2.5D.
 
-The old J2 writer/schema/contract/pod job are migration debt. They remain blocked from a paid benchmark until they agree on the text-first recipe and pass preflight.
+The old J2 writer/schema/contract still produce the historical clay-conditioned job shape. A D-120 fail-closed guard has now been added to `p14_ltx.py` before both weight prefetch and generation, and tests cover J2/clay rejection. **Important deployment gap:** the P14 pod downloads a sha-pinned `ee_src.tar.gz`; the current `p14.sh` still pins the previous bundle. The guard is not live in the cloud pod until `python -m explainer_engine.training.pods.p14.lean build` regenerates the bundle and updates the script's SHA line, and the refreshed bundle is uploaded to HF. Do not start the paid pod before that pin/hand-off is verified.
 
 ### Benchmark design after migration
 
