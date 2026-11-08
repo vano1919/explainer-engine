@@ -229,11 +229,12 @@ def check_conversations(plan: dict) -> list[dict]:
         first_dialogue_place = shots[first].get("place")
         opener_is_grounded = (bool(opener.get("clip")) and bool(opener.get("place")) and bool(opener.get("drawing"))
                               and opener.get("place") == first_dialogue_place
+                              and opener.get("scene") == sc and shots[first].get("scene") == sc
                               and speakers <= {str(x).lower() for x in opener.get("shows", [])})
         if not (opener["type"] == "V" and opener.get("two_shot") and opener_is_grounded):
             out.append(_f("AS-03", "FAIL", opener["id"], f"conversation '{sc}' must normally open on an LTX two-shot "
                                                          "(type V, two_shot) sourced from the dialogue place and showing both speakers, "
-                                                         "then use the coverage required by the scene"))
+                                                         "with matching scene metadata, then use the coverage required by the scene"))
             out.append(_f("ED-14", "FAIL", opener["id"], f"conversation '{sc}' has no establishing two-shot"))
         run = 0
         for i in range(first, ix[-1] + 1):

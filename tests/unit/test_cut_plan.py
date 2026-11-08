@@ -29,7 +29,7 @@ def good():
             {"id": 1, "type": "V", "start": 3, "dur": 3, "lines": [1], "place": "tundra", "drawing": "p4", "clip": "c1.mp4",
              "shows": ["spears", "hunters", "marcus"]},
             {"id": 2, "type": "V", "start": 6, "dur": 4, "lines": [2], "place": "cave", "drawing": "p6", "clip": "c2.mp4",
-             "two_shot": True, "shows": ["marcus", "ura"]},
+             "scene": "cave", "two_shot": True, "shows": ["marcus", "ura"]},
             {"id": 3, "type": "D", "start": 10, "dur": 2.5, "lines": [3], "place": "cave", "who": "ura", "cut": "ura_rest.png",
              "bg": "blur_cave.png", "framing": "MCU", "h": 1.45, "drop": 0.38, "facing": "left", "mouth": dict(MOUTH),
              "mouth_cues": "l3.mouth.json", "edge_trim_px": 2},
@@ -102,11 +102,11 @@ def test_conversation_opener_duration_is_not_a_hardcoded_gate(duration):
 
 
 @pytest.mark.parametrize("change", [
-    {"place": "street"}, {"clip": None}, {"drawing": None}, {"shows": ["marcus"]},
+    {"place": "street"}, {"clip": None}, {"drawing": None}, {"shows": ["marcus"]}, {"scene": "street"},
 ])
 def test_a_two_shot_opener_must_be_grounded_in_the_dialogue_place_and_show_both_speakers(change):
     p = good()
-    opener = {"id": "opening", "type": "V", "start": 5.5, "dur": 0.5, "lines": [], "place": "cave",
+    opener = {"id": "opening", "type": "V", "start": 5.5, "dur": 0.5, "lines": [], "place": "cave", "scene": "cave",
               "drawing": "p6", "clip": "opening.mp4", "two_shot": True, "shows": ["marcus", "ura"]}
     p["shots"].insert(2, opener)
     if "place" in change:
