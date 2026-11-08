@@ -2,6 +2,7 @@
 each owned rule has a bad plan that trips exactly that rule; the assembly keeps the LTX sound, mixes an ambience bed per place,
 crops instead of squeezing and writes subtitles without names."""
 import copy
+import json
 
 import pytest
 
@@ -74,7 +75,7 @@ MUTATIONS = {
     "ED-14": lambda p: sh(p, 2).update(two_shot=False),
     "AS-01": lambda p: sh(p, 1).update(type="C"),
     "AS-02": lambda p: sh(p, 5).update(lines=[3]),
-    "AS-03": lambda p: sh(p, 2).update(dur=9),
+    "AS-03": lambda p: sh(p, 2).update(two_shot=False),
     "AS-04": lambda p: sh(p, 0).update(lines=[0, 2]),
     "AS-05": lambda p: p["ambience"].pop("cave"),
     "AS-06": lambda p: sh(p, 2).update(shows=["ura"]),
@@ -92,11 +93,28 @@ def test_good_plan_passes_every_check():
     assert C.gate(good()) == []
 
 
+@pytest.mark.parametrize("duration", [3.0, 9.0, 12.0])
+def test_conversation_opener_duration_is_not_a_hardcoded_gate(duration):
+    p = good()
+    sh(p, 2)["dur"] = duration
+    assert "AS-03" not in {f["rule"] for f in C.check_conversations(p)}
+
+
 @pytest.mark.parametrize("rule", sorted(MUTATIONS))
 def test_each_rule_trips_on_its_bad_plan(rule):
     p = copy.deepcopy(good())
     MUTATIONS[rule](p)
     assert rule in {f["rule"] for f in C.gate(p)}
+
+
+def test_final_cut_entrypoint_rejects_an_invalid_plan_before_creating_outputs(tmp_path, capsys):
+    p = good()
+    sh(p, 3)["mouth"].pop("round")
+    (tmp_path / "plan.json").write_text(json.dumps(p), encoding="utf-8")
+    assert C.main(["assemble", str(tmp_path)]) == 1
+    assert "nothing was rendered" in capsys.readouterr().out
+    assert not (tmp_path / "seg").exists()
+    assert not (tmp_path / "cut.mp4").exists()
 
 
 def test_every_rule_owned_by_the_gate_has_a_bad_plan():

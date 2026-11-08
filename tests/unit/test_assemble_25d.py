@@ -161,16 +161,46 @@ def test_the_four_dialogue_shots_plan_cards_facing_the_camera_and_one_speaking_m
             assert c["kind"] == "hero" and len(c["breath"]) == 24 and c["shadow"]["alpha"] == A.SHADOW["alpha"]
             assert "blink" in c
     speaking = [c for b in bodies.values() for c in b["cards"] if "mouth" in c]
-    assert [c["name"] for c in speaking] == ["card_H3"] and len(speaking[0]["mouth"]["factors"]) == 24
-    assert any(any(v > 0.5 for v in f) for f in speaking[0]["mouth"]["factors"])   # a mouth state opens on the line
+    dialogue_mcus = [c for c in bodies["J5-03_mcu_b_speaks"]["cards"] if "mouth" in c]
+    assert len(speaking) == 5 and [c["name"] for c in dialogue_mcus] == ["card_H3"]
+    assert len(dialogue_mcus[0]["mouth"]["factors"]) == 24
+    assert any(any(v > 0.5 for v in f) for f in dialogue_mcus[0]["mouth"]["factors"])   # a mouth state opens on the line
     mcu, rev = bodies["J5-03_mcu_b_speaks"], bodies["J5-04_mcu_a_reacts"]
     assert mcu["camera"]["setup"] == rev["camera"]["setup"] == "mcu_front"
+    assert mcu["world"]["blur_sigma_px"] == A.CLOSEUP_BACKGROUND_BLUR_SIGMA_PX
+    assert mcu["world"]["source_image"] == mcu["world"]["image"]
+    assert len(mcu["world"]["source_sha256"]) == 64
+    assert "blur_sigma_px" not in bodies["J5-01_master"]["world"]
     assert mcu["probe"][0]["at"][:2] == pytest.approx(A.SMOKE_CAST["H3"][:2])
     assert rev["probe"][0]["at"][:2] == pytest.approx(A.SMOKE_CAST["H1"][:2])
     pan = bodies["J5-05_pan30"]["camera"]["keys"]
     from explainer_engine.blender import scene_builder as SB
     yaw = [SB.angles([k["look_at"][i] - k["location"][i] for i in range(3)])[0] for k in (pan[0], pan[-1])]
     assert (yaw[0] - yaw[1]) % 360 == pytest.approx(30.0, abs=1e-3)
+
+
+def test_closeup_world_is_blurred_from_the_same_approved_panorama_without_mutating_it(smoke_assets, tmp_path):
+    from PIL import Image, ImageChops
+    doc, d = smoke_assets
+    body = A.plan(doc, A.smoke_shots(0.5)[2], base=d, width=320, height=180)
+    source_bytes = (d / "grid360.png").read_bytes()
+    rendered = A._world_for_render(body, tmp_path)
+    derived = Image.open(rendered["world"]["image"]).convert("RGB")
+    original = Image.open(d / "grid360.png").convert("RGB")
+    assert (d / "grid360.png").read_bytes() == source_bytes
+    assert derived.size == original.size
+    assert ImageChops.difference(derived, original).getbbox() is not None
+    assert rendered["world"]["source_image"] == str((d / "grid360.png").resolve())
+    assert len(rendered["world"]["derived_sha256"]) == 64
+
+
+@pytest.mark.parametrize("state,shape", [("rest", "X"), ("half", "C"), ("wide", "D"), ("round", "E")])
+def test_smoke_has_a_separate_render_probe_for_each_mouth_state(state, shape):
+    shots = {s.get("mouth_state_probe"): s for s in A.smoke_shots(0.5) if s.get("mouth_state_probe")}
+    assert set(shots) == set(A.STATES)
+    shot = shots[state]
+    planned = A.LipSync().plan(shot["cast"]["H3"]["line"]["cues"], frames=12)
+    assert A.MOUTH_STATE[planned["shapes"][5]] == state
 
 
 def test_the_planner_refuses_what_is_not_drawn_or_not_the_drawn_file(smoke_assets, tmp_path):

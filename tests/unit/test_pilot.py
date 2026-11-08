@@ -95,6 +95,27 @@ def test_the_pilot_assembles_its_window_and_a_missing_clip_stops_it_or_becomes_a
 
 
 @needs_ffmpeg
+def test_a_complete_pilot_clip_set_still_cannot_be_marked_as_a_final_cut(tmp_path, monkeypatch):
+    from explainer_engine.production import assemble as ASM
+    j5 = tmp_path / "j5"
+    _clip(j5 / "S01-06.mp4", "2560x1440", 60)
+
+    def fake_run(command, check):
+        Path(command[-1]).parent.mkdir(parents=True, exist_ok=True)
+        Path(command[-1]).write_bytes(b"test video")
+
+    def fake_assemble(_manifest, _shots, output, **_kwargs):
+        Path(output).write_bytes(b"preview")
+        return {"findings": []}
+
+    monkeypatch.setattr(ASM, "build_video_v2", fake_assemble)
+    report = P.build(RS, tmp_path / "out", ids=["S01-06"], j5=j5, run=fake_run)
+    assert report["slates"] == []
+    assert report["preview"] is True
+    assert "cut_plan.gate" in report["preview_reason"]
+
+
+@needs_ffmpeg
 def test_an_assemble_25d_frame_folder_is_a_j5_clip(tmp_path):
     from PIL import Image
     d = tmp_path / "j5" / "S01-06" / "frames"

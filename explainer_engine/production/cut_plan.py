@@ -45,7 +45,6 @@ CUE_TO_STATE = {"A": "rest", "X": "rest", "B": "half", "C": "half", "G": "half",
 MCU_MIN_H = 1.35            # DL-01: chest-up close-up; Gemini review: a full figure at h 0.95 is too small to read a mouth
 MCU_MIN_DROP = 0.30
 HEAD_TOLERANCE = 0.02       # DL-03: the same size in every shot of the same size in a scene
-TWO_SHOT_S = (4.0, 8.0)     # AS-03: a conversation opens on an LTX two-shot of 4-8 s (the creator 21:01-21:03)
 REACTION_EVERY = 4          # DL-07 / ED-14: a listener's reaction at least every 4th line
 CUT_SNAP_S = 0.10           # AS-07: a cut sits in a pause, or within 100 ms of a line's start
 AMBIENCE_GAIN = 0.12        # AS-05: the bed sits about 18 dB under the voice
@@ -219,16 +218,15 @@ def _conversations(plan: dict) -> dict[str, list[int]]:
 
 
 def check_conversations(plan: dict) -> list[dict]:
-    """AS-03 / ED-14 (a conversation opens on an LTX two-shot of 4-8 s), DL-07 (listener reaction at least every 4th line),
+    """AS-03 / ED-14 (a conversation normally opens on an LTX two-shot; duration is editorial, not hardcoded), DL-07 (listener reaction at least every 4th line),
     DL-08 (a two-shot is a place picture or an LTX clip from it, never a cut-out), DL-09 (an overlap cuts on its first frame)."""
     out, shots = [], plan["shots"]
     for sc, ix in _conversations(plan).items():
         first = ix[0]
         opener = shots[first - 1] if first and shots[first - 1].get("two_shot") else shots[first]
-        lo, hi = TWO_SHOT_S
-        if not (opener["type"] == "V" and opener.get("two_shot") and lo <= float(opener["dur"]) <= hi):
-            out.append(_f("AS-03", "FAIL", opener["id"], f"conversation '{sc}' must open on an LTX two-shot of {lo:g}-{hi:g} s "
-                                                         "(type V, two_shot), then the close-ups"))
+        if not (opener["type"] == "V" and opener.get("two_shot")):
+            out.append(_f("AS-03", "FAIL", opener["id"], f"conversation '{sc}' must normally open on an LTX two-shot "
+                                                         "(type V, two_shot), then use the coverage required by the scene"))
             out.append(_f("ED-14", "FAIL", opener["id"], f"conversation '{sc}' has no establishing two-shot"))
         run = 0
         for i in range(first, ix[-1] + 1):

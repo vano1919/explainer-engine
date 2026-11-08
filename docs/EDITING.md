@@ -1,6 +1,6 @@
 # Editing rules (ED-xx)
 
-> **Route-scoped since D-116/D-120 (2026-11-08).** J2's target is Qwen text-first frame -> LTX image-to-video, but that migration is pending and the old clay-conditioned path must not be launched; J4 uses Blender layout conditioning -> LTX restyle; J5 uses approved Qwen assets assembled/rendered in Blender; H uses Python helpers. Older procedures below remain scoped to the route and episode version that uses them. The edit, rhythm and sound rules (ED) stay in force for every lane.
+> **Route-scoped since D-116 (2026-11-06), amended by D-120/D-121/D-122 (2026-11-08).** J2's target is Qwen text-first frame -> LTX image-to-video, but that migration is pending and the old clay-conditioned path must not be launched; J4 uses Blender layout conditioning -> LTX restyle; J5 uses approved Qwen assets assembled/rendered in Blender only when the LTX-first dialogue route benefits from it; H uses Python helpers. Older procedures below remain scoped to the route and episode version that uses them. The edit, rhythm and sound rules (ED) stay in force for every lane.
 
 Creator notes of 2026-10-17 after the first full cut of Episode 1: audible jumps between read chunks (worst in Day 1), a zoom
 that snaps back to the default view on the same picture, two music tracks plus the tick plus a bed all under the voice, and a

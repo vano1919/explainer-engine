@@ -1,12 +1,12 @@
 # Scene assets and the J5 2.5D assembly
 
-> **Route-scoped since D-116 (2026-11-06):** this page belongs to route J5 (Qwen assets + Blender 2.5D, no LTX) and to the
+> **Route-scoped since D-116 (2026-11-06), amended by D-122 (2026-11-08):** this page documents J5 asset assembly as an optional
+> component within an LTX-first dialogue route (a J5 shot itself contains no LTX) and to the
 > first frames of J2/J4. The routes and their default mapping live in the [decision log](DECISIONS_AND_OPEN_QUESTIONS.md) (D-116) and
 > in `explainer_engine/visual/archetypes_ic.json`; the plan is [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md)
 > (D-121: flat-lit sheets, four mouth states (closed, half, wide, round) with a two-frame cross-blend, the horizon check on a 30-degree pan).
 
-Work package ICW-11 (guide step 2.1). Qwen-Image-2.1 + xworld_v2 draws each scene's assets: one 360 backdrop, the approved hero drawings actually needed by the shots, and props. Do not automatically generate every angle from a hero sheet: RF-03 (3)-(4) keeps mouth/blink/expression variants on the same approved drawing and leaves a new pose/angle reference unapproved until measured. No Blender/3D render is ever a Qwen input (D-120/RF-01). A J5 shot is assembled from approved assets in Blender: no picture is drawn per shot and no video model runs. The creator judges the result with his eyes; if he calls it "paper puppet", V3/V4 move to LTX a2v
-(`route_alt` becomes `route` in the registry) and step 3 adds the a2v shot.
+Work package ICW-11 (guide step 2.1). Qwen-Image-2.1 + xworld_v2 supplies approved scene assets when a selected route needs them: one 360 backdrop, only the approved hero drawings actually needed, and props. Do not automatically generate every angle from a hero sheet: RF-03 (3)-(4) keeps mouth/blink/expression variants on the same approved drawing and leaves a new pose/angle reference unapproved until measured. No Blender/3D render is ever a Qwen input (D-120/RF-01). LTX is the primary dialogue visual route; use its footage directly when it covers the exchange. J5 assembles approved assets only for optional close-ups/reactions when there is a measurable quality-preserving production benefit (D-122). The creator's visual review decides naturalness; a successful render alone is not acceptance.
 
 ## The flow
 
@@ -45,11 +45,15 @@ angle, and for the speaker the line's mouth cues: `audio/words_to_mouth_cues.py`
 
 ## D-120 / DL-02 integration boundary
 
-The current J5 renderer uses the 360° panorama as a sharp world texture for every shot. That is valid for wide/establishing shots but does **not** satisfy DL-02 for dialogue close-ups, which require the same place picture as a blurred background crop with no readable landmark. A derived blurred background from the same approved place image is the proposed fix; it is not implemented yet. Do not label J5 dialogue compliant with DL-02 until the renderer and a frame-level test prove the blur.
+J5 close-up jobs derive a Gaussian-blurred panorama from the same approved 360° source used by the scene. The renderer records the original path and hash plus the derived file hash; it never edits the approved source or calls Qwen for a second background. Wide shots keep the sharp source. The 40 px blur is a starting value only; visual review must confirm that landmarks are not readable and continuity is preserved.
 
 ## D-121 update (2026-11-08)
 
-The earlier three-state J5 mouth contract is superseded by D-121. A speaking card now requires `mouth_half`, `mouth_wide`, and `mouth_round` in addition to the closed `base`; `mouth_open` is retained in the schema only as a deprecated legacy field and is not consumed by the current renderer. The planner and Blender material must implement the same sequential four-state blend. The existing synthetic smoke is a software test only; it does not replace the real Qwen-asset dialogue review.
+The earlier three-state J5 mouth contract is superseded by D-121. A speaking card now requires `mouth_half`, `mouth_wide`, and `mouth_round` in addition to the rest/closed `base`; `mouth_open` is retained in the schema only as a deprecated legacy field and is not consumed by the current renderer. The planner and Blender material implement the same sequential four-state blend. The synthetic smoke now plans a separate actual-render probe for each state and compares the decoded frame pixels; its figures are still placeholders and it does not replace the real visual dialogue benchmark.
+
+## D-122 LTX-first dialogue
+
+The conversation's opening is normally an LTX establishing two-shot, with about 5-9 seconds as the pilot test target rather than a universal duration. If that segment contains enough usable dialogue footage, keep it and create no J5 cut-outs. If the exchange needs more coverage, compare further LTX footage with optional J5 close-ups/reactions. Do not force a fixed sequence. The benchmark protocol and current evidence are in [DIALOGUE_BENCHMARK_TEMPLATE_2026-11-08](research/stoneage_pilot_2026-11-07/DIALOGUE_BENCHMARK_TEMPLATE_2026-11-08.md).
 
 ## Measured (2026-11-06, the cloud container, free)
 

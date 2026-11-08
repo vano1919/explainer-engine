@@ -1,127 +1,59 @@
 # Phase 3 / 4 / 5 readiness — 2026-11-08
 
-Scope: free Blender work and rule reconciliation before any paid Qwen/LTX/Modal step. This is a technical readiness record, not a production approval.
+Scope: free local code and documentation changes before any paid Qwen/LTX/Modal work. This is a technical readiness record, not approval for production generation.
 
-## 3. Free J5 Blender work
+## A. Architecture audit
 
-### What has actually rendered
+- PR #161 provides the D-121 four-state J5 card contract and renderer mapping.
+- PR #162 fixes the 0.5-second cue false-green at the planner level and records per-state active frames. Its latest Quality CI failed in `test_icw01_rule_rewrite`; the Blender smoke passed. The failure is a documentation banner mismatch, not an observed renderer regression.
+- `cut_plan.gate()` is called by the final `cut_plan assemble` entrypoint. The route-comparison `pilot.build()` accepts a different schema and currently marks a complete clip set non-preview, despite bypassing that gate.
+- The J5 renderer previously used a sharp panorama for close-ups. This continuation derives a blurred copy from the same approved panorama for MCU/OTS close-up setups and retains file-hash provenance.
+- The earlier D-116 J5-only dialogue default conflicts with AS-03's LTX conversation opener. D-122 resolves this: LTX leads; Blender J5 is an optional measured extension.
+- D-120 and D-121 remain in force. No rendered frame is sent to Qwen; J2's historical clay path and the production P14 worker are outside this change.
 
-GitHub Actions Blender smoke run 42458910449 completed successfully on the previous J5 dialogue branch:
+## B. Current decisions (D-122)
 
-- Blender 5.2.3 LTS, EEVEE, CPU-only GitHub runner.
-- Five J5 component shots: master two-shot, OTS, speaking MCU, reaction MCU, and 30-degree pan.
-- 12 PNG frames per shot, 320x180, 24 fps, 4 samples, 0.5 seconds per shot.
-- The run produced a 115 MB artifact; the rendered frames were inspected.
+A conversation normally opens with an LTX establishing two-shot. About 5-9 seconds is the pilot target for evaluating that opening, not a universal duration. It should show the place, both characters, their positions and who is addressing whom. Further coverage remains editorially flexible.
 
-This is a real Blender render, but only a synthetic software smoke. The characters are deliberately primitive red/blue test figures and the background is a blue/green grid. It is not a Qwen-art quality test, not a 1440p render, and not a final video.
+If LTX gives enough usable dialogue footage, use it directly and create no character cut-outs. If the dialogue needs more coverage, compare additional LTX footage with optional Blender close-ups/reactions. J5 must match the established characters, place, light and style, and earn its place through lower total production cost or effort without unacceptable quality loss. Mouth timing must derive from the actual dialogue audio. For J5 close-ups, blur a derivative of the same approved place image and use one approved character drawing as the source for its mouth/blink/expression variants. Do not generate new angles before the benchmark.
 
-### Defect found after inspecting the artifact
+`pilot.build()` remains preview-only until it consumes a cut plan that passes `cut_plan.gate()`. The production final-cut entrypoint must continue to gate before rendering.
 
-The CI run was green but the speaking shot had `mouth_frames_open: 0`. Its 12 Rhubarb frames were all `X` (rest/closed). The synthetic sentence had six short words; at 0.5 seconds, the spelling-derived cues were shorter than the 40 ms minimum and were folded into rest. The smoke therefore did not prove lip movement even though the planner unit test passed.
+## C. Existing assets and benchmark feasibility
 
-On branch `fix/j5-free-render-contracts` this is being corrected by:
-- using deterministic test words that exercise all four states at 0.5 seconds;
-- normalising the internal closed-lips state name to `rest`, matching D-121 and `cut_plan.MOUTH_STATES`;
-- reporting active mouth frames per state and failing the smoke if half, wide, or round is not exercised;
-- adding a unit test that requires rest, half, wide and round to appear in the smoke cue plan.
+The local `route_test_assets/` handoff contains creator-reviewed Qwen images, including approved character references, scene images and environment panoramas. It contains no LTX dialogue clip, no paired dialogue audio with verified timings, and no four-state close-up cut-outs. The repository's tracked scientist assets are unrelated to that story. Blender is not installed on this Windows host. No free/local resource set is currently sufficient for a fair end-to-end LTX-only versus LTX+Blender dialogue comparison.
 
-The correction is not accepted until the new branch's CI and Blender artifact both pass and the artifact shows non-zero active mouth frames for all three overlays.
+Therefore the real visual benchmark is **BLOCKED**, not successful. The benchmark protocol is in [DIALOGUE_BENCHMARK_TEMPLATE_2026-11-08](DIALOGUE_BENCHMARK_TEMPLATE_2026-11-08.md). No paid generation job was launched. A paid LTX dialogue sample or additional LTX coverage would require explicit approval before submission; if a later benchmark also needs generated MCU assets, that operation must be separately priced and approved.
 
-### Still required for the free visual test
+## D. Test and smoke evidence
 
-1. Render the corrected synthetic smoke in CI and inspect all five shot sequences.
-2. Run the same renderer on the creator's RX 5700 PC at 2560x1440 / 24 fps with a short, representative scene.
-3. Record PC render time, memory, frame hashes and the creator's visual verdict.
-4. Only after the asset-contract questions below are resolved, use approved real Qwen cut-outs and a real place backdrop for a 5-second J5 dialogue component test. No new Qwen asset generation is included in the free Blender step.
+The previous CI run for PR #162 (head `c8354f97144c463abaf7ffa7b234385bf6b6e83e`) reported:
 
-## D-120 / D-121 rule conflicts requiring creator decisions
+- Quality checks: **failed**, 1 failed, 3,208 passed, 3 skipped, 3 deselected, 1 xfailed. Failure: `tests/unit/test_icw01_rule_rewrite.py::test_old_route_words_appear_only_under_a_dated_legacy_banner_or_marked_legacy`; route-scoped document banners did not meet the test's exact date check.
+- Blender smoke: **passed** on Blender 5.2.3 LTS, EEVEE, CPU runner, 320x180, 12 frames per shot, 24 fps, 4 samples. Its figures and grid are synthetic; this is not a quality benchmark.
 
-The following are not safe to resolve by silently changing code. Recommendations are explicit; the creator's answer becomes the decision.
+This continuation adds source-level checks for a derived same-source background blur, removes the hardcoded 4-8 second conversation-opener gate, makes the route pilot preview-only regardless of clip completeness, tests cut-plan gate refusal on an invalid final cut, and adds actual rendered-image hashes for separate rest/half/wide/round Blender smoke probes. Those probes share identical camera and body-motion seeds so the decoded image differences come from the mouth images. They still need to run in Blender CI before their render evidence can be accepted.
 
-### Q1 — Conversation opening: LTX or J5 Blender?
+Local verification on this Windows host:
 
-- D-116 assigns V3/V4 dialogue to J5 (Qwen assets + Blender 2.5D, no LTX).
-- D-121 AS-03 says every conversation opens on an LTX two-shot of 4–8 seconds, then close-ups.
-- D-120 / DL-08 defines the visual form of a two-shot as the place picture or an over-the-shoulder, not a new sharp place drawing.
+- Python 3.14.7 with Pillow 13.0.0 ran the relevant cut-plan, pilot, J5 assembly, video assembly, ICW-01 documentation and scene-reuse documentation tests: **101 passed**.
+- `python -m explainer_engine.docs_lint`: **0 findings**. `python -m explainer_engine.design.palette`: **passed**.
+- The full non-system/non-media suite did not complete on this host. Windows required Git's `which.exe` for POSIX-only test decorators; after that workaround, pytest exited during collection/execution at 13% without a summary. Its last-failed rerun isolated `test_a_pid_of_another_user_is_not_a_crash`, which assumes Linux `PermissionError` semantics for PID 1.
+- Blender is not installed and the repository has no pinned Windows archive. The updated Blender smoke has not run locally. The previous CI Blender smoke is evidence only for the prior revision.
+- FFmpeg 9.0.2 is installed. A route-pilot integration test initially exposed that FFmpeg 9 removed `-vsync`; `production/assemble.py` now uses `-fps_mode passthrough`, and its video-assembly tests passed in the 101-test run.
 
-**Recommendation:** keep AS-03 as the route-wide rule: LTX creates the conversation-opening two-shot; J5 handles the approved close-ups/reactions afterward. The free J5 test should validate the Blender close-up component only, not claim to be a complete D-121-compliant conversation. This preserves the later D-121 hard rule without pretending J5 is LTX-free for the entire dialogue scene.
+## E. Remaining benchmark work
 
-**Question:** Do you approve this split (LTX opening + J5 close-ups), or should J5 be allowed to create the opening two-shot in Blender as an explicit exception to AS-03?
+1. Prepare one short, two-character dialogue exchange with real approved voice audio and verified word/phoneme timing.
+2. Use an existing usable LTX sample if available; otherwise obtain creator approval for the exact generation and current price before launching it. The opening target is about 5-9 seconds.
+3. Render Pipeline A (LTX-only) and Pipeline B (same LTX opening plus only the close-ups/reactions needed, using existing approved character/location assets) at matched output settings.
+4. Inspect representative frames and the transition, then record all quality and effort fields in the benchmark template.
+5. Extend LTX or retain J5 only if the measured total cost/effort and visual review support that choice.
 
-### Q2 — Dialogue source image: MCU cut-out or full-body card?
+## F. Cost status
 
-- D-120 and DL-01 specify a Qwen-drawn MCU/chest-up hero image on a flat light-grey background, then cut out.
-- The current `scene_assets/1` J5 card model stores a full-height hero image with real `height_m`; Blender camera framing crops it to MCU.
-- Those are different source-image contracts and should not be mixed.
+Measured for this continuation: no provider jobs and no production render costs. Local code edits and unit tests have no provider charge. The asset handoff notes a historical roughly US$1.08 route-test Qwen run across its whole asset batch; that is sunk context, not a dialogue benchmark cost. Current LTX prices, asset-preparation hours, Blender setup/render hours and correction time are not measured here, so no pipeline is declared cheaper.
 
-**Recommendation:** use a dedicated MCU dialogue cut-out for speaking shots, and keep full-height cards for wide/establishing shots. Do not reinterpret a full-body asset's `height_m` as an MCU image height.
+## G. Scope guard
 
-**Question:** Should J5 dialogue assets use the dedicated MCU cut-out required by DL-01, while full-body cards remain for non-dialogue shots?
-
-### Q3 — Dialogue background: sharp 360 panorama or blurred place crop?
-
-- DL-02 requires the place's own picture as a blurred background crop, with no readable landmark.
-- Current J5 Blender jobs use the unblurred 360 panorama as the world texture for MCU shots.
-- This means the current renderer does not yet meet DL-02 for dialogue close-ups.
-
-**Recommendation:** derive a blurred background texture from the same approved place image for dialogue close-ups; do not generate a second Qwen view. Keep the sharp panorama for wide shots.
-
-**Question:** Approve this derived blurred-background variant for J5 dialogue shots?
-
-### Q4 — Hero angles and reference reuse
-
-- The current scene-assets guide describes drawing every angle a shot needs.
-- RF-03 says a hero's approved close-up may be used as Image 1 for mouth/blink/expression variants of that same drawing; a hero sheet as Image 2 for a new pose is not used until measured.
-- D-120 forbids Blender/3D renders as Qwen references.
-
-**Recommendation:** for the first free dialogue component test, use one creator-approved hero drawing per speaker and derive only mouth/blink/expression variants from that same drawing. Do not generate new camera angles from a prior render or use an unmeasured hero sheet as Image 2. Add a separate angle only after the RF-03 test and creator approval.
-
-**Question:** Approve this conservative single-approved-drawing rule for the first dialogue test?
-
-### Q5 — Does `production.pilot.build()` produce a preview or a final cut?
-
-- D-121 requires `production/cut_plan.py` to gate the cut before rendering.
-- `production/pilot.py::build()` currently builds `film_shots/3` and calls `assemble.build_video_v2()` without `cut_plan.gate()`.
-- The two input schemas are not interchangeable: `cut_plan` requires dialogue lines, ambience, cast, `must_show` and cut metadata that `route_shots` does not necessarily contain.
-
-**Recommendation:** classify `pilot.build()` as a route-comparison preview only until it accepts a real cut-plan artifact or a validated adapter. Do not label its output as a final/production cut. If it is intended to produce a final cut, implement the adapter and fail closed when required fields are missing.
-
-**Question:** Is `pilot.build()` preview-only, or must it become a fully gated final-cut builder?
-
-## 4. Formal Phase 3 benchmark
-
-### D-120 route correction
-
-The previous J2 implementation still contains a Blender clay-conditioned route:
-- `blender/layout_passes.py` can render the historical J2 clay pass;
-- `edit/ltx_jobs.py` and `core/contracts.py` still describe/require clay for the old J2 recipe;
-- `docs/LTX_JOBS.md` still documents the old recipe.
-
-D-120 amends D-116: J2 must start from a Qwen image generated from scene words, with no Blender/3D render supplied to Qwen. The intended current route is Qwen text-first frame -> LTX image-to-video. J4 retains Blender colour/depth/line conditioning for LTX restyle. J5 remains approved Qwen assets -> Blender 2.5D.
-
-The old J2 writer/schema/contract and P14 worker still accept the historical clay-conditioned job shape. No D-120-specific fail-closed guard is currently present in the production P14/RunPod worker. This branch deliberately leaves that worker and its pinned bundle untouched. The old J2 route must not be launched; before any paid run, migrate the writer/schema/pod path and separately review an explicit prefetch/run gate. Manual approval alone is not a substitute for that technical gate.
-
-### Benchmark design after migration
-
-- J2: Qwen text-to-image first frame from scene words -> LTX image-to-video.
-- J4: Blender colour/depth/line layout -> LTX restyle / Union-Control variants.
-- J5: approved Qwen assets -> Blender 2.5D component renders; no LTX inside a J5 shot.
-- Keep the existing lean matrix's question-led order and stop rules.
-- Record input/output hashes, runtime, retry count, clip cost, identity, palette/line share, flicker, motion continuity and upscale impact.
-- Preserve watchdog, per-job caps, output persistence and stop-after-two-consecutive-failures behavior.
-
-### Spend gate
-
-The route plan's US$3–6 Phase 3 estimate is not authorization. The OR-23 spend plan, Opus review, OR-34 audit and explicit creator approval remain mandatory. No paid Qwen, LTX, Modal or RunPod job was started in this work.
-
-## 5. Preliminary verdict
-
-| Route / capability | Evidence | Verdict |
-|---|---|---|
-| J5 synthetic Blender renderer | Prior smoke rendered; mouth-cue false-green defect found; fix is in progress | NOT ACCEPTED until new smoke artifact proves all four states |
-| J5 real Qwen dialogue | No approved MCU cut-outs and matching blurred place crop verified for this test | NOT TESTED |
-| J2 | Old clay-conditioned implementation conflicts with D-120 | BLOCKED |
-| J4 | Layout and LTX job infrastructure exists; no comparable measured paid run in this step | NOT MEASURED |
-| End-to-end route choice | No comparable J2/J4/J5 result set under current decisions | NO WINNER SELECTED |
-
-No route is production-ready from this evidence. The immediate safe work is to fix and re-render the free J5 smoke, answer Q1–Q5, and then perform the creator-PC 1440p Blender test. Paid benchmarking remains closed until the J2 migration, asset approvals and spend gates are complete.
+No Qwen, LTX, Modal or RunPod jobs were started. No PR was merged and nothing was deployed. This change does not edit `p14_ltx.py`, P14/RunPod worker code, pinned bundles, deployment/API configuration or credentials, or production workflows.

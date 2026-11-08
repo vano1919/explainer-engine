@@ -663,7 +663,7 @@ def clip_frames(path: Path, start: int, count: int):
         return
     _n, w, h = clip_info(path)
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"select='between(n,{start},{start + count - 1})'",
-                           "-vsync", "0", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+                           "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     try:
         for _ in range(count):
             raw = ff.stdout.read(w * h * 3)

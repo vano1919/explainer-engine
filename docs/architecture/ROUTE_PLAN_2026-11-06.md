@@ -1,4 +1,4 @@
-# Route plan: Qwen draws, Blender builds and animates in places, LTX animates in places
+# Route plan: LTX leads; Qwen supplies approved imagery; Blender is optional
 
 > **Route-scoped since D-116 (2026-11-06):** the English copy of sections 1-6 and 9 of the creator-approved plan
 > `FINAL_HIGH_LEVEL_PLAN_ka.md` (Georgian, written by the Fable thread 2026-11-06 07:00 UTC; project files
@@ -17,6 +17,10 @@ The older J2 clay path is still present in `layout_passes.py`, `edit/ltx_jobs.py
 
 D-121 also supersedes the older three-mouth-state J5 description: the current J5 dialogue contract is closed/rest + half + wide + round. The scene-assets schema, planner, renderer, and tests are updated on the Phase 3 dialogue branch; CI must verify them before merge.
 
+## D-122 dialogue route (2026-11-08)
+
+LTX is the primary dialogue visual route and the quality reference. A conversation normally begins with an LTX establishing two-shot that shows both speakers and their relation to the place. The pilot target is about 5-9 seconds for this opening segment; it is not a universal duration or a fixed shot order. When LTX supplies enough usable dialogue coverage, keep that footage and do not create character cut-outs. If more coverage is needed, compare more LTX footage against optional J5 close-ups or reactions. J5 earns a place only when an inspected render preserves identity, expression, motion, lighting and transition naturalness while reducing total production effort or cost. A J5 close-up derives its blurred background from the same approved place image and its mouth/expression variants from one approved character drawing. Do not send a Blender render to Qwen or generate new angles before the benchmark.
+
 
 Goal: maximum stability and quality; a 12-15 minute episode for about US$10-15 (EST).
 
@@ -28,7 +32,7 @@ Goal: maximum stability and quality; a 12-15 minute episode for about US$10-15 (
    camera, mouth, crowds); in places it only gives LTX the **drawing** (a layout).
 3. **LTX animates only where motion is really needed:** battle, travel, duel, an emotional gesture, a discovery.
 4. **A scene seen once:** straight Qwen picture -> LTX. **A scene with several angles:** Qwen assets -> Blender assembly -> angles.
-5. **Dialogue:** cut-out heroes on the same backdrop, mouth and face cheaply in Blender/Python; LTX only if the cheap way fails.
+5. **Dialogue (superseded by D-122 below):** this was the D-116 route proposal; LTX-first is now the default, with J5 only as an optional measured extension.
    Nobody watches one frame for more than 5 s.
 6. The "beautiful" Blender NPR render is the final picture nowhere (it failed three times: ICW-05b, ICW-05c, the overnight matrix).
 
@@ -36,22 +40,22 @@ Goal: maximum stability and quality; a 12-15 minute episode for about US$10-15 (
 
 | Tool | Does | Does not |
 |---|---|---|
-| Qwen-Image-2.1 + xworld_v2 ck3000 (0.7) | the look: assets, first frames, fixes (edit mode; references = the creator-approved hero reference only; no Blender or other rendered frame) | motion; continuity with another shot by prompt (D-75: continuity by cards and structure) |
-| Blender 5.2.3 | scene, camera grammar, 360° backdrop projection, 2.5D cards, Geometry Nodes crowds, rigs (Quaternius CC0), Rhubarb mouth, J4 colour/depth/line-art passes, lighting, the EEVEE render of J5 shots; the old J2 clay pass is historical only | the final painted look through a shader |
-| LTX-2.5 (pod) | J2 image-to-video from a Qwen text-first frame (migration pending); J4 restyle under depth/canny; audio-driven dialogue where needed | using the superseded J2 clay-conditioned recipe or inventing a background/composition without a source picture |
+| Qwen-Image-2.1 + xworld_v2 ck3000 (0.7) | approved scene assets and first frames; edit approved drawings (references = approved hero/place images only; no Blender or other rendered frame) | motion; continuity with another shot by prompt (D-75: continuity by cards and structure) |
+| Blender 5.2.3 | optional J5 close-ups/reactions when the benchmark shows a total-cost benefit; J4 colour/depth/line-art passes and the historical J2 clay pass only as documented | replace LTX when that lowers visual quality or naturalness |
+| LTX-2.5 (pod) | primary dialogue visuals and conversation openings; J2 image-to-video from a Qwen text-first frame (migration pending); J4 restyle under depth/canny | using the superseded J2 clay-conditioned recipe or inventing a background/composition without a source picture |
 | Python / FFmpeg | HELPER graphics, assembly (`build_video_v2`), QA, cut-out (BiRefNet), mouth shapes swapped on a card | — |
 | ElevenLabs | narrator + the heroes' fixed voices (D-90), Scribe word timings | — |
 
 ## 3. Matrix: which route for which scene
 
-Routes: **J5** = approved Qwen assets + Blender 2.5D (no LTX in the J5 shot); **J2** = Qwen text-to-image first frame from scene words -> LTX image-to-video (the exact recipe is still blocked pending migration); **J4** = Blender colour/depth/line layout -> LTX restyle; **H** = Python. Status: ✔ = rests on an approved result; T = the test must confirm it (the registry's `route_status`).
+Routes: **J5** = approved Qwen assets + optional Blender 2.5D; **J2** = Qwen text-to-image first frame from scene words -> LTX image-to-video (the exact recipe is still blocked pending migration); **J4** = Blender colour/depth/line layout -> LTX restyle; **H** = Python. For dialogue, LTX is primary and J5 is optional by D-122. Status: ✔ = rests on an approved result; T = the test must confirm it (the registry's `route_status`).
 
 | Lane / sub-category (archetypes_ic) | Route | Alternative | Duration | Identity carrier | Status |
 |---|---|---|---|---|---|
 | **VIDEO** V1 battle / siege / formation | **J4** (thousands of GN soldiers, camera on a rail) | J2 | scene at most 15 s (BP-108), LTX clip 3-6 s (BP-172), by edit or chain | Blender layout -> LTX; no Blender render is sent to Qwen | T |
 | V2 duel / action | **J2** (LTX adds the gestures) | J4 | scene at most 15 s, LTX clip 3-6 s, key pose at 5 s | Qwen text-first frame + scene words | T (J2 migration blocked) |
-| V3 dialogue (visible mouth) | **J5 close-ups** (approved cut-out, four-state mouth, expressions, breathing; conversation opening is separately governed by AS-03) | LTX audio-driven (D-90) | at most 5 s | one creator-approved drawing; variants from that same drawing (RF-03) | T (cheap way) / ✔ (a2v code exists, never run) |
-| V4 council / group dialogue | **J5 close-ups after the AS-03 opening shot** | — | at most 5 s | approved drawings only; no untested new angles | T |
+| V3 dialogue (visible mouth) | **LTX first**; optional J5 close-ups after the establishing shot if footage is insufficient and the benchmark supports it | additional LTX generation | pilot opening target about 5-9 s; later coverage follows the scene | approved reference; J5 variants from one drawing (RF-03) | LTX visual result and cost not measured; J5 component test pending |
+| V4 council / group dialogue | **LTX first**; optional J5 close-ups/reactions for additional coverage | — | no fixed sequence or universal duration | approved drawings only; no untested new angles | no comparative benchmark yet |
 | V5 crafting (hands) | **J2** (loop 2-5 s) | J5 loop on a card | at most 5 s | Qwen insert | T |
 | V6 travel | **J4** (dolly, parallax, crowd) | J5 (cards + camera) | scene at most 15 s, LTX clip 3-6 s | Blender | T |
 | V7 discovery (push-in, fog) | **J5** (Blender camera + fog on cards) | J4 | short | Blender | T |
@@ -61,7 +65,7 @@ Routes: **J5** = approved Qwen assets + Blender 2.5D (no LTX in the J5 shot); **
 | **STILL** S1-S7 (establishing, tableau, insert, aftermath, match, freeze) | **J5**: Qwen plate -> Blender camera / parallax / BP-170 curve | — | at most 5 s (BP-109) | Qwen 360° / plate | ✔ (+dpl 10-27, the parallax code exists) |
 | **HELPER** H1-H6 (map, timeline, counter, cutaway, comparison, callout) | **H** Python (D-87: 2D vector + 2.5D) | Blender terrain only by benchmark (D-112) | the narrator's sentence | — | ✔ |
 
-**Dialogue route boundary (D-121, open for creator confirmation):** AS-03 requires an LTX two-shot at the start of a conversation (4–8 s); the J5 rows above therefore describe the close-up/reaction coverage, not a complete dialogue scene. See Q1 in the [Phase 3/4/5 readiness record](../research/stoneage_pilot_2026-11-07/PHASE3_4_5_READINESS_2026-11-08.md). The J5 free smoke is a renderer-component test only until this boundary is confirmed.
+**Dialogue route boundary (D-122):** AS-03 normally requires an LTX two-shot at the start of a conversation, with no hardcoded duration. The J5 free smoke tests renderer components and does not establish that J5 improves the complete LTX-first scene.
 
 **Budget (EST):** of the 432 s of VIDEO, LTX is needed by V1, V2, V5, V6, V8, about 40-55 %, so about 30-45 clips an episode
 (instead of about 90); the rest is J5 on the creator's PC or CI ($0) or under $1 on RunPod. One LTX clip EST $0.05-0.15 + retries ->
@@ -74,7 +78,7 @@ an episode $3-8 of LTX + $1-2 of Qwen assets + the narrator.
 | Axis | Rule | Home |
 |---|---|---|
 | Voice | 70 % narrator / 30 % dialogue, REVIEW 65-75 %; the narrator is the clock; a hero's voice is fixed, read first, then conditions the clip | D-99 / BP-105, D-88, D-90 |
-| Duration | dialogue at most 5 s; action 10-15 s, never cut artificially; a still at most 5 s; a shot at least 2.5 s; 8k+1 frames on LTX | BP-108, BP-109, BP-84, BP-139 |
+| Duration | visible lip-synced J5 coverage follows BP-108; the dialogue opening's 5-9 s is a pilot target, not a hardcoded rule; action 10-15 s, never cut artificially; a still at most 5 s; a shot at least 2.5 s; 8k+1 frames on LTX | BP-108, BP-109, BP-84, BP-139, D-122 |
 | Lanes | 60/30/10 ± 5 pp, measured in seconds, independent of the words | D-93 / BP-109, D-98 |
 | Rhythm | the MrBeast five zones, one narrator with tempo changes; short clips in the hyped zones | D-94, BP-169, BP-171, BP-172 |
 | Format | 2560x1440, 24 fps, 12 minutes, 5 Shorts | BP-167, D-85, D-104 |

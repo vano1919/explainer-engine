@@ -15,8 +15,8 @@ narration track laid under it when one is given. Free and local; it renders noth
   drops the frames it shares with the clip before it (``overlap_frames_with_previous``), so a J4 shot of two clips is one take.
 - Every clip is conformed to the master (BP-167: 2560x1440, 24 fps: ``finish/upscale.video_filter`` for a 1088-row LTX clip, a
   plain scale for a 1440p render). A clip shorter than its shot is refused by ``build_video_v2``, never stretched.
-- ``--slates`` puts a flat card in the route's colour where a clip is missing, so the cut and the timing can be watched before
-  every route has run; ``pilot.json`` lists each slate and the pilot is then marked ``preview`` (never a sample for approval).
+- ``pilot.build`` is always a route-comparison preview. ``--slates`` puts a flat card in the route's colour where a clip is
+  missing; even when every clip exists, this route-shots input has not passed ``cut_plan.gate`` and is never a final cut.
 - The film_shots/3, audio_spine/2 and edit_and_grade_manifest/1 the assembler reads are written next to the video (straight cuts on
   the shot boundaries; the spine is the shots' clock unless ``--spine`` gives the read's own).
 """
@@ -263,7 +263,9 @@ def build(route_shots: dict, out: Path, *, seconds: float = 60.0, ids: list[str]
     for s in film["shots"]:
         secs[s["lane"]] = round(secs.get(s["lane"], 0) + s["seconds"], 2)
     total = sum(s["seconds"] for s in film["shots"])
-    report = {"schema": "pilot/1", "video": str(video.relative_to(out)), "preview": bool(missing), "seconds": total,
+    report = {"schema": "pilot/1", "video": str(video.relative_to(out)), "preview": True,
+              "preview_reason": "route_shots are not a validated cut_plan/1; final assembly must pass cut_plan.gate",
+              "seconds": total,
               "scenes": sorted({s["scene"] for s in film["shots"]}), "routes": sorted({s["route"] for s in film["shots"]}),
               "lane_share": {k: round(v / total, 3) for k, v in secs.items()}, "shots": rows,
               "slates": [r["shot"] for r in missing], "findings": derived.get("findings", [])}
@@ -290,8 +292,8 @@ def main(argv: list[str] | None = None) -> int:
     pick = dict(x.split("=", 1) for x in a.pick.split(",")) if a.pick else None
     rep = build(rs, a.out, seconds=a.seconds, ids=a.shots.split(",") if a.shots else None, j5=a.j5, helper=a.helper, ltx=a.ltx,
                 base=a.base, pick=pick, audio=a.audio, spine=a.spine, slates=a.slates)
-    print(f"{rep['video']}: {rep['seconds']} s, scenes {', '.join(rep['scenes'])}, routes {', '.join(rep['routes'])}"
-          + (f"; PREVIEW, slates for {', '.join(rep['slates'])}" if rep["slates"] else ""))
+    print(f"{rep['video']}: {rep['seconds']} s, scenes {', '.join(rep['scenes'])}, routes {', '.join(rep['routes'])}; PREVIEW"
+          + (f", slates for {', '.join(rep['slates'])}" if rep["slates"] else ""))
     return 0
 
 

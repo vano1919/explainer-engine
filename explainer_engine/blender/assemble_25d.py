@@ -27,6 +27,8 @@ The numbers of the blink and breathing are the plan's (FINAL_HIGH_LEVEL_PLAN_ka.
 from __future__ import annotations
 
 import argparse
+import copy
+import hashlib
 import json
 import math
 import random
@@ -55,6 +57,8 @@ BREATH_SCALE = 0.005             # breathing: 0.5 % vertical scale ...
 BREATH_HZ = 0.25                 # ... at 0.25 Hz
 SHADOW = {"width_share": 0.9, "depth_share": 0.3, "alpha": 0.35}   # the contact shadow under the feet (share of the figure width)
 ANGLES = ("front", "3q_left", "3q_right", "back")
+CLOSEUP_SETUPS = {"mcu_front", "ots_a", "ots_b", "low_angle_hero_cu"}
+CLOSEUP_BACKGROUND_BLUR_SIGMA_PX = 40.0
 
 
 def _rng(*keys: str) -> random.Random:
@@ -189,6 +193,7 @@ def plan(assets: dict, shot: dict, *, base: Path | str = ".", fps: int = FPS, wi
     cam_pos = path[0]["pos"]
     cards = []
     lip = LipSync(fps)
+    motion_seed = shot.get("motion_seed", sid)
     for hid, c in cast.items():
         hero = heroes[hid]
         angle = c["angle"]
@@ -198,7 +203,7 @@ def plan(assets: dict, shot: dict, *, base: Path | str = ".", fps: int = FPS, wi
         img = _file(ang["base"], base, f"{sid}.{hid}.{angle}.base")
         geo = card_geometry(img, hero["height_m"])
         card = {"name": f"card_{hid}", "kind": "hero", "image": img, "pos": list(c["pos"]), "yaw_deg": _facing(c["pos"], cam_pos),
-                **geo, "breath": breath_track(frames, fps, f"{sid}/{hid}"),
+                **geo, "breath": breath_track(frames, fps, f"{motion_seed}/{hid}"),
                 "shadow": {"width_m": round(geo["figure_width_m"] * SHADOW["width_share"], 6),
                            "depth_m": round(geo["figure_width_m"] * SHADOW["width_share"] * SHADOW["depth_share"], 6),
                            "alpha": SHADOW["alpha"]}}
@@ -221,7 +226,7 @@ def plan(assets: dict, shot: dict, *, base: Path | str = ".", fps: int = FPS, wi
                              "shapes": lp["shapes"], "factors": [list(mix_factors(x)) for x in w]}
         if ang.get("blink"):
             card["blink"] = {"image": _file(ang["blink"], base, f"{sid}.{hid}.{angle}.blink"),
-                             "track": blink_track(frames, fps, f"{sid}/{hid}")}
+                             "track": blink_track(frames, fps, f"{motion_seed}/{hid}")}
         cards.append(card)
     props = {p["id"]: p for p in scene["props"]}
     for pr in shot.get("props") or []:
@@ -232,9 +237,14 @@ def plan(assets: dict, shot: dict, *, base: Path | str = ".", fps: int = FPS, wi
         cards.append({"name": f"card_{pr['id']}", "kind": "prop", "image": img, "pos": list(pr["pos"]),
                       "yaw_deg": _facing(pr["pos"], cam_pos), **geo})
     bd = scene["backdrop_360"]
+    backdrop = _file(bd["file"], base, f"{sid}.backdrop_360")
+    world = {"image": backdrop, "yaw_deg": bd.get("yaw_deg", 0.0)}
+    if cam_spec["setup"] in CLOSEUP_SETUPS:
+        world.update({"source_image": backdrop, "source_sha256": C.sha256_file(backdrop),
+                      "blur_sigma_px": CLOSEUP_BACKGROUND_BLUR_SIGMA_PX})
     return {"job": JOB, "shot_id": sid, "fps": fps, "frames": frames, "width": width, "height": height, "engine": engine,
             "samples": samples,
-            "world": {"image": _file(bd["file"], base, f"{sid}.backdrop_360"), "yaw_deg": bd.get("yaw_deg", 0.0)},
+            "world": world,
             "camera": {"keys": keys, "lens_mm": cam["lens_mm"], "sensor_mm": CS.SENSOR_MM, "setup": cam_spec["setup"]},
             "cards": cards,
             "probe": [{"name": "target", "at": resolved["target"]}]}
@@ -255,11 +265,29 @@ def command(launcher: list[str], job_path: Path | str) -> list[str]:
     return [*launcher, str(SCRIPT), "--", str(job_path)]
 
 
+def _world_for_render(body: dict, out: Path) -> dict:
+    """Create a local, provenance-recorded blur of the approved panorama for dialogue close-ups."""
+    render_body = copy.deepcopy(body)
+    world = render_body["world"]
+    sigma = world.get("blur_sigma_px")
+    if not sigma:
+        return render_body
+    from PIL import Image, ImageFilter
+    source = Path(world["image"])
+    target = out / "background_blurred.png"
+    with Image.open(source) as im:
+        im.convert("RGB").filter(ImageFilter.GaussianBlur(radius=float(sigma))).save(target)
+    world["image"] = str(target.resolve())
+    world["derived_sha256"] = C.sha256_file(target)
+    return render_body
+
+
 def run(body: dict, out: Path | str, launcher: list[str], pin_version: str) -> dict:
     """Render one planned shot under ``out``; returns the bpy report (+ the frame files). Raises on a non-zero exit."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    j = job(body, out, pin_version)
+    rendered = _world_for_render(body, out)
+    j = job(rendered, out, pin_version)
     jp = out / "job.json"
     write_json_atomic(jp, j)
     proc = subprocess.run(command(launcher, jp), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -268,6 +296,7 @@ def run(body: dict, out: Path | str, launcher: list[str], pin_version: str) -> d
         raise ContractError(f"{body['shot_id']}: Blender exited {proc.returncode} (see {out / 'blender.log'})")
     rep = json.loads((out / "bpy_report.json").read_text(encoding="utf-8"))
     rep["frame_files"] = [str(p) for p in sorted((out / "frames").glob("frame_*.png"))]
+    rep["world"] = rendered["world"]
     return rep
 
 
@@ -381,7 +410,7 @@ def smoke_shots(seconds: float) -> list[dict]:
     """The guide's four-shot dialogue (master two-shot, OTS A, MCU B speaking, reverse MCU A reacting) and the 30-degree pan."""
     cast = {h: {"pos": p, "angle": "front"} for h, p in SMOKE_CAST.items()}
     speaking = {**cast, "H3": {**cast["H3"], "line": {"cues": _smoke_cues(seconds)}}}
-    return [
+    shots = [
         {"id": "J5-01_master", "scene": "S01", "seconds": seconds, "camera": {"setup": "profile_two_shot", "a": "H1", "b": "H3"},
          "cast": {"H1": {**cast["H1"], "angle": "3q_right"}, "H3": {**cast["H3"], "angle": "3q_left"}}},
         {"id": "J5-02_ots_a", "scene": "S01", "seconds": seconds, "camera": {"setup": "ots_a", "a": "H1", "b": "H3"},
@@ -394,6 +423,20 @@ def smoke_shots(seconds: float) -> list[dict]:
          "camera": {"setup": "establishing_wide", "pan_deg": 30, "a": [0.0, 2.3, 0.0]},
          "cast": {}},
     ]
+    for state, word in (("rest", None), ("half", "e"), ("wide", "a"), ("round", "o")):
+        cast_state = {**cast, "H3": {**cast["H3"], "line": {"cues": _smoke_state_cues(seconds, word)}}}
+        shots.append({"id": f"J5-mouth-{state}", "scene": "S01", "seconds": seconds,
+                      "camera": {"setup": "mcu_front", "a": "H1", "b": "H3"}, "cast": cast_state,
+                      "motion_seed": "J5-mouth-state-probe", "mouth_state_probe": state})
+    return shots
+
+
+def _smoke_state_cues(seconds: float, word: str | None) -> dict:
+    """One Rhubarb shape across the middle frames for a pixel-level render probe of each drawn mouth state."""
+    from explainer_engine.audio import words_to_mouth_cues as W
+    words = [{"text": word, "start": 0.05, "end": max(0.06, seconds - 0.05)}] if word else []
+    return {"metadata": {"soundFile": "smoke-state", "duration": seconds},
+            "mouthCues": W.mouth_cues(words, duration=seconds)}
 
 
 def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int, height: int, seconds: float,
@@ -401,13 +444,16 @@ def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int,
     out = Path(out)
     assets = _smoke_assets(out / "assets")
     write_json_atomic(out / "scene_assets.json", assets)
-    rows, failures = {}, []
+    rows, failures, mouth_state_pixels = {}, [], {}
     for sh in smoke_shots(seconds):
         body = plan(assets, sh, base=out / "assets", width=width, height=height, engine=engine, samples=samples)
         rep = run(body, out / sh["id"], launcher, pin_version)
         files = rep["frame_files"]
         row = {"frames": len(files), "seconds_per_frame": rep.get("seconds_per_frame"), "cards": rep.get("cards"),
-               "cast_shadows": rep.get("cast_shadows")}
+               "cast_shadows": rep.get("cast_shadows"), "blender_version": rep.get("blender_version"),
+               "engine_id": rep.get("engine_id"), "world": rep.get("world")}
+        if rep.get("engine_id") not in {"BLENDER_EEVEE_NEXT", "BLENDER_EEVEE"} and engine == "eevee":
+            failures.append(f"{sh['id']}: Blender reported unexpected engine {rep.get('engine_id')!r}")
         if len(files) != body["frames"]:
             failures.append(f"{sh['id']}: {len(files)} of {body['frames']} frames")
         if rep.get("cast_shadows"):
@@ -430,8 +476,24 @@ def smoke(out: Path | str, launcher: list[str], pin_version: str, *, width: int,
                 failures.append(f"{sh['id']}: dialogue smoke did not exercise mouth states {', '.join(missing)}")
             if active == 0:
                 failures.append(f"{sh['id']}: speaking shot has no active mouth frames")
+        if sh.get("mouth_state_probe"):
+            from PIL import Image
+            frame = files[min(5, len(files) - 1)] if files else None
+            if frame is None:
+                failures.append(f"{sh['id']}: no frame available for the mouth-state pixel probe")
+            else:
+                pixels = Image.open(frame).convert("RGB").tobytes()
+                digest = hashlib.sha256(pixels).hexdigest()
+                mouth_state_pixels[sh["mouth_state_probe"]] = digest
+                row["mouth_state_probe"] = sh["mouth_state_probe"]
+                row["probe_frame_sha256"] = digest
         rows[sh["id"]] = row
-    summary = {"schema": "assemble_25d_smoke/1", "shots": rows, "failures": failures, "size": [width, height], "engine": engine}
+    if set(mouth_state_pixels) != set(STATES):
+        failures.append("rendered mouth-state probes are incomplete")
+    elif len(set(mouth_state_pixels.values())) != len(STATES):
+        failures.append("mouth-state probes did not produce four distinct rendered frames")
+    summary = {"schema": "assemble_25d_smoke/1", "shots": rows, "failures": failures, "size": [width, height],
+               "engine": engine, "engine_requested": engine, "mouth_state_render_sha256": mouth_state_pixels}
     write_json_atomic(out / "smoke_summary.json", summary)
     return summary
 
