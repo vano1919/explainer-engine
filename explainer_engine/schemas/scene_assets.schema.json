@@ -260,7 +260,7 @@
         "base"
        ],
        "additionalProperties": false,
-       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "description": "the card images of one angle: base (mouth closed), the three additional mouth states (half, wide, round) and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
        "properties": {
         "base": {
          "$ref": "#/$defs/file"
@@ -269,6 +269,14 @@
          "$ref": "#/$defs/file"
         },
         "mouth_open": {
+         "$ref": "#/$defs/file",
+         "deprecated": true,
+         "description": "legacy three-state alias; not used by the D-121 four-state dialogue renderer"
+        },
+        "mouth_wide": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_round": {
          "$ref": "#/$defs/file"
         },
         "blink": {
@@ -282,7 +290,7 @@
         "base"
        ],
        "additionalProperties": false,
-       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "description": "the card images of one angle: base (mouth closed), the three additional mouth states (half, wide, round) and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
        "properties": {
         "base": {
          "$ref": "#/$defs/file"
@@ -291,6 +299,14 @@
          "$ref": "#/$defs/file"
         },
         "mouth_open": {
+         "$ref": "#/$defs/file",
+         "deprecated": true,
+         "description": "legacy three-state alias; not used by the D-121 four-state dialogue renderer"
+        },
+        "mouth_wide": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_round": {
          "$ref": "#/$defs/file"
         },
         "blink": {
@@ -304,7 +320,7 @@
         "base"
        ],
        "additionalProperties": false,
-       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "description": "the card images of one angle: base (mouth closed), the three additional mouth states (half, wide, round) and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
        "properties": {
         "base": {
          "$ref": "#/$defs/file"
@@ -313,6 +329,14 @@
          "$ref": "#/$defs/file"
         },
         "mouth_open": {
+         "$ref": "#/$defs/file",
+         "deprecated": true,
+         "description": "legacy three-state alias; not used by the D-121 four-state dialogue renderer"
+        },
+        "mouth_wide": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_round": {
          "$ref": "#/$defs/file"
         },
         "blink": {
@@ -326,7 +350,7 @@
         "base"
        ],
        "additionalProperties": false,
-       "description": "the card images of one angle: base (mouth closed), the two mouth states and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
+       "description": "the card images of one angle: base (mouth closed), the three additional mouth states (half, wide, round) and the eyes-closed overlay (an RGBA patch the size of base, opaque only over the eyes)",
        "properties": {
         "base": {
          "$ref": "#/$defs/file"
@@ -335,6 +359,14 @@
          "$ref": "#/$defs/file"
         },
         "mouth_open": {
+         "$ref": "#/$defs/file",
+         "deprecated": true,
+         "description": "legacy three-state alias; not used by the D-121 four-state dialogue renderer"
+        },
+        "mouth_wide": {
+         "$ref": "#/$defs/file"
+        },
+        "mouth_round": {
          "$ref": "#/$defs/file"
         },
         "blink": {
