@@ -1,6 +1,5 @@
-"""Route-test pod, the LTX part (guide step 3, D-116/D-120): every approved job of ``ltx_jobs.json`` (``ltx_job/1``) as one
-``ltx_pipelines.ic_lora`` call at the pinned LTX-2 code, then the free FFmpeg upscale of each clip. D-120 rejects historical J2/clay
-jobs before prefetch or generation; J2 remains blocked until the Qwen text-first I2V recipe is implemented.
+"""Route-test pod, the LTX part (guide step 3, D-116): every job of ``ltx_jobs.json`` (``ltx_job/1``, written by
+``edit/ltx_jobs.py``) as one ``ltx_pipelines.ic_lora`` call at the pinned LTX-2 code, then the free FFmpeg upscale of each clip.
 
 Runs on the pod under ``p14.sh`` (inside pod_wrapper.sh, which uploads ``$EE_OUT`` as files land: OR-33), stdlib + ffmpeg +
 huggingface_hub for the downloads. Nothing here decides the matrix: the jobs file does, and its sha256 is pinned in ``p14.json``.
@@ -411,25 +410,11 @@ def run(cfg, jobs_doc, out, deadline, log, *, runner=run_cmd, fetch=fetch_input,
     return rows
 
 
-def require_d120_compliance(jobs_doc: dict) -> None:
-    """D-120: the historical J2 clay-conditioned recipe is not a production route."""
-    blocked = []
-    for job in jobs_doc.get("jobs", []):
-        passes = {row.get("pass") for row in job.get("conditioning", [])}
-        if job.get("route") == "J2" or "clay" in passes:
-            blocked.append(job.get("id", "<unnamed>"))
-    if blocked:
-        raise SystemExit("D-120 preflight refused legacy J2/clay jobs; migrate to Qwen text-first frames -> LTX I2V before any paid run: "
-                         + ", ".join(blocked))
-
-
 def prefetch():
     """Downloads and checks the weights of every base the jobs want (run beside the Blender passes, so the LTX stage starts on
     checked weights)."""
     cfg = json.loads((HERE / CFG_NAME).read_text(encoding="utf-8"))
-    jobs_doc = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))
-    require_d120_compliance(jobs_doc)
-    jobs = jobs_doc["jobs"]
+    jobs = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))["jobs"]
     out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     bad = {b: download_base(cfg, b, log) for b in bases_wanted(jobs)}
@@ -444,7 +429,6 @@ def main():
     jobs_doc = json.loads((HERE / cfg["jobs_file"]).read_text(encoding="utf-8"))
     if jobs_doc.get("schema") != "ltx_job/1" or jobs_doc["code"]["sha"] != cfg["code"]["sha"]:
         raise SystemExit("the jobs file is not ltx_job/1 at this pod's code pin")
-    require_d120_compliance(jobs_doc)
     out = Path(os.environ.get("P14_OUT") or os.environ.get("EE_OUT", "/workspace/out"))
     log = Log(out)
     deadline = float(os.environ["EE_DEADLINE"])
