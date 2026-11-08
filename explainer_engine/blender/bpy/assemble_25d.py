@@ -4,7 +4,7 @@
 
 It reads an ``assemble_25d/1`` job and builds exactly what it lists: the 360 backdrop as the world, one camera-facing card per
 hero and prop (emission only: the sheets are drawn flat-lit; no light in the scene, no card casts or takes a shadow), a flat contact
-shadow under each hero, the mouth's three states and the blink as keyed mixes of the card's images, breathing as keyed vertical
+shadow under each hero, the mouth's four states and the blink as keyed mixes of the card's images, breathing as keyed vertical
 scale about the feet, and the camera keys. It renders the job's frames one by one (temporary name, then ``os.replace``) and
 appends one progress line per frame, flushed, like ``render_shot.py``. The report lists the cards, their shadow flags, the
 framing of the probe points and the seconds per frame. Decides nothing; stdlib + bpy (+ mathutils) only.
@@ -127,12 +127,16 @@ def card_material(card):
     if card.get("mouth"):
         half = nt.nodes.new("ShaderNodeTexImage")
         half.image = image(card["mouth"]["half"])
-        opn = nt.nodes.new("ShaderNodeTexImage")
-        opn.image = image(card["mouth"]["open"])
+        wide = nt.nodes.new("ShaderNodeTexImage")
+        wide.image = image(card["mouth"]["wide"])
+        round_mouth = nt.nodes.new("ShaderNodeTexImage")
+        round_mouth.image = image(card["mouth"]["round"])
         m1, col = mix_rgb(nt, col, half.outputs["Color"], 0.0)
-        m2, col = mix_rgb(nt, col, opn.outputs["Color"], 0.0)
+        m2, col = mix_rgb(nt, col, wide.outputs["Color"], 0.0)
+        m3, col = mix_rgb(nt, col, round_mouth.outputs["Color"], 0.0)
         keyed += [(socket(m1, "Factor_Float"), [f[0] for f in card["mouth"]["factors"]]),
-                  (socket(m2, "Factor_Float"), [f[1] for f in card["mouth"]["factors"]])]
+                  (socket(m2, "Factor_Float"), [f[1] for f in card["mouth"]["factors"]]),
+                  (socket(m3, "Factor_Float"), [f[2] for f in card["mouth"]["factors"]])]
     if card.get("blink"):
         lid = nt.nodes.new("ShaderNodeTexImage")
         lid.image = image(card["blink"]["image"])
