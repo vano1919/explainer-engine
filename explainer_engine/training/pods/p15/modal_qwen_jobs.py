@@ -49,6 +49,10 @@ def go_gate(env=os.environ):
     return v
 
 
+def retired_launcher():
+    raise SystemExit("This experimental launcher is retired; use the D-121-gated v15 Qwen or v1 LTX launcher.")
+
+
 def _tok():
     t = os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
     if not t:
@@ -261,6 +265,7 @@ if modal is not None:
 
     @app.local_entrypoint()
     def smoke():
+        retired_launcher()
         print("GO card", go_gate(), "smoke timeout", SMOKE_TIMEOUT_S, "s", flush=True)
         print("result", qwen_smoke.remote())
 
@@ -275,5 +280,6 @@ if modal is not None:
 
     @app.local_entrypoint()
     def main():
+        retired_launcher()
         print("GO card", go_gate(), "timeout", TIMEOUT_S, "s", flush=True)
         print("result", qwen_jobs.remote())
