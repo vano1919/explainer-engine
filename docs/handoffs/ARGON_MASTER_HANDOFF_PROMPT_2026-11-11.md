@@ -86,7 +86,7 @@ Do not remove `return` statements, schema branches, compatibility adapters, or l
 
 ## 5. Third task — reconcile the current decisions and pipeline
 
-Start with D-123 through D-127 and trace every claim to current code and tests.
+Start with D-123 through D-127, then inspect every post-D-126 overlay. The provided cohesive/rules overlay contains D-129-labelled code and a pilot runner, but no corresponding D-129 entry was found in the canonical decision log in the supplied bundle. Treat these additions as undocumented/provisional until their provenance and creator approval are established. Trace every claim to code and tests.
 
 The current archive indicates this direction, subject to reconciliation and verification:
 
@@ -95,7 +95,9 @@ The current archive indicates this direction, subject to reconciliation and veri
 - G5 produces unique still assets/keyframes; G7 separates the 10%/30% visual work from the 60% Wan 2.2 video work; G8 assembles reviewable approximately 3-minute chunks.
 - D-125 makes the screenplay authoritative and changes the visual/speech ratios to flexible episode-level guardrails. It also adds anti-metronome pacing and repeated-pattern restrictions. `frame[-5]` is for a single continuous video shot longer than five seconds, not a generic rule for every shot.
 - D-126 separates Tier 1 invariants, Tier 2 story-bounded limits, and Tier 3 advice across text, audio, video, and editing cohesion.
-- D-127 describes a resumable batch image worker with a durable generation ledger and transient-error retry. Its model choice must be revalidated against current provider documentation before any implementation or use.
+- D-127 describes a resumable batch image worker with a durable generation ledger and transient-error retry. Its primary Imagen 3 model and Gemini 2.0 image-generation fallback must be revalidated against current provider documentation before any implementation or use.
+- The post-D-126 overlay adds `YT-00-3SEC-KINETIC-HOOK`, a rule forcing the first two shots to Wan video (shot 1 <= 2.4 s; first two <= 4.6 s), and `PV-THREE-TIER-VIDEO-ROUTING-LAW`, which routes maps/collages through Veo 2. These are not automatically accepted decisions: confirm whether they were approved, whether their scope is intended, and whether the hook is measured from actual timeline/media rather than prompt text alone.
+- The same overlay adds `verify_real_api_media_renders()` and a D-129 pilot runner. Audit whether this function is integrated into the standard gate, has tests, and proves provider provenance. A bitrate threshold, stereo stream, contact-sheet variance, or receipt-file existence alone does not prove that real provider-generated media was used.
 
 Do not assume all of these are mutually consistent. In particular, resolve and report:
 
@@ -119,7 +121,7 @@ Before accepting any provider, model ID, parameter, quota, price, SDK method, wo
 - If a model is shut down or renamed, mark the route `BLOCKED/OBSOLETE`; do not substitute a guessed replacement. Recommend a documented candidate and require a small, approved benchmark before promotion.
 - Quotas are project/model/tier dependent. Do not hardcode an account-wide RPM figure or promise that a queue can prevent every 429. Implement rate limiting and backoff from the actual quota data, with idempotent resume and a hard spend cap.
 
-The previous prompt's Veo 3.1 and Imagen 3 assumptions must be treated as stale pending official verification. Do not build around them.
+The previous prompt's Veo 3.1 assumptions and the overlay's Veo 2.0 route are stale: Google lists the Veo 3.1 preview endpoints as shut down on 2026-10-22 and `veo-2.0-generate-001` as shut down on 2026-06-30. Google also lists `imagen-3.0-generate-002` as shut down on 2025-11-10 and `gemini-2.0-flash-preview-image-generation` as shut down on 2025-11-14. `gemini-omni-1.2-flash` is shown as the recommended replacement for retired Veo 3.1 preview endpoints, but do not assume feature parity or route production traffic until its video inputs/outputs, SDK method, and quality are verified. Do not build around stale model IDs.
 
 ## 7. Fifth task — design an independent YouTube viewer-review agent
 
