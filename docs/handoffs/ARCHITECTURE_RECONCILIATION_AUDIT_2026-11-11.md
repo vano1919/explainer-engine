@@ -94,7 +94,25 @@ Specific concerns:
 
 Google's official deprecations page also lists `veo-2.0-generate-001` as shut down on 2026-06-30, so the overlay's Veo 2 route is unusable through that Gemini API endpoint.
 
-## 3. Implementation audit — documented coverage vs actual calls
+## 3. Sample production script — structural measurements only
+
+The outer archive's `ep_toba_74000bce_12min_production_script.json` was parsed without invoking any paid service or changing the file. Its measured structure is:
+
+- Runtime: **719.8 seconds** (close to the 720-second target); 24-fps schema v4.0.0.
+- **138 shots**, **12 segments**, **5 phases**, **138 audio lines**.
+- Shot durations: 1.8–7.8 seconds; mean 5.22 seconds; population standard deviation 1.63 seconds.
+- Segment durations: mean 60 seconds; population standard deviation 16.89 seconds.
+- Average audio line length: 15.41 words; standard deviation 5.78; maximum 25 words.
+- Narrator/character audio duration: 553.3/166.5 seconds, approximately **76.9%/23.1%**.
+- Visual mix by shot count: approximately **60.1% cinematic video / 29.7% composed illustration / 10.1% map**.
+- Visual mix by shot duration: approximately **56.9% cinematic video / 30.6% composed illustration / 12.5% map**.
+- First two shots are Wan cinematic video at 1.8 and 2.2 seconds; their action text includes running/detonation. This satisfies the visible structural conditions of the D-129 hook rule, but it does not prove the rendered media actually shows those actions.
+
+These metrics sit inside D-125's published shot-duration, variability, spoken-line and broad visual-mix bands. That is a useful sign of structural alignment, not proof of narrative quality, historical accuracy, actual media quality, or a full validator pass.
+
+The main unresolved schema/decision mismatch is the **12 segment** count in this script versus D-123's described canonical **16 segment** structure. Do not automatically split or rewrite the sample. Confirm whether sixteen segments is a hard episode-wide contract or a target for a specific template/episode style, then add the right schema/test if needed. The separate Toba image queue requests 168 Gemini images for 138 shots, which appears to include distinct start/end images for some shots; inspect queue semantics and shot-level mapping before treating that as a duplication defect.
+
+## 4. Implementation audit — documented coverage vs actual calls
 
 ### Rule enforcer call path
 
@@ -144,7 +162,7 @@ The EDL builder emits edit metadata and sets fields such as ambience-bed count, 
 
 It uses `client.models.generate_images(...)` for Imagen and `client.models.generate_content(...)` for the Gemini multimodal path. The queue/ledger/resume/backoff design may be reusable, but both model assumptions and exact SDK compatibility must be checked against current official documentation. The 4.5-second fixed request delay does not replace dynamic project/model quota management. The Gemini 2.0 image fallback `gemini-2.0-flash-preview-image-generation` is also listed as shut down on 2025-11-14.
 
-## 4. Current Google API viability
+## 5. Current Google API viability
 
 Official Google documentation checked on 2026-11-11:
 
@@ -154,7 +172,7 @@ Official Google documentation checked on 2026-11-11:
 
 Do not blindly substitute a guessed replacement for Veo or Imagen. Verify the currently supported model ID, output modality, image/reference capabilities, SDK method and pricing; then benchmark a small representative sample behind the creator's approval and cost cap. Keep Wan 2.2 routing separate from image generation and do not reintroduce Veo just because it was in the old prompt.
 
-## 5. Tests and verification evidence
+## 6. Tests and verification evidence
 
 Executed against the extracted v4.2 hybrid bundle with the D-126 cohesive/rules overlay:
 
@@ -163,7 +181,7 @@ Executed against the extracted v4.2 hybrid bundle with the D-126 cohesive/rules 
 
 Therefore the accurate report is: the focused D-126 tests pass; the full suite is not currently verified because test collection is blocked by missing/mismatched repository assets/imports. Do not state “all tests pass”. Restore the correct tracked fixtures/import contract or adjust tests to the intended package layout in a separate implementation task, then run supported full CI.
 
-## 6. Gemini YouTube audience-review layer
+## 7. Gemini YouTube audience-review layer
 
 The current `.claude/agents/script-critic.md` is not a pure audience-only reviewer: it reads project context, story references, claim maps, technical/editorial lint outputs, and script artifacts. It is useful as a broader critic, but it does not satisfy the requested blind first-time-viewer test.
 
@@ -181,7 +199,7 @@ It must not fact-check historical claims or assess technical production feasibil
 
 The current `explainer_engine/llm/gemini_api.py` is a stub whose `complete()` method raises `GeminiRefused`. Therefore this agent is a design proposal, not a live capability. A future implementation requires a verified Gemini client, the existing spend-cap/ledger integration, strict packet schema, context-isolation tests, retry/error handling, privacy controls, and a test proving that no repository or lint context reaches the reviewer.
 
-## 7. Keep / change / remove
+## 8. Keep / change / remove
 
 | Area | Keep | Change | Do not do |
 |---|---|---|---|
@@ -195,7 +213,7 @@ The current `explainer_engine/llm/gemini_api.py` is a stub whose `complete()` me
 | YouTube story QA | Existing `script-critic` and lints | Add blind `youtube_viewer_critic` as advisory G2 review | Give this agent the whole repository or technical reports |
 | GitHub | Existing history/branches | Publish only audit/planning docs on an isolated branch | Upload the full ZIP, secrets, MP4s, or overwrite `main` |
 
-## 8. Priority implementation plan for Codex (after approval)
+## 9. Priority implementation plan for Codex (after approval)
 
 ### P0 — establish canonical baseline and safety
 
