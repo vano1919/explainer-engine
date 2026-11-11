@@ -139,6 +139,8 @@ Run it in a fresh session/context. Give it only a sanitized `viewer_review_packe
 
 Do **not** give it the repository, architecture, schema, source registry, production prompts, validators, linter results, previous model feedback, author explanations, implementation plan, or technical production constraints. Do not let it read the writer's hidden chain-of-thought or internal notes. Its blind spot is intentional: evaluate what a first-time viewer can understand from the material they receive.
 
+**Companion agent specification:** use `docs/handoffs/YOUTUBE_VIEWER_CRITIC_AGENT_PROMPT_2026-11-11.md` as the standalone system prompt for this reviewer. Keep it separate from the main Argon orchestrator and pass it only the `viewer_review_packet`; do not attach repository files or technical QA output.
+
 ### Reviewer role and limits
 
 The agent is a skeptical first-time YouTube viewer/editor. It evaluates only audience experience and story quality:
@@ -176,8 +178,9 @@ Produce these planning artifacts:
 
 1. `ARCHITECTURE_RECONCILIATION_AUDIT_2026-11-11.md` — snapshot identity, source-of-truth decision, branch/archive differences, rule traceability findings, implementation-vs-documentation gaps, model/API deprecations, test evidence, unresolved conflicts, and keep/change/retire recommendations.
 2. `ARGON_MASTER_HANDOFF_PROMPT_2026-11-11.md` — this instruction, refined after the audit.
-3. A file-by-file Codex implementation plan with priority, rationale, expected diff, tests, acceptance criteria, rollback risk, and dependencies.
-4. A short list of creator decisions that truly cannot be resolved from available evidence. Do not ask questions for routine implementation details.
+3. `YOUTUBE_VIEWER_CRITIC_AGENT_PROMPT_2026-11-11.md` — standalone clean-room system prompt for the independent audience reviewer.
+4. A file-by-file Codex implementation plan with priority, rationale, expected diff, tests, acceptance criteria, rollback risk, and dependencies.
+5. A short list of creator decisions that truly cannot be resolved from available evidence. Do not ask questions for routine implementation details.
 
 ## 9. Acceptance criteria
 
