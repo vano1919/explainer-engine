@@ -103,11 +103,11 @@ Do not assume all of these are mutually consistent. In particular, resolve and r
 
 1. D-123 says local/free-by-default, while D-124's G5 image generation uses Gemini API and G7 specifies Wan on Modal GPU. Identify which work is local, which is paid/hosted, the opt-in boundary, and the creator approval required. Do not silently choose one interpretation.
 2. D-123's original 60/30/10 and 70/30 speech targets are amended by D-125's wider ranges. Identify which ranges remain canonical and which documents/config/schema still carry older values.
-3. D-125's shot-duration and pacing bounds must match the code. Do not allow code, decision log and docs to carry different thresholds.
-4. D-126's catalog must match actual enforcement. Check whether all listed invariants are actually run, and whether applicability conditions are represented correctly (for example, a screen-axis requirement should not automatically be applied to an unrelated map/insert shot without a reason).
-5. D-126's visual mix must be measured on a meaningful basis. Determine whether it is computed by shot count or by actual timeline duration. Do not call a shot-count ratio a runtime ratio.
-6. The EDL and generation plans are plans, not evidence of rendered output. Separate planned cues/flags from media-level verification.
-7. Reconcile `GEMINI.md`, `docs/YOUTUBE_MASTER_MANUAL_ARGON_VS_FLASH.md`, and `docs/architecture/GEMINI_STORYTELLING_SYSTEM_REBUILD_2026-11-09.md`. They appear to describe different Gemini roles and workflow generations. Do not merge incompatible instructions into one prompt.
+4. D-125's shot-duration and pacing bounds must match the code. Do not allow code, decision log and docs to carry different thresholds.
+5. D-126's catalog must match actual enforcement. Check whether all listed invariants are actually run, and whether applicability conditions are represented correctly (for example, a screen-axis requirement should not automatically be applied to an unrelated map/insert shot without a reason).
+6. D-126's visual mix must be measured on a meaningful basis. Determine whether it is computed by shot count or by actual timeline duration. Do not call a shot-count ratio a runtime ratio.
+7. The EDL and generation plans are plans, not evidence of rendered output. Separate planned cues/flags from media-level verification.
+8. Reconcile `GEMINI.md`, `docs/YOUTUBE_MASTER_MANUAL_ARGON_VS_FLASH.md`, and `docs/architecture/GEMINI_STORYTELLING_SYSTEM_REBUILD_2026-11-09.md`. They appear to describe different Gemini roles and workflow generations. Do not merge incompatible instructions into one prompt.
 
 Keep the smallest working parts of the current system. Recommend changes only where evidence demonstrates a defect, drift, dead endpoint, untested invariant, or materially better simpler architecture.
 
