@@ -31,7 +31,7 @@ The outer ZIP contains **134 entries** and several competing nested project bund
 
 There is also an outer `env_config_v4.env` and `vault_secrets.json`. Their values were not read or disclosed. These files, all credentials, generated media and large reference assets must not be uploaded to GitHub as part of this audit.
 
-The newest coherent working set appears to be `explainer_engine_v4_2_hybrid_gemini_wan_complete.zip` plus the D-126 cohesive-film/rules overlay and the 12-component registry bundle. This is a candidate baseline, not a proof that every nested copy is byte-identical or mutually compatible. The top-level `Deprecated_Old_Robotic_Drafts/` names several older artifacts explicitly as obsolete, including pre-D127 bundles and fake slideshow material; those must not be treated as active production instructions.
+The newest plausible working set is `explainer_engine_v4_2_hybrid_gemini_wan_complete.zip` combined with the D-126 cohesive-film/rules overlay and the 12-component registry bundle. However, the overlay adds D-129-labelled logic that is not recorded in the canonical decision log, so it is not safe to call the combined set a single approved release. Treat it as a candidate source set requiring a D-129 provenance/approval decision. This is not proof that every nested copy is byte-identical or mutually compatible. The top-level `Deprecated_Old_Robotic_Drafts/` names several older artifacts explicitly as obsolete, including pre-D127 bundles and fake slideshow material; those must not be treated as active production instructions.
 
 ### GitHub mismatch
 
@@ -78,6 +78,21 @@ The four audit levels are text/script, audio/soundscape, video/visuals, and edit
 ### D-127 — batch image worker
 
 D-127 adds a resumable batch generation worker, per-image ledger checkpointing, validation before skipping existing images, and transient-error retry/backoff. These are useful operational concepts. The specific primary model `imagen-3.0-generate-002` is no longer viable and must be replaced only after official model/SDK verification and an approved test.
+
+### Post-D-126 overlay — D-129-labelled changes require review
+
+The separate `explainer_engine_v4_2_cohesive_film_and_rules_bundle.zip` is not just a registry copy. Compared with the hybrid bundle, its `cohesive_film_engine.py` adds three catalog rows and a `verify_real_api_media_renders()` function; its `shot_prompt_lint.py` adds `YT-00-3SEC-KINETIC-HOOK`; and it includes `scripts/run_2min_pilot_real_apis.py`.
+
+These additions are labelled D-129 in code/comments, but no D-129 entry was found in the supplied canonical `DECISIONS_AND_OPEN_QUESTIONS.md`. Do not treat them as approved policy until the decision is recorded and the code/test scope is reconciled.
+
+Specific concerns:
+
+- The hook check looks for kinetic verbs in action/prompt text. It does not inspect actual generated video frames or prove that the rendered opening is visually kinetic. It requires shot 1 <= 2.4 seconds and shots 1+2 <= 4.6 seconds, despite the rule's “0–3 sec” title and some text describing a 3–3.5-second window. The exact metric/window needs one canonical definition.
+- The overlay's `PV-THREE-TIER-VIDEO-ROUTING-LAW` routes 10% maps and 30% collages through `veo-2.0-generate-001` / FAL light video, while D-123 says deterministic 2.5D and D-124 defines Gemini stills plus the 10%/30% thread. This is a direct routing conflict, not a rule to add automatically.
+- The overlay's `verify_real_api_media_renders()` is called by the special 2-minute pilot runner, not by the standard `rule_enforcer.run_all_gate_audits()` path. No D-129-specific test file was found in that overlay.
+- Its checks are heuristics, not forensic proof: a high-bitrate re-encoded slideshow can pass; a synthetic stereo track can pass; pixel variance can misclassify legitimate dark images; a receipts JSON file is only checked for existence rather than content/provenance; and a missing/unreadable video path or failed `ffprobe` can avoid adding a failure. The function should not be described as proving real API origin. Preserve the anti-fake-render objective, but design verifiable receipts/hashes/provider job IDs and explicit missing/unreadable-file failures with tests.
+
+Google's official deprecations page also lists `veo-2.0-generate-001` as shut down on 2026-06-30, so the overlay's Veo 2 route is unusable through that Gemini API endpoint.
 
 ## 3. Implementation audit — documented coverage vs actual calls
 
@@ -127,14 +142,14 @@ The EDL builder emits edit metadata and sets fields such as ambience-bed count, 
 - `DEFAULT_IMAGEN_MODEL = "imagen-3.0-generate-002"`
 - `DEFAULT_GEMINI_IMAGE_MODEL = "gemini-2.0-flash-preview-image-generation"`
 
-It uses `client.models.generate_images(...)` for Imagen and `client.models.generate_content(...)` for the Gemini multimodal path. The queue/ledger/resume/backoff design may be reusable, but both model assumptions and exact SDK compatibility must be checked against current official documentation. The 4.5-second fixed request delay does not replace dynamic project/model quota management.
+It uses `client.models.generate_images(...)` for Imagen and `client.models.generate_content(...)` for the Gemini multimodal path. The queue/ledger/resume/backoff design may be reusable, but both model assumptions and exact SDK compatibility must be checked against current official documentation. The 4.5-second fixed request delay does not replace dynamic project/model quota management. The Gemini 2.0 image fallback `gemini-2.0-flash-preview-image-generation` is also listed as shut down on 2025-11-14.
 
 ## 4. Current Google API viability
 
 Official Google documentation checked on 2026-11-11:
 
 - [Gemini API deprecations](https://ai.google.dev/gemini-api/docs/deprecations) lists `imagen-3.0-generate-002` as shut down on **2025-11-10**. D-127's hardcoded primary model is therefore obsolete.
-- The same deprecations page lists the Veo 3.1 preview model IDs (`veo-3.1-generate-preview`, `veo-3.1-fast-generate-preview`, `veo-3.1-lite-generate-preview`) as shut down on **2026-10-22**. The original prompt's `veo-3.1-*-generate-001` names are not a viable current production contract either.
+- The same deprecations page lists the Veo 3.1 preview model IDs (`veo-3.1-generate-preview`, `veo-3.1-fast-generate-preview`, `veo-3.1-lite-generate-preview`) as shut down on **2026-10-22**, and lists `veo-2.0-generate-001` as shut down on **2026-06-30**. The original prompt's `veo-3.1-*-generate-001` names are not a viable current production contract either. The page recommends `gemini-omni-1.2-flash` for the retired Veo 3.1 preview routes, but a replacement entry does not by itself prove equal feature support or quality for this pipeline.
 - Google's [rate limit documentation](https://ai.google.dev/gemini-api/docs/rate-limits) says quotas vary by project/model/tier and are expressed across RPM, TPM and RPD; the current project quota must be inspected rather than hardcoding a universal 50 RPM. Rolling 10-minute spend caps vary by tier (the documented Tier 1 cap is $10 per 10 minutes, Tier 2 $50, Tier 3 $200).
 
 Do not blindly substitute a guessed replacement for Veo or Imagen. Verify the currently supported model ID, output modality, image/reference capabilities, SDK method and pricing; then benchmark a small representative sample behind the creator's approval and cost cap. Keep Wan 2.2 routing separate from image generation and do not reintroduce Veo just because it was in the old prompt.
@@ -143,7 +158,7 @@ Do not blindly substitute a guessed replacement for Veo or Imagen. Verify the cu
 
 Executed against the extracted v4.2 hybrid bundle with the D-126 cohesive/rules overlay:
 
-- `tests/unit/test_cohesive_film_3tier_engine.py`: **3 passed**, with one Python `SyntaxWarning` in `wan_optimizer.py`.
+- `tests/unit/test_cohesive_film_3tier_engine.py`: **3 passed**, with one Python `SyntaxWarning` in `wan_optimizer.py`. The test file is from the hybrid bundle; it does not test the additional D-129 hook or media-verification logic in the overlay.
 - Full suite collection: **blocked** before execution. The first collection failures reference the missing fixture `examples/stone_age/day1_v6/world_spec.json` imported by `tests/unit/test_production_script.py`. Running with `--maxfail=2` stopped on two collection errors; the full suite was not verified. A separate import error was also observed in the broader run in `tests/unit/test_youtube_publish.py` (`cannot import name 'route' from explainer_engine.imagegen.routing`).
 
 Therefore the accurate report is: the focused D-126 tests pass; the full suite is not currently verified because test collection is blocked by missing/mismatched repository assets/imports. Do not state “all tests pass”. Restore the correct tracked fixtures/import contract or adjust tests to the intended package layout in a separate implementation task, then run supported full CI.
@@ -174,8 +189,8 @@ The current `explainer_engine/llm/gemini_api.py` is a stub whose `complete()` me
 | Approval process | Creator approval gates and reviewable 3-minute chunks | Reconcile G0–G8 with local/hosted cost boundaries | Replace with old 4-step Colab by assumption |
 | Rules | D-126 three-tier governance; canonical rule IDs | Trace each rule to actual call path + tests; align D-125 bounds | Reactivate every BP/KP/ST/SC/PV rule as hard FAIL |
 | Pacing | Screenplay-first accordion pacing | Align code and docs on bounds; duration-weight mix | Force metronomic duration/ratio quotas |
-| Image generation | Gemini image engine as the current D-124 decision | Replace obsolete model IDs only after official verification | Use Imagen 3 or old Veo 3.1 names |
-| Video generation | Per-shot Wan 2.2 route, selective control | Verify checkpoint, wrapper, job schema, local/Modal spend boundary | Add Veo as a default without testing/approval |
+| Image generation | Gemini image engine as the current D-124 decision | Replace obsolete model IDs only after official verification; add evidence-backed provider receipts | Use Imagen 3 or old Veo 3.1/Veo 2.0 names |
+| Video generation | Per-shot Wan 2.2 route, selective control | Verify checkpoint, wrapper, job schema, local/Modal spend boundary; resolve unapproved D-129 routing overlay | Add dead Veo 2.0/3.1 endpoints as a default |
 | Audio | Existing voice/audio spine and sound planning | Distinguish cue plans from rendered-audio QA | Claim DSP/mix is implemented because EDL flags say so |
 | YouTube story QA | Existing `script-critic` and lints | Add blind `youtube_viewer_critic` as advisory G2 review | Give this agent the whole repository or technical reports |
 | GitHub | Existing history/branches | Publish only audit/planning docs on an isolated branch | Upload the full ZIP, secrets, MP4s, or overwrite `main` |
@@ -186,8 +201,9 @@ The current `explainer_engine/llm/gemini_api.py` is a stub whose `complete()` me
 
 1. Select one coherent source snapshot; capture SHA-256 and source/ref manifest.
 2. Reconcile the archive and GitHub branch; preserve all existing branches and main history.
-3. Remove stale API model IDs from active config only after current replacement and migration tests are approved.
-4. Define the actual local/hosted/paid boundary and route-specific spend/creator approval gates.
+3. Decide whether to approve or reject the D-129 overlay, and record its provenance/decision before enabling it.
+4. Remove stale API model IDs from active config only after current replacement and migration tests are approved.
+5. Define the actual local/hosted/paid boundary and route-specific spend/creator approval gates.
 
 **Acceptance:** one repeatable baseline and no production route using a shut-down model ID; no paid job can start without preflight and explicit approval.
 
