@@ -2605,7 +2605,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:AL-01"
+    "explainer_engine/audio/layers.py:AL-01",
+    "explainer_engine/overlay/rules.py:OV-54"
    ],
    "supersedes": [
     "AL-01 (confirmed)",
@@ -3873,7 +3874,7 @@
     "words_min": 150,
     "words_max": 700,
     "georgian_share_min": 0.6,
-    "why_heading": "რატომ"
+    "why_heading": "\u10e0\u10d0\u10e2\u10dd\u10db"
    },
    "sources": [],
    "enforced_by": [
@@ -5102,7 +5103,8 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01",
     "explainer_engine/maps/laws.py",
-    "explainer_engine/maps/render.py"
+    "explainer_engine/maps/render.py",
+    "explainer_engine/overlay/rules.py:OV-41"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -5205,7 +5207,8 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10",
     "explainer_engine/scripting/variant_plan.py:checks",
-    "explainer_engine/edit/visual_compensator.py"
+    "explainer_engine/edit/visual_compensator.py",
+    "explainer_engine/overlay/rules.py:OV-42"
    ],
    "planned": "the dramatisability score of a beat and the lane shares that follow it: the planner (P3); the two caps are enforced now (P5, visual_compensator.lane_balance)",
    "supersedes": [],
@@ -5450,7 +5453,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/motion_graphics.json:CRAFT-MOG-01"
+    "explainer_engine/standards/craft_checklists/motion_graphics.json:CRAFT-MOG-01",
+    "explainer_engine/overlay/rules.py:OV-16"
    ],
    "planned": "explainer_engine/edit/motion_lint.py (P7)",
    "supersedes": [],
@@ -7268,6 +7272,74 @@
     "explainer_engine/audio/stems.py:SPREAD_MAX_DB"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-187",
+   "area": "video",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A character finishes the line inside the clip: a video shot's length comes from its spoken line plus a tail, and the speech in the clip's own sound ends at least speech_tail_s before the clip ends (measured on the clip's audio), so no line is cut mid-word. How two clips' sound meets at the cut is BP-188.",
+   "thresholds": {
+    "speech_tail_s": 0.5
+   },
+   "sources": [],
+   "enforced_by": [],
+   "supersedes": [],
+   "decided": "the creator, 2026-11-12 19:16 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWR1zwsJYy2hthiFJQQj48kT): LTX cut a line mid-speech in the bake-off; every video is planned so the character finishes speaking. His half-second sound overlap was put to research at 20:07 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU5wnV4sFK5JC2vc6uQcvGC): the finding is BP-188"
+  },
+  {
+   "id": "BP-188",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The sound at a cut between two clips depends on where the sound comes from. (1) One generation made the picture and its sound together (LTX's own speech, effects and ambience): picture and sound cut on the same frame, with no overlap (overlap_joint_s); a longer crossfade under a hard picture cut doubles the speech or moves it off the lips, so each side only gets a seam_fade_s fade against a click, and a clip chained from the previous clip's last frame drops that repeated first frame. (2) The sound was made apart from the picture (ElevenLabs lines, narration, library beds): the sound runs on its own tracks across the picture cut, the room tone or bed continues under it (BP-116), a line may lead or trail the cut as a J/L split within split_edit_s (scene boundaries keep BP-117's longer bands), and two different beds meeting at a cut crossfade. No overlap of the pictures is needed in either case.",
+   "thresholds": {
+    "overlap_joint_s": 0.0,
+    "seam_fade_s": 0.03,
+    "split_edit_s": [
+     0.12,
+     0.5
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Adobe community: why is the minimum audio transition duration 2 frames (Premiere's default audio transition, de-click)",
+     "url": "https://community.adobe.com/t5/premiere-pro-discussions/why-is-the-minimum-audio-transition-duration-2-frames/m-p/12864872"
+    },
+    {
+     "type": "A",
+     "title": "How the 30 ms audio fade prevents pops at video cut boundaries (video-use)",
+     "url": "https://instagit.com/browser-use/video-use/how-30ms-audio-fade-prevents-pops.md"
+    },
+    {
+     "type": "A",
+     "title": "Videomaker: how to hide audio transitions (cut between sentences; J/L cuts or room tone for longer transitions)",
+     "url": "https://www.videomaker.com/how-to/audio-how-to/audio-editing/how-to-hide-audio-transitions-for-a-cleaner-sounding-video/"
+    },
+    {
+     "type": "A",
+     "title": "J-cuts and L-cuts: 3-12 frame overlaps; excessive crossfades double speech (Cursa)",
+     "url": "https://cursa.app/en/article/j-cuts-and-l-cuts-how-audio-transitions-make-your-edits-invisible"
+    },
+    {
+     "type": "B",
+     "title": "Apple Final Cut Pro 7 User Manual: tips for cutting dialogue (fill every gap with the scene's room tone)",
+     "url": "https://www.manualsdir.com/manuals/547347/apple-final-cut-pro-7.html?page=1002"
+    },
+    {
+     "type": "A",
+     "title": "LTX API: extend a video with context frames for a seamless continuation with consistent motion and audio",
+     "url": "https://docs.ltx.io/api-documentation/api-reference/async-video-generation/submit-extend"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/seams.py:EDGE_FADE"
+   ],
+   "supersedes": [
+    "BP-187 audio_overlap_s (the creator's 0.5 s, 2026-11-12 19:16 UTC, put to research at 20:07 UTC)"
+   ],
+   "research": "2026-11-12 (thread 'Build v4.3 episode-first engine'): the 2-frame de-click default and the 30 ms fade agree with ED-01's EDGE_FADE; the 3-12 frame J/L figure is from one guide (unverified elsewhere); the FCP manual is a vendor manual. No source asks for a crossfade at a cut of jointly generated picture and sound."
   }
  ]
 }

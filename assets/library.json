@@ -2815,9 +2815,9 @@
     {
       "id": "model.ph_cannon_01",
       "kind": "model",
-      "file": "tools/assets_cache/51fb00d2544af0d2e1362d9a933598a9b1753ffef2757e38dcabb0454161ba5e/cannon_01_1k.blend",
-      "sha256": "51fb00d2544af0d2e1362d9a933598a9b1753ffef2757e38dcabb0454161ba5e",
-      "bytes": 1232944,
+      "file": "tools/assets_cache/e3d1de4145242ebc95433e3c5d2049146664c37248f63f016f3d60e093020511/cannon_01_1k.blend",
+      "sha256": "e3d1de4145242ebc95433e3c5d2049146664c37248f63f016f3d60e093020511",
+      "bytes": 1235389,
       "tags": [
         "artillery",
         "battle",
@@ -2844,7 +2844,7 @@
         "commercial_use": "yes",
         "note": "Poly Haven (models, materials, HDRIs): assets CC0 (VERIFIED); the API code (github.com/Poly-Haven/Public-API) is AGPL-3.0 and is never copied into the package",
         "source_url": "https://polyhaven.com/a/cannon_01",
-        "revision_or_version": "1k blend, published 2022-03-16",
+        "revision_or_version": "1k blend, published 2022-03-16; re-published by Poly Haven (zstd-compressed .blend, md5 6b7260e0 = api.polyhaven.com/files/cannon_01, checked 2026-11-12)",
         "inspected_on": "2026-11-05",
         "redistribution": "allowed (CC0 1.0)",
         "derivatives": "allowed (CC0 1.0)",

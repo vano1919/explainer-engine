@@ -32,11 +32,12 @@
       "everywhere": "the creator, 2026-11-12 14:01 UTC (final audit section 7, answer 4): Qwen is retired fully; the style rounds go through the Gemini chat only, no Qwen exception (the xworld LoRA is a Qwen-Image LoRA)"
     },
     "ltx": {
-      "what": "LTX-2.5 / 2.3 clips (J2/J4, D-116)",
+      "what": "the D-116 LTX routes: the J2/J4 clips of the p15 LTX launcher, the old LTX LoRAs, the RunPod LTX pods and the LTX 0.9.x routes",
       "entry": [
         "explainer_engine/training/pods/p15/modal_ltx_jobs_v1.py"
       ],
-      "replacement": "Wan on Modal through aivideo/wan_adapter (route wan)"
+      "replacement": "route video: LTX-2.5 distilled on Modal through aivideo/ltx_modal.ModalLtxBackend and the worker training/pods/ltx/modal_ltx_jobs.py (D-132)",
+      "returned": "the creator, 2026-11-12 19:10 UTC (D-132, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji): LTX-2.5 distilled is back for the v4.3 Modal path only (training/pods/ltx/modal_ltx_jobs.py, not an entry here); everything else of the old LTX era stays retired"
     },
     "blender_scene": {
       "what": "Blender scenes, J5 shots, layout passes (D-113, D-116)",
@@ -51,7 +52,7 @@
       "entry": [
         "explainer_engine/cloud/runpod.py"
       ],
-      "replacement": "Modal for Wan (training/pods/wan/modal_wan_jobs.py, OR-37 ladder)"
+      "replacement": "Modal for the video route (training/pods/ltx/modal_ltx_jobs.py, D-132; the Wan worker stays, not routed)"
     },
     "legacy_paint": {
       "what": "the legacy still-picture route's paint plans (production/paint.py run)",

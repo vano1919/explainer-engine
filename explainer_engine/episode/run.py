@@ -389,11 +389,11 @@ def _clip_key(shot: dict, files: list, ep: Episode, spine) -> str:
 
 def _wan_clip(ep: Episode, sid: str) -> dict | None:
     """The QA'd Wan clip of a shot, if ``aivideo/wan_adapter.run_shot`` made one: its report beside the clip."""
-    rep = ep.root / "production" / "wan" / f"{sid}.json"
+    rep = ep.root / "production" / "video" / f"{sid}.json"
     if not rep.is_file():
         return None
     doc = json.loads(rep.read_text(encoding="utf-8"))
-    if doc.get("route") != "wan" or doc.get("status") == G.FAIL or not doc.get("clip_path"):
+    if doc.get("route") != "video" or doc.get("status") == G.FAIL or not doc.get("clip_path"):
         return None
     p = ep.path(doc["clip_path"]) if not Path(doc["clip_path"]).is_absolute() else Path(doc["clip_path"])
     return dict(doc, clip_path=str(p)) if p.is_file() else None
@@ -453,8 +453,8 @@ def stage_clips(ep: Episode, rehearsal: bool):
                            gates_map=res["gates"]["status"], source_start_keyframe=res.get("start_keyframe_path"),
                            source_end_keyframe=res.get("end_keyframe_path"))
             else:
-                wan = _wan_clip(ep, sid) if route == "wan" else None
-                if route == "wan" and wan is None:   # counted before the picture check (final audit B2)
+                wan = _wan_clip(ep, sid) if route == "video" else None
+                if route == "video" and wan is None:   # counted before the picture check (final audit B2)
                     missing_wan.append(sid)
                 if start is None:
                     missing_pic.append(sid)
@@ -466,7 +466,7 @@ def stage_clips(ep: Episode, rehearsal: bool):
                                wan_attempts=len(wan.get("attempts") or []))
                 else:
                     shot = sh
-                    if route == "wan":
+                    if route == "video":
                         if not rehearsal:
                             raise ContractError(f"{sid}: no QA'd Wan clip (production/wan/{sid}.json); Wan clips are made "
                                                 "by the adapter on the creator's approved plan, never by the runner")
@@ -478,7 +478,7 @@ def stage_clips(ep: Episode, rehearsal: bool):
                     rec.update(visual_type=sh.get("visual_type", "cinematic_scene"), provider=res["provider"],
                                status=res["gates"]["status"], gates_25d=res["gates"]["status"], camera=res["camera"],
                                effects=res["effects"], families=res["families"],
-                               fallback_for_wan=route == "wan")
+                               fallback_for_wan=route == "video")
                 rec.update(source_start_keyframe=str(ep.root / start["file"]),
                            source_end_keyframe=str(ep.root / end["file"]) if end else None)
             if int(res.get("total_frames") or frames) != frames:

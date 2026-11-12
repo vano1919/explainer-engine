@@ -5509,6 +5509,185 @@ Finding: the worker's result carries torch's `TorchVersion`, so a local client w
 (DeserializationError). LTX was settled by hand from the Modal app lifetime (258 s). torch CPU is now in the local venv.
 The fix is in the worker (`libs()` returns `str(...)`); it goes in only with the next GO, because it changes the worker sha.
 
+## 2026-11-12 19:40 UTC: D-132, the video route moves to LTX-2.5 distilled on Modal (work in progress, nothing paid)
+
+The creator picked LTX over Wan after the bake-off (19:10 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji).
+
+**Recorded and renamed**
+- D-132 is in the decision log.
+- The route is renamed `wan` → `video`. A legacy alias (`router.LEGACY_ROUTES`) and the schema enum keep old scripts valid, and the Toba data is migrated.
+- `config/spend_caps.json` gains the creator's `modal_ltx` line ($1 per run, 19:20 UTC, message ...WWqRxqiE28kSDxnNPn41fng; `core/spend_caps.modal_ltx()`).
+- `config/retired_era.json` says LTX-2.5 distilled is back on the Modal path only.
+
+**The adapter**
+- `aivideo/wan_adapter` now takes the worker module, the fail marker, the money line and the audio choice per backend.
+- With `keep_audio`, LTX's own sound survives the conform.
+
+**The new worker** (`training/pods/ltx/modal_ltx_jobs.py` + `launch.json`)
+- It carries the bake-off's pins and its audit lessons: clean deadline, attempt marker, Volume copy before the last HF flush, HF hash check, plain-JSON result.
+- It chains shots. Each next clip starts from the previous clip's last frame, and a clip the time left cannot finish is not started.
+- The preflight keeps every cap under 80 % of the creator's line, which is the ledger's own stop.
+- The session hook frees only its CPU rungs.
+
+**The love-scene test**
+- `training/pods/ltx/scene_run.py` turns a scene file into the worker's spec and reserves and settles the one launch in the ledger. Its scene is `training/pods/ltx/scenes/love_2026-11-12.json`.
+- The start picture is `main_style_5709.png`, cropped so the lantern is out of frame. It is on HF with its sha256.
+- Found: the project-files mount re-encodes PNGs (the sha256 changed on copy), so the start picture is pinned from a local copy and from HF, never from project files.
+
+Tests: `tests/unit/test_v43_ltx_jobs.py`.
+
+**Open**
+- The line-end gate and the 0.5 s audio overlap (the creator, 19:16 UTC).
+- `aivideo/ltx_modal.py`.
+- The docs, INDEX and CLAUDE.md wording.
+- The Fable OR-34 audit before the paid scene test.
+
+## 2026-11-12: Poly Haven re-published cannon_01_1k.blend (CI red on two legacy tests)
+
+`model.ph_cannon_01`'s upstream file changed: 1,232,944 → 1,235,389 bytes, now a zstd-compressed .blend. Its md5 6b7260e0 is the one Poly Haven's own API lists (api.polyhaven.com/files/cannon_01, checked 2026-11-12). The licence is still CC0.
+
+The new sha256 `e3d1de41…` is now in both `assets/library.json` and `blender/style_sheet_assets.json`. The vault copy (`assets/3d/model/model.ph_cannon_01/cannon_01_1k.blend`) was replaced and checked by sha256 on HF.
+
+Not checked: the poly count and the materials in Blender. The asset belongs to the retired Blender route.
+
+## 2026-11-12 20:20 UTC: the clip-seam research (the creator, 20:07 UTC) — BP-187 split, BP-188 new
+
+The creator paused the LTX test and asked whether his 0.5 s sound overlap is needed when LTX makes the sound itself.
+
+**What the sources say** (BP-188 lists them):
+- Editors give an audio cut only a de-click fade: Premiere's 2-frame default, a 30 ms fade in a video-cut tool, and ED-01's own 30 ms `EDGE_FADE`.
+- Longer crossfades double speech or warble.
+- Longer transitions are J/L splits over continuous room tone.
+
+No source asks for a crossfade at a cut where picture and sound were generated together.
+
+**The new rules**
+- BP-187 keeps only the line-end tail (0.5 s, the creator's house rule).
+- BP-188 (hypothesis, REVIEW) covers the cut:
+  - Joint sound: a hard cut, no overlap, 30 ms fades, and a chained clip's repeated first frame dropped.
+  - Separate sound: its own tracks across the cut, a continuous bed (BP-116), J/L splits of 0.12-0.5 s (scene boundaries keep BP-117), and different beds crossfade.
+
+**The LTX worker**
+- `chain_overlap_frames` is 0, so a chained clip starts from the last frame. This reverts audit B3's 12 frames, which served the 0.5 s crossfade.
+- The love scene's prompts lose the silent opening that B3 had added.
+- The editing-style skill gains the rule.
+
+## 2026-11-12 20:35 UTC: the LTX love-scene test ran (3 chained clips, $0.4352)
+
+The run used audited bytes f239f23c (run id `6f91619285c7_1abffbda4cc0`). There was no L3 smoke, on the creator's word at 19:53 UTC.
+
+**Clips**
+- c1: 122.1 s on the H100, cold start.
+- c2: 76.8 s.
+- c3: 78.2 s.
+- Each clip went to HF as soon as it was done. All were sha-verified at `explainer-engine/ltx_route/out/6f91619285c7_1abffbda4cc0/love_c1/`.
+
+**Money and apps**
+- Settled $0.4352 for 307.6 s against the $1.5 line. The reservation was released.
+- Every Modal app is stopped (`modal app list` is empty).
+- The L1/L2 CPU checks cost a few cents and are not in the ledger.
+
+**Speech end (BP-187)**, measured with faster-whisper small.en. All words came out exact.
+
+| Clip | Speech ends | Tail | Result |
+|---|---|---|---|
+| c1 | 6.58 s | 3.13 s | PASS |
+| c2 | 6.58 s | 3.13 s | PASS |
+| c3 | 4.82 s | 4.89 s, then the kiss | PASS |
+
+**The join (BP-188), done by hand**
+- Frame 0 of c2 and c3 dropped, with its 41.7 ms of audio.
+- 30 ms fades at the cuts.
+- Result: 29.04 s at 1280x704, plus a Lanczos 2560x1408 copy and a contact sheet. All are in `.../joined/` on HF.
+- The faces hold across the clips, and the scene ends in a kiss.
+
+**Still open**
+- Voice similarity across the clips.
+- The speech-end gate and the BP-188 join as code.
+- `aivideo/ltx_modal.py`.
+- The audit's minor notes.
+
+## 2026-11-12 21:10 UTC: LTX scene of cuts, the battle-scene test prepared (free; paid run waits for the audit and the creator's card)
+
+**Why.** The creator reviewed the love scene at 20:37 UTC. LTX leaves about 1 s between two speakers inside one clip, and its lips and faces are weak close up. At 20:44 UTC he asked for a 40 s battle scene using a new method:
+- one line per clip;
+- every shot cut from its own picture;
+- no close-ups;
+- pictures from the Gemini API batch tier;
+- $1 in total.
+
+The rules change only if this works.
+
+**Worker (`training/pods/ltx/modal_ltx_jobs.py`)**
+- A chained shot may bring its own pinned start picture: `read_job` checks it against `extra.start_sha256`, and `body` checks it again in transit. Such a shot is a cut, so no frame is taken from the clip before it.
+- The deadline check scales the time a clip needs by its length, relative to the clip before it.
+
+**`scene_run.py`**
+- A scene of cuts takes every shot's picture from the pictures manifest.
+- A scene can name its own ledger and caps.
+- `budget_problems` refuses a scene whose worst case passes its `budget.total_usd`. The worst case is the GPU's hard bill, (run timeout + cold start) × rate, plus the pictures and the CPU rungs.
+
+**New `scene_pictures.py`**
+- Pictures go through the Gemini batch tier in stages: first the heroes' sheet, then the shots, which reference the style picture and the sheet.
+- Each stage is submitted once, is reserved in the scene's ledger, and needs `EE_PICTURES_GO`.
+- `pin` fits each picture to 1280x704. `upload` sends the pictures to HF and checks them by sha256.
+
+**Scene and launch**
+- Scene file `scenes/battle_2026-11-12.json`: 4 cuts of 10, 6, 10 and 10 s, set on the Late Bronze Age plain before Troy, with English lines.
+- Launch `caps.run_usd` changes 1.2 → 1.0 (run timeout 528 s), which makes L1 and L2 stale.
+- Scene worst case: GPU $0.917 + pictures $0.135 + CPU $0.075 = $1.127. The expected cost is about $0.70.
+
+**Stale text.** The main-style preset says "paid API never" for style rounds. The creator's word for this run is the Gemini API batch tier, as a temporary rule break asked on the card.
+
+**Tests.** 6 new tests in `tests/unit/test_v43_ltx_jobs.py`.
+
+**21:20 UTC: four problems the cancelled audit had already found, fixed in code** (the creator's 21:09 rule: an audit finding goes into the code)
+- **Budget.** `caps.run_usd` is now 0.97, so the run timeout is 508 s and the hard GPU bill $0.889. The scene's `total_usd` is 1.1, which is the card's "$1.1". The worst case is $1.099.
+- **Clip 4 at risk.** `MARGIN_S` drops from 150 to 75, because each clip is already saved when it is made and the love run's whole overhead was 30.5 s. A test now runs the four cuts with the bake-off's 147 s cold clip and warm clips 10 % slower; all four finish.
+- **A stage could be paid twice.** `scene_pictures.submit` now marks the stage SUBMITTING before the POST. A lost answer keeps the mark and refuses a resend. Only a clean refusal by the provider clears it. Tested.
+- **State on the session's disk.** The manifest and the batch records are now backed up to project files (`pictures.backup`) after every submit and collect. Tested.
+
+## 2026-11-12 21:35 UTC: the battle scene ran — 4 cuts, $0.67 of the $1.1 ceiling
+
+**Run.** Run id `30e63a9ffec2_80994f1122df`, worker `7e04d09a`, launch `80994f11`.
+
+**Pictures.** 5 pictures on Gemini batch, nano-banana-2.1 at 2K, $0.1348. Each stage took about 4 minutes.
+
+**LTX.** One H100 app made 4 cuts:
+
+| Clip | Generation time |
+|---|---|
+| c1 (cold) | 116.8 s |
+| c2 | 73.5 s |
+| c3 | 81.9 s |
+| c4 | 81.9 s |
+
+Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is live.
+
+**Money.** $0.6674 settled, plus a few cents for the L1/L2 CPU checks.
+
+**Speech** (faster-whisper small.en):
+- c1: the line runs 1.86–6.32 s.
+- c2: 0.0–3.44 s, with a 1 s pause inside the commander's own two-sentence line.
+- c3: "There! On the ridge!" runs 0–1.42 s and "Attack!" 2.94–3.44 s.
+- c4: a war cry.
+
+**Edit.**
+- Hard cuts with 30 ms fades. Every clip is cut 0.3 s after its line, so the gap between lines is 0.3 s instead of LTX's ~1 s.
+- c3 is kept to 8 s for the charge. c4 is kept to 5.5 s, because after about 5 s the crowd melts into texture.
+- Every cut is at -18 LUFS.
+- Result: 23.9 s, plus a 2K copy.
+
+**What did not work.**
+- c2's camera pushes into a close-up near its end. The trim cuts it before that.
+- c4's wide battle loses its figures after about 5 s.
+- A line of two sentences still gets LTX's ~1 s pause inside it.
+
+**Rules to update if the creator approves:**
+- one sentence per clip;
+- a wide battle at most 5 s;
+- c1's "after a few steps" opening wastes 1.9 s.
+
 ## 2026-11-12 — B5: HyperFrames overlay layer, free test PASSED (branch `claude/project-thread-92rcrx`, off #163's branch)
 - Done: `explainer_engine/overlay/` (spec `overlay_spec/1`, HTML/GSAP template with GSAP 3.12.7 and Inter vendored, driver, Toba sample) and
   [HYPERFRAMES_OVERLAY](HYPERFRAMES_OVERLAY.md). HyperFrames 0.9.39 (Apache-2.0) pinned in `overlay/hyperframes/package.json`; telemetry off.

@@ -157,6 +157,11 @@ The numbers of this skill live in the registry (D-59); the code reads them with 
   beat counts only when it is tied to a narration word (BP-93): never add a prop or ring to beat a clock; fix a long still
   with a cut or a move the story asks for, or accept the REVIEW.
 - BP-41: one scripted pattern interrupt in the 25-35 s window (a cut with a new element).
+- BP-187 / BP-188 (2026-11-12): a line ends 0.5 s before its clip ends. At a cut, the sound depends on where it came from.
+  If picture and sound came from one generation (LTX), cut both on the same frame with no overlap: a crossfade under a hard cut
+  doubles the speech or moves it off the lips. Give each side only a 30 ms de-click fade, and drop a chained clip's repeated
+  first frame. If the sound was made apart (ElevenLabs, narration, beds), it runs on its own tracks across the cut over a
+  continuous bed. A line may lead or trail as a J/L split, and two different beds crossfade.
 - BP-116..BP-123: room tone, J/L at scene boundaries, the masking gap, composite hits, the pre-reveal vacuum, the stereo
   field and same-colour density, acoustic perspective, motifs and the beat grid (all hypothesis, REVIEW; the sound
   checklist above names each one's planned validator, `audio/sound_director.py`, P4).

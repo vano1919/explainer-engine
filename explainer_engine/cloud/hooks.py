@@ -69,6 +69,7 @@ MODAL_CMD = re.compile(r"(?:^|[\s;&|(`'\"])(?:\S*?python[\d.]*(?:\.exe)?\s+(?:-\
                        r"modal(?:\.exe)?\s+(?P<sub>run|deploy|serve|shell|launch)\b"
                        r"(?P<rest>[^\n]*)")
 WAN_WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
+LTX_WORKER = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"   # the video route since D-132 (2026-11-12 19:10 UTC)
 BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the creator's video bake-off, 2026-11-12 15:01 UTC
 BAKEOFF_ENTRIES = ("check", "stage", "run")
 
@@ -81,7 +82,7 @@ def bakeoff_go_sha(root=None) -> str:
     w = root / BAKEOFF
     h = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
     return hashlib.sha256((h(w.with_name("plan_v43.json")) + h(w)).encode()).hexdigest()
-FREE_ENTRIES = {WAN_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
+FREE_ENTRIES = {WAN_WORKER: ("check", "weights"), LTX_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
 
 
 HEREDOC = re.compile(r"(?m)^(?P<head>[^\n]*?<<-?\s*(?P<q>['\"]?)(?P<tag>\w+)(?P=q)[^\n]*)\n(?P<body>.*?)^\s*(?P=tag)\s*$", re.S)
@@ -143,9 +144,9 @@ def modal_refusal(cmd: str, env=None) -> str | None:
             if go.split(":", 1)[1] != want:
                 return ("EE_MODAL_GO names another plan or worker than the files on disk: the creator's GO binds the plan's and "
                         "the worker's bytes (modal_bakeoff.go_sha, Fable audit A4)")
-        elif path == WAN_WORKER:
+        elif path in (WAN_WORKER, LTX_WORKER):
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
-                return ("the Wan worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "
+                return (f"the {'Wan' if path == WAN_WORKER else 'LTX'} worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "
                         "(OR-23, final audit B10)")
         elif not go.startswith("cmsg_"):
             return f"`modal run {target}` is paid: EE_MODAL_GO=<the creator's card id> first (OR-23)"

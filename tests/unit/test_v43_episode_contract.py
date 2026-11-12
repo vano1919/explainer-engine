@@ -68,11 +68,11 @@ def test_a_map_goes_to_map_action():
 
 def test_a_speaker_in_frame_goes_to_wan_with_the_reason():
     route, why = R.route_shot(shot(character_ids=["kael"], action_start_state="Kael stands by the fire"), {"kael"})
-    assert route == "wan" and "Q7" in why and "kael" in why
+    assert route == "video" and "Q7" in why and "kael" in why
 
 
 def test_a_body_action_goes_to_wan_and_a_held_pose_does_not():
-    assert R.route_shot(shot(character_ids=["kael"], action_start_state="Kael sprints across the ash"))[0] == "wan"
+    assert R.route_shot(shot(character_ids=["kael"], action_start_state="Kael sprints across the ash"))[0] == "video"
     route, why = R.route_shot(shot(character_ids=["kael"], action_start_state="Kael stands and gazes at the sky"))
     assert route == "still_25d" and "Q4" in why
 
@@ -87,19 +87,19 @@ def test_the_router_is_deterministic_and_keeps_a_locked_route():
     a = R.route_script(copy.deepcopy(doc))
     b = R.route_script(copy.deepcopy(doc))
     assert a == b and all(r["route"] in R.ROUTES and len(r["reason"]) > 10 for r in a)
-    doc["shots"][0].update(route="wan", route_reason="hand-picked for the opening run", route_locked=True)
+    doc["shots"][0].update(route="video", route_reason="hand-picked for the opening run", route_locked=True)
     rows = R.route_script(doc)
-    assert rows[0] == {"shot_id": doc["shots"][0]["shot_id"], "route": "wan", "reason": "hand-picked for the opening run",
+    assert rows[0] == {"shot_id": doc["shots"][0]["shot_id"], "route": "video", "reason": "hand-picked for the opening run",
                        "locked": True}
 
 
 def test_the_mix_is_reported_by_duration_not_by_count():
-    doc = {"shots": [{"shot_id": "a", "route": "wan", "target_duration_seconds": 9.0},
+    doc = {"shots": [{"shot_id": "a", "route": "video", "target_duration_seconds": 9.0},
                      {"shot_id": "b", "route": "still_25d", "target_duration_seconds": 1.0},
                      {"shot_id": "c", "route": "still_25d", "target_duration_seconds": 1.0},
                      {"shot_id": "d"}]}
     rep = R.mix_report(doc)
-    assert rep["basis"] == "estimated" and rep["shares"]["wan"] == round(9 / 11, 4) and rep["unrouted"] == ["d"]
+    assert rep["basis"] == "estimated" and rep["shares"]["video"] == round(9 / 11, 4) and rep["unrouted"] == ["d"]
     rep = R.mix_report(doc, durations={"a": 1.0, "b": 1.0, "c": 1.0})
     assert rep["basis"] == "measured" and rep["shares"]["still_25d"] == round(2 / 3, 4)
 
@@ -144,7 +144,7 @@ def test_route_fields_are_accepted_and_an_unknown_route_is_refused():
 def test_motion_imitation_only_on_still_and_actions_only_on_maps():
     v = shot_validator()
     s = a_valid_shot()
-    s.update(route="wan", route_reason="a body performs an action", motion_imitation=[{"effect": "push"}])
+    s.update(route="video", route_reason="a body performs an action", motion_imitation=[{"effect": "push"}])
     assert list(v.iter_errors(s))
     s = a_valid_shot()
     s.update(route="still_25d", route_reason="a place at rest, moved by the camera", actions=[{"kind": "pulse", "at_word": "Toba"}])
@@ -157,7 +157,7 @@ def test_motion_imitation_only_on_still_and_actions_only_on_maps():
 def test_a_locked_route_needs_its_reason():
     s = a_valid_shot()
     s.pop("route_reason", None)
-    s.update(route="wan", route_locked=True)
+    s.update(route="video", route_locked=True)
     assert list(shot_validator().iter_errors(s))
     s["route_reason"] = "the creator picked this shot for the opening"
     assert not list(shot_validator().iter_errors(s))
@@ -195,7 +195,7 @@ def test_a_hero_line_outside_a_played_scene_fails():
 def test_a_fallback_motion_belongs_to_a_wan_shot_only():
     v = shot_validator()
     s = a_valid_shot()
-    s.update(route="wan", route_reason="a body performs an action",
+    s.update(route="video", route_reason="a body performs an action",
              fallback_motion_imitation=[{"effect": "push"}, {"effect": "mist"}, {"effect": "subject_sway"}])
     assert not list(v.iter_errors(s))
     s.update(route="still_25d", route_reason="a place at rest")
@@ -208,8 +208,8 @@ def test_a_speaker_shot_must_be_wan_and_short():
               "shots": [{"shot_id": "A", "character_ids": ["kael"], "audio_line_ids": ["L1"], "route": "still_25d",
                          "target_duration_seconds": 7.0}]}
     rows = {r["gate"]: r["status"] for r in R.talking_check(script)}
-    assert rows == {"speaker_shots_are_wan": "FAIL", "speaker_off_screen": "PASS", "speaker_shots_short": "REVIEW"}
-    script["shots"][0].update(route="wan", target_duration_seconds=4.0)
+    assert rows == {"speaker_shots_are_video": "FAIL", "speaker_off_screen": "PASS", "speaker_shots_short": "REVIEW"}
+    script["shots"][0].update(route="video", target_duration_seconds=4.0)
     assert {r["status"] for r in R.talking_check(script)} == {"PASS"}
 
 
@@ -221,5 +221,5 @@ def test_a_line_over_a_shot_without_its_speaker_is_review_not_fail():
               "shots": [{"shot_id": "A", "character_ids": ["sena"], "audio_line_ids": ["L1"], "route": "still_25d",
                          "target_duration_seconds": 3.0}]}
     rows = {r["gate"]: r for r in R.talking_check(script)}
-    assert rows["speaker_shots_are_wan"]["status"] == "PASS"
+    assert rows["speaker_shots_are_video"]["status"] == "PASS"
     assert rows["speaker_off_screen"]["status"] == "REVIEW" and "kael off screen" in rows["speaker_off_screen"]["measured"][0]

@@ -123,5 +123,10 @@
     "tests_total_usd": 6.5,
     "for": "the v4.3 video bake-off (training/pods/bakeoff/plan_v43.json): each run's cap at most 2.5, all its runs together at most 6.5; only this test: the Wan route's own `modal` line is still unset (zero budget; its per-run and episode lines follow rung L3, answer 3 of 2026-11-12 14:01 UTC)",
     "decided": "the creator, 2026-11-12 17:50 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2enCV9tSdSVx7ivWPgEYur: \"ა და ა\" (answer 1ა: $2.5 per run, $6.5 total, run the bake-off)"
+  },
+  "modal_ltx": {
+    "per_run_usd": 1.5,
+    "for": "the video route's LTX-2.5 distilled clips on Modal (D-132, training/pods/ltx/modal_ltx_jobs.py): each test run at most $1.5 (the ledger stops reservations at 80 %, $1.2); the episode line (per_episode_usd) follows rung L3. Not the Wan route's `modal` line, which stays unset",
+    "decided": "the creator, 2026-11-12 19:20 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng: \"ა\" (answer a of the card: $1 per LTX test run); raised to $1.5 at 19:53 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCKTbNTauXZ3AGuHNgczrk: \"1\" (card option 1: $1.5, 3 chained clips in one app, no separate L3 smoke for this run)"
   }
 }

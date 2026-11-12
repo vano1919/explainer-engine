@@ -45,9 +45,9 @@ from the registry. Status of each rule in the validator: PASS, FAIL, NOT_RUN (a 
 
 | ID | rule | how it is checked |
 |---|---|---|
-| OV-01 | an `ltx` shot carries no overlay at all: no element, no date chip, no inset; `composite` refuses an ltx clip | validator: ltx and a non-empty overlay = FAIL |
+| OV-01 | an `ltx` shot (the video route of D-131, LTX since D-132) carries no overlay at all: no element, no date chip, no inset; `composite` refuses an ltx clip | validator: ltx and a non-empty overlay = FAIL |
 | OV-02 | an overlay never crosses a cut: every element starts at frame >= 8 and ends >= 8 frames before the cut | spec |
-| OV-03 | information a video scene needs goes into its own 10 % shot before or after it, or the narrator says it without an overlay | script lint: an ltx shot has no `overlay_reason` |
+| OV-03 | information a video scene needs goes into its own 10 % shot before or after it, or the narrator says it without an overlay | script lint: an ltx shot (D-131 video route) has no `overlay_reason` |
 | OV-04 | `full` mode only on `map_action` shots, every kind allowed | spec |
 | OV-05 | `still_25d` shots take `accent` only (OV-30..38) | spec |
 | OV-06 | the overlay never changes a shot's route; shares are measured by duration | spec, mix report |
@@ -69,7 +69,7 @@ from the registry. Status of each rule in the validator: PASS, FAIL, NOT_RUN (a 
 | OV-31 | removal test: if the line is just as clear without the overlay, the overlay goes | the script critic's question, one answer per shot (NOT_RUN here) |
 | OV-32 | budget: one group per shot, at most 2 elements on screen at once; at most 40 % of the 30 % shots (by duration) carry an overlay; at most 2 such shots in a row | spec, mix report |
 | OV-33 | area: all overlay boxes together at most 15 % of the frame, one glass panel at most 12 % | box area |
-| OV-34 | protected zones: an overlay never touches a face (YuNet box + 10 %) or the main object on any frame of the 2.5D move; 5 % safe margin from the edge; the place is chosen by Python (`place.choose`, calm zone), never by hand | intersections per frame must be 0 |
+| OV-34 | protected zones: an overlay never touches a face (YuNet box + 10 %) or the main object on any frame of the 2.5D move (`still_25d`, D-131); 5 % safe margin from the edge; the place is chosen by Python (`place.choose`, calm zone), never by hand | intersections per frame must be 0 |
 | OV-35 | timing: an element appears on its word (never earlier, BP-54), stays at least 1.5 s or words x 0.3 s (the larger); all overlays together at most 60 % of an accent shot | timing report |
 | OV-36 | the overlay is anchored to the screen (does not follow the camera, does not sway); anchoring to a point of the photo is not in v1 | spec: `anchor == screen` |
 | OV-37 | no impact effect (`shake`, `lightning`) while an overlay element enters or draws | camera events against overlay frames |
@@ -129,13 +129,13 @@ PremiumBeat title guides beyond the opened Frame.io page ("on screen long enough
 ### `overlay_spec/2` (explainer_engine/overlay/spec2.py)
 
 New against spec/1: `mode` (full / accent), `surface` (solid / glass / bare), `overlay_reason`, `style_ref` and the style tokens, `anchor`, `protected[]`
-(face and object boxes in picture units, moved with the 2.5D camera by `camera.cam`), panels with a place chosen by `place.choose`, per item a `sound` list
+(face and object boxes in picture units, moved with the 2.5D camera (D-131) by `camera.cam`), panels with a place chosen by `place.choose`, per item a `sound` list
 (class, frame, length), and the kinds `bar_chart` (bars), `line_chart` (segments), `compare_pair` (halves), `timeline`, `stat_callout`, `counter_big`.
 Geometry, time and sound are decided in Python; `hyperframes/template2.html` only draws them. A tween begins one frame before the word frame so that
 its first visible change lands ON the word frame (measured by `window.__timing` in the composition and by the rendered alpha).
 
 ### The free 2-minute demo (`overlay/demo_build.py`, report `overlay/demo_report.py`)
 
-Twelve shots (10 % and 30 % lanes and one LTX clip), 2560x1440, 24 fps, 120 s, one chunk per shot; the narration is a free scratch read (Kokoro, word
+Twelve shots (10 % and 30 % lanes and one LTX clip of the D-131 video route), 2560x1440, 24 fps, 120 s, one chunk per shot; the narration is a free scratch read (Kokoro, word
 times by faster-whisper at 16 kHz, `demo_words.json`), the sounds are procedural, the photos are the three existing ones (M1, M3, `start_c1.png`), the map
 plates are the repo's relief plates tinted with the style tokens. All data on screen is DEMO data and the demo is never uploaded. Cost: 0.
