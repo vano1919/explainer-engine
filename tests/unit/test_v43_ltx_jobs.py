@@ -394,7 +394,7 @@ def test_the_pictures_go_in_two_stages_once_each_and_the_job_spec_pins_their_fit
     from explainer_engine.training.pods.ltx import scene_run as SR
     scene = json.loads(BATTLE.read_text(encoding="utf-8"))
     style = _png((200, 120, 80))
-    scene["pictures"].update(dir=str(tmp_path / "pics"), manifest=str(tmp_path / "pics" / "pictures.json"),
+    scene["pictures"].update(dir=str(tmp_path / "pics"), manifest=str(tmp_path / "pics" / "pictures.json"), backup=str(tmp_path / "backup"),
                              style=dict(scene["pictures"]["style"], sha256=hashlib.sha256(style).hexdigest()))
     scene["ledger"] = dict(scene["ledger"], path=str(tmp_path / "ledger.json"))
     sp = tmp_path / "scene.json"
