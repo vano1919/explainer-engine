@@ -411,14 +411,15 @@ def _files(root):
     return out
 
 
-def upload_round(api, root, hf_prefix, repo, seen: dict, final=False, sleep=time.sleep) -> int:
+def upload_round(api, root, hf_prefix, repo, seen: dict, final=False, sleep=time.sleep, op=None) -> int:
     """One batched commit of every new or changed file (the Wan worker's lesson: one commit per round, backoff, more tries at
     the final flush); returns the number sent, 0 when nothing was new or every try failed."""
-    from huggingface_hub import CommitOperationAdd
     new = [(p, k) for p, k in _files(root) if seen.get(str(p)) != k]
     if not new:
         return 0
-    ops = [CommitOperationAdd(path_in_repo=f"{hf_prefix}/{p.relative_to(root).as_posix()}", path_or_fileobj=str(p)) for p, _ in new]
+    if op is None:
+        from huggingface_hub import CommitOperationAdd as op
+    ops = [op(path_in_repo=f"{hf_prefix}/{p.relative_to(root).as_posix()}", path_or_fileobj=str(p)) for p, _ in new]
     for k in range(6 if final else 2):
         try:
             api.create_commit(repo_id=repo, repo_type="dataset", operations=ops, commit_message=f"bakeoff: {len(new)} files")

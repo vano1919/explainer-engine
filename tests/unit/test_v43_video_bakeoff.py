@@ -206,6 +206,10 @@ def test_run_state_says_done_only_when_every_shot_is_made_and_on_hf():
     assert B.run_state(done, 2, {}, error="DeadlineHit: x") == "PARTIAL"
 
 
+def OP(path_in_repo, path_or_fileobj):
+    return SimpleNamespace(path_in_repo=path_in_repo, path_or_fileobj=path_or_fileobj)
+
+
 class FakeApi:
     def __init__(self, fail=0):
         self.commits, self.fail, self.store = [], fail, {}
@@ -238,15 +242,15 @@ def test_uploads_are_batched_retried_and_checked_back_on_hf(tmp_path):
     (root / "v" / "measured.json").write_text("{}")
     (root / "v" / "x.mp4.tmp").write_bytes(b"half")                      # an encoder's temp file is never sent
     api, seen = FakeApi(fail=1), {}
-    assert B.upload_round(api, root, "pre/rid", "o/r", seen, final=True, sleep=lambda s: None) == 2
+    assert B.upload_round(api, root, "pre/rid", "o/r", seen, final=True, sleep=lambda s: None, op=OP) == 2
     assert len(api.commits) == 1 and sorted(api.commits[0]) == ["pre/rid/v/a.clip1.mp4", "pre/rid/v/measured.json"]
-    assert B.upload_round(api, root, "pre/rid", "o/r", seen, sleep=lambda s: None) == 0  # nothing new, no commit
+    assert B.upload_round(api, root, "pre/rid", "o/r", seen, sleep=lambda s: None, op=OP) == 0  # nothing new, no commit
     assert B.verify_uploads(api, root / "v", "pre/rid/v", "o/r") == {"a.clip1.mp4": "ok", "measured.json": "ok"}
     (root / "v" / "b.mp4").write_bytes(b"never sent")
     api.store["pre/rid/v/a.clip1.mp4"] = b"other"
     v = B.verify_uploads(api, root / "v", "pre/rid/v", "o/r")
     assert v["b.mp4"] == "missing on HF" and v["a.clip1.mp4"] == "hash differs on HF"
-    assert B.upload_round(FakeApi(fail=9), root, "pre/rid", "o/r", {}, sleep=lambda s: None) == 0
+    assert B.upload_round(FakeApi(fail=9), root, "pre/rid", "o/r", {}, sleep=lambda s: None, op=OP) == 0
 
 
 def test_the_ledger_reserves_the_cap_before_settles_after_and_refuses_a_repeat(tmp_path):
