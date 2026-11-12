@@ -11,6 +11,8 @@ const fs = require("fs");
   await p.waitForTimeout(300);
   const boxes = await p.evaluate(() => window.__measure());
   const timing = await p.evaluate(() => window.__timing());
-  fs.writeFileSync(out, JSON.stringify({ boxes, timing }, null, 1));
+  // OV-67: the fill every text is really drawn with (read from the page, not from the template's source)
+  const text_fills = await p.evaluate(() => [...new Set([...document.querySelectorAll("text")].map((t) => getComputedStyle(t).fill))]);
+  fs.writeFileSync(out, JSON.stringify({ boxes, timing, text_fills }, null, 1));
   await b.close();
 })();

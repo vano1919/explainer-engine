@@ -89,6 +89,27 @@ def bad_three_pops(sp):
     sp["sound"] += [{"cls": "pop_in", "t": 30, "dur": 20, "gain": 1, "item": "i0"}] * 3
 
 
+def bad_tall_small_bar(sp):
+    b = item(sp, "bar")                       # the 1 km3 bar drawn 100 px tall: a bar that lies about its value
+    b.update(h=100.0, y=b["ybase"] - 100.0)
+
+
+def bad_many_bars(sp):
+    b = item(sp, "bar")
+    sp["items"] += [{**b, "id": f"x{k}"} for k in range(4)]
+
+
+def bad_all_focus(sp):
+    for i in sp["items"]:
+        if i["kind"] == "bar":
+            i["highlight"] = True
+
+
+def bad_sound_on_fade(sp):
+    i = item(sp, "label")
+    sp["sound"].append({"cls": "swish", "t": i["end"] - 4, "dur": 4, "gain": 1.0, "item": i["id"]})        # a sound on the quiet fade-out
+
+
 BAD = {
     "OV-01": (8, lambda sp: sp["items"].append({"id": "x", "kind": "label"}), None, {}),
     "OV-02": (2, lambda sp: panel0(sp).update(end=sp["frames"] - 2), None, {}),
@@ -128,6 +149,16 @@ BAD = {
     "OV-50": (6, bad_sound_none, None, {}),
     "OV-51": (6, bad_pencil_len, None, {}),
     "OV-54": (3, bad_three_pops, None, {}),
+    "OV-58": (4, bad_tall_small_bar, None, {}),
+    "OV-59": (4, bad_many_bars, None, {}),
+    "OV-60": (4, bad_all_focus, None, {}),
+    "OV-61": (10, None, None, {"meas": "text on a point"}),
+    "OV-62": (3, bad_sound_on_fade, None, {}),
+    "OV-63": (2, None, None, {"meas": {"comp_frames": 287}}),
+    "OV-64": (2, None, None, {"meas": {"sync": {"lag": 1, "stalls": 4, "moving_frames": 12}}}),
+    "OV-65": (2, None, None, {"meas": {"rendered_spec_sha": "0" * 64}}),
+    "OV-66": (2, None, None, {"line": "stretched"}),
+    "OV-67": (10, None, None, {"meas": {"text_fills": ["rgb(48, 25, 17)", "rgb(120, 93, 88)"]}}),          # one text in the dim token
 }
 
 
@@ -141,9 +172,65 @@ def test_each_rule_fails_on_its_bad_input(base, rule):
         bx, by = sp["panels"][0]["box"][:2]
         x, y = ln["path"][len(ln["path"]) // 2]
         kw["boxes"] = {item(sp, "counter")["id"]: [x + bx - 40, y + by - 20, 80, 40]}
+    if kw.get("meas") == "text on a point":
+        sp = base[no]
+        seg = item(sp, "line_seg")
+        bx, by = sp["panels"][0]["box"][:2]
+        kw["meas"] = {"texts": {item(sp, "chart_zero")["id"]: [[bx + seg["p1"][0] - 30, by + seg["p1"][1] - 20, 80, 40]]}}     # the zero label on the first point
+    stretched = kw.pop("line", None) == "stretched"
     c = ctx(base, no, mut, shot_mut, **kw)
+    if stretched:
+        c.line = {**c.line, "words": [{**w, "start_s": w["start_s"] * 1.5, "end_s": w["end_s"] * 1.5} for w in c.line["words"]]}     # 24 kHz into a 16 kHz aligner
     res = run(rule, c)
     assert res["status"] == R.FAIL, (rule, res)
+
+
+def test_common_mistake_rules_pass_on_the_good_input_and_say_not_run_without_a_measure(base):
+    assert run("OV-58", ctx(base, 4))["status"] == R.PASS
+    assert run("OV-59", ctx(base, 4))["status"] == R.PASS and run("OV-59", ctx(base, 10))["status"] == R.PASS and run("OV-59", ctx(base, 12))["status"] == R.PASS
+    assert run("OV-60", ctx(base, 4))["status"] == R.PASS
+    assert run("OV-62", ctx(base, 6))["status"] == R.PASS
+    assert run("OV-66", ctx(base, 2))["status"] == R.PASS
+    assert run("OV-57", ctx(base, 4))["status"] == R.NOT_RUN                      # a critic's question, never a silent PASS
+    assert run("OV-67", ctx(base, 10, meas={"text_fills": ["rgb(48, 25, 17)"]}))["status"] == R.PASS
+    for k in ("OV-61", "OV-63", "OV-64", "OV-65", "OV-67"):
+        assert run(k, ctx(base, 2))["status"] == R.NOT_RUN, k
+    sp = base[2]
+    assert run("OV-65", ctx(base, 2, meas={"rendered_spec_sha": R.spec_visual(sp)}))["status"] == R.PASS
+    quiet = copy.deepcopy(sp)
+    quiet["sound"] = []
+    assert R.spec_visual(quiet) == R.spec_visual(sp)                              # a sound-only change does not make the picture stale
+
+
+def test_file_and_eye_rules(base):
+    specs = [base[s["no"]] for s in D.SHOTS]
+    n = sum(s["frames"] for s in specs)
+    assert R.ep63(specs, None)["status"] == R.NOT_RUN
+    assert R.ep63(specs, {"final_frames": n, "final_audio_s": n / 24})["status"] == R.PASS
+    assert R.ep63(specs, {"final_frames": n - 9, "final_audio_s": n / 24})["status"] == R.FAIL        # the first demo: one frame lost per overlay shot
+    assert R.ep63(specs, {"final_frames": n, "final_audio_s": n / 24 - 0.4})["status"] == R.FAIL
+    assert R.ep65(specs, {"sound_sha": R.spec_sound(specs)})["status"] == R.PASS
+    assert R.ep65(specs, {"sound_sha": "old"})["status"] == R.FAIL and R.ep65(specs, {})["status"] == R.NOT_RUN
+    need = [s["shot_no"] for s in specs if s["items"]]
+    assert R.ep68(specs, None)["status"] == R.NOT_RUN
+    assert R.ep68(specs, {"final_sha256": "a", "checked_sha256": "a", "shots": need, "fixed": ["x"]})["status"] == R.PASS
+    assert R.ep68(specs, {"final_sha256": "b", "checked_sha256": "a", "shots": need})["status"] == R.FAIL        # looked at an older file
+    assert R.ep68(specs, {"final_sha256": "a", "checked_sha256": "a", "shots": need[:-1]})["status"] == R.FAIL
+    assert R.ep68(specs, {"final_sha256": "a", "checked_sha256": "a", "shots": need, "open_findings": ["label on a point"]})["status"] == R.FAIL
+
+
+def test_sync_signals_catch_a_repeated_overlay_frame():
+    from explainer_engine.overlay import demo_measure as M
+    rng = np.random.default_rng(1)
+    s_ov = np.zeros(120)
+    s_ov[30:48] = 20 + rng.random(18) * 10
+    good = 0.4 * s_ov + 0.05 + rng.random(120) * 0.01
+    assert M.sync_from_signals(s_ov, good)["lag"] == 0 and M.sync_from_signals(s_ov, good)["stalls"] == 0
+    late = np.roll(good, 1)
+    assert M.sync_from_signals(s_ov, late)["lag"] == 1
+    stall = good.copy()
+    stall[33::3] = 0.05                               # every third overlay frame shown one frame late: the composite does not move there
+    assert M.sync_from_signals(s_ov, stall)["stalls"] >= 3
 
 
 def test_rules_that_cannot_be_checked_say_so(base):

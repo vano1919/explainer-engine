@@ -5523,3 +5523,31 @@ The fix is in the worker (`libs()` returns `str(...)`); it goes in only with the
 - Tests: `tests/unit/test_overlay_hyperframes.py` (6; the render test runs when `EXPLAINER_HYPERFRAMES` points at a local CLI), docs_lint 0 findings.
 - Files: HF `vano1919/tmr-artifacts` `explainer-engine/overlay_b5_2026-11-12/`, e.g. [S02_SH010_on_ltx_2k.mp4](https://huggingface.co/datasets/vano1919/tmr-artifacts/blob/main/explainer-engine/overlay_b5_2026-11-12/S02_SH010_on_ltx_2k.mp4).
 - Cost: 0 (no paid service). Next: the creator looks at the two samples; then P4 wiring (episode runner stage for map_action shots) in the C stage.
+
+## 2026-11-12 — Overlay rules OV-01..OV-69 and the free 2-minute 10 %/30 % demo (branch `claude/project-thread-92rcrx`)
+- Asked by the creator (19:43 UTC: overlay forbidden in video shots, allowed in the 10 % and 30 % lanes, strict in the 30 % lane, a sound on every
+  motion, the picture first and the overlay in its style, transparent surfaces; 21:06 UTC: research the common mistakes and write them as rules).
+- Done: `overlay/rules.py` (one function per rule, PASS / FAIL / NOT_RUN / N/A, the house numbers in `HOUSE`), `overlay/spec2.py` (`overlay_spec/2`:
+  full / accent, solid / glass / bare, bar and line charts, compare pair, timeline, stat callout, counters, a sound list per item),
+  `hyperframes/template2.html`, placement away from faces (`place.py`, `camera.py`), the demo pipeline (`demo_build.py`, stages specs, bg, overlay,
+  measure, comp, sound, final, ab, sheet, eye, report) and its measurements (`demo_measure.py`). Rules and sources: [HYPERFRAMES_OVERLAY](HYPERFRAMES_OVERLAY.md).
+- The demo: 12 shots, 2560x1440, 24 fps, 2880 frames (120.000 s), one chunk per shot, composite then grade. Free scratch read (Kokoro, word times by
+  faster-whisper), procedural sounds, the three existing photos, one LTX bake-off clip without overlay, relief plates tinted with the style tokens.
+  All data on screen is DEMO data; the demo is never uploaded to YouTube. Cost: 0.
+- Validator on the real files: 0 FAIL. NOT_RUN (said, not passed): OV-31 and OV-57 (critic questions), OV-41 (the dim of inactive terrain is not drawn),
+  OV-46 (no claim map: demo data), OV-56 (the library's wav files are not in the container), the 40 % budget of OV-32 (a showcase). Levels: 10 % -33.8,
+  30 % -34.0, LTX -33.9 LUFS (spread 0.2 LU); overlay sounds 6.5 LU under the scene's sounds; OV-34 0 intersections on every frame.
+- Timing against the word frame, 25 elements: 16 on the frame, 2 pulses one frame early, 5 one frame late, 2 line segments two frames late (all inside
+  BP-54; the relay's stricter wish "none early, at most one frame" is not met for 4 elements: the pulse's first visible change and the slow start of
+  the ease on a line segment).
+- Mistakes of this build, each now a rule with a test (OV-61, OV-63..OV-69): `overlay=shortest=1` dropped the last frame of 9 shots (2871 frames
+  instead of 2880); WebM millisecond timestamps put a third of the overlay frames one frame late in the composite while the timing check read only the
+  overlay's own file; the report ran on stale specs; a 24 kHz read into a 16 kHz aligner stretched the word times by 1.5; the zero label of the line
+  chart sat on the first point and, in the dim token, measured 4.22:1; the contrast measure took the whole text box as ground; a chained background
+  command died without a line. The validator had said 0 FAIL before the eye found the frame loss and the label: OV-68 makes the look a recorded step.
+- Stale text reported, not changed: the rules table of the rules file asks `glass` for shot 9 while OV-23 says one number is `bare`; the demo follows
+  OV-23 (told to the rules thread). The demo's chart titles name the topic, not the finding (OV-57 is new; a critic's question).
+- Tests: `tests/unit/test_overlay_rules.py` (54), `test_overlay_demo.py` (7), `test_overlay_hyperframes.py` (6, 1 skipped without the CLI); docs_lint 0 findings.
+- Files: HF `vano1919/tmr-artifacts` `explainer-engine/overlay_demo_2026-11-12/`: [demo_overlay_2min.mp4](https://huggingface.co/datasets/vano1919/tmr-artifacts/blob/main/explainer-engine/overlay_demo_2026-11-12/demo_overlay_2min.mp4)
+  (sha256 729400e7...e0af, verified), `ab_surface.mp4`, `ab_sound.mp4`, `DEMO_REPORT.md`, `validator_report.json`, contact sheets, `eye_check.json`, specs.
+- Next: the creator looks at the demo and the two A/B files and confirms or changes the house numbers (report section 6); then the episode runner stage.

@@ -1,4 +1,4 @@
-"""The overlay validator (OVERLAY_INTEGRATION_RULES_ka.md, OV-01..OV-56): one function per rule, each PASS / FAIL / NOT_RUN / N/A with a detail.
+"""The overlay validator (OVERLAY_INTEGRATION_RULES_ka.md, OV-01..OV-56, and the common mistakes OV-57..OV-69 of docs/HYPERFRAMES_OVERLAY.md): one function per rule, each PASS / FAIL / NOT_RUN / N/A with a detail.
 
 ``validate(specs, shots, measures, mix, ...)`` returns {"shots": {no: {OV: {status, detail}}}, "episode": {OV: {...}}}. A rule that needs a
 measurement says NOT_RUN when the measurement is absent (never PASS by default); N/A means the rule has nothing to judge in that shot.
@@ -9,6 +9,8 @@ The numbers: BP-134 (enter 200-400 ms, exit 150-250 ms, one moving element, coun
 from __future__ import annotations
 
 import colorsys
+import hashlib
+import json
 import re
 from typing import Callable
 
@@ -36,6 +38,10 @@ HOUSE = {  # the numbers of the rules file marked "წ"; the demo uses exactly t
     "OV-45 grid lines": 3, "OV-45 title words": 6, "OV-49 bars in an accent chart": 3,
     "OV-53 overlay sounds below the scene's real sounds, LU": 6.0,
     "OV-55 spread of the group levels, LU": 1.0,
+    "OV-59 data points in a full chart (bars, line points, timeline marks)": (5, 6, 5),
+    "OV-61 gap between a text and a data point, px": 6,
+    "OV-63 audio and picture lengths differ by at most, frames": 1,
+    "OV-66 last word past the end of its audio, s": 0.15,
 }
 ALLOWED_REASONS = {"number", "place", "date", "compare", "name"}
 ALLOWED_KINDS = {"date_chip", "label", "pulse", "highlight", "spread", "plume", "route_arrow", "front_line", "counter", "counter_big", "bar", "line_seg",
@@ -428,12 +434,126 @@ def ov54(c):
     return r(FAIL, f"{worst} sounds of one class together (> {lim})") if worst > lim else r(PASS, f"at most {worst} sounds of one class at once")
 
 
+# ------------------------------------------------------------------------------------------------ section 11: the common mistakes (OV-57..OV-69)
+def spec_visual(sp: dict) -> str:
+    """What a render depends on: the spec without its sound events (a sound-only change must not make a picture stale, and the reverse)."""
+    d = {k: v for k, v in sp.items() if k != "sound"}
+    d["items"] = [{k: v for k, v in i.items() if k != "sound"} for i in sp["items"]]
+    return hashlib.sha256(json.dumps(d, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+def spec_sound(specs: list[dict]) -> str:
+    return hashlib.sha256(json.dumps([[s["shot_no"], s["frames"], s["sound"]] for s in specs], sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+def ov57(c):
+    t = [i for i in c.items if i["kind"] == "chart_title"]
+    return r(NA) if not t else r(NOT_RUN, f"needs the script-critic: does the title state the finding, not the topic? ({[i['text'] for i in t]})")
+def ov58(c):
+    bars = [i for i in c.items if i["kind"] == "bar"]
+    if not bars: return r(NA)
+    top = max(bars, key=lambda i: i["value"])
+    bad = []
+    for i in bars:
+        if abs(i["y"] + i["h"] - i["ybase"]) > 0.6: bad.append(f"{i['id']} does not stand on the zero line")
+        want = max(3.0, top["h"] * i["value"] / top["value"])       # 3 px = the smallest bar still seen
+        if abs(i["h"] - want) > max(1.0, 0.02 * top["h"]): bad.append(f"{i['id']} is {i['h']:.0f} px tall, its value asks for {want:.0f}")
+    if len({i["ybase"] for i in bars}) > 1: bad.append("the bars do not share one baseline")
+    return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"{len(bars)} bars from zero, heights in proportion to their values")
+def ov59(c):
+    if not c.full: return r(NA)
+    nb, nl, nt = HOUSE["OV-59 data points in a full chart (bars, line points, timeline marks)"]
+    got = {"bars": (sum(1 for i in c.items if i["kind"] == "bar"), nb), "line points": (sum(1 for i in c.items if i["kind"] == "line_seg"), nl),
+           "timeline marks": (max((len(i.get("ticks", [])) for i in c.items if i["kind"] == "timeline_axis"), default=0), nt)}
+    if not any(v[0] for v in got.values()): return r(NA)
+    bad = [f"{v[0]} {k} (> {v[1]})" for k, v in got.items() if v[0] > v[1]]
+    return r(FAIL, "; ".join(bad)) if bad else r(PASS, ", ".join(f"{v[0]} {k}" for k, v in got.items() if v[0]))
+def ov60(c):
+    bars = [i for i in c.items if i["kind"] == "bar"]
+    if len(bars) < 2: return r(NA)
+    n = sum(1 for i in bars if i.get("highlight"))
+    return r(PASS, "one bar in the focus colour, the rest neutral") if n == 1 else r(FAIL, f"{n} bars in the focus colour")
+def _hit(a, b, gap=0.0):
+    return a[0] < b[0] + b[2] + gap and b[0] < a[0] + a[2] + gap and a[1] < b[1] + b[3] + gap and b[1] < a[1] + a[3] + gap
+def ov61(c):
+    tx = c.meas.get("texts")
+    if not c.items: return r(NA)
+    if tx is None: return r(NOT_RUN, "no measured text boxes")
+    live = {i["id"]: i for i in c.items}
+    bad = []
+    ids = [k for k in tx if k in live and tx[k]]
+    for n, a in enumerate(ids):
+        for b in ids[n + 1:]:
+            ia, ib = live[a], live[b]
+            if (ia["end"] or c.n) <= ib["start"] or (ib["end"] or c.n) <= ia["start"]: continue
+            if any(_hit(x, y) for x in tx[a] for y in tx[b]): bad.append(f"texts of {a} {ia['kind']} and {b} {ib['kind']} overlap")
+    gap = HOUSE["OV-61 gap between a text and a data point, px"]
+    panels = {p["id"]: p for p in c.panels}
+    for i in c.items:
+        if i["kind"] != "line_seg": continue
+        p = panels[i["pid"]]
+        if p["anchor"] != "screen": continue
+        rr = i.get("width", 14) * 0.75
+        for pt in (i.get("p0"), i.get("p1")):
+            if not pt: continue
+            dot = [p["box"][0] + pt[0] - rr, p["box"][1] + pt[1] - rr, 2 * rr, 2 * rr]
+            for k in ids:
+                if any(_hit(x, dot, gap) for x in tx[k]) and not (k == i["id"]):
+                    bad.append(f"text of {k} {live[k]['kind']} sits on a data point of {i['id']}")
+    bad = sorted(set(bad))
+    return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"{len(ids)} texts: none overlaps another text or sits on a data point")
+def ov62(c):
+    if not c.items: return r(NA)
+    live = {i["id"]: i for i in c.items}
+    bad = []
+    for e in c.spec["sound"]:
+        i = live.get(e["item"])
+        pn = next((p for p in c.panels if p["id"] == e["item"]), None)
+        if pn is not None:                                   # a panel that slides in is a motion too; its sound stays inside its entrance
+            if not (pn["start"] - 1 <= e["t"] <= pn["start"] + 6 + 3): bad.append(f"panel {pn['id']} {e['cls']} at frame {e['t']}, outside its entrance at {pn['start']}")
+        elif i is None: bad.append(f"a {e['cls']} at frame {e['t']} belongs to no element")
+        elif i["kind"] in STATIC: bad.append(f"{i['id']} {i['kind']} does not move but sounds")
+        elif not (i["start"] - 1 <= e["t"] <= i["motion_end"] + 3): bad.append(f"{i['id']} {e['cls']} at frame {e['t']}, outside its motion {i['start']}-{i['motion_end']}")
+    return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"{len(c.spec['sound'])} sounds, each inside the motion of its element; fades and still parts are silent")
+def ov63(c):
+    n = c.meas.get("comp_frames")
+    if n is None: return r(NOT_RUN, "the composite's frames were not counted")
+    return r(PASS, f"{n} frames, as planned") if n == c.n else r(FAIL, f"the composite has {n} frames, the plan {c.n}")
+def ov64(c):
+    if not c.items: return r(NA)
+    s = c.meas.get("sync")
+    if s is None: return r(NOT_RUN, "the overlay's step with the picture was not measured on the composite")
+    if s["lag"] != 0 or s["stalls"] > 0: return r(FAIL, f"on the composite the overlay is {s['lag']} frames off and stalls on {s['stalls']} of {s['moving_frames']} moving frames")
+    return r(PASS, f"on the composite: lag 0, no repeated overlay frame on {s['moving_frames']} moving frames")
+def ov65(c):
+    if not c.items: return r(NA)
+    got = c.meas.get("rendered_spec_sha")
+    if got is None: return r(NOT_RUN, "no record of the spec the overlay was rendered from")
+    return r(PASS, "the overlay was rendered from this spec") if got == spec_visual(c.spec) else r(FAIL, "the overlay was rendered from an older spec (stale file)")
+def ov66(c):
+    if not c.line or not c.line.get("words"): return r(NA)
+    sec = c.line.get("seconds")
+    if sec is None: return r(NOT_RUN, "the read's length is not recorded")
+    last, first = max(w["end_s"] for w in c.line["words"]), min(w["start_s"] for w in c.line["words"])
+    lim = HOUSE["OV-66 last word past the end of its audio, s"]
+    if first < 0 or last > sec + lim: return r(FAIL, f"the words run {first:.2f}-{last:.2f} s, the audio is {sec:.2f} s long (stretched times)")
+    return r(PASS, f"the words run {first:.2f}-{last:.2f} s inside {sec:.2f} s of audio")
+def ov67(c):
+    if not c.items: return r(NA)
+    fills = c.meas.get("text_fills")
+    if fills is None: return r(NOT_RUN, "the fills of the drawn texts were not read from the composition")
+    ink = c.spec["style"]["tokens"]["ink"].lower()
+    def hx(v):
+        m = re.match(r"rgba?\((\d+),\s*(\d+),\s*(\d+)", v)
+        return "#%02x%02x%02x" % tuple(int(x) for x in m.groups()) if m else v.lower()
+    bad = sorted({hx(v) for v in fills} - {ink})
+    name = {v.lower(): k for k, v in c.spec["style"]["tokens"].items()}
+    return r(FAIL, f"text drawn in {[name.get(b, b) for b in bad]}: text is ink only") if bad else r(PASS, "every text is drawn in the ink token")
+
+
 SHOT_RULES: dict[str, Callable] = {
     "OV-01": ov01, "OV-02": ov02, "OV-03": ov03, "OV-04": ov04, "OV-05": ov05, "OV-06": ov06, "OV-10": ov10, "OV-11": ov11, "OV-13": ov13, "OV-14": ov14,
     "OV-15": ov15, "OV-16": ov16, "OV-17": ov17, "OV-18": ov18, "OV-20": ov20, "OV-21": ov21, "OV-22": ov22, "OV-23": ov23, "OV-24": ov24, "OV-30": ov30,
     "OV-31": ov31, "OV-32": ov32, "OV-33": ov33, "OV-34": ov34, "OV-35": ov35, "OV-36": ov36, "OV-37": ov37, "OV-38": ov38, "OV-40": ov40, "OV-41": ov41,
     "OV-42": ov42, "OV-43": ov43, "OV-44": ov44, "OV-45": ov45, "OV-46": ov46, "OV-47": ov47, "OV-48": ov48, "OV-49": ov49, "OV-50": ov50, "OV-51": ov51,
-    "OV-54": ov54,
+    "OV-54": ov54, "OV-57": ov57, "OV-58": ov58, "OV-59": ov59, "OV-60": ov60, "OV-61": ov61, "OV-62": ov62, "OV-63": ov63, "OV-64": ov64, "OV-65": ov65,
+    "OV-66": ov66, "OV-67": ov67,
 }
 
 
@@ -493,7 +613,30 @@ def ep56(lib_present: bool, classes_used: set):
     return r(PASS, "library wavs used") if lib_present else r(NOT_RUN, f"the library's wav files are not in this container; procedural numpy sounds ({sorted(classes_used)}) are allowed in the demo only")
 
 
-def validate(specs: list[dict], shots: list[dict], *, lines: dict, boxes: dict, meas: dict, htmls: dict, mix: dict | None, order: dict | None, lib_present: bool = False) -> dict:
+def ep63(specs: list[dict], files: dict | None):
+    if not files: return r(NOT_RUN, "the final file was not measured")
+    want = sum(s["frames"] for s in specs)
+    bad = []
+    if files["final_frames"] != want: bad.append(f"the final file has {files['final_frames']} frames, the plan {want}")
+    lim = HOUSE["OV-63 audio and picture lengths differ by at most, frames"]
+    if files.get("final_audio_s") is None: bad.append("no audio stream")
+    elif abs(files["final_audio_s"] - files["final_frames"] / FPS) > lim / FPS + 0.03: bad.append(f"audio {files['final_audio_s']:.3f} s against picture {files['final_frames'] / FPS:.3f} s")
+    return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"{want} frames as planned; audio {files['final_audio_s']:.3f} s against {want / FPS:.3f} s of picture")
+def ep65(specs: list[dict], mix: dict | None):
+    if not mix or "sound_sha" not in mix: return r(NOT_RUN, "no record of the sound plan the mix was made from")
+    return r(PASS, "the mix was made from this sound plan") if mix["sound_sha"] == spec_sound(specs) else r(FAIL, "the mix was made from an older sound plan (stale file)")
+def ep68(specs: list[dict], eye: dict | None):
+    need = sorted(s["shot_no"] for s in specs if s["items"])
+    if not eye: return r(NOT_RUN, "nobody looked: no eye-check record of the final file (a validator PASS is not a look)")
+    if eye.get("final_sha256") != eye.get("checked_sha256"): return r(FAIL, "the eye check was made on another file than the final one")
+    miss = [n for n in need if n not in eye.get("shots", [])]
+    if miss: return r(FAIL, f"shots {miss} were not looked at")
+    if eye.get("open_findings"): return r(FAIL, f"open findings of the eye check: {eye['open_findings']}")
+    return r(PASS, f"a settled frame of every shot with an overlay was looked at on the final file ({len(need)} shots); findings fixed: {len(eye.get('fixed', []))}")
+
+
+def validate(specs: list[dict], shots: list[dict], *, lines: dict, boxes: dict, meas: dict, htmls: dict, mix: dict | None, order: dict | None, lib_present: bool = False,
+             files: dict | None = None, eye: dict | None = None) -> dict:
     out = {"shots": {}, "episode": {}}
     for sp, sh in zip(specs, shots):
         no = sp["shot_no"]
@@ -501,7 +644,8 @@ def validate(specs: list[dict], shots: list[dict], *, lines: dict, boxes: dict, 
         out["shots"][no] = {k: fn(c) for k, fn in SHOT_RULES.items()}
     out["episode"] = {"OV-06 shares": ep06(specs, shots), "OV-11": ep11(specs), "OV-12": ep12(order), "OV-32 sequence": ep32(specs), "OV-42 run": ep42(specs),
                       "OV-52": ep52(specs), "OV-53": ep53(mix), "OV-44/55": ep55(mix),
-                      "OV-56": ep56(lib_present, {e["cls"] for s in specs for e in s["sound"]})}
+                      "OV-56": ep56(lib_present, {e["cls"] for s in specs for e in s["sound"]}),
+                      "OV-63 final": ep63(specs, files), "OV-65 mix": ep65(specs, mix), "OV-68": ep68(specs, eye)}
     return out
 
 

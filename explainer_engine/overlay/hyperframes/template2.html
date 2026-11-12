@@ -181,7 +181,7 @@ for (const it of SPEC.items) {
     reg(it.id, l);
   } else if (K0 === "chart_zero") {
     const l = el("line", { x1: it.x0, x2: it.x1, y1: it.y, y2: it.y, stroke: K.dim, "stroke-width": 4, "stroke-dasharray": "14 12" }, parent);
-    const t = text(parent, it.label, it.x0 - 10, it.y - 12, it.size, { opacity: 1, noHalo: true, fill: K.dim });
+    const t = text(parent, it.label, it.x0 - 16, it.y + it.size * 0.35, it.size, { opacity: 1, noHalo: true, anchor: "end" });   // left of the line, never on the first point
     reg(it.id, l, t);
   } else if (K0 === "bar") {
     const r = el("rect", { x: it.x, y: it.y, width: it.w, height: it.h, rx: 8, fill: it.highlight ? K.accent : K.dim, stroke: K.ink, "stroke-width": 4, opacity: 0 }, parent);

@@ -3,6 +3,7 @@ loudness, the list of house numbers used, cost 0). Any FAIL means the demo is no
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -20,7 +21,7 @@ def collect(w: B.Work) -> dict:
     st = B.style()
     ink = st["tokens"]["ink"]
     specs = [B.load_spec(w, s["no"]) for s in D.SHOTS]
-    boxes, texts, timing, meas, htmls, pix = {}, {}, {}, {}, {}, {}
+    boxes, texts, timing, meas, htmls, pix, fills = {}, {}, {}, {}, {}, {}, {}
     for sp in specs:
         no = sp["shot_no"]
         m = w.p("meas", f"boxes_{no:02d}.json")
@@ -29,13 +30,23 @@ def collect(w: B.Work) -> dict:
             boxes[no] = {b["id"]: b["box"] for b in d["boxes"]}
             texts[no] = {b["id"]: b["texts"] for b in d["boxes"]}
             timing[no] = d["timing"]
+            fills[no] = d.get("text_fills")
         h = w.p("proj", f"s{no:02d}", "index.html")
         if h.exists():
             htmls[no] = h.read_text()
         meas[no] = {}
+        if fills.get(no) is not None:
+            meas[no]["text_fills"] = fills[no]
         comp = w.p("comp", f"comp_{no:02d}.mp4")
         if sp["items"] and comp.exists() and no in texts:
-            meas[no]["contrast"] = M.contrast(comp, sp, texts[no], ink)
+            meas[no]["contrast"] = M.contrast(comp, sp, texts[no], ink, dim=sp["style"]["tokens"]["dim"])
+            meas[no]["texts"] = texts[no]
+        if comp.exists():
+            meas[no]["comp_frames"] = M.n_frames(comp)
+        used = w.p("proj", f"s{no:02d}", "spec.json")           # the spec the composition (and so the overlay file) was made from
+        ovf = w.p("ov", f"ov_{no:02d}.webm")
+        if sp["items"] and used.exists() and ovf.exists() and ovf.stat().st_mtime >= used.stat().st_mtime:
+            meas[no]["rendered_spec_sha"] = R.spec_visual(json.loads(used.read_text()))
         bg = w.p("bg", f"bg_{no:02d}.mp4")
         if sp["mode"] == "full" and bg.exists():
             meas[no]["bg_std"] = M.bg_std(bg, sp["frames"])
@@ -47,9 +58,19 @@ def collect(w: B.Work) -> dict:
             a = M.alpha_frames(ov)
             if any(p["surface"] == "glass" for p in sp["panels"]):
                 meas[no]["glass_alpha"] = M.glass_alpha(ov, sp, a)
+            if comp.exists() and w.p("bg", f"bg_{no:02d}.mp4").exists():
+                meas[no]["sync"] = M.sync_check(comp, w.p("bg", f"bg_{no:02d}.mp4"), a)
             if no in boxes:
                 pix[no] = M.pixel_first_change(ov, sp, boxes[no], a)
     return {"specs": specs, "boxes": boxes, "texts": texts, "timing": timing, "meas": meas, "htmls": htmls, "pix": pix}
+
+
+def sha256(p: Path) -> str:
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
 
 
 def run(w: B.Work) -> dict:
@@ -57,10 +78,17 @@ def run(w: B.Work) -> dict:
     mix = json.loads(w.p("sound", "mix_report.json").read_text()) if w.p("sound", "mix_report.json").exists() else None
     order = json.loads(w.p("final", "render_order.json").read_text()) if w.p("final", "render_order.json").exists() else None
     narr = {l["no"]: l for l in B.narration()}
-    rep = R.validate(c["specs"], D.SHOTS, lines=narr, boxes=c["boxes"], meas=c["meas"], htmls=c["htmls"], mix=mix, order=order, lib_present=any(LIB.glob("**/*.wav")))
+    final = w.p("final", "demo_overlay_2min.mp4")
+    files = {"final_frames": M.n_frames(final), "final_audio_s": M.audio_seconds(final), "final_sha256": sha256(final)} if final.exists() else None
+    eye = json.loads(w.p("final", "eye_check.json").read_text()) if w.p("final", "eye_check.json").exists() else None
+    if eye and files:
+        eye["final_sha256"] = files["final_sha256"]
+    rep = R.validate(c["specs"], D.SHOTS, lines=narr, boxes=c["boxes"], meas=c["meas"], htmls=c["htmls"], mix=mix, order=order, lib_present=any(LIB.glob("**/*.wav")),
+                     files=files, eye=eye)
+    rep["files"] = files
     rep["fails"] = R.failures(rep)
     rep["timing"] = timing_rows(c)
-    rep["measurements"] = {str(k): {kk: vv for kk, vv in v.items()} for k, v in c["meas"].items()}
+    rep["measurements"] = {str(k): {kk: vv for kk, vv in v.items() if kk != "texts"} for k, v in c["meas"].items()}
     rep["cost_usd"] = 0
     write_text_atomic(w.p("final", "validator_report.json"), json.dumps(rep, indent=1, ensure_ascii=False))
     write_text_atomic(w.p("final", "DEMO_REPORT.md"), markdown(c, rep, mix))

@@ -95,6 +95,37 @@ from the registry. Status of each rule in the validator: PASS, FAIL, NOT_RUN (a 
 BP-55 (at most half of the visual beats have a sound) is overridden for overlay motion sounds by the creator's newer word: their purpose is `sync`
 and they do not count in BP-55's share.
 
+## Common mistakes OV-57..OV-69 (the creator, 2026-11-12 21:06 UTC: "research the mistakes made often and write them into the rules")
+
+Two sources: (a) what editors, chart makers, map makers and sound editors name as their usual mistakes (web, 2026-11-12; pages opened are marked
+*opened*, the rest were read as search summaries only), and (b) the mistakes this thread itself made while building the first demo, each found by
+a measurement or by the eye. Most of (a) was already a rule (faces and margins OV-34, contrast OV-15, time on screen OV-35, no legend and direct labels
+OV-45/OV-48, one style OV-11, no sound without need OV-50..OV-54); the rows below are what was missing. Every number is a house number ("წ") until
+the creator confirms it; none comes from two source types yet (D-59), so each is a hypothesis with its measured check.
+
+| ID | rule | the mistake it stops | check |
+|---|---|---|---|
+| OV-57 | a chart title states the finding ("Toba was 19 times bigger"), not the topic ("Eruption sizes") | the viewer has seconds and must work the point out alone (Online Journalism Blog 2026-06-23, *opened*) | critic question, NOT_RUN in code |
+| OV-58 | bars stand on zero and their heights are in proportion to their values; a value axis never rescales while it is animated | the truncated axis and the bar that lies (GraphPad series, search summary) | spec |
+| OV-59 | a `full` chart shows at most 5 bars, 6 line points or 5 timeline marks (accent: OV-49) | "a top ten is too much for video" (Online Journalism Blog, *opened*) | spec |
+| OV-60 | exactly one bar wears the focus colour, the others stay neutral | colour on everything: the eye has nowhere to go (same source: remove to improve) | spec |
+| OV-61 | no text overlaps another text, and no text sits on a data point (6 px clear) | a label on its own dot or on the line (map and chart guides; found in this demo: "0 °C" on the first point of the line chart) | measured text boxes |
+| OV-62 | a sound belongs to a motion and lies inside it; fades, still parts and titles are silent | a whoosh on everything flattens the mix and hides the payoff (Boom Box Post, Kate Finan, *opened*) | spec |
+| OV-63 | every chunk has exactly its planned frames, the final file their sum, audio and picture within 1 frame | **this demo:** `overlay=shortest=1` dropped the last frame of each of 9 shots: 9 frames of drift against the sound by the end | frame counts of the files |
+| OV-64 | the overlay's step with the picture is measured on the COMPOSITE: lag 0 and no repeated overlay frame | **this demo:** WebM stores milliseconds, 0.042 s is later than 1/24 s, so a third of the overlay frames landed one frame late; the timing check read only the overlay's own file and passed | `demo_measure.sync_check` |
+| OV-65 | a rendered file is used only with the spec it was made from (picture: the spec without sound; mix: the sound plan) | **this demo:** the report ran on specs older than the code and showed sound errors that were already fixed | hashes |
+| OV-66 | the last word of a line ends inside its audio | **this demo:** a 24 kHz read fed to a 16 kHz aligner stretched every word time by 1.5 | word times against the read's length |
+| OV-67 | text is drawn in the ink token only (dim, accent and second are for lines and fills) | **this demo:** the zero label in the dim token measured 4.22:1, under OV-15 | the fills of the drawn texts, read from the composition |
+| OV-68 | before a file is sent the thread looks at one settled frame of every shot cut from the FINAL file and records it (`eye_check.json`: file hash, findings fixed, findings open); a newer final file needs a new look | **this demo:** the validator said 0 FAIL while the frames showed a label on a point and the file was 9 frames short. A PASS is not a look | the record and its hash |
+| OV-69 | a long chain is one tracked process whose log ends with DONE or FAIL; never a shell loop that waits on `pgrep` | **this demo:** a chained background command died without a line and 20 minutes passed before it was seen | `demo_build.main` writes the line |
+
+How the two ffmpeg mistakes are avoided in code: the overlay input is read with `-r 24` (exact frame times instead of the stored milliseconds) and the
+`overlay` filter runs with `eof_action=repeat`, the frame count comes from `-frames:v`. Checked on three shots rendered both ways: the old command gives
+lag 0-1 and 3-7 stalled frames, the new one lag 0 and 0 stalls on all nine overlay shots.
+
+Not opened by this thread (search summaries only, so guidance, not grade): the GraphPad chart series, the Splice and Maptive map guides, the Frame.io and
+PremiumBeat title guides beyond the opened Frame.io page ("on screen long enough to read every word twice" is its only number; OV-35 already asks for more).
+
 ### `overlay_spec/2` (explainer_engine/overlay/spec2.py)
 
 New against spec/1: `mode` (full / accent), `surface` (solid / glass / bare), `overlay_reason`, `style_ref` and the style tokens, `anchor`, `protected[]`

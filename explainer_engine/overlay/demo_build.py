@@ -1,6 +1,6 @@
 """Build the free 2-minute overlay demo (OVERLAY_INTEGRATION_RULES section 10), stage by stage, in chunks (RULE-R1: one shot = one chunk).
 
-    python -m explainer_engine.overlay.demo_build specs|bg|overlay|measure|comp|sound|final|ab|all [--shots 2,3] [--work DIR]
+    python -m explainer_engine.overlay.demo_build specs|bg|overlay|measure|comp|sound|final|ab|sheet|eye|report|all (or a,b,c) [--shots 2,3] [--work DIR]
 
 Free only: Kokoro scratch narration, procedural sound, the repo's maps, HyperFrames on this machine, ffmpeg. No ElevenLabs, LTX, Gemini API,
 pod or Modal. Every stage writes its files and is skipped when its output exists (``--force`` redoes it).
@@ -25,6 +25,7 @@ from explainer_engine.overlay import demo_bg as BG
 from explainer_engine.overlay import demo_mix as MIX
 from explainer_engine.overlay import demo_script as D
 from explainer_engine.overlay import hyperframes as HF
+from explainer_engine.overlay import rules as R
 from explainer_engine.overlay import spec2
 
 HERE = Path(__file__).resolve().parent
@@ -160,8 +161,10 @@ def compose_cmd(sp: dict, bg: Path, ov: Path | None, masks: list[Path], out: Pat
         cur = f"[g{k}]"
         idx += 1
     if ov is not None:
-        cmd += ["-c:v", "libvpx-vp9", "-i", str(ov)]
-        chain.append(f"{cur}[{idx}:v]overlay=0:0:format=auto:shortest=1[o]")
+        # "-r" as an input option replaces the WebM's millisecond timestamps by exact k/fps ones: with the stored ones a third of the overlay
+        # frames land one frame late (0.042 > 1/24) and "shortest" dropped the last frame of every shot (9 frames of drift over the demo).
+        cmd += ["-r", str(FPS), "-c:v", "libvpx-vp9", "-i", str(ov)]
+        chain.append(f"{cur}[{idx}:v]overlay=0:0:format=auto:eof_action=repeat[o]")
     else:
         chain.append(f"{cur}null[o]")
     cmd += ["-filter_complex", ";".join(chain), "-map", "[o]", "-frames:v", str(n), "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "14",
@@ -193,6 +196,7 @@ def stage_sound(w: Work, force: bool) -> dict:
     rep = w.p("sound", "mix_report.json")
     specs = [load_spec(w, s["no"]) for s in D.SHOTS]
     res = MIX.build(D.SHOTS, specs, narration(), LTX_CLIP, w.p("sound"))
+    res["report"]["sound_sha"] = R.spec_sound(specs)        # OV-65: the report refuses a mix made from another sound plan
     write_text_atomic(rep, json.dumps(res["report"], indent=1))
     mx = MIX.mix_range(res["stems"], 0, sum(s["dur"] for s in D.SHOTS))
     sf.write(w.p("sound", "mix.wav"), mx, MIX.SR)
@@ -264,16 +268,62 @@ def stage_final(w: Work, force: bool) -> Path:
     return out
 
 
+def settled_frame(sp: dict) -> int:
+    return min(max([i["motion_end"] for i in sp["items"]] or [sp["frames"] // 2]) + 10, sp["frames"] - 12)
+
+
+def stage_sheet(w: Work) -> list[Path]:
+    """OV-68: one settled frame of every shot, cut from the FINAL file, on contact sheets for the eye check (a validator PASS is not a look)."""
+    final, t, tiles = w.p("final", "demo_overlay_2min.mp4"), 0, []
+    for s in D.SHOTS:
+        sp = load_spec(w, s["no"])
+        png = w.p("cache", f"sheet_{s['no']:02d}.png")
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{(t + settled_frame(sp)) / FPS:.3f}", "-i", str(final), "-frames:v", "1", "-vf", "scale=1280:720", str(png)], check=True)
+        tiles.append(png)
+        t += sp["frames"]
+    out = []
+    for k in range(0, len(tiles), 4):
+        im = Image.new("RGB", (2560, 1440))
+        for j, png in enumerate(tiles[k:k + 4]):
+            im.paste(Image.open(png), ((j % 2) * 1280, (j // 2) * 720))
+        out.append(w.p("final", f"contact_sheet_{k // 4 + 1}.jpg"))
+        im.save(out[-1], quality=88)
+    return out
+
+
+def stage_eye(w: Work, fixed: str, open_: str) -> dict:
+    """The record of the look at the contact sheets: which file was looked at (its hash), what was found and fixed, what is still open."""
+    from explainer_engine.overlay import demo_report
+    rec = {"checked_sha256": demo_report.sha256(w.p("final", "demo_overlay_2min.mp4")), "shots": [s["no"] for s in D.SHOTS], "by": "the building thread, on the contact sheets",
+           "fixed": [x.strip() for x in fixed.split(";") if x.strip()], "open_findings": [x.strip() for x in open_.split(";") if x.strip()],
+           "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    write_text_atomic(w.p("final", "eye_check.json"), json.dumps(rec, indent=1))
+    return rec
+
+
 def main(argv=None) -> int:
+    """One process, one log: the last line is DONE or FAIL (OV-69), so a chain that died is never read as a chain that is still running."""
+    try:
+        code = _main(argv)
+        log("DONE")
+        return code
+    except BaseException as e:
+        log("FAIL", type(e).__name__, str(e)[:300])
+        raise
+
+
+def _main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("stage")
     ap.add_argument("--shots", default="")
     ap.add_argument("--work", default="/tmp/claude-0/work/demo")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--fixed", default="", help="eye stage: findings of the look that were fixed, ';' between them")
+    ap.add_argument("--open", default="", help="eye stage: findings still open (any one fails OV-68)")
     a = ap.parse_args(argv)
     w = Work(Path(a.work))
     nos = [int(x) for x in a.shots.split(",") if x] or [s["no"] for s in D.SHOTS]
-    stages = ["specs", "bg", "overlay", "measure", "comp", "sound", "final", "ab", "report"] if a.stage == "all" else [a.stage]
+    stages = ["specs", "bg", "overlay", "measure", "comp", "sound", "final", "ab", "sheet", "report"] if a.stage == "all" else a.stage.split(",")
     for s in stages:
         log("stage", s, nos if s not in ("sound", "final") else "")
         if s == "specs":
@@ -292,6 +342,10 @@ def main(argv=None) -> int:
             stage_final(w, a.force)
         elif s == "ab":
             stage_ab(w, a.force)
+        elif s == "sheet":
+            log("sheet", [str(p) for p in stage_sheet(w)])
+        elif s == "eye":
+            log("eye", json.dumps(stage_eye(w, a.fixed, a.open)))
         elif s == "report":
             from explainer_engine.overlay import demo_report
             rep = demo_report.run(w)
