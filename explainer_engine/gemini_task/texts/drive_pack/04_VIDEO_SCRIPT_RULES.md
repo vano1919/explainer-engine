@@ -16,7 +16,7 @@ every picture that follows.
 | the line it covers | every spoken line of the approved script is covered by at least one shot, in order; no shot covers words the script does not have |
 | `route` and a reason | one of `map_action`, `still_25d`, `wan` (RT-01) |
 | `duration_s` | from the timed read, not from a guess (RN-03) |
-| `shot_type` | A, B, C or D: it picks the style anchor (`05_STYLE.md`) |
+| `shot_type` | one of the shot types of the style pack table in `05_STYLE.md`: it picks the style anchor |
 | `cast` | the heroes in the picture, by id; each has an approved reference before its first shot |
 | `place` | one place id; it has an approved reference before its first shot |
 | `references` | in this order: the style anchor of the shot type, the heroes in `cast` order, the place (GC-02) |
@@ -47,8 +47,9 @@ Check every prompt against these. Quote the shot id and the words for each miss.
 5. No text of any kind is asked for: no signs, labels, letters, numbers, plaques, written maps (GC-07).
 6. None of the forbidden words of `05_STYLE.md` appears outside a "never" phrase (GC-18).
 7. The light source is named and fits the era (a hearth, a torch, a clay oil lamp, the low sun). Every object fits
-   the era.
-8. A scene prompt says to keep the faces, hair, costumes and props of the reference pictures.
+   the era, and the prompt carries the episode's era line word for word.
+8. A scene prompt says to keep the faces, hair, costumes and props of the reference pictures after image 1 (image 1
+   is the style anchor and gives the look only).
 9. An end frame of a `wan` shot attaches its own start frame first (GC-09).
 
 ## The list as a whole

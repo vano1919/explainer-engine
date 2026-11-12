@@ -1,6 +1,6 @@
 # Rules for the script
 
-Sources: `docs/STORY_ENGINE.md` (ST, SC, DW rules, YT-01..YT-03); `docs/SOURCED_RULES.md` (the BP numbers below are
+Sources: `docs/STORY_ENGINE.md` (ST, SC, DW rules, YT-01, YT-02); `docs/SOURCED_RULES.md` (the BP numbers below are
 copied from the registry at export; the registry wins); `docs/DECISIONS_AND_OPEN_QUESTIONS.md` (D-61, D-99).
 
 The script is the approved short story written out in full: narration and dialogue, with the dialogue inside its

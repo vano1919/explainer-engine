@@ -43,9 +43,9 @@ The voice comes before the pictures on purpose: the timed words set how long eac
 ## The mix of an episode
 
 - Spoken words: about 70 % narrator and 30 % voiced dialogue (D-99).
-- Picture time (D-131), as a guide and not a quota: about 10 % maps and special moments drawn by Python, about 30 %
-  still pictures moved in 2.5D, about 60 % video clips that start from a still picture. Nearly every shot therefore
-  starts from a picture you make.
+- Picture time (D-131), as a guide and not a quota: about 10 % maps with an action layer, drawn by Python;
+  about 30 % still pictures moved in 2.5D; about 60 % video clips that start from a still picture. Nearly every shot
+  therefore starts from a picture you make.
 
 ## Who decides what
 

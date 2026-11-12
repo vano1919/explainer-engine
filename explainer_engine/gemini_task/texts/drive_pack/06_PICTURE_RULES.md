@@ -13,7 +13,8 @@ short report. Claude downloads them, checks each one and sends the next batch. T
    run of 168 once came back as four pictures and 164 text cards, and nobody could use it.
 2. **Send each prompt to the image tool word for word.** Do not rewrite, shorten, translate, merge or decorate it, and
    add no style words of your own. Why: the wording is tested; added words have changed the look of whole rounds.
-3. **Six separate 16:9 pictures, in the order listed.** One prompt makes one picture. No grid, no collage, no extra
+3. **Separate 16:9 pictures, in the order listed**, six unless the message names another number. One prompt makes
+   one picture. No grid, no collage, no extra
    variants, nothing that is not on the list.
 4. **References exactly as listed for each picture, in the order listed.** The first one is the style anchor: take
    the look from it and nothing else. Do not copy its people, their pose or its place. The following ones are our
@@ -32,14 +33,14 @@ After the last picture, write this and nothing more:
 
 ```
 BATCH REPORT <batch number>
-1 | <picture id> | MADE | references used: <numbers> | note: <one short line, or ->
+1 | <picture id> | MADE | refs: <numbers> | prompt: AS GIVEN|CHANGED <how> | note: <one short line, or ->
 2 | <picture id> | NOT MADE | reason: <one short line>
 ...
 MADE <n> of <total>
 ```
 
-Use the note for anything Claude should look at: "a second lamp appeared", "the cloak is a different colour", "the
-tool changed my prompt". One line. No descriptions of the pictures, no praise.
+Use the note for anything Claude should look at: "a second lamp appeared", "the cloak is a different colour". If the
+tool changed a prompt, write `prompt: CHANGED` and how. One line. No descriptions of the pictures, no praise.
 
 ## Order of the work
 
