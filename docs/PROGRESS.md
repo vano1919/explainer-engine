@@ -5571,3 +5571,38 @@ No source asks for a crossfade at a cut where picture and sound were generated t
 - `chain_overlap_frames` is 0, so a chained clip starts from the last frame. This reverts audit B3's 12 frames, which served the 0.5 s crossfade.
 - The love scene's prompts lose the silent opening that B3 had added.
 - The editing-style skill gains the rule.
+
+## 2026-11-12 20:35 UTC: the LTX love-scene test ran (3 chained clips, $0.4352)
+
+The run used audited bytes f239f23c (run id `6f91619285c7_1abffbda4cc0`). There was no L3 smoke, on the creator's word at 19:53 UTC.
+
+**Clips**
+- c1: 122.1 s on the H100, cold start.
+- c2: 76.8 s.
+- c3: 78.2 s.
+- Each clip went to HF as soon as it was done. All were sha-verified at `explainer-engine/ltx_route/out/6f91619285c7_1abffbda4cc0/love_c1/`.
+
+**Money and apps**
+- Settled $0.4352 for 307.6 s against the $1.5 line. The reservation was released.
+- Every Modal app is stopped (`modal app list` is empty).
+- The L1/L2 CPU checks cost a few cents and are not in the ledger.
+
+**Speech end (BP-187)**, measured with faster-whisper small.en. All words came out exact.
+
+| Clip | Speech ends | Tail | Result |
+|---|---|---|---|
+| c1 | 6.58 s | 3.13 s | PASS |
+| c2 | 6.58 s | 3.13 s | PASS |
+| c3 | 4.82 s | 4.89 s, then the kiss | PASS |
+
+**The join (BP-188), done by hand**
+- Frame 0 of c2 and c3 dropped, with its 41.7 ms of audio.
+- 30 ms fades at the cuts.
+- Result: 29.04 s at 1280x704, plus a Lanczos 2560x1408 copy and a contact sheet. All are in `.../joined/` on HF.
+- The faces hold across the clips, and the scene ends in a kiss.
+
+**Still open**
+- Voice similarity across the clips.
+- The speech-end gate and the BP-188 join as code.
+- `aivideo/ltx_modal.py`.
+- The audit's minor notes.
