@@ -1,3 +1,4 @@
+
 """Terrain-aware routes (map law 2): a smooth curve through waypoints that stay on land and out of the no-go areas.
 
 A route is a list of (lon, lat) waypoints, the crossings it is allowed to make (a ford, a bridge: a waypoint on a river is

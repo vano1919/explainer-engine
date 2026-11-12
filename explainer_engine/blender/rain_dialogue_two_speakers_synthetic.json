@@ -1,0 +1,7 @@
+{
+ "_note": "SYNTHETIC two-speaker shot (no audio): Rain speaks line 1 and the UBC villager answers line 2; both reuse rain_cues_synthetic.json. Replace each cues path by Rhubarb on rain_line1.mp3 / villager_line2.mp3.",
+ "lines": [
+  {"speaker": "rain", "cues": "rain_cues_synthetic.json", "start_s": 0.0, "turn_deg": 10, "gesture": "explain"},
+  {"speaker": "villager", "cues": "rain_cues_synthetic.json", "start_s": 2.6, "turn_deg": -12, "gesture": "nod"}
+ ]
+}

@@ -1,3 +1,4 @@
+
 """Time a production script on its read (D-43): the edit decision list every later step uses.
 
     timed = time_script(doc, words_doc)

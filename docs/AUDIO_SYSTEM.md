@@ -1,5 +1,7 @@
 # Audio system
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 Python mixes all audio; the renderer produces silent video (RENDERING_ARCHITECTURE, D-11). Targets: P-90 to P-97
 (D-08), every number now read from the sourced rules BP-50..BP-63 ([SOURCED_RULES](SOURCED_RULES.md)) through
 `qa/targets.py`. Louder is not better: levels are validated against measurements of the rendered file.

@@ -1,3 +1,4 @@
+
 """The Claude API client of the project (P0d, docs/LLM_API.md): the one place that calls Anthropic.
 
 Model and effort come from ``config/model_routing.json`` by task class (never a model string in a job file); the key is read

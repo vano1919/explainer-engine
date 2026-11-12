@@ -6,6 +6,8 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep
 ---
 
+**Ink Chronicle note (D-96, 2026-11-05):** speech mix nominal 70/30, REVIEW outside 65-75 % narrator words (D-99); visible voiced coverage stays ≤ 5 s (BP-108); where this page names LTX shots it describes the legacy image-generation route (D-105).
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start writer --job <job> --page .claude/agents/scene-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh writer --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You write the words of one segment: its `lines` (text, `speaker`, `claims`, and on every dialogue line `to`, plus
@@ -51,7 +53,7 @@ Animated episodes (shot cards, docs/SHOT_PROMPTS.md KP-16..KP-20): for each shot
 present-tense verb phrases (`start` = what the first frame shows, `peak` = the big move with body parts, `settle` = the pose
 it holds), `reactions` (one small verb each), the `dialogue` line copied from the script with `to`, and on a narrated shot
 the `narration` (what the heroes cannot know; never a description of the picture). A spoken line fits its shot (BP-100: about
-7 words in 4 s); a longer one is two shots or goes to the narrator. One speaker per shot.
+7 words in 4 s); keep visible dialogue/lip-sync coverage at or under 5 s. Longer spoken text may be reassigned to narration or split into motivated dialogue coverage. This dialogue rule does not apply to non-dialogue LTX/action shots, which may run 10-15 s when uninterrupted action is better; do not cut a battle/task shot just to meet the dialogue limit. One speaker per shot.
 
 Then run `python -m explainer_engine.scripting.stage_guard writer before.json after.json` and
 `python -m explainer_engine.production validate <script>`: 0 FAIL for PV-12, PV-33 and PV-48 (scene_lint, SC-01..SC-10).

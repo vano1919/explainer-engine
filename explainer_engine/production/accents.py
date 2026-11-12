@@ -1,3 +1,4 @@
+
 """Motion accents (MO rules, docs/STORY_ENGINE.md; D-48): drawn motion on top of a shot's camera move, so a still
 picture does not read as a slideshow. Episode 1 had 217 shots, every one a push or pan of at most 8 % zoom, no
 transition but the cut, and 8 bubbles in 18 minutes (measured 2026-10-19); the creator saw it as slow and not animated.

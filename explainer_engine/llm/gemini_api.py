@@ -1,3 +1,4 @@
+
 """The Gemini API (the Argon reviewer): its monthly ceiling and nothing else yet.
 
 The creator's line is ``gemini_api`` in ``config/spend_caps.json`` (max_usd per calendar month, 2026-10-30). No client exists, so

@@ -1,3 +1,4 @@
+
 """The drawing kit of the maps and the compensator: palette colours, supersampled canvas, easing, the markers. PIL + numpy.
 
 Colours come only from ``design/palette.json`` (tokens, blends of tokens); sizes are shares of the frame height, so a frame drawn at

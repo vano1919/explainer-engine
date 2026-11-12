@@ -1,3 +1,4 @@
+
 """The map camera: a start state and moves between words, eased, in log-scale of the view's width (law 5).
 
 A state is a centre (lon, lat), a view width in km and a pitch. A move runs from the first frame of one spoken word to the first

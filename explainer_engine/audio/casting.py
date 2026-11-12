@@ -1,3 +1,4 @@
+
 """Voice casting from a character's traits (VC rules, docs/STORY_ENGINE.md, D-48): the search an ElevenLabs voice
 library query needs, the description a designed voice needs, and a ranking of the voices that come back. Free;
 the agent passes ``query(...)`` to the connector's ``creative_list_voices`` and the result to ``rank(...)``.

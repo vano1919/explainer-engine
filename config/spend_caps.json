@@ -26,7 +26,7 @@
     "p12b_measure": {"runpod_usd": 0.63, "for": "one measurement pod of P12b's fixed setup (install + base model download, no GPU work); pod hard 0.50 (raised from 0.30/0.38 on the creator's \"გადადი\" 2026-11-01 07:41 UTC: SECURE A40 instead of a COMMUNITY card, no cheap COMMUNITY stock); the creator's YES on the card of 2026-10-31 06:50 UTC, tapped 2026-11-01 06:10 UTC (grant up to 0.95, 0.38 used)"}
   },
   "runpod": {
-    "per_pod_usd": 6.9,
+    "per_pod_usd": 10.0,
     "per_24h_usd": 26.0,
     "max_hours_per_pod": 5.0,
     "max_price_per_hour": 3.0,
@@ -83,19 +83,20 @@
       "ys4qcp04yp4nym",
       "wnrcpyh9f2xl2c",
       "udfnfnuo6eim89",
-      "jibqiezqtwsqls", "3n1q879dwpe1k6"
+      "jibqiezqtwsqls", "3n1q879dwpe1k6",
+      "0t2re35vf6f3sq"
     ],
     "keep_network_volumes": []
   },
   "claude_api": {
     "_doc": "The Claude API credit (explainer_engine/llm/claude_api.py, docs/LLM_API.md). max_usd is the whole credit; the client stops at 80 % of it and of each job. A job without a line here is refused. approval is the recorded word that allows real calls.",
-    "max_usd": 95.0,
-    "jobs": {"J1": 10.0, "J1b": 5.02,
+    "max_usd": 105.0,
+    "jobs": {"J1": 0.0, "J1b": 5.02,
   "final_review": 8.0,
   "change_plan": 8.0,
   "fix_desk": 1.0,
-  "result_check": 10.0, "J2a": 0.0, "J2b": 0.0, "J3": 4.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 18.0, "reserve": 5.98,
-      "research_vs_main": 25.0},
+  "result_check": 10.0, "J2a": 0.0, "J2b": 0.0, "J3": 0.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 0.0, "reserve": 2.98,
+      "research_vs_main": 15.0, "build_loop": 45.0, "plan_revision": 10.0},
     "approval": {
       "by": "vano (credit, his word) + the OR-24 plan thread verdict",
       "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMWfhemnwjz2KZddCLNHbGL; project files blueprint_2026-10-29/CLAUDE_API_PLAN_OR24.md",
@@ -114,5 +115,6 @@
     "decided": "the creator, 2026-10-30 11:56 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW5XNWqTbsYwYjr1qt3UyQhT (\"ყველაფერზე კი\" = option a of question 10: $10 a month)"
   },
   "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card.",
+  "_runpod_per_pod_note": "2026-11-06 14:09 UTC, the creator (card cmsg_01Hnu5zB86sjUj5GtTgaUkPWCBFNhcLbboHYEu9ndfN9Zn, \"$10 ამ პოდისთვის\"): per_pod_usd 6.9 -> 10 for the step-3 lean pod (PR #146) only; back to 6.9 after that pod.",
   "_runpod_hours_note": "2026-10-26 02:15 Tbilisi, the creator (\"ყველა კი\" to the night plan): max_hours_per_pod 4 -> 5 so the xworld_v1 training pod may run 5 h (its own cap $4)."
 }

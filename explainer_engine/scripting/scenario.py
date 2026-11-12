@@ -1,3 +1,4 @@
+
 """The approved short scenario comes before the script (PV-45, OR-15; creator 2026-10-19). stdlib only.
 
 The creator reads a short scenario (the story in plain lines, the dialogue marked) and approves it before any production

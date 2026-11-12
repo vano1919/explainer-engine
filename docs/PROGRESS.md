@@ -1,5 +1,7 @@
 # Progress log
 
+> **Route-scoped since D-116 (2026-11-06), updated by D-120/D-121/D-122 (2026-11-08).** Target routes: J2 = Qwen text-first frame -> LTX image-to-video (**migration pending; blocked**); J4 = Blender colour/depth/line layout -> LTX restyle; J5 = approved Qwen assets -> optional Blender 2.5D dialogue close-ups; LTX remains the primary dialogue visual tool; H = Python helpers. Older entries preserve the historical route decisions of their date; current decisions in `DECISIONS_AND_OPEN_QUESTIONS.md` take precedence.
+
 Append one entry per phase boundary: completed work, state, files changed, test results, decisions, blockers,
 cost (estimate/actual), next step, recovery instructions.
 
@@ -998,7 +1000,6 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 
 ვანო asked for a coordinator / multi-agent system for the three LoRAs (photo style, image-edit next pose, video motion),
 built on researched testing practice, and for step-by-step control of the running trainings.
-
 - Research (sources in [LORA_TRAINING](LORA_TRAINING.md) section 3): judge checkpoints by fixed-seed samples, not loss;
   overfitting = same background/pose whatever the prompt, prompt words ignored, colour burn, unasked objects; held-out
   prompts and a no-trigger probe; video with vs without the LoRA, temporal metrics only together with motion amount.
@@ -3746,3 +3747,985 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-01 — P12 combined pod: Fable plan + Opus code draft (WIP, not runnable, nothing paid on a pod)
+- Creator 08:23-08:26 UTC: measurement + Qwen + LTX in ONE pod, stop by hand after any stage; Fable plans, Opus writes the code through the Claude API, the session reads no plan text. Jobs (API, `change_plan` line): decision $1.10, plan $1.56 (Fable high), code $1.41 (Opus high, hit max_tokens 48000: four files whole, the tests cut off).
+- Plan: `docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md`. Draft code in this branch: `p12b.json`, `p12b.py`, `p12c_ltx.py`, `p12b.sh` (syntax checks pass). The old tests for them fail by design (they pin the old shape); the Opus tests were cut off and are still to be written.
+- Not runnable yet: `PLACEHOLDER_SHA` / `PLACEHOLDER_*` in `p12b.json` (video revisions and files, shot prompts, clay videos, the two AV audio takes with ElevenLabs voices), `p12c_ltx.py` `ltx_i2v` module name (UNVERIFIED), the sha256 lines of `p12b.sh`, the LTX-2 git pin in `config/cloud_pins.json`. No paid step has run.
+
+## 2026-11-01 WP-1a (build loop): LTX flags
+`llm/build_loop.py` (Opus codes, Fable checks, Opus fixes; empty system blocks are skipped). WP-1a placed `p12c_ltx.py` flags, the install line in `p12b.sh`, `docs/pods/P12_LTX_FLAGS.md`. Fable: p12c_ltx.py and p12b.sh PASS; open: `MODULES["ltx_i2v"]` is still PLACEHOLDER (the distilled pipeline module is not in the sources passed), so L1/L3 are skipped until it is named. Cost $0.85 + check $0.49. `p12b.sh` sha lines stay PLACEHOLDER until the DRY gate (WP-1e).
+
+2026-11-01: `config/cloud_pins.json` gains the `Lightricks/LTX-2` git pin (e98f6d92…, smoke_verified false) used by `p12b.sh`; CI had 9 failures, this one fixed, the 8 old P12b tests are rewritten in WP-1d.
+
+2026-11-01 WP-1b: the 8 LTX shot prompts (`docs/pods/P12_PROMPTS.md`, merged into `p12b.json` `ltx.prompts`; no dialogue text for av1/av2); Fable check PASS. `config/spend_caps.json`: claude_api total 95 -> 105 with a `plan_revision` line of $10 (creator's word 2026-11-01 09:34 UTC), pinned test updated.
+
+2026-11-01 WP-1a2: `MODULES["ltx_i2v"]` named from the LTX-2 listing at e98f6d9, `test_p12c_ltx.py::test_flags_resolved`, flags doc updated; Fable check PASS ($0.97).
+
+2026-11-01 `llm/token_stats.py` (+ `tests/unit/test_token_stats.py`): measured output tokens (thinking included) per model/effort/request from the API ledger, and `suggest(effort, expected_answer)` for max_tokens (floor per effort, measured max x1.5, capped calls x2, answer x3). Measured so far: Fable xhigh single-shot plans 25-48k (one capped at 48k), Opus high code 14.6k per file-set turn (one capped at 48k with 5 files), Fable high checks 3.5-7k, audits 13k. Why: creator, "we set max tokens, files end mid-way, we never measure the real size".
+
+2026-11-01 D-93 (the creator, 10:16 UTC): visual mix 60 % LTX video / 30 % stills with objects Python adds and moves / 10 % Python helper visuals. BP-109 is now the creator's house row (`lane_share`, `lane_tolerance` 0.03, `still_shot_max_s` 5); BP-141 loses `map_pure_max` (a map is a helper visual). `film_shots.visual_lane` / `lane_shares` / `lane_share_findings` (KP-37: runtime shares, a still over 5 s; film_shots/1 cannot name a helper, so video+helper are judged together), `variant_plan` VP-02 (map <= helper + tolerance) and VP-18 (lane shares). D-75 amended (Python composes on the still lane again). Fixtures predate the rule: the Napoleon variants now score 40 / 30 (were 70 / 70) and its film_shots carries only the KP-37 mix REVIEW; tests say so explicitly. Docs: SCRIPT_ENGINE, SHOT_PROMPTS KP-37, animation-principles skill, CRAFT-ANI-09, SOURCED_RULES regenerated. Unit suite: only the 8 known old P12b tests fail (rewritten in WP-1d).
+
+2026-11-01 WP-1c: `explainer_engine/edit/clay_video.py`, the grey clay layout clips that drive LTX-2.5's Layout-To-Render IC-LoRA (model card @ bd765d55: grey blocks, 24 fps, sides /64, 8k+1 frames, the clay's first frame must match the keyframe). Pure software (numpy + PIL painter's algorithm, the floor and back wall drawn first, ffmpeg H.264). Specs for tent_s0/s3/s4 in `training/pods/p12/clay/clay_specs.json`: camera height and horizon solved from the keyframes' figure heights, floor positions back-projected from the feet, props approximate (the painted perspective is not exact); motion from the shot prompts; static camera. `tests/unit/test_clay_video.py` (7). Waiting for the creator's OK on the blocking before the 1920x1088 clips go to HF `code/p12/clay/` and their sha256 into `p12b.json`. Costs $0.
+
+2026-11-01 WP-1d: the 8 P12b tests of the Qwen-only era are rewritten for the combined pod, none weakened: `test_p12b_config` (drop order Q3, L3, Q2; the seven stages and four kinds; the LTX-2.5 repo, revision, Layout LoRA and LTX-2 git sha equal `config/cloud_pins.json`; plan numbers meet RP-01 and the $2.40 cap; the ltx file block and its reserve add up), `test_p12b_measure` (the measured install is the Qwen install; the single LTX-2 line of p12b.sh is pinned to the git sha), `test_p12b_pod_script` (stall 25, LTX only downloads in process 1 and runs in process 2, `start_ltx_download` per file at its revision incl. the 403 gated path and the disk guard, projection with the LTX reserve). The p12b.sh sha256 lines are still PLACEHOLDER until the DRY gate (WP-1e): a real sha must be the file's, and a strict xfail `test_the_pod_is_runnable_only_when_no_placeholder_is_left` keeps the reminder. `config/cloud_pins.json`: `models.video_ltx` is now Lightricks/LTX-2.5 at the p12b.json revision (it still named LTX-Video-0.9.8, which serves neither the Layout IC LoRA nor audio-driven clips) and `models.video_ltx_layout_lora` is new; `test_shot_router` expects the new model. Unit suite green. Costs $0.
+
+2026-11-01 Argon audit of the P12 branch (OR-34, by hand: the API credit is out; project files `argon_audit_p12_2026-11-01/`, verdict BLOCK, 22 findings, each checked in the code before acting; Argon invented some details, e.g. a wrong LTX-2 sha and a repo name that is not ours). Fixed here, with tests: (#7) `dryrun.placeholder_problems` and `runpod create` refuse a script or a job file it names that still holds PLACEHOLDER (the pod can no longer bill an install and then fail `sha256sum -c`); (#13) p12b.sh writes progress.txt every minute from the first second, p12b.py ticks during the model load (`ticker`); (#10) the creator's soft stop works after stage M; (#11) `ltx.sizes` has all 8 downloaded files (sizes read from the Hub listing 2026-11-01); (#17) the AV audio check compares samples (`audio_corr`), the container sha256 can never match a re-encode; (#18) the AV sidecar no longer logs L1's frames/steps; (#20) clay: `-threads 1 -bitexact`, no metadata (the clip is pinned by sha256: same spec = same bytes, tested), the size override is validated; (#22) the six tests the plan asks for are in `test_p12c_ltx.py`, plan-number bounds restored in `test_p12b_config.py`; (#12) the prompts copy is tested equal; (#2, #5) stale texts (P12e, "scene LoRA" label). Not changed, for the creator or the next coder: #8 the planned create command fails RP-09 on A40 (3.75 h > 3.5 h), #9 L3 is not in the LTX reserve, #14 essential stages ignore the end reserve and the 51 GB AV download starts even without AV takes, #15 dryrun does not read p12b.json's repos, #1 spend_caps `for` text (protected), #3 p12b_measure.sh (superseded by stage M), #21 BP-141 profile A/D 0.40 has no slack beside D-93's 30 % + 10 %, #4 HOST_COMMENTARY. Kept on purpose, with a strict xfail: the PLACEHOLDER shas until WP-1e (a xfail of this kind is not a weakened test: the new dryrun check makes the pod unstartable meanwhile). Unit suite: 2379 passed, 1 strict xfail.
+
+2026-11-01 audit follow-up (the creator: "ყველაფერზე კი" to the five open items): (#3) `p12b_measure.sh` and its test are deleted (the measurement is stage M of the combined pod; the pod-script test now ties p12b.sh's one LTX-2 install line to `config/cloud_pins.json`); (#9) `ltx.optional_reserve_min.L3` = 8 min (L1's plan number, NOT measured) and `after_reserve`: Q3 starts only when L3 still fits behind it, so the drop order is really Q3, L3, Q2. Not done: (#1) the `for` texts of config/spend_caps.json (the session cannot record the creator's word for a protected config; the creator or a fresh `governance ok` decides), (#21) BP-141 profile A/D 0.40 vs D-93 (the exact number is the creator's), (#8) --max-hours goes into the OR-23 pod plan. Unit suite 2378 passed, 1 strict xfail.
+
+2026-11-01 audit items #14, #15 and BP-141 (the creator's "კი"): (#15) `runpod dryrun` and `create` now read the repos named in the job files (`p12b.json`) and prove gated access with `auth_check`; (#14) no unit (a Qwen picture or an LTX clip) starts inside `end_reserve_min`, essential stages included (`p12b.unit_may_start`), `p12c_ltx.main` exits 0 when it starts inside the reserve, the Layout LoRA is fetched before the AV files, and the 51 GB AV files are fetched only when both takes are real (`ltx_download_av_skipped` otherwise); tests in `test_p12b_pod_script`, `test_p12c_ltx`, `test_dryrun_placeholders`. BP-141 profiles A and D `non_character_max` 0.40 -> 0.43 = D-93's 30 % still + 10 % helper + BP-109's lane tolerance 0.03 (`test_sourced_rules`); `docs/SOURCED_RULES.md` regenerated. Nothing paid.
+
+2026-11-01 WP-1e and audit #16, #19: the three clay clips are rendered (1920x1088, 121 frames, identical on a second render), uploaded to `vano1919/tmr-artifacts` `code/p12/clay/` and pinned in `p12b.json`. (#19) the six keyframes are sha256-pinned and checked before use; a stage line says `done` only when every shot of the stage is ok, else `failed <stage> ok=n/m`. A new AST test found three `log.ev(..., name=...)` calls that would raise `TypeError` (`Log.ev` already takes `name`): `download_start` and `download_end` in `p12b.py` (they would have crashed the first download on the pod) and the `sha256_mismatch` events; they now use `item=` and `file=`. (#16) no new smoke pod: the P12 pod runs under the same `pod_wrapper.sh` whose in-pod `self_stop` P12a pod A proved on 2026-10-31 (E: the watchdog stopped it 41 s after DONE; B3: the session guard stopped it); the Haiku watchdog every 5 minutes stays a session standing order. Still open before the pod: AV voice and texts (the creator picks), `p12b.sh` sha lines (last, after the code is final), a new Argon audit, the OR-23 plan. Nothing paid.
+
+2026-11-01 free end-to-end runs of both pod processes (no pod, no money): `test_p12b_pod_script::test_the_whole_qwen_process_runs_end_to_end...` drives `p12b.run()` over the real `p12b.json` (stage M, style LoRA sha check, hero references, model load, every Qwen unit with MVA merge/unmerge through the real `draw`, sidecars, `qwen_done.txt`) with torch, huggingface_hub, videox_fun and the pipeline stubbed; `test_p12c_ltx::test_the_whole_ltx_process_runs_end_to_end...` drives `p12c_ltx.run()` over L1, L3, L2 and AV with only the HF fetch, the weights check and the GPU command stubbed (keyframe, clay and take sha checks, sidecars, AV `audio_corr` > 0.9 on an AAC re-encode). Both pass; what stays unproven without a GPU is the real VideoX-Fun and LTX-2 call shapes (the flags marked UNVERIFIED).
+
+2026-11-01 AV takes (the creator: voice Raymond Verne, texts as written, "let's do it", 13:12 UTC): ElevenLabs `eleven_v4`, voice `HWDDFlsSVOpTSkiLijPq`, one take each, estimated before the call: av1 "Ten thousand men. One bridge. We cross at DAWN." 4.56 s, 46.995 credits; av2 "I have never lost a day. I will not lose THIS one." 3.84 s, 49.995 credits; 97 credits in total (about $0.0176 by the tool's own price). Decoded to mono 44.1 kHz WAV, uploaded to `vano1919/tmr-artifacts` `code/p12/audio/av1.wav` and `av2.wav`, sha256 and seconds pinned in `p12b.json` (no PLACEHOLDER is left there). The MP3s are in project files `explainer-engine/p12_av_2026-11-01/`. Open pins: the three sha lines of `p12b.sh`, set last.
+
+2026-11-01 MrBeast-style rhythm, WP-R1 (the creator, 13:20 UTC: teasers, hooks, very fast change, one narrator whose tempo follows the zones; his 15:26 UTC "ვადასტურებ, მიყევი გეგმას"; plan from Argon's roadmap + measured numbers, `argon_mrbeast_roadmap_2026-11-01/`): `sourced_rules.json` gets BP-169 (the five-zone rhythm profile, the ONE home of the zone numbers, hypothesis/REVIEW because cuts, events and sounds are reported or estimated and the research file's own "BINDING" labels mix source types: a YouTube video listed as an article, blog posts as books), BP-170 (house, FAIL: a still holds up to 5 s only with a dramatic change; thresholds 0.25 / 0.08 / 0.30 are proposals), BP-171 (one narrator, prosody and tag recipe, REVIEW), BP-172 (LTX clip lengths and fast-action verbs, REVIEW). Not done on purpose: Argon's `*_hyped` keys on 20 old rows (a second home for the same numbers; the profile reader of WP-R2 will serve them). Schemas `rhythm_profile.schema.json` and `dramatic_still.schema.json`. Tests in `test_sourced_rules.py`.
+
+2026-11-01 WP-R2: `edit/rhythm_profile.py` is the one reader of BP-169 (profile name from the document or its schema version: production_script/3 = calm_docudrama, /4 and later = the zoned profile; `zone_at_time`, `zone_for_window`, `zone_wpm`, `words_to_seconds`; the last zone owns second 720). KP-47 in `shot_prompt_lint` (BP-172: a hyped-zone clip names a fast action verb, no slow modifier; shots without `rhythm_zone` are untouched). Argon called the video check LT-63, which already exists (LT-63 = newest code): it is LT-80 here, `video_qa.check_fast_action_rhythm`, the ceiling above LT-57's floor. BP-169 and BP-172 `enforced_by` updated. Tests: `test_rhythm_profile.py`, KP-47 in `test_shot_prompt_lint.py`, LT-80 in `test_video_qa_clip_rows.py`.
+
+2026-11-01 WP-R3 (the creator: "კი შეცვალე" the P12 prompts): Argon's replacement texts did not match the real prompts (his cast tags and phrases are not in `p12b.json`; the real silent prompts already used slams/jabs/yanks), so only what KP-47 flagged was changed: tent_s2, tent_s3, tent_s4 name a fast verb; AV prompts untouched (the take drives the mouth). `render.frames_by_shot {"tent_s1": 73}` renders one plain L3 clip at 3.0 s instead of adding a new unit (`p12c_ltx.frames_for`; no new shot, so the reserves and the drop order stay). `p12b_prompts.json` and `P12_PROMPTS.md` updated in step. Tests: `test_p12b_config` (KP-47 on the six silent prompts, 73/121 frames), `test_p12c_ltx` (the command carries 73 for tent_s1). `p12b.sh` still has its three PLACEHOLDER sha lines (set last, after the audit round 2).
+
+2026-11-01 WP-R4 (BP-170, the simple version the creator asked for): `edit/dramatic_still.py` validates the change of a held still (cap 5 s; static hold per zone; a cutout relocation of at least 0.25 of the frame by a subject of at least 0.08 of it, or a plate swap of 0.30 of the pixels; the change in the middle of the hold), computed from the boxes and not from the declared numbers; `measure_frame_change` measures two frames; `render_dramatic_still` cuts a subject onto a clean plate. Not done on purpose: Argon's edits to tableau, visual_compensator, archetypes, parallax and accents (hooking a validator into the old pipeline before a script uses it; a slow zoom or a text pop never counts, so those modules need no marker). `check_script_stills` is the entry for the later lint. BP-170 and BP-109 `enforced_by` updated. Tests: `test_dramatic_still.py` (7).
+
+2026-11-01 WP-R5 (BP-171, free part): `audio/hype_read.py` for ONE narrator whose tempo follows the zones: the tag palette per zone, `format_line_for_tts` (at most ONE tag at the start of a line, because tags cost credits and a tag holds until the next one, EL-05; the calm middle gets none), `check_prosody_plan` (HR-01 foreign tag, HR-02 more than two stressed capital words, HR-03 tags per clause, HR-04 chunk over 800 characters or 90 s; acronyms are not stressed words), `hype_score` and `rank_audition_takes` for the audition. Not done on purpose: Argon's edits to `casting`, `voice_check`, `pause_pad` and `channel_voices.json` (the narrator is the creator's word, VC-08; they wait for his ear on the audition). No credit spent. Tests: `test_hype_read.py`.
+
+2026-11-01 WP-R6 (part): `production_script/4` in the schema (episode `rhythm_profile`, segment `rhythm_zone`, shot `dramatic_change` as a `$defs` copy of `dramatic_still.schema.json`, `pace_wpm` up to 250); `syllables.seconds(zone=, wpm=)` reads the heard pace of a zone through `rhythm_profile` (default unchanged: BP-01); the architect owns `rhythm_zone` in `stage_guard`. Not done on purpose: the hyped thresholds in `narration_lint` and `story_lint` (Argon's plan reads `*_hyped` keys that WP-R1 deliberately did not copy onto 20 old rows, and no /4 script exists yet to lint; they come with the first script written under /4, from the BP-169 zones). Tests: `test_syllables`, `test_production_script_schema` (new), `test_story_engine`.
+
+2026-11-01 WP-R8 (before the rest of R7, because it is the piece that enforces the profile): `scripting/rhythm_lint.py` checks a shot list against the zones of BP-169: RL-01 shots a minute per zone, RL-02/RL-03 shot lengths, RL-04 every held still carries its dramatic change (through `dramatic_still.check_script_stills`, FAIL). CLI `python -m explainer_engine.scripting.rhythm_lint <shots.json>`; the calm era (`calm_docudrama`, `production_script/3`) is not judged and keeps `film_shots` / `board` / `motion_lint`. WP-R7 (rewiring those old modules to the profile) is NOT done: their calm numbers are read at import time (BP-107, BP-85, BP-40) and a rewrite would risk the calm era's tests for no consumer yet; the first /4 script decides which old check must defer to `rhythm_lint`.
+
+2026-11-01 WP-R11/R12 (the parts that fit): D-94 in `DECISIONS_AND_OPEN_QUESTIONS.md` (the rhythm profile, one narrator, the open items); the cost effect in `COST_AND_TIME_MODEL.md` recomputed from OUR prices (Argon used a B200 at $4.99/h); `tests/unit/test_rhythm_end_to_end.py` runs one 720 s episode through the profile, the pace, the lint, the still rule, the tags and the schema, and checks that the calm numbers and the finished calm example are untouched. Open work, in order: the rewiring of the old calm checks (WP-R7), the production modules (WP-R9: timing, beats, fill_holds, staging, compile, assemble, validate) and the audio/QA modules (WP-R10) wait for the first production_script/4 script, which will show which old check must defer to `rhythm_lint`; the narrator's voice waits for the creator's ear.
+
+2026-11-01 Narrator decided (the creator's ear, VC-08; his words cmsg_01Hnu5zB86sjUj5GtTgaUkPW2XEbaJG2R1L8izYhuy2J5v "this is our narrator" and cmsg_01Hnu5zB86sjUj5GtTgaUkPW1QSH5W31W8vYr4E4WLzkuR "make this the standard"): the library voice Odom - Deep, Resonant, Dramatic (`CcSJ2r3qw0XU9gJpEPyk`, eleven_v4) is the channel narrator in `config/channel_voices.json`, Grandpa Spuds Oxley is retired (the Voice Design route was tried twice and rejected as "pure AI"). One paid test take (599.94 credits, 41 s, estimated first) and two Voice Design runs (6 previews, cost not shown by the tool: the creator's ElevenLabs balance page is the source for the ledger). The standard polish `audio/narrator_polish.py` (free ffmpeg chain: highpass 60 Hz, light denoise, +12 dB low shelf at 150 Hz, -2 dB at 300 Hz, -0.6 dB trim, limiter) was chosen by his ear on that take. No baseline yet (Oxley's is not Odom's; the test take is a hype+calm mix, not a read): EL-13 reports REVIEW until the approved first piece of the next sample sets one. Tests: `test_narrator_polish.py` (chain, registry, bass lift and length), `test_voice_audition.py` registry tests now run on the frozen Oxley-standing fixture. Full suite 2434 passed.
+
+2026-11-01 CI fix on #119: `p12b.Log.progress` wrote progress.txt with a truncating write, so a reader (the pod stall rule, `test_the_ticker_rewrites_progress...`) could see an empty file (failed once on CI, passed locally); it now writes a temp file and renames. No test weakened.
+
+2026-11-01 Narrator polish wired in (the creator: "take the voice issue to the end"): `production words` (cmd_words) now runs `narrator_polish.polish_in_place` on narration.wav for a single-narrator read, after the EL-13 drift check (raw timbre) and the pause padding, refuses a length change above one frame, and records the chain in words.json (`narrator_polish`); a conversation (D-45) is left alone. Tests: `test_dialogue_and_shorts_set.py` (polished and not polished), `test_narrator_polish.py`.
+
+2026-11-01 WP-3a and WP-5b (the creator: "start and finish what Sonnet can"): (WP-3a) the 12-minute episode lives in BP-167 `long_minutes` 15 -> 12 (a second home would have been wrong; BP-169 `episode_s` is the same 720 s, tied by `test_delivery_defaults.py`), and `variant_plan.brief` reads `episode_runtime_s` from it instead of the old calm-era 900. (WP-5b) `finish/upscale.py`: an LTX clip (1920x1088) is cropped to true 16:9 and Lanczos-scaled to the delivery frame (BP-167, 2560x1440, 24 fps), crf 17, temp file + rename, ffmpeg only; `test_finish_upscale.py`. Shorts were NOT written: `production/shorts.py` and `clip_shorts.py` already own the 1440x2560 frame (the plan was made from an unread listing). Found while reading: WP-4a is mostly done by D-93 (`film_shots.lane_share_findings` already checks 60/30/10 by time; a COLLAGE router kind waits for WP-4b design), WP-2a already exists for `--vram` (`pick_gpus` ranks, `create` falls on to the next card after a refusal; only an explicit fallback list for `--gpu` is missing: a design call), WP-3b waits for the creator's Fable-Q3 answer (rule one). `runpod check` (read-only): the 56 stopped pods hold 0 GB, bill $0.00/day, balance $10.17, nothing running: deleting them saves nothing.
+
+2026-11-01 20:03 UTC the creator's answers to the open-questions list: BP-109 `lane_tolerance` 0.03 -> 0.05 (the mix numbers are approximate; BP-141 A and D `non_character_max` 0.43 -> 0.45 follow, as `test_bp141_a_and_d_non_character_max_follows_the_d93_lane_mix` ties them); BP-169 status hypothesis -> house with the required pace variation written into its statement (no frequency number yet, none invented); retention rules as REVIEW-only: waits for the sourced rule row (WP-3b) after the topic; the creator picks the next topic himself (the three offered are rejected); PR #119 is merged only when the next video is finished. D-94 records all of it. Full unit suite 2437 passed.
+
+### 2026-11-03 — Final Multi-Source Verification & Re-Audit Patch of Master Mold v2.1.0 Roadmap (`docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md`)
+
+- Completed full code-against-spec reconciliation of `docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md` against `repo_5013a55a.zip` (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`), `mrbeast_12min_master_mold.md`, and `mrbeast_12min_video_mold (1).json`.
+- Verified and resolved all 12 code/registry/research misconceptions with 2-3 independent primary sources each.
+- Verified `PYTHONPATH=. python3 -m explainer_engine.docs_lint` passes with 0 finding(s) and zero application code or protected config files were modified.
+
+### 2026-11-03 — Master Mold Independent Re-Audit (v6.0): Open Final RunPod Budget (`CPFM_usd` Protocol) & 7-Category Semantic Visual Change Architecture (`CHG-14`, `CHG-15`)
+- **Branch HEAD Audited**: `d214dd79f264559c4846a94482f449d39ebdd5cf` on `planning/master-mold-integration-2026-11-02` against code baseline `5013a55aca5a17a3734150f61a5eb172abcbe3b8` (`PR #119`).
+- **Open Final RunPod Budget & `CPFM_usd` Measurement Protocol (`§9.10`, `§13`, `CD-05`, `CHG-14`)**: Kept the final episode RunPod GPU budget explicitly `OPEN` until empirical measurement of the first representative multi-minute video (`GATE-P2` 2-part sample `D-67` / `OR-19`), defined the exact **Cost Per Finished Minute (`CPFM_gross_usd` & `CPFM_var_usd`)** mathematical protocol via `cloud/speeds.py` (`units.json`) and `core/ledger.py` (`run.json`), preserved all `config/spend_caps.json` (`$6.90` per-pod, `$26.00` 24h, `$31.00` outer episode safety ceiling at `STOP_FRACTION = 0.80`) and `OR-36` Haiku watchdog protections, and separated deterministic ElevenLabs credit accounting (`casting_credits_max = 1,500`) from RunPod GPU USD.
+- **7-Category Semantic Visual Change Architecture (`§18`, `CHG-15`)**: Established Mandatory Invariant `VC-INV-01` (*"Every visual decision must correspond to the meaning, action, emotion, or information in the script"*), the research-backed 7-Category Visual Change Taxonomy (`VC-CAT-01..07`), the Cross-Category Anti-Substitution Matrix (`§18.4`), the 7-Step Minimum-Sufficient Technique Decision Tree (`§18.5`), 6 worked script-to-visual examples (`§18.6`), and the `CURRENT -> NEW REQUIREMENT -> KEEP -> CHANGE -> REMOVE -> TRADE-OFFS -> RECOMMENDATION` repository compatibility matrix (`§18.7`) across `production/beats.py`, `edit/board.py`, `scripting/continuity.py`, `scripting/film_shots.py`, `edit/router.py`, `edit/dramatic_still.py`, `edit/motion_lint.py`, `production/faces.py`, `maps/*`, `edit/visual_compensator.py`, and `qa/*`.
+
+### 2026-11-03 — Master Mold Independent Zero-Trust Audit (v7.0, Branch `489afc44` vs Pinned Code `5013a55a`)
+- **Audit Scope**: Audited branch `planning/master-mold-integration-2026-11-02` (`489afc44eef4e719e8758400e8b2e5ca8dc2ceee`) strictly against pinned code commit `5013a55aca5a17a3734150f61a5eb172abcbe3b8` (`PR #119`) without trusting `PROGRESS.md` self-assessments, tagging every finding as `VERIFIED`, `CONTRADICTED`, `INCOMPLETE`, or `UNVERIFIED`.
+- **1. `OPEN_PENDING_MEASUREMENT` RunPod Target, Bounded `3.5–4.0` Min Pilot & Separate ElevenLabs Accounting (`§9.10`, `§13`, `CHG-14`)**: Removed residual `$15.00`/`$12.00` hardcodes in `CHG-14` (`GATE-P4`) and non-existent `config/craft_rules.json` references; verified exact `config/spend_caps.json` (`per_episode.runpod_usd = 31.0`, `runpod.per_pod_usd = 6.9`, `runpod.per_24h_usd = 26.0`, `casting.casting_credits_max = 1500`, `allowances.qa_loop.per_run = 2000`), `core/ledger.py` (`STOP_FRACTION = 0.8`, `MAX_FAILURES = 3`, `Run.approve()`), and `cloud/watchdog.py` protections; expanded `GATE-P2` into a **Bounded `3.50–4.00` Finished-Minute (`210s–240s`) Whole-Segment Pilot** (`["S01", "S02", "S04", "S11", "S15"]` or `+"S08"` via `production/sample.py:scope_segments`).
+- **2. 11-Dimension `Script Event -> Visual Change Taxonomy -> Technique Routing` & Dual-Layer QA (`§18`, `CHG-15`)**: Covered all 11 visual change dimensions (`expression`, `gaze`, `pose`, `gesture`, `character blocking`, `prop/object state`, `environment/location transition`, `maps/routes`, `camera/composition`, `graphics`, and `lighting` via `compose/episode_look.py` `AC-16..19` + `continuity.py` `CT-05` + `finish/grade.py` `BP-130`), mapped strictly to `5013a55a` modules (`Qwen-Image-2.1`, `LTX-2.5`, `parallax.py`, `dramatic_still.py`, `faces.py`, `maps/`, `visual_compensator.py`, `hud.py`, `episode_look.py`), and separated **Mandatory Semantic Compliance (`FAIL`)** from **Visual Execution Quality (`REVIEW`)**.
+- **3. `BATCH-M0` `teaser_of` Cold-Open, Cumulative Timeline & `rhythm_zone` Tests (`§9.1`, `§10`, `CHG-02`)**: Specified advancing cumulative `t_start_s` before `if shot.get("teaser_of"): continue` at `scripting/film_shots.py:457–463`, added 3 explicit `BATCH-M0` unit tests covering `KP-41` (`BP-111`) `teaser_of` cold-open shots, cumulative timeline, and `rhythm_zone` propagation, and fixed the stale `§10` ASCII diagram.
+- **4. Fixed `§12.2` LTX Clips Contradiction, Harmonized `UNVERIFIED` Branch Protection (`RSK-06`), and Separated `D-92` Creator Decisions from `BP-168` `REVIEW` Thresholds (`CORR-04`, `CHG-01`, `CHG-14`)**: Removed the contradictory `§12.2` `L1702–1704` claim of committed `.mp4` LTX clips in Git (`D-73`), harmonized `RSK-06` as `UNVERIFIED` offline gated by `GATE-EXT-MAIN-PROTECT`, and separated `D-92` item 7 binding retry/review gates (`<=3` GO, `3–6` PIVOT, `>6` ABANDON, zero USD threshold) from `BP-168`'s `REVIEW`-only `go_forecast_usd_max: 12.0` pilot indicator.
+
+
+### 2026-11-03 — Independent Post-Argon Verification & Documentation Corrections (docs-only)
+
+- **Review baseline**: independently checked branch `planning/master-mold-integration-2026-11-02` at starting HEAD `9b3e1d604d3096791ba09887301359b7849504a0` against pinned implementation baseline `5013a55aca5a17a3734150f61a5eb172abcbe3b8`. This review did not modify application code, configuration, source-rule registries, or tests.
+- **`D-67` sample governance corrected**: `production/sample.py` defaults to `PARTS = 2`, but `scope_segments` can override that default and the code does not hard-reject a longer list. This configurability is not permission to change the creator's 2026-10-21 two-part sample decision. The proposed 210–240s representative measurement scope is now explicitly **BLOCKED pending a separate creator decision, manifest, cap and approval path** (or an explicit amendment to D-67). It must not be silently written into the current `sample_approval.json` or approved through the existing `production.sample approve` path.
+- **D-92 vs `BP-168` runtime gap recorded**: D-92 item 7 is the later creator decision (GO at <=3 on both measures, PIVOT above 3 through 6, ABANDON above 6; no USD limit). However, the pinned `core/ledger.py::pilot_verdict` still reads legacy `BP-168` thresholds (`2`, `3`, review `4`, forecast `$12`) and remains REVIEW-only. The roadmap now marks alignment to D-92 as a pending implementation/test task, not as current enforcement.
+- **RunPod cost evidence corrected**: `cloud/runpod.py` settles provider-billed USD from the RunPod billing endpoint; the v2 billing records expose amounts by bucket but not billed seconds. `cloud/speeds.py` accepts `work_s` and optional producer-supplied `setup_s`, `mb`, `download_s`; it does not independently establish all lifecycle timings or prove that `download_s` is HF Vault upload time. `CPFM_gross_usd` is now labelled actual gross RunPod USD per finished minute; setup/idle/fixed allocation and `CPFM_var_estimated_usd` are explicitly modelled estimates. ElevenLabs credits remain separate.
+- **Unapproved spend boundary corrected**: the repository has a `$6.90` per-pod ceiling, but the proposed `5,500` ElevenLabs-credit pilot cap is not found as an approved total pilot allowance in the pinned config or D-92. It now requires explicit creator approval; existing `1,500` casting and `2,000` QA-loop caps remain purpose-specific. No paid run was started.
+- **Visual taxonomy clarified**: the 11-dimension decision tree now first captures all semantic requirements (multi-label), then resolves one primary visual focus. Secondary requirements are retained when reinforcing; competing dominant actions are split into sequential shots. The first-YES ordering is not permission to discard co-occurring script semantics.
+- **Test inventory status**: `tests/unit/test_sample_gate.py` and `tests/unit/test_d92_creator_answers.py` exist in the pinned implementation. `test_cpfm_cost_protocol.py` and the other newly proposed test modules must be treated as proposed until their paths are actually added; no new tests were implemented in this documentation-only pass.
+- **Artifact comparison**: `mold_254_shots_verified_digest.json` in the supplied ZIP has the same Git blob SHA as `docs/wip/mold_254_shots_verified_digest.json` already on the branch; no replacement was necessary.
+- **Verification limits**: local structural/content checks were performed on the supplied Markdown and digest. `docs_lint` and `pytest` were **not run in this audit session** because this working session did not have a checked-out project tree. Earlier lint/test statements in this file remain historical records and are not represented as newly rerun results.
+
+### 2026-11-03 — Gate-Sequence Consistency Correction (supersedes the expanded-pilot gate labels in the earlier v7 audit entry)
+
+- **Existing paid gates preserved**: independently re-read `D-67`, `production/sample.py`, and the roadmap's original paid sequence. `GATE-P2` remains the creator's pre-spend authorization for the existing first-two-segment sample; `GATE-P3` remains the zero-cost post-render `production.sample approve` sign-off bound to the script hash. The earlier v7 wording that placed the 210–240s extension inside `GATE-P2` was incorrect and is superseded.
+- **Measurement extension is separate**: the proposed 210–240s multi-zone cost study is an optional additional phase after the existing `GATE-P3` and before `GATE-P4`, with a separate gate ID still pending creator decision. It requires its own creator authorization, manifest, ledger cap, code path and approval record. It must not reuse or expand `sample_approval.json`, and the existing `GATE-P2`/`GATE-P3` contracts are unchanged.
+- **Full-production dependency**: `CD-05` remains `OPEN_PENDING_MEASUREMENT`. Unless the creator chooses another evidence-backed way to set the target, `GATE-P4` must not proceed until the separate extension has been authorized, measured and reviewed; declining or not implementing it leaves `CD-05` open.
+- **Traceability wording corrected**: `CORR-12`, `CHG-14`, §9.10, §13.2, the operational-stage table and §17.2 now describe the 3.5–4.0 minute study as an additional extension, not as `GATE-P2` or `GATE-P3`. Existing five paid operational stages remain the current sequence; the optional extension is not included in that count.
+- **Verification status unchanged**: this remains a documentation-only correction. No source code, configuration, canonical rule registry, creator decision, or test file was changed. `docs_lint` and `pytest` were not run in this audit session.
+
+### 2026-11-03 — Independent approval-scope and D-92 metric verification (post-Argon)
+
+- Rechecked the current branch at starting HEAD `20dd72c7a43970765c8eff2c90fda574962ff2e5` against pinned code baseline `5013a55aca5a17a3734150f61a5eb172abcbe3b8`.
+- **Approval integrity:** `sample.py` accepts `sample_approval.json.scope_segments`, but `approved()` does not verify a canonical hash of that ordered list. A post-approval segment-list edit can change the paid scope without changing the approved script SHA. D-67 remains the first-two-segment decision; a scope hash and mutation-rejection test are required before relying on the release approval. This is a precondition for paid D-67 sample/release execution, not optional hardening.
+- **D-92 seed metric semantics:** the existing `renders_made / accepted` ratio counts total render attempts including the initial render. BATCH-M1 must define “seeds per accepted shot” explicitly and test the 1.0 baseline and the 3.0/6.0 boundaries; retries-only is a different metric.
+- **P1b scope:** the P12b canary is not a finished-minute sample and cannot establish the D-92 creator-review-minutes-per-finished-minute verdict. The roadmap now keeps P1b as speed/identity measurement and defers D-92 verdict classification until representative finished-sample evidence exists.
+- Documentation only. No application code, schema, source-rule registry, protected spend caps, creator decision, or tests were changed. `docs_lint` and `pytest` were not run.
+
+### 2026-11-04 — Gemini Master Mold handoff branch prepared
+
+- Created `claude/master-mold-ready-2026-11-04` from `planning/master-mold-integration-2026-11-02` at `bb0da660582ac0868825d88592276d7d43c234d5`.
+- Imported the Gemini roadmap revision, read-only audit brief, execution guide, and 301 TODO-marked Python files (259 existing modules with annotation-only additions; 42 new stubs). Comparing the existing modules after removing the inserted TODO comments found unchanged executable bodies; four package `__init__.py` files differed only in whitespace. No implementation behavior was changed.
+- Added `docs/wip/CLAUDE_MASTER_MOLD_HANDOFF_2026-11-04.md` and a read-first pointer in `CLAUDE.md`. The handoff records source/archive provenance, exclusions, and discrepancies Claude must verify. The Gemini guide's creator-decision claims are explicitly unverified; `CD-05` remains open, and no paid action is authorized.
+- Did not replace the progress history, verified-shot digest, `config/job_speeds.json`, or runtime state. The ZIP's added A100/A40 telemetry is attributed only to `"pod x"` and needs evidence before use; `jobs/` and `tools/runpod/` session data were excluded.
+- Verification: `python -m explainer_engine.docs_lint` reported 0 findings; `python -m compileall -q explainer_engine scripts` passed. `tests/unit/test_repo_hygiene.py` could not run because the available Python 3.14 environment has no `pytest` installed. No paid calls, pods, or production jobs were run.
+
+### 2026-11-04 — D-95 creator override: spoken mix and intent-based shot duration
+
+- Recorded creator decision D-95: target 70–80% narrator and 20–30% voiced character dialogue (75/25 midpoint), measured from audible spoken words and excluding `voiced: false` lines. This speech ratio is independent from D-93's 60% VIDEO / 30% STILL / 10% HELPER runtime mix (±5 percentage points), which remains unchanged.
+- Replaced the old universal 10s/8s clip/shot cap with intent-based duration: visible voiced dialogue/lip-sync coverage targets a maximum 5s; non-dialogue VIDEO action may run 10–15s where continuity and camera choreography benefit. The 15s value is a planning ceiling, not a guarantee across model/provider/resolution/fps combinations. STILL and HELPER rules remain separate.
+- Updated the canonical registry, spoken-share calculations, variant planner's unknown-data behavior, film-shot duration checks, prompt lint, and focused tests. Updated the rule table, decision log, story/shot specs, Claude agents/skills, and the 2026-11-04 Claude handoff. Added `docs/wip/CREATOR_OVERRIDE_NARRATION_VISUAL_SHOT_DURATIONS_2026-11-04.md` as the explicit precedence document.
+- Preserved prior Master Mold and Integration Roadmap files as historical comparison material; D-95 supersedes only conflicting speech-ratio and generic shot-duration guidance. The Gemini-generated CD-01..CD-06 claims remain unverified unless separately approved in the canonical decision log; CD-05 remains open.
+- Verification limitation: this connected GitHub session did not have a checked-out working tree or a local Python test runner. Focused test cases were added, but pytest, docs lint, compileall and end-to-end rendering have not been run here. No paid API calls, pods, GPU jobs, production renders, YouTube Studio changes, uploads or publishing were performed.
+
+### 2026-11-04 — Critical audit corrections and visual-grammar research brief
+
+- Corrected the Gemini execution guide's malformed baseline hashes and clarified the difference between the pinned PR #119 code baseline, the planning-branch base and the live review branch.
+- Added an explicit rule that imported TODO blocks are unverified proposals: new/stub paths must not be described as existing defects, and no batch executes solely because a TODO says MUST/CRITICAL. The guide's “five sources per module” wording was replaced with claim-level relevance and traceability.
+- Corrected unsupported creator-decision claims: D-96 is not in the canonical decision log, D-95 does not authorize color grading, and `living == false` is not automatic voice / likeness clearance under ElevenLabs' current policy. Recast the Gemini batch sequence, target call graph and module inventory as proposals requiring repository evidence.
+- Corrected the blind-check compatibility note: the actual PEP 701 parse risk was quote reuse in `describe_rules()`'s `style_key` expression, not the nonexistent `BlindCheckReport` / `guesses` code described in the imported TODO. Extracted style entries before the outer f-string. Python 3.11 execution was not available in this session; project minimum runtime still needs confirmation from CI/runtime metadata.
+- Added `docs/wip/GEMINI_VISUAL_GRAMMAR_AND_SHOT_DESIGN_RESEARCH_2026-11-04.md`, a read-only research brief for mapping story beats to visual archetypes, shot composition, camera/motion, image prompts, video prompts and repository integration. D-93 and D-95 remain unchanged.
+- Scope: documentation and one syntax-compatibility fix only. No batch implementation, paid API, GPU pod, production render or publishing action. Tests were not run in this connected GitHub session.
+- Further source/decision audit: removed unsupported causal claims from the imported research references (LoRA scale `0.7`, CLIP identity threshold, LPIPS motion floors, sub-2-second visual-change rule, quoted GPU rates and cold-start figures); clarified that these sources do not prove the proposed thresholds. Corrected ElevenLabs and YouTube policy summaries against current official policy pages. The visual mix / speech mix / shot-duration rules remain separate.
+- Live GitHub check on 2026-11-04 found `main.protected=false`, `protection.enabled=false`, and no repository rulesets. `GATE-EXT-MAIN-PROTECT` is therefore UNMET. Recorded the blocker in the Claude handoff and execution guide; did not alter repository settings or touch `main`.
+
+
+### 2026-11-04 — Independent audit reconciliation and Claude follow-up note
+
+- Reconciled the independent ChatGPT audit with the live review branch. GitHub compare against main: 86 commits ahead, 0 behind; 300 changed paths (239 modified, 61 added, 0 deleted). These are full branch-vs-main totals, not only the latest handoff commits.
+- Verified no PR result, combined status checks, or workflow runs for the reported target SHA. Clarified that .github/workflows/quality.yml push triggers only main and systemic/**, but pull_request and workflow_dispatch exist; no run was found, but the workflow is not inherently impossible to run.
+- Confirmed main was unprotected and repository rulesets were empty. Target branch protection could not be read (403), so its status remains unknown. No repository settings were changed.
+- Added a precise scope note for the layout gap: layout.py has real geometry functions and film_shots.py has text-level blocking, but the inspected P6 edit.router does not call layout.solve() or place its geometry artifact into the still spec. blocking_sha256 defaults to null. This finding is scoped to that route.
+- Clarified D-95 verification: script word accounting and narrator timing exist, but final post-mix verification of actually delivered narrator/character words was not established. Further work must trace stems/clips/mixer first and must not assume ASR is necessary.
+- Confirmed LTX planner lanes remain unavailable pending the actual clip-pod dryrun. Local frame quantization and hosted API duration rules must remain adapter-specific.
+- Corrected the stale BlindCheckReport / BlindChecker inventory row in the execution guide. Added a Claude-facing action note to the handoff with findings, scope, recommended investigation order and explicit no-implementation boundary.
+- Extended the Visual Grammar research brief with asset provenance, adapter-specific capability records, stronger worked-example requirements, and provenance/layout/provider acceptance tests. The proposal keeps these records separate from creator-approved visual intent and avoids creating duplicate registries prematurely.
+- Documentation only in this update. No application code, schema, CI dispatch, branch-protection settings, paid API, GPU pod, production render or upload was changed/run. Tests and docs lint were not run in this connected GitHub session.
+
+### 2026-11-04 — Supplemental cinematic craft report
+
+- Added the creator-supplied `cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md` to `docs/research/`; verified the copied file's SHA-256 matches the Downloads original (`44F0FE17B2F31B1999A536C6B6B937E6944657E029C60923C3CDDC890B35205F`).
+- Linked the report from `docs/INDEX.md` and the craft curriculum, explicitly marking its claims as supplemental and unverified rather than treating its proposed numbers, model/API facts, or tool routes as policy.
+- Added a non-binding visual-grammar idea set to `shot-visuals` and a research-authority/capability caution to `video-editing-architect`. Existing project rules remain authoritative, including D-93 and D-95; no thresholds, checklists, provider choices, or production architecture were changed.
+- No paid calls, pods, renders, or publishing actions. `git diff --check` passed. `python -m explainer_engine.docs_lint`
+  reported one pre-existing undefined decision-ID reference in the unchanged historical `PROGRESS.md` text; the same
+  reference exists at `HEAD`, so it was not altered as part of this task.
+
+### 2026-11-05 — ICW-01 rule rewrite (Ink Chronicle, roadmap section 20)
+
+- Work package ICW-01 of `docs/architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md` (launch word of the creator 2026-11-05 08:42 UTC). Docs, registry, config and test-pin changes only; no runtime code changed.
+- RW-06: decision rows D-96 (Ink Chronicle direction, the precedence rule; clears the docs_lint D-96 finding) and D-97..D-112 (ICD-01..16), D-113 (ICG-3, the M4 Pro Mac); D-31, D-41, D-50, D-75, D-77, D-80, D-87, D-93, D-95 carry their supersession notes.
+- RW-07: BP-105 nominal 0.70 and REVIEW band [0.65, 0.75] (D-99, ICG-1 = A); BP-139 scoped to `ltx_i2v/*`; legacy-recipe prefixes on BP-100/101/102/110/164/165/172; new house rows BP-173 (line weight), BP-174 (render validator thresholds), BP-175 (Blender 5.2.3 LTS pin); SOURCED_RULES table regenerated.
+- RW-08: world bible v1.5 (house look wording, bans re-worded, motion default per lane; rehashed by `bible bump`), look_v2 bans photoreal / raw cgi / pbr instead of 3d render.
+- RW-01..05, RW-09..13, RW-18..20: CLAUDE.md header, precedence banner, invariants 1 and 6, picture-provider scope; PRODUCTION_RULES gates 4-8; ORCHESTRATION OR-21/OR-23/OR-33; VAULT VT-01 and `config/vault.json` critical `blender/**`, `assets/3d/**`; CONTRACTS planned /3 contracts; VIDEO_PARAMETER_SPEC P-12/P-13/P-60; `config/cloud_pins.json` blender pin (sha256 from download.blender.org) and legacy marks; `config/job_speeds.json` empty `blender_frame_*` job types; EPISODE_STANDARDS `paid_assets` names the render pod.
+- RW-14..17: dated legacy banners on 23 docs, the skills and agents; the D-95 override and the two Master Mold guides moved to `docs/archive/` (INDEX row added). RW-19: `config/model_routing.json` unchanged (recorded in D-96).
+- Tests: new `test_icw01_rule_rewrite.py` (the section 20 grep), `test_world_resolver_bans.py`, `test_orchestration_docs.py`, `test_job_speeds_rows.py`, `test_rulebook_blender_gate.py`, one new case in `test_vault.py`; pins updated for the changed rules: `test_sourced_rules` (BP-105 band), `test_universe_boards` (photoreal instead of 3d render), `test_story_engine` (fixture inside the new band, plus the counted-voiced case).
+- Results: `docs_lint` 0 findings. Fast suite (`-m "not system and not media"`, Python 3.13): base branch 12 failed / 2440 passed; this change 10 failed / 2458 passed. The 10 remaining failures are the inherited ICW-00 set (Master Mold docstrings, stale Napoleon fixtures, three undefined BP citations inside `docs/wip` evidence files, a loudness-literal check), unchanged by ICW-01.
+- Cost: $0. No pod, no paid API call.
+
+### 2026-11-05 — ICW-00 branch hygiene (Ink Chronicle, roadmap section 15)
+
+- Work package ICW-00, no behaviour change. Removed the `CLAUDE-MASTER-MOLD-SYNC` header blocks from 295 `.py` files and the `CLAUDE-CLASS-SYNC` lines; proof = `ast.dump` of every module equal before and after (script run in the thread, no module differed).
+- Deleted 37 empty "Stub specification module" files (36 modules in `pacing/`, `cast/`, `map/`, `edit/`, `scripting/`, `audio/`, `qa/`, `video/`, `validate.py`, `pipeline.py`, plus `scripts/validate_mold_compliance.py`); importer grep over code, tests, scripts, `.claude`, docs found none, `compileall` clean. Kept `video/__init__.py` with the four Ink Chronicle planning stubs (`video/generator.py`, `keyframes.py`, `scene_builder.py`, `tier_router.py`), replaced by ICW-04/06/07.
+- The three undefined BP citations (BP 68, BP 79, BP 155; roadmap section 16): the two Master Mold copies under `docs/wip/` cite `ZI-02`, `PV-37` and `BP-43`/`BP-106` as the roadmap table names them; the historical audit texts that talk about the dangling ids write them as "BP 68" etc.
+- `docs/PRODUCTION_RULES.md` rows 7.5/7.6 name their cells `**keyframes**` / `**clips**` again (the `production_gate` row names, pinned by `test_repo_hygiene`).
+- Napoleon example rebuilt to the current rules (the creator's choice A, 2026-11-05 09:54 and 09:57 UTC): in
+  `examples/napoleon_vs_genghis/episode.py` the 19 dialogue shots of 6-7 s are 5 s (BP-108, D-95), the freed 20 s go to silent
+  shots of the same scenes; 68 silent shots got narration of the story (no new numbers; claims from the existing claim map,
+  I01-I04 for invented events), 6 expository lines became narration, 29 lines were tightened. Narrator share by audible words
+  45 % -> 70.1 % (1192 narrator / 509 character words, BP-105 70/30). 214 shots, 900 s, cast, story and style text unchanged.
+  `film_shots.json` and `shotlist.md` regenerated (`build_cards.py`, `film_shots shotlist`); `film_shots check`: 0 FAIL, only the
+  two KP-37 visual-mix REVIEWs the test expects. `prompts.json` left as it was (it was already not reproducible at the base).
+- `variant_v2.json`: each planned block carries `words` = seconds x BP-01 `wpm_target` / 60 (scene = character, the rest =
+  narrator), so v2's narrator share is computed (63.8 %, a VP-16 REVIEW by design for the tactical profile) and the schema holds;
+  `script_variants.json` regenerated (`variant_plan napoleon --write`): v1 code score 40 (was 30, no VP-16), v2 30.
+- `tests/unit/test_variant_plan.py`: only the fixture pins moved to the rebuilt values (scene 0.793, compensator 0.161, hold
+  0.046, narrator 0.701, non-scene run 9 s, turn shares S04 0.88 / S08 0.79 / S13 0.86, S13 played 87 s, v1 score 40 and its
+  risk list without VP-16); no threshold, rule, schema or test meaning changed, no xfail.
+- Stale text reported (precedence rule): `examples/napoleon_vs_genghis/script.md` is the earlier draft and does not carry the new
+  narration; the cards are the source.
+- Cost: $0.
+
+### 2026-11-05 — ICW-02 contracts (Ink Chronicle, roadmap sections 10 and 15)
+
+- Work package ICW-02, branch `icw/02-contracts` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (00c7fcd). No stage
+  writes the new files yet (the later work packages do, roadmap section 11); this package writes the contracts, their checks, the migration and the tests.
+- Schemas (`explainer_engine/schemas/`): `film_shots/3` (same file as /1 and /2, dispatched on `schema`), `shot_spec/2`,
+  `shot_route/2`, `asset_library/2` (each in its file's `$defs` beside /1), new `blender_scene_manifest/1`,
+  `blender_render_manifest/1`, `render_checkpoint/1` (roadmap 10.4), `speech_mix_report/1`. Field lists and owners:
+  [CONTRACTS](CONTRACTS.md) "Ink Chronicle contracts (ICW-02)".
+- Checks (`core/contracts.py`): CN-08 binds only the recipes BP-139 names (`ltx_recipe`, D-105); new CN-17 (master, profile/recipe,
+  lip-sync, BP-173 line weight, BP-175 route pin, stale bible = REVIEW), CN-18 (render checkpoint and render manifest), CN-19
+  (asset library /2), CN-20 (speech-mix counts). `sourced_rules.json` `enforced_by` gains the readers of BP-167, BP-173, BP-175;
+  `SOURCED_RULES.md` regenerated. No new number in code: the 5 MB storage line and a chunk maximum the roadmap names have no BP row
+  yet and are not enforced (D-59).
+- `scripting/film_shots.py`: `visual_lane(shot, schema)` dispatches on the version (/3 = its lane; /2 keeps its mapping, and no
+  longer crashes on the string archetypes of MAP/COMPENSATOR shots); `check` runs the staging checks on /3 and not the prompt
+  lints; `compose` refuses /3; `shotlist` writes a /3 sheet. `core/shot_cache.py` keys `shot_spec/2` (without `clock.start_frame`,
+  assets by sha256, cue file by hash).
+- Migration: `scripts/migrate_film_shots_2_to_3.py` (/1 and /2 -> /3; BP-109 shares kept and reported; refused lanes refused with
+  D-89 / D-106; output validated); checked-in dry run `docs/architecture/ICW-02_MIGRATION_DRY_RUN_2026-11-05.md`.
+- Napoleon example: `film_shots.json` is /3 (204 VIDEO_3D, 10 STILL_3D, 84 lip-synced shots, shares unchanged), `shotlist.md` and
+  `migration_report.md` from `build_cards.py`; `script_variants.json` regenerated (blocks carry the /3 lane; scores v1 40, v2 30
+  unchanged; `script_variants.schema.json` lane enum gains the three /3 lanes). The legacy composer tests keep the real 214-shot
+  episode through `tests/unit/_napoleon.legacy_cards()` (the same cards as /1, built in memory).
+- Stale text reported (precedence rule): `examples/napoleon_vs_genghis/prompts.json` and `PROMPT_PACKAGE.md` are the D-80 record
+  of the legacy cards, not of the /3 cards; `examples/film_shots/bus_in_the_ice_age.json` stays /1 as the legacy fixture.
+- Choices the roadmap did not spell out (for the Fable check): a /2 shot at tier hold becomes STILL_3D (BP-109 shares kept);
+  /1 cards migrate too (Napoleon is /1); `archetype` null until ICW-03; `still_mode` hold for a static camera, else
+  camera_move_3d (the 2.5D tableau = parallax_25d); profile light -> eevee_fast, else eevee_full; `clock.start_frame` not in the key.
+- Tests: `test_contracts` (+ /3, refused and legacy lanes refused on /3, CN-08 by recipe, the new contracts' fixtures),
+  `test_film_shots` (+ the version dispatch), `test_shot_cache` (+ /2: every input moves the key, a job rename, clock place, cue path
+  and asset order do not), new `test_migrate_film_shots.py`.
+- Results: `docs_lint` 0 findings; fast suite (`-m "not system and not media"`, Python 3.13, with cv2): 2566 collected, 0 failed
+  (2 skipped, 1 xfail, as at the base).
+- Cost: $0. No pod, no paid API call.
+
+### 2026-11-05 — ICW-03 lane planner, archetype registry, speech report (Ink Chronicle, roadmap sections 7, 8 and 15)
+
+- Work package ICW-03, branch `icw/03-lane-planner` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c4926d9), PR #124;
+  Fable accepted it 2026-11-05.
+- New modules:
+  - `explainer_engine/visual/archetypes_ic.json` + `schemas/archetypes_ic.schema.json` (`archetypes_ic/1`): 20 visual
+    archetypes and the 23 sub-categories of roadmap 7.4 (H1-H6, S1-S7, V1-V10), each with the twelve required attributes.
+  - `visual/shot_design.py`: the archetype, helper pick, still mode and rig of each shot; a seen line over BP-108's cap is
+    split onto an off-screen cover with no word lost.
+  - `visual/lanes.py`: the lane plan into BP-109's band, with REVIEW-only findings (KP-37 out of band, the new KP-48 for a
+    long VIDEO_3D run); the script is never rewritten.
+  - `qa/speech_mix.py`: `speech_mix_report/1` (BP-105, with KP-39 and KP-36 REVIEWs).
+- Napoleon example planned:
+  - lanes 62.0 / 30.6 / 7.4 (was 95.4 / 4.6 / 0);
+  - narrator 70.1 %;
+  - archetypes 1-20 on every shot;
+  - new `lane_plan.md`; `film_shots.json`, `shotlist.md` and `script_variants.json` regenerated; variant v1 scores 70.
+- Stale text reported (precedence rule): the roadmap prose says "26" sub-categories; the lists in 7.4 have 23 (for ICW-07).
+- For ICW-07 (shared files left untouched):
+  - `sourced_rules.json` `enforced_by` for BP-105, BP-108 and BP-109 (the new modules read them through `scripting/film_shots`);
+  - a row for KP-48's run limit (`planner.video_run_max` 3, a hypothesis), or keep it as a hypothesis;
+  - a CONTRACTS/INDEX row for `archetypes_ic/1`;
+  - optional `camera_rig` / `intensity` card fields.
+- For ICW-08: the scorecard row and the final-mix delivery check.
+- Tests: new `test_visual_lanes.py` (32) and `test_speech_mix.py` (9) on three fixture scripts (`tests/unit/_lane_fixtures.py`)
+  plus Napoleon; the pins in `test_variant_plan.py` and `test_film_shots.py` now hold the planned episode's real values.
+- Results: `docs_lint` 0 findings; fast suite (`-m "not system and not media"`): 2604 passed, 2 skipped, 1 xfail. CI `quality`
+  fails only `test_seams.py::test_duration_of_an_mp3_is_its_decoded_length` (it depends on the runner's ffmpeg build); the same
+  test fails on ICW-00/01/02 too, and this PR does not cause it.
+- Cost: $0. No pod, no paid API call.
+
+### 2026-11-05 — ICW-05 part 1: asset library v2, 3D reuse gate, Blender asset and lip-sync adapters (Ink Chronicle, roadmap 9.3, 11, 21.4-21.5)
+
+- Work package ICW-05 (part 1, the asset pipeline in the coordinator's scope), branch `icw/05-assets` from
+  `opus/ink-chronicle-blender-visual-system-2026-11-04` (67e1bc3), PR #126; Fable accepted it 2026-11-05.
+- `assets/library.py` on asset_library/2 (D-110):
+  - the 9 3D kinds, `deps` by hash, git storage up to 5 MB and external above (`tools/assets_cache/<sha256>/`, vault `assets/3d/`);
+  - a `three_d` block, CN-19 inside `validate`, and approval refused on unknown commercial use unless the approver records it;
+  - `find` by skeleton, and `import` / `fetch` / `upgrade` on the CLI.
+- `assets/library.json` migrated to /2 (9 superseded Gemini records, commercial use `unknown`).
+- `assets/licence_sources.json` holds the licence rows per source (roadmap 21.3/21.4).
+- `assets_reuse` searches the asset library for the 3D kinds.
+- `blender/assets.py`: `AssetResolver` and the fixed Blender 5.2.3 import settings, with a twice-import determinism check.
+- `blender/rigs.py`: Rhubarb cues to shape-key tracks (X on silence, a one-frame blend) and `RigAdapter.plan`.
+- Schema: the asset_library/2 id pattern now allows underscore kinds (`blend_collection`, `scene_template`).
+- Tests: new `test_asset_library_v2`, `test_blender_assets`, `test_lipsync_map`; the /1 → /2 pins moved in
+  `test_asset_library` and `test_contracts`.
+- Not done, waiting for the creator: part 2 (`blender/style.py`, `edit/style_bridge.py`, the style sheets and the collage) and PoC 3
+  (it needs downloads). The ICW-07 notes are in the PR and the handoff.
+- Results: `docs_lint` 0 findings; fast suite 2658 passed, 0 failed (`test_seams` is the inherited ffprobe failure).
+- Cost: $0. No download, no pod, no paid call.
+
+### 2026-11-05 — Mac render environment and runbook (D-113)
+- Blender 5.2.3 LTS installed on the creator's M4 Pro Mac; the image's sha256 matches `config/cloud_pins.json`, no pin change.
+- New: `docs/RUNBOOK_mac_render.md` (install, run, measured speeds, known limits), with its row in `docs/INDEX.md`.
+- Measured on Metal: the ICW-04 smoke and the ICW-05b round-2 clips; numbers in the runbook. Stand-in figures only.
+- Found: `style_sheets.mp4()` at efbcc17 leaves the colour matrix to ffmpeg (BT.601 values, untagged), reported to ICW-05b; the manifest's `device` says `cpu` on the Mac while EEVEE runs on Metal.
+- Docs only, no code or test changes. Results: `docs_lint` 0 findings. Cost: $0.
+
+### 2026-11-05 — ICW-05b: style engine, style bridge, PoC 3 CC0 assets, style sheets and motion clips (Ink Chronicle, roadmap 9.1, 21.6)
+
+- Work package ICW-05b (the rest of ICW-05), branch `icw/05b-style` from `opus/ink-chronicle-blender-visual-system-2026-11-04`
+  (d605b81), PR #127. Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw05b_2026-11-05/HANDOFF_ICW-05b.md`.
+- `blender/style.py` builds `style_graph/1` as data:
+  - the EEVEE path: Shader to RGB, a three-step ramp, rim, Emission;
+  - the Cycles-safe path: an N·L ramp;
+  - shared by both: Line Art, the paper pass and AgX.
+- The light profile is the default (the creator, 2026-11-05: palette and frame quality first, shadows and reflections secondary).
+  There are no cast shadows and no ray tracing, AO or fast GI; `StyleTokens.shadows` and `palette_match` are switches.
+- `blender/grade.py` and `agx_palette_match.json` invert AgX Medium High Contrast for each colour (OCIO). The palette's mean dE
+  drops from 12.98 to 2.25. Amber, teal and faction_b stay out of AgX's reach.
+- `bpy/render_shot.py` gains described scenes and motion keys. It is still the only bpy importer.
+- `edit/style_bridge.py` covers HELPER frames.
+- `blender/project.py` recognises an Apple silicon GPU (`device=auto`), and Cycles uses METAL there.
+- PoC 3: 9 CC0 records (Poly Haven, ambientCG), stored external and hash-verified on the vault. No binary is in git.
+- Renders, all free:
+  - 5 style sheets × A/B/C/S at 1440p, with EEVEE on the GitHub runner;
+  - 8 clips of 48 frames (2 scenes × B_shadow / B_light / B_match / A_match) on the creator's Mac M4 Pro, 0.33-0.73 s/frame;
+  - without shadows a frame is about 35 % faster, and the palette match costs nothing.
+- **Creator pick deferred:** ვანო (2026-11-05 14:58 UTC) picks the look on real-character frames in ICW-06. Every variant stays
+  selectable and the bible v1.5 `style` block is not written yet. The Mac is for tests only; production renders run on RunPod.
+- Open question, a contract matter for ICW-07 and the bible: an exact palette needs the Standard view transform, but shot_spec/2 pins
+  `view_transform` to AgX.
+- For ICW-07:
+  - add style.py to BP-173's `enforced_by` (style.py reads no threshold until then);
+  - `style_graph/1` in CONTRACTS;
+  - a described-scene field in shot_spec/2;
+  - INDEX rows;
+  - the AgX look-id note in roadmap 9.1;
+  - palette tokens for terrain (`SCENE_COLOURS`);
+  - eevee_full's missing `use_gtao` belongs to ICW-09.
+- Results: `docs_lint` 0 findings; fast suite 2705 passed (`test_seams` is the inherited ffprobe failure).
+- Cost: $0. No pod and no paid call.
+
+### 2026-11-05 — ICW-08: Blender render validator (Ink Chronicle, roadmap section 13)
+
+- Work package ICW-08, branch `icw/08-render-validator` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c4c7223, after
+  the PR #127 merge). Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw08_2026-11-05/HANDOFF_ICW-08.md`.
+- `blender/validate.py`: `RenderValidator.check(shot_dir, spec, still_mode=)` reads a `blender/render.py` shot folder and returns
+  `qa_report/1` rows: RV-FRAMES, RV-SIZE, RV-FPS (FAIL); RV-BLACK, RV-FROZEN (FAIL, BP-174, `still_mode` hold exempts the frozen
+  row); RV-FLICKER, RV-LINE (REVIEW, BP-174); RV-LINE-WEIGHT (REVIEW, BP-173, the stroke width scaled to 1440 rows); RV-CAL-* (INFO,
+  calibration numbers for ICW-09). `report()` makes one `qa_report/1` of stage `clip` (no retry directive: a failed FAIL row is
+  ESCALATE_TO_HUMAN); the CLI writes `<job>/qa/clip.qa_report.json`, which the review bundle already copies.
+- Definitions without numbers of their own: black = no lit pixel (as `render.check_png`), frozen = identical pixels, an edge pixel
+  = luma nearer the `ink` token than the `paper` token. Near-black luma and the smallest neighbour change are reported for ICW-09.
+- `style_findings`: palette dE to the nearest token, paper grain and specular share as INFO rows (no BP row exists for them yet).
+- `qa/scorecard.py` check 5 reads the render report (`render_qa`, `render_report`): a failed FAIL row fails it, a REVIEW row makes it
+  REVIEW; the legacy route's clip report is not read.
+- Registry: `blender/validate.py` added to BP-173 and BP-174 `enforced_by` (thresholds unchanged; the sync test requires it).
+- Tests: `tests/unit/test_blender_validate.py` (18): each synthetic defect (black run, frozen run, flicker, edge jump, missing frame,
+  wrong size, wrong clip rate, stroke width) triggers exactly its row.
+- Results: `docs_lint` 0 findings; fast suite 2723 passed, 2 skipped, 2 xfailed (`test_seams` deselected: the inherited ffprobe failure).
+- Cost: $0. No pod and no paid call.
+
+### 2026-11-05 — ICW-06: characters, rigs, lip-sync, scene builder, camera rigs (Ink Chronicle, roadmap 10.1, 11, 15)
+
+- Work package ICW-06, branch `icw/06-characters` from `opus/ink-chronicle-blender-visual-system-2026-11-04` (c35678d, after the
+  PR #129 merge). Handoff: `/mnt/project-files/explainer-engine/ink_chronicle_icw06_2026-11-05/HANDOFF_ICW-06.md`.
+- Assets (PoC 1, all CC0, $0): Quaternius Universal Base Characters, Universal Animation Library 1 (43 clips) and Modular Character
+  Outfits Fantasy, fetched by `assets/itch.py` (the page's own free-download button; refuses a pack whose minimum price is not 0).
+  `blender/characters.py` packs the glTF members into deterministic GLBs (a missing `*_png.png` normal map is dropped with its
+  slot) and registers 11 external records (`character_assets.json`; `licence_sources.json` row `quaternius_mco`); the GLBs are on
+  the vault under `assets/3d/**`, 11 of 11 with the same hash. PoC 1 finding: body, hair, outfits and clips share one 65-joint
+  skeleton with identical names, so every clip plays without a retarget (`rigs.bone_map` measures it; no fuzzy matching).
+- `characters.json` (character/1): three test characters (two men, one woman), four costumes, slot materials (skin always the
+  head's flat mean colour, so hands match the face; costume tint = a palette token; hair tint), the mouth (Rhubarb A-H + X).
+- `bpy/render_shot.py`: `character` objects: the parts merged onto the first part's armature, the body cut to the head bones, one
+  UAL clip per member as an NLA strip (offset, speed), the mouth as jaw shape keys plus a dark opening lens (the UBC lips are one
+  closed surface), lip-sync keys; rig copies share their meshes in a crowd; camera `keys` (several poses, optional bone tracking);
+  world bounds per object in the report.
+- `blender/turnaround.py` (D-101): 4 body views + 9 mouth close-ups tracked on the posed head, the sheet registered as
+  `sheet.<character>_<costume>_turnaround` with the head as its parent.
+- `blender/rigs.py`: `run_rhubarb` (no dialog file only for a reused take), `LipSync.plan` (refuses a shot over BP-108
+  `dialogue_shot_max_s`; registry `enforced_by` updated, table regenerated), `LipSync.busiest` (the window with the most mouth
+  changes), `bone_map`.
+- `blender/scene_builder.py`: the six camera rigs of 10.1 (static, push, dolly, rail, orbit, dramatic_curve; four eases) sampled
+  into LINEAR keys every 4 frames; the cast checked against the library (head asset, animation set, sha256);
+  `blender_scene_manifest/1` from the bpy report; `smoke`: one rigged character under a rail, Workbench (added to the Blender smoke
+  workflow, packs cached by their sha256).
+- `blender/benchmark_shots.py`: S1-S6 of 12.4 as shot_spec/2 + described scenes. All six built and rendered headless here (2 frames,
+  half scale, CPU EEVEE / Cycles): S1 10.8, S2 14.0, S3 19.1 (18 characters, 258 objects), S4 8.4, S5 6.8, S6 12.8 s/frame. Deviations:
+  S3 without Geometry Nodes instancing and the dust volume, S4 on the primitive hills (no Poly Haven terrain registered); both go to
+  the ICW-09 preflight list.
+- `style_sheets clips`: the real cast by default (`--cast real`), speaker_a lip-synced from Rhubarb cues (`--cues`, or `--wav` +
+  `--rhubarb`); the spec then carries `performance.rhubarb` (CN-17). `style.material(strength=)` overrides a material's texture share.
+- Not done here: Rhubarb could not run in this cloud session (an external binary); the Mac runs it on an existing ElevenLabs take
+  (PoC 2's offset and silence lines are measured there). The MPFB2 body and a foreign-skeleton retarget are out of scope (PoC 1
+  passed natively). For ICW-07: a costume and clip field in shot_spec/2 `characters` (the cast table carries them today).
+- Tests: `test_characters.py` (7), `test_scene_builder.py` (10), additions to `test_lipsync_map.py`, `test_style_sheets.py`,
+  `test_blender_style.py`.
+- Cost: $0. No pod and no paid call.
+- Rule D-114 (creator 2026-11-05 17:31 UTC): free runs (a Mac test render, a GitHub Actions run) start without asking; paid runs
+  keep the OR-23 plan, the OR-34 audit and his word. CLAUDE.md invariant 1 carries the line.
+- Results: `docs_lint` 0 findings; fast suite 2727 passed, 7 skipped, 2 xfailed; 5 failed only for the missing `cv2` in this
+  container (`test_lora_training`, `test_xworld_v1_score`; the same 5 fail on the base without these changes; `test_seams`
+  deselected as before).
+- PoC 1 measured (Fable's review of PR #130): `characters measure-clips` (Blender samples every frame on the UAL armature,
+  `rigs.foot_slide`): 7 of 8 clips under the 2 cm foot-slide line (walk 0.45 cm at its natural 0.77 m/s, formal walk the same,
+  jog 0.18 cm, idle/talking/sit/dance 0); `Sword_Attack` drags its rear foot 0.55 m (a sliding lunge in the clip itself), so a
+  planted combat shot uses `Sword_Idle`. The pass line is 6 of 8. Identity across costumes: `turnaround compare` (mouth close-ups'
+  pixel RMS, INFO; same man in two costumes against a different person) runs on the Mac with the third sheet, and ვანო reads them.
+- PoC 2: `rigs.lipsync_measure` (mean |offset| of mouth openings to word starts in frames, open mouth outside every word window)
+  and `rigs measure-lipsync`; the words come from `audio/local_words.py` (faster-whisper, free) on the Mac with Rhubarb's cues.
+- CI: the Blender smoke installs `pillow==12.3.0` for the character smoke (`characters._mean`).
+
+## 2026-11-05 — ICW-05c look round: ten looks from the creator's reference to a flat painting of it (branch icw/05c-ink-round)
+
+- Why: ვანო read the ICW-06 test frames as "a very poor world, a completely different style, not ink" (17:45 UTC) and sent a
+  reference sheet at 17:54 UTC ("like this, but less 3D"): a stylized 3D-animation look with soft painted light, a warm key and a
+  bright rim, matte painted materials, soft-focus painted backgrounds and a warm limited palette. Fable's plan rev. 2
+  (`/mnt/project-files/explainer-engine/ink_chronicle_ink_round_2026-11-05/PLAN_INK_ROUND.md`) turned that into ten variants
+  along one slider; this entry implements it. No variant is chosen; the bible is not touched (ICW-07 writes v1.5's style block
+  after the pick).
+- `blender/style.py`: `Look` (the knobs: shade mode toon/soft/feathered/flat/painted_light, ramp with a cool shadow tint and a
+  warm light tint, brush texture, halftone, light rig cinematic/key_rim/flat_key/ambient_only with a cool fill sun and a warm rim,
+  line mode none/faint/dark/ink, background set/dof/plate/flat, sky paper/gradient/hdri, Kuwahara on the frame or on the far
+  background by depth, bleed, paper as a multiply base, screen-space grain, vignette, palette maps warm_cinematic and
+  reference_swatches, `texture_keep` for set photos and `costume_keep` for a costume's own painted atlas over the shot's tint).
+  `StyleTokens.art` carries it; without it every ICW-05 graph keeps its bytes (`to_dict` drops the field). EEVEE only.
+- `blender/look_variants.json` (`look_variants/1`): the ten variants (slider 1-10) and three swatch twins (1, 5, 9 with the six
+  swatches sampled from the reference sheet as proposal colours; `design/palette.json` stays the house palette's home).
+- `bpy/render_shot.py`: the fill light, camera depth of field, the depth pass for the painted plate, and no Line Art object when a
+  look draws no line. `characters.materials` marks costume slots (`slot: costume`; the toon path ignores it).
+- `style_sheets looks / look-collage / look-report`: per look 24-frame clips of the dialogue close-up (real cast) and the battle
+  wide, a still of the establishing shot, MP4 review copies, `looks.json` rows written as they finish; the collage and the
+  summary (s/frame per scene, ratio to B_light on the same runner, over 2x flagged, BP-173 band) from every job's folder.
+- CI: `style-sheets.yml` job `looks` (matrix: B_light + one job per look, the swatch twins in their parent's job) and
+  `look-collage` (merges the artifacts). Runs on push to `icw/05c-**`; free (D-114).
+- BP-173: v04's faint contour is 1.5 px at 40 % opacity (the band's floor; 1 px fails CN-17). Looks without a line carry the B
+  token's 2.25 px in shot_spec/2 (`look.line_weight_px` has no "none"; proposed to ICW-07).
+- Tests: `tests/unit/test_look_variants.py` (20). Cost: $0.
+
+- Result (CI run 42084774093, head 8f302a5, 49 min): all ten looks + three twins + B_light rendered at 2560x1440; s/frame per look
+  against B_light in the round's REPORT.md (project folder `ink_chronicle_ink_round_2026-11-05/`); none over 2x (largest: 1, 8, 10 at
+  ~1.9x from cast shadows); one runner per job, so ratios under ~1.3x are runner noise. `look-report` takes the line verdict from
+  the render's CN-17 finding (no second BP-173 reader). Waiting for the creator's pick; ICW-07 writes it into bible v1.5.
+
+## 2026-11-05 WP-Q8: world kits (Quaternius MegaKit, Poly Haven, Blender-MCP import code)
+
+- Why: the creator's principle (19:19 UTC): synthesis of existing libraries and code, ours is glue. A real mid-ground and props instead of primitives.
+- `blender/polyhaven.py`: the Poly Haven search/download/side-file/HDRI-world code of Blender-MCP (MIT, @2e4b0bc) with the third-party-copy header (rule drafted in the Fable quality report, no D-id yet) and a PROVENANCE row; urllib instead of requests; nothing of its server, telemetry or paid generators.
+- `blender/world_kits.py`, `world_kits.json`, `world_layouts.json`: 22 MegaKit pieces (itch.io CC0 page; quaternius.com now shows a no-redistribution licence) and 6 Poly Haven models packed with `characters.pack_glb` to one GLB each (base-colour image only, <=1024 px: `style.py` replaces every material), registered external (`model.mvk_*`, `model.ph_*`), vault copy under `assets/3d/model/`, rebuildable from the pack/URLs. Layouts `castle_courtyard` and `village_street` expand to `described` objects and a `scene_set/1`.
+- `bpy/render_shot.py`: object kind `gltf`. `world-kits.yml` + `world_kits poc`: three moving courtyard shots with the real cast.
+- Tests: `test_world_kits.py`, `test_repo_hygiene.py` (any `# from owner/repo@commit` header needs a PROVENANCE row). Cost: $0.
+
+## 2026-11-05 — WP-Q7 camera grammar and Add Camera Rigs (branch wpq/07-cameras, base icw/05c-ink-round)
+
+- Why: flat cameras. The engine had six rig names (static, push, dolly, rail, orbit, dramatic_curve) sampled into plain keys, but no
+  shot grammar: no low-angle hero close-up, no over-the-shoulder, no thirds, no f-stop, no real dolly or crane object to move.
+- Synthesis, not new code: the official **Add Camera Rigs 1.9.2** extension (GPL-3.0-or-later, 15 KB zip) is pinned by sha256 in
+  `config/cloud_pins.json` (`blender_extensions`), fetched and verified by `blender/camera_rigs.py`, installed into the render's own
+  Blender with `bpy.ops.extensions.package_install_files`, and built with its own operator (Dolly or Crane). None of its code is copied
+  (licence row `assets/licence_sources.json` add_camera_rigs; so no PROVENANCE row). Installs offline on 5.2.3 (checked with the
+  `bpy` 5.2.3 wheel, which is the pinned build).
+- `blender/camera_setups.json` + `camera_setups.py`: six setups (establishing wide on a crane, over-the-shoulder A and B =
+  `shot_reverse_shot`, low-angle hero close-up, push-in reveal, profile two-shot). Each: lens, height and distance in head heights,
+  a thirds target, f-stop, focus target. `resolve()` places the camera from the subjects' feet and aims it so the framed point lands
+  on the thirds target (pinhole); `framing()` projects any point; `check_camera()`.
+- `shot_spec/2` `scene.camera` gains optional `setup`, `fstop`, `rig_kind` (an additive amendment: documents without them are
+  unchanged). `scene_builder.camera_job` / `build` carry `fstop`, `rig_kind`, `focus_at` and the extension path.
+- `bpy/render_shot.py`: `build_rig` / `key_rig` / `set_dof` / `frame_probe`: Root under the camera on the floor, Camera and Aim bones
+  keyed from the same LINEAR camera path as before (so the path in the manifest is still the truth), the focus distance follows
+  `focus_at`, the aperture is the rig's `aperture_fstop`; the style's DoF fills what the job did not name. Without `rig_kind` the bare
+  camera path is byte-for-byte the old one. The 2D rig is not mapped yet (it belongs to the painted plates, WP-Q3).
+- Check on real Blender 5.2.3 (bpy wheel, Workbench, 960x540, 48 frames, 0.26-0.31 s/frame): for all six setups the framing Blender
+  measures with `world_to_camera_view` equals the pure-Python pinhole to 4 decimals at the first and the last frame.
+  `blender/camera_smoke.py` repeats this on CI (`blender-smoke.yml`, new step; tolerance 0.002 frame widths).
+- Tests: `tests/unit/test_camera_setups.py` (24). Cost: $0. Not done here: the clips on the real cast (they need the character GLBs from
+  the vault: Mac or CI) and an A/B of the 2D rig.
+## 2026-11-05 — WP-Q0: Blender 5.x API names in `render_shot.py` (branch `wpq/00-api`)
+- `ENGINE_IDS["eevee"]` is now `("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT")` (5.0 renamed EEVEE Next back; the old id stays as fallback).
+- `apply_settings`: `ambient_occlusion` maps to `eevee.use_fast_gi` plus `eevee.fast_gi_method = 'AMBIENT_OCCLUSION_ONLY'` (5.x has no
+  `use_gtao`; `eevee_full` used to land it under `missing`/silently without AO). Mapped switches are recorded under `applied`.
+  `None` still sets nothing; `False` switches Fast GI off. `RenderProfile.ambient_occlusion` unchanged. `profiles.py` docstring updated.
+- Tests: `tests/unit/test_blender_render.py` (first engine id tried, `eevee_full` applies `use_fast_gi` and no `use_gtao`, None/False cases).
+  Blender/docs/hygiene/governance subset: 188 passed. Cost $0. Not run: a real Blender 5.2 CI render (the `applied` block should show `use_fast_gi`).
+- WP-Q0 CI proof: `bpy/check_eevee_api.py` + a step in `blender-smoke.yml` run `apply_settings` inside the pinned Blender and print the `APPLIED` block
+  (engine id `BLENDER_EEVEE`, `eevee.use_fast_gi`, `eevee.fast_gi_method`); the step fails if a switch is missing. The Workbench smoke alone never touches EEVEE.
+  `quality` is red on the base branch too (`test_seams.py::test_duration_of_an_mp3_is_its_decoded_length`, ffmpeg mp3 duration 2.0 < 2.0), not this PR's.
+- WP-Q8 addendum (the creator, 2026-11-05 19:44 UTC: a rich static epic historical 3D world is the main character; angular forms): layout `hill_castle` (castle fort on an ellipsoid hill, river, brick-arch bridge, 8 plaster houses with tiled roofs, 110 pines and broadleaf trees from the Quaternius Stylized Nature MegaKit (CC0, itch.io page) placed by a seeded scatter that follows the hill surface, 14 rocks, four mountains); block types `shape` and `scatter`; `world_kits poc --layout hill_castle` renders a 1440p still and a 24-frame push (CI job `epic`). Not yet judged against the Moklet reference. Cost: $0.
+
+## 2026-11-05 WP-Q8 overnight: layouts E1-E4, C5 profile, derived-build hash rule
+
+- Layouts `antique_forum` (E1), `hill_castle` (E2, cast on the bridge, `bridge_medium` shot), `harbour_square` (E3), `field_camp` (E4): 7-8 characters each, shots in the layout file (`cast`, `shots`); 12 more Poly Haven pieces registered (vault copies). The frames are not judged yet; the earlier hill_castle still read as a game render (camera in the trees, foliage shards), the camera, tree size and normals were changed and are unseen.
+- C5 `C5_cycles_pbr`: Cycles 48 samples + denoise, the kit's own glTF materials, PBR Neutral (`style_sheets.PBR_VARIANTS`); its cost is measured by CI, not claimed.
+- Fable's hash policy: a repacked GLB is a derived build. `world_kits.json` keeps the source hash (pack zip sha256, or the sha256 of the Poly Haven file md5s), `derived: true`, the packer id and the structural fingerprint (nodes, meshes, primitives, images); `fetch` accepts a rebuild with other bytes only when the source and the fingerprint match and keeps it under `derived/`; byte-identical rebuilds and cache or vault copies are used as before. Test `test_a_derived_rebuild_is_checked_by_source_and_fingerprint_not_bytes`.
+
+## 2026-11-05 — WP-Q1: soft painterly shading, coloured light rigs, colour transform (branch `claude/project-thread-ekz0dc`)
+- Principle (the creator, 19:19 UTC): synthesis of existing techniques and code. Re-implemented from public documents, no code
+  copied (so no provenance row): Blender Studio's Wing It! shading write-up and the Blender 5.2 manual / API pages for Shader to RGB,
+  Light Linking, Light Objects, SceneEEVEE and Displays and Views. API names checked in the pinned Blender 5.2.3 itself.
+- `blender/style.py`: the soft mode gets two new node paths (`Look.shade_path`): `lit` (a matte BSDF lit by real lights, no
+  Emission: Diffuse, or a Principled with Specular IOR Level 0, Roughness 1, no coat, no metal, subsurface on skin) and `rgb_soft`
+  (Shader to RGB keeps the light's colour: mix(shadow tint x albedo, albedo x light, tone), a LINEAR/EASE ramp of the half-lambert
+  lifted luminance, shadow tints per material class skin / hair / eyes / costume / set). `StyleEngine.lights()`: the rigs
+  `cinematic` (warm key SUN 5-10 degrees, PCF blur 2.5, no jitter; cool shadowless fill, specular 0; warm rim aimed from behind the
+  subject relative to the camera, shadowless, specular 0.3, light-linked to the cast), `key_rim`, `flat_key`, `ambient_only`.
+  `Look.view_transform` Standard | Khronos PBR Neutral (no look), `Look.ao` (Fast GI AO, lit path only), `Look.normal_soften`.
+  Every new knob at its default keeps the look round's graphs byte for byte (`Q1_DEFAULTS`).
+- `blender/light_presets.json` (`light_presets/1`, shared with WP-Q4 and WP-Q8): golden_hour, noon_epic, overcast_day,
+  interior_hearth, night_moon. Wing It!'s rule as data: only the key sun casts a shadow, two colourable rims on the cast, an
+  optional fill, one world tint per sequence. `Look.light_preset` picks one.
+- `style.check()`: a Principled BSDF passes only as the matte one on the lit path (narrower, not weaker); the lit path ends in a
+  matte BSDF; Fast GI only as AO and only without Shader to RGB; fill and rims shadowless with specular <= 0.3, rims linked to the
+  cast, only the key casts a shadow, a shadowed key has a 5-10 degree disc.
+- `bpy/render_shot.py`: `build_lights` (light linking through `Object.light_linking.receiver_collection`; a rim with no cast in the
+  shot is left out and reported), `_camera_aim`, `soften_normals` (a Geometry Nodes modifier after the armature: Blur Attribute on
+  the normals into Set Mesh Normal, FREE, point domain), profile `shadows` / `motion_blur_steps`.
+- `blender/profiles.py` `eevee_painterly` (32 samples, shadows, Fast GI AO, motion blur 1 step; stop rule None: the research's
+  budget-share formula is not settled, ICW-09's OR-23 plan names it); `config/job_speeds.json` row; render manifest enum.
+- `shot_spec/3` (docs/CONTRACTS.md): view transform, shade mode and path, line mode; `style_sheets.spec_for` writes /3 for the
+  `q1_*` looks (`look_variants.json` `q1_variants`, kept apart from the round's ten).
+- `blender/grade.py views` -> `view_palette_match.json` (Blender 5.2.3 OCIO): palette mean CIE76 dE raw Standard 0.0, Khronos PBR
+  Neutral 6.73 (max 17.1, `night`; matched 0.5), against AgX MHC 12.98 (matched 2.25). `palette_match` uses it on the new paths.
+- Tests: `tests/unit/test_light_rigs.py` (new), additions to `test_blender_style.py`, `test_agx_grade.py`, `test_shot_cache.py`
+  (/3 validates, /2 unchanged), `test_job_speeds_rows.py` (the new row). Cost $0.
+- Local check (this container, Blender 5.2.3 CPU / Mesa, 1280x720): lights, light linking (20 cast meshes) and the normal blur
+  applied, nothing missing; ~17 s/frame. Verdict (Fable agreed): not there yet. The light behaves as planned, but the Quaternius
+  heads, the photo-brick wall and the empty set still read as a game render, so no pick goes to the creator from that scene.
+- Overnight matrix C1-C4 (Fable's OVERNIGHT_PLAN 22:05 UTC, the creator's brief 19:55 UTC): `blender/combo_profiles.json`
+  (`combo_profiles/1`, read by `blender/combos.py`) names each combination's look (`q1_c1_lit_preset`, `q1_c2_native_skin`,
+  `q1_c3_far_plate`, `q1_c4_pn_faces`), render profile and character path; each era brings its light preset (E1 noon_epic, E2
+  golden_hour, E3 overcast_day, E4 golden_hour). C2 is the default character path (Fable 22:06 UTC: Q4's toon Rain is not there).
+  New look knobs (defaults keep every older graph byte for byte): `native_classes` (those character classes keep the asset's own
+  material, e.g. Blender Studio's SSS skin; `apply_style` leaves the slot alone, `check` accepts a native entry only for a listed
+  class), `skin_lift` (per character: a shadowless, specular-free front fill linked to that character's meshes, and on rgb_soft its
+  skin shadow tint lerped to white), `pn_converge` (Perfectly Normal 0.0.3, GPL-3.0-or-later: its Manip Verts GN groups appended
+  from the extension's own .blend as data, (Re)create -> Tweak Converge -> Apply; one face-normal method at a time). Presets: every
+  key carries `front_offset_deg` (30-45 degrees, enforced): with a cast in the shot the key turns to the camera's side.
+  Perfectly Normal pinned in `config/cloud_pins.json` and `assets/licence_sources.json`, fetched by `blender/face_normals.py`.
+  Not in (stated, not hidden): Brushstroke Tools on C3's close plane (its operators are add-on Python, refused in the cloud
+  container; the GN-only route is not built) and nikolaj3d's shader for C4 (the $0 Gumroad download needs a checkout with an
+  email). Tests: `tests/unit/test_combo_profiles.py`.
+- `character_key` (light_presets.json; WP-Q4's front_key(), the lead close-up accepted by Fable 22:17 UTC): on a close-up
+  (`Look.character_key`, `combos.tokens(..., close_up=True)`) the preset's key and fill give way to a warm key 35 degrees off the
+  camera axis, 10.4 degrees up (above the eye line), and a cool shadowless fill opposite at a quarter of its energy; the era's rims
+  and world tint stay. The loader holds the band (30-45 degrees, fill opposite, share <= 0.5).
+- Era light by look id (`style.LIGHT_TAG`): `q1_c2_native_skin@E1` (era key -> its preset), `...@noon_epic` (a preset name),
+  `...@E2+cu` (the close-up character key). Every CLI that takes a look id (`style_sheets looks`, `world_kits poc --variants`)
+  passes the era's light this way; a look without a preset refuses the tag. Perfectly Normal's Converge turned out inward for a
+  positive share (UV sphere in 5.2.3: mean dot with the outward normal 0.971 flat, -0.911 at +0.6; the first C4 frame's cast went
+  black), so `render_shot.perfectly_normal` passes the outward share as a negative Converge (0.984 at -0.6).
+  The black cast had a second cause: PN 0.0.3's rebuild shifts every face's material index by one (5.2.3, a two-slot sphere:
+  [0, 1] -> [1, 2]), so the kit cast drew in the wrong slots. Two small GN groups around PN store the index as a face attribute and
+  set it back; the cast's imported custom normals are cleared and shaded smooth first. Local C4 frame now renders the cast in its
+  own colours (14.5 s/frame at 1280x720).
+- Depth haze (Fable 22:30 UTC: the E2 cells fail on the world, C3's plate is invisible at that distance): `Look.haze` (share at the
+  far end, at most `HAZE_MAX` 0.75 so the far world keeps a quarter of its contrast), `haze_start_m`, `haze_depth_m`, `haze_colour`
+  (warm grey 0.8/0.76/0.7). Second version (Fable 22:33 UTC): the finish builds the factor from the depth pass alone (Map Range
+  start..start+depth, squared, times the share) and masks the sky (`HAZE_SKY_M`: a depth beyond 1e5 m is the world background, EEVEE
+  writes ~1e10 there), so the sky stays as rendered; no mist pass, no world mist settings, no extra render layer, no denoise. Every C
+  look carries haze 0.45 from 12 m to 162 m. Cost, measured here (2560x1440, EEVEE on software GL, CPU compositor): the real
+  establishing shot 27.6/27.5 s without haze, 29.9/29.0 s with it (mist-pass version 31.8/32.3 s). A bare bench with the same
+  compositor chain isolates it: at 1 sample haze adds ~0.2 s (the nodes), at 16 samples ~+2 s, so the cost is the depth pass
+  accumulated per EEVEE sample on this software GL, not the nodes. The under-0.3 s target is not met on software GL. On the
+  creator's Mac GPU (T-C, E2 hero, C2, tree 4c149d8 with the 5efa45b light): haze ON (0.45) 1.502 s/frame, haze OFF
+  1.507 s/frame, i.e. no measurable cost there; the target is met on the machine that renders.
+- E2 golden hour reads in the world (Fable 22:51 UTC: the world_kits poc's E2 hero showed no low warm sun and no shadows). Cause
+  found on a local 720p render of `hill_castle/castle_hero` in `q1_c2_native_skin@E2`: the preset key turned to the camera's side on
+  every shot with a cast (the front-biased key meant for character shots), so a 49 m world shot was front-lit and flat, and the
+  sky was the noon HDRI. Now: the front-biased key only on a character shot (camera focus within `style.CHARACTER_SHOT_M`, 12 m);
+  a world shot under a preset with `key.world_offset_deg` aims the sun per shot from the camera's side (golden_hour: 110 degrees,
+  12 degrees up, warm 1.0/0.74/0.46, energy 3.4, shadows on); an optional preset `sky` block tints the HDRI and lays a warm band
+  over the horizon (golden_hour: tint 0.86/0.66/0.5, horizon 1.0/0.7/0.44, band 0.6, glow 0.7). Presets without these keys
+  (noon_epic, overcast_day, interior_hearth, night_moon) keep their bytes. Local A/B at 720p: before = flat front light, blue sky;
+  after = warm side light from the right, long shadows to the left, warmer sky. 3 tests in `test_combo_profiles.py`.
+  Fable's tweaks (23:24 UTC): `world_exposure_ev` +0.5 on world shots only (`scene.exposure`, set by `render_shot` on the view
+  settings; close-ups keep 0), and a stronger warm band (tint 0.95/0.72/0.52, horizon 1.0/0.74/0.48, band 0.85, glow 0.95): the
+  720p hero is half a stop brighter and the sky over the ridge reads warm peach.
+  golden_hour v3 (Fable 23:33/23:37 UTC: the village sat in the hill's shadow and the sky went white): sun 21 degrees up and turned
+  to 138 degrees (from behind the camera's shoulder), so the slope and the market are lit and shadows run across them; HDRI tint
+  0.72/0.68/0.64 keeps the sky blue, the warm band only near the horizon (band 0.22, glow 0.9).
+- overcast_day and noon_epic on the same logic (Fable 23:24 UTC): overcast_day key 35 degrees up, world offset 100, shadow filter 5
+  (new optional `key.shadow_filter`, 0.5..8, instead of the look's), grey sky (tint 0.8/0.82/0.86, band 0.85), +0.3 EV on world
+  shots; noon_epic key 55 degrees, slightly warm 1.0/0.93/0.82, disc 5 degrees, shadow filter 1, world offset 120, its HDRI blue
+  unchanged. Local 720p: `harbour_square/harbour_wide@E3` soft shadows, grey air (the depth haze greys the cliff wall heavily);
+  `antique_forum/forum_wide@E1` hard shadows, blue sky. Tests in `test_combo_profiles.py`.
+
+
+## 2026-11-05 — WP-Q4: Blender Studio Rain as the appeal benchmark (draft PR #135, branch wpq/04-character-benchmark)
+- Done: Rain v3.3 (CC-BY 4.0, free anonymous download, 64.4 MB, sha256 `80217f16...ea70d24`, fetched 2026-11-05) recorded as the
+  `blender_studio_cc_by` row of `assets/licence_sources.json`; the zip stays out of git (D-110; vault copy still to do, no HF
+  credentials in the cloud session; CI fetches it from the public URL at the sha256). Storm's page says "Login to Download": not
+  fetched. Rain opens in Blender 5.2.3 with scripts off (the embedded cloudrig.py/rain_shading.py are not run); the face works.
+- Code: `rigs.ActionVisemes` (Rhubarb shapes to pose-bone tracks, X on silence, same timing rule as `LipSync`), `viseme_poses_rain.json`
+  (jaw, mouth scale: three poses measured by render, the rest interpolated), `bpy/render_shot.py` object kind `rig_blend` (a `.blend` rig
+  appended whole, helper meshes hidden, head-lattice deltas, viseme keys, toon re-materialing by slot), `character_benchmark.py` (glue to the
+  Q1 style graph, `light_preset`, HDRI sky), `.github/workflows/character-benchmark.yml`, tests `test_lipsync_map.py` + `test_character_benchmark.py`.
+- Findings (direct): Rain under Blender Studio's own shading has the appeal the reference wants; under the Q1 graph at 720p/4 samples the
+  face is dark brown, the golden_hour key leaves it in shadow, a skin texture strength of 0.2 leaves hard cheek stripes. Verdict "not there",
+  not offered for a pick. 10.5-11.8 s/frame at 1280x720 on a CPU sandbox (not Mac/GPU figures). The head's shared 2x2x3 lattice lengthens the
+  jaw without a rebuild; angular nose/brow need one authored shape key; MCO outfits need a weight transfer (skeleton differs), so the costume is
+  only recoloured so far. The cue file in the CI clip is synthetic: real Rhubarb on an ElevenLabs line is a Mac step.
+- Cost: $0 (free CPU sandbox and GitHub Actions). Next: judge the 48-frame 1440p CI clip, Q1's lighting fix, real tunic, shape key.
+
+## 2026-11-05 WP-Q8 (night, Fable orders): smooth ground, castle wall, harbour horizon
+
+- Terrain is shade-smooth and has no per-face classes in the shader: `terrain.py` writes per-vertex weights (meadow, forest, rock, road, snow), `_terrain` stores them as point attributes `w_*`, and one ground material layers the Poly Haven maps by them, broken up by a world-space noise (`style._blend_textures`). The face classes stay in the data for the tests.
+- Raw graphs outside the toon path (`raw` in `StyleEngine.material`, `S.check` wants an output and no Principled): `ocean` (glossy 0.1 ripple, quay band, far haze) and `smoke` cards.
+- E2: castle scale 1.0, level crest radius 17, front curtain walls, gatehouse with two towers and a lintel (primitives with the Poly Haven stone map; placement not yet seen in a frame). E3: mountains 0.35 x height, 500 m further back, sea plane to the horizon, two more distant ships. Not verified in a render yet.
+- 2026-11-05 (from the 66aafbe Mac frames): `model.ph_modular_fort_01` is a kit SHEET (22 modules laid out over 42 x 71 m), not an assembled castle; placing it whole made towers float over the slope and the dark block above the hero camera. The castle is now assembled from single modules (`nodes` on a piece: one tower_round per corner, thin straight walls, a gate, a keep of primitives), scale 0.8, on a levelled crest of radius 29. E2 mountains lowered (peak 95).
+- 2026-11-06 tone only (Fable): ground layers get per-layer tints (olive grass, ochre dirt road, grey-brown sand and cobbles), the plaza floor tiles a grey-brown multiplier, and every stall awning the same faded canvas palette. No geometry changed. The hero camera has no roll in the data (it is aimed with world Z up); the tilt seen in the frame is the hill and the 17 degree yaw, not roll.
+
+## 2026-11-05 — WP-Q12: test_seams MP3 duration test no longer depends on the ffmpeg version
+- `test_duration_of_an_mp3_is_its_decoded_length` asserted `duration() < ffprobe container duration`; newer ffmpeg honours the
+  LAME header and reports the gapless length, so the strict `<` failed on CI. Now one definition: decoded samples with delay and
+  padding trimmed; the expected value is derived from the fixture (seconds x rate), the container length is only an upper bound.
+- `seams.duration` unchanged. `tests/unit/test_seams.py`: 3 passed locally. No render branch touched. Cost $0.
+
+## 2026-11-05 — T-E crowd proof: thousands of soldiers as Geometry Nodes tiers, a battle set, a 30 s battle (branch `claude/project-thread-u1fc5g`, PR #139)
+- Overnight plan T-E (Fable 22:05 UTC; the creator's brief 19:55 UTC: "cheap ways to generate thousands of fighters"), built to
+  MOTION_RESEARCH.md Group 7. Synthesis of documented parts (the creator 19:19 UTC), no add-on and no copied code: the ICW-06 cast (Quaternius UBC +
+  MCO, CC0) plays its UAL1 clips; `Object.evaluated_get` + `meshes.new_from_object` bake them; Instance on Points (Pick Instance),
+  Collection Info, Scene Time, Object Info, Align Rotation to Vector and the Attribute node's Instancer lookup draw them.
+- `blender/crowd.py` (pure Python, schema `crowd_gn/1`): formations (line, phalanx, cohort, shield wall, wedge, rout) seeded by shot
+  + crowd id; tiers by screen height (h = focal_px x 1.8 m / d; T0 rig above 250 px, the nearest 12; T1 baked mesh frames; T2 a yaw
+  billboard at 60 px and below); closed-form motion (advance from a delay, a stop after `stop_m`, a clip switch at a time), so any
+  frame renders alone (RULE-R1). `bpy/crowd_bake.py`: the bake (32 frames per clip, full + decimated to 2,000 tris), the atlas (8
+  yaw x 16 frames per far template, EXR, the shot's own look), the T1 bands near (full meshes, only for the slots seen near the
+  camera), shadow (< 40 m) and far (no shadow), the T2 billboards, banners, dust cards, smoke puffs and ballistic arrows; every
+  crowd object off Line Art; baked soldiers join the lights' receiver collections. `render_shot.build_crowd` runs it after the style.
+- Compositions: `field` (the first proof's parade), `battle` (24 f: a wedge charging a shield wall, the camera low behind the near
+  line, Poly Haven dirt field and grass ridges, Q1 haze `q1_c2_native_skin@E2`, dust over the far ranks, banners) and `battle30`
+  (720 f = 30 s, the creator 22:46 UTC via the coordinator, Fable's spec: the wedge stops at the wall at 13 s and turns to cuts,
+  the wall's front ranks cut, the main line walks up from 17 s, five volleys of 2,150 arrows, three smoke columns over a village on
+  the ridge, timed dust, the WP-Q7 crane rig on one eased curve from establishing into a push). `crowd preview --at` renders
+  single frames alone. No shot_spec bump: `scene.crowds` rides WP-Q1's shot_spec/3 (Fable). CI: `.github/workflows/crowd-proof.yml`.
+- Measured (free; this container's 4-core Mesa CPU, 1280x720, 16 samples): 5,000 soldiers on the field, 29.2 s/frame steady
+  (atlas 422 s, bake 47 s once per run); tiers at frame 1 = 859 near-shadow + 1,135 far T1 + 2,994 billboards + 12 rigs. CI run
+  42122490710 (same clip) green. A/B with `--far-px 1` (everything as T1): the billboard army matches in colour, size and place
+  (Fable accepted it as the Group 7 proof). 30 s battle preview at 400 soldiers (4 samples): five frames 10-20 s each after a
+  ~8 min bake + atlas; a first run was OOM-killed at ~14 GB (all full meshes kept) -> only near slots keep them.
+- Defaults taken tonight on Group 7's OR-22 questions (the creator's to confirm in the morning): billboards for the far tier,
+  5,000 soldiers, UAL1 clips only, 2,000 mid tris, shadows only on T1 within 40 m, cohort / phalanx / wedge / shield wall.
+- v2 round (Fable 23:52 UTC on the 400-soldier preview: "not there as a video yet"): two armies by look, picked by place so no
+  side or front neighbours match (`Formation.looks`; side A blue `faction_a`/`support_blue`, side B vermilion `faction_b`/
+  `answer_coral`, three costume x colour x helmet looks each), the C1 look `q1_c1_lit_preset@E2` (C2 keeps native costume colours,
+  so faction tints did not show), an iron helmet (kettle or conical, sized from the posed head-top vertices) baked with every
+  template, no T0 heroes in the 30 s battle (so nobody is bare-headed), the light-linking receivers now also get the instanced
+  collection children (the near soldiers were silhouettes), a new camera on a time-parametrised Catmull-Rom through four beats
+  (25 m beside the wedge at its level, high and wide, 60 m behind the wall at the clash, over the shoulder), banners with cloth
+  folds, a swallowtail and a gold disc or chevron, thinner arrows (7 mm, `radius_m`) falling in 3-4 clusters per volley, and a
+  world: a castle on the ridge behind the enemy (four towers, curtain walls with merlons, a keep), pine lines on the ridge foot, its
+  top and behind side A, mounds on the flanks; the reserve moved out of the ridge slope.
+- v2b (the v2 frames at 5,000, `crowd/battle30_preview_v2b/`): helmets drop the template's long hair and hood and are dark iron
+  (`night`; the cannon tone read tan, grey_mid pale), the opening camera stands 20 m off the wedge's flank at 2.8 m, side A's
+  archers (two blocks where its volleys leave from) fill the clash shots' foreground with a lane the push flies down; a test keeps
+  every low camera key clear of soldiers and banner poles. 4 frames at 5,000 soldiers, 4 samples, 1280x720: 533 s with the setup.
+- Not done / open: the 2560x1440 clips (the Mac, T-C, on Fable's go); the billboards keep one elevation per shot (a crane from
+  24 m to 2 m shows them from the `view_frame` pose); arrows are instanced meshes, not curves; dust and smoke are cards, not
+  volumes. Tests: `tests/unit/test_crowd.py` (43, Group 7 tests 1-4 and 7, the battle and the 30 s plan). Cost $0.
+
+## 2026-11-06 — WP-Q4 follow-up: the Rain cast lead v3b/v4b, dialogue tracks, CI clip (thread: Benchmark Rain and Storm characters)
+
+- `bpy/make_rain_lead.py` now bakes the lead's look into the .blend (a plain open shows it): draped solidified tabard + red trim + belt + one-shoulder cloak, Rain's top recoloured undyed linen (flat Principled) and pulled in 4 mm, trousers dark brown, scarf and hairband cloak red, arms down on the CloudRig FK controls, calm face shape keys held, darker eyebrows. Exported to `ink_chronicle_overnight_2026-11-05/cast_lead/` (README v2..v4b). Not fixed: small white flecks at the tabard hem (not the top; cause unknown); the belt reads as a bar; the elbow sign is unverified (forearm +8 deg is nearly straight).
+- `blender/rain_dialogue.py` (pure Python, `tests/unit/test_rain_dialogue.py`): N lines -> the `rig_blend` "visemes" track map: mouth from each line's Rhubarb cues (`rigs.ActionVisemes`), head+neck turn, an explain gesture (right forearm/upperarm) or a nod per line. Synthetic fixture `rain_dialogue_synthetic.json`; real cue files swap in without other changes. CLI `character_benchmark --dialogue`. Poses checked in Blender at two frames; the full motion has not been judged.
+- `MAT-lead.trim` maps to `rain_cloak` in `character_benchmark.MATERIAL_MAP` (T-C's render refused the unmapped material).
+- CI clip (run 42120108247, v3 lead, 48 frames, 1440p, EEVEE on a CPU runner): 64.9 s/frame, wall 52 min, style missing none; face appealing but soft focus and a hard cheek shadow from the key. Synthetic cues only; real Rhubarb on an ElevenLabs line is a Mac step.
+- Stale text found: none new. Skin shading stays Rain's own (C2).
+
+## 2026-11-05 — D-115: outside code allowed, licences recorded not gating; quality research delivered
+- The creator's word (18:42 UTC): quality first, then efficiency; "on GitHub all the code we need is written: find, combine,
+  fill in, adapt"; the rule against bringing outside code into the repo is lifted. Recorded as D-115 in the decision log;
+  roadmap 21.9 rewritten (rev. 6) and the 21.1/21.3/21.8 GPL-boundary phrases amended; Hunyuan3D-2.1 moves REJECT -> OPTIONAL
+  (licence facts stay recorded). The free-Mac-and-CI-runs rule (the creator, 17:31 UTC) is carried by the ICW-06 PR as its own decision row and is not on this branch yet.
+- Quality research (Opus high, deep research, outside the ICW packages, $0): report, integration plan WP-Q0..Q10, Georgian
+  summary and research notes q1-q6 in the project files folder `ink_chronicle_quality_research_2026-11-05/`. Verified by the
+  Fable thread: code-defect claims (luminance -> CONSTANT ramp -> Emission chain, grey rim, `use_gtao` gone in 5.2,
+  `BLENDER_EEVEE_NEXT` tried first) confirmed on `icw/05c-ink-round`; Blender 5.0 engine-id rename and Brushstroke Tools
+  1.2.3 GPL-3.0-or-later confirmed at their sources. Nothing rendered or measured by the research; every s/frame is EST.
+- Stale text reported, not deleted (CLAUDE.md precedence rule): roadmap 21.1 and 21.7 still describe the GPL boundary in
+  places not quoted above; the decision log wins. ICW-07 to-do: widen `test_repo_hygiene` provenance check to any
+  `# from <owner>/<repo>@` header; shot_spec/2 `view_transform` const AgX and `line_weight_px > 0` need a version step before
+  WP-Q1 lands.
+- Results: `docs_lint` (see the PR). Cost: $0.
+
+## 2026-11-06 — words_to_mouth_cues: Rhubarb-shaped cues from Scribe word timings (overnight test, $0 code)
+- Why: Rhubarb Lip Sync 1.14.0 ships x86_64 only; the creator's M4 Mac has no Rosetta (a system change, not taken at night) and the
+  cloud session's policy does not run a downloaded binary. The two ElevenLabs dialogue lines of the Ink Chronicle 5 s test still
+  needed mouth cues for `blender.rigs.LipSync` and Q4's `rain_dialogue`.
+- `explainer_engine/audio/words_to_mouth_cues.py` (stdlib): Scribe `{"text","start","end"}` words -> Rhubarb JSON (`mouthCues`,
+  `metadata.estimated: true`): each word's span shared among its letters, letter -> Preston Blair shape by spelling (m/b/p -> A,
+  a -> D, e -> C, i/y -> B, o -> E, u/w -> F, f/v -> G, l -> H, else B), equal neighbours merged, cues under 0.04 s folded, X in the
+  gaps and the tail. A spelling approximation, REVIEW for an episode; the real tool stays Rhubarb (`rigs.rhubarb_argv`).
+- Tests: `tests/unit/test_words_to_mouth_cues.py` (4): spelling shapes, rest in gaps and tail, contiguous non-repeating cues
+  that `LipSync.frames` accepts, the CLI on a WAV.
+- Used on: `winners/audio/rain_line1.wav` (44 cues, 3.68 s) and `villager_line2.wav` (36 cues, 4.08 s) in the overnight folder;
+  word timings from ElevenLabs Scribe (42 credits) next to them as `*.scribe_words.json`.
+- Cost: ElevenLabs 121 credits for the two lines + 42 for the two transcripts = 163 of the 100,000 cap; no pod, $0 otherwise.
+- CI follow-up (00:55 UTC): `test_video_qa_clip_rows.py::test_real_clips_probe_and_rows` raised CLIP-05 on the runner's newer ffmpeg
+  (the fixture fed an endless lavfi tone and relied on `-shortest`; AAC priming left the audio more than one frame longer than the
+  49-frame picture). The fixture's tone is now bounded to frames / fps; the CLIP-05 rule and its tolerance are unchanged. Local
+  ffmpeg 6.1 never showed it; the inherited CLIP-05 red that Q4 and Q8 reported on their PRs is this same fixture.
+
+## 2026-11-06 — ICW rules PR: route per scene type (D-116), D-96 role split, BP-108 scene / BP-172 clip (PR #141)
+- Why: the creator's decisions of 2026-11-06 07:14 and 07:19 UTC (FINAL_HIGH_LEVEL_PLAN_ka.md §7): Qwen-Image-2.1 + xworld_v2 draws
+  the look, Blender builds space and time and renders J5, LTX animates J2/J4; one LTX clip is 3-6 s under a 15 s scene; the Mac is out.
+  Step 1 of the Opus step-by-step guide (`ltx_gap_review_2026-11-06/OPUS_STEP_BY_STEP_GUIDE.md`), free, no pod.
+- Decision log: D-96, D-97, D-101, D-105 and D-113 amended (dated clauses, old text kept); D-116 new (routes J5/J2/J4/H, default
+  mapping of the 23 sub-categories, status T). Sourced rules: BP-108 and BP-109 renderer-neutral (BP-108 = scene duration); BP-172 =
+  one LTX clip (`clip_target_s_band` [3, 6], house); the LTX rules BP-100/101/102/110/139/164/165 route-scoped to J2/J4. KP-49 new.
+- Code: `film_shots.ltx_clip_findings` (KP-49: REVIEW outside the band, FAIL over 8 s on a written clip), `shot_prompt_lint` reads the
+  same symbols; `archetypes_ic/2` (route, route_alt, route_status) and `shot_design.route_of`; film_shots/3 `route`, `sub_category`,
+  `ltx_clips`; CN-08 on every J2/J4 clip; `edit/router.recipe_plan` (ltx_layout/1, ltx_restyle/1, assemble_25d/1, python_helper/1);
+  `style_prompt.INFERENCE["lora"]` read from `cloud_pins` (xworld_v2 0.7, one home); pins for LTX-2.5, Layout-To-Render and
+  Union-Control (LTX-2.3) with Hub LFS shas; p12b.sh placeholders filled; empty job_speeds rows for the new routes.
+- Docs: route-scoped banners on SHOT_PROMPTS, SHOT_CONTINUITY, KEYFRAME_GATE, LORA_TRAINING, SCRIPT_ENGINE; new
+  `docs/architecture/ROUTE_PLAN_2026-11-06.md`; CLAUDE.md banner and invariant 1 (PC + CI). The creator said "yes, all" (09:50 UTC) to
+  the five contentious finds (test_icw01, legacy pins test, CN-08 recipe list, BP-108-as-clip docs, the second home of 0.7).
+- Checks: fast suite 2950 passed; docs_lint 0; governance ok; CI quality + smoke green; Fable verification PASS (10:28 UTC, all 9 LTX
+  shas checked against the Hub). Merged on the creator's word (card, 11:11 UTC).
+- Open: the J4 base (Union-Control exists only for LTX-2.3: a step-3 OR-23 item); `dryrun.placeholder_problems` matches p12b.py's own
+  detector word, so `runpod create` would refuse the p12 pod; the HF copy of `code/p12/` still needs uploading; C1-C6 of the route-test
+  script stay the creator's.
+
+## 2026-11-06 — ICW-11 J5 route: scene_assets/1, cut-out finish, Blender 2.5D assembly, mcu_front (PR #142, guide step 2.1)
+- Why: route J5 (D-116) = Qwen assets on 2.5D cards rendered by Blender; step 2.1 of the Opus step-by-step guide, free. Merged into
+  icw/05c-ink-round after Fable's PASS (12:02 UTC) under the creator's step-2 word (11:11 UTC card).
+- Contract `scene_assets/1` (docs/SCENE_ASSETS.md, SA-01..SA-09): per scene a 360° backdrop (2:1), heroes by angle with mouth/blink
+  states and the flat-lighting note as a const, props, defects as "change nothing, fix:" edits; `core/contracts._scene_assets`.
+- `edit/cutout.py`: BiRefNet matte (pinned `models.cutout_birefnet`, MIT) + feather/defringe finish; halo 0.30-0.50 -> 0.0006 on the
+  10-25 comp_test cut-outs (SA-04 REVIEW above 0.06).
+- `blender/assemble_25d.py` + `bpy/assemble_25d.py`: equirect world, emission cards, 3 mouth states with a 2-frame cross-blend on
+  the mouth cues (LipSync, BP-108), blink 3-5 s, breathing 0.5 % at 0.25 Hz, flat contact shadow, no lights and no cast shadows;
+  horizon bend check on a 30° pan (SA-08, 0.0037 measured on the smoke). Camera setup `mcu_front` (C4) with a framing test.
+- CI: the Blender smoke renders the 5-shot J5 set. Open: the 1440p dialogue needs the asset pod's Qwen assets; the PC seconds/frame
+  row stays null (no PC measurement).
+
+## 2026-11-06 — ICW-13 layout passes for the J2/J4 routes (PR #143, guide step 2.2)
+- Why: J2 (clay -> LTX Layout-To-Render) and J4 (colour/depth/line -> LTX restyle) need Blender layout videos at the LTX geometry
+  (D-116); step 2.2 of the Opus step-by-step guide, free. Merged into icw/05c-ink-round after Fable's PASS (12:02 UTC) under the
+  creator's step-2 word (11:11 UTC card), rebased on #142 by a merge commit.
+- `blender/layout_passes.py` (plan / render / upload; 1920x1088 at 24 fps; battle = 282 frames as 2x145 with 8 overlap, J4; duel =
+  121 frames, J2) and `bpy/layout_pass.py` (clay = Workbench; depth = 1/z through MapRange, Raw view, dither 0; line = Freestyle with the
+  background crowd excluded; colour = flat emission; the style's compositor tree is off in every pass). `render_shot.apply_layout_pass`.
+- Fixes found by eye: duel cast behind the wall, duelists facing away, grey depth, depth noise, compositor haze in the depth pass;
+  Blender's exit -11 after the last frame (Mesa EGL teardown) is accepted only when every frame, the progress file and the report exist.
+- Checks: 14 focused tests; CI quality + smoke green. Open: the full-size renders and their HF upload under
+  `route_test_2026-11/layouts/` (free CPU, running next), then `ltx_jobs --layouts` carries their shas.
+
+## 2026-11-06 — ICW-14 step-3 code: LTX jobs on both bases, the p14 route-test pod, the upscale chain, the verdict page (PR #144)
+- Why: guide step 3 as code only (the creator, 11:58 UTC: every code item that needs no test run; every test goes into one later
+  pod whose OR-23 plan the Fable thread writes). Merged into icw/05c-ink-round after Fable's PASS (12:39 UTC) and green CI.
+- `edit/ltx_jobs.py` + `ltx_job/1` (LJ-01..LJ-07, docs/LTX_JOBS.md): the J2/J4 generations on LTX-2.5 + Layout-To-Render and
+  LTX-2.3 + Union-Control (the creator's card 11:11 UTC), 10 by default; pins `video_ltx_23` and `text_encoder_gemma3` (the creator
+  accepted the Gemma licence 12:16 UTC; LFS shas read from the Hub and checked by Fable).
+- `training/pods/p14` (p14.sh + p14_ltx.py + p14.json + ltx_jobs.json, sha-pinned): derived line/canny controls, clip B chained
+  from A's last 8 frames, sidecars, speeds.json, upscaled copies. Nothing uploaded to HF, no pod.
+- `finish/upscale.py`: optional cas/unsharp + grain after the crop to 16:9 and Lanczos (`ROUTE_TEST`), `compare()`; the WP-5b
+  default is unchanged. `qa/verdict_page.py` (guide step 4 tooling), `qa/fix_diff.py` (what a fix-edit changed outside its defect).
+- `cloud/runpod`: the guard writes a beat file every look; `check` replaces a dead or hung guard and pushes (the asset pod's guard
+  died silently at 11:41 UTC). `cloud/dryrun`: a marked detector line is not a placeholder (p12b.py's own word).
+- LT-65: the creator's band of 40-150 words (12:27 UTC, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWQ83nahs7XqJbJiNjko9vuk): FAIL over 150, REVIEW
+  over 90 on the crowd sub-categories V1/S3; the composer's default moment stays 40 words. ROUTE_PLAN 5b/5c: measured facts.
+- Checks: full suite 3019 passed; docs_lint 0; governance ok; CI quality + smoke green. Open: the battle line pass (Freestyle over
+  the whole crowd) is killed for memory on the cloud container; where it renders is the creator's card.
+
+## 2026-11-06 — ICW-15 step-6 code: the one-minute multi-scene pilot assembly (PR #145)
+- Why: guide step 6 as code only (the creator, 11:58 UTC; 11:42 UTC: 1-minute multi-scene videos at the end). Merged into
+  icw/05c-ink-round after Fable's PASS (12:44 UTC) and green CI.
+- `production/pilot.py`: whole shots up to 60 s (the route test's S01, S02, S03-01..03: 59.5 s, three scenes, routes J5/H/J4/J2)
+  -> each shot's clip by route (J5/H mp4 or an assemble_25d frame folder; J2/J4 the pod's upscaled take of a job that ran, a chained
+  clip without its 8 shared frames) -> the 2560x1440/24 master -> film_shots/3 (validated) + audio_spine/2 + straight-cut
+  edit_and_grade_manifest/1 -> `build_video_v2`; narration muxed under it when given. A missing clip stops it; `--slates` gives a
+  timing preview marked `preview` (never a sample). ROUTE_PLAN 5d.
+- Checks: 6 focused tests (an end-to-end 1440p assembly); docs_lint 0; CI green. Open: exact-length J5/helper renders have no
+  handles (BP-128 REVIEW); the step-3 plan renders them with 12 frames on each side.
+
+## 2026-11-06 — RP-11: every combination of a pod's run costed before the pod (D-117, branch `icw/17-run-schedule`)
+- Why: the creator, 14:48 UTC, after the step-3 pod `ygg2ztmflr8pv2` (H100 NVL, $2.59/h) idled 14:33-14:48 UTC: its GPU lane waited for both
+  Blender first frames on the CPU (the battle line pass first, the one memory-killed on the container) before even the Qwen stages that
+  need no Blender, and its LTX clips waited for every Blender pass. Stopped by Fable at 14:48 (about $1.05, nothing paid made; balance $7.99).
+- Root cause of the miss: the OR-34 audit read hashes, prompts, tests and the offline dry run; none of them runs the clock, so the wait
+  chain (`p14_pod.gpu` waits for `A.frame0` although `NEEDS` says C and X6 need nothing) was never walked, and the known memory failure
+  of the battle line pass was not tied to the GPU's dependency.
+- `cloud/schedule.py`: `pod_schedule/1` files, list-scheduling simulation (expected and worst case), every card x lane x GPU order
+  (up to 20,000, else a fixed-seed sample + heuristics), the pick, `check` and `rp11`; `runpod create --schedule` (refused without one
+  for a script pod, exempt as RP-01). The step-3 graph as launched: no combination fits $8 / 3.5 h in its worst case, idle GPU 95 min
+  (41 %), refused; with each stage waiting only on its inputs and Blender allowed on the GPU: 324 combinations, cheapest $3.45 expected /
+  $7.08 worst, idle GPU 0 min.
+- Tests: `test_cloud_schedule.py` (13); the create tests carry `tests/fixtures/pod_schedule_ok.json`. Cost $0.
+
+## 2026-11-06 — ICW-16 fix after pod 1 (ygg2ztmflr8pv2): the card no longer waits for Blender; Blender on the card; BiRefNet dtype
+- Why: pod 1 (H100, 14:25-14:48 UTC, ~$1.0, stopped) sat idle: the GPU lane waited for the battle's line frame 0, which the kernel
+  killed (-9, memory) after ~13 min, and every cut-out failed on a float16 checkpoint fed a float32 input (D, 12 of 12). Fable
+  thread's asks 14:44 UTC and the creator's 14:49 UTC (Blender on the pod GPU with a 2-minute preflight; a stage graph file).
+- `p14_pod.py`: C + X6 still and D run at once; B (its own Qwen process) when the frames 0 are done, the duel alone if the battle's
+  was cut at `frame0_timeout_s` 600; the battle's line pass runs last and only when frame 0's seconds x 282 frames fit its
+  3600 s budget; E no longer waits for A: `p14_ltx.run_all` defers a job whose input the pod still makes (a layout clip until A
+  ends, X3's first frame until G draws it; `P14_PENDING`) and runs it as soon as it lands. A timeout kills the stage's whole
+  process group (Blender too); Blender log tails go to `step3/logs/` every minute; layout clips are published atomically.
+  `A.preflight` draws the duel's line frame 0 with EEVEE on NVIDIA's EGL vendor (only that vendor file, so Mesa cannot shadow it;
+  written from `libEGL_nvidia.so.0` when the driver mounts no file) within 120 s: kept, and A and G render on the card, when the
+  report's GL renderer is NVIDIA's (`render_shot.py` now records `gl`); else Blender stays on Mesa/CPU. No Cycles fallback was
+  built: it would change the passes' renderer and needs a comparison first.
+- `edit/cutout.py`: the BiRefNet input takes the weights' dtype (float on the CPU). `p14_schedule.json` (`lean.py schedule`): lane,
+  needs, expected and max minutes, measured (pod 1's records, this container) or estimated, per stage.
+- Open: the battle's frame 0 is a memory problem, not a speed one: on the CPU or the card it may die again; fewer soldiers or lines
+  only on the near tiers is the creator's call (plan section 9). Blender on the card shares its memory with LTX (unmeasured).
+
+## 2026-11-06 — ICW-16 the lean step-3 pod package: one pod, stages A-G + the six extras (PR pending, nothing uploaded, no pod)
+- Why: the creator's word 13:21 UTC ("one lean pod", STEP3_POD_PLAN_LEAN_ka.md: every run answers a question, no upscale on the
+  pod, no every-combination), stage G 13:25 UTC (the J5 shots of the pilot window on the pod CPU beside LTX) and the six extras
+  13:33 UTC (caps $10 / ledger $12.5 / 3.5 h), relayed by the Fable thread. Built free on icw/16-lean-pod for the OR-34 audit.
+- `training/pods/p14`: `p14.sh` installs Blender 5.2.3 (the CI smoke's pin), Qwen (VideoX-Fun at the asset pod's commit), LTX-2
+  @e98f6d9 and fetches ONE sha256-pinned code bundle (`lean.py bundle`: byte-stable tar of explainer_engine/, config/, assets/
+  without p14.sh); `p14_pod.py` runs three lanes (net: weights prefetch; cpu: A layout passes -> X6 camera move -> G; gpu: B+C+X6
+  still -> D cut-outs -> E five LTX jobs + extras X1/X2/X5/X3/X6 -> X4 fix edit -> F speeds.json), each stage its own process, a
+  failed one recorded and skipped past (`step3/stages.json`). `p14_qwen.py` (B line-drawing edits with a line-match measure and the
+  LTX first frames; C 150-word pictures; X6 still; X4), `p14_cutout.py` (D: 12 PASS sheets, BiRefNet, edge width, halo),
+  `p14_j5.py` (G: scene_assets/1 from the backdrops + cut-outs, 9 shots at 2560x1440 with 12-frame handles, nice'd on Mesa EGL,
+  killed at the deadline reserve), `p14_stages.json` (every prompt, question and setting).
+- `edit/ltx_jobs.py`: `LEAN` (E1-E5 in the plan's order, seed 42, c2 chained on LTX-2.5), `--out-root step3`; `p14.json`
+  `upscale.enabled: false`. `p14_ltx.py`: the pod's own inputs before the vault, two failures in a row end the stage, a bad
+  derived control skips only its job (a crash found by the new test), the distilled i2v pipeline for X1/X3/X6, a verified-weights
+  stamp. `production/pilot.py` honours a J5 folder's `handles.json`.
+- Measured here (free): `assemble_25d` at 2560x1440, EEVEE 16 samples, 4 vCPU Xeon 2.1 GHz: 7.8-8.3 s per frame with cards, 3.7
+  s without (the smoke shots). Stale text: none found. Open: `config/spend_caps.json` per_pod_usd 6.9 is below the card's $10, so
+  `create --max-usd 10` is refused until the creator moves that ceiling; the H shot S02-01 needs no GPU and is not on the pod.
+
+## 2026-11-06 — Pilot stills: a furnished room from the libraries + the soldiers scene (thread: ICW-16 lean pod; branch `icw/18-pilot-room`)
+
+- The creator (15:25 UTC, Fable thread): build the Blender frames from the libraries with the whole room furnished (a clock, a table,
+  everything), a scene of a few minutes in that room, then a shot with many soldiers; then test one 8 s single-scene LTX shot.
+- Layout `pilot_room` (`blender/world_layouts.json`): an 8 x 6 m plaster room of the Quaternius MegaKit (four closed sides, three
+  arched windows, a door), a planks floor and a wooden ceiling; 16 new Poly Haven CC0 pieces (18 after the fix round) registered in `world_kits.json` and
+  `assets/library.json` (md5 per file, sha256, fingerprint; `polyhaven.<slug>.downloaded_on` 2026-11-06, read by `register`):
+  grandfather and wall clock, plain table (`model.ph_plain_wooden_table_02`: the style sheets' `model.ph_wooden_table_02` .blend
+  keeps its id), two chairs, stool, bench, bookshelf, masonry stove, drawers, picture frame, jug, plates, bowl, candlestick, basket;
+  three of the cast (host and guest face each other, the elder by the shelf); seven static cameras (establishing, two-shot, the
+  over-the-shoulder pair on one side of the line, reverse, two inserts).
+- `own_materials` (a kit row flag, `world_kits.expand`): the wall clock keeps its glTF materials (one toon material painted its glass
+  over the dial). The grandfather clock stays toon (its own materials rendered black under the toon rig's light links).
+- `blender/pilot_stills.py`: the camera list, the `pilot_stills/1` manifest (file, sha256, s/frame, camera) and the HF upload
+  (sha256-checked); CI `.github/workflows/pilot-stills.yml` re-renders the same stills for free.
+- Rendered free in the cloud container (Blender 5.2.3 pin, EEVEE on 4 CPU cores, 2560x1440, look v01): 37.5-48.5 s per still.
+  Uploaded to HF `route_test_2026-11/pilot/blender/` (7 PNGs + `pilot_room_layout.json` + `pilot_stills.json`). The battle stills
+  (5,000 soldiers, frames 0 and 200, colour + depth, 1920x1088) follow in this entry's next line when they finish.
+- Known flaws: the wall clock reads modern, the bookshelf pale, the grandfather clock's face dark, the windows bright.
+- Tests: `tests/unit/test_pilot_stills.py` (7). Cost $0. Plan for the paid part: `PILOT_1MIN_PLAN.md` v2 (project files), run-plan
+  schedules (PR #147) in `pilot_1min/` (A100: $1.25 expected / $2.95 worst with Qwen on the pod; $0.98 / $2.12 with Qwen on the PC).
+
+## 2026-11-06 — The pilot pod package `training/pods/p15/` (thread: ICW-16 lean pod; branch `icw/19-pilot-pod`)
+
+- The creator (16:05 UTC, Fable thread): run the pilot with the current render, to settle whether Qwen restyles our Blender stills
+  in our style and whether LTX builds the video from them. Fable (15:52 UTC): option A only (Qwen on the pod), 185 frames, the room
+  clip is the two-shot.
+- `p15/build.py config --stills <pilot_stills.json>` writes `p15.json` from the uploaded stills manifest: 8 Qwen edits (the 7 room
+  stills and the battle colour frame 0, each pinned by sha256; frame 200 and the depth pass start no clip, so they are not
+  restyled), Image 1 the still plus the hero fronts the card names (B_H1, B_H2 as the step-3 pod pins them; B_H3 pinned here), the
+  prompts of `pilot_stills.prompts` (a manifest whose prompt differs from the card's is refused); two LTX-2.5 distilled i2v jobs
+  (the room two-shot, the battle frame 0), 185 frames (7.71 s, 8k+1, BP-172), 1920x1088, seed 42, no LoRA, no upscale.
+- `p15_qwen.py` (the step-3 pod's loader, LoRA merge and draw from `p14_qwen`), `p15_ltx.py` (one clip per process through
+  `p14_ltx.run`), `p15_pod.py` (net lane: the Qwen weights, then the LTX weights; gpu lane: the restyle, then each clip when its
+  first frame exists; two LTX failures stop; every timeout the schedule's max; F writes `speeds.json`), `p15.sh` (the step-3 stack
+  without Blender; the bundle `code/p15/ee_src.tar.gz` pinned by sha256; heartbeat `route_test_2026-11/pilot/beat.txt`, so
+  `$EE_OUT` lands in `route_test_2026-11/pilot/`), `p15_schedule.json` (RP-11 `check` rc 0: A100 80GB $1.21 expected / $2.83
+  worst, 0 idle GPU minutes; limits max-usd 3.5, max-hours 2.5).
+- Tests: `tests/unit/test_p15_pilot_pod.py` (8). Nothing launched; cost $0. The pod waits for Fable's OR-34 audit and then launches
+  through the worker thread.
+
+## 2026-11-06 — Pilot pod v4: eight clips with native audio, three prompt styles (branch `icw/19-pilot-pod`)
+
+The creator (16:42 UTC: a start-up costs so much that one pod should buy 30 s and more answers, with 2-3 prompt styles for the
+picture and the sound and other settings) and Fable's v4 list (16:42 UTC). Still no Blender on the pod; the 8 Qwen restyles stay.
+- `pilot_stills.ltx_prompt(sid, style, audio, line)`: S1 = today's film sentence, S2 = the xworld captions' look words ("bold uneven
+  black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents"), S3 = no style
+  sentence (motion and settle only); an audio sentence ("We hear ...") drives LTX-2.5's native audio; a spoken line is said in
+  quotes by a name the card lists (a name outside the card is refused).
+- `p15/build.py`: 8 clips of 185 frames, 1920x1088, seed 42, each with its own question: c1-c3 the two-shot in S1/S2/S3 (same room
+  audio), c4/c5 battle frame 0 in S2/S1 with audio A (battle roar) / B (distant drums), c6 the wide room (props stay put?), c7 the
+  commander's close-up saying "We ride at first light." (native voice and lips), c8 the clock insert (small motion without drift).
+  Run order c1-c4, c6, c7, c8, c5 (Fable's drop order last). `p15_schedule.json` is generated from the clips.
+- `p15_ltx.audio_sidecar`: the audio stays in the mp4, plus `<job>.wav` (PCM 16-bit) and `<job>.audio.json` (has_audio, streams,
+  wav sha256); F folds them into `speeds.json`.
+- Money (RP-11 rc 0, cap $6.5 under the $7.99 balance): per clip 5.8 min expected, 12 min max (2x). H100 NVL COMMUNITY $2.59/h:
+  $3.25 expected / $6.37 worst (2.46 h pod). A100 SECURE $1.79/h: $3.29 / $6.68 worst, over the cap, so the launch line names the
+  H100 only. At a 17.5 min clip max no drop fits (8 clips $8.27, 7 $7.51, 6 $6.76 worst on the H100); that is why the max is 12.
+  Disk 200 GB (Qwen 33.1 GB + LTX-2.5 86.5 GB + pip + outputs ~140 GB).
+- Tests: `tests/unit/test_p15_pilot_pod.py` (11). Nothing launched; cost $0.
+
+## 2026-11-07 — Stone-age pilot approach test: six Blender stills (creator 12:48 UTC)
+- `blender/stoneage_test_layouts.py` adds six layouts (`sa_cave|ice|camp_block|cc0`): three scenes built as flat primitives or from CC0 pieces (ten Poly Haven models registered in `world_kits.json` / `assets/library.json`); same props, cast, camera and Qwen prompt in both ways. Six stills rendered locally with Blender 5.2.3 (CPU, 2560x1440, 35-65 s each) and the six Qwen prompts pass `pilot_stills.prompts` and `qa/style_prompt.check`. Test `tests/unit/test_stoneage_test_layouts.py`. The Qwen photos are paid and wait for the creator. Costs $0.
+
+
+## 2026-11-07 Stone-age test: Modal runner for the six Qwen photos
+`training/pods/p15/modal_sa_test.py` + `sa_test_qwen.py`: one A100-80 function (25 min timeout, retries 0) draws the six blockout/CC0 stills as p15 edits (no hero refs), inputs sha256-pinned on HF `route_test_2026-11/sa_test/in/`, photos uploaded as drawn. Gate: `EE_MODAL_GO` = the creator's yes card id. Not run yet. Plan: OR23_SA_TEST_6_QWEN_PHOTOS.md.
+
+## 2026-11-07 OR-37: environment proven free before the paid GPU
+First Modal photo run failed in 21 s (`No module named videox_fun`, ~$0.02). New rule OR-37 (docs/ORCHESTRATION.md, test in test_api_audit_rules.py); `modal_sa_test.py` now has a free CPU `check` entrypoint and an import check as the first step of the GPU function.
+
+## 2026-11-07 Modal runner: smoke mode, 20-min timeout, traceback
+`modal_sa_test.py`: `modal run ...::smoke` (GPU, 8-min timeout, 1 step, 768x432, [still] then [still, still]) to prove the edit path before the 6-photo run; main timeout 20 min (cap-derived, OR-37); runner logs full tracebacks and stops at the first failure. Not run (waits for the investigation and the creator's new yes).
+
+## 2026-11-07 Modal guard (OR-37 addendum)
+`cloud/modal_run.py` (ladder order, app id, stop by id), cost-derived timeout + in-container deadline + strict DONE in `modal_sa_test.py`, prompt-dict bug fixed in `sa_test_qwen.py` (sa_prompts.json holds {qwen, words, ltx}; the dict reached the pipeline as 3 prompts, the cause of "Expected 1 got 3"). Tests: tests/unit/test_modal_guard.py.
+
+## 2026-11-07 Blender-vs-Qwen test result (provisional note, NOT a binding rule)
+6 photos (one seed, eye judgement, not blind): Qwen restyles strongly but does not keep the Blender layout (4 huts -> 1, mammoth count/poses change, painted wall changes); blockout vs CC0 differ little. Provisional note: Blender gives colour, light, character count and rough placement; geometry is not guaranteed after Qwen; blockout is enough for that role. A binding rule waits for 2 more seeds per scene and a blind rating (`modal_sa_test.py::seeds`, 12 photos). Details: stoneage_pilot_2026-11-07/QWEN_TEST_COMPARISON_2026-11-07.md.
+
+## 2026-11-07 Argon's review of the 6-photo test applied (KP-50..55, creator 14:42 UTC)
+`docs/SHOT_PROMPTS.md` KP-50..55. `blender/stoneage_test_layouts.py`: screen sides come from the camera projection (never hand-written),
+counts are words ("four round huts"), every named person gets a distinct proxy in Image 1 (Ura's antler crown and cloak, Marcus's grey
+hood, fur-colour caps), unnamed clutter must keep clear of the subjects (a clash raises), cave/camp fill lights raised. Rich (CC0) frames
+stay: the creator prefers them, so Argon's "proxies only" was not taken. `qa/blender_gate.py` (BL-01 subject luma, BL-02 light colour
+vs the prompt's words, BL-03 clashes) runs on each still before any paid Qwen call; on the old stills it failed the cave's right hunter
+and all four camp figures (too dark). `shot_prompt_lint` KP-55 REVIEWs a frozen settle ("kneels still"). The Modal test now draws every
+frame at style LoRA 0.7 and 1.0, each weight in its own process (the merge is in place). Not taken: Argon's QWEN_MAX_WORDS 90/130 (it
+read an older 40). Tests: `test_stoneage_prompt_gates.py`, `test_modal_guard.py`.
+
+## 2026-11-07 Argon Part 4 applied (KP-56, KP-57, creator 14:55 UTC)
+Re-measured on our 6 photos (OpenCV, full-size): luma and RGB match Argon's table exactly; edge density and Laplacian variance are
+smaller at full size (cave 3.90 % vs 2.28 %, 366 vs 209) but point the same way; ice_cc0 kept 2 of 3 mammoths (seen). So CC0 leaves the
+Qwen stills (KP-56, KP-53 reworded): new way `flat3` in `stoneage_test_layouts` (dark teeth and drifts in front, asymmetric walls and huts
+in the middle: west ledge with talismans, east fissure with a rim light, tusk arch, hide rack, the chief's larger hut, a bone gate; a
+lit back plane), `textured()` FAILs any CC0 mesh or texture in a Qwen way. KP-57: `pilot_stills.prompts(master=True)` puts the painted
+wide master as Image 2 behind the new angle's Blender still (Argon's prefix minus the word "camera", LT-65). All 6 stills (block, flat3)
+pass `qa/blender_gate.py` with 0 FAIL after two light fixes; inputs on HF `route_test_2026-11/sa_test/in_v2/`, outputs to `out_v2/`.
+
+## 2026-11-07 Run sa_v3: one Qwen run for the creator's three new tests (15:04-15:08 UTC)
+`training/pods/p15/qwen_jobs.py` (any list of text-to-image or edit jobs, refs to inputs or to pictures made earlier in the run, one
+LoRA weight per group/process, free `check_jobs`) + `modal_qwen_jobs.py` (the OR-37 launcher for a sha-pinned jobs file; cap 1.4,
+timeout 1733 s from it). `blender/stoneage_qwen_jobs.py` builds the jobs: flat3 masters at 0.7 and 1.0; test A, two more Blender angles
+per place (`stoneage_test_layouts.ANGLES`, every named figure kept in frame) drawn with the painted master as Image 2 (KP-57); test B,
+each place drawn by Qwen alone and then from three more sides as edits of that view, plus one turnaround per person (assets that
+Blender assembles afterwards); test C, codes drawn on the still (A people, B animals, C landmarks) and the prompt in codes, at LoRA
+1.0 (the creator: so the letters are not painted), in two forms: black on white boxes with the usual text ban, and magenta bold
+oblique mono with a negative that forbids only magenta codes (15:10 UTC: other text stays allowed). KP-53's clash check now judges a hanging piece where it hangs (screen y too).
+Tests: `test_qwen_jobs.py`.
+
+## 2026-11-07 Fallback rule KP-58 (creator 16:41 UTC)
+If E4 and E5 do not fix the camera angle, one environment is never shown from a second angle in LTX/painted shots, and its dialogues are Blender close-ups with a blurred background (`docs/SHOT_PROMPTS.md` KP-58). Recorded as the last step of his review; no code change, so no test.
+
+## 2026-11-07 Test F/A: one Blender picture per call, fixed appearance text; two runs overlapped (17:00-17:45 UTC)
+creator 17:03/17:04: each Qwen call gets ONE Blender picture (no master, no second image); the picture says where everything is, a fixed text per person
+and thing (`stoneage_qwen_jobs.SPEC`, from the Qwen turnarounds) says what it looks like. Run F (PC session, LoRA 0.7, 9 photos, ~$0.27): style and
+identities held in all 9, layout did not (cave/camp figures in a row facing the camera, log gone). Test A (this thread, `specA`: SPEC + pose phrases and
+the facing of each figure taken from the layout's cast row + the place's colours; run sa_v8, `modal_qwen_jobs_v8.py`, LoRA 0.7). The PC session
+launched its own "v6" (scene words with positions) at the same moment because it could not be reached when the cloud thread started A (the relay to it
+failed): two A100 apps ran at once, a breach of the one-run-at-a-time order (rule 7a); caps $0.6 + $0.5, expected ~$0.6. Lesson: before starting a paid
+run check `modal app list` AND confirm the PC session has nothing queued.
+
+## 2026-11-07 One place, one picture (D-120, the creator 18:08 UTC)
+The creator's rule after the day's Qwen tests: a place is drawn more than once only with its background blurred or when the two
+drawings never sit in consecutive shots; no rendered (Blender) picture is a Qwen reference; staging comes from detailed scene words,
+identity from a verbatim cast registry plus the hero's approved reference picture. `docs/SCENE_REUSE_RULES.md` (LV-, RF-, HI-, DL-)
+merges the PC session's first version (9dccfcb on systemic/next-video, prefixes SR/RF/ID/DL; SR- was taken by ORCHESTRATION, so the
+families were renamed) and adds the reference map (RF-03), face words (HI-05), partial-figure words (HI-04), the dialogue render
+(DL-01..DL-10: hero close-up drawn on flat grey, cut out over the place's blurred crop, four mouth states from edits of the same
+drawing, breathing, blinks, eyelines, over-the-shoulder two-shots, overlaps). D-120 logged; KP-54/56/57/58 superseded; D-116 J2,
+D-101, CT-03, CT-07, ED-14 and standing order 14 amended; LT-65 scoped to the LoRA moment prompts. Open for the creator: LV-08 (one
+or two shots between two drawings in a scene), HI-08 (route prompt ceiling, proposal 280 words). Visual script v3 and the plan of the
+first 10 pictures are in project files (`stoneage_pilot_2026-11-07/VISUAL_SCRIPT_v3.md`, `one_place_2026-11-07/`); nothing paid ran.
+Test: `tests/unit/test_scene_reuse_docs.py`.
+
+## 2026-11-07 — One-place route, free part of the first 10 pictures (D-120)
+- Done (free): `production/scene_reuse.py` (LV-01 place register, RF-01/RF-04 references, HI-04/HI-01/HI-08 prompt shape), `qwen_jobs.check_jobs` now refuses an unknown ref type, launcher `modal_qwen_jobs_v11.py` (caps $0.75 main / $0.25 smoke, run `sa_v11`, jobs sha c64c82f6…, runner sha d7b74883…). Test: `tests/unit/test_scene_reuse_rules.py` (+ qwen_jobs, modal_guard, docs tests pass).
+- Cost: $0.00. Not started: the paid run needs the creator's new yes with the price (≈$0.40 expected, ≤$1.00 with smoke); photo renders stay off until then.
+- Next: upload `in_v11` to HF, OR-37 import check, smoke after his yes, then contact sheet with hero comparisons (HI-06).
+
+## 2026-11-07 — First-minute pictures, voices, LTX launcher; LoRA weight 1.0 (HI-07)
+- The creator's word 19:25 UTC: the Qwen LoRA weight is 1.0, not 0.7 (HI-07 in docs/SCENE_REUSE_RULES.md updated). Done (paid): 10 first-minute pictures `sa_v12` (Modal, ≈$0.27 + smoke ≈$0.11, HF `route_test_2026-11/sa_test/out_v12`); ElevenLabs first-minute voices, one take each, 19 lines, 1142 of 5000 credits (project files `voices_minute1/`); LTX launcher `modal_ltx_jobs_v1.py` (free check passed; the first paid attempt failed after 59 s ≈$0.07, cause: first-frame path mapping, fixed; the second attempt was stopped on purpose at the creator's word to make 3 style-sentence photos first, ≈$0.1). Test: `tests/unit/test_scene_reuse_rules.py`.
+- Next: the creator's yes on the 3-photo comparison, then the two LTX clips (c1 105, c2 113 frames, cap $1.00).
+
+## 2026-11-07 — The PC session may not start paid runs
+- The creator's word 19:32 UTC: paid runs only from the cloud thread (docs/SCENE_REUSE_RULES.md section 7). A duplicate LTX app of the PC session was stopped the same minute.
+- LTX failure cause (first run, 59 s, ≈$0.07): the first-frame root mapped to the wrong vault prefix. Fixed: `first_frames_resolve` pre-flight in `modal_ltx_jobs_v1.py`, tested in `tests/unit/test_modal_ltx.py`.
+- The creator's word 19:33 UTC: the 3-photo comparison with the added style sentence looked better; the style line carries a per-scene style description that fits the one channel style (HI-04 updated). LTX c1/c2 ran on Modal (1920x1088, 4.4 s and 4.7 s with audio, 118 s each, ≈$0.2 with cold start); clips and `ltx1_sheet.jpg` in `stoneage_pilot_2026-11-07/ltx_first_minute/`.
+
+
+## 2026-11-07 — D-121: every rule has a code check; the cut is gated before it is drawn (Gemini review of minute 1)
+- The creator, 22:23 UTC (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWH3yBwffdTpnyWVr339uFoN`), answers 1a-8a to the Gemini review of the
+  stone-age minute-1 test: "the point of the video and the review is to optimise the code; update the code with the advice and make
+  sure a test checks every rule". The review package and the merged action plan: HF `route_test_2026-11/gemini_review/`.
+- New `production/cut_plan.py`: the cut plan gate (LV-01/02/04/06/07/08, DL-01..09, ED-04, ED-14, AS-01..AS-13) and the FFmpeg
+  assembly that keeps each LTX clip's own sound (v1 used `-an`), mixes one looping ambience bed per place, crops instead of
+  squeezing, and writes subtitles without speaker names. `CHECKS` names the checker of every SCENE_REUSE row; `MANUAL` says why
+  the rest need a person. `blender/bpy/cut_render.py` (moved in from the PC's one-off `minute1_render_plan.py`): gate first,
+  chest-up cut-outs, four mouth states switched by `cut_plan.mouth_track`, `flip_x`, texture edges clipped.
+  `production/cutout_prep.py` trims the matte (v1's white top line); `production/cards.py` draws the phone and number cards in the
+  house style (AS-12).
+- LTX prompts (`scripting/shot_prompt_lint.py`): KP-59 no time labels (answer 1a), KP-60 held props kept, KP-61 one continuous
+  shot, KP-62 a move names its end; KP-04 (two moves), KP-11, KP-55 now FAIL; "stands completely still" is caught.
+- `production/paid_preflight.py` runs before `.remote()` in `modal_ltx_jobs_v1.py` and `modal_qwen_jobs_v15.py` (AS-14): the
+  c3 prompt that was paid fails it (KP-22, KP-49, KP-55, KP-59, KP-61, KP-62, KP-11); a jobs file without `names` fails.
+- `scene_reuse.py`: HI-08 FAIL at 280 words (answer 4a), HI-01 needs each job's `in_shot` list, RF-05 needs `variant_of`,
+  HI-02/HI-05 registry checks, HI-07 one LoRA weight. The pre-D-121 `sa_v11_jobs.json` now fails only HI-01 (no `in_shot`) and
+  RF-05 and must be migrated by its builder before it runs again.
+- Tests: `test_cut_plan` (a good plan passes; a bad plan per rule, 30 rules), `test_rule_coverage`, `test_paid_preflight`,
+  `test_cards_and_cutout_prep`, updated `test_shot_prompt_lint`, `test_scene_reuse_rules`, `test_scene_reuse_docs`. An FFmpeg
+  end-to-end run of the test plan (two 1920x1088 clips with sound, three ambience beds) wrote a 1280x704 cut with sound. Not run
+  here: Blender (not installed in the cloud sandbox), so the renderer is checked by source only.
+- Not done here (other threads): re-generating c3b/c2/the cave two-shot (paid, the pilot thread with the creator's yes) and
+  fixing v1's edit; the pilot's plan and job builders must be brought onto the new fields (`in_shot`, `variant_of`, `names`,
+  `held_props`, cut plan fields) before anything runs. Spend: $0.

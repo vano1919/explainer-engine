@@ -1,3 +1,4 @@
+
 """2.5D parallax (D-70 stage F, bible.json motion default "stills + 2.5D parallax"): near parts of a picture slide a little
 more than far parts while the shot runs. numpy only.
 

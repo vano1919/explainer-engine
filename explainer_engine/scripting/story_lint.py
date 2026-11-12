@@ -1,3 +1,4 @@
+
 """Story rules ST-01..ST-19 (docs/STORY_ENGINE.md, D-48) on a production script's story layer (``drama`` at the top,
 ``drama`` per segment). Free, run by ``production validate`` before any paid step.
 
@@ -394,21 +395,22 @@ def reported_speech(doc: dict) -> list[dict]:
 
 
 def _docudrama(out: list, segs: list, sd: list, seg_words: list) -> None:
-    """Template D (the historical docudrama): narration blocks stay short (ST-17), the central scene is the longest
-    scene (ST-18) and the narrator keeps a share of the words (ST-19). All three are hypotheses, REVIEW."""
-    run, run_from, total_n, total = 0, None, 0, 0
+    """Template D: narration blocks stay short (ST-17), the central scene is longest (ST-18), and BP-105 measures audible words only."""
+    run, run_from, total_n, total_spoken = 0, None, 0, 0
     for s in segs:
         for ln in s.get("lines", []):
             w = len(ln["text"].split())
-            total += w
             if ln.get("speaker"):
-                run, run_from = 0, None
+                if ln.get("voiced", True) is not False:
+                    total_spoken += w
+                    run, run_from = 0, None
                 continue
             total_n += w
+            total_spoken += w
             run_from = run_from or s["id"]
             run += w
             if run / WORDS_PER_S > NARRATION_BLOCK_MAX_S:
-                _f(out, "ST-17", f"{run_from}..{s['id']}", f"the narrator talks about {run / WORDS_PER_S:.0f} s without a "
+                _f(out, "ST-17", f"{run_from}..{s['id']}", f"the narrator talks about {run / WORDS_PER_S:.0f} s without an audible "
                    f"character line: give the scene back within {NARRATION_BLOCK_MAX_S:g} s (BP-104)", sev("BP-104"))
                 run, run_from = 0, None
     scenes = [(sid, d, w) for (sid, d), w, s in zip(sd, seg_words, segs)
@@ -422,11 +424,11 @@ def _docudrama(out: list, segs: list, sd: list, seg_words: list) -> None:
         if longer:
             _f(out, "ST-18", top[0], f"the central scene is shorter than {', '.join(longer)}: it should be the longest scene, "
                "with 2-3 escalations inside")
-    if total:
-        share = total_n / total
+    if total_spoken:
+        share = total_n / total_spoken
         if not NARRATOR_SHARE[0] <= share <= NARRATOR_SHARE[1]:
-            _f(out, "ST-19", "lines", f"the narrator has {share:.0%} of the words (aim {NARRATOR_SHARE[0]:.0%}-"
-               f"{NARRATOR_SHARE[1]:.0%}, BP-105; a rivalry story may sit low, a campaign high)", sev("BP-105"))
+            _f(out, "ST-19", "lines", f"the narrator has {share:.0%} of audible spoken words (target {NARRATOR_SHARE[0]:.0%}-"
+               f"{NARRATOR_SHARE[1]:.0%}, voiced character dialogue is the complement; BP-105)", sev("BP-105"))
 
 
 def main(argv: list[str] | None = None) -> int:

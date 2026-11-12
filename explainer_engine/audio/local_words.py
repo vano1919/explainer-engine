@@ -1,3 +1,4 @@
+
 """Free word times from a local Whisper (faster-whisper on the CPU) instead of ElevenLabs Scribe (~1,000 credits per
 3 minutes, 2026-10-16). Writes the same shape Scribe returns (``{"words": [{"text", "start", "end", "type"}]}``), so
 ``scribe_words.py --transcript`` aligns it to the script unchanged (missed or misheard words are interpolated there and

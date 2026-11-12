@@ -1,3 +1,4 @@
+
 """RETIRED by D-80 (2026-10-26): the night-run route of the wldnk era; kept as history, never run. Checks and plans for an AI-video test (shots.json + timeline.json), shared by the pod scripts and the montage.
 
 shots.json: {"title", "trigger", "style_suffix", "characters": {id: description}, "plates": {id: description},

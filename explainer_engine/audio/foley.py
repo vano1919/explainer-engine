@@ -1,3 +1,4 @@
+
 """Procedural foley: deterministic sound effects built from noise and tones (numpy only, no network, no cost).
 
 Every generator takes a seed and returns mono float32 at 48 kHz in [-1, 1]. The same seed gives the same samples, so a

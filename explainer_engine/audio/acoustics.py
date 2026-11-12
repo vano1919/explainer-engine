@@ -1,3 +1,4 @@
+
 """The signal pieces of the sound director (Blueprint P4, docs/AUDIO_SYSTEM.md SD-): pan, stereo width, room impulse responses,
 shelves, the presence-band dip, room tone, the beat grid and the band share a check measures. numpy only (no scipy: it is not in
 requirements.txt), deterministic (the same seed gives the same samples), mono float32 in and out unless a stereo pair is named.

@@ -1,3 +1,4 @@
+
 """LT-75 scoring of the xworld_v1 prompt-type test (D-80): every drawn frame against the REAL frame of the same place in
 its held-out scene, free and local after the pod.
 

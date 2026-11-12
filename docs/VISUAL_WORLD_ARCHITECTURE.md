@@ -1,5 +1,7 @@
 # Visual world architecture: era-true worlds, one look, hybrid generation
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 Status: **decided (D-41, creator 2026-10-16); free parts built, paid steps one by one with the creator's approval.** Rules UR-23..UR-26. Written 2026-10-16 after
 the creator rejected the six style-bridge pictures ("they look like children on a school excursion") and asked for a
 system that, for every topic, works out which period and world belong in the picture and shows it the way cinema and mass

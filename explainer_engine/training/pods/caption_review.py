@@ -1,3 +1,4 @@
+
 """LT-74 caption review, the automatic half (D-80, OR-21): runs on the pod's captions.jsonl before Claude reads them.
 
 * a description cut off by the token limit is trimmed to its last full sentence;

@@ -1,3 +1,4 @@
+
 """The episode rulebook (docs/EPISODE_STANDARDS.md, ES-xx, decision D-51): one versioned ``episode_rules.json`` per video,
 written by the ``episode-standards-director`` agent and read by every other step.
 

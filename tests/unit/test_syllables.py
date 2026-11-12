@@ -52,3 +52,14 @@ def test_the_committed_calibration_is_what_the_cli_computes():
     stored = SY.calibration()
     for k in ("ratio_b_over_a", "pause_units_sentence", "pause_units_clause", "mean_units_per_word"):
         assert stored[k] == pytest.approx(fresh[k], abs=1e-3), k
+
+
+def test_a_zone_or_a_pace_changes_the_seconds_and_the_default_does_not():
+    S = SY
+    text = "Ten thousand men walked across the frozen river before dawn."
+    base = S.seconds(text)
+    assert S.seconds(text, wpm=None, zone=None) == base                    # nothing asked: BP-01's pace, as before
+    hook, middle = S.seconds(text, zone="hook_0_30s"), S.seconds(text, zone="middle_calm_90_480s")
+    assert hook < middle                                                   # 193 wpm reads faster than 166 wpm
+    assert S.seconds(text, wpm=100) > base > S.seconds(text, wpm=250)
+    assert S.seconds(text, zone="hook_0_30s", pause_after=0.5) == pytest.approx(hook + 0.5, abs=1e-3)

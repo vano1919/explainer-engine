@@ -1,3 +1,4 @@
+
 """The letterless map plate: one per region, drawn from the Natural Earth vectors, cached by the hash of its spec.
 
 A plate is land, coast, lakes, rivers and borders in palette colours and nothing else. It has no letters (CMP-01): this module

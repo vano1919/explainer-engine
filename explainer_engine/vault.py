@@ -1,3 +1,4 @@
+
 """The vault: nothing we made is lost, and every copy is the creator's (D-73, docs/VAULT.md). stdlib only, so it runs on a pod,
 in a cloud session and on the creator's PC alike.
 

@@ -42,8 +42,7 @@ scene still works; repeat until it doesn't. End within 1-2 lines of the turn, on
 
 `NARRATOR 2-4 sentences (where / when / why-now, ending on the pressure) -> SCENE 5-12 beats with a turn, exiting on
 the complication -> NARRATOR 1-2 sentences (the consequence + the next pressure)`. The narrator NEVER restates the
-scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md)'s (25-45 % for
-template D; the old ~40-60 % is superseded). A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
+scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md): 70-80 % of audible spoken words (voiced character dialogue is the complementary 20-30 %; target 75/25). Lines marked `voiced: false` do not count. This is independent from the 60/30/10 visual runtime mix. A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
 seconds stay in one place: cut away to the plan carried out, its cost or the other side moving (KP-42), and no more than
 [BP-113](../../../docs/SOURCED_RULES.md)'s lines in a row without a silent reaction, an insert or a cutaway (KP-43).
 

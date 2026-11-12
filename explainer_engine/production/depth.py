@@ -1,3 +1,4 @@
+
 # from vano1919/tmr-video-script-engine@1c34e27:tmr_engine/render/depth.py
 """Depth maps for the pictures: the 2.5D parallax of D-70 stage F (motion stays stills + parallax by default, bible.json).
 

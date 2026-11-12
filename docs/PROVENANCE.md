@@ -1,5 +1,7 @@
 # Provenance of copied code
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 Source: `vano1919/tmr-video-script-engine` at commit `d88ba8f` (2026-10-15), same owner. Copied files carry a
 `# from vano1919/tmr-video-script-engine@d88ba8f:<path>` header. They evolve independently; nothing imports
 `tmr_engine` at run time (`tests/unit/test_repo_hygiene.py` enforces both rules).
@@ -34,3 +36,9 @@ Tests adapted from `tests/unit/test_timings.py`, `test_celestial.py` (viseme par
 | `explainer_engine/imagegen/gemini.py` | `tmr_engine/render/imagegen.py` (`GeminiImages`, `PRICES`) | stdlib client reshaped: reference list, 2026-10-16 price table, 80 % cap stop, cache by prompt + references, spend log, text `judge` call |
 | `explainer_engine/cloud/runpod.py` | TMR `cloud/rp.py` at `f0abe62` (branch `claude/master-directive-prompt-5rmv2y`) | one retrying HTTP layer; create never re-POSTed after an unclear answer (found by unique name); verified, idempotent stop/delete; per-pod session files instead of one `pod_meta.json`; guard enforces the name's lifetime, stays blind-safe, stops instead of deleting; `config/spend_caps.json` preflight; `check`, `cost` (billing API), `PodSession`; the in-pod side (bootstrap, conductor, painters) stays in TMR |
 | `explainer_engine/cloud/store.py` | TMR `cloud/store.py` at `1c33878` | the durable store of the Guardian (2026-10-22): stdlib backend switch (`EXPLAINER_STORE_LOCAL` folder or the HF dataset), sha256 sidecar on every push, `verify` reports and never deletes, `store_job` for the job record; env names `EXPLAINER_STORE_*` |
+
+## Third-party code copied from public repositories (rule drafted in the Fable quality report, WP-Q8)
+
+| File here | Source | What changed |
+|---|---|---|
+| `explainer_engine/blender/polyhaven.py` | `ahujasid/blender-mcp@2e4b0bc294694b1570d76ed01be657c22e6d02a0:addon.py` (MIT, (c) 2025 Siddharth Ahuja) | the Poly Haven part only: API get with ETag/TTL cache, slug guard, md5-checked streamed download, texture-map selection, `include` side files with the zip-slip guard, the HDRI world node chain. `requests` became `urllib`, the User-Agent names this project, model import is glTF (the artist's `.blend` node tree would be replaced by `style.py` anyway). NOT taken: the socket server, telemetry, edit recorder, paid 3D generators. |

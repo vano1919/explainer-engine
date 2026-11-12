@@ -5,6 +5,8 @@ description: Choose and apply an editing style for a Crossworld Theories video (
 
 # Editing style
 
+**Ink Chronicle lanes (D-97, 2026-11-05):** the lanes are VIDEO_3D (Blender clip), STILL_3D (Blender plate, held or moved by a camera) and HELPER (Python maps, HUD, tableaux); the editing rules below apply to all three; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Rules: `docs/EDITING.md` (ED-01..ED-07). This page is the judgement behind them. Sources of the research (2026-10-17):

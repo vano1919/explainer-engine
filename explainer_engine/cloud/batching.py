@@ -1,3 +1,4 @@
+
 """RP-01..RP-10, the batching and card rules of a paid pod, as code (P1c; source: the p9 RunPod re-check, B1..B10, project files
 ``blueprint_2026-10-29/recheck/p9_runpod.json``). The one home of the text is ``docs/CLOUD_RUNBOOK.md``; this module is what
 ``runpod create`` asks. stdlib only. Rules that need a measurement refuse only on what the plan states or a row measured; an

@@ -1,3 +1,4 @@
+
 """Validation of a production script (D-43). Rule ids PV-xx; FAIL blocks the next paid or final step, REVIEW needs a
 one-line answer. Two passes:
 

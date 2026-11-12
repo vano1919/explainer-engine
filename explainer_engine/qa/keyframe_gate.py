@@ -1,3 +1,4 @@
+
 """Keyframe gate (KG-01..KG-22, docs/KEYFRAME_GATE.md): every picture of an animated shot is checked before the next step
 uses it, every check is logged with its cause, and the log says what to fix: a prompt rule or a LoRA. stdlib only.
 

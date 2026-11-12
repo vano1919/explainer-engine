@@ -1,3 +1,4 @@
+
 """Period cards (ED-09) and data visuals (ED-10), drawn by our own code as overlays on the finished frame: free, hand-drawn
 look (the bubbles' fonts), no stock chart template. Every number a visual shows is written in the script and traces to a claim.
 

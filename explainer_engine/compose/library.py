@@ -1,3 +1,4 @@
+
 """AC-01..AC-04: the asset library. Every reusable picture is one record; a shot list is turned into the list of assets it
 needs, and only what the library lacks is drawn (the paid part). stdlib only.
 

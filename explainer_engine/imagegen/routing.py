@@ -1,3 +1,4 @@
+
 """Picture routing (D-52): every picture is painted by Gemini on the batch tier, on one of three tiers. stdlib only.
 
 Scope (N-06, 2026-10-30): the D-43 still-picture route. An animated episode's keyframes (D-77, D-80) are made on a pod with

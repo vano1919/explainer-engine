@@ -1,3 +1,4 @@
+
 """Per-segment hashes (D-70 stage F): when a script changes, only what depends on the changed segments is made again.
 
 A segment's voice depends on its spoken text (lines: text, tags, emphasis, pause_after, speaker); its pictures on their

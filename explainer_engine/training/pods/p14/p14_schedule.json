@@ -1,0 +1,195 @@
+{
+  "schema": "p14_schedule/1",
+  "_doc": "The lean step-3 pod's stages after the 14:44 UTC fix. lane: pod (p14.sh before the runner), net, cpu (Blender on the card when A.preflight finds NVIDIA's EGL, then cpu means 'the Blender lane'), gpu (Qwen, BiRefNet, LTX). needs: the stages whose output the stage reads (E's per job). max_min null: runs to the end reserve.",
+  "end_reserve_min": 10,
+  "preflight_s": 120,
+  "stages": {
+    "install": {
+      "lane": "pod",
+      "needs": [],
+      "expected_min": 2.5,
+      "max_min": 20,
+      "basis": "measured",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): script_start 14:25:02 -> runner 14:27:30"
+    },
+    "weights": {
+      "lane": "net",
+      "needs": [
+        "install"
+      ],
+      "expected_min": 5.5,
+      "max_min": 90,
+      "basis": "measured",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): 14:27:30 -> 14:33:00 (both LTX bases, sha256 checked)"
+    },
+    "weights_qwen": {
+      "lane": "net",
+      "needs": [
+        "install"
+      ],
+      "expected_min": 5,
+      "max_min": 60,
+      "basis": "estimated",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): done before 14:40, not timed alone"
+    },
+    "A.preflight": {
+      "lane": "cpu",
+      "needs": [
+        "install"
+      ],
+      "expected_min": 0.5,
+      "max_min": 2,
+      "basis": "estimated",
+      "source": "duel line frame 0: 8.3 s on the pod CPU (measured), card unmeasured"
+    },
+    "A.frame0.duel": {
+      "lane": "cpu",
+      "needs": [
+        "A.preflight"
+      ],
+      "expected_min": 0.15,
+      "max_min": 10,
+      "basis": "measured",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): duel/line 1 frame in 8.3 s (CPU)"
+    },
+    "A.frame0.battle": {
+      "lane": "cpu",
+      "needs": [
+        "A.frame0.duel"
+      ],
+      "expected_min": 10,
+      "max_min": 10,
+      "basis": "measured",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): killed by the kernel (-9, memory) after ~13 min on the CPU; now cut at 600 s"
+    },
+    "A.duel": {
+      "lane": "cpu",
+      "needs": [
+        "A.frame0.battle"
+      ],
+      "expected_min": 1.6,
+      "max_min": 90,
+      "basis": "measured",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): clay 121 frames 14:40:26 -> 14:42:02"
+    },
+    "A.battle": {
+      "lane": "cpu",
+      "needs": [
+        "A.duel"
+      ],
+      "expected_min": 30,
+      "max_min": 90,
+      "basis": "estimated",
+      "source": "colour + depth, 282 frames each: never finished on any machine"
+    },
+    "A.battle.line": {
+      "lane": "cpu",
+      "needs": [
+        "A.battle",
+        "A.frame0.battle"
+      ],
+      "expected_min": 60,
+      "max_min": 60,
+      "basis": "estimated",
+      "source": "runs only when frame 0's seconds x 282 fit 3600 s; pod 1's frame 0 did not finish"
+    },
+    "X6.move": {
+      "lane": "cpu",
+      "needs": [
+        "qwen1"
+      ],
+      "expected_min": 1,
+      "max_min": 15,
+      "basis": "estimated",
+      "source": "FFmpeg zoompan of one still"
+    },
+    "G": {
+      "lane": "cpu",
+      "needs": [
+        "D"
+      ],
+      "expected_min": 133,
+      "max_min": null,
+      "basis": "measured",
+      "source": "8 s/frame x 996 frames on 4 vCPU (this container, assemble_25d 1440p EEVEE 16); pod scaling unmeasured; stops at the reserve"
+    },
+    "qwen1": {
+      "lane": "gpu",
+      "needs": [
+        "weights_qwen"
+      ],
+      "expected_min": 2.9,
+      "max_min": 60,
+      "basis": "measured",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): load 61 s + C, C, X6 at 33.5-38.5 s each"
+    },
+    "D": {
+      "lane": "gpu",
+      "needs": [
+        "qwen1"
+      ],
+      "expected_min": 2,
+      "max_min": 30,
+      "basis": "estimated",
+      "source": "pod ygg2ztmflr8pv2 (H100, 2026-11-06 14:25-14:48 UTC, HF route_test_2026-11/step3/stages.txt and logs/): failed in 22 s on a float16 input (fixed); 12 pictures"
+    },
+    "qwen2": {
+      "lane": "gpu",
+      "needs": [
+        "D",
+        "A.frame0.duel"
+      ],
+      "expected_min": 2.2,
+      "max_min": 60,
+      "basis": "estimated",
+      "source": "Qwen load 61 s + 2 edits at ~35 s (pod 1's Qwen speed)"
+    },
+    "E": {
+      "lane": "gpu",
+      "needs": [
+        "qwen2",
+        "weights",
+        "A.duel",
+        "A.battle",
+        "A.battle.line"
+      ],
+      "expected_min": 25,
+      "max_min": 150,
+      "basis": "estimated",
+      "source": "5 core clips at ~5 min (docs: the 22B takes >200 s per clip on RunPod), 30 min cap per clip"
+    },
+    "E.extras": {
+      "lane": "gpu",
+      "needs": [
+        "E",
+        "qwen1",
+        "G"
+      ],
+      "expected_min": 25,
+      "max_min": 150,
+      "basis": "estimated",
+      "source": "X1, X2, X5 (2560x1472), X3 (G's frame), X6: ~5 min each"
+    },
+    "X4": {
+      "lane": "gpu",
+      "needs": [
+        "E.extras",
+        "G"
+      ],
+      "expected_min": 1.7,
+      "max_min": 60,
+      "basis": "estimated",
+      "source": "Qwen load + 1 edit"
+    },
+    "F": {
+      "lane": "gpu",
+      "needs": [
+        "X4"
+      ],
+      "expected_min": 0.1,
+      "max_min": 5,
+      "basis": "estimated",
+      "source": "speeds.json from the records"
+    }
+  }
+}

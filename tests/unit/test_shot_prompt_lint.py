@@ -45,9 +45,13 @@ def test_camera_length_and_moving_vehicle():
     no_cam = {"id": "ice", "kind": "video", "prompt": STYLE + "The cave people jerk back and stay in frame."}
     assert "KP-04" in rules(no_cam, "FAIL")
     two = {"id": "t", "kind": "video", "prompt": STYLE + "The girl ducks and stays in frame. The camera pans left, then a push-in."}
-    assert "KP-04" in rules(two, "REVIEW")
-    assert "KP-06" in rules({"id": "l", "kind": "video", "seconds": 15, "prompt": STYLE + "x jumps. Static camera."}, "FAIL")
-    assert "KP-06" in rules({"id": "l", "kind": "video", "seconds": 9, "prompt": STYLE + "x jumps. Static camera."}, "REVIEW")
+    assert "KP-04" in rules(two, "FAIL")   # D-121: one shot, one move is FAIL
+    assert "KP-06" not in rules({"id": "l", "kind": "video", "seconds": 15, "prompt": STYLE + "x jumps. Static camera."})
+    assert "KP-06" in rules({"id": "l", "kind": "video", "seconds": 16, "prompt": STYLE + "x jumps. Static camera."}, "REVIEW")
+    dialogue = {"id": "ld", "kind": "video", "seconds": 6, "prompt": STYLE + 'The warrior shouts "Hold the line!" and stays in frame. Static camera.'}
+    assert "KP-06" in rules(dialogue, "REVIEW")
+    dialogue["seconds"] = 5
+    assert "KP-06" not in rules(dialogue)
     train = {"id": "ww", "kind": "video",
              "prompt": STYLE + "Two outlaws on the roof of the moving train wave and stay in frame. Static camera."}
     assert "KP-05" in rules(train, "REVIEW")
@@ -88,3 +92,47 @@ def test_the_video_lora_validation_prompts_pass():
                                "thud, gasps."}
     assert not rules(disco, "FAIL")
     assert rules({"id": "k", "kind": "pose", "prompt": "x"}) == {"KP-00"}
+
+
+def test_hyped_zone_video_prompt_with_fast_verb_passes_kp47():
+    shot = {"id": "h", "kind": "video", "rhythm_zone": "hook_0_30s",
+            "prompt": STYLE + "The short man in the dark coat slams his palm onto the map, then snaps his head up and stays in "
+                              "frame. Static camera."}
+    assert "KP-47" not in rules(shot)
+
+
+def test_hyped_zone_video_prompt_with_slow_breath_fails_kp47():
+    shot = {"id": "h", "kind": "video", "rhythm_zone": "hook_0_30s",
+            "prompt": STYLE + "The short man in the dark coat draws a slow breath and looks across the tent, stays in frame. "
+                              "Static camera."}
+    found = [f for f in check_shot(shot) if f["rule"] == "KP-47"]
+    assert len(found) == 2 and all(f["severity"] == "REVIEW" for f in found)  # no fast verb and a slow modifier
+    # the calm middle and legacy shots (no zone) are not touched
+    assert "KP-47" not in rules(dict(shot, rhythm_zone="middle_calm_90_480s"))
+    legacy = {k: v for k, v in shot.items() if k != "rhythm_zone"}
+    assert "KP-47" not in rules(legacy)
+    assert "KP-47" in rules(dict(legacy, fast_action=True))
+
+
+def test_d121_ltx_rules_kp59_to_kp62_and_promoted_fails():
+    """The creator 2026-11-07 22:23 UTC (D-121): no time labels, held props kept, one continuous shot, a move names its end;
+    KP-11 and KP-55 are FAIL."""
+    base = {"id": "c", "kind": "video", "route": "J2", "seconds": 6,
+            "prompt": STYLE + "A single continuous unbroken shot. The man in the grey hoodie raises his phone and stays in frame. "
+                              "Static camera."}
+    assert not {"KP-59", "KP-61", "KP-62"} & rules(base, "FAIL")
+    for label in ("0-2 s: he jumps.", "At 4 s he jumps.", "In the first three seconds he jumps.", "2 s: he jumps."):
+        assert "KP-59" in rules(dict(base, prompt=base["prompt"] + " " + label), "FAIL"), label
+    assert "KP-61" in rules(dict(base, prompt=base["prompt"].replace("A single continuous unbroken shot. ", "")), "FAIL")
+    assert "KP-61" in rules(dict(base, prompt=base["prompt"] + " Then cut to the hunters."), "FAIL")
+    move = dict(base, prompt=base["prompt"].replace("Static camera.", "The camera pushes in slowly."))
+    assert "KP-62" in rules(move, "FAIL")
+    assert "KP-62" not in rules(dict(move, prompt=move["prompt"] + " It ends on a medium shot of the man."))
+    held = dict(base, held_props=["phone"])
+    assert "KP-60" in rules(held, "FAIL")
+    kept = dict(held, prompt=held["prompt"].replace("raises his phone", "keeps the phone raised in his right hand"))
+    assert "KP-60" not in rules(kept)
+    assert "KP-60" in rules(dict(kept, prompt=kept["prompt"] + " He drops the phone."), "FAIL")
+    assert "KP-55" in rules(dict(base, prompt=base["prompt"] + " The shaman stands completely still."), "FAIL")
+    noisy = dict(base, prompt=base["prompt"] + " We hear: wind, embers, gasps, a drum.")
+    assert "KP-11" in rules(noisy, "FAIL")

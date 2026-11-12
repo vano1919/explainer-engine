@@ -1,0 +1,602 @@
+{
+ "schema": "p14_stages/1",
+ "_doc": "The lean step-3 pod (STEP3_POD_PLAN_LEAN_ka.md; the creator 2026-11-06 13:21 UTC, stage G 13:25 UTC): what stages A-G run. Read by p14_pod.py on the pod; every setting not named here is the registered one (qa/style_prompt.INFERENCE, the asset pod's route_assets.json, blender/layout_passes, blender/assemble_25d).",
+ "order": [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "X",
+  "G",
+  "F"
+ ],
+ "hf_root": "route_test_2026-11",
+ "A": {
+  "what": "Blender layout passes on the pod CPU (PR #143 code, Blender 5.2.3 as in the CI smoke)",
+  "first_frames": [
+   {
+    "scene": "duel",
+    "pass": "line",
+    "frame": 0
+   },
+   {
+    "scene": "battle",
+    "pass": "line",
+    "frame": 0
+   }
+  ],
+  "renders": [
+   {
+    "scene": "duel",
+    "passes": [
+     "clay"
+    ],
+    "core": true
+   },
+   {
+    "scene": "battle",
+    "passes": [
+     "colour",
+     "depth"
+    ],
+    "core": true
+   },
+   {
+    "scene": "battle",
+    "passes": [
+     "line"
+    ],
+    "core": false,
+    "budget_s": 3600,
+    "frames": 282
+   }
+  ],
+  "timeout_s": 5400,
+  "frame0_timeout_s": 600,
+  "_fix_2026-11-06": "pod ygg2ztmflr8pv2 (14:44 UTC): the battle line frame 0 (Freestyle over the fore and mid tiers) held the GPU lane. Now: the duel's frame 0 first, each frame 0 killed at frame0_timeout_s (B then draws the duel alone); the core passes (duel clay, battle colour and depth) release E; the battle line runs last and only when frame 0's seconds x its frames fit budget_s (frame 0 includes the scene build, so the estimate is pessimistic); the LTX jobs that read it wait for it at the end of the queue."
+ },
+ "qwen": {
+  "base": "Qwen/Qwen-Image-2.1",
+  "dtype": "bf16",
+  "gpu_mode": "model_cpu_offload",
+  "style_lora": {
+   "hf": "vano1919/tmr-artifacts",
+   "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
+   "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
+   "weight": 0.7
+  },
+  "steps": 30,
+  "cfg_text": 4.0,
+  "cfg_edit": 2.5,
+  "seed": 11,
+  "size": [
+   1280,
+   720
+  ],
+  "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+  "timeout_s": 3600
+ },
+ "B": {
+  "question": "does Qwen keep the Blender proportions and placement when it is given the layout as a line drawing?",
+  "jobs": [
+   {
+    "name": "B_S02-02.c1_battle",
+    "clip": "S02-02.c1",
+    "layout": {
+     "scene": "battle",
+     "pass": "line",
+     "frame": 0
+    },
+    "heroes": [
+     "B_H1_front"
+    ],
+    "prompt": "xworld style, Image 1 is the line drawing of the battle: keep every soldier's place, size and pose, the river and the horizon exactly. Image 2 is the broad commander: draw him once, leading the charge at the point of the wedge. Two armies of lanky soldiers clash in a shallow river, spears lowered, banners snapping, spray rising from their boots, every soldier with his own face, helmet and shield, low golden sun through grey clouds."
+   },
+   {
+    "name": "B_S03-02_duel",
+    "clip": "S03-02",
+    "layout": {
+     "scene": "duel",
+     "pass": "line",
+     "frame": 0
+    },
+    "heroes": [
+     "B_H1_front",
+     "B_H2_front"
+    ],
+    "prompt": "xworld style, Image 1 is the line drawing of the scene: keep every figure's place, size and pose and the ground line exactly. Image 2 is the broad commander and Image 3 is the young scout: keep their faces, builds and clothes. In a castle courtyard of grey stone at hard noon the broad commander with a grey beard, a dented steel helmet and a red cloak raises his broadsword over the crouching young scout in a green hood, both with bulging eyes, boots scraping on sunlit stone."
+   }
+  ],
+  "first_frame_size": [
+   1920,
+   1088
+  ],
+  "line_match_px": 3
+ },
+ "C": {
+  "question": "does the style hold at 150 words, and do the crowd clones go or stay?",
+  "jobs": [
+   {
+    "name": "C_D4_rain_150",
+    "from": "D4_rain_90",
+    "prompt": "xworld style, a long column of tired soldiers marches along a muddy road in heavy rain at the end of a lost day, lanky angular men with long thin legs, narrow shoulders and big dented helmets sliding over their eyes, each soldier different, one tall and bony, one short and round, one with a bandaged arm, cloaks soaked and heads bowed, spears carried crooked over their shoulders, horses with drooping heads and knobbly knees pulling a creaking cart loaded with wet sacks, a limp banner hanging from a bent pole, puddles splashing under heavy boots, ruts full of brown water, a broken fence along the roadside, a lone drummer boy at the front with a drum too big for him, bare hills on both sides with a few black twisted trees, storm clouds piled over the hills with one weak gold break of light far ahead."
+   },
+   {
+    "name": "C_D2_duel_150",
+    "from": "D2_duel_90",
+    "prompt": "xworld style, two swordsmen duel in a castle courtyard at harsh noon, a tall lanky swordsman with long arms and a pointed beard lunges with a wild grin while a short stocky one with a thick neck and bowed legs parries and sparks fly from the blades, soldiers in a loose ring watching with wide eyes, every watcher different, a skinny boy perched on a barrel, a fat cook with a ladle, an old guard leaning on his spear, a woman with a basket of apples, a toppled barrel rolling across the uneven cobbles, a nervous dog backing away with its tail down, a stone well with a wooden bucket, high stone walls with narrow windows and a wooden gallery, banners hanging still on the keep wall, laundry on a rope between two towers, hard sun straight above throwing short sharp shadows."
+   }
+  ]
+ },
+ "heroes_refs": [
+  {
+   "name": "B_H1_front",
+   "path": "route_test_2026-11/assets/B/B_H1_front.png",
+   "sha256": "109b0c43e0b34859aaae5c02abcb478d453681f051c3f9c9968eca04e35667a6"
+  },
+  {
+   "name": "B_H2_front",
+   "path": "route_test_2026-11/assets/B/B_H2_front.png",
+   "sha256": "5cc05b92acad0b7ac7c3a022119224c64413428d037c587a4e54be60fd3d8a72"
+  }
+ ],
+ "D": {
+  "question": "are the alpha edges clean enough for the 2.5D cards?",
+  "pictures": [
+   {
+    "name": "B_H1_front",
+    "path": "route_test_2026-11/assets/B/B_H1_front.png",
+    "sha256": "109b0c43e0b34859aaae5c02abcb478d453681f051c3f9c9968eca04e35667a6",
+    "hero": "H1",
+    "angle": "front"
+   },
+   {
+    "name": "B_H1_left34",
+    "path": "route_test_2026-11/assets/B/B_H1_left34.png",
+    "sha256": "f2fba7844a3aacbf43ea4cc3684d4c9e71ac2cb8d2393854fb68c42dda9da8f9",
+    "hero": "H1",
+    "angle": "3q_left"
+   },
+   {
+    "name": "B_H1_right34",
+    "path": "route_test_2026-11/assets/B/B_H1_right34.png",
+    "sha256": "29270137a8bd2723058ff40fbb0943b9d87fc6294db2913d8e748e3bb448f9ca",
+    "hero": "H1",
+    "angle": "3q_right"
+   },
+   {
+    "name": "B_H1_back",
+    "path": "route_test_2026-11/assets/B/B_H1_back.png",
+    "sha256": "91062f0aafbbc2c2a51a74dd7fc2c52f790f1850a77a6b068cb9d6a066757fa1",
+    "hero": "H1",
+    "angle": "back"
+   },
+   {
+    "name": "B_H2_front",
+    "path": "route_test_2026-11/assets/B/B_H2_front.png",
+    "sha256": "5cc05b92acad0b7ac7c3a022119224c64413428d037c587a4e54be60fd3d8a72",
+    "hero": "H2",
+    "angle": "front"
+   },
+   {
+    "name": "E_B_H2_left34",
+    "path": "route_test_2026-11/assets/E/E_B_H2_left34.png",
+    "sha256": "efe537b07a9e61ad822d3256d7d421e6ef24963f22b3176722ae7e7f92f49cad",
+    "hero": "H2",
+    "angle": "3q_left"
+   },
+   {
+    "name": "B_H2_right34",
+    "path": "route_test_2026-11/assets/B/B_H2_right34.png",
+    "sha256": "8ed7ccaa8440003e40d690dd0f06243791e4f3cd1abdb9475697e59a775c0ba8",
+    "hero": "H2",
+    "angle": "3q_right"
+   },
+   {
+    "name": "B_H2_back",
+    "path": "route_test_2026-11/assets/B/B_H2_back.png",
+    "sha256": "20636a86a1bcdd1b145e9d98c694c82f7d3c61f69a1cadffc92cde3af97f9761",
+    "hero": "H2",
+    "angle": "back"
+   },
+   {
+    "name": "B_H3_front",
+    "path": "route_test_2026-11/assets/B/B_H3_front.png",
+    "sha256": "bae26df7f2a27872e8bcf52c2d762da955c7259f7b5c3b624c535cbe04bd0001",
+    "hero": "H3",
+    "angle": "front"
+   },
+   {
+    "name": "B_H3_left34",
+    "path": "route_test_2026-11/assets/B/B_H3_left34.png",
+    "sha256": "473e232ab98a661d5da47816d79f04d13750f77eeec0ff42b12599d48124e019",
+    "hero": "H3",
+    "angle": "3q_left"
+   },
+   {
+    "name": "B_H3_right34",
+    "path": "route_test_2026-11/assets/B/B_H3_right34.png",
+    "sha256": "5c56a186d9bfad133ef9aaaa0110b926f57273ff5239670b46004cff5603d6cc",
+    "hero": "H3",
+    "angle": "3q_right"
+   },
+   {
+    "name": "B_H3_back",
+    "path": "route_test_2026-11/assets/B/B_H3_back.png",
+    "sha256": "e840e6138438fa7b5ad36ff456da28c23d74988d85928ac772d8e638754e677c",
+    "hero": "H3",
+    "angle": "back"
+   }
+  ],
+  "timeout_s": 1800
+ },
+ "E": {
+  "question": "see each job (STEP3_POD_PLAN_LEAN section 1, E1-E5)",
+  "jobs_file": "ltx_jobs.json"
+ },
+ "G": {
+  "what": "the J5 shots of the pilot window (production/pilot.py --seconds 60) as assemble_25d renders at 2560x1440 on the pod CPU, beside the LTX stage",
+  "handles_frames": 12,
+  "size": [
+   2560,
+   1440
+  ],
+  "engine": "eevee",
+  "samples": 16,
+  "nice": 10,
+  "height_m": 1.75,
+  "backdrops": {
+   "S01": {
+    "name": "A1_tent",
+    "path": "route_test_2026-11/assets/A/A1_tent.png",
+    "sha256": "7d9060b2ade98cc0fc2e414851fd62c272197afbb869f3d3ee68dc6353123415"
+   },
+   "S02": {
+    "name": "A3_field",
+    "path": "route_test_2026-11/assets/A/A3_field.png",
+    "sha256": "6001a5e5242ca0405f208ea08a7a99fdf78a8ffff833d55d8652d5ae4a66368e"
+   },
+   "S03": {
+    "name": "A2_courtyard",
+    "path": "route_test_2026-11/assets/A/A2_courtyard.png",
+    "sha256": "ff5f808da84f272fcff362ae7ec734479a5bb3aab8a64d889f9cd17491543436"
+   }
+  },
+  "backdrop_prompts": {
+   "S01": "xworld style, empty tent camp at dusk, canvas tents in rings around a dying fire, banners on poles, hills fading into purple haze, warm firelight and a low orange sun.",
+   "S02": "xworld style, empty open battlefield on an overcast morning, trampled mud and broken spears, drifting mist, a dark forest line far away, cold low light from the east.",
+   "S03": "xworld style, empty castle courtyard at noon, stone keep and wall towers, a well and a cart of hay, banners hanging, hard sun straight above."
+  },
+  "seconds": {
+   "S01-01": 4,
+   "S01-02": 4.5,
+   "S01-03": 4,
+   "S01-04": 4,
+   "S01-05": 3.5,
+   "S01-06": 2.5,
+   "S02-04": 3,
+   "S03-01": 4,
+   "S03-03": 3
+  },
+  "shots": [
+   {
+    "id": "S01-01",
+    "scene": "S01",
+    "camera": {
+     "setup": "establishing_wide",
+     "a": [
+      0.0,
+      2.3,
+      0.0
+     ]
+    },
+    "cast": {}
+   },
+   {
+    "id": "S01-02",
+    "scene": "S01",
+    "camera": {
+     "setup": "profile_two_shot",
+     "a": "H1",
+     "b": "H3"
+    },
+    "cast": {
+     "H1": {
+      "pos": [
+       -1.1,
+       2.0,
+       0.0
+      ],
+      "angle": "3q_right"
+     },
+     "H3": {
+      "pos": [
+       1.1,
+       2.6,
+       0.0
+      ],
+      "angle": "3q_left"
+     }
+    }
+   },
+   {
+    "id": "S01-03",
+    "scene": "S01",
+    "camera": {
+     "setup": "mcu_front",
+     "a": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "b": "H1"
+    },
+    "cast": {
+     "H1": {
+      "pos": [
+       0.0,
+       2.3,
+       0.0
+      ],
+      "angle": "front"
+     }
+    }
+   },
+   {
+    "id": "S01-04",
+    "scene": "S01",
+    "camera": {
+     "setup": "ots_a",
+     "a": "H1",
+     "b": "H3"
+    },
+    "cast": {
+     "H1": {
+      "pos": [
+       -1.1,
+       2.0,
+       0.0
+      ],
+      "angle": "back"
+     },
+     "H3": {
+      "pos": [
+       1.1,
+       2.6,
+       0.0
+      ],
+      "angle": "3q_left"
+     }
+    }
+   },
+   {
+    "id": "S01-05",
+    "scene": "S01",
+    "camera": {
+     "setup": "profile_two_shot",
+     "a": "H1",
+     "b": "H2"
+    },
+    "cast": {
+     "H1": {
+      "pos": [
+       -1.1,
+       2.0,
+       0.0
+      ],
+      "angle": "3q_right"
+     },
+     "H2": {
+      "pos": [
+       1.1,
+       2.6,
+       0.0
+      ],
+      "angle": "3q_left"
+     }
+    }
+   },
+   {
+    "id": "S01-06",
+    "scene": "S01",
+    "camera": {
+     "setup": "mcu_front",
+     "a": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "b": "H1"
+    },
+    "cast": {
+     "H1": {
+      "pos": [
+       0.0,
+       2.3,
+       0.0
+      ],
+      "angle": "front"
+     }
+    }
+   },
+   {
+    "id": "S02-04",
+    "scene": "S02",
+    "camera": {
+     "setup": "low_angle_hero_cu",
+     "a": [
+      0.0,
+      2.3,
+      0.0
+     ]
+    },
+    "cast": {}
+   },
+   {
+    "id": "S03-01",
+    "scene": "S03",
+    "camera": {
+     "setup": "establishing_wide",
+     "a": [
+      0.0,
+      2.3,
+      0.0
+     ]
+    },
+    "cast": {}
+   },
+   {
+    "id": "S03-03",
+    "scene": "S03",
+    "camera": {
+     "setup": "ots_a",
+     "a": [
+      -1.1,
+      2.0,
+      0.0
+     ],
+     "b": [
+      1.1,
+      2.6,
+      0.0
+     ]
+    },
+    "cast": {}
+   }
+  ],
+  "not_in_this_run": "props on cards (no prop pictures drawn yet), the mouth states and lip-sync (no mouth sheets drawn; the narration comes later), the shots' own camera moves beyond each setup's rig, the H shot S02-01 (free on the PC or here, no GPU)"
+ },
+ "F": {
+  "what": "speeds.json: seconds per stage, per LTX clip (ltx_clip_s_per_clip), per Qwen picture, per Blender frame"
+ },
+ "end_reserve_min": 10,
+ "gpu_order": [
+  "C",
+  "X6.still",
+  "D",
+  "B",
+  "E",
+  "X1",
+  "X2",
+  "X5",
+  "X3",
+  "X6.ltx",
+  "X4"
+ ],
+ "cpu_order": [
+  "A",
+  "G",
+  "X6.move"
+ ],
+ "X": {
+  "_doc": "The creator's card 2026-11-06 13:33 UTC: six extra approaches, one generation each, after the five core LTX jobs so the core answers land first. Each sidecar carries its question.",
+  "X1": {
+   "question": "J1: does plain LTX-2.5 image-to-video from the duel's Qwen first frame (no layout video) hold the look and the two heroes?",
+   "recipe": "ltx_i2v/1",
+   "pipeline": "distilled",
+   "base": "ltx25",
+   "first_frame": "first_frames/S03-02.png",
+   "frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "seed": 42,
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The broad commander circles with the sword raised, then swings the broadsword down in a wide arc, and holds the sword low after the swing. His teeth are bared shows on the face. The young scout ducks under the blade and steps back. Nobody speaks. Boots scrape on stone."
+  },
+  "X2": {
+   "question": "does the Layout-To-Render LoRA take the inverted line pass as its layout video (instead of the colour pass), and how does it compare with E1?",
+   "from_job": "S02-02.c1.ltx25.colour.s42",
+   "conditioning": [
+    {
+     "pass": "line",
+     "derive": "invert",
+     "strength": 1.0
+    }
+   ]
+  },
+  "X3": {
+   "question": "V3 dialogue as LTX-2.5 audio+video from the J5 first frame with its native voice, against the J5 2.5D render of the same shot (stage G)",
+   "recipe": "ltx_a2v_native/1 (route_alt LTX_A2V of V3)",
+   "pipeline": "distilled",
+   "base": "ltx25",
+   "shot": "S01-02",
+   "first_frame_from_g": {
+    "shot": "S01-02",
+    "frame": 12
+   },
+   "first_frame": "first_frames/S01-02.j5.png",
+   "frames": 121,
+   "width": 1920,
+   "height": 1088,
+   "seed": 42,
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing. Static shot. In a tent camp at dusk by warm firelight, the old elder with a long white beard, a blue robe and a wooden staff leans on his staff and says slowly and with certainty: \"He will cross at dawn.\" The broad commander with a grey beard and a red cloak stands at the map table with his fists on it and listens. A slow, dry old man's voice. A quiet fire crackles."
+  },
+  "X4": {
+   "question": "can a Qwen-2.1 edit 'change nothing, fix the defects' clean the 2.5D seams of one assembled J5 frame without changing the rest?",
+   "frame_from_g": {
+    "shot": "S01-02",
+    "frame": 66
+   },
+   "heroes": [
+    "B_H1_front"
+   ],
+   "cfg": 2.5,
+   "seed": 11,
+   "prompt": "xworld style, Image 1 is the picture and Image 2 is the broad commander. Change nothing else; fix: the seams of the 2.5D assembly, the light rims around the figures and the feet that do not touch the ground; keep the faces and clothes as they are."
+  },
+  "X5": {
+   "question": "what does one LTX-2.5 clip cost in seconds at native 2K against 1920x1088 (E1, same seed)?",
+   "from_job": "S02-02.c1.ltx25.colour.s42",
+   "width": 2560,
+   "height": 1472,
+   "size_note": "2560x1440 is not on the two-stage distilled grid (height and width divisible by 64: 1440/64 = 22.5); 2560x1472 is the nearest LTX-legal size that covers 16:9 2K, cut to 2560x1440 later (16 rows top and bottom)",
+   "conditioning": [
+    {
+     "pass": "colour",
+     "derive": "scale_2k",
+     "strength": 1.0
+    }
+   ]
+  },
+  "X6": {
+   "question": "STILL_3D: one Qwen still of the travel shot with a free camera move (FFmpeg, CPU) against an LTX-2.5 image-to-video of the same still",
+   "shot": "S04-01",
+   "still": {
+    "name": "X6_S04-01_still",
+    "prompt": "xworld style, a long column of lanky soldiers trudges along a muddy road in heavy rain, cloaks soaked and heads bowed, banners drooping from bent poles, horses pulling a creaking cart, puddles splashing under heavy boots, bare hills on both sides, cold blue rain light.",
+    "seed": 11
+   },
+   "move": {
+    "seconds": 5,
+    "size": [
+     2560,
+     1440
+    ],
+    "zoom_end": 1.08,
+    "fps": 24
+   },
+   "ltx": {
+    "recipe": "ltx_i2v/1",
+    "pipeline": "distilled",
+    "base": "ltx25",
+    "first_frame": "first_frames/S04-01.png",
+    "frames": 121,
+    "width": 1920,
+    "height": 1088,
+    "seed": 42,
+    "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, chalky painterly texture, muted earthy colours. A long column of lanky soldiers trudges forward along a muddy road in heavy rain, heads bowed, banners drooping, rain streaking the air, the camera pushing slowly in. Nobody speaks. Rain hiss and squelching boots."
+   }
+  }
+ },
+ "launch": {
+  "_doc": "For the worker thread that creates the pod AFTER the OR-34 audit and the creator's word; this file never creates anything. The caps are the creator's card of 13:33 UTC (it raised 13:21's $7 / $8.75 / 3 h).",
+  "cards": "RTX PRO 6000 Blackwell 96 GB COMMUNITY first, then the other 80-96 GB cards in the asset pod's loop (no --only): whichever starts is kept, the rest are stopped",
+  "max_usd": 10,
+  "ledger_usd": 12.5,
+  "max_hours": 3.5,
+  "heartbeat": "datasets/vano1919/tmr-artifacts:route_test_2026-11/beat.txt",
+  "upload_first": "HF code/p14/ee_src.tar.gz = python -m explainer_engine.training.pods.p14.lean bundle --ref <the audited commit> (its sha256 is the one in p14.sh)",
+  "guards": "the money dead-man on the pod (pod_wrapper.sh), runpod guard + its beat locally, watchdog.yml dispatched within 60 min of create",
+  "known_refusal": "config/spend_caps.json per_pod_usd is 6.9 < max_usd 10: runpod create refuses --max-usd 10 until the creator moves that ceiling (a hook-guarded file, his word only)"
+ }
+}

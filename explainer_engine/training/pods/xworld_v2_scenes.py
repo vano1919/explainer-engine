@@ -1,3 +1,4 @@
+
 """The xworld_v2 round test (D-80; ვანო 2026-10-26 13:26 Tbilisi): after every training round, three scenes of five shots in
 three worlds (stories/v2: tent = inside, tundra = outside, rome = a city street) are drawn with the round's checkpoint (or
 the base model in round 0), in three prompt forms, so we see whether learning the style damages the scene logic and which

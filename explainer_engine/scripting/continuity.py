@@ -1,3 +1,4 @@
+
 """Scene continuity cards (CT-01..CT-16, docs/SHOT_CONTINUITY.md): one card per shot describes the shot's whole state (place,
 camera and axis, every person with position, facing, eyeline, costume and props, landmarks, light), the references in
 order and what changed since the previous shot. Code checks the cards and assembles the keyframe prompt; nobody writes a

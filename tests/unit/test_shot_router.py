@@ -20,7 +20,7 @@ FIX = ROOT / "tests" / "fixtures" / "contracts"
 H = [c * 64 for c in "0123456789abcdef"]
 PINS = {"models": {
     "keyframe": {"id": "Qwen/Qwen-Image-2.1", "revision": "r-keyframe", "sha256": None},
-    "video_ltx": {"id": "Lightricks/LTX-Video-0.9.8-13B-distilled", "revision": "r-ltx", "sha256": None, "params": {"steps": 8}},
+    "video_ltx": {"id": "Lightricks/LTX-2.5", "revision": "r-ltx", "sha256": None, "params": {"steps": 8}},
     "loras": {"xworld_v2": {"id": "xworld_v2", "sha256": H[6], "weight": 0.7}},
 }}
 
@@ -256,8 +256,9 @@ def test_the_real_pins_route_a_valid_keyframe_ltx_shot_to_a_still_and_a_video_sp
     assert [s["role"] for s in out["routes"][0]["specs"]] == ["still", "video"]
     still = json.loads((tmp_path / "shots" / "s1.still.spec.json").read_text(encoding="utf-8"))
     video = json.loads((tmp_path / "shots" / "s1.video.spec.json").read_text(encoding="utf-8"))
-    assert video["model"] == {"id": "Lightricks/LTX-Video-0.9.8-13B-distilled", "sha256": None,
-                              "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd"}
+    # the combined P12 pod's model (creator 2026-11-01); its distilled transformer's sha256 read from the Hub on 2026-11-06 (D-116)
+    assert video["model"] == {"id": "Lightricks/LTX-2.5", "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+                              "revision": "49b093a39c19169a8a81721dcc541e07e945232f"}
     assert video["frames"] == 241 and video["refs"][0]["role"] == "keyframe"
     assert still["loras"] == [{"id": "xworld_v2", "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02", "weight": 0.7}]
     assert C.main(["check", *map(str, spec_files(tmp_path)), str(tmp_path / "shots" / "route.json"), "--base", str(tmp_path)]) == 0
@@ -276,3 +277,60 @@ def test_a_per_shot_attempt_map_reseeds_only_the_named_shot_and_keeps_the_others
     with pytest.raises(ContractError, match="tries per shot"):
         run(tmp_path, job, attempt={"s1": 4})
     assert "Retry k" in (R.route.__doc__ or "") and "REWEIGHT_REFERENCES" in R.route.__doc__
+
+
+# --- D-116 (2026-11-06): the routes of film_shots/3 ---------------------------------------------------------------------------
+def _routed_v3() -> dict:
+    """The film_shots/3 fixture with one shot per route: s1 J2 (an LTX Layout-To-Render clip), s1b J4 (two chained restyle clips),
+    s2 J5 (a STILL_3D plate), s3 H; plus s1c, a VIDEO_3D J5 shot (a 2.5D dialogue)."""
+    doc = load("film_shots_3", "valid.json")
+    s1, s2, s3 = doc["shots"]
+    s1.update(route="J2", sub_category="V3")
+    s1b = copy.deepcopy(s1)
+    s1b.update(id="s1b", seconds=10, duration_frames=240, route="J4", sub_category="V1", lipsync=False,
+               ltx_clips=[{"seconds": 6, "frames": 145, "width": 1920, "height": 1088},
+                          {"seconds": 6, "frames": 145, "width": 1920, "height": 1088, "overlap_frames": 8}])
+    for k in ("dialogue", "dialogue_cover"):
+        s1b.pop(k, None)
+    s1c = copy.deepcopy(s1)
+    s1c.update(id="s1c", route="J5")
+    s2.update(route="J5", sub_category="S1")
+    s3.update(route="H", sub_category="H1")
+    doc["shots"] = [s1, s1b, s1c, s2, s3]
+    return doc
+
+
+def test_one_shot_per_route_plans_and_a_j5_shot_never_gets_an_ltx_recipe():
+    plan = {e["shot_id"]: e for e in R.recipe_plan(_routed_v3())}
+    assert {k: (e["route"], e["recipe"]) for k, e in plan.items()} == {
+        "s1": ("J2", "ltx_layout/1"), "s1b": ("J4", "ltx_restyle/1"), "s1c": ("J5", "assemble_25d/1"),
+        "s2": ("J5", "assemble_25d/1"), "s3": ("H", "python_helper/1")}
+    for e in plan.values():
+        assert C.ltx_recipe(e["recipe"]) == (e["route"] in ("J2", "J4")), e
+        assert bool(e["clips"]) == (e["route"] in ("J2", "J4")), e
+    assert [c["frames"] for c in plan["s1b"]["clips"]] == [145, 145]
+    assert plan["s1"]["inputs"] == ["layout.clay.mp4", "first_frame.png", "prompt"]
+    assert "video_ltx_control" in plan["s1b"]["pins"] and "video_ltx_layout_lora" in plan["s1"]["pins"]
+    assert not any(k.startswith("video_ltx") for k in plan["s1c"]["pins"] + plan["s2"]["pins"])
+
+
+def test_a_routeless_shot_and_ltx_clips_on_a_j5_shot_are_refused():
+    doc = _routed_v3()
+    del doc["shots"][0]["route"]
+    with pytest.raises(ContractError, match="no D-116 route"):
+        R.recipe_plan(doc)
+    doc = _routed_v3()
+    doc["shots"][2]["ltx_clips"] = [{"seconds": 4, "frames": 97, "width": 1920, "height": 1088}]
+    with pytest.raises(ContractError):
+        R.recipe_plan(doc)   # the schema: ltx_clips only on a J2/J4 shot
+    with pytest.raises(ContractError, match="film_shots/3"):
+        R.recipe_plan(load("film_shots", "valid.json") if FIX.joinpath("film_shots", "valid.json").exists() else {"schema": "film_shots/2"})
+
+
+def test_cn08_binds_the_clips_of_the_ltx_routes_only():
+    doc = _routed_v3()
+    assert not [f for f in C.errors(doc) if f["rule"] == "CN-08"]
+    doc["shots"][1]["ltx_clips"][0].update(frames=144, width=1900)
+    found = {(f["rule"], f["where"]) for f in C.errors(doc)}
+    assert ("CN-08", "s1b.clip1") in found
+    assert not any(w.startswith(("s1c", "s2", "s3")) for r, w in found if r == "CN-08")

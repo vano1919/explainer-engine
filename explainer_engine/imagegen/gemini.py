@@ -1,3 +1,4 @@
+
 # from vano1919/tmr-video-script-engine@d88ba8f:tmr_engine/render/imagegen.py (GeminiImages, PRICES), reshaped
 """Gemini picture client (D-41): references, a price table, a budget guard, a cache and a spend log. stdlib only.
 

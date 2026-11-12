@@ -1,3 +1,4 @@
+
 """Visual beats (VB rules, docs/STORY_ENGINE.md; the creator, 2026-10-19): something new happens on screen about every
 1.5 s, tied to what the narrator says at that instant, and in dialogue the speaking face changes its expression about once
 a second. How often the picture itself changes is BP-40 (pictures a minute, still limits by section; PV-24 RHYTHM); the

@@ -10,6 +10,8 @@ from explainer_engine.qa import keyframe_gate, style_prompt
 from explainer_engine.scripting import film_shots as F
 from explainer_engine.training import lora_rules
 
+from _napoleon import legacy_cards
+
 ROOT = Path(__file__).resolve().parents[2]
 BUS = ROOT / "examples" / "film_shots" / "bus_in_the_ice_age.json"
 NAPOLEON = ROOT / "examples" / "napoleon_vs_genghis"
@@ -57,8 +59,16 @@ def test_style_check_fails_a_retired_trigger():
 
 
 def test_napoleon_fixture_is_on_the_d80_stack():
-    doc = json.loads((NAPOLEON / "film_shots.json").read_text(encoding="utf-8"))
+    # ICW-02: the committed cards are film_shots/3 (the Blender path: no trigger, no prompt); the legacy cards built in memory
+    # and the committed prompts.json stay the D-80 record of the legacy route, and both are on the one stack
+    v3 = json.loads((NAPOLEON / "film_shots.json").read_text(encoding="utf-8"))
+    assert v3["schema"] == "film_shots/3" and v3["style"]["house_look"] == "ink_chronicle" and "trigger" not in v3["style"]
+    doc = legacy_cards()
     assert doc["style"]["trigger"] == lora_rules.trigger()
+    live = [c for c in F.compose(doc) + F.sheet_prompts(doc) if c["kind"] in PICTURES]
+    assert len(live) > 200
+    for card in live:
+        _on_the_d80_stack(card)
     committed = json.loads((NAPOLEON / "prompts.json").read_text(encoding="utf-8"))
     cards = [c for c in committed["sheets"] + committed["shots"] if c["kind"] in PICTURES]
     assert len(cards) > 200

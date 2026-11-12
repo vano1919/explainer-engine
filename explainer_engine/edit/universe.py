@@ -1,3 +1,4 @@
+
 """The universe thread for generated art (UR-22, the primary visual rule).
 
 Every image prompt (pod pictures and Gemini cast sprites) carries the same drawing rules from the episode look, so characters,

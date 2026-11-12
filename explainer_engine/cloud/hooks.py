@@ -1,3 +1,4 @@
+
 """Claude Code session hooks for money (D-56): the rules are checked by code at every turn, not remembered.
 
     session-start  prints what bills on the RunPod account (stray pods, stopped disks, 24 h billing, balance)

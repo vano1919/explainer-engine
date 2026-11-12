@@ -1,3 +1,4 @@
+
 """Paint an episode's pictures, one approved batch at a time (OR-01..OR-04, PP-01..PP-07; audit 2026-10-19).
 
     python -m explainer_engine.production.paint plan    <script.json> --out <pictures dir> --id B1 --provider gemini

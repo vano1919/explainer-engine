@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "archetypes_ic.schema.json",
+  "title": "Ink Chronicle archetype registry: the 20 archetypes of roadmap 7.3 and the lane sub-categories of 7.4, each with the twelve attributes of brief section 5 (ICW-03, D-97; read by visual/shot_design.py and visual/lanes.py)",
+  "type": "object",
+  "required": ["schema", "about", "planner", "archetypes", "sub_categories"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "archetypes_ic/2"},
+    "about": {"type": "string", "minLength": 1},
+    "planner": {
+      "type": "object",
+      "required": ["video_run_max", "video_run_max_evidence", "intensity", "intensity_evidence", "helper_score",
+                   "scene_mode_still_penalty", "scene_mode_still_penalty_evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "video_run_max": {"type": "integer", "minimum": 1},
+        "video_run_max_evidence": {"type": "string", "minLength": 1},
+        "intensity": {
+          "type": "object",
+          "required": ["mode", "dialogue_on_screen", "loudest_sound", "action", "reactions", "teaser", "climax_peak", "no_people"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": {"type": "object", "additionalProperties": {"type": "number"}},
+            "dialogue_on_screen": {"type": "number"}, "loudest_sound": {"type": "number"}, "action": {"type": "number"},
+            "reactions": {"type": "number"}, "teaser": {"type": "number"}, "climax_peak": {"type": "number"},
+            "no_people": {"type": "number"}
+          }
+        },
+        "intensity_evidence": {"type": "string", "minLength": 1},
+        "helper_score": {
+          "type": "object",
+          "required": ["claims", "number", "cue_word", "named_character"],
+          "additionalProperties": false,
+          "properties": {"claims": {"type": "number"}, "number": {"type": "number"}, "cue_word": {"type": "number"},
+                         "named_character": {"type": "number"}}
+        },
+        "scene_mode_still_penalty": {"type": "number"},
+        "scene_mode_still_penalty_evidence": {"type": "string", "minLength": 1}
+      }
+    },
+    "archetypes": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "title", "default_lane", "lanes", "fallback", "blender_technique", "camera_language", "reuse",
+                     "sub_categories", "helper_archetypes", "intensity", "triggers"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "integer", "minimum": 1, "maximum": 20},
+          "name": {"type": "string", "pattern": "^[a-z_]+$"},
+          "title": {"type": "string", "minLength": 1},
+          "default_lane": {"$ref": "#/$defs/lane"},
+          "lanes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/lane"}},
+          "fallback": {
+            "anyOf": [
+              {"type": "null"},
+              {"type": "object", "required": ["lane", "still_mode", "note"], "additionalProperties": false,
+               "properties": {"lane": {"$ref": "#/$defs/lane"}, "still_mode": {"anyOf": [{"$ref": "#/$defs/still_mode"}, {"type": "null"}]},
+                              "note": {"type": "string", "minLength": 1}}}
+            ]
+          },
+          "still_mode": {"$ref": "#/$defs/still_mode"},
+          "blender_technique": {"type": "string", "minLength": 1},
+          "camera_language": {"type": "string", "minLength": 1},
+          "reuse": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "sub_categories": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sub_id"}},
+          "helper_archetypes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z0-9_]+$"}},
+          "intensity": {"type": "number"},
+          "triggers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "sub_categories": {
+      "type": "array",
+      "minItems": 23,
+      "items": {
+        "type": "object",
+        "description": "one lane sub-category of roadmap 7.4; the twelve attributes of brief section 5 are all required",
+        "required": ["id", "lane", "route", "route_alt", "route_status", "name", "purpose_and_trigger", "when_not", "required_metadata", "shot_design", "motion", "look",
+                     "duration", "blender_strategy", "render_profile_and_cost_class", "audio_and_continuity", "qa",
+                     "archetype_examples"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/sub_id"},
+          "lane": {"$ref": "#/$defs/lane"},
+          "route": {"enum": ["J2", "J4", "J5", "H"], "description": "D-116: J5 Qwen assets + Blender 2.5D; J2 Blender clay layout -> Qwen first frame -> LTX Layout-To-Render; J4 Blender full layout -> LTX restyle; H Python helper"},
+          "route_alt": {"anyOf": [{"enum": ["J2", "J4", "J5", "LTX_A2V"]}, {"type": "null"}], "description": "D-116: the fallback route (FINAL_HIGH_LEVEL_PLAN section 3); LTX_A2V = the D-90 audio-driven clip"},
+          "route_status": {"enum": ["T", "confirmed", "rejected"], "description": "T until the phase-3 route test, then the creator's verdict (step 4)"},
+          "name": {"type": "string", "minLength": 1},
+          "purpose_and_trigger": {"type": "string", "minLength": 1},
+          "when_not": {"type": "string", "minLength": 1},
+          "required_metadata": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "shot_design": {
+            "type": "object", "required": ["sizes", "lens", "camera", "composition", "screen_direction"], "additionalProperties": false,
+            "properties": {"sizes": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "lens": {"$ref": "#/$defs/text"},
+                           "camera": {"$ref": "#/$defs/text"}, "composition": {"$ref": "#/$defs/text"},
+                           "screen_direction": {"$ref": "#/$defs/text"}}
+          },
+          "motion": {
+            "type": "object", "required": ["character", "prop", "environment", "secondary"], "additionalProperties": false,
+            "properties": {"character": {"$ref": "#/$defs/text"}, "prop": {"$ref": "#/$defs/text"},
+                           "environment": {"$ref": "#/$defs/text"}, "secondary": {"$ref": "#/$defs/text"}}
+          },
+          "look": {
+            "type": "object", "required": ["lighting", "atmosphere", "material", "palette"], "additionalProperties": false,
+            "properties": {"lighting": {"$ref": "#/$defs/text"}, "atmosphere": {"$ref": "#/$defs/text"},
+                           "material": {"$ref": "#/$defs/text"}, "palette": {"$ref": "#/$defs/text"}}
+          },
+          "duration": {
+            "type": "object", "required": ["guidance", "evidence"], "additionalProperties": false,
+            "properties": {"guidance": {"$ref": "#/$defs/text"},
+                           "evidence": {"type": "string", "pattern": "^(BP-\\d{2,3}|HYP)$",
+                                        "description": "the sourced rule the guidance rests on, or HYP (a planner heuristic)"}}
+          },
+          "blender_strategy": {
+            "type": "object", "required": ["scene_template", "reusable_asset_kinds"], "additionalProperties": false,
+            "properties": {"scene_template": {"$ref": "#/$defs/text"},
+                           "reusable_asset_kinds": {"type": "array", "items": {"$ref": "#/$defs/asset_kind"}}}
+          },
+          "render_profile_and_cost_class": {
+            "type": "object", "required": ["render_profile", "cost_class"], "additionalProperties": false,
+            "properties": {"render_profile": {"enum": ["eevee_fast", "eevee_full", "cycles_hero", "python_helper"]},
+                           "cost_class": {"enum": ["free", "still_frame", "short_clip", "long_clip", "hero_clip"],
+                                          "description": "EST until ICW-09 measures job_speeds rows"}}
+          },
+          "audio_and_continuity": {
+            "type": "object", "required": ["audio", "continuity"], "additionalProperties": false,
+            "properties": {"audio": {"$ref": "#/$defs/text"}, "continuity": {"$ref": "#/$defs/text"}}
+          },
+          "qa": {
+            "type": "object", "required": ["assertions", "failure_modes", "recovery"], "additionalProperties": false,
+            "properties": {"assertions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+                           "failure_modes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+                           "recovery": {"$ref": "#/$defs/text"}}
+          },
+          "archetype_examples": {"type": "array", "minItems": 1, "uniqueItems": true,
+                                 "items": {"type": "integer", "minimum": 1, "maximum": 20}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "lane": {"enum": ["VIDEO_3D", "STILL_3D", "HELPER"]},
+    "still_mode": {"enum": ["hold", "drift", "parallax_25d", "dramatic_curve", "camera_move_3d"]},
+    "sub_id": {"type": "string", "pattern": "^(H|S|V)\\d{1,2}$"},
+    "text": {"type": "string", "minLength": 1},
+    "asset_kind": {"enum": ["reference", "anchor", "sheet", "sprite", "picture", "plate", "prop", "collage", "lora", "prompt", "sound",
+                            "music", "font", "model", "rig", "animation", "material", "texture", "hdri", "blend_collection",
+                            "scene_template", "costume"]}
+  }
+}

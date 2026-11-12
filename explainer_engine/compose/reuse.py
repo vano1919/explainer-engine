@@ -1,3 +1,4 @@
+
 """AC-12..AC-13: a shot that returns to a setup already composed reuses that frame through a crop instead of composing (and
 repainting) a new one. ვანო 2026-10-25 02:13 Tbilisi: "if the script cuts back to a view, do not generate it again; use the
 old frame, even with a zoom or a slightly different crop, and animate it". The cartoons measured on 2026-10-25 return to an

@@ -1,3 +1,4 @@
+
 """The xworld_v2 test S2x (Opus plan, relay 2026-10-26 19:20 UTC): does the S2 storyboard idea hold for a scene of EIGHT shots?
 
 One scene is drawn as two 2x2 grids (2560x1408, panels 1280x704, both divisible by 64):

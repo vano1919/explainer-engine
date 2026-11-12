@@ -5,6 +5,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
+**Ink Chronicle route (D-96, D-97, 2026-11-05), read first:** on the Blender path a shot is a `shot_spec/2` scene (scene template, set assets, characters with rig and animation, camera rig, light rig, archetype of the roadmap's section 7.3; contracts in ICW-02, builder in ICW-06), not a picture prompt; image prompts are written only for reference art (style sheets, D-100). The still-picture route (D-43) and the animated Qwen/LTX route (D-77/D-80) below are the legacy image-generation routes; their stakes, named-hero and one-universe rules (UR-16..UR-22) still decide what a Blender shot shows.
+
 > **Route note:** a still-picture episode (D-43) uses the sprite/plate rules below; an animated episode (D-77, D-80) uses docs/SHOT_CONTINUITY.md (continuity_card/1, film_shots/2) and docs/SHOT_PROMPTS.md on Qwen-Image-2.1 + xworld_v2 — never both in one episode.
 
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
@@ -116,7 +118,7 @@ The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..
 `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`. In short:
 - Name every acting person by what the picture shows ("the nurse in the purple jacket"); a bare "the woman" paints a stranger.
 - One actor first, one big action (start, peak, settle, body parts), the others react small; acting heroes large in frame.
-- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; at most 10 s; at most three sounds.
+- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; voiced dialogue/lip-sync coverage at most 5 s, non-dialogue VIDEO action up to 15 s where continuity benefits the scene; do not cut a no-dialogue battle/task shot just to meet the dialogue cap; at most three sounds. Validate actual model/resolution/fps limits.
 - Next pose: from the master, poses only, no framing word; a new framing is a cut with the hero sheet.
 - The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
 - A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.
@@ -144,6 +146,23 @@ The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..
 - **Lanes follow the story.** Each beat gets a dramatisability score (a person deciding, acting, failing, or only a
   quantity or a place); the lane shares follow the scores, inside BP-127's run caps (house numbers of the Blueprint, not
   McKee's or Katz's), tuned later by the channel's own retention curve.
+
+### Optional visual grammar (research lead, not a shot quota)
+
+For each beat, first decide what the viewer needs to understand or feel, then choose the simplest picture that adds evidence
+or subtext instead of merely repeating the narration. The creator-supplied [cinematic craft report](../../../docs/research/cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md)
+offers these as options, not required coverage:
+
+- Establish geography before close action when the viewer needs to understand positions or scale.
+- Show physical cause and consequence, or pair an action with a meaningful reaction.
+- Delay a reveal when discovery is part of the beat; use visual contrast or a recurring motif when the comparison itself matters.
+- Compress repeated steps into a montage, or cross-cut only when parallel events create a clear question or consequence.
+- Use a map, chart, or other deterministic helper when it makes a factual relationship easier to see; source every fact and number.
+
+These are creative choices, not fixed durations, mandatory transitions, or a new visual framework. Keep screen direction and
+scene continuity; follow D-93's visual-lane target, D-95's independent speech and intent-based duration rules, and the active
+episode rulebook. The report's technical/provider claims remain unverified leads: confirm the selected adapter's actual
+capabilities and constraints before planning a generation.
 
 ### CHECKLIST (cinematography)
 

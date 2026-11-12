@@ -1,3 +1,4 @@
+
 """What a phone needs to know about the cloud (master brief 2026-10-22, stage B): one command, short answers.
 
     python -m explainer_engine.cloud status            # pods, jobs, what changed since the last look

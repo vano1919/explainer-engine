@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "render_checkpoint.schema.json",
+  "title": "Render checkpoint: the frame-level recovery state of one Blender shot render (roadmap 10.4, OR-03, OR-33); written atomically by blender/render.py (ICW-04)",
+  "type": "object",
+  "required": [
+    "schema",
+    "job_id",
+    "shot_key",
+    "spec_sha256",
+    "frames_expected",
+    "chunk_size",
+    "vault_prefix",
+    "frames",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "render_checkpoint/1"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shot_key": {
+      "$ref": "#/$defs/sha256"
+    },
+    "spec_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "frames_expected": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "chunk_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8,
+      "description": "frames per uploaded chunk (at most 8, roadmap 10.4)"
+    },
+    "vault_prefix": {
+      "type": "string",
+      "pattern": "^blender/[^/]+/[0-9a-f]{64}/frames/$",
+      "description": "blender/<job_id>/<shot_key>/frames/"
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "state",
+          "file",
+          "local_sha256",
+          "remote_sha256",
+          "stored_at"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "state": {
+            "enum": [
+              "RENDERED",
+              "DURABLY_STORED",
+              "COMMITTED"
+            ]
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "local_sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "remote_sha256": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/sha256"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stored_at": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "$ref": "#/$defs/time"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fileref": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "time": {
+      "type": "string",
+      "minLength": 10
+    }
+  }
+}

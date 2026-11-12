@@ -1,3 +1,4 @@
+
 """Prop points found on the painted pictures (the creator's CC-03, 2026-10-20: "props appear only because a rule demands
 them"). The beat-writer writes a ring's or a label's ``pos`` without seeing the picture; on titans 59 of 82 rings and labels
 whose phrase names no hero were such guesses (template values like [0.5, 0.72]) and circled empty wall or floor ('wooden

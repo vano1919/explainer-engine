@@ -1,3 +1,4 @@
+
 """The reusable sound library: every sound is stored once, described in ``manifest.json`` and found by tags.
 
 Layout: ``<root>/manifest.json`` and ``<root>/<category>/<id>.wav`` (16-bit mono WAV). Entries carry where they came

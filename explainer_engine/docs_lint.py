@@ -1,3 +1,4 @@
+
 """Documentation lint (decision D-23): one canonical home per ID, links resolve, fixtures parse. stdlib only.
 
 Run: ``python -m explainer_engine.docs_lint`` (exit 1 on findings). ``docs/PLAN_2026-10-15.md`` is history: it is
@@ -49,6 +50,11 @@ HOMES = {
     "KG": "KEYFRAME_GATE.md",
     "LY": "KEYFRAME_GATE.md",  # shot layout from real sizes and the camera (2026-10-24)  # keyframe gate: picture checks, cause log, LoRA/base pairing (2026-10-24)
     "AC": "ASSET_COMPOSE.md",  # shots composed from reusable assets (2026-10-25)
+    "LV": "SCENE_REUSE_RULES.md",  # one place, one picture (D-120, 2026-11-07)
+    "RF": "SCENE_REUSE_RULES.md",
+    "HI": "SCENE_REUSE_RULES.md",
+    "DL": "SCENE_REUSE_RULES.md",
+    "AS": "SCENE_REUSE_RULES.md",  # cut assembly gate (D-121, 2026-11-07)
     "CT": "SHOT_CONTINUITY.md",  # continuity cards of the shots of one scene (D-75, 2026-10-25)
     "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
     "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
@@ -60,6 +66,8 @@ HOMES = {
     "SD": "AUDIO_SYSTEM.md",  # the sound director checks (Blueprint P4, 2026-10-30)
     "CN": "CONTRACTS.md",  # the data contracts, the episode lifecycle and the shot cache (Blueprint P2, 2026-10-29)
     "CMP": "COMPENSATOR.md",  # the visual compensator: maps, HUD, tableaux, the eight map laws (Blueprint P5, 2026-10-30)
+    "SA": "SCENE_ASSETS.md",  # the drawn scene assets and the J5 2.5D assembly (D-116, ICW-11, 2026-11-06)
+    "LJ": "LTX_JOBS.md",  # the LTX generations of the J2/J4 routes (ltx_job/1, D-116, guide step 3, 2026-11-06)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

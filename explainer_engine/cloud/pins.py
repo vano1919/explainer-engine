@@ -1,3 +1,4 @@
+
 """``config/cloud_pins.json``: the digest of every pod image, the sha of every cloned repo and the version of every pip package a
 pod job may depend on (P1b, CR-18). stdlib only. ``runpod create`` refuses a script pod whose image is not one of these, by
 digest; ``compare`` checks the ``pins.txt`` a pod wrote against the file; ``boot_minutes_needed`` is the image-cache rule.

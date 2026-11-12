@@ -1,3 +1,4 @@
+
 """Paint plans (audit 2026-10-19, PP-01..PP-07): the image provider is chosen for every batch, the creator says yes to that batch,
 and only then is anything painted. stdlib only.
 

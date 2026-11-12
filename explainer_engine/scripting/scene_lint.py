@@ -1,3 +1,4 @@
+
 """Scene and dialogue rules SC-01..SC-10 (docs/STORY_ENGINE.md, the 2026-10-19 rewrite) on a production_script/3,
 wired as PV-48. stdlib only, free, run by ``production validate`` before any paid step.
 

@@ -5,12 +5,14 @@ phase P2; Blueprint phase 3). A contract says what the file holds, who writes it
 written by hand (by an agent or a person) or **derived** by code from other contracts. A derived file is never edited
 by hand: it carries the sha256 of every input it was made from, and a stale one is refused.
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96, D-105):** `film_shots/2` (lanes KEYFRAME_LTX, DIALOGUE_CU, ...), `shot_spec/1` and the shot-router table below describe the legacy route (Qwen keyframes, LTX clips; D-80). They stay readable and validated for the inputs already written. The Ink Chronicle contracts that replace them on the Blender path (`film_shots/3`, `shot_spec/2`, `shot_route/2` and the Blender manifests) are written (ICW-02) and listed under "Ink Chronicle contracts (ICW-02)" below.
+
 - Schemas: `explainer_engine/schemas/<name>.schema.json`; a document names its contract in `"schema": "<name>/<N>"`.
 - Validation: `explainer_engine/core/contracts.py` (`errors(doc, base)`, `validate(doc, base)` raises `ContractError`,
   CLI `python -m explainer_engine.core.contracts check <file>...`): the JSON Schema first, then the contract's
   semantic checks below (frame geometry, derived freshness, index ranges). jsonschema only, no Pydantic (plan D1).
 - Lifecycle of an episode: `explainer_engine/core/store.py` (`EpisodeJob`, `job_manifest/1`).
-- Shot cache: `explainer_engine/core/shot_cache.py` (`shot_spec/1` -> SHA-256 key).
+- Shot cache: `explainer_engine/core/shot_cache.py` (`shot_spec/1` or `/2` -> SHA-256 key).
 - Money: the one run ledger `explainer_engine/core/ledger.py` and `config/spend_caps.json` (D-56); nothing new here.
 - Fixtures: `tests/fixtures/contracts/<name>/valid*.json` and `invalid__<what>.json`; tests
   `tests/unit/test_contracts.py`, `test_lifecycle.py`, `test_shot_cache.py`, `test_one_ledger.py`,
@@ -48,6 +50,17 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `qa_report/1` | `qa/<stage>.qa_report.json` | QA gates (P8) | code | retry router, review bundle |
 | `editorial_review/3` | `story/editorial_review.json` | the critic (P3b/P8) | hand (findings), per department | `production/editorial_gate.py` (P8 accepts /3) |
 | `distribution_package/1` | `packages/<clip_id>.json` | packager (P9) | code + copy | `qa/publish_check.py`, `publish/` (P10) |
+| `film_shots/3` | `film_shots.json` | the shot designer (`visual/shot_design.py`, roadmap section 11); `scripts/migrate_film_shots_2_to_3.py` for an older card | hand | `edit/router.py` (recipe table v2), cache, assemble, `film_shots.visual_lane` |
+| `shot_spec/2` | `shots/<shot_id>.video.spec.json` / `.still.spec.json` (as /1) | `edit/router.py` | **derived** from `film_shots/3` + the asset library + the bible | `core/shot_cache.py`, the Blender runner |
+| `shot_route/2` | `shots/route.json` | `edit/router.py` | **derived** from `film_shots/3` (+ `visual_comp_manifest/1`, `audio_spine/2`) | the Blender runner, the helper renderers, assemble |
+| `blender_scene_manifest/1` | written next to the shot's render | `blender/scene_builder.py` | code (what the bpy script built) | QA, `blender/render.py` |
+| `blender_render_manifest/1` | written next to the shot's render | `blender/render.py` | code (what was rendered, how fast) | `blender/validate.py`, `blender/cost.py` (job speeds) |
+| `render_checkpoint/1` | `render_checkpoint.json` in the shot's render folder (+ its vault copy, roadmap 10.4) | `blender/render.py` | code, atomic, after each remote verify (OR-33) | resume after a lost pod (OR-03) |
+| `speech_mix_report/1` | `audio/speech_mix_report.json` | `qa/speech_mix.py` | **derived** from the script (+ spine, cards) | REVIEW (BP-105, D-99), the review bundle |
+| `scene_assets/1` | `assets/scene_assets.json` | the scene-asset writer (ICW-11, [SCENE_ASSETS](SCENE_ASSETS.md)) | hand (prompts) + the asset pod (files, sha256) | `blender/assemble_25d.py` (J5), the step-3 first frames (J2/J4) |
+| `ltx_job/1` | `ltx_jobs.json` (vault `route_test_2026-11/`) | `edit/ltx_jobs.py` (the J2/J4 spec writer, [LTX_JOBS](LTX_JOBS.md)) | derived from the route shots + layout manifests; never by hand | the route-test pod (`training/pods/p14`) |
+| `asset_library/1` | `assets/library.json` | `assets/library.py` ([WORLD_BIBLE](WORLD_BIBLE.md)) | hand (approved assets) | `library verify`, the shot writers |
+| `asset_library/2` | `assets/library.json` (once `assets/library.py` moves to it) | `assets/library.py` | hand (approved 3D assets, licences) | the Blender router, `library verify` |
 
 `editorial_review/2` already exists (D-60, the integrated review of `production_script/3`); the department layers are
 therefore version 3, not a new meaning of 2. `continuity_card/2` (P6) takes its camera side, eyeline, landmarks and
@@ -181,6 +194,68 @@ Nth of `router.SEEDS` (BP-165 `max_tries` tries, then the item stops).
 Every spec `fps` is the cards' `fps` (CN-09; a `job_manifest.json` in the folder must agree). `route.json` names its inputs by sha256: a
 changed card makes it stale (CN-02).
 
+## Ink Chronicle contracts (ICW-02, D-96)
+
+Written in ICW-02 from the [roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 10; the /1 and /2
+versions above stay readable and validated (roadmap 10.3). No stage writes these files yet: `edit/router.py`, `assets/library.py`,
+`blender/scene_builder.py`, `blender/render.py` and `qa/speech_mix.py` will (roadmap section 11, later work packages). A number the checks use comes from the registry (BP-109,
+BP-139, BP-167, BP-173, BP-175; D-59), never from this page.
+
+- **film_shots/3**: top-level `fps` (BP-167) and `style{house_look: ink_chronicle, bible_version, look?}` (no prompt field: `trigger`,
+  `video_sentence`, `neg_keyframe`, `body`, `neg_video` are refused, D-100/D-105); every shot keeps the /1 fields and the /2 geometry
+  (`duration_frames` = round(`seconds` x `fps`), `width` x `height` = the master, `lens_tier`, `focal_xy`, `continuity_ref`,
+  `blocking_ref`) and has `lane` VIDEO_3D | STILL_3D | HELPER (D-97) and `archetype` 1-20 or null (the shot designer's catalogue,
+  roadmap 7.3). By lane: VIDEO_3D needs `render_profile` (eevee_fast | eevee_full | cycles_hero) and `lipsync`; STILL_3D needs
+  `render_profile` and `still_mode` (hold | drift | parallax_25d | dramatic_curve | camera_move_3d); HELPER needs `helper_archetype`
+  (the P5 catalogue, CN-15) and has no render fields. A spoken line needs `dialogue_cover` (on_screen | off_screen); `lipsync` true
+  means a line, on screen; `cycles_hero` needs a written `why` (D-96). The refused /2 lanes are not /3 lanes: `HOST_COMMENTARY`
+  (D-89) has no successor, `DRAMA_BLOCKED_3D` becomes VIDEO_3D + an archetype (D-75/D-77, D-106). `film_shots.visual_lane`
+  dispatches on the version: /3 maps the lane straight to the BP-109 share; /2 keeps its mapping (a 2.5D tableau and a tier-hold
+  shot are stills). `film_shots.compose` refuses /3 (no prompts on the Blender path); `film_shots.shotlist` writes its own sheet.
+- **shot_spec/2**: `job_id`, `shot_id`, `lane` VIDEO_3D | STILL_3D, `recipe` blender_eevee/1 | blender_cycles/1 (matching the
+  profile), `clock{fps, frames, start_frame}`, `frame{width, height, render_scale 1.0|0.75|0.5}`, `scene{template_asset,
+  era, set_assets[], characters[]{cast_id, asset, rig, animation|null, position[3], facing_deg}, camera{rig static|push|dolly|rail|
+  orbit|dramatic_curve, start, end{pos[3], yaw_deg, pitch_deg}, lens_mm, ease}, light_rig, weather|null, props[]}` (an asset is
+  `{id, sha256}`), `performance{lipsync, rhubarb file reference|null, mouth_shapes 8, dialogue_cover|null}`, `look{bible_version,
+  line_weight_px (BP-173), crease_deg, shading_steps, view_transform AgX, grade_look, paper{asset, opacity}}`,
+  `render{profile, samples, motion_blur, denoise, output mkv_ffv1|png_seq}`, `seed`, `why` (required for cycles_hero).
+  Cache key: everything but `job_id`, `shot_id` and `clock.start_frame` (the shot's place on the episode clock moves no pixel);
+  assets count by sha256, the Rhubarb cues by their hash, never their path; asset lists are sorted.
+- **shot_spec/3** (WP-Q1, 2026-11-05): shot_spec/2 with a wider `look` and one more profile; /2 documents validate unchanged.
+  `look.view_transform` AgX | Standard | Khronos PBR Neutral (`grade_look` "None" off AgX), `look.shade_mode` (style.SHADE_MODES),
+  optional `look.shade_path` luma | lit | rgb_soft, `look.line_mode` none | faint | dark | ink with `line_weight_px` required when a
+  line is drawn and absent when not (CN-17 holds the weight to BP-173 only then); `render.profile` adds `eevee_painterly`. Keyed,
+  rendered and validated as /2 (`contracts.BLENDER_SPECS`).
+- **shot_route/2**: `job_id`, `fps`, `derived_from` (as /1), `pins.blender{version, series, archive_sha256, image|null}` (BP-175) and
+  `routes[]{shot_id, lane, recipe blender_eevee/1|blender_cycles/1|python_helper/1, specs[], comp_items[]}`: a HELPER route is
+  `python_helper/1` with comp items and no spec; a VIDEO_3D or STILL_3D route has exactly one spec (role video or still) and no comp
+  item.
+- **blender_scene_manifest/1**: what a built scene holds before it renders: `spec` (file reference), `cache_key`, `blender_version`,
+  `objects{total, meshes, armatures, lights, cameras}`, `assets[]{id, sha256, kind}`, `bounds[]{object, min[3], max[3]}`,
+  `camera_path[]{frame, pos[3], yaw_deg, pitch_deg}`, `import_settings{}`.
+- **blender_render_manifest/1**: what was rendered: `spec`, `cache_key`, `blender{version, build_hash}`, `engine`
+  eevee|cycles|workbench, `device` cpu|gpu, `gpu`, `profile`, `frames_expected`, `frames_written`, `seconds_total`,
+  `seconds_per_frame` (null iff no frame was written), `output{path, sha256, codec ffv1|png, width, height, fps}` or null until every
+  frame is written, `log` (file reference), `started_at`, `finished_at`. Its measured speeds feed the cost model (ICW-09).
+- **render_checkpoint/1** (the frame-recovery protocol, roadmap 10.4, OR-03, OR-33): `job_id`, `shot_key` (the cache key),
+  `spec_sha256`, `frames_expected`, `chunk_size`, `vault_prefix` = `blender/<job_id>/<shot_key>/frames/`, `frames[]{index, state
+  RENDERED|DURABLY_STORED|COMMITTED, file, local_sha256, remote_sha256, stored_at}`, `updated_at`. A RENDERED frame has no remote copy
+  yet; a stored or committed one carries the same remote hash and a time. A resumed pod renders only the frames not stored.
+- **speech_mix_report/1** (D-99): `derived_from{script, audio_spine?, film_shots?}`, `rule` BP-105 (the band lives there, never here),
+  `narrator_words`, `dialogue_words`, `unvoiced_words`, `narrator_share_words`, `narrator_share_seconds`, `lipsync_shots`,
+  `lipsync_seconds`, `longest_voiced_cu_s`.
+- **asset_library/2** (D-110): everything of /1 plus the kinds model, rig, animation, material, texture, hdri, blend_collection,
+  scene_template, costume; every item has `deps[]` (ids with their sha256) and `storage{location git|external, external_path|null}`;
+  the 3D kinds carry `three_d{format, skeleton_id, rig_profile, compatible_animation_sets, poly_count, bounds_m, units m, up_axis,
+  materials, retargeted_from?}`; the licence names `status` (the /1 values plus cc-by-4.0, mit-tool, gpl-tool-only, vendor-terms,
+  community-licence-revenue-capped, restricted-territory), `note`, `commercial_use` yes|no|unknown and, for a third-party asset,
+  `source_url`, `revision_or_version` and `inspected_on`. `assets/library.json` stays /1 until `assets/library.py` moves it.
+- Migration (roadmap 10.3): `python scripts/migrate_film_shots_2_to_3.py <card>... [--write] [--report <md>]` turns a /1 or /2 card
+  into /3, keeps the BP-109 shares (the report says so per card), sets `archetype` null for the shot designer, counts every default
+  it chose, refuses the two refused lanes with their decisions, and validates its output. A dry run writes nothing; the checked-in run
+  is [ICW-02_MIGRATION_DRY_RUN_2026-11-05](architecture/ICW-02_MIGRATION_DRY_RUN_2026-11-05.md). The Napoleon example is /3
+  (`examples/napoleon_vs_genghis/build_cards.py`, its `migration_report.md`); its legacy prompt package stays as the D-80 record.
+
 ## Rules
 
 | ID | Rule | Basis | Checked by |
@@ -191,8 +266,8 @@ changed card makes it stale (CN-02).
 | CN-04 | A gated state is entered only with an approval of its kind (table below); a creator or planner approval of a gate needs `by`, `ref` and a non-null `sha256` of what was approved (OR-15, OR-17, OR-19, D-50, invariant 4); `adopt` is held to the same gates | invariant 4 + the creator's gates | `EpisodeJob.move` |
 | CN-05 | The research dossier's sha256 is fixed when the job becomes RESEARCHED; an artifact recorded under another dossier hash, or a path inside another job's folder, is refused (no cross-job bleed, Blueprint GAP-01) | invariant 5 | `EpisodeJob.record_artifact` / `check_artifact` |
 | CN-06 | PUBLISHED_PUBLIC only records the creator's own Studio click (his `ref`); no code path sets a video public, and `distribution_package/1` allows only private or unlisted | invariant 4 | `EpisodeJob.move`, schema |
-| CN-07 | A shot's cache key is the SHA-256 of the canonical JSON of its `shot_spec/1` without file paths: prompt, negative, seed, model hash, LoRA hashes and weights, size, frames, fps, audio slice hash, reference hashes, blocking hash, recipe and params; one changed byte in any of them is a new key, a moved file is not; a hit needs every stored output's sha256 to match | invariant 2 (nothing paid twice) | `core/shot_cache.py` |
-| CN-08 | A shot on a video lane has 8k+1 frames, a width and height divisible by 32 and at most the clip frame limit; two-stage pipelines want multiples of 64; the numbers and the severity come from BP-139 | BP-139 | `contracts` (`film_shots/2`, `shot_spec/1`) |
+| CN-07 | A shot's cache key is the SHA-256 of the canonical JSON of its `shot_spec/1` (or `/2`, field list above) without file paths: prompt, negative, seed, model hash, LoRA hashes and weights, size, frames, fps, audio slice hash, reference hashes, blocking hash, recipe and params; one changed byte in any of them is a new key, a moved file is not; a hit needs every stored output's sha256 to match | invariant 2 (nothing paid twice) | `core/shot_cache.py` |
+| CN-08 | A shot on an LTX video lane has 8k+1 frames, a width and height divisible by 32 and at most the clip frame limit; two-stage pipelines want multiples of 64; the numbers, the severity and the recipes it binds (`applies_to_recipes`) come from BP-139: a `shot_spec/1` binds only on an `ltx_i2v/*` recipe, a Blender shot never (D-105) | BP-139 | `contracts` (`film_shots/2`, `shot_spec/1`, `ltx_recipe`) |
 | CN-09 | One frame rate per episode with video-model clips: the clips' native rate (D-85); `job_manifest.fps`, `film_shots/2.fps` and every `shot_spec/1.fps` of a video lane are equal; no pulldown or frame-rate conversion | D-85 | `contracts` |
 | CN-10 | Pods and API calls reserve in the same episode ledger (`run.json`, D-56), stopping at 80 % of a cap; no cap number is written in code outside `config/spend_caps.json` | invariant 1, 2 | `test_one_ledger.py`, `test_spend_caps_single_source.py` |
 | CN-11 | A check may FAIL only on a binding BP rule, a CLAUDE.md invariant or a house rule that quotes the creator's dated words; a check driven by a hypothesis rule is REVIEW at most (D-59) | D-59 | `test_validator_severity_tiers.py`, `sourced_rules.level` |
@@ -201,6 +276,10 @@ changed card makes it stale (CN-02).
 | CN-14 | A `distribution_package/1` lists only files that exist with their sha256, and when the job folder holds `job_manifest.json` its `source_episode_sha256` equals that manifest's `assembled_video` artifact (a package from an older render is refused) | invariant 4, 5 | `contracts.errors(doc, base)` FAIL |
 | CN-15 | An archetype named by a shot, a manifest item or a spec is one of the catalogue (`explainer_engine/edit/archetypes.json`), and a shot on the MAP or COMPENSATOR lane names an archetype of that lane | [COMPENSATOR](COMPENSATOR.md) | `contracts` (`film_shots/2`, `visual_comp_manifest/1`, `comp_spec/1`) |
 | CN-16 | A `sound_mix_manifest/2` agrees with its spine: every frame lies inside `total_frames`, which equals the spine's; `scenes[]` tile the spine without a gap or an overlap; each hit group has exactly one `sub`, one `body` and one `air`; every `word_index` is inside the spine named by `derived_from.audio_spine` (D-88) | invariant 7, D-88 | `core/contracts.py` FAIL |
+| CN-17 | A Blender shot is the master (BP-167 size and fps; `duration_frames` = round(`seconds` x `fps`)); its recipe is its profile's (eevee -> `blender_eevee/1`, `cycles_hero` -> `blender_cycles/1`); a lip-synced spec is VIDEO_3D, on screen, with its Rhubarb cues, and a spec that is not has neither; its line weight lies in BP-173's range; a `shot_route/2` names BP-175's Blender version and series, routes each shot once, a HELPER as `python_helper/1` with comp items and no spec, a 3D shot as exactly its one spec; a card whose `bible_version` is not the current bible is REVIEW | D-96, D-97, D-104, BP-167, BP-173, BP-175 | `contracts` (`film_shots/3`, `shot_spec/2`, `shot_route/2`), `film_shots.check` |
+| CN-18 | A render is honest about what exists: a `render_checkpoint/1` lives under `blender/<job_id>/<shot_key>/frames/`, names each frame once and inside the shot, and counts a frame stored only with a remote hash equal to the local one and a time; a `blender_render_manifest/1` writes at most the expected frames, names an output (the master) iff every frame is written, and its seconds per frame are its total over the frames written | OR-03, OR-33, BP-167 | `contracts` FAIL |
+| CN-19 | An `asset_library/2` names each id once; every dependency exists with the same sha256; an external asset names its path and a git one does not; a third-party licence names its source, version and inspection date; an approved asset with unknown commercial use is refused; a costume belongs to a model and an animation names its skeleton | invariant 5, invariant 6, D-110 | `contracts` FAIL |
+| CN-20 | A `speech_mix_report/1` agrees with its own counts: each narrator share equals narrator / (narrator + dialogue); the band it is judged by is BP-105's, at REVIEW (D-99) | D-99, BP-105 | `contracts` FAIL (the counts), `qa/speech_mix.py` REVIEW (the band) |
 
 ## The lifecycle (`job_manifest/1`)
 

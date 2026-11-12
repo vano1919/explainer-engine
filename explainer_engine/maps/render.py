@@ -1,3 +1,4 @@
+
 """The four map archetypes (1 flyover, 2 unit manoeuvre, 3 formation, 4 logistics) drawn as a pure function of (spec, frame).
 
 The base is the vector plate (or a certified painted plate), the overlays are drawn over it at the frame the viewer sees: routes that
