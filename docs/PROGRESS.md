@@ -5488,3 +5488,11 @@ The delta audit (`BAKEOFF_DELTA_AUDIT.md`) closed A1, A3, A5 and B2-B6 and found
 - N4: the hooks now see `modal` called by a path (`.venv/bin/modal`, `modal.exe`, `python -m modal`).
 - New tests run `write_clip`, `make_wan` and `body` with a fake pipeline, a fake diffusers and a fake HF: a full Wan run, a
   deadline in clip 2, a second attempt, and HF down.
+
+## 2026-11-12 — the creator's money line for the bake-off
+
+At 17:50 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2enCV9tSdSVx7ivWPgEYur, "ა და ა", answer 1ა) the creator set the bake-off's
+caps: $2.5 per run and $6.5 in all. His word is recorded with `python -m explainer_engine.governance ok protected_config`.
+`config/spend_caps.json` gains its own `modal_bakeoff` line (`core/spend_caps.modal_bakeoff()`), which the bake-off's preflight
+reads. The Wan route's `modal` line stays unset, so that route still has a zero budget until rung L3. Test:
+`tests/unit/test_v43_video_bakeoff.py`.

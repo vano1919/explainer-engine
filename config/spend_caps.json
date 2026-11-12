@@ -117,5 +117,11 @@
   },
   "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card.",
   "_runpod_per_pod_note": "2026-11-06 14:09 UTC, the creator (card cmsg_01Hnu5zB86sjUj5GtTgaUkPWCBFNhcLbboHYEu9ndfN9Zn, \"$10 ამ პოდისთვის\"): per_pod_usd 6.9 -> 10 for the step-3 lean pod (PR #146) only; back to 6.9 after that pod.",
-  "_runpod_hours_note": "2026-10-26 02:15 Tbilisi, the creator (\"ყველა კი\" to the night plan): max_hours_per_pod 4 -> 5 so the xworld_v1 training pod may run 5 h (its own cap $4)."
+  "_runpod_hours_note": "2026-10-26 02:15 Tbilisi, the creator (\"ყველა კი\" to the night plan): max_hours_per_pod 4 -> 5 so the xworld_v1 training pod may run 5 h (its own cap $4).",
+  "modal_bakeoff": {
+    "per_run_usd": 2.5,
+    "tests_total_usd": 6.5,
+    "for": "the v4.3 video bake-off (training/pods/bakeoff/plan_v43.json): each run's cap at most 2.5, all its runs together at most 6.5; only this test: the Wan route's own `modal` line is still unset (zero budget; its per-run and episode lines follow rung L3, answer 3 of 2026-11-12 14:01 UTC)",
+    "decided": "the creator, 2026-11-12 17:50 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2enCV9tSdSVx7ivWPgEYur: \"ა და ა\" (answer 1ა: $2.5 per run, $6.5 total, run the bake-off)"
+  }
 }

@@ -501,3 +501,13 @@ def test_lightning_timesteps_are_the_authors():
     assert B.shifted_timesteps(4, 5.0) == [1000.0, 937.5, 833.3, 625.0]
     assert B.variant(PLAN, "wan_a14b_lightning")["scheduler"]["timesteps"] == B.shifted_timesteps(4, 5.0)
     assert B.linear_sigmas(4) == [1.0, 0.75, 0.5, 0.25]
+
+
+def test_the_creators_bakeoff_line_is_its_own_and_leaves_the_wan_route_at_zero():
+    from explainer_engine.core import spend_caps
+    line = spend_caps.modal_bakeoff()
+    assert line["per_run_usd"] == 2.5 and line["tests_total_usd"] == 6.5 and "cmsg_" in line["decided"]
+    assert max(v["cap_usd"] for v in PLAN["variants"]) <= line["per_run_usd"] and PLAN["total_cap_usd"] <= line["tests_total_usd"]
+    with pytest.raises(spend_caps.OverCeiling, match="zero approved budget"):
+        spend_caps.modal()
+    B.preflight(PLAN)

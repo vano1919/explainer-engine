@@ -78,6 +78,16 @@ def check_caps(caps: dict) -> dict:
     return out
 
 
+def modal_bakeoff() -> dict:
+    """The creator's line for the v4.3 video bake-off only (``modal_bakeoff``: ``per_run_usd``, ``tests_total_usd``; the creator
+    2026-11-12 17:50 UTC). It is not the Wan route's ``modal`` line: that one stays unset (a zero budget) until rung L3."""
+    m = load().get("modal_bakeoff")
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0  # noqa: E731
+    if not (isinstance(m, dict) and num(m.get("per_run_usd")) and num(m.get("tests_total_usd"))):
+        raise OverCeiling("no modal_bakeoff line in config/spend_caps.json: the bake-off spends nothing until the creator sets it")
+    return m
+
+
 def modal(episode: bool = False) -> dict:
     """The Modal line (``modal``: ``per_run_usd``, ``per_episode_usd``; v4.3 D-131: Wan runs on Modal). A missing or
     non-positive ``per_run_usd`` = refused: until the creator adds the line, Modal has a zero approved project budget

@@ -210,12 +210,12 @@ def token_ok(token, sha) -> bool:
 
 def preflight(plan, env=os.environ, line=None) -> None:
     """Free, local, before any call: the plan holds; each cap stays under the creator's per-run Modal line and the plan's total
-    under its ``tests_total_usd``."""
+    under its ``tests_total_usd`` (``config/spend_caps.json`` ``modal_bakeoff``, the creator 2026-11-12 17:50 UTC)."""
     bad = plan_problems(plan)
     if line is None:
         try:
             from explainer_engine.core import spend_caps
-            line = spend_caps.modal()
+            line = spend_caps.modal_bakeoff()
         except Exception as exc:  # noqa: BLE001 - no line = a zero budget
             bad.append(f"no Modal line in config/spend_caps.json ({type(exc).__name__}: {exc})")
     if line is not None:
