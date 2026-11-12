@@ -5277,3 +5277,25 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   chunks drawn/reused/joined with a dissolve, a short clip refused, and the whole chain rehearsed on a 3-shot episode).
   docs_lint 0 findings.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 Fable audit fixes 1-3: the Wan adapter on the one ledger, the Modal backend wired, the Wan worker on the v15 template (thread "Implement v4.3 episode-first rebuild")
+- Fix 3 (R-E): `aivideo/wan_adapter.run_shot` takes the run's `core/ledger.Run`; a paid backend needs the OR-23 approval and the
+  Run, the plan's cap and the run's cap may not pass the creator's line (`core/spend_caps.modal()`: `modal.per_run_usd`,
+  `per_episode_usd`), every attempt is reserved before it is sent (the 80 % stop) and settled when the backend reports a bill.
+  `config/spend_caps.json` has no `modal` line yet: Modal has a zero approved budget and every paid Wan call is refused until the
+  creator sets it (not edited here, it is his file). The jsonl attempt log stays for `paid_calls_approved`.
+- Fix 2: `ModalWanBackend` is wired: priced from `cloud/modal_schedule` (GPU + CPU + memory of the launch's size, prices of
+  2026-11-07) and the speed measured on L3; launches `modal run --detach <worker>::main --job <spec>` through an injected runner,
+  reads the app id (`cloud/modal_run.parse_app_id`), stops a failed app by id (`stop_target`), fetches the clip from HF
+  (`hf_fetch`). It refuses (nothing sent) while the launch file has a null pin, the ladder is not at L4, `EE_MODAL_GO` is not the
+  creator's message id, the `modal` line is missing, or no runner is given.
+- Fix 1: `training/pods/wan/modal_wan_jobs.py` + `launch.json` on the v15 template: timeouts from the caps (OR-37), retries 0,
+  preflight before the GO gate, weights only from the Volume ee-weights (L2 checks their sha256), the start picture pinned by
+  sha256, clip + measurement + beat to HF as they are made and to the Volume. Ladder: L0 local tests, L1 `::check` (CPU
+  imports + pipeline class), L2 `::weights` (CPU), L3 `::smoke` (GPU, measures `s_per_clip_s` and the cold start), L4 `::main`;
+  `cloud/modal_run.gate` / `record_rung` and `python -m explainer_engine.cloud.modal_run record|show` keep the order. The
+  committed launch file pins nothing (OR-22): the model, revision, weights, pipeline, settings and caps are the creator's to pick.
+  T4 of plan section 7 is split into these rungs (RT-07 in [EPISODE_FIRST](EPISODE_FIRST.md)).
+- Tests: `test_v43_wan_adapter.py` (19, the paid path now with a Run and a caps file; the old "not wired" check became the
+  refusal and wiring tests), `test_v43_wan_worker.py` (9). Cost: $0. Nothing paid or remote was run.
+

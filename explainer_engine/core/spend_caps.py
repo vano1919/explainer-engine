@@ -76,3 +76,16 @@ def check_caps(caps: dict) -> dict:
         elif out[service] > ceiling + 1e-9:
             raise OverCeiling(f"{service} cap {out[service]} is above the creator's ceiling {ceiling} (config/spend_caps.json)")
     return out
+
+
+def modal() -> dict:
+    """The Modal line (``modal``: ``per_run_usd``, ``per_episode_usd``; v4.3 D-131: Wan runs on Modal). Missing or not a positive
+    number = refused: until the creator adds the line, Modal has a zero approved project budget (.claude/rules/
+    cloud-platforms.md section 4), whatever an approval card says."""
+    m = load().get("modal")
+    ok = isinstance(m, dict) and all(isinstance(m.get(k), (int, float)) and not isinstance(m.get(k), bool) and m[k] > 0
+                                     for k in ("per_run_usd", "per_episode_usd"))
+    if not ok:
+        raise OverCeiling("no modal per_run_usd / per_episode_usd in config/spend_caps.json: Modal spends nothing until the "
+                          "creator sets the line (zero approved budget)")
+    return m

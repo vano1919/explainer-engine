@@ -6,8 +6,14 @@ what every backend needs and none may skip:
 1. **Money before the call.** ``Backend.estimate`` prices the job from MEASURED seconds on the backend's GPU
    (``measured_s_per_clip_s`` and ``usd_per_hour``); a backend with no measurement cannot price a job and the adapter refuses
    it. A paid backend also needs an approval record (the OR-23 plan agreed with the creator: its id, the cap in USD) and the
-   run's ledger; the estimate of every attempt (retries included) must fit under the cap that is left. Nothing in this
-   package runs a paid backend: the Modal backend refuses until the creator's word is recorded (plan P6.3, OR-23, OR-34).
+   run's ledger ``core/ledger.Run`` (D-56, R-E of the Fable audit 2026-11-12): the plan's cap and the run's cap of the
+   backend's service may not pass the creator's line in ``config/spend_caps.json`` (``modal``: no line = a zero approved
+   budget, every paid call refused), every attempt is reserved in the Run before it is sent (the 80 % stop applies), and the
+   estimate of every attempt (retries included) must fit under what is left of the plan and of the run.
+   The jsonl attempt log stays beside it for the runner's acceptance (``paid_calls_approved``).
+   The Modal backend (``ModalWanBackend``) launches the Wan worker ``training/pods/wan/modal_wan_jobs.py`` only on rung L4 of
+   the OR-37 ladder (``cloud/modal_run``), with a pinned launch file, a measured speed from L3 and ``EE_MODAL_GO`` set to the
+   creator's message id; nothing in the tests sends a call.
 2. **Real QA after every clip** (``qa_clip``), replacing the archive's ``passed: True``: the clip decodes, has at least the
    frames the shot needs, is not one frozen picture, its first frame matches the start picture (and the last the end
    picture), it holds no black, blown or flat frames, its longest frozen run, and the face against the start picture (SFace,
@@ -21,13 +27,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import numpy as np
 
+from explainer_engine.core import spend_caps
 from explainer_engine.core.errors import ConfigError, ContractError
+from explainer_engine.core.ledger import STOP_FRACTION, CapReached
 from explainer_engine.qa import gates as G
 from explainer_engine.standards import sourced_rules as SR
 
@@ -75,9 +84,11 @@ class Approval:
 
 
 class Backend:
-    """One way to make a Wan clip. ``paid`` backends need an Approval; ``measured`` speeds price the jobs."""
+    """One way to make a Wan clip. ``paid`` backends need an Approval and a Run; ``measured`` speeds price the jobs; a paid
+    backend names the ledger ``service`` its money is reserved under."""
     name = "base"
     paid = False
+    service: str | None = None
     measured_s_per_clip_s: float | None = None   # wall seconds of GPU per second of clip, measured on this backend
     usd_per_hour: float = 0.0
     setup_usd: float = 0.0
@@ -93,15 +104,130 @@ class Backend:
         raise NotImplementedError
 
 
+def service_ceiling(service: str) -> float:
+    """The creator's per-run line for a paid service (``config/spend_caps.json``): ``modal_usd`` -> ``modal.per_run_usd``
+    (refused while the line is missing), any other service -> its ``per_episode`` line (refused when it has none)."""
+    if service == "modal_usd":
+        return float(spend_caps.modal()["per_run_usd"])
+    v = spend_caps.episode_ceiling(service)
+    if v is None:
+        raise spend_caps.OverCeiling(f"no {service} line in config/spend_caps.json: it spends nothing without the creator's line")
+    return float(v)
+
+
+WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
+
+
+def launch_problems(launch: dict | None) -> list[str]:
+    """What keeps a Wan launch file from a paid run (the worker's own check, ``training/pods/wan/modal_wan_jobs``): every pin of
+    the model (repo, revision, file shas), the pipeline class, every generation setting, the HF output folder, the dated price
+    and the caps must be written down (OR-22, OR-23), none left None."""
+    if not isinstance(launch, dict):
+        return ["no launch file (training/pods/wan/launch.json)"]
+    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+    return WJ.launch_problems(launch)
+
+
 class ModalWanBackend(Backend):
-    """Wan on Modal: wired only after the OR-23 plan, the OR-34 audit and the creator's word (plan P6.3). Until then it
-    refuses every job; the adapter, the QA and the fallback are tested with a fake backend."""
+    """Wan on Modal (D-131): the worker ``training/pods/wan/modal_wan_jobs.py`` on the v15 template, launched with
+    ``modal run --detach <worker>::main`` by an injected ``runner(argv) -> (returncode, output)``; the clip is read back from
+    the worker's HF output by an injected ``fetch(job, out_mp4)``.
+
+    Price: the GPU's per-second rate plus the CPU cores and memory the worker asks for (``cloud/modal_schedule``, prices of
+    ``PRICES_DATE``), times the speed MEASURED on rung L3 (``ladder.json``: ``measured.s_per_clip_s`` and the cold start
+    ``measured.setup_s`` paid per launch). It refuses (ConfigError, nothing sent) while: the launch file is not pinned, the
+    ladder's next rung is not L4 (L0-L3 not all green, or one red), ``EE_MODAL_GO`` is not the creator's message id, the
+    ``modal`` line is missing in ``config/spend_caps.json``, or no runner was given. A failed launch stops its app by id
+    (``modal_run.stop_target``: ephemeral apps stop only by id)."""
     name = "modal_wan"
     paid = True
+    service = "modal_usd"
+
+    def __init__(self, launch: dict | None = None, ladder: dict | None = None, *, runner=None, fetch=None,
+                 gpu: str = "A100-80GB", cores: int = 8, ram_gib: int = 64, env=None):
+        from explainer_engine.cloud import modal_schedule as MS
+        if isinstance(launch, dict):
+            gpu = launch.get("gpu") or gpu
+        if gpu not in MS.GPUS:
+            raise ConfigError(f"unknown Modal GPU {gpu!r}; known: {sorted(MS.GPUS)}")
+        self.launch, self.ladder = launch, ladder or {}
+        self.runner, self.fetch, self.env = runner, fetch, os.environ if env is None else env
+        if isinstance(launch, dict):   # the worker's size is the launch file's, so the price is the one it pays
+            gpu, cores, ram_gib = launch.get("gpu") or gpu, launch.get("cpu") or cores, launch.get("memory_gib") or ram_gib
+        self.gpu, self.cores, self.ram_gib = gpu, cores, ram_gib
+        per_s = MS.GPUS[gpu]["usd_s"] + cores * MS.CPU_CORE_S + ram_gib * MS.MEM_GIB_S
+        self.usd_per_hour = round(per_s * 3600.0, 4)
+        self.prices_date = MS.PRICES_DATE
+        m = self.ladder.get("measured") or {}
+        if m and m.get("gpu") not in (None, gpu):
+            raise ConfigError(f"the L3 speed was measured on {m.get('gpu')}, not on {gpu}: measure it there first")
+        self.measured_s_per_clip_s = m.get("s_per_clip_s")
+        self.setup_usd = round(float(m.get("setup_s") or 0.0) * per_s, 4)
+
+    def refusals(self) -> list[str]:
+        from explainer_engine.cloud import modal_run as MR
+        out = launch_problems(self.launch)
+        rung = MR.next_rung(list(self.ladder.get("done") or []), self.ladder.get("red"))
+        if rung != "L4":
+            out.append(f"the OR-37 ladder is at {rung or 'a red rung'}, not L4: L0-L3 run first, in order")
+        if self.measured_s_per_clip_s is None:
+            out.append("no speed measured on L3")
+        if not str(self.env.get("EE_MODAL_GO") or "").startswith("cmsg_"):
+            out.append("EE_MODAL_GO is not set to the creator's message id")
+        try:
+            spend_caps.modal()
+        except spend_caps.OverCeiling as exc:
+            out.append(str(exc))
+        if self.runner is None or self.fetch is None:
+            out.append("no Modal runner / fetch was given")
+        return out
+
+    def _stop(self, app_id: str | None) -> None:
+        from explainer_engine.cloud import modal_run as MR
+        rc, text = self.runner(["modal", "app", "list", "--json"])
+        ids = MR.stop_target(text, self.launch["app_name"]) if rc == 0 and self.launch.get("app_name") else []
+        for i in sorted(set(ids) | ({app_id} if app_id else set())):
+            self.runner(["modal", "app", "stop", i])
 
     def generate(self, job: WanJob, out_mp4: Path) -> dict:
-        raise ConfigError("the Modal Wan backend is not wired: it needs the OR-23 plan agreed with the creator, the "
-                          "Fable audit (OR-34) and his word before the first paid clip (plan P6.3)")
+        from explainer_engine.cloud import modal_run as MR
+        bad = self.refusals()
+        if bad:
+            raise ConfigError(f"{job.shot_id}: the Modal Wan backend refuses ({'; '.join(bad)}); nothing was sent "
+                              "(plan P6.3, OR-23, OR-34, OR-37)")
+        out_mp4 = Path(out_mp4)
+        spec = out_mp4.with_suffix(".job.json")
+        spec.write_text(json.dumps(dict(asdict(job), launch_sha=_sha_json(self.launch)), ensure_ascii=False), encoding="utf-8")
+        rc, text = self.runner(["modal", "run", "--detach", f"{WORKER}::main", "--job", str(spec)])
+        app_id = MR.parse_app_id(text)
+        if rc != 0:
+            self._stop(app_id)
+            raise RuntimeError(f"modal run exited {rc} (app {app_id}); the app was stopped")
+        try:
+            self.fetch(job, out_mp4)
+        except Exception:
+            self._stop(app_id)
+            raise
+        return {"app_id": app_id, "gpu": self.gpu, "usd_per_hour": self.usd_per_hour, "prices_date": self.prices_date}
+
+
+def clip_name(shot_id: str, seed: int) -> str:
+    """The clip's name in the worker's ``hf_out`` (``training/pods/wan/modal_wan_jobs.clip_name`` is the same)."""
+    return f"{shot_id}_seed{seed}.mp4"
+
+
+def hf_fetch(launch: dict, repo: str = "vano1919/tmr-artifacts"):
+    """The default ``fetch`` of ModalWanBackend: the worker's clip from HF ``hf_out`` (it was uploaded as it was made, OR-33)."""
+    def fetch(job: WanJob, out_mp4: Path) -> None:
+        from huggingface_hub import hf_hub_download
+        p = hf_hub_download(repo, f"{launch['hf_out']}/{job.shot_id}/{clip_name(job.shot_id, job.seed)}", repo_type="dataset",
+                            local_dir=str(Path(out_mp4).parent / "_hf"))
+        Path(out_mp4).write_bytes(Path(p).read_bytes())
+    return fetch
+
+
+def _sha_json(d) -> str:
+    return hashlib.sha256(json.dumps(d, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
 class ComfyWanBackend(Backend):
@@ -269,39 +395,74 @@ def spent(ledger: Path) -> float:
                      if l.strip()), 4)
 
 
-def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, approval: Approval | None = None,
+def _plan_spent(run, plan_id: str) -> float:
+    return round(sum(r["amount"] for k, r in run.data.get("reserved", {}).items() if k.startswith(f"wan/{plan_id}/")), 6)
+
+
+def _check_money(job: WanJob, backend: Backend, est: dict, approval: Approval | None, run) -> None:
+    if approval is None:
+        raise ConfigError(f"{job.shot_id}: {backend.name} is paid and no approved OR-23 plan was given")
+    if run is None:
+        raise ConfigError(f"{job.shot_id}: {backend.name} is paid and no run ledger (core/ledger.Run) was given")
+    if not backend.service:
+        raise ConfigError(f"{backend.name} is paid and names no ledger service")
+    try:
+        ceiling = service_ceiling(backend.service)
+    except spend_caps.OverCeiling as exc:
+        raise ConfigError(f"{job.shot_id}: {exc}; nothing was sent") from None
+    cap = run.data["caps"].get(backend.service)
+    if cap is None:
+        raise ConfigError(f"{job.shot_id}: the run has no {backend.service} cap; nothing was sent")
+    for what, v in (("plan " + approval.plan_id, approval.cap_usd), ("the run's", cap)):
+        if v > ceiling + 1e-9:
+            raise ConfigError(f"{job.shot_id}: {what} cap ${v:g} is above the creator's ${ceiling:g} line for "
+                              f"{backend.service} (config/spend_caps.json); nothing was sent")
+    left = min(approval.cap_usd - _plan_spent(run, approval.plan_id), cap * STOP_FRACTION - run.spent(backend.service))
+    if est["usd"] * MAX_ATTEMPTS > left + 1e-9:
+        raise ConfigError(f"{job.shot_id}: {MAX_ATTEMPTS} attempt(s) at ${est['usd']:.4f} do not fit under the ${left:.4f} "
+                          f"left of plan {approval.plan_id} and the run's {int(STOP_FRACTION * 100)} % stop; nothing was sent")
+
+
+def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, approval: Approval | None = None, run=None,
              shot: dict | None = None, script: dict | None = None, fallback: bool = True) -> dict:
-    """Make one Wan shot: price, cap, generate, QA, one retry on a FAIL, then the 2.5D fallback. Returns the shot report."""
+    """Make one Wan shot: price, cap, generate, QA, one retry on a FAIL, then the 2.5D fallback. Returns the shot report.
+    ``run`` is the paid run's ``core/ledger.Run``: each paid attempt is reserved in it before it is sent."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     attempts = []
     est = backend.estimate(job)
     if backend.paid:
-        if approval is None:
-            raise ConfigError(f"{job.shot_id}: {backend.name} is paid and no approved OR-23 plan was given")
-        left = approval.cap_usd - spent(ledger)
-        if est["usd"] * MAX_ATTEMPTS > left + 1e-9:
-            raise ConfigError(f"{job.shot_id}: {MAX_ATTEMPTS} attempt(s) at ${est['usd']:.4f} do not fit under the ${left:.4f} "
-                              f"left of plan {approval.plan_id}'s cap; nothing was sent")
+        _check_money(job, backend, est, approval, run)
     seed = job.seed
     for n in range(1, MAX_ATTEMPTS + 1):
         j = WanJob(**dict(asdict(job), seed=seed))
         clip = out_dir / f"{job.shot_id}_try{n}.mp4"
         t0 = time.time()
+        item = f"wan/{approval.plan_id}/{job.shot_id}/try{n}" if backend.paid else None
+        if backend.paid:
+            try:
+                run.reserve(backend.service, est["usd"], item)
+            except CapReached as exc:
+                raise ConfigError(f"{job.shot_id}: attempt {n}: {exc}; nothing more was sent") from None
         _ledger_line(ledger, {"shot_id": job.shot_id, "attempt": n, "seed": seed, "backend": backend.name, "event": "submit",
-                              "estimate_usd": est["usd"] if backend.paid else 0.0,
+                              "estimate_usd": est["usd"] if backend.paid else 0.0, "ledger_item": item,
                               "plan_id": approval.plan_id if approval else None, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ")})
-        error = None
+        error, info = None, {}
         try:
-            backend.generate(j, clip)
+            info = backend.generate(j, clip) or {}
         except ConfigError:
+            if backend.paid:   # refused before anything was sent: the reservation is given back
+                run.settle(backend.service, item, 0.0)
             raise
         except Exception as exc:  # noqa: BLE001 - a backend failure is a FAIL row, recorded, then the retry or fallback
             error = f"{type(exc).__name__}: {exc}"
         rows = qa_clip(clip, j) if error is None else [G.row("clip_made", False, error)]
         v = G.verdict(rows)
+        if backend.paid and isinstance(info.get("billed_usd"), (int, float)):
+            run.settle(backend.service, item, float(info["billed_usd"]))
         rec = {"attempt": n, "seed": seed, "clip": str(clip), "wall_s": round(time.time() - t0, 2), "gates": v,
-               "sha256": hashlib.sha256(clip.read_bytes()).hexdigest() if clip.is_file() else None}
+               "sha256": hashlib.sha256(clip.read_bytes()).hexdigest() if clip.is_file() else None,
+               "backend_info": {k: info[k] for k in ("app_id", "gpu", "billed_usd") if k in info}}
         _ledger_line(ledger, {"shot_id": job.shot_id, "attempt": n, "event": "done", "status": v["status"],
                               "sha256": rec["sha256"], "estimate_usd": 0.0})
         attempts.append(rec)

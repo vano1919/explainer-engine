@@ -1,0 +1,18 @@
+{
+  "_doc": "The Wan launch file of modal_wan_jobs.py (v4.3 plan P6.3, D-131, Fable audit 2026-11-12 fix 1). Every pin stays null until the creator (or the OR-24 plan thread with his word) picks the model, its revision and every setting (OR-22: Claude never picks them); while one is null aivideo/wan_adapter.launch_problems refuses and the worker's entrypoints stop before any remote call. model_files: file -> sha256 of the weights on the Volume ee-weights (L2 checks them).",
+  "app_name": "ee-wan-jobs",
+  "model_repo": null,
+  "model_revision": null,
+  "model_files": {},
+  "pipeline": null,
+  "end_image_arg": null,
+  "gpu": "A100-80GB",
+  "cpu": 8,
+  "memory_gib": 64,
+  "usd_per_h": null,
+  "prices_date": null,
+  "hf_out": null,
+  "settings": {},
+  "caps": {"smoke_usd": null, "run_usd": null, "cold_start_s": null},
+  "decided": null
+}
