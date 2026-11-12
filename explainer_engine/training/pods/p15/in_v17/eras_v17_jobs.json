@@ -1,0 +1,74 @@
+{
+ "run": "eras_v17",
+ "out": "explainer-engine/reference_round_1/qwen_v17",
+ "inputs": {
+  "style_ref.jpg": "e8527ea1d77bdf20a3c782c2ab6badee689043ef5ec9aab6080725443707a0fb"
+ },
+ "groups": [
+  {
+   "lora_weight": 0.0,
+   "jobs": [
+    {
+     "name": "E1_egypt",
+     "prompt": "Use image 1 only as the visual style: keep exactly its world look, painterly cinematic rendering, warm golden sunset rim light, glowing haze, rich warm colours, soft detailed textures, cosy romantic adventure mood and the same kind of attractive, believable, slightly stylized human faces. Do not copy its two people, their pose or its place. New scene: Ancient Egypt, about 1300 BCE: a young scribe and a potter woman share bread on a reed mat on the bank of the Nile at sunset, palm trees, a felucca sail, distant temple pylons glowing, an oil lamp beside them. No text, no letters.",
+     "refs": [
+      "in:style_ref.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "E2_rome",
+     "prompt": "Use image 1 only as the visual style: keep exactly its world look, painterly cinematic rendering, warm golden sunset rim light, glowing haze, rich warm colours, soft detailed textures, cosy romantic adventure mood and the same kind of attractive, believable, slightly stylized human faces. Do not copy its two people, their pose or its place. New scene: Ancient Rome, about 100 CE: a young legionary off duty and a baker woman laugh on the steps of a sunlit side street near the Forum, terracotta roofs, washing lines, a brazier, golden evening light. No text, no letters.",
+     "refs": [
+      "in:style_ref.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "E3_medieval",
+     "prompt": "Use image 1 only as the visual style: keep exactly its world look, painterly cinematic rendering, warm golden sunset rim light, glowing haze, rich warm colours, soft detailed textures, cosy romantic adventure mood and the same kind of attractive, believable, slightly stylized human faces. Do not copy its two people, their pose or its place. New scene: A medieval mountain village, about 1200 CE: a young blacksmith and a weaver woman sit on a stone wall above the valley at sunset, a castle with towers on the ridge, thatched houses, a lantern, a small fire. No text, no letters.",
+     "refs": [
+      "in:style_ref.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "E4_viking",
+     "prompt": "Use image 1 only as the visual style: keep exactly its world look, painterly cinematic rendering, warm golden sunset rim light, glowing haze, rich warm colours, soft detailed textures, cosy romantic adventure mood and the same kind of attractive, believable, slightly stylized human faces. Do not copy its two people, their pose or its place. New scene: Viking age Norway, about 900 CE: a young shipwright and a woman with braided hair sit by a fire on a fjord shore at sunset, a longship pulled up on the stones, turf-roofed houses, mist on the water. No text, no letters.",
+     "refs": [
+      "in:style_ref.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "E5_1900s",
+     "prompt": "Use image 1 only as the visual style: keep exactly its world look, painterly cinematic rendering, warm golden sunset rim light, glowing haze, rich warm colours, soft detailed textures, cosy romantic adventure mood and the same kind of attractive, believable, slightly stylized human faces. Do not copy its two people, their pose or its place. New scene: A harbour city around 1900: a young dock worker and a seamstress share a moment on a rooftop at sunset, brick chimneys, a steamship in the harbour, gas lamps lighting up below, warm haze. No text, no letters.",
+     "refs": [
+      "in:style_ref.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    }
+   ]
+  }
+ ]
+}
