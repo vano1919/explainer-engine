@@ -230,12 +230,64 @@ def test_the_scene_test_spec_pins_its_picture_plan_and_chain_and_the_ledger_refu
     out.write_text(json.dumps(spec))
     assert L.read_job(str(out))["start_sha256"] == scene["start_picture"]["sha256"]
     led = tmp_path / "led.json"
+    assert spec["ledger"]["service"] == "modal_ltx" and spec["ledger"]["item"] == f"{spec['run_id']}/love_c1"
     assert SR.reserve(spec, path=led) == LAUNCH["caps"]["run_usd"]
     with pytest.raises(SystemExit, match="already holds"):
         SR.reserve(spec, path=led)
-    assert SR.settle(spec, 360, path=led) == round(360 * L.usd_per_h(LAUNCH) / 3600, 4)
+    spec["ledger"]["path"] = str(led)
+    L.claim_launch(spec)
+    with pytest.raises(SystemExit, match="launched already"):
+        L.claim_launch(spec)                                     # a second main of the same spec never starts the GPU
+    assert L.settle_launch(spec, 360) == round(360 * L.usd_per_h(LAUNCH) / 3600, 4)
     data = json.loads(led.read_text())
     assert data["reserved"][SR.item(spec)]["settled"] and abs(data["spent"]["modal_ltx"] - 360 * L.usd_per_h(LAUNCH) / 3600) < 1e-3
     pic.write_bytes(b"changed")
     with pytest.raises(SystemExit, match="not the one the scene pins"):
         SR.job_spec(sp)
+
+
+def test_main_refuses_a_spec_without_its_open_reservation(tmp_path):
+    spec = {"shot_id": "c1", "ledger": {"path": str(tmp_path / "l.json"), "service": "modal_ltx", "item": "rid/c1"}}
+    with pytest.raises(SystemExit, match="no open modal_ltx reservation"):
+        L.claim_launch(spec)
+    with pytest.raises(SystemExit, match="names no ledger"):
+        L.claim_launch({"shot_id": "c1"})
+
+
+def test_a_chained_clip_starts_12_frames_before_the_end_of_the_one_before(container, monkeypatch):
+    from explainer_engine.standards import sourced_rules as SRU
+    assert LAUNCH["chain_overlap_frames"] == round(SRU.T("BP-187", "audio_overlap_s") * LAUNCH["native"]["fps"])
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    res = _run(container)
+    picks = [c[c.index("-vf") + 1] for c in container.calls if c[0] == "ffmpeg"]
+    assert picks == ["select=eq(n\\,220)"] * 2                         # 233 frames: index 232 - 12
+    assert [r.get("chain_from_frame", {}).get("frame") for r in res["chain"]] == [None, 220, 220]
+
+
+def test_a_kill_in_clip_three_leaves_clips_one_and_two_on_the_volume_and_hf(container, monkeypatch):
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    real, n = container.sh, [0]
+
+    def dies(cmd, **kw):
+        if cmd[0] != "ffmpeg":
+            n[0] += 1
+            if n[0] == 3:
+                raise SystemExit("the container is killed")          # not an Exception: no end path runs
+        return real(cmd, **kw)
+    container.sh = dies
+    api = FakeApi()
+    with pytest.raises(SystemExit):
+        _run(container, api=api)
+    vol = container.tmp / "w" / L.VOL_OUT / "rid" / "c1"
+    assert (vol / "c1_seed1.mp4").is_file() and (vol / "c2_seed2.mp4").is_file()
+    assert {"c1_seed1.mp4", "c2_seed2.mp4"} <= {Path(k).name for k in api.store}
+    rows = json.loads((vol / "c1.measured.json").read_text())["chain"]
+    assert [r["state"] for r in rows] == ["DONE", "DONE"]
+
+
+def test_a_hung_start_is_bounded_by_the_startup_timeout():
+    bad = dict(copy.deepcopy(LAUNCH), startup_timeout_s=None)
+    assert any("startup_timeout_s" in x for x in L.launch_problems(bad))
+    assert LAUNCH["startup_timeout_s"] <= LAUNCH["caps"]["cold_start_s"]
+    assert (L.TIMEOUTS[1] + LAUNCH["caps"]["cold_start_s"]) * L.usd_per_h(LAUNCH) / 3600 <= LAUNCH["caps"]["run_usd"]
+    assert "startup_timeout=LAUNCH[\"startup_timeout_s\"]" in Path(L.__file__).read_text()

@@ -10,7 +10,7 @@
     "from": "explainer-engine/main_style/main_style_5709.png (HF vano1919/tmr-artifacts, sha256 d882d52d2ab09c2ee09bb747dfb17c7f1ab1bb75f7c6b5b64237f727357babbb), cropped to 1181x650 (x 15..1196, y 85..735 of 1402x1122) so the lantern (not of the Toba era) is out of frame"
   },
   "sound": "LTX's own (way A, D-132): speech, fire and wind from the prompt; no separate sound",
-  "line_end_rule": "every line ends at least 0.5 s before its clip ends; the clips overlap 0.5 s of sound at assembly (the creator 2026-11-12 19:16 UTC)",
+  "line_end_rule": "BP-187 (the creator 2026-11-12 19:16 UTC): every line ends at least 0.5 s before its clip ends; a chained clip starts 12 frames (0.5 s) before the end of the one before it, so the clips overlap in time and the 0.5 s sound crossfade has the same picture under it; a chained clip begins with a silent moment, so no speech falls in its first 0.5 s (audit B3)",
   "voices": "Sena: a warm, soft young woman's voice. Kael: a calm, deep young man's voice. The same words describe them in every clip, so LTX keeps them as close as it can (no voice id; measured after the run).",
   "shots": [
     {
@@ -23,13 +23,13 @@
       "shot_id": "love_c2",
       "seconds": 9.5,
       "seed": 5302,
-      "motion_prompt": "Warm sunset light on a rocky cliff ledge above a green valley. The young woman with long dark braided hair laughs quietly, raises her hand and touches the bearded young man's cheek, and says in a warm, soft young woman's voice: \"Say that again tomorrow, when I'm muddy and tired.\" He keeps his eyes on hers and answers softly in a calm, deep young man's voice: \"Tomorrow, and every day after.\" Their lips move clearly as they speak, then they smile in silence. A campfire crackles nearby, a soft evening wind moves their hair. The camera holds a steady medium close-up."
+      "motion_prompt": "Warm sunset light on a rocky cliff ledge above a green valley. For a brief silent moment they only look at each other. Then the young woman with long dark braided hair laughs quietly, raises her hand and touches the bearded young man's cheek, and says in a warm, soft young woman's voice: \"Say that again tomorrow, when I'm muddy and tired.\" He keeps his eyes on hers and answers softly in a calm, deep young man's voice: \"Tomorrow, and every day after.\" Their lips move clearly as they speak, then they smile in silence. A campfire crackles nearby, a soft evening wind moves their hair. The camera holds a steady medium close-up."
     },
     {
       "shot_id": "love_c3",
       "seconds": 9.5,
       "seed": 5303,
-      "motion_prompt": "Warm sunset light on a rocky cliff ledge above a green valley. The young woman leans in close to the bearded young man and whispers in a warm, soft young woman's voice: \"Then stay with me tonight.\" He whispers back in a calm, deep young man's voice: \"Always.\" They close their eyes and kiss slowly and tenderly, her hand on his chest. A campfire crackles nearby, a soft evening wind moves through their hair. The camera pushes in slowly on the kiss."
+      "motion_prompt": "Warm sunset light on a rocky cliff ledge above a green valley. For a brief silent moment they only look at each other. Then the young woman leans in close to the bearded young man and whispers in a warm, soft young woman's voice: \"Then stay with me tonight.\" He whispers back in a calm, deep young man's voice: \"Always.\" They close their eyes and kiss slowly and tenderly, her hand on his chest. A campfire crackles nearby, a soft evening wind moves through their hair. The camera pushes in slowly on the kiss."
     }
   ]
 }

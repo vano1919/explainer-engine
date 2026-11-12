@@ -74,6 +74,11 @@ def launch_problems(launch: dict) -> list[str]:
         out.append("launch usd_per_h / prices_date is not set")
     caps = launch.get("caps") or {}
     out += [f"launch caps.{k} is not set" for k in ("smoke_usd", "run_usd", "cold_start_s") if not _num(caps.get(k))]
+    if not (isinstance(launch.get("chain_overlap_frames"), int) and launch["chain_overlap_frames"] >= 0):
+        out.append("launch chain_overlap_frames (BP-187 audio_overlap_s x fps) is not set")
+    st = launch.get("startup_timeout_s")
+    if not (isinstance(st, int) and 30 <= st <= caps.get("cold_start_s", 0)):
+        out.append("launch startup_timeout_s must be set and no longer than caps.cold_start_s (a hung start bills it)")
     out += native_problems(launch)
     return out
 
@@ -273,6 +278,37 @@ def preflight(launch: dict, job: dict | None = None):
             bad.append(f"{job.get('shot_id')}: an end picture, but the LTX distilled CLI takes only the frame-0 picture")
     if bad:
         raise SystemExit("paid preflight FAILED, nothing was started:\n" + "\n".join(bad))
+
+
+def _ledger(spec: dict):
+    from explainer_engine.core.ledger import Run
+    led = spec.get("ledger") or {}
+    if not (led.get("path") and led.get("service") and led.get("item")):
+        raise SystemExit(f"{spec.get('shot_id')}: the spec names no ledger (path, service, item); nothing was started (D-56)")
+    return Run.open(led["path"]), led
+
+
+def claim_launch(spec: dict, now=time.time) -> None:
+    """Before ``.remote()`` (audit B2, bake-off A3): this spec's reservation is in the ledger and open, and no launch of it is
+    marked; then the launch mark is written, so a second ``main`` of the same spec is refused even if the first one died."""
+    run, led = _ledger(spec)
+    r = run.data.get("reserved", {}).get(led["item"])
+    if not r or r.get("settled") or r.get("service") != led["service"]:
+        raise SystemExit(f"{led['item']}: no open {led['service']} reservation in {led['path']}; reserve first (scene_run "
+                         "reserve); nothing was started")
+    if led["item"] in run.data.get("items", {}).get("launch", {}):
+        raise SystemExit(f"{led['item']}: this spec was launched already ({run.data['items']['launch'][led['item']]}); a "
+                         "repeat would pay twice; nothing was started")
+    run.done("launch", led["item"], at=round(now(), 1), reserved_usd=r["amount"])
+
+
+def settle_launch(spec: dict, wall_s: float, launch: dict | None = None) -> float:
+    """After ``.remote()`` returned or raised: the launch's own wall clock at the GPU rate, an upper bound of the bill."""
+    lf = LAUNCH if launch is None else launch
+    run, led = _ledger(spec)
+    usd = round(max(0.0, float(wall_s)) * usd_per_h(lf) / 3600.0, 4)
+    run.settle(led["service"], led["item"], usd)
+    return usd
 
 
 # --- in the container ------------------------------------------------------------------------------------------------------
@@ -500,23 +536,38 @@ def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp=
     return row
 
 
-def last_frame(clip: Path, png: Path, sh=subprocess.run) -> bytes:
-    """The clip's last frame as a PNG: the start picture of the next chained shot (the scene goes on where it stopped)."""
-    sh(["ffmpeg", "-y", "-loglevel", "error", "-sseof", "-0.5", "-i", str(clip), "-update", "1", "-q:v", "1", str(png)],
-       check=True, timeout=60)
+def chain_from(launch: dict, frames: int) -> int:
+    """The frame of a clip that starts the next chained clip: ``chain_overlap_frames`` before its end (BP-187: the clips
+    overlap in time by that much, so the 0.5 s sound crossfade at assembly has the same picture under it; audit B3)."""
+    k = int(launch["chain_overlap_frames"])
+    if not 0 <= k < frames - 1:
+        raise ValueError(f"chain_overlap_frames {k} does not fit a clip of {frames} frames")
+    return frames - 1 - k
+
+
+def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run) -> bytes:
+    """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the start picture of the next chained shot."""
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", f"select=eq(n\\,{int(index)})", "-vsync", "0",
+        "-frames:v", "1", str(png)], check=True, timeout=60)
+    if not Path(png).is_file() or Path(png).stat().st_size == 0:
+        raise RuntimeError(f"frame {index} of {Path(clip).name} was not written")
     return Path(png).read_bytes()
 
 
 def chain_jobs(job: dict) -> list[dict]:
     """The shot and the shots chained after it (``job["chain"]``): each a full spec of its own, sharing the run, size and
-    rate; its start picture is the previous clip's last frame, made in the container."""
+    rate; its start picture is a frame of the previous clip (``chain_from``), made in the container."""
     keep = ("run_id", "launch_sha", "plan_sha256", "fps", "width", "height", "nonce", "worker_sha", "commit")
     return [job] + [dict({k: job[k] for k in keep if k in job}, **c) for c in job.get("chain") or []]
 
 
+SAVE_BUDGET_S = 45   # the upload after each clip (audit B1): short; the final flush retries longer
+
+
 def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambda: None, api=None, sh=subprocess.run,
          now=time.time, out_root=OUT_ROOT) -> dict:
-    """The GPU function: attempt marker, weights there, the clip, the Volume copy, the final upload checked on HF."""
+    """The GPU function: attempt marker, weights there, each clip saved to the Volume and HF as soon as it is made (OR-33,
+    audit B1), then the final upload checked on HF."""
     t_in = now()
     vol_out = Path(vol_root) / VOL_OUT
     seen = attempt_guard(vol_out, job)
@@ -526,8 +577,30 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
     deadline = Deadline(timeout_s, now=now)
     out = Path(out_root) / job["run_id"] / job["shot_id"]
     out.mkdir(parents=True, exist_ok=True)
+    prefix = f"{launch['hf_out']}/{job['run_id']}/{job['shot_id']}"
+    sent: dict = {}
     m = {"shot_id": job["shot_id"], "run_id": job["run_id"], "gpu": launch["gpu"], "launch_sha": launch_sha(launch),
          "worker_sha": job.get("worker_sha"), "commit": job.get("commit"), "error": None}
+
+    def to_volume():
+        try:
+            shutil.copytree(out, vol_out / job["run_id"] / job["shot_id"], dirs_exist_ok=True)
+            commit()
+        except Exception as e:  # noqa: BLE001
+            print("volume copy failed", repr(e)[:200], flush=True)
+
+    def write_measured():
+        (out / f"{job['shot_id']}.measured.json").write_text(json.dumps(m, default=str))
+
+    def save_now(rows):
+        """After every finished clip: the rows so far, the Volume copy, one short HF round (the clip leaves the container)."""
+        if job.get("chain"):
+            m["chain"] = rows
+        write_measured()
+        to_volume()
+        if api is not None:
+            upload_round(api, out, prefix, sent, budget_s=min(SAVE_BUDGET_S, max(0.0, deadline.left())))
+
     try:
         if hashlib.sha256(job["start_bytes"]).hexdigest() != job["start_sha256"]:
             raise RuntimeError("the start picture changed in transit")
@@ -537,7 +610,7 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
         if bad:
             raise RuntimeError("weights not on the Volume: " + "; ".join(bad[:5]))
         rows, prev = [], None
-        for k, sub in enumerate(chain_jobs(job)):
+        for sub in chain_jobs(job):
             if prev is not None:
                 if prev.get("state") != "DONE":
                     break
@@ -545,13 +618,22 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
                 if deadline.left() < need:
                     rows.append({"shot_id": sub["shot_id"], "state": "PARTIAL", "why": f"{deadline.left():.0f} s left, the "
                                  f"clip needs ~{need:.0f} s: not started"})
+                    print("clip", sub["shot_id"], "PARTIAL: not started, the deadline", flush=True)
                     break
-                sub = dict(sub, start_bytes=last_frame(out / prev["clip"], out / f"{sub['shot_id']}.start.png", sh=sh))
+                idx = chain_from(launch, int(prev["frames"]))
+                sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh))
+                sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx}
             row = dict(generate(sub, launch, out, deadline, sh=sh, now=now), shot_id=sub["shot_id"])
+            if sub.get("chain_from_frame"):
+                row["chain_from_frame"] = sub["chain_from_frame"]
             if row.get("state") == "DONE":
                 row["clip"] = clip_name(sub["shot_id"], sub["seed"])
             rows.append(row)
             prev = row
+            print("clip", sub["shot_id"], row.get("state"), f"gen {row.get('gen_s')} s", flush=True)
+            if row.get("state") == "DONE":
+                m.update({k: v for k, v in rows[0].items() if k != "shot_id"})
+                save_now(rows)
         m.update({k: v for k, v in rows[0].items() if k != "shot_id"})
         if job.get("chain"):
             m["chain"] = rows
@@ -560,19 +642,11 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
     except Exception as e:  # noqa: BLE001 - one attempt: the failure is written, copied and returned
         m.update(state="FAILED", error=f"{type(e).__name__}: {str(e)[:300]}")
     m.update(body_s=round(now() - t_in, 1), libs=libs())
-    (out / f"{job['shot_id']}.measured.json").write_text(json.dumps(m))
+    write_measured()
     beat(out, job, m["state"])
-
-    def to_volume():
-        try:
-            shutil.copytree(out, vol_out / job["run_id"] / job["shot_id"], dirs_exist_ok=True)
-            commit()
-        except Exception as e:  # noqa: BLE001
-            print("volume copy failed", repr(e)[:200], flush=True)
     to_volume()                                  # the Volume first (delta audit N2)
-    prefix = f"{launch['hf_out']}/{job['run_id']}/{job['shot_id']}"
     if api is not None:
-        upload_round(api, out, prefix, {}, final=True, budget_s=max(0.0, deadline.left() + MARGIN_S - 60))
+        upload_round(api, out, prefix, sent, final=True, budget_s=max(0.0, deadline.left() + MARGIN_S - 60))
         m["verified"] = verify_uploads(api, out, prefix)
         if m["state"] == "DONE" and any(v != "ok" for v in m["verified"].values()):
             m["state"] = "UPLOAD_UNVERIFIED"
@@ -617,7 +691,7 @@ if modal is not None:
     if TIMEOUTS:
         GPU_KW = dict(image=image, gpu=LAUNCH["gpu"] + "!", cpu=(float(LAUNCH["cpu"]),) * 2,
                       memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0, volumes={"/w": vol}, secrets=secrets,
-                      scaledown_window=LAUNCH["scaledown_window_s"])
+                      scaledown_window=LAUNCH["scaledown_window_s"], startup_timeout=LAUNCH["startup_timeout_s"])
 
         def _remote_body(job, launch, timeout_s):
             from huggingface_hub import HfApi
@@ -685,7 +759,15 @@ if modal is not None:
         preflight(LAUNCH, spec)
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
-        res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12]), LAUNCH)
+        claim_launch(spec)
+        t0, res = time.time(), None
+        try:
+            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12]), LAUNCH)
+        finally:
+            wall = time.time() - t0
+            print("settled", settle_launch(spec, wall), "USD for", round(wall, 1), "s", flush=True)
+            if res is not None:
+                Path(job).with_suffix(".result.json").write_text(json.dumps(res))
         print("result", json.dumps(res))
         if res.get("state") != "DONE":   # a FAILED clip is a non-zero exit, never a 0
             print(LTX_FAILED, flush=True)

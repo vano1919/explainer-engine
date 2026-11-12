@@ -49,10 +49,13 @@
   "hf_hub_pin": "1.33.0",
   "hf_out": "explainer-engine/ltx_route/out",
   "scaledown_window_s": 2,
+  "startup_timeout_s": 120,
+  "chain_overlap_frames": 12,
+  "chain_overlap_why": "BP-187 audio_overlap_s 0.5 x native fps 24: a chained clip starts 12 frames before the end of the one before it, so the clips overlap in time and the sound crossfade has the same picture under it (audit B3)",
   "caps": {
-    "smoke_usd": 0.4,
+    "smoke_usd": 0.5,
     "run_usd": 1.2,
-    "cold_start_s": 60
+    "cold_start_s": 120
   },
   "decided": {
     "model": "LTX-2.5 distilled (the bake-off's ltx_distilled)",
