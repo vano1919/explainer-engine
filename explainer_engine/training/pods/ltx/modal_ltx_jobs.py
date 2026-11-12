@@ -244,6 +244,18 @@ def read_job(path: str, launch: dict | None = None) -> dict:
     if (job.get("fps"), job.get("width"), job.get("height")) != (nat["fps"], nat["width"], nat["height"]):
         raise SystemExit(f"{job['shot_id']}: the spec asks {job.get('width')}x{job.get('height')} at {job.get('fps')} fps, not "
                          f"the model's {nat['width']}x{nat['height']} at {nat['fps']} fps; nothing was started")
+    chain = []
+    for c in job.get("chain") or []:
+        if c.get("start_picture"):                    # a shot with its own picture (a cut, not a continuation)
+            own = Path(c["start_picture"]).read_bytes()
+            pin = (c.get("extra") or {}).get("start_sha256")
+            if not pin or pin != hashlib.sha256(own).hexdigest():
+                raise SystemExit(f"{c.get('shot_id')}: its own start picture is not the one the pictures stage pinned; "
+                                 "nothing was started")
+            c = dict(c, start_sha256=pin, start_bytes=own)
+        chain.append(c)
+    if job.get("chain"):
+        job["chain"] = chain
     return dict(job, start_sha256=sha, start_bytes=pic)
 
 
@@ -557,7 +569,8 @@ def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run) -> bytes:
 
 def chain_jobs(job: dict) -> list[dict]:
     """The shot and the shots chained after it (``job["chain"]``): each a full spec of its own, sharing the run, size and
-    rate; its start picture is a frame of the previous clip (``chain_from``), made in the container."""
+    rate; its start picture is a frame of the previous clip (``chain_from``), made in the container, unless the shot brings
+    its own pinned picture (``start_bytes``, read by ``read_job``): then it is a cut, made from that picture."""
     keep = ("run_id", "launch_sha", "plan_sha256", "fps", "width", "height", "nonce", "worker_sha", "commit")
     return [job] + [dict({k: job[k] for k in keep if k in job}, **c) for c in job.get("chain") or []]
 
@@ -610,27 +623,32 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
         bad = sizes_ok(launch, vol_root)
         if bad:
             raise RuntimeError("weights not on the Volume: " + "; ".join(bad[:5]))
-        rows, prev = [], None
+        rows, prev, prev_s = [], None, None
         for sub in chain_jobs(job):
             if prev is not None:
                 if prev.get("state") != "DONE":
                     break
-                need = 1.15 * float(prev["gen_s"])           # a warm clip takes no longer than the one before it
+                # a warm clip takes no longer than the one before it, scaled up when it is longer
+                need = 1.15 * float(prev["gen_s"]) * max(1.0, float(sub["seconds"]) / float(prev_s))
                 if deadline.left() < need:
                     rows.append({"shot_id": sub["shot_id"], "state": "PARTIAL", "why": f"{deadline.left():.0f} s left, the "
                                  f"clip needs ~{need:.0f} s: not started"})
                     print("clip", sub["shot_id"], "PARTIAL: not started, the deadline", flush=True)
                     break
-                idx = chain_from(launch, int(prev["frames"]))
-                sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh))
-                sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx}
+                if sub.get("start_bytes") is not None:        # its own pinned picture: a cut
+                    if hashlib.sha256(sub["start_bytes"]).hexdigest() != sub.get("start_sha256"):
+                        raise RuntimeError(f"{sub['shot_id']}: its start picture changed in transit")
+                else:
+                    idx = chain_from(launch, int(prev["frames"]))
+                    sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh))
+                    sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx}
             row = dict(generate(sub, launch, out, deadline, sh=sh, now=now), shot_id=sub["shot_id"])
             if sub.get("chain_from_frame"):
                 row["chain_from_frame"] = sub["chain_from_frame"]
             if row.get("state") == "DONE":
                 row["clip"] = clip_name(sub["shot_id"], sub["seed"])
             rows.append(row)
-            prev = row
+            prev, prev_s = row, sub["seconds"]
             print("clip", sub["shot_id"], row.get("state"), f"gen {row.get('gen_s')} s", flush=True)
             if row.get("state") == "DONE":
                 m.update({k: v for k, v in rows[0].items() if k != "shot_id"})

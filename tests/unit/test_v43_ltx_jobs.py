@@ -291,3 +291,138 @@ def test_a_hung_start_is_bounded_by_the_startup_timeout():
     assert LAUNCH["startup_timeout_s"] <= LAUNCH["caps"]["cold_start_s"]
     assert (L.TIMEOUTS[1] + LAUNCH["caps"]["cold_start_s"]) * L.usd_per_h(LAUNCH) / 3600 <= LAUNCH["caps"]["run_usd"]
     assert "startup_timeout=LAUNCH[\"startup_timeout_s\"]" in Path(L.__file__).read_text()
+
+
+# --- a scene of cuts: every shot from its own picture (the creator 2026-11-12 20:37-20:44 UTC) --------------------------------
+
+def test_a_cut_starts_from_its_own_pinned_picture_and_never_from_the_clip_before(container, monkeypatch):
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    own = {c["shot_id"]: _png((i * 40, 90, 9)) for i, c in enumerate(container.job["chain"], 1)}
+    for c in container.job["chain"]:
+        c.update(start_bytes=own[c["shot_id"]], start_sha256=hashlib.sha256(own[c["shot_id"]]).hexdigest())
+    res = _run(container)
+    assert [r["state"] for r in res["chain"]] == ["DONE"] * 3
+    assert not [c for c in container.calls if c[0] == "ffmpeg"]          # no frame taken from a clip
+    assert all("chain_from_frame" not in r for r in res["chain"])
+    clis = [c for c in container.calls if c[0] != "ffmpeg"]
+    made = [Path(container.tmp / "out" / "rid" / "c1" / f"{s}_seed{n}.mp4").read_bytes() for s, n in (("c2", 2), ("c3", 3))]
+    assert made == [b"mp4:" + hashlib.sha256(own[s]).hexdigest().encode() for s in ("c2", "c3")] and len(clis) == 3
+
+
+def test_a_cut_whose_picture_changed_in_transit_makes_nothing_more(container, monkeypatch):
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    c2 = container.job["chain"][0]
+    c2.update(start_bytes=_png((1, 2, 3)), start_sha256="0" * 64)
+    res = _run(container)
+    assert res["state"] == "FAILED" and "changed in transit" in res["error"]
+    assert len([c for c in container.calls if c[0] != "ffmpeg"]) == 1
+
+
+def test_a_longer_next_clip_needs_proportionally_more_time_before_it_starts(container, monkeypatch):
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    container.job["seconds"] = 5.0                                       # 80 s for 5 s; the 9.5 s clip needs ~175 s
+    res = _run(container, timeout_s=L.MARGIN_S + 200)
+    assert [r["state"] for r in res["chain"]] == ["DONE", "PARTIAL"] and "not started" in res["chain"][1]["why"]
+
+
+def test_read_job_refuses_a_cut_whose_picture_is_not_the_pinned_one(tmp_path):
+    from PIL import Image
+    pics = []
+    for i in range(2):
+        p = tmp_path / f"p{i}.png"
+        Image.new("RGB", (1280, 704), (i, i, i)).save(p)
+        pics.append(p)
+    pin = lambda p: {"start_picture": str(p), "extra": {"start_sha256": hashlib.sha256(p.read_bytes()).hexdigest()}}  # noqa
+    sha = "a" * 64
+    job = dict({"shot_id": "c1", "seconds": 5.0, "seed": 1, "fps": 24, "width": 1280, "height": 704, "plan_sha256": sha,
+                "run_id": L.run_id(sha, LAUNCH), "launch_sha": L.launch_sha(LAUNCH)}, **pin(pics[0]),
+               chain=[dict({"shot_id": "c2", "seconds": 5.0, "seed": 2, "motion_prompt": "x"}, **pin(pics[1]))])
+    f = tmp_path / "job.json"
+    f.write_text(json.dumps(job))
+    got = L.read_job(str(f))
+    assert got["chain"][0]["start_bytes"] == pics[1].read_bytes()
+    pics[1].write_bytes(pics[0].read_bytes())
+    with pytest.raises(SystemExit, match="its own start picture"):
+        L.read_job(str(f))
+
+
+BATTLE = Path(L.__file__).parent / "scenes" / "battle_2026-11-12.json"
+
+
+def test_the_battle_scene_is_cuts_of_one_line_each_within_the_creators_total():
+    from explainer_engine.training.pods.ltx import scene_pictures as P
+    from explainer_engine.training.pods.ltx import scene_run as SR
+    scene = json.loads(BATTLE.read_text(encoding="utf-8"))
+    assert "start_picture" not in scene and len(scene["shots"]) == 4
+    made = {it["id"] for items in scene["pictures"]["stages"].values() for it in items}
+    for s in scene["shots"]:
+        assert s["seconds"] <= L.max_seconds(LAUNCH) and s["picture"] in made
+        assert "close-up" not in s["motion_prompt"].lower() and "lantern" not in json.dumps(scene["pictures"]).replace(
+            "no lanterns", "")
+    assert sum(s["seconds"] for s in scene["shots"]) >= 35
+    assert SR.budget_problems(scene, LAUNCH) == []
+    assert P.estimate(scene)["total"] <= scene["budget"]["pictures_usd"]
+    worst = SR.worst_gpu_usd(LAUNCH) + scene["budget"]["pictures_usd"] + scene["budget"]["cpu_checks_usd"]
+    assert worst <= scene["budget"]["total_usd"]
+    tight = dict(scene, budget=dict(scene["budget"], total_usd=1.0))
+    assert SR.budget_problems(tight, LAUNCH)                            # the GPU's hard bill alone does not fit a smaller total
+
+
+class FakeGemini:
+    def __init__(self, run, root):
+        self.run, self.root, self.sent = run, Path(root), []
+
+    def submit_batch(self, items, *, model, size, aspect):
+        from explainer_engine.imagegen.gemini import BATCH_PRICES, REFERENCE_USD
+        cost = round(sum(BATCH_PRICES[model][size] + len(i["refs"]) * REFERENCE_USD for i in items), 4)
+        self.run.reserve("gemini_usd", cost, item=f"batch:{items[0]['name']}+{len(items)}")
+        self.sent.append(items)
+        return f"batches/{len(self.sent)}"
+
+    def collect_batch(self, name, wait_s=0.0):
+        items = self.sent[int(name.split("/")[1]) - 1]
+        out = {}
+        for i, it in enumerate(items):
+            p = self.root / f"{it['name']}.png"
+            p.write_bytes(_png((i * 30, 60, 90)))
+            out[it["name"]] = p
+        return {"state": "JOB_STATE_SUCCEEDED", "done": True, "items": out}
+
+
+def test_the_pictures_go_in_two_stages_once_each_and_the_job_spec_pins_their_fits(tmp_path, monkeypatch):
+    from explainer_engine.training.pods.ltx import scene_pictures as P
+    from explainer_engine.training.pods.ltx import scene_run as SR
+    scene = json.loads(BATTLE.read_text(encoding="utf-8"))
+    style = _png((200, 120, 80))
+    scene["pictures"].update(dir=str(tmp_path / "pics"), manifest=str(tmp_path / "pics" / "pictures.json"),
+                             style=dict(scene["pictures"]["style"], sha256=hashlib.sha256(style).hexdigest()))
+    scene["ledger"] = dict(scene["ledger"], path=str(tmp_path / "ledger.json"))
+    sp = tmp_path / "scene.json"
+    sp.write_text(json.dumps(scene))
+    go = {"EE_PICTURES_GO": f"cmsg_x:{P.scene_sha(sp)[:12]}"}
+    with pytest.raises(SystemExit, match="EE_PICTURES_GO"):
+        P.submit(sp, "heroes", env={})
+    run = P.open_ledger(scene)
+    gc = FakeGemini(run, tmp_path / "pics")
+    with pytest.raises(SystemExit, match="not made yet"):
+        P.submit(sp, "shots", env=go, gc=gc, fetch=lambda path: style)   # the heroes' sheet is a reference of the shots
+    P.submit(sp, "heroes", env=go, gc=gc, fetch=lambda path: style)
+    with pytest.raises(SystemExit, match="submitted already"):
+        P.submit(sp, "heroes", env=go, gc=gc, fetch=lambda path: style)
+    assert P.collect(sp, "heroes", gc=gc)["made"] == ["heroes"]
+    P.submit(sp, "shots", env=go, gc=gc, fetch=lambda path: style)
+    assert [len(i["refs"]) for i in gc.sent[1]] == [2, 2, 2, 1]
+    assert gc.sent[1][0]["refs"] == [style, (tmp_path / "pics" / "heroes.png").read_bytes()]
+    P.collect(sp, "shots", gc=gc)
+    fits = P.pin(sp)
+    from PIL import Image
+    assert {Image.open(v["path"]).size for v in fits.values()} == {(1280, 704)}
+    data = json.loads(Path(scene["ledger"]["path"]).read_text())
+    assert abs(data["spent"]["gemini_usd"] - P.estimate(scene)["total"]) < 1e-6
+    monkeypatch.setattr(SR, "plan_sha", lambda p: "b" * 64)
+    spec = SR.job_spec(sp)
+    assert [c["extra"]["start_sha256"] for c in spec["chain"]] == [fits[p]["sha256"] for p in ("b2", "b3", "b4")]
+    assert spec["extra"]["start_sha256"] == fits["b1"]["sha256"] and spec["ledger"]["caps"] == scene["ledger"]["caps"]
+    Path(fits["b3"]["path"]).write_bytes(b"other")
+    with pytest.raises(SystemExit, match="not the one the scene pins"):
+        SR.job_spec(sp)

@@ -5606,3 +5606,37 @@ The run used audited bytes f239f23c (run id `6f91619285c7_1abffbda4cc0`). There 
 - The speech-end gate and the BP-188 join as code.
 - `aivideo/ltx_modal.py`.
 - The audit's minor notes.
+
+## 2026-11-12 21:10 UTC: LTX scene of cuts, the battle-scene test prepared (free; paid run waits for the audit and the creator's card)
+
+**Why.** The creator reviewed the love scene at 20:37 UTC. LTX leaves about 1 s between two speakers inside one clip, and its lips and faces are weak close up. At 20:44 UTC he asked for a 40 s battle scene using a new method:
+- one line per clip;
+- every shot cut from its own picture;
+- no close-ups;
+- pictures from the Gemini API batch tier;
+- $1 in total.
+
+The rules change only if this works.
+
+**Worker (`training/pods/ltx/modal_ltx_jobs.py`)**
+- A chained shot may bring its own pinned start picture: `read_job` checks it against `extra.start_sha256`, and `body` checks it again in transit. Such a shot is a cut, so no frame is taken from the clip before it.
+- The deadline check scales the time a clip needs by its length, relative to the clip before it.
+
+**`scene_run.py`**
+- A scene of cuts takes every shot's picture from the pictures manifest.
+- A scene can name its own ledger and caps.
+- `budget_problems` refuses a scene whose worst case passes its `budget.total_usd`. The worst case is the GPU's hard bill, (run timeout + cold start) × rate, plus the pictures and the CPU rungs.
+
+**New `scene_pictures.py`**
+- Pictures go through the Gemini batch tier in stages: first the heroes' sheet, then the shots, which reference the style picture and the sheet.
+- Each stage is submitted once, is reserved in the scene's ledger, and needs `EE_PICTURES_GO`.
+- `pin` fits each picture to 1280x704. `upload` sends the pictures to HF and checks them by sha256.
+
+**Scene and launch**
+- Scene file `scenes/battle_2026-11-12.json`: 4 cuts of 10, 6, 10 and 10 s, set on the Late Bronze Age plain before Troy, with English lines.
+- Launch `caps.run_usd` changes 1.2 → 1.0 (run timeout 528 s), which makes L1 and L2 stale.
+- Scene worst case: GPU $0.917 + pictures $0.135 + CPU $0.075 = $1.127. The expected cost is about $0.70.
+
+**Stale text.** The main-style preset says "paid API never" for style rounds. The creator's word for this run is the Gemini API batch tier, as a temporary rule break asked on the card.
+
+**Tests.** 6 new tests in `tests/unit/test_v43_ltx_jobs.py`.

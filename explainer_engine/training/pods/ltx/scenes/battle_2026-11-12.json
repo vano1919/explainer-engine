@@ -1,0 +1,120 @@
+{
+ "schema": "ltx_scene_test/2",
+ "id": "battle_2026-11-12",
+ "asked": "the creator, 2026-11-12 20:44 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWHyXhJX3cqwwSdUvezppgbN): a 40 s scene, a general and a commander lead the army and talk, they see the enemy, shout 'attack', the shot moves to a large battle, about the Trojan War period; pictures from the Gemini API batch tier in the project's style; $1 in total. 20:44:40 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWSsotMUuc29qLr3Csw1kuVR): use the new method (one line per clip, a cut per shot from its own picture, no close-ups); the rules change only if it works",
+ "method": "the love-scene review (the creator, 2026-11-12 20:37 UTC): LTX leaves about 1 s between two speakers inside one clip and its faces and lips are weak close up, so every clip carries one speaker's line (or one reaction beat), every shot is a cut from its own picture (no chaining), the framing is medium or wide, and assembly trims each clip's tail to 0.3 s after its line (BP-187 tail 0.5 s at generation)",
+ "sound": "LTX's own (way A, D-132): speech, marching, horns and battle from the prompt; no separate sound",
+ "budget": {
+  "total_usd": 1.13,
+  "pictures_usd": 0.135,
+  "cpu_checks_usd": 0.075,
+  "note": "the worst case: the GPU launch's hard bill ((run timeout 528 s + cold start 120 s) x $5.0937/h = $0.917), the pictures' batch price, the L1/L2 CPU rungs at their timeouts; expected about $0.70 (60-75 s of GPU per clip, measured on the love scene)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_scene_battle.json",
+  "caps": {
+   "modal_ltx": 1.25,
+   "gemini_usd": 0.2
+  }
+ },
+ "pictures": {
+  "model": "gemini-nano-banana-2.1",
+  "size": "2K",
+  "aspect": "16:9",
+  "tier": "batch",
+  "dir": "/home/user/ee-data/ltx_scene/battle",
+  "manifest": "/home/user/ee-data/ltx_scene/battle/pictures.json",
+  "hf": "explainer-engine/ltx_route/scenes/battle_2026-11-12",
+  "style": {
+   "hf": "explainer-engine/main_style/main_style_5709.png",
+   "sha256": "d882d52d2ab09c2ee09bb747dfb17c7f1ab1bb75f7c6b5b64237f727357babbb"
+  },
+  "stages": {
+   "heroes": [
+    {
+     "id": "heroes",
+     "refs": [
+      "style"
+     ],
+     "prompt": "Use image 1 only as the visual style; do not copy its people, their pose or its place. A character sheet of two Achaean war leaders of the Late Bronze Age Aegean, about 1200 BC, the plain before Troy: Achaean warriors wear boar's-tusk or plain bronze helmets with cheek guards, bronze or linen armour, carry long spears, short bronze swords and tall oxhide shields; two-horse war chariots; no iron, no Roman or classical Greek gear, no cavalry riders, no lanterns. They stand side by side, full body, facing the viewer, on a plain warm stone-grey background in low golden sunset light with a warm rim light, both faces clearly visible and lit. On the left, the general: a broad-shouldered man in his fifties with a short grey beard, a weathered, kind face and deep-set eyes, a bronze scale cuirass over a red linen tunic, bronze greaves, a boar's-tusk helmet with bronze cheek guards and a tall red horsehair crest, a long ash spear and a tall figure-eight oxhide shield. On the right, the commander: a lean man in his early thirties with a short black beard and sharp, alert dark eyes, a plain bronze helmet with cheek guards, a bronze breastplate over a white linen tunic, a leather belt with a bronze short sword, and a round oxhide shield painted with a black octopus. The mood here is epic and tense. Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, torches, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood. People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes. No text, no letters, no logos, no watermark."
+    }
+   ],
+   "shots": [
+    {
+     "id": "b1",
+     "refs": [
+      "style",
+      "heroes"
+     ],
+     "prompt": "Use image 1 only as the visual style; do not copy its people, their pose or its place. Image 2 shows our two heroes: keep their faces, beards, armour and helmets exactly as in image 2. Late Bronze Age Aegean, about 1200 BC, the plain before Troy: Achaean warriors wear boar's-tusk or plain bronze helmets with cheek guards, bronze or linen armour, carry long spears, short bronze swords and tall oxhide shields; two-horse war chariots; no iron, no Roman or classical Greek gear, no cavalry riders, no lanterns. A wide shot, camera low in front of the column: an Achaean army marches across a dusty golden plain at sunset toward the camera. At the head of the column, the general (left) and the commander (right) from image 2 walk side by side, mid-stride, the general turning his head to speak; both are small to medium in the frame, their faces visible. Behind them hundreds of spearmen with tall oxhide shields and bronze helmets, a few two-horse war chariots, dust glowing in the low sun; a low ridge on the far horizon. The mood here is epic and tense. Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, torches, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood. People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes. No text, no letters, no logos, no watermark."
+    },
+    {
+     "id": "b2",
+     "refs": [
+      "style",
+      "heroes"
+     ],
+     "prompt": "Use image 1 only as the visual style; do not copy its people, their pose or its place. Image 2 shows our two heroes: keep their faces, beards, armour and helmets exactly as in image 2. Late Bronze Age Aegean, about 1200 BC, the plain before Troy: Achaean warriors wear boar's-tusk or plain bronze helmets with cheek guards, bronze or linen armour, carry long spears, short bronze swords and tall oxhide shields; two-horse war chariots; no iron, no Roman or classical Greek gear, no cavalry riders, no lanterns. A medium shot from the waist up, camera walking backward in front of them: the general and the commander from image 2 walk side by side at the head of the army at sunset; the commander turns his head toward the general as if to speak, the general listens, eyes ahead. Spearmen and dust softly out of focus behind them, the low sun behind the army giving both men a warm rim light. Both faces fully visible, not a close-up. The mood here is epic and tense. Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, torches, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood. People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes. No text, no letters, no logos, no watermark."
+    },
+    {
+     "id": "b3",
+     "refs": [
+      "style",
+      "heroes"
+     ],
+     "prompt": "Use image 1 only as the visual style; do not copy its people, their pose or its place. Image 2 shows our two heroes: keep their faces, beards, armour and helmets exactly as in image 2. Late Bronze Age Aegean, about 1200 BC, the plain before Troy: Achaean warriors wear boar's-tusk or plain bronze helmets with cheek guards, bronze or linen armour, carry long spears, short bronze swords and tall oxhide shields; two-horse war chariots; no iron, no Roman or classical Greek gear, no cavalry riders, no lanterns. A medium-wide shot from behind and slightly to the side of the two leaders from image 2: the commander has stopped and points with his outstretched arm toward a distant ridge, the general beside him grips his long spear; we see their backs, helmets and the general's red crest, their faces turned away. On the ridge far ahead, against a blazing sunset sky, a long line of Trojan warriors with tall shields and spears and a few chariots has appeared. The Achaean army fills the plain behind the leaders. The mood here is epic and tense. Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, torches, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood. People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes. No text, no letters, no logos, no watermark."
+    },
+    {
+     "id": "b4",
+     "refs": [
+      "style"
+     ],
+     "prompt": "Use image 1 only as the visual style; do not copy its people, their pose or its place. Late Bronze Age Aegean, about 1200 BC, the plain before Troy: Achaean warriors wear boar's-tusk or plain bronze helmets with cheek guards, bronze or linen armour, carry long spears, short bronze swords and tall oxhide shields; two-horse war chariots; no iron, no Roman or classical Greek gear, no cavalry riders, no lanterns. An epic wide high-angle shot over a vast dusty plain at sunset: two Bronze Age armies charge and crash into each other, thousands of warriors with spears and tall oxhide shields, two-horse war chariots racing through clouds of golden dust, the walled city of Troy on a hill in the distance with its great stone walls and towers, the low sun turning the dust gold and rose. The mood here is epic and tense. Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, torches, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood. People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes. No text, no letters, no logos, no watermark."
+    }
+   ]
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "battle_c1",
+   "picture": "b1",
+   "seconds": 10.0,
+   "seed": 5401,
+   "line": {
+    "speaker": "general",
+    "text": "Three days on this plain, and not one Trojan in sight."
+   },
+   "motion_prompt": "A wide shot of a Bronze Age army marching across a dusty golden plain at sunset. At the head of the column a grey-bearded general with a tall red crest on his boar's-tusk helmet and a younger dark-bearded commander walk side by side toward the camera; hundreds of spearmen with tall shields march behind them, a chariot rolls, dust glows in the low sun. After a few steps the general says in a deep, gravelly older man's voice: \"Three days on this plain, and not one Trojan in sight.\" Then they keep marching in silence. The camera tracks slowly backward in front of them. Sound: heavy marching feet, clinking bronze, creaking chariot wheels, wind."
+  },
+  {
+   "shot_id": "battle_c2",
+   "picture": "b2",
+   "seconds": 6.0,
+   "seed": 5402,
+   "line": {
+    "speaker": "commander",
+    "text": "They're out there, my lord. Watching us."
+   },
+   "motion_prompt": "A medium shot of two Bronze Age war leaders walking at the head of their army at sunset, the camera moving backward in front of them. Right away the younger dark-bearded commander turns his head to the grey-bearded general and says in a firm, low young man's voice: \"They're out there, my lord. Watching us.\" The general nods slowly, eyes ahead. Sound: marching feet, clinking bronze, wind."
+  },
+  {
+   "shot_id": "battle_c3",
+   "picture": "b3",
+   "seconds": 10.0,
+   "seed": 5403,
+   "line": {
+    "speaker": "commander, then general",
+    "text": "There! On the ridge! / Attack!"
+   },
+   "motion_prompt": "A medium-wide shot from behind two Bronze Age war leaders on a dusty plain at sunset. Right away the younger commander points at the distant ridge, where a long line of enemy warriors with tall shields stands against the blazing sky, and shouts in a firm young man's voice: \"There! On the ridge!\" The grey-bearded general raises his long spear high and roars in a deep, gravelly voice: \"Attack!\" The army behind them bursts into a great war cry and surges forward past the two leaders toward the ridge. Sound: a war horn, a huge roar of hundreds of men, running feet, clashing shields."
+  },
+  {
+   "shot_id": "battle_c4",
+   "picture": "b4",
+   "seconds": 10.0,
+   "seed": 5404,
+   "line": null,
+   "motion_prompt": "An epic wide high-angle shot of two Bronze Age armies charging and crashing into each other on a vast dusty plain at sunset, below the walled city of Troy on a distant hill. Thousands of warriors with spears and tall shields clash, two-horse war chariots race through clouds of golden dust, the camera slowly pushes forward over the battle. No one speaks. Sound: a great battle roar, clashing bronze, galloping horses, war horns."
+  }
+ ]
+}
