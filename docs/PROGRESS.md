@@ -5535,3 +5535,11 @@ The delta audit (`BAKEOFF_DELTA_AUDIT.md`) closed A1, A3, A5 and B2-B6 and found
 - Test: `tests/unit/test_gemini_task_flow.py` (fill, pack, era line, T0 sizes and modes, report parsing, queue order and
   batches, frame and Wan clip, review deadlock, full batch flow with limit, resume and redo, P5/P8, Toba dry export).
 - Next: A3 (Sonnet) runs T0 in the browser and records it.
+
+## 2026-11-12 (A3) - T0 model rule: Flash is shown as "Hydrogen"
+
+- The first T0 run (Task mode, "4 Argon") made 6 of 6 pictures but recorded FAIL for the model only; the creator ruled (19:54 UTC)
+  that pictures always run on Flash in Task mode and Argon is for code only, and (19:56 UTC) that the Flash model is listed as
+  "Hydrogen". `gemini_task/gate.py` now accepts `flash` or `hydrogen` (`FLASH_NAMES`) and still refuses Argon, Carbon and Pro;
+  the Argon run is void for the gate. Test: `test_t0_fails_on_another_model_...` (Argon and "4 Argon" FAIL, "4 Hydrogen" PASS).
+- Argon T0 material (voided, for the creator's look only): HF `explainer-engine/gemini_t0/2026-11-12/`.

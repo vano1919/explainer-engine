@@ -26,6 +26,8 @@ SCHEMA = "gemini_t0_record/1"
 T0_IDS = ("t0_B2", "t0_C3", "t0_D2", "t0_E", "t0_F", "t0_G")
 T0_PEOPLE = {"t0_B2": True, "t0_C3": True, "t0_D2": False, "t0_E": True, "t0_F": True, "t0_G": True}
 FULL, MIN_PASS = 6, 4
+# The creator, 2026-11-12 19:56 UTC: the Task model list shows Flash as "Hydrogen"; Argon (and Carbon, Pro) stay refused for pictures.
+FLASH_NAMES = ("flash", "hydrogen")
 
 
 def record_path() -> Path:
@@ -118,13 +120,13 @@ def record_t0(root: Path, answer_text: str, files: list[Path], recorded_by: str,
         pictures.append({"k": it["k"], "id": it["id"], "file": str(f), "sha256": EP.sha256_file(f) if f else None,
                          "prompt": it["prompt"], "gates": gates, "ok": ok, "hf": (hf or {}).get(it["id"])})
     real = max(0, real - int(code_drawn))
-    model_ok = "flash" in (rep["model"] or "").lower() and not any(
+    model_ok = any(w in (rep["model"] or "").lower() for w in FLASH_NAMES) and not any(
         w in (rep["model"] or "").lower() for w in ("pro", "argon", "carbon"))
     as_given = all(it.get("prompt") == "AS GIVEN" for it in rep["batch"]["items"] if it["status"] == "MADE") and \
         all(it["status"] == "MADE" for it in rep["batch"]["items"])
     read_ok = rep["drive_read"]["ok"] and sent.get("pack_version") and sent["pack_version"] in rep["drive_read"]["detail"]
     if not model_ok:
-        status, size, why = "FAIL", None, f"model {rep['model']!r} is not Flash"
+        status, size, why = "FAIL", None, f"model {rep['model']!r} is not Flash (Flash is shown as Hydrogen in the Task model list)"
     elif real >= FULL:
         status, size, why = "PASS", FULL, "six generated pictures in one answer"
     elif real >= MIN_PASS:

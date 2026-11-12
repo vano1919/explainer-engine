@@ -184,6 +184,9 @@ def test_t0_counts_set_the_batch_size_or_fail_with_a_card(env, tmp_path, n, stat
 
 def test_t0_fails_on_another_model_and_mode_needs_drive_read_and_verbatim_prompts(env, tmp_path):
     assert pass_t0(env, tmp_path, model="Gemini Pro")["status"] == "FAIL"
+    assert pass_t0(env, tmp_path, model="Argon")["status"] == "FAIL"
+    assert pass_t0(env, tmp_path, model="4 Argon")["status"] == "FAIL"
+    assert pass_t0(env, tmp_path, model="4 Hydrogen")["status"] == "PASS"  # creator 2026-11-12 19:56 UTC: Flash = Hydrogen
     assert pass_t0(env, tmp_path, prompt="CHANGED shortened")["batch_mode"] == "self_contained"
     assert pass_t0(env, tmp_path, drive_ok=False)["batch_mode"] == "self_contained"
 
