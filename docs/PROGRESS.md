@@ -4744,3 +4744,68 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 - `speech.py` (PV-46): optional `cast.<id>.speech.max_contractions` and `mlu_range` (schema fields added), checked against the hero's lines as REVIEW. `scene_lint` SC-05: `episode.short_form` (a pilot of about three minutes) asks BP-70's new threshold `min_exchange_lines_short` = 2 and only REVIEWs; the registry row and `docs/SOURCED_RULES.md` regenerated. `validate` PV-12 now runs the narration lint on `narrator_tts_text`, so N-05/N-06/N-12 read the narrator only when heroes speak (their turns stay under DW-11 and SC-09). Test: `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
 
 - Stone-age pilot VISUAL_SCRIPT_v2 (SCRIPT_v4.6, 55 shots, about 189 s estimated, 6 LTX clips 510 frames) saved under docs/research/stoneage_pilot_2026-11-07/; awaits the creator on duration and handprint type. Costs $0.
+## 2026-11-06 — J5 dialogue collage, step 1 (thread: "Test J5 dialogue with existing photos"; branch `claude/project-thread-4nebmi` off `icw/05c-ink-round`)
+
+- The creator (16:44 UTC): test J5 now with the existing pictures, a dialogue photo-collage first, then voice, emotion, mouth and background motion;
+  16:55 UTC: maximum realism. Free only (no pod, no paid call, no ElevenLabs).
+- `blender/j5_collage.py`: BiRefNet cut-outs of the B sheets (CPU, with the dtype fix of `icw/16-lean-pod` 0fa738b taken for `edit/cutout.py`),
+  a flat plate cropped from A1_tent per shot (a 2048-px equirect would be ~10x soft at a 44-degree frame), each card graded by the fire (warm wrap and
+  rim on the side that faces it, dusk ambient, black lifted to the backdrop's), rendered alone on alpha by Blender 5.2.3 (`transparent` job flag added to
+  `bpy/assemble_25d.py`), then depth blur (backdrop and foreground shoulder), fire bloom, vignette and one shared grain/paper layer.
+- Four frames, 2560x1440: S1 medium two-shot, S2 over H2's shoulder (H1 speaks), S3 reverse over H1's shoulder (H2 listens), S4 close-up H1.
+  H2 stays screen-left of H1 in all four, all cameras on one side of the line. EEVEE on 4 CPU cores: 3.4-5.8 s per pass; whole sheet 95 s.
+- HF: `route_test_2026-11/j5_dialogue/step1/` (frames, contact sheet, report.json, graded cards, `compare/` frame-vs-backdrop-only).
+- What the sheets could not give (reported to the creator): H1's sheets end at the belt (no legs, so no standing wide shot and no feet contact
+  shadow in these frames), H2 has no left-facing card (his right34 looks nearly at the camera, so his eye-line to H1 is weak), no mouth or
+  eyes-closed variants exist yet (step 2 needs them), H1's back card is the sheet mirrored for the reverse shot.
+- Tests: `tests/unit/test_j5_collage.py` (4). Cost $0.
+- Step 2 (creator 17:25 and 17:26 UTC: animate the background as much as possible in Python; shadow on the face; document every step): `blender/j5_background.py`,
+  a 12.5 s clip at 2560x1440/24 fps (S1 3.5 s, S2 3.0 s, S4 3.0 s, S3 3.0 s) with a synthesised camp ambience (no voice, nothing paid): one shared fire flicker on the
+  flame, the ground glow, embers, smoke and the heroes' warm side; banners waving, ground fog, dust bokeh, a push-in/truck per shot with parallax 0.3 : 0.65 : 1.0
+  and breathing. `j5_collage.face_shadow` adds the form shadow of the face (cool terminator away from the fire, brow, the chin's shadow on the collar); the stills
+  were re-rendered (v2). 1.3 s per frame, 2.5 min for the clip on 4 cores. HF `route_test_2026-11/j5_dialogue/step2/`. The step-by-step record for a later standard
+  is `docs/J5_DIALOGUE_COLLAGE.md`. Tests: `tests/unit/test_j5_background.py` (5), `test_j5_collage.py` (4). Cost $0. Still missing: mouth/blink/brow variants,
+  a full-body commander, a left-facing scout (see the doc, section 10).
+- Step 3 (creator 17:53 UTC: the cuts are abrupt, the people stand stiff): `j5_background.idle` gives each card a small time-only displacement (body sway from the
+  bottom edge, head turn, nod, chest breath, cloth ripple; shares of the card height, two unrelated sines per movement, the old whole-card scale breath removed because
+  it stretched the figure); the camera follows an ease-in-out curve; the shots are joined by a 10-frame (0.42 s) `xfade` dissolve carried by a tail of the earlier shot, cuts
+  stay on the nominal clock. Tests: 3 more in `tests/unit/test_j5_background.py` (8). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7b. Cost $0. L/J-cut and lip-sync
+  still wait for a voice (no ElevenLabs without the creator's separate yes).
+- Step 4 (creator 18:34 UTC: voice and mouth, credit cap 5000): three dialogue lines in two ElevenLabs voices, one take each, 155 credits (estimate first); Rhubarb Lip Sync 1.14.0 (MIT)
+  gives the mouth shapes; `blender/j5_face.py` draws blinks, brows and a mouth that follows the cues on the graded cards (exact sheet-to-frame projection, no model); `mix_voice` puts the
+  lines over the camp ambience. Tests: `tests/unit/test_j5_face.py` (5). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7c. Real mouth/eye variants per sheet (SA-06) still open (paid Qwen edit, the creator's call).
+
+## 2026-11-06 J5 dialogue step 4c
+Straight cuts (no dip), young scout voice, per-line RMS levelling, smoother face drive. Render: HF route_test_2026-11/j5_dialogue/step4c/. Docs: J5_DIALOGUE_COLLAGE.md section 7d. ElevenLabs +71 credits (226/5000).
+
+## 2026-11-06 J5 dialogue: variant sheets (D-119), chin fix, background gain
+New `j5_variant_sheet.py` (layout constant, cut, align, per-cell checks, variant sheets, blend) with tests on a synthetic sheet; D-119 in the decision log. Step 4d chin movement scaled (commander 0.12, scout 0.4); step 4e plate gain per close shot (1.28-1.30) and a smaller foreground shift. Real sheets are not drawn yet: real registration and identity numbers are unmeasured.
+
+## 2026-11-06 J5 dialogue step 4f: cuts with a reason
+S2 and S4 merged into one 6 s commander shot with a push-in (the same man only closer was a jump); `j5_cuts.py` lints cuts (subject or 30-degree angle change plus size step, 180-degree rule); docs 7g records the rules and sources.
+
+## 2026-11-06 J5 dialogue rules (BP-176, BP-177)
+Re-checked sources in three types, two binding rules in the registry (cut reason; plan before generation), `j5_cuts.plan_check` + `lint` read their thresholds from it, docs 7h. vidIQ: 5 credits (one transcript). Not verified: the UChicago dialogue-cut study (PDF unreadable).
+
+## 2026-11-06 20:40 UTC - J5 montage rules and the one-minute plan (thread "Test J5 dialogue with existing photos")
+- Read about 25 Wikipedia film-editing, transition and still-lane pages; registered BP-179 (transitions), BP-180 (non-dialogue order and rhythm), BP-181 (still lane and style continuity) as hypotheses (REVIEW only; one source type).
+- `blender/j5_montage.py` (`lint_montage`), `blender/j5_minute.py` (14 shots, five scenes, 60 s, three heroes plus crowds from existing HF pictures), `tests/unit/test_j5_montage.py`; docs/J5_DIALOGUE_COLLAGE.md 7j.
+- Reported by the lint, not hidden: lane shares 36/53/11 against 60/30/10 because the cards animate only the heroes. No render, no paid call.
+- 2026-11-06 20:45 UTC: first render of the one-minute film (v1, 60.0 s, 1080p, free): HF route_test_2026-11/j5_minute/v1/. Plan timing adjusted (M3 7.5 s, S1 3.5, elder 2.0, eyes 5.0); lane shares 34/54/12 still outside BP-109 (REVIEW). BP-108/109 enforced_by now list j5_montage.
+- 2026-11-06 21:35 UTC: minute v2 (HF route_test_2026-11/j5_minute/v2/): story order by time and place, depth-map relief camera in Blender, local picture animation, BP-50 loudness -14.0 LUFS. Found Animated Drawings, DepthFlow, 3D Ken Burns as existing techniques (docs 7j). Weak points listed there.
+- 2026-11-06 21:50 UTC: Animated Drawings installed in a separate venv and run headless; the first hand-rigged elder collapses (robe, no legs), not adopted. 3D Ken Burns needs CUDA, not run. Notes in docs 7j.
+
+## 2026-11-07 — Argon's J5 LTX minimisation (`argon/ltx-minimisation`, thread "Review and merge Gemini cloud providers work")
+- Source: ვანო's upload `apply_j5_ltx_minimisation.sh`, decoded without running it. Taken: `blender/j5_limits.py` (shot router, BP-184
+  limits), `blender/j5_action_rig.py` (depth-relief, billboard-crowd and hinged-action frames), `blender/j5_minute_v3.py` (v3 one-minute
+  plan; adapted to read `j5_minute.PLAN`), the three new rule rows BP-182..184 added to `sourced_rules.json` (the creator's BP-176..181
+  untouched), `docs/J5_LTX_MINIMISATION_REPORT.md`, and a test for what was taken (7 tests).
+- Not taken: the script's versions of `j5_background`, `j5_face`, `j5_variant_sheet`, `j5_cuts`, `j5_montage`, `j5_minute*` (stubs that replace
+  the real modules, e.g. `j5_background` 40 KB -> 0.9 KB, `j5_face` 14 KB -> 1.7 KB), the rewritten BP-100..181 rows (they undo the creator's
+  D-116 scoping and 2026-11-06 house rows), and the full-file PROGRESS, SOURCED_RULES and INDEX. Its original test imports those stubs, so it was
+  cut down to the router, the v3 plan and the rig.
+- Result: on the one-minute film the router keeps LTX at 3.04 s (73 frames) in one duel insert against 21.0 s in the v2 video lane. This is a plan
+  and a lint, not a render. No pictures or clips were made. Cost: $0.
+
+### 2026-11-07 09:50 UTC: voice search by age, root cause of the adult voice for the boy scout
+Root cause: the J5 dialogue test chose both voices by hand from `creative_list_voices` descriptions (J5_DIALOGUE_COLLAGE 7c), not through `audio/casting.py`; the scout got Cam, a library voice labelled `young`, which holds adults up to about 40, and the library has no child label. `casting.py` also had no child band, so a card saying boy gave `age_of` None and no age filter. Fix: VC-10 (STORY_ENGINE), `age_of` returns `child`, `child_problems` (a child voice must say child in its name or description and no adult, companion or other "boy"), `query` searches one plain word for a child, `design_description` for a child; tests in `test_casting_age.py`; skill `voice-search` (fields and blind spots, free preview measurement, first-take proof, credit guard); voice-caster page points to it. Free listing and preview measurement only; no paid take (ElevenLabs ledger unchanged at 226 of 5000).

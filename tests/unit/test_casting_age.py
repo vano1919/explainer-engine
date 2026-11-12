@@ -49,3 +49,29 @@ def test_a_named_region_goes_into_the_search_and_into_the_ranking():
     japanese = [{"voice_id": "j", "labels": {"gender": "male", "age": "middle_aged", "accent": "japanese"}},
                 {"voice_id": "u", "labels": {"gender": "male", "age": "middle_aged", "accent": "american"}}]
     assert [r["voice_id"] for r in casting.rank(japanese, JP)][0] == "j"
+
+
+# VC-10 (2026-11-06): the library has no child label and "young" holds adults; a boy scout was cast with an adult voice
+SCOUT = {"names": ["scout"], "card": "a boy scout of about twelve", "voice": {"style": "quiet, nervous", "traits": {"gender": "male"}}}
+
+
+def test_a_child_is_a_band_of_its_own():
+    assert casting.age_of(SCOUT) == "child"
+    assert casting.age_of({"voice": {"traits": {"age": "child"}}}) == "child"
+    assert casting.age_of({"card": "the drummer boy", "voice": {}}) == "child"
+    q = casting.query(SCOUT)
+    assert q["search"] == "boy" and "age" not in q and "gender" not in q
+    assert "child" in casting.design_description(SCOUT) and "boy's" in casting.design_description(SCOUT)
+
+
+def test_a_young_adult_voice_is_never_a_child():
+    voices = [{"voice_id": "cam", "name": "Cam", "description": "young American male", "labels": {"gender": "male", "age": "young"}},
+              {"voice_id": "bf", "name": "Brad", "description": "your favorite boyfriend voice", "labels": {"gender": "male"}},
+              {"voice_id": "jb", "name": "Hosie - Professional Jersey Boy", "labels": {"gender": "male"}},
+              {"voice_id": "ab", "name": "Austin Boy", "description": "A timid orphan boy", "labels": {}},
+              {"voice_id": "tt", "name": "Teddy Twinkle - Cute Cartoon Boy",
+               "description": "A sweet, playful little cartoon boy", "labels": {"gender": "male", "age": "young"}},
+              {"voice_id": "old", "name": "Old boy", "description": "an old boy scout leader", "labels": {"age": "old"}}]
+    assert [r["voice_id"] for r in casting.rank(voices, SCOUT, top=5)] == ["tt", "ab"] or \
+        {r["voice_id"] for r in casting.rank(voices, SCOUT, top=5)} == {"tt", "ab"}
+    assert casting.eligible(voices[0], SCOUT) and "VC-10" in casting.eligible(voices[0], SCOUT)[0]
