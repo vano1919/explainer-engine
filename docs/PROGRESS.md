@@ -4984,3 +4984,33 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
 - Cost status: public-list arithmetic only. Hyperstack A100 80 GB = $1.35/GPU-hour; Modal A100 80 GB = $2.4984/GPU-hour before CPU/RAM; Modal may win on bursty jobs through scale-to-zero and Starter credits. D-116 episode cost remains unproven until current Qwen/LTX stage seconds and peak VRAM are measured.
 - No cloud resource was created and no paid request was made. No provider adapter or `config/spend_caps.json` change was made. Existing RunPod budget was not reused.
 - Validation: documentation was committed to this branch through GitHub. Local `docs_lint`, pytest and CI were not run in this session; the next code/documentation validation should run them before merging.
+## 2026-11-07 — Gemini Argon's cloud providers work, merged in part (thread "Review and merge Gemini cloud providers work")
+- Source: ვანო's upload `apply_and_push_argon_ltx_minimisation.py` (32 files as a base64+zlib payload). It was decoded without
+  running it and checked file by file against `argon/handoff-2026-11-06` (its base) and `icw/05c-ink-round`.
+- Merged (new files only): `explainer_engine/cloud/providers/` (provider-neutral adapters: Hyperstack, Modal, RunPod read
+  adapter, selector, a dry-run CLI `python -m explainer_engine.cloud.providers --workload <id>`), `tests/unit/test_cloud_providers.py`
+  (18 pass), `docs/providers/*` (7 docs, indexed), skills `hyperstack-operations`, `modal-operations`, `cloud-provider-selection`,
+  `cloud-cost-audit`, Argon's reports `docs/handoff/argon_2026-11-06/argon/` (A-E) and one line in `paid-run-watchdog`.
+  Live submission stays behind `ApprovalGate` (dry-run by default); Modal's live path is a stub. It does not yet go through
+  `config/spend_caps.json` or the ledger, so no live provider run happens until it is wired to them (invariant 1).
+- Fixed on review: Argon's proposed provider caps were numbers in `base.py` (D-56 test failed); they moved to
+  `config/provider_caps_proposed.json` (all disabled, not approved). Four skills got the D-116 route banner; docs no longer cite
+  BP ids that the registry does not define. Full suite: 3053 passed, 4 skipped, 1 xfailed; docs_lint 0 findings.
+- Not merged: the payload's full-file versions of `docs/PROGRESS.md` (dropped ~1000 lines), `docs/SOURCED_RULES.md` (reverted
+  the D-116 J2/J4 scoping, BP-105/108/172 house rows, deleted three ICW rows and reused the IDs of the creator's 2026-11-06 J5 rows
+  for new meanings), `docs/INDEX.md` and `sourced_rules.py`. They were written on an older base. The J5 LTX minimisation part
+  is missing from the payload: `explainer_engine/blender/{j5_limits,j5_action_rig,j5_minute_v3}.py`, `explainer_engine/visual/
+  {still_needs,visual_script}.py`, its three new rule rows in `sourced_rules.json` and its report, so its tests
+  (`test_j5_ltx_minimisation.py`, `test_still_needs.py`) cannot run and were left out. Argon is asked to resend those files.
+- Cost: $0. Nothing paid was run.
+
+## 2026-11-07 — Kids get kids' voices: VC-10 and the `voice-search` skill (thread "Pick voices for dialogue")
+- Cause found: on 2026-11-06 the J5 scout (a boy of about 13 on his card) was cast from the library with age `young`, which in
+  ElevenLabs is a young adult (Cam, then "Ben Young Man", labelled `young`). `casting.py` had only young / middle_aged / old,
+  and "teen" mapped to `young`, so nothing could tell a boy from a 30-year-old.
+- Fix (`audio/casting.py`): ages `child` and `teen`; `age_of` reads them before `young`; a kid is searched without the age
+  filter by `kid_search` words; `kid_bands` reads the voice's own description and labels (audience phrases struck out,
+  adult words and ages 18+ refuse); `kid_clash` makes `eligible`/`score` refuse an adult voice for a kid and a kid voice for an
+  adult. Rule VC-10 in `docs/STORY_ENGINE.md`; skill `voice-search` (the free procedure and the casting card).
+- Tests: `tests/unit/test_casting_kids.py` (4) on voices copied from the free library listing of 2026-11-07.
+- Cost: $0, no audio generated (free `creative_list_voices` listings only).

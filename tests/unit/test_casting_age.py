@@ -56,12 +56,15 @@ SCOUT = {"names": ["scout"], "card": "a boy scout of about twelve", "voice": {"s
 
 
 def test_a_child_is_a_band_of_its_own():
-    assert casting.age_of(SCOUT) == "child"
+    # Merge of 2026-11-12 (v4.3 P0.3): two VC-10 versions met; the kept one (PR #156, test_casting_kids.py) splits the kid
+    # ages into child (4-11) and teen (12-17, and a bare "boy"), so this scout of about twelve is a teen; a kid band either way,
+    # never the library's adult "young".
+    assert casting.age_of(SCOUT) == "teen" and casting.age_of(SCOUT) in casting.KID_AGES
     assert casting.age_of({"voice": {"traits": {"age": "child"}}}) == "child"
-    assert casting.age_of({"card": "the drummer boy", "voice": {}}) == "child"
+    assert casting.age_of({"card": "the drummer boy", "voice": {}}) in casting.KID_AGES
     q = casting.query(SCOUT)
-    assert q["search"] == "boy" and "age" not in q and "gender" not in q
-    assert "child" in casting.design_description(SCOUT) and "boy's" in casting.design_description(SCOUT)
+    assert q["search"] == "teen boy" and "age" not in q
+    assert "teenage" in casting.design_description(SCOUT) and "boy" in casting.design_description(SCOUT)
 
 
 def test_a_young_adult_voice_is_never_a_child():

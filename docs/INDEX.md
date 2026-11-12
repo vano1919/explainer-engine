@@ -13,6 +13,12 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [MODAL_README](providers/MODAL_README.md) | Modal Functions, serverless GPU, credits, volumes, secrets, agent skills and migration fit | |
 | [CLOUD_COST_MODEL_2026-11-07](providers/CLOUD_COST_MODEL_2026-11-07.md) | dated RunPod/Hyperstack/Modal GPU, AI Studio token and compute-credit arithmetic; D-116 cost assumptions | |
 | [cloud-platforms](../.claude/rules/cloud-platforms.md) | canonical Claude execution rules for RunPod, Hyperstack and Modal; approval gates and adapter contract | |
+| [providers/PROVIDER_COMPARISON.md](providers/PROVIDER_COMPARISON.md) | 18-provider GPU cloud comparison (RunPod, Hyperstack, Modal, Vast, TensorDock, Lambda, Nebius, CoreWeave, Crusoe, Fluidstack, Paperspace, Salad, CUDO, Vultr, Genesis, AWS, GCP, Azure) |
+| [providers/GPU_AVAILABILITY_RESEARCH.md](providers/GPU_AVAILABILITY_RESEARCH.md) | GPU stock APIs, shortage behavior, TOCTOU race analysis, and zero-cost polling specification |
+| [providers/CLOUD_COST_MODEL.md](providers/CLOUD_COST_MODEL.md) | Comparable total-cost model across Workloads A, B, C, D and 12-minute episode projections |
+| [providers/PROVIDER_ADAPTER_DESIGN.md](providers/PROVIDER_ADAPTER_DESIGN.md) | Provider-neutral adapter design reusing `explainer_engine/cloud/jobs.py` and enforcing `OR-22..36` |
+| [providers/PROVIDER_DECISION.md](providers/PROVIDER_DECISION.md) | Final 10-criterion provider scorecard, category rankings, and approval gates |
+| [handoff/argon_2026-11-06/argon/](handoff/argon_2026-11-06/argon/README.md) | Gemini Argon's 2026-11-06/07 audit (A), cost model (B), design (C), implementation notes (D) and paid-test proposal (E); evidence and proposals, not active rules | |
 | [SCENE_ASSETS](SCENE_ASSETS.md) | the drawn scene assets (`scene_assets/1`), cut-outs and the J5 2.5D assembly in Blender (D-116, ICW-11) | SA- |
 | [J5_DIALOGUE_COLLAGE](J5_DIALOGUE_COLLAGE.md) | the J5 dialogue test as a step-by-step record: cut-out, scale and eye-line, fire light and face shadow, Blender layer passes, depth and grain, the animated background, ambience, commands, open items (2026-11-06; not yet a standard) | |
 | [J5_ARGON_REVIEW](J5_ARGON_REVIEW.md) | review request for Argon: where the J5 dialogue, montage and animation code is, the sources with exact links, the questions and the prompt (2026-11-06) | |

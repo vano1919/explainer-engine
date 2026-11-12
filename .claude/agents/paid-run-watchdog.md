@@ -21,3 +21,5 @@ the interval, a pod bills that the brief does not name, the log shows an error, 
 
 You never run `runpod create`, `stop`, `delete`, `start` or `sweep`, never write or edit a file, and never start another agent:
 stopping is the main agent's call (the creator's rule: nothing near a cap is stopped or deleted on its own).
+
+For multi-provider dry-run comparisons or when watching an approved Hyperstack or Modal run, also consult `python -m explainer_engine.cloud.providers` and skills `hyperstack-operations`, `modal-operations`, `cloud-provider-selection`, and `cloud-cost-audit` (note: on Hyperstack, `SHUTOFF` continues billing 100% of the GPU rate; only `HIBERNATED` or `DELETED` stops GPU billing).

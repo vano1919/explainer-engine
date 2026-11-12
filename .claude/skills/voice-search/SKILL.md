@@ -1,58 +1,53 @@
 ---
 name: voice-search
-description: How to find an ElevenLabs voice that fits a character's age, gender, accent and temperament before any paid take - the library's fields and their blind spots (no child label), the free search, preview measurement, the shortlist and the verification of the first take. Use whenever a speaking character needs a voice, above all a child, a teen or an elder.
+description: Find ElevenLabs library voices for each speaking character by age, gender, temperament and accent (free listing only, no audio), and write the casting card the creator picks from. Use before any dialogue take.
 ---
 
-# Voice search: age first, proof before a paid take
+# Voice search: cast every speaking character by age first (VC-01..VC-10)
 
-Route-scoped since D-116 (2026-11-06): the J5 route is Qwen assets + Blender cards + FFmpeg, no LTX. Rules by id: VC-01..VC-10 in
-`docs/STORY_ENGINE.md`; code `explainer_engine/audio/casting.py` and `explainer_engine/audio/voice_audition.py`; stage page
-`.claude/agents/voice-caster.md`. The narrator is the channel voice (VC-08) and is never searched.
+Why this exists: on 2026-11-06 the J5 scout, a boy of about 13, was read first by an adult male voice and then by
+"Ben Young Man" (library age `young` = a young adult). The creator, 2026-11-07: "yesterday a child had a 40-year-old
+man's voice". The rules live in `docs/STORY_ENGINE.md` (VC rows); the code is `explainer_engine/audio/casting.py`.
 
-**Why this skill exists (2026-11-06).** The J5 dialogue test picked its two voices by hand "by description" (J5_DIALOGUE_COLLAGE section 7c): the scout
-got Cam, a library voice labelled `young`, and it sounded like a 40-year-old man. The library's age labels are only `young`,
-`middle_aged`, `old` and `young` holds every adult under about 40; there is no child label at all. `casting.py` was not used and
-had no child band. Fixed in code by VC-10 (`age_of` returns `child`, `child_problems`) and by the steps below.
+Everything here is FREE: `creative_list_voices` lists voices and returns preview links; it makes no audio and spends no
+credits. A take (`creative_generate_speech`), a designed voice (`creative_design_voice`) or a dialogue render is PAID and
+needs the creator's explicit yes in a new message, with the credit estimate (invariant 2, OR-23).
 
-## What the connector gives (free: `creative_list_voices`)
+## 1. The character sheet (one row per speaker)
 
-| Field | Reliable for | Blind spot |
-|---|---|---|
-| `gender` | male / female / neutral | missing on many library voices |
-| `age` | old and middle-aged | `young` = anything up to ~40; no `child`; many voices have no label |
-| `accent` / `languages` | accent filter (one language only) | free text on uploads (`en-american`, `American`, `Southern`) |
-| `use_cases`, `descriptives` | temperament words (calm, raspy, gentle...) | library voices only; the AND of filters often returns nothing |
-| `search` | name and description words | one plain word works (`boy`); `child kid teen` together returned 0 |
-| `preview_url` | a free listen and a free measurement | one stylised sample, not a read of our line |
-| `creative_design_voice` | a new voice from words | paid, creator approves the cost; designed voices were rejected as "pure AI" for the narrator |
+From the script and the picture card, write for each speaker: `gender`, `age` (child 4-11 / teen 12-17 / young 18-35 /
+middle_aged 35-55 / old 55+), the apparent age in years from the picture, up to four temperament words, energy
+(low/medium/high), origin or ethnicity (accent), role. Look at the hero's card or still yourself: the picture decides the
+age, not the role name ("scout" says nothing about age). An unknown age is a question to the creator, never a guess.
 
-## Procedure (all free until step 7)
+## 2. The searches
 
-1. **Traits first.** Per speaking character write `voice.traits`: gender, **age as the character is in the picture** (`child` for a boy, girl or kid;
-   `young` only for a young adult; `middle_aged`, `old`), accent, 2-4 temperament words, energy, role. Look at the picture: a boy
-   with a drum is `child`, a bearded commander is `middle_aged`. Never write the age from the voice you hope to use.
-2. **Search.** `casting.query(hero)` gives the arguments (a child gets one plain word, no age filter). Call `creative_list_voices` with
-   `sort: usage_character_count_1y`; relax with `casting.relaxed(q)`; for a child also try `girl`, `kid`, `teenager` as single words.
-3. **Eligible.** `casting.rank(results, hero, taken=<ids already cast>)`: famous, taken, wrong age band and, for a child, a voice whose name or
-   description does not say child, or says adult, companion or another "boy" (boyfriend, Jersey Boy), are out (VC-10).
-4. **Measure the preview, free.** Download `preview_url` (curl; the proxy allows storage.googleapis.com and api.us.elevenlabs.io), then
-   `voice_audition.load_audio` + `f0_track(x, sr, 60, 500)`: the median pitch. Reference points measured 2026-11-06 on previews:
-   adult men 90-115 Hz; a 17-year-old boy 154 Hz; child-labelled cartoon voices 320-360 Hz. A voice sold as "boy" with a median
-   near an adult man's (Austin Boy, 117 Hz) is an adult acting: out. These are observations, not a sourced rule (D-59): they order
-   the shortlist and never replace the listening in step 5. Previews with effects or radio filtering can fool the tracker (octave jumps): listen.
-5. **Listen.** The creator hears each shortlisted preview or a free test sample and picks (VC-03). Show name, labels, description, median pitch.
-6. **Distinct.** `voice_audition.distinct` over the whole cast (VC-04, VC-07).
-7. **First take is the proof (paid, estimate first, `generations_count` 1).** One short line (under 60 characters) per new voice, estimate in the ledger. Then
-   verify: transcribe (`creative_transcribe_audio` or Scribe) for words, `f0_track` on the take for pitch, and a listen against the card's age. A
-   take that fails the age check is not used and not re-rolled blindly: change the voice, not the seed (no seed knob exists).
-8. **Record.** The chosen `voice_id`, the traits, the measured median, the take's cost and the creator's word go into the episode's cast file
-   and the ledger. Reuse the same voice for the same character in every later clip (D-90).
+- Adult hero: `casting.query(hero)` gives the connector arguments (gender, age filter, descriptives, accent, use case);
+  call `creative_list_voices` with them plus `sort: usage_character_count_1y`; if nothing comes back, `casting.relaxed(q)`.
+- Child or teen hero: NEVER use the `age` filter (the library has no kid band; `young` returns adults). Run every
+  `casting.kid_search(hero)` text (`teen boy`, `teenager`, `boy`, `kid` / `kid boy`, `child`, `little boy`, `cartoon boy`)
+  with `languages: ["en"]`, with and without `gender`, and pool the results. Descriptive filters drop most kid voices
+  (they carry no labels): leave them off.
+- Never search with a real person's or a known character's name, "famous", "sounds like" (VC-02, PV-10).
 
-## Credit guard
+## 3. Rank and refuse
 
-The creator's cap for the dialogue texts is 5,000 ElevenLabs credits (ledger total before this skill: 226). Estimate = characters x 1 credit,
-tags count. Log the estimate before the call and the actual after. At 80 % stop and ask.
+`casting.rank(pooled, hero, taken=<ids already cast>, top=5, by_usage=True)`. It refuses (`casting.eligible`):
+a voice of the wrong age (labels two bands off, VC-05), an adult voice for a kid hero and a kid voice for an adult hero
+(`casting.kid_clash`, VC-10: the voice's own description must say child/kid/teen/boy/girl or an age under 18, after the
+audience phrases "for kids", "children's books", "kids storyteller" are struck out), a famous or imitation voice, a voice
+another speaker has (PV-32). Read each survivor's description yourself: an adult actor "doing" a kid voice is fine only if
+the description says the voice sounds like a kid.
 
-## Never
+## 4. The casting card for the creator
 
-Search or describe a voice as a named person's voice, use the `famous` category, clone, or pick a voice from its name alone.
+Per speaker, three candidates: name, `voice_id`, the age and tone the library and description state, accent, why it fits,
+the preview link (he listens for free), and the credit estimate of his lines. Credits: ElevenLabs bills per character of
+text (about 1 credit per character on the multilingual / v3 / v4 models; Flash and Turbo about 0.5). Measured on 2026-11-06:
+3 J5 lines, 126 characters, 155 credits = about 1.2 credits per character with the audio tags. Estimate = characters x 1.2
+x the number of takes. He picks by ear (VC-03); nothing is generated before his pick and his yes.
+
+## 5. After his pick
+
+Record the cast in the episode's `cast.<id>.voice.voice_id`; measure the free previews with `audio/voice_audition.py`
+(VC-06, VC-07: two cast voices must differ by a BP-138 margin). Save the chosen ids and his words to project memory.
