@@ -344,3 +344,160 @@ def test_report_upscales_conforms_measures_and_prices_every_clip(tmp_path):
     assert "NO_RECORD" in rep["money"]["wan_ti2v_5b"]["state"]              # A3: a died run is still in the money
     assert rep["total_usd"] >= B.variant(PLAN, "wan_ti2v_5b")["cap_usd"]
     assert "contact_sheet.png" in " ".join(up)
+
+
+# --- the container path with a fake pipeline (delta audit N1, N2, N3: write_clip, make_wan and body had no test) ----------------
+
+class FakeEuler:
+    """Stands in for diffusers' FlowMatchEulerDiscreteScheduler: records the sigmas it is given."""
+
+    def __init__(self, **cfg):
+        self.config, self.sigmas_seen = cfg, None
+
+    @classmethod
+    def from_config(cls, config, **kw):
+        return cls(**{**config, **kw})
+
+    def set_timesteps(self, num_inference_steps=None, device=None, sigmas=None, **kw):
+        self.sigmas_seen = sigmas
+        sh = self.config["shift"]
+        self.timesteps = [1000.0 * sh * s / (1 + (sh - 1) * s) for s in sigmas]
+
+
+class FakePipe:
+    calls = []
+
+    def __init__(self):
+        self.scheduler = SimpleNamespace(config={"flow_shift": 3.0}, set_timesteps=lambda n, **k: None)   # the repo's own
+
+    @classmethod
+    def from_pretrained(cls, path, **kw):
+        return cls()
+
+    def load_lora_weights(self, *a, **k):
+        pass
+
+    def set_adapters(self, *a, **k):
+        pass
+
+    def enable_model_cpu_offload(self):
+        pass
+
+    def to(self, d):
+        return self
+
+    def __call__(self, image, prompt, height, width, num_frames, generator, callback_on_step_end, output_type,
+                 num_inference_steps, **kw):
+        self.scheduler.set_timesteps(num_inference_steps)
+        FakePipe.calls.append({"prompt": prompt, "timesteps": list(getattr(self.scheduler, "timesteps", []))})
+        for i in range(num_inference_steps):
+            callback_on_step_end(self, i, 0, {})
+        return SimpleNamespace(frames=[np.random.rand(num_frames, height, width, 3).astype(np.float32)])
+
+
+def _export_to_video(frames, path, fps=10, quality=5):
+    """imageio's rule: the writer is picked by the file's suffix (a '.tmp' name has none, delta audit N1)."""
+    if Path(path).suffix not in (".mp4", ".mov", ".mkv"):
+        raise ValueError(f"Could not find a backend to open '{path}' with iomode 'w?'")
+    Path(path).write_bytes(b"MP4" + np.asarray(frames[:1]).tobytes()[:64] + bytes([len(frames) % 256]))
+
+
+@pytest.fixture
+def container(tmp_path, monkeypatch):
+    import sys
+    import types
+    from PIL import Image
+    d = types.ModuleType("diffusers")
+    d.WanImageToVideoPipeline, d.FlowMatchEulerDiscreteScheduler = FakePipe, FakeEuler
+    d.AutoencoderKLWan = SimpleNamespace(from_pretrained=lambda *a, **k: object())
+    du = types.ModuleType("diffusers.utils")
+    du.export_to_video = _export_to_video
+    d.utils = du
+    t = types.ModuleType("torch")
+    t.Generator = lambda dev=None: SimpleNamespace(manual_seed=lambda s: None)
+    t.float32 = t.bfloat16 = None
+    hh = types.ModuleType("huggingface_hub")
+    api = FakeApi()
+    hh.HfApi = lambda token=None: api
+    hh.CommitOperationAdd = OP
+    for name, mod in (("diffusers", d), ("diffusers.utils", du), ("torch", t), ("huggingface_hub", hh)):
+        monkeypatch.setitem(sys.modules, name, mod)
+    monkeypatch.setattr(B, "OUT_ROOT", tmp_path / "out")
+    monkeypatch.setattr(B, "VOL_OUT", tmp_path / "vol")
+    pic = tmp_path / "pic.png"
+    Image.new("RGB", (640, 360), (90, 80, 70)).save(pic)
+    monkeypatch.setattr(B, "_picture", lambda plan, shot, root=None: str(pic))
+    monkeypatch.setattr(B, "stamp_ok", lambda w, vol_root="/w": [])
+    monkeypatch.setattr(B, "_tok", lambda: "x")
+    monkeypatch.setattr(B, "libs", lambda: {})
+    FakePipe.calls = []
+    plan = copy.deepcopy(PLAN)
+    for v in plan["variants"]:
+        v["width"], v["height"] = 320, 192
+    return SimpleNamespace(plan=plan, api=api, tmp=tmp_path)
+
+
+def test_the_clip_writer_keeps_the_suffix_and_the_uploader_skips_its_temp_name(tmp_path, container):
+    tmp_path = tmp_path / "w"
+    tmp_path.mkdir()
+    p = B.write_clip(np.zeros((5, 8, 8, 3), np.float32), tmp_path / "dialogue.clip1.mp4", 16)
+    assert p.is_file() and not B.tmp_name(p).exists() and B.tmp_name(p).name == ".dialogue.clip1.mp4"
+    B.tmp_name(p).write_bytes(b"half")
+    assert [q.name for q, _ in B._files(tmp_path)] == ["dialogue.clip1.mp4"]
+
+
+def test_a_wan_run_writes_every_clip_verifies_it_on_hf_and_keeps_a_volume_copy(container):
+    m = B.body(container.plan, "wan_a14b_lightning", "rid", "n1", 1110)
+    assert m["state"] == "DONE", m
+    out = container.tmp / "out" / "rid" / "wan_a14b_lightning"
+    for s in ("dialogue", "action"):
+        assert (out / f"{s}.clip1.mp4").is_file() and (out / f"{s}.clip2.mp4").is_file() and (out / f"{s}.mp4").is_file()
+    assert set(m["verified"].values()) == {"ok"}
+    assert (container.tmp / "vol" / "rid" / "wan_a14b_lightning" / "verified.json").is_file()
+    prompts = [c["prompt"] for c in FakePipe.calls]
+    assert prompts[1] == PLAN["shots"][0]["prompt_2"] and prompts[2] == PLAN["shots"][1]["prompt"]
+    assert [round(x, 1) for x in FakePipe.calls[0]["timesteps"]] == [1000.0, 937.5, 833.3, 625.0]      # N3: the authors' steps
+    assert B.body(container.plan, "wan_a14b_lightning", "rid", "n1", 1110)["state"] == "REFUSED_SECOND_ATTEMPT"
+
+
+def test_a_deadline_in_clip_two_keeps_clip_one_on_hf_and_on_the_volume(container, monkeypatch):
+    n, steps = [0], B.variant(PLAN, "wan_ti2v_5b")["settings"]["num_inference_steps"]
+    real = B.Deadline.check
+
+    def check(self):
+        n[0] += 1
+        if n[0] == steps + 2:                                           # the 2nd step of clip 2 of the first shot
+            raise B.DeadlineHit("the in-container deadline came")
+        return real(self)
+    monkeypatch.setattr(B.Deadline, "check", check)
+    m = B.body(container.plan, "wan_ti2v_5b", "rid", "n1", 1512)
+    assert m["state"] == "PARTIAL" and "DeadlineHit" in m["error"]
+    assert m["verified"]["dialogue.clip1.mp4"] == "ok"
+    assert (container.tmp / "vol" / "rid" / "wan_ti2v_5b" / "dialogue.clip1.mp4").is_file()
+
+
+def test_with_hf_down_the_volume_copy_comes_first_and_the_end_path_stays_inside_the_timeout(container, monkeypatch):
+    container.api.fail = 10 ** 6
+    slept = []
+    real = B.upload_round
+    monkeypatch.setattr(B, "upload_round", lambda *a, **k: real(*a, **{**k, "sleep": slept.append}))
+    m = B.body(container.plan, "wan_a14b_lightning", "rid", "n1", 1110)
+    assert m["state"] == "UPLOAD_UNVERIFIED"
+    assert (container.tmp / "vol" / "rid" / "wan_a14b_lightning" / "action.mp4").is_file()
+    assert sum(slept) <= B.MARGIN_S + 1110                           # the backoff is bounded by the time left
+
+
+def test_the_final_flush_never_sleeps_after_its_last_try_nor_past_its_budget(tmp_path):
+    (tmp_path / "a.mp4").write_bytes(b"x")
+    slept = []
+    assert B.upload_round(FakeApi(fail=99), tmp_path, "p", "r", {}, final=True, sleep=slept.append, op=OP) == 0
+    assert slept == [15.0, 30.0, 60.0, 120.0, 240.0]
+    slept.clear()
+    B.upload_round(FakeApi(fail=99), tmp_path, "p", "r", {}, final=True, sleep=slept.append, op=OP, budget_s=100)
+    assert sum(slept) <= 100
+
+
+def test_lightning_timesteps_are_the_authors():
+    assert B.shifted_timesteps(4, 5.0) == [1000.0, 937.5, 833.3, 625.0]
+    assert B.variant(PLAN, "wan_a14b_lightning")["scheduler"]["timesteps"] == B.shifted_timesteps(4, 5.0)
+    assert B.linear_sigmas(4) == [1.0, 0.75, 0.5, 0.25]

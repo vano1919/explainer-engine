@@ -211,7 +211,14 @@
    "scheduler": {
     "class": "FlowMatchEulerDiscreteScheduler",
     "shift": 5.0,
-    "source": "the LoRA authors' reference workflow at lightx2v/Wan2.2-Lightning 18bccf88 (Seko-V1 NativeComfy): Euler, shift 5.0, 4 steps split 2 + 2 at the 0.9 boundary, CFG 1, LoRA strength 1.0 (read by the Fable audit 2026-11-12, B1)"
+    "source": "the LoRA authors' reference workflow at lightx2v/Wan2.2-Lightning 18bccf88 (Seko-V1 NativeComfy): Euler, ComfyUI 'simple' schedule, shift 5.0, 4 steps split 2 + 2 at the 0.9 boundary, CFG 1, LoRA strength 1.0 (Fable audit B1; the linear sigmas are given explicitly because diffusers' own spacing gives 1000, 910, 717, 24, delta audit N3; checked on CPU with diffusers d8c1b13c)",
+    "sigmas": "linear: 1, 0.75, 0.5, 0.25 before the shift",
+    "timesteps": [
+     1000.0,
+     937.5,
+     833.3,
+     625.0
+    ]
    }
   },
   {

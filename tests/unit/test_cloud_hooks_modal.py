@@ -30,6 +30,12 @@ GO = "cmsg_01AbC:" + "a1b2c3d4e5f6"
     (f"EE_MODAL_GO={GO} modal run {BAKE}::run_ltx_distilled --rid x", "only through its entrypoints"),  # A4: no direct call
     (f"EE_MODAL_GO={GO} modal run {BAKE}::stage_fn", "only through its entrypoints"),
     ("modal shell --gpu H100", "outside any plan"),
+    ("/usr/local/bin/modal shell --gpu H100", "outside any plan"),                   # delta audit N4: a path before modal
+    (".venv/bin/modal deploy x.py", "leaves an app up"),
+    ("~/.local/bin/modal launch jupyter --gpu H100", "outside any plan"),
+    (f".venv/bin/modal run {BAKE}::run_wan_ti2v_5b --rid r", "only through its entrypoints"),
+    ("C:\\tools\\modal.exe shell", "outside any plan"),
+    (".venv/bin/python -m modal shell", "outside any plan"),
     ("modal launch jupyter --gpu H100", "outside any plan"),
     ("echo ok; `modal deploy x.py`", "leaves an app up"),
     ("bash <<'EOF'\nmodal deploy x.py\nEOF", "leaves an app up"),                  # a heredoc fed to a shell is a command

@@ -5473,3 +5473,18 @@ Fixed in `training/pods/bakeoff/` and `cloud/hooks.py`:
 - The `modal` line in `config/spend_caps.json` gains `tests_total_usd` beside `per_run_usd`; both are written only on the
   creator's recorded word.
 - Tests: `tests/unit/test_v43_video_bakeoff.py`, `tests/unit/test_cloud_hooks_modal.py`.
+
+## 2026-11-12 — the bake-off after its delta audit (N1-N4 fixed; nothing run)
+
+The delta audit (`BAKEOFF_DELTA_AUDIT.md`) closed A1, A3, A5 and B2-B6 and found four more items, now fixed:
+- N1: Wan clips were written under a `.mp4.tmp` name, which imageio cannot open, so both Wan variants would have died after
+  their first clip. The temp name is now `.<name>.mp4`, which keeps the suffix, and the uploader skips it. Checked with the real
+  diffusers `d8c1b13c` on the CPU. `::check` now writes one tiny clip inside the real image.
+- N2: the Volume copy is now made and committed before the final HF flush and again after `verified.json`. The final flush's
+  backoff is bounded by the time left, with no sleep after the last try.
+- N3: Lightning gets the authors' timesteps 1000, 937.5, 833.3, 625. Diffusers' own spacing gave 1000, 910, 717, 24, so Euler
+  is now subclassed with linear sigmas given explicitly. Checked on the CPU with the real scheduler, and `::check` repeats it
+  in the image.
+- N4: the hooks now see `modal` called by a path (`.venv/bin/modal`, `modal.exe`, `python -m modal`).
+- New tests run `write_clip`, `make_wan` and `body` with a fake pipeline, a fake diffusers and a fake HF: a full Wan run, a
+  deadline in clip 2, a second attempt, and HF down.

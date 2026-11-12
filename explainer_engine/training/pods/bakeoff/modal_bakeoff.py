@@ -32,7 +32,7 @@ Wan makes 5 s at most per clip, so a 10 s Wan shot is two clips: the second star
 shot's ``prompt_2`` (audit B2), and the join keeps the first clip up to that frame and drops its last five (D-125
 WAN-CHAIN-MINUS-5, ``wan_optimizer.compute_continuation_splice_spec``: the anchor frame is shown once, as the second clip's frame
 0). LTX makes the 10 s (241 frames at 24 fps) in one clip, with its own sound."""
-import hashlib, json, os, re, subprocess, sys, threading, time, traceback, uuid
+import hashlib, json, os, re, shutil, subprocess, sys, threading, time, traceback, uuid
 from pathlib import Path
 try:
     import modal
@@ -411,23 +411,29 @@ def _files(root):
     return out
 
 
-def upload_round(api, root, hf_prefix, repo, seen: dict, final=False, sleep=time.sleep, op=None) -> int:
+def upload_round(api, root, hf_prefix, repo, seen: dict, final=False, sleep=time.sleep, op=None, budget_s=None) -> int:
     """One batched commit of every new or changed file (the Wan worker's lesson: one commit per round, backoff, more tries at
-    the final flush); returns the number sent, 0 when nothing was new or every try failed."""
+    the final flush); returns the number sent, 0 when nothing was new or every try failed. ``budget_s`` bounds the backoff
+    sleeps (delta audit N2): no sleep after the last try, none that would pass the budget."""
     new = [(p, k) for p, k in _files(root) if seen.get(str(p)) != k]
     if not new:
         return 0
     if op is None:
         from huggingface_hub import CommitOperationAdd as op
     ops = [op(path_in_repo=f"{hf_prefix}/{p.relative_to(root).as_posix()}", path_or_fileobj=str(p)) for p, _ in new]
-    for k in range(6 if final else 2):
+    tries, slept = (6 if final else 2), 0.0
+    for k in range(tries):
         try:
             api.create_commit(repo_id=repo, repo_type="dataset", operations=ops, commit_message=f"bakeoff: {len(new)} files")
             seen.update({str(p): key for p, key in new})
             return len(new)
         except Exception as e:  # noqa: BLE001 - a 429/5xx is retried with backoff; the Volume copy is the safety net
             print("upload failed", repr(e)[:160], flush=True)
-            sleep(15.0 * 2 ** k)
+            wait = 15.0 * 2 ** k
+            if k == tries - 1 or (budget_s is not None and slept + wait > budget_s):
+                return 0
+            sleep(wait)
+            slept += wait
     return 0
 
 
@@ -487,12 +493,41 @@ def libs() -> dict:
     return out
 
 
+def tmp_name(path) -> Path:
+    """A temp name that keeps the suffix (imageio picks its writer by it, delta audit N1) and that ``_files`` skips."""
+    path = Path(path)
+    return path.with_name("." + path.name)
+
+
 def write_clip(frames, path, fps):
     from diffusers.utils import export_to_video
-    tmp = Path(str(path) + ".tmp")
+    tmp = tmp_name(path)
     export_to_video(frames, str(tmp), fps=fps, quality=9)          # audit B4: not the default CRF ~25
     os.replace(tmp, path)
     return path
+
+
+def linear_sigmas(n) -> list:
+    """The authors' ComfyUI ``simple`` schedule before the shift: 1, 1 - 1/n, ..., 1/n (delta audit N3)."""
+    return [1.0 - i / n for i in range(n)]
+
+
+def shifted_timesteps(n, shift) -> list:
+    """What the schedule gives after the flow shift, on the 0..1000 timestep scale: at n=4, shift 5: 1000, 937.5, 833.3, 625."""
+    return [round(1000.0 * shift * s / (1 + (shift - 1) * s), 1) for s in linear_sigmas(n)]
+
+
+def lightning_scheduler(diffusers, config, sc):
+    """Euler with the linear sigmas given explicitly (delta audit N3 path a): diffusers' own spacing of
+    ``FlowMatchEulerDiscreteScheduler`` spaces between already shifted ends and gives 1000, 910, 717, 24 at shift 5."""
+    base = getattr(diffusers, sc["class"])
+
+    class LinearSigmas(base):
+        def set_timesteps(self, num_inference_steps=None, device=None, sigmas=None, **kw):
+            if sigmas is None and num_inference_steps:
+                sigmas = linear_sigmas(int(num_inference_steps))
+            return super().set_timesteps(device=device, sigmas=sigmas, **kw)
+    return LinearSigmas.from_config(config, shift=float(sc["shift"]))
 
 
 def make_wan(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, rows=None):
@@ -510,8 +545,7 @@ def make_wan(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, rows=
         kw["vae"] = diffusers.AutoencoderKLWan.from_pretrained(str(weights_root(base) / "vae"), torch_dtype=torch.float32)
     pipe = getattr(diffusers, v["pipeline"]).from_pretrained(str(weights_root(base)), torch_dtype=torch.bfloat16, **kw)
     if v.get("scheduler"):                                           # audit B1: the LoRA authors' sampler
-        sc = v["scheduler"]
-        pipe.scheduler = getattr(diffusers, sc["class"]).from_config(pipe.scheduler.config, shift=float(sc["shift"]))
+        pipe.scheduler = lightning_scheduler(diffusers, pipe.scheduler.config, v["scheduler"])
     if v.get("lora"):
         lw = plan["weights"][v["weights"][1]]
         names = []
@@ -679,30 +713,35 @@ def body(plan, vid, rid, nonce, timeout_s, commit=lambda: None, reload=lambda: N
     m["state"] = run_state(rows, len(plan["shots"]), {}, err)
     (out / "measured.json").write_text(json.dumps(m, indent=1))
     beat(out, stage="upload", variant=vid)
+    wall_left = lambda: deadline.left() + MARGIN_S - 20.0  # noqa: E731 - seconds before Modal's own timeout, with room
+
+    def to_volume():  # the second net first, before any HF wait (delta audit N2), and again at the end
+        try:
+            shutil.copytree(OUT_ROOT / rid, VOL_OUT / rid, dirs_exist_ok=True)
+            commit()
+        except Exception as e:  # noqa: BLE001
+            print("volume copy failed", repr(e)[:200], flush=True)
+    to_volume()
     stop.set()
-    th.join(timeout=120)
+    th.join(timeout=max(5.0, min(120.0, wall_left() / 4)))
     t = time.time()
-    verified = {}
+    verified, api = {}, None
     try:
         from huggingface_hub import HfApi
         api = HfApi(token=_tok())
-        upload_round(api, OUT_ROOT / rid, hf_prefix, plan["hf_repo"], seen, final=True)
+        upload_round(api, OUT_ROOT / rid, hf_prefix, plan["hf_repo"], seen, final=True, budget_s=max(0.0, wall_left() * 0.5))
         verified = verify_uploads(api, OUT_ROOT / rid / vid, f"{hf_prefix}/{vid}", plan["hf_repo"])
     except Exception as e:  # noqa: BLE001
         verified = {"_": f"upload failed: {type(e).__name__}"}
     phases["upload_s"] = round(time.time() - t, 1)
     m["state"], m["verified"] = run_state(rows, len(plan["shots"]), verified, err), verified
     (out / "verified.json").write_text(json.dumps({"state": m["state"], "files": verified}, indent=1))
-    try:
-        upload_round(api, OUT_ROOT / rid, hf_prefix, plan["hf_repo"], seen, final=True)
-    except Exception:  # noqa: BLE001 - the Volume keeps it; the local side gets it in the answer too
-        pass
-    try:
-        import shutil
-        shutil.copytree(OUT_ROOT / rid, VOL_OUT / rid, dirs_exist_ok=True)
-        commit()
-    except Exception as e:  # noqa: BLE001
-        print("volume copy failed", repr(e)[:200], flush=True)
+    to_volume()
+    if api is not None:
+        try:
+            upload_round(api, OUT_ROOT / rid, hf_prefix, plan["hf_repo"], seen, final=True, budget_s=max(0.0, wall_left() * 0.5))
+        except Exception:  # noqa: BLE001 - the Volume keeps it; the local side gets it in the answer too
+            pass
     m["body_s"] = round(time.time() - t_in, 1)
     return m
 
@@ -743,6 +782,21 @@ if modal is not None:
         import diffusers
         bad += [p for p in ("WanImageToVideoPipeline", "AutoencoderKLWan", "FlowMatchEulerDiscreteScheduler")
                 if not hasattr(diffusers, p)]
+        try:   # the real image proves the clip writer and the authors' timesteps (delta audit N1, N3)
+            import numpy as np
+            c = write_clip(np.zeros((9, 64, 64, 3), np.float32), Path("/tmp/check.clip1.mp4"), 16)
+            bad += [] if c.stat().st_size > 0 else ["the clip writer wrote nothing"]
+            light = next((v for v in PLAN["variants"] if v.get("scheduler")), None)
+            if light:
+                sch = lightning_scheduler(diffusers, diffusers.UniPCMultistepScheduler(
+                    prediction_type="flow_prediction", use_flow_sigmas=True, flow_shift=3.0).config, light["scheduler"])
+                n = int(light["settings"]["num_inference_steps"])
+                sch.set_timesteps(n)
+                got = [round(float(t), 1) for t in sch.timesteps]
+                if got != shifted_timesteps(n, float(light["scheduler"]["shift"])):
+                    bad.append(f"Lightning timesteps {got} are not the authors' {shifted_timesteps(n, 5.0)}")
+        except Exception as e:  # noqa: BLE001
+            bad.append(f"clip writer / scheduler check failed: {type(e).__name__}: {str(e)[:200]}")
         return bad
 
     @app.function(image=ltx_image, cpu=(2.0, 2.0), memory=(4096, 4096), timeout=300, retries=0, secrets=secrets)

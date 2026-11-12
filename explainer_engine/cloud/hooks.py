@@ -65,7 +65,8 @@ def _tmr_rp(cmd):
     return "python" in cmd and bool(RP_IMPORT.search(cmd))
 
 
-MODAL_CMD = re.compile(r"(?:^|\s)(?:python[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+)?modal\s+(?P<sub>run|deploy|serve|shell|launch)\b"
+MODAL_CMD = re.compile(r"(?:^|[\s;&|(`'\"])(?:\S*?python[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+|[^\s;&|(`'\"]*[/\\])?"
+                       r"modal(?:\.exe)?\s+(?P<sub>run|deploy|serve|shell|launch)\b"
                        r"(?P<rest>[^\n]*)")
 WAN_WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
 BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the creator's video bake-off, 2026-11-12 15:01 UTC
