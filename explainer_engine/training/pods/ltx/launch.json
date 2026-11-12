@@ -51,7 +51,7 @@
   "scaledown_window_s": 2,
   "caps": {
     "smoke_usd": 0.4,
-    "run_usd": 1.0,
+    "run_usd": 1.2,
     "cold_start_s": 60
   },
   "decided": {
