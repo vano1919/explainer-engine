@@ -1,5 +1,5 @@
 {
- "schema": "video_bakeoff/1",
+ "schema": "video_bakeoff/2",
  "id": "v43_video_bakeoff_2026-11-12",
  "asked_by": {
   "by": "creator",
@@ -34,7 +34,9 @@
    "seed": 4211,
    "why": "approved style anchor M1: Kael and Sena on the gorge path, two faces, mid shot: the speaker test",
    "prompt": "Kael and Sena walk slowly side by side along the rocky gorge path toward the camera. Sena talks to Kael with lively hand gestures, her lips moving as she speaks. Kael turns his head to her, listens, then answers in a few words with a calm nod, his lips moving. Their steps are steady and grounded, the spear sways in his hand. Smoke drifts from the hearth in the shelter behind them, haze moves in the sun shafts. The camera dollies slowly backward in front of them.",
-   "audio_prompt": "Two people talking quietly while walking, footsteps on gravel, distant crackling fire, wind in the gorge."
+   "audio_prompt": "Two people talking quietly while walking, footsteps on gravel, distant crackling fire, wind in the gorge.",
+   "prompt_2": "Kael and Sena keep walking side by side along the rocky gorge path toward the camera. Kael now speaks, his lips moving, one hand opening toward the valley ahead; Sena listens, nods and answers him with a short smile, her lips moving. Their steps stay steady, smoke drifts from the hearth behind them, haze moves in the sun shafts. The camera keeps dollying slowly backward in front of them.",
+   "prompt_2_why": "the second chained Wan clip starts mid-action, so it gets its own text (Fable audit B2, 2026-11-12); LTX makes the 10 s in one clip from `prompt`"
   },
   {
    "id": "action",
@@ -48,7 +50,9 @@
    "seed": 4212,
    "why": "approved style anchor M3: Kael kneeling at the drying riverbed, an ash storm on the horizon: room for a fast body move",
    "prompt": "Kael looks up sharply at the grey ash storm rolling in over the riverbed. He snatches his spear out of the mud, springs to his feet and runs to the left across the shallow water, splashing hard, his cloak flapping. Dust and grey ash sweep in over the acacias and the light dims. The camera pans fast to follow him, handheld, with slight shake.",
-   "audio_prompt": "Rushing wind, splashing water, heavy breathing, a low rumble of the approaching storm."
+   "audio_prompt": "Rushing wind, splashing water, heavy breathing, a low rumble of the approaching storm.",
+   "prompt_2": "Kael runs hard to the left through the shallow water of the riverbed, spear in hand, splashing, his cloak flapping. The grey ash storm sweeps in behind him over the acacias, dust swirls around him and the light dims further. The camera pans fast to follow him, handheld, with slight shake.",
+   "prompt_2_why": "the second chained Wan clip starts mid-action, so it gets its own text (Fable audit B2, 2026-11-12); LTX makes the 10 s in one clip from `prompt`"
   }
  ],
  "weights": {
@@ -167,10 +171,10 @@
    "gpu": "H100",
    "cpu": 8,
    "memory_gib": 96,
-   "estimate_usd": 0.75,
+   "estimate_usd": 0.8,
    "cap_usd": 1.5,
    "sound": "native",
-   "estimate_basis": "measured 2026-10-25: ~200 s per 5 s clip at 1280x704 on an A100 incl. load; 10 s ~2.5x the work; H100 ~1.7x faster; 2 shots + 180 s cold start"
+   "estimate_basis": "measured 2026-11-07 on Modal: 118 s per 1920x1088 clip with this CLI on an A100-80 incl. load; here 1280x704, 10 s, H100, each shot its own CLI process (loads the weights again): ~90 s load + ~100 s work per shot, 2 shots + 180 s cold start = ~560 s at $5.09/h"
   },
   {
    "id": "wan_a14b_lightning",
@@ -200,10 +204,15 @@
    "gpu": "H100",
    "cpu": 8,
    "memory_gib": 96,
-   "estimate_usd": 1.1,
+   "estimate_usd": 1.2,
    "cap_usd": 2.0,
    "sound": "none",
-   "estimate_basis": "estimate: 4 steps instead of 40 plus a fixed ~45 s per clip for text, VAE and offload moves; 4 clips + cold start"
+   "estimate_basis": "the Wan2.2 card's table (1055.9 s for 40 steps x 2 CFG passes of one 720P clip on an H100): ~110-140 s per 4-step clip, 4 clips 440-560 s, plus 4-6 min load of 129 GB from the Volume = ~800 s at $5.09/h (Fable audit A5b)",
+   "scheduler": {
+    "class": "FlowMatchEulerDiscreteScheduler",
+    "shift": 5.0,
+    "source": "the LoRA authors' reference workflow at lightx2v/Wan2.2-Lightning 18bccf88 (Seko-V1 NativeComfy): Euler, shift 5.0, 4 steps split 2 + 2 at the 0.9 boundary, CFG 1, LoRA strength 1.0 (read by the Fable audit 2026-11-12, B1)"
+   }
   },
   {
    "id": "wan_ti2v_5b",
@@ -229,10 +238,10 @@
    "gpu": "H100",
    "cpu": 8,
    "memory_gib": 64,
-   "estimate_usd": 1.2,
-   "cap_usd": 2.0,
+   "estimate_usd": 1.5,
+   "cap_usd": 2.5,
    "sound": "none",
-   "estimate_basis": "the Wan2.2 card's table: 524.8 s per 121-frame 720P clip on a 4090; H100 ~3x faster; 4 clips + cold start"
+   "estimate_basis": "the Wan2.2 card's table: 524.8 s per 121-frame 720P clip on a 4090 (no H100 row); the Fable audit's range 180-260 s per clip on an H100, 4 clips 720-1040 s + load = ~1100 s at $4.84/h; cap $2.5 so the slow end fits (pending the creator's card)"
   }
  ],
  "stage": {
@@ -243,12 +252,27 @@
   "cap_usd": 0.5
  },
  "cold_start_s": 180,
- "total_cap_usd": 6.0,
- "estimate_total_usd": 3.35,
+ "total_cap_usd": 6.5,
+ "estimate_total_usd": 3.8,
  "variants_chosen": {
   "by": "creator",
   "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWCJYrxxMiZNYQ9kq7KeYnQ",
   "at": "2026-11-12T15:12:12Z",
   "note": "only variants 1, 4 and 5 of the five offered (ltx_dev and wan_a14b_full left out)"
+ },
+ "run_order": [
+  "ltx_distilled",
+  "wan_a14b_lightning",
+  "wan_ti2v_5b"
+ ],
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/bakeoff_v43.json",
+  "service": "modal",
+  "why": "one core/ledger.Run with the plan's total as its modal cap: each variant's cap is reserved before it is sent and settled from the measured wall seconds (Fable audit A3); the project files outlive the session"
+ },
+ "audited": {
+  "by": "Fable high OR-34 audit 2026-11-12",
+  "file": "/mnt/project-files/explainer-engine/v4_3_plan_2026-11-12/BAKEOFF_AUDIT_FABLE_HIGH.md",
+  "verdict_at_c66755c1": "NOT READY (A1-A5)"
  }
 }

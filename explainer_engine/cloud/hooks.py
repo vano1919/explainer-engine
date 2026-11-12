@@ -65,9 +65,21 @@ def _tmr_rp(cmd):
     return "python" in cmd and bool(RP_IMPORT.search(cmd))
 
 
-MODAL_CMD = re.compile(r"(?:^|\s)(?:python[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+)?modal\s+(?P<sub>run|deploy|serve)\b(?P<rest>[^\n]*)")
+MODAL_CMD = re.compile(r"(?:^|\s)(?:python[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+)?modal\s+(?P<sub>run|deploy|serve|shell|launch)\b"
+                       r"(?P<rest>[^\n]*)")
 WAN_WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
 BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the creator's video bake-off, 2026-11-12 15:01 UTC
+BAKEOFF_ENTRIES = ("check", "stage", "run")
+
+
+def bakeoff_go_sha(root=None) -> str:
+    """``modal_bakeoff.go_sha()`` read from the files on disk (the plan's and the worker's bytes; Fable audit A4)."""
+    import hashlib
+    from pathlib import Path
+    root = Path(root) if root else Path(__file__).resolve().parents[2]
+    w = root / BAKEOFF
+    h = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
+    return hashlib.sha256((h(w.with_name("plan_v43.json")) + h(w)).encode()).hexdigest()
 FREE_ENTRIES = {WAN_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
 
 
@@ -98,6 +110,9 @@ def modal_refusal(cmd: str, env=None) -> str | None:
         m = MODAL_CMD.search(seg)
         if not m:
             continue
+        if m.group("sub") in ("shell", "launch"):
+            return (f"`modal {m.group('sub')}` starts a container outside any plan, cap or ledger: refused (Fable audit A4, "
+                    "OR-23)")
         if m.group("sub") in ("deploy", "serve"):
             return (f"`modal {m.group('sub')}` leaves an app up: this project only runs committed workers with `modal run` "
                     "(.claude/rules/cloud-platforms.md section 5, D-131)")
@@ -114,9 +129,19 @@ def modal_refusal(cmd: str, env=None) -> str | None:
         go = re.search(r"\bEE_MODAL_GO=['\"]?(\S+?)['\"]?(?:\s|$)", cmd)
         go = go.group(1) if go else str(env.get("EE_MODAL_GO") or "")
         if path == BAKEOFF:
+            if entry not in BAKEOFF_ENTRIES:
+                return (f"`modal run {target}`: the bake-off runs only through its entrypoints {BAKEOFF_ENTRIES}, which hold the "
+                        "preflight, the GO and the ledger (Fable audit A4)")
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return ("the bake-off bills Modal on every entrypoint (its CPU check and stage-in too): "
-                        "EE_MODAL_GO=<the creator's card id>:<plan_v43.json's sha256[:12]> first (OR-23)")
+                        "EE_MODAL_GO=<the creator's card id>:<go sha[:12]> first (OR-23)")
+            try:
+                want = bakeoff_go_sha()[:12]
+            except OSError:
+                want = None
+            if go.split(":", 1)[1] != want:
+                return ("EE_MODAL_GO names another plan or worker than the files on disk: the creator's GO binds the plan's and "
+                        "the worker's bytes (modal_bakeoff.go_sha, Fable audit A4)")
         elif path == WAN_WORKER:
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return ("the Wan worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "

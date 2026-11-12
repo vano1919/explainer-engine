@@ -5444,3 +5444,32 @@ video model we can run, upscaled to 2K, with price and quality measured and the 
 - `cloud/hooks.py`: every bake-off entrypoint needs the GO with the plan's sha (its CPU check bills too).
 - Tests: `tests/unit/test_v43_video_bakeoff.py`, `tests/unit/test_cloud_hooks_modal.py`.
 - Next: the creator chose "audit first" (15:14 UTC): the Fable OR-34 audit, then his GO and his Modal spend line; $0 spent.
+
+## 2026-11-12 — the bake-off after its Fable OR-34 audit (A1-A5, B1-B7, C1-C8 fixed; nothing run)
+
+The Fable high audit of `c66755c1` said NOT READY (`/mnt/project-files/explainer-engine/v4_3_plan_2026-11-12/BAKEOFF_AUDIT_FABLE_HIGH.md`).
+Fixed in `training/pods/bakeoff/` and `cloud/hooks.py`:
+- A1: the work ends on time by itself. The Wan step callback and the LTX subprocess timeout raise before the deadline, and a
+  clip that cannot finish in the time left is not started (PARTIAL). Nothing calls `os._exit` any more, because Modal
+  reschedules a crashed container. An attempt marker per launch nonce on the Volume makes a rescheduled input return
+  `REFUSED_SECOND_ATTEMPT`. (Open: the Wan worker `modal_wan_jobs.py` still has the `os._exit` deadline; fix it before its L3.)
+- A2: every Wan clip is written as it is made. The uploader sends one batched commit per round, with backoff, from an
+  exception-safe loop. After the last flush each file's HF sha256 or git blob id is read back (`verified.json`), and the state
+  is DONE only when every file is verified. The Volume copy is made on every path.
+- A3: one `core/ledger.Run` (`plan.ledger`, in the project files) with the plan's total as its `modal` cap. `run` reserves the
+  variant's cap before it is sent and settles it from the measured wall seconds after; a lost answer keeps the reservation.
+  A repeat (ledger or HF record) needs `--again "<reason>"`. The report charges a run that left a beat but no record at its cap.
+- A4: the GO binds `go_sha()` (the plan's and the worker's bytes); the hook recomputes it from disk and allows only
+  `check|stage|run`; the remote functions return at once without the token; `check` runs the preflight and the GO;
+  `modal shell|launch` are refused everywhere.
+- A5: `stage` stamps each checked weight set and `run` checks the stamp and the sizes only, on the GPU; the pictures are
+  checked first; the record has per-phase seconds; CPU and memory limits equal their requests; the 5B cap is $2.5 (pending the
+  creator's card), and the LTX estimate is rebased on the measured 2026-11-07 Modal run.
+- B1: Lightning uses its authors' sampler (Euler, shift 5.0). B2: `prompt_2` for the second chained Wan clip. B3: `H100!` and
+  the device name. B4: clips are encoded at quality 9. B5: the start picture is cropped to each variant's aspect. B6: the 2K
+  files are conformed to 24 fps. B7: the record includes `libs`.
+- C1: the exception is recorded in `.claude/rules/cloud-platforms.md`. C3: the report has its own CIE76 and no blender import.
+  C4: a beat per phase. C6: `sys.executable`. C7: the stage message says "delete and stage again". C8: `traceback.txt`.
+- The `modal` line in `config/spend_caps.json` gains `tests_total_usd` beside `per_run_usd`; both are written only on the
+  creator's recorded word.
+- Tests: `tests/unit/test_v43_video_bakeoff.py`, `tests/unit/test_cloud_hooks_modal.py`.

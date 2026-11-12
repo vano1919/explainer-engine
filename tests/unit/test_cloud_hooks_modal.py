@@ -26,6 +26,11 @@ GO = "cmsg_01AbC:" + "a1b2c3d4e5f6"
     ("modal run explainer_engine/cloud/modal_j5_smoke.py::main", "EE_MODAL_GO"),
     (f"modal run {BAKE}::check", "bake-off bills"),                               # its CPU check bills too
     (f"EE_MODAL_GO=cmsg_1 modal run {BAKE}::run --variant ltx_distilled", "bake-off bills"),
+    (f"EE_MODAL_GO={GO} modal run {BAKE}::run --variant ltx_distilled", "another plan or worker"),   # A4: the GO binds the bytes
+    (f"EE_MODAL_GO={GO} modal run {BAKE}::run_ltx_distilled --rid x", "only through its entrypoints"),  # A4: no direct call
+    (f"EE_MODAL_GO={GO} modal run {BAKE}::stage_fn", "only through its entrypoints"),
+    ("modal shell --gpu H100", "outside any plan"),
+    ("modal launch jupyter --gpu H100", "outside any plan"),
     ("echo ok; `modal deploy x.py`", "leaves an app up"),
     ("bash <<'EOF'\nmodal deploy x.py\nEOF", "leaves an app up"),                  # a heredoc fed to a shell is a command
 ])
@@ -38,7 +43,6 @@ def test_raw_modal_launches_are_refused(cmd, why):
     f"modal run {WAN}::check",                                                     # L1/L2: CPU, the entrypoint gates itself
     f"modal run {WAN}::weights",
     f"EE_MODAL_GO={GO} modal run --detach {WAN}::main --job s.json",
-    f"EE_MODAL_GO={GO} modal run {BAKE}::run --variant wan_a14b_lightning",
     "EE_MODAL_GO=cmsg_9 modal run explainer_engine/cloud/modal_j5_smoke.py",
     "modal app list --json", "modal app stop ap-123", "grep -rn 'modal run' docs", "git log -S 'modal deploy'",
     "cat > notes.md <<'EOF'\nrun it with: modal deploy x.py\nEOF",                 # a heredoc that only writes text is data
@@ -69,3 +73,11 @@ def test_stop_refuses_the_first_end_of_a_turn_while_an_app_runs(monkeypatch, cap
     assert H.stop({"stop_hook_active": True}, live) == 0                       # the turn after may end: no deadlock
     assert H.stop({}, _runner([{"App ID": "ap-1", "Description": "x", "State": "stopped"}])) == 0
     assert H.stop({}, _runner([], rc=1)) == 0                                    # cannot look: never blocks by itself
+
+
+def test_the_bakeoff_go_binds_the_plan_and_the_worker_on_disk():
+    from explainer_engine.training.pods.bakeoff import modal_bakeoff as B
+    assert H.bakeoff_go_sha() == B.go_sha()
+    go = "cmsg_01AbC:" + B.go_sha()[:12]
+    for entry in ("check", "stage", "run --variant wan_ti2v_5b"):
+        assert H.modal_refusal(f"EE_MODAL_GO={go} modal run {BAKE}::{entry}", env={}) is None

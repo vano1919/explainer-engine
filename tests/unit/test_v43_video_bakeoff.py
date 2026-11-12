@@ -1,7 +1,9 @@
-"""The v4.3 video bake-off (the creator, 2026-11-12 15:01 UTC; variants 1, 4, 5 at 15:12 UTC): the plan holds every pin, size,
-length and cap before a paid call; timeouts come from the caps; the GO binds the plan's bytes; the stage-in downloads only
-what is missing; LTX's command line names the pinned files; a Wan shot is two clips chained on frame[-5]; the local report
-upscales, measures and prices every clip. No Modal, GPU or HF call: every container step is faked."""
+"""The v4.3 video bake-off (the creator, 2026-11-12 15:01 UTC; variants 1, 4, 5 at 15:12 UTC) after the Fable OR-34 audit
+(A1-A5, B1-B7): the plan holds every pin, size, length and cap; timeouts come from the caps; the GO binds the plan's and the
+worker's bytes; the work ends on time by itself and a rescheduled input is refused; every clip is written as it is made and its
+HF copy is checked; the ledger reserves before and settles after, and a repeat is refused; the stage stamps what it checked so
+the GPU never re-hashes; the local report upscales, conforms to 24 fps, measures and prices every clip, failed ones too.
+No Modal, GPU or HF call: every container step is faked."""
 from __future__ import annotations
 
 import copy
@@ -9,6 +11,7 @@ import hashlib
 import json
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -18,29 +21,34 @@ from explainer_engine.training.pods.bakeoff import modal_bakeoff as B
 from explainer_engine.training.pods.bakeoff import report as R
 
 PLAN = B.load_plan()
+LINE = {"per_run_usd": 2.5, "tests_total_usd": 6.5}
 
 
 def test_the_committed_plan_holds_and_keeps_only_the_creators_three_variants():
     assert B.plan_problems(PLAN) == []
     assert [v["id"] for v in PLAN["variants"]] == ["ltx_distilled", "wan_a14b_lightning", "wan_ti2v_5b"]
+    assert PLAN["run_order"] == ["ltx_distilled", "wan_a14b_lightning", "wan_ti2v_5b"]
     assert PLAN["variants_chosen"]["message_id"].startswith("cmsg_")
     caps = sum(v["cap_usd"] for v in PLAN["variants"]) + PLAN["stage"]["cap_usd"]
     assert caps <= PLAN["total_cap_usd"] + 1e-9
     for v in PLAN["variants"]:
         assert 9.5 <= B.shot_seconds(v) <= 10.5
+    light = B.variant(PLAN, "wan_a14b_lightning")
+    assert light["scheduler"] == {**light["scheduler"], "class": "FlowMatchEulerDiscreteScheduler", "shift": 5.0}   # B1
+    assert all(s.get("prompt_2") for s in PLAN["shots"])                                                              # B2
 
 
 def test_prices_equal_the_modal_schedule_table():
     for g, usd in B.USD_S.items():
         assert MS.GPUS[g]["usd_s"] == usd
     assert (B.CPU_CORE_S, B.MEM_GIB_S) == (MS.CPU_CORE_S, MS.MEM_GIB_S)
+    assert B.usd_per_h("H100!", 8, 96) == B.usd_per_h("H100", 8, 96)
 
 
 def test_every_timeout_comes_from_its_cap():
     for v in PLAN["variants"]:
-        rate = B.usd_per_h(v["gpu"], v["cpu"], v["memory_gib"])
         t = B.timeout_of(PLAN, v)
-        assert (PLAN["cold_start_s"] + t) * rate / 3600 <= v["cap_usd"]
+        assert (PLAN["cold_start_s"] + t) * B.rate_of(v) / 3600 <= v["cap_usd"]
     bad = copy.deepcopy(PLAN)
     bad["variants"][0]["cap_usd"] = 0.01
     with pytest.raises(SystemExit, match="cold start"):
@@ -57,6 +65,9 @@ def test_every_timeout_comes_from_its_cap():
     (lambda p: p["variants"][0].__setitem__("gpu", "B300"), "unknown GPU"),
     (lambda p: p["variants"][0]["uses"].__setitem__("transformer", "x.safetensors"), "not a pinned file"),
     (lambda p: p.__setitem__("total_cap_usd", 1.0), "past the plan's total"),
+    (lambda p: p["shots"][1].pop("prompt_2"), "prompt_2"),
+    (lambda p: p.__setitem__("run_order", ["ltx_distilled"]), "run_order"),
+    (lambda p: p.pop("ledger"), "no modal ledger"),
 ])
 def test_a_broken_plan_is_refused(break_it, why):
     p = copy.deepcopy(PLAN)
@@ -64,19 +75,24 @@ def test_a_broken_plan_is_refused(break_it, why):
     assert any(why in b for b in B.plan_problems(p))
 
 
-def test_preflight_needs_the_creators_modal_line_over_every_cap():
-    B.preflight(PLAN, spend_line=10.0)
+def test_preflight_needs_the_creators_modal_line_over_every_cap_and_the_total():
+    B.preflight(PLAN, line=LINE)
     with pytest.raises(SystemExit, match="above the creator"):
-        B.preflight(PLAN, spend_line=1.0)
+        B.preflight(PLAN, line={"per_run_usd": 1.0, "tests_total_usd": 6.5})
+    with pytest.raises(SystemExit, match="tests_total_usd"):
+        B.preflight(PLAN, line={"per_run_usd": 2.5})
 
 
-def test_the_go_binds_the_plans_bytes():
-    sha = B.plan_sha()
+def test_the_go_binds_the_plans_and_the_workers_bytes():
+    sha = B.go_sha()
+    assert sha == hashlib.sha256((B.plan_sha() + B.worker_sha()).encode()).hexdigest()
+    assert B.go_sha(B.plan_sha(), "0" * 64) != sha
     assert B.go_gate({"EE_MODAL_GO": f"cmsg_1A:{sha[:12]}"}, sha) == "cmsg_1A"
     with pytest.raises(SystemExit, match="another plan"):
         B.go_gate({"EE_MODAL_GO": "cmsg_1A:000000000000"}, sha)
     with pytest.raises(SystemExit):
         B.go_gate({}, sha)
+    assert B.token_ok(B.token_for("cmsg_1A", sha), sha) and not B.token_ok("", sha) and not B.token_ok("cmsg_1A:0" * 1, sha)
 
 
 def test_join_shows_the_anchor_frame_once_like_the_splice_spec():
@@ -85,70 +101,171 @@ def test_join_shows_the_anchor_frame_once_like_the_splice_spec():
     j = B.join_clips([a, b], 5)
     spec = WO.compute_continuation_splice_spec(81, 81, offset_from_end=5, fps=16)
     assert len(j) == spec["prev_clip_play_frames_before_splice"] + 81 and j[75] == 75 and j[76] == 100
-    v = B.variant(PLAN, "wan_a14b_lightning")
-    assert B.chained_frames(v) == len(j)
+    assert B.chained_frames(B.variant(PLAN, "wan_a14b_lightning")) == len(j)
+    s = PLAN["shots"][1]
+    assert B.clip_prompt(s, 0) == s["prompt"] and B.clip_prompt(s, 1) == s["prompt_2"]
 
 
 def test_fit_picture_centre_crops_to_the_clip():
     from PIL import Image
-    im = Image.new("RGB", (2752, 1536), (10, 20, 30))
-    out = B.fit_picture(im, 1280, 704)
-    assert out.size == (1280, 704)
+    assert B.fit_picture(Image.new("RGB", (2752, 1536)), 1280, 704).size == (1280, 704)
 
 
-def test_stage_downloads_only_what_is_missing_and_checks_every_sha(tmp_path):
-    plan = {"weights": {"w": {"repo": "o/r", "revision": "a" * 40, "files": {}}}}
+def test_the_deadline_raises_inside_the_work_and_refuses_a_clip_that_cannot_finish():
+    clock = [1000.0]
+    d = B.Deadline(600, margin_s=100, now=lambda: clock[0])
+    assert d.left() == 500 and d.fits(None) and d.fits(400) and not d.fits(460)
+    clock[0] += 501
+    with pytest.raises(B.DeadlineHit):
+        d.check()
+
+
+def test_a_rescheduled_input_is_refused_by_its_attempt_marker(tmp_path):
+    assert B.attempt_guard(tmp_path, "rid", "v", "n1") is None
+    assert B.attempt_guard(tmp_path, "rid", "v", "n1") == "REFUSED_SECOND_ATTEMPT"
+    assert B.attempt_guard(tmp_path, "rid", "v", "n2") is None          # a deliberate new launch has a new nonce
+
+
+def test_no_code_path_kills_its_own_process():
+    src = Path(B.__file__).read_text()
+    assert "os._exit" not in src and "threading.Timer" not in src
+
+
+def test_stage_downloads_only_what_is_missing_checks_every_sha_and_stamps_the_set(tmp_path):
+    w = {"repo": "o/r", "revision": "a" * 40, "files": {"have.bin": hashlib.sha256(b"have").hexdigest(),
+                                                         "new.bin": hashlib.sha256(b"new").hexdigest()}}
+    plan = {"weights": {"w": w}}
     root = tmp_path / "model" / "o/r"
     root.mkdir(parents=True)
     (root / "have.bin").write_bytes(b"have")
-    plan["weights"]["w"]["files"] = {"have.bin": hashlib.sha256(b"have").hexdigest(),
-                                     "new.bin": hashlib.sha256(b"new").hexdigest()}
     asked = []
 
     def dl(repo, rev, files, r):
         asked.append((repo, rev, list(files)))
         (Path(r) / "new.bin").write_bytes(b"new")
+    assert B.stamp_ok(w, str(tmp_path))[0].endswith("run ::stage first")
     assert B.stage_weights(plan, str(tmp_path), dl) == []
     assert asked == [("o/r", "a" * 40, ["new.bin"])]
-    (root / "new.bin").write_bytes(b"changed")
-    assert any("mismatch" in b for b in B.stage_weights(plan, str(tmp_path), dl))
+    assert B.stamp_ok(w, str(tmp_path)) == []                           # the GPU checks the stamp and sizes, no hashing
+    (root / "new.bin").write_bytes(b"longer!")
+    assert any("size differs" in b for b in B.stamp_ok(w, str(tmp_path)))
+    assert any("delete it" in b for b in B.stage_weights(plan, str(tmp_path), dl))
+    w2 = dict(w, files={**w["files"], "more.bin": "c" * 64})
+    assert any("another file set" in b for b in B.stamp_ok(w2, str(tmp_path)))
 
 
 def test_the_ltx_command_names_the_pinned_files_and_the_start_picture():
+    import sys
     v = B.variant(PLAN, "ltx_distilled")
     cmd = B.ltx_cmd(PLAN, v, PLAN["shots"][0], "/tmp/in/p.png", "/o/dialogue.mp4")
     s = " ".join(cmd)
-    assert cmd[:3] == ["python3", "-m", "ltx_pipelines.distilled"]
+    assert cmd[:3] == [sys.executable, "-m", "ltx_pipelines.distilled"]
     for f in PLAN["weights"]["ltx25"]["files"]:
         assert f in s
     assert "--image /tmp/in/p.png 0 1.0" in s and "--num-frames 241" in s and "--frame-rate 24" in s
     assert "--distilled-lora" not in s
 
 
-def test_make_ltx_records_each_shot_with_a_fake_cli(tmp_path, monkeypatch):
+def _pics(tmp_path):
     from PIL import Image
-    monkeypatch.setattr(B, "Path", Path)
     pics = {}
     for s in PLAN["shots"]:
         p = tmp_path / f"{s['id']}.png"
         Image.new("RGB", (640, 360)).save(p)
         pics[s["id"]] = p
-    (tmp_path / "in").mkdir()
-    real = Path
+    return pics
+
+
+def test_make_ltx_bounds_each_shot_by_the_time_left_and_stops_after_a_failure(tmp_path):
+    v = B.variant(PLAN, "ltx_distilled")
+    seen = []
 
     def fake_sh(cmd, **kw):
-        mp4 = cmd[cmd.index("--output-path") + 1]
-        real(mp4).write_bytes(b"video" if "dialogue" in mp4 else b"")
-        return subprocess.CompletedProcess(cmd, 0 if "dialogue" in mp4 else 1)
+        seen.append(kw["timeout"])
+        mp4 = Path(cmd[cmd.index("--output-path") + 1])
+        mp4.write_bytes(b"video")
+        return subprocess.CompletedProcess(cmd, 0)
+    rows = B.make_ltx(PLAN, v, str(tmp_path), _pics(tmp_path), B.Deadline(900, margin_s=100), {}, beat_fn=lambda *a, **k: None,
+                      sh=fake_sh, tmp=str(tmp_path / "in"))
+    assert [r["state"] for r in rows] == ["DONE", "DONE"] and all(0 < t <= 800 for t in seen)
+
+    def timeout_sh(cmd, **kw):
+        raise subprocess.TimeoutExpired(cmd, kw["timeout"])
+    rows = B.make_ltx(PLAN, v, str(tmp_path), _pics(tmp_path), B.Deadline(900, margin_s=100), {}, beat_fn=lambda *a, **k: None,
+                      sh=timeout_sh, tmp=str(tmp_path / "in"))
+    assert [r["state"] for r in rows] == ["PARTIAL"] and "deadline" in rows[0]["why"]
+
+
+def test_run_state_says_done_only_when_every_shot_is_made_and_on_hf():
+    done = [{"state": "DONE"}, {"state": "DONE"}]
+    assert B.run_state(done, 2, {"a": "ok"}) == "DONE"
+    assert B.run_state(done, 2, {"a": "missing on HF"}) == "UPLOAD_UNVERIFIED"
+    assert B.run_state([{"state": "DONE"}, {"state": "PARTIAL"}], 2, {}) == "PARTIAL"
+    assert B.run_state([{"state": "FAILED"}], 2, {}) == "FAILED"
+    assert B.run_state([], 2, {}, error="SystemExit: x") == "FAILED"
+    assert B.run_state(done, 2, {}, error="DeadlineHit: x") == "PARTIAL"
+
+
+class FakeApi:
+    def __init__(self, fail=0):
+        self.commits, self.fail, self.store = [], fail, {}
+
+    def create_commit(self, repo_id, repo_type, operations, commit_message):
+        if self.fail:
+            self.fail -= 1
+            raise RuntimeError("429")
+        self.commits.append([o.path_in_repo for o in operations])
+        for o in operations:
+            self.store[o.path_in_repo] = Path(o.path_or_fileobj).read_bytes()
+
+    def get_paths_info(self, repo, paths, repo_type, expand):
+        out = []
+        for p in paths:
+            if p in self.store:
+                data = self.store[p]
+                if p.endswith(".mp4"):
+                    out.append(SimpleNamespace(path=p, lfs=SimpleNamespace(sha256=hashlib.sha256(data).hexdigest()), blob_id=None))
+                else:
+                    out.append(SimpleNamespace(path=p, lfs=None,
+                                               blob_id=hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()))
+        return out
+
+
+def test_uploads_are_batched_retried_and_checked_back_on_hf(tmp_path):
+    root = tmp_path / "rid"
+    (root / "v").mkdir(parents=True)
+    (root / "v" / "a.clip1.mp4").write_bytes(b"clip")
+    (root / "v" / "measured.json").write_text("{}")
+    (root / "v" / "x.mp4.tmp").write_bytes(b"half")                      # an encoder's temp file is never sent
+    api, seen = FakeApi(fail=1), {}
+    assert B.upload_round(api, root, "pre/rid", "o/r", seen, final=True, sleep=lambda s: None) == 2
+    assert len(api.commits) == 1 and sorted(api.commits[0]) == ["pre/rid/v/a.clip1.mp4", "pre/rid/v/measured.json"]
+    assert B.upload_round(api, root, "pre/rid", "o/r", seen, sleep=lambda s: None) == 0  # nothing new, no commit
+    assert B.verify_uploads(api, root / "v", "pre/rid/v", "o/r") == {"a.clip1.mp4": "ok", "measured.json": "ok"}
+    (root / "v" / "b.mp4").write_bytes(b"never sent")
+    api.store["pre/rid/v/a.clip1.mp4"] = b"other"
+    v = B.verify_uploads(api, root / "v", "pre/rid/v", "o/r")
+    assert v["b.mp4"] == "missing on HF" and v["a.clip1.mp4"] == "hash differs on HF"
+    assert B.upload_round(FakeApi(fail=9), root, "pre/rid", "o/r", {}, sleep=lambda s: None) == 0
+
+
+def test_the_ledger_reserves_the_cap_before_settles_after_and_refuses_a_repeat(tmp_path):
+    led = B.open_ledger(PLAN, tmp_path / "led" / "bakeoff.json")
+    assert led.data["caps"]["modal"] == PLAN["total_cap_usd"]
     v = B.variant(PLAN, "ltx_distilled")
-    monkeypatch.setattr(B, "fit_picture", lambda img, w, h: img)
-    orig = B.make_ltx.__globals__["Path"]
-    monkeypatch.setitem(B.make_ltx.__globals__, "Path", lambda x="": real(str(x).replace("/tmp/in", str(tmp_path / "in"))))
-    res = B.make_ltx(PLAN, v, str(tmp_path), pics, beat_fn=lambda *a, **k: None, sh=fake_sh)
-    monkeypatch.setitem(B.make_ltx.__globals__, "Path", orig)
-    rows = {r["shot"]: r for r in res["shots"]}
-    assert rows["dialogue"]["rc"] == 0 and rows["dialogue"]["sha256"]
-    assert rows["action"]["rc"] == 1 and "sha256" not in rows["action"]
+    assert B.repeat_reason(PLAN, "rid", v["id"], led, lambda p: False) is None
+    item = B.reserve(PLAN, v, "rid", led, "n1")
+    assert led.spent("modal") == v["cap_usd"]
+    assert "ledger already holds" in B.repeat_reason(PLAN, "rid", v["id"], led, lambda p: False)
+    usd = B.settle(PLAN, v, item, led, 600)
+    assert abs(usd - 600 * B.rate_of(v) / 3600) < 1e-3 and abs(led.spent("modal") - usd) < 1e-9
+    assert "HF already has" in B.repeat_reason(PLAN, "rid2", v["id"], led, lambda p: p.endswith("measured.json"))
+    big = B.variant(PLAN, "wan_ti2v_5b")
+    B.reserve(PLAN, B.variant(PLAN, "wan_a14b_lightning"), "rid", led, "n2")
+    from explainer_engine.core.ledger import CapReached
+    led.data["spent"]["modal"] = 4.0
+    with pytest.raises(CapReached):                                       # the 80 % stop of the plan's total holds
+        B.reserve(PLAN, big, "rid", led, "n3")
 
 
 def test_metrics_find_motion_frozen_runs_and_start_faithfulness():
@@ -156,19 +273,23 @@ def test_metrics_find_motion_frozen_runs_and_start_faithfulness():
     frames = [start + i * 2 for i in range(10)] + [start + 18] * 6
     m = R.metrics(frames, start)
     assert m["frames"] == 16 and m["start_diff"] == 0.0
-    assert m["longest_still"] == 7 and m["motion"] > 0
-    assert m["drift"] > 0
+    assert m["longest_still"] == 7 and m["motion"] > 0 and m["drift"] > 0
     assert R.metrics([]) == {"frames": 0}
 
 
-def test_costs_split_the_containers_seconds_over_its_shots():
+def test_costs_use_the_ledger_and_charge_a_run_without_a_record_at_its_cap():
     measured = {"wan_ti2v_5b": {"state": "DONE", "body_s": 600.0,
                                 "shots": [{"shot": "dialogue", "gen_s": 200}, {"shot": "action", "gen_s": 200}]}}
     c = R.costs(PLAN, measured)["wan_ti2v_5b"]
     v = B.variant(PLAN, "wan_ti2v_5b")
-    want = (600 + PLAN["cold_start_s"]) * B.usd_per_h(v["gpu"], v["cpu"], v["memory_gib"]) / 3600
-    assert abs(c["usd"] - want) < 1e-3
-    assert abs(c["per_shot_usd"]["dialogue"] - want / 2) < 1e-3
+    want = (600 + PLAN["cold_start_s"]) * B.rate_of(v) / 3600
+    assert abs(c["usd"] - want) < 1e-3 and abs(c["per_shot_usd"]["dialogue"] - want / 2) < 1e-3
+    led = {"reserved": {"bakeoff/rid/wan_ti2v_5b/n1": {"service": "modal", "amount": 1.234, "settled": True},
+                        "bakeoff/rid/ltx_distilled/n2": {"service": "modal", "amount": 1.5}}}
+    assert R.ledger_usd(led, "rid") == {"wan_ti2v_5b": 1.234}
+    money = R.costs(PLAN, measured, R.ledger_usd(led, "rid"), no_record=["ltx_distilled"])
+    assert money["wan_ti2v_5b"]["usd"] == 1.234 and money["wan_ti2v_5b"]["source"] == "ledger"
+    assert money["ltx_distilled"]["usd"] == B.variant(PLAN, "ltx_distilled")["cap_usd"] and "NO_RECORD" in money["ltx_distilled"]["state"]
 
 
 def _clip(path, frames=24, size=(320, 176), fps=16, audio=False):
@@ -179,7 +300,7 @@ def _clip(path, frames=24, size=(320, 176), fps=16, audio=False):
     return path
 
 
-def test_report_upscales_measures_and_prices_every_clip(tmp_path):
+def test_report_upscales_conforms_measures_and_prices_every_clip(tmp_path):
     from PIL import Image
     src = tmp_path / "src"
     src.mkdir()
@@ -192,7 +313,10 @@ def test_report_upscales_measures_and_prices_every_clip(tmp_path):
         (src / f"{v['id']}.json").write_text(json.dumps(m))
         files[f"{base}/measured.json"] = src / f"{v['id']}.json"
         for s in PLAN["shots"]:
-            files[f"{base}/{s['id']}.mp4"] = _clip(src / f"{v['id']}_{s['id']}.mp4", audio=v["family"] == "ltx")
+            fam = v["family"] == "ltx"
+            files[f"{base}/{s['id']}.mp4"] = _clip(src / f"{v['id']}_{s['id']}.mp4", fps=24 if fam else 16, audio=fam)
+    (src / "beat.json").write_text("{}")
+    files[f"{PLAN['hf_out']}/{rid}/wan_ti2v_5b/beat.json"] = src / "beat.json"    # it started and left no record
     for s in PLAN["shots"]:
         files[s["picture"]] = src / "pic.jpg"
 
@@ -207,12 +331,12 @@ def test_report_upscales_measures_and_prices_every_clip(tmp_path):
     made = [r for r in rep["rows"] if r["state"] == "made"]
     assert len(made) == 4 and all(r["hf_2k"].startswith("https://hf/") for r in made)
     for r in made:
-        p = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=width,height",
+        p = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=width,height,r_frame_rate",
                             "-of", "csv=p=0", r["file_2k"]], capture_output=True, text=True).stdout.strip()
-        assert p == "2560,1440"
+        assert p == "2560,1440,24/1"                                       # B6: the delivery rate, Wan's 16 fps too
         assert r["usd"] > 0 and r["motion"] > 0
     assert any(r["sound"] for r in made) and not all(r["sound"] for r in made)
     assert R.has_audio(Path([r for r in made if r["sound"]][0]["file_2k"]))
-    assert "wan_ti2v_5b" not in rep["money"]                     # not run: no row, no price
-    assert (tmp_path / "out" / "report.md").read_text().count("| made") == 0
+    assert "NO_RECORD" in rep["money"]["wan_ti2v_5b"]["state"]              # A3: a died run is still in the money
+    assert rep["total_usd"] >= B.variant(PLAN, "wan_ti2v_5b")["cap_usd"]
     assert "contact_sheet.png" in " ".join(up)
