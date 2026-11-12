@@ -207,21 +207,24 @@ def test_sound_director_detects_narration_stem_dropout_even_with_continuous_ambi
 # 13.3 GIS & SHADED-RELIEF MAP TESTS
 # ==============================================================================
 
-def test_dem_shaded_relief_generation_and_letterless_plate(tmp_path):
+def test_dem_shaded_relief_generation_and_letterless_plate(tmp_path, monkeypatch):
+    # v4.3 P4 (F6): the synthetic DEM with its hand-placed Toba terrain is gone; the relief is Natural Earth's raster.
+    # A small fixture raster stands in for the 233 MB file (tests/unit/test_v43_map_actions.py covers the sampling).
+    from explainer_engine.maps import relief
+    rows, cols = np.mgrid[0:180, 0:360]
+    Image.fromarray((128 + 100 * np.sin(cols / 9.0) * np.cos(rows / 7.0)).astype(np.uint8), "L").save(tmp_path / relief.RASTER_NAME)
+    (tmp_path / "SR_HR.tfw").write_text("1.0\n0.0\n0.0\n-1.0\n-179.5\n89.5\n")
+    monkeypatch.setenv("EXPLAINER_RELIEF_DIR", str(tmp_path))
+    relief._load.cache_clear()
     view = geo.View(98.88, 2.68, 1200.0, 320, 180)
-    mask = plate.land_mask(view, ss=1)
-    dem = plate.generate_regional_dem_grid(view, is_land=mask, cache_dir=tmp_path)
-    assert dem.shape == (180, 320)
-    assert float(dem.max()) > 800.0
-    assert float(dem.min()) < -1000.0
-
-    hs = plate.compute_multidirectional_hillshade(dem, pixel_size_m=float(view.km_per_px) * 1000.0)
+    hs = relief.sample(view)
     assert hs.shape == (180, 320)
     assert 0.0 <= float(hs.min()) < float(hs.max()) <= 1.0
 
     saved = plate.save_plate(view, tmp_path, shaded_relief=True)
     assert saved.is_file()
     assert plate.spec_hash(view, shaded_relief=True)[:16] in saved.name
+    relief._load.cache_clear()
 
 
 def test_toba_gis_map_specs_validate_and_render(tmp_path):

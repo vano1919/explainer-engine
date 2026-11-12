@@ -1160,7 +1160,8 @@
                   "label",
                   "front_line",
                   "zoom",
-                  "highlight"
+                  "highlight",
+                  "split_compare"
                 ]
               },
               "at_word": {
@@ -1168,10 +1169,12 @@
                 "minLength": 1
               },
               "from": {
-                "type": "string"
+                "type": "string",
+                "description": "a place id of episode.json places (where the action starts or happens)"
               },
               "to": {
-                "type": "string"
+                "type": "string",
+                "description": "a place id of episode.json places (where it goes)"
               },
               "value": {
                 "type": [
@@ -1181,6 +1184,14 @@
               },
               "notes": {
                 "type": "string"
+              },
+              "unit": {
+                "type": "string",
+                "description": "the counter's unit, said in words (people, km, years)"
+              },
+              "label": {
+                "type": "string",
+                "description": "the text a label or a split card shows (drawn by Python, never by a picture model)"
               }
             }
           }
@@ -1223,6 +1234,32 @@
                   "clip_audio"
                 ]
               }
+            }
+          }
+        },
+        "map_view": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lon",
+            "lat",
+            "span_km"
+          ],
+          "description": "map_action: the camera's first view (centre and width in km); without it the view fits the action places",
+          "properties": {
+            "lon": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "lat": {
+              "type": "number",
+              "minimum": -85,
+              "maximum": 85
+            },
+            "span_km": {
+              "type": "number",
+              "exclusiveMinimum": 0
             }
           }
         }

@@ -5133,3 +5133,35 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   retry is the next export.
 - Tests: `tests/unit/test_v43_picture_intake.py` (15). docs_lint 0 findings.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P4: maps on real relief, with actions on their words (thread "Implement v4.3 episode-first rebuild")
+- Real relief (F6): `maps/relief.py` samples Natural Earth `SR_HR` (1:10m shaded relief, public domain, row in
+  [PROVENANCE](PROVENANCE.md)) at the output resolution, bilinear, bicubic when upsampled more than 2x, only on the window the
+  view covers, wrapping at the date line. It is a free download kept out of git (`python -m
+  explainer_engine.production.relief_fetch`, sha256 of the archive checked; outside `maps/` so CMP-14 holds). Without the
+  raster the plate refuses (`ConfigError`); the synthetic DEM with hand-placed Toba, Deccan, Ethiopia and Waterloo features is
+  removed from `maps/plate.py`.
+- The episode's map look: `episode.json` `map_look` (palette tokens for sea, land, coast, rivers, borders, lakes, ink, accent,
+  ash, card; relief strength; seeded grain) and `places` (id -> lon, lat, name). The plate hash includes the look and the
+  raster's sha. Map lettering uses Inter SemiBold (`draw.font(px, "map")`, OFL, in `assets/fonts/`), not the comic face.
+- `camera.tilt_fill`: a pitched plate is cropped to the largest filled frame and scaled back, so no empty corner shows.
+- The action layer (`maps/actions.py`, RT-03 in [EPISODE_FIRST](EPISODE_FIRST.md)): `route_arrow`, `front_line`, `spread`,
+  `plume`, `pulse`, `highlight`, `label`, `counter`, `zoom`, `split_compare`, each anchored in lon/lat and started on its
+  spoken word (Scribe word frames when the spine is given, else an estimate, recorded as `word_basis`). A word that is not
+  spoken or a place that is not in `places` is a `ContractError`. A shot without places is a card with its counter. Each
+  action is drawn on its own transparent layer and composited; frames are a pure function of the frame number.
+  `production/map_clip.render_action_map_clip` writes exactly `round(dur*fps)` frames through FFmpeg (tmp file, rename) and
+  records `relief_upsample_max` (raster pixels per output pixel at the closest zoom).
+- Toba proposal for P1.5 (`episodes/ep_toba/planning/map_actions_proposal_p4.json`, for the creator's approval, not yet in the
+  script): S01_SH008 (pulse, route to Shinfa-Metema, 4,000-mile counter, label), S02_SH001 (zoom to Toba at 1,100 km, pulse,
+  label), S02_SH010 (label, Southern Ocean highlight, the summer ash plume to Jwalapuram). The two site coordinates are
+  approximate and not checked against a source yet.
+- Demo renders (1920x1080, 24 fps, ~130 s CPU per 6 s clip at 2x supersampling) are in the vault:
+  `vano1919/tmr-artifacts` `explainer-engine/v4_3_p4_maps_2026-11-12/`.
+- Limits found: SR_HR is ~1.85 km a pixel; a zoom closer than ~1,000 km across a 1080p frame upsamples it more than 3x and
+  looks soft (the 420 km zoom first tried was blobby; the proposal uses 1,100 km). A local zoom needs a finer DEM (a free
+  source to choose later). The plan's optional test (a Gemini repaint of a plate) was not run: it needs the chat route.
+- Tests: `tests/unit/test_v43_map_actions.py` (20: relief sampling and refusal, the look, the map face, tilt fill, word and
+  place contracts, every action kind on its word and pure, zoom, the card, exact frame count, the Toba proposal against the
+  script). The DEM test in `test_episode_first_isolation_and_v4_3_fixes.py` now reads the fixture raster. docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.

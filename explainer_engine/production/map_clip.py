@@ -107,3 +107,53 @@ def render_episode_gis_map_clip(
         "bytes": out_mp4_path.stat().st_size if out_mp4_path.exists() else 0,
         "output_sha256": hashlib.sha256(out_mp4_path.read_bytes()).hexdigest() if out_mp4_path.exists() else "",
     }
+
+
+def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path, width: int = 1920, height: int = 1080,
+                           fps: int = 24, spine=None, keyframes_out_dir=None) -> dict:
+    """A ``map_action`` shot (v4.3 P4): the real-relief plate in the episode's map look, the action layer on its words.
+
+    ``episode`` is the episode.json document (``places``, ``map_look``). Frames are a pure function of the plan and the frame
+    number (``maps/actions.py``); FFmpeg encodes them here (CMP-14 keeps the renderers free of subprocess)."""
+    import hashlib
+    import subprocess
+    from pathlib import Path
+    from explainer_engine.maps import actions as MA
+
+    out = Path(out_mp4_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    look = episode.get("map_look") or {}
+    p = MA.plan(shot, script, episode.get("places") or {}, fps, spine)
+    base = MA.card_base(width, height, look) if p["card"] else MA.Plate(p, width, height, look)
+    tmp = out.with_name(out.stem + ".part.mp4")
+    proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{width}x{height}",
+                             "-r", str(fps), "-i", "-", "-frames:v", str(p["frames"]), "-c:v", "libx264", "-preset", "medium",
+                             "-crf", "16", "-pix_fmt", "yuv420p", str(tmp)], stdin=subprocess.PIPE)
+    first = last = None
+    for f in range(p["frames"]):
+        im = MA.render_frame(p, f, base, width, height, look)
+        if f == 0:
+            first = im
+        last = im
+        proc.stdin.write(np.asarray(im, dtype=np.uint8).tobytes())
+    proc.stdin.close()
+    if proc.wait(timeout=600) != 0:
+        raise RuntimeError(f"ffmpeg failed on {shot.get('shot_id')}")
+    tmp.replace(out)
+    keys = {}
+    if keyframes_out_dir is not None:
+        kd = Path(keyframes_out_dir)
+        kd.mkdir(parents=True, exist_ok=True)
+        for name, im in (("start", first), ("end", last)):
+            keys[name] = str(kd / f"{p['shot_id']}_map_{name}.png")
+            im.save(keys[name])
+    upsample = None
+    if not p["card"]:
+        raster_km = 111.32 / 60.0       # Natural Earth SR_HR: 1/60 degree a pixel at the equator
+        upsample = round(max(base.upsample(MA.camera(p, f), raster_km) for f in range(p["frames"])), 2)
+    return {"status": "generated", "provider": "python_action_map", "cost_usd": 0.0, "shot_id": p["shot_id"],
+            "relief_upsample_max": upsample,
+            "card": p["card"], "word_basis": p["basis"], "actions": [{k: a[k] for k in ("kind", "word", "start", "end")} for a in p["actions"]],
+            "total_frames": p["frames"], "fps": fps, "resolution": [width, height], "path": str(out),
+            "start_keyframe_path": keys.get("start"), "end_keyframe_path": keys.get("end"),
+            "output_sha256": hashlib.sha256(out.read_bytes()).hexdigest()}

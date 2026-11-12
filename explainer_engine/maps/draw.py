@@ -21,6 +21,7 @@ from explainer_engine.design import palette as PAL
 
 ROOT = Path(__file__).resolve().parents[2]
 FONT_FILES = [ROOT / "assets" / "fonts" / "ComicNeue-Bold.ttf", ROOT / "assets" / "fonts" / "Bangers-Regular.ttf"]
+MAP_FONT = ROOT / "assets" / "fonts" / "Inter.ttf"   # map lettering: never a comic face on a map (v4.3 P4, cartography skill)
 SS = 2  # supersampling of a drawn frame: edges are smooth and the downsample is deterministic
 
 
@@ -43,7 +44,14 @@ def faction(side: str) -> tuple[int, int, int]:
 
 
 @lru_cache(maxsize=64)
-def font(px: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def font(px: int, face: str = "ui") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    if face == "map" and MAP_FONT.exists():
+        f = ImageFont.truetype(str(MAP_FONT), max(8, int(px)))
+        try:
+            f.set_variation_by_name("SemiBold")
+        except (OSError, ValueError):   # a FreeType without variation support keeps the default instance
+            pass
+        return f
     for path in FONT_FILES:
         if path.exists():
             return ImageFont.truetype(str(path), max(8, int(px)))
@@ -192,13 +200,15 @@ class Canvas:
         else:
             self.d.rectangle(box, fill=fill, outline=outline, width=max(1, self.px(width)) if outline else 0)
 
+    face = "ui"   # "map": the map face (Inter); set by the map renderers
+
     def text(self, xy, s: str, size: float, fill, anchor: str = "la", stroke: float = 0, stroke_fill=None):
-        f = font(self.px(size))
+        f = font(self.px(size), self.face)
         self.d.text((xy[0] * self.ss, xy[1] * self.ss), s, font=f, fill=fill, anchor=anchor,
                     stroke_width=self.px(stroke) if stroke else 0, stroke_fill=stroke_fill)
 
     def text_width(self, s: str, size: float) -> float:
-        return self.d.textlength(s, font=font(self.px(size))) / self.ss
+        return self.d.textlength(s, font=font(self.px(size), self.face)) / self.ss
 
     def paste(self, layer: Image.Image, xy=(0, 0)):
         """Paste an RGBA layer given at output size (it is scaled to the supersampled canvas)."""

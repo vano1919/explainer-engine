@@ -42,3 +42,10 @@ Tests adapted from `tests/unit/test_timings.py`, `test_celestial.py` (viseme par
 | File here | Source | What changed |
 |---|---|---|
 | `explainer_engine/blender/polyhaven.py` | `ahujasid/blender-mcp@2e4b0bc294694b1570d76ed01be657c22e6d02a0:addon.py` (MIT, (c) 2025 Siddharth Ahuja) | the Poly Haven part only: API get with ETag/TTL cache, slug guard, md5-checked streamed download, texture-map selection, `include` side files with the zip-slip guard, the HDRI world node chain. `requests` became `urllib`, the User-Agent names this project, model import is glTF (the artist's `.blend` node tree would be replaced by `style.py` anyway). NOT taken: the socket server, telemetry, edit recorder, paid 3D generators. |
+
+## Third-party data downloaded at run time (not in git)
+
+| Data | Source | Licence | How it is used |
+|---|---|---|---|
+| Natural Earth 1:10m shaded relief `SR_HR.tif` (+ `SR_HR.tfw`), version 2.0.0 | `https://naciscdn.org/naturalearth/10m/raster/SR_HR.zip`, sha256 `b2619fff2fc73c17152983c066adfaa25c4b626916b822bad2fae8bcd9be41a5`, downloaded 2026-11-12 by `python -m explainer_engine.production.relief_fetch` into `tools/maps/` | public domain ("All versions of Natural Earth raster + vector map data found on this website are in the public domain", naturalearthdata.com/about/terms-of-use, read 2026-11-12) | `maps/relief.py` samples it for the map plates' relief (v4.3 P4, replaces the synthetic DEM, F6) |
+| Inter font `Inter.ttf` | github.com/google/fonts `ofl/inter` via jsDelivr, 2026-11-12 (in git: `assets/fonts/`) | SIL OFL 1.1 (`assets/fonts/OFL_Inter.txt`) | map lettering (`maps/draw.py` face `map`) |

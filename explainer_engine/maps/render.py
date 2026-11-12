@@ -336,6 +336,7 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
         c = plate.draw_base(view, ss=ss, shaded_relief=True, cache_dir=base_dir)
     else:
         c = plate.draw_base(view, ss=ss)
+    c.face = "map"   # map lettering in the map face, never the bubbles' comic face (v4.3 P4)
     # the active area (law 3): a focus ring or the payload's fixed focus
     focus = None
     if p.get("focus"):
@@ -423,8 +424,7 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
     _scale_bar(c, view, CAM.tier_of(cam.span_km))
     img = c.image()
     if cam.pitch_deg > 0:
-        bg = Image.new("RGBA", img.size, (*plate.colours()["sea"], 255))
-        img = Image.alpha_composite(bg, CAM.tilt(img, cam.pitch_deg))
+        img = CAM.tilt_fill(img, cam.pitch_deg)   # no empty corners (v4.3 P4)
     return img.convert("RGB")
 
 

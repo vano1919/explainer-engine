@@ -307,6 +307,80 @@
       "type": "string",
       "minLength": 3,
       "description": "the map system of P4 in the video's look (Q6): relief plate + action layer"
+    },
+    "places": {
+      "type": "object",
+      "description": "map places of the episode (v4.3 P4): id -> lon/lat and the name a label shows",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lon",
+          "lat"
+        ],
+        "properties": {
+          "lon": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "lat": {
+            "type": "number",
+            "minimum": -85,
+            "maximum": 85
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "map_look": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "the map plate and action layer in the episode's look (v4.3 P4): palette token names (design/palette.json), relief strength, grain",
+      "properties": {
+        "sea": {
+          "type": "string"
+        },
+        "land": {
+          "type": "string"
+        },
+        "coast": {
+          "type": "string"
+        },
+        "river": {
+          "type": "string"
+        },
+        "border": {
+          "type": "string"
+        },
+        "lake": {
+          "type": "string"
+        },
+        "ink": {
+          "type": "string"
+        },
+        "accent": {
+          "type": "string"
+        },
+        "ash": {
+          "type": "string"
+        },
+        "card": {
+          "type": "string"
+        },
+        "relief_strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "grain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.2
+        }
+      }
     }
   }
 }
