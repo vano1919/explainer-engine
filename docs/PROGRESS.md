@@ -5508,3 +5508,18 @@ left running. The 2K report with HF links is on `vano1919/tmr-artifacts`
 Finding: the worker's result carries torch's `TorchVersion`, so a local client without torch loses the answer
 (DeserializationError). LTX was settled by hand from the Modal app lifetime (258 s). torch CPU is now in the local venv.
 The fix is in the worker (`libs()` returns `str(...)`); it goes in only with the next GO, because it changes the worker sha.
+
+## 2026-11-12 — B5: HyperFrames overlay layer, free test PASSED (branch `claude/project-thread-92rcrx`, off #163's branch)
+- Done: `explainer_engine/overlay/` (spec `overlay_spec/1`, HTML/GSAP template with GSAP 3.12.7 and Inter vendored, driver, Toba sample) and
+  [HYPERFRAMES_OVERLAY](HYPERFRAMES_OVERLAY.md). HyperFrames 0.9.39 (Apache-2.0) pinned in `overlay/hyperframes/package.json`; telemetry off.
+  Two Toba map shots (S02_SH010, S01_SH008; actions from `map_actions_proposal_p4.json`) rendered as a transparent 2560x1440 24 fps overlay
+  and composited over the LTX distilled 2K bake-off clips. Remotion was not needed and not tested (its licence was not opened).
+- Measured (container: 4 CPU, no GPU, system Chrome, ffmpeg 6.1): overlay render 31-47 s per 10 s clip, composite 25-30 s; three renders of the
+  same project decode to identical RGBA frames. Timing against the word clock (each item rendered alone, alpha compared with the cubic ease):
+  label, route and plume shift 0 frames, highlight shift 1 (a faint fill), no item changed before its word.
+- Word times are a SYNTHETIC Scribe-shaped fixture (no narration exists yet); the path from Scribe words to frames is tested, a real read is not.
+- Found: the label of a route end sits on the route line (cartography rule 4, same offset as the Python drawer); the scale bar says km while
+  the counter says miles; the plate is the vector plate (no relief raster in the container); `zoom`/`split_compare` are refused by design.
+- Tests: `tests/unit/test_overlay_hyperframes.py` (6; the render test runs when `EXPLAINER_HYPERFRAMES` points at a local CLI), docs_lint 0 findings.
+- Files: HF `vano1919/tmr-artifacts` `explainer-engine/overlay_b5_2026-11-12/`, e.g. [S02_SH010_on_ltx_2k.mp4](https://huggingface.co/datasets/vano1919/tmr-artifacts/blob/main/explainer-engine/overlay_b5_2026-11-12/S02_SH010_on_ltx_2k.mp4).
+- Cost: 0 (no paid service). Next: the creator looks at the two samples; then P4 wiring (episode runner stage for map_action shots) in the C stage.
