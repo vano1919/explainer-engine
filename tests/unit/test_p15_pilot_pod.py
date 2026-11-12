@@ -44,7 +44,8 @@ def test_the_config_restyles_every_first_frame_and_animates_eight_185_frame_clip
     assert len({j["id"] for j in cfg["ltx_jobs"]}) == 8 and len({j["output"] for j in cfg["ltx_jobs"]}) == 8
     assert all(j["question"] for j in cfg["ltx_jobs"]) and cfg["audio"] == {"in_mp4": True, "wav_sidecar": True}
     for j in cfg["ltx_jobs"]:
-        assert j["frames"] == 185 and (j["frames"] - 1) % 8 == 0 and j["frames"] / j["fps"] <= 8.0   # LTX 8k+1, BP-172
+        assert j["frames"] == B.clip_frames("ltx_" + j["id"].split(".")[1]) and (j["frames"] - 1) % 8 == 0 and j["frames"] / j["fps"] <= 8.0   # LTX 8k+1, BP-172
+        assert (j["frames"] == 121) == (j["shot_id"] == "battle_f000_colour")   # PR #155 / BP-184: the crowd clash is capped at 5.04 s = 121 frames
         assert j["pipeline"] == "distilled" and j["lora"] is None and j["model"]["sha256"] and j["seed"] == 42
         assert j["first_frame"]["path"] == f"route_test_2026-11/pilot/first_frames/{j['shot_id']}.png"
         line = (("host", j["spoken_line"]) if j["spoken_line"] else None)
@@ -139,6 +140,7 @@ def test_the_bundle_leaves_the_script_out(tmp_path, monkeypatch):
     sh.write_text((DIR / "p15.sh").read_text(encoding="utf-8"), encoding="utf-8")
     monkeypatch.setattr(B, "SH", sh)
     monkeypatch.setattr(B, "SH_Q", tmp_path / "p15q.sh")   # the bundle pins both scripts: never the committed one
+    monkeypatch.setattr(B, "SH_C", {})
     (tmp_path / "p15q.sh").write_text((DIR / "p15q.sh").read_text(encoding="utf-8"), encoding="utf-8")
     sha = B.bundle(tmp_path / "a.tgz")
     assert sha in sh.read_text() and B.bundle(tmp_path / "b.tgz") == sha
@@ -223,13 +225,16 @@ def test_the_qwen_only_schedule_has_no_ltx_stage_and_passes_rp11_on_the_two_a100
     assert not any("Blackwell" in c["name"] for c in sch["cards"])   # torch on sm_120 is not verified for this image
     assert not any("H100" in c["name"] for c in sch["cards"])   # no H100: its 15.4 min of work fails RP-01
     r = next(s for s in sch["stages"] if s["id"] == "qwen_restyle")["on"]["gpu"]
-    assert r["expected_min"] == 15.4 and r["max_min"] == 46.2   # (61 s + 24 x 36 s), the usual 3x
+    assert r["expected_min"] == 16.6 and r["max_min"] == 49.8   # (61 s + 26 x 36 s: 24 pictures + 2 mouth sheets), the usual 3x
     for c in sch["cards"]:
         one = copy.deepcopy(sch)
         one["cards"] = [c]
         best = RP.plan(one)["best"]
-        assert best["worst"]["usd"] <= 3.4   # every card, in its worst case
-        if c["name"] == "A100 80GB":
+        if (c["name"], c["cloud"]) == ("A100 80GB", "SECURE"):   # 24 pictures + 2 sheets: worst $3.51, over $3.4 by 3 % (the guard still stops at $3.4)
+            assert not best["fits"] and best["worst"]["usd"] <= 3.6
+        else:
+            assert best["worst"]["usd"] <= 3.4   # every other card, in its worst case
+        if c["name"] == "A100 80GB" and c["cloud"] == "COMMUNITY":
             assert best["fits"] and best["worst"]["pod_min"] <= 120
         else:   # estimated speeds: the 2 h cap (guard) bounds the A40/A6000 (worst 3.4 h of work) and the L40S (127 min); money stays under 3.4
             assert c["name"] != "H100 NVL"   # estimated speeds; the 2 h guard bounds the slow cards, money stays under $3.4
@@ -266,7 +271,7 @@ def test_the_qwen_only_pod_downloads_only_the_qwen_weights_and_starts_no_clip(tm
     assert names == ["weights_qwen", "qwen_restyle"]   # no weights_ltx25, no ltx_c*
     rows = json.loads((tmp_path / "stages.json").read_text())["stages"]
     assert rows["F"]["status"] == "ok" and not any(k.startswith("ltx_") or k == "weights_ltx25" for k in rows)
-    assert dict(run.calls)["qwen_restyle"] == 46.2 * 60
+    assert dict(run.calls)["qwen_restyle"] == 49.8 * 60
     failed = FakeRun(tmp_path / "f", fail={"qwen_restyle"})
     assert p15_pod.Pod(cfg, sch, tmp_path / "f", deadline=__import__("time").time() + 7200, run=failed, only="qwen").main() == 1
 
@@ -289,6 +294,7 @@ def test_the_qwen_only_script_has_no_ltx_and_pins_the_same_bundle_and_the_launch
         (tmp_path / n).write_text((DIR / n).read_text(encoding="utf-8"), encoding="utf-8")
     monkeypatch.setattr(B, "SH", tmp_path / "p15.sh")
     monkeypatch.setattr(B, "SH_Q", tmp_path / "p15q.sh")
+    monkeypatch.setattr(B, "SH_C", {})   # the committed clip scripts are pinned only by the real bundle command
     sha = B.bundle(tmp_path / "a.tgz")
     assert sha in (tmp_path / "p15.sh").read_text() and sha in (tmp_path / "p15q.sh").read_text()
     with tarfile.open(tmp_path / "a.tgz") as t:
@@ -313,3 +319,126 @@ def test_the_qwen_stage_ends_after_three_pictures_fail_in_a_row_so_a_card_that_c
     monkeypatch.setattr(p15_qwen, "fetch_still", boom)
     assert p15_qwen.run(tmp_path, tmp_path, tmp_path, True) == 1
     assert len(calls) == p15_qwen.MAX_FAIL_STREAK == 3
+
+
+# ---- 24 pictures + N clips (the creator 2026-11-06 21:41 UTC: video too)
+
+class FakeRunVariants(FakeRun):
+    def __call__(self, cmd, *, timeout=None, env=None, log_path=None, deadline=None):
+        name = Path(log_path).stem
+        if name == "qwen_restyle":
+            assert "--variants" in cmd
+            for shot in ("room_two_shot", "battle_f000_colour"):
+                for look in ("S1", "S2", "S3"):
+                    f = self.out / "first_frames" / f"{shot}__{look}.png"
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    f.write_bytes(b"x")
+        if name.startswith("ltx_c"):
+            assert "--variant-frames" in cmd
+        return super().__call__(cmd, timeout=timeout, env=env, log_path=log_path, deadline=deadline)
+
+
+def test_the_clip_variants_run_the_24_pictures_then_only_their_clips_from_the_variant_first_frames(tmp_path):
+    for n, ids in ((2, ["ltx_c2", "ltx_c4"]), (8, B.CLIP_SETS[8])):
+        cfg = B.config(manifest())
+        out = tmp_path / str(n)
+        run = FakeRunVariants(out)
+        pod = p15_pod.Pod(cfg, p15_pod.load_schedule("qwen", n), out, deadline=__import__("time").time() + 20000, run=run, only="qwen", clips=n)
+        rc = pod.main()
+        names = [c[0] for c in run.calls]
+        assert names[:3] == ["weights_qwen", "weights_ltx25", "qwen_restyle"] or set(names[:2]) == {"weights_qwen", "weights_ltx25"}
+        rows = json.loads((out / "stages.json").read_text())["stages"]
+        done = [k for k, v in rows.items() if k.startswith("ltx_c") and v["status"] == "ok"]
+        skipped = [k for k, v in rows.items() if k.startswith("ltx_c") and v["status"] == "skipped"]
+        assert set(done) | set(skipped) == set(ids)
+        # the shots with a drawn picture start; the others skip with the missing-first-frame reason
+        assert "ltx_c2" in done and "ltx_c4" in done and (n == 2 or "ltx_c6" in skipped) and rc == 0
+
+
+def test_the_clip_first_frames_follow_the_style_tag_and_the_schedules_state_their_proposed_caps():
+    assert B.clip_first_frame("ltx_c1") == "room_two_shot__S1" and B.clip_first_frame("ltx_c4") == "battle_f000_colour__S2"
+    assert B.clip_first_frame("ltx_c5") == "march_side__S1" and B.clip_first_frame("ltx_c7") == "room_close_host__S2"
+    for n in (8, 2):
+        sch = json.loads((DIR / f"p15qc{n}_schedule.json").read_text())
+        assert B.schedule_qwen_clips(n) == sch and sch["limits"] == B.LIMITS_CLIPS[n]
+        assert [s["id"] for s in sch["stages"] if s["id"].startswith("ltx_c")] == B.CLIP_SETS[n]
+        assert RP.rp11(DIR / f"p15qc{n}_schedule.json") == []
+        assert RP.rp11(DIR / f"p15qc{n}_schedule.json", max_usd=3.4, max_hours=2.0) != []   # they do NOT fit the current cap
+        text = (DIR / f"p15c{n}.sh").read_text()
+        assert f"p15_pod --only qwen --clips {n}" in text and len(lean.SHA_LINE.findall(text)) == 1
+    p = json.loads((DIR / "p15.json").read_text())["clips"]
+    assert [c for c in B.CLIP_SETS[8] if c not in p] == []
+
+
+
+def test_the_mouth_sheet_layout_is_one_constant_and_the_prompts_fit_the_style_rules():
+    from PIL import Image
+    from explainer_engine.training.pods.p15 import mouth_grid as G, p15_mouth as M
+    boxes = [G.cell_box(n) for n in G.ORDER]
+    assert len(boxes) == 8 and boxes[0][:2] == (8, 8) and boxes[7][2:] == (1272, 712)
+    assert all(a[2] <= b[0] or a[1] >= b[3] or b[1] >= a[3] for i, a in enumerate(boxes) for b in boxes[i + 1:] if a != b and a[0] < b[2])  # no overlaps
+    cells = G.cut(Image.new("RGB", (1280, 720)))
+    assert list(cells) == list(G.ORDER) and cells["A"].size == (G.cell_box("A")[2] - 8, G.cell_box("A")[3] - 8)
+    for e in M.load_spec()["sheets"].values():
+        pr = M.prompt(e)
+        assert M.words(pr) <= 90 and pr.count("xworld style") == 1 and all(G.WORDS[n] in pr for n in G.ORDER)
+
+
+def test_the_structure_check_and_the_sheet_run_redraw_up_to_three_seeds_per_hero(tmp_path, monkeypatch):
+    import numpy as np
+    from PIL import Image
+    from explainer_engine.training.pods.p15 import mouth_grid as G, p15_mouth as M
+    rng = np.random.default_rng(3)
+    good = Image.fromarray(np.kron(rng.integers(0, 255, (45, 80, 3), dtype=np.uint8), np.ones((16, 16, 1), dtype=np.uint8)))   # blocky: survives the downscale
+    flat = Image.new("RGB", (1280, 720), (200, 200, 200))
+    assert M.cells_ok(good)[0] and not M.cells_ok(flat)[0]
+    monkeypatch.setattr(M, "fetch_sheet", lambda spec, hero, work: tmp_path / "x.png")
+    (tmp_path / "x.png").write_bytes(b"")
+    monkeypatch.setattr(Image, "open", lambda p, *a, **k: flat)
+    seen = []
+
+    def draw(pipe, cfg, j, refs):
+        seen.append((j["seed"], j["size"]))
+        return flat if len(seen) in (1, 2) else good   # hero 1: seeds 11 and 12 fail the structure check, 13 passes; hero 2 passes at 11
+    made, drawn = M.run_all(None, {"qwen": {"cfg_edit": 2.5, "style_lora": {}}}, tmp_path / "o", tmp_path, lambda *a: None, draw)
+    assert (made, drawn) == (2, 4) and [s for s, _ in seen] == [11, 12, 13, 11] and all(z == (1280, 720) for _, z in seen)
+    assert (tmp_path / "o/mouth_variants/B_H2_right34__sheet_s13.png").exists() and len(seen) <= 6
+
+
+def test_the_mouth_identity_check_cuts_the_cells_and_scores_each_against_the_sheet(tmp_path):
+    import numpy as np
+    from PIL import Image
+    from explainer_engine.training.pods.p15 import mouth_grid as G, p15_mouth as M
+    d, sh = tmp_path / "m", tmp_path / "s"
+    d.mkdir(), sh.mkdir()
+    for h in M.load_spec()["sheets"]:
+        Image.new("RGB", (1280, 720), (90, 90, 90)).save(d / f"{h}__sheet_s11.png")
+        Image.new("RGB", (1280, 704), (90, 90, 90)).save(sh / f"{h}.png")
+    rep = M.identity(d, sh, embedder=lambda paths: np.ones((len(paths), 4)))
+    assert set(rep) == {f"{h}__sheet_s11" for h in M.load_spec()["sheets"]} and all(len(v["per_cell"]) == 8 and v["min"] == 1.0 for v in rep.values())
+    assert (d / "identity.json").exists() and (d / "cells" / "B_H2_right34__11__blink2.png").exists()
+
+
+def test_the_default_qwen_pod_draws_the_24_pictures_and_the_two_mouth_sheets_inside_the_3_4_cap():
+    sch = json.loads((DIR / "p15q_schedule.json").read_text())
+    r = next(s for s in sch["stages"] if s["id"] == "qwen_restyle")["on"]["gpu"]
+    assert r["expected_min"] == 16.6 and r["max_min"] == 49.8   # 61 s + 26 x 36 s, the usual 3x (retries of the sheets are inside it)
+    assert RP.rp11(DIR / "p15q_schedule.json", max_usd=3.4, max_hours=2.0) == [] and not (DIR / "p15qm_schedule.json").exists()
+    assert B.schedule_qwen() == sch
+
+
+def test_the_one_clip_pilot_is_the_battle_clip_at_121_frames_and_three_cards_pass_rp11_at_the_original_caps():
+    """p15d (the creator 2026-11-07 07:46 UTC): 24 pictures + 2 mouth sheets + ONE battle clip of 121 frames (BP-184 crowd cap 5.04 s, dialogue = 0 s LTX)."""
+    import copy
+    from explainer_engine.cloud import schedule as S
+    assert B.CLIP_SETS[1] == ["ltx_c4"] and p15_pod.CLIP_SETS[1] == ["ltx_c4"] and B.SH_C[1].name == "p15c1.sh"
+    sch = B.schedule_qwen_clips(1)
+    assert [s["id"] for s in sch["stages"]] == ["weights_qwen", "qwen_restyle", "weights_ltx25", "ltx_c4", "F"]
+    assert sch["limits"]["max_usd"] == 3.7 and sch["limits"]["max_hours"] == 2.7
+    assert sch["stages"][3]["on"]["gpu"] == {"expected_min": 3.8, "max_min": 7.8}   # 5.8 / 12 min of 185 frames, scaled to 121
+    assert S.rp11(B.HERE / "p15qc1_schedule.json", max_usd=3.7, max_hours=2.7) == []
+    assert {c["name"] for c in sch["cards"]} == {"A100 80GB", "A100 80GB PCIe", "H100 PCIe"}
+    for card in sch["cards"]:   # every card passes RP-11 on its own, no 2.8 h and no 4.71 needed
+        one = copy.deepcopy(sch); one["cards"] = [card]
+        assert S.check(one) == [], card
+    assert "--clips 1" in B.SH_C[1].read_text() and "p15qc1_schedule" in B.SH_C[1].read_text()

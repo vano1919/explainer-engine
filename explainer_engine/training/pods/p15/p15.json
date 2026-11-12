@@ -303,7 +303,7 @@
       "output": "route_test_2026-11/pilot/ltx/pilot.c3.room_two_shot.S3.ltx25.i2v.f185.s42.mp4"
     },
     {
-      "id": "pilot.c4.battle_f000_colour.S2.ltx25.i2v.f185.s42",
+      "id": "pilot.c4.battle_f000_colour.S2.ltx25.i2v.f121.s42",
       "question": "do the crowd's direction and the camera hold? (S2; audio A: battle roar)",
       "recipe": "ltx_i2v/1",
       "pipeline": "distilled",
@@ -322,7 +322,7 @@
       },
       "text_encoder": null,
       "lora": null,
-      "frames": 185,
+      "frames": 121,
       "fps": 24,
       "width": 1920,
       "height": 1088,
@@ -337,7 +337,7 @@
       "chain_from": null,
       "prompt": "Hand-drawn 2D animation, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents. The near army charges forward across the plain, dust rises and the banners flap, then the two armies meet in a cloud of dust. Static camera. We hear a roaring battle cry and thundering feet.",
       "stage2_ic": false,
-      "output": "route_test_2026-11/pilot/ltx/pilot.c4.battle_f000_colour.S2.ltx25.i2v.f185.s42.mp4"
+      "output": "route_test_2026-11/pilot/ltx/pilot.c4.battle_f000_colour.S2.ltx25.i2v.f121.s42.mp4"
     },
     {
       "id": "pilot.c6.room_establishing.S2.ltx25.i2v.f185.s42",
@@ -451,7 +451,7 @@
       "output": "route_test_2026-11/pilot/ltx/pilot.c8.room_insert_clock.S2.ltx25.i2v.f185.s42.mp4"
     },
     {
-      "id": "pilot.c5.battle_f000_colour.S1.ltx25.i2v.f185.s42",
+      "id": "pilot.c5.battle_f000_colour.S1.ltx25.i2v.f121.s42",
       "question": "do the crowd's direction and the camera hold? (S1; audio B: distant drums)",
       "recipe": "ltx_i2v/1",
       "pipeline": "distilled",
@@ -470,7 +470,7 @@
       },
       "text_encoder": null,
       "lora": null,
-      "frames": 185,
+      "frames": 121,
       "fps": 24,
       "width": 1920,
       "height": 1088,
@@ -485,7 +485,7 @@
       "chain_from": null,
       "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The near army charges forward across the plain, dust rises and the banners flap, then the two armies meet in a cloud of dust. Static camera. We hear distant war drums and the wind.",
       "stage2_ic": false,
-      "output": "route_test_2026-11/pilot/ltx/pilot.c5.battle_f000_colour.S1.ltx25.i2v.f185.s42.mp4"
+      "output": "route_test_2026-11/pilot/ltx/pilot.c5.battle_f000_colour.S1.ltx25.i2v.f121.s42.mp4"
     }
   ],
   "clips": {
@@ -502,7 +502,7 @@
       "first_frame_of": "room_two_shot"
     },
     "ltx_c4": {
-      "job": "pilot.c4.battle_f000_colour.S2.ltx25.i2v.f185.s42",
+      "job": "pilot.c4.battle_f000_colour.S2.ltx25.i2v.f121.s42",
       "first_frame_of": "battle_f000_colour"
     },
     "ltx_c6": {
@@ -518,7 +518,7 @@
       "first_frame_of": "room_insert_clock"
     },
     "ltx_c5": {
-      "job": "pilot.c5.battle_f000_colour.S1.ltx25.i2v.f185.s42",
+      "job": "pilot.c5.battle_f000_colour.S1.ltx25.i2v.f121.s42",
       "first_frame_of": "battle_f000_colour"
     }
   },

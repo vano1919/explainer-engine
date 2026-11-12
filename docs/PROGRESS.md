@@ -4932,3 +4932,46 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   ESTIMATED (`runpod.SPEED` / 1.8). Out: H100 (17 min work) and RTX PRO 6000 Blackwell (21 min) fail RP-01; A100 PCIe worst $3.65 / 122 min; RTX PRO 4000/4500
   Blackwell have no speed. Qwen-Image-2.1 = 13.3 GB transformer + 16.3 GB text encoder (model_cpu_offload, one at a time): 24 GB cards may fit, unproven;
   the 3-failure stop bounds an OOM. Time worst over 2 h (guard-bounded, pictures upload as made): A5000 276, L4 316, A40/A6000 203, 4090 139, Ada 133, L40S 127 min.
+
+## 2026-11-06 22:10 UTC — p15: 24 pictures + LTX clips as two prepared variants (scope card 21:41 UTC; branch `icw/19-ltx`, NOT launched)
+- `p15_pod --only qwen --clips 8|2` (scripts `p15c8.sh` / `p15c2.sh`, schedules `p15qc8_schedule.json` / `p15qc2_schedule.json`): the 24 look-variant pictures, the LTX-2.5
+  weights, then the clips; a clip starts from `first_frames/<shot>__<its style tag>.png` (`p15_ltx --variant-frames`): c1 room_two_shot__S1, c2 room_two_shot__S2,
+  c3 room_two_shot__S3, c4 battle_f000_colour__S2, c6 room_establishing__S2, c7 room_close_host__S2, c8 room_insert_clock__S2, c5 battle_f000_colour__S1. The 2-clip set
+  = c2 (dialogue two-shot) + c4 (battle). 80 GB cards only (A100 COMMUNITY/SECURE, H100 NVL); Blackwell out (LTX never ran on sm_120).
+- RP-11 per card, expected / worst: 8 clips A100 COMM $2.92 (126 min) / $6.29 (272 min), A100 SEC $3.76 / $8.11, H100 NVL $3.67 (85 min) / $7.61 (176 min);
+  2 clips A100 COMM $1.58 (68) / $3.51 (152), A100 SEC $2.03 / $4.53, H100 NVL $2.16 (50) / $4.50 (104). Neither fits $3.4 / 2 h. Caps written in the files are PROPOSED
+  (8 clips $6.4 / 4.6 h; 2 clips $3.6 / 2.6 h, both on the A100 COMMUNITY), the creator's card decides; the ledger cap needs max_usd / 0.8.
+- Tests: pod runs for both sets, first-frame names, schedules, scripts. Cost $0.
+
+## 2026-11-06 19:55 UTC — p15 mouth SHEETS (J5), branch `icw/19-mouth` (off icw/19-pilot-pod 8b94f46); NOT in the live bundle
+- ვანო 19:41 UTC: one picture per hero holding all variants, not 16 HD edits. `mouth_grid.py` = the one layout constant (4x2 cells on 1280x720,
+  A-F + blink1/2, `cut`/`cut_files` for the free J5 cut-and-align). `p15_mouth.py`: 2 sheets (edit with the hero's own sheet as Image 1, seed 11, prompt
+  built from the sheet's description, <= 90 words, `xworld style` once), redrawn with seed 12/13 when `cells_ok` (structure only) fails: at most 6 pictures.
+  Free host-side identity: `python -m ...p15_mouth --check <mouth_variants> --sheets <dir>` = cosine of every cut cell to the sheet (qa/identity), `identity.json`.
+- `p15q_schedule.json` on this branch = 24 + 2 sheets (expected 16.6 min on the H100 reference; retries inside the 3x): RP-11 rc 0 at $3.4 / 2 h.
+  Per card (expected / worst): A40 and A6000 $0.81 / $2.11 (214 min, over the 2 h guard), L40S $1.03 / $2.45, A100 COMMUNITY $1.18 / $2.73,
+  A100 SECURE $1.52 / $3.51 (over $3.4 by 3 %; the guard stops at $3.4). The live pod (8b94f46) is 24 pictures only (the creator's GO 19:43 UTC).
+- Tests: layout/prompts, structure check + seed retries, identity check, schedule. Cost $0.
+
+## 2026-11-07 06:30 UTC — combo pod window 2: A100 80GB PCIe COMMUNITY added, pod max 2.8 h
+- The creator's card (2026-11-07 06:04 UTC, "yes, 2.8 h"): pod `max_hours` 2.7 -> 2.8, cost cap stays $3.7, ledger cap 4.70. `build.py` CARDS_CLIPS gains A100 80GB PCIe COMMUNITY $1.19/h (speed ESTIMATED 0.6 x 0.95 = 0.57) and LIMITS_CLIPS[2] max_hours 2.8; `p15qc2_schedule.json` and `p15qc8_schedule.json` regenerated.
+- RP-11 per card at $3.7 / 2.8 h: A100 SXM COMM pass ($1.63 expected / $3.65 worst, 158 min), A100 PCIe COMM pass ($1.44 / $3.26, 164 min = 2.74 h); A100 SECURE and H100 NVL fail (worst $4.70 / $4.65). H100 PCIe and H100 HBM3 are not in the schedule (not chosen). Speeds are estimates; no LTX speed is measured on any card.
+
+## 2026-11-07 06:45 UTC — combo pod window 3 prepared: wider cards, pod cap $4.71 / 2.8 h (NOT switched, awaiting audit)
+- The creator (2026-11-07 06:08 UTC): "I choose the $4.7 cap" for the wider search incl. SECURE. `build.py` LIMITS_CLIPS[2] max_usd 3.7 -> 4.71 (A100 SXM SECURE worst case is $4.704, 0.4 cent over $4.70; RP-11 needs $4.71), max_hours stays 2.8; CARDS_CLIPS gains H100 PCIe COMMUNITY $1.99 (0.89) and H100 80GB HBM3 COMMUNITY $2.69 (1.11), speeds ESTIMATED; `p15qc2_schedule.json` / `p15qc8_schedule.json` regenerated. No Blackwell, no H200 (price over max_price_per_hour 3.0).
+- RP-11 per card at $4.71 / 2.8 h (expected / worst): A100 SXM COMM $1.63 / $3.65 (158 min); A100 PCIe COMM $1.44 / $3.26 (164); A100 SXM SECURE $2.09 / $4.70 (158); H100 NVL COMM $2.21 / $4.65 (108); H100 PCIe COMM $1.82 / $3.88 (117); H100 HBM3 COMM $2.17 / $4.50 (100). Fail at $4.71: A100 PCIe SECURE ($4.90), H100 NVL SECURE ($5.73), H100 PCIe SECURE ($5.64).
+- No `spend_caps.json` line changes: per_pod_usd 10.0, max_hours_per_pod 5.0, max_price_per_hour 3.0 already cover it. Run ledger cap 5.90 (4.71 <= 80 % of 5.90) against balance $7.99 minus the $1.00 reserve.
+
+## 2026-11-07 08:05 UTC — pilot p15d built (PR #155 re-plan: one 121-frame battle clip), NOT launched
+- The creator ("yes", 2026-11-07 07:46 UTC) chose the newest approach; the pod itself still needs a new GO. `build.py`: `CLIP_FRAMES` (battle clips c4/c5 = 121 frames, BP-184 crowd cap 5.04 s; other clips stay 185), `CLIP_SETS[1] = [ltx_c4]` (the dialogue clip c2 is dropped: dialogue = 0 s LTX, J5), `p15c1.sh`, `p15qc1_schedule.json`, `LIMITS_CLIPS[1]` $3.7 / 2.7 h, `CARDS_ONE` (A100 SXM COMM, A100 PCIe COMM, H100 PCIe COMM). `p15.json` / `p15_schedule.json` regenerated from the HF stills manifest; `p15_pod --clips 1`.
+- RP-11 per card at $3.7 / 2.7 h (expected / worst, speeds ESTIMATED): A100 SXM COMM $1.32 / $3.03 (131 min); A100 PCIe COMM $1.17 / $2.70 (136 min); H100 PCIe COMM $1.53 / $3.28 (99 min). Providers (PR #154) stay disabled.
+- Test: `test_the_one_clip_pilot_...`; the 185-frame pin is now per clip (121 for the battle clip, still 8k+1).
+
+## 2026-11-07 UTC — Modal run plan (free code, nothing run on Modal)
+- New `explainer_engine/cloud/modal_schedule.py` (`python -m explainer_engine.cloud.modal_schedule p15d|film21|film24 [--max-usd N] [--cards A100-80GB,H100]`): the RP-11 idea for Modal. Per step every (GPU or cores, N containers) option, Pareto-reduced, combined over the step graph (critical path, GPU concurrency 10), worst case = 1.5x slack + 3 attempts of one retried unit, $30 credit applied. Price table = modal.com/pricing fetched 2026-11-07 (all 11 GPUs, CPU per physical core = 2 vCPU). Speeds of every card except the project's A100 0.6 / H100 1.0 are ESTIMATES; nothing is measured on Modal. Test: `tests/unit/test_modal_schedule.py` (11, fake price table). Correction of the earlier plan addendum: CPU is billed per PHYSICAL core, so "4 vCPU" = 2 cores and the CPU render cost is about half of what the addendum said.
+
+## 2026-11-07 UTC — modal_p15d.py written (NOT run; needs audit, verified weight load and the creator's explicit yes)
+- `explainer_engine/training/pods/p15/modal_p15d.py`: the p15d pilot as two concurrent Modal functions on the Volume `ee-weights`: `qwen_pictures` (H100, 40 min) and `ltx_clip` (A100-80GB, 30 min), the same stages and pinned bundle (sha 53eb909e) as p15c1.sh, image = the pinned tmr-pod digest plus the p15c1.sh installs. The battle frame is drawn first by a runtime re-order (bundle untouched) so the clip can start early; a modal.Dict signal, HF upload loop for every output (OR-33), `EE_MODAL_GO=<creator's card id>` gate, no Modal retries. Hard brakes ≈ $4.3 worst, cap $4.5. Tests `tests/unit/test_modal_p15d.py` (5). Open: the Volume's plain folders are linked into an HF cache layout by `link_hf_cache` (needs a free CPU check after the load); the 15 GB image pull/build time and every GPU speed are unmeasured; no 3-frame CPU smoke render is part of this file (CPU render not included yet).
+
+## 2026-11-07 UTC — modal_j5_smoke.py written (NOT run; waits for the creator's explicit pick on the card)
+- `explainer_engine/cloud/modal_j5_smoke.py`: one CPU function (2 physical cores, 8 GiB, 20 min timeout = at most $0.053, hard cap $0.15) renders the J5 tent dialogue, 3 shots x 3 frames at 1280x720, with `j5_background` (PR #151, commit 38cfff1; numpy/Pillow/OpenCV/scipy/jsonschema + ffmpeg, NO Blender and no GL, so the earlier EEVEE-on-software-GL question does not arise for this step). Code and the PC kit are on HF `code/j5/` (sha256 pinned); outputs go to HF `route_test_2026-11/j5_smoke/`. A local run of the same command took 7 s (frames extracted with the same ffmpeg line). Tests: `tests/unit/test_modal_j5_smoke.py` (4).
