@@ -355,6 +355,6 @@ When asked to produce a complete episode or pilot package, ChatGPT must output *
 - **Zero Duplicate Files:** Never emit separate `shotlist.json`, `keyframes.json`, `video_prompts.json`, or `narration.txt` files that could drift out of sync with `production_script.json`.
 
 ## D-124 Amendment (2026-11-09): Gemini Native Image Engine & 9-Gate Creator Workflow
-- **Image Engine Replacement:** Gemini (`explainer_engine/imagegen/gemini_image_engine.py`) replaces Qwen completely for generating all `10%` map/diagram assets, `30%` photo-collage layers, and `60%` video keyframes from the locked `Reference_Library` (`explainer_engine/assets/reference_library.py`).
+- **Image Engine Replacement:** Gemini (the chat image tool through turn packs, `explainer_engine/imagegen/turn_pack.py`, v4.3 GC-01..GC-17; the archive queue builder `gemini_image_engine.py` was removed in v4.3 P3) replaces Qwen completely for generating all `10%` map/diagram assets, `30%` photo-collage layers, and `60%` video keyframes from the locked `Reference_Library` (`explainer_engine/assets/reference_library.py`).
 - **Anti-Crop-Padding Law:** Every shot in `production_script.json` must have a unique `start_frame_prompt` (`KP-V4-NO-DUPLICATE-PROMPT`).
 - **9-Gate Orchestration:** Enforced programmatically via `explainer_engine/orchestration/rule_enforcer.py`, `explainer_engine/audio/sfx_planner.py`, `explainer_engine/aivideo/wan_optimizer.py`, and `explainer_engine/production/chunked_edit.py`.

@@ -1,127 +1,37 @@
-"""Model Lifecycle & Deprecation Guard (D-130).
+"""Model lifecycle guard (D-130; v4.3 plan P3.8): retired models are blocked, paid calls need a freshly checked model.
 
-Blocks retired or shut-down Google Gemini / Imagen / Veo and legacy Qwen endpoints
-before any paid API request or worker job is launched, and provides canonical active
-model identifiers verified against official vendor lifecycle documentation.
+The lists live as dated data in ``config/model_lifecycle.json`` (each entry: its source and the day it was checked). The
+archive's names were never checked against a vendor page, so they carry ``checked: null``: a retired name still blocks (blocking
+is safe), but no paid call may use a model whose entry is unchecked or older than ``max_check_age_days`` on the day of the run
+(``assert_fresh_for_paid_run``). The plan's words: "No model name is trusted from the zip."
 """
 from __future__ import annotations
 
+import json
+from datetime import date
+from pathlib import Path
 from typing import Dict, Tuple
+
+DATA_PATH = Path(__file__).resolve().parents[2] / "config" / "model_lifecycle.json"
 
 
 class RetiredModelBlockedError(RuntimeError):
     """Raised when code attempts to invoke a retired or shut-down model endpoint."""
 
 
-# Officially retired / shut-down models that must NEVER be invoked at runtime
-RETIRED_MODELS_REGISTRY: Dict[str, Dict[str, str]] = {
-    "imagen-3.0-generate-002": {
-        "shutdown_date": "2025-11-10",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Shut down per Google AI Studio Deprecations (2025-11-10).",
-    },
-    "imagen-3.0-generate-001": {
-        "shutdown_date": "2025-11-10",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Shut down per Google AI Studio Deprecations (2025-11-10).",
-    },
-    "imagen-4.0-generate-001": {
-        "shutdown_date": "2026-08-17",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Shut down per Google AI Studio Imagen Docs (2026-08-17).",
-    },
-    "imagen-4.0-ultra-generate-001": {
-        "shutdown_date": "2026-08-17",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Shut down per Google AI Studio Imagen Docs (2026-08-17).",
-    },
-    "imagen-4.0-fast-generate-001": {
-        "shutdown_date": "2026-08-17",
-        "replacement": "gemini-3.1-flash-image",
-        "reason": "Shut down per Google AI Studio Imagen Docs (2026-08-17).",
-    },
-    "gemini-2.0-flash-preview-image-generation": {
-        "shutdown_date": "2025-11-14",
-        "replacement": "gemini-3.1-flash-image",
-        "reason": "Shut down per Google AI Studio Deprecations (2025-11-14).",
-    },
-    "gemini-3-pro-image-preview": {
-        "shutdown_date": "2026-06-25",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Preview shut down (2026-06-25); use GA model gemini-3-pro-image.",
-    },
-    "gemini-3.1-flash-image-preview": {
-        "shutdown_date": "2026-06-25",
-        "replacement": "gemini-3.1-flash-image",
-        "reason": "Preview shut down (2026-06-25); use GA model gemini-3.1-flash-image.",
-    },
-    "veo-2.0-generate-001": {
-        "shutdown_date": "2026-06-30",
-        "replacement": "gemini-omni-1.2-flash",
-        "reason": "Shut down per Google Gemini API Veo 2.0 Docs (2026-06-30).",
-    },
-    "veo-3.1-generate-preview": {
-        "shutdown_date": "2026-10-22",
-        "replacement": "gemini-omni-1.2-flash",
-        "reason": "Shut down per Google Gemini API Veo 3.1 Docs (2026-10-22).",
-    },
-    "veo-3.1-fast-generate-preview": {
-        "shutdown_date": "2026-10-22",
-        "replacement": "gemini-omni-1.2-flash",
-        "reason": "Shut down per Google Gemini API Veo 3.1 Docs (2026-10-22).",
-    },
-    "veo-3.1-lite-generate-preview": {
-        "shutdown_date": "2026-10-22",
-        "replacement": "gemini-omni-1.2-flash",
-        "reason": "Shut down per Google Gemini API Veo 3.1 Docs (2026-10-22).",
-    },
-    "Qwen/Qwen-Image-2512": {
-        "shutdown_date": "2026-10-26",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Retired in repo (KG-16 / D-124).",
-    },
-    "fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA": {
-        "shutdown_date": "2026-11-05",
-        "replacement": "gemini-3-pro-image",
-        "reason": "Retired in repo (D-96 / D-124).",
-    },
-}
+class ModelCheckStale(RuntimeError):
+    """A paid call names a model whose lifecycle entry is missing, unsourced, unchecked or too old."""
 
-# Active canonical models for Explainer Engine v4.2
-ACTIVE_CANONICAL_MODELS: Dict[str, str] = {
-    "g1_g2_reasoning_argon": "gemini-4-argon",
-    "g2_viewer_critic": "gemini-4-argon",
-    "g3_g4_compiler_flash": "gemini-3.8-flash",
-    "g5_keyframe_primary": "gemini-3-pro-image",
-    "g5_keyframe_banana": "gemini-nano-banana-2.1",
-    "g5_keyframe_fast": "gemini-3.1-flash-image",
-    "g6_narrator_tts": "eleven_v4",
-    "g6_narrator_tts_fallback": "eleven_multilingual_v2",
-    "g7_google_video_api": "gemini-omni-1.2-flash",
-    "g7_wan_i2v_api": "fal-ai/wan-i2v",
-    "g7_wan_flf2v_api": "fal-ai/wan-flf2v",
-}
 
-ALLOWED_ACTIVE_MODEL_IDS: Tuple[str, ...] = (
-    "gemini-4-argon",
-    "gemini-3.8-flash",
-    "gemini-3.5-flash-lite",
-    "gemini-3-pro-image",
-    "gemini-nano-banana-2.1",
-    "gemini-3.1-flash-image",
-    "gemini-3.1-flash-lite-image",
-    "gemini-2.5-flash-image",
-    "gemini-omni-1.2-flash",
-    "eleven_v4",
-    "eleven_multilingual_v2",
-    "eleven_text_to_sound_v2",
-    "eleven_music_v2_5",
-    "fal-ai/wan-i2v",
-    "fal-ai/wan-flf2v",
-    "wan2.2_i2v_14b_fp8.safetensors",
-    "wan2.2_flf2v_14b_fp8.safetensors",
-    "wan2.2_fun_control_14b_fp8.safetensors",
-)
+def load(path: Path = DATA_PATH) -> dict:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+_DATA = load()
+RETIRED_MODELS_REGISTRY: Dict[str, Dict[str, str]] = _DATA["retired"]
+ACTIVE_CANONICAL_MODELS: Dict[str, str] = _DATA["canonical"]
+ALLOWED_ACTIVE_MODEL_IDS: Tuple[str, ...] = tuple(_DATA["active"])
+MAX_CHECK_AGE_DAYS: int = int(_DATA["max_check_age_days"])
 
 
 def assert_active_model(model_id: str) -> str:
@@ -144,3 +54,22 @@ def resolve_or_migrate_model(model_id: str) -> str:
     if cleaned in RETIRED_MODELS_REGISTRY:
         return RETIRED_MODELS_REGISTRY[cleaned]["replacement"]
     return assert_active_model(cleaned)
+
+
+def assert_fresh_for_paid_run(model_id: str, today: date | None = None, data: dict | None = None) -> str:
+    """Before a PAID call: the model is not retired, is listed as active with a vendor URL, and was checked at most
+    ``max_check_age_days`` ago. Raises ``ModelCheckStale`` otherwise (re-read the vendor page and date the entry)."""
+    d = data or _DATA
+    cleaned = str(model_id or "").strip()
+    if cleaned in d["retired"]:
+        raise RetiredModelBlockedError(f"{cleaned!r} is listed as retired (replacement {d['retired'][cleaned].get('replacement')!r})")
+    entry = d["active"].get(cleaned)
+    if entry is None:
+        raise ModelCheckStale(f"{cleaned!r} is not in config/model_lifecycle.json 'active'; check the vendor page first")
+    if not str(entry.get("source", "")).startswith("https://") or not entry.get("checked"):
+        raise ModelCheckStale(f"{cleaned!r} was never checked against a vendor page ({entry.get('source')}); no paid call")
+    age = ((today or date.today()) - date.fromisoformat(entry["checked"])).days
+    if age > int(d["max_check_age_days"]):
+        raise ModelCheckStale(f"{cleaned!r} was checked {entry['checked']} ({age} days ago, more than "
+                              f"{d['max_check_age_days']}); re-read {entry['source']} and date the entry before a paid call")
+    return cleaned

@@ -141,9 +141,15 @@ def _synthesize_or_load_narration_voice_track(
     script_doc: Dict[str, Any],
     total_samples: int,
     existing_audio_pack_path: Path | None = None,
+    source_out: Dict[str, Any] | None = None,
 ) -> np.ndarray:
-    """Load a verified narration voice WAV/MP3 or synthesize continuous multi-formant narration across `audio_lines`."""
+    """Load a verified narration voice WAV/MP3 or synthesize continuous multi-formant narration across `audio_lines`.
+
+    ``source_out["narration_source"]`` says which happened: the loaded file's path, or ``"synthesized"`` (a formant
+    placeholder that is never shippable, v4.3 plan F4; the acceptance report FAILs it, EP-03)."""
     validate_narration_source_file(existing_audio_pack_path)
+    if source_out is not None:
+        source_out["narration_source"] = "synthesized"
     n = total_samples
     voice = np.zeros(n, dtype=np.float32)
 
@@ -160,6 +166,8 @@ def _synthesize_or_load_narration_voice_track(
                 voice[:use_len] = loaded[:use_len]
                 peak = float(np.max(np.abs(voice)))
                 if peak > 1e-6:
+                    if source_out is not None:
+                        source_out["narration_source"] = str(existing_audio_pack_path)
                     return (voice / peak * 0.72).astype(np.float32)
         except Exception:
             pass
@@ -248,10 +256,12 @@ def render_continuous_environmental_soundscape(
     shot_sd_map = g4_plan["shot_sound_design"]
 
     # 1. Narration & Dialogue Spine (mono -> stereo centered)
+    narration_info: Dict[str, Any] = {}
     voice_mono = _synthesize_or_load_narration_voice_track(
         script_doc,
         total_samples=total_samples,
         existing_audio_pack_path=Path(existing_audio_pack_path) if existing_audio_pack_path else None,
+        source_out=narration_info,
     )
     voice_stereo = (acoustics.pan(voice_mono, 0.0) * acoustics.CENTRE_GAIN).astype(np.float32)
 
@@ -419,6 +429,7 @@ def render_continuous_environmental_soundscape(
         "channels": 2,
         "duration_sec": round(total_dur_s, 3),
         "historical_period": g4_plan["historical_period"],
+        "narration_source": narration_info["narration_source"],
         "blocked_era_events": g4_plan["blocked_era_events"],
         "continuous_ambience_groups_count": len(grouped_spans),
         "continuous_ambience_groups": grouped_spans,

@@ -275,12 +275,13 @@ def run_v4_pipeline(
                 "shot_duration_total_seconds": shot_total,
                 "audio_spine_total_seconds": round(t_cursor, 3),
                 "duration_aligned": duration_aligned,
-                "frozen_clips_count": 0,
-                "silent_gaps_count": 0,
+                # not measured by this step: None, never a literal 0 (v4.3 plan P2, EP-03)
+                "frozen_clips_count": None,
+                "silent_gaps_count": None,
             },
             "creator_review_checklist": {
                 "character_and_screen_direction_continuity_verified": not dry_run,
-                "historical_dossier_citations_verified": True,
+                "historical_dossier_citations_verified": None,   # the claim map check (PV-37) decides, not this report
             },
         }
         (s4_dir / "qa_report.json").write_text(

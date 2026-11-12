@@ -10,7 +10,6 @@ from explainer_engine.assets.reference_library import (
     validate_reference_library,
 )
 from explainer_engine.imagegen.asset_plan import extract_complete_asset_plan
-from explainer_engine.imagegen.gemini_image_engine import build_gemini_generation_queue
 from explainer_engine.audio.sfx_planner import build_g4_audio_fx_plan
 from explainer_engine.aivideo.wan_optimizer import (
     evaluate_dialogue_render_route,
@@ -105,4 +104,6 @@ def test_wan_chain_minus_5_and_system_logic_check():
     script_doc = json.loads(_need(REPO_ROOT / "jobs/ep_waterloo_12min/production_script.json").read_text(encoding="utf-8"))
     check_report = run_system_logic_check(script_doc)
     assert check_report["overall_status"] == "PASS"
-    assert check_report["1_video_planning_logic"]["wan_chain_minus_5_verified"] is True
+    # v4.3 P2 (EP-03): the chain row is measured on the script's own chained shots, NOT_RUN when it has none
+    chained = any(s.get("continues_from_previous") for s in script_doc.get("shots", []))
+    assert check_report["1_video_planning_logic"]["wan_chain"]["status"] == ("PASS" if chained else "NOT_RUN")

@@ -8,8 +8,8 @@ Executes the complete isolated production pipeline for an episode (`episodes/<ep
 5. Plans `ED-04`-compliant transitions (`edit/cinematic_transitions.py`).
 6. Renders all 5 separate 48kHz stereo audio stems (`narration.wav`, `music.wav`, `ambience.wav`, `sfx.wav`, `mix.wav`)
    and runs independent narration dropout & stem continuity audits (`audio/dropouts.py`, `audio/sound_director.py`).
-7. Assembles the frame-accurate master MP4 (`renders/final/<episode_id>_2min_master.mp4`), extracts a 25-shot
-   verification contact sheet (`qa/contact_sheets/<episode_id>_2min_contact_sheet.jpg`), and writes
+7. Assembles the frame-accurate master MP4 (`renders/final/<episode_id>_master.mp4`), extracts a 25-shot
+   verification contact sheet (`qa/contact_sheets/<episode_id>_contact_sheet.jpg`), and writes
    `production/production_manifest.json` and `qa/acceptance_report.json`.
 """
 from __future__ import annotations
@@ -28,6 +28,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 from explainer_engine.audio import acoustics, dropouts, sound_director
 from explainer_engine.audio.environmental_sound_design import render_continuous_environmental_soundscape
+from explainer_engine.episode.acceptance import gates as acceptance_gates
+from explainer_engine.episode.validate import check_episode_ids
 from explainer_engine.audio.sfx_planner import build_g4_audio_fx_plan
 from explainer_engine.edit.cinematic_transitions import (
     plan_episode_cinematic_transitions,
@@ -306,10 +308,15 @@ def run_episode_production(
     width: int = 1920,
     height: int = 1080,
     fps: int = 24,
-    script_rel_path: str = "planning/production_script_2min.json",
+    script_rel_path: str = "story/production_script.json",
     force_rerender_clips: bool = False,
+    narration_path: Path | str | None = None,
 ) -> Dict[str, Any]:
-    """Execute the complete Episode-First V4.3 production pipeline for any `episode_dir`."""
+    """Execute the complete Episode-First V4.3 production pipeline for any `episode_dir`.
+
+    ``narration_path`` is the episode's read (a file inside the folder); without it the sound step draws a formant
+    placeholder and the acceptance report FAILs ``narration_is_a_real_read`` (EP-03, plan F4). The acceptance report is
+    measured (``episode/acceptance.py``): no gate is a literal, and the map count and the length come from the script."""
     t0 = time.time()
     episode_dir = Path(episode_dir).resolve()
     ctx = load_episode_context(episode_dir)
@@ -328,8 +335,11 @@ def run_episode_production(
         "cinematic_25d_shots_count": sum(1 for s in shots if s.get("visual_type") != "map_visualization"),
         "external_paid_api_calls": 0,
         "estimated_cost_usd": 0.0,
-        "isolation_verified": True,
+        "isolation_findings": check_episode_ids(episode_dir),
     }
+    preflight_report["isolation_verified"] = not preflight_report["isolation_findings"]
+    if narration_path is not None:
+        narration_path = resolver.resolve_path(narration_path)
     resolver.resolve_path("qa/cost_and_isolation_preflight.json").write_text(
         json.dumps(preflight_report, indent=2), encoding="utf-8"
     )
@@ -473,7 +483,7 @@ def run_episode_production(
     audio_res = render_continuous_environmental_soundscape(
         script_doc=script_doc,
         out_wav_path=master_mix_wav,
-        existing_audio_pack_path=None,  # Synthesize dedicated multi-formant narration spine; never use SFX pack
+        existing_audio_pack_path=narration_path,  # None -> a formant placeholder, FAILed by the acceptance report
         transition_plans=transition_plans,
         stems_output_dir=stems_dir,
     )
@@ -482,7 +492,7 @@ def run_episode_production(
     stem_audit_path.write_text(json.dumps(stem_audit, indent=2), encoding="utf-8")
 
     # 5. Assemble Final Master Video (1920x1080, 24fps, 120.0s, 48kHz stereo)
-    master_mp4_path = resolver.resolve_path(f"renders/final/{ctx.episode_id}_2min_master.mp4")
+    master_mp4_path = resolver.resolve_path(f"renders/final/{ctx.episode_id}_master.mp4")
     video_res = assemble_episode_master_video(
         shot_records=shot_records,
         transition_plans=transition_plans,
@@ -494,31 +504,21 @@ def run_episode_production(
     )
 
     # 6. Extract 25-Shot Verification Contact Sheet from Rendered Master MP4
-    contact_sheet_path = resolver.resolve_path(f"qa/contact_sheets/{ctx.episode_id}_2min_contact_sheet.jpg")
+    contact_sheet_path = resolver.resolve_path(f"qa/contact_sheets/{ctx.episode_id}_contact_sheet.jpg")
     generate_master_video_contact_sheet(
         master_mp4_path=master_mp4_path,
         shot_records=shot_records,
         out_jpg_path=contact_sheet_path,
     )
 
-    # 7. Write Production Manifest & Acceptance Report (AC-01 .. AC-10)
+    # 7. Write Production Manifest & the measured acceptance report (EP-03)
     elapsed_s = round(time.time() - t0, 2)
-    acceptance_gates = {
-        "AC-01_episode_isolation": True,
-        "AC-02_zero_contaminated_waterloo_or_podcast_assets": True,
-        "AC-03_audio_era_gating_no_cavalry_or_sword_in_toba": len(audio_res["blocked_era_events"]) == 0,
-        "AC-04_no_sfx_pack_used_as_narration": True,
-        "AC-05_independent_narration_stem_zero_dropouts": (
-            stem_audit["mid_line_narration_dropouts"] == 0 and len(stem_audit["sound_director_stem_findings"]) == 0
-        ),
-        "AC-06_real_gis_maps_with_dem_shaded_relief": sum(1 for r in shot_records if r["generation_mode"] == "GIS_DEM_SHADED_RELIEF_MAP") == 3,
-        "AC-07_multi_axis_smoothstep_camera_motion": True,
-        "AC-08_ed04_transition_compliance": all(p["ed04_compliant"] for p in transition_plans),
-        "AC-09_master_video_specs_1080p_24fps_120s": (
-            115.0 <= video_res["duration_sec"] <= 125.0 and video_res["total_frames"] == int(round(video_res["duration_sec"] * fps))
-        ),
-        "AC-10_zero_paid_api_waste": preflight_report["estimated_cost_usd"] == 0.0,
-    }
+    acceptance = acceptance_gates(
+        root=episode_dir, script=script_doc, shot_records=shot_records, transition_plans=transition_plans,
+        audio=audio_res, stem_audit=stem_audit, video=video_res, fps=fps,
+        forbidden_tokens=sorted(ctx.forbidden_semantic_tokens), narration_source=audio_res.get("narration_source"),
+        paid_calls=None,
+    )
 
     manifest_doc = {
         "schema": "episode_production_manifest/4.3",
@@ -546,8 +546,8 @@ def run_episode_production(
             "ed04_all_compliant": all(p["ed04_compliant"] for p in transition_plans),
         },
         "shots": shot_records,
-        "acceptance_gates": acceptance_gates,
-        "all_gates_passed": all(acceptance_gates.values()),
+        "acceptance": acceptance,
+        "all_gates_passed": acceptance["status"] == "PASS",
     }
 
     manifest_path = resolver.resolve_path("production/production_manifest.json")

@@ -71,6 +71,7 @@ HOMES = {
     "LJ": "LTX_JOBS.md",  # the LTX generations of the J2/J4 routes (ltx_job/1, D-116, guide step 3, 2026-11-06)
     "EP": "EPISODE_FIRST.md",  # one folder, one id, one look per episode (v4.3, D-131, 2026-11-12)
     "RT": "EPISODE_FIRST.md",  # the shot route and the visual mix by duration (v4.3, D-131, 2026-11-12)
+    "GC": "GEMINI_CONSISTENCY_RULES.md",  # pictures through the Gemini chat: turn packs, intake, masters (v4.3, D-131)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

@@ -33,7 +33,8 @@ def test_old_route_words_appear_only_under_a_dated_legacy_banner_or_marked_legac
         if _banner(lines):
             continue
         stale += [f"{path.relative_to(ROOT)}:{n}" for n, l in enumerate(lines, 1) if WORDS.search(l) and "legacy" not in l.lower()
-                  and "D-116" not in l]   # a line that names the 2026-11-06 route decision is current, not stale
+                  and "D-116" not in l and "D-131" not in l]   # a line that names the 2026-11-06 route decision
+    # (D-116) or the v4.3 rebuild (D-131, 2026-11-12: 2.5D is a current route again) is current, not stale
     assert not stale, stale
 
 

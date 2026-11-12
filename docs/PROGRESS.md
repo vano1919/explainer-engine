@@ -5077,3 +5077,59 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
 - Tests: `tests/unit/test_v43_episode_contract.py` (18, one failing case per new rule); full suite 3484 passed, 14 skipped
   (missing Waterloo input), 1 xfailed; docs_lint 0 findings.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P2: gates that measure (thread "Implement v4.3 episode-first rebuild")
+- Rule EP-03 in [EPISODE_FIRST](EPISODE_FIRST.md): a gate row is PASS or FAIL from a measurement, or NOT_RUN with its reason;
+  a report with a NOT_RUN is INCOMPLETE, never a pass (`explainer_engine/qa/gates.py`).
+- `explainer_engine/episode/acceptance.py` replaces the archive's AC-01..AC-10 of `episode/production_runner.py` (four were the literal
+  `True`, one compared a constant with itself, two were fixed to the 2-minute pilot: exactly 3 maps, 115-125 s; plan F2, F3).
+  Measured now: one episode id in the folder (EP-01), every shot file inside the folder, no forbidden era word in the prompts,
+  the audio era gating, a real read as narration, no narration dropouts, every map shot of the script rendered, ED-04 cuts, the
+  master's length against the script (2 %) with its frame count, paid calls from the ledger. The camera-motion row is NOT_RUN
+  until P5 measures it; the ledger row is NOT_RUN until P8 wires it in.
+- The runner: default script `story/production_script.json`, master `renders/final/<id>_master.mp4`, contact sheet
+  `qa/contact_sheets/<id>_contact_sheet.jpg` (no `_2min`); `narration_path` takes the episode's read. Without it the sound step
+  still draws its formant placeholder, and now says so (`narration_source: "synthesized"`), which FAILs the report (F4; P7 refuses it outright).
+  The preflight's `isolation_verified` is the EP-01 result, not `True`.
+- `orchestration/rule_enforcer.py`: the Wan hand-over (frame [-5]) is checked on the script's own chained shots
+  (`wan_chain_check`, NOT_RUN without any), not on a fixed two-clip example; the visual mix comes from `router.mix_report` by
+  duration (RT-04), not job counts over the shot count; `run_all_gate_audits` FAILs only on a FAIL row (REVIEW rows of
+  hypothesis rules give REVIEW, D-59), and the reference library's string errors become FAIL rows (they crashed the dedup).
+- `production/__main__.py`: the stage-4 QA report's frozen-clip and silent-gap counts and the citations flag were literals;
+  they are `None` (not measured by that step).
+- Left for P6: `aivideo/wan_runner.py`'s default QA hook still returns `passed: True`; P6 replaces it with the real Wan QA.
+- Tests: `tests/unit/test_v43_measuring_gates.py` (15, one failing case per gate); full suite green (below); docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P3: pictures from the Gemini chat, gated in (thread "Implement v4.3 episode-first rebuild")
+- Rules GC-01..GC-17 in [GEMINI_CONSISTENCY_RULES](GEMINI_CONSISTENCY_RULES.md) (docs_lint home `GC`): anchors from text only,
+  per-shot anchors in a fixed order, one style sentence, verbatim hero texts, one place one look, one moment per picture,
+  letter-free, one scene per turn, end frame with its start, one episode one chat, live-action faces (never 3D-animation
+  faces; the creator 10:12-10:15 UTC), intake gates, identity checked, the resolution route of plan 0.7, the PC Chrome route,
+  Flash only (never Argon), one prompt one picture.
+- `explainer_engine/imagegen/turn_pack.py` (CLI `python -m explainer_engine.imagegen.turn_pack export|intake|promote|status`):
+  `export` writes turn packs of at most 6 (`--size`, up to 12) with the exact prompt, the references to attach in order and
+  the file name; it refuses to start without the episode's look sentences (they wait for the reference round), on cartoon-face
+  words, a prompt that asks for lettering, a hero without a registry entry, an anchor with a reference or a reference that is
+  not an anchor or the shot's own start frame. `intake` gates the dropped files (decodes, 16:9, the episode's native floor,
+  no letterbox, no duplicate, identity by YuNet + SFace when installed, as REVIEW; else NOT_RUN), writes one ledger line per
+  file with its sha256 and draws a contact sheet. A taken-in picture is a `draft`; `promote` runs the free 2x upscaler
+  (`EE_UPSCALER`, Real-ESRGAN class) and gates the master (16:9, long side >= `image_min_long_side`); with no upscaler it is
+  NOT_RUN, never a plain resize. `remake_list` is the GC-14 request: close-up hero shots whose 1080p frame FAILed the
+  sharpness row, priced at the 2K batch rate (now $0.0263 a picture incl. the reference), status `needs_creator_ok`; nothing is
+  sent. The sharpness measurement itself comes with P5's finished frames (no threshold is invented here).
+- The archive's second queue builder `imagegen/gemini_image_engine.py` is removed; the gate audit counts the scene pictures
+  with `turn_pack.scene_picture_ids` and keeps the unique-scene check (PV-NO-CROP-PADDING) as FAIL rows. The archive's batch
+  generator was never ported (D-127 superseded), so there was no queue format or ledger to merge from it; the turn pack
+  ledger is the one picture ledger.
+- Model names as dated data: `config/model_lifecycle.json` (retired, active, canonical; each with its source and `checked`
+  date); `core/model_lifecycle_guard.py` reads it and adds `assert_fresh_for_paid_run` (vendor URL and a check at most 30 days
+  old). The archive's names carry `checked: null` and allow no paid call; the four Gemini picture models carry the repo's own
+  price check (2026-10-16, ai.google.dev pricing), so they must be re-read by 2026-11-15 before any paid batch.
+- The paid Gemini client (`imagegen/gemini.py`) is off by default: a real call needs `EXPLAINER_GEMINI_API=on` and a fresh
+  model entry. Two client tests set the switch (and the timeout test stubs the date check) to keep testing what they tested.
+- Not done (needs a measurement or the creator): the plan's free `probe` of the creator's key (the API route is off; it is
+  the creator's key and his call); identity retries once then to the creator: the `review` list does the second half, the
+  retry is the next export.
+- Tests: `tests/unit/test_v43_picture_intake.py` (15). docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.
