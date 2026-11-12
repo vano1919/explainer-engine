@@ -21,13 +21,13 @@ HF_VERSION = "0.9.39"      # pinned (npm, Apache-2.0); package.json in the templ
 ENV = {"HYPERFRAMES_NO_TELEMETRY": "1", "DO_NOT_TRACK": "1"}
 
 
-def write_project(spec: dict, out_dir: Path | str) -> Path:
+def write_project(spec: dict, out_dir: Path | str, template: str = "template.html") -> Path:
     """The HyperFrames project folder of one overlay: index.html (template + spec inlined), vendored GSAP and font."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     for sub in ("vendor", "fonts"):
         shutil.copytree(TEMPLATE_DIR / sub, out / sub, dirs_exist_ok=True)
-    html = (TEMPLATE_DIR / "template.html").read_text(encoding="utf-8")
+    html = (TEMPLATE_DIR / template).read_text(encoding="utf-8")
     dur = round(spec["frames"] / spec["fps"], 4)
     for key, val in (("__DURATION__", dur), ("__W__", spec["frame"]["w"]), ("__H__", spec["frame"]["h"]), ("__FPS__", spec["fps"])):
         html = html.replace(key, str(val))

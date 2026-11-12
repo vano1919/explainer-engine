@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>overlay</title>
+<style>
+  @font-face { font-family: "Inter"; src: url("fonts/Inter.ttf"); font-weight: 100 900; }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  #root { position: relative; width: 2560px; height: 1440px; overflow: hidden; background: transparent; font-family: "Inter", sans-serif; }
+  svg { position: absolute; left: 0; top: 0; overflow: visible; }
+  .txt { font-family: "Inter", sans-serif; font-weight: 800; font-variant-numeric: tabular-nums; paint-order: stroke fill; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-start="0" data-duration="__DURATION__" data-width="__W__" data-height="__H__" data-fps="__FPS__">
+  <svg id="svg" xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440"></svg>
+</div>
+<script src="vendor/gsap-3.12.7.min.js"></script>
+<script>
+const SPEC = __SPEC__;
+const NS = "http://www.w3.org/2000/svg";
+const K = SPEC.style.tokens, ST = SPEC.style, FPS = SPEC.fps, EASE = SPEC.ease;
+const ENTER = 6, EXIT = 6, ANIM = 18, LONG = 36;
+const T = (f) => f / FPS;
+const ease = (u) => (u < 0.5 ? 4 * u ** 3 : 1 - Math.pow(-2 * u + 2, 3) / 2);
+const svg = document.getElementById("svg");
+const el = (name, attrs, parent) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; };
+const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+const pts = (shape, cx, cy, r) => shape.map(([x, y]) => `${cx + x * r},${cy + y * r}`).join(" ");
+const tl = gsap.timeline({ paused: true });
+const REG = {}, TXT = {};
+let CUR = null;
+const reg = (id, ...nodes) => { (REG[id] = REG[id] || []).push(...nodes); };
+const defs = el("defs", {});
+const sh = el("filter", { id: "shadow", x: "-10%", y: "-10%", width: "130%", height: "140%" }, defs);
+el("feDropShadow", { dx: 0, dy: 8, stdDeviation: 14, "flood-color": K.ink, "flood-opacity": 0.42 }, sh);
+const world = el("g", { id: "world" });
+const screen = el("g", { id: "screen" });
+const fadeIn = (n, f, d = ENTER) => tl.fromTo(n, { opacity: 0 }, { opacity: 1, duration: T(d), ease: "none", immediateRender: false }, T(f));
+const fadeOut = (n, f) => tl.to(n, { opacity: 0, duration: T(EXIT), ease: "none" }, T(f - EXIT));
+const halo = (s) => Math.max(ST.halo_px_2k, s * 0.09);
+const text = (parent, str, x, y, size, o = {}) => {
+  const t = el("text", { x, y, "font-size": size, class: "txt", fill: o.fill || K.ink, stroke: o.stroke || K.paper, "stroke-width": o.noHalo ? 0 : halo(size) * 2,
+    "text-anchor": o.anchor || "start", opacity: o.opacity === undefined ? 0 : o.opacity }, parent);
+  t.textContent = str;
+  if (CUR) (TXT[CUR] = TXT[CUR] || []).push(t);
+  return t;
+};
+
+// ---- the world push of a map shot (the plate is pushed by the same linear function in demo_bg)
+if (SPEC.world_k) tl.fromTo(world, { scale: 1 }, { scale: 1 + SPEC.world_k, duration: SPEC.frames / FPS, ease: "none", svgOrigin: "1280 720", immediateRender: true }, 0);
+
+// ---- panels
+const PG = {};
+for (const p of SPEC.panels) {
+  const parent = p.anchor === "world" ? world : screen;
+  const [bx, by, bw, bh] = p.box;
+  const g = el("g", { transform: `translate(${bx} ${by})`, opacity: 0 }, parent);
+  if (p.deco === "card") {
+    el("rect", { x: 0, y: 0, width: bw, height: bh, rx: p.radius, fill: rgba(K.paper, p.alpha), stroke: K.ink, "stroke-width": ST.stroke_px_2k * 0.7, filter: "url(#shadow)" }, g);
+  } else if (p.deco === "glass") {
+    const fillA = p.plate_file ? 1 - (1 - p.alpha) / (1 - SPEC.plate_alpha) : p.alpha;     // fill + map together make the panel's alpha
+    el("rect", { x: 0, y: 0, width: bw, height: bh, rx: p.radius, fill: rgba(K.paper, fillA) }, g);
+    el("rect", { x: 1.5, y: 1.5, width: bw - 3, height: bh - 3, rx: p.radius, fill: "none", stroke: rgba(K.paper, 0.92), "stroke-width": 3 }, g);
+  }
+  const cp = el("clipPath", { id: "clip_" + p.id }, defs);
+  el("rect", { x: 0, y: 0, width: bw, height: bh, rx: p.radius }, cp);
+  const inner = el("g", p.deco === "glass" ? { "clip-path": `url(#clip_${p.id})` } : {}, g);
+  if (p.plate_file) el("image", { href: p.plate_file, x: 0, y: 0, width: bw, height: bh, opacity: SPEC.plate_alpha, preserveAspectRatio: "none" }, inner);
+  PG[p.id] = { g, inner, p };
+  if (p.surface === "bare") tl.set(g, { opacity: 1 }, 0); else fadeIn(g, p.start);
+  fadeOut(g, p.end);
+}
+
+const screenNode = (p, pid) => {      // an element that stays on the screen even when its panel is a pushed map
+  if (PG[pid].p.anchor !== "world") return PG[pid].inner;
+  const [bx, by] = PG[pid].p.box;
+  const g = el("g", { transform: `translate(${bx} ${by})`, opacity: 1 }, screen);
+  fadeOut(g, PG[pid].p.end);
+  return g;
+};
+
+for (const it of SPEC.items) {
+  CUR = it.id;
+  const P = PG[it.pid], p = P.p;
+  const parent = it.layer === "screen" ? screenNode(p, it.pid) : P.inner;
+  const t0 = T(it.start - 1), ts = T(it.start) - 0.0001;   // a tween begins one frame early so its first visible change lands ON the word frame
+  const K0 = it.kind;
+  if (K0 === "route_arrow" || K0 === "front_line") {
+    const g = el("g", { opacity: 0 }, parent);
+    const d = "M" + it.path.map((q) => q.join(",")).join(" L");
+    const under = el("path", { d, fill: "none", stroke: K.ink, "stroke-width": it.width * 1.7, "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
+    const line = el("path", { d, fill: "none", stroke: K.accent, "stroke-width": it.width, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-dasharray": K0 === "front_line" ? `${it.width * 2.2} ${it.width * 1.2}` : "none" }, g);
+    const L = line.getTotalLength();
+    const mask = el("mask", { id: "m_" + it.id, maskUnits: "userSpaceOnUse", x: -50, y: -50, width: 2700, height: 1600 }, defs);
+    mask.style.maskType = "alpha";
+    const reveal = el("path", { d, fill: "none", stroke: K.paper, "stroke-width": it.width * 6, "stroke-linecap": "butt", "stroke-dasharray": `${L} ${L}`, "stroke-dashoffset": L }, mask);
+    under.setAttribute("mask", `url(#m_${it.id})`); line.setAttribute("mask", `url(#m_${it.id})`);
+    tl.set(g, { opacity: 1 }, ts).to(reveal, { strokeDashoffset: 0, duration: T(ANIM), ease: EASE }, t0);
+    reg(it.id, g);
+    if (K0 === "route_arrow") {
+      const hs = it.width * 2.6;
+      const head = el("polygon", { points: `0,0 ${-hs},${-0.55 * hs} ${-hs},${0.55 * hs}`, fill: K.accent, stroke: K.ink, "stroke-width": hs * 0.18, "stroke-linejoin": "round", opacity: 0 }, g);
+      for (let j = 0; j <= ANIM; j++) {
+        const u = ease(j / ANIM), s = Math.max(0.01, u * L), q = line.getPointAtLength(s), q0 = line.getPointAtLength(Math.max(0, s - 2));
+        const ang = Math.atan2(q.y - q0.y, q.x - q0.x) * 180 / Math.PI;
+        tl.set(head, { attr: { transform: `translate(${q.x} ${q.y}) rotate(${ang})` }, opacity: 1 }, ts + T(j));
+      }
+    }
+  } else if (K0 === "spread" || K0 === "plume") {
+    const g = el("g", { opacity: 0 }, parent);
+    const f = el("filter", { id: "b_" + it.id, x: "-60%", y: "-60%", width: "220%", height: "220%" }, defs);
+    el("feGaussianBlur", { stdDeviation: it.blur }, f);
+    const grp = el("g", { filter: `url(#b_${it.id})` }, g);
+    const fill = rgba(K.dim, 0.62);
+    const [sx, sy] = it.origin;
+    const blobs = K0 === "plume" ? it.blobs.map((b) => ({ shape: b.shape, cx: sx + (it.target[0] - sx) * b.t, cy: sy + (it.target[1] - sy) * b.t, r: it.radius * b.scale }))
+      : [{ shape: it.shape, cx: sx, cy: sy, r: it.radius }];
+    const polys = blobs.map((b) => el("polygon", { points: pts(b.shape, b.cx, b.cy, b.r), fill }, grp));
+    tl.set(polys, { scale: 0, svgOrigin: `${sx} ${sy}` }, 0);
+    tl.fromTo(g, { opacity: 0.4 }, { opacity: 1, duration: T(LONG), ease: EASE, immediateRender: false }, t0);
+    tl.set(g, { opacity: 0 }, 0);
+    tl.to(polys, { scale: 1, duration: T(LONG), ease: EASE }, t0);
+    reg(it.id, ...polys);
+  } else if (K0 === "pulse") {
+    const [cx, cy] = it.at;
+    const dot = el("circle", { cx, cy, r: 12, fill: K.accent, stroke: K.ink, "stroke-width": 4, opacity: 0 }, parent);
+    tl.set(dot, { opacity: 1 }, ts);
+    const ring = el("circle", { cx, cy, r: it.r0, fill: "none", stroke: K.accent, "stroke-width": it.width, opacity: 0 }, parent);
+    tl.fromTo(ring, { attr: { r: it.r0 }, opacity: 1 }, { attr: { r: it.r1 }, opacity: 0, duration: T(it.frames), ease: "none", immediateRender: false }, t0);
+    reg(it.id, dot, ring);
+  } else if (K0 === "highlight") {
+    const [cx, cy] = it.at, r = it.radius;
+    const g = el("g", { opacity: 0 }, parent);
+    el("circle", { cx, cy, r, fill: rgba(K.accent, 0.20), stroke: rgba(K.accent, 0.92), "stroke-width": it.width }, g);
+    text(g, it.label, cx + r * 0.80 + 14, cy + r * 0.60 + it.size * 0.35, it.size, { opacity: 1 });
+    tl.fromTo(g, { opacity: 0 }, { opacity: 1, duration: T(ANIM), ease: EASE, immediateRender: false }, t0);
+    tl.set(g, { opacity: 0 }, 0);
+    reg(it.id, g);
+  } else if (K0 === "label") {
+    const [cx, cy] = it.at, s = it.size;
+    const x = it.plain ? cx : cx + s * 0.35, y = it.plain ? cy : cy - s * 0.35;
+    const tx = text(parent, it.text, x, y, s);
+    tl.set(tx, { opacity: 0 }, 0);
+    fadeIn(tx, it.start - 1);
+    reg(it.id, tx);
+  } else if (K0 === "date_chip") {
+    const s = it.size, [x, y] = it.at;
+    const g = el("g", { opacity: 0 }, parent);
+    const w = it.text.length * s * 0.58 + s * 1.0, h = s * 1.5;
+    el("rect", { x, y, width: w, height: h, rx: ST.radius_px_2k, fill: rgba(K.paper, 0.96), stroke: K.ink, "stroke-width": ST.stroke_px_2k * 0.7 }, g);
+    text(g, it.text, x + s * 0.5, y + h * 0.68, s, { opacity: 1, noHalo: true });
+    fadeIn(g, it.start - 1);
+    reg(it.id, g);
+  } else if (K0 === "scale_bar") {
+    const g = el("g", { opacity: 0 }, parent);
+    const [x, y] = it.at, w = it.px, s = it.size;
+    el("path", { d: `M${x - w},${y - 14} L${x - w},${y} L${x},${y} L${x},${y - 14}`, fill: "none", stroke: K.ink, "stroke-width": 6, "stroke-linejoin": "round" }, g);
+    text(g, it.label, x - w / 2, y + s * 1.15, s, { opacity: 1, anchor: "middle" });
+    fadeIn(g, it.start - 1);
+    reg(it.id, g);
+  } else if (K0 === "counter" || K0 === "counter_big") {
+    const [x, y] = it.at;
+    const big = it.big;
+    const t = text(parent, big ? "0" : "0 " + it.unit, x, y, it.size, { anchor: big ? "middle" : "start" });
+    tl.set(t, { opacity: 0 }, 0);
+    tl.set(t, { opacity: 1 }, ts);
+    for (const [f, str] of it.steps) tl.set(t, { textContent: big ? str : str + " " + it.unit }, T(f));
+    reg(it.id, t);
+    if (big) {
+      const u = text(parent, it.unit, x, y + 100, 52, { anchor: "middle", opacity: 0 });
+      tl.set(u, { opacity: 1 }, ts);
+      reg(it.id, u);
+    }
+  } else if (K0 === "chart_title") {
+    const t = text(parent, it.text, it.at[0], it.at[1], it.size, { anchor: "middle", opacity: 1, noHalo: true });
+    reg(it.id, t);
+  } else if (K0 === "chart_axis") {
+    const l = el("line", { x1: it.x0, x2: it.x1, y1: it.y, y2: it.y, stroke: K.ink, "stroke-width": 6, "stroke-linecap": "round" }, parent);
+    reg(it.id, l);
+  } else if (K0 === "chart_zero") {
+    const l = el("line", { x1: it.x0, x2: it.x1, y1: it.y, y2: it.y, stroke: K.dim, "stroke-width": 4, "stroke-dasharray": "14 12" }, parent);
+    const t = text(parent, it.label, it.x0 - 10, it.y - 12, it.size, { opacity: 1, noHalo: true, fill: K.dim });
+    reg(it.id, l, t);
+  } else if (K0 === "bar") {
+    const r = el("rect", { x: it.x, y: it.y, width: it.w, height: it.h, rx: 8, fill: it.highlight ? K.accent : K.dim, stroke: K.ink, "stroke-width": 4, opacity: 0 }, parent);
+    tl.set(r, { opacity: 1, scaleY: 0, svgOrigin: `${it.cx} ${it.ybase}` }, 0);
+    tl.fromTo(r, { scaleY: 0 }, { scaleY: 1, duration: T(ANIM), ease: EASE, immediateRender: false }, t0);
+    const lab = text(parent, it.label, it.cx, it.ybase + 62, it.label_size, { anchor: "middle", noHalo: true });
+    fadeIn(lab, it.start - 1);
+    const val = text(parent, it.text, it.cx, it.ybase - 20, it.size, { anchor: "middle", noHalo: true });
+    for (let j = 0; j <= ANIM; j++) tl.set(val, { attr: { y: it.ybase - it.h * ease(j / ANIM) - 20 }, opacity: 1 }, ts + T(j));
+    reg(it.id, r, lab, val);
+  } else if (K0 === "line_seg") {
+    const g = el("g", { opacity: 1 }, parent);
+    const [x1, y1] = it.p1;
+    if (it.p0) {
+      const d = `M${it.p0[0]},${it.p0[1]} L${x1},${y1}`;
+      const under = el("path", { d, fill: "none", stroke: K.ink, "stroke-width": it.width + 8, "stroke-linecap": "round" }, g);
+      const line = el("path", { d, fill: "none", stroke: K.accent, "stroke-width": it.width, "stroke-linecap": "round" }, g);
+      const L = line.getTotalLength();
+      for (const q of [under, line]) { q.setAttribute("stroke-dasharray", `${L} ${L}`); q.setAttribute("stroke-dashoffset", L); }
+      tl.to([under, line], { strokeDashoffset: 0, duration: T(ANIM), ease: EASE }, t0);
+      reg(it.id, under, line);
+    }
+    const dot = el("circle", { cx: x1, cy: y1, r: it.width * 0.9, fill: K.accent, stroke: K.ink, "stroke-width": 5, opacity: 0 }, g);
+    tl.set(dot, { opacity: 0 }, 0);
+    fadeIn(dot, it.start - 1 + (it.p0 ? ANIM - ENTER : 0));
+    reg(it.id, dot);
+    if (it.text) {
+      const t = text(g, it.text, x1 + 34, y1 + 6, it.size, { noHalo: true });
+      fadeIn(t, it.start - 1 + ANIM - ENTER);
+      reg(it.id, t);
+    }
+  } else if (K0 === "timeline_axis") {
+    const g = el("g", {}, parent);
+    const d = `M${it.x0},${it.y} L${it.x1},${it.y}`;
+    const line = el("path", { d, fill: "none", stroke: K.ink, "stroke-width": it.width, "stroke-linecap": "round" }, g);
+    const L = line.getTotalLength();
+    line.setAttribute("stroke-dasharray", `${L} ${L}`); line.setAttribute("stroke-dashoffset", L);
+    tl.to(line, { strokeDashoffset: 0, duration: T(ANIM), ease: EASE }, t0);
+    reg(it.id, line);
+    for (const k of it.ticks) {
+      const tk = el("line", { x1: k.x, x2: k.x, y1: it.y - 22, y2: it.y + 22, stroke: K.ink, "stroke-width": 6, "stroke-linecap": "round", opacity: 0 }, g);
+      const lb = text(g, k.label, k.x, it.y + 92, it.size, { anchor: "middle", noHalo: true });
+      fadeIn(tk, it.start - 1 + ANIM - ENTER); fadeIn(lb, it.start - 1 + ANIM - ENTER);
+      reg(it.id, tk, lb);
+    }
+  } else if (K0 === "marker") {
+    const c = el("circle", { cx: it.x0, cy: it.y, r: it.r, fill: K.accent, stroke: K.ink, "stroke-width": 6, opacity: 0 }, parent);
+    for (let j = 0; j <= LONG; j++) tl.set(c, { attr: { cx: it.x0 + (it.x1 - it.x0) * ease(j / LONG) }, opacity: 1 }, ts + T(j));
+    reg(it.id, c);
+  } else if (K0 === "stat_callout") {
+    const g = el("g", { opacity: 0 }, parent);
+    const [cx, cy] = it.at;
+    const t = el("text", { x: cx, y: 250, "text-anchor": "middle", class: "txt", fill: K.ink, stroke: K.paper, "stroke-width": halo(it.size_num) * 2 }, g);
+    (TXT[it.id] = TXT[it.id] || []).push(t);
+    const a = el("tspan", { "font-size": it.size_num }, t); a.textContent = it.number;
+    const b = el("tspan", { "font-size": it.size_unit, dx: 24 }, t); b.textContent = it.unit;
+    text(g, it.caption, cx, 340, it.size_cap, { anchor: "middle", opacity: 1 });
+    fadeIn(g, it.start - 1);
+    reg(it.id, g);
+  } else if (K0 === "compare_half") {
+    const g = el("g", { opacity: 0 }, parent);
+    const [cx, cy] = it.at, up = it.direction === "up", s = 64;
+    el("polygon", { points: up ? `${cx},${cy - 150} ${cx - s},${cy - 60} ${cx + s},${cy - 60}` : `${cx},${cy - 60} ${cx - s},${cy - 150} ${cx + s},${cy - 150}`,
+      fill: up ? K.accent : K.dim, stroke: K.ink, "stroke-width": 6, "stroke-linejoin": "round" }, g);
+    text(g, it.label, cx, cy + 50, it.size, { anchor: "middle", opacity: 1 });
+    fadeIn(g, it.start - 1);
+    reg(it.id, g);
+  }
+}
+
+// layout of every item at its settled frame, for the validator (boxes in frame pixels)
+window.__measure = () => {
+  const out = [];
+  for (const it of SPEC.items) {
+    tl.time(T(it.motion_end + 3));
+    const rects = (REG[it.id] || []).map((n) => n.getBoundingClientRect()).filter((r) => r.width > 0 || r.height > 0);
+    if (!rects.length) continue;
+    const x0 = Math.min(...rects.map((r) => r.left)), y0 = Math.min(...rects.map((r) => r.top));
+    const x1 = Math.max(...rects.map((r) => r.right)), y1 = Math.max(...rects.map((r) => r.bottom));
+    const texts = (TXT[it.id] || []).map((n) => n.getBoundingClientRect()).filter((r) => r.width > 0).map((r) => [r.left, r.top, r.width, r.height]);
+    out.push({ id: it.id, kind: it.kind, box: [x0, y0, x1 - x0, y1 - y0], texts });
+  }
+  return out;
+};
+// the frame at which each item first changes (its own nodes only), scanned around its planned start; the validator compares it with the word
+window.__timing = () => {
+  const out = [];
+  for (const it of SPEC.items) {
+    if (it.static || !(REG[it.id] || []).length) continue;
+    const sig = () => (REG[it.id] || []).map((n) => n.outerHTML).join("|");
+    const f0 = Math.max(0, it.start - 14);
+    tl.time(T(f0));
+    const base = sig();
+    let first = null;
+    for (let f = f0; f <= it.start + 14; f++) { tl.time(T(f)); if (sig() !== base) { first = f; break; } }
+    out.push({ id: it.id, kind: it.kind, start: it.start, first_change: first });
+  }
+  return out;
+};
+window.__timelines = window.__timelines || {};
+window.__timelines["root"] = tl;
+</script>
+</body>
+</html>
