@@ -5401,3 +5401,27 @@ not ready for a paid test. This entry covers the findings that need no word from
   - A8: the Toba draft waits for the multi-photo style plan.
 - Tests: `test_v43_wan_adapter.py` (28), `test_v43_wan_worker.py` (16), the new `test_cloud_hooks_modal.py`, and the retired,
   picture-intake, runner, map and contract tests. Cost: $0.
+
+## 2026-11-12 — the Wan model pinned, its limits enforced (final audit A2, A6) (thread "Implement v4.3 episode-first rebuild")
+The creator picked Wan2.2-I2V-A14B at 720P on the options card (14:26 UTC). Nothing paid ran.
+- `training/pods/wan/launch.json` pins the model:
+  - The repo `Wan-AI/Wan2.2-I2V-A14B-Diffusers` at revision `596658fd`, and the sha256 of its 41 files (126 GB; the HF API's LFS
+    ids, and the hashed bytes of the small configs).
+  - The pipeline `WanImageToVideoPipeline`, and the card's Diffusers settings (40 steps, guidance 3.5).
+  - `native`: 16 fps, at most 81 frames, sizes 1280x720 and 832x480, made at 1280x720.
+  - `offload: model_cpu_offload`, the card's single-GPU recipe. A `decided` record carries his card.
+  - Still null, waiting for his test-line card: the GPU price, the caps, the image's library pins, `scaledown_window_s` and
+    `hf_out`. So the worker still refuses everything.
+- A2, the model's own limits:
+  - The adapter makes every clip at the model's rate and size. `wan_adapter.conform` then turns it into the timeline's rate and
+    size, free on the CPU: frames are repeated or dropped (no interpolation), Lanczos scale, centre crop, same length.
+  - A shot longer than one clip (5.09 s) is refused before anything is sent. G1 names every such shot
+    (`wan_shots_fit_the_model`) with its remedies: split the shot, or chain two clips on frame[-5], which is not built yet.
+  - The worker refuses a spec at another rate or size, or past 81 frames.
+- A6: `::stage` puts the pinned revision's missing files on the Volume, checks every sha256 and commits. It is a CPU step
+  under the GO, at most about $0.32. L2 `::weights` then proves the files.
+- The official speed table (A100 720P: 2811 s a clip; H100: 1056 s) shows $1 a run cannot hold one 720P clip. The test line is
+  put back to the creator as a card.
+- Tests: `test_v43_wan_worker.py` (A2, A6, the committed pins), `test_v43_wan_adapter.py` (conform, G1, refusal of a long
+  shot), `test_cloud_hooks_modal.py` (`::stage` needs the GO). Cost: $0.
+

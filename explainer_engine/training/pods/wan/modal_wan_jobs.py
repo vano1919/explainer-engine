@@ -64,7 +64,52 @@ def launch_problems(launch: dict) -> list[str]:
     caps = launch.get("caps") or {}
     out += [f"launch caps.{k} is not set" for k in ("smoke_usd", "run_usd", "cold_start_s")
             if not isinstance(caps.get(k), (int, float)) or caps[k] <= 0]
+    out += native_problems(launch)
+    if launch.get("offload") not in OFFLOADS:
+        out.append(f"launch offload must be one of {OFFLOADS}")
     return out
+
+
+OFFLOADS = ("none", "model_cpu_offload")
+
+
+def native_problems(launch: dict) -> list[str]:
+    """The model's own limits (final audit A2), read from its card: ``native`` = {fps, max_frames (4k+1), sizes [[w, h]],
+    use (the size every clip is made at, one of sizes)}."""
+    n = launch.get("native")
+    if not isinstance(n, dict):
+        return ["launch native (fps, max_frames, sizes, use) is not pinned"]
+    out = []
+    if not (isinstance(n.get("fps"), int) and n["fps"] > 0):
+        out.append("launch native.fps must be the model's whole frame rate")
+    mf = n.get("max_frames")
+    if not (isinstance(mf, int) and mf >= 5 and (mf - 1) % 4 == 0):
+        out.append("launch native.max_frames must be the model's longest clip in 4k+1 frames")
+    sizes = n.get("sizes")
+    if not (isinstance(sizes, list) and sizes and all(isinstance(s, list) and len(s) == 2 and all(
+            isinstance(v, int) and v > 0 and v % 16 == 0 for v in s) for s in sizes)):
+        out.append("launch native.sizes must list the model's [width, height] sizes (multiples of 16)")
+    elif n.get("use") not in sizes:
+        out.append("launch native.use must be one of native.sizes")
+    return out
+
+
+def native_spec(launch: dict, seconds: float) -> dict:
+    """The clip the model makes for a shot of ``seconds``: its own rate and the launch's size, 4k+1 frames; a shot longer than
+    the model's longest clip raises ValueError (split it in the script, or chain two clips on frame[-5]; final audit A2)."""
+    n = launch["native"]
+    frames = wan_frames(seconds, n["fps"])
+    if frames > n["max_frames"]:
+        raise ValueError(f"{seconds:g} s is {frames} frames at the model's {n['fps']} fps, past its longest clip of "
+                         f"{n['max_frames']} frames ({max_seconds(launch):.2f} s): split the shot in the script, or chain two "
+                         "clips on frame[-5]")
+    return {"fps": n["fps"], "width": n["use"][0], "height": n["use"][1], "frames": frames}
+
+
+def max_seconds(launch: dict) -> float:
+    """The longest shot one clip holds: round(seconds * fps) may not pass max_frames."""
+    n = launch["native"]
+    return (n["max_frames"] + 0.49) / n["fps"]
 
 
 def usd_per_h(launch: dict) -> float:
@@ -190,6 +235,13 @@ def read_job(path: str, launch: dict | None = None) -> dict:
     lf = LAUNCH if launch is None else launch
     if job["launch_sha"] != launch_sha(lf) or job["run_id"] != run_id(job["plan_sha256"], lf):
         raise SystemExit(f"{job['shot_id']}: the spec was written for another launch file; nothing was started")
+    try:   # final audit A2: the model's own rate and size, never past its longest clip
+        nat = native_spec(lf, float(job["seconds"]))
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SystemExit(f"{job['shot_id']}: {exc}; nothing was started") from None
+    if (job.get("fps"), job.get("width"), job.get("height")) != (nat["fps"], nat["width"], nat["height"]):
+        raise SystemExit(f"{job['shot_id']}: the spec asks {job.get('width')}x{job.get('height')} at {job.get('fps')} fps, not the "
+                         f"model's {nat['width']}x{nat['height']} at {nat['fps']} fps; nothing was started")
     job["start_sha256"] = sha
     if job.get("end_picture"):
         job["end_bytes"] = Path(job["end_picture"]).read_bytes()
@@ -240,6 +292,26 @@ def _sha(p):
 
 def weights_root(launch, vol_root="/w"):
     return Path(vol_root) / "model" / launch["model_repo"]
+
+
+STAGE_CPU, STAGE_MEM_GIB, STAGE_TIMEOUT_S = 4, 16, 3600   # final audit A6: CPU only; its price per hour is held to the table
+STAGE_USD_PER_H = 0.3165                                    # by a test (cloud/modal_schedule, 2026-11-07): at most ~$0.32 a stage
+
+
+def stage_weights(launch, vol_root="/w", download=None) -> list[str]:
+    """Final audit A6: the launch's model files of the pinned revision into the Volume (only the files it names, only the
+    missing ones), then every sha256; returns what is still wrong (an empty list = the weights are there and match)."""
+    root = weights_root(launch, vol_root)
+    missing = [f for f in launch["model_files"] if not (root / f).is_file()]
+    if missing:
+        (download or _hf_download)(launch["model_repo"], launch["model_revision"], missing, root)
+    return check_weights(launch, vol_root)
+
+
+def _hf_download(repo, revision, files, root):
+    from huggingface_hub import snapshot_download
+    snapshot_download(repo_id=repo, revision=revision, allow_patterns=list(files), local_dir=str(root),
+                      token=os.environ.get("HF_TOKEN") or None)
 
 
 def check_weights(launch, vol_root="/w") -> list[str]:
@@ -332,7 +404,11 @@ def generate(job: dict, launch: dict, out: Path) -> dict:
     from PIL import Image
     t0 = time.time()
     beat(out, job, "load")
-    pipe = getattr(diffusers, launch["pipeline"]).from_pretrained(str(weights_root(launch)), torch_dtype=torch.bfloat16).to("cuda")
+    pipe = getattr(diffusers, launch["pipeline"]).from_pretrained(str(weights_root(launch)), torch_dtype=torch.bfloat16)
+    if launch.get("offload") == "model_cpu_offload":   # the card's single-GPU recipe: one part on the GPU at a time
+        pipe.enable_model_cpu_offload()
+    else:
+        pipe = pipe.to("cuda")
     setup_s = time.time() - t0
     kw = dict(launch["settings"])
     if job.get("end_bytes"):
@@ -431,6 +507,14 @@ if modal is not None:
         """L2, CPU only: the Volume's weights against the launch's sha256 pins."""
         return check_weights(launch)
 
+    @app.function(image=image, cpu=STAGE_CPU, memory=STAGE_MEM_GIB * 1024, timeout=STAGE_TIMEOUT_S, retries=0,
+                  volumes={"/w": vol}, secrets=secrets)
+    def weights_stage(launch: dict):
+        """A6, CPU only: the pinned revision's files into the Volume, every sha256 checked, then committed."""
+        bad = stage_weights(launch)
+        vol.commit()
+        return bad
+
     if TIMEOUTS:
         GPU_KW = dict(image=image, gpu=LAUNCH["gpu"], cpu=LAUNCH["cpu"], memory=LAUNCH["memory_gib"] * 1024, retries=0,
                       volumes={"/w": vol}, secrets=secrets, scaledown_window=LAUNCH["scaledown_window_s"])
@@ -454,6 +538,17 @@ if modal is not None:
         record("L1", rc == 0, note=f"env_check rc {rc}")
 
     @app.local_entrypoint()
+    def stage(plan: str = ""):
+        """Between L1 and L2 (final audit A6): a paid CPU step under the creator's GO; L2 then proves the files."""
+        preflight(LAUNCH)
+        print("GO card", go_gate(plan_sha=_sha(plan)), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
+        ladder_gate("L2")
+        bad = weights_stage.remote(LAUNCH)
+        print("stage", bad or "all files on the Volume, sha256 match")
+        if bad:
+            raise SystemExit("the weights stage-in is not complete:\n" + "\n".join(bad))
+
+    @app.local_entrypoint()
     def weights():
         ladder_gate("L2")
         preflight(LAUNCH)
@@ -468,7 +563,8 @@ if modal is not None:
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
         pic = Path(picture).read_bytes()
-        job = dict(SMOKE_JOB, start_bytes=pic, start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH),
+        nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])   # A2: the smoke is made at the model's own rate and the launch's size
+        job = dict(SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"], start_bytes=pic, start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH),
                    launch_sha=launch_sha(LAUNCH), worker_sha=worker_sha())
         res = wan_smoke.remote(job, LAUNCH)
         print("result", json.dumps(res))

@@ -21,6 +21,7 @@ GO = "cmsg_01AbC:" + "a1b2c3d4e5f6"
     ("python -m modal run scratch.py::main", "committed worker"),
     (f"modal run --detach {WAN}::main --job s.json", "EE_MODAL_GO"),
     (f"EE_MODAL_GO=cmsg_1 modal run {WAN}::smoke --picture p.png", "sha256"),      # the Wan GO carries the plan's hash
+    (f"modal run {WAN}::stage --plan p.json", "EE_MODAL_GO"),                    # A6: the stage-in bills CPU, it needs the GO
     ("modal run explainer_engine/cloud/modal_j5_smoke.py::main", "EE_MODAL_GO"),
     ("echo ok; `modal deploy x.py`", "leaves an app up"),
     ("bash <<'EOF'\nmodal deploy x.py\nEOF", "leaves an app up"),                  # a heredoc fed to a shell is a command

@@ -245,6 +245,9 @@ def stage_script(ep: Episode, rehearsal: bool):
     rows.append(G.row("no_retired_route", not old, f"{len(old)} shot field(s) name a retired route (Q10, D-131: "
                       "config/retired_era.json)", old[:20]))
     rows += R.talking_check(doc)
+    from explainer_engine.aivideo import wan_adapter as WA
+    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+    rows += WA.fit_rows(shots, WJ.load_launch())   # final audit A2: one clip of the pinned model holds every Wan shot
     speakers = R.speaking_heroes(doc)
     differ = []
     for s in shots:

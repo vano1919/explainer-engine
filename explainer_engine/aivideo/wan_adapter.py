@@ -276,12 +276,24 @@ class ModalWanBackend(Backend):
             raise ConfigError(f"{job.shot_id}: the Modal Wan backend refuses ({'; '.join(bad)}); nothing was sent "
                               "(plan P6.3, OR-23, OR-34, OR-37)")
         out_mp4 = Path(out_mp4)
+        try:   # final audit A2: the clip is made at the model's own rate and size, then conformed to the timeline here
+            nat = WJ.native_spec(self.launch, job.seconds)
+        except ValueError as exc:
+            raise ConfigError(f"{job.shot_id}: {exc}; nothing was sent (final audit A2)") from None
+        timeline = job
         x = dict(job.extra or {})
         x["run_id"] = WJ.run_id(x["plan_sha256"], self.launch)
-        job = WanJob(**dict(asdict(job), extra=x))
-        base = {"gpu": self.gpu, "usd_per_hour": self.usd_per_hour, "prices_date": self.prices_date, "run_id": x["run_id"]}
+        job = WanJob(**dict(asdict(job), fps=nat["fps"], width=nat["width"], height=nat["height"], extra=x))
+        native, final = out_mp4.with_name(out_mp4.stem + ".native.mp4"), out_mp4
+        out_mp4 = native
+        base = {"gpu": self.gpu, "usd_per_hour": self.usd_per_hour, "prices_date": self.prices_date, "run_id": x["run_id"],
+                "native": {k: nat[k] for k in ("fps", "width", "height", "frames")}}
+
+        def done(info):
+            return dict(info, conform=conform(native, final, fps=timeline.fps, width=timeline.width, height=timeline.height))
         if self._try_fetch(job, out_mp4):   # the same job of the same plan and launch is already made: nothing is sent
-            return dict(base, app_id=None, reused=True, billed_usd=0.0, billed_basis="already in the run's HF folder: not sent")
+            return done(dict(base, app_id=None, reused=True, billed_usd=0.0,
+                             billed_basis="already in the run's HF folder: not sent"))
         spec = out_mp4.with_suffix(".job.json")
         spec.write_text(json.dumps(dict(asdict(job), run_id=x["run_id"], plan_sha256=x["plan_sha256"],
                                         launch_sha=WJ.launch_sha(self.launch), commit=self.commit()), ensure_ascii=False),
@@ -291,7 +303,7 @@ class ModalWanBackend(Backend):
         except Exception as exc:  # noqa: BLE001 - the answer is lost: the app may still run (A4)
             probs = self._stop(None)
             if self._try_fetch(job, out_mp4):
-                return dict(base, app_id=None, reconciled=True, **self.billed(out_mp4))
+                return done(dict(base, app_id=None, reconciled=True, **self.billed(out_mp4)))
             raise InfraError(f"{job.shot_id}: the launcher gave no answer ({type(exc).__name__}: {exc}); "
                              + (f"COULD NOT STOP the apps named {self.launch.get('app_name')} ({'; '.join(probs)}): look at "
                                 "Modal now" if probs else f"the apps named {self.launch.get('app_name')} were stopped")
@@ -307,7 +319,7 @@ class ModalWanBackend(Backend):
             self._stop(app_id)
             raise InfraError(f"{job.shot_id}: the launch ended but no clip is in the run's HF folder (app {app_id}); the app was "
                              "stopped; not retried")
-        return dict(base, app_id=app_id, **self.billed(out_mp4))
+        return done(dict(base, app_id=app_id, **self.billed(out_mp4)))
 
     def commit(self) -> str | None:
         try:
@@ -317,6 +329,50 @@ class ModalWanBackend(Backend):
             return r.stdout.strip() or None if r.returncode == 0 else None
         except Exception:  # noqa: BLE001
             return None
+
+
+def conform(src: Path, dst: Path, *, fps: int, width: int, height: int) -> dict:
+    """The free CPU step after a Wan clip (final audit A2): the model's own rate and size become the timeline's. Frames are
+    repeated or dropped to the timeline's rate (no interpolation, no new pixels) and the picture is scaled with Lanczos and
+    centre-cropped to the timeline's aspect; the length stays. A clip already at the timeline's rate and size is copied."""
+    import subprocess
+
+    import cv2
+    src, dst = Path(src), Path(dst)
+    cap = cv2.VideoCapture(str(src))
+    have = (round(float(cap.get(cv2.CAP_PROP_FPS) or 0.0)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+            int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    cap.release()
+    if have == (int(fps), int(width), int(height)):
+        dst.write_bytes(src.read_bytes())
+        return {"conformed": False, "native": list(have)}
+    vf = f"fps={int(fps)},scale={int(width)}:{int(height)}:force_original_aspect_ratio=increase:flags=lanczos," \
+         f"crop={int(width)}:{int(height)}"
+    r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", vf, "-c:v", "libx264", "-crf", "12",
+                        "-pix_fmt", "yuv420p", "-an", str(dst)], capture_output=True, text=True)
+    if r.returncode != 0 or not dst.is_file():
+        raise ConfigError(f"conform of {src.name} failed: {(r.stderr or '')[-300:]}")
+    return {"conformed": True, "native": list(have), "timeline": [int(fps), int(width), int(height)]}
+
+
+def fit_rows(shots: list[dict], launch: dict | None) -> list[dict]:
+    """G1 (final audit A2): every Wan shot fits one clip of the pinned model; NOT_RUN while the model's limits are not pinned.
+    The remedies of a longer shot: split it in the script, or chain two clips on frame[-5] (not built yet)."""
+    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+    wan = [s for s in shots if s.get("route") == "wan"]
+    if not isinstance(launch, dict) or WJ.native_problems(launch):
+        return [G.row("wan_shots_fit_the_model", None, "NOT_RUN: the Wan model's native limits are not pinned in "
+                      "training/pods/wan/launch.json", len(wan))]
+    longest = WJ.max_seconds(launch)
+    long_ = []
+    for s in wan:
+        try:
+            WJ.native_spec(launch, float(s.get("target_duration_seconds") or 0))
+        except ValueError:
+            long_.append(f"{s.get('shot_id')}: {float(s.get('target_duration_seconds') or 0):g} s")
+    return [G.row("wan_shots_fit_the_model", not long_, f"{len(long_)} of {len(wan)} Wan shot(s) are longer than one clip of "
+                  f"{launch.get('model_repo')} ({longest:.2f} s at {launch['native']['fps']} fps): split the shot in the "
+                  "script, or chain two clips on frame[-5] (final audit A2)", long_[:30])]
 
 
 def clip_name(shot_id: str, seed: int) -> str:

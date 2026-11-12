@@ -18,7 +18,9 @@ PINNED = {"app_name": "ee-wan", "model_repo": "org/wan", "model_revision": "a" *
           "pipeline": "SomePipeline", "hf_out": "route_test/wan_out", "settings": {"steps": 30}, "gpu": "A100-80GB", "cpu": 8,
           "memory_gib": 64, "usd_per_h": 3.3872, "prices_date": "2026-11-07", "scaledown_window_s": 2,
           "pip_pins": {"transformers": "4.0.0", "accelerate": "1.0.0"},
-          "caps": {"smoke_usd": 0.25, "run_usd": 1.0, "cold_start_s": 120}}
+          "caps": {"smoke_usd": 0.25, "run_usd": 1.0, "cold_start_s": 120},
+          "native": {"fps": 16, "max_frames": 81, "sizes": [[1280, 720], [832, 480]], "use": [1280, 720]},
+          "offload": "model_cpu_offload"}
 PROOF = WJ.proof(PINNED)
 
 
@@ -33,18 +35,40 @@ def line(tmp_path, monkeypatch):
     return write
 
 
-def test_the_committed_launch_file_pins_nothing_so_nothing_runs():
+def test_the_committed_launch_file_pins_only_the_creators_pick_so_nothing_runs():
+    """The model is his pick (card of 2026-11-12 14:26 UTC); the GPU price, caps, image pins and output wait for his test line
+    (OR-22), so the worker still refuses everything."""
     lf = json.loads((SRC.parent / "launch.json").read_text())
-    assert lf["model_repo"] is None and lf["model_revision"] is None and lf["pipeline"] is None   # OR-22
+    assert lf["decided"]["by"] == "creator" and lf["decided"]["message_id"].startswith("cmsg_")
+    assert lf["model_repo"] == "Wan-AI/Wan2.2-I2V-A14B-Diffusers" and len(lf["model_revision"]) == 40
+    assert lf["pipeline"] == "WanImageToVideoPipeline" and lf["native"]["use"] == [1280, 720] and not WJ.native_problems(lf)
+    weights = {f for f in lf["model_files"] if f.endswith(".safetensors")}
+    for part, n in (("transformer", 12), ("transformer_2", 12), ("text_encoder", 3), ("vae", 1)):
+        assert sum(f.startswith(part + "/") for f in weights) == n, part
+    assert all(len(h) == 64 for h in lf["model_files"].values())
+    for still_open in ("usd_per_h", "hf_out", "scaledown_window_s"):
+        assert lf[still_open] is None, still_open
     assert WJ.TIMEOUTS is None and WJ.launch_problems(lf)
     with pytest.raises(SystemExit, match="nothing was started"):
         WJ.preflight(lf)
 
 
+def test_a_clip_is_made_at_the_models_own_rate_and_size_and_never_past_its_longest_clip():
+    """Final audit A2: 16 fps, 4k+1 frames up to 81, the launch's size; a longer shot is refused with its remedies."""
+    assert WJ.native_spec(PINNED, 5.0) == {"fps": 16, "width": 1280, "height": 720, "frames": 81}
+    assert WJ.native_spec(PINNED, 1.0)["frames"] == 17 and WJ.max_seconds(PINNED) == pytest.approx(5.093, abs=1e-3)
+    with pytest.raises(ValueError, match="split the shot"):
+        WJ.native_spec(PINNED, 5.2)
+    for bad, want in (({"fps": 24.5}, "native.fps"), ({"max_frames": 80}, "4k\\+1"), ({"sizes": [[1280, 721]]}, "multiples of 16"),
+                      ({"use": [640, 360]}, "one of native.sizes")):
+        assert any(__import__("re").search(want, p) for p in WJ.native_problems(dict(PINNED, native=dict(PINNED["native"], **bad))))
+    assert "launch offload must be one of" in " ".join(WJ.launch_problems(dict(PINNED, offload="sequential")))
+
+
 def test_entrypoints_run_the_preflight_before_the_go_gate_and_the_ladder_gate():
     tree = ast.parse(SRC.read_text())
     fns = {n.name: n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
-    for name, rung in (("smoke", "L3"), ("main", "L4")):
+    for name, rung in (("smoke", "L3"), ("main", "L4"), ("stage", "L2")):
         found = [c for c in ast.walk(fns[name]) if isinstance(c, ast.Call) and isinstance(c.func, ast.Name)]
         calls = [c.func.id for c in sorted(found, key=lambda c: (c.lineno, c.col_offset))]   # source order
         assert calls.index("preflight") < calls.index("go_gate") < calls.index("ladder_gate"), name
@@ -87,13 +111,17 @@ def test_the_start_picture_is_pinned_by_sha_and_the_spec_by_plan_and_launch(tmp_
     pic.write_bytes(b"picture")
     sha, plan = hashlib.sha256(b"picture").hexdigest(), "c" * 64
     good = {"shot_id": "S1", "start_picture": str(pic), "extra": {"start_sha256": sha}, "plan_sha256": plan,
-            "run_id": WJ.run_id(plan, PINNED), "launch_sha": WJ.launch_sha(PINNED)}
+            "run_id": WJ.run_id(plan, PINNED), "launch_sha": WJ.launch_sha(PINNED), "seconds": 3.0, "fps": 16, "width": 1280,
+            "height": 720}
     spec = tmp_path / "s.json"
     for bad, want in (({"extra": {"start_sha256": "0" * 64}}, "sha256 is not the one"),
                       ({"extra": {}}, "no start_sha256"),                      # B9: no longer optional
                       ({"plan_sha256": None}, "no plan_sha256"),
                       ({"launch_sha": "d" * 64}, "another launch file"),
-                      ({"run_id": "x_y"}, "another launch file")):
+                      ({"run_id": "x_y"}, "another launch file"),
+                      ({"seconds": 6.0}, "past its longest clip"),          # A2: never past the model's longest clip
+                      ({"fps": 24}, "not the model's 1280x720 at 16 fps"),
+                      ({"width": 1920, "height": 1080}, "not the model's")):
         spec.write_text(json.dumps(dict(good, **bad)))
         with pytest.raises(SystemExit, match=want):
             WJ.read_job(str(spec), PINNED)
@@ -214,3 +242,29 @@ def test_the_launch_caps_stay_under_the_creators_per_run_line(line):
     line(None)
     with pytest.raises(SystemExit, match="zero approved budget"):
         WJ.preflight(PINNED)
+
+
+def test_the_stage_in_puts_only_the_missing_pinned_files_on_the_volume_then_checks_every_sha(tmp_path):
+    """Final audit A6: the pinned revision's own files, only those still missing, then the sha256 of every file."""
+    import hashlib
+    launch = dict(PINNED, model_files={"a.bin": hashlib.sha256(b"A").hexdigest(), "sub/b.bin": hashlib.sha256(b"B").hexdigest()})
+    root = WJ.weights_root(launch, tmp_path)
+    (root / "sub").mkdir(parents=True)
+    (root / "a.bin").write_bytes(b"A")
+    calls = []
+
+    def download(repo, rev, files, into, body=b"B"):
+        calls.append((repo, rev, list(files)))
+        (into / "sub" / "b.bin").write_bytes(body)
+    assert WJ.stage_weights(launch, tmp_path, download) == []
+    assert calls == [("org/wan", "a" * 40, ["sub/b.bin"])]
+    assert WJ.stage_weights(launch, tmp_path, download) == [] and len(calls) == 1       # nothing missing: nothing fetched
+    (root / "sub" / "b.bin").unlink()
+    assert WJ.stage_weights(launch, tmp_path, lambda *a: download(*a, body=b"X")) == ["sha256 mismatch sub/b.bin"]
+
+
+def test_the_stage_in_price_is_the_tables():
+    from explainer_engine.cloud import modal_schedule as MS
+    per_h = (WJ.STAGE_CPU * MS.CPU_CORE_S + WJ.STAGE_MEM_GIB * MS.MEM_GIB_S) * 3600
+    assert WJ.STAGE_USD_PER_H == pytest.approx(per_h, abs=5e-4)
+    assert WJ.STAGE_TIMEOUT_S * WJ.STAGE_USD_PER_H / 3600 < 0.5

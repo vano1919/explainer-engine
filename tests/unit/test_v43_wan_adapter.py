@@ -220,7 +220,8 @@ LAUNCH = {"app_name": "ee-wan", "model_repo": "org/wan", "model_revision": "a" *
           "pipeline": "SomePipeline", "hf_out": "route_test/wan_out", "settings": {"steps": 30}, "gpu": "A100-80GB", "cpu": 8,
           "memory_gib": 64, "usd_per_h": 3.3872, "prices_date": "2026-11-07", "scaledown_window_s": 2,
           "pip_pins": {"transformers": "4.0.0", "accelerate": "1.0.0"},
-          "caps": {"smoke_usd": 0.25, "run_usd": 1.0, "cold_start_s": 120}}
+          "caps": {"smoke_usd": 0.25, "run_usd": 1.0, "cold_start_s": 120},
+          "native": {"fps": 24, "max_frames": 49, "sizes": [[320, 176]], "use": [320, 176]}, "offload": "none"}
 PROOF = WJ.proof(LAUNCH)
 LADDER = {"done": ["L0", "L1", "L2", "L3"], "red": None, "rungs": {r: dict(PROOF, ok=True) for r in ("L1", "L2", "L3")},
           "measured": {"gpu": "A100-80GB", "s_per_clip_s": 60.0, "setup_s": 30.0}}
@@ -416,3 +417,47 @@ def test_the_default_fallback_is_alive_by_bp185():
     from explainer_engine.production import layers25d as L25
     p = L25.plan({"shot_id": "S9", "target_duration_seconds": 1.0, "motion_imitation": WA.DEFAULT_FALLBACK}, FPS)
     assert len(set(p["families"]) & {"atmosphere", "light", "surface", "subject"}) >= 2
+
+
+def test_a_native_clip_is_conformed_to_the_timelines_rate_and_size(tmp_path):
+    """Final audit A2: the model's 16 fps clip becomes the timeline's 24 fps at its size, the same length, no new pixels."""
+    import cv2
+    src, dst = tmp_path / "S1.native.mp4", tmp_path / "S1.mp4"
+    proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", "160x96", "-r", "16",
+                             "-i", "-", "-c:v", "libx264", "-crf", "12", "-pix_fmt", "yuv420p", str(src)], stdin=subprocess.PIPE)
+    for f in range(17):
+        fr = np.zeros((96, 160, 3), np.uint8)
+        fr[:, f * 8:f * 8 + 20] = 200
+        proc.stdin.write(fr.tobytes())
+    proc.stdin.close()
+    proc.wait()
+    info = WA.conform(src, dst, fps=24, width=W, height=H)
+    cap = cv2.VideoCapture(str(dst))
+    fps, w, h, n = (cap.get(cv2.CAP_PROP_FPS), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
+                    int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+    cap.release()
+    assert info["conformed"] is True and info["native"] == [16, 160, 96]
+    assert round(fps) == 24 and (w, h) == (W, H) and abs(n - round(17 / 16 * 24)) <= 1
+    again = WA.conform(dst, tmp_path / "copy.mp4", fps=24, width=W, height=H)   # already the timeline's: copied
+    assert again["conformed"] is False and (tmp_path / "copy.mp4").read_bytes() == dst.read_bytes()
+
+
+def test_g1_names_every_wan_shot_longer_than_one_clip_of_the_model():
+    launch = dict(LAUNCH, native={"fps": 16, "max_frames": 81, "sizes": [[1280, 720]], "use": [1280, 720]})
+    shots = [{"shot_id": "A", "route": "wan", "target_duration_seconds": 4.0},
+             {"shot_id": "B", "route": "wan", "target_duration_seconds": 7.8},
+             {"shot_id": "C", "route": "still_25d", "target_duration_seconds": 9.0}]
+    row, = WA.fit_rows(shots, launch)
+    assert row["status"] == "FAIL" and row["measured"] == ["B: 7.8 s"] and "split the shot" in row["detail"]
+    assert WA.fit_rows(shots[:1], launch)[0]["status"] == "PASS"
+    assert WA.fit_rows(shots, dict(LAUNCH, native=None))[0]["status"] == "NOT_RUN"
+
+
+def test_a_shot_longer_than_the_models_clip_is_never_sent(picture, tmp_path, caps):
+    fm, appr = FakeModal(), _appr(tmp_path)
+    m = WA.ModalWanBackend(LAUNCH, LADDER, runner=fm.runner, fetch=fm.fetch, env=_go(appr))
+    job = _modal_job(picture, seconds=3.0)   # the test launch holds 49 frames at 24 fps
+    job.extra.update(plan_sha256=appr.plan_sha256, message_id=appr.message_id)
+    with pytest.raises(ConfigError, match="split the shot"):
+        m.generate(job, tmp_path / "S9.mp4")
+    assert fm.calls == []
