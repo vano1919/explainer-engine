@@ -537,8 +537,9 @@ def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp=
 
 
 def chain_from(launch: dict, frames: int) -> int:
-    """The frame of a clip that starts the next chained clip: ``chain_overlap_frames`` before its end (BP-187: the clips
-    overlap in time by that much, so the 0.5 s sound crossfade at assembly has the same picture under it; audit B3)."""
+    """The frame of a clip that starts the next chained clip: ``chain_overlap_frames`` before its last one. BP-188: LTX makes
+    picture and sound together, so the clips meet at a hard cut with no overlap (0: the last frame; assembly drops the next
+    clip's repeated first frame). A non-zero overlap is kept for a route whose seams need picture under a crossfade."""
     k = int(launch["chain_overlap_frames"])
     if not 0 <= k < frames - 1:
         raise ValueError(f"chain_overlap_frames {k} does not fit a clip of {frames} frames")

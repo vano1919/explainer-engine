@@ -5549,3 +5549,25 @@ Tests: `tests/unit/test_v43_ltx_jobs.py`.
 The new sha256 `e3d1de41…` is now in both `assets/library.json` and `blender/style_sheet_assets.json`. The vault copy (`assets/3d/model/model.ph_cannon_01/cannon_01_1k.blend`) was replaced and checked by sha256 on HF.
 
 Not checked: the poly count and the materials in Blender. The asset belongs to the retired Blender route.
+
+## 2026-11-12 20:20 UTC: the clip-seam research (the creator, 20:07 UTC) — BP-187 split, BP-188 new
+
+The creator paused the LTX test and asked whether his 0.5 s sound overlap is needed when LTX makes the sound itself.
+
+**What the sources say** (BP-188 lists them):
+- Editors give an audio cut only a de-click fade: Premiere's 2-frame default, a 30 ms fade in a video-cut tool, and ED-01's own 30 ms `EDGE_FADE`.
+- Longer crossfades double speech or warble.
+- Longer transitions are J/L splits over continuous room tone.
+
+No source asks for a crossfade at a cut where picture and sound were generated together.
+
+**The new rules**
+- BP-187 keeps only the line-end tail (0.5 s, the creator's house rule).
+- BP-188 (hypothesis, REVIEW) covers the cut:
+  - Joint sound: a hard cut, no overlap, 30 ms fades, and a chained clip's repeated first frame dropped.
+  - Separate sound: its own tracks across the cut, a continuous bed (BP-116), J/L splits of 0.12-0.5 s (scene boundaries keep BP-117), and different beds crossfade.
+
+**The LTX worker**
+- `chain_overlap_frames` is 0, so a chained clip starts from the last frame. This reverts audit B3's 12 frames, which served the 0.5 s crossfade.
+- The love scene's prompts lose the silent opening that B3 had added.
+- The editing-style skill gains the rule.

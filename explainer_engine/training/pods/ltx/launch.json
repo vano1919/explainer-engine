@@ -50,8 +50,8 @@
   "hf_out": "explainer-engine/ltx_route/out",
   "scaledown_window_s": 2,
   "startup_timeout_s": 120,
-  "chain_overlap_frames": 12,
-  "chain_overlap_why": "BP-187 audio_overlap_s 0.5 x native fps 24: a chained clip starts 12 frames before the end of the one before it, so the clips overlap in time and the sound crossfade has the same picture under it (audit B3)",
+  "chain_overlap_frames": 0,
+  "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
   "caps": {
     "smoke_usd": 0.5,
     "run_usd": 1.2,

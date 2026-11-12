@@ -254,14 +254,14 @@ def test_main_refuses_a_spec_without_its_open_reservation(tmp_path):
         L.claim_launch({"shot_id": "c1"})
 
 
-def test_a_chained_clip_starts_12_frames_before_the_end_of_the_one_before(container, monkeypatch):
+def test_a_chained_clip_starts_from_the_last_frame_with_no_overlap_for_joint_sound(container, monkeypatch):
     from explainer_engine.standards import sourced_rules as SRU
-    assert LAUNCH["chain_overlap_frames"] == round(SRU.T("BP-187", "audio_overlap_s") * LAUNCH["native"]["fps"])
+    assert LAUNCH["chain_overlap_frames"] == round(SRU.T("BP-188", "overlap_joint_s") * LAUNCH["native"]["fps"]) == 0
     monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
     res = _run(container)
     picks = [c[c.index("-vf") + 1] for c in container.calls if c[0] == "ffmpeg"]
-    assert picks == ["select=eq(n\\,220)"] * 2                         # 233 frames: index 232 - 12
-    assert [r.get("chain_from_frame", {}).get("frame") for r in res["chain"]] == [None, 220, 220]
+    assert picks == ["select=eq(n\\,232)"] * 2                         # 233 frames: the last one, index 232
+    assert [r.get("chain_from_frame", {}).get("frame") for r in res["chain"]] == [None, 232, 232]
 
 
 def test_a_kill_in_clip_three_leaves_clips_one_and_two_on_the_volume_and_hf(container, monkeypatch):
