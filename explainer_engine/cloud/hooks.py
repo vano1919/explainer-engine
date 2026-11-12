@@ -67,6 +67,7 @@ def _tmr_rp(cmd):
 
 MODAL_CMD = re.compile(r"(?:^|\s)(?:python[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+)?modal\s+(?P<sub>run|deploy|serve)\b(?P<rest>[^\n]*)")
 WAN_WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
+BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the creator's video bake-off, 2026-11-12 15:01 UTC
 FREE_ENTRIES = {WAN_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
 
 
@@ -112,7 +113,11 @@ def modal_refusal(cmd: str, env=None) -> str | None:
             continue
         go = re.search(r"\bEE_MODAL_GO=['\"]?(\S+?)['\"]?(?:\s|$)", cmd)
         go = go.group(1) if go else str(env.get("EE_MODAL_GO") or "")
-        if path == WAN_WORKER:
+        if path == BAKEOFF:
+            if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
+                return ("the bake-off bills Modal on every entrypoint (its CPU check and stage-in too): "
+                        "EE_MODAL_GO=<the creator's card id>:<plan_v43.json's sha256[:12]> first (OR-23)")
+        elif path == WAN_WORKER:
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return ("the Wan worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "
                         "(OR-23, final audit B10)")

@@ -11,6 +11,7 @@ import pytest
 from explainer_engine.cloud import hooks as H
 
 WAN = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
+BAKE = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"
 GO = "cmsg_01AbC:" + "a1b2c3d4e5f6"
 
 
@@ -23,6 +24,8 @@ GO = "cmsg_01AbC:" + "a1b2c3d4e5f6"
     (f"EE_MODAL_GO=cmsg_1 modal run {WAN}::smoke --picture p.png", "sha256"),      # the Wan GO carries the plan's hash
     (f"modal run {WAN}::stage --plan p.json", "EE_MODAL_GO"),                    # A6: the stage-in bills CPU, it needs the GO
     ("modal run explainer_engine/cloud/modal_j5_smoke.py::main", "EE_MODAL_GO"),
+    (f"modal run {BAKE}::check", "bake-off bills"),                               # its CPU check bills too
+    (f"EE_MODAL_GO=cmsg_1 modal run {BAKE}::run --variant ltx_distilled", "bake-off bills"),
     ("echo ok; `modal deploy x.py`", "leaves an app up"),
     ("bash <<'EOF'\nmodal deploy x.py\nEOF", "leaves an app up"),                  # a heredoc fed to a shell is a command
 ])
@@ -35,6 +38,7 @@ def test_raw_modal_launches_are_refused(cmd, why):
     f"modal run {WAN}::check",                                                     # L1/L2: CPU, the entrypoint gates itself
     f"modal run {WAN}::weights",
     f"EE_MODAL_GO={GO} modal run --detach {WAN}::main --job s.json",
+    f"EE_MODAL_GO={GO} modal run {BAKE}::run --variant wan_a14b_lightning",
     "EE_MODAL_GO=cmsg_9 modal run explainer_engine/cloud/modal_j5_smoke.py",
     "modal app list --json", "modal app stop ap-123", "grep -rn 'modal run' docs", "git log -S 'modal deploy'",
     "cat > notes.md <<'EOF'\nrun it with: modal deploy x.py\nEOF",                 # a heredoc that only writes text is data

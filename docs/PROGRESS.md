@@ -5425,3 +5425,22 @@ The creator picked Wan2.2-I2V-A14B at 720P on the options card (14:26 UTC). Noth
 - Tests: `test_v43_wan_worker.py` (A2, A6, the committed pins), `test_v43_wan_adapter.py` (conform, G1, refusal of a long
   shot), `test_cloud_hooks_modal.py` (`::stage` needs the GO). Cost: $0.
 
+
+## 2026-11-12 — the video bake-off built, nothing run (thread "Implement v4.3 episode-first rebuild")
+
+The creator asked (15:01 UTC) for one 10 s dialogue shot and one 10 s action shot from the best approved picture, by every
+video model we can run, upscaled to 2K, with price and quality measured and the spend recorded; at 15:12 UTC he kept variants
+1, 4 and 5 only: LTX-2.5 distilled, Wan2.2-I2V-A14B + Lightning 4-step, Wan2.2-TI2V-5B (6 clips).
+
+- `explainer_engine/training/pods/bakeoff/plan_v43.json`: shots (M1.jpg / M3.jpg of reference round 1 v6, sha256-pinned, seeds,
+  prompts), pinned weights (revision + every file's sha256), the three variants (GPU, size, fps, frames, clips, settings,
+  estimate, cap). Estimate $3.35, caps $6.00 in all (stage-in $0.50 included).
+- `modal_bakeoff.py`: `stage` (CPU) downloads only missing pinned files to the Volume and checks every sha256; `run --variant X`
+  loads X once, makes both shots and streams each clip and `measured.json` to HF as it is made (OR-33). Timeouts come from the
+  caps (OR-37), retries 0, nothing warm; the GO binds the plan's bytes; `preflight` needs the creator's Modal line over every
+  cap. A 10 s Wan shot is two clips chained on frame[-5], joined like `wan_optimizer.compute_continuation_splice_spec`.
+- `report.py` (free, local): fetch, 2K upscale (`finish/upscale`, LTX keeps its sound), measures (start faithfulness, motion,
+  longest frozen run, flicker, colour drift, sharpness), price per clip from the container seconds, contact sheet, report.
+- `cloud/hooks.py`: every bake-off entrypoint needs the GO with the plan's sha (its CPU check bills too).
+- Tests: `tests/unit/test_v43_video_bakeoff.py`, `tests/unit/test_cloud_hooks_modal.py`.
+- Next: the creator chose "audit first" (15:14 UTC): the Fable OR-34 audit, then his GO and his Modal spend line; $0 spent.

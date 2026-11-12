@@ -1,0 +1,254 @@
+{
+ "schema": "video_bakeoff/1",
+ "id": "v43_video_bakeoff_2026-11-12",
+ "asked_by": {
+  "by": "creator",
+  "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW4P7YR87bx7d142ahE1SYp5",
+  "at": "2026-11-12T15:01:50Z",
+  "what": "the best picture; a 10 s dialogue and a 10 s action video with every variant; prices and quality measured; all upscaled to 2K; spend recorded"
+ },
+ "app_name": "ee-bakeoff",
+ "hf_repo": "vano1919/tmr-artifacts",
+ "hf_out": "explainer-engine/bakeoff_2026-11-12/out",
+ "volume": "ee-weights",
+ "prices": {
+  "date": "2026-11-12",
+  "source": "https://modal.com/pricing (read 2026-11-12; cloud/modal_schedule.py holds the table)"
+ },
+ "delivery": {
+  "width": 2560,
+  "height": 1440,
+  "fps": 24,
+  "how": "finish/upscale.py: centre crop to 16:9, Lanczos, cas 0.4, free on the session's CPU"
+ },
+ "shots": [
+  {
+   "id": "dialogue",
+   "picture": "explainer-engine/reference_round_1/v6/M1.jpg",
+   "sha256": "fb20720b0adc7b8f8684143f0d164b1fd800e8b2f0fcfbf37481f4166cf67b0c",
+   "size": [
+    2752,
+    1536
+   ],
+   "seconds": 10.0,
+   "seed": 4211,
+   "why": "approved style anchor M1: Kael and Sena on the gorge path, two faces, mid shot: the speaker test",
+   "prompt": "Kael and Sena walk slowly side by side along the rocky gorge path toward the camera. Sena talks to Kael with lively hand gestures, her lips moving as she speaks. Kael turns his head to her, listens, then answers in a few words with a calm nod, his lips moving. Their steps are steady and grounded, the spear sways in his hand. Smoke drifts from the hearth in the shelter behind them, haze moves in the sun shafts. The camera dollies slowly backward in front of them.",
+   "audio_prompt": "Two people talking quietly while walking, footsteps on gravel, distant crackling fire, wind in the gorge."
+  },
+  {
+   "id": "action",
+   "picture": "explainer-engine/reference_round_1/v6/M3.jpg",
+   "sha256": "dc63c46c439575304bbdc47e6f1510b57cc197a12a0647465308ef7746e84a0d",
+   "size": [
+    2752,
+    1536
+   ],
+   "seconds": 10.0,
+   "seed": 4212,
+   "why": "approved style anchor M3: Kael kneeling at the drying riverbed, an ash storm on the horizon: room for a fast body move",
+   "prompt": "Kael looks up sharply at the grey ash storm rolling in over the riverbed. He snatches his spear out of the mud, springs to his feet and runs to the left across the shallow water, splashing hard, his cloak flapping. Dust and grey ash sweep in over the acacias and the light dims. The camera pans fast to follow him, handheld, with slight shake.",
+   "audio_prompt": "Rushing wind, splashing water, heavy breathing, a low rumble of the approaching storm."
+  }
+ ],
+ "weights": {
+  "ltx25": {
+   "repo": "Lightricks/LTX-2.5",
+   "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+   "files": {
+    "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+    "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8",
+    "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+    "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5",
+    "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3"
+   }
+  },
+  "wan_a14b": {
+   "repo": "Wan-AI/Wan2.2-I2V-A14B-Diffusers",
+   "revision": "596658fd9ca6b7b71d5057529bbf319ecbc61d74",
+   "files": {
+    "model_index.json": "50ba96f2b36888eab6b33afb4a74254652fb4f43be4767cea633f4bcda67f5d8",
+    "scheduler/scheduler_config.json": "40624e058848feddf4bc2da5e8a232668b9a6f4a4939365810bebd9ce0166578",
+    "text_encoder/config.json": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07",
+    "text_encoder/model-00001-of-00003.safetensors": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58",
+    "text_encoder/model-00002-of-00003.safetensors": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7",
+    "text_encoder/model-00003-of-00003.safetensors": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f",
+    "text_encoder/model.safetensors.index.json": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab",
+    "tokenizer/special_tokens_map.json": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270",
+    "tokenizer/spiece.model": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+    "tokenizer/tokenizer.json": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef",
+    "tokenizer/tokenizer_config.json": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd",
+    "transformer/config.json": "6809423c4a92f886feded9f85f55c667d73a2332d5e011fab4172f3448dd5666",
+    "transformer/diffusion_pytorch_model-00001-of-00012.safetensors": "0400c403bd7cfe6c1c29b47ff9cb575495dc590c9be2511a3b44ae5795add106",
+    "transformer/diffusion_pytorch_model-00002-of-00012.safetensors": "0da8ce107f7ccbe323be7b35c5e81ce90504995b9cf0a0c06e4132f836474ba4",
+    "transformer/diffusion_pytorch_model-00003-of-00012.safetensors": "4bee4dbbb916f167ce96d3f795ae316cd221713302ee427b7df457ea4dafe034",
+    "transformer/diffusion_pytorch_model-00004-of-00012.safetensors": "e6fec68a39ce49cfde2e6464061df64b853f0354151ca17931f8dd028dd47ff6",
+    "transformer/diffusion_pytorch_model-00005-of-00012.safetensors": "cf66f3fcf66788d2e939d0e60da015fa0953c48da92ae67f04ff085c4e826104",
+    "transformer/diffusion_pytorch_model-00006-of-00012.safetensors": "cdc4bb9e21d17e8577c915215429827ad5d58bee2021ed0d63c6854596b06c90",
+    "transformer/diffusion_pytorch_model-00007-of-00012.safetensors": "c9c48dfd22c8546e20a805a5e5d698f6fbebc7b1426db92d693b75ccd10e574c",
+    "transformer/diffusion_pytorch_model-00008-of-00012.safetensors": "1bed82c03707de72ef06f624f2bbc9d43370cc208d657989dd07b08b1ff998ab",
+    "transformer/diffusion_pytorch_model-00009-of-00012.safetensors": "779d7d8901239b5deef86597f74a4eccaf91fee674f05854dfc3d808e556805b",
+    "transformer/diffusion_pytorch_model-00010-of-00012.safetensors": "ea1ebb7975f001bda912c56bf8095865605e6a019b0c180e1de74129cfbfef98",
+    "transformer/diffusion_pytorch_model-00011-of-00012.safetensors": "38d9349f1c29a99c1f78ef53d228c1f51dde301bd3e33296db1a7e7f8c25f6fe",
+    "transformer/diffusion_pytorch_model-00012-of-00012.safetensors": "978ff94fe927dab5dc2a60030297043abff35a7d93524ce286b07c49025edfe1",
+    "transformer/diffusion_pytorch_model.safetensors.index.json": "fb80e949700c1a9a1d761d7bf56e78e6c5592d819bb600d76092e65497b9dfa5",
+    "transformer_2/config.json": "6809423c4a92f886feded9f85f55c667d73a2332d5e011fab4172f3448dd5666",
+    "transformer_2/diffusion_pytorch_model-00001-of-00012.safetensors": "95256668a2f7f60fd80db7b0ef2edd0700d18bfd44365a546c4eb75150b43518",
+    "transformer_2/diffusion_pytorch_model-00002-of-00012.safetensors": "3af2c8d8990a9a214fa13d2206dabc6ddd7148260ceffa570a93ff3a077d0ea0",
+    "transformer_2/diffusion_pytorch_model-00003-of-00012.safetensors": "47895d51e50eb833cfb729a55c0a88d69801171c3da64b895b44a2128315894f",
+    "transformer_2/diffusion_pytorch_model-00004-of-00012.safetensors": "c60f290bf6173bcd451ce4bb69054de077e6bc68609dc575033123996feebe70",
+    "transformer_2/diffusion_pytorch_model-00005-of-00012.safetensors": "fa53bebbb015efcf3de972a3029a34d4a8535a8d098f8f6e6210ea92d392b8f3",
+    "transformer_2/diffusion_pytorch_model-00006-of-00012.safetensors": "11afdf78c0219e950484e72e046ee0aa2a583052d048f57c339ce4eee3737130",
+    "transformer_2/diffusion_pytorch_model-00007-of-00012.safetensors": "8dc3fc3f8398854f6e1a521ef79d7e2199da7d039caa38625929acf83ab0f41c",
+    "transformer_2/diffusion_pytorch_model-00008-of-00012.safetensors": "fcf286f8a4745b6e7dd557d50f2e8126ac20037c1f4c3d75493b2a32861b29a4",
+    "transformer_2/diffusion_pytorch_model-00009-of-00012.safetensors": "2571fe8aefce8557b97809e9879e7d2650b9033944cf28e77007977cb1b6d7b7",
+    "transformer_2/diffusion_pytorch_model-00010-of-00012.safetensors": "8496ff20bb26d39484c940bc27047f0a7ca107f8ee23ef4ba7b2bd2f36c1dbfd",
+    "transformer_2/diffusion_pytorch_model-00011-of-00012.safetensors": "2bb74907c0cfffcdae0be5efe462a05179f199eee21be79b5ad20ea296a45869",
+    "transformer_2/diffusion_pytorch_model-00012-of-00012.safetensors": "2d3f1aca89bc664f029efd5a9cf848b47fa671d781681ce05dfeb4671a5bd77d",
+    "transformer_2/diffusion_pytorch_model.safetensors.index.json": "fb80e949700c1a9a1d761d7bf56e78e6c5592d819bb600d76092e65497b9dfa5",
+    "vae/config.json": "47e8bcf55e93e9c182e1962a8c7a0650faeb34ea0f66826d6f8aaa9f73e08ec9",
+    "vae/diffusion_pytorch_model.safetensors": "d6e524b3fffede1787a74e81b30976dce5400c4439ba64222168e607ed19e793"
+   }
+  },
+  "wan_5b": {
+   "repo": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+   "revision": "b8fff7315c768468a5333511427288870b2e9635",
+   "files": {
+    "model_index.json": "6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7",
+    "scheduler/scheduler_config.json": "571a3eed68bcd943a61b9fea8efa9e141472216ada59f928c8b5128ce24b32e0",
+    "text_encoder/config.json": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07",
+    "text_encoder/model-00001-of-00003.safetensors": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58",
+    "text_encoder/model-00002-of-00003.safetensors": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7",
+    "text_encoder/model-00003-of-00003.safetensors": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f",
+    "text_encoder/model.safetensors.index.json": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab",
+    "tokenizer/special_tokens_map.json": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270",
+    "tokenizer/spiece.model": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+    "tokenizer/tokenizer.json": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef",
+    "tokenizer/tokenizer_config.json": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd",
+    "transformer/config.json": "dc00d9866e72cf77db6b531aaa33be4dc7148fef9338442bd0ae9181f7075e9b",
+    "transformer/diffusion_pytorch_model-00001-of-00005.safetensors": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+    "transformer/diffusion_pytorch_model-00002-of-00005.safetensors": "7c42724912b1911429125dc50c0e9a49ccbada5a601b657d4ed2e15e7597c193",
+    "transformer/diffusion_pytorch_model-00003-of-00005.safetensors": "e9c3d0c76de786566382f8258101fea973ae37681c6e9fe0e5fe1fb93b806424",
+    "transformer/diffusion_pytorch_model-00004-of-00005.safetensors": "a331121771790939678db6f585553fd5184609f7d02593c699a4d241b0d834c5",
+    "transformer/diffusion_pytorch_model-00005-of-00005.safetensors": "78b655685c47efdb2349f36826bb101264e9f212a16325d584aeb5f53c88e719",
+    "transformer/diffusion_pytorch_model.safetensors.index.json": "d6c1f72d86fbddef8fb5ef1c03f5b56b2bfdb6ae58032db98c6019fd1dae9021",
+    "vae/config.json": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+    "vae/diffusion_pytorch_model.safetensors": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b"
+   }
+  },
+  "lightning": {
+   "repo": "lightx2v/Wan2.2-Lightning",
+   "revision": "18bccf8884ec0a078eed79785eb4ef13ea16ce1e",
+   "files": {
+    "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors": "d176c808d6fc461999b68e321efcb7501b20b8c3797523ed0df14f7d1deff11e",
+    "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors": "024f21de095bc8fad9809ded3e9e49a2e170dcf27075da8145ba7d60d8aab7f9"
+   }
+  }
+ },
+ "variants": [
+  {
+   "id": "ltx_distilled",
+   "family": "ltx",
+   "module": "ltx_pipelines.distilled",
+   "weights": [
+    "ltx25"
+   ],
+   "uses": {
+    "transformer": "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors"
+   },
+   "width": 1280,
+   "height": 704,
+   "fps": 24,
+   "frames": 241,
+   "clips": 1,
+   "settings": {
+    "source": "the CLI's own defaults for LTX-2.5 (ltx_pipelines.utils.constants at LTX-2 e98f6d9)"
+   },
+   "gpu": "H100",
+   "cpu": 8,
+   "memory_gib": 96,
+   "estimate_usd": 0.75,
+   "cap_usd": 1.5,
+   "sound": "native",
+   "estimate_basis": "measured 2026-10-25: ~200 s per 5 s clip at 1280x704 on an A100 incl. load; 10 s ~2.5x the work; H100 ~1.7x faster; 2 shots + 180 s cold start"
+  },
+  {
+   "id": "wan_a14b_lightning",
+   "family": "wan",
+   "pipeline": "WanImageToVideoPipeline",
+   "weights": [
+    "wan_a14b",
+    "lightning"
+   ],
+   "lora": {
+    "transformer": "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors",
+    "transformer_2": "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors"
+   },
+   "width": 1280,
+   "height": 720,
+   "fps": 16,
+   "frames": 81,
+   "clips": 2,
+   "chain_back": 5,
+   "settings": {
+    "num_inference_steps": 4,
+    "guidance_scale": 1.0,
+    "guidance_scale_2": 1.0,
+    "source": "Wan2.2-Lightning card at 18bccf88: 4 steps, no CFG; the high-noise LoRA on transformer, the low-noise on transformer_2"
+   },
+   "offload": "model_cpu_offload",
+   "gpu": "H100",
+   "cpu": 8,
+   "memory_gib": 96,
+   "estimate_usd": 1.1,
+   "cap_usd": 2.0,
+   "sound": "none",
+   "estimate_basis": "estimate: 4 steps instead of 40 plus a fixed ~45 s per clip for text, VAE and offload moves; 4 clips + cold start"
+  },
+  {
+   "id": "wan_ti2v_5b",
+   "family": "wan",
+   "pipeline": "WanImageToVideoPipeline",
+   "weights": [
+    "wan_5b"
+   ],
+   "vae_fp32": true,
+   "width": 1280,
+   "height": 704,
+   "fps": 24,
+   "frames": 121,
+   "clips": 2,
+   "chain_back": 5,
+   "settings": {
+    "num_inference_steps": 50,
+    "guidance_scale": 5.0,
+    "negative_prompt": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
+    "source": "the model card's Diffusers example at revision b8fff731 (VAE in float32)"
+   },
+   "offload": "none",
+   "gpu": "H100",
+   "cpu": 8,
+   "memory_gib": 64,
+   "estimate_usd": 1.2,
+   "cap_usd": 2.0,
+   "sound": "none",
+   "estimate_basis": "the Wan2.2 card's table: 524.8 s per 121-frame 720P clip on a 4090; H100 ~3x faster; 4 clips + cold start"
+  }
+ ],
+ "stage": {
+  "cpu": 4,
+  "memory_gib": 16,
+  "timeout_s": 5400,
+  "estimate_usd": 0.3,
+  "cap_usd": 0.5
+ },
+ "cold_start_s": 180,
+ "total_cap_usd": 6.0,
+ "estimate_total_usd": 3.35,
+ "variants_chosen": {
+  "by": "creator",
+  "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWCJYrxxMiZNYQ9kq7KeYnQ",
+  "at": "2026-11-12T15:12:12Z",
+  "note": "only variants 1, 4 and 5 of the five offered (ltx_dev and wan_a14b_full left out)"
+ }
+}
