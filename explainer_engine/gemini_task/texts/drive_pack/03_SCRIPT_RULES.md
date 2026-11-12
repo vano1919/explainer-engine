@@ -40,10 +40,10 @@ All of `02_SHORT_STORY_RULES.md` still holds. In addition:
 ## Narration
 
 - The narrator talks to "you", in spoken English with contractions (DW-10).
-- Sentences for the ear: one idea per sentence, no sentence over {{bp:BP-06.hard_max_words}} words (BP-06).
+- Sentences for the ear: one idea per sentence. A line is about {{bp:BP-06.hard_max_words}} words at most (BP-06), a frame and not a template: how long a phrase runs comes from the story, and a line within 10 % of the frame is never a finding (`07_REVIEW_PROTOCOL.md`, "Numbers are a frame").
 - A line that reports speech names the speaker first: "Kael says the river is dying", never "..., says Kael" (ST-15).
 - The narrator does not repeat what the scene just played (ST-21).
-- The narrator's share of the spoken words is about {{bp:BP-105.nominal_narrator_share}} (D-99, BP-105). Count the
+- The narrator's share of the spoken words is about {{bp:BP-105.nominal_narrator_share|percent}} (D-99, BP-105). Count the
   words and report the share.
 
 ## The two strict rules, line by line

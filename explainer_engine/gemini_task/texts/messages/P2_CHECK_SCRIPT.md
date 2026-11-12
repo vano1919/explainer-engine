@@ -11,7 +11,7 @@ export (`03_SCRIPT_RULES.md` cites the same rows).
 
 Placeholders: `episode_id`, `sha8` (of the script), `round`, `era_line`, `script`, `drive_root`,
 `bp:BP-01.wpm_target`, `bp:BP-104.narration_block_max_s`, `bp:BP-72.turn_words_max`, `bp:BP-76.turn_gap_s`,
-`bp:BP-105.nominal_narrator_share`.
+`bp:BP-105.nominal_narrator_share|percent`.
 
 =====BEGIN MESSAGE=====
 CHECK | P2 script | episode {{episode_id}} | sha {{sha8}} | round {{round}}
@@ -46,6 +46,6 @@ APPROVED STORY OPENED: "<its first line>" | FAILED <reason>
 C1 | ADDED|REMOVED|CHANGED | "<story words or ->" | "<script words or ->"
 FINDINGS
 F1 | BLOCKER|SHOULD|IDEA | <rule id, claim id or URL> | "<quote>" | <problem> | <proposed fix>
-MEASURED: narrator share <x> % of spoken words (nominal {{bp:BP-105.nominal_narrator_share}}); longest narration block <n> words ≈ <s> s (limit {{bp:BP-104.narration_block_max_s}} s); longest spoken turn <n> words (limit {{bp:BP-72.turn_words_max}}); longest stretch without a turn ≈ <s> s (limit {{bp:BP-76.turn_gap_s}} s)
+MEASURED: narrator share <x> % of spoken words (nominal {{bp:BP-105.nominal_narrator_share|percent}}); longest narration block <n> words ≈ <s> s (frame {{bp:BP-104.narration_block_max_s}} s); longest spoken turn <n> words (frame {{bp:BP-72.turn_words_max}}); longest stretch without a turn ≈ <s> s (limit {{bp:BP-76.turn_gap_s}} s)
 NOT CHECKED: <what you could not open or verify, or ->
 =====END MESSAGE=====

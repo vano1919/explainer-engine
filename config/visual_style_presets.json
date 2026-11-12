@@ -50,7 +50,7 @@
       "name": "CrossWorld main style: painterly cinematic storybook, golden hour and firelight",
       "decided": "ვანო 2026-11-12 13:31 UTC ('აი ეს მინდა!') and 14:03 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWNY8aTebJUp6PNsqn5TzSqM): the system's main style and the reference of every style round",
       "written_by": "the plan thread (main_style_preset.json in the project files, 2026-11-12 14:04 UTC); the style sentence is split at 'People are' into style_sentence and face_sentence, same words",
-      "style_sentence": "Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, lantern, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood.",
+      "style_sentence": "Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of warm light against cooler green and stone, tactile handmade materials, a cosy, romantic, adventurous mood.",
       "face_sentence": "People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes.",
       "style_references": [
         {
@@ -85,6 +85,7 @@
       ],
       "negative": "text, letters, logos, watermark, plastic 3D-render skin, cartoon proportions, oversized eyes, modern objects of another era, harsh flat daylight, documentary look",
       "identity_rule": "The reference's two people, their faces, pose and clothes are NEVER reused; each picture states: 'Use image 1 only as the visual style; do not copy its people, their pose or its place.' Our heroes' faces come from their own anchor portraits.",
+      "era_line_shape": "The world is <era>: the only light sources are <list>, and everything is made of <materials>.",
       "era_rule": "Every object must fit the episode's era (v17 put an oil lantern in Ancient Egypt): name the era's light source (hearth, oil lamp, torch) instead of 'lantern'.",
       "provider": {
         "tool": "Gemini chat built-in image tool",

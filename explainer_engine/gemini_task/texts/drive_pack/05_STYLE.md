@@ -1,7 +1,7 @@
 # The look of the channel
 
 Sources: `config/visual_style_presets.json`, preset `{{style_preset_id}}` (every quoted sentence below is copied from
-it at export; the preset wins); `docs/GEMINI_CONSISTENCY_RULES.md` (GC-01, GC-03, GC-11, GC-18, GC-20..GC-22).
+it at export; the preset wins); `docs/GEMINI_CONSISTENCY_RULES.md` (GC-01, GC-03, GC-11, GC-18, GC-21, GC-22).
 Decided by the creator on 2026-11-12: one picture, `main_style_5709.png`, is the main style of the whole system.
 
 ## In one paragraph
@@ -34,6 +34,16 @@ Why: in the test rounds of 2026-11-12 these words made the tool repaint the whol
 painted look was lost. They are refused in every prompt outside a "never" phrase. Describe the painted look with the
 sentences above instead. The reverse failure has its own words: nothing that asks for a cartoon, big eyes, a round or
 cute face, or a 3D-animation character (GC-11).
+
+## The episode's era line
+
+The style sentence names no era, no light source and no material, so it fits any age. Each episode adds one sentence
+that says which world this is. It is in every picture prompt after the scene, word for word (GC-22):
+
+> {{era_line}}
+
+Everything in a picture comes from that sentence: the light sources it lists are the only ones allowed, and an object
+that does not fit the era is a finding (an oil lantern in Egypt, a glass pane in the Stone Age).
 
 ## Always in the picture
 

@@ -5488,3 +5488,19 @@ The delta audit (`BAKEOFF_DELTA_AUDIT.md`) closed A1, A3, A5 and B2-B6 and found
 - N4: the hooks now see `modal` called by a path (`.venv/bin/modal`, `modal.exe`, `python -m modal`).
 - New tests run `write_clip`, `make_wan` and `body` with a fake pipeline, a fake diffusers and a fake HF: a full Wan run, a
   deadline in clip 2, a second attempt, and HF down.
+
+## 2026-11-12 — Gemini Task route A1c: routine texts, manifest, text test, GC-20..GC-27 (free, nothing sent to Gemini)
+
+- Texts: `drive_pack/08_FILES_AND_STATE.md` (the Drive tree incl. `claim_map.md`, `t0_probe.md`, `reviews/<stage>_reply<n>.md`; who
+  writes what) and messages P0 (open the chat), P5 (save the shot queue), P8 (next, `queue_on_drive` only), P9 (resume after the limit).
+- `texts/manifest.json`: every file, every `{{placeholder}}` with its origin and source, the ten `bp:` numbers, the two open questions.
+  `{{bp:BP-105.nominal_narrator_share|percent}}` now shows 70 %, not 0.7 (03 and P2). T0 trimmed by 17 words to fit the two-minute read.
+- `docs/GEMINI_CONSISTENCY_RULES.md`: GC-20..GC-27 (Task route and T0, anchor by shot type amends GC-01 for scenes, era-neutral
+  style sentence, references in two rounds, only generated pictures and the batch report, no in-batch redo, review record, limit and
+  resume); INDEX line says GC-01..GC-27; the pack cites GC-21/22 (05), GC-01..GC-27 (06), GC-26 (07).
+- Preset `crossworld_main_style_v1`: "lantern" and the Stone Age materials list left `style_sentence` (spec F7, Q6); new
+  `era_line_shape` says how an episode writes its `era_line`; pack file 05 shows the episode's era line.
+- Test: `tests/unit/test_gemini_task_texts.py` (acceptance 1-6: no never-word, placeholders declared, fixed sentences, ids exist,
+  no secrets or Georgian, two-minute read).
+- Open question closed (creator, 18:18 UTC): numbers are a frame with a ±10 % band, never a template (07 "Numbers are a frame", 03); the child-hero question is dropped.
+- Next: A2 (Opus high) builds the exporter and the review intake against this manifest.

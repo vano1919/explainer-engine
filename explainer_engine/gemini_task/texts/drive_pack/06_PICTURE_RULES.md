@@ -1,6 +1,6 @@
 # How a batch of pictures is made
 
-Sources: `docs/GEMINI_CONSISTENCY_RULES.md` (GC-01..GC-25); the creator's messages of 2026-11-12 (15:20 and 15:25 UTC);
+Sources: `docs/GEMINI_CONSISTENCY_RULES.md` (GC-01..GC-27); the creator's messages of 2026-11-12 (15:20 and 15:25 UTC);
 the test rounds of 2026-11-12 (`reference_round_1/v9` on the project's Hugging Face store).
 
 A batch is one message from Claude that lists six pictures, and one answer from you that holds those six pictures and a

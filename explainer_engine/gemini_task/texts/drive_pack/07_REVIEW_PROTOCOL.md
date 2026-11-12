@@ -64,6 +64,14 @@ The fix is the smallest change that solves the problem, in one sentence, or repl
 only. Never rewrite a paragraph, a scene or the whole text, and never send a new version. Claude writes; the creator
 decides.
 
+## Numbers are a frame
+
+Every number in this pack (words, seconds, shares, counts) is a frame, not a template. The story decides how long a
+phrase, a turn or a scene runs; the frame keeps it near what viewers follow easily. A measure within 10 % of a frame
+number, over or under, is never a finding. Beyond 10 % it is a finding only if you can say what it does to the viewer;
+the finding then needs a source like any other. Never ask for a rewrite just to land a number, and never propose a shape
+that exists only to make the arithmetic come out.
+
 ## MEASURED and NOT CHECKED
 
 - MEASURED holds the numbers you counted. Mark an estimate with `≈` and say what you counted from.

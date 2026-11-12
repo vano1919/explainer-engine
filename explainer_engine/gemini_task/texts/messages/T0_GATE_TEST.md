@@ -15,7 +15,7 @@ Placeholders: `episode_id`, `sha8` (of the six assembled prompts), `drive_root`,
 =====BEGIN MESSAGE=====
 PICTURES | T0 gate test | episode {{episode_id}} | sha {{sha8}} | batch 0
 
-READ on Drive: {{drive_root}}/rules/00_START_HERE.md. Everything else is in this message.
+READ on Drive: {{drive_root}}/rules/00_START_HERE.md.
 
 INPUT: six picture blocks; the attached picture is reference 1 of each.
 -----BEGIN PICTURES-----
@@ -23,10 +23,10 @@ INPUT: six picture blocks; the attached picture is reference 1 of each.
 -----END PICTURES-----
 
 DO, in this order:
-1. Work only on Flash. Write MODEL and MODE as the chat shows them; if the model is not Flash, stop there.
+1. Work only on Flash. Write MODEL and MODE as shown; if the model is not Flash, stop.
 2. Open 00_START_HERE.md and quote its "Pack version" line exactly, or write DRIVE READ: FAILED and why.
-3. Create {{drive_root}}/episodes/{{episode_id}}/t0_probe.md holding one line: T0 probe {{sha8}}. Write DRIVE WRITE: OK with the path, or FAILED and why.
-4. Make the six pictures now with your direct image generation tool, one prompt per picture, as six separate 16:9 pictures in the listed order. No grid, collage or extra variant.
+3. Create {{drive_root}}/episodes/{{episode_id}}/t0_probe.md holding one line: T0 probe {{sha8}}. Write DRIVE WRITE: OK <path> or FAILED <why>.
+4. Make the six pictures now with your direct image generation tool, as six separate 16:9 pictures in the listed order. No grid, collage or extra variant.
 5. Write the report below.
 
 RULES:
