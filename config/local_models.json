@@ -1,6 +1,7 @@
 {
   "schema_version": "4.0.0",
-  "local_only_default": true,
+  "local_only_default": false,
+  "local_only_note": "v4.3 (D-131, Fable audit 2026-11-12 fix 4): the Wan shots run on Modal, so the project is not local-only. The local ComfyUI backend still talks only to localhost while EXPLAINER_LOCAL_ONLY=1 (vault.get_comfyui_url, the env default); paid cloud calls are gated by core/ledger + config/spend_caps.json + the creator's word, never by this flag. config/model_routing.json local_media_routing.local_only_default still says true: that file changes only on the creator's word.",
   "comfyui": {
     "default_url": "http://127.0.0.1:8188",
     "required_nodes": [

@@ -66,7 +66,9 @@ def test_load_dotenv_keys_never_exposes_secret_values(tmp_path: Path) -> None:
 
 def test_local_models_and_model_routing_configs_have_zero_cloud_endpoints() -> None:
     local_cfg = vault.local_models_config()
-    assert local_cfg["local_only_default"] is True
+    assert local_cfg["local_only_default"] is False   # D-131: Wan runs on Modal; the ComfyUI guard below still holds
+    assert "D-131" in local_cfg["local_only_note"] and "EXPLAINER_LOCAL_ONLY=1" in local_cfg["local_only_note"]
+    assert vault.is_local_only({}) is True   # the env default keeps the local ComfyUI backend on localhost
     assert local_cfg["comfyui"]["default_url"] == "http://127.0.0.1:8188"
     assert local_cfg["active_defaults"]["stage3_video_inp_model"] == "wan22_fun_5b_inp"
     assert local_cfg["active_defaults"]["stage3_video_control_model"] == "wan22_fun_5b_control"

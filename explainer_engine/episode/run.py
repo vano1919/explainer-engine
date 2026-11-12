@@ -238,6 +238,10 @@ def stage_script(ep: Episode, rehearsal: bool):
     bad = [s.get("shot_id") for s in shots if s.get("route") not in R.ROUTES or not str(s.get("route_reason") or "").strip()]
     rows.append(G.row("every_shot_routed", bool(shots) and not bad, f"{len(bad)} of {len(shots)} shot(s) without a route "
                       "and its reason (RT-01)", bad[:20]))
+    from explainer_engine.episode import retired
+    old = retired.retired_routes_in(doc)
+    rows.append(G.row("no_retired_route", not old, f"{len(old)} shot field(s) name a retired route (Q10, D-131: "
+                      "config/retired_era.json)", old[:20]))
     rows += R.talking_check(doc)
     speakers = R.speaking_heroes(doc)
     differ = []

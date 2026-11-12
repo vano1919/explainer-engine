@@ -1,48 +1,16 @@
-# GEMINI.md — Explainer Engine Master Production Protocol (9-Gate Creator-Approved Workflow)
+# GEMINI.md — pointer
 
-> **მთავარი პრინციპი:** არსებული `explainer-engine`-ის ყველა კვლევა, წყაროზე დაფუძნებული წესი (`docs/SOURCED_RULES.md`: `BP-01..BP-170`), გადაწყვეტილება (`docs/DECISIONS_AND_OPEN_QUESTIONS.md`: `D-01..D-123`) და ვალიდატორი (`story_lint`, `scene_lint`, `narration_lint`, `shot_prompt_lint`, `motion_lint`, `audio/layers`, `audio/casting`, `qa/keyframe_gate`, `qa/scorecard`) სრულად შენარჩუნებულია და სავალდებულოდ სრულდება თითოეულ ეტაპზე. არცერთი ეტაპი არ გადადის შემდეგზე ავტორის (Creator) დადასტურების გარეშე (`OR-15`, `OR-19`, `CN-04`).
+> **Updated 2026-11-12 (D-131):** the 9-gate protocol (G0..G8, the Gemini batch image generator, Thread A / Thread B) that
+> this file described came from the v4.3 archive and is superseded by D-131; it stays readable in git history only.
 
----
+What the Gemini chat does in a v4.3 episode:
 
-## 1. ეტაპობრივი წარმოების ჯაჭვი (Gates G0 – G8)
+1. **Pictures, free:** the chat's built-in image tool draws the episode's pictures in turns of 6-12, exported as turn packs and
+   gated at intake (`imagegen/turn_pack`, rules GC-01..GC-17 in [`docs/GEMINI_CONSISTENCY_RULES.md`](docs/GEMINI_CONSISTENCY_RULES.md)),
+   then upscaled 2x locally. Only a failing close-up hero shot is re-made at 2K on the paid batch tier, priced and asked first.
+2. **Research and reviews** where the creator asks for them (about 90 % reliable, the creator 2026-11-07: used as guidance at once,
+   the registry grade still follows D-59).
 
-| Gate | ეტაპის დასახელება | რას აკეთებს Gemini (`explainer_engine`-ის მოდულებით) | რას ამოწმებს და ადასტურებს ავტორი |
-| :--- | :--- | :--- | :--- |
-| **G0** | **Reference Library & Style Bible** (ერთჯერადი / საბაზისო) | გთავაზობს ვიზუალური სტილის ვარიანტებს და ქმნის სტრუქტურირებულ `Reference Library`-ს Drive-ზე: პერსონაჟების Turnaround-ები, გარემოს განათების/ხაზის ეტალონები, რუკების/დიაგრამების შაბლონები (`qa/keyframe_gate.py`). | ირჩევს და ამტკიცებს არხის ერთიან ვიზუალურ სტილსა და ეტალონურ ფოტოებს. |
-| **G1** | **თემა → ზოგადი ისტორია (Short Scenario)** | იღებს თემას, ატარებს კვლევას (`claim_map.json`), ამოწმებს ჰიპოთეზებს (`variant_plan.py`, `OR-31`) და წერს ზოგად ისტორიას / მოკლე სცენარს (`OR-15`, `episode_rules.json`). | ამოწმებს და ადასტურებს ზოგად ისტორიასა და დრამატურგიულ კითხვას. |
-| **G2** | **ისტორიის სცენარი (Narrative & Dialogue Script)** | წერს სრულ ტექსტურ სცენარს (`70–80%` ნარატორი / `20–30%` დიალოგი, `BP-105`), ამოწმებს `story_lint.py` (`ST-01..19`), `scene_lint.py` (`SC-01..12`), `narration_lint.py` და უშვებს დამოუკიდებელ `script-critic` ქვე-აგენტს (`D-84`). | ამოწმებს და ადასტურებს ტექსტურ სცენარსა და დიალოგებს. |
-| **G3** | **ვიზუალის და აუდიოს სცენარი (Visual & Audio Storyboard)** | ადგენს შოტებისა და ხმის სრულ გეგმას (`production_script.json`): `60%` ვიდეო / `30%` layered collage ფოტო-კოლაჟი / `10%` რუკა-დიაგრამა (`D-97`), კამერის მოძრაობები (`motion_lint.py`), SFX/მუსიკის ბადე (`audio/layers.py`) და ასეტების სია (`asset_manifest.json`). | ამოწმებს და ადასტურებს ვიზუალურ და აუდიო სცენარს. |
-| **G4** | **ხმოვანი ეფექტები და მელოდიები (SFX, Ambience, Music)** | ამზადებს სცენარით გათვალისწინებულ ყველა ხმოვან ეფექტს (ფეხის ნაბიჯები, გარემოს ფონური ხმები `AL-04`, მუსიკალური მელოდიები `BP-62`, სინქრონული აქცენტები `BP-54`) და გიგზავნის მოსასმენად. | უსმენს და ადასტურებს ხმოვან ეფექტებსა და მუსიკალურ ფონს. |
-| **G5** | **ყველა ფოტო-ასეტის გენერაცია (10% + 30% + 60% Keyframes)** | დამტკიცებული `Reference Library`-ს მიხედვით აგენერირებს ყველა საჭირო ვიზუალურ მასალას: (1) `10%` რუკების/დიაგრამების ასეტებს (`maps/`, `graphics.py`), (2) `30%` ფოტო-კოლაჟის/layered collage ფენებს, (3) `60%` ვიდეოს საწყის/საბოლოო ფოტო-კადრებს (`qa/frame_review.py` კონტაქტ-ფურცლებით). | ათვალიერებს და ადასტურებს ყველა დაგენერირებულ ფოტოსა და ასეტს. |
-| **G6** | **გმირების ხმების შერჩევა და ElevenLabs აუდიო** | ნარატორის არსებულ ხმასთან ერთად არჩევს მთავარი გმირების ხმებს (`audio/casting.py`, `voice_check.py`), ადასტურებინებს ავტორს, აგენერირებს ElevenLabs გახმოვანებას და ქმნის 24fps სიტყვების ტაიმინგის ხერხემალს (`scribe_words.py`, `timing.py`). | ამტკიცებს გმირების ხმებს და ადასტურებს დაგენერირებულ ElevenLabs აუდიოს. |
-| **G7** | **პარალელური ვიზუალური წარმოება (Thread A: 10%+30% | Thread B: 60% Wan 2.2)** | **სრედი A** აწყობს `10%` (რუკები/დიაგრამები) და `30%` (layered collage ფოტო-კოლაჟი/პარალაქსი) მასალას; **სრედი B** პარალელურად Modal-ზე აგენერირებს `60%` Wan 2.2 ვიდეო კლიპებს (`wan_runner.py`). | ამოწმებს და ადასტურებს მზა ვიზუალურ კლიპებს (10%, 30%, 60%). |
-| **G8** | **საბოლოო მონტაჟი 3-წუთიანი ნაწილებით (Chunked Assembly)** | აწყობს ვიდეოს ~3-წუთიან ნაწილებად (`0:00–3:00`, `3:00–6:00`, `6:00–9:00`, `9:00–12:00`, `assemble.py`, `qa/scorecard.py`) და თითოეულ ნაწილს გიგზავნის დასადასტურებლად საბოლოო მასტერის შეკვრამდე. | ნაწილ-ნაწილ (3-3 წუთით) ამოწმებს და ადასტურებს საბოლოო მონტაჟს. |
-
----
-
-## 2. Reference Library-ს სტრუქტურა (სტილის ერთიანობის გარანტია)
-
-Google Drive-ის მთავარ საქაღალდეში (`Explainer_Engine_V4_Main/Reference_Library/`) ინახება მუდმივი რეფერენს-ბიბლიოთეკა, რომელსაც ყველა ეპიზოდი ეყრდნობა:
-
-1. `01_style_anchors/` — 4 ეტალონური კადრი (კონტურის სისქე, ჩრდილების ტექსტურა, ფერთა პალიტრა, განათების კონტრასტი), რომლებიც `IP-Adapter`-სა და `Gemini Native Image Engine`-ს გადაეცემა ყველა ეპიზოდში.
-2. `02_character_sheets/` — მუდმივი და ეპიზოდური პერსონაჟების 3-ხედიანი Turnaround ფურცლები (`front`, `3/4`, `side`) და სახის გამომეტყველების ბარათები (`faces.py`).
-3. `03_environment_plates/` — ეპოქებისა და ინტერიერ/ექსტერიერების საბაზისო განათების რეფერენსები.
-4. `04_maps_and_ui_kit/` — რუკების პერგამენტის/ტაქტიკური ბადის ტექსტურები, ისრების, საზღვრებისა და დიაგრამების ტიპოგრაფიული ეტალონები (`maps/`, `graphics.py`).
-
----
-
-## 3. Wan 2.2-ის მაქსიმალური კონტროლი, წამების ლიმიტი და დიალოგების რენდერის წესი
-
-### 3.1. წამების ოპტიმალური და მაქსიმალური ზღვარი (Duration Control)
-* **ოპტიმალური ქრონომეტრაჟი (Sweet Spot):** `4.0 – 5.0 წამი` (`81 – 121 კადრი @ 24fps`). ამ დიაპაზონში `Wan 2.2 I2V-A14B` და `FLF2V-14B` ინარჩუნებს პერსონაჟის სახის 100%-იან მსგავსებას (`cosine >= 0.75`) და ფიზიკურ სიმყარეს.
-* **მაქსიმალური დასაშვები ჭერი (Hard Cap):** `6.0 წამი` (`145 კადრი @ 24fps`). 6 წამის შემდეგ ერთ უწყვეტ გენერაციაში იწყება სახის დრეიფი (identity drift) და ფონის დეფორმაცია.
-* **გრძელი სცენების აწყობის წესი (`KP-04`, `EDITING.md`):** თუ სცენა გრძელდება 12–15 წამს, ის არასდროს რენდერდება ერთ 15-წამიან კლიპად — იყოფა 3–4 გადაბმულ კადრად (`4s Wide Establisher` → `4s Over-The-Shoulder` → `4s Close-Up Reaction` → `3s Detail Cut`), სადაც თითოეული კადრი იყენებს `First-Last-Frame (FLF2V)` ან `Multiple-Angles` საწყის ფოტოს.
-
-### 3.2. მოძრაობისა და კამერის მაქსიმალური კონტროლი (Control Mechanisms)
-1. **სტანდარტული კინემატოგრაფიული შოტი (`WAN_I2V`):** ერთი დამტკიცებული საწყისი ფოტო + ზუსტად 1 სუბიექტის მოქმედება + 1 კამერის მოძრაობა (`shot_prompt_lint.py` `KP-V4-CAMERA`).
-2. **პოზის/კომპოზიციის ზუსტი გადასვლა (`WAN_FLF2V`):** როცა პერსონაჟმა კონკრეტული ჟესტი უნდა დაასრულოს (მაგ. დურბინდის დაწევა ან ხელის გაშვერა), წინასწარ გენერირდება **როგორც პირველი, ისე ბოლო კადრი** (`needs_end_frame: true`), და Wan 2.2 აკეთებს ზუსტ ინტერპოლაციას ამ ორ დამტკიცებულ ფოტოს შორის.
-3. **სტრუქტურული კონტროლი (`WAN_CONTROL` / `Fun-Control-14B`):** რთული მოძრაობისას გამოიყენება `Depth` / `Canny` / `OpenPose` ბადე (`selective_control`), რაც გამორიცხავს კიდურების ან პროპორციების დარღვევას.
-
-### 3.3. როდის ვიყენებთ დიალოგის პირდაპირ ვიდეო-რენდერს (Lip-Sync Cost vs. Quality Rule)
-* **საბაზისო წესი (90% დიალოგებისთვის):** მოკლე რეპლიკებზე (`2–5 წამი`) აუდიოზე მიბმული ტუჩების რენდერი (`Wan-S2V` / `InfiniteTalk`) **არ გამოიყენება**, რადგან ის 2.5–3-ჯერ აძვირებს GPU დროს და ხშირად არბილებს `Luminescent Chiaroscuro`-ის მკვეთრ ხაზებს. ამის ნაცვლად ვიყენებთ კინემატოგრაფიულ მონტაჟს (`SC-09`): ზურგსუკან ხედი (`Over-The-Shoulder`), მსმენელის რეაქცია (`Reaction Cut`), ან პერსონაჟის ჟესტი/მიმიკა `WAN_FLF2V`-ით.
-* **გამონაკლისი (როდის ირთვება რენდერით დიალოგი):** მხოლოდ მაშინ, როცა სცენარში გვაქვს **გრძელი, კულმინაციური მონოლოგი/დიალოგი (`>= 8–12 წამი`) ახლო ხედზე (`Medium Close-Up`)**, სადაც ერთი საბაზისო პორტრეტიდან აუდიო-მართვადი გენერაცია ანაცვლებს 3–4 ცალკეული ახალი შოტის ხატვასა და რენდერს — ანუ **მხოლოდ მაშინ, როცა ის ხარისხის დაუგდებლად რეალურად აიაფებს გრძელ დიალოგურ სცენას**.
+Everything else (the script, the routes `map_action` / `still_25d` / `wan`, the runner's gates, money) lives in [`CLAUDE.md`](CLAUDE.md)
+and [`docs/EPISODE_FIRST.md`](docs/EPISODE_FIRST.md). No paid Gemini API call without the creator's word (`config/spend_caps.json`
+`gemini_api`).

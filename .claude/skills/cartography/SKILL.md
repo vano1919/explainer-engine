@@ -5,6 +5,8 @@ description: Design the maps of a Crossworld Theories episode (campaign maps, fr
 
 # Cartography: maps the eye reads in one look
 
+**v4.3 episode-first (2026-11-12, D-131), read first:** a map is route `map_action` (about 10 % of the runtime by duration, RT-04): `maps/` draws it on real relief, letter-free (CMP-01), with an action layer in the video's look, each action started on its spoken word (`actions[].at_word`, RT-03). The reading rules below stay; the Ink Chronicle style-bridge, Blender terrain and Qwen notes below are legacy for a v4.3 episode.
+
 **Ink Chronicle (D-97, D-112, 2026-11-05):** maps are the HELPER lane, drawn by the Python map renderer through the Ink Chronicle style bridge; a Blender terrain map is a benchmark shot only; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
 
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.

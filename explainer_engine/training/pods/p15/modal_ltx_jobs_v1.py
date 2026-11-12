@@ -190,7 +190,9 @@ LOCAL_SRC = "/home/user/in_ltx1"   # the local folder baked into the image as LO
 
 def preflight():
     """Free rule check of the jobs file before any paid call (production/paid_preflight.py, the creator 2026-11-07 22:23 UTC)."""
+    from explainer_engine.episode import retired
     from explainer_engine.production import paid_preflight
+    retired.refuse("ltx")   # Q10, D-131: retired inside a v4.3 episode
     paid_preflight.refuse("ltx", Path(LOCAL_SRC) / JOBS)
 
 

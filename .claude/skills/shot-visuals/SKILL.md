@@ -5,6 +5,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
+**v4.3 episode-first (2026-11-12, D-131), read first:** every shot carries one route with its reason (`map_action`, `still_25d`, `wan`; RT-01..RT-05 in docs/EPISODE_FIRST.md, `episode/router`). Pictures come from the Gemini chat's turn packs and pass the intake gates (GC-01..GC-17, docs/GEMINI_CONSISTENCY_RULES.md). A `wan` shot is where a body performs or a hero speaks (a performance clip, no lip-sync): start picture, motion prompt, `fallback_motion_imitation` (RT-07). A `still_25d` shot moves in at least two families (RT-06, BP-185). The stakes-and-heroes rules below stay; the Blender `shot_spec/2`, sprite and pod-prompt text below is legacy for a v4.3 episode (the tools are retired, Q10).
+
 **Ink Chronicle route (D-96, D-97, 2026-11-05), read first:** on the Blender path a shot is a `shot_spec/2` scene (scene template, set assets, characters with rig and animation, camera rig, light rig, archetype of the roadmap's section 7.3; contracts in ICW-02, builder in ICW-06), not a picture prompt; image prompts are written only for reference art (style sheets, D-100). The still-picture route (D-43) and the animated Qwen/LTX route (D-77/D-80) below are the legacy image-generation routes; their stakes, named-hero and one-universe rules (UR-16..UR-22) still decide what a Blender shot shows.
 
 > **Route note:** a still-picture episode (D-43) uses the sprite/plate rules below; an animated episode (D-77, D-80) uses docs/SHOT_CONTINUITY.md (continuity_card/1, film_shots/2) and docs/SHOT_PROMPTS.md on Qwen-Image-2.1 + xworld_v2 — never both in one episode.

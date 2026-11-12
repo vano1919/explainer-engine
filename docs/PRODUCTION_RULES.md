@@ -1,5 +1,7 @@
 # Production rules: how every Crossworld Theories video is made
 
+> **v4.3 episode-first, 2026-11-12 (D-131):** a v4.3 episode runs its gates through the runner (`python -m explainer_engine.episode run <episode> --to qa`, RN-01..RN-06 in [EPISODE_FIRST](EPISODE_FIRST.md)): G1 script, G4 sound plan, G5 pictures (turn packs, [GEMINI_CONSISTENCY_RULES](GEMINI_CONSISTENCY_RULES.md)), G6 the read, G7 clips by route (`map_action`, `still_25d`, `wan`), G8 sound, G9 chunked assembly, G10 the acceptance report; `production_gate` and the D-123 / Blender gates below are legacy for it (the retired tools refuse inside a v4.3 episode, Q10). The standing orders of section 1 and the feedback log stay binding for every video; where a standing order names a legacy tool, D-131 wins.
+
 
 ## 4-Stage Local Production Gates & Telemetry (D-123)
 > **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123:** Default preflight runs `explainer_engine/production/local_preflight.py` (`python -m explainer_engine.production --check-local`), verifying local ComfyUI reachability (`http://127.0.0.1:8188`), required custom nodes, local checkpoints in `config/local_models.json`, and Stage 2 keyframe approval (`keyframe_manifest.json`) before Stage 3 Wan 2.2 / DepthFlow rendering. All render attempts log empirical metrics to `render_telemetry.jsonl`.

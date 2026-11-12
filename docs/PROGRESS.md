@@ -5299,3 +5299,33 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
 - Tests: `test_v43_wan_adapter.py` (19, the paid path now with a Run and a caps file; the old "not wired" check became the
   refusal and wiring tests), `test_v43_wan_worker.py` (9). Cost: $0. Nothing paid or remote was run.
 
+## 2026-11-12 — v4.3 P9: the old era retired, not deleted; the docs say the v4.3 method first (thread "Implement v4.3 episode-first rebuild")
+- `config/retired_era.json` + `episode/retired.py` (Q10 answer A, D-131): Qwen pictures, the xworld LoRA, LTX, the Blender scene
+  route, RunPod pods, the legacy paint plans and the archive's 2.5D animator are listed with their entry points and replacements;
+  `retired.refuse` stops them inside a v4.3 episode (a path, the working directory or `$EXPLAINER_EPISODE` inside a folder whose
+  `episode.json` is `episode_manifest/1`) and lets them run for the older episodes. Wired into `cloud/runpod.py create`,
+  `production/paint.py run`, `training/pods/blender_render.render`, the p15 Qwen and LTX launchers' preflight and
+  `production/cinematic_image_animator`. The runner's G1 gets the row `no_retired_route` (Toba: 0).
+- `CLAUDE.md`: the head states the v4.3 method (routes `map_action` / `still_25d` / `wan` at 10/30/60 by duration, the runner,
+  money: Modal has a zero approved budget until its `spend_caps.json` line); the D-116 identity stays as a dated history line;
+  invariant 1 names Modal for Wan and RunPod as legacy; the layout lists `episode/`, `aivideo/` and the Wan worker.
+- `config/local_models.json` `local_only_default` false with its note (Fable audit fix 4): the project is not local-only since
+  D-131; the env default `EXPLAINER_LOCAL_ONLY=1` still keeps the local ComfyUI backend on localhost. Stale text reported, not
+  edited: `config/model_routing.json` `local_media_routing.local_only_default` is still true (that file changes only on the
+  creator's word).
+- Docs: `docs/INDEX.md` and `docs/PRODUCTION_RULES.md` open with the v4.3 entry points; `docs/MAIN_METHOD.md` carries a dated
+  legacy line; `GEMINI.md` (the archive's 9-gate protocol, superseded) and `CHATGPT.md` are short pointers to `CLAUDE.md` and
+  [EPISODE_FIRST](EPISODE_FIRST.md); the skills `shot-visuals`, `dialogue-scenes`, `cartography` and `editing-style` open with
+  the v4.3 rules and mark their Blender / lane text legacy. `production/parallax.py` stays: the legacy assembler still uses it.
+- Tests: `tests/unit/test_v43_retired.py` (17); `test_vault_local_only.py` asserts the new default and that the ComfyUI guard
+  holds. docs_lint 0 findings. Cost: $0.
+
+## 2026-11-12 — v4.3 P10: the OR-34 audit prepared, its free first check in the repo (thread "Implement v4.3 episode-first rebuild")
+- `python -m explainer_engine.episode.retired` lists every module the v4.3 path imports (the runner, the Wan adapter, the Wan
+  worker; lazy imports inside the v4.3 packages count) and fails on any retired entry module of `config/retired_era.json`:
+  121 modules, 0 retired; `training/lora_rules` (read-only trigger data pulled by the script lint) is listed apart under
+  `loaded_not_used` with its reason. Tests in `tests/unit/test_v43_retired.py`.
+- The audit brief (questions, scope, free checks, open items) is in the project files
+  (`v4_3_plan_2026-11-12/OR34_AUDIT_BRIEF.md`). The audit is a paid Claude API job: it needs the creator's word and a
+  `claude_api.jobs` line in `config/spend_caps.json` (none yet). The test ladder (plan section 7) follows it, each rung on his
+  word. Cost: $0.

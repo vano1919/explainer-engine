@@ -1,7 +1,9 @@
-# ChatGPT Main Production Method Pointer (`CHATGPT.md`)
+# ChatGPT pointer (`CHATGPT.md`)
 
-> **Updated 2026-11-09 (D-123):** The canonical, self-contained 12-stage ChatGPT production manual lives in [`docs/MAIN_METHOD.md`](docs/MAIN_METHOD.md).
+> **Updated 2026-11-12 (D-131):** the method is the v4.3 episode-first rebuild. Read [`CLAUDE.md`](CLAUDE.md) (its head states the
+> method) and [`docs/EPISODE_FIRST.md`](docs/EPISODE_FIRST.md) (the episode folder, the routes `map_action` / `still_25d` / `wan`, the
+> runner's gates). [`docs/MAIN_METHOD.md`](docs/MAIN_METHOD.md) (D-123, 2026-11-09) describes the legacy 4-stage local route and
+> is history for a v4.3 episode.
 
-- Read [`docs/MAIN_METHOD.md`](docs/MAIN_METHOD.md) for all episode brief, historical research dossier, 12-minute `Z1-Z5` / `S01-S16` structure, 70-80% narrator / 20-30% character dialogue spine, 60/30/10 visual script, Character/Location/Prop Bible, Stage 2 Qwen keyframe, Stage 3 Wan 2.2 / DepthFlow layered collage motion, and Stage 4 assembly rules.
-- Canonical machine contract: [`explainer_engine/schemas/production_script.schema.json`](explainer_engine/schemas/production_script.schema.json) (`v4.0.0`).
+- Canonical machine contract: [`explainer_engine/schemas/production_script.schema.json`](explainer_engine/schemas/production_script.schema.json).
 - Documentation index: [`docs/INDEX.md`](docs/INDEX.md).

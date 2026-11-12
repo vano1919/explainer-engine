@@ -5,6 +5,8 @@ description: Write or fix any scene where characters talk - the scene header, op
 
 # Dialogue scenes: a unit that turns, not a row of quips
 
+**v4.3 episode-first (2026-11-12, D-131):** the dialogue lives inside the scenes, and every hero line belongs to a shot routed `wan` (a performance clip, no lip-sync) no longer than BP-108's dialogue length; the runner's G1 (`episode/router.talking_check`) FAILs a speaker shot on another route. The scene rules below apply unchanged.
+
 Rules by id: SC-01..SC-10 and DW-01..DW-13 in `docs/STORY_ENGINE.md` (wired as PV-48, `scripting/scene_lint.py`).
 Evidence for every rule and number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`. A scene is not a location or a
 block of lines: someone present wants something now, someone present opposes it, something unexpected turns it, and a

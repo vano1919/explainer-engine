@@ -1,5 +1,7 @@
 # Explainer Engine — Main Production Method (`MAIN_METHOD.md`)
 
+
+> **Legacy for a v4.3 episode (2026-11-12, D-131):** this 4-stage local route (D-123) is history for every episode made with the v4.3 episode-first method; read [EPISODE_FIRST](EPISODE_FIRST.md) and the head of `CLAUDE.md` instead.
 > **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123 (4-Stage Local Hybrid B -> C Rebuild).**
 > **Version:** 4.0 (2026-11-09)
 > **Canonical Schema Contract:** `explainer_engine/schemas/production_script.schema.json` (v4.0.0)

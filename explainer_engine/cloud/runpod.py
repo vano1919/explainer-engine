@@ -1810,6 +1810,12 @@ def main(argv=None, api=None, live=None):
             raise SystemExit("refused: --yes only after the creator approved this pod's price and time cap")
         if create_flag_problems(rest):
             raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(create_flag_problems(rest)))
+        from explainer_engine.core.errors import ConfigError
+        from explainer_engine.episode import retired
+        try:
+            retired.refuse("runpod", *[x for x in rest if not x.startswith("-")])
+        except ConfigError as e:
+            raise SystemExit(f"refused, no pod was made: {e}")
         if _opt(rest, "--rules") and _opt(rest, "--test"):
             raise SystemExit("refused: a paid test has no episode rulebook: --rules and --test do not go together")
         max_usd, max_hours = _opt(rest, "--max-usd", None, float), _opt(rest, "--max-hours", None, float)

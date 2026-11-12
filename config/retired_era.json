@@ -1,0 +1,76 @@
+{
+  "schema": "retired_era/1",
+  "decided": "the creator, 2026-11-12 (D-131, plan PLAN_v4_3_IMPLEMENTATION.md Q10 answer A): the old tools stay as code, marked retired, and guards refuse them inside a v4.3 episode (a folder whose episode.json has schema episode_manifest/1). The episodes made before 2026-11-12 keep them.",
+  "tools": {
+    "qwen_image": {
+      "what": "Qwen-Image-2.1 pictures (and the p15 Modal Qwen launchers)",
+      "entry": [
+        "explainer_engine/training/pods/p15/modal_qwen_jobs_v15.py"
+      ],
+      "replacement": "the Gemini chat turn packs (imagegen/turn_pack, GC-01..GC-17)"
+    },
+    "xworld_lora": {
+      "what": "the xworld LoRA on Qwen-Image-2.1 (D-80)",
+      "entry": [
+        "explainer_engine/training/lora_rules.py",
+        "explainer_engine/training/audit.py",
+        "explainer_engine/training/judge.py",
+        "explainer_engine/training/embed.py",
+        "explainer_engine/training/footage.py",
+        "explainer_engine/training/video_qa.py"
+      ],
+      "replacement": "the Gemini chat with the approved style text (style preset)"
+    },
+    "ltx": {
+      "what": "LTX-2.5 / 2.3 clips (J2/J4, D-116)",
+      "entry": [
+        "explainer_engine/training/pods/p15/modal_ltx_jobs_v1.py"
+      ],
+      "replacement": "Wan on Modal through aivideo/wan_adapter (route wan)"
+    },
+    "blender_scene": {
+      "what": "Blender scenes, J5 shots, layout passes (D-113, D-116)",
+      "entry": [
+        "explainer_engine/training/pods/blender_render.py",
+        "explainer_engine/blender/"
+      ],
+      "replacement": "route still_25d (production/layers25d) and route map (maps/)"
+    },
+    "runpod": {
+      "what": "RunPod pods (cloud/runpod.py create)",
+      "entry": [
+        "explainer_engine/cloud/runpod.py"
+      ],
+      "replacement": "Modal for Wan (training/pods/wan/modal_wan_jobs.py, OR-37 ladder)"
+    },
+    "legacy_paint": {
+      "what": "the legacy still-picture route's paint plans (production/paint.py run)",
+      "entry": [
+        "explainer_engine/production/paint.py"
+      ],
+      "replacement": "the Gemini chat turn packs; a paid 2K re-make only for a failing close-up hero shot"
+    },
+    "cinematic_image_animator": {
+      "what": "the archive's keyword-guessed 2.5D animator (production/cinematic_image_animator.py, one-sheet warp)",
+      "entry": [
+        "explainer_engine/production/cinematic_image_animator.py"
+      ],
+      "replacement": "route still_25d through production/layers25d (RT-06)"
+    }
+  },
+  "retired_routes": [
+    "J2",
+    "J4",
+    "J5",
+    "VIDEO_3D",
+    "STILL_3D",
+    "HELPER",
+    "ltx",
+    "qwen",
+    "blender",
+    "paint"
+  ],
+  "loaded_not_used": {
+    "explainer_engine.training.lora_rules": "read-only trigger data (training/lora_rules.json): the v4.3 script lint (story_lint ST-24 -> scripting/variant_plan) imports scripting/film_shots for its segment parser, and film_shots and qa/style_prompt read the LoRA trigger when they load; no LoRA is trained, loaded or called on the v4.3 path (found by the P10 scan 2026-11-12)"
+  }
+}

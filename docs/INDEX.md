@@ -2,6 +2,8 @@
 
 One canonical home per specification and per ID (D-23). Link to a document or an ID; never copy its content.
 
+**Start here for a v4.3 episode (2026-11-12, D-131):** [EPISODE_FIRST](EPISODE_FIRST.md) (the episode folder, the routes `map_action` / `still_25d` / `wan`, the runner `python -m explainer_engine.episode run`, its gates), [GEMINI_CONSISTENCY_RULES](GEMINI_CONSISTENCY_RULES.md) (the pictures), [SOURCED_RULES](SOURCED_RULES.md) (the numbers), [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) (D-131). The Ink Chronicle rows below (the D-96/D-116 direction, roadmap and route plan, the Blender scene assets, `MAIN_METHOD`) are legacy for a v4.3 episode: the tools they describe are retired, not deleted (Q10, `config/retired_era.json`).
+
 | Document | Canonical for | ID prefix |
 |---|---|---|
 | [BRANCH_HANDOFF_README_2026-11-04](architecture/BRANCH_HANDOFF_README_2026-11-04.md) | entry point and scope for the new Ink Chronicle Blender planning branch | |

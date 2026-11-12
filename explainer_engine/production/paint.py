@@ -233,7 +233,9 @@ def _load(a):
 
 
 def cmd_run(a) -> int:
+    from explainer_engine.episode import retired
     plan, doc, out, dirs = _load(a)
+    retired.refuse("legacy_paint", out, getattr(a, "script", None))   # Q10, D-131: retired inside a v4.3 episode
     run = Run.open(a.run)
     why = preflight(plan, doc, dirs, run, Path(a.script))
     if why:

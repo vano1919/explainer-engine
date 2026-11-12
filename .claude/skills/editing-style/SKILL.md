@@ -5,6 +5,8 @@ description: Choose and apply an editing style for a Crossworld Theories video (
 
 # Editing style
 
+**v4.3 episode-first (2026-11-12, D-131), read first:** the shares are 10 % `map_action`, 30 % `still_25d`, 60 % `wan` by duration (RT-04); the cut plan and its transitions are blended from the two clips' boundary frames and assembled in chunks by the runner's G9 (`production/assemble.assemble_shot_clips`, RN-05); one sound level for every route (SP-02, BP-186). The editing judgement below stays; the VIDEO_3D / STILL_3D / HELPER lane text is legacy for a v4.3 episode.
+
 **Ink Chronicle lanes (D-97, 2026-11-05):** the lanes are VIDEO_3D (Blender clip), STILL_3D (Blender plate, held or moved by a camera) and HELPER (Python maps, HUD, tableaux); the editing rules below apply to all three; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
 
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.

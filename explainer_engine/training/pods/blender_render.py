@@ -80,6 +80,8 @@ def units_line(manifests: list[dict]) -> dict | None:
 
 def render(argv_job: str, binary_path: str | None, out: Path, render_root: Path, *, vault=None, project=None,
            popen=subprocess.Popen, deadline: float | None = None) -> int:
+    from explainer_engine.episode import retired
+    retired.refuse("blender_scene", out)   # Q10, D-131: retired inside a v4.3 episode
     vault = vault or HFVault()
     out.mkdir(parents=True, exist_ok=True)
     tmp = render_root / "_pod"

@@ -1,8 +1,8 @@
 """30% Cinematic 2.5D Image Animation Engine from Existing Generated Images (`cinematic_image_animator.py`, v4.3).
 
-SUPERSEDED (v4.3 plan P5, 2026-11-12): the episode runner renders still_25d shots with `production/layers25d.py`
-(real depth planes, rigid faces, motion imitation, measured gates). This module stays only for the archive's tests
-until P9 retires it; its keyword-guessed effects and one-sheet warp are not on the v4.3 path.
+RETIRED (v4.3 plan P5 and P9, Q10, 2026-11-12): the episode runner renders still_25d shots with `production/layers25d.py`
+(real depth planes, rigid faces, motion imitation, measured gates). This module stays as code for the archive's tests;
+``render_cinematic_25d_clip_from_image`` refuses inside a v4.3 episode (``config/retired_era.json``, ``episode/retired``).
 
 Extends `explainer_engine.production.parallax` and `explainer_engine.production.depth` to turn
 existing high-quality episode keyframes into living 24fps cinematic sequences at zero API cost:
@@ -260,6 +260,8 @@ def render_cinematic_25d_clip_from_image(
 ) -> Dict[str, Any]:
     """Animate an existing generated image (or start->end keyframe pair) into a 24fps cinematic MP4 using multi-axis
     2.5D parallax and procedural atmospheric layers streamed directly via rawvideo pipe at $0.00 cost."""
+    from explainer_engine.episode import retired
+    retired.refuse("cinematic_image_animator", out_mp4_path, source_image_path)   # Q10, D-131
     source_image_path = Path(source_image_path)
     out_mp4_path = Path(out_mp4_path)
     out_mp4_path.parent.mkdir(parents=True, exist_ok=True)
