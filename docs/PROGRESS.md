@@ -5543,3 +5543,15 @@ The delta audit (`BAKEOFF_DELTA_AUDIT.md`) closed A1, A3, A5 and B2-B6 and found
   "Hydrogen". `gemini_task/gate.py` now accepts `flash` or `hydrogen` (`FLASH_NAMES`) and still refuses Argon, Carbon and Pro;
   the Argon run is void for the gate. Test: `test_t0_fails_on_another_model_...` (Argon and "4 Argon" FAIL, "4 Hydrogen" PASS).
 - Argon T0 material (voided, for the creator's look only): HF `explainer-engine/gemini_t0/2026-11-12/`.
+
+## 2026-11-12 (A3) - the paid API as the backup of the Gemini chat
+
+- `gemini_task/api_backup.py` (creator, 20:26 UTC: nano-banana as the backup when the chat's limit is used up): reads the
+  PICTURE blocks of a message of this package word for word (prompt and reference order), prices them on the batch tier and
+  sends them through `imagegen/gemini.GeminiClient.submit_batch` (cap guard, batch recorded on disk before the POST) and
+  `collect_batch` (each picture written as it is read, OR-33). Still behind `EXPLAINER_GEMINI_API=on`.
+- T0 on nano-banana-2.1 2K batch: 6 pictures, estimate 0.158 USD. `config/model_lifecycle.json` nano-banana-2.1 re-checked
+  against aistudio.google.com/docs/pricing (2026-11-12: no free tier for any image model).
+- Test: `tests/unit/test_gemini_api_backup.py` (blocks word for word, request text equals the prompt, collect writes every
+  picture, the cap refuses before sending).
+- Blocked: the project key answers 403 "billing account has an outstanding balance"; nothing was sent or charged.
