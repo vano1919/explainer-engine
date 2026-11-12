@@ -5729,4 +5729,8 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
 - Tests: `tests/unit/test_overlay_rules.py` (54), `test_overlay_demo.py` (7), `test_overlay_hyperframes.py` (6, 1 skipped without the CLI); docs_lint 0 findings.
 - Files: HF `vano1919/tmr-artifacts` `explainer-engine/overlay_demo_2026-11-12/`: [demo_overlay_2min.mp4](https://huggingface.co/datasets/vano1919/tmr-artifacts/blob/main/explainer-engine/overlay_demo_2026-11-12/demo_overlay_2min.mp4)
   (sha256 729400e7...e0af, verified), `ab_surface.mp4`, `ab_sound.mp4`, `DEMO_REPORT.md`, `validator_report.json`, contact sheets, `eye_check.json`, specs.
+- Open for the next render pass (the rules thread, 21:36 UTC): the word frame is rounded up (ceil) and an element that shows before its word is REVIEW
+  in OV-35; the two pulses that show one frame early need the template changed and shots 2 and 7 rendered again. Not applied to the delivered file.
+- Not from this change: `test_v43_picture_intake.py` (5) needs `imagehash`, absent in this container; `test_video_qa_clip_rows.py` (1) expects no
+  transcriber, and this container has faster-whisper installed for the demo's word times.
 - Next: the creator looks at the demo and the two A/B files and confirms or changes the house numbers (report section 6); then the episode runner stage.
