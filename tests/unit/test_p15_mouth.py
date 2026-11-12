@@ -2,7 +2,7 @@
 mask bit-identical, and the pins. No GPU, no network."""
 import numpy as np
 
-from explainer_engine.training.pods.p15 import p15_mouth as M
+from explainer_engine.training.pods.p15 import p15_mouth_crop as M   # the crop job, renamed by the v4.3 merge (2026-11-12)
 
 
 def test_sixteen_jobs_with_fixed_seeds_and_short_prompts():

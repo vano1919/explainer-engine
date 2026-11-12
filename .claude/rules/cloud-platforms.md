@@ -1,5 +1,7 @@
 # Cloud platform execution rules — Ink Chronicle
 
+> Route-scoped since D-116 (2026-11-06): the route lines below describe the D-116 Qwen/LTX/Blender route; the v4.3 rebuild (2026-11-12) replaces the route, and the money and lifecycle rules stay in force.
+
 **Canonical operating policy for every Claude Code agent using paid cloud infrastructure.**
 Applies to the current Ink Chronicle route D-116 and its future provider adapters. Read this file before any cloud, GPU, model-hosting, token API, storage, or agent-MCP action.
 

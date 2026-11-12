@@ -5014,3 +5014,19 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   adult. Rule VC-10 in `docs/STORY_ENGINE.md`; skill `voice-search` (the free procedure and the casting card).
 - Tests: `tests/unit/test_casting_kids.py` (4) on voices copied from the free library listing of 2026-11-07.
 - Cost: $0, no audio generated (free `creative_list_voices` listings only).
+
+## 2026-11-12 — v4.3 episode-first rebuild, P0: one branch with every line's work (thread "Implement v4.3 episode-first rebuild")
+- The creator's order (2026-11-12 08:52 and 09:16 UTC; plan `PLAN_v4_3_IMPLEMENTATION.md` sections 0..0.7): a new branch from
+  `main`, then every line of the repo reviewed and its best work carried in with history; nothing paid.
+- Work branch `claude/project-thread-2hoa9u` from `main` 073eb25; baseline 2357 passed, 3 skipped.
+- Inventory of every branch line (146 commits not on `main`, patch-id checked): [V43_BRANCH_INVENTORY_2026-11-12](architecture/V43_BRANCH_INVENTORY_2026-11-12.md).
+- Merged with history (`--no-ff`, conflicts by hand): the Gemini line (68b99e8), the codex/argon handoff, `systemic/next-video`,
+  the 4nebmi line, `argon/handoff`, `icw/19-modal-schedule`, `icw/21-mouth-job`, `icw/05c-ink-round`. Rule files merged as a union
+  sorted by id; no id lost or reused (BP-182..184 from 4nebmi, LX-01..05 into `SCENE_REUSE_RULES.md` with a docs_lint prefix,
+  D-117..D-122 in order). VC-10: PR #156's age ladder kept, the older test adapted, a label-based kid clash added.
+- Fixes after the merges: `p15` `CLIP_FRAMES` now `{"ltx_c4": 121}` (the Gemini line moved c5 to the march column); the crop
+  mouth job of `icw/21-mouth-job` keeps its test as `p15/p15_mouth_crop.py` (the Gemini line's sheet job holds the name);
+  DW-11's "Registers" sentence (2026-11-07), lost in the 05c merge, restored; `.claude/rules/cloud-platforms.md` got its
+  route-scoped banner (ICW-01 test). `GeminiNew/` archives leave the working tree (hashes in the inventory).
+- Tests: full suite after the merges 3390 passed, 5 failed -> the 5 fixed above (focused re-run green); docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.
