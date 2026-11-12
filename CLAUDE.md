@@ -76,6 +76,7 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 
 **Long renders (RULE-R1, 2026-10-17; a local Blender render on the PC too, D-113):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
 
+**Research trust (creator, 2026-11-07):** research from Gemini and Argon is about 90 % reliable: use it, distrust only what is absolute and unverified, and say which claims you did not open yourself. Claude's own habit of distrusting it by default is wrong. D-59 still decides the registry grade (two source types = binding), but a finding is applied as guidance at once.
 **Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
 `python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style sheets, asset set, render pod, sample, full read,
 render validator, assembly, QA; the legacy still route keeps its style bridge, sprite and picture gates). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures

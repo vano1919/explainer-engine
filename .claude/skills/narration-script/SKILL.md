@@ -251,3 +251,53 @@ wants them "not monotone, the way he would say it". Rules, each with its sources
 
 Story cards (`design/cards.py`): the intro asks the episode's question over the heroes' heads; a recap names where each
 hero stands, then one NEXT line that opens the coming chapter (a hook, never a summary of the end).
+
+## Speech registers (DW-11, creator 2026-11-07): few-shot for the writer
+Rule: every speaking hero has one `speech` card (register, sentence length, habits, `avoid`). It decides the written words AND the delivery tags. Test every line: if another hero could say it unchanged, rewrite it. Put these pairs in the writer prompt; the pairs are style demonstrations, not lines to reuse.
+
+Same idea ("I will not help you"), five heroes:
+- Narrator (dry, short): "Nobody in the camp argues. The old man has already decided."
+- Rustic elder (no contractions, concrete images, repeats a word, inverted order): "Help you, I will not. The river does not carry a stone uphill, and neither do I."
+- City wiseguy (contractions, slang, jokes as armour, trails off): "Yeah, no. I'm not, uh... look, you guys are gonna have to do this one yourselves."
+- Child (tiny words, literal, asks): "You don't want to? But why? Is it because of the dark?"
+- Noble (long courteous sentences, titles, formal verbs): "I regret, sir, that my honour permits me no part in this, however much it grieves me to refuse."
+
+Bad (all heroes sound alike, and sound like a model): "I understand your request, but I must respectfully decline, as it would not be right." Fails RG register and DW-11.
+Delivery follows the card: elder = slow, rough, long pauses; wiseguy = fast, breathy, cracks under stress; child = high, curious; noble = measured, clear consonants. No disclaimers, no stepping outside the story (SC-11).
+
+## Zones, matrix, notation, audit (from docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md; hypotheses, not law)
+Source quality: the report mixes books, studies and video transcripts and some of its links are weak; treat every number as a hypothesis (REVIEW) until it has two source types (D-59). Use as writer guidance and test pairs, not as a new FAIL.
+- **Zone ceilings (narrator sentences):** hook 4-9 words, calm middle 10-16, fast finale 3-7; a silence line of 1.5-2.5 s before a 4-8 word deadpan landing.
+- **Never-AI filter:** the register lint already fails the word list (RG-01); also avoid triplets, "not X but Y", "-ing" explanations, summarising closers.
+- **Register matrix (words per turn / contractions):** rustic elder 8-14 / about 60 %; child 4-7 / about 85 %; noble 14-24 / under 5 %; city wiseguy 5-11 / about 90 %; ancient sorcerer 7-13 / 0 %; soldier or hunter 1-6 / about 70 %; scientist 12-20 / about 50 %; teenager 4-10 / over 95 %.
+- **Overlap notation (TTS timing):** `[CUT: -0.25s]` next clip starts 250 ms early over a cut-off tail; `[OVERLAP: -0.45s]`; `[LATCH: -0.08s]`; `<break time="0.7s" />`; spell numbers out.
+- **Pre-render audit:** blackout test (can you tell the speaker without the name), turn-length spread of at least 35 % between a fast and a slow speaker, at least half of the questions not answered straight away, a reversal every 6-10 lines, every narrator sentence matches what moves on screen.
+
+### Six revision rules learned from the stone-age pilot (creator 2026-11-07, v4.1 -> v4.2)
+1. **No disguised "not X, but Y"** ("He didn't capture him. He called him here."): write the physical action. **Never spoil a later reveal** in the setup narration; plant only the visual mystery (an empty space on the wall).
+2. **No anachronistic nouns** in a period hero's mouth (a stone-age shaman does not say "city"): use the hero's own images. **Never echo a character's line in narration**; the narrator adds a concrete fact or a scale jump instead.
+3. **A visual noun the viewer cannot place yet is clarified in the same line** ("sticky little fingers on the screen", not "fingers on glass"). **No stock similes** ("like water in a desert"): use a concrete number. **An overlap must answer what was just said**: the interrupter reacts to the other hero's words, not to a whisper at a phone.
+4. **Show the realisation, do not state the moral**: let a hero notice the object that carries it. A big-city hero speaks in whole conditionals ("If you keep me here, all you get is..."), not telegraphese.
+5. **Show the physical cause, not what characters think** ("A dead black glass. A fake god. The hunters raise their spears."), and tactile words instead of trailer lines ("Wet red clay. His palm beside Ura's.").
+6. **No SSML on v3/v4 (BP-14).** Silences before a line are `[DELAY: +Ns]`, `[OVERLAP: ..]`, `[CUT: ..]` on the speaker label, left of the colon; the TTS builder strips them so the model never reads them aloud. Inside a line only `...` and the model's audio tags (`[sighs]`) are allowed. A cut-off line is written the same way everywhere (`--`). The narrator uses no em dash (creator 2026-11-07, v4.3, synced 12:20 UTC).
+
+### Few-shot test pairs (run by tests/unit/test_speech_registers_fewshot.py)
+GOOD (register lint must pass):
+    He does the one thing he can. Phone light. On.
+    Mountains of light I saw, in my sleep. Out of them, you walked.
+    Okay. Sticks. I rub sticks. Nothing's happening!
+    Is light inside the stone-thing? Can I eat it?
+BAD (register lint must flag):
+    Moreover, it is crucial to delve into the tapestry of this pivotal moment.
+
+### Per-line boxes and mechanical traps (Gemini audit 2026-11-07 12:14 UTC, taken where it checks out)
+| Speaker | Words per line | Contractions | Formula |
+|---|---|---|---|
+| Narrator, hook | 3-8 | allowed | noun + active present verb + physical object |
+| Narrator, calm middle | 10-15 | allowed | join two physical actions with and / so / while |
+| Narrator, finale | 3-7 | allowed | staccato subject, verb, object |
+| Hero A (city, fast) | 3-8 (about 6.5 on average) | at least one per line | drop subjects, street nouns, interrupt with `--` |
+| Hero B (ancient, ritual) | 10-16 (about 11 or more) | none | object-fronting or two balanced clauses, period nouns only |
+| Child | 3-6 | allowed | literal physical question |
+Traps: (1) a noun the narrator just named is not repeated by the next speaker (the narrator names the sensory part, the hero names the whole); (2) no "X, but no Y" / "didn't X, he Y" pivot, write two positive actions; (3) before the reveal scene the narrator describes only what is visible, never who it is for; (4) a line before an overlap or cut ends with `--` and the interrupter answers it; (5) edit tags on the label, never SSML; (6) no em dash or `--` in a markdown title (register_lint now reads only the spoken lines of a `.md` script); (7) handprint (positive) and stencil (negative) are never mixed in script and visual script.
+Scope notes: D-68 (one narrator voices everyone) applies to narrated real-person episodes only; animated full-cast episodes use D-90 (each hero a fixed voice). BP-40's picture rate is already scoped to still-picture episodes; animated episodes take BP-107. Open for the creator (not changed here): SC-05 asks for a run of 4 hero lines (BP-70) which a 165 s pilot with 9-12 s segments cannot give; N-06/N-12 count questions and "you" on the narrator alone, wrong for a third-person drama; speech.py checks only that a signature word appears, not contraction rate or turn length.

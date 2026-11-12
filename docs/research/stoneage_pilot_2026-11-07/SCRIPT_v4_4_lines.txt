@@ -1,0 +1,58 @@
+S01|N|Marcus Hale delivers sandwiches in Manhattan.
+S01|N|Tonight, he steps in a puddle.
+S01|N|He lands in snow.
+S02|N|Forty thousand years back. A mammoth herd walks by.
+S02|M|Okay. Okay. That's not a pigeon. That's a mammoth.
+S02|N|Phone at fourteen percent. No plan.
+S03|N|Spears. Right at his throat.
+S03|M|Guys, c'mon. I just deliver sandwiches!
+S03|N|Then a drum. One beat. They step back.
+S04|N|The old man in the antlers lowers his drum. He called Marcus here.
+S04|U|Mountains of light I saw, in my sleep. Out of them, you walked.
+S04|M|Out of... what? Man, I was crossing Forty-Second.
+S04|U|Quiet. The fire is listening.
+S04|N|Behind Ura, fresh red paint on the rock. And one space left empty.
+S05|N|Marcus owns a bike and a phone. He can't make fire. He can't cut a blade.
+S05|M|I had a lighter. Back home. In my... other pants.
+S05|M|Okay. Sticks. I rub sticks. Nothing's happening!
+S05|U|Your head is full of stone towers. Your hands know nothing.
+S05|N|Eight million people back home. Not one of them here to strike a spark.
+S06|N|He does the one thing he can.
+S06|N|Phone light. On.
+S06|N|White light floods the cave. The hunters drop to their knees.
+S07|N|Gods get meat, furs, and sticky little fingers on the screen.
+S07|C|Is light inside the stone-thing?
+S07|C|Can I eat it?
+S07|M|No, buddy. Don't eat the phone.
+S07|M|Guys, please, stand up. I'm not... okay. Hi.
+S07|N|Each night, Marcus keeps the light on a little shorter.
+S08|N|Nine percent. He rations the flash three seconds a night.
+S08|M|Look, nine percent, if I turn it on again it's gonna--
+S08|U|Again. For the people.
+S08|N|And Ura counts the nights.
+S09|N|The screen dies. Everyone sees it.
+S09|U|Enough. Put down the spears. Look at him. A man. Only a man.
+S09|M|Yeah. I'm just a guy, I'm--
+S09|U|A man. Then tell me, man. Why would I open the way for you?
+S10|N|A whole wall of red hands.
+S10|U|My mother's hand. Her mother's hand. All here.
+S10|M|Wow. Okay. That's older than my whole city.
+S10|M|Wait. That empty spot by your hand... you saved that for me?
+S10|N|Forty thousand years of skyline. Started with wet red dirt on rock.
+S11|M|Let me go.
+S11|M|Forty thousand years from now, people stand in front of your hand.
+S11|M|They go quiet.
+S11|U|Quiet. Yes. That is what a hand does to stone.
+S11|M|If you keep me here, all you get is a guy who can't start a fire.
+S12|N|Storm. Torches. Hunters block the gate.
+S12|N|A dead black glass. A fake god. The hunters raise their spears.
+S13|N|Ura drums.
+S13|N|Marcus slaps his palm on stone.
+S13|U|Go home, light-walker.
+S13|M|Thanks. Seriously.
+S14|N|Fire runs up the wall.
+S14|N|Gold floods the paintings.
+S14|N|Wet red clay. His palm beside Ura's.
+S16|N|Rain. A horn. Ochre on his fingers.
+S16|N|In a museum window, two handprints. One bigger.
+S16|M|Okay. Okay. I'm home.

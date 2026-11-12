@@ -4729,3 +4729,18 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 - Not done here (other threads): re-generating c3b/c2/the cave two-shot (paid, the pilot thread with the creator's yes) and
   fixing v1's edit; the pilot's plan and job builders must be brought onto the new fields (`in_shot`, `variant_of`, `names`,
   `held_props`, cut plan fields) before anything runs. Spend: $0.
+## 2026-11-07 — DW-11 registers: every hero speaks from character, with few-shot examples (creator 11:22-11:23 UTC)
+- `docs/STORY_ENGINE.md` DW-11 now fixes the hero's register (rustic, child, noble ...) for words and delivery; skill `narration-script` got the section "Speech registers" with five same-idea examples and one bad example. Test `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+## 2026-11-07 — Spoken-storytelling research (Gemini) into the writer rules, few-shot tested (creator 11:40 UTC)
+- Report saved as `docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md`; `narration-script` skill got the zone ceilings, register matrix, overlap notation and a 5-point audit as HYPOTHESES (some of the report's sources are weak; no new FAIL). Few-shot good/bad pairs are run through `register_lint` by `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+- Same day, 11:50 UTC: six revision rules from the stone-age pilot v4.1 -> v4.2 (no disguised "not X but Y", no spoilers, no anachronistic nouns, no narrator echo, no stock similes, overlaps answer the other hero, show realisation, tags after the colon) added to the `narration-script` skill with a test.
+
+## 2026-11-07 — Rule sync after the Gemini audit, research-trust rule (creator 12:14 UTC)
+- `narration-script` skill: rule 6 corrected (no SSML on v3/v4, BP-14; delays are `[DELAY: +Ns]` on the label), per-line word boxes and seven traps, scope notes (D-68 vs D-90, BP-40 already scoped); `register_lint` reads only the spoken lines of a `.md` script (`script_text`); CLAUDE.md "Research trust" line. Not changed, open for the creator: SC-05 exchange length for a 165 s pilot, narrator-only N-06/N-12, `speech.py` contraction rate. Test `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+## 2026-11-07 — Three register checks added (creator 12:17 UTC)
+- `speech.py` (PV-46): optional `cast.<id>.speech.max_contractions` and `mlu_range` (schema fields added), checked against the hero's lines as REVIEW. `scene_lint` SC-05: `episode.short_form` (a pilot of about three minutes) asks BP-70's new threshold `min_exchange_lines_short` = 2 and only REVIEWs; the registry row and `docs/SOURCED_RULES.md` regenerated. `validate` PV-12 now runs the narration lint on `narrator_tts_text`, so N-05/N-06/N-12 read the narrator only when heroes speak (their turns stay under DW-11 and SC-09). Test: `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
+
+- Stone-age pilot VISUAL_SCRIPT_v2 (SCRIPT_v4.6, 55 shots, about 189 s estimated, 6 LTX clips 510 frames) saved under docs/research/stoneage_pilot_2026-11-07/; awaits the creator on duration and handprint type. Costs $0.

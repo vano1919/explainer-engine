@@ -301,6 +301,19 @@ def report(doc_or_text, *, allow: list[dict] | None = None) -> list[dict]:
     return found + ([s] if s else [])
 
 
+def script_text(raw: str) -> str:
+    """The spoken lines of a markdown script: headings, the notation line and every block after a
+    "## Measured" / "## Taken" / "## Open" heading are working notes, not words the viewer hears (creator 2026-11-07)."""
+    out: list[str] = []
+    for ln in raw.splitlines():
+        if re.match(r"##\s+(?:Measured|Taken|Not taken|Open)", ln):
+            break
+        if ln.startswith("#") or ln.startswith("Notation:"):
+            continue
+        out.append(re.sub(r"^[A-Z][A-Za-z ]*(?:\([^)]*\))?(?:\s*\[[^\]]*\])*:\s*", "", ln))
+    return "\n".join(out)
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("path")
@@ -310,6 +323,8 @@ def main(argv: list[str] | None = None) -> int:
     path = Path(a.path)
     allow = json.loads(Path(a.allow).read_text(encoding="utf-8")) if a.allow else load_allow(path)
     raw = path.read_text(encoding="utf-8")
+    if path.suffix == ".md":
+        raw = script_text(raw)
     found = report(json.loads(raw) if path.suffix == ".json" else raw, allow=allow)
     if a.json:
         print(json.dumps(found, indent=1))

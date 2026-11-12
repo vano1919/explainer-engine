@@ -1,0 +1,114 @@
+{
+ "note": "Stone-age pilot, first 10 pictures (VISUAL_SCRIPT_v3 + CAST_REGISTRY_v1, 2026-11-07). Not run, nothing paid. Appearance blocks are verbatim from CAST_REGISTRY_v1 (ID-01). refs 'out:<name>' = an earlier job's output, used only after the creator approves it (RF-05). Measures: identity (Marcus in sh_marcus, m_street, i01, i02, pm01, pm02, m_hall; Ura in sh_ura, pu04, m_hall), master layouts, RF-03 (i02 = master as palette donor; pm01, pu04 = sheet -> pose; m_hall = two sheets; pm02 = no-sheet control).",
+ "jobs": [
+  {
+   "name": "sh_marcus",
+   "purpose": "RF-02 sheet SH-MARCUS (text-only). Reference for every Marcus pose (PM-*); identity baseline.",
+   "refs": [],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. A character model sheet on a plain light-grey background: the same young man shown four times side by side, full body, standing straight, all at the same size and height: front view, three-quarter view, side view facing right, back view. Even soft light, no shadow on the ground, no text, no labels. Hands empty at his sides. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows."
+  },
+  {
+   "name": "m_street",
+   "purpose": "Master M-STREET -> S01-01 (M), first frame of c6 (S16-01), blurred plate of S16-04. Marcus identity check without a reference.",
+   "refs": [],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Wide view at eye level of a Manhattan crosswalk at night in the rain: wide white crosswalk stripes on wet black asphalt, a round puddle at the kerb reflecting red and yellow lights, one street lamp, a bicycle chained to the lamp post, tall buildings with small lit windows far behind. Marcus stands at the kerb in the left third, near and large, head bowed to the phone in his right hand, the round puddle just in front of his sneakers. The bicycle is chained to the lamp post behind him. The crosswalk stripes lead away to the right; far buildings and car lights are small. Exactly one person. Thin rain streaks, blue-black night, yellow and red reflections. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows. The phone: a black smartphone, 15 cm, in a plain black case, one cracked corner on the screen glass at the top right."
+  },
+  {
+   "name": "i01_puddle",
+   "purpose": "Insert I-01 -> S01-02, first frame of LTX c1 (a blurred-ground close-up, SR-06). Tests the registry's sneakers/jeans in a part view.",
+   "refs": [],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Close-up, low view at ground level: one white sneaker and the bottom of the dark-blue jeans stepping into a round rain puddle at the kerb; the edge of one white crosswalk stripe on wet black asphalt; the puddle reflects red and yellow city lights; everything behind is soft and blurred, only colour and light. No face, no other people. Only Marcus's right foot and lower leg are in the picture. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows."
+  },
+  {
+   "name": "m_tundra",
+   "purpose": "Master M-TUNDRA -> first frame of c2 (S02-01), blurred plate of S02-02, S03-01, S03-03; palette donor of I-02/I-03. Tests the mammoth sizes and Marcus far and small.",
+   "refs": [],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Wide low view of a snowy open valley at dusk: flat white snow, a low dark ridge far behind, a pale orange and violet sky, a few bare dark shrubs. Three mammoths walk across the middle distance from left to right, the big one first and the small one last. Marcus stands in the near lower-left corner seen from behind, small against the herd, his breath a white puff, a line of his footprints behind him. Exactly one person and three mammoths. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows. Mammoths: three woolly mammoths with dark reddish-brown shaggy fur and long curved cream tusks; the big one 3.5 m, the middle one 3 m, the small one 2 m."
+  },
+  {
+   "name": "i02_snow",
+   "purpose": "Insert I-02 -> S01-03. RF-03 test 1: a location master as palette donor for that place's insert (must NOT copy the master's layout or figures).",
+   "refs": [
+    "out:m_tundra"
+   ],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Image 1 gives only the colours and light of the snowy valley; do not copy its layout or its figures. Close-up, low view at ground level: one white sneaker and the bottom of the dark-blue jeans sunk into fresh deep snow, snowflakes on the shoe; everything behind is soft and blurred white snow with orange and violet dusk light. No face, no other people, no animals. Only Marcus's right foot and lower leg are in the picture. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows."
+  },
+  {
+   "name": "pm01_marcus_talk",
+   "purpose": "Pose PM-01 (cut-out for 7 D shots: S02-02, S04-03, S05-03, S07-03, S08-03, S11-01, S13-04). RF-03 test 2: character sheet -> close-up identity (face per ID-05).",
+   "refs": [
+    "out:sh_marcus"
+   ],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Image 1 is Marcus's model sheet: keep the face, hair, clothes and proportions exactly; do not copy its layout or background. Close-up from the chest up, three-quarter view: Marcus faces the left side of the picture and looks left, worried, mouth slightly open as if speaking. The frame cuts at mid-chest. Exactly one person. Plain light-grey background, even soft light, no text. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows."
+  },
+  {
+   "name": "pm02_marcus_alarmed",
+   "purpose": "Pose PM-02 -> S03-01. Deliberately text-only: A/B against pm01 (sheet vs no sheet, same face text) measures what the sheet adds to identity.",
+   "refs": [],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Close-up from the chest up, front view: Marcus raises both hands to shoulder height, palms out, eyes wide, eyebrows up, alarmed, mouth open. The frame cuts at mid-chest. Exactly one person. Plain light-grey background, even soft light, no text. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows."
+  },
+  {
+   "name": "sh_ura",
+   "purpose": "RF-02 sheet SH-URA (text-only). Reference for Ura's poses and every picture with Ura; checks that the mask hides the mouth (DL-03 mouth-hidden fallback).",
+   "refs": [],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. A character model sheet on a plain light-grey background: the same old shaman shown four times side by side, full body, standing straight, all at the same size and height: front view, three-quarter view, side view facing right, back view. Even soft light, no shadow on the ground, no text, no labels. Hands empty at his sides. Ura: an old shaman, 1.80 m, his face hidden by a bone-white deer-skull mask with two tall branching brown antlers, a long dark-brown fur cloak to the ankles over a dark-blue tunic, brown leather boots. A long grey beard hangs below the mask."
+  },
+  {
+   "name": "pu04_ura_drum",
+   "purpose": "Pose PU-04 -> S03-03 (and S13 drum beats). RF-03 test 3: sheet -> medium pose with a prop (drum from text; the prop sheet PR-STONE comes later).",
+   "refs": [
+    "out:sh_ura"
+   ],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Image 1 is Ura's model sheet: keep the face, hair, clothes and proportions exactly; do not copy its layout or background. Medium view from the knees up, three-quarter view: Ura faces the right side of the picture, holds the drum up in his left hand and raises the bone beater high in his right, about to strike. Exactly one person. Plain light-grey background, even soft light, no text. Ura: an old shaman, 1.80 m, his face hidden by a bone-white deer-skull mask with two tall branching brown antlers, a long dark-brown fur cloak to the ankles over a dark-blue tunic, brown leather boots. A long grey beard hangs below the mask. The drum: a round flat hand drum, 0.5 m across, pale cream stretched hide on a dark-brown wooden rim, struck with a short white bone beater."
+  },
+  {
+   "name": "m_hall",
+   "purpose": "Master M-HALL -> S04-01 (M), S05-01 (C), first frame of c3 and c4, blurred plate of 13 D shots. RF-03 test 4: two sheets as references in a five-person master (RF-04 order: people as named). Identity: Marcus is in 6 of the 10 pictures, Ura in 3.",
+   "refs": [
+    "out:sh_ura",
+    "out:sh_marcus"
+   ],
+   "size": [
+    1280,
+    720
+   ],
+   "prompt": "xworld style, hand-drawn 2D cartoon with bold black ink outlines and flat bright colours. Images 1 and 2 are Ura's and Marcus's model sheets: faces and clothes only, not their layout. Wide view at eye level of a large cave hall lit by a low dying fire: a ring of stones in the middle with red embers and two small flames; on the back wall a golden-yellow painting of tall towers like a city skyline; grey-brown rock. Ura stands left, near and large, facing right, lowering his drum. Marcus kneels right of the fire, facing left, his phone in both hands. The three hunters sit at the back right, small, in shadow. Exactly five people. Ura: an old shaman, 1.80 m, his face hidden by a bone-white deer-skull mask with two tall branching brown antlers, a long dark-brown fur cloak to the ankles over a dark-blue tunic, brown leather boots. A long grey beard hangs below the mask. Marcus: a young man of 25, 1.75 m, short dark-brown hair, light skin, a medium-grey hoodie with the hood down, dark-blue jeans and plain white sneakers. Face: oval, clean-shaven, straight nose, thick dark brows. Hunters: adult men, 1.70 m, dark-brown shoulder-length hair, bare arms, knee-length fur tunics: one grey fur, one brown fur, one cream fur with dark spots. Faces: broad and bearded (grey), thin (brown), round with a moustache (spotted)."
+  }
+ ]
+}

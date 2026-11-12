@@ -55,6 +55,7 @@ HOMES = {
     "HI": "SCENE_REUSE_RULES.md",
     "DL": "SCENE_REUSE_RULES.md",
     "AS": "SCENE_REUSE_RULES.md",  # cut assembly gate (D-121, 2026-11-07)
+    "LX": "SCENE_REUSE_RULES.md",  # LTX clips in the edit (systemic/next-video 217737d, merged 2026-11-12)
     "CT": "SHOT_CONTINUITY.md",  # continuity cards of the shots of one scene (D-75, 2026-10-25)
     "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
     "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)

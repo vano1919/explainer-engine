@@ -594,7 +594,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # narrator's lines only (doc_findings): a hero may name a date inside a scene, and on /3 SC-07 (PV-48) reads the same
     # BP-15 lexicon on those lines, so N-14 is not repeated there. N-15: a narration hold over BP-10's limit.
     from explainer_engine.scripting import scene_lint as _scene
-    for f in narration_lint.lint(S.tts_text(doc), press=False, register=False) + narration_lint.doc_findings(doc, press=not _scene.binding(doc)):
+    for f in narration_lint.lint(S.narrator_tts_text(doc), press=False, register=False) + narration_lint.doc_findings(doc, press=not _scene.binding(doc)):
         _f(out, "PV-12", f.get("where", "-"), f"{f['rule']}: {f['detail']}", f["severity"])
     # board on the estimated read (rhythm, state, heroes, bubbles)
     if not [x for x in out if x["severity"] == "FAIL" and x["rule"] in ("PV-03", "PV-04")]:

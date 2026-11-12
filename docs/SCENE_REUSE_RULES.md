@@ -106,6 +106,16 @@ now have code. Every rule is checked by `production/cut_plan.py` (`CHECKS` names
 | AS-13 | **A place's state changes only on an event shot** (the fire burning -> embers -> out): a state that changes between shots with no `event` naming it is flagged. | REVIEW |
 | AS-14 | **No paid LTX run on a prompt FAIL:** every Modal launcher runs `production/paid_preflight.py` before `.remote()` (KP-04, KP-11, KP-22, KP-55, KP-59..KP-62 for LTX; RF-/HI- for Qwen). The c3 prompt broke KP-04, KP-22, KP-55 and KP-59 and was paid anyway. | FAIL |
 
+## 4c. LTX clips in the edit (LX-) — merged from `systemic/next-video` 217737d (2026-11-12, v4.3 P0.3); retired-era tool (LTX), the edit lessons stand; the creator 2026-11-07 19:17 UTC; extends KP-16, KP-36, BP-108, BP-164
+
+| ID | Rule | Severity |
+|---|---|---|
+| LX-01 | **Handles:** every clip is generated about 0.5 s longer at the head and 0.5 s at the tail than its slot (frames rounded up to 8k+1), so the edit can choose its in and out points. | REVIEW |
+| LX-02 | **The first frames are not used:** the head handle (the model's warm-up, where the picture can morph away from the first frame) is trimmed; the shot starts at the first frame after the warm-up that still matches the keyframe (BP-164 frame0 check on the kept first frame). | FAIL when the kept head morphs |
+| LX-03 | **The last second lands in the cut:** the clip's settle (KP-16) sits on the out point; the cut is on the settle or on a motivated action beat, never mid-morph; a frozen tail (BP-164) is trimmed, not shown. | REVIEW |
+| LX-04 | **Speed:** a clip may be retimed in the edit between 0.85x and 1.15x (frame blending / optical flow, pitch-free since clip audio is not used for speech) to fit its slot; outside that band it is regenerated with a length that fits. Never retime a shot with visible lip-sync. | REVIEW |
+| LX-05 | **Joins:** a clip that follows or precedes a still of the same picture starts or ends on that picture's framing (ED-02), and the camera is at rest at the cut (ED-08). | REVIEW |
+
 ## 5. Conflicts with existing rules and how they are resolved (D-120)
 
 | Existing rule | Conflict | Resolution |
