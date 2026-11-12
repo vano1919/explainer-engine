@@ -263,6 +263,11 @@
         "archived"
       ]
     },
+    "era_line": {
+      "type": "string",
+      "pattern": "^The world is [^:]+: the only light sources are [^,].*, and everything is made of [^.]+\\.$",
+      "description": "the episode's one era sentence of the preset's era_line_shape, added after the scene in every Gemini Task prompt word for word (GC-22); gemini_task/ep.era_line also refuses never-words"
+    },
     "look_id": {
       "type": "string",
       "pattern": "^[a-z0-9_]+$",

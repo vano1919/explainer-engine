@@ -50,7 +50,7 @@ Check every prompt against these. Quote the shot id and the words for each miss.
    the era, and the prompt carries the episode's era line word for word.
 8. A scene prompt says to keep the faces, hair, costumes and props of the reference pictures after image 1 (image 1
    is the style anchor and gives the look only).
-9. An end frame of a `wan` shot attaches its own start frame first (GC-09).
+9. An end frame of a `wan` shot attaches the style anchor of its shot type first and its own start frame second (GC-09, GC-21).
 
 ## The list as a whole
 

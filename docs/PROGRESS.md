@@ -5504,3 +5504,34 @@ The delta audit (`BAKEOFF_DELTA_AUDIT.md`) closed A1, A3, A5 and B2-B6 and found
   no secrets or Georgian, two-minute read).
 - Open question closed (creator, 18:18 UTC): numbers are a frame with a ±10 % band, never a template (07 "Numbers are a frame", 03); the child-hero question is dropped.
 - Next: A2 (Opus high) builds the exporter and the review intake against this manifest.
+
+## 2026-11-12 — Gemini Task route A2: the code (pack export, T0 gate, reviews, shot queue, batches, redo; free, nothing sent)
+
+- `explainer_engine/gemini_task/` (CLI `python -m explainer_engine.gemini_task`): `texts.py` fills the manifest's placeholders
+  (undeclared or unfilled = ContractError, comments stripped, never-word and secret/Georgian gates on the template and the
+  tool-bound values); `pack.py` exports `planning/gemini_task/drive/rules/00..08` with a pack version
+  `<date>.<commit8>.<digest>` and copies the main style and approved refs; `gate.py` renders T0 and records its answer into
+  `config/gemini_t0_record.json` (6 = PASS, 4-5 = that batch size, else FAIL with a four-option card; `queue_on_drive` only
+  when Drive read matched the version and every prompt came back AS GIVEN, spec Q3); every other message refuses until T0 is PASS.
+- `review.py`: P0-P4; a BLOCKER without a source is an IDEA; an ACCEPT needs the artefact changed; a REJECT needs a source;
+  round-2 HOLD or a DEADLOCK block makes a creator card; a stage passes only closed, and turns STALE when its file changes (GC-26).
+- `queue.py`: `shot_queue/1` from the script and the timed read (`episode/timing`, ±10 % frame rows, the creator 18:18 UTC);
+  image 1 = the style anchor of the shot type from `config/gemini_task.json` `style_pack` (Q4, GC-21), an end frame's own start
+  frame is image 2 (GC-09 amended; drive_pack 04 rule 9 updated), then portraits (+ full body for wide/C/G shots, Q7), then the
+  place; R1 portraits and places, R2 full bodies with their portrait (GC-23); batches grouped by place and anchor (Q10), at most
+  the T0 size and 10 attachments (engineering default); map shares by seconds with REVIEW outside the frame; Wan clip length
+  from `training/pods/wan/launch.json` (read only).
+- `batch.py`: P5-P10; intake maps downloads by order and refuses a count other than MADE (Q9), runs the free turn-pack gates
+  plus a card check; the limit marks a batch partial and P9 resumes it; a redo is the original prompt plus one positive
+  correction sentence, only after the phase is done, and a failed redo goes to the creator (Q11, GC-25); a picture ledger.
+- `episodes/ep_toba/episode.json`: `era_line` (engineering wording, to be confirmed in A3/A5); the episode manifest schema
+  gains the optional `era_line` with the preset's shape as its pattern (additive; a wrong shape is refused).
+- Dry export of Toba (free): pack version `2026-11-12.cd759bea.36fa10dd`, T0 message of six prompts, 138 shots, 10 references,
+  155 pictures, 43 batches; planned shares map 12.5 %, still 52 %, wan 35.5 % (REVIEW against 10/30/60, untimed); 23 Wan shots
+  are longer than one clip.
+- Stale text reported (ICW-01 precedence): the Toba registry texts still carry the old look words ("Luminescent Chiaroscuro …
+  docudrama portrait of", 161 GC-04 REVIEW rows), to be rewritten in A5; GC-21 named Qwen without the legacy mark (fixed, D-131).
+- GC-09, GC-20, GC-21, GC-23..GC-27 now name the module that checks them.
+- Test: `tests/unit/test_gemini_task_flow.py` (fill, pack, era line, T0 sizes and modes, report parsing, queue order and
+  batches, frame and Wan clip, review deadlock, full batch flow with limit, resume and redo, P5/P8, Toba dry export).
+- Next: A3 (Sonnet) runs T0 in the browser and records it.
