@@ -69,7 +69,7 @@ def test_a_folder_with_an_older_manifest_is_not_v43(tmp_path):
 
 
 def test_the_runners_g1_names_a_retired_route():
-    doc = {"shots": [{"shot_id": "S1", "route": "wan"}, {"shot_id": "S2", "route": "J5"},
+    doc = {"shots": [{"shot_id": "S1", "route": "video"}, {"shot_id": "S2", "route": "J5"},
                      {"shot_id": "S3", "generation_mode": "ltx"}]}
     assert retired.retired_routes_in(doc) == ["S2: route J5", "S3: generation_mode ltx"]
     assert "no_retired_route" in (ROOT / "explainer_engine/episode/run.py").read_text()

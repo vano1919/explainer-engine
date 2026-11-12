@@ -1068,9 +1068,10 @@
           "enum": [
             "map_action",
             "still_25d",
+            "video",
             "wan"
           ],
-          "description": "v4.3 route (D-131, plan P1.4): map_action = Python map with an action layer, still_25d = picture moved by the layered 2.5D renderer with motion imitation, wan = a body performs an action or a hero speaks (Q4, Q7). Filled by explainer_engine.episode.router."
+          "description": "v4.3 route (D-131, D-132, plan P1.4): map_action = Python map with an action layer, still_25d = picture moved by the layered 2.5D renderer with motion imitation, video = a body performs an action or a hero speaks (Q4, Q7), made by LTX-2.5 distilled on Modal (D-132). wan is D-131's name of the video route; the router rewrites it to video. Filled by explainer_engine.episode.router."
         },
         "route_reason": {
           "type": "string",
@@ -1581,7 +1582,10 @@
           "then": {
             "properties": {
               "route": {
-                "const": "wan"
+                "enum": [
+                  "video",
+                  "wan"
+                ]
               }
             },
             "required": [

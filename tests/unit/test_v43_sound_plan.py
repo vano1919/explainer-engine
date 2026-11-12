@@ -24,9 +24,9 @@ def _script(shots=None, lines=None, era="prehistoric_pleistocene"):
         {"shot_id": "A2", "segment_id": "S01", "target_duration_seconds": 3.0, "location_id": "loc_caldera",
          "audio_line_ids": ["L2"], "action_start_state": "the band walks down the slope", "route": "map_action"},
         {"shot_id": "B1", "segment_id": "S02", "target_duration_seconds": 3.0, "location_id": "loc_cave",
-         "audio_line_ids": ["L3"], "action_start_state": "inside the cave shelter by the hearth", "route": "wan"},
+         "audio_line_ids": ["L3"], "action_start_state": "inside the cave shelter by the hearth", "route": "video"},
         {"shot_id": "B2", "segment_id": "S02", "target_duration_seconds": 3.0, "location_id": "loc_cave",
-         "audio_line_ids": [], "action_start_state": "inside the cave shelter, quiet", "route": "wan",
+         "audio_line_ids": [], "action_start_state": "inside the cave shelter, quiet", "route": "video",
          "sound_events": [{"kind": "spot", "what": "a distant eruption boom", "at_s": 1.5, "picture_event": "eruption"}]},
     ]
     lines = lines or [{"line_id": "L1", "text": "Then the mountain erupts."}, {"line_id": "L2", "text": "They keep moving."},
@@ -179,7 +179,7 @@ def test_the_level_gate_compares_routes_and_flags_one_that_is_louder(tmp_path):
     nar = _narration(tmp_path / "read.wav", 12.0, [(0.3, 1.5), (3.3, 4.5), (6.3, 7.5), (9.3, 10.5)])
     rep = stems.render(plan, SP.resolve(plan, lib), tmp_path / "even", library_root=lib, narration=nar)
     rows = {r["gate"]: r for r in rep["levels"]["rows"]}
-    assert set(rep["levels"]["groups"]["in_gaps_db"]) == {"map_action", "still_25d", "wan"}
+    assert set(rep["levels"]["groups"]["in_gaps_db"]) == {"map_action", "still_25d", "video"}
     voice = np.zeros(int(12 * SR), np.float32)
     bg = np.random.default_rng(1).standard_normal(int(12 * SR)).astype(np.float32) * 0.01
     bg[int(6 * SR):] *= 4.0     # the Wan shots' background 12 dB up
@@ -194,7 +194,7 @@ def test_the_level_gate_compares_routes_and_flags_one_that_is_louder(tmp_path):
 def test_one_route_is_nothing_to_compare_and_says_so():
     plan = SP.build(_script(), fps=FPS)
     for s in plan["shots"]:
-        s["route"] = "wan"
+        s["route"] = "video"
     rep = stems.level_report(plan, np.zeros(12 * SR, np.float32), np.ones(12 * SR, np.float32) * 0.01)
     assert all(r["status"] == "NOT_RUN" for r in rep["rows"])
 

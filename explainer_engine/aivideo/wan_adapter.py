@@ -130,6 +130,8 @@ def service_ceiling(service: str) -> float:
     (refused while the line is missing), any other service -> its ``per_episode`` line (refused when it has none)."""
     if service == "modal_usd":
         return float(spend_caps.modal()["per_run_usd"])
+    if service == "modal_ltx_usd":   # D-132: the video route's own line
+        return float(spend_caps.modal_ltx()["per_run_usd"])
     v = spend_caps.episode_ceiling(service)
     if v is None:
         raise spend_caps.OverCeiling(f"no {service} line in config/spend_caps.json: it spends nothing without the creator's line")
@@ -137,16 +139,22 @@ def service_ceiling(service: str) -> float:
 
 
 WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
+WAN_JOBS = "explainer_engine.training.pods.wan.modal_wan_jobs"
 
 
-def launch_problems(launch: dict | None) -> list[str]:
+def _jobs(module: str | None = None):
+    """The worker module whose launch rules a backend follows (Wan's by default; LTX's for route video since D-132)."""
+    import importlib
+    return importlib.import_module(module or WAN_JOBS)
+
+
+def launch_problems(launch: dict | None, jobs: str | None = None) -> list[str]:
     """What keeps a Wan launch file from a paid run (the worker's own check, ``training/pods/wan/modal_wan_jobs``): every pin of
     the model (repo, revision, file shas), the pipeline class, every generation setting, the HF output folder, the dated price
     and the caps must be written down (OR-22, OR-23), none left None."""
     if not isinstance(launch, dict):
-        return ["no launch file (training/pods/wan/launch.json)"]
-    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
-    return WJ.launch_problems(launch)
+        return [f"no launch file ({getattr(_jobs(jobs), 'LAUNCH_PATH', 'launch.json')})"]
+    return _jobs(jobs).launch_problems(launch)
 
 
 class ModalWanBackend(Backend):
@@ -163,6 +171,14 @@ class ModalWanBackend(Backend):
     name = "modal_wan"
     paid = True
     service = "modal_usd"
+    worker = WORKER
+    jobs_module = WAN_JOBS
+    failed_mark = "WAN_FAILED"
+    keep_audio = False   # Wan makes no sound; LTX's clips keep theirs (aivideo/ltx_modal)
+    spend_line = staticmethod(lambda: spend_caps.modal())   # the creator's line this backend's runs stay under
+
+    def _wj(self):
+        return _jobs(self.jobs_module)
 
     def __init__(self, launch: dict | None = None, ladder: dict | None = None, *, runner=None, fetch=None,
                  gpu: str = "A100-80GB", cores: int = 8, ram_gib: int = 64, env=None):
@@ -187,22 +203,21 @@ class ModalWanBackend(Backend):
 
     def refusals(self) -> list[str]:
         from explainer_engine.cloud import modal_run as MR
-        out = launch_problems(self.launch)
+        WJ = self._wj()
+        out = launch_problems(self.launch, self.jobs_module)
         rung = MR.next_rung(list(self.ladder.get("done") or []), self.ladder.get("red"))
         if rung != "L4":
             out.append(f"the OR-37 ladder is at {rung or 'a red rung'}, not L4: L0-L3 run first, in order")
-        elif isinstance(self.launch, dict) and not launch_problems(self.launch):
-            from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+        elif isinstance(self.launch, dict) and not launch_problems(self.launch, self.jobs_module):
             old = MR.stale(self.ladder, WJ.proof(self.launch))
             if old:
                 out.append(f"the ladder's rung(s) {old} were proved on another launch file or worker: run them again")
         if self.measured_s_per_clip_s is None:
             out.append("no speed measured on L3")
-        from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
         if not WJ.GO.match(str(self.env.get("EE_MODAL_GO") or "")):
             out.append("EE_MODAL_GO is not '<the creator's message id>:<the plan's sha256[:12]>'")
         try:
-            spend_caps.modal()
+            self.spend_line()
         except spend_caps.OverCeiling as exc:
             out.append(str(exc))
         if self.runner is None or self.fetch is None:
@@ -270,7 +285,7 @@ class ModalWanBackend(Backend):
 
     def generate(self, job: WanJob, out_mp4: Path) -> dict:
         from explainer_engine.cloud import modal_run as MR
-        from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+        WJ = self._wj()
         bad = self.refusals() + self.job_refusals(job)
         if bad:
             raise ConfigError(f"{job.shot_id}: the Modal Wan backend refuses ({'; '.join(bad)}); nothing was sent "
@@ -290,7 +305,8 @@ class ModalWanBackend(Backend):
                 "native": {k: nat[k] for k in ("fps", "width", "height", "frames")}}
 
         def done(info):
-            return dict(info, conform=conform(native, final, fps=timeline.fps, width=timeline.width, height=timeline.height))
+            return dict(info, conform=conform(native, final, fps=timeline.fps, width=timeline.width, height=timeline.height,
+                                              audio=self.keep_audio))
         if self._try_fetch(job, out_mp4):   # the same job of the same plan and launch is already made: nothing is sent
             return done(dict(base, app_id=None, reused=True, billed_usd=0.0,
                              billed_basis="already in the run's HF folder: not sent"))
@@ -299,7 +315,7 @@ class ModalWanBackend(Backend):
                                         launch_sha=WJ.launch_sha(self.launch), commit=self.commit()), ensure_ascii=False),
                         encoding="utf-8")
         try:
-            rc, text = self.runner(["modal", "run", "--detach", f"{WORKER}::main", "--job", str(spec)])
+            rc, text = self.runner(["modal", "run", "--detach", f"{self.worker}::main", "--job", str(spec)])
         except Exception as exc:  # noqa: BLE001 - the answer is lost: the app may still run (A4)
             probs = self._stop(None)
             if self._try_fetch(job, out_mp4):
@@ -312,7 +328,7 @@ class ModalWanBackend(Backend):
         app_id = MR.parse_app_id(text)
         if rc != 0:
             self._stop(app_id)
-            if WJ.WAN_FAILED in (text or ""):
+            if self.failed_mark in (text or ""):
                 raise ClipFailed(f"{job.shot_id}: the model made no clip (app {app_id}); the app was stopped")
             raise InfraError(f"{job.shot_id}: modal run exited {rc} (app {app_id}); the app was stopped; not retried")
         if not self._try_fetch(job, out_mp4):
@@ -331,10 +347,12 @@ class ModalWanBackend(Backend):
             return None
 
 
-def conform(src: Path, dst: Path, *, fps: int, width: int, height: int) -> dict:
+def conform(src: Path, dst: Path, *, fps: int, width: int, height: int, audio: bool = False) -> dict:
     """The free CPU step after a Wan clip (final audit A2): the model's own rate and size become the timeline's. Frames are
     repeated or dropped to the timeline's rate (no interpolation, no new pixels) and the picture is scaled with Lanczos and
-    centre-cropped to the timeline's aspect; the length stays. A clip already at the timeline's rate and size is copied."""
+    centre-cropped to the timeline's aspect; the length stays. A clip already at the timeline's rate and size is copied.
+    ``audio`` keeps the clip's own sound (LTX makes speech and effects with the picture, D-132): AAC 48 kHz in the mp4, and a
+    48 kHz stereo wav beside it (``<dst>.audio.wav``) for the sound stems; without it the sound is dropped (Wan has none)."""
     import subprocess
 
     import cv2
@@ -345,24 +363,35 @@ def conform(src: Path, dst: Path, *, fps: int, width: int, height: int) -> dict:
     cap.release()
     if have == (int(fps), int(width), int(height)):
         dst.write_bytes(src.read_bytes())
-        return {"conformed": False, "native": list(have)}
+        return dict({"conformed": False, "native": list(have)}, **(_audio_out(dst) if audio else {}))
     vf = f"fps={int(fps)},scale={int(width)}:{int(height)}:force_original_aspect_ratio=increase:flags=lanczos," \
          f"crop={int(width)}:{int(height)}"
     r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", vf, "-c:v", "libx264", "-crf", "12",
-                        "-pix_fmt", "yuv420p", "-an", str(dst)], capture_output=True, text=True)
+                        "-pix_fmt", "yuv420p", *(["-c:a", "aac", "-b:a", "192k", "-ar", "48000"] if audio else ["-an"]),
+                        str(dst)], capture_output=True, text=True)
     if r.returncode != 0 or not dst.is_file():
         raise ConfigError(f"conform of {src.name} failed: {(r.stderr or '')[-300:]}")
-    return {"conformed": True, "native": list(have), "timeline": [int(fps), int(width), int(height)]}
+    return dict({"conformed": True, "native": list(have), "timeline": [int(fps), int(width), int(height)]},
+                **(_audio_out(dst) if audio else {}))
 
 
-def fit_rows(shots: list[dict], launch: dict | None) -> list[dict]:
+def _audio_out(clip: Path) -> dict:
+    """The clip's own sound as a 48 kHz stereo wav beside it (``<clip>.audio.wav``); ``{"audio": None}`` when it has none."""
+    import subprocess
+    wav = Path(clip).with_suffix(".audio.wav")
+    r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vn", "-ac", "2", "-ar", "48000", str(wav)],
+                       capture_output=True, text=True)
+    return {"audio": str(wav) if r.returncode == 0 and wav.is_file() and wav.stat().st_size > 44 else None}
+
+
+def fit_rows(shots: list[dict], launch: dict | None, jobs: str | None = None) -> list[dict]:
     """G1 (final audit A2): every Wan shot fits one clip of the pinned model; NOT_RUN while the model's limits are not pinned.
     The remedies of a longer shot: split it in the script, or chain two clips on frame[-5] (not built yet)."""
-    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
-    wan = [s for s in shots if s.get("route") == "wan"]
+    WJ = _jobs(jobs)
+    wan = [s for s in shots if s.get("route") == "video"]
     if not isinstance(launch, dict) or WJ.native_problems(launch):
-        return [G.row("wan_shots_fit_the_model", None, "NOT_RUN: the Wan model's native limits are not pinned in "
-                      "training/pods/wan/launch.json", len(wan))]
+        return [G.row("video_shots_fit_the_model", None, "NOT_RUN: the video model's native limits are not pinned in "
+                      f"{getattr(WJ, 'LAUNCH_PATH', 'its launch file')}", len(wan))]
     longest = WJ.max_seconds(launch)
     long_ = []
     for s in wan:
@@ -370,7 +399,7 @@ def fit_rows(shots: list[dict], launch: dict | None) -> list[dict]:
             WJ.native_spec(launch, float(s.get("target_duration_seconds") or 0))
         except ValueError:
             long_.append(f"{s.get('shot_id')}: {float(s.get('target_duration_seconds') or 0):g} s")
-    return [G.row("wan_shots_fit_the_model", not long_, f"{len(long_)} of {len(wan)} Wan shot(s) are longer than one clip of "
+    return [G.row("video_shots_fit_the_model", not long_, f"{len(long_)} of {len(wan)} video shot(s) are longer than one clip of "
                   f"{launch.get('model_repo')} ({longest:.2f} s at {launch['native']['fps']} fps): split the shot in the "
                   "script, or chain two clips on frame[-5] (final audit A2)", long_[:30])]
 
@@ -380,10 +409,10 @@ def clip_name(shot_id: str, seed: int) -> str:
     return f"{shot_id}_seed{seed}.mp4"
 
 
-def hf_fetch(launch: dict, repo: str = "vano1919/tmr-artifacts"):
+def hf_fetch(launch: dict, repo: str = "vano1919/tmr-artifacts", jobs: str | None = None):
     """The default ``fetch`` of ModalWanBackend: the worker's clip from its run's folder in HF ``hf_out``
     (``<hf_out>/<run_id>/<shot>/``, uploaded as it was made, OR-33) and its ``measured.json`` beside it, when there is one."""
-    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+    WJ = _jobs(jobs)
 
     def fetch(job: WanJob, out_mp4: Path) -> None:
         from huggingface_hub import hf_hub_download
@@ -590,13 +619,14 @@ def _plan_spent(run, plan_id: str) -> float:
 
 def episode_total(backend: Backend, run) -> EpisodeTotal | None:
     """The episode-wide total of a paid service with an episode line (``modal_usd`` -> ``modal.per_episode_usd``; B5)."""
-    if backend.service != "modal_usd":
+    lines = {"modal_usd": spend_caps.modal, "modal_ltx_usd": spend_caps.modal_ltx}
+    if backend.service not in lines:
         return None
     ep = (run.data.get("meta") or {}).get("episode")
     if not ep:
         raise ConfigError("the run ledger names no episode (meta episode): the episode's Modal line cannot be held")
     try:
-        return EpisodeTotal(ep, backend.service, float(spend_caps.modal(episode=True)["per_episode_usd"]))
+        return EpisodeTotal(ep, backend.service, float(lines[backend.service](episode=True)["per_episode_usd"]))
     except (ValueError, spend_caps.OverCeiling) as exc:
         raise ConfigError(f"{exc}; nothing was sent") from None
 
@@ -698,16 +728,16 @@ def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, appr
                               "sha256": rec["sha256"], "estimate_usd": 0.0})
         attempts.append(rec)
         if infra:
-            return {"shot_id": job.shot_id, "route": "wan", "backend": backend.name, "clip_path": None, "attempts": attempts,
+            return {"shot_id": job.shot_id, "route": "video", "backend": backend.name, "clip_path": None, "attempts": attempts,
                     "status": G.FAIL, "fallback": None, "stopped": "infrastructure", "estimate_usd_per_attempt": est["usd"]}
         if v["status"] != G.FAIL:
             final = out_dir / f"{job.shot_id}.mp4"
             final.write_bytes(clip.read_bytes())
-            return {"shot_id": job.shot_id, "route": "wan", "backend": backend.name, "clip_path": str(final),
+            return {"shot_id": job.shot_id, "route": "video", "backend": backend.name, "clip_path": str(final),
                     "attempts": attempts, "status": v["status"], "fallback": None, "estimate_usd_per_attempt": est["usd"]}
         seed += SEED_STEP
     if not fallback:
-        return {"shot_id": job.shot_id, "route": "wan", "backend": backend.name, "clip_path": None, "attempts": attempts,
+        return {"shot_id": job.shot_id, "route": "video", "backend": backend.name, "clip_path": None, "attempts": attempts,
                 "status": G.FAIL, "fallback": None, "estimate_usd_per_attempt": est["usd"]}
     from explainer_engine.production import layers25d as L25
     fb_shot = dict(shot or {"shot_id": job.shot_id}, target_duration_seconds=job.seconds,
@@ -716,7 +746,7 @@ def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, appr
         res = L25.render_clip(fb_shot, Path(job.start_picture), out_dir / f"{job.shot_id}.mp4", width=job.width,
                               height=job.height, fps=job.fps, script=script)
     except ContractError as exc:
-        return {"shot_id": job.shot_id, "route": "wan", "backend": backend.name, "clip_path": None, "attempts": attempts,
+        return {"shot_id": job.shot_id, "route": "video", "backend": backend.name, "clip_path": None, "attempts": attempts,
                 "status": G.FAIL, "fallback": {"error": str(exc)}, "estimate_usd_per_attempt": est["usd"]}
     return {"shot_id": job.shot_id, "route": "still_25d", "backend": backend.name, "clip_path": res["path"],
             "attempts": attempts, "status": res["gates"]["status"], "estimate_usd_per_attempt": est["usd"],

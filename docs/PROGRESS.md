@@ -5508,3 +5508,44 @@ left running. The 2K report with HF links is on `vano1919/tmr-artifacts`
 Finding: the worker's result carries torch's `TorchVersion`, so a local client without torch loses the answer
 (DeserializationError). LTX was settled by hand from the Modal app lifetime (258 s). torch CPU is now in the local venv.
 The fix is in the worker (`libs()` returns `str(...)`); it goes in only with the next GO, because it changes the worker sha.
+
+## 2026-11-12 19:40 UTC: D-132, the video route moves to LTX-2.5 distilled on Modal (work in progress, nothing paid)
+
+The creator picked LTX over Wan after the bake-off (19:10 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji).
+
+**Recorded and renamed**
+- D-132 is in the decision log.
+- The route is renamed `wan` → `video`. A legacy alias (`router.LEGACY_ROUTES`) and the schema enum keep old scripts valid, and the Toba data is migrated.
+- `config/spend_caps.json` gains the creator's `modal_ltx` line ($1 per run, 19:20 UTC, message ...WWqRxqiE28kSDxnNPn41fng; `core/spend_caps.modal_ltx()`).
+- `config/retired_era.json` says LTX-2.5 distilled is back on the Modal path only.
+
+**The adapter**
+- `aivideo/wan_adapter` now takes the worker module, the fail marker, the money line and the audio choice per backend.
+- With `keep_audio`, LTX's own sound survives the conform.
+
+**The new worker** (`training/pods/ltx/modal_ltx_jobs.py` + `launch.json`)
+- It carries the bake-off's pins and its audit lessons: clean deadline, attempt marker, Volume copy before the last HF flush, HF hash check, plain-JSON result.
+- It chains shots. Each next clip starts from the previous clip's last frame, and a clip the time left cannot finish is not started.
+- The preflight keeps every cap under 80 % of the creator's line, which is the ledger's own stop.
+- The session hook frees only its CPU rungs.
+
+**The love-scene test**
+- `training/pods/ltx/scene_run.py` turns a scene file into the worker's spec and reserves and settles the one launch in the ledger. Its scene is `training/pods/ltx/scenes/love_2026-11-12.json`.
+- The start picture is `main_style_5709.png`, cropped so the lantern is out of frame. It is on HF with its sha256.
+- Found: the project-files mount re-encodes PNGs (the sha256 changed on copy), so the start picture is pinned from a local copy and from HF, never from project files.
+
+Tests: `tests/unit/test_v43_ltx_jobs.py`.
+
+**Open**
+- The line-end gate and the 0.5 s audio overlap (the creator, 19:16 UTC).
+- `aivideo/ltx_modal.py`.
+- The docs, INDEX and CLAUDE.md wording.
+- The Fable OR-34 audit before the paid scene test.
+
+## 2026-11-12: Poly Haven re-published cannon_01_1k.blend (CI red on two legacy tests)
+
+`model.ph_cannon_01`'s upstream file changed: 1,232,944 → 1,235,389 bytes, now a zstd-compressed .blend. Its md5 6b7260e0 is the one Poly Haven's own API lists (api.polyhaven.com/files/cannon_01, checked 2026-11-12). The licence is still CC0.
+
+The new sha256 `e3d1de41…` is now in both `assets/library.json` and `blender/style_sheet_assets.json`. The vault copy (`assets/3d/model/model.ph_cannon_01/cannon_01_1k.blend`) was replaced and checked by sha256 on HF.
+
+Not checked: the poly count and the materials in Blender. The asset belongs to the retired Blender route.

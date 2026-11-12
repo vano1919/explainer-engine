@@ -111,9 +111,9 @@
    "page": "https://polyhaven.com/a/cannon_01",
    "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/cannon_01/cannon_01_1k.blend",
    "name": "cannon_01_1k.blend",
-   "sha256": "51fb00d2544af0d2e1362d9a933598a9b1753ffef2757e38dcabb0454161ba5e",
-   "bytes": 1232944,
-   "version": "1k blend, published 2022-03-16",
+   "sha256": "e3d1de4145242ebc95433e3c5d2049146664c37248f63f016f3d60e093020511",
+   "bytes": 1235389,
+   "version": "1k blend, published 2022-03-16; re-published by Poly Haven (zstd-compressed .blend, md5 6b7260e0 = api.polyhaven.com/files/cannon_01, checked 2026-11-12)",
    "tags": [
     "polyhaven",
     "prop",

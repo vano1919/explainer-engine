@@ -2502,7 +2502,7 @@
         2.2
       ],
       "shot_role": "teaser",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('sprint') (Q4)"
     },
     {
@@ -2563,7 +2563,7 @@
         2.7
       ],
       "shot_role": "teaser",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)"
     },
     {
@@ -2623,7 +2623,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)"
     },
     {
@@ -2680,7 +2680,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('steps to') (Q4)"
     },
     {
@@ -3071,7 +3071,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)"
     },
     {
@@ -3126,7 +3126,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('collapses') (Q4)"
     },
     {
@@ -3401,7 +3401,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)"
     },
     {
@@ -3953,7 +3953,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('wrapping') (Q4)"
     },
     {
@@ -4237,7 +4237,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)"
     },
     {
@@ -4294,7 +4294,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('turns to') (Q4)"
     },
     {
@@ -4861,7 +4861,7 @@
         "escalation_reason": "Preserve 3D canyon depth geometry as Kael and Sena trek along the narrow entrenched Shinfa river channel"
       },
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('trek') (Q4)"
     },
     {
@@ -4920,7 +4920,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)"
     },
     {
@@ -4977,7 +4977,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('digging') (Q4)"
     },
     {
@@ -5208,7 +5208,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('presses the charred wooden point of his heavy throwing spear against') (Q4)"
     },
     {
@@ -5269,7 +5269,7 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
@@ -5387,8 +5387,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "establish",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH003",
@@ -5447,8 +5447,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "action",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH004",
@@ -5506,8 +5506,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "reaction",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH005",
@@ -5567,8 +5567,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "exit",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH006",
@@ -5856,7 +5856,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)"
     },
     {
@@ -6081,7 +6081,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('walk') (Q4)"
     },
     {
@@ -6255,7 +6255,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)"
     },
     {
@@ -6369,7 +6369,7 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('climbs') (Q4)"
     },
     {
@@ -6539,7 +6539,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)"
     },
     {
@@ -6598,7 +6598,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('thrusts') (Q4)"
     },
     {
@@ -6771,7 +6771,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
@@ -6830,7 +6830,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
@@ -7001,7 +7001,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('buries') (Q4)"
     },
     {
@@ -7117,7 +7117,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
@@ -7177,7 +7177,7 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('positions the cooled, heat-treated stone core against') (Q4)"
     },
     {
@@ -7295,7 +7295,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('presses the tip of the antelope bone firmly against') (Q4)"
     },
     {
@@ -7358,7 +7358,7 @@
         "escalation_reason": "Lock precise hand and finger articulation as Sena binds the microlithic arrowhead onto the reed shaft with wet sinew"
       },
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('wrap') (Q4)"
     },
     {
@@ -7419,8 +7419,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "establish",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S08_SH005",
@@ -7537,7 +7537,7 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "reaction",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
@@ -7654,7 +7654,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('draws the sinew') (Q4)"
     },
     {
@@ -7886,7 +7886,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('carry') (Q4)"
     },
     {
@@ -8005,7 +8005,7 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('steps out') (Q4)"
     },
     {
@@ -8067,7 +8067,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lift') (Q4)"
     },
     {
@@ -8127,8 +8127,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "establish",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S09_SH003",
@@ -8187,8 +8187,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "action",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_thar_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_thar_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S09_SH004",
@@ -8247,8 +8247,8 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "shot_role": "reaction",
-      "route": "wan",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
+      "route": "video",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S09_SH005",
@@ -8425,7 +8425,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)"
     },
     {
@@ -8484,7 +8484,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('draws two microlithic') (Q4)"
     },
     {
@@ -8544,7 +8544,7 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
@@ -8604,7 +8604,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('extends two') (Q4)"
     },
     {
@@ -8664,7 +8664,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('presses an acacia bow and a bundle of microlithic arrows into') (Q4)"
     },
     {
@@ -9003,7 +9003,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('detaches') (Q4)"
     },
     {
@@ -9060,7 +9060,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('presses her red-ochre-coated palm firmly against') (Q4)"
     },
     {
@@ -9299,7 +9299,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('marches') (Q4)"
     },
     {
@@ -9359,7 +9359,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)"
     },
     {
@@ -9645,7 +9645,7 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('walks') (Q4)"
     },
     {
@@ -9704,7 +9704,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('tilts her head') (Q4)"
     },
     {
@@ -9765,7 +9765,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('stride') (Q4)"
     },
     {
@@ -10108,7 +10108,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)"
     },
     {
@@ -10220,7 +10220,7 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "route": "wan",
+      "route": "video",
       "route_reason": "a body performs an action a still cannot fake ('wrapped') (Q4)"
     },
     {

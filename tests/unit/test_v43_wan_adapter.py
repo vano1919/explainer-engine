@@ -133,7 +133,7 @@ def test_a_fail_is_retried_once_with_a_new_seed_then_kept(picture, tmp_path):
     be = Fake(["short", "good"])
     r = WA.run_shot(_job(picture), be, tmp_path / "out", tmp_path / "ledger.jsonl")
     assert [c[1] for c in be.calls] == [7, 7 + WA.SEED_STEP]
-    assert r["route"] == "wan" and r["status"] != "FAIL" and r["fallback"] is None
+    assert r["route"] == "video" and r["status"] != "FAIL" and r["fallback"] is None
     lines = [json.loads(x) for x in (tmp_path / "ledger.jsonl").read_text().splitlines()]
     assert [(x["attempt"], x["event"]) for x in lines] == [(1, "submit"), (1, "done"), (2, "submit"), (2, "done")]
     assert lines[3]["sha256"] and (tmp_path / "out" / "S9.mp4").is_file()
@@ -301,7 +301,7 @@ def test_the_wired_modal_backend_launches_detached_fetches_reserves_and_settles(
     m = WA.ModalWanBackend(LAUNCH, LADDER, runner=fm.runner, fetch=fm.fetch, env=_go(appr))
     run = _run(tmp_path / "run.json", 2.5)
     r = WA.run_shot(_modal_job(picture), m, tmp_path / "o", tmp_path / "l.jsonl", run=run, approval=appr)
-    assert r["route"] == "wan" and r["attempts"][0]["backend_info"]["app_id"] == "ap-AbCdEfGhIjKl12"
+    assert r["route"] == "video" and r["attempts"][0]["backend_info"]["app_id"] == "ap-AbCdEfGhIjKl12"
     assert fm.calls[0][:4] == ["modal", "run", "--detach", f"{WA.WORKER}::main"]
     spec = fm.specs[0]   # the run id, the plan and the launch travel with the job (A4, B9, B10)
     assert spec["run_id"] == WJ.run_id(appr.plan_sha256, LAUNCH) and spec["plan_sha256"] == appr.plan_sha256
@@ -319,7 +319,7 @@ def test_a_clip_already_in_the_runs_folder_is_not_launched_again(picture, tmp_pa
     fm.hf.add((WJ.run_id(appr.plan_sha256, LAUNCH), "S9", 7))
     run = _run(tmp_path / "run.json", 2.5)
     r = WA.run_shot(_modal_job(picture), m, tmp_path / "o", tmp_path / "l.jsonl", run=run, approval=appr)
-    assert r["route"] == "wan" and r["attempts"][0]["backend_info"]["reused"] is True
+    assert r["route"] == "video" and r["attempts"][0]["backend_info"]["reused"] is True
     assert not any(c[:2] == ["modal", "run"] for c in fm.calls) and run.spent("modal_usd") == 0.0
 
 
@@ -329,7 +329,7 @@ def test_a_lost_answer_is_reconciled_never_launched_twice(picture, tmp_path, cap
     r = WA.run_shot(_modal_job(picture), m, tmp_path / "o", tmp_path / "l.jsonl", run=_run(tmp_path / "run.json", 2.5),
                     approval=appr)
     assert sum(c[:2] == ["modal", "run"] for c in fm.calls) == 1 and ["modal", "app", "stop", "ap-Zz0123456789ab"] in fm.calls
-    assert r["route"] == "wan" and r["attempts"][0]["backend_info"]["reconciled"] is True
+    assert r["route"] == "video" and r["attempts"][0]["backend_info"]["reconciled"] is True
 
 
 def test_a_lost_answer_without_a_clip_stops_there_and_keeps_the_money_reserved(picture, tmp_path, caps):
@@ -357,7 +357,7 @@ def test_a_clip_the_model_failed_gets_the_one_retry_with_a_new_seed(picture, tmp
     m = WA.ModalWanBackend(LAUNCH, LADDER, runner=fm.runner, fetch=fm.fetch, env=_go(appr))
     r = WA.run_shot(_modal_job(picture), m, tmp_path / "o", tmp_path / "l.jsonl", run=_run(tmp_path / "run.json", 2.5),
                     approval=appr)
-    assert [s["seed"] for s in fm.specs] == [7, 7 + WA.SEED_STEP] and r["route"] == "wan" and r["status"] != "FAIL"
+    assert [s["seed"] for s in fm.specs] == [7, 7 + WA.SEED_STEP] and r["route"] == "video" and r["status"] != "FAIL"
 
 
 def test_the_yes_binds_the_plan_and_the_picture_binds_its_pin(picture, tmp_path, caps):
@@ -444,8 +444,8 @@ def test_a_native_clip_is_conformed_to_the_timelines_rate_and_size(tmp_path):
 
 def test_g1_names_every_wan_shot_longer_than_one_clip_of_the_model():
     launch = dict(LAUNCH, native={"fps": 16, "max_frames": 81, "sizes": [[1280, 720]], "use": [1280, 720]})
-    shots = [{"shot_id": "A", "route": "wan", "target_duration_seconds": 4.0},
-             {"shot_id": "B", "route": "wan", "target_duration_seconds": 7.8},
+    shots = [{"shot_id": "A", "route": "video", "target_duration_seconds": 4.0},
+             {"shot_id": "B", "route": "video", "target_duration_seconds": 7.8},
              {"shot_id": "C", "route": "still_25d", "target_duration_seconds": 9.0}]
     row, = WA.fit_rows(shots, launch)
     assert row["status"] == "FAIL" and row["measured"] == ["B: 7.8 s"] and "split the shot" in row["detail"]

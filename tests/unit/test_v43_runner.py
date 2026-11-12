@@ -297,7 +297,7 @@ def test_a_small_episode_rehearses_the_whole_chain(tmp_path, monkeypatch):
     timing = json.loads((root / "audio" / "timing.json").read_text())
     shots = json.loads((root / "production" / "shot_records.json").read_text())["shots"]
     assert [s["total_frames"] for s in shots] == [timing["shots"][s["shot_id"]]["frames"] for s in shots]
-    wan = next(s for s in shots if s["route"] == "wan")
+    wan = next(s for s in shots if s["route"] == "video")
     assert wan["fallback_for_wan"] and wan["clip_path"]                    # the rehearsal draws it with the 2.5D fallback
     clips = {r["gate"]: r["status"] for r in recs["clips"]["rows"]}
     assert clips["every_wan_shot_is_a_wan_clip"] == G.FAIL
@@ -332,7 +332,7 @@ def test_a_map_without_actions_fails_and_a_wan_shot_without_pictures_still_count
     Wan shot without its QA'd clip, never a PASS of 0."""
     doc = _script(("S01_SH001", "S01_SH008"), (1.0, 1.0))
     doc["shots"][1].pop("actions", None)
-    assert doc["shots"][0]["route"] == "wan" and doc["shots"][1]["route"] == "map_action"
+    assert doc["shots"][0]["route"] == "video" and doc["shots"][1]["route"] == "map_action"
     rows, _ = RUN.stage_clips(RUN.Episode(_episode(tmp_path, doc), size=(192, 108)), True)
     by = {r["gate"]: r for r in rows}
     assert by["every_wan_shot_is_a_wan_clip"]["status"] == G.FAIL and by["every_wan_shot_is_a_wan_clip"]["measured"] == ["S01_SH001"]

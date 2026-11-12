@@ -1,0 +1,64 @@
+{
+  "_doc": "The LTX launch file of modal_ltx_jobs.py (D-132, the creator 2026-11-12 19:10 UTC). Every pin is the bake-off's, which made two 10 s clips with sound on 2026-11-12 (run fae4ee9fb9d2_5dd040ac95c8, plan training/pods/bakeoff/plan_v43.json, variant ltx_distilled): the same LTX-2 code commit, CLI module, LTX-2.5 weights by sha256 (already on the Volume ee-weights at /w/model/Lightricks/LTX-2.5), size, rate, GPU and image. native.max_frames is the longest clip proven (241 = 10 s at 24 fps); a longer shot is split in the script. caps follow the creator's modal_ltx line ($1 per run, 2026-11-12 19:20 UTC); cold_start_s is the bake-off's measured overhead (258 s billed for 224 s of CLI work) rounded up.",
+  "app_name": "ee-ltx-jobs",
+  "model_repo": "Lightricks/LTX-2.5",
+  "model_revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+  "model_files": {
+    "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+    "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8",
+    "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+    "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5",
+    "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3"
+  },
+  "ltx_code": {
+    "repo": "https://github.com/Lightricks/LTX-2.git",
+    "commit": "e98f6d927d83c92ef2be6aec76c8440b19306e39"
+  },
+  "module": "ltx_pipelines.distilled",
+  "uses": {
+    "transformer": "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+    "text_encoder": "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+    "video_vae": "vae/ltx-2.5-video-vae-bf16.safetensors",
+    "audio_vae": "vae/ltx-2.5-audio-vae-bf16.safetensors",
+    "spatial_upsampler": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+  },
+  "settings_source": "the CLI's own defaults for LTX-2.5 (ltx_pipelines.utils.constants at LTX-2 e98f6d9), as in the bake-off",
+  "native": {
+    "fps": 24,
+    "max_frames": 241,
+    "sizes": [
+      [
+        1280,
+        704
+      ]
+    ],
+    "use": [
+      1280,
+      704
+    ],
+    "source": "the bake-off run fae4ee9fb9d2_5dd040ac95c8 (2 clips of 241 frames at 1280x704, 24 fps)",
+    "checked": "2026-11-12"
+  },
+  "sound": "native: LTX makes speech, effects and ambience with the picture (D-132)",
+  "gpu": "H100",
+  "cpu": 8,
+  "memory_gib": 96,
+  "usd_per_h": 5.0937,
+  "prices_date": "2026-11-07",
+  "base_image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+  "hf_hub_pin": "1.33.0",
+  "hf_out": "explainer-engine/ltx_route/out",
+  "scaledown_window_s": 2,
+  "caps": {
+    "smoke_usd": 0.4,
+    "run_usd": 1.0,
+    "cold_start_s": 60
+  },
+  "decided": {
+    "model": "LTX-2.5 distilled (the bake-off's ltx_distilled)",
+    "by": "creator",
+    "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji",
+    "at": "2026-11-12T19:10:06Z",
+    "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
+  }
+}

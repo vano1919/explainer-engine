@@ -5,8 +5,11 @@ Routes:
 - ``map_action``: geography, numbers, spread and comparison shots, drawn by Python over a letter-free plate (P4).
 - ``still_25d``: a picture moved through space by the layered 2.5D renderer with motion imitation (P5): camera moves, weather,
   fire, water, crowds at a distance, establishing shots, objects at rest, tableaux.
-- ``wan``: only where a body really performs an action a still cannot fake (running, fighting, throwing, handling an object,
-  a fall), and the speaker's performance shot of a played scene (Q7: a Wan performance clip, no lip-sync, no talking still).
+- ``video``: only where a body really performs an action a still cannot fake (running, fighting, throwing, handling an object,
+  a fall), and the speaker's performance shot of a played scene (Q7: a performance clip, no lip-sync, no talking still). Since
+  D-132 (the creator, 2026-11-12 19:10 UTC, after the bake-off) the clip is made by LTX-2.5 distilled on Modal
+  (``aivideo/ltx_modal.ModalLtxBackend``); the route was called ``wan`` under D-131 and a script that still says ``wan`` is
+  read as ``video`` (``LEGACY_ROUTES``).
 
 The router is deterministic: the same shot always gets the same route. A shot may pin its route by hand
 (``route_locked: true`` with its own ``route_reason``); the router then keeps it and only checks it.
@@ -18,7 +21,8 @@ from collections import defaultdict
 
 from explainer_engine.standards import sourced_rules as SR
 
-ROUTES = ("map_action", "still_25d", "wan")
+ROUTES = ("map_action", "still_25d", "video")
+LEGACY_ROUTES = {"wan": "video"}   # D-131's name of the video route (D-132)
 DIALOGUE_SHOT_MAX_S = float(SR.T("BP-108", "dialogue_shot_max_s"))
 
 # a body doing something a still cannot fake: whole-body motion, contact with a thing, a strike, a fall (Q4)
@@ -33,7 +37,7 @@ BODY_ACTION = re.compile(
     r"rais\w+ (his|her) (spear|bow|arm|hand)|(press|position)\w* [\w ,'-]{3,60}?\b(into|against|onto)|bur(y|ies|ying)|"
     r"extend\w* (two|an?|the|his|her)|hold\w* (his|her|an?|the) \w+ (out|into|up))\b",
     re.I)
-# camera-only or ambient motion: these never need Wan
+# camera-only or ambient motion: these never need a video clip
 AMBIENT = re.compile(r"\b(stand\w*|sit\w*|sat|rest\w*|lie\w*|lying|gaz\w+|stare\w*|look\w* (out|over|at)|wait\w*|sleep\w*|"
                      r"silhouett\w+|tableau|overlook\w*|drift\w*|fall\w* ash|ash fall\w*|smoke|mist|fog|rain|snow|blizzard|"
                      r"lightning|glow\w*|flicker\w*|burn\w*|embers?)\b", re.I)
@@ -72,10 +76,10 @@ def route_shot(shot: dict, speakers: set[str] | None = None) -> tuple[str, str]:
     heroes = set(shot.get("character_ids") or [])
     if speakers and speakers & heroes:
         who = ", ".join(sorted(speakers & heroes))
-        return "wan", f"a hero speaks a line in this shot ({who}): a Wan performance clip, no lip-sync, no talking still (Q7)"
+        return "video", f"a hero speaks a line in this shot ({who}): a performance clip, no lip-sync, no talking still (Q7)"
     m = BODY_ACTION.search(text)
     if m and not DISTANT_CROWD.search(text):
-        return "wan", f"a body performs an action a still cannot fake ({m.group(0)!r}) (Q4)"
+        return "video", f"a body performs an action a still cannot fake ({m.group(0)!r}) (Q4)"
     a = AMBIENT.search(text)
     if not heroes:
         return "still_25d", "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
@@ -90,6 +94,8 @@ def route_script(script: dict) -> list[dict]:
     speakers = speaking_heroes(script)
     rows = []
     for s in script.get("shots", []):
+        if s.get("route") in LEGACY_ROUTES:   # D-132: a D-131 script's ``wan`` is the video route
+            s["route"] = LEGACY_ROUTES[s["route"]]
         if s.get("route_locked") and s.get("route") in ROUTES and s.get("route_reason"):
             rows.append({"shot_id": s["shot_id"], "route": s["route"], "reason": s["route_reason"], "locked": True})
             continue
@@ -119,7 +125,7 @@ def mix_report(script: dict, durations: dict[str, float] | None = None) -> dict:
 
 def talking_check(script: dict) -> list[dict]:
     """Q7 (plan P6.4): a hero who speaks is seen performing, never a still with a voice over a closed mouth. A shot that
-    carries a character's line AND shows that character (``character_ids``) is a Wan shot (FAIL otherwise). A line over a
+    carries a character's line AND shows that character (``character_ids``) is a video shot (FAIL otherwise). A line over a
     shot that does not show its speaker (a cutaway, an insert, a listener) is the off-screen voice of Q7's "speaker plus
     listener reactions": REVIEW until the creator says yes to off-screen lines (final audit A9, 2026-11-12). A speaker shot
     stays within BP-108's dialogue length (REVIEW: a house rule whose registry severity is REVIEW)."""
@@ -127,12 +133,12 @@ def talking_check(script: dict) -> list[dict]:
     speakers = speaking_heroes(script)
     shots = {s["shot_id"]: s for s in script.get("shots", [])}
     seen = {sid: who & set(shots[sid].get("character_ids") or []) for sid, who in speakers.items()}
-    still = sorted(sid for sid in speakers if seen[sid] and shots[sid].get("route") != "wan")
+    still = sorted(sid for sid in speakers if seen[sid] and shots[sid].get("route") != "video")
     off = sorted(f"{sid}: {', '.join(sorted(speakers[sid]))} off screen on {shots[sid].get('route')}"
-                 for sid in speakers if not seen[sid] and shots[sid].get("route") != "wan")
+                 for sid in speakers if not seen[sid] and shots[sid].get("route") != "video")
     long_ = sorted(sid for sid in speakers if float(shots[sid].get("target_duration_seconds") or 0) > DIALOGUE_SHOT_MAX_S)
-    return [G.row("speaker_shots_are_wan", not still, f"{len(still)} of {len(speakers)} shot(s) that show their speaker are "
-                  "not Wan performance clips (Q7: no talking still)", still),
+    return [G.row("speaker_shots_are_video", not still, f"{len(still)} of {len(speakers)} shot(s) that show their speaker are "
+                  "not video performance clips (Q7: no talking still)", still),
             G.row("speaker_off_screen", not off, f"{len(off)} line(s) over a shot that does not show the speaker (a cutaway "
                   "or a listener): allowed only on the creator's yes to off-screen lines (audit A9)", off, level=G.REVIEW),
             G.row("speaker_shots_short", not long_, f"{len(long_)} speaker shot(s) longer than {DIALOGUE_SHOT_MAX_S} s "

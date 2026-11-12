@@ -200,7 +200,7 @@ def wan_chain_check(script_doc: Dict[str, Any], fps: int = 24, offset_from_end: 
     bad = []
     for i in chained:
         prev = shots[i - 1] if i > 0 else None
-        if prev is None or prev.get("route") != "wan" or shots[i].get("route") != "wan":
+        if prev is None or prev.get("route") != "video" or shots[i].get("route") != "video":
             bad.append(f"{shots[i].get('shot_id')}: a chained shot and the one before it must both be wan")
         elif frames[i - 1] <= offset_from_end + 4:
             bad.append(f"{shots[i].get('shot_id')}: the previous clip has {frames[i - 1]} frames, too short to hand over")

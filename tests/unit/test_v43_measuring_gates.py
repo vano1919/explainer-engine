@@ -147,14 +147,14 @@ def test_a_paid_call_fails_and_an_unread_ledger_is_not_run(tmp_path):
 
 
 def test_wan_chain_is_measured_on_the_scripts_own_shots():
-    two = {"shots": [{"shot_id": "A", "route": "wan", "target_duration_seconds": 4.0},
-                     {"shot_id": "B", "route": "wan", "target_duration_seconds": 4.0, "continues_from_previous": True}]}
+    two = {"shots": [{"shot_id": "A", "route": "video", "target_duration_seconds": 4.0},
+                     {"shot_id": "B", "route": "video", "target_duration_seconds": 4.0, "continues_from_previous": True}]}
     assert wan_chain_check(two)["status"] == G.PASS
-    assert wan_chain_check({"shots": [{"shot_id": "A", "route": "wan"}]})["status"] == G.NOT_RUN
+    assert wan_chain_check({"shots": [{"shot_id": "A", "route": "video"}]})["status"] == G.NOT_RUN
     two["shots"][0]["route"] = "still_25d"
     assert wan_chain_check(two)["status"] == G.FAIL
-    short = {"shots": [{"shot_id": "A", "route": "wan", "target_duration_seconds": 0.25},
-                       {"shot_id": "B", "route": "wan", "target_duration_seconds": 4.0, "continues_from_previous": True}]}
+    short = {"shots": [{"shot_id": "A", "route": "video", "target_duration_seconds": 0.25},
+                       {"shot_id": "B", "route": "video", "target_duration_seconds": 4.0, "continues_from_previous": True}]}
     assert wan_chain_check(short)["status"] == G.FAIL
 
 
