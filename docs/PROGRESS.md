@@ -5646,3 +5646,44 @@ The rules change only if this works.
 - **Clip 4 at risk.** `MARGIN_S` drops from 150 to 75, because each clip is already saved when it is made and the love run's whole overhead was 30.5 s. A test now runs the four cuts with the bake-off's 147 s cold clip and warm clips 10 % slower; all four finish.
 - **A stage could be paid twice.** `scene_pictures.submit` now marks the stage SUBMITTING before the POST. A lost answer keeps the mark and refuses a resend. Only a clean refusal by the provider clears it. Tested.
 - **State on the session's disk.** The manifest and the batch records are now backed up to project files (`pictures.backup`) after every submit and collect. Tested.
+
+## 2026-11-12 21:35 UTC: the battle scene ran — 4 cuts, $0.67 of the $1.1 ceiling
+
+**Run.** Run id `30e63a9ffec2_80994f1122df`, worker `7e04d09a`, launch `80994f11`.
+
+**Pictures.** 5 pictures on Gemini batch, nano-banana-2.1 at 2K, $0.1348. Each stage took about 4 minutes.
+
+**LTX.** One H100 app made 4 cuts:
+
+| Clip | Generation time |
+|---|---|
+| c1 (cold) | 116.8 s |
+| c2 | 73.5 s |
+| c3 | 81.9 s |
+| c4 | 81.9 s |
+
+Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is live.
+
+**Money.** $0.6674 settled, plus a few cents for the L1/L2 CPU checks.
+
+**Speech** (faster-whisper small.en):
+- c1: the line runs 1.86–6.32 s.
+- c2: 0.0–3.44 s, with a 1 s pause inside the commander's own two-sentence line.
+- c3: "There! On the ridge!" runs 0–1.42 s and "Attack!" 2.94–3.44 s.
+- c4: a war cry.
+
+**Edit.**
+- Hard cuts with 30 ms fades. Every clip is cut 0.3 s after its line, so the gap between lines is 0.3 s instead of LTX's ~1 s.
+- c3 is kept to 8 s for the charge. c4 is kept to 5.5 s, because after about 5 s the crowd melts into texture.
+- Every cut is at -18 LUFS.
+- Result: 23.9 s, plus a 2K copy.
+
+**What did not work.**
+- c2's camera pushes into a close-up near its end. The trim cuts it before that.
+- c4's wide battle loses its figures after about 5 s.
+- A line of two sentences still gets LTX's ~1 s pause inside it.
+
+**Rules to update if the creator approves:**
+- one sentence per clip;
+- a wide battle at most 5 s;
+- c1's "after a few steps" opening wastes 1.9 s.
