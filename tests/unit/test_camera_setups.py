@@ -174,3 +174,12 @@ def test_the_extension_pin_is_a_verified_download(tmp_path, monkeypatch):
     with pytest.raises(ConfigError):   # a file that is not the pinned one is refused and removed
         R.ensure(tmp_path / "other", download=lambda url, dest: dest.write_bytes(payload))
     assert not list((tmp_path / "other").rglob("*.zip"))
+
+
+def test_the_resolve_cli_prints_the_camera_block_and_a_24_frame_path(capsys):
+    assert C.main(["resolve", "push_in_reveal", "--a", "0,6,0", "--frames", "24"]) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["camera"]["setup"] == "push_in_reveal" and out["frames"] == 24
+    assert [k["frame"] for k in out["path"]][0] == 0 and out["path"][-1]["frame"] == 23
+    assert out["path"][-1]["pos"][1] > out["path"][0]["pos"][1]   # the camera walks in (+Y towards the subject at y=6)
+    assert C.main(["list"]) == 0 and "push_in_reveal" in capsys.readouterr().out

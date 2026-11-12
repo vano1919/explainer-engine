@@ -5,25 +5,20 @@ which uploads ``$EE_OUT`` as files land (OR-33): ``$EE_OUT/layouts/`` -> HF ``ro
 -> ``route_test_2026-11/step3/`` (the pod's heartbeat file is ``route_test_2026-11/beat.txt``, so the wrapper's prefix is
 ``route_test_2026-11``).
 
-Three lanes, so the card is never idle while the CPU works and the paid time is not stretched:
+Three lanes, so the card is never idle while the CPU works and the paid time is not stretched (fix 2, Fable thread 15:07 UTC:
+the stage graph is ``p14_schedule.json``, the file ``runpod create --schedule`` costs under RP-11, and the code follows it):
 
-- net (from the start): the LTX weights of both bases, checked by sha256 once (``p14_ltx.py --prefetch``), Qwen-Image-2.1 and BiRefNet;
-- cpu: A (Blender layout passes: first the line frame 0 of the duel, then of the battle, each killed at ``frame0_timeout_s``; then the
-  core passes, the duel's clay and the battle's colour and depth; last the battle's line, only when frame 0's time x its frames fits
-  its budget), X6.move (the still's FFmpeg camera move), then G (the J5 shots of the pilot window, ``nice``d, stopped at the deadline
-  reserve; it starts when D's cut-outs exist);
-- gpu: C + X6.still (one Qwen process, at once) -> D (BiRefNet) -> B (a second Qwen process, when the frames 0 are done; the duel
-  alone when the battle's frame 0 did not finish) -> E when the core passes exist (the five core LTX jobs, then the extras X1, X2,
-  X5, X3, X6.ltx in one LTX process; a job whose layout clip is the battle line still being drawn waits at the end of the queue
-  for it, ``P14_PENDING``) -> X4 (a Qwen process, when stage G has the frame) -> F (speeds.json).
+- net: Qwen-Image-2.1 + its LoRA + BiRefNet (``weights_qwen``), then the LTX weights checked by sha256 (``weights``);
+- cpu (the Blender lane, a thread beside the card): ``A.preflight`` (the duel's line frame 0 with EEVEE on NVIDIA's EGL; kept, and
+  Blender moved to the card, when the report's GL renderer is NVIDIA's), the frames 0 of the duel and the battle, the duel's clay,
+  the battle's colour and depth, last the battle's line (only when frame 0 x its frames fits its max), then X6.move;
+- gpu: a ready-queue over ``gpu_order`` (p14_stages.json): a free card takes the first stage whose needs (the schedule's) are done:
+  qwen1 (C + X6 still), D, B.duel / B.battle (one Qwen process per scene, as its frame 0 lands), E.duel, X6.ltx, E.battle,
+  E.battle_line (each an LTX process of its own jobs, ``E_stages``), G (the J5 shots, on the pod only when Blender is on the card
+  and the preflight frame took at most ``G.on_pod.max_frame_s``; else they render free on CI or the PC, D-114, and X3 and X4
+  skip with them), X3, X4, then F (speeds.json) once the CPU lane is done.
 
-Blender's device (the creator 2026-11-06 14:49 UTC): ``A.preflight`` draws the duel's line frame 0 with EEVEE on the card (NVIDIA's
-EGL vendor, ``PREFLIGHT_S`` at most); when the report's GL renderer is NVIDIA's, A and G render there beside Qwen and LTX, else on the
-CPU (Mesa's software EGL, the card hidden), as before. Nothing waits for the preflight but A itself.
-
-Fix of 2026-11-06 14:44 UTC (pod ygg2ztmflr8pv2): the GPU lane used to wait for the battle's line frame 0 before any Qwen picture and
-E for every A pass; a timed-out stage now kills its whole process group (Blender too), and the Blender logs' tails are copied into
-``step3/logs/`` every minute while a pass runs.
+Every timeout is the stage's max in ``p14_schedule.json`` on the lane (device) it runs on.
 
 Records: ``step3/stages.json`` (per stage: status, rc, seconds, reason), ``step3/stages.txt`` and ``step3/t.jsonl``.
 
@@ -45,22 +40,27 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
 PKG = "explainer_engine.training.pods.p14"
-LANES = {"net": ["weights"], "cpu": ["A", "X6.move", "G"],
-         "gpu": ["C", "X6.still", "D", "B", "E", "X1", "X2", "X5", "X3", "X6.ltx", "X4", "F"]}
+LANES = {"net": ["weights_qwen", "weights"],
+         "cpu": ["A.preflight", "A.frame0.duel", "A.frame0.battle", "A.duel", "A.battle", "A.battle.line", "X6.move"],
+         "gpu": ["qwen1", "D", "B.duel", "B.battle", "E.duel", "X6.ltx", "E.battle", "E.battle_line", "G", "X3", "X4", "F"]}
 TAIL_LINES = 200
 TAIL_EVERY_S = 60
 PREFLIGHT_S = 120          # the creator 2026-11-06 14:49 UTC: a 2-minute preflight frame decides card or CPU for Blender
 MESA_JSON = "/usr/share/glvnd/egl_vendor.d/50_mesa.json"
 EGL_DIRS = ("/usr/share/glvnd/egl_vendor.d", "/etc/glvnd/egl_vendor.d")
-NEEDS = {   # stage -> the stages whose output it reads (a failed one skips it with that reason)
-    # E needs nothing as a whole: p14_ltx skips each job whose layout clip or first frame is missing, with that reason
-    "B": ["A.frame0"], "C": [], "X6.still": [], "D": [], "E": [], "X4": ["G"], "X6.move": ["X6.still"],
-    "G": ["D"], "F": [],
+NEEDS = {   # stage -> the stages whose output it must have (a failed one skips it with that reason); the GPU lane's waits are the
+    # schedule's needs (p14_schedule.json), these are the ones whose failure makes the stage pointless
+    "B.duel": ["A.frame0.duel"], "B.battle": ["A.frame0.battle"], "X6.move": ["X6.still"], "G": ["D"], "X3": ["G"], "X4": ["G"],
 }
+QWEN_LABELS = {"qwen1": (("C", "C"), ("X6", "X6.still"))}
 
 
 def load_cfg() -> dict:
     return json.loads((HERE / "p14_stages.json").read_text(encoding="utf-8"))
+
+
+def load_schedule() -> dict:
+    return json.loads((HERE / "p14_schedule.json").read_text(encoding="utf-8"))
 
 
 class Book:
@@ -71,7 +71,8 @@ class Book:
         self.d.mkdir(parents=True, exist_ok=True)
         self.rows: dict[str, dict] = {}
         self.lock = threading.Lock()
-        self.events = {k: threading.Event() for k in ("A.frame0", "A.core", "A", "B", "weights", "D", "G", "X6.still", "cpu_done")}
+        self.events: dict[str, threading.Event] = {}
+        self.changed = threading.Condition(self.lock)
 
     def _write(self):
         tmp = self.d / "stages.json.tmp"
@@ -93,9 +94,21 @@ class Book:
     def ok(self, name: str) -> bool:
         return (self.rows.get(name) or {}).get("status") == "ok"
 
+    def event(self, name: str) -> threading.Event:
+        with self.lock:
+            return self.events.setdefault(name, threading.Event())
+
     def done(self, name: str):
-        if name in self.events:
-            self.events[name].set()
+        self.event(name).set()
+        with self.changed:
+            self.changed.notify_all()
+
+    def is_done(self, name: str) -> bool:
+        return self.event(name).is_set()
+
+    def wait_change(self, timeout: float):
+        with self.changed:
+            self.changed.wait(max(0.0, timeout))
 
 
 def run_proc(cmd, *, timeout=None, env=None, log_path=None, deadline=None) -> tuple[object, float]:
@@ -174,7 +187,7 @@ class Tailer:
 
 class Pod:
     def __init__(self, cfg: dict, out: Path, *, binary: str, deadline: float, run=run_proc, layouts_work=Path("/workspace/layouts"),
-                 assets=Path("/workspace/assets")):
+                 assets=Path("/workspace/assets"), schedule: dict | None = None):
         self.cfg, self.out, self.binary, self.deadline, self.run = cfg, Path(out), binary, deadline, run
         self.step3, self.lay_out = self.out / "step3", self.out / "layouts"
         self.lay_work, self.lay_f0, self.assets = Path(layouts_work), Path(str(layouts_work) + "_f0"), Path(assets)
@@ -184,9 +197,27 @@ class Pod:
             [f"{cfg['hf_root']}/layouts", str(self.lay_out)], [f"{cfg['hf_root']}/step3", str(self.step3)]]))
         self.logs = self.step3 / "logs"
         self.logs.mkdir(parents=True, exist_ok=True)
-        self.blender_env = cpu_env(self.env)   # until the preflight puts Blender on the card
+        self.blender_env, self.blender_on = cpu_env(self.env), "cpu"   # until the preflight puts Blender on the card
+        self.sched = {s["id"]: s for s in (schedule or load_schedule())["stages"]}
+        self.active = set(self.sched)   # fix 2: the pod runs only the stages its schedule names (lean.graph)
+        self.pre_frame_s = None
 
     # --- helpers -------------------------------------------------------------------------------------------------------------
+    def off_reason(self, sid: str) -> str:
+        pod = self.cfg.get("pod") or {}
+        if sid in (pod.get("off") or {}):
+            return pod["off"][sid]
+        if ".battle" in sid or sid.endswith("battle"):
+            return pod.get("battle_why", "the battle is not on this pod")
+        return "not in this pod's schedule"
+
+    def mark_off(self):
+        """Every stage the lanes know that this pod's schedule leaves out: recorded as skipped with its reason, never waited for."""
+        for sid in [*LANES["cpu"], *LANES["gpu"], *LANES["net"]]:
+            if sid not in self.active:
+                self.book.mark(sid, "skipped", reason=self.off_reason(sid), off_pod=True)
+                self.book.done(sid)
+
     def missing(self, name: str) -> str | None:
         bad = [n for n in NEEDS.get(name, []) if not self.book.ok(n)]
         return f"needs {', '.join(bad)}, which did not finish" if bad else None
@@ -207,11 +238,20 @@ class Pod:
         self.book.done(name)
         return rc == 0
 
+    def max_s(self, sid: str, lane: str | None = None) -> float:
+        """The stage's timeout: its max minutes in p14_schedule.json (the graph RP-11 costs), on the lane it runs on."""
+        on = self.sched[sid]["on"]
+        lane = lane if lane in on else ("gpu" if self.blender_on == "gpu" and "gpu" in on and lane is None else next(iter(on)))
+        return float(on[lane]["max_min"]) * 60
+
+    def blender_max_s(self, sid: str) -> float:
+        return self.max_s(sid, self.blender_on)
+
     def mod(self, m: str, *args) -> list[str]:
         return [PY, "-m", f"{PKG}.{m}", *map(str, args)]
 
     def wait(self, event: str, until: float) -> bool:
-        return self.book.events[event].wait(max(0.0, until - time.time()))
+        return self.book.event(event).wait(max(0.0, until - time.time()))
 
     # --- lanes ----------------------------------------------------------------------------------------------------------------
     def net(self):
@@ -221,8 +261,12 @@ class Pod:
                 f"hf_hub_download({q['style_lora']['hf']!r}, {q['style_lora']['path']!r}, repo_type='dataset')\n"
                 "import json; p = json.load(open('config/cloud_pins.json'))['models']['cutout_birefnet']\n"
                 "snapshot_download(p['id'], revision=p['revision'])\n")
-        self.run([PY, "-c", code], timeout=3600, env=self.env, log_path=self.logs / "weights_qwen.log", deadline=self.deadline)
-        self.stage("weights", [PY, str(HERE / "p14_ltx.py"), "--prefetch"], timeout=5400, need=False)
+        try:
+            self.stage("weights_qwen", [PY, "-c", code], timeout=self.max_s("weights_qwen"), need=False)
+            self.stage("weights", [PY, str(HERE / "p14_ltx.py"), "--prefetch"], timeout=self.max_s("weights"), need=False)
+        finally:
+            self.book.done("weights_qwen")
+            self.book.done("weights")
 
     def blender_tails(self, root: Path, scene: str, passes, label: str):
         return [(Path(root) / scene / k / "blender.log", self.logs / f"{label}.{k}.blender_tail.txt") for k in passes]
@@ -231,16 +275,22 @@ class Pod:
         a = self.cfg["A"]
         lp = ["-m", "explainer_engine.blender.layout_passes", "render", "--binary", self.binary]
         got, f0_seconds = [], {}
-        pre = self.preflight(lp, a["first_frames"][0])
-        for f in a["first_frames"]:   # the duel first (seconds), then the battle; each one killed at frame0_timeout_s
+        firsts = [f for f in a["first_frames"] if f"A.frame0.{f['scene']}" in self.active]
+        pre = self.preflight(lp, firsts[0]) if firsts else None
+        fetched = self.hf_first()   # layouts already on the vault: fetched and checked, not rendered (fix 2)
+        for f in firsts:   # the duel first (seconds), then the battle; each one killed at frame0_timeout_s
             name = f"A.frame0.{f['scene']}"
+            if f["scene"] in fetched:
+                got.append(f["scene"])
+                continue
             if pre and f is a["first_frames"][0]:   # the preflight drew it on the card: the same frame, kept
                 rc, sec = 0, pre["seconds"]
+                self.book.mark(name, "running")
             else:
                 self.book.mark(name, "running")
                 with Tailer(self.blender_tails(self.lay_f0, f["scene"], [f["pass"]], name)):
                     rc, sec = self.run([PY, *lp, "--scene", f["scene"], "--out", self.lay_f0, "--passes", f["pass"], "--only-frames",
-                                        str(f["frame"])], timeout=a["frame0_timeout_s"], env=self.blender_env,
+                                        str(f["frame"])], timeout=self.blender_max_s(name), env=self.blender_env,
                                        log_path=self.logs / f"{name}.log", deadline=self.deadline - self.reserve)
             src = self.lay_f0 / f["scene"] / f["pass"] / "frames" / f"frame_{f['frame']:06d}.png"
             ok = rc == 0 and src.exists()
@@ -251,28 +301,35 @@ class Pod:
             if ok:
                 got.append(f["scene"])
                 f0_seconds[f["scene"]] = sec
-            self.book.mark(name, "ok" if ok else "failed", rc=rc, seconds=sec)
-        missing = [f["scene"] for f in a["first_frames"] if f["scene"] not in got]
+            self.book.mark(name, "ok" if ok else "failed", rc=rc, seconds=sec, on=self.blender_on)
+            self.book.done(name)
+        missing = [f["scene"] for f in firsts if f["scene"] not in got]
         self.book.mark("A.frame0", "ok" if got else "failed", scenes=got, missing=missing)
         self.book.done("A.frame0")
         ok = True
         for r in a["renders"]:
+            name = f"A.{r['scene']}" + ("" if r.get("core", True) else "." + "+".join(r["passes"]))
+            if name not in self.active or (r["scene"] in fetched and r.get("core", True)):
+                continue
             if not r.get("core", True):
                 self.release_core(ok)   # the core passes are done: E may start while the battle line is drawn
             name = f"A.{r['scene']}" + ("" if r.get("core", True) else "." + "+".join(r["passes"]))
             why = None
-            if r.get("budget_s"):
+            if not r.get("core", True):   # the battle's line: only when frame 0's seconds x its frames fit its max (the schedule's)
+                budget = self.blender_max_s(name)
                 s0 = f0_seconds.get(r["scene"])
                 if s0 is None:
-                    why = f"the {r['scene']} frame 0 did not finish inside {a['frame0_timeout_s']} s"
-                elif s0 * r["frames"] > r["budget_s"]:
+                    f0 = round(self.blender_max_s("A.frame0." + r["scene"]))
+                    why = f"the {r['scene']} frame 0 did not finish inside {f0} s"
+                elif s0 * r["frames"] > budget:
                     why = (f"the {r['scene']} frame 0 took {s0} s: {r['frames']} frames would take ~{round(s0 * r['frames'])} s, "
-                           f"over the {r['budget_s']} s budget")
+                           f"over the {round(budget)} s budget")
             if why:
                 self.book.mark(name, "skipped", reason=why)
+                self.book.done(name)
                 done = False
             else:
-                timeout = min(a["timeout_s"], r["budget_s"]) if r.get("budget_s") else a["timeout_s"]
+                timeout = self.blender_max_s(name)
                 done = self.stage(name, [PY, *lp, "--scene", r["scene"], "--out", self.lay_work, "--passes", ",".join(r["passes"])],
                                   timeout=timeout, need=False, env=self.blender_env,
                                   tails=self.blender_tails(self.lay_work, r["scene"], r["passes"], name))
@@ -284,46 +341,81 @@ class Pod:
         self.book.mark("A", "ok" if ok else "failed")
         self.book.done("A")
 
+    def hf_first(self) -> set[str]:
+        """The scenes of ``hf_first`` (p14_stages.json) whose layout files are on the vault with their pinned sha256: frame 0 goes
+        where B reads it (``<layouts>_f0/<scene>/<pass>/frames/``), the clips stay on the vault (E fetches them by path and hash),
+        and A.frame0.<scene> and A.<scene> are recorded as fetched. Any missing or changed file: the scene renders as before."""
+        out = set()
+        for scene, spec in (self.cfg.get("hf_first") or {}).items():
+            if scene.startswith("_") or f"A.frame0.{scene}" not in self.active:
+                continue
+            t0 = time.time()
+            try:
+                got = {}
+                for f in [spec["frame0"], spec["manifest"], *spec["clips"]]:
+                    p = hf_fetch(f["path"], self.lay_work.parent / "hf_first")
+                    sha = sha256_file(p)
+                    if sha != f["sha256"]:
+                        raise ValueError(f"{f['path']}: sha256 {sha} is not the pinned {f['sha256']}")
+                    got[f["path"]] = p
+            except Exception as e:   # noqa: BLE001 - the vault copy is a shortcut, never a reason to lose the scene
+                self.book.mark(f"A.hf_first.{scene}", "failed", reason=repr(e)[:200])
+                continue
+            f0 = spec["frame0"]
+            dst = self.lay_f0 / scene / f0["pass"] / "frames" / f"frame_{f0['frame']:06d}.png"
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(got[f0["path"]], dst)
+            sec = round(time.time() - t0, 1)
+            for name in (f"A.frame0.{scene}", f"A.{scene}"):
+                if name in self.active:
+                    self.book.mark(name, "ok", source="hf", seconds=sec, files=sorted(got))
+                    self.book.done(name)
+            out.add(scene)
+        return out
+
     def preflight(self, lp: list[str], f: dict) -> dict | None:
         """A.preflight: the first frame 0 (the duel's line) with EEVEE on the card, at most ``PREFLIGHT_S``. Kept (and
         ``blender_env`` switched to the card) only when it rendered and its report's GL renderer is NVIDIA's; else Blender stays on
         the CPU and the frame is drawn again there. Returns the kept row or None."""
+        if "G" not in self.active:   # fix 2: only G needed Blender on the card; the duel's passes are small CPU work
+            self.book.mark("A.preflight", "ok", chosen="cpu", reason="G is not on this pod: Blender stays on the CPU")
+            self.book.done("A.preflight")
+            return None
         env, egl = gpu_env(self.env, self.lay_work.parent / "egl")
         row = {"mode_tried": "gpu", "egl": egl, "budget_s": PREFLIGHT_S}
         if env is None:
             self.book.mark("A.preflight", "ok", chosen="cpu", reason="no NVIDIA EGL vendor on this pod", **row)
+            self.book.done("A.preflight")
             return None
         self.book.mark("A.preflight", "running", **row)
         with Tailer(self.blender_tails(self.lay_f0, f["scene"], [f["pass"]], "A.preflight")):
             rc, sec = self.run([PY, *lp, "--scene", f["scene"], "--out", self.lay_f0, "--passes", f["pass"], "--only-frames",
-                                str(f["frame"])], timeout=PREFLIGHT_S, env=env, log_path=self.logs / "A.preflight.log",
+                                str(f["frame"])], timeout=min(PREFLIGHT_S, self.max_s("A.preflight", "gpu")), env=env,
+                               log_path=self.logs / "A.preflight.log",
                                deadline=self.deadline - self.reserve)
         d = self.lay_f0 / f["scene"] / f["pass"]
         frame = d / "frames" / f"frame_{f['frame']:06d}.png"
         gl = ((read_json(d / "bpy_report.json") or {}).get("gl") or {})
         on_card = "nvidia" in f"{gl.get('vendor', '')} {gl.get('renderer', '')}".lower()
         keep = rc == 0 and frame.exists() and on_card
+        frame_s = frame_seconds(d / "progress.jsonl", f["frame"])
         if keep:
-            self.blender_env = env
+            self.blender_env, self.blender_on, self.pre_frame_s = env, "gpu", frame_s
         elif frame.exists():
             frame.unlink()   # drawn by Mesa after all: the CPU loop draws it again under its own record
-        self.book.mark("A.preflight", "ok", chosen="gpu" if keep else "cpu", rc=rc, seconds=sec, s_per_frame=sec, gl=gl,
+        self.book.mark("A.preflight", "ok", chosen="gpu" if keep else "cpu", rc=rc, seconds=sec, s_per_frame=frame_s, gl=gl,
                        reason="" if keep else ("not drawn on the NVIDIA renderer" if rc == 0 else f"rc {rc}"), **row)
+        self.book.done("A.preflight")
         return {"seconds": sec} if keep else None
 
     def release_core(self, ok: bool):
-        if not self.book.events["A.core"].is_set():
+        if not self.book.is_done("A.core"):
             self.book.mark("A.core", "ok" if ok else "failed")
             self.book.done("A.core")
 
     @property
     def pending(self) -> Path:
         return Path(str(self.lay_work) + ".pending.json")   # on the pod's disk, not in the upload
-
-    def promised(self) -> list[str]:
-        """The vault prefixes the CPU lane makes for E: every layout clip (until A ends) and X3's first frame (until G draws it)."""
-        root = self.cfg["hf_root"]
-        return [f"{root}/layouts/", f"{root}/step3/{self.cfg['X']['X3']['first_frame']}"]
 
     def settle(self, prefix: str | None = None):
         """Drop one promise (all of them when ``prefix`` is None): E stops waiting for it."""
@@ -364,7 +456,7 @@ class Pod:
         still = self.step3 / "qwen" / f"{x['still']['name']}.png"
         dst = self.step3 / "x6" / f"{x['shot']}.move.mp4"
         dst.parent.mkdir(parents=True, exist_ok=True)
-        if self.stage("X6.move", move_cmd(still, dst, **x["move"]), timeout=900):
+        if self.stage("X6.move", move_cmd(still, dst, **x["move"]), timeout=self.max_s("X6.move")):
             write_side(dst.with_suffix(".json"), {"question": x["question"], "recipe": "still_move/1 (FFmpeg zoompan, CPU)",
                                                    "still": str(still), "move": x["move"]})
 
@@ -383,20 +475,31 @@ class Pod:
                 os.replace(tmp, ff)   # whole, before E reads it
             self.settle(f"{self.cfg['hf_root']}/step3/{self.cfg['X']['X3']['first_frame']}")
 
+    def g_on_pod(self) -> str | None:
+        """None when G may run on the pod, else why not: on the pod only with Blender on the card and the preflight's frame at most
+        ``G.on_pod.max_frame_s``; otherwise the J5 shots render free on CI or the creator's PC (D-114)."""
+        lim = self.cfg["G"]["on_pod"]["max_frame_s"]
+        if self.blender_on != "gpu":
+            return "Blender is on the CPU here (A.preflight): G renders free on CI or the PC (D-114)"
+        if self.pre_frame_s is None or self.pre_frame_s > lim:
+            return f"the preflight frame took {self.pre_frame_s} s on the card, over {lim} s: G renders free on CI or the PC (D-114)"
+        return None
+
     def stage_g(self):
-        self.wait("D", self.deadline - self.reserve)
-        dl = self.deadline - self.reserve
-        if self.missing("G"):
-            self.book.mark("G", "skipped", reason=self.missing("G"))
+        why = self.missing("G") or self.g_on_pod()
+        if why:
+            self.book.mark("G", "skipped", reason=why)
         else:
             self.book.mark("G", "running")
             t0 = time.time()
+            dl = min(self.deadline - self.reserve, t0 + self.max_s("G"))
             try:
                 from explainer_engine.training.pods.p14 import p14_j5
                 rc = p14_j5.run(self.step3, self.assets, self.binary, deadline=dl, on_shot=self.g_frames, env=self.blender_env)
             except Exception as e:   # noqa: BLE001 - G failing never stops the GPU lane
                 rc = f"error {e!r}"[:200]
-            self.book.mark("G", "ok" if rc == 0 else "failed", rc=rc, seconds=round(time.time() - t0, 1))
+            self.book.mark("G", "ok" if rc == 0 else "failed", rc=rc, seconds=round(time.time() - t0, 1), cut_at_min=self.max_s("G") / 60)
+        self.settle(f"{self.cfg['hf_root']}/step3/{self.cfg['X']['X3']['first_frame']}")
         self.book.done("G")
 
     def cpu(self):
@@ -404,22 +507,19 @@ class Pod:
             self.stage_a()
             self.wait("X6.still", self.deadline - self.reserve)
             self.stage_x6_move()
-            self.stage_g()
         finally:
-            self.settle()   # whatever happened, E waits for nothing more from this lane
-            self.book.done("A.frame0")
-            self.book.done("A.core")
-            self.book.done("A")
-            self.book.done("G")
-            self.book.done("cpu_done")
+            self.settle(f"{self.cfg['hf_root']}/layouts/")   # whatever happened, E waits for no layout clip more
+            for s in LANES["cpu"] + ["A.frame0", "A.core", "A", "cpu_done"]:
+                self.book.done(s)
 
-    def qwen(self, name: str, stages: list[str], labels) -> bool:
-        q = self.cfg["qwen"]
+    def qwen(self, name: str, stages: list[str], labels, *, scene: str | None = None, need=False) -> bool:
+        extra = ["--scene", scene] if scene else []
         ok = self.stage(name, self.mod("p14_qwen", "--stages", ",".join(stages), "--out", self.step3, "--layouts", self.lay_f0,
-                                       "--assets", self.assets), timeout=q["timeout_s"], need=False)
+                                       "--assets", self.assets, *extra), timeout=self.max_s(name), need=need)
         man = read_manifest(self.step3 / "qwen" / "manifest.jsonl")
+        names = {j["name"] for j in self.cfg["B"]["jobs"] if j["layout"]["scene"] == scene} if scene else None
         for st, label in labels:
-            got = [r for r in man if r.get("stage") == st]
+            got = [r for r in man if r.get("stage") == st and (names is None or r.get("name") in names)]
             good = [r for r in got if r.get("status") == "ok"]
             self.book.mark(label, "ok" if got and len(good) == len(got) else "partial" if good else "failed",
                            pictures=len(good), names=[r.get("name") for r in good], process_ok=ok)
@@ -427,39 +527,69 @@ class Pod:
         return ok
 
     def gpu(self):
-        q = self.cfg["qwen"]
-        self.qwen("qwen1", ["C", "X6"], (("C", "C"), ("X6", "X6.still")))   # at once: neither reads a layout frame
-        self.stage("D", self.mod("p14_cutout", "--out", self.step3, "--assets", self.assets), timeout=self.cfg["D"]["timeout_s"])
-        self.wait("A.frame0", self.deadline - self.reserve)
-        if self.book.ok("A.frame0"):
-            self.qwen("qwen2", ["B"], (("B", "B"),))
-        else:
-            self.book.mark("B", "skipped", reason=self.missing("B"))
-            self.book.done("B")
-        self.wait("weights", self.deadline - self.reserve)   # not A: a job whose layout clip is not drawn yet waits inside E
-        self.stage("E", [PY, str(HERE / "p14_ltx.py")], timeout=None, env=dict(self.env, P14_PENDING=str(self.pending)))
-        core = self.step3 / "ltx" / "speeds.json"
-        if core.exists():
-            sp = json.loads(core.read_text(encoding="utf-8"))
-            self.book.mark("E", "ok" if sp.get("ok") else "failed", clips_ok=sp.get("ok"), started=sp.get("started"),
-                           rows=[{k: r.get(k) for k in ("job", "status", "seconds", "reason")} for r in sp["rows"]])
-        self.mark_extras()
-        self.wait("G", self.deadline - self.reserve)
-        if (self.step3 / "j5" / self.cfg["X"]["X4"]["frame_from_g"]["shot"] / "frames"
-                / f"frame_{self.cfg['X']['X4']['frame_from_g']['frame']:06d}.png").exists():
-            self.stage("X4", self.mod("p14_qwen", "--stages", "X4", "--out", self.step3, "--layouts", self.step3,
-                                      "--assets", self.assets), timeout=q["timeout_s"], need=False)
-        else:
-            self.book.mark("X4", "skipped", reason="stage G has not rendered the frame X4 edits")
+        """The card's stages in ``gpu_order`` (p14_stages.json, the order RP-11 costs): a free card takes the first stage whose
+        inputs are done (the schedule's needs), so it waits only when nothing of its own is ready: list scheduling, as
+        cloud/schedule.py simulates it."""
+        left = [s for s in self.cfg["gpu_order"] if s != "F" and s in self.active]
+        until = self.deadline - self.reserve
+        while left:
+            ready = [s for s in left if all(self.book.is_done(n) for n in self.sched[s]["needs"])]
+            if not ready:
+                if time.time() >= until:
+                    ready = left[:1]   # the end reserve: each one is recorded as skipped, with that reason
+                else:
+                    self.book.wait_change(min(5.0, until - time.time()))
+                    continue
+            s = ready[0]
+            left.remove(s)
+            try:
+                self.gpu_stage(s)
+            except Exception as e:   # noqa: BLE001 - one stage's crash never ends the lane
+                self.book.mark(s, "failed", reason=repr(e)[:300])
+            self.book.done(s)
 
-    def mark_extras(self):
-        """The extras' rows from the LTX process's speeds_extra.json (one record per extra in the stage list)."""
-        p = self.step3 / "ltx" / "speeds_extra.json"
-        rows = json.loads(p.read_text(encoding="utf-8"))["rows"] if p.exists() else []
+    def gpu_stage(self, s: str):
+        if s == "qwen1":
+            self.qwen("qwen1", ["C", "X6"], QWEN_LABELS["qwen1"])
+        elif s == "D":
+            self.stage("D", self.mod("p14_cutout", "--out", self.step3, "--assets", self.assets), timeout=self.max_s("D"))
+        elif s.startswith("B."):
+            scene = s.split(".", 1)[1]
+            self.qwen(s, ["B"], (("B", f"B.{scene}.pictures"),), scene=scene, need=True)
+        elif s in self.cfg["E_stages"]:
+            self.ltx(s, self.cfg["E_stages"][s])
+        elif s == "G":
+            self.stage_g()
+        elif s == "X4":
+            fg = self.cfg["X"]["X4"]["frame_from_g"]
+            if (self.step3 / "j5" / fg["shot"] / "frames" / f"frame_{fg['frame']:06d}.png").exists():
+                self.stage("X4", self.mod("p14_qwen", "--stages", "X4", "--out", self.step3, "--layouts", self.step3,
+                                          "--assets", self.assets), timeout=self.max_s("X4"), need=False)
+            else:
+                self.book.mark("X4", "skipped", reason=self.missing("X4") or "stage G has not rendered the frame X4 edits")
+        else:
+            raise ValueError(f"no runner for GPU stage {s!r}")
+
+    def ltx(self, s: str, ids: list[str]):
+        """One LTX process for the stage's jobs (``P14_JOBS``); its speeds files are tagged with the stage."""
+        if s == "X3" and self.missing("X3"):
+            self.book.mark(s, "skipped", reason=self.missing("X3"))
+            return
+        env = dict(self.env, P14_JOBS=",".join(ids), P14_TAG=s)   # its inputs are done: the GPU lane waited for them
+        self.stage(s, [PY, str(HERE / "p14_ltx.py")], timeout=self.max_s(s), env=env)
+        rows = []
+        for name in (f"speeds.{s}.json", f"speeds_extra.{s}.json"):
+            p = self.step3 / "ltx" / name
+            if p.exists():
+                rows += json.loads(p.read_text(encoding="utf-8"))["rows"]
+        if rows:
+            self.book.mark(s, "ok" if any(r["status"] == "ok" for r in rows) else "failed", clips_ok=sum(r["status"] == "ok" for r in rows),
+                           rows=[{k: r.get(k) for k in ("job", "status", "seconds", "reason")} for r in rows])
         for r in rows:
             label = r["job"].split(".", 1)[0]
-            self.book.mark(label if label != "X6" else "X6.ltx", r["status"], job=r["job"], seconds=r.get("seconds"),
-                           reason=r.get("reason", ""))
+            if label.startswith("X"):
+                self.book.mark(label if label != "X6" else "X6.ltx.clip", r["status"], job=r["job"], seconds=r.get("seconds"),
+                               reason=r.get("reason", ""))
 
     def stage_f(self):
         self.book.mark("F", "running")
@@ -470,7 +600,7 @@ class Pod:
             self.book.mark("F", "failed", reason=repr(e)[:200])
 
     def main(self) -> int:
-        write_side(self.pending, {"prefixes": self.promised()})   # before the lanes start: E reads it
+        self.mark_off()
         lanes = [threading.Thread(target=self.net, daemon=True), threading.Thread(target=self.cpu, daemon=True)]
         for t in lanes:
             t.start()
@@ -478,10 +608,25 @@ class Pod:
             self.gpu()
         except Exception as e:   # noqa: BLE001 - the record says what broke; the CPU lane and F still run
             self.book.mark("gpu_lane", "failed", reason=repr(e)[:300])
-        self.book.events["cpu_done"].wait(max(0.0, self.deadline - self.reserve - time.time()))
+        self.book.event("cpu_done").wait(max(0.0, self.deadline - self.reserve - time.time()))
         self.stage_f()
         ok = [k for k, v in self.book.rows.items() if v.get("status") == "ok"]
         return 0 if ok else 1
+
+
+def sha256_file(p) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def hf_fetch(path: str, dest: Path) -> Path:
+    """One vault file (``vano1919/tmr-artifacts``, the dataset every stage reads) under ``dest``."""
+    from huggingface_hub import hf_hub_download
+    return Path(hf_hub_download("vano1919/tmr-artifacts", path, repo_type="dataset", local_dir=str(dest)))
 
 
 def read_json(p: Path):
@@ -489,6 +634,18 @@ def read_json(p: Path):
         return json.loads(Path(p).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+
+
+def frame_seconds(progress: Path, index: int) -> float | None:
+    """The seconds Blender spent on one frame (render_shot.py's progress.jsonl row), without the scene build and start-up."""
+    try:
+        for ln in Path(progress).read_text(encoding="utf-8").splitlines():
+            row = json.loads(ln) if ln.strip() else {}
+            if int(row.get("index", -1)) == index and row.get("seconds") is not None:
+                return float(row["seconds"])
+    except (OSError, ValueError):
+        return None
+    return None
 
 
 def cpu_env(base: dict) -> dict:
@@ -557,7 +714,8 @@ def speeds_report(step3: Path, lay_out: Path, stages: dict) -> dict:
     """F: what each kind of work cost in seconds on this pod (job_speeds rows for the ICW-09 benchmark)."""
     def load(p):
         return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
-    ltx, extra = load(step3 / "ltx" / "speeds.json"), load(step3 / "ltx" / "speeds_extra.json")
+    ltx = {p.stem: load(p) for p in sorted((step3 / "ltx").glob("speeds.*.json"))}
+    extra = {p.stem: load(p) for p in sorted((step3 / "ltx").glob("speeds_extra.*.json"))}
     qwen = [r for r in read_manifest(step3 / "qwen" / "manifest.jsonl") if r.get("status") == "ok"]
     blender = {}
     for man in sorted(lay_out.glob("*/layout_manifest.json")):

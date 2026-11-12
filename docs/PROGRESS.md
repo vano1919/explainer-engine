@@ -4516,6 +4516,19 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   $7.08 worst, idle GPU 0 min.
 - Tests: `test_cloud_schedule.py` (13); the create tests carry `tests/fixtures/pod_schedule_ok.json`. Cost $0.
 
+## 2026-11-06 — ICW-16 fix 2: the step-3 pod passes RP-11 (its stage graph costed before the pod)
+- Why: the Fable thread's fix-1 audit (15:07 UTC): the code read fine but its graph failed RP-11 (PR #147, D-117): G 133 min on the
+  pod CPU with X3/X4 behind it, loose timeouts as maxes, E as one block behind every pass; no card fitted $6.9 / 3.5 h.
+- `p14_schedule.json` is now `pod_schedule/1` (`lean.py schedule`): 21 stages, E split per input (E.duel, X6.ltx, E.battle,
+  E.battle_line, X3) and B per scene, Blender stages on cpu and gpu, cards H100 NVL $2.59 and A100 80GB $1.39 (x0.6), caps $8 /
+  3.5 h / 15 % idle. `python -m explainer_engine.cloud.schedule check` passes: H100 NVL $3.84 expected, $7.90 worst (3.05 h),
+  idle GPU 1 min; the pod's own order too (9 % idle in its worst case).
+- `p14_pod.py`: the GPU lane is a ready-queue over `gpu_order` with the schedule's needs (what the RP-11 simulation assumes); every
+  timeout is the stage's max in the schedule on its device (LTX 10 min a clip, `p14.json clip_timeout_s` 600); G runs on the pod
+  only when Blender is on the card and the preflight frame (its own seconds, from `progress.jsonl`) took at most 1.5 s, cut at
+  20 min; else G, X3 and X4 render free on CI or the PC (D-114). `p14_ltx.py` runs one E stage's jobs (`P14_JOBS`) into tagged
+  speeds files; `p14_qwen.py --scene`. The battle crowd is untouched (the creator gets a card on the line pass).
+
 ## 2026-11-06 — ICW-16 fix after pod 1 (ygg2ztmflr8pv2): the card no longer waits for Blender; Blender on the card; BiRefNet dtype
 - Why: pod 1 (H100, 14:25-14:48 UTC, ~$1.0, stopped) sat idle: the GPU lane waited for the battle's line frame 0, which the kernel
   killed (-9, memory) after ~13 min, and every cut-out failed on a float16 checkpoint fed a float32 input (D, 12 of 12). Fable
@@ -4553,6 +4566,22 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Measured here (free): `assemble_25d` at 2560x1440, EEVEE 16 samples, 4 vCPU Xeon 2.1 GHz: 7.8-8.3 s per frame with cards, 3.7
   s without (the smoke shots). Stale text: none found. Open: `config/spend_caps.json` per_pod_usd 6.9 is below the card's $10, so
   `create --max-usd 10` is refused until the creator moves that ceiling; the H shot S02-01 needs no GPU and is not on the pod.
+
+
+## 2026-11-06 — ICW-16 fix 2: the step-3 pod without the battle and G, the duel's layouts from the vault (thread: ICW-16 lean pod)
+
+- Fable thread (15:07 / 16:23 UTC): `p14_stages.json` `pod`: `battle_on_pod` false until the creator's card (the battle's Blender
+  passes never finished on a pod and held the card idle), G, X3 and X4 off (they ride the next pod: the J5 shots render free on CI
+  or the PC, D-114); X7 dropped (the pilot pod's battle i2v, `training/pods/p15`, answers it).
+- `lean.graph()` cuts GRAPH to that (a need on a dropped stage goes with it; the duel's clay follows the duel's own frame 0);
+  `lean.schedule(full=True)` keeps the whole graph, and the tests of the battle, G, X3 and X4 paths run a pod on it. `p14_pod` runs
+  only the stages its schedule names and records the rest as skipped with their reasons (`off_pod`); A.preflight keeps Blender on
+  the CPU when G is not on the pod.
+- `hf_first` (`p14_stages.json`): the duel's line frame 0, clay clip and manifest from pod 1 are on HF; the pod fetches them and
+  checks each sha256 instead of rendering (frame 0 where B reads it; E fetches the clip by path). A missing or changed file renders
+  the scene as before.
+- RP-11 on the cut graph: A100 80GB $1.27 expected / $2.62 worst (1.88 h), 0 idle GPU minutes; H100 NVL $1.81 / $3.50.
+- Tests: `tests/unit/test_p14_lean.py` (+3: the cut pod and its reasons, the vault layouts, a changed vault file renders).
 
 ## 2026-11-06 — Pilot stills: a furnished room from the libraries + the soldiers scene (thread: ICW-16 lean pod; branch `icw/18-pilot-room`)
 
@@ -4744,6 +4773,24 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 - `speech.py` (PV-46): optional `cast.<id>.speech.max_contractions` and `mlu_range` (schema fields added), checked against the hero's lines as REVIEW. `scene_lint` SC-05: `episode.short_form` (a pilot of about three minutes) asks BP-70's new threshold `min_exchange_lines_short` = 2 and only REVIEWs; the registry row and `docs/SOURCED_RULES.md` regenerated. `validate` PV-12 now runs the narration lint on `narrator_tts_text`, so N-05/N-06/N-12 read the narrator only when heroes speak (their turns stay under DW-11 and SC-09). Test: `tests/unit/test_speech_registers_fewshot.py`. Costs $0.
 
 - Stone-age pilot VISUAL_SCRIPT_v2 (SCRIPT_v4.6, 55 shots, about 189 s estimated, 6 LTX clips 510 frames) saved under docs/research/stoneage_pilot_2026-11-07/; awaits the creator on duration and handprint type. Costs $0.
+## 2026-11-06 18:20 UTC — pilot pod p15, Qwen-only mode: 24 pictures (Fable 18:00 UTC)
+- `p15_pod --only qwen` (`p15q.sh`, `p15q_schedule.json` from `build.py schedule-qwen`): only the Qwen weights (never `weights_ltx25`),
+  `qwen_restyle --variants`, F; no LTX-2 clone, no clip. One bundle pins both scripts (`build.bundle` leaves `p15.sh` and `p15q.sh` out).
+- 3 look variants per still = 24 pictures `<shot>__S1/S2/S3`, same seed and LoRA. `pilot_stills.qwen_variant`: the card's Qwen prompt plus
+  picture-only look clauses (`QWEN_LOOK`, no video words) that fit under 90 words; S3 = the card's prompt. The LTX S1/S2/S3 text is
+  unchanged. Tests: all 24 prompts <= 90 words, style check clean, no "snappy"/"timing".
+- Money (RP-11 rc 0, cap $3.4 / 2 h, usual 3x max): restyle 15.4 min on the H100 reference, 25.8 min on the A100; A100 COMMUNITY $1.39/h
+  expected $1.13 / worst $2.59, A100 SECURE $1.79/h $1.46 / $3.33 (pod worst 112 min). No H100: its 15.4 min of work fails RP-01
+  (>= 3 x the 8 min setup); the A100's 26 min passes. Disk 110 GB.
+- Tests: `tests/unit/test_p15_pilot_pod.py` (15). Nothing launched; cost $0.
+
+## 2026-11-06 18:40 UTC — RP-10 placement watch (D-118, the creator 18:28 UTC)
+- `batching.is_placement_failure` + `rp10(..., placement_failures, watch, watch_reason)`; `create` records an HTTP 400 "no instances
+  available" as `placement:<job>` (not `hw:`), and reads `--placement-watch --placement-watch-reason <his message id>`: such tries count
+  toward 60 only; BAD_HOST pods, made-then-failed pods and script failures keep the old limit. Without both flags nothing changes.
+- Tests: `test_cloud_economy.py` (+2): flag on/off, reason missing, 400 vs BAD_HOST, flags known to create. Docs: RP-10 row in CLOUD_RUNBOOK,
+  D-118 in the decision log. Cost $0.
+
 ## 2026-11-06 — J5 dialogue collage, step 1 (thread: "Test J5 dialogue with existing photos"; branch `claude/project-thread-4nebmi` off `icw/05c-ink-round`)
 
 - The creator (16:44 UTC): test J5 now with the existing pictures, a dialogue photo-collage first, then voice, emotion, mouth and background motion;
@@ -4774,6 +4821,66 @@ Test: `tests/unit/test_scene_reuse_docs.py`.
 - Step 4 (creator 18:34 UTC: voice and mouth, credit cap 5000): three dialogue lines in two ElevenLabs voices, one take each, 155 credits (estimate first); Rhubarb Lip Sync 1.14.0 (MIT)
   gives the mouth shapes; `blender/j5_face.py` draws blinks, brows and a mouth that follows the cues on the graded cards (exact sheet-to-frame projection, no model); `mix_voice` puts the
   lines over the camp ambience. Tests: `tests/unit/test_j5_face.py` (5). Record: `docs/J5_DIALOGUE_COLLAGE.md` section 7c. Real mouth/eye variants per sheet (SA-06) still open (paid Qwen edit, the creator's call).
+
+## 2026-11-06 — P1: the rest of the 60 s pilot minute (branch `claude/project-thread-9hpm56`, on `icw/19-pilot-pod`)
+
+- The creator (16:18 UTC): Qwen and LTX are not proven yet; make about one minute of video. Plan: EXEC_QUEUE.md P1 (project files,
+  `ltx_gap_review_2026-11-06/`). The p15 pod (Fable thread, 2 clips, 8 restyles) runs first; P1 adds only what it did not make, and
+  reuses its first frames from HF `route_test_2026-11/pilot/first_frames/` (no second payment for the two-shot or battle frame 0).
+- Free, done: two new static battle cameras (`layout_passes.BATTLE_CAMERAS`: `wide_high`, `front_mid`; `crowd.scene(camera_override=)`
+  plans the crowd for them), rendered in the container (Blender 5.2.3, 5,000 soldiers, 1920x1088, frame 112, 160-185 s per frame
+  after the bake) and uploaded with sha256 to HF `route_test_2026-11/pilot/blender/` (`battle_wide_high_f112_colour.png`,
+  `battle_front_mid_f112_colour.png`, `pilot_stills_p16.json`; the pinned `pilot_stills.json` is untouched). Three new soldiers cards
+  in `pilot_stills.BATTLE_CARDS` (frame 200, wide high, front mid), prompts generated from them, clean under `qa/style_prompt.check`.
+- `training/pods/p16/`: `build.py` (config + RP-11 schedule from p15's pins, the extra manifest and, later, p15's measured first frames
+  and LTX speed), `p16_pod.py` (net: LTX weights then Qwen's; gpu: five room clips from p15's first frames, then the three restyles,
+  then the three battle clips; two LTX failures stop; timeouts = schedule max), `p16.sh` (the p15 stack, heartbeat `.../pilot/p16/beat.txt`,
+  bundle `code/p16/ee_src.tar.gz`, sha256 pinned by `build.py bundle`), `p16.json`, `p16_schedule.json`. Eight clips, 1,088 frames: room
+  establishing/close host/close guest/reverse 145 f, insert table 97 f; battle wide high/front mid 145 f, frame 200 121 f.
+- `production/pilot_minute.py`: after the pods, the ten clips and the clock insert (J5-style push-in on its Qwen still) cut to one
+  2560x1440 video of about 63 s (ROUTE_TEST chain, each clip trimmed to its shot), plus `compare.html` (Blender | Qwen | clip per shot).
+- Tests: `test_pilot_stills.py` (+3), `test_p16_pod.py` (11), `test_pilot_minute.py` (5). Cost $0. Nothing paid launched; the pod
+  waits for the p15 pod (measured LTX speed), the OR-23 plan, the OR-34 audit and the creator's word.
+
+## 2026-11-06 — Route-test Qwen asset pod: script, prompt list, tests (no pod yet)
+- `training/pods/route/route_assets.{sh,py,json}`: one 48 GB card, Qwen-Image-2.1 + xworld_v2 ck3000 at 0.7 (pinned sha f5c420a1…), loader/merge/draw of `xworld_v1_test.py` (working branch copy, sha-pinned in the .sh). Phase 1 = 6 D scenes, 4 backdrops at 2048x1024 with the left/right seam score, 12 hero-sheet angles (flat-light line on every prompt), hero 1 front placed in the 4 backdrops by reference x 2 seeds, at most 2 pictures with the 2.1 panorama outpaint LoRA (experiment, dropped on failure), CLIP identity scores. Phase 2 waits up to 20 min for `e_picks.json` on HF (redraws with seeds 12/13, three fix edits). Every picture: file + sidecar + `manifest.jsonl` line, uploaded by the wrapper every five minutes (OR-33); time stops at 80 % of the cap.
+- Settings are the registered ones (`qa/style_prompt.INFERENCE`, `NEGATIVE`, cfg 2.5 for edit jobs as round 3b); the keyframe gate's 72B judge does not fit beside the image model on 48 GB, so the gate is answered by reading the pictures after phase 1.
+- `tests/unit/test_route_assets.py` (8): job list, style check of all text prompts, banned LoRA/base, LoRA pin, picks to jobs, seam score, panorama canvas, pinned hashes. `runpod dryrun` ok (sha256 f361be04…). Ledger `jobs/route_test_2026-11/assets_ledger.json` runpod_usd 1.5.
+
+## 2026-11-06 — Route-test Qwen asset pod: run report
+One pod (RTX PRO 6000 Blackwell COMMUNITY, 40 min, balance $10.17 -> $9.09) drew 42 pictures (D 6, D2 6 = 90-word twins, A 4, B 12, C 8, P 2, redraws 2, fix-edits 2); 2 rejected. Question C: identity held (CLIP .70-.82 vs .93-.98 own angles). Guard process died at 11:41 and was restarted at 12:11. Report and cards page: /mnt/project-files/explainer-engine/route_test_2026-11/assets/ (HANDOFF.md, index.html). Qwen routes only; no change to rules.
+
+
+## 2026-11-05 — WP-Q7b `camera_setups resolve` CLI for the overnight render matrix
+
+- `python -m explainer_engine.blender.camera_setups resolve NAME --a x,y,z [--b x,y,z] [--bearing D] [--frames N] [--head-m M --eye-m M]`
+  prints the `scene.camera` block (setup, fstop, rig_kind), the framed and focus points and the sampled path as JSON, so a render
+  runner can feed `push_in_reveal` (24 frames) to any cast without knowing the internals. Distances scale with `--head-m` / `--eye-m`
+  (the lead character's head height and eye line; the defaults are the UBC's). Test: `test_the_resolve_cli_...`. Cost $0.
+
+
+## 2026-11-06 — Argon handoff branch `argon/handoff-2026-11-06` (thread: "Prepare Argon handoff branch"; free work, nothing paid)
+
+- The creator (18:54 UTC, Fable thread): one branch with every active change and every future plan, READMEs, the generated frames with
+  verdicts, the LTX helper material, and a prompt for Gemini "Argon" (LTX minimisation; shots from the script, pictures fitted to the
+  video; reuse; pictures from assets; everything measured). Brief: project files `argon_handoff_2026-11-06/BRIEF.md`.
+- Branch from `icw/19-pilot-pod` @3e8f994. Merged (merge commits with the PR number): #151 (twice, 362be4c then f7add32), #150, #152
+  (cancelled, kept), #140, #137, and #146 (`icw/16-lean-pod` @d29a769: icw/19 did not hold its fix-2 commits). Conflicts: PROGRESS.md
+  (both entries kept), `pilot_stills.py` (#150 vs #152, both sides kept). #119, #120, #112 listed as history, not merged.
+- `docs/handoff/argon_2026-11-06/`: README, PRS, PLANS (+ `plans/`: the Georgian plans with English summaries, audits, pilot plans,
+  cost note), MATERIAL.md + MATERIAL.json + 17 JPEG sheets (2.6 MB) with a verdict and reason per set, LTX_HELPERS, REUSE, OPEN_QUESTIONS,
+  ARGON_PROMPT, README_ka, `handoffs/`. Verdicts come from handoffs and the creator's relayed words; each row says what is not verified.
+- Test: `tests/unit/test_argon_handoff.py` (6): every material row has its picture, size budget, verdict and reason, no orphan image, the
+  prompt's documents exist, no secret-looking text. Cost $0. No pod, no paid call. Not done: p14/p15 bundle pins are not rebuilt for
+  the merged tree (do not launch a pod from this branch); the p15 pod result is not known.
+- Refresh (~22:00 UTC, peer request from the J5 thread): merged PR #151 head 7007d7d (BP-176..181, `j5_montage`, `j5_minute` v1/v2, D-119,
+  `docs/J5_ARGON_REVIEW.md`) and `icw/19-pilot-pod` head 0e7e030; `docs/J5_ARGON_REVIEW.md` is listed in the handoff README; PRS and
+  OPEN_QUESTIONS (section E) updated. Conflicts only in PROGRESS and the decision log, all rows kept. No pod, no paid call.
+- Second refresh (~22:30 UTC, coordinator relay): merged PR #151 head 9752721 (`docs/J5_ARGON_PROMPT.md`); the handoff README links it as the
+  main prompt and keeps `ARGON_PROMPT.md` as the second task. No pod, no paid call.
+- Handoff merge fix: `test_route_assets.py::test_prompt_check_allows_ninety_words_only_in_d2` expected 75 words to fail in group D
+  (PR #140, 90-word cap); the newer LT-65 band is 40-150 words (b8ef1c5, creator 2026-11-06 12:27 UTC), so the assertion now uses a
+  prompt above the band; the D2 limit assertion is unchanged. Full `tests/unit` on the merged tree before this fix: 3156 passed, 1 failed (this one).
 
 ## 2026-11-06 J5 dialogue step 4c
 Straight cuts (no dip), young scout voice, per-line RMS levelling, smoother face drive. Render: HF route_test_2026-11/j5_dialogue/step4c/. Docs: J5_DIALOGUE_COLLAGE.md section 7d. ElevenLabs +71 credits (226/5000).
@@ -4809,3 +4916,19 @@ Re-checked sources in three types, two binding rules in the registry (cut reason
 
 ### 2026-11-07 09:50 UTC: voice search by age, root cause of the adult voice for the boy scout
 Root cause: the J5 dialogue test chose both voices by hand from `creative_list_voices` descriptions (J5_DIALOGUE_COLLAGE 7c), not through `audio/casting.py`; the scout got Cam, a library voice labelled `young`, which holds adults up to about 40, and the library has no child label. `casting.py` also had no child band, so a card saying boy gave `age_of` None and no age filter. Fix: VC-10 (STORY_ENGINE), `age_of` returns `child`, `child_problems` (a child voice must say child in its name or description and no adult, companion or other "boy"), `query` searches one plain word for a child, `design_description` for a child; tests in `test_casting_age.py`; skill `voice-search` (fields and blind spots, free preview measurement, first-take proof, credit guard); voice-caster page points to it. Free listing and preview measurement only; no paid take (ElevenLabs ledger unchanged at 226 of 5000).
+## 2026-11-06 19:45 UTC — p15q: 48 GB cards added to the Qwen-only schedule (the creator 19:30 UTC: "only A100?")
+- Finding: the asset pod 0t2re35vf6f3sq was NOT a 48 GB card. Its record says RTX PRO 6000 Blackwell Workstation (96 GB, $1.69/h); the
+  33-41 s per 1280x720 picture (HF route_test_2026-11/assets/manifest.jsonl, B 34 s, C edits 39 s, D 35 s) are Blackwell numbers. No 48 GB
+  card has ever run this Qwen pipeline: its speed and its VRAM fit at 1280x720 with 2-3 reference images (`model_cpu_offload`) are unknown.
+  The restyle is drawn at 1280x720 too (first frames are scaled to 1920x1088 on the CPU afterwards), so no pixel scaling applies.
+- `CARDS_QWEN` += A40 SECURE $0.59/h, RTX A6000 SECURE $0.59/h (gpu_speed 0.28), L40S SECURE $1.09/h (0.5): ESTIMATED from `runpod.SPEED`
+  ratios, never measured. Worst money <= $3.4 for every card (A40 $1.98, L40S $2.31); the worst pod time of the A40/A6000 (201 min) and
+  L40S (127 min) is over the 2 h cap, so the guard's 2 h bounds them and a stop leaves the saved pictures (step-by-step uploads). Blackwell stays out.
+- `p15_qwen.run` ends the stage after `MAX_FAIL_STREAK` = 3 pictures failing in a row (a card that cannot hold the model would only bill).
+- Tests: schedule card list, no Blackwell/H100, per-card worst money; the failure-streak stop. Cost $0.
+
+## 2026-11-06 20:20 UTC — p15q: every card that passes RP-01 and stays under $3.4 in the worst case (the creator 20:09 UTC: "try every possible card, in turn")
+- `CARDS_QWEN` = RTX A5000, A40, RTX A6000, L4, RTX 5090 (COMMUNITY + SECURE), RTX 4090, RTX 6000 Ada, L40S, A100 (COMMUNITY + SECURE); all speeds below the A100
+  ESTIMATED (`runpod.SPEED` / 1.8). Out: H100 (17 min work) and RTX PRO 6000 Blackwell (21 min) fail RP-01; A100 PCIe worst $3.65 / 122 min; RTX PRO 4000/4500
+  Blackwell have no speed. Qwen-Image-2.1 = 13.3 GB transformer + 16.3 GB text encoder (model_cpu_offload, one at a time): 24 GB cards may fit, unproven;
+  the 3-failure stop bounds an OOM. Time worst over 2 h (guard-bounded, pictures upload as made): A5000 276, L4 316, A40/A6000 203, 4090 139, Ada 133, L40S 127 min.

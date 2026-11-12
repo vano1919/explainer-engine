@@ -16,6 +16,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [J5_LTX_MINIMISATION_REPORT](J5_LTX_MINIMISATION_REPORT.md) | Argon's report on minimising LTX in J5 (D-116): shot router, limits BP-182..184, the v3 one-minute plan (21.0 s of LTX to 3.04 s); its edits to the existing J5 modules were not taken, see PROGRESS 2026-11-07 | |
 | [LTX_JOBS](LTX_JOBS.md) | the LTX generations of the J2/J4 routes (`ltx_job/1`): bases, IC-LoRAs, layout conditioning, the test matrix (D-116, guide step 3) | LJ- |
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
+| [handoff/argon_2026-11-06/](handoff/argon_2026-11-06/README.md) | the Argon handoff (2026-11-06, routes of D-116): the creator's strategy (LTX minimisation, shots from the script, reuse), every open PR and plan, every generated picture set with a verdict and reason, LTX helpers and measured numbers, reuse tooling, open questions, the Argon prompt; a reading branch, not a launch branch | |
 | [archive/](archive/) | history moved out of `docs/wip/` by ICW-01 (2026-11-05, D-108): the D-95 override note, the Master Mold handoff and its execution guide; evidence only, never an active instruction | |
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
 | [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) | every decision, open questions, approval gates | D- |

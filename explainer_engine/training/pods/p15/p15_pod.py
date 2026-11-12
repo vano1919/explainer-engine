@@ -13,6 +13,9 @@ uploads ``$EE_OUT`` to HF ``route_test_2026-11/pilot/`` as files land: OR-33).
 
     python3 -m explainer_engine.training.pods.p15.p15_pod            # on the pod (EE_OUT, EE_DEADLINE from the wrapper)
     python3 -m explainer_engine.training.pods.p15.p15_pod --plan     # the stages, their lanes and timeouts, no work
+    python3 -m explainer_engine.training.pods.p15.p15_pod --only qwen   # the creator 2026-11-06 17:34 UTC: only the 8 Qwen pictures,
+                                                                     # no LTX weights, no clips, three look variants per still = 24 pictures
+                                                                     # (``p15q_schedule.json``, ``p15q.sh``)
 """
 from __future__ import annotations
 
@@ -31,14 +34,15 @@ PY = sys.executable
 PKG = "explainer_engine.training.pods.p15"
 CLIP_STAGES = ["ltx_c1", "ltx_c2", "ltx_c3", "ltx_c4", "ltx_c6", "ltx_c7", "ltx_c8", "ltx_c5"]   # v4: build.CLIPS order, c5 + c8 last
 LANES = {"net": ["weights_qwen", "weights_ltx25"], "gpu": ["qwen_restyle", *CLIP_STAGES, "F"]}
+QWEN_LANES = {"net": ["weights_qwen"], "gpu": ["qwen_restyle", "F"]}   # --only qwen: never the LTX weights, never a clip
 
 
 def load_cfg() -> dict:
     return json.loads((HERE / "p15.json").read_text(encoding="utf-8"))
 
 
-def load_schedule() -> dict:
-    return json.loads((HERE / "p15_schedule.json").read_text(encoding="utf-8"))
+def load_schedule(only: str | None = None) -> dict:
+    return json.loads((HERE / ("p15q_schedule.json" if only == "qwen" else "p15_schedule.json")).read_text(encoding="utf-8"))
 
 
 def timeouts(schedule: dict) -> dict[str, float]:
@@ -51,8 +55,8 @@ def timeouts(schedule: dict) -> dict[str, float]:
 
 
 class Pod:
-    def __init__(self, cfg: dict, schedule: dict, out: Path, *, deadline: float, run=P.run_proc):
-        self.cfg, self.out, self.deadline, self.run = cfg, Path(out), deadline, run
+    def __init__(self, cfg: dict, schedule: dict, out: Path, *, deadline: float, run=P.run_proc, only: str | None = None):
+        self.cfg, self.out, self.deadline, self.run, self.only = cfg, Path(out), deadline, run, only
         self.book = P.Book(self.out)
         self.book.events = {k: threading.Event() for k in ("weights_qwen", "weights_ltx25")}
         self.reserve = schedule["end_reserve_min"] * 60
@@ -85,13 +89,16 @@ class Pod:
                 f"snapshot_download({q['base']!r})\n"
                 f"hf_hub_download({q['style_lora']['hf']!r}, {q['style_lora']['path']!r}, repo_type='dataset')\n")
         self.stage("weights_qwen", [PY, "-c", code])
-        self.stage("weights_ltx25", self.mod("p15_ltx", "--prefetch"))
+        if self.only != "qwen":
+            self.stage("weights_ltx25", self.mod("p15_ltx", "--prefetch"))
 
     def gpu(self):
         until = self.deadline - self.reserve
         self.book.events["weights_qwen"].wait(max(0.0, until - time.time()))
-        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out),
+        self.stage("qwen_restyle", self.mod("p15_qwen", "--out", self.out, *(["--variants"] if self.only == "qwen" else [])),
                    why=None if self.book.ok("weights_qwen") else "the Qwen weights did not download")
+        if self.only == "qwen":
+            return
         self.book.events["weights_ltx25"].wait(max(0.0, until - time.time()))
         fails = 0
         for name, job in self.cfg["clips"].items():
@@ -126,19 +133,22 @@ class Pod:
         except Exception as e:   # noqa: BLE001 - the record says what broke; F still runs
             self.book.mark("gpu_lane", "failed", reason=repr(e)[:300])
         self.stage_f()
+        if self.only == "qwen":
+            return 0 if self.book.ok("qwen_restyle") else 1
         return 0 if any(self.book.ok(n) for n in self.cfg["clips"]) else 1
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--plan", action="store_true")
+    ap.add_argument("--only", choices=["qwen"], help="run only the Qwen restyle (no LTX weights, no clips)")
     a = ap.parse_args(argv)
-    cfg, sch = load_cfg(), load_schedule()
+    cfg, sch = load_cfg(), load_schedule(a.only)
     if a.plan:
-        print(json.dumps({"lanes": LANES, "timeouts_s": timeouts(sch), "clips": cfg["clips"]}, indent=1))
+        print(json.dumps({"lanes": QWEN_LANES if a.only else LANES, "timeouts_s": timeouts(sch), "clips": {} if a.only else cfg["clips"]}, indent=1))
         return 0
     out = Path(os.environ.get("EE_OUT", "/workspace/out"))
-    return Pod(cfg, sch, out, deadline=float(os.environ["EE_DEADLINE"])).main()
+    return Pod(cfg, sch, out, deadline=float(os.environ["EE_DEADLINE"]), only=a.only).main()
 
 
 if __name__ == "__main__":

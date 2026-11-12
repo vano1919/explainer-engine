@@ -1,0 +1,205 @@
+{
+  "schema": "pod_schedule/1",
+  "setup_min": 8,
+  "end_reserve_min": 10,
+  "lanes": {
+    "gpu": 1,
+    "net": 1
+  },
+  "cards": [
+    {
+      "name": "A100 80GB",
+      "cloud": "COMMUNITY",
+      "price_h": 1.39,
+      "gpu_speed": 0.6
+    },
+    {
+      "name": "H100 NVL",
+      "cloud": "COMMUNITY",
+      "price_h": 2.59,
+      "gpu_speed": 1.0
+    }
+  ],
+  "stages": [
+    {
+      "id": "weights_ltx25",
+      "needs": [],
+      "on": {
+        "net": {
+          "expected_min": 4,
+          "max_min": 12
+        }
+      },
+      "measured": false,
+      "note": "LTX-2.5 distilled only (step-3 pod 1: both LTX bases in 5.5 min, measured)"
+    },
+    {
+      "id": "weights_qwen",
+      "needs": [],
+      "on": {
+        "net": {
+          "expected_min": 5,
+          "max_min": 15
+        }
+      },
+      "measured": false,
+      "note": "Qwen-Image-2.1 + xworld_v2 ck3000 (step-3 pod 1 had it before 14:40 UTC, not timed alone)"
+    },
+    {
+      "id": "ltx_room_establishing",
+      "needs": [
+        "weights_ltx25"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 4.51,
+          "max_min": 13.5
+        }
+      },
+      "measured": false,
+      "note": "145 frames (6.04 s) at 1920x1088, seed 42, from the p15 pod's restyle of room_establishing"
+    },
+    {
+      "id": "ltx_room_close_host",
+      "needs": [
+        "weights_ltx25"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 4.51,
+          "max_min": 13.5
+        }
+      },
+      "measured": false,
+      "note": "145 frames (6.04 s) at 1920x1088, seed 42, from the p15 pod's restyle of room_close_host"
+    },
+    {
+      "id": "ltx_room_close_guest",
+      "needs": [
+        "weights_ltx25"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 4.51,
+          "max_min": 13.5
+        }
+      },
+      "measured": false,
+      "note": "145 frames (6.04 s) at 1920x1088, seed 42, from the p15 pod's restyle of room_close_guest"
+    },
+    {
+      "id": "ltx_room_reverse",
+      "needs": [
+        "weights_ltx25"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 4.51,
+          "max_min": 13.5
+        }
+      },
+      "measured": false,
+      "note": "145 frames (6.04 s) at 1920x1088, seed 42, from the p15 pod's restyle of room_reverse"
+    },
+    {
+      "id": "ltx_room_insert_table",
+      "needs": [
+        "weights_ltx25"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 3.02,
+          "max_min": 9.1
+        }
+      },
+      "measured": false,
+      "note": "97 frames (4.04 s) at 1920x1088, seed 42, from the p15 pod's restyle of room_insert_table"
+    },
+    {
+      "id": "ltx_battle_wide_high",
+      "needs": [
+        "weights_ltx25",
+        "qwen_restyle"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 4.51,
+          "max_min": 13.5
+        }
+      },
+      "measured": false,
+      "note": "145 frames (6.04 s) at 1920x1088, seed 42, from this pod's restyle of wide_high"
+    },
+    {
+      "id": "ltx_battle_front_mid",
+      "needs": [
+        "weights_ltx25",
+        "qwen_restyle"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 4.51,
+          "max_min": 13.5
+        }
+      },
+      "measured": false,
+      "note": "145 frames (6.04 s) at 1920x1088, seed 42, from this pod's restyle of front_mid"
+    },
+    {
+      "id": "ltx_battle_f200",
+      "needs": [
+        "weights_ltx25",
+        "qwen_restyle"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 3.76,
+          "max_min": 11.3
+        }
+      },
+      "measured": false,
+      "note": "121 frames (5.04 s) at 1920x1088, seed 42, from this pod's restyle of battle_f200_colour"
+    },
+    {
+      "id": "qwen_restyle",
+      "needs": [
+        "weights_qwen"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 2.82,
+          "max_min": 8.5
+        }
+      },
+      "measured": true,
+      "note": "3 edits (battle frame 200 and the two new battle stills) at 36 s + 61 s load: pod 1's measured Qwen speed on the H100 NVL"
+    },
+    {
+      "id": "F",
+      "needs": [
+        "ltx_room_establishing",
+        "ltx_room_close_host",
+        "ltx_room_close_guest",
+        "ltx_room_reverse",
+        "ltx_room_insert_table",
+        "ltx_battle_wide_high",
+        "ltx_battle_front_mid",
+        "ltx_battle_f200"
+      ],
+      "on": {
+        "gpu": {
+          "expected_min": 0.1,
+          "max_min": 1
+        }
+      },
+      "measured": false,
+      "note": "speeds.json + the last uploads"
+    }
+  ],
+  "limits": {
+    "max_usd": 5.0,
+    "max_hours": 3.0,
+    "max_idle_gpu_share": 0.15
+  },
+  "_doc": "P1 (EXEC_QUEUE.md): the rest of the 60 s pilot minute after the p15 pod. The room clips start from p15's first frames (on HF) as soon as the LTX weights are in; Qwen's weights come second on the net lane; the three battle clips follow the restyle of their stills. No Blender on the pod."
+}

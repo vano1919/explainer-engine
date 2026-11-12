@@ -26,11 +26,29 @@ def load_cfg() -> dict:
     return json.loads((HERE / "p15.json").read_text(encoding="utf-8"))
 
 
-def jobs(cfg: dict) -> list[dict]:
+MAX_FAIL_STREAK = 3   # pictures failing in a row before the stage ends (a card that cannot hold the model fails every one)
+LOOKS = ("S1", "S2", "S3")   # the three look variants of --variants (pilot_stills.QWEN_LOOK), same seed and LoRA
+
+
+def jobs(cfg: dict, variants: bool = False) -> list[dict]:
+    """The pictures: one per still, or with ``variants`` three per still (``<shot>__S1`` .. ``__S3``, Fable 18:00 UTC), the prompt
+    ``pilot_stills.qwen_variant`` (the card's words plus the look clauses that fit under 90 words), everything else identical."""
     q = cfg["qwen"]
-    return [{"name": j["shot"], "stage": "pilot", "prompt": j["qwen_prompt"], "seed": q["seed"], "cfg": q["cfg_edit"], "size": q["size"],
-             "kind": "edit", "clip": j["shot"], "still": j["still"], "refs": [("hero", h) for h in j["hero_refs"]]}
-            for j in cfg["qwen_jobs"]]
+    if not variants:
+        return [{"name": j["shot"], "stage": "pilot", "prompt": j["qwen_prompt"], "seed": q["seed"], "cfg": q["cfg_edit"], "size": q["size"],
+                 "kind": "edit", "clip": j["shot"], "still": j["still"], "refs": [("hero", h) for h in j["hero_refs"]]}
+                for j in cfg["qwen_jobs"]]
+    from explainer_engine.blender import pilot_stills as PS
+    out = []
+    for j in cfg["qwen_jobs"]:
+        for s in LOOKS:
+            prompt = PS.qwen_variant(j["shot"], s)
+            if s == "S3" and prompt != j["qwen_prompt"]:
+                raise ValueError(f"{j['shot']}: S3 must be the card's prompt")
+            out.append({"name": f"{j['shot']}__{s}", "stage": "pilot", "prompt": prompt, "seed": q["seed"], "cfg": q["cfg_edit"],
+                        "size": q["size"], "kind": "edit", "clip": f"{j['shot']}__{s}", "still": j["still"],
+                        "refs": [("hero", h) for h in j["hero_refs"]], "look": s})
+    return out
 
 
 def fetch_still(cfg: dict, still: dict, work: Path) -> Path:
@@ -43,7 +61,7 @@ def fetch_still(cfg: dict, still: dict, work: Path) -> Path:
     return p
 
 
-def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in")) -> int:
+def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in"), variants: bool = False) -> int:
     cfg = load_cfg()
     out = Path(out)
     qd = out / "qwen"
@@ -64,8 +82,8 @@ def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in")) -> in
     pipe, tr = t.load_pipeline()
     pipe = Q.style_lora(t, pipe, tr, cfg, say)
     say("loaded in", round(time.time() - t0), "s")
-    made = failed = 0
-    for j in jobs(cfg):
+    made = failed = streak = 0
+    for j in jobs(cfg, variants):
         p = qd / f"{j['name']}.png"
         if p.exists():
             continue
@@ -80,10 +98,15 @@ def run(out: Path, assets: Path, work: Path = Path("/workspace/pilot_in")) -> in
             im = Q.draw(pipe, cfg, j, refs).convert("RGB")
         except Exception as e:   # noqa: BLE001 - one failed picture must not end the stage
             failed += 1
+            streak += 1
             say("FAIL", j["name"], repr(e)[:300])
             with open(qd / "manifest.jsonl", "a") as f:
                 f.write(json.dumps({"name": j["name"], "status": "failed", "error": repr(e)[:300]}) + "\n")
+            if streak >= MAX_FAIL_STREAK:   # e.g. 48 GB out of memory: every picture would fail, the card would only bill
+                say("STOP: ", streak, "pictures failed in a row; ending the stage so the pod can stop")
+                break
             continue
+        streak = 0
         im.save(p)
         ff = out / "first_frames" / f"{j['clip']}.png"
         ff.parent.mkdir(parents=True, exist_ok=True)
@@ -107,12 +130,13 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, default=Path(os.environ.get("EE_OUT", "/workspace/out")))
     ap.add_argument("--assets", type=Path, default=Path("/workspace/assets"))
     ap.add_argument("--list", action="store_true", help="print the pictures, no GPU")
+    ap.add_argument("--variants", action="store_true", help="three look variants per still (S1, S2, S3), 24 pictures")
     a = ap.parse_args(argv)
     if a.list:
-        for j in jobs(load_cfg()):
+        for j in jobs(load_cfg(), a.variants):
             print(j["name"], j["size"], len(j["prompt"].split()), "words", j["still"]["path"], [r[1] for r in j["refs"]])
         return 0
-    return run(a.out, a.assets)
+    return run(a.out, a.assets, variants=a.variants)
 
 
 if __name__ == "__main__":

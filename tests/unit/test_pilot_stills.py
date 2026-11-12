@@ -182,3 +182,55 @@ def test_a_card_that_names_a_prop_outside_the_shot_is_refused():
     bad["cards"]["room_two_shot"]["start"] = "{host} looks at {host}"
     with pytest.raises(ContractError, match="twice"):
         PS.prompts("room_two_shot", bad)
+
+
+# P1 (the 60 s pilot): three more soldiers stills, two of them from named static cameras
+def test_the_extra_battle_cards_are_clean_one_per_camera_and_under_the_clone_limit():
+    from explainer_engine.qa import style_prompt as SP
+    from explainer_engine.blender import layout_passes as LP
+    assert set(LP.BATTLE_CAMERAS) == {"wide_high", "front_mid"}
+    for sid, key in (("battle_f200_colour", "f200"), ("battle_wide_high_f096_colour", "wide_high"),
+                     ("battle_front_mid_f100_colour", "front_mid")):
+        assert PS.battle_card(sid) is PS.BATTLE_CARDS[key]
+        p = PS.prompts(sid)
+        assert p["qwen_words"] <= PS.QWEN_MAX_WORDS and p["hero_refs"] == []
+        assert not [f for f in SP.check(p["qwen"], sub_category="V1") if f["severity"] in ("FAIL", "REVIEW")], sid
+        assert p["ltx"].startswith(PS.VIDEO_SENTENCE) and p["ltx"].endswith("Static camera."), sid
+        q = p["qwen"].lower()
+        for name, tag in PS.BATTLE_CARDS[key]["tags"].items():
+            assert q.count(tag.lower()) <= 1, (sid, name)
+    assert PS.battle_card("battle_f000_colour") is PS.BATTLE
+    with pytest.raises(ContractError, match="not a battle"):
+        PS.battle_card("room_two_shot")
+
+
+def test_the_extra_manifest_keeps_the_pinned_one_and_hashes_the_new_stills(tmp_path):
+    def render(name, frames):
+        d = tmp_path / name / "battle"
+        (d / "colour" / "frames").mkdir(parents=True)
+        for i in frames:
+            (d / "colour" / "frames" / f"frame_{i:06d}.png").write_bytes(f"{name}{i}".encode())
+        (d / "layout_manifest.json").write_text(json.dumps({"camera": name, "passes": {"colour": {
+            "engine": "eevee", "seconds_per_frame": 250.0, "wall_seconds": 700.0,
+            "frame_sha256": {f"frame_{i:06d}.png": "x" for i in frames}}}}), encoding="utf-8")
+        return tmp_path / name
+    dirs = {"wide_high": render("wide_high", [96, 112]), "front_mid": render("front_mid", [100, 112])}
+    doc = PS.extra_manifest(dirs, {"wide_high": [96], "front_mid": [100]}, tmp_path / "out")
+    assert set(doc["shots"]) == {"battle_wide_high_f096_colour", "battle_front_mid_f100_colour"}
+    assert all((tmp_path / "out" / s["file"]).exists() and len(s["sha256"]) == 64 and s["prompts"]["qwen"] for s in doc["shots"].values())
+    assert (tmp_path / "out" / PS.EXTRA_FILE).exists() and not (tmp_path / "out" / "pilot_stills.json").exists()
+    with pytest.raises(ContractError, match="was not rendered"):
+        PS.extra_manifest(dirs, {"wide_high": [50], "front_mid": [100]}, tmp_path / "out2")
+    with pytest.raises(ContractError, match="rendered with camera"):
+        PS.extra_manifest({"wide_high": dirs["front_mid"]}, {"wide_high": [100]}, tmp_path / "out3")
+
+
+def test_a_named_battle_camera_reaches_the_crowd_plan():
+    from explainer_engine.blender import crowd as CR
+    from explainer_engine.blender import layout_passes as LP
+    import inspect
+    assert "camera_override" in inspect.signature(CR.scene).parameters
+    for cam in LP.BATTLE_CAMERAS.values():
+        assert {"location", "look_at", "lens_mm", "focus_distance_m"} <= set(cam)
+    with pytest.raises(ContractError, match="unknown battle camera"):
+        LP.battle_scene(24, camera="nope")
