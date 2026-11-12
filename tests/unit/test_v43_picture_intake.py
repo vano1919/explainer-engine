@@ -232,3 +232,70 @@ def test_an_identity_miss_is_review_and_listed(tmp_path):
     res = T.intake(root, tmp_path / "drop",
                    identity=lambda path, item: {"gate": "identity", "status": "REVIEW", "detail": "kael not matched"})
     assert res["accepted"] == ["S1_SH2_start"] and res["review"] == ["S1_SH2_start"]
+
+
+# --- the main style (the creator, 2026-11-12 14:03 UTC) and GC-01's split, GC-18, GC-19 (final audit A10) ----------------
+MAIN = {"preset": "crossworld_main_style_v1"}
+STYLE_PIC = "assets/reference/style/main_style_5709.png"
+
+
+def test_the_main_style_preset_is_the_default_and_its_picture_is_pinned():
+    doc = json.loads(T.PRESETS.read_text())
+    assert doc["default_style_profile"] == "crossworld_main_style_v1"
+    pre = T.preset("crossworld_main_style_v1")
+    ref = pre["style_references"][0]
+    assert T.sha256(T.REPO_ROOT / ref["file"]) == ref["sha256"] == "db719b00bdfacc0446986598da3b33ee005eeb67bda9260c35ff973bceb8739e"
+    look = T.look_of({"look": MAIN})                        # its own words pass GC-11 (negations) and GC-18
+    assert look["face_sentence"].startswith("People are") and "photograph" in look["never_words"]
+
+
+def test_image_1_is_the_style_picture_for_every_item_anchors_included(tmp_path):
+    root = _episode(tmp_path, look=MAIN)
+    T.export(root)
+    items = _items(root)
+    assert T.sha256(root / STYLE_PIC) == T.preset("crossworld_main_style_v1")["style_references"][0]["sha256"]
+    assert all(i["references"][0] == STYLE_PIC for i in items)
+    assert all(T.STYLE_REF_CLAUSE in i["prompt"] for i in items)
+    anchors = [i for i in items if i["kind"] != "shot"]
+    assert anchors and all(i["references"] == [STYLE_PIC] for i in anchors)          # people and places: own anchors only
+    sh1 = next(i for i in items if i["id"] == "S1_SH1_start")
+    assert sh1["references"] == [STYLE_PIC, "assets/reference/characters/kael.png", "assets/reference/characters/sena.png",
+                                 "assets/reference/locations/camp.png"]
+    end = next(i for i in items if i["id"] == "S1_SH1_end")
+    assert end["references"][:2] == [STYLE_PIC, "assets/generated/images/S1_SH1_start.png"]
+
+
+def test_a_changed_style_picture_stops_the_export(tmp_path):
+    root = _episode(tmp_path, look=MAIN)
+    (root / STYLE_PIC).parent.mkdir(parents=True)
+    _pic(root / STYLE_PIC)
+    with pytest.raises(ContractError, match="not the approved style picture"):
+        T.export(root)
+
+
+def test_words_the_chat_redraws_as_a_photograph_fail(tmp_path):
+    shots = [_shot("S1_SH1", "S1", ["kael"], "camp", start="Kael stands in natural, candid light.")]
+    with pytest.raises(ContractError, match="GC-18"):
+        T.export(_episode(tmp_path, look=MAIN, shots=shots))
+    with pytest.raises(ContractError, match="GC-18"):
+        T.look_of({"look": dict(MAIN, style_sentence="A realistic photograph of the past.")})
+
+
+def test_the_cartoon_check_reads_negations():
+    T.look_of({"look": dict(LOOK, face_sentence="Warm adult faces, never a cartoon nose or oversized eyes.")})
+    with pytest.raises(ContractError, match="GC-11"):
+        T.look_of({"look": dict(LOOK, face_sentence="Warm cartoon faces.")})
+
+
+def test_packs_are_planned_against_the_daily_chat_quota(tmp_path):
+    shots = [_shot(f"S1_SH{i}", "S1", ["kael"], "camp") for i in range(1, 15)]
+    root = _episode(tmp_path, shots=shots)
+    man = json.loads((root / "episode.json").read_text())
+    (root / "episode.json").write_text(json.dumps(dict(man, chat_pictures_per_day=8)))
+    res = T.export(root, size=6)
+    packs = [json.loads(p.read_text()) for p in sorted((root / "planning" / "turn_packs").glob("pack_*.json"))]
+    per_day = {}
+    for pk in packs:
+        per_day[pk["day"]] = per_day.get(pk["day"], 0) + len(pk["items"])
+    assert all(n <= 8 for n in per_day.values()) and res["days"] == max(per_day) >= 2
+    assert "day 1 (about 8 pictures a day" in (root / "planning" / "turn_packs" / "pack_01.md").read_text()

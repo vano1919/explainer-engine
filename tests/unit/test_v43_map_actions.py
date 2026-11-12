@@ -165,6 +165,8 @@ def test_the_action_clip_has_exactly_its_frames(raster, tmp_path):
     n = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
                         "stream=nb_read_frames", "-of", "csv=p=0", str(tmp_path / "m.mp4")], capture_output=True, text=True).stdout
     assert int(n.strip()) == r["total_frames"] == 24 and r["word_basis"] == "estimated" and r["relief_upsample_max"] is not None
+    gates = {g["gate"]: g for g in r["gates"]["gates"]}   # final audit B1: a map clip is measured, never a literal PASS
+    assert gates["map_has_actions"]["status"] == "PASS" and isinstance(gates["map_not_standing_still"]["measured"], int)
 
 
 def test_the_toba_proposal_resolves_against_the_script():

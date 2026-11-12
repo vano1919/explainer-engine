@@ -32,8 +32,25 @@ def test_every_retired_tool_names_existing_entry_points_and_a_replacement():
             assert (ROOT / e).exists(), (name, e)
 
 
-@pytest.mark.parametrize("tool", ["qwen_image", "xworld_lora", "ltx", "blender_scene", "runpod", "legacy_paint",
-                                  "cinematic_image_animator"])
+@pytest.mark.parametrize("tool", ["qwen_image", "xworld_lora"])
+def test_qwen_and_its_lora_are_retired_everywhere(tool, episode, tmp_path):
+    """The creator, 2026-11-12 14:01 UTC (final audit section 7, answer 4; C3): no Qwen exception, the style rounds too."""
+    with pytest.raises(ConfigError, match="retired everywhere"):
+        retired.refuse(tool, tmp_path / "style_round", env={}, cwd=tmp_path)
+    with pytest.raises(ConfigError, match="retired everywhere"):
+        retired.refuse(tool, episode / "production" / "out", env={}, cwd=tmp_path)
+
+
+def test_the_hook_refuses_a_qwen_worker_launch_everywhere():
+    from explainer_engine.cloud import hooks as H
+    for f in ("modal_qwen_jobs_v15.py", "modal_qwen_jobs_v3.py", "modal_sa_test.py"):
+        cmd = f"EE_MODAL_GO=cmsg_1 modal run explainer_engine/training/pods/p15/{f}::main"
+        assert "retired everywhere" in (H.modal_refusal(cmd, env={}) or ""), f
+    for g in retired.load()["tools"]["qwen_image"]["workers_glob"]:
+        assert list(ROOT.glob(g)), g
+
+
+@pytest.mark.parametrize("tool", ["ltx", "blender_scene", "runpod", "legacy_paint", "cinematic_image_animator"])
 def test_a_retired_tool_refuses_inside_a_v43_episode_and_runs_outside(tool, episode, tmp_path):
     with pytest.raises(ConfigError, match="retired for a v4.3 episode"):
         retired.refuse(tool, episode / "production" / "out", env={}, cwd=tmp_path)

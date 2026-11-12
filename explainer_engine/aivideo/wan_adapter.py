@@ -22,6 +22,15 @@ what every backend needs and none may skip:
    the layered 2.5D renderer (``production/layers25d``) with the shot's ``fallback_motion_imitation`` and the report says
    so. REVIEW rows are kept for the creator, never retried on money.
 4. **Saved as it arrives** (OR-33): every finished clip is hashed and a ledger line is appended before the next attempt.
+5. **No second launch after a lost answer** (final audit A4): the Modal backend looks for the job's finished clip in its run's
+   HF folder before it submits; when the launcher dies without an answer it stops the app by name and fetches before it
+   decides; an infrastructure or configuration failure (``InfraError``) is never retried with a new seed and its
+   reservation stays open until the bill is read. Only a clip the model made badly (``ClipFailed``, the worker's
+   ``WAN_FAILED`` exit, or a QA FAIL) gets the one retry.
+6. **Settled from what was measured** (final audit B6): the worker's ``measured.json`` (container seconds) plus the launch's
+   cold start replace the reservation; the report shows estimate, reserved and billed apart (cloud rules section 8).
+7. **The episode's line** (final audit B5): every paid attempt is also reserved in ``core/ledger.EpisodeTotal``, the durable
+   total of all the episode's runs against ``modal.per_episode_usd``.
 """
 from __future__ import annotations
 
@@ -36,7 +45,7 @@ import numpy as np
 
 from explainer_engine.core import spend_caps
 from explainer_engine.core.errors import ConfigError, ContractError
-from explainer_engine.core.ledger import STOP_FRACTION, CapReached
+from explainer_engine.core.ledger import STOP_FRACTION, CapReached, EpisodeTotal
 from explainer_engine.qa import gates as G
 from explainer_engine.standards import sourced_rules as SR
 
@@ -75,12 +84,24 @@ class WanJob:
 
 @dataclass
 class Approval:
-    """The creator's agreed OR-23 plan for a paid batch: its id, the batch cap in USD, when and where he said yes."""
+    """The creator's agreed OR-23 plan for a paid batch: its id, the batch cap in USD, when and where he said yes, and the plan
+    file he said yes to with its sha256 (final audit B10: the yes binds the plan's bytes; a changed plan needs a new yes)."""
     plan_id: str
     cap_usd: float
     said_by: str
     said_at: str
     message_id: str
+    plan_path: str | None = None
+    plan_sha256: str | None = None
+
+
+class InfraError(RuntimeError):
+    """The launch failed for a reason that is not the clip (launcher, network, Modal, a refusal in the container) or its
+    answer was lost: never retried with a new seed, the reservation stays open until the bill is read (final audit A4)."""
+
+
+class ClipFailed(RuntimeError):
+    """The model ran and made no usable clip (the worker's ``WAN_FAILED``): the one retry with a new seed may follow."""
 
 
 class Backend:
@@ -170,10 +191,16 @@ class ModalWanBackend(Backend):
         rung = MR.next_rung(list(self.ladder.get("done") or []), self.ladder.get("red"))
         if rung != "L4":
             out.append(f"the OR-37 ladder is at {rung or 'a red rung'}, not L4: L0-L3 run first, in order")
+        elif isinstance(self.launch, dict) and not launch_problems(self.launch):
+            from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+            old = MR.stale(self.ladder, WJ.proof(self.launch))
+            if old:
+                out.append(f"the ladder's rung(s) {old} were proved on another launch file or worker: run them again")
         if self.measured_s_per_clip_s is None:
             out.append("no speed measured on L3")
-        if not str(self.env.get("EE_MODAL_GO") or "").startswith("cmsg_"):
-            out.append("EE_MODAL_GO is not set to the creator's message id")
+        from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+        if not WJ.GO.match(str(self.env.get("EE_MODAL_GO") or "")):
+            out.append("EE_MODAL_GO is not '<the creator's message id>:<the plan's sha256[:12]>'")
         try:
             spend_caps.modal()
         except spend_caps.OverCeiling as exc:
@@ -182,33 +209,114 @@ class ModalWanBackend(Backend):
             out.append("no Modal runner / fetch was given")
         return out
 
-    def _stop(self, app_id: str | None) -> None:
+    def _stop(self, app_id: str | None) -> list[str]:
+        """Stop the launch's app by id and every running app of the launch's name (ephemeral apps stop only by id); returns
+        what could not be done, so a lost network is reported, never taken for a stopped app."""
         from explainer_engine.cloud import modal_run as MR
-        rc, text = self.runner(["modal", "app", "list", "--json"])
-        ids = MR.stop_target(text, self.launch["app_name"]) if rc == 0 and self.launch.get("app_name") else []
+        problems, ids = [], []
+        try:
+            rc, text = self.runner(["modal", "app", "list", "--json"])
+            ids = MR.stop_target(text, self.launch["app_name"]) if rc == 0 and self.launch.get("app_name") else []
+            if rc != 0:
+                problems.append(f"modal app list exited {rc}")
+        except Exception as exc:  # noqa: BLE001
+            problems.append(f"modal app list failed: {type(exc).__name__}")
         for i in sorted(set(ids) | ({app_id} if app_id else set())):
-            self.runner(["modal", "app", "stop", i])
+            try:
+                if self.runner(["modal", "app", "stop", i])[0] != 0:
+                    problems.append(f"modal app stop {i} failed")
+            except Exception as exc:  # noqa: BLE001
+                problems.append(f"modal app stop {i} failed: {type(exc).__name__}")
+        return problems
+
+    def job_refusals(self, job: WanJob) -> list[str]:
+        """What keeps one job from being sent (B9, B10): the start picture pinned by the pictures stage and still those bytes,
+        the plan's sha256, and EE_MODAL_GO naming this plan."""
+        out, x = [], job.extra or {}
+        want = x.get("start_sha256")
+        if not want:
+            out.append("no start_sha256 from production/pictures.json")
+        elif not Path(job.start_picture).is_file() or _sha_file(job.start_picture) != want:
+            out.append("the start picture is not the one production/pictures.json pinned")
+        plan_sha, msg = x.get("plan_sha256"), x.get("message_id")
+        if not plan_sha:
+            out.append("no approved plan sha256")
+        elif str(self.env.get("EE_MODAL_GO") or "") != f"{msg}:{plan_sha[:12]}":
+            out.append(f"EE_MODAL_GO is not this plan's yes ({msg}:{plan_sha[:12]})")
+        return out
+
+    def _try_fetch(self, job: WanJob, out_mp4: Path) -> bool:
+        try:
+            self.fetch(job, out_mp4)
+        except Exception:  # noqa: BLE001 - not there (yet): the caller decides
+            return False
+        return Path(out_mp4).is_file() and Path(out_mp4).stat().st_size > 0
+
+    def billed(self, out_mp4: Path) -> dict:
+        """The cost of one launch from the worker's ``measured.json`` (B6): the container's own seconds plus the launch's
+        cold start, at the launch's per-second price; {} when the worker wrote no measurement (the reservation then stays)."""
+        f = Path(out_mp4).with_suffix(".measured.json")
+        try:
+            m = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return {}
+        if not isinstance(m.get("body_s"), (int, float)):
+            return {}
+        cold = float(((self.launch or {}).get("caps") or {}).get("cold_start_s") or 0.0)
+        secs = float(m["body_s"]) + cold
+        return {"billed_usd": round(secs * self.usd_per_hour / 3600.0, 4), "billed_seconds": round(secs, 1),
+                "billed_basis": "measured container seconds + the launch's cold_start_s at the dated price (Modal's usage "
+                                "page is the bill of record)", "measured": m}
 
     def generate(self, job: WanJob, out_mp4: Path) -> dict:
         from explainer_engine.cloud import modal_run as MR
-        bad = self.refusals()
+        from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+        bad = self.refusals() + self.job_refusals(job)
         if bad:
             raise ConfigError(f"{job.shot_id}: the Modal Wan backend refuses ({'; '.join(bad)}); nothing was sent "
                               "(plan P6.3, OR-23, OR-34, OR-37)")
         out_mp4 = Path(out_mp4)
+        x = dict(job.extra or {})
+        x["run_id"] = WJ.run_id(x["plan_sha256"], self.launch)
+        job = WanJob(**dict(asdict(job), extra=x))
+        base = {"gpu": self.gpu, "usd_per_hour": self.usd_per_hour, "prices_date": self.prices_date, "run_id": x["run_id"]}
+        if self._try_fetch(job, out_mp4):   # the same job of the same plan and launch is already made: nothing is sent
+            return dict(base, app_id=None, reused=True, billed_usd=0.0, billed_basis="already in the run's HF folder: not sent")
         spec = out_mp4.with_suffix(".job.json")
-        spec.write_text(json.dumps(dict(asdict(job), launch_sha=_sha_json(self.launch)), ensure_ascii=False), encoding="utf-8")
-        rc, text = self.runner(["modal", "run", "--detach", f"{WORKER}::main", "--job", str(spec)])
+        spec.write_text(json.dumps(dict(asdict(job), run_id=x["run_id"], plan_sha256=x["plan_sha256"],
+                                        launch_sha=WJ.launch_sha(self.launch), commit=self.commit()), ensure_ascii=False),
+                        encoding="utf-8")
+        try:
+            rc, text = self.runner(["modal", "run", "--detach", f"{WORKER}::main", "--job", str(spec)])
+        except Exception as exc:  # noqa: BLE001 - the answer is lost: the app may still run (A4)
+            probs = self._stop(None)
+            if self._try_fetch(job, out_mp4):
+                return dict(base, app_id=None, reconciled=True, **self.billed(out_mp4))
+            raise InfraError(f"{job.shot_id}: the launcher gave no answer ({type(exc).__name__}: {exc}); "
+                             + (f"COULD NOT STOP the apps named {self.launch.get('app_name')} ({'; '.join(probs)}): look at "
+                                "Modal now" if probs else f"the apps named {self.launch.get('app_name')} were stopped")
+                             + "; no clip is in the run's HF folder; not retried, the reservation stays until Modal's bill "
+                               "is read") from None
         app_id = MR.parse_app_id(text)
         if rc != 0:
             self._stop(app_id)
-            raise RuntimeError(f"modal run exited {rc} (app {app_id}); the app was stopped")
-        try:
-            self.fetch(job, out_mp4)
-        except Exception:
+            if WJ.WAN_FAILED in (text or ""):
+                raise ClipFailed(f"{job.shot_id}: the model made no clip (app {app_id}); the app was stopped")
+            raise InfraError(f"{job.shot_id}: modal run exited {rc} (app {app_id}); the app was stopped; not retried")
+        if not self._try_fetch(job, out_mp4):
             self._stop(app_id)
-            raise
-        return {"app_id": app_id, "gpu": self.gpu, "usd_per_hour": self.usd_per_hour, "prices_date": self.prices_date}
+            raise InfraError(f"{job.shot_id}: the launch ended but no clip is in the run's HF folder (app {app_id}); the app was "
+                             "stopped; not retried")
+        return dict(base, app_id=app_id, **self.billed(out_mp4))
+
+    def commit(self) -> str | None:
+        try:
+            import subprocess
+            r = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, timeout=10,
+                               cwd=str(Path(__file__).resolve().parents[2]))
+            return r.stdout.strip() or None if r.returncode == 0 else None
+        except Exception:  # noqa: BLE001
+            return None
 
 
 def clip_name(shot_id: str, seed: int) -> str:
@@ -217,17 +325,42 @@ def clip_name(shot_id: str, seed: int) -> str:
 
 
 def hf_fetch(launch: dict, repo: str = "vano1919/tmr-artifacts"):
-    """The default ``fetch`` of ModalWanBackend: the worker's clip from HF ``hf_out`` (it was uploaded as it was made, OR-33)."""
+    """The default ``fetch`` of ModalWanBackend: the worker's clip from its run's folder in HF ``hf_out``
+    (``<hf_out>/<run_id>/<shot>/``, uploaded as it was made, OR-33) and its ``measured.json`` beside it, when there is one."""
+    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+
     def fetch(job: WanJob, out_mp4: Path) -> None:
         from huggingface_hub import hf_hub_download
-        p = hf_hub_download(repo, f"{launch['hf_out']}/{job.shot_id}/{clip_name(job.shot_id, job.seed)}", repo_type="dataset",
-                            local_dir=str(Path(out_mp4).parent / "_hf"))
+        spec = {"run_id": job.extra["run_id"], "shot_id": job.shot_id}
+        local = str(Path(out_mp4).parent / "_hf")
+        p = hf_hub_download(repo, WJ.hf_path(launch, spec, clip_name(job.shot_id, job.seed)), repo_type="dataset", local_dir=local)
         Path(out_mp4).write_bytes(Path(p).read_bytes())
+        try:
+            m = hf_hub_download(repo, WJ.hf_path(launch, spec, f"{job.shot_id}.measured.json"), repo_type="dataset", local_dir=local)
+            Path(out_mp4).with_suffix(".measured.json").write_bytes(Path(m).read_bytes())
+        except Exception:  # noqa: BLE001 - the clip is the result; without its measurement the reservation stays the estimate
+            pass
     return fetch
 
 
 def _sha_json(d) -> str:
-    return hashlib.sha256(json.dumps(d, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
+    return WJ.sha_json(d)
+
+
+def _sha_file(p) -> str:
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def start_sha_from_pictures(episode_root: Path, shot_id: str, which: str = "start") -> str:
+    """The start picture's sha256 the pictures stage pinned (``production/pictures.json``, final audit B9): the Wan job carries
+    it, the worker re-checks the bytes against it, so a picture changed after the intake never reaches the GPU."""
+    f = Path(episode_root) / "production" / "pictures.json"
+    pics = json.loads(f.read_text(encoding="utf-8"))["pictures"] if f.is_file() else {}
+    rec = pics.get(f"{shot_id}_{which}") or {}
+    if not rec.get("sha256"):
+        raise ContractError(f"{shot_id}: no {which} picture pinned in production/pictures.json (run the pictures stage first)")
+    return rec["sha256"]
 
 
 class ComfyWanBackend(Backend):
@@ -399,9 +532,28 @@ def _plan_spent(run, plan_id: str) -> float:
     return round(sum(r["amount"] for k, r in run.data.get("reserved", {}).items() if k.startswith(f"wan/{plan_id}/")), 6)
 
 
-def _check_money(job: WanJob, backend: Backend, est: dict, approval: Approval | None, run) -> None:
+def episode_total(backend: Backend, run) -> EpisodeTotal | None:
+    """The episode-wide total of a paid service with an episode line (``modal_usd`` -> ``modal.per_episode_usd``; B5)."""
+    if backend.service != "modal_usd":
+        return None
+    ep = (run.data.get("meta") or {}).get("episode")
+    if not ep:
+        raise ConfigError("the run ledger names no episode (meta episode): the episode's Modal line cannot be held")
+    try:
+        return EpisodeTotal(ep, backend.service, float(spend_caps.modal(episode=True)["per_episode_usd"]))
+    except (ValueError, spend_caps.OverCeiling) as exc:
+        raise ConfigError(f"{exc}; nothing was sent") from None
+
+
+def _check_money(job: WanJob, backend: Backend, est: dict, approval: Approval | None, run) -> EpisodeTotal | None:
     if approval is None:
         raise ConfigError(f"{job.shot_id}: {backend.name} is paid and no approved OR-23 plan was given")
+    if not approval.plan_path or not approval.plan_sha256 or not Path(approval.plan_path).is_file() \
+            or _sha_file(approval.plan_path) != approval.plan_sha256:
+        raise ConfigError(f"{job.shot_id}: plan {approval.plan_id} is not the file the creator said yes to (its sha256 must "
+                          "match the approval, final audit B10); nothing was sent")
+    if not str(approval.message_id or "").startswith("cmsg_"):
+        raise ConfigError(f"{job.shot_id}: the approval names no creator's message id; nothing was sent")
     if run is None:
         raise ConfigError(f"{job.shot_id}: {backend.name} is paid and no run ledger (core/ledger.Run) was given")
     if not backend.service:
@@ -417,10 +569,14 @@ def _check_money(job: WanJob, backend: Backend, est: dict, approval: Approval | 
         if v > ceiling + 1e-9:
             raise ConfigError(f"{job.shot_id}: {what} cap ${v:g} is above the creator's ${ceiling:g} line for "
                               f"{backend.service} (config/spend_caps.json); nothing was sent")
-    left = min(approval.cap_usd - _plan_spent(run, approval.plan_id), cap * STOP_FRACTION - run.spent(backend.service))
+    ep = episode_total(backend, run)
+    left = min(approval.cap_usd - _plan_spent(run, approval.plan_id), cap * STOP_FRACTION - run.spent(backend.service),
+               ep.left() if ep else float("inf"))
     if est["usd"] * MAX_ATTEMPTS > left + 1e-9:
         raise ConfigError(f"{job.shot_id}: {MAX_ATTEMPTS} attempt(s) at ${est['usd']:.4f} do not fit under the ${left:.4f} "
-                          f"left of plan {approval.plan_id} and the run's {int(STOP_FRACTION * 100)} % stop; nothing was sent")
+                          f"left of plan {approval.plan_id}, the run's and the episode's {int(STOP_FRACTION * 100)} % stop; "
+                          "nothing was sent")
+    return ep
 
 
 def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, approval: Approval | None = None, run=None,
@@ -431,11 +587,13 @@ def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, appr
     out_dir.mkdir(parents=True, exist_ok=True)
     attempts = []
     est = backend.estimate(job)
-    if backend.paid:
-        _check_money(job, backend, est, approval, run)
+    ep = _check_money(job, backend, est, approval, run) if backend.paid else None
     seed = job.seed
+    extra = dict(job.extra or {})
+    if backend.paid:   # the plan the job belongs to travels with it (B10)
+        extra.update(plan_id=approval.plan_id, plan_sha256=approval.plan_sha256, message_id=approval.message_id)
     for n in range(1, MAX_ATTEMPTS + 1):
-        j = WanJob(**dict(asdict(job), seed=seed))
+        j = WanJob(**dict(asdict(job), seed=seed, extra=extra))
         clip = out_dir / f"{job.shot_id}_try{n}.mp4"
         t0 = time.time()
         item = f"wan/{approval.plan_id}/{job.shot_id}/try{n}" if backend.paid else None
@@ -444,28 +602,48 @@ def run_shot(job: WanJob, backend: Backend, out_dir: Path, ledger: Path, *, appr
                 run.reserve(backend.service, est["usd"], item)
             except CapReached as exc:
                 raise ConfigError(f"{job.shot_id}: attempt {n}: {exc}; nothing more was sent") from None
+            if ep is not None:
+                try:
+                    ep.reserve(item, est["usd"], run=str(run.path))
+                except CapReached as exc:
+                    run.settle(backend.service, item, 0.0)
+                    raise ConfigError(f"{job.shot_id}: attempt {n}: {exc}; nothing more was sent") from None
         _ledger_line(ledger, {"shot_id": job.shot_id, "attempt": n, "seed": seed, "backend": backend.name, "event": "submit",
                               "estimate_usd": est["usd"] if backend.paid else 0.0, "ledger_item": item,
                               "plan_id": approval.plan_id if approval else None, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ")})
-        error, info = None, {}
+        error, info, infra = None, {}, None
         try:
             info = backend.generate(j, clip) or {}
         except ConfigError:
             if backend.paid:   # refused before anything was sent: the reservation is given back
                 run.settle(backend.service, item, 0.0)
+                if ep is not None:
+                    ep.settle(item, 0.0)
             raise
+        except InfraError as exc:   # A4: not the clip's fault, the outcome is uncertain: no new seed, the money stays reserved
+            error = infra = f"{type(exc).__name__}: {exc}"
         except Exception as exc:  # noqa: BLE001 - a backend failure is a FAIL row, recorded, then the retry or fallback
             error = f"{type(exc).__name__}: {exc}"
         rows = qa_clip(clip, j) if error is None else [G.row("clip_made", False, error)]
         v = G.verdict(rows)
         if backend.paid and isinstance(info.get("billed_usd"), (int, float)):
             run.settle(backend.service, item, float(info["billed_usd"]))
+            if ep is not None:
+                ep.settle(item, float(info["billed_usd"]))
         rec = {"attempt": n, "seed": seed, "clip": str(clip), "wall_s": round(time.time() - t0, 2), "gates": v,
                "sha256": hashlib.sha256(clip.read_bytes()).hexdigest() if clip.is_file() else None,
-               "backend_info": {k: info[k] for k in ("app_id", "gpu", "billed_usd") if k in info}}
+               "backend_info": {k: info[k] for k in ("app_id", "gpu", "billed_usd", "run_id", "reused", "reconciled")
+                                if k in info}}
+        if backend.paid:   # cloud rules section 8: estimate, reserved and billed apart
+            rec["money"] = {"estimate_usd": est["usd"], "reserved_usd": run.data["reserved"].get(item, {}).get("amount"),
+                            "billed_usd": info.get("billed_usd"), "billed_basis": info.get("billed_basis"),
+                            "episode_total_usd": ep.total() if ep else None}
         _ledger_line(ledger, {"shot_id": job.shot_id, "attempt": n, "event": "done", "status": v["status"],
                               "sha256": rec["sha256"], "estimate_usd": 0.0})
         attempts.append(rec)
+        if infra:
+            return {"shot_id": job.shot_id, "route": "wan", "backend": backend.name, "clip_path": None, "attempts": attempts,
+                    "status": G.FAIL, "fallback": None, "stopped": "infrastructure", "estimate_usd_per_attempt": est["usd"]}
         if v["status"] != G.FAIL:
             final = out_dir / f"{job.shot_id}.mp4"
             final.write_bytes(clip.read_bytes())

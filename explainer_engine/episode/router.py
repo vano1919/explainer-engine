@@ -118,15 +118,22 @@ def mix_report(script: dict, durations: dict[str, float] | None = None) -> dict:
 
 
 def talking_check(script: dict) -> list[dict]:
-    """Q7 (plan P6.4): a hero who speaks is seen performing, never a still with a voice over a closed mouth. Every shot that
-    carries a character's line is a Wan shot (FAIL otherwise), and a speaker shot stays within BP-108's dialogue length
-    (REVIEW: a house rule whose registry severity is REVIEW)."""
+    """Q7 (plan P6.4): a hero who speaks is seen performing, never a still with a voice over a closed mouth. A shot that
+    carries a character's line AND shows that character (``character_ids``) is a Wan shot (FAIL otherwise). A line over a
+    shot that does not show its speaker (a cutaway, an insert, a listener) is the off-screen voice of Q7's "speaker plus
+    listener reactions": REVIEW until the creator says yes to off-screen lines (final audit A9, 2026-11-12). A speaker shot
+    stays within BP-108's dialogue length (REVIEW: a house rule whose registry severity is REVIEW)."""
     from explainer_engine.qa import gates as G
     speakers = speaking_heroes(script)
     shots = {s["shot_id"]: s for s in script.get("shots", [])}
-    still = sorted(sid for sid in speakers if shots[sid].get("route") != "wan")
+    seen = {sid: who & set(shots[sid].get("character_ids") or []) for sid, who in speakers.items()}
+    still = sorted(sid for sid in speakers if seen[sid] and shots[sid].get("route") != "wan")
+    off = sorted(f"{sid}: {', '.join(sorted(speakers[sid]))} off screen on {shots[sid].get('route')}"
+                 for sid in speakers if not seen[sid] and shots[sid].get("route") != "wan")
     long_ = sorted(sid for sid in speakers if float(shots[sid].get("target_duration_seconds") or 0) > DIALOGUE_SHOT_MAX_S)
-    return [G.row("speaker_shots_are_wan", not still, f"{len(still)} of {len(speakers)} speaker shot(s) are not Wan "
-                  "performance clips (Q7: no talking still)", still),
+    return [G.row("speaker_shots_are_wan", not still, f"{len(still)} of {len(speakers)} shot(s) that show their speaker are "
+                  "not Wan performance clips (Q7: no talking still)", still),
+            G.row("speaker_off_screen", not off, f"{len(off)} line(s) over a shot that does not show the speaker (a cutaway "
+                  "or a listener): allowed only on the creator's yes to off-screen lines (audit A9)", off, level=G.REVIEW),
             G.row("speaker_shots_short", not long_, f"{len(long_)} speaker shot(s) longer than {DIALOGUE_SHOT_MAX_S} s "
                   "(BP-108)", long_, level=SR.severity("BP-108") if SR.severity("BP-108") == "REVIEW" else SR.level("BP-108"))]

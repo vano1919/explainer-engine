@@ -6,7 +6,8 @@ chat session at the tool's native 16:9 size, one prompt per picture (GC-17). The
 - ``export``: from the episode-first script (``story/production_script.json``, schema_version 4.0.0) and the episode's look
   (``episode.json`` -> ``look``), write **turn packs**: ``planning/turn_packs/pack_NN.json`` (machine) and ``pack_NN.md``
   (paste-ready: one block per picture with its exact prompt, the reference files to attach IN ORDER and the file name to
-  save it as). Anchors come first, from text only (GC-01); a scene shot attaches only its people and its place (GC-02).
+  save it as). Image 1 of every picture is the look's style picture (GC-01, the preset ``crossworld_main_style_v1``);
+  anchors come first; a scene shot attaches only its people and its place (GC-02).
 - ``intake``: read the files he drops (by name), gate each one (GC-12: decodes, 16:9, native size or more, no letterbox,
   no duplicate; GC-07 lettering and GC-13 identity where a measurement exists, else ``NOT_RUN``), append every file to the
   ledger (``planning/picture_ledger.jsonl``, sha256 + gates + pack), draw a contact sheet and list what must be re-made.
@@ -65,6 +66,24 @@ NEGATED_TEXT = re.compile(r"\bno (text|lettering|letters|labels|signs|writing|wa
 ROUND_FACE_WORDS = re.compile(r"\b(expressive eyes|big eyes|round face|chubby|cute|smooth 3d sculpted shading|"
                               r"smooth sculpted|pixar|disney|button nose|baby[- ]faced|3d animat\w*|3d cartoon|cartoon|animated character)\b", re.I)
 SECOND_ACTION = re.compile(r"\b(then|after that|and then|while also)\b", re.I)
+NEGATED = re.compile(r"\b(never|no|not|without)\b[^,.;]*", re.I)   # a refused word inside "never a cartoon nose" is not asked for
+STYLE_REF_CLAUSE = "Use image 1 only as the visual style; do not copy its people, their pose or its place."   # GC-01
+PRESETS = Path(__file__).resolve().parents[2] / "config" / "visual_style_presets.json"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+PICTURES_PER_DAY = 25         # GC-19: Flash pictures a day in the creator's chat, measured in reference round 1 (2026-11-12)
+
+
+def _affirmative(text: str) -> str:
+    return NEGATED.sub("", text or "")
+
+
+def preset(pid: str) -> dict:
+    """One style preset of ``config/visual_style_presets.json`` (the one home of the channel's look)."""
+    doc = json.loads(PRESETS.read_text(encoding="utf-8"))
+    pre = (doc.get("presets") or {}).get(pid)
+    if not pre:
+        raise ContractError(f"no style preset {pid!r} in config/visual_style_presets.json")
+    return pre
 
 
 def now() -> str:
@@ -103,15 +122,47 @@ def sizes_of(man: dict) -> tuple[tuple[int, int], int]:
 
 
 def look_of(man: dict) -> dict:
-    """The episode's look: ``style_sentence`` (environment + materials, GC-03), ``face_sentence`` (GC-11)."""
-    look = man.get("look") or {}
+    """The episode's look: ``style_sentence`` (environment + materials, GC-03), ``face_sentence`` (GC-11), and the style
+    references attached as image 1 of every picture (GC-01) with the words the chat must never read (GC-18). ``look.preset``
+    takes them from ``config/visual_style_presets.json``; a field written in the episode wins."""
+    look = dict(man.get("look") or {})
+    if look.get("preset"):
+        pre = preset(look["preset"])
+        for k in ("style_sentence", "face_sentence", "never_words", "negative", "style_references", "pictures_per_day"):
+            if look.get(k) in (None, "", []):
+                look[k] = pre.get(k)
     for k in ("style_sentence", "face_sentence"):
-        if not str(look.get(k, "")).strip():
+        if not str(look.get(k) or "").strip():
             raise ContractError(f"episode.json look.{k} is missing (GC-03, GC-11)")
-    if ROUND_FACE_WORDS.search(look["face_sentence"]) or ROUND_FACE_WORDS.search(look["style_sentence"]):
-        raise ContractError(f"the look asks for round, modern-cartoon faces ({ROUND_FACE_WORDS.search(look['face_sentence'] + ' ' + look['style_sentence']).group(0)!r}), "
+    both = _affirmative(look["face_sentence"] + " " + look["style_sentence"])
+    if ROUND_FACE_WORDS.search(both):
+        raise ContractError(f"the look asks for round, modern-cartoon faces ({ROUND_FACE_WORDS.search(both).group(0)!r}), "
                             "rejected by the creator on 2026-11-12 (GC-11)")
+    never = never_hits(look, look["style_sentence"] + " " + look["face_sentence"])
+    if never:
+        raise ContractError(f"the look itself uses the words the chat must never read: {never} (GC-18)")
+    for r in look.get("style_references") or []:
+        if not (isinstance(r, dict) and r.get("file") and isinstance(r.get("sha256"), str) and len(r["sha256"]) == 64):
+            raise ContractError("a style reference needs its file and sha256 (GC-01)")
     return look
+
+
+def never_hits(look: dict, text: str) -> list[str]:
+    """The look's never-words that ``text`` asks for (outside a negation): Gemini redraws such a request as a photograph."""
+    words = [w for w in (look.get("never_words") or []) if w]
+    if not words:
+        return []
+    rx = re.compile(r"\b(" + "|".join(re.escape(w) for w in sorted(words, key=len, reverse=True)) + r")\b", re.I)
+    return sorted({m.group(0).lower() for m in rx.finditer(_affirmative(text))})
+
+
+def style_ref_path(ref: dict) -> str:
+    """Where a style reference sits inside the episode folder (copied there from the repo by ``export``)."""
+    return f"assets/reference/style/{Path(ref['file']).name}"
+
+
+def style_refs(look: dict) -> list[str]:
+    return [style_ref_path(r) for r in look.get("style_references") or []]
 
 
 def registry(script: dict) -> dict:
@@ -138,14 +189,21 @@ def frame_path(shot_id: str, which: str) -> str:
 
 
 # --- prompts -----------------------------------------------------------------------------------------------------------
+def _style(look: dict) -> str:
+    """The style sentence, and the style-reference clause when the look attaches its style picture as image 1 (GC-01)."""
+    return f"{look['style_sentence']} {STYLE_REF_CLAUSE}" if look.get("style_references") else look["style_sentence"]
+
+
 def anchor_prompt(look: dict, rid: str, entry: dict) -> str:
-    """GC-01/03/11: style sentence, face sentence (people only), the registry text verbatim, the anchor clause. No refs."""
+    """GC-01/03/11: style sentence (and the style-reference clause), face sentence (people only), the registry text
+    verbatim, the anchor clause. An anchor attaches nothing but the look's style reference."""
+    st = _style(look)
     if entry["kind"] == "character":
-        return f"{look['style_sentence']} {look['face_sentence']} {entry['name']}: {entry['text']}. {ANCHOR_CLAUSE_CHAR} No text."
+        return f"{st} {look['face_sentence']} {entry['name']}: {entry['text']}. {ANCHOR_CLAUSE_CHAR} No text."
     if entry["kind"] == "location":
         light = f" Light: {entry['light']}." if entry.get("light") else ""
-        return f"{look['style_sentence']} {entry['name']}: {entry['text']}.{light} {ANCHOR_CLAUSE_PLACE} No text."
-    return f"{look['style_sentence']} Object reference: {entry['name']}: {entry['text']}, on a plain neutral grey background. No text."
+        return f"{st} {entry['name']}: {entry['text']}.{light} {ANCHOR_CLAUSE_PLACE} No text."
+    return f"{st} Object reference: {entry['name']}: {entry['text']}, on a plain neutral grey background. No text."
 
 
 def shot_prompt(look: dict, shot: dict, reg: dict, which: str) -> str:
@@ -156,7 +214,7 @@ def shot_prompt(look: dict, shot: dict, reg: dict, which: str) -> str:
     size = str(cam.get("shot_size", "")).replace("_", " ")
     people = [f"{reg[c]['name']}: {reg[c]['text']}" for c in shot.get("character_ids", []) if c in reg]
     place = reg.get(shot.get("location_id"), {})
-    parts = [look["style_sentence"]]
+    parts = [_style(look)]
     if people:
         parts.append(look["face_sentence"])
     parts.append(KEEP_CLAUSE)
@@ -187,8 +245,13 @@ def check_prompt(prompt: str, item: dict, reg: dict, look: dict) -> list[dict]:
     asks_text = [m.group(0) for m in TEXT_WORDS.finditer(NEGATED_TEXT.sub("", prompt))]
     if asks_text:
         out.append({"rule": "GC-07", "severity": "FAIL", "detail": f"the prompt asks for lettering: {asks_text[:3]}"})
-    if ROUND_FACE_WORDS.search(prompt):
-        out.append({"rule": "GC-11", "severity": "FAIL", "detail": f"round, modern-cartoon face words: {ROUND_FACE_WORDS.search(prompt).group(0)!r}"})
+    if ROUND_FACE_WORDS.search(_affirmative(prompt)):
+        out.append({"rule": "GC-11", "severity": "FAIL", "detail": f"round, modern-cartoon face words: {ROUND_FACE_WORDS.search(_affirmative(prompt)).group(0)!r}"})
+    never = never_hits(look, prompt)
+    if never:
+        out.append({"rule": "GC-18", "severity": "FAIL", "detail": f"words the chat redraws as a photograph: {never}"})
+    if look.get("style_references") and STYLE_REF_CLAUSE not in prompt:
+        out.append({"rule": "GC-01", "severity": "FAIL", "detail": "the style reference is attached but the prompt lacks its clause"})
     moment = item.get("moment", "")
     if moment.count(",") > MAX_COMMAS or len(SECOND_ACTION.findall(moment)) >= 1:
         out.append({"rule": "GC-06", "severity": "REVIEW", "detail": "the moment reads as a list or as two actions"})
@@ -201,6 +264,7 @@ def build_queue(man: dict, script: dict, only: str = "all") -> list[dict]:
     start frames, then end frames (GC-01, GC-09). A shot routed to ``map_action`` gets no picture (Python draws it)."""
     look = look_of(man)
     reg = registry(script)
+    srefs = style_refs(look)
     used = {"character": set(), "location": set(), "prop": set()}
     shots = [s for s in script.get("shots", []) if s.get("route") != "map_action"
              and s.get("visual_type") != "map_visualization"]
@@ -216,7 +280,7 @@ def build_queue(man: dict, script: dict, only: str = "all") -> list[dict]:
                 if rid not in reg:
                     raise ContractError(f"{rid} is used by a shot but has no world_bible entry (GC-02)")
                 q.append({"id": rid, "kind": kind, "group": f"anchors:{kind}", "people": [rid] if kind == "character" else [],
-                          "target": anchor_path(kind, rid), "references": [], "prompt": anchor_prompt(look, rid, reg[rid]),
+                          "target": anchor_path(kind, rid), "references": list(srefs), "prompt": anchor_prompt(look, rid, reg[rid]),
                           "moment": reg[rid]["text"]})
     if only in ("all", "shots"):
         ends = []
@@ -226,17 +290,18 @@ def build_queue(man: dict, script: dict, only: str = "all") -> list[dict]:
             if s.get("location_id"):
                 refs.append(anchor_path("location", s["location_id"]))
             refs += [anchor_path("prop", p) for p in s.get("prop_ids", [])]
-            if len(refs) > MAX_REFERENCES:
-                raise ContractError(f"{s['shot_id']} needs {len(refs)} references, more than {MAX_REFERENCES} (GC-02): split the shot")
+            if len(refs) + len(srefs) > MAX_REFERENCES:
+                raise ContractError(f"{s['shot_id']} needs {len(refs) + len(srefs)} references, more than {MAX_REFERENCES} "
+                                    "(GC-02): split the shot")
             base = {"kind": "shot", "shot_id": s["shot_id"], "segment_id": s["segment_id"], "group": f"scene:{s['segment_id']}",
                     "people": list(s.get("character_ids", [])), "place": s.get("location_id")}
             if kp.get("needs_start_frame", True):
                 q.append(dict(base, id=f"{s['shot_id']}_start", which="start", target=frame_path(s["shot_id"], "start"),
-                              references=refs, prompt=shot_prompt(look, s, reg, "start"), moment=s["action_start_state"]))
+                              references=srefs + refs, prompt=shot_prompt(look, s, reg, "start"), moment=s["action_start_state"]))
             if kp.get("needs_end_frame"):
                 start_ref = [frame_path(s["shot_id"], "start")] if kp.get("needs_start_frame", True) else []
                 ends.append(dict(base, id=f"{s['shot_id']}_end", which="end", target=frame_path(s["shot_id"], "end"),
-                                 references=start_ref + refs[:MAX_REFERENCES - len(start_ref)],
+                                 references=srefs + start_ref + refs[:MAX_REFERENCES - len(start_ref) - len(srefs)],
                                  prompt=shot_prompt(look, s, reg, "end"), moment=s["action_end_state"],
                                  after=f"{s['shot_id']}_start"))
         q += ends
@@ -277,12 +342,13 @@ def plan_turns(queue: list[dict], size: int = DEFAULT_TURN) -> list[list[dict]]:
     return turns
 
 
-def instruction_block(man: dict, pack_no: int, turn: list[dict]) -> str:
-    """The paste-ready text for one chat turn (GC-10: one episode, one chat; GC-02 attach order)."""
-    lines = [f"# Turn pack {pack_no:02d} — episode {man['episode_id']} ({len(turn)} pictures)", "",
+def instruction_block(man: dict, pack_no: int, turn: list[dict], day: int | None = None, per_day: int | None = None) -> str:
+    """The paste-ready text for one chat turn (GC-10: one episode, one chat; GC-02 attach order; GC-19 the day it fits in)."""
+    when = f" — day {day} (about {per_day} pictures a day in the chat, GC-19)" if day else ""
+    lines = [f"# Turn pack {pack_no:02d} — episode {man['episode_id']} ({len(turn)} pictures){when}", "",
              f"Make these in THE ONE Gemini chat of episode `{man['episode_id']}` (GC-10), with the Flash image model, never Argon/Pro (GC-16). Every picture 16:9.",
              "Send each prompt block below as its OWN message (one prompt draws one picture; never send these notes, GC-17).",
-             "Attach the listed reference images IN THE ORDER given, and nothing else (no style samples, GC-01/02).",
+             "Attach the listed reference images IN THE ORDER given, and nothing else (image 1 is the look's style picture when it has one; GC-01/02).",
              "Save each result under the file name given and drop them into the episode's folder.", ""]
     for k, it in enumerate(turn, 1):
         lines.append(f"## {k}. `{it['id']}` -> save as `{it['target']}`")
@@ -302,33 +368,52 @@ def export(root: Path, size: int = DEFAULT_TURN, only: str = "all") -> dict:
     fails = [(it["id"], c) for it in queue for c in it["checks"] if c["severity"] == "FAIL"]
     if fails:
         raise ContractError(f"{len(fails)} prompt rule(s) FAIL, no pack written: {fails[:5]}")
-    for it in queue:                                   # GC-01: anchors from text only; a shot attaches anchors or its own start
+    look = look_of(man)
+    srefs = style_refs(look)
+    for ref in look.get("style_references") or []:      # GC-01: the style picture, copied in from the repo, held to its sha256
+        dst = root / style_ref_path(ref)
+        if not dst.is_file():
+            src = REPO_ROOT / ref["file"]
+            if not src.is_file():
+                raise ContractError(f"the style reference {ref['file']} is missing (GC-01)")
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+        if sha256(dst) != ref["sha256"]:
+            raise ContractError(f"{style_ref_path(ref)} is not the approved style picture (sha256, GC-01)")
+    for it in queue:   # GC-01: image 1 is the look's style picture (or nothing); then only the episode's anchors or own start
         own = {frame_path(it["shot_id"], "start")} if it.get("shot_id") else set()
-        if it["kind"] != "shot" and it["references"]:
-            raise ContractError(f"{it['id']}: an anchor is made from text only, it attaches nothing (GC-01)")
-        foreign = [r for r in it["references"] if not r.startswith("assets/reference/") and r not in own]
+        if it["references"][:len(srefs)] != srefs:
+            raise ContractError(f"{it['id']}: image 1 must be the look's style reference (GC-01)")
+        rest = it["references"][len(srefs):]
+        if it["kind"] != "shot" and rest:
+            raise ContractError(f"{it['id']}: an anchor attaches only the style reference, no other picture (GC-01)")
+        foreign = [r for r in rest if not re.match(r"assets/reference/(characters|locations|props)/", r) and r not in own]
         if foreign:
             raise ContractError(f"{it['id']} attaches {foreign}: only the episode's anchors or its own start frame (GC-01)")
     accepted = {r["id"] for r in ledger_rows(root) if r.get("status") == "accepted"}
     todo = [it for it in queue if it["id"] not in accepted]
     have_refs = accepted | {it["id"] for it in todo}
     for it in todo:
-        for r in it["references"]:
+        for r in it["references"][len(srefs):]:
             rid = Path(r).stem
             if rid not in have_refs:
                 raise ContractError(f"{it['id']} attaches {r}, which no pack makes and the ledger lacks (GC-02)")
     turns = plan_turns(todo, size)
+    per_day = int(man.get("chat_pictures_per_day") or look.get("pictures_per_day") or PICTURES_PER_DAY)
     out_dir = root / "planning" / "turn_packs"
     out_dir.mkdir(parents=True, exist_ok=True)
     start = 1 + max([int(p.stem.split("_")[1]) for p in out_dir.glob("pack_*.json")] or [0])
-    written = []
-    for n, turn in enumerate(turns, start):
+    written, today, day = [], 0, 1
+    for n, turn in enumerate(turns, start):   # GC-19: a pack never runs past the chat's daily picture quota
+        if today and today + len(turn) > per_day:
+            day, today = day + 1, 0
+        today += len(turn)
         doc = {"schema": SCHEMA, "episode_id": man["episode_id"], "pack": n, "made_at": now(), "route": "gemini_chat",
-               "native_size": list(NATIVE_CHAT_SIZE), "items": turn}
+               "native_size": list(NATIVE_CHAT_SIZE), "day": day, "pictures_per_day": per_day, "items": turn}
         write_json_atomic(out_dir / f"pack_{n:02d}.json", doc)
-        write_text_atomic(out_dir / f"pack_{n:02d}.md", instruction_block(man, n, turn))
+        write_text_atomic(out_dir / f"pack_{n:02d}.md", instruction_block(man, n, turn, day, per_day))
         written.append(f"pack_{n:02d}")
-    return {"episode_id": man["episode_id"], "items": len(todo), "packs": written,
+    return {"episode_id": man["episode_id"], "items": len(todo), "packs": written, "days": day if turns else 0,
             "review": [(it["id"], c["detail"]) for it in todo for c in it["checks"] if c["severity"] == "REVIEW"]}
 
 

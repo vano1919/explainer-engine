@@ -208,6 +208,18 @@ def test_a_speaker_shot_must_be_wan_and_short():
               "shots": [{"shot_id": "A", "character_ids": ["kael"], "audio_line_ids": ["L1"], "route": "still_25d",
                          "target_duration_seconds": 7.0}]}
     rows = {r["gate"]: r["status"] for r in R.talking_check(script)}
-    assert rows == {"speaker_shots_are_wan": "FAIL", "speaker_shots_short": "REVIEW"}
+    assert rows == {"speaker_shots_are_wan": "FAIL", "speaker_off_screen": "PASS", "speaker_shots_short": "REVIEW"}
     script["shots"][0].update(route="wan", target_duration_seconds=4.0)
     assert {r["status"] for r in R.talking_check(script)} == {"PASS"}
+
+
+def test_a_line_over_a_shot_without_its_speaker_is_review_not_fail():
+    """Final audit A9: a voice over a cutaway or a listener is Q7's "speaker plus listener reactions"; it waits for the
+    creator's yes as REVIEW, while a speaker who is in the frame on a still stays a FAIL."""
+    from explainer_engine.episode import router as R
+    script = {"audio_lines": [{"line_id": "L1", "speaker_type": "character", "speaker_id": "kael", "text": "Run."}],
+              "shots": [{"shot_id": "A", "character_ids": ["sena"], "audio_line_ids": ["L1"], "route": "still_25d",
+                         "target_duration_seconds": 3.0}]}
+    rows = {r["gate"]: r for r in R.talking_check(script)}
+    assert rows["speaker_shots_are_wan"]["status"] == "PASS"
+    assert rows["speaker_off_screen"]["status"] == "REVIEW" and "kael off screen" in rows["speaker_off_screen"]["measured"][0]

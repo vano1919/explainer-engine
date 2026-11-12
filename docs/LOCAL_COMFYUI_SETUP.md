@@ -1,5 +1,11 @@
 # Local ComfyUI Setup & Model Verification Guide (`LOCAL_COMFYUI_SETUP.md`)
 
+> **Legacy for a v4.3 episode (D-131, 2026-11-12; final audit C1).** Local ComfyUI is the creator's free option for a Wan
+> clip (`aivideo/wan_adapter.ComfyWanBackend`, QA'd like any other), not the v4.3 route: Wan runs on Modal through
+> `training/pods/wan/modal_wan_jobs.py`. `config/local_models.json` sets `local_only_default` false with its note
+> (`config/model_routing.json` still says true: that file changes only on the creator's word). The page stays readable for
+> the episodes made before 2026-11-12.
+
 > **Route-scoped since D-116 (2026-11-06); created 2026-11-09 by D-123 (Local Hybrid B -> C Rebuild).**
 > **Canonical Registry:** `config/local_models.json`
 > **Preflight Module:** `explainer_engine/production/local_preflight.py`

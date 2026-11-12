@@ -39,10 +39,15 @@ def v43_episode_of(path) -> Path | None:
 
 
 def refuse(tool: str, *paths, env=None, cwd=None) -> None:
-    """Stop a retired tool inside a v4.3 episode (Q10, D-131); nothing happens outside one."""
+    """Stop a retired tool inside a v4.3 episode (Q10, D-131); nothing happens outside one, unless the tool is retired
+    ``everywhere`` (Qwen and its LoRA: the creator, 2026-11-12 14:01 UTC, final audit C3: the style rounds too)."""
     tools = load()["tools"]
     if tool not in tools:
         raise ValueError(f"unknown retired tool {tool!r}; known: {sorted(tools)}")
+    t = tools[tool]
+    if t.get("everywhere"):
+        raise ConfigError(f"{tool} ({t['what']}) is retired everywhere ({t['everywhere']}); use {t['replacement']}. "
+                          "Nothing was started.")
     env = os.environ if env is None else env
     for where in (*paths, env.get("EXPLAINER_EPISODE"), cwd or os.getcwd()):
         ep = v43_episode_of(where)
@@ -50,6 +55,15 @@ def refuse(tool: str, *paths, env=None, cwd=None) -> None:
             t = tools[tool]
             raise ConfigError(f"{tool} ({t['what']}) is retired for a v4.3 episode (Q10, D-131) and {ep.name} is one; "
                               f"use {t['replacement']}. Nothing was started.")
+
+
+def retired_worker(path: str) -> str | None:
+    """The tool a Modal worker file belongs to when that tool is retired everywhere (the session hook refuses its launch)."""
+    import fnmatch
+    for name, t in load()["tools"].items():
+        if t.get("everywhere") and any(fnmatch.fnmatch(path, g) for g in t.get("workers_glob", [])):
+            return name
+    return None
 
 
 def retired_routes_in(script: dict) -> list[str]:

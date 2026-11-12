@@ -4,13 +4,18 @@ One shot per launch: ``aivideo/wan_adapter.ModalWanBackend`` runs ``modal run --
 prices it from the speed measured on L3 and reserves it in the run's ledger before it is sent. The OR-37 ladder, in order,
 each rung recorded in the ladder file (``cloud/modal_run.record_rung``) before the next may start:
 
-    L0  local: the unit tests (free, no Modal)
+    L0  local: the unit tests (free, no Modal; ``python -m explainer_engine.cloud.modal_run l0 <ladder>`` runs them and records
+                   the pytest summary and the commit)
     L1  ::check    CPU only: the image imports every module and the pipeline class, the launch file is pinned, the HF token
                    is in the secret (no GPU, no weights; cents of CPU time on the Starter credit)
     L2  ::weights  CPU only: the Volume ee-weights holds every model file of the launch with its sha256 (no GPU)
     L3  ::smoke    GPU, tiny clip under ``caps.smoke_usd``: measures ``s_per_clip_s`` and the cold start ``setup_s`` (the
-                   price base of L4); paid, needs EE_MODAL_GO = the creator's message id
-    L4  ::main     GPU, the shot of ``--job`` under ``caps.run_usd``; paid, needs EE_MODAL_GO
+                   price base of L4); paid, needs EE_MODAL_GO = ``<the creator's message id>:<the plan's sha256[:12]>``
+    L4  ::main     GPU, the shot of ``--job`` under ``caps.run_usd``; paid, needs the same EE_MODAL_GO for the job's plan
+
+Each entrypoint records its own rung (final audit A5): green only when its result is good, with the launch file's sha256 and
+the worker's own sha256 (``proof``); a bad result records the rung red and exits non-zero. A rung proved on another launch
+file or another worker is stale: ``cloud/modal_run.gate`` refuses the rungs above it until it is run again.
 
 Every function's timeout comes from its cap (OR-37: ``cost_timeout``), retries 0. The free rule check (``preflight``) runs on
 the local side before the GO gate. Inputs are pinned by sha256 (the start picture's bytes travel with the call and are
@@ -32,7 +37,10 @@ LADDER_PATH = Path(os.environ.get("EE_WAN_LADDER") or Path(__file__).with_name("
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 DIFFUSERS = "git+https://github.com/huggingface/diffusers@d8c1b13c756df0059bcdb6e477a1eafcd502098d"
 SECRET_NAME = "huggingface-secret"
-PINS = ("model_repo", "model_revision", "model_files", "pipeline", "hf_out", "settings")
+PINS = ("model_repo", "model_revision", "model_files", "pipeline", "hf_out", "settings", "pip_pins", "scaledown_window_s")
+PIP_LIBS = ("transformers", "accelerate")   # pinned in the image (final audit C4); diffusers is pinned by commit above
+GO = __import__("re").compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
+WAN_FAILED = "WAN_FAILED"   # printed by ::main when the model ran and made no clip (the adapter may retry once with a new seed)
 SMOKE_JOB = {"shot_id": "L3_smoke", "seconds": 1.0, "fps": 16, "width": 832, "height": 480, "seed": 7,
              "motion_prompt": "the camera drifts slowly forward"}
 
@@ -46,6 +54,11 @@ def launch_problems(launch: dict) -> list[str]:
     out = [f"launch {k} is not pinned" for k in PINS if launch.get(k) in (None, "", {}, [])]
     out += [f"launch model file {f} has no sha256" for f, h in (launch.get("model_files") or {}).items()
             if not (isinstance(h, str) and len(h) == 64)]
+    pins = launch.get("pip_pins") if isinstance(launch.get("pip_pins"), dict) else {}
+    out += [f"launch pip_pins.{k} is not pinned" for k in PIP_LIBS if launch.get("pip_pins") and not pins.get(k)]
+    if launch.get("scaledown_window_s") is not None and not (isinstance(launch["scaledown_window_s"], int)
+                                                             and 2 <= launch["scaledown_window_s"] <= 60):
+        out.append("launch scaledown_window_s must be a short whole number of seconds (2..60): nothing stays warm")
     if not isinstance(launch.get("usd_per_h"), (int, float)) or not launch.get("prices_date"):
         out.append("launch usd_per_h / prices_date is not set")
     caps = launch.get("caps") or {}
@@ -93,32 +106,90 @@ def clip_name(shot_id: str, seed: int) -> str:
     return f"{shot_id}_seed{seed}.mp4"
 
 
+def sha_json(d) -> str:
+    """The sha256 of a JSON value (sorted keys): the launch file's identity on the ladder and in every job."""
+    return hashlib.sha256(json.dumps(d, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def launch_sha(launch: dict) -> str:
+    return sha_json(launch)
+
+
+def worker_sha() -> str:
+    """The sha256 of this file: the code a rung proved (a changed worker makes the rungs above L0 stale)."""
+    return _sha(__file__)
+
+
+def proof(launch: dict) -> dict:
+    """What a rung proves: this launch file run by this worker (final audit A5)."""
+    return {"launch_sha": launch_sha(launch), "worker_sha": worker_sha()}
+
+
+def run_id(plan_sha: str, launch: dict) -> str:
+    """The folder of one approved plan on one launch file inside ``hf_out`` (final audit A4): a clip of an earlier plan or of
+    another launch can never be fetched as this one's, and the same job asked again finds its finished clip."""
+    if not (isinstance(plan_sha, str) and len(plan_sha) == 64):
+        raise ValueError("a run id needs the approved plan's sha256")
+    return f"{plan_sha[:12]}_{launch_sha(launch)[:12]}"
+
+
+def hf_path(launch: dict, job: dict, name: str) -> str:
+    """A file of one job in the HF output: ``<hf_out>/<run_id>/<shot_id>/<name>``."""
+    return f"{launch['hf_out']}/{job['run_id']}/{job['shot_id']}/{name}"
+
+
 def wan_frames(seconds: float, fps: int) -> int:
     """Wan draws 4k+1 frames: the smallest such count that holds the shot (the adapter's QA asks for round(seconds*fps))."""
     n = max(1, int(round(seconds * fps)))
     return 4 * math.ceil((n - 1) / 4) + 1
 
 
-def go_gate(env=os.environ):
+def go_gate(env=os.environ, plan_sha: str | None = None):
+    """EE_MODAL_GO = ``<the creator's message id>:<sha256[:12] of the plan he said yes to>`` (final audit B10): a yes binds one
+    plan; a changed plan, or a job of another plan, is refused before anything starts."""
     v = env.get("EE_MODAL_GO", "")
-    if not v.startswith("cmsg_"):
-        raise SystemExit("EE_MODAL_GO must be the card id of the creator's yes (OR-23); nothing was started")
+    m = GO.match(v)
+    if not m:
+        raise SystemExit("EE_MODAL_GO must be '<the card id of the creator's yes>:<the plan's sha256[:12]>' (OR-23); "
+                         "nothing was started")
+    if not plan_sha or m.group(2) != plan_sha[:12]:
+        raise SystemExit("EE_MODAL_GO names another plan than this job's (OR-23: the yes binds the plan's hash); nothing was "
+                         "started")
     return v
 
 
-def ladder_gate(rung: str, path=None):
+def ladder_gate(rung: str, path=None, launch=None):
+    """The rung may start only when every rung below it is green ON THIS launch file and worker (``proof``)."""
     from explainer_engine.cloud import modal_run as MR
-    MR.gate(MR.load_ladder(path or LADDER_PATH), rung)
+    MR.gate(MR.load_ladder(path or LADDER_PATH), rung, proof=proof(LAUNCH if launch is None else launch))
 
 
-def read_job(path: str) -> dict:
-    """The shot spec the adapter wrote, with the start picture's bytes and their sha256 (checked against the spec's pin)."""
+def record(rung: str, ok: bool, path=None, launch=None, **info):
+    """The entrypoint records its own rung (final audit A5), bound to the launch file and the worker; red exits non-zero."""
+    from explainer_engine.cloud import modal_run as MR
+    MR.record_rung(path or LADDER_PATH, rung, ok, **proof(LAUNCH if launch is None else launch), **info)
+    if not ok:
+        raise SystemExit(f"rung {rung} is red: {json.dumps(info, default=str)[:600]}")
+
+
+def read_job(path: str, launch: dict | None = None) -> dict:
+    """The shot spec the adapter wrote, with the start picture's bytes and their sha256. The spec must carry the pin the
+    pictures stage wrote (``extra.start_sha256``, from ``production/pictures.json``; final audit B9), its plan's sha256, its run
+    id and the launch file's sha256; any of them missing or different stops the job before anything starts."""
     job = json.loads(Path(path).read_text(encoding="utf-8"))
     pic = Path(job["start_picture"]).read_bytes()
     sha = hashlib.sha256(pic).hexdigest()
     want = (job.get("extra") or {}).get("start_sha256")
-    if want and want != sha:
+    if not want:
+        raise SystemExit(f"{job['shot_id']}: the spec has no start_sha256 pinned by the pictures stage; nothing was started")
+    if want != sha:
         raise SystemExit(f"{job['shot_id']}: the start picture's sha256 is not the one the pictures stage pinned")
+    for k in ("plan_sha256", "run_id", "launch_sha"):
+        if not job.get(k):
+            raise SystemExit(f"{job['shot_id']}: the spec has no {k}; nothing was started")
+    lf = LAUNCH if launch is None else launch
+    if job["launch_sha"] != launch_sha(lf) or job["run_id"] != run_id(job["plan_sha256"], lf):
+        raise SystemExit(f"{job['shot_id']}: the spec was written for another launch file; nothing was started")
     job["start_sha256"] = sha
     if job.get("end_picture"):
         job["end_bytes"] = Path(job["end_picture"]).read_bytes()
@@ -131,6 +202,14 @@ def preflight(launch: dict, job: dict | None = None):
     bad = launch_problems(launch)
     if not bad and abs(schedule_rate(launch) - usd_per_h(launch)) > 0.01 * schedule_rate(launch):
         bad.append(f"launch usd_per_h {usd_per_h(launch)} is not the price table's {schedule_rate(launch)} (cloud/modal_schedule)")
+    if not bad:   # the launch's caps never pass the creator's per-run line (config/spend_caps.json modal.per_run_usd)
+        from explainer_engine.core import spend_caps
+        try:
+            line = float(spend_caps.modal()["per_run_usd"])
+            bad += [f"launch caps.{k} ${launch['caps'][k]:g} is above the creator's ${line:g} per run" for k in ("smoke_usd", "run_usd")
+                    if launch["caps"][k] > line + 1e-9]
+        except spend_caps.OverCeiling as exc:
+            bad.append(str(exc))
     if job is not None:
         if not str(job.get("motion_prompt") or "").strip():
             bad.append(f"{job.get('shot_id')}: no motion prompt")
@@ -194,19 +273,30 @@ def import_check(pipeline: str):
 
 def _upload(api, out: Path, launch, seen: set, final=False):
     from huggingface_hub import CommitOperationAdd
-    new = [p for p in sorted(out.rglob("*")) if p.is_file() and p.stat().st_size > 0 and (str(p), p.stat().st_size) not in seen]
+    new = [p for p in sorted(out.rglob("*")) if p.is_file() and p.stat().st_size > 0 and _key(p) not in seen]
     if not new:
         return 0
-    ops = [CommitOperationAdd(path_in_repo=f"{launch['hf_out']}/{p.relative_to(out.parent)}", path_or_fileobj=str(p)) for p in new]
+    ops = [CommitOperationAdd(path_in_repo=f"{launch['hf_out']}/{p.relative_to(OUT_ROOT)}", path_or_fileobj=str(p)) for p in new]
     for k in range(6 if final else 2):
         try:
             api.create_commit(repo_id=HF_REPO, repo_type="dataset", operations=ops, commit_message=f"{launch['hf_out']}: {len(new)} files")
-            seen.update((str(p), p.stat().st_size) for p in new)
+            seen.update(_key(p) for p in new)
             return len(new)
         except Exception as e:  # noqa: BLE001 - a 429/5xx is retried with backoff; the Volume copy is the safety net
             print("upload failed", repr(e)[:160], flush=True)
             time.sleep(15.0 * 2 ** k)
     return 0
+
+
+def _key(p: Path):
+    st = p.stat()
+    return str(p), st.st_size, st.st_mtime_ns
+
+
+def beat(out: Path, job: dict, stage: str, **info):
+    """The step beat the OR-36 watchdog reads (final audit A7): what the worker is doing now, and since when; the uploader
+    sends it with the next 30 s commit, so a hang is told apart from work while the GPU bills."""
+    (out / f"{job['shot_id']}.beat.txt").write_text(json.dumps(dict(info, stage=stage, at=round(time.time(), 1))) + "\n")
 
 
 def _uploader(out, launch, stop, interval=30.0):
@@ -220,36 +310,64 @@ def _uploader(out, launch, stop, interval=30.0):
         stop.wait(interval)
 
 
+def libs() -> dict:
+    """The versions of the libraries the clip was made with (recorded in ``measured.json``, final audit B9)."""
+    import importlib
+    out = {}
+    for m in ("torch", "diffusers", "transformers", "accelerate"):
+        try:
+            out[m] = getattr(importlib.import_module(m), "__version__", "?")
+        except Exception:  # noqa: BLE001
+            out[m] = None
+    return out
+
+
 def generate(job: dict, launch: dict, out: Path) -> dict:
     """One clip with the launch's diffusers pipeline, from the Volume's weights, every setting from the launch file."""
+    import inspect
     import io
     import torch
     import diffusers
     from diffusers.utils import export_to_video
     from PIL import Image
     t0 = time.time()
+    beat(out, job, "load")
     pipe = getattr(diffusers, launch["pipeline"]).from_pretrained(str(weights_root(launch)), torch_dtype=torch.bfloat16).to("cuda")
     setup_s = time.time() - t0
     kw = dict(launch["settings"])
     if job.get("end_bytes"):
         kw[launch["end_image_arg"]] = Image.open(io.BytesIO(job["end_bytes"])).convert("RGB")
+    if "callback_on_step_end" in inspect.signature(pipe.__call__).parameters:
+        def _step(p, i, t, cbk):
+            beat(out, job, "generate", step=int(i) + 1)
+            return cbk
+        kw["callback_on_step_end"] = _step
     t1 = time.time()
+    beat(out, job, "generate", step=0)
     res = pipe(image=Image.open(io.BytesIO(job["start_bytes"])).convert("RGB"), prompt=job["motion_prompt"],
                negative_prompt=job.get("negative_prompt") or None, num_frames=wan_frames(job["seconds"], job["fps"]),
                height=job["height"], width=job["width"], generator=torch.Generator("cuda").manual_seed(job["seed"]), **kw)
+    beat(out, job, "export")
     export_to_video(res.frames[0], str(out / clip_name(job["shot_id"], job["seed"])), fps=job["fps"])
     gen_s = time.time() - t1
     return {"gpu": launch["gpu"], "setup_s": round(setup_s, 1), "gen_s": round(gen_s, 1),
             "s_per_clip_s": round(gen_s / job["seconds"], 2), "frames": wan_frames(job["seconds"], job["fps"])}
 
 
+OUT_ROOT = Path("/workspace/out")
+
+
 def body(job: dict, launch: dict, timeout_s: int) -> dict:
+    t_in = time.time()
     if import_check(launch["pipeline"]) != 0:
         raise SystemExit("OR-37: the image lacks a module or the pipeline; stopped before any weight was read")
     if hashlib.sha256(job["start_bytes"]).hexdigest() != job["start_sha256"]:
         raise SystemExit("the start picture changed in transit")
-    out = Path("/workspace/out") / job["shot_id"]
+    if job.get("launch_sha") and job["launch_sha"] != launch_sha(launch):
+        raise SystemExit("the launch file changed between the spec and the container")
+    out = OUT_ROOT / job["run_id"] / job["shot_id"]
     out.mkdir(parents=True, exist_ok=True)
+    beat(out, job, "start")
     stop = threading.Event()
     th = threading.Thread(target=_uploader, args=(out, launch, stop), daemon=True)
     th.start()
@@ -268,8 +386,11 @@ def body(job: dict, launch: dict, timeout_s: int) -> dict:
         state = "DONE" if (out / clip_name(job["shot_id"], job["seed"])).stat().st_size > 0 else "FAILED"
     except Exception as e:  # noqa: BLE001 - one attempt: the failure is written, uploaded and returned
         measured, state = {"error": repr(e)[:400]}, "FAILED"
+    t.cancel()   # final audit C4: the deadline belongs to this job only
+    measured.update(state=state, body_s=round(time.time() - t_in, 1), commit=job.get("commit"), worker_sha=job.get("worker_sha"),
+                    launch_sha=launch_sha(launch), run_id=job["run_id"], libs=libs())
     (out / f"{job['shot_id']}.measured.json").write_text(json.dumps(measured))
-    (out / f"{job['shot_id']}.beat.txt").write_text(f"{state}\n")
+    beat(out, job, state)
     persist(out)
     stop.set()
     th.join(timeout=300)
@@ -279,7 +400,7 @@ def body(job: dict, launch: dict, timeout_s: int) -> dict:
 def persist(out):
     import shutil
     try:
-        shutil.copytree(out, f"/w/out_wan/{Path(out).name}", dirs_exist_ok=True)
+        shutil.copytree(out, f"/w/out_wan/{Path(out).relative_to(OUT_ROOT)}", dirs_exist_ok=True)
         vol.commit()
     except Exception as e:  # noqa: BLE001
         print("volume copy failed", repr(e)[:200], flush=True)
@@ -293,7 +414,9 @@ if modal is not None:
     vol = modal.Volume.from_name("ee-weights", version=2)
     image = (modal.Image.from_registry(BASE_IMAGE, add_python="3.12")
              .apt_install("ffmpeg")
-             .run_commands(f'pip install -q "huggingface_hub==1.33.0" "{DIFFUSERS}" transformers accelerate ftfy "imageio[ffmpeg]"')
+             .run_commands(f'pip install -q "huggingface_hub==1.33.0" "{DIFFUSERS}" '
+                           + " ".join(f'"{k}=={(LAUNCH.get("pip_pins") or {}).get(k)}"' for k in PIP_LIBS)
+                           + ' ftfy "imageio[ffmpeg]"')
              .add_local_file(str(LAUNCH_PATH), "/root/launch.json"))
     secrets = [modal.Secret.from_name(SECRET_NAME)]
 
@@ -310,7 +433,7 @@ if modal is not None:
 
     if TIMEOUTS:
         GPU_KW = dict(image=image, gpu=LAUNCH["gpu"], cpu=LAUNCH["cpu"], memory=LAUNCH["memory_gib"] * 1024, retries=0,
-                      volumes={"/w": vol}, secrets=secrets)
+                      volumes={"/w": vol}, secrets=secrets, scaledown_window=LAUNCH["scaledown_window_s"])
 
         @app.function(timeout=TIMEOUTS[0], **GPU_KW)
         def wan_smoke(job: dict, launch: dict):
@@ -326,27 +449,41 @@ if modal is not None:
         bad = launch_problems(LAUNCH)
         if bad:
             raise SystemExit("the launch file is not pinned:\n" + "\n".join(bad))
-        print("env_check rc", env_check.remote(LAUNCH["pipeline"]))
+        rc = env_check.remote(LAUNCH["pipeline"])
+        print("env_check rc", rc)
+        record("L1", rc == 0, note=f"env_check rc {rc}")
 
     @app.local_entrypoint()
     def weights():
         ladder_gate("L2")
         preflight(LAUNCH)
-        print("weights", weights_check.remote(LAUNCH) or "all files present, sha256 match")
+        bad = weights_check.remote(LAUNCH)
+        print("weights", bad or "all files present, sha256 match")
+        record("L2", not bad, problems=bad)
 
     @app.local_entrypoint()
-    def smoke(picture: str = ""):
+    def smoke(picture: str = "", plan: str = ""):
         preflight(LAUNCH)
-        print("GO card", go_gate(), "smoke timeout", TIMEOUTS[0], "s", flush=True)
+        plan_sha = _sha(plan)
+        print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
         pic = Path(picture).read_bytes()
-        job = dict(SMOKE_JOB, start_bytes=pic, start_sha256=hashlib.sha256(pic).hexdigest())
-        print("result", json.dumps(wan_smoke.remote(job, LAUNCH)))
+        job = dict(SMOKE_JOB, start_bytes=pic, start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH),
+                   launch_sha=launch_sha(LAUNCH), worker_sha=worker_sha())
+        res = wan_smoke.remote(job, LAUNCH)
+        print("result", json.dumps(res))
+        ok = res.get("state") == "DONE"
+        record("L3", ok, measured={k: res.get(k) for k in ("gpu", "s_per_clip_s", "setup_s", "body_s")} if ok else None,
+               result={k: res.get(k) for k in ("state", "error")})
 
     @app.local_entrypoint()
     def main(job: str = ""):
         spec = read_job(job)
         preflight(LAUNCH, spec)
-        print("GO card", go_gate(), "timeout", TIMEOUTS[1], "s", flush=True)
+        print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
-        print("result", json.dumps(wan_main.remote(spec, LAUNCH)))
+        res = wan_main.remote(dict(spec, worker_sha=worker_sha()), LAUNCH)
+        print("result", json.dumps(res))
+        if res.get("state") != "DONE":   # final audit A4: a FAILED clip is a non-zero exit, never a 0
+            print(WAN_FAILED, flush=True)
+            raise SystemExit(4)

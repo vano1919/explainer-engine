@@ -78,14 +78,18 @@ def check_caps(caps: dict) -> dict:
     return out
 
 
-def modal() -> dict:
-    """The Modal line (``modal``: ``per_run_usd``, ``per_episode_usd``; v4.3 D-131: Wan runs on Modal). Missing or not a positive
-    number = refused: until the creator adds the line, Modal has a zero approved project budget (.claude/rules/
-    cloud-platforms.md section 4), whatever an approval card says."""
+def modal(episode: bool = False) -> dict:
+    """The Modal line (``modal``: ``per_run_usd``, ``per_episode_usd``; v4.3 D-131: Wan runs on Modal). A missing or
+    non-positive ``per_run_usd`` = refused: until the creator adds the line, Modal has a zero approved project budget
+    (.claude/rules/cloud-platforms.md section 4), whatever an approval card says. ``per_episode_usd`` is asked only for an
+    episode's runs (``episode=True``): the creator sets it after rung L3 has measured the real price per clip (final audit
+    section 7, answer 3, 2026-11-12 14:01 UTC); until then only the ladder's test runs may spend, each under ``per_run_usd``."""
     m = load().get("modal")
-    ok = isinstance(m, dict) and all(isinstance(m.get(k), (int, float)) and not isinstance(m.get(k), bool) and m[k] > 0
-                                     for k in ("per_run_usd", "per_episode_usd"))
-    if not ok:
-        raise OverCeiling("no modal per_run_usd / per_episode_usd in config/spend_caps.json: Modal spends nothing until the "
-                          "creator sets the line (zero approved budget)")
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0  # noqa: E731
+    if not (isinstance(m, dict) and num(m.get("per_run_usd"))):
+        raise OverCeiling("no modal per_run_usd in config/spend_caps.json: Modal spends nothing until the creator sets the "
+                          "line (zero approved budget)")
+    if episode and not num(m.get("per_episode_usd")):
+        raise OverCeiling("no modal per_episode_usd in config/spend_caps.json: an episode's Modal runs wait for the creator's "
+                          "episode line, set after rung L3 measures the price per clip (zero approved episode budget)")
     return m

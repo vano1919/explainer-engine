@@ -129,12 +129,23 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
     proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{width}x{height}",
                              "-r", str(fps), "-i", "-", "-frames:v", str(p["frames"]), "-c:v", "libx264", "-preset", "medium",
                              "-crf", "16", "-pix_fmt", "yuv420p", str(tmp)], stdin=subprocess.PIPE)
-    first = last = None
+    from explainer_engine.standards import sourced_rules as SR
+    size = tuple(SR.T("BP-164", "analysis_size"))
+    still_diff, still_max = float(SR.T("BP-164", "frozen_diff_max")), int(SR.T("BP-164", "frozen_run_frames"))
+    first = last = prev = None
+    run = longest = 0
     for f in range(p["frames"]):
         im = MA.render_frame(p, f, base, width, height, look)
         if f == 0:
             first = im
         last = im
+        small = np.asarray(im.convert("L").resize(size), dtype=np.float32)
+        if prev is not None and float(np.abs(small - prev).mean()) < still_diff:
+            run += 1
+            longest = max(longest, run + 1)
+        else:
+            run = 0
+        prev = small
         proc.stdin.write(np.asarray(im, dtype=np.uint8).tobytes())
     proc.stdin.close()
     if proc.wait(timeout=600) != 0:
@@ -151,8 +162,14 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
     if not p["card"]:
         raster_km = 111.32 / 60.0       # Natural Earth SR_HR: 1/60 degree a pixel at the equator
         upsample = round(max(base.upsample(MA.camera(p, f), raster_km) for f in range(p["frames"])), 2)
+    from explainer_engine.qa import gates as G
+    first_action = min((a["start"] for a in p["actions"]), default=None)
+    rows = [G.row("map_has_actions", bool(p["actions"]), f"{len(p['actions'])} action(s) on their words (RT-03)",
+                  len(p["actions"])),
+            G.row("map_not_standing_still", longest <= still_max, f"longest still stretch {longest} frames (BP-164: "
+                  f"{still_max}); the first action starts at frame {first_action}", longest, level=SR.level("BP-164"))]
     return {"status": "generated", "provider": "python_action_map", "cost_usd": 0.0, "shot_id": p["shot_id"],
-            "relief_upsample_max": upsample,
+            "gates": G.verdict(rows), "relief_upsample_max": upsample,
             "card": p["card"], "word_basis": p["basis"], "actions": [{k: a[k] for k in ("kind", "word", "start", "end")} for a in p["actions"]],
             "total_frames": p["frames"], "fps": fps, "resolution": [width, height], "path": str(out),
             "start_keyframe_path": keys.get("start"), "end_keyframe_path": keys.get("end"),

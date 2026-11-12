@@ -247,6 +247,59 @@ class Run:
                 "failures": {k: len(v) for k, v in self.data["failures"].items()}}
 
 
+class EpisodeTotal:
+    """One service's money across EVERY run of one episode (final audit B5): ``modal.per_episode_usd`` is a line for the
+    episode, and separate runs share no ``spent``. A durable file ``$EXPLAINER_LEDGER_MIRROR/episode_<id>_<service>.json``
+    (the folder that outlives the container, as the paid tests' mirror) holds every reservation of every run; a reservation
+    that would pass 80 % of the episode's line is refused (CapReached), and ``settle`` replaces it with the bill."""
+
+    def __init__(self, episode_id: str, service: str, ceiling: float, folder: str | Path | None = None):
+        folder = folder or os.environ.get("EXPLAINER_LEDGER_MIRROR")
+        if not folder:
+            raise ValueError("an episode total needs a durable folder (EXPLAINER_LEDGER_MIRROR), so a new run or a lost container "
+                             "never counts the episode's spending from 0 again")
+        if not episode_id or not isinstance(ceiling, (int, float)) or ceiling <= 0:
+            raise ValueError("an episode total needs the episode id and the creator's positive line")
+        self.episode_id, self.service, self.ceiling = episode_id, service, float(ceiling)
+        self.path = Path(folder) / f"episode_{episode_id}_{service}.json"
+        self.lock = threading.RLock()
+
+    def _load(self) -> dict:
+        if self.path.is_file():
+            return json.loads(self.path.read_text(encoding="utf-8"))
+        return {"episode": self.episode_id, "service": self.service, "rows": []}
+
+    def total(self) -> float:
+        return round(sum(float(r["amount"]) for r in self._load()["rows"]), 6)
+
+    def left(self) -> float:
+        """What may still be reserved before the episode's 80 % stop."""
+        return round(self.ceiling * STOP_FRACTION - self.total(), 6)
+
+    def reserve(self, item: str, amount: float, run: str = "") -> None:
+        with self.lock:
+            d = self._load()
+            now = sum(float(r["amount"]) for r in d["rows"])
+            if now + amount > self.ceiling * STOP_FRACTION + 1e-9:
+                raise CapReached(f"{self.service}: the episode {self.episode_id} would reach {now + amount:.4f} of its "
+                                 f"{self.ceiling:g} line (80 % stop, config/spend_caps.json); stop and ask the creator")
+            d["rows"].append({"item": item, "run": str(run), "amount": float(amount), "settled": False,
+                              "at": time.strftime("%Y-%m-%dT%H:%M:%S")})
+            write_json_atomic(self.path, d)
+
+    def settle(self, item: str, actual: float) -> None:
+        """The newest open reservation of ``item`` becomes what was billed (money spent is recorded even past the line)."""
+        with self.lock:
+            d = self._load()
+            for r in reversed(d["rows"]):
+                if r["item"] == item and not r["settled"]:
+                    r.update(amount=float(actual), settled=True)
+                    break
+            else:
+                d["rows"].append({"item": item, "amount": float(actual), "settled": True, "at": time.strftime("%Y-%m-%dT%H:%M:%S")})
+            write_json_atomic(self.path, d)
+
+
 class Attempts:
     """Code attempts per phase (OR-04, P0b): attempts 1-2 run at the assigned level, the 3rd only escalated (or on its plan), a
     4th stops the item with NeedsReview. File ``jobs/<phase>/attempts.json``."""

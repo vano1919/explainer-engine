@@ -1,5 +1,12 @@
 # Local Video & 2.5D Motion Generation Guide (`VIDEO_GENERATION_WAN.md`)
 
+> **Legacy for a v4.3 episode (D-131, 2026-11-12; final audit C1).** The local ComfyUI Wan route and the DepthFlow 2.5D
+> motion on this page are not the v4.3 method. A v4.3 `wan` shot is made by `aivideo/wan_adapter.ModalWanBackend` and the
+> worker `training/pods/wan/modal_wan_jobs.py` (OR-37 ladder L0..L4, the one ledger `core/ledger.Run`); a `still_25d` shot by
+> `production/layers25d`; the routes are in `docs/EPISODE_FIRST.md` (RT rows). Local ComfyUI stays the creator's free option
+> (`ComfyWanBackend`), never the route. The numbers below (81 frames, 1280x720, the frame[-5] chain) are notes for the v4.3
+> model pin (final audit A2), not settings. The page stays readable for the episodes made before 2026-11-12.
+
 > **Route-scoped since D-116 (2026-11-06); created 2026-11-09 by D-123 (Local Hybrid B -> C Rebuild).**
 > **Canonical Job Schema:** `explainer_engine/schemas/wan_job.schema.json`
 > **Local Dispatcher:** `explainer_engine/aivideo/wan_runner.py` & `explainer_engine/aivideo/shotplan.py`

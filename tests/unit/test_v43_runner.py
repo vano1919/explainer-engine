@@ -313,3 +313,28 @@ def test_a_small_episode_rehearses_the_whole_chain(tmp_path, monkeypatch):
     # a second run keeps every fresh record and every clip
     again = RUN.run_to(RUN.Episode(root, size=(192, 108), rehearsal=True, chunk_seconds=1.0), "qa")
     assert all(r.get("reused") for r in again)
+
+
+def test_a_missing_free_tool_is_not_run_on_record_not_a_traceback(tmp_path, monkeypatch):
+    """Final audit B3: a ConfigError (a missing raster, model or binary) is a NOT_RUN row that names it."""
+    from explainer_engine.core.errors import ConfigError
+
+    def boom(ep, rehearsal):
+        raise ConfigError("no shaded relief raster (run: python -m explainer_engine.production.relief_fetch)")
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", dict(_fake({}), script=boom))
+    rec = RUN.run_stage(RUN.Episode(_episode(tmp_path)), "script")
+    assert rec["verdict"]["status"] == "INCOMPLETE" and rec["rows"][0]["status"] == G.NOT_RUN
+    assert "relief_fetch" in rec["rows"][0]["detail"]
+
+
+def test_a_map_without_actions_fails_and_a_wan_shot_without_pictures_still_counts(tmp_path):
+    """Final audit B1 and B2: no fallback to the archive's fixed Toba map; a Wan shot with no picture is still counted as a
+    Wan shot without its QA'd clip, never a PASS of 0."""
+    doc = _script(("S01_SH001", "S01_SH008"), (1.0, 1.0))
+    doc["shots"][1].pop("actions", None)
+    assert doc["shots"][0]["route"] == "wan" and doc["shots"][1]["route"] == "map_action"
+    rows, _ = RUN.stage_clips(RUN.Episode(_episode(tmp_path, doc), size=(192, 108)), True)
+    by = {r["gate"]: r for r in rows}
+    assert by["every_wan_shot_is_a_wan_clip"]["status"] == G.FAIL and by["every_wan_shot_is_a_wan_clip"]["measured"] == ["S01_SH001"]
+    shots = {s["shot_id"]: s for s in json.loads((tmp_path / "ep_toba" / "production" / "shot_records.json").read_text())["shots"]}
+    assert shots["S01_SH008"]["status"] == G.FAIL and "without actions" in shots["S01_SH008"]["error"]

@@ -5329,3 +5329,75 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   (`v4_3_plan_2026-11-12/OR34_AUDIT_BRIEF.md`). The audit is a paid Claude API job: it needs the creator's word and a
   `claude_api.jobs` line in `config/spend_caps.json` (none yet). The test ladder (plan section 7) follows it, each rung on his
   word. Cost: $0.
+
+## 2026-11-12 — v4.3 final audit (Fable, high): the free fixes (thread "Implement v4.3 episode-first rebuild")
+The audit (`v4_3_plan_2026-11-12/FINAL_AUDIT_FABLE_HIGH_2026-11-12.md` in the project files, 26 findings) said the v4.3 code is
+not ready for a paid test. This entry covers the findings that need no word from the creator. Nothing paid ran.
+- A9: `episode/router.talking_check` FAILs a speaker shot off Wan only when the speaker is in the frame (`character_ids`). A
+  line over a cutaway or a listener is a REVIEW row `speaker_off_screen`: an off-screen voice, which is a question for the
+  creator. On Toba all 5 of the old FAILs are of this kind.
+- B1: in a v4.3 episode a `map_action` shot without `actions` FAILs (RT-03). It no longer falls back to the archive's
+  hard-coded Toba map. Map clips get measured gates: `map_has_actions`, and `map_not_standing_still`, the longest still run at
+  BP-164 sizes.
+- B2: a missing Wan clip is counted before the picture check (`every_wan_shot_is_a_wan_clip` no longer passes when the
+  pictures are missing).
+- B3: a missing free tool (ConfigError) is a NOT_RUN row that names it, in `run_stage` and per shot (`free_tools_present`),
+  never a traceback.
+- A4, idempotency and reconciliation:
+  - The output path carries a run id, the plan's and the launch file's sha256 (`<hf_out>/<run_id>/<shot>/`).
+  - Before a submit, the adapter fetches the job's finished clip. If the clip is there, nothing is sent.
+  - On a lost launcher answer, the adapter stops the apps by name and fetches before it decides.
+  - `InfraError` (infrastructure or configuration) is never retried with a new seed. Its reservation stays open.
+  - Only `ClipFailed` (the worker's `WAN_FAILED` exit 4) and QA FAILs get the one retry.
+  - The worker's `main` exits non-zero on FAILED.
+- A5, rungs bound to their proof:
+  - Every worker entrypoint records its own rung with the launch file's and the worker's sha256 (`proof`), and a red rung
+    exits non-zero.
+  - `modal_run.gate` refuses a rung while a lower rung was proved on another launch file or worker. The adapter also refuses
+    such a stale ladder.
+  - `modal_run l0` runs the Wan tests and records the pytest summary and the commit. L0 is green only on a clean tree.
+  - The CLI can mark a rung red by hand, never green.
+- B5: `core/ledger.EpisodeTotal` is a durable file in `$EXPLAINER_LEDGER_MIRROR` that holds `modal.per_episode_usd` across
+  every run of the episode. A paid run must name its episode.
+- B6: each attempt is settled from the worker's `measured.json`: container seconds plus the launch file's cold start, at the
+  dated price. The report shows the estimate, the reservation and the bill separately.
+- B9: the start picture's sha256 comes from `production/pictures.json` (`wan_adapter.start_sha_from_pictures`). It is
+  required, and the worker re-checks it. `measured.json` records the commit, the worker's and the launch file's sha256 and
+  the library versions.
+- B10: the approval carries the plan file and its sha256. `EE_MODAL_GO` is `<card id>:<plan sha256[:12]>`, checked by the
+  adapter and the worker.
+- A7, Modal in the session hooks:
+  - `cloud/hooks` pre-bash refuses `modal deploy|serve`, a `modal run` of anything but a committed `explainer_engine/` worker,
+    and a paid entrypoint without its GO.
+  - Session start lists the Modal apps that are not stopped. Stop refuses the first end of a turn while one is.
+  - The worker writes a step beat (load, each diffusion step, export), and the uploader re-sends it as it changes.
+- C4: the in-container deadline is cancelled after the job. `scaledown_window_s` and the `transformers` / `accelerate`
+  versions are now pins of `launch.json` (null until the model is picked, OR-22).
+- C1: dated legacy banners on `docs/VIDEO_GENERATION_WAN.md` and `docs/LOCAL_COMFYUI_SETUP.md` and their `docs/INDEX.md` rows;
+  `.claude/rules/cloud-platforms.md` states the Modal path as it now is, and what it still lacks.
+- The creator's answers to the audit (section 7, 2026-11-12 14:01 UTC), applied:
+  - Answer 1: a line over a cutaway is allowed, so the five Toba shots stay as written (A9 above).
+  - Answer 3: Modal gets $1 a run for the tests, and the episode cap is set only after L3 measures. `spend_caps.modal()` needs
+    `per_run_usd`; `per_episode_usd` is required only by a paid episode run (`modal(episode=True)`). The `modal` line in
+    `config/spend_caps.json` is not written yet: it waits for his word to be recorded through governance.
+  - Answer 4 (C3): Qwen is retired everywhere, the style rounds included (Gemini only). `config/retired_era.json` marks
+    `qwen_image` and `xworld_lora` `everywhere`, so `episode/retired.refuse` stops them outside an episode too. Its
+    `workers_glob` names the Qwen Modal workers, and the session hook refuses a `modal run` of them.
+  - Answer 2: the Wan options are written up (`v4_3_plan_2026-11-12/wan_options/WAN_OPTIONS_2026-11-12.md` in the project files)
+    and put to him as a card. Nothing in `launch.json` is pinned before his pick.
+- A10, the main style (his picture of 14:03 UTC):
+  - `config/visual_style_presets.json` adds `crossworld_main_style_v1` as the default and marks the old preset retired.
+  - The picture is `assets/style/main_style_5709.png` (sha256 pinned in the preset, copy on HF).
+  - `imagegen/turn_pack` puts the style picture first in every Gemini turn, with the clause "use image 1 only as the visual
+    style". GC-01 checks it, and an anchor attaches nothing else.
+  - The look merges the preset. GC-11 is negation-aware, so "never a cartoon nose" is not a hit.
+  - GC-18 refuses the preset's never-words in a prompt. GC-19 plans the packs at 25 pictures a day.
+  - The references are a list, so the multi-photo style plan the creator asked for at 14:05 UTC can add pictures per shot type
+    without a code change. That plan is the next step.
+- Not done, waits for the creator:
+  - A2, A3 and A6: the model's native length, rate and size, the smoke at production settings, and the weights stage-in all
+    follow the model pin (his Wan pick).
+  - A1: the batch driver follows A2.
+  - A8: the Toba draft waits for the multi-photo style plan.
+- Tests: `test_v43_wan_adapter.py` (28), `test_v43_wan_worker.py` (16), the new `test_cloud_hooks_modal.py`, and the retired,
+  picture-intake, runner, map and contract tests. Cost: $0.

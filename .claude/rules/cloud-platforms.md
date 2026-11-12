@@ -15,7 +15,7 @@ The active production route is D-116, not the legacy still-picture route:
 - Python and FFmpeg handle helper graphics, cut-outs, QA and final assembly.
 - The route for every archetype is authoritative in `explainer_engine/visual/archetypes_ic.json`; the explanatory matrix is `docs/architecture/ROUTE_PLAN_2026-11-06.md`.
 
-**Current provider status:** the repository currently has a RunPod-specific manager in `explainer_engine/cloud/runpod.py`. `cloud/jobs.py` has provider-neutral job-state concepts, but `cloud/watchdog.py`, the pod wrapper, billing guard and provider lifecycle remain RunPod-specific. Hyperstack and Modal are researched candidates, not implemented adapters. Do not claim that a Hyperstack or Modal resource can be launched safely through the current project manager.
+**Current provider status:** the repository currently has a RunPod-specific manager in `explainer_engine/cloud/runpod.py`. `cloud/jobs.py` has provider-neutral job-state concepts, but `cloud/watchdog.py`, the pod wrapper, billing guard and provider lifecycle remain RunPod-specific. Hyperstack is a researched candidate, not an implemented adapter. **Modal since D-131 (2026-11-12):** the v4.3 Wan route has one Modal path, `aivideo/wan_adapter.ModalWanBackend` with the worker `training/pods/wan/modal_wan_jobs.py`: the one ledger `core/ledger.Run`, `spend_caps.modal()` (a zero budget until the creator's `modal` line), the OR-37 ladder L0..L4 bound to the launch file and the worker, run ids in the output path, reconciliation after a lost answer, an episode-wide total and settlement from measured seconds (final audit A4, A5, B5, B6), and the session hooks refuse raw `modal deploy|serve|run` (A7). It is not yet a full section-7 adapter: no provider-native bill reconciliation, no watchdog that outlives the session, no paid pilot. Do not launch any other Modal resource, and do not claim a Hyperstack one can be launched safely.
 
 Do not replace the active visual route or move any production job to a new provider just because its hourly list price is lower.
 
@@ -60,7 +60,7 @@ No approval means no API request, no VM create, no endpoint deploy, no image/vid
 
 ### Existing RunPod adapter
 
-- RunPod remains the only provider wired to the current `cloud/runpod.py` manager.
+- RunPod remains the only provider wired to the `cloud/runpod.py` manager; for a v4.3 episode RunPod is retired (D-131, `config/retired_era.json`) and the Wan shots run on Modal through the worker above.
 - All existing RunPod pods must continue through the manager, ledger, guard, unique lifetime name, heartbeat, upload wrapper and verified stop path. Never use raw `POST /pods`, `runpodctl create`, or the RunPod MCP to bypass the manager.
 - Current code already uses REST v2; do not reintroduce REST v1.
 - The RunPod official plugin is useful documentation/skills for its own service, but its MCP tools can directly create/manage/delete live resources. It must not bypass project approvals or the repository manager.

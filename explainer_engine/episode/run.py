@@ -182,6 +182,8 @@ def run_stage(ep: Episode, stage: str) -> dict:
         rows, outputs = STAGE_FUNCS[stage](ep, rehearsal)
     except ContractError as exc:   # a contract the stage cannot get past is its FAIL row, recorded, never a silent stop
         rows, outputs = [G.row(f"{stage}_ran", False, f"{type(exc).__name__}: {exc}")], {}
+    except ConfigError as exc:     # a missing free tool or setting: nothing measured, recorded as NOT_RUN (final audit B3)
+        rows, outputs = [G.row(f"{stage}_ran", None, f"{type(exc).__name__}: {exc}")], {}
     if stage == "qa":   # a rehearsal is never a pass: an earlier stage did not pass, so nothing from this run ships
         rows = rows + [G.row("not_a_rehearsal", not rehearsal, "the chain passed every stage" if not rehearsal else
                              "a rehearsal: an earlier stage did not pass, so nothing from this run ships")]
@@ -395,14 +397,15 @@ def _wan_clip(ep: Episode, sid: str) -> dict | None:
 
 
 def stage_clips(ep: Episode, rehearsal: bool):
-    """G7: every shot's clip by its route. ``map_action``: the action map (P4) or, without actions, the relief map;
+    """G7: every shot's clip by its route. ``map_action``: the action map (P4) with its gates (a map shot without actions
+    FAILs, final audit B1);
     ``still_25d``: the layered 2.5D renderer (P5) with the sound plan's picture events and the measured spine; ``wan``: the
     QA'd clip of the Wan adapter (P6), never generated here; without one the shot FAILs, and a rehearsal draws it with the
     adapter's 2.5D fallback. A clip whose shot, pictures, spine and size are unchanged is reused."""
     from explainer_engine.aivideo.wan_adapter import DEFAULT_FALLBACK
     from explainer_engine.episode import sound_plan as SP
     from explainer_engine.production import layers25d as L25
-    from explainer_engine.production.map_clip import render_action_map_clip, render_episode_gis_map_clip
+    from explainer_engine.production.map_clip import render_action_map_clip
     script = ep.timed_script()
     timing = ep.timing()
     spines = TM.spines_of(timing)
@@ -413,7 +416,7 @@ def stage_clips(ep: Episode, rehearsal: bool):
     w, h = ep.size
     clips_dir = ep.path("production/shot_clips")
     clips_dir.mkdir(parents=True, exist_ok=True)
-    records, made, reused, failed, missing_wan, fallback, missing_pic = [], 0, 0, [], [], [], []
+    records, made, reused, failed, missing_wan, fallback, missing_pic, no_tool = [], 0, 0, [], [], [], [], []
     t = 0
     for sh in script["shots"]:
         sid = sh["shot_id"]
@@ -438,21 +441,21 @@ def stage_clips(ep: Episode, rehearsal: bool):
             continue
         try:
             if is_map:
-                if sh.get("actions"):
-                    res = render_action_map_clip(sh, script, ep.manifest, out, width=w, height=h, fps=ep.fps,
-                                                 spine=spines.get(sid), keyframes_out_dir=ep.path("assets/maps/renders"))
-                else:
-                    res = render_episode_gis_map_clip(shot=sh, out_mp4_path=out, cache_dir=ep.path("assets/maps/dem"),
-                                                      keyframes_out_dir=ep.path("assets/maps/renders"), width=w,
-                                                      height=h, fps=ep.fps)
-                rec.update(visual_type="map_visualization", provider=res["provider"], status=G.PASS,
-                           source_start_keyframe=res.get("start_keyframe_path"),
+                if not sh.get("actions"):   # final audit B1: the archive's hard-coded Toba maps are no fallback
+                    raise ContractError(f"{sid}: a map_action shot without actions (RT-03): write its actions on their "
+                                        "words; the archive's fixed relief map is not used in a v4.3 episode")
+                res = render_action_map_clip(sh, script, ep.manifest, out, width=w, height=h, fps=ep.fps,
+                                             spine=spines.get(sid), keyframes_out_dir=ep.path("assets/maps/renders"))
+                rec.update(visual_type="map_visualization", provider=res["provider"], status=res["gates"]["status"],
+                           gates_map=res["gates"]["status"], source_start_keyframe=res.get("start_keyframe_path"),
                            source_end_keyframe=res.get("end_keyframe_path"))
             else:
+                wan = _wan_clip(ep, sid) if route == "wan" else None
+                if route == "wan" and wan is None:   # counted before the picture check (final audit B2)
+                    missing_wan.append(sid)
                 if start is None:
                     missing_pic.append(sid)
                     raise ContractError(f"{sid}: no start picture (G5)")
-                wan = _wan_clip(ep, sid) if route == "wan" else None
                 if wan is not None:
                     out.write_bytes(Path(wan["clip_path"]).read_bytes())
                     res = {"provider": wan.get("backend"), "status": wan["status"], "total_frames": frames}
@@ -461,7 +464,6 @@ def stage_clips(ep: Episode, rehearsal: bool):
                 else:
                     shot = sh
                     if route == "wan":
-                        missing_wan.append(sid)
                         if not rehearsal:
                             raise ContractError(f"{sid}: no QA'd Wan clip (production/wan/{sid}.json); Wan clips are made "
                                                 "by the adapter on the creator's approved plan, never by the runner")
@@ -483,6 +485,11 @@ def stage_clips(ep: Episode, rehearsal: bool):
             failed.append(sid)
             records.append(rec)
             continue
+        except ConfigError as exc:   # a free tool is missing: nothing was measured for this shot (final audit B3)
+            rec.update(status=G.NOT_RUN, error=str(exc), clip_path=None)
+            no_tool.append(f"{sid}: {exc}")
+            records.append(rec)
+            continue
         rec.update(clip_path=str(out), output_sha256=_sha(out))
         if rec["status"] == G.FAIL:
             failed.append(sid)
@@ -498,7 +505,10 @@ def stage_clips(ep: Episode, rehearsal: bool):
             G.row("no_clip_fails_its_gates", not failed, f"{len(failed)} shot(s) FAIL their clip gates", failed[:30]),
             G.row("every_wan_shot_is_a_wan_clip", not missing_wan, f"{len(missing_wan)} Wan shot(s) without a QA'd Wan "
                   "clip" + (f" ({len(fallback)} drawn by the 2.5D fallback in this rehearsal)" if fallback else ""),
-                  missing_wan[:30])]
+                  missing_wan[:30]),
+            G.row("free_tools_present", None if no_tool else True,
+                  f"{len(no_tool)} shot(s) not drawn: a free tool is missing (the message names its fetch command)"
+                  if no_tool else "every free tool the clips need was found", no_tool[:10])]
     from explainer_engine.episode import router as R
     durations = {r["shot_id"]: r["duration_sec"] for r in records}
     return rows, {"records": "production/shot_records.json", "made": made, "reused": reused,

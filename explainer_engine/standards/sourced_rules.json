@@ -6251,7 +6251,8 @@
    "enforced_by": [
     "explainer_engine/training/video_qa.py",
     "explainer_engine/production/layers25d.py:FROZEN_DIFF",
-    "explainer_engine/aivideo/wan_adapter.py:FRAME0_DIFF"
+    "explainer_engine/aivideo/wan_adapter.py:FRAME0_DIFF",
+    "explainer_engine/production/map_clip.py:map_not_standing_still"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word before any CLIP row becomes FAIL (D-59)",
    "supersedes": []
