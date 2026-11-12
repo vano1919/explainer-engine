@@ -994,14 +994,12 @@
         "video_engine_tier": {
           "type": "string",
           "enum": [
-            "GEMINI_LIGHT_VIDEO_I2V",
             "WAN_2_1_HEAVY_ACTION_ENGINE",
             "BATCH_ANIMATED_PHOTO_CLIP",
-            "GEMINI_VIDEO_API_BATCH",
             "WAN_2_1_COMPLEX_PLANNER",
             "PYTHON_INFO_GRAPHICS_RENDER"
           ],
-          "description": "Visual engine routing tier (D-129 / D-130 Creator Directive)"
+          "description": "Legacy routing label of the v4.2 archive (D-129/D-130, pending the creator's word); the v4.3 route is `route` (D-131). The Gemini video engines nobody approved are not allowed."
         },
         "teaser_of": {
           "type": [
@@ -1064,6 +1062,168 @@
             "type": "number",
             "minimum": 0,
             "maximum": 1
+          }
+        },
+        "route": {
+          "enum": [
+            "map_action",
+            "still_25d",
+            "wan"
+          ],
+          "description": "v4.3 route (D-131, plan P1.4): map_action = Python map with an action layer, still_25d = picture moved by the layered 2.5D renderer with motion imitation, wan = a body performs an action or a hero speaks (Q4, Q7). Filled by explainer_engine.episode.router."
+        },
+        "route_reason": {
+          "type": "string",
+          "minLength": 10,
+          "description": "why the router (or the writer, with route_locked) chose the route"
+        },
+        "route_locked": {
+          "type": "boolean",
+          "description": "true = the route was chosen by hand; the router keeps it and only checks it"
+        },
+        "motion_imitation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "camera"
+          ],
+          "description": "still_25d only (plan P5): how the layered 2.5D shot imitates life without a video model",
+          "properties": {
+            "camera": {
+              "enum": [
+                "push_in",
+                "pull_out",
+                "pan_left",
+                "pan_right",
+                "tilt_up",
+                "tilt_down",
+                "orbit_small",
+                "hold"
+              ]
+            },
+            "layers": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "foreground",
+                  "subject",
+                  "midground",
+                  "background",
+                  "sky"
+                ]
+              }
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "ash_fall",
+                  "smoke",
+                  "fire_flicker",
+                  "embers",
+                  "water_ripple",
+                  "mist",
+                  "rain",
+                  "snow",
+                  "wind_grass",
+                  "breathing",
+                  "cloth_sway",
+                  "light_pulse",
+                  "dust"
+                ]
+              }
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "description": "map_action only (plan P4): the timed action layer over the letter-free plate, each item tied to a spoken word",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "at_word"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "route_arrow",
+                  "spread",
+                  "pulse",
+                  "plume",
+                  "counter",
+                  "label",
+                  "front_line",
+                  "zoom",
+                  "highlight"
+                ]
+              },
+              "at_word": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "sound_events": {
+          "type": "array",
+          "description": "filled by the sound plan (G4, plan P7): ambience, foley and spot effects of the shot, library first",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "what"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "ambience",
+                  "foley",
+                  "spot",
+                  "music"
+                ]
+              },
+              "what": {
+                "type": "string",
+                "minLength": 2
+              },
+              "at_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "library_id": {
+                "type": "string"
+              },
+              "source": {
+                "enum": [
+                  "library",
+                  "elevenlabs_sfx",
+                  "elevenlabs_music",
+                  "clip_audio"
+                ]
+              }
+            }
           }
         }
       },
@@ -1227,6 +1387,58 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "motion_imitation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "route": {
+                "const": "still_25d"
+              }
+            },
+            "required": [
+              "route"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "actions"
+            ]
+          },
+          "then": {
+            "properties": {
+              "route": {
+                "const": "map_action"
+              }
+            },
+            "required": [
+              "route"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "route_locked"
+            ],
+            "properties": {
+              "route_locked": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "route",
+              "route_reason"
+            ]
           }
         }
       ]

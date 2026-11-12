@@ -2496,13 +2496,14 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
       "teaser_of": "S05_SH001",
       "teaser_trim": [
         0.4,
         2.2
       ],
-      "shot_role": "teaser"
+      "shot_role": "teaser",
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('sprint') (Q4)"
     },
     {
       "shot_id": "S01_SH002",
@@ -2556,13 +2557,14 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
       "teaser_of": "S09_SH001",
       "teaser_trim": [
         0.5,
         2.7
       ],
-      "shot_role": "teaser"
+      "shot_role": "teaser",
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)"
     },
     {
       "shot_id": "S01_SH003",
@@ -2621,7 +2623,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)"
     },
     {
       "shot_id": "S01_SH004",
@@ -2677,7 +2680,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('steps to') (Q4)"
     },
     {
       "shot_id": "S01_SH005",
@@ -2733,7 +2737,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S01_SH006",
@@ -2787,7 +2792,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S01_SH007",
@@ -2845,7 +2851,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S01_SH008",
@@ -2899,7 +2906,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S01_SH009",
@@ -2953,7 +2961,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH001",
@@ -3007,7 +3016,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S02_SH002",
@@ -3061,7 +3071,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)"
     },
     {
       "shot_id": "S02_SH003",
@@ -3115,7 +3126,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('collapses') (Q4)"
     },
     {
       "shot_id": "S02_SH004",
@@ -3169,7 +3181,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH005",
@@ -3223,7 +3236,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH006",
@@ -3277,7 +3291,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH007",
@@ -3331,7 +3346,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH008",
@@ -3385,7 +3401,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)"
     },
     {
       "shot_id": "S02_SH009",
@@ -3439,7 +3456,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH010",
@@ -3493,7 +3511,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S02_SH011",
@@ -3547,7 +3566,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S02_SH012",
@@ -3601,7 +3621,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH001",
@@ -3655,7 +3676,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH002",
@@ -3709,7 +3731,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH003",
@@ -3765,7 +3788,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH004",
@@ -3819,7 +3843,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH005",
@@ -3873,7 +3898,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S03_SH006",
@@ -3927,7 +3953,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('wrapping') (Q4)"
     },
     {
       "shot_id": "S03_SH007",
@@ -3981,7 +4008,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH008",
@@ -4035,7 +4063,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S03_SH009",
@@ -4089,7 +4118,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S03_SH010",
@@ -4148,7 +4178,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('stand'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S03_SH011",
@@ -4206,7 +4237,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)"
     },
     {
       "shot_id": "S03_SH012",
@@ -4262,7 +4294,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('turns to') (Q4)"
     },
     {
       "shot_id": "S03_SH013",
@@ -4321,7 +4354,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('standing'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S03_SH014",
@@ -4378,7 +4412,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('glowing'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S04_SH001",
@@ -4432,7 +4467,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH002",
@@ -4486,7 +4522,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH003",
@@ -4540,7 +4577,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH004",
@@ -4594,7 +4632,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH005",
@@ -4648,7 +4687,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH006",
@@ -4702,7 +4742,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S04_SH007",
@@ -4756,7 +4797,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH008",
@@ -4819,7 +4861,8 @@
         "escalation_reason": "Preserve 3D canyon depth geometry as Kael and Sena trek along the narrow entrenched Shinfa river channel"
       },
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('trek') (Q4)"
     },
     {
       "shot_id": "S04_SH009",
@@ -4877,7 +4920,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)"
     },
     {
       "shot_id": "S04_SH010",
@@ -4933,7 +4977,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('digging') (Q4)"
     },
     {
       "shot_id": "S04_SH011",
@@ -4987,7 +5032,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S04_SH012",
@@ -5045,7 +5091,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('stands'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S04_SH013",
@@ -5102,7 +5149,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('embers'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S04_SH014",
@@ -5160,7 +5208,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('presses the charred wooden point of his heavy throwing spear against') (Q4)"
     },
     {
       "shot_id": "S04_SH015",
@@ -5220,7 +5269,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
       "shot_id": "S05_SH001",
@@ -5277,7 +5327,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('embers'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S05_SH002",
@@ -5335,8 +5386,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "establish"
+      "shot_role": "establish",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH003",
@@ -5394,8 +5446,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "action"
+      "shot_role": "action",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH004",
@@ -5452,8 +5505,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "reaction"
+      "shot_role": "reaction",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH005",
@@ -5512,8 +5566,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "exit"
+      "shot_role": "exit",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S05_SH006",
@@ -5571,8 +5626,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
-      "shot_role": "establish"
+      "shot_role": "establish",
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('gaze'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S05_SH007",
@@ -5631,7 +5687,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('tableau'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S05_SH008",
@@ -5687,7 +5744,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S05_SH009",
@@ -5741,7 +5799,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S05_SH010",
@@ -5797,7 +5856,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)"
     },
     {
       "shot_id": "S05_SH011",
@@ -5851,7 +5911,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S06_SH001",
@@ -5905,7 +5966,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S06_SH002",
@@ -5959,7 +6021,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S06_SH003",
@@ -6018,7 +6081,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('walk') (Q4)"
     },
     {
       "shot_id": "S06_SH004",
@@ -6077,7 +6141,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S06_SH005",
@@ -6133,7 +6198,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('flickers'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S06_SH006",
@@ -6189,7 +6255,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)"
     },
     {
       "shot_id": "S06_SH007",
@@ -6243,7 +6310,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S06_SH008",
@@ -6301,7 +6369,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('climbs') (Q4)"
     },
     {
       "shot_id": "S07_SH001",
@@ -6355,7 +6424,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S07_SH002",
@@ -6409,7 +6479,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S07_SH003",
@@ -6468,7 +6539,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)"
     },
     {
       "shot_id": "S07_SH004",
@@ -6526,7 +6598,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('thrusts') (Q4)"
     },
     {
       "shot_id": "S07_SH005",
@@ -6580,7 +6653,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S07_SH006",
@@ -6638,7 +6712,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S07_SH007",
@@ -6696,7 +6771,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
       "shot_id": "S07_SH008",
@@ -6754,7 +6830,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
       "shot_id": "S07_SH009",
@@ -6808,7 +6885,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S07_SH010",
@@ -6864,7 +6942,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S07_SH011",
@@ -6922,7 +7001,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('buries') (Q4)"
     },
     {
       "shot_id": "S07_SH012",
@@ -6978,7 +7058,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('ember'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S07_SH013",
@@ -7036,7 +7117,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
       "shot_id": "S07_SH014",
@@ -7095,7 +7177,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('positions the cooled, heat-treated stone core against') (Q4)"
     },
     {
       "shot_id": "S08_SH001",
@@ -7153,7 +7236,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S08_SH002",
@@ -7211,7 +7295,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('presses the tip of the antelope bone firmly against') (Q4)"
     },
     {
       "shot_id": "S08_SH003",
@@ -7273,7 +7358,8 @@
         "escalation_reason": "Lock precise hand and finger articulation as Sena binds the microlithic arrowhead onto the reed shaft with wet sinew"
       },
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('wrap') (Q4)"
     },
     {
       "shot_id": "S08_SH004",
@@ -7332,8 +7418,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "establish"
+      "shot_role": "establish",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S08_SH005",
@@ -7389,8 +7476,9 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
-      "shot_role": "action"
+      "shot_role": "action",
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S08_SH006",
@@ -7448,8 +7536,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "reaction"
+      "shot_role": "reaction",
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
       "shot_id": "S08_SH007",
@@ -7505,8 +7594,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "exit"
+      "shot_role": "exit",
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S08_SH008",
@@ -7564,7 +7654,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('draws the sinew') (Q4)"
     },
     {
       "shot_id": "S08_SH009",
@@ -7620,7 +7711,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S08_SH010",
@@ -7679,7 +7771,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S08_SH011",
@@ -7738,7 +7831,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S08_SH012",
@@ -7792,7 +7886,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('carry') (Q4)"
     },
     {
       "shot_id": "S08_SH013",
@@ -7850,7 +7945,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('silhouettes'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S08_SH014",
@@ -7909,7 +8005,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('steps out') (Q4)"
     },
     {
       "shot_id": "S09_SH001",
@@ -7970,7 +8067,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lift') (Q4)"
     },
     {
       "shot_id": "S09_SH002",
@@ -8028,8 +8126,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "establish"
+      "shot_role": "establish",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S09_SH003",
@@ -8087,8 +8186,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "action"
+      "shot_role": "action",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_thar_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S09_SH004",
@@ -8146,8 +8246,9 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
-      "shot_role": "reaction"
+      "shot_role": "reaction",
+      "route": "wan",
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a Wan performance clip, no lip-sync, no talking still (Q7)"
     },
     {
       "shot_id": "S09_SH005",
@@ -8207,8 +8308,9 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
-      "shot_role": "exit"
+      "shot_role": "exit",
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S09_SH006",
@@ -8262,8 +8364,9 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
-      "shot_role": "establish"
+      "shot_role": "establish",
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S09_SH007",
@@ -8322,7 +8425,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)"
     },
     {
       "shot_id": "S09_SH008",
@@ -8380,7 +8484,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('draws two microlithic') (Q4)"
     },
     {
       "shot_id": "S09_SH009",
@@ -8439,7 +8544,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
     },
     {
       "shot_id": "S10_SH001",
@@ -8498,7 +8604,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('extends two') (Q4)"
     },
     {
       "shot_id": "S10_SH002",
@@ -8557,7 +8664,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('presses an acacia bow and a bundle of microlithic arrows into') (Q4)"
     },
     {
       "shot_id": "S10_SH003",
@@ -8618,7 +8726,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S10_SH004",
@@ -8672,7 +8781,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S10_SH005",
@@ -8726,7 +8836,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S10_SH006",
@@ -8780,7 +8891,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S10_SH007",
@@ -8834,7 +8946,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S10_SH008",
@@ -8890,7 +9003,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('detaches') (Q4)"
     },
     {
       "shot_id": "S10_SH009",
@@ -8946,7 +9060,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('presses her red-ochre-coated palm firmly against') (Q4)"
     },
     {
       "shot_id": "S10_SH010",
@@ -9006,7 +9121,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('stand'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S10_SH011",
@@ -9060,7 +9176,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S10_SH012",
@@ -9121,7 +9238,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S10_SH013",
@@ -9181,7 +9299,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('marches') (Q4)"
     },
     {
       "shot_id": "S10_SH014",
@@ -9240,7 +9359,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)"
     },
     {
       "shot_id": "S10_SH015",
@@ -9296,7 +9416,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S10_SH016",
@@ -9350,7 +9471,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S11_SH001",
@@ -9404,7 +9526,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S11_SH002",
@@ -9460,7 +9583,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S11_SH003",
@@ -9521,7 +9645,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('walks') (Q4)"
     },
     {
       "shot_id": "S11_SH004",
@@ -9579,7 +9704,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('tilts her head') (Q4)"
     },
     {
       "shot_id": "S11_SH005",
@@ -9639,7 +9765,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('stride') (Q4)"
     },
     {
       "shot_id": "S11_SH006",
@@ -9693,7 +9820,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S11_SH007",
@@ -9754,7 +9882,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('tableau'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S11_SH008",
@@ -9808,7 +9937,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S11_SH009",
@@ -9864,7 +9994,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('ember'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S12_SH001",
@@ -9918,7 +10049,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     },
     {
       "shot_id": "S12_SH002",
@@ -9976,7 +10108,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)"
     },
     {
       "shot_id": "S12_SH003",
@@ -10030,7 +10163,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "map_action",
+      "route_reason": "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"
     },
     {
       "shot_id": "S12_SH004",
@@ -10086,7 +10220,8 @@
       },
       "selective_control": null,
       "transition_out": "j_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "wan",
+      "route_reason": "a body performs an action a still cannot fake ('wrapped') (Q4)"
     },
     {
       "shot_id": "S12_SH005",
@@ -10147,7 +10282,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V"
+      "route": "still_25d",
+      "route_reason": "the heroes hold a pose ('glowing'); camera, light and atmosphere carry the motion (Q4)"
     },
     {
       "shot_id": "S12_SH006",
@@ -10205,7 +10341,8 @@
       },
       "selective_control": null,
       "transition_out": "hard_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no body action named: the 2.5D renderer with motion imitation carries the shot (Q4)"
     },
     {
       "shot_id": "S12_SH007",
@@ -10259,7 +10396,8 @@
       },
       "selective_control": null,
       "transition_out": "l_cut",
-      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE"
+      "route": "still_25d",
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
     }
   ]
 }

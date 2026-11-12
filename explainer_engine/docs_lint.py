@@ -69,6 +69,8 @@ HOMES = {
     "CMP": "COMPENSATOR.md",  # the visual compensator: maps, HUD, tableaux, the eight map laws (Blueprint P5, 2026-10-30)
     "SA": "SCENE_ASSETS.md",  # the drawn scene assets and the J5 2.5D assembly (D-116, ICW-11, 2026-11-06)
     "LJ": "LTX_JOBS.md",  # the LTX generations of the J2/J4 routes (ltx_job/1, D-116, guide step 3, 2026-11-06)
+    "EP": "EPISODE_FIRST.md",  # one folder, one id, one look per episode (v4.3, D-131, 2026-11-12)
+    "RT": "EPISODE_FIRST.md",  # the shot route and the visual mix by duration (v4.3, D-131, 2026-11-12)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

@@ -10,6 +10,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) | the authoritative Opus implementation roadmap: branch dispositions, decision matrix (ICD), work packages (ICW), cost model, creator decision gate (ICG) and launch verdict | |
 | [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md) | the creator-approved route plan (D-116): Qwen the look, Blender space and time, LTX motion; routes J2/J4/J5/H per sub-category; English copy of sections 1-6, 9 of FINAL_HIGH_LEVEL_PLAN_ka.md | |
 | [V43_BRANCH_INVENTORY_2026-11-12](architecture/V43_BRANCH_INVENTORY_2026-11-12.md) | v4.3 rebuild P0: every branch line of the repo, what each added, the verdict (merge / keep / drop) and how the merges were resolved | |
+| [EPISODE_FIRST](EPISODE_FIRST.md) | v4.3 episode-first contract (D-131): one folder, one id, one look (EP-01, EP-02); one route per shot with its reason and the mix by duration (RT-01..RT-05) | |
 | [HYPERSTACK_README](providers/HYPERSTACK_README.md) | Hyperstack GPU VM, AI Studio token/image API, Dedicated Inference, storage, lifecycle, agent MCP and migration fit | |
 | [MODAL_README](providers/MODAL_README.md) | Modal Functions, serverless GPU, credits, volumes, secrets, agent skills and migration fit | |
 | [CLOUD_COST_MODEL_2026-11-07](providers/CLOUD_COST_MODEL_2026-11-07.md) | dated RunPod/Hyperstack/Modal GPU, AI Studio token and compute-credit arithmetic; D-116 cost assumptions | |

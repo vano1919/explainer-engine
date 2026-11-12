@@ -128,5 +128,9 @@
     "oppenheimer"
   ],
   "created_at": "2026-11-11T18:30:00Z",
-  "status": "in_production"
+  "status": "in_production",
+  "look_id": "crossworld_live_action_adventure_v1",
+  "image_native_min_long_side": 1376,
+  "image_min_long_side": 2752,
+  "map_style": "relief plate + action layer in the video's look (Q6, plan P4)"
 }

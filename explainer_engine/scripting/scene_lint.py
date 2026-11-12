@@ -412,6 +412,17 @@ def lint_v4(doc: dict) -> list[dict]:
                 })
             continue
 
+        # v4.3 (the creator, 2026-11-12, plan P1.3): dialogue lives inside scenes; a hero line in a segment that is not a
+        # played scene is a FAIL, never an aside dropped into narration or a visual-action run.
+        if seg_mode is not None and seg_mode != "played_scene":
+            out.append({
+                "rule": "SC-01",
+                "severity": "FAIL",
+                "where": char_lines[0].get("line_id", sid),
+                "detail": (f"Segment {sid} is {seg_mode!r} but carries {len(char_lines)} character line(s): dialogue belongs "
+                           "only in a played_scene segment (v4.3, 2026-11-12)"),
+            })
+
         # Measure contiguous character runs in seg_lines
         runs: list[tuple[int, set[str], list[str]]] = []
         cur_len = 0

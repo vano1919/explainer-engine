@@ -5058,3 +5058,22 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
 - The archive's case-F test asked ST-21 for FAIL on the hypothesis BP-144; it now asks `SR.level("BP-144")` (REVIEW until binding, D-59).
 - Tests: full suite 3465 passed, 14 skipped (10 of them the missing Waterloo input), 1 xfailed, the last failure fixed and re-run; docs_lint 0 findings.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P1: one contract for script, episode and routes (thread "Implement v4.3 episode-first rebuild")
+- Rules in [EPISODE_FIRST](EPISODE_FIRST.md): EP-01 one id per episode folder, EP-02 one look (`look_id`, `map_style`, intake floor
+  1376, working master 2752 never under 2048, plan 0.7), RT-01..RT-05 the shot route with its reason, Wan only where a body
+  performs or a hero speaks (Q4, Q7), maps as `map_action` (Q6), the visual mix by duration (R-C), no unapproved engine.
+- Code: `explainer_engine/episode/validate.py` (EP-01, CLI `python -m explainer_engine.episode.validate episodes/<id>`),
+  `explainer_engine/episode/router.py` (`route_shot`, `route_script` with `route_locked`, `mix_report`); `scene_lint` SC-01: a hero
+  line in a segment that is not a `played_scene` FAILs. Schema: `ShotSpec` gets `route`, `route_reason`, `route_locked`,
+  `motion_imitation` (still only), `actions` (maps only), `sound_events`; `video_engine_tier` loses the two Gemini video engines;
+  `episode_manifest` gets `look_id`, `look`, `image_native_min_long_side`, `image_min_long_side`, `map_style`.
+- The Toba script: the 138 archive engine labels dropped, every shot routed. Mix by duration (estimated from the script's
+  target seconds, 719.8 s): map 12.5 %, 2.5D 51.9 %, Wan 35.6 % (14 / 69 / 55 shots). `episode.json` got its look id and sizes; the
+  look sentences wait for the reference round with the creator (the plan thread, 2026-11-12: a live-action adventure-film look,
+  not 3D-cartoon faces).
+- Not done here: P1.5, the rewrite of the Toba prompts to the new look and of its 14 map shots to the P4 map system. It is a
+  script edit for the creator's approval and needs the chosen look first.
+- Tests: `tests/unit/test_v43_episode_contract.py` (18, one failing case per new rule); full suite 3484 passed, 14 skipped
+  (missing Waterloo input), 1 xfailed; docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.
