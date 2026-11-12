@@ -30,7 +30,10 @@ def _map_shot(s: dict) -> bool:
 
 def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plans: list[dict] | None,
           audio: dict | None, stem_audit: dict | None, video: dict | None, fps: int,
-          forbidden_tokens=(), narration_source: str | None = None, paid_calls: int | None = None) -> dict:
+          forbidden_tokens=(), narration_source: str | None = None, paid_calls: int | None = None,
+          paid: list[dict] | None = None) -> dict:
+    """``paid_calls``: a count of paid calls that must be zero (a free rehearsal); ``paid``: the run's paid ledger lines
+    (``episode/run.paid_lines``), each of which must name the creator's approved plan (``plan_id``, OR-23)."""
     root = Path(root)
     rows = []
 
@@ -127,8 +130,12 @@ def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plan
                         f"master {dur:.2f} s vs script {planned:.2f} s (tolerance {DURATION_TOL:.0%}), frames {'match' if frames_ok else 'differ'}",
                         {"master_s": dur, "script_s": planned, "frames": video.get("total_frames")}))
 
-    if paid_calls is None:
-        rows.append(row("no_paid_call", None, "this run does not read the ledger yet (P8)"))
+    if paid is not None:
+        loose = [f"{x.get('ledger')}:{x.get('shot_id') or x.get('id') or '?'}" for x in paid if not x.get("plan_id")]
+        rows.append(row("paid_calls_approved", not loose, f"{len(paid)} paid ledger line(s), {len(loose)} without an "
+                        "approved plan id (OR-23)", loose[:20]))
+    elif paid_calls is None:
+        rows.append(row("no_paid_call", None, "no ledger was read for this run"))
     else:
         rows.append(row("no_paid_call", paid_calls == 0, f"{paid_calls} paid call(s) in the ledger for this run", paid_calls))
     return verdict(rows)

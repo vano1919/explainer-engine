@@ -5251,3 +5251,29 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   refusal, ducking and the bridge in the stems, the level gate per route and its NOT_RUN with one route); two acceptance tests in
   `test_v43_measuring_gates.py`. docs_lint 0 findings.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P8: one runner over the stages, the read's clock, assembly in chunks (thread "Implement v4.3 episode-first rebuild")
+- `python -m explainer_engine.episode run episodes/<id> --stage <stage>|--to <stage>` and `status` (`episode/run.py`, RN-01..RN-06
+  in [EPISODE_FIRST](EPISODE_FIRST.md)): the stages of plan section 4 (`script` G1-G3, `sound_plan` G4, `pictures` G5, `voice` G6,
+  `clips` G7, `sound` G8, `assemble` G9, `qa` G10), each with its record in `production/stages/` (rows, verdict, outputs,
+  fingerprint). A stage refuses to start on a missing, stale or failed record before it; `--rehearsal` goes on after a FAIL
+  and marks every later record, and the QA of a rehearsal FAILs `not_a_rehearsal`. `--to` keeps fresh records; clips are
+  reused per shot when shot, pictures, spine and size are unchanged.
+- The voice stage (`episode/timing.py`): the real read and its Scribe transcript aligned to the lines; the cut between two
+  spoken shots in the middle of their pause, line-less shots share theirs, the shots tile the read frame by frame;
+  `audio/timing.json` holds the lengths and each shot's word spine (maps, 2.5D accents and sound events start on them). The
+  script is not edited.
+- Clips: pictures only through the turn-pack intake and upscaled (else FAIL rows), maps by P4, still_25d by P5 with the sound
+  plan's picture events, Wan only as the adapter's QA'd clip (a rehearsal draws the 2.5D fallback and says so); the runner calls
+  nothing paid. Paid ledger lines must name an approved plan (`paid_calls_approved` in the acceptance report, OR-23).
+- Assembly (F15, RULE-R1): `production/assemble.assemble_shot_clips` streams the clips into chunks that start on a shot, blends
+  the cut plan's transitions from the two clips' boundary frames, reuses chunks by stamp, draws `--chunks A:B` only, and muxes
+  once all exist; a short clip is refused. The archive's in-RAM assembler is removed from `episode/production_runner.py`, which
+  keeps the stem audit and the contact sheet and runs the stages as one call; the Colab notebook calls the command.
+- On the Toba script (a copy): G1-G3 FAIL (5 of 14 speaker shots are not Wan, Q7, for P1.5), G4 REVIEW (19 sound classes need
+  takes), G5 FAIL (no picture in the repo; they are on HF as drafts).
+- Tests: `tests/unit/test_v43_runner.py` (16: refusal, FAIL and rehearsal, review goes on, staleness, reuse and force, a
+  contract error on record, CLI, folder escape, paid lines, the read's clock with and without line-less shots, a line twice,
+  chunks drawn/reused/joined with a dissolve, a short clip refused, and the whole chain rehearsed on a 3-shot episode).
+  docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.
