@@ -5496,3 +5496,15 @@ caps: $2.5 per run and $6.5 in all. His word is recorded with `python -m explain
 `config/spend_caps.json` gains its own `modal_bakeoff` line (`core/spend_caps.modal_bakeoff()`), which the bake-off's preflight
 reads. The Wan route's `modal` line stays unset, so that route still has a zero budget until rung L3. Test:
 `tests/unit/test_v43_video_bakeoff.py`.
+
+## 2026-11-12 19:01 UTC: v4.3 video bake-off ran (run fae4ee9fb9d2_5dd040ac95c8)
+
+The creator's GO (1ა) was used after the Fable recheck PASSed at 2b18a948 (GO 2698fcb071f2), with the Haiku watchdog
+reading a live mirror. Steps run: `check`, `stage` (18.7 min CPU, $0.099), then `ltx_distilled` $0.365,
+`wan_a14b_lightning` $1.336 and `wan_ti2v_5b` $0.893, all DONE and verified on HF. Total $2.69 of $6.5. No Modal app is
+left running. The 2K report with HF links is on `vano1919/tmr-artifacts`
+`explainer-engine/bakeoff_2026-11-12/out/fae4ee9fb9d2_5dd040ac95c8/`.
+
+Finding: the worker's result carries torch's `TorchVersion`, so a local client without torch loses the answer
+(DeserializationError). LTX was settled by hand from the Modal app lifetime (258 s). torch CPU is now in the local venv.
+The fix is in the worker (`libs()` returns `str(...)`); it goes in only with the next GO, because it changes the worker sha.
