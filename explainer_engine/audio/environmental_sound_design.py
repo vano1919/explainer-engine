@@ -1,12 +1,15 @@
-"""Environmental Audio & Non-Dialogue Sound Design Continuity Engine (`environmental_sound_design.py`, v4.3).
+"""LEGACY (v4.3 plan P7): the zip's soundscape renderer, kept only for its tests and the narration-source check. The
+production path renders through ``episode/sound_plan`` + ``audio/stems`` (SP-01, SP-02); its voice and music synthesizers are
+removed, so this module can never make a voice either.
+
+Environmental Audio & Non-Dialogue Sound Design Continuity Engine (`environmental_sound_design.py`, v4.3).
 
 Connects existing repository audio modules (`foley.py`, `acoustics.py`, `sfx_planner.py`, `duck.py`, `layers.py`)
 to render a continuous, multi-layered stereo soundscape and separate 48kHz stems at $0.00 cost:
 1. Continuous Narration & Dialogue Voice Spine (`narration.wav`):
    - Strictly forbids SFX/ambience/music packs (`G4_SFX_Footsteps_Ambience_Music_Pack.mp3`, etc.) from ever being loaded
      as a narration voice track (`SFX_PACK_FORBIDDEN_AS_NARRATION`).
-   - Renders continuous, natural-cadence multi-formant articulated voice waveforms across every scheduled spoken line
-     with smooth breath transitions and zero mid-word dropouts.
+   - Loads the read or leaves the stem silent (the formant voice synthesizer is gone, plan P7.3).
 2. Continuous Environmental Ambience Beds (`ambience.wav`) across connected shots sharing a `continuity_group`
    (smooth 0.65s crossfades across scene changes; never hard-cuts or restarts ambience on every shot).
 3. Acoustic Environment Filtering (`acoustics.impulse` & `acoustics.convolve` for `outdoor`, `room`, `hall`, `cave`)
@@ -61,163 +64,34 @@ def _pitch_shift_resample(samples: np.ndarray, factor: float) -> np.ndarray:
     return np.interp(xs, np.arange(len(samples), dtype=np.float32), samples).astype(np.float32)
 
 
-def _synthesize_articulated_line_waveform(
-    text: str,
-    duration_sec: float,
-    speaker_type: str = "narrator",
-    line_idx: int = 0,
-) -> np.ndarray:
-    """Synthesize a continuous, natural-cadence multi-formant spoken voice waveform for a single line.
-
-    Uses word-by-word prosody envelopes derived from the actual words of `text` so every word has continuous
-    voiced formant energy (F1/F2/F3) + soft consonant onset shaping, with zero mid-word dropouts (< 45ms micro-valleys
-    between syllables so `dropouts.scan` and `SD-02` pass cleanly).
-    """
-    n = max(1, int(round(duration_sec * SR)))
-    t = np.arange(n, dtype=np.float32) / SR
-    rng = np.random.default_rng(1000 + line_idx * 37)
-
-    words = [w for w in re.findall(r"[A-Za-z0-9']+", text or "history unfolds") if w]
-    if not words:
-        words = ["narration", "segment"]
-
-    # Fundamental frequency contour with natural declarative sentence declination
-    base_f0 = 110.0 if speaker_type == "narrator" else 132.0
-    f0_contour = (
-        base_f0 * (1.04 - 0.08 * (t / max(duration_sec, 0.1)))
-        + 4.5 * np.sin(2.0 * np.pi * 1.15 * t + 0.4 * line_idx)
-        + 1.8 * np.sin(2.0 * np.pi * 4.2 * t)
-    ).astype(np.float32)
-    phase = 2.0 * np.pi * np.cumsum(f0_contour) / SR
-
-    # Glottal source: rich harmonic stack (F0 .. 12*F0) with warm spectral tilt
-    glottal = np.zeros(n, dtype=np.float32)
-    harmonic_weights = (0.48, 0.34, 0.22, 0.15, 0.11, 0.08, 0.06, 0.045, 0.032, 0.022)
-    for h_idx, w_h in enumerate(harmonic_weights, start=1):
-        glottal += w_h * np.sin(h_idx * phase + 0.17 * h_idx).astype(np.float32)
-
-    # Time-varying vowel formant filters (F1 ~ 520 Hz, F2 ~ 1350 Hz, F3 ~ 2550 Hz) + chest resonance (120-260 Hz)
-    chest_band = foley._band(glottal, 95, 320)[:n]
-    f1_band = foley._band(glottal, 380, 780)[:n]
-    f2_band = foley._band(glottal, 1050, 1850)[:n]
-    f3_band = foley._band(glottal, 2200, 3100)[:n]
-    aspirated = foley._band(foley._noise(duration_sec + 0.05, rng), 1400, 4200)[:n]
-
-    f1_mod = 0.65 + 0.35 * np.sin(2.0 * np.pi * 3.1 * t + 0.3 * line_idx)
-    f2_mod = 0.60 + 0.40 * np.cos(2.0 * np.pi * 4.4 * t + 0.7 * line_idx)
-    voiced = (0.42 * chest_band + 0.34 * f1_band * f1_mod + 0.20 * f2_band * f2_mod + 0.08 * f3_band + 0.03 * aspirated).astype(np.float32)
-
-    # Build smooth syllable articulation envelope across the line without dropping below 0.28 inside speech
-    n_syllables = max(len(words) * 2, int(round(duration_sec * 3.6)))
-    syl_rate = n_syllables / max(duration_sec, 0.2)
-    syl_env = (0.68 + 0.32 * np.sin(2.0 * np.pi * syl_rate * t - 0.5 * np.pi)).astype(np.float32)
-
-    # Word-level stress modulation
-    word_env = np.ones(n, dtype=np.float32)
-    word_span = n / max(len(words), 1)
-    for w_i in range(len(words)):
-        w_center = (w_i + 0.5) * word_span
-        stress = 1.0 + 0.12 * math.sin(w_i * 1.7 + line_idx)
-        bell = np.exp(-0.5 * ((np.arange(n, dtype=np.float32) - w_center) / max(word_span * 0.45, 1.0)) ** 2)
-        word_env += (stress - 1.0) * bell.astype(np.float32)
-
-    sig = (voiced * syl_env * word_env).astype(np.float32)
-
-    # Gentle attack (35ms) and release (55ms) at line boundaries
-    fi = min(int(0.035 * SR), n // 5)
-    fo = min(int(0.055 * SR), n // 5)
-    if fi > 0:
-        sig[:fi] *= np.linspace(0.0, 1.0, fi, dtype=np.float32)
-    if fo > 0:
-        sig[-fo:] *= np.linspace(1.0, 0.0, fo, dtype=np.float32)
-
-    peak = float(np.max(np.abs(sig)))
-    if peak > 1e-6:
-        sig = (sig / peak * 0.62).astype(np.float32)
-    return sig
-
-
 def _synthesize_or_load_narration_voice_track(
     script_doc: Dict[str, Any],
     total_samples: int,
     existing_audio_pack_path: Path | None = None,
     source_out: Dict[str, Any] | None = None,
 ) -> np.ndarray:
-    """Load a verified narration voice WAV/MP3 or synthesize continuous multi-formant narration across `audio_lines`.
-
-    ``source_out["narration_source"]`` says which happened: the loaded file's path, or ``"synthesized"`` (a formant
-    placeholder that is never shippable, v4.3 plan F4; the acceptance report FAILs it, EP-03)."""
+    """Load the read (WAV/MP3) or return silence: v4.3 plan P7.3 removed the formant voice synthesizer from the code, so no
+    path can make a voice. ``source_out["narration_source"]`` is the loaded file, or ``"none"`` (never shippable, EP-03)."""
     validate_narration_source_file(existing_audio_pack_path)
     if source_out is not None:
-        source_out["narration_source"] = "synthesized"
-    n = total_samples
-    voice = np.zeros(n, dtype=np.float32)
-
+        source_out["narration_source"] = "none"
+    voice = np.zeros(total_samples, dtype=np.float32)
     if existing_audio_pack_path and Path(existing_audio_pack_path).is_file():
-        try:
-            raw = subprocess.run(
-                ["ffmpeg", "-v", "error", "-i", str(existing_audio_pack_path), "-f", "f32le", "-ac", "1", "-ar", str(SR), "-"],
-                capture_output=True,
-                check=True,
-            ).stdout
-            loaded = np.frombuffer(raw, dtype=np.float32)
-            if len(loaded) > 0:
-                use_len = min(n, len(loaded))
-                voice[:use_len] = loaded[:use_len]
-                peak = float(np.max(np.abs(voice)))
-                if peak > 1e-6:
-                    if source_out is not None:
-                        source_out["narration_source"] = str(existing_audio_pack_path)
-                    return (voice / peak * 0.72).astype(np.float32)
-        except Exception:
-            pass
-
-    audio_lines = script_doc.get("audio_lines", [])
-    cursor_s = 0.0
-    for idx, ln in enumerate(audio_lines):
-        dur_s = float(ln.get("estimated_duration_seconds", 3.5))
-        start_s = float(ln.get("start_sec", cursor_s))
-        end_s = float(ln.get("end_sec", start_s + dur_s))
-        line_dur_s = max(0.25, end_s - start_s)
-        # Leave a natural 0.14s breath pause at the tail of each spoken line
-        active_dur_s = max(0.20, line_dur_s - 0.14)
-        a = max(0, int(round(start_s * SR)))
-        b = min(n, int(round((start_s + active_dur_s) * SR)))
-        span = b - a
-        if span > int(0.08 * SR):
-            seg = _synthesize_articulated_line_waveform(
-                text=str(ln.get("text") or ""),
-                duration_sec=span / SR,
-                speaker_type=str(ln.get("speaker_type") or "narrator"),
-                line_idx=idx,
-            )
-            voice[a:b] = seg[:span]
-        cursor_s = end_s
+        raw = subprocess.run(
+            ["ffmpeg", "-v", "error", "-i", str(existing_audio_pack_path), "-f", "f32le", "-ac", "1", "-ar", str(SR), "-"],
+            capture_output=True, check=True,
+        ).stdout
+        loaded = np.frombuffer(raw, dtype=np.float32)
+        use_len = min(total_samples, len(loaded))
+        voice[:use_len] = loaded[:use_len]
+        if use_len and source_out is not None:
+            source_out["narration_source"] = str(existing_audio_pack_path)
     return voice
 
 
-def _synthesize_cinematic_cello_ostinato(total_samples: int, seed: int = 19) -> np.ndarray:
-    """Synthesize a deep D-minor cello & low-string tension ostinato stem (48kHz stereo) at $0.00 cost."""
-    t = np.arange(total_samples, dtype=np.float32) / SR
-    # D2 (73.42 Hz), Bb1 (58.27 Hz), G2 (98.00 Hz), A1 (55.00 Hz) slow progression with smooth crossfade
-    chord_cycle = np.floor(t / 6.0).astype(int) % 4
-    freqs = np.choose(chord_cycle, [73.42, 58.27, 98.00, 55.00]).astype(np.float32)
-    phase = 2.0 * np.pi * np.cumsum(freqs) / SR
-    drone = (
-        0.55 * np.sin(phase)
-        + 0.25 * np.sin(2.0 * phase + 0.3)
-        + 0.12 * np.sin(3.0 * phase + 0.7)
-    ).astype(np.float32)
-    swell = (0.68 + 0.32 * np.sin(2.0 * np.pi * 0.16 * t)).astype(np.float32)
-    mono = foley._band(drone * swell, 45, 1100)[:total_samples]
-    fi = min(int(1.0 * SR), total_samples // 4)
-    fo = min(int(2.0 * SR), total_samples // 4)
-    if fi > 0:
-        mono[:fi] *= np.linspace(0.0, 1.0, fi, dtype=np.float32)
-    if fo > 0:
-        mono[-fo:] *= np.linspace(1.0, 0.0, fo, dtype=np.float32)
-    mono = mono / (np.max(np.abs(mono)) + 1e-6) * 0.18
-    return acoustics.widen(mono, seed=seed)
+def _silent_music(total_samples: int) -> np.ndarray:
+    """No music here: the numpy cello was removed (plan P7.3); real music comes from the library through audio/stems.py."""
+    return np.zeros((total_samples, 2), dtype=np.float32)
 
 
 def _write_stereo_wav(path: Path, stereo_samples: np.ndarray, sr: int = SR) -> None:
@@ -381,7 +255,7 @@ def render_continuous_environmental_soundscape(
                 sfx_stereo[a_idx:b_idx] += acoustics.pan(sw[: b_idx - a_idx], 0.0)
 
     # 4. Musical Tension Ostinato Stem
-    music_stereo = _synthesize_cinematic_cello_ostinato(total_samples, seed=19)
+    music_stereo = _silent_music(total_samples)
 
     # 5. Speech-Gated Sidechain Ducking (BP-53 & BP-118):
     # Music ducks smoothly by 5.0 dB under speech, ambience ducks by 3.0 dB under speech (never -11 dB full-mix collapses)

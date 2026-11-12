@@ -40,7 +40,8 @@ def _good(root: Path, **over):
                       {"shot_id": "S2", "visual_type": "cinematic_scene", "clip_path": _clip(root, "S2.mp4"),
                        "source_start_keyframe": _clip(root, "S2.jpg")}],
         transition_plans=[{"from_shot_id": "S1", "ed04_compliant": True}],
-        audio={"blocked_era_events": []}, stem_audit={"mid_line_narration_dropouts": 0, "sound_director_stem_findings": []},
+        audio={"blocked_era_events": [], "placeholders": [], "not_shippable_because": [],
+               "levels": {"rows": [G.row("equal_level_in_gaps", True, "route medians within BP-186", 0.8)]}}, stem_audit={"mid_line_narration_dropouts": 0, "sound_director_stem_findings": []},
         video={"duration_sec": 10.0, "total_frames": 240}, fps=24, forbidden_tokens=("waterloo",),
         narration_source=_clip(root, "read.wav"), paid_calls=0)
     kw.update(over)
@@ -177,3 +178,19 @@ def test_gate_audit_status_is_review_not_fail_on_review_rows(monkeypatch):
     monkeypatch.setattr(RE, "validate_reference_library", lambda lib: ["not locked"])
     assert RE.run_all_gate_audits(doc)["status"] == "FAIL"
 
+
+@pytest.mark.parametrize("audio, want", [
+    ({"blocked_era_events": [], "placeholders": ["fire"], "not_shippable_because": ["fire: placeholder"]}, "FAIL"),
+    ({"blocked_era_events": [], "placeholders": [], "not_shippable_because": ["music_bed: missing"]}, "FAIL"),
+    ({"blocked_era_events": [], "placeholders": [], "not_shippable_because": ["no narration"]}, "PASS"),
+    ({"blocked_era_events": []}, "NOT_RUN"),
+])
+def test_the_sound_row_fails_a_placeholder_or_a_missing_class(tmp_path, audio, want):
+    assert _status(_good(_episode(tmp_path), audio=audio), "sound_is_real") == want
+
+
+def test_the_level_rows_of_the_renderer_join_the_report(tmp_path):
+    lv = {"rows": [G.row("equal_level_in_gaps", False, "the Wan shots 6 dB up", 6.0, level="REVIEW")]}
+    rep = _good(_episode(tmp_path), audio={"blocked_era_events": [], "placeholders": [], "not_shippable_because": [],
+                                            "levels": lv})
+    assert _status(rep, "equal_level_in_gaps") == "REVIEW"

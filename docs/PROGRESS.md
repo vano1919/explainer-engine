@@ -5224,3 +5224,30 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   clips), two schema tests in `test_v43_episode_contract.py`. docs_lint 0 findings.
 - Not done: Modal is not wired (needs a measured speed, the OR-23 plan, the OR-34 audit and the creator's word).
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P7: one sound plan and one renderer, at one level everywhere (thread "Implement v4.3 episode-first rebuild")
+- The sound plan (`episode/sound_plan.py`, SP-01 in [EPISODE_FIRST](EPISODE_FIRST.md)): `audio/sound_plan.json` per episode
+  with, per shot, its events and their time (an authored `sound_events` item, else the spoken word that names it, on the
+  measured spine or the estimated word clock, else the visible action), per place one ambience bed with a J/L bridge of 0.5 s
+  each side of a place change, and per segment one music cue. Every event is one of the classes of `EVENT_CLASSES`, the one list
+  the library is filled from. An era refuses the classes it never heard (horses, swords in the Pleistocene) and a library take
+  whose tags, id or prompt place it in a later world (the burnt garage's fire crackle is not a Pleistocene hearth).
+- Sources: library first; a procedural numpy take is a placeholder, a class without a take is missing, and both go on the
+  plan's `needs` list. The Toba plan (`episodes/ep_toba/audio/sound_plan.json`, from the current script, before P1.5) needs 19
+  classes: none has a real take yet (4 have only procedural placeholders).
+- The renderer (`audio/stems.py`, SP-02): the plan into the five 48 kHz stems for every route alike (R-D). The narration is the
+  episode's real read; the zip's formant voice and numpy cello are deleted from `audio/environmental_sound_design.py` (now
+  legacy, kept for its tests), so no code makes a voice. Every event of a kind at one RMS, music and bed ducked under the voice
+  (BP-53), room tone and room per place, the J/L bridges. A shippable render refuses a placeholder, a missing class or a missing
+  read; a preview may hold them and its report says it cannot ship. The production runner renders through it (as a preview) and
+  the acceptance report gains `sound_is_real` (FAIL on a placeholder or a missing class) and the level rows.
+- The level gate (BP-186, new, hypothesis, REVIEW): per shot the background (ambience + effects) under speech and in the gaps;
+  per route group the median; the groups' spread at most 3 dB (an engineering default until the creator sets the number).
+- Not done: the plan's free 30-second mix from library sounds. The library holds no real take of any Toba class, so a mix today
+  would be placeholders only; the takes need new ElevenLabs sound effects (credits, the creator's word first). The sound test S
+  of the plan's section 7 (Wan's own sound against ours) also waits for his word.
+- Tests: `tests/unit/test_v43_sound_plan.py` (11: word, action and authored times, the measured spine, era refusal, unknown or
+  late sounds, beds and bridges, library/placeholder/missing and the needs list, a later world's take, placeholder and voice
+  refusal, ducking and the bridge in the stems, the level gate per route and its NOT_RUN with one route); two acceptance tests in
+  `test_v43_measuring_gates.py`. docs_lint 0 findings.
+- Cost: $0. Nothing paid was run.

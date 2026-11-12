@@ -1,0 +1,5262 @@
+{
+  "schema": "sound_plan/1",
+  "episode_id": "ep_toba",
+  "era": "prehistoric_pleistocene",
+  "fps": 24,
+  "duration_s": 719.8,
+  "shots": [
+    {
+      "shot_id": "S01_SH001",
+      "segment_id": "S01",
+      "start_s": 0.0,
+      "dur_s": 1.8,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S01_L001"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.36,
+          "at_frame": 9,
+          "basis": "action"
+        },
+        {
+          "class": "eruption_boom",
+          "kind": "spot",
+          "at_s": 0.36,
+          "at_frame": 9,
+          "basis": "action",
+          "picture_event": "eruption"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.36,
+          "at_frame": 9,
+          "basis": "action"
+        },
+        {
+          "class": "running",
+          "kind": "foley",
+          "at_s": 0.36,
+          "at_frame": 9,
+          "basis": "action"
+        },
+        {
+          "class": "thunder",
+          "kind": "spot",
+          "at_s": 0.36,
+          "at_frame": 9,
+          "basis": "action",
+          "picture_event": "thunder"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 0.708,
+          "at_frame": 17,
+          "basis": "word:people:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH002",
+      "segment_id": "S01",
+      "start_s": 1.8,
+      "dur_s": 2.2,
+      "route": "wan",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S01_L002"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.44,
+          "at_frame": 11,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "start_s": 4.0,
+      "dur_s": 5.6,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S01_L003"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        },
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action",
+          "picture_event": "impact"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH004",
+      "segment_id": "S01",
+      "start_s": 9.6,
+      "dur_s": 2.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S01_L004"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 0.44,
+          "at_frame": 11,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH005",
+      "segment_id": "S01",
+      "start_s": 11.8,
+      "dur_s": 3.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S01_L005"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.68,
+          "at_frame": 16,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_grass",
+          "kind": "foley",
+          "at_s": 1.375,
+          "at_frame": 33,
+          "basis": "word:savanna:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH006",
+      "segment_id": "S01",
+      "start_s": 15.2,
+      "dur_s": 7.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S01_L006"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.52,
+          "at_frame": 36,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH007",
+      "segment_id": "S01",
+      "start_s": 22.8,
+      "dur_s": 2.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S01_L007"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.56,
+          "at_frame": 13,
+          "basis": "action"
+        },
+        {
+          "class": "eruption_rumble",
+          "kind": "ambience",
+          "at_s": 0.75,
+          "at_frame": 18,
+          "basis": "word:volcano:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH008",
+      "segment_id": "S01",
+      "start_s": 25.6,
+      "dur_s": 5.8,
+      "route": "map_action",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S01_L008"
+      ],
+      "events": [
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S01_SH009",
+      "segment_id": "S01",
+      "start_s": 31.4,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S01_L009"
+      ],
+      "events": [
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.167,
+          "at_frame": 28,
+          "basis": "word:ocean:estimated"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "eruption_boom",
+          "kind": "spot",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action",
+          "picture_event": "eruption"
+        },
+        {
+          "class": "thunder",
+          "kind": "spot",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action",
+          "picture_event": "thunder"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH001",
+      "segment_id": "S02",
+      "start_s": 37.8,
+      "dur_s": 5.8,
+      "route": "map_action",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S02_L001"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S02_SH002",
+      "segment_id": "S02",
+      "start_s": 43.6,
+      "dur_s": 2.1,
+      "route": "wan",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S02_L002"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.42,
+          "at_frame": 10,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH003",
+      "segment_id": "S02",
+      "start_s": 45.7,
+      "dur_s": 7.4,
+      "route": "wan",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "grass",
+      "audio_line_ids": [
+        "S02_L003"
+      ],
+      "events": [
+        {
+          "class": "eruption_rumble",
+          "kind": "ambience",
+          "at_s": 1.48,
+          "at_frame": 36,
+          "basis": "action"
+        },
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 1.48,
+          "at_frame": 36,
+          "basis": "action",
+          "picture_event": "impact"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH004",
+      "segment_id": "S02",
+      "start_s": 53.1,
+      "dur_s": 5.2,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S02_L004"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S02_SH005",
+      "segment_id": "S02",
+      "start_s": 58.3,
+      "dur_s": 6.8,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S02_L005"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        },
+        {
+          "class": "eruption_rumble",
+          "kind": "ambience",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH006",
+      "segment_id": "S02",
+      "start_s": 65.1,
+      "dur_s": 3.0,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "grass",
+      "audio_line_ids": [
+        "S02_L006"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.6,
+          "at_frame": 14,
+          "basis": "action"
+        },
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 0.6,
+          "at_frame": 14,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH007",
+      "segment_id": "S02",
+      "start_s": 68.1,
+      "dur_s": 6.5,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S02_L007"
+      ],
+      "events": [
+        {
+          "class": "eruption_rumble",
+          "kind": "ambience",
+          "at_s": 1.3,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH008",
+      "segment_id": "S02",
+      "start_s": 74.6,
+      "dur_s": 5.4,
+      "route": "wan",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S02_L008"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S02_SH009",
+      "segment_id": "S02",
+      "start_s": 80.0,
+      "dur_s": 2.6,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S02_L009"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH010",
+      "segment_id": "S02",
+      "start_s": 82.6,
+      "dur_s": 6.6,
+      "route": "map_action",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S02_L010"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "rain",
+          "kind": "ambience",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 2.958,
+          "at_frame": 71,
+          "basis": "word:ash:estimated"
+        },
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 4.25,
+          "at_frame": 102,
+          "basis": "word:ocean:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH011",
+      "segment_id": "S02",
+      "start_s": 89.2,
+      "dur_s": 6.2,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S02_L011"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        },
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        },
+        {
+          "class": "rain",
+          "kind": "ambience",
+          "at_s": 1.583,
+          "at_frame": 38,
+          "basis": "word:monsoon:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S02_SH012",
+      "segment_id": "S02",
+      "start_s": 95.4,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S02_L012"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH001",
+      "segment_id": "S03",
+      "start_s": 101.8,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S03_L001"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "thunder",
+          "kind": "spot",
+          "at_s": 4.833,
+          "at_frame": 116,
+          "basis": "word:lightning:estimated",
+          "picture_event": "thunder"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH002",
+      "segment_id": "S03",
+      "start_s": 107.6,
+      "dur_s": 6.6,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L002"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 3.25,
+          "at_frame": 78,
+          "basis": "word:river:estimated"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 4.375,
+          "at_frame": 105,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH003",
+      "segment_id": "S03",
+      "start_s": 114.2,
+      "dur_s": 2.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L003"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH004",
+      "segment_id": "S03",
+      "start_s": 116.8,
+      "dur_s": 6.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L004"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_ash",
+          "kind": "foley",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        },
+        {
+          "class": "rain",
+          "kind": "ambience",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        },
+        {
+          "class": "running",
+          "kind": "foley",
+          "at_s": 5.167,
+          "at_frame": 124,
+          "basis": "word:flee:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH005",
+      "segment_id": "S03",
+      "start_s": 123.6,
+      "dur_s": 6.0,
+      "route": "map_action",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S03_L005"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S03_SH006",
+      "segment_id": "S03",
+      "start_s": 129.6,
+      "dur_s": 7.2,
+      "route": "wan",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L006"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S03_SH007",
+      "segment_id": "S03",
+      "start_s": 136.8,
+      "dur_s": 3.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L007"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.542,
+          "at_frame": 13,
+          "basis": "word:ash:estimated"
+        },
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 0.917,
+          "at_frame": 22,
+          "basis": "word:falls:estimated",
+          "picture_event": "impact"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH008",
+      "segment_id": "S03",
+      "start_s": 140.2,
+      "dur_s": 3.0,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L008"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S03_SH009",
+      "segment_id": "S03",
+      "start_s": 143.2,
+      "dur_s": 7.2,
+      "route": "map_action",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L009"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S03_SH010",
+      "segment_id": "S03",
+      "start_s": 150.4,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S03_L010"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH011",
+      "segment_id": "S03",
+      "start_s": 156.2,
+      "dur_s": 4.4,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L011"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.458,
+          "at_frame": 35,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH012",
+      "segment_id": "S03",
+      "start_s": 160.6,
+      "dur_s": 5.0,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S03_L012"
+      ],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH013",
+      "segment_id": "S03",
+      "start_s": 165.6,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "grass",
+      "audio_line_ids": [
+        "S03_L013"
+      ],
+      "events": [
+        {
+          "class": "footsteps_grass",
+          "kind": "foley",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S03_SH014",
+      "segment_id": "S03",
+      "start_s": 172.0,
+      "dur_s": 7.8,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S03_L014"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.56,
+          "at_frame": 37,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.56,
+          "at_frame": 37,
+          "basis": "action"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 1.56,
+          "at_frame": 37,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH001",
+      "segment_id": "S04",
+      "start_s": 179.8,
+      "dur_s": 6.2,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S04_L001"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        },
+        {
+          "class": "eruption_boom",
+          "kind": "spot",
+          "at_s": 1.625,
+          "at_frame": 39,
+          "basis": "word:eruption:estimated",
+          "picture_event": "eruption"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH002",
+      "segment_id": "S04",
+      "start_s": 186.0,
+      "dur_s": 5.0,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S04_L002"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S04_SH003",
+      "segment_id": "S04",
+      "start_s": 191.0,
+      "dur_s": 2.4,
+      "route": "still_25d",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S04_L003"
+      ],
+      "events": [
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 0.958,
+          "at_frame": 23,
+          "basis": "word:ocean:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH004",
+      "segment_id": "S04",
+      "start_s": 193.4,
+      "dur_s": 7.4,
+      "route": "still_25d",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S04_L004"
+      ],
+      "events": [
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.48,
+          "at_frame": 36,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH005",
+      "segment_id": "S04",
+      "start_s": 200.8,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S04_L005"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "rain",
+          "kind": "ambience",
+          "at_s": 4.792,
+          "at_frame": 115,
+          "basis": "word:rain:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH006",
+      "segment_id": "S04",
+      "start_s": 206.6,
+      "dur_s": 6.6,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S04_L006"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "rain",
+          "kind": "ambience",
+          "at_s": 2.708,
+          "at_frame": 65,
+          "basis": "word:monsoon:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH007",
+      "segment_id": "S04",
+      "start_s": 213.2,
+      "dur_s": 2.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "grass",
+      "audio_line_ids": [
+        "S04_L007"
+      ],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_grass",
+          "kind": "foley",
+          "at_s": 1.292,
+          "at_frame": 31,
+          "basis": "word:savanna:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH008",
+      "segment_id": "S04",
+      "start_s": 215.8,
+      "dur_s": 6.4,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S04_L008"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH009",
+      "segment_id": "S04",
+      "start_s": 222.2,
+      "dur_s": 3.8,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S04_L009"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 0.76,
+          "at_frame": 18,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH010",
+      "segment_id": "S04",
+      "start_s": 226.0,
+      "dur_s": 4.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S04_L010"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.92,
+          "at_frame": 22,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH011",
+      "segment_id": "S04",
+      "start_s": 230.6,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S04_L011"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 4.5,
+          "at_frame": 108,
+          "basis": "word:collapse:estimated",
+          "picture_event": "impact"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH012",
+      "segment_id": "S04",
+      "start_s": 237.0,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S04_L012"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 4.0,
+          "at_frame": 96,
+          "basis": "word:band:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH013",
+      "segment_id": "S04",
+      "start_s": 242.8,
+      "dur_s": 6.6,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S04_L013"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 2.125,
+          "at_frame": 51,
+          "basis": "word:river:estimated"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 2.833,
+          "at_frame": 68,
+          "basis": "word:band:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH014",
+      "segment_id": "S04",
+      "start_s": 249.4,
+      "dur_s": 4.6,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S04_L014"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.92,
+          "at_frame": 22,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 3.833,
+          "at_frame": 92,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S04_SH015",
+      "segment_id": "S04",
+      "start_s": 254.0,
+      "dur_s": 7.8,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S04_L015"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.56,
+          "at_frame": 37,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH001",
+      "segment_id": "S05",
+      "start_s": 261.8,
+      "dur_s": 4.6,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L001"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.75,
+          "at_frame": 18,
+          "basis": "word:basalt:estimated"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 3.792,
+          "at_frame": 91,
+          "basis": "word:fire:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH002",
+      "segment_id": "S05",
+      "start_s": 266.4,
+      "dur_s": 4.8,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L002"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.96,
+          "at_frame": 23,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH003",
+      "segment_id": "S05",
+      "start_s": 271.2,
+      "dur_s": 2.0,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L003"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.4,
+          "at_frame": 10,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH004",
+      "segment_id": "S05",
+      "start_s": 273.2,
+      "dur_s": 5.8,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L004"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_grass",
+          "kind": "foley",
+          "at_s": 2.583,
+          "at_frame": 62,
+          "basis": "word:grass:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH005",
+      "segment_id": "S05",
+      "start_s": 279.0,
+      "dur_s": 3.4,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S05_L005"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.68,
+          "at_frame": 16,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 2.0,
+          "at_frame": 48,
+          "basis": "word:ash:estimated"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 2.125,
+          "at_frame": 51,
+          "basis": "word:wind:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH006",
+      "segment_id": "S05",
+      "start_s": 282.4,
+      "dur_s": 4.5,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L006"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.9,
+          "at_frame": 22,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH007",
+      "segment_id": "S05",
+      "start_s": 286.9,
+      "dur_s": 6.2,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L007"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH008",
+      "segment_id": "S05",
+      "start_s": 293.1,
+      "dur_s": 5.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S05_L008"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH009",
+      "segment_id": "S05",
+      "start_s": 298.7,
+      "dur_s": 2.4,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L009"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.48,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.48,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.48,
+          "at_frame": 12,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH010",
+      "segment_id": "S05",
+      "start_s": 301.1,
+      "dur_s": 6.4,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S05_L010"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.917,
+          "at_frame": 22,
+          "basis": "word:hearth:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S05_SH011",
+      "segment_id": "S05",
+      "start_s": 307.5,
+      "dur_s": 6.3,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S05_L011"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.26,
+          "at_frame": 30,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S06_SH001",
+      "segment_id": "S06",
+      "start_s": 313.8,
+      "dur_s": 6.4,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S06_L001"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S06_SH002",
+      "segment_id": "S06",
+      "start_s": 320.2,
+      "dur_s": 6.8,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S06_L002"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S06_SH003",
+      "segment_id": "S06",
+      "start_s": 327.0,
+      "dur_s": 2.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S06_L003"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.52,
+          "at_frame": 12,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S06_SH004",
+      "segment_id": "S06",
+      "start_s": 329.6,
+      "dur_s": 7.2,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S06_L004"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.44,
+          "at_frame": 35,
+          "basis": "action"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 1.44,
+          "at_frame": 35,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.44,
+          "at_frame": 35,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S06_SH005",
+      "segment_id": "S06",
+      "start_s": 336.8,
+      "dur_s": 3.4,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S06_L005"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.68,
+          "at_frame": 16,
+          "basis": "action"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 2.083,
+          "at_frame": 50,
+          "basis": "word:people:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S06_SH006",
+      "segment_id": "S06",
+      "start_s": 340.2,
+      "dur_s": 6.0,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S06_L006"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.2,
+          "at_frame": 29,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S06_SH007",
+      "segment_id": "S06",
+      "start_s": 346.2,
+      "dur_s": 5.8,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S06_L007"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S06_SH008",
+      "segment_id": "S06",
+      "start_s": 352.0,
+      "dur_s": 7.8,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S06_L008"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.56,
+          "at_frame": 37,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.56,
+          "at_frame": 37,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH001",
+      "segment_id": "S07",
+      "start_s": 359.8,
+      "dur_s": 6.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L001"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 2.958,
+          "at_frame": 71,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH002",
+      "segment_id": "S07",
+      "start_s": 366.4,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S07_L002"
+      ],
+      "events": [
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH003",
+      "segment_id": "S07",
+      "start_s": 372.2,
+      "dur_s": 3.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S07_L003"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 0.72,
+          "at_frame": 17,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.792,
+          "at_frame": 19,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH004",
+      "segment_id": "S07",
+      "start_s": 375.8,
+      "dur_s": 4.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S07_L004"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S07_SH005",
+      "segment_id": "S07",
+      "start_s": 380.4,
+      "dur_s": 2.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S07_L005"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S07_SH006",
+      "segment_id": "S07",
+      "start_s": 383.0,
+      "dur_s": 6.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L006"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH007",
+      "segment_id": "S07",
+      "start_s": 389.6,
+      "dur_s": 4.0,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S07_L007"
+      ],
+      "events": [
+        {
+          "class": "running",
+          "kind": "foley",
+          "at_s": 2.167,
+          "at_frame": 52,
+          "basis": "word:sprint:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH008",
+      "segment_id": "S07",
+      "start_s": 393.6,
+      "dur_s": 5.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L008"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.083,
+          "at_frame": 26,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH009",
+      "segment_id": "S07",
+      "start_s": 398.8,
+      "dur_s": 6.4,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L009"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        },
+        {
+          "class": "stone_tools",
+          "kind": "foley",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH010",
+      "segment_id": "S07",
+      "start_s": 405.2,
+      "dur_s": 6.0,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L010"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.2,
+          "at_frame": 29,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH011",
+      "segment_id": "S07",
+      "start_s": 411.2,
+      "dur_s": 6.2,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L011"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH012",
+      "segment_id": "S07",
+      "start_s": 417.4,
+      "dur_s": 5.0,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L012"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH013",
+      "segment_id": "S07",
+      "start_s": 422.4,
+      "dur_s": 5.6,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L013"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S07_SH014",
+      "segment_id": "S07",
+      "start_s": 428.0,
+      "dur_s": 5.8,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S07_L014"
+      ],
+      "events": [
+        {
+          "class": "stone_tools",
+          "kind": "foley",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.458,
+          "at_frame": 35,
+          "basis": "word:hearth:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH001",
+      "segment_id": "S08",
+      "start_s": 433.8,
+      "dur_s": 5.6,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L001"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 2.125,
+          "at_frame": 51,
+          "basis": "word:hearth:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH002",
+      "segment_id": "S08",
+      "start_s": 439.4,
+      "dur_s": 2.4,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L002"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.125,
+          "at_frame": 3,
+          "basis": "word:fire:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH003",
+      "segment_id": "S08",
+      "start_s": 441.8,
+      "dur_s": 6.4,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L003"
+      ],
+      "events": [
+        {
+          "class": "stone_tools",
+          "kind": "foley",
+          "at_s": 1.28,
+          "at_frame": 31,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH004",
+      "segment_id": "S08",
+      "start_s": 448.2,
+      "dur_s": 4.2,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L004"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.84,
+          "at_frame": 20,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH005",
+      "segment_id": "S08",
+      "start_s": 452.4,
+      "dur_s": 6.8,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L005"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH006",
+      "segment_id": "S08",
+      "start_s": 459.2,
+      "dur_s": 3.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S08_L006"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.64,
+          "at_frame": 15,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH007",
+      "segment_id": "S08",
+      "start_s": 462.4,
+      "dur_s": 2.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S08_L007"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S08_SH008",
+      "segment_id": "S08",
+      "start_s": 464.8,
+      "dur_s": 2.0,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S08_L008"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.4,
+          "at_frame": 10,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH009",
+      "segment_id": "S08",
+      "start_s": 466.8,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S08_L009"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 2.042,
+          "at_frame": 49,
+          "basis": "word:arrow:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH010",
+      "segment_id": "S08",
+      "start_s": 473.2,
+      "dur_s": 6.0,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L010"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.2,
+          "at_frame": 29,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.2,
+          "at_frame": 29,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH011",
+      "segment_id": "S08",
+      "start_s": 479.2,
+      "dur_s": 4.6,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L011"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.92,
+          "at_frame": 22,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.92,
+          "at_frame": 22,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.917,
+          "at_frame": 46,
+          "basis": "word:river:estimated"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 3.583,
+          "at_frame": 86,
+          "basis": "word:basalt:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH012",
+      "segment_id": "S08",
+      "start_s": 483.8,
+      "dur_s": 5.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S08_L012"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH013",
+      "segment_id": "S08",
+      "start_s": 489.4,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S08_L013"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.16,
+          "at_frame": 28,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.375,
+          "at_frame": 33,
+          "basis": "word:ash:estimated"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 2.708,
+          "at_frame": 65,
+          "basis": "word:band:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S08_SH014",
+      "segment_id": "S08",
+      "start_s": 495.2,
+      "dur_s": 6.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S08_L014"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.375,
+          "at_frame": 33,
+          "basis": "word:ash:estimated"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 2.583,
+          "at_frame": 62,
+          "basis": "word:band:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH001",
+      "segment_id": "S09",
+      "start_s": 501.8,
+      "dur_s": 4.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S09_L001"
+      ],
+      "events": [
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 0.84,
+          "at_frame": 20,
+          "basis": "action",
+          "picture_event": "impact"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH002",
+      "segment_id": "S09",
+      "start_s": 506.0,
+      "dur_s": 2.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S09_L002"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 0.125,
+          "at_frame": 3,
+          "basis": "word:step:estimated"
+        },
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.44,
+          "at_frame": 11,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH003",
+      "segment_id": "S09",
+      "start_s": 508.2,
+      "dur_s": 3.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S09_L003"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.542,
+          "at_frame": 37,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH004",
+      "segment_id": "S09",
+      "start_s": 511.8,
+      "dur_s": 2.4,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S09_L004"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 0.48,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_ash",
+          "kind": "foley",
+          "at_s": 0.48,
+          "at_frame": 12,
+          "basis": "action"
+        },
+        {
+          "class": "running",
+          "kind": "foley",
+          "at_s": 0.48,
+          "at_frame": 12,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH005",
+      "segment_id": "S09",
+      "start_s": 514.2,
+      "dur_s": 5.0,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S09_L005"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.708,
+          "at_frame": 17,
+          "basis": "word:bow:estimated"
+        },
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "action",
+          "picture_event": "impact"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH006",
+      "segment_id": "S09",
+      "start_s": 519.2,
+      "dur_s": 5.8,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "snow",
+      "audio_line_ids": [
+        "S09_L006"
+      ],
+      "events": [
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 1.917,
+          "at_frame": 46,
+          "basis": "word:people:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH007",
+      "segment_id": "S09",
+      "start_s": 525.0,
+      "dur_s": 4.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S09_L007"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 0.92,
+          "at_frame": 22,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 0.92,
+          "at_frame": 22,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH008",
+      "segment_id": "S09",
+      "start_s": 529.6,
+      "dur_s": 5.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S09_L008"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 2.875,
+          "at_frame": 69,
+          "basis": "word:arrows:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S09_SH009",
+      "segment_id": "S09",
+      "start_s": 534.8,
+      "dur_s": 5.0,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S09_L009"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH001",
+      "segment_id": "S10",
+      "start_s": 539.8,
+      "dur_s": 4.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L001"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S10_SH002",
+      "segment_id": "S10",
+      "start_s": 544.4,
+      "dur_s": 4.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L002"
+      ],
+      "events": [
+        {
+          "class": "bow",
+          "kind": "foley",
+          "at_s": 1.125,
+          "at_frame": 27,
+          "basis": "word:bow:estimated"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 3.292,
+          "at_frame": 79,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH003",
+      "segment_id": "S10",
+      "start_s": 548.6,
+      "dur_s": 6.8,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L003"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH004",
+      "segment_id": "S10",
+      "start_s": 555.4,
+      "dur_s": 6.0,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L004"
+      ],
+      "events": [
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 2.833,
+          "at_frame": 68,
+          "basis": "word:band:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH005",
+      "segment_id": "S10",
+      "start_s": 561.4,
+      "dur_s": 2.8,
+      "route": "still_25d",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L005"
+      ],
+      "events": [
+        {
+          "class": "impact",
+          "kind": "spot",
+          "at_s": 0.56,
+          "at_frame": 13,
+          "basis": "action",
+          "picture_event": "impact"
+        },
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 0.56,
+          "at_frame": 13,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH006",
+      "segment_id": "S10",
+      "start_s": 564.2,
+      "dur_s": 7.2,
+      "route": "still_25d",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L006"
+      ],
+      "events": [
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.44,
+          "at_frame": 35,
+          "basis": "action"
+        },
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 1.44,
+          "at_frame": 35,
+          "basis": "action"
+        },
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 6.125,
+          "at_frame": 147,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH007",
+      "segment_id": "S10",
+      "start_s": 571.4,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L007"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S10_SH008",
+      "segment_id": "S10",
+      "start_s": 577.8,
+      "dur_s": 6.6,
+      "route": "wan",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L008"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.32,
+          "at_frame": 32,
+          "basis": "action"
+        },
+        {
+          "class": "eruption_boom",
+          "kind": "spot",
+          "at_s": 2.458,
+          "at_frame": 59,
+          "basis": "word:eruption:estimated",
+          "picture_event": "eruption"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH009",
+      "segment_id": "S10",
+      "start_s": 584.4,
+      "dur_s": 3.4,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L009"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.68,
+          "at_frame": 16,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 0.68,
+          "at_frame": 16,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH010",
+      "segment_id": "S10",
+      "start_s": 587.8,
+      "dur_s": 2.6,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L010"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S10_SH011",
+      "segment_id": "S10",
+      "start_s": 590.4,
+      "dur_s": 6.8,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L011"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH012",
+      "segment_id": "S10",
+      "start_s": 597.2,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L012"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 3.292,
+          "at_frame": 79,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH013",
+      "segment_id": "S10",
+      "start_s": 603.6,
+      "dur_s": 5.2,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L013"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.04,
+          "at_frame": 25,
+          "basis": "action"
+        },
+        {
+          "class": "crowd",
+          "kind": "foley",
+          "at_s": 1.04,
+          "at_frame": 25,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.04,
+          "at_frame": 25,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH014",
+      "segment_id": "S10",
+      "start_s": 608.8,
+      "dur_s": 5.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S10_L014"
+      ],
+      "events": [
+        {
+          "class": "footsteps_stone",
+          "kind": "foley",
+          "at_s": 1.12,
+          "at_frame": 27,
+          "basis": "action"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.542,
+          "at_frame": 37,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH015",
+      "segment_id": "S10",
+      "start_s": 614.4,
+      "dur_s": 5.0,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L015"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S10_SH016",
+      "segment_id": "S10",
+      "start_s": 619.4,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S10_L016"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 3.0,
+          "at_frame": 72,
+          "basis": "word:riverbed:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S11_SH001",
+      "segment_id": "S11",
+      "start_s": 625.8,
+      "dur_s": 6.8,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L001"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S11_SH002",
+      "segment_id": "S11",
+      "start_s": 632.6,
+      "dur_s": 3.2,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L002"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S11_SH003",
+      "segment_id": "S11",
+      "start_s": 635.8,
+      "dur_s": 7.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L003"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.52,
+          "at_frame": 36,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 3.708,
+          "at_frame": 89,
+          "basis": "word:walk:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S11_SH004",
+      "segment_id": "S11",
+      "start_s": 643.4,
+      "dur_s": 4.6,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L004"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S11_SH005",
+      "segment_id": "S11",
+      "start_s": 648.0,
+      "dur_s": 3.8,
+      "route": "wan",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L005"
+      ],
+      "events": [
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 0.208,
+          "at_frame": 5,
+          "basis": "word:step:estimated"
+        },
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 1.125,
+          "at_frame": 27,
+          "basis": "word:river:estimated"
+        },
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 2.625,
+          "at_frame": 63,
+          "basis": "word:sea:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S11_SH006",
+      "segment_id": "S11",
+      "start_s": 651.8,
+      "dur_s": 6.8,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L006"
+      ],
+      "events": [
+        {
+          "class": "water_waves",
+          "kind": "ambience",
+          "at_s": 1.36,
+          "at_frame": 33,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S11_SH007",
+      "segment_id": "S11",
+      "start_s": 658.6,
+      "dur_s": 6.4,
+      "route": "still_25d",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S11_L007"
+      ],
+      "events": []
+    },
+    {
+      "shot_id": "S11_SH008",
+      "segment_id": "S11",
+      "start_s": 665.0,
+      "dur_s": 7.4,
+      "route": "still_25d",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S11_L008"
+      ],
+      "events": [
+        {
+          "class": "rain",
+          "kind": "ambience",
+          "at_s": 1.042,
+          "at_frame": 25,
+          "basis": "word:rain:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S11_SH009",
+      "segment_id": "S11",
+      "start_s": 672.4,
+      "dur_s": 7.4,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S11_L009"
+      ],
+      "events": [
+        {
+          "class": "eruption_rumble",
+          "kind": "ambience",
+          "at_s": 1.0,
+          "at_frame": 24,
+          "basis": "word:volcano:estimated"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.48,
+          "at_frame": 36,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH001",
+      "segment_id": "S12",
+      "start_s": 679.8,
+      "dur_s": 6.6,
+      "route": "still_25d",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "grass",
+      "audio_line_ids": [
+        "S12_L001"
+      ],
+      "events": [
+        {
+          "class": "river",
+          "kind": "ambience",
+          "at_s": 2.958,
+          "at_frame": 71,
+          "basis": "word:river:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH002",
+      "segment_id": "S12",
+      "start_s": 686.4,
+      "dur_s": 2.4,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S12_L002"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.958,
+          "at_frame": 23,
+          "basis": "word:embers:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH003",
+      "segment_id": "S12",
+      "start_s": 688.8,
+      "dur_s": 7.2,
+      "route": "map_action",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "dirt",
+      "audio_line_ids": [
+        "S12_L003"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 6.083,
+          "at_frame": 146,
+          "basis": "word:ash:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH004",
+      "segment_id": "S12",
+      "start_s": 696.0,
+      "dur_s": 6.0,
+      "route": "wan",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S12_L004"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.2,
+          "at_frame": 29,
+          "basis": "action"
+        },
+        {
+          "class": "footsteps_dirt",
+          "kind": "foley",
+          "at_s": 3.833,
+          "at_frame": 92,
+          "basis": "word:walk:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH005",
+      "segment_id": "S12",
+      "start_s": 702.0,
+      "dur_s": 5.4,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S12_L005"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.08,
+          "at_frame": 26,
+          "basis": "action"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH006",
+      "segment_id": "S12",
+      "start_s": 707.4,
+      "dur_s": 6.2,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S12_L006"
+      ],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 5.208,
+          "at_frame": 125,
+          "basis": "word:fire:estimated"
+        }
+      ]
+    },
+    {
+      "shot_id": "S12_SH007",
+      "segment_id": "S12",
+      "start_s": 713.6,
+      "dur_s": 6.2,
+      "route": "still_25d",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "weather": "volcanic_ash_storm_and_wind",
+      "surface": "stone",
+      "audio_line_ids": [
+        "S12_L007"
+      ],
+      "events": [
+        {
+          "class": "ash_fall",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        },
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 1.24,
+          "at_frame": 30,
+          "basis": "action"
+        }
+      ]
+    }
+  ],
+  "beds": [
+    {
+      "bed_id": "BED_01_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 0.0,
+      "end_s": 1.8,
+      "shot_ids": [
+        "S01_SH001"
+      ],
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_02_loc_sumatra_toba_caldera",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 1.8,
+      "end_s": 4.0,
+      "shot_ids": [
+        "S01_SH002"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_03_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 4.0,
+      "end_s": 9.6,
+      "shot_ids": [
+        "S01_SH003"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_04_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 9.6,
+      "end_s": 25.6,
+      "shot_ids": [
+        "S01_SH004",
+        "S01_SH005",
+        "S01_SH006",
+        "S01_SH007"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_05_loc_sumatra_toba_caldera",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 25.6,
+      "end_s": 114.2,
+      "shot_ids": [
+        "S01_SH008",
+        "S01_SH009",
+        "S02_SH001",
+        "S02_SH002",
+        "S02_SH003",
+        "S02_SH004",
+        "S02_SH005",
+        "S02_SH006",
+        "S02_SH007",
+        "S02_SH008",
+        "S02_SH009",
+        "S02_SH010",
+        "S02_SH011",
+        "S02_SH012",
+        "S03_SH001",
+        "S03_SH002"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_06_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 114.2,
+      "end_s": 123.6,
+      "shot_ids": [
+        "S03_SH003",
+        "S03_SH004"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_07_loc_sumatra_toba_caldera",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 123.6,
+      "end_s": 136.8,
+      "shot_ids": [
+        "S03_SH005",
+        "S03_SH006"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_08_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 136.8,
+      "end_s": 140.2,
+      "shot_ids": [
+        "S03_SH007"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_09_loc_sumatra_toba_caldera",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 140.2,
+      "end_s": 150.4,
+      "shot_ids": [
+        "S03_SH008",
+        "S03_SH009"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_10_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 150.4,
+      "end_s": 172.0,
+      "shot_ids": [
+        "S03_SH010",
+        "S03_SH011",
+        "S03_SH012",
+        "S03_SH013"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_11_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 172.0,
+      "end_s": 179.8,
+      "shot_ids": [
+        "S03_SH014"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_12_loc_sumatra_toba_caldera",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 179.8,
+      "end_s": 191.0,
+      "shot_ids": [
+        "S04_SH001",
+        "S04_SH002"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_13_loc_pinnacle_point_cliffs",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 191.0,
+      "end_s": 200.8,
+      "shot_ids": [
+        "S04_SH003",
+        "S04_SH004"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_14_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 200.8,
+      "end_s": 230.6,
+      "shot_ids": [
+        "S04_SH005",
+        "S04_SH006",
+        "S04_SH007",
+        "S04_SH008",
+        "S04_SH009",
+        "S04_SH010"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_15_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 230.6,
+      "end_s": 237.0,
+      "shot_ids": [
+        "S04_SH011"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_16_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 237.0,
+      "end_s": 242.8,
+      "shot_ids": [
+        "S04_SH012"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_17_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 242.8,
+      "end_s": 293.1,
+      "shot_ids": [
+        "S04_SH013",
+        "S04_SH014",
+        "S04_SH015",
+        "S05_SH001",
+        "S05_SH002",
+        "S05_SH003",
+        "S05_SH004",
+        "S05_SH005",
+        "S05_SH006",
+        "S05_SH007"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_18_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 293.1,
+      "end_s": 298.7,
+      "shot_ids": [
+        "S05_SH008"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_19_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 298.7,
+      "end_s": 307.5,
+      "shot_ids": [
+        "S05_SH009",
+        "S05_SH010"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_20_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 307.5,
+      "end_s": 320.2,
+      "shot_ids": [
+        "S05_SH011",
+        "S06_SH001"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_21_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 320.2,
+      "end_s": 327.0,
+      "shot_ids": [
+        "S06_SH002"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_22_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 327.0,
+      "end_s": 336.8,
+      "shot_ids": [
+        "S06_SH003",
+        "S06_SH004"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_23_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 336.8,
+      "end_s": 346.2,
+      "shot_ids": [
+        "S06_SH005",
+        "S06_SH006"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_24_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 346.2,
+      "end_s": 411.2,
+      "shot_ids": [
+        "S06_SH007",
+        "S06_SH008",
+        "S07_SH001",
+        "S07_SH002",
+        "S07_SH003",
+        "S07_SH004",
+        "S07_SH005",
+        "S07_SH006",
+        "S07_SH007",
+        "S07_SH008",
+        "S07_SH009",
+        "S07_SH010"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_25_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 411.2,
+      "end_s": 459.2,
+      "shot_ids": [
+        "S07_SH011",
+        "S07_SH012",
+        "S07_SH013",
+        "S07_SH014",
+        "S08_SH001",
+        "S08_SH002",
+        "S08_SH003",
+        "S08_SH004",
+        "S08_SH005"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_26_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 459.2,
+      "end_s": 473.2,
+      "shot_ids": [
+        "S08_SH006",
+        "S08_SH007",
+        "S08_SH008",
+        "S08_SH009"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_27_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 473.2,
+      "end_s": 483.8,
+      "shot_ids": [
+        "S08_SH010",
+        "S08_SH011"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_28_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 483.8,
+      "end_s": 519.2,
+      "shot_ids": [
+        "S08_SH012",
+        "S08_SH013",
+        "S08_SH014",
+        "S09_SH001",
+        "S09_SH002",
+        "S09_SH003",
+        "S09_SH004",
+        "S09_SH005"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_29_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 519.2,
+      "end_s": 525.0,
+      "shot_ids": [
+        "S09_SH006"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_30_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 525.0,
+      "end_s": 548.6,
+      "shot_ids": [
+        "S09_SH007",
+        "S09_SH008",
+        "S09_SH009",
+        "S10_SH001",
+        "S10_SH002"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_31_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 548.6,
+      "end_s": 555.4,
+      "shot_ids": [
+        "S10_SH003"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_32_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 555.4,
+      "end_s": 561.4,
+      "shot_ids": [
+        "S10_SH004"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_33_loc_pinnacle_point_cliffs",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 561.4,
+      "end_s": 584.4,
+      "shot_ids": [
+        "S10_SH005",
+        "S10_SH006",
+        "S10_SH007",
+        "S10_SH008"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_34_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 584.4,
+      "end_s": 590.4,
+      "shot_ids": [
+        "S10_SH009",
+        "S10_SH010"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_35_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 590.4,
+      "end_s": 658.6,
+      "shot_ids": [
+        "S10_SH011",
+        "S10_SH012",
+        "S10_SH013",
+        "S10_SH014",
+        "S10_SH015",
+        "S10_SH016",
+        "S11_SH001",
+        "S11_SH002",
+        "S11_SH003",
+        "S11_SH004",
+        "S11_SH005",
+        "S11_SH006"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_36_loc_pinnacle_point_cliffs",
+      "place": "loc_pinnacle_point_cliffs",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 658.6,
+      "end_s": 665.0,
+      "shot_ids": [
+        "S11_SH007"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_37_loc_sumatra_toba_caldera",
+      "place": "loc_sumatra_toba_caldera",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 665.0,
+      "end_s": 672.4,
+      "shot_ids": [
+        "S11_SH008"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_38_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 672.4,
+      "end_s": 679.8,
+      "shot_ids": [
+        "S11_SH009"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_39_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 679.8,
+      "end_s": 686.4,
+      "shot_ids": [
+        "S12_SH001"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_40_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 686.4,
+      "end_s": 688.8,
+      "shot_ids": [
+        "S12_SH002"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_41_loc_shinfa_ash_riverbed",
+      "place": "loc_shinfa_ash_riverbed",
+      "room": "outdoor",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 688.8,
+      "end_s": 696.0,
+      "shot_ids": [
+        "S12_SH003"
+      ],
+      "lead_s": 0.5,
+      "tail_s": 0.5
+    },
+    {
+      "bed_id": "BED_42_loc_rift_cave_hearth",
+      "place": "loc_rift_cave_hearth",
+      "room": "cave",
+      "classes": [
+        "ash_fall",
+        "wind"
+      ],
+      "start_s": 696.0,
+      "end_s": 719.8,
+      "shot_ids": [
+        "S12_SH004",
+        "S12_SH005",
+        "S12_SH006",
+        "S12_SH007"
+      ],
+      "lead_s": 0.5
+    }
+  ],
+  "bridges": [
+    {
+      "at_s": 1.8,
+      "from": "BED_01_loc_rift_cave_hearth",
+      "to": "BED_02_loc_sumatra_toba_caldera",
+      "j_start_s": 1.3,
+      "l_end_s": 2.3
+    },
+    {
+      "at_s": 4.0,
+      "from": "BED_02_loc_sumatra_toba_caldera",
+      "to": "BED_03_loc_rift_cave_hearth",
+      "j_start_s": 3.5,
+      "l_end_s": 4.5
+    },
+    {
+      "at_s": 9.6,
+      "from": "BED_03_loc_rift_cave_hearth",
+      "to": "BED_04_loc_shinfa_ash_riverbed",
+      "j_start_s": 9.1,
+      "l_end_s": 10.1
+    },
+    {
+      "at_s": 25.6,
+      "from": "BED_04_loc_shinfa_ash_riverbed",
+      "to": "BED_05_loc_sumatra_toba_caldera",
+      "j_start_s": 25.1,
+      "l_end_s": 26.1
+    },
+    {
+      "at_s": 114.2,
+      "from": "BED_05_loc_sumatra_toba_caldera",
+      "to": "BED_06_loc_shinfa_ash_riverbed",
+      "j_start_s": 113.7,
+      "l_end_s": 114.7
+    },
+    {
+      "at_s": 123.6,
+      "from": "BED_06_loc_shinfa_ash_riverbed",
+      "to": "BED_07_loc_sumatra_toba_caldera",
+      "j_start_s": 123.1,
+      "l_end_s": 124.1
+    },
+    {
+      "at_s": 136.8,
+      "from": "BED_07_loc_sumatra_toba_caldera",
+      "to": "BED_08_loc_shinfa_ash_riverbed",
+      "j_start_s": 136.3,
+      "l_end_s": 137.3
+    },
+    {
+      "at_s": 140.2,
+      "from": "BED_08_loc_shinfa_ash_riverbed",
+      "to": "BED_09_loc_sumatra_toba_caldera",
+      "j_start_s": 139.7,
+      "l_end_s": 140.7
+    },
+    {
+      "at_s": 150.4,
+      "from": "BED_09_loc_sumatra_toba_caldera",
+      "to": "BED_10_loc_shinfa_ash_riverbed",
+      "j_start_s": 149.9,
+      "l_end_s": 150.9
+    },
+    {
+      "at_s": 172.0,
+      "from": "BED_10_loc_shinfa_ash_riverbed",
+      "to": "BED_11_loc_rift_cave_hearth",
+      "j_start_s": 171.5,
+      "l_end_s": 172.5
+    },
+    {
+      "at_s": 179.8,
+      "from": "BED_11_loc_rift_cave_hearth",
+      "to": "BED_12_loc_sumatra_toba_caldera",
+      "j_start_s": 179.3,
+      "l_end_s": 180.3
+    },
+    {
+      "at_s": 191.0,
+      "from": "BED_12_loc_sumatra_toba_caldera",
+      "to": "BED_13_loc_pinnacle_point_cliffs",
+      "j_start_s": 190.5,
+      "l_end_s": 191.5
+    },
+    {
+      "at_s": 200.8,
+      "from": "BED_13_loc_pinnacle_point_cliffs",
+      "to": "BED_14_loc_shinfa_ash_riverbed",
+      "j_start_s": 200.3,
+      "l_end_s": 201.3
+    },
+    {
+      "at_s": 230.6,
+      "from": "BED_14_loc_shinfa_ash_riverbed",
+      "to": "BED_15_loc_rift_cave_hearth",
+      "j_start_s": 230.1,
+      "l_end_s": 231.1
+    },
+    {
+      "at_s": 237.0,
+      "from": "BED_15_loc_rift_cave_hearth",
+      "to": "BED_16_loc_shinfa_ash_riverbed",
+      "j_start_s": 236.5,
+      "l_end_s": 237.5
+    },
+    {
+      "at_s": 242.8,
+      "from": "BED_16_loc_shinfa_ash_riverbed",
+      "to": "BED_17_loc_rift_cave_hearth",
+      "j_start_s": 242.3,
+      "l_end_s": 243.3
+    },
+    {
+      "at_s": 293.1,
+      "from": "BED_17_loc_rift_cave_hearth",
+      "to": "BED_18_loc_shinfa_ash_riverbed",
+      "j_start_s": 292.6,
+      "l_end_s": 293.6
+    },
+    {
+      "at_s": 298.7,
+      "from": "BED_18_loc_shinfa_ash_riverbed",
+      "to": "BED_19_loc_rift_cave_hearth",
+      "j_start_s": 298.2,
+      "l_end_s": 299.2
+    },
+    {
+      "at_s": 307.5,
+      "from": "BED_19_loc_rift_cave_hearth",
+      "to": "BED_20_loc_shinfa_ash_riverbed",
+      "j_start_s": 307.0,
+      "l_end_s": 308.0
+    },
+    {
+      "at_s": 320.2,
+      "from": "BED_20_loc_shinfa_ash_riverbed",
+      "to": "BED_21_loc_rift_cave_hearth",
+      "j_start_s": 319.7,
+      "l_end_s": 320.7
+    },
+    {
+      "at_s": 327.0,
+      "from": "BED_21_loc_rift_cave_hearth",
+      "to": "BED_22_loc_shinfa_ash_riverbed",
+      "j_start_s": 326.5,
+      "l_end_s": 327.5
+    },
+    {
+      "at_s": 336.8,
+      "from": "BED_22_loc_shinfa_ash_riverbed",
+      "to": "BED_23_loc_rift_cave_hearth",
+      "j_start_s": 336.3,
+      "l_end_s": 337.3
+    },
+    {
+      "at_s": 346.2,
+      "from": "BED_23_loc_rift_cave_hearth",
+      "to": "BED_24_loc_shinfa_ash_riverbed",
+      "j_start_s": 345.7,
+      "l_end_s": 346.7
+    },
+    {
+      "at_s": 411.2,
+      "from": "BED_24_loc_shinfa_ash_riverbed",
+      "to": "BED_25_loc_rift_cave_hearth",
+      "j_start_s": 410.7,
+      "l_end_s": 411.7
+    },
+    {
+      "at_s": 459.2,
+      "from": "BED_25_loc_rift_cave_hearth",
+      "to": "BED_26_loc_shinfa_ash_riverbed",
+      "j_start_s": 458.7,
+      "l_end_s": 459.7
+    },
+    {
+      "at_s": 473.2,
+      "from": "BED_26_loc_shinfa_ash_riverbed",
+      "to": "BED_27_loc_rift_cave_hearth",
+      "j_start_s": 472.7,
+      "l_end_s": 473.7
+    },
+    {
+      "at_s": 483.8,
+      "from": "BED_27_loc_rift_cave_hearth",
+      "to": "BED_28_loc_shinfa_ash_riverbed",
+      "j_start_s": 483.3,
+      "l_end_s": 484.3
+    },
+    {
+      "at_s": 519.2,
+      "from": "BED_28_loc_shinfa_ash_riverbed",
+      "to": "BED_29_loc_rift_cave_hearth",
+      "j_start_s": 518.7,
+      "l_end_s": 519.7
+    },
+    {
+      "at_s": 525.0,
+      "from": "BED_29_loc_rift_cave_hearth",
+      "to": "BED_30_loc_shinfa_ash_riverbed",
+      "j_start_s": 524.5,
+      "l_end_s": 525.5
+    },
+    {
+      "at_s": 548.6,
+      "from": "BED_30_loc_shinfa_ash_riverbed",
+      "to": "BED_31_loc_rift_cave_hearth",
+      "j_start_s": 548.1,
+      "l_end_s": 549.1
+    },
+    {
+      "at_s": 555.4,
+      "from": "BED_31_loc_rift_cave_hearth",
+      "to": "BED_32_loc_shinfa_ash_riverbed",
+      "j_start_s": 554.9,
+      "l_end_s": 555.9
+    },
+    {
+      "at_s": 561.4,
+      "from": "BED_32_loc_shinfa_ash_riverbed",
+      "to": "BED_33_loc_pinnacle_point_cliffs",
+      "j_start_s": 560.9,
+      "l_end_s": 561.9
+    },
+    {
+      "at_s": 584.4,
+      "from": "BED_33_loc_pinnacle_point_cliffs",
+      "to": "BED_34_loc_rift_cave_hearth",
+      "j_start_s": 583.9,
+      "l_end_s": 584.9
+    },
+    {
+      "at_s": 590.4,
+      "from": "BED_34_loc_rift_cave_hearth",
+      "to": "BED_35_loc_shinfa_ash_riverbed",
+      "j_start_s": 589.9,
+      "l_end_s": 590.9
+    },
+    {
+      "at_s": 658.6,
+      "from": "BED_35_loc_shinfa_ash_riverbed",
+      "to": "BED_36_loc_pinnacle_point_cliffs",
+      "j_start_s": 658.1,
+      "l_end_s": 659.1
+    },
+    {
+      "at_s": 665.0,
+      "from": "BED_36_loc_pinnacle_point_cliffs",
+      "to": "BED_37_loc_sumatra_toba_caldera",
+      "j_start_s": 664.5,
+      "l_end_s": 665.5
+    },
+    {
+      "at_s": 672.4,
+      "from": "BED_37_loc_sumatra_toba_caldera",
+      "to": "BED_38_loc_rift_cave_hearth",
+      "j_start_s": 671.9,
+      "l_end_s": 672.9
+    },
+    {
+      "at_s": 679.8,
+      "from": "BED_38_loc_rift_cave_hearth",
+      "to": "BED_39_loc_shinfa_ash_riverbed",
+      "j_start_s": 679.3,
+      "l_end_s": 680.3
+    },
+    {
+      "at_s": 686.4,
+      "from": "BED_39_loc_shinfa_ash_riverbed",
+      "to": "BED_40_loc_rift_cave_hearth",
+      "j_start_s": 685.9,
+      "l_end_s": 686.9
+    },
+    {
+      "at_s": 688.8,
+      "from": "BED_40_loc_rift_cave_hearth",
+      "to": "BED_41_loc_shinfa_ash_riverbed",
+      "j_start_s": 688.3,
+      "l_end_s": 689.3
+    },
+    {
+      "at_s": 696.0,
+      "from": "BED_41_loc_shinfa_ash_riverbed",
+      "to": "BED_42_loc_rift_cave_hearth",
+      "j_start_s": 695.5,
+      "l_end_s": 696.5
+    }
+  ],
+  "music": [
+    {
+      "music_id": "MUS_S01",
+      "segment_id": "S01",
+      "start_s": 0.0,
+      "end_s": 37.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S02",
+      "segment_id": "S02",
+      "start_s": 37.8,
+      "end_s": 101.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S03",
+      "segment_id": "S03",
+      "start_s": 101.8,
+      "end_s": 179.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S04",
+      "segment_id": "S04",
+      "start_s": 179.8,
+      "end_s": 261.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S05",
+      "segment_id": "S05",
+      "start_s": 261.8,
+      "end_s": 313.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S06",
+      "segment_id": "S06",
+      "start_s": 313.8,
+      "end_s": 359.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S07",
+      "segment_id": "S07",
+      "start_s": 359.8,
+      "end_s": 433.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S08",
+      "segment_id": "S08",
+      "start_s": 433.8,
+      "end_s": 501.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S09",
+      "segment_id": "S09",
+      "start_s": 501.8,
+      "end_s": 539.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S10",
+      "segment_id": "S10",
+      "start_s": 539.8,
+      "end_s": 625.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S11",
+      "segment_id": "S11",
+      "start_s": 625.8,
+      "end_s": 679.8,
+      "mood": "actual_history"
+    },
+    {
+      "music_id": "MUS_S12",
+      "segment_id": "S12",
+      "start_s": 679.8,
+      "end_s": 719.8,
+      "mood": "actual_history"
+    }
+  ],
+  "blocked_era_events": [],
+  "classes": [
+    "ash_fall",
+    "bow",
+    "crowd",
+    "eruption_boom",
+    "eruption_rumble",
+    "fire",
+    "footsteps_ash",
+    "footsteps_dirt",
+    "footsteps_grass",
+    "footsteps_stone",
+    "impact",
+    "music_bed",
+    "rain",
+    "river",
+    "running",
+    "stone_tools",
+    "thunder",
+    "water_waves",
+    "wind"
+  ],
+  "sources": {
+    "ash_fall": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "ash",
+        "fall"
+      ]
+    },
+    "bow": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "bow"
+      ]
+    },
+    "crowd": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "crowd"
+      ]
+    },
+    "eruption_boom": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "eruption",
+        "boom"
+      ]
+    },
+    "eruption_rumble": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "eruption",
+        "rumble"
+      ]
+    },
+    "fire": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "fire"
+      ]
+    },
+    "footsteps_ash": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "footstep",
+        "ash"
+      ]
+    },
+    "footsteps_dirt": {
+      "status": "placeholder",
+      "ids": [
+        "footstep_dirt__v1",
+        "footstep_dirt__v2",
+        "footstep_dirt__v3"
+      ],
+      "origin": "procedural"
+    },
+    "footsteps_grass": {
+      "status": "placeholder",
+      "ids": [
+        "footstep_grass__v1",
+        "footstep_grass__v2",
+        "footstep_grass__v3"
+      ],
+      "origin": "procedural"
+    },
+    "footsteps_stone": {
+      "status": "placeholder",
+      "ids": [
+        "footstep_stone__v1",
+        "footstep_stone__v2",
+        "footstep_stone__v3"
+      ],
+      "origin": "procedural"
+    },
+    "impact": {
+      "status": "placeholder",
+      "ids": [
+        "landing_thud__v1",
+        "landing_thud__v2"
+      ],
+      "origin": "procedural"
+    },
+    "music_bed": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "music",
+        "bed"
+      ]
+    },
+    "rain": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "rain"
+      ]
+    },
+    "river": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "water",
+        "river"
+      ]
+    },
+    "running": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "footstep",
+        "run"
+      ]
+    },
+    "stone_tools": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "stone",
+        "tool"
+      ]
+    },
+    "thunder": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "thunder"
+      ]
+    },
+    "water_waves": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "water",
+        "waves"
+      ]
+    },
+    "wind": {
+      "status": "missing",
+      "ids": [],
+      "tags": [
+        "wind"
+      ]
+    }
+  },
+  "needs": [
+    {
+      "class": "ash_fall",
+      "status": "missing",
+      "tags": [
+        "ash",
+        "fall"
+      ],
+      "kind": "ambience"
+    },
+    {
+      "class": "bow",
+      "status": "missing",
+      "tags": [
+        "bow"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "crowd",
+      "status": "missing",
+      "tags": [
+        "crowd"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "eruption_boom",
+      "status": "missing",
+      "tags": [
+        "eruption",
+        "boom"
+      ],
+      "kind": "spot"
+    },
+    {
+      "class": "eruption_rumble",
+      "status": "missing",
+      "tags": [
+        "eruption",
+        "rumble"
+      ],
+      "kind": "ambience"
+    },
+    {
+      "class": "fire",
+      "status": "missing",
+      "tags": [
+        "fire"
+      ],
+      "kind": "ambience"
+    },
+    {
+      "class": "footsteps_ash",
+      "status": "missing",
+      "tags": [
+        "footstep",
+        "ash"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "footsteps_dirt",
+      "status": "placeholder",
+      "tags": [
+        "footstep",
+        "dirt"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "footsteps_grass",
+      "status": "placeholder",
+      "tags": [
+        "footstep",
+        "grass"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "footsteps_stone",
+      "status": "placeholder",
+      "tags": [
+        "footstep",
+        "stone"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "impact",
+      "status": "placeholder",
+      "tags": [
+        "impact"
+      ],
+      "kind": "spot"
+    },
+    {
+      "class": "music_bed",
+      "status": "missing",
+      "tags": [
+        "music",
+        "bed"
+      ],
+      "kind": "music"
+    },
+    {
+      "class": "rain",
+      "status": "missing",
+      "tags": [
+        "rain"
+      ],
+      "kind": "ambience"
+    },
+    {
+      "class": "river",
+      "status": "missing",
+      "tags": [
+        "water",
+        "river"
+      ],
+      "kind": "ambience"
+    },
+    {
+      "class": "running",
+      "status": "missing",
+      "tags": [
+        "footstep",
+        "run"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "stone_tools",
+      "status": "missing",
+      "tags": [
+        "stone",
+        "tool"
+      ],
+      "kind": "foley"
+    },
+    {
+      "class": "thunder",
+      "status": "missing",
+      "tags": [
+        "thunder"
+      ],
+      "kind": "spot"
+    },
+    {
+      "class": "water_waves",
+      "status": "missing",
+      "tags": [
+        "water",
+        "waves"
+      ],
+      "kind": "ambience"
+    },
+    {
+      "class": "wind",
+      "status": "missing",
+      "tags": [
+        "wind"
+      ],
+      "kind": "ambience"
+    }
+  ],
+  "shippable": false,
+  "not_shippable_because": [
+    "ash_fall: missing",
+    "bow: missing",
+    "crowd: missing",
+    "eruption_boom: missing",
+    "eruption_rumble: missing",
+    "fire: missing",
+    "footsteps_ash: missing",
+    "footsteps_dirt: placeholder",
+    "footsteps_grass: placeholder",
+    "footsteps_stone: placeholder",
+    "impact: placeholder",
+    "music_bed: missing",
+    "rain: missing",
+    "river: missing",
+    "running: missing",
+    "stone_tools: missing",
+    "thunder: missing",
+    "water_waves: missing",
+    "wind: missing"
+  ]
+}

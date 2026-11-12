@@ -27,7 +27,9 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from explainer_engine.audio import acoustics, dropouts, sound_director
-from explainer_engine.audio.environmental_sound_design import render_continuous_environmental_soundscape
+from explainer_engine.assets_reuse import SOUND_LIB
+from explainer_engine.audio import stems as STEMS
+from explainer_engine.episode import sound_plan as SP
 from explainer_engine.episode.acceptance import gates as acceptance_gates
 from explainer_engine.episode.validate import check_episode_ids
 from explainer_engine.audio.sfx_planner import build_g4_audio_fx_plan
@@ -467,13 +469,15 @@ def run_episode_production(
     # 4. Render 5 Continuous 48kHz Stereo Audio Stems & Audit Stems
     stems_dir = resolver.resolve_path("audio/stems")
     master_mix_wav = resolver.resolve_path(f"audio/{ctx.episode_id}_master_mix.wav")
-    audio_res = render_continuous_environmental_soundscape(
-        script_doc=script_doc,
-        out_wav_path=master_mix_wav,
-        existing_audio_pack_path=narration_path,  # None -> a formant placeholder, FAILed by the acceptance report
-        transition_plans=transition_plans,
-        stems_output_dir=stems_dir,
-    )
+    # P7: one sound plan (audio/sound_plan.json) and the one renderer for every route; a rehearsal renders as a preview
+    # (placeholders allowed, no voice needed) and the acceptance report FAILs what cannot ship (sound_is_real, narration)
+    s_plan = SP.build(script_doc, fps=fps, routes={r["shot_id"]: r.get("route") for r in shot_records})
+    s_sources = SP.resolve(s_plan, SOUND_LIB)
+    SP.write(s_plan, s_sources, episode_dir)
+    audio_res = STEMS.render(s_plan, s_sources, stems_dir, library_root=SOUND_LIB, narration=narration_path,
+                             shippable=False)
+    master_mix_wav.parent.mkdir(parents=True, exist_ok=True)
+    master_mix_wav.write_bytes((stems_dir / "mix.wav").read_bytes())
     stem_audit = audit_rendered_audio_stems(stems_dir=stems_dir, script_doc=script_doc, fps=fps)
     stem_audit_path = resolver.resolve_path("qa/audio_stem_audit.json")
     stem_audit_path.write_text(json.dumps(stem_audit, indent=2), encoding="utf-8")

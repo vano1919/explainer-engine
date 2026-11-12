@@ -62,10 +62,20 @@ def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plan
     if narration_source is None:
         rows.append(row("narration_is_a_real_read", None, "no narration in this run"))
     else:
-        real = narration_source not in ("synthesized", "placeholder") and Path(narration_source).is_file()
+        real = narration_source not in ("synthesized", "placeholder", "none") and Path(narration_source).is_file()
         rows.append(row("narration_is_a_real_read", real,
                         "the narration is a read file" if real else
                         f"the narration is {narration_source!r}: a placeholder, never shippable (plan F4, P7)", narration_source))
+
+    # P7: the mix plays only real sounds (no placeholder, nothing missing) and sounds alike on every route (BP-186)
+    if audio is None or "placeholders" not in audio:
+        rows.append(row("sound_is_real", None, "no sound report of the one renderer (audio/stems.py)"))
+    else:
+        bad = sorted(set(audio.get("placeholders") or []) | {w.split(":")[0] for w in audio.get("not_shippable_because") or []
+                                                              if w != "no narration"})
+        rows.append(row("sound_is_real", not bad, f"{len(bad)} sound class(es) without a real library take" if bad else
+                        "every sound is a real library take", bad))
+        rows += list((audio.get("levels") or {}).get("rows") or [])
 
     if stem_audit is None:
         rows.append(row("narration_has_no_dropouts", None, "no stem audit"))

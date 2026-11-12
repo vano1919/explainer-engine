@@ -2456,7 +2456,8 @@
    "enforced_by": [
     "explainer_engine/audio/duck.py:BP-53",
     "explainer_engine/production/assemble.py:vduck",
-    "explainer_engine/production/assemble.py:bduck"
+    "explainer_engine/production/assemble.py:bduck",
+    "explainer_engine/audio/stems.py:BED_DUCK_DB"
    ],
    "supersedes": [
     "P-93 attack 50 / release 400",
@@ -7251,6 +7252,21 @@
    ],
    "supersedes": [],
    "decided": "the creator, 2026-11-12 (v4.3 plan section 0.4, answer Q4: the 2.5D shots must feel animated, not like stills with a camera move)"
+  },
+  {
+   "id": "BP-186",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The same sound level everywhere (the creator, 2026-11-12, v4.3 plan section 1: audio at one level in every shot): the background (ambience + effects) of the shots of each picture route (map, 2.5D, Wan) is measured per shot under speech and in the gaps, and the routes' medians stay within route_spread_db_max of each other. The number is an engineering default (RMS dB on the mono stems, no K-weighting) until the creator sets it or two source types back one.",
+   "thresholds": {
+    "route_spread_db_max": 3.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/audio/stems.py:SPREAD_MAX_DB"
+   ],
+   "supersedes": []
   }
  ]
 }
