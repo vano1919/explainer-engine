@@ -124,9 +124,12 @@ def _png(color) -> bytes:
 
 @pytest.fixture
 def container(tmp_path, monkeypatch):
-    import huggingface_hub
-    monkeypatch.setattr(huggingface_hub, "CommitOperationAdd",
-                        lambda path_in_repo, path_or_fileobj: SimpleNamespace(path_in_repo=path_in_repo, path_or_fileobj=path_or_fileobj))
+    import sys
+    import types
+    hub = types.ModuleType("huggingface_hub")         # the container's library, faked: CI has no huggingface_hub
+    hub.CommitOperationAdd = lambda path_in_repo, path_or_fileobj: SimpleNamespace(path_in_repo=path_in_repo,
+                                                                                   path_or_fileobj=path_or_fileobj)
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
     launch = copy.deepcopy(LAUNCH)
     root = tmp_path / "w" / "model" / launch["model_repo"]
     for f in launch["model_files"]:
