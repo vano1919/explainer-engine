@@ -2,6 +2,10 @@
 
 > Route-scoped since D-116 (2026-11-06: J2 and J5 use Qwen and LTX), amended by D-120 (2026-11-07).
 
+
+## 2D Anchor & Multi-Angle Keyframe Reuse (`reuse_location_anchor`, D-123)
+> **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123:** In the 4-stage Hybrid B -> C pipeline ([MAIN_METHOD](MAIN_METHOD.md) Stage 7), environment and character continuity is maintained in 2D image space by passing approved `loc_<id>_anchor.png` and `char_<id>_turnaround.png` sheets into local ComfyUI Qwen workflows (`workflows/comfyui/qwen_keyframe_multiangle.json` with `reuse_location_anchor: true` and `start_frame_source: "multiangle_from_anchor"`). The `LV-`, `RF-`, `HI-`, `DL-`, and `AS-` rules below remain the code-checked continuity baseline.
+
 The creator's decision, 2026-11-07 18:08 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWWGFzRWxBehT3gJoao5ggGZ), recorded as
 [D-120](DECISIONS_AND_OPEN_QUESTIONS.md). His words, translated: "One scene only when it renders with a blurred background, or when
 those scenes do not follow each other and the viewer will not notice. Rewrite the script and visual rules for this approach; so we

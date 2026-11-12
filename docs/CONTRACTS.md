@@ -1,5 +1,9 @@
 # Data contracts (CN-)
 
+
+## Canonical v4.0 Contracts (`production_script`, `wan_job`, `keyframe_manifest`, `render_telemetry`, D-123)
+> **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123:** In the 4-stage local Hybrid B -> C architecture, the primary schemas are `production_script.schema.json` (`v4.0.0`), `keyframe_manifest.schema.json` (`1.0.0`), `wan_job.schema.json`, `render_telemetry.schema.json`, and `shot_route.schema.json` (`shot_route/3`). Legacy `ltx_job.schema.json` is retained only for explicit `WAN_FALLBACK_LTX` fallback tests.
+
 Every file one stage hands to the next has ONE versioned JSON Schema, and this page is its one home (Blueprint plan v2,
 phase P2; Blueprint phase 3). A contract says what the file holds, who writes it, who reads it, and whether it is
 written by hand (by an agent or a person) or **derived** by code from other contracts. A derived file is never edited

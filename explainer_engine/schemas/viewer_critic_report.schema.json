@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/viewer_critic_report.schema.json",
+  "title": "YouTubeViewerCriticReportV1",
+  "description": "Structured output schema returned by youtube_viewer_critic (D-130).",
+  "type": "object",
+  "required": [
+    "schema",
+    "episode_id",
+    "verdict",
+    "overall_score_100",
+    "click_probability",
+    "first_30s_survival_probability",
+    "predicted_30s_retention_pct",
+    "predicted_average_view_duration_pct",
+    "scores",
+    "dropoff_risk_timestamps",
+    "confusion_points",
+    "robotic_ai_tells_detected",
+    "top_3_highest_leverage_fixes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "viewer_critic_report/1"
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "execution_mode": {
+      "enum": [
+        "live_gemini_api",
+        "offline_heuristic_simulator"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "NEEDS_REVISION",
+        "REJECT"
+      ]
+    },
+    "overall_score_100": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "click_probability": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "VERY_HIGH"
+      ]
+    },
+    "first_30s_survival_probability": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "predicted_30s_retention_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "predicted_average_view_duration_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "scores": {
+      "type": "object",
+      "required": [
+        "packaging_intrigue",
+        "cold_open_grip",
+        "narrative_momentum",
+        "visual_variety_and_clarity",
+        "emotional_immersion",
+        "ending_payoff"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "packaging_intrigue": { "type": "number", "minimum": 0, "maximum": 10 },
+        "cold_open_grip": { "type": "number", "minimum": 0, "maximum": 10 },
+        "narrative_momentum": { "type": "number", "minimum": 0, "maximum": 10 },
+        "visual_variety_and_clarity": { "type": "number", "minimum": 0, "maximum": 10 },
+        "emotional_immersion": { "type": "number", "minimum": 0, "maximum": 10 },
+        "ending_payoff": { "type": "number", "minimum": 0, "maximum": 10 }
+      }
+    },
+    "dropoff_risk_timestamps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "start_sec",
+          "end_sec",
+          "risk_level",
+          "viewer_symptom",
+          "plain_language_fix"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "start_sec": { "type": "number", "minimum": 0 },
+          "end_sec": { "type": "number", "minimum": 0 },
+          "risk_level": { "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "viewer_symptom": { "type": "string", "minLength": 3 },
+          "plain_language_fix": { "type": "string", "minLength": 3 }
+        }
+      }
+    },
+    "confusion_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "timestamp_sec",
+          "confused_question",
+          "suggested_clarification"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "timestamp_sec": { "type": "number", "minimum": 0 },
+          "confused_question": { "type": "string", "minLength": 3 },
+          "suggested_clarification": { "type": "string", "minLength": 3 }
+        }
+      }
+    },
+    "robotic_ai_tells_detected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "timestamp_sec",
+          "tell_description",
+          "humanizing_rewrite_hint"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "timestamp_sec": { "type": "number", "minimum": 0 },
+          "tell_description": { "type": "string", "minLength": 3 },
+          "humanizing_rewrite_hint": { "type": "string", "minLength": 3 }
+        }
+      }
+    },
+    "top_3_highest_leverage_fixes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    }
+  }
+}

@@ -4,6 +4,12 @@
 
 > **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
 
+
+## Canonical v4.0 Single-Source-of-Truth Script & 4-Stage Routing (D-123)
+- **Canonical Manual & Schema:** See [MAIN_METHOD](MAIN_METHOD.md) and `explainer_engine/schemas/production_script.schema.json` (`v4.0.0`). One canonical `production_script.json` holds `world_bible`, `phases` (`Z1-Z5`), `segments` (`S01-S16`), `audio_lines`, and `shots`.
+- **Stage 2 & Stage 3 Generation Modes (Superseding `J1-J5` as Default):** Each shot routes to `WAN_I2V`, `WAN_FLF2V`, selective `WAN_CONTROL`, `STILL_25D`, or `MAP_25D` ([VIDEO_GENERATION_WAN](VIDEO_GENERATION_WAN.md)).
+- **Preserved Lints:** `claims.py`, `narration_lint.py`, `register_lint.py`, `rhythm_lint.py`, and `shot_prompt_lint.py` enforce zero improvisation and anti-overconditioning (`primary_action_count == 1`, `camera_move_count <= 1`).
+
 **What it is.** The one path from a topic to every prompt of an animated episode, with nothing left to improvise: each
 dimension of a prompt or a script is either set by a rule with a source or marked as a variant under test. ვანო asked for
 it on 2026-10-24 ("zero improvisation; where a rule is missing, research it, then write it"). The first episode written

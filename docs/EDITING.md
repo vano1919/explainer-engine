@@ -2,6 +2,10 @@
 
 > **Route-scoped since D-116 (2026-11-06), amended by D-120/D-121/D-122 (2026-11-08).** J2's target is Qwen text-first frame -> LTX image-to-video, but that migration is pending and the old clay-conditioned path must not be launched; J4 uses Blender layout conditioning -> LTX restyle; J5 uses approved Qwen assets assembled/rendered in Blender only when the LTX-first dialogue route benefits from it; H uses Python helpers. Older procedures below remain scoped to the route and episode version that uses them. The edit, rhythm and sound rules (ED) stay in force for every lane.
 
+
+## Stage 4 24fps Assembly of Wan 2.2 & Deterministic 2.5D Clips (D-123)
+- **4-Stage Local Assembly ([MAIN_METHOD](MAIN_METHOD.md) Stage 11):** `explainer_engine/production/assemble.py` conforms independent Stage 3 Wan 2.2 video clips (`WAN_I2V`, `WAN_FLF2V`, selective `WAN_CONTROL`) and deterministic 2.5D still/map clips (`STILL_25D`, `MAP_25D`) to **24 fps** (D-85) locked to `audio_spine` timestamps (`04_assembly/audio/audio_spine_manifest.json`), using `hard_cut`, `j_cut`, `l_cut`, `cross_dissolve_8f`, and `fade_to_black`.
+
 Creator notes of 2026-10-17 after the first full cut of Episode 1: audible jumps between read chunks (worst in Day 1), a zoom
 that snaps back to the default view on the same picture, two music tracks plus the tick plus a bed all under the voice, and a
 request for a faster final cut and a more mysterious feel at no extra cost. How to apply them: skill `editing-style`.

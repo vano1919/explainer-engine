@@ -776,16 +776,37 @@ def build_described(scene, sc, report):
             _key(ob, ("location", "rotation_euler"), first, cam.get("interp", "BEZIER"))
             _aim(ob, cam["to"]["location"], cam["to"]["look_at"], ob.rotation_euler.copy())
             _key(ob, ("location", "rotation_euler"), last, cam.get("interp", "BEZIER"))
+        if not RIG and (cam.get("focus_at") or cam.get("fstop") is not None):
+            data.dof.use_dof = True
+            if cam.get("focus_at"):
+                data.dof.focus_distance = float((Vector(cam["focus_at"]) - Vector(cam["location"])).length)
+                data["ee_dof_focus_keyed"] = True
+            if cam.get("fstop") is not None:
+                data.dof.aperture_fstop = float(cam["fstop"])
+                data["ee_dof_fstop_keyed"] = True
         if cam.get("keys") and not RIG:   # a camera path of several poses (scene_builder: rail, orbit, dramatic curve; a turnaround's views)
             for k in cam["keys"]:
                 loc, at = k["location"], k["look_at"]
+                k_frame = first + int(k["frame"])
                 if k.get("track"):   # aim at a point of a posed bone (a face close-up follows the head the clip moves)
-                    loc, at = _tracked(scene, first + int(k["frame"]), k["track"], loc, at)
+                    loc, at = _tracked(scene, k_frame, k["track"], loc, at)
                 _aim(ob, loc, at, ob.rotation_euler.copy())
                 if "lens_mm" in k:
                     data.lens = k["lens_mm"]
-                    data.keyframe_insert("lens", frame=first + int(k["frame"]))
-                _key(ob, ("location", "rotation_euler"), first + int(k["frame"]), cam.get("interp", "BEZIER"))
+                    data.keyframe_insert("lens", frame=k_frame)
+                focus_target = k.get("focus_at") or cam.get("focus_at")
+                if focus_target:
+                    data.dof.use_dof = True
+                    data.dof.focus_distance = float((Vector(focus_target) - Vector(loc)).length)
+                    data.dof.keyframe_insert("focus_distance", frame=k_frame)
+                    data["ee_dof_focus_keyed"] = True
+                fstop_val = k.get("fstop") if k.get("fstop") is not None else cam.get("fstop")
+                if fstop_val is not None:
+                    data.dof.use_dof = True
+                    data.dof.aperture_fstop = float(fstop_val)
+                    data.dof.keyframe_insert("aperture_fstop", frame=k_frame)
+                    data["ee_dof_fstop_keyed"] = True
+                _key(ob, ("location", "rotation_euler"), k_frame, cam.get("interp", "BEZIER"))
         report["motion"] = {"frames": [first, last], "objects": len(moving), "camera": bool(cam.get("to") or cam.get("keys"))}
     if RIG:
         key_rig(scene, cam, first, last, cam.get("interp", "LINEAR"))
@@ -1096,7 +1117,11 @@ def apply_style(scene, style, pending, report):
             set_dof(scene, dof["focus_distance_m"], dof["fstop"])
         else:
             cd = scene.camera.data.dof
-            cd.use_dof, cd.focus_distance, cd.aperture_fstop = True, dof["focus_distance_m"], dof["fstop"]
+            cd.use_dof = True
+            if not scene.camera.data.get("ee_dof_focus_keyed"):
+                cd.focus_distance = dof["focus_distance_m"]
+            if not scene.camera.data.get("ee_dof_fstop_keyed"):
+                cd.aperture_fstop = dof["fstop"]
     st = style["scene"]
     vs = scene.view_settings
     vs.view_transform = st["view_transform"]

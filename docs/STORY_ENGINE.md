@@ -2,6 +2,24 @@
 
 > **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
 
+
+## Canonical 12-Minute Story Architecture (`Z1-Z5` & `S01-S16`, D-123)
+
+### YouTube Retention Rules (`YT-01..YT-04`, Added 2026-11-09)
+- **`YT-01-HOOK` (0–12s Paradox Cold Open):** Never open `S01` with slow textbook weather/date throat-clearing. The first two `audio_lines` (`0:00–0:12`) must plant a visceral paradox, high-stakes number, or dramatic question alongside an immediate visual pattern interrupt.
+- **`YT-02-CLIFFHANGER` (90-Second Retention Bridges):** Never close segments `S01–S11` with a passive summary ("And that concluded the phase."). Every segment must end on an unresolved forward causal hook ("But fifteen miles east, a single courier had just spotted the smoke...") that pulls the viewer across the cut.
+- **`YT-03-PACING` (8–22 Word Concrete Sentences, Max 28):** Every `audio_line` is capped at `<= 28` words (target `8–22` words, `4–6s` per shot) in active voice, naming a visible physical object, gesture, or metric on screen.
+- **`YT-04-SIGNATURE-STYLE` (`Luminescent Chiaroscuro & Tactile Mythic Realism`):** Default visual world anchor uses tactile oil-canvas materiality, dramatic volumetric golden-amber shafts against deep indigo/obsidian shadows, and tangible copper/vellum/liquid-gold war-table relief maps.
+
+- **Canonical Episode Structure (`production_script.schema.json` v4.0.0, [MAIN_METHOD](MAIN_METHOD.md) Stage 3):** Every full episode targets **12 minutes (`720` seconds, acceptable window `660-780s`)** at **24 fps** (D-85), organized into **5 narrative phases (`Z1-Z5`)** and **16 segments (`S01-S16`)**:
+  - `Z1` (*Hook & Historical Setup*, `0:00-2:00`, `S01-S03`)
+  - `Z2` (*The Point of Divergence*, `2:00-4:00`, `S04-S06`)
+  - `Z3` (*Escalation & Transformation*, `4:00-7:00`, `S07-S10`)
+  - `Z4` (*Major Consequences & Climax*, `7:00-10:00`, `S11-S14`)
+  - `Z5` (*Resolution & Reflection*, `10:00-12:00`, `S15-S16`)
+- **Spoken Balance (D-95 retained active by D-123):** `70-80%` narrator voiceover (`0.70-0.80`) and `20-30%` dramatized character dialogue (`0.20-0.30`).
+- **Causal Chain & Speculation Signalling:** Every segment `S02-S16` specifies `cause_from_segment_id` -> `effect_to_segment_id` and labels `factual_status` (`actual_history`, `divergence_point`, `counterfactual_consequence`, `historical_reflection`).
+
 The creator's notes of 2026-10-19:
 - The first video told a less interesting story than it could have and missed what viewers want. Facts and people's basic needs must be balanced.
 - The edit was slow, not animated and boring. It needs frequent picture changes, not only photos joined by standard transitions.

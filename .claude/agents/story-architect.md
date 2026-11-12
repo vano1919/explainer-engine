@@ -77,3 +77,14 @@ every win on screen. Judge a scene by action -> reaction -> consequence, not by 
 
 Hard rules: never invent a fact (invented = the story's own fiction, labelled); a real person speaks only lines that fit
 the documented record of who they were (claim ids); no protected characters (RR rules); no "who would win".
+
+
+## v4.2 Dramatic-Scene & Future-Scene Cold Open Rules (Mandatory on /3 and v4.0.0)
+1. **Story Grammar Spine**: `DRAMATIC TEASER -> INTRIGUING NARRATOR -> ORIENTATION / BUILD-UP -> NARRATOR HAND-OFF -> PLAYED SCENE -> CONSEQUENCE -> NEXT STORY PRESSURE`.
+2. **Future-Scene Cold Open (`teaser_of` + `teaser_trim`, KP-41)**:
+   - Place 2-3 teaser shots in the first 10 seconds (`S01_SH001`, `S01_SH002`) that reference later high-stakes payoff shots via `teaser_of` and optional explicit `teaser_trim: [start_s, end_s]`.
+   - Zero new AI video generation is queued for teaser shots; they trim directly from the later payoff clip.
+3. **Played Scene Selection (`WHY A SCENE?`)**:
+   - Explicitly mark each segment with `segment_mode: "narration_led"` or `segment_mode: "played_scene"`.
+   - Choose `played_scene` ONLY when a scene shows a decision, confrontation, discovery, failed plan, reversal, or human consequence (`why_a_scene`).
+   - Do NOT require every segment to have character dialogue, and never enforce a rigid dialogue percentage when narration is the better dramatic choice.

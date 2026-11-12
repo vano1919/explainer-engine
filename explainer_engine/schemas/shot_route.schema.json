@@ -10,7 +10,20 @@
     "schema": {
       "enum": [
         "shot_route/1",
-        "shot_route/2"
+        "shot_route/2",
+        "shot_route/3"
+      ]
+    },
+    "route_type": {
+      "enum": [
+        "WAN_I2V",
+        "WAN_FLF2V",
+        "WAN_CONTROL",
+        "STILL_25D",
+        "MAP_25D",
+        "WAN_FALLBACK_LTX",
+        "COLLAGE_STILL",
+        "TACTILE_MAP"
       ]
     }
   },
@@ -37,6 +50,21 @@
       },
       "then": {
         "$ref": "#/$defs/v2"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema": {
+            "const": "shot_route/3"
+          }
+        },
+        "required": [
+          "schema"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/v3"
       }
     }
   ],
@@ -170,7 +198,7 @@
           }
         }
       },
-      "description": "shot_route/1: the legacy route of film_shots/2 (Qwen keyframes, LTX clips)"
+      "description": "shot_route/1: the legacy route of film_shots/2 (Gemini keyframes, LTX clips)"
     },
     "v2": {
       "description": "shot_route/2: the Blender route of film_shots/3 (D-96): one shot_spec/2 per VIDEO_3D or STILL_3D shot, compensator items per HELPER shot",
@@ -326,6 +354,84 @@
                   "type": "string",
                   "minLength": 1
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "route_type": {
+      "enum": [
+        "WAN_I2V",
+        "WAN_FLF2V",
+        "WAN_CONTROL",
+        "STILL_25D",
+        "MAP_25D",
+        "WAN_FALLBACK_LTX",
+        "COLLAGE_STILL",
+        "TACTILE_MAP"
+      ]
+    },
+    "v3": {
+      "description": "shot_route/3: the 4-stage local Hybrid B -> C route (D-123): maps each shot to WAN_I2V, WAN_FLF2V, WAN_CONTROL, STILL_25D, MAP_25D, or WAN_FALLBACK_LTX",
+      "type": "object",
+      "required": [
+        "schema",
+        "episode_id",
+        "fps",
+        "routes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "shot_route/3"
+        },
+        "episode_id": {
+          "type": "string",
+          "pattern": "^ep_[a-z0-9_]+$"
+        },
+        "fps": {
+          "type": "integer",
+          "const": 24
+        },
+        "routes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "shot_id",
+              "route_type",
+              "start_frame_path",
+              "needs_end_frame"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "shot_id": {
+                "type": "string",
+                "pattern": "^S(0[1-9]|1[0-6])_SH[0-9]{3}$"
+              },
+              "route_type": {
+                "$ref": "#/$defs/route_type"
+              },
+              "needs_end_frame": {
+                "type": "boolean"
+              },
+              "start_frame_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "end_frame_path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "wan_job_path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }

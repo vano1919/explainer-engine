@@ -1,0 +1,2067 @@
+{
+  "schema": "g5_gemini_image_queue/1",
+  "episode_id": "ep_toba_74000bce_12min",
+  "engine": "gemini_native_image_engine",
+  "qwen_removed": true,
+  "total_images_to_generate": 168,
+  "bucket_breakdown": {
+    "total_shots": 138,
+    "total_unique_gemini_images_required": 168,
+    "maps_and_diagrams_10pct_count": 14,
+    "photo_collage_30pct_count": 41,
+    "video_keyframes_60pct_count": 83,
+    "shares": {
+      "maps_10pct": 0.101,
+      "collage_30pct": 0.297,
+      "video_60pct": 0.601
+    }
+  },
+  "queue": [
+    {
+      "asset_id": "S01_SH008_start",
+      "shot_id": "S01_SH008",
+      "segment_id": "S01",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile hammered-copper relief map reveals the vast indian ocean basin between africa and sumatra, with foreground carved walnut war-table rim and flickering beeswax candle casting warm amber light and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH001_start",
+      "shot_id": "S02_SH001",
+      "segment_id": "S02",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile bronze cross-section relief map displays five glowing magma chambers beneath sumatra, with foreground oxidized bronze geological cross-section frame with incised depth markers and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH010_start",
+      "shot_id": "S02_SH010",
+      "segment_id": "S02",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a hammered-copper relief map shows summer monsoon wind arrows curving northwest from sumatra, with foreground brass compass rose and flickering tallow candle on the walnut war-table edge and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH005_start",
+      "shot_id": "S03_SH005",
+      "segment_id": "S03",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile copper and silver map links sumatra to the ice sheets of greenland and antarctica, with foreground frosted glass and hammered silver polar relief markers on the dark war table and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH009_start",
+      "shot_id": "S03_SH009",
+      "segment_id": "S03",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile copper world map shows high-altitude jet streams wrapping silver aerosol bands around earth, with foreground engraved brass astrolabe arc along the edge of the walnut war table and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH006_start",
+      "shot_id": "S04_SH006",
+      "segment_id": "S04",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a hammered-copper relief map of the horn of africa shows the blue nile tributaries dimming, with foreground carved bronze calipers resting on the edge of the relief map and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH001_start",
+      "shot_id": "S06_SH001",
+      "segment_id": "S06",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a hammered-copper map of africa and eurasia shows scattered golden population nodes, with foreground candles and obsidian markers along the walnut war-table border and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH007_start",
+      "shot_id": "S06_SH007",
+      "segment_id": "S06",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a tactile copper relief map highlights two tiny golden refugia pockets in ethiopia and south africa, with foreground obsidian spearhead markers resting on the copper relief edge and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH009_start",
+      "shot_id": "S07_SH009",
+      "segment_id": "S07",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a tactile bronze excavation map displays the river terrace of site shinfa-metema one in ethiopia, with foreground archaeological brass grid frame and obsidian scale markers on the walnut table and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH004_start",
+      "shot_id": "S10_SH004",
+      "segment_id": "S10",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a tactile copper map of east africa lights up with interconnected golden kinship threads, with foreground perforated nassarius shell beads and ostrich-shell fragments on the walnut table border and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH011_start",
+      "shot_id": "S10_SH011",
+      "segment_id": "S10",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a tactile copper relief map shows the golden refugia in ethiopia and south africa pulsing with strength, with foreground obsidian arrowheads and carved shell tokens resting on the copper relief border and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH001_start",
+      "shot_id": "S11_SH001",
+      "segment_id": "S11",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a tactile copper map of africa shows the arid sahara barrier in dark oxidized bronze, with foreground antique brass dividers and a glowing oil lamp on the walnut war table and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH006_start",
+      "shot_id": "S11_SH006",
+      "segment_id": "S11",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a tactile copper relief map shows glowing liquid-gold streams flowing down the nile and across the red sea, with foreground compass dividers and obsidian arrowheads along the walnut map frame and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH003_start",
+      "shot_id": "S12_SH003",
+      "segment_id": "S12",
+      "bucket": "10pct_maps_and_diagrams",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_04_Tactile_Copper_Gold_Map_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; on the hammered-copper world map, a bright golden pulse in east africa radiates outward, with foreground flickering beeswax candles illuminating the carved walnut border and warm beeswax candlelight casting deep indigo shadows. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH002_start",
+      "shot_id": "S01_SH002",
+      "segment_id": "S01",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic 35mm anamorphic frame at the erupting Mount Toba caldera in Sumatra; Mount Toba summit violently detonates into a mile-wide fountain of incandescent magma and a supersonic atmospheric shockwave ring, with foreground shattering jungle ridges, midground colossal volcanic caldera erupting in blinding amber-orange magma fountains, and background stratospheric pitch-black ash cloud boiling upward. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH006_start",
+      "shot_id": "S01_SH006",
+      "segment_id": "S01",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; microscopic bubble-wall shards of volcanic cryptotephra glisten atop dark ethiopian river silt, featuring foreground translucent bubble-wall volcanic glass shards glinting under warm amber side-lighting, midground coarse alluvial river silt and dark basalt pebbles of the shinfa riverbank, and background shadowed geological strata of the ethiopian lowlands in deep chiaroscuro texture under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH004_start",
+      "shot_id": "S02_SH004",
+      "segment_id": "S02",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile hammered-bronze and obsidian scale relief contrasts a tiny modern volcanic plume with toba's colossal dome, featuring foreground carved obsidian scale monolith in left foreground showing a tiny golden speck for modern eruptions, midground monstrous chiaroscuro ash dome of youngest toba tuff dwarfing an entire mountain range, and background volumetric amber light rays slicing through slate-grey stratospheric clouds under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH006_start",
+      "shot_id": "S02_SH006",
+      "segment_id": "S02",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a scorching wall of grey ash sweeps across charred forest trunks along the sumatra coast, featuring foreground charred, snapped tree trunks smoking in deep grey tephra drifts, midground pyroclastic surge boiling into the steaming coastal waters of sumatra, and background wall of pitch-black ash blotting out the sky under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH007_start",
+      "shot_id": "S02_SH007",
+      "segment_id": "S02",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; high aerial chiaroscuro view reveals the smoking hundred-kilometer abyss of the collapsed toba caldera, featuring foreground billowing charcoal ash rims framed in heavy chiaroscuro brushwork, midground gaping hundred-kilometer smoking caldera basin where the mountain once stood, and background faint golden-amber magma fissures glowing inside the collapsed abyss under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH009_start",
+      "shot_id": "S02_SH009",
+      "segment_id": "S02",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; golden-amber sulfur gas clouds swirl inside the black stratospheric ash column, featuring foreground swirling yellow-amber sulfur gas tendrils in macro chiaroscuro detail, midground dense stratospheric aerosol cloud glowing dimly against eclipsed sunlight, and background deep slate-black void of the upper atmosphere under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH001_start",
+      "shot_id": "S03_SH001",
+      "segment_id": "S03",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; noon across the jwalapuram valley in india turns black under swirling ash and amber lightning, featuring foreground dead tree branches coated in grey tephra in the foreground, midground ancient jwalapuram valley in india buried beneath swirling ash clouds and amber lightning, and background blackened sky pressing down on the hills in deep chiaroscuro contrast under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH004_start",
+      "shot_id": "S03_SH004",
+      "segment_id": "S03",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; acid rain strips the foliage from prehistoric trees above a grey ash-covered plain, featuring foreground skeletal defoliated acacia branches dripping with acidic grey rain, midground prehistoric antelope carcasses half-buried in drifting grey volcanic dust, and background faint amber light shaft piercing a suffocating slate-grey fog under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH007_start",
+      "shot_id": "S03_SH007",
+      "segment_id": "S03",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; heavy grey volcanic ash settles into a compact layer along the canyon floor, featuring foreground settled grey tephra layers stratified over dark basalt river stones, midground barren canyon wall where heavy dust has already finished falling, and background high stratospheric haze still hanging unbroken across the upper sky under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH008_start",
+      "shot_id": "S03_SH008",
+      "segment_id": "S03",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a metallic-grey stratospheric aerosol veil hangs motionless above the dark mountain peaks, featuring foreground dark mountain crags silhouetted in the lower frame, midground unmoving metallic-grey aerosol ceiling suspended twenty miles overhead, and background weak, heatless copper sun trapped behind the chemical veil under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH013_start",
+      "shot_id": "S03_SH013",
+      "segment_id": "S03",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; high chiaroscuro angle shows kael and sena standing alone in the vast grey riverbed, featuring foreground jagged dead acacia limbs framing the foreground in dark silhouette, midground small figures of kael and sena dwarfed by the vast, ash-grey ethiopian riverbed, and background endless horizon of dying savanna under a bruised indigo sky under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH002_start",
+      "shot_id": "S04_SH002",
+      "segment_id": "S04",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a herd of woolly mammoths lowers its heads against a blinding grey blizzard on the eurasian steppe, featuring foreground snow-crusted mammoth tusk jutting from frozen silt in foreground, midground woolly mammoths trudging through a blinding grey blizzard across the eurasian steppe, and background jagged ice-covered peaks under a bruised amber-slate horizon under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH005_start",
+      "shot_id": "S04_SH005",
+      "segment_id": "S04",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; deep polygonal cracks split the baked mud of the ethiopian riverbed, featuring foreground deep polygonal mud cracks splitting the dry riverbed in foreground, midground withered acacia skeletons standing along the parched ethiopian plain, and background dust-choked amber horizon without a single rain cloud under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH011_start",
+      "shot_id": "S04_SH011",
+      "segment_id": "S04",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; an abandoned stone-age rock shelter sits silent with snow and ash covering its dead hearth, featuring foreground cold, unlit stone hearth covered in drifted snow and volcanic ash, midground empty neanderthal rock shelter in the levant overlooking a frozen, game-less valley, and background dim amber twilight fading into deep indigo winter shadow under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH013_start",
+      "shot_id": "S04_SH013",
+      "segment_id": "S04",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael and sena confront each other across the dying embers of the cave hearth, featuring foreground flickering amber hearth flames casting sharp shadows across rough stone tools, midground kael and sena facing each other across the low fire as hungry clan members watch from the shadows, and background ochre handprints dimly visible on the dark basalt cave wall behind them under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH006_start",
+      "shot_id": "S05_SH006",
+      "segment_id": "S05",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena holds up a dried catfish vertebra and a piece of black stone in the firelight, featuring foreground sharp obsidian core and dried catfish bone held in sena's palm in foreground, midground sena's resolute face half-lit by golden firelight, half in deep indigo shadow, and background kael's blurred silhouette standing silent in the background under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH007_start",
+      "shot_id": "S05_SH007",
+      "segment_id": "S05",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; a wide chiaroscuro tableau captures the silent tension dividing the nineteen survivors around the fire, featuring foreground scattered stone cores and animal bones in warm chiaroscuro foreground, midground dramatic tactile chiaroscuro tableau of the divided clan inside the basalt shelter, and background dark canyon walls stretching into the freezing volcanic night under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH009_start",
+      "shot_id": "S05_SH009",
+      "segment_id": "S05",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; a solitary red ember glows faintly amidst grey volcanic ash, featuring foreground white-grey ash crust covering charred wood, midground a single dying red coal winking out into cold black charcoal, and background total indigo darkness surrounding the dead hearth under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH011_start",
+      "shot_id": "S05_SH011",
+      "segment_id": "S05",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; chiaroscuro geological strata reveal archaic hominin skulls buried beneath thick volcanic ash, featuring foreground half-buried hominin skulls in stratified volcanic ash in the foreground, midground shadowed geological trench of the late pleistocene extinction layer, and background single beam of golden-amber light illuminating a lone surviving footprint in the upper stratum under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH002_start",
+      "shot_id": "S06_SH002",
+      "segment_id": "S06",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; luminous golden threads representing human lineages converge into a narrow obsidian bottleneck, featuring foreground luminous golden filaments converging through a narrow obsidian hourglass neck, midground tactile mythic diagram of the human maternal lineage tree branching from a single narrow trunk, and background deep slate-indigo chiaroscuro background with faint ochre cave motifs under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH005_start",
+      "shot_id": "S06_SH005",
+      "segment_id": "S06",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; extreme close-up on sena's ash-streaked face illuminated by a fragile amber flame, featuring foreground faint orange hearth reflection dancing in the foreground, midground extreme close-up on sena's dark, determined eyes framed by ash-streaked skin, and background deep chiaroscuro shadow enveloping the edges of the frame under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH002_start",
+      "shot_id": "S07_SH002",
+      "segment_id": "S07",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; beneath a thin film of volcanic dust, dozens of large catfish crowd a shallow river pool, featuring foreground thin film of grey volcanic ash floating at the edges of the pool, midground dozens of dark catfish and tilapia crowded inside a shallow, clear-amber waterhole, and background rippled gravel bottom of the entrenched river channel under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH006_start",
+      "shot_id": "S07_SH006",
+      "segment_id": "S07",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; wide chiaroscuro composition shows kael completely exposed on the bare gravel riverbed, featuring foreground bleached driftwood and bare cobbles in foreground, midground kael standing exposed on the wide, coverless gravel bed as small game flees eighty meters ahead, and background distant canyon rim in deep slate shadow under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH010_start",
+      "shot_id": "S07_SH010",
+      "segment_id": "S07",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; three small, symmetrical triangular stone points rest beside charred fish bones in dark river silt, featuring foreground charred catfish vertebrae resting on dark alluvial silt, midground three symmetrical triangular microlith points of chert and obsidian glowing in warm amber side-light, and background fine grey volcanic ash grains visible in the surrounding sediment under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH013_start",
+      "shot_id": "S07_SH013",
+      "segment_id": "S07",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena lifts a heat-treated stone nodule from the parted ash bed using a thick piece of hide, featuring foreground red-hot wood embers parted with a wooden stick in foreground, midground heat-treated stone nodule gleaming with a glassy, waxy luster in sena's leather-wrapped hand, and background kael watching intently from the left chiaroscuro shadow under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH001_start",
+      "shot_id": "S08_SH001",
+      "segment_id": "S08",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; macro chiaroscuro illustration reveals the silky, vitrified fracture plane of heat-treated chert, featuring foreground fine micro-flakes of translucent chert scattered on dark hide, midground cross-section chiaroscuro study of heat-treated stone showing its vitrified, glass-smooth interior, and background glowing orange hearth coals in soft background bokeh under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH005_start",
+      "shot_id": "S08_SH005",
+      "segment_id": "S08",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; forensic chiaroscuro study highlights the diagnostic step-fractures on the 74,000-year-old stone point, featuring foreground diagnostic impact fracture scars highlighted in golden-amber light at the stone tip, midground tactile forensic study of the shinfa-metema symmetrical triangular arrowhead mounted on a reed shaft, and background faint ballistic trajectory arcs etched in warm gold across the slate background under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH010_start",
+      "shot_id": "S08_SH010",
+      "segment_id": "S08",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; freshly caught river fish roast on wooden spits above a bright, crackling camp hearth, featuring foreground skewered catfish and tilapia roasting over glowing golden-amber coals, midground clan children and elders eating around the warm hearth as sena repairs arrows, and background quivers of reed arrows leaning against the basalt shelter wall under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH013_start",
+      "shot_id": "S08_SH013",
+      "segment_id": "S08",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; gaunt silhouettes of twelve armed strangers emerge through the grey canyon fog, featuring foreground jagged basalt rocks and drifting grey fog in the foreground, midground tall, gaunt silhouettes of thar and twelve refugee hunters emerging through the canyon mist, and background dim copper sunlight glinting off their raised spear points under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH005_start",
+      "shot_id": "S09_SH005",
+      "segment_id": "S09",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; high-contrast chiaroscuro reflection in the waterhole mirrors the aimed arrow and levelled spear, featuring foreground opposing weapon tips—an obsidian arrow on the left and a wooden spear on the right—reflected in the pool, midground frozen chiaroscuro standoff between the two tiny surviving bands of homo sapiens, and background dark canyon walls towering like an amphitheater around the last waterhole under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH006_start",
+      "shot_id": "S09_SH006",
+      "segment_id": "S09",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; chiaroscuro tableau shows an isolated archaic band trapped alone inside a snowbound gorge, featuring foreground jagged ice stalactites hanging from a dark european cave mouth, midground isolated archaic hominins clutching spears in a snowbound gorge with no neighbors in sight, and background frozen, empty wilderness stretching into deep indigo darkness under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH003_start",
+      "shot_id": "S10_SH003",
+      "segment_id": "S10",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; both clans gather around a bright, roaring campfire inside the basalt overhang, featuring foreground engraved ostrich eggshells, perforated marine shell beads, and obsidian cores arranged by the hearth, midground combined clans of kael, sena, and thar seated together around a roaring golden campfire, and background warm amber light filling the basalt cavern walls under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH007_start",
+      "shot_id": "S10_SH007",
+      "segment_id": "S10",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; under a low amber moon, coastal survivors pry dense clusters of mussels from wet tidal rocks, featuring foreground glistening brown mussels and turbo shells pried from wet intertidal rocks, midground coastal women and hunters harvesting rich shellfish beds under a low silver-amber full moon, and background crashing ocean rollers in deep indigo chiaroscuro under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH009_start",
+      "shot_id": "S10_SH009",
+      "segment_id": "S10",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena presses her red-ochre-coated palm firmly against the dark basalt wall of the cave, featuring foreground carved piece of red ochre with incised geometric chevron patterns, midground sena's hand pressing a fresh red ochre palm-print onto the dark basalt cave wall, and background dozens of older ancestral handprints glowing in amber firelight under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH013_start",
+      "shot_id": "S10_SH013",
+      "segment_id": "S10",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; tiny green shoots pierce the grey ash layer along the gravel riverbed, featuring foreground sunlit river cobbles and green shoots piercing the grey volcanic ash in foreground, midground heroic chiaroscuro silhouette of the thirty-one united survivors marching down the canyon, and background parting slate clouds revealing a brilliant golden-amber sky ahead under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH015_start",
+      "shot_id": "S10_SH015",
+      "segment_id": "S10",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; filled ostrich-eggshell water flasks rest beside the footprints of the united clan on the gravel bar, featuring foreground filled ostrich-eggshell flasks resting on sun-warmed river gravel in foreground, midground chain of shallow pools stretching northward through the basalt gorge, and background golden morning light breaking across the northern rift escarpment under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH016_start",
+      "shot_id": "S10_SH016",
+      "segment_id": "S10",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; high aerial chiaroscuro view transforms the chain of river pools into a glowing golden pathway, featuring foreground dark basalt canyon walls framing the lower corners, midground aerial chiaroscuro vista of the shinfa river channel glowing like a golden artery through the parched lowlands, and background the river corridor joining the blue nile and stretching toward the distant horizon under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH002_start",
+      "shot_id": "S11_SH002",
+      "segment_id": "S11",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; close chiaroscuro study of the shinfa-metema sediment layer shows toba glass beside microlithic points, featuring foreground sparkling microscopic toba glass shards alongside a triangular stone arrowhead, midground stratigraphic cross-section of the shinfa-metema river terrace glowing in golden rim light, and background deep chiaroscuro shadow framing the archaeological trench under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH007_start",
+      "shot_id": "S11_SH007",
+      "segment_id": "S11",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; a mythic tactile chiaroscuro tableau depicts the survivors standing high on a coastal promontory at sunrise, featuring foreground crashing golden-lit waves and rocky promontory in foreground, midground mythic chiaroscuro tableau of prehistoric humans standing on a coastal bluff looking across the strait toward new lands, and background radiant sunrise breaking through deep indigo clouds under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH001_start",
+      "shot_id": "S12_SH001",
+      "segment_id": "S12",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; chiaroscuro composition contrasts a divided forest river below with a single unified web of golden human light above, featuring foreground two forested riverbanks divided by a dark channel in the lower frame, midground luminous golden dna helix threads uniting thousands of human silhouettes across the upper canvas, and background deep indigo and amber chiaroscuro sky under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH005_start",
+      "shot_id": "S12_SH005",
+      "segment_id": "S12",
+      "bucket": "30pct_photo_collage",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; golden sparks from the prehistoric campfire float past the red ochre handprints on the cave wall, featuring foreground microlithic bow, bone pressure-flaker, and engraved ostrich eggshell in warm foreground light, midground ascending column of golden campfire sparks floating toward the cave roof, and background ochre handprints on the basalt wall blending into a starry night sky under sculptural golden-amber rim light. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH001_start",
+      "shot_id": "S01_SH001",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic 35mm anamorphic action frame in the East African Rift; terrified Pleistocene hunters Kael and Sena sprint full-speed through falling incandescent pumice as a colossal black pyroclastic surge explodes behind them, with foreground glowing amber pumice embers streaking past the lens, midground Kael in his antelope-hide cloak and Sena sprinting desperately forward across dark basalt rock, and background a towering wall of boiling black volcanic ash laced with blinding amber lightning. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH003_start",
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; nineteen gaunt hunters and children huddle beneath a basalt overhang around a low amber fire, with foreground jagged basalt overhang dripping with cold condensation in foreground shadow, midground nineteen gaunt pleistocene survivors huddled in animal hides around a low amber fire, and background wind-swept gorge of the shinfa river disappearing into indigo darkness in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH003_end",
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S01_SH003_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Close amber-lit tableau of the huddled clan leaning closer to the wind-bent flames inside the basalt overhang, preserving foreground jagged basalt overhang dripping with cold condensation in foreground shadow and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH004_start",
+      "shot_id": "S01_SH004",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena steps to the cave rim and tilts her face toward the darkening slate sky, with foreground abrasive grey volcanic dust flakes falling past the lens in warm rim light, midground sena tilting her chin upward at the cave mouth with wide dark eyes, and background overcast slate-grey morning sky blotting out the morning sun in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH005_start",
+      "shot_id": "S01_SH005",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena holds her open palm into the falling grey grit outside the cave ledge, with foreground swirling grey tephra motes caught in a narrow shaft of amber firelight, midground sena's open palm rubbing sharp silver-grey volcanic glass grit between her thumb and forefinger, and background out-of-focus dark basalt ledge and kael's shoulder in left shadow in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH007_start",
+      "shot_id": "S01_SH007",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael grips his wooden throwing spear and scans the silent eastern highland ridge, with foreground fire-hardened wooden spear tip held vertically in left foreground, midground kael squinting toward the eastern plateau with ash dusting his bearded jaw, and background silent volcanic peaks of the ethiopian highlands showing zero smoke plumes in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH009_start",
+      "shot_id": "S01_SH009",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; dark indian ocean swells pitch beneath a sky split by crimson volcanic lightning, with foreground dark ocean swells reflecting blood-amber lightning flashes in the foreground, midground towering black volcanic eruption column bursting above the coastline of northern sumatra, and background stratospheric shockwave ring expanding across the indigo sky in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S01_SH009_end",
+      "shot_id": "S01_SH009",
+      "segment_id": "S01",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S01_SH009_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Colossal black co-ignimbrite ash column towering above the burning Sumatra coastline under blood-amber lightning, preserving foreground dark ocean swells reflecting blood-amber lightning flashes in the foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH002_start",
+      "shot_id": "S02_SH002",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; solid granite and basalt bedrock cracks along the crest of mount toba, with foreground shattering basalt boulders hurtling past the lens in orange magma glare, midground mountain crust splitting open along a blinding fissure of incandescent white-amber lava, and background roiling black smoke wall climbing into the night sky in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH003_start",
+      "shot_id": "S02_SH003",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; the mountain summit disintegrates into a mile-wide fountain of incandescent rhyolite magma, with foreground burning rainforest canopy silhouetted against blinding golden-amber shockwaves, midground twin vents of the toba caldera collapsing inward as a massive fountain of magma jets skyward, and background forked purple-amber volcanic lightning webs illuminating a thirty-kilometer ash dome in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH003_end",
+      "shot_id": "S02_SH003",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S02_SH003_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Collapsed hundred-kilometer volcanic cauldron glowing with molten amber rivers beneath a towering black ash umbrella, preserving foreground burning rainforest canopy silhouetted against blinding golden-amber shockwaves and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH005_start",
+      "shot_id": "S02_SH005",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a supersonic column of pulverized rock and incandescent pumice roars out of the caldera vent, with foreground incandescent pumice boulders and ash avalanches roaring across the foreground valley, midground continuous supersonic jet of pulverized rock roaring out of the ruptured sumatra caldera, and background darkening crimson horizon choked with boiling pyroclastic surges in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH008_start",
+      "shot_id": "S02_SH008",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; the black co-ignimbrite column punches through the white cloud deck of the tropopause, with foreground thinning blue-white upper atmospheric clouds parted like a curtain, midground mushrooming black ash umbrella spreading thirty-two kilometers above the earth, and background curved dark-indigo edge of the stratosphere lit by a thin amber solar rim in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH008_end",
+      "shot_id": "S02_SH008",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S02_SH008_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Vast stratospheric umbrella cloud spreading across the curved horizon thirty-two kilometers above Earth, preserving foreground thinning blue-white upper atmospheric clouds parted like a curtain and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH011_start",
+      "shot_id": "S02_SH011",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; monsoon winds drive a towering black wall of volcanic ash across the indian ocean, with foreground roiling grey-black cloud front advancing toward the lens in amber twilight, midground towering monsoon wind wall dragging toba's ash plume across the dark indian ocean, and background distant coastline of the indian subcontinent vanishing under the shadow in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH012_start",
+      "shot_id": "S02_SH012",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; the midday sun hangs above the indian coast as a black stratospheric shelf approaches, with foreground silhouetted coastal palm trees bending under a sudden freezing gale, midground blinding midday sun being devoured by an advancing ceiling of black volcanic ash, and background last sliver of golden-amber light vanishing into total eclipse in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S02_SH012_end",
+      "shot_id": "S02_SH012",
+      "segment_id": "S02",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S02_SH012_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Total volcanic darkness over the coastline with only a faint blood-amber ring where the sun vanished, preserving foreground silhouetted coastal palm trees bending under a sudden freezing gale and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH002_start",
+      "shot_id": "S03_SH002",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; thick drifts of grey volcanic ash cascade into an indian river valley, with foreground thick grey ash avalanches sliding down a steep rocky ravine, midground river channel in south asia completely clogged by six-meter drifts of wet volcanic mud, and background dim amber glow filtering through dense falling tephra in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH003_start",
+      "shot_id": "S03_SH003",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; thick grey volcanic scum coats the surface of a stagnant river pool, with foreground crust of grey pumice floating atop dark acidic water, midground dead fish and scorched leaves trapped in thick volcanic scum along the bank, and background dark basalt rocks stained with yellowish sulfur residue in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH006_start",
+      "shot_id": "S03_SH006",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; billowing plumes of sulfur dioxide gas oxidize in the cold upper stratosphere, with foreground billowing dark sulfur clouds ascending toward the upper atmospheric boundary, midground glistening veil of microscopic sulfuric acid aerosol droplets forming across the stratosphere, and background pale amber sunlight diffusing and scattering off the reflective chemical haze in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH006_end",
+      "shot_id": "S03_SH006",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S03_SH006_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Continuous reflective silver-amber sulfate aerosol haze wrapping the curvature of the Earth, preserving foreground billowing dark sulfur clouds ascending toward the upper atmospheric boundary and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH010_start",
+      "shot_id": "S03_SH010",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael and sena stand atop a basalt ledge overlooking the dim, ash-draped rift valley, with foreground wind-blown dry reeds coated in grey volcanic dust along the bank, midground kael and sena standing on a basalt outcrop above the drying shinfa riverbed, and background a dim, blood-amber sun hanging low in a bruised indigo sky in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH011_start",
+      "shot_id": "S03_SH011",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael tightens his hide cloak as his breath condenses in the unseasonal chill, with foreground frost-rimmed hide cloak collar around kael's neck in foreground, midground kael's weathered face lit by pale copper twilight as his breath forms a faint mist, and background darkening basalt cliffs of the shinfa gorge behind him in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH012_start",
+      "shot_id": "S03_SH012",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena crouches at the water's edge and crushes a blackened, unripened reed stalk, with foreground withered, blackened river reeds crumbling in sena's hand, midground sena crouching by the bank, showing the dead stalks to kael, and background receding waterline of the muddy shinfa river in slate shadow in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH014_start",
+      "shot_id": "S03_SH014",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; a freezing gust of wind sweeps into the basalt cave and flattens the campfire flame, with foreground swirling frost and grey volcanic dust blowing into the cave entrance, midground a gust of freezing wind flattening the amber campfire flames between kael and sena, and background deep pitch-black shadows closing in from the back of the basalt cavern in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S03_SH014_end",
+      "shot_id": "S03_SH014",
+      "segment_id": "S03",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S03_SH014_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Near-total darkness inside the basalt cave with only a thin ribbon of amber ember light illuminating Kael and Sena's hands, preserving foreground swirling frost and grey volcanic dust blowing into the cave entrance and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH001_start",
+      "shot_id": "S04_SH001",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; hard white rime frost spreads rapidly across the canopy of a prehistoric forest, with foreground swirling ice crystals and freezing fog blowing past the lens, midground prehistoric temperate forests glazing over with hard white rime frost under a dim amber sky, and background frozen river networks locking up across a dark continental landmass in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH001_end",
+      "shot_id": "S04_SH001",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S04_SH001_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Frozen prehistoric river valley encased in white rime ice beneath a dark stratospheric haze, preserving foreground swirling ice crystals and freezing fog blowing past the lens and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH003_start",
+      "shot_id": "S04_SH003",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; freezing, lead-grey ocean swells roll sluggishly against black coastal rocks, with foreground dark, slush-filled ocean foam washing over black coastal basalt, midground sluggish, freezing ocean swells rolling beneath a thick curtain of sea fog, and background ice-grey horizon devoid of sunlight in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH004_start",
+      "shot_id": "S04_SH004",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; massive sea-ice floes lock together across the dark surface of the northern ocean, with foreground jagged sea-ice floes grinding together in dark chiaroscuro water, midground expanding northern ice sheets creeping southward over the atlantic coastline, and background faint amber twilight reflecting off a wall of advancing glacial ice in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH004_end",
+      "shot_id": "S04_SH004",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S04_SH004_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; Continental shelf locked beneath a towering wall of advancing blue-slate glacial ice, preserving foreground jagged sea-ice floes grinding together in dark chiaroscuro water and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH007_start",
+      "shot_id": "S04_SH007",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; dry volcanic wind sweeps grey silt across a bleached antelope ribcage on the savanna, with foreground bleached antelope ribcage half-buried in grey volcanic silt, midground dry wind blowing dust across a barren expanse of dead scrub grass, and background dim amber sun hanging low behind a veil of dust in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH008_start",
+      "shot_id": "S04_SH008",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael and sena trek down the cracked, dry canyon floor of the entrenched shinfa river, with foreground jagged basalt boulders and cracked clay in the lower foreground, midground kael and sena walking along the entrenched, bone-dry channel of the shinfa river, and background steep volcanic canyon walls ascending into dusty amber-slate twilight in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH009_start",
+      "shot_id": "S04_SH009",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael kneels in the dry riverbed and cracks open a weathered gazelle femur with a stone, with foreground splintered gazelle femur bone held in kael's ash-stained hand, midground kael kneeling on the cracked mud, tilting the hollow bone so dry dust pours out, and background sena's leather-wrapped shins visible in the right background in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH010_start",
+      "shot_id": "S04_SH010",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena drives her fire-hardened wooden digging stick into the frozen riverbank clay, with foreground broken wooden digging stick splintered against hard grey clay, midground sena on her knees examining the rock-hard soil beside a dead root crown, and background wind-whipped dust devils moving across the dark river terrace in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH012_start",
+      "shot_id": "S04_SH012",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael stands atop a windy basalt ridge scanning the empty grey plains below, with foreground withered black thorn branches clawing at the lower frame, midground kael standing alone atop a windswept basalt ridge with his heavy wooden spear lowered, and background vast, empty grey plains stretching to the horizon without a single living herd in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH012_end",
+      "shot_id": "S04_SH012",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S04_SH012_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Lone silhouette of Kael with lowered spear dwarfed by the empty, ash-choked savanna horizon, preserving foreground withered black thorn branches clawing at the lower frame and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH014_start",
+      "shot_id": "S04_SH014",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael presses the charred wooden point of his heavy throwing spear against a coarse basalt stone, with foreground sparks flying from a rough grindstone in warm chiaroscuro light, midground kael's scarred hands pressing the tip of his heavy wooden spear against a basalt whetstone, and background sena's silhouette watching from the right background in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH015_start",
+      "shot_id": "S04_SH015",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael lifts his heavy wooden spear on the left side of the hearth fire, with foreground ascending ribbon of orange woodsmoke dividing the frame vertically, midground kael gripping his heavy wooden spear on the left while sena holds a flake of black obsidian on the right, and background dark basalt wall flickering with warm amber firelight in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S04_SH015_end",
+      "shot_id": "S04_SH015",
+      "segment_id": "S04",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S04_SH015_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Two-shot across the hearth flame with Kael gripping his wooden spear on the left and Sena holding gleaming black obsidian on the right, preserving foreground ascending ribbon of orange woodsmoke dividing the frame vertically and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH001_start",
+      "shot_id": "S05_SH001",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; nineteen gaunt survivors huddle in a tight circle around the low acacia embers, with foreground shadowed basalt ceiling arch framing the top of the composition, midground nineteen gaunt survivors wrapped in hides seated in a tight semicircle around low embers, and background cold grey ash blowing past the dark mouth of the gorge shelter in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH002_start",
+      "shot_id": "S05_SH002",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael plants the butt of his wooden spear against the basalt floor in amber firelight, with foreground glowing red hearth embers in the lower foreground, midground kael standing tall with his wooden spear planted on the stone floor, gesturing toward the northern exit, and background dark ochre-stained basalt wall behind his shoulders in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH002_end",
+      "shot_id": "S05_SH002",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S05_SH002_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Low-angle chiaroscuro portrait of Kael pointing toward the northern canyon mouth with his spear planted firm, preserving foreground glowing red hearth embers in the lower foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH003_start",
+      "shot_id": "S05_SH003",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena surges to her feet on the right side of the fire, her jaw set in alarm, with foreground sharp orange spark ascending from the disturbed fire, midground sena springing to her feet, eyes blazing in golden-amber rim light, and background shadowed figures of the clan watching in the background in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH004_start",
+      "shot_id": "S05_SH004",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; seen over kael's shoulder, sena points toward the ash-choked mouth of the cave, with foreground kael's dark fur-clad shoulder in left foreground over-the-shoulder framing, midground sena gesturing toward the shivering children huddled by the cave wall, then pointing to the ash storm outside, and background swirling grey volcanic dust visible at the mouth of the cavern in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH004_end",
+      "shot_id": "S05_SH004",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S05_SH004_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Over-the-shoulder frame past Kael as Sena leans across the firelight with her hand extended in warning, preserving foreground kael's dark fur-clad shoulder in left foreground over-the-shoulder framing and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH005_start",
+      "shot_id": "S05_SH005",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael strikes his chest with his fist, his voice echoing off the basalt walls, with foreground sena's profile edge in right foreground shadow, midground kael striking his chest with his free fist while gripping the heavy wooden spear, and background flickering amber shadows leaping across the cave ceiling in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH008_start",
+      "shot_id": "S05_SH008",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a small band of spear-hunters marches across a barren, ash-swept plateau, with foreground swirling grey ash clouds sweeping across the foreground ridge, midground a distant line of five prehistoric hunters walking into a blinding dust storm on the barren plateau, and background sunless slate horizon swallowing their silhouettes in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH010_start",
+      "shot_id": "S05_SH010",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena kneels beside a sleeping child and feeds dry twigs into the tiny hearth flame, with foreground hanging animal skins swaying in the cold draft at the cave entrance, midground sena kneeling beside a sleeping child, piling small twigs onto the last tiny flame, and background vast, empty darkness of the gorge beyond the shelter ledge in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S05_SH010_end",
+      "shot_id": "S05_SH010",
+      "segment_id": "S05",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S05_SH010_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Tiny amber campfire glowing inside the dark cliff face surrounded by miles of black canyon, preserving foreground hanging animal skins swaying in the cold draft at the cave entrance and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH003_start",
+      "shot_id": "S06_SH003",
+      "segment_id": "S06",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael and sena walk shoulder-to-shoulder through a narrow, wind-blasted basalt defile, with foreground swirling grey ash particles catching warm rim light, midground tight framing on kael and sena's weathered faces pressing forward against the cold wind, and background narrow basalt canyon walls squeezing the sky into a thin slit behind them in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH004_start",
+      "shot_id": "S06_SH004",
+      "segment_id": "S06",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; nineteen tiny figures walk single-file across a vast, ash-grey rift valley floor, with foreground barren volcanic crags framing the lower left corner, midground a tiny band of nineteen humans walking single-file across an immense, ash-covered rift basin, and background colossal slate-grey storm clouds towering miles above the empty landscape in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH004_end",
+      "shot_id": "S06_SH004",
+      "segment_id": "S06",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S06_SH004_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; High aerial chiaroscuro vista showing the tiny nineteen-person band as a lone speck in an immense grey wasteland, preserving foreground barren volcanic crags framing the lower left corner and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH006_start",
+      "shot_id": "S06_SH006",
+      "segment_id": "S06",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena wraps a thick antelope hide tightly around a shivering child beside the hearth, with foreground rough animal-hide blanket in warm amber rim light, midground sena wrapping a shivering child in thick antelope skins beside the low fire, and background elders coughing quietly in the dark background of the basalt cave in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH008_start",
+      "shot_id": "S06_SH008",
+      "segment_id": "S06",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; at dawn, sena climbs down the steep basalt bank into the dry bed of the shinfa river, with foreground dry, ash-frosted riverbank reeds in the left foreground, midground sena descending alone at dawn into the entrenched bed of the shinfa river where a shallow pool glimmers, and background first pale golden-amber rays breaking through the slate clouds on the horizon in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S06_SH008_end",
+      "shot_id": "S06_SH008",
+      "segment_id": "S06",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S06_SH008_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Sena crouching beside a glimmering shallow waterhole in the entrenched Shinfa riverbed under pale golden dawn light, preserving foreground dry, ash-frosted riverbank reeds in the left foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH001_start",
+      "shot_id": "S07_SH001",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; high above the shinfa gorge, the dry riverbed winds through dark basalt terraces, with foreground steep basalt canyon rim in dark foreground shadow, midground dry gravel bed of the shinfa river dotted with a string of isolated, amber-lit waterholes, and background parched ethiopian lowlands stretching toward the blue nile basin in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH003_start",
+      "shot_id": "S07_SH003",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena crouches on the gravel bar and points toward the crowded waterhole, with foreground rippling amber water reflection in the lower foreground, midground sena crouching low on the right bank, pointing into the shallow pool as kael steps up on the left, and background dry basalt boulders of the entrenched river terrace in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH004_start",
+      "shot_id": "S07_SH004",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael thrusts his heavy wooden spear downward into the shallow waterhole, with foreground splash of muddy water droplets flying across the lower frame, midground kael thrusting his thick wooden spear into the shallow pool as fish dart away in every direction, and background rippling concentric waves disturbing the murky pool in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH004_end",
+      "shot_id": "S07_SH004",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg",
+        "S07_SH004_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Kael holding his dripping wooden spear above the empty, mud-clouded waterhole in frustration, preserving foreground splash of muddy water droplets flying across the lower frame and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH005_start",
+      "shot_id": "S07_SH005",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; startled waterfowl burst into flight from the bare gravel shoreline of the waterhole, with foreground bare grey gravel bar with zero vegetation cover, midground a flock of guinea fowl exploding into flight from the water's edge, and background dusty amber sky above the open canyon in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH007_start",
+      "shot_id": "S07_SH007",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael lifts his wet wooden spear from the mud and lowers the point to the gravel, with foreground dripping wooden spear point lowered in left foreground, midground kael wiping sweat and grey ash from his brow, shoulders slumped, and background glaring amber reflection off the muddy waterhole behind him in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH008_start",
+      "shot_id": "S07_SH008",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena lifts a slender, straight river reed and aligns a small black stone flake at its tip, with foreground slender straight river reed and a small black obsidian flake held in sena's fingers, midground sena sighting along the straight reed shaft with fierce concentration in golden rim light, and background out-of-focus basalt cliff behind her head in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH011_start",
+      "shot_id": "S07_SH011",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; back inside the cave shelter, sena buries raw stone nodules beneath glowing hearth embers, with foreground glowing orange hearth coals in the lower foreground, midground sena kneeling by the cave fire, arranging raw silcrete and chert nodules beneath hot wood ash, and background bundled river reeds and animal sinew resting against the basalt wall in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH011_end",
+      "shot_id": "S07_SH011",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S07_SH011_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Sena tending the glowing ember mound with bone tongs while bundles of straight river reeds rest beside her, preserving foreground glowing orange hearth coals in the lower foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH012_start",
+      "shot_id": "S07_SH012",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; golden flames dance across sena's focused eyes as she listens to the stones heating beneath the ash, with foreground dancing golden-amber flames filling the lower frame, midground extreme close-up on sena's eyes reflecting the pulsing hearth fire as stone cracks softly beneath the ash, and background deep slate shadow of the cavern roof in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S07_SH014_start",
+      "shot_id": "S07_SH014",
+      "segment_id": "S07",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena positions the cooled, heat-treated stone core against a leather pad on her knee, with foreground curled strips of dried antelope sinew and reed shafts on a flat anvil stone, midground sena picking up her antelope-bone pressure flaker as kael leans in from the left, and background warm amber firelight carving their profiles against the dark basalt cave in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH002_start",
+      "shot_id": "S08_SH002",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena presses the tip of the antelope bone firmly against the edge of the obsidian core, with foreground tiny razor-sharp stone spalls flying through the amber light, midground sena's bone pressure-flaker pressing a clean, symmetrical detachment from the obsidian core, and background dark cave shadow behind her steady hands in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH003_start",
+      "shot_id": "S08_SH003",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena seats the triangular stone microlith into a split reed shaft coated with warm resin, with foreground coiled animal sinew and pine resin warming beside the fire, midground sena wrapping wet sinew tightly around the notched reed tip to secure the triangular microlith, and background rows of finished arrows leaning against the basalt wall in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH004_start",
+      "shot_id": "S08_SH004",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael braces the seasoned acacia stave against his knee and bends the wood inward, with foreground flickering hearth flames illuminating the curved wooden stave, midground sena helping kael brace a seasoned acacia bow-stave and loop the twisted sinew string over its nock, and background clan hunters gathering closely in the background shadow in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH006_start",
+      "shot_id": "S08_SH006",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; at the riverbank, kael lifts the light acacia bow and nocks a slender microlithic arrow, with foreground slender reed arrow nocked on the taut sinew string in foreground, midground kael standing by the dawn waterhole, weighing the light acacia bow in his scarred hands, and background mist drifting off the shallow river pool behind him in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH007_start",
+      "shot_id": "S08_SH007",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena crouches motionless on the gravel bank, her eyes fixed on the water's surface, with foreground strands of hair blowing across sena's cheek in the morning breeze, midground sena crouching beside kael, her eyes locked on the dark shadow of a large catfish in the pool, and background pale golden dawn light reflecting off the water in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH008_start",
+      "shot_id": "S08_SH008",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael draws the sinew string to his cheek and releases the nock, with foreground vibrating sinew bowstring releasing a puff of fine grey ash, midground kael's fingers releasing the nock as the reed arrow blurs forward out of the bow, and background golden morning rim light catching the flexing acacia wood in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH008_end",
+      "shot_id": "S08_SH008",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg",
+        "S08_SH008_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Vibrating bowstring and empty bow rest in Kael's hand as the arrow blurs toward the pool, preserving foreground vibrating sinew bowstring releasing a puff of fine grey ash and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH009_start",
+      "shot_id": "S08_SH009",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; the microlithic arrow slices cleanly through the water surface with minimal splash, with foreground concentric golden ripples expanding across the dark water surface, midground the slender reed arrow slicing cleanly into the shallow pool and pinning a large catfish, and background clear gravel bottom of the entrenched shinfa waterhole in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH009_end",
+      "shot_id": "S08_SH009",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S08_SH009_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Reed arrow shaft quivering upright in the shallow amber-lit pool with the captured catfish, preserving foreground concentric golden ripples expanding across the dark water surface and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH011_start",
+      "shot_id": "S08_SH011",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael holds a slender microlithic arrow in both hands across the hearth fire, with foreground warm orange sparks drifting between their faces, midground kael holding a finished microlithic arrow with both hands and bowing his head toward sena, and background sena looking back at him in warm firelight in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH012_start",
+      "shot_id": "S08_SH012",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; a thin ribbon of pale woodsmoke ascends from the rock shelter above the river, with foreground thin column of pale woodsmoke ascending from the gorge overhang, midground wind carrying the smoke plume southward along the dry, ash-covered riverbed, and background dark, shadowy canyon bends disappearing into the volcanic haze in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH014_start",
+      "shot_id": "S08_SH014",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; thar steps out of the swirling grey ash fog onto the eastern gravel bar, with foreground pointed wooden spear shaft levelled in the lower foreground, midground thar stepping out of the swirling grey dust at the edge of the waterhole, eyes hollow with thirst, and background armed hunters of his clan fanning out along the right gravel bank in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S08_SH014_end",
+      "shot_id": "S08_SH014",
+      "segment_id": "S08",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S08_SH014_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Close chiaroscuro portrait of Thar on the right bank with levelled spear and hollow, desperate eyes, preserving foreground pointed wooden spear shaft levelled in the lower foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH001_start",
+      "shot_id": "S09_SH001",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; across the narrow waterhole, kael's hunters face thar's twelve gaunt strangers, with foreground rippling amber surface of the narrow waterhole separating the two groups, midground kael and sena's clan on the left bank facing thar's twelve gaunt refugees on the right bank, and background steep dark basalt canyon walls trapping both bands in the gorge in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH001_end",
+      "shot_id": "S09_SH001",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg",
+        "S09_SH001_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Wide standoff across the glimmering waterhole with Kael's archers on the left and Thar's spear-men on the right, preserving foreground rippling amber surface of the narrow waterhole separating the two groups and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH002_start",
+      "shot_id": "S09_SH002",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael plants his feet on the gravel bar and draws his microlithic arrow to his ear, with foreground taut sinew bowstring and triangular stone arrowhead aimed toward the right edge, midground kael drawing his acacia bow to full tension on the left gravel bank, and background two younger hunters lifting spears behind his left shoulder in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH003_start",
+      "shot_id": "S09_SH003",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; thar taps the empty ostrich-eggshell flask against his chest with a dry, hollow sound, with foreground engraved ostrich-eggshell flask hanging from cracked leather cord on thar's chest, midground thar's cracked lips and sunken eyes as he gestures toward the exhausted women and children behind him, and background grey dust swirling through the canyon behind his right shoulder in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH004_start",
+      "shot_id": "S09_SH004",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael's fingers tighten on the bowstring as sweat runs through the ash on his temple, with foreground trembling acacia bow limb in extreme foreground, midground close-up on kael's conflicted eyes sighting down the arrow shaft, and background dark basalt cliff wall in left shadow in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH007_start",
+      "shot_id": "S09_SH007",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena steps forward onto the gravel bar and places her open hand atop kael's aimed arrow, with foreground kael's drawn bowstring in the left foreground, midground sena stepping boldly between kael and the water, pressing her palm gently atop the arrow shaft, and background thar watching intently from the misty right background in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH007_end",
+      "shot_id": "S09_SH007",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S09_SH007_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Sena's hand resting atop Kael's lowered bow while both look across the pool toward Thar, preserving foreground kael's drawn bowstring in the left foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH008_start",
+      "shot_id": "S09_SH008",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena draws two microlithic arrows from her quiver and holds them out on her open palms, with foreground two spare microlithic arrows held up in sena's open palm, midground sena extending the arrows toward the opposite bank as golden light breaks through the mist, and background kael's lowered bow visible in left soft focus in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S09_SH009_start",
+      "shot_id": "S09_SH009",
+      "segment_id": "S09",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; thar lowers his wooden throwing spear and lays it flat upon the grey gravel, with foreground shallow waterhole surface reflecting warm amber light in foreground, midground thar slowly lowering his wooden spear to the gravel and unstrapping an engraved ostrich-eggshell flask, and background his gaunt hunters lowering their weapons in unison behind him in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH001_start",
+      "shot_id": "S10_SH001",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; at the center of the gravel bar, thar extends two engraved ostrich-eggshell flasks toward kael, with foreground geometric cross-hatched engravings on the cream ostrich eggshell in macro focus, midground thar placing two sealed ostrich-eggshell water flasks into kael's rough hands, and background sena watching beside them in warm golden-amber light in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH001_end",
+      "shot_id": "S10_SH001",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S10_SH001_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; Close two-shot of Kael on the left and Thar on the right gripping the engraved ostrich-eggshell flasks together, preserving foreground geometric cross-hatched engravings on the cream ostrich eggshell in macro focus and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH002_start",
+      "shot_id": "S10_SH002",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael presses an acacia bow and a bundle of microlithic arrows into thar's hands, with foreground bundle of fletched reed arrows tipped with black obsidian microliths, midground kael placing the bow and arrows into thar's hands on the riverbank, and background both clans mingling peacefully along the water's edge behind them in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH005_start",
+      "shot_id": "S10_SH005",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; powerful indian ocean rollers crash against the quartzite cliffs of pinnacle point in south africa, with foreground white ocean spray bursting over dark quartzite sea cliffs, midground towering coastal caves of pinnacle point in south africa facing the indian ocean, and background warm golden rays piercing through coastal storm clouds in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH006_start",
+      "shot_id": "S10_SH006",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; high aerial view of the pinnacle point sea cliffs shows human figures descending from a vast cave, with foreground steep quartzite cliff face in dramatic chiaroscuro shadow, midground prehistoric coastal foragers descending a rocky path from cave site pp5-6 toward the intertidal zone, and background sweeping curve of mossel bay glinting under pale amber light in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH006_end",
+      "shot_id": "S10_SH006",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S10_SH006_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; Foragers reaching the glistening intertidal rock pools below the towering Pinnacle Point cave arch, preserving foreground steep quartzite cliff face in dramatic chiaroscuro shadow and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH008_start",
+      "shot_id": "S10_SH008",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the towering quartzite sea cliffs and intertidal shellfish reefs of Pinnacle Point in South Africa; inside the coastal cave, an artisan detaches a long, razor-sharp bladelet from heat-treated red silcrete, with foreground glowing hearth embers and ground red ochre powder in a shell dish, midground a pinnacle point artisan flaking glossy heat-treated red silcrete blades beside the cave fire, and background cave wall adorned with geometric ochre engravings in warm rim light in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH010_start",
+      "shot_id": "S10_SH010",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena, kael, and thar stand shoulder-to-shoulder before the glowing ochre handprints, with foreground bright campfire flames ascending in golden-amber brilliance, midground sena, kael, and thar standing together before the ochre-painted wall holding bows and ostrich flasks, and background vaulted basalt roof illuminated by warm light in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH012_start",
+      "shot_id": "S10_SH012",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; at dawn, the united clan gathers at the dried mud basin of the old waterhole, with foreground dry, cracked mud basin where the old waterhole has finally evaporated, midground the united clan slinging filled ostrich-shell flasks and bows over their shoulders at dawn, and background golden morning light pouring down the northern curve of the shinfa river channel in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH012_end",
+      "shot_id": "S10_SH012",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S10_SH012_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; United clan walking together down the sunlit gravel corridor of the Shinfa riverbed, preserving foreground dry, cracked mud basin where the old waterhole has finally evaporated and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S10_SH014_start",
+      "shot_id": "S10_SH014",
+      "segment_id": "S10",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena and kael crest a low basalt bluff above the winding riverbed, with foreground glistening reed arrows held ready in sena's hand, midground sena and kael cresting a basalt rise to spot the next shimmering waterhole two miles downstream, and background distant ribbon of the blue nile valley gleaming under warm sunlight in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH003_start",
+      "shot_id": "S11_SH003",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; leaving the depleted gravel pool behind, the united clan walks downstream along the riverbed, with foreground dry gravel bar of a depleted pool in the lower foreground, midground the united clan walking steadily along the entrenched channel toward a larger, gleaming waterhole ahead, and background warm golden sunlight bathing the canyon walls in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH003_end",
+      "shot_id": "S11_SH003",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S11_SH003_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; The united clan arriving at the edge of a broad, sunlit downstream waterhole in the river corridor, preserving foreground dry gravel bar of a depleted pool in the lower foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH004_start",
+      "shot_id": "S11_SH004",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena tilts her head toward the sky as a warm shaft of golden sunlight pierces the thinning clouds, with foreground warm golden sunbeam touching sena's cheek and shoulder, midground sena shielding her eyes as she looks northward where blue sky breaks through the volcanic haze, and background clear river water sparkling behind her in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH005_start",
+      "shot_id": "S11_SH005",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael and thar stride side by side along the gravel bank with bows slung across their shoulders, with foreground bow and ostrich-shell flask carried side by side in the foreground, midground kael and thar walking shoulder-to-shoulder at the head of the united tribe in warm golden light, and background parting clouds and bright sky above the canyon rim in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH008_start",
+      "shot_id": "S11_SH008",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; golden morning mist drifts across the tranquil, hundred-kilometer expanse of lake toba in sumatra, with foreground lush green sumatran pine branches framing the foreground, midground serene, mirror-like waters of modern lake toba stretching a hundred kilometers around samosir island, and background golden morning mist ascending peacefully from the volcanic caldera in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH008_end",
+      "shot_id": "S11_SH008",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S11_SH008_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; High aerial chiaroscuro vista of tranquil Lake Toba and Samosir Island bathed in golden morning light, preserving foreground lush green sumatran pine branches framing the foreground and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S11_SH009_start",
+      "shot_id": "S11_SH009",
+      "segment_id": "S11",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; warm golden firelight reflects inside the iris of sena's unblinking eye, with foreground floating golden sparks of the prehistoric hearth in macro focus, midground extreme close-up on sena's warm, firelit eye reflecting the ancient flame, and background luminous golden filaments of light shimmering in the dark background in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH002_start",
+      "shot_id": "S12_SH002",
+      "segment_id": "S12",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_01_Battlefield_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; kael, sena, and thar sit shoulder-to-shoulder around the bright hearth fire with the children, with foreground warm, crackling campfire flames in the foreground, midground kael, sena, and thar seated close together with their combined clan in the warm cave glow, and background red ochre handprints gleaming softly on the basalt wall behind them in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH004_start",
+      "shot_id": "S12_SH004",
+      "segment_id": "S12",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; sena dips a resin-wrapped torch into the hearth coals until it bursts into bright golden flame, with foreground glowing acacia torch flame in crisp foreground focus, midground sena lighting a resin-soaked wooden torch from the hearth and placing it into the hands of a young child, and background dark basalt cavern walls illuminated by the bright flare in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH004_end",
+      "shot_id": "S12_SH004",
+      "segment_id": "S12",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S12_SH004_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Close chiaroscuro frame of the child holding the blazing golden torch beside Sena, preserving foreground glowing acacia torch flame in crisp foreground focus and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH006_start",
+      "shot_id": "S12_SH006",
+      "segment_id": "S12",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; the warm golden light of the prehistoric campfire shines inside the dark ethiopian gorge, with foreground warm golden-amber sparks ascending from the canyon mouth, midground the glowing campfire in the ethiopian gorge expanding outward into the golden city lights of modern earth seen from orbit, and background curved blue-indigo horizon of planet earth glowing in nocturnal chiaroscuro in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH006_end",
+      "shot_id": "S12_SH006",
+      "segment_id": "S12",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "end_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+        "S12_SH006_start"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Orbital chiaroscuro view of night-side Earth glowing with interconnected golden city lights along the Nile and across the continents, preserving foreground warm golden-amber sparks ascending from the canyon mouth and deep chiaroscuro lighting. clean composition, text-free, no labels, no watermarks"
+    },
+    {
+      "asset_id": "S12_SH007_start",
+      "shot_id": "S12_SH007",
+      "segment_id": "S12",
+      "bucket": "60pct_video_keyframes",
+      "frame_role": "start_frame",
+      "aspect_ratio": "16:9",
+      "image_references": [
+        "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg"
+      ],
+      "query": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; a solitary golden-amber ember pulses warmly on the dark hearth stone, with foreground soft grey woodash settling gently around a glowing coal, midground a single golden-amber hearth ember pulsing warmly in deep chiaroscuro darkness, and background velvet slate-black shadow fading gently to black at the final frame in high-contrast golden-amber firelight and deep slate shadow. clean composition, text-free, no labels, no watermarks"
+    }
+  ]
+}

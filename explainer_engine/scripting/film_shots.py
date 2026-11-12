@@ -475,9 +475,14 @@ def compose(doc: dict) -> list[dict]:
         if shot.get("teaser_of"):
             # a teaser is a piece of its payoff's clip (KP-41): nothing new is drawn or rendered
             of = by_id[shot["teaser_of"]]
-            start = round(max(0.0, (of["seconds"] - shot["seconds"]) / 2), 2)
+            t_trim = shot.get("teaser_trim")
+            if isinstance(t_trim, list) and len(t_trim) == 2:
+                 trim_pair = [round(float(t_trim[0]), 2), round(float(t_trim[1]), 2)]
+            else:
+                start = round(max(0.0, (of["seconds"] - shot["seconds"]) / 2), 2)
+                trim_pair = [start, round(start + shot["seconds"], 2)]
             out.append({"id": f"{sid}.video", "kind": "reuse", "of": f"{of['id']}.video", "seconds": shot["seconds"],
-                        "trim": [start, round(start + shot["seconds"], 2)]})
+                        "trim": trim_pair})
             continue
         if src == "keyframe":
             out.append({"id": f"{sid}.first", "kind": "keyframe", "lora": "style", "prompt": keyframe_prompt(doc, shot),
@@ -978,13 +983,22 @@ def episode_check(doc: dict) -> list[dict]:
     t, teasers = 0.0, 0
     for i, s in enumerate(shots):
         of = s.get("teaser_of")
+        t_trim = s.get("teaser_trim")
+        if t_trim is not None and not of:
+            add("KP-41", "FAIL", s["id"], "teaser_trim is set on a shot without teaser_of")
         if of:
             if of not in by_id or by_id[of] <= i:
                 add("KP-41", "FAIL", s["id"], f"teaser_of '{of}' is not a later shot: a teaser is a piece of a shot to come")
             elif s["seconds"] > shots[by_id[of]]["seconds"]:
                 add("KP-41", "FAIL", s["id"], f"the teaser is longer than its payoff {of}")
-            elif t < TEASER_WINDOW_S:
-                teasers += 1
+            else:
+                payoff_sec = float(shots[by_id[of]]["seconds"])
+                if isinstance(t_trim, list) and len(t_trim) == 2:
+                    t0, t1 = float(t_trim[0]), float(t_trim[1])
+                    if t0 < 0 or t1 <= t0 or t1 > payoff_sec + 1e-6 or (t1 - t0) > float(s["seconds"]) + 1e-6:
+                        add("KP-41", "FAIL", s["id"], f"teaser_trim [{t0:g}, {t1:g}] is invalid or exceeds payoff {of} ({payoff_sec:g} s) / teaser duration ({s['seconds']:g} s)")
+                if t < TEASER_WINDOW_S:
+                    teasers += 1
         t += s["seconds"]
     if total >= 60 and teasers < TEASERS_MIN:
         add("KP-41", "REVIEW", "opening", f"{teasers} teaser shot(s) in the first {TEASER_WINDOW_S:g} s: show at least "

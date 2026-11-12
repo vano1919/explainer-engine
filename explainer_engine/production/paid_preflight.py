@@ -48,7 +48,22 @@ def refuse(kind: str, path) -> None:
         raise SystemExit("paid preflight FAILED, nothing was started:\n" + "\n".join(bad))
 
 
+
+
+def check_cloud_allowed(*, allow_paid_cloud: bool = False, env=None) -> None:
+    """Gate paid cloud preflight behind explicit --allow-paid-cloud (EXPLAINER_LOCAL_ONLY=1 default, D-123)."""
+    from explainer_engine import vault
+    if vault.is_local_only(env) and not allow_paid_cloud:
+        raise SystemExit(
+            "DEPRECATED / BLOCKED BY DEFAULT (D-123): paid_preflight is disabled when EXPLAINER_LOCAL_ONLY=1. "
+            "Use `python -m explainer_engine.production --check-local` (local_preflight.py) or pass `--allow-paid-cloud`."
+        )
+
+
 def main(argv: list[str]) -> int:
+    allow_cloud = '--allow-paid-cloud' in argv
+    argv = [a for a in argv if a != '--allow-paid-cloud']
+    check_cloud_allowed(allow_paid_cloud=allow_cloud)
     kind, path = argv
     doc = json.loads(Path(path).read_text(encoding="utf-8"))
     bad = (ltx if kind == "ltx" else qwen)(doc)

@@ -1,0 +1,225 @@
+{
+  "schema_version": "4.0.0",
+  "local_only_default": true,
+  "comfyui": {
+    "default_url": "http://127.0.0.1:8188",
+    "required_nodes": [
+      "WanFunInpaintToVideo",
+      "WanImageToVideo",
+      "Wan22FunControlToVideo",
+      "TextEncodeQwenImageEditPlus",
+      "QwenMultiangleCameraNode"
+    ],
+    "optional_nodes": [
+      "WanCameraEmbedding",
+      "DepthflowPresetDolly",
+      "DepthflowPresetOrbital",
+      "DepthflowPresetZoom",
+      "DepthflowPresetHorizontal",
+      "DepthflowPresetVertical",
+      "DWPreprocessor",
+      "CannyEdgePreprocessor",
+      "DepthAnythingV2Preprocessor"
+    ],
+    "custom_node_repos": {
+      "ComfyUI-qwenmultiangle": {
+        "repo_url": "https://github.com/jtydhr88/ComfyUI-qwenmultiangle",
+        "pinned_ref": "main",
+        "nodes": [
+          "QwenMultiangleCameraNode"
+        ]
+      },
+      "ComfyUI-Depthflow-Nodes": {
+        "repo_url": "https://github.com/akatz-ai/ComfyUI-Depthflow-Nodes",
+        "pinned_ref": "main",
+        "nodes": [
+          "DepthflowPresetDolly",
+          "DepthflowPresetOrbital",
+          "DepthflowPresetZoom",
+          "DepthflowPresetHorizontal",
+          "DepthflowPresetVertical"
+        ],
+        "fallback_module": "explainer_engine.production.parallax"
+      },
+      "comfyui_controlnet_aux": {
+        "repo_url": "https://github.com/Fannovel16/comfyui_controlnet_aux",
+        "pinned_ref": "main",
+        "nodes": [
+          "DWPreprocessor",
+          "CannyEdgePreprocessor",
+          "DepthAnythingV2Preprocessor"
+        ]
+      }
+    }
+  },
+  "active_defaults": {
+    "stage2_image_model": "qwen_image_edit_2511",
+    "stage2_fallback_image_model": "qwen_image_2_1_xworld_v2",
+    "stage3_video_inp_model": "wan22_fun_5b_inp",
+    "stage3_video_escalation_model": "wan22_fun_14b_inp",
+    "stage3_video_control_model": "wan22_fun_5b_control",
+    "stage3_video_control_escalation_model": "wan22_fun_14b_control",
+    "stage3_parallax_engine": "depthflow_local_25d"
+  },
+  "models": {
+    "qwen_image_2_1_xworld_v2": {
+      "stage": "stage2_keyframe",
+      "role": "benchmark_candidate_a_baseline",
+      "hf_repo": "Qwen/Qwen-Image-2.1",
+      "checkpoint_file": "diffusion_models/qwen_image_2_1_bf16.safetensors",
+      "lora_files": [
+        "loras/xworld_v2.safetensors"
+      ],
+      "vault_lora_prefix": "lora_plan_2026-10-26/train_xworld_v2/output/",
+      "workflow_json": "workflows/comfyui/qwen_keyframe_multiangle.json",
+      "licence": "Apache-2.0 + Internal Vault LoRA",
+      "licence_status": "commercial_ok"
+    },
+    "qwen_image_edit_2511": {
+      "stage": "stage2_keyframe",
+      "role": "benchmark_candidate_b_multiangle",
+      "hf_repo": "Qwen/Qwen-Image-Edit-2511",
+      "checkpoint_file": "diffusion_models/qwen_image_edit_2511_fp8_e4m3fn.safetensors",
+      "lora_files": [
+        "loras/qwen-image-edit-2511-multiple-angles-lora.safetensors"
+      ],
+      "adapter_hf_repo": "fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA",
+      "workflow_json": "workflows/comfyui/qwen_keyframe_multiangle.json",
+      "licence": "Apache-2.0 (base) / fal.ai Multiple-Angles card terms",
+      "licence_status": "verify_card"
+    },
+    "next_scene_qwen_image_lora_2509": {
+      "stage": "stage2_keyframe",
+      "role": "optional_gated_progression_lora",
+      "enabled_by_default": false,
+      "stack_with_multiangle_allowed": false,
+      "hf_repo": "lovis93/next-scene-qwen-image-lora-2509",
+      "lora_files": [
+        "loras/next-scene-qwen-image-lora-2509.safetensors"
+      ],
+      "workflow_json": "workflows/comfyui/qwen_keyframe_multiangle.json",
+      "licence": "Community HuggingFace card terms (verify before commercial use)",
+      "licence_status": "verify_card"
+    },
+    "wan22_fun_5b_inp": {
+      "stage": "stage3_video",
+      "role": "primary_video_default_candidate",
+      "hf_repo": "alibaba-pai/Wan2.2-Fun-5B-InP",
+      "checkpoint_file": "diffusion_models/Wan2.2-Fun-5B-InP.safetensors",
+      "vae_file": "vae/Wan2.2_VAE.safetensors",
+      "text_encoder_file": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "optional_vault_style_loras": [
+        "loras/wldnk_wan22_v1_high_noise.safetensors",
+        "loras/wldnk_wan22_v1_low_noise.safetensors"
+      ],
+      "workflow_json": "workflows/comfyui/wan22_fun_inp_flf2v.json",
+      "licence": "Apache-2.0",
+      "licence_status": "commercial_ok"
+    },
+    "wan22_fun_14b_inp": {
+      "stage": "stage3_video",
+      "role": "primary_video_escalation_tier",
+      "hf_repo": "alibaba-pai/Wan2.2-Fun-A14B-InP",
+      "checkpoint_files": [
+        "diffusion_models/wan2.2_fun_inp_high_noise_14B_fp8_scaled.safetensors",
+        "diffusion_models/wan2.2_fun_inp_low_noise_14B_fp8_scaled.safetensors"
+      ],
+      "optional_accel_loras": [
+        "loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors",
+        "loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors"
+      ],
+      "optional_vault_style_loras": [
+        "loras/wldnk_wan22_v1_high_noise.safetensors",
+        "loras/wldnk_wan22_v1_low_noise.safetensors"
+      ],
+      "workflow_json": "workflows/comfyui/wan22_fun_inp_flf2v.json",
+      "licence": "Apache-2.0",
+      "licence_status": "commercial_ok"
+    },
+    "wan22_fun_5b_control": {
+      "stage": "stage3_video_control",
+      "role": "secondary_selective_control_default",
+      "hf_repo": "alibaba-pai/Wan2.2-Fun-5B-Control",
+      "checkpoint_file": "diffusion_models/Wan2.2-Fun-5B-Control.safetensors",
+      "workflow_json": "workflows/comfyui/wan22_fun_control.json",
+      "licence": "Apache-2.0",
+      "licence_status": "commercial_ok"
+    },
+    "wan22_fun_14b_control": {
+      "stage": "stage3_video_control",
+      "role": "secondary_selective_control_escalation",
+      "hf_repo": "alibaba-pai/Wan2.2-Fun-A14B-Control",
+      "checkpoint_files": [
+        "diffusion_models/wan2.2_fun_control_high_noise_14B_fp8_scaled.safetensors",
+        "diffusion_models/wan2.2_fun_control_low_noise_14B_fp8_scaled.safetensors"
+      ],
+      "workflow_json": "workflows/comfyui/wan22_fun_control.json",
+      "licence": "Apache-2.0",
+      "licence_status": "commercial_ok"
+    },
+    "wan21_ati_14b_experimental": {
+      "stage": "stage3_video_control",
+      "role": "experimental_trajectory_control_opt_in",
+      "enabled_by_default": false,
+      "hf_repo": "bytedance/ATI",
+      "checkpoint_file": "diffusion_models/wan2.1_ati_14b_i2v.safetensors",
+      "workflow_json": "workflows/comfyui/wan22_fun_control.json",
+      "licence": "Apache-2.0",
+      "licence_status": "commercial_ok"
+    },
+    "depthflow_local_25d": {
+      "stage": "stage3_parallax",
+      "role": "primary_deterministic_25d_engine",
+      "hf_repo": "depth-anything/Depth-Anything-V2-Base",
+      "checkpoint_file": "depthanything/depth_anything_v2_vitb_fp16.safetensors",
+      "non_commercial_variant_note": "depth-anything/Depth-Anything-V2-Large (vitl) is CC-BY-NC-4.0; use vitb/vits (Apache-2.0) for commercial monetized episodes",
+      "workflow_json": "workflows/comfyui/depthflow_25d_motion.json",
+      "python_fallback_module": "explainer_engine.production.parallax",
+      "blender_plane_fallback_module": "explainer_engine.blender.assemble_25d",
+      "licence": "Apache-2.0 (vitb)",
+      "licence_status": "commercial_ok"
+    },
+    "depth_anything_v2_large_research": {
+      "stage": "stage3_parallax",
+      "role": "non_commercial_depth_variant",
+      "enabled_by_default": false,
+      "hf_repo": "depth-anything/Depth-Anything-V2-Large",
+      "checkpoint_file": "depthanything/depth_anything_v2_vitl_fp16.safetensors",
+      "workflow_json": "workflows/comfyui/depthflow_25d_motion.json",
+      "licence": "CC-BY-NC-4.0 (DINOv2-Large roots; non-commercial research only)",
+      "licence_status": "non_commercial_research"
+    },
+    "wan21_infinitetalk_optional": {
+      "stage": "stage3_lipsync",
+      "role": "optional_closeup_lipsync",
+      "enabled_by_default": false,
+      "hf_repo": "MeiGen-AI/InfiniteTalk",
+      "checkpoint_file": "diffusion_models/wan2.1_infiniteTalk_single_fp16.safetensors",
+      "licence": "Apache-2.0",
+      "licence_status": "commercial_ok"
+    }
+  },
+  "architecture": "D-124 Gemini Native Image Engine + Wan 2.2 Modal GPU + ElevenLabs Audio Spine",
+  "image_generation_engine": {
+    "provider": "gemini_native_image_engine",
+    "tool": "image_gen:generate_image",
+    "reference_library_dir": "Explainer_Engine_V4_Main/Reference_Library",
+    "style_anchor_token": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama",
+    "aspect_ratio": "16:9",
+    "unique_scene_per_shot_enforced": true
+  },
+  "video_generation_engine": {
+    "provider": "modal_cloud_gpu",
+    "primary_i2v_model": "wan2.2_i2v_14b_fp8.safetensors",
+    "flf2v_model": "wan2.2_flf2v_14b_fp8.safetensors",
+    "fun_control_model": "wan2.2_fun_control_14b_fp8.safetensors",
+    "native_fps": 24,
+    "max_clip_seconds": 5.0,
+    "max_clip_frames": 121,
+    "continuation_frame_offset_from_end": 5
+  },
+  "voice_generation_engine": {
+    "provider": "elevenlabs_tts",
+    "alignment_engine": "elevenlabs_scribe_24fps"
+  }
+}

@@ -1,5 +1,9 @@
 # CLOUD_RUNBOOK — how a pod ends (P1a, 2026-10-29)
 
+
+## Disabled by Default (`EXPLAINER_LOCAL_ONLY=1`, D-123)
+> **Route-scoped since D-116 (2026-11-06); DISABLED BY DEFAULT (2026-11-09, D-123):** All default Stage 2 keyframe and Stage 3 video/2.5D generation runs 100% locally and free via ComfyUI ([LOCAL_COMFYUI_SETUP](LOCAL_COMFYUI_SETUP.md)). Paid RunPod / cloud execution documented in this runbook is strictly opt-in (`--allow-paid-cloud`, `EXPLAINER_LOCAL_ONLY=0`).
+
 The one home of the **CR-** rules: every way a RunPod pod is stopped, who owns each step, and what the code refuses.
 Money ceilings stay in `config/spend_caps.json` (D-56); the pod manager is `explainer_engine/cloud/runpod.py`; the watchdog
 is `explainer_engine/cloud/watchdog.py` + `.github/workflows/watchdog.yml`; the session hooks are `explainer_engine/cloud/hooks.py`.

@@ -293,6 +293,33 @@
                     "description": "where the record came from: a paint plan id, a ledger line, sound_library:<id>, picture_library:<id>"
                   }
                 }
+              },
+              "episode_scope": {
+                "type": "string"
+              },
+              "historical_period": {
+                "type": "string"
+              },
+              "era_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "geographic_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "domain_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "shared_ok": {
+                "type": "boolean"
               }
             }
           }
@@ -844,6 +871,33 @@
                     ]
                   }
                 }
+              },
+              "episode_scope": {
+                "type": "string"
+              },
+              "historical_period": {
+                "type": "string"
+              },
+              "era_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "geographic_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "domain_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "shared_ok": {
+                "type": "boolean"
               }
             },
             "allOf": [
