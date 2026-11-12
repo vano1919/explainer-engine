@@ -426,3 +426,64 @@ def test_the_pictures_go_in_two_stages_once_each_and_the_job_spec_pins_their_fit
     Path(fits["b3"]["path"]).write_bytes(b"other")
     with pytest.raises(SystemExit, match="not the one the scene pins"):
         SR.job_spec(sp)
+
+
+def test_the_battle_scenes_four_cuts_finish_inside_the_run_timeout_even_with_a_slow_cold_clip(container, monkeypatch):
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    scene = json.loads(BATTLE.read_text(encoding="utf-8"))
+    secs = [s["seconds"] for s in scene["shots"]]
+    gen = {10.0: 85.0, 6.0: 75.0}                                       # warm clips 10 % slower than the love run
+    first = [True]
+
+    def sh(cmd, **kw):
+        if cmd[0] != "ffmpeg":
+            i = cmd.index("--num-frames") if "--num-frames" in cmd else None
+            n = int(cmd[i + 1]) if i is not None else 241
+            s = 6.0 if n < 200 else 10.0
+            container.clock[0] += 147.0 if first[0] else gen[s]         # the bake-off's cold clip
+            first[0] = False
+            Path(cmd[cmd.index("--output-path") + 1]).write_bytes(b"mp4")
+        return SimpleNamespace(returncode=0)
+    container.job.update(shot_id="battle_c1", seconds=secs[0])
+    own = _png((5, 5, 5))
+    container.job["chain"] = [{"shot_id": s["shot_id"], "seconds": s["seconds"], "seed": s["seed"], "motion_prompt": "x",
+                               "start_bytes": own, "start_sha256": hashlib.sha256(own).hexdigest()}
+                              for s in scene["shots"][1:]]
+    res = L.body(container.job, container.launch, L.TIMEOUTS[1], vol_root=container.tmp / "w", api=FakeApi(), sh=sh,
+                 now=lambda: container.clock[0], out_root=container.tmp / "out")
+    assert [r["state"] for r in res["chain"]] == ["DONE"] * 4, res["chain"]
+
+
+class _Refusing(FakeGemini):
+    def __init__(self, run, root, exc):
+        super().__init__(run, root)
+        self.exc = exc
+
+    def submit_batch(self, items, *, model, size, aspect):
+        raise self.exc
+
+
+def test_a_stage_whose_answer_was_lost_is_never_sent_again_and_its_state_is_backed_up(tmp_path):
+    from explainer_engine.imagegen.gemini import ChargeUncertain, GeminiError
+    from explainer_engine.training.pods.ltx import scene_pictures as P
+    scene = json.loads(BATTLE.read_text(encoding="utf-8"))
+    style = _png((200, 120, 80))
+    scene["pictures"].update(dir=str(tmp_path / "pics"), manifest=str(tmp_path / "pics" / "pictures.json"),
+                             backup=str(tmp_path / "backup"),
+                             style=dict(scene["pictures"]["style"], sha256=hashlib.sha256(style).hexdigest()))
+    scene["ledger"] = dict(scene["ledger"], path=str(tmp_path / "ledger.json"))
+    sp = tmp_path / "scene.json"
+    sp.write_text(json.dumps(scene))
+    go = {"EE_PICTURES_GO": f"cmsg_x:{P.scene_sha(sp)[:12]}"}
+    run = P.open_ledger(scene)
+    with pytest.raises(GeminiError):                                     # a clean refusal: the mark goes, a retry may send
+        P.submit(sp, "heroes", env=go, gc=_Refusing(run, tmp_path, GeminiError("400 bad")), fetch=lambda p: style)
+    assert "heroes" not in P.manifest(scene)["batches"]
+    with pytest.raises(SystemExit, match="answer was lost"):
+        P.submit(sp, "heroes", env=go, gc=_Refusing(run, tmp_path, ChargeUncertain("timeout")), fetch=lambda p: style)
+    assert P.manifest(scene)["batches"]["heroes"]["state"] == "SUBMITTING"
+    assert json.loads((tmp_path / "backup" / "pictures.json").read_text())["batches"]["heroes"]["state"] == "SUBMITTING"
+    with pytest.raises(SystemExit, match="submitted already"):
+        P.submit(sp, "heroes", env=go, gc=FakeGemini(run, tmp_path), fetch=lambda p: style)
+    with pytest.raises(SystemExit, match="answer was lost"):
+        P.collect(sp, "heroes", gc=FakeGemini(run, tmp_path))

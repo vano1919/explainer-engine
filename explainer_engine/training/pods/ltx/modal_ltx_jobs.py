@@ -41,7 +41,8 @@ PINS = ("model_repo", "model_revision", "model_files", "ltx_code", "module", "us
 USES = ("transformer", "text_encoder", "video_vae", "audio_vae", "spatial_upsampler")
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
 LTX_FAILED = "LTX_FAILED"   # printed by ::main when the model ran and made no clip (the adapter may retry once, new seed)
-MARGIN_S = 150              # the end path after the last step: export, Volume copy, final upload, HF check
+MARGIN_S = 75               # the end path after the last step: Volume copy, final upload, HF check (each clip is
+                            # already saved on the Volume and HF when it is made; the love run's whole overhead was 30.5 s)
 OUT_ROOT = Path("/workspace/out")
 VOL_OUT = "out_ltx"
 SMOKE_JOB = {"shot_id": "L3_smoke", "seconds": 2.0, "seed": 7,

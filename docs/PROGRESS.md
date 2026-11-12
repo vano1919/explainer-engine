@@ -5640,3 +5640,9 @@ The rules change only if this works.
 **Stale text.** The main-style preset says "paid API never" for style rounds. The creator's word for this run is the Gemini API batch tier, as a temporary rule break asked on the card.
 
 **Tests.** 6 new tests in `tests/unit/test_v43_ltx_jobs.py`.
+
+**21:20 UTC: four problems the cancelled audit had already found, fixed in code** (the creator's 21:09 rule: an audit finding goes into the code)
+- **Budget.** `caps.run_usd` is now 0.97, so the run timeout is 508 s and the hard GPU bill $0.889. The scene's `total_usd` is 1.1, which is the card's "$1.1". The worst case is $1.099.
+- **Clip 4 at risk.** `MARGIN_S` drops from 150 to 75, because each clip is already saved when it is made and the love run's whole overhead was 30.5 s. A test now runs the four cuts with the bake-off's 147 s cold clip and warm clips 10 % slower; all four finish.
+- **A stage could be paid twice.** `scene_pictures.submit` now marks the stage SUBMITTING before the POST. A lost answer keeps the mark and refuses a resend. Only a clean refusal by the provider clears it. Tested.
+- **State on the session's disk.** The manifest and the batch records are now backed up to project files (`pictures.backup`) after every submit and collect. Tested.

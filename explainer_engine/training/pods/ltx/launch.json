@@ -54,7 +54,7 @@
   "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
   "caps": {
     "smoke_usd": 0.5,
-    "run_usd": 1.0,
+    "run_usd": 0.97,
     "cold_start_s": 120
   },
   "decided": {
@@ -64,5 +64,5 @@
     "at": "2026-11-12T19:10:06Z",
     "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
   },
-  "caps_why": "run_usd 1.0 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd): four cuts need ~530 s of GPU wall with the 150 s end path; the hard bill (run timeout + cold start) is $0.917 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene"
+  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene"
 }

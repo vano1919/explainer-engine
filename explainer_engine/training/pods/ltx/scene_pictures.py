@@ -26,7 +26,7 @@ from pathlib import Path
 
 from explainer_engine.core.ledger import Run
 from explainer_engine.core.store import write_json_atomic
-from explainer_engine.imagegen.gemini import BATCH_PRICES, REFERENCE_USD, GeminiClient
+from explainer_engine.imagegen.gemini import BATCH_PRICES, REFERENCE_USD, ChargeUncertain, GeminiClient, GeminiError
 from explainer_engine.training.pods.ltx import modal_ltx_jobs as L
 
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
@@ -66,6 +66,22 @@ def manifest(scene: dict) -> dict:
 
 def save_manifest(scene: dict, m: dict) -> None:
     write_json_atomic(Path(scene["pictures"]["manifest"]), m)
+
+
+def backup(scene: dict) -> None:
+    """The manifest and the client's batch records copied off the session's disk (``pictures.backup``, project files): a
+    lost container keeps the batch names, so a paid batch is collected later and never sent twice. JSON only (the project
+    files mount re-encodes PNGs)."""
+    dst = scene["pictures"].get("backup")
+    if not dst:
+        return
+    dst = Path(dst)
+    (dst / "batches").mkdir(parents=True, exist_ok=True)
+    src = Path(scene["pictures"]["manifest"])
+    if src.exists():
+        write_json_atomic(dst / src.name, json.loads(src.read_text(encoding="utf-8")))
+    for f in sorted((Path(scene["pictures"]["dir"]) / "batches").glob("*.json")):
+        write_json_atomic(dst / "batches" / f.name, json.loads(f.read_text(encoding="utf-8")))
 
 
 def style_bytes(scene: dict, fetch=None) -> bytes:
@@ -126,7 +142,9 @@ def submit(scene_path, stage: str, *, env=os.environ, gc=None, fetch=None) -> st
     go_gate(scene_path, env)
     pics, m = scene["pictures"], manifest(scene)
     if stage in m["batches"]:
-        raise SystemExit(f"stage {stage} was submitted already ({m['batches'][stage]['name']}); collect it, a repeat pays twice")
+        b = m["batches"][stage]
+        raise SystemExit(f"stage {stage} was submitted already ({b.get('name') or b.get('state')}); collect it, a repeat pays "
+                         "twice")
     items = stage_items(scene, stage)
     total = estimate(scene)
     if total["total"] > float(scene["budget"]["pictures_usd"]) + 1e-9:
@@ -135,9 +153,24 @@ def submit(scene_path, stage: str, *, env=os.environ, gc=None, fetch=None) -> st
     run = open_ledger(scene)
     gc = gc or client(scene, run)
     batch = [{"name": it["id"], "prompt": it["prompt"], "refs": refs_of(scene, it, m, fetch)} for it in items]
-    name = gc.submit_batch(batch, model=pics["model"], size=pics["size"], aspect=pics["aspect"])
+    # the stage is marked BEFORE the POST: a lost answer or a kill leaves the mark, and the next submit refuses (no second
+    # batch is paid); only a clean refusal by the provider (refunded by the client) clears it
+    m["batches"][stage] = {"name": None, "state": "SUBMITTING", "usd": total[stage], "items": [it["id"] for it in items]}
+    save_manifest(scene, m)
+    backup(scene)
+    try:
+        name = gc.submit_batch(batch, model=pics["model"], size=pics["size"], aspect=pics["aspect"])
+    except GeminiError as exc:
+        if isinstance(exc, ChargeUncertain):
+            raise SystemExit(f"stage {stage}: the answer was lost ({exc}); the stage stays marked SUBMITTING, look up the "
+                             "batch in AI Studio before anything else") from None
+        del m["batches"][stage]
+        save_manifest(scene, m)
+        backup(scene)
+        raise
     m["batches"][stage] = {"name": name, "usd": total[stage], "items": [it["id"] for it in items]}
     save_manifest(scene, m)
+    backup(scene)
     return name
 
 
@@ -145,8 +178,8 @@ def collect(scene_path, stage: str, *, wait_s: float = 0.0, gc=None) -> dict:
     scene = load(scene_path)
     m = manifest(scene)
     b = m["batches"].get(stage)
-    if not b:
-        raise SystemExit(f"stage {stage} was not submitted")
+    if not b or not b.get("name"):
+        raise SystemExit(f"stage {stage} was not submitted (or its answer was lost: {b and b.get('state')})")
     gc = gc or client(scene, open_ledger(scene))
     res = gc.collect_batch(b["name"], wait_s=wait_s)
     for item, val in res["items"].items():
@@ -155,6 +188,7 @@ def collect(scene_path, stage: str, *, wait_s: float = 0.0, gc=None) -> dict:
     b["state"], b["done"] = res["state"], res["done"]
     b["errors"] = {k: v for k, v in res["items"].items() if not isinstance(v, Path)}
     save_manifest(scene, m)
+    backup(scene)
     return {"state": res["state"], "done": res["done"], "made": sorted(k for k, v in res["items"].items() if isinstance(v, Path)),
             "errors": b["errors"]}
 

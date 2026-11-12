@@ -5,10 +5,10 @@
  "method": "the love-scene review (the creator, 2026-11-12 20:37 UTC): LTX leaves about 1 s between two speakers inside one clip and its faces and lips are weak close up, so every clip carries one speaker's line (or one reaction beat), every shot is a cut from its own picture (no chaining), the framing is medium or wide, and assembly trims each clip's tail to 0.3 s after its line (BP-187 tail 0.5 s at generation)",
  "sound": "LTX's own (way A, D-132): speech, marching, horns and battle from the prompt; no separate sound",
  "budget": {
-  "total_usd": 1.13,
+  "total_usd": 1.1,
   "pictures_usd": 0.135,
   "cpu_checks_usd": 0.075,
-  "note": "the worst case: the GPU launch's hard bill ((run timeout 528 s + cold start 120 s) x $5.0937/h = $0.917), the pictures' batch price, the L1/L2 CPU rungs at their timeouts; expected about $0.70 (60-75 s of GPU per clip, measured on the love scene)"
+  "note": "the creator's card answer '4 clips, $1.1' (20:59 UTC) is the ceiling of the worst case: the GPU launch's hard bill ((run timeout 509 s + cold start 120 s) x $5.0937/h = $0.890), the pictures' batch price, the L1/L2 CPU rungs at their timeouts; expected about $0.70 (60-75 s of GPU per clip, measured on the love scene)"
  },
  "ledger": {
   "path": "/mnt/project-files/explainer-engine/ledgers/ltx_scene_battle.json",
@@ -72,7 +72,8 @@
      "prompt": "Use image 1 only as the visual style; do not copy its people, their pose or its place. Late Bronze Age Aegean, about 1200 BC, the plain before Troy: Achaean warriors wear boar's-tusk or plain bronze helmets with cheek guards, bronze or linen armour, carry long spears, short bronze swords and tall oxhide shields; two-horse war chariots; no iron, no Roman or classical Greek gear, no cavalry riders, no lanterns. An epic wide high-angle shot over a vast dusty plain at sunset: two Bronze Age armies charge and crash into each other, thousands of warriors with spears and tall oxhide shields, two-horse war chariots racing through clouds of golden dust, the walled city of Troy on a hill in the distance with its great stone walls and towers, the low sun turning the dust gold and rose. The mood here is epic and tense. Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, torches, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood. People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes. No text, no letters, no logos, no watermark."
     }
    ]
-  }
+  },
+  "backup": "/mnt/project-files/explainer-engine/v4_3_plan_2026-11-12/ltx_battle_live/pictures_state"
  },
  "shots": [
   {
