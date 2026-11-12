@@ -67,6 +67,15 @@ def test_a_full_good_run_passes_except_the_unmeasured_camera_row(tmp_path):
     assert rep["status"] == "INCOMPLETE"
 
 
+@pytest.mark.parametrize("measured, want", [("PASS", "PASS"), ("REVIEW", "PASS"), ("INCOMPLETE", "NOT_RUN"), ("FAIL", "FAIL")])
+def test_the_motion_row_reads_the_layered_renderer_gates(tmp_path, measured, want):
+    root = _episode(tmp_path)
+    recs = [{"shot_id": "S1", "visual_type": "map_visualization", "clip_path": _clip(root, "S1.mp4")},
+            {"shot_id": "S2", "visual_type": "cinematic_scene", "clip_path": _clip(root, "S2.mp4"),
+             "source_start_keyframe": _clip(root, "S2.jpg"), "gates_25d": measured}]
+    assert _status(_good(root, shot_records=recs), "camera_motion_measured") == want
+
+
 def test_isolation_fails_on_a_second_episode_id(tmp_path):
     root = _episode(tmp_path)
     (root / "other.json").write_text(json.dumps({"episode_id": "ep_waterloo"}), encoding="utf-8")
@@ -167,3 +176,4 @@ def test_gate_audit_status_is_review_not_fail_on_review_rows(monkeypatch):
     assert RE.run_all_gate_audits(doc)["status"] == "REVIEW"
     monkeypatch.setattr(RE, "validate_reference_library", lambda lib: ["not locked"])
     assert RE.run_all_gate_audits(doc)["status"] == "FAIL"
+

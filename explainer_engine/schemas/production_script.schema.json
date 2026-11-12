@@ -1082,59 +1082,90 @@
           "description": "true = the route was chosen by hand; the router keeps it and only checks it"
         },
         "motion_imitation": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "camera"
-          ],
-          "description": "still_25d only (plan P5): how the layered 2.5D shot imitates life without a video model",
-          "properties": {
-            "camera": {
-              "enum": [
-                "push_in",
-                "pull_out",
-                "pan_left",
-                "pan_right",
-                "tilt_up",
-                "tilt_down",
-                "orbit_small",
-                "hold"
-              ]
-            },
-            "layers": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "description": "still_25d only (plan P5, RT-05): what moves in the layered 2.5D shot. One camera path at most (push, pull, truck, crane, orbit_small) plus handheld and rack_focus; light, atmosphere, surface and subject effects; a shake only on an impact. BP-185 asks for two moving families beyond the camera.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
                 "enum": [
-                  "foreground",
-                  "subject",
-                  "midground",
-                  "background",
-                  "sky"
-                ]
-              }
-            },
-            "effects": {
-              "type": "array",
-              "items": {
-                "enum": [
-                  "ash_fall",
-                  "smoke",
+                  "push",
+                  "pull",
+                  "truck",
+                  "crane",
+                  "orbit_small",
+                  "handheld",
+                  "rack_focus",
                   "fire_flicker",
-                  "embers",
-                  "water_ripple",
+                  "lightning",
+                  "sun_shaft_drift",
+                  "ash_fall",
+                  "smoke_drift",
                   "mist",
                   "rain",
-                  "snow",
-                  "wind_grass",
-                  "breathing",
-                  "cloth_sway",
-                  "light_pulse",
-                  "dust"
+                  "embers",
+                  "dust",
+                  "water_shimmer",
+                  "heat_haze",
+                  "foliage_sway",
+                  "subject_sway",
+                  "shake"
                 ]
+              },
+              "strength": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1.5
+              },
+              "region": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "minItems": 4,
+                "maxItems": 4,
+                "description": "[x0, y0, x1, y1] share of the picture; required by water_shimmer, heat_haze, foliage_sway"
+              },
+              "direction": {
+                "enum": [
+                  "left",
+                  "right",
+                  "up",
+                  "down"
+                ]
+              },
+              "to": {
+                "enum": [
+                  "near",
+                  "far"
+                ],
+                "description": "rack_focus: where the focus ends"
+              },
+              "origin": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "sun_shaft_drift: where the light comes from (default: the brightest part of the sky)"
+              },
+              "at_frame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "at_word": {
+                "type": "string",
+                "minLength": 1
               }
-            },
-            "notes": {
-              "type": "string"
             }
           }
         },
@@ -1233,6 +1264,16 @@
                   "elevenlabs_music",
                   "clip_audio"
                 ]
+              },
+              "picture_event": {
+                "enum": [
+                  "boom",
+                  "eruption",
+                  "flash",
+                  "impact",
+                  "thunder"
+                ],
+                "description": "the picture reacts on this sound at at_s (plan P5.6): boom/eruption = shake + lightning, impact = shake, thunder/flash = lightning"
               }
             }
           }
@@ -1260,6 +1301,94 @@
             "span_km": {
               "type": "number",
               "exclusiveMinimum": 0
+            }
+          }
+        },
+        "fallback_motion_imitation": {
+          "type": "array",
+          "description": "wan only (plan P6.2): the layered 2.5D motion the shot falls back to when its Wan clip fails QA twice; without it the fallback is a push and a subject sway, whose BP-185 row then FAILs for the creator to see",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "enum": [
+                  "push",
+                  "pull",
+                  "truck",
+                  "crane",
+                  "orbit_small",
+                  "handheld",
+                  "rack_focus",
+                  "fire_flicker",
+                  "lightning",
+                  "sun_shaft_drift",
+                  "ash_fall",
+                  "smoke_drift",
+                  "mist",
+                  "rain",
+                  "embers",
+                  "dust",
+                  "water_shimmer",
+                  "heat_haze",
+                  "foliage_sway",
+                  "subject_sway",
+                  "shake"
+                ]
+              },
+              "strength": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1.5
+              },
+              "region": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "minItems": 4,
+                "maxItems": 4,
+                "description": "[x0, y0, x1, y1] share of the picture; required by water_shimmer, heat_haze, foliage_sway"
+              },
+              "direction": {
+                "enum": [
+                  "left",
+                  "right",
+                  "up",
+                  "down"
+                ]
+              },
+              "to": {
+                "enum": [
+                  "near",
+                  "far"
+                ],
+                "description": "rack_focus: where the focus ends"
+              },
+              "origin": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "sun_shaft_drift: where the light comes from (default: the brightest part of the sky)"
+              },
+              "at_frame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "at_word": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         }
@@ -1436,6 +1565,23 @@
             "properties": {
               "route": {
                 "const": "still_25d"
+              }
+            },
+            "required": [
+              "route"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "fallback_motion_imitation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "route": {
+                "const": "wan"
               }
             },
             "required": [

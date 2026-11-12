@@ -227,7 +227,14 @@ def test_dem_shaded_relief_generation_and_letterless_plate(tmp_path, monkeypatch
     relief._load.cache_clear()
 
 
-def test_toba_gis_map_specs_validate_and_render(tmp_path):
+def test_toba_gis_map_specs_validate_and_render(tmp_path, monkeypatch):
+    # v4.3 P4 (F6): the plate needs Natural Earth's raster; CI has no download, so a 1-degree fixture raster stands in
+    from explainer_engine.maps import relief
+    rows, cols = np.mgrid[0:180, 0:360]
+    Image.fromarray((128 + 100 * np.sin(cols / 9.0) * np.cos(rows / 7.0)).astype(np.uint8), "L").save(tmp_path / relief.RASTER_NAME)
+    (tmp_path / "SR_HR.tfw").write_text("1.0\n0.0\n0.0\n-1.0\n-179.5\n89.5\n")
+    monkeypatch.setenv("EXPLAINER_RELIEF_DIR", str(tmp_path))
+    relief._load.cache_clear()
     for sid in ("S01_SH008", "S02_SH001", "S02_SH010"):
         spec, spine = map_render.build_toba_gis_map_spec(sid, width=320, height=180, total_frames=48)
         assert map_render.validate_payload(spec) == []

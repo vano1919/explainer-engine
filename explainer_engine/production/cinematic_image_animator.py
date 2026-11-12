@@ -1,5 +1,9 @@
 """30% Cinematic 2.5D Image Animation Engine from Existing Generated Images (`cinematic_image_animator.py`, v4.3).
 
+SUPERSEDED (v4.3 plan P5, 2026-11-12): the episode runner renders still_25d shots with `production/layers25d.py`
+(real depth planes, rigid faces, motion imitation, measured gates). This module stays only for the archive's tests
+until P9 retires it; its keyword-guessed effects and one-sheet warp are not on the v4.3 path.
+
 Extends `explainer_engine.production.parallax` and `explainer_engine.production.depth` to turn
 existing high-quality episode keyframes into living 24fps cinematic sequences at zero API cost:
 1. Reuses existing episode-scoped generated images without regenerating or altering character designs.

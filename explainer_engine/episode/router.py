@@ -16,7 +16,10 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 
+from explainer_engine.standards import sourced_rules as SR
+
 ROUTES = ("map_action", "still_25d", "wan")
+DIALOGUE_SHOT_MAX_S = float(SR.T("BP-108", "dialogue_shot_max_s"))
 
 # a body doing something a still cannot fake: whole-body motion, contact with a thing, a strike, a fall (Q4)
 BODY_ACTION = re.compile(
@@ -112,3 +115,18 @@ def mix_report(script: dict, durations: dict[str, float] | None = None) -> dict:
     shares = {r: round(secs[r] / total, 4) if total else 0.0 for r in ROUTES}
     return {"basis": "measured" if durations else "estimated", "total_seconds": round(total, 2),
             "seconds": {r: round(secs[r], 2) for r in ROUTES}, "shares": shares, "unrouted": missing}
+
+
+def talking_check(script: dict) -> list[dict]:
+    """Q7 (plan P6.4): a hero who speaks is seen performing, never a still with a voice over a closed mouth. Every shot that
+    carries a character's line is a Wan shot (FAIL otherwise), and a speaker shot stays within BP-108's dialogue length
+    (REVIEW: a house rule whose registry severity is REVIEW)."""
+    from explainer_engine.qa import gates as G
+    speakers = speaking_heroes(script)
+    shots = {s["shot_id"]: s for s in script.get("shots", [])}
+    still = sorted(sid for sid in speakers if shots[sid].get("route") != "wan")
+    long_ = sorted(sid for sid in speakers if float(shots[sid].get("target_duration_seconds") or 0) > DIALOGUE_SHOT_MAX_S)
+    return [G.row("speaker_shots_are_wan", not still, f"{len(still)} of {len(speakers)} speaker shot(s) are not Wan "
+                  "performance clips (Q7: no talking still)", still),
+            G.row("speaker_shots_short", not long_, f"{len(long_)} speaker shot(s) longer than {DIALOGUE_SHOT_MAX_S} s "
+                  "(BP-108)", long_, level=SR.severity("BP-108") if SR.severity("BP-108") == "REVIEW" else SR.level("BP-108"))]

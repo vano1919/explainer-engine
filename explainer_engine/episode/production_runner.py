@@ -4,7 +4,7 @@ Executes the complete isolated production pipeline for an episode (`episodes/<ep
 1. Enforces `EpisodeContext` & `EpisodeResolver` path and era isolation (`zero cross-episode asset leakage`).
 2. Performs Paid-Service & Cost Preflight (`$0.00` local execution when using existing episode assets + GIS/2.5D engines).
 3. Renders GIS + DEM Shaded-Relief map clips (`maps/plate.py` + `maps/render.py`) for map shots.
-4. Renders Multi-Axis 2.5D Cinematic Parallax clips (`production/cinematic_image_animator.py`) for narrative/dramatic shots.
+4. Renders the still_25d shots with the layered 2.5D renderer and its motion imitation (`production/layers25d.py`, plan P5).
 5. Plans `ED-04`-compliant transitions (`edit/cinematic_transitions.py`).
 6. Renders all 5 separate 48kHz stereo audio stems (`narration.wav`, `music.wav`, `ambience.wav`, `sfx.wav`, `mix.wav`)
    and runs independent narration dropout & stem continuity audits (`audio/dropouts.py`, `audio/sound_director.py`).
@@ -42,7 +42,7 @@ from explainer_engine.episode.context import (
     validate_asset_compatibility,
 )
 from explainer_engine.production.map_clip import render_episode_gis_map_clip
-from explainer_engine.production.cinematic_image_animator import render_cinematic_25d_clip_from_image
+from explainer_engine.production import layers25d as L25
 
 
 def _read_wav_mono_and_stereo(wav_path: Path) -> tuple[np.ndarray, np.ndarray, int]:
@@ -431,36 +431,23 @@ def run_episode_production(
             end_kf_path = resolver.resolve_path(end_kf_rel) if end_kf_rel else None
             out_clip = shot_clips_dir / f"{sid}.mp4"
 
-            if (not force_rerender_clips) and out_clip.is_file() and out_clip.stat().st_size > 10000:
-                from explainer_engine.production.cinematic_image_animator import infer_atmospheric_effects_for_shot
-                seed_i = int(hashlib.sha256(sid.encode("utf-8")).hexdigest()[:8], 16)
-                varied_presets = ("pan_and_push_ne", "dolly_in", "orbital_right", "pan_and_push_nw", "dolly_out", "orbital_left", "zoom_focus")
-                res = {
-                    "provider": "python_25d_cinematic_animator",
-                    "parallax_preset": varied_presets[seed_i % len(varied_presets)],
-                    "atmospheric_effects": infer_atmospheric_effects_for_shot(sh),
-                    "total_frames": max(fps, int(round(dur_s * fps))),
-                    "output_sha256": hashlib.sha256(out_clip.read_bytes()).hexdigest(),
-                }
+            report_path = out_clip.with_suffix(".25d.json")
+            if (not force_rerender_clips) and out_clip.is_file() and report_path.is_file():
+                res = json.loads(report_path.read_text(encoding="utf-8"))   # the clip and its measured report
             else:
-                res = render_cinematic_25d_clip_from_image(
-                    shot=sh,
-                    source_image_path=start_kf_path,
-                    end_image_path=end_kf_path,
-                    out_mp4_path=out_clip,
-                    width=width,
-                    height=height,
-                    fps=fps,
-                    protect_character_faces=True,
-                )
+                res = L25.render_clip(sh, start_kf_path, out_clip, width=width, height=height, fps=fps,
+                                      end_picture=end_kf_path, script=script_doc)
+                report_path.write_text(json.dumps(res, indent=2, default=str), encoding="utf-8")
             shot_records.append({
                 "shot_id": sid,
                 "segment_id": sh.get("segment_id"),
                 "visual_type": sh.get("visual_type", "cinematic_scene"),
-                "generation_mode": "IMAGE_25D_MULTI_AXIS_PARALLAX",
+                "generation_mode": "LAYERED_25D_MOTION_IMITATION",
                 "provider": res["provider"],
-                "parallax_preset": res["parallax_preset"],
-                "atmospheric_effects": res["atmospheric_effects"],
+                "camera": res["camera"],
+                "effects": res["effects"],
+                "families": res["families"],
+                "gates_25d": res["gates"]["status"],
                 "start_sec": start_s,
                 "end_sec": end_s,
                 "duration_sec": dur_s,

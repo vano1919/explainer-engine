@@ -85,7 +85,20 @@ def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plan
         rows.append(row("every_map_shot_rendered", not missing, f"{len(made_maps)} of {len(want_maps)} map shot(s) of the script rendered",
                         missing))
 
-    rows.append(row("camera_motion_measured", None, "no motion measurement on the clips yet (P5 adds it)"))
+    # P5: every still_25d shot carries the layered renderer's measured gates (alive, tears, faces, frozen, chunks...)
+    want_25 = [x["shot_id"] for x in script.get("shots", []) if x.get("route") == "still_25d"]
+    by_id = {r.get("shot_id"): r for r in shot_records}
+    unmeasured = [sid for sid in want_25 if (by_id.get(sid) or {}).get("gates_25d") in (None, "", "INCOMPLETE", "NOT_RUN")]
+    failed_25 = [sid for sid in want_25 if (by_id.get(sid) or {}).get("gates_25d") == "FAIL"]
+    if failed_25:
+        rows.append(row("camera_motion_measured", False, f"{len(failed_25)} still_25d shot(s) FAIL their motion gates",
+                        failed_25[:20]))
+    elif unmeasured:
+        rows.append(row("camera_motion_measured", None, f"{len(unmeasured)} of {len(want_25)} still_25d shot(s) without a complete "
+                        "motion measurement (not rendered by production/layers25d.py, or one of its gates NOT_RUN)"))
+    else:
+        rows.append(row("camera_motion_measured", True, f"{len(want_25)} still_25d shot(s) measured, none FAIL "
+                        "(Wan clips get their QA in P6)", len(want_25)))
 
     if transition_plans is None:
         rows.append(row("transitions_ed04", None, "no transition plan"))

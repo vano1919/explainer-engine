@@ -56,8 +56,8 @@ class WanLocalRunner:
         self.local_models = local_models or vault.local_models_config()
         self.comfy_url = vault.get_comfyui_url(env)
         self.post_fn = post_fn or self._default_post
-        self.qa_eval_fn = qa_eval_fn or self._default_qa_eval
         self.dry_run = dry_run
+        self.qa_eval_fn = qa_eval_fn or (self._dry_run_qa if dry_run else self._default_qa_eval)
         self._telemetry_schema = _load_telemetry_schema()
 
     def _default_post(self, url: str, payload: dict) -> dict:
@@ -70,16 +70,21 @@ class WanLocalRunner:
             return json.loads(resp.read().decode("utf-8"))
 
     @staticmethod
+    def _dry_run_qa(job: dict, attempt: int) -> dict:
+        """A dry run makes no clip (its placeholder is named ``*_raw.mp4`` with a dry-run marker) and measures nothing; the
+        telemetry schema needs numbers, so these are the archive's nominal values, used ONLY in a dry run."""
+        return {"passed": True, "failure_reason": None, "action_or_camera_error": False,
+                "qa_metrics": {"duration_match": True, "frozen_frame_ratio": 0.0, "boundary_jump_score": 0.02}}
+
+    @staticmethod
     def _default_qa_eval(job: dict, attempt: int) -> dict:
+        """No clip QA of its own (v4.3 plan P6.2 replaced the archive's ``passed: True``): a real clip is QA'd by
+        ``aivideo/wan_adapter.qa_clip`` through ``wan_adapter.run_shot`` with ``ComfyWanBackend``."""
         return {
-            "passed": True,
-            "failure_reason": None,
+            "passed": False,
+            "failure_reason": "no clip QA in the local runner: run the shot through aivideo/wan_adapter.run_shot",
             "action_or_camera_error": False,
-            "qa_metrics": {
-                "duration_match": True,
-                "frozen_frame_ratio": 0.0,
-                "boundary_jump_score": 0.02,
-            },
+            "qa_metrics": {"duration_match": False, "frozen_frame_ratio": 1.0, "boundary_jump_score": 1.0},
         }
 
     def compile_workflow_graph(self, job: dict) -> dict:
@@ -174,7 +179,7 @@ class WanLocalRunner:
 
             if passed:
                 clip_path = clips_dir / f"{current_job['shot_id']}_raw.mp4"
-                if not clip_path.exists():
+                if self.dry_run and not clip_path.exists():   # a dry run names its clip; it never fakes one otherwise
                     clip_path.write_bytes(b"RIFF_DRYRUN_MP4_PLACEHOLDER")
                 rec = {
                     "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

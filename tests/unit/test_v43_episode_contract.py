@@ -134,7 +134,7 @@ def test_route_fields_are_accepted_and_an_unknown_route_is_refused():
     v = shot_validator()
     s = a_valid_shot()
     s.update(route="still_25d", route_reason="the heroes hold a pose; the camera carries it",
-             motion_imitation={"camera": "push_in", "effects": ["ash_fall", "fire_flicker"]},
+             motion_imitation=[{"effect": "push"}, {"effect": "ash_fall"}, {"effect": "fire_flicker"}],
              sound_events=[{"kind": "ambience", "what": "wind over ash", "source": "library"}])
     assert not list(v.iter_errors(s))
     bad = dict(s, route="gemini_video")
@@ -144,7 +144,7 @@ def test_route_fields_are_accepted_and_an_unknown_route_is_refused():
 def test_motion_imitation_only_on_still_and_actions_only_on_maps():
     v = shot_validator()
     s = a_valid_shot()
-    s.update(route="wan", route_reason="a body performs an action", motion_imitation={"camera": "hold"})
+    s.update(route="wan", route_reason="a body performs an action", motion_imitation=[{"effect": "push"}])
     assert list(v.iter_errors(s))
     s = a_valid_shot()
     s.update(route="still_25d", route_reason="a place at rest, moved by the camera", actions=[{"kind": "pulse", "at_word": "Toba"}])
@@ -190,3 +190,24 @@ def test_a_hero_line_outside_a_played_scene_fails():
     doc["audio_lines"].append(line)
     rows = [f for f in scene_lint.lint(doc) if f["rule"] == "SC-01" and "dialogue belongs" in f["detail"]]
     assert rows and rows[0]["severity"] == "FAIL"
+
+
+def test_a_fallback_motion_belongs_to_a_wan_shot_only():
+    v = shot_validator()
+    s = a_valid_shot()
+    s.update(route="wan", route_reason="a body performs an action",
+             fallback_motion_imitation=[{"effect": "push"}, {"effect": "mist"}, {"effect": "subject_sway"}])
+    assert not list(v.iter_errors(s))
+    s.update(route="still_25d", route_reason="a place at rest")
+    assert list(v.iter_errors(s))
+
+
+def test_a_speaker_shot_must_be_wan_and_short():
+    from explainer_engine.episode import router as R
+    script = {"audio_lines": [{"line_id": "L1", "speaker_type": "character", "speaker_id": "kael", "text": "Run."}],
+              "shots": [{"shot_id": "A", "character_ids": ["kael"], "audio_line_ids": ["L1"], "route": "still_25d",
+                         "target_duration_seconds": 7.0}]}
+    rows = {r["gate"]: r["status"] for r in R.talking_check(script)}
+    assert rows == {"speaker_shots_are_wan": "FAIL", "speaker_shots_short": "REVIEW"}
+    script["shots"][0].update(route="wan", target_duration_seconds=4.0)
+    assert {r["status"] for r in R.talking_check(script)} == {"PASS"}

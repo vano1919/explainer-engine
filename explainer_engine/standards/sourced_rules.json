@@ -1059,7 +1059,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/accents.py:SHAKE_S",
-    "explainer_engine/edit/motion_lint.py:BP-24"
+    "explainer_engine/edit/motion_lint.py:BP-24",
+    "explainer_engine/production/layers25d.py:SHAKE_S"
    ],
    "supersedes": [
     "UR-13 no camera shake",
@@ -1131,7 +1132,8 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/motion_lint.py:BP-26",
-    "explainer_engine/production/accents.py:FLASH_WHITE"
+    "explainer_engine/production/accents.py:FLASH_WHITE",
+    "explainer_engine/production/layers25d.py:FLASH_WHITE"
    ],
    "supersedes": [
     "(new)"
@@ -4443,7 +4445,8 @@
     "explainer_engine/scripting/shot_prompt_lint.py:NON_DIALOGUE_VIDEO_MAX_S",
     "explainer_engine/blender/rigs.py:LipSync.plan",
     "explainer_engine/blender/rain_dialogue.py:main",
-    "explainer_engine/blender/j5_montage.py:lint_montage"
+    "explainer_engine/blender/j5_montage.py:lint_montage",
+    "explainer_engine/episode/router.py:DIALOGUE_SHOT_MAX_S"
    ],
    "supersedes": [
     "universal 10 s / 8 s video-shot cap (KP-06) and pre-D-95 universal 10 s clip cap"
@@ -5276,7 +5279,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-08",
-    "explainer_engine/production/assemble.py"
+    "explainer_engine/production/assemble.py",
+    "explainer_engine/production/layers25d.py:RACK_S"
    ],
    "planned": "explainer_engine/edit/motion_lint.py (ramp and rack focus; the whip is built in assemble.py, P7)",
    "supersedes": [],
@@ -6244,7 +6248,9 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/training/video_qa.py"
+    "explainer_engine/training/video_qa.py",
+    "explainer_engine/production/layers25d.py:FROZEN_DIFF",
+    "explainer_engine/aivideo/wan_adapter.py:FRAME0_DIFF"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word before any CLIP row becomes FAIL (D-59)",
    "supersedes": []
@@ -6835,7 +6841,9 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/blender/validate.py"
+    "explainer_engine/blender/validate.py",
+    "explainer_engine/production/layers25d.py:FROZEN_FRAMES_MAX",
+    "explainer_engine/aivideo/wan_adapter.py:FROZEN_FRAMES_MAX"
    ],
    "supersedes": [],
    "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
@@ -7131,7 +7139,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/blender/j5_montage.py:lint_montage"
+    "explainer_engine/blender/j5_montage.py:lint_montage",
+    "explainer_engine/production/layers25d.py:LAYERS_MIN"
    ],
    "supersedes": []
   },
@@ -7161,7 +7170,8 @@
     "explainer_engine/blender/j5_action_rig.py",
     "tests/unit/test_j5_ltx_minimisation.py",
     "explainer_engine/blender/j5_minute_depthcam.py",
-    "explainer_engine/blender/j5_minute_depth.py"
+    "explainer_engine/blender/j5_minute_depth.py",
+    "explainer_engine/production/layers25d.py:TRAVEL_MAX"
    ],
    "supersedes": []
   },
@@ -7194,7 +7204,8 @@
     "explainer_engine/blender/j5_limits.py",
     "explainer_engine/blender/j5_action_rig.py",
     "tests/unit/test_j5_ltx_minimisation.py",
-    "explainer_engine/blender/j5_minute_anim.py"
+    "explainer_engine/blender/j5_minute_anim.py",
+    "explainer_engine/production/layers25d.py:FLASH_FRAMES_MAX"
    ],
    "supersedes": []
   },
@@ -7224,6 +7235,22 @@
     "explainer_engine/blender/j5_minute.py"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-185",
+   "area": "stills",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A 2.5D shot is alive beyond the camera: at least families_min moving systems from different families among atmosphere (ash, smoke, mist, rain, embers, dust), light (fire flicker, lightning, sun shafts), surface (water shimmer, heat haze, foliage sway) and subject (a rigid sway of the subject's plane). A camera move alone does not count. Action beats inside a 2.5D shot get their impact effect on the sound event's frame.",
+   "thresholds": {
+    "families_min": 2
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/layers25d.py:ALIVE_MIN"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-11-12 (v4.3 plan section 0.4, answer Q4: the 2.5D shots must feel animated, not like stills with a camera move)"
   }
  ]
 }

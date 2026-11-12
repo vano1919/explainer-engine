@@ -5165,3 +5165,62 @@ Root cause: the J5 dialogue test chose both voices by hand from `creative_list_v
   place contracts, every action kind on its word and pure, zoom, the card, exact frame count, the Toba proposal against the
   script). The DEM test in `test_episode_first_isolation_and_v4_3_fixes.py` now reads the fixture raster. docs_lint 0 findings.
 - Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P5: layered 2.5D that reads as movement (thread "Implement v4.3 episode-first rebuild")
+- One renderer for every `still_25d` shot (`production/layers25d.py`, RT-06 in [EPISODE_FIRST](EPISODE_FIRST.md)): the
+  picture's real depth (Depth-Anything V2 Small, free; the formula ramp only as a flagged fallback, `depth_is_real` REVIEW)
+  is cut into 3-5 planes by 1-D k-means of the disparity, with hard plane edges feathered by a pixel and Telea fills under the
+  nearer planes (BP-182's radius). Each plane moves by ONE affine transform, its parallax by its disparity, so nothing inside a
+  plane is ever warped; a face (YuNet) is kept inside one plane by moving any threshold out of its depth range. The base zoom
+  is searched so no edge ever shows. Every frame is a pure function of its number (chunks match a fresh scene).
+- `motion_imitation` (schema: an array of effects): at most one camera path (push, pull, truck, crane, orbit_small) plus
+  handheld and rack_focus; light (fire_flicker, lightning, sun_shaft_drift), atmosphere (ash_fall, smoke_drift, mist, rain,
+  embers, dust), surface (water_shimmer, heat_haze, foliage_sway: a region is required) and subject (subject_sway, a rigid
+  turn of the subject's plane, at rest on frame 0). BP-185 (new, house, the creator's Q4): at least two families beyond the
+  camera. A shake or a lightning strike lands only on an impact: `at_word` (a spoken word of the shot), `at_frame`, or a sound
+  event's `picture_event` (boom/eruption = shake + lightning, impact = shake, thunder/flash = lightning; plan P5.6).
+- The clip report measures and gates: two families (FAIL), planes, real depth, coverage, edge tears, the face's plane (FAIL)
+  and its landmarks, frozen runs (BP-174, FAIL), flashes (BP-26), the near plane's travel (truck/crane/orbit, BP-182), the
+  start frame, chunk equality and speed; an end picture with another layout is not cross-moved (`end_picture_layout` REVIEW:
+  two shots). Gate rows on a hypothesis or an engineering default miss as REVIEW (`qa/gates.row(level=...)`), never FAIL
+  (D-59). `episode/acceptance` `camera_motion_measured` now reads these gates per shot.
+- What the seven samples taught (1920x1080, 10 s each, 0.4-0.6 s a frame on this CPU): the first sun rays were a hard
+  starburst (now three broad, turning beams, soft at the sun, the sun found on the far planes); a bright-dim-bright lightning
+  made four 10 % steps in one strike, over BP-26 (now one bright frame and a decay); YuNet scored a storm cloud 0.72 as a face
+  (faces under 0.85 stay rigid but steer nothing); the orbit moved the near plane twice its travel when the focus sat on the
+  far plane; YuNet's own landmark noise on a rigid copy of a face is up to 0.135, so the landmark REVIEW line is 0.20, not
+  0.08; a rack's designed first blur is no longer read as a seam.
+- Samples in the vault (`vano1919/tmr-artifacts`, dataset, commit 7f381465, sha256 checked after the upload):
+  `explainer-engine/v4_3_p5_25d_samples_2026-11-12/` (seven clips with their reports, `contact_sheet_f0_f120_f239.jpg`,
+  `samples_summary.json`). Six PASS; the rack-focus close-up is REVIEW on `face_landmarks_steady` (0.226 against 0.20): the
+  face is one rigid plane (`faces_rigid` 1.000) and looks the same on every frame, so this is detector noise under the dust
+  particles, left as REVIEW for the creator's eye.
+- `production/cinematic_image_animator.py` is marked superseded (P9 retires it).
+- Tests: `tests/unit/test_v43_layers25d.py` (43, a fixture picture and depth, no model needed); the motion row in
+  `test_v43_measuring_gates.py`; schema samples in `test_v43_episode_contract.py`. docs_lint 0 findings.
+- CI: `test_toba_gis_map_specs_validate_and_render` now uses the fixture raster (CI has no Natural Earth download, P4).
+- Cost: $0. Nothing paid was run.
+
+## 2026-11-12 — v4.3 P6: one Wan adapter with real clip QA, one retry, then the 2.5D fallback (thread "Implement v4.3 episode-first rebuild")
+- One adapter (`aivideo/wan_adapter.py`, RT-07 in [EPISODE_FIRST](EPISODE_FIRST.md)) in front of every Wan backend:
+  `WanJob` (shot, start and end picture, motion prompt, seconds, seed, size, fps), `Backend.estimate` priced from a measured
+  speed (`measured_s_per_clip_s` x `usd_per_hour`; no measured speed is a `ConfigError`, never a guess), `ComfyWanBackend`
+  (a local ComfyUI, free) and `ModalWanBackend`, which refuses until it is wired and measured.
+- Money: a paid backend runs only with an `Approval` (the creator's OR-23 plan id, cap, who, when, his message id) and only
+  when every attempt's estimate fits under what is left of that cap; otherwise nothing is sent. Every attempt writes a
+  ledger line before it is sent (`submit`, with the estimate) and after (`done`, its QA status and the clip's sha256).
+- Clip QA (`qa_clip`) measures the clip that came back: it decodes, has its frames, is not a still (BP-174's run) and has no
+  frozen run (BP-164, REVIEW), is not black, blown or flat, starts on its picture and ends on its end picture (mean
+  difference and dHash, BP-164), and keeps the face of its picture (SFace at `face_points.ID_MIN`, REVIEW). A FAIL is
+  retried once at seed + 1001; a second FAIL renders the shot with the layered 2.5D renderer (P5) from the shot's
+  `fallback_motion_imitation` (schema: only on a `wan` shot) or the default (push, mist, subject sway: two families,
+  BP-185), and the report says why. A backend exception (out of memory, a lost worker) is a FAIL row, retried the same way.
+- `wan_runner.WanLocalRunner._default_qa_eval` no longer passes a clip it never saw (it returned `passed: True`); it points to
+  the adapter, and the placeholder clip is written only in dry runs (a dry run keeps the archive's nominal QA numbers, which
+  the telemetry schema needs, and only there: `_dry_run_qa`).
+- Talking shots (Q4, Q7): `router.talking_check` FAILs a speaker's shot that is not `wan` and REVIEWs one longer than BP-108's
+  dialogue length (router now reads BP-108; registry `enforced_by` updated).
+- Tests: `tests/unit/test_v43_wan_adapter.py` (12, a fake backend that makes good, frozen, short, wrong-start and crashing
+  clips), two schema tests in `test_v43_episode_contract.py`. docs_lint 0 findings.
+- Not done: Modal is not wired (needs a measured speed, the OR-23 plan, the OR-34 audit and the creator's word).
+- Cost: $0. Nothing paid was run.
