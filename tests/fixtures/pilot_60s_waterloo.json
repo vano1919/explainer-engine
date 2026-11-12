@@ -1,0 +1,1017 @@
+{
+  "schema_version": "4.0.0",
+  "episode_id": "ep_waterloo_pilot_60s",
+  "title": "What If Napoleon Had Crushed Wellington at Waterloo? (60s Pilot)",
+  "what_if_premise": "On June 18, 1815, Marshal Grouchy marches west from Wavre toward the sound of the guns, pinning Blucher's Prussians and enabling Napoleon's Imperial Guard to break Wellington's center.",
+  "target_duration_seconds": 60,
+  "fps": 24,
+  "audio_balance_target": {
+    "narrator_ratio_min": 0.7,
+    "narrator_ratio_max": 0.8,
+    "dialogue_ratio_min": 0.2,
+    "dialogue_ratio_max": 0.3
+  },
+  "visual_mix_target": {
+    "cinematic_video_target": 0.6,
+    "composed_illustration_target": 0.3,
+    "map_visualization_target": 0.1
+  },
+  "historical_dossier_ref": "jobs/ep_waterloo_pilot_60s/01_script/research_dossier.md",
+  "world_bible": {
+    "style_anchor_token": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama",
+    "characters": [
+      {
+        "character_id": "char_napoleon_1815",
+        "name": "Napoleon Bonaparte",
+        "historical_role": "Emperor of the French",
+        "fixed_appearance_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama portrait of Napoleon Bonaparte in 1815, grey chasseur riding overcoat over dark green uniform, black bicorne hat, sculptural volumetric chiaroscuro and tactile oil-canvas texture",
+        "costume_continuity_notes": "Grey chasseur overcoat, black bicorne, Legion of Honour star",
+        "voice_profile_id": "voice_napoleon_1815",
+        "reference_sheet_path": "02_keyframes/assets/char_napoleon_1815_turnaround.png"
+      },
+      {
+        "character_id": "char_grouchy_1815",
+        "name": "Marshal Emmanuel de Grouchy",
+        "historical_role": "Commander of the Right Wing at Wavre",
+        "fixed_appearance_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama portrait of Marshal Grouchy in 1815, dark blue French marshal coat with gold oak-leaf embroidery, rain-slicked cloak, bicorne with white plume",
+        "costume_continuity_notes": "Gold-embroidered dark blue marshal coat and wet cavalry cloak",
+        "voice_profile_id": "voice_grouchy_1815",
+        "reference_sheet_path": "02_keyframes/assets/char_grouchy_1815_turnaround.png"
+      },
+      {
+        "character_id": "char_gerard_1815",
+        "name": "General Etienne Maurice Gerard",
+        "historical_role": "Commander of IV Corps under Grouchy",
+        "fixed_appearance_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama portrait of General Gerard in 1815, mud-splattered French general uniform, gold epaulets, urgent expression",
+        "costume_continuity_notes": "French IV Corps general coat with high collar",
+        "voice_profile_id": "voice_gerard_1815",
+        "reference_sheet_path": "02_keyframes/assets/char_gerard_1815_turnaround.png"
+      },
+      {
+        "character_id": "char_ney",
+        "name": "Marshal Michel Ney",
+        "historical_role": "French Field Commander",
+        "fixed_appearance_prompt": "Luminescent Chiaroscuro historical portrait of Marshal Michel Ney in 1815 French uniform",
+        "costume_continuity_notes": "Gold-braided marshal coat with mud-splattered sash",
+        "voice_profile_id": "voice_ney",
+        "reference_sheet_path": "02_keyframes/assets/char_ney_turnaround.png"
+      },
+      {
+        "character_id": "char_wellington",
+        "name": "Duke of Wellington",
+        "historical_role": "Allied Commander",
+        "fixed_appearance_prompt": "Luminescent Chiaroscuro historical portrait of the Duke of Wellington on Mont-Saint-Jean ridge",
+        "costume_continuity_notes": "Dark blue frock coat and low-crowned cocked hat",
+        "voice_profile_id": "voice_wellington",
+        "reference_sheet_path": "02_keyframes/assets/char_wellington_turnaround.png"
+      }
+    ],
+    "locations": [
+      {
+        "location_id": "loc_caillou_command_tent",
+        "name": "La Belle Alliance & Caillou Field HQ",
+        "era_and_geography": "South of Mont-Saint-Jean Ridge, Belgium, June 18, 1815",
+        "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of Napoleon's field command post at La Belle Alliance, oak campaign table with maps, muddy road, cannon smoke on horizon",
+        "lighting_palette": "Cold overcast slate sky with warm lantern light on map table",
+        "anchor_image_path": "02_keyframes/assets/loc_caillou_command_tent_anchor.png"
+      },
+      {
+        "location_id": "loc_wavre_crossroads_mud",
+        "name": "Wavre Crossroads & Lasne River Bridge",
+        "era_and_geography": "15 miles east of Waterloo, Belgium, June 18, 1815",
+        "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of sunken muddy crossroads at Wavre leading to wooden Lasne river bridge, rain puddles, rutted wheel tracks",
+        "lighting_palette": "Rain-soaked silver-grey midday light with dark mud shadows",
+        "anchor_image_path": "02_keyframes/assets/loc_wavre_crossroads_mud_anchor.png"
+      },
+      {
+        "location_id": "loc_waterloo_ridge",
+        "name": "Mont-Saint-Jean Ridge",
+        "era_and_geography": "Waterloo Battlefield, Belgium, June 18, 1815",
+        "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of Mont-Saint-Jean ridge, trampled rye fields, drifting black-powder smoke, sunken Ohain lane crest",
+        "lighting_palette": "Stormy slate grey transitioning to amber dusk",
+        "anchor_image_path": "02_keyframes/assets/loc_waterloo_ridge_anchor.png"
+      }
+    ],
+    "props": [
+      {
+        "prop_id": "prop_brass_spyglass",
+        "name": "Imperial Brass Spyglass",
+        "fixed_prop_prompt": "Engraved nineteenth-century telescoping brass field spyglass",
+        "anchor_image_path": "02_keyframes/assets/prop_brass_spyglass_anchor.png"
+      },
+      {
+        "prop_id": "prop_imperial_eagle_standard",
+        "name": "French Imperial Eagle Standard",
+        "fixed_prop_prompt": "Gilded bronze French Imperial Eagle atop tricolor regiment banner",
+        "anchor_image_path": "02_keyframes/assets/prop_imperial_eagle_standard_anchor.png"
+      }
+    ]
+  },
+  "phases": [
+    {
+      "phase_id": "Z2",
+      "title": "The Point of Divergence",
+      "target_window": "2:00-3:00",
+      "segment_ids": [
+        "S04"
+      ],
+      "narrative_objective": "Dramatize Grouchy's westward march from Wavre and the collapse of Wellington's center."
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "S04",
+      "phase_id": "Z2",
+      "title": "Marching to the Sound of the Guns",
+      "narrative_purpose": "Show Grouchy intercepting the Prussians at the Lasne bridges and Napoleon launching the Old Guard.",
+      "target_duration_seconds": 60.0,
+      "factual_status": "divergence_point",
+      "cause_from_segment_id": "S03",
+      "effect_to_segment_id": "S05",
+      "segment_mode": "played_scene",
+      "why_a_scene": "Shows the high-stakes dawn confrontation at La Belle Alliance where Marshal Ney presses Napoleon to unleash the grand battery and heavy cuirassiers immediately while the chalk ground is dry.",
+      "scene": {
+        "place": "La Belle Alliance forward command ridge",
+        "present": [
+          "char_napoleon_1815",
+          "char_ney"
+        ],
+        "pov": "char_ney",
+        "want": "Open the grand battery and launch the cuirassiers at 6:00 AM while the ground is firm",
+        "obstacle_want": "Hold the reserve cavalry until Wellington exposes his center",
+        "value": "tactical_initiative",
+        "open_charge": "-",
+        "close_charge": "+",
+        "turn": "Napoleon sees Wellington center unreinforced and orders Ney to sound the general charge",
+        "exit": "Ney spurs his horse down the ridge to lead the heavy cuirassiers",
+        "surface_topic": "Whether the frost-hardened chalk can support an immediate dawn assault",
+        "real_subject": "Gambling the entire French Empire on a four-hour window before Prussia arrives"
+      }
+    }
+  ],
+  "audio_lines": [
+    {
+      "line_id": "S04_L001",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "What if Napoleon marched at dawn?",
+      "register_type": "verified_historical_fact",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 2.5,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L002",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "June eighteenth, eighteen fifteen: sodden black mud traps seventy-two thousand French troops south of Mont-Saint-Jean while artillery caissons sink axle-deep.",
+      "register_type": "verified_historical_fact",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 4.0,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L003",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "One downpour rewrote European history, forcing the Emperor to delay his grand battery barrage for four fatal hours while Prussian columns closed in from Wavre.",
+      "register_type": "plausible_counterfactual_inference",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 6.5,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L004",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "Disciplined British squares lock bayonets in silence along the reverse slope.",
+      "register_type": "plausible_counterfactual_inference",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 3.5,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L005",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "urgent battlefield command",
+      "text": "In our counterfactual divergence, frost-hardened chalk soil holds firm beneath the French cannon wheels at six in the morning before a single Prussian scout crosses the Lasne valley.",
+      "register_type": "dramatized_in_scene_speech",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 7.0,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L006",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "Eighty brass twelve-pounders roar at once.",
+      "register_type": "plausible_counterfactual_inference",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 3.0,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L007",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "Dense columns of dark-blue infantry surge past the orchard walls of Hougoumont, driving Wellington's forward riflemen back toward the sunken ridge in swirling cannon smoke.",
+      "register_type": "plausible_counterfactual_inference",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 5.5,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L008",
+      "segment_id": "S04",
+      "speaker_type": "character",
+      "speaker_id": "char_ney",
+      "addressee_id": "char_napoleon_1815",
+      "delivery_direction": "urgent battlefield command",
+      "text": "The chalk beneath the wheels is firm, Sire! Let the batteries open now before their center locks the ridge!",
+      "register_type": "dramatized_in_scene_speech",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 6.5,
+      "requires_visible_lipsync": false,
+      "intent": "challenge"
+    },
+    {
+      "line_id": "S04_L009",
+      "segment_id": "S04",
+      "speaker_type": "character",
+      "speaker_id": "char_napoleon_1815",
+      "addressee_id": "char_ney",
+      "delivery_direction": "commanding imperial authority",
+      "text": "Their center wavers, Marshal. Unleash the heavy cuirassiers now!",
+      "register_type": "dramatized_in_scene_speech",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 3.5,
+      "requires_visible_lipsync": false,
+      "intent": "command"
+    },
+    {
+      "line_id": "S04_L010",
+      "segment_id": "S04",
+      "speaker_type": "character",
+      "speaker_id": "char_ney",
+      "addressee_id": "char_napoleon_1815",
+      "delivery_direction": "fierce decisive resolve",
+      "text": "Sound the general charge—we break Mont-Saint-Jean before Bülow reaches the woods!",
+      "register_type": "dramatized_in_scene_speech",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 5.0,
+      "requires_visible_lipsync": false,
+      "intent": "turn"
+    },
+    {
+      "line_id": "S04_L011",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "Ney's heavy cuirassiers thunder up the unscathed slope three hours ahead of schedule, shattering the allied center before a single Prussian brigade can emerge from the eastern woods.",
+      "register_type": "plausible_counterfactual_inference",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 7.5,
+      "requires_visible_lipsync": false
+    },
+    {
+      "line_id": "S04_L012",
+      "segment_id": "S04",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "addressee_id": null,
+      "delivery_direction": "measured documentary pacing",
+      "text": "By noon, Brussels falls—yet can a bankrupt Paris sustain an empire reborn in blood?",
+      "register_type": "plausible_counterfactual_inference",
+      "citation_ids": [
+        "CITE-01",
+        "CITE-04"
+      ],
+      "estimated_duration_seconds": 5.5,
+      "requires_visible_lipsync": false
+    }
+  ],
+  "shots": [
+    {
+      "shot_id": "S04_SH001",
+      "segment_id": "S04",
+      "target_duration_seconds": 2.5,
+      "narrative_purpose": "Establish the dawn divergence question on the battlefield ridge",
+      "visual_type": "composed_illustration",
+      "generation_mode": "STILL_25D",
+      "location_id": "loc_waterloo_ridge",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L001"
+      ],
+      "action_start_state": "Dew drips from bronze cannon muzzles on the dark ridge",
+      "action_end_state": "Golden-amber sunrise pierces the wet mist across the valley",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Rain sweeps across sodden Mont-Saint-Jean ridge at dawn",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Storm clouds parting over the rain-soaked ridge of Waterloo at daybreak, brass cannon barrels glinting in cold slate light, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Dew drips from bronze cannon muzzles on the dark ridge; then golden-amber sunrise pierces the wet mist across the valley.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "dolly_in"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH002",
+      "segment_id": "S04",
+      "target_duration_seconds": 4.0,
+      "narrative_purpose": "Map the geographical trap between Wellington's ridge and Bülow's march",
+      "visual_type": "map_visualization",
+      "generation_mode": "MAP_25D",
+      "location_id": "loc_waterloo_ridge",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L002"
+      ],
+      "action_start_state": "Amber lantern light sweeps across the carved ridge of Mont-Saint-Jean",
+      "action_end_state": "Crimson cavalry markers advance toward the allied line on the relief map",
+      "camera_spec": {
+        "shot_size": "top_down_map",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "1815 campaign map of Belgium showing Waterloo, Wavre, and the 15-mile Lasne gap",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH001"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down war-table relief map in hammered copper and liquid gold showing French corps massed south of Mont-Saint-Jean and Prussian arrows at Wavre, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Amber lantern light sweeps across the carved ridge of Mont-Saint-Jean; then crimson cavalry markers advance toward the allied line on the relief map.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "zoom_focus"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH003",
+      "segment_id": "S04",
+      "target_duration_seconds": 6.5,
+      "narrative_purpose": "Show the physical artillery bottleneck that decided the morning clock",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_wavre_crossroads_mud",
+      "character_ids": [
+        "char_grouchy_1815"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L003"
+      ],
+      "action_start_state": "Gunners heave on muddy spoked wheels in deep chiaroscuro shadow",
+      "action_end_state": "The heavy twelve-pounder rolls onto firm chalk ground at the crest",
+      "camera_spec": {
+        "shot_size": "medium_wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Marshal Grouchy on horseback at muddy Wavre crossroads as cannon smoke billows in the west",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH002"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Artillery horses straining against heavy wooden caissons along the sunken muddy road near La Belle Alliance under towering thunderheads, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Gunners heave on muddy spoked wheels in deep chiaroscuro shadow; then the heavy twelve-pounder rolls onto firm chalk ground at the crest.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH004",
+      "segment_id": "S04",
+      "target_duration_seconds": 3.5,
+      "narrative_purpose": "Dramatize the counterfactual dawn command decision at headquarters",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_wavre_crossroads_mud",
+      "character_ids": [
+        "char_grouchy_1815",
+        "char_gerard_1815"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L004"
+      ],
+      "action_start_state": "Ney slams his spyglass onto the candlelit field table",
+      "action_end_state": "Napoleon gives the dawn attack signal as couriers sprint into the mist",
+      "camera_spec": {
+        "shot_size": "over_the_shoulder",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "General Gerard rides beside Grouchy with arm lowered in the rain",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH003"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": "Bridges Gerard riding up to pointing west toward Mont-Saint-Jean cannon smoke."
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Marshal Ney in gold-braided dark-blue coat leaning over the field table at La Belle Alliance, pointing his brass spyglass toward the allied ridge, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Napoleon raising his gloved hand beside the unfolded parchment map as aides-de-camp leap toward their saddled horses, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Ney slams his spyglass onto the candlelit field table; then napoleon gives the dawn attack signal as couriers sprint into the mist.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH005",
+      "segment_id": "S04",
+      "target_duration_seconds": 7.0,
+      "narrative_purpose": "Show the counterfactual 6:00 AM grand battery bombardment",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_wavre_crossroads_mud",
+      "character_ids": [
+        "char_grouchy_1815",
+        "char_gerard_1815"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L005"
+      ],
+      "action_start_state": "Artillerymen lower glowing linstocks toward the touchholes",
+      "action_end_state": "A rolling wall of orange flame and grey powder smoke erupts down the line",
+      "camera_spec": {
+        "shot_size": "medium_close_up",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 225,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Reverse over-the-shoulder onto Grouchy's weathered face gripping wet leather reins",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH004"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Long row of French twelve-pounder brass cannons aligned wheel-to-wheel on dry chalk turf, gunners holding lit linstocks in golden morning shafts, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Artillerymen lower glowing linstocks toward the touchholes; then a rolling wall of orange flame and grey powder smoke erupts down the line.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH006",
+      "segment_id": "S04",
+      "target_duration_seconds": 3.0,
+      "narrative_purpose": "Capture the rapid collapse of Wellington's right-flank bastion",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_wavre_crossroads_mud",
+      "character_ids": [
+        "char_grouchy_1815"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L006"
+      ],
+      "action_start_state": "Heavy iron hinges groan under the impact of a timber battering ram",
+      "action_end_state": "Splintered oak doors burst inward as French infantry flood the courtyard",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "high_angle_30",
+        "horizontal_azimuth_deg": 90,
+        "camera_move": "pan_left",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Grouchy's cavalry column halted at the muddy Wavre fork facing north",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH005"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": "Bridges cavalry column from halted north-facing formation to wheeling west across the mud road."
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Close-up of shattered stone courtyard gates at Hougoumont farm wreathed in drifting musket smoke and falling oak leaves, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. French grenadiers in tall bearskin shakos charging through the splintered wooden archway with fixed bayonets, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Heavy iron hinges groan under the impact of a timber battering ram; then splintered oak doors burst inward as french infantry flood the courtyard.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH007",
+      "segment_id": "S04",
+      "target_duration_seconds": 5.5,
+      "narrative_purpose": "Illustrate the coordinated infantry pressure across the central valley",
+      "visual_type": "composed_illustration",
+      "generation_mode": "STILL_25D",
+      "location_id": "loc_wavre_crossroads_mud",
+      "character_ids": [
+        "char_grouchy_1815"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S04_L007"
+      ],
+      "action_start_state": "Regimental eagles catch the amber light above the advancing bayonets",
+      "action_end_state": "Smoke billows across the foreground as the columns reach the sunken lane",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "pan_right",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "French dragoons and cannon unlimbered across the narrow wooden Lasne river bridge blocking Prussian scouts",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH006"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Layered chiaroscuro tableau of French infantry columns advancing in echelon across trampling wheat fields toward the allied ridge, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Regimental eagles catch the amber light above the advancing bayonets; then smoke billows across the foreground as the columns reach the sunken lane.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "pan_horizontal"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH008",
+      "segment_id": "S04",
+      "target_duration_seconds": 6.5,
+      "narrative_purpose": "Show Wellington's desperate reverse-slope defensive discipline",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_caillou_command_tent",
+      "character_ids": [
+        "char_napoleon_1815"
+      ],
+      "prop_ids": [
+        "prop_brass_spyglass"
+      ],
+      "audio_line_ids": [
+        "S04_L008"
+      ],
+      "action_start_state": "Wellington gestures sharply with his cocked hat along the ridge line",
+      "action_end_state": "Two thousand steel bayonets lock into a bristling hedge of iron",
+      "camera_spec": {
+        "shot_size": "medium_close_up",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 315,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Napoleon stands outside La Belle Alliance holding brass spyglass raised to his right eye",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH007"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": "Bridges spyglass raised pose to lowered command pose as Napoleon spots French tricolors."
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Duke of Wellington on his chestnut horse Copenhagen along the reverse slope of Mont-Saint-Jean, calm amid whistling roundshot, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. British redcoat infantry kneeling into four-rank hollow squares along the bruised grass crest, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Wellington gestures sharply with his cocked hat along the ridge line; then two thousand steel bayonets lock into a bristling hedge of iron.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH009",
+      "segment_id": "S04",
+      "target_duration_seconds": 3.5,
+      "narrative_purpose": "Hold on the claustrophobic human tension inside the British square",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_caillou_command_tent",
+      "character_ids": [
+        "char_napoleon_1815"
+      ],
+      "prop_ids": [
+        "prop_brass_spyglass"
+      ],
+      "audio_line_ids": [
+        "S04_L009"
+      ],
+      "action_start_state": "Soldiers thumb back steel flintlock hammers in unison",
+      "action_end_state": "Sunlight glints across the angled wall of fixed bayonets",
+      "camera_spec": {
+        "shot_size": "medium",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Napoleon stands beside the campaign table at headquarters facing Mont-Saint-Jean ridge",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH008"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Layered oil-canvas study of kneeling redcoat infantrymen gripping flintlock muskets, sweat and black powder staining their faces, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Soldiers thumb back steel flintlock hammers in unison; then sunlight glints across the angled wall of fixed bayonets.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH010",
+      "segment_id": "S04",
+      "target_duration_seconds": 5.0,
+      "narrative_purpose": "Launch the decisive mid-morning heavy cavalry assault",
+      "visual_type": "composed_illustration",
+      "generation_mode": "STILL_25D",
+      "location_id": "loc_waterloo_ridge",
+      "character_ids": [
+        "char_napoleon_1815"
+      ],
+      "prop_ids": [
+        "prop_imperial_eagle_standard"
+      ],
+      "audio_line_ids": [
+        "S04_L010"
+      ],
+      "action_start_state": "Ney's sabre blade flashes upward against the dark smoke bank",
+      "action_end_state": "Rows of steel breastplates and plumed helmets surge forward at a gallop",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "worm_eye_-30",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Towering Luminescent Chiaroscuro tableau of Imperial Guard columns in bearskin caps advancing up Mont-Saint-Jean slope",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH009"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Marshal Ney on a rearing white charger drawing his curved sabre in front of three thousand armored French cuirassiers, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Ney's sabre blade flashes upward against the dark smoke bank; then rows of steel breastplates and plumed helmets surge forward at a gallop.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "dolly_in"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH011",
+      "segment_id": "S04",
+      "target_duration_seconds": 7.5,
+      "narrative_purpose": "Deliver the counterfactual climax as the allied center breaks before Prussian arrival",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_waterloo_ridge",
+      "character_ids": [],
+      "prop_ids": [
+        "prop_imperial_eagle_standard"
+      ],
+      "audio_line_ids": [
+        "S04_L011"
+      ],
+      "action_start_state": "Hooves churn the dry turf as cavalrymen level their long straight sabres",
+      "action_end_state": "The cavalry wedge crashes through the smoke-shrouded allied artillery batteries",
+      "camera_spec": {
+        "shot_size": "medium_wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "French Imperial Eagle standard planted atop shattered Allied breastworks in drifting smoke",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH010"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Massed French cuirassiers in gleaming steel breastplates thundering up the firm slope of Mont-Saint-Jean through drifting cannon smoke, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Hooves churn the dry turf as cavalrymen level their long straight sabres; then the cavalry wedge crashes through the smoke-shrouded allied artillery batteries.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut"
+    },
+    {
+      "shot_id": "S04_SH012",
+      "segment_id": "S04",
+      "target_duration_seconds": 5.5,
+      "narrative_purpose": "Close on the cliffhanger question of whether a victorious France can survive the peace",
+      "visual_type": "composed_illustration",
+      "generation_mode": "STILL_25D",
+      "location_id": "loc_waterloo_ridge",
+      "character_ids": [
+        "char_napoleon_1815"
+      ],
+      "prop_ids": [
+        "prop_brass_spyglass"
+      ],
+      "audio_line_ids": [
+        "S04_L012"
+      ],
+      "action_start_state": "Smoke drifts past the silent stone guildhalls of Brussels",
+      "action_end_state": "A French tricolor banner rises in the amber light at the end of the avenue",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 180,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Tactile foreground detail with sculptural volumetric rim light",
+        "midground": "Dusk over the silent Waterloo ridge with Napoleon's silhouette on horseback overlooking the Brussels road",
+        "background": "1815 Waterloo campaign horizon under rain clouds",
+        "screen_direction_notes": "180-degree axis preserved across adjacent cuts"
+      },
+      "lighting_and_time": "Overcast June 1815 storm light with warm muzzle-flash accents",
+      "continuity_refs": {
+        "reuse_location_anchor": false,
+        "inherit_from_previous_shot_id": "S04_SH011"
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Shadowed Brussels cobble square at noon with abandoned allied supply wagons and a lone tattered coalition standard fluttering in the wind, volumetric amber-gold light cutting through deep slate shadow, tactile oil-canvas grain.",
+        "end_frame_prompt": null,
+        "negative_prompt": "comic book outlines, cartoon cel-shading, anime, plastic 3D CGI sheen, flat vector map, extra fingers, malformed hands, modern clothing, watermark, subtitles, text banner, blurry faces"
+      },
+      "video_prompt": {
+        "motion_prompt": "Smoke drifts past the silent stone guildhalls of Brussels; then a french tricolor banner rises in the amber light at the end of the avenue.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "dolly_out"
+      },
+      "selective_control": null,
+      "transition_out": "fade_to_black"
+    }
+  ]
+}

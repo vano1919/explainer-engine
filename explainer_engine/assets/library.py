@@ -208,7 +208,9 @@ def make_record(asset_id: str, kind: str, file: Path | str, *, tags: list[str], 
                 made_with: dict | None = None, licence: dict | None = None, parent: str | None = None, episode: str = "",
                 approval: dict | None = None, source: str = "", repo: Path | None = None, created: str | None = None,
                 deps: list | None = None, three_d: dict | None = None, external_path: str | None = None,
-                lib: dict | None = None) -> dict:
+                lib: dict | None = None, episode_scope: str | None = None, historical_period: str | None = None,
+                era_tags: list[str] | None = None, geographic_tags: list[str] | None = None,
+                domain_tags: list[str] | None = None, shared_ok: bool | None = None) -> dict:
     """One asset_library/2 record from a file on disk: the id is checked against its kind, the file hashed (and measured
     for a raster). ``deps`` are asset ids (their sha256 read from ``lib``) or {asset_id, sha256} pairs; a file over
     ``GIT_MAX_BYTES`` is stored externally under ``external_path`` (default ``vault_path``); the 3D kinds need ``three_d``."""
@@ -247,6 +249,18 @@ def make_record(asset_id: str, kind: str, file: Path | str, *, tags: list[str], 
         rec["three_d"] = td
     if path.suffix.lower() in RASTER:
         rec["width"], rec["height"] = _size(path)
+    if episode_scope is not None:
+        rec["episode_scope"] = episode_scope
+    if historical_period is not None:
+        rec["historical_period"] = historical_period
+    if era_tags is not None:
+        rec["era_tags"] = [str(x) for x in era_tags]
+    if geographic_tags is not None:
+        rec["geographic_tags"] = [str(x) for x in geographic_tags]
+    if domain_tags is not None:
+        rec["domain_tags"] = [str(x) for x in domain_tags]
+    if shared_ok is not None:
+        rec["shared_ok"] = bool(shared_ok)
     return rec
 
 
@@ -287,7 +301,8 @@ def register(rec: dict, *, path: Path | None = None, lib: dict | None = None, re
 
 
 def find(*, tags: list[str] | None = None, kind: str | None = None, bible_version: str | None = None, usable: bool = True,
-         skeleton_id: str | None = None, rig_profile: str | None = None, lib: dict | None = None,
+         skeleton_id: str | None = None, rig_profile: str | None = None, episode_scope: str | None = None,
+         historical_period: str | None = None, allow_shared: bool = True, lib: dict | None = None,
          path: Path | None = None) -> list[dict]:
     """Records having ALL the tags (and the kind, the bible version, the skeleton and rig profile of their ``three_d``);
     ``usable`` hides rejected and superseded ones. ``find(kind="animation", skeleton_id=...)`` is the clips that play on
@@ -309,7 +324,34 @@ def find(*, tags: list[str] | None = None, kind: str | None = None, bible_versio
             continue
         if usable and i["approval"]["status"] in ("rejected", "superseded"):
             continue
+        if episode_scope:
+            item_ep = i.get("episode_scope") or (i.get("origin") or {}).get("episode") or ""
+            shared = bool(i.get("shared_ok", False))
+            if item_ep != episode_scope and not (allow_shared and shared and item_ep in ("", "shared", "global_style")):
+                continue
+        if historical_period:
+            item_era = str(i.get("historical_period") or "").lower()
+            item_eras = {str(t).lower() for t in (i.get("era_tags") or [])}
+            if item_era:
+                item_eras.add(item_era)
+            if item_eras and historical_period.lower() not in item_eras:
+                continue
         out.append(i)
+    return out
+
+
+def find_for_episode(context, *, tags: list[str] | None = None, kind: str | None = None, usable: bool = True,
+                     lib: dict | None = None, path: Path | None = None) -> list[dict]:
+    """Return only library records that pass strict EpisodeContext isolation and era/semantic compatibility."""
+    from explainer_engine.episode.context import validate_asset_compatibility
+    candidates = find(tags=tags, kind=kind, usable=usable, lib=lib, path=path)
+    out = []
+    for item in candidates:
+        meta = dict(item)
+        meta.setdefault("episode_scope", item.get("episode_scope") or (item.get("origin") or {}).get("episode") or "")
+        ok, _ = validate_asset_compatibility(context, meta)
+        if ok:
+            out.append(item)
     return out
 
 

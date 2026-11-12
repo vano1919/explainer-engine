@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/episode_manifest.schema.json",
+  "title": "EpisodeManifest",
+  "description": "Schema for an isolated, self-contained Episode-First production workspace (episodes/<episode_id>/episode.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "episode_id",
+    "slug",
+    "title",
+    "historical_period",
+    "geographic_scope",
+    "canonical_characters",
+    "canonical_locations",
+    "target_duration_s",
+    "visual_style_profile",
+    "map_style_profile",
+    "audio_profile",
+    "asset_sources",
+    "allowed_era_tags",
+    "forbidden_era_tags",
+    "created_at",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "episode_manifest/1"
+    },
+    "episode_id": {
+      "type": "string",
+      "pattern": "^ep_[a-z0-9_]+$"
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 2
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5
+    },
+    "historical_period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["era_id", "label", "start_year", "end_year"],
+      "properties": {
+        "era_id": {
+          "type": "string",
+          "enum": [
+            "prehistoric_pleistocene",
+            "ancient_classical",
+            "medieval",
+            "early_modern",
+            "napoleonic_19th_century",
+            "modern_20th_century",
+            "contemporary_21st_century"
+          ]
+        },
+        "label": { "type": "string" },
+        "start_year": { "type": "integer" },
+        "end_year": { "type": "integer" }
+      }
+    },
+    "geographic_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regions", "primary_bbox", "key_coordinates"],
+      "properties": {
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "primary_bbox": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "number" }
+        },
+        "key_coordinates": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["lat", "lon", "label"],
+            "properties": {
+              "lat": { "type": "number" },
+              "lon": { "type": "number" },
+              "label": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "canonical_characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["character_id", "name", "role"],
+        "properties": {
+          "character_id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "voice_profile_id": { "type": "string" }
+        }
+      }
+    },
+    "canonical_locations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["location_id", "name", "era_and_geography"],
+        "properties": {
+          "location_id": { "type": "string" },
+          "name": { "type": "string" },
+          "era_and_geography": { "type": "string" }
+        }
+      }
+    },
+    "target_duration_s": {
+      "type": "number",
+      "minimum": 30.0,
+      "maximum": 3600.0
+    },
+    "demo_duration_s": {
+      "type": "number",
+      "minimum": 30.0,
+      "maximum": 300.0
+    },
+    "visual_style_profile": {
+      "type": "string",
+      "minLength": 3
+    },
+    "map_style_profile": {
+      "type": "string",
+      "minLength": 3
+    },
+    "audio_profile": {
+      "type": "object",
+      "required": ["narrator_voice_id", "sample_rate_hz", "channels", "target_lufs"],
+      "properties": {
+        "narrator_voice_id": { "type": "string" },
+        "sample_rate_hz": { "type": "integer", "const": 48000 },
+        "channels": { "type": "integer", "const": 2 },
+        "target_lufs": { "type": "number" }
+      }
+    },
+    "asset_sources": {
+      "type": "object",
+      "required": ["episode_assets_dir", "allow_shared_style_anchors", "strict_episode_isolation"],
+      "properties": {
+        "episode_assets_dir": { "type": "string" },
+        "allow_shared_style_anchors": { "type": "boolean" },
+        "strict_episode_isolation": { "type": "boolean", "const": true }
+      }
+    },
+    "allowed_era_tags": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "forbidden_era_tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "forbidden_semantic_tokens": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["initialized", "in_production", "qa_verified", "completed", "archived"]
+    }
+  }
+}

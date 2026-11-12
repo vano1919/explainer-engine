@@ -142,6 +142,8 @@ def _clauses(text: str) -> int:
 
 
 def check_shot(shot: dict, names: list[str] | None = None) -> list[dict]:
+    if 'shot_id' in shot and 'generation_mode' in shot:
+        return check_v4_shot(shot)
     sid = shot.get("id", "?")
     kind = shot.get("kind")
     prompt = str(shot.get("prompt", ""))
@@ -273,6 +275,307 @@ def check(shots: list[dict], names: list[str] | None = None) -> list[dict]:
                     "detail": f"{len(firsts)} different style sentences: one fixed style sentence in every shot"})
     return out
 
+
+
+
+VALID_CONTROL_MODALITIES = frozenset({"openpose", "depth", "canny", "camera_preset", "trajectory_ati_experimental"})
+
+
+def check_v4_shot(
+    shot: dict,
+    *,
+    style_anchor_token: str | None = None,
+    spoken_texts: list[str] | None = None,
+) -> list[dict]:
+    """Validate a production_script.schema.json v4.0 ShotSpec against Stage 2/3 prompt and conditioning guardrails (D-123)."""
+    sid = shot.get("shot_id", shot.get("id", "?"))
+    out: list[dict] = []
+
+    def add(rule: str, sev: str, detail: str) -> None:
+        out.append({"rule": rule, "severity": sev, "where": sid, "detail": detail})
+
+    gen_mode = shot.get("generation_mode")
+    visual_type = shot.get("visual_type")
+    kf = shot.get("keyframe_plan") or {}
+    img_p = shot.get("image_prompt") or {}
+    vid_p = shot.get("video_prompt") or {}
+    ctrl = shot.get("selective_control")
+
+    # 1. Single primary physical action guardrail
+    primary_actions = vid_p.get("primary_action_count")
+    if primary_actions != 1:
+        add("KP-V4-ACTION", "FAIL", f"primary_action_count is {primary_actions!r}; must be exactly 1 primary physical action per shot")
+
+    # 2. At most 1 camera move guardrail
+    cam_moves = vid_p.get("camera_move_count")
+    if cam_moves is None or not (0 <= int(cam_moves) <= 1):
+        add("KP-V4-CAMERA", "FAIL", f"camera_move_count is {cam_moves!r}; must be 0 or 1")
+    motion_prompt = str(vid_p.get("motion_prompt", ""))
+    detected_moves = {m.group(0).lower() for m in MOVES.finditer(motion_prompt)}
+    if len(detected_moves) > 1:
+        add("KP-V4-CAMERA", "FAIL", f"motion_prompt names multiple camera moves ({sorted(detected_moves)}); at most 1 move allowed")
+
+    # 3. Single control modality on WAN_CONTROL; null otherwise
+    if gen_mode == "WAN_CONTROL":
+        if not isinstance(ctrl, dict):
+            add("KP-V4-CONTROL", "FAIL", "generation_mode is WAN_CONTROL but selective_control is missing")
+        else:
+            mod = ctrl.get("control_modality")
+            if isinstance(mod, (list, tuple, set)) or mod not in VALID_CONTROL_MODALITIES:
+                add("KP-V4-CONTROL", "FAIL", f"WAN_CONTROL requires exactly 1 valid control_modality in {sorted(VALID_CONTROL_MODALITIES)}, got {mod!r}")
+            if not str(ctrl.get("escalation_reason", "")).strip():
+                add("KP-V4-CONTROL", "FAIL", "WAN_CONTROL requires a non-empty escalation_reason")
+    else:
+        if ctrl is not None:
+            add("KP-V4-CONTROL", "FAIL", f"selective_control must be null when generation_mode is {gen_mode!r}")
+
+    # 4. End-frame consistency (WAN_FLF2V vs WAN_I2V / STILL_25D / MAP_25D)
+    needs_end = kf.get("needs_end_frame")
+    end_reason = kf.get("end_frame_reason")
+    if gen_mode == "WAN_FLF2V":
+        if needs_end is not True:
+            add("KP-V4-ENDFRAME", "FAIL", "WAN_FLF2V requires keyframe_plan.needs_end_frame == True")
+        if not (isinstance(end_reason, str) and len(end_reason.strip()) >= 5):
+            add("KP-V4-ENDFRAME", "FAIL", "WAN_FLF2V requires a non-empty keyframe_plan.end_frame_reason")
+        if not (isinstance(img_p.get("end_frame_prompt"), str) and len(img_p["end_frame_prompt"].strip()) >= 10):
+            add("KP-V4-ENDFRAME", "FAIL", "WAN_FLF2V requires a non-empty image_prompt.end_frame_prompt")
+    else:
+        if needs_end is True:
+            add("KP-V4-ENDFRAME", "FAIL", f"keyframe_plan.needs_end_frame is True on {gen_mode!r}; only WAN_FLF2V uses an end frame")
+
+    # 5. Visual type vs generation_mode and layered collage parallax preset consistency
+    if visual_type == "composed_illustration":
+        if gen_mode not in ("COLLAGE_STILL", "STILL_25D"):
+            add("KP-V4-MODE", "FAIL", f"composed_illustration must use COLLAGE_STILL (or legacy STILL_25D), got {gen_mode!r}")
+        if not vid_p.get("parallax_preset"):
+            add("KP-V4-PARALLAX", "FAIL", f"{gen_mode} requires a non-null video_prompt.parallax_preset")
+    elif visual_type == "map_visualization":
+        if gen_mode not in ("TACTILE_MAP", "MAP_25D"):
+            add("KP-V4-MODE", "FAIL", f"map_visualization must use TACTILE_MAP (or legacy MAP_25D), got {gen_mode!r}")
+        if not vid_p.get("parallax_preset"):
+            add("KP-V4-PARALLAX", "FAIL", f"{gen_mode} requires a non-null video_prompt.parallax_preset")
+
+    # 6. Style anchor token check
+    start_prompt = str(img_p.get("start_frame_prompt", ""))
+    if style_anchor_token and style_anchor_token.lower() not in start_prompt.lower():
+        add("KP-V4-STYLE", "FAIL", f"start_frame_prompt is missing world_bible.style_anchor_token ({style_anchor_token!r})")
+
+    # 7. Ban spoken dialogue strings leaked into image_prompt or video_prompt
+    for field_name, prompt_text in (
+        ("image_prompt.start_frame_prompt", start_prompt),
+        ("image_prompt.end_frame_prompt", str(img_p.get("end_frame_prompt") or "")),
+        ("video_prompt.motion_prompt", motion_prompt),
+    ):
+        if not prompt_text:
+            continue
+        quotes = QUOTE.findall(prompt_text)
+        if quotes:
+            add("KP-V4-DIALOGUE-LEAK", "FAIL", f"{field_name} contains quoted dialogue {quotes[0]!r}; spoken lines belong in audio_lines only")
+        for line_txt in spoken_texts or []:
+            cleaned = line_txt.strip()
+            if len(cleaned) >= 12 and cleaned.lower() in prompt_text.lower():
+                add("KP-V4-DIALOGUE-LEAK", "FAIL", f"{field_name} leaks spoken audio_line text {cleaned[:40]!r}")
+
+    # 8. Anti-Loop-Boilerplate & Raw-ID Leak Gate (KP-NO-LOOP-BOILERPLATE)
+    boilerplate_patterns = (
+        "initial composition of",
+        "completed motion cadence",
+        "cinematic sequence at",
+        "historical tableau of",
+        "drive causal mechanism",
+        "escalate dramatic stakes",
+        "bold ink linework",
+        "2.5d ink chronicle",
+        "2.5d parallax",
+        "2d flat cartoon",
+        "anime comic book",
+        "flat vector illustration",
+    )
+    raw_id_regex = re.compile(r"\b(loc_[a-z0-9_]+|char_[a-z0-9_]+|prop_[a-z0-9_]+|S(0[1-9]|1[0-6])_SH[0-9]{3})\b")
+    sc_comp = shot.get("screen_composition") or {}
+    for field_name, text_val in (
+        ("image_prompt.start_frame_prompt", start_prompt),
+        ("image_prompt.end_frame_prompt", str(img_p.get("end_frame_prompt") or "")),
+        ("video_prompt.motion_prompt", motion_prompt),
+        ("action_start_state", str(shot.get("action_start_state") or "")),
+        ("action_end_state", str(shot.get("action_end_state") or "")),
+        ("narrative_purpose", str(shot.get("narrative_purpose") or "")),
+        ("screen_composition.foreground", str(sc_comp.get("foreground") or "")),
+        ("screen_composition.midground", str(sc_comp.get("midground") or "")),
+        ("screen_composition.background", str(sc_comp.get("background") or "")),
+    ):
+        if not text_val:
+            continue
+        low_val = text_val.lower()
+        for bp in boilerplate_patterns:
+            if bp in low_val:
+                add(
+                    "KP-NO-LOOP-BOILERPLATE",
+                    "FAIL",
+                    f"{field_name} contains robotic loop-generated boilerplate {bp!r}; write a concrete visual description of the scene",
+                )
+        m_id = raw_id_regex.search(text_val)
+        if m_id:
+            add(
+                "KP-NO-LOOP-BOILERPLATE",
+                "FAIL",
+                f"{field_name} leaks raw database identifier {m_id.group(1)!r} instead of concrete visual nouns",
+            )
+
+    return out
+
+
+def check_v4_script(doc: dict) -> list[dict]:
+    """Run v4.0 shot prompt lints, unique-scene checks (D-124), anti-metronome Accordion Pacing checks,
+    and anti-cookie-cutter segment template checks on production_script.json."""
+    import statistics as _stats
+    from collections import Counter as _Counter
+    from explainer_engine.scripting import story_lint
+
+    out: list[dict] = []
+    wb = doc.get("world_bible") or {}
+    style_token = wb.get("style_anchor_token")
+    audio_lines = doc.get("audio_lines", [])
+    spoken = [str(line.get("text", "")) for line in audio_lines if line.get("text")]
+    seen_start_prompts: dict[str, str] = {}
+    shots = doc.get("shots", [])
+    segments = doc.get("segments", [])
+
+    teaser_pairs = (
+        {(str(s.get("shot_id")), str(s.get("teaser_of"))) for s in shots if s.get("teaser_of")}
+        | {(str(s.get("teaser_of")), str(s.get("shot_id"))) for s in shots if s.get("teaser_of")}
+    )
+    for shot in shots:
+        out.extend(check_v4_shot(shot, style_anchor_token=style_token, spoken_texts=spoken))
+        sid = shot.get("shot_id", "?")
+        sp = " ".join(str((shot.get("image_prompt") or {}).get("start_frame_prompt") or "").lower().split())
+        if sp in seen_start_prompts and (str(sid), str(seen_start_prompts[sp])) not in teaser_pairs:
+            out.append({
+                "rule": "KP-V4-NO-DUPLICATE-PROMPT",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": f"Shot {sid} duplicates start_frame_prompt from {seen_start_prompts[sp]}; every shot must have a distinct scene prompt (no single-photo crop padding, D-124)"
+            })
+        elif sp and sp not in seen_start_prompts:
+            seen_start_prompts[sp] = sid
+
+    # 9. Anti-Metronome Shot Duration Gate (PV-NO-METRONOME-DURATIONS, BP-107 / Accordion Pacing)
+    if len(shots) >= 6:
+        shot_durs = [float(s.get("target_duration_seconds", 0.0)) for s in shots]
+        dur_stdev = _stats.pstdev(shot_durs)
+        if dur_stdev < 0.45:
+            out.append({
+                "rule": "PV-NO-METRONOME-DURATIONS",
+                "severity": "FAIL",
+                "where": "shots",
+                "detail": (
+                    f"Shot durations have robotic metronome uniformity (stdev={dur_stdev:.3f}s, mean={_stats.mean(shot_durs):.2f}s). "
+                    "Cinematography requires Accordion Pacing driven by spoken line length and dramatic tension (target stdev >= 0.65s, range 1.8s-7.5s)."
+                ),
+            })
+
+    # 10. Anti-Metronome Segment Duration & Shot-Count Gate (PV-NO-METRONOME-SEGMENTS, OR-15 / BP-75)
+    if len(segments) >= 4:
+        seg_durs = [float(seg.get("target_duration_seconds", 0.0)) for seg in segments]
+        seg_dur_stdev = _stats.pstdev(seg_durs)
+        shots_per_seg = [sum(1 for s in shots if s.get("segment_id") == seg.get("segment_id")) for seg in segments]
+        shots_count_stdev = _stats.pstdev(shots_per_seg)
+        if seg_dur_stdev < 3.0 and shots_count_stdev < 0.4:
+            out.append({
+                "rule": "PV-NO-METRONOME-SEGMENTS",
+                "severity": "FAIL",
+                "where": "segments",
+                "detail": (
+                    f"All {len(segments)} segments have robotic identical durations (stdev={seg_dur_stdev:.2f}s) "
+                    f"and shot counts (stdev={shots_count_stdev:.2f}). Chapters must vary organically with narrative acts "
+                    "(e.g. 35s cold open, 75s setup, 110s escalation, 50s crisis)."
+                ),
+            })
+
+    # 11. Anti-Cookie-Cutter Segment Mode Pattern Gate (PV-NO-COOKIE-CUTTER-SEGMENTS)
+    if len(segments) >= 4:
+        seg_patterns = []
+        for seg in segments:
+            seg_id = seg.get("segment_id")
+            modes = tuple(s.get("generation_mode") for s in shots if s.get("segment_id") == seg_id)
+            if len(modes) >= 4:
+                seg_patterns.append((seg_id, modes))
+        if len(seg_patterns) >= 4:
+            pattern_counts = _Counter(m for _, m in seg_patterns)
+            most_common_pat, most_common_cnt = pattern_counts.most_common(1)[0]
+            if most_common_cnt >= 3 or len(pattern_counts) <= len(seg_patterns) // 2:
+                out.append({
+                    "rule": "PV-NO-COOKIE-CUTTER-SEGMENTS",
+                    "severity": "FAIL",
+                    "where": "segments",
+                    "detail": (
+                        f"{most_common_cnt}/{len(seg_patterns)} segments repeat the exact same generation_mode sequence {list(most_common_pat)}. "
+                        "Visual routing must follow each scene's unique dramatic action, never a loop template."
+                    ),
+                })
+
+        # 12. Anti-Cookie-Cutter Dialogue Slot Gate (PV-NO-COOKIE-CUTTER-DIALOGUE)
+        char_slot_patterns = []
+        for seg in segments:
+            seg_id = seg.get("segment_id")
+            seg_lines = [l for l in audio_lines if l.get("segment_id") == seg_id]
+            if len(seg_lines) >= 4:
+                char_indices = tuple(i for i, l in enumerate(seg_lines) if l.get("speaker_type") == "character")
+                if char_indices:
+                    char_slot_patterns.append(char_indices)
+        if len(char_slot_patterns) >= 4:
+            slot_counts = _Counter(char_slot_patterns)
+            top_slot, top_cnt = slot_counts.most_common(1)[0]
+            if top_cnt >= 4 and top_cnt >= len(char_slot_patterns) * 0.65:
+                out.append({
+                    "rule": "PV-NO-COOKIE-CUTTER-DIALOGUE",
+                    "severity": "FAIL",
+                    "where": "audio_lines",
+                    "detail": (
+                        f"Character dialogue appears at the identical relative line indices {list(top_slot)} in {top_cnt}/{len(char_slot_patterns)} segments. "
+                        "Place character dialogue organically only where dramatic confrontation demands it."
+                    ),
+                })
+
+
+    # 13. Compelling Cinematic Hook Gate (YT-00-3SEC-KINETIC-HOOK, D-130 Creator Directive)
+    # The hook must deploy the strongest video/audio material conceptually: rapid grab (shot 0 <= 3.8s, shots 0+1 <= 9.0s),
+    # active visual motion or dramatic tension, and zero passive dead holds.
+    if len(shots) >= 2:
+        passive_hook_regex = re.compile(
+            r"\b(stands? still|sits? quietly|stares? blankly|nothing happens|dead silence|frozen pose)\b",
+            re.I,
+        )
+        sh0, sh1 = shots[0], shots[1]
+        d0 = float(sh0.get("target_duration_seconds", 0.0))
+        d1 = float(sh1.get("target_duration_seconds", 0.0))
+        for idx, h_sh in enumerate((sh0, sh1)):
+            h_sid = h_sh.get("shot_id", f"shot_{idx}")
+            h_text = " ".join([
+                str(h_sh.get("action_start_state") or ""),
+                str(h_sh.get("action_end_state") or ""),
+                str((h_sh.get("video_prompt") or {}).get("motion_prompt") or ""),
+            ])
+            if passive_hook_regex.search(h_text):
+                out.append({
+                    "rule": "YT-00-3SEC-KINETIC-HOOK",
+                    "severity": "FAIL",
+                    "where": h_sid,
+                    "detail": f"Opening hook shot {h_sid} contains passive dead action; opening requires compelling visual/dramatic motion.",
+                })
+        if d0 > 3.8 or (d0 + d1) > 9.0:
+            out.append({
+                "rule": "YT-00-3SEC-KINETIC-HOOK",
+                "severity": "FAIL",
+                "where": sh0.get("shot_id", "S01_SH001"),
+                "detail": (
+                    f"Opening 2 hook shots are too slow ({d0:.1f}s + {d1:.1f}s = {d0+d1:.1f}s); "
+                    "the opening requires rapid grab (shot 0 <= 3.8s, shots 0+1 <= 9.0s)."
+                ),
+            })
+
+    out.extend(story_lint.lint_v4(doc))
+    return out
 
 def main(argv: list[str]) -> int:
     data = json.loads(Path(argv[0]).read_text(encoding="utf-8"))

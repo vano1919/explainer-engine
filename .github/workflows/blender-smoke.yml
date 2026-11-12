@@ -7,28 +7,8 @@ name: Blender smoke
 # smoke: one rigged character (the free CC0 Quaternius packs, fetched by their sha256 from itch.io) walking under a camera rail,
 # with its blender_scene_manifest/1. Free: no pod, no paid call.
 
+# Manual only since v4.3 (2026-11-12, D-131): the Blender route is retired; run it by hand when its line is revisited.
 on:
-  push:
-    branches:
-      - "icw/**"
-      - "opus/ink-chronicle-**"
-    paths:
-      - "explainer_engine/blender/**"
-      - "explainer_engine/core/contracts.py"
-      - "explainer_engine/schemas/shot_spec.schema.json"
-      - "explainer_engine/schemas/blender_render_manifest.schema.json"
-      - "explainer_engine/schemas/render_checkpoint.schema.json"
-      - "config/cloud_pins.json"
-      - ".github/workflows/blender-smoke.yml"
-  pull_request:
-    paths:
-      - "explainer_engine/blender/**"
-      - "explainer_engine/core/contracts.py"
-      - "explainer_engine/schemas/shot_spec.schema.json"
-      - "explainer_engine/schemas/blender_render_manifest.schema.json"
-      - "explainer_engine/schemas/render_checkpoint.schema.json"
-      - "config/cloud_pins.json"
-      - ".github/workflows/blender-smoke.yml"
   workflow_dispatch:
 
 permissions:

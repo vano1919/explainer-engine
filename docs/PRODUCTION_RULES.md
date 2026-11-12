@@ -1,5 +1,9 @@
 # Production rules: how every Crossworld Theories video is made
 
+
+## 4-Stage Local Production Gates & Telemetry (D-123)
+> **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123:** Default preflight runs `explainer_engine/production/local_preflight.py` (`python -m explainer_engine.production --check-local`), verifying local ComfyUI reachability (`http://127.0.0.1:8188`), required custom nodes, local checkpoints in `config/local_models.json`, and Stage 2 keyframe approval (`keyframe_manifest.json`) before Stage 3 Wan 2.2 / DepthFlow rendering. All render attempts log empirical metrics to `render_telemetry.jsonl`.
+
 The channel-wide procedure. It holds no rule text of its own: each rule has one home (linked), and this page says **in which
 order they apply, what the creator has told us, and what enforces each one**. Topic-specific material (heroes, palette,
 claims, look) lives in the episode folder; everything here applies to every topic, history, science or fantasy crossover.

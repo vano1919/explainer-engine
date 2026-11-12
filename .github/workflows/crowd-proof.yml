@@ -7,6 +7,7 @@ name: Crowd proof (T-E)
 # GPU, no paid call. The CC0 assets are fetched from their source URLs and kept only at the registered sha256. CI timing is not a
 # cost input (Group 7): s/frame here only shows the method runs; the Mac and a pod measure cost.
 
+# Manual only since v4.3 (2026-11-12, D-131): the Blender route is retired; run it by hand when its line is revisited.
 on:
   workflow_dispatch:
     inputs:
@@ -25,15 +26,6 @@ on:
       look:
         description: "look id; empty = the composition's own (battle q1_c2_native_skin@E2, field v01_reference_soft3d)"
         default: ""
-  push:
-    branches:
-      - "claude/project-thread-u1fc5g"
-    paths:
-      - "explainer_engine/blender/crowd.py"
-      - "explainer_engine/blender/bpy/crowd_bake.py"
-      - "explainer_engine/blender/bpy/render_shot.py"
-      - ".github/workflows/crowd-proof.yml"
-
 permissions:
   contents: read
 

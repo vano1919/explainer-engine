@@ -136,6 +136,14 @@
     },
     "sha256": {
      "$ref": "#/$defs/sha256"
+    },
+    "episode_scope": {
+     "type": "string",
+     "minLength": 1
+    },
+    "historical_period": {
+     "type": "string",
+     "minLength": 1
     }
    }
   },
@@ -334,6 +342,55 @@
     },
     "params": {
      "type": "object"
+    },
+    "episode_scope": {
+     "type": "string",
+     "minLength": 1
+    },
+    "historical_period": {
+     "type": "string",
+     "minLength": 1
+    },
+    "era_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "geographic_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "domain_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "asset_selection_audit": {
+     "type": "object",
+     "properties": {
+      "candidate_assets_considered": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rejected_candidates": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "selected_asset_id": {
+       "type": "string"
+      },
+      "selection_reason": {
+       "type": "string"
+      }
+     }
     }
    },
    "required": [
@@ -762,6 +819,55 @@
      "type": "string",
      "minLength": 1,
      "description": "creator-readable justification; required on cycles_hero"
+    },
+    "episode_scope": {
+     "type": "string",
+     "minLength": 1
+    },
+    "historical_period": {
+     "type": "string",
+     "minLength": 1
+    },
+    "era_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "geographic_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "domain_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "asset_selection_audit": {
+     "type": "object",
+     "properties": {
+      "candidate_assets_considered": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rejected_candidates": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "selected_asset_id": {
+       "type": "string"
+      },
+      "selection_reason": {
+       "type": "string"
+      }
+     }
     }
    },
    "allOf": [
@@ -1247,6 +1353,55 @@
      "type": "string",
      "minLength": 1,
      "description": "creator-readable justification; required on cycles_hero"
+    },
+    "episode_scope": {
+     "type": "string",
+     "minLength": 1
+    },
+    "historical_period": {
+     "type": "string",
+     "minLength": 1
+    },
+    "era_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "geographic_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "domain_tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "asset_selection_audit": {
+     "type": "object",
+     "properties": {
+      "candidate_assets_considered": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "rejected_candidates": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "selected_asset_id": {
+       "type": "string"
+      },
+      "selection_reason": {
+       "type": "string"
+      }
+     }
     }
    },
    "allOf": [

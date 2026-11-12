@@ -5,6 +5,7 @@ name: World kits
 # review copies and the seconds per frame. The pieces come from the vault when a token is there, else they are rebuilt from the free
 # itch.io pack and the Poly Haven files and kept only at the registered sha256. Free: no pod, no paid call (D-114).
 
+# Manual only since v4.3 (2026-11-12, D-131): the Blender route is retired; run it by hand when its line is revisited.
 on:
   workflow_dispatch:
     inputs:
@@ -17,18 +18,6 @@ on:
       variants:
         description: "comma-separated look ids"
         default: "v01_reference_soft3d,B_light"
-  push:
-    branches:
-      - "wpq/**"
-      - "claude/project-thread-**"
-    paths:
-      - "explainer_engine/blender/world_kits.py"
-      - "explainer_engine/blender/world_kits.json"
-      - "explainer_engine/blender/world_layouts.json"
-      - "explainer_engine/blender/polyhaven.py"
-      - "explainer_engine/blender/bpy/render_shot.py"
-      - ".github/workflows/world-kits.yml"
-
 permissions:
   contents: read
 

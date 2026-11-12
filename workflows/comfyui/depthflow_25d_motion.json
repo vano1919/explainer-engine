@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "workflow_id": "depthflow_25d_motion_v1",
+    "stage": "stage3_parallax_25d",
+    "supported_modes": ["STILL_25D", "MAP_25D"],
+    "supported_presets": [
+      "dolly_in",
+      "dolly_out",
+      "orbital_left",
+      "orbital_right",
+      "pan_horizontal",
+      "pan_vertical",
+      "zoom_focus"
+    ],
+    "description": "Parameterized local ComfyUI API workflow for deterministic 2.5D parallax on composed illustrations (STILL_25D) and maps (MAP_25D) via Depth-Anything-V2 + ComfyUI-Depthflow-Nodes (D-123)."
+  },
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{start_image_path}}"
+    }
+  },
+  "2": {
+    "class_type": "DepthAnythingV2Preprocessor",
+    "inputs": {
+      "image": ["1", 0],
+      "ckpt_name": "depthanything/depth_anything_v2_vitb_fp16.safetensors",
+      "resolution": "{{height}}"
+    }
+  },
+  "3": {
+    "class_type": "DepthflowPresetDolly",
+    "inputs": {
+      "preset": "{{parallax_preset}}",
+      "intensity": 0.35
+    }
+  },
+  "4": {
+    "class_type": "DepthflowScene",
+    "inputs": {
+      "image": ["1", 0],
+      "depth_map": ["2", 0],
+      "motion": ["3", 0],
+      "num_frames": "{{num_frames}}",
+      "fps": "{{fps}}",
+      "width": "{{width}}",
+      "height": "{{height}}"
+    }
+  },
+  "5": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["4", 0],
+      "fps": "{{fps}}",
+      "filename_prefix": "{{output_prefix}}"
+    }
+  }
+}

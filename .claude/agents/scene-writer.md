@@ -67,3 +67,16 @@ A reported exchange counts as the scene's exchange (SC-05, BP-70, D-65, the crea
 at most two speakers reported in one line (BP-96). Frame every exchange (ST-14, BP-90, D-64): narrator setup (who talks, named before his first line, and what brings them there), the exchange, narrator conclusion (what came of it); a segment never ends or opens on a hero line, so two exchanges never touch. A bubble line, when the scene keeps one, is a key phrase within BP-84's cap.
 
 Before you hand a segment over: `python -m explainer_engine.scripting.register_lint <script>` reports 0 RG-01 (a word the AI register owns is a FAIL, BP-140), and `story_lint` shows no ST-20..ST-23 you cannot answer in one line (an and-then chain, a narrator repeating the scene, violence in the first seven seconds, a twist that takes too long to say).
+
+
+## v4.2 Played Dramatic Scene & Anti-Interruption Contract (Mandatory on /3 and v4.0.0)
+1. **Ban Isolated One-Line Character Interruptions (`SC-05`)**:
+   - Never drop an isolated 1-line character shout inside narrator exposition without a `scene` contract and a multi-turn response.
+   - If a segment is `narration_led`, keep it 100% narrator-voiced.
+2. **Complete `scene` Contract (`SC-01..SC-06`, `SC-10`)**:
+   - Every segment with character dialogue MUST define `scene: {place, present, pov, want, obstacle_want, value, open_charge, close_charge, turn, exit, surface_topic, real_subject}`.
+   - Characters in `present` must be co-present in the same physical `place`; `open_charge != close_charge`; `want != obstacle_want`.
+   - Play at least 2 contiguous character turns from at least 2 co-present characters without narrator interruption mid-exchange.
+3. **Narrator Hand-Off & Consequence Without Double-Exposition (`ST-14`, `ST-21`)**:
+   - Frame every played exchange with narrator setup before and narrator consequence after.
+   - Never repeat in narration what the adjacent character line just said (`ST-21`).

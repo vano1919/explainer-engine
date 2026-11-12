@@ -73,6 +73,28 @@ def _frames(t: float, fps: int) -> int:
 
 
 def time_script(doc: dict, words_doc: dict) -> dict:
+    if doc.get('schema_version') == '4.0.0':
+        fps = int(doc.get('fps', 24))
+        t_cur = 0.0
+        out_shots = []
+        for idx, s in enumerate(doc.get('shots', []), start=1):
+            dur = float(s['target_duration_seconds'])
+            f0, f1 = _frames(t_cur, fps), _frames(t_cur + dur, fps)
+            out_shots.append({
+                'seq': idx,
+                'id': s['shot_id'],
+                'segment': s['segment_id'],
+                'generation_mode': s['generation_mode'],
+                'start': round(t_cur, 3),
+                'end': round(t_cur + dur, 3),
+                'duration': round(dur, 3),
+                'start_frame': f0,
+                'end_frame': f1,
+                'frames': f1 - f0,
+                'transition': s['transition_out'],
+            })
+            t_cur += dur
+        return {'fps': fps, 'duration': round(t_cur, 3), 'frames': _frames(t_cur, fps), 'shots': out_shots, 'problems': []}
     fps = int(doc["episode"].get("fps", 30))
     words, duration = words_doc["words"], float(words_doc["duration"])
     toks = S.tokens(doc)

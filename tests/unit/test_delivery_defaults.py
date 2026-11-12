@@ -1,4 +1,4 @@
-"""BP-167 (house, the creator's word of 2026-10-30 16:13 UTC): the animated route's delivery defaults, one registry row, one reader,
+"""(v4.3 P0.4, 2026-11-12: the legacy contract /1../4 lives under $defs.LegacyProductionScriptV1ToV4 since the schema dispatches on schema_version.) BP-167 (house, the creator's word of 2026-10-30 16:13 UTC): the animated route's delivery defaults, one registry row, one reader,
 a test per default. The still-picture route and the production_script schema default are not changed (TECH_QUESTIONS Q-29..Q-31)."""
 
 from __future__ import annotations
@@ -48,6 +48,6 @@ def test_a_job_without_fps_gets_the_delivery_rate_and_a_named_fps_is_kept(tmp_pa
 
 def test_the_still_route_and_the_schema_default_are_unchanged():
     schema = json.loads((ROOT / "explainer_engine/schemas/production_script.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["episode"]["properties"]["fps"]["default"] == 30
+    assert schema["$defs"]["LegacyProductionScriptV1ToV4"]["properties"]["episode"]["properties"]["fps"]["default"] == 30
     timing = (ROOT / "explainer_engine/production/timing.py").read_text(encoding="utf-8")
     assert 'doc["episode"].get("fps", 30)' in timing

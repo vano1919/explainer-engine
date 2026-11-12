@@ -59,3 +59,10 @@ def test_the_creators_word_band_40_to_150_and_the_crowd_review_above_90():
     assert not SP.check(prompt(90), sub_category="S3")
     assert [f["severity"] for f in SP.check(prompt(151))] == ["FAIL"]
     assert "150 words" in dict(SP.ABSOLUTES)["A4"]
+
+
+def test_style_clash_rejects_oil_painting_and_other_media():
+    """Regression test (D-130 Item 7): ensure STYLE_CLASH in style_prompt.py catches 'oil painting' on Ink Chronicle prompts."""
+    assert "oil painting" in sp.STYLE_CLASH.pattern
+    res = sp.check(f"{T}, an oil painting of a soldier standing by a tent")
+    assert any(f["rule"] == "LT-66" and f["severity"] == "FAIL" and "oil painting" in f["detail"].lower() for f in res)

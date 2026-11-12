@@ -1,5 +1,9 @@
 # Orchestration: how an episode is run end to end, alone, with money and stops under control
 
+
+## 4-Stage Local Pipeline Orchestration & Preflight (D-123)
+> **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123:** Default orchestration executes the 4-stage local pipeline (`01_script` -> `02_keyframes` -> `03_video` -> `04_assembly`) gated by `explainer_engine/production/local_preflight.py` (`EXPLAINER_LOCAL_ONLY=1`, [LOCAL_COMFYUI_SETUP](LOCAL_COMFYUI_SETUP.md)) and empirical `render_telemetry.jsonl` logging. Cloud pods (`paid_preflight.py`) are disabled by default and require explicit `--allow-paid-cloud` opt-in.
+
 Canonical for the autonomous run of a whole episode (creator, 2026-10-16: "fully autonomous, phases, find mistakes early, a
 hard cap, a stop must never lose material"). The agent that follows it is `.claude/agents/orchestrator.md`; the code that
 enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of one video stay in

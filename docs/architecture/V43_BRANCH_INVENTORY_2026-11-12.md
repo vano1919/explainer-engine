@@ -44,3 +44,11 @@ a manifest). They stay in history; the working tree drops the two archives (repo
 `ep_toba_v4_2_demo_master.rar` sha256 `117756c8ecc774a42690df9cbc53939ee8b45d3ca72968466e3b0d51bcf74eef`,
 `explainer_engine_v4_2_canonical_reconciled.zip` sha256 `347130ca490dfabc5667d79abbd93d67575f4e3b7ae684ae0b72451ea7438004`
 (recoverable with `git show 68b99e8:GeminiNew/<name>`).
+
+## Media of the v4.3 archive (P0.4)
+
+The archive's media are on HF `vano1919/tmr-artifacts` (dataset), commit `b96593d4d5562ca9cabfa926f8a1319bf75d4719`, every sha256 checked after the upload: the Toba episode's 39 pictures, maps and references under `explainer-engine/episodes/ep_toba/` (list: `episodes/ep_toba/media_manifest.json`), and under `explainer-engine/v4_3_import_2026-11-12/`:
+
+- `explainer-engine/v4_3_import_2026-11-12/GeminiNew/ep_toba_v4_2_demo_master.rar` (6700018 bytes, sha256 `117756c8ecc774a42690df9cbc53939ee8b45d3ca72968466e3b0d51bcf74eef`)
+- `explainer-engine/v4_3_import_2026-11-12/GeminiNew/explainer_engine_v4_2_canonical_reconciled.zip` (7038280 bytes, sha256 `347130ca490dfabc5667d79abbd93d67575f4e3b7ae684ae0b72451ea7438004`)
+- `explainer-engine/v4_3_import_2026-11-12/docs/Explainer Engine Architecture Technical Analysis.docx` (103364 bytes, sha256 `cb847b4d8802f37c2b7e97caef4f26ef400ef30536a6991a11c28e2717d6cecf`)

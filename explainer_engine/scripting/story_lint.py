@@ -67,6 +67,8 @@ def _f(out, rule, where, detail, sev="REVIEW"):
 
 
 def lint(doc: dict) -> list[dict]:
+    if doc.get('schema_version') == '4.0.0':
+        return lint_v4(doc)
     out: list[dict] = []
     drama = doc.get("drama")
     segs = doc.get("segments", [])
@@ -440,6 +442,188 @@ def main(argv: list[str] | None = None) -> int:
     n_fail = sum(f["severity"] == "FAIL" for f in found)
     print(f"{n_fail} FAIL, {len(found) - n_fail} REVIEW")
     return 1 if n_fail else 0
+
+
+
+
+def lint_v4(doc: dict) -> list[dict]:
+    """Validate Z1-Z5 phases, S01-S16 causal chain links, KP-41 cold-open teaser payoffs,
+    ST-14 narrator setup/consequence framing, ST-21 anti-double-exposition, and narrator spine balance on a v4.0 production_script."""
+    out: list[dict] = []
+    phases = doc.get("phases") or []
+    segments = doc.get("segments") or []
+    audio_lines = doc.get("audio_lines") or []
+    shots = doc.get("shots") or []
+
+    phase_ids = [p.get("phase_id") for p in phases]
+    valid_phases = ["Z1", "Z2", "Z3", "Z4", "Z5"]
+    if not phases or any(pid not in valid_phases for pid in phase_ids):
+        _f(out, "ST-V4-PHASES", "phases", f"Invalid or empty phase_ids {phase_ids!r}; must be subset of Z1..Z5", "FAIL")
+
+    for idx, seg in enumerate(segments):
+        sid = seg.get("segment_id", f"seg_{idx}")
+        cause_id = seg.get("cause_from_segment_id")
+        effect_id = seg.get("effect_to_segment_id")
+        if idx > 0:
+            prev_sid = segments[idx - 1].get("segment_id")
+            if not cause_id or cause_id != prev_sid:
+                _f(
+                    out,
+                    "ST-V4-CAUSE",
+                    sid,
+                    f"Broken causal chain: segment {sid} has cause_from_segment_id={cause_id!r}, expected {prev_sid!r}",
+                    "FAIL",
+                )
+        if idx < len(segments) - 1:
+            next_sid = segments[idx + 1].get("segment_id")
+            if not effect_id or effect_id != next_sid:
+                _f(
+                    out,
+                    "ST-V4-CAUSE",
+                    sid,
+                    f"Broken causal chain: segment {sid} has effect_to_segment_id={effect_id!r}, expected {next_sid!r}",
+                    "FAIL",
+                )
+        if AND_THEN.match(str(seg.get("narrative_purpose", ""))):
+            _f(out, "ST-02", sid, "narrative_purpose opens with an 'and then' join; state the causal mechanism", "FAIL")
+
+    # KP-41: Future-Scene Cold Open Teaser Payoff & Trim Validation
+    shot_idx_by_id = {s.get("shot_id"): i for i, s in enumerate(shots) if s.get("shot_id")}
+    shot_by_id = {s.get("shot_id"): s for s in shots if s.get("shot_id")}
+    for i, sh in enumerate(shots):
+        payoff_id = sh.get("teaser_of")
+        if payoff_id is None:
+            continue
+        sid = sh.get("shot_id", f"shot_{i}")
+        if payoff_id not in shot_by_id:
+            _f(out, "KP-41", sid, f"teaser_of references unknown payoff shot {payoff_id!r}", "FAIL")
+            continue
+        p_idx = shot_idx_by_id[payoff_id]
+        payoff = shot_by_id[payoff_id]
+        if p_idx <= i:
+            _f(out, "KP-41", sid, f"teaser_of {payoff_id!r} must point to a later payoff shot (payoff index {p_idx} <= teaser index {i})", "FAIL")
+        if payoff.get("teaser_of"):
+            _f(out, "KP-41", sid, f"teaser_of target {payoff_id!r} is itself a teaser shot", "FAIL")
+        t_dur = float(sh.get("target_duration_seconds", 0.0))
+        p_dur = float(payoff.get("target_duration_seconds", 0.0))
+        if t_dur > p_dur + 1e-6:
+            _f(out, "KP-41", sid, f"teaser shot {sid} ({t_dur:.2f}s) is longer than its payoff shot {payoff_id} ({p_dur:.2f}s)", "FAIL")
+        t_trim = sh.get("teaser_trim")
+        if t_trim is not None:
+            if not (isinstance(t_trim, list) and len(t_trim) == 2 and all(isinstance(x, (int, float)) for x in t_trim)):
+                _f(out, "KP-41", sid, f"teaser_trim on {sid} must be [start_seconds, end_seconds]", "FAIL")
+            else:
+                t0, t1 = float(t_trim[0]), float(t_trim[1])
+                if t0 < 0.0 or t1 <= t0 or t1 > p_dur + 1e-6 or (t1 - t0) > t_dur + 1e-6:
+                    _f(
+                        out,
+                        "KP-41",
+                        sid,
+                        f"teaser_trim [{t0:.2f}, {t1:.2f}] on {sid} ({t_dur:.2f}s) exceeds payoff {payoff_id} ({p_dur:.2f}s)",
+                        "FAIL",
+                    )
+
+    # ST-14 (Narrator Setup & Consequence Framing) and ST-21 (No Narrator Double-Exposition)
+    for seg in segments:
+        sid = seg.get("segment_id", "?")
+        seg_lines = [l for l in audio_lines if l.get("segment_id") == sid]
+        char_idxs = [k for k, l in enumerate(seg_lines) if l.get("speaker_type") == "character"]
+        if char_idxs:
+            first_c, last_c = char_idxs[0], char_idxs[-1]
+            if first_c == 0:
+                _f(
+                    out,
+                    "ST-14",
+                    seg_lines[0].get("line_id", sid),
+                    f"Segment {sid} opens directly on character dialogue without narrator setup/hand-off (BP-90)",
+                    "FAIL",
+                )
+            if last_c == len(seg_lines) - 1:
+                _f(
+                    out,
+                    "ST-14",
+                    seg_lines[-1].get("line_id", sid),
+                    f"Segment {sid} ends on character dialogue without narrator consequence framing (BP-90)",
+                    "FAIL",
+                )
+        for k, ln in enumerate(seg_lines):
+            if ln.get("speaker_type") == "character":
+                continue
+            said = content_words(str(ln.get("text", "")))
+            near = [
+                seg_lines[j]
+                for j in (k - 1, k + 1)
+                if 0 <= j < len(seg_lines) and seg_lines[j].get("speaker_type") == "character"
+            ]
+            if len(said) >= 4 and near and overlap(said, content_words(" ".join(str(n.get("text", "")) for n in near))) >= OVERLAP_MAX:
+                _f(
+                    out,
+                    "ST-21",
+                    ln.get("line_id", f"{sid} line {k + 1}"),
+                    "Narrator repeats what the adjacent character line just played (double exposition, BP-144); give the narrator setup or consequence instead",
+                    SR.level("BP-144"),   # FAIL once BP-144 is binding, REVIEW while it is a hypothesis (D-59)
+                )
+
+    # YouTube Retention Rules (YT-01..YT-03: Cold Open Hook, Segment Cliffhangers, Concrete Pacing)
+    if audio_lines:
+        first_two_text = " ".join(str(l.get("text", "")) for l in audio_lines[:2]).lower()
+        hook_signals = ("?", "what if", "how", "why", "million", "empire", "seconds", "hours", "trap", "secret", "collapsed", "gold", "blood", "single", "fortune", "billion", "volcanic", "extinct")
+        if not any(sig in first_two_text for sig in hook_signals):
+            _f(
+                out,
+                "YT-01-HOOK",
+                "S01_L001",
+                "First 12 seconds lack a high-stakes paradox, question, or concrete dramatic hook word for YouTube retention",
+                "FAIL",
+            )
+    word_counts: list[int] = []
+    for l_obj in audio_lines:
+        w_count = len(str(l_obj.get("text", "")).split())
+        word_counts.append(w_count)
+        if w_count > 28:
+            _f(
+                out,
+                "YT-03-PACING",
+                l_obj.get("line_id", "audio_lines"),
+                f"Audio line has {w_count} words (max 28 for crisp YouTube pacing; mix 4-7 word punchy beats with 12-24 word sentences)",
+                "FAIL",
+            )
+
+    # YT-04-BURSTINESS: Ban monotonous textbook sentence lengths (BP-01, BP-06)
+    if len(word_counts) >= 8:
+        import statistics as _stats
+        wc_stdev = _stats.pstdev(word_counts)
+        wc_mean = _stats.mean(word_counts)
+        if wc_stdev < 2.6:
+            _f(
+                out,
+                "YT-04-BURSTINESS",
+                "audio_lines",
+                (
+                    f"Spoken lines have robotic monotonous sentence length (stdev={wc_stdev:.2f} words, mean={wc_mean:.1f} words). "
+                    "YouTube storytelling requires burstiness (stdev >= 2.8 words): alternate 3-7 word punchy fragments with 14-24 word narrative sentences."
+                ),
+                "FAIL",
+            )
+
+    # Narrator spine guardrail: narration carries the documentary spine (>= n_min, default 65%),
+    # with NO mandatory minimum character dialogue quota when narration is the better choice.
+    narr_dur = sum(float(l.get("estimated_duration_seconds", 0.0)) for l in audio_lines if l.get("speaker_type") == "narrator")
+    char_dur = sum(float(l.get("estimated_duration_seconds", 0.0)) for l in audio_lines if l.get("speaker_type") == "character")
+    total_spoken = narr_dur + char_dur
+    target = doc.get("audio_balance_target") or {}
+    n_min = min(0.65, float(target.get("narrator_ratio_min", 0.65)))
+    if total_spoken > 0 and len(audio_lines) >= 4:
+        n_share = narr_dur / total_spoken
+        if n_share < n_min - 1e-6:
+            _f(
+                out,
+                "ST-V4-AUDIO-BALANCE",
+                "audio_lines",
+                f"Narrator spoken share is {n_share:.1%} ({narr_dur:.1f}s / {total_spoken:.1f}s); narrator spine must be at least {n_min:.0%}",
+                "REVIEW",
+            )
+    return out
 
 
 if __name__ == "__main__":

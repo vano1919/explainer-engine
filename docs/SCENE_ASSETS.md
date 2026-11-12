@@ -6,6 +6,11 @@
 > in `explainer_engine/visual/archetypes_ic.json`; the plan is [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md)
 > (D-121: flat-lit sheets, four mouth states (closed, half, wide, round) with a two-frame cross-blend, the horizon check on a 30-degree pan).
 
+
+## Stage 2 2D Master Asset & Cast Creation (D-123 Rebuild)
+- **Mandatory 3D `.blend` & Grease-Pencil Scene Building Retired from Default (D-123):** Stage 2 creates and locks 2D reference anchors in `02_keyframes/assets/` (`char_<id>_turnaround.png`, `loc_<id>_anchor.png`, `prop_<id>_anchor.png`) declared in `world_bible` ([MAIN_METHOD](MAIN_METHOD.md) Stage 6 & Stage 7).
+- **Optional Local 2.5D Fallback Only:** `explainer_engine/blender/assemble_25d.py` is retained strictly as an optional local deterministic 2.5D plane renderer alongside `ComfyUI-Depthflow-Nodes` and `explainer_engine/production/parallax.py`. The `SA-01..SA-09` rules below govern 2D cutouts and optional 2.5D card assembly.
+
 Work package ICW-11 (guide step 2.1). Qwen-Image-2.1 + xworld_v2 supplies approved scene assets when a selected route needs them: one 360 backdrop, only the approved hero drawings actually needed, and props. Do not automatically generate every angle from a hero sheet: RF-03 (3)-(4) keeps mouth/blink/expression variants on the same approved drawing and leaves a new pose/angle reference unapproved until measured. No Blender/3D render is ever a Qwen input (D-120/RF-01). LTX is the primary dialogue visual route; use its footage directly when it covers the exchange. J5 assembles approved assets only for optional close-ups/reactions when there is a measurable quality-preserving production benefit (D-122). The creator's visual review decides naturalness; a successful render alone is not acceptance.
 
 ## The flow

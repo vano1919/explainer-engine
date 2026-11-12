@@ -29,6 +29,9 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
 | [handoff/argon_2026-11-06/](handoff/argon_2026-11-06/README.md) | the Argon handoff (2026-11-06, routes of D-116): the creator's strategy (LTX minimisation, shots from the script, reuse), every open PR and plan, every generated picture set with a verdict and reason, LTX helpers and measured numbers, reuse tooling, open questions, the Argon prompt; a reading branch, not a launch branch | |
 | [archive/](archive/) | history moved out of `docs/wip/` by ICW-01 (2026-11-05, D-108): the D-95 override note, the Master Mold handoff and its execution guide; evidence only, never an active instruction | |
+| [MAIN_METHOD](MAIN_METHOD.md) | canonical 12-stage ChatGPT production manual for 12-minute (`720s`) `Z1-Z5` / `S01-S16` episodes (`production_script.schema.json` v4.0.0, D-123) | |
+| [VIDEO_GENERATION_WAN](VIDEO_GENERATION_WAN.md) | Stage 3 local Wan 2.2 Fun InP/I2V (`WAN_I2V`, `WAN_FLF2V`), selective `WAN_CONTROL`, and deterministic `DepthFlow` 2.5D motion (`STILL_25D`, `MAP_25D`; D-116 superseded by D-123) | |
+| [LOCAL_COMFYUI_SETUP](LOCAL_COMFYUI_SETUP.md) | local ComfyUI setup, `config/local_models.json` registry, `.env` variable names, custom node pins, and `local_preflight.py` checks (`EXPLAINER_LOCAL_ONLY=1`, D-123) | |
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
 | [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) | every decision, open questions, approval gates | D- |
 | [MARKET_RESEARCH](MARKET_RESEARCH.md) | seed-evidence register, verification log, topic comparison, vidIQ ledger | SE-, V- |
@@ -92,3 +95,22 @@ Machine-readable sources of truth: `explainer_engine/design/palette.json` (colou
 (character parts), `explainer_engine/schemas/` (contracts, from Phase 3),
 `explainer_engine/standards/policy_baseline.json` (verified policy and law sources for episode rulebooks),
 `explainer_engine/standards/sourced_rules.json` (the sourced production rules BP-, rendered into SOURCED_RULES.md).
+
+- [YOUTUBE_MASTER_MANUAL_ARGON_VS_FLASH.md](YOUTUBE_MASTER_MANUAL_ARGON_VS_FLASH.md) — Argon vs. Flash YouTube Production Manual & Retention Rules (`YT-01..YT-04`)
+- `YOUTUBE_50_100_BENCHMARK_AND_ROOT_CAUSE_FIX.md` — 50–100 YouTube Docudrama Corpus Arithmetic Benchmark vs. `ep_fortress_sterling_12min` & Anti-Robotic Codebase Root-Cause Fixes (`D-125`).
+
+## Rules Registry (YouTube Historical Docudrama & Filmmaking Standard)
+- `rules_registry/00_RULES_REGISTRY_MASTER_INDEX.md` — Master Index of the 12 modular component rulebooks.
+- `rules_registry/01_DRAMATURGY_AND_SCRIPTWRITING.md` — 5-phase causal structure, cold open hooks, unequal act durations.
+- `rules_registry/02_DIALOGUE_STAGING_AND_SPEECH.md` — 180-degree rule, shot-reverse-shot, eyeline match, speech burstiness.
+- `rules_registry/03_CINEMATOGRAPHY_AND_CAMERA_FRAMING.md` — Shot sizes (EWS to ECU), 30-degree rule, motivated camera moves.
+- `rules_registry/04_PACING_EDITING_AND_ASL.md` — Average Shot Length (ASL) benchmarks, accordion editing, match on action.
+- `rules_registry/05_LIGHTING_AND_CHIAROSCURO_AESTHETICS.md` — Luminescent Chiaroscuro key/fill/rim lighting, color harmony.
+- `rules_registry/06_COLLAGE_AND_COMPOSING_STILLS.md` — 30% photo-collage multi-plane parallax depth, no 5s time ceiling.
+- `rules_registry/07_TACTILE_RELIEF_MAPS_AND_WAR_TABLES.md` — 10% tactical relief maps in hammered copper and liquid gold.
+- `rules_registry/08_AI_VIDEO_GENERATION_AND_WAN22.md` — 60% Wan 2.2 video, single physical action, WAN-CHAIN-MINUS-5.
+- `rules_registry/09_FOLEY_AND_SPOT_SOUND_EFFECTS.md` — Physical presence foley (footsteps, cloth, paper) and spot SFX.
+- `rules_registry/10_MUSIC_AND_AMBIENCE_HIERARCHY.md` — 5-layer sound mix hierarchy, -24dB ambience bed, sidechain ducking.
+- `rules_registry/11_VOICE_ACTING_AND_LIPSYNC_SPINE.md` — Character voice contrast, 24fps word timing spine, selective lip-sync.
+- `rules_registry/12_FINAL_ASSEMBLY_AND_PACKAGING.md` — 3-minute chunked review assembly, color grade LUT, YouTube CTR packaging.
+

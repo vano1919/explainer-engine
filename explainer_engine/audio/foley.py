@@ -1,9 +1,12 @@
-
 """Procedural foley: deterministic sound effects built from noise and tones (numpy only, no network, no cost).
 
 Every generator takes a seed and returns mono float32 at 48 kHz in [-1, 1]. The same seed gives the same samples, so a
 library rebuild is byte-identical. Quality is "clean and plain": they are placeholders a person may replace with
 better recordings, and each library entry records that it is procedural (``sfx_library``).
+
+Extended in v4.2 with rich historical documentary environmental & spot foley generators (wind, rain, thunder,
+fire crackle, horse hooves, sword/metal clash, armor march, wooden door creak, crowd murmur, forest birds/wind,
+ship water hull creak, volcanic explosion/debris).
 """
 
 from __future__ import annotations
@@ -254,6 +257,150 @@ def hit_air(seed: int) -> np.ndarray:
     return _band(_band(out, lo, hi), lo, hi) * 1.6
 
 
+# --- v4.2 Documentary Environmental & Historical Foley Extensions ----------------------------------------------------------
+
+def wind_howl(seed: int, seconds: float = 4.0) -> np.ndarray:
+    """Continuous swirling wind bed with slow gust modulation."""
+    rng = np.random.default_rng(seed)
+    t = _t(seconds)
+    base = _band(_noise(seconds, rng), 110, 950)
+    whistle = _band(_noise(seconds, rng), 900, 2400) * (0.35 + 0.35 * np.sin(2 * np.pi * 0.42 * t + rng.uniform(0, 3)))
+    gust = 0.55 + 0.45 * np.sin(2 * np.pi * 0.25 * t)
+    out = (base * gust + whistle * 0.45).astype(np.float32)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.65
+
+
+def rain_downpour(seed: int, seconds: float = 4.0) -> np.ndarray:
+    """Continuous rainfall bed with patter droplets."""
+    rng = np.random.default_rng(seed)
+    wash = _band(_noise(seconds, rng), 800, 6800) * 0.45
+    drops = np.zeros(int(seconds * SR), dtype=np.float32)
+    for at in rng.uniform(0.0, max(0.1, seconds - 0.04), int(seconds * 28)):
+        _place(drops, _band(_noise(0.025, rng), 1800, 8200) * _env(int(0.025 * SR), 0.001, 0.008), float(at), rng.uniform(0.2, 0.6))
+    out = (wash + drops).astype(np.float32)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.65
+
+
+def thunder_rumble(seed: int) -> np.ndarray:
+    """Deep rolling thunder crack and low-frequency rumble."""
+    rng = np.random.default_rng(seed)
+    n = int(2.8 * SR)
+    crack = _band(_noise(2.8, rng), 180, 2600) * _env(n, 0.008, 0.22) * 0.8
+    rumble = _band(_noise(2.8, rng), 32, 240) * _env(n, 0.12, 1.15) * 1.4
+    out = (crack + rumble).astype(np.float32)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.85
+
+
+def fire_crackle_bed(seed: int, seconds: float = 4.0) -> np.ndarray:
+    """Hearth / torch / volcanic ember fire crackle and warm low draft."""
+    rng = np.random.default_rng(seed)
+    draft = _band(_noise(seconds, rng), 80, 420) * 0.35
+    snaps = np.zeros(int(seconds * SR), dtype=np.float32)
+    for at in rng.uniform(0.0, max(0.1, seconds - 0.03), int(seconds * 18)):
+        _place(snaps, _band(_noise(0.018, rng), 2200, 9500) * _env(int(0.018 * SR), 0.0005, 0.005), float(at), rng.uniform(0.3, 0.9))
+    out = (draft + snaps).astype(np.float32)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.65
+
+
+def horse_hooves_gallop(seed: int, seconds: float = 2.4) -> np.ndarray:
+    """Rhythmic 4-beat cavalry/horse hooves on dirt/stone."""
+    rng = np.random.default_rng(seed)
+    out = np.zeros(int(seconds * SR), dtype=np.float32)
+    t_cur = 0.04
+    while t_cur < seconds - 0.35:
+        for beat_off in (0.0, 0.09, 0.19, 0.30):
+            if t_cur + beat_off < seconds - 0.15:
+                step_snd = footstep("dirt", seed + int(t_cur * 100)) * rng.uniform(0.75, 1.0)
+                _place(out, step_snd, t_cur + beat_off)
+        t_cur += 0.52 + rng.uniform(-0.02, 0.02)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.80
+
+
+def sword_metal_clash(seed: int) -> np.ndarray:
+    """Sharp metallic blade/bayonet impact with resonant ring."""
+    rng = np.random.default_rng(seed)
+    out = np.zeros(int(0.85 * SR), dtype=np.float32)
+    scrape = _band(_noise(0.18, rng), 2400, 9800) * _env(int(0.18 * SR), 0.002, 0.05)
+    _place(out, scrape, 0.0, 0.8)
+    for f_hz, dec in ((1840, 0.18), (2910, 0.24), (4320, 0.16), (6180, 0.11)):
+        _place(out, _ping(f_hz + rng.uniform(-45, 45), 0.8, dec, 0.45), 0.005)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.85
+
+
+def armor_march_clink(seed: int, seconds: float = 2.5) -> np.ndarray:
+    """Synchronized infantry march footsteps with metallic gear/buckle clinks."""
+    rng = np.random.default_rng(seed)
+    out = np.zeros(int(seconds * SR), dtype=np.float32)
+    t_cur = 0.05
+    step_idx = 0
+    while t_cur < seconds - 0.25:
+        st = footstep("stone" if step_idx % 2 == 0 else "dirt", seed + step_idx)
+        cl = buckle_click(seed + step_idx * 3) * 0.35
+        _place(out, st, t_cur, 0.85)
+        _place(out, cl, t_cur + 0.02, 0.45)
+        t_cur += 0.54 + rng.uniform(-0.015, 0.015)
+        step_idx += 1
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.78
+
+
+def door_wood_creak(seed: int) -> np.ndarray:
+    """Heavy timber door or ship hull creak + latch thud."""
+    rng = np.random.default_rng(seed)
+    n = int(1.1 * SR)
+    t = np.arange(n) / SR
+    f_mod = 190 + 65 * np.sin(2 * np.pi * 2.2 * t) + rng.uniform(-12, 12)
+    creak = np.sin(2 * np.pi * np.cumsum(f_mod) / SR) * np.sin(np.pi * t / 1.1) ** 2
+    creak = _band(creak.astype(np.float32), 140, 1400) * 0.6
+    _place(creak, landing_thud(seed + 5) * 0.7, 0.75)
+    return creak / (np.max(np.abs(creak)) + 1e-6) * 0.75
+
+
+def crowd_battle_murmur(seed: int, seconds: float = 4.0) -> np.ndarray:
+    """Distant crowd / parliament / army camp murmur bed."""
+    rng = np.random.default_rng(seed)
+    t = _t(seconds)
+    formant1 = _band(_noise(seconds, rng), 220, 780) * (0.6 + 0.4 * np.sin(2 * np.pi * 1.1 * t))
+    formant2 = _band(_noise(seconds, rng), 850, 2100) * (0.5 + 0.5 * np.cos(2 * np.pi * 1.7 * t)) * 0.45
+    out = (formant1 + formant2).astype(np.float32)
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.55
+
+
+def forest_birds_wind(seed: int, seconds: float = 4.0) -> np.ndarray:
+    """Forest canopy breeze with distant bird calls."""
+    rng = np.random.default_rng(seed)
+    breeze = _band(_noise(seconds, rng), 250, 1800) * 0.35
+    for at in rng.uniform(0.3, max(0.5, seconds - 0.4), max(2, int(seconds * 1.5))):
+        dur = 0.14
+        t_c = _t(dur)
+        f_chirp = rng.uniform(2200, 3400) + 600 * np.sin(2 * np.pi * 14 * t_c)
+        chirp = (np.sin(2 * np.pi * np.cumsum(f_chirp) / SR) * np.sin(np.pi * t_c / dur) ** 2).astype(np.float32)
+        _place(breeze, chirp, float(at), 0.25)
+    return breeze / (np.max(np.abs(breeze)) + 1e-6) * 0.55
+
+
+def ship_water_hull_creak(seed: int, seconds: float = 4.0) -> np.ndarray:
+    """Ocean wave wash against timber hull."""
+    rng = np.random.default_rng(seed)
+    t = _t(seconds)
+    waves = _band(_noise(seconds, rng), 120, 1600) * (0.5 + 0.5 * np.sin(2 * np.pi * 0.32 * t))
+    _place(waves, door_wood_creak(seed + 9) * 0.4, min(0.8, seconds * 0.3))
+    return waves / (np.max(np.abs(waves)) + 1e-6) * 0.60
+
+
+def volcanic_explosion_debris(seed: int) -> np.ndarray:
+    """Massive supervolcano / artillery shockwave + falling rock/ash debris."""
+    rng = np.random.default_rng(seed)
+    n = int(2.6 * SR)
+    sub = hit_sub(seed)
+    boom = _band(_noise(2.6, rng), 28, 380) * _env(n, 0.015, 0.95) * 1.5
+    roar = _band(_noise(2.6, rng), 350, 3200) * _env(n, 0.04, 0.65) * 0.9
+    out = (boom + roar).astype(np.float32)
+    _place(out, sub, 0.0, 1.1)
+    for at in rng.uniform(0.35, 2.1, 12):
+        _place(out, footstep("stone", seed + int(at * 100)) * rng.uniform(0.3, 0.7), float(at))
+    return out / (np.max(np.abs(out)) + 1e-6) * 0.90
+
+
 # id -> (category tags, generator, seeds)
 BUILD = {
     "footstep_snow": (["footstep", "snow", "walk"], lambda s: footstep("snow", s), (1, 2, 3)),
@@ -280,4 +427,16 @@ BUILD = {
     "hit_sub": (["hit", "hit_sub", "impact"], hit_sub, (1, 2, 3)),  # the three layers of a composite hit (BP-119, SD-05)
     "hit_body": (["hit", "hit_body", "impact"], hit_body, (1, 2, 3)),
     "hit_air": (["hit", "hit_air", "impact"], hit_air, (1, 2, 3)),
+    "wind_howl": (["wind", "weather", "ambience"], lambda s: wind_howl(s, 4.0), (1, 2)),
+    "rain_downpour": (["rain", "storm", "weather", "ambience"], lambda s: rain_downpour(s, 4.0), (1, 2)),
+    "thunder_rumble": (["thunder", "storm", "impact"], thunder_rumble, (1, 2)),
+    "fire_crackle_bed": (["fire", "embers", "ambience"], lambda s: fire_crackle_bed(s, 4.0), (1, 2)),
+    "horse_hooves_gallop": (["horse", "cavalry", "hooves"], lambda s: horse_hooves_gallop(s, 2.4), (1, 2)),
+    "sword_metal_clash": (["sword", "metal", "combat", "impact"], sword_metal_clash, (1, 2, 3)),
+    "armor_march_clink": (["march", "armor", "footstep"], lambda s: armor_march_clink(s, 2.5), (1, 2)),
+    "door_wood_creak": (["door", "wood", "creak"], door_wood_creak, (1, 2)),
+    "crowd_battle_murmur": (["crowd", "murmur", "ambience"], lambda s: crowd_battle_murmur(s, 4.0), (1, 2)),
+    "forest_birds_wind": (["forest", "nature", "ambience"], lambda s: forest_birds_wind(s, 4.0), (1, 2)),
+    "ship_water_hull_creak": (["ship", "water", "sea", "ambience"], lambda s: ship_water_hull_creak(s, 4.0), (1, 2)),
+    "volcanic_explosion_debris": (["volcano", "explosion", "cannon", "impact"], volcanic_explosion_debris, (1, 2, 3)),
 }

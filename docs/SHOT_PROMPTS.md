@@ -6,6 +6,11 @@
 
 > **Retired in part by [D-80](DECISIONS_AND_OPEN_QUESTIONS.md) (2026-10-26):** Qwen-Image-2512, Edit-2511 and every `wldnk_*` LoRA are banned; keyframes come from Qwen-Image-2.1 (draws and edits with references) with the new LoRA learned from Rick and Morty. Since N-09 (2026-10-30) the kind table, the model rows and the prompt shape below are on Qwen-Image-2.1 and the xworld_v2 LoRA, the trigger is read from `training/lora_rules.json`; the retired rows stay as marked History, and their Helps and Hurts lists are not yet re-measured on 2.1.
 
+
+## Stage 2 Qwen Keyframe & Stage 3 Wan 2.2 Motion Prompt Rules (D-123)
+- **Stage 2 Keyframe Prompts (`image_prompt`):** Embed `world_bible.style_anchor_token`, optional `<sks>` multi-angle camera token (`QwenMultiangleCameraNode`), `shot_size`, `vertical_angle`, `fixed_environment_prompt`, and `fixed_appearance_prompt`. Generate a Start Frame for every shot and an End Frame **only** when `generation_mode == "WAN_FLF2V"` (`needs_end_frame: true` with `end_frame_reason`).
+- **Stage 3 Wan 2.2 Motion Prompts (`video_prompt`):** Specify **exactly 1 primary physical action** (`primary_action_count == 1`) and **at most 1 camera movement** (`camera_move_count <= 1`). Never include spoken dialogue text or stack multiple control modalities ([MAIN_METHOD](MAIN_METHOD.md) Stage 7-8, [VIDEO_GENERATION_WAN](VIDEO_GENERATION_WAN.md)).
+
 How the prompts of an animated shot are written: the keyframe (Qwen-Image-2.1 + the xworld_v2 LoRA, D-80), the next pose of the same
 shot (Qwen-Image-2.1 in its edit mode with the one LoRA, from the master frame), a cut to a new angle of the same scene, and the video
 (LTX-2.5 with native audio). ვანო asked for it on 2026-10-24 (15:35 Tbilisi): "analyse the patterns and anti-patterns of the

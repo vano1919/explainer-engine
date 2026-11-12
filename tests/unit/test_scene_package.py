@@ -1,4 +1,4 @@
-"""D-70 stage F: 2.5D parallax from a depth map, per-segment hashes (only what changed is made again), PV-59/PV-60."""
+"""(v4.3 P0.4, 2026-11-12: the legacy contract /1../4 lives under $defs.LegacyProductionScriptV1ToV4 since the schema dispatches on schema_version.) D-70 stage F: 2.5D parallax from a depth map, per-segment hashes (only what changed is made again), PV-59/PV-60."""
 import copy
 import json
 from pathlib import Path
@@ -106,7 +106,7 @@ def test_pv54_review_is_given_on_the_current_segment():
 
 def test_schema_takes_the_scene_package_fields():
     schema = json.loads((ROOT / "explainer_engine" / "schemas" / "production_script.schema.json").read_text(encoding="utf-8"))
-    v = jsonschema.Draft202012Validator({**schema["properties"]["segments"]["items"], "$defs": schema["$defs"]})
+    v = jsonschema.Draft202012Validator({**schema["$defs"]["LegacyProductionScriptV1ToV4"]["properties"]["segments"]["items"], "$defs": schema["$defs"]})
     good = {"id": "S01", "beat": "b", "light_beat": 1, "lines": [{"text": "x"}],
             "shots": [{"at": "x", "type": "A", "picture": "p1", "motion": {"kind": "push", "z0": 1.0, "z1": 1.05, "parallax": 0.012}}],
             "asset_ids": ["sheet.mira"], "new_assets": ["p1"], "review": {"status": "pending"}}

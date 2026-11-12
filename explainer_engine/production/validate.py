@@ -180,6 +180,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         _f(out, "PV-01", "schema", e)
     if errs:
         return out  # the rest assumes the shape
+    if doc.get('schema_version') == '4.0.0':
+        from explainer_engine.scripting import scene_lint, shot_prompt_lint
+        return shot_prompt_lint.check_v4_script(doc) + scene_lint.check(doc)
     # PV-02 ids and order
     ids = [s["id"] for s in doc["segments"]]
     if ids != [f"S{k + 1:02d}" for k in range(len(ids))]:
