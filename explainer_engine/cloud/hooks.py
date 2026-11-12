@@ -74,14 +74,17 @@ BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the crea
 BAKEOFF_ENTRIES = ("check", "stage", "run")
 
 
-def bakeoff_go_sha(root=None) -> str:
-    """``modal_bakeoff.go_sha()`` read from the files on disk (the plan's and the worker's bytes; Fable audit A4)."""
+def bakeoff_go_sha(root=None, plan_name=None) -> str:
+    """``modal_bakeoff.go_sha()`` read from the files on disk (the plan's and the worker's bytes; Fable audit A4). The plan is
+    the one ``EE_BAKEOFF_PLAN`` names (its file name only, in the bake-off folder; default ``plan_v43.json``), as in
+    ``modal_bakeoff.plan_path``."""
     import hashlib
     from pathlib import Path
     root = Path(root) if root else Path(__file__).resolve().parents[2]
     w = root / BAKEOFF
     h = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
-    return hashlib.sha256((h(w.with_name("plan_v43.json")) + h(w)).encode()).hexdigest()
+    plan = w.with_name(Path(str(plan_name or "plan_v43.json")).name)
+    return hashlib.sha256((h(plan) + h(w)).encode()).hexdigest()
 FREE_ENTRIES = {WAN_WORKER: ("check", "weights"), LTX_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
 
 
@@ -137,8 +140,9 @@ def modal_refusal(cmd: str, env=None) -> str | None:
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return ("the bake-off bills Modal on every entrypoint (its CPU check and stage-in too): "
                         "EE_MODAL_GO=<the creator's card id>:<go sha[:12]> first (OR-23)")
+            pn = re.search(r"\bEE_BAKEOFF_PLAN=['\"]?(\S+?)['\"]?(?:\s|$)", cmd)
             try:
-                want = bakeoff_go_sha()[:12]
+                want = bakeoff_go_sha(plan_name=pn.group(1) if pn else env.get("EE_BAKEOFF_PLAN"))[:12]
             except OSError:
                 want = None
             if go.split(":", 1)[1] != want:
