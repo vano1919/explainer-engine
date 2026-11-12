@@ -1,0 +1,156 @@
+{
+ "run": "style_ladder_v16",
+ "out": "explainer-engine/reference_round_1/qwen_v16",
+ "inputs": {
+  "v6_M1.jpg": "030f9716924ad63ee55d78cf64332631479c26336d7de7205869133c57806be7",
+  "ref_4.jpg": "d8d6506be050f2df90503de0b9d802bd8bb675b498314009a23880762198ed4b",
+  "v6_M4.jpg": "b59fe346c59ffa50586a63a6719bba2c8b5e70cd8e3d44ae85c4af5c2f29c592"
+ },
+ "groups": [
+  {
+   "lora_weight": 0.0,
+   "jobs": [
+    {
+     "name": "S0",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Change nothing else; only refine the light to match images 2 and 3.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S1",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add a very gentle touch of warmth: slightly more golden sunlight.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S2",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add a gentle touch of warmth and charm: more golden sunlight and slightly richer colour.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S3",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add a little warmth and charm: sunny golden light, a patch of bright blue sky with soft white clouds, richer warm colours.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S4",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add some cosy charm: sunny golden light, bright blue sky with soft clouds, saturated warm colours, one or two cheerful small details in the camp (a child playing, a curious dog).",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S5",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add clear cosy, cheerful charm: sunny storybook light, bright blue sky, saturated warm colours, playful small details in the camp, handmade tactile textures on hides, baskets and huts.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S6",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add strong cosy, cheerful charm like a warm family adventure film: sunny storybook light, bright blue sky, saturated colours, playful details, handmade tactile textures, slightly characterful body proportions and warm expressive smiles.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S7",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Add strong family-adventure-film charm: bright sunny storybook world, vivid saturated colours, playful humorous details everywhere, chunky handmade props and huts, slightly exaggerated characterful proportions, warm expressive faces.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S8",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Make it a bright, joyful, humorous family adventure film world: vivid sunny colours, cartoonish chunky props and huts, comic background villagers, exaggerated characterful proportions, very expressive but still human faces.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    },
+    {
+     "name": "S9",
+     "prompt": "Edit image 1. Keep the same two people (the grey-bearded elder spear-hunter and the young woman with the woven bag), their identity, poses, the gorge path, the basalt overhang camp and the composition. Keep the cinematic painterly adventure-film look of images 2 and 3: golden backlight, glowing haze, warm firelight against cool shadows, rich detail. Faces stay believable adult human faces with real skin texture, never 3D-animation or cartoon faces. Make it a fully stylized, comic, joyful family-film world with exaggerated caricatured proportions and big comic charm, vivid saturated sunny colours, humorous background characters; the two heroes stay recognisable, faces expressive and caricatured but human.",
+     "refs": [
+      "in:v6_M1.jpg",
+      "in:ref_4.jpg",
+      "in:v6_M4.jpg"
+     ],
+     "size": [
+      1280,
+      720
+     ],
+     "seed": 74000
+    }
+   ]
+  }
+ ]
+}
