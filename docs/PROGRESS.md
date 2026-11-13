@@ -5687,3 +5687,36 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
 - one sentence per clip;
 - a wide battle at most 5 s;
 - c1's "after a few steps" opening wastes 1.9 s.
+
+## 2026-11-13 00:55 UTC: the cheaper-video test on Modal — $1.61 of the creator's $3
+
+**Ask.** The creator (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9`, 2026-11-12 22:21 UTC) gave $3 on Modal to test the open
+models against LTX after an outside audit called LTX too expensive; API models are priced only, nothing run.
+
+**Code.** The bake-off worker reads a plan named by `EE_BAKEOFF_PLAN` (file name only, bakeoff folder), makes several sizes per
+container, runs HunyuanVideo 1.5 I2V with the deadline inside the transformer forward, and the session hook binds the GO to the
+named plan (`tests/unit/test_cheap_video_bakeoff.py`). Spend line `modal_cheap_video` (1.2 per run, 3.0 total) in
+`config/spend_caps.json`. Plans: `plan_cheap_2026-11-12.json` (LTX 576p/448p, Hunyuan 480p), `plan_cheap_wan_2026-11-12.json`
+(Wan A14B + Lightning 480p).
+
+**Measured** (H100 $5.0937/h, battle pictures, seeds and prompts; generation $/s):
+
+| model | native | sound | clip s | gen $/s |
+|---|---|---|---|---|
+| LTX-2.5 distilled 704p (battle run) | 1280x704@24, 10 s | yes | 81.9 | 0.0115 |
+| LTX 576p | 1024x576@24, 10 s | yes | 70.6 | 0.0099 |
+| LTX 448p | 768x448@24, 10 s | yes | 59.8 | 0.0084 |
+| Wan2.2 A14B + Lightning 480p | 832x480@16, 5 s | no | 78.8 | 0.022 |
+| HunyuanVideo 1.5 480p distilled | 848x480@24, 5 s | no | ~107 | 0.030 |
+
+Ledger `ledgers/cheap_video_2026-11-12.json`: stage+check $0.029, ltx_low $0.561, hunyuan $0.576, wan $0.439 = $1.605. No app live.
+HF: `vano1919/tmr-artifacts` `explainer-engine/cheap_video_2026-11-12/` (side_by_side_prices.png, two reports, every clip + 2K).
+
+**Findings.** The audit's $0.09/s is LTX's API price, not our self-hosted cost. A lower size saves only 14-27 %: most of a clip's
+82 s is loading the weights and decoding, not denoising. Hunyuan's Tencent licence does not apply in the EU, UK and South Korea.
+
+**Recommendation** (`v4_3_plan_2026-11-12/CHEAP_VIDEO_RECOMMENDATION_ka.md`):
+- keep LTX 704p;
+- the next saving is keeping the model loaded across clips (an estimate, not measured);
+- Hunyuan is not recommended;
+- API trials (Vidu Q3 Turbo off-peak, Grok 1.5 Lite) wait for the creator's word.

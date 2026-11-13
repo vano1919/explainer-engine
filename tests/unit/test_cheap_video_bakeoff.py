@@ -199,3 +199,12 @@ def test_stage_does_not_hash_a_set_whose_stamp_already_holds(tmp_path):
 def test_libs_are_plain_strings_a_client_without_torch_can_read():
     for v in B.libs().values():
         assert v is None or type(v) is str
+
+
+def test_the_wan_plan_is_one_clip_under_the_same_line_and_ledger():
+    wan = B.load_plan(B.plan_path({"EE_BAKEOFF_PLAN": "plan_cheap_wan_2026-11-12.json"}))
+    assert B.plan_problems(wan) == []
+    B.preflight(wan, line=LINE)
+    assert wan["spend_line"] == PLAN["spend_line"] and wan["ledger"] == PLAN["ledger"]
+    assert [j["tag"] for v in wan["variants"] for j in B.jobs_of(wan, v)] == ["b4"]
+    assert H.bakeoff_go_sha(plan_name="plan_cheap_wan_2026-11-12.json") != H.bakeoff_go_sha(plan_name=NAME)
