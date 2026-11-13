@@ -1,0 +1,347 @@
+{
+ "episode": "ep_truce_1914",
+ "script": "A",
+ "frames": {
+  "S01_SH001_start": {
+   "file": "api_S3_scenes_w2/S01_SH001_start_r2.png",
+   "sha256": "d25c5989e95b6752f7ef972ae7d1c595cdb6753ac54899453076efa67f71256e"
+  },
+  "S01_SH002_start": {
+   "file": "api_S3_scenes_w3/S01_SH002_start.png",
+   "sha256": "65159f9efe73e3a91f4d1d08eb4724347abf2a208d3933ee0b7844b873b35a58"
+  },
+  "S01_SH003_start": {
+   "file": "api_S3_scenes_w2/S01_SH003_start.png",
+   "sha256": "643e471230764c2b85e0de0f9b35e90bd199008f8c0a0dffd919990aaf39d048"
+  },
+  "S01_SH004_start": {
+   "file": "api_S3_scenes_w1/S01_SH004_start.png",
+   "sha256": "09b68604c43244b980bedca5d0f59b1d5c4f53966ea8038096e0367ed28abc59"
+  },
+  "S01_SH005_start": {
+   "file": "api_S3_scenes_w1/S01_SH005_start.png",
+   "sha256": "35bdd6857fc0644f2e91927a2aa81b53985e5334e923d6fac872731e2f3f3dab"
+  },
+  "S02_SH004_start": {
+   "file": "api_S3_scenes_w1/S02_SH004_start.png",
+   "sha256": "acf6958ad37be7b0ba80ed78465def34c39f33663f7b83c48f1707037e7a9e1e"
+  },
+  "S02_SH005_start": {
+   "file": "api_S3_scenes_w1/S02_SH005_start.png",
+   "sha256": "53b07cbe3e9b51c25badc3bfd98823e3a2b87b97368fa250a5341f7714e5701d"
+  },
+  "S02_SH006_start": {
+   "file": "api_S3_scenes_w2/S02_SH006_start.png",
+   "sha256": "fe8f6c03e5a1e16e40c93bcd56ea73bdef351a2d88dd72f40197c48b99ec2b62"
+  },
+  "S02_SH007_start": {
+   "file": "api_S3_scenes_w2/S02_SH007_start.png",
+   "sha256": "2491153a615481469d90dcce17a5608df9d5af33a41496c564a3ade01cdf2312"
+  },
+  "S02_SH008_start": {
+   "file": "api_S3_scenes_w1/S02_SH008_start.png",
+   "sha256": "ea636c84db530f1c582646e908ff008867005bec3aeab9e95471f37b5b96904c"
+  },
+  "S02_SH009_start": {
+   "file": "api_S3_scenes_w2/S02_SH009_start.png",
+   "sha256": "a99e99c7378f9cb9e56ae7bfa13125cfba9b60cd75f1dd07ae660f91d42efe8d"
+  },
+  "S03_SH001_start": {
+   "file": "api_S3_scenes_w1/S03_SH001_start.png",
+   "sha256": "573538aaa54137fd52fa1406549b53265eb1c75f32b36e26cece60e0943eb0e2"
+  },
+  "S03_SH002_start": {
+   "file": "api_S3_scenes_w2/S03_SH002_start_r2.png",
+   "sha256": "ff99d0365da0f7f68e34454a06ed7a71a46c6317e459711827de2918e9d268e0"
+  },
+  "S03_SH003_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S03_SH003_start_fix2.png",
+   "sha256": "7b3eda590dfe4ba36f7320a3433e51db0a2011b8b678ad3d00ba1ba8abb51dcf",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S03_SH004_start": {
+   "file": "api_S3_scenes_w1/S03_SH004_start.png",
+   "sha256": "3e5f92ad04fb2fa9cd9c21f5c43c1315466c1ff5235c2207e48941572b240c6d"
+  },
+  "S03_SH005_start": {
+   "file": "api_S3_scenes_w2/S03_SH005_start.png",
+   "sha256": "1d063ee1bd4009d57cb5e2015b1d72b199f4fbdfe4508d81051270547762acb2"
+  },
+  "S03_SH006_start": {
+   "file": "api_S3_scenes_w2/S03_SH006_start.png",
+   "sha256": "bdcb459e2bd34f8661f1c4047346ac131a57807bbcd93793d8ceec3c6dfdec7b"
+  },
+  "S03_SH007_start": {
+   "file": "api_S3_scenes_w2/S03_SH007_start.png",
+   "sha256": "054545fc36c9501dcb92a27e7467cff25840842256f6b5d359eb0da058a90461"
+  },
+  "S03_SH008_start": {
+   "file": "api_S3_scenes_w2/S03_SH008_start.png",
+   "sha256": "a7105ae671bfcf70a65cc00367e01f55652931c60852722940eb90d0f3ae44e8"
+  },
+  "S03_SH009_start": {
+   "file": "api_S3_scenes_w2/S03_SH009_start.png",
+   "sha256": "99c916785590880aada592dd293b330fe34427d7b0c85a1b1c02bdff581c6a5d"
+  },
+  "S03_SH010_start": {
+   "file": "api_S3_scenes_w1/S03_SH010_start.png",
+   "sha256": "dc230211d9f21c814d3894865da7eca2bc5c0aa91a691ba5a26abec5cd5aa720"
+  },
+  "S04_SH001_start": {
+   "file": "api_S3_scenes_w2/S04_SH001_start_r2.png",
+   "sha256": "967bdbdab35bac4b420d42ba84fb5d0250d7466935154626971aea0f9884dfc2"
+  },
+  "S04_SH002_start": {
+   "file": "api_S3_scenes_w1/S04_SH002_start.png",
+   "sha256": "229617f201562b8f491f6531ed092441c27443a27c3436f4f3d18ba08120f5dc"
+  },
+  "S04_SH003_start": {
+   "file": "api_S3_scenes_w1/S04_SH003_start.png",
+   "sha256": "0f8fe23338722df4a3e84f606c1af753e461af715ee39e064b0f4afc8c671aa8"
+  },
+  "S04_SH004_start": {
+   "file": "api_S3_scenes_w2/S04_SH004_start.png",
+   "sha256": "6819348d9423b03bae16274029e61f84e90f5f1a6e7131f3be095043045a465d"
+  },
+  "S04_SH005_start": {
+   "file": "api_S3_scenes_w2/S04_SH005_start.png",
+   "sha256": "6b99bd9a32508f67bcee515b7c1c1e1afd64e6a92daea9591aff40ed6e65ff87"
+  },
+  "S04_SH006_start": {
+   "file": "api_S3_scenes_w2/S04_SH006_start.png",
+   "sha256": "913c66cc4d994bf2d313e87bf78b5fcb2a17ee440d2806db289c5ee41a6df66d"
+  },
+  "S04_SH007_start": {
+   "file": "api_S3_scenes_w2/S04_SH007_start.png",
+   "sha256": "fe9588c4a4a816281ae81513f42ac9c37ba56bb19388887ab185ad0cd2fd536d"
+  },
+  "S04_SH008_start": {
+   "file": "api_S3_scenes_w1/S04_SH008_start.png",
+   "sha256": "900095d829188c15e00c874d763aef419beb73d4036d2a2d818c094b332128a6"
+  },
+  "S04_SH009_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S04_SH009_start_mirror.png",
+   "sha256": "19b20caf6442dc10a3fb17e5e90bb8f82e3949ef2e106937317a69a9b275126f",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S04_SH010_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles/p1/S04_SH010_start_n1.png",
+   "sha256": "9a359125b08e49e56a17ca283636bc46d542131893f3801e995e637593dea20d",
+   "source": "gemini_api_2k, clips lane new camera position"
+  },
+  "S04_SH011_start": {
+   "file": "api_S3_scenes_w1/S04_SH011_start.png",
+   "sha256": "7fa62fc7ef569ca207ebc3f412bfadc1f6ee0e04e17a9e9c241fc58e5d9ab161"
+  },
+  "S04_SH012_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles/p2/S04_SH012_start_n1.png",
+   "sha256": "c03c50c2788e0c407004a226115017775759d3145e36083a9c90d89cb1e6e85f",
+   "source": "gemini_api_2k, clips lane new camera position"
+  },
+  "S04_SH013_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S04_SH013_start_fix2.png",
+   "sha256": "e1bd0038ebc515e2ab8c2070fa91750bdf944565b4e7fa5c255a40b9e4a94f1b",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S04_SH014_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles/p2/S04_SH014_start_n1.png",
+   "sha256": "486e14ab30af42221251ef05b23bb9fd68eef81fc82ec6fba25c7c37231713e0",
+   "source": "gemini_api_2k, clips lane new camera position"
+  },
+  "S04_SH015_start": {
+   "file": "api_S3_scenes_w1/S04_SH015_start.png",
+   "sha256": "2df2d9fcff0e81655c79c07697c5147148b43bc5c6a99549400e6814e09f1d8a"
+  },
+  "S05_SH003_start": {
+   "file": "api_S3_scenes_w1/S05_SH003_start.png",
+   "sha256": "3241c15867ca9985b63950d60beb5947d911144efb1bc18940b0c5934473a888"
+  },
+  "S05_SH004_start": {
+   "file": "api_S3_scenes_w2/S05_SH004_start.png",
+   "sha256": "720819a05156376e5747c5afb168ec77835eab85efa40554d88dac5f4827f601"
+  },
+  "S05_SH005_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH005_start_mirror.png",
+   "sha256": "d456f2392e31aa3575ea6cfc2b3e917fcb5266d55fa95832bff5bfd925f9ba13",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S05_SH006_start": {
+   "file": "api_S3_scenes_w1/S05_SH006_start.png",
+   "sha256": "794455bd27f040ac33e7b1a95607cdd9a7b9cf7b52a743dd6fc7391b23f47f0f"
+  },
+  "S05_SH007_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH007_start_mirror.png",
+   "sha256": "cc07ad460a0850b8a21ff1a4f8449f639ec0abb838450f29b845992a4ee9c0db",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S05_SH008_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH008_start_mirror.png",
+   "sha256": "cd0212d6720469005e9909d820fea69f619e289a1c9a6e6cffa7df5cef71f5f5",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S05_SH009_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed/S05_SH009_start_n1_card.png",
+   "sha256": "39b8155aa8f4363d674d166237b327462243a34e881312cb261be6e031711c9f",
+   "source": "gemini_api_2k n1 + local card fix (audit FL-312): woman from the S05_SH010 card",
+   "note": "sha256 of the file as it sits on the mount after its post-write rewrite (same pixels as the builder output, FL-213)"
+  },
+  "S05_SH010_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH010_start_mirror.png",
+   "sha256": "e8aba06f051b33d561dd13a56b7feb941733f35476240008cbf59044276a8947",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S05_SH011_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S05_SH011_start_fix2.png",
+   "sha256": "d56ea374e3db6fc77adf1a8aaa4a34dbacc1115d3b86e1e4fab179d619a71332",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S05_SH012_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S05_SH012_start_fix2.png",
+   "sha256": "b2e501aa22a348dc71197b2186491e0c5ee768866dc16998c8921def48d8d016",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S05_SH013_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH013_start_mirror.png",
+   "sha256": "1251bd138f0f307c654e27ace3a2e2ed040c004fb23de3de20116e432655db27",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S05_SH014_start": {
+   "file": "api_S3_scenes_w1/S05_SH014_start.png",
+   "sha256": "8da55afa4ba6b05ad59f07e778c9ecf6da9b9075caabad013129998fc1e8f1e0"
+  },
+  "S05_SH015_start": {
+   "file": "api_S3_scenes_w2/S05_SH015_start.png",
+   "sha256": "7e586c204363933a9d4802ee83b76dc5630789e46c846f6c81f85c904b77c4c4"
+  },
+  "S05_SH016_start": {
+   "file": "api_S3_scenes_w1/S05_SH016_start.png",
+   "sha256": "391eaa3c1e71e261a4d419931b8c75ff40f377215b1e3fec0d3ef466d4bc7dda"
+  },
+  "S05_SH017_start": {
+   "file": "api_S3_scenes_w2/S05_SH017_start.png",
+   "sha256": "10a1e5cf404ae8085c8fb0d2d5ca966473f780de06d23f681ef4c20be284ff9b"
+  },
+  "S05_SH018_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH018_start_mirror.png",
+   "sha256": "ea7bda57f8c6969ea2cddf838d295ca80d1aa6ddac374241926c542b7de35075",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S05_SH019_start": {
+   "file": "local_fix/S05_SH019_start_fix.png",
+   "sha256": "95e7129ac87a94715fe0715627cb638ab33d361ee935f1a79421042d3be5290b"
+  },
+  "S05_SH020_start": {
+   "file": "api_S3_scenes_w1/S05_SH020_start.png",
+   "sha256": "0ed409434bda10ea47fdcc750eb5397772daf59f95608f6c5b062a0ec3f72919"
+  },
+  "S05_SH021_start": {
+   "file": "api_S3_scenes_w2/S05_SH021_start.png",
+   "sha256": "52d6de376ac619e95525696f2c7df206226ecf8cd7c3fd5caa9ce9ddc7ca0f37"
+  },
+  "S06_SH001_start": {
+   "file": "api_S3_scenes_w1/S06_SH001_start.png",
+   "sha256": "20c7240a415d7b215bd501cab11060fb093cb855e74b7fe352f8e63e66b919bd"
+  },
+  "S06_SH002_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S06_SH002_start_mirror.png",
+   "sha256": "d514df0361683b6ade96dcd4d066e334795180de630f1bf09ea81ea2db022a11",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S06_SH003_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S06_SH003_start_fix2.png",
+   "sha256": "edc203d8f9c210ae811e9ead5fc52dc7b471a10b0eed573b81792d10a77eb511",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S06_SH004_start": {
+   "file": "api_S3_scenes_w2/S06_SH004_start.png",
+   "sha256": "8b291d60251700b6806fa672f7f46252fb1c5d6a587efe0cb9c7dfbda7da7edf"
+  },
+  "S06_SH005_start": {
+   "file": "api_S3_scenes_w2/S06_SH005_start_r2.png",
+   "sha256": "7391d3ac093184e85c92804ad739aca9a5f1352c051926e8fd52ba2569ecb98e"
+  },
+  "S06_SH006_start": {
+   "file": "api_S3_scenes_w2/S06_SH006_start.png",
+   "sha256": "0a02b54b53404e557ced01d98d4fa2b87b29027bbde0c1850594a29286fa9a41"
+  },
+  "S06_SH007_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S06_SH007_start_fix2.png",
+   "sha256": "55481c9042881ae2280b5acbb08c0bacb32421591d55c42a81837ca87b771fea",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S06_SH008_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S06_SH008_start_fix2.png",
+   "sha256": "1ff2bf435d11c192c90d2746577fa7431d22a4975023975abb0b3c6bf4dd6288",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S06_SH009_start": {
+   "file": "api_S3_scenes_w1/S06_SH009_start.png",
+   "sha256": "a3e337a18623a3094e7b162edfa9777de3b9bc5e70530657fe673a1e99ab8fa4"
+  },
+  "S06_SH010_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S06_SH010_start_mirror.png",
+   "sha256": "c89fa9e8731589c4c7b03d4c914cbff836c4e4c9c05f0bf8718eb4cbc84a8979",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S06_SH011_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S06_SH011_start_mirror.png",
+   "sha256": "2daf93c78c0a86fe0bb6560583e924c32efda012af45ae6cfeed62bc2c24aa89",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S06_SH012_start": {
+   "file": "api_S3_scenes_w1/S06_SH012_start.png",
+   "sha256": "f0aceb5a2a07cbd933116764560090b7d579fe03e1b4bd78638df11c4475b2be"
+  },
+  "S07_SH001_start": {
+   "file": "api_S3_scenes_w1/S07_SH001_start.png",
+   "sha256": "2559bc774f92920cdb634cfab3afd3f7da752aee07cd6973f96192505678e696"
+  },
+  "S07_SH002_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S07_SH002_start_mirror.png",
+   "sha256": "6964fdcc2478bc0e6492d08af99585e50aae20382cc7c5f41cb5c7ce70b6da72",
+   "source": "mirrored left-right (audit FL-311), free"
+  },
+  "S07_SH003_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S07_SH003_start_fix2.png",
+   "sha256": "807a492e13797caff95f06d635bc405df55e55b5f91a48c7fc551d134a2b40ed",
+   "source": "local fix after the Opus-medium picture review (lantern->candle, card->woman, crate marks smudged, or bottom crop): fix_review_items.py"
+  },
+  "S07_SH004_start": {
+   "file": "api_S3_scenes_w1/S07_SH004_start.png",
+   "sha256": "a3b53359cc3563f4a5bbd50a37da15d692eaaefde5ae23457e5060141278018f"
+  },
+  "S07_SH005_start": {
+   "file": "api_S3_scenes_w2/S07_SH005_start.png",
+   "sha256": "da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3"
+  },
+  "S07_SH006_start": {
+   "file": "api_S3_scenes_w1/S07_SH006_start.png",
+   "sha256": "fe18ad2e4dfe70c4de82b0fe77ff97cbdff071e1cd7eb478dd2f2fd5adcb9859"
+  },
+  "S07_SH007_start": {
+   "file": "button_fix/S07_SH007_start.png",
+   "sha256": "7ae336a63a2a1b20b4156ab29bd9861de78f0fd2dc2838f311bc084775e2d938"
+  },
+  "S07_SH008_start": {
+   "file": "button_fix/S07_SH008_start.png",
+   "sha256": "9699933428ae27fc3e0ca5b575eb640be93a8863977d6a2596109ab7126d1751"
+  },
+  "S08_SH001_start": {
+   "file": "api_S3_scenes_w1/S08_SH001_start.png",
+   "sha256": "38d7ea7cd62206fc4a671f74e2312262c3d84d92490cd5f07c11411468934ea1"
+  },
+  "S08_SH002_start": {
+   "file": "api_S3_scenes_w1/S08_SH002_start.png",
+   "sha256": "2aa79cda8d12bf783d39c053f5ff3b3c54a3593d7318e4d5d167b0fabf653648"
+  },
+  "S08_SH003_start": {
+   "file": "api_S3_scenes_w1/S08_SH003_start.png",
+   "sha256": "1e2151be9cfcfa7aaa7ea6f2182f94a0ef1c48bd34544c9c5ada2d78fb636938"
+  },
+  "S08_SH004_start": {
+   "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/S08_SH004_start_candle.png",
+   "sha256": "ab009277a67eb84416c208591b70f5eb172d3c568f7a97d31b188b5bf46587e4",
+   "source": "local candle crop, RC-006"
+  }
+ }
+}

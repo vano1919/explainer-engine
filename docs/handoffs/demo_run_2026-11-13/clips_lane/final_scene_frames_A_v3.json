@@ -181,8 +181,9 @@
   },
   "S05_SH009_start": {
    "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed/S05_SH009_start_n1_card.png",
-   "sha256": "091c2ce76b799aaf63e61a5abd6512464f145d09cc8d652f7d8b38e73db88241",
-   "source": "gemini_api_2k n1 + local card fix (audit FL-312): woman from the S05_SH010 card"
+   "sha256": "39b8155aa8f4363d674d166237b327462243a34e881312cb261be6e031711c9f",
+   "source": "gemini_api_2k n1 + local card fix (audit FL-312): woman from the S05_SH010 card",
+   "note": "sha256 of the file as it sits on the mount after its post-write rewrite (same pixels as the builder output, FL-213)"
   },
   "S05_SH010_start": {
    "file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH010_start_mirror.png",
