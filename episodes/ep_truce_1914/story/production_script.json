@@ -3123,17 +3123,17 @@
    "action_start_state": "Friedrich and five Saxon soldiers stand in the trench by the candle tree",
    "action_end_state": "They sing together, faces lit by candles",
    "camera_spec": {
-    "shot_size": "medium_wide",
+    "shot_size": "medium",
     "vertical_angle": "eye_level_0",
     "horizontal_azimuth_deg": 135,
     "camera_move": "static",
     "multiangle_token": null
    },
    "screen_composition": {
-    "foreground": "the edge of the dugout entrance and an oil lamp",
-    "midground": "Friedrich and five soldiers in field grey singing, standing close together",
-    "background": "the candle tree on the parapet",
-    "screen_direction_notes": "the group faces screen left"
+    "foreground": "the dark edge of the trench wall",
+    "midground": "Friedrich, seen from the chest up, singing, with two soldiers singing at his shoulders",
+    "background": "the candle tree small and soft on the parapet",
+    "screen_direction_notes": "Friedrich looks a little to screen left"
    },
    "lighting_and_time": "night, candle glow on the faces",
    "continuity_refs": {
@@ -3147,7 +3147,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Six Saxon soldiers in field-grey caps and greatcoats standing close together in a trench at night beside a small candle-lit fir tree on the parapet, singing, breath visible, night, candle glow on the faces.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Friedrich and two Saxon soldiers in field-grey caps and greatcoats, seen from the chest up, singing in a trench at night, breath visible, a small candle-lit fir tree soft on the parapet behind them, night, candle glow on the faces.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -4705,7 +4705,7 @@
    "action_start_state": "Thomas and Friedrich face each other two paces apart",
    "action_end_state": "They shake hands firmly",
    "camera_spec": {
-    "shot_size": "medium_wide",
+    "shot_size": "wide",
     "vertical_angle": "eye_level_0",
     "horizontal_azimuth_deg": 90,
     "camera_move": "static",
@@ -4713,7 +4713,7 @@
    },
    "screen_composition": {
     "foreground": "frost on the ground",
-    "midground": "Thomas and Friedrich shaking hands, side-on",
+    "midground": "Thomas and Friedrich, two small full-length figures, shaking hands side-on in the empty field",
     "background": "wire stakes and fog",
     "screen_direction_notes": "Thomas left, Friedrich right"
    },
@@ -4729,7 +4729,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A young British private on the left and a broad Saxon soldier on the right shaking hands in a frozen field, side-on to camera, wire stakes and fog behind, low golden winter morning sun, frost haze.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Seen from a distance, a young British private on the left and a broad Saxon soldier on the right, two small full-length figures shaking hands side-on in an empty frozen field, frost in the foreground, wire stakes and fog behind, low golden winter morning sun, frost haze.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },

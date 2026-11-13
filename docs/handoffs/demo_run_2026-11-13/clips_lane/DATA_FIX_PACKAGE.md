@@ -18,7 +18,7 @@ S02_SH004 `fire_flicker` region [0.57, 0.60, 0.70, 0.80] (the brazier) and S08_S
 silent_by_design (no new `fire` events; G4 events differ from the base only by S02_SH009 `fire`, the British trench bed); "dawn bed" texts removed;
 date labels `chip_aug` / `chip_dec` (top-left corner of each map frame, looked at on rendered frames) instead of Aachen / Nieuport;
 LTX thread's three voice_description texts added (caster-owned fields, voice_card untouched); S02_SH009 2.5D = push + brazier flicker + smoke (silent).
-End card picture: `clips_lane/pictures/S08_SH004_start_candle.png` sha256 `6246cc1eae8612aa1d48dac0f26f1cc7f674adbe85d66b8d5ce566e00f99b224`
+End card picture: `clips_lane/pictures/S08_SH004_start_candle.png` sha256 `ab009277a67eb84416c208591b70f5eb172d3c568f7a97d31b188b5bf46587e4`
 (a soft-masked crop of the candle of S08_SH002 on black, local, free); G5 intake row: the intake gate `no_letterbox` (edge bands) rejects it exactly like the
 black frame (LTX FL-103), so G5 stays a rehearsal row for this one picture until the creator waives that gate for the end card (RC, not asked yet).
 Not in this package (picture decisions, would add another sha): the S03_SH003 jump cut and the repeated two-shots (S04_SH009/010/012/014, S05_SH007/009).

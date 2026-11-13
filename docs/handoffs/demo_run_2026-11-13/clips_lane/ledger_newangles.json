@@ -1,0 +1,23 @@
+{
+ "run": "clips lane: 5 new camera-position start pictures of script A (Gemini API batch, nano-banana-2.1, 2K)",
+ "owner_word": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMM8jtQUik8XW4pSnJ5ABR7 (19:31) and cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei (19:36): total cap 4.00 USD shared with LTX",
+ "estimate_usd": 0.148,
+ "cap_usd": 0.2,
+ "status": "submitted",
+ "spent_usd": 0.0,
+ "batch": [
+  "ipxfk0jllu3esgdsscxbri396i2i2katmhu8",
+  "q4l7ovvzp4bk3qr8509lb0ou7sehc7oqeg9u",
+  "1awceydhywbwws6rfo43jfloxgqdu6pc0tpx"
+ ],
+ "out_dir": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles",
+ "ids": [
+  "S03_SH003_start_n1",
+  "S04_SH010_start_n1",
+  "S04_SH012_start_n1",
+  "S04_SH014_start_n1",
+  "S05_SH009_start_n1"
+ ],
+ "updated_utc": "2026-11-13T19:54:00Z",
+ "reserved_usd": 0.148
+}
