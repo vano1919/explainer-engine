@@ -31,7 +31,7 @@ GAIN_MAX_DB = 12.0          # engineering default: a clip quieter than this unde
 EQ_EDGES_HZ = (100, 200, 400, 800, 1600, 3200, 6400, 8000)     # seven octave bands, 100 Hz to 8 kHz (engineering default)
 EQ_MAX_DB = 4.0             # every band's correction stays inside this (the audit's bound)
 EQ_MIN_CLIPS = 3            # a man with fewer clips has no median worth matching to
-EQ_MIN_SPEECH_S = 0.5       # a clip with less measured speech than this is not measured
+EQ_MIN_SPEECH_S = 1.0       # TD-321: under a second of measured speech the curve follows noise, the clip is not measured
 # TD-320: a pitch shift only on a clip two estimators and the tracker's own confidence agree on, 2 to 4 semitones from the median
 PITCH_MIN_CONF = 0.5
 PITCH_AGREE_ST = 1.0
