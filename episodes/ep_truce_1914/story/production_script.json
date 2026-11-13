@@ -111,8 +111,7 @@
     "lighting_palette": "pale white winter dawn, flat grey midday, low amber sunset",
     "ambience_bed": {
      "classes": [
-      "wind",
-      "crowd_murmur"
+      "wind"
      ],
      "room": "outdoor",
      "why": "an open frozen field with men talking in it"
@@ -2498,8 +2497,8 @@
      "effect": "fire_flicker",
      "event_id": "S02_SH004.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      },
      "region": [
       0.57,
@@ -2583,8 +2582,8 @@
      "effect": "fire_flicker",
      "event_id": "S02_SH005.M2",
      "audio": {
-      "decision": "ambience_only",
-      "why": "the brazier is in the bed of the place"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      },
      "region": [
       0.6,
@@ -2597,8 +2596,8 @@
      "effect": "embers",
      "event_id": "S02_SH005.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "sparks lift from the brazier below the letter; embers are the fire's bed"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -2825,8 +2824,8 @@
      "effect": "cloud_drift",
      "event_id": "S02_SH008.M2",
      "audio": {
-      "decision": "ambience_only",
-      "why": "sky drift under the wind bed"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      },
      "region": [
       0.0,
@@ -2839,8 +2838,8 @@
      "effect": "fire_flicker",
      "event_id": "S02_SH008.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -2923,8 +2922,8 @@
       0.82
      ],
      "audio": {
-      "decision": "ambience_only",
-      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     },
     {
@@ -3096,8 +3095,8 @@
      "effect": "dust",
      "event_id": "S03_SH002.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "motes drift in the candle's light; the cold night bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -5176,8 +5175,8 @@
      "effect": "smoke_drift",
      "event_id": "S05_SH003.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "breath and brazier smoke rise between the men; the bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -6151,8 +6150,8 @@
      "effect": "smoke_drift",
      "event_id": "S05_SH016.M2",
      "audio": {
-      "decision": "ambience_only",
-      "why": "smoke rises from the braziers behind the stretcher; the bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     },
     {
@@ -6637,8 +6636,8 @@
      "effect": "smoke_drift",
      "event_id": "S06_SH001.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "brazier smoke rises beside the German; the bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -6936,8 +6935,8 @@
      "effect": "smoke_drift",
      "event_id": "S06_SH005.M2",
      "audio": {
-      "decision": "ambience_only",
-      "why": "smoke rises from the two trench lines; the bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     },
     {
@@ -7482,8 +7481,8 @@
      "effect": "smoke_drift",
      "event_id": "S06_SH012.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "smoke rises from the trench; the bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -8175,8 +8174,8 @@
      "effect": "dust",
      "event_id": "S08_SH001.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "motes drift in the candle's light; the cold night bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -8269,8 +8268,8 @@
      "effect": "dust",
      "event_id": "S08_SH002.M3",
      "audio": {
-      "decision": "ambience_only",
-      "why": "motes drift in the candle's light; the cold night bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     }
    ],
@@ -8347,8 +8346,8 @@
      "effect": "smoke_drift",
      "event_id": "S08_SH003.M2",
      "audio": {
-      "decision": "ambience_only",
-      "why": "smoke rises from the trench braziers; the bed carries it"
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
      }
     },
     {
@@ -8451,8 +8450,7 @@
      }
     }
    ],
-   "motion_profile": "document",
-   "intentional_silence": "the end card: the bed fades out under the black and the text holds in silence"
+   "motion_profile": "document"
   }
  ],
  "av_contract": "av_events/1"
