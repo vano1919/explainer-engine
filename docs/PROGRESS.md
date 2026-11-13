@@ -5735,7 +5735,7 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   transcriber, and this container has faster-whisper installed for the demo's word times.
 - Next: the creator looks at the demo and the two A/B files and confirms or changes the house numbers (report section 6); then the episode runner stage.
 
-## 2026-11-12 — W1: believable sound, measured on the delivered file (branch `claude/project-thread-xpsv3w`, D-133)
+## 2026-11-12 — W1: believable sound, measured on the delivered file (branch `claude/project-thread-xpsv3w`, D-133, renumbered D-136 at the merge with the cheapest-run line)
 
 - Asked by the creator (21:44 UTC: dead air in the dialogue, an illogical fast cut, a senseless hiss under the maps with no action sounds; 22:15 UTC:
   library first, then free licence-checked sounds, then ElevenLabs from a priced list; every map move and counter start has its own sound plus a bed;
@@ -5752,7 +5752,7 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   highs; broadband it never beats the voice).
 - Free test: Demucs on six LTX clips found no usable bed (non-vocal stem under -55 dBFS). Cost: 0.
 - Files: HF `vano1919/tmr-artifacts` `explainer-engine/realism_w1_2026-11-12/` (videos, reports, library takes + manifest; commit 2bf5dcf3).
-- Stale text reported, not deleted: D-132's 19:12 UTC sound clause ("LTX clips need no separate background sound") is retired by D-133;
+- Stale text reported, not deleted: D-132's 19:12 UTC sound clause ("LTX clips need no separate background sound") is retired by D-136 (W1's D-133);
   `docs/SCENE_REUSE_RULES.md` AS-10 still reads as if the LTX sound alone were enough (it stays true that the clip keeps its own sound).
 - Tests: `tests/unit/test_sound_realism.py` (10), `test_scene_join.py` (7), `test_overlay_demo.py` and `test_overlay_rules.py` changed (OV-53/56
   stricter); docs_lint 0 findings.
