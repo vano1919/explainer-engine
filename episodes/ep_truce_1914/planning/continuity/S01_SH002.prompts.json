@@ -1,0 +1,17 @@
+[
+ {
+  "shot_id": "S01_SH002",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the young British private: copy the face, body and costume only, not the pose. Medium wide shot, low angle. Exactly 1 person. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place, in the centre, in the middle distance, seen from behind, Thomas stands at the trench ladder, his rifle leaning against the sandbags. Visible: waist-high sandbag breastworks with frost in the centre; a trench ladder in the centre. The rifle is leaning against the sandbags. Dawn; key light from the right (the low winter sun).",
+  "refs": [
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 1)",
+   "Is the young British private in the centre of the frame?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Is a trench ladder visible in the centre?",
+   "Does the main light come from the right?"
+  ]
+ }
+]

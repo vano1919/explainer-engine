@@ -1,0 +1,54 @@
+{
+  "schema": "episode_stage/1",
+  "episode_id": "ep_truce_1914",
+  "stage": "sound_plan",
+  "gate": "G4",
+  "verdict": {
+    "status": "PASS",
+    "failed": [],
+    "not_run": [],
+    "review": []
+  },
+  "rows": [
+    {
+      "gate": "era_from_the_manifest",
+      "status": "PASS",
+      "measured": null,
+      "detail": "the era is 'modern_20th_century' (manifest): it comes from episode.json historical_period.era_id, never a guess (FA-09)"
+    },
+    {
+      "gate": "beds_authored_per_place",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 place(s) without an authored ambience_bed: their bed is a candidate read from the prose (FA-09, the story-architect writes it)"
+    },
+    {
+      "gate": "no_era_foreign_sound_asked",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 sound event(s) the era never heard, asked by the script"
+    },
+    {
+      "gate": "every_sound_class_has_a_take",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 class(es) still need a real take (the needs list; new takes are paid credits, the creator's word first)"
+    },
+    {
+      "gate": "av_events_decided",
+      "status": "PASS",
+      "measured": [],
+      "detail": "50 visible event(s) {'silent_by_design': 33, 'ambience_only': 7, 'ui_cue': 7, 'sfx': 3}; review_required []; 42 word candidate(s) listed, none placed (AV-07)"
+    }
+  ],
+  "outputs": {
+    "plan": "audio/sound_plan.json",
+    "classes": 8,
+    "needs": 0,
+    "av_events": "production/av_events.json"
+  },
+  "rehearsal": false,
+  "fingerprint": "344dc11ee96031e6481d9420877520f828b6154ddf740463a67f23d01f44a7ff",
+  "elapsed_s": 0.1,
+  "at": "2026-11-13T16:25:11Z"
+}

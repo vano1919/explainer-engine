@@ -1,0 +1,394 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S02@loc_british_trench:S02_SH004",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_british_trench",
+  "where_when": "British front-line breastwork trench opposite Frelinghien / Christmas Eve 1914, afternoon to dusk",
+  "int_ext": "EXT",
+  "time_of_day": "day",
+  "weather": "clear",
+  "master_frame": "S02_SH008_start",
+  "landmarks": [
+   {
+    "id": "sandbag_breastwork",
+    "text": "waist-high sandbag breastworks with frost"
+   },
+   {
+    "id": "duckboards",
+    "text": "duckboards over brown floodwater"
+   },
+   {
+    "id": "fire_step",
+    "text": "the fire step"
+   },
+   {
+    "id": "brazier",
+    "text": "a small coke brazier"
+   },
+   {
+    "id": "trench_ladder",
+    "text": "a trench ladder"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "top",
+  "light_source": "the low winter sun",
+  "colour_key": "cold steel-blue winter light, warm orange brazier glow at night"
+ },
+ "cast": {
+  "char_sgt_harris": {
+   "name": "the British sergeant",
+   "description": "Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic",
+   "sheet": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+   "costumes": {
+    "cap_on": "khaki soft cap, goatskin jerkin over the khaki tunic, three chevrons",
+    "cap_off": "bareheaded, the khaki soft cap in his hand, goatskin jerkin over the khaki tunic, three chevrons"
+   }
+  },
+  "char_thomas_hale": {
+   "name": "the young British private",
+   "description": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
+   "sheet": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "costumes": {
+    "service": "khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place",
+    "button_cut": "khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S02_SH004",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 6,
+   "characters": [],
+   "camera_move": "parallax_dolly",
+   "refs": [
+    {
+     "path": "S02_SH008_start",
+     "role": "place"
+    }
+   ],
+   "hook_up": "first",
+   "extras": 6,
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "duckboards",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S02_SH005",
+   "shot_size": "MCU",
+   "angle": "high",
+   "camera_side": "A",
+   "head_count": 0,
+   "characters": [],
+   "camera_move": "slow_push_in",
+   "refs": [
+    {
+     "path": "S02_SH008_start",
+     "role": "place"
+    }
+   ],
+   "hook_up": "cutaway",
+   "angle_change_deg": 45.0,
+   "changes": [
+    {
+     "entity": "scene",
+     "field": "key_light_dir",
+     "from": null,
+     "to": "front",
+     "cause": "the light of this shot: warm brazier light at dusk"
+    },
+    {
+     "entity": "scene",
+     "field": "time_of_day",
+     "from": null,
+     "to": "dusk",
+     "cause": "the light of this shot: warm brazier light at dusk"
+    }
+   ],
+   "time_of_day": "dusk",
+   "key_light_dir": "front",
+   "set_state": {
+    "hands": "Thomas's cold hands in khaki greatcoat sleeves holding the letter open"
+   },
+   "landmarks": [
+    {
+     "id": "brazier",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S02_SH006",
+   "shot_size": "MS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "action": "Thomas sits on the fire step by the brazier holding the letter",
+     "props": [
+      {
+       "id": "prop_mothers_letter",
+       "hand": "both",
+       "state": "open"
+      }
+     ],
+     "eyeline": "off_right"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S02_SH008_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "hook_up": "eyeline",
+   "angle_change_deg": 45.0,
+   "time_of_day": "dusk",
+   "key_light_dir": "front",
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    },
+    {
+     "id": "brazier",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S02_SH007",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_sgt_harris",
+     "screen_pos": "right",
+     "depth": "mid",
+     "facing": "left",
+     "costume": "cap_on",
+     "eyeline": "char_thomas_hale",
+     "action": "Harris sits further along the fire step cleaning his rifle"
+    },
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "char_sgt_harris"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S02_SH008_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+     "role": "character",
+     "of": "char_sgt_harris"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "axis": [
+    "char_sgt_harris",
+    "char_thomas_hale"
+   ],
+   "hook_up": "eyeline",
+   "angle_change_deg": 90.0,
+   "changes": [
+    {
+     "entity": "char_thomas_hale",
+     "field": "props",
+     "from": [
+      "prop_mothers_letter (both, open)"
+     ],
+     "to": null,
+     "cause": "end of S02_SH006: Thomas folds the letter into his breast pocket; this shot starts: Harris sits further along the fire step cleaning his rifle"
+    }
+   ],
+   "time_of_day": "dusk",
+   "key_light_dir": "front",
+   "set_state": {
+    "rifle": "across Harris's knees, being cleaned"
+   },
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    },
+    {
+     "id": "brazier",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S02_SH008",
+   "shot_size": "WS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "costume": "service",
+     "eyeline": "char_sgt_harris",
+     "facing": "right",
+     "action": "Thomas and Harris sit by the brazier at dusk"
+    },
+    {
+     "id": "char_sgt_harris",
+     "screen_pos": "right",
+     "depth": "mid",
+     "costume": "cap_on",
+     "eyeline": "char_thomas_hale",
+     "facing": "left"
+    }
+   ],
+   "camera_move": "slow_push_in",
+   "refs": [
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+     "role": "character",
+     "of": "char_sgt_harris"
+    }
+   ],
+   "is_master": true,
+   "axis": [
+    "char_thomas_hale",
+    "char_sgt_harris"
+   ],
+   "hook_up": "cutaway",
+   "angle_change_deg": 0.0,
+   "changes": [
+    {
+     "entity": "scene",
+     "field": "key_light_dir",
+     "from": "front",
+     "to": "left",
+     "cause": "the light of this shot: cold blue dusk"
+    }
+   ],
+   "time_of_day": "dusk",
+   "key_light_dir": "left",
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "brazier",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S02_SH009",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 4,
+   "characters": [],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S02_SH008_start",
+     "role": "place"
+    }
+   ],
+   "hook_up": "time_cut",
+   "angle_change_deg": 90.0,
+   "changes": [
+    {
+     "entity": "scene",
+     "field": "key_light_dir",
+     "from": "left",
+     "to": "front",
+     "cause": "the light of this shot: dusk, warm brazier light"
+    }
+   ],
+   "time_of_day": "dusk",
+   "key_light_dir": "front",
+   "extras": 4,
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    },
+    {
+     "id": "brazier",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}
