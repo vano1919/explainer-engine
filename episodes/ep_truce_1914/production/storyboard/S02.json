@@ -1,0 +1,160 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S02",
+  "shots": [
+    "S02_SH006",
+    "S02_SH007"
+  ],
+  "cells": [
+    {
+      "shot_id": "S02_SH006",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S02_SH006_start",
+      "from": null,
+      "seconds": 5.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S02_SH006_start.png",
+      "vs_master": {
+        "palette_dist": 0.0487,
+        "top_palette_dist": 0.1089,
+        "luma_gap": 0.0114
+      }
+    },
+    {
+      "shot_id": "S02_SH007",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S02_SH007_start",
+      "from": null,
+      "seconds": 5.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S02_SH007_start.png",
+      "vs_master": {
+        "palette_dist": 0.059,
+        "top_palette_dist": 0.1422,
+        "luma_gap": 0.0306
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 2 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-09 S02_SH006: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+      ],
+      "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S02_SH006 vs S02_SH004_start: palette 0.0487, top third 0.1089 (max 0.08), brightness gap 0.0114 (max 0.18)",
+        "S02_SH007 vs S02_SH004_start: palette 0.059, top third 0.1422 (max 0.08), brightness gap 0.0306 (max 0.18)"
+      ],
+      "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "REVIEW",
+      "measured": [
+        "S02_SH006->S02_SH007"
+      ],
+      "detail": "the palette sees no change, 1 hero cut(s) wait for the eye check of headgear, props and clothes (costume_review/1; the palette missed the 11-12 helmet)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review",
+      "storyboard_same_place_as_master",
+      "storyboard_hero_costume_holds"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 2 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-09 S02_SH006: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+        ],
+        "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S02_SH006 vs S02_SH004_start: palette 0.0487, top third 0.1089 (max 0.08), brightness gap 0.0114 (max 0.18)",
+          "S02_SH007 vs S02_SH004_start: palette 0.059, top third 0.1422 (max 0.08), brightness gap 0.0306 (max 0.18)"
+        ],
+        "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "REVIEW",
+        "measured": [
+          "S02_SH006->S02_SH007"
+        ],
+        "detail": "the palette sees no change, 1 hero cut(s) wait for the eye check of headgear, props and clothes (costume_review/1; the palette missed the 11-12 helmet)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S02_SH006_start": "fe8f6c03e5a1e16e40c93bcd56ea73bdef351a2d88dd72f40197c48b99ec2b62",
+    "S02_SH004_start": "acf6958ad37be7b0ba80ed78465def34c39f33663f7b83c48f1707037e7a9e1e",
+    "S02_SH007_start": "2491153a615481469d90dcce17a5608df9d5af33a41496c564a3ade01cdf2312"
+  },
+  "plan_digest": "888e33b5cfd2194409f8dce7d5e8fba0b38d07dd1e0ab29566e0d07945fd5139",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S02.jpg",
+  "sheet_sha256": "d384a694e48d54a7b1d37d7beb73cd7db4a3f80acaf26eb328075c591678af69"
+}

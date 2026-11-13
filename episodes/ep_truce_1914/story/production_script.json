@@ -33,7 +33,7 @@
      "pace": "quick, then hesitant",
      "accent": "a working-class East Midlands English accent"
     },
-    "voice_description": "a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+    "voice_description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
     "voice_profile_id": "voice_thomas_hale_1914"
    },
    {
@@ -49,7 +49,7 @@
      "pace": "calm and careful",
      "accent": "a German accent with English learned in London"
     },
-    "voice_description": "a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+    "voice_description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
     "voice_profile_id": "voice_friedrich_brandt_1914"
    },
    {
@@ -65,7 +65,7 @@
      "pace": "clipped and hard",
      "accent": "a Lancashire English accent"
     },
-    "voice_description": "a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
+    "voice_description": "the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
     "voice_profile_id": "voice_sgt_harris_1914"
    }
   ],
@@ -1757,6 +1757,14 @@
       "decision": "ambience_only",
       "why": "the fog drift is carried by the wind bed"
      }
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S01_SH001.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts through the fog; the place's bed carries it"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -1988,6 +1996,14 @@
       "decision": "ambience_only",
       "why": "the crowd murmur bed carries the figures"
      }
+    },
+    {
+     "effect": "mist",
+     "event_id": "S01_SH004.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "ground fog drifts over the field; mist is heard in the bed"
+     }
     }
    ],
    "motion_profile": "battle"
@@ -2074,6 +2090,14 @@
       1.0,
       0.55
      ]
+    },
+    {
+     "effect": "mist",
+     "event_id": "S01_SH005.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "night frost-fog lies on the field; mist is heard in the bed"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -2144,7 +2168,8 @@
       "class": "map_arrive_click",
       "sync": "onset",
       "purpose": "clarify"
-     }
+     },
+     "from": "chip_aug"
     },
     {
      "kind": "route_arrow",
@@ -2167,9 +2192,9 @@
    ],
    "infographic_subtype": "map",
    "map_view": {
-    "lon": 4.6,
-    "lat": 49.4,
-    "span_km": 520
+    "lon": 4.84,
+    "lat": 49.9,
+    "span_km": 530
    }
   },
   {
@@ -2238,7 +2263,8 @@
       "class": "map_arrive_click",
       "sync": "onset",
       "purpose": "clarify"
-     }
+     },
+     "from": "chip_dec"
     },
     {
      "kind": "front_line",
@@ -2269,9 +2295,9 @@
    ],
    "infographic_subtype": "map",
    "map_view": {
-    "lon": 4.6,
-    "lat": 49.4,
-    "span_km": 520
+    "lon": 4.95,
+    "lat": 49.31,
+    "span_km": 1000
    }
   },
   {
@@ -2331,6 +2357,30 @@
    "route_locked": true,
    "actions": [
     {
+     "kind": "front_line",
+     "at_word": "Here",
+     "from": "nieuport",
+     "to": "swiss_border",
+     "via": [
+      "ypres",
+      "armentieres",
+      "la_bassee",
+      "arras",
+      "noyon",
+      "soissons",
+      "reims",
+      "verdun",
+      "st_mihiel",
+      "pont_a_mousson"
+     ],
+     "cues": "none",
+     "event_id": "S02_SH003.A0",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the line is already known from the shot before; it stands at once, no draw (BP-81)"
+     }
+    },
+    {
      "kind": "zoom",
      "at_word": "Here",
      "to": "flanders",
@@ -2358,9 +2408,9 @@
    ],
    "infographic_subtype": "map",
    "map_view": {
-    "lon": 4.6,
-    "lat": 49.4,
-    "span_km": 520
+    "lon": 4.95,
+    "lat": 49.31,
+    "span_km": 1000
    }
   },
   {
@@ -2442,6 +2492,20 @@
       0.7,
       1.0,
       1.0
+     ]
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S02_SH004.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+     },
+     "region": [
+      0.57,
+      0.6,
+      0.7,
+      0.8
      ]
     }
    ],
@@ -2528,6 +2592,14 @@
       1.0,
       0.5
      ]
+    },
+    {
+     "effect": "embers",
+     "event_id": "S02_SH005.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "sparks lift from the brazier below the letter; embers are the fire's bed"
+     }
     }
    ],
    "motion_profile": "document"
@@ -2762,6 +2834,14 @@
       1.0,
       0.35
      ]
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S02_SH008.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+     }
     }
    ],
    "motion_profile": "portrait"
@@ -2771,8 +2851,8 @@
    "segment_id": "S02",
    "target_duration_seconds": 8.25,
    "narrative_purpose": "Christmas Eve arrives as parcels: British soldiers open Princess Mary's brass tins (bodies at work, narrated)",
-   "visual_type": "cinematic_video",
-   "generation_mode": "WAN_I2V",
+   "visual_type": "composed_illustration",
+   "generation_mode": "STILL_25D",
    "location_id": "loc_british_trench",
    "character_ids": [],
    "prop_ids": [],
@@ -2802,7 +2882,7 @@
    "keyframe_plan": {
     "needs_start_frame": true,
     "needs_end_frame": false,
-    "start_frame_source": "reference_derived_anchor",
+    "start_frame_source": "new_master_anchor",
     "end_frame_reason": null
    },
    "image_prompt": {
@@ -2811,27 +2891,51 @@
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
    "video_prompt": {
-    "motion_prompt": "The soldiers open their brass tins and pass cigarettes along the step.",
+    "motion_prompt": "A slow push toward the men as the narrator names the tins.",
     "primary_action_count": 1,
-    "camera_move_count": 0,
-    "parallax_preset": null
+    "camera_move_count": 1,
+    "parallax_preset": "dolly_in"
    },
    "selective_control": null,
    "transition_out": "hard_cut",
-   "route": "video",
-   "route_reason": "a hero speaks or a body performs in this shot; LTX clip, one line at most (RT-02, VL-02)",
+   "route": "still_25d",
+   "route_reason": "place, object or tableau with no line spoken in frame: the 2.5D renderer carries it (RT-02)",
    "route_locked": true,
    "shot_role": "action",
-   "edit_plan": {
-    "continuity_mode": "coverage",
-    "cut_in_reason": "time_cut",
-    "scene_master": "S02_SH004_start",
-    "axis_side": "A",
-    "screen_direction": "none",
-    "camera_in": "rest",
-    "camera_out": "rest",
-    "screen_positions": {}
-   }
+   "motion_profile": "battle",
+   "motion_imitation": [
+    {
+     "effect": "push",
+     "event_id": "S02_SH009.M1",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "a slow camera move under the voice (BP-81 budget)"
+     },
+     "strength": 0.6
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S02_SH009.M2",
+     "region": [
+      0.56,
+      0.58,
+      0.67,
+      0.82
+     ],
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+     }
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S02_SH009.M3",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "breath and brazier smoke rise; heard as nothing"
+     }
+    }
+   ]
   },
   {
    "shot_id": "S03_SH001",
@@ -2987,6 +3091,14 @@
       1.0,
       0.35
      ]
+    },
+    {
+     "effect": "dust",
+     "event_id": "S03_SH002.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "motes drift in the candle's light; the cold night bed carries it"
+     }
     }
    ],
    "motion_profile": "object"
@@ -3588,6 +3700,14 @@
       1.0,
       0.55
      ]
+    },
+    {
+     "effect": "mist",
+     "event_id": "S03_SH010.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "cold ground mist over the frozen field; mist is heard in the bed"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -3664,6 +3784,14 @@
      "audio": {
       "decision": "ambience_only",
       "why": "fog drift under the wind bed"
+     }
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S04_SH001.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts through the fog; the place's bed carries it"
      }
     }
    ],
@@ -4172,7 +4300,9 @@
     "camera_out": "push",
     "screen_positions": {
      "char_thomas_hale": "center"
-    }
+    },
+    "head_handle_s": 0.0,
+    "tail_handle_s": 0.0
    }
   },
   {
@@ -4388,6 +4518,22 @@
       "why": "the silence of the beat; no cue (BP-81)"
      },
      "strength": 0.3
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S04_SH011.M2",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts behind the hands; the place's bed carries it"
+     }
+    },
+    {
+     "effect": "mist",
+     "event_id": "S04_SH011.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "a thin frost mist over the field; mist is heard in the bed"
+     }
     }
    ],
    "motion_profile": "object"
@@ -4804,9 +4950,9 @@
    ],
    "infographic_subtype": "map",
    "map_view": {
-    "lon": 2.87,
-    "lat": 50.66,
-    "span_km": 45
+    "lon": 2.871,
+    "lat": 50.692,
+    "span_km": 90
    }
   },
   {
@@ -4866,6 +5012,69 @@
    "route_locked": true,
    "actions": [
     {
+     "kind": "front_line",
+     "at_word": "Nobody",
+     "from": "ypres",
+     "to": "la_bassee",
+     "via": [
+      "wulverghem",
+      "ploegsteert",
+      "frelinghien",
+      "armentieres",
+      "fleurbaix"
+     ],
+     "cues": "none",
+     "event_id": "S05_SH002.A0",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the line is already known from the shot before; it stands at once, no draw (BP-81)"
+     }
+    },
+    {
+     "kind": "highlight",
+     "at_word": "Nobody",
+     "from": "wulverghem",
+     "value": 3,
+     "event_id": "S05_SH002.A2",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"
+     }
+    },
+    {
+     "kind": "highlight",
+     "at_word": "Nobody",
+     "from": "ploegsteert",
+     "value": 3,
+     "event_id": "S05_SH002.A3",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"
+     }
+    },
+    {
+     "kind": "highlight",
+     "at_word": "Nobody",
+     "from": "frelinghien",
+     "value": 3,
+     "event_id": "S05_SH002.A4",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"
+     }
+    },
+    {
+     "kind": "highlight",
+     "at_word": "Nobody",
+     "from": "fleurbaix",
+     "value": 3,
+     "event_id": "S05_SH002.A5",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"
+     }
+    },
+    {
      "kind": "counter",
      "at_word": "hundred",
      "until_word": "part",
@@ -4883,9 +5092,9 @@
    ],
    "infographic_subtype": "map",
    "map_view": {
-    "lon": 2.87,
-    "lat": 50.66,
-    "span_km": 45
+    "lon": 2.871,
+    "lat": 50.692,
+    "span_km": 90
    }
   },
   {
@@ -4961,6 +5170,14 @@
      "audio": {
       "decision": "ambience_only",
       "why": "the crowd murmur bed"
+     }
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S05_SH003.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "breath and brazier smoke rise between the men; the bed carries it"
      }
     }
    ],
@@ -5472,6 +5689,22 @@
       "why": "the push is the silence of the beat; no cue (BP-81)"
      },
      "strength": 0.5
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S05_SH010.M2",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts behind the hands; the place's bed carries it"
+     }
+    },
+    {
+     "effect": "mist",
+     "event_id": "S05_SH010.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "a thin frost mist over the field; mist is heard in the bed"
+     }
     }
    ],
    "motion_profile": "object"
@@ -5913,6 +6146,22 @@
       "why": "the silence of the beat; no cue (BP-81)"
      },
      "strength": 0.3
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S05_SH016.M2",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "smoke rises from the braziers behind the stretcher; the bed carries it"
+     }
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S05_SH016.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts over the spades and the stretcher; the place's bed carries it"
+     }
     }
    ],
    "motion_profile": "object"
@@ -6218,6 +6467,14 @@
       1.0,
       0.25
      ]
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S05_SH020.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts over the graves; the place's bed carries it"
+     }
     }
    ],
    "motion_profile": "battle"
@@ -6375,6 +6632,14 @@
       1.0,
       0.6
      ]
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S06_SH001.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "brazier smoke rises beside the German; the bed carries it"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -6666,6 +6931,22 @@
       "why": "the silence of the beat; no cue"
      },
      "strength": 0.3
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S06_SH005.M2",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "smoke rises from the two trench lines; the bed carries it"
+     }
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S06_SH005.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts over the ice; the place's bed carries it"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -7196,6 +7477,14 @@
       1.0,
       0.7
      ]
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S06_SH012.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "smoke rises from the trench; the bed carries it"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -7273,6 +7562,14 @@
       "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"
      },
      "strength": 0.4
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S07_SH001.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the low sun's light drifts through the mist; the place's bed carries it"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -7873,6 +8170,14 @@
       0.35,
       0.5
      ]
+    },
+    {
+     "effect": "dust",
+     "event_id": "S08_SH001.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "motes drift in the candle's light; the cold night bed carries it"
+     }
     }
    ],
    "motion_profile": "document"
@@ -7945,6 +8250,28 @@
       "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"
      },
      "strength": 0.5
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S08_SH002.M2",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "a candle makes no sound"
+     },
+     "region": [
+      0.78,
+      0.3,
+      0.92,
+      0.62
+     ]
+    },
+    {
+     "effect": "dust",
+     "event_id": "S08_SH002.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "motes drift in the candle's light; the cold night bed carries it"
+     }
     }
    ],
    "motion_profile": "object"
@@ -8015,6 +8342,22 @@
      },
      "strength": 0.6,
      "direction": "up"
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S08_SH003.M2",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "smoke rises from the trench braziers; the bed carries it"
+     }
+    },
+    {
+     "effect": "sun_shaft_drift",
+     "event_id": "S08_SH003.M3",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the last low sun's light drifts over the field; the place's bed carries it"
+     }
     }
    ],
    "motion_profile": "landscape"
@@ -8032,8 +8375,8 @@
    "audio_line_ids": [
     "S08_L004"
    ],
-   "action_start_state": "Black",
-   "action_end_state": "Black with the line of text",
+   "action_start_state": "Black with one small candle flame low in the corner",
+   "action_end_state": "Black with one small candle flame and the line of text",
    "camera_spec": {
     "shot_size": "wide",
     "vertical_angle": "eye_level_0",
@@ -8042,7 +8385,7 @@
     "multiangle_token": null
    },
    "screen_composition": {
-    "foreground": "black",
+    "foreground": "one small candle in a tin holder, low right",
     "midground": "black",
     "background": "black",
     "screen_direction_notes": "no axis: a static place or object view"
@@ -8059,7 +8402,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A plain black frame, no image, black.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A black frame with one small candle flame in a tin holder low in the right corner, nothing else, no text.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -8084,6 +8427,28 @@
       "why": "the text fades up in silence; the film ends on silence"
      },
      "strength": 0.05
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S08_SH004.M2",
+     "region": [
+      0.74,
+      0.48,
+      0.86,
+      0.72
+     ],
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the film ends in silence; the candle's flicker makes no sound"
+     }
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S08_SH004.M3",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the film ends in silence; the thin smoke makes no sound"
+     }
     }
    ],
    "motion_profile": "document",

@@ -1,0 +1,252 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S04b",
+  "shots": [
+    "S04_SH008",
+    "S04_SH009",
+    "S04_SH010",
+    "S04_SH012",
+    "S04_SH013",
+    "S04_SH014",
+    "S04_SH015"
+  ],
+  "cells": [
+    {
+      "shot_id": "S04_SH008",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S04_SH008_start",
+      "from": null,
+      "seconds": 9.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH008_start.png"
+    },
+    {
+      "shot_id": "S04_SH009",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH009_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH009_start.png"
+    },
+    {
+      "shot_id": "S04_SH010",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S04_SH010_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH010_start.png",
+      "vs_master": {
+        "palette_dist": 0.0095,
+        "top_palette_dist": 0.0259,
+        "luma_gap": 0.0114
+      }
+    },
+    {
+      "shot_id": "S04_SH012",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S04_SH012_start",
+      "from": null,
+      "seconds": 5.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH012_start.png",
+      "vs_master": {
+        "palette_dist": 0.0416,
+        "top_palette_dist": 0.1,
+        "luma_gap": 0.0089
+      }
+    },
+    {
+      "shot_id": "S04_SH013",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S04_SH013_start",
+      "from": null,
+      "seconds": 5.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH013_start.png",
+      "vs_master": {
+        "palette_dist": 0.1022,
+        "top_palette_dist": 0.3717,
+        "luma_gap": 0.0329
+      }
+    },
+    {
+      "shot_id": "S04_SH014",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH014_start",
+      "from": null,
+      "seconds": 4.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH014_start.png",
+      "vs_master": {
+        "palette_dist": 0.005,
+        "top_palette_dist": 0.0058,
+        "luma_gap": 0.0321
+      }
+    },
+    {
+      "shot_id": "S04_SH015",
+      "mode": "coverage",
+      "route": "video",
+      "size": "extreme_wide",
+      "picture": "S04_SH015_start",
+      "from": null,
+      "seconds": 7.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH015_start.png"
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 7 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-08 S04_SH013: 4 character lines in a row without a reaction or insert"
+      ],
+      "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "FAIL",
+      "measured": [
+        "S04_SH010 repeats the composition of S04_SH009 (3 of 64 bits apart)",
+        "S04_SH012 repeats the composition of S04_SH010 (6 of 64 bits apart)"
+      ],
+      "detail": "2 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S04_SH012 vs S04_SH009_start: palette 0.0416, top third 0.1 (max 0.08), brightness gap 0.0089 (max 0.18)",
+        "S04_SH013 vs S04_SH009_start: palette 0.1022, top third 0.3717 (max 0.08), brightness gap 0.0329 (max 0.18)"
+      ],
+      "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "REVIEW",
+      "measured": [
+        "char_friedrich_brandt (head) S04_SH012 -> S04_SH013: colours move 0.2448 (> 0.15): clothes, skin or hair changed",
+        "char_friedrich_brandt (head) S04_SH013 -> S04_SH014: colours move 0.3443 (> 0.15): clothes, skin or hair changed",
+        "char_thomas_hale (head) S04_SH013 -> S04_SH014: colours move 0.2136 (> 0.15): clothes, skin or hair changed"
+      ],
+      "detail": "3 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "FAIL",
+      "measured": [
+        "S04_SH010: char_friedrich_brandt's face is not found",
+        "S04_SH012: char_friedrich_brandt's face is not found",
+        "S04_SH013: char_friedrich_brandt's face is not found",
+        "S04_SH014: char_friedrich_brandt's face is not found"
+      ],
+      "detail": "4 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "FAIL",
+    "failed": [
+      "storyboard_no_repeated_composition",
+      "storyboard_hero_face_holds"
+    ],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review",
+      "storyboard_same_place_as_master",
+      "storyboard_hero_costume_holds"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 7 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-08 S04_SH013: 4 character lines in a row without a reaction or insert"
+        ],
+        "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "FAIL",
+        "measured": [
+          "S04_SH010 repeats the composition of S04_SH009 (3 of 64 bits apart)",
+          "S04_SH012 repeats the composition of S04_SH010 (6 of 64 bits apart)"
+        ],
+        "detail": "2 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S04_SH012 vs S04_SH009_start: palette 0.0416, top third 0.1 (max 0.08), brightness gap 0.0089 (max 0.18)",
+          "S04_SH013 vs S04_SH009_start: palette 0.1022, top third 0.3717 (max 0.08), brightness gap 0.0329 (max 0.18)"
+        ],
+        "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "REVIEW",
+        "measured": [
+          "char_friedrich_brandt (head) S04_SH012 -> S04_SH013: colours move 0.2448 (> 0.15): clothes, skin or hair changed",
+          "char_friedrich_brandt (head) S04_SH013 -> S04_SH014: colours move 0.3443 (> 0.15): clothes, skin or hair changed",
+          "char_thomas_hale (head) S04_SH013 -> S04_SH014: colours move 0.2136 (> 0.15): clothes, skin or hair changed"
+        ],
+        "detail": "3 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "FAIL",
+        "measured": [
+          "S04_SH010: char_friedrich_brandt's face is not found",
+          "S04_SH012: char_friedrich_brandt's face is not found",
+          "S04_SH013: char_friedrich_brandt's face is not found",
+          "S04_SH014: char_friedrich_brandt's face is not found"
+        ],
+        "detail": "4 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S04_SH008_start": "900095d829188c15e00c874d763aef419beb73d4036d2a2d818c094b332128a6",
+    "S04_SH009_start": "97a352ccef3c4a8ab676987d97d8d827a04abe3ff17414ede3f7a984bf6933a0",
+    "S04_SH010_start": "70466f7dce6f5a56055c6df9783214c4118e3641e7614c2769bd0ff996a36f89",
+    "S04_SH012_start": "623e5eef47ad945c754045615ee4a650a9db734844bd56ece8721af3fcbf40a4",
+    "S04_SH013_start": "471cb2347054639e12ff5ecc706aba85b5fa64fc34884cf6d9ea20dfeb9d9293",
+    "S04_SH014_start": "9492176dcddb24e309c8c7ce8c28083eac23a38bf5b7b1d6de8d72e099e1683b",
+    "S04_SH015_start": "2df2d9fcff0e81655c79c07697c5147148b43bc5c6a99549400e6814e09f1d8a"
+  },
+  "plan_digest": "91cf321c9867fe861985b202caf458a9211b941f76bdc7261e47c314c0b18564",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S04b.jpg",
+  "sheet_sha256": "8542edc67934b5813da7d07380ed3b993f2a599f2de77b4f772e93fa81bf33ce"
+}

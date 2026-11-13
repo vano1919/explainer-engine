@@ -1,0 +1,233 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S07",
+  "shots": [
+    "S07_SH002",
+    "S07_SH003",
+    "S07_SH004",
+    "S07_SH005",
+    "S07_SH006",
+    "S07_SH007",
+    "S07_SH008"
+  ],
+  "cells": [
+    {
+      "shot_id": "S07_SH002",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S07_SH002_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH002_start.png"
+    },
+    {
+      "shot_id": "S07_SH003",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S07_SH003_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH003_start.png",
+      "vs_master": {
+        "palette_dist": 0.0484,
+        "top_palette_dist": 0.1224,
+        "luma_gap": 0.0548
+      }
+    },
+    {
+      "shot_id": "S07_SH004",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S07_SH004_start",
+      "from": null,
+      "seconds": 2.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH004_start.png"
+    },
+    {
+      "shot_id": "S07_SH005",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S07_SH005_start",
+      "from": null,
+      "seconds": 7.25,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH005_start.png",
+      "vs_master": {
+        "palette_dist": 0.0187,
+        "top_palette_dist": 0.0634,
+        "luma_gap": 0.0518
+      }
+    },
+    {
+      "shot_id": "S07_SH006",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S07_SH006_start",
+      "from": null,
+      "seconds": 6.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH006_start.png"
+    },
+    {
+      "shot_id": "S07_SH007",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S07_SH007_start",
+      "from": null,
+      "seconds": 4.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH007_start.png",
+      "vs_master": {
+        "palette_dist": 0.0165,
+        "top_palette_dist": 0.0095,
+        "luma_gap": 0.016
+      }
+    },
+    {
+      "shot_id": "S07_SH008",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S07_SH008_start",
+      "from": null,
+      "seconds": 8.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH008_start.png",
+      "vs_master": {
+        "palette_dist": 0.0044,
+        "top_palette_dist": 0.004,
+        "luma_gap": 0.0256
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 7 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-09 S07_SH002: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+      ],
+      "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S07_SH003 vs S07_SH002_start: palette 0.0484, top third 0.1224 (max 0.08), brightness gap 0.0548 (max 0.18)"
+      ],
+      "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "REVIEW",
+      "measured": [
+        "char_friedrich_brandt (head) S07_SH002 -> S07_SH003: colours move 0.1615 (> 0.15): clothes, skin or hair changed"
+      ],
+      "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "FAIL",
+      "measured": [
+        "S07_SH002: char_friedrich_brandt's face is not found"
+      ],
+      "detail": "1 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "FAIL",
+    "failed": [
+      "storyboard_hero_face_holds"
+    ],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review",
+      "storyboard_same_place_as_master",
+      "storyboard_hero_costume_holds"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 7 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-09 S07_SH002: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+        ],
+        "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S07_SH003 vs S07_SH002_start: palette 0.0484, top third 0.1224 (max 0.08), brightness gap 0.0548 (max 0.18)"
+        ],
+        "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "REVIEW",
+        "measured": [
+          "char_friedrich_brandt (head) S07_SH002 -> S07_SH003: colours move 0.1615 (> 0.15): clothes, skin or hair changed"
+        ],
+        "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "FAIL",
+        "measured": [
+          "S07_SH002: char_friedrich_brandt's face is not found"
+        ],
+        "detail": "1 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S07_SH002_start": "36840927ff40ca4a3a6eb903f5df4fd853264eb72c20bd9571240e546830a38b",
+    "S07_SH003_start": "10649d998348bf62e55a3e4ce3dfb59d66af5256305dfa4f74b47d1236b8e6c7",
+    "S07_SH004_start": "a3b53359cc3563f4a5bbd50a37da15d692eaaefde5ae23457e5060141278018f",
+    "S07_SH005_start": "da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3",
+    "S07_SH006_start": "fe18ad2e4dfe70c4de82b0fe77ff97cbdff071e1cd7eb478dd2f2fd5adcb9859",
+    "S07_SH007_start": "7ae336a63a2a1b20b4156ab29bd9861de78f0fd2dc2838f311bc084775e2d938",
+    "S07_SH008_start": "9699933428ae27fc3e0ca5b575eb640be93a8863977d6a2596109ab7126d1751"
+  },
+  "plan_digest": "7eca5e90e161abf2fc34a3991fa2b7353bc22e67d86e65c0141bf679551e0249",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S07.jpg",
+  "sheet_sha256": "0b4e8c3c29502a5c07112312dffa1a3a32ba52a2b89f24a34a8be6c696a49565"
+}

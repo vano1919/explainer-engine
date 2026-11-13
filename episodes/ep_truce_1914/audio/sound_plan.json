@@ -46,6 +46,19 @@
             48
           ],
           "placed": false
+        },
+        {
+          "event_id": "S01_SH001.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts through the fog; the place's bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            48
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -97,7 +110,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S01_SH001.M1 push: silent_by_design",
-            "S01_SH001.M2 mist: ambience_only"
+            "S01_SH001.M2 mist: ambience_only",
+            "S01_SH001.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -297,6 +311,19 @@
             120
           ],
           "placed": false
+        },
+        {
+          "event_id": "S01_SH004.M3",
+          "op": "mist",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "ground fog drifts over the field; mist is heard in the bed",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            120
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -348,7 +375,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S01_SH004.M1 pull: silent_by_design",
-            "S01_SH004.M2 subject_sway: ambience_only"
+            "S01_SH004.M2 subject_sway: ambience_only",
+            "S01_SH004.M3 mist: ambience_only"
           ],
           "candidates": []
         },
@@ -390,6 +418,19 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "tiny distant candles; heard as nothing over the wind",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            192
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S01_SH005.M3",
+          "op": "mist",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "night frost-fog lies on the field; mist is heard in the bed",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -462,7 +503,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S01_SH005.M1 truck: silent_by_design",
-            "S01_SH005.M2 fire_flicker: silent_by_design"
+            "S01_SH005.M2 fire_flicker: silent_by_design",
+            "S01_SH005.M3 mist: ambience_only"
           ],
           "candidates": [
             "running (action_text)",
@@ -898,6 +940,19 @@
       ],
       "visual_events": [
         {
+          "event_id": "S02_SH003.A0",
+          "op": "front_line",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the line is already known from the shot before; it stands at once, no draw (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            9,
+            68
+          ],
+          "placed": false
+        },
+        {
           "event_id": "S02_SH003.A1",
           "op": "zoom",
           "decision": "silent_by_design",
@@ -979,6 +1034,7 @@
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
+            "S02_SH003.A0 front_line: silent_by_design",
             "S02_SH003.A1 zoom: silent_by_design",
             "S02_SH003.A2 highlight: ui_cue map_arrive_click"
           ],
@@ -1001,7 +1057,21 @@
       "audio_line_ids": [
         "S02_L004"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:fire_flicker",
+          "event_id": "S02_SH004.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 6.25,
+          "distance": "medium"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S02_SH004.M1",
@@ -1028,6 +1098,19 @@
             150
           ],
           "placed": false
+        },
+        {
+          "event_id": "S02_SH004.M3",
+          "op": "fire_flicker",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the brazier's flame flickers; the fire's crackle is the bed's",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            150
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -1042,7 +1125,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_06_loc_british_trench (wind, fire)"
+            "reason": "bed BED_06_loc_british_trench (wind, fire) + fire"
           },
           "foley": {
             "active": false,
@@ -1065,13 +1148,14 @@
           "visible": "Soldiers in greatcoats stand in floodwater along the trench Same; one man ducks below the parapet Make the cold and the danger physical before we meet the hero brown floodwater over the duckboards three huddled British soldiers in greatcoats on the fire step sandbag parapet, grey sky Flanders, Chris",
           "environment_sounds": [
             "wind",
+            "fire",
             "fire"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "medium"
           ],
-          "ambience_layer": "bed BED_06_loc_british_trench (wind, fire)",
+          "ambience_layer": "bed BED_06_loc_british_trench (wind, fire) + fire",
           "music_supports": "authored music=True",
           "emotion": "dark",
           "sync_points": [],
@@ -1079,7 +1163,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S02_SH004.M1 truck: silent_by_design",
-            "S02_SH004.M2 water_shimmer: silent_by_design"
+            "S02_SH004.M2 water_shimmer: silent_by_design",
+            "S02_SH004.M3 fire_flicker: ambience_only"
           ],
           "candidates": []
         },
@@ -1141,6 +1226,19 @@
             132
           ],
           "placed": false
+        },
+        {
+          "event_id": "S02_SH005.M3",
+          "op": "embers",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "sparks lift from the brazier below the letter; embers are the fire's bed",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            132
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -1195,7 +1293,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S02_SH005.M1 push: silent_by_design",
-            "S02_SH005.M2 fire_flicker: ambience_only"
+            "S02_SH005.M2 fire_flicker: ambience_only",
+            "S02_SH005.M3 embers: ambience_only"
           ],
           "candidates": []
         },
@@ -1394,6 +1493,19 @@
       ],
       "events": [
         {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:fire_flicker",
+          "event_id": "S02_SH008.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 10.0,
+          "distance": "medium"
+        },
+        {
           "class": "wind",
           "kind": "ambience",
           "at_s": 0.0,
@@ -1433,6 +1545,19 @@
             240
           ],
           "placed": false
+        },
+        {
+          "event_id": "S02_SH008.M3",
+          "op": "fire_flicker",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the brazier's flame flickers; the fire's crackle is the bed's",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            240
+          ],
+          "placed": false
         }
       ],
       "candidates": [
@@ -1462,7 +1587,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_06_loc_british_trench (wind, fire) + wind"
+            "reason": "bed BED_06_loc_british_trench (wind, fire) + fire, wind"
           },
           "foley": {
             "active": false,
@@ -1486,13 +1611,15 @@
           "environment_sounds": [
             "wind",
             "fire",
+            "fire",
             "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "distant"
+            "distant",
+            "medium"
           ],
-          "ambience_layer": "bed BED_06_loc_british_trench (wind, fire) + wind",
+          "ambience_layer": "bed BED_06_loc_british_trench (wind, fire) + fire, wind",
           "music_supports": "authored music=True",
           "emotion": "dark",
           "sync_points": [],
@@ -1500,7 +1627,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S02_SH008.M1 push: silent_by_design",
-            "S02_SH008.M2 cloud_drift: ambience_only"
+            "S02_SH008.M2 cloud_drift: ambience_only",
+            "S02_SH008.M3 fire_flicker: ambience_only"
           ],
           "candidates": [
             "crowd (action_text)",
@@ -1516,7 +1644,7 @@
       "segment_id": "S02",
       "start_s": 75.0,
       "dur_s": 8.25,
-      "route": "video",
+      "route": "still_25d",
       "place": "loc_british_trench",
       "room": "outdoor",
       "weather": "high_altitude_wind",
@@ -1524,18 +1652,65 @@
       "audio_line_ids": [
         "S02_L009"
       ],
-      "events": [],
-      "visual_events": [],
+      "events": [
+        {
+          "class": "fire",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:fire_flicker",
+          "event_id": "S02_SH009.M2",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 8.25,
+          "distance": "medium"
+        }
+      ],
+      "visual_events": [
+        {
+          "event_id": "S02_SH009.M1",
+          "op": "push",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "a slow camera move under the voice (BP-81 budget)",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            198
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S02_SH009.M2",
+          "op": "fire_flicker",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the brazier's flame flickers; the fire's crackle is the bed's",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            198
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S02_SH009.M3",
+          "op": "smoke_drift",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "breath and brazier smoke rise; heard as nothing",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            198
+          ],
+          "placed": false
+        }
+      ],
       "candidates": [
         {
           "class": "footsteps_dirt",
-          "source": "action_text",
-          "at_s": null,
-          "basis": "text",
-          "why": "the shot's action text names it: a person authors the event with its frame (AV-07)"
-        },
-        {
-          "class": "fire",
           "source": "action_text",
           "at_s": null,
           "basis": "text",
@@ -1553,7 +1728,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_06_loc_british_trench (wind, fire)"
+            "reason": "bed BED_06_loc_british_trench (wind, fire) + fire"
           },
           "foley": {
             "active": false,
@@ -1576,22 +1751,26 @@
           "visible": "Soldiers on the fire step hold small brass gift tins They open the lids and pass cigarettes along Christmas Eve arrives as parcels: British soldiers open Princess Mary's brass tins (bodies at work, narrated) a sandbag with frost four British soldiers on the fire step opening small embossed brass tin",
           "environment_sounds": [
             "wind",
+            "fire",
             "fire"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "medium"
           ],
-          "ambience_layer": "bed BED_06_loc_british_trench (wind, fire)",
+          "ambience_layer": "bed BED_06_loc_british_trench (wind, fire) + fire",
           "music_supports": "authored music=True",
           "emotion": "dark",
           "sync_points": [],
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
-          "visual_events": [],
+          "visual_events": [
+            "S02_SH009.M1 push: silent_by_design",
+            "S02_SH009.M2 fire_flicker: ambience_only",
+            "S02_SH009.M3 smoke_drift: silent_by_design"
+          ],
           "candidates": [
-            "footsteps_dirt (action_text)",
-            "fire (action_text)"
+            "footsteps_dirt (action_text)"
           ]
         },
         "heard_not_seen": []
@@ -1707,7 +1886,21 @@
       "audio_line_ids": [
         "S03_L002"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:dust",
+          "event_id": "S03_SH002.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 4.0,
+          "distance": "close"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S03_SH002.M1",
@@ -1728,6 +1921,19 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "candle light only, no sound of its own",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            96
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S03_SH002.M3",
+          "op": "dust",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "motes drift in the candle's light; the cold night bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -1756,7 +1962,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_07_loc_german_trench (wind, crowd_murmur)"
+            "reason": "bed BED_07_loc_german_trench (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -1779,13 +1985,14 @@
           "visible": "A small sepia portrait card lies in a gloved hand in candlelight Same Plant the portrait card: who Friedrich is fighting for a woollen glove a sepia portrait card of a young woman with a small girl in a white dress on her knee candle flames out of focus Flanders, Christmas 1914, a frozen winter worl",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "close"
           ],
-          "ambience_layer": "bed BED_07_loc_german_trench (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_07_loc_german_trench (wind, crowd_murmur) + wind",
           "music_supports": "authored music=False",
           "emotion": "reflective",
           "sync_points": [],
@@ -1793,7 +2000,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S03_SH002.M1 push: silent_by_design",
-            "S03_SH002.M2 fire_flicker: silent_by_design"
+            "S03_SH002.M2 fire_flicker: silent_by_design",
+            "S03_SH002.M3 dust: ambience_only"
           ],
           "candidates": [
             "battle_din (action_text)"
@@ -2376,6 +2584,19 @@
             162
           ],
           "placed": false
+        },
+        {
+          "event_id": "S03_SH010.M3",
+          "op": "mist",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "cold ground mist over the frozen field; mist is heard in the bed",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            162
+          ],
+          "placed": false
         }
       ],
       "candidates": [
@@ -2435,7 +2656,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S03_SH010.M1 crane: silent_by_design",
-            "S03_SH010.M2 fire_flicker: silent_by_design"
+            "S03_SH010.M2 fire_flicker: silent_by_design",
+            "S03_SH010.M3 mist: ambience_only"
           ],
           "candidates": [
             "night_insects (action_text)"
@@ -2479,6 +2701,19 @@
           "decision": "ambience_only",
           "class": null,
           "why": "fog drift under the wind bed",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S04_SH001.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts through the fog; the place's bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -2536,7 +2771,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S04_SH001.M1 push: silent_by_design",
-            "S04_SH001.M2 mist: ambience_only"
+            "S04_SH001.M2 mist: ambience_only",
+            "S04_SH001.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -3230,6 +3466,32 @@
             60
           ],
           "placed": false
+        },
+        {
+          "event_id": "S04_SH011.M2",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts behind the hands; the place's bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            60
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S04_SH011.M3",
+          "op": "mist",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "a thin frost mist over the field; mist is heard in the bed",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            60
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -3280,7 +3542,9 @@
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
-            "S04_SH011.M1 push: silent_by_design"
+            "S04_SH011.M1 push: silent_by_design",
+            "S04_SH011.M2 sun_shaft_drift: ambience_only",
+            "S04_SH011.M3 mist: ambience_only"
           ],
           "candidates": []
         },
@@ -3825,6 +4089,71 @@
       ],
       "visual_events": [
         {
+          "event_id": "S05_SH002.A0",
+          "op": "front_line",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the line is already known from the shot before; it stands at once, no draw (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            9,
+            91
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH002.A2",
+          "op": "highlight",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            9,
+            27
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH002.A3",
+          "op": "highlight",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            9,
+            27
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH002.A4",
+          "op": "highlight",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            9,
+            27
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH002.A5",
+          "op": "highlight",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            9,
+            27
+          ],
+          "placed": false
+        },
+        {
           "event_id": "S05_SH002.A1",
           "op": "counter",
           "decision": "sfx",
@@ -3891,6 +4220,11 @@
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
+            "S05_SH002.A0 front_line: silent_by_design",
+            "S05_SH002.A2 highlight: silent_by_design",
+            "S05_SH002.A3 highlight: silent_by_design",
+            "S05_SH002.A4 highlight: silent_by_design",
+            "S05_SH002.A5 highlight: silent_by_design",
             "S05_SH002.A1 counter: sfx data_rise_texture"
           ],
           "candidates": []
@@ -3912,7 +4246,21 @@
       "audio_line_ids": [
         "S05_L003"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:smoke_drift",
+          "event_id": "S05_SH003.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 6.75,
+          "distance": "distant"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S05_SH003.M1",
@@ -3939,6 +4287,19 @@
             162
           ],
           "placed": false
+        },
+        {
+          "event_id": "S05_SH003.M3",
+          "op": "smoke_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "breath and brazier smoke rise between the men; the bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            162
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -3953,7 +4314,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
+            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -3976,13 +4337,14 @@
           "visible": "Groups of British and German soldiers stand mixed in the field Same; a ball in the air far behind The trading, wide: what men did with one free day two soldiers exchanging a tin and a cigarette mixed groups in khaki and field grey talking and laughing far off, a few men kicking a ball Flanders, Chri",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "distant"
           ],
-          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "tragic",
           "sync_points": [],
@@ -3990,7 +4352,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S05_SH003.M1 truck: silent_by_design",
-            "S05_SH003.M2 subject_sway: ambience_only"
+            "S05_SH003.M2 subject_sway: ambience_only",
+            "S05_SH003.M3 smoke_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -4449,6 +4812,32 @@
             72
           ],
           "placed": false
+        },
+        {
+          "event_id": "S05_SH010.M2",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts behind the hands; the place's bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH010.M3",
+          "op": "mist",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "a thin frost mist over the field; mist is heard in the bed",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -4499,7 +4888,9 @@
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
-            "S05_SH010.M1 push: silent_by_design"
+            "S05_SH010.M1 push: silent_by_design",
+            "S05_SH010.M2 sun_shaft_drift: ambience_only",
+            "S05_SH010.M3 mist: ambience_only"
           ],
           "candidates": []
         },
@@ -4865,7 +5256,21 @@
       "audio_line_ids": [
         "S05_L016"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:smoke_drift",
+          "event_id": "S05_SH016.M2",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 3.0,
+          "distance": "close"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S05_SH016.M1",
@@ -4873,6 +5278,32 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "the silence of the beat; no cue (BP-81)",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH016.M2",
+          "op": "smoke_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "smoke rises from the braziers behind the stretcher; the bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S05_SH016.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts over the spades and the stretcher; the place's bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -4893,7 +5324,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
+            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -4916,20 +5347,23 @@
           "visible": "A British and a German spade stand side by side in a heap of frozen earth Same Insert: two spades in the frozen earth by the open grave; the work done together (VL-08 breath) frozen clods a British entrenching spade and a German spade stuck side by side in a heap of earth beside a shallow grave a co",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "close"
           ],
-          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "tragic",
           "sync_points": [],
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
-            "S05_SH016.M1 push: silent_by_design"
+            "S05_SH016.M1 push: silent_by_design",
+            "S05_SH016.M2 smoke_drift: ambience_only",
+            "S05_SH016.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -5184,6 +5618,19 @@
             186
           ],
           "placed": false
+        },
+        {
+          "event_id": "S05_SH020.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts over the graves; the place's bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            186
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -5235,7 +5682,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S05_SH020.M1 push: silent_by_design",
-            "S05_SH020.M2 cloud_drift: silent_by_design"
+            "S05_SH020.M2 cloud_drift: silent_by_design",
+            "S05_SH020.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -5325,7 +5773,21 @@
       "audio_line_ids": [
         "S06_L001"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:smoke_drift",
+          "event_id": "S06_SH001.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 3.25,
+          "distance": "distant"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S06_SH001.M1",
@@ -5352,6 +5814,19 @@
             78
           ],
           "placed": false
+        },
+        {
+          "event_id": "S06_SH001.M3",
+          "op": "smoke_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "brazier smoke rises beside the German; the bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            78
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -5366,7 +5841,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
+            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -5389,13 +5864,14 @@
           "visible": "Thomas and Friedrich sit on an ammunition box in the field Same Time cut to dusk: two men sitting in the open where nobody could sit yesterday wire stakes black against the sky two small figures sitting on an ammunition box a low amber sun behind the willows Flanders, Christmas 1914, a frozen winter",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "distant"
           ],
-          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "reflective",
           "sync_points": [],
@@ -5403,7 +5879,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S06_SH001.M1 pull: silent_by_design",
-            "S06_SH001.M2 sun_shaft_drift: silent_by_design"
+            "S06_SH001.M2 sun_shaft_drift: silent_by_design",
+            "S06_SH001.M3 smoke_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -5635,7 +6112,21 @@
       "audio_line_ids": [
         "S06_L005"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:smoke_drift",
+          "event_id": "S06_SH005.M2",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 3.0,
+          "distance": "medium"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S06_SH005.M1",
@@ -5643,6 +6134,32 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "the silence of the beat; no cue",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S06_SH005.M2",
+          "op": "smoke_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "smoke rises from the two trench lines; the bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            72
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S06_SH005.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts over the ice; the place's bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -5663,7 +6180,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
+            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -5686,20 +6203,23 @@
           "visible": "Two shadows on the frozen ground side by side Same Thomas's reaction: he looks at the 'enemy' beside him (VL-08) frozen ground the long sunset shadows of two seated men side by side, one cap round, one peaked the box's edge Flanders, Christmas 1914, a frozen winter world. The long sunset shadows of ",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "medium"
           ],
-          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "reflective",
           "sync_points": [],
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
-            "S06_SH005.M1 push: silent_by_design"
+            "S06_SH005.M1 push: silent_by_design",
+            "S06_SH005.M2 smoke_drift: ambience_only",
+            "S06_SH005.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -6134,7 +6654,21 @@
       "audio_line_ids": [
         "S06_L012"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:smoke_drift",
+          "event_id": "S06_SH012.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 5.5,
+          "distance": "distant"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S06_SH012.M1",
@@ -6161,6 +6695,19 @@
             132
           ],
           "placed": false
+        },
+        {
+          "event_id": "S06_SH012.M3",
+          "op": "smoke_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "smoke rises from the trench; the bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            132
+          ],
+          "placed": false
         }
       ],
       "candidates": [],
@@ -6175,7 +6722,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
+            "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -6198,13 +6745,14 @@
           "visible": "Two silhouettes sit on the box against the last light Same; the light goes The narrator closes the scene: the day ends and neither wants to go (BP-90) black wire stakes two small silhouettes sitting side by side on an ammunition box the last amber band of sunset over the willows Flanders, Christmas ",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "distant"
           ],
-          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_17_loc_no_mans_land (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "reflective",
           "sync_points": [],
@@ -6212,7 +6760,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S06_SH012.M1 pull: silent_by_design",
-            "S06_SH012.M2 sun_shaft_drift: silent_by_design"
+            "S06_SH012.M2 sun_shaft_drift: silent_by_design",
+            "S06_SH012.M3 smoke_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -6254,6 +6803,19 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            114
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S07_SH001.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the low sun's light drifts through the mist; the place's bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -6319,7 +6881,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S07_SH001.M1 mist: ambience_only",
-            "S07_SH001.M2 pull: silent_by_design"
+            "S07_SH001.M2 pull: silent_by_design",
+            "S07_SH001.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": [
             "footsteps_dirt (action_text)"
@@ -6903,7 +7466,21 @@
       "audio_line_ids": [
         "S08_L001"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:dust",
+          "event_id": "S08_SH001.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 6.75,
+          "distance": "close"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S08_SH001.M1",
@@ -6924,6 +7501,19 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "a candle makes no sound; the night bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            162
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH001.M3",
+          "op": "dust",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "motes drift in the candle's light; the cold night bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -6953,7 +7543,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_20_loc_british_trench (wind, fire)"
+            "reason": "bed BED_20_loc_british_trench (wind, fire) + wind"
           },
           "foley": {
             "active": false,
@@ -6976,13 +7566,14 @@
           "visible": "A hand writes a letter by candlelight; a grey German button lies on the page Same The letter answered: Thomas writes home with the German button on the paper a candle stub a pencil writing 'Dear Mum' on a fresh page, a grey German tunic button resting on it the mother's old letter beside it Flanders",
           "environment_sounds": [
             "wind",
-            "fire"
+            "fire",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "close"
           ],
-          "ambience_layer": "bed BED_20_loc_british_trench (wind, fire)",
+          "ambience_layer": "bed BED_20_loc_british_trench (wind, fire) + wind",
           "music_supports": "authored music=True",
           "emotion": "reflective",
           "sync_points": [],
@@ -6990,7 +7581,8 @@
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
             "S08_SH001.M1 push: silent_by_design",
-            "S08_SH001.M2 fire_flicker: silent_by_design"
+            "S08_SH001.M2 fire_flicker: silent_by_design",
+            "S08_SH001.M3 dust: ambience_only"
           ],
           "candidates": [
             "night_insects (word)"
@@ -7013,7 +7605,21 @@
       "audio_line_ids": [
         "S08_L002"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:dust",
+          "event_id": "S08_SH002.M3",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 8.75,
+          "distance": "close"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S08_SH002.M1",
@@ -7021,6 +7627,32 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            210
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH002.M2",
+          "op": "fire_flicker",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "a candle makes no sound",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            210
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH002.M3",
+          "op": "dust",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "motes drift in the candle's light; the cold night bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -7049,7 +7681,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_21_loc_german_trench (wind, crowd_murmur)"
+            "reason": "bed BED_21_loc_german_trench (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -7072,20 +7704,23 @@
           "visible": "Friedrich's hands hold the portrait card with a brass button on it, by a candle stub in a tin holder Same Friedrich with the portrait card and the brass button: the other side of the same night the edge of a dugout bunk the sepia family portrait card in a gloved hand with a British brass button rest",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "close"
           ],
-          "ambience_layer": "bed BED_21_loc_german_trench (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_21_loc_german_trench (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "reflective",
           "sync_points": [],
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
-            "S08_SH002.M1 push: silent_by_design"
+            "S08_SH002.M1 push: silent_by_design",
+            "S08_SH002.M2 fire_flicker: silent_by_design",
+            "S08_SH002.M3 dust: ambience_only"
           ],
           "candidates": [
             "night_insects (action_text)"
@@ -7108,7 +7743,21 @@
       "audio_line_ids": [
         "S08_L003"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "wind",
+          "kind": "ambience",
+          "at_s": 0.0,
+          "at_frame": 0,
+          "basis": "picture:smoke_drift",
+          "event_id": "S08_SH003.M2",
+          "decision": "ambience_only",
+          "sync": "span",
+          "audio_basis": "authored",
+          "dur_s": 4.0,
+          "distance": "distant"
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S08_SH003.M1",
@@ -7116,6 +7765,32 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            96
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH003.M2",
+          "op": "smoke_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "smoke rises from the trench braziers; the bed carries it",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            96
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH003.M3",
+          "op": "sun_shaft_drift",
+          "decision": "ambience_only",
+          "class": null,
+          "why": "the last low sun's light drifts over the field; the place's bed carries it",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -7136,7 +7811,7 @@
           },
           "ambience": {
             "active": true,
-            "reason": "bed BED_22_loc_no_mans_land (wind, crowd_murmur)"
+            "reason": "bed BED_22_loc_no_mans_land (wind, crowd_murmur) + wind"
           },
           "foley": {
             "active": false,
@@ -7159,20 +7834,23 @@
           "visible": "Two trench lines in snow from above Same, smaller Pull up and away: two trench lines, a narrow strip between, and the years still to come snow two zigzag trench lines a few dozen yards apart with a thin strip of wire between the white plain running to the horizon Flanders, Christmas 1914, a frozen w",
           "environment_sounds": [
             "wind",
-            "crowd_murmur"
+            "crowd_murmur",
+            "wind"
           ],
           "audible_actions": [],
           "perspective": [
-            "(no event)"
+            "distant"
           ],
-          "ambience_layer": "bed BED_22_loc_no_mans_land (wind, crowd_murmur)",
+          "ambience_layer": "bed BED_22_loc_no_mans_land (wind, crowd_murmur) + wind",
           "music_supports": "authored music=True",
           "emotion": "reflective",
           "sync_points": [],
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [
-            "S08_SH003.M1 crane: silent_by_design"
+            "S08_SH003.M1 crane: silent_by_design",
+            "S08_SH003.M2 smoke_drift: ambience_only",
+            "S08_SH003.M3 sun_shaft_drift: ambience_only"
           ],
           "candidates": []
         },
@@ -7201,6 +7879,32 @@
           "decision": "silent_by_design",
           "class": null,
           "why": "the text fades up in silence; the film ends on silence",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            120
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH004.M2",
+          "op": "fire_flicker",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the film ends in silence; the candle's flicker makes no sound",
+          "audio_basis": "authored",
+          "frames": [
+            0,
+            120
+          ],
+          "placed": false
+        },
+        {
+          "event_id": "S08_SH004.M3",
+          "op": "smoke_drift",
+          "decision": "silent_by_design",
+          "class": null,
+          "why": "the film ends in silence; the thin smoke makes no sound",
           "audio_basis": "authored",
           "frames": [
             0,
@@ -7241,7 +7945,7 @@
           }
         },
         "answers": {
-          "visible": "Black Black with the line of text The last line on black black black black Flanders, Christmas 1914, a frozen winter world. A plain black frame, no image, black. No motion; the words fade up and hold.",
+          "visible": "Black with one small candle flame low in the corner Black with one small candle flame and the line of text The last line on black one small candle in a tin holder, low right black black Flanders, Christmas 1914, a frozen winter world. A black frame with one small candle flame in a tin holder low in ",
           "environment_sounds": [
             "wind",
             "crowd_murmur"
@@ -7257,7 +7961,9 @@
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "the end card: the bed fades out under the black and the text holds in silence",
           "visual_events": [
-            "S08_SH004.M1 push: silent_by_design"
+            "S08_SH004.M1 push: silent_by_design",
+            "S08_SH004.M2 fire_flicker: silent_by_design",
+            "S08_SH004.M3 smoke_drift: silent_by_design"
           ],
           "candidates": []
         },
@@ -7994,13 +8700,13 @@
     "resolver": "av_events/1.0",
     "contract": "av_events/1",
     "decisions": {
-      "silent_by_design": 33,
-      "ambience_only": 7,
+      "silent_by_design": 44,
+      "ambience_only": 34,
       "ui_cue": 7,
       "sfx": 3
     },
     "review_required": [],
-    "candidates": 42
+    "candidates": 41
   },
   "sources": {
     "crowd_murmur": {

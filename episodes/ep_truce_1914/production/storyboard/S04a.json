@@ -1,0 +1,205 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S04a",
+  "shots": [
+    "S04_SH002",
+    "S04_SH003",
+    "S04_SH004",
+    "S04_SH005",
+    "S04_SH006",
+    "S04_SH007"
+  ],
+  "cells": [
+    {
+      "shot_id": "S04_SH002",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH002_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH002_start.png"
+    },
+    {
+      "shot_id": "S04_SH003",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH003_start",
+      "from": null,
+      "seconds": 3.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH003_start.png"
+    },
+    {
+      "shot_id": "S04_SH004",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S04_SH004_start",
+      "from": null,
+      "seconds": 3.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH004_start.png",
+      "vs_master": {
+        "palette_dist": 0.0099,
+        "top_palette_dist": 0.0144,
+        "luma_gap": 0.0384
+      }
+    },
+    {
+      "shot_id": "S04_SH005",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH005_start",
+      "from": null,
+      "seconds": 6.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH005_start.png",
+      "vs_master": {
+        "palette_dist": 0.004,
+        "top_palette_dist": 0.0034,
+        "luma_gap": 0.0003
+      }
+    },
+    {
+      "shot_id": "S04_SH006",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH006_start",
+      "from": null,
+      "seconds": 3.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH006_start.png",
+      "vs_master": {
+        "palette_dist": 0.041,
+        "top_palette_dist": 0.1068,
+        "luma_gap": 0.016
+      }
+    },
+    {
+      "shot_id": "S04_SH007",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S04_SH007_start",
+      "from": null,
+      "seconds": 5.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH007_start.png",
+      "vs_master": {
+        "palette_dist": 0.0223,
+        "top_palette_dist": 0.0648,
+        "luma_gap": 0.0333
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 6 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S04_SH006 vs S04_SH003_start: palette 0.041, top third 0.1068 (max 0.08), brightness gap 0.016 (max 0.18)"
+      ],
+      "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "storyboard_same_place_as_master"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 6 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S04_SH006 vs S04_SH003_start: palette 0.041, top third 0.1068 (max 0.08), brightness gap 0.016 (max 0.18)"
+        ],
+        "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S04_SH002_start": "229617f201562b8f491f6531ed092441c27443a27c3436f4f3d18ba08120f5dc",
+    "S04_SH003_start": "0f8fe23338722df4a3e84f606c1af753e461af715ee39e064b0f4afc8c671aa8",
+    "S04_SH004_start": "6819348d9423b03bae16274029e61f84e90f5f1a6e7131f3be095043045a465d",
+    "S04_SH005_start": "6b99bd9a32508f67bcee515b7c1c1e1afd64e6a92daea9591aff40ed6e65ff87",
+    "S04_SH006_start": "913c66cc4d994bf2d313e87bf78b5fcb2a17ee440d2806db289c5ee41a6df66d",
+    "S04_SH007_start": "fe9588c4a4a816281ae81513f42ac9c37ba56bb19388887ab185ad0cd2fd536d"
+  },
+  "plan_digest": "8692f26789a9a6657377056db4cf45712ea97272aa4b881a717915840ff13710",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S04a.jpg",
+  "sheet_sha256": "ac6c02857f8bb7cfe742dcf98ca17cd6b6fa93a9672b92c783dc18bb73f81bb0"
+}
