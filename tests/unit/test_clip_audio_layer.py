@@ -21,8 +21,11 @@ def _plan():
     return {"shots": [{"shot_id": "V1", "start_s": 1.0, "dur_s": 2.0}]}
 
 
-def test_the_layer_is_off_by_default(tmp_path):
-    assert OQ.value("Q2") == "off"
+def test_the_layer_is_on_since_the_creators_ab_and_off_when_switched_off(tmp_path, monkeypatch):
+    """Q2: the creator chose version b of the A/B on 2026-11-13 13:55 UTC (D-138), so the switch is on; switched off, the
+    layer lays nothing."""
+    assert OQ.value("Q2") == "on"
+    monkeypatch.setattr(OQ, "value", lambda qid, path=OQ.PATH: "off" if qid == "Q2" else "x")
     layer, laid, state = STEMS.clip_audio_layer(_plan(), {"V1": str(_wav(tmp_path / "c.wav", 2.0))}, RATE * 4)
     assert not laid and state.startswith("off") and float(np.abs(layer).max()) == 0.0
 
@@ -54,7 +57,7 @@ def test_the_read_pieces_split_for_a_clip_fade_at_the_split(tmp_path):
 def test_the_q2_ab_renders_both_versions_by_the_one_renderer(tmp_path):
     """Q2 (the creator 2026-11-13, answer c; D-138): the free A/B makes one narrated clip twice through ``stems.render``:
     a) the clip's sound dropped (the effects stem silent), b) the clip's sound as the quiet ducked layer; the same cue rows;
-    the switch itself stays off afterwards (stripped is the default until he chooses)."""
+    the switch itself is restored afterwards (on since his choice, D-138)."""
     import json
     import subprocess
     from explainer_engine.audio import clip_audio_ab as AB
@@ -76,4 +79,4 @@ def test_the_q2_ab_renders_both_versions_by_the_one_renderer(tmp_path):
     rows = lambda v: [(r["layer"], r.get("asset_id")) for r in json.loads(
         (tmp_path / "ab" / v / "stems" / "cue_sheet.json").read_text())["rows"]]
     assert rows("a_stripped") == rows("b_clip_layer")
-    assert OQ.value("Q2") == "off" and (tmp_path / "ab" / "b_clip_layer.mp4").is_file()
+    assert OQ.value("Q2") == "on" and (tmp_path / "ab" / "b_clip_layer.mp4").is_file()   # the switch is restored

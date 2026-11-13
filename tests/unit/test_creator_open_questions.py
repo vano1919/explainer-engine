@@ -10,7 +10,7 @@ import pytest
 from explainer_engine.core import open_questions as OQ
 from explainer_engine.core.errors import ConfigError
 
-DEFAULTS = {"Q1": "REVIEW", "Q2": "off", "Q3": "FAIL_FACE_REVIEW_COSTUME", "Q4": "forced", "Q5": "prompt_description",
+DEFAULTS = {"Q1": "REVIEW", "Q2": "on", "Q3": "FAIL_FACE_REVIEW_COSTUME", "Q4": "forced", "Q5": "prompt_description",
             "Q6": "close", "Q7": "sample_review_full_fail"}   # the creator's answers of 2026-11-13 (D-138)
 CHOICES = {"Q1": "გ", "Q2": "გ", "Q3": "გ", "Q4": "ა", "Q5": "ა", "Q6": "ა", "Q7": "გ"}
 

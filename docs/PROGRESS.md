@@ -6216,3 +6216,7 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Q6: PRs #164, #120 and #112 closed without merging with his comment; branches kept.
 - Tests: `test_creator_answers_d138.py` (10, one on the real battle file when the project files are mounted),
   `test_clip_audio_layer.py::test_the_q2_ab_renders_both_versions_by_the_one_renderer`.
+- Q2 decided by ear (the creator, 2026-11-13 13:55 UTC, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW6SveZAK5w2JWsLY4paBCkm: "both
+  sound almost the same, but the second is slightly better"): switch Q2 = on, the narrated clips' own sound is the quiet
+  ducked layer. Rewritten to the new value: `test_clip_audio_layer::test_the_layer_is_on_since_the_creators_ab_...` (off is
+  still tested through the switch), `test_creator_open_questions` DEFAULTS.
