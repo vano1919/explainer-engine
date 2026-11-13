@@ -803,9 +803,73 @@ def chain_from(launch: dict, frames: int) -> int:
     return frames - 1 - k
 
 
-def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run) -> bytes:
-    """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the start picture of the next chained shot."""
-    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", f"select=eq(n\\,{int(index)})", "-vsync", "0",
+HANDOVER_W = 160            # VL-05: frames are scored on a small grey copy (sharpness and motion are relative measures)
+HANDOVER_MOTION_W = 1.5     # engineering default: one unit of mean frame-to-frame change costs this much relative sharpness
+CROP_MIN_SIDE = 2.0 / 3.0   # VL-05: a crop keeps at least 2/3 of each side (at most a 1.5x enlargement of the clip's frame)
+
+
+def _grey_frames(clip: Path, first: int, count: int, width: int = HANDOVER_W, sh=subprocess.run):
+    """Frames ``first .. first+count-1`` of the clip as small grey float arrays (ffmpeg decode, numpy only: the container
+    has no OpenCV)."""
+    import numpy as np
+    probe = sh(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0",
+                str(clip)], check=True, timeout=60, capture_output=True, text=True)
+    w0, h0 = (int(v) for v in probe.stdout.strip().split(",")[:2])
+    h = max(2, int(round(width * h0 / w0 / 2)) * 2)
+    raw = sh(["ffmpeg", "-v", "error", "-i", str(clip), "-vf", f"select=gte(n\\,{int(first)}),scale={width}:{h},format=gray",
+              "-vsync", "0", "-frames:v", str(int(count)), "-f", "rawvideo", "-"], check=True, timeout=120,
+             capture_output=True).stdout
+    n = len(raw) // (width * h)
+    return np.frombuffer(raw[:n * width * h], np.uint8).reshape(n, h, width).astype(np.float32)
+
+
+def handover_scores(frames) -> list[dict]:
+    """VL-05: every candidate frame's sharpness (variance of a 4-neighbour Laplacian), motion (mean absolute change to its
+    neighbours, the motion blur and the mid-pose a frozen hand-over would keep) and score. Pure numpy."""
+    import numpy as np
+    out = []
+    for i, g in enumerate(frames):
+        lap = (-4 * g[1:-1, 1:-1] + g[:-2, 1:-1] + g[2:, 1:-1] + g[1:-1, :-2] + g[1:-1, 2:])
+        diffs = [float(np.abs(g - frames[j]).mean()) for j in (i - 1, i + 1) if 0 <= j < len(frames)]
+        out.append({"i": i, "sharpness": float(lap.var()), "motion": float(np.mean(diffs)) if diffs else 0.0})
+    top = max((o["sharpness"] for o in out), default=0.0) or 1.0
+    for o in out:
+        o["score"] = o["sharpness"] / top - HANDOVER_MOTION_W * o["motion"] / 255.0 * 10.0
+    return out
+
+
+def handover_frame(clip: Path, frames: int, fps: int, cont: dict | None, launch: dict, sh=subprocess.run) -> dict:
+    """The frame of a clip that starts its continuation (VL-05). ``pick: last`` (or no plan) is ``chain_from``; ``pick:
+    best_tail`` scores the last ``window_s`` seconds and takes the sharpest, stillest frame, so a blurred or mid-motion last
+    frame is never frozen into the next clip's first frame. Our LTX-2.5 distilled CLI has no extend: this frame IS the
+    hand-over."""
+    last = chain_from(launch, frames)
+    cont = cont or {}
+    if cont.get("pick", "last") == "last":
+        return {"frame": last, "pick": "last"}
+    n = max(2, min(last + 1, int(round(float(cont.get("window_s", 0.75)) * fps))))
+    first = last + 1 - n
+    scores = handover_scores(_grey_frames(clip, first, n, sh=sh))
+    best = max(scores, key=lambda o: o["score"])
+    return {"frame": first + best["i"], "pick": "best_tail", "window": [first, last],
+            "scores": [{k: round(v, 4) if isinstance(v, float) else v for k, v in s.items()} for s in scores]}
+
+
+def crop_filter(crop) -> str:
+    """The ffmpeg crop of a ``[x0, y0, x1, y1]`` share box (VL-05: each side at least CROP_MIN_SIDE)."""
+    x0, y0, x1, y1 = (float(v) for v in crop)
+    if not (0 <= x0 < x1 <= 1 and 0 <= y0 < y1 <= 1):
+        raise ValueError(f"crop {crop} is not a box inside the frame")
+    if x1 - x0 < CROP_MIN_SIDE - 1e-9 or y1 - y0 < CROP_MIN_SIDE - 1e-9:
+        raise ValueError(f"crop {crop} enlarges the frame more than {1 / CROP_MIN_SIDE:.2f}x: it would be soft")
+    return f"crop=iw*{x1 - x0:.6f}:ih*{y1 - y0:.6f}:iw*{x0:.6f}:ih*{y0:.6f}"
+
+
+def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run, crop=None) -> bytes:
+    """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the start picture of the next chained shot, cropped
+    when the continuation plan reframes it (``fit_picture`` then brings it to the clip size)."""
+    vf = f"select=eq(n\\,{int(index)})" + (f",{crop_filter(crop)}" if crop else "")
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", vf, "-vsync", "0",
         "-frames:v", "1", str(png)], check=True, timeout=60)
     if not Path(png).is_file() or Path(png).stat().st_size == 0:
         raise RuntimeError(f"frame {index} of {Path(clip).name} was not written")
@@ -889,9 +953,13 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
                     if hashlib.sha256(sub["start_bytes"]).hexdigest() != sub.get("start_sha256"):
                         raise RuntimeError(f"{sub['shot_id']}: its start picture changed in transit")
                 else:
-                    idx = chain_from(launch, int(prev["frames"]))
-                    sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh))
-                    sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx}
+                    cont = sub.get("continue_frame") or {}
+                    hand = handover_frame(out / prev["clip"], int(prev["frames"]), int(sub["fps"]), cont, launch, sh=sh)
+                    idx = hand["frame"]
+                    sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh,
+                                                          crop=cont.get("crop")))
+                    sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx, "pick": hand["pick"],
+                                               "crop": cont.get("crop"), "window": hand.get("window")}
             row = dict(generate(sub, launch, out, deadline, sh=sh, now=now, session=session), shot_id=sub["shot_id"])
             if session is not None and not rows:
                 row["setup"] = dict(session.setup)        # the one-time steps, inside the first clip's gen_s

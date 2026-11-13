@@ -6265,7 +6265,8 @@
     "explainer_engine/training/video_qa.py",
     "explainer_engine/production/layers25d.py:FROZEN_DIFF",
     "explainer_engine/aivideo/wan_adapter.py:FRAME0_DIFF",
-    "explainer_engine/production/map_clip.py:map_not_standing_still"
+    "explainer_engine/production/map_clip.py:map_not_standing_still",
+    "explainer_engine/videolane/master_qa.py"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word before any CLIP row becomes FAIL (D-59)",
    "supersedes": []
@@ -6313,7 +6314,9 @@
    "enforced_by": [
     "explainer_engine/training/video_qa.py",
     "explainer_engine/training/pods/xworld_v1_score.py",
-    "explainer_engine/qa/verdict_page.py"
+    "explainer_engine/qa/verdict_page.py",
+    "explainer_engine/videolane/cuts.py",
+    "explainer_engine/videolane/storyboard.py"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word; none of these becomes FAIL before that (D-59)",
    "supersedes": []
@@ -7292,7 +7295,9 @@
     "speech_tail_s": 0.5
    },
    "sources": [],
-   "enforced_by": [],
+   "enforced_by": [
+    "explainer_engine/videolane/plan.py"
+   ],
    "supersedes": [],
    "decided": "the creator, 2026-11-12 19:16 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWR1zwsJYy2hthiFJQQj48kT): LTX cut a line mid-speech in the bake-off; every video is planned so the character finishes speaking. His half-second sound overlap was put to research at 20:07 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU5wnV4sFK5JC2vc6uQcvGC): the finding is BP-188"
   },
@@ -7385,7 +7390,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/qa/sound_realism.py:measure"
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/videolane/master_qa.py"
    ],
    "supersedes": [],
    "research": "2026-11-12 (W1): the sources agree that dialogue gaps are filled with the scene's room tone or ambience, never left as holes; none of them gives a dBFS number, so floor_dbfs and dead_dbfs are the realism audit's engineering line (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/))."
@@ -7425,7 +7431,9 @@
    ],
    "enforced_by": [
     "explainer_engine/qa/sound_realism.py:line_pauses",
-    "explainer_engine/production/scene_join.py:trims"
+    "explainer_engine/production/scene_join.py:trims",
+    "explainer_engine/videolane/ingest.py",
+    "explainer_engine/videolane/plan.py"
    ],
    "supersedes": [],
    "research": "2026-11-12 (W1): the turn-taking studies put natural gaps near 0.2 s; a film's edited dialogue is a choice, so the 0.25-0.6 s band is the realism plan's house proposal (REVIEW until the creator picks on the A/B: REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/)). Measured before: 1.15 s across cut 1 of the battle scene, because the heads of the clips were not trimmed (LTX starts speaking about 0.75 s into a clip)."
@@ -7458,7 +7466,9 @@
    ],
    "enforced_by": [
     "explainer_engine/qa/sound_realism.py:measure",
-    "explainer_engine/production/scene_join.py:CLIP_FADE_S"
+    "explainer_engine/production/scene_join.py:CLIP_FADE_S",
+    "explainer_engine/videolane/master_qa.py",
+    "explainer_engine/videolane/voice.py"
    ],
    "supersedes": [
     "BP-188 part 1's 'nothing crosses the cut' for a scene with a bed"

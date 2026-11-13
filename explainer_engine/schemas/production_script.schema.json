@@ -1392,6 +1392,203 @@
               }
             }
           }
+        },
+        "edit_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The shot's editorial plan, written before any paid clip (VL rules, docs/VIDEO_LANE.md, D-137). Required on every route=video shot by explainer_engine.videolane.plan; optional elsewhere. How this shot joins the one before, what the camera does at its ends, where its one line sits in the clip and how much clean picture it keeps for the cut.",
+          "required": [
+            "continuity_mode",
+            "cut_in_reason"
+          ],
+          "properties": {
+            "continuity_mode": {
+              "enum": [
+                "continuation",
+                "coverage",
+                "insert"
+              ],
+              "description": "continuation = the same action goes on (the next clip starts from a chosen frame of the clip before); coverage = a new camera angle on the same scene, drawn fresh from the scene master and the hero sheets; insert = a reaction, hand, object or detail (prefer still_25d)"
+            },
+            "continuity_from": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "continuation: the shot whose clip this one continues"
+            },
+            "scene_master": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "coverage/insert: the picture key of the scene's master frame (production/pictures.json)"
+            },
+            "axis_side": {
+              "enum": [
+                "A",
+                "B",
+                null
+              ],
+              "description": "the camera's side of the scene's 180-degree axis"
+            },
+            "axis_cross_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "screen_positions": {
+              "type": "object",
+              "additionalProperties": {
+                "enum": [
+                  "left",
+                  "center",
+                  "right",
+                  "off"
+                ]
+              },
+              "description": "character_id -> where the character stands on screen"
+            },
+            "screen_direction": {
+              "enum": [
+                "left_to_right",
+                "right_to_left",
+                "toward_camera",
+                "away_from_camera",
+                "none"
+              ]
+            },
+            "camera_in": {
+              "enum": [
+                "rest",
+                "push",
+                "pull",
+                "pan_left",
+                "pan_right",
+                "tilt_up",
+                "tilt_down",
+                "track_left",
+                "track_right"
+              ],
+              "description": "what the camera does on the shot's first frames"
+            },
+            "camera_out": {
+              "enum": [
+                "rest",
+                "push",
+                "pull",
+                "pan_left",
+                "pan_right",
+                "tilt_up",
+                "tilt_down",
+                "track_left",
+                "track_right"
+              ],
+              "description": "what the camera does on the shot's last frames"
+            },
+            "speech_onset_s": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 3,
+              "description": "where the line is expected to start inside the generated clip (LTX measured about 0.75 s, VL-06)"
+            },
+            "head_handle_s": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "tail_handle_s": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "cut_in_reason": {
+              "enum": [
+                "establish",
+                "action",
+                "eyeline",
+                "line",
+                "reaction",
+                "insert",
+                "time_cut",
+                "scene_change"
+              ]
+            },
+            "reaction_cover": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "the reaction or insert shot that covers this line's pause"
+            },
+            "continue_frame": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "pick": {
+                  "enum": [
+                    "best_tail",
+                    "last"
+                  ]
+                },
+                "window_s": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 3
+                },
+                "crop": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "description": "[x0, y0, x1, y1] as shares of the frame; null = the whole frame"
+                }
+              },
+              "description": "continuation: how the start frame is taken from the clip before (our self-hosted LTX has no extend, so the next clip is generated from this frame)"
+            },
+            "reuse_of": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "shot_id"
+              ],
+              "properties": {
+                "shot_id": {
+                  "type": "string"
+                },
+                "crop": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "description": "[x0, y0, x1, y1] as shares of the frame; null = the whole frame"
+                }
+              },
+              "description": "this shot reuses another shot's clip or picture with a new framing"
+            }
+          }
         }
       },
       "allOf": [

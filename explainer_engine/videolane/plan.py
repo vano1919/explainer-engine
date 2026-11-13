@@ -1,0 +1,216 @@
+"""The shot edit plan of the video lane (VL-01..VL-09, docs/VIDEO_LANE.md, D-137): how every LTX shot joins the shot before,
+written in the shot itself (``edit_plan``, schema ``production_script``) BEFORE any paid clip, and checked here.
+
+Why: the 2026-11-12 battle scene had four good clips that did not cut together (sky, ground, helmet and shield changed
+across cut 1, the cut fell on dead air, the first line started 0.75 s into its clip). A shot that knows its continuity mode,
+its camera state at both ends, its axis side, where its one line sits in the clip and how much clean picture it keeps can be
+generated for the cut instead of being rescued after it.
+
+Three continuity modes, never one strategy for every cut:
+
+* ``continuation``: the same action goes on. The clip is generated from a chosen frame of the clip before (our self-hosted
+  LTX-2.5 distilled CLI takes only a frame-0 picture and has no extend or retake, so the frame is the hand-over; VL-05).
+  Screen direction, camera motion and the place carry over.
+* ``coverage``: a new angle on the same scene, drawn fresh from the scene master and the hero sheets (CT-03), never from
+  the previous clip's last frame. Size or angle changes by a step (CT-07), the axis side holds (CT-06) and every shared
+  character keeps their screen side.
+* ``insert``: a reaction, hand, object or detail. Usually ``still_25d``; never a speaking close-up.
+
+The clip's length comes from its line, never a fixed 10 s (VL-06): onset + the line + BP-187's tail + the handles.
+"""
+from __future__ import annotations
+
+from explainer_engine.qa import gates as G
+from explainer_engine.standards import sourced_rules as SR
+
+MODES = ("continuation", "coverage", "insert")
+SIZES = ("extreme_wide", "wide", "medium_wide", "medium", "over_the_shoulder", "medium_close_up", "close_up",
+         "extreme_close_up")
+SIZE_STEP = {"extreme_wide": 0, "wide": 1, "medium_wide": 2, "medium": 3, "over_the_shoulder": 3, "medium_close_up": 4,
+             "close_up": 5, "extreme_close_up": 6}
+SPEAKING_CLOSE = ("close_up", "extreme_close_up")   # the creator 2026-11-12 20:37 UTC: weak mouths, no speaking close-up
+MOVING = ("push", "pull", "pan_left", "pan_right", "tilt_up", "tilt_down", "track_left", "track_right")
+SPEECH_ONSET_S = 0.75        # measured: LTX-2.5 starts the line about 0.75 s into a clip (battle scene, 2026-11-12); house
+WORDS_PER_S = 2.6            # engineering default for a line without an estimate (conversational English, ~155 wpm)
+TAIL_S = float(SR.T("BP-187", "speech_tail_s"))
+HEAD_LEAD = SR.T("BP-190", "head_lead_s")
+CUT_TAIL = SR.T("BP-190", "tail_s")
+MIN_CLIP_S = 2.0             # engineering default: LTX needs a few seconds to settle a motion
+DIALOGUE_RUN_MAX = 3         # VL-08: more lines in a row than this without a reaction or insert = REVIEW (ED-14's 2nd-4th line)
+
+
+def is_video(shot: dict) -> bool:
+    return shot.get("route") in ("video", "wan")
+
+
+def _lines(script: dict) -> dict:
+    return {ln["line_id"]: ln for ln in script.get("audio_lines", [])}
+
+
+def clip_spoken(script: dict) -> set[str]:
+    """The video shots whose every line is a character's line: the clip speaks them (D-132), so the narrator's read does not
+    and the shot's length comes from the trimmed clip (VL-07)."""
+    lines = _lines(script)
+    out = set()
+    for s in script.get("shots", []):
+        ids = s.get("audio_line_ids") or []
+        if is_video(s) and ids and all(lines.get(i, {}).get("speaker_type") == "character" for i in ids):
+            out.add(s["shot_id"])
+    return out
+
+
+def line_seconds(script: dict, shot: dict) -> float:
+    """The planned speaking time of the shot's lines: their estimate, else their words at WORDS_PER_S."""
+    lines = _lines(script)
+    t = 0.0
+    for lid in shot.get("audio_line_ids") or []:
+        ln = lines.get(lid) or {}
+        est = ln.get("estimated_duration_seconds")
+        t += float(est) if est else max(0.6, len(str(ln.get("text") or "").split()) / WORDS_PER_S)
+    return t
+
+
+def clip_seconds(script: dict, shot: dict, max_s: float) -> dict:
+    """VL-06: the seconds to generate for one video shot. A spoken shot: onset + its line + BP-187's tail + the tail handle
+    (the head handle lies inside the onset: LTX speaks late anyway). A silent shot: its planned length + both handles.
+    Rounded up to 0.25 s, at least MIN_CLIP_S, at most the model's ``max_s``; ``over`` says when the plan does not fit."""
+    ep = shot.get("edit_plan") or {}
+    head = float(ep.get("head_handle_s", 0.0))
+    tail = float(ep.get("tail_handle_s", float(CUT_TAIL[1])))
+    speak = line_seconds(script, shot)
+    if speak > 0:
+        onset = float(ep.get("speech_onset_s", SPEECH_ONSET_S))
+        need = max(onset, head) + speak + TAIL_S + tail
+        basis = "line"
+    else:
+        need = head + float(shot.get("target_duration_seconds") or 0.0) + tail
+        basis = "planned_length"
+    sec = max(MIN_CLIP_S, -(-need * 4 // 1) / 4.0)
+    return {"seconds": min(sec, max_s), "needed_s": round(need, 3), "over": sec > max_s + 1e-9, "basis": basis,
+            "speech_s": round(speak, 3)}
+
+
+def scenes(script: dict) -> list[list[dict]]:
+    """Consecutive shots of one segment and one place are one scene."""
+    out: list[list[dict]] = []
+    for s in script.get("shots", []):
+        if out and out[-1][-1].get("segment_id") == s.get("segment_id") \
+                and out[-1][-1].get("location_id") == s.get("location_id"):
+            out[-1].append(s)
+        else:
+            out.append([s])
+    return out
+
+
+def _f(rule, sid, severity, detail) -> dict:
+    return {"rule": rule, "shot_id": sid, "severity": severity, "detail": detail}
+
+
+def findings(script: dict, max_s: float = 10.0) -> list[dict]:
+    """Every VL-01..VL-08 finding of the script's video shots (and of the shots cut against them)."""
+    out: list[dict] = []
+    lines = _lines(script)
+    spoken = clip_spoken(script)
+    ids = {s["shot_id"] for s in script.get("shots", [])}
+    for scene in scenes(script):
+        run = 0
+        for k, s in enumerate(scene):
+            sid = s["shot_id"]
+            prev = scene[k - 1] if k else None
+            # the last earlier shot of the scene that set the axis side / the screen positions (an insert between two
+            # coverage shots does not reset them)
+            axis_at = next(({"shot_id": o["shot_id"], "axis_side": o["edit_plan"]["axis_side"]} for o in reversed(scene[:k])
+                            if (o.get("edit_plan") or {}).get("axis_side")), None)
+            pos_at = next(({"shot_id": o["shot_id"], "screen_positions": o["edit_plan"]["screen_positions"]}
+                           for o in reversed(scene[:k]) if (o.get("edit_plan") or {}).get("screen_positions")), None)
+            ep = s.get("edit_plan")
+            has_line = bool(s.get("audio_line_ids"))
+            character_line = any(lines.get(i, {}).get("speaker_type") == "character" for i in s.get("audio_line_ids") or [])
+            run = run + 1 if character_line else (0 if (ep or {}).get("continuity_mode") == "insert"
+                                                  or s.get("shot_role") in ("listener_reaction", "reaction", "insert_cutaway")
+                                                  else run)
+            if run > DIALOGUE_RUN_MAX:
+                out.append(_f("VL-08", sid, G.REVIEW, f"{run} character lines in a row without a reaction or insert"))
+                run = 0
+            if not is_video(s):
+                continue
+            if not ep:
+                out.append(_f("VL-01", sid, G.FAIL, "a video shot without its edit_plan (written before any paid clip)"))
+                continue
+            mode = ep.get("continuity_mode")
+            if len(s.get("audio_line_ids") or []) > 1 and sid in spoken:
+                out.append(_f("VL-02", sid, G.FAIL, "two lines in one LTX clip: LTX leaves 0.85-1.0 s between "
+                              "sentences; one clip, one line"))
+            size = (s.get("camera_spec") or {}).get("shot_size")
+            if has_line and character_line and size in SPEAKING_CLOSE:
+                out.append(_f("VL-02", sid, G.FAIL, f"a speaking {size}: LTX mouths are weak, a close-up is silent"))
+            if mode == "continuation":
+                src = ep.get("continuity_from")
+                if not src or src not in ids:
+                    out.append(_f("VL-03", sid, G.FAIL, f"continuation names no shot to continue ({src!r})"))
+                elif prev is None or prev["shot_id"] != src:
+                    out.append(_f("VL-03", sid, G.FAIL, f"continuation of {src}, but the shot before in this scene is "
+                                  f"{prev['shot_id'] if prev else 'none'}: a continuation follows its source directly"))
+                elif not is_video(prev):
+                    out.append(_f("VL-03", sid, G.FAIL, f"continuation of {src}, which is not a video clip"))
+                else:
+                    pep = prev.get("edit_plan") or {}
+                    a, b = pep.get("screen_direction"), ep.get("screen_direction")
+                    if a and b and a != b and not ep.get("axis_cross_reason"):
+                        out.append(_f("VL-03", sid, G.FAIL, f"screen direction {a} -> {b} across a continuation "
+                                      "without an axis-cross reason"))
+                    co, ci = pep.get("camera_out", "rest"), ep.get("camera_in", "rest")
+                    if co != ci:
+                        out.append(_f("VL-03", sid, G.FAIL, f"camera {co} at the end of {src} but {ci} at the start "
+                                      "of its continuation: the move must carry over"))
+                    if prev.get("transition_out") in ("cross_dissolve_8f", "fade_to_black"):
+                        out.append(_f("VL-03", sid, G.REVIEW, f"{prev.get('transition_out')} inside a continuous action"))
+            elif mode in ("coverage", "insert"):
+                if not ep.get("scene_master"):
+                    out.append(_f("VL-04", sid, G.FAIL, f"{mode} without the scene master it is drawn from"))
+                if prev is not None:
+                    pep = prev.get("edit_plan") or {}
+                    ps, pa = (prev.get("camera_spec") or {}).get("shot_size"), (prev.get("camera_spec") or {}).get(
+                        "horizontal_azimuth_deg")
+                    cs, ca = size, (s.get("camera_spec") or {}).get("horizontal_azimuth_deg")
+                    if mode == "coverage" and ps in SIZE_STEP and cs in SIZE_STEP and SIZE_STEP[ps] == SIZE_STEP[cs] \
+                            and pa is not None and ca is not None and min(abs(pa - ca), 360 - abs(pa - ca)) < 30:
+                        out.append(_f("VL-04", sid, G.FAIL, f"coverage cut {ps}@{pa} -> {cs}@{ca}: no size step and under "
+                                      "30 degrees, it reads as a jump cut"))
+                    sa, sb = (axis_at or {}).get("axis_side"), ep.get("axis_side")
+                    if sa and sb and sa != sb and not ep.get("axis_cross_reason"):
+                        out.append(_f("VL-04", sid, G.FAIL, f"camera crosses the axis {sa} -> {sb} (set by "
+                                      f"{axis_at['shot_id']}) without a reason"))
+                    if sa and sb and sa == sb and pos_at:
+                        pp, cp = pos_at.get("screen_positions") or {}, ep.get("screen_positions") or {}
+                        for who in sorted(set(pp) & set(cp)):
+                            if {pp[who], cp[who]} == {"left", "right"}:
+                                out.append(_f("VL-04", sid, G.FAIL, f"{who} swaps screen side {pp[who]} -> {cp[who]} "
+                                              f"(after {pos_at['shot_id']}) on the same side of the axis"))
+                if mode == "insert" and has_line and character_line:
+                    out.append(_f("VL-04", sid, G.REVIEW, "an insert carrying a character line: the speaker is off "
+                                  "screen (Q7 REVIEW)"))
+            else:
+                out.append(_f("VL-01", sid, G.FAIL, f"unknown continuity_mode {mode!r}"))
+            reason = ep.get("cut_in_reason")
+            if reason == "line" and prev is not None and not prev.get("audio_line_ids"):
+                out.append(_f("VL-09", sid, G.REVIEW, "cut on a line, but the shot before carries none"))
+            if prev is None and reason not in ("establish", "scene_change", "time_cut"):
+                out.append(_f("VL-09", sid, G.REVIEW, f"the scene opens on a {reason!r} cut: a scene opens on an "
+                              "establishing, place or time cut"))
+            cs_ = clip_seconds(script, s, max_s)
+            if cs_["over"]:
+                out.append(_f("VL-06", sid, G.FAIL, f"needs {cs_['needed_s']} s of clip, the model makes {max_s:g} s: split "
+                              "the line or the shot"))
+    return out
+
+
+def rows(script: dict, max_s: float = 10.0) -> list[dict]:
+    """The edit plan's gate rows: FAIL findings block a paid clip, REVIEW findings are listed for the creator."""
+    fs = findings(script, max_s)
+    fail = [f"{f['rule']} {f['shot_id']}: {f['detail']}" for f in fs if f["severity"] == G.FAIL]
+    rev = [f"{f['rule']} {f['shot_id']}: {f['detail']}" for f in fs if f["severity"] == G.REVIEW]
+    n = sum(1 for s in script.get("shots", []) if is_video(s))
+    return [G.row("video_edit_plan", not fail, f"{len(fail)} FAIL finding(s) over {n} video shot(s) (VL-01..VL-06)", fail[:30]),
+            G.row("video_edit_plan_review", not rev, f"{len(rev)} REVIEW finding(s) (VL-03/04/08/09)", rev[:30],
+                  level=G.REVIEW)]

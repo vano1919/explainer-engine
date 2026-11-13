@@ -5898,3 +5898,40 @@ Wan waiver case moved into its own test, which now also checks the record.
 The creator then chose "კი, დაიცავი" (07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`). His word was
 recorded for `config/model_routing.json` (`governance ok protected_config`). `cloud/cheapest.py`, `cloud/cheapest.json` and the
 LTX `launch.json` are now in `protected_files` (60 minutes). Test: `test_the_rule_files_change_only_on_the_creators_recorded_word`.
+
+## 2026-11-13 11:00 UTC: the video lane (D-137, VL-01..VL-13), LTX shots planned for the edit and measured on the file
+
+The creator, 09:11 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWP8uyVzMjdeETMLFhRBASf2`): adapt the cinematic edit and QC brief to our
+system, this thread only the video (the 30 %/10 % worker does its sound and montage), cut a frame and generate from it where our
+LTX has no extend; a detailed report for Fable at the end, Fable not run here. Nothing paid ran; every test is offline.
+
+**Found (audit of the real call graph).** No code wrote `production/video/<shot>.json` for an LTX clip, so the runner could not take
+one (the 2026-11-12 scenes were joined by hand). The clock assumed one narrator read for every line, also the lines LTX speaks.
+The worker's CLI takes only a frame-0 picture: no extend, end frame or retake. G1 checked LTX shots with the Wan fit only.
+
+**Made.**
+- `ShotSpec.edit_plan` in the production script schema; `videolane/plan.py` (VL-01..VL-09, G1 rows), clip seconds from the line
+  (VL-06).
+- The worker's hand-over (VL-05): `handover_frame` (best tail frame by sharpness minus motion, numpy only), `crop_filter`,
+  `frame_png(crop=)`; the chain records `chain_from_frame` with pick, crop and window.
+- `videolane/ingest.py` (VL-07): raw kept and pinned, cut by measured speech, 24/30 fps normalised, the record the runner reads;
+  `recut` from raw for narrated shots (VL-11, never stretched, never past a hand-over).
+- `episode/timing.read_order` skips clip-spoken lines; `retime_with_clips` inserts clip-timed shots; G6 uses it
+  (`clip_spoken_shots_timed_by_their_clips`).
+- `videolane/voice.py` (VL-13): the voice track the stems duck under; G8 hands it to `audio/stems.render` as narration.
+- `videolane/storyboard.py` and `videolane/scene.py` (VL-10): the contact-sheet gate and the `ltx_scene_test/3` file;
+  `scene_run.job_spec` refuses a /3 scene with a moved storyboard pin or without the creator's budget and ledger.
+- `videolane/cuts.py` (VL-11) and `videolane/master_qa.py` (VL-12): the master measured at G10 with repair classes A/B/C.
+- Docs: `docs/VIDEO_LANE.md`, INDEX row, D-137, docs_lint prefix `VL`; the new BP readers listed in `sourced_rules.json`.
+
+**Tests.** `tests/unit/test_videolane.py` (27: plan, 12 parametrized mutations, schema, clock, voice, storyboard, scene, hand-over)
+and `tests/unit/test_videolane_media.py` (19: ingest at 24 and 30 fps, cuts positive and negative, master faults, the battlefield-
+ambience pair, an end-to-end run of G1..G10 with fake LTX clips).
+
+**Measured on the real 2026-11-12 battle master** (`video_lane_2026-11-13/real_battle_2026-11-12/`): 3 cuts found at 6.67, 10.42
+and 18.42 s; as coverage they PASS the palette checks (top-third distance 0.034-0.066 under BP-166's 0.08) although the sheet shows
+the helmets and shield changing at cut 1: palette alone does not see hero identity (open, not a VL-12 gate yet). Line gaps
+0.56-1.62 s, dead air at 12.0-12.5 s (-62 dBFS).
+
+**Stale text reported.** `SCENE_REUSE_RULES.md` LX-04 says clip audio is not used for speech; since D-132 LTX speaks its lines.
+The Toba script's S05_SH003 is a speaking close-up on the video route (VL-02 FAIL when its edit plan is written).

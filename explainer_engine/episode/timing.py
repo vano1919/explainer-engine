@@ -27,14 +27,18 @@ PAD_S = 0.25   # air kept after a line before a shot without a line takes over (
 
 def read_order(script: dict) -> list[str]:
     """The line ids in the order the shots carry them (the order of the read). A line carried by two shots is a FAIL of the
-    contract: the read has it once."""
+    contract: the read has it once. The lines an LTX clip speaks itself (``videolane.plan.clip_spoken``, VL-07) are not in
+    the read: their shots are timed by their trimmed clips (``retime_with_clips``)."""
+    from explainer_engine.videolane.plan import clip_spoken
+    by_clip = clip_spoken(script)
     out, seen = [], set()
     for s in script.get("shots", []):
         for lid in s.get("audio_line_ids") or []:
             if lid in seen:
                 raise ContractError(f"line {lid} is carried by two shots; the read speaks it once")
             seen.add(lid)
-            out.append(lid)
+            if s["shot_id"] not in by_clip:
+                out.append(lid)
     return out
 
 
@@ -131,6 +135,80 @@ def retime(script: dict, aligned: dict, fps: int, read_s: float) -> dict:
     return {"schema": SCHEMA, "fps": fps, "read_s": round(read_s, 4), "total_frames": frames_at[-1], "shots": out_shots,
             "spines": spines, "coverage": aligned["coverage"], "alignment_status": aligned["status"],
             "unmatched": aligned["unmatched"][:50]}
+
+
+def clip_spine(script: dict, shot: dict, speech: list, fps: int) -> list[dict]:
+    """A clip-timed shot's word spine (VL-07): its line's words spread over the speech the clip's own sound holds (trimmed-
+    clip seconds), every word marked estimated (no aligner ran on the clip)."""
+    words = MA.shot_words(shot, script)
+    if not words:
+        return []
+    spans = [(float(a), float(b)) for a, b in speech or []] or [(0.0, float(shot.get("target_duration_seconds") or 1.0))]
+    total = sum(b - a for a, b in spans) or 1.0
+    out, k = [], 0
+    for a, b in spans:
+        n = len(words) - k if (a, b) == spans[-1] else int(round(len(words) * (b - a) / total))
+        for i in range(n):
+            if k >= len(words):
+                break
+            out.append({"word": words[k], "start_frame": int(round((a + (b - a) * i / max(1, n)) * fps)), "estimated": True})
+            k += 1
+    while k < len(words):
+        out.append({"word": words[k], "start_frame": int(round(spans[-1][1] * fps)), "estimated": True})
+        k += 1
+    return out
+
+
+def retime_with_clips(script: dict, aligned: dict | None, fps: int, read_s: float, clips: dict) -> dict:
+    """The episode clock when some shots are timed by their LTX clips (VL-07). ``clips``: ``{shot_id: {"frames": n,
+    "speech": [[s, e], ...]}}`` for every clip-timed shot (trimmed clip, its own speech in clip seconds). The read times the
+    other shots exactly as ``retime`` does; each clip-timed shot is then inserted at the read's cut where it sits, so the read
+    pauses for it (``inserts``: where the voice track splits the read, ``videolane/voice``). Without any read line the shots
+    without a clip keep their planned lengths."""
+    by_clip = [s["shot_id"] for s in script.get("shots", []) if s["shot_id"] in clips]
+    missing = sorted(set(clips) - {s["shot_id"] for s in script.get("shots", [])})
+    if missing:
+        raise ContractError(f"clip timings for shots the script does not have: {missing[:5]}")
+    read_shots = [s for s in script.get("shots", []) if s["shot_id"] not in clips]
+    has_read = aligned is not None and any(aligned["lines"].get(lid) for s in read_shots for lid in s.get("audio_line_ids") or [])
+    if has_read:
+        base = retime(dict(script, shots=read_shots), aligned, fps, read_s)
+    else:
+        base, t = {"shots": {}, "spines": {}, "total_frames": 0, "coverage": None, "alignment_status": None,
+                   "unmatched": []}, 0
+        for s in read_shots:
+            n = max(1, int(round(float(s.get("target_duration_seconds") or 1.0) * fps)))
+            base["shots"][s["shot_id"]] = {"start_frame": t, "frames": n, "seconds": round(n / fps, 4),
+                                           "planned_seconds": float(s.get("target_duration_seconds") or 0.0)}
+            base["spines"][s["shot_id"]] = []
+            t += n
+        base["total_frames"] = t
+    out_shots, spines, inserts, shift = {}, {}, [], 0
+    order = script.get("shots", [])
+    for k, s in enumerate(order):
+        sid = s["shot_id"]
+        if sid in clips:
+            nxt = next((o["shot_id"] for o in order[k + 1:] if o["shot_id"] not in clips), None)
+            at = base["shots"][nxt]["start_frame"] if nxt else base["total_frames"]
+            n = int(clips[sid]["frames"])
+            if n < 1:
+                raise ContractError(f"{sid}: a clip-timed shot without frames")
+            out_shots[sid] = {"start_frame": at + shift, "frames": n, "seconds": round(n / fps, 4),
+                              "planned_seconds": float(s.get("target_duration_seconds") or 0.0), "timed_by": "clip"}
+            spines[sid] = clip_spine(script, s, clips[sid].get("speech"), fps)
+            inserts.append({"shot_id": sid, "at_read_frame": at, "frames": n})
+            shift += n
+        else:
+            b = base["shots"][sid]
+            out_shots[sid] = dict(b, start_frame=b["start_frame"] + shift)
+            spines[sid] = base["spines"].get(sid, [])
+    starts = [out_shots[s["shot_id"]]["start_frame"] for s in order]
+    if any(b < a for a, b in zip(starts, starts[1:])):
+        raise ContractError("internal: clip-timed shots broke the shot order")
+    return {"schema": SCHEMA, "fps": fps, "read_s": round(read_s, 4), "total_frames": base["total_frames"] + shift,
+            "shots": out_shots, "spines": spines, "inserts": inserts, "clip_timed": by_clip,
+            "coverage": base.get("coverage"), "alignment_status": base.get("alignment_status"),
+            "unmatched": base.get("unmatched", [])[:50]}
 
 
 def timed_script(script: dict, timing: dict | None) -> dict:
