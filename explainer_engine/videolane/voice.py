@@ -97,8 +97,16 @@ def compose(timing: dict, read: Path | None, clip_audio: dict, out: Path, *, rea
         if len(a) < n:
             a = np.pad(a, (0, n - len(a)))
         spans = c.get("speech") or []
-        gain_db = max(-GAIN_MAX_DB, min(GAIN_MAX_DB, ref_db - speech_level(a, spans))) if spans else 0.0
-        a = a * (10 ** (gain_db / 20)) * between_lines_gain(len(a), spans, RATE)
+        # HF-5 (FL-408, FL-409, TD-306): the clamp holds for boosts only, a clip louder than the read is turned down by
+        # whatever it needs; the last speech span runs to the clip's end (the detector can close early on a short line
+        # and the end of the line was dropped 15 dB), the level itself is still taken from the spans as detected
+        want_db = ref_db - speech_level(a, spans) if spans else 0.0
+        gain_db = min(GAIN_MAX_DB, want_db) if spans else 0.0
+        boost_clamped = bool(spans and want_db > GAIN_MAX_DB)
+        held = [list(sp) for sp in spans]
+        if held:
+            held[-1][1] = max(held[-1][1], len(a) / RATE)
+        a = a * (10 ** (gain_db / 20)) * between_lines_gain(len(a), held, RATE)
         k = min(len(a) // 2, int(max(CLIP_FADE_S, SEAM_FADE_S) * RATE))
         if k:
             r = np.linspace(0, 1, k, dtype=np.float32)
@@ -106,6 +114,9 @@ def compose(timing: dict, read: Path | None, clip_audio: dict, out: Path, *, rea
             a[-k:] *= r[::-1]
         y[start:start + n] += a[: max(0, total - start)]
         laid.append({"what": "clip", "shot_id": sid, "at_s": round(start / RATE, 3), "seconds": round(n / RATE, 3),
-                     "gain_db": round(gain_db, 2), "speech": spans})
+                     "gain_db": round(gain_db, 2), "boost_clamped": boost_clamped, "speech": spans})
     write_mono(out, y)
-    return {"path": str(out), "seconds": round(total / RATE, 4), "read_level_db": round(ref_db, 2), "laid": laid}
+    peak = float(np.abs(y).max()) if len(y) else 0.0
+    return {"path": str(out), "seconds": round(total / RATE, 4), "read_level_db": round(ref_db, 2), "laid": laid,
+            "peak_dbfs": round(20 * float(np.log10(peak + 1e-9)), 2),
+            "boost_clamped": [l["shot_id"] for l in laid if l.get("boost_clamped")]}

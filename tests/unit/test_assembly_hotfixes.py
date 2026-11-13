@@ -195,3 +195,61 @@ def test_a_polish_that_moves_the_length_is_refused_and_leaves_nothing(tmp_path, 
     with pytest.raises(ContractError, match="moved the length"):
         RUN._polish_read(_Ep(tmp_path))
     assert not (tmp_path / RUN.POLISHED_REL).exists() and read.is_file()
+
+
+# --- HF-5: the voice track's levels and line ends (FL-408, FL-409; TD-306) --------------------------------------------
+
+def _wav16(path: Path, x: np.ndarray, rate: int = 48000) -> Path:
+    from explainer_engine.videolane import voice as VV
+    return VV.write_mono(path, x, rate)
+
+
+def _sine(seconds: float, hz: float, amp: float, rate: int = 48000) -> np.ndarray:
+    t = np.arange(int(seconds * rate)) / rate
+    return (amp * np.sin(2 * np.pi * hz * t)).astype(np.float32)
+
+
+def _one_clip_timing(frames: int = 36) -> dict:
+    return {"fps": 24, "total_frames": 24 + frames, "inserts": [{"shot_id": "C", "at_read_frame": 24, "frames": frames}],
+            "shots": {"A": {"start_frame": 0}, "C": {"start_frame": 24}}}
+
+
+def _amp_at(y: np.ndarray, hz: float, a: float, b: float, rate: int = 48000) -> float:
+    seg = y[int(a * rate):int(b * rate)]
+    f = np.fft.rfftfreq(len(seg), 1 / rate)
+    return float(np.abs(np.fft.rfft(seg))[np.argmin(np.abs(f - hz))]) * 2 / len(seg)
+
+
+def test_a_clip_louder_than_the_read_is_turned_down_to_the_reads_level(tmp_path):
+    from explainer_engine.videolane import voice as VV
+    read = _wav16(tmp_path / "read.wav", _sine(1.0, 400, 0.05))
+    clip = _wav16(tmp_path / "clip.wav", _sine(1.5, 900, 0.05 * 10 ** (15 / 20)))    # 15 dB over the read
+    rep = VV.compose(_one_clip_timing(), read, {"C": {"path": str(clip), "speech": [[0.0, 1.5]]}}, tmp_path / "v.wav",
+                     read_speech=[[0.0, 1.0]])
+    laid = [e for e in rep["laid"] if e["what"] == "clip"][0]
+    assert laid["gain_db"] == pytest.approx(-15.0, abs=0.3) and laid["boost_clamped"] is False
+    y = VV.read_mono(tmp_path / "v.wav")
+    assert _amp_at(y, 900, 1.1, 1.8) == pytest.approx(_amp_at(y, 400, 0.1, 0.9), rel=0.1)
+    assert rep["peak_dbfs"] < 0 and rep["boost_clamped"] == []
+
+
+def test_a_boost_is_still_clamped_and_reported(tmp_path):
+    from explainer_engine.videolane import voice as VV
+    read = _wav16(tmp_path / "read.wav", _sine(1.0, 400, 0.2))
+    clip = _wav16(tmp_path / "clip.wav", _sine(1.5, 900, 0.2 * 10 ** (-20 / 20)))    # 20 dB under the read
+    rep = VV.compose(_one_clip_timing(), read, {"C": {"path": str(clip), "speech": [[0.0, 1.5]]}}, tmp_path / "v.wav",
+                     read_speech=[[0.0, 1.0]])
+    laid = [e for e in rep["laid"] if e["what"] == "clip"][0]
+    assert laid["gain_db"] == VV.GAIN_MAX_DB and laid["boost_clamped"] is True and rep["boost_clamped"] == ["C"]
+
+
+def test_the_last_sound_after_an_early_closed_speech_span_keeps_its_level(tmp_path):
+    from explainer_engine.videolane import voice as VV
+    clip_x = np.concatenate([_sine(0.9, 900, 0.2), _sine(0.3, 700, 0.2), np.zeros(int(0.3 * 48000), np.float32)])
+    read = _wav16(tmp_path / "read.wav", _sine(1.0, 400, 0.2))
+    clip = _wav16(tmp_path / "clip.wav", clip_x)
+    VV.compose(_one_clip_timing(), read, {"C": {"path": str(clip), "speech": [[0.0, 0.9]]}}, tmp_path / "v.wav",
+               read_speech=[[0.0, 1.0]])
+    y = VV.read_mono(tmp_path / "v.wav")
+    tail, speech = _amp_at(y, 700, 1.0 + 1.02, 1.0 + 1.15), _amp_at(y, 900, 1.0 + 0.2, 1.0 + 0.8)
+    assert tail > 0.7 * speech      # the 0.3 s sound is as loud as the line (was 15 dB down)
