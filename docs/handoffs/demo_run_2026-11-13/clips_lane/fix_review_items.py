@@ -50,9 +50,9 @@ for shot in ("S04_SH013", "S06_SH007", "S06_SH008", "S07_SH003"):
     save(np.clip(out_im, 0, 255).astype(np.uint8), f"{shot}_start_fix2.png")
 
 # 2. cards
-woman = load(sh010)[665:890, 1300:1490]          # the woman, head and shoulders (190x225)
-CARDS = {"S05_SH011": [(1366, 1086), (1465, 1105), (1392, 1242), (1222, 1258)],
-         "S05_SH012": [(1688, 780), (1737, 815), (1706, 942), (1641, 936)]}
+woman = load(sh010)[665:890, 1312:1437]          # the woman, head and shoulders, a narrow strip (125x225) for the narrow cards
+CARDS = {"S05_SH011": [(1368, 1090), (1456, 1109), (1336, 1239), (1228, 1255)],   # the card's own paper, inside its cream border
+         "S05_SH012": [(1686, 778), (1737, 815), (1706, 942), (1641, 936)]}
 for shot, quad in CARDS.items():
     im = load(mir / f"{shot}_start_mirror.png")
     h, w = im.shape[:2]
@@ -63,15 +63,16 @@ for shot, quad in CARDS.items():
     cv2.fillConvexPoly(poly, np.int32(quad), 255)
     poly = cv2.erode(poly, np.ones((3, 3), np.uint8))
     px = im.astype(np.int32)
-    skin = ((px[..., 0] - px[..., 2]) > 55) & (px[..., 0] > px[..., 1] + 15)       # fingers stay in front
+    skin = ((px[..., 0] - px[..., 2]) > 72) & (px[..., 0] > 165) & (px[..., 0] > px[..., 1] + 30)       # fingers stay in front (pink, not the brown paper)
+    if shot == "S05_SH012":                      # here the thumb is only at the right edge; the old face is skin too and must go
+        skin[:, :1718] = False
     mask = (poly > 0) & ~skin
     mask = cv2.GaussianBlur(mask.astype(np.float32), (0, 0), 1.2)[..., None]
     old = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY).astype(np.float32)
     inside = poly > 0
     g = cv2.cvtColor(warp, cv2.COLOR_RGB2GRAY).astype(np.float32)
     g = (g - g[inside].mean()) / (g[inside].std() + 1e-6) * old[inside].std() + old[inside].mean()
-    paper = im[inside & (old > np.percentile(old[inside], 55))].astype(np.float32)
-    hue = np.median(paper, axis=0) / max(float(np.median(paper)), 1.0)
+    hue = np.array([1.0, 0.93, 0.84], np.float32)       # the grey-sepia of the cards in S05_SH009 and S05_SH010
     new = np.clip(g[..., None] * hue[None, None, :], 0, 255)
     res = im.astype(np.float32) * (1 - mask) + new * mask
     save(res.astype(np.uint8), f"{shot}_start_fix2.png")
