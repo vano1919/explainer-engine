@@ -359,3 +359,89 @@ def test_a_changed_narrator_chain_makes_the_g8_record_stale(tmp_path, monkeypatc
     monkeypatch.setattr(NP, "CHAIN", NP.CHAIN + ",volume=-1dB")
     assert RUN.fingerprint(ep, "sound") != before
     assert RUN.fingerprint(ep, "sound_plan") == RUN.fingerprint(RUN.Episode(ep.root, sound_library=tmp_path), "sound_plan")
+
+
+# --- TD-320: the per-man EQ match and the bounded pitch shift in the voice track ----------------------------------------
+
+def _filtered_noise(seconds: float, kind: str, seed: int, amp: float = 0.05, rate: int = 48000) -> np.ndarray:
+    from scipy import signal
+    x = np.random.default_rng(seed).standard_normal(int(seconds * rate)).astype(np.float32)
+    if kind == "dark":
+        x = signal.lfilter(*signal.butter(1, 1500 / (rate / 2)), x)
+    elif kind == "thin":
+        x = signal.lfilter(*signal.butter(1, 1200 / (rate / 2), btype="high"), x)
+    return (amp * x / (np.std(x) + 1e-9)).astype(np.float32)
+
+
+def _three_clip_timing() -> dict:
+    return {"fps": 24, "total_frames": 24 + 3 * 48,
+            "inserts": [{"shot_id": f"X{k}", "at_read_frame": 4 * (k + 1), "frames": 48} for k in range(3)],
+            "shots": {"A": {"start_frame": 0}, **{f"X{k}": {"start_frame": 4 * (k + 1) + 48 * k} for k in range(3)}}}
+
+
+def test_the_eq_match_brings_one_mans_clips_closer_inside_the_bound_and_writes_every_band(tmp_path):
+    from explainer_engine.videolane import voice as VV
+    read = _wav16(tmp_path / "read.wav", _filtered_noise(1.0, "flat", 1))
+    kinds = ["flat", "dark", "thin"]
+    clips = {f"X{k}": {"path": str(_wav16(tmp_path / f"c{k}.wav", _filtered_noise(2.0, kinds[k], 10 + k))),
+                       "speech": [[0.0, 2.0]], "speaker": "Hale"} for k in range(3)}
+    rep = VV.compose(_three_clip_timing(), read, clips, tmp_path / "v.wav", read_speech=[[0.0, 1.0]])
+    plan = rep["eq_match"]
+    assert plan["speakers"]["Hale"]["clips"] == 3 and len(plan["bands_hz"]) == 7
+    gains = np.array([plan["clips"][f"X{k}"]["gain_db"] for k in range(3)])
+    assert np.abs(gains).max() <= VV.EQ_MAX_DB + 1e-6 and np.abs(gains).max() > 1.0     # bounded, and it did something
+    assert [e["eq_gain_db"] for e in rep["laid"] if e["what"] == "clip"] == gains.tolist()
+    y = VV.read_mono(tmp_path / "v.wav")
+    at = lambda k: y[int((4 * (k + 1) + 48 * k) / 24 * 48000):][: 2 * 48000]
+    before = np.array([VV.band_shape(VV.read_mono(Path(clips[f"X{k}"]["path"])), [[0.1, 1.9]]) for k in range(3)])
+    after = np.array([VV.band_shape(at(k), [[0.1, 1.9]]) for k in range(3)])
+    assert np.ptp(after, axis=0).mean() < 0.7 * np.ptp(before, axis=0).mean()
+
+
+def test_a_man_with_fewer_than_three_clips_is_skipped_and_nothing_is_changed(tmp_path):
+    from explainer_engine.videolane import voice as VV
+    plan = VV.eq_plan({"X0": [0.0] * 7, "X1": [1.0] * 7}, {"X0": "Harris", "X1": "Harris"})
+    assert "skipped" in plan["speakers"]["Harris"] and plan["clips"] == {}
+    x = _filtered_noise(1.0, "flat", 3)
+    assert np.allclose(VV.apply_eq(x, [0.0] * 7), x, atol=1e-4)
+
+
+def test_the_pitch_plan_shifts_only_a_clip_both_estimators_and_the_confidence_agree_on():
+    from explainer_engine.videolane import voice as VV
+    hz = lambda st: 150 * 2 ** (st / 12)
+    good = lambda st, c=0.8: {"pyin_hz": hz(st), "yin_hz": hz(st), "pyin_conf": c}
+    m = {"a": good(0), "b": good(0.2), "c": good(-0.1), "d": good(3.0), "e": good(7.0),
+         "f": good(3.0, 0.2), "g": {"pyin_hz": hz(3.0), "yin_hz": hz(8.0), "pyin_conf": 0.9}, "h": None, "i": good(1.0)}
+    plan = VV.pitch_plan(m, {k: "Hale" for k in m})
+    rows = plan["clips"]
+    # the median of the six reliable clips (0, 0.2, -0.1, 3, 7, 1 st) is 0.6 st: d is 2.4 st above it
+    assert rows["d"]["shift_st"] == pytest.approx(-2.4, abs=0.1) and rows["d"]["why"] == "shifted"
+    for k in "abcefghi":
+        assert rows[k]["shift_st"] == 0.0
+    assert "bound" in rows["e"]["why"] and "confidence" in rows["f"]["why"] and "disagree" in rows["g"]["why"]
+    assert rows["h"]["why"] == "no F0 measured" and "2 st" in rows["i"]["why"]
+
+
+def test_a_pitch_shift_moves_the_pitch_and_keeps_the_length_and_a_compose_reports_it(tmp_path):
+    if subprocess.run("ffmpeg -hide_banner -filters | grep -q rubberband", shell=True).returncode:
+        pytest.skip("this ffmpeg has no rubberband")
+    from explainer_engine.videolane import voice as VV
+    t = np.arange(2 * 48000) / 48000
+    x = sum(0.1 / h * np.sin(2 * np.pi * 150 * h * t) for h in range(1, 8)).astype(np.float32)
+    y = VV.shift_pitch(x, 3.0)
+    assert len(y) == len(x)
+    f0 = VV.f0_estimates(y, [[0.2, 1.8]])
+    assert 12 * np.log2(f0["yin_hz"] / 150) == pytest.approx(3.0, abs=0.4)
+    read = _wav16(tmp_path / "read.wav", _sine(1.0, 400, 0.05))
+    clip = _wav16(tmp_path / "clip.wav", x[: int(1.5 * 48000)] * 0.5)
+    rep = VV.compose(_one_clip_timing(), read, {"C": {"path": str(clip), "speech": [[0.0, 1.5]]}}, tmp_path / "v.wav",
+                     read_speech=[[0.0, 1.0]], pitch_shifts={"C": -3.0})
+    assert [e for e in rep["laid"] if e["what"] == "clip"][0]["pitch_shift_st"] == -3.0 and rep["eq_match"] is None
+
+
+def test_the_clip_speaker_is_the_first_character_line_of_the_shot():
+    from explainer_engine.episode import run as R
+    script = {"audio_lines": [{"line_id": "L1", "speaker_type": "narrator", "speaker_id": "N"},
+                              {"line_id": "L2", "speaker_type": "character", "speaker_id": "Hale"}],
+              "shots": [{"shot_id": "S1", "audio_line_ids": ["L1", "L2"]}, {"shot_id": "S2", "audio_line_ids": ["L1"]}]}
+    assert R._clip_speaker(script, "S1") == "Hale" and R._clip_speaker(script, "S2") is None

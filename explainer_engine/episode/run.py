@@ -773,6 +773,34 @@ def _master_loudness_rows(master_mp4: Path) -> tuple[list[dict], dict]:
     return _loudness_rows("master", meas, "the master file"), meas
 
 
+def _clip_speaker(script: dict, shot_id: str) -> str | None:
+    """The character whose line a clip-spoken shot carries (the first character line of the shot), for the per-man matches."""
+    lines = {l["line_id"]: l for l in script.get("audio_lines") or []}
+    for s in script.get("shots") or []:
+        if s.get("shot_id") == shot_id:
+            for i in s.get("audio_line_ids") or []:
+                if lines.get(i, {}).get("speaker_type") == "character":
+                    return lines[i].get("speaker_id")
+    return None
+
+
+def _pitch_shifts(ep: Episode, clip_audio: dict) -> dict:
+    """TD-320: measure each man's clips by two F0 estimators, write ``audio/voice_pitch_plan.json`` (every clip with its reason)
+    and return the shifts of the clips that pass every test (usually none: the clips carry effects and music)."""
+    from explainer_engine.videolane import voice as VV
+    speakers = {sid: c["speaker"] for sid, c in clip_audio.items() if c.get("speaker")}
+    if not speakers:
+        return {}
+    try:
+        measures = {sid: VV.f0_estimates(VV.read_mono(Path(clip_audio[sid]["path"])), clip_audio[sid].get("speech"))
+                    for sid in speakers}
+    except ImportError:
+        return {}
+    plan = VV.pitch_plan(measures, speakers)
+    write_json_atomic(ep.path("audio/voice_pitch_plan.json"), plan)
+    return {i: r["shift_st"] for i, r in plan["clips"].items() if r.get("shift_st")}
+
+
 def stage_sound(ep: Episode, rehearsal: bool):
     """G8: the sound plan again on the measured clock, then the one renderer (``audio/stems``) into the five stems. A full
     run renders shippable (no placeholder, no missing class, the real read); a rehearsal renders a preview."""
@@ -798,11 +826,13 @@ def stage_sound(ep: Episode, rehearsal: bool):
             rp = ep.root / "production" / "video" / f"{ins['shot_id']}.json"
             if rp.is_file():
                 d = json.loads(rp.read_text(encoding="utf-8"))
-                clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or []}
+                clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or [],
+                                              "speaker": _clip_speaker(script, ins["shot_id"])}
         missing = [i["shot_id"] for i in timing["inserts"] if i["shot_id"] not in clip_audio]
         if not missing:
+            shifts = _pitch_shifts(ep, clip_audio)     # TD-320: bounded, only on clips both estimators agree on
             voice_rep = VV.compose(timing, narration, clip_audio, ep.path("audio/voice_track.wav"),
-                                   read_speech=VI.speech(narration) if narration else None)
+                                   read_speech=VI.speech(narration) if narration else None, pitch_shifts=shifts)
             write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
             narration = ep.path("audio/voice_track.wav")
     # FA-13 / Q2: the narrated video shots' own clip sound, offered to the renderer (it lays it only when the switch is on)
