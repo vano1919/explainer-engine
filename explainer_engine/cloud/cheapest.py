@@ -11,7 +11,13 @@ A rule is waived for one run only by the creator's own message (rule TOP of the 
 ``EE_CHEAPEST_WAIVE=<cmsg id>:CH-01[,CH-03]`` on the command or in the environment, and only while the same message is recorded
 for that rule (``python -m explainer_engine.governance ok cheapest_waive CH-03 <cmsg id> "<his words>"``, at most
 ``WAIVE_MINUTES`` old): an invented id, or a waiver left in the environment from an earlier run, waives nothing. The bake-off is
-exempt: it measures the alternatives (CH-06 names its line)."""
+exempt: it measures the alternatives (CH-06 names its line).
+
+CH-07 (the creator 2026-11-13 14:37 UTC, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW4rpktDxvJ3cn9nLY9QaMLC, his card 14:47 UTC): no paid
+option is offered to him, and no paid GPU rung starts, before a ``paid_offer/1`` file (``cloud/paid_offer``) shows the free credit
+checked first, today's Modal cards and prices and status, at least two priced combinations and the cheapest one chosen with its
+free/paid split, cap and watchdog. ``offer_refusal`` holds the hook to it: ``EE_PAID_OFFER=<file>`` on the command or in the
+environment, a passing check, the worker and rung it names, and the launch's own card."""
 from __future__ import annotations
 
 import hashlib
@@ -143,7 +149,37 @@ def ltx_refusal(entry: str, cmd: str, env=None, launch=None, scenes_dir=SCENES_D
             found.append(("CH-03", "the hook could not read the --job spec, so it cannot check the scene's one container"))
         else:
             found += spec_problems(launch, spec, scenes_dir)
+    found += offer_problems(entry, cmd, env, launch, LTX_WORKER)
     return problems_text(found, cmd, env)
+
+
+LTX_WORKER = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"
+OFFER_VAR = re.compile(r"\bEE_PAID_OFFER=['\"]?(\S+?)['\"]?(?:\s|$)")
+
+
+def offer_problems(entry: str, cmd: str, env, launch: dict, worker: str, now=None) -> list[tuple[str, str]]:
+    """CH-07 on a paid GPU rung: the offer the creator was shown (``EE_PAID_OFFER``) passes ``paid_offer.problems``, names this
+    worker and rung, and chose the card the launch runs on."""
+    from explainer_engine.cloud import paid_offer
+    env = os.environ if env is None else env
+    m = OFFER_VAR.search(cmd or "")
+    path = m.group(1) if m else str(env.get("EE_PAID_OFFER") or "")
+    if not path:
+        return [("CH-07", "no paid offer: before a paid run the thread checks the free credit, today's Modal cards and prices, "
+                          "prices two combinations and offers the cheapest (`python -m explainer_engine.cloud.paid_offer "
+                          "fetch|price|check <offer>`), then EE_PAID_OFFER=<offer file>")]
+    try:
+        offer = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return [("CH-07", f"the paid offer {path} cannot be read")]
+    found = [("CH-07", why) for why in paid_offer.problems(offer, now)]
+    run = offer.get("launch") or {}
+    if (run.get("worker"), run.get("entry")) != (worker, entry):
+        found.append(("CH-07", f"the offer is for {run.get('worker')}::{run.get('entry')}, not {worker}::{entry}"))
+    ch = next((c for c in offer.get("combos") or [] if isinstance(c, dict) and c.get("id") == offer.get("chosen")), {})
+    if ch.get("gpu") != str(launch.get("gpu") or "").rstrip("!"):
+        found.append(("CH-07", f"the offer chose {ch.get('gpu')}, the launch runs on {launch.get('gpu')}"))
+    return found
 
 
 PICTURES_CMD = re.compile(r"\bexplainer_engine\.training\.pods\.ltx\.scene_pictures\s+submit\s+['\"]?(\S+?)['\"]?(?:\s|$)")

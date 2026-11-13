@@ -6241,3 +6241,24 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   `test_videolane::test_the_best_tail_search_starts_after_the_line...`, `::test_the_scene_row_tells_the_worker...`.
 - The worker's sha changed, so the OR-37 ladder runs again: L0 (local tests) on the commit; L1/L2 (Modal CPU) and L3 (GPU
   smoke, paid) wait for the creator's word on a priced card. Nothing paid ran.
+
+## 2026-11-13 — CH-07: no paid offer before the free credit, today's Modal cards and two priced combinations
+- Asked: the creator 2026-11-13 14:37 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW4rpktDxvJ3cn9nLY9QaMLC) and his card answer at
+  14:47 UTC (relayed by the coordinator): before any thread offers him a paid option it checks the free credit first, then the
+  Modal cards on offer now, plans the cheapest card + generation combination and offers that.
+- Found: D-133 (CH-01..CH-06) fixed the setup of one LTX launch but never checked the credit, never compared cards (the launch
+  names H100; `providers/modal_provider` marks every card available without a check) and had no rule on the offer itself.
+- Done: `cloud/paid_offer.py` (`paid_offer/1`: `fetch` reads the credit and today's cards, `price` prices the combinations and
+  the free/paid split, `check` fails an offer without the credit check, the GPU check, a measured or known VRAM need or two
+  combinations, and prints the Georgian card text); `cheapest.offer_problems` (protected file, the creator's word recorded) makes
+  the hook refuse a paid LTX GPU rung without `EE_PAID_OFFER=<passing offer>` for that rung and the launch's card; CH-07 in
+  `docs/CLOUD_RUNBOOK.md`, D-133 amended, references in the orchestrator, the watchdog page, the cloud rules and the Modal skill.
+- Measured today (free, read-only): modal.com/pricing equals the 2026-11-07 table (H100 $0.001097/s, RTX PRO 6000 $0.000842/s,
+  A100-80GB $0.000694/s); status.modal.com: Functions operational, a control-plane maintenance on 2026-11-16 01:00-02:00 UTC.
+  `modal billing summary|rates` need Modal's gRPC API, which this cloud container's proxy does not carry ("Could not connect to
+  the Modal server"), so the credit falls back to the ledgers: $5.43 of Modal spend in November in the four project ledgers,
+  a lower bound (runs without a ledger in that folder are not in it).
+- Not covered: the Wan worker (refused by CH-06, no offer check) and the bake-off (its own line); the LTX `stage` CPU rung.
+- Rewritten to the new rule (not weakened): `test_cheapest::test_a_scene_spec_in_one_container_passes_the_hook`,
+  `::test_the_creators_message_waives_only_the_rule_it_names` and `test_v43_ltx_jobs::test_the_session_hook_frees_only_the_ltx_cpu_rungs`
+  now carry a passing offer (`conftest.make_offer`). New: `test_paid_offer.py` (17).

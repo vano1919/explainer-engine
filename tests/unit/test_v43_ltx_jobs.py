@@ -200,13 +200,16 @@ def test_a_second_attempt_of_the_same_launch_runs_nothing(container):
     assert _run(container)["state"] == "REFUSED_SECOND_ATTEMPT" and len(container.calls) == n
 
 
-def test_the_session_hook_frees_only_the_ltx_cpu_rungs():
+def test_the_session_hook_frees_only_the_ltx_cpu_rungs(paid_offer):
     for entry in ("check", "weights"):
         assert H.modal_refusal(f"modal run {WORKER}::{entry}", env={}) is None
     for entry in ("smoke", "main", "stage"):
         assert "EE_MODAL_GO" in (H.modal_refusal(f"modal run {WORKER}::{entry}", env={}) or "")
-    for entry in ("smoke", "stage"):
-        assert H.modal_refusal(f"EE_MODAL_GO=cmsg_abc:{'a' * 12} modal run {WORKER}::{entry}", env={}) is None
+    assert H.modal_refusal(f"EE_MODAL_GO=cmsg_abc:{'a' * 12} modal run {WORKER}::stage", env={}) is None
+    # the GPU rung also needs the priced offer since CH-07 (test_paid_offer.py)
+    assert "CH-07" in H.modal_refusal(f"EE_MODAL_GO=cmsg_abc:{'a' * 12} modal run {WORKER}::smoke", env={})
+    go = f"EE_MODAL_GO=cmsg_abc:{'a' * 12} EE_PAID_OFFER={paid_offer('smoke')}"
+    assert H.modal_refusal(f"{go} modal run {WORKER}::smoke", env={}) is None
     # ::main also needs its scene's spec since D-133 (CH-03, one container per scene): test_cheapest.py
     assert "refused" in (H.modal_refusal(f"modal shell {WORKER}", env={}) or "")
 
