@@ -35,3 +35,19 @@ def _job_speeds_isolated(tmp_path, monkeypatch):
     shutil.copy(S.FILE, copy)
     monkeypatch.setattr(S, "FILE", copy)
     yield
+
+
+@pytest.fixture
+def word(tmp_path, monkeypatch):
+    """D-133: an isolated record file of the creator's word; ``word("CH-03", "cmsg_1", ago_s=0)`` records a cheapest-run waiver."""
+    import time
+
+    from explainer_engine import governance
+    from explainer_engine.governance import records
+    root = tmp_path / "gov_root"
+    monkeypatch.setattr(governance, "ROOT", root)
+    monkeypatch.delenv("CLAUDE_PROJECT_DIR", raising=False)
+
+    def add(rule, message_id, ago_s=0.0):
+        return records.add("cheapest_waive", rule, message_id, "his words", root=root, now=time.time() - ago_s)
+    return add

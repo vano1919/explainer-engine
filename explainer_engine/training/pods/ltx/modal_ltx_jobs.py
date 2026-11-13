@@ -269,6 +269,41 @@ def read_job(path: str, launch: dict | None = None) -> dict:
     return dict(job, start_sha256=sha, start_bytes=pic)
 
 
+BAKED_LAUNCH = Path("/root/launch.json")   # the launch file the image was built with (``add_local_file`` below)
+
+
+def container_gate(job: dict, launch: dict, baked=BAKED_LAUNCH) -> list[str]:
+    """D-133's last line, inside the paid container before any model loads (a ``.remote()`` from custom code skips the hook and
+    the local entrypoints). No repo import here: the image holds only this file and the launch file. CH-01, CH-02 and CH-04
+    against the launch baked into the image; a rule is skipped only when the local entrypoint passed the creator's recorded
+    waiver in ``job["cheapest_waive"]``. CH-03 needs the committed scenes and stays with the hook and ``::main``."""
+    bad = []
+    baked = Path(baked)
+    if baked.exists() and json.loads(baked.read_text(encoding="utf-8")) != launch:
+        bad.append("the launch passed in is not the launch file baked into the image")
+    off = set(job.get("cheapest_waive") or ())
+    if "CH-01" not in off and launch.get("runner") != "inproc":
+        bad.append("CH-01: the launch must run in process (runner inproc)")
+    nat = launch.get("native") or {}
+    if "CH-02" not in off:
+        if nat.get("use") != [1280, 704] or nat.get("fps") != 24:
+            bad.append(f"CH-02: native.use {nat.get('use')} @ {nat.get('fps')}, not 1280x704@24")
+        for j in [job] + [c for c in job.get("chain") or [] if isinstance(c, dict)]:
+            size = [j.get("width", job.get("width")), j.get("height", job.get("height"))]
+            if size != nat.get("use") or j.get("fps", job.get("fps")) != nat.get("fps"):
+                bad.append(f"CH-02: {j.get('shot_id')} asks {size[0]}x{size[1]}@{j.get('fps', job.get('fps'))}")
+    sd = launch.get("scaledown_window_s")
+    if "CH-04" not in off and not (isinstance(sd, int) and sd <= 5):
+        bad.append(f"CH-04: scaledown_window_s {sd} is above 5 s")
+    return bad
+
+
+def waivers() -> list[str]:
+    """The creator's recorded waivers for this run (D-133), carried into the job for ``container_gate``."""
+    from explainer_engine.cloud import cheapest
+    return sorted(cheapest.waived()[1])
+
+
 def preflight(launch: dict, job: dict | None = None):
     """Free check before any paid call: every pin and cap set, the price equal to the dated table, the caps under the
     creator's ``modal_ltx`` line (``config/spend_caps.json``; missing = a zero budget), and the shot has a prompt, seconds,
@@ -937,6 +972,9 @@ if modal is not None:
 
         def _remote_body(job, launch, timeout_s):
             from huggingface_hub import HfApi
+            bad = container_gate(job, launch)
+            if bad:
+                return {"state": "FAILED", "error": "cheapest-run rules (D-133) refused in the container: " + "; ".join(bad)}
             vol.reload()
             return body(job, launch, timeout_s, commit=vol.commit, api=HfApi(token=_tok()))
 
@@ -986,7 +1024,7 @@ if modal is not None:
         nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])
         job = dict(SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"], start_bytes=pic,
                    start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH), launch_sha=launch_sha(LAUNCH),
-                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12])
+                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers())
         res = ltx_smoke.remote(job, LAUNCH)
         print("result", json.dumps(res))
         ok = res.get("state") == "DONE"
@@ -1009,7 +1047,8 @@ if modal is not None:
         claim_launch(spec)
         t0, res = time.time(), None
         try:
-            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12]), LAUNCH)
+            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers()),
+                                  LAUNCH)
         finally:
             wall = time.time() - t0
             print("settled", settle_launch(spec, wall), "USD for", round(wall, 1), "s", flush=True)

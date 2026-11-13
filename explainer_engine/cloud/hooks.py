@@ -162,6 +162,32 @@ def modal_refusal(cmd: str, env=None) -> str | None:
     return None
 
 
+WORKER_NAME = re.compile(r"\b(?:modal_ltx_jobs|modal_wan_jobs|modal_bakeoff)\b")
+WORKER_API = re.compile(r"\.(?:remote|spawn|map|starmap|remote_gen|for_each)\s*\(|\bapp\.run\s*\(|\bwith_options\s*\(|\bsubprocess\.\w+\s*\("
+                        r"|\bos\.(?:system|exec\w*|spawn\w*|popen)\b|\bPopen\b|\brunpy\b")
+INTERPRETER = re.compile(r"\bpython[\d.]*(?:\.exe)?\b|\buv\s+run\b|\bnode\b|\bipython\b")
+QUOTED_MODAL = re.compile(r"""['"]modal(?:\.exe)?['"]\s*(?:,\s*['"]|\s+)(?:run|deploy|serve|shell|launch)\b""")
+
+
+def worker_api_refusal(cmd: str) -> str | None:
+    """D-133 / A7, the forms ``MODAL_CMD`` cannot read: a paid worker driven from Python (``ltx_main.remote(...)`` inside
+    ``app.run()``, ``subprocess.run(["modal", "run", ...])``, a heredoc fed to python) or a quoted binary (``"modal" run``).
+    They skip the hook's GO and cheapest-run checks, and a direct ``.remote()`` skips the worker's local entrypoints too."""
+    if QUOTED_MODAL.search(cmd) and INTERPRETER.search(cmd) or re.search(r"""(?:^|[\s;&|(])['"]modal(?:\.exe)?['"]\s+run\b""", cmd):
+        return ("a quoted `modal` or `modal` driven from a program is not read by this hook: launch a worker only as a plain "
+                "`modal run explainer_engine/...::<entry>` command, so its GO and the cheapest-run rules are checked (D-133)")
+    if WORKER_NAME.search(cmd) and WORKER_API.search(cmd) and INTERPRETER.search(cmd):
+        return ("a paid Modal worker driven from Python (`.remote()`, `app.run()`, a subprocess) skips its local entrypoints, "
+                "where the GO, the ladder and the cheapest-run rules are checked: use `modal run <worker>::<entry>` (D-133, A7)")
+    return None
+
+
+def paid_looking(cmd: str) -> bool:
+    """A command the money checks must look at: a Modal launch, a paid worker named or a paid picture batch."""
+    return bool(MODAL_CMD.search(cmd) or WORKER_NAME.search(cmd) or QUOTED_MODAL.search(cmd)
+                or re.search(r"\bscene_pictures\s+submit\b", cmd))       # no import here: it runs when an import broke
+
+
 def _modal_live(runner=None):
     """The Modal apps that are not stopped, or None when there is no Modal CLI here (nothing to look at)."""
     import shutil
@@ -294,12 +320,17 @@ def pre_bash(event: dict) -> int:
         print("refused (D-56): pods start only through `python -m explainer_engine.cloud.runpod create|start`, which checks "
               "config/spend_caps.json, the ledger and the account and starts the guard.", file=sys.stderr)
         return 2
-    why = modal_refusal(cmd)
-    if why:
-        print(f"refused (D-56, A7): {why}; nothing was started.", file=sys.stderr)
-        return 2
-    from explainer_engine.cloud import cheapest
-    why = cheapest.picture_refusal(cmd)
+    try:
+        why = modal_refusal(cmd)
+        if why:
+            print(f"refused (D-56, A7): {why}; nothing was started.", file=sys.stderr)
+            return 2
+        from explainer_engine.cloud import cheapest
+        why = cheapest.picture_refusal(cmd) or worker_api_refusal(cmd)
+    except Exception as e:  # noqa: BLE001 - D-133: a money check that breaks refuses a paid command, never lets it through
+        if not paid_looking(cmd):
+            return 0
+        why = f"the money check itself failed ({type(e).__name__}: {e}), so this paid command cannot be checked"
     if why:
         print(f"refused (D-133): {why}; nothing was started.", file=sys.stderr)
         return 2

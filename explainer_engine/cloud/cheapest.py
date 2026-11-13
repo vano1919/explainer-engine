@@ -8,8 +8,10 @@ places call them, so no path around them exists:
 - the worker's own entrypoints (``modal_ltx_jobs.preflight`` and ``::main``) refuse again, for a launch from code.
 
 A rule is waived for one run only by the creator's own message (rule TOP of the project memory: he may break a rule once):
-``EE_CHEAPEST_WAIVE=<cmsg id>:CH-01[,CH-03]`` on the command or in the environment. The bake-off is exempt: it measures the
-alternatives (CH-06 names its line)."""
+``EE_CHEAPEST_WAIVE=<cmsg id>:CH-01[,CH-03]`` on the command or in the environment, and only while the same message is recorded
+for that rule (``python -m explainer_engine.governance ok cheapest_waive CH-03 <cmsg id> "<his words>"``, at most
+``WAIVE_MINUTES`` old): an invented id, or a waiver left in the environment from an earlier run, waives nothing. The bake-off is
+exempt: it measures the alternatives (CH-06 names its line)."""
 from __future__ import annotations
 
 import hashlib
@@ -22,19 +24,40 @@ BASIS_PATH = Path(__file__).with_name("cheapest.json")
 SCENES_DIR = Path(__file__).resolve().parents[1] / "training" / "pods" / "ltx" / "scenes"
 WAIVE = re.compile(r"^(cmsg_\w+):((?:CH-\d\d)(?:,CH-\d\d)*)$")
 MAX_SCALEDOWN_S = 5
+WAIVE_MINUTES = 60   # the record of his word is fresh for one run, like protected_config
 
 
 def basis(path=BASIS_PATH) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def waived(cmd: str = "", env=None) -> tuple[str | None, set[str]]:
-    """The creator's message id and the rules it waives for this run, from the command or the environment."""
+def recorded(message_id: str, rule: str, root=None, now=None) -> bool:
+    """True when ``governance ok cheapest_waive <rule> <message_id>`` was recorded at most WAIVE_MINUTES ago."""
+    import time
+    from explainer_engine.governance import records, root_dir
+    path = root_dir(root) / records.FILE
+    now = time.time() if now is None else now
+    for line in (path.read_text(encoding="utf-8").splitlines() if path.exists() else []):
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if (row.get("action"), row.get("target"), row.get("message_id")) == ("cheapest_waive", rule, message_id) \
+                and 0 <= now - float(row.get("at", 0)) <= WAIVE_MINUTES * 60:
+            return True
+    return False
+
+
+def waived(cmd: str = "", env=None, root=None, now=None) -> tuple[str | None, set[str]]:
+    """The creator's message id and the rules it waives for this run: named on the command or in the environment AND recorded
+    for that message (``recorded``). A rule named but not recorded is not waived."""
     env = os.environ if env is None else env
     m = re.search(r"\bEE_CHEAPEST_WAIVE=['\"]?(\S+?)['\"]?(?:\s|$)", cmd or "")
     raw = m.group(1) if m else str(env.get("EE_CHEAPEST_WAIVE") or "")
     w = WAIVE.match(raw)
-    return (w.group(1), set(w.group(2).split(","))) if w else (None, set())
+    if not w:
+        return None, set()
+    return w.group(1), {r for r in w.group(2).split(",") if recorded(w.group(1), r, root, now)}
 
 
 def launch_problems(launch: dict) -> list[tuple[str, str]]:
@@ -98,7 +121,8 @@ def problems_text(found: list[tuple[str, str]], cmd: str = "", env=None) -> str 
         return None
     return ("the cheapest-run rules (D-133, docs/CLOUD_RUNBOOK.md) refuse this paid run: "
             + "; ".join(f"{r}: {why}" for r, why in left)
-            + ". Waive one rule for this run only with the creator's word: EE_CHEAPEST_WAIVE=<his cmsg id>:<CH-xx>")
+            + ". Waive one rule for this run only with the creator's word: record it (`python -m explainer_engine.governance ok "
+              "cheapest_waive <CH-xx> <his cmsg id> \"<his words>\"`), then EE_CHEAPEST_WAIVE=<his cmsg id>:<CH-xx>")
 
 
 def ltx_refusal(entry: str, cmd: str, env=None, launch=None, scenes_dir=SCENES_DIR) -> str | None:
@@ -115,7 +139,7 @@ def ltx_refusal(entry: str, cmd: str, env=None, launch=None, scenes_dir=SCENES_D
             spec = json.loads(Path(m.group(1)).read_text(encoding="utf-8")) if m else None
         except (OSError, ValueError):
             spec = None
-        if spec is None:
+        if not isinstance(spec, dict) or not all(isinstance(c, dict) for c in spec.get("chain") or []):
             found.append(("CH-03", "the hook could not read the --job spec, so it cannot check the scene's one container"))
         else:
             found += spec_problems(launch, spec, scenes_dir)

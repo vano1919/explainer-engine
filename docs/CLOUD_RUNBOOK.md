@@ -112,12 +112,30 @@ The creator, 2026-11-13 07:00 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2
 rules that pick the cheapest combination of every paid run are mandatory, like a PreToolUse hook. Code: `cloud/cheapest.py`.
 The measured basis is `cloud/cheapest.json`: the cheaper-video test of 2026-11-12 and the battle run.
 
-Two places check every rule, so no path around them exists:
-- the PreToolUse Bash hook (`cloud/hooks.pre_bash`: `modal_refusal`, `cheapest.picture_refusal`) refuses the command;
-- the worker's own entrypoints (`modal_ltx_jobs.preflight`, `::main`) refuse again.
+Three lines check the rules (hardened 2026-11-13 07:25 UTC after the creator asked for the weak points, msg
+`cmsg_01Hnu5zB86sjUj5GtTgaUkPWDSaxGVbkbSGcfef2Lga1kM`):
+- the PreToolUse Bash hook (`cloud/hooks.pre_bash`: `modal_refusal`, `cheapest.picture_refusal`, `worker_api_refusal`) refuses
+  the command. It also refuses a paid worker driven from Python (`.remote()`, `app.run()`, a subprocess, a heredoc fed to python)
+  and a quoted `"modal" run`, which it cannot read. A money check that raises refuses a paid-looking command (fail closed); other
+  commands still pass;
+- the worker's own entrypoints refuse again: `modal_ltx_jobs.preflight` and `::main` for LTX, `modal_wan_jobs.cheapest_gate`
+  (CH-06) for Wan's `stage`, `smoke` and `main`;
+- inside the paid container, before any model loads, `modal_ltx_jobs.container_gate` checks CH-01, CH-02 and CH-04 against the
+  launch file baked into the image. This catches a `.remote()` from code that skipped the first two lines.
 
-The creator can waive one rule for one run with his own message: `EE_CHEAPEST_WAIVE=<his cmsg id>:CH-xx[,CH-yy]`. The bake-off
-measures alternatives and has its own line, so it is not checked. RP-11 still costs a RunPod pod's stage graph (D-117).
+The creator can waive one rule for one run with his own message. The message must also be recorded for that rule:
+`python -m explainer_engine.governance ok cheapest_waive CH-xx <his cmsg id> "<his words>"`, then
+`EE_CHEAPEST_WAIVE=<his cmsg id>:CH-xx[,CH-yy]`. A rule named without a matching record younger than `WAIVE_MINUTES` (60) is not
+waived. So an invented id, or a waiver left in the environment from an earlier run, waives nothing.
+
+The bake-off measures alternatives and has its own line, so it is not checked. RP-11 still costs a RunPod pod's stage graph
+(D-117).
+
+Two limits remain:
+- `cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` are not in `protected_files`
+  (`config/model_routing.json`). Adding them needs the creator's word on that protected file.
+- A Python file run from disk that calls a worker's `.remote()` is not read by the hook. The container gate is the line there,
+  and CH-03 is checked only by the hook and `::main`.
 
 | ID | Rule | Where | Test |
 |---|---|---|---|

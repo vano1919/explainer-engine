@@ -77,9 +77,10 @@ def test_a_clip_above_or_below_the_native_size_is_refused(tmp_path):
         assert "CH-02" in H.modal_refusal(f"EE_MODAL_GO={GO} modal run {LTX}::main --job {p}", env={})
 
 
-def test_the_creators_message_waives_only_the_rule_it_names(tmp_path):
+def test_the_creators_message_waives_only_the_rule_it_names(tmp_path, word):
     one = _write(tmp_path, _spec(chain=[]))
     ok = f"EE_MODAL_GO={GO} EE_CHEAPEST_WAIVE=cmsg_01X:CH-03 modal run {LTX}::main --job {one}"
+    word("CH-03", "cmsg_01X")
     assert H.modal_refusal(ok, env={}) is None
     big = _write(tmp_path, _spec(chain=[], width=2560))
     still = f"EE_MODAL_GO={GO} EE_CHEAPEST_WAIVE=cmsg_01X:CH-03 modal run {LTX}::main --job {big}"
@@ -104,3 +105,90 @@ def test_the_rules_have_one_home_in_the_cloud_runbook():
     text = (Path(__file__).parents[2] / "docs" / "CLOUD_RUNBOOK.md").read_text()
     for r in ("CH-01", "CH-02", "CH-03", "CH-04", "CH-05", "CH-06"):
         assert f"| {r} |" in text
+
+
+# ---- weak points closed after the creator's check (2026-11-13 07:25 UTC, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWDSaxGVbkbSGcfef2Lga1kM)
+
+def test_a_waiver_without_his_recorded_word_waives_nothing(tmp_path, word):
+    """An invented message id, a record for another message or rule, or a record older than an hour (a waiver left in the
+    environment from an earlier run) waives nothing."""
+    one = _write(tmp_path, _spec(chain=[]))
+    cmd = f"EE_MODAL_GO={GO} EE_CHEAPEST_WAIVE=cmsg_01X:CH-03 modal run {LTX}::main --job {one}"
+    assert "CH-03" in H.modal_refusal(cmd, env={})
+    word("CH-03", "cmsg_01Y")                       # another message
+    word("CH-02", "cmsg_01X")                       # another rule
+    word("CH-03", "cmsg_01X", ago_s=(C.WAIVE_MINUTES + 1) * 60)   # stale
+    assert "CH-03" in H.modal_refusal(cmd, env={})
+    assert C.waived("", env={"EE_CHEAPEST_WAIVE": "cmsg_01X:CH-03"}) == ("cmsg_01X", set())
+    word("CH-03", "cmsg_01X")
+    assert C.waived("", env={"EE_CHEAPEST_WAIVE": "cmsg_01X:CH-03,CH-01"}) == ("cmsg_01X", {"CH-03"})
+
+
+def test_a_waiver_record_names_one_rule():
+    from explainer_engine.governance import records
+    for target in ("*", "CH-*", "all"):
+        with pytest.raises(ValueError, match="one rule"):
+            records.add("cheapest_waive", target, "cmsg_1", "his words", root=Path("/nonexistent"))
+
+
+def test_a_spec_the_check_cannot_read_is_refused(tmp_path):
+    for bad in ([], "x", {"chain": ["s2"]}):
+        p = _write(tmp_path, bad)
+        assert "CH-03" in H.modal_refusal(f"EE_MODAL_GO={GO} modal run {LTX}::main --job {p}", env={})
+
+
+def test_a_broken_money_check_refuses_a_paid_command_but_not_other_work(monkeypatch):
+    def boom(*a, **k):
+        raise KeyError("shots")
+    monkeypatch.setattr(H, "modal_refusal", boom)
+    assert H.pre_bash({"tool_input": {"command": f"EE_MODAL_GO={GO} modal run {LTX}::main --job s.json"}}) == 2
+    assert H.pre_bash({"tool_input": {"command": "python -m explainer_engine.training.pods.ltx.scene_pictures submit s h"}}) == 2
+    assert H.pre_bash({"tool_input": {"command": "ls -la"}}) == 0
+
+
+@pytest.mark.parametrize("cmd", [
+    'python -c "from explainer_engine.training.pods.ltx import modal_ltx_jobs as L\nwith L.app.run(): L.ltx_main.remote({}, L.LAUNCH)"',
+    "python3 - <<'EOF'\nfrom explainer_engine.training.pods.ltx.modal_ltx_jobs import app, ltx_smoke\nwith app.run():\n    ltx_smoke.remote(j, l)\nEOF",
+    f"python3 -c \"import subprocess; subprocess.run(['modal', 'run', '{LTX}::main', '--job', 's.json'])\"",
+    f'"modal" run {LTX}::main --job s.json',
+    f"python3 -c \"import os; os.system('modal run {LTX}::smoke')\"",
+])
+def test_a_worker_driven_from_python_or_a_quoted_modal_is_refused(cmd):
+    assert H.worker_api_refusal(cmd)
+    assert H.pre_bash({"tool_input": {"command": cmd}}) == 2
+
+
+@pytest.mark.parametrize("cmd", [
+    "python -m pytest -q tests/unit/test_cheapest.py",
+    f"grep -n remote {LTX}",
+    f"git add {LTX} && git commit -m 'D-133: container gate'",
+    "python3 - <<'EOF'\ns = '``modal serve``'\nEOF",
+])
+def test_ordinary_work_on_the_workers_passes(cmd):
+    assert H.worker_api_refusal(cmd) is None
+    assert H.pre_bash({"tool_input": {"command": cmd}}) == 0
+
+
+def test_the_wan_worker_refuses_its_paid_rungs_itself(word):
+    from explainer_engine.training.pods.wan import modal_wan_jobs as W
+    for entry in ("stage", "smoke", "main"):
+        with pytest.raises(SystemExit, match="CH-06"):
+            W.cheapest_gate(entry, env={})
+    W.cheapest_gate("check", env={})
+    word("CH-06", "cmsg_7")
+    W.cheapest_gate("main", env={"EE_CHEAPEST_WAIVE": "cmsg_7:CH-06"})
+
+
+def test_the_paid_container_checks_the_rules_before_any_model_loads(tmp_path):
+    nat = L.native_spec(LAUNCH, L.SMOKE_JOB["seconds"])
+    job = dict(L.SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"])
+    baked = tmp_path / "launch.json"
+    baked.write_text(json.dumps(LAUNCH))
+    assert L.container_gate(job, LAUNCH, baked) == []
+    cli = dict(LAUNCH, runner="cli")
+    assert any("baked" in b for b in L.container_gate(job, cli, baked))
+    assert any(b.startswith("CH-01") for b in L.container_gate(job, cli, tmp_path / "none.json"))
+    assert L.container_gate(dict(job, cheapest_waive=["CH-01"]), cli, tmp_path / "none.json") == []
+    big = dict(job, chain=[{"shot_id": "s2", "width": 2560, "height": 1408}])
+    assert any(b.startswith("CH-02") and "s2" in b for b in L.container_gate(big, LAUNCH, baked))
+    assert any(b.startswith("CH-04") for b in L.container_gate(job, dict(LAUNCH, scaledown_window_s=60), tmp_path / "none.json"))

@@ -5773,3 +5773,25 @@ worker shas need the ladder again (L1, L2 free; L3 smoke and a re-run of the bat
   - an LTX `::main` needs its scene spec (CH-03).
 
 **Stale text reported.** `docs/VIDEO_GENERATION_WAN.md` still names the `wan` route in its banner; D-132 reads it as `video`.
+
+## 2026-11-13 08:10 UTC: D-133 hardened, the weak points of the cheapest-run hook closed
+
+The creator, 07:25 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWDSaxGVbkbSGcfef2Lga1kM`): no video generation; check the hook's
+mandatory enforcement for weak points. Nothing paid ran. Found and closed (rules and lines in `docs/CLOUD_RUNBOOK.md`, CH section):
+- **Unchecked waiver.** Any `cmsg_` id waived a rule, and a waiver left in the environment stayed valid. Now the same message must
+  be recorded for that rule (`governance ok cheapest_waive CH-xx <cmsg> "<words>"`, new action in `governance/records.py`, one
+  rule per record) and be at most 60 minutes old.
+- **Fail-open.** A money check that raised (for example a spec that is a list) made the hook exit 1, which lets the command run.
+  `hooks.pre_bash` now refuses a paid-looking command when a check breaks; other commands still pass.
+- **Forms the hook could not read.** `"modal" run`, `subprocess.run(["modal", "run", ...])`, `os.system`, and a worker driven
+  from Python (`.remote()`, `app.run()`, also in a python heredoc) skipped the GO and the rules. `hooks.worker_api_refusal`
+  refuses them.
+- **Wan had CH-06 only in the hook.** `modal_wan_jobs.cheapest_gate` now refuses `stage`, `smoke` and `main` inside the worker.
+- **No line inside the container.** `modal_ltx_jobs.container_gate` checks CH-01, CH-02 and CH-04 against the baked launch file
+  before any model loads. The local entrypoints carry the recorded waivers in `job["cheapest_waive"]`.
+
+Tests: 9 new tests in `test_cheapest.py`, and a new `word` fixture in `tests/unit/conftest.py`. In `test_cloud_hooks_modal.py`, the
+Wan waiver case moved into its own test, which now also checks the record.
+
+Open, needs the creator's word: putting `cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` into
+`protected_files`, which means a change to the protected `config/model_routing.json`.
