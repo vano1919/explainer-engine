@@ -5823,5 +5823,6 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   `test_v43_sound_plan.py`/`test_sound_design_system.py` now assert the brief's rule (words are candidates); docs_lint 0 findings.
 - Not verified: nobody has listened or watched in real time; no narration (estimated word times only); 73 vault-only library takes
   without QC.
-- Next: the creator's word on the D-133/BP-81 question and on the riser's BP-54 reading; real takes for map_pin_set, map_line_strain,
+- Decided 11:44 UTC (decision card): a map or 2.5D motion may be silent_by_design within BP-81's budget (D-135 row amended; it replaces D-133's "every map motion heard" for these routes).
+- Next: the creator's word on the riser's BP-54 reading; real takes for map_pin_set, map_line_strain,
   map_line_snap, cloth_flap, ash_fall, eruption_boom (library -> free -> priced ElevenLabs on his word); Fable's review of PR #174.
