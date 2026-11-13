@@ -20,7 +20,6 @@ shot, so a Wan shot, a 2.5D shot and a map sound alike (R-D).
 """
 from __future__ import annotations
 
-import hashlib
 import wave
 from pathlib import Path
 
@@ -144,29 +143,15 @@ class Sounds:
         return np.zeros(SR // 10, np.float32)
 
 
-def tpdf_dither(stereo: np.ndarray, seed: str) -> np.ndarray:
-    """One 16-bit step of triangular dither (deterministic per ``seed``) added before rounding: a pause of a read cleaned to
-    below half a step (the RC-004 chain's noise floor) would else quantise to exact digital zero, which is what ED-12's dropout
-    scan reads as a hole cut into the line. A real recording's room tone does the same job."""
-    rng = np.random.default_rng(int(hashlib.sha256(seed.encode()).hexdigest()[:8], 16))
-    d = (rng.random(stereo.shape, dtype=np.float32) - rng.random(stereo.shape, dtype=np.float32)) / 32767
-    return stereo + d
-
-
-def _write(path: Path, stereo: np.ndarray, dither_seed: str | None = None) -> None:
+def _write(path: Path, stereo: np.ndarray) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".part.wav")
-    scaled = np.clip(stereo, -1, 1)
-    if dither_seed:
-        scaled = np.clip(tpdf_dither(scaled, dither_seed), -1, 1)
-        q = np.rint(scaled * 32767)
-    else:
-        q = scaled * 32767
     with wave.open(str(tmp), "wb") as wf:
         wf.setnchannels(2)
         wf.setsampwidth(2)
         wf.setframerate(SR)
-        wf.writeframes(q.astype("<i2").tobytes())
+        # rounded, not truncated: a read's one-step dither (voice.dither_read) survives the centre gain; exact zeros stay zero
+        wf.writeframes(np.rint(np.clip(stereo, -1, 1) * 32767).astype("<i2").tobytes())
     tmp.replace(path)
 
 
@@ -381,8 +366,7 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
         nar, amb, sfx, mus, mix = (s * k for s in (nar, amb, sfx, mus, mix))
     stems = {"narration": nar, "music": mus, "ambience": amb, "sfx": sfx, "mix": mix}
     for name, s in stems.items():
-        # the read's own stem is dithered (see tpdf_dither); a preview without a voice stays exact silence
-        _write(out_dir / f"{name}.wav", s, dither_seed="narration_stem" if name == "narration" and voice_src.startswith("file:") else None)
+        _write(out_dir / f"{name}.wav", s)
     gate = CS.write(sheet, plan, out_dir, library_root, onsets)   # BP-54 again, now on the rendered onsets
     levels = level_report(plan, voice, amb.mean(axis=1) + sfx.mean(axis=1))
     placeholders = sorted({u["class"] for u in snd.used if u["status"] == "placeholder"})

@@ -14,6 +14,7 @@ The sound files belong to the AV thread (``scene_join``, ``stems``); this module
 """
 from __future__ import annotations
 
+import hashlib
 import subprocess
 import wave
 from pathlib import Path
@@ -51,8 +52,19 @@ def write_mono(path: Path, x: np.ndarray, rate: int = RATE) -> Path:
         w.setnchannels(1)
         w.setsampwidth(2)
         w.setframerate(rate)
-        w.writeframes((np.clip(x, -1, 1) * 32767).astype("<i2").tobytes())
+        w.writeframes(np.rint(np.clip(x, -1, 1) * 32767).astype("<i2").tobytes())   # rounded: a read's dither survives
     return path
+
+
+def dither_read(x: np.ndarray, seed: str = "read") -> np.ndarray:
+    """TD-329: one 16-bit step of triangular dither (deterministic per ``seed``) on the narrator's read, added where the read is
+    loaded as sound. The RC-004 chain leaves pauses under half a step (about -101 dB); the 16-bit conversion turned them into exact
+    zero, which ED-12's dropout scan reads as a hole cut into the line. A real recording's room tone does the same job. Only the
+    read gets it: every zero the pipeline makes itself (a gap, a missing piece, a pad) stays exact zero, so the gate still finds a
+    real hole."""
+    rng = np.random.default_rng(int(hashlib.sha256(seed.encode()).hexdigest()[:8], 16))
+    d = (rng.random(len(x), dtype=np.float32) - rng.random(len(x), dtype=np.float32)) / 32767
+    return (x + d).astype(np.float32)
 
 
 def _rms_db(x: np.ndarray) -> float:
@@ -201,6 +213,7 @@ def compose(timing: dict, read: Path | None, clip_audio: dict, out: Path, *, rea
     y = np.zeros(total, np.float32)
     x = read_mono(read) if read else np.zeros(0, np.float32)
     ref_db = speech_level(x, read_speech) if len(x) else -20.0
+    x = dither_read(x)
     inserts = sorted(timing.get("inserts") or [], key=lambda i: i["at_read_frame"])
     # the read in pieces: read frame r -> episode frame r + (frames inserted before r)
     cuts = [0] + [i["at_read_frame"] for i in inserts] + [None]
