@@ -81,3 +81,10 @@ Read these as a viewer; the code cannot (they need a reading of what a sentence 
 - BP-43: the ending is abrupt: no recap or goodbye in the last 10 % ("to recap", "thanks for watching", "and lastly", "don't
   forget to subscribe"; `engagement` ENG-8 FAILs the lexicon), the last sentence is an open question or a pointer to one
   next video, and narration continues at least 15 s under the end screen.
+
+
+## v4.2 Integrated Dramatic-Scene & Cold-Open Review Criteria
+- **Cold Open Assessment (`KP-41`)**: Verify the first 10s tease 2-3 compelling future moments (`teaser_of` + `teaser_trim`) and the narrator immediately establishes the central dramatic question without spoiling the resolution.
+- **Narration-to-Scene Hand-Off (`ST-14`, `ST-21`)**: Verify the narrator sets up who is present and what is at stake before handing off to a played scene, and states the consequence afterward without repeating spoken dialogue.
+- **Dialogue Necessity (`SC-01..SC-05`)**: Reject any isolated one-line character interruption or decorative quote that does not turn the scene charge (`open_charge -> close_charge`).
+- **Scene Coverage (`SC-V4-SCENE-COVERAGE`)**: Verify played scenes use multi-shot visual progression (`establish -> action -> reaction -> exit`).

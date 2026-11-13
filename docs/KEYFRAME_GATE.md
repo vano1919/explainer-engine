@@ -1,5 +1,9 @@
 # Keyframe gate: check every picture, log the cause, fix only the weak part
 
+> **Route-scoped since D-116 (2026-11-06):** these rules apply to J2/J4 shots and to the Qwen assets of J5 ([route plan](architecture/ROUTE_PLAN_2026-11-06.md), [decision log](DECISIONS_AND_OPEN_QUESTIONS.md) D-96 as amended, D-116); the 2026-11-05 legacy banner below is history and stays readable.
+
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 ვანო asked for this on 2026-10-24 (18:53 Tbilisi). The system draws a picture for the video and checks its logic, the world's
 physics, and whether a video can be made from it. A failing picture is drawn again. Only a passing master goes on to the
 scene LoRA. Every session records what came out right and wrong and whose fault it was (the prompt, the style LoRA or the

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>map overlay</title>
+<style>
+  @font-face { font-family: "Inter"; src: url("fonts/Inter.ttf"); font-weight: 100 900; }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  #root { position: relative; width: 2560px; height: 1440px; overflow: hidden; background: transparent; font-family: "Inter", sans-serif; }
+  #card { position: absolute; overflow: hidden; box-sizing: border-box; }
+  #card svg { position: absolute; left: 0; top: 0; overflow: visible; }
+  #chrome { position: absolute; inset: 0; box-sizing: border-box; pointer-events: none; }
+  .chip { position: absolute; font-weight: 700; white-space: nowrap; }
+  .txt { font-family: "Inter", sans-serif; font-weight: 800; paint-order: stroke fill; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-start="0" data-duration="__DURATION__" data-width="__W__" data-height="__H__" data-fps="__FPS__">
+  <div id="card">
+    <div id="chrome"></div>
+    <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="date" class="chip"></div>
+    <div id="scale" class="chip"></div>
+    <div id="counter" class="chip"></div>
+  </div>
+</div>
+<script src="vendor/gsap-3.12.7.min.js"></script>
+<script>
+const SPEC = __SPEC__;
+const NS = "http://www.w3.org/2000/svg";
+const FPS = SPEC.fps, AF = SPEC.anim_frames, EASE = SPEC.ease, PAL = SPEC.palette;
+const C = SPEC.card, unit = C.h;
+const card = document.getElementById("card");
+Object.assign(card.style, { left: C.x + "px", top: C.y + "px", width: C.w + "px", height: C.h + "px", borderRadius: C.radius + "px" });
+const svg = document.getElementById("map");
+svg.setAttribute("width", C.w); svg.setAttribute("height", C.h); svg.setAttribute("viewBox", `0 0 ${C.w} ${C.h}`);
+const chrome = document.getElementById("chrome");
+Object.assign(chrome.style, { border: Math.max(3, unit * 0.006) + "px solid " + PAL.ink, borderRadius: C.radius + "px",
+  boxShadow: "0 " + unit * 0.01 + "px " + unit * 0.04 + "px rgba(0,0,0,.45)" });
+
+const tl = gsap.timeline({ paused: true });
+const T = (f) => f / FPS;                       // frame -> seconds (frame f is rendered at t = f / fps)
+const ease = (u) => (u < 0.5 ? 4 * u ** 3 : 1 - Math.pow(-2 * u + 2, 3) / 2);   // = power3.inOut, for the per-frame steps
+const el = (name, attrs, parent) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; };
+const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+const pts = (shape, cx, cy, r) => shape.map(([x, y]) => `${cx + x * r},${cy + y * r}`).join(" ");
+const fmt = (v) => (Math.abs(v) >= 1 ? Math.round(v).toLocaleString("en-US") : v.toFixed(2));
+
+// card chrome fades in with the plate (ffmpeg fades the plate over the same frames)
+tl.set(chrome, { opacity: 0 }, 0).to(chrome, { opacity: 1, duration: T(6), ease: "none" }, 0);
+
+// the blur used by clouds
+const defs = el("defs", {});
+
+for (const it of SPEC.items) {
+  const t0 = T(it.start), dur = T(AF);
+  if (it.kind === "route_arrow" || it.kind === "front_line") {
+    const g = el("g", { opacity: 0 });
+    const d = "M" + it.path.map((p) => p.join(",")).join(" L");
+    const under = el("path", { d, fill: "none", stroke: PAL.ink, "stroke-width": it.width * 1.7, "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
+    const line = el("path", { d, fill: "none", stroke: PAL.accent, "stroke-width": it.width, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-dasharray": it.kind === "front_line" ? `${it.width * 2.2} ${it.width * 1.2}` : "none" }, g);
+    const L = line.getTotalLength();
+    // the path is revealed by a clip: a dash whose length grows would break the front_line dashes, so an inverse mask of the path
+    // prefix is used: stroke-dasharray on a separate "reveal" path inside a mask
+    const maskId = "m_" + it.id;
+    const mask = el("mask", { id: maskId, maskUnits: "userSpaceOnUse", x: 0, y: 0, width: C.w, height: C.h }, defs);
+    const reveal = el("path", { d, fill: "none", stroke: "#fff", "stroke-width": it.width * 6, "stroke-linecap": "butt", "stroke-dasharray": `${L} ${L}`, "stroke-dashoffset": L }, mask);
+    under.setAttribute("mask", `url(#${maskId})`); line.setAttribute("mask", `url(#${maskId})`);
+    tl.set(g, { opacity: 1 }, t0 + 0.0001).to(reveal, { strokeDashoffset: 0, duration: dur, ease: EASE }, t0);
+    if (it.kind === "route_arrow") {          // the head follows the path end, one keyframe per frame (exact, no plugin)
+      const hs = it.width * 2.6;
+      const head = el("polygon", { points: `0,0 ${-hs},${-0.55 * hs} ${-hs},${0.55 * hs}`, fill: PAL.accent, stroke: PAL.ink, "stroke-width": hs * 0.18,
+        "stroke-linejoin": "round", opacity: 0 }, g);
+      for (let j = 0; j <= AF; j++) {
+        const u = ease(j / AF), s = Math.max(0.01, u * L), p = line.getPointAtLength(s), p0 = line.getPointAtLength(Math.max(0, s - 2));
+        const ang = Math.atan2(p.y - p0.y, p.x - p0.x) * 180 / Math.PI;
+        tl.set(head, { attr: { transform: `translate(${p.x} ${p.y}) rotate(${ang})` }, opacity: u > 0.02 ? 1 : 0 }, t0 + T(j));
+      }
+    }
+  } else if (it.kind === "spread" || it.kind === "plume") {
+    const g = el("g", { opacity: 0 });
+    const f = el("filter", { id: "b_" + it.id, x: "-60%", y: "-60%", width: "220%", height: "220%" }, defs);
+    el("feGaussianBlur", { stdDeviation: it.blur }, f);
+    const grp = el("g", { filter: `url(#b_${it.id})` }, g);
+    const fill = rgba(PAL.ash, 140 / 255);
+    const [sx, sy] = it.origin;
+    const blobs = it.kind === "plume"
+      ? it.blobs.map((b) => ({ shape: b.shape, cx: sx + (it.target[0] - sx) * b.t, cy: sy + (it.target[1] - sy) * b.t, r: it.radius * b.scale }))
+      : [{ shape: it.shape, cx: sx, cy: sy, r: it.radius }];
+    const polys = blobs.map((b) => el("polygon", { points: pts(b.shape, b.cx, b.cy, b.r), fill }, grp));
+    // every blob = the full-size blob scaled about the source point by u (centre and radius both grow with u)
+    tl.set(g, { opacity: 0 }, 0).set(polys, { scale: 0, svgOrigin: `${sx} ${sy}` }, 0);
+    tl.fromTo(g, { opacity: 0.4 }, { opacity: 1, duration: dur, ease: EASE, immediateRender: false }, t0);
+    tl.to(polys, { scale: 1, duration: dur, ease: EASE }, t0);
+  } else if (it.kind === "pulse") {
+    const [cx, cy] = it.at;
+    const dot = el("circle", { cx, cy, r: unit * 0.008, fill: PAL.accent, opacity: 0 });
+    tl.set(dot, { opacity: 1 }, t0 + 0.0001);
+    for (let n = 0; n < 3; n++) {
+      const ring = el("circle", { cx, cy, r: it.r0, fill: "none", stroke: PAL.accent, "stroke-width": it.width, opacity: 0 });
+      let phase = n / 3, tau = 0;
+      const total = SPEC.frames / FPS - t0;
+      while (tau < total) {
+        const len = Math.min(1 - phase, total - tau);
+        const p1 = phase + len;
+        tl.fromTo(ring, { attr: { r: it.r0 + (it.r1 - it.r0) * phase }, opacity: 1 - phase },
+          { attr: { r: it.r0 + (it.r1 - it.r0) * p1 }, opacity: 1 - p1, duration: len, ease: "none", immediateRender: false }, t0 + tau);
+        tau += len; phase = p1 >= 1 ? 0 : p1;
+      }
+    }
+  } else if (it.kind === "highlight") {
+    const [cx, cy] = it.at;
+    const c = el("circle", { cx, cy, r: it.radius, fill: rgba(PAL.glow, 90 / 255), stroke: rgba(PAL.glow, 220 / 255), "stroke-width": it.width, opacity: 0 });
+    tl.fromTo(c, { opacity: 0 }, { opacity: 1, duration: dur, ease: EASE, immediateRender: false }, t0);
+  } else if (it.kind === "label") {
+    const [cx, cy] = it.at, s = it.size;
+    const tx = el("text", { x: cx + s * 0.35, y: cy - s * 0.35, "font-size": s, class: "txt", fill: PAL.ink, stroke: PAL.paper, "stroke-width": Math.max(1, s * 0.12) * 2, opacity: 0 });
+    tx.textContent = it.text;
+    tl.fromTo(tx, { opacity: 0 }, { opacity: 1, duration: T(6), ease: "none", immediateRender: false }, t0);
+  } else if (it.kind === "counter") {
+    const box = document.getElementById("counter"), s = it.size;
+    Object.assign(box.style, { left: C.w * 0.05 + "px", top: C.h * 0.78 + "px", height: s * 1.5 + "px", lineHeight: s * 1.5 + "px", padding: "0 " + s * 0.5 + "px",
+      fontSize: s + "px", background: rgba(PAL.card, 235 / 255), color: PAL.ink, border: Math.max(2, unit * 0.004) + "px solid " + PAL.ink,
+      borderRadius: s * 0.25 + "px", boxSizing: "border-box", fontVariantNumeric: "tabular-nums", opacity: 0 });
+    tl.set(box, { opacity: 1, textContent: "0 " + it.unit }, t0 + 0.0001);
+    for (let j = 1; j <= AF; j++) tl.set(box, { textContent: (fmt(it.value * ease(j / AF)) + " " + it.unit).trim() }, t0 + T(j));
+  }
+}
+
+// date chip + scale bar (cartography rules 3 and 6)
+if (SPEC.date_chip) {
+  const d = document.getElementById("date"), s = unit * 0.045;
+  d.textContent = SPEC.date_chip.text;
+  Object.assign(d.style, { left: unit * 0.03 + "px", top: unit * 0.03 + "px", fontSize: s + "px", padding: s * 0.25 + "px " + s * 0.6 + "px", background: PAL.paper, color: PAL.ink,
+    border: Math.max(2, unit * 0.004) + "px solid " + PAL.ink, borderRadius: s * 0.4 + "px", opacity: 0 });
+  tl.fromTo(d, { opacity: 0 }, { opacity: 1, duration: T(6), ease: "none", immediateRender: false }, T(SPEC.date_chip.start + 2));
+}
+{
+  const sb = document.getElementById("scale"), s = unit * 0.03, w = SPEC.scale_bar.px;
+  sb.innerHTML = `<div style="border-bottom:${Math.max(3, unit * 0.006)}px solid ${PAL.ink};border-left:${Math.max(3, unit * 0.006)}px solid ${PAL.ink};border-right:${Math.max(3, unit * 0.006)}px solid ${PAL.ink};width:${w}px;height:${s * 0.5}px"></div><div style="font-size:${s}px;margin-top:${s * 0.15}px">${SPEC.scale_bar.label}</div>`;
+  Object.assign(sb.style, { right: unit * 0.04 + "px", bottom: unit * 0.035 + "px", color: PAL.ink, textShadow: `0 0 ${s * 0.3}px ${PAL.paper}, 0 0 ${s * 0.3}px ${PAL.paper}, 0 0 ${s * 0.3}px ${PAL.paper}`, opacity: 0 });
+  tl.fromTo(sb, { opacity: 0 }, { opacity: 1, duration: T(6), ease: "none", immediateRender: false }, T(4));
+}
+
+window.__timelines = window.__timelines || {};
+window.__timelines["root"] = tl;
+</script>
+</body>
+</html>

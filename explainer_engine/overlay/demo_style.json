@@ -1,0 +1,21 @@
+{
+ "id": "overlay_style_demo_v1",
+ "source_picture": "main_style_5709.png",
+ "tokens": {
+  "ink": "#301911",
+  "paper": "#FBDDB8",
+  "accent": "#CC6A2E",
+  "second": "#3A5C54",
+  "dim": "#785D58"
+ },
+ "frame_saturation_p99": 0.963,
+ "fonts": {
+  "text": "Inter",
+  "numbers": "Inter"
+ },
+ "stroke_px_2k": 6,
+ "radius_px_2k": 22,
+ "ease": "power3.inOut",
+ "shadow": "0 8px 28px rgba(20,8,2,.42)",
+ "halo_px_2k": 5
+}

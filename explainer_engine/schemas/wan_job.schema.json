@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/wan_job.schema.json",
+  "title": "WanLocalVideoJobSpec",
+  "type": "object",
+  "required": [
+    "job_id",
+    "episode_id",
+    "shot_id",
+    "generation_mode",
+    "model_tier",
+    "workflow_template_path",
+    "comfy_local_url",
+    "start_image_path",
+    "motion_prompt",
+    "negative_prompt",
+    "width",
+    "height",
+    "num_frames",
+    "fps",
+    "steps",
+    "cfg_scale",
+    "seed"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shot_id": {
+      "type": "string",
+      "pattern": "^S(0[1-9]|1[0-6])_SH[0-9]{3}$"
+    },
+    "generation_mode": {
+      "enum": [
+        "WAN_I2V",
+        "WAN_FLF2V",
+        "WAN_CONTROL",
+        "STILL_25D",
+        "MAP_25D",
+        "COLLAGE_STILL",
+        "TACTILE_MAP"
+      ]
+    },
+    "model_tier": {
+      "enum": [
+        "wan22_fun_5b_inp",
+        "wan22_fun_14b_inp",
+        "wan22_fun_5b_control",
+        "wan22_fun_14b_control",
+        "depthflow_local_25d"
+      ]
+    },
+    "workflow_template_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "comfy_local_url": {
+      "type": "string",
+      "pattern": "^https?://(127\\.0\\.0\\.1|localhost)(:[0-9]+)?$"
+    },
+    "start_image_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "end_image_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "single_control_input": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "modality",
+        "control_file_path",
+        "strength"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "modality": {
+          "enum": [
+            "openpose",
+            "depth",
+            "canny",
+            "camera_preset",
+            "trajectory_ati_experimental"
+          ]
+        },
+        "control_file_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "strength": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 1.0
+        }
+      }
+    },
+    "use_lightx2v_4step": {
+      "type": "boolean",
+      "default": false
+    },
+    "motion_prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "negative_prompt": {
+      "type": "string"
+    },
+    "width": {
+      "type": "integer",
+      "enum": [
+        832,
+        1280
+      ]
+    },
+    "height": {
+      "type": "integer",
+      "enum": [
+        480,
+        720
+      ]
+    },
+    "num_frames": {
+      "type": "integer",
+      "enum": [
+        49,
+        81,
+        121
+      ],
+      "default": 81
+    },
+    "fps": {
+      "type": "integer",
+      "const": 24
+    },
+    "steps": {
+      "type": "integer",
+      "minimum": 4,
+      "maximum": 40
+    },
+    "cfg_scale": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 7.0
+    },
+    "seed": {
+      "type": "integer"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "generation_mode": {
+            "const": "WAN_FLF2V"
+          }
+        },
+        "required": [
+          "generation_mode"
+        ]
+      },
+      "then": {
+        "required": [
+          "end_image_path"
+        ],
+        "properties": {
+          "end_image_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generation_mode": {
+            "const": "WAN_CONTROL"
+          }
+        },
+        "required": [
+          "generation_mode"
+        ]
+      },
+      "then": {
+        "required": [
+          "single_control_input"
+        ],
+        "properties": {
+          "single_control_input": {
+            "type": "object"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "single_control_input": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

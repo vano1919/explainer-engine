@@ -1,3 +1,4 @@
+
 """The creator's money ceilings from ``config/spend_caps.json`` (D-56): one file, read by the run ledger and the pod manager.
 A run ledger may hold lower caps than the file, never higher; ``$EXPLAINER_SPEND_CAPS`` points at another file (tests)."""
 
@@ -75,3 +76,45 @@ def check_caps(caps: dict) -> dict:
         elif out[service] > ceiling + 1e-9:
             raise OverCeiling(f"{service} cap {out[service]} is above the creator's ceiling {ceiling} (config/spend_caps.json)")
     return out
+
+
+def modal_bakeoff() -> dict:
+    """The creator's line for the v4.3 video bake-off only (``modal_bakeoff``: ``per_run_usd``, ``tests_total_usd``; the creator
+    2026-11-12 17:50 UTC). It is not the Wan route's ``modal`` line: that one stays unset (a zero budget) until rung L3."""
+    m = load().get("modal_bakeoff")
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0  # noqa: E731
+    if not (isinstance(m, dict) and num(m.get("per_run_usd")) and num(m.get("tests_total_usd"))):
+        raise OverCeiling("no modal_bakeoff line in config/spend_caps.json: the bake-off spends nothing until the creator sets it")
+    return m
+
+
+def modal(episode: bool = False) -> dict:
+    """The Modal line (``modal``: ``per_run_usd``, ``per_episode_usd``; v4.3 D-131: Wan runs on Modal). A missing or
+    non-positive ``per_run_usd`` = refused: until the creator adds the line, Modal has a zero approved project budget
+    (.claude/rules/cloud-platforms.md section 4), whatever an approval card says. ``per_episode_usd`` is asked only for an
+    episode's runs (``episode=True``): the creator sets it after rung L3 has measured the real price per clip (final audit
+    section 7, answer 3, 2026-11-12 14:01 UTC); until then only the ladder's test runs may spend, each under ``per_run_usd``."""
+    m = load().get("modal")
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0  # noqa: E731
+    if not (isinstance(m, dict) and num(m.get("per_run_usd"))):
+        raise OverCeiling("no modal per_run_usd in config/spend_caps.json: Modal spends nothing until the creator sets the "
+                          "line (zero approved budget)")
+    if episode and not num(m.get("per_episode_usd")):
+        raise OverCeiling("no modal per_episode_usd in config/spend_caps.json: an episode's Modal runs wait for the creator's "
+                          "episode line, set after rung L3 measures the price per clip (zero approved episode budget)")
+    return m
+
+
+def modal_ltx(episode: bool = False) -> dict:
+    """The creator's Modal line for the video route's LTX clips (``modal_ltx``: ``per_run_usd``, later ``per_episode_usd``;
+    D-132, 2026-11-12). Its own key, like ``modal_bakeoff``: the Wan route's ``modal`` line is not reused. Missing = refused, a
+    zero approved budget, until the creator sets the numbers (cloud rules section 4); ``per_episode_usd`` comes after rung L3."""
+    m = load().get("modal_ltx")
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0  # noqa: E731
+    if not (isinstance(m, dict) and num(m.get("per_run_usd"))):
+        raise OverCeiling("no modal_ltx per_run_usd in config/spend_caps.json: the LTX video route spends nothing until the "
+                          "creator sets the line (zero approved budget)")
+    if episode and not num(m.get("per_episode_usd")):
+        raise OverCeiling("no modal_ltx per_episode_usd in config/spend_caps.json: an episode's LTX runs wait for the creator's "
+                          "episode line, set after rung L3 (zero approved episode budget)")
+    return m

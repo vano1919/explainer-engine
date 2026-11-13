@@ -1,3 +1,4 @@
+
 """The Blueprint phase table, the decision cards and the routing log as repo files (``docs/blueprint``): validators and the
 renderer of the generated blocks of ``docs/blueprint/STATUS.md``."""
 from __future__ import annotations

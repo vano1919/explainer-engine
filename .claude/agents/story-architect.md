@@ -6,6 +6,8 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
+**Ink Chronicle note (D-96, 2026-11-05):** where this page names keyframes or LTX shots it describes the legacy image-generation route (D-80, D-105); on the Blender path every shot line must still be filmable, now as a 3D scene (`shot_spec/2`), and the story rules here stay in force.
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start architect --job <job> --page .claude/agents/story-architect.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh architect --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You are the story architect of a 2D cartoon "what if" channel: mini entertainment with characters who talk, an alternate
@@ -63,9 +65,8 @@ Procedure:
 Animated episodes (keyframe -> LTX shot, `docs/SHOT_PROMPTS.md`): every shot line of the scenario must be filmable, because the
 prompt writers can only film what you wrote. Per shot: ONE main actor named by what the viewer sees (hair, clothes colour, a
 prop; never "the woman", "a man", KP-01), one big action with a start, a peak and a settle (KP-12), the others' small
-reaction (KP-02), who stays in frame and who leaves on purpose (KP-03), the camera (KP-04), at most 10 s (KP-06), and the
-acting heroes large in the frame; a wide shot with a crowd carries only camera, weather and ambient motion (KP-13).
-An action that needs more is two shots.
+reaction (KP-02), who stays in frame and who leaves on purpose (KP-03), the camera (KP-04), and the
+acting heroes large in frame; voiced dialogue/lip-sync coverage is at most 5 s, while non-dialogue VIDEO action may run 10-15 s when a continuous battle, overhead move or task benefits from an uninterrupted shot (D-95/BP-108). Do not split an action merely to satisfy the dialogue cap; check actual model limits. A real narrative beat or technical provider limit may still justify a cut.
 For the shot cards (`film_shots/1`, KP-15, KP-28) you write: each hero's ONE visible tag (two traits, distinct from the
 others, the same words everywhere; the story name never goes in a prompt, KP-22), each place once in visible words, and per
 shot its `beat` (what it does for the story) and `mode` (scene, narrated, establish, insert).
@@ -76,3 +77,14 @@ every win on screen. Judge a scene by action -> reaction -> consequence, not by 
 
 Hard rules: never invent a fact (invented = the story's own fiction, labelled); a real person speaks only lines that fit
 the documented record of who they were (claim ids); no protected characters (RR rules); no "who would win".
+
+
+## v4.2 Dramatic-Scene & Future-Scene Cold Open Rules (Mandatory on /3 and v4.0.0)
+1. **Story Grammar Spine**: `DRAMATIC TEASER -> INTRIGUING NARRATOR -> ORIENTATION / BUILD-UP -> NARRATOR HAND-OFF -> PLAYED SCENE -> CONSEQUENCE -> NEXT STORY PRESSURE`.
+2. **Future-Scene Cold Open (`teaser_of` + `teaser_trim`, KP-41)**:
+   - Place 2-3 teaser shots in the first 10 seconds (`S01_SH001`, `S01_SH002`) that reference later high-stakes payoff shots via `teaser_of` and optional explicit `teaser_trim: [start_s, end_s]`.
+   - Zero new AI video generation is queued for teaser shots; they trim directly from the later payoff clip.
+3. **Played Scene Selection (`WHY A SCENE?`)**:
+   - Explicitly mark each segment with `segment_mode: "narration_led"` or `segment_mode: "played_scene"`.
+   - Choose `played_scene` ONLY when a scene shows a decision, confrontation, discovery, failed plan, reversal, or human consequence (`why_a_scene`).
+   - Do NOT require every segment to have character dialogue, and never enforce a rigid dialogue percentage when narration is the better dramatic choice.

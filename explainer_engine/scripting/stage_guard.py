@@ -1,3 +1,4 @@
+
 """Stage guard (D-48, docs/STORY_ENGINE.md "The writers' room"): each agent stage may change only its own fields of the
 one production script, so a later pass (voice tags, shots, sounds) can never quietly rewrite the story an earlier pass
 settled. This is how a mid-size model (Claude Sonnet) keeps the whole text while it adds technical detail: the words are
@@ -40,7 +41,7 @@ import time
 from pathlib import Path
 
 INTERJECTIONS = ("oh", "hmm", "well", "right", "ah", "uh-oh", "wait", "okay", "huh", "so", "look", "yeah", "nope")
-SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama", "scene")
+SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama", "scene", "rhythm_zone")
 LINE_WORDS = ("text", "speaker", "claims", "voiced")
 LINE_DELIVERY = ("tags", "emphasis", "tone", "emotion", "pause_after")
 STAGES = {

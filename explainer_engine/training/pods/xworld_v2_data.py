@@ -1,3 +1,4 @@
+
 """The new-world part of the xworld_v2 dataset (D-80; ვანო 2026-10-26 13:17 Tbilisi: "99 % is good, train the world"): the
 220 BFL pictures of `training/cast` with captions made from the text each was drawn from, without the style words, so the
 look binds to the trigger. Ten are held out for the checkpoint choice (HOLD_OUT). Where Claude's look found a woman drawn

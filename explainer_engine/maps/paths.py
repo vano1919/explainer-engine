@@ -1,3 +1,4 @@
+
 """Terrain-aware routes (map law 2): a smooth curve through waypoints that stay on land and out of the no-go areas.
 
 A route is a list of (lon, lat) waypoints, the crossings it is allowed to make (a ford, a bridge: a waypoint on a river is
@@ -48,7 +49,7 @@ def validate(route: dict, rid: str = "route") -> list[dict]:
         add(f"ease {route.get('ease')!r}: a march starts slow, cruises and halts at the line (never a constant-speed arrow)")
     wp = route["waypoints"]
     curve = spline(wp)
-    wet = [i for i, (lon, lat) in enumerate(curve) if geo.is_water(lon, lat)]
+    wet = [] if (route.get("allow_water") or route.get("domain") in ("air", "maritime")) else [i for i, (lon, lat) in enumerate(curve) if geo.is_water(lon, lat)]
     if wet:
         lon, lat = curve[wet[0]]
         add(f"{len(wet)} of {len(curve)} samples are in the sea or a lake (first at {lon:.2f}, {lat:.2f}): a route follows the land")

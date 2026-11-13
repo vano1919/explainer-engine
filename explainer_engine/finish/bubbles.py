@@ -1,3 +1,4 @@
+
 """Speech bubbles over a held picture (creator 2026-10-16): one picture carries a short exchange, a bubble pops in on the
 speaker with the line they say, then the other answers, instead of a new picture for every sentence.
 

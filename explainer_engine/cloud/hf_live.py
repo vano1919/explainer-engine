@@ -1,3 +1,4 @@
+
 """The live-pod registry on Hugging Face (docs/CLOUD_RUNBOOK.md CR-07, CR-12): ``create`` writes what a watchdog needs to judge
 a pod without any local session file, and the watchdog (GitHub Actions, any machine with the tokens) reads it.
 

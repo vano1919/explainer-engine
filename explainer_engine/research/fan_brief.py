@@ -1,3 +1,4 @@
+
 """Fan research brief and script balance for crossover episodes (creator rule 2026-10-16, P-123..P-125).
 
 A crossover script starts from what the fans of both worlds actually discuss: their theories, what they ask for, the

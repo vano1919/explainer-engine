@@ -1,3 +1,4 @@
+
 """The visual compensator: free, deterministic frames for the stretches where the narrator speaks and no character is on screen
 (Blueprint plan v2, phase P5; docs/COMPENSATOR.md).
 

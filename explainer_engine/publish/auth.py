@@ -1,3 +1,4 @@
+
 """``publish auth``: the one-time YouTube sign-in, run on the creator's PC (a browser is needed). stdlib only.
 
     .venv\\Scripts\\python -m explainer_engine.publish auth path\\to\\client_secret.json

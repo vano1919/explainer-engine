@@ -1,3 +1,4 @@
+
 """The watchdog that does not live in the Claude session (master brief 2026-10-22, stage B): pure rules over what the
 provider shows, run by any machine with the RunPod key: the GitHub Actions cron (``.github/workflows/watchdog.yml``, every
 30 min and a kill-all button in GitHub Mobile), a Cloudflare Worker later, or this session's hooks.

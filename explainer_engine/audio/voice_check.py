@@ -1,3 +1,4 @@
+
 """Voice consistency check (creator 2026-10-16: "from 3:17 almost to the end another voice comes in").
 
 One ElevenLabs v4 generation of the whole Day 1 read (2,917 characters, 223 s) drifted: from about 190 s of the read the

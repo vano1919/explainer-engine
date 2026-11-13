@@ -1,0 +1,1071 @@
+{
+  "schema": "look_variants/1",
+  "_doc": "ICW-05c look round (plan rev. 2, Fable 2026-11-05 18:00 UTC; the creator's reference sheet of 17:54 UTC: 'like this, but less 3D'). Ten spots on a slider from the reference's stylized 3D (slider 1) to a flat painting of it (slider 10), every knob independent (style.Look): a blend is one more entry. Rendered by style_sheets looks on the EEVEE light path; cast shadows only where a variant says so (cinematic rig, or the flat cast-shadow shape), their cost measured. No variant is chosen: the creator picks, then ICW-07 writes the bible v1.5 style block. Ramp positions are the key light's N.L (key energy 1 in these graphs), tones are light multipliers. The swatch twins (suffix _swatch) are variants 1, 5 and 9 with the reference sheet's six swatches as their palette map.",
+  "swatch_map_doc": "Proposal colours, not palette tokens: the six swatches of the creator's reference sheet (sampled from REFERENCE_creator_2026-11-05_1754.png, 3x3 mean at each swatch centre), mapped onto the bible tokens they would replace. design/palette.json stays the only home of the house hex values; if the creator picks a swatch variant, ICW-07 moves these into the palette as tokens and this map then names them.",
+  "swatch_map": {
+    "kit_card": "#E9A981",
+    "kit_shadow": "#603827",
+    "answer_coral": "#8E322A",
+    "faction_b": "#8E322A",
+    "support_blue": "#424D61",
+    "faction_a": "#424D61",
+    "night": "#3F4450",
+    "ink": "#3F4450",
+    "grey_mid": "#746D70"
+  },
+  "variants": [
+    {
+      "id": "v01_reference_soft3d",
+      "slider": 1,
+      "label": "1  reference, soft 3D",
+      "feel": "the reference as it is: soft rounded light, warm key and a bright rim, a softly blurred world behind",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "shadow_tint": [
+        0.8,
+        0.84,
+        1.0
+      ],
+      "light_tint": [
+        1.0,
+        0.95,
+        0.86
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.92,
+      "warmth": 0.22,
+      "light_rig": "cinematic",
+      "shadow_softness_deg": 8.0,
+      "fill": 0.35,
+      "rim_strength": 0.45,
+      "rim_soft": 0.12,
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.4,
+      "sky": "hdri",
+      "grain": 0.06
+    },
+    {
+      "id": "v02_painterly_3d",
+      "slider": 2,
+      "label": "2  painterly 3D",
+      "feel": "the same light, but every surface turns into soft brush strokes",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "shadow_tint": [
+        0.8,
+        0.84,
+        1.0
+      ],
+      "light_tint": [
+        1.0,
+        0.95,
+        0.86
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.92,
+      "warmth": 0.22,
+      "light_rig": "cinematic",
+      "shadow_softness_deg": 8.0,
+      "fill": 0.35,
+      "rim_strength": 0.45,
+      "rim_soft": 0.12,
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.4,
+      "sky": "hdri",
+      "kuwahara": 6,
+      "grain": 0.08
+    },
+    {
+      "id": "v03_soft_cel_warm",
+      "slider": 3,
+      "label": "3  soft cel, warm",
+      "feel": "four soft-edged tones, warm and clean, no cast shadows",
+      "shade_mode": "feathered",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.2,
+          0.66
+        ],
+        [
+          0.45,
+          0.84
+        ],
+        [
+          0.75,
+          1.0
+        ]
+      ],
+      "feather": 0.08,
+      "texture_keep": 0.35,
+      "costume_keep": 0.85,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.25,
+      "light_rig": "key_rim",
+      "fill": 0.4,
+      "rim_strength": 0.35,
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 2.8,
+      "sky": "gradient",
+      "grain": 0.12
+    },
+    {
+      "id": "v04_painted_cel",
+      "slider": 4,
+      "label": "4  painted cel",
+      "feel": "three soft tones under brush strokes, a faint warm contour",
+      "shade_mode": "feathered",
+      "ramp": [
+        [
+          0.0,
+          0.52
+        ],
+        [
+          0.25,
+          0.78
+        ],
+        [
+          0.6,
+          1.0
+        ]
+      ],
+      "feather": 0.06,
+      "texture_keep": 0.3,
+      "costume_keep": 0.85,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.25,
+      "light_rig": "key_rim",
+      "fill": 0.4,
+      "rim_strength": 0.3,
+      "line_mode": "faint",
+      "line_px": 1.5,
+      "line_opacity": 0.4,
+      "line_colour": "kit_shadow",
+      "bg_mode": "dof",
+      "fstop": 4.0,
+      "sky": "gradient",
+      "kuwahara": 8,
+      "grain": 0.15
+    },
+    {
+      "id": "v05_gouache",
+      "slider": 5,
+      "label": "5  gouache",
+      "feel": "flat opaque paint with visible brush texture, the far wall a painted backdrop",
+      "shade_mode": "toon",
+      "ramp": [
+        [
+          0.0,
+          0.58
+        ],
+        [
+          0.22,
+          0.8
+        ],
+        [
+          0.55,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.25,
+      "costume_keep": 0.8,
+      "brush": 0.3,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.88,
+      "warmth": 0.25,
+      "light_rig": "flat_key",
+      "fill": 0.0,
+      "rim_strength": 0.25,
+      "rim_soft": 0.0,
+      "line_mode": "none",
+      "bg_mode": "plate",
+      "fstop": 4.0,
+      "plate_kuwahara": 14,
+      "sky": "gradient",
+      "grain": 0.2,
+      "vignette": 0.25
+    },
+    {
+      "id": "v06_storybook",
+      "slider": 6,
+      "label": "6  storybook",
+      "feel": "a picture book: two soft tones, watercolour paper, a thin coloured line",
+      "shade_mode": "feathered",
+      "ramp": [
+        [
+          0.0,
+          0.68
+        ],
+        [
+          0.3,
+          1.0
+        ]
+      ],
+      "feather": 0.35,
+      "texture_keep": 0.2,
+      "costume_keep": 0.8,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.85,
+      "warmth": 0.2,
+      "light_rig": "flat_key",
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "faint",
+      "line_px": 1.5,
+      "line_opacity": 0.7,
+      "line_colour": "kit_shadow",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "paper": 0.35
+    },
+    {
+      "id": "v07_graphic_poster",
+      "slider": 7,
+      "label": "7  graphic poster",
+      "feel": "bold shapes in two tones, print dots in the shadows, a dark contour",
+      "shade_mode": "toon",
+      "ramp": [
+        [
+          0.0,
+          0.55
+        ],
+        [
+          0.32,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.1,
+      "costume_keep": 0.7,
+      "halftone": 0.35,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.15,
+      "light_rig": "flat_key",
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "dark",
+      "line_px": 2.0,
+      "line_colour": "night",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "grain": 0.2
+    },
+    {
+      "id": "v08_flat_illustration",
+      "slider": 8,
+      "label": "8  flat illustration",
+      "feel": "flat fills, one cast-shadow shape per figure, a warm brown contour",
+      "shade_mode": "flat",
+      "ramp": [
+        [
+          0.0,
+          0.78
+        ],
+        [
+          0.06,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.1,
+      "costume_keep": 0.75,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.2,
+      "light_rig": "flat_key",
+      "shadow_softness_deg": 1.5,
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "dark",
+      "line_px": 2.0,
+      "line_opacity": 0.9,
+      "line_colour": "kit_shadow",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "paper": 0.2
+    },
+    {
+      "id": "v09_painted_matte",
+      "slider": 9,
+      "label": "9  painted matte",
+      "feel": "no live light: one painting, the light brushed onto the forms",
+      "shade_mode": "painted_light",
+      "ramp": [
+        [
+          0.0,
+          0.78
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.25,
+      "costume_keep": 0.8,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.25,
+      "light_rig": "ambient_only",
+      "fill": 0.0,
+      "rim_strength": 0.2,
+      "line_mode": "none",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "kuwahara": 12,
+      "grain": 0.22
+    },
+    {
+      "id": "v10_ink_accent",
+      "slider": 10,
+      "label": "10  ink accent",
+      "feel": "the flat illustration with today's strong black line, for comparison",
+      "shade_mode": "flat",
+      "ramp": [
+        [
+          0.0,
+          0.78
+        ],
+        [
+          0.06,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.1,
+      "costume_keep": 0.75,
+      "palette_map": "warm_cinematic",
+      "saturation": 0.9,
+      "warmth": 0.2,
+      "light_rig": "flat_key",
+      "shadow_softness_deg": 1.5,
+      "fill": 0.0,
+      "rim_strength": 0.0,
+      "line_mode": "ink",
+      "line_px": 2.5,
+      "line_colour": "ink",
+      "bg_mode": "flat",
+      "sky": "gradient",
+      "paper": 0.3
+    }
+  ],
+  "swatch_twins": [
+    "v01_reference_soft3d",
+    "v05_gouache",
+    "v09_painted_matte"
+  ],
+  "q1_variants_doc": "WP-Q1 (2026-11-05, INTEGRATION_PLAN WP-Q1): the soft shade mode's lit and rgb_soft paths with the coloured cinematic / key_rim rigs (style.StyleEngine.lights) and the Standard / Khronos PBR Neutral view transforms. Kept apart from the round's ten so its table stays the one home of those; every value HYP until the creator judges the clips.",
+  "q1_variants": [
+    {
+      "id": "q1_lit_pbrn_cinematic",
+      "slider": 1,
+      "label": "Q1a  lit matte, PBR Neutral, cinematic",
+      "feel": "real matte light: warm key with a soft cast shadow, cool fill, warm rim on the cast only, soft faces, painted blur behind",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35
+    },
+    {
+      "id": "q1_lit_std_keyrim",
+      "slider": 2,
+      "label": "Q1b  lit matte, Standard, no cast shadows",
+      "feel": "the same matte light without cast shadows (the light profile), palette hex exact under Standard",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Standard",
+      "light_rig": "key_rim",
+      "key_energy": 2.2,
+      "fill": 0.8,
+      "rim_strength": 2.5,
+      "ao": true,
+      "ambient": 0.3
+    },
+    {
+      "id": "q1_rgbsoft_pbrn_cinematic",
+      "slider": 2,
+      "label": "Q1c  painted soft light, PBR Neutral, cinematic",
+      "feel": "light keeps its colour, the shadow side is a painted warm or cool tint per material, a soft lifted ramp",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "rgb_soft",
+      "half_lambert": 0.3,
+      "ramp_interp": "LINEAR",
+      "shadow_tints": {
+        "skin": [
+          0.82,
+          0.52,
+          0.46
+        ],
+        "hair": [
+          0.6,
+          0.5,
+          0.58
+        ],
+        "eyes": [
+          0.8,
+          0.8,
+          0.9
+        ],
+        "costume": [
+          0.58,
+          0.58,
+          0.78
+        ],
+        "set": [
+          0.66,
+          0.68,
+          0.86
+        ]
+      },
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 2.4,
+      "fill": 0.9,
+      "rim_strength": 2.8,
+      "ambient": 0.3
+    },
+    {
+      "id": "q1_rgbsoft_pbrn_keyrim",
+      "slider": 3,
+      "label": "Q1d  painted soft light, PBR Neutral, no cast shadows",
+      "feel": "the painted soft light with no shadow pass: the cheapest of the four",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "rgb_soft",
+      "half_lambert": 0.3,
+      "ramp_interp": "LINEAR",
+      "shadow_tints": {
+        "skin": [
+          0.82,
+          0.52,
+          0.46
+        ],
+        "hair": [
+          0.6,
+          0.5,
+          0.58
+        ],
+        "eyes": [
+          0.8,
+          0.8,
+          0.9
+        ],
+        "costume": [
+          0.58,
+          0.58,
+          0.78
+        ],
+        "set": [
+          0.66,
+          0.68,
+          0.86
+        ]
+      },
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "key_rim",
+      "key_energy": 2.4,
+      "fill": 0.9,
+      "rim_strength": 2.8,
+      "ambient": 0.3
+    },
+    {
+      "id": "q1_c1_lit_preset",
+      "slider": 1,
+      "label": "C1  lit matte, PBR Neutral, preset light, Kuwahara + DoF",
+      "feel": "the overnight C1: our matte lit shading on every surface, the era's light preset (front-biased key, two rims), a light Kuwahara over the frame, painted blur behind; depth haze: the far world fades into warm grey",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 6,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 4,
+      "kuwahara_scope": "frame",
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
+    },
+    {
+      "id": "q1_c2_native_skin",
+      "slider": 1,
+      "label": "C2  C1 light and finish, characters keep their own shading",
+      "feel": "the overnight C2 (Fable: the default character path): Blender Studio's own SSS skin and cloth on the cast under C1's light and finish; the set stays matte lit; depth haze: the far world fades into warm grey",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 0,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 4,
+      "kuwahara_scope": "frame",
+      "native_classes": [
+        "skin",
+        "hair",
+        "eyes",
+        "costume"
+      ],
+      "skin_lift": {
+        "rain": 0.2
+      },
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
+    },
+    {
+      "id": "q1_c3_far_plate",
+      "slider": 1,
+      "label": "C3  C2 + far ground painted as a plate",
+      "feel": "the overnight C3: C2 with the far ground painted (a strong Kuwahara on the depth-far plate), the close plane kept sharp; depth haze: the far world fades into warm grey",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "plate",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 0,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 3,
+      "kuwahara_scope": "frame",
+      "plate_kuwahara": 10,
+      "native_classes": [
+        "skin",
+        "hair",
+        "eyes",
+        "costume"
+      ],
+      "skin_lift": {
+        "rain": 0.2
+      },
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
+    },
+    {
+      "id": "q1_c4_pn_faces",
+      "slider": 1,
+      "label": "C4  lit matte body + Perfectly Normal spherized faces",
+      "feel": "the overnight C4: C1's light and finish with Perfectly Normal (GPL-3) spherizing the cast's normals; the nikolaj3d body shader is not in (its Gumroad checkout needs an email); depth haze: the far world fades into warm grey",
+      "shade_mode": "soft",
+      "ramp": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.45,
+          0.8
+        ],
+        [
+          0.95,
+          1.0
+        ]
+      ],
+      "texture_keep": 0.35,
+      "costume_keep": 0.9,
+      "palette_map": "warm_cinematic",
+      "saturation": 1.0,
+      "warmth": 0.12,
+      "shadow_tint": [
+        0.62,
+        0.7,
+        0.95
+      ],
+      "light_tint": [
+        1.0,
+        0.93,
+        0.82
+      ],
+      "rim_tint": [
+        1.0,
+        0.82,
+        0.6
+      ],
+      "rim_mode": "light",
+      "line_mode": "none",
+      "bg_mode": "dof",
+      "fstop": 1.8,
+      "sky": "hdri",
+      "grain": 0.04,
+      "normal_soften": 0,
+      "shadow_softness_deg": 8.0,
+      "shadow_filter": 2.5,
+      "fill_colour": [
+        0.62,
+        0.72,
+        1.0
+      ],
+      "key_colour": [
+        1.0,
+        0.9,
+        0.76
+      ],
+      "shade_path": "lit",
+      "lit_bsdf": "principled_matte",
+      "subsurface": 0.3,
+      "view_transform": "Khronos PBR Neutral",
+      "light_rig": "cinematic",
+      "key_energy": 3.0,
+      "fill": 1.0,
+      "rim_strength": 3.0,
+      "ao": true,
+      "ambient": 0.35,
+      "light_preset": "golden_hour",
+      "kuwahara": 4,
+      "kuwahara_scope": "frame",
+      "pn_converge": 0.6,
+      "haze": 0.45,
+      "haze_start_m": 12.0,
+      "haze_depth_m": 150.0,
+      "haze_colour": [
+        0.8,
+        0.76,
+        0.7
+      ]
+    }
+  ]
+}

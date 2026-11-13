@@ -1,3 +1,4 @@
+
 """Cast sheet for xworld v2: 100 invented people, full body in full costume on a plain background (ვანო 2026-10-26 12:01-12:02
 Tbilisi, with his reference picture `style_ref` = four labelled figures: Napoleonic officer, caveman, Renaissance man,
 space cadet).

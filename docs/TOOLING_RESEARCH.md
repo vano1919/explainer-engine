@@ -1,5 +1,7 @@
 # Tooling research (stage A of the 2026-10-22 master brief)
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 Research date: **2026-10-22** (every price and licence below was read on that day unless a row says otherwise; re-read
 before any number enters `config/spend_caps.json`, a skill or a paint plan). This is the synthesis the master brief asked
 for; the full notes with every source URL and evidence tag are the four appendices:

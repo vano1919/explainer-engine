@@ -1,3 +1,4 @@
+
 """Render one Short of the production script's ``shorts`` block (docs/ORCHESTRATION.md SH-01..SH-04): the Short frame of
 ``core/delivery.shorts_frame()`` (BP-167, 1440x2560), the video's own
 pictures cropped around the hero (``crop_x``, ``zoom``) with a slow push, the same narrator, word-timed captions, a low music bed,

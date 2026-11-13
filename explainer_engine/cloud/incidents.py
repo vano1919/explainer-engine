@@ -1,3 +1,4 @@
+
 """The incident log of the Guardian (master brief 2026-10-22, stage B): every cloud failure has a fingerprint (provider,
 resource type, stage, error class), a cause, the fix that lives in code and what it cost. ``doctor`` searches it before any
 diagnosis, so the same failure is recognised the second time and its known fix is named instead of guessed.

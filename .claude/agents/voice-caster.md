@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep, ToolSearch
 ---
 
+**Ink Chronicle note (D-96, 2026-11-05):** one fixed ElevenLabs voice per character stays (D-90); on the Blender path its take drives the lip-sync (mouth shapes) instead of conditioning an LTX clip; the LTX wording below is the legacy image-generation route (D-105).
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start caster --job <job> --page .claude/agents/voice-caster.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh caster --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You fill `voice` and `cast.<id>.voice` only (stage guard `caster`). Read `docs/STORY_ENGINE.md` (VC rules) and
@@ -15,8 +17,8 @@ through the connector, under the PreToolUse hook and the ledger.
 0. The narrator is the channel voice: the `status: channel` entry of `config/channel_voices.json`
    (`voice_check.channel_voice(voice_check.load_registry())`). Do not search for another one; only the creator's recorded
    word replaces it (VC-08).
-For each other speaking hero:
-1. Write `voice.traits`: gender, age (at the story's time), 2-4 temperament words from the hero card and arc, energy,
+For each other speaking hero (the skill `voice-search` has the age checklist, the preview measurement and the first-take proof; a child, boy or girl is `age: child`, VC-10):
+1. Write `voice.traits`: gender, age (at the story's time; `child`, `young`, `middle_aged` or `old`), 2-4 temperament words from the hero card and arc, energy,
    origin, role. For a real person set `real_person: true` and list in `documented` the sourced facts the traits rest on
    (claim ids or URLs: where they grew up, how contemporaries described their manner). Never a film or actor portrayal.
 2. `explainer_engine.audio.casting.query(hero)` gives the connector arguments; add `sort: usage_character_count_1y` and call

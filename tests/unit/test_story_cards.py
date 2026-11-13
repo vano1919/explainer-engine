@@ -1,4 +1,4 @@
-"""Story cards (design/cards.py, the creator 2026-10-21): a dark title card with the heroes' heads, recap boards with signs."""
+"""(v4.3 P0.4, 2026-11-12: the legacy contract /1../4 lives under $defs.LegacyProductionScriptV1ToV4 since the schema dispatches on schema_version.) Story cards (design/cards.py, the creator 2026-10-21): a dark title card with the heroes' heads, recap boards with signs."""
 
 from __future__ import annotations
 
@@ -59,8 +59,8 @@ def test_recap_rows_take_a_head_or_a_sign_and_rings_land_on_them(tmp_path, faces
 
 
 def test_cards_and_card_lines_are_in_the_schema():
-    assert SCHEMA["properties"]["cards"]["items"]["properties"]["kind"]["enum"] == ["title", "recap"]
-    line = SCHEMA["properties"]["segments"]["items"]["properties"]["lines"]["items"]["properties"]
+    assert SCHEMA["$defs"]["LegacyProductionScriptV1ToV4"]["properties"]["cards"]["items"]["properties"]["kind"]["enum"] == ["title", "recap"]
+    line = SCHEMA["$defs"]["LegacyProductionScriptV1ToV4"]["properties"]["segments"]["items"]["properties"]["lines"]["items"]["properties"]
     assert line["card"]["type"] == "boolean"
 
 

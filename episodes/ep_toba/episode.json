@@ -1,0 +1,136 @@
+{
+  "schema": "episode_manifest/1",
+  "episode_id": "ep_toba",
+  "slug": "ep_toba_74000bce",
+  "title": "When Humanity Dropped to 2,000 People: The Volcanic Winter That Almost Killed Us All",
+  "historical_period": {
+    "era_id": "prehistoric_pleistocene",
+    "label": "Late Pleistocene (74,000 BCE)",
+    "start_year": -74000,
+    "end_year": -73000
+  },
+  "geographic_scope": {
+    "regions": [
+      "Northern Sumatra",
+      "Indian Ocean Basin",
+      "Indian Subcontinent",
+      "East African Rift (Shinfa-Metema)",
+      "Pinnacle Point"
+    ],
+    "primary_bbox": [
+      25.0,
+      -36.0,
+      108.0,
+      26.0
+    ],
+    "key_coordinates": {
+      "mount_toba": {
+        "lat": 2.68,
+        "lon": 98.88,
+        "label": "Mount Toba Caldera (Sumatra)"
+      },
+      "shinfa_metema": {
+        "lat": 12.7,
+        "lon": 36.2,
+        "label": "Shinfa-Metema Refugium (Ethiopia)"
+      },
+      "indian_subcontinent": {
+        "lat": 21.0,
+        "lon": 78.0,
+        "label": "Central Indian Tephra Basin"
+      },
+      "pinnacle_point": {
+        "lat": -34.2,
+        "lon": 22.09,
+        "label": "Pinnacle Point Coastal Caves"
+      }
+    }
+  },
+  "canonical_characters": [
+    {
+      "character_id": "char_kael_74000bce",
+      "name": "Kael",
+      "role": "Elder Spear-Hunter of the Shinfa Gorge Band",
+      "voice_profile_id": "voice_kael_74000bce"
+    },
+    {
+      "character_id": "char_sena_74000bce",
+      "name": "Sena",
+      "role": "Master Stone Artisan and Inventor of the Microlithic Bow at Shinfa-Metema",
+      "voice_profile_id": "voice_sena_74000bce"
+    },
+    {
+      "character_id": "char_thar_74000bce",
+      "name": "Thar",
+      "role": "Leader of the Southern Rift Refugee Band",
+      "voice_profile_id": "voice_thar_74000bce"
+    }
+  ],
+  "canonical_locations": [
+    {
+      "location_id": "loc_sumatra_toba_caldera",
+      "name": "Mount Toba Caldera & Barisan Mountains",
+      "era_and_geography": "Northern Sumatra, Indonesia, 74,000 BCE"
+    },
+    {
+      "location_id": "loc_shinfa_ash_riverbed",
+      "name": "Shinfa-Metema Seasonal Riverbed & Shrinking Waterholes",
+      "era_and_geography": "Lowlands of Northwestern Ethiopia, Horn of Africa, 74,000 BCE"
+    },
+    {
+      "location_id": "loc_rift_cave_hearth",
+      "name": "Basalt Overhang Shelter & Camp Hearth Above Shinfa Gorge",
+      "era_and_geography": "Ethiopian Rift Margin, 74,000 BCE"
+    },
+    {
+      "location_id": "loc_pinnacle_point_cliffs",
+      "name": "Pinnacle Point Coastal Caves & Intertidal Shellfish Beds (Site PP5-6)",
+      "era_and_geography": "Mossel Bay, Southern Coast of South Africa, 74,000 BCE"
+    }
+  ],
+  "target_duration_s": 720.0,
+  "demo_duration_s": 120.0,
+  "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+  "map_style_profile": "Documentary GIS Shaded-Relief + Natural Earth 1:50m Vector Cartography",
+  "audio_profile": {
+    "narrator_voice_id": "CcSJ2r3qw0XU9gJpEPyk",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "target_lufs": -14.0
+  },
+  "asset_sources": {
+    "episode_assets_dir": "episodes/ep_toba/assets",
+    "allow_shared_style_anchors": false,
+    "strict_episode_isolation": true
+  },
+  "allowed_era_tags": [
+    "prehistoric_pleistocene",
+    "74000_bce",
+    "stone_age",
+    "toba_eruption",
+    "paleolithic"
+  ],
+  "forbidden_era_tags": [
+    "napoleonic_19th_century",
+    "1815_waterloo",
+    "modern_20th_century",
+    "1946_postwar_british_empire"
+  ],
+  "forbidden_semantic_tokens": [
+    "napoleon",
+    "wellington",
+    "rothschild",
+    "waterloo",
+    "french_cavalry",
+    "musket",
+    "cannon",
+    "whitehall",
+    "oppenheimer"
+  ],
+  "created_at": "2026-11-11T18:30:00Z",
+  "status": "in_production",
+  "look_id": "crossworld_live_action_adventure_v1",
+  "image_native_min_long_side": 1376,
+  "image_min_long_side": 2752,
+  "map_style": "relief plate + action layer in the video's look (Q6, plan P4)"
+}

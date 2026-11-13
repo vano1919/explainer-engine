@@ -1,3 +1,4 @@
+
 """The job record of a cloud job (the Guardian's memory, master brief 2026-10-22 stage B): one directory per job with
 ``state.json`` (where the job is now), ``events.jsonl`` (every transition, with time and reason) and ``heartbeat.json``
 (the last sign of life). Code polls; a person or an agent reads "what changed since my last look" from the events.

@@ -1,3 +1,4 @@
+
 """Model and process governance in code (P0b, D-84): the one config (``config/model_routing.json``, D7), the creator's recorded
 word, the hooks that lint what instructions cannot enforce, the phase/decision/routing-log files under ``docs/blueprint``.
 stdlib only; every check fails open in the hooks (a broken check must not lock a session), loudly in the tests."""

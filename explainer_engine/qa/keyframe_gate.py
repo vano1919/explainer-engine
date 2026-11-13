@@ -1,3 +1,4 @@
+
 """Keyframe gate (KG-01..KG-22, docs/KEYFRAME_GATE.md): every picture of an animated shot is checked before the next step
 uses it, every check is logged with its cause, and the log says what to fix: a prompt rule or a LoRA. stdlib only.
 
@@ -238,6 +239,17 @@ def summary(records: list[dict], retrain_at: int = RETRAIN_AT) -> dict:
             "counts": [{"code": c, "cause": k, "lora": l, "n": n} for (c, k, l), n in sorted(by_cause.items())],
             "actions": actions}
 
+
+V4_ALLOWED_BASES = {'Qwen/Qwen-Image-2.1', 'Qwen/Qwen-Image-Edit-2511'}
+
+def check_v4_stack(model: str, loras: dict) -> None:
+    """D-123: Stage 2 allows Qwen-Image-2.1 (+ xworld_v2) and Qwen-Image-Edit-2511 (+ Multiple-Angles-LoRA),
+    while keeping the ban on pre-2026-10-26 wldnk_ image LoRAs."""
+    if model not in V4_ALLOWED_BASES:
+        raise ValueError(f'{model} is not an allowed Stage 2 base in D-123 ({sorted(V4_ALLOWED_BASES)})')
+    for name in loras:
+        if name.startswith(RETIRED_LORAS):
+            raise ValueError(f'{name} is banned (D-80/D-123): pre-2026-10-26 wldnk_ image LoRAs remain retired')
 
 def check_stack(model: str, loras: dict) -> None:
     """KG-16: refuse a retired base (D-80) and a LoRA on a base it was not trained on (the style LoRA inside Edit-2511

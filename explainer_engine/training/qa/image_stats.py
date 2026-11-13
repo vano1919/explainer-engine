@@ -1,3 +1,4 @@
+
 """Free picture statistics for the automatic round QA (AUTO_QA_PLAN_2026-10-26 sections A and B, ვანო 2026-10-26).
 
 Noise (the high-frequency energy of a picture, its Laplacian variance, the share of busy 16 px blocks) and colour

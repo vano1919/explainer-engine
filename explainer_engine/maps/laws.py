@@ -1,3 +1,4 @@
+
 """The eight map laws (docs/COMPENSATOR.md, CMP-01..08) as validators over a map item and its timeline.
 
 Each validator returns findings ``{rule, severity, where, detail}`` and never raises: the numbers come from the registry (BP-124,

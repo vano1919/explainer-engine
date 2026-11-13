@@ -1,3 +1,4 @@
+
 """The audio spine (Blueprint P4, docs/CONTRACTS.md ``audio_spine/1`` and ``/2``, D-88): every word of the narrator's read in
 seconds and frames on ONE clock that the picture, the compensators and the sound all lock to. The spine is compiled from
 ``audio/words.json`` (the measured read) and ``timed.json`` (``production_timed/1``), never written by hand and never repaired:

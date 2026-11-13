@@ -1,3 +1,4 @@
+
 """Captions for the xworld_v1 material (D-80) with Qwen3-VL-8B-Instruct on a pod; started by caption_xworld_v1.sh (OR-21).
 
 The material is HF ``lora_plan_2026-10-26/dataset_xworld_v1/`` (manifest.json). Every image gets one description; every

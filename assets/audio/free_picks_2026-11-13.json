@@ -1,0 +1,4769 @@
+{
+ "schema": "free_sound_picks/2",
+ "read": "2026-11-13",
+ "about": "The professional library acquisition (2026-11-13, the creator's brief): real recordings from licence-checked sources. Mixkit sound effects under the Mixkit Sound Effects Free License (read 2026-11-13 from the licence modal: YouTube and commercial use, no standalone redistribution, no Content ID registration; User Terms 9: no scripted mass download, so these items are picked one by one from category pages and fetched slowly). Music from Incompetech under CC BY 4.0 with the credit line its FAQ gives. Every licence is re-read at import time (audio/sources.py) and recorded per item; nobody has listened (review.human not_listened).",
+ "picks": [
+  {
+   "name": "war_horn_ambience",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/war/",
+   "item": "2785",
+   "tags": [
+    "horn",
+    "war",
+    "brass"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "horn",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "plain"
+    ],
+    "materials": [
+     "air",
+     "metal"
+    ],
+    "action_tags": [
+     "horn_call"
+    ],
+    "mood": [
+     "epic",
+     "tense"
+    ],
+    "intensity": 4,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "warfare_horn",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/cinematic/",
+   "item": "2289",
+   "tags": [
+    "horn",
+    "war",
+    "brass"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "horn",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "air"
+    ],
+    "action_tags": [
+     "horn_call"
+    ],
+    "mood": [
+     "epic",
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "war_drums_call",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/war/",
+   "item": "2780",
+   "tags": [
+    "drum",
+    "war"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "drum",
+    "genres": [
+     "ancient_warfare",
+     "battlefield",
+     "military_camp"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "battlefield",
+     "military_camp"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "camp"
+    ],
+    "materials": [
+     "leather",
+     "wood"
+    ],
+    "action_tags": [
+     "drum_beat"
+    ],
+    "mood": [
+     "epic",
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "war_drums",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/war/",
+   "item": "2784",
+   "tags": [
+    "drum",
+    "war",
+    "impact"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "drum",
+    "genres": [
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "leather"
+    ],
+    "action_tags": [
+     "drum_beat"
+    ],
+    "mood": [
+     "epic",
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "drums_ancient_heartbeat",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/drum/",
+   "item": "487",
+   "tags": [
+    "drum",
+    "ancient",
+    "tension",
+    "cinematic"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "cinematic_textures",
+    "subcategory": "drum_texture",
+    "genres": [
+     "suspense",
+     "ritual",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "suspense",
+     "ritual",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "leather"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "epic"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "musical_bed"
+    ]
+   },
+   "seconds": 36
+  },
+  {
+   "name": "drums_tribal_ritual",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/drum/",
+   "item": "567",
+   "tags": [
+    "drum",
+    "ritual",
+    "tribal"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "instrument_samples",
+    "subcategory": "drum_ensemble",
+    "genres": [
+     "ritual",
+     "prehistoric"
+    ],
+    "scene_types": [
+     "ritual",
+     "prehistoric"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "camp",
+     "village"
+    ],
+    "materials": [
+     "leather",
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "mysterious",
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "musical_bed"
+    ]
+   },
+   "seconds": 20
+  },
+  {
+   "name": "drums_tribal_ambience",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/drum/",
+   "item": "572",
+   "tags": [
+    "drum",
+    "ritual",
+    "tribal",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "instrument_samples",
+    "subcategory": "drum_ensemble",
+    "genres": [
+     "ritual",
+     "prehistoric",
+     "military_camp"
+    ],
+    "scene_types": [
+     "ritual",
+     "prehistoric",
+     "military_camp"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "camp",
+     "village"
+    ],
+    "materials": [
+     "leather",
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "mysterious"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "distant_layer"
+    ]
+   },
+   "seconds": 38
+  },
+  {
+   "name": "drum_roll_tension",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/drum/",
+   "item": "577",
+   "tags": [
+    "drum",
+    "roll",
+    "tension",
+    "riser"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "transitions",
+    "subcategory": "drum_roll",
+    "genres": [
+     "suspense"
+    ],
+    "scene_types": [
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "leather",
+     "metal"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "transition"
+    ]
+   }
+  },
+  {
+   "name": "drum_hit_deep",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/drum/",
+   "item": "549",
+   "tags": [
+    "drum",
+    "impact",
+    "hit",
+    "reveal"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "impacts",
+    "subcategory": "drum_hit",
+    "genres": [
+     "suspense",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "suspense",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "leather"
+    ],
+    "action_tags": [
+     "reveal"
+    ],
+    "mood": [
+     "dark",
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "army_marching_big",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/war/",
+   "item": "461",
+   "tags": [
+    "army",
+    "march",
+    "footstep",
+    "crowd"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "march",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "military_camp"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "military_camp"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "plain"
+    ],
+    "materials": [
+     "earth",
+     "leather",
+     "metal"
+    ],
+    "action_tags": [
+     "march"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "sword_chainmail",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/battle/",
+   "item": "2776",
+   "tags": [
+    "sword",
+    "metal",
+    "chainmail",
+    "armour",
+    "hit"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "sword_hit",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "bronze_age",
+     "classical",
+     "medieval"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "strike"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "armour_hit_metal",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/battle/",
+   "item": "2775",
+   "tags": [
+    "armour",
+    "hit",
+    "metal",
+    "shield"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "armour_hit",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "strike",
+     "block"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "sword_strikes_armour",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2765",
+   "tags": [
+    "sword",
+    "metal",
+    "armour",
+    "hit"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "sword_hit",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "bronze_age",
+     "classical",
+     "medieval"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "strike"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "sword_blade_metal",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2766",
+   "tags": [
+    "sword",
+    "metal",
+    "blade"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "sword_hit",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "bronze_age",
+     "classical",
+     "medieval"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "strike"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "sword_slashes",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2763",
+   "tags": [
+    "sword",
+    "metal",
+    "slash"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "sword_swing",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "bronze_age",
+     "classical",
+     "medieval"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "air"
+    ],
+    "action_tags": [
+     "swing"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "sword_pierces_armour",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2761",
+   "tags": [
+    "sword",
+    "metal",
+    "armour",
+    "pierce"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "sword_hit",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "bronze_age",
+     "classical",
+     "medieval"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "flesh"
+    ],
+    "action_tags": [
+     "strike"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "arrow_shot",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2771",
+   "tags": [
+    "arrow",
+    "shot",
+    "bow"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "bow",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "prehistoric"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "prehistoric"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "forest",
+     "plain"
+    ],
+    "materials": [
+     "wood",
+     "air"
+    ],
+    "action_tags": [
+     "release"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "arrow_whizz",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2767",
+   "tags": [
+    "arrow",
+    "flyby"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "arrow_flight",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "forest"
+    ],
+    "materials": [
+     "air",
+     "wood"
+    ],
+    "action_tags": [
+     "flyby"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "arrow_hit_metal",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "2769",
+   "tags": [
+    "arrow",
+    "hit",
+    "metal"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "arrow_hit",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "wood"
+    ],
+    "action_tags": [
+     "impact"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "battle_scream",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/battle/",
+   "item": "2175",
+   "tags": [
+    "scream",
+    "battle",
+    "shout",
+    "human"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "battle_cry",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [
+     "shout"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "foreground_action"
+    ]
+   }
+  },
+  {
+   "name": "crowd_angry_men",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/crowd/",
+   "item": "458",
+   "tags": [
+    "crowd",
+    "shout",
+    "angry",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "crowd",
+    "genres": [
+     "battlefield",
+     "political_drama",
+     "military_camp"
+    ],
+    "scene_types": [
+     "battlefield",
+     "political_drama",
+     "military_camp"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "town",
+     "camp"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [],
+    "mood": [
+     "aggressive",
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 30
+  },
+  {
+   "name": "horse_gallop_dirt",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/horse/",
+   "item": "77",
+   "tags": [
+    "horse",
+    "hooves",
+    "gallop",
+    "dirt"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse_gallop",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "exploration"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "exploration"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "battlefield",
+     "village"
+    ],
+    "materials": [
+     "earth"
+    ],
+    "action_tags": [
+     "gallop"
+    ],
+    "mood": [
+     "tense",
+     "epic"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 12
+  },
+  {
+   "name": "horse_walk_dirt",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/horse/",
+   "item": "78",
+   "tags": [
+    "horse",
+    "hooves",
+    "walk",
+    "dirt"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse_walk",
+    "genres": [
+     "exploration",
+     "village",
+     "historical_city"
+    ],
+    "scene_types": [
+     "exploration",
+     "village",
+     "historical_city"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "village",
+     "town"
+    ],
+    "materials": [
+     "earth"
+    ],
+    "action_tags": [
+     "walk"
+    ],
+    "mood": [
+     "peaceful",
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 12
+  },
+  {
+   "name": "horse_neigh_scared",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/horse/",
+   "item": "85",
+   "tags": [
+    "horse",
+    "neigh"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse_voice",
+    "genres": [
+     "ancient_warfare",
+     "exploration"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "exploration"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "battlefield"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [
+     "neigh"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "horse_neigh_stallion",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/horse/",
+   "item": "76",
+   "tags": [
+    "horse",
+    "neigh"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse_voice",
+    "genres": [
+     "exploration",
+     "village"
+    ],
+    "scene_types": [
+     "exploration",
+     "village"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "village"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [
+     "neigh"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "horse_snort",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/horse/",
+   "item": "80",
+   "tags": [
+    "horse",
+    "snort"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse_voice",
+    "genres": [
+     "exploration",
+     "military_camp"
+    ],
+    "scene_types": [
+     "exploration",
+     "military_camp"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "camp"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [
+     "snort"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "carriage_street",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/carriage/",
+   "item": "353",
+   "tags": [
+    "carriage",
+    "horse",
+    "street",
+    "crowd",
+    "wheels"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "horse_carriage",
+    "genres": [
+     "historical_city"
+    ],
+    "scene_types": [
+     "historical_city"
+    ],
+    "historical_era": [
+     "early_modern"
+    ],
+    "environment": [
+     "town"
+    ],
+    "materials": [
+     "wood",
+     "earth"
+    ],
+    "action_tags": [
+     "roll"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 10
+  },
+  {
+   "name": "campfire_crackles",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/fire/",
+   "item": "1330",
+   "tags": [
+    "fire",
+    "crackle",
+    "campfire"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "fire",
+    "genres": [
+     "military_camp",
+     "prehistoric",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "military_camp",
+     "prehistoric",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "camp",
+     "cave",
+     "village"
+    ],
+    "materials": [
+     "fire",
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful",
+     "reflective"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 22
+  },
+  {
+   "name": "campfire_night_wind",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/fire/",
+   "item": "1736",
+   "tags": [
+    "fire",
+    "wind",
+    "night",
+    "campfire"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "fire",
+    "genres": [
+     "military_camp",
+     "prehistoric",
+     "wilderness"
+    ],
+    "scene_types": [
+     "military_camp",
+     "prehistoric",
+     "wilderness"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "camp",
+     "plain"
+    ],
+    "materials": [
+     "fire",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "reflective"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 28
+  },
+  {
+   "name": "fire_big_burning",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/fire/",
+   "item": "1331",
+   "tags": [
+    "fire",
+    "big",
+    "burning"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "fire_large",
+    "genres": [
+     "tragedy",
+     "battlefield"
+    ],
+    "scene_types": [
+     "tragedy",
+     "battlefield"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "town",
+     "village",
+     "battlefield"
+    ],
+    "materials": [
+     "fire",
+     "wood"
+    ],
+    "action_tags": [
+     "burn"
+    ],
+    "mood": [
+     "tragic",
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "foreground_action"
+    ]
+   }
+  },
+  {
+   "name": "fire_burning_big2",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/fire/",
+   "item": "1335",
+   "tags": [
+    "fire",
+    "big",
+    "burning"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "fire_large",
+    "genres": [
+     "tragedy"
+    ],
+    "scene_types": [
+     "tragedy"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "town",
+     "village"
+    ],
+    "materials": [
+     "fire"
+    ],
+    "action_tags": [
+     "burn"
+    ],
+    "mood": [
+     "tragic"
+    ],
+    "intensity": 4,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "foreground_action"
+    ]
+   }
+  },
+  {
+   "name": "wind_blowing",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2658",
+   "tags": [
+    "wind",
+    "ambience",
+    "open"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "wind",
+    "genres": [
+     "wilderness",
+     "exploration",
+     "battlefield"
+    ],
+    "scene_types": [
+     "wilderness",
+     "exploration",
+     "battlefield"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "plain",
+     "mountain",
+     "coast"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral",
+     "reflective"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "wind_mountain_top",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wind/",
+   "item": "1267",
+   "tags": [
+    "wind",
+    "mountain"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "wind",
+    "genres": [
+     "wilderness",
+     "exploration"
+    ],
+    "scene_types": [
+     "wilderness",
+     "exploration"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "mountain"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "reflective",
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 28
+  },
+  {
+   "name": "forest_wind_birds",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wind/",
+   "item": "1238",
+   "tags": [
+    "forest",
+    "wind",
+    "birds",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "forest",
+    "genres": [
+     "peaceful_environment",
+     "wilderness",
+     "exploration"
+    ],
+    "scene_types": [
+     "peaceful_environment",
+     "wilderness",
+     "exploration"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest"
+    ],
+    "materials": [
+     "air",
+     "plant"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "forest_european",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/ambience/",
+   "item": "1213",
+   "tags": [
+    "forest",
+    "birds",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "forest",
+    "genres": [
+     "peaceful_environment",
+     "wilderness",
+     "village"
+    ],
+    "scene_types": [
+     "peaceful_environment",
+     "wilderness",
+     "village"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest"
+    ],
+    "materials": [
+     "plant"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "birds_morning",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2472",
+   "tags": [
+    "birds",
+    "morning",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "birdsong",
+    "genres": [
+     "peaceful_environment",
+     "village"
+    ],
+    "scene_types": [
+     "peaceful_environment",
+     "village"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest",
+     "village",
+     "plain"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful",
+     "joyful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "night_forest_insects",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2414",
+   "tags": [
+    "insects",
+    "night",
+    "forest",
+    "crickets"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "night",
+    "genres": [
+     "wilderness",
+     "military_camp",
+     "suspense"
+    ],
+    "scene_types": [
+     "wilderness",
+     "military_camp",
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest",
+     "camp"
+    ],
+    "materials": [
+     "plant"
+    ],
+    "action_tags": [],
+    "mood": [
+     "mysterious",
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "crickets_wild",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/ambience/",
+   "item": "39",
+   "tags": [
+    "crickets",
+    "insects",
+    "night"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "insects",
+    "genres": [
+     "peaceful_environment",
+     "village"
+    ],
+    "scene_types": [
+     "peaceful_environment",
+     "village"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "plain",
+     "camp",
+     "village"
+    ],
+    "materials": [
+     "plant"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 1,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 24
+  },
+  {
+   "name": "river_flow",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2452",
+   "tags": [
+    "water",
+    "river",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "river",
+    "genres": [
+     "exploration",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "exploration",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "river",
+     "forest"
+    ],
+    "materials": [
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "river_birds",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2473",
+   "tags": [
+    "water",
+    "river",
+    "birds"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "river",
+    "genres": [
+     "peaceful_environment",
+     "village"
+    ],
+    "scene_types": [
+     "peaceful_environment",
+     "village"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "river"
+    ],
+    "materials": [
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "water_flowing",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "3126",
+   "tags": [
+    "water",
+    "stream",
+    "river"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "stream",
+    "genres": [
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "river",
+     "cave"
+    ],
+    "materials": [
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 1,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 48
+  },
+  {
+   "name": "rain_long",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2394",
+   "tags": [
+    "rain",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "rain",
+    "genres": [
+     "storm",
+     "tragedy"
+    ],
+    "scene_types": [
+     "storm",
+     "tragedy"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "reflective",
+     "tragic"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "storm_thunder_rumble",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/nature/",
+   "item": "2395",
+   "tags": [
+    "storm",
+    "rain",
+    "thunder",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "storm",
+    "genres": [
+     "storm",
+     "suspense"
+    ],
+    "scene_types": [
+     "storm",
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "water",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "dark",
+     "tense"
+    ],
+    "intensity": 4,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 48
+  },
+  {
+   "name": "thunder_single",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/thunder/",
+   "item": "1298",
+   "tags": [
+    "thunder",
+    "impact"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "thunder",
+    "genres": [
+     "storm",
+     "suspense"
+    ],
+    "scene_types": [
+     "storm",
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "sky"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [
+     "thunder"
+    ],
+    "mood": [
+     "dark",
+     "tense"
+    ],
+    "intensity": 4,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "thunder_rumble_big",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/thunder/",
+   "item": "1297",
+   "tags": [
+    "thunder",
+    "rumble"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "thunder",
+    "genres": [
+     "storm",
+     "suspense"
+    ],
+    "scene_types": [
+     "storm",
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "sky"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [
+     "thunder"
+    ],
+    "mood": [
+     "dark"
+    ],
+    "intensity": 4,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "desert_wind",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wind/",
+   "item": "2495",
+   "tags": [
+    "desert",
+    "wind",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "desert",
+    "genres": [
+     "exploration",
+     "wilderness"
+    ],
+    "scene_types": [
+     "exploration",
+     "wilderness"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "desert"
+    ],
+    "materials": [
+     "air",
+     "earth"
+    ],
+    "action_tags": [],
+    "mood": [
+     "reflective",
+     "mysterious"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "sea_storm_waves",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/sea/",
+   "item": "1199",
+   "tags": [
+    "water",
+    "waves",
+    "sea",
+    "storm",
+    "wind"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "sea",
+    "genres": [
+     "sea_voyage",
+     "storm"
+    ],
+    "scene_types": [
+     "sea_voyage",
+     "storm"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "sea",
+     "coast"
+    ],
+    "materials": [
+     "water",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "dark"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "harbor_small_waves",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/sea/",
+   "item": "1208",
+   "tags": [
+    "water",
+    "waves",
+    "sea",
+    "harbor",
+    "rocks"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "sea",
+    "genres": [
+     "harbor",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "harbor",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "harbor",
+     "coast"
+    ],
+    "materials": [
+     "water",
+     "stone"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "sea_waves",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/sea/",
+   "item": "1189",
+   "tags": [
+    "water",
+    "waves",
+    "sea",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "sea",
+    "genres": [
+     "sea_voyage",
+     "exploration"
+    ],
+    "scene_types": [
+     "sea_voyage",
+     "exploration"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "sea",
+     "coast"
+    ],
+    "materials": [
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful",
+     "reflective"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "ship_wooden_sea",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/sea/",
+   "item": "1187",
+   "tags": [
+    "ship",
+    "wooden",
+    "creak",
+    "water",
+    "sea"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "ship",
+    "genres": [
+     "sea_voyage",
+     "harbor",
+     "exploration"
+    ],
+    "scene_types": [
+     "sea_voyage",
+     "harbor",
+     "exploration"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "sea",
+     "harbor"
+    ],
+    "materials": [
+     "wood",
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral",
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 30
+  },
+  {
+   "name": "ship_hull_creak",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/creak/",
+   "item": "3076",
+   "tags": [
+    "ship",
+    "creak",
+    "wood"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "ship",
+    "genres": [
+     "sea_voyage"
+    ],
+    "scene_types": [
+     "sea_voyage"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "sea",
+     "harbor"
+    ],
+    "materials": [
+     "wood"
+    ],
+    "action_tags": [
+     "creak"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "interior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "seabirds",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/sea/",
+   "item": "1188",
+   "tags": [
+    "seabirds",
+    "birds",
+    "sea"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "seabirds",
+    "genres": [
+     "harbor"
+    ],
+    "scene_types": [
+     "harbor"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "harbor",
+     "coast"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   }
+  },
+  {
+   "name": "farm_morning",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/horse/",
+   "item": "7",
+   "tags": [
+    "farm",
+    "animals",
+    "birds",
+    "village",
+    "morning"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "farm",
+    "genres": [
+     "village",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "village",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "village"
+    ],
+    "materials": [
+     "earth"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful",
+     "joyful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 40
+  },
+  {
+   "name": "hens_rooster",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/farm/",
+   "item": "1756",
+   "tags": [
+    "farm",
+    "rooster",
+    "hens"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "poultry",
+    "genres": [
+     "village"
+    ],
+    "scene_types": [
+     "village"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "village"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [
+     "crow"
+    ],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   }
+  },
+  {
+   "name": "countryside_forest_farm",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/farm/",
+   "item": "1221",
+   "tags": [
+    "farm",
+    "forest",
+    "birds",
+    "village",
+    "ambience"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "soundscapes",
+    "subcategory": "countryside",
+    "genres": [
+     "village",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "village",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "village",
+     "forest"
+    ],
+    "materials": [
+     "plant"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "crowd_talking_big",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/crowd/",
+   "item": "364",
+   "tags": [
+    "crowd",
+    "murmur",
+    "talking",
+    "market"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "crowd_walla",
+    "genres": [
+     "marketplace",
+     "historical_city",
+     "political_drama"
+    ],
+    "scene_types": [
+     "marketplace",
+     "historical_city",
+     "political_drama"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "market",
+     "town"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "fair_people_laughter",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/crowd/",
+   "item": "368",
+   "tags": [
+    "crowd",
+    "fair",
+    "laughter",
+    "market"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "crowd_walla",
+    "genres": [
+     "marketplace",
+     "village",
+     "victory"
+    ],
+    "scene_types": [
+     "marketplace",
+     "village",
+     "victory"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "market",
+     "village"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [],
+    "mood": [
+     "joyful"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   }
+  },
+  {
+   "name": "church_bell_calling",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/bell/",
+   "item": "603",
+   "tags": [
+    "bell",
+    "church",
+    "toll"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "bell",
+    "genres": [
+     "historical_city",
+     "village",
+     "tragedy"
+    ],
+    "scene_types": [
+     "historical_city",
+     "village",
+     "tragedy"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "church",
+     "town",
+     "village"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "toll"
+    ],
+    "mood": [
+     "reflective",
+     "tragic"
+    ],
+    "intensity": 3,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "cathedral_bell",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/bell/",
+   "item": "587",
+   "tags": [
+    "bell",
+    "church",
+    "tower"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "bell",
+    "genres": [
+     "historical_city",
+     "castle"
+    ],
+    "scene_types": [
+     "historical_city",
+     "castle"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "church",
+     "town"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "toll"
+    ],
+    "mood": [
+     "reflective"
+    ],
+    "intensity": 3,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "medieval_door_lock",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/medieval/",
+   "item": "187",
+   "tags": [
+    "door",
+    "wood",
+    "lock",
+    "medieval"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "door",
+    "genres": [
+     "castle",
+     "political_drama"
+    ],
+    "scene_types": [
+     "castle",
+     "political_drama"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "castle",
+     "church",
+     "interior"
+    ],
+    "materials": [
+     "wood",
+     "metal"
+    ],
+    "action_tags": [
+     "open"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "interior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "old_church_door",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/church/",
+   "item": "193",
+   "tags": [
+    "door",
+    "wood",
+    "creak"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "door",
+    "genres": [
+     "castle",
+     "suspense"
+    ],
+    "scene_types": [
+     "castle",
+     "suspense"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "church",
+     "castle",
+     "interior"
+    ],
+    "materials": [
+     "wood"
+    ],
+    "action_tags": [
+     "open"
+    ],
+    "mood": [
+     "mysterious"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "interior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "footsteps_stones",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/footsteps/",
+   "item": "1269",
+   "tags": [
+    "footstep",
+    "stone",
+    "walk"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "footsteps",
+    "genres": [
+     "exploration"
+    ],
+    "scene_types": [
+     "exploration"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "mountain",
+     "cave",
+     "castle"
+    ],
+    "materials": [
+     "stone"
+    ],
+    "action_tags": [
+     "walk"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 14
+  },
+  {
+   "name": "footsteps_forest_ground",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/footsteps/",
+   "item": "1230",
+   "tags": [
+    "footstep",
+    "dirt",
+    "forest",
+    "walk"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "footsteps",
+    "genres": [
+     "exploration",
+     "prehistoric"
+    ],
+    "scene_types": [
+     "exploration",
+     "prehistoric"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest",
+     "plain"
+    ],
+    "materials": [
+     "earth",
+     "plant"
+    ],
+    "action_tags": [
+     "walk"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 30
+  },
+  {
+   "name": "footsteps_tall_grass",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/footsteps/",
+   "item": "532",
+   "tags": [
+    "footstep",
+    "grass",
+    "walk"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "footsteps",
+    "genres": [
+     "exploration",
+     "prehistoric"
+    ],
+    "scene_types": [
+     "exploration",
+     "prehistoric"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "plain"
+    ],
+    "materials": [
+     "plant"
+    ],
+    "action_tags": [
+     "walk"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 22
+  },
+  {
+   "name": "twig_break",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wood/",
+   "item": "2945",
+   "tags": [
+    "twig",
+    "break",
+    "wood"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "plant",
+    "genres": [
+     "suspense",
+     "wilderness"
+    ],
+    "scene_types": [
+     "suspense",
+     "wilderness"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest"
+    ],
+    "materials": [
+     "wood",
+     "plant"
+    ],
+    "action_tags": [
+     "break"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "wood_hard_hit",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wood/",
+   "item": "2182",
+   "tags": [
+    "wood",
+    "hit",
+    "impact",
+    "thud"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "impacts",
+    "subcategory": "wood_hit",
+    "genres": [
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "wood"
+    ],
+    "action_tags": [
+     "impact"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "paper_book_stiff",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/paper/",
+   "item": "1103",
+   "tags": [
+    "paper",
+    "page",
+    "map",
+    "parchment"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "paper",
+    "genres": [
+     "map_sequence",
+     "political_drama"
+    ],
+    "scene_types": [
+     "map_sequence",
+     "political_drama"
+    ],
+    "historical_era": [
+     "classical",
+     "medieval",
+     "early_modern",
+     "modern"
+    ],
+    "environment": [
+     "map",
+     "interior"
+    ],
+    "materials": [
+     "paper"
+    ],
+    "action_tags": [
+     "unfold"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "interior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "paper_slide",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/paper/",
+   "item": "1530",
+   "tags": [
+    "paper",
+    "slide",
+    "map"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "paper",
+    "genres": [
+     "map_sequence",
+     "explainer_overlay"
+    ],
+    "scene_types": [
+     "map_sequence",
+     "explainer_overlay"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "map"
+    ],
+    "materials": [
+     "paper"
+    ],
+    "action_tags": [
+     "slide"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 1,
+    "distance": "close",
+    "space": "interior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "papers_moved",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/paper/",
+   "item": "2379",
+   "tags": [
+    "paper",
+    "map",
+    "rustle"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "foley",
+    "subcategory": "paper",
+    "genres": [
+     "map_sequence"
+    ],
+    "scene_types": [
+     "map_sequence"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "map",
+     "interior"
+    ],
+    "materials": [
+     "paper"
+    ],
+    "action_tags": [
+     "rustle"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "interior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "transition_windy_swoosh",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wind/",
+   "item": "1474",
+   "tags": [
+    "swish",
+    "transition",
+    "wind"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "transitions",
+    "subcategory": "swoosh",
+    "genres": [
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "transition"
+    ]
+   }
+  },
+  {
+   "name": "storm_coming_whoosh",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/whoosh/",
+   "item": "2408",
+   "tags": [
+    "whoosh",
+    "transition",
+    "storm",
+    "riser"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "transitions",
+    "subcategory": "riser",
+    "genres": [
+     "suspense",
+     "storm"
+    ],
+    "scene_types": [
+     "suspense",
+     "storm"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "dark"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "transition"
+    ]
+   }
+  },
+  {
+   "name": "mystery_heartbeat_texture",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/drum/",
+   "item": "492",
+   "tags": [
+    "drone",
+    "tension",
+    "heartbeat",
+    "cinematic"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "cinematic_textures",
+    "subcategory": "heartbeat",
+    "genres": [
+     "suspense"
+    ],
+    "scene_types": [
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "leather"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "mysterious"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "musical_bed"
+    ]
+   },
+   "seconds": 60
+  },
+  {
+   "name": "suspense_ambience",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/ambience/",
+   "item": "2510",
+   "tags": [
+    "drone",
+    "tension",
+    "suspense",
+    "cinematic"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "cinematic_textures",
+    "subcategory": "drone",
+    "genres": [
+     "suspense",
+     "tragedy"
+    ],
+    "scene_types": [
+     "suspense",
+     "tragedy"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "dark"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "musical_bed"
+    ]
+   },
+   "seconds": 58
+  },
+  {
+   "name": "deep_wind_hum",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/wind/",
+   "item": "1177",
+   "tags": [
+    "drone",
+    "wind",
+    "hum",
+    "cinematic"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "cinematic_textures",
+    "subcategory": "drone",
+    "genres": [
+     "suspense",
+     "map_sequence"
+    ],
+    "scene_types": [
+     "suspense",
+     "map_sequence"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "mysterious",
+     "dark"
+    ],
+    "intensity": 2,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "musical_bed"
+    ]
+   },
+   "seconds": 50
+  },
+  {
+   "name": "trailer_riser",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/cinematic/",
+   "item": "790",
+   "tags": [
+    "riser",
+    "cinematic",
+    "transition"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "transitions",
+    "subcategory": "riser",
+    "genres": [
+     "suspense"
+    ],
+    "scene_types": [
+     "suspense"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "air"
+    ],
+    "action_tags": [
+     "reveal"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "transition"
+    ]
+   }
+  },
+  {
+   "name": "epic_orchestra_transition",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "mixkit",
+   "page": "https://mixkit.co/free-sound-effects/cinematic/",
+   "item": "2290",
+   "tags": [
+    "orchestra",
+    "transition",
+    "brass",
+    "stinger"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "stinger",
+    "genres": [
+     "victory",
+     "map_sequence"
+    ],
+    "scene_types": [
+     "victory",
+     "map_sequence"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "reveal"
+    ],
+    "mood": [
+     "epic"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "transition"
+    ]
+   }
+  },
+  {
+   "name": "mus_crusade",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Crusade",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "dark",
+    "epic",
+    "tense"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "map_sequence",
+     "medieval_warfare",
+     "ancient_warfare",
+     "political_drama"
+    ],
+    "scene_types": [
+     "map_sequence",
+     "medieval_warfare",
+     "ancient_warfare",
+     "political_drama"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "dark",
+     "epic",
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_lord_of_the_land",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Lord of the Land",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "mysterious",
+    "tense"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "map_sequence",
+     "exploration",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "map_sequence",
+     "exploration",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "medieval",
+     "classical",
+     "bronze_age",
+     "ancient"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "mysterious",
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_clash_defiant",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Clash Defiant",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "aggressive",
+    "dark",
+    "epic"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "battlefield",
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "battlefield",
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "aggressive",
+     "dark",
+     "epic"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_five_armies",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Five Armies",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "aggressive",
+    "epic",
+    "dark"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "battlefield",
+     "ancient_warfare",
+     "victory"
+    ],
+    "scene_types": [
+     "battlefield",
+     "ancient_warfare",
+     "victory"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "aggressive",
+     "epic",
+     "dark"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_prelude_and_action",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Prelude and Action",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "tense",
+    "aggressive"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "suspense",
+     "battlefield"
+    ],
+    "scene_types": [
+     "suspense",
+     "battlefield"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_dark_times",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Dark Times",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "tragic",
+    "dark"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "tragedy",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "tragedy",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "tragic",
+     "dark"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_ancient_rite",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Ancient Rite",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "mysterious",
+    "reflective"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "ritual",
+     "prehistoric",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "ritual",
+     "prehistoric",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "prehistoric",
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "mysterious",
+     "reflective"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_rites",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Rites",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "dark",
+    "mysterious"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "ritual",
+     "suspense"
+    ],
+    "scene_types": [
+     "ritual",
+     "suspense"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "dark",
+     "mysterious"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_thunder_dreams",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Thunder Dreams",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "dark",
+    "mysterious",
+    "tense"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "suspense",
+     "map_sequence",
+     "prehistoric"
+    ],
+    "scene_types": [
+     "suspense",
+     "map_sequence",
+     "prehistoric"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "dark",
+     "mysterious",
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_echoes_of_time",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Echoes of Time",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "mysterious",
+    "dark"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "suspense",
+     "map_sequence",
+     "exploration"
+    ],
+    "scene_types": [
+     "suspense",
+     "map_sequence",
+     "exploration"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "mysterious",
+     "dark"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_lightless_dawn",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Lightless Dawn",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "dark",
+    "tense",
+    "mysterious"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "suspense",
+     "tragedy"
+    ],
+    "scene_types": [
+     "suspense",
+     "tragedy"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "dark",
+     "tense",
+     "mysterious"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_village_consort",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Village Consort",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "peaceful",
+    "joyful"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "village",
+     "marketplace",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "village",
+     "marketplace",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "medieval"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "peaceful",
+     "joyful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_strength_of_titans",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Strength of the Titans",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "epic",
+    "heroic"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "victory",
+     "battlefield"
+    ],
+    "scene_types": [
+     "victory",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "epic",
+     "heroic"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_heroic_age",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Heroic Age",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "heroic",
+    "epic"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "victory",
+     "exploration"
+    ],
+    "scene_types": [
+     "victory",
+     "exploration"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "heroic",
+     "epic"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  },
+  {
+   "name": "mus_despair_and_triumph",
+   "take": 1,
+   "category": "music",
+   "kind": "track",
+   "source": "incompetech",
+   "item": "Despair and Triumph",
+   "page": "https://incompetech.com/music/royalty-free/pieces.json",
+   "tags": [
+    "music",
+    "bed",
+    "reflective",
+    "tragic"
+   ],
+   "catalog": {
+    "bst": "music",
+    "sound_category": "music",
+    "subcategory": "score",
+    "genres": [
+     "tragedy",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "tragedy",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "any"
+    ],
+    "materials": [],
+    "action_tags": [],
+    "mood": [
+     "reflective",
+     "tragic"
+    ],
+    "intensity": 1,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   }
+  }
+ ]
+}

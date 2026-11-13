@@ -1,5 +1,25 @@
 # Story engine: story, dialogue, motion, sound layers, voices, Shorts (D-48)
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
+
+## Canonical 12-Minute Story Architecture (`Z1-Z5` & `S01-S16`, D-123)
+
+### YouTube Retention Rules (`YT-01..YT-04`, Added 2026-11-09)
+- **`YT-01-HOOK` (0–12s Paradox Cold Open):** Never open `S01` with slow textbook weather/date throat-clearing. The first two `audio_lines` (`0:00–0:12`) must plant a visceral paradox, high-stakes number, or dramatic question alongside an immediate visual pattern interrupt.
+- **`YT-02-CLIFFHANGER` (90-Second Retention Bridges):** Never close segments `S01–S11` with a passive summary ("And that concluded the phase."). Every segment must end on an unresolved forward causal hook ("But fifteen miles east, a single courier had just spotted the smoke...") that pulls the viewer across the cut.
+- **`YT-03-PACING` (8–22 Word Concrete Sentences, Max 28):** Every `audio_line` is capped at `<= 28` words (target `8–22` words, `4–6s` per shot) in active voice, naming a visible physical object, gesture, or metric on screen.
+- **`YT-04-SIGNATURE-STYLE` (`Luminescent Chiaroscuro & Tactile Mythic Realism`):** Default visual world anchor uses tactile oil-canvas materiality, dramatic volumetric golden-amber shafts against deep indigo/obsidian shadows, and tangible copper/vellum/liquid-gold war-table relief maps.
+
+- **Canonical Episode Structure (`production_script.schema.json` v4.0.0, [MAIN_METHOD](MAIN_METHOD.md) Stage 3):** Every full episode targets **12 minutes (`720` seconds, acceptable window `660-780s`)** at **24 fps** (D-85), organized into **5 narrative phases (`Z1-Z5`)** and **16 segments (`S01-S16`)**:
+  - `Z1` (*Hook & Historical Setup*, `0:00-2:00`, `S01-S03`)
+  - `Z2` (*The Point of Divergence*, `2:00-4:00`, `S04-S06`)
+  - `Z3` (*Escalation & Transformation*, `4:00-7:00`, `S07-S10`)
+  - `Z4` (*Major Consequences & Climax*, `7:00-10:00`, `S11-S14`)
+  - `Z5` (*Resolution & Reflection*, `10:00-12:00`, `S15-S16`)
+- **Spoken Balance (D-95 retained active by D-123):** `70-80%` narrator voiceover (`0.70-0.80`) and `20-30%` dramatized character dialogue (`0.20-0.30`).
+- **Causal Chain & Speculation Signalling:** Every segment `S02-S16` specifies `cause_from_segment_id` -> `effect_to_segment_id` and labels `factual_status` (`actual_history`, `divergence_point`, `counterfactual_consequence`, `historical_reflection`).
+
 The creator's notes of 2026-10-19:
 - The first video told a less interesting story than it could have and missed what viewers want. Facts and people's basic needs must be balanced.
 - The edit was slow, not animated and boring. It needs frequent picture changes, not only photos joined by standard transitions.
@@ -84,10 +104,9 @@ all-is-lost ~75 %, break-into-three ~80 %, finale to the end. Suits episodes who
 **C. Mystery reveal ladder.** A cold open on a contradiction, then a reveal that reframes everything about every
 2:00; the chronology is written out straight before the suspense order is chosen. Suits analysis episodes (D-26).
 
-**D. Historical docudrama, 15 minutes (2026-10-24).** An animated docudrama: a narrator plus characters who talk to each
-other, shots of 3-5 s. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
+**D. Historical docudrama (historical 15-minute reference map; current production target is 12 minutes under BP-167).** An animated docudrama: a narrator plus characters who talk to each other. Voiced dialogue/lip-sync coverage shots use the 5 s cap; non-dialogue VIDEO action may run 10-15 s where continuous choreography benefits the scene. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
 ending on the next question. Set `drama.template` to "D"; ST-17..ST-19 then apply. Times are for 15:00 and scale with
-length; the borders are guides, not a stopwatch. Evidence and what was not verified:
+length; the borders are guides, not a stopwatch. Speech mix is BP-105 (nominal 70 % narration / 30 % voiced character dialogue by audible words, REVIEW outside 65-75 %, D-99), independent from D-93/BP-109 visual runtime lanes. Evidence and what was not verified:
 [research/DOCUDRAMA_CONSTITUTION_2026-10-24.md](research/DOCUDRAMA_CONSTITUTION_2026-10-24.md).
 
 | # | Time | Segment (`function`) | What happens |
@@ -252,6 +271,7 @@ Stage 5 casts the voices. `audio/casting.py` and PV-10 / PV-32 check them.
 | VC-07 | **Distinct is measurable.** Two cast voices differ by at least one of BP-138's margins (pitch, pace, centroid); a pair that reaches none is a VC-04 REVIEW (`voice_audition.distinct`). The creator still picks by ear (VC-03). | REVIEW (BP-138) |
 | VC-08 | **The channel voice stays.** `config/channel_voices.json` (`channel_voices/1`) holds the voices the channel uses and the baseline of each; the narrator is the one `status: channel` entry, and only the creator's recorded word replaces, retires or demotes it, or changes its model or its baseline (the drift reference of EL-13): `voice_check.register` needs a `creator_ref` that names a `channel_voice` record younger than 60 minutes in `jobs/creator_ok.jsonl` for the voice that becomes the channel voice (or the standing one being changed) (`python -m explainer_engine.governance ok channel_voice <voice_id> <message id> "<his words>"`) and refuses otherwise, in one call or two (Blueprint veto line V1). | FAIL (register) |
 | VC-09 | **Eligible, then fit, then use.** A voice is a candidate only if `casting.eligible` finds no reason against it (famous or imitation, taken, age two bands off, VC-02/05); candidates are ordered by `casting.fit`: the trait match first, the library's one-year usage order only as the tie-break (the connector is called with `sort: usage_character_count_1y`, `rank(..., by_usage=True)`). A voice an LTX cast card needs is written as words from the traits only (`casting.ltx_voice_text`, the same PV-10 guard). | REVIEW |
+| VC-10 | **A child or a teen speaks with a kid's voice** (creator 2026-11-07: "yesterday a child had a 40-year-old man's voice"). `voice.traits.age` also takes `child` (about 4-11) and `teen` (12-17); `casting.age_of` reads them from the style or card before `young` ("a boy" is a teen, never a young adult). The library's age filter knows only young / middle_aged / old and its `young` is a young adult, so a kid hero is searched without it, by the words of `casting.kid_search` ("teen boy", "kid boy"...). A voice speaks for a kid only if its own description or labels say it is one (`casting.kid_bands`: the audience phrases "for kids", "children's books", "kids storyteller" are struck out first, a voice that also calls itself an adult or names an age of 18+ claims none, a name alone is no evidence); an adult hero never gets a kid's voice (`casting.kid_clash`). The procedure is the skill `voice-search`. | FAIL (eligible) |
 
 ## Shorts styles (SS)
 

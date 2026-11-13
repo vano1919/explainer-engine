@@ -1,3 +1,4 @@
+
 """Collage of the P2S test (xworld_v2_p2s.py): one sheet per scene. Row 0 = the master and the model sheets; then one row per
 cell (refs, cfg, LoRA weight) with shots 1..4. Questions per row: did the camera move? is it the same place? is it the same
 face and clothes as the sheet?

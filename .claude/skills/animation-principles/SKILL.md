@@ -5,6 +5,8 @@ description: Judge and direct the character animation of a Crossworld Theories e
 
 # Animation principles: characters that move like they think
 
+**Ink Chronicle (D-96, 2026-11-05):** the twelve principles are medium-neutral and stay; on the Blender path they are keyed into the rig's animation and checked on the rendered clip; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Department page of the craft curriculum (P3b, [CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)). Our animation is a
@@ -26,7 +28,7 @@ Kit" and Alan Becker's series were not opened; every cadence below is a hypothes
 | slow in and slow out | poses at the extremes of the move | limbs ease too, not only the camera (BP-23) |
 | arcs | the path implied by the two poses curves | hands and heads travel on arcs |
 | secondary action (KP-29) | breath, cloth, hair left free in the prompt | they move without stealing the read |
-| timing | the shot's length from BP-107, holds within BP-109 | no metronome, no rush |
+| timing | the shot's length from BP-107, the visual mix of BP-109 (60 / 30 / 10, stills at most 5 s) | no metronome, no rush |
 | exaggeration | in the caricature and the acting, never in the facts | the peak gesture reads |
 | solid drawing | turnarounds and hero sheets (D-55) | no duplicated or missing limbs |
 | appeal | the hero on model | the same hero from shot to shot |
@@ -64,7 +66,7 @@ differ). Every row is a hypothesis until a second source type is verified.
 | CRAFT-ANI-06 | eye | slow in and slow out on limbs, not only on the camera | clip frames | BP-23 | manual |
 | CRAFT-ANI-07 | eye | actions move on arcs | clip frames | - | manual |
 | CRAFT-ANI-08 | eye | secondary action (hair, cloth, breath) is free | clip frames | KP-29 | manual |
-| CRAFT-ANI-09 | code | timing: shot rhythm and hold share | shot cards | BP-107, BP-109 | `explainer_engine/scripting/film_shots.py` |
+| CRAFT-ANI-09 | code | timing: shot rhythm and visual mix | shot cards | BP-107, BP-109 | `explainer_engine/scripting/film_shots.py` |
 | CRAFT-ANI-10 | eye | exaggeration in the caricature, never in the facts | keyframe | - | manual |
 | CRAFT-ANI-11 | eye | solid drawing: no duplicated or missing limbs | clip frames (VQ-10) | - | manual |
 | CRAFT-ANI-12 | eye | appeal: the hero stays on model (hero references, D-55) | clip frames | D-55 | manual |
@@ -80,4 +82,4 @@ The numbers of this page live only in the registry (D-59); code reads them with 
 
 - BP-132: blink cadence and the moving hold on long holds (hypothesis, REVIEW).
 - BP-133: lip-sync offset and the identity threshold, calibrated on our own sheets (hypothesis, REVIEW).
-- BP-107, BP-109, BP-113: shot rhythm, the hold share, the AI-acting cap (already in force).
+- BP-107, BP-109, BP-113: shot rhythm, the visual mix (60 / 30 / 10, D-93), the AI-acting cap (already in force).

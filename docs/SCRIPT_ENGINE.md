@@ -1,5 +1,15 @@
 # Script engine v1 (2026-10-24)
 
+> **Route-scoped since D-116 (2026-11-06):** these rules apply to J2/J4 shots and to the Qwen assets of J5 ([route plan](architecture/ROUTE_PLAN_2026-11-06.md), [decision log](DECISIONS_AND_OPEN_QUESTIONS.md) D-96 as amended, D-116); the 2026-11-05 legacy banner below is history and stays readable.
+
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
+
+## Canonical v4.0 Single-Source-of-Truth Script & 4-Stage Routing (D-123)
+- **Canonical Manual & Schema:** See [MAIN_METHOD](MAIN_METHOD.md) and `explainer_engine/schemas/production_script.schema.json` (`v4.0.0`). One canonical `production_script.json` holds `world_bible`, `phases` (`Z1-Z5`), `segments` (`S01-S16`), `audio_lines`, and `shots`.
+- **Stage 2 & Stage 3 Generation Modes (Superseding `J1-J5` as Default):** Each shot routes to `WAN_I2V`, `WAN_FLF2V`, selective `WAN_CONTROL`, `STILL_25D`, or `MAP_25D` ([VIDEO_GENERATION_WAN](VIDEO_GENERATION_WAN.md)).
+- **Preserved Lints:** `claims.py`, `narration_lint.py`, `register_lint.py`, `rhythm_lint.py`, and `shot_prompt_lint.py` enforce zero improvisation and anti-overconditioning (`primary_action_count == 1`, `camera_move_count <= 1`).
+
 **What it is.** The one path from a topic to every prompt of an animated episode, with nothing left to improvise: each
 dimension of a prompt or a script is either set by a rule with a source or marked as a variant under test. ვანო asked for
 it on 2026-10-24 ("zero improvisation; where a rule is missing, research it, then write it"). The first episode written
@@ -47,7 +57,7 @@ the critic's.
 | ID | Check | Severity |
 |---|---|---|
 | VP-01 | the blocks of every segment add up to its window and the shares to 1 (a contract fault) | FAIL (invariant 7) |
-| VP-02 | pure map share at most [BP-141](SOURCED_RULES.md)'s `map_pure_max` | REVIEW |
+| VP-02 | pure map share at most [BP-109](SOURCED_RULES.md)'s helper lane plus its tolerance (a map is a helper visual, D-93) | REVIEW |
 | VP-03 | the non-character share at most the profile's `non_character_max` | REVIEW |
 | VP-04 | the longest run of pure map at most `map_run_max_s` | REVIEW |
 | VP-05 | the longest run without a played block at most [BP-127](SOURCED_RULES.md)'s `non_character_run_max_s` | REVIEW |
@@ -63,7 +73,7 @@ the critic's.
 | VP-15 | drift from the choice: seconds per segment beyond [BP-146](SOURCED_RULES.md)'s `seconds_drift` or cost beyond `usd_drift` of the planned price: REVIEW; cost above the `usd_worst` the creator approved: FAIL (invariant 2) | REVIEW / FAIL |
 | VP-16 | the estimated narrator share outside [BP-105](SOURCED_RULES.md)'s band | REVIEW |
 | VP-17 | the central scene (slot 10) has the most played seconds (ST-18) | REVIEW |
-| VP-18 | planned shots per minute outside [BP-107](SOURCED_RULES.md)'s band, or the planned hold share above [BP-109](SOURCED_RULES.md)'s | REVIEW |
+| VP-18 | planned shots per minute outside [BP-107](SOURCED_RULES.md)'s band, or a planned lane share (video / still / helper) outside [BP-109](SOURCED_RULES.md)'s 60 / 30 / 10 plus or minus its tolerance (D-93) | REVIEW |
 
 Costs come only from `config/job_speeds.json` (pod work, measured by P12b) and the API price tables (`imagegen`); a row with no
 measurement is `unknown` and is shown as such, never filled in. A pod row waits for its measurement, an API row does not.
@@ -81,14 +91,16 @@ measurement is `unknown` and is shown as such, never filled in. A pod row waits 
 | Episode look and absolutes | every style-LoRA prompt ends with the episode's colour-and-light phrase (`style.look`: a look file or its phrase and `lights`; a shot names a variant with `frame.look`), added by `episode_look.apply`, never by hand (AC-16..AC-17); the moment shrinks so the whole prompt keeps 40 words; the negative is exactly `style_prompt.NEGATIVE` and the inference settings `style_prompt.INFERENCE` (LT-66) | colour words written per prompt, a negative per episode | `film_shots._look`, `style_check` |
 | Next pose, cut, last frame | Qwen-Image-2.1 in its edit mode with references and the one xworld_v2 LoRA (no scene LoRA); a next pose opens `<trigger>, a later frame of the same continuous animated shot, same camera:`, a cut opens with the trigger (N-09) | the retired cells are under History below | KP-07, KP-08, KP-27, `film_shots` |
 | Video model by tier | `full` -> LTX-2.5 dev (acting, every line, every peak); `light` -> LTX-2.5 distilled (breath, glance, a turn of the head); `hold` -> no video model: the keyframe with our camera move | the cheaper model on `full` shots, after the 1-minute film | `film_shots.MODEL` |
-| Clip length | at most 10 s; a longer acted shot draws its last frame | 12-15 s with a video LoRA | BP-108 |
+| Scene length (was "Clip length") | a scene limit since D-116 (2026-11-06): visible voiced dialogue/lip-sync coverage at most 5 s; non-dialogue VIDEO action shots may run up to 15 s when continuity benefits the scene; actual model/resolution/fps limits still apply. A guided last frame is not an edit cut. | old universal 10 s cap | BP-108 / D-95 |
+| One LTX clip | a J2/J4 shot is cut or chained into LTX generations inside BP-172's clip band (D-116) | one generation per scene | BP-172 / KP-49 |
 | Frame rate and frames | 24 fps, 8k + 1 frames covering the shot | 12 fps or 24 fps drawn on twos (the creator's three-variant test film) | `film_shots.frames`, LT-07 |
 | Clip size | test films 1280x704 (LTX sizes are multiples of 32), never upscaled; release clips upscaled to 2560x1440 | release clips rendered at 1920x1088 before the upscale | LT-18 |
 | Video prompt | one present-tense paragraph: the style sentence, the action start -> peak -> settle, the face, the reactions, the line in quotes with its voice, who stays in frame, one camera sentence, the sounds | - | KP-10..KP-12, KP-18, BP-102 |
 | Acting fallback (KP-43) | a line whose take fails the acting check twice: over the speaker's shoulder onto the listener (the line plays on the reaction), or the speaker's hands for a line said to the room | redraw the same shot a third time | `film_shots._acting` |
 | Dialogue audio | a fixed ElevenLabs voice per speaking character (cast card `voice_id`), the line read first and the take given to LTX as its audio input (D-90; the wiring is P6/P7, not built yet) | LTX native audio with the voice described in words (superseded by D-90, card A3) | the cast cards, D-90 |
 | Narrator | ElevenLabs, the script's narrator lines, first take | - | skill `elevenlabs-voice` |
-| Tier shares | hold at most 10 %, light about a sixth, full the rest | the critic's 40 / 35 / 25 % on the test film | BP-109 |
+| Spoken mix | nominal 70 % narrator / 30 % voiced character dialogue by audible spoken words, REVIEW outside 65-75 % narrator (D-99, 2026-11-05); `voiced:false` lines are excluded | old 25-45 % narrator mix; D-95's 70-80 % band and 75/25 midpoint | BP-105 / D-99 |
+| Visual mix | by runtime 60 % VIDEO (light and full, including non-dialogue action), 30 % STILL (Python adds/moves objects), 10 % HELPER visuals (maps, graphics, calculations); independent from the spoken mix | the creator's call 2026-11-01 (D-93); tolerance ±5 pp | BP-109 / D-93 |
 
 ### History (banned by D-80)
 Cells that were "in use" before 2026-10-26 and are retired, kept so a reader can tell where an old prompt came from:

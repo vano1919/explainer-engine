@@ -663,7 +663,7 @@ def clip_frames(path: Path, start: int, count: int):
         return
     _n, w, h = clip_info(path)
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"select='between(n,{start},{start + count - 1})'",
-                           "-vsync", "0", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+                           "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     try:
         for _ in range(count):
             raw = ff.stdout.read(w * h * 3)
@@ -1418,4 +1418,146 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
     result["frames_written"] = written
     result["frames_planned"] = timed["frames"]
     (out / "assemble_report.json").write_text(json.dumps(result, indent=1))
+    return result
+
+
+# --- episode-first assembly (v4.3 plan P8, RN-05): the shot clips in order, written in chunks (RULE-R1) ------------------
+
+EPISODE_CHUNK_VERSION = 1
+
+
+def _boundary_frames(a: dict, b: dict, plan: dict, size: tuple[int, int]) -> tuple[int, list, int]:
+    """The frames of one cut that a transition blends: ``(frames taken from the end of a, blended frames, frames taken from
+    the start of b)``. A hard cut (or a transition shorter than two frames) blends nothing. The blend reads only the two
+    clips' boundary frames, so a chunk that starts at b draws the same frames as one long render."""
+    from explainer_engine.edit.cinematic_transitions import render_transition_frame_pair
+    t_type, t_frames = plan.get("transition_type"), int(plan.get("transition_frames") or 0)
+    if t_type == "hard_cut_with_jl_bridge" or t_frames <= 0:
+        return 0, [], 0
+    half_a = min(t_frames // 2, a["frames"] // 4)
+    half_b = min(t_frames - half_a, b["frames"] // 4)
+    total = half_a + half_b
+    if total < 2:
+        return 0, [], 0
+    tail = [_fit(f, size) for f in clip_frames(Path(a["clip"]), a["frames"] - max(half_a, 1), max(half_a, 1))]
+    head = [_fit(f, size) for f in clip_frames(Path(b["clip"]), 0, max(half_b, 1))]
+    zoom = plan.get("zoom_target_xy") or [0.5, 0.5]
+    out = []
+    for k in range(total):
+        u = (k + 1) / (total + 1)
+        im = render_transition_frame_pair(Image.fromarray(tail[min(k, len(tail) - 1)]), Image.fromarray(head[min(k, len(head) - 1)]),
+                                          transition_type=t_type, progress_u=u, zoom_target_xy=zoom)
+        out.append(np.asarray(im.convert("RGB"), dtype=np.uint8))
+    return half_a, out, half_b
+
+
+def _episode_chunk_stamp(shots: list, plans: list, k0: int, k1: int, size, fps: int, crf: int) -> str:
+    """What one chunk is made of: its shots' clips (by sha256) and frames, the cuts that touch it, the size, the code."""
+    from explainer_engine.edit import cinematic_transitions as CT
+    body = {"v": EPISODE_CHUNK_VERSION, "size": list(size), "fps": fps, "crf": crf,
+            "shots": [[s["shot_id"], s["sha256"], s["frames"]] for s in shots[k0:k1]],
+            "neighbours": [[s["shot_id"], s["sha256"]] for s in (shots[k0 - 1:k0] + shots[k1:k1 + 1])],
+            "cuts": [plans[k] for k in range(max(0, k0 - 1), min(len(plans), k1))],
+            "code": hashlib.sha1(Path(__file__).read_bytes() + Path(CT.__file__).read_bytes()).hexdigest()}
+    return hashlib.sha1(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def assemble_shot_clips(records: list[dict], transitions: list[dict], audio_wav: Path, out_mp4: Path, *, fps: int,
+                        size: tuple[int, int], chunk_seconds: float = CHUNK_SECONDS, only: tuple[int, int] | None = None,
+                        crf: int = 18) -> dict:
+    """The master of an episode-first run: every shot's clip (``records[i]``: ``shot_id``, ``clip_path``, ``total_frames``)
+    in order, the cut plan's transitions blended on the boundary frames, the mix muxed in once every chunk exists.
+
+    RULE-R1: the picture is written in chunks of at least ``chunk_seconds`` that start on a shot (``chunk_bounds``); a chunk
+    on disk whose stamp matches is reused, so a stopped render costs at most one chunk; ``only=(a, b)`` draws chunks a..b-1
+    and joins nothing until all exist. A clip shorter than its shot is refused (never stretched or repeated, invariant 7);
+    a longer one is cut to the shot. Frames are streamed one shot at a time, never held together."""
+    out_mp4 = Path(out_mp4)
+    if len(transitions) != max(0, len(records) - 1):
+        raise ContractError(f"{len(records)} shots need {max(0, len(records) - 1)} cuts, the plan has {len(transitions)}")
+    shots, f = [], 0
+    for r in records:
+        clip = Path(r["clip_path"])
+        n_have, _w, _h = clip_info(clip)
+        need = int(r["total_frames"])
+        if n_have < need:
+            raise ContractError(f"shot {r['shot_id']}: the clip has {n_have} frames, the shot {need}; render it again "
+                                "(a short clip is never stretched or repeated)")
+        shots.append({"shot_id": r["shot_id"], "clip": str(clip), "frames": need, "start_frame": f, "end_frame": f + need,
+                      "sha256": r.get("output_sha256") or contracts.sha256_file(clip)})
+        f += need
+    total = f
+    work = out_mp4.with_name(out_mp4.stem + "_chunks")
+    work.mkdir(parents=True, exist_ok=True)
+    lock = work / ".lock"
+    if lock.exists() and lock_alive(lock):
+        raise ContractError(f"another assembly is writing {work} (pid in {lock.name}); wait for it or stop it first")
+    lock.write_text(str(os.getpid()))
+    bounds = chunk_bounds(shots, fps, total, chunk_seconds)
+    todo = range(len(bounds)) if only is None else range(max(0, only[0]), min(len(bounds), only[1]))
+    reused = drawn = 0
+    try:
+        for i in todo:
+            k0, k1 = bounds[i]
+            stamp = _episode_chunk_stamp(shots, transitions, k0, k1, size, fps, crf)
+            part, meta = work / f"c_{i:04d}.mp4", work / f"c_{i:04d}.json"
+            if part.exists() and meta.exists() and json.loads(meta.read_text()).get("stamp") == stamp:
+                reused += 1
+                continue
+            frames = shots[k1 - 1]["end_frame"] - shots[k0]["start_frame"]
+            tmp = work / f"c_{i:04d}.part.mp4"
+            w, h = size
+            ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}",
+                                   "-r", str(fps), "-i", "-", "-c:v", "libx264", "-preset", "fast", "-crf", str(crf),
+                                   "-pix_fmt", "yuv420p", "-an", "-frames:v", str(frames), str(tmp)], stdin=subprocess.PIPE)
+            written = 0
+            try:
+                cut_in = _boundary_frames(shots[k0 - 1], shots[k0], transitions[k0 - 1], size) if k0 > 0 else (0, [], 0)
+                for k in range(k0, k1):
+                    s = shots[k]
+                    cut_out = _boundary_frames(s, shots[k + 1], transitions[k], size) if k + 1 < len(shots) else (0, [], 0)
+                    head = cut_in[1][cut_in[0]:]          # the blended frames that replace this shot's first frames
+                    tail = cut_out[1][:cut_out[0]]       # ... and its last ones
+                    for j, raw in enumerate(clip_frames(Path(s["clip"]), 0, s["frames"])):
+                        if j < len(head):
+                            fr = head[j]
+                        elif j >= s["frames"] - len(tail):
+                            fr = tail[j - (s["frames"] - len(tail))]
+                        else:
+                            fr = _fit(raw, size)
+                        ff.stdin.write(np.ascontiguousarray(fr, dtype=np.uint8).tobytes())
+                        written += 1
+                    cut_in = cut_out
+                ff.stdin.close()
+            except BaseException:
+                ff.kill()
+                raise
+            finally:
+                ff.wait()
+            if ff.returncode != 0 or written != frames:
+                tmp.unlink(missing_ok=True)
+                raise ContractError(f"chunk {i}: ffmpeg failed or the frame count differs ({written} of {frames}); the "
+                                    f"finished chunks stay in {work} and the next run reuses them")
+            os.replace(tmp, part)   # a c_NNNN.mp4 on disk is always a finished chunk
+            write_json_atomic(meta, {"stamp": stamp, "shots": [s["shot_id"] for s in shots[k0:k1]], "frames": frames})
+            drawn += 1
+    finally:
+        lock.unlink(missing_ok=True)
+    left = [i for i in range(len(bounds)) if not (work / f"c_{i:04d}.mp4").exists()
+            or json.loads((work / f"c_{i:04d}.json").read_text()).get("stamp")
+            != _episode_chunk_stamp(shots, transitions, *bounds[i], size, fps, crf)]
+    result = {"chunks": {"count": len(bounds), "drawn": drawn, "reused": reused, "left": left,
+                         "bounds": bounds, "dir": str(work)}, "total_frames_planned": total}
+    if left:
+        return result
+    names = [f"c_{i:04d}.mp4" for i in range(len(bounds))]
+    (work / "list.txt").write_text("".join(f"file '{n}'\n" for n in names))
+    tmp = out_mp4.with_name(out_mp4.stem + ".part.mp4")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(work / "list.txt"), "-i",
+                    str(audio_wav), "-map", "0:v", "-map", "1:a", "-c:v", "copy", *AUDIO_CODEC, "-t", f"{total / fps:.6f}",
+                    str(tmp)], check=True)
+    os.replace(tmp, out_mp4)   # a master on disk is always a finished one; the chunks stay for a cheap re-mux
+    n_frames, _w, _h = clip_info(out_mp4)
+    result.update({"master_mp4_path": str(out_mp4), "total_frames": n_frames, "duration_sec": round(n_frames / fps, 3),
+                   "bytes": out_mp4.stat().st_size, "sha256": contracts.sha256_file(out_mp4)})
     return result

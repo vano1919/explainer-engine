@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep
 ---
 
+**Ink Chronicle lanes (D-97, 2026-11-05):** a beat lands on a VIDEO_3D, STILL_3D or HELPER shot; on-screen text is never rendered inside Blender.
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start beats --job <job> --page .claude/agents/beat-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh beats --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You write `lines[].visual_beats` of one segment (or, after the shorts-writer, of the Shorts' own lines, SS-09), nothing

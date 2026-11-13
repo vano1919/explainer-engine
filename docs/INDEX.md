@@ -2,8 +2,40 @@
 
 One canonical home per specification and per ID (D-23). Link to a document or an ID; never copy its content.
 
+**Start here for a v4.3 episode (2026-11-12, D-131):** [EPISODE_FIRST](EPISODE_FIRST.md) (the episode folder, the routes `map_action` / `still_25d` / `wan`, the runner `python -m explainer_engine.episode run`, its gates), [GEMINI_CONSISTENCY_RULES](GEMINI_CONSISTENCY_RULES.md) (the pictures), [SOURCED_RULES](SOURCED_RULES.md) (the numbers), [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) (D-131). The Ink Chronicle rows below (the D-96/D-116 direction, roadmap and route plan, the Blender scene assets, `MAIN_METHOD`) are legacy for a v4.3 episode: the tools they describe are retired, not deleted (Q10, `config/retired_era.json`).
+
 | Document | Canonical for | ID prefix |
 |---|---|---|
+| [BRANCH_HANDOFF_README_2026-11-04](architecture/BRANCH_HANDOFF_README_2026-11-04.md) | entry point and scope for the new Ink Chronicle Blender planning branch | |
+| [INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04](architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md) | creator-approved new visual direction, 10/30/60 lanes, 70/30 speech target, style, render target and migration intent | |
+| [FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04](architecture/FABLE_CLAUDE_TO_OPUS_IMPLEMENTATION_PLAN_BRIEF_2026-11-04.md) | controlling Fable master task: branch reconciliation, evidence-closed decisions, one authoritative Opus roadmap and launch gate | |
+| [INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) | the authoritative Opus implementation roadmap: branch dispositions, decision matrix (ICD), work packages (ICW), cost model, creator decision gate (ICG) and launch verdict | |
+| [ROUTE_PLAN_2026-11-06](architecture/ROUTE_PLAN_2026-11-06.md) | the creator-approved route plan (D-116): Qwen the look, Blender space and time, LTX motion; routes J2/J4/J5/H per sub-category; English copy of sections 1-6, 9 of FINAL_HIGH_LEVEL_PLAN_ka.md | |
+| [V43_BRANCH_INVENTORY_2026-11-12](architecture/V43_BRANCH_INVENTORY_2026-11-12.md) | v4.3 rebuild P0: every branch line of the repo, what each added, the verdict (merge / keep / drop) and how the merges were resolved | |
+| [EPISODE_FIRST](EPISODE_FIRST.md) | v4.3 episode-first contract (D-131): one folder, one id, one look (EP-01, EP-02); one route per shot with its reason and the mix by duration (RT-01..RT-05) | |
+| [GEMINI_CONSISTENCY_RULES](GEMINI_CONSISTENCY_RULES.md) | v4.3 pictures from the Gemini chat (D-131): turn packs out, intake gates in, free 2x masters, the paid 2K re-make list of failing close-ups only (GC-01..GC-17) | |
+| [HYPERSTACK_README](providers/HYPERSTACK_README.md) | Hyperstack GPU VM, AI Studio token/image API, Dedicated Inference, storage, lifecycle, agent MCP and migration fit | |
+| [MODAL_README](providers/MODAL_README.md) | Modal Functions, serverless GPU, credits, volumes, secrets, agent skills and migration fit | |
+| [CLOUD_COST_MODEL_2026-11-07](providers/CLOUD_COST_MODEL_2026-11-07.md) | dated RunPod/Hyperstack/Modal GPU, AI Studio token and compute-credit arithmetic; D-116 cost assumptions | |
+| [cloud-platforms](../.claude/rules/cloud-platforms.md) | canonical Claude execution rules for RunPod, Hyperstack and Modal; approval gates and adapter contract | |
+| [providers/PROVIDER_COMPARISON.md](providers/PROVIDER_COMPARISON.md) | 18-provider GPU cloud comparison (RunPod, Hyperstack, Modal, Vast, TensorDock, Lambda, Nebius, CoreWeave, Crusoe, Fluidstack, Paperspace, Salad, CUDO, Vultr, Genesis, AWS, GCP, Azure) |
+| [providers/GPU_AVAILABILITY_RESEARCH.md](providers/GPU_AVAILABILITY_RESEARCH.md) | GPU stock APIs, shortage behavior, TOCTOU race analysis, and zero-cost polling specification |
+| [providers/CLOUD_COST_MODEL.md](providers/CLOUD_COST_MODEL.md) | Comparable total-cost model across Workloads A, B, C, D and 12-minute episode projections |
+| [providers/PROVIDER_ADAPTER_DESIGN.md](providers/PROVIDER_ADAPTER_DESIGN.md) | Provider-neutral adapter design reusing `explainer_engine/cloud/jobs.py` and enforcing `OR-22..36` |
+| [providers/PROVIDER_DECISION.md](providers/PROVIDER_DECISION.md) | Final 10-criterion provider scorecard, category rankings, and approval gates |
+| [handoff/argon_2026-11-06/argon/](handoff/argon_2026-11-06/argon/README.md) | Gemini Argon's 2026-11-06/07 audit (A), cost model (B), design (C), implementation notes (D) and paid-test proposal (E); evidence and proposals, not active rules | |
+| [SCENE_ASSETS](SCENE_ASSETS.md) | the drawn scene assets (`scene_assets/1`), cut-outs and the J5 2.5D assembly in Blender (D-116, ICW-11) | SA- |
+| [J5_DIALOGUE_COLLAGE](J5_DIALOGUE_COLLAGE.md) | the J5 dialogue test as a step-by-step record: cut-out, scale and eye-line, fire light and face shadow, Blender layer passes, depth and grain, the animated background, ambience, commands, open items (2026-11-06; not yet a standard) | |
+| [J5_ARGON_REVIEW](J5_ARGON_REVIEW.md) | review request for Argon: where the J5 dialogue, montage and animation code is, the sources with exact links, the questions and the prompt (2026-11-06) | |
+| [J5_ARGON_PROMPT](J5_ARGON_PROMPT.md) | the demanding prompt for Argon: reading receipts, minimise LTX realistically (D-116), research table, Python / Blender / FFmpeg / Qwen / LTX limits, code, v3 proof (2026-11-06) | |
+| [J5_LTX_MINIMISATION_REPORT](J5_LTX_MINIMISATION_REPORT.md) | Argon's report on minimising LTX in J5 (D-116): shot router, limits BP-182..184, the v3 one-minute plan (21.0 s of LTX to 3.04 s); its edits to the existing J5 modules were not taken, see PROGRESS 2026-11-07 | |
+| [LTX_JOBS](LTX_JOBS.md) | the LTX generations of the J2/J4 routes (`ltx_job/1`): bases, IC-LoRAs, layout conditioning, the test matrix (D-116, guide step 3) | LJ- |
+| [INITIAL_TODO_DISPOSITION_2026-11-04](architecture/INITIAL_TODO_DISPOSITION_2026-11-04.md) | initial obsolete-TODO cleanup record; full repository scan remains a Fable deliverable | |
+| [handoff/argon_2026-11-06/](handoff/argon_2026-11-06/README.md) | the Argon handoff (2026-11-06, routes of D-116): the creator's strategy (LTX minimisation, shots from the script, reuse), every open PR and plan, every generated picture set with a verdict and reason, LTX helpers and measured numbers, reuse tooling, open questions, the Argon prompt; a reading branch, not a launch branch | |
+| [archive/](archive/) | history moved out of `docs/wip/` by ICW-01 (2026-11-05, D-108): the D-95 override note, the Master Mold handoff and its execution guide; evidence only, never an active instruction | |
+| [MAIN_METHOD](MAIN_METHOD.md) | canonical 12-stage ChatGPT production manual for 12-minute (`720s`) `Z1-Z5` / `S01-S16` episodes (`production_script.schema.json` v4.0.0, D-123) | |
+| [VIDEO_GENERATION_WAN](VIDEO_GENERATION_WAN.md) | Stage 3 local Wan 2.2 Fun InP/I2V (`WAN_I2V`, `WAN_FLF2V`), selective `WAN_CONTROL`, and deterministic `DepthFlow` 2.5D motion (`STILL_25D`, `MAP_25D`; D-116 superseded by D-123); **legacy for a v4.3 episode** (D-131: Wan on Modal through `aivideo/wan_adapter`, 2.5D in `production/layers25d`) | |
+| [LOCAL_COMFYUI_SETUP](LOCAL_COMFYUI_SETUP.md) | local ComfyUI setup, `config/local_models.json` registry, `.env` variable names, custom node pins, and `local_preflight.py` checks (`EXPLAINER_LOCAL_ONLY=1`, D-123); **legacy for a v4.3 episode** (D-131: the creator's free option, not the route) | |
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
 | [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) | every decision, open questions, approval gates | D- |
 | [MARKET_RESEARCH](MARKET_RESEARCH.md) | seed-evidence register, verification log, topic comparison, vidIQ ledger | SE-, V- |
@@ -25,18 +57,22 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [SOURCED_RULES](SOURCED_RULES.md) | the sourced production rules (BP-): every number a validator enforces, its sources (article, book, video), status (binding, hypothesis, house) and the code that enforces it; generated from `explainer_engine/standards/sourced_rules.json`; D-59 | BP- |
 | [CRAFT_CURRICULUM](CRAFT_CURRICULUM.md) | the professional craft per department (screenwriting, sound, cartography, cinematography, editing and colour, animation, voice, packaging, motion graphics): skill -> checklist (`explainer_engine/standards/craft_checklists/<dept>.json`, CRAFT- ids) -> BP ids -> planned code; the 13 Blueprint conflicts (creator decision pending) and the 17 areas; P3b | |
 | [research/CRAFT_SOURCES_2026-10](research/CRAFT_SOURCES_2026-10.md) | the sources behind the craft curriculum, opened 2026-10-29, each with its type and verdict (SUPPORTED, PARTIAL, NOT FOUND) | |
+| [cinematic audio-visual craft and tool implementation report (2026-11-04)](research/cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md) | creator-supplied supplemental research on visual grammar, editing, audio, LTX, Blender, Python and FFmpeg; unverified proposals, not project rules (legacy image-generation era: Qwen keyframes and LTX clips are not the Blender path, D-105; HELPER and craft rules stay) | |
 | [LORA_TRAINING](LORA_TRAINING.md) | how the photo style, image-edit and video motion LoRAs are trained and judged: the G1-G6 protocol, dataset audit, config check, checkpoint judge, stop rules, research sources; own voice / editing feasibility; the creator's 50 video criteria (VQ-); D-72 | LT-, VQ- |
-| [SHOT_PROMPTS](SHOT_PROMPTS.md) | how the prompts of an animated shot are written (keyframe, next pose, cut, LTX video), the mistakes of 2026-10-22..24 and who made them; checked by `scripting/shot_prompt_lint.py` | KP- |
-| [SCRIPT_ENGINE](SCRIPT_ENGINE.md) | the script engine v1: topic -> claim map -> template D skeleton -> shot cards -> composed prompts (keyframe, next pose, cut, video, narrator), the rules that leave nothing to improvise, the variant planner's checks (VP-), and the variants in use while tests run | ZI-, VP- |
-| [KEYFRAME_GATE](KEYFRAME_GATE.md) | every picture of an animated shot is checked (logic, physics, video use) before the next step, redrawn at most three times, logged with its measured cause (prompt or LoRA) and turned into a prompt rule or a retraining candidate; a LoRA loads only into its own base; `qa/keyframe_gate.py`; shot layout from real sizes and the camera (technical and relative prompts, EliGen boxes, blockout), `scripting/layout.py` | KG-, LY- |
+| [SHOT_PROMPTS](SHOT_PROMPTS.md) | how the prompts of an animated shot are written (keyframe, next pose, cut, LTX video), the mistakes of 2026-10-22..24 and who made them; checked by `scripting/shot_prompt_lint.py` (legacy image-generation era: Qwen keyframes and LTX clips are not the Blender path, D-105; HELPER and craft rules stay) | KP- |
+| [SCRIPT_ENGINE](SCRIPT_ENGINE.md) | the script engine v1: topic -> claim map -> template D skeleton -> shot cards -> composed prompts (keyframe, next pose, cut, video, narrator), the rules that leave nothing to improvise, the variant planner's checks (VP-), and the variants in use while tests run (legacy image-generation era: Qwen keyframes and LTX clips are not the Blender path, D-105; HELPER and craft rules stay) | ZI-, VP- |
+| [KEYFRAME_GATE](KEYFRAME_GATE.md) | every picture of an animated shot is checked (logic, physics, video use) before the next step, redrawn at most three times, logged with its measured cause (prompt or LoRA) and turned into a prompt rule or a retraining candidate; a LoRA loads only into its own base; `qa/keyframe_gate.py`; shot layout from real sizes and the camera (technical and relative prompts, EliGen boxes, blockout), `scripting/layout.py` (legacy image-generation era: Qwen keyframes and LTX clips are not the Blender path, D-105; HELPER and craft rules stay) | KG-, LY- |
 | [ASSET_COMPOSE](ASSET_COMPOSE.md) | shots composed from reusable assets: the style LoRA draws backgrounds, heroes by angle, props and crowd units once; code places them by perspective, scatters crowds and battles, reuses same-setup frames by a crop; the asset library and the automatic style score; `explainer_engine/compose/` | AC- |
+| [SCENE_REUSE_RULES](SCENE_REUSE_RULES.md) | one place, one picture (D-120): when a place may be drawn twice, which picture is a reference for which shot, the cast registry and the three-part prompt, the dialogue close-up render | LV- RF- HI- DL- |
 | [SHOT_CONTINUITY](SHOT_CONTINUITY.md) | continuity cards of one scene: place and master frame, the axis, every person's position, facing, eyeline, costume and props, the changes with their cause, references in order; the checker and the prompt assembler (`scripting/continuity.py`), agent `shot-continuity-writer`; what we test instead of training; D-75 | CT- |
 | [CONTRACTS](CONTRACTS.md) | the versioned data contracts every stage hands on (job manifest, spines, manifests, shot spec, QA report, distribution package): who writes and reads each, hand or derived; the episode lifecycle (states, gates #1-#4, named back paths); the shot cache key; Blueprint P2 | CN- |
 | [COMPENSATOR](COMPENSATOR.md) | the visual compensator (P5): the twelve archetypes for narration over a non-character stretch, the maps (Natural Earth, letterless plates, terrain paths, the eight map laws), HUD, graphs and tableaux, all free and deterministic; the plate's certificate; D-86 | CMP- |
+| [HYPERFRAMES_OVERLAY](HYPERFRAMES_OVERLAY.md) | the HyperFrames overlay layer for map and special-moment shots (v4.3 plan 9.2, stage B5): spec, template, driver, the Toba sample and the timing check | - |
 | [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) | hook, arc, ABC shots, faces, mood (emotion, light, palette), durations, cuts, motion, transitions | UR- |
 | [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |
 | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences, the sound director's checks | SD- |
+| [SOUND_LIBRARY](SOUND_LIBRARY.md) | the professional sound library (D-134): sources and their licences, the creator's licence scope (music only), originals, QC, the catalog and its search CLI, previews | LIB- |
 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | current Python/FFmpeg assembler; historical Remotion proposal and renderer decision notes | |
 | [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | target stages, failure classes, config and job record; current entry points and unimplemented coordinator are marked at the top | |
 | [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |
@@ -44,6 +80,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [VAULT](VAULT.md) | where every trained file, dataset and branch is kept, the second copy, restore, the pod upload check; D-73 | VT- |
 | [LLM_API](LLM_API.md) | the Claude API client: routing by task class, prices, caps and ledger, response cache, batch, fallbacks, secret refusal, read-only repo tools; P0d | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
+| [RUNBOOK_mac_render](RUNBOOK_mac_render.md) | free local Blender renders on the creator's Mac: install, run, measured speeds, known limits (D-113) | |
 | [CLOUD_RUNBOOK](CLOUD_RUNBOOK.md) | how a RunPod pod ends: the three stop paths (in-pod wrapper, guard, GitHub watchdog), beat.txt, the key probe, the money dead-man, what create refuses; P1a; P1b CR-18 (dry run, pins); P1c RP-01..10 (batching, card choice, the bill) | CR-, RP- |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
 | [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |
@@ -64,3 +101,22 @@ Machine-readable sources of truth: `explainer_engine/design/palette.json` (colou
 (character parts), `explainer_engine/schemas/` (contracts, from Phase 3),
 `explainer_engine/standards/policy_baseline.json` (verified policy and law sources for episode rulebooks),
 `explainer_engine/standards/sourced_rules.json` (the sourced production rules BP-, rendered into SOURCED_RULES.md).
+
+- [YOUTUBE_MASTER_MANUAL_ARGON_VS_FLASH.md](YOUTUBE_MASTER_MANUAL_ARGON_VS_FLASH.md) — Argon vs. Flash YouTube Production Manual & Retention Rules (`YT-01..YT-04`)
+- `YOUTUBE_50_100_BENCHMARK_AND_ROOT_CAUSE_FIX.md` — 50–100 YouTube Docudrama Corpus Arithmetic Benchmark vs. `ep_fortress_sterling_12min` & Anti-Robotic Codebase Root-Cause Fixes (`D-125`).
+
+## Rules Registry (YouTube Historical Docudrama & Filmmaking Standard)
+- `rules_registry/00_RULES_REGISTRY_MASTER_INDEX.md` — Master Index of the 12 modular component rulebooks.
+- `rules_registry/01_DRAMATURGY_AND_SCRIPTWRITING.md` — 5-phase causal structure, cold open hooks, unequal act durations.
+- `rules_registry/02_DIALOGUE_STAGING_AND_SPEECH.md` — 180-degree rule, shot-reverse-shot, eyeline match, speech burstiness.
+- `rules_registry/03_CINEMATOGRAPHY_AND_CAMERA_FRAMING.md` — Shot sizes (EWS to ECU), 30-degree rule, motivated camera moves.
+- `rules_registry/04_PACING_EDITING_AND_ASL.md` — Average Shot Length (ASL) benchmarks, accordion editing, match on action.
+- `rules_registry/05_LIGHTING_AND_CHIAROSCURO_AESTHETICS.md` — Luminescent Chiaroscuro key/fill/rim lighting, color harmony.
+- `rules_registry/06_COLLAGE_AND_COMPOSING_STILLS.md` — 30% photo-collage multi-plane parallax depth, no 5s time ceiling.
+- `rules_registry/07_TACTILE_RELIEF_MAPS_AND_WAR_TABLES.md` — 10% tactical relief maps in hammered copper and liquid gold.
+- `rules_registry/08_AI_VIDEO_GENERATION_AND_WAN22.md` — 60% Wan 2.2 video, single physical action, WAN-CHAIN-MINUS-5.
+- `rules_registry/09_FOLEY_AND_SPOT_SOUND_EFFECTS.md` — Physical presence foley (footsteps, cloth, paper) and spot SFX.
+- `rules_registry/10_MUSIC_AND_AMBIENCE_HIERARCHY.md` — 5-layer sound mix hierarchy, -24dB ambience bed, sidechain ducking.
+- `rules_registry/11_VOICE_ACTING_AND_LIPSYNC_SPINE.md` — Character voice contrast, 24fps word timing spine, selective lip-sync.
+- `rules_registry/12_FINAL_ASSEMBLY_AND_PACKAGING.md` — 3-minute chunked review assembly, color grade LUT, YouTube CTR packaging.
+

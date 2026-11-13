@@ -1,14 +1,50 @@
+# v4.3 episode-first (D-131) — read first
+
+@.claude/rules/cloud-platforms.md
+
+> **Since 2026-11-12 the channel's method is the v4.3 episode-first rebuild (D-131,** [plan](docs/EPISODE_FIRST.md)**):** one
+> episode folder (`episodes/<id>/`) holds the script with its dialogue inside the scenes, the routes and the gates; pictures come
+> free from the Gemini chat's built-in image tool (turn packs gated at intake, GC-01..GC-17) plus a free local 2x upscale, and only
+> failing close-up hero shots are re-made at 2K on the paid batch tier, each batch priced and asked first; the visual mix by
+> duration is 10 % `map_action` (Python maps with an action layer), 30 % `still_25d` (picture + layered 2.5D with motion imitation, D-131)
+> and 60 % `wan` (Wan on Modal where a body moves; the speaker shot is a Wan performance clip, no lip-sync); sound from ElevenLabs
+> SFX/music, library first, one level everywhere; one runner (`python -m explainer_engine.episode run <episode> --to qa`) and
+> chunked assembly; every gate measures or says NOT_RUN. Paid steps (Gemini 2K, ElevenLabs, Modal Wan) still need the OR-23 plan,
+> the Fable full-repo audit (rule below) and the creator's word; Modal has a zero approved budget until `config/spend_caps.json` has
+> its `modal` line.
+>
+> **Retired, not deleted (Q10, D-131):** Qwen-Image-2.1 + the xworld LoRA, LTX, the Blender scene/J5 route, RunPod (legacy, D-131) stay
+> as code and keep their tests, but `config/retired_era.json` lists them and `episode/retired.refuse` stops them inside a v4.3
+> episode. History, for the episodes made before 2026-11-12 (D-116, 2026-11-06, as amended D-96): Qwen-Image-2.1 + xworld_v2 draws the look,
+> Blender builds space and time and renders the J5 shots, LTX animates the J2/J4 shots, FFmpeg assembles (legacy); that route and its
+> roadmap (ICW-00..ICW-10, [direction](docs/architecture/INK_CHRONICLE_VISUAL_PRODUCTION_DIRECTION_2026-11-04.md)) are legacy for
+> a v4.3 episode.
+>
+> **Precedence (ICW-01, 2026-11-05; D-131):** where an older text still conflicts with the newest decision, the thread follows the decision log, reports the stale text
+> in its reply and in `docs/PROGRESS.md`, and continues; it does not refuse and it does not silently delete the old text. Texts about
+> the legacy routes carry a dated legacy banner and stay readable for the episodes already made.
+>
+> Spoken words nominal 70 % narrator / 30 % voiced dialogue, REVIEW band 65-75 % (D-99, BP-105). Master 2560x1440 at 24 fps
+> (BP-167).
+
+---
+
 # CLAUDE.md — explainer-engine
 
-A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
-eras, D-25; analysis episodes of other people's fictional worlds under the RR rules, D-26) and its production
-pipeline: topic → research dossier + claim map → short scenario → **creator approval** (OR-15) → script → **creator approval** → schema-validated storyboard →
-paint plan + **creator's provider choice** → pictures and ElevenLabs narration for the **first two parts only**, stitched into
-a sample the creator watches and approves before the rest is paid (OR-19, D-67; `production/sample.py`) → the rest's pictures +
-narration + Scribe word timings → PIL/ffmpeg assembly
-(`production/assemble.py`) → Shorts → thumbnail + metadata (`qa/publish_check.py`) →
-technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
-link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
+A solo creator's explainer channel ("worlds collide": history, science and money meeting other eras, D-25; analysis episodes of
+other people's fictional worlds under the RR rules, D-26) and its production pipeline, v4.3 episode-first (D-131): topic → research
+dossier + claim map → short scenario → **creator approval** (OR-15) → script with the dialogue inside its scenes, every shot routed
+`map_action` / `still_25d` / `wan` (`episode/router`) → **creator approval** → the stages of `episode/run.py` (G1 script, G4 sound plan,
+G5 pictures from the turn packs, G6 the read and its Scribe clock, G7 clips by route through `maps/`, `production/layers25d` and
+`aivideo/wan_adapter`, G8 sound stems, G9 chunked assembly in `production/assemble.assemble_shot_clips`, G10 the measured
+acceptance report) → Shorts → thumbnail + metadata (`qa/publish_check.py`) → review bundle → **creator approval** → manual upload.
+Cloud-first (D-31). Start from `docs/INDEX.md` and `docs/EPISODE_FIRST.md`: every specification and every ID (D-, SE-, V-, P-, R-,
+Q-) has ONE canonical home — link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this).
+`docs/PLAN_2026-10-15.md` is history.
+
+**Speech and visual mixes (D-99, D-131):** spoken words 70/30 nominal with the 65-75 % REVIEW band (D-99); the visual shares are
+D-131's 10/30/60 by duration. The older 60/30/10 VIDEO_3D/STILL_3D/HELPER mapping onto Blender (D-97) is legacy; the override note
+and the Master Mold handoff are history in [`docs/archive/`](docs/archive/) (D-108).
 
 **Rule one (creator, 2026-10-26, OR-22):** never take a system decision on an assumption (base model, LoRA and checkpoint, data, settings, test design, rule wording, spend); every detail his words do not settle is put to the creator first, also in auto mode. **Before every pod (OR-23):** a detailed plan item by item (purpose, model and checkpoint, data, every setting, outputs and HF paths, GPU and price, time and money caps, stop condition, what he sees, what follows), agreed before `runpod create`; never a general summary.
 **Higher thread decides (creator, 2026-10-26, OR-24):** before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning, so the answer is not biased.
@@ -29,10 +65,14 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 
 ## Invariants (do not violate; stop and ask if a task seems to require it)
 
-1. Production is cloud-first (D-31): the cloud session + RunPod pods. Money ceilings live only in
+1. Production is cloud-first (D-31): the cloud session + Modal for the Wan shots (D-131: `aivideo/wan_adapter` with the
+   one ledger `core/ledger.Run`, the worker on the OR-37 ladder L0..L4); RunPod pods are legacy for a v4.3 episode. Money ceilings live only in
    `config/spend_caps.json` and are enforced by code (D-56): pods only via `python -m explainer_engine.cloud.runpod`
    (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
-   The creator's PC only reviews and uploads.
+   Free Blender renders (review, style sheets, J5 shots, layout passes, benchmark preflight) run on the creator's PC (RX 5700,
+   EEVEE) and on CI (D-113 as amended 2026-11-06; the Mac is out of every plan); paid work stays cloud-first; the PC also reviews
+   and uploads. Free runs, a test render on the PC and a GitHub Actions run, start without asking (D-114); anything that bills still waits
+   for the OR-23 plan, the OR-34 audit and his word.
 2. Budget caps are ceilings, not targets; the numbers live only in `config/spend_caps.json` (invariant 1; vidIQ and ElevenLabs
    credits are counted in the ledger until they have a line there). Estimate and log before every paid call
    (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
@@ -42,8 +82,9 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
    D-57 (`publish/`), run after the creator's OK; going public is the creator's click in Studio.
 5. No unsupported claims, fabricated research, invented metrics, or copied protected IP. Every factual sentence maps
    to a claim with a source; say exactly what was and was not verified.
-6. The original character/visual identity stays stable (hero references and expression sheets, D-55; never redraw from
-   scratch; a new character or environment style is one collage of variants for the creator's choice).
+6. The original character/visual identity stays stable: the approved `model` + `rig` + `material` assets with their
+   turnaround sheet carry it (D-101; the legacy still route keeps its hero references and expression sheets, D-55); never
+   rebuild a hero from scratch; a new character or set is one collage of variants for the creator's choice.
 7. Versioned schema contracts are authoritative; never bypass or weaken validation to make a render pass.
 8. No destructive command, broad deletion, credential exposure, or unrelated refactor without approval. Cleanup
    deletes only job directories via `core/jobs.clean_jobs`.
@@ -58,13 +99,13 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 **How we work (creator, 2026-10-17):** a change request goes in this order: (1) study the process and the real output (open files, measure, find the cause); (2) research when the topic needs it and write the findings into a skill; (3) ask the creator the questions that are truly his to answer; (4) update rules, skills, agents and tests; (5) only then produce. Never produce before steps 1-4. Creator notes become rules with a test (OR-09).
 **Reusable before fast (creator, 2026-10-25, OR-21):** between a quick one-off and a reusable tool in the repo, always the reusable one at the same money cost, even when slower (a cheaper one-off goes to the creator); pods start only through `cloud/runpod.py create` with their script and config committed under `explainer_engine/training/pods/`.
 
-**Long renders (RULE-R1, 2026-10-17):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
+**Long renders (RULE-R1, 2026-10-17; a local Blender render on the PC too, D-113):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
 
 **Research trust (creator, 2026-11-07):** research from Gemini and Argon is about 90 % reliable: use it, distrust only what is absolute and unverified, and say which claims you did not open yourself. Claude's own habit of distrusting it by default is wrong. D-59 still decides the registry grade (two source types = binding), but a finding is applied as guidance at once.
 **Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
-`python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style bridge,
-sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
-show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
+`python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style sheets, asset set, render pod, sample, full read,
+render validator, assembly, QA; the legacy still route keeps its style bridge, sprite and picture gates). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
+show). Entertainment first, facts second; stakes and named heroes in every frame; one Ink Chronicle world; limits computed from
 measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply to the creator in Georgian.
 **Strict storytelling (creator, 2026-10-20, D-61):** show, don't tell (no trait statements, ratings or biographies from the
 narrator, SC-12) and full immersion (no meta disclaimers or hedges on the story, SC-11); the creator approves the finished
@@ -91,15 +132,20 @@ thumbnail, sign-in by a fresh link per upload session.
 
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
-Pictures: the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini
+Pictures of a v4.3 episode (D-131): the Gemini chat's built-in image tool, free, exported as turn packs and gated at intake (`imagegen/turn_pack`, GC-01..GC-17); a paid 2K re-make only for a failing close-up hero shot, priced and asked first. Pictures (legacy still-picture route and reference art only, D-100; Blender VIDEO/STILL shots are rendered, not bought per picture): the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini
 batch tier only"); on Gemini the batch tier and the tiers draft/standard/premium pick the model (`imagegen/routing.py`, D-52); audio: ElevenLabs for narration and sound effects, music from ElevenLabs or a per-track verified free library (D-52), guarded by the `.claude/settings.json` PreToolUse hook.
-Filler pictures (type A/C, no person, used once, low-stakes beat, at most 30 %) may come from Canva once its terms are verified (D-53, PV-43).
+Filler pictures on the legacy still route (type A/C, no person, used once, low-stakes beat, at most 30 %) may come from Canva once its terms are verified (D-53, PV-43).
 Main market: US (D-52). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 
 ## Layout
 
 ```
+explainer_engine/episode/ v4.3 (D-131): run.py (the runner, G1..G10, records in production/stages/), timing.py (the read's
+                          clock), router.py (map_action / still_25d / wan), context.py, sound_plan.py (audio/stems.py renders it), acceptance.py,
+                          retired.py (refuses the retired tools of config/retired_era.json inside a v4.3 episode)
+explainer_engine/aivideo/ wan_adapter.py (Wan QA, retry, 2.5D fallback, ModalWanBackend; D-131), wan_runner.py (local ComfyUI)
+explainer_engine/training/pods/wan/  modal_wan_jobs.py + launch.json: the Wan worker on Modal (OR-37 ladder L0..L4)
 explainer_engine/core/    store.py (JobStore, atomic writes, stage registry), jobs.py (job naming, cleanup),
                           errors.py (Contract/Config/Retryable/NeedsReview), labels.py (evidence labels)
 explainer_engine/audio/   scribe_words.py / local_words.py (word timings of the read), voice_layer.py, level.py, seams.py,

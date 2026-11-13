@@ -1,3 +1,4 @@
+
 """Claude's free picture review (audit 2026-10-19 item 13): the visual judge's questions, answered by Claude in the session.
 
 The paid judge (``GeminiClient.judge``) is no longer part of the default flow. Claude opens every painted picture (and the

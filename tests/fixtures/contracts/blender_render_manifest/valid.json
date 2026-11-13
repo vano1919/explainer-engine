@@ -1,0 +1,36 @@
+{
+ "schema": "blender_render_manifest/1",
+ "job_id": "job-001",
+ "shot_id": "s1",
+ "spec": {
+  "path": "shots/s1.video.spec.json",
+  "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+ },
+ "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+ "blender": {
+  "version": "5.2.3",
+  "build_hash": null
+ },
+ "engine": "eevee",
+ "device": "gpu",
+ "gpu": "RTX 4090",
+ "profile": "eevee_full",
+ "frames_expected": 96,
+ "frames_written": 96,
+ "seconds_total": 288.0,
+ "seconds_per_frame": 3.0,
+ "output": {
+  "path": "shots/s1.mkv",
+  "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+  "codec": "ffv1",
+  "width": 2560,
+  "height": 1440,
+  "fps": 24
+ },
+ "log": {
+  "path": "logs/s1.blender.log",
+  "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+ },
+ "started_at": "2026-11-05T10:00:00Z",
+ "finished_at": "2026-11-05T10:04:48Z"
+}

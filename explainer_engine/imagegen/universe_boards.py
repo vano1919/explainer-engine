@@ -1,3 +1,4 @@
+
 """Candidate animated universes (four, plus the creator's own reference as a fifth), one concept board each (the creator's brief of 2026-10-22, "Define the Original
 Animation Universe Before Production", deliverables 2, 3 and 6): the same four environments (A a modern city street, B a Mars
 outpost, C a prehistoric river camp, D a drowned alternate-future city) and the same three-character line-up are painted in

@@ -1,3 +1,4 @@
+
 """World resolver (D-41, UR-23): which worlds a topic shows, who owns the light, what may and may not appear. stdlib only.
 
 ``resolve(spec)`` turns a short topic spec into ``world.json``: a host world (owns landscape, light, grade, extras), visitors

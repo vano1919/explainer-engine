@@ -1,3 +1,4 @@
+
 """AC-05..AC-09: one shot composed from library assets. The layout (scripting/layout.py, LY-01..LY-08) says where every
 figure stands and how tall it is; this module scales each cut-out to its box, stands it on the ground, draws its contact
 shadow, hazes it by distance and paints far to near. No model and no money: Pillow + numpy on the CPU. A light repaint with

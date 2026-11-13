@@ -1,3 +1,4 @@
+
 """J3/J6 citation check (OR-24, invariant 5): a rule may cite only a URL that the same response's web_search_tool_result blocks returned.
 
     python -m explainer_engine.llm.cite_check ANSWER.md ANSWER.sources.json   # prints the unlisted URLs, exit 1 when there are any

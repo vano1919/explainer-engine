@@ -1,0 +1,19 @@
+{
+  "done": [
+    "L0"
+  ],
+  "red": null,
+  "measured": {},
+  "rungs": {
+    "L0": {
+      "tests": [
+        "tests/unit/test_v43_ltx_jobs.py",
+        "tests/unit/test_cloud_hooks_modal.py"
+      ],
+      "pytest": "54 passed in 4.69s",
+      "commit": "7f219e678797bc79d4b690f5b73985e881e10636",
+      "ok": true,
+      "at": "2026-11-12T20:06:30Z"
+    }
+  }
+}

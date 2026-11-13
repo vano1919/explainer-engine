@@ -1,3 +1,4 @@
+
 """RETIRED by D-80 (2026-10-26): it loads a banned wldnk LoRA; kept as history, never run.
 Keyframes for the night test video: FLUX.2 klein base 4B + the wldnk photo LoRA (diffusers Flux2KleinPipeline).
 Character sheets and plates first (text to image), then each shot's FIRST frame (references: the sheets of the

@@ -1,3 +1,4 @@
+
 """Where is this episode on the production gates? (docs/PRODUCTION_RULES.md section 2)
 
     python -m explainer_engine.production_gate examples/stone_age/day1_v4
@@ -268,6 +269,12 @@ def animated_gates(day: Path) -> list[dict]:
 
 
 def gates(day: Path, look_path: Path | None = None, run_path: Path | None = None) -> list[dict]:
+    if (day / '01_script' / 'production_script.json').exists():
+        return v4_stage_gates(day)
+    if (day / 'production_script.json').exists():
+        doc = _json(day / 'production_script.json') or {}
+        if doc.get('schema_version') == '4.0.0':
+            return v4_stage_gates(day)
     if (day / "job_manifest.json").exists():
         return animated_gates(day)
     if (day / "production_script.json").exists():
@@ -354,6 +361,100 @@ def _legacy_gates(day: Path, look_path: Path | None = None) -> list[dict]:
     for n, name, hint in ((7, "animatic and render", "after gates 2, 3, 5, 6 and the compositor (D-32)"),
                           (8, "QA", "technical and editorial QA"), (9, "approval #2", "the creator's recorded approval")):
         add(n, name, "WAIT", hint)
+    return out
+
+
+
+
+def v4_stage_gates(job_dir: Path) -> list[dict]:
+    """Evaluate 4-stage Hybrid B -> C production gates (D-123) on a jobs/<episode_id>/ directory."""
+    import jsonschema
+    from explainer_engine.production import local_preflight
+    from explainer_engine.scripting import scene_lint, shot_prompt_lint
+
+    root = Path(__file__).resolve().parents[1]
+    out: list[dict] = []
+
+    def add(gate_id: str, name: str, status: str, detail: str, nxt: str = "") -> None:
+        out.append({"gate": gate_id, "name": name, "status": status, "detail": detail, "next": nxt})
+
+    # Stage 1: Script & Schema v4.0
+    script_path = job_dir / "01_script" / "production_script.json"
+    if not script_path.exists():
+        script_path = job_dir / "production_script.json"
+    if not script_path.exists():
+        add("stage1", "01_script (v4.0 SSOT)", "WAIT", "no 01_script/production_script.json", "run --stage 1")
+        return out
+
+    doc = _json(script_path) or {}
+    ps_schema = _json(root / "explainer_engine" / "schemas" / "production_script.schema.json")
+    try:
+        jsonschema.validate(doc, ps_schema)
+    except jsonschema.ValidationError as exc:
+        add("stage1", "01_script (v4.0 SSOT)", "BLOCKED", f"schema error: {exc.message}", "fix production_script.json")
+        return out
+
+    findings = shot_prompt_lint.check_v4_script(doc) + scene_lint.check(doc)
+    fails = [f for f in findings if f["severity"] == "FAIL"]
+    add(
+        "stage1",
+        "01_script (v4.0 SSOT)",
+        "BLOCKED" if fails else "PASS",
+        f"{len(doc.get('shots', []))} shots, {len(fails)} FAIL",
+        "fix prompt/story FAILs" if fails else "",
+    )
+
+    # Stage 2: 2D Anchored Keyframes
+    kf_path = job_dir / "02_keyframes" / "keyframe_manifest.json"
+    if not kf_path.exists():
+        add("stage2", "02_keyframes (Qwen 2D)", "WAIT", "no 02_keyframes/keyframe_manifest.json", "run --stage 2")
+        return out
+    kf_problems = local_preflight.check_keyframe_manifest(kf_path)
+    add(
+        "stage2",
+        "02_keyframes (Qwen 2D)",
+        "BLOCKED" if kf_problems else "PASS",
+        "; ".join(kf_problems) if kf_problems else f"all {len(doc.get('shots', []))} keyframes approved",
+        "repair or approve keyframes in 2D before Stage 3" if kf_problems else "",
+    )
+
+    # Stage 3: Wan 2.2 Video & DepthFlow layered collage
+    wan_manifest_path = job_dir / "03_video" / "wan_jobs_manifest.json"
+    telemetry_path = job_dir / "03_video" / "render_telemetry.jsonl"
+    if not wan_manifest_path.exists() or not telemetry_path.exists():
+        add("stage3", "03_video (Wan 2.2 / layered collage)", "WAIT", "no wan_jobs_manifest.json or render_telemetry.jsonl", "run --stage 3")
+        return out
+    wan_manifest = _json(wan_manifest_path) or {}
+    wan_schema = _json(root / "explainer_engine" / "schemas" / "wan_job.schema.json")
+    job_errors = []
+    for j in wan_manifest.get("jobs", []):
+        try:
+            jsonschema.validate(j, wan_schema)
+        except jsonschema.ValidationError as exc:
+            job_errors.append(f"{j.get('shot_id')}: {exc.message}")
+    add(
+        "stage3",
+        "03_video (Wan 2.2 / layered collage)",
+        "BLOCKED" if job_errors else "PASS",
+        "; ".join(job_errors) if job_errors else f"{len(wan_manifest.get('jobs', []))} clips rendered with telemetry",
+        "fix wan_job errors" if job_errors else "",
+    )
+
+    # Stage 4: Audio Spine & 24fps Assembly
+    qa_path = job_dir / "04_assembly" / "qa_report.json"
+    master_mp4 = job_dir / "04_assembly" / "timeline" / "episode_master_24fps.mp4"
+    if not qa_path.exists() or not master_mp4.exists():
+        add("stage4", "04_assembly (24fps NLE)", "WAIT", "no qa_report.json or episode_master_24fps.mp4", "run --stage 4")
+    else:
+        qa_doc = _json(qa_path) or {}
+        ok = qa_doc.get("technical_gate", {}).get("duration_aligned", False) and int(qa_doc.get("fps", 0)) == 24
+        add(
+            "stage4",
+            "04_assembly (24fps NLE)",
+            "PASS" if ok else "BLOCKED",
+            f"fps={qa_doc.get('fps')}, duration_aligned={ok}, status={qa_doc.get('status')}",
+            "" if ok else "re-run Stage 4 assembly",
+        )
     return out
 
 

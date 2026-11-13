@@ -1,3 +1,4 @@
+
 """Claims resolve to sources (invariant 5; PV-37, audit 2026-10-19 M1). stdlib only.
 
 The episode's ``claim_map.md`` (next to the production script) is the one place a claim lives: a table row

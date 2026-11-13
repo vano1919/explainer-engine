@@ -5,6 +5,8 @@ description: Write the visual beats of a Crossworld Theories script - something 
 
 # Visual beats and their cues
 
+**Ink Chronicle lanes (D-97, 2026-11-05):** beats land on VIDEO_3D, STILL_3D or HELPER shots; text and labels are never rendered inside Blender, they stay HELPER or overlay graphics (roadmap section 13).
+
 Rules: `docs/STORY_ENGINE.md`, section "Visual beats" (VB-00..VB-11, PV-44). Field: `lines[].visual_beats` in the
 production script (`docs/PRODUCTION_SCRIPT.md`). Render: `production/beats.py` (free, deterministic); cues:
 `audio/cues.py`. Agent: `.claude/agents/beat-writer.md` (stage 2b, right after the scene-writer, same segment).

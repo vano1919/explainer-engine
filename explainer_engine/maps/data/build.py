@@ -1,3 +1,4 @@
+
 """Build ``ne50m.json.gz``, the one vector source of every map (Natural Earth 1:50m, public domain, naturalearthdata.com).
 
 The extract keeps four layers (land, lakes, rivers, land borders) and no names: a plate has no letters (CMP-01). Coordinates

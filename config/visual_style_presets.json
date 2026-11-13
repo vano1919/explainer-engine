@@ -1,0 +1,114 @@
+{
+  "schema": "visual_style_presets/1",
+  "default_style_profile": "crossworld_main_style_v1",
+  "presets": {
+    "bande_dessinee_3d_cinematic_adventure": {
+      "id": "bande_dessinee_3d_cinematic_adventure",
+      "name": "Cinematic Historical Realism & 3D European Bande Dessinée Adventure Hybrid",
+      "character_anatomy": {
+        "proportions": "anatomically_logical_human_proportions",
+        "forbidden_caricatures": [
+          "giant_comic_noses",
+          "oversized_cartoon_heads",
+          "comic_bellies",
+          "2d_black_ink_outlines"
+        ],
+        "facial_features": "refined_franco_belgian_bande_dessinee_profiles_expressive_eyes_vivid_acting",
+        "archetypal_contrast": "agile_perceptive_young_protagonist_and_strong_protective_elder_companion"
+      },
+      "environment_and_materiality": {
+        "realism_level": "high_tactile_material_realism",
+        "required_textures": [
+          "weathered_leather",
+          "wet_stone_and_cobble",
+          "rough_wool_and_hide",
+          "moss_and_bark",
+          "volumetric_smoke_steam_mist"
+        ]
+      },
+      "lighting_and_cinematography": {
+        "lighting_model": "soft_diffused_natural_volumetric_light_with_shallow_dof",
+        "color_palette": [
+          "warm_gold_amber",
+          "moss_green",
+          "slate_grey",
+          "terracotta_ochre"
+        ],
+        "forbidden_palettes": [
+          "garish_neon_cartoon_colors",
+          "flat_unlit_surfaces"
+        ]
+      },
+      "tonal_balance": {
+        "mood": "warm_human_camaraderie_and_resilience_inside_high_stakes_historical_drama"
+      },
+      "master_prompt_prefix": "High-budget 3D animated European adventure film aesthetic (refined Franco-Belgian Bande Dessinée character stylization combined with cinematic historical realism, logical human proportions, no cartoon giant noses, expressive eyes, vivid facial acting, smooth 3D sculpted shading without 2D ink outlines, hyper-tactile materials of weathered leather, wet stone, rough hide, and moss, soft diffused volumetric natural light with shallow depth of field, controlled earthy palette of warm gold, moss green, slate grey, and terracotta, warm human camaraderie inside historical drama).",
+      "retired": "replaced on 2026-11-12 by crossworld_main_style_v1 (the creator, 14:03 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWNY8aTebJUp6PNsqn5TzSqM); kept for the episodes made before"
+    },
+    "crossworld_main_style_v1": {
+      "id": "crossworld_main_style_v1",
+      "name": "CrossWorld main style: painterly cinematic storybook, golden hour and firelight",
+      "decided": "ვანო 2026-11-12 13:31 UTC ('აი ეს მინდა!') and 14:03 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWNY8aTebJUp6PNsqn5TzSqM): the system's main style and the reference of every style round",
+      "written_by": "the plan thread (main_style_preset.json in the project files, 2026-11-12 14:04 UTC); the style sentence is split at 'People are' into style_sentence and face_sentence, same words",
+      "style_sentence": "Painterly cinematic storybook illustration with rich detail: a warm golden-hour world, low sun or firelight as a glowing rim light on hair and skin, soft luminous haze, a sky of warm gold, peach and rose melting into soft violet, deep warm shadows, glowing points of light (fire, lantern, embers) against cooler green and stone, tactile handmade materials (shaggy fur, rough woven cloth, stitched leather, clay pots, rough stone), a cosy, romantic, adventurous mood.",
+      "face_sentence": "People are attractive, believable adult humans with real skin texture and warm, gentle, expressive faces, slightly idealised and softly stylised like a high-end animated feature painting, never a plastic 3D-render face, never a cartoon nose or oversized eyes.",
+      "style_references": [
+        {
+          "file": "assets/style/main_style_5709.png",
+          "sha256": "db719b00bdfacc0446986598da3b33ee005eeb67bda9260c35ff973bceb8739e",
+          "size": [
+            1402,
+            1122
+          ],
+          "hf": "vano1919/tmr-artifacts explainer-engine/style/main_style_5709.png",
+          "role": "image 1 of every picture: the visual style only (GC-01)",
+          "note": "the original bytes of the creator's upload (sha256 db719b00...); the project-files and main_style/ copies re-encode to other bytes with the same pixels, so the repo copy is the pinned one"
+        }
+      ],
+      "style_reference_clause": "Use image 1 only as the visual style; do not copy its people, their pose or its place.",
+      "always": [
+        "golden hour or firelight",
+        "warm rim light",
+        "soft haze and depth",
+        "one glowing warm light source in frame",
+        "tactile handmade textures",
+        "people interact with each other or the place"
+      ],
+      "never_words": [
+        "photograph",
+        "photo",
+        "natural",
+        "naturalistic",
+        "candid",
+        "realistic",
+        "3D render"
+      ],
+      "negative": "text, letters, logos, watermark, plastic 3D-render skin, cartoon proportions, oversized eyes, modern objects of another era, harsh flat daylight, documentary look",
+      "identity_rule": "The reference's two people, their faces, pose and clothes are NEVER reused; each picture states: 'Use image 1 only as the visual style; do not copy its people, their pose or its place.' Our heroes' faces come from their own anchor portraits.",
+      "era_rule": "Every object must fit the episode's era (v17 put an oil lantern in Ancient Egypt): name the era's light source (hearth, oil lamp, torch) instead of 'lantern'.",
+      "provider": {
+        "tool": "Gemini chat built-in image tool",
+        "model": "Flash",
+        "never": [
+          "Argon",
+          "Carbon",
+          "Pro",
+          "Qwen (cancelled 2026-11-12 14:01 UTC)",
+          "paid API"
+        ],
+        "attach": "main_style_5709.png always as image 1; plus the shot's own hero/place anchors",
+        "per_turn": "several separate images: 'Generate the following N pictures as N separate images'"
+      },
+      "pictures_per_day": 25,
+      "supporting_refs": [
+        "explainer-engine/reference_round_1/qwen_v17/qwen/E2_rome.png",
+        "explainer-engine/reference_round_1/qwen_v17/qwen/E3_medieval.png"
+      ],
+      "known_issues": [
+        "the reference couple leaked into all 5 era pictures",
+        "Viking picture copied the reference pose and fur clothes",
+        "oil lantern in Ancient Egypt"
+      ]
+    }
+  }
+}

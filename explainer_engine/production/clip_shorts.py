@@ -1,3 +1,4 @@
+
 """Shorts cut from the finished long video (the creator, 2026-10-21): no new read of the story, only one shared outro line.
 
 Each Short = the long video's own opening (the question card and its first lines, ``intro_end``) + one moment of the video

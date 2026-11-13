@@ -1,3 +1,4 @@
+
 """Image providers behind one interface (D-70 stage D): ``get(name)`` returns an adapter with ``estimate``, ``generate``
 and ``edit``; prices, reference limits and model versions are data on the adapter. New providers are added here, never by
 teaching ``paint.py`` another API."""

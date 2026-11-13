@@ -1,3 +1,4 @@
+
 """Build the procedural part of the sound library (free, deterministic): ``python -m explainer_engine.audio.build_library <root>``."""
 
 from __future__ import annotations

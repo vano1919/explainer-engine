@@ -1,4 +1,4 @@
-"""PV-45 / OR-15: the creator approves a short scenario before the script is written."""
+"""(v4.3 P0.4, 2026-11-12: the legacy contract /1../4 lives under $defs.LegacyProductionScriptV1ToV4 since the schema dispatches on schema_version.) PV-45 / OR-15: the creator approves a short scenario before the script is written."""
 
 import json
 from pathlib import Path
@@ -33,4 +33,4 @@ def test_an_approved_scenario_passes_and_an_edit_after_the_approval_fails(tmp_pa
 
 def test_the_schema_knows_the_scenario_record():
     s = json.loads((ROOT / "explainer_engine/schemas/production_script.schema.json").read_text(encoding="utf-8"))
-    assert set(s["properties"]["episode"]["properties"]["scenario"]["properties"]) == {"file", "approved_by", "approved_at", "sha256"}
+    assert set(s["$defs"]["LegacyProductionScriptV1ToV4"]["properties"]["episode"]["properties"]["scenario"]["properties"]) == {"file", "approved_by", "approved_at", "sha256"}

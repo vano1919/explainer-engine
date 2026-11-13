@@ -1,3 +1,4 @@
+
 """The review bundle's manifest (REVIEW_APPROVED, approval #2, invariant 4; N-03 option A, ვანო 2026-10-30).
 
 The creator approves the bundle he watched; ``bundle_manifest.json`` inside it lists every file with its sha256, and the

@@ -1,3 +1,4 @@
+
 """Narration lint: the mechanical part of the `narration-script` skill (.claude/skills/narration-script/SKILL.md).
 
     python -m explainer_engine.scripting.narration_lint examples/stone_age/day1_v3/narration_tts.txt

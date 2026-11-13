@@ -1,0 +1,13 @@
+{"schema": "scene_join/1", "scene": "battle_troy", "place": "trojan_plain", "room": "outdoor", "era": "bronze_age",
+ "about": "The LTX battle test of 2026-11-12 (HF explainer-engine/ltx_route/out/30e63a9ffec2_80994f1122df), joined again from the same four clips. Sources by what the picture shows: c1 a column marching at the camera on a dusty plain, horses behind; c2 the general and the commander, the army and horses behind; c3 the commander points at the ridge, small fires, chariots, then the column surges; c4 a wide charge towards the city, chariots and horses in dust.",
+ "bed": ["wind", "army_march", "horse_hooves"],
+ "clips": [
+  {"id": "c1", "file": "battle/battle_c1/battle_c1_seed5401.mp4", "lead_s": 1.2, "line": "general"},
+  {"id": "c2", "file": "battle/battle_c1/battle_c2_seed5402.mp4", "line": "commander"},
+  {"id": "c3", "file": "battle/battle_c1/battle_c3_seed5403.mp4", "line": "commander", "line_window": [0.0, 3.7]},
+  {"id": "c4", "file": "battle/battle_c1/battle_c4_seed5404.mp4", "speech": false, "keep": [0.0, 6.0]}
+ ],
+ "spots": [{"clip": "c4", "at_s": 0.0, "class": "crowd_shout", "what": "the charge"}],
+ "intended_pauses": [{"clip": "c3", "why": "he sees the ridge, then gives the order"}],
+ "missing": [{"class": "war_horn", "clip": "c3", "what": "a Bronze Age war horn under ATTACK! (no free CC0 take found; ElevenLabs needs list)"}]
+}

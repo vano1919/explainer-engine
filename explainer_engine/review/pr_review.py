@@ -1,3 +1,4 @@
+
 """J1, the PR cross-review (docs/LLM_API.md): an independent reviewer on the Claude API, so reviews do not burn session limits.
 
 ``prepare`` builds a job for ``explainer_engine.llm.claude_api``: the diff against the merge base, the phase card, the invariants of

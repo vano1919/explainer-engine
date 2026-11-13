@@ -38,3 +38,31 @@ def test_the_cli_reads_the_composers_dict(tmp_path):
     assert sp.main([str(f)]) == 1
     f.write_text(json.dumps({"sheets": [], "shots": [{"id": "S1.first", "kind": "keyframe", "prompt": ERAS}]}))
     assert sp.main([str(f)]) == 0
+
+
+def test_the_creators_word_band_40_to_150_and_the_crowd_review_above_90():
+    """The creator, 2026-11-06 12:27 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWQ83nahs7XqJbJiNjko9vuk): 40 to 150 words, as the scene
+    needs. Over 150 FAILs; a crowd or mass scene (V1, S3) over 90 words is a REVIEW (clone soldiers, asset pod 2026-11-06)."""
+    import json
+    from pathlib import Path
+    SP = sp
+    reg = json.loads((Path(SP.__file__).resolve().parents[1] / "visual" / "archetypes_ic.json").read_text(encoding="utf-8"))
+    assert set(SP.CROWD_SUB_CATEGORIES) <= {s["id"] for s in reg["sub_categories"]}
+    assert (SP.MAX_WORDS, SP.CROWD_REVIEW_WORDS, SP.MOMENT_WORDS) == (150, 90, 40)
+
+    def prompt(n):
+        return f"{SP.TRIGGER}, " + " ".join(["soldier"] * (n - len(SP.TRIGGER.split())))
+    assert not SP.check(prompt(120))
+    assert not SP.check(prompt(120), sub_category="V2")
+    crowd = SP.check(prompt(120), sub_category="V1")
+    assert [f["severity"] for f in crowd] == ["REVIEW"] and "clone" in crowd[0]["detail"]
+    assert not SP.check(prompt(90), sub_category="S3")
+    assert [f["severity"] for f in SP.check(prompt(151))] == ["FAIL"]
+    assert "150 words" in dict(SP.ABSOLUTES)["A4"]
+
+
+def test_style_clash_rejects_oil_painting_and_other_media():
+    """Regression test (D-130 Item 7): ensure STYLE_CLASH in style_prompt.py catches 'oil painting' on Ink Chronicle prompts."""
+    assert "oil painting" in sp.STYLE_CLASH.pattern
+    res = sp.check(f"{T}, an oil painting of a soldier standing by a tent")
+    assert any(f["rule"] == "LT-66" and f["severity"] == "FAIL" and "oil painting" in f["detail"].lower() for f in res)

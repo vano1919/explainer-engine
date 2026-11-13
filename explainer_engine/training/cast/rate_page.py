@@ -1,3 +1,4 @@
+
 """The rating page for the new-world pictures (ვანო 2026-10-26 12:50 Tbilisi): every picture with four grades (ideal, good,
 similar but with problems, bad), the reasons (palette wrong, outline of the people or the world, scene logic) and a free
 field for his own reason; Claude's check (cast.check) and Claude's look are shown beside each picture.

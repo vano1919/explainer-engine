@@ -30,3 +30,10 @@ def test_or35_api_instead_of_threads_where_quality_holds():
 def test_the_rows_follow_or33_in_order():
     ids = [l.split("|")[1].strip() for l in ORCH.splitlines() if l.startswith("| OR-3")]
     assert ids[-3:] == ["OR-33", "OR-34", "OR-35"] or ids.index("OR-34") == ids.index("OR-33") + 1
+
+
+def test_or37_environment_is_proven_free_before_the_paid_gpu():
+    r = row("OR-37")
+    assert r.startswith("| OR-37 | **A paid run's environment is proven before the paid GPU starts**")
+    for item in ("FREE", "cheapest CPU", "every module the run imports", "never first tried on a GPU", "fails fast", "cost_timeout", "app ID", "non-empty `str`", "smoke"):
+        assert item in r, item

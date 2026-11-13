@@ -29,6 +29,7 @@ def test_batch_get_is_retried_when_the_answer_is_cut_off_but_a_post_is_not(tmp_p
 
     monkeypatch.setattr(urllib.request, "urlopen", flaky)
     monkeypatch.setattr(G.time, "sleep", lambda s: None)
+    monkeypatch.setenv(G.API_SWITCH, "on")          # v4.3: the paid route is off by default (GC-14)
     c = G.GeminiClient(tmp_path, key="k", cap_usd=1.0)
     assert c._batch_http("GET", "https://x/y") == {"ok": True} and calls["n"] == 3
     calls["n"] = 0

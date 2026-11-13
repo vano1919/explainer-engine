@@ -1,0 +1,15 @@
+{
+ "old_ltx": 18,
+ "old_q": 25,
+ "old_ltx_s": 82.5,
+ "new_ltx": 9,
+ "new_q": 25,
+ "new_ltx_s": 43.2,
+ "route_seconds": {
+  "J5": 56.5,
+  "H": 7,
+  "J4": 20,
+  "J2": 21
+ },
+ "total": 104.5
+}

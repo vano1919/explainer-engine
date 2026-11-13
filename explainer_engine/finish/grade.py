@@ -1,3 +1,4 @@
+
 """The finishing grade (D-41, UR-26): one era grade, grain and black level over every picture. numpy only.
 
 ``grade(img, params, seed)`` takes float RGB ``[0,1]`` of shape (H, W, 3). ``params`` come from ``world/eras.json`` "grades".

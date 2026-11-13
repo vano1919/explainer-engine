@@ -1,3 +1,4 @@
+
 """The creator's recorded word (``jobs/creator_ok.jsonl``): the second lock behind a model switch, an effort override, an
 edit of a protected config file, a change of the channel voice (``channel_voice``, target = the voice id, P4b / VC-08) and the
 admission of a free generator for a kind (``generator_admit``, target = ``<generator>:<kind>``, BP-162). Claude writes a line only from the creator's own message and quotes it; the hooks cannot

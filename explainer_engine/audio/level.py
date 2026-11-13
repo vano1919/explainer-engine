@@ -1,3 +1,4 @@
+
 """Voice leveler (creator 2026-10-16: the ElevenLabs read sounded "unstable"): per-sentence loudness on the Day 1 read swung
 from -35.5 to -22.6 dB (std 2.5 dB). A slow gain rider pulls every spoken stretch toward the same level, within a limit, so
 emphasis stays but a whispered "Wise." is not 13 dB under a shouted "Two!". numpy only, O(n).
