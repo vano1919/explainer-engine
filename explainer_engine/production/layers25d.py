@@ -148,8 +148,8 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
     from explainer_engine.episode import events as E
     sid = str(shot.get("shot_id") or "shot")
     frames = max(1, int(round(float(shot.get("target_duration_seconds", 4.0)) * fps)))
-    evs = [e for e in E.visual_events(shot, script or {}, spine, fps) if e["source"] == "motion_imitation"] \
-        if shot.get("motion_imitation") else []
+    all_evs = E.visual_events(shot, script or {}, spine, fps) if E.has_events(shot) else []
+    evs = [e for e in all_evs if e["source"] == "motion_imitation"]
     profile_name = shot.get("motion_profile")
     if profile_name is not None and profile_name not in PROFILES:
         raise ContractError(f"{sid}: motion_profile {profile_name!r} is not one of {', '.join(PROFILES)}")
@@ -163,7 +163,8 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
         if not 0.0 < s <= 1.5:
             raise ContractError(f"{sid}: {name} strength {s} is outside (0, 1.5]")
         ev = evs[j] if j < len(evs) else None
-        at = (ev["start_frame"] if ev else None) if (e.get("at_frame") is not None or e.get("at_word")) else None
+        at = (ev["start_frame"] if ev else None) if (e.get("at_frame") is not None or e.get("at_word")
+                                                     or e.get("at_frac") is not None) else None
         if at is not None and not 0 <= int(at) < frames:
             raise ContractError(f"{sid}: {name} at frame {at} is outside the shot's {frames} frames")
         if name in PATH_MOVES:
@@ -184,7 +185,8 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
                             "to": int(ev["end_frame"]) if ev else frames, "easing": easing,
                             "hold": int(e.get("hold_frames", 0)), "event_id": ev["event_id"] if ev else None,
                             "timed": e.get("from_frame") is not None or e.get("at_word") is not None
-                            or e.get("at_frame") is not None})
+                            or e.get("at_frame") is not None or e.get("from_frac") is not None
+                            or e.get("at_frac") is not None})
         elif name == "handheld":
             handheld = min(s, prof["handheld_max"]) if prof else s
         elif name == "rack_focus":
@@ -206,9 +208,9 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
                 impacts.append({"frame": int(at), "effects": ["lightning"], "strength": s, "kind": "script"})
                 fx["timed"] = True
             effects.append(fx)
-    if events is None:   # the script's sound events that the picture answers (plan P5.6)
-        events = [{"frame": int(round(float(e["at_s"]) * fps)), "kind": e["picture_event"]}
-                  for e in shot.get("sound_events") or [] if e.get("picture_event") and e.get("at_s") is not None]
+    if events is None:   # the script's sound events that the picture answers (plan P5.6), from the one resolver (FA-10)
+        events = [{"frame": int(e["start_frame"]), "kind": e["picture_event"]} for e in all_evs
+                  if e["source"] == "sound_events"]
     for ev in events:
         kind = ev.get("kind")
         if kind in EVENT_EFFECTS and 0 <= int(ev["frame"]) < frames:

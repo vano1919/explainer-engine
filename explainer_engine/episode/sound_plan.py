@@ -164,6 +164,9 @@ MOODS = [("aggressive", r"battle|attack|charge|assault|slaughter|war\b|fight|cla
          ("reflective", r"reflect|memory|remember|quiet|today|legacy|lesson|hushed"),
          ("peaceful", r"peaceful|calm|village life|harvest|gentle|morning|idyll|market day")]
 _MOODS = [(m, re.compile(w, re.I)) for m, w in MOODS]
+# every mood a segment may author (the schema's ``segments[].mood`` enum is this list; FA-05): the word moods, the two
+# the music decision knows by name, and neutral
+MOOD_NAMES = tuple(m for m, _ in MOODS) + ("joyful", "neutral")
 MUSIC_MOODS = {"aggressive", "tragic", "tense", "dark", "mysterious", "heroic", "epic", "reflective", "neutral"}
 # shot size -> how far the shot's events sound (engineering default: the camera's distance to the action)
 SHOT_DISTANCE = {"extreme_wide": "distant", "wide": "distant", "establishing": "distant", "full": "medium", "medium_wide": "medium",
@@ -282,7 +285,11 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
                                 f"once (so the library is filled once) or name it")
         if cls not in EVENT_CLASSES:
             raise ContractError(f"{sid}: sound event class {cls!r} is not in EVENT_CLASSES")
-        at = float(item.get("at_s", 0.0))
+        if item.get("at_word") is not None:   # FA-06: a word anchor follows the read (the resolver's word spine)
+            f_, _how = E.sound_event_frame(shot, script, item, spine, fps)
+            at = f_ / fps
+        else:
+            at = float(item.get("at_s", 0.0))
         if at > dur + 1e-6:
             raise ContractError(f"{sid}: sound event {cls} at {at} s is after the shot's end ({dur} s)")
         extra = {k_: item[k_] for k_ in ("library_id", "source", "what", "distance", "dur_s", "purpose") if k_ in item}
@@ -293,13 +300,15 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
                      "ambience" else "ambience_only", sync="span" if item.get("dur_s") else "onset", audio_basis="authored")
         events.append(_event(cls, at, "authored", fps, **extra))
         seen.add(cls)
-    vis = E.visual_events(shot, script, spine, fps) if (shot.get("actions") or shot.get("motion_imitation")) else []
+    vis = E.visual_events(shot, script, spine, fps) if E.has_events(shot) else []
     decisions = []
     for ev in vis:
-        placed = _visual(ev, fps)
+        # a picture sound event (FA-10) is placed once, by the authored loop above; here it is only recorded
+        placed = _visual(ev, fps) if ev["source"] != "sound_events" else None
         decisions.append({"event_id": ev["event_id"], "op": ev["op"], "decision": ev["audio"]["decision"],
                           "class": ev["audio"].get("class"), "why": ev["audio"].get("why"), "audio_basis": ev["audio_basis"],
-                          "frames": [ev["start_frame"], ev["end_frame"]], "placed": placed is not None})
+                          "frames": [ev["start_frame"], ev["end_frame"]],
+                          "placed": placed is not None or ev["source"] == "sound_events"})
         if placed is not None:
             events.append(placed)
         elif ev["audio"]["decision"] == "ambience_only" and ev["source"] == "motion_imitation" \

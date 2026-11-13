@@ -1204,6 +1204,24 @@
                 "type": "integer",
                 "minimum": 0,
                 "description": "W2: frames the camera rests after the segment"
+              },
+              "at_frac": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "FA-06: the effect's moment as a share of the shot (0..1); follows a retimed shot"
+              },
+              "from_frac": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "FA-06: a camera segment's start as a share of the shot (0..1)"
+              },
+              "to_frac": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "FA-06: a camera segment's end as a share of the shot (0..1)"
               }
             }
           }
@@ -1373,7 +1391,7 @@
         },
         "sound_events": {
           "type": "array",
-          "description": "filled by the sound plan (G4, plan P7): ambience, foley and spot effects of the shot, library first",
+          "description": "the shot's authored sounds that the picture does not draw (D-135 guide v2 section 3b): ambience, foley and spot effects, library first; anchored on a word (at_word, follows the read) or at_s",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -1446,7 +1464,58 @@
                   "sync"
                 ],
                 "description": "BP-55: why the sound is there (a picture_event is sync)"
+              },
+              "class": {
+                "type": "string",
+                "minLength": 2,
+                "description": "the class id of episode/sound_plan.EVENT_CLASSES (sound_plan.shot_events reads it before what; FA-05)"
+              },
+              "at_word": {
+                "description": "FA-06 / P1: the sound lands on a spoken word and follows the read when the shot is retimed: a phrase of the shot's line (as actions[].at_word) or {line_id, word (index in that line from 0, or its text), offset_s}; exactly one of at_s / at_word",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "line_id",
+                      "word"
+                    ],
+                    "properties": {
+                      "line_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "word": {
+                        "oneOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        ]
+                      },
+                      "offset_s": {
+                        "type": "number",
+                        "minimum": -2,
+                        "maximum": 5
+                      }
+                    }
+                  }
+                ]
               }
+            },
+            "not": {
+              "required": [
+                "at_s",
+                "at_word"
+              ]
             }
           }
         },
@@ -1771,6 +1840,23 @@
                 }
               },
               "description": "this shot reuses another shot's clip or picture with a new framing"
+            }
+          }
+        },
+        "intentional_silence": {
+          "type": "string",
+          "minLength": 3,
+          "description": "SP-04 (sound_plan.design_of): this shot is silent on purpose; a sentence with the reason, never true. Only the room tone plays."
+        },
+        "sound_design": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "SP-04: the shot's authored sound design (sound_plan.design_of reads it); today only the silence sentence",
+          "properties": {
+            "silence": {
+              "type": "string",
+              "minLength": 3,
+              "description": "the reason this shot is silent (same as intentional_silence; one of the two)"
             }
           }
         }
@@ -2175,6 +2261,12 @@
                   "reference_sheet_path": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "voice_description": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 200,
+                    "description": "FA-02 (voice-caster): how this character sounds, in plain words for the LTX prompt (age, timbre, accent, pace), e.g. 'a hoarse older man, low and slow'; never a real person's name"
                   }
                 }
               }
@@ -2216,6 +2308,59 @@
                   "anchor_image_path": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "ambience_bed": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "classes",
+                      "room"
+                    ],
+                    "description": "FA-09 (story-architect): the place's own bed, authored once; sound_plan takes the bed from here, never from the prose",
+                    "properties": {
+                      "classes": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 4,
+                        "uniqueItems": true,
+                        "items": {
+                          "enum": [
+                            "army_march",
+                            "ash_fall",
+                            "battle_din",
+                            "birds",
+                            "crickets",
+                            "crowd_murmur",
+                            "crowd_shout",
+                            "desert",
+                            "eruption_rumble",
+                            "farm",
+                            "fire",
+                            "forest",
+                            "harbor",
+                            "night_insects",
+                            "rain",
+                            "river",
+                            "seabirds",
+                            "ship",
+                            "storm",
+                            "water_waves",
+                            "wind"
+                          ]
+                        }
+                      },
+                      "room": {
+                        "enum": [
+                          "outdoor",
+                          "cave"
+                        ],
+                        "description": "the room the bed and its reverb sit in"
+                      },
+                      "why": {
+                        "type": "string",
+                        "minLength": 3
+                      }
+                    }
                   }
                 }
               }
@@ -2464,6 +2609,26 @@
                     "minLength": 2
                   }
                 }
+              },
+              "mood": {
+                "enum": [
+                  "aggressive",
+                  "tragic",
+                  "tense",
+                  "dark",
+                  "mysterious",
+                  "heroic",
+                  "epic",
+                  "reflective",
+                  "peaceful",
+                  "joyful",
+                  "neutral"
+                ],
+                "description": "SP-05 / FA-09: the segment's authored mood (sound_plan.segment_mood); a mood read from words is only a candidate"
+              },
+              "music": {
+                "type": "boolean",
+                "description": "SP-05: score this segment (true) or let the place's bed carry it (false)"
               }
             }
           }

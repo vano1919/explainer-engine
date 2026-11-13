@@ -271,6 +271,7 @@ def stage_script(ep: Episode, rehearsal: bool):
     from explainer_engine.episode import events as E
     from explainer_engine.episode import sound_plan as SP
     rows += E.contract_rows(doc, set(SP.EVENT_CLASSES), ep.fps)
+    rows += E.absolute_anchor_rows(doc)   # FA-06: on a locked script an absolute anchor under a read line is REVIEW
     rows.append(_claims_row(ep, doc))
     return rows, {"mix": R.mix_report(doc), "shots": len(shots), "audit_status": audit["status"]}
 
@@ -418,8 +419,15 @@ def stage_voice(ep: Episode, rehearsal: bool):
             G.row("read_aligned_to_the_lines", aligned["status"] == G.PASS,
                   f"{aligned['coverage']:.1%} of the written words heard (needs {SW.MIN_COVERAGE:.0%})",
                   aligned["unmatched"][:20], level=G.REVIEW)]
+    rows += _anchor_rows(ep, timing)
     return rows, {"timing": "audio/timing.json", "read_s": round(read_s, 3), "planned_s": round(planned, 3),
                   "total_frames": timing["total_frames"]}
+
+
+def _anchor_rows(ep: Episode, timing: dict) -> list[dict]:
+    """FA-06: every anchor resolved on the retimed shots right after G6's retime (``events.anchor_rows``)."""
+    from explainer_engine.episode import events as E
+    return E.anchor_rows(TM.timed_script(ep.script, timing), TM.spines_of(timing), ep.fps)
 
 
 def _events_for_picture(plan_shot: dict) -> list[dict]:
@@ -474,6 +482,7 @@ def _voice_with_clips(ep: Episode, read: Path, tr: Path, timing_path: Path):
     write_json_atomic(timing_path, timing)
     rows.append(G.row("clip_spoken_shots_timed_by_their_clips", not missing, f"{len(spoken) - len(missing)} of "
                       f"{len(spoken)} clip-spoken shot(s) timed by their trimmed LTX clip", missing[:20]))
+    rows += _anchor_rows(ep, timing)
     planned = sum(float(s.get("target_duration_seconds") or 0) for s in ep.script["shots"])
     return rows, {"timing": "audio/timing.json", "read_s": round(read_s, 3), "planned_s": round(planned, 3),
                   "total_frames": timing["total_frames"], "clip_timed": timing["clip_timed"],

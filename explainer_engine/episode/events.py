@@ -19,6 +19,17 @@ Timing: an event starts on its ``at_word`` (actions: searched from the previous 
 always did; motion items: from the first word), or on ``at_frame``; ``until_word`` ends it on the start of the word after the
 phrase (the last word of the line: its start plus one word's length). Without ``until_word`` a continuous action lasts until the
 next action of the shot starts or the line ends (never shorter than ``ANIM_FRAMES``); an instant one lasts ``ANIM_FRAMES``.
+
+Anchors that follow the read (Fable audit 2026-11-13, FA-06 / P1): the read changes every shot's length, so an anchor in
+absolute frames or seconds breaks on a retimed shot. A motion item may anchor on a share of the shot (``at_frac``,
+``from_frac``, ``to_frac``, 0..1) or on a word; a sound event (``sound_events[]``) on ``at_word`` (a phrase of the shot's
+line, or ``{line_id, word, offset_s}``), resolved on the same word spine. An absolute end past a retimed shot is cut and the
+event says so (``truncated_frames``), never silently; ``anchor_rows`` lists every broken or cut anchor at G6, right after
+the retime, before any clip or stem is made.
+
+A sound event with a ``picture_event`` (an eruption, an impact) is a visible event too (FA-10): it is resolved here with
+``source: "sound_events"`` and its authored class, so the 2.5D renderer shakes on the same frame the sound plan places and
+the event report lists it.
 """
 from __future__ import annotations
 
@@ -133,8 +144,75 @@ def _word_len(starts: list[int], frames: int) -> int:
     return max(WORD_FRAMES_MIN, gaps[len(gaps) // 2])
 
 
+def has_events(shot: dict) -> bool:
+    """True when the shot has a visible event for the resolver: an action, a motion item or a picture sound event."""
+    return bool(shot.get("actions") or shot.get("motion_imitation")
+                or any(e.get("picture_event") for e in shot.get("sound_events") or []))
+
+
+def _frac(v, frames: int, what: str, sid: str) -> int:
+    x = float(v)
+    if not 0.0 <= x <= 1.0:
+        raise ContractError(f"{sid}: {what} {x} is not a share of the shot (0..1)")
+    return int(round(x * frames))
+
+
+def _line_word_index(shot: dict, script: dict, anchor: dict, sid: str) -> int:
+    """The index in the shot's words of ``{line_id, word}`` (``word``: its index in that line from 0, or its text, the
+    first time it is spoken in that line)."""
+    lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
+    base = 0
+    for lid in shot.get("audio_line_ids") or []:
+        ws = MA._words(lines.get(lid, {}).get("text", ""))
+        if lid == anchor.get("line_id"):
+            w = anchor.get("word")
+            if isinstance(w, int) and not isinstance(w, bool):
+                if not 0 <= w < len(ws):
+                    raise ContractError(f"{sid}: at_word word {w} is outside line {lid}'s {len(ws)} words")
+                return base + w
+            want = MA._words(str(w or ""))
+            hit = _find(ws, want, 0) if want else None
+            if hit is None:
+                raise ContractError(f"{sid}: at_word {w!r} is not spoken in line {lid}")
+            return base + hit
+        base += len(ws)
+    raise ContractError(f"{sid}: at_word names line {anchor.get('line_id')!r}, which this shot does not carry")
+
+
+def sound_event_frame(shot: dict, script: dict, item: dict, measured_spine: list[dict] | None = None,
+                      fps: int = 24) -> tuple[int, str]:
+    """(frame, basis) of one authored sound event on the shot's clock: ``at_word`` on the word spine (the measured one after
+    the read; FA-06), else ``at_s``; an anchor outside the shot raises ``ContractError``."""
+    sid = str(shot.get("shot_id") or "?")
+    frames = _frames(shot, fps)
+    if item.get("at_word") is not None and item.get("at_s") is not None:
+        raise ContractError(f"{sid}: sound event {item.get('what')!r} has both at_s and at_word (exactly one)")
+    if item.get("at_word") is not None:
+        words = MA.shot_words(shot, script)
+        starts, basis = MA.word_frames(words, frames, measured_spine)
+        aw = item["at_word"]
+        if isinstance(aw, dict):
+            idx = _line_word_index(shot, script, aw, sid)
+            off = float(aw.get("offset_s") or 0.0)
+        else:
+            want = MA._words(str(aw))
+            idx = _find(words, want, 0) if want else None
+            off = 0.0
+            if idx is None:
+                raise ContractError(f"{sid}: sound event at_word {aw!r} is not spoken in the shot")
+        f = starts[idx] + int(round(off * fps))
+        how = f"{basis}:word"
+    else:
+        f, how = int(round(float(item.get("at_s", 0.0)) * fps)), "seconds"
+    if not 0 <= f < frames + 1:
+        raise ContractError(f"{sid}: sound event {item.get('class') or item.get('what')} lands at frame {f}, outside the "
+                            f"shot's {frames} frames")
+    return min(f, frames - 1) if frames else f, how
+
+
 def visual_events(shot: dict, script: dict, measured_spine: list[dict] | None = None, fps: int = 24) -> list[dict]:
-    """The shot's events on its own clock (frames from the shot's first frame), in order: actions first, then motion items.
+    """The shot's events on its own clock (frames from the shot's first frame), in order: actions, motion items, then the
+    sound events that move the picture (``picture_event``, FA-10).
 
     Raises ``ContractError`` where a word is not spoken in the shot, a frame lies outside it, or an audio block is malformed
     (the contract rows report the softer misses)."""
@@ -196,6 +274,8 @@ def visual_events(shot: dict, script: dict, measured_spine: list[dict] | None = 
         hit = None
         if m.get("at_frame") is not None:
             f0, t0 = int(m["at_frame"]), "frame"
+        elif m.get("at_frac") is not None:
+            f0, t0 = min(frames - 1, _frac(m["at_frac"], frames, f"{op} at_frac", sid)), "frac"
         elif m.get("at_word"):
             want = MA._words(m["at_word"])
             hit = _find(words, want, 0)
@@ -211,21 +291,38 @@ def visual_events(shot: dict, script: dict, measured_spine: list[dict] | None = 
             f1, t1 = end_of_phrase(m["until_word"], after, op), f"{basis}:until_word"
         elif m.get("to_frame") is not None:
             f1, t1 = int(m["to_frame"]), "frame"
+        elif m.get("to_frac") is not None:
+            f1, t1 = _frac(m["to_frac"], frames, f"{op} to_frac", sid), "frac"
         elif t0 == "shot" or op in PATH_MOVES:
             f1, t1 = frames, "shot"     # a camera path started on a word runs to the shot's end unless told otherwise
         else:
             f1, t1 = f0 + ANIM_FRAMES, "anim_frames"
         if m.get("from_frame") is not None and t0 == "shot":
             f0, t0 = int(m["from_frame"]), "frame"
+        elif m.get("from_frac") is not None and t0 == "shot":
+            f0, t0 = min(frames - 1, _frac(m["from_frac"], frames, f"{op} from_frac", sid)), "frac"
+        if not 0 <= f0 < frames:
+            raise ContractError(f"{sid}: {op} starts at frame {f0}, outside the shot's {frames} frames")
         out.append({"_item": m, "source": "motion_imitation", "index": j, "op": op, "start_frame": f0, "timing_start": t0,
-                    "end_frame": int(max(f0 + 1, min(frames, f1))), "timing_end": t1})
+                    "end_frame": int(max(f0 + 1, min(frames, f1))), "timing_end": t1,
+                    "truncated_frames": max(0, int(f1) - frames)})
+    for k, item in enumerate(shot.get("sound_events") or []):
+        if not item.get("picture_event"):
+            continue
+        f0, t0 = sound_event_frame(shot, script, item, measured_spine, fps)
+        cls = item.get("class") or item.get("what")
+        audio = _a("sfx", cls, "onset", item.get("purpose") or "sync")
+        it = dict(item, audio=audio, event_id=item.get("event_id") or f"{sid}.S{k + 1}")
+        out.append({"_item": it, "source": "sound_events", "index": k, "op": f"picture:{item['picture_event']}",
+                    "start_frame": f0, "timing_start": t0, "end_frame": min(frames, f0 + 1), "timing_end": "one frame",
+                    "_authored": True})
     events = []
     for ev in out:
         item = ev.pop("_item")
         ev.pop("_hit", None)
         ev.pop("_want", None)
         letter = "A" if ev["source"] == "actions" else "M"
-        authored = item.get("audio")
+        authored = item.get("audio") if not ev.pop("_authored", False) else item["audio"]
         audio = dict(authored) if isinstance(authored, dict) else default_audio(ev["op"], item)
         audio.setdefault("sync", "span" if ev["op"] in CONTINUOUS and audio.get("decision") == "sfx" else "onset")
         e = {"event_id": item.get("event_id") or f"{sid}.{letter}{ev['index'] + 1}", "shot_id": sid,
@@ -234,6 +331,10 @@ def visual_events(shot: dict, script: dict, measured_spine: list[dict] | None = 
              "id_basis": "authored" if item.get("event_id") else "derived",
              "timing": {"start": ev["timing_start"], "end": ev["timing_end"]}, "word": item.get("at_word"),
              "until_word": item.get("until_word")}
+        if ev.get("truncated_frames"):
+            e["truncated_frames"] = int(ev["truncated_frames"])
+        if ev["source"] == "sound_events":
+            e["picture_event"] = item["picture_event"]
         if ev["op"] == "supply_state":
             e["state"] = item.get("state") or "active"
         if item.get("route"):
@@ -313,7 +414,7 @@ def episode_events(script: dict, spines: dict | None = None, fps: int = 24) -> d
     """``{shot_id: [events]}`` for every shot with actions or motion items."""
     out = {}
     for sh in script.get("shots", []):
-        if sh.get("actions") or sh.get("motion_imitation"):
+        if has_events(sh):
             out[sh["shot_id"]] = visual_events(sh, script, (spines or {}).get(sh["shot_id"]), fps)
     return out
 
@@ -337,7 +438,7 @@ def contract_rows(script: dict, classes=None, fps: int = 24) -> list[dict]:
                 if not item.get("event_id") or not isinstance(item.get("audio"), dict):
                     missing.append(f"{sh.get('shot_id')}.{src}[{i}]")
         try:
-            evs = visual_events(sh, script, None, fps) if (sh.get("actions") or sh.get("motion_imitation")) else []
+            evs = visual_events(sh, script, None, fps) if has_events(sh) else []
         except ContractError as exc:
             broken.append(str(exc)[:160])
             continue
@@ -346,6 +447,8 @@ def contract_rows(script: dict, classes=None, fps: int = 24) -> list[dict]:
             if ev["event_id"] in ids:
                 dup.append(ev["event_id"])
             ids.add(ev["event_id"])
+            if ev["source"] == "sound_events":   # its class is checked by sound_plan.shot_events (what or class, G4)
+                continue
             for lvl, text in audio_problems(ev, classes):
                 (fails if lvl == G.FAIL else reviews).append(text)
     rows = []
@@ -379,3 +482,50 @@ def events_report(script: dict, spines: dict | None, fps: int) -> dict:
             counts[e["audio"]["decision"]] = counts.get(e["audio"]["decision"], 0) + 1
     return {"schema": SCHEMA, "resolver": RESOLVER_VERSION, "episode_id": script.get("episode_id"), "fps": fps,
             "contract": script.get("av_contract") or "legacy", "decisions": counts, "shots": per}
+
+
+def absolute_anchors(shot: dict) -> list[str]:
+    """The absolute anchors inside a shot (``at_s`` of a sound event; ``at_frame``, ``from_frame``, ``to_frame`` of an action
+    or motion item): they do not follow the read (FA-06)."""
+    sid = shot.get("shot_id")
+    out = [f"{sid}.sound_events[{k}].at_s" for k, e in enumerate(shot.get("sound_events") or []) if e.get("at_s") is not None]
+    for src in ("actions", "motion_imitation"):
+        for i, item in enumerate(shot.get(src) or []):
+            out += [f"{sid}.{src}[{i}].{f}" for f in ("at_frame", "from_frame", "to_frame") if item.get(f) is not None]
+    return out
+
+
+def absolute_anchor_rows(script: dict) -> list[dict]:
+    """G1 (FA-06): in a locked script (``av_contract``) an absolute anchor on a shot that carries a read line is REVIEW with
+    the list: the read will change the shot's length (use a word or a share of the shot). An older script: not checked."""
+    if script.get("av_contract") != CONTRACT:
+        return []
+    found = [a for sh in script.get("shots", []) if sh.get("audio_line_ids") for a in absolute_anchors(sh)]
+    return [G.row("av_anchors_follow_the_read", not found, f"{len(found)} absolute anchor(s) on shots with a read line: they do "
+                  "not move with the read (anchor on a word or a share of the shot, FA-06)", found[:30], level=G.REVIEW)]
+
+
+def anchor_rows(timed_script: dict, spines: dict | None, fps: int = 24) -> list[dict]:
+    """G6, right after the retime (FA-06): every anchor of every shot resolved on the measured clock, so a broken one is
+    found at the read stage, before a clip or a stem is made. FAIL lists every anchor outside its retimed shot (and every 2.5D
+    camera plan that no longer fits); REVIEW lists the segments the resolver had to cut, with the frames they lost."""
+    from explainer_engine.production import layers25d as L25
+    broken, cut = [], []
+    for sh in timed_script.get("shots", []):
+        sid = sh.get("shot_id")
+        sp = (spines or {}).get(sid)
+        try:
+            if has_events(sh):
+                for e in visual_events(sh, timed_script, sp, fps):
+                    if e.get("truncated_frames"):
+                        cut.append(f"{e['event_id']}: {e['op']} loses {e['truncated_frames']} frame(s) at the shot's end")
+            for item in sh.get("sound_events") or []:
+                sound_event_frame(sh, timed_script, item, sp, fps)
+            if sh.get("motion_imitation"):
+                L25.plan(sh, fps, events=[], script=timed_script, spine=sp)
+        except ContractError as exc:
+            broken.append(str(exc)[:200])
+    return [G.row("av_anchors_inside_retimed_shots", not broken, f"{len(broken)} shot(s) with an anchor outside the retimed "
+                  "shot (FA-06: anchor on a word or a share of the shot, or re-plan it)", broken[:40]),
+            G.row("av_anchors_truncated", not cut, f"{len(cut)} event(s) cut short by the retimed shot", cut[:40],
+                  level=G.REVIEW)]

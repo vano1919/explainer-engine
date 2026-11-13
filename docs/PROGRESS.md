@@ -6068,3 +6068,22 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   `video` and carry the two video-lane sentences. The Toba queue builds with 55 video rows.
 - Tests: `test_videolane.py` (fit row LTX not Wan, narrated sizing, Toba row), `test_gemini_task_flow.py` (two assertions on
   `wan` rewritten to the FA-04 rule; new: wan read as video, continuation/coverage, drive pack sentences, Toba 55 rows).
+
+## 2026-11-13 — FA-05, FA-06, FA-10: schema and guides agree, anchors follow the read, picture events through the resolver
+- FA-05: `production_script.schema.json` (all optional) gains, with the spellings `sound_plan.py` already reads: on a shot
+  `intentional_silence` (a sentence) and `sound_design.silence`; on a sound event `class` and `at_word`; on a segment `mood`
+  (enum `sound_plan.MOOD_NAMES`) and `music`; on a 2.5D motion item `at_frac` / `from_frac` / `to_frac`; on a cast member
+  `voice_description` (for FA-02); on a location `ambience_bed` (for FA-09). Fable's proposal had `intentional_silence` as an
+  object with `reason`; the code and both guides use a sentence, so the schema takes the sentence (one spelling). The guides
+  are corrected and now live in the repo (`docs/sound_guides/SOUND_INTEGRATION_GUIDE_v1.md`, `_v2.md`), copied back to the
+  project folders. Test `tests/unit/test_sound_guide_schema.py`: a script written by guide v2 validates and reaches
+  INTENTIONAL_SILENCE and the authored mood.
+- FA-06: `events.sound_event_frame` resolves a sound event's `at_word` (phrase, or `{line_id, word, offset_s}`) on the word
+  spine; motion items take shares of the shot; an end past a retimed shot is cut with `truncated_frames` (never silent);
+  `events.anchor_rows` runs at G6 right after the retime (both read paths of `run.py`), FAIL with every anchor outside its
+  retimed shot (2.5D camera plans included), REVIEW with the cut ones; `events.absolute_anchor_rows` at G1 lists absolute
+  anchors under a read line of a locked script as REVIEW. Measured on the AV pilot: 0.6 = REVIEW 2 cut segments; 0.5 = FAIL
+  2 shots; 0.33 = FAIL 3 (camera segments and the eruption sound), all at G6 instead of G7/G8.
+- FA-10: a sound event with `picture_event` is a resolved event (`source: sound_events`) of `visual_events`; layers25d's
+  private `at_s` fallback reads the resolver; the sound plan records it and places its sound once; the event report lists it.
+- Test `tests/unit/test_av_anchors.py`.
