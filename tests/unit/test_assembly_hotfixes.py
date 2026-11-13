@@ -305,3 +305,44 @@ def test_recut_uses_the_records_level_trim(tmp_path, monkeypatch):
            "clip_path": "cut.mp4", "level_trim_db": -2.0}
     IN.recut(tmp_path, rec, 72, 24)
     assert seen["gain"] == -2.0
+
+
+# --- HF-7: --sound-library on run and status (FL-404; TD-308) ------------------------------------------------------------
+
+def _tiny_episode(tmp_path: Path) -> Path:
+    root = tmp_path / "ep"
+    (root / "story").mkdir(parents=True)
+    (root / "episode.json").write_text(json.dumps({"episode_id": "ep_x"}), encoding="utf-8")
+    (root / "story" / "production_script.json").write_text(json.dumps({"fps": 24, "shots": []}), encoding="utf-8")
+    return root
+
+
+def test_the_sound_library_flag_reaches_the_episode_and_changes_the_g4_fingerprint(tmp_path, monkeypatch, capsys):
+    from explainer_engine.episode import run as RUN
+    root = _tiny_episode(tmp_path)
+    libs = []
+    for name, body in (("a", {"items": [1]}), ("b", {"items": [1, 2]})):
+        (tmp_path / name).mkdir()
+        (tmp_path / name / "manifest.json").write_text(json.dumps(body), encoding="utf-8")
+        libs.append(tmp_path / name)
+    fa = RUN.fingerprint(RUN.Episode(root, sound_library=libs[0]), "sound_plan")
+    fb = RUN.fingerprint(RUN.Episode(root, sound_library=libs[1]), "sound_plan")
+    assert fa != fb
+    assert RUN.fingerprint(RUN.Episode(root, sound_library=libs[0]), "sound") != RUN.fingerprint(
+        RUN.Episode(root, sound_library=libs[1]), "sound")
+    seen = []
+    real = RUN.Episode
+
+    def spy(*a, **kw):
+        ep = real(*a, **kw)
+        seen.append(ep.sound_library)
+        return ep
+    monkeypatch.setattr(RUN, "Episode", spy)
+    assert RUN.main(["status", str(root), "--sound-library", str(libs[1])]) == 0
+    assert seen == [libs[1]]
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", {s: (lambda ep, rh: ([], {})) for s in RUN.STAGES})
+    RUN.main(["run", str(root), "--stage", "script", "--sound-library", str(libs[0])])
+    assert seen[-1] == libs[0]
+    RUN.main(["status", str(root)])
+    from explainer_engine.assets_reuse import SOUND_LIB
+    assert seen[-1] == Path(SOUND_LIB)                  # without the flag: the repo's own library, as before

@@ -1025,14 +1025,17 @@ def main(argv=None) -> int:
     r.add_argument("--fps", type=int)
     r.add_argument("--chunks", type=_chunks, help="A:B, draw only those assembly chunks (RULE-R1)")
     r.add_argument("--chunk-seconds", type=float)
+    r.add_argument("--sound-library", type=Path, help="HF-7: the sound library folder (a manifest.json and its categories); "
+                   "default assets/audio/library. Its manifest is in the fingerprint of G4 and G8, so give it to every call")
     s = sub.add_parser("status", help="the stages and their records")
     s.add_argument("episode", type=Path)
+    s.add_argument("--sound-library", type=Path, help="the same folder the runs used (HF-7)")
     a = ap.parse_args(argv)
     if a.cmd == "status":
-        _print_state(Episode(a.episode))
+        _print_state(Episode(a.episode, sound_library=a.sound_library))
         return 0
     ep = Episode(a.episode, size=a.size, fps=a.fps, rehearsal=a.rehearsal, force=a.force, chunks=a.chunks,
-                 chunk_seconds=a.chunk_seconds)
+                 chunk_seconds=a.chunk_seconds, sound_library=a.sound_library)
     try:
         recs = [run_stage(ep, a.stage)] if a.stage else run_to(ep, a.to)
     except StageRefused as exc:
