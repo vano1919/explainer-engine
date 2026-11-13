@@ -131,10 +131,11 @@ waived. So an invented id, or a waiver left in the environment from an earlier r
 The bake-off measures alternatives and has its own line, so it is not checked. RP-11 still costs a RunPod pod's stage graph
 (D-117).
 
-Two limits remain:
-- `cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` are not in `protected_files`
-  (`config/model_routing.json`). Adding them needs the creator's word on that protected file.
-- A Python file run from disk that calls a worker's `.remote()` is not read by the hook. The container gate is the line there,
+`cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` are protected files (`config/model_routing.json`
+`protected_files`; the creator chose "კი, დაიცავი", 2026-11-13 07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`).
+An Edit, a Write or a shell writer is refused unless his word is recorded (`governance ok protected_config <file> ...`).
+
+One limit remains: a Python file run from disk that calls a worker's `.remote()` is not read by the hook. The container gate is the line there,
   and CH-03 is checked only by the hook and `::main`.
 
 | ID | Rule | Where | Test |

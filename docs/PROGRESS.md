@@ -5793,5 +5793,6 @@ mandatory enforcement for weak points. Nothing paid ran. Found and closed (rules
 Tests: 9 new tests in `test_cheapest.py`, and a new `word` fixture in `tests/unit/conftest.py`. In `test_cloud_hooks_modal.py`, the
 Wan waiver case moved into its own test, which now also checks the record.
 
-Open, needs the creator's word: putting `cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` into
-`protected_files`, which means a change to the protected `config/model_routing.json`.
+The creator then chose "კი, დაიცავი" (07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`). His word was
+recorded for `config/model_routing.json` (`governance ok protected_config`). `cloud/cheapest.py`, `cloud/cheapest.json` and the
+LTX `launch.json` are now in `protected_files` (60 minutes). Test: `test_the_rule_files_change_only_on_the_creators_recorded_word`.

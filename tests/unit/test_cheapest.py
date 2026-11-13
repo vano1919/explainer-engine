@@ -192,3 +192,23 @@ def test_the_paid_container_checks_the_rules_before_any_model_loads(tmp_path):
     big = dict(job, chain=[{"shot_id": "s2", "width": 2560, "height": 1408}])
     assert any(b.startswith("CH-02") and "s2" in b for b in L.container_gate(big, LAUNCH, baked))
     assert any(b.startswith("CH-04") for b in L.container_gate(job, dict(LAUNCH, scaledown_window_s=60), tmp_path / "none.json"))
+
+
+def test_the_rule_files_change_only_on_the_creators_recorded_word(tmp_path):
+    """The creator chose "კი, დაიცავი" (2026-11-13 07:49 UTC, card cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW): the
+    rules and their basis are protected files, like config/spend_caps.json."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _gov import make_repo
+    from explainer_engine.governance import hooks as G
+    root = Path(__file__).parents[2]
+    rels = ("explainer_engine/cloud/cheapest.py", "explainer_engine/cloud/cheapest.json",
+            "explainer_engine/training/pods/ltx/launch.json")
+    assert {C.BASIS_PATH.resolve(), Path(C.__file__).resolve(), L.LAUNCH_PATH.resolve()} == {(root / r).resolve() for r in rels}
+    repo = make_repo(tmp_path / "r", git=True)
+    for rel in rels:
+        assert G.load(root)["protected_files"][rel] == 60
+        assert G.load(repo)["protected_files"][rel] == 60
+        assert G.pre_write({"tool_name": "Edit", "tool_input": {"file_path": str(repo / rel)}}, repo) == 2
+        assert G.pre_bash({"tool_input": {"command": f"sed -i 's/5/60/' {rel}"}}, repo) == 2
+        assert G.pre_bash({"tool_input": {"command": f"cat {rel}"}}, repo) == 0
