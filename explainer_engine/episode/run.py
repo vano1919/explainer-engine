@@ -800,7 +800,7 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     from explainer_engine.production import assemble as ASM
     records = _records(ep)
     script = ep.timed_script()
-    plans = plan_episode_cinematic_transitions(script, fps=ep.fps, allow_decorative_wipes=False)
+    plans = plan_episode_cinematic_transitions(script, fps=ep.fps, allow_decorative_wipes=False, honour_authored=True)
     write_json_atomic(ep.path("editing/transition_plan.json"), plans)
     missing = [r["shot_id"] for r in records if not r.get("clip_path")]
     if missing:
