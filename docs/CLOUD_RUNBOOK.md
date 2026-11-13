@@ -106,7 +106,7 @@ disk; a resumed job is a new pod that reads its checkpoint from HF). `check` pri
 `keep_stopped_pods` ids RunPod no longer knows (removing them is the creator's edit of `config/spend_caps.json`), and reports billing that
 no pod and no volume explains (`currentSpendPerHr`).
 
-## CH-01..CH-06: the cheapest known combination of every paid run (D-133)
+## CH-01..CH-07: the cheapest known combination of every paid run (D-133)
 
 The creator, 2026-11-13 07:00 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g`): LTX stays the generator, and the
 rules that pick the cheapest combination of every paid run are mandatory, like a PreToolUse hook. Code: `cloud/cheapest.py`.
@@ -135,6 +135,20 @@ The bake-off measures alternatives and has its own line, so it is not checked. R
 `protected_files`; the creator chose "კი, დაიცავი", 2026-11-13 07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`).
 An Edit, a Write or a shell writer is refused unless his word is recorded (`governance ok protected_config <file> ...`).
 
+**CH-07, the paid offer (2026-11-13 14:47 UTC):** the creator, msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPW4rpktDxvJ3cn9nLY9QaMLC`
+(14:37 UTC) and his card answer at 14:47 UTC: before any thread offers him a paid option it checks the free credit first, then
+the Modal cards that are offered now, and plans the cheapest combination of card and generation. The offer is a `paid_offer/1`
+file made with `python -m explainer_engine.cloud.paid_offer fetch|price|check <file>` (free, read-only). The hook refuses a paid
+LTX GPU rung (`smoke`, `main`) unless `EE_PAID_OFFER=<file>` names a passing offer for that worker and rung whose chosen card is
+the launch's card. What Modal lets us read, checked 2026-11-13: `modal billing summary --json` (the credit used is
+`adjustments.credits`, `metered_cost` also counts storage; free left = the $30 Starter credit minus it) and
+`modal billing rates --json` need Modal's gRPC API, which the cloud container's proxy carries after
+`pip install "modal[api-proxy-support]"`; without that package a cloud thread falls back to the project ledgers' Modal spend of the month (`ledger_sum`, a lower bound
+of the use, said so on the card) or the creator's own number; the cards and prices come from https://modal.com/pricing; Modal
+publishes no free-capacity figure (its GPU guide: a list of cards is a fallback order), so "available" means on today's price
+list with Functions operational on https://status.modal.com/index.json, and open notices (a planned maintenance) go on the card.
+The Wan worker stays refused by CH-06 and is not checked for an offer; the bake-off has its own line.
+
 One limit remains: a Python file run from disk that calls a worker's `.remote()` is not read by the hook. The container gate is the line there,
   and CH-03 is checked only by the hook and `::main`.
 
@@ -145,6 +159,7 @@ One limit remains: a Python file run from disk that calls a worker's `.remote()`
 | CH-03 | **One container per scene.** A `::main` launch is one committed scene file (`training/pods/ltx/scenes/`, made by `scene_run job`) with all its shots in the spec's chain. A launch per clip pays the start-up and the model load again. | `cheapest.spec_problems` | `test_cheapest.py` |
 | CH-04 | **Nothing stays warm.** `scaledown_window_s` is at most 5 s; no minimum or buffer containers (cloud-platforms section 5). | `cheapest.launch_problems` | `test_cheapest.py` |
 | CH-05 | **Paid pictures on the batch tier only.** The free Gemini chat picture tool comes first (D-131 turn packs). A paid picture batch goes through the Gemini API batch tier (half price; nano-banana-2.1 at 2K, $0.025 a picture). | `cheapest.picture_refusal` | `test_cheapest.py` |
+| CH-07 | **No paid offer without the free credit, today's cards and two priced combinations.** Before a thread offers the creator a paid run, a `paid_offer/1` file shows, in this order: (1) the free credit checked first (source `modal_billing_summary`, `ledger_sum` or `creator`, at most 24 h old; free left = the monthly credit minus this month's use); (2) today's Modal cards with their per-second price and VRAM, the CPU-core and memory prices, and Functions operational on status.modal.com (at most 6 h old); the job's VRAM need measured or known with its reference, never a guess; (3) at least two combinations (card, CPU, memory, model loads per container, containers, scenes, clips and their seconds, scaledown, GPU seconds expected and worst, speed measured or estimate), each priced at its seconds x today's rate; the chosen one fits the VRAM, loads the model once, starts no more containers than scenes, stays warm at most 5 s, and a cheaper fitting combination is taken or its `not_chosen_why` is written; (4) the split of the chosen price into free credit (spent first) and paid money, the cap at or above its worst case, and the Haiku watchdog with its interval. Only then the card; the hook refuses a paid LTX GPU rung without `EE_PAID_OFFER=<passing offer>` for that rung and the launch's card. | `paid_offer.problems`, `cheapest.offer_problems` | `test_paid_offer.py` |
 | CH-06 | **The generator is the self-hosted LTX-2.5 distilled** (D-132). It measured $0.0115 a generated second with sound, below Wan A14B ($0.022, no sound), HunyuanVideo 1.5 ($0.030, no sound, a licence that excludes the EU, UK and South Korea) and every API list price checked (Vidu Q3 Turbo off-peak $0.02-0.03, Grok Imagine 1.5 Lite $0.02, MiniMax H3 Turbo $0.025-0.04, Veo 3.1 Lite $0.05, the LTX API ~$0.09). A paid rung of the Wan worker is refused. | `cheapest.generator_refusal` | `test_cloud_hooks_modal.py` |
 
 ## Not in P1a

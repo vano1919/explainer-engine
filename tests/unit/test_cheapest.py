@@ -57,9 +57,10 @@ def test_the_worker_preflight_refuses_the_cli_runner():
         L.preflight(dict(LAUNCH, runner="cli"))
 
 
-def test_a_scene_spec_in_one_container_passes_the_hook(tmp_path):
+def test_a_scene_spec_in_one_container_passes_the_hook(tmp_path, paid_offer):
     p = _write(tmp_path, _spec())
-    assert H.modal_refusal(f"EE_MODAL_GO={GO} modal run {LTX}::main --job {p}", env={}) is None
+    offer = paid_offer("main")                                   # CH-07: the priced offer he was shown
+    assert H.modal_refusal(f"EE_MODAL_GO={GO} EE_PAID_OFFER={offer} modal run {LTX}::main --job {p}", env={}) is None
 
 
 def test_a_launch_per_clip_or_a_spec_from_no_scene_is_refused(tmp_path):
@@ -77,9 +78,9 @@ def test_a_clip_above_or_below_the_native_size_is_refused(tmp_path):
         assert "CH-02" in H.modal_refusal(f"EE_MODAL_GO={GO} modal run {LTX}::main --job {p}", env={})
 
 
-def test_the_creators_message_waives_only_the_rule_it_names(tmp_path, word):
+def test_the_creators_message_waives_only_the_rule_it_names(tmp_path, word, paid_offer):
     one = _write(tmp_path, _spec(chain=[]))
-    ok = f"EE_MODAL_GO={GO} EE_CHEAPEST_WAIVE=cmsg_01X:CH-03 modal run {LTX}::main --job {one}"
+    ok = f"EE_MODAL_GO={GO} EE_PAID_OFFER={paid_offer('main')} EE_CHEAPEST_WAIVE=cmsg_01X:CH-03 modal run {LTX}::main --job {one}"
     word("CH-03", "cmsg_01X")
     assert H.modal_refusal(ok, env={}) is None
     big = _write(tmp_path, _spec(chain=[], width=2560))

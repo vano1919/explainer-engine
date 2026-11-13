@@ -6257,3 +6257,34 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   including the one-time setup (pipeline 4.9 s, Gemma 29.5 s, transformer 18.2 s), so about 24 s for the clip itself; body
   91 s. Settled $0.1599 (the app's 113 s at $5.0937/h, an upper bound); the two L3 runs together $0.33; nothing left
   running. The ladder L0..L3 is green on this worker; L4 is the demo's scene on its own GO.
+
+## 2026-11-13 — CH-07: no paid offer before the free credit, today's Modal cards and two priced combinations
+- Asked: the creator 2026-11-13 14:37 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW4rpktDxvJ3cn9nLY9QaMLC) and his card answer at
+  14:47 UTC (relayed by the coordinator): before any thread offers him a paid option it checks the free credit first, then the
+  Modal cards on offer now, plans the cheapest card + generation combination and offers that.
+- Found: D-133 (CH-01..CH-06) fixed the setup of one LTX launch but never checked the credit, never compared cards (the launch
+  names H100; `providers/modal_provider` marks every card available without a check) and had no rule on the offer itself.
+- Done: `cloud/paid_offer.py` (`paid_offer/1`: `fetch` reads the credit and today's cards, `price` prices the combinations and
+  the free/paid split, `check` fails an offer without the credit check, the GPU check, a measured or known VRAM need or two
+  combinations, and prints the Georgian card text); `cheapest.offer_problems` (protected file, the creator's word recorded) makes
+  the hook refuse a paid LTX GPU rung without `EE_PAID_OFFER=<passing offer>` for that rung and the launch's card; CH-07 in
+  `docs/CLOUD_RUNBOOK.md`, D-133 amended, references in the orchestrator, the watchdog page, the cloud rules and the Modal skill.
+- Measured today (free, read-only): modal.com/pricing equals the 2026-11-07 table (H100 $0.001097/s, RTX PRO 6000 $0.000842/s,
+  A100-80GB $0.000694/s); status.modal.com: Functions operational, a control-plane maintenance on 2026-11-16 01:00-02:00 UTC.
+  `modal billing summary|rates` need Modal's gRPC API, which this cloud container's proxy does not carry ("Could not connect to
+  the Modal server"), so the credit falls back to the ledgers: $5.43 of Modal spend in November in the four project ledgers,
+  a lower bound (runs without a ledger in that folder are not in it).
+- Not covered: the Wan worker (refused by CH-06, no offer check) and the bake-off (its own line); the LTX `stage` CPU rung.
+- Rewritten to the new rule (not weakened): `test_cheapest::test_a_scene_spec_in_one_container_passes_the_hook`,
+  `::test_the_creators_message_waives_only_the_rule_it_names` and `test_v43_ltx_jobs::test_the_session_hook_frees_only_the_ltx_cpu_rungs`
+  now carry a passing offer (`conftest.make_offer`). New: `test_paid_offer.py` (17).
+
+## 2026-11-13 — CH-07 fix: the free credit is `adjustments.credits`, not `metered_cost`
+- Found (Fable tech-decision thread, `modal billing summary --json` from the cloud, 17:32 UTC): metered $22.49 = apps 17.03 +
+  volumes 5.32; the plan credit used is 17.03 (`adjustments.credits`), storage and egress have their own allowance lines,
+  billed 0. So free left is $12.97 of $30; `credit_from_summary` took `metered_cost` and would have said $7.51.
+- Also found: the cloud proxy does carry Modal's gRPC after `pip install "modal[api-proxy-support]"`; the runbook, the
+  `paid_offer` docstring and the modal-operations skill said it does not.
+- Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
+  skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
+  the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.

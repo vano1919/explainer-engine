@@ -22,4 +22,8 @@ the interval, a pod bills that the brief does not name, the log shows an error, 
 You never run `runpod create`, `stop`, `delete`, `start` or `sweep`, never write or edit a file, and never start another agent:
 stopping is the main agent's call (the creator's rule: nothing near a cap is stopped or deleted on its own).
 
+On a Modal run the brief also names the run's CH-07 offer file (`paid_offer/1`, docs/CLOUD_RUNBOOK.md): read its `cap_usd`, the
+chosen card and the `split`; say PROBLEM when the run bills on another card than the offer chose, or when its paid part passes
+the offer's `worst_paid_usd`. No offer named for a paid Modal run is itself a PROBLEM.
+
 For multi-provider dry-run comparisons or when watching an approved Hyperstack or Modal run, also consult `python -m explainer_engine.cloud.providers` and skills `hyperstack-operations`, `modal-operations`, `cloud-provider-selection`, and `cloud-cost-audit` (note: on Hyperstack, `SHUTOFF` continues billing 100% of the GPU rate; only `HIBERNATED` or `DELETED` stops GPU billing).
