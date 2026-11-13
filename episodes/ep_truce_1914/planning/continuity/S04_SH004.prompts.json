@@ -1,0 +1,17 @@
+[
+ {
+  "shot_id": "S04_SH004",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the Saxon corporal: copy the face, body and costume only, not the pose. Wide shot, eye-level camera. Exactly 1 person. The Saxon corporal, Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots, wearing field-grey round cap with red band, grey greatcoat buttoned, the portrait card in the left breast pocket, in the centre, in the middle distance, facing left, looking off to the left, Friedrich climbs onto the German parapet. Visible: a parapet of sandbags in the centre. Dawn; key light from the right (the low winter sun).",
+  "refs": [
+   "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 1)",
+   "Is the Saxon corporal in the centre of the frame?",
+   "Does the Saxon corporal face left?",
+   "Does the Saxon corporal match the model sheet (face, colours, costume)?",
+   "Is a parapet of sandbags visible in the centre?",
+   "Does the main light come from the right?"
+  ]
+ }
+]

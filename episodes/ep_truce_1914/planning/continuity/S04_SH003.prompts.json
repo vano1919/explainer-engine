@@ -1,0 +1,21 @@
+[
+ {
+  "shot_id": "S04_SH003",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the British sergeant: copy the face, body and costume only, not the pose. Image 2 is the young British private: copy the face, body and costume only, not the pose. Medium wide shot, eye-level camera. Exactly 2 people. The British sergeant, Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic, wearing khaki soft cap, goatskin jerkin over the khaki tunic, three chevrons, on the left, in the middle distance, facing right, looking at the young British private, Harris and Thomas crouch behind the parapet. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place, on the right, in the middle distance, facing right, looking off to the right. Visible: waist-high sandbag breastworks with frost in the centre. Dawn; key light from the right (the low winter sun).",
+  "refs": [
+   "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 2)",
+   "Is the British sergeant on the left of the frame?",
+   "Does the British sergeant face right?",
+   "Does the British sergeant match the model sheet (face, colours, costume)?",
+   "Is the young British private on the right of the frame?",
+   "Does the young British private face right?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Does the main light come from the right?"
+  ]
+ }
+]
