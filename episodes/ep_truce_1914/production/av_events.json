@@ -5,8 +5,8 @@
   "fps": 24,
   "contract": "av_events/1",
   "decisions": {
-    "silent_by_design": 33,
-    "ambience_only": 7,
+    "silent_by_design": 41,
+    "ambience_only": 34,
     "ui_cue": 7,
     "sfx": 3
   },
@@ -14,7 +14,7 @@
     "S01_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "3eb6869a903ecc61",
+      "events_sha": "cc7e353af36a5105",
       "events": [
         {
           "event_id": "S01_SH001.M1",
@@ -59,13 +59,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S01_SH001.M3",
+          "shot_id": "S01_SH001",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 48,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the lamps at the trench edges flicker; the fire's crackle is the bed's",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S01_SH004": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "ca2eee0425ee85e3",
+      "events_sha": "34057f30bbe4cdf8",
       "events": [
         {
           "event_id": "S01_SH004.M1",
@@ -110,13 +132,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S01_SH004.M3",
+          "shot_id": "S01_SH004",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 120,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "ground fog drifts over the field; mist is heard in the bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S01_SH005": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "e48c408a79ffc63f",
+      "events_sha": "666b492e06e4bdcb",
       "events": [
         {
           "event_id": "S01_SH005.M1",
@@ -151,6 +195,28 @@
           "audio": {
             "decision": "silent_by_design",
             "why": "tiny distant candles; heard as nothing over the wind",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S01_SH005.M3",
+          "shot_id": "S01_SH005",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 192,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "night frost-fog lies on the field; mist is heard in the bed",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -297,13 +363,35 @@
     "S02_SH003": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "e70d9af21c601941",
+      "events_sha": "ed9ec86efa8f42fa",
       "events": [
+        {
+          "event_id": "S02_SH003.A0",
+          "shot_id": "S02_SH003",
+          "source": "actions",
+          "index": 0,
+          "op": "front_line",
+          "start_frame": 9,
+          "end_frame": 68,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the line is already known from the shot before; it stands at once, no draw (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "next_action"
+          },
+          "word": "Here",
+          "until_word": null
+        },
         {
           "event_id": "S02_SH003.A1",
           "shot_id": "S02_SH003",
           "source": "actions",
-          "index": 0,
+          "index": 1,
           "op": "zoom",
           "start_frame": 9,
           "end_frame": 68,
@@ -325,7 +413,7 @@
           "event_id": "S02_SH003.A2",
           "shot_id": "S02_SH003",
           "source": "actions",
-          "index": 1,
+          "index": 2,
           "op": "highlight",
           "start_frame": 68,
           "end_frame": 86,
@@ -349,7 +437,7 @@
     "S02_SH004": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "1f0d322c7bdce262",
+      "events_sha": "d8281fb36fc854a6",
       "events": [
         {
           "event_id": "S02_SH004.M1",
@@ -394,13 +482,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S02_SH004.M3",
+          "shot_id": "S02_SH004",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 150,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the brazier's flame flickers; the fire's crackle is the bed's",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S02_SH005": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "d0a5c6dcbaa48755",
+      "events_sha": "40f4ad64598a1013",
       "events": [
         {
           "event_id": "S02_SH005.M1",
@@ -445,13 +555,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S02_SH005.M3",
+          "shot_id": "S02_SH005",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "embers",
+          "start_frame": 0,
+          "end_frame": 132,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "sparks lift from the brazier below the letter; embers are the fire's bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S02_SH008": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "dedd70fe9ef89b62",
+      "events_sha": "92e7efebd91fb40b",
       "events": [
         {
           "event_id": "S02_SH008.M1",
@@ -496,13 +628,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S02_SH008.M3",
+          "shot_id": "S02_SH008",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 240,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the brazier's flame flickers; the fire's crackle is the bed's",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S03_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "8917e5e19c106c00",
+      "events_sha": "a3104929b43ced6b",
       "events": [
         {
           "event_id": "S03_SH002.M1",
@@ -547,13 +701,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S03_SH002.M3",
+          "shot_id": "S03_SH002",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "dust",
+          "start_frame": 0,
+          "end_frame": 96,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "motes drift in the candle's light; the cold night bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S03_SH010": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "fa83be77360771ae",
+      "events_sha": "c37d55041bb7fedf",
       "events": [
         {
           "event_id": "S03_SH010.M1",
@@ -598,13 +774,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S03_SH010.M3",
+          "shot_id": "S03_SH010",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "cold ground mist over the frozen field; mist is heard in the bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S04_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "b7c00287b633016d",
+      "events_sha": "683cbf6a2c6ea4e2",
       "events": [
         {
           "event_id": "S04_SH001.M1",
@@ -649,13 +847,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S04_SH001.M3",
+          "shot_id": "S04_SH001",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the low sun's light drifts through the fog; the dawn bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S04_SH011": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "39c63842c6bb4087",
+      "events_sha": "73263adc9bf0a711",
       "events": [
         {
           "event_id": "S04_SH011.M1",
@@ -668,6 +888,50 @@
           "audio": {
             "decision": "silent_by_design",
             "why": "the silence of the beat; no cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S04_SH011.M2",
+          "shot_id": "S04_SH011",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 60,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the low sun's light drifts behind the hands; the dawn bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S04_SH011.M3",
+          "shot_id": "S04_SH011",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 60,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "a thin frost mist over the field; mist is heard in the bed",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -804,13 +1068,123 @@
     "S05_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "4fc4ff9486bf112a",
+      "events_sha": "cab062ffccede9ac",
       "events": [
+        {
+          "event_id": "S05_SH002.A0",
+          "shot_id": "S05_SH002",
+          "source": "actions",
+          "index": 0,
+          "op": "front_line",
+          "start_frame": 9,
+          "end_frame": 91,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the line is already known from the shot before; it stands at once, no draw (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "next_action"
+          },
+          "word": "Nobody",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH002.A2",
+          "shot_id": "S05_SH002",
+          "source": "actions",
+          "index": 1,
+          "op": "highlight",
+          "start_frame": 9,
+          "end_frame": 27,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "Nobody",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH002.A3",
+          "shot_id": "S05_SH002",
+          "source": "actions",
+          "index": 2,
+          "op": "highlight",
+          "start_frame": 9,
+          "end_frame": 27,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "Nobody",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH002.A4",
+          "shot_id": "S05_SH002",
+          "source": "actions",
+          "index": 3,
+          "op": "highlight",
+          "start_frame": 9,
+          "end_frame": 27,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "Nobody",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH002.A5",
+          "shot_id": "S05_SH002",
+          "source": "actions",
+          "index": 4,
+          "op": "highlight",
+          "start_frame": 9,
+          "end_frame": 27,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "Nobody",
+          "until_word": null
+        },
         {
           "event_id": "S05_SH002.A1",
           "shot_id": "S05_SH002",
           "source": "actions",
-          "index": 0,
+          "index": 5,
           "op": "counter",
           "start_frame": 91,
           "end_frame": 132,
@@ -834,7 +1208,7 @@
     "S05_SH003": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "b56f8a9a768fc2f0",
+      "events_sha": "c69c481e1c43ea0c",
       "events": [
         {
           "event_id": "S05_SH003.M1",
@@ -879,13 +1253,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S05_SH003.M3",
+          "shot_id": "S05_SH003",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "breath and brazier smoke rise between the men; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S05_SH010": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "d427b666d337f1a8",
+      "events_sha": "d1b740555bfdbff8",
       "events": [
         {
           "event_id": "S05_SH010.M1",
@@ -908,13 +1304,57 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S05_SH010.M2",
+          "shot_id": "S05_SH010",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the low sun's light drifts behind the hands; the dawn bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH010.M3",
+          "shot_id": "S05_SH010",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "a thin frost mist over the field; mist is heard in the bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S05_SH016": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "fa04cef795aa9185",
+      "events_sha": "1abf30f00f40fcf2",
       "events": [
         {
           "event_id": "S05_SH016.M1",
@@ -937,13 +1377,57 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S05_SH016.M2",
+          "shot_id": "S05_SH016",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "smoke rises from the braziers behind the stretcher; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH016.M3",
+          "shot_id": "S05_SH016",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the braziers flicker; the fire's crackle is the bed's",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S05_SH020": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "72bcd17323ea77c9",
+      "events_sha": "911035398452e1b3",
       "events": [
         {
           "event_id": "S05_SH020.M1",
@@ -988,13 +1472,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S05_SH020.M3",
+          "shot_id": "S05_SH020",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 186,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the low sun's light drifts over the graves; the dawn bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S06_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "e3e9459121b006b2",
+      "events_sha": "36ff2111e2a3c211",
       "events": [
         {
           "event_id": "S06_SH001.M1",
@@ -1039,13 +1545,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S06_SH001.M3",
+          "shot_id": "S06_SH001",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 78,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "brazier smoke rises beside the German; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S06_SH005": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "a23f036c3544f38d",
+      "events_sha": "f64b5b350a193ff5",
       "events": [
         {
           "event_id": "S06_SH005.M1",
@@ -1068,13 +1596,57 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S06_SH005.M2",
+          "shot_id": "S06_SH005",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "smoke rises from the two trench lines; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S06_SH005.M3",
+          "shot_id": "S06_SH005",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the low sun's light drifts over the ice; the dawn bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S06_SH012": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "ed13d5436077e1c0",
+      "events_sha": "30baff71ad97f5eb",
       "events": [
         {
           "event_id": "S06_SH012.M1",
@@ -1119,13 +1691,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S06_SH012.M3",
+          "shot_id": "S06_SH012",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 132,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "smoke rises from the trench; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S07_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "9b1a2690cf336a57",
+      "events_sha": "b8abbcc6773ce2d2",
       "events": [
         {
           "event_id": "S07_SH001.M1",
@@ -1170,13 +1764,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S07_SH001.M3",
+          "shot_id": "S07_SH001",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 114,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the low sun's light drifts through the mist; the dawn bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S08_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "7e5c9f1ed5250255",
+      "events_sha": "3f207769af2d51b5",
       "events": [
         {
           "event_id": "S08_SH001.M1",
@@ -1221,13 +1837,35 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S08_SH001.M3",
+          "shot_id": "S08_SH001",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "dust",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "motes drift in the candle's light; the cold night bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S08_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "3fd8cbdc2be0f517",
+      "events_sha": "13fcf3595152b521",
       "events": [
         {
           "event_id": "S08_SH002.M1",
@@ -1250,13 +1888,57 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S08_SH002.M2",
+          "shot_id": "S08_SH002",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 210,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the candle's flame flickers; its sound is the bed's",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S08_SH002.M3",
+          "shot_id": "S08_SH002",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "dust",
+          "start_frame": 0,
+          "end_frame": 210,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "motes drift in the candle's light; the cold night bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S08_SH003": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "0b402d7f91bc54f3",
+      "events_sha": "716f1bd4c40e4c5a",
       "events": [
         {
           "event_id": "S08_SH003.M1",
@@ -1279,13 +1961,57 @@
           },
           "word": null,
           "until_word": null
+        },
+        {
+          "event_id": "S08_SH003.M2",
+          "shot_id": "S08_SH003",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 96,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "smoke rises from the trench braziers; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S08_SH003.M3",
+          "shot_id": "S08_SH003",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 96,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the last low sun's light drifts over the field; the bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
         }
       ]
     },
     "S08_SH004": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "55ecbb79b60ae5e8",
+      "events_sha": "083c51e8e242b7a6",
       "events": [
         {
           "event_id": "S08_SH004.M1",
@@ -1298,6 +2024,50 @@
           "audio": {
             "decision": "silent_by_design",
             "why": "the text fades up in silence; the film ends on silence",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S08_SH004.M2",
+          "shot_id": "S08_SH004",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 120,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the film ends in silence; the candle's flicker makes no sound",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S08_SH004.M3",
+          "shot_id": "S08_SH004",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 120,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the film ends in silence; the thin smoke makes no sound",
             "sync": "onset"
           },
           "audio_basis": "authored",

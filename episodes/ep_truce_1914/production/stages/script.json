@@ -157,7 +157,7 @@
     "audit_status": "PASS"
   },
   "rehearsal": false,
-  "fingerprint": "93391aca4d9a54ea65f3e0e976f4ac1660c1530880b5a4f39a54729491e17e3b",
-  "elapsed_s": 0.19,
-  "at": "2026-11-13T16:25:11Z"
+  "fingerprint": "a8e0f463b7bd729d5c3b40c725766cb733f5d49364903eb63c96843826848ad0",
+  "elapsed_s": 0.21,
+  "at": "2026-11-13T19:28:34Z"
 }
