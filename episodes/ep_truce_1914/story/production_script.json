@@ -3,7 +3,7 @@
  "episode_id": "ep_truce_1914",
  "title": "The Day We Were Not Enemies: The Christmas Truce of 1914",
  "what_if_premise": "On Christmas 1914, after five months of war that was meant to be over by Christmas, British and German soldiers on parts of the Western Front climbed out of their trenches, sang, traded, buried their dead together and then went back to war; told through two invented men, Thomas and Friedrich.",
- "target_duration_seconds": 364.75,
+ "target_duration_seconds": 367.0,
  "fps": 24,
  "audio_balance_target": {
   "narrator_ratio_min": 0.55,
@@ -91,7 +91,7 @@
     "anchor_image_path": "episodes/ep_truce_1914/assets/places/loc_german_trench_anchor.png",
     "name": "Saxon front-line trench opposite the British line",
     "era_and_geography": "Frelinghien sector, French Flanders, 24-26 December 1914",
-    "fixed_environment_prompt": "a German front-line trench in Flanders, December 1914: timber-revetted earth walls, a parapet of sandbags, small fir trees set on the parapet, a dugout entrance with a hanging lantern, frost on the timber",
+    "fixed_environment_prompt": "a German front-line trench in Flanders, December 1914: timber-revetted earth walls, a parapet of sandbags, small fir trees set on the parapet, a dugout entrance with a hanging oil lamp, frost on the timber",
     "lighting_palette": "deep night blue, many small warm candle points along the parapet",
     "ambience_bed": {
      "classes": [
@@ -200,7 +200,7 @@
     "S02"
    ],
    "narrative_objective": "Open on the walk toward the enemy and show why the men were stuck",
-   "target_window": "0:00-1:22"
+   "target_window": "0:00-1:23"
   },
   {
    "phase_id": "Z2",
@@ -210,7 +210,7 @@
     "S04"
    ],
    "narrative_objective": "The song and the first step: the enemy becomes a man",
-   "target_window": "1:22-3:02"
+   "target_window": "1:23-3:02"
   },
   {
    "phase_id": "Z3",
@@ -238,7 +238,7 @@
     "S08"
    ],
    "narrative_objective": "The return to arms, the letters, the last line",
-   "target_window": "5:06-6:04"
+   "target_window": "5:06-6:07"
   }
  ],
  "segments": [
@@ -286,7 +286,7 @@
     "surface_topic": "the letter",
     "real_subject": "how long the war will last"
    },
-   "target_duration_seconds": 57.5,
+   "target_duration_seconds": 58.25,
    "cause_from_segment_id": "S01",
    "effect_to_segment_id": "S03"
   },
@@ -388,7 +388,7 @@
     "surface_topic": "families",
     "real_subject": "who is being killed"
    },
-   "target_duration_seconds": 86.25,
+   "target_duration_seconds": 85.5,
    "cause_from_segment_id": "S04",
    "effect_to_segment_id": "S06"
   },
@@ -455,7 +455,7 @@
     "surface_topic": "goodbye",
     "real_subject": "the war is bigger than them"
    },
-   "target_duration_seconds": 34.75,
+   "target_duration_seconds": 35.75,
    "cause_from_segment_id": "S06",
    "effect_to_segment_id": "S08"
   },
@@ -468,7 +468,7 @@
    "segment_mode": "narration_led",
    "mood": "reflective",
    "music": true,
-   "target_duration_seconds": 23.25,
+   "target_duration_seconds": 24.5,
    "cause_from_segment_id": "S07",
    "effect_to_segment_id": null,
    "why_a_scene": null,
@@ -659,12 +659,12 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "plain; a dry beat before the last sentence",
-   "text": "In early December, the Pope asked the warring governments for a truce at Christmas. They refused. Nobody asked the men in the trenches.",
+   "text": "In early December, the Pope asked for a Christmas truce. The appeal failed. No official truce was agreed. Nobody asked the men in the trenches.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-25"
    ],
-   "estimated_duration_seconds": 8.52,
+   "estimated_duration_seconds": 9.26,
    "requires_visible_lipsync": false
   },
   {
@@ -1083,13 +1083,13 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "lighter, almost fond",
-   "text": "They traded cigarettes, food, buttons. In a few places, men wrote home about a kickabout with a ball.",
+   "text": "They traded cigarettes, food, buttons. In a few places, accounts describe men kicking a ball around.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-16",
     "C-17"
    ],
-   "estimated_duration_seconds": 6.67,
+   "estimated_duration_seconds": 5.93,
    "requires_visible_lipsync": false
   },
   {
@@ -1588,12 +1588,12 @@
    "speaker_id": "none",
    "addressee_id": null,
    "delivery_direction": "silence",
-   "text": "(the German officer fires into the air in answer, then steps down)",
+   "text": "(the German captain salutes back, gets down into his trench, then fires two shots into the air)",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-21"
    ],
-   "estimated_duration_seconds": 5.0,
+   "estimated_duration_seconds": 6.0,
    "requires_visible_lipsync": false
   },
   {
@@ -1646,12 +1646,12 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "plain, no comment",
-   "text": "Their commanders forbade it. A few small truces came in 1915, but nothing on that scale ever again.",
+   "text": "Their commanders moved to prevent it from happening again. A few small truces still occurred in 1915, but nothing on that scale.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-23"
    ],
-   "estimated_duration_seconds": 6.67,
+   "estimated_duration_seconds": 8.15,
    "requires_visible_lipsync": false
   },
   {
@@ -2683,7 +2683,7 @@
   {
    "shot_id": "S02_SH008",
    "segment_id": "S02",
-   "target_duration_seconds": 9.25,
+   "target_duration_seconds": 10.0,
    "narrative_purpose": "Raise the stakes from above: the people in charge said no; the men were never asked",
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",
@@ -4891,7 +4891,7 @@
   {
    "shot_id": "S05_SH003",
    "segment_id": "S05",
-   "target_duration_seconds": 7.5,
+   "target_duration_seconds": 6.75,
    "narrative_purpose": "The trading, wide: what men did with one free day",
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",
@@ -6301,7 +6301,10 @@
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",
    "location_id": "loc_no_mans_land",
-   "character_ids": [],
+   "character_ids": [
+    "char_thomas_hale",
+    "char_friedrich_brandt"
+   ],
    "prop_ids": [],
    "audio_line_ids": [
     "S06_L001"
@@ -7498,7 +7501,7 @@
    "shot_id": "S07_SH005",
    "segment_id": "S07",
    "target_duration_seconds": 6.75,
-   "narrative_purpose": "The signal: a captain fires into the air and raises a flag (after Capt. Stockwell, Houplines, 26 December 1914)",
+   "narrative_purpose": "The signal: a British captain fires three shots into the air, raises a flag and salutes the German line (after Capt. Stockwell, Houplines, 26 December 1914)",
    "visual_type": "cinematic_video",
    "generation_mode": "WAN_I2V",
    "location_id": "loc_british_trench",
@@ -7510,7 +7513,7 @@
     "S07_L005"
    ],
    "action_start_state": "A British captain stands on the fire step, revolver raised",
-   "action_end_state": "He fires into the air and raises a flag reading MERRY CHRISTMAS",
+   "action_end_state": "He has fired three shots, raised a flag reading MERRY CHRISTMAS, and salutes toward the German line",
    "camera_spec": {
     "shot_size": "wide",
     "vertical_angle": "worm_eye_-30",
@@ -7520,7 +7523,7 @@
    },
    "screen_composition": {
     "foreground": "sandbags",
-    "midground": "a British infantry captain on the fire step firing a revolver into the air, then raising a small flag",
+    "midground": "a British infantry captain on the fire step firing three shots into the air, raising a small flag, then saluting",
     "background": "fog",
     "screen_direction_notes": "the captain faces away toward the German line"
    },
@@ -7541,7 +7544,7 @@
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
    "video_prompt": {
-    "motion_prompt": "The captain fires his revolver into the air, then raises the flag on the parapet.",
+    "motion_prompt": "The captain fires his revolver into the air three times, raises the flag on the parapet, then salutes toward the German line.",
     "primary_action_count": 1,
     "camera_move_count": 0,
     "parallax_preset": null
@@ -7577,8 +7580,8 @@
   {
    "shot_id": "S07_SH006",
    "segment_id": "S07",
-   "target_duration_seconds": 5.0,
-   "narrative_purpose": "The answer: a German officer fires into the air; both men step down",
+   "target_duration_seconds": 6.0,
+   "narrative_purpose": "The answer: the German captain salutes back and gets down into his trench, then fires two shots into the air",
    "visual_type": "cinematic_video",
    "generation_mode": "WAN_I2V",
    "location_id": "loc_german_trench",
@@ -7587,8 +7590,8 @@
    "audio_line_ids": [
     "S07_L006"
    ],
-   "action_start_state": "A German officer stands on the German parapet",
-   "action_end_state": "He fires into the air and steps down",
+   "action_start_state": "A German captain stands on the German parapet, saluting toward the British line",
+   "action_end_state": "He has stepped down behind the parapet; two pistol shots go up from the German trench",
    "camera_spec": {
     "shot_size": "wide",
     "vertical_angle": "eye_level_0",
@@ -7598,7 +7601,7 @@
    },
    "screen_composition": {
     "foreground": "frosted wire stakes",
-    "midground": "a German officer on the parapet firing a pistol into the air",
+    "midground": "a German captain on the parapet saluting, then stepping down behind it",
     "background": "fog",
     "screen_direction_notes": "the officer faces screen left"
    },
@@ -7614,12 +7617,12 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A German infantry officer in a field-grey peaked cap standing on a foggy German parapet raising a pistol to the sky, seen across the wire, cold fog glowing gold where the low morning sun breaks through.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A German infantry captain in a field-grey peaked cap standing on a foggy German parapet, saluting toward the British line, a pistol in his holster, seen across the wire, cold fog glowing gold where the low morning sun breaks through.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
    "video_prompt": {
-    "motion_prompt": "The officer fires his pistol into the air, salutes, and steps down out of sight.",
+    "motion_prompt": "The captain salutes, steps down out of sight behind the parapet, then his arm rises above it and fires a pistol twice into the air.",
     "primary_action_count": 1,
     "camera_move_count": 0,
     "parallax_preset": null
@@ -7877,7 +7880,7 @@
   {
    "shot_id": "S08_SH002",
    "segment_id": "S08",
-   "target_duration_seconds": 7.5,
+   "target_duration_seconds": 8.75,
    "narrative_purpose": "Friedrich with the portrait card and the brass button: the other side of the same night",
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",

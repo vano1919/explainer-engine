@@ -4,7 +4,7 @@
   "era": "modern_20th_century",
   "era_basis": "manifest",
   "fps": 24,
-  "duration_s": 364.75,
+  "duration_s": 367.0,
   "shots": [
     {
       "shot_id": "S01_SH001",
@@ -1383,7 +1383,7 @@
       "shot_id": "S02_SH008",
       "segment_id": "S02",
       "start_s": 65.0,
-      "dur_s": 9.25,
+      "dur_s": 10.0,
       "route": "still_25d",
       "place": "loc_british_trench",
       "room": "outdoor",
@@ -1403,7 +1403,7 @@
           "decision": "ambience_only",
           "sync": "span",
           "audio_basis": "authored",
-          "dur_s": 9.25,
+          "dur_s": 10.0,
           "distance": "distant"
         }
       ],
@@ -1417,7 +1417,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            222
+            240
           ],
           "placed": false
         },
@@ -1430,7 +1430,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            222
+            240
           ],
           "placed": false
         }
@@ -1514,7 +1514,7 @@
     {
       "shot_id": "S02_SH009",
       "segment_id": "S02",
-      "start_s": 74.25,
+      "start_s": 75.0,
       "dur_s": 8.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -1601,7 +1601,7 @@
     {
       "shot_id": "S03_SH001",
       "segment_id": "S03",
-      "start_s": 82.5,
+      "start_s": 83.25,
       "dur_s": 9.5,
       "route": "video",
       "place": "loc_german_trench",
@@ -1697,7 +1697,7 @@
     {
       "shot_id": "S03_SH002",
       "segment_id": "S03",
-      "start_s": 92.0,
+      "start_s": 92.75,
       "dur_s": 4.0,
       "route": "still_25d",
       "place": "loc_german_trench",
@@ -1806,7 +1806,7 @@
     {
       "shot_id": "S03_SH003",
       "segment_id": "S03",
-      "start_s": 96.0,
+      "start_s": 96.75,
       "dur_s": 4.75,
       "route": "video",
       "place": "loc_german_trench",
@@ -1885,7 +1885,7 @@
     {
       "shot_id": "S03_SH004",
       "segment_id": "S03",
-      "start_s": 100.75,
+      "start_s": 101.5,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -1972,7 +1972,7 @@
     {
       "shot_id": "S03_SH005",
       "segment_id": "S03",
-      "start_s": 103.0,
+      "start_s": 103.75,
       "dur_s": 3.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -2052,7 +2052,7 @@
     {
       "shot_id": "S03_SH006",
       "segment_id": "S03",
-      "start_s": 106.25,
+      "start_s": 107.0,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_british_trench",
@@ -2121,7 +2121,7 @@
     {
       "shot_id": "S03_SH007",
       "segment_id": "S03",
-      "start_s": 109.0,
+      "start_s": 109.75,
       "dur_s": 3.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -2190,7 +2190,7 @@
     {
       "shot_id": "S03_SH008",
       "segment_id": "S03",
-      "start_s": 112.0,
+      "start_s": 112.75,
       "dur_s": 4.75,
       "route": "video",
       "place": "loc_british_trench",
@@ -2270,7 +2270,7 @@
     {
       "shot_id": "S03_SH009",
       "segment_id": "S03",
-      "start_s": 116.75,
+      "start_s": 117.5,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_german_trench",
@@ -2339,7 +2339,7 @@
     {
       "shot_id": "S03_SH010",
       "segment_id": "S03",
-      "start_s": 118.75,
+      "start_s": 119.5,
       "dur_s": 6.75,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -2448,7 +2448,7 @@
     {
       "shot_id": "S04_SH001",
       "segment_id": "S04",
-      "start_s": 125.5,
+      "start_s": 126.25,
       "dur_s": 3.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -2547,7 +2547,7 @@
     {
       "shot_id": "S04_SH002",
       "segment_id": "S04",
-      "start_s": 128.5,
+      "start_s": 129.25,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_german_trench",
@@ -2626,7 +2626,7 @@
     {
       "shot_id": "S04_SH003",
       "segment_id": "S04",
-      "start_s": 130.5,
+      "start_s": 131.25,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_british_trench",
@@ -2695,7 +2695,7 @@
     {
       "shot_id": "S04_SH004",
       "segment_id": "S04",
-      "start_s": 133.25,
+      "start_s": 134.0,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_german_trench",
@@ -2764,7 +2764,7 @@
     {
       "shot_id": "S04_SH005",
       "segment_id": "S04",
-      "start_s": 135.5,
+      "start_s": 136.25,
       "dur_s": 5.5,
       "route": "video",
       "place": "loc_british_trench",
@@ -2833,7 +2833,7 @@
     {
       "shot_id": "S04_SH006",
       "segment_id": "S04",
-      "start_s": 141.0,
+      "start_s": 141.75,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -2920,7 +2920,7 @@
     {
       "shot_id": "S04_SH007",
       "segment_id": "S04",
-      "start_s": 143.25,
+      "start_s": 144.0,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -2989,7 +2989,7 @@
     {
       "shot_id": "S04_SH008",
       "segment_id": "S04",
-      "start_s": 147.25,
+      "start_s": 148.0,
       "dur_s": 9.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3068,7 +3068,7 @@
     {
       "shot_id": "S04_SH009",
       "segment_id": "S04",
-      "start_s": 156.25,
+      "start_s": 157.0,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3137,7 +3137,7 @@
     {
       "shot_id": "S04_SH010",
       "segment_id": "S04",
-      "start_s": 158.25,
+      "start_s": 159.0,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3206,7 +3206,7 @@
     {
       "shot_id": "S04_SH011",
       "segment_id": "S04",
-      "start_s": 160.25,
+      "start_s": 161.0,
       "dur_s": 2.5,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -3291,7 +3291,7 @@
     {
       "shot_id": "S04_SH012",
       "segment_id": "S04",
-      "start_s": 162.75,
+      "start_s": 163.5,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3360,7 +3360,7 @@
     {
       "shot_id": "S04_SH013",
       "segment_id": "S04",
-      "start_s": 166.75,
+      "start_s": 167.5,
       "dur_s": 4.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3429,7 +3429,7 @@
     {
       "shot_id": "S04_SH014",
       "segment_id": "S04",
-      "start_s": 171.0,
+      "start_s": 171.75,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3498,7 +3498,7 @@
     {
       "shot_id": "S04_SH015",
       "segment_id": "S04",
-      "start_s": 175.0,
+      "start_s": 175.75,
       "dur_s": 7.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3577,7 +3577,7 @@
     {
       "shot_id": "S05_SH001",
       "segment_id": "S05",
-      "start_s": 182.0,
+      "start_s": 182.75,
       "dur_s": 6.0,
       "route": "map_action",
       "place": "loc_western_front_map",
@@ -3792,7 +3792,7 @@
     {
       "shot_id": "S05_SH002",
       "segment_id": "S05",
-      "start_s": 188.0,
+      "start_s": 188.75,
       "dur_s": 6.25,
       "route": "map_action",
       "place": "loc_western_front_map",
@@ -3902,8 +3902,8 @@
     {
       "shot_id": "S05_SH003",
       "segment_id": "S05",
-      "start_s": 194.25,
-      "dur_s": 7.5,
+      "start_s": 195.0,
+      "dur_s": 6.75,
       "route": "still_25d",
       "place": "loc_no_mans_land",
       "room": "outdoor",
@@ -3923,7 +3923,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            180
+            162
           ],
           "placed": false
         },
@@ -3936,7 +3936,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            180
+            162
           ],
           "placed": false
         }
@@ -6614,7 +6614,7 @@
           }
         },
         "answers": {
-          "visible": "A British captain stands on the fire step, revolver raised He fires into the air and raises a flag reading MERRY CHRISTMAS The signal: a captain fires into the air and raises a flag (after Capt. Stockwell, Houplines, 26 December 1914) sandbags a British infantry captain on the fire step firing a rev",
+          "visible": "A British captain stands on the fire step, revolver raised He has fired three shots, raised a flag reading MERRY CHRISTMAS, and salutes toward the German line The signal: a British captain fires three shots into the air, raises a flag and salutes the German line (after Capt. Stockwell, Houplines, 26",
           "environment_sounds": [
             "wind",
             "fire"
@@ -6651,27 +6651,18 @@
       "shot_id": "S07_SH006",
       "segment_id": "S07",
       "start_s": 324.25,
-      "dur_s": 5.0,
+      "dur_s": 6.0,
       "route": "video",
       "place": "loc_german_trench",
       "room": "outdoor",
       "weather": "high_altitude_wind",
-      "surface": "snow",
+      "surface": "dirt",
       "audio_line_ids": [
         "S07_L006"
       ],
       "events": [],
       "visual_events": [],
-      "candidates": [
-        {
-          "class": "footsteps_dirt",
-          "source": "word",
-          "word": "steps",
-          "at_s": 3.708,
-          "basis": "estimated",
-          "why": "a word of the read names it and the picture shows it: a person authors the event (AV-07); words never place a sound"
-        }
-      ],
+      "candidates": [],
       "heard_not_seen": [],
       "mood": "tragic",
       "design": {
@@ -6703,7 +6694,7 @@
           }
         },
         "answers": {
-          "visible": "A German officer stands on the German parapet He fires into the air and steps down The answer: a German officer fires into the air; both men step down frosted wire stakes a German officer on the parapet firing a pistol into the air fog Flanders, Christmas 1914, a frozen winter world. A German infant",
+          "visible": "A German captain stands on the German parapet, saluting toward the British line He has stepped down behind the parapet; two pistol shots go up from the German trench The answer: the German captain salutes back and gets down into his trench, then fires two shots into the air frosted wire stakes a Ger",
           "environment_sounds": [
             "wind",
             "crowd_murmur"
@@ -6719,9 +6710,7 @@
           "protect_voice": "music ducks by 9 dB and the bed by its BP-53 depth under the lines",
           "silence": "none (the bed and room tone carry the shot)",
           "visual_events": [],
-          "candidates": [
-            "footsteps_dirt (word)"
-          ]
+          "candidates": []
         },
         "heard_not_seen": []
       },
@@ -6730,7 +6719,7 @@
     {
       "shot_id": "S07_SH007",
       "segment_id": "S07",
-      "start_s": 329.25,
+      "start_s": 330.25,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -6817,7 +6806,7 @@
     {
       "shot_id": "S07_SH008",
       "segment_id": "S07",
-      "start_s": 333.25,
+      "start_s": 334.25,
       "dur_s": 8.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -6904,7 +6893,7 @@
     {
       "shot_id": "S08_SH001",
       "segment_id": "S08",
-      "start_s": 341.5,
+      "start_s": 342.5,
       "dur_s": 6.75,
       "route": "still_25d",
       "place": "loc_british_trench",
@@ -7014,8 +7003,8 @@
     {
       "shot_id": "S08_SH002",
       "segment_id": "S08",
-      "start_s": 348.25,
-      "dur_s": 7.5,
+      "start_s": 349.25,
+      "dur_s": 8.75,
       "route": "still_25d",
       "place": "loc_german_trench",
       "room": "outdoor",
@@ -7035,7 +7024,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            180
+            210
           ],
           "placed": false
         }
@@ -7109,7 +7098,7 @@
     {
       "shot_id": "S08_SH003",
       "segment_id": "S08",
-      "start_s": 355.75,
+      "start_s": 358.0,
       "dur_s": 4.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -7194,7 +7183,7 @@
     {
       "shot_id": "S08_SH004",
       "segment_id": "S08",
-      "start_s": 359.75,
+      "start_s": 362.0,
       "dur_s": 5.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -7375,7 +7364,7 @@
       ],
       "basis": "authored",
       "start_s": 44.75,
-      "end_s": 82.5,
+      "end_s": 83.25,
       "shot_ids": [
         "S02_SH004",
         "S02_SH005",
@@ -7396,8 +7385,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 82.5,
-      "end_s": 100.75,
+      "start_s": 83.25,
+      "end_s": 101.5,
       "shot_ids": [
         "S03_SH001",
         "S03_SH002",
@@ -7415,8 +7404,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 100.75,
-      "end_s": 116.75,
+      "start_s": 101.5,
+      "end_s": 117.5,
       "shot_ids": [
         "S03_SH004",
         "S03_SH005",
@@ -7436,8 +7425,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 116.75,
-      "end_s": 118.75,
+      "start_s": 117.5,
+      "end_s": 119.5,
       "shot_ids": [
         "S03_SH009"
       ],
@@ -7453,8 +7442,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 118.75,
-      "end_s": 128.5,
+      "start_s": 119.5,
+      "end_s": 129.25,
       "shot_ids": [
         "S03_SH010",
         "S04_SH001"
@@ -7471,8 +7460,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 128.5,
-      "end_s": 130.5,
+      "start_s": 129.25,
+      "end_s": 131.25,
       "shot_ids": [
         "S04_SH002"
       ],
@@ -7488,8 +7477,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 130.5,
-      "end_s": 133.25,
+      "start_s": 131.25,
+      "end_s": 134.0,
       "shot_ids": [
         "S04_SH003"
       ],
@@ -7505,8 +7494,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 133.25,
-      "end_s": 135.5,
+      "start_s": 134.0,
+      "end_s": 136.25,
       "shot_ids": [
         "S04_SH004"
       ],
@@ -7522,8 +7511,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 135.5,
-      "end_s": 147.25,
+      "start_s": 136.25,
+      "end_s": 148.0,
       "shot_ids": [
         "S04_SH005",
         "S04_SH006",
@@ -7541,8 +7530,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 147.25,
-      "end_s": 182.0,
+      "start_s": 148.0,
+      "end_s": 182.75,
       "shot_ids": [
         "S04_SH008",
         "S04_SH009",
@@ -7564,8 +7553,8 @@
         "wind"
       ],
       "basis": "authored",
-      "start_s": 182.0,
-      "end_s": 194.25,
+      "start_s": 182.75,
+      "end_s": 195.0,
       "shot_ids": [
         "S05_SH001",
         "S05_SH002"
@@ -7582,7 +7571,7 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 194.25,
+      "start_s": 195.0,
       "end_s": 315.5,
       "shot_ids": [
         "S05_SH003",
@@ -7651,7 +7640,7 @@
       ],
       "basis": "authored",
       "start_s": 324.25,
-      "end_s": 329.25,
+      "end_s": 330.25,
       "shot_ids": [
         "S07_SH006"
       ],
@@ -7667,8 +7656,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 329.25,
-      "end_s": 348.25,
+      "start_s": 330.25,
+      "end_s": 349.25,
       "shot_ids": [
         "S07_SH007",
         "S07_SH008",
@@ -7686,8 +7675,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 348.25,
-      "end_s": 355.75,
+      "start_s": 349.25,
+      "end_s": 358.0,
       "shot_ids": [
         "S08_SH002"
       ],
@@ -7703,8 +7692,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 355.75,
-      "end_s": 364.75,
+      "start_s": 358.0,
+      "end_s": 367.0,
       "shot_ids": [
         "S08_SH003",
         "S08_SH004"
@@ -7749,81 +7738,81 @@
       "l_end_s": 45.25
     },
     {
-      "at_s": 82.5,
+      "at_s": 83.25,
       "from": "BED_06_loc_british_trench",
       "to": "BED_07_loc_german_trench",
-      "j_start_s": 82.0,
-      "l_end_s": 83.0
+      "j_start_s": 82.75,
+      "l_end_s": 83.75
     },
     {
-      "at_s": 100.75,
+      "at_s": 101.5,
       "from": "BED_07_loc_german_trench",
       "to": "BED_08_loc_british_trench",
-      "j_start_s": 100.25,
-      "l_end_s": 101.25
+      "j_start_s": 101.0,
+      "l_end_s": 102.0
     },
     {
-      "at_s": 116.75,
+      "at_s": 117.5,
       "from": "BED_08_loc_british_trench",
       "to": "BED_09_loc_german_trench",
-      "j_start_s": 116.25,
-      "l_end_s": 117.25
+      "j_start_s": 117.0,
+      "l_end_s": 118.0
     },
     {
-      "at_s": 118.75,
+      "at_s": 119.5,
       "from": "BED_09_loc_german_trench",
       "to": "BED_10_loc_no_mans_land",
-      "j_start_s": 118.25,
-      "l_end_s": 119.25
+      "j_start_s": 119.0,
+      "l_end_s": 120.0
     },
     {
-      "at_s": 128.5,
+      "at_s": 129.25,
       "from": "BED_10_loc_no_mans_land",
       "to": "BED_11_loc_german_trench",
-      "j_start_s": 128.0,
-      "l_end_s": 129.0
+      "j_start_s": 128.75,
+      "l_end_s": 129.75
     },
     {
-      "at_s": 130.5,
+      "at_s": 131.25,
       "from": "BED_11_loc_german_trench",
       "to": "BED_12_loc_british_trench",
-      "j_start_s": 130.0,
-      "l_end_s": 131.0
+      "j_start_s": 130.75,
+      "l_end_s": 131.75
     },
     {
-      "at_s": 133.25,
+      "at_s": 134.0,
       "from": "BED_12_loc_british_trench",
       "to": "BED_13_loc_german_trench",
-      "j_start_s": 132.75,
-      "l_end_s": 133.75
+      "j_start_s": 133.5,
+      "l_end_s": 134.5
     },
     {
-      "at_s": 135.5,
+      "at_s": 136.25,
       "from": "BED_13_loc_german_trench",
       "to": "BED_14_loc_british_trench",
-      "j_start_s": 135.0,
-      "l_end_s": 136.0
+      "j_start_s": 135.75,
+      "l_end_s": 136.75
     },
     {
-      "at_s": 147.25,
+      "at_s": 148.0,
       "from": "BED_14_loc_british_trench",
       "to": "BED_15_loc_no_mans_land",
-      "j_start_s": 146.75,
-      "l_end_s": 147.75
+      "j_start_s": 147.5,
+      "l_end_s": 148.5
     },
     {
-      "at_s": 182.0,
+      "at_s": 182.75,
       "from": "BED_15_loc_no_mans_land",
       "to": "BED_16_loc_western_front_map",
-      "j_start_s": 181.5,
-      "l_end_s": 182.5
+      "j_start_s": 182.25,
+      "l_end_s": 183.25
     },
     {
-      "at_s": 194.25,
+      "at_s": 195.0,
       "from": "BED_16_loc_western_front_map",
       "to": "BED_17_loc_no_mans_land",
-      "j_start_s": 193.75,
-      "l_end_s": 194.75
+      "j_start_s": 194.5,
+      "l_end_s": 195.5
     },
     {
       "at_s": 315.5,
@@ -7840,25 +7829,25 @@
       "l_end_s": 324.75
     },
     {
-      "at_s": 329.25,
+      "at_s": 330.25,
       "from": "BED_19_loc_german_trench",
       "to": "BED_20_loc_british_trench",
-      "j_start_s": 328.75,
-      "l_end_s": 329.75
+      "j_start_s": 329.75,
+      "l_end_s": 330.75
     },
     {
-      "at_s": 348.25,
+      "at_s": 349.25,
       "from": "BED_20_loc_british_trench",
       "to": "BED_21_loc_german_trench",
-      "j_start_s": 347.75,
-      "l_end_s": 348.75
+      "j_start_s": 348.75,
+      "l_end_s": 349.75
     },
     {
-      "at_s": 355.75,
+      "at_s": 358.0,
       "from": "BED_21_loc_german_trench",
       "to": "BED_22_loc_no_mans_land",
-      "j_start_s": 355.25,
-      "l_end_s": 356.25
+      "j_start_s": 357.5,
+      "l_end_s": 358.5
     }
   ],
   "music": [
@@ -7876,7 +7865,7 @@
       "music_id": "MUS_S02",
       "segment_id": "S02",
       "start_s": 25.0,
-      "end_s": 82.5,
+      "end_s": 83.25,
       "mood": "dark",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7885,8 +7874,8 @@
     {
       "music_id": "MUS_S04",
       "segment_id": "S04",
-      "start_s": 125.5,
-      "end_s": 182.0,
+      "start_s": 126.25,
+      "end_s": 182.75,
       "mood": "tense",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7895,7 +7884,7 @@
     {
       "music_id": "MUS_S05",
       "segment_id": "S05",
-      "start_s": 182.0,
+      "start_s": 182.75,
       "end_s": 268.25,
       "mood": "tragic",
       "mood_basis": "authored",
@@ -7916,7 +7905,7 @@
       "music_id": "MUS_S07",
       "segment_id": "S07",
       "start_s": 306.75,
-      "end_s": 341.5,
+      "end_s": 342.5,
       "mood": "tragic",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7925,8 +7914,8 @@
     {
       "music_id": "MUS_S08",
       "segment_id": "S08",
-      "start_s": 341.5,
-      "end_s": 364.75,
+      "start_s": 342.5,
+      "end_s": 367.0,
       "mood": "reflective",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -8011,7 +8000,7 @@
       "sfx": 3
     },
     "review_required": [],
-    "candidates": 43
+    "candidates": 42
   },
   "sources": {
     "crowd_murmur": {

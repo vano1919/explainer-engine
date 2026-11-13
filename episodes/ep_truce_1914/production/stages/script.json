@@ -133,23 +133,23 @@
     {
       "gate": "video_share_against_target",
       "status": "PASS",
-      "measured": 0.6018,
-      "detail": "video 60.2% of the duration (estimated), D-131's target 60% (+-10 points); switch Q7 = sample_review_full_fail, run_scope full"
+      "measured": 0.6008,
+      "detail": "video 60.1% of the duration (estimated), D-131's target 60% (+-10 points); switch Q7 = sample_review_full_fail, run_scope full"
     }
   ],
   "outputs": {
     "mix": {
       "basis": "estimated",
-      "total_seconds": 364.75,
+      "total_seconds": 367.0,
       "seconds": {
         "map_action": 32.0,
-        "still_25d": 113.25,
-        "video": 219.5
+        "still_25d": 114.5,
+        "video": 220.5
       },
       "shares": {
-        "map_action": 0.0877,
-        "still_25d": 0.3105,
-        "video": 0.6018
+        "map_action": 0.0872,
+        "still_25d": 0.312,
+        "video": 0.6008
       },
       "unrouted": []
     },
@@ -157,7 +157,7 @@
     "audit_status": "PASS"
   },
   "rehearsal": false,
-  "fingerprint": "abe8d95691432c4553c64497a10d95123804c6801d940f6c337117b21ea0dd9d",
-  "elapsed_s": 0.17,
-  "at": "2026-11-13T16:16:21Z"
+  "fingerprint": "93391aca4d9a54ea65f3e0e976f4ac1660c1530880b5a4f39a54729491e17e3b",
+  "elapsed_s": 0.19,
+  "at": "2026-11-13T16:25:11Z"
 }

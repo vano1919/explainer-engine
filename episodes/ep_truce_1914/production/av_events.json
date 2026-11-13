@@ -451,7 +451,7 @@
     "S02_SH008": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "a453e57aed04cdbd",
+      "events_sha": "dedd70fe9ef89b62",
       "events": [
         {
           "event_id": "S02_SH008.M1",
@@ -460,7 +460,7 @@
           "index": 0,
           "op": "push",
           "start_frame": 0,
-          "end_frame": 222,
+          "end_frame": 240,
           "audio": {
             "decision": "silent_by_design",
             "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
@@ -482,7 +482,7 @@
           "index": 1,
           "op": "cloud_drift",
           "start_frame": 0,
-          "end_frame": 222,
+          "end_frame": 240,
           "audio": {
             "decision": "ambience_only",
             "why": "sky drift under the wind bed",
@@ -834,7 +834,7 @@
     "S05_SH003": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "8f6d4db904fcee03",
+      "events_sha": "b56f8a9a768fc2f0",
       "events": [
         {
           "event_id": "S05_SH003.M1",
@@ -843,7 +843,7 @@
           "index": 0,
           "op": "truck",
           "start_frame": 0,
-          "end_frame": 180,
+          "end_frame": 162,
           "audio": {
             "decision": "silent_by_design",
             "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
@@ -865,7 +865,7 @@
           "index": 1,
           "op": "subject_sway",
           "start_frame": 0,
-          "end_frame": 180,
+          "end_frame": 162,
           "audio": {
             "decision": "ambience_only",
             "why": "the crowd murmur bed",
@@ -1227,7 +1227,7 @@
     "S08_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "318e640acf9e983e",
+      "events_sha": "3fd8cbdc2be0f517",
       "events": [
         {
           "event_id": "S08_SH002.M1",
@@ -1236,7 +1236,7 @@
           "index": 0,
           "op": "push",
           "start_frame": 0,
-          "end_frame": 180,
+          "end_frame": 210,
           "audio": {
             "decision": "silent_by_design",
             "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
