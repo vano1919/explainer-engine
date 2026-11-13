@@ -21,6 +21,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -701,6 +703,72 @@ def _records(ep: Episode) -> list[dict]:
     return json.loads(p.read_text(encoding="utf-8"))["shots"]
 
 
+SILENT_LUFS = -60.0
+POLISHED_REL = "audio/narration_polished.wav"   # HF-3: the read through the narrator chain (RC-004); the read itself is never written
+DELIVERED_MIX_REL = "audio/stems/mix_delivered.wav"   # HF-2: the mix at the delivered loudness (BP-50); G9 muxes this file
+
+
+def _polish_read(ep: Episode) -> tuple[Path | None, dict | None]:
+    """HF-3 (FL-402, RC-004, TD-303): the read through ``audio/narrator_polish.CHAIN`` into its own file. The read stays as
+    it is (its sha is pinned and is an input of G6); a chain that moves the length by more than 1/30 s is refused, because
+    the word timings were measured on the raw read. Returns ``(None, None)`` when there is no read."""
+    from explainer_engine.audio import narrator_polish as NP
+    read = ep.root / READ_REL
+    if not read.is_file():
+        return None, None
+    dst = ep.path(POLISHED_REL)
+    before = NP._seconds(read)
+    NP.polish(read, dst)
+    after = NP._seconds(dst)
+    if abs(after - before) > 1 / 30:
+        dst.unlink(missing_ok=True)
+        raise ContractError(f"narrator polish moved the length by {after - before:+.3f} s: the word timings would be wrong")
+    return dst, {"chain": NP.CHAIN, "seconds_before": round(before, 3), "seconds_after": round(after, 3),
+                 "read_sha256": _sha(read), "polished_sha256": _sha(dst)}
+
+
+def _loudness_rows(prefix: str, meas: dict, what: str) -> list[dict]:
+    """The BP-50 verdicts of a measurement as two gate rows (a REVIEW verdict stays a REVIEW row)."""
+    from explainer_engine.qa import targets as TG
+    v = TG.verdicts(meas, "long")
+    band, tp = TG.PROFILES["long"]["pass_band"], TG.PROFILES["long"]["true_peak_max"]
+    rows = []
+    for gate, key, ok_text in ((f"{prefix}_loudness", "loudness_verdict",
+                                f"{what}: {meas['lufs']:.2f} LUFS (BP-50 band {band[0]:g}..{band[1]:g})"),
+                               (f"{prefix}_true_peak", "true_peak_verdict",
+                                f"{what}: true peak {meas.get('true_peak')} dBTP (BP-50 ceiling {tp:g})")):
+        if key not in v:
+            rows.append(G.row(gate, None, f"{what}: not measured"))
+        else:
+            rows.append(G.row(gate, v[key] == "PASS", ok_text, meas["lufs"] if "loud" in gate else meas.get("true_peak"),
+                              level=G.REVIEW if v[key] == "REVIEW" else G.FAIL))
+    return rows
+
+
+def _deliver_mix(mix_raw: Path, delivered: Path) -> tuple[list[dict], dict, dict]:
+    """HF-2 (FL-403, TD-302): the raw mix at the delivered loudness (``qa/targets.normalise_file``, BP-50) in its own file,
+    with the BP-50 verdict rows of the result. Returns ``(rows, raw measurement, delivered measurement)``; a silent preview
+    is copied as it is and its rows are NOT_RUN."""
+    from explainer_engine.qa import targets as TG
+    try:
+        raw_meas = TG.measure_file(mix_raw)
+    except RuntimeError:
+        raw_meas = {}
+    if raw_meas.get("lufs", float("-inf")) <= SILENT_LUFS:   # ebur128 reports its -70 gate for silence
+        shutil.copyfile(mix_raw, delivered)
+        why = "the mix has no measurable loudness (silent preview)"
+        return [G.row("delivered_mix_loudness", None, why), G.row("delivered_mix_true_peak", None, why)], raw_meas, raw_meas
+    meas = TG.normalise_file(mix_raw, delivered, "long", 48000, channels=2)
+    return _loudness_rows("delivered_mix", meas, "the delivered mix"), raw_meas, meas
+
+
+def _master_loudness_rows(master_mp4: Path) -> tuple[list[dict], dict]:
+    """HF-2: BP-50 on the master file itself (no gate measured it before); the measurement and its two rows."""
+    from explainer_engine.qa import targets as TG
+    meas = TG.measure_file(Path(master_mp4))
+    return _loudness_rows("master", meas, "the master file"), meas
+
+
 def stage_sound(ep: Episode, rehearsal: bool):
     """G8: the sound plan again on the measured clock, then the one renderer (``audio/stems``) into the five stems. A full
     run renders shippable (no placeholder, no missing class, the real read); a rehearsal renders a preview."""
@@ -715,7 +783,8 @@ def stage_sound(ep: Episode, rehearsal: bool):
     SP.write(plan, sources, ep.root)
     read = ep.root / READ_REL
     stems_dir = ep.path("audio/stems")
-    narration = read if read.is_file() else None
+    polished, polish_info = _polish_read(ep)      # HF-3: every use of the read as sound below takes the polished file
+    narration = polished
     voice_rep = None
     if timing and timing.get("inserts"):   # VL-13: the LTX dialogue laid once on its shots, the read split around it
         from explainer_engine.videolane import ingest as VI
@@ -749,6 +818,9 @@ def stage_sound(ep: Episode, rehearsal: bool):
     rows = [G.row("sound_is_shippable", bool(rep.get("shippable")) and not bad,
                   "every sound a real take and the real read" if not bad else f"not shippable: {', '.join(bad[:10])}", bad[:30])]
     rows += list((rep.get("levels") or {}).get("rows") or [])
+    if polish_info:
+        rows.append(G.row("narrator_polished", True, f"{POLISHED_REL}: {polish_info['seconds_before']} s -> "
+                          f"{polish_info['seconds_after']} s, the read untouched", polish_info))
     n_drop = int(stem_audit.get("mid_line_narration_dropouts", 0))
     rows.append(G.row("narration_has_no_dropouts", n_drop == 0 if read.is_file() else None,
                       f"{n_drop} mid-line dropout(s)" if read.is_file() else "no read to scan", n_drop))
@@ -767,9 +839,15 @@ def stage_sound(ep: Episode, rehearsal: bool):
     ev_doc = E.events_report(script, TM.spines_of(timing), ep.fps)
     rep_av = AVR.event_report(ev_doc, plan, sheet, rep)
     write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
+    delivered_rows, raw_meas, meas = _deliver_mix(stems_dir / "mix.wav", ep.path(DELIVERED_MIX_REL))   # HF-2
+    rows += delivered_rows
+    write_json_atomic(ep.path("qa/delivered_mix.json"), {"raw_mix": raw_meas, "delivered_mix": meas,
+                                                         "delivered_sha256": _sha(ep.path(DELIVERED_MIX_REL))})
     return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source"),
                   "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json",
-                  "voice_track": "audio/voice_track.json" if voice_rep else None}
+                  "voice_track": "audio/voice_track.json" if voice_rep else None,
+                  "narrator_polish": polish_info, "delivered_mix": DELIVERED_MIX_REL,
+                  "mix_raw_loudness": raw_meas, "mix_delivered_loudness": meas}
 
 
 def _with_line_times(script: dict, timing: dict | None) -> dict:
@@ -805,9 +883,9 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     missing = [r["shot_id"] for r in records if not r.get("clip_path")]
     if missing:
         return [G.row("every_clip_to_assemble", False, f"{len(missing)} shot(s) without a clip", missing[:30])], {}
-    mix = ep.path("audio/stems/mix.wav")
+    mix = ep.path(DELIVERED_MIX_REL)   # HF-2: the delivered mix, never the raw one
     if not mix.is_file():
-        return [G.row("the_mix_exists", False, "no audio/stems/mix.wav: run the sound stage (G8)")], {}
+        return [G.row("the_delivered_mix_exists", False, f"no {DELIVERED_MIX_REL}: run the sound stage (G8) again")], {}
     master = ep.path(f"renders/final/{ep.manifest['episode_id']}_master.mp4")
     res = ASM.assemble_shot_clips(records, plans, mix, master, fps=ep.fps, size=ep.size, only=ep.chunks,
                                   chunk_seconds=ep.chunk_seconds if ep.chunk_seconds is not None else ASM.CHUNK_SECONDS)
@@ -883,6 +961,10 @@ def stage_qa(ep: Episode, rehearsal: bool):
         rep_av = AVR.event_report(E.events_report(script, TM.spines_of(ep.timing()), ep.fps), plan, sheet_doc, audio, realism)
         write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
         write_text_atomic(ep.path("qa/av_event_report.md"), AVR.markdown(rep_av))
+    if video:   # HF-2: nothing measured the delivered file's loudness before; BP-50 on the master itself
+        master_rows, master_meas = _master_loudness_rows(Path(video["master_mp4_path"]))
+        write_json_atomic(ep.path("qa/master_loudness.json"), master_meas)
+        realism_rows = realism_rows + master_rows
     acc = dict(acc, gates=list(acc["gates"]) + realism_rows)
     if realism_rows:
         acc["status"] = G.verdict(acc["gates"])["status"]

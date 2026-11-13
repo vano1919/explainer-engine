@@ -114,3 +114,84 @@ def test_fit_with_the_same_aspect_gives_the_plain_resize_pixels():
     plain = np.asarray(Image.fromarray(frame).resize((1920, 1080), Image.LANCZOS))
     assert np.array_equal(ASM._fit(frame, (1920, 1080)), plain)
     assert ASM._fit(frame, (640, 360)) is frame
+
+
+# --- HF-2 and HF-3: the delivered mix, the measured master, the narrator's own file (FL-402, FL-403; TD-302, TD-303) ----
+
+def _tone(path: Path, db: float, seconds: float = 4.0, channels: int = 2, rate: int = 48000) -> Path:
+    layout = "stereo" if channels == 2 else "mono"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i",
+                    f"sine=f=220:r={rate}:d={seconds},volume={db}dB,aformat=channel_layouts={layout}", "-c:a", "pcm_s16le",
+                    str(path)], check=True)
+    return path
+
+
+def test_a_quiet_mix_is_delivered_inside_bp50s_band_and_the_raw_mix_stays(tmp_path):
+    from explainer_engine.episode import run as RUN
+    from explainer_engine.qa import targets as TG
+    raw = _tone(tmp_path / "mix.wav", -28.0)
+    before = RUN._sha(raw)
+    delivered = tmp_path / "mix_delivered.wav"
+    rows, raw_meas, meas = RUN._deliver_mix(raw, delivered)
+    assert RUN._sha(raw) == before and delivered.is_file()
+    assert raw_meas["lufs"] < TG.PROFILES["long"]["pass_band"][0] - 5     # the raw mix is far too quiet
+    lo, hi = TG.PROFILES["long"]["pass_band"]
+    assert lo <= meas["lufs"] <= hi and meas["true_peak"] <= TG.PROFILES["long"]["true_peak_max"]
+    assert [r["gate"] for r in rows] == ["delivered_mix_loudness", "delivered_mix_true_peak"]
+    assert all(r["status"] == "PASS" for r in rows)
+
+
+def test_a_silent_preview_mix_is_copied_and_says_not_run(tmp_path):
+    from explainer_engine.episode import run as RUN
+    raw = _tone(tmp_path / "mix.wav", -200.0)
+    rows, _raw_meas, _meas = RUN._deliver_mix(raw, tmp_path / "mix_delivered.wav")
+    assert (tmp_path / "mix_delivered.wav").is_file()
+    assert [r["status"] for r in rows] == ["NOT_RUN", "NOT_RUN"]
+
+
+def test_the_master_file_gets_its_own_bp50_rows(tmp_path):
+    from explainer_engine.episode import run as RUN
+    quiet = tmp_path / "quiet.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=black:s=64x36:r=24:d=4", "-f", "lavfi", "-i",
+                    "sine=f=220:r=48000:d=4,volume=-28dB", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac",
+                    "-shortest", str(quiet)], check=True)
+    rows, meas = RUN._master_loudness_rows(quiet)
+    assert [r["gate"] for r in rows] == ["master_loudness", "master_true_peak"]
+    assert rows[0]["status"] != "PASS" and meas["lufs"] < -30      # a master 20 LU too quiet no longer passes unseen
+    assert rows[1]["status"] == "PASS"
+
+
+class _Ep:
+    def __init__(self, root: Path):
+        self.root = root
+
+    def path(self, rel: str) -> Path:
+        return self.root / rel
+
+
+def test_the_polish_writes_its_own_file_and_never_the_read(tmp_path):
+    from explainer_engine.audio import narrator_polish as NP
+    from explainer_engine.episode import run as RUN
+    (tmp_path / "audio").mkdir()
+    read = _tone(tmp_path / "audio" / "narration.wav", -20.0, seconds=3.0, channels=1, rate=24000)
+    before = RUN._sha(read)
+    out, info = RUN._polish_read(_Ep(tmp_path))
+    assert out == tmp_path / RUN.POLISHED_REL and out.is_file()
+    assert RUN._sha(read) == before                       # the pinned read is untouched
+    assert info["read_sha256"] == before and info["polished_sha256"] == RUN._sha(out) != before
+    assert info["chain"] == NP.CHAIN
+    assert abs(NP._seconds(out) - NP._seconds(read)) <= 1 / 30
+    assert RUN._polish_read(_Ep(tmp_path / "nowhere")) == (None, None)
+
+
+def test_a_polish_that_moves_the_length_is_refused_and_leaves_nothing(tmp_path, monkeypatch):
+    from explainer_engine.audio import narrator_polish as NP
+    from explainer_engine.core.errors import ContractError
+    from explainer_engine.episode import run as RUN
+    (tmp_path / "audio").mkdir()
+    read = _tone(tmp_path / "audio" / "narration.wav", -20.0, seconds=2.0, channels=1, rate=24000)
+    seen = iter([2.0, 2.2])
+    monkeypatch.setattr(NP, "_seconds", lambda _p: next(seen))
+    with pytest.raises(ContractError, match="moved the length"):
+        RUN._polish_read(_Ep(tmp_path))
+    assert not (tmp_path / RUN.POLISHED_REL).exists() and read.is_file()
