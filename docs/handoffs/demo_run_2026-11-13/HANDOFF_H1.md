@@ -31,6 +31,30 @@ Written 2026-11-13 by the story thread (Opus high). Read the journal first: `/mn
 - Clip-spoken lines (LTX speaks them; Q4 readback takes first): 39 lines, listed in `SCRIPT_A_READ_2026-11-13.md`. The two songs (S03_SH003 German, S03_SH008 English) are sung in the clip.
 - Voices: each hero's `voice_card` and `voice_description` (Q5) are in `world_bible.characters`; `videolane/scene.compose_prompt` adds the description to every clip prompt.
 
+
+## LTX launch parts (scene files sized to one launch, CH-03)
+
+One launch has a 508 s timeout. L3 measured 38.6 s per clip with setup, and warm clips in a chain are not measured yet, so the
+estimate is about 10-12 clips a launch. Each part below stays at or under 9 clips and about 34 clip-seconds, which leaves room for
+the worker's one retry per clip. Every cut between two parts falls on a `scene_change` or `time_cut` shot, so the next part starts
+from its own start frame and needs no hand-over frame. The script does not change: these are the ids of the scene files S5 builds
+(`videolane/scene.build`), one per part, each priced on its own.
+
+| Part | Video shots (A) | Clips | Clip-seconds (estimated) | Starts on |
+|---|---|---|---|---|
+| S01 | S01_SH002, S01_SH003 | 2 | 10.0 | scene_change |
+| S02 | S02_SH006, S02_SH007, S02_SH009 | 3 | 16.75 | line |
+| S03 | S03_SH001 .. S03_SH009 | 8 | 32.25 | scene_change |
+| S04a | S04_SH002 .. S04_SH007 (the trenches) | 6 | 18.75 | scene_change |
+| S04b | S04_SH008 .. S04_SH015 (no man's land) | 7 | 32.25 | scene_change |
+| S05a | S05_SH004 .. S05_SH013 | 9 | 33.5 | line (follows the map and stills) |
+| S05b | S05_SH014 .. S05_SH021 | 6 | 21.25 | time_cut |
+| S06 | S06_SH002 .. S06_SH011 | 9 | 26.75 | line (split at the insert S06_SH009 if warm clips measure slower than 38 s) |
+| S07 | S07_SH002 .. S07_SH008 | 7 | 31.0 | line |
+
+Total 57 clips in 9 launches. B uses the same parts minus its 17 stills (B never launches: its clips are A's). A larger time cap per
+launch is the other way: `launch.json` is protected (D-133), so that needs ვანო's word and the ladder L1-L3 again.
+
 ## What the next stage must know
 
 1. Sound classes are missing for rifle and pistol shots, digging, paper, singing, clapping and match strikes (FL-002). The shots and songs live in the clip audio (Q2 quiet layer). For B, lift the signal-shot audio from A's clips (DV-001).

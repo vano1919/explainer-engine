@@ -6,10 +6,10 @@ A snapshot goes into `docs/handoffs/demo_run_<date>/` at the end of every stage.
 | Field | Value |
 |---|---|
 | Episode id | `ep_truce_1914` (S2, story thread, 2026-11-13) |
-| `FREEZE_SHA` | _not set: S0 has not run (FL-001); S2 worked on `8ae21ec` (PR #177 head)_ |
-| Baseline tests | _not run (S0)_ |
-| Current stage and thread | S2 closed 2026-11-13 ~16:40 UTC (script approved and frozen, CQ-007, NT-003); next: S0, then S3 pictures for A |
-| Counts | KN 15 · FL 8 · DV 2 · RC 1 · SF 4 · NT 3 · CQ 7 · MS 4 · CU 0 |
+| `FREEZE_SHA` | **provisional `8ae21ec`** (code under the frozen script commit `8da40d6`, PR #180; S0 2026-11-13 16:50 UTC). PR #177 is not merged and moved on to `1406ce2` (L3 worker fixes), PR #179 (CH-07 `cloud/paid_offer`) is stacked on it: the freeze is set again on the merged `systemic/next-video` before any paid stage (FL-009) |
+| Baseline tests | 4141 passed, 20 skipped, 1 xfailed (677 s) at `8da40d6` (MS-005) |
+| Current stage and thread | S0 done 16:50 UTC and S3 started (pictures thread, `claude/project-thread-bf505m`); continuity cards written; start frames blocked on T0 and the style anchors (FL-010, CQ-008) |
+| Counts | KN 15 · FL 19 · DV 2 · RC 1 · SF 4 · NT 3 · CQ 9 · MS 7 · CU 0 |
 
 ## 0. How to write here
 
@@ -60,19 +60,19 @@ status to `confirmed`, `changed` (with what changed) or `closed`.
 
 | Id | What is known | Source read | Touches | Status |
 |---|---|---|---|---|
-| KN-01 | The P5 worker edits are not started: the hand-over frame search on the worker side, the worker-side retry, the stale docstring. After any worker edit the L0-L4 ladder runs again. | `HANDOFF_AFTER_OPUS.md`, "Still open" 2 and 3 | `explainer_engine/training/pods/ltx/modal_ltx_jobs.py` | open, decide before S0 |
+| KN-01 | The P5 worker edits are not started: the hand-over frame search on the worker side, the worker-side retry, the stale docstring. After any worker edit the L0-L4 ladder runs again. | `HANDOFF_AFTER_OPUS.md`, "Still open" 2 and 3 | `explainer_engine/training/pods/ltx/modal_ltx_jobs.py` | changed: P5 edits done on PR #177 (`6e144f8`, `8cd8be8`, L0-L3 green at `1406ce2`), but not in the episode's base `8ae21ec` (FL-009) |
 | KN-02 | The script approval stamp binds only `production_script/3`; a v4 script's OR-17 approval cannot be stamped by the tool. In this run it is a CQ entry with the script's sha256 and his message id. | `HANDOFF_AFTER_OPUS.md`, "Still open" 1 | `scripting/script_approval` | open |
 | KN-03 | No real takes for `map_pin_set`, `map_line_strain`, `map_line_snap` and a flag-like `cloth_flap`; the other map and data classes have one or two takes (BP-57 asks three). Such events become `review_required` and the render is not shippable. | guide v2, section 7.1 | `assets/audio/library/manifest.json`, `episode/sound_plan` | open |
 | KN-04 | 73 library items are vault-only: their working copies are not in the container and their QC is NOT_RUN. | guide v2, section 7.2; `docs/SOUND_LIBRARY.md` | the library | open |
 | KN-05 | Nobody has listened: every event says `human: not_listened`. A machine PASS is never the creator's approval. | guide v2, section 7.7 | `episode/av_report` | open |
 | KN-06 | Two FA-11 checks are coarse: BP-55 counts only visual events as beats, and one emphasis a line is counted per shot. | `HANDOFF_AFTER_OPUS.md`, "Still open" 5 | `episode/cue_sheet` | open |
-| KN-07 | LTX money: `modal_ltx` has `per_run_usd` 1.5 and no episode line; the Wan `modal` line is unset. The demo scene needs the creator's line before S5. | `config/spend_caps.json` on `11f556b` | `config/spend_caps.json` | open |
+| KN-07 | LTX money: `modal_ltx` has `per_run_usd` 1.5 and no episode line; the Wan `modal` line is unset. The demo scene needs the creator's line before S5. | `config/spend_caps.json` on `11f556b` | `config/spend_caps.json` | confirmed 16:45 UTC: `modal_ltx.per_run_usd` 1.5, no episode line |
 | KN-08 | No automatic repair loop: G10 writes repair lines with their class; running them is a person's step. The face and costume identity across a cut is not a VL-12 gate. | `docs/VIDEO_LANE.md`, "Not done here" | `videolane/master_qa` | open |
 | KN-09 | Switch Q1: BP-56 is REVIEW and flips to FAIL "after the Toba sample". The demo does not flip it unless the creator says so. | `config/creator_open_questions.json`, D-138 | `episode/cue_sheet.bp56_level` | open |
-| KN-10 | Switch Q3: a paid scene is refused while the face is NOT MEASURED. It needs YuNet and SFace in the gitignored `tools/yunet` and the heroes' reference pictures. | `HANDOFF_AFTER_OPUS.md`, Q3 row | `videolane/identity` | open |
+| KN-10 | Switch Q3: a paid scene is refused while the face is NOT MEASURED. It needs YuNet and SFace in the gitignored `tools/yunet` and the heroes' reference pictures. | `HANDOFF_AFTER_OPUS.md`, Q3 row | `videolane/identity` | confirmed: no `tools/yunet` in the container |
 | KN-11 | Switch Q4: every video shot is sized from a measured read; the clip-line takes are a paid ElevenLabs step. | `HANDOFF_AFTER_OPUS.md`, Q4 row and "Still open" 0 | `videolane/line_reads`, `videolane/scene` | open |
 | KN-12 | The LTX build takes one picture at frame 0, 1280x704 at 24 fps, at most 10 s; no end frame, extend or retake. A line starts about 0.75 s into its clip; mouths are weak close up. | `docs/VIDEO_LANE.md`, "What our generator can and cannot do" | the worker | open |
-| KN-13 | `episodes/` holds only `ep_toba`. Whether a scaffold command for a new episode exists is not known; S0 finds out. The chat picture route needs the creator's PC session or his own pasting (GC-15). | `git ls-tree` of `11f556b`; `docs/GEMINI_CONSISTENCY_RULES.md` | `episode/`, `imagegen/turn_pack`, `gemini_task/` | open |
+| KN-13 | `episodes/` holds only `ep_toba`. Whether a scaffold command for a new episode exists is not known; S0 finds out. The chat picture route needs the creator's PC session or his own pasting (GC-15). | `git ls-tree` of `11f556b`; `docs/GEMINI_CONSISTENCY_RULES.md` | `episode/`, `imagegen/turn_pack`, `gemini_task/` | changed: `episodes/ep_truce_1914` exists (S2 built it by its builder, no scaffold command); the picture route needs T0 first (FL-010) |
 | KN-14 | One test depends on an outside server (itch.io answered 522 in CI): `test_pilot_stills::test_a_named_battle_camera_reaches_the_crowd_plan`. | PR #177 body | `tests/unit/test_pilot_stills.py` | open |
 | KN-15 | This is the first paid end-to-end run of the integrated line. Only real clips show: whether LTX holds faces and costumes, whether the voice text keeps a voice across clips, the clip sound under the narrator, the hand-overs and seams, the cue density by ear, the real cost and time per clip. | `HANDOFF_AFTER_OPUS.md`, "What only the sample proves" | the video lane | open |
 
@@ -221,6 +221,96 @@ touches: `config/visual_style_presets.json` (crossworld_main_style_v1), `imagege
 workaround: rung 2 — every picture prompt says "sepia portrait card" and "oil lamp"; the narration still says "photograph" (not a picture prompt)
 proposed fix: a line in skill `shot-visuals`: props that are never-words get a stated substitute · test: governance test names the substitute list
 
+### FL-009 · FRICTION · PROCESS · S0 · open
+when: 2026-11-13 16:45 UTC · thread: pictures thread (S0, S3), Opus
+what failed: S0's start condition (PR #177 merged into `systemic/next-video`) does not hold; the episode branch sits on `8ae21ec`, while #177 moved on to `1406ce2` and #179 (CH-07) is stacked on it
+expected: DEMO_PROCESS.md S0: FREEZE_SHA is the merged `systemic/next-video`
+evidence: `git log origin/claude/project-thread-knwnla` (head `1406ce2`), `git log origin/systemic/next-video` (older); `explainer_engine/cloud/paid_offer.py` exists only on `claude/project-thread-wxcp6k`
+touches: unlocated (process, not code)
+cause: the Truce demo started before the merge · confidence: confirmed
+impact on the demo: none for the free S3 work; S4/S5 cannot apply CH-07 from this base (no `cloud.paid_offer` here) and would run the pre-L3 LTX worker
+workaround: rung 2 — provisional freeze `8ae21ec` for free work; the freeze is set again on the merged branch before any paid stage
+proposed fix: none in code; merge #177 and #179 before S4
+links: KN-01, KN-07
+
+### FL-010 · BLOCKER · PROCESS · S3 · open
+when: 2026-11-13 16:40 UTC · thread: pictures thread
+what failed: no start frame can be made on the production path today: the Task route refuses every batch until T0 is PASS (`gemini_task batch ... 1` → "the Gemini Task route is off until T0 is recorded as PASS (GC-20); T0 is NOT_RUN"); T0 was never recorded (no `config/gemini_t0_record.json` on any branch); Gemini Task mode's usage limit is used up until 2026-11-14 ~05:19 Georgia time (memory of the A3 thread); the API backup (`gemini_task/api_backup.py`) only reads messages this package writes, so level 2 is blocked by the same gate; the scene pictures also need approved style anchors A-F (`config/gemini_task.json` `style_pack`: all `candidate`; the queue counts 82 items `needs_approval`)
+expected: picture route level 1, then level 2 (`config/picture_route.json`)
+evidence: `python -m explainer_engine.gemini_task queue episodes/ep_truce_1914` (t0 NOT_RUN, blocked 82); `batch` refusal above → evidence in this entry
+touches: `explainer_engine/gemini_task/batch.py` (T0 gate), `explainer_engine/gemini_task/queue.py` (needs_approval), opened yes
+cause: the T0 retest (Hydrogen) was planned for 11-14 after the limit; nobody approved anchors · confidence: confirmed
+impact on the demo: S3 start frames wait for T0 and the anchor pick (CQ-008)
+workaround: none (stopped at rung 5: card to the creator)
+links: FL-013, CQ-008
+
+### FL-011 · COSMETIC · RULE-WRONG · S3 · open
+what failed: two checks of one rule disagree: `imagegen/turn_pack export` passed the German-trench place prompt with "a hanging lantern"; `gemini_task queue` refused it (GC-22)
+touches: `explainer_engine/imagegen/turn_pack.py` (never-word check), `explainer_engine/gemini_task/prompts.py` (era rule), opened yes
+workaround: rung 2 — SF-002 (applied by the script thread, `8da40d6`)
+proposed fix: one era-rule check used by both routes · test: a "lantern" prompt fails in both
+
+### FL-012 · DEGRADED · MISSING-FEATURE · S3 · open
+what failed: the Task queue makes no prop references: the H1 R2 list names nine props (letter, portrait card, two buttons, candle tree, two rifles, spade, flag), the queue has only 3 portraits, 3 places and 3 full bodies
+expected: GC-02 "people ..., then the place, then props"
+evidence: `shot_queue.json` reference roles: style 79, scene master 55, heroes and places only
+touches: `explainer_engine/gemini_task/queue.py` (`_refs_for_shot`), opened yes
+impact on the demo: props are drawn from words only; the buttons and the portrait card may differ between shots
+workaround: none needed to start; G10 identity rows and the contact sheet watch them
+proposed fix: prop anchors in R2 and attached after the place · test: a shot with a prop id attaches its anchor
+
+### FL-013 · FRICTION · PROCESS · S3 · open
+what failed: the T0 record (`gemini_task t0-record` → `config/gemini_t0_record.json`) and an anchor approval (`approve-anchor` → `config/gemini_task.json`) write under `config/`, which the freeze forbids except a money line or a creator switch
+expected: DEMO_PROCESS.md section 3
+touches: `explainer_engine/gemini_task/gate.py`, `explainer_engine/gemini_task/__main__.py`, opened yes (CLI help)
+workaround: treated as a creator switch: written only on his recorded word, listed in the freeze check
+proposed fix: the freeze table names these two files as creator records
+
+### FL-014 · FRICTION · DOC-WRONG · S3 · open
+what failed: `scripting/continuity.cards_from_v4` (the stage page's first draft) writes Toba's light ("the low sun through the ash veil", "hearth"), depth `mid` and facing `camera` by default, one costume `default`, no props, and generic change causes
+touches: `explainer_engine/scripting/continuity.py:cards_from_v4`, opened yes
+workaround: rung 2 — the S3 builder (`demo_truce_1914/builder/build_continuity_cards.py`) lays place, light, costume variants, props, crowd counts and causes on the draft; 0 FAIL, 0 REVIEW
+proposed fix: light and weather from the shot's own `lighting_and_time`, costume variants from `costume_continuity_notes` · test: a dusk shot of a non-Toba episode gets dusk and its own source
+
+### FL-015 · DEGRADED · MISSING-FEATURE · S3 · open
+what failed: the Task queue's prompts do not read the continuity cards or the heroes' `costume_continuity_notes`: from S06_SH010 on, no prompt says Thomas's top brass button or Friedrich's greatcoat button is missing; the registry text "tunic with brass buttons" is copied as it is (GC-04)
+touches: `explainer_engine/gemini_task/queue.py` (prompt assembly), opened yes
+impact on the demo: the button exchange (the episode's keepsake) may not show on the later shots; small at medium size
+workaround: none yet; a one-clause prompt addition is a script fix (SF), offered to the creator in the stage message
+proposed fix: the queue adds the card's costume variant after the registry text · test: a shot after a costume change carries the variant
+
+### FL-016 · DEGRADED · RULE-WRONG · S5 · open
+when: 2026-11-13 16:43 UTC · thread: Fable review of #177 (script check), relayed to the story thread
+what failed: one LTX launch is one scene (CH-03) under a 508 s function timeout (`caps.run_usd` 0.97); from L3 (about 53 s setup, about 24 s per 2 s clip) about 30 clip-seconds fit. ep_truce_1914 A has S05 19 clips / 89.5 s, S06 12 / 49.2 s, S04 8 / 41.0 s, S02 6 / 42.6 s, so these four would end PARTIAL (an estimate, not measured)
+expected: the launch fits the longest scene, or the runner splits a scene over launches
+touches: `training/pods/ltx/launch.json` (protected), `cloud/cheapest.py` CH-03, opened no (the reviewer's reading)
+workaround: rung 2 (data, no code): A's 57 clips are planned as 9 launch parts of at most 9 clips / about 34 clip-seconds, each cut on a scene_change or time_cut shot (HANDOFF_H1, "LTX launch parts"; the LTX worker thread confirmed 38.6 s per clip at L3, 16:47 UTC). A higher run cap stays the other way: ვანო's word, ladder L1-L3 again; it goes into the OR-23 plan
+proposed fix: the scene runner splits a scene into launch-sized parts with the hand-over frame · test: a 90 clip-second scene plans as 3 launches
+
+### FL-017 · COSMETIC · RULE-WRONG · S4 · open
+when: 2026-11-13 16:43 UTC · thread: Fable review (script check)
+what failed: S03_SH001 is 10.0 s against the model's 10.06 s (VL-06); a slower measured read makes `videolane/scene.build` raise
+expected: a margin in the script stage
+touches: `videolane/plan` VL-06, opened no
+workaround: if the read is longer, split the narration over S03_SH001 and the next shot, or trim the shot to the clip and let the line run over the cut (a script change goes to ვანო first)
+proposed fix: story stage keeps clips at or under 9.5 s on the estimated clock · test: a 9.8 s estimated clip gets a REVIEW
+
+### FL-018 · DEGRADED · MISSING-FEATURE · S4 · open
+when: 2026-11-13 16:43 UTC · thread: Fable review (script check)
+what failed: Q4 is forced: all 39 clip lines need a measured take in `audio/line_reads.json` (paid ElevenLabs) before a scene file builds; the two sung lines (S03_SH003 German, S03_SH008 English) will not match a spoken TTS length
+expected: a way to measure a sung line (a sung take, or a fixed sung length)
+touches: `videolane/voice`, `config/creator_open_questions.json` Q4, opened no
+workaround: a card to ვანო: the sung lines take their estimated 4.0 s, or a sung ElevenLabs take (priced first)
+proposed fix: `line_reads` accepts `sung: true` with a declared length · test: a sung line passes with a declared length
+
+### FL-019 · BLOCKING · MISSING-FEATURE · S5 · open
+when: 2026-11-13 16:43 UTC · thread: Fable review (script check)
+what failed: Q3: a paid scene is refused while the face is NOT MEASURED; the cloud container has no `tools/yunet` (KN-10)
+expected: the face model is fetched in S0 readiness
+touches: Q3 identity gate, `tools/yunet`, opened no
+workaround: fetch YuNet (free) before S5; check the HF / OpenCV zoo path first
+proposed fix: S0 checklist names it · test: readiness fails without the model file
+
 ## 4. Deviations from the production path (DV)
 
 Everything the master carries that the production path did not make. The message that shows the master to the creator
@@ -267,6 +357,8 @@ His words, exactly, with the message id. Each ends as a rule change, a code pack
 | CQ-005 | S2 | Test both LTX ways on one scene? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWAVhNnHhgM7grtUkaxnUvFi`) | withdrawn 15:04 UTC: replaced by NT-001 (two whole versions, B from A's material) | RC-001 |
 | CQ-006 | S2 | B under 60 % LTX: break Q7 for the comparison? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPW5udZfvGUREE4XYMQnfev1X`) | ა "კი", 15:08 UTC | RC-001 |
 | CQ-007 | S2 | OR-17: approve script A for production? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWBd2wajM4s1jMPTyK1DHWZq`) | approved in words 16:13 UTC (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCqRPmUmvb4PzH7h1aEZDY`), on the condition of SF-001, applied; card closed. Re-confirmed 16:24 UTC (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWGK3dPACZAx9mwS5gMQAXKT`, NT-003) after SF-004; FROZEN at A sha256 `25636aba731607b94911060da011eab0993ac6b728793acf4b39805fe66de24c` and B sha256 `0ce9795a7290429c81ee11a2f126dad830367feed6848856da2d95cb139efbc4` | S3 onward |
+| CQ-008 | S3 | How and when to make the pictures: T0 tomorrow on the Task route, the plain chat today, or wait? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWHsJHengUbe4HbZ1d7i88iw`, recommended ა: T0 after the Task limit resets) | open | FL-010 |
+| CQ-009 | S3 | Style anchors of the scene pictures: new 1914 anchors or the Stone-Age T0 pictures of 11-12? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPW7GY6Qm56ACPTod55Tz7hik`, recommended ა: new 1914 anchors) | open | FL-010 |
 
 ## 6. Measurements (MS)
 
@@ -278,6 +370,9 @@ Real numbers only, each with where it was read. They replace estimates in the co
 | MS-003 | S2 | Critic (script-critic, 2 rounds) | round 1 mean 3.77 (title gate below 4), 8 fixes applied; round 2 mean 3.92, "ship after the one wording fix" (applied); still slowest 0:59-1:22 | this thread |
 | MS-004 | S2 | LTX cost estimate (not measured) | A 57 clips ≈ $6.8-16; B alone 40 ≈ $4.8-11; B after A $0 new LTX. Basis: H100 $5.0937/h, CLI ~82 s a clip; battle run 4 clips $1.1 | `training/pods/ltx/launch.json`; `A_vs_B_2026-11-13.md` |
 | MS-002 | S2 | Variant B, same clock | 367.0 s; video 115.75 s (31.5 %), still_25d 219.25 s (59.7 %), map 32.0 s (8.7 %); 84 shots, 40 LTX clips, all 40 are clips of A (0 new clips, 0 new pictures); sha256 0ce9795a...9efbc4 (before SF-001: 1015b11f...602e) → see `variants/B` | scratch G1 record of B; `variants/B/production_script.json` |
+| MS-005 | S0 | Baseline test suite at `8da40d6` (code `8ae21ec`), cloud container, Python 3.13 | 4141 passed, 20 skipped, 1 xfailed (677 s) | `python -m pytest -q` (log in the S3 handoff) |
+| MS-006 | S3 | Task queue of A (free) | 84 shots → 9 references (R1 3 portraits + 3 places, R2 3 full bodies), 79 pictures (style anchors E 38, A 18, C 11, D 7, F 4, B 1), 31 batches of 6, 4 days at the measured limit; 0 prompt FAIL after SF-002 | `episodes/ep_truce_1914/planning/gemini_task/shot_queue.json` |
+| MS-007 | S3 | Continuity cards of A (free) | 16 scene files (S01-S07, one per place run), 70 cards, 0 FAIL, 0 REVIEW | `episodes/ep_truce_1914/planning/continuity/report.json` |
 
 Each stage's closing MS row: thread minutes, money and credits spent against the cap, items made, items retried.
 
