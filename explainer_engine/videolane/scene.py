@@ -44,6 +44,55 @@ def _cast(script: dict) -> dict:
     return {c.get("character_id"): c for c in (script.get("world_bible") or {}).get("characters", [])}
 
 
+VOICE_FACETS = ("age", "timbre", "pace", "accent")
+
+
+def voice_card_problems(script: dict, speaker_ids) -> list[str]:
+    """Q5 (the creator, 2026-11-13, answer a; D-138): every character who speaks in an LTX clip has ONE fixed voice text on
+    its card, ``voice_description``, and the card's ``voice_card`` names the four facets (age, timbre, pace, accent), each
+    found word for word in that text; the composer puts the same text, verbatim, into every prompt of the speaker."""
+    cast = _cast(script)
+    out = []
+    for sid in sorted({str(x) for x in speaker_ids if x}):
+        c = cast.get(sid) or {}
+        text = str(c.get("voice_description") or "").strip()
+        card = c.get("voice_card") or {}
+        if not text:
+            continue                      # listed in voice_missing (FA-02)
+        gone = [f for f in VOICE_FACETS if not str(card.get(f) or "").strip()]
+        if gone:
+            out.append(f"{sid}: the voice card has no {', '.join(gone)} (Q5: age, timbre, pace, accent)")
+            continue
+        absent = [f for f in VOICE_FACETS if str(card[f]).strip().lower() not in text.lower()]
+        if absent:
+            out.append(f"{sid}: the voice text does not carry its card's {', '.join(absent)} word for word (Q5)")
+    return out
+
+
+def voice_text_sha(text: str) -> str:
+    return hashlib.sha256(str(text).strip().encode("utf-8")).hexdigest()
+
+
+def voice_drift(out: Path, episode: str, voices: dict) -> list[str]:
+    """Q5: the other scene files of the same episode beside ``out`` must carry each speaker's voice text unchanged; a card
+    edited after an earlier scene was written makes that scene stale (write it again), never two voices for one person."""
+    out = Path(out)
+    bad = []
+    for other in sorted(out.parent.glob("*.json")):
+        if other.resolve() == out.resolve():
+            continue
+        try:
+            doc = json.loads(other.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(doc, dict) or doc.get("schema") != SCHEMA or doc.get("episode") != episode:
+            continue
+        for sid, v in (doc.get("voices") or {}).items():
+            if sid in voices and v.get("sha256") != voices[sid]["sha256"]:
+                bad.append(f"{sid}: its voice text differs from the one in {other.name}: write that scene again (Q5)")
+    return bad
+
+
 def compose_prompt(script: dict, shot: dict) -> dict:
     """FA-02: ``{"prompt", "parts", "spoken", "voice_missing"}`` for one video shot (see the module text)."""
     from explainer_engine.episode import sound_plan as SPL
@@ -108,7 +157,10 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
     lines = {ln["line_id"]: ln for ln in script.get("audio_lines", [])}
     from explainer_engine.episode import timing as ETM
     timed = (ETM.load(root) or {}).get("shots", {})
-    shots, manifest, voice_missing = [], {}, []
+    from explainer_engine.videolane import line_reads as LR
+    line_t = LR.seconds_by_line(root)
+    forced = OQ.value("Q4") == "forced"
+    shots, manifest, voice_missing, speakers, unmeasured = [], {}, [], set(), []
     for k, sid in enumerate(rec["shots"]):
         s = by[sid]
         if not P.is_video(s):
@@ -116,11 +168,16 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
         ep = s.get("edit_plan") or {}
         t_ = timed.get(sid)
         measured = float(t_["seconds"]) if t_ and t_.get("seconds") is not None else None
-        secs = P.clip_seconds(script, s, max_s, measured_s=measured)
+        char_ids = [lid for lid in s.get("audio_line_ids") or [] if (lines.get(lid) or {}).get("speaker_type") == "character"]
+        m_line = sum(line_t[lid] for lid in char_ids) if char_ids and all(lid in line_t for lid in char_ids) else None
+        secs = P.clip_seconds(script, s, max_s, measured_s=measured, measured_line_s=m_line)
+        if secs["basis"] not in P.MEASURED_BASES:
+            unmeasured.append(f"{sid} ({secs['basis']})")
         if secs["over"]:
             raise ContractError(f"{sid}: its line needs {secs['needed_s']} s, the model makes {max_s} s (VL-06): split it")
         comp = compose_prompt(script, s)
         voice_missing += [f"{sid}: {who}" for who in comp["voice_missing"]]
+        speakers |= {str((lines.get(lid) or {}).get("speaker_id")) for lid in char_ids}
         row = {"shot_id": sid, "seconds": secs["seconds"], "seconds_basis": secs["basis"], "seed": seed_base + k,
                "motion_prompt": comp["prompt"], "prompt_parts": comp["parts"],
                "continuity_mode": ep.get("continuity_mode")}
@@ -140,7 +197,16 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
         shots.append(row)
     if not shots:
         raise ContractError(f"{scene_id}: no video shot in the scene")
+    if forced and unmeasured:   # Q4 (the creator, 2026-11-13, answer a; D-138): no measured read, no LTX
+        raise ContractError(f"switch Q4 = forced: {len(unmeasured)} video shot(s) have no measured time "
+                            f"({', '.join(unmeasured[:8])}): read the narration (G6, audio/timing.json) and every clip line "
+                            f"(TTS or a recording, videolane.line_reads) before the LTX scene")
     out = Path(out)
+    cast = _cast(script)
+    voices = {sp: {"description": str((cast.get(sp) or {}).get("voice_description") or "").strip(),
+                   "sha256": voice_text_sha((cast.get(sp) or {}).get("voice_description") or "")}
+              for sp in sorted(speakers) if (cast.get(sp) or {}).get("voice_description")}
+    voice_problems = voice_card_problems(script, speakers) + voice_drift(out, str(root), voices)
     man_p = out.with_name(out.stem + ".pictures.json")
     write_json_atomic(man_p, {"shots": manifest})
     scene = {"schema": SCHEMA, "id": scene_id, "episode": str(root), "asked": asked,
@@ -148,7 +214,8 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
                        "best tail frame, coverage from its own picture",
              "storyboard": {"record": str(rec_p.resolve()), "sha256": _sha(rec_p), "verdict": rec["verdict"]["status"]},
              "pictures": {"manifest": str(man_p.resolve())}, "shots": shots, "draft": not (budget and ledger),
-             "prompt_composer": "videolane.scene.compose_prompt (FA-02)", "voice_missing": voice_missing}
+             "prompt_composer": "videolane.scene.compose_prompt (FA-02)", "voice_missing": voice_missing,
+             "voices": voices, "voice_problems": voice_problems, "read_first": OQ.value("Q4")}
     if budget:
         scene["budget"] = budget
     if ledger:
@@ -166,12 +233,32 @@ def storyboard_problems(scene: dict) -> list[str]:
         why.append("a draft scene (no budget or ledger from the creator, OR-23)")
     if scene.get("voice_missing"):
         why.append(f"spoken shot(s) whose speaker has no voice description (FA-02): {', '.join(scene['voice_missing'][:6])}")
+    if scene.get("voice_problems"):
+        why.append(f"voice cards (Q5): {'; '.join(scene['voice_problems'][:6])}")
+    voices = scene.get("voices") or {}
+    for row in scene.get("shots") or []:
+        speech = (row.get("prompt_parts") or {}).get("speech")
+        sp = (row.get("line") or {}).get("speaker")
+        if speech and sp in voices and f"in {voices[sp]['description']}:" not in speech:
+            why.append(f"{row.get('shot_id')}: the prompt does not carry {sp}'s voice text word for word (Q5)")
+    from explainer_engine.core import open_questions as OQ
+    from explainer_engine.videolane import plan as P
+    if OQ.value("Q4") == "forced":
+        loose = [r.get("shot_id") for r in scene.get("shots") or [] if r.get("seconds_basis") not in P.MEASURED_BASES]
+        if loose:
+            why.append(f"switch Q4 = forced: shot(s) sized without a measured read: {', '.join(map(str, loose[:8]))}")
     sb = scene.get("storyboard") or {}
     p = Path(sb.get("record") or "__none__")
     if not p.is_file():
         why.append("its storyboard record is missing")
     elif _sha(p) != sb.get("sha256"):
         why.append("its storyboard changed after the scene was written: write the scene again")
-    elif json.loads(p.read_text(encoding="utf-8"))["verdict"]["status"] == G.FAIL:
-        why.append("its storyboard FAILs")
+    else:
+        rec = json.loads(p.read_text(encoding="utf-8"))
+        if rec["verdict"]["status"] == G.FAIL:
+            why.append("its storyboard FAILs")
+        from explainer_engine.videolane import identity as ID
+        if not scene.get("draft") and ID.levels()["face"] == G.FAIL and ID.face_not_measured(rec):
+            why.append("switch Q3 makes the hero face binding and the storyboard could not measure it (fetch YuNet + SFace "
+                       "into tools/yunet and the heroes' reference pictures, then build the storyboard again)")
     return why

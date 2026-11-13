@@ -47,8 +47,10 @@ def _scene() -> dict:
              _shot("D", route="still_25d", size="close_up", az=60, mode="insert", cut_in_reason="reaction"),
              _shot("E", size="medium", az=-40, lines=["L2"], axis_side="A", screen_positions={"gen": "left", "cmd": "right"})]
     cast = {"characters": [   # FA-02: the voice-caster's voice descriptions feed the LTX prompt composer
-        {"character_id": "gen", "name": "The General", "voice_description": "a hoarse older man, low and slow"},
-        {"character_id": "cmd", "name": "The Commander", "voice_description": "a firm younger man, clipped and quick"}]}
+        {"character_id": "gen", "name": "The General", "voice_description": "a hoarse older man, low and slow, a dry Argive accent",
+         "voice_card": {"age": "older", "timbre": "hoarse", "pace": "slow", "accent": "a dry Argive accent"}},   # Q5
+        {"character_id": "cmd", "name": "The Commander", "voice_description": "a firm younger man, clipped and quick, a plain Ithacan accent",
+         "voice_card": {"age": "younger", "timbre": "firm", "pace": "clipped and quick", "accent": "a plain Ithacan accent"}}]}
     return {"shots": shots, "audio_lines": lines, "fps": FPS, "world_bible": cast}
 
 
@@ -284,6 +286,29 @@ def _board_episode(tmp_path, doc):
     return root, pics
 
 
+LINE_S = 2.1   # the measured speech of a clip line in the fixture (Q4)
+
+
+def _reads(root, doc, shot_s=3.2):
+    """Q4 (the creator 2026-11-13, D-138): the measured read every paid LTX scene needs: the narration's shot lengths in
+    audio/timing.json and every clip line's read in audio/line_reads.json (a file whose sha256 matches the record)."""
+    import hashlib
+    from explainer_engine.videolane import line_reads as LR
+    from explainer_engine.videolane import plan as VP
+    spoken = VP.clip_spoken(doc)
+    (root / "audio").mkdir(parents=True, exist_ok=True)
+    (root / "audio" / "timing.json").write_text(json.dumps({"shots": {s["shot_id"]: {"seconds": shot_s}
+                                                                       for s in doc["shots"] if s["shot_id"] not in spoken}}))
+    lines = {}
+    for ln in doc["audio_lines"]:
+        if ln.get("speaker_type") == "character":
+            f = root / "audio" / f"{ln['line_id']}.wav"
+            f.write_bytes(b"line read " + ln["line_id"].encode())
+            lines[ln["line_id"]] = {"seconds": LINE_S, "source": "tts", "file": str(f),
+                                    "sha256": hashlib.sha256(f.read_bytes()).hexdigest()}
+    (root / LR.REL).write_text(json.dumps({"schema": LR.SCHEMA, "lines": lines}))
+
+
 def test_the_storyboard_passes_a_good_scene_and_fails_a_repeated_or_missing_picture(tmp_path):
     from explainer_engine.videolane import storyboard as SB
     doc = _scene()
@@ -323,6 +348,7 @@ def test_the_scene_file_needs_a_fresh_storyboard_and_chains_its_continuations(tm
     from explainer_engine.videolane import storyboard as SB
     doc = _scene()
     root, pics = _board_episode(tmp_path, doc)
+    _reads(root, doc)   # Q4 (D-138)
     ids = [s["shot_id"] for s in doc["shots"]]
     with pytest.raises(ContractError, match="no storyboard"):
         SC.build(root, doc, "s1", tmp_path / "scene.json")
@@ -333,7 +359,7 @@ def test_the_scene_file_needs_a_fresh_storyboard_and_chains_its_continuations(tm
     assert "D" not in by                                                   # the insert is still_25d: no LTX clip
     assert by["B"]["continue_frame"]["pick"] == "best_tail" and "picture" not in by["B"]
     assert by["C"]["picture"] == "C_start" and by["C"]["line"]["text"].startswith("Three days")
-    assert by["C"]["seconds"] == P.clip_seconds(doc, doc["shots"][2], 10.0)["seconds"]
+    assert by["C"]["seconds"] == P.clip_seconds(doc, doc["shots"][2], 10.0, measured_line_s=LINE_S)["seconds"]   # Q4
     got = SRN.scene_pictures(scene)
     assert set(got) == {"A", "C", "E"}                                     # the continuation has no picture of its own
     assert SC.storyboard_problems(scene) == ["a draft scene (no budget or ledger from the creator, OR-23)"]
@@ -440,15 +466,16 @@ def test_the_ltx_prompt_is_composed_with_the_line_and_the_voice(tmp_path):
     doc = _scene()
     doc["shots"][2]["sound_events"] = [{"kind": "foley", "what": "chariot", "class": "chariot", "at_word": "days"}]
     root, pics = _board_episode(tmp_path, doc)
+    _reads(root, doc)   # Q4 (D-138): every video shot measured before the scene file
     SB.build(root, doc, [s["shot_id"] for s in doc["shots"]], "s1", pictures=pics)
     by = {s["shot_id"]: s for s in SC.build(root, doc, "s1", tmp_path / "scene.json")["shots"]}
     c = by["C"]["motion_prompt"]
     assert c.startswith("motion of C, one action")
-    assert 'The General says in a hoarse older man, low and slow: "Three days and not one Trojan."' in c
+    assert 'The General says in a hoarse older man, low and slow, a dry Argive accent: "Three days and not one Trojan."' in c
     assert "Sound: chariot." in c and SC.NOBODY_SPEAKS not in c
     assert by["A"]["motion_prompt"].endswith(SC.NOBODY_SPEAKS) and "says" not in by["A"]["motion_prompt"]   # narrated
     assert by["B"]["prompt_parts"] == {"motion": "motion of B, one action", "no_speech": SC.NOBODY_SPEAKS}
-    assert by["C"]["seconds_basis"] == "line" and by["A"]["seconds_basis"] == "planned_length"
+    assert by["C"]["seconds_basis"] == "measured_line" and by["A"]["seconds_basis"] == "measured_length"   # Q4 (D-138)
     # the script itself stays clean: the line never sits in the script's motion prompt (KP-V4-DIALOGUE-LEAK)
     assert '"' not in doc["shots"][2]["video_prompt"]["motion_prompt"]
     del doc["world_bible"]["characters"][1]["voice_description"]

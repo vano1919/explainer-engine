@@ -6186,3 +6186,33 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   its reason. The worker-side retry of a scene run is not built (worker frozen until P5). Test `test_video_failure_rt07.py`.
 - Rewritten to the new rule (not weakened): `test_sound_design_system::test_validation_catches_...a_crowd` asserted BP-56
   overlap FAIL; it now asserts REVIEW at the Q1 default and FAIL with Q1 = FAIL (rule ids in its docstring).
+
+## 2026-11-13 — The creator's seven answers to the Fable audit (D-138)
+- Switches in `config/creator_open_questions.json`, each with its answer (choice, date, words, via the coordinator's relay of
+  his card answers 13:27-13:29 UTC): Q1 REVIEW (FAIL after the Toba sample measures the limit, one change), Q2 off until he
+  picks by ear, Q3 FAIL_FACE_REVIEW_COSTUME, Q4 forced, Q5 prompt_description with voice cards, Q6 close, Q7
+  sample_review_full_fail. Rewritten to the new values (not weakened): `test_creator_open_questions` (defaults -> his
+  answers), `test_video_identity::test_the_level_follows_switch_q3`, the two `test_videolane` scene tests (they now give the
+  scene its measured read, `_reads`; bases `measured_line` / `measured_length`), the fixture voices of `test_videolane` (a
+  voice card each, Q5).
+- Q4: `videolane/line_reads` (new, `audio/line_reads.json`, `line_reads/1`: the speech seconds of every clip line's TTS take or
+  recording, sha-pinned); `plan.clip_seconds(measured_line_s=)` (basis `measured_line`); `scene.build` refuses a scene with a
+  video shot not sized from a measured read, `scene.storyboard_problems` refuses it again at the paid launch; the runner's
+  `read_before_video` row counts the clip lines too.
+- Q5: `voice_card` (age, timbre, pace, accent) in the script schema, owned by the voice-caster (stage_guard); Toba's three
+  cards; `scene.voice_card_problems`, `voice_drift` (the same text in every scene file of the episode), the verbatim check in
+  `storyboard_problems`.
+- Q3: `videolane/identity`: wide shots and heroes facing away (continuity cards) are not face-judged; `hero_cuts`,
+  `eye_findings` (`costume_review/1`), `cut_sheet`; a costume row never PASSes on the palette alone while a hero cut waits for
+  the eye check; a paid scene is refused while the binding face is NOT MEASURED; `check_joined` + CLI for a made clip. On the
+  11-12 battle (free, YuNet + SFace from opencv's HF repos into the gitignored tools/yunet): the palette sees 0.094 at cut 1
+  (under 0.15), the eye check names the general's crest and the commander's shield, the row is REVIEW, the face PASSes (c2
+  names both, wides and backs not judged). Evidence: HF `explainer-engine/creator_answers_2026-11-13/q3_battle_identity/`.
+- Q2: `audio/clip_audio_ab` renders one narrated LTX shot twice by `stems.render` (Q2 off / on for that render only): the
+  11-12 charge clip under an existing narrator take, the library bed sha-checked; HF
+  `explainer-engine/creator_answers_2026-11-13/q2_clip_audio_ab/` (a_stripped.mp4, b_clip_layer.mp4).
+- Q7: `run_scope` in the manifest schema (sample | full, absent = full); Toba is `sample`; G1's `video_share_against_target`
+  REVIEW on the sample, FAIL on a full episode.
+- Q6: PRs #164, #120 and #112 closed without merging with his comment; branches kept.
+- Tests: `test_creator_answers_d138.py` (10, one on the real battle file when the project files are mounted),
+  `test_clip_audio_layer.py::test_the_q2_ab_renders_both_versions_by_the_one_renderer`.

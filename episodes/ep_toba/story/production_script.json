@@ -28,7 +28,13 @@
         "costume_continuity_notes": "Cracked antelope-hide cloak fastened with bone pin, red ochre stripe across cheekbone",
         "voice_profile_id": "voice_kael_74000bce",
         "reference_sheet_path": "02_keyframes/assets/char_kael_74000bce_turnaround.png",
-        "voice_description": "a deep, weathered male voice in his mid-forties, slow and stubborn, low gravel in the throat, a soft East African lilt, each word set down hard"
+        "voice_description": "a deep, weathered male voice in his mid-forties, slow and stubborn, low gravel in the throat, a soft East African lilt, each word set down hard",
+        "voice_card": {
+          "age": "mid-forties",
+          "timbre": "low gravel in the throat",
+          "pace": "slow and stubborn",
+          "accent": "a soft East African lilt"
+        }
       },
       {
         "character_id": "char_sena_74000bce",
@@ -38,7 +44,13 @@
         "costume_continuity_notes": "Leather work apron, perforated shell and obsidian necklace, bone pressure-flaker at belt",
         "voice_profile_id": "voice_sena_74000bce",
         "reference_sheet_path": "02_keyframes/assets/char_sena_74000bce_turnaround.png",
-        "voice_description": "a clear, quick female voice in her mid-twenties, warm but sharp when pressed, a light East African lilt, precise and urgent, rising when she argues"
+        "voice_description": "a clear, quick female voice in her mid-twenties, warm but sharp when pressed, a light East African lilt, precise and urgent, rising when she argues",
+        "voice_card": {
+          "age": "mid-twenties",
+          "timbre": "clear",
+          "pace": "quick",
+          "accent": "a light East African lilt"
+        }
       },
       {
         "character_id": "char_thar_74000bce",
@@ -48,7 +60,13 @@
         "costume_continuity_notes": "Ash-caked leather shoulder wraps, net of engraved ostrich-eggshell water containers",
         "voice_profile_id": "voice_thar_74000bce",
         "reference_sheet_path": "02_keyframes/assets/char_thar_74000bce_turnaround.png",
-        "voice_description": "a hoarse, dry male voice in his mid-thirties, thin from thirst, measured and wary, a southern Rift accent, quiet force under exhaustion"
+        "voice_description": "a hoarse, dry male voice in his mid-thirties, thin from thirst, measured and wary, a southern Rift accent, quiet force under exhaustion",
+        "voice_card": {
+          "age": "mid-thirties",
+          "timbre": "hoarse, dry",
+          "pace": "measured and wary",
+          "accent": "a southern Rift accent"
+        }
       }
     ],
     "locations": [

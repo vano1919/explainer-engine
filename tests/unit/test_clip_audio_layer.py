@@ -49,3 +49,31 @@ def test_the_read_pieces_split_for_a_clip_fade_at_the_split(tmp_path):
     assert abs(y[split - 1]) < 0.02 and abs(y[3 * RATE]) < 0.02            # both sides of the split fade (BP-188)
     assert abs(y[RATE]) > 0.3 and abs(y[int(3.5 * RATE)]) > 0.3            # the read itself is untouched
     assert [p["what"] for p in rep["laid"]] == ["read", "read", "clip"]
+
+
+def test_the_q2_ab_renders_both_versions_by_the_one_renderer(tmp_path):
+    """Q2 (the creator 2026-11-13, answer c; D-138): the free A/B makes one narrated clip twice through ``stems.render``:
+    a) the clip's sound dropped (the effects stem silent), b) the clip's sound as the quiet ducked layer; the same cue rows;
+    the switch itself stays off afterwards (stripped is the default until he chooses)."""
+    import json
+    import subprocess
+    from explainer_engine.audio import clip_audio_ab as AB
+    from explainer_engine.episode import sound_plan as SP
+    from tests.unit.test_sound_design_system import _lib
+    clip = tmp_path / "clip.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=320x180:rate=24:duration=3", "-f",
+                    "lavfi", "-i", "sine=frequency=300:duration=3", "-shortest", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                    "-c:a", "aac", str(clip)], check=True)
+    read = _wav(tmp_path / "read.wav", 2.0, level=0.3)
+    plan = SP.build(AB.one_shot_script(3.0, ["battle_din"], "plain", "bronze_age", "x"), fps=24, era="bronze_age")
+    lib = _lib(tmp_path / "lib", {c: [("loop", 4.0, None)] for c in plan["classes"]})
+    rep = AB.build(clip, read, tmp_path / "ab", lib, bed=["battle_din"], seconds=3.0)
+    a, b = rep["versions"]["a_stripped"], rep["versions"]["b_clip_layer"]
+    assert a["clip_audio"]["laid"] == [] and b["clip_audio"]["laid"][0]["gain_db"] == STEMS.CLIP_AUDIO_DB
+    sa = VV.read_mono(tmp_path / "ab" / "a_stripped" / "stems" / "sfx.wav")
+    sb = VV.read_mono(tmp_path / "ab" / "b_clip_layer" / "stems" / "sfx.wav")
+    assert float(np.abs(sa).max()) == 0.0 and float(np.abs(sb).max()) > 0.0
+    rows = lambda v: [(r["layer"], r.get("asset_id")) for r in json.loads(
+        (tmp_path / "ab" / v / "stems" / "cue_sheet.json").read_text())["rows"]]
+    assert rows("a_stripped") == rows("b_clip_layer")
+    assert OQ.value("Q2") == "off" and (tmp_path / "ab" / "b_clip_layer.mp4").is_file()

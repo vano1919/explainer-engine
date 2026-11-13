@@ -273,22 +273,34 @@ def stage_script(ep: Episode, rehearsal: bool):
     rows += E.contract_rows(doc, set(SP.EVENT_CLASSES), ep.fps)
     rows += E.absolute_anchor_rows(doc)   # FA-06: on a locked script an absolute anchor under a read line is REVIEW
     rows.append(_claims_row(ep, doc))
-    rows.append(_video_share_row(doc))
+    rows.append(_video_share_row(doc, _scope(ep)))
     return rows, {"mix": R.mix_report(doc), "shots": len(shots), "audit_status": audit["status"]}
 
 
-def _video_share_row(doc: dict) -> dict:
-    """Q7 (Fable audit): the video share by duration against D-131's target; REVIEW while the switch says the mix is a frame,
-    FAIL when the creator asks to re-route towards the target (reroute) and the share is more than 10 points short."""
+def _scope(ep: Episode) -> str:
+    """The run's scope from the manifest (``run_scope``): ``sample`` or ``full``; a manifest that says nothing is a full
+    episode (the strict side)."""
+    v = str(ep.manifest.get("run_scope") or "full")
+    if v not in ("sample", "full"):
+        raise ConfigError(f"episode.json run_scope {v!r} is not sample or full")
+    return v
+
+
+def _video_share_row(doc: dict, scope: str = "full") -> dict:
+    """Q7 (Fable audit; the creator 2026-11-13, answer c, D-138): the video share by duration against D-131's target (+-10
+    points). ``sample_review_full_fail`` (his answer): REVIEW on a sample (Toba keeps its 35.6 %, no re-routing), FAIL on a
+    full episode; ``frame`` REVIEW always; ``reroute`` FAIL always."""
     from explainer_engine.core import open_questions as OQ
     from explainer_engine.episode import router as R
     mix = R.mix_report(doc)
     share = float(mix["shares"].get("video", 0.0))
     target = float((doc.get("visual_mix_target") or {}).get("cinematic_video_target") or 0.6)
     ok = abs(share - target) <= 0.10
-    level = G.FAIL if OQ.value("Q7") == "reroute" else G.REVIEW
+    q7 = OQ.value("Q7")
+    fail = q7 == "reroute" or (q7 == "sample_review_full_fail" and scope != "sample")
     return G.row("video_share_against_target", ok, f"video {share:.1%} of the duration ({mix['basis']}), D-131's target "
-                 f"{target:.0%} (+-10 points); switch Q7 = {OQ.value('Q7')}", round(share, 4), level=level)
+                 f"{target:.0%} (+-10 points); switch Q7 = {q7}, run_scope {scope}", round(share, 4),
+                 level=G.FAIL if fail else G.REVIEW)
 
 
 def _claims_row(ep: Episode, doc: dict) -> dict:
@@ -664,9 +676,18 @@ def stage_clips(ep: Episode, rehearsal: bool):
                   f"{len(no_tool)} shot(s) not drawn: a free tool is missing (the message names its fetch command)"
                   if no_tool else "every free tool the clips need was found", no_tool[:10])]
     from explainer_engine.core import open_questions as OQ
-    if OQ.value("Q4") == "forced":   # Q4: the read before the LTX scenes; "supported" (default) sizes from it when present
-        rows.append(G.row("read_before_video", timing is not None, "switch Q4 = forced: the read (audio/timing.json) "
-                          "comes before any video clip" + ("" if timing else ": no read yet")))
+    if OQ.value("Q4") == "forced":   # Q4 (D-138): the read before the LTX scenes, every video shot measured
+        from explainer_engine.videolane import line_reads as LR
+        from explainer_engine.videolane import plan as VP
+        have = LR.seconds_by_line(ep.root)
+        lines_by = {ln["line_id"]: ln for ln in script.get("audio_lines", [])}
+        unread = [s["shot_id"] for s in script.get("shots", []) if VP.is_video(s) and s["shot_id"] in VP.clip_spoken(script)
+                  and any((lines_by.get(l) or {}).get("speaker_type") == "character" and l not in have
+                          for l in s.get("audio_line_ids") or [])]
+        rows.append(G.row("read_before_video", timing is not None and not unread,
+                          "switch Q4 = forced: the narration's read (audio/timing.json) and every clip line's read "
+                          f"(audio/line_reads.json) come before any video clip; read {'yes' if timing else 'no'}, "
+                          f"{len(unread)} clip-spoken shot(s) without a line read", unread[:20]))
     from explainer_engine.episode import router as R
     durations = {r["shot_id"]: r["duration_sec"] for r in records}
     return rows, {"records": "production/shot_records.json", "made": made, "reused": reused,

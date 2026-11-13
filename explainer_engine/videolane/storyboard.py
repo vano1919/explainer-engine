@@ -137,9 +137,15 @@ def build(root: Path, script: dict, scene_shots: list[str], scene_id: str, *, pi
     from explainer_engine.videolane import identity as ID
     frames = {c["shot_id"]: (arrays[c["shot_id"]], arrays[c["shot_id"]]) for c in cells if c["shot_id"] in arrays}
     paths = {c["shot_id"]: c["path"] for c in cells if c.get("path")}
-    rows += ID.rows(sub, scene_shots, frames, paths, ID.references_of(root, script), "storyboard")
     out_dir = root / "production" / "storyboard"
     out_dir.mkdir(parents=True, exist_ok=True)
+    rv_p = out_dir / f"{scene_id}.costume_review.json"   # Q3: the eye check of headgear, props, clothes (warning only)
+    review = json.loads(rv_p.read_text(encoding="utf-8")) if rv_p.is_file() else None
+    rows += ID.rows(sub, scene_shots, frames, paths, ID.references_of(root, script), "storyboard", review=review,
+                    facing=ID.facing_of(root))
+    cuts = ID.hero_cuts(sub, scene_shots)
+    if cuts and any(c["a"] in frames and c["b"] in frames for c in cuts):
+        ID.cut_sheet(frames, cuts, out_dir / f"{scene_id}.cuts.jpg")
     sheet = out_dir / f"{scene_id}.jpg"
     contact_sheet(cells, sheet)
     rec = {"schema": SCHEMA, "scene_id": scene_id, "shots": scene_shots, "cells": cells, "rows": rows,

@@ -73,21 +73,29 @@ def line_seconds(script: dict, shot: dict, speaker_type: str | None = None) -> f
     return t
 
 
-def clip_seconds(script: dict, shot: dict, max_s: float, measured_s: float | None = None) -> dict:
+MEASURED_BASES = ("measured_length", "measured_line")   # Q4 (D-138): the bases that come from a real read
+
+
+def clip_seconds(script: dict, shot: dict, max_s: float, measured_s: float | None = None,
+                 measured_line_s: float | None = None) -> dict:
     """VL-06: the seconds to generate for one video shot. A clip-spoken shot (it carries a character line, which LTX speaks):
     onset + its line + BP-187's tail + the tail handle (the head handle lies inside the onset: LTX speaks late anyway). A
     narrated or silent shot (the narrator's read lies over it, the clip says nothing; Fable audit FA-01): its length + both
     handles, where the length is the measured shot of the read when ``measured_s`` is given (FA-15: ``basis``
     ``measured_length``) and the planned length otherwise. Rounded up to 0.25 s, at least MIN_CLIP_S, at most the model's
-    ``max_s``; ``over`` says when the plan does not fit."""
+    ``max_s``; ``over`` says when the plan does not fit. A clip-spoken shot whose line was read first (TTS or a recording,
+    ``videolane.line_reads``; Q4, D-138) uses that measured speech (``measured_line_s``, basis ``measured_line``) instead of
+    the estimate."""
     ep = shot.get("edit_plan") or {}
     head = float(ep.get("head_handle_s", 0.0))
     tail = float(ep.get("tail_handle_s", float(CUT_TAIL[1])))
     speak = line_seconds(script, shot, "character")
     if speak > 0:
         onset = float(ep.get("speech_onset_s", SPEECH_ONSET_S))
-        need = max(onset, head) + speak + TAIL_S + tail
         basis = "line"
+        if measured_line_s is not None:
+            speak, basis = float(measured_line_s), "measured_line"
+        need = max(onset, head) + speak + TAIL_S + tail
     elif measured_s is not None:
         need = head + float(measured_s) + tail
         basis = "measured_length"

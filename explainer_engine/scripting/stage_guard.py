@@ -76,6 +76,7 @@ V4_OWNERS = (
     ("audio_lines[*].delivery_direction", "performer"),
     ("audio_lines*", "writer"),
     ("world_bible.characters[*].voice_description", "caster"), ("world_bible.characters[*].voice_profile_id", "caster"),
+    ("world_bible.characters[*].voice_card", "caster"),
     ("world_bible.locations[*].ambience_bed", "architect"),
     ("world_bible*", "architect"),
     ("av_contract", "editor"), ("visual_mix_target", "editor"),

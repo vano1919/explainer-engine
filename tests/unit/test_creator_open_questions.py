@@ -1,5 +1,6 @@
-"""The creator's open questions Q1..Q7 of the Fable audit 2026-11-13 are switches with Fable's defaults until he answers
-(config/creator_open_questions.json); each switch is read where it acts."""
+"""The creator's open questions Q1..Q7 of the Fable audit 2026-11-13 are switches (config/creator_open_questions.json); each
+switch is read where it acts. The creator answered all seven on 2026-11-13 (D-138): every answer is recorded with its
+choice and date, and the values are his."""
 from __future__ import annotations
 
 import json
@@ -9,8 +10,9 @@ import pytest
 from explainer_engine.core import open_questions as OQ
 from explainer_engine.core.errors import ConfigError
 
-DEFAULTS = {"Q1": "REVIEW", "Q2": "off", "Q3": "REVIEW", "Q4": "supported", "Q5": "prompt_description", "Q6": "keep_open",
-            "Q7": "frame"}
+DEFAULTS = {"Q1": "REVIEW", "Q2": "off", "Q3": "FAIL_FACE_REVIEW_COSTUME", "Q4": "forced", "Q5": "prompt_description",
+            "Q6": "close", "Q7": "sample_review_full_fail"}   # the creator's answers of 2026-11-13 (D-138)
+CHOICES = {"Q1": "გ", "Q2": "გ", "Q3": "გ", "Q4": "ა", "Q5": "ა", "Q6": "ა", "Q7": "გ"}
 
 
 def test_every_question_has_fables_default_and_a_reader_that_exists():
@@ -18,7 +20,8 @@ def test_every_question_has_fables_default_and_a_reader_that_exists():
     assert set(data["questions"]) == set(DEFAULTS)
     for qid, want in DEFAULTS.items():
         q = data["questions"][qid]
-        assert OQ.value(qid) == want and q["answered"] is None, qid
+        assert OQ.value(qid) == want and q["answered"]["choice"] == CHOICES[qid], qid
+        assert q["answered"]["date"].startswith("2026-11-13") and q["answered"]["words"], qid
         if q["read_by"]:
             src = (OQ.PATH.parents[1] / q["read_by"]).read_text(encoding="utf-8")
             assert f'"{qid}"' in src, f"{q['read_by']} does not read {qid}"
@@ -48,5 +51,9 @@ def test_q7_the_video_share_is_a_review_row_on_toba():
     from pathlib import Path
     from explainer_engine.episode import run as RUN
     doc = json.loads((Path(__file__).resolve().parents[2] / "episodes/ep_toba/story/production_script.json").read_text("utf-8"))
-    row = RUN._video_share_row(doc)
-    assert row["gate"] == "video_share_against_target" and row["status"] == "REVIEW" and "Q7 = frame" in row["detail"]
+    row = RUN._video_share_row(doc, "sample")      # Q7 (D-138): a warning on the sample, Toba keeps its share
+    assert row["gate"] == "video_share_against_target" and row["status"] == "REVIEW"
+    assert "Q7 = sample_review_full_fail" in row["detail"] and row["measured"] == pytest.approx(0.356, abs=0.005)
+    assert RUN._video_share_row(doc, "full")["status"] == "FAIL"       # the full episode: FAIL
+    ep = json.loads((Path(__file__).resolve().parents[2] / "episodes/ep_toba/episode.json").read_text("utf-8"))
+    assert ep["run_scope"] == "sample"

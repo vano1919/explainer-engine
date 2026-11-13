@@ -30,9 +30,10 @@ def test_a_changed_helmet_colour_is_flagged():
 
 
 def test_the_level_follows_switch_q3(monkeypatch):
-    assert OQ.value("Q3") == "REVIEW" and ID.levels() == {"face": "REVIEW", "costume": "REVIEW"}
-    monkeypatch.setattr(OQ, "value", lambda qid, path=OQ.PATH: "FAIL_FACE_REVIEW_COSTUME")
-    assert ID.levels() == {"face": "FAIL", "costume": "REVIEW"}
+    """Q3 answered by the creator 2026-11-13 (answer c, D-138): the face FAILs, costume and props are a warning."""
+    assert OQ.value("Q3") == "FAIL_FACE_REVIEW_COSTUME" and ID.levels() == {"face": "FAIL", "costume": "REVIEW"}
+    monkeypatch.setattr(OQ, "value", lambda qid, path=OQ.PATH: "REVIEW")
+    assert ID.levels() == {"face": "REVIEW", "costume": "REVIEW"}
     monkeypatch.setattr(OQ, "value", lambda qid, path=OQ.PATH: "FAIL")
     rows = ID.rows(_script(), ["A", "B"], {"A": (_frame((200, 40, 40)),) * 2, "B": (_frame((40, 60, 210)),) * 2}, {}, {},
                    "storyboard")

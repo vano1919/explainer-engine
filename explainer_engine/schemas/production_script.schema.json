@@ -2267,6 +2267,18 @@
                     "minLength": 8,
                     "maxLength": 200,
                     "description": "FA-02 (voice-caster): how this character sounds, in plain words for the LTX prompt (age, timbre, accent, pace), e.g. 'a hoarse older man, low and slow'; never a real person's name"
+                  },
+                  "voice_card": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["age", "timbre", "pace", "accent"],
+                    "description": "Q5 (the creator 2026-11-13, D-138; voice-caster): the four facets of the ONE fixed voice text, each found word for word in voice_description; the composer puts that text verbatim into every LTX prompt of the character",
+                    "properties": {
+                      "age": {"type": "string", "minLength": 2},
+                      "timbre": {"type": "string", "minLength": 2},
+                      "pace": {"type": "string", "minLength": 2},
+                      "accent": {"type": "string", "minLength": 2}
+                    }
                   }
                 }
               }
