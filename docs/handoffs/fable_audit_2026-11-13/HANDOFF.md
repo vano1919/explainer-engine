@@ -26,7 +26,8 @@ Copies: `/mnt/project-files/explainer-engine/v4_3_plan_2026-11-12/fable_audit_20
 
 ## Entry for the next stage (one Opus high thread, rule 7a)
 Read the guideline, then the report sections it cites. Branch off `origin/systemic/next-video`. Start at P0. Free work only.
-Inputs: `origin/claude/project-thread-98b6wy`, `-lncsi3`, `-1hrknf`, `-96iqtm`, `-eczgwr`. Do not edit the LTX worker or its
+Inputs: `origin/claude/project-thread-98b6wy`, `-lncsi3`, `-1hrknf`, `-eczgwr` (`-96iqtm` is not merged, guideline P0 step 6).
+Merged scratch tree, measured: 4056 of 4087 tests pass; the only failures a correct merge keeps are six on FA-04. Do not edit the LTX worker or its
 launch file before P5; do not touch the D-133 protected files, `config/spend_caps.json` or `config/model_routing.json`.
 
 ## Open, not blocking the start

@@ -28,7 +28,8 @@ audio was listened to.
 ## 1. Verdict
 
 1. Both reports are honest about what they built. Their main claims hold in the code (section 2).
-2. The two branches merge. Six files conflict between them and all six resolve mechanically (guideline, phase P0).
+2. The two branches merge. Six files conflict between them and all six resolve mechanically (guideline, phase P0). Rule tables
+   need a row-by-row merge, not "keep both sides" (section 8).
 3. Neither line can produce the Toba episode today. Five faults stop the run or waste it, and none of them is in either report:
    the script gate still measures LTX shots against the Wan model (FA-01), LTX is never told the line it must speak (FA-02), the
    Toba script has none of the new fields and no writer page teaches them (FA-03), the Gemini picture line refuses every `video`
@@ -97,8 +98,9 @@ Also measured: the Toba video share is 35.6 % of duration (255.9 s of 719.8 s) a
 `gemini_task/queue.py` on the A line: `BUCKET = {"map_action": 10, "still_25d": 30, "wan": 60}` and a `ContractError` for any
 other route. The router now writes `video` (`LEGACY_ROUTES = {"wan": "video"}`). After the merge every video shot fails the
 queue. `texts/drive_pack/04_VIDEO_SCRIPT_RULES.md` still says `wan` and has no rule for continuation shots (they need no start
-picture) or coverage shots (they take the scene master as reference). Commit `db59807` (GC-21) exists only on `96iqtm` and is
-missing from `1hrknf`.
+picture) or coverage shots (they take the scene master as reference). Commit `db59807` on `96iqtm` (a rewording of the GC-21
+row for the icw01 test) is not in `1hrknf`, but `1hrknf` reworded the same row itself about half an hour later (`6072afb`) and its test
+passes: the commit is superseded, not missing.
 
 ### FA-05 (A) Both sound guides tell the writer to use fields the schema rejects
 Guide v1 section 3 and guide v2 section 3e name `intentional_silence`, `sound_design` on a shot and `mood` / `music` on a
@@ -239,7 +241,7 @@ on main.
 | #171, #169, #163 | `xpsv3w`, `92rcrx`, `2hoa9u` | contained in #174 and #175; close |
 | #172 | `nvctxh` | contained in #175; close |
 | #170, #168, #166, #165 | `1hrknf`, `s03igf`, `bi0g2e`, `dx9fty` | merged by it (A line, with the FA-04 fix); close |
-| #167 | `96iqtm` | its extra commit `db59807` is merged separately; close |
+| #167 | `96iqtm` | not merged: its one extra commit `db59807` is superseded by the GC-21 row of `1hrknf`; close with that comment |
 | #173 | `eczgwr` | merged by it; close |
 | #119, #130, #131, #137, #140, #146, #147, #149, #150, #151, #152, #157, #158, #160, #161, #162 | older heads | already contained in `lncsi3`; close after the merge |
 | #164, #120, #112 | `jtvjlt` and two older | NOT contained; retired work; Q6 |
@@ -256,4 +258,17 @@ naming the integration PR. Branches are deleted only on the creator's word (hook
 
 ## 8. Full suite on the merged scratch tree
 
-The run was still going when this file was first committed; the result is appended in the next commit of this branch.
+Scratch tree = `98b6wy` + `lncsi3` + `1hrknf` + `96iqtm` + `eczgwr`, conflicts resolved by keeping both sides everywhere,
+`run.py` and the schema as in the guideline. Measured: **4056 passed, 10 failed, 20 skipped, 1 xfailed** of 4087 (638 s).
+`docs_lint`: 10 findings.
+
+| Failing test | Cause | Removed by |
+|---|---|---|
+| `test_gemini_task_flow.py`, six tests | `ContractError: S01_SH001: route 'video' is not one of ('map_action', 'still_25d', 'wan')` | FA-04, guideline 1.2 |
+| `test_docs.py::test_the_documentation_set_is_consistent`, `test_docs_lint.py::test_docs_lint_passes_with_zero_findings` | ten ids defined twice: RT-07, SP-01, SP-02, SP-03 (`EPISODE_FIRST.md`), BP-189..BP-192 (`SOURCED_RULES.md`), GC-20, GC-21 (`GEMINI_CONSISTENCY_RULES.md`) | my "keep both sides" resolution: both branches edited the same rows. A row-by-row merge leaves one row per id (guideline P0) |
+| `test_sourced_rules.py::test_the_doc_table_matches_the_registry` | the generated table is older than the merged registry | `python -m explainer_engine.standards.sourced_rules write` after the merge |
+| `test_gemini_task_texts.py::test_the_gc_rows_20_to_27_exist_and_the_pack_cites_only_those` | GC-20 and GC-21 twice, from merging `96iqtm` on top of `1hrknf` | `96iqtm` is not merged |
+
+No id has two meanings: the duplicated rows are the same rule in two wordings (checked row by row on both branches), and the
+registry JSON holds each BP id once. So the only failures that survive a correct merge are the six of FA-04. Everything else in
+the suite passes on the merged tree, including the 46 video-lane tests and the AV tests together.

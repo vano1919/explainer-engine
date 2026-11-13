@@ -28,8 +28,14 @@ so that the Toba script passes G1 honestly and the next step is the priced sampl
 2. `git merge --no-ff origin/claude/project-thread-98b6wy` (brings #163, #169, #171, #174). No conflict: the base is an
    ancestor.
 3. `git merge --no-ff origin/claude/project-thread-lncsi3` (brings #172, #175 and the sixteen older heads). Six conflicts:
-   - `docs/DECISIONS_AND_OPEN_QUESTIONS.md`, `docs/EPISODE_FIRST.md`, `docs/PROGRESS.md`, `docs/SOURCED_RULES.md`: keep both
-     sides, video-lane numbering wins (D-133 cheapest run, D-135 AV, D-136 W1 sound, D-137 video lane).
+   - `docs/DECISIONS_AND_OPEN_QUESTIONS.md`, `docs/PROGRESS.md` (append-only logs): keep both sides, video-lane numbering wins
+     (D-133 cheapest run, D-135 AV, D-136 W1 sound, D-137 video lane).
+   - `docs/EPISODE_FIRST.md` (a rule table): merge row by row, one row per id. Both branches edited RT-07, SP-01, SP-02 and
+     SP-03. RT-07: the video-lane wording (LTX since D-132, RT-08). SP-01 and SP-03: the AV wording (words are candidates,
+     AV-07). SP-02: the AV wording with D-136 for the W1 decision. New rows of either side (AV-xx, MA-xx, L25-xx, VL-xx) all
+     stay. Keeping both sides here gives ten `canonical_home` findings (report section 8).
+   - `docs/SOURCED_RULES.md`: take either side for the generated block, then regenerate it from the merged registry with
+     `python -m explainer_engine.standards.sourced_rules write`; hand-written text outside the block keeps both sides.
    - `explainer_engine/schemas/production_script.schema.json`: keep both `motion_profile` (AV) and `edit_plan` (video lane).
    - `explainer_engine/episode/run.py`, two hunks. In `stage_clips` the cache key takes both sides:
      ```python
@@ -45,15 +51,17 @@ so that the Toba script passes G1 honestly and the next step is the priced sampl
    cheapest-run decision.
 5. `git merge --no-ff origin/claude/project-thread-1hrknf` (A line: #165, #166, #168, #170). Conflict: `docs/PROGRESS.md`, keep
    both.
-6. `git merge --no-ff origin/claude/project-thread-96iqtm` (#167, commit `db59807`, GC-21). Conflict:
-   `docs/GEMINI_CONSISTENCY_RULES.md`, keep the GC-21 row beside the newer rows.
+6. Do NOT merge `origin/claude/project-thread-96iqtm` (#167). Its one extra commit `db59807` rewords the GC-21 row for the
+   icw01 test; `1hrknf` reworded the same row itself later (`6072afb`). Merging it defines GC-20 and GC-21 twice and fails
+   `test_gemini_task_texts.py`. #167 is closed as superseded.
 7. `git merge --no-ff origin/claude/project-thread-eczgwr` (#173, `config/picture_route.json`). Conflict: `docs/PROGRESS.md`,
    keep both.
-8. Run `python -m pytest -q` and `python -m explainer_engine.docs_lint`. Report section 8 lists what fails on this tree before
-   any fix; nothing beyond that list may fail.
+8. Run `python -m pytest -q` and `python -m explainer_engine.docs_lint`. Expected on a correct merge (report section 8): the
+   six `test_gemini_task_flow.py` tests fail on FA-04 until step 1.2, docs_lint has zero findings, everything else passes
+   (4087 tests collected). Anything else red is a merge mistake: fix the merge, not the test.
 
-Done when: the seven merges are in, the suite result equals the list in the report or better, and one PROGRESS entry names the
-merged PRs.
+Done when: the four merges are in (`98b6wy`, `lncsi3`, `1hrknf`, `eczgwr`), the suite result is the expected one, and one
+PROGRESS entry names the merged PRs and this audit.
 
 ## P1. Blocking fixes (in this order)
 
@@ -193,8 +201,8 @@ Done when: G1 is green or shows only REVIEW rows that are the creator's (Q1, Q3,
 
 ## After the integration PR is merged into `systemic/next-video`
 
-Report section 6 lists every pull request. The thread closes #174, #175, #171, #169, #163, #172, #170, #168, #167, #166, #165,
-#173 and the sixteen older contained heads, each with one comment naming the integration PR (the creator said on 2026-11-13
+Report section 6 lists every pull request. The thread closes #174, #175, #171, #169, #163, #172, #170, #168, #166, #165,
+#173, the sixteen older contained heads and #167 (superseded, its head is not an ancestor: say so in the comment), each with one comment naming the integration PR (the creator said on 2026-11-13
 that the active branches can be closed once this work is done; confirm containment with `git merge-base --is-ancestor <head>
 origin/systemic/next-video` before each close). #164, #120 and #112 wait for Q6. No branch is deleted without his word.
 
