@@ -1,0 +1,44 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S05_SH011",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S05_SH011.mp4",
+  "clip_sha256": "f17da6eb0fa4d1ddcfa2b324e679a481199f6a33fc1caa735aa7c8b7a3d072c2",
+  "raw_path": "production/video/raw/S05_SH011.mp4",
+  "raw_sha256": "f93ad1c75caad72b8290deb387e9bdeebcd3b3fce3c0be93a9138db33c2d72ce",
+  "raw_fps": 24.0,
+  "raw_seconds": 3.0417,
+  "fps": 24,
+  "in_s": 0.8333,
+  "out_s": 2.2917,
+  "frames": 35,
+  "speech_raw": [
+    [
+      1.1,
+      1.78
+    ]
+  ],
+  "speech": [
+    [
+      0.267,
+      0.947
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "35 frames is not 8k+1 (BP-139)"
+    }
+  ],
+  "attempts": [
+    {
+      "note": "re-make with the speaker bound by look and side (TD-316, run c441511c56ed); the first take (name-only prompt, the wrong man spoke) is in production/video/superseded/ or was never ingested"
+    }
+  ]
+}

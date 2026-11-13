@@ -142,26 +142,29 @@
     },
     {
       "gate": "storyboard_hero_face_holds",
-      "status": "FAIL",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    },
+    {
+      "gate": "storyboard_hero_face_eye_review",
+      "status": "REVIEW",
       "measured": [
-        "S05_SH015: char_friedrich_brandt's face is not found",
-        "S05_SH017: char_friedrich_brandt's face is not found",
-        "S05_SH018: char_friedrich_brandt's face is not found",
-        "S05_SH019: char_thomas_hale's face is not found",
-        "S05_SH019: char_friedrich_brandt's face is not found"
+        "S05_SH015: wide: Thomas digging left, Friedrich right in grey coat with red-band cap",
+        "S05_SH018: wide: Thomas left, Friedrich right at the cross, same coats",
+        "S05_SH019: wide: Thomas left, Friedrich right, faces tiny, same coats and caps"
       ],
-      "detail": "5 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      "detail": "3 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
     }
   ],
   "verdict": {
-    "status": "FAIL",
-    "failed": [
-      "storyboard_hero_face_holds"
-    ],
+    "status": "REVIEW",
+    "failed": [],
     "not_run": [],
     "review": [
       "storyboard_same_place_as_master",
-      "storyboard_hero_costume_holds"
+      "storyboard_hero_costume_holds",
+      "storyboard_hero_face_eye_review"
     ],
     "gates": [
       {
@@ -209,15 +212,19 @@
       },
       {
         "gate": "storyboard_hero_face_holds",
-        "status": "FAIL",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      },
+      {
+        "gate": "storyboard_hero_face_eye_review",
+        "status": "REVIEW",
         "measured": [
-          "S05_SH015: char_friedrich_brandt's face is not found",
-          "S05_SH017: char_friedrich_brandt's face is not found",
-          "S05_SH018: char_friedrich_brandt's face is not found",
-          "S05_SH019: char_thomas_hale's face is not found",
-          "S05_SH019: char_friedrich_brandt's face is not found"
+          "S05_SH015: wide: Thomas digging left, Friedrich right in grey coat with red-band cap",
+          "S05_SH018: wide: Thomas left, Friedrich right at the cross, same coats",
+          "S05_SH019: wide: Thomas left, Friedrich right, faces tiny, same coats and caps"
         ],
-        "detail": "5 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+        "detail": "3 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
       }
     ]
   },
@@ -225,11 +232,11 @@
     "S05_SH014_start": "8da55afa4ba6b05ad59f07e778c9ecf6da9b9075caabad013129998fc1e8f1e0",
     "S05_SH015_start": "7e586c204363933a9d4802ee83b76dc5630789e46c846f6c81f85c904b77c4c4",
     "S05_SH017_start": "10a1e5cf404ae8085c8fb0d2d5ca966473f780de06d23f681ef4c20be284ff9b",
-    "S05_SH018_start": "9175764cc7d33495dbb29b4abd713266d9a6e951486a3f08a30afc64e5c8fb9a",
+    "S05_SH018_start": "ea7bda57f8c6969ea2cddf838d295ca80d1aa6ddac374241926c542b7de35075",
     "S05_SH019_start": "95e7129ac87a94715fe0715627cb638ab33d361ee935f1a79421042d3be5290b",
     "S05_SH021_start": "52d6de376ac619e95525696f2c7df206226ecf8cd7c3fd5caa9ce9ddc7ca0f37"
   },
   "plan_digest": "c60a0389d796220f2cbd30e00ee630bd53ec1d77d99da6add51c410f76cbf4eb",
   "sheet": "episodes/ep_truce_1914/production/storyboard/S05b.jpg",
-  "sheet_sha256": "8567938746fa396f8be9d6fd405eeffb3f2f401e036b98862ecce0af49189dd0"
+  "sheet_sha256": "40fa2b253afdde4c8130a92c917a55544d23ee939ac73ba4403527ddc7740e91"
 }

@@ -197,26 +197,29 @@
     },
     {
       "gate": "storyboard_hero_face_holds",
-      "status": "FAIL",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    },
+    {
+      "gate": "storyboard_hero_face_eye_review",
+      "status": "REVIEW",
       "measured": [
-        "S06_SH004: char_friedrich_brandt's face is not found",
-        "S06_SH006: char_friedrich_brandt's face is not found",
-        "S06_SH007: char_friedrich_brandt's face is not found",
-        "S06_SH010: char_friedrich_brandt's face is not found"
+        "S06_SH006: Thomas left sitting, Friedrich right: moustache, red-band cap, grey greatcoat",
+        "S06_SH007: Thomas left, Friedrich right: same man"
       ],
-      "detail": "4 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      "detail": "2 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
     }
   ],
   "verdict": {
-    "status": "FAIL",
-    "failed": [
-      "storyboard_hero_face_holds"
-    ],
+    "status": "REVIEW",
+    "failed": [],
     "not_run": [],
     "review": [
       "video_edit_plan_review",
       "storyboard_same_place_as_master",
-      "storyboard_hero_costume_holds"
+      "storyboard_hero_costume_holds",
+      "storyboard_hero_face_eye_review"
     ],
     "gates": [
       {
@@ -271,29 +274,33 @@
       },
       {
         "gate": "storyboard_hero_face_holds",
-        "status": "FAIL",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      },
+      {
+        "gate": "storyboard_hero_face_eye_review",
+        "status": "REVIEW",
         "measured": [
-          "S06_SH004: char_friedrich_brandt's face is not found",
-          "S06_SH006: char_friedrich_brandt's face is not found",
-          "S06_SH007: char_friedrich_brandt's face is not found",
-          "S06_SH010: char_friedrich_brandt's face is not found"
+          "S06_SH006: Thomas left sitting, Friedrich right: moustache, red-band cap, grey greatcoat",
+          "S06_SH007: Thomas left, Friedrich right: same man"
         ],
-        "detail": "4 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+        "detail": "2 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
       }
     ]
   },
   "pictures": {
-    "S06_SH002_start": "1e01bc87b03dd59c8851c9a2f2c1d3a5733c7d0ed3dd22e3dafee5263a474e6b",
-    "S06_SH003_start": "5051ad8d51f56c0d9fff54e9e6e30c9d750cd385b8130c5e730bdcc7377e6829",
+    "S06_SH002_start": "d514df0361683b6ade96dcd4d066e334795180de630f1bf09ea81ea2db022a11",
+    "S06_SH003_start": "c903555b8077f16373ee7661123fef80f4394274eec66c474db1042cf230e591",
     "S06_SH004_start": "8b291d60251700b6806fa672f7f46252fb1c5d6a587efe0cb9c7dfbda7da7edf",
     "S06_SH006_start": "0a02b54b53404e557ced01d98d4fa2b87b29027bbde0c1850594a29286fa9a41",
-    "S06_SH007_start": "f274d8cfb5886e7918fa23153c5a626aa43253eaf5c92566f7d3cbbba7dbbb26",
-    "S06_SH008_start": "f17c93ef55d774a6f5d239e99f846a0f992a4c672c816e35f1d8db5bad317ef4",
+    "S06_SH007_start": "30a0dc424b84459292a1df8f5e029cdd57fb14b195eeb1bcecdd1c54c44191dc",
+    "S06_SH008_start": "f4849798352203b02bada672fc2d020b3c9bc8dbf9aed8dbc12f134457c04ad5",
     "S06_SH009_start": "a3e337a18623a3094e7b162edfa9777de3b9bc5e70530657fe673a1e99ab8fa4",
-    "S06_SH010_start": "3e8ee84256bf97b269f42190bd08e9bf9f6eb37c64e534dbf26eea6e449f4cd9",
-    "S06_SH011_start": "d2ee9eeefa38901b033d434aff9d8c236be44dfd090bb7a11cbf06102d1db7fb"
+    "S06_SH010_start": "c89fa9e8731589c4c7b03d4c914cbff836c4e4c9c05f0bf8718eb4cbc84a8979",
+    "S06_SH011_start": "2daf93c78c0a86fe0bb6560583e924c32efda012af45ae6cfeed62bc2c24aa89"
   },
   "plan_digest": "51b6e1610a792d2e94b26e43a03731602c8c25d9369c594b79633ef321f82b6e",
   "sheet": "episodes/ep_truce_1914/production/storyboard/S06.jpg",
-  "sheet_sha256": "dae71277e7c40929b44a5faedd5550c1d29c8516d8a974b590d0a87a42ae49a9"
+  "sheet_sha256": "a04ea44a0506aaeda1e925f65555ec9b72007f03b0cd204c9786054576f0d87c"
 }

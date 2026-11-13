@@ -1,0 +1,153 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S05c",
+  "shots": [
+    "S05_SH018"
+  ],
+  "cells": [
+    {
+      "shot_id": "S05_SH018",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S05_SH018_start",
+      "from": null,
+      "seconds": 3.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S05_SH018_start.png",
+      "vs_master": {
+        "palette_dist": 0.0348,
+        "top_palette_dist": 0.0954,
+        "luma_gap": 0.007
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 1 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-09 S05_SH018: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+      ],
+      "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S05_SH018 vs S05_SH014_start: palette 0.0348, top third 0.0954 (max 0.08), brightness gap 0.007 (max 0.18)"
+      ],
+      "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    },
+    {
+      "gate": "storyboard_hero_face_eye_review",
+      "status": "REVIEW",
+      "measured": [
+        "S05_SH018: Thomas left (khaki cap, hands clasped), Friedrich in the middle next to him: bare head, moustache, grey greatcoat, holding his cap, looks down at the cross"
+      ],
+      "detail": "1 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review",
+      "storyboard_same_place_as_master",
+      "storyboard_hero_face_eye_review"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 1 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-09 S05_SH018: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+        ],
+        "detail": "1 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S05_SH018 vs S05_SH014_start: palette 0.0348, top third 0.0954 (max 0.08), brightness gap 0.007 (max 0.18)"
+        ],
+        "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      },
+      {
+        "gate": "storyboard_hero_face_eye_review",
+        "status": "REVIEW",
+        "measured": [
+          "S05_SH018: Thomas left (khaki cap, hands clasped), Friedrich in the middle next to him: bare head, moustache, grey greatcoat, holding his cap, looks down at the cross"
+        ],
+        "detail": "1 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
+      }
+    ]
+  },
+  "pictures": {
+    "S05_SH018_start": "ea7bda57f8c6969ea2cddf838d295ca80d1aa6ddac374241926c542b7de35075",
+    "S05_SH014_start": "8da55afa4ba6b05ad59f07e778c9ecf6da9b9075caabad013129998fc1e8f1e0"
+  },
+  "plan_digest": "09cafb527af94c01334660838195e2ab9a86dacf7eef3e042b92a31d688eda03",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S05c.jpg",
+  "sheet_sha256": "ac9385367a5a78b5879d541868b60c9d73af2e22fee6137b1e08b2f2c4234e9f"
+}

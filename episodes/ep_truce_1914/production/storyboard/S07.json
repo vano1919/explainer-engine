@@ -141,24 +141,20 @@
       "gate": "storyboard_hero_costume_holds",
       "status": "REVIEW",
       "measured": [
-        "char_friedrich_brandt (head) S07_SH002 -> S07_SH003: colours move 0.1615 (> 0.15): clothes, skin or hair changed"
+        "char_thomas_hale (head) S07_SH002 -> S07_SH003: colours move 0.1615 (> 0.15): clothes, skin or hair changed"
       ],
       "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
     },
     {
       "gate": "storyboard_hero_face_holds",
-      "status": "FAIL",
-      "measured": [
-        "S07_SH002: char_friedrich_brandt's face is not found"
-      ],
-      "detail": "1 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
     }
   ],
   "verdict": {
-    "status": "FAIL",
-    "failed": [
-      "storyboard_hero_face_holds"
-    ],
+    "status": "REVIEW",
+    "failed": [],
     "not_run": [],
     "review": [
       "video_edit_plan_review",
@@ -204,23 +200,21 @@
         "gate": "storyboard_hero_costume_holds",
         "status": "REVIEW",
         "measured": [
-          "char_friedrich_brandt (head) S07_SH002 -> S07_SH003: colours move 0.1615 (> 0.15): clothes, skin or hair changed"
+          "char_thomas_hale (head) S07_SH002 -> S07_SH003: colours move 0.1615 (> 0.15): clothes, skin or hair changed"
         ],
         "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
       },
       {
         "gate": "storyboard_hero_face_holds",
-        "status": "FAIL",
-        "measured": [
-          "S07_SH002: char_friedrich_brandt's face is not found"
-        ],
-        "detail": "1 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
       }
     ]
   },
   "pictures": {
-    "S07_SH002_start": "36840927ff40ca4a3a6eb903f5df4fd853264eb72c20bd9571240e546830a38b",
-    "S07_SH003_start": "10649d998348bf62e55a3e4ce3dfb59d66af5256305dfa4f74b47d1236b8e6c7",
+    "S07_SH002_start": "6964fdcc2478bc0e6492d08af99585e50aae20382cc7c5f41cb5c7ce70b6da72",
+    "S07_SH003_start": "29c8d7576f447909eef7ba57b12701699b45d0bdd0233557d1db51bba228fe72",
     "S07_SH004_start": "a3b53359cc3563f4a5bbd50a37da15d692eaaefde5ae23457e5060141278018f",
     "S07_SH005_start": "da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3",
     "S07_SH006_start": "fe18ad2e4dfe70c4de82b0fe77ff97cbdff071e1cd7eb478dd2f2fd5adcb9859",
@@ -229,5 +223,5 @@
   },
   "plan_digest": "7eca5e90e161abf2fc34a3991fa2b7353bc22e67d86e65c0141bf679551e0249",
   "sheet": "episodes/ep_truce_1914/production/storyboard/S07.jpg",
-  "sheet_sha256": "0b4e8c3c29502a5c07112312dffa1a3a32ba52a2b89f24a34a8be6c696a49565"
+  "sheet_sha256": "ce2a23f8bebc493aeb2ff26ce7f589fe57a2da6cf60084b442145695913bfe72"
 }

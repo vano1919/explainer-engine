@@ -126,6 +126,18 @@ class Run:
                 "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
             self.save()
 
+    def waive_stop(self, service: str, items: list[str], *, by: str, ref: str) -> None:
+        """The creator moves the 80 % stop line for exactly these reservation items (their ``reserve`` may reach the full cap,
+        never more); every other item, the caps and ``STOP_FRACTION`` stay as they are. ``ref`` points at the creator's own
+        message or card."""
+        if not by or not ref:
+            raise ValueError("a stop waiver needs who allowed it (by) and where they said it (ref)")
+        with self.lock:
+            w = self.data.setdefault("stop_waivers", {})
+            for item in items:
+                w[item] = {"service": service, "by": by, "ref": ref, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            self.save()
+
     def approved(self, plan_id: str, plan_hash: str) -> bool:
         return (self.data.get("approvals", {}).get(plan_id) or {}).get("hash") == plan_hash
 
@@ -144,7 +156,12 @@ class Run:
             raise CapReached(f"{service} has no cap in this run; set it before spending")
         if amount < 0:
             raise ValueError("a reservation is not negative")
-        if self.spent(service) + amount > cap * STOP_FRACTION + 1e-9:
+        waived = (self.data.get("stop_waivers") or {}).get(item or "")
+        if waived and waived.get("service") == service:   # the creator moved the stop line for THIS item only: the cap stays
+            if self.spent(service) + amount > cap + 1e-9:
+                raise CapReached(f"{service}: {self.spent(service) + amount:.4f} would pass the cap {cap} (the creator's stop "
+                                 f"line is waived for {item}, the cap is not); stop and ask the creator")
+        elif self.spent(service) + amount > cap * STOP_FRACTION + 1e-9:
             raise CapReached(f"{service}: {self.spent(service) + amount:.4f} would pass {int(STOP_FRACTION * 100)} % of the "
                              f"cap {cap}; stop and ask the creator")
         self.data["spent"][service] = self.spent(service) + amount

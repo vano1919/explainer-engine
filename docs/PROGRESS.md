@@ -6288,3 +6288,14 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
   skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
   the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
+
+## 2026-11-13 — Ledger: a stop waiver for named items (the creator moves the 80 % line, never the cap)
+
+- Why: the creator's two cards (cmsg_01Hnu5zB86sjUj5GtTgaUkPWUggTDcsmgkbMGTvsCsvmaM, cmsg_01Hnu5zB86sjUj5GtTgaUkPWTk444C224qtw32y4Qt6H95)
+  allow the last two LTX launches of the Truce demo (S07, the S05_SH018 re-make) past the 4.00 stop line inside the 5.00 cap; the
+  ledger refused the reservation at 80 % of the cap. Audit TD-318 (Fable medium thread): write the waiver in the ledger, do not
+  write a false cap.
+- Done: `core/ledger.Run.waive_stop(service, items, by, ref)` records `stop_waivers[item]`; `_reserve` lets a waived item reach the
+  full cap and says "would pass the cap" past it; STOP_FRACTION, the caps and every other item are untouched; a waiver without
+  `by` or `ref` is a ValueError. Test `test_stop_waiver_moves_the_80_percent_line_for_named_items_only_never_the_cap`.
+- The launch of a part now goes through `demo_truce_1914/ltx/launch_safe.sh` (reserve first, launch only if it succeeded, FL-317).

@@ -52,27 +52,27 @@
       "status": "FAIL",
       "measured": [
         "S02_SH006",
-        "S02_SH007",
         "S03_SH003",
-        "S03_SH004",
-        "S03_SH005",
-        "S03_SH006",
-        "S03_SH008",
-        "S03_SH009",
-        "S04_SH002",
-        "S04_SH003",
-        "S04_SH004",
-        "S04_SH006",
-        "S04_SH007",
         "S04_SH009",
         "S04_SH010",
         "S04_SH012",
         "S04_SH013",
         "S05_SH004",
         "S05_SH005",
-        "S05_SH007"
+        "S05_SH007",
+        "S05_SH008",
+        "S05_SH009",
+        "S05_SH011",
+        "S05_SH012",
+        "S05_SH013",
+        "S05_SH017",
+        "S05_SH018",
+        "S05_SH019",
+        "S06_SH002",
+        "S06_SH003",
+        "S06_SH004"
       ],
-      "detail": "0 of 39 clip-spoken shot(s) timed by their trimmed LTX clip"
+      "detail": "11 of 39 clip-spoken shot(s) timed by their trimmed LTX clip"
     },
     {
       "gate": "av_anchors_inside_retimed_shots",
@@ -91,7 +91,7 @@
     "timing": "audio/timing.json",
     "read_s": 268.08,
     "planned_s": 367.0,
-    "total_frames": 9116,
+    "total_frames": 9165,
     "clip_timed": [
       "S02_SH006",
       "S02_SH007",
@@ -136,7 +136,7 @@
     "inserts": 39
   },
   "rehearsal": true,
-  "fingerprint": "eb71ce1db6fa9a05b0a808bd4c8c904d8fc3452efc322e0e55a7cc908b50d9f2",
-  "elapsed_s": 0.05,
-  "at": "2026-11-13T19:41:54Z"
+  "fingerprint": "1599d0e51570c9e706767a7d44c999253f23ff44e406d8ed6e3a7d23f3ff7702",
+  "elapsed_s": 0.04,
+  "at": "2026-11-13T20:17:58Z"
 }

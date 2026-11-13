@@ -1,0 +1,160 @@
+{
+  "schema": "ltx_scene_test/3",
+  "id": "S04a",
+  "episode": "episodes/ep_truce_1914",
+  "asked": "the creator, 2026-11-13 19:36 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei via the coordinator): LTX series cap 4.00 total; audit PASS for launch 2 (S04a) on script c2abcdd3 after the S02 pilot was looked at and heard",
+  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+  "storyboard": {
+    "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S04a.json",
+    "sha256": "ac3cc3d0274099ecdbb91742db0fd98252173bad5a7f1f826b036e38e1d234d8",
+    "verdict": "REVIEW"
+  },
+  "pictures": {
+    "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S04a.pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "S04_SH002",
+      "seconds": 3.75,
+      "seconds_basis": "measured_line",
+      "seed": 7100,
+      "motion_prompt": "Friedrich calls across the field with cupped hands, then waves one arm. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"English! Merry Christmas!\"",
+      "prompt_parts": {
+        "motion": "Friedrich calls across the field with cupped hands, then waves one arm.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"English! Merry Christmas!\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.72,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "English! Merry Christmas!"
+      },
+      "picture": "S04_SH002_start"
+    },
+    {
+      "shot_id": "S04_SH003",
+      "seconds": 4.0,
+      "seconds_basis": "measured_line",
+      "seed": 7101,
+      "motion_prompt": "Harris keeps low and speaks without turning his head, his hand tight on the rifle. Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"It's a trick. Nobody move.\"",
+      "prompt_parts": {
+        "motion": "Harris keeps low and speaks without turning his head, his hand tight on the rifle.",
+        "speech": "Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"It's a trick. Nobody move.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.796,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_sgt_harris",
+        "text": "It's a trick. Nobody move."
+      },
+      "picture": "S04_SH003_start"
+    },
+    {
+      "shot_id": "S04_SH004",
+      "seconds": 4.25,
+      "seconds_basis": "measured_line",
+      "seed": 7102,
+      "motion_prompt": "Friedrich steps up onto the parapet and stands with his arms open. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"No shooting! Merry Christmas!\"",
+      "prompt_parts": {
+        "motion": "Friedrich steps up onto the parapet and stands with his arms open.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"No shooting! Merry Christmas!\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.046,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "No shooting! Merry Christmas!"
+      },
+      "picture": "S04_SH004_start"
+    },
+    {
+      "shot_id": "S04_SH005",
+      "seconds": 6.25,
+      "seconds_basis": "measured_length",
+      "seed": 7103,
+      "motion_prompt": "Thomas leans his rifle on the sandbags, grips the ladder and climbs up into the fog. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "Thomas leans his rifle on the sandbags, grips the ladder and climbs up into the fog.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "coverage",
+      "line": {
+        "speaker": "none",
+        "text": "(Thomas leans his rifle on the sandbags and climbs the ladder)"
+      },
+      "picture": "S04_SH005_start"
+    },
+    {
+      "shot_id": "S04_SH006",
+      "seconds": 3.75,
+      "seconds_basis": "measured_line",
+      "seed": 7104,
+      "motion_prompt": "Harris stays low behind the sandbags and calls up sharply, one arm reaching. Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Thomas! Get back down!\"",
+      "prompt_parts": {
+        "motion": "Harris stays low behind the sandbags and calls up sharply, one arm reaching.",
+        "speech": "Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Thomas! Get back down!\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.611,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_sgt_harris",
+        "text": "Thomas! Get back down!"
+      },
+      "picture": "S04_SH006_start"
+    },
+    {
+      "shot_id": "S04_SH007",
+      "seconds": 4.25,
+      "seconds_basis": "measured_line",
+      "seed": 7105,
+      "motion_prompt": "Thomas looks back down into the trench, answers, then stands up. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"If they wanted us dead, we'd be dead.\"",
+      "prompt_parts": {
+        "motion": "Thomas looks back down into the trench, answers, then stands up.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"If they wanted us dead, we'd be dead.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.165,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "If they wanted us dead, we'd be dead."
+      },
+      "picture": "S04_SH007_start"
+    }
+  ],
+  "draft": false,
+  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+  "voice_missing": [],
+  "voices": {
+    "char_friedrich_brandt": {
+      "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+      "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+    },
+    "char_sgt_harris": {
+      "description": "the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
+      "sha256": "b070cabd415907465136348e1de88f706e19af3688972854787d8f27ce6247f0"
+    },
+    "char_thomas_hale": {
+      "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+      "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+    }
+  },
+  "voice_problems": [],
+  "read_first": "forced",
+  "budget": {
+    "total_usd": 0.97,
+    "pictures_usd": 0.0,
+    "cpu_checks_usd": 0.0,
+    "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+  },
+  "ledger": {
+    "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+    "caps": {
+      "modal_ltx": 4.0
+    }
+  }
+}

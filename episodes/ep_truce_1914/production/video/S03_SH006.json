@@ -1,0 +1,57 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S03_SH006",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S03_SH006.mp4",
+  "clip_sha256": "60c745098e584e1b324fffd11bb6b860ce30bfeb30f95c8bfa0c27fa705d76a3",
+  "raw_path": "production/video/raw/S03_SH006.mp4",
+  "raw_sha256": "40e16721d0cc2763af5c66d5f214021e79995b78774d2d87c8388af5677577a5",
+  "raw_fps": 24.0,
+  "raw_seconds": 4.0417,
+  "fps": 24,
+  "in_s": 0.375,
+  "out_s": 3.8333,
+  "frames": 83,
+  "speech_raw": [
+    [
+      0.64,
+      0.88
+    ],
+    [
+      3.14,
+      3.32
+    ]
+  ],
+  "speech": [
+    [
+      0.265,
+      0.505
+    ],
+    [
+      2.765,
+      2.945
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "83 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 23 frames from frame 25"
+    }
+  ],
+  "attempts": [
+    {
+      "note": "first take (run 049b3979fea2 seed 7103/7104, name-only prompt) superseded by the speaker-bound probe take (run 4e31028adebf, TD-316 D3); first take kept in production/video/superseded/"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": "face_review/1",
+ "by": "LTX thread (Claude), 2026-11-13 21:00 UTC, eye check of the v5 start picture",
+ "rule": "RC-101 / owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWRrRegfdMpYg7Zdtbn46LJP option a (this run only)",
+ "frames_file": "v5 f2e5a232",
+ "shots": {
+  "S05_SH011": "Thomas left reading the portrait card, Friedrich right: moustache, red-band cap, grey greatcoat (same men as in the part S05a review)",
+  "S06_SH006": "Thomas left, Friedrich right: moustache, red-band cap, grey greatcoat (same men as the part S06 review, v5 picture unchanged)"
+ }
+}

@@ -2,7 +2,7 @@
   "schema": "episode_timing/1",
   "fps": 24,
   "read_s": 268.08,
-  "total_frames": 9116,
+  "total_frames": 9165,
   "shots": {
     "S01_SH001": {
       "start_frame": 0,
@@ -73,476 +73,476 @@
     },
     "S02_SH007": {
       "start_frame": 1572,
-      "frames": 102,
-      "seconds": 4.25,
+      "frames": 71,
+      "seconds": 2.9583,
       "planned_seconds": 4.25,
       "timed_by": "clip"
     },
     "S02_SH008": {
-      "start_frame": 1674,
+      "start_frame": 1643,
       "frames": 263,
       "seconds": 10.9583,
       "planned_seconds": 10.0
     },
     "S02_SH009": {
-      "start_frame": 1937,
+      "start_frame": 1906,
       "frames": 251,
       "seconds": 10.4583,
       "planned_seconds": 8.25
     },
     "S03_SH001": {
-      "start_frame": 2188,
+      "start_frame": 2157,
       "frames": 214,
       "seconds": 8.9167,
       "planned_seconds": 9.5
     },
     "S03_SH002": {
-      "start_frame": 2402,
+      "start_frame": 2371,
       "frames": 104,
       "seconds": 4.3333,
       "planned_seconds": 4.0
     },
     "S03_SH003": {
-      "start_frame": 2506,
+      "start_frame": 2475,
       "frames": 114,
       "seconds": 4.75,
       "planned_seconds": 4.75,
       "timed_by": "clip"
     },
     "S03_SH004": {
-      "start_frame": 2620,
-      "frames": 54,
-      "seconds": 2.25,
+      "start_frame": 2589,
+      "frames": 28,
+      "seconds": 1.1667,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S03_SH005": {
-      "start_frame": 2674,
-      "frames": 78,
-      "seconds": 3.25,
+      "start_frame": 2617,
+      "frames": 88,
+      "seconds": 3.6667,
       "planned_seconds": 3.25,
       "timed_by": "clip"
     },
     "S03_SH006": {
-      "start_frame": 2752,
-      "frames": 66,
-      "seconds": 2.75,
+      "start_frame": 2705,
+      "frames": 83,
+      "seconds": 3.4583,
       "planned_seconds": 2.75,
       "timed_by": "clip"
     },
     "S03_SH007": {
-      "start_frame": 2818,
+      "start_frame": 2788,
       "frames": 90,
       "seconds": 3.75,
       "planned_seconds": 3.0
     },
     "S03_SH008": {
-      "start_frame": 2908,
-      "frames": 114,
-      "seconds": 4.75,
+      "start_frame": 2878,
+      "frames": 121,
+      "seconds": 5.0417,
       "planned_seconds": 4.75,
       "timed_by": "clip"
     },
     "S03_SH009": {
-      "start_frame": 3022,
-      "frames": 48,
-      "seconds": 2.0,
+      "start_frame": 2999,
+      "frames": 87,
+      "seconds": 3.625,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S03_SH010": {
-      "start_frame": 3070,
+      "start_frame": 3086,
       "frames": 140,
       "seconds": 5.8333,
       "planned_seconds": 6.75
     },
     "S04_SH001": {
-      "start_frame": 3210,
+      "start_frame": 3226,
       "frames": 74,
       "seconds": 3.0833,
       "planned_seconds": 3.0
     },
     "S04_SH002": {
-      "start_frame": 3284,
-      "frames": 48,
-      "seconds": 2.0,
+      "start_frame": 3300,
+      "frames": 63,
+      "seconds": 2.625,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S04_SH003": {
-      "start_frame": 3332,
-      "frames": 66,
-      "seconds": 2.75,
+      "start_frame": 3363,
+      "frames": 67,
+      "seconds": 2.7917,
       "planned_seconds": 2.75,
       "timed_by": "clip"
     },
     "S04_SH004": {
-      "start_frame": 3398,
-      "frames": 54,
-      "seconds": 2.25,
+      "start_frame": 3430,
+      "frames": 88,
+      "seconds": 3.6667,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S04_SH005": {
-      "start_frame": 3452,
+      "start_frame": 3518,
       "frames": 138,
       "seconds": 5.75,
       "planned_seconds": 5.5
     },
     "S04_SH006": {
-      "start_frame": 3590,
-      "frames": 54,
-      "seconds": 2.25,
+      "start_frame": 3656,
+      "frames": 69,
+      "seconds": 2.875,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S04_SH007": {
-      "start_frame": 3644,
-      "frames": 96,
-      "seconds": 4.0,
+      "start_frame": 3725,
+      "frames": 64,
+      "seconds": 2.6667,
       "planned_seconds": 4.0,
       "timed_by": "clip"
     },
     "S04_SH008": {
-      "start_frame": 3740,
+      "start_frame": 3789,
       "frames": 240,
       "seconds": 10.0,
       "planned_seconds": 9.0
     },
     "S04_SH009": {
-      "start_frame": 3980,
+      "start_frame": 4029,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S04_SH010": {
-      "start_frame": 4028,
+      "start_frame": 4077,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S04_SH011": {
-      "start_frame": 4076,
+      "start_frame": 4125,
       "frames": 85,
       "seconds": 3.5417,
       "planned_seconds": 2.5
     },
     "S04_SH012": {
-      "start_frame": 4161,
+      "start_frame": 4210,
       "frames": 96,
       "seconds": 4.0,
       "planned_seconds": 4.0,
       "timed_by": "clip"
     },
     "S04_SH013": {
-      "start_frame": 4257,
+      "start_frame": 4306,
       "frames": 102,
       "seconds": 4.25,
       "planned_seconds": 4.25,
       "timed_by": "clip"
     },
     "S04_SH014": {
-      "start_frame": 4359,
+      "start_frame": 4408,
       "frames": 86,
       "seconds": 3.5833,
       "planned_seconds": 4.0
     },
     "S04_SH015": {
-      "start_frame": 4445,
+      "start_frame": 4494,
       "frames": 146,
       "seconds": 6.0833,
       "planned_seconds": 7.0
     },
     "S05_SH001": {
-      "start_frame": 4591,
+      "start_frame": 4640,
       "frames": 152,
       "seconds": 6.3333,
       "planned_seconds": 6.0
     },
     "S05_SH002": {
-      "start_frame": 4743,
+      "start_frame": 4792,
       "frames": 163,
       "seconds": 6.7917,
       "planned_seconds": 6.25
     },
     "S05_SH003": {
-      "start_frame": 4906,
+      "start_frame": 4955,
       "frames": 193,
       "seconds": 8.0417,
       "planned_seconds": 6.75
     },
     "S05_SH004": {
-      "start_frame": 5099,
+      "start_frame": 5148,
       "frames": 54,
       "seconds": 2.25,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S05_SH005": {
-      "start_frame": 5153,
+      "start_frame": 5202,
       "frames": 84,
       "seconds": 3.5,
       "planned_seconds": 3.5,
       "timed_by": "clip"
     },
     "S05_SH006": {
-      "start_frame": 5237,
+      "start_frame": 5286,
       "frames": 189,
       "seconds": 7.875,
       "planned_seconds": 9.25
     },
     "S05_SH007": {
-      "start_frame": 5426,
+      "start_frame": 5475,
       "frames": 54,
       "seconds": 2.25,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S05_SH008": {
-      "start_frame": 5480,
+      "start_frame": 5529,
       "frames": 78,
       "seconds": 3.25,
       "planned_seconds": 3.25,
       "timed_by": "clip"
     },
     "S05_SH009": {
-      "start_frame": 5558,
+      "start_frame": 5607,
       "frames": 84,
       "seconds": 3.5,
       "planned_seconds": 3.5,
       "timed_by": "clip"
     },
     "S05_SH010": {
-      "start_frame": 5642,
+      "start_frame": 5691,
       "frames": 81,
       "seconds": 3.375,
       "planned_seconds": 3.0
     },
     "S05_SH011": {
-      "start_frame": 5723,
+      "start_frame": 5772,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S05_SH012": {
-      "start_frame": 5771,
+      "start_frame": 5820,
       "frames": 84,
       "seconds": 3.5,
       "planned_seconds": 3.5,
       "timed_by": "clip"
     },
     "S05_SH013": {
-      "start_frame": 5855,
+      "start_frame": 5904,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S05_SH014": {
-      "start_frame": 5903,
+      "start_frame": 5952,
       "frames": 146,
       "seconds": 6.0833,
       "planned_seconds": 7.0
     },
     "S05_SH015": {
-      "start_frame": 6049,
+      "start_frame": 6098,
       "frames": 60,
       "seconds": 2.5,
       "planned_seconds": 3.25
     },
     "S05_SH016": {
-      "start_frame": 6109,
+      "start_frame": 6158,
       "frames": 84,
       "seconds": 3.5,
       "planned_seconds": 3.0
     },
     "S05_SH017": {
-      "start_frame": 6193,
+      "start_frame": 6242,
       "frames": 54,
       "seconds": 2.25,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S05_SH018": {
-      "start_frame": 6247,
+      "start_frame": 6296,
       "frames": 66,
       "seconds": 2.75,
       "planned_seconds": 2.75,
       "timed_by": "clip"
     },
     "S05_SH019": {
-      "start_frame": 6313,
+      "start_frame": 6362,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S05_SH020": {
-      "start_frame": 6361,
+      "start_frame": 6410,
       "frames": 188,
       "seconds": 7.8333,
       "planned_seconds": 7.75
     },
     "S05_SH021": {
-      "start_frame": 6549,
+      "start_frame": 6598,
       "frames": 103,
       "seconds": 4.2917,
       "planned_seconds": 4.0
     },
     "S06_SH001": {
-      "start_frame": 6652,
+      "start_frame": 6701,
       "frames": 72,
       "seconds": 3.0,
       "planned_seconds": 3.25
     },
     "S06_SH002": {
-      "start_frame": 6724,
+      "start_frame": 6773,
       "frames": 66,
       "seconds": 2.75,
       "planned_seconds": 2.75,
       "timed_by": "clip"
     },
     "S06_SH003": {
-      "start_frame": 6790,
+      "start_frame": 6839,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S06_SH004": {
-      "start_frame": 6838,
+      "start_frame": 6887,
       "frames": 84,
       "seconds": 3.5,
       "planned_seconds": 3.5,
       "timed_by": "clip"
     },
     "S06_SH005": {
-      "start_frame": 6922,
+      "start_frame": 6971,
       "frames": 49,
       "seconds": 2.0417,
       "planned_seconds": 3.0
     },
     "S06_SH006": {
-      "start_frame": 6971,
+      "start_frame": 7020,
       "frames": 84,
       "seconds": 3.5,
       "planned_seconds": 3.5,
       "timed_by": "clip"
     },
     "S06_SH007": {
-      "start_frame": 7055,
+      "start_frame": 7104,
       "frames": 78,
       "seconds": 3.25,
       "planned_seconds": 3.25,
       "timed_by": "clip"
     },
     "S06_SH008": {
-      "start_frame": 7133,
+      "start_frame": 7182,
       "frames": 54,
       "seconds": 2.25,
       "planned_seconds": 2.25,
       "timed_by": "clip"
     },
     "S06_SH009": {
-      "start_frame": 7187,
+      "start_frame": 7236,
       "frames": 136,
       "seconds": 5.6667,
       "planned_seconds": 4.0
     },
     "S06_SH010": {
-      "start_frame": 7323,
+      "start_frame": 7372,
       "frames": 66,
       "seconds": 2.75,
       "planned_seconds": 2.75,
       "timed_by": "clip"
     },
     "S06_SH011": {
-      "start_frame": 7389,
+      "start_frame": 7438,
       "frames": 66,
       "seconds": 2.75,
       "planned_seconds": 2.75,
       "timed_by": "clip"
     },
     "S06_SH012": {
-      "start_frame": 7455,
+      "start_frame": 7504,
       "frames": 131,
       "seconds": 5.4583,
       "planned_seconds": 5.5
     },
     "S07_SH001": {
-      "start_frame": 7586,
+      "start_frame": 7635,
       "frames": 102,
       "seconds": 4.25,
       "planned_seconds": 4.75
     },
     "S07_SH002": {
-      "start_frame": 7688,
+      "start_frame": 7737,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S07_SH003": {
-      "start_frame": 7736,
+      "start_frame": 7785,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S07_SH004": {
-      "start_frame": 7784,
+      "start_frame": 7833,
       "frames": 48,
       "seconds": 2.0,
       "planned_seconds": 2.0,
       "timed_by": "clip"
     },
     "S07_SH005": {
-      "start_frame": 7832,
+      "start_frame": 7881,
       "frames": 174,
       "seconds": 7.25,
       "planned_seconds": 6.75
     },
     "S07_SH006": {
-      "start_frame": 8006,
+      "start_frame": 8055,
       "frames": 191,
       "seconds": 7.9583,
       "planned_seconds": 6.0
     },
     "S07_SH007": {
-      "start_frame": 8197,
+      "start_frame": 8246,
       "frames": 68,
       "seconds": 2.8333,
       "planned_seconds": 4.0
     },
     "S07_SH008": {
-      "start_frame": 8265,
+      "start_frame": 8314,
       "frames": 201,
       "seconds": 8.375,
       "planned_seconds": 8.25
     },
     "S08_SH001": {
-      "start_frame": 8466,
+      "start_frame": 8515,
       "frames": 188,
       "seconds": 7.8333,
       "planned_seconds": 6.75
     },
     "S08_SH002": {
-      "start_frame": 8654,
+      "start_frame": 8703,
       "frames": 234,
       "seconds": 9.75,
       "planned_seconds": 8.75
     },
     "S08_SH003": {
-      "start_frame": 8888,
+      "start_frame": 8937,
       "frames": 86,
       "seconds": 3.5833,
       "planned_seconds": 4.0
     },
     "S08_SH004": {
-      "start_frame": 8974,
+      "start_frame": 9023,
       "frames": 142,
       "seconds": 5.9167,
       "planned_seconds": 5.0
@@ -1314,47 +1314,47 @@
     "S02_SH007": [
       {
         "word": "keep",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "your",
-        "start_frame": 11,
+        "start_frame": 10,
         "estimated": true
       },
       {
         "word": "head",
-        "start_frame": 23,
+        "start_frame": 13,
         "estimated": true
       },
       {
         "word": "down",
-        "start_frame": 34,
+        "start_frame": 17,
         "estimated": true
       },
       {
         "word": "and",
-        "start_frame": 45,
+        "start_frame": 20,
         "estimated": true
       },
       {
         "word": "you",
-        "start_frame": 57,
+        "start_frame": 23,
         "estimated": true
       },
       {
         "word": "might",
-        "start_frame": 68,
+        "start_frame": 50,
         "estimated": true
       },
       {
         "word": "see",
-        "start_frame": 79,
+        "start_frame": 53,
         "estimated": true
       },
       {
         "word": "one",
-        "start_frame": 91,
+        "start_frame": 56,
         "estimated": true
       }
     ],
@@ -1781,81 +1781,81 @@
     "S03_SH004": [
       {
         "word": "what",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "are",
-        "start_frame": 14,
+        "start_frame": 11,
         "estimated": true
       },
       {
         "word": "they",
-        "start_frame": 27,
+        "start_frame": 16,
         "estimated": true
       },
       {
         "word": "singing",
-        "start_frame": 40,
+        "start_frame": 21,
         "estimated": true
       }
     ],
     "S03_SH005": [
       {
         "word": "silent",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "night",
-        "start_frame": 13,
+        "start_frame": 11,
         "estimated": true
       },
       {
         "word": "same",
-        "start_frame": 26,
+        "start_frame": 53,
         "estimated": true
       },
       {
         "word": "tune",
-        "start_frame": 39,
+        "start_frame": 59,
         "estimated": true
       },
       {
         "word": "as",
-        "start_frame": 52,
+        "start_frame": 65,
         "estimated": true
       },
       {
         "word": "ours",
-        "start_frame": 65,
+        "start_frame": 70,
         "estimated": true
       }
     ],
     "S03_SH006": [
       {
         "word": "let",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "'em",
-        "start_frame": 13,
+        "start_frame": 8,
         "estimated": true
       },
       {
         "word": "sing",
-        "start_frame": 26,
+        "start_frame": 10,
         "estimated": true
       },
       {
         "word": "heads",
-        "start_frame": 40,
+        "start_frame": 66,
         "estimated": true
       },
       {
         "word": "down",
-        "start_frame": 53,
+        "start_frame": 69,
         "estimated": true
       }
     ],
@@ -1909,39 +1909,39 @@
     "S03_SH008": [
       {
         "word": "silent",
-        "start_frame": 0,
+        "start_frame": 4,
         "estimated": true
       },
       {
         "word": "night",
-        "start_frame": 28,
+        "start_frame": 25,
         "estimated": true
       },
       {
         "word": "holy",
-        "start_frame": 57,
+        "start_frame": 85,
         "estimated": true
       },
       {
         "word": "night",
-        "start_frame": 86,
+        "start_frame": 101,
         "estimated": true
       }
     ],
     "S03_SH009": [
       {
         "word": "good",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "english",
-        "start_frame": 16,
+        "start_frame": 29,
         "estimated": true
       },
       {
         "word": "more",
-        "start_frame": 32,
+        "start_frame": 44,
         "estimated": true
       }
     ],
@@ -2062,66 +2062,66 @@
     "S04_SH002": [
       {
         "word": "english",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "merry",
-        "start_frame": 16,
+        "start_frame": 41,
         "estimated": true
       },
       {
         "word": "christmas",
-        "start_frame": 32,
+        "start_frame": 50,
         "estimated": true
       }
     ],
     "S04_SH003": [
       {
         "word": "it's",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "a",
-        "start_frame": 13,
+        "start_frame": 12,
         "estimated": true
       },
       {
         "word": "trick",
-        "start_frame": 26,
+        "start_frame": 42,
         "estimated": true
       },
       {
         "word": "nobody",
-        "start_frame": 40,
+        "start_frame": 48,
         "estimated": true
       },
       {
         "word": "move",
-        "start_frame": 53,
+        "start_frame": 54,
         "estimated": true
       }
     ],
     "S04_SH004": [
       {
         "word": "no",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "shooting",
-        "start_frame": 14,
+        "start_frame": 18,
         "estimated": true
       },
       {
         "word": "merry",
-        "start_frame": 27,
+        "start_frame": 51,
         "estimated": true
       },
       {
         "word": "christmas",
-        "start_frame": 40,
+        "start_frame": 59,
         "estimated": true
       }
     ],
@@ -2185,64 +2185,64 @@
     "S04_SH006": [
       {
         "word": "thomas",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "get",
-        "start_frame": 14,
+        "start_frame": 42,
         "estimated": true
       },
       {
         "word": "back",
-        "start_frame": 27,
+        "start_frame": 48,
         "estimated": true
       },
       {
         "word": "down",
-        "start_frame": 40,
+        "start_frame": 58,
         "estimated": true
       }
     ],
     "S04_SH007": [
       {
         "word": "if",
-        "start_frame": 0,
+        "start_frame": 6,
         "estimated": true
       },
       {
         "word": "they",
-        "start_frame": 12,
+        "start_frame": 10,
         "estimated": true
       },
       {
         "word": "wanted",
-        "start_frame": 24,
+        "start_frame": 15,
         "estimated": true
       },
       {
         "word": "us",
-        "start_frame": 36,
+        "start_frame": 19,
         "estimated": true
       },
       {
         "word": "dead",
-        "start_frame": 48,
+        "start_frame": 24,
         "estimated": true
       },
       {
         "word": "we'd",
-        "start_frame": 60,
+        "start_frame": 43,
         "estimated": true
       },
       {
         "word": "be",
-        "start_frame": 72,
+        "start_frame": 48,
         "estimated": true
       },
       {
         "word": "dead",
-        "start_frame": 84,
+        "start_frame": 52,
         "estimated": true
       }
     ],
@@ -4712,7 +4712,7 @@
     {
       "shot_id": "S02_SH007",
       "at_read_frame": 1470,
-      "frames": 102
+      "frames": 71
     },
     {
       "shot_id": "S03_SH003",
@@ -4722,52 +4722,52 @@
     {
       "shot_id": "S03_SH004",
       "at_read_frame": 2302,
-      "frames": 54
+      "frames": 28
     },
     {
       "shot_id": "S03_SH005",
       "at_read_frame": 2302,
-      "frames": 78
+      "frames": 88
     },
     {
       "shot_id": "S03_SH006",
       "at_read_frame": 2302,
-      "frames": 66
+      "frames": 83
     },
     {
       "shot_id": "S03_SH008",
       "at_read_frame": 2392,
-      "frames": 114
+      "frames": 121
     },
     {
       "shot_id": "S03_SH009",
       "at_read_frame": 2392,
-      "frames": 48
+      "frames": 87
     },
     {
       "shot_id": "S04_SH002",
       "at_read_frame": 2606,
-      "frames": 48
+      "frames": 63
     },
     {
       "shot_id": "S04_SH003",
       "at_read_frame": 2606,
-      "frames": 66
+      "frames": 67
     },
     {
       "shot_id": "S04_SH004",
       "at_read_frame": 2606,
-      "frames": 54
+      "frames": 88
     },
     {
       "shot_id": "S04_SH006",
       "at_read_frame": 2744,
-      "frames": 54
+      "frames": 69
     },
     {
       "shot_id": "S04_SH007",
       "at_read_frame": 2744,
-      "frames": 96
+      "frames": 64
     },
     {
       "shot_id": "S04_SH009",

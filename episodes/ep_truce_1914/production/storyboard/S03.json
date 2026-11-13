@@ -26,15 +26,15 @@
       "shot_id": "S03_SH003",
       "mode": "coverage",
       "route": "video",
-      "size": "medium_wide",
+      "size": "medium",
       "picture": "S03_SH003_start",
       "from": null,
       "seconds": 5.75,
       "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH003_start.png",
       "vs_master": {
-        "palette_dist": 0.149,
-        "top_palette_dist": 0.3132,
-        "luma_gap": 0.0323
+        "palette_dist": 0.1711,
+        "top_palette_dist": 0.3276,
+        "luma_gap": 0.01
       }
     },
     {
@@ -126,11 +126,9 @@
   "rows": [
     {
       "gate": "video_edit_plan",
-      "status": "FAIL",
-      "measured": [
-        "VL-04 S03_SH003: coverage cut medium_wide@135 -> medium_wide@135: no size step and under 30 degrees, it reads as a jump cut"
-      ],
-      "detail": "1 FAIL finding(s) over 8 video shot(s) (VL-01..VL-06)"
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 8 video shot(s) (VL-01..VL-06)"
     },
     {
       "gate": "video_edit_plan_review",
@@ -154,7 +152,7 @@
       "gate": "storyboard_same_place_as_master",
       "status": "REVIEW",
       "measured": [
-        "S03_SH003 vs S03_SH001_start: palette 0.149, top third 0.3132 (max 0.08), brightness gap 0.0323 (max 0.18)",
+        "S03_SH003 vs S03_SH001_start: palette 0.1711, top third 0.3276 (max 0.08), brightness gap 0.01 (max 0.18)",
         "S03_SH005 vs S03_SH004_start: palette 0.1771, top third 0.3212 (max 0.08), brightness gap 0.045 (max 0.18)",
         "S03_SH009 vs S03_SH001_start: palette 0.0331, top third 0.0818 (max 0.08), brightness gap 0.01 (max 0.18)"
       ],
@@ -164,8 +162,8 @@
       "gate": "storyboard_hero_costume_holds",
       "status": "REVIEW",
       "measured": [
-        "char_friedrich_brandt S03_SH001 -> S03_SH003: colours move 0.1605 (> 0.15): clothes, skin or hair changed",
-        "char_friedrich_brandt (head) S03_SH001 -> S03_SH003: colours move 0.3074 (> 0.15): clothes, skin or hair changed",
+        "char_friedrich_brandt S03_SH001 -> S03_SH003: colours move 0.1834 (> 0.15): clothes, skin or hair changed",
+        "char_friedrich_brandt (head) S03_SH001 -> S03_SH003: colours move 0.3322 (> 0.15): clothes, skin or hair changed",
         "char_sgt_harris S03_SH004 -> S03_SH005: colours move 0.2255 (> 0.15): clothes, skin or hair changed",
         "char_sgt_harris (head) S03_SH004 -> S03_SH005: colours move 0.4042 (> 0.15): clothes, skin or hair changed",
         "char_thomas_hale (head) S03_SH004 -> S03_SH005: colours move 0.2603 (> 0.15): clothes, skin or hair changed",
@@ -182,10 +180,8 @@
     }
   ],
   "verdict": {
-    "status": "FAIL",
-    "failed": [
-      "video_edit_plan"
-    ],
+    "status": "REVIEW",
+    "failed": [],
     "not_run": [],
     "review": [
       "storyboard_same_place_as_master",
@@ -194,11 +190,9 @@
     "gates": [
       {
         "gate": "video_edit_plan",
-        "status": "FAIL",
-        "measured": [
-          "VL-04 S03_SH003: coverage cut medium_wide@135 -> medium_wide@135: no size step and under 30 degrees, it reads as a jump cut"
-        ],
-        "detail": "1 FAIL finding(s) over 8 video shot(s) (VL-01..VL-06)"
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 8 video shot(s) (VL-01..VL-06)"
       },
       {
         "gate": "video_edit_plan_review",
@@ -222,7 +216,7 @@
         "gate": "storyboard_same_place_as_master",
         "status": "REVIEW",
         "measured": [
-          "S03_SH003 vs S03_SH001_start: palette 0.149, top third 0.3132 (max 0.08), brightness gap 0.0323 (max 0.18)",
+          "S03_SH003 vs S03_SH001_start: palette 0.1711, top third 0.3276 (max 0.08), brightness gap 0.01 (max 0.18)",
           "S03_SH005 vs S03_SH004_start: palette 0.1771, top third 0.3212 (max 0.08), brightness gap 0.045 (max 0.18)",
           "S03_SH009 vs S03_SH001_start: palette 0.0331, top third 0.0818 (max 0.08), brightness gap 0.01 (max 0.18)"
         ],
@@ -232,8 +226,8 @@
         "gate": "storyboard_hero_costume_holds",
         "status": "REVIEW",
         "measured": [
-          "char_friedrich_brandt S03_SH001 -> S03_SH003: colours move 0.1605 (> 0.15): clothes, skin or hair changed",
-          "char_friedrich_brandt (head) S03_SH001 -> S03_SH003: colours move 0.3074 (> 0.15): clothes, skin or hair changed",
+          "char_friedrich_brandt S03_SH001 -> S03_SH003: colours move 0.1834 (> 0.15): clothes, skin or hair changed",
+          "char_friedrich_brandt (head) S03_SH001 -> S03_SH003: colours move 0.3322 (> 0.15): clothes, skin or hair changed",
           "char_sgt_harris S03_SH004 -> S03_SH005: colours move 0.2255 (> 0.15): clothes, skin or hair changed",
           "char_sgt_harris (head) S03_SH004 -> S03_SH005: colours move 0.4042 (> 0.15): clothes, skin or hair changed",
           "char_thomas_hale (head) S03_SH004 -> S03_SH005: colours move 0.2603 (> 0.15): clothes, skin or hair changed",
@@ -252,7 +246,7 @@
   },
   "pictures": {
     "S03_SH001_start": "573538aaa54137fd52fa1406549b53265eb1c75f32b36e26cece60e0943eb0e2",
-    "S03_SH003_start": "d613117ff74b585455ae7628d5937199a25a9a46480edf70bfc70159e2bd3c07",
+    "S03_SH003_start": "73a1c478de400a80e1fab4f84e0fa37912fc2632d036e01a8a98daff812b564b",
     "S03_SH004_start": "3e5f92ad04fb2fa9cd9c21f5c43c1315466c1ff5235c2207e48941572b240c6d",
     "S03_SH005_start": "1d063ee1bd4009d57cb5e2015b1d72b199f4fbdfe4508d81051270547762acb2",
     "S03_SH006_start": "bdcb459e2bd34f8661f1c4047346ac131a57807bbcd93793d8ceec3c6dfdec7b",
@@ -260,7 +254,7 @@
     "S03_SH008_start": "a7105ae671bfcf70a65cc00367e01f55652931c60852722940eb90d0f3ae44e8",
     "S03_SH009_start": "99c916785590880aada592dd293b330fe34427d7b0c85a1b1c02bdff581c6a5d"
   },
-  "plan_digest": "576421b9de90a8b64b8d7a6c01ec5ae3504a493e8b3ea01092b46c3a144902b2",
+  "plan_digest": "b39759cd356267191f2212315bdd32493bdbc807791a3167693939a12e5add03",
   "sheet": "episodes/ep_truce_1914/production/storyboard/S03.jpg",
-  "sheet_sha256": "7930c11458286979711652e184a986d9a2862f758dcb8b131a8a9634ea53cefa"
+  "sheet_sha256": "bbd4b27d5212dd9c0551cc81ec43c8ef72287f52b2a72bae8f4f374105d16041"
 }

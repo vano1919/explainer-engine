@@ -1,0 +1,11 @@
+{
+ "schema": "face_review/1",
+ "by": "LTX thread (Claude), eye check of the v3 start pictures 2026-11-13 20:10 UTC; re-checked on the v5 pictures 20:35 UTC (S05_SH011 and S06_SH007 look at the new pictures: Thomas left, Friedrich right with moustache and red-band cap, same men; S04_SH013 passes the gate unaided on v5)",
+ "rule": "RC-101, owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWRrRegfdMpYg7Zdtbn46LJP option a",
+ "sheet": "demo_truce_1914/ltx/Q3_face_eye_sheet_v3.jpg",
+ "shots": {
+  "S04_SH010": "Thomas left smiling, Friedrich seen from behind (cap with red band, grey greatcoat): same man by costume; face not visible",
+  "S04_SH012": "Friedrich right smiling, moustache, red-band cap; Thomas seen from behind on the left, same cap and coat"
+ },
+ "frames_file": "v5 f2e5a232c35369f17bf7c0f7ff35a722beb67e8e4191da0024d51215486d303d"
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S03_SH005",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S03_SH005.mp4",
+  "clip_sha256": "98989fa95d78774e1a0179768dac1760702080d1fb5c65f06332da05726f836c",
+  "raw_path": "production/video/raw/S03_SH005.mp4",
+  "raw_sha256": "e88b57d1c1e7aed0aede47aff7714b9983e50a11d307659952ea5c70a498eb99",
+  "raw_fps": 24.0,
+  "raw_seconds": 4.7083,
+  "fps": 24,
+  "in_s": 0.2917,
+  "out_s": 4.5417,
+  "frames": 102,
+  "speech_raw": [
+    [
+      0.54,
+      1.16
+    ],
+    [
+      2.86,
+      4.04
+    ]
+  ],
+  "speech": [
+    [
+      0.248,
+      0.868
+    ],
+    [
+      2.568,
+      3.748
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "102 frames is not 8k+1 (BP-139)"
+    }
+  ],
+  "attempts": [
+    {
+      "note": "first take (run 049b3979fea2 seed 7103/7104, name-only prompt) superseded by the speaker-bound probe take (run 4e31028adebf, TD-316 D3); first take kept in production/video/superseded/"
+    }
+  ]
+}

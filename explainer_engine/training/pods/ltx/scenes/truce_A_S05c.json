@@ -1,0 +1,59 @@
+{
+ "schema": "ltx_scene_test/3",
+ "id": "S05c",
+ "episode": "episodes/ep_truce_1914",
+ "asked": "the creator via the coordinator, autopilot: cards cmsg_01Hnu5zB86sjUj5GtTgaUkPWTk444C224qtw32y4Qt6H95 option A (21:07:45 UTC, S07 and the S05_SH018 re-make, stop line 4.60, hard cap 5.00); Fable medium audit TD-316; script 261d43b8, frames v5 f2e5a232; DV-109 speaker bound by look and place (Friedrich stands in the middle of this picture, not on the right: FL-115)",
+ "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+ "storyboard": {
+  "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S05c.json",
+  "sha256": "e3bf7d9c1a80ff97f3555698e85dc120f8a2355c1a44a81fe3440de1ff4a4272",
+  "verdict": "REVIEW"
+ },
+ "pictures": {
+  "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S05c.pictures.json"
+ },
+ "shots": [
+  {
+   "shot_id": "S05_SH018",
+   "seconds": 4.25,
+   "seconds_basis": "measured_line",
+   "seed": 7400,
+   "motion_prompt": "The young British private in the khaki cap stands on the left with his hands clasped. The German corporal with the moustache, standing next to him in the middle and holding his cap in his hands, says the name and looks down at the earth. Nobody else enters the frame. The German corporal holding his cap says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Karl. He sang the loudest.\"",
+   "prompt_parts": {
+    "motion": "The young British private in the khaki cap stands on the left with his hands clasped. The German corporal with the moustache, standing next to him in the middle and holding his cap in his hands, says the name and looks down at the earth. Nobody else enters the frame.",
+    "speech": "The German corporal holding his cap says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Karl. He sang the loudest.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 3.01,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_friedrich_brandt",
+    "text": "Karl. He sang the loudest."
+   },
+   "picture": "S05_SH018_start"
+  }
+ ],
+ "draft": false,
+ "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+ "voice_missing": [],
+ "voices": {
+  "char_friedrich_brandt": {
+   "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+   "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+  }
+ },
+ "voice_problems": [],
+ "read_first": "forced",
+ "budget": {
+  "total_usd": 0.97,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.0,
+  "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+  "caps": {
+   "modal_ltx": 5.0
+  }
+ }
+}

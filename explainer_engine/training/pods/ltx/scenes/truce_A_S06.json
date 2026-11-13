@@ -1,0 +1,213 @@
+{
+  "schema": "ltx_scene_test/3",
+  "id": "S06",
+  "episode": "episodes/ep_truce_1914",
+  "asked": "the creator, 2026-11-13 20:30 UTC (decision card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6AULacxKdq5hJZPfuKrQ97 option A, series cap raised 4.00 -> 5.00; earlier cap message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei); audit PASS for launches 3-8 (round 5) on script 261d43b8 and frames v5 f2e5a232",
+  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+  "storyboard": {
+    "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S06.json",
+    "sha256": "cf3a4f5db4ce01cad369a77046adac5dd889ff1624020e84bc423710e2db2645",
+    "verdict": "REVIEW"
+  },
+  "pictures": {
+    "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S06.pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "S06_SH002",
+      "seconds": 4.0,
+      "seconds_basis": "measured_line",
+      "seed": 7100,
+      "motion_prompt": "Friedrich turns to Thomas and asks slowly. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Tommy... why are we fighting?\"",
+      "prompt_parts": {
+        "motion": "Friedrich turns to Thomas and asks slowly.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Tommy... why are we fighting?\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.992,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "Tommy... why are we fighting?"
+      },
+      "picture": "S06_SH002_start"
+    },
+    {
+      "shot_id": "S06_SH003",
+      "seconds": 3.0,
+      "seconds_basis": "measured_line",
+      "seed": 7101,
+      "motion_prompt": "Thomas looks at the ground and shrugs a little. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"I don't know.\"",
+      "prompt_parts": {
+        "motion": "Thomas looks at the ground and shrugs a little.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"I don't know.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 1.839,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "I don't know."
+      },
+      "picture": "S06_SH003_start"
+    },
+    {
+      "shot_id": "S06_SH004",
+      "seconds": 3.75,
+      "seconds_basis": "measured_line",
+      "seed": 7102,
+      "motion_prompt": "Friedrich looks out over the field and half smiles as he speaks. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"They told us you were the enemy.\"",
+      "prompt_parts": {
+        "motion": "Friedrich looks out over the field and half smiles as he speaks.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"They told us you were the enemy.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.567,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "They told us you were the enemy."
+      },
+      "picture": "S06_SH004_start"
+    },
+    {
+      "shot_id": "S06_SH006",
+      "seconds": 3.5,
+      "seconds_basis": "measured_line",
+      "seed": 7103,
+      "motion_prompt": "Thomas turns to Friedrich and laughs once, tiredly. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"They told us the same about you.\"",
+      "prompt_parts": {
+        "motion": "Thomas turns to Friedrich and laughs once, tiredly.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"They told us the same about you.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.471,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "They told us the same about you."
+      },
+      "picture": "S06_SH006_start"
+    },
+    {
+      "shot_id": "S06_SH007",
+      "seconds": 4.75,
+      "seconds_basis": "measured_line",
+      "seed": 7104,
+      "motion_prompt": "Friedrich smiles, but his eyes are sad as he speaks. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Tomorrow, maybe, we are enemies again.\"",
+      "prompt_parts": {
+        "motion": "Friedrich smiles, but his eyes are sad as he speaks.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Tomorrow, maybe, we are enemies again.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.52,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "Tomorrow, maybe, we are enemies again."
+      },
+      "picture": "S06_SH007_start"
+    },
+    {
+      "shot_id": "S06_SH008",
+      "seconds": 4.0,
+      "seconds_basis": "measured_line",
+      "seed": 7105,
+      "motion_prompt": "Thomas says 'Maybe', pauses, then turns and says the rest, holding Friedrich's look. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Maybe. But not today.\"",
+      "prompt_parts": {
+        "motion": "Thomas says 'Maybe', pauses, then turns and says the rest, holding Friedrich's look.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Maybe. But not today.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.872,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "Maybe. But not today."
+      },
+      "picture": "S06_SH008_start"
+    },
+    {
+      "shot_id": "S06_SH009",
+      "seconds": 6.25,
+      "seconds_basis": "measured_length",
+      "seed": 7106,
+      "motion_prompt": "Thomas cuts the brass button free with a penknife and it drops into his palm. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "Thomas cuts the brass button free with a penknife and it drops into his palm.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "insert",
+      "line": {
+        "speaker": "none",
+        "text": "(Thomas cuts a brass button off his tunic with a penknife)"
+      },
+      "picture": "S06_SH009_start"
+    },
+    {
+      "shot_id": "S06_SH010",
+      "seconds": 3.5,
+      "seconds_basis": "measured_line",
+      "seed": 7107,
+      "motion_prompt": "Thomas holds out the button on his palm and speaks; Friedrich reaches for it. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Something to remember me by.\"",
+      "prompt_parts": {
+        "motion": "Thomas holds out the button on his palm and speaks; Friedrich reaches for it.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Something to remember me by.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.444,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "Something to remember me by."
+      },
+      "picture": "S06_SH010_start"
+    },
+    {
+      "shot_id": "S06_SH011",
+      "seconds": 3.25,
+      "seconds_basis": "measured_line",
+      "seed": 7108,
+      "motion_prompt": "Friedrich twists a button off his greatcoat and presses it into Thomas's hand as he speaks. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Then take one of mine.\"",
+      "prompt_parts": {
+        "motion": "Friedrich twists a button off his greatcoat and presses it into Thomas's hand as he speaks.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Then take one of mine.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.096,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "Then take one of mine."
+      },
+      "picture": "S06_SH011_start"
+    }
+  ],
+  "draft": false,
+  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+  "voice_missing": [],
+  "voices": {
+    "char_friedrich_brandt": {
+      "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+      "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+    },
+    "char_thomas_hale": {
+      "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+      "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+    }
+  },
+  "voice_problems": [],
+  "read_first": "forced",
+  "budget": {
+    "total_usd": 0.97,
+    "pictures_usd": 0.0,
+    "cpu_checks_usd": 0.0,
+    "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+  },
+  "ledger": {
+    "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+    "caps": {
+      "modal_ltx": 5.0
+    }
+  }
+}

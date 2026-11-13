@@ -41,9 +41,9 @@
       "seconds": 3.0,
       "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH010_start.png",
       "vs_master": {
-        "palette_dist": 0.0095,
-        "top_palette_dist": 0.0259,
-        "luma_gap": 0.0114
+        "palette_dist": 0.0491,
+        "top_palette_dist": 0.0765,
+        "luma_gap": 0.0516
       }
     },
     {
@@ -56,9 +56,9 @@
       "seconds": 5.0,
       "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH012_start.png",
       "vs_master": {
-        "palette_dist": 0.0416,
-        "top_palette_dist": 0.1,
-        "luma_gap": 0.0089
+        "palette_dist": 0.0065,
+        "top_palette_dist": 0.0211,
+        "luma_gap": 0.0726
       }
     },
     {
@@ -80,15 +80,15 @@
       "shot_id": "S04_SH014",
       "mode": "coverage",
       "route": "video",
-      "size": "medium_wide",
+      "size": "wide",
       "picture": "S04_SH014_start",
       "from": null,
       "seconds": 4.5,
       "path": "episodes/ep_truce_1914/assets/generated/images/S04_SH014_start.png",
       "vs_master": {
-        "palette_dist": 0.005,
-        "top_palette_dist": 0.0058,
-        "luma_gap": 0.0321
+        "palette_dist": 0.0506,
+        "top_palette_dist": 0.0225,
+        "luma_gap": 0.1073
       }
     },
     {
@@ -125,55 +125,52 @@
     },
     {
       "gate": "storyboard_no_repeated_composition",
-      "status": "FAIL",
-      "measured": [
-        "S04_SH010 repeats the composition of S04_SH009 (3 of 64 bits apart)",
-        "S04_SH012 repeats the composition of S04_SH010 (6 of 64 bits apart)"
-      ],
-      "detail": "2 repeated composition(s)"
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
     },
     {
       "gate": "storyboard_same_place_as_master",
       "status": "REVIEW",
       "measured": [
-        "S04_SH012 vs S04_SH009_start: palette 0.0416, top third 0.1 (max 0.08), brightness gap 0.0089 (max 0.18)",
         "S04_SH013 vs S04_SH009_start: palette 0.1022, top third 0.3717 (max 0.08), brightness gap 0.0329 (max 0.18)"
       ],
-      "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
     },
     {
       "gate": "storyboard_hero_costume_holds",
       "status": "REVIEW",
       "measured": [
-        "char_friedrich_brandt (head) S04_SH012 -> S04_SH013: colours move 0.2448 (> 0.15): clothes, skin or hair changed",
-        "char_friedrich_brandt (head) S04_SH013 -> S04_SH014: colours move 0.3443 (> 0.15): clothes, skin or hair changed",
-        "char_thomas_hale (head) S04_SH013 -> S04_SH014: colours move 0.2136 (> 0.15): clothes, skin or hair changed"
+        "char_friedrich_brandt (head) S04_SH012 -> S04_SH013: colours move 0.2639 (> 0.15): clothes, skin or hair changed",
+        "char_friedrich_brandt (head) S04_SH013 -> S04_SH014: colours move 0.2452 (> 0.15): clothes, skin or hair changed"
       ],
-      "detail": "3 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      "detail": "2 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
     },
     {
       "gate": "storyboard_hero_face_holds",
-      "status": "FAIL",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    },
+    {
+      "gate": "storyboard_hero_face_eye_review",
+      "status": "REVIEW",
       "measured": [
-        "S04_SH010: char_friedrich_brandt's face is not found",
-        "S04_SH012: char_friedrich_brandt's face is not found",
-        "S04_SH013: char_friedrich_brandt's face is not found",
-        "S04_SH014: char_friedrich_brandt's face is not found"
+        "S04_SH010: Thomas left smiling, Friedrich seen from behind (cap with red band, grey greatcoat): same man by costume; face not visible",
+        "S04_SH012: Friedrich right smiling, moustache, red-band cap; Thomas seen from behind on the left, same cap and coat"
       ],
-      "detail": "4 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      "detail": "2 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
     }
   ],
   "verdict": {
-    "status": "FAIL",
-    "failed": [
-      "storyboard_no_repeated_composition",
-      "storyboard_hero_face_holds"
-    ],
+    "status": "REVIEW",
+    "failed": [],
     "not_run": [],
     "review": [
       "video_edit_plan_review",
       "storyboard_same_place_as_master",
-      "storyboard_hero_costume_holds"
+      "storyboard_hero_costume_holds",
+      "storyboard_hero_face_eye_review"
     ],
     "gates": [
       {
@@ -198,55 +195,54 @@
       },
       {
         "gate": "storyboard_no_repeated_composition",
-        "status": "FAIL",
-        "measured": [
-          "S04_SH010 repeats the composition of S04_SH009 (3 of 64 bits apart)",
-          "S04_SH012 repeats the composition of S04_SH010 (6 of 64 bits apart)"
-        ],
-        "detail": "2 repeated composition(s)"
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
       },
       {
         "gate": "storyboard_same_place_as_master",
         "status": "REVIEW",
         "measured": [
-          "S04_SH012 vs S04_SH009_start: palette 0.0416, top third 0.1 (max 0.08), brightness gap 0.0089 (max 0.18)",
           "S04_SH013 vs S04_SH009_start: palette 0.1022, top third 0.3717 (max 0.08), brightness gap 0.0329 (max 0.18)"
         ],
-        "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+        "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
       },
       {
         "gate": "storyboard_hero_costume_holds",
         "status": "REVIEW",
         "measured": [
-          "char_friedrich_brandt (head) S04_SH012 -> S04_SH013: colours move 0.2448 (> 0.15): clothes, skin or hair changed",
-          "char_friedrich_brandt (head) S04_SH013 -> S04_SH014: colours move 0.3443 (> 0.15): clothes, skin or hair changed",
-          "char_thomas_hale (head) S04_SH013 -> S04_SH014: colours move 0.2136 (> 0.15): clothes, skin or hair changed"
+          "char_friedrich_brandt (head) S04_SH012 -> S04_SH013: colours move 0.2639 (> 0.15): clothes, skin or hair changed",
+          "char_friedrich_brandt (head) S04_SH013 -> S04_SH014: colours move 0.2452 (> 0.15): clothes, skin or hair changed"
         ],
-        "detail": "3 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+        "detail": "2 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
       },
       {
         "gate": "storyboard_hero_face_holds",
-        "status": "FAIL",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      },
+      {
+        "gate": "storyboard_hero_face_eye_review",
+        "status": "REVIEW",
         "measured": [
-          "S04_SH010: char_friedrich_brandt's face is not found",
-          "S04_SH012: char_friedrich_brandt's face is not found",
-          "S04_SH013: char_friedrich_brandt's face is not found",
-          "S04_SH014: char_friedrich_brandt's face is not found"
+          "S04_SH010: Thomas left smiling, Friedrich seen from behind (cap with red band, grey greatcoat): same man by costume; face not visible",
+          "S04_SH012: Friedrich right smiling, moustache, red-band cap; Thomas seen from behind on the left, same cap and coat"
         ],
-        "detail": "4 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+        "detail": "2 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
       }
     ]
   },
   "pictures": {
     "S04_SH008_start": "900095d829188c15e00c874d763aef419beb73d4036d2a2d818c094b332128a6",
-    "S04_SH009_start": "97a352ccef3c4a8ab676987d97d8d827a04abe3ff17414ede3f7a984bf6933a0",
-    "S04_SH010_start": "70466f7dce6f5a56055c6df9783214c4118e3641e7614c2769bd0ff996a36f89",
-    "S04_SH012_start": "623e5eef47ad945c754045615ee4a650a9db734844bd56ece8721af3fcbf40a4",
-    "S04_SH013_start": "471cb2347054639e12ff5ecc706aba85b5fa64fc34884cf6d9ea20dfeb9d9293",
-    "S04_SH014_start": "9492176dcddb24e309c8c7ce8c28083eac23a38bf5b7b1d6de8d72e099e1683b",
+    "S04_SH009_start": "19b20caf6442dc10a3fb17e5e90bb8f82e3949ef2e106937317a69a9b275126f",
+    "S04_SH010_start": "9a359125b08e49e56a17ca283636bc46d542131893f3801e995e637593dea20d",
+    "S04_SH012_start": "c03c50c2788e0c407004a226115017775759d3145e36083a9c90d89cb1e6e85f",
+    "S04_SH013_start": "c1dc49623277aae559d079c3a212c87c7fc9fda116e35a64b22d6145b8eb56b1",
+    "S04_SH014_start": "486e14ab30af42221251ef05b23bb9fd68eef81fc82ec6fba25c7c37231713e0",
     "S04_SH015_start": "2df2d9fcff0e81655c79c07697c5147148b43bc5c6a99549400e6814e09f1d8a"
   },
-  "plan_digest": "91cf321c9867fe861985b202caf458a9211b941f76bdc7261e47c314c0b18564",
+  "plan_digest": "b45973734fc28a63ffcbeff43bb396041014341423cde215ad28a893b298aa26",
   "sheet": "episodes/ep_truce_1914/production/storyboard/S04b.jpg",
-  "sheet_sha256": "8542edc67934b5813da7d07380ed3b993f2a599f2de77b4f772e93fa81bf33ce"
+  "sheet_sha256": "cab53cff937cd2411263e5675d56727e5c75c0109e28b71feb5f2ff0ebbf4a40"
 }

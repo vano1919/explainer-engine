@@ -1,0 +1,45 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S04_SH005",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S04_SH005.mp4",
+  "clip_sha256": "c1b9a7f127afc42268918a65811d4f2d717f4f601840a78cc69b5544f6f43df4",
+  "raw_path": "production/video/raw/S04_SH005.mp4",
+  "raw_sha256": "711980a46c3f126ea71bee06da902fd465615bcb1fa71977ae40774e4c2e45ba",
+  "raw_fps": 24.0,
+  "raw_seconds": 6.375,
+  "fps": 24,
+  "in_s": 0.0,
+  "out_s": 5.5,
+  "frames": 132,
+  "speech_raw": [
+    [
+      4.56,
+      4.98
+    ]
+  ],
+  "speech": [
+    [
+      4.56,
+      4.98
+    ]
+  ],
+  "clip_spoken": false,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "132 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-07",
+      "status": "REVIEW",
+      "msg": "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"
+    }
+  ],
+  "attempts": []
+}
