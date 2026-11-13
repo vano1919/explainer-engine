@@ -205,7 +205,9 @@ def test_the_session_hook_frees_only_the_ltx_cpu_rungs():
         assert H.modal_refusal(f"modal run {WORKER}::{entry}", env={}) is None
     for entry in ("smoke", "main", "stage"):
         assert "EE_MODAL_GO" in (H.modal_refusal(f"modal run {WORKER}::{entry}", env={}) or "")
+    for entry in ("smoke", "stage"):
         assert H.modal_refusal(f"EE_MODAL_GO=cmsg_abc:{'a' * 12} modal run {WORKER}::{entry}", env={}) is None
+    # ::main also needs its scene's spec since D-133 (CH-03, one container per scene): test_cheapest.py
     assert "refused" in (H.modal_refusal(f"modal shell {WORKER}", env={}) or "")
 
 

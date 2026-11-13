@@ -48,7 +48,7 @@ def test_raw_modal_launches_are_refused(cmd, why):
 @pytest.mark.parametrize("cmd", [
     f"modal run {WAN}::check",                                                     # L1/L2: CPU, the entrypoint gates itself
     f"modal run {WAN}::weights",
-    f"EE_MODAL_GO={GO} modal run --detach {WAN}::main --job s.json",
+    f"EE_MODAL_GO={GO} EE_CHEAPEST_WAIVE=cmsg_9:CH-06 modal run --detach {WAN}::main --job s.json",  # D-133: his word
     "EE_MODAL_GO=cmsg_9 modal run explainer_engine/cloud/modal_j5_smoke.py",
     "modal app list --json", "modal app stop ap-123", "grep -rn 'modal run' docs", "git log -S 'modal deploy'",
     "cat > notes.md <<'EOF'\nrun it with: modal deploy x.py\nEOF",                 # a heredoc that only writes text is data
@@ -87,3 +87,10 @@ def test_the_bakeoff_go_binds_the_plan_and_the_worker_on_disk():
     go = "cmsg_01AbC:" + B.go_sha()[:12]
     for entry in ("check", "stage", "run --variant wan_ti2v_5b"):
         assert H.modal_refusal(f"EE_MODAL_GO={go} modal run {BAKE}::{entry}", env={}) is None
+
+
+def test_a_paid_wan_rung_is_refused_since_ltx_is_the_generator():
+    """D-133 CH-06 (the creator 2026-11-13 07:00 UTC: LTX stays the generator)."""
+    why = H.modal_refusal(f"EE_MODAL_GO={GO} modal run --detach {WAN}::main --job s.json", env={})
+    assert "CH-06" in why and "EE_CHEAPEST_WAIVE" in why
+    assert "CH-06" in H.modal_refusal(f"EE_MODAL_GO={GO} EE_CHEAPEST_WAIVE=bad:CH-06 modal run {WAN}::smoke", env={})

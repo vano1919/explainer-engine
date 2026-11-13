@@ -5748,3 +5748,28 @@ keeps no weights) and decoded. That is ~82 s a clip, of which ~17 s is denoising
 
 **Not measured.** The saving is not measured on a GPU yet. The VAE pieces and the decode still run per clip. The new launch and
 worker shas need the ladder again (L1, L2 free; L3 smoke and a re-run of the battle scene's 4 cuts paid, on the creator's word).
+
+## 2026-11-13 07:45 UTC: D-133, LTX stays and the cheapest combination is enforced by the hook
+
+**Ask.** The creator, 07:00 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g`):
+- keep LTX as the generator;
+- update the video generation rules;
+- the rules that pick the cheapest combination of every paid run must be mandatory, like a PreToolUse hook.
+
+**Found.** The cheapest-combination rule was D-117 / RP-11. It costs a RunPod pod's stage graph only (`cloud/schedule.py`,
+`runpod create --schedule`); nothing covered a Modal video run or a picture batch.
+
+**Change.**
+- D-133 and CH-01..CH-06 in `docs/CLOUD_RUNBOOK.md`.
+- The measured basis is in `cloud/cheapest.json`.
+- `cloud/cheapest.py` is checked twice: by the PreToolUse Bash hook (`hooks.modal_refusal` for the LTX and Wan workers, `picture_refusal` for `scene_pictures submit`), and again by `modal_ltx_jobs.preflight` and `::main`.
+- One rule is waived for one run only with the creator's message: `EE_CHEAPEST_WAIVE=<cmsg>:CH-xx`.
+- Video rules: RT-02 and RT-07 now read the `video` route as LTX (D-132). The new RT-08 is the LTX clip rule.
+
+**Tests.**
+- `tests/unit/test_cheapest.py` is new.
+- `test_cloud_hooks_modal.py` and `test_v43_ltx_jobs.py` changed because the rules are stricter:
+  - a GO'd Wan `::main` is now refused (CH-06) unless the creator waives it;
+  - an LTX `::main` needs its scene spec (CH-03).
+
+**Stale text reported.** `docs/VIDEO_GENERATION_WAN.md` still names the `wan` route in its banner; D-132 reads it as `video`.

@@ -152,6 +152,11 @@ def modal_refusal(cmd: str, env=None) -> str | None:
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return (f"the {'Wan' if path == WAN_WORKER else 'LTX'} worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "
                         "(OR-23, final audit B10)")
+            from explainer_engine.cloud import cheapest      # D-133: the cheapest known combination, every paid run
+            why = (cheapest.generator_refusal(path, entry, cmd, env) if path == WAN_WORKER
+                   else cheapest.ltx_refusal(entry, cmd, env))
+            if why:
+                return why
         elif not go.startswith("cmsg_"):
             return f"`modal run {target}` is paid: EE_MODAL_GO=<the creator's card id> first (OR-23)"
     return None
@@ -292,6 +297,11 @@ def pre_bash(event: dict) -> int:
     why = modal_refusal(cmd)
     if why:
         print(f"refused (D-56, A7): {why}; nothing was started.", file=sys.stderr)
+        return 2
+    from explainer_engine.cloud import cheapest
+    why = cheapest.picture_refusal(cmd)
+    if why:
+        print(f"refused (D-133): {why}; nothing was started.", file=sys.stderr)
         return 2
     return 0
 

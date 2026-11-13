@@ -298,6 +298,10 @@ def preflight(launch: dict, job: dict | None = None):
                 bad.append(f"{c['shot_id']}: {c['seconds']} s is longer than the model's {max_seconds(launch):g} s")
         if job.get("end_picture"):
             bad.append(f"{job.get('shot_id')}: an end picture, but the LTX distilled CLI takes only the frame-0 picture")
+    from explainer_engine.cloud import cheapest        # D-133: the cheapest known combination (CH-01, CH-02, CH-04)
+    why = cheapest.problems_text(cheapest.launch_problems(launch))
+    if why:
+        bad.append(why)
     if bad:
         raise SystemExit("paid preflight FAILED, nothing was started:\n" + "\n".join(bad))
 
@@ -996,6 +1000,10 @@ if modal is not None:
     def main(job: str = ""):
         spec = read_job(job)
         preflight(LAUNCH, spec)
+        from explainer_engine.cloud import cheapest    # D-133 CH-02, CH-03: every clip native, the whole scene in this container
+        why = cheapest.problems_text(cheapest.spec_problems(LAUNCH, json.loads(Path(job).read_text(encoding="utf-8"))))
+        if why:
+            raise SystemExit("paid preflight FAILED, nothing was started:\n" + why)
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
         claim_launch(spec)
