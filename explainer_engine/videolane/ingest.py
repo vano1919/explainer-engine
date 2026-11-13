@@ -21,8 +21,10 @@ The trimmed clip's speech spans (trimmed seconds) are the clip-timed clock's inp
 """
 from __future__ import annotations
 
+import difflib
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 from fractions import Fraction
@@ -74,6 +76,60 @@ def speech(path: Path) -> list[tuple[float, float]]:
 LATE_SOUND_WITHIN_DB = 6.0
 LATE_SOUND_FALL_DB = 12.0
 LATE_SOUND_STEP_S = 0.04
+
+
+def _tokens(text: str) -> list[str]:
+    return re.findall(r"[a-z0-9']+", (text or "").lower())
+
+
+def matched_word_spans(words: list[dict], line_text: str, gap_s: float = 0.35) -> list[tuple[float, float]]:
+    """TD-327 (audit, 2026-11-13): the time spans of the heard words (the local Whisper's, ``{text, start, end}``) that match
+    the shot's own script line, in order (``difflib`` over the lower-cased word tokens), joined where less than ``gap_s``
+    apart. A word the line does not hold (a misheard "You", an extra word) is never in them. ``gap_s`` is an engineering default."""
+    heard = [(_tokens(w.get("text"))[:1] or [""])[0] for w in words]
+    want = _tokens(line_text)
+    blocks = difflib.SequenceMatcher(None, want, heard, autojunk=False).get_matching_blocks()
+    spans: list[tuple[float, float]] = []
+    for _a, b, size in blocks:
+        for k in range(b, b + size):
+            if heard[k]:
+                spans.append((float(words[k]["start"]), float(words[k]["end"])))
+    spans.sort()
+    out: list[tuple[float, float]] = []
+    for a, b in spans:
+        if out and a - out[-1][1] < gap_s:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
+
+
+def _local_words(path: Path) -> list[dict] | None:
+    """The local Whisper's words of a clip, or None when faster-whisper is not installed (it is optional: the detector's spans
+    alone are then used, and the record says so)."""
+    try:
+        from explainer_engine.audio import local_words as LW
+    except ImportError:
+        return None
+    try:
+        return LW.transcribe(path)["words"]
+    except ImportError:
+        return None
+
+
+def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float) -> list:
+    """TD-327: the detector's spans plus the matched word spans, for a clip-spoken shot only (a silent clip is cut exactly as
+    before), merged where they touch, never past the clip's own length."""
+    if not spoken or not words or not line_text:
+        return [tuple(sp) for sp in spans]
+    both = sorted([tuple(sp) for sp in spans] + [(a, min(dur, b)) for a, b in matched_word_spans(words, line_text)])
+    out: list[tuple[float, float]] = []
+    for a, b in both:
+        if out and a <= out[-1][1] + 1e-9:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
 
 
 def _rms_db(x) -> float:
@@ -178,7 +234,7 @@ def _level_trim(metrics: dict, finds: list[dict]) -> tuple[float, float | None]:
     return -max(2.0, float(peak) - float(targets.PROFILES["long"]["true_peak_max"]) + 1.0), float(peak)
 
 
-def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backend: str = "ltx") -> list[dict]:
+def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backend: str = "ltx", words_fn=None) -> list[dict]:
     """Ingest one scene's clips. ``clips``: in cut order, ``[{shot_id, path, chain_from_frame?: {frame}}]`` (the worker's rows
     with the downloaded file). Writes the raw copy, the trimmed clip and the record of each; returns the records."""
     from explainer_engine.training import video_qa as VQ
@@ -209,6 +265,14 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         from explainer_engine.qa import sound_realism as R
         x = R.read_audio(raw) if pr["has_audio"] else np.zeros(0, np.float32)
         spans = [(float(a), float(b)) for a, b in R.speech_spans(x)] if len(x) else []
+        if sid in spoken and pr["has_audio"]:    # TD-327: the words the detector missed (the detector alone dropped a line's start)
+            words_fn = words_fn or _local_words
+            lines = {l["line_id"]: l for l in script.get("audio_lines") or []}
+            text = " ".join(lines[i]["text"] for i in shot.get("audio_line_ids") or []
+                            if lines.get(i, {}).get("speaker_type") == "character")
+            heard = words_fn(raw)
+            words_source = "local whisper" if heard is not None else "unavailable (detector spans only)"
+            spans = speech_with_words(spans, heard, text, spoken=True, dur=pr["duration"])
         planned = float(shot.get("target_duration_seconds") or 0.0)
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
                           handover_s=handover_s, drop_first=is_cont, shot_id=sid,
@@ -231,6 +295,8 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "frames": pts["frames"], "speech_raw": spans, "speech": t_spans, "clip_spoken": sid in spoken,
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
                "findings": finds, "attempts": c.get("attempts") or []}
+        if sid in spoken and pr["has_audio"]:
+            rec["speech_words"] = words_source
         if trim_db:
             rec.update({"level_trim_db": trim_db, "true_peak_before": peak_before})
         write_json_atomic(vdir / f"{sid}.json", rec)

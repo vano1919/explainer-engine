@@ -425,6 +425,7 @@ def test_the_pitch_plan_shifts_only_a_clip_both_estimators_and_the_confidence_ag
 def test_a_pitch_shift_moves_the_pitch_and_keeps_the_length_and_a_compose_reports_it(tmp_path):
     if subprocess.run("ffmpeg -hide_banner -filters | grep -q rubberband", shell=True).returncode:
         pytest.skip("this ffmpeg has no rubberband")
+    pytest.importorskip("librosa")      # not a declared dependency: the pitch plan is skipped by the runner when it is missing
     from explainer_engine.videolane import voice as VV
     t = np.arange(2 * 48000) / 48000
     x = sum(0.1 / h * np.sin(2 * np.pi * 150 * h * t) for h in range(1, 8)).astype(np.float32)
@@ -476,3 +477,32 @@ def test_a_clip_with_a_quiet_tail_is_cut_exactly_as_before_and_a_raw_end_is_the_
     # a hand-over frame still ends the clip on that frame (the late-sound rule does not touch it)
     h = VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True, handover_s=2.6, audio=_held_note_audio(2.9), rate=16000)
     assert h["out_s"] == pytest.approx(2.6 + 1 / 24, abs=1 / 24)
+
+
+# --- TD-327: the words the detector missed keep their place in the cut --------------------------------------------------
+
+_S04_SH012_WORDS = [{"text": t, "start": a, "end": b} for t, a, b in [
+    ("Saxon.", 0.0, 1.02), ("Fritz", 1.44, 1.82), ("to", 1.82, 2.62), ("my", 2.62, 2.8), ("friends.", 2.8, 3.2),
+    ("Merry", 4.26, 4.56), ("Christmas,", 4.56, 5.02), ("Tommy.", 5.22, 5.3)]]
+_S04_SH012_LINE = "Saxon. Fritz, to my friends. Merry Christmas, Tommy."
+
+
+def test_a_line_whose_first_words_the_detector_misses_keeps_them():
+    from explainer_engine.videolane import ingest as VI
+    detector = [(2.52, 2.76), (4.3, 5.26)]
+    old = VI.edit_points(6.04, detector, None, 3.5, 24, spoken=True)
+    spans = VI.speech_with_words(detector, _S04_SH012_WORDS, _S04_SH012_LINE, spoken=True, dur=6.04)
+    new = VI.edit_points(6.04, spans, None, 3.5, 24, spoken=True)
+    assert old["in_s"] > 2.0 and new["in_s"] == 0.0       # 'Saxon. Fritz' were cut before, now they are in
+    assert new["out_s"] >= old["out_s"] and new["frames"] > old["frames"]
+
+
+def test_a_silent_clip_or_a_word_the_line_does_not_hold_changes_nothing():
+    from explainer_engine.videolane import ingest as VI
+    detector = [(1.0, 2.0)]
+    heard = [{"text": "You", "start": 5.0, "end": 5.6}, {"text": "Okay.", "start": 6.0, "end": 6.4}]
+    assert VI.speech_with_words(detector, heard, "Stand to.", spoken=False, dur=8.0) == detector      # silent shot: as before
+    line = [{"text": "Stand", "start": 1.0, "end": 1.5}, {"text": "to.", "start": 1.5, "end": 2.0}] + heard
+    assert VI.speech_with_words(detector, line, "Stand to.", spoken=True, dur=8.0) == [(1.0, 2.0)]   # 'You', 'Okay' not in the line
+    assert VI.matched_word_spans(line, "Stand to.") == [(1.0, 2.0)]
+    assert VI.speech_with_words(detector, None, "Stand to.", spoken=True, dur=8.0) == detector       # no Whisper installed
