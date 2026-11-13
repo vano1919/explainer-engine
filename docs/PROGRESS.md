@@ -6241,3 +6241,14 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   `test_videolane::test_the_best_tail_search_starts_after_the_line...`, `::test_the_scene_row_tells_the_worker...`.
 - The worker's sha changed, so the OR-37 ladder runs again: L0 (local tests) on the commit; L1/L2 (Modal CPU) and L3 (GPU
   smoke, paid) wait for the creator's word on a priced card. Nothing paid ran.
+- L3 on the P5 worker (the creator's card 14:35 UTC, option a: L1+L2+L3 now; watchdog thread up first): L1 and L2 green;
+  L3 red at 14:43 UTC, run 8462e18a7e41_fc6ae61bf410, H100: CUDA out of memory while the transformer was built, after
+  pipeline 13.4 s and Gemma 35.2 s; no clip. The worker's retry declined correctly (57 s left, ~88 s needed). Settled
+  $0.1684 (the app's 119 s at $5.0937/h, an upper bound) in `ledgers/ltx_scene_test.json`; nothing left running. The Modal
+  client needs `modal[api-proxy-support]` (python-socks) in the cloud container to reach the API through the agent proxy.
+- Cause, read in the pinned LTX-2 code (e98f6d9): Gemma's `encode` has no no_grad and relies on the CLI's
+  `@torch.inference_mode()` main; `LtxSession._open` ran outside it, so the cached prompt embeddings held an autograd graph
+  that kept Gemma's weights on the GPU after its dispose. Fix: the session opens and runs every clip inside
+  `torch.inference_mode()`. Test `test_ltx_inproc::test_the_session_opens_gemma_and_the_transformer_inside_inference_mode`
+  (fails on the old worker). The red ladder is kept as `ladder_2026-11-13_worker_9739fdb2_red.json`; the fixed worker starts
+  a new `ladder.json` (L0..L2 again, L3 on the creator's word).

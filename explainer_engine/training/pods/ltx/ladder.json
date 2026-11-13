@@ -1,21 +1,6 @@
 {
-  "done": [
-    "L0"
-  ],
+  "done": [],
   "red": null,
   "measured": {},
-  "rungs": {
-    "L0": {
-      "tests": [
-        "tests/unit/test_v43_ltx_jobs.py",
-        "tests/unit/test_ltx_inproc.py",
-        "tests/unit/test_videolane.py",
-        "tests/unit/test_cloud_hooks_modal.py"
-      ],
-      "pytest": "113 passed, 2 skipped in 12.08s",
-      "commit": "6e144f864949ff313d6bcf9b31dfd5df40313de4",
-      "ok": true,
-      "at": "2026-11-13T14:28:51Z"
-    }
-  }
+  "rungs": {}
 }
