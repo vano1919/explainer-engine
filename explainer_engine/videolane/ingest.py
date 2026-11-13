@@ -36,6 +36,7 @@ from explainer_engine.standards import sourced_rules as SR
 SCHEMA = "video_clip_record/1"
 HEAD_LEAD = [float(v) for v in SR.T("BP-190", "head_lead_s")]
 CUT_TAIL = [float(v) for v in SR.T("BP-190", "tail_s")]
+SPEECH_TAIL_S = float(SR.T("BP-187", "speech_tail_s"))   # a spoken line ends inside its clip with this much after it
 
 
 def _sha(p: Path) -> str:
@@ -66,10 +67,19 @@ def speech(path: Path) -> list[tuple[float, float]]:
 
 
 def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: float, fps: int, *, spoken: bool,
-                handover_s: float | None = None, drop_first: bool = False) -> dict:
-    """The in and out points (clip seconds, on whole frames) of one clip; see the module text."""
+                handover_s: float | None = None, drop_first: bool = False, shot_id: str = "?") -> dict:
+    """The in and out points (clip seconds, on whole frames) of one clip; see the module text.
+
+    A hand-over frame (VL-05) before the last speech end + BP-187's tail would cut the line: a ContractError (repair class C,
+    regenerate the clip or move the hand-over), never a silent cut (Fable audit FA-07)."""
     ep = edit_plan or {}
     fr = 1.0 / fps
+    if handover_s is not None and spans:
+        s_end = float(spans[-1][1])
+        if handover_s + 1e-9 < s_end + SPEECH_TAIL_S:
+            raise ContractError(f"{shot_id}: the hand-over frame at {handover_s:.3f} s lies before the speech end {s_end:.3f} s "
+                                f"+ BP-187's {SPEECH_TAIL_S:g} s tail: the cut would clip the line (class C: regenerate the "
+                                "clip or pick a later hand-over frame, FA-07)")
     if spoken:
         if not spans:
             raise ContractError("a spoken clip with no speech in its own sound (LTX dropped the line?): regenerate or "
@@ -145,7 +155,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         spans = speech(raw) if pr["has_audio"] else []
         planned = float(shot.get("target_duration_seconds") or 0.0)
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
-                          handover_s=handover_s, drop_first=is_cont)
+                          handover_s=handover_s, drop_first=is_cont, shot_id=sid)
         trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps)
         t_spans = [(round(max(0.0, a - pts["in_s"]), 3), round(min(pts["frames"] / fps, b - pts["in_s"]), 3))
                    for a, b in spans if b > pts["in_s"] and a < pts["out_s"]]

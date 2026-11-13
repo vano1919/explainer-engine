@@ -46,7 +46,10 @@ def _scene() -> dict:
              _shot("C", size="medium", az=40, lines=["L1"], axis_side="A", screen_positions={"gen": "left", "cmd": "right"}),
              _shot("D", route="still_25d", size="close_up", az=60, mode="insert", cut_in_reason="reaction"),
              _shot("E", size="medium", az=-40, lines=["L2"], axis_side="A", screen_positions={"gen": "left", "cmd": "right"})]
-    return {"shots": shots, "audio_lines": lines, "fps": FPS}
+    cast = {"characters": [   # FA-02: the voice-caster's voice descriptions feed the LTX prompt composer
+        {"character_id": "gen", "name": "The General", "voice_description": "a hoarse older man, low and slow"},
+        {"character_id": "cmd", "name": "The Commander", "voice_description": "a firm younger man, clipped and quick"}]}
+    return {"shots": shots, "audio_lines": lines, "fps": FPS, "world_bible": cast}
 
 
 def _fails(doc, rule=None):
@@ -427,3 +430,59 @@ def test_the_runner_g1_on_toba_no_longer_reports_wan():
     doc = json.loads((ROOT / "episodes" / "ep_toba" / "story" / "production_script.json").read_text(encoding="utf-8"))
     row = P.fit_rows(doc, LJ.max_seconds(LJ.LAUNCH), LJ.LAUNCH["model_repo"], LJ.LAUNCH["native"]["fps"])[0]
     assert row["status"] == G.PASS and "Wan" not in row["detail"]
+
+
+def test_the_ltx_prompt_is_composed_with_the_line_and_the_voice(tmp_path):
+    """FA-02: the row's motion_prompt = motion + '<Name> says in <voice>: "<line>"' (+ sound) for a clip-spoken shot, and
+    the fixed no-speech clause for a narrated or silent one; the parts are in the row; a missing voice refuses the scene."""
+    from explainer_engine.videolane import scene as SC
+    from explainer_engine.videolane import storyboard as SB
+    doc = _scene()
+    doc["shots"][2]["sound_events"] = [{"kind": "foley", "what": "chariot", "class": "chariot", "at_word": "days"}]
+    root, pics = _board_episode(tmp_path, doc)
+    SB.build(root, doc, [s["shot_id"] for s in doc["shots"]], "s1", pictures=pics)
+    by = {s["shot_id"]: s for s in SC.build(root, doc, "s1", tmp_path / "scene.json")["shots"]}
+    c = by["C"]["motion_prompt"]
+    assert c.startswith("motion of C, one action")
+    assert 'The General says in a hoarse older man, low and slow: "Three days and not one Trojan."' in c
+    assert "Sound: chariot." in c and SC.NOBODY_SPEAKS not in c
+    assert by["A"]["motion_prompt"].endswith(SC.NOBODY_SPEAKS) and "says" not in by["A"]["motion_prompt"]   # narrated
+    assert by["B"]["prompt_parts"] == {"motion": "motion of B, one action", "no_speech": SC.NOBODY_SPEAKS}
+    assert by["C"]["seconds_basis"] == "line" and by["A"]["seconds_basis"] == "planned_length"
+    # the script itself stays clean: the line never sits in the script's motion prompt (KP-V4-DIALOGUE-LEAK)
+    assert '"' not in doc["shots"][2]["video_prompt"]["motion_prompt"]
+    del doc["world_bible"]["characters"][1]["voice_description"]
+    scene = SC.build(root, doc, "s1", tmp_path / "scene2.json")
+    assert scene["voice_missing"] == ["E: cmd"]
+    assert any("no voice description" in w for w in SC.storyboard_problems(scene))
+
+
+def test_toba_scene_rows_carry_their_lines_and_the_narrated_ones_say_nobody_speaks():
+    """FA-02 on the real script: the 9 clip-spoken video shots compose their line, the 46 narrated ones the no-speech clause,
+    and the script's own motion prompts still pass the leak lint."""
+    from explainer_engine.scripting import shot_prompt_lint as SPL
+    from explainer_engine.videolane import scene as SC
+    doc = json.loads((ROOT / "episodes" / "ep_toba" / "story" / "production_script.json").read_text(encoding="utf-8"))
+    vids = [s for s in doc["shots"] if P.is_video(s)]
+    comps = [SC.compose_prompt(doc, s) for s in vids]
+    spoken = [c for c in comps if c["spoken"]]
+    assert len(vids) == 55 and len(spoken) == 9 and sum(c["prompt"].endswith(SC.NOBODY_SPEAKS) for c in comps) == 46
+    lines = {ln["line_id"]: ln["text"] for ln in doc["audio_lines"]}
+    for s, c in zip(vids, comps):
+        if c["spoken"]:
+            assert lines[s["audio_line_ids"][0]].replace('"', "'") in c["prompt"]
+    leaks = [i for i in SPL.check_v4_script(doc) if i.get("rule") == "KP-V4-DIALOGUE-LEAK"]
+    assert leaks == []
+
+
+def test_a_hand_over_before_the_speech_end_is_refused_not_cut():
+    """FA-07, measured case of the audit: speech to 4.6 s, hand-over at 105/24 = 4.375 s -> ContractError naming the shot,
+    the speech end and the hand-over; a hand-over at 5.2 s (after 4.6 + BP-187's 0.5 s) passes."""
+    from explainer_engine.videolane import ingest as VI
+    with pytest.raises(ContractError, match=r"S05_SH002: the hand-over frame at 4\.375 s lies before the speech end 4\.600 s"):
+        VI.edit_points(5.0, [(0.8, 4.6)], {"tail_handle_s": 0.5}, 4.0, 24, spoken=True, handover_s=105 / 24,
+                       shot_id="S05_SH002")
+    pts = VI.edit_points(6.0, [(0.8, 4.6)], {"tail_handle_s": 0.5}, 4.0, 24, spoken=True, handover_s=5.2, shot_id="S")
+    assert pts["out_s"] >= 4.6 + VI.SPEECH_TAIL_S
+    from explainer_engine.standards import sourced_rules as SR
+    assert "explainer_engine/videolane/ingest.py" in SR.rule("BP-187")["enforced_by"]

@@ -6087,3 +6087,20 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - FA-10: a sound event with `picture_event` is a resolved event (`source: sound_events`) of `visual_events`; layers25d's
   private `at_s` fallback reads the resolver; the sound plan records it and places its sound once; the event report lists it.
 - Test `tests/unit/test_av_anchors.py`.
+
+## 2026-11-13 — FA-02 LTX prompt composer, FA-07 hand-over never cuts speech, FA-15 narrated clips from the read
+- FA-02: `videolane/scene.compose_prompt` composes what LTX is told, the one place a line meets a prompt: the script's
+  `video_prompt.motion_prompt` + `<Name> says in <voice_description>: "<line>"` for a clip-spoken shot + `Sound: ...` from
+  the shot's authored `sound_events` + `Nobody speaks.` on a narrated or silent shot. The scene row keeps `prompt_parts`;
+  a spoken shot whose speaker has no `world_bible.characters[].voice_description` is listed in `voice_missing` and
+  `storyboard_problems` refuses the scene (so `scene_run.job_spec` refuses it). The script still passes
+  `KP-V4-DIALOGUE-LEAK`. Toba: 9 clip-spoken rows carry their line, 46 narrated rows end on the no-speech clause (measured
+  by the test; the Toba cast has no voice description yet, P3). NOT PROVEN until the first paid sample: that LTX speaks the
+  composed line in the described voice.
+- FA-07: `videolane/ingest.edit_points` raises (class C) when the hand-over frame lies before the last speech end + BP-187's
+  tail; the audit's measured case (speech to 4.6 s, hand-over 4.375 s) raises, 5.2 s passes. BP-187 `enforced_by` names
+  `videolane/ingest.py`. The worker half (search the hand-over frame only after the expected speech end) waits for P5.
+- FA-15: `scene.build` sizes a narrated video shot from `audio/timing.json` when it exists (`seconds_basis:
+  measured_length`), from the plan otherwise; the runner does not force the read first (Q4).
+- Tests: `test_videolane.py` (composer on a fixture and on Toba, missing voice refused, hand-over case). The `_scene`
+  fixture gained a cast with voice descriptions (no assertion weakened).

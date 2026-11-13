@@ -7298,7 +7298,8 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/videolane/plan.py"
+    "explainer_engine/videolane/plan.py",
+    "explainer_engine/videolane/ingest.py"
    ],
    "supersedes": [],
    "decided": "the creator, 2026-11-12 19:16 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWR1zwsJYy2hthiFJQQj48kT): LTX cut a line mid-speech in the bake-off; every video is planned so the character finishes speaking. His half-second sound overlap was put to research at 20:07 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU5wnV4sFK5JC2vc6uQcvGC): the finding is BP-188"
