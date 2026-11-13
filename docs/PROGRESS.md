@@ -5720,3 +5720,31 @@ HF: `vano1919/tmr-artifacts` `explainer-engine/cheap_video_2026-11-12/` (side_by
 - the next saving is keeping the model loaded across clips (an estimate, not measured);
 - Hunyuan is not recommended;
 - API trials (Vidu Q3 Turbo off-peak, Grok 1.5 Lite) wait for the creator's word.
+
+## 2026-11-13 07:30 UTC: LTX worker, in-process runner (free; the paid measurement waits for the creator's word)
+
+**Ask.** The creator asked at 06:40 UTC why a 22 s scene cost ~$0.60 (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWXt3bQhg6DyxmXs3TumdzYg`).
+The coordinator said: free code, do it.
+
+**Cause.** The battle run's container ran 376 s on the H100, $0.53, for 36 s generated (24 s kept). The worker started the LTX-2
+CLI once per clip. Every clip therefore loaded Gemma 12B, built the 22B transformer twice (stage 1 and stage 2; the registry
+keeps no weights) and decoded. That is ~82 s a clip, of which ~17 s is denoising (the log's step bars: 8 steps ~6 s, 3 steps ~10 s).
+
+**Change.** `modal_ltx_jobs.LtxSession`, launch `runner: inproc`.
+- It runs the CLI's own `main` body in the container's process on one `DistilledPipeline`.
+- The pipeline is built from the CLI's own parser.
+- Every prompt of the shot and its chain is encoded in one Gemma load, in groups of 4. Each prompt is padded to 1024 tokens, so a group is one batch.
+- The transformer is built once and held with `DiffusionStage.resident()`, as LTX-2's own multi-GPU pipeline does. It is built before the first clip plans its decode tiles.
+- The deadline is checked before each denoising pass.
+- The clip's log goes to its usual file.
+- `setup` records the one-time seconds.
+- `runner: cli` goes back to the old path.
+
+**Tests.** `tests/unit/test_ltx_inproc.py`:
+- 10 fake-library tests: one load for three clips, prompt groups, refusals, the deadline, failed clips, the body's chain on one session.
+- 2 tests on the pinned LTX-2 code (run in a CPU venv with ltx-core and ltx-pipelines at e98f6d9; skipped where the library is absent):
+  - the CLI's `main` and `LtxSession.clip` hand `DistilledPipeline`, `stream_chunks` and `encode_video` identical arguments for the same command line;
+  - a real `DiffusionStage.resident()` builds once and releases the weights at the block's end.
+
+**Not measured.** The saving is not measured on a GPU yet. The VAE pieces and the decode still run per clip. The new launch and
+worker shas need the ladder again (L1, L2 free; L3 smoke and a re-run of the battle scene's 4 cuts paid, on the creator's word).
