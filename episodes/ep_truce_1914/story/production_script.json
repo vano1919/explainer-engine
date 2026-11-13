@@ -7798,8 +7798,8 @@
    "segment_id": "S07",
    "target_duration_seconds": 6.75,
    "narrative_purpose": "The signal: a British captain fires three shots into the air, raises a flag and salutes the German line (after Capt. Stockwell, Houplines, 26 December 1914)",
-   "visual_type": "cinematic_video",
-   "generation_mode": "WAN_I2V",
+   "visual_type": "composed_illustration",
+   "generation_mode": "STILL_25D",
    "location_id": "loc_british_trench",
    "character_ids": [],
    "prop_ids": [
@@ -7840,36 +7840,117 @@
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
    "video_prompt": {
-    "motion_prompt": "The captain fires his revolver into the air three times, raises the flag on the parapet, then salutes toward the German line.",
+    "motion_prompt": "A slow push toward the captain as he fires three shots into the air; the brazier flickers and its steam and the muzzle smoke drift.",
     "primary_action_count": 1,
-    "camera_move_count": 0,
-    "parallax_preset": null
+    "camera_move_count": 1,
+    "parallax_preset": "dolly_in"
    },
    "selective_control": null,
    "transition_out": "hard_cut",
-   "route": "video",
-   "route_reason": "a hero speaks or a body performs in this shot; LTX clip, one line at most (RT-02, VL-02)",
+   "route": "still_25d",
+   "route_reason": "place, object or tableau with no line spoken in frame: the 2.5D renderer carries it (RT-02)",
    "route_locked": true,
    "shot_role": "action",
-   "edit_plan": {
-    "continuity_mode": "coverage",
-    "cut_in_reason": "action",
-    "scene_master": "S07_SH004_start",
-    "axis_side": "A",
-    "screen_direction": "away_from_camera",
-    "camera_in": "rest",
-    "camera_out": "rest",
-    "screen_positions": {}
-   },
    "sound_events": [
     {
      "kind": "spot",
-     "what": "the shots are the clip's own sound",
+     "what": "a revolver shot into the air",
      "class": "impact",
-     "at_word": "shots",
      "distance": "close",
-     "source": "clip_audio",
-     "event_id": "S07_SH005.S1"
+     "source": "library",
+     "picture_event": "impact",
+     "purpose": "sync",
+     "event_id": "S07_SH005.S1",
+     "at_word": {
+      "line_id": "S07_L005",
+      "word": "shots",
+      "offset_s": 0.0
+     }
+    },
+    {
+     "kind": "spot",
+     "what": "a revolver shot into the air",
+     "class": "impact",
+     "distance": "close",
+     "source": "library",
+     "picture_event": "impact",
+     "purpose": "sync",
+     "event_id": "S07_SH005.S2",
+     "at_word": {
+      "line_id": "S07_L005",
+      "word": "shots",
+      "offset_s": 0.4
+     }
+    },
+    {
+     "kind": "spot",
+     "what": "a revolver shot into the air",
+     "class": "impact",
+     "distance": "close",
+     "source": "library",
+     "picture_event": "impact",
+     "purpose": "sync",
+     "event_id": "S07_SH005.S3",
+     "at_word": {
+      "line_id": "S07_L005",
+      "word": "shots",
+      "offset_s": 0.8
+     }
+    }
+   ],
+   "motion_profile": "portrait",
+   "motion_imitation": [
+    {
+     "effect": "push",
+     "event_id": "S07_SH005.M1",
+     "strength": 0.3,
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "a slow camera move under the voice (BP-81 budget)"
+     }
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S07_SH005.M2",
+     "region": [
+      0.69,
+      0.64,
+      0.8,
+      0.86
+     ],
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
+     }
+    },
+    {
+     "effect": "mist",
+     "event_id": "S07_SH005.M3",
+     "region": [
+      0.6,
+      0.4,
+      0.82,
+      0.8
+     ],
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the place's bed carries it"
+     }
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S07_SH005.M4",
+     "region": [
+      0.1,
+      0.12,
+      0.34,
+      0.42
+     ],
+     "at_word": "shots",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "the muzzle smoke drifts after the shots; the shots carry the sound"
+     }
     }
    ]
   },
