@@ -5790,3 +5790,38 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   the next merge must renumber one of them.
 - Tests: `tests/unit/test_sound_design_system.py` (15); `test_v43_sound_plan.py` (11) unchanged and green; docs_lint 0 findings.
 - Next: the creator listens to the two battle files, the BBC audition page and picks takes; `requalify` the 73 vault-only takes where their WAVs are.
+
+## 2026-11-13 — AV event contract for maps and 2.5D (D-135), W3 maps, W2 2.5D, zero-cost pilot
+- Brief: the creator's "v4.3 unified audiovisual system — implementation order" (08:43 UTC). Branch `claude/project-thread-98b6wy` on W1's
+  `d1b96141`, draft PR #174 (base `claude/project-thread-xpsv3w`). Scope 10 % maps + 30 % 2.5D only (the creator 08:54 UTC: the montage
+  thread owns assembly and the LTX lane; nothing there was touched). Rules: `docs/EPISODE_FIRST.md` AV-01..AV-08, MA-01..MA-08,
+  L25-01..L25-06; decision D-135.
+- Done: `episode/events.py` (one resolver; half-open frames; one audio decision per event; derived ids for older scripts, REVIEW);
+  `episode/sound_plan.py` (only authored events are placed, words are candidates, catalog facets first with the legacy-tag fallback
+  recorded, a missing class goes to `needs` and its rows become review_required); `episode/cue_sheet.py` (BP-54 three bands on the
+  rendered SFX stem, BP-55, BP-56 from intervals, BP-81 density/bursts/one emphasis a line); `episode/av_report.py` (per-event report,
+  `human: not_listened`); G8 runs W1's `mix_check`, G10 W1's `sound_realism`; `maps/actions.py` 2.1 (splines through `via`, marker on its
+  route's progress, supply line/state/snap, counter/bar/progress/milestone with data and claim ids, event camera, dense map holds, drift and
+  dash flow); `production/layers25d.py` 2 (two camera segments, motion profiles, cloth/cloud in their region, shake and flash only from
+  authored events). LaMa and SAM not integrated (their gates are not met); Depth-Anything V2 Small and Telea kept.
+- Preview sound: `audio/stems` no longer plays a procedural placeholder in a preview (D-133, OV-56 as changed); the row stays silent and is
+  listed (`placeholders`, `silent_rows`).
+- Pilot ($0, rehearsal without a read, `examples/av_pilot_2026-11-13`, `scripts/av_pilot.py`, `scripts/av_pilot_measure.py`): 3 map + 4 2.5D
+  Toba shots, baseline on a worktree of `d1b96141` against the new code, same pictures (sha256 checked against Toba's media manifest).
+  Runs: baseline 607 s wall, peak 1549 MB, 795 s CPU; new 630 s, 1639 MB, 874 s. Clips PASS on both. Decoded-MP4 longest frozen stretch
+  (BP-164 at 160x90): maps S01_SH008 92 -> 64, S03_SH002 105 -> 80, S04_SH006 158 -> 47 frames (REVIEW stays); 2.5D S01_SH006 59 -> 22,
+  S01_SH009 55 -> 53, S02_SH005 20 -> 18, S01_SH007 6 -> 13. Sound: baseline 0 event rows, its effects placed from words (a war horn on
+  the supply map, rivers on the number card, flashes on the battle picture at two words); new 15 event rows with ids, onsets measured
+  +0/+5 ms on six, P3.bar riser +485 ms (BP-54 FAIL kept). Delivered -13.9 LUFS, -1.5 dBTP. REVIEW: BP-191 bed jumps at 6 cuts, BP-192
+  6 of 10 action sounds outside 6-10 dB, BP-190 pauses; FAIL `realism_dialogue_never_dead` 1 % (the Toba bed `ash_fall` has no real take
+  and is now silent). Outputs and SHA256SUMS: HF `vano1919/tmr-artifacts` (dataset) `explainer-engine/av_pilot_2026-11-13/`, 90 files
+  hash-verified.
+- Stale text reported, not changed: D-133 is used twice (the video lane's branch `claude/project-thread-lncsi3` renumbers W1's and takes the next number; this branch names
+  neither); BP-56 is REVIEW in the registry and FAIL in W1's code and test (FAIL kept); D-133's "every map motion heard" against the
+  brief's `silent_by_design` and BP-81's budgets (open with the creator).
+- Tests: `tests/unit/test_av_events.py` (26 functions, 50 cases), one new test in `test_v43_sound_plan.py`; the word-placement tests of
+  `test_v43_sound_plan.py`/`test_sound_design_system.py` now assert the brief's rule (words are candidates); docs_lint 0 findings.
+- Not verified: nobody has listened or watched in real time; no narration (estimated word times only); 73 vault-only library takes
+  without QC.
+- Next: the creator's word on the D-133/BP-81 question and on the riser's BP-54 reading; real takes for map_pin_set, map_line_strain,
+  map_line_snap, cloth_flap, ash_fall, eruption_boom (library -> free -> priced ElevenLabs on his word); Fable's review of PR #174.
