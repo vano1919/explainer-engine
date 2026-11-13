@@ -88,6 +88,24 @@ def modal_bakeoff() -> dict:
     return m
 
 
+def modal_cheap_video() -> dict:
+    """The creator's line for the cheaper-video-generator test on Modal (``modal_cheap_video``: ``per_run_usd``,
+    ``tests_total_usd``; the creator 2026-11-12 22:21 UTC, "$3 on Modal"). Its own key, like ``modal_bakeoff``."""
+    m = load().get("modal_cheap_video")
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0  # noqa: E731
+    if not (isinstance(m, dict) and num(m.get("per_run_usd")) and num(m.get("tests_total_usd"))):
+        raise OverCeiling("no modal_cheap_video line in config/spend_caps.json: the test spends nothing until the creator sets it")
+    return m
+
+
+def modal_test_line(name: str) -> dict:
+    """One of the creator's Modal test lines by name (a bake-off plan's ``spend_line``); any other name is refused."""
+    lines = {"modal_bakeoff": modal_bakeoff, "modal_cheap_video": modal_cheap_video}
+    if name not in lines:
+        raise OverCeiling(f"{name!r} is not one of the creator's Modal test lines {sorted(lines)}")
+    return lines[name]()
+
+
 def modal(episode: bool = False) -> dict:
     """The Modal line (``modal``: ``per_run_usd``, ``per_episode_usd``; v4.3 D-131: Wan runs on Modal). A missing or
     non-positive ``per_run_usd`` = refused: until the creator adds the line, Modal has a zero approved project budget

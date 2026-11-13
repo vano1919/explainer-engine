@@ -130,7 +130,7 @@ def container(tmp_path, monkeypatch):
     hub.CommitOperationAdd = lambda path_in_repo, path_or_fileobj: SimpleNamespace(path_in_repo=path_in_repo,
                                                                                    path_or_fileobj=path_or_fileobj)
     monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
-    launch = copy.deepcopy(LAUNCH)
+    launch = dict(copy.deepcopy(LAUNCH), runner="cli")    # these tests fake the CLI process; inproc: test_ltx_inproc.py
     root = tmp_path / "w" / "model" / launch["model_repo"]
     for f in launch["model_files"]:
         (root / f).parent.mkdir(parents=True, exist_ok=True)
@@ -205,7 +205,9 @@ def test_the_session_hook_frees_only_the_ltx_cpu_rungs():
         assert H.modal_refusal(f"modal run {WORKER}::{entry}", env={}) is None
     for entry in ("smoke", "main", "stage"):
         assert "EE_MODAL_GO" in (H.modal_refusal(f"modal run {WORKER}::{entry}", env={}) or "")
+    for entry in ("smoke", "stage"):
         assert H.modal_refusal(f"EE_MODAL_GO=cmsg_abc:{'a' * 12} modal run {WORKER}::{entry}", env={}) is None
+    # ::main also needs its scene's spec since D-133 (CH-03, one container per scene): test_cheapest.py
     assert "refused" in (H.modal_refusal(f"modal shell {WORKER}", env={}) or "")
 
 

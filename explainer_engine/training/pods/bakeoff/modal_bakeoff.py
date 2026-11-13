@@ -39,7 +39,18 @@ try:
 except ImportError:
     modal = None
 
-PLAN_PATH = Path(__file__).with_name("plan_v43.json")
+PLAN_DEFAULT = "plan_v43.json"
+FAMILIES = ("ltx", "wan", "hunyuan")
+SPEND_LINES = ("modal_bakeoff", "modal_cheap_video")   # the creator's Modal test lines a plan may name (config/spend_caps.json)
+
+
+def plan_path(env=os.environ) -> Path:
+    """The plan of this run: ``EE_BAKEOFF_PLAN`` names a plan file in this folder (only its file name counts, so no other
+    folder can be named), default ``plan_v43.json``. The container gets the same name through its image's env."""
+    return Path(__file__).with_name(Path(str(env.get("EE_BAKEOFF_PLAN") or PLAN_DEFAULT)).name)
+
+
+PLAN_PATH = plan_path()
 BASE_IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 DIFFUSERS = "git+https://github.com/huggingface/diffusers@d8c1b13c756df0059bcdb6e477a1eafcd502098d"
 LTX2 = ("https://github.com/Lightricks/LTX-2.git", "e98f6d927d83c92ef2be6aec76c8440b19306e39")
@@ -110,12 +121,33 @@ def stage_timeout(plan) -> int:
     return min(int(s["timeout_s"]), cost_timeout(s["cap_usd"], usd_per_h(None, s["cpu"], s["memory_gib"]), 0))
 
 
+def sizes_of(v) -> list:
+    """The sizes a variant makes, as [width, height] pairs: ``sizes`` when the plan lists several (one container, the weights
+    loaded once per size and shot), else its ``width`` x ``height``."""
+    return [list(x) for x in (v.get("sizes") or [[v["width"], v["height"]]])]
+
+
 def frames_ok(v) -> bool:
-    """LTX takes 8k+1 frames and sizes divisible by 64 (two stages at half size); Wan 4k+1 frames and sizes divisible by 16."""
-    f, w, h = v["frames"], v["width"], v["height"]
+    """LTX takes 8k+1 frames and sizes divisible by 64 (two stages at half size); Wan and HunyuanVideo 1.5 4k+1 frames and
+    sizes divisible by 16."""
+    f = v["frames"]
     if v["family"] == "ltx":
-        return (f - 1) % 8 == 0 and w % 64 == 0 and h % 64 == 0
-    return (f - 1) % 4 == 0 and w % 16 == 0 and h % 16 == 0
+        return (f - 1) % 8 == 0 and all(w % 64 == 0 and h % 64 == 0 for w, h in sizes_of(v))
+    return (f - 1) % 4 == 0 and all(w % 16 == 0 and h % 16 == 0 for w, h in sizes_of(v))
+
+
+def shots_of(plan, v) -> list:
+    """The plan's shots this variant makes (``shots`` lists their ids; default every shot), in the plan's order."""
+    want = v.get("shots")
+    return [s for s in plan["shots"] if want is None or s["id"] in want]
+
+
+def jobs_of(plan, v) -> list:
+    """Every clip-shot of a variant: each size x each of its shots, with the file tag (the shot id alone when there is one
+    size, so the old bake-off keeps its file names)."""
+    sizes = sizes_of(v)
+    return [{"shot": s, "width": w, "height": h, "tag": s["id"] if len(sizes) == 1 else f"{s['id']}_{w}x{h}"}
+            for w, h in sizes for s in shots_of(plan, v)]
 
 
 def chained_frames(v) -> int:
@@ -131,6 +163,14 @@ def shot_seconds(v) -> float:
 def clip_prompt(shot, c) -> str:
     """Clip 1 of a shot gets ``prompt``, every chained clip after it ``prompt_2`` (audit B2)."""
     return shot["prompt"] if c == 0 else (shot.get("prompt_2") or shot["prompt"])
+
+
+def ltx_prompt(shot) -> str:
+    """LTX makes sound too: ``prompt_ltx`` when the shot has its own (the scene's prompt with its words and sounds, so a rerun
+    at another size is the same clip), else ``prompt`` plus ``audio_prompt``."""
+    if shot.get("prompt_ltx"):
+        return shot["prompt_ltx"]
+    return shot["prompt"] + (" " + shot["audio_prompt"] if shot.get("audio_prompt") else "")
 
 
 def plan_problems(plan) -> list:
@@ -154,9 +194,16 @@ def plan_problems(plan) -> list:
         out.append("run_order must name every variant once")
     if not (plan.get("ledger") or {}).get("path") or (plan.get("ledger") or {}).get("service") != "modal":
         out.append("the plan names no modal ledger")
+    if plan.get("spend_line", "modal_bakeoff") not in SPEND_LINES:
+        out.append(f"spend_line must be one of {SPEND_LINES}")
+    lo, hi = plan.get("shot_seconds") or (9.5, 10.5)
     for v in plan["variants"]:
-        if v["family"] not in ("ltx", "wan"):
-            out.append(f"{v['id']}: family must be ltx or wan")
+        if v["family"] not in FAMILIES:
+            out.append(f"{v['id']}: family must be one of {FAMILIES}")
+            continue
+        unknown = [x for x in (v.get("shots") or []) if x not in {s["id"] for s in plan["shots"]}]
+        if unknown or v.get("shots") == []:
+            out.append(f"{v['id']}: shots {unknown or '[]'} are not the plan's shots")
         if not frames_ok(v):
             out.append(f"{v['id']}: frames/size do not fit the model's grid")
         miss = [w for w in v["weights"] if w not in plan["weights"]]
@@ -165,10 +212,13 @@ def plan_problems(plan) -> list:
         for k, f in list((v.get("uses") or {}).items()) + list((v.get("lora") or {}).items()):
             if not any(f in plan["weights"][w]["files"] for w in v["weights"] if w in plan["weights"]):
                 out.append(f"{v['id']}: {k} {f} is not a pinned file")
-        if v["family"] == "wan" and v["clips"] > 1 and not all(s.get("prompt_2") for s in plan["shots"]):
+        if v["family"] != "ltx" and v["clips"] > 1 and not all(s.get("prompt_2") for s in shots_of(plan, v)):
             out.append(f"{v['id']}: a chained Wan shot needs prompt_2 on every shot")
-        if not 9.5 <= shot_seconds(v) <= 10.5:
-            out.append(f"{v['id']}: the shot is {shot_seconds(v):.2f} s, not 10 s")
+        if v["family"] == "hunyuan" and (v["clips"] != 1 or not v.get("pipeline")):
+            out.append(f"{v['id']}: a HunyuanVideo 1.5 variant makes one clip per shot with a named pipeline")
+        if not lo <= shot_seconds(v) <= hi:
+            out.append(f"{v['id']}: the shot is {shot_seconds(v):.2f} s, not "
+                       + ("10 s" if not plan.get("shot_seconds") else f"{lo:g}-{hi:g} s"))
         if v.get("gpu") not in USD_S:
             out.append(f"{v['id']}: unknown GPU {v.get('gpu')}")
         elif not (0 < v["estimate_usd"] <= v["cap_usd"]):
@@ -210,12 +260,13 @@ def token_ok(token, sha) -> bool:
 
 def preflight(plan, env=os.environ, line=None) -> None:
     """Free, local, before any call: the plan holds; each cap stays under the creator's per-run Modal line and the plan's total
-    under its ``tests_total_usd`` (``config/spend_caps.json`` ``modal_bakeoff``, the creator 2026-11-12 17:50 UTC)."""
+    under its ``tests_total_usd`` (``config/spend_caps.json``: the plan's ``spend_line``, default ``modal_bakeoff``, the creator
+    2026-11-12 17:50 UTC; ``modal_cheap_video``, the creator 2026-11-12 22:21 UTC)."""
     bad = plan_problems(plan)
     if line is None:
         try:
             from explainer_engine.core import spend_caps
-            line = spend_caps.modal_bakeoff()
+            line = spend_caps.modal_test_line(plan.get("spend_line", "modal_bakeoff"))
         except Exception as exc:  # noqa: BLE001 - no line = a zero budget
             bad.append(f"no Modal line in config/spend_caps.json ({type(exc).__name__}: {exc})")
     if line is not None:
@@ -373,18 +424,25 @@ def stamp_ok(w, vol_root="/w"):
 
 
 def stage_weights(plan, vol_root="/w", download=None):
-    """Every pinned file still missing on the Volume, at its pinned revision, then every sha256; a stamp per clean set."""
+    """Every pinned file still missing on the Volume, at its pinned revision, then every sha256; a stamp per clean set. A set
+    whose stamp already names this exact file set with every size is not hashed again (the stamp was written only after a
+    full sha256 check; re-hashing the 80 GB LTX set would bill ~10 CPU minutes for nothing)."""
     bad = []
     for w in plan["weights"].values():
-        root = weights_root(w, vol_root)
-        miss = [f for f in w["files"] if not (root / f).is_file()]
-        if miss:
-            (download or _hf_download)(w["repo"], w["revision"], miss, root)
-        b = check_weights(w, vol_root)
-        if not b:
-            stamp_path(w, vol_root).write_text(json.dumps({"files_hash": files_hash(w), "revision": w["revision"],
-                                                           "sizes": {f: (root / f).stat().st_size for f in w["files"]}}))
-        bad += b
+        if stamp_ok(w, vol_root):          # problems: stage the set (download what is missing, hash every file)
+            bad += _stage_set(w, vol_root, download)
+    return bad
+
+
+def _stage_set(w, vol_root, download):
+    root = weights_root(w, vol_root)
+    miss = [f for f in w["files"] if not (root / f).is_file()]
+    if miss:
+        (download or _hf_download)(w["repo"], w["revision"], miss, root)
+    bad = check_weights(w, vol_root)
+    if not bad:
+        stamp_path(w, vol_root).write_text(json.dumps({"files_hash": files_hash(w), "revision": w["revision"],
+                                                       "sizes": {f: (root / f).stat().st_size for f in w["files"]}}))
     return bad
 
 
@@ -482,12 +540,13 @@ def libs() -> dict:
     out = {"python": sys.version.split()[0]}
     for m in ("torch", "diffusers", "transformers", "accelerate", "peft", "huggingface_hub"):
         try:
-            out[m] = getattr(importlib.import_module(m), "__version__", "?")
+            out[m] = str(getattr(importlib.import_module(m), "__version__", "?"))   # plain str: torch's TorchVersion
+                                                                                   # cannot be read by a client without torch
         except Exception:  # noqa: BLE001
             out[m] = None
     try:
         import torch
-        out["cuda"], out["device"] = torch.version.cuda, torch.cuda.get_device_name(0)   # audit B3: the card that really ran
+        out["cuda"], out["device"] = str(torch.version.cuda), str(torch.cuda.get_device_name(0))   # audit B3: the card that really ran
     except Exception:  # noqa: BLE001
         pass
     return out
@@ -562,10 +621,11 @@ def make_wan(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, rows=
     phases["load_s"] = round(time.time() - t0, 1)
     settings = {k: x for k, x in v["settings"].items() if k != "source"}
     rows, last = ([] if rows is None else rows), None   # the caller's list: what was made survives a DeadlineHit
-    for shot in plan["shots"]:
-        t1, clips, row = time.time(), [], {"shot": shot["id"], "clips": []}
+    for job in jobs_of(plan, v):
+        shot, tag, width, height = job["shot"], job["tag"], job["width"], job["height"]
+        t1, clips, row = time.time(), [], {"shot": tag, "clips": [], "width": width, "height": height}
         rows.append(row)
-        start = fit_picture(Image.open(start_pictures[shot["id"]]), v["width"], v["height"])
+        start = fit_picture(Image.open(start_pictures[shot["id"]]), width, height)
         for c in range(v["clips"]):
             if not deadline.fits(last):
                 row["state"] = "PARTIAL"
@@ -577,29 +637,132 @@ def make_wan(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, rows=
                 beat_fn(out, stage="generate", variant=v["id"], shot=shot["id"], clip=_c + 1, step=int(i) + 1)
                 return cbk
             tc = time.time()
-            res = pipe(image=start, prompt=clip_prompt(shot, c), height=v["height"], width=v["width"], num_frames=v["frames"],
+            res = pipe(image=start, prompt=clip_prompt(shot, c), height=height, width=width, num_frames=v["frames"],
                        generator=torch.Generator("cuda").manual_seed(int(shot["seed"]) + c), callback_on_step_end=_step,
                        output_type="np", **settings)
             frames = res.frames[0]
             beat_fn(out, stage="export", variant=v["id"], shot=shot["id"], clip=c + 1)
-            cp = write_clip(frames, Path(out) / f"{shot['id']}.clip{c + 1}.mp4", v["fps"])
+            cp = write_clip(frames, Path(out) / f"{tag}.clip{c + 1}.mp4", v["fps"])
             last = time.time() - tc
             row["clips"].append({"clip": c + 1, "gen_s": round(last, 1), "frames": len(frames), "sha256": _sha(cp)})
             clips.append(frames)
             start = Image.fromarray((np.clip(frames[-v.get("chain_back", 5)], 0, 1) * 255).astype("uint8"))
         if clips:
             joined = join_clips(clips, v.get("chain_back", 5))
-            mp4 = write_clip(joined, Path(out) / f"{shot['id']}.mp4", v["fps"])
+            mp4 = write_clip(joined, Path(out) / f"{tag}.mp4", v["fps"])
             row.update(frames=len(joined), fps=v["fps"], sha256=_sha(mp4))
         row["gen_s"] = round(time.time() - t1, 1)
         row.setdefault("state", "DONE" if len(clips) == v["clips"] else "PARTIAL")
-        (Path(out) / f"{shot['id']}.measured.json").write_text(json.dumps(row))
+        (Path(out) / f"{tag}.measured.json").write_text(json.dumps(row))
         if row["state"] != "DONE":
             break
     return rows
 
 
-def ltx_cmd(plan, v, shot, picture, mp4):
+def guard_forward(module, deadline):
+    """The in-container deadline inside a pipeline that has no step callback (HunyuanVideo 1.5 in diffusers d8c1b13c): the
+    transformer's forward checks it first, so ``DeadlineHit`` comes between two denoising steps and the normal end path still
+    writes, copies and uploads (audit A1); never a killed process."""
+    orig = module.forward
+
+    def forward(*a, **kw):
+        deadline.check()
+        return orig(*a, **kw)
+    module.forward = forward
+    return module
+
+
+def make_hunyuan(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, rows=None, diffusers=None, torch=None,
+                 device="cuda"):
+    """One HunyuanVideo 1.5 image-to-video variant (diffusers ``HunyuanVideo15ImageToVideoPipeline``): loaded once from the
+    Volume onto the card (no offload), one clip per shot at the model's own bucket size for the picture (the start picture is
+    fitted to the variant's size first, so the pipeline's crop changes nothing), each clip written as it is made; a clip that
+    cannot finish in the time left is not started (PARTIAL). ``device`` is "cuda" on Modal; the CPU rehearsal passes "cpu"."""
+    if torch is None:
+        import torch
+    if diffusers is None:
+        import diffusers
+    from PIL import Image
+    t0 = time.time()
+    beat_fn(out, stage="load", variant=v["id"])
+    base = plan["weights"][v["weights"][0]]
+    pipe = getattr(diffusers, v["pipeline"]).from_pretrained(str(weights_root(base)), torch_dtype=torch.bfloat16)
+    if v.get("vae_tiling"):
+        pipe.vae.enable_tiling()
+    pipe = pipe.to(device)
+    guard_forward(pipe.transformer, deadline)
+    phases["load_s"] = round(time.time() - t0, 1)
+    settings = {k: x for k, x in v["settings"].items() if k != "source"}
+    rows, last = ([] if rows is None else rows), None
+    for job in jobs_of(plan, v):
+        shot, tag, width, height = job["shot"], job["tag"], job["width"], job["height"]
+        row = {"shot": tag, "fps": v["fps"]}
+        rows.append(row)
+        if not deadline.fits(last):
+            row.update(state="PARTIAL", why=f"would not finish: {deadline.left():.0f} s left, the last clip took {last:.0f} s")
+            break
+        start = fit_picture(Image.open(start_pictures[shot["id"]]), width, height)
+        beat_fn(out, stage="generate", variant=v["id"], shot=tag)
+        tc = time.time()
+        res = pipe(image=start, prompt=shot["prompt"], num_frames=v["frames"], output_type="np",
+                   generator=torch.Generator(device).manual_seed(int(shot["seed"])), **settings)
+        frames = res.frames[0]
+        beat_fn(out, stage="export", variant=v["id"], shot=tag)
+        mp4 = write_clip(frames, Path(out) / f"{tag}.mp4", v["fps"])
+        last = time.time() - tc
+        row.update(frames=len(frames), width=int(frames[0].shape[1]), height=int(frames[0].shape[0]), gen_s=round(last, 1),
+                   sha256=_sha(mp4), state="DONE")
+        if (row["width"], row["height"]) != (width, height):
+            row["note"] = f"the pipeline made {row['width']}x{row['height']}, not the plan's {width}x{height}"
+        (Path(out) / f"{tag}.measured.json").write_text(json.dumps(row))
+    return rows
+
+
+def hunyuan_small_check(plan, vol_root="/w", out_dir="/tmp") -> list:
+    """CPU rehearsal of the HunyuanVideo 1.5 load (no GPU): the classes the model index names import, and when the weights are
+    staged, the small parts (tokenizers, image processor, scheduler, guider) load from the Volume, the model's bucket for the
+    2752x1536 start pictures is the plan's size, and the clip writer writes."""
+    bad = []
+    try:
+        import diffusers
+        import transformers
+    except Exception as e:  # noqa: BLE001
+        return [f"import failed: {type(e).__name__}: {e}"]
+    for v in [x for x in plan["variants"] if x["family"] == "hunyuan"]:
+        if not hasattr(diffusers, v["pipeline"]):
+            bad.append(f"diffusers has no {v['pipeline']}")
+            continue
+        root = weights_root(plan["weights"][v["weights"][0]], vol_root)
+        if not (root / "model_index.json").is_file():
+            bad.append(f"{v['id']}: not staged yet (model_index.json missing): run ::stage, then ::check again")
+            continue
+        idx = json.loads((root / "model_index.json").read_text())
+        for name, spec in idx.items():
+            if isinstance(spec, list) and len(spec) == 2:
+                lib = diffusers if spec[0] == "diffusers" else transformers
+                if not hasattr(lib, spec[1]):
+                    bad.append(f"{v['id']}: {spec[0]} has no {spec[1]} (for {name})")
+        try:
+            for name in ("tokenizer", "tokenizer_2", "feature_extractor", "scheduler", "guider"):
+                lib, cls = idx[name]
+                getattr(diffusers if lib == "diffusers" else transformers, cls).from_pretrained(str(root / name))
+            from diffusers.pipelines.hunyuan_video1_5.image_processor import HunyuanVideo15ImageProcessor
+            target = json.loads((root / "transformer" / "config.json").read_text())["target_size"]
+            hh, ww = HunyuanVideo15ImageProcessor(vae_scale_factor=16).calculate_default_height_width(1536, 2752, target)
+            if [ww, hh] not in sizes_of(v):
+                bad.append(f"{v['id']}: the model's bucket for the pictures is {ww}x{hh}, not the plan's {sizes_of(v)}")
+            import numpy as np
+            c = write_clip(np.zeros((9, 64, 64, 3), np.float32), Path(out_dir) / "check.mp4", int(v["fps"]))
+            bad += [] if c.stat().st_size > 0 else ["the clip writer wrote nothing"]
+        except Exception as e:  # noqa: BLE001
+            bad.append(f"{v['id']}: small parts failed to load: {type(e).__name__}: {str(e)[:300]}")
+    return bad
+
+
+MAKERS = {"ltx": "make_ltx", "wan": "make_wan", "hunyuan": "make_hunyuan"}
+
+
+def ltx_cmd(plan, v, shot, picture, mp4, size=None):
     """The LTX-2 CLI of one shot (ltx_pipelines.distilled): split weights from the Volume, the start picture at frame 0, every
     other setting the CLI's own LTX-2.5 default."""
     w = plan["weights"]["ltx25"]
@@ -610,8 +773,9 @@ def ltx_cmd(plan, v, shot, picture, mp4):
            "--spatial-upsampler-path", f("spatial-upscaler")]
     if v["uses"].get("distilled_lora"):
         cmd += ["--distilled-lora", str(root / v["uses"]["distilled_lora"])]
-    prompt = shot["prompt"] + (" " + shot["audio_prompt"] if shot.get("audio_prompt") else "")
-    cmd += ["--image", str(picture), "0", "1.0", "--prompt", prompt, "--width", str(v["width"]), "--height", str(v["height"]),
+    prompt = ltx_prompt(shot)
+    w_, h_ = (size or (v["width"], v["height"]))
+    cmd += ["--image", str(picture), "0", "1.0", "--prompt", prompt, "--width", str(w_), "--height", str(h_),
             "--num-frames", str(v["frames"]), "--frame-rate", str(v["fps"]), "--seed", str(shot["seed"]), "--output-path", str(mp4)]
     return cmd
 
@@ -621,22 +785,23 @@ def make_ltx(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, sh=su
     """Each shot is one CLI process (it loads the weights itself), bounded by the time left (audit A1)."""
     from PIL import Image
     rows, last = ([] if rows is None else rows), None
-    for shot in plan["shots"]:
+    for job in jobs_of(plan, v):
+        shot, tag, w, h = job["shot"], job["tag"], job["width"], job["height"]
         if not deadline.fits(last):
-            rows.append({"shot": shot["id"], "state": "PARTIAL",
+            rows.append({"shot": tag, "state": "PARTIAL",
                          "why": f"would not finish: {deadline.left():.0f} s left, the last shot took {last:.0f} s"})
             break
         t1 = time.time()
-        beat_fn(out, stage="generate", variant=v["id"], shot=shot["id"])
+        beat_fn(out, stage="generate", variant=v["id"], shot=tag)
         Path(tmp).mkdir(parents=True, exist_ok=True)
-        pic = Path(tmp) / f"{shot['id']}_{v['width']}x{v['height']}.png"
-        fit_picture(Image.open(start_pictures[shot["id"]]), v["width"], v["height"]).save(pic)
-        mp4 = Path(out) / f"{shot['id']}.mp4"
-        row = {"shot": shot["id"], "fps": v["fps"], "frames": v["frames"]}
-        with open(Path(out) / f"{shot['id']}.log", "w") as log:
+        pic = Path(tmp) / f"{shot['id']}_{w}x{h}.png"
+        fit_picture(Image.open(start_pictures[shot["id"]]), w, h).save(pic)
+        mp4 = Path(out) / f"{tag}.mp4"
+        row = {"shot": tag, "fps": v["fps"], "frames": v["frames"], "width": w, "height": h}
+        with open(Path(out) / f"{tag}.log", "w") as log:
             try:
-                row["rc"] = sh(ltx_cmd(plan, v, shot, pic, mp4), stdout=log, stderr=subprocess.STDOUT, cwd="/workspace/LTX-2",
-                               timeout=max(1.0, deadline.left())).returncode
+                row["rc"] = sh(ltx_cmd(plan, v, shot, pic, mp4, size=(w, h)), stdout=log, stderr=subprocess.STDOUT,
+                               cwd="/workspace/LTX-2", timeout=max(1.0, deadline.left())).returncode
             except subprocess.TimeoutExpired:
                 row["rc"], row["why"] = None, "the in-container deadline came during this shot"
         last = time.time() - t1
@@ -646,7 +811,7 @@ def make_ltx(plan, v, out, start_pictures, deadline, phases, beat_fn=beat, sh=su
         else:
             row["state"] = "PARTIAL" if row["rc"] is None else "FAILED"
         rows.append(row)
-        (Path(out) / f"{shot['id']}.measured.json").write_text(json.dumps(row))
+        (Path(out) / f"{tag}.measured.json").write_text(json.dumps(row))
         if row["state"] != "DONE":
             break
     return rows
@@ -699,18 +864,18 @@ def body(plan, vid, rid, nonce, timeout_s, commit=lambda: None, reload=lambda: N
     try:
         t = time.time()
         beat(out, stage="verify", variant=vid)
-        pics = {s["id"]: _picture(plan, s) for s in plan["shots"]}       # the cheapest thing that can fail goes first
+        pics = {s["id"]: _picture(plan, s) for s in shots_of(plan, v)}   # the cheapest thing that can fail goes first
         bad = [b for w in v["weights"] for b in stamp_ok(plan["weights"][w])]
         if bad:
             raise SystemExit("weights not staged: " + "; ".join(bad[:5]))
         phases["verify_s"] = round(time.time() - t, 1)
-        (make_ltx if v["family"] == "ltx" else make_wan)(plan, v, out, pics, deadline, phases, rows=rows)
+        globals()[MAKERS[v["family"]]](plan, v, out, pics, deadline, phases, rows=rows)
     except BaseException as e:  # noqa: BLE001 - recorded, then the run ends through the normal path
         err = f"{type(e).__name__}: {str(e)[:400]}"
         (out / "traceback.txt").write_text(traceback.format_exc())
     m = {"variant": vid, "run_id": rid, "shots": rows, "error": err, "phases": phases, "gpu": v["gpu"], "usd_per_h": rate_of(v),
          "worker_sha": worker_sha(), "plan_sha": plan_sha(), "libs": libs(), "body_s": round(time.time() - t_in, 1)}
-    m["state"] = run_state(rows, len(plan["shots"]), {}, err)
+    m["state"] = run_state(rows, len(jobs_of(plan, v)), {}, err)
     (out / "measured.json").write_text(json.dumps(m, indent=1))
     beat(out, stage="upload", variant=vid)
     wall_left = lambda: deadline.left() + MARGIN_S - 20.0  # noqa: E731 - seconds before Modal's own timeout, with room
@@ -734,7 +899,7 @@ def body(plan, vid, rid, nonce, timeout_s, commit=lambda: None, reload=lambda: N
     except Exception as e:  # noqa: BLE001
         verified = {"_": f"upload failed: {type(e).__name__}"}
     phases["upload_s"] = round(time.time() - t, 1)
-    m["state"], m["verified"] = run_state(rows, len(plan["shots"]), verified, err), verified
+    m["state"], m["verified"] = run_state(rows, len(jobs_of(plan, v)), verified, err), verified
     (out / "verified.json").write_text(json.dumps({"state": m["state"], "files": verified}, indent=1))
     to_volume()
     if api is not None:
@@ -753,20 +918,27 @@ if modal is not None:
     vol = modal.Volume.from_name(PLAN["volume"], version=2)
     secrets = [modal.Secret.from_name(SECRET_NAME)]
     pins = " ".join(f'"{k}=={x}"' for k, x in PIP.items())
+    plan_env = {"EE_BAKEOFF_PLAN": PLAN_PATH.name}       # the container reads the same plan file (plan_path)
     wan_image = (modal.Image.from_registry(BASE_IMAGE, add_python="3.12").apt_install("ffmpeg")
                  .run_commands(f'pip install -q "{DIFFUSERS}" {pins} ftfy "imageio[ffmpeg]"')
-                 .add_local_file(str(PLAN_PATH), "/root/plan_v43.json"))
+                 .env(plan_env).add_local_file(str(PLAN_PATH), f"/root/{PLAN_PATH.name}"))
     ltx_image = (modal.Image.from_registry(BASE_IMAGE, add_python="3.12").apt_install("ffmpeg", "git")
                  .run_commands(f'pip install -q "huggingface_hub=={PIP["huggingface_hub"]}"',
                                f"git clone -q {LTX2[0]} /workspace/LTX-2 && git -C /workspace/LTX-2 checkout -q {LTX2[1]} && "
                                "pip install -q -e /workspace/LTX-2/packages/ltx-core -e /workspace/LTX-2/packages/ltx-pipelines")
-                 .add_local_file(str(PLAN_PATH), "/root/plan_v43.json"))
+                 .env(plan_env).add_local_file(str(PLAN_PATH), f"/root/{PLAN_PATH.name}"))
     common = dict(retries=0, volumes={"/w": vol}, secrets=secrets, scaledown_window=2)
 
     def _gpu_kw(v):
-        """Audit A5c: the CPU and memory limits equal the requests; audit B3: ``H100!`` so Modal cannot swap the card."""
+        """Audit A5c: the CPU and memory limits equal the requests; audit B3: ``H100!`` so Modal cannot swap the card. Given to
+        the family's function at call time (``with_options``), so every variant keeps its own cap-derived timeout."""
         return dict(gpu=v["gpu"] + "!", cpu=(float(v["cpu"]), float(v["cpu"])),
-                    memory=(v["memory_gib"] * 1024, v["memory_gib"] * 1024), timeout=timeout_of(PLAN, v), **common)
+                    memory=(v["memory_gib"] * 1024, v["memory_gib"] * 1024), timeout=timeout_of(PLAN, v))
+
+    # the static size of each family's function: the plan's SMALLEST timeout, so a call that somehow lost its options still
+    # ends under every variant's cap
+    _NOMINAL = dict(gpu="H100!", cpu=(8.0, 8.0), memory=(96 * 1024, 96 * 1024),
+                    timeout=min([timeout_of(PLAN, v) for v in PLAN["variants"]] or [300]), **common)
 
     def _gpu_body(vid, rid, token, nonce):
         if not token_ok(token, go_sha()):
@@ -799,6 +971,14 @@ if modal is not None:
             bad.append(f"clip writer / scheduler check failed: {type(e).__name__}: {str(e)[:200]}")
         return bad
 
+    @app.function(image=wan_image, cpu=(2.0, 2.0), memory=(8192, 8192), timeout=600, retries=0, secrets=secrets,
+                  volumes={"/w": vol})
+    def hunyuan_env(token: str):
+        """``hunyuan_small_check`` on the real image with the Volume (CPU)."""
+        if not token_ok(token, go_sha()):
+            return ["REFUSED_NO_TOKEN"]
+        return hunyuan_small_check(PLAN)
+
     @app.function(image=ltx_image, cpu=(2.0, 2.0), memory=(4096, 4096), timeout=300, retries=0, secrets=secrets)
     def ltx_env(token: str):
         if not token_ok(token, go_sha()):
@@ -817,20 +997,19 @@ if modal is not None:
 
     _V = {v["id"]: v for v in PLAN["variants"]}
 
-    @app.function(image=ltx_image, **_gpu_kw(_V["ltx_distilled"]))
-    def run_ltx_distilled(rid: str, token: str, nonce: str):
-        return _gpu_body("ltx_distilled", rid, token, nonce)
+    @app.function(image=ltx_image, **_NOMINAL)
+    def run_ltx(vid: str, rid: str, token: str, nonce: str):
+        return _gpu_body(vid, rid, token, nonce)
 
-    @app.function(image=wan_image, **_gpu_kw(_V["wan_a14b_lightning"]))
-    def run_wan_a14b_lightning(rid: str, token: str, nonce: str):
-        return _gpu_body("wan_a14b_lightning", rid, token, nonce)
+    @app.function(image=wan_image, **_NOMINAL)
+    def run_wan(vid: str, rid: str, token: str, nonce: str):
+        return _gpu_body(vid, rid, token, nonce)
 
-    @app.function(image=wan_image, **_gpu_kw(_V["wan_ti2v_5b"]))
-    def run_wan_ti2v_5b(rid: str, token: str, nonce: str):
-        return _gpu_body("wan_ti2v_5b", rid, token, nonce)
+    @app.function(image=wan_image, **_NOMINAL)
+    def run_hunyuan(vid: str, rid: str, token: str, nonce: str):
+        return _gpu_body(vid, rid, token, nonce)
 
-    GPU_FNS = {"ltx_distilled": run_ltx_distilled, "wan_a14b_lightning": run_wan_a14b_lightning,
-               "wan_ti2v_5b": run_wan_ti2v_5b}
+    GPU_FNS = {"ltx": run_ltx, "wan": run_wan, "hunyuan": run_hunyuan}
 
     def _gate():
         preflight(PLAN)
@@ -842,8 +1021,15 @@ if modal is not None:
     def check():
         card, sha = _gate()
         tok = token_for(card, sha)
-        print("wan image", wan_env.remote(tok) or "imports ok")
-        print("ltx image", ltx_env.remote(tok) or "imports ok")
+        fams = {v["family"] for v in PLAN["variants"]}
+        bad = []
+        for fam, fn in (("wan", wan_env), ("ltx", ltx_env), ("hunyuan", hunyuan_env)):
+            if fam in fams:     # ``with_options`` proven here on the CPU before any GPU call relies on it
+                got = fn.with_options(timeout=600 if fam == "hunyuan" else 300).remote(tok)
+                print(fam, "image", got or "ok", flush=True)
+                bad += got
+        if bad:
+            raise SystemExit(4)
 
     @app.local_entrypoint()
     def stage():
@@ -875,7 +1061,7 @@ if modal is not None:
         print("GO card", card, "run id", rid, "timeout", timeout_of(PLAN, v), "s, cap $", v["cap_usd"], "reserved", item, flush=True)
         t0 = time.time()
         try:
-            res = GPU_FNS[variant].remote(rid, token_for(card, sha), nonce)
+            res = GPU_FNS[v["family"]].with_options(**_gpu_kw(v)).remote(variant, rid, token_for(card, sha), nonce)
         except BaseException as e:  # noqa: BLE001 - a lost answer: the reservation stays, nothing is retried
             led.fail(item, f"{type(e).__name__}: {str(e)[:200]}")
             print(FAILED, "no answer; the cap stays reserved until the Modal bill is read", flush=True)

@@ -106,6 +106,47 @@ disk; a resumed job is a new pod that reads its checkpoint from HF). `check` pri
 `keep_stopped_pods` ids RunPod no longer knows (removing them is the creator's edit of `config/spend_caps.json`), and reports billing that
 no pod and no volume explains (`currentSpendPerHr`).
 
+## CH-01..CH-06: the cheapest known combination of every paid run (D-133)
+
+The creator, 2026-11-13 07:00 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g`): LTX stays the generator, and the
+rules that pick the cheapest combination of every paid run are mandatory, like a PreToolUse hook. Code: `cloud/cheapest.py`.
+The measured basis is `cloud/cheapest.json`: the cheaper-video test of 2026-11-12 and the battle run.
+
+Three lines check the rules (hardened 2026-11-13 07:25 UTC after the creator asked for the weak points, msg
+`cmsg_01Hnu5zB86sjUj5GtTgaUkPWDSaxGVbkbSGcfef2Lga1kM`):
+- the PreToolUse Bash hook (`cloud/hooks.pre_bash`: `modal_refusal`, `cheapest.picture_refusal`, `worker_api_refusal`) refuses
+  the command. It also refuses a paid worker driven from Python (`.remote()`, `app.run()`, a subprocess, a heredoc fed to python)
+  and a quoted `"modal" run`, which it cannot read. A money check that raises refuses a paid-looking command (fail closed); other
+  commands still pass;
+- the worker's own entrypoints refuse again: `modal_ltx_jobs.preflight` and `::main` for LTX, `modal_wan_jobs.cheapest_gate`
+  (CH-06) for Wan's `stage`, `smoke` and `main`;
+- inside the paid container, before any model loads, `modal_ltx_jobs.container_gate` checks CH-01, CH-02 and CH-04 against the
+  launch file baked into the image. This catches a `.remote()` from code that skipped the first two lines.
+
+The creator can waive one rule for one run with his own message. The message must also be recorded for that rule:
+`python -m explainer_engine.governance ok cheapest_waive CH-xx <his cmsg id> "<his words>"`, then
+`EE_CHEAPEST_WAIVE=<his cmsg id>:CH-xx[,CH-yy]`. A rule named without a matching record younger than `WAIVE_MINUTES` (60) is not
+waived. So an invented id, or a waiver left in the environment from an earlier run, waives nothing.
+
+The bake-off measures alternatives and has its own line, so it is not checked. RP-11 still costs a RunPod pod's stage graph
+(D-117).
+
+`cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` are protected files (`config/model_routing.json`
+`protected_files`; the creator chose "კი, დაიცავი", 2026-11-13 07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`).
+An Edit, a Write or a shell writer is refused unless his word is recorded (`governance ok protected_config <file> ...`).
+
+One limit remains: a Python file run from disk that calls a worker's `.remote()` is not read by the hook. The container gate is the line there,
+  and CH-03 is checked only by the hook and `::main`.
+
+| ID | Rule | Where | Test |
+|---|---|---|---|
+| CH-01 | **One model load per container.** The LTX launch runs `runner: inproc`: one pipeline, every prompt encoded in one Gemma load, the 22B transformer built once and held for every clip. The CLI runner reloaded Gemma and built the transformer twice for every clip: ~82 s a clip, of which ~17 s is denoising. | `cheapest.launch_problems`, `modal_ltx_jobs.LtxSession` | `test_cheapest.py`, `test_ltx_inproc.py` |
+| CH-02 | **Clips at the native size only.** Every LTX clip is made at 1280x704@24 (`native.use`); 2K is the free CPU upscale (`finish/upscale.py`), never a generation. A smaller size saved only 14-27 % ($0.0099 and $0.0084 against $0.0115 a second) and looked softer at 2K. | `cheapest.launch_problems`, `spec_problems` | `test_cheapest.py` |
+| CH-03 | **One container per scene.** A `::main` launch is one committed scene file (`training/pods/ltx/scenes/`, made by `scene_run job`) with all its shots in the spec's chain. A launch per clip pays the start-up and the model load again. | `cheapest.spec_problems` | `test_cheapest.py` |
+| CH-04 | **Nothing stays warm.** `scaledown_window_s` is at most 5 s; no minimum or buffer containers (cloud-platforms section 5). | `cheapest.launch_problems` | `test_cheapest.py` |
+| CH-05 | **Paid pictures on the batch tier only.** The free Gemini chat picture tool comes first (D-131 turn packs). A paid picture batch goes through the Gemini API batch tier (half price; nano-banana-2.1 at 2K, $0.025 a picture). | `cheapest.picture_refusal` | `test_cheapest.py` |
+| CH-06 | **The generator is the self-hosted LTX-2.5 distilled** (D-132). It measured $0.0115 a generated second with sound, below Wan A14B ($0.022, no sound), HunyuanVideo 1.5 ($0.030, no sound, a licence that excludes the EU, UK and South Korea) and every API list price checked (Vidu Q3 Turbo off-peak $0.02-0.03, Grok Imagine 1.5 Lite $0.02, MiniMax H3 Turbo $0.025-0.04, Veo 3.1 Lite $0.05, the LTX API ~$0.09). A paid rung of the Wan worker is refused. | `cheapest.generator_refusal` | `test_cloud_hooks_modal.py` |
+
 ## Not in P1a
 
 The live smoke (P12a: proves the in-pod key, each stop path separately, download speed), dryrun and pins (P1b), ledger,

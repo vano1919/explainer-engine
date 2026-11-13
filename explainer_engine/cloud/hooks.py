@@ -74,14 +74,17 @@ BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the crea
 BAKEOFF_ENTRIES = ("check", "stage", "run")
 
 
-def bakeoff_go_sha(root=None) -> str:
-    """``modal_bakeoff.go_sha()`` read from the files on disk (the plan's and the worker's bytes; Fable audit A4)."""
+def bakeoff_go_sha(root=None, plan_name=None) -> str:
+    """``modal_bakeoff.go_sha()`` read from the files on disk (the plan's and the worker's bytes; Fable audit A4). The plan is
+    the one ``EE_BAKEOFF_PLAN`` names (its file name only, in the bake-off folder; default ``plan_v43.json``), as in
+    ``modal_bakeoff.plan_path``."""
     import hashlib
     from pathlib import Path
     root = Path(root) if root else Path(__file__).resolve().parents[2]
     w = root / BAKEOFF
     h = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
-    return hashlib.sha256((h(w.with_name("plan_v43.json")) + h(w)).encode()).hexdigest()
+    plan = w.with_name(Path(str(plan_name or "plan_v43.json")).name)
+    return hashlib.sha256((h(plan) + h(w)).encode()).hexdigest()
 FREE_ENTRIES = {WAN_WORKER: ("check", "weights"), LTX_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
 
 
@@ -137,8 +140,9 @@ def modal_refusal(cmd: str, env=None) -> str | None:
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return ("the bake-off bills Modal on every entrypoint (its CPU check and stage-in too): "
                         "EE_MODAL_GO=<the creator's card id>:<go sha[:12]> first (OR-23)")
+            pn = re.search(r"\bEE_BAKEOFF_PLAN=['\"]?(\S+?)['\"]?(?:\s|$)", cmd)
             try:
-                want = bakeoff_go_sha()[:12]
+                want = bakeoff_go_sha(plan_name=pn.group(1) if pn else env.get("EE_BAKEOFF_PLAN"))[:12]
             except OSError:
                 want = None
             if go.split(":", 1)[1] != want:
@@ -148,9 +152,40 @@ def modal_refusal(cmd: str, env=None) -> str | None:
             if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
                 return (f"the {'Wan' if path == WAN_WORKER else 'LTX'} worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "
                         "(OR-23, final audit B10)")
+            from explainer_engine.cloud import cheapest      # D-133: the cheapest known combination, every paid run
+            why = (cheapest.generator_refusal(path, entry, cmd, env) if path == WAN_WORKER
+                   else cheapest.ltx_refusal(entry, cmd, env))
+            if why:
+                return why
         elif not go.startswith("cmsg_"):
             return f"`modal run {target}` is paid: EE_MODAL_GO=<the creator's card id> first (OR-23)"
     return None
+
+
+WORKER_NAME = re.compile(r"\b(?:modal_ltx_jobs|modal_wan_jobs|modal_bakeoff)\b")
+WORKER_API = re.compile(r"\.(?:remote|spawn|map|starmap|remote_gen|for_each)\s*\(|\bapp\.run\s*\(|\bwith_options\s*\(|\bsubprocess\.\w+\s*\("
+                        r"|\bos\.(?:system|exec\w*|spawn\w*|popen)\b|\bPopen\b|\brunpy\b")
+INTERPRETER = re.compile(r"\bpython[\d.]*(?:\.exe)?\b|\buv\s+run\b|\bnode\b|\bipython\b")
+QUOTED_MODAL = re.compile(r"""['"]modal(?:\.exe)?['"]\s*(?:,\s*['"]|\s+)(?:run|deploy|serve|shell|launch)\b""")
+
+
+def worker_api_refusal(cmd: str) -> str | None:
+    """D-133 / A7, the forms ``MODAL_CMD`` cannot read: a paid worker driven from Python (``ltx_main.remote(...)`` inside
+    ``app.run()``, ``subprocess.run(["modal", "run", ...])``, a heredoc fed to python) or a quoted binary (``"modal" run``).
+    They skip the hook's GO and cheapest-run checks, and a direct ``.remote()`` skips the worker's local entrypoints too."""
+    if QUOTED_MODAL.search(cmd) and INTERPRETER.search(cmd) or re.search(r"""(?:^|[\s;&|(])['"]modal(?:\.exe)?['"]\s+run\b""", cmd):
+        return ("a quoted `modal` or `modal` driven from a program is not read by this hook: launch a worker only as a plain "
+                "`modal run explainer_engine/...::<entry>` command, so its GO and the cheapest-run rules are checked (D-133)")
+    if WORKER_NAME.search(cmd) and WORKER_API.search(cmd) and INTERPRETER.search(cmd):
+        return ("a paid Modal worker driven from Python (`.remote()`, `app.run()`, a subprocess) skips its local entrypoints, "
+                "where the GO, the ladder and the cheapest-run rules are checked: use `modal run <worker>::<entry>` (D-133, A7)")
+    return None
+
+
+def paid_looking(cmd: str) -> bool:
+    """A command the money checks must look at: a Modal launch, a paid worker named or a paid picture batch."""
+    return bool(MODAL_CMD.search(cmd) or WORKER_NAME.search(cmd) or QUOTED_MODAL.search(cmd)
+                or re.search(r"\bscene_pictures\s+submit\b", cmd))       # no import here: it runs when an import broke
 
 
 def _modal_live(runner=None):
@@ -285,9 +320,19 @@ def pre_bash(event: dict) -> int:
         print("refused (D-56): pods start only through `python -m explainer_engine.cloud.runpod create|start`, which checks "
               "config/spend_caps.json, the ledger and the account and starts the guard.", file=sys.stderr)
         return 2
-    why = modal_refusal(cmd)
+    try:
+        why = modal_refusal(cmd)
+        if why:
+            print(f"refused (D-56, A7): {why}; nothing was started.", file=sys.stderr)
+            return 2
+        from explainer_engine.cloud import cheapest
+        why = cheapest.picture_refusal(cmd) or worker_api_refusal(cmd)
+    except Exception as e:  # noqa: BLE001 - D-133: a money check that breaks refuses a paid command, never lets it through
+        if not paid_looking(cmd):
+            return 0
+        why = f"the money check itself failed ({type(e).__name__}: {e}), so this paid command cannot be checked"
     if why:
-        print(f"refused (D-56, A7): {why}; nothing was started.", file=sys.stderr)
+        print(f"refused (D-133): {why}; nothing was started.", file=sys.stderr)
         return 2
     return 0
 

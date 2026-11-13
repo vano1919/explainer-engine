@@ -6,6 +6,7 @@ check the quote, they stop an unprompted change (design section 7)."""
 from __future__ import annotations
 
 import json
+import re
 import time
 from pathlib import Path
 
@@ -13,7 +14,8 @@ from explainer_engine.governance import root_dir
 
 FILE = Path("jobs") / "creator_ok.jsonl"
 ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice",
-           "generator_admit")   # target = "<generator>:<kind>": the word behind an entry of assets/audio/generator_admission.json (BP-162)
+           "generator_admit",   # target = "<generator>:<kind>": the word behind an entry of assets/audio/generator_admission.json (BP-162)
+           "cheapest_waive")    # target = one rule "CH-xx": his word breaks that cheapest-run rule for one run (D-133)
 
 
 def _now() -> float:
@@ -27,6 +29,8 @@ def add(action: str, target: str, message_id: str, quote: str, *, by: str = "cre
         raise ValueError("a recorded word needs the creator's message id and a quote")
     if action == "protected_config" and target == "*":
         raise ValueError("protected_config names one file; a wildcard would unlock the money caps too")
+    if action == "cheapest_waive" and not re.fullmatch(r"CH-\d\d", target):
+        raise ValueError("cheapest_waive names one rule CH-xx; a wildcard would waive every cheapest-run rule")
     if action == "generator_admit" and "*" in target:
         raise ValueError("generator_admit names one <generator>:<kind>; a wildcard can never match an admission")
     row = {"action": action, "target": target, "message_id": message_id, "by": by, "quote": quote[:300],

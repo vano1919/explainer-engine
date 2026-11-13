@@ -248,6 +248,15 @@ def read_job(path: str, launch: dict | None = None) -> dict:
     return dict(job, start_bytes=pic)
 
 
+def cheapest_gate(entry: str, env=None):
+    """D-133 CH-06 inside the worker too (a launch the Bash hook could not read still stops here): the video generator is LTX;
+    a paid Wan rung needs the creator's recorded waiver."""
+    from explainer_engine.cloud import cheapest
+    why = cheapest.generator_refusal("explainer_engine/training/pods/wan/modal_wan_jobs.py", entry, env=env)
+    if why:
+        raise SystemExit("paid preflight FAILED, nothing was started:\n" + why)
+
+
 def preflight(launch: dict, job: dict | None = None):
     """Free check before any paid call (the creator 2026-11-07 22:23 UTC): every pin and cap set; the shot has a motion prompt,
     seconds, a seed and a sha-pinned start picture; an end picture only where the launch names the pipeline's argument."""
@@ -541,6 +550,7 @@ if modal is not None:
     def stage(plan: str = ""):
         """Between L1 and L2 (final audit A6): a paid CPU step under the creator's GO; L2 then proves the files."""
         preflight(LAUNCH)
+        cheapest_gate("stage")
         print("GO card", go_gate(plan_sha=_sha(plan)), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
         ladder_gate("L2")
         bad = weights_stage.remote(LAUNCH)
@@ -559,6 +569,7 @@ if modal is not None:
     @app.local_entrypoint()
     def smoke(picture: str = "", plan: str = ""):
         preflight(LAUNCH)
+        cheapest_gate("smoke")
         plan_sha = _sha(plan)
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
@@ -576,6 +587,7 @@ if modal is not None:
     def main(job: str = ""):
         spec = read_job(job)
         preflight(LAUNCH, spec)
+        cheapest_gate("main")
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
         res = wan_main.remote(dict(spec, worker_sha=worker_sha()), LAUNCH)
