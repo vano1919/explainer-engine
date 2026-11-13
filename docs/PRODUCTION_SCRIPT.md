@@ -28,6 +28,12 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 * Scene continuity (D-69): segment `staging` (location, time, layout, fixed, roster, positions, master, scene_id, continues) and picture `framing`/`visible`/`partial`/`change`/`cut_away`; `look.continuity`. See the CS rules below.
 * Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (a reference edit, painted by the provider the creator picks for the batch, D-50), `pod_text` (no longer made, D-52), `canva` (filler made by hand, D-53).
 * Rulebook-era fields (D-51, D-52): `episode.rulebook`; segment `job`, `feel`, `rules`; shot `purpose`, `cut.why`; picture `tier`, `tier_reason`; bed and sound `purpose`, `yields_to`. Times are still never written by hand: anchors are phrases, durations come from the read.
+* **The v4.3 episode script** (`ProductionScriptV4`, D-131; this page's PV rules describe the D-43 `/1..3` shape): top-level
+  `shots` and `audio_lines`; the video lane's `edit_plan` (D-137), the AV contract's `av_contract`, `event_id`, `audio` and
+  anchors (D-135), the sound fields `sound_events` (`class`, `at_word`), `intentional_silence`, `sound_design`, segment `mood`
+  / `music`, a character's `voice_description` and a place's `ambience_bed` (Fable audit 2026-11-13). Who writes which field:
+  [STORY_ENGINE](STORY_ENGINE.md) "The v4.3 episode script: who owns the new fields"; the rules: VL-01..VL-13
+  ([VIDEO_LANE](VIDEO_LANE.md)), AV-01..AV-08 and SP-01..SP-07 ([EPISODE_FIRST](EPISODE_FIRST.md)).
 
 ## Flow (one command line: `python -m explainer_engine.production ...`)
 

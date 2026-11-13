@@ -1,0 +1,492 @@
+{
+  "schema": "episode_quarantine_log/1",
+  "episode_id": "ep_toba",
+  "quarantined_count": 97,
+  "quarantined_items": [
+    {
+      "asset_id": "REF_01_Battlefield_Chiaroscuro_Anchor.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Cross-episode contamination blocked: asset 'REF_01_Battlefield_Chiaroscuro_Anchor.jpg' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "REF_02_Interior_Character_Chiaroscuro_Anchor.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Cross-episode contamination blocked: asset 'REF_02_Interior_Character_Chiaroscuro_Anchor.jpg' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Cross-episode contamination blocked: asset 'REF_03_Dynamic_Action_Chiaroscuro_Anchor.jpg' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "watermarked_img_10488066985452487441.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_10561131188481629680.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_10620224911943238966.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_10752990763734445834.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_10769193954744468268.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_10850471096406468761.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_10963120367756674279.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_11137933768711772074.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_1176979652070095869.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_12922648913083526429.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_13423192386510947294.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_13803660105381807409.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_13831441114158226572.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_1405257841721217578.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_14299351420015539521.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_14847631962775570543.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_14856289306992211595.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_14980769473197670329.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_15205250144656691901.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_15617024616999080698.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_1562859430796621975.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_16875159108003587427.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_17348331002816338320.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_17643821904276384439.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_1997411396591944352.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_2038561570256493954.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_2398037665092758457.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_3355066311249586928.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_3978058839961132601.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_4140238387365244350.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_4574090687100448572.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_4585746363296501511.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_470344958726419655.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_5114744969314648818.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_5801762980598795892.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_5918726142469653884.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_5981281230305264007.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_6030185790470816085.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_6070562873815415599.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_6659264870201354315.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_7124569891705378183.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_7993676486044345181.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_8207694812122980321.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_9086900913648359535.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_9388506228068301232.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_9459793310154408911.jpg",
+      "intended_episode": "ep_waterloo",
+      "quarantine_reason": "Belongs to c_9d1450721e0bfb86 (1815 Waterloo / 1946 Fortress Sterling); isolated into episodes/ep_waterloo/."
+    },
+    {
+      "asset_id": "watermarked_img_11285004708937322816.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_12441085469091428361.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_12996661152392660058.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13100736595337195013.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_133526666421727049.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_14047465038685859726.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_14339652598516816980.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_14467283540855972967.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_17466201364064867420.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_17622839722592206662.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_18017930610279845015.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_5782561942772605036.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_7350492820937790038.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_753131523131072756.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_8293165501675529015.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_8966212837443601003.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_10659580918531904257.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_11624915804165541553.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_12436364399604842092.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13289319772189799266.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13317765991215866362.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13824168767475173107.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_1512655111688716169.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_2688599705973166309.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_2842434270919375091.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_3110202198595100033.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_3620903977462148939.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_4348486910973260402.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_4558690444887154390.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_5993970189244496672.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_8190376844462769079.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_9635582910708778375.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_10659580918531904257.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_11624915804165541553.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_12436364399604842092.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13289319772189799266.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13317765991215866362.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_13824168767475173107.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_1512655111688716169.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_2688599705973166309.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_2842434270919375091.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_3110202198595100033.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_3620903977462148939.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_4348486910973260402.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_4558690444887154390.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_5993970189244496672.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_8190376844462769079.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    },
+    {
+      "asset_id": "watermarked_img_9635582910708778375.jpg",
+      "intended_episode": "_quarantine_non_episode_assets/oct29_podcast_studio",
+      "quarantine_reason": "Oct 29 AI historical podcast studio image unrelated to Toba or Waterloo."
+    }
+  ]
+}

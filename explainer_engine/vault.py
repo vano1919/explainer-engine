@@ -1,5 +1,6 @@
+
 """The vault: nothing we made is lost, and every copy is the creator's (D-73, docs/VAULT.md). stdlib only, so it runs on a pod,
-in a cloud session and on the creator's PC alike.
+in a cloud session and on the creator's PC alike. Also provides safe .env key readers and local-only URL guards (D-123).
 
     python -m explainer_engine.vault snapshot [--out docs/VAULT_MANIFEST.json]      # list the primary copy with hashes
     python -m explainer_engine.vault verify [--manifest M]                           # every manifest file still there, same hash
@@ -25,12 +26,28 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from typing import Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "vault.json"
+LOCAL_MODELS_CONFIG = ROOT / "config" / "local_models.json"
 HUB = "https://huggingface.co"
 CHUNK = 1 << 20
 SELF = "vault/VAULT_MANIFEST"  # the manifest copies on the primary are rewritten by every snapshot: never listed in one
+
+ENV_KEYS: tuple[str, ...] = (
+    "EXPLAINER_LOCAL_ONLY",
+    "COMFY_SERVER_ADDRESS",
+    "COMFYUI_API_ENDPOINT",
+    "COMFYUI_MODELS_DIR",
+    "HF_TOKEN",
+    "HUGGING_FACE_HUB_TOKEN",
+    "EXPLAINER_ENGINE_ENV",
+    "SPEND_LIMIT_USD",
+    "PAID_PREFLIGHT_STRICT",
+    "COMFY_API_KEY",
+)
+_LOCAL_HOSTS = frozenset({"127.0.0.1", "localhost"})
 
 
 class VaultError(RuntimeError):
@@ -39,6 +56,95 @@ class VaultError(RuntimeError):
 
 def config(path=CONFIG):
     return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def local_models_config(path: Path | str = LOCAL_MODELS_CONFIG) -> dict:
+    """Load the local ComfyUI model, adapter, workflow, and licence registry (config/local_models.json)."""
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def load_dotenv_keys(dotenv_path: Path | str | None = None, *, env: Mapping[str, str] | None = None) -> dict[str, bool]:
+    """Inspect environment / .env variable names safely without exposing, returning, or logging secret values.
+
+    Returns a dictionary mapping each recognized variable name in ``ENV_KEYS`` to a boolean indicating whether a
+    non-empty value is present in the environment or ``.env`` file.
+    """
+    source_env = os.environ if env is None else env
+    file_keys: set[str] = set()
+    candidate = Path(dotenv_path) if dotenv_path is not None else (ROOT / ".env")
+    if candidate.exists() and candidate.is_file():
+        for raw_line in candidate.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, _, v = line.partition("=")
+            key = k.removeprefix("export ").strip()
+            val = v.strip().strip("'").strip('"')
+            if key and val:
+                file_keys.add(key)
+    return {key: bool(source_env.get(key)) or (key in file_keys) for key in ENV_KEYS}
+
+
+def is_local_only(env: Mapping[str, str] | None = None) -> bool:
+    """Return True when local-only execution is enforced (default EXPLAINER_LOCAL_ONLY='1')."""
+    source_env = os.environ if env is None else env
+    raw = str(source_env.get("EXPLAINER_LOCAL_ONLY", "1")).strip().lower()
+    return raw not in ("0", "false", "no", "off")
+
+
+def get_explainer_env(env: Mapping[str, str] | None = None) -> str:
+    """Return the active execution profile (default 'local_default')."""
+    source_env = os.environ if env is None else env
+    val = str(source_env.get("EXPLAINER_ENGINE_ENV", "local_default")).strip()
+    return val or "local_default"
+
+
+def is_localhost_url(url: str) -> bool:
+    """Return True if and only if ``url`` is an http/https URL targeting 127.0.0.1 or localhost."""
+    try:
+        parsed = urllib.parse.urlparse(url)
+    except ValueError:
+        return False
+    if parsed.scheme not in ("http", "https"):
+        return False
+    return (parsed.hostname or "").lower() in _LOCAL_HOSTS
+
+
+def assert_local_url(url: str, *, env: Mapping[str, str] | None = None) -> str:
+    """Verify that ``url`` targets localhost/127.0.0.1 when ``is_local_only(env)`` is True."""
+    cleaned = str(url).strip().rstrip("/")
+    if is_local_only(env) and not is_localhost_url(cleaned):
+        raise VaultError(
+            f"EXPLAINER_LOCAL_ONLY=1 blocks non-localhost endpoint {cleaned!r}; "
+            "only http://127.0.0.1 or http://localhost is permitted by default (D-123)."
+        )
+    return cleaned
+
+
+def get_comfyui_server_address(env: Mapping[str, str] | None = None) -> str:
+    """Return the local ComfyUI host:port address (default '127.0.0.1:8188')."""
+    source_env = os.environ if env is None else env
+    addr = str(source_env.get("COMFY_SERVER_ADDRESS", "127.0.0.1:8188")).strip()
+    return addr or "127.0.0.1:8188"
+
+
+def get_comfyui_url(env: Mapping[str, str] | None = None) -> str:
+    """Return the validated local ComfyUI base URL (default 'http://127.0.0.1:8188')."""
+    source_env = os.environ if env is None else env
+    explicit = str(source_env.get("COMFYUI_API_ENDPOINT", "")).strip()
+    if explicit:
+        url = explicit
+    else:
+        addr = get_comfyui_server_address(source_env)
+        url = addr if addr.startswith(("http://", "https://")) else f"http://{addr}"
+    return assert_local_url(url, env=source_env)
+
+
+def get_comfyui_models_dir(env: Mapping[str, str] | None = None) -> Path:
+    """Return the local filesystem directory holding ComfyUI model weights ($COMFYUI_MODELS_DIR)."""
+    source_env = os.environ if env is None else env
+    raw = str(source_env.get("COMFYUI_MODELS_DIR", "")).strip()
+    return Path(raw) if raw else (ROOT / "models")
 
 
 def token():

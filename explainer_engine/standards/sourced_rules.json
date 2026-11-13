@@ -1059,7 +1059,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/accents.py:SHAKE_S",
-    "explainer_engine/edit/motion_lint.py:BP-24"
+    "explainer_engine/edit/motion_lint.py:BP-24",
+    "explainer_engine/production/layers25d.py:SHAKE_S"
    ],
    "supersedes": [
     "UR-13 no camera shake",
@@ -1131,7 +1132,8 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/motion_lint.py:BP-26",
-    "explainer_engine/production/accents.py:FLASH_WHITE"
+    "explainer_engine/production/accents.py:FLASH_WHITE",
+    "explainer_engine/production/layers25d.py:FLASH_WHITE"
    ],
    "supersedes": [
     "(new)"
@@ -2383,7 +2385,9 @@
    ],
    "enforced_by": [
     "explainer_engine/qa/targets.py:gap_verdict",
-    "explainer_engine/production/assemble.py:stem_measures"
+    "explainer_engine/production/assemble.py:stem_measures",
+    "explainer_engine/production/scene_join.py:BED_UNDER_MIN_LU",
+    "explainer_engine/audio/mix_check.py:COMBINED_UNDER_LU"
    ],
    "supersedes": [
     "P-93 14 dB (confirmed, unit changes to LU)",
@@ -2454,7 +2458,8 @@
    "enforced_by": [
     "explainer_engine/audio/duck.py:BP-53",
     "explainer_engine/production/assemble.py:vduck",
-    "explainer_engine/production/assemble.py:bduck"
+    "explainer_engine/production/assemble.py:bduck",
+    "explainer_engine/audio/stems.py:BED_DUCK_DB"
    ],
    "supersedes": [
     "P-93 attack 50 / release 400",
@@ -2505,7 +2510,8 @@
     "explainer_engine/production/timing.py:SFX_EARLY_MAX",
     "explainer_engine/qa/scorecard.py:synced",
     "explainer_engine/audio/sound_director.py",
-    "explainer_engine/core/delivery.py:frame_ms"
+    "explainer_engine/core/delivery.py:frame_ms",
+    "explainer_engine/episode/cue_sheet.py:SYNC_EARLY_MS"
    ],
    "supersedes": [
     "AL-03 0.25 s window",
@@ -2566,7 +2572,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:BP-55"
+    "explainer_engine/audio/layers.py:BP-55",
+    "explainer_engine/episode/cue_sheet.py"
    ],
    "supersedes": [
     "P-94 purpose (confirmed)",
@@ -2602,7 +2609,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:AL-01"
+    "explainer_engine/audio/layers.py:AL-01",
+    "explainer_engine/overlay/rules.py:OV-54",
+    "explainer_engine/episode/cue_sheet.py:LAYERS_MAX"
    ],
    "supersedes": [
     "AL-01 (confirmed)",
@@ -2639,7 +2648,8 @@
    ],
    "enforced_by": [
     "explainer_engine/audio/layers.py:BP-57",
-    "explainer_engine/audio/cues.py:VARIANTS"
+    "explainer_engine/audio/cues.py:VARIANTS",
+    "explainer_engine/episode/cue_sheet.py:PITCH_JITTER"
    ],
    "supersedes": [
     "the cue pitch variants of the scene rewrite PR (1.0 / 0.94 / 1.06: now 1 +/- pitch_jitter)"
@@ -2694,7 +2704,10 @@
    ],
    "enforced_by": [
     "explainer_engine/audio/sfx_library.py:BP-58",
-    "explainer_engine/schemas/sfx_manifest.schema.json"
+    "explainer_engine/schemas/sfx_manifest.schema.json",
+    "explainer_engine/audio/free_import.py:make_loop",
+    "explainer_engine/audio/free_import.py:rotate_to_quiet_seam",
+    "explainer_engine/audio/free_import.py:run"
    ],
    "supersedes": [
     "(new; PR #9 adds the manifest loop flag)"
@@ -3447,7 +3460,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/beats.py:CUE_PER_MIN_FAIL",
-    "explainer_engine/audio/sound_director.py:compensator_cues"
+    "explainer_engine/audio/sound_director.py:compensator_cues",
+    "explainer_engine/episode/cue_sheet.py"
    ],
    "supersedes": [
     "VB-11 CUE_PER_MIN_OK / CUE_PER_MIN_FAIL / CUE_BURST literals"
@@ -4183,7 +4197,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "A spoken line in a video clip (KP-18): at most words_per_second words a second of the clip after a settle of settle_s at each end (the face settles before the line and after it), so a 4 s shot carries about 7 words and a 10 s shot about 22. The model lip-syncs what fits; a longer line is split over two shots or given to the narrator.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. A spoken line in a video clip (KP-18): at most words_per_second words a second of the clip after a settle of settle_s at each end (the face settles before the line and after it), so a 4 s shot carries about 7 words and a 10 s shot about 22. The model lip-syncs what fits; a longer line is split over two shots or given to the narrator.",
    "thresholds": {
     "words_per_second": 2.5,
     "settle_s": 0.5
@@ -4211,7 +4225,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Faces in a medium or closer shot (KP-19): at most close_faces_max people in an MS, MCU, CU, ECU or OTS shot; more faces merge in the video model, and the creator's cartoons show 2 or fewer people in 78 % of their shots (120 shots hand-labelled 2026-10-24, docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md). A group is a wide; the acting is a medium.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Faces in a medium or closer shot (KP-19): at most close_faces_max people in an MS, MCU, CU, ECU or OTS shot; more faces merge in the video model, and the creator's cartoons show 2 or fewer people in 78 % of their shots (120 shots hand-labelled 2026-10-24, docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md). A group is a wide; the acting is a medium.",
    "thresholds": {
     "close_faces_max": 2
    },
@@ -4232,7 +4246,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "A video prompt is one present-tense paragraph of four to eight sentences (KP-25): video_words is its word range. Shorter prompts leave the action and the sound to chance; longer ones re-describe the picture, which drifts the identity in image-to-video.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. A video prompt is one present-tense paragraph of four to eight sentences (KP-25): video_words is its word range. Shorter prompts leave the action and the sound to chance; longer ones re-describe the picture, which drifts the identity in image-to-video.",
    "thresholds": {
     "video_words": [
      30,
@@ -4317,13 +4331,14 @@
   {
    "id": "BP-105",
    "area": "story",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Template D (historical docudrama, ST-19): the narrator has 25-45 % of the script's words, the dramatized scenes the rest (house aim 35-40 %; a political or personal rivalry sits near 25-30 %, a campaign higher). No study fixes the split; our retention data will move it.",
+   "statement": "Template D (12-minute historical docudrama, ST-19): the narrator's nominal share is 70 % of audible spoken words and voiced character dialogue the complementary 30 % (D-99); a script outside 65-75 % narrator words is a REVIEW finding that goes back to the writers' room, never a silent rewrite. Measure words on audible narrator and character lines only; exclude character lines marked voiced: false. This is the speech mix, not visual runtime or shot/lane allocation; audible seconds are reported beside it, informational only.",
    "thresholds": {
+    "nominal_narrator_share": 0.7,
     "narrator_share": [
-     0.25,
-     0.45
+     0.65,
+     0.75
     ]
    },
    "sources": [
@@ -4344,8 +4359,10 @@
     "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
-    "dialogue-scenes '~40-60 % narration', for template D"
-   ]
+    "dialogue-scenes old ~40-60 % narration and pre-D-95 25-45 % narrator share",
+    "D-95's 70-80 % band and its 75/25 midpoint (D-99, 2026-11-05)"
+   ],
+   "decided": "the creator, 2026-11-05 07:37 UTC (D-99, decision card ICG-1 answered A: nominal 70/30, REVIEW band 65-75 % narrator words); before that 2026-11-04 (D-95): 70-80 %, midpoint 75/25"
   },
   {
    "id": "BP-106",
@@ -4412,11 +4429,12 @@
   {
    "id": "BP-108",
    "area": "film",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Clip length (KP-36): one video clip is at most clip_max_s (plain LTX from one picture was clean at 10 s, duplicated a person at 15 s and turned heroes translucent at 20 s; LTX-2.5 Pro renders 6, 8 or 10 s); a shot longer than keypose_after_s that changes pose draws its last frame, so a key pose lands every 2.5-4 s.",
+   "statement": "A VIDEO shot by any route (J2, J4 or J5, D-116). These are SCENE durations (the creator, 2026-11-06): one LTX generation inside a scene is bounded by BP-172, not by this rule. Shot duration by intent (KP-06/KP-36, D-95): a visible voiced dialogue or lip-sync coverage shot is at most dialogue_shot_max_s; a non-dialogue VIDEO-lane action shot may run up to non_dialogue_video_max_s when a continuous battle, overhead move, task or camera choreography benefits from it. Do not split a 10-15 s non-dialogue action just to meet a dialogue limit. The 15 s value is a planning ceiling, not a promise that every model, resolution or frame rate supports it; the generation adapter must enforce the selected model's actual constraints. keypose_after_s requests a guided last frame for a pose-changing action when useful; it is not an edit-cut limit. STILL and HELPER lanes use their own rules.",
    "thresholds": {
-    "clip_max_s": 10.0,
+    "dialogue_shot_max_s": 5.0,
+    "non_dialogue_video_max_s": 15.0,
     "keypose_after_s": 5.0
    },
    "sources": [
@@ -4432,19 +4450,35 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:CLIP_MAX_S",
-    "explainer_engine/scripting/film_shots.py:KEYPOSE_AFTER_S"
+    "explainer_engine/scripting/film_shots.py:DIALOGUE_SHOT_MAX_S",
+    "explainer_engine/scripting/film_shots.py:NON_DIALOGUE_VIDEO_MAX_S",
+    "explainer_engine/scripting/film_shots.py:KEYPOSE_AFTER_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:DIALOGUE_SHOT_MAX_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:NON_DIALOGUE_VIDEO_MAX_S",
+    "explainer_engine/blender/rigs.py:LipSync.plan",
+    "explainer_engine/blender/rain_dialogue.py:main",
+    "explainer_engine/blender/j5_montage.py:lint_montage",
+    "explainer_engine/episode/router.py:DIALOGUE_SHOT_MAX_S"
    ],
-   "supersedes": []
+   "supersedes": [
+    "universal 10 s / 8 s video-shot cap (KP-06) and pre-D-95 universal 10 s clip cap"
+   ],
+   "decided": "the creator, 2026-11-04 (D-95): 5 s dialogue coverage; non-dialogue VIDEO action up to 15 s when justified; provider limits still apply; the creator, 2026-11-06 07:14 UTC (scene level): BP-108 is the whole scene's duration, BP-172 the single LTX clip"
   },
   {
    "id": "BP-109",
    "area": "film",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Animation tiers (KP-37): at most hold_share_max of the shots are a held picture with a camera move (the creator's cartoons hold a still on 5-10 % of the time; the critic's 40 % read as a slideshow); every spoken line and every peak is full.",
+   "statement": "The lanes are VIDEO_3D (a moving shot by route J2, J4 or J5), STILL_3D (a J5 plate with camera motion) and HELPER (Python renderers) (D-97 as amended by D-116, 2026-11-06); the shares and the tolerance are unchanged (D-98). Visual mix by runtime (the creator's rule of 2026-11-01, D-93): lane_share.video is generated video (including non-dialogue LTX action), lane_share.still is still frames on which Python adds objects and moves them, and lane_share.helper is Python-made maps, progress bars, calculations and counters; each share stays within tolerance. The still_shot_max_s guard applies to the STILL lane only. It is independent from the spoken narration/dialogue mix (BP-105) and the VIDEO-lane duration rules (BP-108).",
    "thresholds": {
-    "hold_share_max": 0.1
+    "lane_share": {
+     "video": 0.6,
+     "still": 0.3,
+     "helper": 0.1
+    },
+    "lane_tolerance": 0.05,
+    "still_shot_max_s": 5.0
    },
    "sources": [
     {
@@ -4454,19 +4488,26 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX",
-    "explainer_engine/scripting/variant_plan.py:checks"
+    "explainer_engine/scripting/film_shots.py:LANE_SHARE",
+    "explainer_engine/scripting/film_shots.py:visual_lane",
+    "explainer_engine/scripting/variant_plan.py:checks",
+    "explainer_engine/edit/dramatic_still.py",
+    "explainer_engine/blender/j5_montage.py:lint_montage"
    ],
    "supersedes": [
-    "the critic's plan review 2026-10-23: 40 % still + camera"
-   ]
+    "the critic's plan review 2026-10-23: 40 % still + camera",
+    "BP-109 hypothesis (2026-10-24): at most hold_share_max = 0.1 of the shots a held picture with a camera move ('the creator's cartoons hold a still on 5-10 % of the time')",
+    "BP-141 map_pure_max = 0.25: a pure map is a helper visual, bounded by lane_share.helper + lane_tolerance",
+    "D-75's 'replaces ASSET_COMPOSE's code-composed shots' for the still lane (D-93)"
+   ],
+   "decided": "the creator, 2026-11-01 10:16 UTC: 10 % helper visuals made by Python (maps, progress, calculations), 30 % still frames where Python adds and moves objects, cut fast enough and matched to the narrator, 60 % real videos; every old rule that contradicts it is rewritten; 2026-11-01 20:03 UTC: the 60/30/10 are approximate and must not cost the video anything, tolerance +-5 % (lane_tolerance 0.03 -> 0.05)"
   },
   {
    "id": "BP-110",
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Camera moves (KP-38): at most camera_move_share_max of the shots move the camera; the creator's cartoons keep the camera still on 81 % of shots (moving 9-19 %) and LTX moves the camera on its own when it is not told to stay.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Camera moves (KP-38): at most camera_move_share_max of the shots move the camera; the creator's cartoons keep the camera still on 81 % of shots (moving 9-19 %) and LTX moves the camera on its own when it is not told to stay.",
    "thresholds": {
     "camera_move_share_max": 0.2
    },
@@ -5072,7 +5113,8 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01",
     "explainer_engine/maps/laws.py",
-    "explainer_engine/maps/render.py"
+    "explainer_engine/maps/render.py",
+    "explainer_engine/overlay/rules.py:OV-41"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -5175,7 +5217,8 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10",
     "explainer_engine/scripting/variant_plan.py:checks",
-    "explainer_engine/edit/visual_compensator.py"
+    "explainer_engine/edit/visual_compensator.py",
+    "explainer_engine/overlay/rules.py:OV-42"
    ],
    "planned": "the dramatisability score of a beat and the lane shares that follow it: the planner (P3); the two caps are enforced now (P5, visual_compensator.lane_balance)",
    "supersedes": [],
@@ -5250,7 +5293,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-08",
-    "explainer_engine/production/assemble.py"
+    "explainer_engine/production/assemble.py",
+    "explainer_engine/production/layers25d.py:RACK_S"
    ],
    "planned": "explainer_engine/edit/motion_lint.py (ramp and rack focus; the whip is built in assemble.py, P7)",
    "supersedes": [],
@@ -5419,7 +5463,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/motion_graphics.json:CRAFT-MOG-01"
+    "explainer_engine/standards/craft_checklists/motion_graphics.json:CRAFT-MOG-01",
+    "explainer_engine/overlay/rules.py:OV-16"
    ],
    "planned": "explainer_engine/edit/motion_lint.py (P7)",
    "supersedes": [],
@@ -5545,7 +5590,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-85).",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06): the recipes ltx_i2v/*, ltx_layout/* and ltx_restyle/*; never to a J5 or Blender-rendered shot. Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-85).",
    "thresholds": {
     "frames_step": 8,
     "frames_offset": 1,
@@ -5561,6 +5606,11 @@
      193,
      241,
      257
+    ],
+    "applies_to_recipes": [
+     "ltx_i2v/*",
+     "ltx_layout/*",
+     "ltx_restyle/*"
     ]
    },
    "sources": [
@@ -5719,12 +5769,12 @@
    "area": "story",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is at most map_pure_max of the runtime in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own.",
+   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is a helper visual (its share is bounded by BP-109's helper lane) in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own. A and D allow 0.43, not the Blueprint's 0.4: D-93 (the creator, 2026-11-01) makes 30 % still + 10 % helper = 40 % of the runtime non-character, and BP-109's lane_tolerance 0.03 is added so a plan that meets D-93 exactly does not fail.",
    "thresholds": {
     "episode_structure_profiles": {
      "A": {
       "name": "cinematic docudrama",
-      "non_character_max": 0.4,
+      "non_character_max": 0.45,
       "turn_scene_share_min": 0.5
      },
      "B": {
@@ -5739,11 +5789,10 @@
      },
      "D": {
       "name": "chronicle dual POV",
-      "non_character_max": 0.4,
+      "non_character_max": 0.45,
       "turn_scene_share_min": 0.5
      }
     },
-    "map_pure_max": 0.25,
     "map_run_max_s": 90,
     "rotation_adjacent": true,
     "rotation_family_max": 2,
@@ -5762,7 +5811,9 @@
    "enforced_by": [
     "explainer_engine/scripting/variant_plan.py:checks"
    ],
-   "supersedes": []
+   "supersedes": [
+    "map_pure_max = 0.25 (moved to BP-109's helper lane, the creator 2026-11-01)"
+   ]
   },
   {
    "id": "BP-142",
@@ -6127,7 +6178,8 @@
    ],
    "enforced_by": [
     "docs/AUDIO_SYSTEM.md:SD-02",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/audio/mix_check.py:SILENCE_DBFS"
    ],
    "supersedes": []
   },
@@ -6190,7 +6242,7 @@
    "area": "qa",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Clip container, audio and frame checks (CLIP-02..12 of `video-qa`): the clip's audio length against its picture, spoken words in a shot that should be silent, the share of the dialogue heard, silence in a dialogue shot, black, blown or flat frames, a frozen tail, and the first frame against its keyframe. The numbers are proposals read from the two Argon audits; none becomes FAIL before two source types (A/B/C) or the creator's dated word back it (D-59).",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Clip container, audio and frame checks (CLIP-02..12 of `video-qa`): the clip's audio length against its picture, spoken words in a shot that should be silent, the share of the dialogue heard, silence in a dialogue shot, black, blown or flat frames, a frozen tail, and the first frame against its keyframe. The numbers are proposals read from the two Argon audits; none becomes FAIL before two source types (A/B/C) or the creator's dated word back it (D-59).",
    "thresholds": {
     "av_duration_tol_frames": 1,
     "spoken_words_max_in_silent_shot": 3,
@@ -6212,7 +6264,11 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/training/video_qa.py"
+    "explainer_engine/training/video_qa.py",
+    "explainer_engine/production/layers25d.py:FROZEN_DIFF",
+    "explainer_engine/aivideo/wan_adapter.py:FRAME0_DIFF",
+    "explainer_engine/production/map_clip.py:map_not_standing_still",
+    "explainer_engine/videolane/master_qa.py"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word before any CLIP row becomes FAIL (D-59)",
    "supersedes": []
@@ -6222,7 +6278,7 @@
    "area": "qa",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Keyframe gate: tries per shot and the retrain trigger (KG-14, KG-15). A failing shot is drawn again with a new seed at most max_tries times, then the prompt is fixed; at retrain_at cases of one error type on one LoRA a retraining is proposed to the creator. The creator's own sentence behind KG-14 (\"regenerate only on a fail; spend nothing blind\", 2026-10-24) names no number, so 3 and 15 are the project's own starting values, recorded as a hypothesis; the gate stops a shot (`fix_prompt`) or proposes, it does not FAIL a picture on them.",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Keyframe gate: tries per shot and the retrain trigger (KG-14, KG-15). A failing shot is drawn again with a new seed at most max_tries times, then the prompt is fixed; at retrain_at cases of one error type on one LoRA a retraining is proposed to the creator. The creator's own sentence behind KG-14 (\"regenerate only on a fail; spend nothing blind\", 2026-10-24) names no number, so 3 and 15 are the project's own starting values, recorded as a hypothesis; the gate stops a shot (`fix_prompt`) or proposes, it does not FAIL a picture on them.",
    "thresholds": {
     "max_tries": 3,
     "retrain_at": 15
@@ -6259,7 +6315,11 @@
    "sources": [],
    "enforced_by": [
     "explainer_engine/training/video_qa.py",
-    "explainer_engine/training/pods/xworld_v1_score.py"
+    "explainer_engine/training/pods/xworld_v1_score.py",
+    "explainer_engine/qa/verdict_page.py",
+    "explainer_engine/videolane/cuts.py",
+    "explainer_engine/videolane/storyboard.py",
+    "explainer_engine/videolane/identity.py"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word; none of these becomes FAIL before that (D-59)",
    "supersedes": []
@@ -6271,7 +6331,7 @@
    "severity": "REVIEW",
    "statement": "Delivery defaults of an animated episode (the Blueprint route, D-77/D-80/D-85): the long video's target length, its frame size, its frame rate and the number of Shorts. A job or script that names its own fps or size keeps it; the still-picture route (D-43) and its shipped 30 fps episodes are not changed by this row. VIDEO_PARAMETER_SPEC P-10, P-12, P-13 and P-100 carry the older values of the still route.",
    "thresholds": {
-    "long_minutes": 15,
+    "long_minutes": 12,
     "width": 2560,
     "height": 1440,
     "fps": 24,
@@ -6280,10 +6340,11 @@
    "sources": [],
    "enforced_by": [
     "explainer_engine/core/delivery.py",
-    "explainer_engine/core/store.py"
+    "explainer_engine/core/store.py",
+    "explainer_engine/core/contracts.py:_master"
    ],
    "supersedes": [],
-   "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC",
+   "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC; long_minutes 15 -> 12 on the creator's 12-minute (720 s) episode brief of 2026-11-01 (BP-169's episode_s is the same 720 s: tests/unit/test_delivery_defaults.py ties them)",
    "next_step": "the still route, the Shorts' frame rate, PV-34's count for five Shorts and the production_script schema default are open (TECH_QUESTIONS Q-29..Q-31)"
   },
   {
@@ -6305,6 +6366,1170 @@
    "supersedes": [],
    "decided": "the creator, 2026-10-31 (answer 5 of the F-step brief: GO <= 2.0x retries with forecast <= $12.00 and review <= 4.0 min per finished minute, PIVOT (2.0, 3.0], ABANDON > 3.0)",
    "next_step": "the meaning of 'forecast' (here: settled plus reserved-open USD of the pilot) is for the creator to confirm"
+  },
+  {
+   "id": "BP-169",
+   "area": "rhythm",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "The channel's rhythm is a named profile with five zones of a 720 s episode (hook 0-30 s, early 30-90 s, calm middle 90-480 s, late third 480-660 s, climax 660-720 s). Each zone carries its own narration pace, shots per minute, shot length, dramatic changes per minute, still hold, tease cadence, sound density and camera share. This row is the ONE home of the zone numbers; code reads them through the profile reader, never a copy. The heard-pace numbers of the zones are measured on MrBeast's videos (hook 193, 30-60 s 176, middle 166 words per minute); the cut, event, tease and sound numbers are partly reported and partly estimates adapted to a 2D cartoon, so the whole profile is REVIEW until the creator confirms it as a house rule. The older 'calm_docudrama' profile is the set of the other BP rows (BP-01, BP-107, BP-85, BP-40 ...) and stays unchanged. Pace variation is required (the creator, 2026-11-01): inside every zone the heard pace is an average, redistributed so that it rises and falls at a regular rhythm instead of one flat tempo; the frequency of those changes is not yet a number (open: needs a sourced value before code enforces it).",
+   "thresholds": {
+    "default_profile": "mrbeast_animated",
+    "episode_s": 720,
+    "profiles": {
+     "mrbeast_animated": {
+      "calm_middle_share": 0.5417,
+      "zones": [
+       {
+        "id": "hook_0_30s",
+        "mode": "hyped",
+        "window_s": [
+         0,
+         30
+        ],
+        "heard_wpm_target": 193,
+        "heard_wpm_band": [
+         180,
+         215
+        ],
+        "speaking_wpm_target": 233,
+        "speaking_wpm_band": [
+         215,
+         250
+        ],
+        "pauses_gt_05s_per_min_max": 4.0,
+        "median_words_max": 8,
+        "shots_per_min_target": 28.0,
+        "shots_per_min_band": [
+         24,
+         34
+        ],
+        "shot_len_s_band": [
+         1.0,
+         2.5
+        ],
+        "dramatic_changes_per_min_target": 30.0,
+        "dramatic_changes_per_min_band": [
+         26,
+         36
+        ],
+        "still_max_s": 2.5,
+        "static_still_max_s": 1.5,
+        "tease_events_per_min": 4.0,
+        "tease_max_gap_s": 12,
+        "sfx_events_per_min_band": [
+         14.0,
+         20.0
+        ],
+        "music_cues_per_min": 2.0,
+        "camera_move_share_max": 0.3,
+        "tts_tags": [
+         "excited",
+         "shouting",
+         "rushed",
+         "amazed"
+        ]
+       },
+       {
+        "id": "early_30_90s",
+        "mode": "hyped",
+        "window_s": [
+         30,
+         90
+        ],
+        "heard_wpm_target": 176,
+        "heard_wpm_band": [
+         165,
+         195
+        ],
+        "speaking_wpm_target": 225,
+        "speaking_wpm_band": [
+         210,
+         240
+        ],
+        "pauses_gt_05s_per_min_max": 6.0,
+        "median_words_max": 9,
+        "shots_per_min_target": 24.0,
+        "shots_per_min_band": [
+         20,
+         28
+        ],
+        "shot_len_s_band": [
+         1.2,
+         3.5
+        ],
+        "dramatic_changes_per_min_target": 24.0,
+        "dramatic_changes_per_min_band": [
+         20,
+         28
+        ],
+        "still_max_s": 3.5,
+        "static_still_max_s": 2.0,
+        "tease_events_per_min": 1.5,
+        "tease_max_gap_s": 45,
+        "sfx_events_per_min_band": [
+         11.0,
+         16.0
+        ],
+        "music_cues_per_min": 1.5,
+        "camera_move_share_max": 0.25,
+        "tts_tags": [
+         "excited",
+         "curious",
+         "gasps",
+         "rushed"
+        ]
+       },
+       {
+        "id": "middle_calm_90_480s",
+        "mode": "calm_story",
+        "window_s": [
+         90,
+         480
+        ],
+        "heard_wpm_target": 166,
+        "heard_wpm_band": [
+         150,
+         180
+        ],
+        "speaking_wpm_target": 205,
+        "speaking_wpm_band": [
+         190,
+         220
+        ],
+        "pauses_gt_05s_per_min_max": 8.5,
+        "median_words_max": 11,
+        "shots_per_min_target": 17.0,
+        "shots_per_min_band": [
+         14,
+         20
+        ],
+        "shot_len_s_band": [
+         2.0,
+         5.0
+        ],
+        "dramatic_changes_per_min_target": 16.0,
+        "dramatic_changes_per_min_band": [
+         14,
+         20
+        ],
+        "still_max_s": 5.0,
+        "static_still_max_s": 2.5,
+        "tease_events_per_min": 1.0,
+        "tease_max_gap_s": 65,
+        "sfx_events_per_min_band": [
+         7.0,
+         12.0
+        ],
+        "music_cues_per_min": 1.0,
+        "camera_move_share_max": 0.2,
+        "tts_tags": [
+         "curious",
+         "softly",
+         "pause",
+         "drawn out",
+         "laughs"
+        ]
+       },
+       {
+        "id": "late_third_480_660s",
+        "mode": "hyped",
+        "window_s": [
+         480,
+         660
+        ],
+        "heard_wpm_target": 185,
+        "heard_wpm_band": [
+         170,
+         200
+        ],
+        "speaking_wpm_target": 230,
+        "speaking_wpm_band": [
+         215,
+         245
+        ],
+        "pauses_gt_05s_per_min_max": 6.5,
+        "median_words_max": 9,
+        "shots_per_min_target": 25.0,
+        "shots_per_min_band": [
+         22,
+         28
+        ],
+        "shot_len_s_band": [
+         1.2,
+         3.2
+        ],
+        "dramatic_changes_per_min_target": 22.0,
+        "dramatic_changes_per_min_band": [
+         20,
+         26
+        ],
+        "still_max_s": 3.5,
+        "static_still_max_s": 2.0,
+        "tease_events_per_min": 1.6,
+        "tease_max_gap_s": 40,
+        "sfx_events_per_min_band": [
+         12.0,
+         18.0
+        ],
+        "music_cues_per_min": 1.5,
+        "camera_move_share_max": 0.25,
+        "tts_tags": [
+         "excited",
+         "rushed",
+         "gasps",
+         "amazed"
+        ]
+       },
+       {
+        "id": "climax_660_720s",
+        "mode": "hyped_climax",
+        "window_s": [
+         660,
+         720
+        ],
+        "heard_wpm_target": 160,
+        "heard_wpm_band": [
+         145,
+         185
+        ],
+        "speaking_wpm_target": 225,
+        "speaking_wpm_band": [
+         210,
+         245
+        ],
+        "pauses_gt_05s_per_min_max": 9.0,
+        "median_words_max": 7,
+        "shots_per_min_target": 30.0,
+        "shots_per_min_band": [
+         26,
+         34
+        ],
+        "shot_len_s_band": [
+         1.0,
+         2.5
+        ],
+        "dramatic_changes_per_min_target": 28.0,
+        "dramatic_changes_per_min_band": [
+         24,
+         32
+        ],
+        "still_max_s": 2.5,
+        "static_still_max_s": 1.5,
+        "tease_events_per_min": 2.0,
+        "tease_max_gap_s": 30,
+        "sfx_events_per_min_band": [
+         15.0,
+         20.0
+        ],
+        "music_cues_per_min": 2.0,
+        "camera_move_share_max": 0.3,
+        "tts_tags": [
+         "shouting",
+         "excited",
+         "gasps",
+         "short pause"
+        ]
+       }
+      ]
+     },
+     "calm_docudrama": "legacy: read the other BP rows"
+    }
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "10 MrBeast videos, transcript word counts (Argon research rows A1.1-A1.6, 2021-2025)",
+     "url": "http://www.youtube.com/watch?v=0e3GPea1Tyg"
+    },
+    {
+     "type": "C",
+     "title": "Paddy Galloway breakdown, 54.5 visual events per minute in hooks (Argon row C8.1)",
+     "url": "https://www.youtube.com/watch?v=626-bcmvCQw"
+    },
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing, cutting patterns (2026-09-14)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that"
+    },
+    {
+     "type": "A",
+     "title": "EchoVox: how to make AI voiceovers sound human (2026-05-01)",
+     "url": "https://echovox.in/blog/how-to-make-ai-voiceovers-sound-human-2026/"
+    },
+    {
+     "type": "B",
+     "title": "Derral Eves, The YouTube Formula (2021)",
+     "url": "https://books.google.com/books/about/The_YouTube_Formula.html?id=nhj3EQAAQBAJ"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/rhythm_profile.py",
+    "explainer_engine/scripting/rhythm_lint.py",
+    "explainer_engine/scripting/syllables.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)",
+   "decided": "the creator, 2026-11-01 20:03 UTC (answer 5 to the open-questions list): the profile's recommendations (which second needs which pace, cuts and events per minute for the hook and the first 3 minutes) are recorded as the channel's rule; the pace must CHANGE within a zone and between zones (a hook and a narration never run at one flat tempo): each zone's heard pace is the average that the read redistributes so that it changes at a regular frequency, a normal talking hook"
+  },
+  {
+   "id": "BP-170",
+   "area": "stills",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A still may stay on screen up to still_max_s only when something dramatic changes in it: a person or object cut out and placed in another part of the frame (relocation of at least min_relocation_distance_frac of the frame, subject at least min_subject_area_frac of it) or the background replaced (at least min_plate_swap_pixel_frac of the pixels), inside the middle of the hold (change_window_frac). A small dot, a small hammer or a tint is not a change. Without such a change a still holds at most static_still_max_s of its zone.",
+   "thresholds": {
+    "still_max_s": 5.0,
+    "static_still_max_s_by_zone": {
+     "hook_0_30s": 1.5,
+     "early_30_90s": 2.0,
+     "middle_calm_90_480s": 2.5,
+     "late_third_480_660s": 2.0,
+     "climax_660_720s": 1.5
+    },
+    "min_relocation_distance_frac": 0.25,
+    "min_subject_area_frac": 0.08,
+    "min_plate_swap_pixel_frac": 0.3,
+    "change_window_frac": [
+     0.25,
+     0.75
+    ]
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/edit/dramatic_still.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-11-01 13:20 UTC (project thread: a still may stay up to 5 s only if something dramatic changes in it, a person cut out and placed in another location; a small dot or a small hammer is not enough). The numeric thresholds (0.25, 0.08, 0.30, window, static holds per zone) are the coordinator's proposals from the Argon roadmap, not the creator's numbers.",
+   "next_step": "the creator confirms the numeric thresholds; edit/dramatic_still.py takes over enforced_by when it exists"
+  },
+  {
+   "id": "BP-171",
+   "area": "voice",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The narrator is ONE voice whose tempo and energy follow the zones of BP-169: faster and more excited in the hook and the late third, calmer in the middle. Prosody targets for the excited zones: pitch range, a pitch shift above the calm read, active-speech words per second, loudness range, at most one ElevenLabs audio tag per clause, one or two stressed capitalised words per sentence, a long read split into chunks, and a short silence before a reveal. These come from TTS engineering guides and speech-prosody literature, not from MrBeast's isolated voice track (not measurable from public videos), so the rule is REVIEW.",
+   "thresholds": {
+    "f0_range_st_min": 5.0,
+    "f0_shift_st_min": 1.0,
+    "speaking_wps_band": [
+     3.3,
+     4.2
+    ],
+    "dynamic_range_db_band": [
+     10.0,
+     14.0
+    ],
+    "max_tags_per_clause": 1,
+    "caps_words_per_sentence": [
+     1,
+     2
+    ],
+    "chunk_reset_max_chars": 800,
+    "chunk_reset_max_s": 90.0,
+    "pre_reveal_silence_s": [
+     0.5,
+     1.0
+    ],
+    "hyped_min_gap_s": 0.18,
+    "casting_keywords": [
+     "energetic",
+     "dynamic",
+     "fast-paced",
+     "expressive"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "EchoVox: how to make AI voiceovers sound human (2026-05-01)",
+     "url": "https://echovox.in/blog/how-to-make-ai-voiceovers-sound-human-2026/"
+    },
+    {
+     "type": "C",
+     "title": "10 MrBeast videos, transcript word counts (Argon research rows A1.1-A1.6, 2021-2025)",
+     "url": "http://www.youtube.com/watch?v=0e3GPea1Tyg"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/hype_read.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "next_step": "audio/hype_read.py takes over enforced_by when it exists; the narrator voice itself is the creator's choice (VC-08)",
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)"
+  },
+  {
+   "id": "BP-172",
+   "area": "video",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "Applies to shots routed J2/J4 (D-116, 2026-11-06; recipes ltx_*); not to J5 shots. Single LTX clip limit (the creator, 2026-11-06: BP-108 is the scene, this rule one LTX generation; a longer scene is cut or chained into clips): clip_target_s_band is the planned length of every J2/J4 clip, middle_clip_s_band's upper end its hard limit. LTX clips and their prompts follow the zone: short clips with one clear physical action (start, peak, settle) in the hyped zones, longer clips in the calm middle, a bounded share of frames that hold, and a prompt names a fast action verb instead of a slow gesture. The numbers are the project's first values for a fast cartoon and are untested on LTX-2.5 until the P12 pod runs.",
+   "thresholds": {
+    "hyped_clip_s_band": [
+     2.0,
+     4.0
+    ],
+    "middle_clip_s_band": [
+     4.0,
+     8.0
+    ],
+    "clip_target_s_band": [
+     3.0,
+     6.0
+    ],
+    "hyped_hold_share_max": 0.35,
+    "hyped_frozen_run_frames_max": 12,
+    "fast_action_verbs": [
+     "slams",
+     "yanks",
+     "lunges",
+     "snaps",
+     "whips",
+     "bolts",
+     "flings",
+     "jabs",
+     "throws",
+     "shoves",
+     "spins",
+     "leaps",
+     "charges",
+     "strikes",
+     "sweeps",
+     "snatches"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing, cutting patterns (2026-09-14)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that"
+    },
+    {
+     "type": "C",
+     "title": "10 MrBeast videos, transcript word counts (Argon research rows A1.1-A1.6, 2021-2025)",
+     "url": "http://www.youtube.com/watch?v=0e3GPea1Tyg"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:LTX_CLIP_TARGET_S",
+    "explainer_engine/scripting/film_shots.py:LTX_CLIP_MAX_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:LTX_CLIP_TARGET_S",
+    "explainer_engine/scripting/shot_prompt_lint.py:LTX_CLIP_MAX_S",
+    "explainer_engine/training/video_qa.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "next_step": "measure on the step-3 route-test pod (D-116); the hyped and middle bands stay the MrBeast-rhythm values",
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)",
+   "decided": "the creator, 2026-11-06 07:14 UTC: one LTX generation 3-6 s (clip_target_s_band); BP-108 stays the scene limit"
+  },
+  {
+   "id": "BP-173",
+   "area": "look",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "Ink Chronicle line weight (world bible v1.5, D-102): Blender Line Art at 2560x1440 draws its strokes between weight_px_1440 pixels, crease angle crease_deg; checked on rendered frames by the render validator (ICW-08) and on the style-sheet collage (ICW-05). The numbers are the roadmap's first values, unmeasured until ICW-09.",
+   "thresholds": {
+    "weight_px_1440": [
+     1.5,
+     3.0
+    ],
+    "crease_deg": 134
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/core/contracts.py:_shot_spec_2",
+    "explainer_engine/blender/validate.py"
+   ],
+   "supersedes": [],
+   "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
+   "next_step": "measured on the ICW-05 style sheets and the ICW-09 benchmark frames"
+  },
+  {
+   "id": "BP-174",
+   "area": "qa",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "Blender render validator (roadmap section 13, ICW-08): a shot FAILs with more than black_frames_max black frames or a frozen run longer than frozen_frames_max frames (unless still_mode is hold); a mean-luma change above flicker_luma_delta between neighbouring frames is flicker (REVIEW); an edge-pixel count that changes by more than line_edge_variance between neighbours is unstable line art (REVIEW). Proposals, untested on real frames until ICW-09.",
+   "thresholds": {
+    "black_frames_max": 2,
+    "frozen_frames_max": 12,
+    "flicker_luma_delta": 0.08,
+    "line_edge_variance": 0.25
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/blender/validate.py",
+    "explainer_engine/production/layers25d.py:FROZEN_FRAMES_MAX",
+    "explainer_engine/aivideo/wan_adapter.py:FROZEN_FRAMES_MAX"
+   ],
+   "supersedes": [],
+   "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
+   "next_step": "blender/validate.py (ICW-08) reads these keys; thresholds revisited on the ICW-09 frames"
+  },
+  {
+   "id": "BP-175",
+   "area": "render",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "The Blender binary is pinned: version blender_version from download.blender.org, the Linux and macOS archives named by their sha256 in config/cloud_pins.json (blender entry); an unpinned or mismatching binary is refused (BlenderProject.resolve, ICW-04). The pin moves only by a decision-log row (a 5.3 release does not move it).",
+   "thresholds": {
+    "blender_version": "5.2.3",
+    "series": "LTS"
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blender 5.2 release folder and its sha256 file (download.blender.org, read 2026-11-05)",
+     "url": "https://download.blender.org/release/Blender5.2/blender-5.2.3.sha256"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/core/contracts.py:_shot_route"
+   ],
+   "supersedes": [],
+   "decided": "the creator's launch word for the Ink Chronicle roadmap's work packages, 2026-11-05 08:42 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWVr5BU3e86r8zZ2fNXSXq3J); the roadmap section 20 (RW-07) names this row",
+   "next_step": "ICW-04 reads the pin in blender/project.py and the CI smoke verifies the archive hash"
+  },
+  {
+   "id": "BP-176",
+   "area": "film",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A cut in a dialogue has a reason: it changes the SUBJECT (the other speaker or a reaction) or the ANGLE on the same subject by at least angle_min_deg degrees together with a full shot-size step; a size change on the same subject and the same angle is a push-in inside one shot, never a cut (the 'same man, only closer' jump); the one exception is a declared axial cut-in (cut = axial, the classical cut-in to a tighter shot from the master's angle) of at least axial_size_step_min size steps (wide to close), a house choice stricter than the textbooks after the creator's 2026-11-06 19:52 UTC complaint. Both speakers keep their side of the frame and their eyeline in every shot (the 180-degree rule); when a cut cannot satisfy all of emotion, story, rhythm, eye trace, plane and space, the cut gives up the lowest first (Murch). Checked on the J5 shot sequence by j5_cuts.lint.",
+   "thresholds": {
+    "angle_min_deg": 30,
+    "size_step_min": 1,
+    "axial_size_step_min": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia, citing Corrigan and White)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule"
+    },
+    {
+     "type": "A",
+     "title": "Camera coverage (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Camera_coverage"
+    },
+    {
+     "type": "B",
+     "title": "The Five C's of Cinematography, Joseph V. Mascelli (screen direction, eyeline, continuity cutting)",
+     "url": "https://www.goodreads.com/book/show/139087290-five-cs-of-cinematography"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye, Walter Murch (the rule of six: emotion, story, rhythm, eye trace, planarity, spatial continuity)",
+     "url": "https://en.wikipedia.org/wiki/In_the_Blink_of_an_Eye_(Murch_book)"
+    },
+    {
+     "type": "C",
+     "title": "Most AI Filmmakers Ignore This Rule (YouTube, transcript read 2026-11-06): the 180-degree rule for generated dialogue, coverage from the establishing two-shot, eyeline logged per shot",
+     "url": "https://www.youtube.com/watch?v=0VxTJYZ2Hcc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:lint"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-177",
+   "area": "film",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A dialogue is planned before any picture is generated (the rules start at the first photo frame): the first picture is the establishing two-shot that fixes who stands on which side and which way each looks; every coverage picture (over-the-shoulder, single, reaction) is derived from that master and keeps the sides and eyelines; every shot of the plan carries its subject, sheet view, size, sides, each hero's eyeline and, after the first, the motivation of its cut, and a plan without them is refused before the paid picture is drawn (j5_cuts.plan_check).",
+   "thresholds": {
+    "required_fields": [
+     "name",
+     "subject",
+     "view",
+     "size",
+     "sides",
+     "eyeline"
+    ],
+    "establishing_size": "wide"
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia, citing Corrigan and White)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule"
+    },
+    {
+     "type": "A",
+     "title": "Camera coverage (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Camera_coverage"
+    },
+    {
+     "type": "B",
+     "title": "The Five C's of Cinematography, Joseph V. Mascelli (screen direction, eyeline, continuity cutting)",
+     "url": "https://www.goodreads.com/book/show/139087290-five-cs-of-cinematography"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye, Walter Murch (the rule of six: emotion, story, rhythm, eye trace, planarity, spatial continuity)",
+     "url": "https://en.wikipedia.org/wiki/In_the_Blink_of_an_Eye_(Murch_book)"
+    },
+    {
+     "type": "C",
+     "title": "Most AI Filmmakers Ignore This Rule (YouTube, transcript read 2026-11-06): the 180-degree rule for generated dialogue, coverage from the establishing two-shot, eyeline logged per shot",
+     "url": "https://www.youtube.com/watch?v=0VxTJYZ2Hcc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:plan_check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-178",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Reusing a picture inside a dialogue (the creator, 2026-10-25: reuse an existing keyframe with a zoom, crop or slight angle when the script returns to a view; a new picture only when the shot needs one) uses two cheap cuts. A punch-in is a cut to the same subject at the same angle with the frame scaled by punch_scale_min to punch_scale_max, at most one per punch_gap_min_s seconds; it is a deliberate jump cut (it does not satisfy BP-176's angle rule) and every use is declared as cut = punch_in. A reused picture names the earlier shot it comes from (reuse_of) and that shot has the same subject and sheet view. Limited-animation practice (holds, reused drawings, mouth-only movement over a still body) is the base; the punch-in numbers come from creator tutorials and the project's own editing skill, not from a study.",
+   "thresholds": {
+    "punch_scale_min": 1.06,
+    "punch_scale_max": 1.15,
+    "punch_gap_min_s": 3.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Limited animation (Wikipedia): reused drawings, cels over still backgrounds, mouth movement over a still body",
+     "url": "https://en.wikipedia.org/wiki/Limited_animation"
+    },
+    {
+     "type": "A",
+     "title": "YouTube Video Retention Editing (Pixflow): punch-in zoom on a jump cut, modest, zoom back out at the next break (creator tutorial)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_cuts.py:lint",
+    "explainer_engine/blender/j5_cuts.py:plan_check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-179",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Transitions between shots of a J5 montage (the creator, 2026-11-06 20:17 UTC: transitions between photos). The default is the straight cut; the creator removed the dip to black (19:14). A dissolve marks a change of place or passage of time, never a cut inside one scene, and lasts dissolve_min_s to dissolve_max_s; a fade to black closes the film or a chapter, at most one per fade_gap_min_s and never between two shots of one scene; wipes and graphic transitions are not used. A match cut is declared with a shared match_tag (shape, motion or gaze that carries over) and is used rarely. A cutaway shows something related to the scene it interrupts. One page-level source type only (Wikipedia, whose pages cite film-editing textbooks), so REVIEW.",
+   "thresholds": {
+    "dissolve_min_s": 0.5,
+    "dissolve_max_s": 2.0,
+    "fade_gap_min_s": 20.0,
+    "transitions": [
+     "cut",
+     "dissolve",
+     "fade_black",
+     "match"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Cut (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cut_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Dissolve (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Dissolve_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Fade (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Fade_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Match cut (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Match_cut"
+    },
+    {
+     "type": "A",
+     "title": "Cutaway (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cutaway_(filmmaking)"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_montage.py:lint_montage"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-180",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Order and rhythm of a non-dialogue J5 montage (the creator, 2026-11-06 20:17 UTC). A new scene opens with an establishing wide shot (or a declared establishing helper), then closer coverage; cross-cutting alternates two lines of action and each cut says why (motivation); a jump cut (same subject, same angle, a small step) is avoided unless declared (BP-176, BP-178); travelling subjects keep their screen direction through the scene (180-degree rule); montage shots are short, a still is held at most the still_shot_max_s of BP-109 and a video shot at most the BP-108 limits; the runtime is the clips minus the dissolve overlaps. Wikipedia pages (Film editing, Montage, Continuity editing, Establishing shot, Cross-cutting, Jump cut, Shot) are one source type, so REVIEW.",
+   "thresholds": {
+    "runtime_tolerance_s": 1.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Film editing (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Film_editing"
+    },
+    {
+     "type": "A",
+     "title": "Montage (filmmaking) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Montage_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Continuity editing (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Continuity_editing"
+    },
+    {
+     "type": "A",
+     "title": "Establishing shot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Establishing_shot"
+    },
+    {
+     "type": "A",
+     "title": "Cross-cutting (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cross-cutting"
+    },
+    {
+     "type": "A",
+     "title": "Jump cut (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Jump_cut"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_montage.py:lint_montage"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-181",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A still (or 2.5D collage) lane keeps the Ink Chronicle look alive without redrawing (the creator, 2026-11-06 20:17 UTC: the 30 % photo-collage lane and keeping the animated style). A still shot always moves: a slow push, pull or pan over the picture (Ken Burns effect) whose total scale change stays within still_move_min to still_move_max, or a parallax of at least parallax_layers_min depth layers where the near layer travels faster than the far one (multiplane camera, parallax scrolling); limited animation reuses drawings and moves only what must move. The subject sits on a third and keeps headroom (rule of thirds, headroom). Neighbouring shots of one scene keep the plate brightness within luma_ratio_max of each other (the creator, 19:28: background continuity). Wikipedia is one source type, so REVIEW.",
+   "thresholds": {
+    "still_move_min": 1.04,
+    "still_move_max": 1.25,
+    "parallax_layers_min": 3,
+    "luma_ratio_max": 1.25
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Ken Burns effect (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Ken_Burns_effect"
+    },
+    {
+     "type": "A",
+     "title": "Multiplane camera (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Multiplane_camera"
+    },
+    {
+     "type": "A",
+     "title": "Parallax scrolling (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Parallax_scrolling"
+    },
+    {
+     "type": "A",
+     "title": "Limited animation (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Limited_animation"
+    },
+    {
+     "type": "A",
+     "title": "Cutout animation (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Cutout_animation"
+    },
+    {
+     "type": "A",
+     "title": "Rule of thirds (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Rule_of_thirds"
+    },
+    {
+     "type": "A",
+     "title": "Headroom (photographic framing) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Headroom_(photographic_framing)"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_montage.py:lint_montage",
+    "explainer_engine/production/layers25d.py:LAYERS_MIN"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-182",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Python and Blender 2.5D depth-relief and ARAP mesh-warp bounds: depth-relief parallax factor stays at most parallax_factor_max, camera yaw offset at most relief_yaw_max_deg with Telea disocclusion inpaint radius inpaint_radius_px, ARAP handle displacement at most arap_disp_frac_max of card height, and Workbench/EEVEE render time within cpu_sec_per_frame_max on 4-core CPU CI (pc_rx5700_sec_per_frame_max on RX 5700).",
+   "thresholds": {
+    "parallax_factor_max": 0.08,
+    "relief_yaw_max_deg": 8.0,
+    "inpaint_radius_px": 4,
+    "arap_disp_frac_max": 0.06,
+    "cpu_sec_per_frame_max": 1.5,
+    "pc_rx5700_sec_per_frame_max": 0.4
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Simon Niklaus et al., 3D Ken Burns Effect from a Single Image (ACM TOG 2019, arXiv:1909.05483)",
+     "url": "https://arxiv.org/abs/1909.05483"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_limits.py",
+    "explainer_engine/blender/j5_action_rig.py",
+    "tests/unit/test_j5_ltx_minimisation.py",
+    "explainer_engine/blender/j5_minute_depthcam.py",
+    "explainer_engine/blender/j5_minute_depth.py",
+    "explainer_engine/production/layers25d.py:TRAVEL_MAX"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-183",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Multi-plane billboard crowd and hinged cut-out action bounds without LTX: a marching or massed crowd uses at least min_crowd_planes depth planes with stride bob in bob_freq_hz_band (amplitude <= bob_amp_px_max) and plane parallax speed ratio >= plane_speed_ratio_min; hinged upper-body/weapon cut-outs rotate at most hinge_angle_max_deg with impact flashes <= impact_flash_frames_max and camera shake <= camera_shake_amp_px_max.",
+   "thresholds": {
+    "min_crowd_planes": 3,
+    "bob_freq_hz_band": [
+     1.2,
+     2.2
+    ],
+    "bob_amp_px_max": 6.0,
+    "plane_speed_ratio_min": 1.35,
+    "hinge_angle_max_deg": 22.0,
+    "impact_flash_frames_max": 3,
+    "camera_shake_amp_px_max": 10.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Wikipedia: Multiplane camera and Cutout animation",
+     "url": "https://en.wikipedia.org/wiki/Multiplane_camera"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_limits.py",
+    "explainer_engine/blender/j5_action_rig.py",
+    "tests/unit/test_j5_ltx_minimisation.py",
+    "explainer_engine/blender/j5_minute_anim.py",
+    "explainer_engine/production/layers25d.py:FLASH_FRAMES_MAX"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-184",
+   "area": "video",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Realistic LTX minimisation ceiling: LTX is restricted to close-range multi-limb weapon/body contact (capped at action_ltx_clip_max_s = 3.04 s, 73 frames) and wide uneven-terrain crowd clashes (capped at crowd_ltx_clip_max_s = 5.04 s, 121 frames), keeping the total LTX share of an episode at most episode_ltx_share_max (15%, target 12.5% = 90 s in 12 min) while J5 animated shots + LTX together satisfy moving_lane_min_share (55%).",
+   "thresholds": {
+    "action_ltx_clip_max_s": 3.04,
+    "crowd_ltx_clip_max_s": 5.04,
+    "episode_ltx_share_max": 0.15,
+    "moving_lane_min_share": 0.55
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Wikipedia: Limited animation and planned animation holds",
+     "url": "https://en.wikipedia.org/wiki/Limited_animation"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/blender/j5_limits.py",
+    "explainer_engine/blender/j5_minute_v3.py",
+    "tests/unit/test_j5_ltx_minimisation.py",
+    "explainer_engine/blender/j5_minute.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-185",
+   "area": "stills",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A 2.5D shot is alive beyond the camera: at least families_min moving systems from different families among atmosphere (ash, smoke, mist, rain, embers, dust), light (fire flicker, lightning, sun shafts), surface (water shimmer, heat haze, foliage sway) and subject (a rigid sway of the subject's plane). A camera move alone does not count. Action beats inside a 2.5D shot get their impact effect on the sound event's frame.",
+   "thresholds": {
+    "families_min": 2
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/layers25d.py:ALIVE_MIN"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-11-12 (v4.3 plan section 0.4, answer Q4: the 2.5D shots must feel animated, not like stills with a camera move)"
+  },
+  {
+   "id": "BP-186",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The same sound level everywhere (the creator, 2026-11-12, v4.3 plan section 1: audio at one level in every shot): the background (ambience + effects) of the shots of each picture route (map, 2.5D, Wan) is measured per shot under speech and in the gaps, and the routes' medians stay within route_spread_db_max of each other. The number is an engineering default (RMS dB on the mono stems, no K-weighting) until the creator sets it or two source types back one.",
+   "thresholds": {
+    "route_spread_db_max": 3.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/audio/stems.py:SPREAD_MAX_DB"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-187",
+   "area": "video",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A character finishes the line inside the clip: a video shot's length comes from its spoken line plus a tail, and the speech in the clip's own sound ends at least speech_tail_s before the clip ends (measured on the clip's audio), so no line is cut mid-word. How two clips' sound meets at the cut is BP-188.",
+   "thresholds": {
+    "speech_tail_s": 0.5
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/videolane/plan.py",
+    "explainer_engine/videolane/ingest.py"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-11-12 19:16 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWR1zwsJYy2hthiFJQQj48kT): LTX cut a line mid-speech in the bake-off; every video is planned so the character finishes speaking. His half-second sound overlap was put to research at 20:07 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU5wnV4sFK5JC2vc6uQcvGC): the finding is BP-188"
+  },
+  {
+   "id": "BP-188",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The sound at a cut between two clips depends on where the sound comes from. (1) One generation made the picture and its sound together (LTX's own speech, effects and ambience): picture and sound cut on the same frame, with no overlap (overlap_joint_s); a longer crossfade under a hard picture cut doubles the speech or moves it off the lips, so each side gets at least a seam_fade_s fade against a click (BP-191 sets the clip fade and lets the scene's bed and the tails of point sounds cross the cut), and a clip chained from the previous clip's last frame drops that repeated first frame. (2) The sound was made apart from the picture (ElevenLabs lines, narration, library beds): the sound runs on its own tracks across the picture cut, the room tone or bed continues under it (BP-116), a line may lead or trail the cut as a J/L split within split_edit_s (scene boundaries keep BP-117's longer bands), and two different beds meeting at a cut crossfade. No overlap of the pictures is needed in either case.",
+   "thresholds": {
+    "overlap_joint_s": 0.0,
+    "seam_fade_s": 0.03,
+    "split_edit_s": [
+     0.12,
+     0.5
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Adobe community: why is the minimum audio transition duration 2 frames (Premiere's default audio transition, de-click)",
+     "url": "https://community.adobe.com/t5/premiere-pro-discussions/why-is-the-minimum-audio-transition-duration-2-frames/m-p/12864872"
+    },
+    {
+     "type": "A",
+     "title": "How the 30 ms audio fade prevents pops at video cut boundaries (video-use)",
+     "url": "https://instagit.com/browser-use/video-use/how-30ms-audio-fade-prevents-pops.md"
+    },
+    {
+     "type": "A",
+     "title": "Videomaker: how to hide audio transitions (cut between sentences; J/L cuts or room tone for longer transitions)",
+     "url": "https://www.videomaker.com/how-to/audio-how-to/audio-editing/how-to-hide-audio-transitions-for-a-cleaner-sounding-video/"
+    },
+    {
+     "type": "A",
+     "title": "J-cuts and L-cuts: 3-12 frame overlaps; excessive crossfades double speech (Cursa)",
+     "url": "https://cursa.app/en/article/j-cuts-and-l-cuts-how-audio-transitions-make-your-edits-invisible"
+    },
+    {
+     "type": "B",
+     "title": "Apple Final Cut Pro 7 User Manual: tips for cutting dialogue (fill every gap with the scene's room tone)",
+     "url": "https://www.manualsdir.com/manuals/547347/apple-final-cut-pro-7.html?page=1002"
+    },
+    {
+     "type": "A",
+     "title": "LTX API: extend a video with context frames for a seamless continuation with consistent motion and audio",
+     "url": "https://docs.ltx.io/api-documentation/api-reference/async-video-generation/submit-extend"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/seams.py:EDGE_FADE",
+    "explainer_engine/videolane/voice.py:SEAM_FADE_S",
+    "explainer_engine/audio/stems.py:SEAM_FADE_S"
+   ],
+   "supersedes": [
+    "BP-187 audio_overlap_s (the creator's 0.5 s, 2026-11-12 19:16 UTC, put to research at 20:07 UTC)"
+   ],
+   "research": "2026-11-12 (thread 'Build v4.3 episode-first engine'): the 2-frame de-click default and the 30 ms fade agree with ED-01's EDGE_FADE; the 3-12 frame J/L figure is from one guide (unverified elsewhere); the FCP manual is a vendor manual. No source asks for a crossfade at a cut of jointly generated picture and sound."
+  },
+  {
+   "id": "BP-189",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "The scene's sound never drops out (realism plan SD-04/SD-05): a scene's bed (place, weather, crowd) runs under every shot from its first frame and under every line, so measured on the delivered file no window_ms window between the first and the last second falls under floor_dbfs, and inside the dialogue part (intended pauses left out) no more than dead_share_max of the windows fall under dead_dbfs. An intended silence is written in the script and keeps the room tone. The numbers are the realism plan's measured line between a dropout and a bed (the battle scene of 2026-11-12: -62 dBFS before 'Attack!', 45 % of its dialogue part under -40 dBFS); BP-116 keeps the bed's own level and BP-161 the digital-silence check.",
+   "thresholds": {
+    "floor_dbfs": -50.0,
+    "dead_dbfs": -40.0,
+    "dead_share_max": 0.0,
+    "window_ms": 250
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "5 techniques for dialogue editing in film and TV (Production Expert): fill the gaps with room tone, never leave holes",
+     "url": "https://www.production-expert.com/production-expert-1/5-techniques-for-dialogue-editing-in-film-and-tv"
+    },
+    {
+     "type": "A",
+     "title": "Videomaker: how to hide audio transitions (cut between sentences; J/L cuts or room tone for longer transitions)",
+     "url": "https://www.videomaker.com/how-to/audio-how-to/audio-editing/how-to-hide-audio-transitions-for-a-cleaner-sounding-video/"
+    },
+    {
+     "type": "B",
+     "title": "Dialogue Editing for Motion Pictures (John Purcell; Open Library search-inside, room tone)",
+     "url": "https://openlibrary.org/search/inside?q=Dialogue%20Editing%20for%20Motion%20Pictures"
+    },
+    {
+     "type": "B",
+     "title": "Apple Final Cut Pro 7 User Manual: tips for cutting dialogue (fill every gap with the scene's room tone)",
+     "url": "https://www.manualsdir.com/manuals/547347/apple-final-cut-pro-7.html?page=1002"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/videolane/master_qa.py"
+   ],
+   "supersedes": [],
+   "research": "2026-11-12 (W1): the sources agree that dialogue gaps are filled with the scene's room tone or ambience, never left as holes; none of them gives a dBFS number, so floor_dbfs and dead_dbfs are the realism audit's engineering line (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/))."
+  },
+  {
+   "id": "BP-190",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The pause between two lines is measured speech to speech on the delivered file (realism plan SD-06/SD-07), never planned from a clip's tail: pause_s in conversation; an intended dramatic pause is written in the script and stays under dramatic_max_s. A clip is therefore trimmed at both ends from the speech the detector finds in its own sound: in at the first speech minus head_lead_s, out at the last speech plus tail_s (BP-187 keeps the generation's tail). One clip carries one line: LTX leaves 0.85-1.0 s between two sentences of one clip.",
+   "thresholds": {
+    "pause_s": [
+     0.25,
+     0.6
+    ],
+    "dramatic_max_s": 1.5,
+    "head_lead_s": [
+     0.15,
+     0.25
+    ],
+    "tail_s": [
+     0.25,
+     0.5
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Stivers et al. 2009, Universals and cultural variation in turn-taking in conversation (PNAS): the modal gap between turns is about 0-200 ms in every language studied",
+     "url": "https://www.pnas.org/doi/10.1073/pnas.0903616106"
+    },
+    {
+     "type": "A",
+     "title": "Heldner and Edlund 2010, Pauses, gaps and overlaps in conversations (Journal of Phonetics)",
+     "url": "https://doi.org/10.1016/j.wocn.2010.08.002"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:line_pauses",
+    "explainer_engine/production/scene_join.py:trims",
+    "explainer_engine/videolane/ingest.py",
+    "explainer_engine/videolane/plan.py"
+   ],
+   "supersedes": [],
+   "research": "2026-11-12 (W1): the turn-taking studies put natural gaps near 0.2 s; a film's edited dialogue is a choice, so the 0.25-0.6 s band is the realism plan's house proposal (REVIEW until the creator picks on the A/B: REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/)). Measured before: 1.15 s across cut 1 of the battle scene, because the heads of the clips were not trimmed (LTX starts speaking about 0.75 s into a clip)."
+  },
+  {
+   "id": "BP-191",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Sound crosses the cut (realism plan SD-08, amends BP-188 part 1): the picture may cut hard and a clip's own sound cuts with it under a clip_fade_s fade (BP-188's seam_fade_s is the de-click minimum), but the scene's bed and at least one tail of a point sound run across the cut, so the background measured cut_window_s either side of the cut (speech left out) moves no more than cut_jump_db_max.",
+   "thresholds": {
+    "clip_fade_s": [
+     0.08,
+     0.12
+    ],
+    "cut_window_s": 0.5,
+    "cut_jump_db_max": 3.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Videomaker: how to hide audio transitions (cut between sentences; J/L cuts or room tone for longer transitions)",
+     "url": "https://www.videomaker.com/how-to/audio-how-to/audio-editing/how-to-hide-audio-transitions-for-a-cleaner-sounding-video/"
+    },
+    {
+     "type": "A",
+     "title": "J-cuts and L-cuts: how audio transitions make your edits invisible (Cursa)",
+     "url": "https://cursa.app/en/article/j-cuts-and-l-cuts-how-audio-transitions-make-your-edits-invisible"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/production/scene_join.py:CLIP_FADE_S",
+    "explainer_engine/videolane/master_qa.py",
+    "explainer_engine/videolane/voice.py"
+   ],
+   "supersedes": [
+    "BP-188 part 1's 'nothing crosses the cut' for a scene with a bed"
+   ],
+   "research": "2026-11-12 (W1): both guides keep room tone or a J/L split running under a picture cut; the 80-120 ms clip fade and the 3 dB jump are the realism plan's house proposals (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/))."
+  },
+  {
+   "id": "BP-192",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-11-12 19:43 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ: motion on a map, chart or counter makes a sound) and 21:44 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu: no sounds on the map's actions)",
+   "statement": "An action sound is heard (realism plan SD-03/SD-14/SD-15; replaces OV-53's 'under the scene's sounds'): measured on the delivered file, the loudest 100 ms of every planned action sound (a map move, a chart bar, a counter, a footstep, a spear) stands at least heard_min_db over the bed around it, else the motion has no sound; the target is target_above_bed_db over the bed and under the voice, at most max_at_once sounds together, and a shot where motion is seen has at least spots_per_5s_min point sounds every five seconds (both REVIEW, the plan's proposals). The sound is a real take that fits the motion (a line drawn = a pen stroke that lasts with the line, a spreading zone = a low air swell, a counter = ticks and a final knock), never a sine or noise.",
+   "thresholds": {
+    "heard_min_db": 3.0,
+    "target_above_bed_db": [
+     6.0,
+     10.0
+    ],
+    "max_at_once": 2,
+    "spots_per_5s_min": 2
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/overlay/demo_mix.py:SFX_ABOVE_BED_DB",
+    "explainer_engine/overlay/rules.py:ep53",
+    "explainer_engine/episode/av_report.py"
+   ],
+   "supersedes": [
+    "OV-53 overlay sounds at least 6 LU under the scene's sounds"
+   ],
+   "research": "2026-11-12 (W1): the overlay demo's action sounds measured 12 LU under its bed (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/)); heard_min_db is the engineering line of 'heard at all', the 6-10 dB target is the plan's house proposal for the creator's A/B."
+  },
+  {
+   "id": "BP-193",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-11-12 21:44 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu): the map demo's background is a senseless hiss",
+   "statement": "No generated noise as a bed (realism plan SD-11/SD-13; sharpens OV-44/OV-55): the bed is a real take of the place the shot shows (library first, then a free licence-checked source, then ElevenLabs: the creator's order of 2026-11-12 22:15 UTC), never numpy noise. Measured on the delivered file: in each place of the timeline the bed-only frames (no speech, no planned event, the quieter half of the rest, at least place_min_s) give a band spectrum; when min_places or more different places share one spectrum (largest band-share deviation under same_spectrum_share_max) the film plays one noise everywhere and FAILs. A map or a chart under the neighbouring scene's bed is that scene's place (OV-55's text stays). A level that moves little is not by itself a fault: a real wind and the demo's noise measured the same 1.7 dB spread.",
+   "thresholds": {
+    "same_spectrum_share_max": 0.05,
+    "min_places": 3,
+    "place_min_s": 1.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/overlay/demo_sound.py:beds"
+   ],
+   "supersedes": [
+    "OV-56's 'NOT_RUN in the demo' (a demo is built from the library too)"
+   ],
+   "research": "2026-11-12 (W1): on the overlay demo the bed-only spectra of 12 shots (cave, river, maps, charts, an LTX clip) lie within 0.03-0.05 of each other in every band; the level spread of a 100 ms window did not tell the numpy wind (1.75 dB) from LTX's real battle sound (1.81 dB), so the level test of the plan's draft was dropped. 0.05 is the engineering line until real beds of different places are measured."
   }
  ]
 }

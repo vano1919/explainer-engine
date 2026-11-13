@@ -1,3 +1,4 @@
+
 """Map geometry: the Natural Earth extract, one local projection per view, point-in-polygon and clipping. numpy only.
 
 The projection is the local equirectangular one (x east = longitude * cos(latitude of the centre), y north = latitude), north up

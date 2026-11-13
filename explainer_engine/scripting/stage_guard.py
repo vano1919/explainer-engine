@@ -1,3 +1,4 @@
+
 """Stage guard (D-48, docs/STORY_ENGINE.md "The writers' room"): each agent stage may change only its own fields of the
 one production script, so a later pass (voice tags, shots, sounds) can never quietly rewrite the story an earlier pass
 settled. This is how a mid-size model (Claude Sonnet) keeps the whole text while it adds technical detail: the words are
@@ -28,6 +29,15 @@ Stages and what they own:
 * ``shorts``     the ``shorts`` block
 * ``sound``      owns NO script field (P4, step 4b of ``edit-planner``): the sound pass runs the audio spine and the sound director
   and writes only under ``audio/`` (``sound_mix_manifest.json``, never by hand, CN-02); any change to the script it made is a violation
+
+A v4 script (``production_script.schema.json`` ``ProductionScriptV4``: top-level ``shots`` and ``audio_lines``, the v4.3
+episode format) is guarded by ``V4_OWNERS`` (Fable audit 2026-11-13, P2): every changed path (``shots[S01_SH002].edit_plan``,
+``audio_lines[S01_L003].text``, ``world_bible.characters[char_kael].voice_description``) has exactly one owner, the first
+pattern that matches. The new contracts: the ``editor`` owns ``edit_plan``, ``actions``, ``motion_imitation``, ``av_contract``
+and a segment's ``mood`` / ``music``; the ``beats`` stage owns ``sound_events``, ``intentional_silence``, ``sound_design``;
+the ``caster`` owns a character's ``voice_description`` and ``voice_profile_id``; the ``architect`` owns a place's
+``ambience_bed`` and the rest of the story layer; the ``writer`` owns the words (``audio_lines`` and a shot's
+``audio_line_ids``); the ``performer`` only a line's ``delivery_direction``.
 """
 
 from __future__ import annotations
@@ -40,7 +50,7 @@ import time
 from pathlib import Path
 
 INTERJECTIONS = ("oh", "hmm", "well", "right", "ah", "uh-oh", "wait", "okay", "huh", "so", "look", "yeah", "nope")
-SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama", "scene")
+SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama", "scene", "rhythm_zone")
 LINE_WORDS = ("text", "speaker", "claims", "voiced")
 LINE_DELIVERY = ("tags", "emphasis", "tone", "emotion", "pause_after")
 STAGES = {
@@ -56,6 +66,72 @@ STAGES = {
 }
 
 
+# v4 (the episode format of D-131): path pattern -> owning stage, first match wins (P2 of the Fable audit 2026-11-13)
+V4_OWNERS = (
+    ("shots[*].sound_events", "beats"), ("shots[*].intentional_silence", "beats"), ("shots[*].sound_design", "beats"),
+    ("shots[*].audio_line_ids", "writer"),
+    ("shots*", "editor"),
+    ("segments[*].mood", "editor"), ("segments[*].music", "editor"),
+    ("segments*", "architect"),
+    ("audio_lines[*].delivery_direction", "performer"),
+    ("audio_lines*", "writer"),
+    ("world_bible.characters[*].voice_description", "caster"), ("world_bible.characters[*].voice_profile_id", "caster"),
+    ("world_bible.characters[*].voice_card", "caster"),
+    ("world_bible.locations[*].ambience_bed", "architect"),
+    ("world_bible*", "architect"),
+    ("av_contract", "editor"), ("visual_mix_target", "editor"),
+    ("shorts*", "shorts"),
+    ("*", "architect"),
+)
+V4_KEYS = {"shots": "shot_id", "audio_lines": "line_id", "segments": "segment_id", "characters": "character_id",
+           "locations": "location_id", "props": "prop_id"}
+
+
+def is_v4(doc: dict) -> bool:
+    return isinstance(doc.get("shots"), list) and isinstance(doc.get("audio_lines"), list)
+
+
+def _changes(a, b, path: str) -> list[str]:
+    if a == b:
+        return []
+    if isinstance(a, dict) and isinstance(b, dict):
+        out = []
+        for k in sorted(set(a) | set(b)):
+            out += _changes(a.get(k), b.get(k), f"{path}.{k}" if path else k)
+        return out
+    key = V4_KEYS.get(path.rsplit(".", 1)[-1])
+    if key and isinstance(a, list) and isinstance(b, list) and all(isinstance(x, dict) for x in a + b):
+        ia, ib = {x.get(key): x for x in a}, {x.get(key): x for x in b}
+        out = [f"{path}[+{k}]" for k in ib if k not in ia] + [f"{path}[-{k}]" for k in ia if k not in ib]
+        if [x.get(key) for x in a if x.get(key) in ib] != [x.get(key) for x in b if x.get(key) in ia]:
+            out.append(f"{path}[order]")
+        for k in ia:
+            if k in ib:
+                out += [p.replace(f"{path}.", f"{path}[{k}].", 1) if p.startswith(f"{path}.") else p
+                        for p in _changes(ia[k], ib[k], path)]
+        return out
+    return [path]
+
+
+def _match(path: str, pat: str) -> bool:
+    """``*`` matches anything (brackets are literal, unlike fnmatch)."""
+    return re.fullmatch(re.escape(pat).replace(r"\*", ".*"), path) is not None
+
+
+def owner_v4(path: str) -> str:
+    probe = path.replace("[+", "[").replace("[-", "[")
+    for pat, stage in V4_OWNERS:
+        if _match(probe, pat):
+            return stage
+    return "architect"
+
+
+def violations_v4(stage: str, before: dict, after: dict) -> list[str]:
+    """The v4 guard: every changed path whose owner is another stage."""
+    return [f"{p} changed: owned by the {owner_v4(p)}, not the {stage}" for p in _changes(before, after, "")
+            if owner_v4(p) != stage]
+
+
 def _interjection_only(old: str, new: str) -> bool:
     if old == new:
         return True
@@ -66,6 +142,8 @@ def _interjection_only(old: str, new: str) -> bool:
 
 
 def violations(stage: str, before: dict, after: dict) -> list[str]:
+    if is_v4(before) or is_v4(after):
+        return violations_v4(stage, before, after)
     own = STAGES[stage]
     out: list[str] = []
     for k in sorted(set(before) | set(after)):

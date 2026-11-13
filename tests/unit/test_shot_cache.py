@@ -99,3 +99,90 @@ def test_a_non_finite_number_is_a_contract_error_not_a_crash():
     for bad in (float("inf"), float("nan")):
         with pytest.raises(ContractError):
             SC.key(variant(params={"steps": 8, "cfg": bad}))
+
+
+# ---- shot_spec/2: the Blender shot (ICW-02, roadmap 10.1) ---------------------------------------------------------------
+SPEC2 = json.loads((ROOT / "tests" / "fixtures" / "contracts" / "shot_spec" / "valid_v2.json").read_text(encoding="utf-8"))
+
+
+def v2(edit):
+    s = copy.deepcopy(SPEC2)
+    edit(s)
+    return s
+
+
+@pytest.mark.parametrize("edit", [
+    lambda s: s["render"].update(profile="eevee_fast"),  # a profile change re-renders (roadmap 10.1)
+    lambda s: s["render"].update(samples=128),
+    lambda s: s["clock"].update(frames=72),
+    lambda s: s["frame"].update(render_scale=0.75),
+    lambda s: s["scene"]["characters"][0]["asset"].update(sha256=H[9]),  # an asset change re-renders exactly its shots (21.5 #11)
+    lambda s: s["scene"]["set_assets"][0].update(sha256=H[8]),
+    lambda s: s["scene"]["camera"].update(lens_mm=35),
+    lambda s: s["look"].update(bible_version="1.6"),
+    lambda s: s["look"]["paper"].update(opacity=0.1),
+    lambda s: s["performance"]["rhubarb"].update(sha256=H[2]),
+    lambda s: s.update(seed=2),
+])
+def test_v2_every_render_input_changes_the_key(edit):
+    assert SC.key(v2(edit)) != SC.key(SPEC2)
+
+
+def test_v2_job_rename_clock_position_cue_path_and_asset_order_keep_the_key():
+    def move(s):
+        s.update(job_id="job-777", shot_id="s99")
+        s["clock"]["start_frame"] = 9000  # the shot moved in the edit: no pixel changes
+        s["performance"]["rhubarb"]["path"] = "elsewhere/s1.json"
+        s["scene"]["set_assets"] = [{"id": "model.camp_stool", "sha256": H[1]}, *s["scene"]["set_assets"]]
+    moved = v2(move)
+    reordered = copy.deepcopy(moved)
+    reordered["scene"]["set_assets"].reverse()
+    assert SC.key(moved) == SC.key(reordered)
+    plain = v2(lambda s: s.update(job_id="job-777"))
+    assert SC.key(plain) == SC.key(SPEC2)
+    assert SC.key(v2(lambda s: s["clock"].update(start_frame=9000))) == SC.key(SPEC2)
+    assert SC.key(v2(lambda s: s["performance"]["rhubarb"].update(path="x/y.json"))) == SC.key(SPEC2)
+
+
+def test_v2_and_v1_keys_never_collide_and_a_broken_v2_has_no_key():
+    assert SC.key(SPEC2) != SC.key(SPEC)
+    with pytest.raises(ContractError):
+        SC.key(v2(lambda s: s.update(recipe="blender_cycles/1")))  # CN-17: the recipe is not the profile's
+
+
+# ---- shot_spec/3 (WP-Q1): /2 plus the look's view transform, shade mode and line mode ---------------------------------
+def v3(**look):
+    s = copy.deepcopy(SPEC2)
+    s["schema"] = "shot_spec/3"
+    s["render"]["profile"] = "eevee_painterly"
+    s["look"].pop("line_weight_px")
+    s["look"].update({"view_transform": "Khronos PBR Neutral", "grade_look": "None", "shade_mode": "soft", "shade_path": "lit",
+                      "line_mode": "none", **look})
+    return s
+
+
+def test_v3_validates_with_no_line_and_a_soft_view_and_v2_still_validates():
+    from explainer_engine.core import contracts as C
+    assert C.errors(v3()) == [] and C.errors(SPEC2) == []
+    assert C.errors(v3(view_transform="Standard")) == []
+    assert C.errors(v3(line_mode="faint", line_weight_px=1.5)) == []
+    assert SC.key(v3()) != SC.key(SPEC2) and SC.key(v3()) != SC.key(v3(shade_path="rgb_soft"))
+
+
+@pytest.mark.parametrize("look", [
+    {"line_mode": "ink"},                               # a drawn line needs its weight
+    {"line_weight_px": 2.0},                            # no line, no weight
+    {"view_transform": "Filmic"},
+    {"view_transform": "Standard", "grade_look": "Medium High Contrast"},   # a look belongs to AgX only
+    {"shade_mode": "glossy"},
+])
+def test_v3_refuses_what_its_look_cannot_mean(look):
+    with pytest.raises(ContractError):
+        SC.key(v3(**look))
+
+
+def test_v2_keeps_its_agx_pin_and_its_profiles():
+    with pytest.raises(ContractError):
+        SC.key(v2(lambda s: s["look"].update(view_transform="Standard")))
+    with pytest.raises(ContractError):
+        SC.key(v2(lambda s: s["render"].update(profile="eevee_painterly")))

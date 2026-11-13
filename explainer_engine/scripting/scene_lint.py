@@ -1,3 +1,4 @@
+
 """Scene and dialogue rules SC-01..SC-10 (docs/STORY_ENGINE.md, the 2026-10-19 rewrite) on a production_script/3,
 wired as PV-48. stdlib only, free, run by ``production validate`` before any paid step.
 
@@ -141,6 +142,8 @@ def binding(doc: dict) -> bool:
 
 
 def lint(doc: dict) -> list[dict]:
+    if doc.get('schema_version') == '4.0.0':
+        return lint_v4(doc)
     """SC findings on a /3 script; an earlier schema gets none (its contract is unchanged)."""
     out: list[dict] = []
     if not binding(doc):
@@ -278,6 +281,290 @@ def main(argv: list[str] | None = None) -> int:
     n_fail = sum(f["severity"] == "FAIL" for f in found)
     print(f"{n_fail} FAIL, {len(found) - n_fail} REVIEW")
     return 1 if n_fail else 0
+
+
+
+
+def lint_v4(doc: dict) -> list[dict]:
+    """Validate played dramatic scenes (SC-01..SC-06, SC-10), character dialogue turns, speaker/addressee IDs,
+    anti-isolated-interruption rules, and lip-sync flags on a v4.0 production_script."""
+    out: list[dict] = []
+    wb = doc.get("world_bible") or {}
+    chars_list = wb.get("characters", [])
+    known_chars = {c.get("character_id") for c in chars_list if c.get("character_id")}
+
+    # Map character_id -> distinctive name tokens (for third-person self-reference detection)
+    char_self_tokens: dict[str, set[str]] = {}
+    for c in chars_list:
+        cid = str(c.get("character_id") or "")
+        tokens: set[str] = set()
+        parts = [p for p in re.split(r"[^a-zA-Z]+", cid.replace("char_", "")) if len(p) >= 4 and not p.isdigit()]
+        tokens.update(p.lower() for p in parts)
+        for nm_field in ("name", "display_name"):
+            nm_val = str(c.get(nm_field) or "")
+            for p in re.split(r"[^a-zA-Z]+", nm_val):
+                if len(p) >= 4 and p.lower() not in {"general", "marshal", "duke", "emperor", "lord", "chief", "hunter", "elder"}:
+                    tokens.add(p.lower())
+        if cid:
+            char_self_tokens[cid] = tokens
+
+    audio_lines = doc.get("audio_lines", [])
+    segments = doc.get("segments", [])
+    shots = doc.get("shots", [])
+    seen_char_texts: dict[str, str] = {}
+
+    for line in audio_lines:
+        lid = line.get("line_id", "?")
+        stype = line.get("speaker_type")
+        if stype == "narrator" and line.get("requires_visible_lipsync") is True:
+            out.append({
+                "rule": "SC-V4-LIPSYNC",
+                "severity": "FAIL",
+                "where": lid,
+                "detail": "Narrator voiceover line cannot set requires_visible_lipsync=True",
+            })
+        elif stype == "character":
+            spk = line.get("speaker_id")
+            addr = line.get("addressee_id")
+            ltext = str(line.get("text") or "").strip()
+
+            if known_chars and spk not in known_chars:
+                out.append({
+                    "rule": "SC-V4-SPEAKER",
+                    "severity": "FAIL",
+                    "where": lid,
+                    "detail": f"Character speaker_id {spk!r} is not defined in world_bible.characters",
+                })
+            if not str(line.get("delivery_direction", "")).strip():
+                out.append({
+                    "rule": "SC-V4-DELIVERY",
+                    "severity": "FAIL",
+                    "where": lid,
+                    "detail": "Character dialogue line must specify a non-empty delivery_direction",
+                })
+            if not addr:
+                out.append({
+                    "rule": "SC-04",
+                    "severity": "FAIL",
+                    "where": lid,
+                    "detail": f"{spk}'s line has no addressee_id: every character line must address a co-present character, 'self', or 'room'",
+                })
+            elif addr in ("narrator", "narrator_main"):
+                out.append({
+                    "rule": "SC-04",
+                    "severity": "FAIL",
+                    "where": lid,
+                    "detail": f"{spk} addresses {addr!r}: a character never addresses the narrator (fourth wall stands)",
+                })
+            elif addr == spk:
+                out.append({
+                    "rule": "SC-04",
+                    "severity": "FAIL",
+                    "where": lid,
+                    "detail": f"{spk} addresses themselves by character_id; use 'self' for soliloquy",
+                })
+            elif known_chars and addr not in (known_chars | ADDRESS_EXTRA):
+                out.append({
+                    "rule": "SC-04",
+                    "severity": "FAIL",
+                    "where": lid,
+                    "detail": f"addressee_id {addr!r} is not in world_bible.characters or {sorted(ADDRESS_EXTRA)}",
+                })
+
+            # Check third-person self-reference (e.g. char_wellington_1815 saying "before Wellington reinforces...")
+            for own_tok in char_self_tokens.get(str(spk), set()):
+                if re.search(rf"\b{re.escape(own_tok)}\b", ltext, re.I):
+                    out.append({
+                        "rule": "SC-04",
+                        "severity": "FAIL",
+                        "where": lid,
+                        "detail": f"Speaker {spk} refers to themselves in the third person ({own_tok!r}) inside {ltext[:60]!r}",
+                    })
+                    break
+
+            norm_txt = " ".join(ltext.lower().split())
+            if len(norm_txt) >= 15:
+                if norm_txt in seen_char_texts:
+                    out.append({
+                        "rule": "SC-V4-DUPLICATE-DIALOGUE",
+                        "severity": "FAIL",
+                        "where": lid,
+                        "detail": f"Character line duplicates verbatim text from {seen_char_texts[norm_txt]} ({ltext[:50]!r})",
+                    })
+                else:
+                    seen_char_texts[norm_txt] = lid
+
+    # Segment-level played scene vs. narration-led validation
+    for seg in segments:
+        sid = seg.get("segment_id", "?")
+        seg_mode = seg.get("segment_mode")
+        scene = seg.get("scene")
+        seg_lines = [l for l in audio_lines if l.get("segment_id") == sid]
+        char_lines = [l for l in seg_lines if l.get("speaker_type") == "character"]
+
+        if not char_lines:
+            if seg_mode == "played_scene" or isinstance(scene, dict):
+                out.append({
+                    "rule": "SC-01",
+                    "severity": "FAIL",
+                    "where": sid,
+                    "detail": f"Segment {sid} is marked as a played_scene / defines a scene object but has 0 character lines",
+                })
+            continue
+
+        # v4.3 (the creator, 2026-11-12, plan P1.3): dialogue lives inside scenes; a hero line in a segment that is not a
+        # played scene is a FAIL, never an aside dropped into narration or a visual-action run.
+        if seg_mode is not None and seg_mode != "played_scene":
+            out.append({
+                "rule": "SC-01",
+                "severity": "FAIL",
+                "where": char_lines[0].get("line_id", sid),
+                "detail": (f"Segment {sid} is {seg_mode!r} but carries {len(char_lines)} character line(s): dialogue belongs "
+                           "only in a played_scene segment (v4.3, 2026-11-12)"),
+            })
+
+        # Measure contiguous character runs in seg_lines
+        runs: list[tuple[int, set[str], list[str]]] = []
+        cur_len = 0
+        cur_spks: set[str] = set()
+        cur_lids: list[str] = []
+        for l in seg_lines:
+            if l.get("speaker_type") == "character":
+                cur_len += 1
+                if l.get("speaker_id"):
+                    cur_spks.add(str(l["speaker_id"]))
+                cur_lids.append(str(l.get("line_id", "?")))
+            else:
+                if cur_len > 0:
+                    runs.append((cur_len, set(cur_spks), list(cur_lids)))
+                    cur_len, cur_spks, cur_lids = 0, set(), []
+        if cur_len > 0:
+            runs.append((cur_len, set(cur_spks), list(cur_lids)))
+
+        best_run = max((r[0] for r in runs), default=0)
+        best_spks = max((len(r[1]) for r in runs), default=0)
+        isolated_runs = [r for r in runs if r[0] < 2 or len(r[1]) < 2]
+
+        if best_run < 2 or best_spks < 2 or isolated_runs:
+            bad_where = isolated_runs[0][2][0] if isolated_runs and isolated_runs[0][2] else sid
+            out.append({
+                "rule": "SC-05",
+                "severity": "FAIL",
+                "where": bad_where,
+                "detail": (
+                    f"Isolated character interruption in {sid} (best contiguous run={best_run} line(s), {best_spks} speaker(s)): "
+                    "characters must never drop 1-line shouts inside narration. Use pure narration or play a real multi-turn exchange "
+                    "(>=2 contiguous character lines from >=2 co-present speakers)."
+                ),
+            })
+
+        if not isinstance(scene, dict):
+            out.append({
+                "rule": "SC-01",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": f"Segment {sid} has character dialogue but no scene object {{place, present, pov, want, obstacle_want, value, open_charge, close_charge, turn, exit}}",
+            })
+            continue
+
+        present_list = scene.get("present") or []
+        present = set(present_list)
+        if len(present) < 2:
+            out.append({
+                "rule": "SC-01",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": f"scene.present in {sid} must include at least 2 co-present characters, got {present_list!r}",
+            })
+        for who in present:
+            if known_chars and who not in known_chars:
+                out.append({
+                    "rule": "SC-01",
+                    "severity": "FAIL",
+                    "where": sid,
+                    "detail": f"scene.present in {sid} names unknown character {who!r}",
+                })
+        if scene.get("pov") not in present:
+            out.append({
+                "rule": "SC-01",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": f"scene.pov {scene.get('pov')!r} is not in scene.present {sorted(present)}",
+            })
+        if scene.get("open_charge") == scene.get("close_charge"):
+            out.append({
+                "rule": "SC-02",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": f"scene value {scene.get('value', '?')!r} opens and closes at {scene.get('open_charge')!r}: charge must turn (+/-)",
+            })
+        if len(_words(str(scene.get("turn") or ""))) < 3:
+            out.append({
+                "rule": "SC-02",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": "scene.turn must state the beat where the scene turns in at least 3 words",
+            })
+        want = str(scene.get("want") or "").strip().lower()
+        ow = str(scene.get("obstacle_want") or "").strip().lower()
+        if not want or not ow or want == ow:
+            out.append({
+                "rule": "SC-03",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": "scene.want and scene.obstacle_want must be non-empty and opposing",
+            })
+        real_subj = str(scene.get("real_subject") or "").strip().lower()
+
+        for cl in char_lines:
+            clid = cl.get("line_id", sid)
+            cspk = cl.get("speaker_id")
+            caddr = cl.get("addressee_id")
+            ctext = str(cl.get("text") or "")
+            if cspk not in present:
+                out.append({
+                    "rule": "SC-04",
+                    "severity": "FAIL",
+                    "where": clid,
+                    "detail": f"{cspk} speaks in {sid} but is not in scene.present {sorted(present)}",
+                })
+            if caddr and caddr not in (present | ADDRESS_EXTRA):
+                out.append({
+                    "rule": "SC-04",
+                    "severity": "FAIL",
+                    "where": clid,
+                    "detail": f"{cspk} addresses {caddr!r} who is not co-present in scene.present {sorted(present)}",
+                })
+            if real_subj and len(real_subj) >= 4 and real_subj in ctext.lower():
+                out.append({
+                    "rule": "SC-10",
+                    "severity": "FAIL",
+                    "where": clid,
+                    "detail": f"Character line states scene.real_subject ({real_subj!r}) out loud; subtext must stay unspoken",
+                })
+        if GREETING.match(str(char_lines[0].get("text") or "")):
+            out.append({
+                "rule": "SC-06",
+                "severity": "FAIL",
+                "where": char_lines[0].get("line_id", sid),
+                "detail": "Scene opens on a small-talk greeting; enter late in the middle of the conflict",
+            })
+
+        # Multi-shot coverage check for played scenes
+        char_line_ids = {cl.get("line_id") for cl in char_lines if cl.get("line_id")}
+        scene_shots = [sh for sh in shots if sh.get("segment_id") == sid and set(sh.get("audio_line_ids") or []) & char_line_ids]
+        if len(char_lines) >= 2 and len([sh for sh in shots if sh.get("segment_id") == sid]) >= 2 and len(scene_shots) < 2:
+            out.append({
+                "rule": "SC-V4-SCENE-COVERAGE",
+                "severity": "FAIL",
+                "where": sid,
+                "detail": f"Played scene in {sid} has {len(char_lines)} character turns but only {len(scene_shots)} shot covering them; use multi-shot action/reaction coverage",
+            })
+
+    return out
+
+
+check = lint
 
 
 if __name__ == "__main__":

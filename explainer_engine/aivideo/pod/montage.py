@@ -1,3 +1,4 @@
+
 """RETIRED by D-80 (2026-10-26): the night-run route of the wldnk era; kept as history, never run. Assemble the night test video: black 'what if' opening with the title, then one shot per narration segment. A shot
 longer than its clip first holds the clip's first keyframe with a slow push, then plays the clip (the clip starts on that
 same frame); a shorter one plays the clip from its start. Output 3840x2160 24 fps H.264 + the narration (AAC).

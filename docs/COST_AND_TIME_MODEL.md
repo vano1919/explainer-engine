@@ -1,5 +1,7 @@
 # Cost and time model
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force. Blender render cost rows come from measured `blender_frame_*` job speeds (D-111).
+
 All prices are estimates unless a source and date are given. Budget caps are ceilings, not targets (invariant 2);
 before any paid call the ledger below is updated with the estimate, and at 80 % of a cap work stops for a decision.
 
@@ -7,9 +9,9 @@ before any paid call the ledger below is updated with the estimate, and at 80 % 
 | Budget | Cap | Spent in this project | Notes |
 |---|---|---|---|
 | Gemini API / AI Studio | the ceiling `per_episode.gemini_usd` in config/spend_caps.json (D-56) | about $8.0 (80 % of the then US$10 cap, STOP; 2026-10-16: look test 6 Pro pictures $0.804; Day 1 v5 67 Nano Banana 2.1 pictures at 2K = $3.598 by the spend log (46 + 16 + 3 + 2 repaints); about $0.3 of judge calls, estimated; the earlier part) about $3.28 (estimate at list price; 44 pictures + about $0.26 of audio: Gemini TTS about $0.14 including one uncapped $0.10 mistake, Lyria 3 x $0.04; of which 2 world pictures at 1K were wasted and replaced by 2K; includes the first kit test and the discarded child-faced bank; real billing not yet read) | free-tier use is not assumed equal to paid cost; TMR's earlier spend (about $2.40) belongs to that project |
-| vidIQ credits | 200 | 155 (2026-10-15: 60 niche research + 70 worlds-collide research; 2026-10-16: 25 narration research; see the spend log; 2026-10-19: 110 + 45 = 155 for the D-48/D-49 research under the creator's separate allowance of up to 200 credits for that research (80 % reached at 160: stop), so the original 200 cap covers the earlier 155) | account balance read 2026-10-15: 395, later 445 (an add-on top-up of 50 that is not our spend), 385 after the research batch (65 renewable, resets 2026-11-08; 320 add-on); the balance call costs 0; a call's cost is read from its tool description first |
+| vidIQ credits | 200 | 155 (2026-10-15: 60 niche research + 70 worlds-collide research; 2026-10-16: 25 narration research; see the spend log; 2026-10-19: 110 + 45 = 155 for the D-48/D-49 research under the creator's separate allowance of up to 200 credits for that research (80 % reached at 160: stop), so the original 200 cap covers the earlier 155; 2026-11-06 20:05 UTC: 5 credits for one video transcript, the creator allowed up to 100 for the dialogue-rules research) | account balance read 2026-10-15: 395, later 445 (an add-on top-up of 50 that is not our spend), 385 after the research batch (65 renewable, resets 2026-11-08; 320 add-on); the balance call costs 0; a call's cost is read from its tool description first |
 | RunPod | the ceilings under `runpod` in config/spend_caps.json (D-56) | about $0.81 (2026-10-16: 13-picture Day 1 run about $0.20; 35-picture v2 run $0.28 by the guard, **pictures lost**: the stage hit its 15-minute limit and the fatal stop skipped the push; manifest fixed; 35-picture re-run $0.26; 6-picture style-bridge test $0.07 by the guard, cap $0.25) | balance read 2026-10-16 after the bridge test: $3.64 (the account is shared with TMR; the drop since the previous reading is larger than this project's guard figures and is to be checked in RunPod billing); no pod running; every pod needs an approved price and time cap |
-| ElevenLabs (D-39, connector, the creator's account credits) | 3 short samples now; the Day 1 read (~2,400 characters) only after the creator picks a voice (creator, 2026-10-16) | 849 credits ≈ $0.15 for 3 samples + 2,337 credits ≈ $0.42 for the Day 1 Clyde read (estimates read first, actuals equal); Scribe 0 credits (estimate 0); after the creator's review, a v3 test of the first 3 sections (creator-approved, 1,011 credits ≈ $0.18); total about $0.75; full v3 re-read estimated 2,809 credits ≈ $0.51, waits for approval | per-call price read with `estimate_only` first; never re-run a generation to retry; Scribe for timings is a separate small charge, estimated before the call |
+| ElevenLabs (D-39, connector, the creator's account credits) | 3 short samples now; the Day 1 read (~2,400 characters) only after the creator picks a voice (creator, 2026-10-16) | 849 credits ≈ $0.15 for 3 samples + 2,337 credits ≈ $0.42 for the Day 1 Clyde read (estimates read first, actuals equal); Scribe 0 credits (estimate 0); after the creator's review, a v3 test of the first 3 sections (creator-approved, 1,011 credits ≈ $0.18); total about $0.75; full v3 re-read estimated 2,809 credits ≈ $0.51, waits for approval | per-call price read with `estimate_only` first; never re-run a generation to retry; Scribe for timings is a separate small charge, estimated before the call; J5 dialogue test (creator 2026-11-06 18:34 UTC, cap 5,000 credits): 3 lines, one take each, 155 credits ≈ $0.03 (estimate 53 + 84 + 18, actuals equal), plus 71 credits for the two young scout takes (step 4c), total 226 of 5,000 |
 | Subscriptions | none planned | $0/month | any paid voice or tool is an explicit approved line item |
 
 ### vidIQ spend log (written before each batch; actuals filled after)
@@ -62,3 +64,24 @@ remain human work.
 ## Time log
 `jobs/<slug>/time_log.json` records minutes per activity per video (research, scripting, storyboard, assets, narration
 fixes, QA, revisions, packaging, upload) and the machine time per stage; the cadence decision (D-06) reads it.
+
+## The rhythm profile's effect on one 12-minute episode (estimate, 2026-11-01; D-94)
+
+Argon's roadmap priced it on a B200 at $4.99/h; our measured prices are an A40/A6000 at about $0.59/h for a pod and about
+$1.4/h for the LTX work measured earlier, so this is recomputed here. Nothing below is a measurement of LTX-2.5.
+
+| item | calm profile | zoned profile (BP-169) | basis |
+|---|---|---|---|
+| shots | about 171 | about 254 | the zones' shots per minute against BP-107 |
+| LTX clips (60 % of the runtime) | about 96 | about 152 | shorter clips in the hyped zones |
+| LTX GPU time | 96 x ~200 s = 5.3 h | 152 x ~145 s = 6.1 h | ~200 s per 121-frame clip measured on an earlier LTX; a 69-frame clip assumed 0.57 x that plus ~30 s fixed |
+| LTX GPU cost at ~$1.4/h | about $7.5 | about $8.5 | the line above |
+| Qwen pictures | about 144 | about 276 (195 with reuse where it is simple) | ~$2 per 214 pictures measured |
+| Qwen cost | about $1.3 | about $2.6 | |
+| ElevenLabs credits (1 per character, tags included) | about 9,800 | about 12,000 | 2,067 words (zone paces) x ~5.3 characters + about one tag per line; Argon counted a tag per clause and got 12,950 |
+| one-time narrator audition | none | about 1,050 credits | three 350-character reads, only with the creator's word |
+
+The episode's RunPod cap is the creator's number in `config/spend_caps.json`; this estimate is well inside it. The 5.3 h and 6.1 h are
+GPU hours of one card and are not wall-clock under a pod's time cap: P12 measures the real LTX-2.5 clip time and replaces the
+145 s guess.
+

@@ -1,0 +1,103 @@
+{
+  "schema": "continuity_card/1",
+  "scene_id": "S12@loc_rift_cave_hearth:S12_SH002",
+  "model": "gemini_3_1_flash_image",
+  "style_line": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama",
+  "location": {
+    "id": "loc_rift_cave_hearth",
+    "where_when": "Basalt Overhang Shelter & Camp Hearth Above Shinfa Gorge / dusk",
+    "int_ext": "INT",
+    "time_of_day": "dusk",
+    "weather": "indoor",
+    "master_frame": "S12_SH002_start"
+  },
+  "light": {
+    "key_light_dir": "left",
+    "light_source": "the hearth fire"
+  },
+  "cast": {
+    "char_kael_74000bce": {
+      "name": "the elder spear-hunter",
+      "description": "45-year-old Late Pleistocene East African hunter, weathered dark skin dusted with grey volcanic ash and red ochre, coarse braided hair, cracked antelope-hide cloak over muscular shoulders, holding a fire-hardened wooden spear",
+      "sheet": "assets/reference/characters/char_kael_74000bce.jpg",
+      "costumes": {
+        "default": "Cracked antelope-hide cloak fastened with bone pin, red ochre stripe across cheekbone"
+      }
+    },
+    "char_sena_74000bce": {
+      "name": "the master stone artisan and inventor",
+      "description": "26-year-old Late Pleistocene East African woman artisan, intense dark eyes reflecting amber firelight, charcoal-stained fingers, woven leather work apron, necklace of perforated Nassarius shells and an obsidian pendant",
+      "sheet": "assets/reference/characters/char_sena_74000bce.jpg",
+      "costumes": {
+        "default": "Leather work apron, perforated shell and obsidian necklace, bone pressure-flaker at belt"
+      }
+    },
+    "char_thar_74000bce": {
+      "name": "the leader",
+      "description": "35-year-old Late Pleistocene hunter from the southern Rift Valley, tall gaunt frame, ash-caked leather wraps, carrying geometric-engraved ostrich eggshell water flasks in knotted hide netting across his chest",
+      "sheet": "assets/reference/characters/char_thar_74000bce.jpg",
+      "costumes": {
+        "default": "Ash-caked leather shoulder wraps, net of engraved ostrich-eggshell water containers"
+      }
+    }
+  },
+  "shots": [
+    {
+      "shot_id": "S12_SH002",
+      "shot_size": "MS",
+      "angle": "eye",
+      "camera_side": "A",
+      "head_count": 3,
+      "characters": [
+        {
+          "id": "char_kael_74000bce",
+          "screen_pos": "left",
+          "depth": "mid",
+          "facing": "camera",
+          "costume": "default",
+          "eyeline": "char_sena_74000bce"
+        },
+        {
+          "id": "char_sena_74000bce",
+          "screen_pos": "right",
+          "depth": "mid",
+          "facing": "camera",
+          "costume": "default",
+          "eyeline": "char_kael_74000bce"
+        },
+        {
+          "id": "char_thar_74000bce",
+          "screen_pos": "centre",
+          "depth": "mid",
+          "facing": "camera",
+          "costume": "default",
+          "eyeline": "char_kael_74000bce"
+        }
+      ],
+      "camera_move": "static",
+      "refs": [
+        {
+          "path": "assets/reference/characters/char_kael_74000bce.jpg",
+          "role": "character",
+          "of": "char_kael_74000bce"
+        },
+        {
+          "path": "assets/reference/characters/char_sena_74000bce.jpg",
+          "role": "character",
+          "of": "char_sena_74000bce"
+        },
+        {
+          "path": "assets/reference/characters/char_thar_74000bce.jpg",
+          "role": "character",
+          "of": "char_thar_74000bce"
+        }
+      ],
+      "is_master": true,
+      "axis": [
+        "char_kael_74000bce",
+        "char_sena_74000bce"
+      ],
+      "hook_up": "first"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+ "schema": "scene_join/1",
+ "scene": "love_cliff",
+ "place": "cliff_edge_sunset",
+ "room": "outdoor",
+ "era": "bronze_age",
+ "about": "The LTX love-scene test of 2026-11-12 (HF explainer-engine/ltx_route/out/6f91619285c7_1abffbda4cc0), three chained clips (each starts on the last frame of the one before: one continuous motion); the creator asked 2026-11-12 to trim the tails in the edit, so each clip is trimmed by its speech and the cut is a 0.3 s picture dissolve (a hard cut inside one continuous close-up jumps)). Sources by what the picture shows: a cliff edge at sunset, a tree branch above, forest and rock walls below; no fire, no people near.",
+ "bed": [
+  "wind",
+  "birds"
+ ],
+ "clips": [
+  {
+   "id": "c1",
+   "file": "love/love_c1/love_c1_seed5301.mp4",
+   "line": "her"
+  },
+  {
+   "id": "c2",
+   "file": "love/love_c1/love_c2_seed5302.mp4",
+   "line": "him"
+  },
+  {
+   "id": "c3",
+   "file": "love/love_c1/love_c3_seed5303.mp4",
+   "line": "her"
+  }
+ ],
+ "spots": [],
+ "intended_pauses": [
+  {
+   "clip": "c3",
+   "why": "the kiss, then 'Always.'"
+  }
+ ],
+ "dissolve_s": 0.3
+}

@@ -1,0 +1,19 @@
+{
+ "schema": "speech_mix_report/1",
+ "job_id": "job-001",
+ "derived_from": {
+  "script": {
+   "path": "story/script.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "rule": "0.65-0.75",
+ "narrator_words": 1192,
+ "dialogue_words": 509,
+ "unvoiced_words": 12,
+ "narrator_share_words": 0.701,
+ "narrator_share_seconds": null,
+ "lipsync_shots": 84,
+ "lipsync_seconds": 380.0,
+ "longest_voiced_cu_s": 5.0
+}

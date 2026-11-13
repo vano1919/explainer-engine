@@ -1,0 +1,842 @@
+[
+  {
+    "from_shot_id": "S01_SH001",
+    "to_shot_id": "S01_SH002",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH001",
+      "to_shot_id": "S01_SH002",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "tracking_shot",
+      "camera_move_to": "push_in",
+      "motion_vector_dot": 0.3,
+      "motion_direction_aligned": true,
+      "same_location": false,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH002",
+    "to_shot_id": "S01_SH003",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH002",
+      "to_shot_id": "S01_SH003",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "push_in",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 1.0,
+      "motion_direction_aligned": true,
+      "same_location": false,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH003",
+    "to_shot_id": "S01_SH004",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH003",
+      "to_shot_id": "S01_SH004",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "static",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": false,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH004",
+    "to_shot_id": "S01_SH005",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH004",
+      "to_shot_id": "S01_SH005",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "static",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH005",
+    "to_shot_id": "S01_SH006",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH005",
+      "to_shot_id": "S01_SH006",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH006",
+    "to_shot_id": "S01_SH007",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH006",
+      "to_shot_id": "S01_SH007",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "static",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH007",
+    "to_shot_id": "S01_SH008",
+    "transition_type": "cross_dissolve_8f",
+    "cut_plan_transition": "dissolve",
+    "ed04_compliant": true,
+    "transition_frames": 8,
+    "transition_duration_sec": 0.3333,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH007",
+      "to_shot_id": "S01_SH008",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "static",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": false,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH008",
+    "to_shot_id": "S01_SH009",
+    "transition_type": "map_to_location_zoom_through",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 14,
+    "transition_duration_sec": 0.5833,
+    "audio_j_cut_prelap_sec": 0.5,
+    "audio_l_cut_postlap_sec": 0.425,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH008",
+      "to_shot_id": "S01_SH009",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S01_SH009",
+    "to_shot_id": "S02_SH001",
+    "transition_type": "cross_dissolve_8f",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 8,
+    "transition_duration_sec": 0.3333,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S01_SH009",
+      "to_shot_id": "S02_SH001",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": false,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH001",
+    "to_shot_id": "S02_SH002",
+    "transition_type": "map_to_location_zoom_through",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 14,
+    "transition_duration_sec": 0.5833,
+    "audio_j_cut_prelap_sec": 0.5,
+    "audio_l_cut_postlap_sec": 0.425,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH001",
+      "to_shot_id": "S02_SH002",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "static",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH002",
+    "to_shot_id": "S02_SH003",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH002",
+      "to_shot_id": "S02_SH003",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "static",
+      "camera_move_to": "slow_pull_back",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH003",
+    "to_shot_id": "S02_SH004",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH003",
+      "to_shot_id": "S02_SH004",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_pull_back",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": -0.8,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH004",
+    "to_shot_id": "S02_SH005",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH004",
+      "to_shot_id": "S02_SH005",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH005",
+    "to_shot_id": "S02_SH006",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH005",
+      "to_shot_id": "S02_SH006",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH006",
+    "to_shot_id": "S02_SH007",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH006",
+      "to_shot_id": "S02_SH007",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.64,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH007",
+    "to_shot_id": "S02_SH008",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH007",
+      "to_shot_id": "S02_SH008",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "slow_pull_back",
+      "motion_vector_dot": -0.8,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH008",
+    "to_shot_id": "S02_SH009",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH008",
+      "to_shot_id": "S02_SH009",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_pull_back",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": -0.8,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH009",
+    "to_shot_id": "S02_SH010",
+    "transition_type": "cross_dissolve_8f",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 8,
+    "transition_duration_sec": 0.3333,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH009",
+      "to_shot_id": "S02_SH010",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.64,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH010",
+    "to_shot_id": "S02_SH011",
+    "transition_type": "map_to_location_zoom_through",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 14,
+    "transition_duration_sec": 0.5833,
+    "audio_j_cut_prelap_sec": 0.5,
+    "audio_l_cut_postlap_sec": 0.425,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH010",
+      "to_shot_id": "S02_SH011",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH011",
+    "to_shot_id": "S02_SH012",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH011",
+      "to_shot_id": "S02_SH012",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 1.0,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S02_SH012",
+    "to_shot_id": "S03_SH001",
+    "transition_type": "cross_dissolve_8f",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 8,
+    "transition_duration_sec": 0.3333,
+    "audio_j_cut_prelap_sec": 0.45,
+    "audio_l_cut_postlap_sec": 0.383,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S02_SH012",
+      "to_shot_id": "S03_SH001",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": false,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S03_SH001",
+    "to_shot_id": "S03_SH002",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S03_SH001",
+      "to_shot_id": "S03_SH002",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "parallax_dolly",
+      "camera_move_to": "slow_push_in",
+      "motion_vector_dot": 0.8,
+      "motion_direction_aligned": true,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S03_SH002",
+    "to_shot_id": "S03_SH003",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.35,
+    "audio_l_cut_postlap_sec": 0.297,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S03_SH002",
+      "to_shot_id": "S03_SH003",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "slow_push_in",
+      "camera_move_to": "static",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": false,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  },
+  {
+    "from_shot_id": "S03_SH003",
+    "to_shot_id": "S03_SH004",
+    "transition_type": "hard_cut_with_jl_bridge",
+    "cut_plan_transition": "cut",
+    "ed04_compliant": true,
+    "transition_frames": 0,
+    "transition_duration_sec": 0.0,
+    "audio_j_cut_prelap_sec": 0.25,
+    "audio_l_cut_postlap_sec": 0.212,
+    "zoom_target_xy": [
+      0.5,
+      0.5
+    ],
+    "continuity": {
+      "from_shot_id": "S03_SH003",
+      "to_shot_id": "S03_SH004",
+      "focal_xy_from": [
+        0.5,
+        0.5
+      ],
+      "focal_xy_to": [
+        0.5,
+        0.5
+      ],
+      "focal_distance_norm": 0.0,
+      "camera_move_from": "static",
+      "camera_move_to": "parallax_dolly",
+      "motion_vector_dot": 0.0,
+      "motion_direction_aligned": false,
+      "same_location": true,
+      "same_segment": true,
+      "lighting_coherent": true
+    }
+  }
+]

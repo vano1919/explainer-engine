@@ -1,3 +1,4 @@
+
 """Checkpoint choice for xworld_v1 from its training samples (D-80, LT-75 step 1; the night plan's agreed method).
 
 The six fixed-seed samples per saved step (LT-77) are scored with CLIP (``training.embed``, free, local):

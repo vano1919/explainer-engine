@@ -1,3 +1,4 @@
+
 """AC-10..AC-11: crowds and battles from a few crowd units. A model cannot count 200 soldiers; code can: it scatters N
 figures over a band of ground by perspective (more of them far away, where the ground is wider), keeps a real gap between
 them, varies each by mirror and a slight tint, and never stands two identical figures side by side.

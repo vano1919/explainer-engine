@@ -1,3 +1,4 @@
+
 """Scene continuity (D-69, CS-01..CS-12, docs/PRODUCTION_SCRIPT.md): consecutive pictures of one staged scene are painted
 as shots of ONE room, not as independent illustrations. The titans episode (2026-10-21) painted every Gemini picture from
 its prompt and the style references alone, so a bench of ten became five in one shot and two different men in another

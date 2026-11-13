@@ -1,3 +1,4 @@
+
 """The map camera: a start state and moves between words, eased, in log-scale of the view's width (law 5).
 
 A state is a centre (lon, lat), a view width in km and a pitch. A move runs from the first frame of one spoken word to the first
@@ -76,6 +77,33 @@ def tilt(im, pitch_deg: float):
     # samples a wider band of the source than the bottom edge, so the far edge narrows
     quad = (-inset, 0, 0, h, w, h, w + inset, 0)
     return im.transform((w, h), Image.QUAD, quad, Image.BICUBIC)
+
+
+def tilt_fill(im, pitch_deg: float):
+    """``tilt`` without the empty top corners (v4.3 P4: the archive's tilt showed sea-coloured wedges): the warped frame is
+    cropped to the largest frame-shaped rectangle that is filled everywhere and scaled back to the frame size."""
+    import numpy as np
+    from PIL import Image
+    if pitch_deg <= 0:
+        return im
+    w, h = im.size
+    src = im.convert("RGBA")
+    solid = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    solid.paste(src.convert("RGB"), (0, 0))
+    solid.putalpha(255)
+    warped = tilt(solid, pitch_deg)
+    alpha = np.asarray(warped.getchannel("A")) > 250
+    for top in range(h):
+        cols = np.flatnonzero(alpha[top])
+        if len(cols) == 0:
+            continue
+        x0, x1 = int(cols[0]), int(cols[-1]) + 1
+        if (x1 - x0) * h >= w * (h - top):
+            cw = (h - top) * w / h
+            cx = (x0 + x1) / 2
+            box = (cx - cw / 2, top, cx + cw / 2, h)
+            return warped.resize((w, h), Image.BICUBIC, box=box)
+    return warped
 
 
 def zdepth(width: int, height: int, pitch_deg: float):

@@ -1,3 +1,4 @@
+
 """Story cards: the dark title card that opens an episode and the recap boards between chapters (the creator 2026-10-21:
 "the video starts on a dark background with text and a question ... after every chapter a small recap of what is happening
 and what to expect, on a dark or coloured background with signs and text"; then "not pure black: a dark background, text,

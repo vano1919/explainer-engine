@@ -431,7 +431,10 @@
     "config/spend_caps.json": 60,
     "config/model_routing.json": 60,
     "config/channel_voices.json": 60,
-    "assets/audio/generator_admission.json": 60
+    "assets/audio/generator_admission.json": 60,
+    "explainer_engine/cloud/cheapest.py": 60,
+    "explainer_engine/cloud/cheapest.json": 60,
+    "explainer_engine/training/pods/ltx/launch.json": 60
   },
   "usage": {
     "backup_at_percent": 95,
@@ -439,5 +442,78 @@
     "backup_dir": "/mnt/project-files/explainer-engine/_backup",
     "untracked_cap_mb": 50
   },
-  "reminder": "Before acting: name the class S0-S4 and model/effort from config/model_routing.json; tag every open choice owner=creator (a card, one message) or owner=claude (one-line reason); never raise your own model or effort."
+  "reminder": "Before acting: name the class S0-S4 and model/effort from config/model_routing.json; tag every open choice owner=creator (a card, one message) or owner=claude (one-line reason); never raise your own model or effort.",
+  "local_media_routing": {
+    "stage_1_script_and_lint": "argon_for_story_and_script_flash_for_json_compilation",
+    "stage_2_image_generation": "gemini_native_image_engine",
+    "stage_3_video_generation": "wan_2_2_modal_cloud_gpu_with_frame_minus_5_chaining",
+    "stage_4_assembly": "ffmpeg_3min_chunked_assembly",
+    "local_only_default": true,
+    "default_provider": "local_comfyui"
+  },
+  "gemini_youtube_routing": {
+    "description": "Argon (Deep Reasoning / Creative Architecture) vs Flash (High-Speed Execution / Formatting / Validation) routing for YouTube Explainer Engine v4.0",
+    "models": {
+      "argon": {
+        "role": "Lead Showrunner, Story Architect, Dramaturg, Retention Doctor, Script Critic (D-84)",
+        "use_when": "High-cognitive creative synthesis, counterfactual premise invention, emotional/psychological hooks, subtext-heavy dialogue, and retention valley diagnosis."
+      },
+      "flash": {
+        "role": "Production Engineer, Schema Compiler, Shot-Prompt Formatter, Asset Extractor, QA Linter Runner",
+        "use_when": "Converting approved scripts into strict JSON schemas (v4.0.0), expanding 120+ camera/motion prompts, extracting SFX/asset manifests, running validation loops, and batching Modal/ComfyUI payloads."
+      }
+    },
+    "gate_routing": [
+      {
+        "gate": "G0_REFERENCE_LIBRARY",
+        "recommended_model": "argon",
+        "why": "Requires high-taste visual worldbuilding and defining cohesive tactile lighting/texture rules across eras."
+      },
+      {
+        "gate": "G1_GENERAL_STORY",
+        "recommended_model": "argon",
+        "why": "Finding the counter-intuitive YouTube angle, packaging Title/Thumbnail synergy, and designing the 5-phase causal spine (OR-15, OR-31)."
+      },
+      {
+        "gate": "G2_NARRATIVE_SCRIPT",
+        "recommended_model": "argon",
+        "why": "Writing the 0-12s Paradox Hook, micro-cliffhangers at every segment end, vivid concrete narration, and sharp subtextual dialogue (ST-01..19, SC-01..12)."
+      },
+      {
+        "gate": "G2B_SCRIPT_CRITIC_PASS",
+        "recommended_model": "argon",
+        "why": "Fresh-context retention audit (D-84): hunting boring encyclopedia lines, slow setups, and weak segment transitions."
+      },
+      {
+        "gate": "G3_VISUAL_AND_AUDIO_SCRIPT",
+        "recommended_model": "flash",
+        "why": "Compiling approved narrative into 120+ structured ShotSpec JSON objects, camera moves, and SFX/music cue sheets at high speed with 0 schema errors."
+      },
+      {
+        "gate": "G4_SFX_AMBIENCE_MUSIC",
+        "recommended_model": "flash",
+        "why": "Extracting exact timestamped foley/footstep/ambience cue lists and validating AL-01..AL-08 decibel ducking rules."
+      },
+      {
+        "gate": "G5_ALL_STILL_ASSETS_AND_KEYFRAMES",
+        "recommended_model": "flash",
+        "why": "Batch-generating 10% map specs, 30% layered collage layered prompts, and 60% start/end keyframe payloads from the locked Reference Library."
+      },
+      {
+        "gate": "G6_ELEVENLABS_VOICE_AND_SPINE",
+        "recommended_model": "flash",
+        "why": "Running ElevenLabs TTS batches, Scribe word alignment (words.json), and 24fps frame tiling (timing.py)."
+      },
+      {
+        "gate": "G7_PARALLEL_10_30_60_RENDER",
+        "recommended_model": "flash",
+        "why": "Orchestrating parallel Thread A (10%+30%) and Thread B (60% Wan 2.2 Modal GPU) jobs and telemetry checks."
+      },
+      {
+        "gate": "G8_CHUNKED_3MIN_ASSEMBLY",
+        "recommended_model": "flash_with_argon_qa",
+        "why": "Flash assembles the four 3-minute MP4 chunks and runs technical QA; Argon reviews narrative pacing if a chunk needs re-cutting."
+      }
+    ]
+  }
 }

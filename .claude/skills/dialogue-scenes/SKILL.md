@@ -5,6 +5,8 @@ description: Write or fix any scene where characters talk - the scene header, op
 
 # Dialogue scenes: a unit that turns, not a row of quips
 
+**v4.3 episode-first (2026-11-12, D-131):** the dialogue lives inside the scenes, and every hero line belongs to a shot routed `video` (LTX-2.5 distilled speaks it in the clip, D-132; the old name `wan` reads as `video`); the runner's G1 (`episode/router.talking_check`) FAILs a speaker shot on another route. One line per clip (VL-02), the line ends inside its clip with BP-187's tail, a line longer than one clip is split (VL-06, G1 `video_shots_fit_the_model`); a scene is one segment in one place (docs/VIDEO_LANE.md). The scene rules below apply unchanged.
+
 Rules by id: SC-01..SC-10 and DW-01..DW-13 in `docs/STORY_ENGINE.md` (wired as PV-48, `scripting/scene_lint.py`).
 Evidence for every rule and number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`. A scene is not a location or a
 block of lines: someone present wants something now, someone present opposes it, something unexpected turns it, and a
@@ -42,8 +44,7 @@ scene still works; repeat until it doesn't. End within 1-2 lines of the turn, on
 
 `NARRATOR 2-4 sentences (where / when / why-now, ending on the pressure) -> SCENE 5-12 beats with a turn, exiting on
 the complication -> NARRATOR 1-2 sentences (the consequence + the next pressure)`. The narrator NEVER restates the
-scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md)'s (25-45 % for
-template D; the old ~40-60 % is superseded). A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
+scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md): 70-80 % of audible spoken words (voiced character dialogue is the complementary 20-30 %; target 75/25). Lines marked `voiced: false` do not count. This is independent from the 60/30/10 visual runtime mix. A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
 seconds stay in one place: cut away to the plan carried out, its cost or the other side moving (KP-42), and no more than
 [BP-113](../../../docs/SOURCED_RULES.md)'s lines in a row without a silent reaction, an insert or a cutaway (KP-43).
 

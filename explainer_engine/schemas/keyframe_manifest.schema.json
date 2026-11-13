@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/keyframe_manifest.schema.json",
+  "title": "Stage2KeyframeManifest",
+  "description": "Stage 2 2D anchored storyboard keyframe manifest tracking asset anchors, start/end frames, seeds, SHA-256 hashes, 2D repair history, and approval gates before Stage 3 video rendering.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "episode_id",
+    "stage2_model_id",
+    "comfy_local_url",
+    "assets",
+    "shots"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "episode_id": {
+      "type": "string",
+      "pattern": "^ep_[a-z0-9_]+$"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stage2_model_id": {
+      "enum": [
+        "gemini_image_edit_2511",
+        "gemini_image_2_1_chiaroscuro_anchor_v2",
+        "qwen_image_edit_2511",
+        "qwen_image_2_1_xworld_v2",
+        "gemini-3-pro-image"
+      ]
+    },
+    "comfy_local_url": {
+      "type": "string",
+      "pattern": "^https?://(127\\.0\\.0\\.1|localhost)(:[0-9]+)?$"
+    },
+    "assets": {
+      "type": "object",
+      "required": [
+        "characters",
+        "locations",
+        "props"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "characters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AssetRecord"
+          }
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AssetRecord"
+          }
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AssetRecord"
+          }
+        }
+      }
+    },
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/ShotKeyframeRecord"
+      }
+    }
+  },
+  "$defs": {
+    "AssetRecord": {
+      "type": "object",
+      "required": [
+        "asset_id",
+        "path",
+        "approved"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "pattern": "^(char|loc|prop)_[a-z0-9_]+$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "approved": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ShotKeyframeRecord": {
+      "type": "object",
+      "required": [
+        "shot_id",
+        "generation_mode",
+        "needs_start_frame",
+        "needs_end_frame",
+        "start_frame_path",
+        "end_frame_path",
+        "start_frame_seed",
+        "approval_status",
+        "repair_attempts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "shot_id": {
+          "type": "string",
+          "pattern": "^S(0[1-9]|1[0-6])_SH[0-9]{3}$"
+        },
+        "generation_mode": {
+          "enum": [
+            "WAN_I2V",
+            "WAN_FLF2V",
+            "WAN_CONTROL",
+            "STILL_25D",
+            "MAP_25D",
+            "WAN_FALLBACK_LTX",
+            "COLLAGE_STILL",
+            "TACTILE_MAP"
+          ]
+        },
+        "needs_start_frame": {
+          "type": "boolean",
+          "const": true
+        },
+        "needs_end_frame": {
+          "type": "boolean"
+        },
+        "start_frame_source": {
+          "enum": [
+            "new_master_anchor",
+            "reference_derived_anchor",
+            "edit_from_prev_shot",
+            "reuse_existing_asset",
+            "multiangle_from_anchor"
+          ]
+        },
+        "start_frame_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start_frame_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "start_frame_seed": {
+          "type": "integer"
+        },
+        "end_frame_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end_frame_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "end_frame_seed": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "approval_status": {
+          "enum": [
+            "KEYFRAME_GENERATED",
+            "KEYFRAME_APPROVED",
+            "REPAIRED_2D",
+            "FLAGGED_HUMAN_REVIEW"
+          ]
+        },
+        "repair_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "repair_notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "needs_end_frame": {
+                "const": true
+              }
+            },
+            "required": [
+              "needs_end_frame"
+            ]
+          },
+          "then": {
+            "properties": {
+              "end_frame_path": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "end_frame_path": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

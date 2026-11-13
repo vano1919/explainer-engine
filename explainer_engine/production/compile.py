@@ -1,3 +1,4 @@
+
 """Compile a production script (D-43): fill every picture's prompt from its subject (``edit/prompt_v2.compose``, the D-41
 slots) at the moment the segment is written, and derive the files the paid steps take:
 

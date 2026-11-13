@@ -6,6 +6,16 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
+**v4.3 episode (D-131; Fable audit 2026-11-13):** a character's line on a `video` shot is spoken by the LTX clip itself
+(D-132): one line per clip (VL-02, a clip leaves 0.85-1.0 s between two sentences), the line ends inside its clip with
+BP-187's tail, and a line longer than one clip is split in the script (VL-06, the G1 row `video_shots_fit_the_model`). No
+speaking close-up (VL-02). A scene is a segment in one place: the video lane cuts and continues inside it. You write
+`audio_lines` and each shot's `audio_line_ids`; the motion prompt never quotes a line (`KP-V4-DIALOGUE-LEAK`).
+
+**Ink Chronicle note (D-96, 2026-11-05):** speech mix nominal 70/30, REVIEW outside 65-75 % narrator words (D-99); visible voiced coverage stays ≤ 5 s (BP-108); where this page names LTX shots it describes the legacy image-generation route (D-105).
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start writer --job <job> --page .claude/agents/scene-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh writer --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You write the words of one segment: its `lines` (text, `speaker`, `claims`, and on every dialogue line `to`, plus
@@ -51,7 +61,7 @@ Animated episodes (shot cards, docs/SHOT_PROMPTS.md KP-16..KP-20): for each shot
 present-tense verb phrases (`start` = what the first frame shows, `peak` = the big move with body parts, `settle` = the pose
 it holds), `reactions` (one small verb each), the `dialogue` line copied from the script with `to`, and on a narrated shot
 the `narration` (what the heroes cannot know; never a description of the picture). A spoken line fits its shot (BP-100: about
-7 words in 4 s); a longer one is two shots or goes to the narrator. One speaker per shot.
+7 words in 4 s); keep visible dialogue/lip-sync coverage at or under 5 s. Longer spoken text may be reassigned to narration or split into motivated dialogue coverage. This dialogue rule does not apply to non-dialogue LTX/action shots, which may run 10-15 s when uninterrupted action is better; do not cut a battle/task shot just to meet the dialogue limit. One speaker per shot.
 
 Then run `python -m explainer_engine.scripting.stage_guard writer before.json after.json` and
 `python -m explainer_engine.production validate <script>`: 0 FAIL for PV-12, PV-33 and PV-48 (scene_lint, SC-01..SC-10).
@@ -65,3 +75,16 @@ A reported exchange counts as the scene's exchange (SC-05, BP-70, D-65, the crea
 at most two speakers reported in one line (BP-96). Frame every exchange (ST-14, BP-90, D-64): narrator setup (who talks, named before his first line, and what brings them there), the exchange, narrator conclusion (what came of it); a segment never ends or opens on a hero line, so two exchanges never touch. A bubble line, when the scene keeps one, is a key phrase within BP-84's cap.
 
 Before you hand a segment over: `python -m explainer_engine.scripting.register_lint <script>` reports 0 RG-01 (a word the AI register owns is a FAIL, BP-140), and `story_lint` shows no ST-20..ST-23 you cannot answer in one line (an and-then chain, a narrator repeating the scene, violence in the first seven seconds, a twist that takes too long to say).
+
+
+## v4.2 Played Dramatic Scene & Anti-Interruption Contract (Mandatory on /3 and v4.0.0)
+1. **Ban Isolated One-Line Character Interruptions (`SC-05`)**:
+   - Never drop an isolated 1-line character shout inside narrator exposition without a `scene` contract and a multi-turn response.
+   - If a segment is `narration_led`, keep it 100% narrator-voiced.
+2. **Complete `scene` Contract (`SC-01..SC-06`, `SC-10`)**:
+   - Every segment with character dialogue MUST define `scene: {place, present, pov, want, obstacle_want, value, open_charge, close_charge, turn, exit, surface_topic, real_subject}`.
+   - Characters in `present` must be co-present in the same physical `place`; `open_charge != close_charge`; `want != obstacle_want`.
+   - Play at least 2 contiguous character turns from at least 2 co-present characters without narrator interruption mid-exchange.
+3. **Narrator Hand-Off & Consequence Without Double-Exposition (`ST-14`, `ST-21`)**:
+   - Frame every played exchange with narrator setup before and narrator consequence after.
+   - Never repeat in narration what the adjacent character line just said (`ST-21`).

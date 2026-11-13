@@ -1,3 +1,4 @@
+
 """The HUD and graph archetypes of the visual compensator: 5 ballistic range HUD, 7 split-screen speed race, 10 tech tree,
 11 order-of-battle telemetry (a transparent overlay), 12 verdict matrix. Free, drawn by code, a pure function of (spec, frame).
 

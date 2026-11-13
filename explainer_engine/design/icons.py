@@ -1,3 +1,4 @@
+
 """Drawn props from the text (the creator 2026-10-21: "visual things that follow logically from the text", not new pictures).
 
 A prop beat (``visual_beats[].kind == "prop"``) pops a cut-out PNG onto the frame. This module makes those cut-outs from line

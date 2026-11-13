@@ -8,6 +8,13 @@
     "ltx_clip": {"unit": "clip", "rows": {}},
     "lora_train": {"unit": "step", "rows": {}},
     "captions": {"unit": "row", "rows": {}},
-    "smoke": {"unit": "pod", "rows": {}}
+    "smoke": {"unit": "pod", "rows": {}},
+    "blender_frame_eevee_fast_1440": {"unit": "frame", "rows": {}},
+    "blender_frame_eevee_full_1440": {"unit": "frame", "rows": {}},
+    "blender_frame_eevee_painterly_1440": {"unit": "frame", "rows": {}},
+    "blender_frame_cycles_hero_1440": {"unit": "frame", "rows": {}},
+    "ltx_clip_s_per_clip": {"unit": "clip", "rows": {}, "measured": null, "note": "D-116 J2/J4: one LTX generation of 3-6 s (BP-172), measured on the step-3 route-test pod"},
+    "qwen_asset_s_per_image": {"unit": "picture", "rows": {}, "measured": null, "note": "D-116: one Qwen-Image-2.1 + xworld_v2 asset or first frame, measured on the asset pod"},
+    "blender_25d_s_per_frame_pc": {"unit": "frame", "rows": {}, "measured": null, "note": "D-116 J5: one 2.5D Blender frame on the creator's PC (RX 5700, EEVEE, D-113)"}
   }
 }

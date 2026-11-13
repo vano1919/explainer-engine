@@ -11,8 +11,20 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "file", "category", "tags", "seconds", "sample_rate", "sha256", "peak_dbfs", "rms_dbfs",
-                     "source", "licence", "review"],
+        "required": [
+          "id",
+          "file",
+          "category",
+          "tags",
+          "seconds",
+          "sample_rate",
+          "sha256",
+          "peak_dbfs",
+          "rms_dbfs",
+          "source",
+          "licence",
+          "review"
+        ],
         "additionalProperties": false,
         "properties": {
           "id": {"type": "string", "pattern": "^[a-z0-9_]+__v[0-9]+$"},
@@ -20,12 +32,24 @@
           "category": {"enum": ["vocal", "foley", "music"]},
           "tags": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}},
           "seconds": {"type": "number", "exclusiveMinimum": 0},
-          "kind": {"enum": ["one_shot", "loop"], "description": "BP-58: sfx_library.kind_of reads it before the loop flag"},
-          "loop": {"type": "boolean",
-                   "description": "true: made to tile seamlessly (beds, music loops); false: a one-shot that plays once. Missing means true (older manifests); assemble.Sounds.loopable reads it and a one-shot is never tiled."},
-          "intended_seconds": {"type": "number", "exclusiveMinimum": 0,
-                               "description": "the length the sound was prompted for; a stored length far from it (reveal_sting: asked ~4 s, stored 30.772 s) is caught at review, not in the mix"},
-          "motif_of": {"type": "string", "minLength": 1, "description": "music only: the owner (faction, hero or the channel) whose motif this is (BP-123, SD-11)"},
+          "kind": {
+            "enum": ["one_shot", "loop", "track"],
+            "description": "BP-58: sfx_library.kind_of reads it before the loop flag; a track is a music piece played through"
+          },
+          "loop": {
+            "type": "boolean",
+            "description": "true: made to tile seamlessly (beds, music loops); false: a one-shot that plays once. Missing means true (older manifests); assemble.Sounds.loopable reads it and a one-shot is never tiled."
+          },
+          "intended_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "the length the sound was prompted for; a stored length far from it (reveal_sting: asked ~4 s, stored 30.772 s) is caught at review, not in the mix"
+          },
+          "motif_of": {
+            "type": "string",
+            "minLength": 1,
+            "description": "music only: the owner (faction, hero or the channel) whose motif this is (BP-123, SD-11)"
+          },
           "beat_grid": {
             "type": "object",
             "required": ["bpm", "offset_s", "source"],
@@ -46,16 +70,30 @@
             "required": ["kind"],
             "additionalProperties": false,
             "properties": {
-              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "elevenlabs", "recorded", "third_party", "open_model"],
-                       "description": "open_model: a take from a free generator, allowed only with source.admission (BP-162, SD-13)"},
+              "kind": {
+                "enum": ["procedural", "gemini_tts", "lyria", "elevenlabs", "recorded", "third_party", "open_model"],
+                "description": "open_model: a take from a free generator, allowed only with source.admission (BP-162, SD-13)"
+              },
               "model": {"type": "string"},
               "prompt": {"type": "string"},
               "seed": {"type": "integer"},
               "generated": {"type": "string"},
               "cost_usd_estimate": {"type": "number", "minimum": 0},
-              "cost_credits": {"type": "number", "minimum": 0, "description": "ElevenLabs credits charged for this take (D-52)"},
-              "generation_id": {"type": "string", "minLength": 1, "description": "the provider's generation id, to re-download or prove the take"},
-              "admission": {"type": "string", "minLength": 1, "description": "open_model only: the id of the admission record in assets/audio/generator_admission.json (BP-162)"}
+              "cost_credits": {
+                "type": "number",
+                "minimum": 0,
+                "description": "ElevenLabs credits charged for this take (D-52)"
+              },
+              "generation_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "the provider's generation id, to re-download or prove the take"
+              },
+              "admission": {
+                "type": "string",
+                "minLength": 1,
+                "description": "open_model only: the id of the admission record in assets/audio/generator_admission.json (BP-162)"
+              }
             }
           },
           "licence": {
@@ -63,20 +101,111 @@
             "required": ["status", "note"],
             "additionalProperties": false,
             "properties": {
-              "status": {"enum": ["own_procedural", "generated_terms_unverified", "generated_terms_verified", "licensed", "cc0"]},
+              "status": {
+                "enum": [
+                  "own_procedural",
+                  "generated_terms_unverified",
+                  "generated_terms_verified",
+                  "licensed",
+                  "cc0"
+                ]
+              },
               "note": {"type": "string", "minLength": 1},
-              "attribution": {"type": "string", "minLength": 1,
-                              "description": "the credit line a CC BY (or similar) licence asks for; published in the description (D-83: text only, never a block)"}
+              "attribution": {
+                "type": "string",
+                "minLength": 1,
+                "description": "the credit line a CC BY (or similar) licence asks for; published in the description (D-83: text only, never a block)"
+              },
+              "type": {
+                "type": "string",
+                "description": "licence id of audio/sources.LICENCES (cc0, cc_by_4, mixkit_sfx_free, ...)"
+              },
+              "url": {"type": "string"},
+              "source_url": {"type": "string", "description": "the asset's page, read when the item was imported"},
+              "creator": {"type": "string"},
+              "attribution_required": {"type": "boolean"},
+              "attribution_text": {"type": ["string", "null"]},
+              "commercial_use": {"type": ["boolean", "null"]},
+              "modification": {"type": ["boolean", "null"]},
+              "redistribution": {"type": ["boolean", "null"]},
+              "ai_processing": {"type": ["boolean", "null"]},
+              "read_on": {"type": "string", "description": "the day the licence was read on the source page"},
+              "production": {
+                "enum": ["verified", "quarantine", "rejected"],
+                "description": "LIB-05: only verified items are ever played"
+              },
+              "use": {
+                "enum": ["music", "sfx"],
+                "description": "what the licence was judged for (sources.verdict): music keeps the licence gate, an effect follows the creator's 2026-11-13 rule"
+              },
+              "exception": {
+                "type": "string",
+                "description": "the creator's recorded exception that verifies this licence for its use"
+              }
             }
           },
           "review": {
             "type": "object",
             "required": ["machine", "human"],
             "additionalProperties": false,
+            "properties": {"machine": {"type": "string"}, "human": {"enum": ["not_listened", "approved", "rejected"]}}
+          },
+          "catalog": {
+            "type": "object",
+            "description": "LIB-02/LIB-04: the item's classification, values from assets/audio/taxonomy.json",
+            "additionalProperties": false,
             "properties": {
-              "machine": {"type": "string"},
-              "human": {"enum": ["not_listened", "approved", "rejected"]}
+              "title": {"type": "string"},
+              "bst": {"type": "string"},
+              "sound_category": {"type": "string"},
+              "subcategory": {"type": "string"},
+              "genres": {"type": "array", "items": {"type": "string"}},
+              "scene_types": {"type": "array", "items": {"type": "string"}},
+              "historical_era": {"type": "array", "items": {"type": "string"}},
+              "environment": {"type": "array", "items": {"type": "string"}},
+              "materials": {"type": "array", "items": {"type": "string"}},
+              "action_tags": {"type": "array", "items": {"type": "string"}},
+              "mood": {"type": "array", "items": {"type": "string"}},
+              "intensity": {"type": "integer", "minimum": 1, "maximum": 5},
+              "distance": {"enum": ["close", "medium", "distant"]},
+              "space": {"enum": ["interior", "exterior"]},
+              "width": {"enum": ["wide", "narrow"]},
+              "usage": {"type": "array", "items": {"type": "string"}},
+              "loopable": {"type": "boolean"},
+              "inferred": {
+                "type": "boolean",
+                "description": "true: derived from older tags by catalog.migrate, not hand-classified"
+              }
             }
+          },
+          "original": {
+            "type": "object",
+            "description": "LIB-06: the downloaded original, kept unchanged in the private originals store",
+            "additionalProperties": false,
+            "properties": {
+              "path": {"type": "string"},
+              "filename": {"type": "string"},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "format": {"type": ["string", "null"]},
+              "codec": {"type": ["string", "null"]},
+              "sample_rate": {"type": "integer"},
+              "channels": {"type": "integer"},
+              "bit_depth": {"type": ["integer", "null"]},
+              "duration_s": {"type": "number"},
+              "bytes": {"type": "integer"},
+              "downloaded_at": {"type": "string"},
+              "url": {"type": "string"},
+              "partial": {
+                "type": "string",
+                "description": "set when only the head of a long recording was fetched: which seconds and bytes"
+              }
+            }
+          },
+          "qc": {
+            "type": "object",
+            "description": "LIB-07: technical QC (audio/asset_qc)",
+            "additionalProperties": true,
+            "properties": {"status": {"enum": ["PASS", "REVIEW", "FAIL"]}, "findings": {"type": "array"}}
           }
         }
       }

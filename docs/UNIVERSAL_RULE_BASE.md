@@ -1,5 +1,7 @@
 # Universal Rule Base
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 The channel-wide rules every Crossworld Theories video follows: history, science, fantasy crossovers alike. The creator
 set them on 2026-10-16 (D-37). Rules marked **[code]** are checked by `explainer_engine/edit/shot_rules.py`
 (`python -m explainer_engine.edit.shot_rules <shots.json> <words.json> <look.json>`; UR-16..UR-21 in `edit/stakes.json`); **[editorial]** rules are

@@ -1,3 +1,4 @@
+
 """Expression sheets (VB-09, docs/STORY_ENGINE.md; the creator, 2026-10-19): a speaking hero's face changes about once a
 second in dialogue (VB-02), so the hero is not painted again into every place. Each speaking hero gets ONE sheet of about
 ten close-up expressions on a flat chroma-green background, painted once from the hero's reference picture (invariant 6:

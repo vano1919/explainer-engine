@@ -1,3 +1,4 @@
+
 """RP-01..RP-10, the batching and card rules of a paid pod, as code (P1c; source: the p9 RunPod re-check, B1..B10, project files
 ``blueprint_2026-10-29/recheck/p9_runpod.json``). The one home of the text is ``docs/CLOUD_RUNBOOK.md``; this module is what
 ``runpod create`` asks. stdlib only. Rules that need a measurement refuse only on what the plan states or a row measured; an
@@ -57,17 +58,38 @@ def rp09(rows, *, share_max, refused=None):
 
 
 HW_EXTRA_MAX = 2          # RP-10: at most this many creator-granted extra hardware tries per create command
+PLACEMENT_WATCH_MAX = 60  # RP-10 (amended 2026-11-06 18:28 UTC): placement failures a recorded watch may try; they create no pod and bill $0
+PLACEMENT_MARKERS = ("no longer any instances available", "no instances available")
 
 
-def rp10(hw_failures, script_failed, *, key="", extra=0, extra_reason=""):
+def is_placement_failure(message: str) -> bool:
+    """A create the API refused because no instance of the card is free (HTTP 400 "no instances available"): no pod, $0.
+    BAD_HOST pods, pods that were made and then failed, and every other refusal are real hardware failures, not this."""
+    m = (message or "").lower()
+    return any(k in m for k in PLACEMENT_MARKERS)
+
+
+def rp10(hw_failures, script_failed, *, key="", extra=0, extra_reason="", placement_failures=0, watch=False, watch_reason=""):
     """RP-10: a hardware failure (no capacity, BAD_HOST) gets one retry; a script failure gets no paid retry of the same text.
     ``extra`` = tries the creator granted in words (``--hw-extra-retries N --hw-extra-reason "<his message id>"``); a grant
-    without a reason, or over ``HW_EXTRA_MAX``, is ignored, so the guard is never opened without his recorded word."""
+    without a reason, or over ``HW_EXTRA_MAX``, is ignored, so the guard is never opened without his recorded word.
+    ``placement_failures`` = creates the API refused with "no instances available" (no pod, $0). Without ``watch`` they count as
+    hardware failures, exactly as before. With ``--placement-watch --placement-watch-reason <his message id>`` they count only
+    toward ``PLACEMENT_WATCH_MAX``; real hardware failures stay under the old limit."""
     out = []
+    if watch and not watch_reason.strip():
+        out.append("RP-10: --placement-watch needs --placement-watch-reason (the creator's message id); it is not granted without it")
+        watch = False
     if extra and not extra_reason.strip():
         out.append("RP-10: --hw-extra-retries needs --hw-extra-reason (the creator's message id); it is not granted without it")
         extra = 0
     extra = max(0, min(int(extra or 0), HW_EXTRA_MAX))
+    if watch:
+        if placement_failures >= PLACEMENT_WATCH_MAX:
+            out.append(f"RP-10: {placement_failures} placement failures (no instances available) on {key or 'this job'}: the watch limit "
+                       f"{PLACEMENT_WATCH_MAX} is used; stop and ask the creator")
+    else:
+        hw_failures += placement_failures
     if hw_failures >= HW_ATTEMPTS + extra:
         out.append(f"RP-10: {hw_failures} failed create or BAD_HOST pod(s) on {key or 'this job'}: the one retry is used; stop and ask the creator")
     if script_failed:

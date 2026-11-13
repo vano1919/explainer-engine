@@ -1,0 +1,97 @@
+{
+  "schema": "retired_era/1",
+  "decided": "the creator, 2026-11-12 (D-131, plan PLAN_v4_3_IMPLEMENTATION.md Q10 answer A): the old tools stay as code, marked retired, and guards refuse them inside a v4.3 episode (a folder whose episode.json has schema episode_manifest/1). The episodes made before 2026-11-12 keep them.",
+  "tools": {
+    "qwen_image": {
+      "what": "Qwen-Image-2.1 pictures (and the p15 Modal Qwen launchers)",
+      "entry": [
+        "explainer_engine/training/pods/p15/modal_qwen_jobs_v15.py"
+      ],
+      "replacement": "the Gemini chat turn packs (imagegen/turn_pack, GC-01..GC-17)",
+      "everywhere": "the creator, 2026-11-12 14:01 UTC (final audit section 7, answer 4): Qwen is retired fully; the style rounds go through the Gemini chat only, no Qwen exception",
+      "workers_glob": [
+        "explainer_engine/training/pods/p15/modal_qwen_jobs*.py",
+        "explainer_engine/training/pods/p15/modal_sa_test.py",
+        "explainer_engine/training/pods/p15/modal_p15d.py",
+        "explainer_engine/training/pods/p15/p15_qwen.py",
+        "explainer_engine/training/pods/p15/qwen_jobs.py",
+        "explainer_engine/training/pods/p15/sa_test_qwen.py"
+      ]
+    },
+    "xworld_lora": {
+      "what": "the xworld LoRA on Qwen-Image-2.1 (D-80)",
+      "entry": [
+        "explainer_engine/training/lora_rules.py",
+        "explainer_engine/training/audit.py",
+        "explainer_engine/training/judge.py",
+        "explainer_engine/training/embed.py",
+        "explainer_engine/training/footage.py"
+      ],
+      "replacement": "the Gemini chat with the approved style text (style preset)",
+      "everywhere": "the creator, 2026-11-12 14:01 UTC (final audit section 7, answer 4): Qwen is retired fully; the style rounds go through the Gemini chat only, no Qwen exception (the xworld LoRA is a Qwen-Image LoRA)",
+      "not_retired": {
+        "explainer_engine/training/video_qa.py": "the Fable audit 2026-11-13 FA-16: a generic clip QA (palette identity per hero box, black and frozen runs, rhythm), not part of the LoRA; the v4.3 identity rows (FA-14) use shot_identity"
+      }
+    },
+    "ltx": {
+      "what": "the D-116 LTX routes: the J2/J4 clips of the p15 LTX launcher, the old LTX LoRAs, the RunPod LTX pods and the LTX 0.9.x routes",
+      "entry": [
+        "explainer_engine/training/pods/p15/modal_ltx_jobs_v1.py"
+      ],
+      "replacement": "route video: LTX-2.5 distilled on Modal through the video lane videolane/scene (the scene file and its prompt composer) + training/pods/ltx/scene_run (job spec and ledger) and the worker training/pods/ltx/modal_ltx_jobs.py (D-132, D-137); the planned aivideo/ltx_modal adapter was never built (Fable audit FA-16)",
+      "returned": "the creator, 2026-11-12 19:10 UTC (D-132, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji): LTX-2.5 distilled is back for the v4.3 Modal path only (training/pods/ltx/modal_ltx_jobs.py, not an entry here); everything else of the old LTX era stays retired"
+    },
+    "blender_scene": {
+      "what": "Blender scenes, J5 shots, layout passes (D-113, D-116)",
+      "entry": [
+        "explainer_engine/training/pods/blender_render.py",
+        "explainer_engine/blender/"
+      ],
+      "replacement": "route still_25d (production/layers25d) and route map (maps/)"
+    },
+    "runpod": {
+      "what": "RunPod pods (cloud/runpod.py create)",
+      "entry": [
+        "explainer_engine/cloud/runpod.py"
+      ],
+      "replacement": "Modal for the video route (training/pods/ltx/modal_ltx_jobs.py, D-132; the Wan worker stays, not routed)"
+    },
+    "legacy_paint": {
+      "what": "the legacy still-picture route's paint plans (production/paint.py run)",
+      "entry": [
+        "explainer_engine/production/paint.py"
+      ],
+      "replacement": "the Gemini chat turn packs; a paid 2K re-make only for a failing close-up hero shot"
+    },
+    "cinematic_image_animator": {
+      "what": "the archive's keyword-guessed 2.5D animator (production/cinematic_image_animator.py, one-sheet warp)",
+      "entry": [
+        "explainer_engine/production/cinematic_image_animator.py"
+      ],
+      "replacement": "route still_25d through production/layers25d (RT-06)"
+    }
+  },
+  "retired_routes": [
+    "J2",
+    "J4",
+    "J5",
+    "VIDEO_3D",
+    "STILL_3D",
+    "HELPER",
+    "ltx",
+    "qwen",
+    "blender",
+    "paint"
+  ],
+  "loaded_not_used": {
+    "explainer_engine.training.lora_rules": "read-only trigger data (training/lora_rules.json): the v4.3 script lint (story_lint ST-24 -> scripting/variant_plan) imports scripting/film_shots for its segment parser, and film_shots and qa/style_prompt read the LoRA trigger when they load; no LoRA is trained, loaded or called on the v4.3 path (found by the P10 scan 2026-11-12)"
+  },
+  "video_path": {
+    "decided": "D-132 (the creator, 2026-11-12 19:10 UTC) and D-137 (the video lane); named by the Fable audit 2026-11-13 FA-16",
+    "modules": [
+      "explainer_engine/videolane/scene.py",
+      "explainer_engine/training/pods/ltx/scene_run.py",
+      "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"
+    ]
+  }
+}

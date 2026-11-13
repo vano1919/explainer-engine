@@ -1,3 +1,4 @@
+
 """Voice casting from a character's traits (VC rules, docs/STORY_ENGINE.md, D-48): the search an ElevenLabs voice
 library query needs, the description a designed voice needs, and a ranking of the voices that come back. Free;
 the agent passes ``query(...)`` to the connector's ``creative_list_voices`` and the result to ``rank(...)``.
@@ -64,25 +65,74 @@ PLACES = {"england": "british", "london": "british", "usa": "american", "new yor
 
 
 AGES = ("young", "middle_aged", "old")
-# words in the voice style or the picture card that say the hero's age (the creator, 2026-10-19: "ages matter most")
+# a hero under 18 (VC-10, the creator 2026-11-07: "yesterday a child had a 40-year-old man's voice"): the library's age
+# filter knows only young / middle_aged / old, and its "young" is a young ADULT (Ben Young Man, Cam), so a child or a
+# teen is never searched with the age filter; the voice must say it is a kid in its own name, description or labels
+KID_AGES = ("child", "teen")
+# words in the voice style or the picture card that say the hero's age (the creator, 2026-10-19: "ages matter most");
+# the kid bands are read before "young" so "a young boy" is a teen, never a young adult
 AGE_WORDS = [("old", r"\b(elderly|old man|old woman|older|aged|grandfather|grandmother|patriarch|matriarch|sixties|seventies|"
                      r"eighties|white[- ]haired)\b"),
              ("middle_aged", r"\b(middle[- ]aged|forties|fifties|thirties|mature)\b"),
-             ("young", r"\b(young|youthful|teen\w*|twenties|boyish|girlish)\b")]
+             ("child", r"\b(child|kid|little (boy|girl)|small (boy|girl)|([4-9]|1[01])[- ]years?[- ]old|"
+                       r"(five|six|seven|eight|nine|ten|eleven)[- ]years?[- ]old)\b"),
+             ("teen", r"\b(teen\w*|adolescent|boy|girl|lad|lass|(1[2-7])[- ]years?[- ]old|"
+                      r"(twelve|thirteen|fourteen|fifteen|sixteen|seventeen)[- ]years?[- ]old)\b"),
+             ("young", r"\b(young|youthful|twenties|boyish|girlish)\b")]
+# a voice that says it is a kid (VC-10): read from its description and labels, after the words that only name the
+# AUDIENCE ("for kids", "children's books", "kids storyteller") are struck out; a name alone ("Johnny Boy") is no evidence
+KID_VOICE = {"child": r"\b(child(like)?|kids?|little (cartoon )?(boy|girl)|cartoon (boy|girl)|very young|actual kid|"
+                      r"([4-9]|1[01])[- ]?(years?[- ]old|yo)?)\b",
+             "teen": r"\b(teen\w*|adolescent|(1[2-7])[- ]?(years?[- ]old|yo)?|orphan boy|schoolboy|boy|girl)\b"}
+KID_AUDIENCE = re.compile(r"\b(for (young )?(kids|children)|kids'?\s*(content|stor\w+|learning|educat\w*|bedtime|audio\w*|"
+                          r"cartoons?|apps?|channels?|platforms?|series|characters? voiceover)|children'?s\s*(books?|content|"
+                          r"stor\w+|educat\w*|audiobooks?|animations?|podcasts?|nonfiction|learning|channels?)|young listeners|"
+                          r"teen and young adult audiobooks|teen audiobooks|kid characters|kid-friendly|youtube kids|"
+                          r"kids? (narrator|storyteller|educator|bedtime)|boyfriend|boy[- ]next[- ]door|good ol'? boys?|"
+                          r"with your boys|the boys)\b", re.I)
+ADULT_VOICE = re.compile(r"\b(young adult|adult|man|men|woman|grown|mid-?\d0s|[2-9]0s|middle[- ]aged|millennial|gen z|"
+                         r"father|dad|mother|mom|grandpa|grandfather|uncle|aunt|senior|elder\w*|\d{2,3}\+|age 3\d)\b", re.I)
 
 
 def age_of(hero: dict) -> str | None:
     """The hero's age band in the library's labels: ``traits.age`` first, else read from the voice style and the card."""
     t = hero.get("voice", {}).get("traits", {}).get("age")
     if t:
-        return t
+        return {"kid": "child", "boy": "teen", "girl": "teen", "teenager": "teen", "teenage": "teen"}.get(t, t)
     text = " ".join([hero.get("voice", {}).get("style", ""), hero.get("card", "")]).lower()
     return next((band for band, rx in AGE_WORDS if re.search(rx, text)), None)
 
 
 # the library's own age words (labels are free text: "Senior", "middle aged", "elderly") -> our three bands
 AGE_LABELS = {"senior": "old", "elderly": "old", "old": "old", "middle_aged": "middle_aged", "middle-aged": "middle_aged",
-              "mature": "middle_aged", "young": "young", "youthful": "young", "teen": "young"}
+              "mature": "middle_aged", "adult": "middle_aged", "young": "young", "youthful": "young", "young_adult": "young",
+              "teen": "teen", "teenager": "teen", "child": "child", "kid": "child"}
+
+
+def voice_text(v: dict) -> str:
+    """A returned voice's description and labels (keys and values: the library's free labels put words in both)."""
+    lab = v.get("labels") or {}
+    return " ".join([str(v.get("description", ""))] + [f"{k} {x}" for k, x in lab.items()])
+
+
+def kid_bands(v: dict) -> set[str]:
+    """The kid bands a voice claims for itself (VC-10): ``child``, ``teen`` or both, from its description and labels with
+    the audience phrases struck out; a voice that also calls itself an adult (``young adult``, ``mid-30s``) claims none."""
+    text = KID_AUDIENCE.sub(" ", voice_text(v))
+    name = str(v.get("name", ""))
+    if ADULT_VOICE.search(text) or ADULT_VOICE.search(KID_AUDIENCE.sub(" ", name)):
+        return set()
+    if any(int(n) >= 18 for n in re.findall(r"\b(\d{2})[- ]?years?[- ]old\b", name, re.I)):
+        return set()  # "Kuya Boy: The 20-Year-Old Narrator": the name says the age
+    bands = {band for band, rx in KID_VOICE.items() if re.search(rx, text, re.I)}
+    for n in re.findall(r"\b(\d{1,2})\b", text):
+        if 4 <= int(n) <= 11:
+            bands.add("child")
+        elif 12 <= int(n) <= 17:
+            bands.add("teen")
+        elif int(n) >= 18:
+            return set()
+    return bands
 
 
 def _age_label(label: str) -> str:
@@ -93,6 +143,8 @@ def _age_label(label: str) -> str:
 def _age_clash(want: str, label: str) -> bool:
     """A labelled voice two bands away (a young voice for an old hero) or a young voice for a middle-aged one."""
     label = _age_label(label)
+    if want in KID_AGES or label in KID_AGES:
+        return False  # kid bands are judged by kid_clash on the voice's own words, never by the library's adult labels
     if want not in AGES or label not in AGES:
         return False
     return abs(AGES.index(want) - AGES.index(label)) == 2 or (want == "middle_aged" and label == "young")
@@ -147,8 +199,9 @@ def query(hero: dict, language: str = "en") -> dict:
     q: dict = {"languages": [language], "context": "cast a voice for an animated explainer character from its traits"}
     if traits.get("gender"):
         q["gender"] = traits["gender"]
-    if age_of(hero):
-        q["age"] = age_of(hero)
+    age = age_of(hero)
+    if age in AGES:
+        q["age"] = age  # never for a child or a teen: the library's "young" is a young adult (VC-10)
     d = _descriptives(traits, style)
     if d:
         q["descriptives"] = d
@@ -159,7 +212,40 @@ def query(hero: dict, language: str = "en") -> dict:
     energy = {"low": "slow measured", "medium": "", "high": "energetic fast"}.get(traits.get("energy", "medium"), "")
     reg = region_of(hero)
     q["search"] = " ".join(x for x in [reg, energy, " ".join(d[:2]), "character" if traits.get("role") != "narrator" else "storyteller"] if x).strip()
+    if age in KID_AGES:
+        q["search"] = kid_search(hero)[0]
+        q.pop("descriptives", None)  # descriptives narrow to labelled library voices; most kid voices carry no labels
     return q
+
+
+def kid_search(hero: dict) -> list[str]:
+    """The free-text searches for a child or teen hero, best first (VC-10); run each with ``query``'s other filters and
+    pool the results: the library has no kid age band, so the words in the voice's own name and description find it."""
+    age = age_of(hero)
+    gender = hero.get("voice", {}).get("traits", {}).get("gender", "")
+    who = {"male": "boy", "female": "girl"}.get(gender, "kid")
+    if age == "child":
+        return [f"kid {who}", "child", f"little {who}", f"cartoon {who}"]
+    if age == "teen":
+        return [f"teen {who}", "teenager", who, "kid"]
+    return []
+
+
+def kid_clash(v: dict, hero: dict) -> str | None:
+    """Why a voice cannot speak for this hero by age (VC-10): a child or a teen hero needs a voice that says it is a kid
+    in its own description or labels; an adult hero never gets a voice that says it is a kid."""
+    age = age_of(hero)
+    bands = kid_bands(v)
+    lab = _age_label(_labels(v).get("age", ""))
+    if age in KID_AGES and lab in ("middle_aged", "old"):
+        return f"the hero is a {age}; the library labels the voice {lab!r} (VC-10)"   # "an old boy scout leader" says "boy"
+    if age in KID_AGES and not bands:
+        return f"the hero is a {age}; the voice never says it is a child or a teen (VC-10)"
+    if age == "child" and bands == {"teen"} and re.search(r"\b1[6-7]\b|older teen|deep-voiced", voice_text(v), re.I):
+        return "the hero is a child; the voice is an older teen (VC-10)"
+    if age in AGES and bands:
+        return f"the hero is {age}; the voice says it is a {'/'.join(sorted(bands))} (VC-10)"
+    return None
 
 
 def relaxed(q: dict) -> list[dict]:
@@ -189,13 +275,22 @@ def score(v: dict, hero: dict) -> float:
     if "famous" in lab.get("category", "") or IMITATION.search(str(v.get("description", ""))):
         return 0.0
     want = {"gender": traits.get("gender"), "age": age_of(hero)}
-    if want["age"] and _age_clash(want["age"], lab.get("age", "")):
+    if want["age"] and (_age_clash(want["age"], lab.get("age", "")) or kid_clash(v, hero)):
         return 0.0  # a voice of the wrong age is never a candidate, however well the rest fits
     s, total = 0.0, 0.0
+    if want["age"] in KID_AGES:
+        total += 2.0
+        s += 2.0 if want["age"] in kid_bands(v) else 1.0  # a teen voice for a child (or the reverse) is a weaker fit
     for key, w in (("gender", 3.0), ("age", 2.0)):
+        if key == "age" and want["age"] in KID_AGES:
+            continue
         if want[key]:
             total += w
             have = _age_label(lab.get(key, "")) if key == "age" else lab.get(key, "")
+            if key == "gender" and not have and want["age"] in KID_AGES:  # most kid voices carry no labels
+                text_v = KID_AUDIENCE.sub(" ", voice_text(v) + " " + str(v.get("name", "")))
+                have = ("male" if re.search(r"\b(boy|lad|schoolboy|male)\b", text_v, re.I) else
+                        "female" if re.search(r"\b(girl|lass|schoolgirl|female)\b", text_v, re.I) else "")
             s += w * (want[key].replace("_", " ") in have.replace("_", " "))
     acc = accent_of(traits)
     if acc:
@@ -226,6 +321,8 @@ def eligible(v: dict, hero: dict, taken: set[str] | None = None) -> list[str]:
     want_age = age_of(hero)
     if want_age and _age_clash(want_age, lab.get("age", "")):
         out.append(f"labelled {lab.get('age')!r}, the hero is {want_age} (VC-05)")
+    if want_age and kid_clash(v, hero):
+        out.append(kid_clash(v, hero))
     return out
 
 
@@ -267,8 +364,10 @@ def design_description(hero: dict) -> str:
         raise ValueError("; ".join(problems(hero)))
     voice = hero.get("voice", {})
     t = voice.get("traits", {})
-    age = {"young": "young adult", "middle_aged": "middle-aged", "old": "elderly"}.get(age_of(hero) or "", "")
-    parts = [p for p in [age, t.get("gender", ""), "voice"] if p]
+    age = {"young": "young adult", "middle_aged": "middle-aged", "old": "elderly", "child": "child's (about 8 to 11)",
+           "teen": "young teenage (about 12 to 15)"}.get(age_of(hero) or "", "")
+    who = {"child": {"male": "boy", "female": "girl"}, "teen": {"male": "boy", "female": "girl"}}.get(age_of(hero) or "", {})
+    parts = [p for p in [age, who.get(t.get("gender", ""), t.get("gender", "")), "voice"] if p]
     desc = " ".join(parts)
     acc = accent_of(t)
     if acc:

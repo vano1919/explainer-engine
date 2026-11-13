@@ -1,3 +1,4 @@
+
 """The QA loop: time, render a pair of chunks, review it (data + pixels), classify every finding, stop with a report
 (standing order 12, docs/PRODUCTION_RULES.md; the creator, 2026-10-20: check the video after every two rendered parts, fix
 the code when a problem is systemic and the script when it is the script's, re-render, until it is clean).

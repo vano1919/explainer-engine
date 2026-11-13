@@ -6,6 +6,18 @@ effort: high
 tools: Read, Edit, Bash, Grep, ToolSearch
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
+**v4.3 episode (D-131, D-132; Fable audit 2026-11-13):** LTX-2.5 distilled makes the clip's own sound and speaks the
+character's line itself (RT-08); the worker takes no audio input, so D-90's read-first conditioning is not built for this route.
+Write for every speaking character `world_bible.characters[].voice_description`: the voice in plain words (age, timbre,
+accent, pace), from the traits only, never a person's name (PV-10; `casting.design_description` gives a start). The LTX
+prompt composer (`videolane/scene.compose_prompt`) puts it in every clip of that speaker, and a spoken shot without it is
+refused before money. Whether a paid speech-to-speech pass is added later is the creator's (audit Q5,
+`config/creator_open_questions.json`).
+
+**Ink Chronicle note (D-96, 2026-11-05):** one fixed ElevenLabs voice per character stays (D-90); on the Blender path its take drives the lip-sync (mouth shapes) instead of conditioning an LTX clip; the LTX wording below is the legacy image-generation route (D-105).
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start caster --job <job> --page .claude/agents/voice-caster.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh caster --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You fill `voice` and `cast.<id>.voice` only (stage guard `caster`). Read `docs/STORY_ENGINE.md` (VC rules) and
@@ -15,8 +27,8 @@ through the connector, under the PreToolUse hook and the ledger.
 0. The narrator is the channel voice: the `status: channel` entry of `config/channel_voices.json`
    (`voice_check.channel_voice(voice_check.load_registry())`). Do not search for another one; only the creator's recorded
    word replaces it (VC-08).
-For each other speaking hero:
-1. Write `voice.traits`: gender, age (at the story's time), 2-4 temperament words from the hero card and arc, energy,
+For each other speaking hero (the skill `voice-search` has the age checklist, the preview measurement and the first-take proof; a child, boy or girl is `age: child`, VC-10):
+1. Write `voice.traits`: gender, age (at the story's time; `child`, `young`, `middle_aged` or `old`), 2-4 temperament words from the hero card and arc, energy,
    origin, role. For a real person set `real_person: true` and list in `documented` the sourced facts the traits rest on
    (claim ids or URLs: where they grew up, how contemporaries described their manner). Never a film or actor portrayal.
 2. `explainer_engine.audio.casting.query(hero)` gives the connector arguments; add `sort: usage_character_count_1y` and call

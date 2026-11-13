@@ -1,3 +1,4 @@
+
 """RETIRED by D-80 (2026-10-26): starts a pod outside the CLI (no script lint, no heartbeat, no pins, no ledger-per-test)
 and pulls pod.sh that loads the banned wldnk_wan22_v1 LoRA. Kept as history (invariant 8: deletion only on the creator's
 word); never run.

@@ -6,7 +6,24 @@ effort: high
 tools: Read, Edit, Bash, Grep, Glob
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
 > **Route note:** a still-picture episode (D-43) uses the sprite/plate rules below; an animated episode (D-77, D-80) uses docs/SHOT_CONTINUITY.md (continuity_card/1, film_shots/2) and docs/SHOT_PROMPTS.md on Qwen-Image-2.1 + xworld_v2 — never both in one episode.
+
+**v4.3 episode (D-131; Fable audit 2026-11-13):** on a `ProductionScriptV4` this stage owns, besides the shot fields:
+- `edit_plan` on every `video` shot (route `video` = LTX-2.5 distilled, D-132): `continuity_mode` (`continuation` / `coverage` /
+  `insert`), `continuity_from` or `scene_master`, the camera at both ends, `axis_side`, `screen_positions`, the handles and
+  `speech_onset_s` (VL-01..VL-13, [VIDEO_LANE](../../docs/VIDEO_LANE.md)); G1 FAILs a video shot without it
+  (`videolane/plan.rows`); scenes are segment + place, the video lane's unit; the clip length comes from the line, never 10 s (VL-06).
+- `av_contract: "av_events/1"` and on every `actions` / `motion_imitation` item its `event_id` and `audio` decision (AV-01..AV-08,
+  `episode/events.py`); anchor them on words or on shares of the shot (`at_frac`, `from_frac`, `to_frac`), never on absolute
+  frames under a read line: the read changes every shot's length and G6 lists every anchor the retimed shot no longer holds (FA-06).
+- a segment's `mood` and `music` (SP-05): the authored mood wins; the mood read from words is only a candidate.
+- the motion prompt stays free of dialogue (`KP-V4-DIALOGUE-LEAK`): `videolane/scene.compose_prompt` adds the line, the
+  speaker's voice and the sound for the clip (D-132).
+Field owners: [STORY_ENGINE](../../docs/STORY_ENGINE.md) "The v4.3 episode script: who owns the new fields".
+
+**Ink Chronicle lanes (D-96, D-97, 2026-11-05):** once film_shots/3 lands (ICW-02) this stage writes the lanes VIDEO_3D, STILL_3D and HELPER with `archetype`, `still_mode`, `render_profile`, `lipsync` and `dialogue_cover` (roadmap section 7.1) and no video-model prompt; prompts only for reference art. Until then film_shots/2 (keyframe, LTX) is the legacy image-generation route, kept readable.
 
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start editor --job <job> --page .claude/agents/edit-planner.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh editor --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 

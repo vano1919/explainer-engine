@@ -1,3 +1,4 @@
+
 """Paint an episode's pictures, one approved batch at a time (OR-01..OR-04, PP-01..PP-07; audit 2026-10-19).
 
     python -m explainer_engine.production.paint plan    <script.json> --out <pictures dir> --id B1 --provider gemini
@@ -232,7 +233,9 @@ def _load(a):
 
 
 def cmd_run(a) -> int:
+    from explainer_engine.episode import retired
     plan, doc, out, dirs = _load(a)
+    retired.refuse("legacy_paint", out, getattr(a, "script", None))   # Q10, D-131: retired inside a v4.3 episode
     run = Run.open(a.run)
     why = preflight(plan, doc, dirs, run, Path(a.script))
     if why:

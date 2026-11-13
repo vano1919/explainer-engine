@@ -1,3 +1,4 @@
+
 """One variant collage, approved, before a hero or a world is painted (PV-47, OR-16; creator 2026-10-19). PIL for the sheet.
 
 The creator: "generate the different versions of the characters and of the general setting as ONE big picture; I approve the

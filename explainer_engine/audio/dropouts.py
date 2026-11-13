@@ -1,3 +1,4 @@
+
 """Dropout scan (ED-12): finds digital-silence runs in a narration and reports those that cut into sound (speech level on one
 side). A pause inserted in the middle of a word shows up here; on the Episode 1 read it found 67 of 131 before the fix.
 numpy only: ``scan(audio, sr)``."""

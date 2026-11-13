@@ -1,5 +1,9 @@
 # CLOUD_RUNBOOK — how a pod ends (P1a, 2026-10-29)
 
+
+## Disabled by Default (`EXPLAINER_LOCAL_ONLY=1`, D-123)
+> **Route-scoped since D-116 (2026-11-06); DISABLED BY DEFAULT (2026-11-09, D-123):** All default Stage 2 keyframe and Stage 3 video/2.5D generation runs 100% locally and free via ComfyUI ([LOCAL_COMFYUI_SETUP](LOCAL_COMFYUI_SETUP.md)). Paid RunPod / cloud execution documented in this runbook is strictly opt-in (`--allow-paid-cloud`, `EXPLAINER_LOCAL_ONLY=0`).
+
 The one home of the **CR-** rules: every way a RunPod pod is stopped, who owns each step, and what the code refuses.
 Money ceilings stay in `config/spend_caps.json` (D-56); the pod manager is `explainer_engine/cloud/runpod.py`; the watchdog
 is `explainer_engine/cloud/watchdog.py` + `.github/workflows/watchdog.yml`; the session hooks are `explainer_engine/cloud/hooks.py`.
@@ -76,7 +80,7 @@ Constants (designer's choice, engineering_experiment until P12a measures them): 
 silence alert 20 min, upload grace 900 s at the end and 300 s at a cap, upload-failure push at 3 and escalation at 6,
 watchdog freshness 60 min, stop wait 90 s per way in the watchdog.
 
-## RP-01..RP-10: when a paid pod is worth starting (P1c)
+## RP-01..RP-11: when a paid pod is worth starting (P1c)
 
 The batching and card rules of a paid pod, from the RunPod re-check (project files `blueprint_2026-10-29/recheck/p9_runpod.json`, B1..B10,
 2026-10-29). Code: `cloud/batching.py` (the rules), `cloud/speeds.py` + `config/job_speeds.json` (the measured table), `runpod.py`
@@ -94,12 +98,54 @@ number nobody has is asked for, never assumed.
 | RP-07 | **Every pod ends with its bill.** `cost` needs the pod id; a pod stopped 90 min ago is settled by the session hook (`settle_due`, RunPod's billing lags up to an hour); `cost` prints a PROGRESS-ready line `pod X: $Y` and appends it to `tools/runpod/settled.jsonl` (it does not edit `docs/PROGRESS.md` itself: that file is every branch's merge conflict). | `cost_report`, `settle_due`, `hooks._check` | `test_cloud_economy.py` |
 | RP-08 | **Cost per asset from measurements.** A job script writes `$EE_OUT/units.json` (`{job_type, units, work_s, setup_s?, mb?, download_s?}`); `cost` fills the job x card row of `config/job_speeds.json` (s/unit, setup minutes, MB/s per cloud, $/unit) and the ledger item (`usd_per_unit`). The next plan quotes $/picture and $/clip from rows, not estimates. | `cost_report`, `speeds.record` | `test_cloud_economy.py` |
 | RP-09 | **Card choice.** The cheapest estimated JOB among the cards with stock (a measured row wins over the SPEED estimate; a card nobody knows is taken at the slowest known speed x 2.0, never skipped); a card whose fixed setup is over 40 % of the pod's time is refused with the reason. `cards --job T --units N [--setup-min M]` prints the basis of each row; `create --wait-stock 15m` waits for stock. | `pick_gpus`, `batching.rp09` | `test_cloud_economy.py` |
-| RP-10 | **Retries.** A hardware failure (a refused create, `BAD_HOST` seen by `cost`) gets one retry on another card under the same caps: the ledger counts them per job and refuses a third; a script failure (`FAILED`, `FAILED_UPLOAD`) gets no paid retry of the same text: a changed script needs its own dry run. The creator may grant extra hardware tries in words: `create --hw-extra-retries N --hw-extra-reason <his message id>` (N <= 2, no reason = refused). | `batching.rp10`, `cost_report`, `main create` | `test_cloud_economy.py` |
+| RP-10 | **Retries.** A hardware failure (a refused create, `BAD_HOST` seen by `cost`) gets one retry on another card under the same caps: the ledger counts them per job and refuses a third; a script failure (`FAILED`, `FAILED_UPLOAD`) gets no paid retry of the same text: a changed script needs its own dry run. The creator may grant extra hardware tries in words: `create --hw-extra-retries N --hw-extra-reason <his message id>` (N <= 2, no reason = refused). **Placement watch (D-118, 2026-11-06 18:28 UTC):** a create refused with HTTP 400 "no instances available" (no pod, $0) is recorded as `placement:<job>`; with `--placement-watch --placement-watch-reason <his message id>` such tries count only toward 60 (`PLACEMENT_WATCH_MAX`), real hardware failures keep the limit above, and without both flags they count as hardware failures as before. | `batching.rp10`, `cost_report`, `main create` | `test_cloud_economy.py` |
+| RP-11 | **Every combination of the run is costed before the pod; the cheapest is taken** (the creator, 2026-11-06 14:48 UTC, D-117). A script pod states its stage graph in a `pod_schedule/1` file (lanes and their slots, each stage's inputs, expected and max minutes on every lane it may run on, the cards it may land on with their price); `create --schedule` tries every card x lane choice x GPU order that keeps each stage after its inputs (all of them up to 20,000, else a fixed-seed sample plus the critical-path orders), simulates each in its expected and its worst case (a free slot takes the first stage whose inputs are done), and refuses when no combination fits `--max-usd` / `--max-hours` in its worst case or the cheapest one still leaves the GPU idle over `max_idle_gpu_share` (default 15 %) of the run. No combination drops a stage or runs one before its inputs. `python -m explainer_engine.cloud.schedule plan|check <file> [--card C --order a,b,...]` prints the pick and holds the pod's own order to it (at most 5 % dearer). Exempt as RP-01. | `cloud/schedule.py` (`rp11`), `main create` | `test_cloud_schedule.py` |
 
 `start` of a stopped pod is refused unless `--allow-zero-gpu-risk` is given (a stopped pod can return with zero GPUs and a wiped container
 disk; a resumed job is a new pod that reads its checkpoint from HF). `check` prints the stopped disks on one line, names the
 `keep_stopped_pods` ids RunPod no longer knows (removing them is the creator's edit of `config/spend_caps.json`), and reports billing that
 no pod and no volume explains (`currentSpendPerHr`).
+
+## CH-01..CH-06: the cheapest known combination of every paid run (D-133)
+
+The creator, 2026-11-13 07:00 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g`): LTX stays the generator, and the
+rules that pick the cheapest combination of every paid run are mandatory, like a PreToolUse hook. Code: `cloud/cheapest.py`.
+The measured basis is `cloud/cheapest.json`: the cheaper-video test of 2026-11-12 and the battle run.
+
+Three lines check the rules (hardened 2026-11-13 07:25 UTC after the creator asked for the weak points, msg
+`cmsg_01Hnu5zB86sjUj5GtTgaUkPWDSaxGVbkbSGcfef2Lga1kM`):
+- the PreToolUse Bash hook (`cloud/hooks.pre_bash`: `modal_refusal`, `cheapest.picture_refusal`, `worker_api_refusal`) refuses
+  the command. It also refuses a paid worker driven from Python (`.remote()`, `app.run()`, a subprocess, a heredoc fed to python)
+  and a quoted `"modal" run`, which it cannot read. A money check that raises refuses a paid-looking command (fail closed); other
+  commands still pass;
+- the worker's own entrypoints refuse again: `modal_ltx_jobs.preflight` and `::main` for LTX, `modal_wan_jobs.cheapest_gate`
+  (CH-06) for Wan's `stage`, `smoke` and `main`;
+- inside the paid container, before any model loads, `modal_ltx_jobs.container_gate` checks CH-01, CH-02 and CH-04 against the
+  launch file baked into the image. This catches a `.remote()` from code that skipped the first two lines.
+
+The creator can waive one rule for one run with his own message. The message must also be recorded for that rule:
+`python -m explainer_engine.governance ok cheapest_waive CH-xx <his cmsg id> "<his words>"`, then
+`EE_CHEAPEST_WAIVE=<his cmsg id>:CH-xx[,CH-yy]`. A rule named without a matching record younger than `WAIVE_MINUTES` (60) is not
+waived. So an invented id, or a waiver left in the environment from an earlier run, waives nothing.
+
+The bake-off measures alternatives and has its own line, so it is not checked. RP-11 still costs a RunPod pod's stage graph
+(D-117).
+
+`cloud/cheapest.py`, `cloud/cheapest.json` and the LTX `launch.json` are protected files (`config/model_routing.json`
+`protected_files`; the creator chose "კი, დაიცავი", 2026-11-13 07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`).
+An Edit, a Write or a shell writer is refused unless his word is recorded (`governance ok protected_config <file> ...`).
+
+One limit remains: a Python file run from disk that calls a worker's `.remote()` is not read by the hook. The container gate is the line there,
+  and CH-03 is checked only by the hook and `::main`.
+
+| ID | Rule | Where | Test |
+|---|---|---|---|
+| CH-01 | **One model load per container.** The LTX launch runs `runner: inproc`: one pipeline, every prompt encoded in one Gemma load, the 22B transformer built once and held for every clip. The CLI runner reloaded Gemma and built the transformer twice for every clip: ~82 s a clip, of which ~17 s is denoising. | `cheapest.launch_problems`, `modal_ltx_jobs.LtxSession` | `test_cheapest.py`, `test_ltx_inproc.py` |
+| CH-02 | **Clips at the native size only.** Every LTX clip is made at 1280x704@24 (`native.use`); 2K is the free CPU upscale (`finish/upscale.py`), never a generation. A smaller size saved only 14-27 % ($0.0099 and $0.0084 against $0.0115 a second) and looked softer at 2K. | `cheapest.launch_problems`, `spec_problems` | `test_cheapest.py` |
+| CH-03 | **One container per scene.** A `::main` launch is one committed scene file (`training/pods/ltx/scenes/`, made by `scene_run job`) with all its shots in the spec's chain. A launch per clip pays the start-up and the model load again. | `cheapest.spec_problems` | `test_cheapest.py` |
+| CH-04 | **Nothing stays warm.** `scaledown_window_s` is at most 5 s; no minimum or buffer containers (cloud-platforms section 5). | `cheapest.launch_problems` | `test_cheapest.py` |
+| CH-05 | **Paid pictures on the batch tier only.** The free Gemini chat picture tool comes first (D-131 turn packs). A paid picture batch goes through the Gemini API batch tier (half price; nano-banana-2.1 at 2K, $0.025 a picture). | `cheapest.picture_refusal` | `test_cheapest.py` |
+| CH-06 | **The generator is the self-hosted LTX-2.5 distilled** (D-132). It measured $0.0115 a generated second with sound, below Wan A14B ($0.022, no sound), HunyuanVideo 1.5 ($0.030, no sound, a licence that excludes the EU, UK and South Korea) and every API list price checked (Vidu Q3 Turbo off-peak $0.02-0.03, Grok Imagine 1.5 Lite $0.02, MiniMax H3 Turbo $0.025-0.04, Veo 3.1 Lite $0.05, the LTX API ~$0.09). A paid rung of the Wan worker is refused. | `cheapest.generator_refusal` | `test_cloud_hooks_modal.py` |
 
 ## Not in P1a
 

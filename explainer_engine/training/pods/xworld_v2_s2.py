@@ -1,3 +1,4 @@
+
 """The xworld_v2 storyboard test S2 (D-75; the Opus thread's plan 2026-10-26 16:39 UTC): one canvas holds a 2x2 grid of four
 shots of ONE scene, so the model draws place, faces and clothes once and every panel shares them (the idea of In-Context LoRA,
 arXiv 2410.23775, and StoryDiffusion, 2405.01434). The grid is cut into panels and each panel is cleaned up as a P2F-style

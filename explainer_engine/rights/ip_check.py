@@ -1,3 +1,4 @@
+
 """Rights check for one episode (docs/RIGHTS_AND_FAIR_USE.md, decision D-26).
 
 Input: a rights manifest (``schemas/rights_manifest.schema.json``). Output: findings ``{check, rule, verdict, detail}``

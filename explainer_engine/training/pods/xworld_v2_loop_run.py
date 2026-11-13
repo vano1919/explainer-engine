@@ -1,3 +1,4 @@
+
 """The pod side and the container side of one round of the strategy loop (xworld_v2_loop.py holds the free logic and the plan's rules).
 
     python xworld_v2_loop_run.py inputs <round.json> <scene dir> <more dir> <sets dir> <p2s dir> <out dir>        (free, the container)

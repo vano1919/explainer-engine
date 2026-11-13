@@ -1,3 +1,4 @@
+
 """Zoom continuity (ED-02): consecutive shots of the same picture continue one camera move instead of snapping back to the
 default view. Each timed shot gets ``render_motion`` (what the assembler draws); the script's ``motion`` stays what the board
 rules (UR-13) judge. State is (zoom, horizontal centre offset as a share of the picture width). ``findings`` also carries

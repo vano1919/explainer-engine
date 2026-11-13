@@ -1,5 +1,9 @@
 # Shot continuity cards (CT-)
 
+> **Route-scoped since D-116 (2026-11-06):** these rules apply to J2/J4 shots and to the Qwen assets of J5 ([route plan](architecture/ROUTE_PLAN_2026-11-06.md), [decision log](DECISIONS_AND_OPEN_QUESTIONS.md) D-96 as amended, D-116); the 2026-11-05 legacy banner below is history and stays readable.
+
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted. Continuity on the Blender path is asset ids plus camera rigs (shot_spec/2, ICW-02).
+
 How the shots of one scene are made to cut together. ვანო decided this on 2026-10-25 (20:11 and 20:17 Tbilisi). The base
 picture models already know how shots join, so we do not train continuity. We train only the style
 ([LORA_TRAINING](LORA_TRAINING.md) LT-69). For continuity, we test which prompts and references work best. The agent that
@@ -63,11 +67,11 @@ One card per shot:
 |---|---|---|---|
 | CT-01 | The cards follow `continuity_card/1`. `where_when` has the BG-note shape "place / time", and shot ids are unique | house + H-B Layout Notes | `schema_findings` FAIL |
 | CT-02 | Every person on screen is in the cast registry, and every costume is one of the person's registered variants. The prompt copies the description verbatim; there is no per-shot description field | source (FLUX "held identically across shots"; model sheets) | FAIL |
-| CT-03 | Image 1 of every shot except the master is the scene's master frame (role `place`). The master is drawn and approved first | source (H-B "Match to BG 19"; anchor-shot practice) | FAIL |
+| CT-03 | (amended 2026-11-07 by D-120: the master is Image 1 only for a change of itself, RF-03; crops of it are made in code; a new sharp view of a place is LV-01) Image 1 of every shot except the master is the scene's master frame (role `place`). The master is drawn and approved first | source (H-B "Match to BG 19"; anchor-shot practice) | FAIL |
 | CT-04 | `head_count` = named people + `extras`; the prompt says "Exactly N people" | hypothesis (extra people were our most common failure, KG-27) | FAIL |
 | CT-05 | References stay within the model's cap (`MODEL_REFS`). Every character reference is that person's model sheet. Every person on screen has a sheet among the references; a missing sheet is a REVIEW when the cap is full. The previous shot, when used, is the last reference | vendor (Qwen 1-3; Gemini 4-5 people) | FAIL / REVIEW |
 | CT-06 | Two or more people on screen need an axis. The camera stays on its side unless a reason is given (neutral shot, cutaway, insert, on-screen move) | source (180° rule; H-B Sc 28-30) | FAIL / REVIEW |
-| CT-07 | Two consecutive shots of the same people change size by at least one step or the angle by at least 30°, unless the cut is a time cut | source (30° rule; H-B "not so slightly different") | FAIL |
+| CT-07 | (amended 2026-11-07 by D-120: inside one place the change is a size step on the same picture or a cut to a blurred close-up or insert, LV-02) Two consecutive shots of the same people change size by at least one step or the angle by at least 30°, unless the cut is a time cut | source (30° rule; H-B "not so slightly different") | FAIL |
 | CT-08 | Every state difference from the previous shot appears in `changes` with a cause. This covers time, weather, light, set state, and each person's costume, flags and props; position and facing are compared only on the same camera side and size. A listed change that did not happen is a REVIEW | source (hook-ups; script supervisor) | FAIL / REVIEW |
 | CT-09 | A shot is drawn fresh from the original references: `MAX_CHAIN` is 0, so `derive_from` is `original` (Qwen-Image-2.1 draws it with the references, in edit mode when it has them; a generated shot is never the base image of the next, [D-78](DECISIONS_AND_OPEN_QUESTIONS.md) as amended by D-80) | source (Banana100, FreqEdit, Agent Banana drift) + the creator's rule | FAIL |
 | CT-10 | A shot shows only landmarks from its location's list | source (H-B BG continuity) | FAIL |

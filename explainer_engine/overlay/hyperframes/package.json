@@ -1,0 +1,6 @@
+{
+  "name": "explainer-engine-overlay-hyperframes",
+  "private": true,
+  "description": "Pinned HyperFrames CLI for the v4.3 map/special-moment overlay layer (stage B5). GSAP is vendored in vendor/, never a CDN.",
+  "dependencies": { "hyperframes": "0.9.39" }
+}
