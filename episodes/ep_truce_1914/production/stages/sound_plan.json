@@ -48,7 +48,7 @@
     "av_events": "production/av_events.json"
   },
   "rehearsal": false,
-  "fingerprint": "a9595131872a592a19cabe5c73af16a1a423370f436427131e2fa040193f874e",
-  "elapsed_s": 0.1,
-  "at": "2026-11-13T15:33:49Z"
+  "fingerprint": "da1f09c155c5a38e5371168d28e8b7f2a5df293fdef7a748218cb8b1ef48fecd",
+  "elapsed_s": 0.11,
+  "at": "2026-11-13T16:16:21Z"
 }

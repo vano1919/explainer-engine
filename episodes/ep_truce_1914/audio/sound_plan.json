@@ -4,7 +4,7 @@
   "era": "modern_20th_century",
   "era_basis": "manifest",
   "fps": 24,
-  "duration_s": 357.0,
+  "duration_s": 364.75,
   "shots": [
     {
       "shot_id": "S01_SH001",
@@ -360,7 +360,7 @@
       "shot_id": "S01_SH005",
       "segment_id": "S01",
       "start_s": 17.0,
-      "dur_s": 7.0,
+      "dur_s": 8.0,
       "route": "still_25d",
       "place": "loc_german_trench",
       "room": "outdoor",
@@ -380,7 +380,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            168
+            192
           ],
           "placed": false
         },
@@ -393,7 +393,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            168
+            192
           ],
           "placed": false
         }
@@ -476,7 +476,7 @@
     {
       "shot_id": "S02_SH001",
       "segment_id": "S02",
-      "start_s": 24.0,
+      "start_s": 25.0,
       "dur_s": 6.0,
       "route": "map_action",
       "place": "loc_western_front_map",
@@ -682,7 +682,7 @@
     {
       "shot_id": "S02_SH002",
       "segment_id": "S02",
-      "start_s": 30.0,
+      "start_s": 31.0,
       "dur_s": 7.75,
       "route": "map_action",
       "place": "loc_western_front_map",
@@ -866,7 +866,7 @@
     {
       "shot_id": "S02_SH003",
       "segment_id": "S02",
-      "start_s": 37.75,
+      "start_s": 38.75,
       "dur_s": 6.0,
       "route": "map_action",
       "place": "loc_western_front_map",
@@ -991,7 +991,7 @@
     {
       "shot_id": "S02_SH004",
       "segment_id": "S02",
-      "start_s": 43.75,
+      "start_s": 44.75,
       "dur_s": 6.25,
       "route": "still_25d",
       "place": "loc_british_trench",
@@ -1090,7 +1090,7 @@
     {
       "shot_id": "S02_SH005",
       "segment_id": "S02",
-      "start_s": 50.0,
+      "start_s": 51.0,
       "dur_s": 5.5,
       "route": "still_25d",
       "place": "loc_british_trench",
@@ -1208,7 +1208,7 @@
     {
       "shot_id": "S02_SH006",
       "segment_id": "S02",
-      "start_s": 55.5,
+      "start_s": 56.5,
       "dur_s": 4.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -1295,7 +1295,7 @@
     {
       "shot_id": "S02_SH007",
       "segment_id": "S02",
-      "start_s": 59.75,
+      "start_s": 60.75,
       "dur_s": 4.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -1382,7 +1382,7 @@
     {
       "shot_id": "S02_SH008",
       "segment_id": "S02",
-      "start_s": 64.0,
+      "start_s": 65.0,
       "dur_s": 9.25,
       "route": "still_25d",
       "place": "loc_british_trench",
@@ -1514,7 +1514,7 @@
     {
       "shot_id": "S02_SH009",
       "segment_id": "S02",
-      "start_s": 73.25,
+      "start_s": 74.25,
       "dur_s": 8.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -1601,7 +1601,7 @@
     {
       "shot_id": "S03_SH001",
       "segment_id": "S03",
-      "start_s": 81.5,
+      "start_s": 82.5,
       "dur_s": 9.5,
       "route": "video",
       "place": "loc_german_trench",
@@ -1697,7 +1697,7 @@
     {
       "shot_id": "S03_SH002",
       "segment_id": "S03",
-      "start_s": 91.0,
+      "start_s": 92.0,
       "dur_s": 4.0,
       "route": "still_25d",
       "place": "loc_german_trench",
@@ -1806,7 +1806,7 @@
     {
       "shot_id": "S03_SH003",
       "segment_id": "S03",
-      "start_s": 95.0,
+      "start_s": 96.0,
       "dur_s": 4.75,
       "route": "video",
       "place": "loc_german_trench",
@@ -1885,7 +1885,7 @@
     {
       "shot_id": "S03_SH004",
       "segment_id": "S03",
-      "start_s": 99.75,
+      "start_s": 100.75,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -1972,7 +1972,7 @@
     {
       "shot_id": "S03_SH005",
       "segment_id": "S03",
-      "start_s": 102.0,
+      "start_s": 103.0,
       "dur_s": 3.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -2052,7 +2052,7 @@
     {
       "shot_id": "S03_SH006",
       "segment_id": "S03",
-      "start_s": 105.25,
+      "start_s": 106.25,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_british_trench",
@@ -2121,7 +2121,7 @@
     {
       "shot_id": "S03_SH007",
       "segment_id": "S03",
-      "start_s": 108.0,
+      "start_s": 109.0,
       "dur_s": 3.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -2190,7 +2190,7 @@
     {
       "shot_id": "S03_SH008",
       "segment_id": "S03",
-      "start_s": 111.0,
+      "start_s": 112.0,
       "dur_s": 4.75,
       "route": "video",
       "place": "loc_british_trench",
@@ -2270,7 +2270,7 @@
     {
       "shot_id": "S03_SH009",
       "segment_id": "S03",
-      "start_s": 115.75,
+      "start_s": 116.75,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_german_trench",
@@ -2339,7 +2339,7 @@
     {
       "shot_id": "S03_SH010",
       "segment_id": "S03",
-      "start_s": 117.75,
+      "start_s": 118.75,
       "dur_s": 6.75,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -2448,7 +2448,7 @@
     {
       "shot_id": "S04_SH001",
       "segment_id": "S04",
-      "start_s": 124.5,
+      "start_s": 125.5,
       "dur_s": 3.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -2547,7 +2547,7 @@
     {
       "shot_id": "S04_SH002",
       "segment_id": "S04",
-      "start_s": 127.5,
+      "start_s": 128.5,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_german_trench",
@@ -2626,7 +2626,7 @@
     {
       "shot_id": "S04_SH003",
       "segment_id": "S04",
-      "start_s": 129.5,
+      "start_s": 130.5,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_british_trench",
@@ -2695,7 +2695,7 @@
     {
       "shot_id": "S04_SH004",
       "segment_id": "S04",
-      "start_s": 132.25,
+      "start_s": 133.25,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_german_trench",
@@ -2764,7 +2764,7 @@
     {
       "shot_id": "S04_SH005",
       "segment_id": "S04",
-      "start_s": 134.5,
+      "start_s": 135.5,
       "dur_s": 5.5,
       "route": "video",
       "place": "loc_british_trench",
@@ -2833,7 +2833,7 @@
     {
       "shot_id": "S04_SH006",
       "segment_id": "S04",
-      "start_s": 140.0,
+      "start_s": 141.0,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -2920,7 +2920,7 @@
     {
       "shot_id": "S04_SH007",
       "segment_id": "S04",
-      "start_s": 142.25,
+      "start_s": 143.25,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -2989,7 +2989,7 @@
     {
       "shot_id": "S04_SH008",
       "segment_id": "S04",
-      "start_s": 146.25,
+      "start_s": 147.25,
       "dur_s": 9.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3068,7 +3068,7 @@
     {
       "shot_id": "S04_SH009",
       "segment_id": "S04",
-      "start_s": 155.25,
+      "start_s": 156.25,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3137,7 +3137,7 @@
     {
       "shot_id": "S04_SH010",
       "segment_id": "S04",
-      "start_s": 157.25,
+      "start_s": 158.25,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3206,7 +3206,7 @@
     {
       "shot_id": "S04_SH011",
       "segment_id": "S04",
-      "start_s": 159.25,
+      "start_s": 160.25,
       "dur_s": 2.5,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -3291,7 +3291,7 @@
     {
       "shot_id": "S04_SH012",
       "segment_id": "S04",
-      "start_s": 161.75,
+      "start_s": 162.75,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3360,7 +3360,7 @@
     {
       "shot_id": "S04_SH013",
       "segment_id": "S04",
-      "start_s": 165.75,
+      "start_s": 166.75,
       "dur_s": 4.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3429,7 +3429,7 @@
     {
       "shot_id": "S04_SH014",
       "segment_id": "S04",
-      "start_s": 170.0,
+      "start_s": 171.0,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3498,7 +3498,7 @@
     {
       "shot_id": "S04_SH015",
       "segment_id": "S04",
-      "start_s": 174.0,
+      "start_s": 175.0,
       "dur_s": 7.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -3577,7 +3577,7 @@
     {
       "shot_id": "S05_SH001",
       "segment_id": "S05",
-      "start_s": 181.0,
+      "start_s": 182.0,
       "dur_s": 6.0,
       "route": "map_action",
       "place": "loc_western_front_map",
@@ -3792,8 +3792,8 @@
     {
       "shot_id": "S05_SH002",
       "segment_id": "S05",
-      "start_s": 187.0,
-      "dur_s": 4.5,
+      "start_s": 188.0,
+      "dur_s": 6.25,
       "route": "map_action",
       "place": "loc_western_front_map",
       "room": "outdoor",
@@ -3806,8 +3806,8 @@
         {
           "class": "data_rise_texture",
           "kind": "transition",
-          "at_s": 2.125,
-          "at_frame": 51,
+          "at_s": 3.792,
+          "at_frame": 91,
           "basis": "visual:counter:estimated:word",
           "event_id": "S05_SH002.A1",
           "decision": "sfx",
@@ -3816,10 +3816,10 @@
           "op": "counter",
           "audio_basis": "authored",
           "span_frames": [
-            51,
-            95
+            91,
+            132
           ],
-          "dur_s": 1.833,
+          "dur_s": 1.708,
           "distance": "medium"
         }
       ],
@@ -3832,8 +3832,8 @@
           "why": null,
           "audio_basis": "authored",
           "frames": [
-            51,
-            95
+            91,
+            132
           ],
           "placed": true
         }
@@ -3884,7 +3884,7 @@
           "sync_points": [
             {
               "class": "data_rise_texture",
-              "at_s": 2.125,
+              "at_s": 3.792,
               "basis": "visual:counter:estimated:word"
             }
           ],
@@ -3902,8 +3902,8 @@
     {
       "shot_id": "S05_SH003",
       "segment_id": "S05",
-      "start_s": 191.5,
-      "dur_s": 7.0,
+      "start_s": 194.25,
+      "dur_s": 7.5,
       "route": "still_25d",
       "place": "loc_no_mans_land",
       "room": "outdoor",
@@ -3923,7 +3923,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            168
+            180
           ],
           "placed": false
         },
@@ -3936,7 +3936,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            168
+            180
           ],
           "placed": false
         }
@@ -4001,7 +4001,7 @@
     {
       "shot_id": "S05_SH004",
       "segment_id": "S05",
-      "start_s": 198.5,
+      "start_s": 201.75,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4070,7 +4070,7 @@
     {
       "shot_id": "S05_SH005",
       "segment_id": "S05",
-      "start_s": 200.75,
+      "start_s": 204.0,
       "dur_s": 3.5,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4139,7 +4139,7 @@
     {
       "shot_id": "S05_SH006",
       "segment_id": "S05",
-      "start_s": 204.25,
+      "start_s": 207.5,
       "dur_s": 9.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4208,7 +4208,7 @@
     {
       "shot_id": "S05_SH007",
       "segment_id": "S05",
-      "start_s": 213.5,
+      "start_s": 216.75,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4277,7 +4277,7 @@
     {
       "shot_id": "S05_SH008",
       "segment_id": "S05",
-      "start_s": 215.75,
+      "start_s": 219.0,
       "dur_s": 3.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4356,7 +4356,7 @@
     {
       "shot_id": "S05_SH009",
       "segment_id": "S05",
-      "start_s": 219.0,
+      "start_s": 222.25,
       "dur_s": 3.5,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4425,7 +4425,7 @@
     {
       "shot_id": "S05_SH010",
       "segment_id": "S05",
-      "start_s": 222.5,
+      "start_s": 225.75,
       "dur_s": 3.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -4510,7 +4510,7 @@
     {
       "shot_id": "S05_SH011",
       "segment_id": "S05",
-      "start_s": 225.5,
+      "start_s": 228.75,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4579,7 +4579,7 @@
     {
       "shot_id": "S05_SH012",
       "segment_id": "S05",
-      "start_s": 227.5,
+      "start_s": 230.75,
       "dur_s": 3.5,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4648,7 +4648,7 @@
     {
       "shot_id": "S05_SH013",
       "segment_id": "S05",
-      "start_s": 231.0,
+      "start_s": 234.25,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4717,7 +4717,7 @@
     {
       "shot_id": "S05_SH014",
       "segment_id": "S05",
-      "start_s": 233.0,
+      "start_s": 236.25,
       "dur_s": 7.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4786,7 +4786,7 @@
     {
       "shot_id": "S05_SH015",
       "segment_id": "S05",
-      "start_s": 240.0,
+      "start_s": 243.25,
       "dur_s": 3.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -4855,7 +4855,7 @@
     {
       "shot_id": "S05_SH016",
       "segment_id": "S05",
-      "start_s": 243.25,
+      "start_s": 246.5,
       "dur_s": 3.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -4940,7 +4940,7 @@
     {
       "shot_id": "S05_SH017",
       "segment_id": "S05",
-      "start_s": 246.25,
+      "start_s": 249.5,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5009,7 +5009,7 @@
     {
       "shot_id": "S05_SH018",
       "segment_id": "S05",
-      "start_s": 248.5,
+      "start_s": 251.75,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5078,7 +5078,7 @@
     {
       "shot_id": "S05_SH019",
       "segment_id": "S05",
-      "start_s": 251.25,
+      "start_s": 254.5,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5147,7 +5147,7 @@
     {
       "shot_id": "S05_SH020",
       "segment_id": "S05",
-      "start_s": 253.25,
+      "start_s": 256.5,
       "dur_s": 7.75,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -5246,7 +5246,7 @@
     {
       "shot_id": "S05_SH021",
       "segment_id": "S05",
-      "start_s": 261.0,
+      "start_s": 264.25,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5315,7 +5315,7 @@
     {
       "shot_id": "S06_SH001",
       "segment_id": "S06",
-      "start_s": 265.0,
+      "start_s": 268.25,
       "dur_s": 3.25,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -5414,7 +5414,7 @@
     {
       "shot_id": "S06_SH002",
       "segment_id": "S06",
-      "start_s": 268.25,
+      "start_s": 271.5,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5487,7 +5487,7 @@
     {
       "shot_id": "S06_SH003",
       "segment_id": "S06",
-      "start_s": 271.0,
+      "start_s": 274.25,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5556,7 +5556,7 @@
     {
       "shot_id": "S06_SH004",
       "segment_id": "S06",
-      "start_s": 273.0,
+      "start_s": 276.25,
       "dur_s": 3.5,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5625,7 +5625,7 @@
     {
       "shot_id": "S06_SH005",
       "segment_id": "S06",
-      "start_s": 276.5,
+      "start_s": 279.75,
       "dur_s": 3.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -5710,7 +5710,7 @@
     {
       "shot_id": "S06_SH006",
       "segment_id": "S06",
-      "start_s": 279.5,
+      "start_s": 282.75,
       "dur_s": 3.5,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5779,7 +5779,7 @@
     {
       "shot_id": "S06_SH007",
       "segment_id": "S06",
-      "start_s": 283.0,
+      "start_s": 286.25,
       "dur_s": 3.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5848,7 +5848,7 @@
     {
       "shot_id": "S06_SH008",
       "segment_id": "S06",
-      "start_s": 286.25,
+      "start_s": 289.5,
       "dur_s": 2.25,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5917,7 +5917,7 @@
     {
       "shot_id": "S06_SH009",
       "segment_id": "S06",
-      "start_s": 288.5,
+      "start_s": 291.75,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -5986,7 +5986,7 @@
     {
       "shot_id": "S06_SH010",
       "segment_id": "S06",
-      "start_s": 292.5,
+      "start_s": 295.75,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -6055,7 +6055,7 @@
     {
       "shot_id": "S06_SH011",
       "segment_id": "S06",
-      "start_s": 295.25,
+      "start_s": 298.5,
       "dur_s": 2.75,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -6124,7 +6124,7 @@
     {
       "shot_id": "S06_SH012",
       "segment_id": "S06",
-      "start_s": 298.0,
+      "start_s": 301.25,
       "dur_s": 5.5,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -6223,7 +6223,7 @@
     {
       "shot_id": "S07_SH001",
       "segment_id": "S07",
-      "start_s": 303.5,
+      "start_s": 306.75,
       "dur_s": 4.75,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -6332,7 +6332,7 @@
     {
       "shot_id": "S07_SH002",
       "segment_id": "S07",
-      "start_s": 308.25,
+      "start_s": 311.5,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -6401,7 +6401,7 @@
     {
       "shot_id": "S07_SH003",
       "segment_id": "S07",
-      "start_s": 310.25,
+      "start_s": 313.5,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_no_mans_land",
@@ -6470,7 +6470,7 @@
     {
       "shot_id": "S07_SH004",
       "segment_id": "S07",
-      "start_s": 312.25,
+      "start_s": 315.5,
       "dur_s": 2.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -6539,8 +6539,8 @@
     {
       "shot_id": "S07_SH005",
       "segment_id": "S07",
-      "start_s": 314.25,
-      "dur_s": 5.0,
+      "start_s": 317.5,
+      "dur_s": 6.75,
       "route": "video",
       "place": "loc_british_trench",
       "room": "outdoor",
@@ -6553,8 +6553,8 @@
         {
           "class": "impact",
           "kind": "spot",
-          "at_s": 3.042,
-          "at_frame": 73,
+          "at_s": 4.542,
+          "at_frame": 109,
           "basis": "authored",
           "picture_event": "impact",
           "source": "clip_audio",
@@ -6602,7 +6602,7 @@
           },
           "spot": {
             "active": true,
-            "reason": "impact@3.042s (authored)"
+            "reason": "impact@4.542s (authored)"
           },
           "music": {
             "active": true,
@@ -6631,7 +6631,7 @@
           "sync_points": [
             {
               "class": "impact",
-              "at_s": 3.042,
+              "at_s": 4.542,
               "basis": "authored"
             }
           ],
@@ -6650,7 +6650,7 @@
     {
       "shot_id": "S07_SH006",
       "segment_id": "S07",
-      "start_s": 319.25,
+      "start_s": 324.25,
       "dur_s": 5.0,
       "route": "video",
       "place": "loc_german_trench",
@@ -6730,7 +6730,7 @@
     {
       "shot_id": "S07_SH007",
       "segment_id": "S07",
-      "start_s": 324.25,
+      "start_s": 329.25,
       "dur_s": 4.0,
       "route": "video",
       "place": "loc_british_trench",
@@ -6817,7 +6817,7 @@
     {
       "shot_id": "S07_SH008",
       "segment_id": "S07",
-      "start_s": 328.25,
+      "start_s": 333.25,
       "dur_s": 8.25,
       "route": "video",
       "place": "loc_british_trench",
@@ -6904,7 +6904,7 @@
     {
       "shot_id": "S08_SH001",
       "segment_id": "S08",
-      "start_s": 336.5,
+      "start_s": 341.5,
       "dur_s": 6.75,
       "route": "still_25d",
       "place": "loc_british_trench",
@@ -7014,8 +7014,8 @@
     {
       "shot_id": "S08_SH002",
       "segment_id": "S08",
-      "start_s": 343.25,
-      "dur_s": 4.75,
+      "start_s": 348.25,
+      "dur_s": 7.5,
       "route": "still_25d",
       "place": "loc_german_trench",
       "room": "outdoor",
@@ -7035,7 +7035,7 @@
           "audio_basis": "authored",
           "frames": [
             0,
-            114
+            180
           ],
           "placed": false
         }
@@ -7109,7 +7109,7 @@
     {
       "shot_id": "S08_SH003",
       "segment_id": "S08",
-      "start_s": 348.0,
+      "start_s": 355.75,
       "dur_s": 4.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -7194,7 +7194,7 @@
     {
       "shot_id": "S08_SH004",
       "segment_id": "S08",
-      "start_s": 352.0,
+      "start_s": 359.75,
       "dur_s": 5.0,
       "route": "still_25d",
       "place": "loc_no_mans_land",
@@ -7340,7 +7340,7 @@
       ],
       "basis": "authored",
       "start_s": 17.0,
-      "end_s": 24.0,
+      "end_s": 25.0,
       "shot_ids": [
         "S01_SH005"
       ],
@@ -7355,8 +7355,8 @@
         "wind"
       ],
       "basis": "authored",
-      "start_s": 24.0,
-      "end_s": 43.75,
+      "start_s": 25.0,
+      "end_s": 44.75,
       "shot_ids": [
         "S02_SH001",
         "S02_SH002",
@@ -7374,8 +7374,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 43.75,
-      "end_s": 81.5,
+      "start_s": 44.75,
+      "end_s": 82.5,
       "shot_ids": [
         "S02_SH004",
         "S02_SH005",
@@ -7396,8 +7396,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 81.5,
-      "end_s": 99.75,
+      "start_s": 82.5,
+      "end_s": 100.75,
       "shot_ids": [
         "S03_SH001",
         "S03_SH002",
@@ -7415,8 +7415,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 99.75,
-      "end_s": 115.75,
+      "start_s": 100.75,
+      "end_s": 116.75,
       "shot_ids": [
         "S03_SH004",
         "S03_SH005",
@@ -7436,8 +7436,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 115.75,
-      "end_s": 117.75,
+      "start_s": 116.75,
+      "end_s": 118.75,
       "shot_ids": [
         "S03_SH009"
       ],
@@ -7453,8 +7453,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 117.75,
-      "end_s": 127.5,
+      "start_s": 118.75,
+      "end_s": 128.5,
       "shot_ids": [
         "S03_SH010",
         "S04_SH001"
@@ -7471,8 +7471,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 127.5,
-      "end_s": 129.5,
+      "start_s": 128.5,
+      "end_s": 130.5,
       "shot_ids": [
         "S04_SH002"
       ],
@@ -7488,8 +7488,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 129.5,
-      "end_s": 132.25,
+      "start_s": 130.5,
+      "end_s": 133.25,
       "shot_ids": [
         "S04_SH003"
       ],
@@ -7505,8 +7505,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 132.25,
-      "end_s": 134.5,
+      "start_s": 133.25,
+      "end_s": 135.5,
       "shot_ids": [
         "S04_SH004"
       ],
@@ -7522,8 +7522,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 134.5,
-      "end_s": 146.25,
+      "start_s": 135.5,
+      "end_s": 147.25,
       "shot_ids": [
         "S04_SH005",
         "S04_SH006",
@@ -7541,8 +7541,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 146.25,
-      "end_s": 181.0,
+      "start_s": 147.25,
+      "end_s": 182.0,
       "shot_ids": [
         "S04_SH008",
         "S04_SH009",
@@ -7564,8 +7564,8 @@
         "wind"
       ],
       "basis": "authored",
-      "start_s": 181.0,
-      "end_s": 191.5,
+      "start_s": 182.0,
+      "end_s": 194.25,
       "shot_ids": [
         "S05_SH001",
         "S05_SH002"
@@ -7582,8 +7582,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 191.5,
-      "end_s": 312.25,
+      "start_s": 194.25,
+      "end_s": 315.5,
       "shot_ids": [
         "S05_SH003",
         "S05_SH004",
@@ -7632,8 +7632,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 312.25,
-      "end_s": 319.25,
+      "start_s": 315.5,
+      "end_s": 324.25,
       "shot_ids": [
         "S07_SH004",
         "S07_SH005"
@@ -7650,8 +7650,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 319.25,
-      "end_s": 324.25,
+      "start_s": 324.25,
+      "end_s": 329.25,
       "shot_ids": [
         "S07_SH006"
       ],
@@ -7667,8 +7667,8 @@
         "fire"
       ],
       "basis": "authored",
-      "start_s": 324.25,
-      "end_s": 343.25,
+      "start_s": 329.25,
+      "end_s": 348.25,
       "shot_ids": [
         "S07_SH007",
         "S07_SH008",
@@ -7686,8 +7686,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 343.25,
-      "end_s": 348.0,
+      "start_s": 348.25,
+      "end_s": 355.75,
       "shot_ids": [
         "S08_SH002"
       ],
@@ -7703,8 +7703,8 @@
         "crowd_murmur"
       ],
       "basis": "authored",
-      "start_s": 348.0,
-      "end_s": 357.0,
+      "start_s": 355.75,
+      "end_s": 364.75,
       "shot_ids": [
         "S08_SH003",
         "S08_SH004"
@@ -7735,130 +7735,130 @@
       "l_end_s": 17.5
     },
     {
-      "at_s": 24.0,
+      "at_s": 25.0,
       "from": "BED_04_loc_german_trench",
       "to": "BED_05_loc_western_front_map",
-      "j_start_s": 23.5,
-      "l_end_s": 24.5
+      "j_start_s": 24.5,
+      "l_end_s": 25.5
     },
     {
-      "at_s": 43.75,
+      "at_s": 44.75,
       "from": "BED_05_loc_western_front_map",
       "to": "BED_06_loc_british_trench",
-      "j_start_s": 43.25,
-      "l_end_s": 44.25
+      "j_start_s": 44.25,
+      "l_end_s": 45.25
     },
     {
-      "at_s": 81.5,
+      "at_s": 82.5,
       "from": "BED_06_loc_british_trench",
       "to": "BED_07_loc_german_trench",
-      "j_start_s": 81.0,
-      "l_end_s": 82.0
+      "j_start_s": 82.0,
+      "l_end_s": 83.0
     },
     {
-      "at_s": 99.75,
+      "at_s": 100.75,
       "from": "BED_07_loc_german_trench",
       "to": "BED_08_loc_british_trench",
-      "j_start_s": 99.25,
-      "l_end_s": 100.25
+      "j_start_s": 100.25,
+      "l_end_s": 101.25
     },
     {
-      "at_s": 115.75,
+      "at_s": 116.75,
       "from": "BED_08_loc_british_trench",
       "to": "BED_09_loc_german_trench",
-      "j_start_s": 115.25,
-      "l_end_s": 116.25
+      "j_start_s": 116.25,
+      "l_end_s": 117.25
     },
     {
-      "at_s": 117.75,
+      "at_s": 118.75,
       "from": "BED_09_loc_german_trench",
       "to": "BED_10_loc_no_mans_land",
-      "j_start_s": 117.25,
-      "l_end_s": 118.25
+      "j_start_s": 118.25,
+      "l_end_s": 119.25
     },
     {
-      "at_s": 127.5,
+      "at_s": 128.5,
       "from": "BED_10_loc_no_mans_land",
       "to": "BED_11_loc_german_trench",
-      "j_start_s": 127.0,
-      "l_end_s": 128.0
+      "j_start_s": 128.0,
+      "l_end_s": 129.0
     },
     {
-      "at_s": 129.5,
+      "at_s": 130.5,
       "from": "BED_11_loc_german_trench",
       "to": "BED_12_loc_british_trench",
-      "j_start_s": 129.0,
-      "l_end_s": 130.0
+      "j_start_s": 130.0,
+      "l_end_s": 131.0
     },
     {
-      "at_s": 132.25,
+      "at_s": 133.25,
       "from": "BED_12_loc_british_trench",
       "to": "BED_13_loc_german_trench",
-      "j_start_s": 131.75,
-      "l_end_s": 132.75
+      "j_start_s": 132.75,
+      "l_end_s": 133.75
     },
     {
-      "at_s": 134.5,
+      "at_s": 135.5,
       "from": "BED_13_loc_german_trench",
       "to": "BED_14_loc_british_trench",
-      "j_start_s": 134.0,
-      "l_end_s": 135.0
+      "j_start_s": 135.0,
+      "l_end_s": 136.0
     },
     {
-      "at_s": 146.25,
+      "at_s": 147.25,
       "from": "BED_14_loc_british_trench",
       "to": "BED_15_loc_no_mans_land",
-      "j_start_s": 145.75,
-      "l_end_s": 146.75
+      "j_start_s": 146.75,
+      "l_end_s": 147.75
     },
     {
-      "at_s": 181.0,
+      "at_s": 182.0,
       "from": "BED_15_loc_no_mans_land",
       "to": "BED_16_loc_western_front_map",
-      "j_start_s": 180.5,
-      "l_end_s": 181.5
+      "j_start_s": 181.5,
+      "l_end_s": 182.5
     },
     {
-      "at_s": 191.5,
+      "at_s": 194.25,
       "from": "BED_16_loc_western_front_map",
       "to": "BED_17_loc_no_mans_land",
-      "j_start_s": 191.0,
-      "l_end_s": 192.0
+      "j_start_s": 193.75,
+      "l_end_s": 194.75
     },
     {
-      "at_s": 312.25,
+      "at_s": 315.5,
       "from": "BED_17_loc_no_mans_land",
       "to": "BED_18_loc_british_trench",
-      "j_start_s": 311.75,
-      "l_end_s": 312.75
-    },
-    {
-      "at_s": 319.25,
-      "from": "BED_18_loc_british_trench",
-      "to": "BED_19_loc_german_trench",
-      "j_start_s": 318.75,
-      "l_end_s": 319.75
+      "j_start_s": 315.0,
+      "l_end_s": 316.0
     },
     {
       "at_s": 324.25,
-      "from": "BED_19_loc_german_trench",
-      "to": "BED_20_loc_british_trench",
+      "from": "BED_18_loc_british_trench",
+      "to": "BED_19_loc_german_trench",
       "j_start_s": 323.75,
       "l_end_s": 324.75
     },
     {
-      "at_s": 343.25,
-      "from": "BED_20_loc_british_trench",
-      "to": "BED_21_loc_german_trench",
-      "j_start_s": 342.75,
-      "l_end_s": 343.75
+      "at_s": 329.25,
+      "from": "BED_19_loc_german_trench",
+      "to": "BED_20_loc_british_trench",
+      "j_start_s": 328.75,
+      "l_end_s": 329.75
     },
     {
-      "at_s": 348.0,
+      "at_s": 348.25,
+      "from": "BED_20_loc_british_trench",
+      "to": "BED_21_loc_german_trench",
+      "j_start_s": 347.75,
+      "l_end_s": 348.75
+    },
+    {
+      "at_s": 355.75,
       "from": "BED_21_loc_german_trench",
       "to": "BED_22_loc_no_mans_land",
-      "j_start_s": 347.5,
-      "l_end_s": 348.5
+      "j_start_s": 355.25,
+      "l_end_s": 356.25
     }
   ],
   "music": [
@@ -7866,7 +7866,7 @@
       "music_id": "MUS_S01",
       "segment_id": "S01",
       "start_s": 0.0,
-      "end_s": 24.0,
+      "end_s": 25.0,
       "mood": "mysterious",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7875,8 +7875,8 @@
     {
       "music_id": "MUS_S02",
       "segment_id": "S02",
-      "start_s": 24.0,
-      "end_s": 81.5,
+      "start_s": 25.0,
+      "end_s": 82.5,
       "mood": "dark",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7885,8 +7885,8 @@
     {
       "music_id": "MUS_S04",
       "segment_id": "S04",
-      "start_s": 124.5,
-      "end_s": 181.0,
+      "start_s": 125.5,
+      "end_s": 182.0,
       "mood": "tense",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7895,8 +7895,8 @@
     {
       "music_id": "MUS_S05",
       "segment_id": "S05",
-      "start_s": 181.0,
-      "end_s": 265.0,
+      "start_s": 182.0,
+      "end_s": 268.25,
       "mood": "tragic",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7905,8 +7905,8 @@
     {
       "music_id": "MUS_S06",
       "segment_id": "S06",
-      "start_s": 265.0,
-      "end_s": 303.5,
+      "start_s": 268.25,
+      "end_s": 306.75,
       "mood": "reflective",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7915,8 +7915,8 @@
     {
       "music_id": "MUS_S07",
       "segment_id": "S07",
-      "start_s": 303.5,
-      "end_s": 336.5,
+      "start_s": 306.75,
+      "end_s": 341.5,
       "mood": "tragic",
       "mood_basis": "authored",
       "reason": "authored music=True",
@@ -7925,8 +7925,8 @@
     {
       "music_id": "MUS_S08",
       "segment_id": "S08",
-      "start_s": 336.5,
-      "end_s": 357.0,
+      "start_s": 341.5,
+      "end_s": 364.75,
       "mood": "reflective",
       "mood_basis": "authored",
       "reason": "authored music=True",

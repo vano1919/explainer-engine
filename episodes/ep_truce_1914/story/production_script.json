@@ -3,7 +3,7 @@
  "episode_id": "ep_truce_1914",
  "title": "The Day We Were Not Enemies: The Christmas Truce of 1914",
  "what_if_premise": "On Christmas 1914, after five months of war that was meant to be over by Christmas, British and German soldiers on parts of the Western Front climbed out of their trenches, sang, traded, buried their dead together and then went back to war; told through two invented men, Thomas and Friedrich.",
- "target_duration_seconds": 357.0,
+ "target_duration_seconds": 364.75,
  "fps": 24,
  "audio_balance_target": {
   "narrator_ratio_min": 0.55,
@@ -200,7 +200,7 @@
     "S02"
    ],
    "narrative_objective": "Open on the walk toward the enemy and show why the men were stuck",
-   "target_window": "0:00-1:21"
+   "target_window": "0:00-1:22"
   },
   {
    "phase_id": "Z2",
@@ -210,7 +210,7 @@
     "S04"
    ],
    "narrative_objective": "The song and the first step: the enemy becomes a man",
-   "target_window": "1:21-3:01"
+   "target_window": "1:22-3:02"
   },
   {
    "phase_id": "Z3",
@@ -219,7 +219,7 @@
     "S05"
    ],
    "narrative_objective": "Families and the burial: the cost of the war gets a name",
-   "target_window": "3:01-4:25"
+   "target_window": "3:02-4:28"
   },
   {
    "phase_id": "Z4",
@@ -228,7 +228,7 @@
     "S06"
    ],
    "narrative_objective": "Why are we fighting; but not today",
-   "target_window": "4:25-5:03"
+   "target_window": "4:28-5:06"
   },
   {
    "phase_id": "Z5",
@@ -238,7 +238,7 @@
     "S08"
    ],
    "narrative_objective": "The return to arms, the letters, the last line",
-   "target_window": "5:03-5:57"
+   "target_window": "5:06-6:04"
   }
  ],
  "segments": [
@@ -251,7 +251,7 @@
    "segment_mode": "narration_led",
    "mood": "mysterious",
    "music": true,
-   "target_duration_seconds": 24.0,
+   "target_duration_seconds": 25.0,
    "cause_from_segment_id": null,
    "effect_to_segment_id": "S02",
    "why_a_scene": null,
@@ -388,7 +388,7 @@
     "surface_topic": "families",
     "real_subject": "who is being killed"
    },
-   "target_duration_seconds": 84.0,
+   "target_duration_seconds": 86.25,
    "cause_from_segment_id": "S04",
    "effect_to_segment_id": "S06"
   },
@@ -455,7 +455,7 @@
     "surface_topic": "goodbye",
     "real_subject": "the war is bigger than them"
    },
-   "target_duration_seconds": 33.0,
+   "target_duration_seconds": 34.75,
    "cause_from_segment_id": "S06",
    "effect_to_segment_id": "S08"
   },
@@ -468,7 +468,7 @@
    "segment_mode": "narration_led",
    "mood": "reflective",
    "music": true,
-   "target_duration_seconds": 20.5,
+   "target_duration_seconds": 23.25,
    "cause_from_segment_id": "S07",
    "effect_to_segment_id": null,
    "why_a_scene": null,
@@ -541,14 +541,14 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "the promise; a beat before 'ended'",
-   "text": "This is the day the war stopped. How it began, with a song. And how it ended.",
+   "text": "This is the day the war stopped, along parts of the Western Front. How it began, with a song. And how it ended.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-04",
     "C-10",
     "C-21"
    ],
-   "estimated_duration_seconds": 6.3,
+   "estimated_duration_seconds": 8.52,
    "requires_visible_lipsync": false
   },
   {
@@ -1068,12 +1068,12 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "the number lands softly",
-   "text": "By most estimates, about a hundred thousand men took part.",
+   "text": "Nobody counted them. The usual estimate is that about a hundred thousand men took part.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-03"
    ],
-   "estimated_duration_seconds": 3.7,
+   "estimated_duration_seconds": 5.56,
    "requires_visible_lipsync": false
   },
   {
@@ -1083,13 +1083,13 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "lighter, almost fond",
-   "text": "They traded cigarettes, food, buttons. In a few places, men wrote home about a game of football.",
+   "text": "They traded cigarettes, food, buttons. In a few places, men wrote home about a kickabout with a ball.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-16",
     "C-17"
    ],
-   "estimated_duration_seconds": 6.3,
+   "estimated_duration_seconds": 6.67,
    "requires_visible_lipsync": false
   },
   {
@@ -1573,12 +1573,12 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "flat",
-   "text": "Here, on Boxing Day morning, it ended politely: shots into the air.",
+   "text": "At Houplines, on Boxing Day morning, a British captain ended it politely: shots into the air.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-21"
    ],
-   "estimated_duration_seconds": 4.44,
+   "estimated_duration_seconds": 5.93,
    "requires_visible_lipsync": false
   },
   {
@@ -1646,12 +1646,12 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "plain, no comment",
-   "text": "Their commanders made sure nothing on that scale ever happened again.",
+   "text": "Their commanders forbade it. A few small truces came in 1915, but nothing on that scale ever again.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-23"
    ],
-   "estimated_duration_seconds": 4.07,
+   "estimated_duration_seconds": 6.67,
    "requires_visible_lipsync": false
   },
   {
@@ -1995,7 +1995,7 @@
   {
    "shot_id": "S01_SH005",
    "segment_id": "S01",
-   "target_duration_seconds": 7.0,
+   "target_duration_seconds": 8.0,
    "narrative_purpose": "The promise of the video over its most magical picture: the candle trees in the dark",
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",
@@ -4812,7 +4812,7 @@
   {
    "shot_id": "S05_SH002",
    "segment_id": "S05",
-   "target_duration_seconds": 4.5,
+   "target_duration_seconds": 6.25,
    "narrative_purpose": "How many men: the estimate on the map, the number tied to its claim",
    "visual_type": "map_visualization",
    "generation_mode": "TACTILE_MAP",
@@ -4891,7 +4891,7 @@
   {
    "shot_id": "S05_SH003",
    "segment_id": "S05",
-   "target_duration_seconds": 7.0,
+   "target_duration_seconds": 7.5,
    "narrative_purpose": "The trading, wide: what men did with one free day",
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",
@@ -7497,7 +7497,7 @@
   {
    "shot_id": "S07_SH005",
    "segment_id": "S07",
-   "target_duration_seconds": 5.0,
+   "target_duration_seconds": 6.75,
    "narrative_purpose": "The signal: a captain fires into the air and raises a flag (after Capt. Stockwell, Houplines, 26 December 1914)",
    "visual_type": "cinematic_video",
    "generation_mode": "WAN_I2V",
@@ -7877,7 +7877,7 @@
   {
    "shot_id": "S08_SH002",
    "segment_id": "S08",
-   "target_duration_seconds": 4.75,
+   "target_duration_seconds": 7.5,
    "narrative_purpose": "Friedrich with the portrait card and the brass button: the other side of the same night",
    "visual_type": "composed_illustration",
    "generation_mode": "STILL_25D",

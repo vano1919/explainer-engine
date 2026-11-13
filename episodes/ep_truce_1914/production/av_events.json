@@ -116,7 +116,7 @@
     "S01_SH005": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "10fcd8b761ced758",
+      "events_sha": "e48c408a79ffc63f",
       "events": [
         {
           "event_id": "S01_SH005.M1",
@@ -125,7 +125,7 @@
           "index": 0,
           "op": "truck",
           "start_frame": 0,
-          "end_frame": 168,
+          "end_frame": 192,
           "audio": {
             "decision": "silent_by_design",
             "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
@@ -147,7 +147,7 @@
           "index": 1,
           "op": "fire_flicker",
           "start_frame": 0,
-          "end_frame": 168,
+          "end_frame": 192,
           "audio": {
             "decision": "silent_by_design",
             "why": "tiny distant candles; heard as nothing over the wind",
@@ -804,7 +804,7 @@
     "S05_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "f760c907f3fc49c5",
+      "events_sha": "4fc4ff9486bf112a",
       "events": [
         {
           "event_id": "S05_SH002.A1",
@@ -812,8 +812,8 @@
           "source": "actions",
           "index": 0,
           "op": "counter",
-          "start_frame": 51,
-          "end_frame": 95,
+          "start_frame": 91,
+          "end_frame": 132,
           "audio": {
             "decision": "sfx",
             "class": "data_rise_texture",
@@ -834,7 +834,7 @@
     "S05_SH003": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "ed2d979e3c0cfc67",
+      "events_sha": "8f6d4db904fcee03",
       "events": [
         {
           "event_id": "S05_SH003.M1",
@@ -843,7 +843,7 @@
           "index": 0,
           "op": "truck",
           "start_frame": 0,
-          "end_frame": 168,
+          "end_frame": 180,
           "audio": {
             "decision": "silent_by_design",
             "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
@@ -865,7 +865,7 @@
           "index": 1,
           "op": "subject_sway",
           "start_frame": 0,
-          "end_frame": 168,
+          "end_frame": 180,
           "audio": {
             "decision": "ambience_only",
             "why": "the crowd murmur bed",
@@ -1227,7 +1227,7 @@
     "S08_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "4f1dd1a282af92f8",
+      "events_sha": "318e640acf9e983e",
       "events": [
         {
           "event_id": "S08_SH002.M1",
@@ -1236,7 +1236,7 @@
           "index": 0,
           "op": "push",
           "start_frame": 0,
-          "end_frame": 114,
+          "end_frame": 180,
           "audio": {
             "decision": "silent_by_design",
             "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",

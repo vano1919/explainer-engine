@@ -6,12 +6,13 @@ Written 2026-11-13 by the story thread (Opus high). Read the journal first: `/mn
 |---|---|
 | Episode id | `ep_truce_1914` (folder `episodes/ep_truce_1914/`) |
 | Branch, base | `claude/project-thread-p6oesi`, on `8ae21ec` (PR #177 head, not yet merged) |
-| Script A | `story/production_script.json`, sha256 `9d3c18a919a05b2b8e7ed44e6856937fa4faca068722b7f12ad84c4c5551b7a0` |
-| Variant B | `variants/B/production_script.json`, sha256 `1015b11f0ca558d32e5b57439d4268865ae956f86a3cac00c0b6db251efe602e` (RC-001) |
-| Approval (OR-17) | **not yet**: ვანო reads `SCRIPT_A_READ_2026-11-13.md` and approves; record it as a CQ with the sha above (KN-02) |
-| Measured mix (A, estimated clock) | 357.0 s; video 61.0 %, still_25d 30.5 %, map 8.5 %; 84 shots, 57 LTX clips (39 with a hero line, 18 narrated or silent) |
-| Mix (B) | video 32.4 %, 40 clips, all of them clips of A |
-| Spoken words | narrator 477 / dialogue 193 (71 % / 29 %, D-99 band 65-75 %) |
+| Script A | `story/production_script.json`, sha256 `d14f7c7d0586536b18b6ce72f3c2aa6d94e49804cc82f15381d86b2d313f2806` |
+| Variant B | `variants/B/production_script.json`, sha256 `e89b5adf93bc0f9751248e9b5c8aac60d2daba34202764f1459e7b522a074a07` (RC-001) |
+| Approval (OR-17) | **approved** by ვანო 2026-11-13 16:13 UTC (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCqRPmUmvb4PzH7h1aEZDY`), on the condition of five factual narrator fixes, applied in both versions (SF-001); journal CQ-007 binds the sha above. Dialogue and structure unchanged |
+| Measured mix (A, estimated clock) | 364.8 s; video 60.2 %, still_25d 31.0 %, map 8.8 %; 84 shots, 57 LTX clips (39 with a hero line, 18 narrated or silent) |
+| Mix (B) | video 31.7 %, 40 clips, all of them clips of A |
+| Production order (ვანო 16:13 UTC, NT-002) | Produce A first (57 clips, the quality baseline and his preferred version). Derive B from A's assets only: no extra LTX clip and no new picture for B. No version C and no hybrid before A and B are rendered and compared. Compare the real results on cinematic quality, emotional impact, pacing, character consistency and real cost |
+| Spoken words | narrator 500 / dialogue 193 (72 % / 28 %, D-99 band 65-75 %) |
 | Gates | A: G1-G3 PASS with no REVIEW, G4 PASS (`production/stages/`); B: G1 FAIL only on Q7 and CF-VISUAL-MIX-BOUNDS (approved RC-001) |
 | Critic | 2 rounds; round 2 mean 3.92, verdict "ship after the one wording fix" (applied). Still slowest: 0:59-1:22 (four narrator lines) |
 | Open cards | Stille Nacht in German (script follows ა: German verse, English answer); disclosure place (packaging follows ა: description only) |

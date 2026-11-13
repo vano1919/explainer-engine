@@ -8,8 +8,8 @@ A snapshot goes into `docs/handoffs/demo_run_<date>/` at the end of every stage.
 | Episode id | `ep_truce_1914` (S2, story thread, 2026-11-13) |
 | `FREEZE_SHA` | _not set: S0 has not run (FL-001); S2 worked on `8ae21ec` (PR #177 head)_ |
 | Baseline tests | _not run (S0)_ |
-| Current stage and thread | S2, the story thread (Opus high) |
-| Counts | KN 15 · FL 8 · DV 2 · RC 1 · SF 0 · NT 1 · CQ 6 · MS 4 · CU 0 |
+| Current stage and thread | S2 closed 2026-11-13 ~16:45 UTC (script approved, CQ-007); next: S0, then S3 pictures for A |
+| Counts | KN 15 · FL 8 · DV 2 · RC 1 · SF 1 · NT 2 · CQ 7 · MS 4 · CU 0 |
 
 ## 0. How to write here
 
@@ -240,7 +240,7 @@ shows only the changed lines.
 
 | Id | From stage | Shot or line | What must change and why (FL / MS) | Words change | Answered (script sha256 after) |
 |---|---|---|---|---|---|
-| _none yet_ | | | | | |
+| SF-001 | creator (NT-002) | S01_L005, S05_L002, S05_L003, S07_L005, S08_L002 (narrator only) | five factual qualifiers: parts of the Western Front; the 100,000 is an estimate nobody counted; football as a kickabout (C-17); the Boxing Day shots are the Houplines incident (C-21); small truces did happen in 1915 (C-23). Claim rows C-01, C-03, C-21, C-23 reworded to match; S01_SH005 8.0 s, S07_SH005 6.75 s from the longer lines | yes, narrator only; shown to ვანო before/after in the thread | 2026-11-13 ~16:40 UTC; A `d14f7c7d...3f2806`, B `e89b5adf...074a07`; A G1-G4 PASS no REVIEW, B G1 FAIL only RC-001 |
 
 ### 5b. The creator's notes (NT)
 
@@ -250,6 +250,7 @@ His words, exactly, with the message id. Each ends as a rule change, a code pack
 | Id | When, message id | His words | About (shot, sound, story) | Becomes |
 |---|---|---|---|---|
 | NT-001 | 2026-11-13 15:04 UTC, `cmsg_01Hnu5zB86sjUj5GtTgaUkPWFcyjCKA7uQJsTkd692MkxS` | "რეალურად ორმაგდება? ეგ ჯერ არ ვიცით მოდი დაწერე ჯერ სენი ვერსის სკრიპტი მერე დაწერე ჩატჯიპიტისი სადაც გაუთვალისწინებ თუ რა ვიდეო მასალა გექნება იმას ააგებ და მხოლოდ იშვიათ გამონაკლისებში ფააკეთებ დამატებით ლტხს სადაც უბრალიდ გარდაუვალია ასე ხარჯი კი არ გაორმაგდება არამედ გარკვეული პროცენტით იზრდება" | the A/B plan | RC-001; variant B built only from A's material |
+| NT-002 | 2026-11-13 16:13 UTC, `cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCqRPmUmvb4PzH7h1aEZDY` | "keep the current A/B experiment unchanged and proceed with production in this order. Version A: Keep Claude's original route — 57 LTX clips. This is the cinematic quality baseline and is currently my preferred version. Version B: Keep the reduced route — 40 LTX clips, using only A's existing clips and start frames. Do not generate additional LTX clips for B. Do not merge the two approaches or introduce a Version C before we have rendered and compared A and B. [...] B must remain a genuine low-LTX comparison, not an improved hybrid version. Before paid production, address these factual wording issues in both versions [five items]. Do not change the approved story structure or dialogue without showing me the proposed changes first. Next objective: produce A, derive B from A's assets, and compare the actual result for cinematic quality, emotional impact, pacing, character consistency, and real cost. No paid work beyond the approved caps without my approval." | the A/B plan, the narration facts, the production order | SF-001 (applied); CQ-007 (OR-17 approval); the production order in HANDOFF_H1; B stays frozen as built (no C, no hybrid) |
 
 ### 5c. Questions to the creator (CQ)
 
@@ -261,6 +262,7 @@ His words, exactly, with the message id. Each ends as a rule change, a code pack
 | CQ-004 | S2 | Approve story v2? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWLzxUHmmZ1Qgk6xADkeaZRG`) | taken as approved by his 15:04 UTC message (NT-001: "write your version's script first"); card closed 15:04 | the script |
 | CQ-005 | S2 | Test both LTX ways on one scene? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWAVhNnHhgM7grtUkaxnUvFi`) | withdrawn 15:04 UTC: replaced by NT-001 (two whole versions, B from A's material) | RC-001 |
 | CQ-006 | S2 | B under 60 % LTX: break Q7 for the comparison? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPW5udZfvGUREE4XYMQnfev1X`) | ა "კი", 15:08 UTC | RC-001 |
+| CQ-007 | S2 | OR-17: approve script A for production? (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWBd2wajM4s1jMPTyK1DHWZq`) | approved in words 16:13 UTC (`cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCqRPmUmvb4PzH7h1aEZDY`), on the condition of SF-001, applied; card closed. Bound to A sha256 `d14f7c7d0586536b18b6ce72f3c2aa6d94e49804cc82f15381d86b2d313f2806` and B sha256 `e89b5adf93bc0f9751248e9b5c8aac60d2daba34202764f1459e7b522a074a07` | S3 onward |
 
 ## 6. Measurements (MS)
 
@@ -268,10 +270,10 @@ Real numbers only, each with where it was read. They replace estimates in the co
 
 | Id | Stage | What was measured | Value | Read from |
 |---|---|---|---|---|
-| MS-001 | S2 | Version A, estimated clock (G1 `outputs.mix`, before the read) | after the critic's two rounds: 357.0 s; video 217.75 s (61.0 %), still_25d 109.0 s (30.5 %), map 30.25 s (8.5 %); 84 shots, 57 LTX clips (39 with a hero line); narrator 477 / dialogue 193 words (71 % / 29 %); script sha256 9d3c18a9...51b7a0; G1-G4 PASS, no REVIEW | `episodes/ep_truce_1914/production/stages/script.json` |
+| MS-001 | S2 | Version A, estimated clock (G1 `outputs.mix`, before the read) | after the critic's two rounds and SF-001: 364.8 s; video 219.5 s (60.2 %), still_25d 113.2 s (31.0 %), map 32.0 s (8.8 %); 84 shots, 57 LTX clips (39 with a hero line); narrator 500 / dialogue 193 words (72 % / 28 %); script sha256 d14f7c7d...3f2806; G1-G4 PASS, no REVIEW (before SF-001: 357.0 s, 61.0 %, sha 9d3c18a9...51b7a0) | `episodes/ep_truce_1914/production/stages/script.json` |
 | MS-003 | S2 | Critic (script-critic, 2 rounds) | round 1 mean 3.77 (title gate below 4), 8 fixes applied; round 2 mean 3.92, "ship after the one wording fix" (applied); still slowest 0:59-1:22 | this thread |
 | MS-004 | S2 | LTX cost estimate (not measured) | A 57 clips ≈ $6.8-16; B alone 40 ≈ $4.8-11; B after A $0 new LTX. Basis: H100 $5.0937/h, CLI ~82 s a clip; battle run 4 clips $1.1 | `training/pods/ltx/launch.json`; `A_vs_B_2026-11-13.md` |
-| MS-002 | S2 | Variant B, same clock | 357.0 s; video 115.75 s (32.4 %), still_25d 211.0 s (59.1 %), map 30.25 s (8.5 %); 84 shots, 40 LTX clips, all 40 are clips of A (0 new clips, 0 new pictures); sha256 1015b11f...b7a0 → see `variants/B` | scratch G1 record of B; `variants/B/production_script.json` |
+| MS-002 | S2 | Variant B, same clock | 364.75 s; video 115.75 s (31.7 %), still_25d 217.0 s (59.5 %), map 32.0 s (8.8 %); 84 shots, 40 LTX clips, all 40 are clips of A (0 new clips, 0 new pictures); sha256 e89b5adf...074a07 (before SF-001: 1015b11f...602e) → see `variants/B` | scratch G1 record of B; `variants/B/production_script.json` |
 
 Each stage's closing MS row: thread minutes, money and credits spent against the cap, items made, items retried.
 
