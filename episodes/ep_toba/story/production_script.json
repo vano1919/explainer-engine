@@ -27,7 +27,8 @@
         "fixed_appearance_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama portrait of Kael, 45-year-old Late Pleistocene East African hunter, weathered dark skin dusted with grey volcanic ash and red ochre, coarse braided hair, cracked antelope-hide cloak over muscular shoulders, holding a fire-hardened wooden spear",
         "costume_continuity_notes": "Cracked antelope-hide cloak fastened with bone pin, red ochre stripe across cheekbone",
         "voice_profile_id": "voice_kael_74000bce",
-        "reference_sheet_path": "02_keyframes/assets/char_kael_74000bce_turnaround.png"
+        "reference_sheet_path": "02_keyframes/assets/char_kael_74000bce_turnaround.png",
+        "voice_description": "a deep, weathered male voice in his mid-forties, slow and stubborn, low gravel in the throat, a soft East African lilt, each word set down hard"
       },
       {
         "character_id": "char_sena_74000bce",
@@ -36,7 +37,8 @@
         "fixed_appearance_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama portrait of Sena, 26-year-old Late Pleistocene East African woman artisan, intense dark eyes reflecting amber firelight, charcoal-stained fingers, woven leather work apron, necklace of perforated Nassarius shells and an obsidian pendant",
         "costume_continuity_notes": "Leather work apron, perforated shell and obsidian necklace, bone pressure-flaker at belt",
         "voice_profile_id": "voice_sena_74000bce",
-        "reference_sheet_path": "02_keyframes/assets/char_sena_74000bce_turnaround.png"
+        "reference_sheet_path": "02_keyframes/assets/char_sena_74000bce_turnaround.png",
+        "voice_description": "a clear, quick female voice in her mid-twenties, warm but sharp when pressed, a light East African lilt, precise and urgent, rising when she argues"
       },
       {
         "character_id": "char_thar_74000bce",
@@ -45,7 +47,8 @@
         "fixed_appearance_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama portrait of Thar, 35-year-old Late Pleistocene hunter from the southern Rift Valley, tall gaunt frame, ash-caked leather wraps, carrying geometric-engraved ostrich eggshell water flasks in knotted hide netting across his chest",
         "costume_continuity_notes": "Ash-caked leather shoulder wraps, net of engraved ostrich-eggshell water containers",
         "voice_profile_id": "voice_thar_74000bce",
-        "reference_sheet_path": "02_keyframes/assets/char_thar_74000bce_turnaround.png"
+        "reference_sheet_path": "02_keyframes/assets/char_thar_74000bce_turnaround.png",
+        "voice_description": "a hoarse, dry male voice in his mid-thirties, thin from thirst, measured and wary, a southern Rift accent, quiet force under exhaustion"
       }
     ],
     "locations": [
@@ -55,7 +58,15 @@
         "era_and_geography": "Northern Sumatra, Indonesia, 74,000 BCE",
         "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of Mount Toba in northern Sumatra, 100-kilometer collapsing volcanic caldera, incandescent amber magma fissures, towering 32-kilometer black ash column laced with volcanic lightning",
         "lighting_palette": "Blinding incandescent amber-orange magma glare cutting through pitch-black and indigo ash clouds",
-        "anchor_image_path": "02_keyframes/assets/loc_sumatra_toba_caldera_anchor.png"
+        "anchor_image_path": "02_keyframes/assets/loc_sumatra_toba_caldera_anchor.png",
+        "ambience_bed": {
+          "classes": [
+            "eruption_rumble",
+            "ash_fall"
+          ],
+          "room": "outdoor",
+          "why": "the caldera: the eruption's rumble and the hiss of falling ash and pumice"
+        }
       },
       {
         "location_id": "loc_shinfa_ash_riverbed",
@@ -63,7 +74,14 @@
         "era_and_geography": "Lowlands of Northwestern Ethiopia, Horn of Africa, 74,000 BCE",
         "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of the entrenched Shinfa river channel in Ethiopia, dark basalt terraces coated in fine grey volcanic ash, polygonal mud cracks, and isolated shallow amber-lit waterholes",
         "lighting_palette": "Dim copper-amber eclipsed sunlight filtering through slate-grey stratospheric aerosol haze",
-        "anchor_image_path": "02_keyframes/assets/loc_shinfa_ash_riverbed_anchor.png"
+        "anchor_image_path": "02_keyframes/assets/loc_shinfa_ash_riverbed_anchor.png",
+        "ambience_bed": {
+          "classes": [
+            "wind"
+          ],
+          "room": "outdoor",
+          "why": "a dry riverbed with shrinking pools: a thin dry wind over gravel; the pools are too still to be heard"
+        }
       },
       {
         "location_id": "loc_rift_cave_hearth",
@@ -71,7 +89,15 @@
         "era_and_geography": "Ethiopian Rift Margin, 74,000 BCE",
         "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of a prehistoric basalt rock shelter above the Shinfa gorge, central acacia-wood hearth fire, red ochre hand stencils on dark stone walls, stone-knapping anvil and animal hides",
         "lighting_palette": "Sculptural single-source golden-amber campfire light cutting through deep indigo cavern shadows",
-        "anchor_image_path": "02_keyframes/assets/loc_rift_cave_hearth_anchor.png"
+        "anchor_image_path": "02_keyframes/assets/loc_rift_cave_hearth_anchor.png",
+        "ambience_bed": {
+          "classes": [
+            "fire",
+            "wind"
+          ],
+          "room": "cave",
+          "why": "a basalt overhang: the small hearth fire and the wind at the cave mouth, in a stone room"
+        }
       },
       {
         "location_id": "loc_pinnacle_point_cliffs",
@@ -79,7 +105,15 @@
         "era_and_geography": "Mossel Bay, Southern Coast of South Africa, 74,000 BCE",
         "fixed_environment_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama of Pinnacle Point coastal caves in South Africa, towering quartzite cliffs above crashing Indian Ocean waves, exposed intertidal mussel reefs, and warm hearth firelight inside cave mouth",
         "lighting_palette": "Cool silver-indigo ocean spray contrasted with warm golden cave firelight and amber twilight",
-        "anchor_image_path": "02_keyframes/assets/loc_pinnacle_point_cliffs_anchor.png"
+        "anchor_image_path": "02_keyframes/assets/loc_pinnacle_point_cliffs_anchor.png",
+        "ambience_bed": {
+          "classes": [
+            "water_waves",
+            "wind"
+          ],
+          "room": "outdoor",
+          "why": "sea cliffs: Indian Ocean rollers on quartzite and the coastal wind"
+        }
       }
     ],
     "props": [
@@ -173,7 +207,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": null,
       "effect_to_segment_id": "S02",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "mysterious"
     },
     {
       "segment_id": "S02",
@@ -184,7 +219,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S01",
       "effect_to_segment_id": "S03",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "epic"
     },
     {
       "segment_id": "S03",
@@ -195,7 +231,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S02",
       "effect_to_segment_id": "S04",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "dark"
     },
     {
       "segment_id": "S04",
@@ -206,7 +243,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S03",
       "effect_to_segment_id": "S05",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "tragic"
     },
     {
       "segment_id": "S05",
@@ -235,7 +273,8 @@
         "exit": "Kael lowers his heavy hunting spear beside the dying embers",
         "surface_topic": "Whether to march north for antelope or stay by the muddy river pools",
         "real_subject": "Rigid hunting pride versus cognitive adaptation under extinction pressure"
-      }
+      },
+      "mood": "tense"
     },
     {
       "segment_id": "S06",
@@ -246,7 +285,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S05",
       "effect_to_segment_id": "S07",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "dark"
     },
     {
       "segment_id": "S07",
@@ -257,7 +297,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S06",
       "effect_to_segment_id": "S08",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "tense"
     },
     {
       "segment_id": "S08",
@@ -286,7 +327,8 @@
         "exit": "Kael lifts the impaled fish from the pool as the starving clan gathers",
         "surface_topic": "How to draw and aim the light acacia bow below the water glare",
         "real_subject": "Replacing brute muscular force with stored mechanical energy"
-      }
+      },
+      "mood": "heroic"
     },
     {
       "segment_id": "S09",
@@ -316,7 +358,8 @@
         "exit": "Thar lowers his spear and lays the sealed water shells on the gravel bar",
         "surface_topic": "Who has the right to drink from the last living pool in the gorge",
         "real_subject": "Why Homo sapiens survived through reciprocal networks while isolated cousins vanished"
-      }
+      },
+      "mood": "tense"
     },
     {
       "segment_id": "S10",
@@ -327,7 +370,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S09",
       "effect_to_segment_id": "S11",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "peaceful"
     },
     {
       "segment_id": "S11",
@@ -338,7 +382,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S10",
       "effect_to_segment_id": "S12",
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "epic"
     },
     {
       "segment_id": "S12",
@@ -349,7 +394,8 @@
       "factual_status": "actual_history",
       "cause_from_segment_id": "S11",
       "effect_to_segment_id": null,
-      "segment_mode": "narration_led"
+      "segment_mode": "narration_led",
+      "mood": "reflective"
     }
   ],
   "audio_lines": [
@@ -2503,7 +2549,32 @@
       ],
       "shot_role": "teaser",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('sprint') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('sprint') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "establish",
+        "axis_side": "A",
+        "screen_direction": "right_to_left",
+        "camera_in": "track_left",
+        "camera_out": "track_left",
+        "scene_master": "S01_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "right",
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "running",
+          "class": "running",
+          "at_word": "Eight billion",
+          "purpose": "clarify",
+          "distance": "close",
+          "dur_s": 1.6,
+          "event_id": "S01_SH001.S1"
+        }
+      ]
     },
     {
       "shot_id": "S01_SH002",
@@ -2564,7 +2635,28 @@
       ],
       "shot_role": "teaser",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "establish",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S01_SH002_start"
+      },
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "eruption_boom",
+          "class": "eruption_boom",
+          "at_word": "cataclysmic",
+          "purpose": "sync",
+          "distance": "distant",
+          "picture_event": "eruption",
+          "event_id": "S01_SH002.S1"
+        }
+      ]
     },
     {
       "shot_id": "S01_SH003",
@@ -2624,7 +2716,20 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "establish",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S01_SH003_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S01_SH004",
@@ -2681,7 +2786,31 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('steps to') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('steps to') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S01_SH007_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "ash_fall",
+          "class": "ash_fall",
+          "at_word": "glass shards drifted",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 3.0,
+          "event_id": "S01_SH004.S1"
+        }
+      ]
     },
     {
       "shot_id": "S01_SH005",
@@ -2962,7 +3091,19 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "thunder",
+          "class": "thunder",
+          "at_word": "ruptured",
+          "purpose": "sync",
+          "distance": "distant",
+          "picture_event": "thunder",
+          "event_id": "S01_SH009.S1"
+        }
+      ]
     },
     {
       "shot_id": "S02_SH001",
@@ -3072,7 +3213,28 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "insert",
+        "cut_in_reason": "insert",
+        "axis_side": "A",
+        "screen_direction": "left_to_right",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S02_SH003_start"
+      },
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "impact",
+          "class": "impact",
+          "at_word": "the roof failed",
+          "purpose": "sync",
+          "distance": "medium",
+          "picture_event": "impact",
+          "event_id": "S02_SH002.S1"
+        }
+      ]
     },
     {
       "shot_id": "S02_SH003",
@@ -3127,7 +3289,28 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('collapses') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('collapses') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "pull",
+        "camera_out": "pull",
+        "scene_master": "S02_SH003_start"
+      },
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "eruption_boom",
+          "class": "eruption_boom",
+          "at_word": "detonated",
+          "purpose": "sync",
+          "distance": "distant",
+          "picture_event": "eruption",
+          "event_id": "S02_SH003.S1"
+        }
+      ]
     },
     {
       "shot_id": "S02_SH004",
@@ -3237,7 +3420,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "eruption_rumble",
+          "class": "eruption_rumble",
+          "at_word": "hurled",
+          "purpose": "clarify",
+          "distance": "distant",
+          "dur_s": 4.0,
+          "event_id": "S02_SH005.S1"
+        }
+      ]
     },
     {
       "shot_id": "S02_SH006",
@@ -3402,7 +3597,28 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('punches') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "pull",
+        "camera_out": "pull",
+        "scene_master": "S02_SH003_start"
+      },
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "eruption_rumble",
+          "class": "eruption_rumble",
+          "at_word": "punched",
+          "purpose": "clarify",
+          "distance": "distant",
+          "dur_s": 3.0,
+          "event_id": "S02_SH008.S1"
+        }
+      ]
     },
     {
       "shot_id": "S02_SH009",
@@ -3677,7 +3893,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "thunder",
+          "class": "thunder",
+          "at_word": "volcanic lightning",
+          "purpose": "sync",
+          "distance": "distant",
+          "picture_event": "thunder",
+          "event_id": "S03_SH001.S1"
+        }
+      ]
     },
     {
       "shot_id": "S03_SH002",
@@ -3954,7 +4182,16 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('wrapping') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('wrapping') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S03_SH006_start"
+      }
     },
     {
       "shot_id": "S03_SH007",
@@ -4238,7 +4475,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('tightens') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S03_SH010_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        }
+      }
     },
     {
       "shot_id": "S03_SH012",
@@ -4295,7 +4544,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('turns to') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('turns to') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S03_SH010_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S03_SH013",
@@ -4413,7 +4674,19 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "still_25d",
-      "route_reason": "the heroes hold a pose ('glowing'); camera, light and atmosphere carry the motion (Q4)"
+      "route_reason": "the heroes hold a pose ('glowing'); camera, light and atmosphere carry the motion (Q4)",
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "wind",
+          "class": "wind",
+          "at_word": "winter does not last",
+          "purpose": "clarify",
+          "distance": "close",
+          "dur_s": 2.5,
+          "event_id": "S03_SH014.S1"
+        }
+      ]
     },
     {
       "shot_id": "S04_SH001",
@@ -4578,7 +4851,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "water_waves",
+          "class": "water_waves",
+          "at_word": "ocean currents",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 2.0,
+          "event_id": "S04_SH003.S1"
+        }
+      ]
     },
     {
       "shot_id": "S04_SH004",
@@ -4798,7 +5083,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "wind",
+          "class": "wind",
+          "at_word": "savanna",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 3.0,
+          "event_id": "S04_SH007.S1"
+        }
+      ]
     },
     {
       "shot_id": "S04_SH008",
@@ -4862,7 +5159,32 @@
       },
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('trek') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('trek') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S04_SH005_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "footsteps_dirt",
+          "class": "footsteps_dirt",
+          "at_word": "Stable oxygen",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 4.0,
+          "event_id": "S04_SH008.S1"
+        }
+      ]
     },
     {
       "shot_id": "S04_SH009",
@@ -4921,7 +5243,30 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S04_SH005_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "stone_tools",
+          "class": "stone_tools",
+          "at_word": "starved",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S04_SH009.S1"
+        }
+      ]
     },
     {
       "shot_id": "S04_SH010",
@@ -4978,7 +5323,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('digging') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('digging') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S04_SH005_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S04_SH011",
@@ -5209,7 +5566,30 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('presses the charred wooden point of his heavy throwing spear against') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('presses the charred wooden point of his heavy throwing spear against') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S04_SH013_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "stone_tools",
+          "class": "stone_tools",
+          "at_word": "desperate hunters",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S04_SH014.S1"
+        }
+      ]
     },
     {
       "shot_id": "S04_SH015",
@@ -5270,7 +5650,20 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S04_SH013_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S05_SH001",
@@ -5388,7 +5781,20 @@
       "transition_out": "j_cut",
       "shot_role": "establish",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "line",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S05_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S05_SH003",
@@ -5410,7 +5816,7 @@
       "action_start_state": "Sena surges to her feet on the right side of the fire, her jaw set in alarm",
       "action_end_state": "Amber firelight catches the fierce intensity in her dark eyes as she confronts Kael",
       "camera_spec": {
-        "shot_size": "close_up",
+        "shot_size": "medium_close_up",
         "vertical_angle": "eye_level_0",
         "horizontal_azimuth_deg": 135,
         "camera_move": "static",
@@ -5448,7 +5854,20 @@
       "transition_out": "j_cut",
       "shot_role": "action",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "line",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S05_SH001_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S05_SH004",
@@ -5507,7 +5926,21 @@
       "transition_out": "j_cut",
       "shot_role": "reaction",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "reaction",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S05_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S05_SH005",
@@ -5568,7 +6001,20 @@
       "transition_out": "j_cut",
       "shot_role": "exit",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "line",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S05_SH001_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S05_SH006",
@@ -5800,7 +6246,8 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "intentional_silence": "the fires go out one by one: no effect, only the cave's own hush under the line"
     },
     {
       "shot_id": "S05_SH010",
@@ -5857,7 +6304,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('kneels') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "pull",
+        "camera_out": "pull",
+        "scene_master": "S05_SH010_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S05_SH011",
@@ -6082,7 +6541,32 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('walk') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('walk') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S06_SH004_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "footsteps_stone",
+          "class": "footsteps_stone",
+          "at_word": "genetic bottleneck",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 2.0,
+          "event_id": "S06_SH003.S1"
+        }
+      ]
     },
     {
       "shot_id": "S06_SH004",
@@ -6256,7 +6740,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S06_SH006_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S06_SH007",
@@ -6370,7 +6866,19 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('climbs') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('climbs') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S06_SH008_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S07_SH001",
@@ -6540,7 +7048,20 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S07_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S07_SH004",
@@ -6599,7 +7120,30 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('thrusts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('thrusts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S07_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "impact",
+          "class": "impact",
+          "at_word": "shattered the surface",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S07_SH004.S1"
+        }
+      ]
     },
     {
       "shot_id": "S07_SH005",
@@ -6654,7 +7198,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "birds",
+          "class": "birds",
+          "at_word": "shoreline",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 1.5,
+          "event_id": "S07_SH005.S1"
+        }
+      ]
     },
     {
       "shot_id": "S07_SH006",
@@ -6772,7 +7328,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S07_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        }
+      }
     },
     {
       "shot_id": "S07_SH008",
@@ -6831,7 +7399,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S07_SH001_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S07_SH009",
@@ -7002,7 +7582,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('buries') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('buries') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S07_SH011_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S07_SH012",
@@ -7118,7 +7710,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "track_right",
+        "camera_out": "track_right",
+        "scene_master": "S07_SH011_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S07_SH014",
@@ -7178,7 +7782,31 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('positions the cooled, heat-treated stone core against') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('positions the cooled, heat-treated stone core against') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S07_SH011_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "stone_tools",
+          "class": "stone_tools",
+          "at_word": "flaked",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S07_SH014.S1"
+        }
+      ]
     },
     {
       "shot_id": "S08_SH001",
@@ -7296,7 +7924,30 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('presses the tip of the antelope bone firmly against') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('presses the tip of the antelope bone firmly against') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S08_SH004_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "stone_tools",
+          "class": "stone_tools",
+          "at_word": "flake like glass",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S08_SH002.S1"
+        }
+      ]
     },
     {
       "shot_id": "S08_SH003",
@@ -7359,7 +8010,30 @@
       },
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('wrap') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('wrap') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S08_SH004_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "stone_tools",
+          "class": "stone_tools",
+          "at_word": "pressure-flakers",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S08_SH003.S1"
+        }
+      ]
     },
     {
       "shot_id": "S08_SH004",
@@ -7420,7 +8094,21 @@
       "transition_out": "j_cut",
       "shot_role": "establish",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_sena_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "line",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S08_SH004_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S08_SH005",
@@ -7538,7 +8226,20 @@
       "transition_out": "j_cut",
       "shot_role": "reaction",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S08_SH009_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S08_SH007",
@@ -7655,7 +8356,27 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('draws the sinew') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('draws the sinew') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S08_SH009_start"
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "bow",
+          "class": "bow",
+          "at_word": "sinew snapped",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S08_SH008.S1"
+        }
+      ]
     },
     {
       "shot_id": "S08_SH009",
@@ -7712,7 +8433,18 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "impact",
+          "class": "impact",
+          "at_word": "pierced",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S08_SH009.S1"
+        }
+      ]
     },
     {
       "shot_id": "S08_SH010",
@@ -7887,7 +8619,16 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('carry') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('carry') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "establish",
+        "axis_side": "A",
+        "screen_direction": "left_to_right",
+        "camera_in": "pull",
+        "camera_out": "pull",
+        "scene_master": "S08_SH012_start"
+      }
     },
     {
       "shot_id": "S08_SH013",
@@ -7946,7 +8687,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "still_25d",
-      "route_reason": "the heroes hold a pose ('silhouettes'); camera, light and atmosphere carry the motion (Q4)"
+      "route_reason": "the heroes hold a pose ('silhouettes'); camera, light and atmosphere carry the motion (Q4)",
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "crowd",
+          "class": "crowd",
+          "at_word": "another starving band",
+          "purpose": "clarify",
+          "distance": "distant",
+          "dur_s": 2.0,
+          "event_id": "S08_SH013.S1"
+        }
+      ]
     },
     {
       "shot_id": "S08_SH014",
@@ -8006,7 +8759,31 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('steps out') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('steps out') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S08_SH012_start",
+        "screen_positions": {
+          "char_thar_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "footsteps_ash",
+          "class": "footsteps_ash",
+          "at_word": "stepped",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 2.0,
+          "event_id": "S08_SH014.S1"
+        }
+      ]
     },
     {
       "shot_id": "S09_SH001",
@@ -8068,7 +8845,32 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lift') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lift') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "establish",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S09_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_thar_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "crowd",
+          "class": "crowd",
+          "at_word": "Twelve strangers",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 2.0,
+          "event_id": "S09_SH001.S1"
+        }
+      ]
     },
     {
       "shot_id": "S09_SH002",
@@ -8128,7 +8930,20 @@
       "transition_out": "j_cut",
       "shot_role": "establish",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "line",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S09_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S09_SH003",
@@ -8188,7 +9003,20 @@
       "transition_out": "j_cut",
       "shot_role": "action",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_thar_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_thar_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "line",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S09_SH001_start",
+        "screen_positions": {
+          "char_thar_74000bce": "right"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S09_SH004",
@@ -8210,7 +9038,7 @@
       "action_start_state": "Kael's fingers tighten on the bowstring as sweat runs through the ash on his temple",
       "action_end_state": "He holds the aim steady across the pool, afraid to yield the clan's last water",
       "camera_spec": {
-        "shot_size": "close_up",
+        "shot_size": "medium_close_up",
         "vertical_angle": "eye_level_0",
         "horizontal_azimuth_deg": 90,
         "camera_move": "static",
@@ -8234,7 +9062,7 @@
         "end_frame_reason": null
       },
       "image_prompt": {
-        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael's fingers tighten on the bowstring as sweat runs through the ash on his temple, with foreground trembling acacia bow limb in extreme foreground, midground close-up on kael's conflicted eyes sighting down the arrow shaft, and background dark basalt cliff wall in left shadow in high-contrast golden-amber firelight and deep slate shadow.",
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael's fingers tighten on the bowstring as sweat runs through the ash on his temple, with foreground trembling acacia bow limb in extreme foreground, midground medium close-up of kael, his conflicted eyes sighting down the arrow shaft, and background dark basalt cliff wall in left shadow in high-contrast golden-amber firelight and deep slate shadow.",
         "end_frame_prompt": null,
         "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
       },
@@ -8248,7 +9076,20 @@
       "transition_out": "j_cut",
       "shot_role": "reaction",
       "route": "video",
-      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)"
+      "route_reason": "a hero speaks a line in this shot (char_kael_74000bce): a performance clip, no lip-sync, no talking still (Q7)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "reaction",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S09_SH001_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left"
+        },
+        "speech_onset_s": 0.75
+      }
     },
     {
       "shot_id": "S09_SH005",
@@ -8426,7 +9267,20 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('steps forward') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S09_SH009_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "center"
+        }
+      }
     },
     {
       "shot_id": "S09_SH008",
@@ -8485,7 +9339,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('draws two microlithic') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('draws two microlithic') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S09_SH009_start",
+        "screen_positions": {
+          "char_sena_74000bce": "left"
+        }
+      }
     },
     {
       "shot_id": "S09_SH009",
@@ -8545,7 +9411,19 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('lifts') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S09_SH009_start",
+        "screen_positions": {
+          "char_thar_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S10_SH001",
@@ -8605,7 +9483,20 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('extends two') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('extends two') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S10_SH002_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_thar_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S10_SH002",
@@ -8665,7 +9556,20 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('presses an acacia bow and a bundle of microlithic arrows into') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('presses an acacia bow and a bundle of microlithic arrows into') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S10_SH002_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_thar_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S10_SH003",
@@ -9004,7 +9908,27 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('detaches') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('detaches') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S10_SH006_start"
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "stone_tools",
+          "class": "stone_tools",
+          "at_word": "silcrete blades",
+          "purpose": "clarify",
+          "distance": "close",
+          "event_id": "S10_SH008.S1"
+        }
+      ]
     },
     {
       "shot_id": "S10_SH009",
@@ -9061,7 +9985,19 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('presses her red-ochre-coated palm firmly against') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('presses her red-ochre-coated palm firmly against') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "right_to_left",
+        "camera_in": "track_left",
+        "camera_out": "track_left",
+        "scene_master": "S10_SH010_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S10_SH010",
@@ -9300,7 +10236,16 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('marches') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('marches') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "track_right",
+        "camera_out": "track_right",
+        "scene_master": "S10_SH016_start"
+      }
     },
     {
       "shot_id": "S10_SH014",
@@ -9360,7 +10305,20 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('crest') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S10_SH016_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S10_SH015",
@@ -9646,7 +10604,28 @@
       "selective_control": null,
       "transition_out": "hard_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('walks') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('walks') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "left_to_right",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S11_SH003_start"
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "footsteps_dirt",
+          "class": "footsteps_dirt",
+          "at_word": "walk downstream",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 3.0,
+          "event_id": "S11_SH003.S1"
+        }
+      ]
     },
     {
       "shot_id": "S11_SH004",
@@ -9705,7 +10684,19 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('tilts her head') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('tilts her head') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "left_to_right",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S11_SH003_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      }
     },
     {
       "shot_id": "S11_SH005",
@@ -9766,7 +10757,32 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('stride') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('stride') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "action",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S11_SH003_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_thar_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "foley",
+          "what": "footsteps_dirt",
+          "class": "footsteps_dirt",
+          "at_word": "Step by step",
+          "purpose": "clarify",
+          "distance": "medium",
+          "dur_s": 3.0,
+          "event_id": "S11_SH005.S1"
+        }
+      ]
     },
     {
       "shot_id": "S11_SH006",
@@ -10109,7 +11125,21 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('wraps') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "rest",
+        "camera_out": "rest",
+        "scene_master": "S12_SH002_start",
+        "screen_positions": {
+          "char_kael_74000bce": "left",
+          "char_sena_74000bce": "right",
+          "char_thar_74000bce": "center"
+        }
+      }
     },
     {
       "shot_id": "S12_SH003",
@@ -10221,7 +11251,31 @@
       "selective_control": null,
       "transition_out": "j_cut",
       "route": "video",
-      "route_reason": "a body performs an action a still cannot fake ('wrapped') (Q4)"
+      "route_reason": "a body performs an action a still cannot fake ('wrapped') (Q4)",
+      "edit_plan": {
+        "continuity_mode": "coverage",
+        "cut_in_reason": "scene_change",
+        "axis_side": "A",
+        "screen_direction": "none",
+        "camera_in": "push",
+        "camera_out": "push",
+        "scene_master": "S12_SH006_start",
+        "screen_positions": {
+          "char_sena_74000bce": "right"
+        }
+      },
+      "sound_events": [
+        {
+          "kind": "ambience",
+          "what": "fire",
+          "class": "fire",
+          "at_word": "Every living human",
+          "purpose": "clarify",
+          "distance": "close",
+          "dur_s": 2.0,
+          "event_id": "S12_SH004.S1"
+        }
+      ]
     },
     {
       "shot_id": "S12_SH005",
@@ -10397,7 +11451,9 @@
       "selective_control": null,
       "transition_out": "l_cut",
       "route": "still_25d",
-      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)"
+      "route_reason": "no hero in frame: place, object or tableau, moved by the 2.5D renderer with motion imitation (Q4)",
+      "intentional_silence": "the last ember: the effects fall away so the closing line is heard alone"
     }
-  ]
+  ],
+  "av_contract": "av_events/1"
 }

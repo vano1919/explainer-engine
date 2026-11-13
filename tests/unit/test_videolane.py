@@ -486,3 +486,49 @@ def test_a_hand_over_before_the_speech_end_is_refused_not_cut():
     assert pts["out_s"] >= 4.6 + VI.SPEECH_TAIL_S
     from explainer_engine.standards import sourced_rules as SR
     assert "explainer_engine/videolane/ingest.py" in SR.rule("BP-187")["enforced_by"]
+
+
+def test_the_draft_edit_plans_cover_toba_and_leave_no_fail():
+    """Fable audit 2026-11-13 P3: the edit-planner's first draft (``plan.draft_edit_plans``) reads the script's camera,
+    screen-direction notes and continuity refs; on the Toba script (55 video shots, plans now written) every video shot has a
+    plan and the VL findings hold no FAIL. A draft never overwrites a written plan."""
+    import json
+    from pathlib import Path
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as LJ
+    from explainer_engine.videolane import plan as P
+    doc = json.loads((Path(__file__).resolve().parents[2] / "episodes/ep_toba/story/production_script.json").read_text("utf-8"))
+    vids = [s for s in doc["shots"] if P.is_video(s)]
+    assert len(vids) == 55 and all(s.get("edit_plan") for s in vids)
+    assert P.draft_edit_plans(doc) == {}                       # nothing left to draft, nothing overwritten
+    assert not [f for f in P.findings(doc, LJ.max_seconds(LJ.LAUNCH)) if f["severity"] == "FAIL"]
+    bare = json.loads(json.dumps(doc))
+    for s in bare["shots"]:
+        s.pop("edit_plan", None)
+    drafts = P.draft_edit_plans(bare)
+    assert set(drafts) == {s["shot_id"] for s in vids}
+    assert drafts["S05_SH002"]["speech_onset_s"] == P.SPEECH_ONSET_S          # a clip-spoken shot
+    assert drafts["S05_SH002"]["axis_side"] == "A" and drafts["S05_SH002"]["screen_positions"] == {"char_kael_74000bce": "left"}
+    assert drafts["S02_SH002"]["continuity_mode"] == "insert"                 # a close-up with nobody in it
+
+
+def test_continuity_cards_from_the_v4_script():
+    """P3 / FA-14: ``continuity.cards_from_v4`` drafts continuity_card/1 for every Toba scene with a video shot and a hero;
+    they pass the schema (CT-01) and the card check; the master frame is image 1 of every other shot (CT-03)."""
+    import json
+    from pathlib import Path
+    from explainer_engine.scripting import continuity as C
+    from explainer_engine.videolane import plan as P
+    doc = json.loads((Path(__file__).resolve().parents[2] / "episodes/ep_toba/story/production_script.json").read_text("utf-8"))
+    n = 0
+    for scene in P.scenes(doc):
+        if not any(P.is_video(s) for s in scene):
+            continue
+        card = C.cards_from_v4(doc, scene)
+        if card is None:
+            continue
+        n += 1
+        assert not [f for f in C.check(card) if f["level"] == "FAIL"], card["scene_id"]
+        for s in card["shots"]:
+            if not s.get("is_master"):
+                assert s["refs"][0] == {"path": card["location"]["master_frame"], "role": "place"}
+    assert n == 24

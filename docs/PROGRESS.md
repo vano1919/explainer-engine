@@ -6132,3 +6132,25 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Tests rewritten to the new rule, none weakened: `test_v43_retired.test_claude_md_states_the_v43_method_first` asks for
   `60 % video` and D-132; `test_icw01_rule_rewrite` treats a line naming D-132 or D-137 as current. New
   `test_v43_retired.test_the_ltx_video_path_is_named_and_on_the_active_path`.
+
+## 2026-11-13 — P3 of the Fable audit: the Toba script meets the v4.3 contracts (the words did not change)
+- Edit-planner stage: `videolane/plan.draft_edit_plans` (new, reusable) drafts one `edit_plan` per video shot from what the
+  script already says (camera_spec, the screen-direction notes, continuity refs, who speaks); reviewed and written to all
+  55 video shots of `episodes/ep_toba`. Two speaker shots were close-ups (VL-02, the creator's no speaking close-up): S05_SH003
+  and S09_SH004 step back to `medium_close_up` (S09_SH004's picture prompt says so too). `av_contract: "av_events/1"`; each
+  segment has its authored `mood` (SP-05).
+- Beat stage: 30 shots carry authored `sound_events` with a `class` and a word anchor (`at_word`, every one resolves on the
+  shot's line), `event_id` and `purpose`; three `picture_event` syncs (eruption x2, thunder x2, impact x1). No sound on a
+  clip-spoken shot (LTX makes that clip's sound). Two `intentional_silence` shots (S05_SH009, S12_SH007).
+- Architect stage: an `ambience_bed` for each of the four places (caldera: eruption_rumble + ash_fall; dry riverbed: wind;
+  cave: fire + wind, room cave; Pinnacle Point: water_waves + wind). Caster stage: a `voice_description` for Kael, Sena and
+  Thar (traits only, no names), so the prompt composer has a voice for all 9 clip-spoken shots.
+- Continuity: `scripting/continuity.cards_from_v4` / `cards_for_episode` (new) draft continuity_card/1 for every scene with a
+  video shot and a hero: 24 scenes in `episodes/ep_toba/planning/continuity/`, 0 FAIL, 0 REVIEW in `continuity.check`
+  (a draft: the changes are listed with the script's action as their cause, the shot-continuity-writer still reviews them).
+- G1 (`episode run episodes/ep_toba --to script`): REVIEW only (speaker_off_screen 5 = Q7; speaker_shots_short 3 = BP-108;
+  VL-08 two runs of four character lines in S05 and S09). Was FAIL `video_edit_plan 55`.
+- OR-17: the Toba v4 script carries no recorded creator approval (`scripting/script_approval` binds only
+  `production_script/3`), so no approval hash covers the changed fields and nothing was re-stamped; the creator's approval
+  of this script is still to be recorded before anything paid (in the handoff).
+- Tests: `test_videolane.py` (the drafts on Toba, the cards), `test_stage_guard_v4.py` adjusted to the plans now present.

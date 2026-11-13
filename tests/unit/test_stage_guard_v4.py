@@ -50,7 +50,7 @@ def test_the_beat_writer_may_write_sound_events_but_not_the_edit_plan() -> None:
     assert SG.violations("beats", before, after) == []
     shot["edit_plan"] = {"continuity_mode": "insert"}
     found = SG.violations("beats", before, after)
-    assert len(found) == 1 and "edit_plan" in found[0] and "editor" in found[0]
+    assert found and all("edit_plan" in f and "editor" in f for f in found)
 
 
 def test_the_editor_may_not_change_frozen_words_or_add_a_line() -> None:

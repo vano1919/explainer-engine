@@ -369,6 +369,117 @@ def prompts(doc: dict) -> list[dict]:
              "questions": vision_questions(doc, s)} for s in doc["shots"]]
 
 
+# ---- cards from a v4.3 episode script (Fable audit 2026-11-13, P3 / FA-14) ------------------------------------------------
+# The shot-continuity-writer's first draft for one scene (segment + place, ``videolane.plan.scenes``) of a
+# ``ProductionScriptV4``: the place and its master frame, every hero's screen side (the shot's edit plan, else its screen
+# direction notes), facing, eyeline, costume and the references in order. A change between two shots is listed with the
+# script's own action as its cause; ``check`` then names what still does not hook up. A draft, never an approval.
+V4_SIZE = {"extreme_wide": "EWS", "wide": "WS", "medium_wide": "MWS", "medium": "MS", "over_the_shoulder": "MS",
+           "medium_close_up": "MCU", "close_up": "CU", "extreme_close_up": "CU"}
+
+
+def _v4_time(text: str) -> str:
+    t = text.lower()
+    return "dawn" if "dawn" in t else "dusk" if ("twilight" in t or "dusk" in t) else "night" if ("night" in t or
+                                                                                                    "midnight" in t) else "day"
+
+
+def cards_from_v4(script: dict, scene: list[dict], model: str = "gemini_3_1_flash_image") -> dict | None:
+    """``continuity_card/1`` for one scene of a v4 script, or None when nobody of the cast is on screen in it."""
+    import re
+    from explainer_engine.videolane import plan as VP
+    wb = script.get("world_bible") or {}
+    chars = {c["character_id"]: c for c in wb.get("characters", [])}
+    locs = {l["location_id"]: l for l in wb.get("locations", [])}
+    shots = [s for s in scene if s.get("route") != "map_action" and (s.get("camera_spec") or {}).get("shot_size") in V4_SIZE]
+    present = sorted({c for s in shots for c in s.get("character_ids") or [] if c in chars})
+    if not shots or not present:
+        return None
+    loc = locs.get(shots[0].get("location_id"), {})
+    master = min(shots, key=lambda s: VP.SIZE_STEP.get(s["camera_spec"]["shot_size"], 9))
+    master_frame = f"{master['shot_id']}_start"
+    indoor = (loc.get("ambience_bed") or {}).get("room") == "cave"
+    light_text = str(shots[0].get("lighting_and_time") or "")
+    sheet = {cid: f"assets/reference/characters/{cid}.jpg" for cid in present}
+    cast = {cid: {"name": f"the {str(chars[cid].get('historical_role') or 'hero').split(' of ')[0].lower()}",
+                  "description": re.sub(r"^.*?portrait of [A-Z][a-z]+, ", "", chars[cid].get("fixed_appearance_prompt", "")),
+                  "sheet": sheet[cid], "costumes": {"default": chars[cid].get("costume_continuity_notes") or "as the sheet"}}
+            for cid in present}
+    doc = {"schema": "continuity_card/1", "scene_id": f"{shots[0]['segment_id']}@{loc.get('location_id', '?')}:{shots[0]['shot_id']}",
+           "model": model, "style_line": wb.get("style_anchor_token") or "the episode style",
+           "location": {"id": loc.get("location_id", "?"),
+                        "where_when": f"{str(loc.get('name', 'the place')).replace('/', '-')} / {_v4_time(light_text)}",
+                        "int_ext": "INT" if indoor else "EXT", "time_of_day": _v4_time(light_text),
+                        "weather": "indoor" if indoor else ("dust" if "ash" in str(loc.get("fixed_environment_prompt", "")).lower()
+                                                            else "clear"),
+                        "master_frame": master_frame},
+           "light": {"key_light_dir": "left" if "hearth" not in light_text.lower() else "front",
+                     "light_source": "the hearth fire" if indoor else "the low sun through the ash veil"},
+           "cast": cast, "shots": []}
+    prev, prev_az = None, None
+    for s in shots:
+        cam = s["camera_spec"]
+        notes = str((s.get("screen_composition") or {}).get("screen_direction_notes") or "")
+        pos = dict((s.get("edit_plan") or {}).get("screen_positions") or VP._positions(script, s, notes))
+        on = [c for c in s.get("character_ids") or [] if c in chars]
+        people = []
+        for cid in on:
+            side = {"center": "centre"}.get(pos.get(cid, "centre"), pos.get(cid, "centre"))
+            if side == "off":
+                continue
+            m = re.search(rf"\b{re.escape(chars[cid]['name'])}\b[^;.]{{0,60}}?facing (?:sharply )?(left|right)", notes, re.I)
+            people.append({"id": cid, "screen_pos": side, "depth": "mid",
+                           "facing": m.group(1).lower() if m else "camera", "costume": "default"})
+        for p in people:
+            other = next((o for o in people if o["id"] != p["id"]), None)
+            if other:
+                p["eyeline"] = other["id"]
+        va = str(cam.get("vertical_angle") or "").lower()
+        card = {"shot_id": s["shot_id"], "shot_size": V4_SIZE[cam["shot_size"]],
+                "angle": "low" if ("worm" in va or "low" in va) else "high" if ("high" in va or "bird" in va) else "eye",
+                "camera_side": (s.get("edit_plan") or {}).get("axis_side") or "A", "head_count": len(people),
+                "characters": people, "camera_move": str(cam.get("camera_move") or "static"),
+                "refs": ([] if s is master else [{"path": master_frame, "role": "place"}])
+                + [{"path": sheet[p["id"]], "role": "character", "of": p["id"]} for p in people][:MODEL_REFS[model]["people"]]}
+        if s is master:
+            card["is_master"] = True
+        if len(people) >= 2:
+            card["axis"] = [people[0]["id"], people[1]["id"]]
+        az = cam.get("horizontal_azimuth_deg")
+        if prev is None:
+            card["hook_up"] = "first"
+        else:
+            card["hook_up"] = {"insert": "insert", "reaction": "reaction"}.get((s.get("edit_plan") or {}).get("cut_in_reason"),
+                                                                           "cutaway")
+            if az is not None and prev_az is not None:
+                card["angle_change_deg"] = float(min(abs(az - prev_az), 360 - abs(az - prev_az)))
+            cause = f"the script's action: {str(s.get('action_start_state') or 'the cut')[:120]}"
+            card["changes"] = [{"entity": e, "field": f, "cause": cause, "to": "see the card"}
+                               for e, f in sorted(differences(prev, card, doc))]
+        doc["shots"].append(card)
+        prev, prev_az = card, az
+    return doc
+
+
+def cards_for_episode(script: dict, out_dir: Path | str, model: str = "gemini_3_1_flash_image") -> list[dict]:
+    """Cards for every scene of the script that holds a video shot and a hero; written one file per scene; the findings."""
+    from explainer_engine.core.store import write_json_atomic
+    from explainer_engine.videolane import plan as VP
+    out = []
+    for scene in VP.scenes(script):
+        if not any(VP.is_video(s) for s in scene):
+            continue
+        doc = cards_from_v4(script, scene, model)
+        if doc is None:
+            continue
+        p = Path(out_dir) / f"{scene[0]['shot_id']}.json"
+        write_json_atomic(p, doc)
+        found = check(doc)
+        out.append({"scene": doc["scene_id"], "file": str(p), "shots": len(doc["shots"]),
+                    "fail": [f for f in found if f["level"] == "FAIL"], "review": [f for f in found if f["level"] == "REVIEW"]})
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if len(argv) < 2 or argv[0] not in ("check", "prompts"):

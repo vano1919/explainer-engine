@@ -239,3 +239,89 @@ def rows(script: dict, max_s: float = 10.0) -> list[dict]:
     return [G.row("video_edit_plan", not fail, f"{len(fail)} FAIL finding(s) over {n} video shot(s) (VL-01..VL-06)", fail[:30]),
             G.row("video_edit_plan_review", not rev, f"{len(rev)} REVIEW finding(s) (VL-03/04/08/09)", rev[:30],
                   level=G.REVIEW)]
+
+
+# ---- the edit-planner's first draft (Fable audit 2026-11-13, P3) ------------------------------------------------------------
+# A script written before D-137 has no edit_plan. The draft reads what the script already says (camera_spec, the screen
+# direction notes, the continuity refs, who speaks) and proposes one plan per video shot; the edit-planner reviews it and
+# the findings above check it. A draft never overwrites a written plan.
+_CAMERA = {"push_in": "push", "slow_push_in": "push", "dolly_in": "push", "pull_back": "pull", "slow_pull_back": "pull",
+           "dolly_out": "pull", "static": "rest", "locked_off": "rest", "tilt_up": "tilt_up", "tilt_down": "tilt_down",
+           "pan_left": "pan_left", "pan_right": "pan_right"}
+_WIDE = ("extreme_wide", "wide", "medium_wide")
+
+
+def _direction(text: str) -> str:
+    t = text.lower()
+    if "right-to-left" in t or "right to left" in t:
+        return "right_to_left"
+    if "left-to-right" in t or "left to right" in t:
+        return "left_to_right"
+    if "toward the camera" in t or "toward camera" in t:
+        return "toward_camera"
+    return "none"
+
+
+def _positions(script: dict, shot: dict, text: str) -> dict:
+    import re
+    names = {c.get("name", ""): c["character_id"] for c in (script.get("world_bible") or {}).get("characters", [])
+             if c.get("character_id") in (shot.get("character_ids") or [])}
+    out = {}
+    for name, cid in names.items():
+        m = re.search(rf"\b{re.escape(name)}\b[^;.]{{0,40}}?\b(?:screen-|on screen-|strictly on screen-)?(left|right|center)\b",
+                      text, re.I)
+        if m:
+            out[cid] = m.group(1).lower()
+    return out
+
+
+def draft_edit_plans(script: dict) -> dict[str, dict]:
+    """``{shot_id: edit_plan}`` for every video shot that has none yet (see the comment above)."""
+    lines = _lines(script)
+    spoken = clip_spoken(script)
+    out: dict[str, dict] = {}
+    for scene in scenes(script):
+        sized = [s for s in scene if (s.get("camera_spec") or {}).get("shot_size") in SIZE_STEP]
+        master = min(sized or scene, key=lambda s: SIZE_STEP.get((s.get("camera_spec") or {}).get("shot_size"), 9))
+        for k, s in enumerate(scene):
+            if not is_video(s) or s.get("edit_plan"):
+                continue
+            prev = scene[k - 1] if k else None
+            cam = s.get("camera_spec") or {}
+            notes = str((s.get("screen_composition") or {}).get("screen_direction_notes") or "")
+            size = cam.get("shot_size")
+            inherit = (s.get("continuity_refs") or {}).get("inherit_from_previous_shot_id")
+            character_line = any(lines.get(i, {}).get("speaker_type") == "character" for i in s.get("audio_line_ids") or [])
+            if inherit and prev is not None and prev["shot_id"] == inherit and is_video(prev):
+                mode = "continuation"
+            elif not s.get("character_ids") and size in SPEAKING_CLOSE and k:
+                mode = "insert"
+            else:
+                mode = "coverage"
+            direction = _direction(notes)
+            move = _CAMERA.get(str(cam.get("camera_move") or ""), None)
+            if move is None:   # tracking / parallax: a lateral move with the action's direction
+                move = "track_left" if direction == "right_to_left" else "track_right"
+            if prev is None:
+                reason = "establish" if size in _WIDE else "scene_change"
+            elif mode == "insert":
+                reason = "insert"
+            elif s.get("shot_role") in ("listener_reaction", "reaction"):
+                reason = "reaction"
+            elif character_line:
+                reason = "line"
+            else:
+                reason = "action"
+            ep = {"continuity_mode": mode, "cut_in_reason": reason, "axis_side": "A", "screen_direction": direction,
+                  "camera_in": move, "camera_out": move}
+            if mode == "continuation":
+                ep["continuity_from"] = inherit
+            else:
+                ep["scene_master"] = f"{master['shot_id']}_start"
+            pos = _positions(script, s, notes)
+            if pos:
+                ep["screen_positions"] = pos
+            if s["shot_id"] in spoken:
+                ep["speech_onset_s"] = SPEECH_ONSET_S
+            out[s["shot_id"]] = ep
+    return out
