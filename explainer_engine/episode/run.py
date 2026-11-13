@@ -762,6 +762,9 @@ def stage_sound(ep: Episode, rehearsal: bool):
     mixq = MC.check(stems_dir, plan=plan, sheet=sheet)
     write_json_atomic(ep.path("qa/mix_check.json"), mixq)
     rows += [dict(r, gate=f"mix_{r['gate']}") for r in mixq["rows"]]
+    drows, dmeas = deliver_mix(stems_dir)       # HF-2: the delivered mix, written and measured (FL-403)
+    write_json_atomic(ep.path("audio/stems/mix_delivered.json"), dmeas)
+    rows += drows
     from explainer_engine.episode import av_report as AVR
     from explainer_engine.episode import events as E
     ev_doc = E.events_report(script, TM.spines_of(timing), ep.fps)
@@ -770,6 +773,37 @@ def stage_sound(ep: Episode, rehearsal: bool):
     return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source"),
                   "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json",
                   "voice_track": "audio/voice_track.json" if voice_rep else None}
+
+
+DELIVERED_MIX_REL = "audio/stems/mix_delivered.wav"
+
+
+def _loudness_rows(prefix: str, meas: dict, what: str) -> list[dict]:
+    """The two rows of a delivered-loudness measurement (BP-50's own levels through ``targets.verdicts``)."""
+    from explainer_engine.qa import targets as T
+    from explainer_engine.standards import sourced_rules as SR
+    prof = T.PROFILES["long"]
+    v = T.verdicts(meas, "long")
+    rows = [G.row(f"{prefix}_loudness", v["loudness_verdict"] == "PASS",
+                  f"{what}: {meas['lufs']} LUFS (long profile, {prof['rule']}, band {list(prof['pass_band'])})", meas["lufs"],
+                  level=G.REVIEW if v["loudness_verdict"] == "REVIEW" else G.FAIL)]
+    if "true_peak" in meas:
+        rows.append(G.row(f"{prefix}_true_peak", v["true_peak_verdict"] == "PASS",
+                          f"{what}: true peak {meas['true_peak']} dBTP (max {prof['true_peak_max']})", meas["true_peak"],
+                          level=SR.level(prof["rule"])))
+    else:
+        rows.append(G.row(f"{prefix}_true_peak", None, f"{what}: ffmpeg printed no true peak"))
+    return rows
+
+
+def deliver_mix(stems_dir: Path) -> tuple[list[dict], dict]:
+    """HF-2 (FL-403, TD-302): ``stems/mix.wav`` through ``targets.normalise_file`` (BP-50) into ``stems/mix_delivered.wav``,
+    the file G9 muxes; the raw mix is kept. Returns the two verdict rows and the raw and delivered measurements."""
+    from explainer_engine.qa import targets as T
+    raw, out = stems_dir / "mix.wav", stems_dir / "mix_delivered.wav"
+    before = T.measure_file(raw)
+    after = T.normalise_file(raw, out, "long", 48000, channels=2)
+    return _loudness_rows("delivered_mix", after, "the delivered mix (stems/mix_delivered.wav)"), {"raw": before, "delivered": after}
 
 
 def _with_line_times(script: dict, timing: dict | None) -> dict:
@@ -805,9 +839,9 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     missing = [r["shot_id"] for r in records if not r.get("clip_path")]
     if missing:
         return [G.row("every_clip_to_assemble", False, f"{len(missing)} shot(s) without a clip", missing[:30])], {}
-    mix = ep.path("audio/stems/mix.wav")
+    mix = ep.path(DELIVERED_MIX_REL)
     if not mix.is_file():
-        return [G.row("the_mix_exists", False, "no audio/stems/mix.wav: run the sound stage (G8)")], {}
+        return [G.row("the_delivered_mix_exists", False, f"no {DELIVERED_MIX_REL}: run the sound stage (G8, HF-2)")], {}
     master = ep.path(f"renders/final/{ep.manifest['episode_id']}_master.mp4")
     res = ASM.assemble_shot_clips(records, plans, mix, master, fps=ep.fps, size=ep.size, only=ep.chunks,
                                   chunk_seconds=ep.chunk_seconds if ep.chunk_seconds is not None else ASM.CHUNK_SECONDS)
@@ -860,6 +894,12 @@ def stage_qa(ep: Episode, rehearsal: bool):
         vm = VM.check(ep.root, script, records, Path(video["master_mp4_path"]), ep.fps, timing=ep.timing(),
                       voice_report=rd("audio/voice_track.json"))
         acc = dict(acc, gates=acc["gates"] + vm["rows"])
+        acc["status"] = G.verdict(acc["gates"])["status"]
+    if video:   # HF-2: the master file itself against BP-50, which no gate measured before (FL-403)
+        from explainer_engine.qa import targets as T
+        mm = T.measure_file(Path(video["master_mp4_path"]))
+        write_json_atomic(ep.path("qa/master_loudness.json"), mm)
+        acc = dict(acc, gates=list(acc["gates"]) + _loudness_rows("master", mm, "the master file"))
         acc["status"] = G.verdict(acc["gates"])["status"]
     sheet = None
     if video:
