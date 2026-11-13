@@ -1,0 +1,12 @@
+{
+  "shots": {
+    "S01_SH002_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S01_SH002_start.png",
+      "sha256": "65159f9efe73e3a91f4d1d08eb4724347abf2a208d3933ee0b7844b873b35a58"
+    },
+    "S01_SH003_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S01_SH003_start.png",
+      "sha256": "643e471230764c2b85e0de0f9b35e90bd199008f8c0a0dffd919990aaf39d048"
+    }
+  }
+}

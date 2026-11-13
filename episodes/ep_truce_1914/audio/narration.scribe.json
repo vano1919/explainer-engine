@@ -1,0 +1,2988 @@
+{
+"source": "faster-whisper small.en (local, free)",
+"seconds": 55.7,
+"words": [
+{
+"text": "Christmas",
+"start": 0.0,
+"end": 0.48,
+"type": "word"
+},
+{
+"text": "Morning,",
+"start": 0.48,
+"end": 1.0,
+"type": "word"
+},
+{
+"text": "1914.",
+"start": 1.44,
+"end": 2.52,
+"type": "word"
+},
+{
+"text": "In",
+"start": 3.5,
+"end": 3.66,
+"type": "word"
+},
+{
+"text": "a",
+"start": 3.66,
+"end": 3.8,
+"type": "word"
+},
+{
+"text": "few",
+"start": 3.8,
+"end": 3.98,
+"type": "word"
+},
+{
+"text": "seconds,",
+"start": 3.98,
+"end": 4.58,
+"type": "word"
+},
+{
+"text": "this",
+"start": 4.8,
+"end": 5.12,
+"type": "word"
+},
+{
+"text": "man",
+"start": 5.12,
+"end": 5.44,
+"type": "word"
+},
+{
+"text": "will",
+"start": 5.44,
+"end": 5.72,
+"type": "word"
+},
+{
+"text": "walk",
+"start": 5.72,
+"end": 6.06,
+"type": "word"
+},
+{
+"text": "toward",
+"start": 6.06,
+"end": 6.4,
+"type": "word"
+},
+{
+"text": "the",
+"start": 6.4,
+"end": 6.66,
+"type": "word"
+},
+{
+"text": "German",
+"start": 6.66,
+"end": 6.96,
+"type": "word"
+},
+{
+"text": "guns,",
+"start": 6.96,
+"end": 7.58,
+"type": "word"
+},
+{
+"text": "unarmed,",
+"start": 8.28,
+"end": 8.96,
+"type": "word"
+},
+{
+"text": "across",
+"start": 9.68,
+"end": 10.02,
+"type": "word"
+},
+{
+"text": "the",
+"start": 10.02,
+"end": 10.32,
+"type": "word"
+},
+{
+"text": "ground",
+"start": 10.32,
+"end": 10.68,
+"type": "word"
+},
+{
+"text": "where",
+"start": 10.68,
+"end": 11.04,
+"type": "word"
+},
+{
+"text": "men",
+"start": 11.04,
+"end": 11.34,
+"type": "word"
+},
+{
+"text": "had",
+"start": 11.34,
+"end": 11.62,
+"type": "word"
+},
+{
+"text": "been",
+"start": 11.62,
+"end": 11.82,
+"type": "word"
+},
+{
+"text": "dying",
+"start": 11.82,
+"end": 12.34,
+"type": "word"
+},
+{
+"text": "for",
+"start": 12.34,
+"end": 12.74,
+"type": "word"
+},
+{
+"text": "a",
+"start": 12.74,
+"end": 12.86,
+"type": "word"
+},
+{
+"text": "few",
+"start": 12.86,
+"end": 13.16,
+"type": "word"
+},
+{
+"text": "yards",
+"start": 13.16,
+"end": 13.54,
+"type": "word"
+},
+{
+"text": "of",
+"start": 13.54,
+"end": 13.8,
+"type": "word"
+},
+{
+"text": "mud.",
+"start": 13.8,
+"end": 14.14,
+"type": "word"
+},
+{
+"text": "That",
+"start": 14.98,
+"end": 15.26,
+"type": "word"
+},
+{
+"text": "Christmas,",
+"start": 15.26,
+"end": 15.74,
+"type": "word"
+},
+{
+"text": "thousands",
+"start": 16.24,
+"end": 16.6,
+"type": "word"
+},
+{
+"text": "of",
+"start": 16.6,
+"end": 17.0,
+"type": "word"
+},
+{
+"text": "soldiers",
+"start": 17.0,
+"end": 17.38,
+"type": "word"
+},
+{
+"text": "on",
+"start": 17.38,
+"end": 17.7,
+"type": "word"
+},
+{
+"text": "both",
+"start": 17.7,
+"end": 18.02,
+"type": "word"
+},
+{
+"text": "sides",
+"start": 18.02,
+"end": 18.5,
+"type": "word"
+},
+{
+"text": "did",
+"start": 18.5,
+"end": 18.8,
+"type": "word"
+},
+{
+"text": "the",
+"start": 18.8,
+"end": 18.98,
+"type": "word"
+},
+{
+"text": "same.",
+"start": 18.98,
+"end": 19.32,
+"type": "word"
+},
+{
+"text": "This",
+"start": 20.0,
+"end": 20.38,
+"type": "word"
+},
+{
+"text": "is",
+"start": 20.38,
+"end": 20.58,
+"type": "word"
+},
+{
+"text": "the",
+"start": 20.58,
+"end": 20.8,
+"type": "word"
+},
+{
+"text": "day",
+"start": 20.8,
+"end": 21.04,
+"type": "word"
+},
+{
+"text": "the",
+"start": 21.04,
+"end": 21.28,
+"type": "word"
+},
+{
+"text": "war",
+"start": 21.28,
+"end": 21.62,
+"type": "word"
+},
+{
+"text": "stopped,",
+"start": 21.62,
+"end": 22.18,
+"type": "word"
+},
+{
+"text": "along",
+"start": 22.64,
+"end": 22.94,
+"type": "word"
+},
+{
+"text": "parts",
+"start": 22.94,
+"end": 23.3,
+"type": "word"
+},
+{
+"text": "of",
+"start": 23.3,
+"end": 23.48,
+"type": "word"
+},
+{
+"text": "the",
+"start": 23.48,
+"end": 23.6,
+"type": "word"
+},
+{
+"text": "Western",
+"start": 23.6,
+"end": 23.9,
+"type": "word"
+},
+{
+"text": "Front.",
+"start": 23.9,
+"end": 24.3,
+"type": "word"
+},
+{
+"text": "How",
+"start": 24.94,
+"end": 25.26,
+"type": "word"
+},
+{
+"text": "it",
+"start": 25.26,
+"end": 25.42,
+"type": "word"
+},
+{
+"text": "began",
+"start": 25.42,
+"end": 25.84,
+"type": "word"
+},
+{
+"text": "with",
+"start": 25.84,
+"end": 26.56,
+"type": "word"
+},
+{
+"text": "a",
+"start": 26.56,
+"end": 26.76,
+"type": "word"
+},
+{
+"text": "song,",
+"start": 26.76,
+"end": 27.12,
+"type": "word"
+},
+{
+"text": "and",
+"start": 27.62,
+"end": 27.94,
+"type": "word"
+},
+{
+"text": "how",
+"start": 27.94,
+"end": 28.16,
+"type": "word"
+},
+{
+"text": "it",
+"start": 28.16,
+"end": 28.3,
+"type": "word"
+},
+{
+"text": "ended.",
+"start": 28.3,
+"end": 28.68,
+"type": "word"
+},
+{
+"text": "The",
+"start": 29.3,
+"end": 29.64,
+"type": "word"
+},
+{
+"text": "war",
+"start": 29.64,
+"end": 29.98,
+"type": "word"
+},
+{
+"text": "had",
+"start": 29.98,
+"end": 30.18,
+"type": "word"
+},
+{
+"text": "begun",
+"start": 30.18,
+"end": 30.62,
+"type": "word"
+},
+{
+"text": "in",
+"start": 30.62,
+"end": 30.92,
+"type": "word"
+},
+{
+"text": "August.",
+"start": 30.92,
+"end": 31.38,
+"type": "word"
+},
+{
+"text": "Everyone",
+"start": 32.22,
+"end": 32.4,
+"type": "word"
+},
+{
+"text": "said",
+"start": 32.4,
+"end": 32.84,
+"type": "word"
+},
+{
+"text": "it",
+"start": 32.84,
+"end": 33.0,
+"type": "word"
+},
+{
+"text": "would",
+"start": 33.0,
+"end": 33.14,
+"type": "word"
+},
+{
+"text": "be",
+"start": 33.14,
+"end": 33.3,
+"type": "word"
+},
+{
+"text": "over",
+"start": 33.3,
+"end": 33.56,
+"type": "word"
+},
+{
+"text": "by",
+"start": 33.56,
+"end": 33.84,
+"type": "word"
+},
+{
+"text": "Christmas.",
+"start": 33.84,
+"end": 34.24,
+"type": "word"
+},
+{
+"text": "By",
+"start": 35.18,
+"end": 35.36,
+"type": "word"
+},
+{
+"text": "December,",
+"start": 35.36,
+"end": 35.8,
+"type": "word"
+},
+{
+"text": "it",
+"start": 36.22,
+"end": 36.32,
+"type": "word"
+},
+{
+"text": "had",
+"start": 36.32,
+"end": 36.46,
+"type": "word"
+},
+{
+"text": "dug",
+"start": 36.46,
+"end": 36.76,
+"type": "word"
+},
+{
+"text": "itself",
+"start": 36.76,
+"end": 37.14,
+"type": "word"
+},
+{
+"text": "into",
+"start": 37.14,
+"end": 37.44,
+"type": "word"
+},
+{
+"text": "the",
+"start": 37.44,
+"end": 37.68,
+"type": "word"
+},
+{
+"text": "ground.",
+"start": 37.68,
+"end": 38.08,
+"type": "word"
+},
+{
+"text": "One",
+"start": 38.76,
+"end": 39.02,
+"type": "word"
+},
+{
+"text": "line",
+"start": 39.02,
+"end": 39.36,
+"type": "word"
+},
+{
+"text": "of",
+"start": 39.36,
+"end": 39.54,
+"type": "word"
+},
+{
+"text": "trenches",
+"start": 39.54,
+"end": 39.94,
+"type": "word"
+},
+{
+"text": "from",
+"start": 39.94,
+"end": 40.58,
+"type": "word"
+},
+{
+"text": "the",
+"start": 40.58,
+"end": 40.76,
+"type": "word"
+},
+{
+"text": "North",
+"start": 40.76,
+"end": 41.0,
+"type": "word"
+},
+{
+"text": "Sea",
+"start": 41.0,
+"end": 41.36,
+"type": "word"
+},
+{
+"text": "to",
+"start": 41.36,
+"end": 41.72,
+"type": "word"
+},
+{
+"text": "Switzerland.",
+"start": 41.72,
+"end": 42.24,
+"type": "word"
+},
+{
+"text": "Here,",
+"start": 43.08,
+"end": 43.48,
+"type": "word"
+},
+{
+"text": "in",
+"start": 43.84,
+"end": 43.92,
+"type": "word"
+},
+{
+"text": "Flanders,",
+"start": 43.92,
+"end": 44.36,
+"type": "word"
+},
+{
+"text": "the",
+"start": 44.9,
+"end": 45.06,
+"type": "word"
+},
+{
+"text": "two",
+"start": 45.06,
+"end": 45.3,
+"type": "word"
+},
+{
+"text": "sides",
+"start": 45.3,
+"end": 45.66,
+"type": "word"
+},
+{
+"text": "sat",
+"start": 45.66,
+"end": 46.04,
+"type": "word"
+},
+{
+"text": "close",
+"start": 46.04,
+"end": 46.48,
+"type": "word"
+},
+{
+"text": "enough",
+"start": 46.48,
+"end": 46.78,
+"type": "word"
+},
+{
+"text": "to",
+"start": 46.78,
+"end": 47.02,
+"type": "word"
+},
+{
+"text": "hear",
+"start": 47.02,
+"end": 47.24,
+"type": "word"
+},
+{
+"text": "each",
+"start": 47.24,
+"end": 47.5,
+"type": "word"
+},
+{
+"text": "other",
+"start": 47.5,
+"end": 47.7,
+"type": "word"
+},
+{
+"text": "cough.",
+"start": 47.7,
+"end": 48.18,
+"type": "word"
+},
+{
+"text": "to",
+"start": 49.34,
+"end": 49.62,
+"type": "word"
+},
+{
+"text": "the",
+"start": 49.62,
+"end": 49.78,
+"type": "word"
+},
+{
+"text": "knee.",
+"start": 49.78,
+"end": 50.1,
+"type": "word"
+},
+{
+"text": "Water",
+"start": 50.82,
+"end": 51.0,
+"type": "word"
+},
+{
+"text": "in",
+"start": 51.0,
+"end": 51.4,
+"type": "word"
+},
+{
+"text": "every",
+"start": 51.4,
+"end": 51.96,
+"type": "word"
+},
+{
+"text": "boot.",
+"start": 51.96,
+"end": 52.34,
+"type": "word"
+},
+{
+"text": "A",
+"start": 52.88,
+"end": 53.02,
+"type": "word"
+},
+{
+"text": "sniper",
+"start": 53.02,
+"end": 53.46,
+"type": "word"
+},
+{
+"text": "waiting",
+"start": 53.46,
+"end": 53.88,
+"type": "word"
+},
+{
+"text": "for",
+"start": 53.88,
+"end": 54.18,
+"type": "word"
+},
+{
+"text": "one",
+"start": 54.18,
+"end": 54.58,
+"type": "word"
+},
+{
+"text": "careless",
+"start": 54.58,
+"end": 55.08,
+"type": "word"
+},
+{
+"text": "head.",
+"start": 55.08,
+"end": 55.52,
+"type": "word"
+},
+{
+"text": "Private",
+"start": 56.42,
+"end": 56.66,
+"type": "word"
+},
+{
+"text": "Thomas",
+"start": 56.66,
+"end": 57.24,
+"type": "word"
+},
+{
+"text": "Hale",
+"start": 57.24,
+"end": 57.54,
+"type": "word"
+},
+{
+"text": "had",
+"start": 57.54,
+"end": 57.88,
+"type": "word"
+},
+{
+"text": "read",
+"start": 57.88,
+"end": 58.06,
+"type": "word"
+},
+{
+"text": "the",
+"start": 58.06,
+"end": 58.32,
+"type": "word"
+},
+{
+"text": "same",
+"start": 58.32,
+"end": 58.66,
+"type": "word"
+},
+{
+"text": "line",
+"start": 58.66,
+"end": 59.02,
+"type": "word"
+},
+{
+"text": "every",
+"start": 59.02,
+"end": 59.68,
+"type": "word"
+},
+{
+"text": "night",
+"start": 59.68,
+"end": 60.02,
+"type": "word"
+},
+{
+"text": "for",
+"start": 60.02,
+"end": 60.38,
+"type": "word"
+},
+{
+"text": "a",
+"start": 60.38,
+"end": 60.56,
+"type": "word"
+},
+{
+"text": "week.",
+"start": 60.56,
+"end": 60.9,
+"type": "word"
+},
+{
+"text": "In",
+"start": 61.62,
+"end": 61.74,
+"type": "word"
+},
+{
+"text": "early",
+"start": 61.74,
+"end": 62.1,
+"type": "word"
+},
+{
+"text": "December,",
+"start": 62.1,
+"end": 62.62,
+"type": "word"
+},
+{
+"text": "the",
+"start": 63.14,
+"end": 63.24,
+"type": "word"
+},
+{
+"text": "Pope",
+"start": 63.24,
+"end": 63.42,
+"type": "word"
+},
+{
+"text": "asked",
+"start": 63.42,
+"end": 63.88,
+"type": "word"
+},
+{
+"text": "for",
+"start": 63.88,
+"end": 64.14,
+"type": "word"
+},
+{
+"text": "a",
+"start": 64.14,
+"end": 64.34,
+"type": "word"
+},
+{
+"text": "Christmas",
+"start": 64.34,
+"end": 64.7,
+"type": "word"
+},
+{
+"text": "truce.",
+"start": 64.7,
+"end": 65.1,
+"type": "word"
+},
+{
+"text": "The",
+"start": 65.86,
+"end": 65.94,
+"type": "word"
+},
+{
+"text": "appeal",
+"start": 65.94,
+"end": 66.28,
+"type": "word"
+},
+{
+"text": "failed.",
+"start": 66.28,
+"end": 66.78,
+"type": "word"
+},
+{
+"text": "No",
+"start": 67.44,
+"end": 67.72,
+"type": "word"
+},
+{
+"text": "official",
+"start": 67.72,
+"end": 68.24,
+"type": "word"
+},
+{
+"text": "truce",
+"start": 68.24,
+"end": 68.72,
+"type": "word"
+},
+{
+"text": "was",
+"start": 68.72,
+"end": 68.92,
+"type": "word"
+},
+{
+"text": "agreed.",
+"start": 68.92,
+"end": 69.32,
+"type": "word"
+},
+{
+"text": "Nobody",
+"start": 70.06,
+"end": 70.28,
+"type": "word"
+},
+{
+"text": "asked",
+"start": 70.28,
+"end": 70.66,
+"type": "word"
+},
+{
+"text": "the",
+"start": 70.66,
+"end": 70.88,
+"type": "word"
+},
+{
+"text": "men",
+"start": 70.88,
+"end": 71.06,
+"type": "word"
+},
+{
+"text": "in",
+"start": 71.06,
+"end": 71.22,
+"type": "word"
+},
+{
+"text": "the",
+"start": 71.22,
+"end": 71.34,
+"type": "word"
+},
+{
+"text": "trenches.",
+"start": 71.34,
+"end": 71.72,
+"type": "word"
+},
+{
+"text": "At",
+"start": 72.7,
+"end": 72.88,
+"type": "word"
+},
+{
+"text": "Christmas,",
+"start": 72.88,
+"end": 73.46,
+"type": "word"
+},
+{
+"text": "parcels",
+"start": 73.9,
+"end": 74.02,
+"type": "word"
+},
+{
+"text": "came",
+"start": 74.02,
+"end": 74.46,
+"type": "word"
+},
+{
+"text": "up",
+"start": 74.46,
+"end": 74.64,
+"type": "word"
+},
+{
+"text": "the",
+"start": 74.64,
+"end": 74.78,
+"type": "word"
+},
+{
+"text": "line.",
+"start": 74.78,
+"end": 75.1,
+"type": "word"
+},
+{
+"text": "British",
+"start": 75.82,
+"end": 75.96,
+"type": "word"
+},
+{
+"text": "soldiers",
+"start": 75.96,
+"end": 76.44,
+"type": "word"
+},
+{
+"text": "opened",
+"start": 76.44,
+"end": 77.02,
+"type": "word"
+},
+{
+"text": "brass",
+"start": 77.02,
+"end": 77.38,
+"type": "word"
+},
+{
+"text": "tins",
+"start": 77.38,
+"end": 77.82,
+"type": "word"
+},
+{
+"text": "from",
+"start": 77.82,
+"end": 78.12,
+"type": "word"
+},
+{
+"text": "Princess",
+"start": 78.12,
+"end": 78.48,
+"type": "word"
+},
+{
+"text": "Mary.",
+"start": 78.48,
+"end": 78.9,
+"type": "word"
+},
+{
+"text": "Cigarettes,",
+"start": 79.68,
+"end": 80.06,
+"type": "word"
+},
+{
+"text": "tobacco,",
+"start": 80.58,
+"end": 80.82,
+"type": "word"
+},
+{
+"text": "a",
+"start": 81.42,
+"end": 81.58,
+"type": "word"
+},
+{
+"text": "Christmas",
+"start": 81.58,
+"end": 81.9,
+"type": "word"
+},
+{
+"text": "card.",
+"start": 81.9,
+"end": 82.26,
+"type": "word"
+},
+{
+"text": "On",
+"start": 83.04,
+"end": 83.18,
+"type": "word"
+},
+{
+"text": "the",
+"start": 83.18,
+"end": 83.32,
+"type": "word"
+},
+{
+"text": "German",
+"start": 83.32,
+"end": 83.58,
+"type": "word"
+},
+{
+"text": "side,",
+"start": 83.58,
+"end": 84.12,
+"type": "word"
+},
+{
+"text": "little",
+"start": 84.58,
+"end": 84.76,
+"type": "word"
+},
+{
+"text": "Christmas",
+"start": 84.76,
+"end": 85.24,
+"type": "word"
+},
+{
+"text": "trees",
+"start": 85.24,
+"end": 85.64,
+"type": "word"
+},
+{
+"text": "had",
+"start": 85.64,
+"end": 85.94,
+"type": "word"
+},
+{
+"text": "come",
+"start": 85.94,
+"end": 86.14,
+"type": "word"
+},
+{
+"text": "up",
+"start": 86.14,
+"end": 86.28,
+"type": "word"
+},
+{
+"text": "the",
+"start": 86.28,
+"end": 86.44,
+"type": "word"
+},
+{
+"text": "line.",
+"start": 86.44,
+"end": 86.78,
+"type": "word"
+},
+{
+"text": "As",
+"start": 86.78,
+"end": 87.54,
+"type": "word"
+},
+{
+"text": "night",
+"start": 87.54,
+"end": 87.82,
+"type": "word"
+},
+{
+"text": "fell,",
+"start": 87.82,
+"end": 88.2,
+"type": "word"
+},
+{
+"text": "they",
+"start": 88.64,
+"end": 88.68,
+"type": "word"
+},
+{
+"text": "went",
+"start": 88.68,
+"end": 88.9,
+"type": "word"
+},
+{
+"text": "up",
+"start": 88.9,
+"end": 89.1,
+"type": "word"
+},
+{
+"text": "on",
+"start": 89.1,
+"end": 89.24,
+"type": "word"
+},
+{
+"text": "the",
+"start": 89.24,
+"end": 89.4,
+"type": "word"
+},
+{
+"text": "parapets,",
+"start": 89.4,
+"end": 89.96,
+"type": "word"
+},
+{
+"text": "candles",
+"start": 90.36,
+"end": 90.58,
+"type": "word"
+},
+{
+"text": "and",
+"start": 90.58,
+"end": 90.84,
+"type": "word"
+},
+{
+"text": "all.",
+"start": 90.84,
+"end": 91.2,
+"type": "word"
+},
+{
+"text": "Gefreiter",
+"start": 92.0,
+"end": 92.44,
+"type": "word"
+},
+{
+"text": "Friedrich",
+"start": 92.44,
+"end": 92.96,
+"type": "word"
+},
+{
+"text": "Brandt",
+"start": 92.96,
+"end": 93.72,
+"type": "word"
+},
+{
+"text": "had",
+"start": 93.72,
+"end": 93.84,
+"type": "word"
+},
+{
+"text": "carried",
+"start": 93.84,
+"end": 94.2,
+"type": "word"
+},
+{
+"text": "this",
+"start": 94.2,
+"end": 94.52,
+"type": "word"
+},
+{
+"text": "photograph",
+"start": 94.52,
+"end": 95.04,
+"type": "word"
+},
+{
+"text": "since",
+"start": 95.04,
+"end": 95.38,
+"type": "word"
+},
+{
+"text": "August.",
+"start": 95.38,
+"end": 95.9,
+"type": "word"
+},
+{
+"text": "And",
+"start": 99.68,
+"end": 99.88,
+"type": "word"
+},
+{
+"text": "for",
+"start": 99.88,
+"end": 100.04,
+"type": "word"
+},
+{
+"text": "the",
+"start": 100.04,
+"end": 100.2,
+"type": "word"
+},
+{
+"text": "first",
+"start": 100.2,
+"end": 100.46,
+"type": "word"
+},
+{
+"text": "time",
+"start": 100.46,
+"end": 100.8,
+"type": "word"
+},
+{
+"text": "in",
+"start": 100.8,
+"end": 101.0,
+"type": "word"
+},
+{
+"text": "months,",
+"start": 101.0,
+"end": 101.52,
+"type": "word"
+},
+{
+"text": "the",
+"start": 101.96,
+"end": 102.08,
+"type": "word"
+},
+{
+"text": "sound",
+"start": 102.08,
+"end": 102.42,
+"type": "word"
+},
+{
+"text": "crossing",
+"start": 102.42,
+"end": 102.84,
+"type": "word"
+},
+{
+"text": "no",
+"start": 102.84,
+"end": 103.14,
+"type": "word"
+},
+{
+"text": "man's",
+"start": 103.14,
+"end": 103.54,
+"type": "word"
+},
+{
+"text": "land",
+"start": 103.54,
+"end": 103.78,
+"type": "word"
+},
+{
+"text": "was",
+"start": 103.78,
+"end": 104.06,
+"type": "word"
+},
+{
+"text": "not",
+"start": 104.06,
+"end": 104.5,
+"type": "word"
+},
+{
+"text": "gunfire.",
+"start": 104.5,
+"end": 105.06,
+"type": "word"
+},
+{
+"text": "Christmas",
+"start": 105.98,
+"end": 106.3,
+"type": "word"
+},
+{
+"text": "morning",
+"start": 106.3,
+"end": 106.78,
+"type": "word"
+},
+{
+"text": "came",
+"start": 106.78,
+"end": 107.18,
+"type": "word"
+},
+{
+"text": "white",
+"start": 107.18,
+"end": 107.62,
+"type": "word"
+},
+{
+"text": "and",
+"start": 107.62,
+"end": 108.1,
+"type": "word"
+},
+{
+"text": "still.",
+"start": 108.1,
+"end": 108.58,
+"type": "word"
+},
+{
+"text": "In",
+"start": 114.34,
+"end": 114.98,
+"type": "word"
+},
+{
+"text": "places,",
+"start": 114.98,
+"end": 115.42,
+"type": "word"
+},
+{
+"text": "lines",
+"start": 115.98,
+"end": 116.22,
+"type": "word"
+},
+{
+"text": "were",
+"start": 116.22,
+"end": 116.48,
+"type": "word"
+},
+{
+"text": "only",
+"start": 116.48,
+"end": 116.76,
+"type": "word"
+},
+{
+"text": "50",
+"start": 116.76,
+"end": 117.32,
+"type": "word"
+},
+{
+"text": "yards",
+"start": 117.32,
+"end": 117.64,
+"type": "word"
+},
+{
+"text": "apart.",
+"start": 117.64,
+"end": 118.2,
+"type": "word"
+},
+{
+"text": "50",
+"start": 119.0,
+"end": 119.32,
+"type": "word"
+},
+{
+"text": "yards",
+"start": 119.32,
+"end": 119.78,
+"type": "word"
+},
+{
+"text": "of",
+"start": 119.78,
+"end": 120.08,
+"type": "word"
+},
+{
+"text": "frozen",
+"start": 120.08,
+"end": 120.52,
+"type": "word"
+},
+{
+"text": "mud,",
+"start": 120.52,
+"end": 120.96,
+"type": "word"
+},
+{
+"text": "wire,",
+"start": 121.36,
+"end": 121.76,
+"type": "word"
+},
+{
+"text": "and",
+"start": 122.26,
+"end": 122.38,
+"type": "word"
+},
+{
+"text": "the",
+"start": 122.38,
+"end": 122.5,
+"type": "word"
+},
+{
+"text": "men",
+"start": 122.5,
+"end": 122.74,
+"type": "word"
+},
+{
+"text": "who",
+"start": 122.74,
+"end": 123.04,
+"type": "word"
+},
+{
+"text": "never",
+"start": 123.04,
+"end": 123.44,
+"type": "word"
+},
+{
+"text": "made",
+"start": 123.44,
+"end": 123.68,
+"type": "word"
+},
+{
+"text": "it",
+"start": 123.68,
+"end": 123.86,
+"type": "word"
+},
+{
+"text": "back.",
+"start": 123.86,
+"end": 124.32,
+"type": "word"
+},
+{
+"text": "Up",
+"start": 131.46,
+"end": 132.1,
+"type": "word"
+},
+{
+"text": "and",
+"start": 132.1,
+"end": 132.32,
+"type": "word"
+},
+{
+"text": "down",
+"start": 132.32,
+"end": 132.58,
+"type": "word"
+},
+{
+"text": "this",
+"start": 132.58,
+"end": 132.86,
+"type": "word"
+},
+{
+"text": "part",
+"start": 132.86,
+"end": 133.16,
+"type": "word"
+},
+{
+"text": "of",
+"start": 133.16,
+"end": 133.26,
+"type": "word"
+},
+{
+"text": "the",
+"start": 133.26,
+"end": 133.4,
+"type": "word"
+},
+{
+"text": "line,",
+"start": 133.4,
+"end": 133.68,
+"type": "word"
+},
+{
+"text": "the",
+"start": 134.0,
+"end": 134.06,
+"type": "word"
+},
+{
+"text": "same",
+"start": 134.06,
+"end": 134.5,
+"type": "word"
+},
+{
+"text": "thing",
+"start": 134.5,
+"end": 134.88,
+"type": "word"
+},
+{
+"text": "was",
+"start": 134.88,
+"end": 135.1,
+"type": "word"
+},
+{
+"text": "happening.",
+"start": 135.1,
+"end": 135.58,
+"type": "word"
+},
+{
+"text": "Nobody",
+"start": 135.58,
+"end": 136.42,
+"type": "word"
+},
+{
+"text": "had",
+"start": 136.42,
+"end": 136.86,
+"type": "word"
+},
+{
+"text": "ordered",
+"start": 136.86,
+"end": 137.18,
+"type": "word"
+},
+{
+"text": "it.",
+"start": 137.18,
+"end": 137.56,
+"type": "word"
+},
+{
+"text": "the",
+"start": 138.44,
+"end": 138.68,
+"type": "word"
+},
+{
+"text": "British",
+"start": 138.68,
+"end": 138.94,
+"type": "word"
+},
+{
+"text": "line",
+"start": 138.94,
+"end": 139.3,
+"type": "word"
+},
+{
+"text": "in",
+"start": 139.3,
+"end": 139.52,
+"type": "word"
+},
+{
+"text": "Flanders,",
+"start": 139.52,
+"end": 140.02,
+"type": "word"
+},
+{
+"text": "it",
+"start": 140.58,
+"end": 140.62,
+"type": "word"
+},
+{
+"text": "spread",
+"start": 140.62,
+"end": 140.94,
+"type": "word"
+},
+{
+"text": "from",
+"start": 140.94,
+"end": 141.28,
+"type": "word"
+},
+{
+"text": "trench",
+"start": 141.28,
+"end": 141.66,
+"type": "word"
+},
+{
+"text": "to",
+"start": 141.66,
+"end": 142.02,
+"type": "word"
+},
+{
+"text": "trench",
+"start": 142.02,
+"end": 142.48,
+"type": "word"
+},
+{
+"text": "in",
+"start": 142.48,
+"end": 143.06,
+"type": "word"
+},
+{
+"text": "patches.",
+"start": 143.06,
+"end": 143.4,
+"type": "word"
+},
+{
+"text": "Nobody",
+"start": 144.38,
+"end": 144.78,
+"type": "word"
+},
+{
+"text": "counted",
+"start": 144.78,
+"end": 145.24,
+"type": "word"
+},
+{
+"text": "them.",
+"start": 145.24,
+"end": 145.66,
+"type": "word"
+},
+{
+"text": "The",
+"start": 146.1,
+"end": 146.26,
+"type": "word"
+},
+{
+"text": "usual",
+"start": 146.26,
+"end": 146.68,
+"type": "word"
+},
+{
+"text": "estimate",
+"start": 146.68,
+"end": 147.28,
+"type": "word"
+},
+{
+"text": "is",
+"start": 147.28,
+"end": 147.58,
+"type": "word"
+},
+{
+"text": "that",
+"start": 147.58,
+"end": 147.8,
+"type": "word"
+},
+{
+"text": "about",
+"start": 147.8,
+"end": 148.06,
+"type": "word"
+},
+{
+"text": "100",
+"start": 148.06,
+"end": 148.64,
+"type": "word"
+},
+{
+"text": ",000",
+"start": 148.64,
+"end": 149.3,
+"type": "word"
+},
+{
+"text": "men",
+"start": 149.3,
+"end": 149.66,
+"type": "word"
+},
+{
+"text": "took",
+"start": 149.66,
+"end": 149.94,
+"type": "word"
+},
+{
+"text": "part.",
+"start": 149.94,
+"end": 150.34,
+"type": "word"
+},
+{
+"text": "They",
+"start": 150.98,
+"end": 151.2,
+"type": "word"
+},
+{
+"text": "traded",
+"start": 151.2,
+"end": 151.56,
+"type": "word"
+},
+{
+"text": "cigarettes,",
+"start": 151.56,
+"end": 152.14,
+"type": "word"
+},
+{
+"text": "food,",
+"start": 152.7,
+"end": 152.94,
+"type": "word"
+},
+{
+"text": "In",
+"start": 154.54,
+"end": 154.66,
+"type": "word"
+},
+{
+"text": "a",
+"start": 154.66,
+"end": 154.76,
+"type": "word"
+},
+{
+"text": "few",
+"start": 154.76,
+"end": 154.92,
+"type": "word"
+},
+{
+"text": "places,",
+"start": 154.92,
+"end": 155.42,
+"type": "word"
+},
+{
+"text": "accounts",
+"start": 155.7,
+"end": 156.02,
+"type": "word"
+},
+{
+"text": "described",
+"start": 156.02,
+"end": 156.56,
+"type": "word"
+},
+{
+"text": "men",
+"start": 156.56,
+"end": 157.0,
+"type": "word"
+},
+{
+"text": "kicking",
+"start": 157.0,
+"end": 157.44,
+"type": "word"
+},
+{
+"text": "a",
+"start": 157.44,
+"end": 157.62,
+"type": "word"
+},
+{
+"text": "ball",
+"start": 157.62,
+"end": 157.88,
+"type": "word"
+},
+{
+"text": "around.",
+"start": 157.88,
+"end": 158.3,
+"type": "word"
+},
+{
+"text": "Many",
+"start": 159.12,
+"end": 159.38,
+"type": "word"
+},
+{
+"text": "Germans",
+"start": 159.38,
+"end": 159.76,
+"type": "word"
+},
+{
+"text": "had",
+"start": 159.76,
+"end": 160.14,
+"type": "word"
+},
+{
+"text": "worked",
+"start": 160.14,
+"end": 160.44,
+"type": "word"
+},
+{
+"text": "in",
+"start": 160.44,
+"end": 160.68,
+"type": "word"
+},
+{
+"text": "Britain",
+"start": 160.68,
+"end": 160.9,
+"type": "word"
+},
+{
+"text": "before",
+"start": 160.9,
+"end": 161.34,
+"type": "word"
+},
+{
+"text": "the",
+"start": 161.34,
+"end": 161.56,
+"type": "word"
+},
+{
+"text": "war.",
+"start": 161.56,
+"end": 161.86,
+"type": "word"
+},
+{
+"text": "One",
+"start": 161.86,
+"end": 162.66,
+"type": "word"
+},
+{
+"text": "Briton",
+"start": 162.66,
+"end": 163.06,
+"type": "word"
+},
+{
+"text": "found",
+"start": 163.06,
+"end": 163.36,
+"type": "word"
+},
+{
+"text": "his",
+"start": 163.36,
+"end": 163.58,
+"type": "word"
+},
+{
+"text": "old",
+"start": 163.58,
+"end": 163.88,
+"type": "word"
+},
+{
+"text": "barber",
+"start": 163.88,
+"end": 164.32,
+"type": "word"
+},
+{
+"text": "among",
+"start": 164.32,
+"end": 164.6,
+"type": "word"
+},
+{
+"text": "them",
+"start": 164.6,
+"end": 164.92,
+"type": "word"
+},
+{
+"text": "and",
+"start": 164.92,
+"end": 165.24,
+"type": "word"
+},
+{
+"text": "sat",
+"start": 165.24,
+"end": 165.48,
+"type": "word"
+},
+{
+"text": "down",
+"start": 165.48,
+"end": 165.8,
+"type": "word"
+},
+{
+"text": "for",
+"start": 165.8,
+"end": 166.04,
+"type": "word"
+},
+{
+"text": "a",
+"start": 166.04,
+"end": 166.2,
+"type": "word"
+},
+{
+"text": "haircut.",
+"start": 166.2,
+"end": 166.58,
+"type": "word"
+},
+{
+"text": "But",
+"start": 169.94,
+"end": 170.54,
+"type": "word"
+},
+{
+"text": "the",
+"start": 170.54,
+"end": 170.68,
+"type": "word"
+},
+{
+"text": "day",
+"start": 170.68,
+"end": 170.94,
+"type": "word"
+},
+{
+"text": "was",
+"start": 170.94,
+"end": 171.16,
+"type": "word"
+},
+{
+"text": "not",
+"start": 171.16,
+"end": 171.46,
+"type": "word"
+},
+{
+"text": "only",
+"start": 171.46,
+"end": 171.96,
+"type": "word"
+},
+{
+"text": "for",
+"start": 171.96,
+"end": 172.18,
+"type": "word"
+},
+{
+"text": "trading.",
+"start": 172.18,
+"end": 172.62,
+"type": "word"
+},
+{
+"text": "Both",
+"start": 173.34,
+"end": 173.5,
+"type": "word"
+},
+{
+"text": "sides",
+"start": 173.5,
+"end": 173.92,
+"type": "word"
+},
+{
+"text": "went",
+"start": 173.92,
+"end": 174.22,
+"type": "word"
+},
+{
+"text": "out",
+"start": 174.22,
+"end": 174.48,
+"type": "word"
+},
+{
+"text": "to",
+"start": 174.48,
+"end": 174.7,
+"type": "word"
+},
+{
+"text": "bring",
+"start": 174.7,
+"end": 174.9,
+"type": "word"
+},
+{
+"text": "in",
+"start": 174.9,
+"end": 175.06,
+"type": "word"
+},
+{
+"text": "their",
+"start": 175.06,
+"end": 175.28,
+"type": "word"
+},
+{
+"text": "dead.",
+"start": 175.28,
+"end": 175.64,
+"type": "word"
+},
+{
+"text": "Some",
+"start": 176.48,
+"end": 176.78,
+"type": "word"
+},
+{
+"text": "had",
+"start": 176.78,
+"end": 177.02,
+"type": "word"
+},
+{
+"text": "lain",
+"start": 177.02,
+"end": 177.3,
+"type": "word"
+},
+{
+"text": "out",
+"start": 177.3,
+"end": 177.56,
+"type": "word"
+},
+{
+"text": "there",
+"start": 177.56,
+"end": 177.76,
+"type": "word"
+},
+{
+"text": "for",
+"start": 177.76,
+"end": 178.0,
+"type": "word"
+},
+{
+"text": "weeks.",
+"start": 178.0,
+"end": 178.54,
+"type": "word"
+},
+{
+"text": "At",
+"start": 182.06,
+"end": 182.66,
+"type": "word"
+},
+{
+"text": "one",
+"start": 182.66,
+"end": 182.96,
+"type": "word"
+},
+{
+"text": "burial,",
+"start": 182.96,
+"end": 183.34,
+"type": "word"
+},
+{
+"text": "a",
+"start": 183.74,
+"end": 183.86,
+"type": "word"
+},
+{
+"text": "Scottish",
+"start": 183.86,
+"end": 184.26,
+"type": "word"
+},
+{
+"text": "chaplain",
+"start": 184.26,
+"end": 184.86,
+"type": "word"
+},
+{
+"text": "read",
+"start": 184.86,
+"end": 185.2,
+"type": "word"
+},
+{
+"text": "the",
+"start": 185.2,
+"end": 185.42,
+"type": "word"
+},
+{
+"text": "23rd",
+"start": 185.42,
+"end": 186.44,
+"type": "word"
+},
+{
+"text": "Psalm.",
+"start": 186.44,
+"end": 186.76,
+"type": "word"
+},
+{
+"text": "A",
+"start": 187.1,
+"end": 187.26,
+"type": "word"
+},
+{
+"text": "German",
+"start": 187.26,
+"end": 187.54,
+"type": "word"
+},
+{
+"text": "student",
+"start": 187.54,
+"end": 187.9,
+"type": "word"
+},
+{
+"text": "read",
+"start": 187.9,
+"end": 188.26,
+"type": "word"
+},
+{
+"text": "it",
+"start": 188.26,
+"end": 188.42,
+"type": "word"
+},
+{
+"text": "after",
+"start": 188.42,
+"end": 188.68,
+"type": "word"
+},
+{
+"text": "him,",
+"start": 188.68,
+"end": 189.02,
+"type": "word"
+},
+{
+"text": "in",
+"start": 189.2,
+"end": 189.5,
+"type": "word"
+},
+{
+"text": "German.",
+"start": 189.5,
+"end": 189.88,
+"type": "word"
+},
+{
+"text": "By",
+"start": 194.18,
+"end": 194.8,
+"type": "word"
+},
+{
+"text": "late",
+"start": 194.8,
+"end": 195.04,
+"type": "word"
+},
+{
+"text": "afternoon,",
+"start": 195.04,
+"end": 195.62,
+"type": "word"
+},
+{
+"text": "the",
+"start": 196.1,
+"end": 196.26,
+"type": "word"
+},
+{
+"text": "light",
+"start": 196.26,
+"end": 196.48,
+"type": "word"
+},
+{
+"text": "was",
+"start": 196.48,
+"end": 196.74,
+"type": "word"
+},
+{
+"text": "going.",
+"start": 196.74,
+"end": 197.16,
+"type": "word"
+},
+{
+"text": "The",
+"start": 204.88,
+"end": 205.5,
+"type": "word"
+},
+{
+"text": "sun",
+"start": 205.5,
+"end": 205.78,
+"type": "word"
+},
+{
+"text": "went",
+"start": 205.78,
+"end": 206.04,
+"type": "word"
+},
+{
+"text": "down",
+"start": 206.04,
+"end": 206.44,
+"type": "word"
+},
+{
+"text": "on",
+"start": 206.44,
+"end": 206.72,
+"type": "word"
+},
+{
+"text": "Christmas",
+"start": 206.72,
+"end": 207.04,
+"type": "word"
+},
+{
+"text": "day.",
+"start": 207.04,
+"end": 207.48,
+"type": "word"
+},
+{
+"text": "Neither",
+"start": 208.42,
+"end": 208.5,
+"type": "word"
+},
+{
+"text": "of",
+"start": 208.5,
+"end": 208.8,
+"type": "word"
+},
+{
+"text": "them",
+"start": 208.8,
+"end": 208.98,
+"type": "word"
+},
+{
+"text": "moved",
+"start": 208.98,
+"end": 209.28,
+"type": "word"
+},
+{
+"text": "to",
+"start": 209.28,
+"end": 209.58,
+"type": "word"
+},
+{
+"text": "leave.",
+"start": 209.58,
+"end": 209.9,
+"type": "word"
+},
+{
+"text": "The",
+"start": 210.8,
+"end": 210.92,
+"type": "word"
+},
+{
+"text": "next",
+"start": 210.92,
+"end": 211.14,
+"type": "word"
+},
+{
+"text": "morning,",
+"start": 211.14,
+"end": 211.6,
+"type": "word"
+},
+{
+"text": "the",
+"start": 211.96,
+"end": 212.1,
+"type": "word"
+},
+{
+"text": "men",
+"start": 212.1,
+"end": 212.3,
+"type": "word"
+},
+{
+"text": "drifted",
+"start": 212.3,
+"end": 212.68,
+"type": "word"
+},
+{
+"text": "back",
+"start": 212.68,
+"end": 213.06,
+"type": "word"
+},
+{
+"text": "to",
+"start": 213.06,
+"end": 213.28,
+"type": "word"
+},
+{
+"text": "their",
+"start": 213.28,
+"end": 213.44,
+"type": "word"
+},
+{
+"text": "own",
+"start": 213.44,
+"end": 213.72,
+"type": "word"
+},
+{
+"text": "trenches.",
+"start": 213.72,
+"end": 214.16,
+"type": "word"
+},
+{
+"text": "At",
+"start": 215.04,
+"end": 215.22,
+"type": "word"
+},
+{
+"text": "Hooplines,",
+"start": 215.22,
+"end": 215.76,
+"type": "word"
+},
+{
+"text": "on",
+"start": 216.16,
+"end": 216.36,
+"type": "word"
+},
+{
+"text": "Boxing",
+"start": 216.36,
+"end": 216.66,
+"type": "word"
+},
+{
+"text": "Day",
+"start": 216.66,
+"end": 216.96,
+"type": "word"
+},
+{
+"text": "morning,",
+"start": 216.96,
+"end": 217.28,
+"type": "word"
+},
+{
+"text": "a",
+"start": 217.76,
+"end": 217.9,
+"type": "word"
+},
+{
+"text": "British",
+"start": 217.9,
+"end": 218.16,
+"type": "word"
+},
+{
+"text": "captain",
+"start": 218.16,
+"end": 218.58,
+"type": "word"
+},
+{
+"text": "ended",
+"start": 218.58,
+"end": 219.04,
+"type": "word"
+},
+{
+"text": "it",
+"start": 219.04,
+"end": 219.28,
+"type": "word"
+},
+{
+"text": "politely.",
+"start": 219.28,
+"end": 219.74,
+"type": "word"
+},
+{
+"text": "Shots",
+"start": 220.37,
+"end": 220.7,
+"type": "word"
+},
+{
+"text": "into",
+"start": 220.7,
+"end": 221.22,
+"type": "word"
+},
+{
+"text": "the",
+"start": 221.22,
+"end": 221.4,
+"type": "word"
+},
+{
+"text": "air.",
+"start": 221.4,
+"end": 221.84,
+"type": "word"
+},
+{
+"text": "had",
+"start": 233.08,
+"end": 233.28,
+"type": "word"
+},
+{
+"text": "been",
+"start": 233.28,
+"end": 233.6,
+"type": "word"
+},
+{
+"text": "no",
+"start": 233.6,
+"end": 233.9,
+"type": "word"
+},
+{
+"text": "treaty.",
+"start": 233.9,
+"end": 234.3,
+"type": "word"
+},
+{
+"text": "In",
+"start": 235.0,
+"end": 235.16,
+"type": "word"
+},
+{
+"text": "some",
+"start": 235.16,
+"end": 235.44,
+"type": "word"
+},
+{
+"text": "places,",
+"start": 235.44,
+"end": 235.86,
+"type": "word"
+},
+{
+"text": "truce",
+"start": 236.24,
+"end": 236.46,
+"type": "word"
+},
+{
+"text": "lasted",
+"start": 236.46,
+"end": 236.98,
+"type": "word"
+},
+{
+"text": "hours.",
+"start": 236.98,
+"end": 237.58,
+"type": "word"
+},
+{
+"text": "In",
+"start": 238.14,
+"end": 238.34,
+"type": "word"
+},
+{
+"text": "others,",
+"start": 238.34,
+"end": 238.64,
+"type": "word"
+},
+{
+"text": "it",
+"start": 238.96,
+"end": 239.14,
+"type": "word"
+},
+{
+"text": "held",
+"start": 239.14,
+"end": 239.44,
+"type": "word"
+},
+{
+"text": "until",
+"start": 239.44,
+"end": 239.78,
+"type": "word"
+},
+{
+"text": "the",
+"start": 239.78,
+"end": 239.98,
+"type": "word"
+},
+{
+"text": "new",
+"start": 239.98,
+"end": 240.18,
+"type": "word"
+},
+{
+"text": "year.",
+"start": 240.18,
+"end": 240.56,
+"type": "word"
+},
+{
+"text": "Thomas",
+"start": 241.4,
+"end": 241.66,
+"type": "word"
+},
+{
+"text": "wrote",
+"start": 241.66,
+"end": 241.98,
+"type": "word"
+},
+{
+"text": "home",
+"start": 241.98,
+"end": 242.32,
+"type": "word"
+},
+{
+"text": "that",
+"start": 242.32,
+"end": 242.58,
+"type": "word"
+},
+{
+"text": "night.",
+"start": 242.58,
+"end": 242.92,
+"type": "word"
+},
+{
+"text": "So",
+"start": 243.54,
+"end": 243.7,
+"type": "word"
+},
+{
+"text": "did",
+"start": 243.7,
+"end": 243.88,
+"type": "word"
+},
+{
+"text": "many",
+"start": 243.88,
+"end": 244.16,
+"type": "word"
+},
+{
+"text": "others.",
+"start": 244.16,
+"end": 244.6,
+"type": "word"
+},
+{
+"text": "In",
+"start": 245.24,
+"end": 245.42,
+"type": "word"
+},
+{
+"text": "January,",
+"start": 245.42,
+"end": 245.94,
+"type": "word"
+},
+{
+"text": "British",
+"start": 246.38,
+"end": 246.62,
+"type": "word"
+},
+{
+"text": "newspapers",
+"start": 246.62,
+"end": 247.14,
+"type": "word"
+},
+{
+"text": "printed",
+"start": 247.14,
+"end": 247.66,
+"type": "word"
+},
+{
+"text": "their",
+"start": 247.66,
+"end": 248.02,
+"type": "word"
+},
+{
+"text": "letters.",
+"start": 248.02,
+"end": 248.38,
+"type": "word"
+},
+{
+"text": "Their",
+"start": 249.32,
+"end": 249.44,
+"type": "word"
+},
+{
+"text": "commanders",
+"start": 249.44,
+"end": 249.84,
+"type": "word"
+},
+{
+"text": "moved",
+"start": 249.84,
+"end": 250.38,
+"type": "word"
+},
+{
+"text": "to",
+"start": 250.38,
+"end": 250.72,
+"type": "word"
+},
+{
+"text": "prevent",
+"start": 250.72,
+"end": 251.06,
+"type": "word"
+},
+{
+"text": "it",
+"start": 251.06,
+"end": 251.26,
+"type": "word"
+},
+{
+"text": "from",
+"start": 251.26,
+"end": 251.42,
+"type": "word"
+},
+{
+"text": "happening",
+"start": 251.42,
+"end": 251.86,
+"type": "word"
+},
+{
+"text": "again.",
+"start": 251.86,
+"end": 252.3,
+"type": "word"
+},
+{
+"text": "A",
+"start": 253.02,
+"end": 253.1,
+"type": "word"
+},
+{
+"text": "few",
+"start": 253.1,
+"end": 253.34,
+"type": "word"
+},
+{
+"text": "small",
+"start": 253.34,
+"end": 253.82,
+"type": "word"
+},
+{
+"text": "truces",
+"start": 253.82,
+"end": 254.26,
+"type": "word"
+},
+{
+"text": "still",
+"start": 254.26,
+"end": 254.72,
+"type": "word"
+},
+{
+"text": "occurred",
+"start": 254.72,
+"end": 255.12,
+"type": "word"
+},
+{
+"text": "in",
+"start": 255.12,
+"end": 255.36,
+"type": "word"
+},
+{
+"text": "1915,",
+"start": 255.36,
+"end": 256.06,
+"type": "word"
+},
+{
+"text": "but",
+"start": 256.7,
+"end": 256.9,
+"type": "word"
+},
+{
+"text": "nothing",
+"start": 256.9,
+"end": 257.34,
+"type": "word"
+},
+{
+"text": "on",
+"start": 257.34,
+"end": 257.62,
+"type": "word"
+},
+{
+"text": "that",
+"start": 257.62,
+"end": 257.84,
+"type": "word"
+},
+{
+"text": "scale.",
+"start": 257.84,
+"end": 258.22,
+"type": "word"
+},
+{
+"text": "The",
+"start": 258.94,
+"end": 259.16,
+"type": "word"
+},
+{
+"text": "war",
+"start": 259.16,
+"end": 259.42,
+"type": "word"
+},
+{
+"text": "went",
+"start": 259.42,
+"end": 259.66,
+"type": "word"
+},
+{
+"text": "on",
+"start": 259.66,
+"end": 259.96,
+"type": "word"
+},
+{
+"text": "for",
+"start": 259.96,
+"end": 260.2,
+"type": "word"
+},
+{
+"text": "almost",
+"start": 260.2,
+"end": 260.64,
+"type": "word"
+},
+{
+"text": "four",
+"start": 260.64,
+"end": 261.22,
+"type": "word"
+},
+{
+"text": "more",
+"start": 261.22,
+"end": 261.58,
+"type": "word"
+},
+{
+"text": "years.",
+"start": 261.58,
+"end": 262.16,
+"type": "word"
+}
+]
+}
