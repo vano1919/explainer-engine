@@ -1,3 +1,10 @@
+# FINAL 2 (2026-11-13 19:45 UTC): script A sha256 **c2abcdd30d04bcd9446c7e6872afca4582cbd231d062e69d9c046048555b69f3** (supersedes 1c117e12)
+
+Audit round 2 (FL-309): S02_SH009 `fire_flicker` now has `region` [0.56, 0.58, 0.67, 0.82] (the brazier, checked on the picture). Effect-only render
+(with minus without the effect, frames 6/17/40): 0.4-0.5 % of the change in the top third (the auto mask had 68 %). Only that one field differs from 1c117e12
+(`shots[13].motion_imitation[1].region`). `episode.json` unchanged (c85da546...). G1-G3 PASS, G4 PASS. Repo commit 2327dfe on claude/project-thread-hqs08m.
+`stage_guard editor` lists only the three caster-owned `voice_description` texts the LTX thread asked for.
+
 # FINAL (2026-11-13 19:40 UTC), supersedes the numbers below where they differ
 
 Script A sha256 **1c117e129b5e55da46f55168ba34f8e7188a563ddb1b5328fe814b0934e62660**; `episode.json` sha256 `c85da546a33af2a47bca177cbee9ff48a131ab985b1e4b111ae9deaa1658c36b`

@@ -81,7 +81,7 @@ def to_still(e):    # FL-023 option ა: S02_SH009 as a 2.5D shot on its own sta
                          "camera_move_count": 1, "parallax_preset": "dolly_in"}
     e["motion_imitation"] = [
         {"effect": "push", "event_id": "S02_SH009.M1", "audio": {"decision": "silent_by_design", "why": "a slow camera move under the voice (BP-81 budget)"}, "strength": 0.6},
-        {"effect": "fire_flicker", "event_id": "S02_SH009.M2", "audio": {"decision": "ambience_only", "why": "the brazier's flame flickers; the fire's crackle is the bed's"}},
+        {"effect": "fire_flicker", "event_id": "S02_SH009.M2", "region": [0.56, 0.58, 0.67, 0.82], "audio": {"decision": "ambience_only", "why": "the brazier's flame flickers; the fire's crackle is the bed's"}},
         {"effect": "smoke_drift", "event_id": "S02_SH009.M3", "audio": {"decision": "silent_by_design", "why": "breath and brazier smoke rise; heard as nothing"}}]
     e.pop("edit_plan", None)
 
