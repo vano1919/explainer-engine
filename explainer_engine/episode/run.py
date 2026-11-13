@@ -131,6 +131,9 @@ def _stage_inputs(ep: Episode, stage: str) -> dict:
         files[TRANSCRIPT_REL] = _sha(ep.root / TRANSCRIPT_REL)
     if stage in ("sound_plan", "sound"):
         files["sound_library/manifest.json"] = _sha(ep.sound_library / "manifest.json")
+    if stage == "sound":   # HF-3 follow-up (TD-317): a changed narrator chain makes the stems stale
+        from explainer_engine.audio import narrator_polish as NP
+        files["narrator_polish_chain"] = hashlib.sha256(NP.CHAIN.encode("utf-8")).hexdigest()
     if stage == "clips":
         files[WAN_LEDGER_REL] = _sha(ep.root / WAN_LEDGER_REL)
     if stage == "voice":   # VL-07: the clip records of the clip-spoken shots time them (G7 re-cuts only the others)
@@ -745,10 +748,10 @@ def _loudness_rows(prefix: str, meas: dict, what: str) -> list[dict]:
     return rows
 
 
-def _deliver_mix(mix_raw: Path, delivered: Path) -> tuple[list[dict], dict, dict]:
+def _deliver_mix(mix_raw: Path, delivered: Path, rehearsal: bool = False) -> tuple[list[dict], dict, dict]:
     """HF-2 (FL-403, TD-302): the raw mix at the delivered loudness (``qa/targets.normalise_file``, BP-50) in its own file,
-    with the BP-50 verdict rows of the result. Returns ``(rows, raw measurement, delivered measurement)``; a silent preview
-    is copied as it is and its rows are NOT_RUN."""
+    with the BP-50 verdict rows of the result. Returns ``(rows, raw measurement, delivered measurement)``; a silent mix is
+    copied as it is: in a rehearsal its rows are NOT_RUN, in a real run they FAIL (audit TD-317: nothing silent ships)."""
     from explainer_engine.qa import targets as TG
     try:
         raw_meas = TG.measure_file(mix_raw)
@@ -756,8 +759,9 @@ def _deliver_mix(mix_raw: Path, delivered: Path) -> tuple[list[dict], dict, dict
         raw_meas = {}
     if raw_meas.get("lufs", float("-inf")) <= SILENT_LUFS:   # ebur128 reports its -70 gate for silence
         shutil.copyfile(mix_raw, delivered)
-        why = "the mix has no measurable loudness (silent preview)"
-        return [G.row("delivered_mix_loudness", None, why), G.row("delivered_mix_true_peak", None, why)], raw_meas, raw_meas
+        why = "the mix has no measurable loudness (silent)"
+        ok = None if rehearsal else False
+        return [G.row("delivered_mix_loudness", ok, why), G.row("delivered_mix_true_peak", ok, why)], raw_meas, raw_meas
     meas = TG.normalise_file(mix_raw, delivered, "long", 48000, channels=2)
     return _loudness_rows("delivered_mix", meas, "the delivered mix"), raw_meas, meas
 
@@ -839,7 +843,7 @@ def stage_sound(ep: Episode, rehearsal: bool):
     ev_doc = E.events_report(script, TM.spines_of(timing), ep.fps)
     rep_av = AVR.event_report(ev_doc, plan, sheet, rep)
     write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
-    delivered_rows, raw_meas, meas = _deliver_mix(stems_dir / "mix.wav", ep.path(DELIVERED_MIX_REL))   # HF-2
+    delivered_rows, raw_meas, meas = _deliver_mix(stems_dir / "mix.wav", ep.path(DELIVERED_MIX_REL), rehearsal)   # HF-2
     rows += delivered_rows
     write_json_atomic(ep.path("qa/delivered_mix.json"), {"raw_mix": raw_meas, "delivered_mix": meas,
                                                          "delivered_sha256": _sha(ep.path(DELIVERED_MIX_REL))})

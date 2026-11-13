@@ -141,12 +141,14 @@ def test_a_quiet_mix_is_delivered_inside_bp50s_band_and_the_raw_mix_stays(tmp_pa
     assert all(r["status"] == "PASS" for r in rows)
 
 
-def test_a_silent_preview_mix_is_copied_and_says_not_run(tmp_path):
+def test_a_silent_mix_is_copied_not_run_in_a_rehearsal_and_a_fail_in_a_real_run(tmp_path):
     from explainer_engine.episode import run as RUN
     raw = _tone(tmp_path / "mix.wav", -200.0)
-    rows, _raw_meas, _meas = RUN._deliver_mix(raw, tmp_path / "mix_delivered.wav")
+    rows, _raw_meas, _meas = RUN._deliver_mix(raw, tmp_path / "mix_delivered.wav", rehearsal=True)
     assert (tmp_path / "mix_delivered.wav").is_file()
     assert [r["status"] for r in rows] == ["NOT_RUN", "NOT_RUN"]
+    rows, _r, _m = RUN._deliver_mix(raw, tmp_path / "mix_delivered2.wav")        # a real run: nothing silent ships
+    assert [r["status"] for r in rows] == ["FAIL", "FAIL"]
 
 
 def test_the_master_file_gets_its_own_bp50_rows(tmp_path):
@@ -346,3 +348,14 @@ def test_the_sound_library_flag_reaches_the_episode_and_changes_the_g4_fingerpri
     RUN.main(["status", str(root)])
     from explainer_engine.assets_reuse import SOUND_LIB
     assert seen[-1] == Path(SOUND_LIB)                  # without the flag: the repo's own library, as before
+
+
+def test_a_changed_narrator_chain_makes_the_g8_record_stale(tmp_path, monkeypatch):
+    from explainer_engine.audio import narrator_polish as NP
+    from explainer_engine.episode import run as RUN
+    ep = RUN.Episode(_tiny_episode(tmp_path), sound_library=tmp_path)
+    before = RUN.fingerprint(ep, "sound")
+    assert RUN.fingerprint(ep, "sound") == before
+    monkeypatch.setattr(NP, "CHAIN", NP.CHAIN + ",volume=-1dB")
+    assert RUN.fingerprint(ep, "sound") != before
+    assert RUN.fingerprint(ep, "sound_plan") == RUN.fingerprint(RUN.Episode(ep.root, sound_library=tmp_path), "sound_plan")
