@@ -9,7 +9,7 @@ A snapshot goes into `docs/handoffs/demo_run_<date>/` at the end of every stage.
 | `FREEZE_SHA` | **provisional `8ae21ec`** (code under the frozen script commit `8da40d6`, PR #180; S0 2026-11-13 16:50 UTC). PR #177 is not merged and moved on to `1406ce2` (L3 worker fixes), PR #179 (CH-07 `cloud/paid_offer`) is stacked on it: the freeze is set again on the merged `systemic/next-video` before any paid stage (FL-009) |
 | Baseline tests | 4141 passed, 20 skipped, 1 xfailed (677 s) at `8da40d6` (MS-005) |
 | Current stage and thread | S0 done 16:50 UTC and S3 started (pictures thread, `claude/project-thread-bf505m`); continuity cards written; start frames blocked on T0 and the style anchors (FL-010, CQ-008) |
-| Counts | KN 15 · FL 27 · DV 7 · RC 4 · SF 9 · NT 6 · CQ 11 · MS 12 · CU 0 |
+| Counts | KN 15 · FL 27 · DV 7 · RC 4 · SF 9 · NT 6 · CQ 11 · MS 13 · CU 0 |
 
 ## 0. How to write here
 
@@ -376,7 +376,7 @@ what failed: 1916 steel helmets (Stahlhelm shape) in 1914 pictures: two of Fried
 evidence: https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/S03_SH003_start.png, S05_SH018_start.png, S05_SH019_start.png (looked at by the thread)
 touches: `explainer_engine/gemini_task/queue.py` / `prompts.assemble` (extras and props get no costume words; the shot's `negative_prompt` is not used), opened yes
 cause: unnamed extras ("five Saxon soldiers") and an unnamed grave fall back to the model's WWI default, the steel helmet; Gemini gets no negative prompt and the script's banned list never reaches the prompt (FL-021 cause 3 again, for extras and props) · confidence: likely
-workaround: rung 2 — one correction sentence per picture (GC-25), shown to the creator first (card `cmsg_01Hnu5zB86sjUj5GtTgaUkPW8LqB9WituvDzr6sWrTzazv`, ≈$0.09)
+workaround: rung 2 — one correction sentence per picture (GC-25), shown to the creator first (card `cmsg_01Hnu5zB86sjUj5GtTgaUkPW8LqB9WituvDzr6sWrTzazv`, ≈$0.09, answered ა 18:52 UTC; MS-013)
 proposed fix: the era line names the 1914 headwear of both armies ("every soldier wears a soft cloth cap; no helmets"), and the queue turns the script's banned list into positive era words · test: a scene with unnamed soldiers carries the headwear sentence
 links: FL-021, FL-024
 
@@ -385,7 +385,7 @@ when: 2026-11-13 18:58 UTC · thread: pictures thread
 what failed: commit `30b2b27e` on `claude/project-thread-bf505m` carried 93 picture send copies (35 MB: `planning/gemini_task/anchors`, `frames`, `refs`), against the rule that pictures are never committed; `b649a382` took them out of the index, but the blobs stay in the branch history
 touches: `.gitignore` (the send-copy folders are not ignored), `tests/unit/test_repo_hygiene.py` (passed: it does not look at these folders), opened yes
 cause: a broad `git add episodes/ep_truce_1914/` after reformatting the scripts; no ignore line stops it · confidence: confirmed
-workaround: rung 1 — removal commit; a squash merge of PR #181 keeps the blobs out of the main line; rewriting the branch needs a force push and the creator's word
+workaround: rung 1 — removal commit; a squash merge of PR #181 keeps the blobs out of the main line; rewriting the branch needs a force push and the creator's word; ვანო chose squash (card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWTd8W1bUWh7GWGg7DXycutW`, ა, 18:53 UTC), noted at the top of PR #181
 proposed fix: ignore `episodes/*/planning/gemini_task/{anchors,frames,refs}/`; the hygiene test refuses any image under `episodes/` · test: an image staged under `episodes/` fails the test
 
 ## 4. Deviations from the production path (DV)
@@ -470,6 +470,7 @@ Real numbers only, each with where it was read. They replace estimates in the co
 | MS-010 | S3b | Shot lengths from S4's per-line reads (no Scribe yet) | read 336.5 s vs planned 367.0 s (-8.3 %, in the frame); 50 of 84 shots outside their own 10 % frame (median ratio 0.88, story decides); 2 video shots over the LTX limit (FL-023) | `audio/reads/shot_seconds.json` |
 | MS-011 | S3b | Wave 1 of the scene start frames, Gemini API 2K, 4 batches (inline limit 18 MB: references sent at 1536 px, DV-005) | 37 of 37, $1.0457 settled; 32 right, 4 to redo (FL-024), 1 not a picture (FL-025); HF hash 39/39 | https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1 |
 | MS-012 | S3b | Redo of 4 (FL-024) + wave 2 (41), 2 batches; wave 3 (1) | 46 of 46, $1.3617 + $0.0307 settled; the 4 redos right; wave 2: 38 right, 3 with steel helmets (FL-026); S3 total $2.8359 (scenes $2.4381 of the $2.90 cap), Gemini balance ≈ $0.59; HF hash 59/59 + 3/3; final list of 79 frames (`final_scene_frames_A.json`, 10/10 on HF) | https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2 |
+| MS-013 | S3b | Helmet redo (FL-026), 1 batch of 3, Gemini API 2K | 3 of 3, $0.0921 settled (scenes $2.5302 of the $2.90 cap; S3 total $2.9280; Gemini balance ≈ $0.50); S03_SH003 and S05_SH018 right; S05_SH019 lost its cross with the helmet (the correction sentence emptied the grave), a local helmet paint-out of the old picture offered (card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWHCAbkqR3jssCQWcU1jmCti`); ვანო chose the local fix with the cross (ა, 19:00 UTC; "ჯვრიანი მინდა" 19:00:49 UTC); patch clone of nearby ground + the post extended, `pictures/local_fix/S05_SH019_start_fix.png`; HF 9/9 | https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_redo_r3 |
 
 Each stage's closing MS row: thread minutes, money and credits spent against the cap, items made, items retried.
 

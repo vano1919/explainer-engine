@@ -55,8 +55,8 @@
    "sha256": "ff99d0365da0f7f68e34454a06ed7a71a46c6317e459711827de2918e9d268e0"
   },
   "S03_SH003_start": {
-   "file": "api_S3_scenes_w2/S03_SH003_start.png",
-   "sha256": "5999df6c14851cdec16020c8504ca3378de6a7c4cde8276b02467034b546ee3c"
+   "file": "api_S3_redo_r3/S03_SH003_start_r2.png",
+   "sha256": "d613117ff74b585455ae7628d5937199a25a9a46480edf70bfc70159e2bd3c07"
   },
   "S03_SH004_start": {
    "file": "api_S3_scenes_w1/S03_SH004_start.png",
@@ -207,12 +207,12 @@
    "sha256": "10a1e5cf404ae8085c8fb0d2d5ca966473f780de06d23f681ef4c20be284ff9b"
   },
   "S05_SH018_start": {
-   "file": "api_S3_scenes_w2/S05_SH018_start.png",
-   "sha256": "c055d1dfd8f3c73787ca4371ff76f7641b804b94eb31d2d7569b9005f1579734"
+   "file": "api_S3_redo_r3/S05_SH018_start_r2.png",
+   "sha256": "9175764cc7d33495dbb29b4abd713266d9a6e951486a3f08a30afc64e5c8fb9a"
   },
   "S05_SH019_start": {
-   "file": "api_S3_scenes_w2/S05_SH019_start.png",
-   "sha256": "35808e57214b2dc3db2681c40010f6889f63f58360c316ebc4472d993c29afe8"
+   "file": "local_fix/S05_SH019_start_fix.png",
+   "sha256": "95e7129ac87a94715fe0715627cb638ab33d361ee935f1a79421042d3be5290b"
   },
   "S05_SH020_start": {
    "file": "api_S3_scenes_w1/S05_SH020_start.png",
