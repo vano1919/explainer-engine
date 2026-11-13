@@ -25,8 +25,8 @@
     "reference_sheet_path": "episodes/ep_truce_1914/assets/characters/char_thomas_hale_sheet.png",
     "name": "Thomas Hale",
     "historical_role": "Private of an English county infantry battalion, 20, from Nottingham (invented composite hero)",
-    "fixed_appearance_prompt": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
-    "costume_continuity_notes": "soft khaki cap (never a steel helmet: none were issued in 1914), greatcoat open over the tunic, the top right brass tunic button cut off from S06_SH009 on, rifle only where the shot says",
+    "fixed_appearance_prompt": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki peaked service cap, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
+    "costume_continuity_notes": "khaki peaked service cap (never a steel helmet: none were issued in 1914), greatcoat open over the tunic, the top right brass tunic button cut off from S06_SH009 on, rifle only where the shot says",
     "voice_card": {
      "age": "early twenties",
      "timbre": "a light, slightly husky tenor",
@@ -57,7 +57,7 @@
     "reference_sheet_path": "episodes/ep_truce_1914/assets/characters/char_sgt_harris_sheet.png",
     "name": "Sergeant Albert Harris",
     "historical_role": "Platoon sergeant, a regular soldier of 42, Thomas's sergeant (invented)",
-    "fixed_appearance_prompt": "Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic",
+    "fixed_appearance_prompt": "Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki peaked service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic",
     "costume_continuity_notes": "goatskin jerkin, cap on until S05_SH021 where he takes it off at the graves",
     "voice_card": {
      "age": "early forties",
@@ -8044,7 +8044,7 @@
    "audio_line_ids": [
     "S08_L002"
    ],
-   "action_start_state": "Friedrich's hands hold the portrait card with a brass button on it, by an oil lamp",
+   "action_start_state": "Friedrich's hands hold the portrait card with a brass button on it, by a candle stub in a tin holder",
    "action_end_state": "Same",
    "camera_spec": {
     "shot_size": "medium_close_up",
@@ -8056,10 +8056,10 @@
    "screen_composition": {
     "foreground": "the edge of a dugout bunk",
     "midground": "the sepia family portrait card in a gloved hand with a British brass button resting on it",
-    "background": "an oil lamp out of focus",
+    "background": "a candle flame out of focus",
     "screen_direction_notes": "no axis: a static place or object view"
    },
-   "lighting_and_time": "warm oil-lamp light at night",
+   "lighting_and_time": "warm candlelight at night",
    "continuity_refs": {
     "reuse_location_anchor": true,
     "inherit_from_previous_shot_id": null

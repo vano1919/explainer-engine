@@ -1,0 +1,182 @@
+{
+ "era_line": "The world is the Western Front in Flanders at Christmas 1914: the only light sources are candles, coke braziers, matches, the low winter sun and the moon, and everything is made of wool, leather, canvas, brass, timber, sandbags, frozen mud and barbed wire.",
+ "sf009": {
+  "S06_SH010_start": [
+   "Thomas's tunic has its top right brass button cut off."
+  ],
+  "S06_SH011_start": [
+   "Thomas's tunic has its top right brass button cut off."
+  ],
+  "S07_SH002_start": [
+   "Thomas's tunic has its top right brass button cut off.",
+   "Friedrich's greatcoat has one button missing."
+  ],
+  "S07_SH003_start": [
+   "Thomas's tunic has its top right brass button cut off.",
+   "Friedrich's greatcoat has one button missing."
+  ],
+  "S07_SH007_start": [
+   "Thomas's tunic has its top right brass button cut off."
+  ],
+  "S07_SH008_start": [
+   "Thomas's tunic has its top right brass button cut off."
+  ]
+ },
+ "waves": {
+  "1": [
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w1_p01.md",
+    "ids": [
+     "S01_SH001_start",
+     "S01_SH004_start",
+     "S01_SH005_start",
+     "S02_SH004_start",
+     "S02_SH005_start",
+     "S02_SH008_start",
+     "S03_SH001_start",
+     "S03_SH002_start",
+     "S03_SH004_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w1_p02.md",
+    "ids": [
+     "S03_SH010_start",
+     "S04_SH001_start",
+     "S04_SH002_start",
+     "S04_SH003_start",
+     "S04_SH008_start",
+     "S04_SH009_start",
+     "S04_SH011_start",
+     "S04_SH015_start",
+     "S05_SH003_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w1_p03.md",
+    "ids": [
+     "S05_SH006_start",
+     "S05_SH007_start",
+     "S05_SH010_start",
+     "S05_SH014_start",
+     "S05_SH016_start",
+     "S05_SH020_start",
+     "S06_SH001_start",
+     "S06_SH002_start",
+     "S06_SH005_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w1_p04.md",
+    "ids": [
+     "S06_SH009_start",
+     "S06_SH012_start",
+     "S07_SH001_start",
+     "S07_SH002_start",
+     "S07_SH004_start",
+     "S07_SH006_start",
+     "S08_SH001_start",
+     "S08_SH002_start",
+     "S08_SH003_start",
+     "S08_SH004_start"
+    ]
+   }
+  ],
+  "2": [
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p01.md",
+    "ids": [
+     "S01_SH003_start",
+     "S02_SH006_start",
+     "S02_SH007_start",
+     "S02_SH009_start",
+     "S03_SH003_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p02.md",
+    "ids": [
+     "S03_SH005_start",
+     "S03_SH006_start",
+     "S03_SH007_start",
+     "S03_SH008_start",
+     "S03_SH009_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p03.md",
+    "ids": [
+     "S04_SH004_start",
+     "S04_SH005_start",
+     "S04_SH006_start",
+     "S04_SH007_start",
+     "S04_SH010_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p04.md",
+    "ids": [
+     "S04_SH012_start",
+     "S04_SH013_start",
+     "S04_SH014_start",
+     "S05_SH004_start",
+     "S05_SH005_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p05.md",
+    "ids": [
+     "S05_SH008_start",
+     "S05_SH009_start",
+     "S05_SH011_start",
+     "S05_SH012_start",
+     "S05_SH013_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p06.md",
+    "ids": [
+     "S05_SH015_start",
+     "S05_SH017_start",
+     "S05_SH018_start",
+     "S05_SH019_start",
+     "S05_SH021_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p07.md",
+    "ids": [
+     "S06_SH003_start",
+     "S06_SH004_start",
+     "S06_SH006_start",
+     "S06_SH007_start",
+     "S06_SH008_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p08.md",
+    "ids": [
+     "S06_SH010_start",
+     "S06_SH011_start",
+     "S07_SH003_start",
+     "S07_SH005_start",
+     "S07_SH007_start"
+    ]
+   },
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w2_p09.md",
+    "ids": [
+     "S07_SH008_start"
+    ]
+   }
+  ],
+  "3": [
+   {
+    "message": "episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_scenes_w3_p01.md",
+    "ids": [
+     "S01_SH002_start"
+    ]
+   }
+  ]
+ }
+}

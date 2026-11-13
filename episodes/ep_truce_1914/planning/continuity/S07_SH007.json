@@ -1,0 +1,163 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S07@loc_british_trench:S07_SH007",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_british_trench",
+  "where_when": "British front-line breastwork trench opposite Frelinghien / Boxing Day 1914, morning",
+  "int_ext": "EXT",
+  "time_of_day": "dawn",
+  "weather": "fog",
+  "master_frame": "S07_SH008_start",
+  "landmarks": [
+   {
+    "id": "sandbag_breastwork",
+    "text": "waist-high sandbag breastworks with frost"
+   },
+   {
+    "id": "duckboards",
+    "text": "duckboards over brown floodwater"
+   },
+   {
+    "id": "fire_step",
+    "text": "the fire step"
+   },
+   {
+    "id": "brazier",
+    "text": "a small coke brazier"
+   },
+   {
+    "id": "trench_ladder",
+    "text": "a trench ladder"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "right",
+  "light_source": "the low winter sun",
+  "colour_key": "cold steel-blue winter light, warm orange brazier glow at night"
+ },
+ "cast": {
+  "char_thomas_hale": {
+   "name": "the young British private",
+   "description": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
+   "sheet": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "costumes": {
+    "service": "khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place",
+    "button_cut": "khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S07_SH007",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "centre",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "button_cut",
+     "action": "Thomas stands on the fire step with his rifle",
+     "props": [
+      {
+       "id": "prop_smle_rifle",
+       "hand": "both",
+       "state": "held"
+      }
+     ],
+     "eyeline": "off_right"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S07_SH008_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "hook_up": "first",
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S07_SH008",
+   "shot_size": "WS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "centre",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "button_cut",
+     "action": "Thomas stands at the foot of the ladder, the rifle leaning on the sandbags",
+     "eyeline": "off_right"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "is_master": true,
+   "hook_up": "match_on_action",
+   "angle_change_deg": 135.0,
+   "changes": [
+    {
+     "entity": "char_thomas_hale",
+     "field": "props",
+     "from": [
+      "prop_smle_rifle (both, held)"
+     ],
+     "to": null,
+     "cause": "end of S07_SH007: Thomas looks up toward the sound, then across; this shot starts: Thomas stands at the foot of the ladder, the rifle leaning on the sandbags"
+    }
+   ],
+   "set_state": {
+    "rifle": "leaning on the sandbags"
+   },
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    },
+    {
+     "id": "trench_ladder",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}
