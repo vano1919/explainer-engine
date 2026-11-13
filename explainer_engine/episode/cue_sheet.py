@@ -365,7 +365,8 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
             rows.append(_row(f"TR_{prev}_{nxt}", scene_id=nxt, shot_id=seg_first[nxt]["shot_id"], asset_id=iid,
                              start=cut - length, end=cut, layer="transition", visual_event=f"cut into {nxt} ({m1})",
                              sync=cut, gain=LEVELS["transition"], fade_in=0.5, fade_out=0.05,
-                             reason=f"designed: {m0} -> {m1} at the cut; {why}", confidence=CONFIDENCE["designed"],
+                             reason=f"designed: {m0} -> {m1} at the cut (derived from the segment moods, mood basis "
+                                    f"{(moods.get(nxt) or {}).get('basis', '?')}); {why}", confidence=CONFIDENCE["designed"],
                              licence=_licence(item), offset=off, cls="riser"))
     rows.sort(key=lambda r: (r["start_s"], PRIORITY[r["layer"]], r["cue_id"]))
     credits = sorted({r["license_status"]["attribution_text"] for r in rows

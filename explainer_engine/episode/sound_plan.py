@@ -271,9 +271,12 @@ def _visual(ev: dict, fps: int) -> dict | None:
     return out
 
 
-def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] | None = None) -> tuple[list[dict], list]:
+def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] | None = None,
+                state: dict | None = None) -> tuple[list[dict], list]:
     """The placed events of one shot (shot-relative times): its authored ``sound_events`` and the audio decisions of its
-    visible events. Words of the read and of the action text are candidates only (``_CANDIDATES``)."""
+    visible events. Words of the read and of the action text are candidates only. ``state`` (the build's own, FA-18) collects
+    per shot the visual-event decisions, the word candidates and the classes heard but not seen."""
+    state = state if state is not None else {"decisions": {}, "candidates": {}, "heard": {}}
     sid = shot.get("shot_id", "?")
     dur = float(shot.get("target_duration_seconds") or 0.0)
     frames = max(1, int(round(dur * fps)))
@@ -317,7 +320,7 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
             events.append(_event(cls, 0.0, f"picture:{ev['op']}", fps, event_id=ev["event_id"], decision="ambience_only",
                                  sync="span", audio_basis=ev["audio_basis"], dur_s=round(dur, 3)))
             seen.add(cls)
-    _DECISIONS[sid] = decisions
+    state["decisions"][sid] = decisions
     # candidates: what the words name (the read, then the action text); listed for a person, never placed
     words = MA.shot_words(shot, script)
     starts, word_basis = MA.word_frames(words, frames, spine)
@@ -340,10 +343,10 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
             continue
         cands.append({"class": cls, "source": "action_text", "at_s": None, "basis": "text",
                       "why": "the shot's action text names it: a person authors the event with its frame (AV-07)"})
-    _CANDIDATES[sid] = [c for c in cands if c["class"] not in seen]
+    state["candidates"][sid] = [c for c in cands if c["class"] not in seen]
     for ev in events:
         ev["distance"] = ev.get("distance") or distance_of(ev["class"], shot)
-    _HEARD[sid] = heard_only
+    state["heard"][sid] = heard_only
     forbidden = _forbidden(era)
     kept = []
     for ev in events:
@@ -352,17 +355,6 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
         else:
             kept.append(ev)
     return sorted(kept, key=lambda e: (e["at_s"], e["class"])), blocked
-
-
-_DECISIONS: dict[str, list[dict]] = {}   # shot id -> every visible event's decision (last build only)
-_CANDIDATES: dict[str, list[dict]] = {}  # shot id -> classes a word names (last build only): never placed
-
-
-_HEARD: dict[str, list[str]] = {}     # shot id -> classes the read names that the picture does not show (last build only)
-
-
-def heard_not_seen(shot_id: str) -> list[str]:
-    return list(_HEARD.get(shot_id, []))
 
 
 def coverage_state(events: list[dict], music_on: bool, is_map_shot: bool, silence: str | None) -> str:
@@ -428,7 +420,7 @@ def design_of(sh: dict, out: dict, bed: dict, mood: str, music_on: bool, music_r
     answers["visual_events"] = [f"{d['event_id']} {d['op']}: {d['decision']}" + (f" {d['class']}" if d.get('class') else "")
                                 for d in out.get("visual_events", [])]
     answers["candidates"] = [f"{c['class']} ({c['source']})" for c in out.get("candidates", [])]
-    return {"state": state, "layers": layers, "answers": answers, "heard_not_seen": heard_not_seen(out["shot_id"]),
+    return {"state": state, "layers": layers, "answers": answers, "heard_not_seen": list(out.get("heard_not_seen") or []),
             **({"silence_reason": str(silence)} if silence else {})}
 
 
@@ -451,12 +443,43 @@ def _class_of(what: str) -> str | None:
     return None
 
 
-def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: dict | None = None) -> dict:
-    """The plan: shots with absolute times and events, beds per place with J/L bridges, music per segment, the needs."""
-    era = infer_historical_period(script)
-    _HEARD.clear()
-    _DECISIONS.clear()
-    _CANDIDATES.clear()
+ERA_BASES = ("manifest", "script")   # FA-09: the era a G4 accepts; a guessed or defaulted era FAILs there
+
+
+def resolve_era(script: dict, era: str | None = None) -> tuple[str, str]:
+    """(era, basis) (Fable audit FA-09): the manifest's ``historical_period.era_id`` (passed by the runner) wins, then the
+    script's own ``historical_period``; otherwise the planner's guess from words (``guessed``) or its Napoleonic fallback
+    (``default``), which G4 refuses."""
+    if era:
+        return str(era), "manifest"
+    hp = script.get("historical_period")
+    hp = hp.get("era_id") if isinstance(hp, dict) else hp
+    if hp:
+        return infer_historical_period({"historical_period": hp}), "script"
+    probe = " ".join(str(script.get(k) or "") for k in ("episode_id", "title", "what_if_premise")).lower()
+    guess = infer_historical_period(script)
+    if guess == "napoleonic_1815" and not any(k in probe for k in ("napoleon", "waterloo", "1815")):
+        return guess, "default"
+    return guess, "guessed"
+
+
+def place_bed(script: dict, place: str, weather: str) -> tuple[list[str], str | None, str]:
+    """(classes, room, basis) of a place's bed (FA-09): the place's authored ``world_bible.locations[].ambience_bed``;
+    without one the weather the planner read from the prose gives a CANDIDATE bed (basis ``candidate:<weather>``), listed
+    at G4 for the architect to author."""
+    for loc in (script.get("world_bible") or {}).get("locations", []):
+        if loc.get("location_id") == place and loc.get("ambience_bed"):
+            bed = loc["ambience_bed"]
+            return list(bed["classes"]), bed.get("room"), "authored"
+    return BED_OF_WEATHER.get(weather, ["wind"]), None, f"candidate:{weather}"
+
+
+def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: dict | None = None,
+          era: str | None = None) -> dict:
+    """The plan: shots with absolute times and events, beds per place with J/L bridges, music per segment, the needs.
+    ``era`` is the manifest's era id (the runner passes it, FA-09); the bed of a place is its authored ``ambience_bed``."""
+    era, era_basis = resolve_era(script, era)
+    state = {"decisions": {}, "candidates": {}, "heard": {}}   # this build's own (FA-18: no module globals)
     shots, blocked, beds = [], [], []
     t = 0.0
     lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
@@ -474,22 +497,25 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
         dur = float(sh.get("target_duration_seconds") or 0.0)
         if dur <= 0:
             raise ContractError(f"{sid}: a shot without a duration has no place on the sound clock")
-        evs, bl = shot_events(sh, script, fps, era, (spines or {}).get(sid))
+        evs, bl = shot_events(sh, script, fps, era, (spines or {}).get(sid), state)
         blocked += bl
         meta = build_shot_sound_design_metadata(sh, shot_start_sec=t, historical_period=era)
         place = sh.get("location_id") or "loc_unknown"
         route = (routes or {}).get(sid) or sh.get("route")
+        bed_classes, bed_room, bed_basis = place_bed(script, place, meta["weather"])
+        room = bed_room or ("cave" if meta["spatial_context"].startswith("indoor") else "outdoor")
         shots.append({"shot_id": sid, "segment_id": sh.get("segment_id"), "start_s": round(t, 3), "dur_s": round(dur, 3),
-                      "route": route, "place": place, "room": "cave" if meta["spatial_context"].startswith("indoor")
-                      else "outdoor", "weather": meta["weather"], "surface": meta["surface"],
+                      "route": route, "place": place, "room": room, "weather": meta["weather"], "surface": meta["surface"],
                       "audio_line_ids": list(sh.get("audio_line_ids") or []), "events": evs,
-                      "visual_events": list(_DECISIONS.get(sid, [])), "candidates": list(_CANDIDATES.get(sid, []))})
+                      "visual_events": list(state["decisions"].get(sid, [])),
+                      "candidates": list(state["candidates"].get(sid, [])),
+                      "heard_not_seen": list(state["heard"].get(sid, []))})
         if beds and beds[-1]["place"] == place:
             beds[-1]["end_s"] = round(t + dur, 3)
             beds[-1]["shot_ids"].append(sid)
         else:
             beds.append({"bed_id": f"BED_{len(beds) + 1:02d}_{place}", "place": place, "room": shots[-1]["room"],
-                         "classes": BED_OF_WEATHER.get(meta["weather"], ["wind"]), "start_s": round(t, 3),
+                         "classes": bed_classes, "basis": bed_basis, "start_s": round(t, 3),
                          "end_s": round(t + dur, 3), "shot_ids": [sid]})
         mood = moods.get(sh.get("segment_id"), ("neutral", "default"))[0]
         on, why = musics.get(sh.get("segment_id"), (True, "no segment: the cue"))
@@ -522,7 +548,8 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
     coverage: dict[str, int] = {}
     for s_ in shots:
         coverage[s_["design"]["state"]] = coverage.get(s_["design"]["state"], 0) + 1
-    return {"schema": SCHEMA, "episode_id": script.get("episode_id"), "era": era, "fps": fps, "duration_s": round(t, 3),
+    return {"schema": SCHEMA, "episode_id": script.get("episode_id"), "era": era, "era_basis": era_basis, "fps": fps,
+            "duration_s": round(t, 3),
             "shots": shots, "beds": beds, "bridges": bridges, "music": music, "blocked_era_events": blocked,
             "segment_moods": {k: {"mood": v[0], "basis": v[1], "music": musics[k][0], "music_reason": musics[k][1]}
                               for k, v in moods.items()}, "coverage": coverage,

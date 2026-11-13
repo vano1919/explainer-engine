@@ -6140,7 +6140,7 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   and S09_SH004 step back to `medium_close_up` (S09_SH004's picture prompt says so too). `av_contract: "av_events/1"`; each
   segment has its authored `mood` (SP-05).
 - Beat stage: 30 shots carry authored `sound_events` with a `class` and a word anchor (`at_word`, every one resolves on the
-  shot's line), `event_id` and `purpose`; three `picture_event` syncs (eruption x2, thunder x2, impact x1). No sound on a
+  shot's line), `event_id` and `purpose`; five `picture_event` syncs (eruption x2, thunder x2, impact x1). No sound on a
   clip-spoken shot (LTX makes that clip's sound). Two `intentional_silence` shots (S05_SH009, S12_SH007).
 - Architect stage: an `ambience_bed` for each of the four places (caldera: eruption_rumble + ash_fall; dry riverbed: wind;
   cave: fire + wind, room cave; Pinnacle Point: water_waves + wind). Caster stage: a `voice_description` for Kael, Sena and

@@ -296,16 +296,27 @@ def _claims_row(ep: Episode, doc: dict) -> dict:
                  f"{no_claim[:10]}, claim not in the map {unknown[:10]}", no_claim[:10] + unknown[:10])
 
 
+def _era(ep: Episode) -> str | None:
+    """The manifest's era id (FA-09): the sound plan's era comes from here, never from a guess."""
+    return str((ep.manifest.get("historical_period") or {}).get("era_id") or "") or None
+
+
 def stage_sound_plan(ep: Episode, rehearsal: bool):
     """G4: the sound plan on the planned clock (the sound stage rebuilds it on the measured one), era-checked, its sources
     resolved, the needs listed."""
     from explainer_engine.episode import sound_plan as SP
-    plan = SP.build(ep.script, fps=ep.fps)
+    plan = SP.build(ep.script, fps=ep.fps, era=_era(ep))
     sources = SP.resolve(plan, ep.sound_library)
     path = SP.write(plan, sources, ep.root)
     needs = SP.needs(sources)
     blocked = plan["blocked_era_events"]
-    rows = [G.row("no_era_foreign_sound_asked", not blocked, f"{len(blocked)} sound event(s) the era never heard, asked "
+    guessed_beds = sorted({b["place"] for b in plan["beds"] if b.get("basis") != "authored"})
+    rows = [G.row("era_from_the_manifest", plan["era_basis"] in SP.ERA_BASES, f"the era is {plan['era']!r} "
+                  f"({plan['era_basis']}): it comes from episode.json historical_period.era_id, never a guess (FA-09)"),
+            G.row("beds_authored_per_place", not guessed_beds, f"{len(guessed_beds)} place(s) without an authored "
+                  "ambience_bed: their bed is a candidate read from the prose (FA-09, the story-architect writes it)",
+                  guessed_beds[:20], level=G.REVIEW),
+            G.row("no_era_foreign_sound_asked", not blocked, f"{len(blocked)} sound event(s) the era never heard, asked "
                   "by the script", blocked[:20]),
             G.row("every_sound_class_has_a_take", not needs, f"{len(needs)} class(es) still need a real take (the needs "
                   "list; new takes are paid credits, the creator's word first)", [n["class"] for n in needs][:30],
@@ -516,7 +527,7 @@ def stage_clips(ep: Episode, rehearsal: bool):
     spines = TM.spines_of(timing)
     pics = json.loads(ep.path("production/pictures.json").read_text(encoding="utf-8"))["pictures"] \
         if ep.path("production/pictures.json").is_file() else {}
-    plan = SP.build(script, fps=ep.fps, spines=spines)
+    plan = SP.build(script, fps=ep.fps, spines=spines, era=_era(ep))
     plan_by = {s["shot_id"]: s for s in plan["shots"]}
     from explainer_engine.episode import events as E
     from explainer_engine.maps import actions as MA
@@ -649,7 +660,7 @@ def stage_sound(ep: Episode, rehearsal: bool):
     script = ep.timed_script()
     timing = ep.timing()
     routes = {r["shot_id"]: (r.get("route") if not r.get("fallback_for_wan") else "still_25d") for r in _records(ep)}
-    plan = SP.build(script, fps=ep.fps, spines=TM.spines_of(timing), routes=routes)
+    plan = SP.build(script, fps=ep.fps, spines=TM.spines_of(timing), routes=routes, era=_era(ep))
     sources = SP.resolve(plan, ep.sound_library)
     SP.write(plan, sources, ep.root)
     read = ep.root / READ_REL

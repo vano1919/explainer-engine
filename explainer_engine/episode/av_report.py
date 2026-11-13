@@ -84,6 +84,17 @@ def event_report(events_doc: dict, plan: dict, sheet: dict | None, stems_report:
                         "onset_s": onset, "onset_off_ms": off_ms,
                         "audible": None if h is None else h.get("status"), "audible_db": None if h is None else h.get("over_db"),
                         "human": "not_listened", "warnings": warnings})
+    # FA-09: a sound no script event asked for (the designed riser from two segment moods) is listed as a DERIVED event with
+    # the reason the cue sheet wrote, so nobody hears a sound the report does not name
+    for r in (sheet or {}).get("rows", []):
+        if r.get("layer") == "transition" and not r.get("event_id"):
+            p = placed.get(r["cue_id"])
+            out.append({"event_id": r["cue_id"], "shot_id": r.get("shot_id"), "op": f"derived:{r.get('class', 'riser')}",
+                        "source": "derived", "frames": None, "start_s": r["start_s"], "decision": "sfx",
+                        "class": r.get("class"), "sync": "end", "why": r.get("selection_reason"), "audio_basis": "derived",
+                        "timing": "cut", "assets": [r["asset_id"]], "placement": [[r["start_s"], r["end_s"]]],
+                        "onset_s": p.get("onset_s") if p else None, "onset_off_ms": None, "audible": None,
+                        "audible_db": None, "human": "not_listened", "warnings": []})
     return {"schema": "av_event_report/1", "episode_id": events_doc.get("episode_id"), "resolver": events_doc.get("resolver"),
             "contract": events_doc.get("contract"), "events": out, "with_warnings": warn_n,
             "note": "machine QC only; a person's listening is recorded separately (review.human)"}
