@@ -103,8 +103,9 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
     return {"in_s": round(f_in / fps, 4), "out_s": round(f_out / fps, 4), "frames": f_out - f_in}
 
 
-def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
-    """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds."""
+def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int, gain_db: float = 0.0) -> Path:
+    """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds. ``gain_db``
+    (HF-4, a level trim, never a boost) is a ``volume`` filter in front of the pad and the trim; the raw file is not touched."""
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".part.mp4")
     dur = frames / fps
@@ -112,7 +113,8 @@ def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
     # ffmpeg with a 30 fps clip on a 24 fps episode); -frames:v caps the picture, atrim the sound
     cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur + 2.0 / fps:.4f}",
            "-vf", f"fps={fps}", "-frames:v", str(frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
-           "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-af", f"apad,atrim=0:{dur:.4f}", str(tmp)]
+           "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+           "-af", (f"volume={gain_db:.3f}dB," if gain_db else "") + f"apad,atrim=0:{dur:.4f}", str(tmp)]
     subprocess.run(cmd, check=True, capture_output=True)
     got = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
                           "stream=nb_read_frames", "-of", "csv=p=0", str(tmp)], capture_output=True, text=True,
@@ -122,6 +124,18 @@ def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
         raise ContractError(f"{Path(raw).name}: the cut has {got} frames, the edit {frames} (from {in_s:.3f} s)")
     tmp.replace(out)
     return out
+
+
+def _level_trim(metrics: dict, finds: list[dict]) -> tuple[float, float | None]:
+    """HF-4: ``(trim in dB, true peak before)`` for a cut that has a CLIP-06 finding that is not PASS: 2 dB, or the excess over
+    BP-50's ceiling plus 1 dB when that is more; ``(0.0, None)`` for a cut that is under the ceiling."""
+    from explainer_engine.qa import targets
+    if not any(f.get("rule") == "CLIP-06" and (f.get("status") or f.get("severity")) != "PASS" for f in finds):
+        return 0.0, None
+    peak = (metrics.get("audio") or {}).get("true_peak")
+    if peak is None:
+        return 0.0, None
+    return -max(2.0, float(peak) - float(targets.PROFILES["long"]["true_peak_max"]) + 1.0), float(peak)
 
 
 def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backend: str = "ltx") -> list[dict]:
@@ -160,6 +174,10 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         t_spans = [(round(max(0.0, a - pts["in_s"]), 3), round(min(pts["frames"] / fps, b - pts["in_s"]), 3))
                    for a, b in spans if b > pts["in_s"] and a < pts["out_s"]]
         metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
+        trim_db, peak_before = _level_trim(metrics, finds)
+        if trim_db:   # HF-4 (FL-401, FL-111, TD-305): CLIP-06 is judged on the trimmed cut; the model's clip stays as it is
+            trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps, gain_db=trim_db)
+            metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
         bad = [f for f in finds if f.get("status") == "FAIL" or f.get("severity") == "FAIL"]
         rec = {"schema": SCHEMA, "shot_id": sid, "route": "video", "backend": backend,
                "status": G.FAIL if bad else (G.REVIEW if any((f.get("status") or f.get("severity")) == "REVIEW"
@@ -170,6 +188,8 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "frames": pts["frames"], "speech_raw": spans, "speech": t_spans, "clip_spoken": sid in spoken,
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
                "findings": finds, "attempts": c.get("attempts") or []}
+        if trim_db:
+            rec.update({"level_trim_db": trim_db, "true_peak_before": peak_before})
         write_json_atomic(vdir / f"{sid}.json", rec)
         out.append(rec)
     return out
@@ -193,7 +213,7 @@ def recut(root: Path, rec: dict, frames: int, fps: int) -> dict:
         raise ContractError(f"{rec['shot_id']}: the shot needs {frames / fps:.2f} s, the raw clip holds {have:.2f} s after "
                             "its in point: make the clip longer (VL-06), it is never stretched")
     out = root / rec["clip_path"]
-    cut(raw, out, float(rec["in_s"]), frames, fps)
+    cut(raw, out, float(rec["in_s"]), frames, fps, gain_db=float(rec.get("level_trim_db") or 0.0))
     new = dict(rec, frames=frames, out_s=round(float(rec["in_s"]) + frames / fps, 4), clip_sha256=_sha(out),
                recut_from=rec.get("frames"))
     write_json_atomic(root / "production" / "video" / f"{rec['shot_id']}.json", new)

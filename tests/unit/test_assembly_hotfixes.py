@@ -253,3 +253,55 @@ def test_the_last_sound_after_an_early_closed_speech_span_keeps_its_level(tmp_pa
     y = VV.read_mono(tmp_path / "v.wav")
     tail, speech = _amp_at(y, 700, 1.0 + 1.02, 1.0 + 1.15), _amp_at(y, 900, 1.0 + 0.2, 1.0 + 0.8)
     assert tail > 0.7 * speech      # the 0.3 s sound is as loud as the line (was 15 dB down)
+
+
+# --- HF-4: a clip over BP-50's ceiling is trimmed in its cut, the raw clip untouched (FL-401, FL-111; TD-305) ----------------
+
+def _speech_clip(tmp_path: Path, name: str, peak: float) -> Path:
+    import test_videolane_media as M   # the media helpers of the video lane's own tests (tests/unit is on the path)
+    audio = M.speechy(5.0, [(0.8, 2.9)])
+    audio = (audio * (peak / float(np.abs(audio).max()))).astype(np.float32)
+    return M.write_clip(tmp_path / f"{name}.mp4", M.moving(120, 1.0), fps=24, audio=audio)
+
+
+def test_a_loud_clip_is_trimmed_in_its_cut_and_ingests_without_a_fail(tmp_path):
+    import test_videolane_media as M
+    from explainer_engine.qa import targets as TG
+    from explainer_engine.videolane import ingest as IN
+    raw = _speech_clip(tmp_path, "C_raw", 0.985)          # about -0.1 dBFS: over the -1 dBTP ceiling
+    raw_bytes = raw.read_bytes()
+    rec = IN.ingest_scene(tmp_path / "ep", M.scene_script(), [{"shot_id": "C", "path": str(raw)}], 24)[0]
+    assert rec["level_trim_db"] <= -2.0 and rec["true_peak_before"] > TG.PROFILES["long"]["true_peak_max"]
+    assert rec["status"] != "FAIL" and not [f for f in rec["findings"] if f["rule"] == "CLIP-06"]
+    assert (tmp_path / "ep" / rec["raw_path"]).read_bytes() == raw_bytes == raw.read_bytes()   # the model's file is untouched
+    assert rec["raw_sha256"] == IN._sha(raw)
+    after = TG.measure_file(tmp_path / "ep" / rec["clip_path"])["true_peak"]
+    assert after <= TG.PROFILES["long"]["true_peak_max"]
+    # the trim rides along when the same clip is cut again for another length
+    again = IN.cut(raw, tmp_path / "again.mp4", rec["in_s"], rec["frames"], 24, gain_db=rec["level_trim_db"])
+    assert TG.measure_file(again)["true_peak"] <= TG.PROFILES["long"]["true_peak_max"]
+
+
+def test_a_clip_under_the_ceiling_gets_no_trim(tmp_path):
+    import test_videolane_media as M
+    from explainer_engine.videolane import ingest as IN
+    raw = _speech_clip(tmp_path, "C_raw", 0.3)
+    rec = IN.ingest_scene(tmp_path / "ep", M.scene_script(), [{"shot_id": "C", "path": str(raw)}], 24)[0]
+    assert "level_trim_db" not in rec and rec["status"] != "FAIL"
+
+
+def test_recut_uses_the_records_level_trim(tmp_path, monkeypatch):
+    from explainer_engine.videolane import ingest as IN
+    seen = {}
+
+    def fake_cut(raw, out, in_s, frames, fps, gain_db=0.0):
+        seen["gain"] = gain_db
+        Path(out).write_bytes(b"cut")
+        return out
+    monkeypatch.setattr(IN, "cut", fake_cut)
+    raw = tmp_path / "raw.mp4"
+    raw.write_bytes(b"x")
+    rec = {"shot_id": "S", "raw_path": "raw.mp4", "raw_sha256": IN._sha(raw), "raw_seconds": 9.0, "in_s": 0.5, "frames": 48,
+           "clip_path": "cut.mp4", "level_trim_db": -2.0}
+    IN.recut(tmp_path, rec, 72, 24)
+    assert seen["gain"] == -2.0
