@@ -5,7 +5,7 @@
   "fps": 24,
   "contract": "av_events/1",
   "decisions": {
-    "silent_by_design": 41,
+    "silent_by_design": 44,
     "ambience_only": 34,
     "ui_cue": 7,
     "sfx": 3
@@ -14,7 +14,7 @@
     "S01_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "cc7e353af36a5105",
+      "events_sha": "e598a910cb1e01db",
       "events": [
         {
           "event_id": "S01_SH001.M1",
@@ -65,12 +65,12 @@
           "shot_id": "S01_SH001",
           "source": "motion_imitation",
           "index": 2,
-          "op": "fire_flicker",
+          "op": "sun_shaft_drift",
           "start_frame": 0,
           "end_frame": 48,
           "audio": {
             "decision": "ambience_only",
-            "why": "the lamps at the trench edges flicker; the fire's crackle is the bed's",
+            "why": "the low sun's light drifts through the fog; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -653,6 +653,79 @@
         }
       ]
     },
+    "S02_SH009": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "eee0cc054fc5edc0",
+      "events": [
+        {
+          "event_id": "S02_SH009.M1",
+          "shot_id": "S02_SH009",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 198,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH009.M2",
+          "shot_id": "S02_SH009",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 198,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the brazier's flame flickers; the fire's crackle is the bed's",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH009.M3",
+          "shot_id": "S02_SH009",
+          "source": "motion_imitation",
+          "index": 2,
+          "op": "smoke_drift",
+          "start_frame": 0,
+          "end_frame": 198,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "breath and brazier smoke rise; heard as nothing",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
     "S03_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
@@ -802,7 +875,7 @@
     "S04_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "683cbf6a2c6ea4e2",
+      "events_sha": "3d9667b20282938f",
       "events": [
         {
           "event_id": "S04_SH001.M1",
@@ -858,7 +931,7 @@
           "end_frame": 72,
           "audio": {
             "decision": "ambience_only",
-            "why": "the low sun's light drifts through the fog; the dawn bed carries it",
+            "why": "the low sun's light drifts through the fog; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -875,7 +948,7 @@
     "S04_SH011": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "73263adc9bf0a711",
+      "events_sha": "5a6ff7bbb7f362d3",
       "events": [
         {
           "event_id": "S04_SH011.M1",
@@ -909,7 +982,7 @@
           "end_frame": 60,
           "audio": {
             "decision": "ambience_only",
-            "why": "the low sun's light drifts behind the hands; the dawn bed carries it",
+            "why": "the low sun's light drifts behind the hands; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1281,7 +1354,7 @@
     "S05_SH010": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "d1b740555bfdbff8",
+      "events_sha": "57630f09a4460fa4",
       "events": [
         {
           "event_id": "S05_SH010.M1",
@@ -1315,7 +1388,7 @@
           "end_frame": 72,
           "audio": {
             "decision": "ambience_only",
-            "why": "the low sun's light drifts behind the hands; the dawn bed carries it",
+            "why": "the low sun's light drifts behind the hands; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1354,7 +1427,7 @@
     "S05_SH016": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "1abf30f00f40fcf2",
+      "events_sha": "cd35f0aafa3c9388",
       "events": [
         {
           "event_id": "S05_SH016.M1",
@@ -1405,12 +1478,12 @@
           "shot_id": "S05_SH016",
           "source": "motion_imitation",
           "index": 2,
-          "op": "fire_flicker",
+          "op": "sun_shaft_drift",
           "start_frame": 0,
           "end_frame": 72,
           "audio": {
             "decision": "ambience_only",
-            "why": "the braziers flicker; the fire's crackle is the bed's",
+            "why": "the low sun's light drifts over the spades and the stretcher; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1427,7 +1500,7 @@
     "S05_SH020": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "911035398452e1b3",
+      "events_sha": "bb98e64f47087a23",
       "events": [
         {
           "event_id": "S05_SH020.M1",
@@ -1483,7 +1556,7 @@
           "end_frame": 186,
           "audio": {
             "decision": "ambience_only",
-            "why": "the low sun's light drifts over the graves; the dawn bed carries it",
+            "why": "the low sun's light drifts over the graves; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1573,7 +1646,7 @@
     "S06_SH005": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "f64b5b350a193ff5",
+      "events_sha": "0e569ddcafed1cfa",
       "events": [
         {
           "event_id": "S06_SH005.M1",
@@ -1629,7 +1702,7 @@
           "end_frame": 72,
           "audio": {
             "decision": "ambience_only",
-            "why": "the low sun's light drifts over the ice; the dawn bed carries it",
+            "why": "the low sun's light drifts over the ice; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1719,7 +1792,7 @@
     "S07_SH001": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "b8abbcc6773ce2d2",
+      "events_sha": "0014e9d15fa685a2",
       "events": [
         {
           "event_id": "S07_SH001.M1",
@@ -1775,7 +1848,7 @@
           "end_frame": 114,
           "audio": {
             "decision": "ambience_only",
-            "why": "the low sun's light drifts through the mist; the dawn bed carries it",
+            "why": "the low sun's light drifts through the mist; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1865,7 +1938,7 @@
     "S08_SH002": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "13fcf3595152b521",
+      "events_sha": "075a642ef3de573f",
       "events": [
         {
           "event_id": "S08_SH002.M1",
@@ -1898,8 +1971,8 @@
           "start_frame": 0,
           "end_frame": 210,
           "audio": {
-            "decision": "ambience_only",
-            "why": "the candle's flame flickers; its sound is the bed's",
+            "decision": "silent_by_design",
+            "why": "a candle makes no sound",
             "sync": "onset"
           },
           "audio_basis": "authored",
@@ -1938,7 +2011,7 @@
     "S08_SH003": {
       "spine_sha": "4f53cda18c2baa0c",
       "spine_basis": "estimated",
-      "events_sha": "716f1bd4c40e4c5a",
+      "events_sha": "db572a29a48428ed",
       "events": [
         {
           "event_id": "S08_SH003.M1",
@@ -1994,7 +2067,7 @@
           "end_frame": 96,
           "audio": {
             "decision": "ambience_only",
-            "why": "the last low sun's light drifts over the field; the bed carries it",
+            "why": "the last low sun's light drifts over the field; the place's bed carries it",
             "sync": "onset"
           },
           "audio_basis": "authored",

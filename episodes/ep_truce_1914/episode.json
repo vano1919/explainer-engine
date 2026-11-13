@@ -233,6 +233,16 @@
       "lon": 2.845,
       "lat": 50.765,
       "name": "Wulverghem"
+    },
+    "chip_aug": {
+      "lon": 1.584,
+      "lat": 50.892,
+      "name": "date chip (top left of S02_SH001)"
+    },
+    "chip_dec": {
+      "lon": -1.119,
+      "lat": 51.182,
+      "name": "date chip (top left of S02_SH002)"
     }
   }
 }

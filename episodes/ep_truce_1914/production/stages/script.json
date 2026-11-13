@@ -68,13 +68,13 @@
       "gate": "video_shots_fit_the_model",
       "status": "PASS",
       "measured": [],
-      "detail": "0 of 57 video shot(s) need more than one clip of the LTX model Lightricks/LTX-2.5 (10.06 s at 24 fps, VL-06): split the line or the shot in the script"
+      "detail": "0 of 56 video shot(s) need more than one clip of the LTX model Lightricks/LTX-2.5 (10.06 s at 24 fps, VL-06): split the line or the shot in the script"
     },
     {
       "gate": "video_edit_plan",
       "status": "PASS",
       "measured": [],
-      "detail": "0 FAIL finding(s) over 57 video shot(s) (VL-01..VL-06)"
+      "detail": "0 FAIL finding(s) over 56 video shot(s) (VL-01..VL-06)"
     },
     {
       "gate": "video_edit_plan_review",
@@ -133,8 +133,8 @@
     {
       "gate": "video_share_against_target",
       "status": "PASS",
-      "measured": 0.6008,
-      "detail": "video 60.1% of the duration (estimated), D-131's target 60% (+-10 points); switch Q7 = sample_review_full_fail, run_scope full"
+      "measured": 0.5783,
+      "detail": "video 57.8% of the duration (estimated), D-131's target 60% (+-10 points); switch Q7 = sample_review_full_fail, run_scope full"
     }
   ],
   "outputs": {
@@ -143,13 +143,13 @@
       "total_seconds": 367.0,
       "seconds": {
         "map_action": 32.0,
-        "still_25d": 114.5,
-        "video": 220.5
+        "still_25d": 122.75,
+        "video": 212.25
       },
       "shares": {
         "map_action": 0.0872,
-        "still_25d": 0.312,
-        "video": 0.6008
+        "still_25d": 0.3345,
+        "video": 0.5783
       },
       "unrouted": []
     },
@@ -157,7 +157,7 @@
     "audit_status": "PASS"
   },
   "rehearsal": false,
-  "fingerprint": "a8e0f463b7bd729d5c3b40c725766cb733f5d49364903eb63c96843826848ad0",
+  "fingerprint": "472f900a30a486a51aa418544003a0af524ebf51d82b9436bd347dd367fa9b43",
   "elapsed_s": 0.21,
-  "at": "2026-11-13T19:28:34Z"
+  "at": "2026-11-13T19:36:20Z"
 }

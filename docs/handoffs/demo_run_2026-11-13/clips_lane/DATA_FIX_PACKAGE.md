@@ -1,3 +1,23 @@
+# FINAL (2026-11-13 19:40 UTC), supersedes the numbers below where they differ
+
+Script A sha256 **1c117e129b5e55da46f55168ba34f8e7188a563ddb1b5328fe814b0934e62660**; `episode.json` sha256 `c85da546a33af2a47bca177cbee9ff48a131ab985b1e4b111ae9deaa1658c36b`
+(two corner places for the date labels). Base `9be981d5...` (bf505m). The first commit d23b700 (sha `aab6686e...`) is withdrawn.
+ვანო's answers: card 1 = A (end card with one candle), card 2 = A (S02_SH009 becomes a 2.5D shot; the "move the pause" answer cannot survive
+G6, audit FL-303; `ingest.recut` never stretches a short raw clip). Builder defaults now = these answers.
+
+Audit round 1 fixes (journal part AUDIT, FL-301..305): S01_SH001 and S05_SH016 get `sun_shaft_drift` instead of a regionless fire mask;
+S02_SH004 `fire_flicker` region [0.57, 0.60, 0.70, 0.80] (the brazier) and S08_SH002 [0.78, 0.30, 0.92, 0.62] (the candle), end card [0.74, 0.48, 0.86, 0.72]
+(measured effect-only: the changed pixels sit on the brazier and the candle, 0 % in the top third for S02_SH004); fire on S01_SH001, S05_SH016, S08_SH002 is
+silent_by_design (no new `fire` events; G4 events differ from the base only by S02_SH009 `fire`, the British trench bed); "dawn bed" texts removed;
+date labels `chip_aug` / `chip_dec` (top-left corner of each map frame, looked at on rendered frames) instead of Aachen / Nieuport;
+LTX thread's three voice_description texts added (caster-owned fields, voice_card untouched); S02_SH009 2.5D = push + brazier flicker + smoke (silent).
+End card picture: `clips_lane/pictures/S08_SH004_start_candle.png` sha256 `6246cc1eae8612aa1d48dac0f26f1cc7f674adbe85d66b8d5ce566e00f99b224`
+(a soft-masked crop of the candle of S08_SH002 on black, local, free); G5 intake row: the intake gate `no_letterbox` (edge bands) rejects it exactly like the
+black frame (LTX FL-103), so G5 stays a rehearsal row for this one picture until the creator waives that gate for the end card (RC, not asked yet).
+Not in this package (picture decisions, would add another sha): the S03_SH003 jump cut and the repeated two-shots (S04_SH009/010/012/014, S05_SH007/009).
+
+---
+
 # Script A data fix package (clips lane, 2026-11-13 ~19:30 UTC)
 
 Script A now: `9be981d5b2ede82dabefc52dc2fb17db2fe26dad8486993cbcb669c64726e1f8` (commit on `claude/project-thread-bf505m`, SF-006..008).

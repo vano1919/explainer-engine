@@ -38,7 +38,7 @@
       "gate": "av_events_decided",
       "status": "PASS",
       "measured": [],
-      "detail": "85 visible event(s) {'silent_by_design': 41, 'ambience_only': 34, 'ui_cue': 7, 'sfx': 3}; review_required []; 42 word candidate(s) listed, none placed (AV-07)"
+      "detail": "88 visible event(s) {'silent_by_design': 44, 'ambience_only': 34, 'ui_cue': 7, 'sfx': 3}; review_required []; 41 word candidate(s) listed, none placed (AV-07)"
     }
   ],
   "outputs": {
@@ -48,7 +48,7 @@
     "av_events": "production/av_events.json"
   },
   "rehearsal": false,
-  "fingerprint": "a70c30dca8f3f10f68c6c3580db679760d74bf330b9ab94ce97a078d7615b208",
-  "elapsed_s": 0.16,
-  "at": "2026-11-13T19:28:35Z"
+  "fingerprint": "6d4bdddbf29c964a36eee08a4b878c0e7b991e9a2297f48782ce3ee33c707eab",
+  "elapsed_s": 0.14,
+  "at": "2026-11-13T19:36:20Z"
 }

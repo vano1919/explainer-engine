@@ -33,7 +33,7 @@
      "pace": "quick, then hesitant",
      "accent": "a working-class East Midlands English accent"
     },
-    "voice_description": "a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+    "voice_description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
     "voice_profile_id": "voice_thomas_hale_1914"
    },
    {
@@ -49,7 +49,7 @@
      "pace": "calm and careful",
      "accent": "a German accent with English learned in London"
     },
-    "voice_description": "a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+    "voice_description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
     "voice_profile_id": "voice_friedrich_brandt_1914"
    },
    {
@@ -65,7 +65,7 @@
      "pace": "clipped and hard",
      "accent": "a Lancashire English accent"
     },
-    "voice_description": "a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
+    "voice_description": "the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
     "voice_profile_id": "voice_sgt_harris_1914"
    }
   ],
@@ -1759,11 +1759,11 @@
      }
     },
     {
-     "effect": "fire_flicker",
+     "effect": "sun_shaft_drift",
      "event_id": "S01_SH001.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the lamps at the trench edges flicker; the fire's crackle is the bed's"
+      "why": "the low sun's light drifts through the fog; the place's bed carries it"
      }
     }
    ],
@@ -2169,7 +2169,7 @@
       "sync": "onset",
       "purpose": "clarify"
      },
-     "from": "aachen"
+     "from": "chip_aug"
     },
     {
      "kind": "route_arrow",
@@ -2264,7 +2264,7 @@
       "sync": "onset",
       "purpose": "clarify"
      },
-     "from": "nieuport"
+     "from": "chip_dec"
     },
     {
      "kind": "front_line",
@@ -2500,7 +2500,13 @@
      "audio": {
       "decision": "ambience_only",
       "why": "the brazier's flame flickers; the fire's crackle is the bed's"
-     }
+     },
+     "region": [
+      0.57,
+      0.6,
+      0.7,
+      0.8
+     ]
     }
    ],
    "motion_profile": "battle"
@@ -2845,8 +2851,8 @@
    "segment_id": "S02",
    "target_duration_seconds": 8.25,
    "narrative_purpose": "Christmas Eve arrives as parcels: British soldiers open Princess Mary's brass tins (bodies at work, narrated)",
-   "visual_type": "cinematic_video",
-   "generation_mode": "WAN_I2V",
+   "visual_type": "composed_illustration",
+   "generation_mode": "STILL_25D",
    "location_id": "loc_british_trench",
    "character_ids": [],
    "prop_ids": [],
@@ -2876,7 +2882,7 @@
    "keyframe_plan": {
     "needs_start_frame": true,
     "needs_end_frame": false,
-    "start_frame_source": "reference_derived_anchor",
+    "start_frame_source": "new_master_anchor",
     "end_frame_reason": null
    },
    "image_prompt": {
@@ -2885,29 +2891,45 @@
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
    "video_prompt": {
-    "motion_prompt": "The soldiers open their brass tins and pass cigarettes along the step.",
+    "motion_prompt": "A slow push toward the men as the narrator names the tins.",
     "primary_action_count": 1,
-    "camera_move_count": 0,
-    "parallax_preset": null
+    "camera_move_count": 1,
+    "parallax_preset": "dolly_in"
    },
    "selective_control": null,
    "transition_out": "hard_cut",
-   "route": "video",
-   "route_reason": "a hero speaks or a body performs in this shot; LTX clip, one line at most (RT-02, VL-02)",
+   "route": "still_25d",
+   "route_reason": "place, object or tableau with no line spoken in frame: the 2.5D renderer carries it (RT-02)",
    "route_locked": true,
    "shot_role": "action",
-   "edit_plan": {
-    "continuity_mode": "coverage",
-    "cut_in_reason": "time_cut",
-    "scene_master": "S02_SH004_start",
-    "axis_side": "A",
-    "screen_direction": "none",
-    "camera_in": "rest",
-    "camera_out": "rest",
-    "screen_positions": {},
-    "head_handle_s": 0.0,
-    "tail_handle_s": 0.0
-   }
+   "motion_profile": "battle",
+   "motion_imitation": [
+    {
+     "effect": "push",
+     "event_id": "S02_SH009.M1",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "a slow camera move under the voice (BP-81 budget)"
+     },
+     "strength": 0.6
+    },
+    {
+     "effect": "fire_flicker",
+     "event_id": "S02_SH009.M2",
+     "audio": {
+      "decision": "ambience_only",
+      "why": "the brazier's flame flickers; the fire's crackle is the bed's"
+     }
+    },
+    {
+     "effect": "smoke_drift",
+     "event_id": "S02_SH009.M3",
+     "audio": {
+      "decision": "silent_by_design",
+      "why": "breath and brazier smoke rise; heard as nothing"
+     }
+    }
+   ]
   },
   {
    "shot_id": "S03_SH001",
@@ -3763,7 +3785,7 @@
      "event_id": "S04_SH001.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the low sun's light drifts through the fog; the dawn bed carries it"
+      "why": "the low sun's light drifts through the fog; the place's bed carries it"
      }
     }
    ],
@@ -4496,7 +4518,7 @@
      "event_id": "S04_SH011.M2",
      "audio": {
       "decision": "ambience_only",
-      "why": "the low sun's light drifts behind the hands; the dawn bed carries it"
+      "why": "the low sun's light drifts behind the hands; the place's bed carries it"
      }
     },
     {
@@ -5667,7 +5689,7 @@
      "event_id": "S05_SH010.M2",
      "audio": {
       "decision": "ambience_only",
-      "why": "the low sun's light drifts behind the hands; the dawn bed carries it"
+      "why": "the low sun's light drifts behind the hands; the place's bed carries it"
      }
     },
     {
@@ -6128,11 +6150,11 @@
      }
     },
     {
-     "effect": "fire_flicker",
+     "effect": "sun_shaft_drift",
      "event_id": "S05_SH016.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the braziers flicker; the fire's crackle is the bed's"
+      "why": "the low sun's light drifts over the spades and the stretcher; the place's bed carries it"
      }
     }
    ],
@@ -6445,7 +6467,7 @@
      "event_id": "S05_SH020.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the low sun's light drifts over the graves; the dawn bed carries it"
+      "why": "the low sun's light drifts over the graves; the place's bed carries it"
      }
     }
    ],
@@ -6917,7 +6939,7 @@
      "event_id": "S06_SH005.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the low sun's light drifts over the ice; the dawn bed carries it"
+      "why": "the low sun's light drifts over the ice; the place's bed carries it"
      }
     }
    ],
@@ -7540,7 +7562,7 @@
      "event_id": "S07_SH001.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the low sun's light drifts through the mist; the dawn bed carries it"
+      "why": "the low sun's light drifts through the mist; the place's bed carries it"
      }
     }
    ],
@@ -8227,9 +8249,15 @@
      "effect": "fire_flicker",
      "event_id": "S08_SH002.M2",
      "audio": {
-      "decision": "ambience_only",
-      "why": "the candle's flame flickers; its sound is the bed's"
-     }
+      "decision": "silent_by_design",
+      "why": "a candle makes no sound"
+     },
+     "region": [
+      0.78,
+      0.3,
+      0.92,
+      0.62
+     ]
     },
     {
      "effect": "dust",
@@ -8322,7 +8350,7 @@
      "event_id": "S08_SH003.M3",
      "audio": {
       "decision": "ambience_only",
-      "why": "the last low sun's light drifts over the field; the bed carries it"
+      "why": "the last low sun's light drifts over the field; the place's bed carries it"
      }
     }
    ],
@@ -8397,6 +8425,12 @@
     {
      "effect": "fire_flicker",
      "event_id": "S08_SH004.M2",
+     "region": [
+      0.74,
+      0.48,
+      0.86,
+      0.72
+     ],
      "audio": {
       "decision": "silent_by_design",
       "why": "the film ends in silence; the candle's flicker makes no sound"
