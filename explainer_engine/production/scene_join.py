@@ -32,6 +32,7 @@ from pathlib import Path
 
 import numpy as np
 
+from explainer_engine.audio import mix_check as MC
 from explainer_engine.audio import stems as ST
 from explainer_engine.audio.free_import import decode
 from explainer_engine.core.errors import ContractError
@@ -143,8 +144,15 @@ def _lufs_of(x: np.ndarray) -> float:
 
 def plan_of(card: dict, clips: list[dict]) -> dict:
     """A sound_plan/1 of the scene: one shot per clip, one bed for the place (the scene is one place), the spots as authored
-    events. No music: a dialogue scene's music is the episode's cue, not the join's."""
+    events (with their ``distance``), and, when the card names them, music cues by mood (``music``: clip ranges with a mood;
+    a mood change crossfades and a turn into a tense or violent mood gets the designed riser, ``episode/cue_sheet``). Each
+    shot carries its design (coverage state, layers, the ten answers) from what the card says the clip shows (``what``)."""
     shots, t = [], 0.0
+    music_of = {}
+    for k, m in enumerate(card.get("music", [])):
+        ids = [c["id"] for c in clips]
+        for cid in ids[ids.index(m["from"]):ids.index(m["to"]) + 1]:
+            music_of[cid] = (f"{card['scene']}_m{k + 1}", m["mood"])
     for c in clips:
         evs = []
         for sp in card.get("spots", []):
@@ -152,20 +160,43 @@ def plan_of(card: dict, clips: list[dict]) -> dict:
                 continue
             at = sp["at_s"] - c["in_s"]
             if 0 <= at <= c["dur_s"]:
-                evs.append(SP._event(sp["class"], at, "authored", FPS, what=sp.get("what", sp["class"])))
-        shots.append({"shot_id": c["id"], "segment_id": card["scene"], "start_s": round(t, 3), "dur_s": c["dur_s"],
+                extra = {k: sp[k] for k in ("distance", "pan", "library_id", "dur_s") if k in sp}
+                evs.append(SP._event(sp["class"], at, "authored", FPS, what=sp.get("what", sp["class"]), **extra))
+        seg, mood = music_of.get(c["id"], (card["scene"], "neutral"))
+        shots.append({"shot_id": c["id"], "segment_id": seg, "start_s": round(t, 3), "dur_s": c["dur_s"],
                       "route": "ltx", "place": card["place"], "room": card.get("room", "outdoor"), "weather": "card",
-                      "surface": "card", "audio_line_ids": [], "events": evs})
+                      "surface": "card", "audio_line_ids": [c["line"]] if c.get("line") else [], "events": evs,
+                      "mood": mood})
         t += c["dur_s"]
     bed = {"bed_id": f"BED_01_{card['place']}", "place": card["place"], "room": card.get("room", "outdoor"),
            "classes": list(card["bed"]), "start_s": 0.0, "end_s": round(t, 3), "shot_ids": [c["id"] for c in clips]}
-    classes = sorted(set(card["bed"]) | {e["class"] for s in shots for e in s["events"]})
+    music, moods = [], {}
+    for s in shots:
+        if s["shot_id"] not in music_of:
+            continue
+        if music and music[-1]["segment_id"] == s["segment_id"]:
+            music[-1]["end_s"] = round(s["start_s"] + s["dur_s"], 3)
+        else:
+            music.append({"music_id": f"MUS_{s['segment_id']}", "segment_id": s["segment_id"], "start_s": s["start_s"],
+                          "end_s": round(s["start_s"] + s["dur_s"], 3), "mood": s["mood"], "mood_basis": "card",
+                          "reason": f"the card's {s['mood']} cue"})
+        moods[s["segment_id"]] = {"mood": s["mood"], "basis": "card", "music": True, "music_reason": "the card's cue"}
+    clip_of = {c["id"]: c for c in clips}
+    for s in shots:
+        on = s["shot_id"] in music_of
+        sh = {"shot_id": s["shot_id"], "route": "ltx", "action_start_state": clip_of[s["shot_id"]].get("what", "")}
+        s["design"] = SP.design_of(sh, s, bed, s["mood"], on, f"the card's {s['mood']} cue" if on else "no cue on this clip")
+    classes = sorted(set(card["bed"]) | {e["class"] for s in shots for e in s["events"]} | ({"music_bed"} if music else set())
+                     | ({"riser"} if card.get("transitions", True) and len(music) > 1 else set()))
     for cls in classes:
         if cls not in SP.EVENT_CLASSES:
             raise ContractError(f"{cls}: not a class of sound_plan.EVENT_CLASSES")
+    coverage: dict[str, int] = {}
+    for s in shots:
+        coverage[s["design"]["state"]] = coverage.get(s["design"]["state"], 0) + 1
     return {"schema": SP.SCHEMA, "episode_id": card["scene"], "era": card.get("era", "unknown"), "fps": FPS,
-            "duration_s": round(t, 3), "shots": shots, "beds": [bed], "bridges": [], "music": [], "blocked_era_events": [],
-            "classes": classes}
+            "duration_s": round(t, 3), "shots": shots, "beds": [bed], "bridges": [], "music": music, "blocked_era_events": [],
+            "segment_moods": moods, "coverage": coverage, "classes": classes}
 
 
 def join(card: dict, out_dir: Path, *, clip_root: Path, library_root: Path, pause_s: float, bed_under_lu: float,
@@ -195,7 +226,8 @@ def join(card: dict, out_dir: Path, *, clip_root: Path, library_root: Path, paus
             seg = seg * between_lines_gain(len(seg), sp)
         seg = _fade_ends(seg, CLIP_FADE_S)
         clips.append({"id": c["id"], "file": c["file"], "in_s": a, "out_s": b, "dur_s": round(b - a, 4), "spans": sp,
-                      "gain_db": round(gain_db, 2), "audio": seg, "line": c.get("line", c["id"]) if sp else None})
+                      "gain_db": round(gain_db, 2), "audio": seg, "line": c.get("line", c["id"]) if sp else None,
+                      "what": c.get("what", "")})
     plan = plan_of(card, clips)
     sources = SP.resolve(plan, library_root)
     ok, why = SP.shippable(sources, plan)
@@ -215,9 +247,12 @@ def join(card: dict, out_dir: Path, *, clip_root: Path, library_root: Path, paus
     dpath = out_dir / f"dialogue_{card['scene']}.wav"
     _write_wav(dpath, dialogue)
     rep = ST.render(plan, sources, out_dir / "stems", library_root=library_root, narration=dpath, shippable=True)
-    nar = read_stereo(out_dir / "stems" / "narration.wav")
+    # the voice from the dialogue itself: the stems' own peak guard scales every stem together when a war cry and a horn peak at
+    # once, which would pull the dialogue down here; the join sets the bed against the voice below and limits its own mix
+    nar = np.stack([dialogue, dialogue], axis=1)
     amb = read_stereo(out_dir / "stems" / "ambience.wav")
     sfx = read_stereo(out_dir / "stems" / "sfx.wav")
+    mus = read_stereo(out_dir / "stems" / "music.wav")
     # the variant's bed level: the bed (ambience + spots) under speech sits bed_under_lu under the speech (BP-52)
     tl = timeline(card, clips, plan)
     sp_mask = np.zeros(n, bool)
@@ -226,10 +261,18 @@ def join(card: dict, out_dir: Path, *, clip_root: Path, library_root: Path, paus
     voice_l = _lufs_of(nar.mean(axis=1)[sp_mask])
     bg_l = _lufs_of((amb + sfx).mean(axis=1)[sp_mask])
     g = 10 ** ((voice_l - bed_under_lu - bg_l) / 20)
-    mix = nar + (amb + sfx) * np.float32(g)
+    bus = (amb + sfx + mus) * np.float32(g)            # the music keeps its place against the bed (cue_sheet LEVELS)
+    env = ST.bus_limit(nar, bus)[:, None]              # a horn or a war cry dips the background, never the voice
+    mix = nar + bus * env
+    k = 1.0
     pk = float(np.max(np.abs(mix)))
     if pk > 0.89:
-        mix *= 0.89 / pk
+        k = 0.89 / pk
+        mix *= k
+    final = out_dir / "final_stems"                     # the stems exactly as they sit in the delivered mix
+    for name, x in (("narration", nar * k), ("music", mus * np.float32(g) * env * k), ("ambience", amb * np.float32(g) * env * k),
+                    ("sfx", sfx * np.float32(g) * env * k), ("mix", mix)):
+        ST._write(final / f"{name}.wav", x.astype(np.float32))
     mpath = out_dir / "mix.wav"
     with wave.open(str(mpath), "wb") as w:
         w.setnchannels(2)
@@ -241,11 +284,16 @@ def join(card: dict, out_dir: Path, *, clip_root: Path, library_root: Path, paus
     write_json_atomic(out_dir / "timeline.json", {k: v for k, v in tl.items() if k != "speech_spans"})
     gate = R.measure(video, tl)
     write_json_atomic(out_dir / "sound_realism.json", gate)
+    sheet = json.loads((out_dir / "stems" / "cue_sheet.json").read_text(encoding="utf-8"))
+    mixq = MC.check(final, plan=plan, sheet=sheet)
+    write_json_atomic(out_dir / "mix_check.json", mixq)
     out = {"schema": "scene_join_report/1", "label": label, "status": "BUILT", "video": str(video),
            "pause_s": pause_s, "tail_s": tail, "head_s": head, "bed_under_voice_lu": bed_under_lu,
            "measured_bed_gain_db": round(R.db(g), 2), "voice_lufs_in_speech": voice_l, "bed_lufs_in_speech_before": bg_l,
            "clips": [{k: v for k, v in c.items() if k != "audio"} for c in clips], "sounds_used": rep["sounds_used"],
-           "stems_gates": rep["gates"], "gate": {r["gate"]: r["status"] for r in gate["rows"]}, "verdict": gate["verdict"]}
+           "stems_gates": rep["gates"], "gate": {r["gate"]: r["status"] for r in gate["rows"]}, "verdict": gate["verdict"],
+           "mix_check": {r["gate"]: r["status"] for r in mixq["rows"]}, "mix_numbers": mixq["numbers"],
+           "cue_gate": rep.get("cue_gate"), "coverage": plan.get("coverage"), "credits": rep.get("credits", [])}
     write_json_atomic(out_dir / "scene_join_report.json", out)
     return out
 

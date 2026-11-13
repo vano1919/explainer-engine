@@ -37,3 +37,8 @@ id_ed25519*
 
 # local Claude Code settings (may hold permissions or keys)
 .claude/settings.local.json
+
+# sound library (LIB-06): originals and derived indexes stay out of git
+assets/audio/originals/
+assets/audio/library/catalog.sqlite
+assets/audio/previews/

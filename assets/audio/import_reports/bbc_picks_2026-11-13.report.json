@@ -1,0 +1,214 @@
+{
+  "schema": "sound_import_report/1",
+  "picks": "assets/audio/bbc_picks_2026-11-13.json",
+  "read_on": "2026-11-13",
+  "stored": [
+    {
+      "id": "cart_wooden_travel__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 41.2
+    },
+    {
+      "id": "cart_two_horse_walk__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 41.0
+    },
+    {
+      "id": "cart_two_horse_trot__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 38.7
+    },
+    {
+      "id": "wheels_wooden_squeak__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 30.7
+    },
+    {
+      "id": "battle_11c_atmos__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 61.4
+    },
+    {
+      "id": "battle_swords_axes__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 61.0
+    },
+    {
+      "id": "battle_crowd_taunting__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 61.5
+    },
+    {
+      "id": "battle_crowd_angry__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 61.1
+    },
+    {
+      "id": "army_waiting_murmur__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 59.3
+    },
+    {
+      "id": "battle_crowd_crescendo__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 29.861
+    },
+    {
+      "id": "melee_twelve_men__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 39.3
+    },
+    {
+      "id": "battle_horses_shouts__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 60.9
+    },
+    {
+      "id": "horses_troop_gallop__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 39.7
+    },
+    {
+      "id": "horses_two_gallop_past__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 22.323
+    },
+    {
+      "id": "charge_reenactment__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 39.8
+    },
+    {
+      "id": "soldiers_march_soft__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 41.1
+    },
+    {
+      "id": "soldiers_march_gravel__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 39.0
+    },
+    {
+      "id": "bow_twang_hits__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 6.037
+    },
+    {
+      "id": "arrows_passing__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 6.0
+    },
+    {
+      "id": "drums_tattoo__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 29.1
+    },
+    {
+      "id": "harbour_wall_gulls__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 27.6
+    },
+    {
+      "id": "ship_deck_sails__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 58.8
+    },
+    {
+      "id": "ship_cabin_creak__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 58.5
+    },
+    {
+      "id": "bonfire_close__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 58.6
+    },
+    {
+      "id": "fire_small_cracks__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 41.3
+    },
+    {
+      "id": "church_bells_village__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 58.7
+    },
+    {
+      "id": "church_bells_ten__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 59.2
+    },
+    {
+      "id": "thunderstorm_heavy__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 60.6
+    },
+    {
+      "id": "woodland_wind_birds__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 59.9
+    },
+    {
+      "id": "village_farm_edge__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 58.5
+    },
+    {
+      "id": "blacksmith_anvil__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 29.7
+    },
+    {
+      "id": "drawbridge_lowered__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 20.024
+    },
+    {
+      "id": "horn_call_signal__v1",
+      "licence": "bbc_remarc",
+      "qc": "REVIEW",
+      "seconds": 11.194
+    },
+    {
+      "id": "army_camp_16c__v1",
+      "licence": "bbc_remarc",
+      "qc": "PASS",
+      "seconds": 59.3
+    }
+  ],
+  "quarantined": [],
+  "rejected": [],
+  "failed": []
+}

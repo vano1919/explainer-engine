@@ -5758,3 +5758,35 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   stricter); docs_lint 0 findings.
 - Next: the creator listens and picks the house numbers (pause 0.3/0.5 s, bed 15/18 LU, overlay sounds +8/+14 dB); the priced ElevenLabs list
   (253 credits, 1153 with a map music bed) waits for his word.
+
+## 2026-11-13 — A professional sound library and a designed sound for every shot (branch `claude/project-thread-xpsv3w`, D-134)
+
+- Asked by the creator (07:07 UTC, the brief "Build a Professional Sound Design Asset Library and Layered Audio System"; 07:24 UTC: licence
+  matters only for the background music, effects by quality; 07:49 UTC card: BBC too). Built on the W1 library and `episode/sound_plan`, no
+  parallel framework.
+- Library (LIB-01..LIB-08, [SOUND_LIBRARY](SOUND_LIBRARY.md)): `audio/sources.py` (licence table, readers for OpenGameArt, Mixkit, Incompetech
+  and the BBC archive's public API, the blocked sources with dates, the creator's licence scope `verdict(use=)`), `audio/asset_qc.py` (probe,
+  sha256, measure, clipping plateaus, silence, DC, noise floor, loop seams, fingerprints and near duplicates), `free_import.run2` (pick lists
+  `free_sound_picks/2`, originals kept and never overwritten, the head of a long archive recording only), `audio/catalog.py` (migrate, requalify,
+  SQLite index, search with every dimension, previews with spectrograms, credits, report), `assets/audio/taxonomy.json`, the manifest schema
+  extended (`track` kind, licence fields, `catalog`, `original`, `qc`). 260 items now: Mixkit 74, BBC 34, Incompetech 15 tracks, OGA 64,
+  ElevenLabs 12, procedural 45, quarantined generated takes 16. Nobody has listened to the new takes (`review.human: not_listened`).
+- Design (SP-03..SP-07, [EPISODE_FIRST](EPISODE_FIRST.md)): a word places a sound only when the picture shows it (`heard_not_seen` otherwise);
+  map shots take no word events; distance from the composition plane or shot size; every shot carries a `design` (one of seven coverage states,
+  six layers with reasons, the brief's ten answers; intentional silence needs its sentence); segment moods from their own words and music only
+  where it supports the scene; `episode/cue_sheet.py` (rows with asset, time, gain, pan, fades, pitch, EQ, reverb, duck group, priority, reason,
+  confidence, licence; take rotation with BP-57 jitter, the most specific take first; music runs by mood with crossfades; a designed riser into a
+  tense turn; validation and `sound_coverage.json/.md`); `audio/stems.render` now plays the cue sheet and refuses a FAILing sheet in a shippable
+  render; `stems.bus_limit` dips the background, never the voice, under a peak; `audio/mix_check.py` (delivered loudness and true peak after the
+  assembly's normalisation, clipping, digital silence, BP-52 in LU, masked shots). `production/scene_join` builds music, designs and moods from
+  the card, keeps the dialogue's own level (the stems' peak guard used to pull it down) and writes `final_stems/` and `mix_check.json`.
+- Demo (the W1 battle's four LTX clips, local, free): `assets/audio/scene_cards/battle_troy_2026-11-12.json` (W1) against
+  `battle_troy_2026-11-13.json` (designed). W1 card: AMBIENCE_ONLY x4, no action sound measured (NOT_RUN), BP-52 bed 17.7 LU. Designed: 
+  FULL_LAYERED_DESIGN x3 + MUSIC_SUPPORTED x1, 6 action sounds heard (BP-192 PASS; level REVIEW), tense cue -> aggressive cue crossfaded with a
+  riser on the c3->c4 cut, combined background 15.3 LU under the voice, both delivered at -14.0 LUFS with true peak -1.9/-2.1 dBTP, no clipping,
+  no digital silence, the cue sheet PASS. REVIEW in both: the c1->c2 pause measures 0.68 s on the final file (0.4 s in W1's own run with other bed
+  takes: the VAD reads the march bed), c3's background within 10 dB of the voice where the clip's own crowd follows "ATTACK!". Nobody has listened.
+- Stale text reported, not changed: D-133 is taken twice (this branch: W1 sound; `claude/project-thread-nvctxh`: LTX stays + cheapest combination);
+  the next merge must renumber one of them.
+- Tests: `tests/unit/test_sound_design_system.py` (15); `test_v43_sound_plan.py` (11) unchanged and green; docs_lint 0 findings.
+- Next: the creator listens to the two battle files, the BBC audition page and picks takes; `requalify` the 73 vault-only takes where their WAVs are.

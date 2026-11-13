@@ -32,7 +32,7 @@ from explainer_engine.standards import sourced_rules as SR
 SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "sfx_manifest.schema.json"
 MAX_PEAK_DBFS = -1.0   # stored sounds never touch full scale
 STORE_PEAK_DBFS = -3.0  # sounds are normalised to this peak; the mixer sets the level per event
-KINDS = ("one_shot", "loop")  # BP-58
+KINDS = ("one_shot", "loop", "track")  # BP-58; a track is a music piece played through (no seam, no one-shot range)
 
 
 def db(x: float) -> float:
@@ -76,8 +76,10 @@ def load_manifest(root: Path) -> dict:
 
 
 def add(root: Path, *, name: str, take: int, category: str, tags: list[str], samples: np.ndarray, rate: int,
-        source: dict, licence: dict, machine_review: str = "none", loop: bool | None = None) -> dict:
-    """Store one sound (normalised) and register it. Replaces an entry with the same id."""
+        source: dict, licence: dict, machine_review: str = "none", loop: bool | None = None,
+        extra: dict | None = None) -> dict:
+    """Store one sound (normalised) and register it. Replaces an entry with the same id. ``extra`` adds the catalog fields
+    (``catalog``, ``original``, ``qc``, ``kind``; LIB-04, docs/SOUND_LIBRARY.md)."""
     root = Path(root)
     item_id = f"{name}__v{take}"
     samples = normalise(samples)
@@ -91,6 +93,7 @@ def add(root: Path, *, name: str, take: int, category: str, tags: list[str], sam
              "review": {"machine": machine_review, "human": "not_listened"}}
     if loop is not None:
         entry["loop"] = loop
+    entry.update(extra or {})
     manifest = load_manifest(root)
     manifest["items"] = [i for i in manifest["items"] if i["id"] != item_id] + [entry]
     manifest["items"].sort(key=lambda i: i["id"])
@@ -106,10 +109,19 @@ def find(root: Path, *, tags: list[str] | None = None, category: str | None = No
             continue
         if tags and not set(tags) <= set(item["tags"]):
             continue
-        if usable and item["review"]["human"] == "rejected":
+        if usable and (item["review"]["human"] == "rejected" or production_status(item) != "verified"):
             continue
         out.append(item)
     return out
+
+
+def production_status(item: dict) -> str:
+    """``verified`` | ``quarantine`` | ``rejected`` (LIB-05): the licence's production field when the item has one, else from
+    its status (an unverified generated take is quarantine; everything older was checked when it was registered)."""
+    lic = item.get("licence") or {}
+    if lic.get("production"):
+        return lic["production"]
+    return "quarantine" if lic.get("status") == "generated_terms_unverified" else "verified"
 
 
 def validate(root: Path, *, check_files: bool = True, admissions: Path | str | None = None) -> list[str]:
@@ -246,6 +258,8 @@ def check_seams(item: dict, samples: np.ndarray, rate: int) -> list[dict]:
         out.append({"rule": "BP-58", "severity": sev, "where": item["id"], "detail": detail})
 
     seconds = len(samples) / rate
+    if kind_of(item) == "track":
+        return out
     if kind_of(item) == "loop":
         if seconds < t["loop_min_s"]:
             add(f"loop of {seconds:.1f} s; a bed loop is at least {t['loop_min_s']:g} s (or a crossfaded join)")
