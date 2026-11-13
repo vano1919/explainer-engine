@@ -273,7 +273,22 @@ def stage_script(ep: Episode, rehearsal: bool):
     rows += E.contract_rows(doc, set(SP.EVENT_CLASSES), ep.fps)
     rows += E.absolute_anchor_rows(doc)   # FA-06: on a locked script an absolute anchor under a read line is REVIEW
     rows.append(_claims_row(ep, doc))
+    rows.append(_video_share_row(doc))
     return rows, {"mix": R.mix_report(doc), "shots": len(shots), "audit_status": audit["status"]}
+
+
+def _video_share_row(doc: dict) -> dict:
+    """Q7 (Fable audit): the video share by duration against D-131's target; REVIEW while the switch says the mix is a frame,
+    FAIL when the creator asks to re-route towards the target (reroute) and the share is more than 10 points short."""
+    from explainer_engine.core import open_questions as OQ
+    from explainer_engine.episode import router as R
+    mix = R.mix_report(doc)
+    share = float(mix["shares"].get("video", 0.0))
+    target = float((doc.get("visual_mix_target") or {}).get("cinematic_video_target") or 0.6)
+    ok = abs(share - target) <= 0.10
+    level = G.FAIL if OQ.value("Q7") == "reroute" else G.REVIEW
+    return G.row("video_share_against_target", ok, f"video {share:.1%} of the duration ({mix['basis']}), D-131's target "
+                 f"{target:.0%} (+-10 points); switch Q7 = {OQ.value('Q7')}", round(share, 4), level=level)
 
 
 def _claims_row(ep: Episode, doc: dict) -> dict:
@@ -518,7 +533,6 @@ def stage_clips(ep: Episode, rehearsal: bool):
     ``still_25d``: the layered 2.5D renderer (P5) with the sound plan's picture events and the measured spine; ``wan``: the
     QA'd clip of the Wan adapter (P6), never generated here; without one the shot FAILs, and a rehearsal draws it with the
     adapter's 2.5D fallback. A clip whose shot, pictures, spine and size are unchanged is reused."""
-    from explainer_engine.aivideo.wan_adapter import DEFAULT_FALLBACK
     from explainer_engine.episode import sound_plan as SP
     from explainer_engine.production import layers25d as L25
     from explainer_engine.production.map_clip import render_action_map_clip
@@ -585,6 +599,14 @@ def stage_clips(ep: Episode, rehearsal: bool):
                     rel = dict(wan, clip_path=str(Path(wan["clip_path"]).relative_to(ep.root)))
                     new = VI.recut(ep.root, rel, frames, ep.fps)     # VL-11: from the kept raw clip, never stretched
                     wan = dict(new, clip_path=str(ep.root / new["clip_path"]))
+                forced_fallback = None
+                if wan is not None and wan.get("status") == G.FAIL:   # RT-07 in one place (videolane/failure, FA-16)
+                    from explainer_engine.videolane import failure as VF
+                    d = VF.decide(wan.get("attempts") or [{"status": G.FAIL}])
+                    rec["rt07"] = d
+                    if d["action"] != "fallback_25d":
+                        raise ContractError(f"{sid}: its clip FAILs the QA and {d['why']} (RT-07)")
+                    forced_fallback, wan = d["why"], None
                 if wan is not None:
                     out.write_bytes(Path(wan["clip_path"]).read_bytes())
                     res = {"provider": wan.get("backend"), "status": wan["status"], "total_frames": frames}
@@ -593,11 +615,14 @@ def stage_clips(ep: Episode, rehearsal: bool):
                 else:
                     shot = sh
                     if route == "video":
-                        if not rehearsal:
-                            raise ContractError(f"{sid}: no QA'd Wan clip (production/wan/{sid}.json); Wan clips are made "
-                                                "by the adapter on the creator's approved plan, never by the runner")
-                        shot = dict(sh, motion_imitation=sh.get("fallback_motion_imitation") or DEFAULT_FALLBACK)
+                        if not rehearsal and not forced_fallback:
+                            raise ContractError(f"{sid}: no QA'd video clip (production/video/{sid}.json); clips are made "
+                                                "by the scene run on the creator's approved plan, never by the runner")
+                        from explainer_engine.videolane import failure as VF
+                        shot = VF.fallback_shot(sh)
                         fallback.append(sid)
+                        if forced_fallback:
+                            rec["fallback_reason"] = forced_fallback
                     res = L25.render_clip(shot, ep.root / start["file"], out, width=w, height=h, fps=ep.fps,
                                           end_picture=(ep.root / end["file"]) if end else None, script=script,
                                           events=_events_for_picture(plan_by.get(sid, {})), spine=spines.get(sid))
@@ -638,6 +663,10 @@ def stage_clips(ep: Episode, rehearsal: bool):
             G.row("free_tools_present", None if no_tool else True,
                   f"{len(no_tool)} shot(s) not drawn: a free tool is missing (the message names its fetch command)"
                   if no_tool else "every free tool the clips need was found", no_tool[:10])]
+    from explainer_engine.core import open_questions as OQ
+    if OQ.value("Q4") == "forced":   # Q4: the read before the LTX scenes; "supported" (default) sizes from it when present
+        rows.append(G.row("read_before_video", timing is not None, "switch Q4 = forced: the read (audio/timing.json) "
+                          "comes before any video clip" + ("" if timing else ": no read yet")))
     from explainer_engine.episode import router as R
     durations = {r["shot_id"]: r["duration_sec"] for r in records}
     return rows, {"records": "production/shot_records.json", "made": made, "reused": reused,
@@ -682,8 +711,16 @@ def stage_sound(ep: Episode, rehearsal: bool):
                                    read_speech=VI.speech(narration) if narration else None)
             write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
             narration = ep.path("audio/voice_track.wav")
+    # FA-13 / Q2: the narrated video shots' own clip sound, offered to the renderer (it lays it only when the switch is on)
+    from explainer_engine.videolane import plan as VP
+    spoken = VP.clip_spoken(script)
+    narrated_clips = {}
+    for s in script.get("shots", []):
+        rp = ep.root / "production" / "video" / f"{s['shot_id']}.json"
+        if VP.is_video(s) and s["shot_id"] not in spoken and rp.is_file():
+            narrated_clips[s["shot_id"]] = str(ep.root / json.loads(rp.read_text(encoding="utf-8"))["clip_path"])
     rep = STEMS.render(plan, sources, stems_dir, library_root=ep.sound_library,
-                       narration=narration, shippable=not rehearsal)
+                       narration=narration, shippable=not rehearsal, clip_audio=narrated_clips)
     write_json_atomic(ep.path("audio/stems_report.json"), rep)
     stem_audit = audit_rendered_audio_stems(stems_dir=stems_dir, script_doc=_with_line_times(script, timing), fps=ep.fps)
     write_json_atomic(ep.path("qa/audio_stem_audit.json"), stem_audit)

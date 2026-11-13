@@ -22,7 +22,7 @@ def timeline(plan: dict, records: list[dict], stems_report: dict | None, line_wi
         t += float(r["duration_sec"])
     lines = [{"id": lid, "start_s": round(a, 3), "end_s": round(b, 3)} for lid, (a, b) in sorted((line_windows or {}).items(),
                                                                                               key=lambda kv: kv[1][0])]
-    dialogue = [[lines[0]["start_s"], lines[-1]["end_s"]]] if lines else []
+    dialogue = [[ln["start_s"], ln["end_s"]] for ln in lines]   # FA-11: one window per line, never first-to-last
     events = [{"at_s": round(p["at_s"], 3), "dur_s": round(min(1.0, max(0.1, float(p.get("end_s", p["at_s"] + 0.6)) - p["at_s"])), 3),
                "class": p["class"], "event_id": p.get("event_id")}
               for p in (stems_report or {}).get("events_placed", []) if p.get("layer") in ("foley", "spot", "transition")]

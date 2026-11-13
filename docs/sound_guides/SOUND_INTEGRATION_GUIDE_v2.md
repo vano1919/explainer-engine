@@ -140,8 +140,8 @@ authored once on the location (`world_bible.locations[].ambience_bed`: `classes`
 2. **73 library items are vault-only.** Their WAVs are not on HF, so their QC is NOT_RUN where nothing was measured.
 3. **D-133 is used twice** (closed 2026-11-13 by the integration branch): W1's sound decision is D-136, the cheapest-run
    decision keeps D-133, the video lane D-137, this contract D-135.
-4. **BP-56's severity differs.** The registry lists BP-56 as REVIEW, while W1's code and test FAIL a crowded mix. The FAIL is kept
-   (no test is weakened); the creator's word decides.
+4. **BP-56's severity** (closed 2026-11-13 by the integration branch, Fable audit FA-12): the cue sheet now reads BP-56's level
+   from the registry (REVIEW) through switch Q1 of `config/creator_open_questions.json`; the creator's answer to Q1 sets FAIL.
 5. **The creator has two different words on map sound.**
    - D-133 (2026-11-12): every overlay or map motion has its own heard sound.
    - The 08:43 brief and BP-81: `silent_by_design` is a valid decision, with cue budgets.

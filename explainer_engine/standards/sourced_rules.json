@@ -6318,7 +6318,8 @@
     "explainer_engine/training/pods/xworld_v1_score.py",
     "explainer_engine/qa/verdict_page.py",
     "explainer_engine/videolane/cuts.py",
-    "explainer_engine/videolane/storyboard.py"
+    "explainer_engine/videolane/storyboard.py",
+    "explainer_engine/videolane/identity.py"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word; none of these becomes FAIL before that (D-59)",
    "supersedes": []
@@ -7351,7 +7352,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/seams.py:EDGE_FADE"
+    "explainer_engine/audio/seams.py:EDGE_FADE",
+    "explainer_engine/videolane/voice.py:SEAM_FADE_S",
+    "explainer_engine/audio/stems.py:SEAM_FADE_S"
    ],
    "supersedes": [
     "BP-187 audio_overlap_s (the creator's 0.5 s, 2026-11-12 19:16 UTC, put to research at 20:07 UTC)"

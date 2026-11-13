@@ -282,8 +282,37 @@ def onset_of(x: np.ndarray, hop_s: float = 0.005) -> float | None:
     return float(np.flatnonzero(env >= env.max() + ONSET_DB)[0] * h / SR)
 
 
+CLIP_AUDIO_DB = -12.0     # engineering default: a narrated clip's own sound sits this far under its natural level (Q2's ear)
+SEAM_FADE_S = float(SR_RULES.T("BP-188", "seam_fade_s"))   # the de-click fade at every clip edge
+
+
+def clip_audio_layer(plan: dict, clip_audio: dict | None, n: int) -> tuple[np.ndarray, list[dict], str]:
+    """FA-13 (Fable audit P6): the narrated LTX clips' own sound (``{shot_id: wav path}``) laid on their shots as the
+    ``clip_audio`` layer of the effects stem, CLIP_AUDIO_DB down, with BP-188's seam fade at both edges, ducked by the
+    narrator like the bed. Off unless switch Q2 (config/creator_open_questions.json) is ``on``; the voice track stays voice."""
+    from explainer_engine.core import open_questions as OQ
+    out = np.zeros((n, 2), np.float32)
+    if OQ.value("Q2") != "on":
+        return out, [], "off (switch Q2)"
+    laid = []
+    starts = {s["shot_id"]: s for s in plan.get("shots", [])}
+    for sid, path in sorted((clip_audio or {}).items()):
+        s = starts.get(sid)
+        if s is None:
+            continue
+        from explainer_engine.videolane.voice import read_mono
+        x = read_mono(Path(path), SR)[: int(round(s["dur_s"] * SR))] * (10 ** (CLIP_AUDIO_DB / 20))
+        x = _fades(x.astype(np.float32), int(SEAM_FADE_S * SR), int(SEAM_FADE_S * SR))
+        i0 = int(round(s["start_s"] * SR))
+        m = min(len(x), n - i0)
+        if m > 0:
+            out[i0:i0 + m] += acoustics.pan(x[:m], 0.0)
+            laid.append({"shot_id": sid, "at_s": s["start_s"], "seconds": round(m / SR, 3), "gain_db": CLIP_AUDIO_DB})
+    return out, laid, "on (switch Q2)"
+
+
 def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narration: Path | None = None,
-           shippable: bool = True, sheet: dict | None = None) -> dict:
+           shippable: bool = True, sheet: dict | None = None, clip_audio: dict | None = None) -> dict:
     """Render the plan into the five stems in ``out_dir`` by playing its cue sheet (``episode/cue_sheet``; built here when
     none is given, validated, written next to the stems). ``shippable=False`` is a preview: a class without a real take stays
     silent (never a procedural sound, D-136), no voice needed, and the report says it cannot ship."""
@@ -324,6 +353,8 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
     g_bed = duck.duck_gain(voice, SR, n, depth_db=BED_DUCK_DB, threshold=SPEECH_THRESHOLD).astype(np.float32)
     mus *= g_mus[:, None]
     amb *= g_bed[:, None]
+    clip_layer, clip_laid, clip_state = clip_audio_layer(plan, clip_audio, n)
+    sfx += clip_layer * g_bed[:, None]          # the clip's own sound in the effects stem, ducked like the bed
     nar = (acoustics.pan(voice, 0.0) * acoustics.CENTRE_GAIN).astype(np.float32)
     env = bus_limit(nar, amb + sfx + mus)[:, None]
     amb, sfx, mus = amb * env, sfx * env, mus * env
@@ -352,7 +383,7 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
             "cue_sheet": str(out_dir / "cue_sheet.json"), "cue_gate": {r["gate"]: r["status"] for r in gate["rows"]},
             "coverage": plan.get("coverage", {}), "credits": sheet.get("credits", []), "sounds_used": snd.used,
             "onsets_measured": len(onsets), "cue_rows": gate["rows"], "missing": sheet.get("missing", []),
-            "av": plan.get("av")}
+            "av": plan.get("av"), "clip_audio": {"state": clip_state, "laid": clip_laid}}
 
 
 def level_report(plan: dict, voice: np.ndarray, background: np.ndarray) -> dict:

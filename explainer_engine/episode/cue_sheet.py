@@ -488,9 +488,6 @@ def validate(sheet: dict, plan: dict, library_root: Path | None = None, onsets: 
                      f"take (pitch and gain jitter only): {sorted(thin)}", len(thin), level="REVIEW"))
     return {"rows": out, "verdict": G.verdict(out)}
 
-FRAME_MS = 1000.0 / 24.0
-
-
 def sync_rows(rows: list[dict], plan: dict, onsets: dict | None) -> list[dict]:
     """BP-54 in its three bands (the registry's ``frames``, ``early_max_ms``, ``late_max_ms``): the sound's onset against its
     event's frame. Within ``frames`` frame(s) PASS; earlier than -early or later than +late FAIL; between them REVIEW (the
@@ -545,7 +542,13 @@ def overlap_rows(rows: list[dict]) -> list[dict]:
             same.append(f"{t:.2f}s:{over[0]}")
     return [G.row("overlap", not crowd and not same, f"BP-56 from the intervals: at most {LAYERS_MAX} layers (voice, music and "
                   f"bed once each) and {SAME_CLASS_MAX} of one class at once: crowded {crowd[:5]}, same class {same[:5]}",
-                  len(crowd) + len(same), level=SR_RULES.level("BP-56"))]
+                  len(crowd) + len(same), level=bp56_level())]
+
+
+def bp56_level() -> str:
+    """FA-12: BP-56's level as the registry gives it (``_sev``, REVIEW), switch Q1 of config/creator_open_questions.json."""
+    from explainer_engine.core import open_questions as OQ
+    return G.FAIL if OQ.value("Q1") == "FAIL" else _sev("BP-56")
 
 
 EMPHASIS_CLASSES = {"map_pin_set": "thud", "ov_thud": "thud", "data_confirm": "chime", "ov_glow": "chime",
@@ -574,13 +577,16 @@ def av_rows(rows: list[dict], plan: dict, sheet: dict) -> list[dict]:
                          f"{no_purpose[:5]}", round(share, 3), level=_sev("BP-55")))
     cues = sorted(r["start_s"] for r in rows if r.get("decision") == "ui_cue")
     dur = float(sheet.get("duration_s") or 0.0)
-    per_min = len(cues) / (dur / 60.0) if dur > 0 else 0.0
+    whole = len(cues) / (dur / 60.0) if dur > 0 else 0.0
+    # FA-11: the WORST minute, not the sheet's average (a long episode would dilute a crowded minute); the whole-sheet
+    # rate stays in the detail as information
+    per_min = max((sum(1 for t in cues if a <= t < a + 60.0) for a in cues), default=0) if dur >= 60.0 else whole
     burst_n, win = int(SR_RULES.T("BP-81", "burst_max")), float(SR_RULES.T("BP-81", "burst_window_s"))
     burst = max((sum(1 for t in cues if a <= t < a + win) for a in cues), default=0)
     measured = dur >= float(SR_RULES.T("BP-81", "measured_from_s"))
     if measured:   # BP-81 counts a minute's density only on a read of measured_from_s or more
         out.append(G.row("cue_density", per_min <= float(SR_RULES.T("BP-81", "per_min_fail")),
-                         f"BP-81: {len(cues)} cue(s), {per_min:.1f} a minute (REVIEW over "
+                         f"BP-81: {len(cues)} cue(s), worst minute {per_min:.1f} (whole sheet {whole:.1f} a minute; REVIEW over "
                          f"{SR_RULES.T('BP-81', 'per_min_review')}, FAIL over {SR_RULES.T('BP-81', 'per_min_fail')})",
                          round(per_min, 2), level=SR_RULES.level("BP-81")))
     out.append(G.row("cue_rate_review", per_min <= float(SR_RULES.T("BP-81", "per_min_review")) and burst <= burst_n,

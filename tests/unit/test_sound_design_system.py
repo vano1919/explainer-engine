@@ -236,7 +236,10 @@ def test_the_cue_sheet_gives_every_sound_its_asset_time_gain_and_reason(tmp_path
     assert gate["verdict"]["status"] in ("PASS", "REVIEW"), gate["verdict"]
 
 
-def test_validation_catches_silence_a_missing_bed_an_unlicensed_score_and_a_crowd(tmp_path):
+def test_validation_catches_silence_a_missing_bed_an_unlicensed_score_and_a_crowd(tmp_path, monkeypatch):
+    """The crowd (BP-56 overlap) is flagged at the level of switch Q1 (Fable audit 2026-11-13, creator_open_questions):
+    REVIEW by default, as the registry says; FAIL when the creator sets Q1 = FAIL. It is never PASS."""
+    from explainer_engine.core import open_questions as OQ
     plan = _battle_plan()
     lib = _battle_lib(tmp_path, plan)
     sheet = CS.build(plan, SP.resolve(plan, lib), lib)
@@ -249,7 +252,11 @@ def test_validation_catches_silence_a_missing_bed_an_unlicensed_score_and_a_crow
         bad["rows"].append(dict(bad["rows"][-1], cue_id=f"X{i}", layer="spot", **{"class": "impact"}, start_s=7.0,
                                 end_s=8.0, duration_s=1.0, shot_id="C"))
     st = {r["gate"]: r["status"] for r in CS.validate(bad, plan, lib)["rows"]}
-    assert st["music_licence"] == "FAIL" and st["overlap"] == "FAIL"
+    assert st["music_licence"] == "FAIL" and st["overlap"] == "REVIEW"           # Q1 default: BP-56 is REVIEW
+    real = OQ.value
+    monkeypatch.setattr(OQ, "value", lambda qid, path=OQ.PATH: "FAIL" if qid == "Q1" else real(qid, path))
+    st = {r["gate"]: r["status"] for r in CS.validate(bad, plan, lib)["rows"]}
+    assert st["overlap"] == "FAIL"                                                  # Q1 = FAIL
     with pytest.raises(ContractError, match="cue sheet FAIL"):
         CS.require(CS.validate(holed, plan, lib))
 

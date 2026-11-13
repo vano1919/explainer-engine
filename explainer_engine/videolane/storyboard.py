@@ -91,6 +91,7 @@ def build(root: Path, script: dict, scene_shots: list[str], scene_id: str, *, pi
     pinned: dict[str, str] = {}
     pal_max = float(SR.T("BP-166", "palette_dist_max"))
     master_cache: dict[str, np.ndarray] = {}
+    arrays: dict[str, np.ndarray] = {}
     for sid in scene_shots:
         s = by[sid]
         ep = s.get("edit_plan") or {}
@@ -105,6 +106,7 @@ def build(root: Path, script: dict, scene_shots: list[str], scene_id: str, *, pi
         path = root / pictures[key]["file"]
         pinned[key] = _sha(path)
         a = _rgb(path)
+        arrays[sid] = a
         cell["path"] = str(path)
         if src == sid:   # a picture of its own: duplicates and the master's place
             h = dhash(a)
@@ -131,6 +133,11 @@ def build(root: Path, script: dict, scene_shots: list[str], scene_id: str, *, pi
     rows.append(G.row("storyboard_no_repeated_composition", not dups, f"{len(dups)} repeated composition(s)", dups[:20]))
     rows.append(G.row("storyboard_same_place_as_master", not env, f"{len(env)} picture(s) leave the master's place or "
                       "light (BP-166 palette, brightness gap)", env[:20], level=G.REVIEW))
+    # FA-14: the heroes before money (costume colours per hero box, SFace faces; level by switch Q3)
+    from explainer_engine.videolane import identity as ID
+    frames = {c["shot_id"]: (arrays[c["shot_id"]], arrays[c["shot_id"]]) for c in cells if c["shot_id"] in arrays}
+    paths = {c["shot_id"]: c["path"] for c in cells if c.get("path")}
+    rows += ID.rows(sub, scene_shots, frames, paths, ID.references_of(root, script), "storyboard")
     out_dir = root / "production" / "storyboard"
     out_dir.mkdir(parents=True, exist_ok=True)
     sheet = out_dir / f"{scene_id}.jpg"

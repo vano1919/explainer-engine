@@ -175,6 +175,25 @@ def check(root: Path, script: dict, records: list[dict], master: Path, fps: int,
     # --- cuts on the real frames
     cut = CU.check_master(master, records, script, fps)
     rows += cut["rows"]
+    # FA-14: the heroes again on the clips (last frame of a shot against the first of the next, per scene; switch Q3)
+    from explainer_engine.videolane import identity as ID
+    rec_by = {r["shot_id"]: r for r in records}
+    id_rows = []
+    for scene in P.scenes(script):
+        ids = [s["shot_id"] for s in scene if P.is_video(s) and (rec_by.get(s["shot_id"]) or {}).get("clip_path")
+               and Path(rec_by[s["shot_id"]]["clip_path"]).is_file()]
+        if len(ids) < 2:
+            continue
+        frames = {}
+        for sid in ids:
+            fr = VQ.read_video(rec_by[sid]["clip_path"])[0]
+            frames[sid] = (fr[0], fr[-1])
+        id_rows += ID.costume_findings(script, ids, frames)
+    if id_rows or any(P.is_video(s) for s in script.get("shots", [])):
+        lv = ID.levels()
+        rows.append(G.row("clips_hero_costume_holds", not id_rows, f"{len(id_rows)} hero box(es) whose colours move "
+                          f"across a cut of the clips (BP-166; switch Q3 -> {lv['costume']})", id_rows[:20],
+                          level=lv["costume"]))
     metrics["cuts"] = cut["cuts"]
     for c in cut["cuts"]:
         if c["status"] == G.FAIL:

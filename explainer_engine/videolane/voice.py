@@ -25,6 +25,7 @@ from explainer_engine.standards import sourced_rules as SR
 
 RATE = 48000
 CLIP_FADE_S = float(np.mean(SR.T("BP-191", "clip_fade_s")))
+SEAM_FADE_S = float(SR.T("BP-188", "seam_fade_s"))   # FA-13: the de-click minimum at every read piece and clip edge
 GAIN_MAX_DB = 12.0          # engineering default: a clip quieter than this under the read is a bad take, not a level to fix
 
 
@@ -73,7 +74,13 @@ def compose(timing: dict, read: Path | None, clip_audio: dict, out: Path, *, rea
         sb = len(x) if b is None else min(len(x), int(round(b / fps * RATE)))
         if sb > sa:
             d = int(round((a + shift) / fps * RATE))
-            piece = x[sa:sb][: max(0, total - d)]
+            piece = x[sa:sb][: max(0, total - d)].copy()
+            # FA-13 / BP-188: a de-click fade on each edge where the read was split for a clip (never on the read's own ends)
+            f = min(len(piece) // 2, int(SEAM_FADE_S * RATE))
+            if f and k > 0:
+                piece[:f] *= np.linspace(0, 1, f, dtype=np.float32)
+            if f and b is not None:
+                piece[-f:] *= np.linspace(1, 0, f, dtype=np.float32)
             y[d:d + len(piece)] += piece
             laid.append({"what": "read", "read_s": [round(sa / RATE, 3), round(sb / RATE, 3)],
                          "at_s": round(d / RATE, 3)})
@@ -92,7 +99,7 @@ def compose(timing: dict, read: Path | None, clip_audio: dict, out: Path, *, rea
         spans = c.get("speech") or []
         gain_db = max(-GAIN_MAX_DB, min(GAIN_MAX_DB, ref_db - speech_level(a, spans))) if spans else 0.0
         a = a * (10 ** (gain_db / 20)) * between_lines_gain(len(a), spans, RATE)
-        k = min(len(a) // 2, int(CLIP_FADE_S * RATE))
+        k = min(len(a) // 2, int(max(CLIP_FADE_S, SEAM_FADE_S) * RATE))
         if k:
             r = np.linspace(0, 1, k, dtype=np.float32)
             a[:k] *= r

@@ -90,6 +90,10 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
     from explainer_engine.videolane import plan as P
     from explainer_engine.videolane import storyboard as SB
     root = Path(root)
+    from explainer_engine.core import open_questions as OQ
+    if OQ.value("Q5") != "prompt_description":   # Q5: a paid speech-to-speech pass per line is not built
+        raise ContractError("switch Q5 asks a speech-to-speech pass for the character voices: not built; the voice "
+                            "description in every prompt is the built path (FA-02)")
     rec_p = root / "production" / "storyboard" / f"{scene_id}.json"
     if not rec_p.is_file():
         raise ContractError(f"no storyboard for {scene_id}: run videolane.storyboard first (VL-10)")

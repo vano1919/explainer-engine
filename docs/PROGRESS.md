@@ -6154,3 +6154,35 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   `production_script/3`), so no approval hash covers the changed fields and nothing was re-stamped; the creator's approval
   of this script is still to be recorded before anything paid (in the handoff).
 - Tests: `test_videolane.py` (the drafts on Toba, the cards), `test_stage_guard_v4.py` adjusted to the plans now present.
+
+## 2026-11-13 — P4 of the Fable audit: the silent quality gaps (FA-09..FA-16, FA-18) and the creator's switches Q1..Q7
+- Switches: `config/creator_open_questions.json` (Q1..Q7 with Fable's defaults until the creator answers) read through
+  `core/open_questions.value`; an unknown value refuses. Q1 `bp56_level` REVIEW (cue_sheet), Q2 `narrated_clip_audio` off
+  (stems), Q3 `identity_level` REVIEW (videolane/identity), Q4 `read_first` supported (run.stage_clips adds a FAIL row only
+  when forced), Q5 `character_voice` prompt_description (scene.build refuses the unbuilt speech-to-speech), Q6 old PRs
+  keep_open (no code), Q7 `video_share` frame (new G1 REVIEW row `video_share_against_target`: Toba is about 36 % video
+  against D-131's 60 %). Test `test_creator_open_questions.py` (each switch is read where it acts).
+- FA-09: `sound_plan.resolve_era` (the manifest's `historical_period.era_id`, passed by the runner, wins; a guess or the old
+  Napoleonic fallback is marked and G4's new row `era_from_the_manifest` FAILs it); `place_bed` takes the bed from the
+  place's authored `ambience_bed`, the word-read weather bed is a candidate listed by G4 (`beds_authored_per_place`, REVIEW);
+  the authored segment mood wins, the word mood is a candidate; the designed riser says it is derived from the segment moods
+  and `av_report.event_report` lists it as a derived event. Test `test_sound_place_era.py` (the audit's three sentences, the
+  ep_troy fallback, G4 on Toba with and without the manifest's era).
+- FA-18: the sound plan's per-shot state lives in the build (no module globals). FA-12: BP-56 at the registry's REVIEW
+  through `_sev` (Q1). FA-11: BP-81 on the worst minute (the whole-sheet rate stays in the detail), the AV timeline's
+  dialogue windows per line, the unused `FRAME_MS = 1000 / 24` removed. Test `test_cue_density_window.py`.
+- FA-13: `stems.clip_audio_layer` lays the narrated video clips' own sound in the effects stem, CLIP_AUDIO_DB (-12 dB,
+  engineering default) down, BP-188 seam fades, ducked like the bed, only when Q2 is on; `videolane/voice.compose` fades every
+  read piece split for a clip (BP-188 seam_fade_s) and every clip edge at least that much; the voice track stays voice only.
+  The free A/B: no narrated LTX clip exists yet (ltx_scene_live holds a ledger and status only; the bake-off clips have no
+  narrator read), so Q2 waits for the sample. Test `test_clip_audio_layer.py`.
+- FA-14: `videolane/identity` (new): per hero box (from the edit plan's screen positions) and its head third, the palette
+  distance across each cut against BP-166's hero_palette_max (a changed helmet: 0.08 on the body box, over 0.15 on the head,
+  measured in the test); SFace face naming against the heroes' references when YuNet/SFace and the references exist, else a
+  REVIEW row that says NOT MEASURED. Rows at the storyboard gate (before money) and in master_qa on the clips (G10); level
+  by Q3. Test `test_video_identity.py`.
+- FA-16: RT-07 for the video route in one place, `videolane/failure` (decide: accept / one paid retry with seed+SEED_STEP /
+  still_25d fallback; fallback_shot); the runner uses it and a FAILing clip record with its attempts used up falls back with
+  its reason. The worker-side retry of a scene run is not built (worker frozen until P5). Test `test_video_failure_rt07.py`.
+- Rewritten to the new rule (not weakened): `test_sound_design_system::test_validation_catches_...a_crowd` asserted BP-56
+  overlap FAIL; it now asserts REVIEW at the Q1 default and FAIL with Q1 = FAIL (rule ids in its docstring).
