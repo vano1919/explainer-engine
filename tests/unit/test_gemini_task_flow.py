@@ -256,7 +256,8 @@ def test_queue_refuses_a_never_word_and_reports_shares_in_the_frame(env):
     assert any(f["rule"] == "GC-18" for f in doc["prompt_fails"])
     with pytest.raises(ContractError, match="FAIL"):
         QU.write(env, doc)
-    assert set(doc["mix"]["frame"]) == {"map_action", "still_25d", "wan"}
+    # FA-04 (Fable audit 2026-11-13): the video route is ``video`` (LTX, D-132); a fixture's legacy ``wan`` is read as video
+    assert set(doc["mix"]["frame"]) == {"map_action", "still_25d", "video"}
 
 
 def test_frame_band_and_wan_clip():
@@ -273,7 +274,65 @@ def test_timed_read_sets_lengths_and_marks_a_measure_outside_the_frame(env):
     doc = QU.build(env)
     shots = {s["shot_id"]: s for s in doc["shots"]}
     assert doc["timed"] and shots["S01_SH001"]["duration_s"] == 3.2 and shots["S01_SH001"]["frame"]["status"] == "PASS"
-    assert shots["S01_SH002"]["frame"]["status"] == "REVIEW" and shots["S01_SH002"]["wan_clip"]["frames"] == 65
+    # FA-01/FA-04/FA-15: the video shot's LTX clip is sized from the measured length (a narrated shot: length + handles)
+    vc = shots["S01_SH002"]["video_clip"]
+    assert shots["S01_SH002"]["frame"]["status"] == "REVIEW" and shots["S01_SH002"]["route"] == "video"
+    assert vc["status"] == "PASS" and vc["basis"] == "measured_length" and vc["model"] == "LTX" and vc["fps"] == 24
+    assert vc["needed_s"] >= 4.0 and vc["clip_seconds"] >= 4.0
+
+
+def test_queue_reads_wan_as_video_and_never_writes_wan(env):
+    """FA-04: ``router.LEGACY_ROUTES`` maps a D-131 ``wan`` to ``video``; the queue writes only ``video``."""
+    doc = QU.build(env)
+    routes = {s["shot_id"]: s["route"] for s in doc["shots"]}
+    assert routes["S01_SH002"] == "video" and "wan" not in routes.values() and "wan" not in QU.BUCKET
+    assert doc["shots"][1]["bucket"] == 60 and "video_clip" in doc["shots"][1]
+
+
+def test_continuation_asks_no_picture_and_coverage_attaches_the_scene_master(env):
+    """FA-04 / VL-05 / VL-04: a continuation video shot has no picture row (its first frame is the clip before's hand-over
+    frame); a coverage video shot attaches the scene master right after the style anchor and never shares its batch."""
+    sp = env / "story" / "production_script.json"
+    s = json.loads(sp.read_text())
+    cont = dict(_shot("S01_SH005", "medium", ["char_kael"], "video"), audio_line_ids=["S01_L004"],
+                edit_plan={"continuity_mode": "continuation", "continuity_from": "S01_SH002", "cut_in_reason": "action"})
+    cov = dict(_shot("S01_SH006", "medium_wide", ["char_kael"], "video"), audio_line_ids=["S01_L004"],
+               edit_plan={"continuity_mode": "coverage", "scene_master": "S01_SH003_start", "cut_in_reason": "eyeline"})
+    s["shots"] += [cont, cov]
+    sp.write_text(json.dumps(s))
+    doc = QU.build(env)
+    rows = {r["shot_id"]: r for r in doc["shots"]}
+    assert rows["S01_SH005"]["pictures"] == [] and "continuation of S01_SH002" in rows["S01_SH005"]["note"]
+    assert not any(p["shot_id"] == "S01_SH005" for p in doc["pictures"])
+    pic = next(p for p in doc["pictures"] if p["id"] == "S01_SH006_start")
+    refs = [r["ref_id"] for r in pic["references"]]
+    assert refs[0].startswith("style_") and refs[1] == "S01_SH003_start"
+    assert pic["references"][1]["role"] == "scene master" and pic["after"] == "S01_SH003_start"
+    for b in doc["batches"]:
+        assert not ({"S01_SH003_start", "S01_SH006_start"} <= set(b["ids"]))
+    listed = {r["shot_id"]: r for r in QU.shot_list(doc)}
+    assert "VL-05" in listed["S01_SH005"]["note"]
+
+
+def test_the_drive_pack_names_video_and_the_two_video_lane_rules():
+    """FA-04: 04_VIDEO_SCRIPT_RULES.md says ``video`` (not ``wan``), and carries the continuation and coverage sentences."""
+    text = (Path(__file__).resolve().parents[2] / "explainer_engine" / "gemini_task" / "texts" / "drive_pack"
+            / "04_VIDEO_SCRIPT_RULES.md").read_text(encoding="utf-8")
+    assert "`wan`" not in text and "`video`" in text
+    assert "asks for no start picture" in text and "hand-over frame" in text
+    assert "scene master picture as its first reference after the style" in text
+
+
+def test_the_toba_queue_has_55_video_rows():
+    """FA-04 measured on the real script: every video shot of Toba builds into the queue as ``video``."""
+    import shutil, tempfile
+    src = Path(__file__).resolve().parents[2] / "episodes" / "ep_toba"
+    with tempfile.TemporaryDirectory() as d:
+        root = Path(d) / "ep_toba"
+        shutil.copytree(src, root, ignore=shutil.ignore_patterns("*.mp4", "*.wav", "*.png", "*.jpg"))
+        q = QU.build(root)
+    vids = [r for r in q["shots"] if r["route"] == "video"]
+    assert len(vids) == sum(1 for r in q["shots"] if r["bucket"] == 60) == 55
 
 
 # --- reviews (item 2) ----------------------------------------------------------------------------------------------

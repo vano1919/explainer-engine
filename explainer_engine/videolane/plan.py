@@ -59,29 +59,38 @@ def clip_spoken(script: dict) -> set[str]:
     return out
 
 
-def line_seconds(script: dict, shot: dict) -> float:
-    """The planned speaking time of the shot's lines: their estimate, else their words at WORDS_PER_S."""
+def line_seconds(script: dict, shot: dict, speaker_type: str | None = None) -> float:
+    """The planned speaking time of the shot's lines (only those of ``speaker_type`` when given): their estimate, else their
+    words at WORDS_PER_S."""
     lines = _lines(script)
     t = 0.0
     for lid in shot.get("audio_line_ids") or []:
         ln = lines.get(lid) or {}
+        if speaker_type and ln.get("speaker_type") != speaker_type:
+            continue
         est = ln.get("estimated_duration_seconds")
         t += float(est) if est else max(0.6, len(str(ln.get("text") or "").split()) / WORDS_PER_S)
     return t
 
 
-def clip_seconds(script: dict, shot: dict, max_s: float) -> dict:
-    """VL-06: the seconds to generate for one video shot. A spoken shot: onset + its line + BP-187's tail + the tail handle
-    (the head handle lies inside the onset: LTX speaks late anyway). A silent shot: its planned length + both handles.
-    Rounded up to 0.25 s, at least MIN_CLIP_S, at most the model's ``max_s``; ``over`` says when the plan does not fit."""
+def clip_seconds(script: dict, shot: dict, max_s: float, measured_s: float | None = None) -> dict:
+    """VL-06: the seconds to generate for one video shot. A clip-spoken shot (it carries a character line, which LTX speaks):
+    onset + its line + BP-187's tail + the tail handle (the head handle lies inside the onset: LTX speaks late anyway). A
+    narrated or silent shot (the narrator's read lies over it, the clip says nothing; Fable audit FA-01): its length + both
+    handles, where the length is the measured shot of the read when ``measured_s`` is given (FA-15: ``basis``
+    ``measured_length``) and the planned length otherwise. Rounded up to 0.25 s, at least MIN_CLIP_S, at most the model's
+    ``max_s``; ``over`` says when the plan does not fit."""
     ep = shot.get("edit_plan") or {}
     head = float(ep.get("head_handle_s", 0.0))
     tail = float(ep.get("tail_handle_s", float(CUT_TAIL[1])))
-    speak = line_seconds(script, shot)
+    speak = line_seconds(script, shot, "character")
     if speak > 0:
         onset = float(ep.get("speech_onset_s", SPEECH_ONSET_S))
         need = max(onset, head) + speak + TAIL_S + tail
         basis = "line"
+    elif measured_s is not None:
+        need = head + float(measured_s) + tail
+        basis = "measured_length"
     else:
         need = head + float(shot.get("target_duration_seconds") or 0.0) + tail
         basis = "planned_length"
@@ -203,6 +212,22 @@ def findings(script: dict, max_s: float = 10.0) -> list[dict]:
                 out.append(_f("VL-06", sid, G.FAIL, f"needs {cs_['needed_s']} s of clip, the model makes {max_s:g} s: split "
                               "the line or the shot"))
     return out
+
+
+def fit_rows(script: dict, max_s: float, model: str, fps: int) -> list[dict]:
+    """G1 (Fable audit FA-01, VL-06): every video shot fits one clip of the pinned LTX model. The need is the same number the
+    lane generates (``clip_seconds``: a spoken shot = onset + line + BP-187's tail + handle; a narrated shot = its length +
+    handles), so this row and VL-06 never disagree. It replaces the Wan fit row (``aivideo/wan_adapter.fit_rows``), which
+    measured LTX shots against Wan's 5 s clip (D-132: the route ``video`` is LTX)."""
+    vids = [s for s in script.get("shots", []) if is_video(s)]
+    long_ = []
+    for s in vids:
+        c = clip_seconds(script, s, max_s)
+        if c["over"]:
+            long_.append(f"{s.get('shot_id')}: needs {c['needed_s']:g} s ({c['basis']})")
+    return [G.row("video_shots_fit_the_model", not long_, f"{len(long_)} of {len(vids)} video shot(s) need more than one clip "
+                  f"of the LTX model {model} ({max_s:.2f} s at {fps} fps, VL-06): split the line or the shot in the script",
+                  long_[:30])]
 
 
 def rows(script: dict, max_s: float = 10.0) -> list[dict]:

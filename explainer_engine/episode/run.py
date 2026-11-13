@@ -250,11 +250,13 @@ def stage_script(ep: Episode, rehearsal: bool):
     rows.append(G.row("no_retired_route", not old, f"{len(old)} shot field(s) name a retired route (Q10, D-131: "
                       "config/retired_era.json)", old[:20]))
     rows += R.talking_check(doc)
-    from explainer_engine.aivideo import wan_adapter as WA
-    from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
-    rows += WA.fit_rows(shots, WJ.load_launch())   # final audit A2: one clip of the pinned model holds every Wan shot
     from explainer_engine.training.pods.ltx import modal_ltx_jobs as LJ
     from explainer_engine.videolane import plan as VP
+    if LJ.native_problems(LJ.LAUNCH):
+        rows.append(G.row("video_shots_fit_the_model", None, "NOT_RUN: the LTX model's native limits are not pinned in "
+                          f"{LJ.LAUNCH_PATH.name}: {'; '.join(LJ.native_problems(LJ.LAUNCH))}"))
+    else:   # FA-01: the video route is LTX (D-132); the Wan fit row stays only for the legacy adapter and its tests
+        rows += VP.fit_rows(doc, LJ.max_seconds(LJ.LAUNCH), LJ.LAUNCH.get("model_repo"), LJ.LAUNCH["native"]["fps"])
     rows += VP.rows(doc, LJ.max_seconds(LJ.LAUNCH))   # VL-01..VL-09: every LTX shot's edit plan (D-137)
     speakers = R.speaking_heroes(doc)
     differ = []

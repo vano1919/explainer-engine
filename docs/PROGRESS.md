@@ -6047,3 +6047,24 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Evidence: the same six T0 prompts with the main-style reference on Gemini 1K (about $0.017 a photo), BFL Klein 1K ($0.009)
   and BFL FLUX 3 Image ($0.048); spend $0.10 + $0.342 of the $0.40 cap; sheet on HF
   `explainer-engine/photo_cost_2026-11-12/sheet_gemini_vs_flux3.jpg`. fal (no balance) and HF providers (402) were not usable.
+
+## 2026-11-13 — Integration branch for Toba (Fable audit 2026-11-13, guideline P0 + P1.1 + P1.2; branch `claude/project-thread-knwnla`)
+- P0 merges, real merge commits off `systemic/next-video` 6b5a1b5: `claude/project-thread-98b6wy` (AV line, PR #174 with #163,
+  #169, #171), `-lncsi3` (video lane, PR #175 with #172 and the older heads), `-1hrknf` (A line, PRs #165 #166 #168 #170),
+  `-eczgwr` (picture route, PR #173). `-96iqtm` (PR #167) is NOT merged: its one commit is superseded by `1hrknf`'s GC-21 row.
+  Conflicts: logs keep both sides; `docs/EPISODE_FIRST.md` row by row (RT-07/RT-08 the video lane's wording, SP-01..SP-03 the
+  AV wording, SP-02 names D-136); `docs/SOURCED_RULES.md` regenerated from the merged registry; the schema keeps
+  `motion_profile` and `edit_plan`; `run.py` keeps both cache-key sides and `voice_track`. FA-08: the AV side's W1 "D-133"
+  becomes D-136 (`audio/stems.py`, `test_v43_sound_plan.py`, the AV PROGRESS lines, the D-135 row); `grep D-133` now shows
+  only the cheapest-run decision. Suite after the merges: 4063 passed, 6 failed (exactly the FA-04 six), docs_lint 0.
+- FA-01: G1's `video_shots_fit_the_model` reads the LTX launch (`training/pods/ltx/launch.json` native) and sizes each video
+  shot with `videolane/plan.clip_seconds` (VL-06) through the new `videolane/plan.fit_rows`; the Wan fit stays only for the
+  legacy adapter. `clip_seconds` now counts only character lines as clip speech: a narrated video shot is its length plus the
+  handles (the narrator is read over the clip), from the measured length when given (`basis: measured_length`, FA-15).
+  Toba: the row is PASS (was FAIL 23 of 55 against Wan). `gemini_task/timing.video_clip` reads the same LTX launch.
+- FA-04: `gemini_task/queue` writes the route `video` (bucket 60); a legacy `wan` is read through `router.LEGACY_ROUTES`. A
+  `continuation` video shot asks for no picture (VL-05); a `coverage` shot attaches `edit_plan.scene_master` right after the
+  style anchor and never shares its batch. `texts/drive_pack/04_VIDEO_SCRIPT_RULES.md` and `P3_CHECK_VIDEO_SCRIPT.md` say
+  `video` and carry the two video-lane sentences. The Toba queue builds with 55 video rows.
+- Tests: `test_videolane.py` (fit row LTX not Wan, narrated sizing, Toba row), `test_gemini_task_flow.py` (two assertions on
+  `wan` rewritten to the FA-04 rule; new: wan read as video, continuation/coverage, drive pack sentences, Toba 55 rows).

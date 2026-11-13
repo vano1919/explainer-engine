@@ -388,3 +388,42 @@ def test_a_crop_that_enlarges_too_much_is_refused():
         L.crop_filter([0.3, 0.3, 0.7, 0.7])
     with pytest.raises(ValueError, match="inside the frame"):
         L.crop_filter([0.5, 0.1, 0.4, 0.9])
+
+
+def test_g1_fit_row_reads_the_ltx_model_not_wan():
+    """FA-01 (Fable audit 2026-11-13): G1's ``video_shots_fit_the_model`` sizes a video shot as the lane does (VL-06) against
+    the pinned LTX launch; a 9 s narrated shot fits one clip, an 11 s one FAILs and names the LTX limit."""
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as LJ
+    max_s, fps, model = LJ.max_seconds(LJ.LAUNCH), LJ.LAUNCH["native"]["fps"], LJ.LAUNCH["model_repo"]
+    doc = _scene()
+    doc["shots"][0]["target_duration_seconds"] = 9.0
+    doc["shots"][0]["edit_plan"]["tail_handle_s"] = 0.25
+    row = P.fit_rows(doc, max_s, model, fps)[0]
+    assert row["gate"] == "video_shots_fit_the_model" and row["status"] == G.PASS
+    doc["shots"][0]["target_duration_seconds"] = 11.0
+    row = P.fit_rows(doc, max_s, model, fps)[0]
+    assert row["status"] == G.FAIL and row["measured"] == ["A: needs 11.25 s (planned_length)"]
+    assert "LTX" in row["detail"] and model in row["detail"] and "Wan" not in row["detail"]
+
+
+def test_a_narrated_video_shot_is_sized_by_its_length_not_the_narrators_words():
+    """FA-01 / FA-15: the narrator's line is read over the clip, not spoken by it: length + handles, the measured length when
+    the read exists (``basis`` says which)."""
+    doc = _scene()
+    a = doc["shots"][0]                                    # carries the narrator's line L3
+    planned = P.clip_seconds(doc, a, 10.0)
+    assert planned["basis"] == "planned_length" and planned["speech_s"] == 0
+    measured = P.clip_seconds(doc, a, 10.0, measured_s=5.0)
+    assert measured["basis"] == "measured_length" and measured["needed_s"] == round(5.0 + float(P.CUT_TAIL[1]), 3)
+
+
+def test_the_runner_g1_on_toba_no_longer_reports_wan():
+    """FA-01 measured on the real script: the fit row of G1 names LTX and no Toba shot is judged against Wan's 5 s clip."""
+    import inspect
+    from explainer_engine.episode import run as RUN
+    src = inspect.getsource(RUN.stage_script)
+    assert "VP.fit_rows" in src and "WA.fit_rows" not in src and "modal_wan_jobs" not in src
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as LJ
+    doc = json.loads((ROOT / "episodes" / "ep_toba" / "story" / "production_script.json").read_text(encoding="utf-8"))
+    row = P.fit_rows(doc, LJ.max_seconds(LJ.LAUNCH), LJ.LAUNCH["model_repo"], LJ.LAUNCH["native"]["fps"])[0]
+    assert row["status"] == G.PASS and "Wan" not in row["detail"]

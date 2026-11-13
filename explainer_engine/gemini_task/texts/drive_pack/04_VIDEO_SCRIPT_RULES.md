@@ -1,6 +1,6 @@
 # Rules for the video script (the shot list)
 
-Sources: `docs/EPISODE_FIRST.md` (RT-01..RT-06, RN-03); `docs/GEMINI_CONSISTENCY_RULES.md` (GC rules);
+Sources: `docs/EPISODE_FIRST.md` (RT-01..RT-08, RN-03); `docs/VIDEO_LANE.md` (VL-01..VL-13); `docs/GEMINI_CONSISTENCY_RULES.md` (GC rules);
 `docs/SOURCED_RULES.md` (BP-185); `05_STYLE.md` and `06_PICTURE_RULES.md` of this pack.
 
 The video script turns the approved script into a list of shots. For every shot it says what the viewer sees, how the
@@ -14,7 +14,7 @@ every picture that follows.
 |---|---|
 | `shot_id` | unique, in viewing order |
 | the line it covers | every spoken line of the approved script is covered by at least one shot, in order; no shot covers words the script does not have |
-| `route` and a reason | one of `map_action`, `still_25d`, `wan` (RT-01) |
+| `route` and a reason | one of `map_action`, `still_25d`, `video` (RT-01; `video` is an LTX clip, RT-08) |
 | `duration_s` | from the timed read, not from a guess (RN-03) |
 | `shot_type` | one of the shot types of the style pack table in `05_STYLE.md`: it picks the style anchor |
 | `cast` | the heroes in the picture, by id; each has an approved reference before its first shot |
@@ -25,12 +25,16 @@ every picture that follows.
 
 ## Routes
 
-- `wan` (a video clip from the picture) only where a body does something a still cannot fake: running, fighting,
+- `video` (an LTX clip from the picture, RT-08) only where a body does something a still cannot fake: running, fighting,
   throwing, handling an object, a fall; and for the speaker of a played scene (RT-02).
 - `still_25d` (the picture moved in layers) for camera moves, weather, fire, water, distant crowds, establishing
   views and objects at rest (RT-02). Such a shot names at least {{bp:BP-185.families_min}} kinds of movement beyond
   the camera, for example embers and a flickering light (RT-06, BP-185).
 - `map_action` for geography and numbers. Python draws these; you make no picture for them (RT-03).
+- A `video` shot whose edit plan says `continuation` asks for no start picture: its first frame is the hand-over frame
+  of the clip before it (VL-05). You make no picture for it.
+- A `video` shot whose edit plan says `coverage` takes the scene master picture as its first reference after the style
+  anchor: a new angle is drawn from the scene master, never from the last frame of the clip before (VL-04).
 - The mix is measured by seconds, not by shot counts. The creator's guide is about 10 % map, 30 % still, 60 % video;
   report the measured shares and do not force them (RT-04).
 
@@ -50,7 +54,7 @@ Check every prompt against these. Quote the shot id and the words for each miss.
    the era, and the prompt carries the episode's era line word for word.
 8. A scene prompt says to keep the faces, hair, costumes and props of the reference pictures after image 1 (image 1
    is the style anchor and gives the look only).
-9. An end frame of a `wan` shot attaches the style anchor of its shot type first and its own start frame second (GC-09, GC-21).
+9. An end frame of a `video` shot attaches the style anchor of its shot type first and its own start frame second (GC-09, GC-21).
 
 ## The list as a whole
 

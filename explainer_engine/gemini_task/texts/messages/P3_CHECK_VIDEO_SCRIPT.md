@@ -41,6 +41,6 @@ VERDICT: APPROVE | APPROVE_WITH_NOTES | REVISE
 STORY FIRST: <two or three sentences>
 FINDINGS
 F1 | BLOCKER|SHOULD|IDEA | <rule id, claim id or URL> | "<shot id>: <quote>" | <problem> | <proposed fix>
-MEASURED: shots <n>; spoken lines covered <a> of <b>; seconds map_action/still_25d/wan <x>/<y>/<z> %; prompts with a miss <n> of <m>; shots before their references <n>
+MEASURED: shots <n>; spoken lines covered <a> of <b>; seconds map_action/still_25d/video <x>/<y>/<z> %; prompts with a miss <n> of <m>; shots before their references <n>
 NOT CHECKED: <what you could not open or verify, or ->
 =====END MESSAGE=====
