@@ -98,10 +98,18 @@ def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".part.mp4")
     dur = frames / fps
-    cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur:.4f}",
+    # read two frames more than the edit: the fps filter's rounding can otherwise drop the last frame (seen on CI's
+    # ffmpeg with a 30 fps clip on a 24 fps episode); -frames:v caps the picture, atrim the sound
+    cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur + 2.0 / fps:.4f}",
            "-vf", f"fps={fps}", "-frames:v", str(frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
            "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-af", f"apad,atrim=0:{dur:.4f}", str(tmp)]
     subprocess.run(cmd, check=True, capture_output=True)
+    got = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
+                          "stream=nb_read_frames", "-of", "csv=p=0", str(tmp)], capture_output=True, text=True,
+                         check=True).stdout.strip()
+    if int(got or 0) != frames:   # the record must say what the file holds (the assembler refuses a short clip)
+        tmp.unlink(missing_ok=True)
+        raise ContractError(f"{Path(raw).name}: the cut has {got} frames, the edit {frames} (from {in_s:.3f} s)")
     tmp.replace(out)
     return out
 

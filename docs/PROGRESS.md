@@ -5935,3 +5935,7 @@ the helmets and shield changing at cut 1: palette alone does not see hero identi
 
 **Stale text reported.** `SCENE_REUSE_RULES.md` LX-04 says clip audio is not used for speech; since D-132 LTX speaks its lines.
 The Toba script's S05_SH003 is a speaking close-up on the video route (VL-02 FAIL when its edit plan is written).
+
+**CI fix (same day).** On CI's ffmpeg a 30 fps clip cut to the 24 fps episode lost its last frame (68 of 69,
+`test_a_spoken_clip_is_cut_around_its_measured_line_on_the_episode_rate[30]`). `ingest.cut` now reads two frames more than
+the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose frame count differs from its record.
