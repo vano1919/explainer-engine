@@ -174,7 +174,7 @@ class ModalWanBackend(Backend):
     worker = WORKER
     jobs_module = WAN_JOBS
     failed_mark = "WAN_FAILED"
-    keep_audio = False   # Wan makes no sound; LTX's clips keep theirs (aivideo/ltx_modal)
+    keep_audio = False   # Wan makes no sound; LTX's clips keep theirs (the video lane, videolane/, D-132)
     spend_line = staticmethod(lambda: spend_caps.modal())   # the creator's line this backend's runs stay under
 
     def _wj(self):

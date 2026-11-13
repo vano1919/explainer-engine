@@ -6,6 +6,13 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
+**v4.3 episode (D-131; Fable audit 2026-11-13):** name the place of every scene once, as a `world_bible.locations` entry,
+and give it its bed (`ambience_bed`: the ambience classes of `episode/sound_plan.EVENT_CLASSES` and the `room`): the bed is
+the place's, authored once, never guessed from the prose (FA-09). The era comes from `episode.json` (`historical_period`),
+never from a default. A scene = a segment in one place (the video lane's unit, VL rules).
+
 **Ink Chronicle note (D-96, 2026-11-05):** where this page names keyframes or LTX shots it describes the legacy image-generation route (D-80, D-105); on the Blender path every shot line must still be filmable, now as a 3D scene (`shot_spec/2`), and the story rules here stay in force.
 
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start architect --job <job> --page .claude/agents/story-architect.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh architect --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).

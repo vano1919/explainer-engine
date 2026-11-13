@@ -1,8 +1,10 @@
 # Local Video & 2.5D Motion Generation Guide (`VIDEO_GENERATION_WAN.md`)
 
 > **Legacy for a v4.3 episode (D-131, 2026-11-12; final audit C1).** The local ComfyUI Wan route and the DepthFlow 2.5D
-> motion on this page are not the v4.3 method. A v4.3 `wan` shot is made by `aivideo/wan_adapter.ModalWanBackend` and the
-> worker `training/pods/wan/modal_wan_jobs.py` (OR-37 ladder L0..L4, the one ledger `core/ledger.Run`); a `still_25d` shot by
+> motion on this page are not the v4.3 method. Since D-132 (2026-11-12 19:10 UTC) a v4.3 `video` shot (the old name `wan`) is
+> made by LTX-2.5 distilled on Modal through the video lane (`videolane/scene`, `training/pods/ltx/scene_run`, the worker
+> `training/pods/ltx/modal_ltx_jobs.py`; VL-01..VL-13, D-137); the Wan adapter `aivideo/wan_adapter.ModalWanBackend` and its worker
+> `training/pods/wan/modal_wan_jobs.py` stay as code, not routed (banner corrected 2026-11-13, Fable audit FA-17); a `still_25d` shot by
 > `production/layers25d`; the routes are in `docs/EPISODE_FIRST.md` (RT rows). Local ComfyUI stays the creator's free option
 > (`ComfyWanBackend`), never the route. The numbers below (81 frames, 1280x720, the frame[-5] chain) are notes for the v4.3
 > model pin (final audit A2), not settings. The page stays readable for the episodes made before 2026-11-12.

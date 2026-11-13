@@ -36,6 +36,11 @@ as a separate agent with a fresh context (OR-20, D-79).
 | 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds; a passing review comes with `story_page.md` (Georgian, one page, the whole story and why it is well told, BP-89, EG-23) |
 | - | creator approval #1 | | nothing is paid before it |
 
+**v4.3 episode (D-131; Fable audit 2026-11-13).** On a `ProductionScriptV4` the same stages own the v4.3 fields
+(`edit_plan`, `av_contract`, `sound_events`, `intentional_silence`, a segment's `mood`/`music`, a character's
+`voice_description`, a place's `ambience_bed`); the table of owners is in [STORY_ENGINE](../../../docs/STORY_ENGINE.md)
+"The v4.3 episode script: who owns the new fields", and `stage_guard` checks it on the v4 keys.
+
 **The re-read rule (OR-32).** Each stage starts by Reading its page and the files the page says to read first, and records it with
 `stage_guard start`; `stage_guard fresh` reports an output with no such record. The reason: the whole writers' room in one
 context squeezes about 135 thousand tokens of rules into a summary, and a stage written from a summary breaks rules its page states.

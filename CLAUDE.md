@@ -7,13 +7,15 @@
 > free from the Gemini chat's built-in image tool (turn packs gated at intake, GC-01..GC-17) plus a free local 2x upscale, and only
 > failing close-up hero shots are re-made at 2K on the paid batch tier, each batch priced and asked first; the visual mix by
 > duration is 10 % `map_action` (Python maps with an action layer), 30 % `still_25d` (picture + layered 2.5D with motion imitation, D-131)
-> and 60 % `wan` (Wan on Modal where a body moves; the speaker shot is a Wan performance clip, no lip-sync); sound from ElevenLabs
+> and 60 % `video` (LTX-2.5 distilled on Modal where a body moves or a hero speaks, D-132, D-131 as amended; the clip speaks its
+> one line itself; the cuts inside a scene follow the video lane D-137; every visible event has its audio decision, the AV
+> contract D-135; the old route name `wan` still reads as `video`); sound from ElevenLabs
 > SFX/music, library first, one level everywhere; one runner (`python -m explainer_engine.episode run <episode> --to qa`) and
-> chunked assembly; every gate measures or says NOT_RUN. Paid steps (Gemini 2K, ElevenLabs, Modal Wan) still need the OR-23 plan,
+> chunked assembly; every gate measures or says NOT_RUN. Paid steps (Gemini 2K, ElevenLabs, Modal LTX, D-132) still need the OR-23 plan,
 > the Fable full-repo audit (rule below) and the creator's word; Modal has a zero approved budget until `config/spend_caps.json` has
 > its `modal` line.
 >
-> **Retired, not deleted (Q10, D-131):** Qwen-Image-2.1 + the xworld LoRA, LTX, the Blender scene/J5 route, RunPod (legacy, D-131) stay
+> **Retired, not deleted (Q10, D-131):** Qwen-Image-2.1 + the xworld LoRA, the old LTX routes (J2/J4, LoRAs, pods; LTX-2.5 distilled is back on the v4.3 Modal path only, D-132), the Blender scene/J5 route, RunPod (legacy, D-131) stay
 > as code and keep their tests, but `config/retired_era.json` lists them and `episode/retired.refuse` stops them inside a v4.3
 > episode. History, for the episodes made before 2026-11-12 (D-116, 2026-11-06, as amended D-96): Qwen-Image-2.1 + xworld_v2 draws the look,
 > Blender builds space and time and renders the J5 shots, LTX animates the J2/J4 shots, FFmpeg assembles (legacy); that route and its
@@ -34,9 +36,9 @@
 A solo creator's explainer channel ("worlds collide": history, science and money meeting other eras, D-25; analysis episodes of
 other people's fictional worlds under the RR rules, D-26) and its production pipeline, v4.3 episode-first (D-131): topic → research
 dossier + claim map → short scenario → **creator approval** (OR-15) → script with the dialogue inside its scenes, every shot routed
-`map_action` / `still_25d` / `wan` (`episode/router`) → **creator approval** → the stages of `episode/run.py` (G1 script, G4 sound plan,
+`map_action` / `still_25d` / `video` (`episode/router`, D-132) → **creator approval** → the stages of `episode/run.py` (G1 script, G4 sound plan,
 G5 pictures from the turn packs, G6 the read and its Scribe clock, G7 clips by route through `maps/`, `production/layers25d` and
-`aivideo/wan_adapter`, G8 sound stems, G9 chunked assembly in `production/assemble.assemble_shot_clips`, G10 the measured
+the video lane `videolane/` (D-137; LTX through `training/pods/ltx/scene_run`, D-132), G8 sound stems, G9 chunked assembly in `production/assemble.assemble_shot_clips`, G10 the measured
 acceptance report) → Shorts → thumbnail + metadata (`qa/publish_check.py`) → review bundle → **creator approval** → manual upload.
 Cloud-first (D-31). Start from `docs/INDEX.md` and `docs/EPISODE_FIRST.md`: every specification and every ID (D-, SE-, V-, P-, R-,
 Q-) has ONE canonical home — link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this).
@@ -65,8 +67,9 @@ and the Master Mold handoff are history in [`docs/archive/`](docs/archive/) (D-1
 
 ## Invariants (do not violate; stop and ask if a task seems to require it)
 
-1. Production is cloud-first (D-31): the cloud session + Modal for the Wan shots (D-131: `aivideo/wan_adapter` with the
-   one ledger `core/ledger.Run`, the worker on the OR-37 ladder L0..L4); RunPod pods are legacy for a v4.3 episode. Money ceilings live only in
+1. Production is cloud-first (D-31): the cloud session + Modal for the video shots (D-132, D-131 as amended: LTX-2.5 distilled through
+   `training/pods/ltx/scene_run` (D-132) with the one ledger `core/ledger.Run` and the worker `training/pods/ltx/modal_ltx_jobs.py` on the
+   OR-37 ladder L0..L4; the Wan adapter stays as code, not routed); RunPod pods are legacy for a v4.3 episode. Money ceilings live only in
    `config/spend_caps.json` and are enforced by code (D-56): pods only via `python -m explainer_engine.cloud.runpod`
    (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
    Free Blender renders (review, style sheets, J5 shots, layout passes, benchmark preflight) run on the creator's PC (RX 5700,
@@ -142,10 +145,12 @@ only, YouTube Help 14328491); channel audience "not made for kids".
 
 ```
 explainer_engine/episode/ v4.3 (D-131): run.py (the runner, G1..G10, records in production/stages/), timing.py (the read's
-                          clock), router.py (map_action / still_25d / wan), context.py, sound_plan.py (audio/stems.py renders it), acceptance.py,
+                          clock), router.py (map_action / still_25d / video, D-132), context.py, sound_plan.py (audio/stems.py renders it), acceptance.py,
                           retired.py (refuses the retired tools of config/retired_era.json inside a v4.3 episode)
-explainer_engine/aivideo/ wan_adapter.py (Wan QA, retry, 2.5D fallback, ModalWanBackend; D-131), wan_runner.py (local ComfyUI)
-explainer_engine/training/pods/wan/  modal_wan_jobs.py + launch.json: the Wan worker on Modal (OR-37 ladder L0..L4)
+explainer_engine/videolane/ the video lane (D-137, VL-01..VL-13): plan, storyboard, scene (the LTX prompt composer), ingest, voice,
+                          cuts, master_qa; training/pods/ltx/ scene_run.py + modal_ltx_jobs.py + launch.json: LTX-2.5 distilled on Modal (D-132)
+explainer_engine/aivideo/ wan_adapter.py (Wan QA, retry, 2.5D fallback, ModalWanBackend; D-131, not routed since D-132), wan_runner.py (local ComfyUI)
+explainer_engine/training/pods/wan/  modal_wan_jobs.py + launch.json: the Wan worker on Modal (OR-37 ladder L0..L4; not routed since D-132)
 explainer_engine/core/    store.py (JobStore, atomic writes, stage registry), jobs.py (job naming, cleanup),
                           errors.py (Contract/Config/Retryable/NeedsReview), labels.py (evidence labels)
 explainer_engine/audio/   scribe_words.py / local_words.py (word timings of the read), voice_layer.py, level.py, seams.py,

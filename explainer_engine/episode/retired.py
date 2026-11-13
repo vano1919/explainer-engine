@@ -79,7 +79,10 @@ def retired_routes_in(script: dict) -> list[str]:
 
 
 ACTIVE_ROOTS = ("explainer_engine.episode.run", "explainer_engine.aivideo.wan_adapter",
-                "explainer_engine.training.pods.wan.modal_wan_jobs")
+                "explainer_engine.training.pods.wan.modal_wan_jobs",
+                # the LTX video path of D-132 / D-137 (Fable audit 2026-11-13, FA-16): config/retired_era.json "video_path"
+                "explainer_engine.videolane.scene", "explainer_engine.training.pods.ltx.scene_run",
+                "explainer_engine.training.pods.ltx.modal_ltx_jobs")
 
 
 def _module_file(mod: str, root: Path) -> Path | None:

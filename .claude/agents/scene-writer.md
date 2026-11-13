@@ -6,6 +6,14 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
+**v4.3 episode (D-131; Fable audit 2026-11-13):** a character's line on a `video` shot is spoken by the LTX clip itself
+(D-132): one line per clip (VL-02, a clip leaves 0.85-1.0 s between two sentences), the line ends inside its clip with
+BP-187's tail, and a line longer than one clip is split in the script (VL-06, the G1 row `video_shots_fit_the_model`). No
+speaking close-up (VL-02). A scene is a segment in one place: the video lane cuts and continues inside it. You write
+`audio_lines` and each shot's `audio_line_ids`; the motion prompt never quotes a line (`KP-V4-DIALOGUE-LEAK`).
+
 **Ink Chronicle note (D-96, 2026-11-05):** speech mix nominal 70/30, REVIEW outside 65-75 % narrator words (D-99); visible voiced coverage stays ≤ 5 s (BP-108); where this page names LTX shots it describes the legacy image-generation route (D-105).
 
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start writer --job <job> --page .claude/agents/scene-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh writer --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).

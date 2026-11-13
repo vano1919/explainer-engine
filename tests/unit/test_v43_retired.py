@@ -102,11 +102,13 @@ def test_the_qwen_and_ltx_launchers_check_the_era_in_their_preflight():
 
 
 def test_claude_md_states_the_v43_method_first():
+    """D-131's shares; the video share is route `video` = LTX-2.5 distilled since D-132 (rewritten by the Fable audit
+    2026-11-13, FA-17: it asserted the old route name `wan`)."""
     text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     head = text[:text.index("## Commands")]
     assert head.startswith("# v4.3 episode-first (D-131)")
     for want in ("Retired, not deleted (Q10, D-131)", "config/retired_era.json", "zero approved budget", "10 % `map_action`",
-                 "30 % `still_25d`", "60 % `wan`", "python -m explainer_engine.episode run"):
+                 "30 % `still_25d`", "60 % `video`", "D-132", "python -m explainer_engine.episode run"):
         assert want in head, want
 
 
@@ -128,3 +130,21 @@ def test_no_retired_tool_is_on_the_v43_active_path():
 def test_the_scan_finds_a_retired_import():
     hits = retired.retired_on_active_path(roots=("explainer_engine.production.paint",))
     assert any(h.startswith("explainer_engine.production.paint <- root") for h in hits)
+
+
+def test_the_ltx_video_path_is_named_and_on_the_active_path():
+    """Fable audit 2026-11-13 FA-16 (D-132, D-137): the real LTX path is videolane/scene + scene_run + the worker; the retired
+    list names no module that does not exist and no longer lists the generic clip QA training/video_qa.py."""
+    data = retired.load()
+    mods = data["video_path"]["modules"]
+    for m in mods:
+        assert (ROOT / m).is_file(), m
+    ap = retired.active_path()
+    for m in mods:
+        assert m.removesuffix(".py").replace("/", ".") in ap, m
+    assert retired.retired_on_active_path() == []
+    entries = [e for t in data["tools"].values() for e in t["entry"]]
+    assert "explainer_engine/training/video_qa.py" not in entries
+    for e in entries:
+        assert (ROOT / e).exists(), e
+    assert "videolane/scene" in data["tools"]["ltx"]["replacement"]

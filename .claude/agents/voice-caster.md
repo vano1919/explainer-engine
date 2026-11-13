@@ -6,6 +6,16 @@ effort: high
 tools: Read, Edit, Bash, Grep, ToolSearch
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
+**v4.3 episode (D-131, D-132; Fable audit 2026-11-13):** LTX-2.5 distilled makes the clip's own sound and speaks the
+character's line itself (RT-08); the worker takes no audio input, so D-90's read-first conditioning is not built for this route.
+Write for every speaking character `world_bible.characters[].voice_description`: the voice in plain words (age, timbre,
+accent, pace), from the traits only, never a person's name (PV-10; `casting.design_description` gives a start). The LTX
+prompt composer (`videolane/scene.compose_prompt`) puts it in every clip of that speaker, and a spoken shot without it is
+refused before money. Whether a paid speech-to-speech pass is added later is the creator's (audit Q5,
+`config/creator_open_questions.json`).
+
 **Ink Chronicle note (D-96, 2026-11-05):** one fixed ElevenLabs voice per character stays (D-90); on the Blender path its take drives the lip-sync (mouth shapes) instead of conditioning an LTX clip; the LTX wording below is the legacy image-generation route (D-105).
 
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start caster --job <job> --page .claude/agents/voice-caster.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh caster --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).

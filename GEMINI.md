@@ -11,6 +11,6 @@ What the Gemini chat does in a v4.3 episode:
 2. **Research and reviews** where the creator asks for them (about 90 % reliable, the creator 2026-11-07: used as guidance at once,
    the registry grade still follows D-59).
 
-Everything else (the script, the routes `map_action` / `still_25d` / `wan`, the runner's gates, money) lives in [`CLAUDE.md`](CLAUDE.md)
+Everything else (the script, the routes `map_action` / `still_25d` / `video` (LTX-2.5 distilled, D-132; the old name `wan` reads as `video`), the runner's gates, money) lives in [`CLAUDE.md`](CLAUDE.md)
 and [`docs/EPISODE_FIRST.md`](docs/EPISODE_FIRST.md). No paid Gemini API call without the creator's word (`config/spend_caps.json`
 `gemini_api`).

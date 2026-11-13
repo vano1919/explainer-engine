@@ -6104,3 +6104,31 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   measured_length`), from the plan otherwise; the runner does not force the read first (Q4).
 - Tests: `test_videolane.py` (composer on a fixture and on Toba, missing voice refused, hand-over case). The `_scene`
   fixture gained a cast with voice descriptions (no assertion weakened).
+
+## 2026-11-13 — P2 of the Fable audit: the writers' room learns the v4.3 contracts (FA-03, FA-16, FA-17)
+- `scripting/stage_guard.py`: on a v4 script (`shots` + `audio_lines` lists) the guard diffs by id (`shots[ID].field`,
+  `[+ID]`, `[-ID]`, `[order]`) and names the owner of every changed path (`V4_OWNERS`): `sound_events`,
+  `intentional_silence`, `sound_design` = beats; `audio_line_ids`, `audio_lines` = writer (`delivery_direction` =
+  performer); shots, `edit_plan`, actions, a segment's `mood`/`music`, `av_contract`, `visual_mix_target` = editor; a
+  character's `voice_description`/`voice_profile_id` = caster; places with their `ambience_bed`, segments, world bible =
+  architect; `shorts` = shorts. The table is in `docs/STORY_ENGINE.md` ("The v4.3 episode script: who owns the new
+  fields") and linked from `docs/PRODUCTION_SCRIPT.md`. Test `tests/unit/test_stage_guard_v4.py` (on the Toba script).
+- Pages: edit-planner (edit_plan, av_contract, frac/word anchors, mood/music), beat-writer + skill visual-beats
+  (sound_events with class and at_word, one audio decision per visible event, guide v2), scene-writer + skill
+  dialogue-scenes (one line per clip, BP-187 tail, split long lines, scene = segment + place), story-architect (place bed,
+  era from the manifest), voice-caster (voice_description for the prompt composer; D-90's read-first text stays as the
+  route it was), shot-continuity-writer (cards for scenes with video, the identity rows), script-critic (the four v4.3
+  checks), skills shot-visuals / editing-style (route `video`, VL and AV ids), story-engine (owner table). The D-116 text on
+  those pages carries a dated legacy banner (2026-11-13).
+- Stale texts corrected (ICW-01): `CLAUDE.md` route facts only (60 % `video` = LTX-2.5 distilled on Modal, D-132; the lane
+  D-137; the AV contract D-135; the layout names `videolane/`); `.claude/rules/cloud-platforms.md` (the Modal path is the
+  LTX worker); `GEMINI.md`; `docs/SCENE_REUSE_RULES.md` LX-04 (a speaking clip is never retimed); the banner of
+  `docs/VIDEO_GENERATION_WAN.md`; `episode/router.py` and `aivideo/wan_adapter.py` comments named `aivideo/ltx_modal`, a
+  module that was never built.
+- FA-16: `config/retired_era.json` no longer lists `training/video_qa.py` as retired (a generic clip QA the identity rows
+  need), names the real LTX path (`video_path`: `videolane/scene`, `training/pods/ltx/scene_run`, the worker), and
+  `episode/retired.ACTIVE_ROOTS` scans that path too (still no retired module on it). The worker's own docstring still
+  names `aivideo/ltx_modal`: not edited (worker frozen until P5), listed in the handoff.
+- Tests rewritten to the new rule, none weakened: `test_v43_retired.test_claude_md_states_the_v43_method_first` asks for
+  `60 % video` and D-132; `test_icw01_rule_rewrite` treats a line naming D-132 or D-137 as current. New
+  `test_v43_retired.test_the_ltx_video_path_is_named_and_on_the_active_path`.

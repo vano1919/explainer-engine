@@ -8,7 +8,8 @@ Routes:
 - ``video``: only where a body really performs an action a still cannot fake (running, fighting, throwing, handling an object,
   a fall), and the speaker's performance shot of a played scene (Q7: a performance clip, no lip-sync, no talking still). Since
   D-132 (the creator, 2026-11-12 19:10 UTC, after the bake-off) the clip is made by LTX-2.5 distilled on Modal
-  (``aivideo/ltx_modal.ModalLtxBackend``); the route was called ``wan`` under D-131 and a script that still says ``wan`` is
+  (the video lane ``videolane/scene`` + ``training/pods/ltx/scene_run`` and the worker
+  ``training/pods/ltx/modal_ltx_jobs.py``, D-137); the route was called ``wan`` under D-131 and a script that still says ``wan`` is
   read as ``video`` (``LEGACY_ROUTES``).
 
 The router is deterministic: the same shot always gets the same route. A shot may pin its route by hand
