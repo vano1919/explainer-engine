@@ -1,0 +1,238 @@
+{
+  "schema": "episode_manifest/1",
+  "episode_id": "ep_truce_1914",
+  "slug": "ep_truce_1914_christmas",
+  "title": "The Day We Were Not Enemies: The Christmas Truce of 1914",
+  "historical_period": {
+    "era_id": "modern_20th_century",
+    "label": "First World War, Christmas 1914",
+    "start_year": 1914,
+    "end_year": 1914
+  },
+  "era_line": "The world is the Western Front in Flanders at Christmas 1914: the only light sources are candles, oil lamps, coke braziers, matches, the low winter sun and the moon, and everything is made of wool, leather, canvas, brass, timber, sandbags, frozen mud and barbed wire.",
+  "geographic_scope": {
+    "regions": [
+      "French Flanders",
+      "West Flanders (Belgium)",
+      "Western Front"
+    ],
+    "primary_bbox": [
+      2.4,
+      47.3,
+      7.4,
+      51.3
+    ],
+    "key_coordinates": {
+      "frelinghien": {
+        "lat": 50.711,
+        "lon": 2.935,
+        "label": "Frelinghien-Houplines sector"
+      },
+      "ploegsteert": {
+        "lat": 50.725,
+        "lon": 2.88,
+        "label": "Ploegsteert Wood"
+      },
+      "fleurbaix": {
+        "lat": 50.651,
+        "lon": 2.833,
+        "label": "Fleurbaix (joint burial)"
+      }
+    }
+  },
+  "canonical_characters": [
+    {
+      "character_id": "char_thomas_hale",
+      "name": "Thomas Hale",
+      "role": "Private of an English county infantry battalion, 20, from Nottingham (invented composite hero)",
+      "voice_profile_id": "voice_thomas_hale_1914"
+    },
+    {
+      "character_id": "char_friedrich_brandt",
+      "name": "Friedrich Brandt",
+      "role": "Gefreiter of a Saxon infantry regiment, 32, a waiter in London before the war (invented composite hero)",
+      "voice_profile_id": "voice_friedrich_brandt_1914"
+    },
+    {
+      "character_id": "char_sgt_harris",
+      "name": "Sergeant Albert Harris",
+      "role": "Platoon sergeant, a regular soldier of 42, Thomas's sergeant (invented)",
+      "voice_profile_id": "voice_sgt_harris_1914"
+    }
+  ],
+  "canonical_locations": [
+    {
+      "location_id": "loc_british_trench",
+      "name": "British front-line breastwork trench opposite Frelinghien",
+      "era_and_geography": "Near Houplines, French Flanders, 24-26 December 1914"
+    },
+    {
+      "location_id": "loc_german_trench",
+      "name": "Saxon front-line trench opposite the British line",
+      "era_and_geography": "Frelinghien sector, French Flanders, 24-26 December 1914"
+    },
+    {
+      "location_id": "loc_no_mans_land",
+      "name": "No man's land between the lines",
+      "era_and_geography": "Frelinghien-Houplines sector, French Flanders, 25-26 December 1914"
+    },
+    {
+      "location_id": "loc_western_front_map",
+      "name": "Map of the Western Front, December 1914",
+      "era_and_geography": "Belgium and north-eastern France, December 1914"
+    }
+  ],
+  "target_duration_s": 360.0,
+  "visual_style_profile": "crossworld_main_style_v1",
+  "look": {
+    "preset": "crossworld_main_style_v1"
+  },
+  "map_style_profile": "letter-free shaded-relief plate + Python action layer in the episode's look",
+  "map_style": "relief plate + action layer in the video's look (Q6, plan P4)",
+  "audio_profile": {
+    "narrator_voice_id": "CcSJ2r3qw0XU9gJpEPyk",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "target_lufs": -14.0
+  },
+  "asset_sources": {
+    "episode_assets_dir": "episodes/ep_truce_1914/assets",
+    "allow_shared_style_anchors": false,
+    "strict_episode_isolation": true
+  },
+  "allowed_era_tags": [
+    "modern_20th_century",
+    "1914",
+    "first_world_war",
+    "western_front",
+    "christmas_truce"
+  ],
+  "forbidden_era_tags": [
+    "prehistoric_pleistocene",
+    "napoleonic_19th_century",
+    "1815_waterloo",
+    "1946_postwar_british_empire"
+  ],
+  "forbidden_semantic_tokens": [
+    "steel helmet",
+    "stahlhelm",
+    "brodie helmet",
+    "tank",
+    "gas mask",
+    "machine pistol",
+    "napoleon",
+    "musket"
+  ],
+  "created_at": "2026-11-13T15:30:00Z",
+  "status": "in_production",
+  "run_scope": "full",
+  "image_native_min_long_side": 1376,
+  "image_min_long_side": 2752,
+  "places": {
+    "nieuport": {
+      "lon": 2.75,
+      "lat": 51.13,
+      "name": "Nieuport"
+    },
+    "ypres": {
+      "lon": 2.885,
+      "lat": 50.851,
+      "name": "Ypres"
+    },
+    "armentieres": {
+      "lon": 2.881,
+      "lat": 50.688,
+      "name": "Armentieres"
+    },
+    "la_bassee": {
+      "lon": 2.807,
+      "lat": 50.534,
+      "name": "La Bassee"
+    },
+    "arras": {
+      "lon": 2.78,
+      "lat": 50.29,
+      "name": "Arras"
+    },
+    "noyon": {
+      "lon": 3.0,
+      "lat": 49.58,
+      "name": "Noyon"
+    },
+    "soissons": {
+      "lon": 3.32,
+      "lat": 49.38,
+      "name": "Soissons"
+    },
+    "reims": {
+      "lon": 4.03,
+      "lat": 49.26,
+      "name": "Reims"
+    },
+    "verdun": {
+      "lon": 5.38,
+      "lat": 49.16,
+      "name": "Verdun"
+    },
+    "st_mihiel": {
+      "lon": 5.54,
+      "lat": 48.89,
+      "name": "St-Mihiel"
+    },
+    "pont_a_mousson": {
+      "lon": 6.05,
+      "lat": 48.9,
+      "name": "Pont-a-Mousson"
+    },
+    "swiss_border": {
+      "lon": 7.15,
+      "lat": 47.5,
+      "name": "Swiss border"
+    },
+    "flanders": {
+      "lon": 2.9,
+      "lat": 50.72,
+      "name": "Flanders"
+    },
+    "aachen": {
+      "lon": 6.08,
+      "lat": 50.78,
+      "name": "Aachen"
+    },
+    "liege": {
+      "lon": 5.57,
+      "lat": 50.63,
+      "name": "Liege"
+    },
+    "brussels": {
+      "lon": 4.35,
+      "lat": 50.85,
+      "name": "Brussels"
+    },
+    "marne": {
+      "lon": 3.6,
+      "lat": 48.95,
+      "name": "the Marne"
+    },
+    "ploegsteert": {
+      "lon": 2.88,
+      "lat": 50.725,
+      "name": "Ploegsteert"
+    },
+    "frelinghien": {
+      "lon": 2.935,
+      "lat": 50.711,
+      "name": "Frelinghien"
+    },
+    "fleurbaix": {
+      "lon": 2.833,
+      "lat": 50.651,
+      "name": "Fleurbaix"
+    },
+    "wulverghem": {
+      "lon": 2.845,
+      "lat": 50.765,
+      "name": "Wulverghem"
+    }
+  }
+}
