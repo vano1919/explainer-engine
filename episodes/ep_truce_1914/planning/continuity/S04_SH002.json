@@ -1,0 +1,86 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S04@loc_german_trench:S04_SH002",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_german_trench",
+  "where_when": "Saxon front-line trench opposite the British line / Christmas morning 1914, dawn",
+  "int_ext": "EXT",
+  "time_of_day": "dawn",
+  "weather": "clear",
+  "master_frame": "S04_SH002_start",
+  "landmarks": [
+   {
+    "id": "fir_trees",
+    "text": "small fir trees set on the parapet"
+   },
+   {
+    "id": "dugout_entrance",
+    "text": "a dugout entrance with a hanging oil lamp"
+   },
+   {
+    "id": "timber_walls",
+    "text": "timber-revetted earth walls"
+   },
+   {
+    "id": "sandbag_parapet",
+    "text": "a parapet of sandbags"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "right",
+  "light_source": "the low winter sun",
+  "colour_key": "deep night blue, many small warm candle points along the parapet"
+ },
+ "cast": {
+  "char_friedrich_brandt": {
+   "name": "the Saxon corporal",
+   "description": "Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots",
+   "sheet": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+   "costumes": {
+    "field": "field-grey round cap with red band, grey greatcoat buttoned, the portrait card in the left breast pocket",
+    "button_given": "field-grey round cap with red band, grey greatcoat buttoned with one button missing, the portrait card in the left breast pocket"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S04_SH002",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "B",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_friedrich_brandt",
+     "screen_pos": "centre",
+     "depth": "mid",
+     "facing": "left",
+     "costume": "field",
+     "action": "Friedrich's head and shoulders show above the German parapet",
+     "eyeline": "off_left"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+     "role": "character",
+     "of": "char_friedrich_brandt"
+    }
+   ],
+   "is_master": true,
+   "hook_up": "first",
+   "landmarks": [
+    {
+     "id": "sandbag_parapet",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}

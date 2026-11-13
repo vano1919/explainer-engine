@@ -1,0 +1,116 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S04@loc_british_trench:S04_SH003",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_british_trench",
+  "where_when": "British front-line breastwork trench opposite Frelinghien / Christmas morning 1914, dawn",
+  "int_ext": "EXT",
+  "time_of_day": "dawn",
+  "weather": "clear",
+  "master_frame": "S04_SH003_start",
+  "landmarks": [
+   {
+    "id": "sandbag_breastwork",
+    "text": "waist-high sandbag breastworks with frost"
+   },
+   {
+    "id": "duckboards",
+    "text": "duckboards over brown floodwater"
+   },
+   {
+    "id": "fire_step",
+    "text": "the fire step"
+   },
+   {
+    "id": "brazier",
+    "text": "a small coke brazier"
+   },
+   {
+    "id": "trench_ladder",
+    "text": "a trench ladder"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "right",
+  "light_source": "the low winter sun",
+  "colour_key": "cold steel-blue winter light, warm orange brazier glow at night"
+ },
+ "cast": {
+  "char_sgt_harris": {
+   "name": "the British sergeant",
+   "description": "Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic",
+   "sheet": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+   "costumes": {
+    "cap_on": "khaki soft cap, goatskin jerkin over the khaki tunic, three chevrons",
+    "cap_off": "bareheaded, the khaki soft cap in his hand, goatskin jerkin over the khaki tunic, three chevrons"
+   }
+  },
+  "char_thomas_hale": {
+   "name": "the young British private",
+   "description": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
+   "sheet": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "costumes": {
+    "service": "khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place",
+    "button_cut": "khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S04_SH003",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_sgt_harris",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "cap_on",
+     "eyeline": "char_thomas_hale",
+     "action": "Harris and Thomas crouch behind the parapet"
+    },
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "right",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "off_right"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+     "role": "character",
+     "of": "char_sgt_harris"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "is_master": true,
+   "axis": [
+    "char_sgt_harris",
+    "char_thomas_hale"
+   ],
+   "hook_up": "first",
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}

@@ -1,0 +1,188 @@
+{
+ "fail": 0,
+ "review": 0,
+ "scenes": [
+  {
+   "scene": "S01@loc_british_trench:S01_SH002",
+   "file": "S01_SH002.json",
+   "shots": [
+    "S01_SH002"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S01@loc_no_mans_land:S01_SH003",
+   "file": "S01_SH003.json",
+   "shots": [
+    "S01_SH003",
+    "S01_SH004"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S02@loc_british_trench:S02_SH004",
+   "file": "S02_SH004.json",
+   "shots": [
+    "S02_SH004",
+    "S02_SH005",
+    "S02_SH006",
+    "S02_SH007",
+    "S02_SH008",
+    "S02_SH009"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S03@loc_german_trench:S03_SH001",
+   "file": "S03_SH001.json",
+   "shots": [
+    "S03_SH001",
+    "S03_SH002",
+    "S03_SH003"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S03@loc_british_trench:S03_SH004",
+   "file": "S03_SH004.json",
+   "shots": [
+    "S03_SH004",
+    "S03_SH005",
+    "S03_SH006",
+    "S03_SH007",
+    "S03_SH008"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S03@loc_german_trench:S03_SH009",
+   "file": "S03_SH009.json",
+   "shots": [
+    "S03_SH009"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S04@loc_german_trench:S04_SH002",
+   "file": "S04_SH002.json",
+   "shots": [
+    "S04_SH002"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S04@loc_british_trench:S04_SH003",
+   "file": "S04_SH003.json",
+   "shots": [
+    "S04_SH003"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S04@loc_german_trench:S04_SH004",
+   "file": "S04_SH004.json",
+   "shots": [
+    "S04_SH004"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S04@loc_british_trench:S04_SH005",
+   "file": "S04_SH005.json",
+   "shots": [
+    "S04_SH005",
+    "S04_SH006",
+    "S04_SH007"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S04@loc_no_mans_land:S04_SH008",
+   "file": "S04_SH008.json",
+   "shots": [
+    "S04_SH008",
+    "S04_SH009",
+    "S04_SH010",
+    "S04_SH011",
+    "S04_SH012",
+    "S04_SH013",
+    "S04_SH014",
+    "S04_SH015"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S05@loc_no_mans_land:S05_SH003",
+   "file": "S05_SH003.json",
+   "shots": [
+    "S05_SH003",
+    "S05_SH004",
+    "S05_SH005",
+    "S05_SH006",
+    "S05_SH007",
+    "S05_SH008",
+    "S05_SH009",
+    "S05_SH010",
+    "S05_SH011",
+    "S05_SH012",
+    "S05_SH013",
+    "S05_SH014",
+    "S05_SH015",
+    "S05_SH016",
+    "S05_SH017",
+    "S05_SH018",
+    "S05_SH019",
+    "S05_SH020",
+    "S05_SH021"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S06@loc_no_mans_land:S06_SH001",
+   "file": "S06_SH001.json",
+   "shots": [
+    "S06_SH001",
+    "S06_SH002",
+    "S06_SH003",
+    "S06_SH004",
+    "S06_SH005",
+    "S06_SH006",
+    "S06_SH007",
+    "S06_SH008",
+    "S06_SH009",
+    "S06_SH010",
+    "S06_SH011",
+    "S06_SH012"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S07@loc_no_mans_land:S07_SH001",
+   "file": "S07_SH001.json",
+   "shots": [
+    "S07_SH001",
+    "S07_SH002",
+    "S07_SH003"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S07@loc_british_trench:S07_SH004",
+   "file": "S07_SH004.json",
+   "shots": [
+    "S07_SH004",
+    "S07_SH005"
+   ],
+   "findings": []
+  },
+  {
+   "scene": "S07@loc_british_trench:S07_SH007",
+   "file": "S07_SH007.json",
+   "shots": [
+    "S07_SH007",
+    "S07_SH008"
+   ],
+   "findings": []
+  }
+ ]
+}
