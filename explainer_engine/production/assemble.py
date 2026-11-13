@@ -676,9 +676,20 @@ def clip_frames(path: Path, start: int, count: int):
 
 
 def _fit(frame: np.ndarray, size: tuple[int, int]) -> np.ndarray:
-    if (frame.shape[1], frame.shape[0]) == tuple(size):
+    """HF-6 (FL-412): the frame scaled to cover the target keeping its aspect, then centre-cropped; never squeezed. The same
+    aspect in gives the same pixels as the plain resize did."""
+    tw, th = int(size[0]), int(size[1])
+    h, w = frame.shape[0], frame.shape[1]
+    if (w, h) == (tw, th):
         return frame
-    return np.asarray(Image.fromarray(frame).resize(tuple(size), Image.LANCZOS))
+    img = Image.fromarray(frame)
+    if w * th == h * tw:   # same aspect: the plain resize, as before
+        return np.asarray(img.resize((tw, th), Image.LANCZOS))
+    scale = max(tw / w, th / h)
+    sw, sh = max(tw, int(round(w * scale))), max(th, int(round(h * scale)))
+    img = img.resize((sw, sh), Image.LANCZOS)
+    x0, y0 = (sw - tw) // 2, (sh - th) // 2
+    return np.asarray(img.crop((x0, y0, x0 + tw, y0 + th)))
 
 
 def whip_length() -> int:

@@ -92,3 +92,25 @@ def test_the_fade_boundary_goes_to_black_in_the_middle_and_back_up(tmp_path):
     assert min(lum) == lum[half_a - 1]
     hard = ASM._boundary_frames(a, b, {"transition_type": "hard_cut_with_jl_bridge", "transition_frames": 0}, (64, 36))
     assert hard == (0, [], 0)
+
+
+# --- HF-6: the video shots are never squeezed (FL-412, TD-307) --------------------------------------------------------
+
+def test_fit_covers_and_crops_a_1280x704_frame_without_squeezing():
+    img = Image.new("RGB", (1280, 704), (20, 20, 20))
+    d = ImageDraw.Draw(img)
+    d.ellipse((640 - 200, 352 - 200, 640 + 200, 352 + 200), fill=(250, 250, 250))
+    out = ASM._fit(np.asarray(img), (1920, 1080))
+    assert out.shape == (1080, 1920, 3)
+    ys, xs = np.nonzero(out[:, :, 0] > 128)
+    width, height = xs.max() - xs.min() + 1, ys.max() - ys.min() + 1
+    assert abs(int(width) - int(height)) <= 1, (width, height)   # still a circle
+    assert abs(int(xs.mean()) - 960) <= 1 and abs(int(ys.mean()) - 540) <= 1   # centred
+
+
+def test_fit_with_the_same_aspect_gives_the_plain_resize_pixels():
+    rng = np.random.default_rng(3)
+    frame = rng.integers(0, 255, (360, 640, 3), dtype=np.uint8)
+    plain = np.asarray(Image.fromarray(frame).resize((1920, 1080), Image.LANCZOS))
+    assert np.array_equal(ASM._fit(frame, (1920, 1080)), plain)
+    assert ASM._fit(frame, (640, 360)) is frame
