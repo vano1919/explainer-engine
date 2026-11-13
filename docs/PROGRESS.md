@@ -6220,3 +6220,24 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   sound almost the same, but the second is slightly better"): switch Q2 = on, the narrated clips' own sound is the quiet
   ducked layer. Rewritten to the new value: `test_clip_audio_layer::test_the_layer_is_on_since_the_creators_ab_...` (off is
   still tested through the switch), `test_creator_open_questions` DEFAULTS.
+
+## 2026-11-13 — P5: the LTX worker's last part before the demo freeze
+- Asked: the creator 2026-11-13 18:15 Georgia time, via the coordinator: finish the worker as the last step of #177, before
+  the demo (code freezes during it): the hand-over frame search and a retry on failure, then the ladder on the new worker
+  sha, free rungs first, a paid rung only after a priced card.
+- Hand-over after the line (BP-187): `plan.clip_seconds` returns `speech_end_s` (onset + the line, None for a narrated or
+  silent shot); `scene.build` writes it and `speech_tail_s` into a clip-spoken row; the worker's `handover_frame` searches only
+  from `speech_floor` (the line's end + the tail, the bound `ingest.edit_points` checks on the real sound); no such frame =
+  the next clip is not started (row FAILED with `handover`), never a cut inside the line. `chain_from_frame.after` records it.
+- Worker-side retry (RT-07): a clip the model fails to make (CLI non-zero exit, an exception in the session) is made again
+  once with `seed + SEED_STEP` (1001, the adapter's) in the same container and deadline when the time left holds a clip like
+  the one before; the row keeps `attempts` (seed, state, rc, why, gen_s) and the retried seed names the clip. The in-process
+  session frees the library's memory after a failed clip (`_free`). The run's timeout and cap still bound the bill.
+- Stale docstring fixed: the worker named `aivideo/ltx_modal.ModalLtxBackend` / `build_prompt`, which never existed; it now
+  names `videolane/scene` + `scene_run`. `videolane/failure` and VL-05 in `docs/VIDEO_LANE.md` say what the worker does now.
+- Rewritten to the new rule (not weakened): `test_ltx_inproc::test_a_failed_clip_ends_the_chain...` became
+  `test_a_clip_that_fails_twice_ends_the_chain...` (the first failure is now retried). New: `test_a_clip_that_fails_once_...`,
+  `test_v43_ltx_jobs::test_a_failed_cli_clip_is_retried_once_...`, `::test_the_hand_over_waits_for_the_end_of_the_line...`,
+  `test_videolane::test_the_best_tail_search_starts_after_the_line...`, `::test_the_scene_row_tells_the_worker...`.
+- The worker's sha changed, so the OR-37 ladder runs again: L0 (local tests) on the commit; L1/L2 (Modal CPU) and L3 (GPU
+  smoke, paid) wait for the creator's word on a priced card. Nothing paid ran.

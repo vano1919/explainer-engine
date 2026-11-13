@@ -410,6 +410,57 @@ def test_the_hand_over_is_the_sharpest_stillest_tail_frame_not_a_blurred_last_on
     assert Image.open(png).size == (256, 140)                              # 80 % of 320x176: a reframe, then fit_picture
 
 
+def test_the_best_tail_search_starts_after_the_line_and_its_tail(tmp_path):
+    """P5 / BP-187 (the creator 2026-11-13): with the clip's expected speech end, the sharpest still frame is searched only
+    from the line's end + tail on; the sharp frames 30..36 lie inside the line here, so the pick moves past them; the
+    ingest check (``edit_points``) accepts the chosen frame."""
+    from PIL import ImageFilter
+
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as L
+    from explainer_engine.videolane import ingest as VI
+    base = np.zeros((176, 320, 3), np.uint8)
+    yy, xx = np.mgrid[0:176, 0:320]
+    base[((yy // 8 + xx // 8) % 2) == 1] = 220
+    frames = []
+    for k in range(48):
+        im = Image.fromarray(np.roll(base, k // 4, axis=1))
+        blur = 0 if 30 <= k <= 36 else (2 if k <= 42 else 5)
+        frames.append(np.asarray(im.filter(ImageFilter.GaussianBlur(blur)) if blur else im))
+    clip = _clip_frames(tmp_path / "c.mp4", frames)
+    cont = {"pick": "best_tail", "window_s": 1.0}
+    free = L.handover_frame(clip, 48, 24, cont, L.LAUNCH)
+    assert 30 <= free["frame"] <= 36 and "after" not in free
+    got = L.handover_frame(clip, 48, 24, cont, L.LAUNCH, speech_end_s=1.25, tail_s=P.TAIL_S)
+    floor = L.speech_floor(24, 1.25, P.TAIL_S)
+    assert got["after"] == floor and got["window"][0] == floor and got["frame"] >= floor > 36
+    assert got["frame"] / 24 + 1e-9 >= 1.25 + P.TAIL_S
+    VI.edit_points(2.0, [(0.5, 1.25)], {"tail_handle_s": 0.0}, 2.0, 24, spoken=True, handover_s=got["frame"] / 24,
+                   shot_id="S")
+    none = L.handover_frame(clip, 48, 24, cont, L.LAUNCH, speech_end_s=1.9, tail_s=P.TAIL_S)
+    assert none["frame"] is None and "keeps the line whole" in none["why"]
+
+
+def test_the_scene_row_tells_the_worker_where_the_line_ends(tmp_path):
+    """P5: a clip-spoken row carries ``speech_end_s`` (onset + its measured line) and BP-187's ``speech_tail_s``; a narrated
+    row carries neither (the clip says nothing, the hand-over may be anywhere in its tail)."""
+    from explainer_engine.videolane import scene as SC
+    from explainer_engine.videolane import storyboard as SB
+    doc = _scene()
+    root, pics = _board_episode(tmp_path, doc)
+    _reads(root, doc)
+    SB.build(root, doc, [s["shot_id"] for s in doc["shots"]], "s1", pictures=pics)
+    scene = SC.build(root, doc, "s1", tmp_path / "scene.json")
+    spoken = P.clip_spoken(doc)
+    for row in scene["shots"]:
+        s = next(x for x in doc["shots"] if x["shot_id"] == row["shot_id"])
+        secs = P.clip_seconds(doc, s, 10.0, measured_line_s=LINE_S if row["shot_id"] in spoken else None)
+        if row["shot_id"] in spoken:
+            assert row["speech_end_s"] == secs["speech_end_s"] > 0 and row["speech_tail_s"] == P.TAIL_S
+            assert row["seconds"] >= row["speech_end_s"] + P.TAIL_S
+        else:
+            assert "speech_end_s" not in row and "speech_tail_s" not in row
+
+
 def test_a_crop_that_enlarges_too_much_is_refused():
     from explainer_engine.training.pods.ltx import modal_ltx_jobs as L
     assert L.crop_filter([0.1, 0.1, 0.9, 0.9]) == "crop=iw*0.800000:ih*0.800000:iw*0.100000:ih*0.100000"

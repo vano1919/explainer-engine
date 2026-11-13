@@ -287,6 +287,49 @@ def test_a_kill_in_clip_three_leaves_clips_one_and_two_on_the_volume_and_hf(cont
     assert [r["state"] for r in rows] == ["DONE", "DONE"]
 
 
+def test_a_failed_cli_clip_is_retried_once_only_when_the_deadline_holds_a_whole_clip(container, monkeypatch):
+    """P5 / RT-07: the CLI runner's non-zero exit is a FAILED clip; it is made again once with seed + SEED_STEP when the time
+    left holds a clip like the one before; otherwise the row says why it was not retried. The seed step is wan_adapter's."""
+    from explainer_engine.aivideo import wan_adapter as WA
+    assert L.SEED_STEP == WA.SEED_STEP and L.CLIP_RETRIES == WA.MAX_ATTEMPTS - 1
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    real, n = container.sh, [0]
+
+    def once(cmd, **kw):
+        if cmd[0] != "ffmpeg":
+            n[0] += 1
+            if n[0] == 2:
+                container.clock[0] += 5.0
+                return SimpleNamespace(returncode=1)
+        return real(cmd, **kw)
+    container.sh = once
+    res = _run(container)
+    assert [r["state"] for r in res["chain"]] == ["DONE"] * 3
+    assert [(a["seed"], a["state"], a["rc"]) for a in res["chain"][1]["attempts"]] == [(2, "FAILED", 1), (1003, "DONE", 0)]
+    n[0] = 0
+    container.job["nonce"] = "n2"
+    res = _run(container, timeout_s=L.MARGIN_S + 175)          # c2 starts with 95 s left; failed at 5 s, the retry needs ~92
+    assert [r["state"] for r in res["chain"]] == ["DONE", "FAILED"] and res["state"] == "PARTIAL"
+    assert "not retried" in res["chain"][1]["attempts"][0]["retry"] and len(res["chain"][1]["attempts"]) == 1
+
+
+def test_the_hand_over_waits_for_the_end_of_the_line_and_its_tail(container, monkeypatch):
+    """P5 / BP-187: a continuation starts from a frame at or after the clip's expected speech end + the tail (the scene row's
+    ``speech_end_s`` and ``speech_tail_s``); a clip whose line runs past its last frame hands nothing over: the chain stops
+    and the next clip is not started (never a cut inside the speech)."""
+    monkeypatch.setattr(L, "fit_picture", lambda img, w, h: img)
+    assert L.speech_floor(24, None) is None and L.speech_floor(24, 4.0, 0.5) == 108
+    container.job.update(speech_end_s=9.0, speech_tail_s=0.5)            # 9.5 s: frame 228 of 233
+    res = _run(container)
+    assert [r["state"] for r in res["chain"]] == ["DONE"] * 3
+    assert res["chain"][1]["chain_from_frame"]["after"] == 228 and res["chain"][1]["chain_from_frame"]["frame"] == 232
+    assert "after" not in res["chain"][2]["chain_from_frame"] or res["chain"][2]["chain_from_frame"]["after"] is None
+    container.job.update(speech_end_s=9.4, speech_tail_s=0.5, nonce="n2")  # 9.9 s: frame 238, the clip ends at 232
+    res = _run(container)
+    assert [r["state"] for r in res["chain"]] == ["DONE", "FAILED"] and res["state"] == "PARTIAL"
+    assert "keeps the line whole" in res["chain"][1]["why"] and res["chain"][1]["handover"]["after"] == 238
+
+
 def test_a_hung_start_is_bounded_by_the_startup_timeout():
     bad = dict(copy.deepcopy(LAUNCH), startup_timeout_s=None)
     assert any("startup_timeout_s" in x for x in L.launch_problems(bad))

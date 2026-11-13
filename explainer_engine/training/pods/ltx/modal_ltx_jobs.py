@@ -1,11 +1,12 @@
 """LTX-2.5 distilled clips on Modal: the video route of a v4.3 episode (D-132, the creator 2026-11-12 19:10 UTC, after the
 bake-off run fae4ee9fb9d2_5dd040ac95c8). The bake-off's LTX job (``training/pods/bakeoff/modal_bakeoff.py``: ``ltx_cmd``,
 ``make_ltx``, the clean deadline, the attempt marker, the Volume copy before the last HF flush) made a production job on the
-contract of the Wan worker (``training/pods/wan/modal_wan_jobs.py``), so ``aivideo/wan_adapter`` drives it unchanged through
-``aivideo/ltx_modal.ModalLtxBackend``.
+contract of the Wan worker (``training/pods/wan/modal_wan_jobs.py``). The video lane drives it (D-137): ``videolane/scene``
+writes the scene file (one row per clip, its prompt from ``scene.compose_prompt``), ``training/pods/ltx/scene_run job`` turns
+it into the ``--job`` spec (the first shot, the others as its ``chain``) and ``scene_run reserve`` opens the ledger line.
 
-One shot per launch: the backend runs ``modal run --detach modal_ltx_jobs.py::main --job <spec>``, priced from the speed
-measured on L3 and reserved in the run's ledger before it is sent. The OR-37 ladder, each rung recorded in the ladder file
+One scene per launch (D-133 CH-03): ``modal run modal_ltx_jobs.py::main --job <spec>``, a plain Bash command the session hook
+reads, priced from the speed measured on L3 and reserved in the run's ledger before it is sent. The OR-37 ladder, each rung recorded in the ladder file
 (``cloud/modal_run.record_rung``, bound to this launch file and this worker) before the next may start:
 
     L0  local: the unit tests (free)
@@ -29,8 +30,13 @@ denoising); ``inproc`` (``LtxSession``) runs the CLI's own ``main`` body in this
 shot and its chain encoded in one Gemma load, the transformer built once and held (``DiffusionStage.resident``) for all
 clips, the deadline checked before each denoising pass.
 
-The clip carries LTX's own sound (speech and effects, the creator 2026-11-12 19:12 UTC): the prompt the backend builds holds
-the scene, the spoken words and the sounds (``aivideo/ltx_modal.build_prompt``)."""
+The clip carries LTX's own sound (speech and effects, the creator 2026-11-12 19:12 UTC): the prompt ``videolane/scene``
+composes holds the scene, the spoken words in the speaker's one voice text (Q5) and the sounds.
+
+P5 (the creator 2026-11-13 18:15 Georgia time, before the demo): a continuation is handed over only after the clip before has
+finished its line (``handover_frame``: the row's ``speech_end_s`` + ``speech_tail_s``, BP-187; no such frame = the chain stops,
+never a cut inside the speech), and a clip the model fails to make is retried once with ``seed + SEED_STEP`` inside the same
+container and deadline (``body``, the row's ``attempts``)."""
 import hashlib, json, logging, math, os, re, shutil, subprocess, sys, threading, time, uuid
 from contextlib import ExitStack
 from pathlib import Path
@@ -52,6 +58,8 @@ MARGIN_S = 75               # the end path after the last step: Volume copy, fin
                             # already saved on the Volume and HF when it is made; the love run's whole overhead was 30.5 s)
 OUT_ROOT = Path("/workspace/out")
 VOL_OUT = "out_ltx"
+SEED_STEP = 1001            # the same step as aivideo/wan_adapter.SEED_STEP (RT-07); no repo import inside the container
+CLIP_RETRIES = 1            # P5: one more attempt of a clip the model failed to make (wan_adapter.MAX_ATTEMPTS - 1)
 SMOKE_JOB = {"shot_id": "L3_smoke", "seconds": 2.0, "seed": 7,
              "motion_prompt": "The camera drifts slowly forward over the scene. Soft wind, distant birds."}
 
@@ -771,7 +779,7 @@ def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp=
 
 def in_process_clip(session, argv, log_path) -> dict:
     """One clip on the session, its LTX log in the clip's log file: ``rc`` 0 when it ran, None when the deadline stopped it
-    (PARTIAL), 1 with ``why`` when it raised (FAILED; the session then makes no further clip)."""
+    (PARTIAL), 1 with ``why`` when it raised (FAILED; ``body`` may retry it once with a new seed, P5)."""
     import traceback
     handler = logging.FileHandler(log_path, mode="w")
     handler.setLevel(logging.INFO)
@@ -782,15 +790,27 @@ def in_process_clip(session, argv, log_path) -> dict:
         session.clip(argv)
         return {"rc": 0}
     except DeadlineHit:
+        _free(session)
         return {"rc": None, "why": "the in-container deadline came during the clip"}
     except Exception as e:  # noqa: BLE001 - written to the clip's row and log
         with open(log_path, "a") as f:
             f.write(traceback.format_exc())
+        _free(session)                            # P5: the retry of this clip starts on freed memory
         return {"rc": 1, "why": f"{type(e).__name__}: {str(e)[:300]}"}
     finally:
         root.removeHandler(handler)
         root.level = level
         handler.close()
+
+
+def _free(session) -> None:
+    """The library's memory clean-up after a clip that did not finish (a fake session in the tests has none)."""
+    cleanup = getattr(getattr(session, "_ltx", None), "cleanup", None)
+    if callable(cleanup):
+        try:
+            cleanup()
+        except Exception as e:  # noqa: BLE001
+            print("cleanup after a failed clip failed", repr(e)[:200], flush=True)
 
 
 def chain_from(launch: dict, frames: int) -> int:
@@ -838,20 +858,43 @@ def handover_scores(frames) -> list[dict]:
     return out
 
 
-def handover_frame(clip: Path, frames: int, fps: int, cont: dict | None, launch: dict, sh=subprocess.run) -> dict:
+def speech_floor(fps: int, speech_end_s=None, tail_s=0.0) -> int | None:
+    """P5 / BP-187: the first frame at or after the clip's expected speech end plus the tail (the same bound
+    ``videolane/ingest.edit_points`` checks on the real sound); None for a clip that speaks no line."""
+    if speech_end_s is None:
+        return None
+    return int(math.ceil((float(speech_end_s) + float(tail_s or 0.0)) * fps - 1e-6))
+
+
+def handover_frame(clip: Path, frames: int, fps: int, cont: dict | None, launch: dict, sh=subprocess.run,
+                   speech_end_s=None, tail_s=0.0) -> dict:
     """The frame of a clip that starts its continuation (VL-05). ``pick: last`` (or no plan) is ``chain_from``; ``pick:
     best_tail`` scores the last ``window_s`` seconds and takes the sharpest, stillest frame, so a blurred or mid-motion last
     frame is never frozen into the next clip's first frame. Our LTX-2.5 distilled CLI has no extend: this frame IS the
-    hand-over."""
+    hand-over.
+
+    P5: when the clip speaks a line (``speech_end_s``, from the scene row), the search starts only at ``speech_floor``, the
+    line's end plus BP-187's ``tail_s``; the result says it (``after``). When no frame of the clip lies there, ``frame`` is None
+    with ``why``: the chain stops instead of cutting the line (the clip was sized from a measured read, Q4, so this means the
+    scene file and the clip disagree)."""
     last = chain_from(launch, frames)
     cont = cont or {}
-    if cont.get("pick", "last") == "last":
-        return {"frame": last, "pick": "last"}
+    pick = cont.get("pick", "last")
+    floor = speech_floor(fps, speech_end_s, tail_s)
+    after = {} if floor is None else {"after": floor}
+    if floor is not None and floor > last:
+        return {"frame": None, "pick": pick, **after,
+                "why": f"the line ends at {float(speech_end_s):.3f} s and BP-187's tail adds {float(tail_s or 0):g} s (frame "
+                       f"{floor}), after the clip's last frame {last}: no hand-over frame that keeps the line whole"}
+    if pick == "last":
+        return {"frame": last, "pick": "last", **after}
     n = max(2, min(last + 1, int(round(float(cont.get("window_s", 0.75)) * fps))))
     first = last + 1 - n
-    scores = handover_scores(_grey_frames(clip, first, n, sh=sh))
+    if floor is not None and floor > first:
+        first = floor                             # never a frame inside the line or its tail
+    scores = handover_scores(_grey_frames(clip, first, last + 1 - first, sh=sh))
     best = max(scores, key=lambda o: o["score"])
-    return {"frame": first + best["i"], "pick": "best_tail", "window": [first, last],
+    return {"frame": first + best["i"], "pick": "best_tail", "window": [first, last], **after,
             "scores": [{k: round(v, 4) if isinstance(v, float) else v for k, v in s.items()} for s in scores]}
 
 
@@ -885,6 +928,11 @@ def chain_jobs(job: dict) -> list[dict]:
 
 
 SAVE_BUDGET_S = 45   # the upload after each clip (audit B1): short; the final flush retries longer
+
+
+def _attempt(row: dict) -> dict:
+    """One attempt of a clip, as its row's ``attempts`` keeps it (P5)."""
+    return {k: row.get(k) for k in ("seed", "state", "rc", "why", "gen_s")}
 
 
 def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambda: None, api=None, sh=subprocess.run,
@@ -933,7 +981,7 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
         bad = sizes_ok(launch, vol_root)
         if bad:
             raise RuntimeError("weights not on the Volume: " + "; ".join(bad[:5]))
-        rows, prev, prev_s = [], None, None
+        rows, prev, prev_s, prev_sub = [], None, None, None
         if runner_of(launch) == "inproc":
             session = (session_factory or LtxSession)([s["motion_prompt"] for s in chain_jobs(job)], deadline=deadline,
                                                       now=now)
@@ -954,13 +1002,38 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
                         raise RuntimeError(f"{sub['shot_id']}: its start picture changed in transit")
                 else:
                     cont = sub.get("continue_frame") or {}
-                    hand = handover_frame(out / prev["clip"], int(prev["frames"]), int(sub["fps"]), cont, launch, sh=sh)
+                    hand = handover_frame(out / prev["clip"], int(prev["frames"]), int(sub["fps"]), cont, launch, sh=sh,
+                                          speech_end_s=prev_sub.get("speech_end_s"), tail_s=prev_sub.get("speech_tail_s"))
+                    if hand["frame"] is None:             # P5: never a hand-over inside the line
+                        rows.append({"shot_id": sub["shot_id"], "state": "FAILED", "why": hand["why"] + "; not started",
+                                     "handover": hand})
+                        print("clip", sub["shot_id"], "FAILED: no hand-over frame after the line", flush=True)
+                        break
                     idx = hand["frame"]
                     sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh,
                                                           crop=cont.get("crop")))
                     sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx, "pick": hand["pick"],
-                                               "crop": cont.get("crop"), "window": hand.get("window")}
-            row = dict(generate(sub, launch, out, deadline, sh=sh, now=now, session=session), shot_id=sub["shot_id"])
+                                               "crop": cont.get("crop"), "window": hand.get("window"),
+                                               "after": hand.get("after")}
+            row = dict(generate(sub, launch, out, deadline, sh=sh, now=now, session=session), shot_id=sub["shot_id"],
+                       seed=sub["seed"])
+            if row.get("state") == "FAILED":              # P5: one more attempt with a new seed, same container and deadline
+                attempts = [_attempt(row)]
+                for _ in range(CLIP_RETRIES):
+                    need = 1.15 * float(row.get("gen_s") or 0.0)
+                    if prev is not None and prev.get("state") == "DONE":
+                        need = max(need, 1.15 * float(prev["gen_s"]) * max(1.0, float(sub["seconds"]) / float(prev_s)))
+                    if deadline.left() < need:
+                        attempts[-1]["retry"] = f"{deadline.left():.0f} s left, a retry needs ~{need:.0f} s: not retried"
+                        break
+                    sub = dict(sub, seed=int(sub["seed"]) + SEED_STEP)
+                    print("clip", sub["shot_id"], "FAILED: retry with seed", sub["seed"], flush=True)
+                    row = dict(generate(sub, launch, out, deadline, sh=sh, now=now, session=session), shot_id=sub["shot_id"],
+                               seed=sub["seed"])
+                    attempts.append(_attempt(row))
+                    if row.get("state") != "FAILED":
+                        break
+                row["attempts"] = attempts
             if session is not None and not rows:
                 row["setup"] = dict(session.setup)        # the one-time steps, inside the first clip's gen_s
             if sub.get("chain_from_frame"):
@@ -968,7 +1041,7 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
             if row.get("state") == "DONE":
                 row["clip"] = clip_name(sub["shot_id"], sub["seed"])
             rows.append(row)
-            prev, prev_s = row, sub["seconds"]
+            prev, prev_s, prev_sub = row, sub["seconds"], sub
             print("clip", sub["shot_id"], row.get("state"), f"gen {row.get('gen_s')} s", flush=True)
             if row.get("state") == "DONE":
                 m.update({k: v for k, v in rows[0].items() if k != "shot_id"})

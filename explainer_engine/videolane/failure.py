@@ -4,7 +4,10 @@ falls back to ``still_25d`` with the shot's ``fallback_motion_imitation`` (else 
 so. A retry is a paid generation: it runs only inside the creator's approved scene plan (OR-23) and its cap, never from the
 runner. The runner (``episode/run.stage_clips``) and the scene tools read ``decide`` and ``fallback_shot`` from here.
 
-Not built yet (listed in the handoff): the worker-side retry of a scene run (the LTX worker is frozen until P5)."""
+The worker side (P5, 2026-11-13): a clip the model fails to make (no file: the CLI's non-zero exit or an exception in the
+session) is retried once in the same container with ``seed + SEED_STEP`` (``modal_ltx_jobs.body``, the row's ``attempts``),
+under the same in-container deadline, so the run's timeout and its cap still bound the bill. ``decide`` here is the QA-side
+rule for a clip that was made."""
 from __future__ import annotations
 
 from explainer_engine.aivideo.wan_adapter import DEFAULT_FALLBACK, MAX_ATTEMPTS, SEED_STEP

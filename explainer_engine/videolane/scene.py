@@ -181,6 +181,8 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
         row = {"shot_id": sid, "seconds": secs["seconds"], "seconds_basis": secs["basis"], "seed": seed_base + k,
                "motion_prompt": comp["prompt"], "prompt_parts": comp["parts"],
                "continuity_mode": ep.get("continuity_mode")}
+        if secs.get("speech_end_s") is not None:   # P5: the worker's hand-over waits for the line's end + BP-187's tail
+            row["speech_end_s"], row["speech_tail_s"] = secs["speech_end_s"], P.TAIL_S
         ids = s.get("audio_line_ids") or []
         if ids:
             ln = lines.get(ids[0]) or {}

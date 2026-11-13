@@ -85,17 +85,20 @@ def clip_seconds(script: dict, shot: dict, max_s: float, measured_s: float | Non
     ``measured_length``) and the planned length otherwise. Rounded up to 0.25 s, at least MIN_CLIP_S, at most the model's
     ``max_s``; ``over`` says when the plan does not fit. A clip-spoken shot whose line was read first (TTS or a recording,
     ``videolane.line_reads``; Q4, D-138) uses that measured speech (``measured_line_s``, basis ``measured_line``) instead of
-    the estimate."""
+    the estimate. ``speech_end_s`` is where the clip's own line is expected to end (onset + its speech; None for a narrated
+    or silent shot): the worker hands a continuation over only after it plus BP-187's tail (P5, ``handover_frame``)."""
     ep = shot.get("edit_plan") or {}
     head = float(ep.get("head_handle_s", 0.0))
     tail = float(ep.get("tail_handle_s", float(CUT_TAIL[1])))
     speak = line_seconds(script, shot, "character")
+    end = None
     if speak > 0:
         onset = float(ep.get("speech_onset_s", SPEECH_ONSET_S))
         basis = "line"
         if measured_line_s is not None:
             speak, basis = float(measured_line_s), "measured_line"
-        need = max(onset, head) + speak + TAIL_S + tail
+        end = max(onset, head) + speak
+        need = end + TAIL_S + tail
     elif measured_s is not None:
         need = head + float(measured_s) + tail
         basis = "measured_length"
@@ -104,7 +107,7 @@ def clip_seconds(script: dict, shot: dict, max_s: float, measured_s: float | Non
         basis = "planned_length"
     sec = max(MIN_CLIP_S, -(-need * 4 // 1) / 4.0)
     return {"seconds": min(sec, max_s), "needed_s": round(need, 3), "over": sec > max_s + 1e-9, "basis": basis,
-            "speech_s": round(speak, 3)}
+            "speech_s": round(speak, 3), "speech_end_s": None if end is None else round(end, 3)}
 
 
 def scenes(script: dict) -> list[list[dict]]:

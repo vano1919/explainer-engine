@@ -234,7 +234,8 @@ class RecSession:
 
     def clip(self, a):
         self.calls.append(a)
-        if self.fail_at is not None and len(self.calls) == self.fail_at:
+        fail = self.fail_at if isinstance(self.fail_at, (set, frozenset)) else {self.fail_at}
+        if len(self.calls) in fail:
             raise RuntimeError("CUDA error")
         pic = Path(a[a.index("--image") + 1]).read_bytes()
         Path(a[a.index("--output-path") + 1]).write_bytes(b"mp4:" + hashlib.sha256(pic).hexdigest().encode())
@@ -288,11 +289,28 @@ def test_the_body_makes_the_whole_chain_on_one_session_and_records_its_setup(box
     assert all(v == "ok" for v in res["verified"].values()) and any(k.endswith("c3_seed3.mp4") for k in api.files)
 
 
-def test_a_failed_clip_ends_the_chain_and_still_closes_the_session(box):
-    res = _body(box, lambda prompts, deadline=None, now=None: RecSession(prompts, fail_at=2))
+def test_a_clip_that_fails_twice_ends_the_chain_and_still_closes_the_session(box):
+    """P5 / RT-07 (the creator 2026-11-13): a failed clip gets one retry with seed + SEED_STEP on the same session; when the
+    retry fails too, the chain ends there (was: the first failure ended it, before the worker-side retry existed)."""
+    res = _body(box, lambda prompts, deadline=None, now=None: RecSession(prompts, fail_at={2, 3}))
     s, = RecSession.made
     assert [r["state"] for r in res["chain"]] == ["DONE", "FAILED"] and "CUDA error" in res["chain"][1]["why"]
+    assert [a["seed"] for a in res["chain"][1]["attempts"]] == [2, 2 + L.SEED_STEP] and len(s.calls) == 3
     assert res["state"] == "PARTIAL" and s.closed
+
+
+def test_a_clip_that_fails_once_is_made_again_with_a_new_seed_and_the_chain_goes_on(box):
+    """P5 / RT-07: one retry inside the container, its seed in the clip's name, both attempts in the row; the next clip
+    chains from the retried clip."""
+    api = FakeApi()
+    res = _body(box, lambda prompts, deadline=None, now=None: RecSession(prompts, fail_at=2), api)
+    s, = RecSession.made
+    c2 = res["chain"][1]
+    assert [r["state"] for r in res["chain"]] == ["DONE"] * 3 and res["state"] == "DONE" and len(s.calls) == 4
+    assert c2["seed"] == 2 + L.SEED_STEP and c2["clip"] == f"c2_seed{2 + L.SEED_STEP}.mp4"
+    assert [(a["seed"], a["state"]) for a in c2["attempts"]] == [(2, "FAILED"), (2 + L.SEED_STEP, "DONE")]
+    assert "CUDA error" in c2["attempts"][0]["why"] and res["chain"][2]["chain_from_frame"]["clip"] == c2["clip"]
+    assert any(k.endswith(c2["clip"]) for k in api.files) and "attempts" not in res["chain"][0]
 
 
 def test_a_session_that_cannot_open_is_a_failed_job_with_nothing_left_open(box):
