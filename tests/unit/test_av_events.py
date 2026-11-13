@@ -5,6 +5,7 @@ W2 2.5D camera segments. Layers A-F of the brief: A resolver, B sound plan, C cu
 from __future__ import annotations
 
 import json
+import shutil
 
 import numpy as np
 import pytest
@@ -471,3 +472,37 @@ def test_an_authored_sound_event_keeps_its_id_purpose_and_class_id():
     evs = {e["event_id"]: e for e in SP.build(script, fps=FPS)["shots"][0]["events"] if e.get("event_id")}
     assert evs["E1.S1"]["class"] == "eruption_boom" and evs["E1.S1"]["purpose"] == "sync"     # a class id names its class
     assert evs["T1"]["purpose"] == "transition" and evs["T1"]["audio_basis"] == "authored"
+
+
+def test_a_take_with_a_declared_onset_starts_before_its_frame_so_the_onset_meets_it(tmp_path):
+    """TD-330: the library record may carry the take's measured onset (``onset_s``). A one-shot with it is placed that much earlier
+    (never before 0), played once from its head, and its onset lands on the event; a take without it is placed as before (the lead
+    skipped, at most LEAD_MAX_S)."""
+    shot, script = _map(actions=[{"kind": "route_arrow", "at_word": "walks", "until_word": "coast", "from": "toba",
+                                  "to": "shinfa"}])
+    plan = SP.build(script, fps=FPS)
+    lib = _lib(tmp_path / "lib", plan["classes"], secs=2.4, lead=0.8)       # a silent 0.8 s head, over LEAD_MAX_S
+    src = SP.resolve(plan, lib)
+    st = {}
+    for name, declare in (("plain", False), ("declared", True)):
+        root = tmp_path / name
+        shutil.copytree(lib, root)
+        if declare:
+            man = json.loads((root / "manifest.json").read_text())
+            for it in man["items"]:
+                it["onset_s"] = CS.take_onset_s(root / it["file"])
+            (root / "manifest.json").write_text(json.dumps(man))
+        rep = stems.render(plan, src, tmp_path / f"stems_{name}", library_root=root, shippable=False)
+        sheet = json.loads((tmp_path / f"stems_{name}" / "cue_sheet.json").read_text())
+        row = next(r for r in sheet["rows"] if r.get("event_id") == "M1.A1.arrive")
+        placed = next(p for p in rep["events_placed"] if p.get("event_id") == "M1.A1.arrive")
+        st[name] = (row, placed)
+    plain, decl = st["plain"][0], st["declared"][0]
+    assert plain["asset_offset_s"] == pytest.approx(0.5, abs=0.006) and "take_onset_s" not in plain      # as before
+    assert st["plain"][1]["onset_s"] - plain["start_s"] == pytest.approx(0.3, abs=0.02)                  # the rest of the head
+    assert decl["take_onset_s"] == pytest.approx(0.8, abs=0.006)
+    pre = decl["sync_point_s"] - decl["start_s"]
+    assert pre == pytest.approx(min(0.8, decl["sync_point_s"]), abs=0.006)                                # earlier, never before 0
+    assert decl["asset_offset_s"] == pytest.approx(0.8 - pre, abs=0.006)
+    assert decl["loop"] is False
+    assert st["declared"][1]["onset_s"] == pytest.approx(decl["sync_point_s"], abs=0.011)                 # the onset meets the event
