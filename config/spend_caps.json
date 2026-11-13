@@ -128,5 +128,11 @@
     "per_run_usd": 1.5,
     "for": "the video route's LTX-2.5 distilled clips on Modal (D-132, training/pods/ltx/modal_ltx_jobs.py): each test run at most $1.5 (the ledger stops reservations at 80 %, $1.2); the episode line (per_episode_usd) follows rung L3. Not the Wan route's `modal` line, which stays unset",
     "decided": "the creator, 2026-11-12 19:20 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng: \"ა\" (answer a of the card: $1 per LTX test run); raised to $1.5 at 19:53 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCKTbNTauXZ3AGuHNgczrk: \"1\" (card option 1: $1.5, 3 chained clips in one app, no separate L3 smoke for this run)"
+  },
+  "modal_cheap_video": {
+    "per_run_usd": 1.2,
+    "tests_total_usd": 3.0,
+    "for": "the cheaper-video-generator test (training/pods/bakeoff/plan_cheap_2026-11-12.json): open models that run on Modal (LTX-2.5 at smaller sizes, HunyuanVideo 1.5 480p) on the battle pictures; each run at most 1.2, all runs together at most 3.0 (the ledger stops reservations at 80 %, $2.40); API-only models are not in it",
+    "decided": "the creator, 2026-11-12 22:21 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9: \"გაქვს მოდალზე 3 დოლარის ლიმიტი იმ მოდელებზე რაც მოდალზე მუშაობს\" ($3 on Modal for the models that run on Modal)"
   }
 }

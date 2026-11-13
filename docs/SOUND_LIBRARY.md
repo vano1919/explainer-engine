@@ -1,7 +1,7 @@
 # The sound library (D-134, 2026-11-13)
 
 The channel's own collection of real recordings, catalogued so a shot's sound is chosen, not improvised. It extends the W1 library
-(`assets/audio/library/manifest.json`, schema `sfx_manifest.schema.json` v1; D-133) instead of standing beside it: the same
+(`assets/audio/library/manifest.json`, schema `sfx_manifest.schema.json` v1; D-136, numbered D-133 on the W1 branch) instead of standing beside it: the same
 manifest, the same `audio/sfx_library` API, more fields. The scene-aware design that uses it (the per-shot design, the cue sheet,
 the mix check) is SP-03..SP-07 of [EPISODE_FIRST](EPISODE_FIRST.md).
 

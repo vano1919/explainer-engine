@@ -50,6 +50,8 @@
   "hf_out": "explainer-engine/ltx_route/out",
   "scaledown_window_s": 2,
   "startup_timeout_s": 120,
+  "runner": "inproc",
+  "runner_why": "the creator 2026-11-13 06:40 UTC asked why a 22 s scene cost ~$0.60 (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWXt3bQhg6DyxmXs3TumdzYg); the coordinator 06:40 UTC: free code, do it. The CLI runner reloads Gemma and the transformer for every clip (the battle run: ~82 s a clip, ~17 s of it denoising); inproc loads them once per container. Not yet measured on a GPU: the first paid run of this launch is the measurement (the creator's word, a price, a cap and the watchdog first); set runner to cli to go back",
   "chain_overlap_frames": 0,
   "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
   "caps": {

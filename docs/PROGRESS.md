@@ -5735,7 +5735,7 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   transcriber, and this container has faster-whisper installed for the demo's word times.
 - Next: the creator looks at the demo and the two A/B files and confirms or changes the house numbers (report section 6); then the episode runner stage.
 
-## 2026-11-12 — W1: believable sound, measured on the delivered file (branch `claude/project-thread-xpsv3w`, D-133)
+## 2026-11-12 — W1: believable sound, measured on the delivered file (branch `claude/project-thread-xpsv3w`, D-133, renumbered D-136 at the merge with the cheapest-run line)
 
 - Asked by the creator (21:44 UTC: dead air in the dialogue, an illogical fast cut, a senseless hiss under the maps with no action sounds; 22:15 UTC:
   library first, then free licence-checked sounds, then ElevenLabs from a priced list; every map move and counter start has its own sound plus a bed;
@@ -5752,7 +5752,7 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   highs; broadband it never beats the voice).
 - Free test: Demucs on six LTX clips found no usable bed (non-vocal stem under -55 dBFS). Cost: 0.
 - Files: HF `vano1919/tmr-artifacts` `explainer-engine/realism_w1_2026-11-12/` (videos, reports, library takes + manifest; commit 2bf5dcf3).
-- Stale text reported, not deleted: D-132's 19:12 UTC sound clause ("LTX clips need no separate background sound") is retired by D-133;
+- Stale text reported, not deleted: D-132's 19:12 UTC sound clause ("LTX clips need no separate background sound") is retired by D-136 (W1's D-133);
   `docs/SCENE_REUSE_RULES.md` AS-10 still reads as if the LTX sound alone were enough (it stays true that the clip keeps its own sound).
 - Tests: `tests/unit/test_sound_realism.py` (10), `test_scene_join.py` (7), `test_overlay_demo.py` and `test_overlay_rules.py` changed (OV-53/56
   stricter); docs_lint 0 findings.
@@ -5790,6 +5790,155 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   the next merge must renumber one of them.
 - Tests: `tests/unit/test_sound_design_system.py` (15); `test_v43_sound_plan.py` (11) unchanged and green; docs_lint 0 findings.
 - Next: the creator listens to the two battle files, the BBC audition page and picks takes; `requalify` the 73 vault-only takes where their WAVs are.
+## 2026-11-13 00:55 UTC: the cheaper-video test on Modal — $1.61 of the creator's $3
+
+**Ask.** The creator (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9`, 2026-11-12 22:21 UTC) gave $3 on Modal to test the open
+models against LTX after an outside audit called LTX too expensive; API models are priced only, nothing run.
+
+**Code.** The bake-off worker reads a plan named by `EE_BAKEOFF_PLAN` (file name only, bakeoff folder), makes several sizes per
+container, runs HunyuanVideo 1.5 I2V with the deadline inside the transformer forward, and the session hook binds the GO to the
+named plan (`tests/unit/test_cheap_video_bakeoff.py`). Spend line `modal_cheap_video` (1.2 per run, 3.0 total) in
+`config/spend_caps.json`. Plans: `plan_cheap_2026-11-12.json` (LTX 576p/448p, Hunyuan 480p), `plan_cheap_wan_2026-11-12.json`
+(Wan A14B + Lightning 480p).
+
+**Measured** (H100 $5.0937/h, battle pictures, seeds and prompts; generation $/s):
+
+| model | native | sound | clip s | gen $/s |
+|---|---|---|---|---|
+| LTX-2.5 distilled 704p (battle run) | 1280x704@24, 10 s | yes | 81.9 | 0.0115 |
+| LTX 576p | 1024x576@24, 10 s | yes | 70.6 | 0.0099 |
+| LTX 448p | 768x448@24, 10 s | yes | 59.8 | 0.0084 |
+| Wan2.2 A14B + Lightning 480p | 832x480@16, 5 s | no | 78.8 | 0.022 |
+| HunyuanVideo 1.5 480p distilled | 848x480@24, 5 s | no | ~107 | 0.030 |
+
+Ledger `ledgers/cheap_video_2026-11-12.json`: stage+check $0.029, ltx_low $0.561, hunyuan $0.576, wan $0.439 = $1.605. No app live.
+HF: `vano1919/tmr-artifacts` `explainer-engine/cheap_video_2026-11-12/` (side_by_side_prices.png, two reports, every clip + 2K).
+
+**Findings.** The audit's $0.09/s is LTX's API price, not our self-hosted cost. A lower size saves only 14-27 %: most of a clip's
+82 s is loading the weights and decoding, not denoising. Hunyuan's Tencent licence does not apply in the EU, UK and South Korea.
+
+**Recommendation** (`v4_3_plan_2026-11-12/CHEAP_VIDEO_RECOMMENDATION_ka.md`):
+- keep LTX 704p;
+- the next saving is keeping the model loaded across clips (an estimate, not measured);
+- Hunyuan is not recommended;
+- API trials (Vidu Q3 Turbo off-peak, Grok 1.5 Lite) wait for the creator's word.
+
+## 2026-11-13 07:30 UTC: LTX worker, in-process runner (free; the paid measurement waits for the creator's word)
+
+**Ask.** The creator asked at 06:40 UTC why a 22 s scene cost ~$0.60 (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWXt3bQhg6DyxmXs3TumdzYg`).
+The coordinator said: free code, do it.
+
+**Cause.** The battle run's container ran 376 s on the H100, $0.53, for 36 s generated (24 s kept). The worker started the LTX-2
+CLI once per clip. Every clip therefore loaded Gemma 12B, built the 22B transformer twice (stage 1 and stage 2; the registry
+keeps no weights) and decoded. That is ~82 s a clip, of which ~17 s is denoising (the log's step bars: 8 steps ~6 s, 3 steps ~10 s).
+
+**Change.** `modal_ltx_jobs.LtxSession`, launch `runner: inproc`.
+- It runs the CLI's own `main` body in the container's process on one `DistilledPipeline`.
+- The pipeline is built from the CLI's own parser.
+- Every prompt of the shot and its chain is encoded in one Gemma load, in groups of 4. Each prompt is padded to 1024 tokens, so a group is one batch.
+- The transformer is built once and held with `DiffusionStage.resident()`, as LTX-2's own multi-GPU pipeline does. It is built before the first clip plans its decode tiles.
+- The deadline is checked before each denoising pass.
+- The clip's log goes to its usual file.
+- `setup` records the one-time seconds.
+- `runner: cli` goes back to the old path.
+
+**Tests.** `tests/unit/test_ltx_inproc.py`:
+- 10 fake-library tests: one load for three clips, prompt groups, refusals, the deadline, failed clips, the body's chain on one session.
+- 2 tests on the pinned LTX-2 code (run in a CPU venv with ltx-core and ltx-pipelines at e98f6d9; skipped where the library is absent):
+  - the CLI's `main` and `LtxSession.clip` hand `DistilledPipeline`, `stream_chunks` and `encode_video` identical arguments for the same command line;
+  - a real `DiffusionStage.resident()` builds once and releases the weights at the block's end.
+
+**Not measured.** The saving is not measured on a GPU yet. The VAE pieces and the decode still run per clip. The new launch and
+worker shas need the ladder again (L1, L2 free; L3 smoke and a re-run of the battle scene's 4 cuts paid, on the creator's word).
+
+## 2026-11-13 07:45 UTC: D-133, LTX stays and the cheapest combination is enforced by the hook
+
+**Ask.** The creator, 07:00 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g`):
+- keep LTX as the generator;
+- update the video generation rules;
+- the rules that pick the cheapest combination of every paid run must be mandatory, like a PreToolUse hook.
+
+**Found.** The cheapest-combination rule was D-117 / RP-11. It costs a RunPod pod's stage graph only (`cloud/schedule.py`,
+`runpod create --schedule`); nothing covered a Modal video run or a picture batch.
+
+**Change.**
+- D-133 and CH-01..CH-06 in `docs/CLOUD_RUNBOOK.md`.
+- The measured basis is in `cloud/cheapest.json`.
+- `cloud/cheapest.py` is checked twice: by the PreToolUse Bash hook (`hooks.modal_refusal` for the LTX and Wan workers, `picture_refusal` for `scene_pictures submit`), and again by `modal_ltx_jobs.preflight` and `::main`.
+- One rule is waived for one run only with the creator's message: `EE_CHEAPEST_WAIVE=<cmsg>:CH-xx`.
+- Video rules: RT-02 and RT-07 now read the `video` route as LTX (D-132). The new RT-08 is the LTX clip rule.
+
+**Tests.**
+- `tests/unit/test_cheapest.py` is new.
+- `test_cloud_hooks_modal.py` and `test_v43_ltx_jobs.py` changed because the rules are stricter:
+  - a GO'd Wan `::main` is now refused (CH-06) unless the creator waives it;
+  - an LTX `::main` needs its scene spec (CH-03).
+
+**Stale text reported.** `docs/VIDEO_GENERATION_WAN.md` still names the `wan` route in its banner; D-132 reads it as `video`.
+
+## 2026-11-13 08:10 UTC: D-133 hardened, the weak points of the cheapest-run hook closed
+
+The creator, 07:25 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWDSaxGVbkbSGcfef2Lga1kM`): no video generation; check the hook's
+mandatory enforcement for weak points. Nothing paid ran. Found and closed (rules and lines in `docs/CLOUD_RUNBOOK.md`, CH section):
+- **Unchecked waiver.** Any `cmsg_` id waived a rule, and a waiver left in the environment stayed valid. Now the same message must
+  be recorded for that rule (`governance ok cheapest_waive CH-xx <cmsg> "<words>"`, new action in `governance/records.py`, one
+  rule per record) and be at most 60 minutes old.
+- **Fail-open.** A money check that raised (for example a spec that is a list) made the hook exit 1, which lets the command run.
+  `hooks.pre_bash` now refuses a paid-looking command when a check breaks; other commands still pass.
+- **Forms the hook could not read.** `"modal" run`, `subprocess.run(["modal", "run", ...])`, `os.system`, and a worker driven
+  from Python (`.remote()`, `app.run()`, also in a python heredoc) skipped the GO and the rules. `hooks.worker_api_refusal`
+  refuses them.
+- **Wan had CH-06 only in the hook.** `modal_wan_jobs.cheapest_gate` now refuses `stage`, `smoke` and `main` inside the worker.
+- **No line inside the container.** `modal_ltx_jobs.container_gate` checks CH-01, CH-02 and CH-04 against the baked launch file
+  before any model loads. The local entrypoints carry the recorded waivers in `job["cheapest_waive"]`.
+
+Tests: 9 new tests in `test_cheapest.py`, and a new `word` fixture in `tests/unit/conftest.py`. In `test_cloud_hooks_modal.py`, the
+Wan waiver case moved into its own test, which now also checks the record.
+
+The creator then chose "კი, დაიცავი" (07:49 UTC, card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWKgzrfKpKoKqsAC7dV9CAbW`). His word was
+recorded for `config/model_routing.json` (`governance ok protected_config`). `cloud/cheapest.py`, `cloud/cheapest.json` and the
+LTX `launch.json` are now in `protected_files` (60 minutes). Test: `test_the_rule_files_change_only_on_the_creators_recorded_word`.
+
+## 2026-11-13 11:00 UTC: the video lane (D-137, VL-01..VL-13), LTX shots planned for the edit and measured on the file
+
+The creator, 09:11 UTC (msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWP8uyVzMjdeETMLFhRBASf2`): adapt the cinematic edit and QC brief to our
+system, this thread only the video (the 30 %/10 % worker does its sound and montage), cut a frame and generate from it where our
+LTX has no extend; a detailed report for Fable at the end, Fable not run here. Nothing paid ran; every test is offline.
+
+**Found (audit of the real call graph).** No code wrote `production/video/<shot>.json` for an LTX clip, so the runner could not take
+one (the 2026-11-12 scenes were joined by hand). The clock assumed one narrator read for every line, also the lines LTX speaks.
+The worker's CLI takes only a frame-0 picture: no extend, end frame or retake. G1 checked LTX shots with the Wan fit only.
+
+**Made.**
+- `ShotSpec.edit_plan` in the production script schema; `videolane/plan.py` (VL-01..VL-09, G1 rows), clip seconds from the line
+  (VL-06).
+- The worker's hand-over (VL-05): `handover_frame` (best tail frame by sharpness minus motion, numpy only), `crop_filter`,
+  `frame_png(crop=)`; the chain records `chain_from_frame` with pick, crop and window.
+- `videolane/ingest.py` (VL-07): raw kept and pinned, cut by measured speech, 24/30 fps normalised, the record the runner reads;
+  `recut` from raw for narrated shots (VL-11, never stretched, never past a hand-over).
+- `episode/timing.read_order` skips clip-spoken lines; `retime_with_clips` inserts clip-timed shots; G6 uses it
+  (`clip_spoken_shots_timed_by_their_clips`).
+- `videolane/voice.py` (VL-13): the voice track the stems duck under; G8 hands it to `audio/stems.render` as narration.
+- `videolane/storyboard.py` and `videolane/scene.py` (VL-10): the contact-sheet gate and the `ltx_scene_test/3` file;
+  `scene_run.job_spec` refuses a /3 scene with a moved storyboard pin or without the creator's budget and ledger.
+- `videolane/cuts.py` (VL-11) and `videolane/master_qa.py` (VL-12): the master measured at G10 with repair classes A/B/C.
+- Docs: `docs/VIDEO_LANE.md`, INDEX row, D-137, docs_lint prefix `VL`; the new BP readers listed in `sourced_rules.json`.
+
+**Tests.** `tests/unit/test_videolane.py` (27: plan, 12 parametrized mutations, schema, clock, voice, storyboard, scene, hand-over)
+and `tests/unit/test_videolane_media.py` (19: ingest at 24 and 30 fps, cuts positive and negative, master faults, the battlefield-
+ambience pair, an end-to-end run of G1..G10 with fake LTX clips).
+
+**Measured on the real 2026-11-12 battle master** (`video_lane_2026-11-13/real_battle_2026-11-12/`): 3 cuts found at 6.67, 10.42
+and 18.42 s; as coverage they PASS the palette checks (top-third distance 0.034-0.066 under BP-166's 0.08) although the sheet shows
+the helmets and shield changing at cut 1: palette alone does not see hero identity (open, not a VL-12 gate yet). Line gaps
+0.56-1.62 s, dead air at 12.0-12.5 s (-62 dBFS).
+
+**Stale text reported.** `SCENE_REUSE_RULES.md` LX-04 says clip audio is not used for speech; since D-132 LTX speaks its lines.
+The Toba script's S05_SH003 is a speaking close-up on the video route (VL-02 FAIL when its edit plan is written).
+
+**CI fix (same day).** On CI's ffmpeg a 30 fps clip cut to the 24 fps episode lost its last frame (68 of 69,
+`test_a_spoken_clip_is_cut_around_its_measured_line_on_the_episode_rate[30]`). `ingest.cut` now reads two frames more than
+the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose frame count differs from its record.
 
 ## 2026-11-13 — AV event contract for maps and 2.5D (D-135), W3 maps, W2 2.5D, zero-cost pilot
 - Brief: the creator's "v4.3 unified audiovisual system — implementation order" (08:43 UTC). Branch `claude/project-thread-98b6wy` on W1's
@@ -5804,7 +5953,7 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   route's progress, supply line/state/snap, counter/bar/progress/milestone with data and claim ids, event camera, dense map holds, drift and
   dash flow); `production/layers25d.py` 2 (two camera segments, motion profiles, cloth/cloud in their region, shake and flash only from
   authored events). LaMa and SAM not integrated (their gates are not met); Depth-Anything V2 Small and Telea kept.
-- Preview sound: `audio/stems` no longer plays a procedural placeholder in a preview (D-133, OV-56 as changed); the row stays silent and is
+- Preview sound: `audio/stems` no longer plays a procedural placeholder in a preview (D-136, OV-56 as changed); the row stays silent and is
   listed (`placeholders`, `silent_rows`).
 - Pilot ($0, rehearsal without a read, `examples/av_pilot_2026-11-13`, `scripts/av_pilot.py`, `scripts/av_pilot_measure.py`): 3 map + 4 2.5D
   Toba shots, baseline on a worktree of `d1b96141` against the new code, same pictures (sha256 checked against Toba's media manifest).
@@ -5817,12 +5966,12 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
   and is now silent). Outputs and SHA256SUMS: HF `vano1919/tmr-artifacts` (dataset) `explainer-engine/av_pilot_2026-11-13/`, 90 files
   hash-verified.
 - Stale text reported, not changed: D-133 is used twice (the video lane's branch `claude/project-thread-lncsi3` renumbers W1's and takes the next number; this branch names
-  neither); BP-56 is REVIEW in the registry and FAIL in W1's code and test (FAIL kept); D-133's "every map motion heard" against the
+  neither); BP-56 is REVIEW in the registry and FAIL in W1's code and test (FAIL kept); D-136's (W1's D-133) "every map motion heard" against the
   brief's `silent_by_design` and BP-81's budgets (open with the creator).
 - Tests: `tests/unit/test_av_events.py` (26 functions, 50 cases), one new test in `test_v43_sound_plan.py`; the word-placement tests of
   `test_v43_sound_plan.py`/`test_sound_design_system.py` now assert the brief's rule (words are candidates); docs_lint 0 findings.
 - Not verified: nobody has listened or watched in real time; no narration (estimated word times only); 73 vault-only library takes
   without QC.
-- Decided 11:44 UTC (decision card): a map or 2.5D motion may be silent_by_design within BP-81's budget (D-135 row amended; it replaces D-133's "every map motion heard" for these routes).
+- Decided 11:44 UTC (decision card): a map or 2.5D motion may be silent_by_design within BP-81's budget (D-135 row amended; it replaces D-136's (W1's D-133) "every map motion heard" for these routes).
 - Next: the creator's word on the riser's BP-54 reading; real takes for map_pin_set, map_line_strain,
   map_line_snap, cloth_flap, ash_fall, eruption_boom (library -> free -> priced ElevenLabs on his word); Fable's review of PR #174.

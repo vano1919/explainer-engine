@@ -1,0 +1,175 @@
+{
+ "schema": "video_bakeoff/3",
+ "asked_by": {
+  "by": "creator",
+  "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9",
+  "at": "2026-11-12T22:21:20Z",
+  "what": "check the outside audit; test the video models that run on Modal against LTX on the battle pictures, $3 on Modal in all; the API-only models wait for the next day"
+ },
+ "hf_repo": "vano1919/tmr-artifacts",
+ "hf_out": "explainer-engine/cheap_video_2026-11-12/out",
+ "volume": "ee-weights",
+ "spend_line": "modal_cheap_video",
+ "shot_seconds": [
+  4.9,
+  10.5
+ ],
+ "prices": {
+  "date": "2026-11-12",
+  "source": "https://modal.com/pricing (read 2026-11-12; cloud/modal_schedule.py holds the table)"
+ },
+ "delivery": {
+  "width": 2560,
+  "height": 1440,
+  "fps": 24,
+  "how": "finish/upscale.py: centre crop to 16:9, Lanczos, cas 0.4, free on the session's CPU"
+ },
+ "cold_start_s": 120,
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/cheap_video_2026-11-12.json",
+  "service": "modal",
+  "why": "one core/ledger.Run with the plan's total ($3, the creator's word) as its modal cap; each variant's cap is reserved before it is sent and settled from the measured wall seconds; reservations stop at 80 %"
+ },
+ "baseline": {
+  "what": "LTX-2.5 distilled at 1280x704, the same pictures, prompts and seeds (battle_c3, battle_c4)",
+  "hf": "explainer-engine/ltx_route/out/30e63a9ffec2_80994f1122df/battle_c1/",
+  "measured": "gen_s 81.9 s per 10 s clip incl. the CLI's own weight load; the 4-clip run billed $0.5326"
+ },
+ "id": "cheap_video_wan_2026-11-12",
+ "app_name": "ee-cheapvideo",
+ "shots": [
+  {
+   "id": "b4",
+   "picture": "explainer-engine/ltx_route/scenes/battle_2026-11-12/b4.png",
+   "sha256": "01e8abdfef8f61fbc2c5e53e89c5bc88d370e839a6a88993d2b76af66643f4e5",
+   "size": [
+    2752,
+    1536
+   ],
+   "seed": 5404,
+   "why": "the wide battle shot: thousands of soldiers, chariots, dust (soldier stability, crowd motion)",
+   "prompt": "An epic wide high-angle shot of two Bronze Age armies charging and crashing into each other on a vast dusty plain at sunset, below the walled city of Troy on a distant hill. Thousands of warriors with spears and tall oxhide shields run and clash, two-horse war chariots race through clouds of golden dust, spears rise and fall, dust swirls in the low sun. The camera slowly pushes forward over the battle. Painterly cinematic storybook illustration.",
+   "prompt_ltx": "An epic wide high-angle shot of two Bronze Age armies charging and crashing into each other on a vast dusty plain at sunset, below the walled city of Troy on a distant hill. Thousands of warriors with spears and tall shields clash, two-horse war chariots race through clouds of golden dust, the camera slowly pushes forward over the battle. No one speaks. Sound: a great battle roar, clashing bronze, galloping horses, war horns.",
+   "prompt_ltx_why": "the battle run's own prompt and seed for battle_c4 (run 30e63a9ffec2_80994f1122df, 1280x704): the same clip at a smaller size, so only the size changes"
+  }
+ ],
+ "stage": {
+  "cpu": 4,
+  "memory_gib": 16,
+  "timeout_s": 1500,
+  "estimate_usd": 0.01,
+  "cap_usd": 0.05
+ },
+ "total_cap_usd": 3.0,
+ "estimate_total_usd": 0.75,
+ "run_order": [
+  "wan_a14b_lightning_480p"
+ ],
+ "weights": {
+  "wan_a14b": {
+   "repo": "Wan-AI/Wan2.2-I2V-A14B-Diffusers",
+   "revision": "596658fd9ca6b7b71d5057529bbf319ecbc61d74",
+   "files": {
+    "model_index.json": "50ba96f2b36888eab6b33afb4a74254652fb4f43be4767cea633f4bcda67f5d8",
+    "scheduler/scheduler_config.json": "40624e058848feddf4bc2da5e8a232668b9a6f4a4939365810bebd9ce0166578",
+    "text_encoder/config.json": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07",
+    "text_encoder/model-00001-of-00003.safetensors": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58",
+    "text_encoder/model-00002-of-00003.safetensors": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7",
+    "text_encoder/model-00003-of-00003.safetensors": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f",
+    "text_encoder/model.safetensors.index.json": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab",
+    "tokenizer/special_tokens_map.json": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270",
+    "tokenizer/spiece.model": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+    "tokenizer/tokenizer.json": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef",
+    "tokenizer/tokenizer_config.json": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd",
+    "transformer/config.json": "6809423c4a92f886feded9f85f55c667d73a2332d5e011fab4172f3448dd5666",
+    "transformer/diffusion_pytorch_model-00001-of-00012.safetensors": "0400c403bd7cfe6c1c29b47ff9cb575495dc590c9be2511a3b44ae5795add106",
+    "transformer/diffusion_pytorch_model-00002-of-00012.safetensors": "0da8ce107f7ccbe323be7b35c5e81ce90504995b9cf0a0c06e4132f836474ba4",
+    "transformer/diffusion_pytorch_model-00003-of-00012.safetensors": "4bee4dbbb916f167ce96d3f795ae316cd221713302ee427b7df457ea4dafe034",
+    "transformer/diffusion_pytorch_model-00004-of-00012.safetensors": "e6fec68a39ce49cfde2e6464061df64b853f0354151ca17931f8dd028dd47ff6",
+    "transformer/diffusion_pytorch_model-00005-of-00012.safetensors": "cf66f3fcf66788d2e939d0e60da015fa0953c48da92ae67f04ff085c4e826104",
+    "transformer/diffusion_pytorch_model-00006-of-00012.safetensors": "cdc4bb9e21d17e8577c915215429827ad5d58bee2021ed0d63c6854596b06c90",
+    "transformer/diffusion_pytorch_model-00007-of-00012.safetensors": "c9c48dfd22c8546e20a805a5e5d698f6fbebc7b1426db92d693b75ccd10e574c",
+    "transformer/diffusion_pytorch_model-00008-of-00012.safetensors": "1bed82c03707de72ef06f624f2bbc9d43370cc208d657989dd07b08b1ff998ab",
+    "transformer/diffusion_pytorch_model-00009-of-00012.safetensors": "779d7d8901239b5deef86597f74a4eccaf91fee674f05854dfc3d808e556805b",
+    "transformer/diffusion_pytorch_model-00010-of-00012.safetensors": "ea1ebb7975f001bda912c56bf8095865605e6a019b0c180e1de74129cfbfef98",
+    "transformer/diffusion_pytorch_model-00011-of-00012.safetensors": "38d9349f1c29a99c1f78ef53d228c1f51dde301bd3e33296db1a7e7f8c25f6fe",
+    "transformer/diffusion_pytorch_model-00012-of-00012.safetensors": "978ff94fe927dab5dc2a60030297043abff35a7d93524ce286b07c49025edfe1",
+    "transformer/diffusion_pytorch_model.safetensors.index.json": "fb80e949700c1a9a1d761d7bf56e78e6c5592d819bb600d76092e65497b9dfa5",
+    "transformer_2/config.json": "6809423c4a92f886feded9f85f55c667d73a2332d5e011fab4172f3448dd5666",
+    "transformer_2/diffusion_pytorch_model-00001-of-00012.safetensors": "95256668a2f7f60fd80db7b0ef2edd0700d18bfd44365a546c4eb75150b43518",
+    "transformer_2/diffusion_pytorch_model-00002-of-00012.safetensors": "3af2c8d8990a9a214fa13d2206dabc6ddd7148260ceffa570a93ff3a077d0ea0",
+    "transformer_2/diffusion_pytorch_model-00003-of-00012.safetensors": "47895d51e50eb833cfb729a55c0a88d69801171c3da64b895b44a2128315894f",
+    "transformer_2/diffusion_pytorch_model-00004-of-00012.safetensors": "c60f290bf6173bcd451ce4bb69054de077e6bc68609dc575033123996feebe70",
+    "transformer_2/diffusion_pytorch_model-00005-of-00012.safetensors": "fa53bebbb015efcf3de972a3029a34d4a8535a8d098f8f6e6210ea92d392b8f3",
+    "transformer_2/diffusion_pytorch_model-00006-of-00012.safetensors": "11afdf78c0219e950484e72e046ee0aa2a583052d048f57c339ce4eee3737130",
+    "transformer_2/diffusion_pytorch_model-00007-of-00012.safetensors": "8dc3fc3f8398854f6e1a521ef79d7e2199da7d039caa38625929acf83ab0f41c",
+    "transformer_2/diffusion_pytorch_model-00008-of-00012.safetensors": "fcf286f8a4745b6e7dd557d50f2e8126ac20037c1f4c3d75493b2a32861b29a4",
+    "transformer_2/diffusion_pytorch_model-00009-of-00012.safetensors": "2571fe8aefce8557b97809e9879e7d2650b9033944cf28e77007977cb1b6d7b7",
+    "transformer_2/diffusion_pytorch_model-00010-of-00012.safetensors": "8496ff20bb26d39484c940bc27047f0a7ca107f8ee23ef4ba7b2bd2f36c1dbfd",
+    "transformer_2/diffusion_pytorch_model-00011-of-00012.safetensors": "2bb74907c0cfffcdae0be5efe462a05179f199eee21be79b5ad20ea296a45869",
+    "transformer_2/diffusion_pytorch_model-00012-of-00012.safetensors": "2d3f1aca89bc664f029efd5a9cf848b47fa671d781681ce05dfeb4671a5bd77d",
+    "transformer_2/diffusion_pytorch_model.safetensors.index.json": "fb80e949700c1a9a1d761d7bf56e78e6c5592d819bb600d76092e65497b9dfa5",
+    "vae/config.json": "47e8bcf55e93e9c182e1962a8c7a0650faeb34ea0f66826d6f8aaa9f73e08ec9",
+    "vae/diffusion_pytorch_model.safetensors": "d6e524b3fffede1787a74e81b30976dce5400c4439ba64222168e607ed19e793"
+   }
+  },
+  "lightning": {
+   "repo": "lightx2v/Wan2.2-Lightning",
+   "revision": "18bccf8884ec0a078eed79785eb4ef13ea16ce1e",
+   "files": {
+    "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors": "d176c808d6fc461999b68e321efcb7501b20b8c3797523ed0df14f7d1deff11e",
+    "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors": "024f21de095bc8fad9809ded3e9e49a2e170dcf27075da8145ba7d60d8aab7f9"
+   }
+  }
+ },
+ "variants": [
+  {
+   "id": "wan_a14b_lightning_480p",
+   "family": "wan",
+   "pipeline": "WanImageToVideoPipeline",
+   "weights": [
+    "wan_a14b",
+    "lightning"
+   ],
+   "lora": {
+    "transformer": "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors",
+    "transformer_2": "Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors"
+   },
+   "width": 832,
+   "height": 480,
+   "fps": 16,
+   "frames": 81,
+   "clips": 1,
+   "settings": {
+    "num_inference_steps": 4,
+    "guidance_scale": 1.0,
+    "guidance_scale_2": 1.0,
+    "source": "Wan2.2-Lightning card at 18bccf88: 4 steps, no CFG; the high-noise LoRA on transformer, the low-noise on transformer_2"
+   },
+   "offload": "model_cpu_offload",
+   "gpu": "H100",
+   "cpu": 8,
+   "memory_gib": 96,
+   "estimate_usd": 0.75,
+   "cap_usd": 1.2,
+   "sound": "none",
+   "estimate_basis": "the bake-off's measured Wan A14B + Lightning run: verify 17 s + Volume load 417 s (model_cpu_offload, 129 GB) + ~100 s per 4-step 720p clip; at 832x480 (~0.43 of the pixels) ~45 s for the one clip, + start and upload = ~530 s at $5.09/h",
+   "scheduler": {
+    "class": "FlowMatchEulerDiscreteScheduler",
+    "shift": 5.0,
+    "source": "the LoRA authors' reference workflow at lightx2v/Wan2.2-Lightning 18bccf88 (Seko-V1 NativeComfy): Euler, ComfyUI 'simple' schedule, shift 5.0, 4 steps split 2 + 2 at the 0.9 boundary, CFG 1, LoRA strength 1.0 (Fable audit B1; the linear sigmas are given explicitly because diffusers' own spacing gives 1000, 910, 717, 24, delta audit N3; checked on CPU with diffusers d8c1b13c)",
+    "sigmas": "linear: 1, 0.75, 0.5, 0.25 before the shift",
+    "timesteps": [
+     1000.0,
+     937.5,
+     833.3,
+     625.0
+    ]
+   },
+   "shots": [
+    "b4"
+   ]
+  }
+ ],
+ "why": "the second half of the creator's $3 test (cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9): Wan 2.2 A14B + Lightning at 480p on the wide battle shot, run only after LTX ($0.5608) and HunyuanVideo 1.5 ($0.5759) settled; the same ledger as plan_cheap_2026-11-12.json, so the $3 cap and its 80 % stop ($2.40) hold across both plans; the weights are the bake-off's, already staged with their stamp"
+}

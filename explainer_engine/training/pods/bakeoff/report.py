@@ -176,10 +176,21 @@ def contact_sheet(rows, out_png: Path, thumb=(384, 216)):
     return out_png
 
 
-def build(plan, rid, folder: Path, fetch, upload=None, ledger_data=None) -> dict:
-    """Fetch, upscale, measure and report one run. ``fetch(hf_path, local)`` downloads a file (raises when it is not there);
-    ``upload(local, hf_path)`` puts the 2K files and the report back on HF; ``ledger_data`` is the bake-off ledger's data."""
+def _row(plan, label, tag, shot, raw, native, size, dst_dir, fetch, folder) -> dict:
     from PIL import Image
+    pic = Path(fetch(shot["picture"], folder / "in" / Path(shot["picture"]).name))
+    start = np.asarray(B.fit_picture(Image.open(pic), size[0], size[1]).resize(ANALYSIS), dtype=np.float32)
+    frames, fps = read_frames(raw)
+    two_k = to_2k(raw, Path(dst_dir) / f"{tag}_2k.mp4", fps=int(plan["delivery"]["fps"]))
+    return {"variant": label, "shot": tag, "state": "made", "native": native,
+            "seconds": round(len(frames) / fps, 2) if fps else None, "sound": has_audio(raw), "file_2k": str(two_k),
+            **metrics(frames, start), "sharpness_2k": sharpness(two_k)}
+
+
+def build(plan, rid, folder: Path, fetch, upload=None, ledger_data=None, baselines=None) -> dict:
+    """Fetch, upscale, measure and report one run. ``fetch(hf_path, local)`` downloads a file (raises when it is not there);
+    ``upload(local, hf_path)`` puts the 2K files and the report back on HF; ``ledger_data`` is the bake-off ledger's data;
+    ``baselines`` = [{label, shot, hf, native, usd, gen_s, usd_per_h}] are earlier clips of the same shots, measured alongside."""
     folder.mkdir(parents=True, exist_ok=True)
     measured, rows, no_record = {}, [], []
     for v in plan["variants"]:
@@ -194,25 +205,38 @@ def build(plan, rid, folder: Path, fetch, upload=None, ledger_data=None) -> dict
             except Exception:  # noqa: BLE001
                 pass
             continue
-        for s in plan["shots"]:
+        gen = {r["shot"]: r.get("gen_s") for r in measured[v["id"]].get("shots") or []}
+        for job in B.jobs_of(plan, v):      # every size of every shot of the variant (one per shot when it has one size)
+            s, tag, w, h = job["shot"], job["tag"], job["width"], job["height"]
             try:
-                raw = Path(fetch(f"{base}/{s['id']}.mp4", folder / v["id"] / f"{s['id']}.mp4"))
+                raw = Path(fetch(f"{base}/{tag}.mp4", folder / v["id"] / f"{tag}.mp4"))
             except Exception:  # noqa: BLE001
-                rows.append({"variant": v["id"], "shot": s["id"], "state": "missing"})
+                rows.append({"variant": v["id"], "shot": tag, "state": "missing"})
                 continue
-            pic = Path(fetch(s["picture"], folder / "in" / Path(s["picture"]).name))
-            start = np.asarray(B.fit_picture(Image.open(pic), v["width"], v["height"]).resize(ANALYSIS), dtype=np.float32)
-            frames, fps = read_frames(raw)
-            two_k = to_2k(raw, folder / v["id"] / f"{s['id']}_2k.mp4", fps=int(plan["delivery"]["fps"]))
-            row = {"variant": v["id"], "shot": s["id"], "state": "made", "native": f"{v['width']}x{v['height']}@{v['fps']}",
-                   "seconds": round(len(frames) / fps, 2) if fps else None, "sound": has_audio(raw), "file_2k": str(two_k),
-                   **metrics(frames, start), "sharpness_2k": sharpness(two_k)}
+            row = _row(plan, v["id"], tag, s, raw, f"{w}x{h}@{v['fps']}", (w, h), folder / v["id"], fetch, folder)
+            row["gen_s"], row["usd_per_h"] = gen.get(tag), B.rate_of(v)
             if upload:
-                row["hf_2k"] = upload(two_k, f"{base}/{s['id']}_2k.mp4")
+                row["hf_raw"] = f"https://huggingface.co/datasets/{plan['hf_repo']}/blob/main/{base}/{tag}.mp4"
+                row["hf_2k"] = upload(Path(row["file_2k"]), f"{base}/{tag}_2k.mp4")
             rows.append(row)
+    for b in baselines or []:              # clips made earlier with the same pictures, prompts and seeds (not paid again)
+        s = next(x for x in plan["shots"] if x["id"] == b["shot"])
+        raw = Path(fetch(b["hf"], folder / "baseline" / Path(b["hf"]).name))
+        row = _row(plan, b["label"], b["shot"], s, raw, b["native"], tuple(int(x) for x in b["native"].split("@")[0].split("x")),
+                   folder / "baseline", fetch, folder)
+        row.update(gen_s=b.get("gen_s"), usd_per_h=b.get("usd_per_h"), usd=b.get("usd"),
+                   hf_raw=f"https://huggingface.co/datasets/{plan['hf_repo']}/blob/main/{b['hf']}")
+        if upload:
+            row["hf_2k"] = upload(Path(row["file_2k"]), f"{plan['hf_out']}/{rid}/baseline/{b['shot']}_{b['label']}_2k.mp4")
+        rows.append(row)
     money = costs(plan, measured, ledger_usd(ledger_data, rid) if ledger_data else None, no_record)
     for r in rows:
-        r["usd"] = (money.get(r["variant"]) or {}).get("per_shot_usd", {}).get(r["shot"])
+        if r["variant"] in money:
+            r["usd"] = (money.get(r["variant"]) or {}).get("per_shot_usd", {}).get(r["shot"])
+        if r.get("state") == "made" and r.get("seconds"):
+            r["usd_per_s"] = round(r["usd"] / r["seconds"], 4) if r.get("usd") is not None else None
+            r["gen_usd_per_s"] = (round(float(r["gen_s"]) * float(r["usd_per_h"]) / 3600.0 / r["seconds"], 4)
+                                  if r.get("gen_s") and r.get("usd_per_h") else None)
     made = [r for r in rows if r.get("state") == "made"]
     sheet = contact_sheet(made, folder / "contact_sheet.png") if made else None
     rep = {"schema": "video_bakeoff_report/2", "run_id": rid, "plan_sha256": B.plan_sha(), "rows": rows, "money": money,
@@ -227,14 +251,14 @@ def build(plan, rid, folder: Path, fetch, upload=None, ledger_data=None) -> dict
 
 def markdown(rep) -> str:
     lines = [f"# Video bake-off {rep['run_id']}", "", f"Total (container seconds at the dated price): ${rep['total_usd']:.3f}", "",
-             "| variant | shot | native | s | sound | $ | start diff | motion | longest still | flicker | drift | sharp 2K |",
-             "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+             "| variant | shot | native | s | sound | $ | $/s | gen $/s | start diff | motion | longest still | flicker | drift "
+             "| sharp 2K |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rep["rows"]:
         if r.get("state") != "made":
-            lines.append(f"| {r['variant']} | {r['shot']} | {r.get('state')} | | | | | | | | | |")
+            lines.append(f"| {r['variant']} | {r['shot']} | {r.get('state')} | | | | | | | | | | | |")
             continue
         lines.append(f"| {r['variant']} | {r['shot']} | {r['native']} | {r['seconds']} | {'yes' if r['sound'] else 'no'} | "
-                     f"{(r.get('usd') or 0):.3f} | {r.get('start_diff')} | {r['motion']} | {r['longest_still']} | {r['flicker']} | "
+                     f"{(r.get('usd') or 0):.3f} | {r.get('usd_per_s')} | {r.get('gen_usd_per_s')} | {r.get('start_diff')} | {r['motion']} | {r['longest_still']} | {r['flicker']} | "
                      f"{r.get('drift')} | {r['sharpness_2k']} |")
     lines += ["", "| variant | state | billed est. $ | estimate $ | cap $ | seconds |", "|---|---|---|---|---|---|"]
     for vid, m in rep["money"].items():
@@ -247,6 +271,7 @@ def main(argv=None) -> int:
     ap.add_argument("run_id")
     ap.add_argument("--out", required=True)
     ap.add_argument("--upload", action="store_true")
+    ap.add_argument("--baselines", help="a JSON file: [{label, shot, hf, native, usd, gen_s, usd_per_h}]")
     a = ap.parse_args(argv)
     import os
     from huggingface_hub import HfApi, hf_hub_download
@@ -265,7 +290,8 @@ def main(argv=None) -> int:
         return f"https://huggingface.co/datasets/{plan['hf_repo']}/blob/main/{path}"
     lp = Path(plan["ledger"]["path"])
     led = json.loads(lp.read_text()) if lp.is_file() else None
-    rep = build(plan, a.run_id, Path(a.out), fetch, upload if a.upload else None, led)
+    base = json.loads(Path(a.baselines).read_text()) if a.baselines else None
+    rep = build(plan, a.run_id, Path(a.out), fetch, upload if a.upload else None, led, base)
     print(json.dumps({"total_usd": rep["total_usd"], "rows": len(rep["rows"])}))
     return 0
 

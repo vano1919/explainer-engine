@@ -159,7 +159,7 @@ def test_a_placeholder_or_a_missing_voice_never_ships_but_a_preview_says_so(tmp_
 
 
 def test_a_preview_leaves_a_missing_take_silent_and_never_plays_a_made_up_sound(tmp_path):
-    """D-133 / OV-56 as changed: procedural numpy sound never plays, in a preview either; the row stays silent and is listed."""
+    """D-136 / OV-56 as changed: procedural numpy sound never plays, in a preview either; the row stays silent and is listed."""
     plan = SP.build(_script(), fps=FPS)
     lib = _library(tmp_path / "lib", [c for c in plan["classes"] if c != "fire"])
     src = SP.resolve(plan, lib)

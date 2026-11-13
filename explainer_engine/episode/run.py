@@ -131,6 +131,11 @@ def _stage_inputs(ep: Episode, stage: str) -> dict:
         files["sound_library/manifest.json"] = _sha(ep.sound_library / "manifest.json")
     if stage == "clips":
         files[WAN_LEDGER_REL] = _sha(ep.root / WAN_LEDGER_REL)
+    if stage == "voice":   # VL-07: the clip records of the clip-spoken shots time them (G7 re-cuts only the others)
+        from explainer_engine.videolane import plan as VP
+        for sid in sorted(VP.clip_spoken(ep.script)):
+            rel = f"production/video/{sid}.json"
+            files[rel] = _sha(ep.root / rel)
     return files
 
 
@@ -248,6 +253,9 @@ def stage_script(ep: Episode, rehearsal: bool):
     from explainer_engine.aivideo import wan_adapter as WA
     from explainer_engine.training.pods.wan import modal_wan_jobs as WJ
     rows += WA.fit_rows(shots, WJ.load_launch())   # final audit A2: one clip of the pinned model holds every Wan shot
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as LJ
+    from explainer_engine.videolane import plan as VP
+    rows += VP.rows(doc, LJ.max_seconds(LJ.LAUNCH))   # VL-01..VL-09: every LTX shot's edit plan (D-137)
     speakers = R.speaking_heroes(doc)
     differ = []
     for s in shots:
@@ -385,6 +393,9 @@ def stage_voice(ep: Episode, rehearsal: bool):
     No read: FAIL (the read is ElevenLabs credits, made outside the runner on the creator's word)."""
     read, tr = ep.root / READ_REL, ep.root / TRANSCRIPT_REL
     timing_path = ep.root / "audio" / "timing.json"
+    from explainer_engine.videolane import plan as VP
+    if VP.clip_spoken(ep.script):
+        return _voice_with_clips(ep, read, tr, timing_path)
     if not read.is_file() or not tr.is_file():
         if timing_path.is_file():
             timing_path.unlink()   # a timing from an older read must not time this run
@@ -423,6 +434,48 @@ def _clip_key(shot: dict, files: list, ep: Episode, spine, events: list | None =
     return _digest({"shot": shot, "files": files, "size": list(ep.size), "fps": ep.fps, "spine_sha": E.spine_hash(spine),
                     "events_sha": E.events_hash(events or []), "motion_profile": shot.get("motion_profile"),
                     "renderer": renderer, "resolver": E.RESOLVER_VERSION, "contract": ep.script.get("av_contract") or "legacy"})
+
+
+def _voice_with_clips(ep: Episode, read: Path, tr: Path, timing_path: Path):
+    """G6 when LTX clips speak some lines (VL-07): the read times the narrator's shots, each clip-spoken shot is timed by its
+    trimmed clip (``production/video/<shot>.json``) and inserted at its place. A clip-spoken shot without its clip keeps its
+    planned length and FAILs ``clip_spoken_shots_timed_by_their_clips`` (a rehearsal goes on)."""
+    import wave
+    from explainer_engine.videolane import ingest as VI
+    from explainer_engine.videolane import plan as VP
+    spoken = VP.clip_spoken(ep.script)
+    clips = VI.clip_timings(ep.root, ep.script)
+    missing = sorted(spoken - set(clips))
+    for sid in missing:
+        sh = next(s for s in ep.script["shots"] if s["shot_id"] == sid)
+        clips[sid] = {"frames": max(1, int(round(float(sh.get("target_duration_seconds") or 1.0) * ep.fps))), "speech": []}
+    rows, aligned, read_s = [], None, 0.0
+    needs_read = bool(TM.read_order(ep.script))
+    if needs_read and (not read.is_file() or not tr.is_file()):
+        what = [x for x, p in ((READ_REL, read), (TRANSCRIPT_REL, tr)) if not p.is_file()]
+        rows.append(G.row("the_read_exists", False, f"missing {', '.join(what)}: the narrator's shots keep their planned "
+                          "lengths (a rehearsal only)", what))
+    elif needs_read:
+        from explainer_engine.audio import scribe_words as SW
+        from explainer_engine.audio.environmental_sound_design import validate_narration_source_file
+        validate_narration_source_file(read)
+        with wave.open(str(read)) as w:
+            read_s = w.getnframes() / float(w.getframerate())
+        aligned = TM.align_read(ep.script, json.loads(tr.read_text(encoding="utf-8")), read_s)
+        rows += [G.row("the_read_exists", True, f"{READ_REL}: {read_s:.2f} s", read_s),
+                 G.row("read_aligned_to_the_lines", aligned["status"] == G.PASS,
+                       f"{aligned['coverage']:.1%} of the written words heard (needs {SW.MIN_COVERAGE:.0%})",
+                       aligned["unmatched"][:20], level=G.REVIEW)]
+    else:
+        rows.append(G.row("the_read_exists", True, "no narrator line: the clips speak every line (VL-07)"))
+    timing = TM.retime_with_clips(ep.script, aligned, ep.fps, read_s, clips)
+    write_json_atomic(timing_path, timing)
+    rows.append(G.row("clip_spoken_shots_timed_by_their_clips", not missing, f"{len(spoken) - len(missing)} of "
+                      f"{len(spoken)} clip-spoken shot(s) timed by their trimmed LTX clip", missing[:20]))
+    planned = sum(float(s.get("target_duration_seconds") or 0) for s in ep.script["shots"])
+    return rows, {"timing": "audio/timing.json", "read_s": round(read_s, 3), "planned_s": round(planned, 3),
+                  "total_frames": timing["total_frames"], "clip_timed": timing["clip_timed"],
+                  "inserts": len(timing["inserts"])}
 
 
 def _wan_clip(ep: Episode, sid: str) -> dict | None:
@@ -479,7 +532,8 @@ def stage_clips(ep: Episode, rehearsal: bool):
         end = pics.get(f"{sid}_end")
         evs = av_events.get(sid, {}).get("events", [])
         renderer = MA.RENDERER_VERSION if is_map else L25.RENDERER_VERSION
-        key = _clip_key(sh, [start, end], ep, spines.get(sid), evs, renderer)
+        files = [start, end] + ([_sha(ep.root / "production" / "video" / f"{sid}.json")] if route == "video" else [])
+        key = _clip_key(sh, files, ep, spines.get(sid), evs, renderer)   # a video shot's key holds its clip record
         old = json.loads(report.read_text(encoding="utf-8")) if report.is_file() else None
         if old and old.get("key") == key and out.is_file() and _sha(out) == old.get("output_sha256") and not ep.force:
             records.append(dict(old["record"], start_sec=rec["start_sec"], end_sec=rec["end_sec"]))
@@ -504,6 +558,11 @@ def stage_clips(ep: Episode, rehearsal: bool):
                 if start is None:
                     missing_pic.append(sid)
                     raise ContractError(f"{sid}: no start picture (G5)")
+                if wan is not None and wan.get("schema") == "video_clip_record/1" and int(wan.get("frames") or 0) != frames:
+                    from explainer_engine.videolane import ingest as VI
+                    rel = dict(wan, clip_path=str(Path(wan["clip_path"]).relative_to(ep.root)))
+                    new = VI.recut(ep.root, rel, frames, ep.fps)     # VL-11: from the kept raw clip, never stretched
+                    wan = dict(new, clip_path=str(ep.root / new["clip_path"]))
                 if wan is not None:
                     out.write_bytes(Path(wan["clip_path"]).read_bytes())
                     res = {"provider": wan.get("backend"), "status": wan["status"], "total_frames": frames}
@@ -584,8 +643,25 @@ def stage_sound(ep: Episode, rehearsal: bool):
     SP.write(plan, sources, ep.root)
     read = ep.root / READ_REL
     stems_dir = ep.path("audio/stems")
+    narration = read if read.is_file() else None
+    voice_rep = None
+    if timing and timing.get("inserts"):   # VL-13: the LTX dialogue laid once on its shots, the read split around it
+        from explainer_engine.videolane import ingest as VI
+        from explainer_engine.videolane import voice as VV
+        clip_audio = {}
+        for ins in timing["inserts"]:
+            rp = ep.root / "production" / "video" / f"{ins['shot_id']}.json"
+            if rp.is_file():
+                d = json.loads(rp.read_text(encoding="utf-8"))
+                clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or []}
+        missing = [i["shot_id"] for i in timing["inserts"] if i["shot_id"] not in clip_audio]
+        if not missing:
+            voice_rep = VV.compose(timing, narration, clip_audio, ep.path("audio/voice_track.wav"),
+                                   read_speech=VI.speech(narration) if narration else None)
+            write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
+            narration = ep.path("audio/voice_track.wav")
     rep = STEMS.render(plan, sources, stems_dir, library_root=ep.sound_library,
-                       narration=read if read.is_file() else None, shippable=not rehearsal)
+                       narration=narration, shippable=not rehearsal)
     write_json_atomic(ep.path("audio/stems_report.json"), rep)
     stem_audit = audit_rendered_audio_stems(stems_dir=stems_dir, script_doc=_with_line_times(script, timing), fps=ep.fps)
     write_json_atomic(ep.path("qa/audio_stem_audit.json"), stem_audit)
@@ -612,7 +688,8 @@ def stage_sound(ep: Episode, rehearsal: bool):
     rep_av = AVR.event_report(ev_doc, plan, sheet, rep)
     write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
     return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source"),
-                  "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json"}
+                  "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json",
+                  "voice_track": "audio/voice_track.json" if voice_rep else None}
 
 
 def _with_line_times(script: dict, timing: dict | None) -> dict:
@@ -696,6 +773,14 @@ def stage_qa(ep: Episode, rehearsal: bool):
                            stem_audit=stem_audit, video=video, fps=ep.fps,
                            forbidden_tokens=sorted(ctx.forbidden_semantic_tokens),
                            narration_source=_narration_source(ep, audio), paid=paid_lines(ep.root))
+    from explainer_engine.videolane import plan as VP
+    vm = None
+    if video and any(VP.is_video(s) for s in script.get("shots", [])):   # VL-12: the master as the viewer gets it
+        from explainer_engine.videolane import master_qa as VM
+        vm = VM.check(ep.root, script, records, Path(video["master_mp4_path"]), ep.fps, timing=ep.timing(),
+                      voice_report=rd("audio/voice_track.json"))
+        acc = dict(acc, gates=acc["gates"] + vm["rows"])
+        acc["status"] = G.verdict(acc["gates"])["status"]
     sheet = None
     if video:
         sheet = ep.path(f"qa/contact_sheets/{ep.manifest['episode_id']}_contact_sheet.jpg")
@@ -728,7 +813,8 @@ def stage_qa(ep: Episode, rehearsal: bool):
     write_json_atomic(ep.path("production/production_manifest.json"), manifest)
     write_json_atomic(ep.path("qa/acceptance_report.json"), manifest)
     return acc["gates"], {"manifest": "production/production_manifest.json", "acceptance": acc["status"],
-                         "contact_sheet": manifest["contact_sheet_path"]}
+                         "contact_sheet": manifest["contact_sheet_path"],
+                         "video_master_qa": "qa/video_master_qa.json" if vm else None}
 
 
 def _narration_source(ep: Episode, audio: dict | None) -> str | None:

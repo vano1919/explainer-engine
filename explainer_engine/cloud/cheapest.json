@@ -1,0 +1,28 @@
+{
+  "_doc": "The measured basis of the cheapest-run rules CH-01..CH-06 (D-133, docs/CLOUD_RUNBOOK.md). Prices are Modal H100 + 8 CPU + 96 GiB at $5.0937/h (cloud/modal_schedule, dated 2026-11-07) unless a row says otherwise; gen_usd_per_s is the generation seconds of one clip at that rate divided by the clip's seconds.",
+  "decided": {"by": "creator", "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g", "at": "2026-11-13T07:00:45Z",
+              "words": "LTX stays the generator; update the video generation rules; the cheapest combination of every paid run is mandatory, like a PreToolUse hook"},
+  "video_measured": {
+    "source": "the cheaper-video test, ledger cheap_video_2026-11-12.json, HF explainer-engine/cheap_video_2026-11-12/ (2026-11-12 22:42-23:10 UTC); the battle run 30e63a9ffec2_80994f1122df",
+    "rows": [
+      {"model": "LTX-2.5 distilled", "size": "1280x704@24", "seconds": 10, "sound": true, "gen_usd_per_s": 0.0115},
+      {"model": "LTX-2.5 distilled", "size": "1024x576@24", "seconds": 10, "sound": true, "gen_usd_per_s": 0.0099},
+      {"model": "LTX-2.5 distilled", "size": "768x448@24", "seconds": 10, "sound": true, "gen_usd_per_s": 0.0084},
+      {"model": "Wan2.2 A14B + Lightning", "size": "832x480@16", "seconds": 5, "sound": false, "gen_usd_per_s": 0.022},
+      {"model": "HunyuanVideo 1.5 480p distilled", "size": "848x480@24", "seconds": 5, "sound": false, "gen_usd_per_s": 0.030}
+    ],
+    "ltx_clip_seconds": {"cli_runner": 81.9, "denoising": 17, "note": "the battle run's log: 8 steps ~6 s + 3 steps ~10 s; the rest is the model load per clip and the decode"}
+  },
+  "video_api_list_prices": {
+    "checked": "2026-11-12/13", "note": "list prices, nothing run; usd per second",
+    "rows": [
+      {"model": "Vidu Q3 Turbo", "size": "540p / 720p", "usd_per_s": "0.02 / 0.03 off-peak (0.04 / 0.06 peak)", "source": "official pricing page, opened"},
+      {"model": "Wan 2.2 I2V Flash", "size": "480p / 720p", "usd_per_s": "0.015 / 0.036", "source": "a reseller page"},
+      {"model": "Grok Imagine 1.5 Lite", "size": "720p", "usd_per_s": "0.02", "source": "xAI docs search snippet, page not opened"},
+      {"model": "MiniMax H3 Max Turbo", "size": "480p / 768p", "usd_per_s": "0.025 / 0.04", "source": "pricing page, opened"},
+      {"model": "Veo 3.1 Lite", "size": "720p", "usd_per_s": "0.05", "source": "several sources agree"},
+      {"model": "LTX-2.5 API", "size": "720p", "usd_per_s": "~0.09", "source": "the outside audit"}
+    ]
+  },
+  "pictures": {"api": "Gemini nano-banana-2.1 batch tier at 2K, $0.025 a picture (T0, 6 of 6, 2026-11-12)", "free_first": "the Gemini chat picture tool (D-131 turn packs)"}
+}

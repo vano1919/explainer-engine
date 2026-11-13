@@ -23,9 +23,16 @@ What the bake-off audits taught, kept here (BAKEOFF_AUDIT_FABLE_HIGH.md, BAKEOFF
 - the result holds plain JSON only (``libs`` returns strings: torch's ``TorchVersion`` cannot be read by a local client
   without torch, which lost the bake-off's LTX answer).
 
+Two runners (``launch.runner``, the creator's cheaper-video question 2026-11-13 06:40 UTC): ``cli`` runs the LTX-2 CLI once
+per clip, so every clip loads Gemma 12B, builds the 22B transformer twice and decodes (the battle run: ~82 s a clip, ~17 s of it
+denoising); ``inproc`` (``LtxSession``) runs the CLI's own ``main`` body in this process on one pipeline: every prompt of the
+shot and its chain encoded in one Gemma load, the transformer built once and held (``DiffusionStage.resident``) for all
+clips, the deadline checked before each denoising pass.
+
 The clip carries LTX's own sound (speech and effects, the creator 2026-11-12 19:12 UTC): the prompt the backend builds holds
 the scene, the spoken words and the sounds (``aivideo/ltx_modal.build_prompt``)."""
-import hashlib, json, math, os, re, shutil, subprocess, sys, threading, time, uuid
+import hashlib, json, logging, math, os, re, shutil, subprocess, sys, threading, time, uuid
+from contextlib import ExitStack
 from pathlib import Path
 try:
     import modal
@@ -80,6 +87,8 @@ def launch_problems(launch: dict) -> list[str]:
     st = launch.get("startup_timeout_s")
     if not (isinstance(st, int) and 30 <= st <= caps.get("cold_start_s", 0)):
         out.append("launch startup_timeout_s must be set and no longer than caps.cold_start_s (a hung start bills it)")
+    if runner_of(launch) not in RUNNERS:
+        out.append(f"launch runner must be one of {RUNNERS}")
     out += native_problems(launch)
     return out
 
@@ -260,6 +269,41 @@ def read_job(path: str, launch: dict | None = None) -> dict:
     return dict(job, start_sha256=sha, start_bytes=pic)
 
 
+BAKED_LAUNCH = Path("/root/launch.json")   # the launch file the image was built with (``add_local_file`` below)
+
+
+def container_gate(job: dict, launch: dict, baked=BAKED_LAUNCH) -> list[str]:
+    """D-133's last line, inside the paid container before any model loads (a ``.remote()`` from custom code skips the hook and
+    the local entrypoints). No repo import here: the image holds only this file and the launch file. CH-01, CH-02 and CH-04
+    against the launch baked into the image; a rule is skipped only when the local entrypoint passed the creator's recorded
+    waiver in ``job["cheapest_waive"]``. CH-03 needs the committed scenes and stays with the hook and ``::main``."""
+    bad = []
+    baked = Path(baked)
+    if baked.exists() and json.loads(baked.read_text(encoding="utf-8")) != launch:
+        bad.append("the launch passed in is not the launch file baked into the image")
+    off = set(job.get("cheapest_waive") or ())
+    if "CH-01" not in off and launch.get("runner") != "inproc":
+        bad.append("CH-01: the launch must run in process (runner inproc)")
+    nat = launch.get("native") or {}
+    if "CH-02" not in off:
+        if nat.get("use") != [1280, 704] or nat.get("fps") != 24:
+            bad.append(f"CH-02: native.use {nat.get('use')} @ {nat.get('fps')}, not 1280x704@24")
+        for j in [job] + [c for c in job.get("chain") or [] if isinstance(c, dict)]:
+            size = [j.get("width", job.get("width")), j.get("height", job.get("height"))]
+            if size != nat.get("use") or j.get("fps", job.get("fps")) != nat.get("fps"):
+                bad.append(f"CH-02: {j.get('shot_id')} asks {size[0]}x{size[1]}@{j.get('fps', job.get('fps'))}")
+    sd = launch.get("scaledown_window_s")
+    if "CH-04" not in off and not (isinstance(sd, int) and sd <= 5):
+        bad.append(f"CH-04: scaledown_window_s {sd} is above 5 s")
+    return bad
+
+
+def waivers() -> list[str]:
+    """The creator's recorded waivers for this run (D-133), carried into the job for ``container_gate``."""
+    from explainer_engine.cloud import cheapest
+    return sorted(cheapest.waived()[1])
+
+
 def preflight(launch: dict, job: dict | None = None):
     """Free check before any paid call: every pin and cap set, the price equal to the dated table, the caps under the
     creator's ``modal_ltx`` line (``config/spend_caps.json``; missing = a zero budget), and the shot has a prompt, seconds,
@@ -289,6 +333,10 @@ def preflight(launch: dict, job: dict | None = None):
                 bad.append(f"{c['shot_id']}: {c['seconds']} s is longer than the model's {max_seconds(launch):g} s")
         if job.get("end_picture"):
             bad.append(f"{job.get('shot_id')}: an end picture, but the LTX distilled CLI takes only the frame-0 picture")
+    from explainer_engine.cloud import cheapest        # D-133: the cheapest known combination (CH-01, CH-02, CH-04)
+    why = cheapest.problems_text(cheapest.launch_problems(launch))
+    if why:
+        bad.append(why)
     if bad:
         raise SystemExit("paid preflight FAILED, nothing was started:\n" + "\n".join(bad))
 
@@ -425,6 +473,172 @@ def ltx_cmd(launch, job, picture, mp4, python=None):
             "--frame-rate", str(job["fps"]), "--seed", str(job["seed"]), "--output-path", str(mp4)]
     return cmd
 
+RUNNERS = ("cli", "inproc")
+# The arguments that build the pipeline: equal for every clip of one session, or the session refuses the clip.
+MODEL_ARGS = ("model_paths", "spatial_upsampler_path", "lora", "quantization", "compile", "offload_mode",
+              "prompt_enhancer_gemma_root", "diffvae_optimization", "marker_root_path")
+PROMPT_GROUP = 4             # prompts per Gemma forward (each is padded to 1024 tokens, so a group is one [N, 1024] batch)
+
+
+def runner_of(launch: dict) -> str:
+    """``cli``: one LTX-2 CLI process per clip (every clip loads Gemma, builds the transformer twice and decodes); ``inproc``:
+    one pipeline per container, every prompt of the shot and its chain encoded in one Gemma load, the transformer built
+    once and held for every clip (``DiffusionStage.resident``, as LTX-2's own multi-GPU pipeline does)."""
+    return launch.get("runner") or "cli"
+
+
+def ltx_argv(launch, job, picture, mp4) -> list[str]:
+    """The CLI's own arguments of one clip (``ltx_cmd`` without the interpreter): the in-process runner parses exactly these
+    with the CLI's own parser, so both runners read the same settings."""
+    return ltx_cmd(launch, job, picture, mp4)[3:]
+
+
+class _Argv:
+    """``sys.argv`` for the LTX-2 parser while it reads it: ``resolve_cli_params`` pre-parses the process arguments to
+    find the checkpoint and its model version."""
+
+    def __init__(self, argv):
+        self.argv, self.old = ["ltx_pipelines.distilled", *argv], None
+
+    def __enter__(self):
+        self.old, sys.argv = sys.argv, self.argv
+
+    def __exit__(self, *exc):
+        sys.argv = self.old
+
+
+def ltx_modules():
+    """The pinned LTX-2 code the CLI runs, imported in the container: ``ltx_pipelines.distilled`` (its module namespace holds
+    every helper its ``main`` calls), torch and the memory cleanup."""
+    import importlib
+    from types import SimpleNamespace
+    import torch
+    return SimpleNamespace(D=importlib.import_module("ltx_pipelines.distilled"), torch=torch,
+                           cleanup=importlib.import_module("ltx_pipelines.utils.helpers").cleanup_memory)
+
+
+class _CachedPrompts:
+    """Stands in for the pipeline's ``PromptEncoder`` once every prompt is encoded: Gemma never loads beside the resident
+    transformer. A prompt that was not encoded first, or a prompt enhancement, is refused (it would load Gemma there)."""
+
+    def __init__(self, cache: dict):
+        self.cache = cache
+
+    def __call__(self, prompts, *, enhance_first_prompt=False, enhance_prompt_image=None, enhance_prompt_seed=42,
+                 enhance_static_cache=False):
+        if enhance_first_prompt:
+            raise RuntimeError("prompt enhancement is not part of the in-process runner")
+        missing = [p[:60] for p in prompts if p not in self.cache]
+        if missing:
+            raise RuntimeError(f"prompt not encoded before the clips: {missing}")
+        return [self.cache[p] for p in prompts]
+
+
+class _GuardedStage:
+    """The pipeline's diffusion stage with the in-container deadline checked before each denoising pass (two per clip):
+    a clip that would run past it ends with ``DeadlineHit`` and the normal end path still writes and uploads."""
+
+    def __init__(self, stage, deadline):
+        self._stage, self._deadline = stage, deadline
+
+    def __call__(self, *a, **kw):
+        if self._deadline is not None:
+            self._deadline.check()
+        return self._stage(*a, **kw)
+
+    def __getattr__(self, name):
+        return getattr(self._stage, name)
+
+
+class LtxSession:
+    """The in-process runner (``runner: inproc``): the CLI's ``main`` (LTX-2 ``ltx_pipelines.distilled`` at the launch's
+    commit) split in two. The first clip parses its arguments with the CLI's parser, builds ``DistilledPipeline`` with the
+    CLI's arguments, encodes every prompt of the shot in one Gemma load and builds the transformer once, held until
+    ``close``; each clip then runs ``main``'s own body: ``stream_chunks``, the decode and ``encode_video``. ``setup`` holds
+    the measured seconds of the one-time steps."""
+
+    def __init__(self, prompts, deadline=None, ltx=None, now=time.time):
+        self.prompts = list(dict.fromkeys(prompts))
+        self.deadline, self._ltx, self.now = deadline, ltx, now
+        self.pipe, self.key, self.setup, self._resident = None, None, {}, None
+
+    def _parse(self, argv):
+        L = self._ltx
+        D = L.D
+        with _Argv(argv):
+            params = D.resolve_cli_params(distilled=True)
+            parser = D.add_chunk_layout_args(D.add_keyframe_decode_arg(D.add_generated_keyframes_arg(
+                D.default_2_stage_distilled_arg_parser(params=params, supports_auto_duration=True))))
+            return parser.parse_args(argv)
+
+    @staticmethod
+    def model_key(args) -> str:
+        return repr([(k, getattr(args, k, None)) for k in MODEL_ARGS])
+
+    def _open(self, args):
+        L, t0 = self._ltx, self.now()
+        D = L.D
+        pipe = D.DistilledPipeline(model_paths=args.model_paths, spatial_upsampler_path=args.spatial_upsampler_path,
+                                   loras=tuple(args.lora) if args.lora else (), quantization=args.quantization,
+                                   compilation_config=args.compile, offload_mode=args.offload_mode,
+                                   prompt_enhancer_gemma_root=args.prompt_enhancer_gemma_root,
+                                   diffvae_optimization=args.diffvae_optimization)
+        self.setup["pipeline_s"] = round(self.now() - t0, 1)
+        t1, cache = self.now(), {}
+        for i in range(0, len(self.prompts), PROMPT_GROUP):
+            group = self.prompts[i:i + PROMPT_GROUP]
+            cache.update(zip(group, pipe.prompt_encoder(group)))
+        pipe.prompt_encoder = _CachedPrompts(cache)
+        L.cleanup()
+        self.setup["prompts_s"], self.setup["prompts"] = round(self.now() - t1, 1), len(cache)
+        t2 = self.now()
+        self._resident = ExitStack()
+        self._resident.enter_context(pipe.stage.resident())
+        with pipe.stage._transformer_ctx():     # built now, before the first clip plans its decode tiles on free memory
+            pass
+        pipe.stage = _GuardedStage(pipe.stage, self.deadline)
+        self.setup["transformer_s"] = round(self.now() - t2, 1)
+        self.pipe, self.key = pipe, self.model_key(args)
+
+    def clip(self, argv) -> None:
+        L = self._ltx = self._ltx or ltx_modules()
+        D, torch = L.D, L.torch
+        args = self._parse(argv)
+        if self.pipe is None:
+            self._open(args)
+        elif self.model_key(args) != self.key:
+            raise RuntimeError("this clip's model arguments differ from the session's")
+        if self.deadline is not None:
+            self.deadline.check()
+        with torch.inference_mode():
+            hdr = D.resolve_hdr_color_space(images=args.images, hdr=args.hdr)
+            video_marker, audio_marker = D.markers_from_args(args, device=D.get_device(), color_space=hdr)
+            vae_dtype = D.vae_dtype_for_hdr(hdr, torch.bfloat16)
+            chunk_config = D.chunk_config_from_args(args)
+            chunks, num_frames, tiling_config = self.pipe.stream_chunks(
+                prompt=args.prompt, seed=args.seed, height=args.height, width=args.width, num_frames=args.num_frames,
+                frame_rate=args.frame_rate, images=args.images, vae_dtype=vae_dtype, color_space=hdr,
+                enhance_prompt=args.enhance_prompt, enhance_static_cache=args.enhance_static_cache,
+                tiling_config=D.AUTO_TILING, generated_keyframes=args.num_generated_keyframes,
+                decode_with_keyframes=args.decode_with_keyframes, chunk_config=chunk_config)
+            if chunk_config is not None:
+                video, audio, audio_sampling_rate = D.split_decoded_chunks(chunks)
+                video_chunks_number = 1
+            else:
+                result = D.pipeline_output_from_chunks(chunks, num_frames=num_frames, tiling_config=tiling_config)
+                video, audio, audio_sampling_rate = result.video, result.audio, None
+                video_chunks_number = D.get_video_chunks_number(result.num_frames, result.tiling_config)
+            D.encode_video(video=video, fps=args.frame_rate, audio=audio, output_path=args.output_path,
+                           video_chunks_number=video_chunks_number, color_space=hdr,
+                           audio_sampling_rate=audio_sampling_rate, video_marker=video_marker, audio_marker=audio_marker)
+        del video, audio
+        L.cleanup()
+
+    def close(self) -> None:
+        if self._resident is not None:
+            self._resident.close()
+            self._resident = None
+
 
 def tmp_name(p: Path) -> Path:
     """A temp name that keeps the suffix (imageio and ffmpeg pick the format by it; delta audit N1)."""
@@ -522,8 +736,11 @@ def attempt_guard(vol_out: Path, job: dict) -> str | None:
     return None
 
 
-def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp="/tmp/in", now=time.time) -> dict:
-    """One clip: the start picture fitted to the clip's size, then the CLI as its own process, bounded by the time left."""
+def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp="/tmp/in", now=time.time,
+             session=None) -> dict:
+    """One clip: the start picture fitted to the clip's size, then the CLI as its own process, bounded by the time left, or,
+    with a ``session`` (``runner: inproc``), the same arguments run in this process on the session's loaded pipeline, its
+    log written to the same file and the deadline checked before each denoising pass."""
     import io
     from PIL import Image
     t0 = now()
@@ -534,12 +751,15 @@ def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp=
     mp4 = tmp_name(final)
     beat(out, job, "generate")
     row = {"frames": ltx_frames(job["seconds"], job["fps"]), "fps": job["fps"]}
-    with open(Path(out) / f"{job['shot_id']}.log", "w") as log:
-        try:
-            row["rc"] = sh(ltx_cmd(launch, job, pic, mp4), stdout=log, stderr=subprocess.STDOUT,
-                           cwd=launch.get("code_dir") or "/workspace/LTX-2", timeout=max(1.0, deadline.left())).returncode
-        except subprocess.TimeoutExpired:
-            row["rc"], row["why"] = None, "the in-container deadline came during the clip"
+    if session is not None:
+        row.update(in_process_clip(session, ltx_argv(launch, job, pic, mp4), Path(out) / f"{job['shot_id']}.log"))
+    else:
+        with open(Path(out) / f"{job['shot_id']}.log", "w") as log:
+            try:
+                row["rc"] = sh(ltx_cmd(launch, job, pic, mp4), stdout=log, stderr=subprocess.STDOUT,
+                               cwd=launch.get("code_dir") or "/workspace/LTX-2", timeout=max(1.0, deadline.left())).returncode
+            except subprocess.TimeoutExpired:
+                row["rc"], row["why"] = None, "the in-container deadline came during the clip"
     row["gen_s"] = round(now() - t0, 1)
     if row["rc"] == 0 and mp4.is_file() and mp4.stat().st_size > 0:
         os.replace(mp4, final)
@@ -547,6 +767,30 @@ def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp=
     else:
         row["state"] = "PARTIAL" if row["rc"] is None else "FAILED"
     return row
+
+
+def in_process_clip(session, argv, log_path) -> dict:
+    """One clip on the session, its LTX log in the clip's log file: ``rc`` 0 when it ran, None when the deadline stopped it
+    (PARTIAL), 1 with ``why`` when it raised (FAILED; the session then makes no further clip)."""
+    import traceback
+    handler = logging.FileHandler(log_path, mode="w")
+    handler.setLevel(logging.INFO)
+    root = logging.getLogger()
+    root.addHandler(handler)
+    level, root.level = root.level, min(root.level or logging.INFO, logging.INFO)
+    try:
+        session.clip(argv)
+        return {"rc": 0}
+    except DeadlineHit:
+        return {"rc": None, "why": "the in-container deadline came during the clip"}
+    except Exception as e:  # noqa: BLE001 - written to the clip's row and log
+        with open(log_path, "a") as f:
+            f.write(traceback.format_exc())
+        return {"rc": 1, "why": f"{type(e).__name__}: {str(e)[:300]}"}
+    finally:
+        root.removeHandler(handler)
+        root.level = level
+        handler.close()
 
 
 def chain_from(launch: dict, frames: int) -> int:
@@ -559,9 +803,73 @@ def chain_from(launch: dict, frames: int) -> int:
     return frames - 1 - k
 
 
-def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run) -> bytes:
-    """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the start picture of the next chained shot."""
-    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", f"select=eq(n\\,{int(index)})", "-vsync", "0",
+HANDOVER_W = 160            # VL-05: frames are scored on a small grey copy (sharpness and motion are relative measures)
+HANDOVER_MOTION_W = 1.5     # engineering default: one unit of mean frame-to-frame change costs this much relative sharpness
+CROP_MIN_SIDE = 2.0 / 3.0   # VL-05: a crop keeps at least 2/3 of each side (at most a 1.5x enlargement of the clip's frame)
+
+
+def _grey_frames(clip: Path, first: int, count: int, width: int = HANDOVER_W, sh=subprocess.run):
+    """Frames ``first .. first+count-1`` of the clip as small grey float arrays (ffmpeg decode, numpy only: the container
+    has no OpenCV)."""
+    import numpy as np
+    probe = sh(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0",
+                str(clip)], check=True, timeout=60, capture_output=True, text=True)
+    w0, h0 = (int(v) for v in probe.stdout.strip().split(",")[:2])
+    h = max(2, int(round(width * h0 / w0 / 2)) * 2)
+    raw = sh(["ffmpeg", "-v", "error", "-i", str(clip), "-vf", f"select=gte(n\\,{int(first)}),scale={width}:{h},format=gray",
+              "-vsync", "0", "-frames:v", str(int(count)), "-f", "rawvideo", "-"], check=True, timeout=120,
+             capture_output=True).stdout
+    n = len(raw) // (width * h)
+    return np.frombuffer(raw[:n * width * h], np.uint8).reshape(n, h, width).astype(np.float32)
+
+
+def handover_scores(frames) -> list[dict]:
+    """VL-05: every candidate frame's sharpness (variance of a 4-neighbour Laplacian), motion (mean absolute change to its
+    neighbours, the motion blur and the mid-pose a frozen hand-over would keep) and score. Pure numpy."""
+    import numpy as np
+    out = []
+    for i, g in enumerate(frames):
+        lap = (-4 * g[1:-1, 1:-1] + g[:-2, 1:-1] + g[2:, 1:-1] + g[1:-1, :-2] + g[1:-1, 2:])
+        diffs = [float(np.abs(g - frames[j]).mean()) for j in (i - 1, i + 1) if 0 <= j < len(frames)]
+        out.append({"i": i, "sharpness": float(lap.var()), "motion": float(np.mean(diffs)) if diffs else 0.0})
+    top = max((o["sharpness"] for o in out), default=0.0) or 1.0
+    for o in out:
+        o["score"] = o["sharpness"] / top - HANDOVER_MOTION_W * o["motion"] / 255.0 * 10.0
+    return out
+
+
+def handover_frame(clip: Path, frames: int, fps: int, cont: dict | None, launch: dict, sh=subprocess.run) -> dict:
+    """The frame of a clip that starts its continuation (VL-05). ``pick: last`` (or no plan) is ``chain_from``; ``pick:
+    best_tail`` scores the last ``window_s`` seconds and takes the sharpest, stillest frame, so a blurred or mid-motion last
+    frame is never frozen into the next clip's first frame. Our LTX-2.5 distilled CLI has no extend: this frame IS the
+    hand-over."""
+    last = chain_from(launch, frames)
+    cont = cont or {}
+    if cont.get("pick", "last") == "last":
+        return {"frame": last, "pick": "last"}
+    n = max(2, min(last + 1, int(round(float(cont.get("window_s", 0.75)) * fps))))
+    first = last + 1 - n
+    scores = handover_scores(_grey_frames(clip, first, n, sh=sh))
+    best = max(scores, key=lambda o: o["score"])
+    return {"frame": first + best["i"], "pick": "best_tail", "window": [first, last],
+            "scores": [{k: round(v, 4) if isinstance(v, float) else v for k, v in s.items()} for s in scores]}
+
+
+def crop_filter(crop) -> str:
+    """The ffmpeg crop of a ``[x0, y0, x1, y1]`` share box (VL-05: each side at least CROP_MIN_SIDE)."""
+    x0, y0, x1, y1 = (float(v) for v in crop)
+    if not (0 <= x0 < x1 <= 1 and 0 <= y0 < y1 <= 1):
+        raise ValueError(f"crop {crop} is not a box inside the frame")
+    if x1 - x0 < CROP_MIN_SIDE - 1e-9 or y1 - y0 < CROP_MIN_SIDE - 1e-9:
+        raise ValueError(f"crop {crop} enlarges the frame more than {1 / CROP_MIN_SIDE:.2f}x: it would be soft")
+    return f"crop=iw*{x1 - x0:.6f}:ih*{y1 - y0:.6f}:iw*{x0:.6f}:ih*{y0:.6f}"
+
+
+def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run, crop=None) -> bytes:
+    """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the start picture of the next chained shot, cropped
+    when the continuation plan reframes it (``fit_picture`` then brings it to the clip size)."""
+    vf = f"select=eq(n\\,{int(index)})" + (f",{crop_filter(crop)}" if crop else "")
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", vf, "-vsync", "0",
         "-frames:v", "1", str(png)], check=True, timeout=60)
     if not Path(png).is_file() or Path(png).stat().st_size == 0:
         raise RuntimeError(f"frame {index} of {Path(clip).name} was not written")
@@ -580,7 +888,7 @@ SAVE_BUDGET_S = 45   # the upload after each clip (audit B1): short; the final f
 
 
 def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambda: None, api=None, sh=subprocess.run,
-         now=time.time, out_root=OUT_ROOT) -> dict:
+         now=time.time, out_root=OUT_ROOT, session_factory=None) -> dict:
     """The GPU function: attempt marker, weights there, each clip saved to the Volume and HF as soon as it is made (OR-33,
     audit B1), then the final upload checked on HF."""
     t_in = now()
@@ -616,6 +924,7 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
         if api is not None:
             upload_round(api, out, prefix, sent, budget_s=min(SAVE_BUDGET_S, max(0.0, deadline.left())))
 
+    session = None
     try:
         if hashlib.sha256(job["start_bytes"]).hexdigest() != job["start_sha256"]:
             raise RuntimeError("the start picture changed in transit")
@@ -625,6 +934,10 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
         if bad:
             raise RuntimeError("weights not on the Volume: " + "; ".join(bad[:5]))
         rows, prev, prev_s = [], None, None
+        if runner_of(launch) == "inproc":
+            session = (session_factory or LtxSession)([s["motion_prompt"] for s in chain_jobs(job)], deadline=deadline,
+                                                      now=now)
+            m["runner"] = "inproc"
         for sub in chain_jobs(job):
             if prev is not None:
                 if prev.get("state") != "DONE":
@@ -640,10 +953,16 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
                     if hashlib.sha256(sub["start_bytes"]).hexdigest() != sub.get("start_sha256"):
                         raise RuntimeError(f"{sub['shot_id']}: its start picture changed in transit")
                 else:
-                    idx = chain_from(launch, int(prev["frames"]))
-                    sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh))
-                    sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx}
-            row = dict(generate(sub, launch, out, deadline, sh=sh, now=now), shot_id=sub["shot_id"])
+                    cont = sub.get("continue_frame") or {}
+                    hand = handover_frame(out / prev["clip"], int(prev["frames"]), int(sub["fps"]), cont, launch, sh=sh)
+                    idx = hand["frame"]
+                    sub = dict(sub, start_bytes=frame_png(out / prev["clip"], idx, out / f"{sub['shot_id']}.start.png", sh=sh,
+                                                          crop=cont.get("crop")))
+                    sub["chain_from_frame"] = {"clip": prev["clip"], "frame": idx, "pick": hand["pick"],
+                                               "crop": cont.get("crop"), "window": hand.get("window")}
+            row = dict(generate(sub, launch, out, deadline, sh=sh, now=now, session=session), shot_id=sub["shot_id"])
+            if session is not None and not rows:
+                row["setup"] = dict(session.setup)        # the one-time steps, inside the first clip's gen_s
             if sub.get("chain_from_frame"):
                 row["chain_from_frame"] = sub["chain_from_frame"]
             if row.get("state") == "DONE":
@@ -661,6 +980,12 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
                 m["state"] = "PARTIAL"
     except Exception as e:  # noqa: BLE001 - one attempt: the failure is written, copied and returned
         m.update(state="FAILED", error=f"{type(e).__name__}: {str(e)[:300]}")
+    finally:
+        if session is not None:
+            try:
+                session.close()                   # the resident transformer is released before the end path
+            except Exception as e:  # noqa: BLE001
+                print("session close failed", repr(e)[:200], flush=True)
     m.update(body_s=round(now() - t_in, 1), libs=libs())
     write_measured()
     beat(out, job, m["state"])
@@ -715,6 +1040,9 @@ if modal is not None:
 
         def _remote_body(job, launch, timeout_s):
             from huggingface_hub import HfApi
+            bad = container_gate(job, launch)
+            if bad:
+                return {"state": "FAILED", "error": "cheapest-run rules (D-133) refused in the container: " + "; ".join(bad)}
             vol.reload()
             return body(job, launch, timeout_s, commit=vol.commit, api=HfApi(token=_tok()))
 
@@ -764,25 +1092,31 @@ if modal is not None:
         nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])
         job = dict(SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"], start_bytes=pic,
                    start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH), launch_sha=launch_sha(LAUNCH),
-                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12])
+                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers())
         res = ltx_smoke.remote(job, LAUNCH)
         print("result", json.dumps(res))
         ok = res.get("state") == "DONE"
         record("L3", ok, measured={"gpu": res.get("gpu"), "s_per_clip_s": res.get("s_per_clip_s"),
                                    "setup_s": round(max(0.0, float(res.get("body_s") or 0) - float(res.get("gen_s") or 0)), 1),
-                                   "body_s": res.get("body_s")} if ok else None,
+                                   "body_s": res.get("body_s"), "runner": res.get("runner") or "cli",
+                                   "setup": res.get("setup")} if ok else None,
                result={k: res.get(k) for k in ("state", "error")})
 
     @app.local_entrypoint()
     def main(job: str = ""):
         spec = read_job(job)
         preflight(LAUNCH, spec)
+        from explainer_engine.cloud import cheapest    # D-133 CH-02, CH-03: every clip native, the whole scene in this container
+        why = cheapest.problems_text(cheapest.spec_problems(LAUNCH, json.loads(Path(job).read_text(encoding="utf-8"))))
+        if why:
+            raise SystemExit("paid preflight FAILED, nothing was started:\n" + why)
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
         claim_launch(spec)
         t0, res = time.time(), None
         try:
-            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12]), LAUNCH)
+            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers()),
+                                  LAUNCH)
         finally:
             wall = time.time() - t0
             print("settled", settle_launch(spec, wall), "USD for", round(wall, 1), "s", flush=True)

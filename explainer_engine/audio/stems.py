@@ -5,7 +5,7 @@ shot, so a Wan shot, a 2.5D shot and a map sound alike (R-D).
 - Narration is the episode's real read (one WAV on the spine's clock); nothing here can make a voice. Without it a shippable
   render stops; a preview renders without a voice and says so.
 - Sounds come from the library (``audio/sfx_library``). A class without a real take is never filled with a made-up sound, in a
-  preview either (D-133, OV-56 as changed: "procedural numpy sound never plays, in the demo either"): a preview
+  preview either (D-136, OV-56 as changed: "procedural numpy sound never plays, in the demo either"): a preview
   (``shippable=False``) leaves that row silent, lists the class under ``placeholders`` (and the row under ``silent_rows``) and
   says ``shippable: false``; a shippable render with one stops. ``PLACEHOLDER`` only names the generator an older preview used.
 - Every sound plays from a row of the episode's cue sheet (``episode/cue_sheet``, SP-06): asset, time, gain, pan, fades, pitch,
@@ -43,7 +43,7 @@ BED_DUCK_DB = float(SR_RULES.T("BP-53", "depth_db")[0])
 MUSIC_DUCK_DB = duck.DEPTH_DB
 SPREAD_MAX_DB = float(SR_RULES.T("BP-186", "route_spread_db_max"))
 SPEECH_THRESHOLD = 0.02      # the voice's control level where a window counts as speech (duck.duck_gain's default)
-# the generator an older preview played per class (audio/foley); since D-133 nothing plays it, a missing take stays silent
+# the generator an older preview played per class (audio/foley); since D-136 nothing plays it, a missing take stays silent
 PLACEHOLDER = {"footsteps_dirt": "footstep_dirt", "footsteps_stone": "footstep_stone", "footsteps_grass": "footstep_grass",
                "footsteps_ash": "footstep_dirt", "running": "footstep_dirt", "eruption_boom": "volcanic_explosion_debris",
                "eruption_rumble": "thunder_rumble", "ash_fall": "wind_howl", "thunder": "thunder_rumble",
@@ -112,7 +112,7 @@ class Sounds:
                 raise ContractError(f"{cls}: a shippable mix never plays a placeholder")
             self.used.append({"class": aid.split(":", 1)[1], "id": None, "status": "placeholder", "why": "placeholder",
                               "played": "silence", "cue_id": row["cue_id"]})
-            return np.zeros(SR // 10, np.float32)       # D-133 / OV-56: no procedural sound, a preview stays silent here
+            return np.zeros(SR // 10, np.float32)       # D-136 / OV-56: no procedural sound, a preview stays silent here
         item = self.items.get(aid)
         path = self.root / item["file"] if item else None
         if path is not None and path.is_file():
@@ -286,7 +286,7 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
            shippable: bool = True, sheet: dict | None = None) -> dict:
     """Render the plan into the five stems in ``out_dir`` by playing its cue sheet (``episode/cue_sheet``; built here when
     none is given, validated, written next to the stems). ``shippable=False`` is a preview: a class without a real take stays
-    silent (never a procedural sound, D-133), no voice needed, and the report says it cannot ship."""
+    silent (never a procedural sound, D-136), no voice needed, and the report says it cannot ship."""
     ok, why = SP.shippable(sources, plan)
     if shippable and not ok:
         raise ContractError("not shippable: " + "; ".join(why))

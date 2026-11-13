@@ -33,13 +33,16 @@ def plan_sha(scene_path) -> str:
 
 def scene_pictures(scene: dict) -> dict:
     """{shot_id: {path, sha256}}: the love scene's one start picture (its other shots chain from the clip before), or, for a
-    scene of cuts, the picture of every shot from the pictures stage's manifest (``scene_pictures.py collect``)."""
+    scene of cuts, the picture of every shot from the pictures stage's manifest (``scene_pictures.py collect``); a
+    continuation shot of a /3 scene (``continue_frame``, VL-05) has none: it starts from the clip before."""
     shots = scene["shots"]
     if scene.get("start_picture"):
         return {shots[0]["shot_id"]: scene["start_picture"]}
     man = json.loads(Path(scene["pictures"]["manifest"]).read_text(encoding="utf-8"))
     out = {}
-    for s in shots:
+    for k, s in enumerate(shots):
+        if k and s.get("continue_frame") and not s.get("picture"):   # VL-05: starts from a frame of the clip before
+            continue
         pic = (man.get("shots") or {}).get(s.get("picture") or "")
         if not pic:
             raise SystemExit(f"{s['shot_id']}: no picture {s.get('picture')!r} in the pictures manifest; make it first")
@@ -74,7 +77,8 @@ def job_spec(scene_path, launch=None) -> dict:
     and the other shots as its ``chain``: each starts from the clip before it, or from its own pinned picture (a cut)."""
     launch = L.LAUNCH if launch is None else launch
     scene = json.loads(Path(scene_path).read_text(encoding="utf-8"))
-    bad = budget_problems(scene, launch)
+    from explainer_engine.videolane.scene import storyboard_problems
+    bad = storyboard_problems(scene) + budget_problems(scene, launch)
     if bad:
         raise SystemExit("; ".join(bad))
     pics = scene_pictures(scene)
