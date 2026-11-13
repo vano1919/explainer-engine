@@ -612,13 +612,17 @@ class LtxSession:
         L = self._ltx = self._ltx or ltx_modules()
         D, torch = L.D, L.torch
         args = self._parse(argv)
-        if self.pipe is None:
-            self._open(args)
-        elif self.model_key(args) != self.key:
-            raise RuntimeError("this clip's model arguments differ from the session's")
-        if self.deadline is not None:
-            self.deadline.check()
         with torch.inference_mode():
+            # L3 2026-11-13 (CUDA out of memory on the H100): the CLI's ``main`` is ``@torch.inference_mode()`` and the
+            # library's Gemma ``encode`` has no no_grad of its own, so the session opens inside inference mode too: outside
+            # it the prompt embeddings kept an autograd graph that held Gemma's weights on the GPU after its dispose, and
+            # the transformer no longer fit beside them.
+            if self.pipe is None:
+                self._open(args)
+            elif self.model_key(args) != self.key:
+                raise RuntimeError("this clip's model arguments differ from the session's")
+            if self.deadline is not None:
+                self.deadline.check()
             hdr = D.resolve_hdr_color_space(images=args.images, hdr=args.hdr)
             video_marker, audio_marker = D.markers_from_args(args, device=D.get_device(), color_space=hdr)
             vae_dtype = D.vae_dtype_for_hdr(hdr, torch.bfloat16)

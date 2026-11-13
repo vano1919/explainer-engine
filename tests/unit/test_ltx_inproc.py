@@ -126,7 +126,14 @@ def fake_ltx(log, written):
         pipeline_output_from_chunks=lambda chunks, num_frames, tiling_config: SimpleNamespace(
             video=list(chunks), audio="a", num_frames=num_frames, tiling_config=tiling_config),
         encode_video=lambda **kw: (written.append(kw["output_path"]), Path(kw["output_path"]).write_bytes(b"mp4")))
-    torch = SimpleNamespace(inference_mode=nullcontext, bfloat16="bf16")
+    @contextmanager
+    def inference_mode():
+        log.append("inference_in")
+        try:
+            yield
+        finally:
+            log.append("inference_out")
+    torch = SimpleNamespace(inference_mode=inference_mode, bfloat16="bf16")
     return SimpleNamespace(D=D, torch=torch, cleanup=lambda: log.append("cleanup"))
 
 
@@ -153,6 +160,24 @@ def test_three_clips_load_the_pipeline_gemma_and_the_transformer_once(tmp_path):
     assert [Path(w).name for w in written] == ["c0.mp4", "c1.mp4", "c2.mp4"]
     assert set(s.setup) == {"pipeline_s", "prompts_s", "prompts", "transformer_s"} and s.setup["prompts"] == 3
     assert ("argv0", "ltx_pipelines.distilled") in log and sys.argv[0] != "ltx_pipelines.distilled"
+
+
+def test_the_session_opens_gemma_and_the_transformer_inside_inference_mode(tmp_path):
+    """L3 of 2026-11-13 (CUDA out of memory on the H100, run 8462e18a7e41): the library's Gemma ``encode`` has no no_grad of
+    its own and relies on the CLI's ``@torch.inference_mode()`` main; the session's ``_open`` ran outside it, so the cached
+    prompt embeddings held an autograd graph that kept Gemma's weights on the GPU. Every pipeline, Gemma and transformer step
+    of the session now happens inside inference mode, as in the CLI."""
+    log, written = [], []
+    s = L.LtxSession(["a", "b"], ltx=fake_ltx(log, written))
+    s.clip(argv("a", tmp_path / "a.mp4"))
+    s.clip(argv("b", tmp_path / "b.mp4"))
+    depth, where = 0, {}
+    for e in log:
+        depth += 1 if e == "inference_in" else -1 if e == "inference_out" else 0
+        key = e[0] if isinstance(e, tuple) else e
+        if key in ("gemma", "build", "denoise", "resident_in", "prepare"):
+            where.setdefault(key, set()).add(depth > 0)
+    assert where["gemma"] == where["build"] == where["resident_in"] == where["denoise"] == {True}
 
 
 def test_more_than_four_prompts_are_encoded_in_groups_of_four(tmp_path):
