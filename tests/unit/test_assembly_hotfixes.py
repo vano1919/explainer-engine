@@ -521,3 +521,30 @@ def test_a_silent_clip_or_a_word_the_line_does_not_hold_changes_nothing():
     assert VI.speech_with_words(detector, line, "Stand to.", spoken=True, dur=8.0) == [(1.0, 2.0)]   # 'You', 'Okay' not in the line
     assert VI.matched_word_spans(line, "Stand to.") == [(1.0, 2.0)]
     assert VI.speech_with_words(detector, None, "Stand to.", spoken=True, dur=8.0) == detector       # no Whisper installed
+
+
+def test_narration_stem_pause_is_not_digital_zero(tmp_path):
+    """G8 (TD-329): a pause cleaned to below half a 16-bit step must not become exact zero in the narration stem (ED-12 reads
+    a zero run beside speech as a hole cut into the line); the same pause in a preview without a voice stays silent."""
+    import wave
+    import numpy as np
+    from explainer_engine.audio import dropouts, stems
+    sr = stems.SR
+    t = np.arange(sr) / sr
+    speech = (0.1 * np.sin(2 * np.pi * 200 * t)).astype(np.float32)
+    quiet = (np.random.default_rng(1).standard_normal(sr // 2) * 3e-6).astype(np.float32)   # about -110 dBFS, under half a step
+    x = np.concatenate([speech, quiet, speech])
+    stereo = np.stack([x, x], axis=1) * 0.7
+    p = tmp_path / "n.wav"
+    stems._write(p, stereo)                                       # undithered: the pause is exact zero
+    with wave.open(str(p)) as w:
+        raw = np.frombuffer(w.readframes(w.getnframes()), "<i2").reshape(-1, 2)[:, 0].astype(np.float32) / 32768
+    assert dropouts.scan(raw, sr, min_run=0.05, loud_db=-45.0)["cut_into_sound"]
+    q = tmp_path / "d.wav"
+    stems._write(q, stereo, dither_seed="narration_stem")
+    with wave.open(str(q)) as w:
+        dith = np.frombuffer(w.readframes(w.getnframes()), "<i2").reshape(-1, 2)[:, 0].astype(np.float32) / 32768
+    assert not dropouts.scan(dith, sr, min_run=0.05, loud_db=-45.0)["cut_into_sound"]
+    assert float(np.sqrt(np.mean(dith[sr:sr + sr // 2] ** 2))) < 10 ** (-90 / 20)     # still below -90 dBFS, inaudible
+    r = stems.tpdf_dither(stereo, "narration_stem")
+    assert np.array_equal(r, stems.tpdf_dither(stereo, "narration_stem"))                 # deterministic
