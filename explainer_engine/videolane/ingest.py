@@ -28,6 +28,8 @@ import subprocess
 from fractions import Fraction
 from pathlib import Path
 
+import numpy as np
+
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.qa import gates as G
@@ -66,8 +68,44 @@ def speech(path: Path) -> list[tuple[float, float]]:
     return [(float(a), float(b)) for a, b in R.speech_spans(x)] if len(x) else []
 
 
+# TD-323 (audit, 2026-11-13): the speech detector can close a span early (a sung or held last word); when the sound after the
+# planned out point is still this close to the last span's own level, the cut goes on until it has fallen this far below it
+# (or the raw clip ends). Both numbers are engineering defaults.
+LATE_SOUND_WITHIN_DB = 6.0
+LATE_SOUND_FALL_DB = 12.0
+LATE_SOUND_STEP_S = 0.04
+
+
+def _rms_db(x) -> float:
+    return float(20 * np.log10(float(np.sqrt(np.mean(np.asarray(x, np.float64) ** 2))) + 1e-9)) if len(x) else -120.0
+
+
+def late_sound_out(t_out: float, dur: float, last_span: tuple, audio, rate: int) -> float:
+    """TD-323: the out point (seconds) moved on past ``t_out`` when the loudest 100 ms of the half second after it is within
+    ``LATE_SOUND_WITHIN_DB`` of the last span's own level, to the end of the first 40 ms window that is ``LATE_SOUND_FALL_DB``
+    under that level, else to the clip's end. Unchanged for a quiet tail."""
+    a, b = int(last_span[0] * rate), int(last_span[1] * rate)
+    ref = _rms_db(audio[a:b])
+    if ref <= -80.0 or t_out >= dur:
+        return t_out
+    step, t = int(LATE_SOUND_STEP_S * rate), t_out
+    # the loudest 100 ms window of the half second after the planned out point (a mean over the half second would let the
+    # decay at its far end hide a held note: S03_SH003 measured 8.4 dB under the span on the mean, 5.6 dB on the window)
+    after = audio[int(t_out * rate):int(min(dur, t_out + 0.5) * rate)]
+    win = int(0.1 * rate)
+    loud = max((_rms_db(after[i:i + win]) for i in range(0, max(1, len(after) - win + 1), step)), default=-120.0)
+    if loud < ref - LATE_SOUND_WITHIN_DB:
+        return t_out
+    while t < dur:
+        w = audio[int(t * rate):int(t * rate) + step]
+        if len(w) and _rms_db(w) < ref - LATE_SOUND_FALL_DB:
+            return round(min(dur, t + LATE_SOUND_STEP_S), 4)
+        t += LATE_SOUND_STEP_S
+    return dur
+
+
 def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: float, fps: int, *, spoken: bool,
-                handover_s: float | None = None, drop_first: bool = False, shot_id: str = "?") -> dict:
+                handover_s: float | None = None, drop_first: bool = False, shot_id: str = "?", audio=None, rate: int = 16000) -> dict:
     """The in and out points (clip seconds, on whole frames) of one clip; see the module text.
 
     A hand-over frame (VL-05) before the last speech end + BP-187's tail would cut the line: a ContractError (repair class C,
@@ -88,6 +126,8 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
         lead = max(HEAD_LEAD[1], float(ep.get("head_handle_s", 0.0)))
         t_in = max(0.0, s0 - lead)
         t_out = min(dur, s1 + max(CUT_TAIL[0], min(CUT_TAIL[1], float(ep.get("tail_handle_s", CUT_TAIL[1])))))
+        if audio is not None and handover_s is None:
+            t_out = late_sound_out(t_out, dur, spans[-1], audio, rate)   # TD-323: a last word the detector closed early
     else:
         t_in = min(float(ep.get("head_handle_s", 0.0)), max(0.0, dur - planned_s))
         t_out = min(dur, t_in + planned_s) if planned_s > 0 else dur
@@ -166,10 +206,13 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         hand = (nxt or {}).get("chain_from_frame")
         handover_s = (int(hand["frame"]) / pr["fps"]) if hand and pr["fps"] else None
         is_cont = bool(c.get("chain_from_frame"))
-        spans = speech(raw) if pr["has_audio"] else []
+        from explainer_engine.qa import sound_realism as R
+        x = R.read_audio(raw) if pr["has_audio"] else np.zeros(0, np.float32)
+        spans = [(float(a), float(b)) for a, b in R.speech_spans(x)] if len(x) else []
         planned = float(shot.get("target_duration_seconds") or 0.0)
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
-                          handover_s=handover_s, drop_first=is_cont, shot_id=sid)
+                          handover_s=handover_s, drop_first=is_cont, shot_id=sid,
+                          audio=x if len(x) else None, rate=R.SR)
         trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps)
         t_spans = [(round(max(0.0, a - pts["in_s"]), 3), round(min(pts["frames"] / fps, b - pts["in_s"]), 3))
                    for a, b in spans if b > pts["in_s"] and a < pts["out_s"]]

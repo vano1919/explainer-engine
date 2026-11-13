@@ -445,3 +445,34 @@ def test_the_clip_speaker_is_the_first_character_line_of_the_shot():
                               {"line_id": "L2", "speaker_type": "character", "speaker_id": "Hale"}],
               "shots": [{"shot_id": "S1", "audio_line_ids": ["L1", "L2"]}, {"shot_id": "S2", "audio_line_ids": ["L1"]}]}
     assert R._clip_speaker(script, "S1") == "Hale" and R._clip_speaker(script, "S2") is None
+
+
+# --- TD-323: a last word the detector closed early keeps its end ---------------------------------------------------------
+
+def _held_note_audio(note_until: float, total: float = 3.6, rate: int = 16000) -> np.ndarray:
+    t = np.arange(int(total * rate)) / rate
+    amp = np.where(t < note_until, 0.2, 0.2 * 10 ** (-30 / 20))      # the line's level, then 30 dB down
+    return (amp * np.sin(2 * np.pi * 180 * t)).astype(np.float32)
+
+
+def test_a_line_the_detector_closed_early_keeps_its_last_word():
+    from explainer_engine.videolane import ingest as VI
+    x = _held_note_audio(2.9)
+    plain = VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True)
+    held = VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True, audio=x, rate=16000)
+    assert plain["out_s"] <= 2.55                         # span end + the 0.5 s tail cap: cuts into the held note
+    assert 2.9 <= held["out_s"] <= 3.1                    # moved on to where the sound has fallen
+    assert held["frames"] > plain["frames"] and held["in_s"] == plain["in_s"]
+
+
+def test_a_clip_with_a_quiet_tail_is_cut_exactly_as_before_and_a_raw_end_is_the_limit():
+    from explainer_engine.videolane import ingest as VI
+    quiet = _held_note_audio(2.0)
+    assert VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True, audio=quiet, rate=16000) == \
+        VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True)
+    never_falls = _held_note_audio(99.0, total=2.8)       # the raw clip ends while the note still sounds
+    cut = VI.edit_points(2.8, [(0.5, 2.0)], None, 3.0, 24, spoken=True, audio=never_falls, rate=16000)
+    assert cut["out_s"] == pytest.approx(2.8, abs=1 / 24)
+    # a hand-over frame still ends the clip on that frame (the late-sound rule does not touch it)
+    h = VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True, handover_s=2.6, audio=_held_note_audio(2.9), rate=16000)
+    assert h["out_s"] == pytest.approx(2.6 + 1 / 24, abs=1 / 24)
