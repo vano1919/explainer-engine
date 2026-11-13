@@ -487,14 +487,29 @@ _S04_SH012_WORDS = [{"text": t, "start": a, "end": b} for t, a, b in [
 _S04_SH012_LINE = "Saxon. Fritz, to my friends. Merry Christmas, Tommy."
 
 
-def test_a_line_whose_first_words_the_detector_misses_keeps_them():
+def _sound_at(spans_s, total: float, rate: int = 16000) -> np.ndarray:
+    x = np.zeros(int(total * rate), np.float32)
+    t = np.arange(len(x)) / rate
+    for a, b in spans_s:
+        m = (t >= a) & (t < b)
+        x[m] = 0.2 * np.sin(2 * np.pi * 180 * t[m])
+    return x
+
+
+def test_a_line_whose_first_words_the_detector_misses_keeps_them_and_a_silent_head_is_not_added():
     from explainer_engine.videolane import ingest as VI
     detector = [(2.52, 2.76), (4.3, 5.26)]
+    audio = _sound_at([(0.0, 0.6), (1.45, 1.85), (2.5, 3.2), (4.3, 5.3)], 6.04)     # 'Saxon' and 'Fritz' sound, the rest is a pause
     old = VI.edit_points(6.04, detector, None, 3.5, 24, spoken=True)
-    spans = VI.speech_with_words(detector, _S04_SH012_WORDS, _S04_SH012_LINE, spoken=True, dur=6.04)
+    spans = VI.speech_with_words(detector, _S04_SH012_WORDS, _S04_SH012_LINE, spoken=True, dur=6.04, audio=audio)
     new = VI.edit_points(6.04, spans, None, 3.5, 24, spoken=True)
     assert old["in_s"] > 2.0 and new["in_s"] == 0.0       # 'Saxon. Fritz' were cut before, now they are in
     assert new["out_s"] >= old["out_s"] and new["frames"] > old["frames"]
+    # a word Whisper dates to 0.0 s while the sound starts at 2.4 s (S05_SH019): the head silence is not added
+    late = [{"text": "I'm", "start": 0.0, "end": 2.9}, {"text": "sorry.", "start": 2.9, "end": 3.4}]
+    snd = _sound_at([(2.4, 3.3)], 3.6)
+    sp = VI.speech_with_words([(2.42, 2.5)], late, "I'm sorry.", spoken=True, dur=3.6, audio=snd)
+    assert sp[0][0] >= 2.3 and VI.edit_points(3.6, sp, None, 3.0, 24, spoken=True)["in_s"] >= 2.0
 
 
 def test_a_silent_clip_or_a_word_the_line_does_not_hold_changes_nothing():

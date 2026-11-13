@@ -117,12 +117,36 @@ def _local_words(path: Path) -> list[dict] | None:
         return None
 
 
-def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float) -> list:
-    """TD-327: the detector's spans plus the matched word spans, for a clip-spoken shot only (a silent clip is cut exactly as
-    before), merged where they touch, never past the clip's own length."""
+TRIM_WINDOW_S = 0.02
+TRIM_BELOW_DB = 20.0       # engineering default: a word's span keeps the windows within this of its own loudest window
+
+
+def _trim_to_sound(span: tuple, audio, rate: int) -> tuple | None:
+    """The local Whisper times a word from the end of the one before it, so a first word can start seconds before any sound
+    (S05_SH019: 0.0 s for a word at 2.4 s). The span is cut back to the 20 ms windows within ``TRIM_BELOW_DB`` of its own
+    loudest window; None when it holds no sound at all."""
+    a, b = int(span[0] * rate), int(min(span[1] * rate, len(audio)))
+    win = int(TRIM_WINDOW_S * rate)
+    if b - a < win:
+        return None
+    lv = [_rms_db(audio[i:i + win]) for i in range(a, b - win + 1, win)]
+    top = max(lv)
+    if top <= -70.0:
+        return None
+    keep = [i for i, v in enumerate(lv) if v >= top - TRIM_BELOW_DB]
+    return (round(span[0] + keep[0] * TRIM_WINDOW_S, 3), round(span[0] + (keep[-1] + 1) * TRIM_WINDOW_S, 3))
+
+
+def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float,
+                      audio=None, rate: int = 16000) -> list:
+    """TD-327: the detector's spans plus the matched word spans (each cut back to where sound is, given ``audio``), for a
+    clip-spoken shot only (a silent clip is cut exactly as before), merged where they touch, never past the clip's own length."""
     if not spoken or not words or not line_text:
         return [tuple(sp) for sp in spans]
-    both = sorted([tuple(sp) for sp in spans] + [(a, min(dur, b)) for a, b in matched_word_spans(words, line_text)])
+    extra = [(a, min(dur, b)) for a, b in matched_word_spans(words, line_text)]
+    if audio is not None:
+        extra = [t for t in (_trim_to_sound(e, audio, rate) for e in extra) if t]
+    both = sorted([tuple(sp) for sp in spans] + extra)
     out: list[tuple[float, float]] = []
     for a, b in both:
         if out and a <= out[-1][1] + 1e-9:
@@ -272,7 +296,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                             if lines.get(i, {}).get("speaker_type") == "character")
             heard = words_fn(raw)
             words_source = "local whisper" if heard is not None else "unavailable (detector spans only)"
-            spans = speech_with_words(spans, heard, text, spoken=True, dur=pr["duration"])
+            spans = speech_with_words(spans, heard, text, spoken=True, dur=pr["duration"], audio=x, rate=R.SR)
         planned = float(shot.get("target_duration_seconds") or 0.0)
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
                           handover_s=handover_s, drop_first=is_cont, shot_id=sid,
