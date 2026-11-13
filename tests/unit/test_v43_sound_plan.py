@@ -158,6 +158,22 @@ def test_a_placeholder_or_a_missing_voice_never_ships_but_a_preview_says_so(tmp_
                      narration=_narration(tmp_path / "G4_SFX_Footsteps_Ambience_Music_Pack.wav", 12.0, []))
 
 
+def test_a_preview_leaves_a_missing_take_silent_and_never_plays_a_made_up_sound(tmp_path):
+    """D-133 / OV-56 as changed: procedural numpy sound never plays, in a preview either; the row stays silent and is listed."""
+    plan = SP.build(_script(), fps=FPS)
+    lib = _library(tmp_path / "lib", [c for c in plan["classes"] if c != "fire"])
+    src = SP.resolve(plan, lib)
+    rep = stems.render(plan, src, tmp_path / "prev", library_root=lib, shippable=False)
+    sheet = json.loads((tmp_path / "prev" / "cue_sheet.json").read_text())
+    held = [r for r in sheet["rows"] if str(r["asset_id"]).startswith("placeholder:")]
+    assert held and {r["class"] for r in held} == {"fire"} and rep["placeholders"] == ["fire"]
+    assert sorted(rep["silent_rows"]) == sorted(r["cue_id"] for r in held)
+    snd = stems.Sounds(src, lib, allow_placeholder=True)
+    for k, r in enumerate(held):
+        assert not np.any(stems.play_row(r, snd, k))                  # silence, not a foley generator
+    assert all(u["played"] == "silence" and u["id"] is None for u in rep["sounds_used"] if u["status"] == "placeholder")
+
+
 def _stem(path):
     with wave.open(str(path)) as w:
         return np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(np.float32).reshape(-1, 2) / 32768

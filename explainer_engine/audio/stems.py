@@ -4,8 +4,10 @@ shot, so a Wan shot, a 2.5D shot and a map sound alike (R-D).
 
 - Narration is the episode's real read (one WAV on the spine's clock); nothing here can make a voice. Without it a shippable
   render stops; a preview renders without a voice and says so.
-- Sounds come from the library (``audio/sfx_library``). A placeholder (a procedural numpy sound from ``audio/foley``) plays
-  only in a preview (``shippable=False``) and the report says ``shippable: false``; a shippable render with one stops.
+- Sounds come from the library (``audio/sfx_library``). A class without a real take is never filled with a made-up sound, in a
+  preview either (D-133, OV-56 as changed: "procedural numpy sound never plays, in the demo either"): a preview
+  (``shippable=False``) leaves that row silent, lists the class under ``placeholders`` (and the row under ``silent_rows``) and
+  says ``shippable: false``; a shippable render with one stops. ``PLACEHOLDER`` only names the generator an older preview used.
 - Every sound plays from a row of the episode's cue sheet (``episode/cue_sheet``, SP-06): asset, time, gain, pan, fades, pitch,
   low-pass and reverb come from the row; the renderer decides nothing on its own.
 - Levels: every event of a kind is set to the same RMS (``LEVELS``, engineering defaults kept under BP-65's caps), music and
@@ -24,7 +26,7 @@ from pathlib import Path
 import numpy as np
 from scipy import signal
 
-from explainer_engine.audio import acoustics, duck, foley, sfx_library
+from explainer_engine.audio import acoustics, duck, sfx_library
 from explainer_engine.audio.environmental_sound_design import validate_narration_source_file
 from explainer_engine.core.errors import ContractError
 from explainer_engine.episode import cue_sheet as CS
@@ -41,7 +43,7 @@ BED_DUCK_DB = float(SR_RULES.T("BP-53", "depth_db")[0])
 MUSIC_DUCK_DB = duck.DEPTH_DB
 SPREAD_MAX_DB = float(SR_RULES.T("BP-186", "route_spread_db_max"))
 SPEECH_THRESHOLD = 0.02      # the voice's control level where a window counts as speech (duck.duck_gain's default)
-# placeholder sounds: class -> foley generator (procedural, preview only)
+# the generator an older preview played per class (audio/foley); since D-133 nothing plays it, a missing take stays silent
 PLACEHOLDER = {"footsteps_dirt": "footstep_dirt", "footsteps_stone": "footstep_stone", "footsteps_grass": "footstep_grass",
                "footsteps_ash": "footstep_dirt", "running": "footstep_dirt", "eruption_boom": "volcanic_explosion_debris",
                "eruption_rumble": "thunder_rumble", "ash_fall": "wind_howl", "thunder": "thunder_rumble",
@@ -108,9 +110,9 @@ class Sounds:
         if aid.startswith("placeholder:"):
             if not self.allow:
                 raise ContractError(f"{cls}: a shippable mix never plays a placeholder")
-            gen = PLACEHOLDER.get(aid.split(":", 1)[1])
-            self.used.append({"class": aid.split(":", 1)[1], "id": gen, "status": "placeholder", "why": "placeholder"})
-            return foley.BUILD[gen][1](k + 1).astype(np.float32) if gen else np.zeros(SR // 10, np.float32)
+            self.used.append({"class": aid.split(":", 1)[1], "id": None, "status": "placeholder", "why": "placeholder",
+                              "played": "silence", "cue_id": row["cue_id"]})
+            return np.zeros(SR // 10, np.float32)       # D-133 / OV-56: no procedural sound, a preview stays silent here
         item = self.items.get(aid)
         path = self.root / item["file"] if item else None
         if path is not None and path.is_file():
@@ -119,9 +121,9 @@ class Sounds:
             return _resample(x, rate)
         if not self.allow:
             raise ContractError(f"{cls}: library sound {aid} is listed but its file is not here (fetch it from the vault)")
-        self.used.append({"class": cls, "id": PLACEHOLDER.get(cls), "status": "placeholder", "why": "file not here"})
-        gen = PLACEHOLDER.get(cls)
-        return foley.BUILD[gen][1](k + 1).astype(np.float32) if gen else np.zeros(SR // 10, np.float32)
+        self.used.append({"class": cls, "id": None, "status": "placeholder", "why": "file not here", "played": "silence",
+                          "cue_id": row["cue_id"]})
+        return np.zeros(SR // 10, np.float32)
 
     def get(self, cls: str, k: int) -> np.ndarray:
         src = self.sources.get(cls) or {"status": "missing"}
@@ -137,11 +139,8 @@ class Sounds:
             src = {"status": "file not here"}
         if not self.allow:
             raise ContractError(f"{cls}: no real library sound ({src['status']}); a shippable mix never plays a placeholder")
-        self.used.append({"class": cls, "id": PLACEHOLDER.get(cls), "status": "placeholder", "why": src["status"]})
-        gen = PLACEHOLDER.get(cls)
-        if gen is None:
-            return np.zeros(SR // 10, np.float32)
-        return foley.BUILD[gen][1](k + 1).astype(np.float32)
+        self.used.append({"class": cls, "id": None, "status": "placeholder", "why": src["status"], "played": "silence"})
+        return np.zeros(SR // 10, np.float32)
 
 
 def _write(path: Path, stereo: np.ndarray) -> None:
@@ -286,8 +285,8 @@ def onset_of(x: np.ndarray, hop_s: float = 0.005) -> float | None:
 def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narration: Path | None = None,
            shippable: bool = True, sheet: dict | None = None) -> dict:
     """Render the plan into the five stems in ``out_dir`` by playing its cue sheet (``episode/cue_sheet``; built here when
-    none is given, validated, written next to the stems). ``shippable=False`` is a preview: placeholders allowed, no voice
-    needed, and the report says it cannot ship."""
+    none is given, validated, written next to the stems). ``shippable=False`` is a preview: a class without a real take stays
+    silent (never a procedural sound, D-133), no voice needed, and the report says it cannot ship."""
     ok, why = SP.shippable(sources, plan)
     if shippable and not ok:
         raise ContractError("not shippable: " + "; ".join(why))
@@ -346,7 +345,8 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
             "ambience_duck_depth_db": BED_DUCK_DB,
             "not_shippable_because": why + ([] if voice_src.startswith("file:") else ["no narration"])
             + ([f"cue sheet: {gate['verdict']['failed']}"] if gate["verdict"]["status"] == G.FAIL else []),
-            "placeholders": placeholders, "narration": voice_src, "duration_s": plan["duration_s"], "sample_rate_hz": SR,
+            "placeholders": placeholders, "silent_rows": [u["cue_id"] for u in snd.used if u.get("played") == "silence" and u.get("cue_id")],
+            "narration": voice_src, "duration_s": plan["duration_s"], "sample_rate_hz": SR,
             "stems": {k: str(out_dir / f"{k}.wav") for k in stems}, "events_placed": placed,
             "bridges": plan["bridges"], "levels": levels, "gates": G.verdict(levels["rows"]),
             "cue_sheet": str(out_dir / "cue_sheet.json"), "cue_gate": {r["gate"]: r["status"] for r in gate["rows"]},

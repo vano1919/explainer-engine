@@ -299,6 +299,14 @@
             ],
             "strength": 1.0
           }
+        ],
+        "sound_events": [
+          {
+            "kind": "spot",
+            "what": "eruption boom",
+            "at_s": 2.2,
+            "picture_event": "eruption"
+          }
         ]
       },
       "keyframe_plan": {
@@ -600,5 +608,6 @@
     }
   ],
   "order_note": "ordered so the opening passes the hook lint (YT-00: shot 0 <= 3.8 s, shots 0+1 <= 9 s); S01_SH009 uses its start picture only (its end picture is not in the vault), so it is a start-frame shot (generation_mode WAN_I2V like S02_SH005; the archive's label, the route is still_25d)",
-  "sound_note": "cue budget per BP-81 (house): one emphasis cue a line, at most 8 cues a minute; the first run (2026-11-13) measured 14.1 a minute and 4 emphasis cues on one line with every default cue on"
+  "sound_note": "cue budget per BP-81 (house): one emphasis cue a line, at most 8 cues a minute; the first run (2026-11-13) measured 14.1 a minute and 4 emphasis cues on one line with every default cue on",
+  "baseline_note": "the code before D-135 names a sound event's class by words only, so the baseline says 'eruption boom' where the new script names the class id"
 }

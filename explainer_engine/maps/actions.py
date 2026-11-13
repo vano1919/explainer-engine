@@ -53,7 +53,7 @@ ANIM_FRAMES = 18          # an action takes this long to arrive (0.75 s at 24 fp
 LEAD_IN = 0.06            # estimated word times: the line starts this share into the shot ...
 LEAD_OUT = 0.12           # ... and ends this share before its end
 MIN_SPAN_KM = 300.0
-RENDERER_VERSION = "map_action/2"         # W3 (D-135): the clip cache keys on it
+RENDERER_VERSION = "map_action/2.1"       # W3 (D-135): the clip cache keys on it (2.1: numbers laid out per card or map)
 WORD = re.compile(r"[A-Za-z0-9']+")
 
 
@@ -271,8 +271,25 @@ def colours(look: dict | None = None) -> dict:
             "paper": D.rgb("paper"), "card": pick("card", "kit_card"), "glow": pick("accent", "uncertain_amber")}
 
 
-def _fmt(v: float) -> str:
+def _fmt(v: float, like: float | None = None) -> str:
+    """A shown number; a count towards a whole target shows whole numbers all the way (no "0.00" on its first frame)."""
+    if like is not None and float(like).is_integer():
+        return f"{int(round(v)):,}"
     return f"{int(round(v)):,}" if abs(v) >= 1 else f"{v:.2f}"
+
+
+def _box(p: dict, c, kind: str) -> tuple[float, float, float, float]:
+    """Where a number sits: on a card (no map under it) the numbers are the picture, large and centred, the counter above the
+    bars; on a map they keep to the corners the land leaves free (the counter bottom left, a progress bar top left, bars on the
+    right), so two numbers never sit on each other (the pilot's card, 2026-11-13, had the counter under the progress bar)."""
+    if p.get("card"):
+        has_bar = any(a["kind"] in ("bar_grow", "progress_bar") for a in p["actions"])
+        return {"counter": (c.w * 0.5, c.h * (0.30 if has_bar else 0.50), 0, 0),
+                "progress_bar": (c.w * 0.16, c.h * 0.60, c.w * 0.84, c.h * 0.66),
+                "bar_grow": (c.w * 0.25, c.h * 0.42, c.w * 0.75, c.h * 0.90)}[kind]
+    return {"counter": (c.w * 0.05, c.h * 0.78, 0, 0),
+            "progress_bar": (c.w * 0.06, c.h * 0.10, c.w * 0.50, c.h * 0.145),
+            "bar_grow": (c.w * 0.60, c.h * 0.50, c.w * 0.95, c.h * 0.90)}[kind]
 
 
 def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | None = None) -> None:
@@ -371,12 +388,12 @@ def _panel(c, x0, y0, x1, y1, col, ink, unit):
 def _draw_numbers(c, a, p, f, col, ink, accent, unit) -> None:
     k = a["kind"]
     u = _u(a, f)
-    size = unit * 0.034
+    size = unit * (0.05 if p.get("card") else 0.034)
     if k == "bar_grow":
         vals = [float(v) for v in a["values"]]
         labels = list(a.get("labels") or [])
         top = max(vals) or 1.0
-        x0, y0, x1, y1 = c.w * 0.60, c.h * 0.50, c.w * 0.95, c.h * 0.90
+        x0, y0, x1, y1 = _box(p, c, "bar_grow")
         _panel(c, x0, y0, x1, y1, col, ink, unit)
         n = len(vals)
         slot = (x1 - x0) / n
@@ -388,21 +405,21 @@ def _draw_numbers(c, a, p, f, col, ink, accent, unit) -> None:
             h = hmax * v / top * ui
             c.rect(bx, base - h, bx + slot * 0.6, base, fill=accent, outline=ink, width=max(1.5, unit * 0.002))
             if ui > 0.05:
-                c.text((bx + slot * 0.3, base - h - size * 0.3), f"{_fmt(v * ui)}", size, ink, anchor="mb")
+                c.text((bx + slot * 0.3, base - h - size * 0.3), f"{_fmt(v * ui, v)}", size, ink, anchor="mb")
             if i < len(labels):
                 c.text((bx + slot * 0.3, base + size * 0.25), labels[i], size * 0.8, ink, anchor="mt")
     elif k in ("progress_bar", "milestone"):
         bar = a if k == "progress_bar" else next((b for b in p["actions"] if b["kind"] == "progress_bar"), None)
         full = float((bar or a).get("max") or a.get("value") or 1.0)
-        x0, y0, x1, y1 = c.w * 0.06, c.h * 0.86, c.w * 0.62, c.h * 0.905
+        x0, y0, x1, y1 = _box(p, c, "progress_bar")
         if k == "progress_bar":
             _panel(c, x0 - unit * 0.01, y0 - size * 1.5, x1 + unit * 0.01, y1 + unit * 0.012, col, ink, unit)
             share = min(1.0, float(a["value"]) / full) * u
             c.rect(x0, y0, x1, y1, fill=(*col["paper"], 235), outline=ink, width=max(1.5, unit * 0.002), radius=unit * 0.006)
             if share > 0:
                 c.rect(x0, y0, x0 + (x1 - x0) * share, y1, fill=accent, radius=unit * 0.006)
-            c.text((x0, y0 - size * 0.35), f"{_fmt(float(a['value']) * u)} / {_fmt(full)} {a.get('unit') or ''}".strip(),
-                   size, ink, anchor="lb")
+            c.text((x1, y0 - size * 0.35), f"{_fmt(float(a['value']) * u, a['value'])} / {_fmt(full)} {a.get('unit') or ''}"
+                   .strip(), size, ink, anchor="rb")      # right-aligned: a milestone's label keeps the left side
         else:
             x = x0 + (x1 - x0) * min(1.0, float(a["value"]) / full)
             alpha = int(255 * min(1.0, (f - a["start"] + 1) / 6))
@@ -410,8 +427,8 @@ def _draw_numbers(c, a, p, f, col, ink, accent, unit) -> None:
             c.polygon([(x, y0 - size * 0.2), (x - size * 0.35 * pop, y0 - size * 0.9 * pop),
                        (x + size * 0.35 * pop, y0 - size * 0.9 * pop)], fill=(*col["glow"], alpha), outline=(*col["ink"], alpha),
                       width=max(1.0, unit * 0.002))
-            if a.get("label"):
-                c.text((x, y0 - size * 1.0 * pop), a["label"], size * 0.8, (*col["ink"], alpha), anchor="mb",
+            if a.get("label"):     # under the bar, clear of the bar's own value above it
+                c.text((x - size * 0.35, y1 + size * 0.35), a["label"], size * 0.9, (*col["ink"], alpha), anchor="lt",
                        stroke=max(1.0, size * 0.08), stroke_fill=(*col["paper"], alpha))
 
 
@@ -461,10 +478,14 @@ def _draw_one(c, a, p, f, view, col, ink, accent, px, unit) -> None:
                    stroke=max(1.0, size * 0.12), stroke_fill=(*col["paper"], alpha))
         elif k == "counter":
             v = float(a.get("value") or 0) * u
-            text = f"{_fmt(v)} {a.get('unit') or ''}".strip()
-            size = unit * 0.07
-            x0, y0 = c.w * 0.05, c.h * 0.78
+            text = f"{_fmt(v, a.get('value') or 0)} {a.get('unit') or ''}".strip()
+            size = unit * (0.12 if p.get("card") else 0.07)
+            x0, y0, _, _ = _box(p, c, "counter")
             w = c.text_width(text, size) + size
+            if p.get("card"):     # centred on its point, its width taken from the final value so it does not jitter
+                final = f"{_fmt(float(a.get('value') or 0), a.get('value') or 0)} {a.get('unit') or ''}".strip()
+                w = c.text_width(final, size) + size
+                x0, y0 = x0 - w / 2, y0 - size * 0.75
             c.rect(x0, y0, x0 + w, y0 + size * 1.5, fill=(*col["card"], 235), outline=ink, width=max(2.0, unit * 0.004), radius=size * 0.25)
             c.text((x0 + size / 2, y0 + size * 0.75), text, size, ink, anchor="lm")
         elif k == "split_compare":
