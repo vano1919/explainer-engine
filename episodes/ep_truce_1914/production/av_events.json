@@ -1,0 +1,1315 @@
+{
+  "schema": "av_events/1",
+  "resolver": "av_events/1.0",
+  "episode_id": "ep_truce_1914",
+  "fps": 24,
+  "contract": "av_events/1",
+  "decisions": {
+    "silent_by_design": 33,
+    "ambience_only": 7,
+    "ui_cue": 7,
+    "sfx": 3
+  },
+  "shots": {
+    "S01_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "3eb6869a903ecc61",
+      "events": [
+        {
+          "event_id": "S01_SH001.M1",
+          "shot_id": "S01_SH001",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 48,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S01_SH001.M2",
+          "shot_id": "S01_SH001",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 48,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the fog drift is carried by the wind bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S01_SH004": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "ca2eee0425ee85e3",
+      "events": [
+        {
+          "event_id": "S01_SH004.M1",
+          "shot_id": "S01_SH004",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "pull",
+          "start_frame": 0,
+          "end_frame": 120,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S01_SH004.M2",
+          "shot_id": "S01_SH004",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "subject_sway",
+          "start_frame": 0,
+          "end_frame": 120,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the crowd murmur bed carries the figures",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S01_SH005": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "10fcd8b761ced758",
+      "events": [
+        {
+          "event_id": "S01_SH005.M1",
+          "shot_id": "S01_SH005",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "truck",
+          "start_frame": 0,
+          "end_frame": 168,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S01_SH005.M2",
+          "shot_id": "S01_SH005",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 168,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "tiny distant candles; heard as nothing over the wind",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S02_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "3d4544c8e4b99c37",
+      "events": [
+        {
+          "event_id": "S02_SH001.A1",
+          "shot_id": "S02_SH001",
+          "source": "actions",
+          "index": 0,
+          "op": "label",
+          "start_frame": 51,
+          "end_frame": 69,
+          "audio": {
+            "decision": "ui_cue",
+            "class": "map_arrive_click",
+            "sync": "onset",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "August",
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH001.A2",
+          "shot_id": "S02_SH001",
+          "source": "actions",
+          "index": 1,
+          "op": "route_arrow",
+          "start_frame": 59,
+          "end_frame": 126,
+          "audio": {
+            "decision": "sfx",
+            "class": "map_route_draw",
+            "sync": "span",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "estimated:until_word"
+          },
+          "word": "Everyone",
+          "until_word": "Christmas"
+        },
+        {
+          "event_id": "S02_SH001.A2.arrive",
+          "shot_id": "S02_SH001",
+          "source": "derived",
+          "index": 1,
+          "op": "route_arrow:arrive",
+          "start_frame": 125,
+          "end_frame": 126,
+          "audio": {
+            "decision": "ui_cue",
+            "sync": "onset",
+            "class": "map_arrive_click",
+            "purpose": "clarify"
+          },
+          "audio_basis": "default",
+          "id_basis": "derived_from:S02_SH001.A2",
+          "timing": {
+            "start": "arrive of S02_SH001.A2",
+            "end": "one frame"
+          },
+          "word": "Everyone",
+          "until_word": null,
+          "parent": "S02_SH001.A2"
+        }
+      ]
+    },
+    "S02_SH002": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "ea85b421a2b2de34",
+      "events": [
+        {
+          "event_id": "S02_SH002.A1",
+          "shot_id": "S02_SH002",
+          "source": "actions",
+          "index": 0,
+          "op": "label",
+          "start_frame": 19,
+          "end_frame": 37,
+          "audio": {
+            "decision": "ui_cue",
+            "class": "map_arrive_click",
+            "sync": "onset",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "December",
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH002.A2",
+          "shot_id": "S02_SH002",
+          "source": "actions",
+          "index": 1,
+          "op": "front_line",
+          "start_frame": 107,
+          "end_frame": 164,
+          "audio": {
+            "decision": "sfx",
+            "class": "map_route_draw",
+            "sync": "span",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "estimated:until_word"
+          },
+          "word": "trenches",
+          "until_word": "Switzerland"
+        }
+      ]
+    },
+    "S02_SH003": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "e70d9af21c601941",
+      "events": [
+        {
+          "event_id": "S02_SH003.A1",
+          "shot_id": "S02_SH003",
+          "source": "actions",
+          "index": 0,
+          "op": "zoom",
+          "start_frame": 9,
+          "end_frame": 68,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a camera move under the voice; the draw sound has just ended (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "next_action"
+          },
+          "word": "Here",
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH003.A2",
+          "shot_id": "S02_SH003",
+          "source": "actions",
+          "index": 1,
+          "op": "highlight",
+          "start_frame": 68,
+          "end_frame": 86,
+          "audio": {
+            "decision": "ui_cue",
+            "class": "map_arrive_click",
+            "sync": "onset",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "close",
+          "until_word": null
+        }
+      ]
+    },
+    "S02_SH004": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "1f0d322c7bdce262",
+      "events": [
+        {
+          "event_id": "S02_SH004.M1",
+          "shot_id": "S02_SH004",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "truck",
+          "start_frame": 0,
+          "end_frame": 150,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH004.M2",
+          "shot_id": "S02_SH004",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "water_shimmer",
+          "start_frame": 0,
+          "end_frame": 150,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "still floodwater: no wave sound; the wind bed carries the trench",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S02_SH005": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "d0a5c6dcbaa48755",
+      "events": [
+        {
+          "event_id": "S02_SH005.M1",
+          "shot_id": "S02_SH005",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 132,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH005.M2",
+          "shot_id": "S02_SH005",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 132,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the brazier is in the bed of the place",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S02_SH008": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "a453e57aed04cdbd",
+      "events": [
+        {
+          "event_id": "S02_SH008.M1",
+          "shot_id": "S02_SH008",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 222,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S02_SH008.M2",
+          "shot_id": "S02_SH008",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "cloud_drift",
+          "start_frame": 0,
+          "end_frame": 222,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "sky drift under the wind bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S03_SH002": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "8917e5e19c106c00",
+      "events": [
+        {
+          "event_id": "S03_SH002.M1",
+          "shot_id": "S03_SH002",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 96,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S03_SH002.M2",
+          "shot_id": "S03_SH002",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 96,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "candle light only, no sound of its own",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S03_SH010": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "fa83be77360771ae",
+      "events": [
+        {
+          "event_id": "S03_SH010.M1",
+          "shot_id": "S03_SH010",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "crane",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S03_SH010.M2",
+          "shot_id": "S03_SH010",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "distant candles: no sound of their own",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S04_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "b7c00287b633016d",
+      "events": [
+        {
+          "event_id": "S04_SH001.M1",
+          "shot_id": "S04_SH001",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S04_SH001.M2",
+          "shot_id": "S04_SH001",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "fog drift under the wind bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S04_SH011": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "39c63842c6bb4087",
+      "events": [
+        {
+          "event_id": "S04_SH011.M1",
+          "shot_id": "S04_SH011",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 60,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the silence of the beat; no cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S05_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "a5e1026b0703e286",
+      "events": [
+        {
+          "event_id": "S05_SH001.A1",
+          "shot_id": "S05_SH001",
+          "source": "actions",
+          "index": 0,
+          "op": "front_line",
+          "start_frame": 9,
+          "end_frame": 85,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the line is already known from S02; it stands at once, no draw",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "next_action"
+          },
+          "word": "Along",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH001.A2",
+          "shot_id": "S05_SH001",
+          "source": "actions",
+          "index": 1,
+          "op": "pulse",
+          "start_frame": 85,
+          "end_frame": 103,
+          "audio": {
+            "decision": "ui_cue",
+            "class": "map_arrive_click",
+            "sync": "onset",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "trench",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH001.A3",
+          "shot_id": "S05_SH001",
+          "source": "actions",
+          "index": 2,
+          "op": "pulse",
+          "start_frame": 93,
+          "end_frame": 111,
+          "audio": {
+            "decision": "ui_cue",
+            "class": "map_arrive_click",
+            "sync": "onset",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "to",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH001.A4",
+          "shot_id": "S05_SH001",
+          "source": "actions",
+          "index": 3,
+          "op": "pulse",
+          "start_frame": 118,
+          "end_frame": 136,
+          "audio": {
+            "decision": "ui_cue",
+            "class": "map_arrive_click",
+            "sync": "onset",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "patches",
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH001.A5",
+          "shot_id": "S05_SH001",
+          "source": "actions",
+          "index": 4,
+          "op": "pulse",
+          "start_frame": 118,
+          "end_frame": 136,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "lands with the Frelinghien pulse; one cue for the pair (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "anim_frames"
+          },
+          "word": "patches",
+          "until_word": null
+        }
+      ]
+    },
+    "S05_SH002": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "f760c907f3fc49c5",
+      "events": [
+        {
+          "event_id": "S05_SH002.A1",
+          "shot_id": "S05_SH002",
+          "source": "actions",
+          "index": 0,
+          "op": "counter",
+          "start_frame": 51,
+          "end_frame": 95,
+          "audio": {
+            "decision": "sfx",
+            "class": "data_rise_texture",
+            "sync": "span",
+            "purpose": "clarify"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "estimated:word",
+            "end": "estimated:until_word"
+          },
+          "word": "hundred",
+          "until_word": "part"
+        }
+      ]
+    },
+    "S05_SH003": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "ed2d979e3c0cfc67",
+      "events": [
+        {
+          "event_id": "S05_SH003.M1",
+          "shot_id": "S05_SH003",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "truck",
+          "start_frame": 0,
+          "end_frame": 168,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH003.M2",
+          "shot_id": "S05_SH003",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "subject_sway",
+          "start_frame": 0,
+          "end_frame": 168,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "the crowd murmur bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S05_SH010": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "d427b666d337f1a8",
+      "events": [
+        {
+          "event_id": "S05_SH010.M1",
+          "shot_id": "S05_SH010",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the push is the silence of the beat; no cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S05_SH016": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "fa04cef795aa9185",
+      "events": [
+        {
+          "event_id": "S05_SH016.M1",
+          "shot_id": "S05_SH016",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the silence of the beat; no cue (BP-81)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S05_SH020": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "72bcd17323ea77c9",
+      "events": [
+        {
+          "event_id": "S05_SH020.M1",
+          "shot_id": "S05_SH020",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 186,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S05_SH020.M2",
+          "shot_id": "S05_SH020",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "cloud_drift",
+          "start_frame": 0,
+          "end_frame": 186,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow sky; silence suits the service",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S06_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "e3e9459121b006b2",
+      "events": [
+        {
+          "event_id": "S06_SH001.M1",
+          "shot_id": "S06_SH001",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "pull",
+          "start_frame": 0,
+          "end_frame": 78,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S06_SH001.M2",
+          "shot_id": "S06_SH001",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 78,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "light only",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S06_SH005": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "a23f036c3544f38d",
+      "events": [
+        {
+          "event_id": "S06_SH005.M1",
+          "shot_id": "S06_SH005",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 72,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the silence of the beat; no cue",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S06_SH012": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "ed13d5436077e1c0",
+      "events": [
+        {
+          "event_id": "S06_SH012.M1",
+          "shot_id": "S06_SH012",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "pull",
+          "start_frame": 0,
+          "end_frame": 132,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S06_SH012.M2",
+          "shot_id": "S06_SH012",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "sun_shaft_drift",
+          "start_frame": 0,
+          "end_frame": 132,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "light only",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S07_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "9b1a2690cf336a57",
+      "events": [
+        {
+          "event_id": "S07_SH001.M1",
+          "shot_id": "S07_SH001",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "mist",
+          "start_frame": 0,
+          "end_frame": 114,
+          "audio": {
+            "decision": "ambience_only",
+            "why": "fog under the wind bed",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S07_SH001.M2",
+          "shot_id": "S07_SH001",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "pull",
+          "start_frame": 0,
+          "end_frame": 114,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S08_SH001": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "7e5c9f1ed5250255",
+      "events": [
+        {
+          "event_id": "S08_SH001.M1",
+          "shot_id": "S08_SH001",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        },
+        {
+          "event_id": "S08_SH001.M2",
+          "shot_id": "S08_SH001",
+          "source": "motion_imitation",
+          "index": 1,
+          "op": "fire_flicker",
+          "start_frame": 0,
+          "end_frame": 162,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a candle makes no sound; the night bed carries it",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S08_SH002": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "4f1dd1a282af92f8",
+      "events": [
+        {
+          "event_id": "S08_SH002.M1",
+          "shot_id": "S08_SH002",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 114,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S08_SH003": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "0b402d7f91bc54f3",
+      "events": [
+        {
+          "event_id": "S08_SH003.M1",
+          "shot_id": "S08_SH003",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "crane",
+          "start_frame": 0,
+          "end_frame": 96,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    },
+    "S08_SH004": {
+      "spine_sha": "4f53cda18c2baa0c",
+      "spine_basis": "estimated",
+      "events_sha": "55ecbb79b60ae5e8",
+      "events": [
+        {
+          "event_id": "S08_SH004.M1",
+          "shot_id": "S08_SH004",
+          "source": "motion_imitation",
+          "index": 0,
+          "op": "push",
+          "start_frame": 0,
+          "end_frame": 120,
+          "audio": {
+            "decision": "silent_by_design",
+            "why": "the text fades up in silence; the film ends on silence",
+            "sync": "onset"
+          },
+          "audio_basis": "authored",
+          "id_basis": "authored",
+          "timing": {
+            "start": "shot",
+            "end": "shot"
+          },
+          "word": null,
+          "until_word": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "schema": "episode_stage/1",
+  "episode_id": "ep_truce_1914",
+  "stage": "script",
+  "gate": "G1-G3",
+  "verdict": {
+    "status": "PASS",
+    "failed": [],
+    "not_run": [],
+    "review": []
+  },
+  "rows": [
+    {
+      "gate": "isolation_one_episode_id",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 EP-01 finding(s)"
+    },
+    {
+      "gate": "script_schema",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 schema error(s)"
+    },
+    {
+      "gate": "script_lints_fail",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) of the gate audit"
+    },
+    {
+      "gate": "script_lints_review",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 REVIEW finding(s) of the gate audit"
+    },
+    {
+      "gate": "every_shot_routed",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 of 84 shot(s) without a route and its reason (RT-01)"
+    },
+    {
+      "gate": "no_retired_route",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot field(s) name a retired route (Q10, D-131: config/retired_era.json)"
+    },
+    {
+      "gate": "speaker_shots_are_video",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 of 39 shot(s) that show their speaker are not video performance clips (Q7: no talking still)"
+    },
+    {
+      "gate": "speaker_off_screen",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 line(s) over a shot that does not show the speaker (a cutaway or a listener): allowed only on the creator's yes to off-screen lines (audit A9)"
+    },
+    {
+      "gate": "speaker_shots_short",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 speaker shot(s) longer than 5.0 s (BP-108)"
+    },
+    {
+      "gate": "video_shots_fit_the_model",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 of 57 video shot(s) need more than one clip of the LTX model Lightricks/LTX-2.5 (10.06 s at 24 fps, VL-06): split the line or the shot in the script"
+    },
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 57 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "router_agrees",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 unlocked shot(s) whose route the router would change (run route_script or lock the route with its reason)"
+    },
+    {
+      "gate": "av_contract_complete",
+      "status": "PASS",
+      "measured": [],
+      "detail": "av_contract av_events/1: 0 action/motion item(s) without event_id and audio (AV-02)"
+    },
+    {
+      "gate": "av_events_resolve",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) whose events do not resolve on the planned clock"
+    },
+    {
+      "gate": "av_event_ids_unique",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 duplicate event id(s)"
+    },
+    {
+      "gate": "av_audio_decisions",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 audio decision(s) break the contract (AV-04)"
+    },
+    {
+      "gate": "av_audio_review",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 decision(s) a person looks at (review_required, a sounding camera move, a purpose outside BP-55)"
+    },
+    {
+      "gate": "av_anchors_follow_the_read",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 absolute anchor(s) on shots with a read line: they do not move with the read (anchor on a word or a share of the shot, FA-06)"
+    },
+    {
+      "gate": "map_numbers_have_claims",
+      "status": "PASS",
+      "measured": [],
+      "detail": "1 shown number(s): without a claim [], claim not in the map []"
+    },
+    {
+      "gate": "video_share_against_target",
+      "status": "PASS",
+      "measured": 0.6099,
+      "detail": "video 61.0% of the duration (estimated), D-131's target 60% (+-10 points); switch Q7 = sample_review_full_fail, run_scope full"
+    }
+  ],
+  "outputs": {
+    "mix": {
+      "basis": "estimated",
+      "total_seconds": 357.0,
+      "seconds": {
+        "map_action": 30.25,
+        "still_25d": 109.0,
+        "video": 217.75
+      },
+      "shares": {
+        "map_action": 0.0847,
+        "still_25d": 0.3053,
+        "video": 0.6099
+      },
+      "unrouted": []
+    },
+    "shots": 84,
+    "audit_status": "PASS"
+  },
+  "rehearsal": false,
+  "fingerprint": "265b1adcdb72c5c2b3d599f9b7709825c8bf823405e2cb52715094e1cfdb741a",
+  "elapsed_s": 0.17,
+  "at": "2026-11-13T15:33:48Z"
+}
