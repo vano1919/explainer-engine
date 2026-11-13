@@ -1,0 +1,23 @@
+{
+  "schema": "gemini_t0_sent/1",
+  "episode_id": "ep_toba",
+  "sha8": "3945a0ca",
+  "made_at": "2026-11-12T19:08:12Z",
+  "pack_version": "2026-11-12.6072afb8.59fdd60a",
+  "attach": [
+    {
+      "file": "assets/style/main_style_5709.png",
+      "drive_name": "main_style_5709.png",
+      "sha256": "db719b00bdfacc0446986598da3b33ee005eeb67bda9260c35ff973bceb8739e"
+    }
+  ],
+  "ids": [
+    "t0_B2",
+    "t0_C3",
+    "t0_D2",
+    "t0_E",
+    "t0_F",
+    "t0_G"
+  ],
+  "message": "planning/gemini_task/messages/T0.md"
+}

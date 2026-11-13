@@ -1,0 +1,61 @@
+{
+  "schema": "gemini_drive_pack/1",
+  "episode_id": "ep_toba",
+  "pack_version": "2026-11-12.6072afb8.59fdd60a",
+  "exported_at": "2026-11-12T19:08:08Z",
+  "repo_commit": "6072afb88f12",
+  "drive_root": "CrossWorld",
+  "files": [
+    {
+      "path": "rules/00_START_HERE.md",
+      "sha256": "9d7746ff13d27bff07deb2efa83660ba965ce4883a36d8ed94e10299808dd98b",
+      "bytes": 2782
+    },
+    {
+      "path": "rules/01_CHANNEL.md",
+      "sha256": "00c9781f0993fd932be29c0aafef0534fb303d3d5b93eddcc56d99a9d3b78dcc",
+      "bytes": 2965
+    },
+    {
+      "path": "rules/02_SHORT_STORY_RULES.md",
+      "sha256": "9d5b3ef41024369d993a7e632074c3df2ba14ed1d02df99a6cac02aa2bbc8f93",
+      "bytes": 2951
+    },
+    {
+      "path": "rules/03_SCRIPT_RULES.md",
+      "sha256": "f78b1339834caf6f9f1c147995de91d8560d5aacea5b0b657bfb5090bb4c3018",
+      "bytes": 3902
+    },
+    {
+      "path": "rules/04_VIDEO_SCRIPT_RULES.md",
+      "sha256": "9452e934c05151887a35f4616f4fccad548da543dff11d58c438d96d5e35af22",
+      "bytes": 4487
+    },
+    {
+      "path": "rules/05_STYLE.md",
+      "sha256": "8e244b3bedd19980330921b75c94f7777ffbb704cf110c2ca6da71e59e151cc6",
+      "bytes": 6038
+    },
+    {
+      "path": "rules/06_PICTURE_RULES.md",
+      "sha256": "2c85be49acc224e0166ca2b710fef94d06a386512c0152f69341a4165b702449",
+      "bytes": 4072
+    },
+    {
+      "path": "rules/07_REVIEW_PROTOCOL.md",
+      "sha256": "1470e5984a822d96ce7c1e8df1d1ab145a9dc6b51c97c6c72c4aec9a2170e69b",
+      "bytes": 5788
+    },
+    {
+      "path": "rules/08_FILES_AND_STATE.md",
+      "sha256": "a701862fed6de95377107f4f652c35c04725165c334bd11e08669776bd5595c6",
+      "bytes": 2905
+    },
+    {
+      "path": "episodes/ep_toba/refs/main_style_5709.png",
+      "sha256": "db719b00bdfacc0446986598da3b33ee005eeb67bda9260c35ff973bceb8739e",
+      "bytes": 200534
+    }
+  ],
+  "upload": "copy this folder's contents into Drive CrossWorld/ as they are (rules/ and episodes/)"
+}
