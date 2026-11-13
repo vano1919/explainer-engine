@@ -3746,3 +3746,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-13 — Picture route order (creator, 2026-11-13 07:28 UTC)
+- Order, permanent: (1) Gemini chat in Task mode (Flash), (2) Gemini API batch (1K for LTX start frames, 2K for the rest),
+  (3) BFL Klein 1K only when 1 and 2 fail. Recorded in `config/picture_route.json`, tested by `tests/unit/test_picture_route.py`.
+- Evidence: the same six T0 prompts with the main-style reference on Gemini 1K (about $0.017 a photo), BFL Klein 1K ($0.009)
+  and BFL FLUX 3 Image ($0.048); spend $0.10 + $0.342 of the $0.40 cap; sheet on HF
+  `explainer-engine/photo_cost_2026-11-12/sheet_gemini_vs_flux3.jpg`. fal (no balance) and HF providers (402) were not usable.
