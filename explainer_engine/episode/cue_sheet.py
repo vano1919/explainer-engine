@@ -19,6 +19,15 @@ its priority, why it was chosen, how sure the choice is, and the asset's licence
 ``validate(sheet, plan, library_root)`` returns gate rows (``qa/gates``): coverage states, undeclared silence, the required
 ambience, assets that exist, the licence of the music (and its credit line), value ranges, events inside their shot and on their
 sync point (BP-54), overlaps (BP-56) and repeats (BP-57). ``coverage_report`` writes what each shot carries, per layer.
+
+AV contract (2026-11-13, D-135): every event row carries its ``event_id``, the decision and sync of the visible event it plays,
+and a one-shot starts its take at the take's own onset (``asset_offset_s`` skips the take's lead-in, so the sound lands on the
+frame, BP-54). An event whose class has no real take is ``review_required`` in ``missing`` (never an unrelated sound). The
+AV rows of ``validate``: ``events_on_sync`` in BP-54's three bands (within one frame PASS; inside -45/+125 ms REVIEW; outside
+FAIL), ``purpose_and_share`` (BP-55: a purpose on every effect, at most half of the visual beats with an audible non-cue
+effect; a silent_by_design beat is a beat, never a missing sound), ``overlap`` from the rows' intervals (BP-56: at most 2 of
+one class and 5 layers in all, the voice, the music and the bed counted once each), ``cue_density`` (BP-81) and
+``review_required_events``. The measured onsets on the rendered SFX stem come from ``audio/stems.onsets``.
 """
 from __future__ import annotations
 
@@ -136,10 +145,35 @@ class Picker:
         return iid, why
 
 
+ONSET_DB = -20.0                     # a take's onset: its envelope first within this of its peak (BP-54 measures the onset)
+ONSET_HOP_S = 0.005
+LEAD_MAX_S = 0.5                     # a take never skips more than this of its head
+
+
+def take_onset_s(path: Path) -> float | None:
+    """Where a take's sound starts: the first 5 ms window whose RMS is within ``ONSET_DB`` of the take's loudest window."""
+    import numpy as np
+    try:
+        x, rate = sfx_library.read_wav(Path(path))
+    except (OSError, ValueError, EOFError, wave.Error):
+        return None
+    x = np.asarray(x, np.float64)
+    h = max(1, int(ONSET_HOP_S * rate))
+    k = len(x) // h
+    if k == 0:
+        return None
+    env = 20 * np.log10(np.sqrt(np.mean(x[: k * h].reshape(k, h) ** 2, axis=1)) + 1e-12)
+    hit = np.flatnonzero(env >= env.max() + ONSET_DB)
+    return float(hit[0] * h / rate) if hit.size else 0.0
+
+
 def _row(cue_id, *, scene_id, shot_id, asset_id, start, end, layer, visual_event, sync, gain, pan=0.0, fade_in=0.0,
          fade_out=0.0, pitch=1.0, lowpass=None, reverb="dry", reason="", confidence=0.8, licence=None, offset=0.0,
-         loop=False, cls=None, distance=None):
-    return {"cue_id": cue_id, "scene_id": scene_id, "shot_id": shot_id, "asset_id": asset_id, "class": cls,
+         loop=False, cls=None, distance=None, event=None):
+    ev = event or {}
+    return {"cue_id": cue_id, "event_id": ev.get("event_id"), "decision": ev.get("decision"), "event_sync": ev.get("sync"),
+            "purpose": ev.get("purpose"), "status": "placed", "scene_id": scene_id, "shot_id": shot_id, "asset_id": asset_id,
+            "class": cls,
             "start_s": round(start, 3), "end_s": round(end, 3), "duration_s": round(end - start, 3), "layer": layer,
             "visual_event": visual_event, "sync_point_s": None if sync is None else round(sync, 3), "gain_db": round(gain, 2),
             "pan": round(pan, 3), "fade_in_s": round(fade_in, 3), "fade_out_s": round(fade_out, 3), "pitch": round(pitch, 4),
@@ -247,14 +281,20 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
             want = "loop" if kind == "ambience" else "one_shot"
             iid, why = (ev["library_id"], "authored take") if ev.get("library_id") else pk.pick(ev["class"], want)
             if iid is None:
-                missing.append({"class": ev["class"], "why": why, "shot_id": s["shot_id"]})
+                missing.append({"class": ev["class"], "why": why, "shot_id": s["shot_id"], "event_id": ev.get("event_id"),
+                                "status": "review_required"})
                 continue
             at = s0 + ev["at_s"]
             item = items.get(iid)
             is_loop = kind == "ambience" or (item is not None and _kind(item) == "loop")
+            lead = 0.0       # an event's take starts at its own onset (one-shots and the takes a span repeats alike)
+            if kind != "ambience" and item is not None and (root / item["file"]).is_file():
+                lead = min(LEAD_MAX_S, take_onset_s(root / item["file"]) or 0.0)
             length = float(ev.get("dur_s") or 0.0) or (max(1.0, s0 + sd - at) if is_loop else
                                                        (_seconds(item, root) if item else 1.0))
             end = min(dur_ep, at + length, s0 + sd + (0.0 if is_loop else SPOT_TAIL_S))
+            if ev.get("sync") == "span" and not is_loop and item is not None and _seconds(item, root) - lead < end - at - 0.05:
+                is_loop = True    # a continuous action lasts its span: the take repeats under it (crossfaded seams)
             dist = ev.get("distance") or "medium"
             cue_id = f"EV_{s['shot_id']}_{ev['class']}_{n_ev}"
             base = LEVELS.get(kind, LEVELS["spot"]) + (0.0 if kind == "ambience" else DISTANCE_DB.get(dist, 0.0))
@@ -265,14 +305,15 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
             rows.append(_row(cue_id, scene_id=s.get("segment_id"), shot_id=s["shot_id"], asset_id=iid, start=at, end=end,
                              layer=layer, visual_event=ev.get("picture_event") or ev.get("what") or ev["class"],
                              sync=at, gain=gain, pan=pan,
-                             fade_in=LOOP_FADE_S if is_loop else EVENT_FADE_S,
+                             fade_in=LOOP_FADE_S if kind == "ambience" else EVENT_FADE_S,   # an event starts on its frame
                              fade_out=LOOP_FADE_S if is_loop else min(0.3, max(EVENT_FADE_S, (end - at) * 0.2)),
                              pitch=pitch, lowpass=None if kind == "ambience" else DISTANCE_LOWPASS_HZ.get(dist),
                              reverb="cave" if s.get("room") == "cave" else
                              ("dry" if kind == "ambience" else DISTANCE_REVERB.get(dist, "dry")),
                              reason=f"{ev['class']} on {ev['basis']} ({dist}): {why}",
-                             confidence=CONFIDENCE.get(basis, 0.7), licence=_licence(item), loop=is_loop,
-                             cls=ev["class"], distance=dist))
+                             confidence=CONFIDENCE.get(basis, CONFIDENCE.get(ev.get("audio_basis"), 0.7)),
+                             licence=_licence(item), loop=is_loop, cls=ev["class"], distance=dist, offset=lead,
+                             event=ev))
             n_ev += 1
     # music: one row per run of the same mood, crossfades at each change
     runs = []
@@ -354,7 +395,9 @@ def _covered(rows: list[dict], a: float, b: float, step: float = 0.05) -> list[t
     return holes
 
 
-def validate(sheet: dict, plan: dict, library_root: Path | None = None) -> dict:
+def validate(sheet: dict, plan: dict, library_root: Path | None = None, onsets: dict | None = None) -> dict:
+    """The gate rows of a sheet; ``onsets`` (``{cue_id: measured onset s}``, from the rendered SFX stem) makes BP-54 a measurement
+    of the sound, not of the sheet."""
     rows = sheet["rows"]
     items = _items(Path(library_root)) if library_root else {}
     out = []
@@ -418,31 +461,18 @@ def validate(sheet: dict, plan: dict, library_root: Path | None = None) -> dict:
     out.append(G.row("values_in_range", not rng, f"time, gain (-70..-6 dB), pan, fades, pitch (0.85..1.15), layer: {rng[:5]}",
                      len(rng)))
     shots = {s["shot_id"]: s for s in plan["shots"]}
-    outside, offsync = [], []
+    outside = []
     for r in rows:
         if r["layer"] in ("foley", "spot") and r["shot_id"] in shots:
             s = shots[r["shot_id"]]
             if not s["start_s"] - 1e-3 <= r["start_s"] <= s["start_s"] + s["dur_s"] + 1e-3:
                 outside.append(r["cue_id"])
-            evs = [s["start_s"] + e["at_s"] for e in s["events"] if e["class"] == r["class"]]
-            if evs and min(abs(r["start_s"] - t) for t in evs) * 1000 > max(SYNC_EARLY_MS, SYNC_LATE_MS):
-                offsync.append(r["cue_id"])
     out.append(G.row("events_inside_their_shot", not outside, f"foley and spots start inside their shot: {outside[:5]}",
                      len(outside)))
-    out.append(G.row("events_on_sync", not offsync, f"foley and spots on their event (BP-54 {SYNC_EARLY_MS:g}/"
-                     f"{SYNC_LATE_MS:g} ms): {offsync[:5]}", len(offsync), level=SR_RULES.level("BP-54")))
+    out += sync_rows(rows, plan, onsets)
+    out += overlap_rows(rows)
+    out += av_rows(rows, plan, sheet)
     fx = [r for r in rows if r["layer"] in ("foley", "spot", "transition")]
-    crowd, same = [], []
-    for r in fx:
-        t = r["start_s"] + 0.01
-        live = [x for x in fx if x["start_s"] <= t < x["end_s"]]
-        if len(live) > LAYERS_MAX:
-            crowd.append(r["cue_id"])
-        if sum(1 for x in live if x["class"] == r["class"]) > SAME_CLASS_MAX:
-            same.append(r["cue_id"])
-    out.append(G.row("overlap", not crowd and not same, f"BP-56: at most {LAYERS_MAX} effect layers and {SAME_CLASS_MAX} of "
-                     f"one class at once: crowded {crowd[:5]}, same class {same[:5]}", len(crowd) + len(same),
-                     level=SR_RULES.level("BP-56")))
     rep, thin = [], set()
     takes = sheet.get("takes", {})
     last: dict[str, tuple[str, float]] = {}
@@ -456,6 +486,119 @@ def validate(sheet: dict, plan: dict, library_root: Path | None = None) -> dict:
     out.append(G.row("variants_available", not thin, f"BP-57 asks {VARIANTS_MIN} takes per repeated class; repeated with one "
                      f"take (pitch and gain jitter only): {sorted(thin)}", len(thin), level="REVIEW"))
     return {"rows": out, "verdict": G.verdict(out)}
+
+FRAME_MS = 1000.0 / 24.0
+
+
+def sync_rows(rows: list[dict], plan: dict, onsets: dict | None) -> list[dict]:
+    """BP-54 in its three bands (the registry's ``frames``, ``early_max_ms``, ``late_max_ms``): the sound's onset against its
+    event's frame. Within ``frames`` frame(s) PASS; earlier than -early or later than +late FAIL; between them REVIEW (the
+    registry asks one frame and FAILs only outside the ms window). Measured onsets when given, else the sheet's start plus the
+    take's skipped lead (the planned onset, said so)."""
+    fps = float(plan.get("fps") or 24)
+    one = float(SR_RULES.T("BP-54", "frames")) * 1000.0 / fps
+    shots = {s["shot_id"]: s for s in plan["shots"]}
+    fail, review, measured = [], [], 0
+    for r in rows:
+        if r["layer"] not in ("foley", "spot", "transition") or not r.get("event_id") or r["shot_id"] not in shots:
+            continue
+        s = shots[r["shot_id"]]
+        ev = next((e for e in s["events"] if e.get("event_id") == r["event_id"]), None)
+        if ev is None:
+            continue
+        want = s["start_s"] + ev["at_frame"] / fps
+        got = (onsets or {}).get(r["cue_id"])
+        measured += got is not None
+        got = r["start_s"] if got is None else got
+        d = (got - want) * 1000.0
+        if d < -SYNC_EARLY_MS or d > SYNC_LATE_MS:
+            fail.append(f"{r['event_id']}:{d:+.0f}ms")
+        elif abs(d) > one + 1e-6:
+            review.append(f"{r['event_id']}:{d:+.0f}ms")
+    basis = f"measured on the SFX stem ({measured} onsets)" if onsets else "planned (no stem measured)"
+    return [G.row("events_on_sync", not fail, f"BP-54 onset against the event frame, {basis}: outside -{SYNC_EARLY_MS:g}/"
+                  f"+{SYNC_LATE_MS:g} ms {fail[:6]}", len(fail), level=SR_RULES.level("BP-54")),
+            G.row("events_on_the_frame", not review, f"BP-54 one-frame target ({one:.0f} ms): off by more than a frame but "
+                  f"inside the window {review[:6]}", len(review), level=G.REVIEW)]
+
+
+def overlap_rows(rows: list[dict]) -> list[dict]:
+    """BP-56 from the rows' intervals (a sweep over every start and end): at most ``SAME_CLASS_MAX`` effects of one class at
+    once, at most ``LAYERS_MAX`` layers in all, where the voice, the music and the bed (every ambience row, room tone left out)
+    count once each and every effect row counts itself."""
+    marks = sorted({r["start_s"] for r in rows} | {r["end_s"] for r in rows})
+    crowd, same = [], []
+    for a, b in zip(marks, marks[1:]):
+        t = (a + b) / 2
+        live = [r for r in rows if r["start_s"] <= t < r["end_s"]]
+        fx = [r for r in live if r["layer"] in ("foley", "spot", "transition")]
+        layers = len(fx) + sum(1 for lay in ("narration", "music") if any(r["layer"] == lay for r in live)) \
+            + (1 if any(r["layer"] == "ambience" and not str(r["asset_id"]).startswith("room_tone") for r in live) else 0)
+        if layers > LAYERS_MAX:
+            crowd.append(f"{t:.2f}s:{layers}")
+        by: dict[str, int] = {}
+        for r in fx:
+            by[r["class"]] = by.get(r["class"], 0) + 1
+        over = [c for c, n in by.items() if n > SAME_CLASS_MAX]
+        if over:
+            same.append(f"{t:.2f}s:{over[0]}")
+    return [G.row("overlap", not crowd and not same, f"BP-56 from the intervals: at most {LAYERS_MAX} layers (voice, music and "
+                  f"bed once each) and {SAME_CLASS_MAX} of one class at once: crowded {crowd[:5]}, same class {same[:5]}",
+                  len(crowd) + len(same), level=SR_RULES.level("BP-56"))]
+
+
+EMPHASIS_CLASSES = {"map_pin_set": "thud", "ov_thud": "thud", "data_confirm": "chime", "ov_glow": "chime",
+                    "data_rise_texture": "rise", "riser": "rise"}
+
+
+def _sev(rule_id: str) -> str:
+    """The severity the registry gives the rule (BP-55 and BP-56 are REVIEW rules), never above what its status allows."""
+    return SR_RULES.level(rule_id, SR_RULES.rule(rule_id).get("severity") or G.FAIL)
+
+
+def av_rows(rows: list[dict], plan: dict, sheet: dict) -> list[dict]:
+    """BP-55 (purpose and share), BP-81 (cue density, bursts, one emphasis cue a line) and the events left for a person."""
+    out = []
+    beats = [d for s in plan["shots"] for d in s.get("visual_events", []) if not str(d.get("op", "")).count(":")]
+    effects = [d for d in beats if d["decision"] == "sfx"]
+    share = len(effects) / len(beats) if beats else None
+    lim = float(SR_RULES.T("BP-55", "beats_with_sfx_share_max"))
+    no_purpose = [r["event_id"] for r in rows if r.get("decision") in ("sfx", "ui_cue") and r.get("purpose") not in
+                  SR_RULES.T("BP-55", "purposes")]
+    silent = sum(1 for d in beats if d["decision"] == "silent_by_design")
+    if beats:   # a sheet without visible events has no beats to share out (the row is left out, not faked)
+        out.append(G.row("purpose_and_share", share <= lim and not no_purpose,
+                         f"BP-55: {len(effects)} of {len(beats)} visual beats carry an audible non-cue effect ({share:.0%}, max "
+                         f"{lim:.0%}; {silent} silent by design count as beats, never as missing); without a purpose "
+                         f"{no_purpose[:5]}", round(share, 3), level=_sev("BP-55")))
+    cues = sorted(r["start_s"] for r in rows if r.get("decision") == "ui_cue")
+    dur = float(sheet.get("duration_s") or 0.0)
+    per_min = len(cues) / (dur / 60.0) if dur > 0 else 0.0
+    burst_n, win = int(SR_RULES.T("BP-81", "burst_max")), float(SR_RULES.T("BP-81", "burst_window_s"))
+    burst = max((sum(1 for t in cues if a <= t < a + win) for a in cues), default=0)
+    measured = dur >= float(SR_RULES.T("BP-81", "measured_from_s"))
+    if measured:   # BP-81 counts a minute's density only on a read of measured_from_s or more
+        out.append(G.row("cue_density", per_min <= float(SR_RULES.T("BP-81", "per_min_fail")),
+                         f"BP-81: {len(cues)} cue(s), {per_min:.1f} a minute (REVIEW over "
+                         f"{SR_RULES.T('BP-81', 'per_min_review')}, FAIL over {SR_RULES.T('BP-81', 'per_min_fail')})",
+                         round(per_min, 2), level=SR_RULES.level("BP-81")))
+    out.append(G.row("cue_rate_review", per_min <= float(SR_RULES.T("BP-81", "per_min_review")) and burst <= burst_n,
+                     f"BP-81: {per_min:.1f} cues a minute, worst {win:g} s holds {burst} (REVIEW over {burst_n})",
+                     {"per_min": round(per_min, 2), "burst": burst}, level=G.REVIEW))
+    heavy = []
+    for s in plan["shots"]:
+        a, b = s["start_s"], s["start_s"] + s["dur_s"]
+        n = sum(1 for r in rows if a <= r["start_s"] < b and EMPHASIS_CLASSES.get(r.get("class") or "") and r.get("decision"))
+        if n > int(SR_RULES.T("BP-81", "emphasis_per_line_max")) * max(1, len(s.get("audio_line_ids") or [])):
+            heavy.append(f"{s['shot_id']}:{n}")
+    out.append(G.row("one_emphasis_a_line", not heavy, f"BP-81: at most {SR_RULES.T('BP-81', 'emphasis_per_line_max')} "
+                     f"emphasis cue (thud, chime, rise) a line: {heavy[:5]}", len(heavy), level=SR_RULES.level("BP-81")))
+    review = [d["event_id"] for s in plan["shots"] for d in s.get("visual_events", []) if d["decision"] == "review_required"]
+    review += [m["event_id"] for m in sheet.get("missing", []) if m.get("event_id")]
+    out.append(G.row("review_required_events", not review, f"{len(review)} event(s) a person decides (review_required or no "
+                     f"real take for their class): {review[:8]}", review[:30], level=G.REVIEW))
+    return out
+
 
 
 def coverage_report(sheet: dict, plan: dict) -> dict:
@@ -494,9 +637,9 @@ def coverage_markdown(cov: dict, gate: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def write(sheet: dict, plan: dict, out_dir: Path, library_root: Path | None = None) -> dict:
+def write(sheet: dict, plan: dict, out_dir: Path, library_root: Path | None = None, onsets: dict | None = None) -> dict:
     out_dir = Path(out_dir)
-    gate = validate(sheet, plan, library_root)
+    gate = validate(sheet, plan, library_root, onsets)
     cov = coverage_report(sheet, plan)
     write_json_atomic(out_dir / "cue_sheet.json", sheet)
     write_json_atomic(out_dir / "sound_coverage.json", dict(cov, gate=gate))

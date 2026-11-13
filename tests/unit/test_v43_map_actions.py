@@ -127,6 +127,7 @@ def test_each_action_appears_on_its_word_and_renders_the_same_twice(raster, act)
     anchor = [{"kind": "label", "at_word": "killer", "from": "toba"}] if act["kind"] in ("counter", "split_compare") else []
     shot, script = _script(actions=anchor + [act], view={"lon": 67.0, "lat": 9.0, "span_km": 9500})
     p = MA.plan(shot, script, PLACES, FPS)
+    p["drift"] = 0.0   # W3's restrained camera drift moves the whole frame; the locality check compares one view
     a = p["actions"][-1]
     base = MA.Plate(p, W, H)
     before = np.asarray(MA.render_frame(p, a["start"] - 1, base, W, H), dtype=np.int16)

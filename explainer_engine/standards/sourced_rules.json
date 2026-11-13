@@ -2572,7 +2572,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:BP-55"
+    "explainer_engine/audio/layers.py:BP-55",
+    "explainer_engine/episode/cue_sheet.py"
    ],
    "supersedes": [
     "P-94 purpose (confirmed)",
@@ -3459,7 +3460,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/beats.py:CUE_PER_MIN_FAIL",
-    "explainer_engine/audio/sound_director.py:compensator_cues"
+    "explainer_engine/audio/sound_director.py:compensator_cues",
+    "explainer_engine/episode/cue_sheet.py"
    ],
    "supersedes": [
     "VB-11 CUE_PER_MIN_OK / CUE_PER_MIN_FAIL / CUE_BURST literals"
@@ -7485,7 +7487,8 @@
    "enforced_by": [
     "explainer_engine/qa/sound_realism.py:measure",
     "explainer_engine/overlay/demo_mix.py:SFX_ABOVE_BED_DB",
-    "explainer_engine/overlay/rules.py:ep53"
+    "explainer_engine/overlay/rules.py:ep53",
+    "explainer_engine/episode/av_report.py"
    ],
    "supersedes": [
     "OV-53 overlay sounds at least 6 LU under the scene's sounds"

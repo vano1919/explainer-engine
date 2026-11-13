@@ -11,6 +11,8 @@ shot, so a Wan shot, a 2.5D shot and a map sound alike (R-D).
 - Levels: every event of a kind is set to the same RMS (``LEVELS``, engineering defaults kept under BP-65's caps), music and
   ambience duck under the voice (BP-53's house depth for music, its floor for the bed), each place gets its room tone and its
   room (a cave's impulse response), and a place change carries the plan's J/L bridge.
+- AV contract (D-135): every placed row keeps its ``event_id`` into ``events_placed``, and the onset of every effect row is
+  measured on the signal the SFX stem receives (``onset_of``), so BP-54's rows of the cue sheet judge the rendered sound.
 - ``level_report`` measures, per shot, the background (ambience + sfx) under speech and in the gaps, groups the shots by route
   and compares the groups' medians (BP-186, the creator's "the same level everywhere").
 """
@@ -265,6 +267,22 @@ def play_row(row: dict, snd: "Sounds", k: int) -> np.ndarray:
     return out
 
 
+ONSET_DB = -20.0     # an onset: the first 5 ms window within this of the row's loudest window (the cue sheet's take onset too)
+
+
+def onset_of(x: np.ndarray, hop_s: float = 0.005) -> float | None:
+    """Seconds from a rendered row's start to its onset (stereo or mono), None for silence."""
+    m = np.abs(x).max(axis=1) if x.ndim == 2 else np.abs(x)
+    h = max(1, int(hop_s * SR))
+    k = len(m) // h
+    if k == 0:
+        return None
+    env = 20 * np.log10(np.sqrt(np.mean(m[: k * h].astype(np.float64).reshape(k, h) ** 2, axis=1)) + 1e-12)
+    if env.max() < -80:
+        return None
+    return float(np.flatnonzero(env >= env.max() + ONSET_DB)[0] * h / SR)
+
+
 def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narration: Path | None = None,
            shippable: bool = True, sheet: dict | None = None) -> dict:
     """Render the plan into the five stems in ``out_dir`` by playing its cue sheet (``episode/cue_sheet``; built here when
@@ -284,7 +302,7 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
     stem_of = {"ambience": np.zeros((n, 2), np.float32), "sfx": np.zeros((n, 2), np.float32),
                "music": np.zeros((n, 2), np.float32)}
     layer_stem = {"ambience": "ambience", "foley": "sfx", "spot": "sfx", "transition": "sfx", "music": "music"}
-    placed = []
+    placed, onsets = [], {}
     for k, row in enumerate(sheet["rows"]):
         if row["layer"] == "narration":
             continue
@@ -295,7 +313,13 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
         m = min(len(x), n - i0)
         stem_of[layer_stem[row["layer"]]][i0:i0 + m] += x[:m]
         if row["layer"] in ("foley", "spot", "transition") or (row["layer"] == "ambience" and row["cue_id"].startswith("EV_")):
-            placed.append({"shot_id": row["shot_id"], "class": row["class"], "at_s": row["start_s"], "cue_id": row["cue_id"]})
+            on = onset_of(x[:m]) if row["layer"] != "ambience" else None
+            if on is not None and row.get("event_id"):
+                onsets[row["cue_id"]] = round(row["start_s"] + on, 4)
+            placed.append({"shot_id": row["shot_id"], "class": row["class"], "at_s": row["start_s"], "cue_id": row["cue_id"],
+                           "event_id": row.get("event_id"), "decision": row.get("decision"), "asset_id": row["asset_id"],
+                           "layer": row["layer"], "end_s": row["end_s"],
+                           "onset_s": onsets.get(row["cue_id"])})
     amb, sfx, mus = stem_of["ambience"], stem_of["sfx"], stem_of["music"]
     g_mus = duck.duck_gain(voice, SR, n, depth_db=MUSIC_DUCK_DB, threshold=SPEECH_THRESHOLD).astype(np.float32)
     g_bed = duck.duck_gain(voice, SR, n, depth_db=BED_DUCK_DB, threshold=SPEECH_THRESHOLD).astype(np.float32)
@@ -312,6 +336,7 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
     stems = {"narration": nar, "music": mus, "ambience": amb, "sfx": sfx, "mix": mix}
     for name, s in stems.items():
         _write(out_dir / f"{name}.wav", s)
+    gate = CS.write(sheet, plan, out_dir, library_root, onsets)   # BP-54 again, now on the rendered onsets
     levels = level_report(plan, voice, amb.mean(axis=1) + sfx.mean(axis=1))
     placeholders = sorted({u["class"] for u in snd.used if u["status"] == "placeholder"})
     return {"schema": "stems_report/1", "shippable": ok and not placeholders and voice_src.startswith("file:")
@@ -325,7 +350,9 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
             "stems": {k: str(out_dir / f"{k}.wav") for k in stems}, "events_placed": placed,
             "bridges": plan["bridges"], "levels": levels, "gates": G.verdict(levels["rows"]),
             "cue_sheet": str(out_dir / "cue_sheet.json"), "cue_gate": {r["gate"]: r["status"] for r in gate["rows"]},
-            "coverage": plan.get("coverage", {}), "credits": sheet.get("credits", []), "sounds_used": snd.used}
+            "coverage": plan.get("coverage", {}), "credits": sheet.get("credits", []), "sounds_used": snd.used,
+            "onsets_measured": len(onsets), "cue_rows": gate["rows"], "missing": sheet.get("missing", []),
+            "av": plan.get("av")}
 
 
 def level_report(plan: dict, voice: np.ndarray, background: np.ndarray) -> dict:

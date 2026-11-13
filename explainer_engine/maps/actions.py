@@ -11,6 +11,18 @@ grows), ``pulse`` (rings beat at ``from``), ``highlight`` (a glow of ``value`` k
 or ``label``), ``counter`` (a number counts up to ``value`` with its ``unit``), ``zoom`` (the camera eases to ``to`` or
 ``from`` at ``value`` km wide), ``split_compare`` (the frame splits into two cards, ``label`` "left | right").
 
+W3 (2026-11-13, D-135; MA-01..MA-08 in docs/EPISODE_FIRST.md): ``marker_travel`` (a token rides a path from -> to, or the
+route ``route`` names, sharing its progress), ``supply_line`` (a supply line draws itself; ``supply_state`` sets it ``active``,
+``strained`` or ``cut``; ``snap`` breaks it), ``bar_grow`` (bars grow to ``values``), ``progress_bar`` (a bar fills to
+``value`` of ``max``), ``milestone`` (a tick on the progress bar at ``value``). A route with ``via`` waypoints follows a
+Catmull-Rom spline through them (``maps/paths.spline``, validated by ``maps/paths.validate``: the frame's projection is a local
+equirectangular one, linear in lon/lat, so a spline in lon/lat is the same curve on screen). Every number shown carries the claim
+that backs it (``claim``; the G1 row ``map_numbers_have_claims``). Frames and decisions come from ``episode/events.visual_events``
+(the one resolver): half-open spans ``[start, end)``; ``until_word`` ends an action on a later word; a continuous action lasts until
+the next one starts. Each action may ask the camera for ``hold`` (default), ``push``, ``pull``, ``route_pan``, ``fly_to`` or
+``scale``; a dense map (``DENSE_ACTIONS`` place actions or more) holds unless it zooms. Restrained persistent life: the view drifts
+``DRIFT`` over the shot, a drawn route keeps a slow flow of dashes, a pulse keeps beating; everything is a function of the frame.
+
 A shot whose actions name no place is a card (the "other 10 %" moments: counters, comparisons on a plain styled card).
 Word times: measured from the read's word spine when it exists, else spread over the line (``basis: estimated``).
 """
@@ -26,13 +38,22 @@ from explainer_engine.core.errors import ContractError
 from explainer_engine.maps import draw as D
 from explainer_engine.maps import geo, plate
 
-KINDS = ("route_arrow", "front_line", "spread", "plume", "pulse", "highlight", "label", "counter", "zoom", "split_compare")
+KINDS = ("route_arrow", "front_line", "spread", "plume", "pulse", "highlight", "label", "counter", "zoom", "split_compare",
+         "marker_travel", "supply_line", "supply_state", "snap", "bar_grow", "progress_bar", "milestone")
 PLACE_KINDS = {"route_arrow": ("from", "to"), "front_line": ("from", "to"), "plume": ("from", "to"), "spread": ("from",),
-               "pulse": ("from",), "highlight": ("from",), "label": ("from",)}
+               "pulse": ("from",), "highlight": ("from",), "label": ("from",), "supply_line": ("from", "to")}
+PATH_KINDS = ("route_arrow", "front_line", "supply_line", "marker_travel")
+NUMBER_KINDS = ("counter", "bar_grow", "progress_bar", "milestone")
+CAMERAS = ("hold", "push", "pull", "route_pan", "fly_to", "scale")
+DENSE_ACTIONS = 4         # a map with this many place actions holds its camera unless it zooms (house default)
+DRIFT = 0.04              # the view narrows this share over a shot (restrained life; house default)
+CAM_PUSH = 0.7            # a push narrows the view to this share over the event's span (pull: the inverse)
+FLOW_PERIOD_F = 48        # a drawn line's dashes travel one period in this many frames
 ANIM_FRAMES = 18          # an action takes this long to arrive (0.75 s at 24 fps); a house default, not a sourced rule
 LEAD_IN = 0.06            # estimated word times: the line starts this share into the shot ...
 LEAD_OUT = 0.12           # ... and ends this share before its end
 MIN_SPAN_KM = 300.0
+RENDERER_VERSION = "map_action/2"         # W3 (D-135): the clip cache keys on it
 WORD = re.compile(r"[A-Za-z0-9']+")
 
 
@@ -69,41 +90,78 @@ def _place(places: dict, pid: str | None, sid: str, kind: str) -> tuple[float, f
     return float(p["lon"]), float(p["lat"])
 
 
+def _path_ll(a: dict, places: dict, sid: str) -> tuple[list[tuple[float, float]] | None, list[dict]]:
+    """The lon/lat path of a route-like action: a spline through ``from``, ``via``..., ``to`` (validated), or the old gentle arc."""
+    from explainer_engine.maps import paths as PATHS
+    p0, p1 = _place(places, a.get("from"), sid, a.get("kind")), _place(places, a.get("to"), sid, a.get("kind"))
+    if p0 is None or p1 is None:
+        return None, []
+    via = [_place(places, v, sid, a.get("kind")) for v in a.get("via") or []]
+    if via:
+        wp = [list(p0)] + [list(v) for v in via] + [list(p1)]
+        route = {"waypoints": wp, "ease": "march", "domain": a.get("domain"), "allow_water": a.get("allow_water", False)}
+        return [tuple(q) for q in PATHS.spline(wp, 24)], PATHS.validate(route, f"{sid}:{a.get('event_id') or a.get('kind')}")
+    kx = math.cos(math.radians((p0[1] + p1[1]) / 2))     # bend in a locally metric space, so the arc is round on screen
+    arc = _arc((p0[0] * kx, p0[1]), (p1[0] * kx, p1[1]), bend=0.12 if a.get("kind") != "front_line" else 0.0)
+    return [(x / kx, y) for x, y in arc], []
+
+
 def plan(shot: dict, script: dict, places: dict, fps: int, spine: list[dict] | None = None) -> dict:
-    """Resolve a shot's actions to frames and lon/lat. Every ``at_word`` must be a word of the shot's line, in order."""
+    """Resolve a shot's actions to frames (``episode/events.visual_events``, the one resolver) and lon/lat. Every ``at_word``
+    must be a word of the shot's line, in order."""
+    from explainer_engine.episode import events as E
     sid = shot.get("shot_id", "?")
     frames = max(fps, int(round(float(shot.get("target_duration_seconds") or 0) * fps)))
     acts = shot.get("actions") or []
     if not acts:
         raise ContractError(f"{sid}: a map_action shot needs actions (RT-03)")
-    words = shot_words(shot, script)
-    starts, basis = word_frames(words, frames, spine)
-    cursor, out = 0, []
     for a in acts:
-        kind = a.get("kind")
-        if kind not in KINDS:
-            raise ContractError(f"{sid}: unknown action kind {kind!r}")
-        want = _words(a.get("at_word", ""))
-        if not want:
-            raise ContractError(f"{sid}: {kind} has no at_word")
-        hit = next((i for i in range(cursor, len(words)) if words[i:i + len(want)] == want), None)
-        if hit is None:
-            raise ContractError(f"{sid}: {kind} lands on {a.get('at_word')!r}, which is not in the shot's line after word "
-                                f"{cursor} (the action must be tied to a spoken word, Q6)")
-        cursor = hit
-        need = PLACE_KINDS.get(kind, ())
-        for k in need:
+        if a.get("kind") not in KINDS:
+            raise ContractError(f"{sid}: unknown action kind {a.get('kind')!r}")
+    evs = [e for e in E.visual_events(shot, script, spine, fps) if e["source"] == "actions"]
+    words = shot_words(shot, script)
+    basis = word_frames(words, frames, spine)[1]
+    out, findings = [], []
+    for a, ev in zip(acts, evs):
+        kind = a["kind"]
+        for k in PLACE_KINDS.get(kind, ()):
             if not a.get(k):
                 raise ContractError(f"{sid}: {kind} needs {k!r}")
-        f0 = starts[hit]
-        out.append({"kind": kind, "start": f0, "end": min(frames - 1, f0 + ANIM_FRAMES), "word": a.get("at_word"),
+        if kind in NUMBER_KINDS:
+            vals = a.get("values") if kind == "bar_grow" else [a.get("value")]
+            if not vals or any(v is None or isinstance(v, str) for v in vals):
+                raise ContractError(f"{sid}: {kind} shows a number: give its value(s) from the claim map (never invented)")
+            if kind == "progress_bar" and not a.get("max"):
+                raise ContractError(f"{sid}: progress_bar needs max (the full value)")
+        if kind == "marker_travel" and not a.get("route") and not (a.get("from") and a.get("to")):
+            raise ContractError(f"{sid}: marker_travel needs from and to, or the route it rides on")
+        if kind in ("supply_state", "snap") and not a.get("route"):
+            raise ContractError(f"{sid}: {kind} needs the event_id of its supply line (route)")
+        if a.get("camera") is not None and a["camera"] not in CAMERAS:
+            raise ContractError(f"{sid}: camera {a['camera']!r} is not one of {', '.join(CAMERAS)}")
+        path, found = _path_ll(a, places, sid) if kind in PATH_KINDS else (None, [])
+        findings += found
+        out.append({"kind": kind, "event_id": ev["event_id"], "audio": ev["audio"], "start": ev["start_frame"],
+                    "end": ev["end_frame"], "timing": ev["timing"], "word": a.get("at_word"), "until_word": a.get("until_word"),
                     "from": _place(places, a.get("from"), sid, kind), "to": _place(places, a.get("to"), sid, kind),
-                    "from_id": a.get("from"), "to_id": a.get("to"),
+                    "from_id": a.get("from"), "to_id": a.get("to"), "path": path, "route": a.get("route"),
+                    "state": a.get("state"), "claim": a.get("claim"), "values": a.get("values"), "labels": a.get("labels"),
+                    "max": a.get("max"), "camera": a.get("camera") or ("zoom" if kind == "zoom" else "hold"),
                     "name": (places.get(a.get("from")) or {}).get("name") if a.get("from") else None,
                     "value": a.get("value"), "unit": a.get("unit", ""), "label": a.get("label")})
-    card = not any(a["from"] or a["to"] for a in out)
-    return {"shot_id": sid, "frames": frames, "fps": fps, "basis": basis, "card": card, "actions": out,
-            "view0": None if card else _first_view(shot, out)}
+    ids = {a["event_id"]: a for a in out}
+    for a in out:
+        if a["route"] is not None:
+            r = ids.get(a["route"])
+            if r is None or r["path"] is None:
+                raise ContractError(f"{sid}: {a['kind']} rides {a['route']!r}, which is no route of this shot")
+            if a["kind"] == "marker_travel" and a["path"] is None:
+                a["path"] = r["path"]
+    card = not any(a["from"] or a["to"] or a["path"] for a in out)
+    dense = sum(1 for a in out if a["from"] or a["path"]) >= DENSE_ACTIONS
+    return {"shot_id": sid, "frames": frames, "fps": fps, "basis": basis, "card": card, "actions": out, "dense": dense,
+            "drift": DRIFT,
+            "path_findings": findings, "view0": None if card else _first_view(shot, out)}
 
 
 def _first_view(shot: dict, acts: list[dict]) -> dict:
@@ -111,6 +169,7 @@ def _first_view(shot: dict, acts: list[dict]) -> dict:
     if mv:
         return {"lon": float(mv["lon"]), "lat": float(mv["lat"]), "span_km": float(mv["span_km"])}
     pts = [p for a in acts if a["kind"] != "zoom" for p in (a["from"], a["to"]) if p]
+    pts += [q for a in acts if a.get("path") for q in a["path"][:: max(1, len(a["path"]) // 8)]]
     if not pts:
         pts = [p for a in acts for p in (a["from"], a["to"]) if p]
     lons, lats = [p[0] for p in pts], [p[1] for p in pts]
@@ -124,22 +183,62 @@ def _first_view(shot: dict, acts: list[dict]) -> dict:
 
 
 def _u(a: dict, f: int) -> float:
+    """Eased progress of an action on its half-open span ``[start, end)``: 0 before, 1 from its last frame on."""
     if f < a["start"]:
         return 0.0
-    return D.ease_in_out(min(1.0, (f - a["start"]) / max(1, a["end"] - a["start"])))
+    return D.ease_in_out(min(1.0, (f - a["start"]) / max(1, a["end"] - 1 - a["start"])))
+
+
+def _progress(a: dict, f: int) -> float:
+    """A path's progress: a march (slow start, cruise, halt; map law 2) for routes and markers, the ease for the rest."""
+    if f < a["start"]:
+        return 0.0
+    u = min(1.0, (f - a["start"]) / max(1, a["end"] - 1 - a["start"]))
+    return D.march(u) if a["kind"] in PATH_KINDS else D.ease_in_out(u)
+
+
+def _head(p: dict, a: dict, f: int) -> float:
+    """How far a path is drawn at ``f``: its own progress, never behind a marker that rides it (one progress)."""
+    u = _progress(a, f)
+    for m in p["actions"]:
+        if m["kind"] == "marker_travel" and m.get("route") == a["event_id"]:
+            u = max(u, _progress(m, f))
+    return u
+
+
+def _lerp_view(cur: dict, tgt: tuple | None, span: float, u: float) -> dict:
+    tgt = tgt or (cur["lon"], cur["lat"])
+    return {"lon": cur["lon"] + (tgt[0] - cur["lon"]) * u, "lat": cur["lat"] + (tgt[1] - cur["lat"]) * u,
+            "span_km": math.exp(math.log(cur["span_km"]) + (math.log(span) - math.log(cur["span_km"])) * u)}
 
 
 def camera(p: dict, f: int) -> dict:
-    """The view at frame ``f``: the first view, eased by every zoom that has started (log-eased width)."""
+    """The view at frame ``f``: the first view, a restrained drift, and every camera move whose event has started (a zoom
+    eases to its place and width; push, pull, route_pan, fly_to and scale answer their action; a dense map only zooms)."""
     cur = dict(p["view0"])
+    n = max(1, p["frames"] - 1)
+    cur["span_km"] *= 1.0 - p.get("drift", DRIFT) * D.ease_in_out(f / n)
     for a in p["actions"]:
-        if a["kind"] != "zoom" or f < a["start"]:
+        cam = a.get("camera", "zoom" if a["kind"] == "zoom" else "hold")
+        if cam == "hold" or f < a["start"] or (p.get("dense") and cam != "zoom"):
             continue
-        tgt = a["to"] or a["from"] or (cur["lon"], cur["lat"])
-        span = float(a["value"]) if a.get("value") else cur["span_km"] / 3.0
         u = _u(a, f)
-        cur = {"lon": cur["lon"] + (tgt[0] - cur["lon"]) * u, "lat": cur["lat"] + (tgt[1] - cur["lat"]) * u,
-               "span_km": math.exp(math.log(cur["span_km"]) + (math.log(span) - math.log(cur["span_km"])) * u)}
+        if cam == "zoom":
+            span = float(a["value"]) if a.get("value") else cur["span_km"] / 3.0
+            cur = _lerp_view(cur, a["to"] or a["from"], span, u)
+        elif cam in ("push", "pull"):
+            k = CAM_PUSH if cam == "push" else 1.0 / CAM_PUSH
+            cur = _lerp_view(cur, a["to"] or a["from"], cur["span_km"] * k, u)
+        elif cam == "route_pan" and a.get("path"):
+            cur = _lerp_view(cur, D.polyline_point(a["path"], _head(p, a, f)), cur["span_km"], min(1.0, 4 * u))
+        elif cam == "fly_to":
+            cur = _lerp_view(cur, a["to"] or a["from"], cur["span_km"], u)
+        elif cam == "scale" and (a.get("path") or a["from"]):
+            pts = a["path"] or [a["from"]] + ([a["to"]] if a["to"] else [])
+            lons, lats = [q[0] for q in pts], [q[1] for q in pts]
+            kx = geo.KM_PER_DEG * math.cos(math.radians(cur["lat"]))
+            want = max(MIN_SPAN_KM, (max(lons) - min(lons)) * kx * 1.4, (max(lats) - min(lats)) * geo.KM_PER_DEG * 1.4 * 16 / 9)
+            cur = _lerp_view(cur, ((min(lons) + max(lons)) / 2, (min(lats) + max(lats)) / 2), want, u)
     return cur
 
 
@@ -192,20 +291,141 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
         base.im.alpha_composite(c.im)
 
 
+def _subpath(pts: list[tuple[float, float]], a: float, b: float) -> list[tuple[float, float]]:
+    """The part of a polyline between shares ``a`` and ``b`` of its length."""
+    if b <= a:
+        return []
+    head = D.polyline_prefix(pts, b)
+    if a <= 0:
+        return head
+    cut = D.polyline_prefix(pts, a)
+    return [cut[-1]] + head[len(cut):] if len(head) > len(cut) - 1 else [cut[-1], head[-1]]
+
+
+def supply_state(p: dict, line: dict, f: int) -> tuple[str, float, float]:
+    """(state, eased progress of the change, where the line breaks) of a supply line at ``f``: the last ``supply_state`` or
+    ``snap`` that rides it and has started; a snap is a cut."""
+    state, u, at = "active", 1.0, 0.5
+    for a in p["actions"]:
+        if a.get("route") != line["event_id"] or a["kind"] not in ("supply_state", "snap") or f < a["start"]:
+            continue
+        state = "cut" if a["kind"] == "snap" else (a.get("state") or "active")
+        u = _u(a, f)
+        if a.get("value") not in (None, "") and not isinstance(a.get("value"), str):
+            at = min(0.95, max(0.05, float(a["value"])))
+    return state, u, at
+
+
+def _flow(c, path_px, f, colour, r) -> None:
+    """Restrained life on a finished line: a few small dots travel slowly along it (pure in the frame number)."""
+    n = 5
+    for k in range(n):
+        t = ((k + f / FLOW_PERIOD_F) / n) % 1.0
+        x, y = D.polyline_point(path_px, t)
+        c.circle(x, y, r, fill=colour)
+
+
+def _draw_path(c, a, p, f, col, ink, accent, px, unit) -> None:
+    k = a["kind"]
+    path = [px(q) for q in a["path"]]
+    w = max(3.0, unit * {"route_arrow": 0.011, "front_line": 0.016, "supply_line": 0.008, "marker_travel": 0.006}[k])
+    u = _head(p, a, f)
+    if k == "marker_travel":
+        if a.get("route") is None:   # its own faint trail; a marker on a route leaves the route to draw itself
+            trail = D.polyline_prefix(path, u)
+            if len(trail) >= 2:
+                c.line(trail, (*col["ink"], 110), w, dash=(w * 2.0, w * 1.6))
+        x, y = D.polyline_point(path, u)
+        D.marker(c, "a", x, y, unit * 0.016)
+        return
+    colour = accent
+    pieces = [D.polyline_prefix(path, u)]
+    if k == "supply_line":
+        state, su, at = supply_state(p, a, f)
+        if state == "strained":   # the line thins, turns amber and breathes
+            colour = (*D.blend(col["accent"], col["glow"], su), 255)
+            w *= 1.0 - 0.35 * su * (0.75 + 0.25 * math.sin(2 * math.pi * f / 20.0))
+        elif state == "cut":
+            gap = 0.07 * su
+            pieces = [_subpath(path, 0.0, min(u, at - gap)), _subpath(path, at + gap, u)]
+            bx, by = D.polyline_point(path, at)
+            r = unit * 0.018 * su
+            if r > 1:
+                c.line([(bx - r, by - r), (bx + r, by + r)], ink, max(2.0, w * 0.9))
+                c.line([(bx - r, by + r), (bx + r, by - r)], ink, max(2.0, w * 0.9))
+    for part in pieces:
+        if len(part) >= 2:
+            c.line(part, ink, w * 1.7)
+            c.line(part, colour, w, dash=(w * 2.2, w * 1.2) if k in ("front_line", "supply_line") else None)
+    if k == "route_arrow" and u > 0.02 and len(pieces[0]) >= 2:
+        part = pieces[0]
+        D.arrow_head(c, part[-1], part[-2] if part[-2] != part[-1] else part[0], w * 2.6, accent, ink)
+    if u >= 1.0 and k in ("route_arrow", "supply_line") and not (k == "supply_line" and supply_state(p, a, f)[0] == "cut"):
+        _flow(c, path, f - a["end"], (*col["paper"], 170), max(1.5, w * 0.35))
+
+
+def _panel(c, x0, y0, x1, y1, col, ink, unit):
+    c.rect(x0, y0, x1, y1, fill=(*col["card"], 225), outline=ink, width=max(2.0, unit * 0.003), radius=unit * 0.012)
+
+
+def _draw_numbers(c, a, p, f, col, ink, accent, unit) -> None:
+    k = a["kind"]
+    u = _u(a, f)
+    size = unit * 0.034
+    if k == "bar_grow":
+        vals = [float(v) for v in a["values"]]
+        labels = list(a.get("labels") or [])
+        top = max(vals) or 1.0
+        x0, y0, x1, y1 = c.w * 0.60, c.h * 0.50, c.w * 0.95, c.h * 0.90
+        _panel(c, x0, y0, x1, y1, col, ink, unit)
+        n = len(vals)
+        slot = (x1 - x0) / n
+        base = y1 - size * 1.6
+        hmax = (base - y0) - size * 2.2
+        for i, v in enumerate(vals):
+            ui = D.ease_in_out(min(1.0, max(0.0, u * 1.25 - 0.25 * i / max(1, n - 1))))   # bars grow in a short stagger
+            bx = x0 + slot * (i + 0.2)
+            h = hmax * v / top * ui
+            c.rect(bx, base - h, bx + slot * 0.6, base, fill=accent, outline=ink, width=max(1.5, unit * 0.002))
+            if ui > 0.05:
+                c.text((bx + slot * 0.3, base - h - size * 0.3), f"{_fmt(v * ui)}", size, ink, anchor="mb")
+            if i < len(labels):
+                c.text((bx + slot * 0.3, base + size * 0.25), labels[i], size * 0.8, ink, anchor="mt")
+    elif k in ("progress_bar", "milestone"):
+        bar = a if k == "progress_bar" else next((b for b in p["actions"] if b["kind"] == "progress_bar"), None)
+        full = float((bar or a).get("max") or a.get("value") or 1.0)
+        x0, y0, x1, y1 = c.w * 0.06, c.h * 0.86, c.w * 0.62, c.h * 0.905
+        if k == "progress_bar":
+            _panel(c, x0 - unit * 0.01, y0 - size * 1.5, x1 + unit * 0.01, y1 + unit * 0.012, col, ink, unit)
+            share = min(1.0, float(a["value"]) / full) * u
+            c.rect(x0, y0, x1, y1, fill=(*col["paper"], 235), outline=ink, width=max(1.5, unit * 0.002), radius=unit * 0.006)
+            if share > 0:
+                c.rect(x0, y0, x0 + (x1 - x0) * share, y1, fill=accent, radius=unit * 0.006)
+            c.text((x0, y0 - size * 0.35), f"{_fmt(float(a['value']) * u)} / {_fmt(full)} {a.get('unit') or ''}".strip(),
+                   size, ink, anchor="lb")
+        else:
+            x = x0 + (x1 - x0) * min(1.0, float(a["value"]) / full)
+            alpha = int(255 * min(1.0, (f - a["start"] + 1) / 6))
+            pop = 1.0 + 0.4 * max(0.0, 1.0 - (f - a["start"]) / 8.0)
+            c.polygon([(x, y0 - size * 0.2), (x - size * 0.35 * pop, y0 - size * 0.9 * pop),
+                       (x + size * 0.35 * pop, y0 - size * 0.9 * pop)], fill=(*col["glow"], alpha), outline=(*col["ink"], alpha),
+                      width=max(1.0, unit * 0.002))
+            if a.get("label"):
+                c.text((x, y0 - size * 1.0 * pop), a["label"], size * 0.8, (*col["ink"], alpha), anchor="mb",
+                       stroke=max(1.0, size * 0.08), stroke_fill=(*col["paper"], alpha))
+
+
 def _draw_one(c, a, p, f, view, col, ink, accent, px, unit) -> None:
     if True:
         u = _u(a, f)
         k = a["kind"]
-        if k in ("route_arrow", "front_line"):
-            pts = [px(a["from"]), px(a["to"])]
-            path = _arc(*pts, bend=0.12 if k == "route_arrow" else 0.0)
-            part = D.polyline_prefix(path, u)
-            w = max(3.0, unit * (0.011 if k == "route_arrow" else 0.016))
-            if len(part) >= 2:
-                c.line(part, ink, w * 1.7)
-                c.line(part, accent, w, dash=(w * 2.2, w * 1.2) if k == "front_line" else None)
-                if k == "route_arrow" and u > 0.02:
-                    D.arrow_head(c, part[-1], part[-2] if part[-2] != part[-1] else part[0], w * 2.6, accent, ink)
+        if k in PATH_KINDS:
+            if a.get("path") and px is not None:
+                _draw_path(c, a, p, f, col, ink, accent, px, unit)
+        elif k in ("bar_grow", "progress_bar", "milestone"):
+            _draw_numbers(c, a, p, f, col, ink, accent, unit)
+        elif k in ("supply_state", "snap"):
+            pass    # drawn by the supply line they ride on
         elif k in ("spread", "plume"):
             r = float(a.get("value") or 400.0) * u / view.km_per_px
             sx, sy = px(a["from"])

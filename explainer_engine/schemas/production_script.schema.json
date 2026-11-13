@@ -1084,7 +1084,7 @@
         },
         "motion_imitation": {
           "type": "array",
-          "description": "still_25d only (plan P5, RT-05): what moves in the layered 2.5D shot. One camera path at most (push, pull, truck, crane, orbit_small) plus handheld and rack_focus; light, atmosphere, surface and subject effects; a shake only on an impact. BP-185 asks for two moving families beyond the camera.",
+          "description": "still_25d only (plan P5, RT-05): what moves in the layered 2.5D shot. Up to two ordered camera segments (from_frame/to_frame, W2; one path when no frames are given) (push, pull, truck, crane, orbit_small) plus handheld and rack_focus; light, atmosphere, surface and subject effects; a shake only on an impact. BP-185 asks for two moving families beyond the camera.",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -1114,7 +1114,9 @@
                   "heat_haze",
                   "foliage_sway",
                   "subject_sway",
-                  "shake"
+                  "shake",
+                  "cloth_flap",
+                  "cloud_drift"
                 ]
               },
               "strength": {
@@ -1131,7 +1133,7 @@
                 },
                 "minItems": 4,
                 "maxItems": 4,
-                "description": "[x0, y0, x1, y1] share of the picture; required by water_shimmer, heat_haze, foliage_sway"
+                "description": "[x0, y0, x1, y1] share of the picture; required by water_shimmer, heat_haze, foliage_sway; cloth_flap and cloud_drift need one too"
               },
               "direction": {
                 "enum": [
@@ -1166,6 +1168,42 @@
               "at_word": {
                 "type": "string",
                 "minLength": 1
+              },
+              "event_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:-]+$",
+                "description": "AV-02"
+              },
+              "audio": {
+                "$ref": "#/$defs/av_audio"
+              },
+              "until_word": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from_frame": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "W2: a camera segment's first frame"
+              },
+              "to_frame": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "W2: a camera segment's end frame (exclusive)"
+              },
+              "easing": {
+                "enum": [
+                  "ease_in_out",
+                  "ease_in",
+                  "ease_out",
+                  "linear"
+                ],
+                "description": "W2: the segment's easing"
+              },
+              "hold_frames": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "W2: frames the camera rests after the segment"
               }
             }
           }
@@ -1193,7 +1231,14 @@
                   "front_line",
                   "zoom",
                   "highlight",
-                  "split_compare"
+                  "split_compare",
+                  "marker_travel",
+                  "supply_line",
+                  "supply_state",
+                  "snap",
+                  "bar_grow",
+                  "progress_bar",
+                  "milestone"
                 ]
               },
               "at_word": {
@@ -1224,6 +1269,104 @@
               "label": {
                 "type": "string",
                 "description": "the text a label or a split card shows (drawn by Python, never by a picture model)"
+              },
+              "event_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:-]+$",
+                "description": "AV-02: the event's id, unique in the episode"
+              },
+              "audio": {
+                "$ref": "#/$defs/av_audio"
+              },
+              "until_word": {
+                "type": "string",
+                "minLength": 1,
+                "description": "AV-05: the action lasts until the word after this phrase starts"
+              },
+              "at_frame": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "start frame (shot-relative) when no word carries the action"
+              },
+              "via": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "maxItems": 12,
+                "description": "route waypoints between from and to: place ids of episode.json places (W3: a validated spline)"
+              },
+              "route": {
+                "type": "string",
+                "description": "marker_travel / supply_state / snap: the event_id of the route or supply line it rides on"
+              },
+              "state": {
+                "enum": [
+                  "active",
+                  "strained",
+                  "cut"
+                ],
+                "description": "supply_state: the line's new state"
+              },
+              "claim": {
+                "type": "string",
+                "pattern": "^C-[0-9A-Za-z_-]+$",
+                "description": "the claim id of claim_map.md that backs a shown number (counter, bar_grow, progress_bar, milestone)"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 1,
+                "maxItems": 8,
+                "description": "bar_grow: the bars' values (each backed by the claim)"
+              },
+              "labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "maxItems": 8,
+                "description": "bar_grow: the bars' names"
+              },
+              "max": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "progress_bar / milestone: the full value"
+              },
+              "camera": {
+                "enum": [
+                  "hold",
+                  "push",
+                  "pull",
+                  "route_pan",
+                  "fly_to",
+                  "scale"
+                ],
+                "description": "W3: the camera's answer to this event (default: hold; zoom keeps its own move)"
+              },
+              "cues": {
+                "enum": [
+                  "auto",
+                  "none"
+                ],
+                "description": "AV-06: the derived start/arrival/confirmation cues of a route or a number (default auto)"
+              },
+              "domain": {
+                "type": "string",
+                "enum": [
+                  "land",
+                  "maritime",
+                  "air"
+                ],
+                "description": "MA-01: a maritime or air route may cross water (maps/paths.validate); default land"
+              },
+              "allow_water": {
+                "type": "boolean",
+                "description": "MA-01: the route may cross water without a REVIEW (a ford, a frozen lake)"
               }
             }
           }
@@ -1249,7 +1392,8 @@
               },
               "what": {
                 "type": "string",
-                "minLength": 2
+                "minLength": 2,
+                "description": "the event: a class id of episode/sound_plan.EVENT_CLASSES, or words that name one (AV-07)"
               },
               "at_s": {
                 "type": "number",
@@ -1275,6 +1419,33 @@
                   "thunder"
                 ],
                 "description": "the picture reacts on this sound at at_s (plan P5.6): boom/eruption = shake + lightning, impact = shake, thunder/flash = lightning"
+              },
+              "distance": {
+                "enum": [
+                  "close",
+                  "medium",
+                  "distant"
+                ],
+                "description": "SP-03: the event's distance (else the composition plane or the shot size)"
+              },
+              "dur_s": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "AV-04: the sound lasts this long (a span; the take repeats under it)"
+              },
+              "event_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "AV-02: the event's id, unique in the episode (default <shot>.S<k>)"
+              },
+              "purpose": {
+                "enum": [
+                  "clarify",
+                  "humour",
+                  "transition",
+                  "sync"
+                ],
+                "description": "BP-55: why the sound is there (a picture_event is sync)"
               }
             }
           }
@@ -1337,7 +1508,9 @@
                   "heat_haze",
                   "foliage_sway",
                   "subject_sway",
-                  "shake"
+                  "shake",
+                  "cloth_flap",
+                  "cloud_drift"
                 ]
               },
               "strength": {
@@ -1392,6 +1565,17 @@
               }
             }
           }
+        },
+        "motion_profile": {
+          "enum": [
+            "portrait",
+            "landscape",
+            "battle",
+            "architecture",
+            "document",
+            "object"
+          ],
+          "description": "W2: the shot's motion profile (how far and how fast its planes may travel)"
         }
       },
       "allOf": [
@@ -2188,6 +2372,10 @@
           "items": {
             "$ref": "#/$defs/ShotSpec"
           }
+        },
+        "av_contract": {
+          "const": "av_events/1",
+          "description": "AV-02 (D-135): a locked script whose every action and motion item carries event_id and audio"
         }
       }
     },
@@ -4321,6 +4509,51 @@
             }
           },
           "description": "D-70 stage F / WB-04: the World Bible version the script was written under (world.bible.cite())"
+        }
+      }
+    },
+    "av_audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision"
+      ],
+      "description": "AV-04 (episode/events.py, D-135): the one audio decision of this visible event; sfx and ui_cue name a class of episode/sound_plan.EVENT_CLASSES; silent_by_design and review_required give their reason",
+      "properties": {
+        "decision": {
+          "enum": [
+            "sfx",
+            "ui_cue",
+            "ambience_only",
+            "music_only",
+            "silent_by_design",
+            "review_required"
+          ]
+        },
+        "class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sync": {
+          "enum": [
+            "onset",
+            "span",
+            "end"
+          ],
+          "description": "onset: starts on the event's first frame; span: lasts the event (continuous action); end: lands on its arrival"
+        },
+        "purpose": {
+          "enum": [
+            "clarify",
+            "humour",
+            "transition",
+            "sync"
+          ],
+          "description": "BP-55"
+        },
+        "why": {
+          "type": "string",
+          "minLength": 3
         }
       }
     }

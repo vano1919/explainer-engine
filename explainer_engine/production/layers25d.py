@@ -20,6 +20,16 @@ One picture becomes a shot that is alive beyond the camera:
 6. Every frame is a pure function of its number: all randomness is drawn once from the shot's seed, so a chunk rendered in
    another process gives the same pixels (the report proves it on two frames of a fresh scene).
 
+W2 (2026-11-13, D-135; L25-01..L25-06 in docs/EPISODE_FIRST.md): the camera takes up to two ordered path segments
+(``from_frame``/``to_frame`` or the words of ``episode/events``, the one resolver), each with its easing and an optional
+``hold_frames`` rest; their moves add up frame by frame, so a second segment starts where the first ended (no jump). A
+``motion_profile`` (portrait, landscape, battle, architecture, document, object) says which moves suit the picture, caps their
+strength and sets how far the far planes follow the near one (a document is flat; a battle has depth); the gates and their
+bands are the same for every profile. ``cloth_flap`` (a flag or a sail ripples inside its region, waves running from the pole)
+and ``cloud_drift`` (the sky inside its region drifts and slowly changes shape) are new surface and atmosphere effects; both
+need a region. A shake and a timed lightning come only from an authored event (an item's frame or word, or an authored sound
+event), never from a word of the read.
+
 A start/end picture pair is cross-moved only when the two share the layout (``layout_similarity``); otherwise the end
 picture is not faked into the shot and the report asks for two shots.
 """
@@ -40,8 +50,8 @@ from explainer_engine.standards import sourced_rules as SR
 FAMILIES = {
     "camera": ("push", "pull", "truck", "crane", "orbit_small", "handheld", "rack_focus"),
     "light": ("fire_flicker", "lightning", "sun_shaft_drift"),
-    "atmosphere": ("ash_fall", "smoke_drift", "mist", "rain", "embers", "dust"),
-    "surface": ("water_shimmer", "heat_haze", "foliage_sway"),
+    "atmosphere": ("ash_fall", "smoke_drift", "mist", "rain", "embers", "dust", "cloud_drift"),
+    "surface": ("water_shimmer", "heat_haze", "foliage_sway", "cloth_flap"),
     "subject": ("subject_sway",),
     "impact": ("shake",),
 }
@@ -50,12 +60,27 @@ EFFECTS = tuple(FAMILY_OF)
 PATH_MOVES = ("push", "pull", "truck", "crane", "orbit_small")
 ALIVE_FAMILIES = ("atmosphere", "light", "surface", "subject")
 ALIVE_MIN = int(SR.T("BP-185", "families_min"))
-NEEDS_REGION = ("water_shimmer", "heat_haze", "foliage_sway")
+NEEDS_REGION = ("water_shimmer", "heat_haze", "foliage_sway", "cloth_flap", "cloud_drift")
+SEGMENTS_MAX = 2
+EASINGS = ("ease_in_out", "ease_in", "ease_out", "linear")
+# W2 motion profiles (house defaults, D-135): the moves that suit the picture, their strength cap, how far the farthest plane
+# follows the near one in a truck or a crane (a document is flat: everything moves together), and the handheld cap
+PROFILES = {
+    "portrait": {"moves": ("push", "pull", "orbit_small", "crane"), "strength_max": 1.0, "far_share": 0.25, "handheld_max": 0.6},
+    "landscape": {"moves": ("push", "pull", "truck", "crane", "orbit_small"), "strength_max": 1.2, "far_share": 0.15,
+                  "handheld_max": 0.8},
+    "battle": {"moves": ("push", "pull", "truck", "crane", "orbit_small"), "strength_max": 1.5, "far_share": 0.2,
+               "handheld_max": 1.5},
+    "architecture": {"moves": ("push", "pull", "truck", "crane"), "strength_max": 1.0, "far_share": 0.3, "handheld_max": 0.3},
+    "document": {"moves": ("push", "pull", "truck", "crane"), "strength_max": 1.0, "far_share": 0.85, "handheld_max": 0.2},
+    "object": {"moves": ("push", "pull", "orbit_small", "truck"), "strength_max": 1.0, "far_share": 0.2, "handheld_max": 0.5},
+}
 TIMED = ("shake", "lightning", "rack_focus")
 EVENT_EFFECTS = {"boom": ("shake", "lightning"), "eruption": ("shake", "lightning"), "impact": ("shake",),
                  "thunder": ("lightning",), "flash": ("lightning",)}
 
 PLANES = 4
+RENDERER_VERSION = "layers25d/2"          # W2 (D-135): the clip cache keys on it
 LAYERS_MIN = int(SR.T("BP-181", "parallax_layers_min"))
 NEAR_TRAVEL = 0.05          # the near plane's travel end to end, share of the width (plan P5.2: target 4-6 %)
 TRAVEL_BAND = (0.04, 0.06)
@@ -120,40 +145,48 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
 
     An unknown effect, a surface effect without a region, two path moves, or an ``at_word`` that is not spoken is a
     ``ContractError``; a shot without motion imitation plans nothing and its ``alive`` gate FAILs."""
-    from explainer_engine.maps import actions as MA
+    from explainer_engine.episode import events as E
     sid = str(shot.get("shot_id") or "shot")
     frames = max(1, int(round(float(shot.get("target_duration_seconds", 4.0)) * fps)))
-    word_frames = None
-    camera, handheld, rack, effects, impacts = None, None, None, [], []
-    for e in shot.get("motion_imitation") or []:
+    evs = [e for e in E.visual_events(shot, script or {}, spine, fps) if e["source"] == "motion_imitation"] \
+        if shot.get("motion_imitation") else []
+    profile_name = shot.get("motion_profile")
+    if profile_name is not None and profile_name not in PROFILES:
+        raise ContractError(f"{sid}: motion_profile {profile_name!r} is not one of {', '.join(PROFILES)}")
+    prof = PROFILES.get(profile_name or "", None)
+    cameras, handheld, rack, effects, impacts, capped = [], None, None, [], [], []
+    for j, e in enumerate(shot.get("motion_imitation") or []):
         name = e.get("effect")
         if name not in FAMILY_OF:
             raise ContractError(f"{sid}: unknown motion imitation {name!r} (known: {', '.join(EFFECTS)})")
         s = float(e.get("strength", 1.0))
         if not 0.0 < s <= 1.5:
             raise ContractError(f"{sid}: {name} strength {s} is outside (0, 1.5]")
-        at = e.get("at_frame")
-        if at is None and e.get("at_word"):
-            if word_frames is None:
-                words = MA.shot_words(shot, script or {})
-                word_frames = (words, MA.word_frames(words, frames, spine)[0])
-            words, starts = word_frames
-            want = MA._words(e["at_word"])
-            hit = next((i for i in range(len(words) - len(want) + 1) if words[i:i + len(want)] == want), None)
-            if hit is None:
-                raise ContractError(f"{sid}: {name} lands on {e['at_word']!r}, which is not a spoken word of the shot")
-            at = starts[hit]
+        ev = evs[j] if j < len(evs) else None
+        at = (ev["start_frame"] if ev else None) if (e.get("at_frame") is not None or e.get("at_word")) else None
         if at is not None and not 0 <= int(at) < frames:
             raise ContractError(f"{sid}: {name} at frame {at} is outside the shot's {frames} frames")
         if name in PATH_MOVES:
-            if camera is not None:
-                raise ContractError(f"{sid}: two camera paths ({camera['move']}, {name}); one shot has one path")
             d = e.get("direction", "right" if name in ("truck", "orbit_small") else "up")
             if d not in ("left", "right", "up", "down"):
                 raise ContractError(f"{sid}: {name} direction {d!r}")
-            camera = {"move": name, "strength": s, "direction": d}
+            easing = e.get("easing", "ease_in_out")
+            if easing not in EASINGS:
+                raise ContractError(f"{sid}: {name} easing {easing!r} is not one of {', '.join(EASINGS)}")
+            if prof is not None:
+                if name not in prof["moves"]:
+                    raise ContractError(f"{sid}: the {profile_name} profile does not move by {name} (it allows "
+                                        f"{', '.join(prof['moves'])})")
+                if s > prof["strength_max"]:
+                    capped.append(f"{name} {s} -> {prof['strength_max']}")
+                    s = prof["strength_max"]
+            cameras.append({"move": name, "strength": s, "direction": d, "from": int(ev["start_frame"]) if ev else 0,
+                            "to": int(ev["end_frame"]) if ev else frames, "easing": easing,
+                            "hold": int(e.get("hold_frames", 0)), "event_id": ev["event_id"] if ev else None,
+                            "timed": e.get("from_frame") is not None or e.get("at_word") is not None
+                            or e.get("at_frame") is not None})
         elif name == "handheld":
-            handheld = s
+            handheld = min(s, prof["handheld_max"]) if prof else s
         elif name == "rack_focus":
             to = e.get("to", "near")
             if to not in ("near", "far"):
@@ -184,9 +217,25 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
     if any("lightning" in i["effects"] for i in impacts) and not any(f["effect"] == "lightning" for f in effects):
         effects.append({"effect": "lightning", "family": "light", "strength": 1.0, "region": None, "timed": True})
     impacts.sort(key=lambda i: i["frame"])
+    if len(cameras) > SEGMENTS_MAX:
+        raise ContractError(f"{sid}: {len(cameras)} camera paths; a shot has at most {SEGMENTS_MAX} ordered segments")
+    if len(cameras) == 2:
+        if not all(c["timed"] for c in cameras):
+            raise ContractError(f"{sid}: two camera paths ({cameras[0]['move']}, {cameras[1]['move']}) need their frames "
+                                "(from_frame/to_frame or at_word/until_word): one shot has one path otherwise")
+        cameras.sort(key=lambda c: c["from"])
+        a, b = cameras
+        if a["to"] + a["hold"] > b["from"]:
+            raise ContractError(f"{sid}: camera segment {b['move']} starts at frame {b['from']}, before {a['move']} ends and "
+                                f"rests (frame {a['to'] + a['hold']})")
+    for c in cameras:
+        if not 0 <= c["from"] < c["to"] <= frames:
+            raise ContractError(f"{sid}: camera segment {c['move']} [{c['from']}, {c['to']}) is outside the shot's {frames} frames")
     fams = sorted({f["family"] for f in effects} | ({"subject"} if any(f["effect"] == "subject_sway" for f in effects)
                                                     else set()))
-    return {"shot_id": sid, "frames": frames, "fps": fps, "seed": _seed(sid), "camera": camera, "handheld": handheld,
+    return {"shot_id": sid, "frames": frames, "fps": fps, "seed": _seed(sid), "camera": cameras[0] if cameras else None,
+            "cameras": cameras, "handheld": handheld, "profile": profile_name, "far_share": prof["far_share"] if prof
+            else FAR_SHARE, "capped": capped, "events": evs,
             "rack": rack, "effects": effects, "impacts": impacts, "families": [f for f in fams if f in ALIVE_FAMILIES]}
 
 
@@ -213,30 +262,49 @@ def shake_offset(p: dict, f: int, height: float) -> tuple[float, float]:
     return dx, dy
 
 
+def _ease(name: str, u: float) -> float:
+    u = min(1.0, max(0.0, u))
+    if name == "ease_in":
+        return u * u
+    if name == "ease_out":
+        return 1.0 - (1.0 - u) ** 2
+    if name == "linear":
+        return u
+    return float(smooth(u))
+
+
+def segment_u(seg: dict, f: int, n: int) -> float:
+    """A segment's eased progress at ``f``: 0 before its first frame, 1 from its last frame on (half-open [from, to))."""
+    a, b = seg.get("from", 0), seg.get("to", n)
+    return _ease(seg.get("easing", "ease_in_out"), (f - a) / max(1, b - 1 - a))
+
+
 def plane_view(p: dict, f: int, w_k: float, w_focus: float) -> dict:
-    """The camera for one plane at frame ``f``: centre offset (share of the width), scale, rotation (degrees)."""
+    """The camera for one plane at frame ``f``: centre offset (share of the width), scale, rotation (degrees). The segments'
+    moves add up (scale multiplies), so the view is continuous across a segment change."""
     n = p["frames"]
-    u = float(smooth(f / max(1, n - 1)))
     t = f / p["fps"]
     cx = cy = 0.0
     scale, rot = 1.0, 0.0
-    cam = p["camera"]
-    if cam:
+    far = p.get("far_share", FAR_SHARE)
+    segs = p.get("cameras") if p.get("cameras") is not None else ([p["camera"]] if p.get("camera") else [])
+    for cam in segs:
+        u = segment_u(cam, f, n)
         s, d = cam["strength"], cam["direction"]
         sx = {"left": -1, "right": 1}.get(d, 0)
         sy = {"up": -1, "down": 1}.get(d, 0)
         if cam["move"] == "push":
-            scale = (1 + PUSH_SCALE * s * u) * (1 + DEPTH_PUSH * s * w_k * u)
+            scale *= (1 + PUSH_SCALE * s * u) * (1 + DEPTH_PUSH * s * w_k * u)
         elif cam["move"] == "pull":
-            scale = (1 + PUSH_SCALE * s * (1 - u)) * (1 + DEPTH_PUSH * s * w_k * (1 - u))
+            scale *= (1 + PUSH_SCALE * s * (1 - u)) * (1 + DEPTH_PUSH * s * w_k * (1 - u))
         elif cam["move"] == "truck":
-            cx = NEAR_TRAVEL * s * u * (FAR_SHARE + (1 - FAR_SHARE) * w_k) * (sx or 1)
+            cx += NEAR_TRAVEL * s * u * (far + (1 - far) * w_k) * (sx or 1)
         elif cam["move"] == "crane":
-            cy = NEAR_TRAVEL * s * u * (FAR_SHARE + (1 - FAR_SHARE) * w_k) * (sy or -1)
+            cy += NEAR_TRAVEL * s * u * (far + (1 - far) * w_k) * (sy or -1)
         elif cam["move"] == "orbit_small":
             # the near plane travels NEAR_TRAVEL past the focus (BP-182); the far side turns the other way, never further
-            cx = NEAR_TRAVEL * s * u * max(-1.0, (w_k - w_focus) / max(1e-3, 1 - w_focus)) * (sx or 1)
-            scale = 1 + 0.02 * s * u
+            cx += NEAR_TRAVEL * s * u * max(-1.0, (w_k - w_focus) / max(1e-3, 1 - w_focus)) * (sx or 1)
+            scale *= 1 + 0.02 * s * u
     if p["handheld"]:
         h = p["handheld"]
         cx += HAND_TR * h * _wave(t, p["seed"], 0)
@@ -488,7 +556,7 @@ class Scene:
                     m = core.astype(np.float32)
                 field = cv2.GaussianBlur(m, (0, 0), 0.08 * self.sw)
                 st["field"] = field / max(1e-6, float(field.max()))
-            elif name in ("mist", "smoke_drift", "heat_haze"):
+            elif name in ("mist", "smoke_drift", "heat_haze", "cloud_drift"):
                 st["tile"] = _noise_tile(rng, 144, 256, 6.0 if name != "heat_haze" else 14.0)
                 if name == "smoke_drift":
                     st["tile2"] = _noise_tile(rng, 144, 256, 10.0)
@@ -720,9 +788,26 @@ def render_frame(sc: Scene, f: int, out_meta: dict | None = None) -> np.ndarray:
             rays = cv2.GaussianBlur((rays * gate).astype(np.float32), (0, 0), 6.0)
             rays = cv2.resize(rays, (W, H), interpolation=cv2.INTER_LINEAR)
             rgb = rgb + np.array([255, 228, 180], np.float32) * (0.40 * s * rays * far ** 0.7)[..., None]
-        elif name in ("water_shimmer", "heat_haze", "foliage_sway"):
+        elif name in ("water_shimmer", "heat_haze", "foliage_sway", "cloth_flap", "cloud_drift"):
             yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-            if name == "water_shimmer":
+            if name == "cloth_flap":
+                # a flag or a sail: waves run away from the pole (the region's side named by direction, default left),
+                # growing with the distance from it; a gust swells them every few seconds
+                x0, y0, x1, y1 = e["region"]
+                pole_left = e.get("direction", "right") != "left"
+                along = np.clip((xx / W - x0) / max(1e-3, x1 - x0), 0, 1) if pole_left else \
+                    np.clip((x1 - xx / W) / max(1e-3, x1 - x0), 0, 1)
+                gust = 0.75 + 0.25 * math.sin(2 * math.pi * 0.23 * t + 0.6)
+                phase = 2 * math.pi * (along * 2.2 - 1.6 * t)
+                dy = 5.0 * k * s * gust * along * np.sin(phase)
+                dx = 1.5 * k * s * gust * along * np.cos(phase + 0.7)
+            elif name == "cloud_drift":
+                # the sky drifts sideways and slowly changes shape (a low-frequency warp over a slow translation)
+                sign = -1.0 if e.get("direction") == "left" else 1.0
+                n_ = _tile_at(sc, st["tile"], 0.006 * t, 0.002 * t) - 0.5
+                dx = -sign * 0.012 * W * s * float(smooth(t / max(1e-3, p["frames"] / p["fps"]))) + 6.0 * k * s * n_
+                dy = 2.5 * k * s * n_
+            elif name == "water_shimmer":
                 dx = 0.6 * k * s * np.sin(2 * math.pi * (yy / (9 * k)) + 3.1 * t)
                 dy = 1.6 * k * s * np.sin(2 * math.pi * (yy / (23 * k) + xx / (140 * k)) - 2.3 * t)
             elif name == "heat_haze":
@@ -898,13 +983,13 @@ def gates(sc: Scene, meter: Meter, sec_per_frame: float, chunk_match: bool | Non
     fl = meter.flashes()
     rows.append(G.row("flash_safety", fl <= FLASHES_PER_S, f"{fl} flashes in the worst second (BP-26: {FLASHES_PER_S})", fl,
                       level=SR.level("BP-26")))
-    if p["camera"] and p["camera"]["move"] in ("truck", "crane", "orbit_small"):
+    if any(c["move"] in ("truck", "crane", "orbit_small") for c in p.get("cameras") or []):
         path = np.array(meter.near_path)
         travel = float(np.hypot(*(path.max(axis=0) - path.min(axis=0))) / sc.W)
         rows.append(G.row("near_plane_travel", TRAVEL_BAND[0] <= travel <= min(TRAVEL_BAND[1], TRAVEL_MAX),
                           f"near plane travel {travel:.3f} of the width (plan P5.2: {TRAVEL_BAND}; BP-182 cap {TRAVEL_MAX})",
                           round(travel, 4), level=SR.level("BP-182")))
-    if meter.start_diff is not None and not (p["camera"] and p["camera"]["move"] == "pull"):
+    if meter.start_diff is not None and not any(c["move"] == "pull" for c in p.get("cameras") or []):
         rows.append(G.row("starts_on_its_picture", meter.start_diff <= START_DIFF_REVIEW,
                           f"frame 0's planes against the picture: mean difference {meter.start_diff:.2f} of 255 (engineering default "
                           f"{START_DIFF_REVIEW}; a pull starts closer by design)", round(meter.start_diff, 3), level="REVIEW"))
@@ -994,7 +1079,10 @@ def render_clip(shot: dict, picture: Path, out_mp4: Path, *, width: int = 1920, 
             "path": str(out_mp4), "total_frames": p["frames"], "fps": fps, "resolution": [width, height],
             "depth_basis": sc.depth_basis, "faces": len(sc.faces or []), "faces_basis": sc.faces_basis,
             "planes": len(sc.weights), "plane_weights": [round(w, 3) for w in sc.weights], "base_zoom": round(sc.z0, 4),
-            "camera": p["camera"], "handheld": p["handheld"], "rack": p["rack"],
+            "camera": p["camera"], "cameras": p["cameras"], "profile": p["profile"], "capped": p["capped"],
+            "events": [{k: e[k] for k in ("event_id", "op", "start_frame", "end_frame")} | {"decision": e["audio"]["decision"]}
+                       for e in p["events"]],
+            "handheld": p["handheld"], "rack": p["rack"],
             "effects": [e["effect"] for e in p["effects"]], "impacts": p["impacts"], "families": p["families"],
             "prep_s": round(prep_s, 2), "sec_per_frame": round(spf, 3), "end_picture": end,
             "gates": G.verdict(rows), "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest()}

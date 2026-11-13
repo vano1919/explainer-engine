@@ -1,0 +1,604 @@
+{
+  "schema": "av_pilot/1",
+  "note": "The zero-cost AV pilot of D-135 (2026-11-13): 3 map shots and 4 2.5D shots from the Toba episode's own lines and pictures, run twice through the v4.3 runner: `baseline` on the code before D-135 (only the old vocabulary), `new` on this branch. No new picture, no voice, no paid call. Built by scripts/av_pilot.py.",
+  "base_episode": "episodes/ep_toba",
+  "places": {
+    "toba": {
+      "lon": 98.88,
+      "lat": 2.68,
+      "name": "Toba"
+    },
+    "shinfa": {
+      "lon": 36.0,
+      "lat": 12.8,
+      "name": "Shinfa-Metema"
+    },
+    "jwalapuram": {
+      "lon": 78.1,
+      "lat": 15.3,
+      "name": "Jwalapuram"
+    },
+    "indian_ocean": {
+      "lon": 66.0,
+      "lat": 4.0,
+      "name": "Indian Ocean"
+    }
+  },
+  "places_note": "toba, shinfa, jwalapuram from planning/map_actions_proposal_p4.json (approximate site positions); indian_ocean is a plain point of the ocean, not a claim",
+  "shots": [
+    {
+      "shot_id": "S01_SH007",
+      "profile_kind": "2.5D portrait: two camera segments (push, rest, small orbit), falling grit",
+      "new": {
+        "motion_profile": "portrait",
+        "motion_imitation": [
+          {
+            "effect": "push",
+            "from_frame": 0,
+            "to_frame": 30,
+            "easing": "ease_out",
+            "hold_frames": 6,
+            "strength": 0.8,
+            "event_id": "P4.cam1",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "camera move"
+            }
+          },
+          {
+            "effect": "orbit_small",
+            "from_frame": 36,
+            "to_frame": 67,
+            "easing": "ease_in_out",
+            "strength": 0.6,
+            "event_id": "P4.cam2",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "camera move"
+            }
+          },
+          {
+            "effect": "ash_fall",
+            "strength": 0.6,
+            "event_id": "P4.ash",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "falling grit is heard as the place's bed"
+            }
+          },
+          {
+            "effect": "foliage_sway",
+            "region": [
+              0.72,
+              0.5,
+              1.0,
+              1.0
+            ],
+            "strength": 0.8,
+            "event_id": "P4.ferns",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "leaves are part of the wind bed"
+            }
+          }
+        ]
+      },
+      "old": {
+        "motion_imitation": [
+          {
+            "effect": "push",
+            "strength": 0.8
+          },
+          {
+            "effect": "ash_fall",
+            "strength": 0.6
+          },
+          {
+            "effect": "foliage_sway",
+            "region": [
+              0.72,
+              0.5,
+              1.0,
+              1.0
+            ],
+            "strength": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "shot_id": "S01_SH008",
+      "profile_kind": "map: route + riding marker + counter (dense map holds its camera)",
+      "map_view": {
+        "lon": 67.0,
+        "lat": 9.0,
+        "span_km": 9500
+      },
+      "new": {
+        "actions": [
+          {
+            "kind": "highlight",
+            "at_word": "local",
+            "from": "shinfa",
+            "value": 400,
+            "event_id": "P1.rift",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "the glow sets the scene under the narrator; the pulse is the first sound"
+            }
+          },
+          {
+            "kind": "pulse",
+            "at_word": "killer",
+            "from": "toba",
+            "event_id": "P1.pulse",
+            "audio": {
+              "decision": "ui_cue",
+              "class": "map_pin_set",
+              "sync": "onset",
+              "purpose": "clarify"
+            }
+          },
+          {
+            "kind": "route_arrow",
+            "at_word": "lay",
+            "until_word": "away",
+            "from": "toba",
+            "via": [
+              "indian_ocean"
+            ],
+            "to": "shinfa",
+            "domain": "air",
+            "event_id": "P1.route",
+            "audio": {
+              "decision": "sfx",
+              "class": "map_route_draw",
+              "sync": "span",
+              "purpose": "clarify"
+            }
+          },
+          {
+            "kind": "marker_travel",
+            "at_word": "lay",
+            "until_word": "away",
+            "route": "P1.route",
+            "event_id": "P1.ash",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "rides P1.route and shares its sound"
+            }
+          },
+          {
+            "kind": "counter",
+            "at_word": "four",
+            "until_word": "miles",
+            "value": 4000,
+            "unit": "miles",
+            "claim": "C-01",
+            "event_id": "P1.count",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "the route's draw is this moment's sound (BP-81: one emphasis a line)"
+            },
+            "cues": "none"
+          },
+          {
+            "kind": "label",
+            "at_word": "away",
+            "from": "shinfa",
+            "event_id": "P1.label",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "a name appears; the route's arrival cue already lands here"
+            }
+          }
+        ]
+      },
+      "old": {
+        "actions": [
+          {
+            "kind": "highlight",
+            "at_word": "local",
+            "from": "shinfa",
+            "value": 400
+          },
+          {
+            "kind": "pulse",
+            "at_word": "killer",
+            "from": "toba"
+          },
+          {
+            "kind": "route_arrow",
+            "at_word": "lay",
+            "from": "toba",
+            "to": "shinfa"
+          },
+          {
+            "kind": "counter",
+            "at_word": "four",
+            "value": 4000,
+            "unit": "miles"
+          },
+          {
+            "kind": "label",
+            "at_word": "away",
+            "from": "shinfa"
+          }
+        ]
+      }
+    },
+    {
+      "shot_id": "S01_SH009",
+      "profile_kind": "2.5D battle profile (the set's most violent picture): an authored boom shakes and flashes it",
+      "sound_events": [
+        {
+          "kind": "spot",
+          "what": "eruption_boom",
+          "at_s": 2.2,
+          "picture_event": "eruption"
+        }
+      ],
+      "new": {
+        "motion_profile": "battle",
+        "motion_imitation": [
+          {
+            "effect": "push",
+            "easing": "ease_in",
+            "strength": 1.0,
+            "event_id": "P6.cam",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "camera move"
+            }
+          },
+          {
+            "effect": "water_shimmer",
+            "region": [
+              0.0,
+              0.55,
+              1.0,
+              1.0
+            ],
+            "strength": 1.0,
+            "event_id": "P6.water",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "the swell is the bed"
+            }
+          },
+          {
+            "effect": "cloud_drift",
+            "region": [
+              0.3,
+              0.0,
+              1.0,
+              0.35
+            ],
+            "strength": 0.8,
+            "event_id": "P6.cloud",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "the sky is the bed"
+            }
+          }
+        ]
+      },
+      "old": {
+        "motion_imitation": [
+          {
+            "effect": "push",
+            "strength": 1.0
+          },
+          {
+            "effect": "water_shimmer",
+            "region": [
+              0.0,
+              0.55,
+              1.0,
+              1.0
+            ],
+            "strength": 1.0
+          }
+        ]
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "generation_mode": "WAN_I2V"
+    },
+    {
+      "shot_id": "S01_SH006",
+      "profile_kind": "2.5D object close-up: push, rest, then a small truck",
+      "new": {
+        "motion_profile": "object",
+        "motion_imitation": [
+          {
+            "effect": "push",
+            "from_frame": 0,
+            "to_frame": 100,
+            "easing": "ease_in_out",
+            "hold_frames": 6,
+            "strength": 0.7,
+            "event_id": "P7.cam1",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "camera move"
+            }
+          },
+          {
+            "effect": "truck",
+            "from_frame": 106,
+            "to_frame": 182,
+            "direction": "right",
+            "easing": "ease_out",
+            "strength": 0.6,
+            "event_id": "P7.cam2",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "camera move"
+            }
+          },
+          {
+            "effect": "mist",
+            "strength": 0.5,
+            "event_id": "P7.mist",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "mist belongs to the bed"
+            }
+          },
+          {
+            "effect": "sun_shaft_drift",
+            "strength": 0.6,
+            "event_id": "P7.sun",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "light makes no sound"
+            }
+          }
+        ]
+      },
+      "old": {
+        "motion_imitation": [
+          {
+            "effect": "push",
+            "strength": 0.7
+          },
+          {
+            "effect": "mist",
+            "strength": 0.5
+          },
+          {
+            "effect": "sun_shaft_drift",
+            "strength": 0.6
+          }
+        ]
+      }
+    },
+    {
+      "shot_id": "S02_SH005",
+      "profile_kind": "2.5D landscape: truck with drifting clouds and smoke",
+      "new": {
+        "motion_profile": "landscape",
+        "motion_imitation": [
+          {
+            "effect": "truck",
+            "direction": "left",
+            "easing": "ease_in_out",
+            "strength": 1.0,
+            "event_id": "P5.cam",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "camera move"
+            }
+          },
+          {
+            "effect": "cloud_drift",
+            "region": [
+              0.25,
+              0.0,
+              1.0,
+              0.45
+            ],
+            "direction": "right",
+            "strength": 1.0,
+            "event_id": "P5.cloud",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "the sky is part of the place's wind bed"
+            }
+          },
+          {
+            "effect": "smoke_drift",
+            "strength": 0.7,
+            "event_id": "P5.smoke",
+            "audio": {
+              "decision": "ambience_only",
+              "why": "smoke is part of the bed"
+            }
+          },
+          {
+            "effect": "sun_shaft_drift",
+            "strength": 0.7,
+            "event_id": "P5.sun",
+            "audio": {
+              "decision": "silent_by_design",
+              "why": "light makes no sound"
+            }
+          }
+        ]
+      },
+      "old": {
+        "motion_imitation": [
+          {
+            "effect": "truck",
+            "direction": "left",
+            "strength": 1.0
+          },
+          {
+            "effect": "smoke_drift",
+            "strength": 0.7
+          },
+          {
+            "effect": "sun_shaft_drift",
+            "strength": 0.7
+          }
+        ]
+      }
+    },
+    {
+      "shot_id": "S03_SH002",
+      "profile_kind": "card: counter + progress bar + milestone (numbers from the line itself)",
+      "route": "map_action",
+      "route_locked": true,
+      "route_reason": "the AV pilot shows this line's two numbers as data on a card (D-135 pilot, not the episode's route)",
+      "new": {
+        "actions": [
+          {
+            "kind": "counter",
+            "at_word": "fifteen",
+            "until_word": "centimeters",
+            "value": 15,
+            "unit": "cm",
+            "claim": "C-02",
+            "event_id": "P3.count",
+            "audio": {
+              "decision": "ui_cue",
+              "class": "data_tick",
+              "sync": "onset",
+              "purpose": "clarify"
+            },
+            "cues": "none"
+          },
+          {
+            "kind": "progress_bar",
+            "at_word": "river",
+            "until_word": "deep",
+            "value": 600,
+            "max": 600,
+            "unit": "cm",
+            "claim": "C-03",
+            "event_id": "P3.bar",
+            "audio": {
+              "decision": "sfx",
+              "class": "data_rise_texture",
+              "sync": "span",
+              "purpose": "clarify"
+            }
+          },
+          {
+            "kind": "milestone",
+            "at_word": "deep",
+            "value": 15,
+            "label": "the peninsula, 15 cm",
+            "claim": "C-02",
+            "event_id": "P3.mark",
+            "audio": {
+              "decision": "ui_cue",
+              "class": "data_tick",
+              "sync": "onset",
+              "purpose": "clarify"
+            }
+          }
+        ]
+      },
+      "old": {
+        "actions": [
+          {
+            "kind": "counter",
+            "at_word": "fifteen",
+            "value": 15,
+            "unit": "cm"
+          },
+          {
+            "kind": "counter",
+            "at_word": "six",
+            "value": 600,
+            "unit": "cm"
+          }
+        ]
+      }
+    },
+    {
+      "shot_id": "S04_SH006",
+      "profile_kind": "map: supply line active -> strained -> snap, camera push on the break",
+      "map_view": {
+        "lon": 52.0,
+        "lat": 9.0,
+        "span_km": 5200
+      },
+      "new": {
+        "actions": [
+          {
+            "kind": "supply_line",
+            "at_word": "cooler",
+            "until_word": "evaporation",
+            "from": "indian_ocean",
+            "to": "shinfa",
+            "domain": "air",
+            "event_id": "P2.supply",
+            "audio": {
+              "decision": "sfx",
+              "class": "map_route_draw",
+              "sync": "span",
+              "purpose": "clarify"
+            },
+            "cues": "none"
+          },
+          {
+            "kind": "supply_state",
+            "at_word": "without",
+            "route": "P2.supply",
+            "state": "strained",
+            "event_id": "P2.strain",
+            "audio": {
+              "decision": "ui_cue",
+              "class": "map_line_strain",
+              "sync": "onset",
+              "purpose": "clarify"
+            }
+          },
+          {
+            "kind": "snap",
+            "at_word": "failed",
+            "route": "P2.supply",
+            "camera": "push",
+            "event_id": "P2.snap",
+            "audio": {
+              "decision": "sfx",
+              "class": "map_line_snap",
+              "sync": "onset",
+              "purpose": "sync"
+            }
+          }
+        ]
+      },
+      "old": {
+        "actions": [
+          {
+            "kind": "route_arrow",
+            "at_word": "cooler",
+            "from": "indian_ocean",
+            "to": "shinfa"
+          },
+          {
+            "kind": "pulse",
+            "at_word": "without",
+            "from": "shinfa"
+          },
+          {
+            "kind": "label",
+            "at_word": "failed",
+            "from": "shinfa",
+            "label": "no rain"
+          }
+        ]
+      }
+    }
+  ],
+  "order_note": "ordered so the opening passes the hook lint (YT-00: shot 0 <= 3.8 s, shots 0+1 <= 9 s); S01_SH009 uses its start picture only (its end picture is not in the vault), so it is a start-frame shot (generation_mode WAN_I2V like S02_SH005; the archive's label, the route is still_25d)",
+  "sound_note": "cue budget per BP-81 (house): one emphasis cue a line, at most 8 cues a minute; the first run (2026-11-13) measured 14.1 a minute and 4 emphasis cues on one line with every default cue on"
+}

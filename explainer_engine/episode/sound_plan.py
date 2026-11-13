@@ -12,6 +12,14 @@ Sources (``resolve``): library first (``audio/sfx_library``); a procedural numpy
 (new takes by the creator's Q5 route: ElevenLabs sound effects, asked and priced first). A Wan clip's own audio
 (``source: clip_audio``) is an extra layer only: every shot sits in its place's bed.
 
+Events (AV contract, 2026-11-13, D-135; AV-01..AV-08 in docs/EPISODE_FIRST.md): a shot's placed events are its authored
+``sound_events`` and the audio decisions of its visible events (``episode/events.visual_events``: map actions and 2.5D motion,
+the one resolver), each carrying its ``event_id``, decision, sync and span. A spoken word or a word of the shot's action text is
+only a CANDIDATE (``candidates``: listed for a person, never placed, never a picture event): the narrator saying "falls" does
+not shake the picture or play an impact. A 2.5D shot's motion items name what the picture shows (rain, fire, water, leaves):
+their ambience joins the place's bed for that shot (``AMBIENCE_OF_EFFECT``), so the bed comes from the place and the picture,
+not from the narration.
+
 Scene-aware design (2026-11-13, SP-03..SP-05 in docs/EPISODE_FIRST.md): every shot carries a ``design`` block that answers the ten
 questions of the creator's brief from the shot's own data (what is visible, which sounds the place makes, which actions are
 heard, near or far, the bed, music or not, the mood, the sync points, what is lowered for the voice, intentional silence),
@@ -32,12 +40,12 @@ from explainer_engine.audio.sfx_planner import (ERA_COMPATIBILITY_TABLE, build_s
                                                 infer_historical_period)
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
+from explainer_engine.episode import events as E
 from explainer_engine.maps import actions as MA
 
 SCHEMA = "sound_plan/1"
 BRIDGE_S = 0.5          # engineering default: a J/L bridge of half a second each side of a place change (ED J/L cuts)
 BED_FADE_S = 0.65       # the beds' crossfade (kept from the zip's renderer)
-ACTION_AT = 0.2         # an event read from the shot's visible action lands at this share of the shot (no word to hang on)
 
 # class -> kind, library tags (ALL must match), words that ask for it, the picture event it drives (plan P5.6), era key
 EVENT_CLASSES: dict[str, dict] = {
@@ -103,7 +111,37 @@ EVENT_CLASSES: dict[str, dict] = {
     "chariot": {"kind": "foley", "tags": ["chariot"], "words": r"chariot|chariots|cart|carts|wagon|wagons"},
     "battle_din": {"kind": "ambience", "tags": ["battle", "crowd"], "words": r"melee|fighting|skirmish"},
     "arrow_volley": {"kind": "spot", "tags": ["arrow", "bow"], "words": r"archers|archer|bowmen"},
+    # AV contract (2026-11-13, D-135): the map, data and 2.5D motion classes, authored by the visible events only. Where an
+    # overlay class already plays the same takes, ``same_as`` names it (one set of takes, a name that says what moves);
+    # ``match`` are the catalog facets tried first, ``tags`` the reported legacy fallback (W1 handoff section 6).
+    "map_route_draw": {"kind": "foley", "tags": ["line", "write"], "words": None, "same_as": "ov_draw",
+                       "match": {"sound_category": ["foley"], "action_tags": ["draw", "write", "scratch"],
+                                 "materials": ["paper"]}},
+    "map_pin_set": {"kind": "foley", "tags": ["soft", "thud"], "words": None, "same_as": "ov_thud",
+                    "match": {"action_tags": ["pin", "tap", "set_down"], "materials": ["paper", "wood"]}},
+    "map_arrive_click": {"kind": "foley", "tags": ["click", "tick"], "words": None,
+                         "match": {"sound_category": ["interface"], "action_tags": ["click"]}},
+    "map_tokens_shift": {"kind": "foley", "tags": ["paper", "slide"], "words": None, "same_as": "ov_slide",
+                         "match": {"action_tags": ["slide", "shift"], "materials": ["paper", "wood"]}},
+    "map_line_strain": {"kind": "foley", "tags": ["rope", "strain"], "words": None,
+                        "match": {"action_tags": ["strain", "stretch", "creak"], "materials": ["cloth", "plant"]}},
+    "map_line_snap": {"kind": "spot", "tags": ["rope", "snap"], "words": None,
+                      "match": {"action_tags": ["snap", "break"], "materials": ["cloth", "plant", "wood"]}},
+    "data_rise_texture": {"kind": "transition", "tags": ["riser"], "words": None, "same_as": "riser",
+                          "match": {"sound_category": ["transitions", "cinematic_textures"], "action_tags": ["rise", "reveal"]}},
+    "data_tick": {"kind": "foley", "tags": ["click", "counter", "tick"], "words": None,
+                  "match": {"sound_category": ["interface"], "action_tags": ["tick", "count"]}},
+    "data_confirm": {"kind": "foley", "tags": ["bell", "soft"], "words": None, "same_as": "ov_glow",
+                     "match": {"sound_category": ["interface"], "action_tags": ["confirm", "chime"]}},
+    "cloth_flap": {"kind": "foley", "tags": ["cloth", "flap"], "words": None,
+                   "match": {"action_tags": ["flap", "flag"], "materials": ["cloth"]}},
 }
+AV_CLASSES = ("map_route_draw", "map_pin_set", "map_arrive_click", "map_tokens_shift", "map_line_strain", "map_line_snap",
+              "data_rise_texture", "data_tick", "data_confirm", "cloth_flap")
+# a 2.5D motion item names what the picture shows: its sound joins the shot's bed (the picture, not the narration)
+AMBIENCE_OF_EFFECT = {"rain": "rain", "fire_flicker": "fire", "embers": "fire", "water_shimmer": "water_waves",
+                      "foliage_sway": "wind", "cloud_drift": "wind", "cloth_flap": "wind", "ash_fall": "ash_fall",
+                      "smoke_drift": "wind", "dust": "wind"}
 # what the picture must show for a word of the read to place the class (besides the class's own words): a narrator saying
 # "erupts" over smoke on the ridge is heard; "erupts" over a face in a cave is not placed (heard_not_seen)
 SEEN = {"eruption_boom": r"smoke|plume|lava|ash cloud|crater|volcano|caldera", "thunder": r"storm|lightning|clouds",
@@ -210,45 +248,90 @@ def _event(cls: str, at_s: float, basis: str, fps: int, **extra) -> dict:
     return ev
 
 
+def _visual(ev: dict, fps: int) -> dict | None:
+    """The sound plan's event for one visible event, or None when it places nothing (ambience_only, music_only, silence and
+    review are recorded on the shot, not placed)."""
+    a = ev["audio"]
+    if a["decision"] not in E.NEEDS_CLASS:
+        return None
+    cls = a["class"]
+    if cls not in EVENT_CLASSES:
+        raise ContractError(f"{ev['shot_id']}: event {ev['event_id']} names the class {cls!r}, which EVENT_CLASSES does not list")
+    f0 = ev["end_frame"] - 1 if a.get("sync") == "end" else ev["start_frame"]
+    extra = {"event_id": ev["event_id"], "decision": a["decision"], "sync": a.get("sync", "onset"),
+             "purpose": a.get("purpose"), "op": ev["op"], "audio_basis": ev["audio_basis"],
+             "span_frames": [ev["start_frame"], ev["end_frame"]]}
+    if a.get("sync") == "span":
+        extra["dur_s"] = round((ev["end_frame"] - ev["start_frame"]) / fps, 3)
+    out = _event(cls, f0 / fps, f"visual:{ev['op']}:{ev['timing']['start']}", fps, **extra)
+    out["at_frame"] = int(f0)
+    return out
+
+
 def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] | None = None) -> tuple[list[dict], list]:
-    """The events of one shot (shot-relative times): authored first, then spoken words, then the visible action."""
+    """The placed events of one shot (shot-relative times): its authored ``sound_events`` and the audio decisions of its
+    visible events. Words of the read and of the action text are candidates only (``_CANDIDATES``)."""
     sid = shot.get("shot_id", "?")
     dur = float(shot.get("target_duration_seconds") or 0.0)
     frames = max(1, int(round(dur * fps)))
     events, blocked, seen = [], [], set()
-    for item in shot.get("sound_events") or []:
+    for k, item in enumerate(shot.get("sound_events") or []):
         cls = item.get("class") or _class_of(item.get("what", ""))
         if cls is None:
             raise ContractError(f"{sid}: sound event {item.get('what')!r} names no class of EVENT_CLASSES; add the class "
                                 f"once (so the library is filled once) or name it")
+        if cls not in EVENT_CLASSES:
+            raise ContractError(f"{sid}: sound event class {cls!r} is not in EVENT_CLASSES")
         at = float(item.get("at_s", 0.0))
         if at > dur + 1e-6:
             raise ContractError(f"{sid}: sound event {cls} at {at} s is after the shot's end ({dur} s)")
-        extra = {k: item[k] for k in ("library_id", "source", "what", "distance", "dur_s") if k in item}
-        if item.get("picture_event"):
+        extra = {k_: item[k_] for k_ in ("library_id", "source", "what", "distance", "dur_s", "purpose") if k_ in item}
+        if item.get("picture_event"):     # the picture shakes or flashes on it: its purpose is sync (BP-55)
             extra["picture_event"] = item["picture_event"]
+            extra.setdefault("purpose", "sync")
+        extra.update(event_id=item.get("event_id") or f"{sid}.S{k + 1}", decision="sfx" if EVENT_CLASSES[cls]["kind"] !=
+                     "ambience" else "ambience_only", sync="span" if item.get("dur_s") else "onset", audio_basis="authored")
         events.append(_event(cls, at, "authored", fps, **extra))
         seen.add(cls)
+    vis = E.visual_events(shot, script, spine, fps) if (shot.get("actions") or shot.get("motion_imitation")) else []
+    decisions = []
+    for ev in vis:
+        placed = _visual(ev, fps)
+        decisions.append({"event_id": ev["event_id"], "op": ev["op"], "decision": ev["audio"]["decision"],
+                          "class": ev["audio"].get("class"), "why": ev["audio"].get("why"), "audio_basis": ev["audio_basis"],
+                          "frames": [ev["start_frame"], ev["end_frame"]], "placed": placed is not None})
+        if placed is not None:
+            events.append(placed)
+        elif ev["audio"]["decision"] == "ambience_only" and ev["source"] == "motion_imitation" \
+                and AMBIENCE_OF_EFFECT.get(ev["op"]) and AMBIENCE_OF_EFFECT[ev["op"]] not in seen:
+            cls = AMBIENCE_OF_EFFECT[ev["op"]]
+            events.append(_event(cls, 0.0, f"picture:{ev['op']}", fps, event_id=ev["event_id"], decision="ambience_only",
+                                 sync="span", audio_basis=ev["audio_basis"], dur_s=round(dur, 3)))
+            seen.add(cls)
+    _DECISIONS[sid] = decisions
+    # candidates: what the words name (the read, then the action text); listed for a person, never placed
     words = MA.shot_words(shot, script)
     starts, word_basis = MA.word_frames(words, frames, spine)
     visible = _visible(shot)
-    heard_only = []
+    heard_only, cands = [], []
     for i, w in enumerate(words if not is_map(shot) else []):
         for cls, rx in _COMPILED.items():
-            if cls in seen or not rx.fullmatch(w):
+            if not rx.fullmatch(w) or any(c["class"] == cls for c in cands):
                 continue
-            if not seen_in(cls, visible):          # only mentioned, not shown: never placed (the brief: no invented events)
+            if not seen_in(cls, visible):
                 if cls not in heard_only:
                     heard_only.append(cls)
                 continue
-            events.append(_event(cls, starts[i] / fps, f"word:{w}:{word_basis}", fps))
-            seen.add(cls)
+            cands.append({"class": cls, "source": "word", "word": w, "at_s": round(starts[i] / fps, 3),
+                          "basis": word_basis, "why": "a word of the read names it and the picture shows it: a person "
+                          "authors the event (AV-07); words never place a sound"})
     text = _action_text(shot)
     for cls, rx in _COMPILED.items():
-        if cls in seen or not rx.search(text):
+        if any(c["class"] == cls for c in cands) or not rx.search(text):
             continue
-        events.append(_event(cls, ACTION_AT * dur, "action", fps))
-        seen.add(cls)
+        cands.append({"class": cls, "source": "action_text", "at_s": None, "basis": "text",
+                      "why": "the shot's action text names it: a person authors the event with its frame (AV-07)"})
+    _CANDIDATES[sid] = [c for c in cands if c["class"] not in seen]
     for ev in events:
         ev["distance"] = ev.get("distance") or distance_of(ev["class"], shot)
     _HEARD[sid] = heard_only
@@ -256,10 +339,14 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
     kept = []
     for ev in events:
         if _ERA_NAMES.get(ev["class"], ev["class"]) in forbidden:
-            blocked.append({"shot_id": sid, "class": ev["class"], "era": era})
+            blocked.append({"shot_id": sid, "class": ev["class"], "era": era, "event_id": ev.get("event_id")})
         else:
             kept.append(ev)
     return sorted(kept, key=lambda e: (e["at_s"], e["class"])), blocked
+
+
+_DECISIONS: dict[str, list[dict]] = {}   # shot id -> every visible event's decision (last build only)
+_CANDIDATES: dict[str, list[dict]] = {}  # shot id -> classes a word names (last build only): never placed
 
 
 _HEARD: dict[str, list[str]] = {}     # shot id -> classes the read names that the picture does not show (last build only)
@@ -329,6 +416,9 @@ def design_of(sh: dict, out: dict, bed: dict, mood: str, music_on: bool, music_r
                          else "no line: nothing to lower",
         "silence": str(silence) if silence else "none (the bed and room tone carry the shot)",
     }
+    answers["visual_events"] = [f"{d['event_id']} {d['op']}: {d['decision']}" + (f" {d['class']}" if d.get('class') else "")
+                                for d in out.get("visual_events", [])]
+    answers["candidates"] = [f"{c['class']} ({c['source']})" for c in out.get("candidates", [])]
     return {"state": state, "layers": layers, "answers": answers, "heard_not_seen": heard_not_seen(out["shot_id"]),
             **({"silence_reason": str(silence)} if silence else {})}
 
@@ -344,6 +434,8 @@ def music_decision(seg: dict, mood: str) -> tuple[bool, str]:
 
 
 def _class_of(what: str) -> str | None:
+    if (what or "").strip() in EVENT_CLASSES:     # the class's own id names it (an authored event of the AV contract)
+        return what.strip()
     for cls, rx in _COMPILED.items():
         if rx.search(what or ""):
             return cls
@@ -354,6 +446,8 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
     """The plan: shots with absolute times and events, beds per place with J/L bridges, music per segment, the needs."""
     era = infer_historical_period(script)
     _HEARD.clear()
+    _DECISIONS.clear()
+    _CANDIDATES.clear()
     shots, blocked, beds = [], [], []
     t = 0.0
     lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
@@ -379,7 +473,8 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
         shots.append({"shot_id": sid, "segment_id": sh.get("segment_id"), "start_s": round(t, 3), "dur_s": round(dur, 3),
                       "route": route, "place": place, "room": "cave" if meta["spatial_context"].startswith("indoor")
                       else "outdoor", "weather": meta["weather"], "surface": meta["surface"],
-                      "audio_line_ids": list(sh.get("audio_line_ids") or []), "events": evs})
+                      "audio_line_ids": list(sh.get("audio_line_ids") or []), "events": evs,
+                      "visual_events": list(_DECISIONS.get(sid, [])), "candidates": list(_CANDIDATES.get(sid, []))})
         if beds and beds[-1]["place"] == place:
             beds[-1]["end_s"] = round(t + dur, 3)
             beds[-1]["shot_ids"].append(sid)
@@ -423,7 +518,19 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
             "segment_moods": {k: {"mood": v[0], "basis": v[1], "music": musics[k][0], "music_reason": musics[k][1]}
                               for k, v in moods.items()}, "coverage": coverage,
             "classes": sorted({e["class"] for s in shots for e in s["events"]} | {c for b in beds for c in b["classes"]}
-                              | ({"music_bed"} if music else set()))}
+                              | ({"music_bed"} if music else set())),
+            "av": {"resolver": E.RESOLVER_VERSION, "contract": script.get("av_contract") or "legacy",
+                   "decisions": _count([d["decision"] for s in shots for d in s["visual_events"]]),
+                   "review_required": [d["event_id"] for s in shots for d in s["visual_events"]
+                                       if d["decision"] == "review_required"],
+                   "candidates": sum(len(s["candidates"]) for s in shots)}}
+
+
+def _count(xs: list) -> dict:
+    out: dict = {}
+    for x in xs:
+        out[x] = out.get(x, 0) + 1
+    return out
 
 
 def _origin(item: dict) -> str:
@@ -438,20 +545,51 @@ def _words_of(item: dict) -> set[str]:
     return set(item.get("tags", [])) | set(re.findall(r"[a-z]+", text))
 
 
+def _facet_hit(item: dict, match: dict) -> bool:
+    """A take whose own (not inferred) catalog carries every facet the class names (any value of each)."""
+    cat = item.get("catalog") or {}
+    if not cat or cat.get("inferred"):
+        return False
+    for key, want in match.items():
+        have = cat.get(key)
+        have = set(have) if isinstance(have, list) else ({have} if have else set())
+        if not have & set(want):
+            return False
+    return True
+
+
+def _candidates(cls: str, root: Path) -> tuple[list[dict], str]:
+    """(takes, basis): catalog facets first (``facets``), else the class's legacy tags (``legacy_tags``, reported)."""
+    spec = EVENT_CLASSES[cls]
+    usable = sfx_library.find(Path(root))
+    if spec.get("match"):
+        hit = [i for i in usable if _facet_hit(i, spec["match"])]
+        if hit:
+            return hit, "facets"
+    return sfx_library.find(Path(root), tags=spec["tags"]), "legacy_tags"
+
+
 def resolve(plan: dict, library_root: Path) -> dict:
-    """Pick a library sound for every class: ``library`` (a real take), ``placeholder`` (procedural only) or ``missing``."""
+    """Pick a library sound for every class: ``library`` (a real take), ``placeholder`` (procedural only) or ``missing``.
+    Each source says how it was matched (catalog ``facets`` or the reported ``legacy_tags`` fallback), how many of its takes
+    carry an inferred catalog, their technical QC and whether a person has listened (three statuses, never merged)."""
     out = {}
     foreign = ERA_FOREIGN_TAGS.get(plan.get("era"), set())
     for cls in plan["classes"]:
         tags = EVENT_CLASSES[cls]["tags"]
-        found = [i for i in sfx_library.find(Path(library_root), tags=tags) if not foreign & _words_of(i)]
+        found, basis = _candidates(cls, library_root)
+        found = [i for i in found if not foreign & _words_of(i)]
         real = [i for i in found if _origin(i) != "procedural"]
+        info = {"match": basis, "same_as": EVENT_CLASSES[cls].get("same_as")}
         if real:
-            out[cls] = {"status": "library", "ids": [i["id"] for i in real], "origin": _origin(real[0])}
+            out[cls] = {"status": "library", "ids": [i["id"] for i in real], "origin": _origin(real[0]), **info,
+                        "inferred_catalog": sum(1 for i in real if (i.get("catalog") or {}).get("inferred")),
+                        "qc": _count([(i.get("qc") or {}).get("status") or "NOT_RUN" for i in real]),
+                        "human": _count([(i.get("review") or {}).get("human") or "not_listened" for i in real])}
         elif found:
-            out[cls] = {"status": "placeholder", "ids": [i["id"] for i in found], "origin": "procedural"}
+            out[cls] = {"status": "placeholder", "ids": [i["id"] for i in found], "origin": "procedural", **info}
         else:
-            out[cls] = {"status": "missing", "ids": [], "tags": tags}
+            out[cls] = {"status": "missing", "ids": [], "tags": tags, **info}
     return out
 
 

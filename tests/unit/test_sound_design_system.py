@@ -104,13 +104,16 @@ def _shot(sid, action, lines=(), **kw):
                  "audio_line_ids": list(lines), "action_start_state": action, "route": "video"}, **kw)
 
 
-def test_a_word_places_a_sound_only_when_the_picture_shows_it():
+def test_a_word_is_a_candidate_only_when_the_picture_shows_it_and_is_never_placed():
+    # AV contract (D-135, the creator's AV brief 2026-11-13): words never place a sound; a person authors it
     lines = [{"line_id": "L1", "text": "Far away the fire spreads."}, {"line_id": "L2", "text": "Far away the fire spreads."}]
     plan = SP.build(_script([_shot("A", "a woman looks at the camera, close", ["L1"]),
                              _shot("B", "embers glow by the hearth", ["L2"])], lines), fps=FPS)
     a, b = plan["shots"]
     assert not any(e["class"] == "fire" for e in a["events"]) and "fire" in a["design"]["heard_not_seen"]
-    assert any(e["class"] == "fire" and e["basis"].startswith("word:fire") for e in b["events"])
+    assert not any(c["class"] == "fire" for c in a["candidates"])
+    assert not any(e["class"] == "fire" for e in b["events"])
+    assert any(c["class"] == "fire" and c["source"] == "word" for c in b["candidates"])
 
 
 def test_a_map_shot_takes_no_word_events_only_its_action_and_authored_ones():
@@ -148,14 +151,15 @@ def test_music_follows_the_segment_mood():
 
 
 def test_every_shot_names_a_coverage_state_and_silence_needs_its_reason():
-    shots = [_shot("A", "riders gallop past", segment_id="S01"),
+    shots = [_shot("A", "riders gallop past", segment_id="S01",
+                   sound_events=[{"class": "horse_hooves", "at_s": 0.5, "what": "riders gallop past"}]),
              _shot("B", "the hall is empty", sound_design={"silence": "the moment after the news: nothing moves"})]
     plan = SP.build(_script(shots, era="napoleonic_1815"), fps=FPS)
     a, b = plan["shots"]
     assert a["design"]["state"] == "FULL_LAYERED_DESIGN" and b["design"]["state"] == "INTENTIONAL_SILENCE"
     assert set(a["design"]["answers"]) == {"visible", "environment_sounds", "audible_actions", "perspective",
                                            "ambience_layer", "music_supports", "emotion", "sync_points", "protect_voice",
-                                           "silence"}
+                                           "silence", "visual_events", "candidates"}
     assert set(a["design"]["layers"]) == set(CS.LAYERS)
     assert SP.coverage_state([], False, True, None) == "MINIMAL_DESIGN"
     with pytest.raises(ContractError, match="needs its reason"):

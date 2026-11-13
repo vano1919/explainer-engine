@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 
 from explainer_engine.core.errors import ConfigError, ContractError
-from explainer_engine.core.store import write_json_atomic
+from explainer_engine.core.store import write_json_atomic, write_text_atomic
 from explainer_engine.episode import timing as TM
 from explainer_engine.qa import gates as G
 
@@ -258,7 +258,31 @@ def stage_script(ep: Episode, rehearsal: bool):
             differ.append(f"{s['shot_id']}: {s['route']} -> {route}")
     rows.append(G.row("router_agrees", not differ, f"{len(differ)} unlocked shot(s) whose route the router would change "
                       "(run route_script or lock the route with its reason)", differ[:20], level=G.REVIEW))
+    from explainer_engine.episode import events as E
+    from explainer_engine.episode import sound_plan as SP
+    rows += E.contract_rows(doc, set(SP.EVENT_CLASSES), ep.fps)
+    rows.append(_claims_row(ep, doc))
     return rows, {"mix": R.mix_report(doc), "shots": len(shots), "audit_status": audit["status"]}
+
+
+def _claims_row(ep: Episode, doc: dict) -> dict:
+    """Every number a map shows (counter, bar_grow, progress_bar, milestone) carries a claim id of the episode's claim map
+    (``story/claim_map.md``, scripting/claims): values come from claims, never invented (W3)."""
+    from explainer_engine.maps import actions as MA
+    from explainer_engine.scripting import claims as CL
+    shown = [(s["shot_id"], a) for s in doc.get("shots", []) for a in s.get("actions") or [] if a.get("kind") in MA.NUMBER_KINDS]
+    if not shown:
+        return G.row("map_numbers_have_claims", True, "no map shot shows a number", 0)
+    cmap = CL.load_map(ep.root / SCRIPT_REL)
+    no_claim = [f"{sid}:{a.get('kind')}" for sid, a in shown if not a.get("claim")]
+    unknown = [f"{sid}:{a.get('claim')}" for sid, a in shown if a.get("claim") and cmap is not None and a["claim"] not in cmap]
+    if cmap is None:   # nothing to resolve the ids against: a person checks them (REVIEW), a missing id still FAILs
+        if no_claim:
+            return G.row("map_numbers_have_claims", False, f"shown numbers without a claim id {no_claim[:10]}", no_claim[:10])
+        return G.row("map_numbers_have_claims", False, f"{len(shown)} shown number(s) carry claim ids, but the episode has no "
+                     "claim map (story/claim_map.md) to resolve them", len(shown), level=G.REVIEW)
+    return G.row("map_numbers_have_claims", not no_claim and not unknown, f"{len(shown)} shown number(s): without a claim "
+                 f"{no_claim[:10]}, claim not in the map {unknown[:10]}", no_claim[:10] + unknown[:10])
 
 
 def stage_sound_plan(ep: Episode, rehearsal: bool):
@@ -275,7 +299,14 @@ def stage_sound_plan(ep: Episode, rehearsal: bool):
             G.row("every_sound_class_has_a_take", not needs, f"{len(needs)} class(es) still need a real take (the needs "
                   "list; new takes are paid credits, the creator's word first)", [n["class"] for n in needs][:30],
                   level=G.REVIEW)]
-    return rows, {"plan": str(path.relative_to(ep.root)), "classes": len(plan["classes"]), "needs": len(needs)}
+    from explainer_engine.episode import events as E
+    write_json_atomic(ep.path("production/av_events.json"), E.events_report(ep.script, None, ep.fps))
+    rv = plan["av"]["review_required"]
+    rows.append(G.row("av_events_decided", not rv, f"{sum(plan['av']['decisions'].values())} visible event(s) "
+                      f"{plan['av']['decisions']}; review_required {rv[:10]}; {plan['av']['candidates']} word candidate(s) "
+                      "listed, none placed (AV-07)", rv[:30], level=G.REVIEW))
+    return rows, {"plan": str(path.relative_to(ep.root)), "classes": len(plan["classes"]), "needs": len(needs),
+                  "av_events": "production/av_events.json"}
 
 
 def _picture_ledger(root: Path) -> Path:
@@ -379,12 +410,19 @@ def stage_voice(ep: Episode, rehearsal: bool):
 
 
 def _events_for_picture(plan_shot: dict) -> list[dict]:
+    """The picture answers only an AUTHORED sound event (AV-07): a word of the read never shakes or flashes a picture."""
     return [{"frame": int(e["at_frame"]), "kind": e["picture_event"]} for e in plan_shot.get("events", [])
-            if e.get("picture_event")]
+            if e.get("picture_event") and e.get("basis") == "authored"]
 
 
-def _clip_key(shot: dict, files: list, ep: Episode, spine) -> str:
-    return _digest({"shot": shot, "files": files, "size": list(ep.size), "fps": ep.fps, "spine": spine})
+def _clip_key(shot: dict, files: list, ep: Episode, spine, events: list | None = None, renderer: str = "") -> str:
+    """The cache key of one clip (AV-08): the shot's data, its pictures (paths and SHA-256), size and fps, the spine's hash,
+    the hash of its resolved events, its motion profile and settings, and the renderer and contract versions. Any of them
+    changing renders the clip again."""
+    from explainer_engine.episode import events as E
+    return _digest({"shot": shot, "files": files, "size": list(ep.size), "fps": ep.fps, "spine_sha": E.spine_hash(spine),
+                    "events_sha": E.events_hash(events or []), "motion_profile": shot.get("motion_profile"),
+                    "renderer": renderer, "resolver": E.RESOLVER_VERSION, "contract": ep.script.get("av_contract") or "legacy"})
 
 
 def _wan_clip(ep: Episode, sid: str) -> dict | None:
@@ -416,6 +454,11 @@ def stage_clips(ep: Episode, rehearsal: bool):
         if ep.path("production/pictures.json").is_file() else {}
     plan = SP.build(script, fps=ep.fps, spines=spines)
     plan_by = {s["shot_id"]: s for s in plan["shots"]}
+    from explainer_engine.episode import events as E
+    from explainer_engine.maps import actions as MA
+    ev_doc = E.events_report(script, spines, ep.fps)    # the one resolver on the measured clock (AV-01)
+    write_json_atomic(ep.path("production/av_events.json"), ev_doc)
+    av_events = ev_doc["shots"]
     w, h = ep.size
     clips_dir = ep.path("production/shot_clips")
     clips_dir.mkdir(parents=True, exist_ok=True)
@@ -434,7 +477,9 @@ def stage_clips(ep: Episode, rehearsal: bool):
         is_map = route == "map_action" or sh.get("visual_type") == "map_visualization"
         start = pics.get(f"{sid}_start")
         end = pics.get(f"{sid}_end")
-        key = _clip_key(sh, [start, end], ep, spines.get(sid))
+        evs = av_events.get(sid, {}).get("events", [])
+        renderer = MA.RENDERER_VERSION if is_map else L25.RENDERER_VERSION
+        key = _clip_key(sh, [start, end], ep, spines.get(sid), evs, renderer)
         old = json.loads(report.read_text(encoding="utf-8")) if report.is_file() else None
         if old and old.get("key") == key and out.is_file() and _sha(out) == old.get("output_sha256") and not ep.force:
             records.append(dict(old["record"], start_sec=rec["start_sec"], end_sec=rec["end_sec"]))
@@ -551,7 +596,23 @@ def stage_sound(ep: Episode, rehearsal: bool):
     n_drop = int(stem_audit.get("mid_line_narration_dropouts", 0))
     rows.append(G.row("narration_has_no_dropouts", n_drop == 0 if read.is_file() else None,
                       f"{n_drop} mid-line dropout(s)" if read.is_file() else "no read to scan", n_drop))
-    return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source")}
+    # P0-C (D-135): the cue sheet's AV rows (BP-54 on the rendered onsets, BP-55, BP-56, BP-81) and the stems' mix check
+    # (BP-50/52 loudness and voice protection, BP-161 silence) join the stage's rows; machine QC, never a listening
+    av = ("events_on_sync", "events_on_the_frame", "purpose_and_share", "overlap", "cue_density", "cue_rate_review",
+          "one_emphasis_a_line", "review_required_events")
+    rows += [dict(r, gate=f"cue_{r['gate']}") for r in rep.get("cue_rows", []) if r["gate"] in av]
+    from explainer_engine.audio import mix_check as MC
+    sheet = json.loads((stems_dir / "cue_sheet.json").read_text(encoding="utf-8"))
+    mixq = MC.check(stems_dir, plan=plan, sheet=sheet)
+    write_json_atomic(ep.path("qa/mix_check.json"), mixq)
+    rows += [dict(r, gate=f"mix_{r['gate']}") for r in mixq["rows"]]
+    from explainer_engine.episode import av_report as AVR
+    from explainer_engine.episode import events as E
+    ev_doc = E.events_report(script, TM.spines_of(timing), ep.fps)
+    rep_av = AVR.event_report(ev_doc, plan, sheet, rep)
+    write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
+    return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source"),
+                  "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json"}
 
 
 def _with_line_times(script: dict, timing: dict | None) -> dict:
@@ -640,6 +701,26 @@ def stage_qa(ep: Episode, rehearsal: bool):
         sheet = ep.path(f"qa/contact_sheets/{ep.manifest['episode_id']}_contact_sheet.jpg")
         generate_master_video_contact_sheet(master_mp4_path=Path(video["master_mp4_path"]), shot_records=records,
                                             out_jpg_path=sheet)
+    realism_rows = []
+    if video:   # P0-C (D-135): BP-189..BP-193 on the delivered file, measured, never a listening
+        from explainer_engine.episode import av_report as AVR
+        from explainer_engine.episode import events as E
+        from explainer_engine.qa import sound_realism as RL
+        plan = rd("audio/sound_plan.json") or {}
+        lw = {ln["line_id"]: (ln["start_sec"], ln["end_sec"]) for ln in _with_line_times(script, ep.timing())["audio_lines"]
+              if ln.get("start_sec") is not None and _narration_source(ep, audio) not in (None, "none")}
+        tl = AVR.timeline(plan, records, audio, lw)
+        write_json_atomic(ep.path("qa/scene_timeline.json"), tl)
+        realism = RL.measure(Path(video["master_mp4_path"]), tl)
+        write_json_atomic(ep.path("qa/sound_realism.json"), {k: v for k, v in realism.items() if k != "gates"})
+        realism_rows = [dict(r, gate=f"realism_{r['gate']}") for r in realism["rows"]]
+        sheet_doc = rd("audio/stems/cue_sheet.json")
+        rep_av = AVR.event_report(E.events_report(script, TM.spines_of(ep.timing()), ep.fps), plan, sheet_doc, audio, realism)
+        write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
+        write_text_atomic(ep.path("qa/av_event_report.md"), AVR.markdown(rep_av))
+    acc = dict(acc, gates=list(acc["gates"]) + realism_rows)
+    if realism_rows:
+        acc["status"] = G.verdict(acc["gates"])["status"]
     manifest = {"schema": "episode_production_manifest/4.3", "episode_id": ctx.episode_id, "title": ctx.title,
                 "historical_period": ctx.era_id, "rehearsal": rehearsal, "master_video": video,
                 "contact_sheet_path": str(sheet.relative_to(ep.root)) if sheet else None,

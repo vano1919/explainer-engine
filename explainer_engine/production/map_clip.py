@@ -167,10 +167,15 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
     rows = [G.row("map_has_actions", bool(p["actions"]), f"{len(p['actions'])} action(s) on their words (RT-03)",
                   len(p["actions"])),
             G.row("map_not_standing_still", longest <= still_max, f"longest still stretch {longest} frames (BP-164: "
-                  f"{still_max}); the first action starts at frame {first_action}", longest, level=SR.level("BP-164"))]
+                  f"{still_max}); the first action starts at frame {first_action}", longest, level=SR.level("BP-164")),
+            G.row("map_routes_follow_the_land", not p["path_findings"], f"{len(p['path_findings'])} route finding(s) of map "
+                  "law 2 on the via-waypoint splines (maps/paths.validate, CMP-02)",
+                  [x["detail"] for x in p["path_findings"]][:5], level=G.REVIEW)]
     return {"status": "generated", "provider": "python_action_map", "cost_usd": 0.0, "shot_id": p["shot_id"],
             "gates": G.verdict(rows), "relief_upsample_max": upsample,
-            "card": p["card"], "word_basis": p["basis"], "actions": [{k: a[k] for k in ("kind", "word", "start", "end")} for a in p["actions"]],
+            "card": p["card"], "word_basis": p["basis"], "actions": [{k: a[k] for k in ("kind", "word", "start", "end", "event_id")} | {"decision": a["audio"]["decision"]}
+                        for a in p["actions"]],
+            "longest_still_frames": longest, "dense": p["dense"],
             "total_frames": p["frames"], "fps": fps, "resolution": [width, height], "path": str(out),
             "start_keyframe_path": keys.get("start"), "end_keyframe_path": keys.get("end"),
             "output_sha256": hashlib.sha256(out.read_bytes()).hexdigest()}

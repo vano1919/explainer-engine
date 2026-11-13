@@ -1,5 +1,6 @@
-"""v4.3 plan P7: one sound plan per episode and one renderer for every route. Events land on their words or on the visible
-action, an era refuses what it never heard, place changes carry J/L bridges, a placeholder or a missing voice never ships,
+"""v4.3 plan P7: one sound plan per episode and one renderer for every route. Events are authored (sound_events, or the audio
+decision of a visible event, AV contract D-135); a word of the read or of the action text is only a candidate, never placed
+(the creator's AV brief, 2026-11-13); an era refuses what it never heard, place changes carry J/L bridges, a placeholder or a missing voice never ships,
 and the background is measured per route so a Wan shot, a 2.5D shot and a map sound alike (BP-186)."""
 from __future__ import annotations
 
@@ -24,7 +25,8 @@ def _script(shots=None, lines=None, era="prehistoric_pleistocene"):
         {"shot_id": "A2", "segment_id": "S01", "target_duration_seconds": 3.0, "location_id": "loc_caldera",
          "audio_line_ids": ["L2"], "action_start_state": "the band walks down the slope", "route": "map_action"},
         {"shot_id": "B1", "segment_id": "S02", "target_duration_seconds": 3.0, "location_id": "loc_cave",
-         "audio_line_ids": ["L3"], "action_start_state": "inside the cave shelter by the hearth", "route": "video"},
+         "audio_line_ids": ["L3"], "action_start_state": "inside the cave shelter by the hearth", "route": "video",
+         "sound_events": [{"kind": "ambience", "class": "fire", "what": "the hearth crackles", "at_s": 0.0}]},
         {"shot_id": "B2", "segment_id": "S02", "target_duration_seconds": 3.0, "location_id": "loc_cave",
          "audio_line_ids": [], "action_start_state": "inside the cave shelter, quiet", "route": "video",
          "sound_events": [{"kind": "spot", "what": "a distant eruption boom", "at_s": 1.5, "picture_event": "eruption"}]},
@@ -64,28 +66,31 @@ def _narration(path, seconds, speech):
     return path
 
 
-def test_events_land_on_their_word_the_action_or_the_authored_time():
+def test_words_are_candidates_and_only_authored_events_are_placed():
     plan = SP.build(_script(), fps=FPS)
     a1, a2, b1, b2 = plan["shots"]
-    boom = next(e for e in a1["events"] if e["class"] == "eruption_boom")
-    assert boom["basis"].startswith("word:erupts") and boom["picture_event"] == "eruption"
-    assert boom["at_frame"] == int(round(boom["at_s"] * FPS)) and 0 < boom["at_s"] < 3.0
-    walk = next(e for e in a2["events"] if e["class"] == "footsteps_dirt")
-    assert walk["basis"] == "action" and walk["at_s"] == pytest.approx(SP.ACTION_AT * 3.0)
-    assert any(e["class"] == "fire" and e["basis"].startswith("word:fire") for e in b1["events"])
+    assert not any(e["class"] == "eruption_boom" for e in a1["events"])      # "erupts" in the read places nothing
+    assert not any(e.get("picture_event") for e in a1["events"])             # ... and shakes nothing
+    cand = next(c for c in a1["candidates"] if c["class"] == "eruption_boom")
+    assert cand["source"] == "word" and cand["word"] == "erupts" and 0 < cand["at_s"] < 3.0
+    assert not a2["events"] and any(c["class"] == "footsteps_dirt" and c["source"] == "action_text" for c in a2["candidates"])
+    assert any(e["class"] == "fire" and e["basis"] == "authored" for e in b1["events"])
     authored = next(e for e in b2["events"] if e["basis"] == "authored")
     assert authored["class"] == "eruption_boom" and authored["at_s"] == 1.5 and authored["at_frame"] == 36
+    assert authored["picture_event"] == "eruption" and authored["event_id"] == "B2.S1"
 
 
-def test_a_measured_spine_moves_the_word_event():
+def test_a_measured_spine_moves_the_word_candidate():
     spine = {"A1": [{"word": w, "start_frame": f} for w, f in zip(["then", "the", "mountain", "erupts"], [0, 10, 20, 60])]}
-    boom = next(e for e in SP.build(_script(), fps=FPS, spines=spine)["shots"][0]["events"] if e["class"] == "eruption_boom")
-    assert boom["at_frame"] == 60 and boom["basis"] == "word:erupts:measured"
+    cand = next(c for c in SP.build(_script(), fps=FPS, spines=spine)["shots"][0]["candidates"] if c["class"] == "eruption_boom")
+    assert cand["at_s"] == 2.5 and cand["basis"] == "measured"
 
 
 def test_an_era_refuses_what_it_never_heard():
     shots = [{"shot_id": "X1", "segment_id": "S01", "target_duration_seconds": 2.0, "location_id": "loc_a",
-              "audio_line_ids": [], "action_start_state": "riders gallop past with swords drawn"}]
+              "audio_line_ids": [], "action_start_state": "riders gallop past with swords drawn",
+              "sound_events": [{"kind": "foley", "class": "horse_hooves", "what": "riders gallop", "at_s": 0.2},
+                               {"kind": "spot", "class": "metal_clash", "what": "swords drawn", "at_s": 1.0}]}]
     plan = SP.build(_script(shots=shots, lines=[]), fps=FPS)
     assert {b["class"] for b in plan["blocked_era_events"]} == {"horse_hooves", "metal_clash"}
     assert not {"horse_hooves", "metal_clash"} & {e["class"] for e in plan["shots"][0]["events"]}
