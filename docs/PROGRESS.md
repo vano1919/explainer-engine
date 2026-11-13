@@ -6252,3 +6252,8 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   `torch.inference_mode()`. Test `test_ltx_inproc::test_the_session_opens_gemma_and_the_transformer_inside_inference_mode`
   (fails on the old worker). The red ladder is kept as `ladder_2026-11-13_worker_9739fdb2_red.json`; the fixed worker starts
   a new `ladder.json` (L0..L2 again, L3 on the creator's word).
+- L3 again on the fixed worker 803eea11 (the creator's card 15:28 UTC, option a; a new watchdog thread): GREEN, run
+  24ad0a11628e_fc6ae61bf410, H100, 15:28:42-15:30:35 UTC. One 2 s clip (49 frames) made and sha-checked on HF; gen 77.2 s
+  including the one-time setup (pipeline 4.9 s, Gemma 29.5 s, transformer 18.2 s), so about 24 s for the clip itself; body
+  91 s. Settled $0.1599 (the app's 113 s at $5.0937/h, an upper bound); the two L3 runs together $0.33; nothing left
+  running. The ladder L0..L3 is green on this worker; L4 is the demo's scene on its own GO.
