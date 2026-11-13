@@ -121,9 +121,9 @@
       "evidence": "the repo's price table (imagegen/gemini.py PRICES_CHECKED)"
     },
     "gemini-nano-banana-2.1": {
-      "source": "https://ai.google.dev/gemini-api/docs/pricing",
-      "checked": "2026-10-16",
-      "evidence": "the repo's price table (imagegen/gemini.py PRICES_CHECKED)"
+      "source": "https://aistudio.google.com/docs/pricing",
+      "checked": "2026-11-12",
+      "evidence": "aistudio.google.com/docs/pricing read 2026-11-12: standard $0.0504/2K, batch $0.0252/2K, free tier not available; the model is listed by models.list on the project key"
     },
     "gemini-3.1-flash-image": {
       "source": "https://ai.google.dev/gemini-api/docs/pricing",

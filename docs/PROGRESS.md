@@ -5975,3 +5975,69 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Decided 11:44 UTC (decision card): a map or 2.5D motion may be silent_by_design within BP-81's budget (D-135 row amended; it replaces D-136's (W1's D-133) "every map motion heard" for these routes).
 - Next: the creator's word on the riser's BP-54 reading; real takes for map_pin_set, map_line_strain,
   map_line_snap, cloth_flap, ash_fall, eruption_boom (library -> free -> priced ElevenLabs on his word); Fable's review of PR #174.
+## 2026-11-12 — Gemini Task route A1c: routine texts, manifest, text test, GC-20..GC-27 (free, nothing sent to Gemini)
+
+- Texts: `drive_pack/08_FILES_AND_STATE.md` (the Drive tree incl. `claim_map.md`, `t0_probe.md`, `reviews/<stage>_reply<n>.md`; who
+  writes what) and messages P0 (open the chat), P5 (save the shot queue), P8 (next, `queue_on_drive` only), P9 (resume after the limit).
+- `texts/manifest.json`: every file, every `{{placeholder}}` with its origin and source, the ten `bp:` numbers, the two open questions.
+  `{{bp:BP-105.nominal_narrator_share|percent}}` now shows 70 %, not 0.7 (03 and P2). T0 trimmed by 17 words to fit the two-minute read.
+- `docs/GEMINI_CONSISTENCY_RULES.md`: GC-20..GC-27 (Task route and T0, anchor by shot type amends GC-01 for scenes, era-neutral
+  style sentence, references in two rounds, only generated pictures and the batch report, no in-batch redo, review record, limit and
+  resume); INDEX line says GC-01..GC-27; the pack cites GC-21/22 (05), GC-01..GC-27 (06), GC-26 (07).
+- Preset `crossworld_main_style_v1`: "lantern" and the Stone Age materials list left `style_sentence` (spec F7, Q6); new
+  `era_line_shape` says how an episode writes its `era_line`; pack file 05 shows the episode's era line.
+- Test: `tests/unit/test_gemini_task_texts.py` (acceptance 1-6: no never-word, placeholders declared, fixed sentences, ids exist,
+  no secrets or Georgian, two-minute read).
+- Open question closed (creator, 18:18 UTC): numbers are a frame with a ±10 % band, never a template (07 "Numbers are a frame", 03); the child-hero question is dropped.
+- Next: A2 (Opus high) builds the exporter and the review intake against this manifest.
+
+## 2026-11-12 — Gemini Task route A2: the code (pack export, T0 gate, reviews, shot queue, batches, redo; free, nothing sent)
+
+- `explainer_engine/gemini_task/` (CLI `python -m explainer_engine.gemini_task`): `texts.py` fills the manifest's placeholders
+  (undeclared or unfilled = ContractError, comments stripped, never-word and secret/Georgian gates on the template and the
+  tool-bound values); `pack.py` exports `planning/gemini_task/drive/rules/00..08` with a pack version
+  `<date>.<commit8>.<digest>` and copies the main style and approved refs; `gate.py` renders T0 and records its answer into
+  `config/gemini_t0_record.json` (6 = PASS, 4-5 = that batch size, else FAIL with a four-option card; `queue_on_drive` only
+  when Drive read matched the version and every prompt came back AS GIVEN, spec Q3); every other message refuses until T0 is PASS.
+- `review.py`: P0-P4; a BLOCKER without a source is an IDEA; an ACCEPT needs the artefact changed; a REJECT needs a source;
+  round-2 HOLD or a DEADLOCK block makes a creator card; a stage passes only closed, and turns STALE when its file changes (GC-26).
+- `queue.py`: `shot_queue/1` from the script and the timed read (`episode/timing`, ±10 % frame rows, the creator 18:18 UTC);
+  image 1 = the style anchor of the shot type from `config/gemini_task.json` `style_pack` (Q4, GC-21), an end frame's own start
+  frame is image 2 (GC-09 amended; drive_pack 04 rule 9 updated), then portraits (+ full body for wide/C/G shots, Q7), then the
+  place; R1 portraits and places, R2 full bodies with their portrait (GC-23); batches grouped by place and anchor (Q10), at most
+  the T0 size and 10 attachments (engineering default); map shares by seconds with REVIEW outside the frame; Wan clip length
+  from `training/pods/wan/launch.json` (read only).
+- `batch.py`: P5-P10; intake maps downloads by order and refuses a count other than MADE (Q9), runs the free turn-pack gates
+  plus a card check; the limit marks a batch partial and P9 resumes it; a redo is the original prompt plus one positive
+  correction sentence, only after the phase is done, and a failed redo goes to the creator (Q11, GC-25); a picture ledger.
+- `episodes/ep_toba/episode.json`: `era_line` (engineering wording, to be confirmed in A3/A5); the episode manifest schema
+  gains the optional `era_line` with the preset's shape as its pattern (additive; a wrong shape is refused).
+- Dry export of Toba (free): pack version `2026-11-12.cd759bea.36fa10dd`, T0 message of six prompts, 138 shots, 10 references,
+  155 pictures, 43 batches; planned shares map 12.5 %, still 52 %, wan 35.5 % (REVIEW against 10/30/60, untimed); 23 Wan shots
+  are longer than one clip.
+- Stale text reported (ICW-01 precedence): the Toba registry texts still carry the old look words ("Luminescent Chiaroscuro …
+  docudrama portrait of", 161 GC-04 REVIEW rows), to be rewritten in A5; GC-21 named Qwen without the legacy mark (fixed, D-131).
+- GC-09, GC-20, GC-21, GC-23..GC-27 now name the module that checks them.
+- Test: `tests/unit/test_gemini_task_flow.py` (fill, pack, era line, T0 sizes and modes, report parsing, queue order and
+  batches, frame and Wan clip, review deadlock, full batch flow with limit, resume and redo, P5/P8, Toba dry export).
+- Next: A3 (Sonnet) runs T0 in the browser and records it.
+
+## 2026-11-12 (A3) - T0 model rule: Flash is shown as "Hydrogen"
+
+- The first T0 run (Task mode, "4 Argon") made 6 of 6 pictures but recorded FAIL for the model only; the creator ruled (19:54 UTC)
+  that pictures always run on Flash in Task mode and Argon is for code only, and (19:56 UTC) that the Flash model is listed as
+  "Hydrogen". `gemini_task/gate.py` now accepts `flash` or `hydrogen` (`FLASH_NAMES`) and still refuses Argon, Carbon and Pro;
+  the Argon run is void for the gate. Test: `test_t0_fails_on_another_model_...` (Argon and "4 Argon" FAIL, "4 Hydrogen" PASS).
+- Argon T0 material (voided, for the creator's look only): HF `explainer-engine/gemini_t0/2026-11-12/`.
+
+## 2026-11-12 (A3) - the paid API as the backup of the Gemini chat
+
+- `gemini_task/api_backup.py` (creator, 20:26 UTC: nano-banana as the backup when the chat's limit is used up): reads the
+  PICTURE blocks of a message of this package word for word (prompt and reference order), prices them on the batch tier and
+  sends them through `imagegen/gemini.GeminiClient.submit_batch` (cap guard, batch recorded on disk before the POST) and
+  `collect_batch` (each picture written as it is read, OR-33). Still behind `EXPLAINER_GEMINI_API=on`.
+- T0 on nano-banana-2.1 2K batch: 6 pictures, estimate 0.158 USD. `config/model_lifecycle.json` nano-banana-2.1 re-checked
+  against aistudio.google.com/docs/pricing (2026-11-12: no free tier for any image model).
+- Test: `tests/unit/test_gemini_api_backup.py` (blocks word for word, request text equals the prompt, collect writes every
+  picture, the cap refuses before sending).
+- Blocked: the project key answers 403 "billing account has an outstanding balance"; nothing was sent or charged.
