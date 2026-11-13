@@ -9,7 +9,7 @@ A snapshot goes into `docs/handoffs/demo_run_<date>/` at the end of every stage.
 | `FREEZE_SHA` | **provisional `8ae21ec`** (code under the frozen script commit `8da40d6`, PR #180; S0 2026-11-13 16:50 UTC). PR #177 is not merged and moved on to `1406ce2` (L3 worker fixes), PR #179 (CH-07 `cloud/paid_offer`) is stacked on it: the freeze is set again on the merged `systemic/next-video` before any paid stage (FL-009) |
 | Baseline tests | 4141 passed, 20 skipped, 1 xfailed (677 s) at `8da40d6` (MS-005) |
 | Current stage and thread | S0 done 16:50 UTC and S3 started (pictures thread, `claude/project-thread-bf505m`); continuity cards written; start frames blocked on T0 and the style anchors (FL-010, CQ-008) |
-| Counts | KN 15 · FL 21 · DV 3 · RC 3 · SF 4 · NT 4 · CQ 11 · MS 8 · CU 0 |
+| Counts | KN 15 · FL 21 · DV 3 · RC 3 · SF 5 · NT 4 · CQ 11 · MS 9 · CU 0 |
 
 ## 0. How to write here
 
@@ -324,17 +324,20 @@ workaround: rung 5 — card CQ-011
 proposed fix: DEMO_PROCESS order S3a references → S4 reads → S3b scenes; the review step named in S2 · test: none (process)
 links: FL-010, CQ-011
 
-### FL-021 · DEGRADED · RULE-WRONG · S3 · open
+### FL-021 · DEGRADED · RULE-WRONG · S3 · open (creator: keep these 12, mark the cause so it does not recur, 17:02 UTC `cmsg_01Hnu5zB86sjUj5GtTgaUkPWLDXrvygQpjduopBTcBb34w`)
 when: 2026-11-13 17:00 UTC · thread: pictures thread
-what failed: the era line names "oil lamps" and the prompt check passes (no "lantern" word), but Gemini draws glass hurricane lanterns as the oil lamp: in ref_char_sgt_harris_portrait, ref_char_friedrich_brandt_portrait, ref_loc_german_trench_place and anchor1914_C. Thomas's portrait wears a stiff peaked cap, not the registry's soft service cap with ear flaps
-expected: GC-22 preset era rule (no lantern); GC-04 the hero's registry text drawn as written
-evidence: contact sheet https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_R1/contact_sheet.jpg (looked at by the thread)
-touches: `explainer_engine/gemini_task/prompts.py` (era rule), the preset's era line, opened yes
-cause: "oil lamp" reads as a hanging lantern to the model · confidence: likely
-impact on the demo: hurricane lanterns are period-correct in 1914; the rule is a house rule. Creator's call: keep, or redo with one correction sentence (GC-25)
-workaround: none yet; card to the creator
-proposed fix: the era line says "small open oil lamps and candles" or the check looks at the picture, not only the words · test: none (needs a picture judge)
-links: FL-011, DV-003
+what failed: glass hurricane lanterns drawn in ref_char_sgt_harris_portrait, ref_char_friedrich_brandt_portrait, ref_loc_german_trench_place and anchor1914_C, though the preset era rule bans lanterns (GC-22); Thomas's portrait wears a stiff peaked cap, not the registry's "soft service cap with ear flaps" (GC-04)
+evidence: contact sheet https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_R1/contact_sheet.jpg; prompts `episodes/ep_truce_1914/planning/gemini_task/messages/API_S3_anchors_R1.md`; `assets/style/main_style_5709.png` opened
+cause (three, confirmed by reading the prompts and the reference):
+  1. image 1 of every picture, `main_style_5709.png`, has a hanging glass lantern (upper right); the style-reference clause forbids copying "its people, their pose or its place" but not its objects, so the model copies the lantern as part of the style;
+  2. the era line itself lists "oil lamps", which the model draws as a glass hurricane lantern; the GC-22 check reads only the word "lantern", so it passes;
+  3. SF-002 replaced "a hanging lantern" in the German trench prompt by "a hanging oil lamp": the same object in other words, so the check passed and the picture kept it.
+  Thomas's cap: "soft service cap with ear flaps" is too vague; the model's default for a 1914 British soldier is the stiff peaked 1905 cap, and nothing in the prompt names the floppy shape.
+impact on the demo: none now (the creator keeps the 12 as style and references); scenes would repeat it
+rule for the rest of the run (creator's word 17:02 UTC, applied as a prompt fix only, no code): before a paid picture batch the thread (a) reads every object of image 1 and checks the prompt does not invite it, (b) checks the meaning of each word against the banned object, not only the word ("oil lamp" = lantern), (c) names the exact shape of a costume part the model has a strong default for. The scene prompts get these fixes as an SF shown to the creator before S3b
+proposed fix (code update, S9): the style-reference clause says "do not copy its people, objects, pose or place"; the era line says "candles in tins, open-flame oil lamps with no glass, coke braziers, matches..."; the GC-22 check carries synonyms (oil lamp hanging, hurricane lamp, storm lamp); the style anchor of a 1914 episode is a 1914 picture, not the Stone-Age main style; costume texts name the shape (for Thomas: "a floppy soft khaki trench cap with the ear flaps tied up over the crown, no stiff peak wire") · test: a prompt with "hanging oil lamp" fails GC-22; a style clause without "objects" fails GC-21
+result of SF-005 (R2, 17:15 UTC): the faces and costumes hold, but the backdrop words did not win: each full body copies its portrait's trench, and the lanterns came back (Harris left, Friedrich right). Cause 4: once a reference picture holds the object, words cannot take it out, because "keep exactly..." pulls the whole image 2. Lesson: fix the first picture of a chain, or cut the backdrop off a reference before it is attached (free local cut-out)
+links: FL-011, DV-003, MS-008
 
 ## 4. Deviations from the production path (DV)
 
@@ -360,6 +363,7 @@ shows only the changed lines.
 | SF-002 | S3 (pictures thread) | `world_bible.locations.loc_german_trench.fixed_environment_prompt` | "hanging lantern" refused by GC-22 (era rule); FL-008's substitute "oil lamp" | no (prompt only) | 2026-11-13 ~16:35 UTC; A `25636aba...6de24c` |
 | SF-003 | S3 (pictures thread) | S06_SH001 `character_ids` | the prompt shows Thomas and Friedrich but the list was empty, so no hero anchors (GC-02); now [char_thomas_hale, char_friedrich_brandt] | no | same |
 | SF-004 | creator (NT-003) | S02_L007, S05_L003, S08_L002 (narrator); S07_SH005, S07_SH006 (action) | the Pope's appeal failed, no official truce (not "they refused"; 28 words max YT-03 and the 10 s shot cap dropped "the warring governments"); football "accounts describe men kicking a ball around"; commanders "moved to prevent it"; Houplines in Stockwell's order: three shots, flag, salute; the German salutes back, gets down, then two shots. Claim C-25 reworded | yes, narrator only; S07_L007 silent action text | same; B `0ce9795a...9efbc4`; A G1-G4 PASS no REVIEW, B G1 FAIL only RC-001 |
+| SF-005 | S3 (pictures thread), creator card `cmsg_01Hnu5zB86sjUj5GtTgaUkPWSCj4Rso8shs2yad4KB6UsB` answer ა 17:11 UTC | R2 prompts (3 full bodies), built by `build_api_r2_message.py` | "a quiet softly blurred backdrop of the same world" → "a plain softly blurred backdrop of frosty sandbags and a dim winter sky", against the lanterns of FL-021; it did not work (MS-009) |
 
 ### 5b. The creator's notes (NT)
 
@@ -403,6 +407,7 @@ Real numbers only, each with where it was read. They replace estimates in the co
 | MS-006 | S3 | Task queue of A (free) | 84 shots → 9 references (R1 3 portraits + 3 places, R2 3 full bodies), 79 pictures (style anchors E 38, A 18, C 11, D 7, F 4, B 1), 31 batches of 6, 4 days at the measured limit; 0 prompt FAIL after SF-002 | `episodes/ep_truce_1914/planning/gemini_task/shot_queue.json` |
 | MS-007 | S3 | Continuity cards of A (free) | 16 scene files (S01-S07, one per place run), 70 cards, 0 FAIL, 0 REVIEW | `episodes/ep_truce_1914/planning/continuity/report.json` |
 | MS-008 | S3 | Gemini API batch, nano-banana-2.1 2K: 6 1914 anchors + R1 (3 portraits, 3 places) | 12 of 12 back, 2752x1536, batch `36v3u67gbxt3ytjru9q2sjjmllf7op26333x` SUCCEEDED in under 7 min; cost $0.3156 reserved = settled (cap $0.60); 13 files on HF, SHA256 match 13/13 | https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_R1 |
+| MS-009 | S3 | Gemini API batch R2 (3 full bodies, image 2 = R1 portrait, SF-005 backdrop) | 3 of 3, 2752x1536, batch `8hv8bw090o2a5s4e7zrpexfz4bkcywjht05i` SUCCEEDED; $0.0822 settled (cap $0.20); S3 total $0.3978; HF hash 4/4 | https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/demo_truce_1914/pictures/S3_R2 |
 
 Each stage's closing MS row: thread minutes, money and credits spent against the cap, items made, items retried.
 
