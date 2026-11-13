@@ -129,6 +129,9 @@ def _stage_inputs(ep: Episode, stage: str) -> dict:
         files[TRANSCRIPT_REL] = _sha(ep.root / TRANSCRIPT_REL)
     if stage in ("sound_plan", "sound"):
         files["sound_library/manifest.json"] = _sha(ep.sound_library / "manifest.json")
+    if stage == "sound":   # HF-3: a changed polish chain changes the stems
+        from explainer_engine.audio import narrator_polish as NP
+        files["narrator_polish_chain"] = hashlib.sha256(NP.CHAIN.encode()).hexdigest()
     if stage == "clips":
         files[WAN_LEDGER_REL] = _sha(ep.root / WAN_LEDGER_REL)
     if stage == "voice":   # VL-07: the clip records of the clip-spoken shots time them (G7 re-cuts only the others)
@@ -716,6 +719,11 @@ def stage_sound(ep: Episode, rehearsal: bool):
     read = ep.root / READ_REL
     stems_dir = ep.path("audio/stems")
     narration = read if read.is_file() else None
+    polish_rep = None
+    if narration is not None:   # HF-3: every use of the read as sound below takes the polished copy; the read stays as it is
+        polish_rep = polish_read(read, ep.path(POLISHED_READ_REL))
+        write_json_atomic(ep.path("audio/narration_polished.json"), polish_rep)
+        narration = ep.path(POLISHED_READ_REL)
     voice_rep = None
     if timing and timing.get("inserts"):   # VL-13: the LTX dialogue laid once on its shots, the read split around it
         from explainer_engine.videolane import ingest as VI
@@ -772,10 +780,32 @@ def stage_sound(ep: Episode, rehearsal: bool):
     write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
     return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source"),
                   "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json",
-                  "voice_track": "audio/voice_track.json" if voice_rep else None}
+                  "voice_track": "audio/voice_track.json" if voice_rep else None,
+                  "narrator_polish": polish_rep}
 
 
 DELIVERED_MIX_REL = "audio/stems/mix_delivered.wav"
+POLISHED_READ_REL = "audio/narration_polished.wav"
+
+
+def polish_read(read: Path, dst: Path) -> dict:
+    """HF-3 (FL-402, TD-303, RC-004): the narrator's standard chain (``audio/narrator_polish``) from the read into ``dst``;
+    the read itself is never written (its sha is an input of G6). A chain that moves the length by more than 1/30 s
+    would put every word timing wrong: ContractError. Returns the chain, the lengths and the shas of both files."""
+    from explainer_engine.audio import narrator_polish as NP
+    read, dst = Path(read), Path(dst)
+    before = NP._seconds(read)
+    sha_read = _sha(read)
+    NP.polish(read, dst)
+    after = NP._seconds(dst)
+    if abs(after - before) > 1 / 30:
+        dst.unlink(missing_ok=True)
+        raise ContractError(f"the narrator polish moved the length of {read.name} by {after - before:+.3f} s "
+                            "(over 1/30 s): the word timings would be wrong")
+    if _sha(read) != sha_read:
+        raise ContractError(f"{read.name} changed while it was polished: the read is never written")
+    return {"chain": NP.CHAIN, "source": str(read.name), "source_sha256": sha_read, "seconds_before": round(before, 3),
+            "seconds_after": round(after, 3), "polished": str(dst.name), "polished_sha256": _sha(dst)}
 
 
 def _loudness_rows(prefix: str, meas: dict, what: str) -> list[dict]:
