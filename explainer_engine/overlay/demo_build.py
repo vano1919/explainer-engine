@@ -200,7 +200,7 @@ def stage_sound(w: Work, force: bool) -> dict:
     write_text_atomic(rep, json.dumps(res["report"], indent=1))
     mx = MIX.mix_range(res["stems"], 0, sum(s["dur"] for s in D.SHOTS))
     sf.write(w.p("sound", "mix.wav"), mx, MIX.SR)
-    log("sound", json.dumps({k: res["report"][k] for k in ("groups", "sfx_under_scene_lu")}))
+    log("sound", json.dumps({k: res["report"][k] for k in ("groups", "sfx_above_bed_db")}))
     return res
 
 

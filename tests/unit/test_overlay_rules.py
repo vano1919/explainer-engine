@@ -246,7 +246,12 @@ def test_episode_rules_fail_on_bad_input(base):
     assert R.ep12({"order": ["grade", "composite"]})["status"] == R.FAIL
     assert R.ep12({"order": ["composite", "grade"]})["status"] == R.PASS
     assert R.ep12(None)["status"] == R.NOT_RUN
-    assert R.ep53({"sfx_under_scene_lu": 3.0})["status"] == R.FAIL
+    assert R.ep53({"sfx_under_scene_lu": 6.5})["status"] == R.FAIL       # the first demo's "6 LU under the bed": not heard (BP-192)
+    assert R.ep53({"sfx_above_bed_db": 1.0})["status"] == R.FAIL
+    assert R.ep53({"sfx_above_bed_db": 14.0})["status"] == R.REVIEW
+    assert R.ep53({"sfx_above_bed_db": 8.0})["status"] == R.PASS
+    assert R.ep56(False, {"tick"})["status"] == R.FAIL                    # W1: no numpy allowance, in the demo either
+    assert R.ep56(True, {"tick"}, "library")["status"] == R.PASS
     assert R.ep55({"groups": {"10 %": -34.0, "30 %": -31.0, "LTX": -34.0}, "ambience_min_100ms_dbfs": -40})["status"] == R.FAIL
     assert R.ep55({"groups": {"10 %": -34.0, "30 %": -33.5, "LTX": -34.0}, "ambience_min_100ms_dbfs": -90})["status"] == R.FAIL
     bad = copy.deepcopy(specs)
@@ -263,4 +268,4 @@ def test_episode_rules_fail_on_bad_input(base):
     odd[1]["style"] = copy.deepcopy(odd[1]["style"])           # the specs share one style object; give this shot its own
     odd[1]["style"]["tokens"]["ink"] = "#000001"
     assert R.ep11(odd)["status"] == R.FAIL
-    assert R.ep56(False, {"pop_in"})["status"] == R.NOT_RUN
+    assert R.ep56(False, {"pop_in"})["status"] == R.FAIL       # W1 2026-11-12: the demo's numpy allowance is withdrawn (stricter)

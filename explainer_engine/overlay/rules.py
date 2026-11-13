@@ -18,7 +18,7 @@ from explainer_engine.overlay import camera as CAM
 from explainer_engine.overlay import place as PL
 from explainer_engine.standards import sourced_rules as SR
 
-PASS, FAIL, NOT_RUN, NA = "PASS", "FAIL", "NOT_RUN", "N/A"
+PASS, FAIL, NOT_RUN, NA, REVIEW = "PASS", "FAIL", "NOT_RUN", "N/A", "REVIEW"
 FPS = 24
 FRAME_AREA = CAM.W * CAM.H
 
@@ -36,7 +36,6 @@ HOUSE = {  # the numbers of the rules file marked "წ"; the demo uses exactly t
     "OV-42 full shot seconds": (4, 12),
     "OV-43 longest frozen run seconds": 2.0,
     "OV-45 grid lines": 3, "OV-45 title words": 6, "OV-49 bars in an accent chart": 3,
-    "OV-53 overlay sounds below the scene's real sounds, LU": 6.0,
     "OV-55 spread of the group levels, LU": 1.0,
     "OV-59 data points in a full chart (bars, line points, timeline marks)": (5, 6, 5),
     "OV-61 gap between a text and a data point, px": 6,
@@ -596,10 +595,17 @@ def ep52(specs: list[dict]):
     if any(seen.get(k) and KIND_SOUND[k] not in seen[k] for k in seen if k in KIND_SOUND): return r(FAIL, "sound class differs from the sound map")
     return r(PASS, f"one sound class per kind, all in the organic family {sorted(ORGANIC)}")
 def ep53(mix: dict | None):
+    """OV-53 as changed by W1 (2026-11-12, BP-192 supersedes "6 LU below"): an overlay sound is HEARD, its loudest 100 ms
+    BP-192's target over the bed around it; under heard_min_db it is not heard (the demo of 2026-11-12: 12 LU under)."""
     if not mix: return r(NOT_RUN, "no mix report")
-    d = mix["sfx_under_scene_lu"]
-    lim = HOUSE["OV-53 overlay sounds below the scene's real sounds, LU"]
-    return r(PASS, f"overlay sounds {d:.1f} LU below the scene's real sounds (>= {lim})") if d >= lim else r(FAIL, f"only {d:.1f} LU below")
+    if "sfx_above_bed_db" not in mix:
+        return r(FAIL, f"the mix set the overlay sounds {mix.get('sfx_under_scene_lu', '?')} LU UNDER the bed (the old OV-53): not heard (BP-192)")
+    d = mix["sfx_above_bed_db"]
+    lo, hi = SR.T("BP-192", "target_above_bed_db")
+    heard = SR.T("BP-192", "heard_min_db")
+    if d < heard: return r(FAIL, f"overlay sounds {d:.1f} dB over the bed: under {heard} dB they are not heard (BP-192)")
+    if not lo <= d <= hi: return r(REVIEW, f"overlay sounds {d:.1f} dB over the bed, outside {lo}-{hi} dB (BP-192)")
+    return r(PASS, f"overlay sounds {d:.1f} dB over the bed around them ({lo}-{hi} dB, BP-192); the final file's gate measures it again")
 def ep55(mix: dict | None):
     if not mix: return r(NOT_RUN, "no mix report")
     g = mix["groups"]
@@ -609,8 +615,11 @@ def ep55(mix: dict | None):
     if spread > HOUSE["OV-55 spread of the group levels, LU"]: bad.append(f"group levels {g} spread {spread:.1f} LU")
     if floor < -70: bad.append(f"the bed drops to {floor} dBFS")
     return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"bed never below {floor} dBFS in any 100 ms; group levels (LUFS) {g}, spread {spread:.1f} LU")
-def ep56(lib_present: bool, classes_used: set):
-    return r(PASS, "library wavs used") if lib_present else r(NOT_RUN, f"the library's wav files are not in this container; procedural numpy sounds ({sorted(classes_used)}) are allowed in the demo only")
+def ep56(lib_present: bool, classes_used: set, source: str | None = None):
+    """OV-56 as changed by W1 (2026-11-12): library takes only, in the demo too; the numpy allowance of the first demo is withdrawn."""
+    if source == "library": return r(PASS, "every overlay sound and every bed is a real library take (demo_sound)")
+    if not lib_present: return r(FAIL, f"the library's wav files are not here: fetch them from the vault; a procedural sound never plays ({sorted(classes_used)})")
+    return r(FAIL, "the mix report does not say its sounds came from the library")
 
 
 def ep63(specs: list[dict], files: dict | None):
@@ -644,7 +653,7 @@ def validate(specs: list[dict], shots: list[dict], *, lines: dict, boxes: dict, 
         out["shots"][no] = {k: fn(c) for k, fn in SHOT_RULES.items()}
     out["episode"] = {"OV-06 shares": ep06(specs, shots), "OV-11": ep11(specs), "OV-12": ep12(order), "OV-32 sequence": ep32(specs), "OV-42 run": ep42(specs),
                       "OV-52": ep52(specs), "OV-53": ep53(mix), "OV-44/55": ep55(mix),
-                      "OV-56": ep56(lib_present, {e["cls"] for s in specs for e in s["sound"]}),
+                      "OV-56": ep56(lib_present, {e["cls"] for s in specs for e in s["sound"]}, (mix or {}).get("sound_source")),
                       "OV-63 final": ep63(specs, files), "OV-65 mix": ep65(specs, mix), "OV-68": ep68(specs, eye)}
     return out
 

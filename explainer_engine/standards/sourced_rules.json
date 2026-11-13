@@ -2385,7 +2385,8 @@
    ],
    "enforced_by": [
     "explainer_engine/qa/targets.py:gap_verdict",
-    "explainer_engine/production/assemble.py:stem_measures"
+    "explainer_engine/production/assemble.py:stem_measures",
+    "explainer_engine/production/scene_join.py:BED_UNDER_MIN_LU"
    ],
    "supersedes": [
     "P-93 14 dB (confirmed, unit changes to LU)",
@@ -2698,7 +2699,10 @@
    ],
    "enforced_by": [
     "explainer_engine/audio/sfx_library.py:BP-58",
-    "explainer_engine/schemas/sfx_manifest.schema.json"
+    "explainer_engine/schemas/sfx_manifest.schema.json",
+    "explainer_engine/audio/free_import.py:make_loop",
+    "explainer_engine/audio/free_import.py:rotate_to_quiet_seam",
+    "explainer_engine/audio/free_import.py:run"
    ],
    "supersedes": [
     "(new; PR #9 adds the manifest loop flag)"
@@ -3874,7 +3878,7 @@
     "words_min": 150,
     "words_max": 700,
     "georgian_share_min": 0.6,
-    "why_heading": "\u10e0\u10d0\u10e2\u10dd\u10db"
+    "why_heading": "რატომ"
    },
    "sources": [],
    "enforced_by": [
@@ -7292,7 +7296,7 @@
    "area": "audio",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "The sound at a cut between two clips depends on where the sound comes from. (1) One generation made the picture and its sound together (LTX's own speech, effects and ambience): picture and sound cut on the same frame, with no overlap (overlap_joint_s); a longer crossfade under a hard picture cut doubles the speech or moves it off the lips, so each side only gets a seam_fade_s fade against a click, and a clip chained from the previous clip's last frame drops that repeated first frame. (2) The sound was made apart from the picture (ElevenLabs lines, narration, library beds): the sound runs on its own tracks across the picture cut, the room tone or bed continues under it (BP-116), a line may lead or trail the cut as a J/L split within split_edit_s (scene boundaries keep BP-117's longer bands), and two different beds meeting at a cut crossfade. No overlap of the pictures is needed in either case.",
+   "statement": "The sound at a cut between two clips depends on where the sound comes from. (1) One generation made the picture and its sound together (LTX's own speech, effects and ambience): picture and sound cut on the same frame, with no overlap (overlap_joint_s); a longer crossfade under a hard picture cut doubles the speech or moves it off the lips, so each side gets at least a seam_fade_s fade against a click (BP-191 sets the clip fade and lets the scene's bed and the tails of point sounds cross the cut), and a clip chained from the previous clip's last frame drops that repeated first frame. (2) The sound was made apart from the picture (ElevenLabs lines, narration, library beds): the sound runs on its own tracks across the picture cut, the room tone or bed continues under it (BP-116), a line may lead or trail the cut as a J/L split within split_edit_s (scene boundaries keep BP-117's longer bands), and two different beds meeting at a cut crossfade. No overlap of the pictures is needed in either case.",
    "thresholds": {
     "overlap_joint_s": 0.0,
     "seam_fade_s": 0.03,
@@ -7340,6 +7344,170 @@
     "BP-187 audio_overlap_s (the creator's 0.5 s, 2026-11-12 19:16 UTC, put to research at 20:07 UTC)"
    ],
    "research": "2026-11-12 (thread 'Build v4.3 episode-first engine'): the 2-frame de-click default and the 30 ms fade agree with ED-01's EDGE_FADE; the 3-12 frame J/L figure is from one guide (unverified elsewhere); the FCP manual is a vendor manual. No source asks for a crossfade at a cut of jointly generated picture and sound."
+  },
+  {
+   "id": "BP-189",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "The scene's sound never drops out (realism plan SD-04/SD-05): a scene's bed (place, weather, crowd) runs under every shot from its first frame and under every line, so measured on the delivered file no window_ms window between the first and the last second falls under floor_dbfs, and inside the dialogue part (intended pauses left out) no more than dead_share_max of the windows fall under dead_dbfs. An intended silence is written in the script and keeps the room tone. The numbers are the realism plan's measured line between a dropout and a bed (the battle scene of 2026-11-12: -62 dBFS before 'Attack!', 45 % of its dialogue part under -40 dBFS); BP-116 keeps the bed's own level and BP-161 the digital-silence check.",
+   "thresholds": {
+    "floor_dbfs": -50.0,
+    "dead_dbfs": -40.0,
+    "dead_share_max": 0.0,
+    "window_ms": 250
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "5 techniques for dialogue editing in film and TV (Production Expert): fill the gaps with room tone, never leave holes",
+     "url": "https://www.production-expert.com/production-expert-1/5-techniques-for-dialogue-editing-in-film-and-tv"
+    },
+    {
+     "type": "A",
+     "title": "Videomaker: how to hide audio transitions (cut between sentences; J/L cuts or room tone for longer transitions)",
+     "url": "https://www.videomaker.com/how-to/audio-how-to/audio-editing/how-to-hide-audio-transitions-for-a-cleaner-sounding-video/"
+    },
+    {
+     "type": "B",
+     "title": "Dialogue Editing for Motion Pictures (John Purcell; Open Library search-inside, room tone)",
+     "url": "https://openlibrary.org/search/inside?q=Dialogue%20Editing%20for%20Motion%20Pictures"
+    },
+    {
+     "type": "B",
+     "title": "Apple Final Cut Pro 7 User Manual: tips for cutting dialogue (fill every gap with the scene's room tone)",
+     "url": "https://www.manualsdir.com/manuals/547347/apple-final-cut-pro-7.html?page=1002"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure"
+   ],
+   "supersedes": [],
+   "research": "2026-11-12 (W1): the sources agree that dialogue gaps are filled with the scene's room tone or ambience, never left as holes; none of them gives a dBFS number, so floor_dbfs and dead_dbfs are the realism audit's engineering line (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/))."
+  },
+  {
+   "id": "BP-190",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The pause between two lines is measured speech to speech on the delivered file (realism plan SD-06/SD-07), never planned from a clip's tail: pause_s in conversation; an intended dramatic pause is written in the script and stays under dramatic_max_s. A clip is therefore trimmed at both ends from the speech the detector finds in its own sound: in at the first speech minus head_lead_s, out at the last speech plus tail_s (BP-187 keeps the generation's tail). One clip carries one line: LTX leaves 0.85-1.0 s between two sentences of one clip.",
+   "thresholds": {
+    "pause_s": [
+     0.25,
+     0.6
+    ],
+    "dramatic_max_s": 1.5,
+    "head_lead_s": [
+     0.15,
+     0.25
+    ],
+    "tail_s": [
+     0.25,
+     0.5
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Stivers et al. 2009, Universals and cultural variation in turn-taking in conversation (PNAS): the modal gap between turns is about 0-200 ms in every language studied",
+     "url": "https://www.pnas.org/doi/10.1073/pnas.0903616106"
+    },
+    {
+     "type": "A",
+     "title": "Heldner and Edlund 2010, Pauses, gaps and overlaps in conversations (Journal of Phonetics)",
+     "url": "https://doi.org/10.1016/j.wocn.2010.08.002"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:line_pauses",
+    "explainer_engine/production/scene_join.py:trims"
+   ],
+   "supersedes": [],
+   "research": "2026-11-12 (W1): the turn-taking studies put natural gaps near 0.2 s; a film's edited dialogue is a choice, so the 0.25-0.6 s band is the realism plan's house proposal (REVIEW until the creator picks on the A/B: REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/)). Measured before: 1.15 s across cut 1 of the battle scene, because the heads of the clips were not trimmed (LTX starts speaking about 0.75 s into a clip)."
+  },
+  {
+   "id": "BP-191",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Sound crosses the cut (realism plan SD-08, amends BP-188 part 1): the picture may cut hard and a clip's own sound cuts with it under a clip_fade_s fade (BP-188's seam_fade_s is the de-click minimum), but the scene's bed and at least one tail of a point sound run across the cut, so the background measured cut_window_s either side of the cut (speech left out) moves no more than cut_jump_db_max.",
+   "thresholds": {
+    "clip_fade_s": [
+     0.08,
+     0.12
+    ],
+    "cut_window_s": 0.5,
+    "cut_jump_db_max": 3.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Videomaker: how to hide audio transitions (cut between sentences; J/L cuts or room tone for longer transitions)",
+     "url": "https://www.videomaker.com/how-to/audio-how-to/audio-editing/how-to-hide-audio-transitions-for-a-cleaner-sounding-video/"
+    },
+    {
+     "type": "A",
+     "title": "J-cuts and L-cuts: how audio transitions make your edits invisible (Cursa)",
+     "url": "https://cursa.app/en/article/j-cuts-and-l-cuts-how-audio-transitions-make-your-edits-invisible"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/production/scene_join.py:CLIP_FADE_S"
+   ],
+   "supersedes": [
+    "BP-188 part 1's 'nothing crosses the cut' for a scene with a bed"
+   ],
+   "research": "2026-11-12 (W1): both guides keep room tone or a J/L split running under a picture cut; the 80-120 ms clip fade and the 3 dB jump are the realism plan's house proposals (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/))."
+  },
+  {
+   "id": "BP-192",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-11-12 19:43 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ: motion on a map, chart or counter makes a sound) and 21:44 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu: no sounds on the map's actions)",
+   "statement": "An action sound is heard (realism plan SD-03/SD-14/SD-15; replaces OV-53's 'under the scene's sounds'): measured on the delivered file, the loudest 100 ms of every planned action sound (a map move, a chart bar, a counter, a footstep, a spear) stands at least heard_min_db over the bed around it, else the motion has no sound; the target is target_above_bed_db over the bed and under the voice, at most max_at_once sounds together, and a shot where motion is seen has at least spots_per_5s_min point sounds every five seconds (both REVIEW, the plan's proposals). The sound is a real take that fits the motion (a line drawn = a pen stroke that lasts with the line, a spreading zone = a low air swell, a counter = ticks and a final knock), never a sine or noise.",
+   "thresholds": {
+    "heard_min_db": 3.0,
+    "target_above_bed_db": [
+     6.0,
+     10.0
+    ],
+    "max_at_once": 2,
+    "spots_per_5s_min": 2
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/overlay/demo_mix.py:SFX_ABOVE_BED_DB",
+    "explainer_engine/overlay/rules.py:ep53"
+   ],
+   "supersedes": [
+    "OV-53 overlay sounds at least 6 LU under the scene's sounds"
+   ],
+   "research": "2026-11-12 (W1): the overlay demo's action sounds measured 12 LU under its bed (REALISM_AUDIT_2026-11-12_ka.md and RULES_REWRITE_SOUND_MOTION_ka.md (Fable high, 2026-11-12; project files explainer-engine/v4_3_plan_2026-11-12/, HF explainer-engine/realism_audit_2026-11-12/)); heard_min_db is the engineering line of 'heard at all', the 6-10 dB target is the plan's house proposal for the creator's A/B."
+  },
+  {
+   "id": "BP-193",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-11-12 21:44 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu): the map demo's background is a senseless hiss",
+   "statement": "No generated noise as a bed (realism plan SD-11/SD-13; sharpens OV-44/OV-55): the bed is a real take of the place the shot shows (library first, then a free licence-checked source, then ElevenLabs: the creator's order of 2026-11-12 22:15 UTC), never numpy noise. Measured on the delivered file: in each place of the timeline the bed-only frames (no speech, no planned event, the quieter half of the rest, at least place_min_s) give a band spectrum; when min_places or more different places share one spectrum (largest band-share deviation under same_spectrum_share_max) the film plays one noise everywhere and FAILs. A map or a chart under the neighbouring scene's bed is that scene's place (OV-55's text stays). A level that moves little is not by itself a fault: a real wind and the demo's noise measured the same 1.7 dB spread.",
+   "thresholds": {
+    "same_spectrum_share_max": 0.05,
+    "min_places": 3,
+    "place_min_s": 1.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/sound_realism.py:measure",
+    "explainer_engine/overlay/demo_sound.py:beds"
+   ],
+   "supersedes": [
+    "OV-56's 'NOT_RUN in the demo' (a demo is built from the library too)"
+   ],
+   "research": "2026-11-12 (W1): on the overlay demo the bed-only spectra of 12 shots (cave, river, maps, charts, an LTX clip) lie within 0.03-0.05 of each other in every band; the level spread of a 100 ms window did not tell the numpy wind (1.75 dB) from LTX's real battle sound (1.81 dB), so the level test of the plan's draft was dropped. 0.05 is the engineering line until real beds of different places are measured."
   }
  ]
 }

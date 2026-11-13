@@ -5734,3 +5734,27 @@ Wall time was 376 s, settled at $0.5326. All clips are verified on HF. No app is
 - Not from this change: `test_v43_picture_intake.py` (5) needs `imagehash`, absent in this container; `test_video_qa_clip_rows.py` (1) expects no
   transcriber, and this container has faster-whisper installed for the demo's word times.
 - Next: the creator looks at the demo and the two A/B files and confirms or changes the house numbers (report section 6); then the episode runner stage.
+
+## 2026-11-12 — W1: believable sound, measured on the delivered file (branch `claude/project-thread-xpsv3w`, D-133)
+
+- Asked by the creator (21:44 UTC: dead air in the dialogue, an illogical fast cut, a senseless hiss under the maps with no action sounds; 22:15 UTC:
+  library first, then free licence-checked sounds, then ElevenLabs from a priced list; every map move and counter start has its own sound plus a bed;
+  wait on video, the generator may change). Plan: `v4_3_plan_2026-11-12/WORK_PLAN_REALISM_ka.md` section 4; handoff `W1_HANDOFF.md` there.
+- Done: `qa/sound_realism.py` (BP-189..BP-193 on the final file), `production/scene_join.py` (clips trimmed by measured speech, a bed across every
+  cut, BP-52's 15 LU floor, picture dissolve for chained close-ups), `audio/free_import.py` with 64 CC0 takes from OpenGameArt
+  (`assets/audio/free_picks_2026-11-12.json`, licences read 2026-11-12, nobody has listened), new sound classes in `episode/sound_plan.py`, the demo's
+  sound from the library (`overlay/demo_sound.py`, `demo_mix.py`, `demo_resound.py`; numpy sounds removed), OV-44/50/53/55/56 changed, BP-188 changed.
+- Measured (old -> new): battle dead air 39 % -> 0 %, quietest -63.5 -> -35..-38 dBFS, pauses 1.28/0.60/1.64 -> 0.3-0.4 s; love 58 % -> 0 %, 29 s ->
+  17 s with pauses 0.5 s; demo one spectrum in five places (0.039) -> 0.399, unheard action sounds 3 -> 0. Every old file FAILs the gate; the rebuilt
+  ones have no FAIL (REVIEW: love cut 1 bed step 12 dB from clip 2's own vocal sound; the demo's Kokoro pauses).
+- Gate changes found on real files: the VAD threshold is taken over the dialogue part (a charge's roar hid the lines); the bed at a cut leaves 0.15 s
+  round speech out (a breath read as a 10 dB jump); an action sound under the narrator is judged in the band where it rises (a tick is heard in the
+  highs; broadband it never beats the voice).
+- Free test: Demucs on six LTX clips found no usable bed (non-vocal stem under -55 dBFS). Cost: 0.
+- Files: HF `vano1919/tmr-artifacts` `explainer-engine/realism_w1_2026-11-12/` (videos, reports, library takes + manifest; commit 2bf5dcf3).
+- Stale text reported, not deleted: D-132's 19:12 UTC sound clause ("LTX clips need no separate background sound") is retired by D-133;
+  `docs/SCENE_REUSE_RULES.md` AS-10 still reads as if the LTX sound alone were enough (it stays true that the clip keeps its own sound).
+- Tests: `tests/unit/test_sound_realism.py` (10), `test_scene_join.py` (7), `test_overlay_demo.py` and `test_overlay_rules.py` changed (OV-53/56
+  stricter); docs_lint 0 findings.
+- Next: the creator listens and picks the house numbers (pause 0.3/0.5 s, bed 15/18 LU, overlay sounds +8/+14 dB); the priced ElevenLabs list
+  (253 credits, 1153 with a map music bed) waits for his word.

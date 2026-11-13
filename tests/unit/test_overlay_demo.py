@@ -78,12 +78,35 @@ def test_spec2_refuses_a_word_the_line_does_not_say():
         spec2.build(shot, WORDS[3], STYLE, {"M1": info()})
 
 
-def test_sound_classes_render_and_are_seeded():
+def _library(tmp_path, origin="third_party"):
+    """A small library with two real takes for every overlay gesture's class (W1: library only, no numpy sounds)."""
+    from explainer_engine.audio import sfx_library as L
+    from explainer_engine.episode import sound_plan as SP
+    rng = np.random.default_rng(0)
+    for k, cls in enumerate(sorted(set(S.LIBRARY_CLASS.values()))):
+        for take in (1, 2):
+            x = (rng.standard_normal(int(0.3 * S.SR)) * np.exp(-np.arange(int(0.3 * S.SR)) / 2000)).astype(np.float32)
+            L.add(tmp_path, name=cls, take=take, category="foley", tags=SP.EVENT_CLASSES[cls]["tags"], samples=x, rate=S.SR,
+                  source={"kind": origin, "prompt": "test"}, licence={"status": "cc0", "note": "test"})
+    return tmp_path
+
+
+def test_sound_classes_come_from_the_library_and_are_seeded(tmp_path):
+    root = _library(tmp_path)
     for cls in S.CLASSES:
-        a = S.render_class(cls, 18, np.random.default_rng(3))
-        b = S.render_class(cls, 18, np.random.default_rng(3))
+        a = S.render_class(cls, 18, np.random.default_rng(3), root)
+        b = S.render_class(cls, 18, np.random.default_rng(3), root)
         assert np.array_equal(a, b) and abs(float(np.max(np.abs(a))) - 1.0) < 1e-5
     for cls in ("pencil_scribble", "air_swell", "slide_grow"):          # the long classes are as long as their motion
-        assert abs(len(S.render_class(cls, 36, np.random.default_rng(1))) / S.SR - 1.5) < 0.01
+        assert abs(len(S.render_class(cls, 36, np.random.default_rng(1), root)) / S.SR - 1.5) < 0.01
     with pytest.raises(KeyError):
-        S.render_class("beep", 10, np.random.default_rng(1))
+        S.render_class("beep", 10, np.random.default_rng(1), root)
+
+
+def test_a_procedural_take_never_plays(tmp_path):
+    from explainer_engine.core.errors import ContractError
+    root = _library(tmp_path, origin="procedural")
+    with pytest.raises(ContractError):
+        S.render_class("tick", 10, np.random.default_rng(1), root)
+    assert "tick" in S.needs(["tick"], root)
+    assert not hasattr(S, "sine") and not hasattr(S, "ambience")      # the numpy generators are gone (OV-56 as changed)

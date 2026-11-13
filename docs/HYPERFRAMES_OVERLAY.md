@@ -78,19 +78,19 @@ from the registry. Status of each rule in the validator: PASS, FAIL, NOT_RUN (a 
 | OV-41 | all cartography rules on a map (CRAFT-CART-01..08, BP-124, BP-125): a simple frame, highlight first and then move, date chip when time moves, scale | validator (the dim of inactive terrain is not drawn yet: NOT_RUN) |
 | OV-42 | one `full` shot 4-12 s; runs of non-character visuals within BP-127 | spec |
 | OV-43 | a `full` shot moves for its whole length (an action or a slow plate camera); no frozen run over 2 s | frame differences |
-| OV-44 | the episode ambience never breaks in a 10 % shot | sound plan (see OV-55) |
+| OV-44 | the episode ambience never breaks in a 10 % shot: a map keeps a bed of its own story (Toba's map: the eruption's low rumble) or the neighbouring scene's bed, never a generic hiss (W1, BP-193) | sound plan (see OV-55), `qa/sound_realism` |
 | OV-45 | no legend, direct labels, at most 3 grid lines, titles at most 6 words | spec |
 | OV-46 | every chart has `claim_ids`; every number matches the claim map (invariant 5); the demo's data is flagged DEMO | spec |
 | OV-47 | a value appears when the narrator says it (`at_word` on every bar or point) | timing |
 | OV-48 | colour never carries meaning alone (D-22): the highlighted bar has a label too | spec |
 | OV-49 | a 30 % chart is `glass`, at most 3 bars or one line, within OV-33 | spec |
-| OV-50 | every overlay motion (enter, draw, grow, count, marker move) has a sound event at its start (BP-54 window); a calm fade is not a motion and is silent | spec |
+| OV-50 | every overlay motion (enter, draw, grow, count, marker move) has a sound event at its start (BP-54 window) and it is heard over the bed (BP-192, the creator 2026-11-12 22:15 UTC: "every move, every counter start has its sound"); a calm fade is not a motion and is silent | spec + `qa/sound_realism` action_sounds_heard |
 | OV-51 | the sound follows the motion's shape: a long motion has a long sound of the same length (+-2 frames), a point motion one hit | spec |
 | OV-52 | one sound family per episode, in the picture's style: soft, organic (paper, pencil, wood, a soft bell); no digital beeps; one kind = one sound class everywhere (BP-57 variants) | sound plan |
-| OV-53 | overlay sounds go through the same sound plan and renderer, in the SFX stem (BP-52, BP-65), and sit at least 6 LU below the scene's real sounds | stem measurement |
+| OV-53 | overlay sounds go through the same sound plan and renderer, in the SFX stem (BP-52, BP-65), and are HEARD: their loudest 100 ms sits BP-192's target over the bed around them (changed by W1, 2026-11-12: the old "6 LU below the scene's real sounds" made the demo's actions 12 LU under its bed) | stem measurement + `qa/sound_realism` on the final file |
 | OV-54 | at most 2 sounds of one class at once (BP-56) | sound plan |
-| OV-55 | the ambience never breaks (in the 30 % lane the overlay sound lies over the scene's ambience; in the 10 % lane the ambience carries over from the neighbouring scene or the shot has its own); 10 %, 30 % and 60 % sit at one level | level gate by route |
-| OV-56 | source: the library first (OR-18); a new paid sound only on the creator's word; procedural numpy sound cannot go into an episode, only into the demo | existing hook |
+| OV-55 | the ambience never breaks (in the 30 % lane the overlay sound lies over the scene's ambience; in the 10 % lane the ambience carries over from the neighbouring scene or the shot has its own); each place has its own bed (BP-193: not one noise everywhere); 10 %, 30 % and 60 % sit at one level | level gate by route + `qa/sound_realism` |
+| OV-56 | source: our library first, then free sounds with a checked licence, then ElevenLabs from a priced needs list (the creator, 2026-11-12 22:15 UTC); procedural numpy sound never plays, in the demo either (W1 withdrew the demo allowance) | `overlay/demo_sound`, `qa/sound_realism` BP-193 |
 
 BP-55 (at most half of the visual beats have a sound) is overridden for overlay motion sounds by the creator's newer word: their purpose is `sync`
 and they do not count in BP-55's share.

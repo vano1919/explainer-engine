@@ -145,7 +145,7 @@ def markdown(c: dict, rep: dict, mix: dict | None) -> str:
     if mix:
         out += ["", "## 4. Loudness (ffmpeg ebur128, LUFS)", "", f"- groups (bed + overlay sounds + clip, without narration): {mix['groups']}",
                 f"- the scene's real sounds (wind + fire): integrated {mix['ambience']['integrated']}, median momentary {mix['ambience']['momentary_median']}",
-                f"- overlay sounds: loudest momentary {mix['sfx']['momentary_max']}; below the scene's real sounds by {mix['sfx_under_scene_lu']} LU",
+                f"- overlay sounds: loudest momentary {mix['sfx']['momentary_max']}; over the bed around them by {mix.get('sfx_above_bed_db')} dB (BP-192)",
                 f"- narration (scratch Kokoro): integrated {mix['narration']['integrated']}",
                 f"- the quietest 100 ms of the bed: {mix['ambience_min_100ms_dbfs']} dBFS"]
     out += ["", "## 5. OV-34: faces and the main object, every frame of the push", ""]

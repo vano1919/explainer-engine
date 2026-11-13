@@ -2,6 +2,103 @@
   "version": 1,
   "items": [
     {
+      "id": "air_move__v1",
+      "file": "foley/air_move__v1.wav",
+      "category": "foley",
+      "tags": [
+        "air",
+        "move",
+        "swell",
+        "whoosh"
+      ],
+      "seconds": 1.154,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.57,
+      "sha256": "1f55f5a1e6a1b7b28e1ce856d7812539b0049ecd0b6d29f31afb23e1793783ad",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'air-woosh-move' by almitory: air_move.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/air-woosh-move (licence field read 2026-11-12; author almitory); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "amb_army_march_dirt__v1",
+      "file": "foley/amb_army_march_dirt__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "army",
+        "bed",
+        "march",
+        "outdoor"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.22,
+      "sha256": "256baf32bab5d81872ed58bcdeb37ea0bec2b6602cf90f5359eb95432d5ecbb9",
+      "source": {
+        "kind": "third_party",
+        "prompt": "arranged by free_import.arrange_march from the CC0 takes step_leather, step_dirt_kenney, step_armour, armour_chain: a marching column arranged from the CC0 step and armour takes above (each soldier its own pace, phase, distance and side); no generated noise",
+        "seed": 1201,
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "arranged from CC0 1.0 takes (https://opengameart.org/content/50-rpg-sound-effects; https://opengameart.org/content/80-cc0-rpg-sfx; https://opengameart.org/content/footsteps-leather-cloth-armor, licence fields read 2026-11-12)"
+      },
+      "review": {
+        "machine": "measured only (free_import): wrapped placement, no seam; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
+      "id": "amb_birds_evening_valley__v1",
+      "file": "foley/amb_birds_evening_valley__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "birds",
+        "evening",
+        "hill",
+        "outdoor"
+      ],
+      "seconds": 41.2,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.47,
+      "sha256": "650519aebd935ab333b6f36580da5b3af5dbac6d7167e319c33b4eb195921430",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'park-ambiences' by thimras: park_ambience_birds.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/park-ambiences (licence field read 2026-11-12; author thimras); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 30.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
       "id": "amb_burnt_garage_dawn__v1",
       "file": "foley/amb_burnt_garage_dawn__v1.wav",
       "category": "foley",
@@ -112,6 +209,70 @@
       "intended_seconds": 30.0
     },
     {
+      "id": "amb_crickets__v1",
+      "file": "foley/amb_crickets__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "crickets",
+        "evening",
+        "night",
+        "outdoor"
+      ],
+      "seconds": 21.5,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.04,
+      "sha256": "feb4649b8b502831f45ad98ca698662956383405f1a79c078cf784b2775f50c3",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'crickets-ambient-noise-loopable' by wolfgang: crickets-oneloop.mp3",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/crickets-ambient-noise-loopable (licence field read 2026-11-12; author wolfgang); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 0.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
+      "id": "amb_crowd_shouting__v1",
+      "file": "foley/amb_crowd_shouting__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "crowd",
+        "outdoor",
+        "shout"
+      ],
+      "seconds": 27.3,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -13.64,
+      "sha256": "4deb85e57ad4c3f05efe06930e58a0d1458b9b9a0b716f85ae7145df8e165192",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'crowd-shoutingspeaking-ambience' by starninjas: crowd_shouting.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/crowd-shoutingspeaking-ambience (licence field read 2026-11-12; author starninjas); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 0.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
       "id": "amb_cuban_warehouse__v1",
       "file": "foley/amb_cuban_warehouse__v1.wav",
       "category": "foley",
@@ -219,6 +380,37 @@
       "loop": true,
       "kind": "loop",
       "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_low_rumble__v1",
+      "file": "foley/amb_low_rumble__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "low",
+        "rumble"
+      ],
+      "seconds": 22.6,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -12.18,
+      "sha256": "70156de05dfa845d0ab0f5468d0635c2bd505d5c5fcfb63098b4be4e866f86ac",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'low-rumbling' by musheran: low-rumbling-176033.mp3",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/low-rumbling (licence field read 2026-11-12; author musheran); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 0.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
     },
     {
       "id": "amb_motel_highway__v1",
@@ -331,6 +523,194 @@
       "intended_seconds": 30.0
     },
     {
+      "id": "amb_river__v1",
+      "file": "foley/amb_river__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "outdoor",
+        "river",
+        "water"
+      ],
+      "seconds": 39.1,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.37,
+      "sha256": "78d48942d54f727a887dccc32fe7595cca688cfad4f30efa778f789b215dd247",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'park-ambiences' by thimras: park_ambience_river.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/park-ambiences (licence field read 2026-11-12; author thimras); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 30.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
+      "id": "amb_wind_open_land__v1",
+      "file": "foley/amb_wind_open_land__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "hill",
+        "outdoor",
+        "plain",
+        "wind"
+      ],
+      "seconds": 40.9,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.28,
+      "sha256": "274686221dd6db16c5a0bd90740c9597eb5afaa585a34d5749137d4a01185d8b",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'park-ambiences' by thimras: park_ambience_wind.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/park-ambiences (licence field read 2026-11-12; author thimras); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 20.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
+      "id": "amb_wind_open_land__v2",
+      "file": "foley/amb_wind_open_land__v2.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "hill",
+        "outdoor",
+        "plain",
+        "wind"
+      ],
+      "seconds": 38.7,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.25,
+      "sha256": "b79131f3630e88d594c5bee91b2ab68c7b73d4a1f5e8f91102bac143365dda3b",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'mild-wind-background-noise' by bashar3a: wind background noise 2.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/mild-wind-background-noise (licence field read 2026-11-12; author bashar3a); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 2.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
+      "id": "armour_chain__v1",
+      "file": "foley/armour_chain__v1.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "chain",
+        "clink"
+      ],
+      "seconds": 0.427,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.17,
+      "sha256": "bf4d81c31a1595fe41a82ead6a8e3d9f61cac623351d2ff45ff152eaec541110",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '80-cc0-rpg-sfx' by rubberduck: chain_01.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/80-cc0-rpg-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "armour_chain__v2",
+      "file": "foley/armour_chain__v2.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "chain",
+        "clink"
+      ],
+      "seconds": 0.381,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.27,
+      "sha256": "d1c7d3d24278b0c25d979bc2e44172457081a12ce9b5969340826a6b5a13b3b5",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '80-cc0-rpg-sfx' by rubberduck: chain_02.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/80-cc0-rpg-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "armour_chain__v3",
+      "file": "foley/armour_chain__v3.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "chain",
+        "clink"
+      ],
+      "seconds": 0.768,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.85,
+      "sha256": "d78968c0f6e1b43bdfc7f4d52df64c195cf272de52a5ee81b0e765e2d905c6c3",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '80-cc0-rpg-sfx' by rubberduck: chain_03.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/80-cc0-rpg-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
       "id": "battery_hiss__v1",
       "file": "foley/battery_hiss__v1.wav",
       "category": "foley",
@@ -364,6 +744,99 @@
       "loop": false,
       "kind": "one_shot",
       "intended_seconds": 1.5
+    },
+    {
+      "id": "bell_soft__v1",
+      "file": "foley/bell_soft__v1.wav",
+      "category": "foley",
+      "tags": [
+        "bell",
+        "glow",
+        "ping",
+        "soft"
+      ],
+      "seconds": 0.996,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -32.0,
+      "sha256": "0feefaf82be7f80019d2c822398c96181298e55f5ebd9c3a3b09b86f8bc9b5bf",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'bell-dingschimes' by pwl: bell_ding1.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/bell-dingschimes (licence field read 2026-11-12; author pwl); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "bell_soft__v2",
+      "file": "foley/bell_soft__v2.wav",
+      "category": "foley",
+      "tags": [
+        "bell",
+        "glow",
+        "ping",
+        "soft"
+      ],
+      "seconds": 1.281,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -26.42,
+      "sha256": "d7c086fe7d35b4fa48dc0a729113ce56dc5083ab47479e058b30dd92e81e8630",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'bell-dingschimes' by pwl: bell_ding2.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/bell-dingschimes (licence field read 2026-11-12; author pwl); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "bell_soft__v3",
+      "file": "foley/bell_soft__v3.wav",
+      "category": "foley",
+      "tags": [
+        "bell",
+        "glow",
+        "ping",
+        "soft"
+      ],
+      "seconds": 1.387,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.73,
+      "sha256": "5ff81256a6ff9e1505878b2d2ec4f4c390213eea298782fd3f5fbff53004e625",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'bell-dingschimes' by pwl: bell_ding3.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/bell-dingschimes (licence field read 2026-11-12; author pwl); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
     },
     {
       "id": "blink_click__v1",
@@ -559,6 +1032,38 @@
       "loop": false
     },
     {
+      "id": "chalk_line__v1",
+      "file": "foley/chalk_line__v1.wav",
+      "category": "foley",
+      "tags": [
+        "chalk",
+        "line",
+        "map",
+        "route",
+        "write"
+      ],
+      "seconds": 0.586,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.64,
+      "sha256": "cab893fbfabdeae521a25be26453a5937b81d5b9a52ff8206bbd159d9ba407f8",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'drawing-with-chalk' by sinny: chalk_drawing_01.mp3",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/drawing-with-chalk (licence field read 2026-11-12; author sinny); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
       "id": "clockwork_loop__v1",
       "file": "music/clockwork_loop__v1.wav",
       "category": "music",
@@ -593,6 +1098,122 @@
       "loop": true,
       "kind": "loop",
       "intended_seconds": 60.0
+    },
+    {
+      "id": "cloth_move__v1",
+      "file": "foley/cloth_move__v1.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "move"
+      ],
+      "seconds": 0.25,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.27,
+      "sha256": "fa4c72a25e62f9b0f4acac0af8f1a42912f9e1fa1491b3e01b3805f3aa3d6709",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_cloth1.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "cloth_move__v2",
+      "file": "foley/cloth_move__v2.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "move"
+      ],
+      "seconds": 0.25,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.34,
+      "sha256": "9d544e7cea2d593f968a2c07bcd05a107118d99f7d6d4367028f8964ddb76e91",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_cloth2.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "cloth_move__v3",
+      "file": "foley/cloth_move__v3.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "move"
+      ],
+      "seconds": 0.25,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.16,
+      "sha256": "78ef0d49a0580342d05221c6b14ebc38ccee301c1934410d6aae84dd24d4511e",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_cloth3.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "cloth_move__v4",
+      "file": "foley/cloth_move__v4.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "move"
+      ],
+      "seconds": 0.185,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.72,
+      "sha256": "ece37931b16f0e61ad198e9bbbaef622446cfccf94952080c4f63ac62ac9ff03",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_cloth4.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
     },
     {
       "id": "cloth_rustle__v1",
@@ -1206,6 +1827,36 @@
       "loop": false
     },
     {
+      "id": "horse_trot__v1",
+      "file": "foley/horse_trot__v1.wav",
+      "category": "foley",
+      "tags": [
+        "hooves",
+        "horse",
+        "trot"
+      ],
+      "seconds": 22.5,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.24,
+      "sha256": "b5fc7a244d6fce8e0414db571c4eb167a8fdae4650b8993191445fae19376f12",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'horse-trotting' by ezduzziteh: Trot.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/horse-trotting (licence field read 2026-11-12; author ezduzziteh); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): loop cut at 0.0 s, closed with a 2 s equal-power crossfade; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
       "id": "jump_whoosh__v1",
       "file": "foley/jump_whoosh__v1.wav",
       "category": "foley",
@@ -1351,6 +2002,68 @@
       "loop": false
     },
     {
+      "id": "map_paper_open__v1",
+      "file": "foley/map_paper_open__v1.wav",
+      "category": "foley",
+      "tags": [
+        "map",
+        "paper",
+        "slide",
+        "unfold"
+      ],
+      "seconds": 1.05,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -26.98,
+      "sha256": "b2eff3ff6b8d8e07c41453ce00dd86912a2c23a65eb8f1db4bc4fb96820c70bb",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'opening-and-closing-a-map-sounds' by spring-spring: snd_use_map.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/opening-and-closing-a-map-sounds (licence field read 2026-11-12; author spring-spring); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "map_paper_open__v2",
+      "file": "foley/map_paper_open__v2.wav",
+      "category": "foley",
+      "tags": [
+        "map",
+        "paper",
+        "slide",
+        "unfold"
+      ],
+      "seconds": 1.429,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -36.7,
+      "sha256": "7886936591e2b8b5717a505f0953590a3f985900aebb6f75910626afa6a41263",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'opening-and-closing-a-map-sounds' by spring-spring: snd_close_map.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/opening-and-closing-a-map-sounds (licence field read 2026-11-12; author spring-spring); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
       "id": "monocle_pop__v1",
       "file": "foley/monocle_pop__v1.wav",
       "category": "foley",
@@ -1462,6 +2175,158 @@
       },
       "review": {
         "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "paper_move__v1",
+      "file": "foley/paper_move__v1.wav",
+      "category": "foley",
+      "tags": [
+        "move",
+        "paper",
+        "slide"
+      ],
+      "seconds": 0.421,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -26.29,
+      "sha256": "5e5a76fd3a95e0dd541fd37e4fb9c5be554f30eb4234acb8103eceb3eb9837c2",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '100-cc0-sfx' by rubberduck: paper_01.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/100-cc0-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "paper_move__v2",
+      "file": "foley/paper_move__v2.wav",
+      "category": "foley",
+      "tags": [
+        "move",
+        "paper",
+        "slide"
+      ],
+      "seconds": 0.548,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.45,
+      "sha256": "4c80ce57d24bc94010472a7fc82c2ba883d36e63d38cb59108d56205949d4eac",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '100-cc0-sfx' by rubberduck: paper_02.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/100-cc0-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "paper_move__v3",
+      "file": "foley/paper_move__v3.wav",
+      "category": "foley",
+      "tags": [
+        "move",
+        "paper",
+        "slide"
+      ],
+      "seconds": 0.54,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.22,
+      "sha256": "17afd3d3a65650023f349930241a2320ca86bc3f5466144ad260a5767c10037e",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '100-cc0-sfx' by rubberduck: paper_03.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/100-cc0-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "paper_move__v4",
+      "file": "foley/paper_move__v4.wav",
+      "category": "foley",
+      "tags": [
+        "move",
+        "paper",
+        "slide"
+      ],
+      "seconds": 0.58,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.64,
+      "sha256": "0b421153870396beecbb5dd91c3c6ed65992afb1c34d5d65e8f741a65ad5c0f2",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '100-cc0-sfx' by rubberduck: paper_04.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/100-cc0-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "pencil_line__v1",
+      "file": "foley/pencil_line__v1.wav",
+      "category": "foley",
+      "tags": [
+        "line",
+        "map",
+        "pencil",
+        "route",
+        "write"
+      ],
+      "seconds": 1.377,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.59,
+      "sha256": "a0404bb10924acb247db48828fe88b540ef53d0f99a1048c737d7ac75b388fba",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'pencil-sounds' by antumdeluge: pencil_write.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/pencil-sounds (licence field read 2026-11-12; author antumdeluge); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
         "human": "not_listened"
       },
       "loop": false
@@ -1742,6 +2607,36 @@
       "loop": false
     },
     {
+      "id": "slide_pop__v1",
+      "file": "foley/slide_pop__v1.wav",
+      "category": "foley",
+      "tags": [
+        "pop",
+        "rise",
+        "slide"
+      ],
+      "seconds": 0.64,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -26.09,
+      "sha256": "b7637130edc50c9bb0612f908a02835c3ccd5529def085c5e52cfd8189935d6b",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'a-slide-pop-sound' by ezduzziteh: slidepop.mp3",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/a-slide-pop-sound (licence field read 2026-11-12; author ezduzziteh); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
       "id": "sneaky_pizzicato__v1",
       "file": "music/sneaky_pizzicato__v1.wav",
       "category": "music",
@@ -1779,6 +2674,159 @@
       "intended_seconds": 60.0
     },
     {
+      "id": "soft_pop__v1",
+      "file": "foley/soft_pop__v1.wav",
+      "category": "foley",
+      "tags": [
+        "appear",
+        "pop",
+        "soft"
+      ],
+      "seconds": 0.238,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -29.53,
+      "sha256": "f8d159508f2225124ed000f5a0276e89f6736092b289efac565d36ce9013df22",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '100-cc0-sfx' by rubberduck: plop_01.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/100-cc0-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "soft_pop__v2",
+      "file": "foley/soft_pop__v2.wav",
+      "category": "foley",
+      "tags": [
+        "appear",
+        "pop",
+        "soft"
+      ],
+      "seconds": 0.204,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.59,
+      "sha256": "47a09a2c44b8d21e8ae57dad6be2bd3a3c85558084cede1eb5c2e1bca68ce55f",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '100-cc0-sfx' by rubberduck: plop_02.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/100-cc0-sfx (licence field read 2026-11-12; author rubberduck); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "soft_thud__v1",
+      "file": "foley/soft_thud__v1.wav",
+      "category": "foley",
+      "tags": [
+        "impact",
+        "land",
+        "soft",
+        "thud"
+      ],
+      "seconds": 0.227,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.91,
+      "sha256": "95847d6db502bef6759fd4c451f1e93061be7eda77bad8c25ef90d7c08a89660",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: bookPlace1.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "soft_thud__v2",
+      "file": "foley/soft_thud__v2.wav",
+      "category": "foley",
+      "tags": [
+        "impact",
+        "land",
+        "soft",
+        "thud"
+      ],
+      "seconds": 0.28,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.94,
+      "sha256": "f95fb122bb81213990363e0ce04ebdb1f82f7184372fb5a1b8c27a32ab3abd7b",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: bookPlace2.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "soft_thud__v3",
+      "file": "foley/soft_thud__v3.wav",
+      "category": "foley",
+      "tags": [
+        "impact",
+        "land",
+        "soft",
+        "thud"
+      ],
+      "seconds": 0.246,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.07,
+      "sha256": "5dcce7988680b34cb87176f885dfbca1221b67b4d7d0eb6cb01db89246076402",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: bookPlace3.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
       "id": "startled_oh__v1",
       "file": "vocal/startled_oh__v1.wav",
       "category": "vocal",
@@ -1807,6 +2855,554 @@
       },
       "review": {
         "machine": "gemini-3.8-flash heard: It sounds like a person letting out a surprised gasp and exclamation. |  | SPEECH: yes (\"Oh\") | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_armour__v1",
+      "file": "foley/step_armour__v1.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "clink",
+        "footstep",
+        "metal"
+      ],
+      "seconds": 0.247,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.91,
+      "sha256": "199c96219d94cfbbfffed63d77f9acca7ef5644d4bc993f2d27a3f1472ca1812",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_metal (2).ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_armour__v2",
+      "file": "foley/step_armour__v2.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "clink",
+        "footstep",
+        "metal"
+      ],
+      "seconds": 0.263,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.62,
+      "sha256": "ca2326c5f0034000f6ec36604d436b8539376c225ff25ba494551cc4f34758e8",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_metal (3).ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_armour__v3",
+      "file": "foley/step_armour__v3.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "clink",
+        "footstep",
+        "metal"
+      ],
+      "seconds": 0.247,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.86,
+      "sha256": "184db748488426adf927335d33493b18ef2d5f33b5b83df678fcd82c808ecd31",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_metal (4).ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_armour__v4",
+      "file": "foley/step_armour__v4.wav",
+      "category": "foley",
+      "tags": [
+        "armour",
+        "clink",
+        "footstep",
+        "metal"
+      ],
+      "seconds": 0.247,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.47,
+      "sha256": "7ac503c272954db2721934f89f90a991b8bd7bbf1a0b9c17fe839a88b60b7eb9",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_metal.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v1",
+      "file": "foley/step_dirt_kenney__v1.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.237,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.21,
+      "sha256": "6b7a16fd897812fe5d078fcafcdd11eca15683c5f47bb03cc0244caf354adcac",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep00.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v10",
+      "file": "foley/step_dirt_kenney__v10.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.215,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.42,
+      "sha256": "fad9b62bbf889a049bcac3108d30fb50e38261be2ffc3d277d8013d3b4949871",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep09.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v2",
+      "file": "foley/step_dirt_kenney__v2.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.28,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.52,
+      "sha256": "2d8da1b624c07081e5dcfa524e2514b8f89ca507a6ba6fbda4079b8681733ea7",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep01.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v3",
+      "file": "foley/step_dirt_kenney__v3.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.242,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.39,
+      "sha256": "685f455f4575bbc632a5a4dd047e200e858ca8fdfa3e32c0097e8794d8fe49ff",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep02.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v4",
+      "file": "foley/step_dirt_kenney__v4.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.267,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.73,
+      "sha256": "714ea1c774d248027a273bd72128d2e2f1115cd52e159a77c83f9c65d80f35b6",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep03.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v5",
+      "file": "foley/step_dirt_kenney__v5.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.286,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.04,
+      "sha256": "0c038259276ab02f3239f0e31417c1e77896b2c02bd4e6e4d9f9e5201b7fe3be",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep04.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v6",
+      "file": "foley/step_dirt_kenney__v6.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.276,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.4,
+      "sha256": "000f89ced774e392dea349e18c999695b1b916f41bd29b0a4395abacf6bb4e76",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep05.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v7",
+      "file": "foley/step_dirt_kenney__v7.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.233,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.37,
+      "sha256": "b19433f4d70230a4b99c0bec7948820145aec61ad75d40a8011c42b5e451e9c0",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep06.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v8",
+      "file": "foley/step_dirt_kenney__v8.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.24,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.71,
+      "sha256": "c88d2d7f5259ea349a871ebdcd0b9082bb86242324b9c3b571cadc43a1d3a437",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep07.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_dirt_kenney__v9",
+      "file": "foley/step_dirt_kenney__v9.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.239,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.56,
+      "sha256": "9eec5a650af47b38183dc035e03c59881234d090dd2fbf7660769056eb2ff3c8",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt '50-rpg-sound-effects' by kenney: footstep08.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/50-rpg-sound-effects (licence field read 2026-11-12; author kenney); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_leather__v1",
+      "file": "foley/step_leather__v1.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "leather",
+        "walk"
+      ],
+      "seconds": 0.25,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.5,
+      "sha256": "8b3335ea645359596f77544e6039362093c33fe0741291b246bc1510038828c8",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_lth1.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_leather__v2",
+      "file": "foley/step_leather__v2.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "leather",
+        "walk"
+      ],
+      "seconds": 0.188,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.56,
+      "sha256": "e434134f4f5dcb9444329e1056adc3d16514f1547bf3aa543427d7f9eac6caee",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_lth2.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_leather__v3",
+      "file": "foley/step_leather__v3.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "leather",
+        "walk"
+      ],
+      "seconds": 0.25,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.39,
+      "sha256": "d26a8ea216efaf9c8ad52f0d2dda4bbc4b4170bc8d54f80943b75fff09d331f2",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_lth33.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "step_leather__v4",
+      "file": "foley/step_leather__v4.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "leather",
+        "walk"
+      ],
+      "seconds": 0.25,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.83,
+      "sha256": "df0d699401baa249f0c8a4c211d50cd38484efe2d5b8bd7ec33e9c1137710c07",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'footsteps-leather-cloth-armor' by haeldb: step_lth4.ogg",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/footsteps-leather-cloth-armor (licence field read 2026-11-12; author haeldb); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
         "human": "not_listened"
       },
       "loop": false
@@ -1861,6 +3457,306 @@
       },
       "review": {
         "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v1",
+      "file": "foley/swish_soft__v1.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.109,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.14,
+      "sha256": "edbb5cfce0284c04d5bb207ce782126d7fccdb85a0ec098e92d75a72a04a51b6",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-1.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v10",
+      "file": "foley/swish_soft__v10.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.126,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.88,
+      "sha256": "45dc41a7342541d5cfd087cc83d2b2164362199e8dcb41f1ce5ec2a6d30cab01",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-6.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v11",
+      "file": "foley/swish_soft__v11.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.149,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.03,
+      "sha256": "c7afcfa1d900449326ef4d89879f2d5e95a559dd8be55981a5936cbe7ce05a55",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-7.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v12",
+      "file": "foley/swish_soft__v12.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.131,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.04,
+      "sha256": "a3cdae8e6c573a3899fa86660bbdd2a2d7418df28cfa501e74a826e8b730ab54",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-8.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v13",
+      "file": "foley/swish_soft__v13.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.159,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.07,
+      "sha256": "cc0395f2e89a1cfe5b01e5961818b1d7f3a25c93529552af6cdf6e6d18091e86",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-9.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v2",
+      "file": "foley/swish_soft__v2.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.116,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.5,
+      "sha256": "f52a87ed1c04bd1417a1c7af92de6d0c2bc77a03efeb78dd56d2bf477bf05209",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-10.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v3",
+      "file": "foley/swish_soft__v3.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.101,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.33,
+      "sha256": "c9f3d6ba86ba0b0bf1bea9905b348be0a8feb23a5c4e5aa0db06c7ff76bc1502",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-11.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v7",
+      "file": "foley/swish_soft__v7.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.125,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -13.12,
+      "sha256": "81fb347bdcf61b499f8a10cf6b5895dffa5b35b02c6f9ac57172199b0170c78c",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-3.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v8",
+      "file": "foley/swish_soft__v8.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.129,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.88,
+      "sha256": "2841240fc821dd02d00f03ebe10a2050e21a2860b4d58d20534faced022a1caa",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-4.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish_soft__v9",
+      "file": "foley/swish_soft__v9.wav",
+      "category": "foley",
+      "tags": [
+        "swish",
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.117,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.41,
+      "sha256": "25c465dcc0a5ccba617abbd38e60dff5d627bb226da4805b58b47b3d1fdf1233",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'swishes-sound-pack' by artisticdude: swish-5.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/swishes-sound-pack (licence field read 2026-11-12; author artisticdude); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
         "human": "not_listened"
       },
       "loop": false
@@ -2009,6 +3905,66 @@
         "human": "not_listened"
       },
       "loop": true
+    },
+    {
+      "id": "tick_wood__v1",
+      "file": "foley/tick_wood__v1.wav",
+      "category": "foley",
+      "tags": [
+        "click",
+        "counter",
+        "tick"
+      ],
+      "seconds": 0.308,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.57,
+      "sha256": "ab0cb92e4e7a2f39b58aa9b0f13a3183639bf13397094391e57ea9f869b75439",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'tick-and-tock' by cemkalyoncu: tick.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/tick-and-tock (licence field read 2026-11-12; author cemkalyoncu); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tick_wood__v2",
+      "file": "foley/tick_wood__v2.wav",
+      "category": "foley",
+      "tags": [
+        "click",
+        "counter",
+        "tick"
+      ],
+      "seconds": 0.123,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.85,
+      "sha256": "480aae58c6ee6ee0f9c06c63aa8bcd410ddadc5ea3a07b44b321baef1bf18591",
+      "source": {
+        "kind": "third_party",
+        "prompt": "OpenGameArt 'tick-and-tock' by cemkalyoncu: tick2.wav",
+        "generated": "2026-11-12",
+        "cost_usd_estimate": 0
+      },
+      "licence": {
+        "status": "cc0",
+        "note": "CC0 1.0 per https://opengameart.org/content/tick-and-tock (licence field read 2026-11-12; author cemkalyoncu); no attribution required, credited in the description as a courtesy"
+      },
+      "review": {
+        "machine": "measured only (free_import): one-shot trimmed at -50 dB under its peak; nobody has listened",
+        "human": "not_listened"
+      },
+      "loop": false
     },
     {
       "id": "tock__v1",

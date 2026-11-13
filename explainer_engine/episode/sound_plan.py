@@ -53,6 +53,23 @@ EVENT_CLASSES: dict[str, dict] = {
     # classes some eras forbid (ERA_COMPATIBILITY_TABLE): named so a script that asks for them is refused, not silently kept
     "horse_hooves": {"kind": "foley", "tags": ["horse", "hooves"], "words": r"horse|horses|cavalry|gallop|galloping|hooves"},
     "metal_clash": {"kind": "spot", "tags": ["sword", "metal"], "words": r"sword|swords|sabre|saber|bayonet"},
+    # W1 (2026-11-12): the battle and the love scene's sources, real CC0 takes (assets/audio/free_picks_2026-11-12.json)
+    "army_march": {"kind": "ambience", "tags": ["army", "march"], "words": r"march|marches|marching"},
+    "armour_clink": {"kind": "foley", "tags": ["armour", "clink"], "words": r"armour|armor|armoured|armored|shield|shields"},
+    "crowd_shout": {"kind": "ambience", "tags": ["crowd", "shout"], "words": r"charge|charges|attack|attacks"},
+    "war_horn": {"kind": "spot", "tags": ["horn", "war"], "words": r"horn|horns|trumpet"},
+    "crickets": {"kind": "ambience", "tags": ["crickets"], "words": r"crickets|cicadas"},
+    "birds": {"kind": "ambience", "tags": ["birds"], "words": r"birds|birdsong"},
+    # overlay motions (BP-192: every motion its own sound); authored by the overlay specs, never read from words
+    "ov_pop": {"kind": "foley", "tags": ["pop", "appear"], "words": None},
+    "ov_glow": {"kind": "foley", "tags": ["bell", "soft"], "words": None},
+    "ov_draw": {"kind": "foley", "tags": ["write", "line"], "words": None},
+    "ov_tick": {"kind": "foley", "tags": ["tick", "counter"], "words": None},
+    "ov_thud": {"kind": "foley", "tags": ["thud", "soft"], "words": None},
+    "ov_slide": {"kind": "foley", "tags": ["paper", "slide"], "words": None},
+    "ov_air": {"kind": "foley", "tags": ["air", "swell"], "words": None},
+    "ov_swish": {"kind": "foley", "tags": ["swish", "transition"], "words": None},
+    "ov_map_open": {"kind": "foley", "tags": ["map", "unfold"], "words": None},
     "music_bed": {"kind": "music", "tags": ["music", "bed"], "words": None},   # the segment cues; never read from words
 }
 _COMPILED = {c: re.compile(rf"\b({v['words']})\b", re.I) for c, v in EVENT_CLASSES.items() if v["words"]}
@@ -61,9 +78,10 @@ _ERA_NAMES = {"footsteps_dirt": "footstep_dirt", "footsteps_stone": "footstep_st
               "horse_hooves": "horse_hooves_gallop", "metal_clash": "sword_metal_clash"}
 # library tags that place a sound in a later world: a take carrying one never plays in that era (the burnt garage's fire
 # crackle is not a Pleistocene hearth)
-ERA_FOREIGN_TAGS = {"prehistoric_pleistocene": {"city", "street", "traffic", "garage", "motel", "highway", "warehouse",
-                                                "factory", "office", "courthouse", "parking", "electric", "battery",
-                                                "industrial", "workshop", "pool", "clock", "ui", "notebook", "pencil"}}
+_MODERN_TAGS = {"city", "street", "traffic", "garage", "motel", "highway", "warehouse", "factory", "office", "courthouse",
+                "parking", "electric", "battery", "industrial", "workshop", "pool"}
+ERA_FOREIGN_TAGS = {"prehistoric_pleistocene": _MODERN_TAGS | {"clock", "ui", "notebook", "pencil"},
+                    "bronze_age": _MODERN_TAGS}   # W1: the Trojan plain and the cliff-edge scene (the motel pool's crickets stay out)
 BED_OF_WEATHER = {"volcanic_ash_storm_and_wind": ["ash_fall", "wind"], "heavy_rain_and_wind": ["rain", "wind"],
                   "enclosed_draft": ["fire"], "freezing_wind_and_snow": ["wind"], "high_altitude_wind": ["wind"]}
 
