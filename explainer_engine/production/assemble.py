@@ -1444,6 +1444,14 @@ def _boundary_frames(a: dict, b: dict, plan: dict, size: tuple[int, int]) -> tup
     zoom = plan.get("zoom_target_xy") or [0.5, 0.5]
     out = []
     for k in range(total):
+        if t_type == "fade_to_black":   # HF-1: A's own frames down to black, then B's own frames up from it
+            if k < half_a:
+                u, fa, fb = 0.5 * (k + 1) / half_a, tail[min(k, len(tail) - 1)], head[0]
+            else:
+                u, fa, fb = 0.5 + 0.5 * (k - half_a + 1) / half_b, tail[-1], head[min(k - half_a, len(head) - 1)]
+            im = render_transition_frame_pair(Image.fromarray(fa), Image.fromarray(fb), transition_type=t_type, progress_u=u)
+            out.append(np.asarray(im.convert("RGB"), dtype=np.uint8))
+            continue
         u = (k + 1) / (total + 1)
         im = render_transition_frame_pair(Image.fromarray(tail[min(k, len(tail) - 1)]), Image.fromarray(head[min(k, len(head) - 1)]),
                                           transition_type=t_type, progress_u=u, zoom_target_xy=zoom)

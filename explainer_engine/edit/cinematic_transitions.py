@@ -26,7 +26,19 @@ TRANSITION_TYPES: Tuple[str, ...] = (
     "atmospheric_smoke_ash_wipe",
     "cross_dissolve_8f",
     "hard_cut_with_jl_bridge",
+    "fade_to_black",
 )
+
+# HF-1 (Truce 1914 assembly, TD-301): what the script's own ``transition_out`` becomes when the runner honours it.
+# ``hard_cut``, ``j_cut`` and ``l_cut`` are cuts (the J/L offsets belong to the sound plan); ``cross_dissolve_8f`` is the
+# 8-frame blend; ``fade_to_black`` is 24 frames, 12 out and 12 in (an engineering default: no source fixes the length yet).
+AUTHORED_FRAMES: Dict[str, int] = {
+    "hard_cut": 0,
+    "j_cut": 0,
+    "l_cut": 0,
+    "cross_dissolve_8f": 8,
+    "fade_to_black": 24,
+}
 
 CAMERA_MOVE_VECTORS: Dict[str, Tuple[float, float, float]] = {
     "static": (0.0, 0.0, 0.0),
@@ -97,8 +109,12 @@ def select_optimal_cinematic_transition(
     shot_b: Dict[str, Any],
     fps: int = 24,
     allow_decorative_wipes: bool = False,
+    honour_authored: bool = False,
 ) -> Dict[str, Any]:
-    """Select the optimal cinematic transition and audio bridge between Shot A and Shot B (`ED-04` compliant)."""
+    """Select the optimal cinematic transition and audio bridge between Shot A and Shot B (`ED-04` compliant).
+
+    ``honour_authored`` (HF-1): when the outgoing shot carries the script's own ``transition_out``, that wins over the
+    structural choice below (``AUTHORED_FRAMES``). Off by default, so every existing plan is what it was."""
     continuity = compute_visual_continuity_alignment(shot_a, shot_b)
     vtype_a = str(shot_a.get("visual_type") or "")
     vtype_b = str(shot_b.get("visual_type") or "")
@@ -109,7 +125,12 @@ def select_optimal_cinematic_transition(
     is_b_infographic = vtype_b == "map_visualization" or gmode_b in ("TACTILE_MAP", "MAP_25D")
 
     explicit_override = shot_a.get("explicit_transition_override")
-    if allow_decorative_wipes and explicit_override in TRANSITION_TYPES:
+    authored = str(shot_a.get("transition_out") or "") if honour_authored else ""
+    if authored in AUTHORED_FRAMES:
+        dur_frames = AUTHORED_FRAMES[authored]
+        t_type = "hard_cut_with_jl_bridge" if dur_frames == 0 else authored
+        audio_prelap_s = 0.25 if continuity["same_location"] else 0.35
+    elif allow_decorative_wipes and explicit_override in TRANSITION_TYPES:
         t_type = str(explicit_override)
         dur_frames = 0 if t_type == "hard_cut_with_jl_bridge" else 10
         audio_prelap_s = 0.35
@@ -142,7 +163,7 @@ def select_optimal_cinematic_transition(
 
     cut_plan_transition = "cut" if t_type == "hard_cut_with_jl_bridge" or continuity["same_location"] else "dissolve"
 
-    return {
+    plan = {
         "from_shot_id": shot_a.get("shot_id") or shot_a.get("id"),
         "to_shot_id": shot_b.get("shot_id") or shot_b.get("id"),
         "transition_type": t_type,
@@ -155,18 +176,23 @@ def select_optimal_cinematic_transition(
         "zoom_target_xy": continuity["focal_xy_from"],
         "continuity": continuity,
     }
+    if authored in AUTHORED_FRAMES:
+        plan["authored"] = True
+    return plan
 
 
 def plan_episode_cinematic_transitions(
     script_doc: Dict[str, Any],
     fps: int = 24,
     allow_decorative_wipes: bool = False,
+    honour_authored: bool = False,
 ) -> List[Dict[str, Any]]:
     """Build the complete shot-to-shot cinematic transition plan for an episode (`ED-04` compliant)."""
     shots = script_doc.get("shots", [])
     plans: List[Dict[str, Any]] = []
     for a, b in zip(shots, shots[1:]):
-        plans.append(select_optimal_cinematic_transition(a, b, fps=fps, allow_decorative_wipes=allow_decorative_wipes))
+        plans.append(select_optimal_cinematic_transition(a, b, fps=fps, allow_decorative_wipes=allow_decorative_wipes,
+                                                         honour_authored=honour_authored))
     return plans
 
 
@@ -187,6 +213,11 @@ def render_transition_frame_pair(
 
     if transition_type == "hard_cut_with_jl_bridge":
         return frame_a if u < 0.5 else frame_b
+
+    if transition_type == "fade_to_black":   # HF-1: the first half takes A down to black, the second brings B up from it
+        src = np.asarray(frame_a if u <= 0.5 else frame_b, dtype=np.float32)
+        gain = (1.0 - 2.0 * u) if u <= 0.5 else (2.0 * u - 1.0)
+        return Image.fromarray(np.clip(src * gain, 0, 255).astype(np.uint8), mode="RGB")
 
     if transition_type == "map_to_location_zoom_through":
         tx, ty = float(zoom_target_xy[0]) * w, float(zoom_target_xy[1]) * h
