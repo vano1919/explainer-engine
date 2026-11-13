@@ -6041,3 +6041,9 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Test: `tests/unit/test_gemini_api_backup.py` (blocks word for word, request text equals the prompt, collect writes every
   picture, the cap refuses before sending).
 - Blocked: the project key answers 403 "billing account has an outstanding balance"; nothing was sent or charged.
+## 2026-11-13 — Picture route order (creator, 2026-11-13 07:28 UTC)
+- Order, permanent: (1) Gemini chat in Task mode (Flash), (2) Gemini API batch (1K for LTX start frames, 2K for the rest),
+  (3) BFL Klein 1K only when 1 and 2 fail. Recorded in `config/picture_route.json`, tested by `tests/unit/test_picture_route.py`.
+- Evidence: the same six T0 prompts with the main-style reference on Gemini 1K (about $0.017 a photo), BFL Klein 1K ($0.009)
+  and BFL FLUX 3 Image ($0.048); spend $0.10 + $0.342 of the $0.40 cap; sheet on HF
+  `explainer-engine/photo_cost_2026-11-12/sheet_gemini_vs_flux3.jpg`. fal (no balance) and HF providers (402) were not usable.
