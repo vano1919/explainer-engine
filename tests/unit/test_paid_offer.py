@@ -111,9 +111,12 @@ def test_prices_must_be_the_seconds_at_todays_rate_and_the_split_spends_free_cre
 
 
 def test_the_credit_comes_from_modal_and_falls_back_to_the_ledgers(tmp_path):
-    raw = json.dumps({"metered_cost": "12.5", "billed_cost": "0", "adjustments": {}})
+    raw = json.dumps({"metered_cost": "22.49", "billed_cost": "0", "adjustments": {
+        "credits": "-17.03", "free_storage": "-5.32", "network_egress_allowance": "-0.14"}})     # Modal's real shape
     c = P.fetch_credit(NOW, cli=lambda args: raw)
-    assert (c["source"], c["used_usd"], c["free_left_usd"]) == ("modal_billing_summary", 12.5, 17.5)
+    assert (c["source"], c["used_usd"], c["free_left_usd"]) == ("modal_billing_summary", 17.03, 12.97)
+    raw = json.dumps({"metered_cost": "12.5", "billed_cost": "0", "adjustments": {}})         # no credits line: fallback
+    assert P.fetch_credit(NOW, cli=lambda args: raw)["free_left_usd"] == 17.5
     (tmp_path / "a.json").write_text(json.dumps({"created": "2026-11-12T18:22:04", "spent": {"modal": 2.5, "gemini_usd": 9}}))
     (tmp_path / "b.json").write_text(json.dumps({"created": "2026-11-12T21:10:25", "spent": {"modal_ltx": 0.5}}))
     (tmp_path / "old.json").write_text(json.dumps({"created": "2026-10-30T10:00:00", "spent": {"modal": 7}}))

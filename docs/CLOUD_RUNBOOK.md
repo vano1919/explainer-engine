@@ -140,9 +140,10 @@ An Edit, a Write or a shell writer is refused unless his word is recorded (`gove
 the Modal cards that are offered now, and plans the cheapest combination of card and generation. The offer is a `paid_offer/1`
 file made with `python -m explainer_engine.cloud.paid_offer fetch|price|check <file>` (free, read-only). The hook refuses a paid
 LTX GPU rung (`smoke`, `main`) unless `EE_PAID_OFFER=<file>` names a passing offer for that worker and rung whose chosen card is
-the launch's card. What Modal lets us read, checked 2026-11-13: `modal billing summary --json` (this month's `metered_cost`;
-free left = the $30 Starter credit minus it) and `modal billing rates --json` need Modal's gRPC API, which the cloud container's
-proxy does not carry, so a cloud thread falls back to the project ledgers' Modal spend of the month (`ledger_sum`, a lower bound
+the launch's card. What Modal lets us read, checked 2026-11-13: `modal billing summary --json` (the credit used is
+`adjustments.credits`, `metered_cost` also counts storage; free left = the $30 Starter credit minus it) and
+`modal billing rates --json` need Modal's gRPC API, which the cloud container's proxy carries after
+`pip install "modal[api-proxy-support]"`; without that package a cloud thread falls back to the project ledgers' Modal spend of the month (`ledger_sum`, a lower bound
 of the use, said so on the card) or the creator's own number; the cards and prices come from https://modal.com/pricing; Modal
 publishes no free-capacity figure (its GPU guide: a list of cards is a fallback order), so "available" means on today's price
 list with Functions operational on https://status.modal.com/index.json, and open notices (a planned maintenance) go on the card.

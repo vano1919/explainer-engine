@@ -11,10 +11,11 @@ the watchdog. The rule text is CH-07 in docs/CLOUD_RUNBOOK.md; ``cheapest.offer_
 rung whose ``EE_PAID_OFFER`` file is missing, stale or fails here.
 
 What Modal lets us read (checked 2026-11-13, all free and read-only):
-- the credit: ``modal billing summary --json`` (``Workspace.billing.summary``: ``metered_cost`` is this month's cost before the
-  plan credit; free left = the Starter credit minus it). It needs Modal's gRPC API, which the cloud container's proxy does not
-  carry, so a thread there falls back to the project ledgers' Modal spend of the month (``ledger_sum``, a lower bound of the
-  use, labelled so in the offer) or the creator's own number (``creator``, his message id);
+- the credit: ``modal billing summary --json`` (``Workspace.billing.summary``: ``adjustments.credits`` is the plan credit used
+  this month; free left = the Starter credit minus it; ``metered_cost`` also holds storage and is only the fallback). The cloud
+  container reaches it after ``pip install "modal[api-proxy-support]"``; without that a thread falls back to the project
+  ledgers' Modal spend of the month (``ledger_sum``, a lower bound of the use, labelled so in the offer) or the creator's own
+  number (``creator``, his message id);
 - the cards and prices: ``modal billing rates --json`` (gRPC again) or the public page https://modal.com/pricing (parsed here);
 - availability: Modal publishes no free-capacity figure (its GPU guide: a list of cards is a fallback order, the first free one
   is taken). The check is that the card is on today's price list and that status.modal.com reports Functions operational
@@ -84,9 +85,11 @@ def _modal_cli(args: list[str], timeout: float = 40.0) -> str | None:
 # ---- (1) the free credit -------------------------------------------------------------------------------------------------
 
 def credit_from_summary(raw: str, now: dt.datetime) -> dict:
-    """``modal billing summary --json``: this month's ``metered_cost`` (before the plan credit) and ``billed_cost``."""
+    """``modal billing summary --json``: the plan credit used is ``abs(adjustments.credits)`` (the credit covers compute only;
+    storage and egress allowances are separate lines), ``metered_cost`` is only the fallback when that field is missing."""
     d = json.loads(raw)
-    used = float(d["metered_cost"])
+    credits = (d.get("adjustments") or {}).get("credits")
+    used = abs(float(credits)) if credits is not None else float(d["metered_cost"])
     return {"checked_at": _iso(now), "source": "modal_billing_summary", "ref": "modal billing summary --json (this month)",
             "monthly_free_usd": MONTHLY_FREE_USD, "used_usd": round(used, 4), "billed_usd": float(d.get("billed_cost", 0)),
             "free_left_usd": round(max(0.0, MONTHLY_FREE_USD - used), 4)}

@@ -6262,3 +6262,13 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Rewritten to the new rule (not weakened): `test_cheapest::test_a_scene_spec_in_one_container_passes_the_hook`,
   `::test_the_creators_message_waives_only_the_rule_it_names` and `test_v43_ltx_jobs::test_the_session_hook_frees_only_the_ltx_cpu_rungs`
   now carry a passing offer (`conftest.make_offer`). New: `test_paid_offer.py` (17).
+
+## 2026-11-13 — CH-07 fix: the free credit is `adjustments.credits`, not `metered_cost`
+- Found (Fable tech-decision thread, `modal billing summary --json` from the cloud, 17:32 UTC): metered $22.49 = apps 17.03 +
+  volumes 5.32; the plan credit used is 17.03 (`adjustments.credits`), storage and egress have their own allowance lines,
+  billed 0. So free left is $12.97 of $30; `credit_from_summary` took `metered_cost` and would have said $7.51.
+- Also found: the cloud proxy does carry Modal's gRPC after `pip install "modal[api-proxy-support]"`; the runbook, the
+  `paid_offer` docstring and the modal-operations skill said it does not.
+- Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
+  skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
+  the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
