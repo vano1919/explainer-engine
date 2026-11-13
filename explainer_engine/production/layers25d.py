@@ -80,7 +80,7 @@ EVENT_EFFECTS = {"boom": ("shake", "lightning"), "eruption": ("shake", "lightnin
                  "thunder": ("lightning",), "flash": ("lightning",)}
 
 PLANES = 4
-RENDERER_VERSION = "layers25d/2"          # W2 (D-135): the clip cache keys on it
+RENDERER_VERSION = "layers25d/2.1"        # W2 (D-135): the clip cache keys on it (2.1: mist and smoke stay off the open sky, FL-319)
 LAYERS_MIN = int(SR.T("BP-181", "parallax_layers_min"))
 NEAR_TRAVEL = 0.05          # the near plane's travel end to end, share of the width (plan P5.2: target 4-6 %)
 TRAVEL_BAND = (0.04, 0.06)
@@ -585,6 +585,8 @@ class Scene:
                     st["mask"] = st["mask"] * cv2.GaussianBlur(green, (0, 0), 3)
             if e.get("region") and "mask" not in st:
                 st["mask"] = self._box_mask(e["region"], feather=0.06)
+            if name in ("mist", "smoke_drift") and "keep" not in st:
+                st["keep"] = self._off_sky()    # haze and smoke belong to the ground and the horizon, not to the open sky
             col_far = src[self.depth <= np.quantile(self.depth, 0.3)].reshape(-1, 3).mean(axis=0)
             col_dark = src[luma <= np.quantile(luma, 0.3)].reshape(-1, 3).mean(axis=0)
             st["mist_col"] = 0.6 * np.array([206, 209, 214], np.float32) + 0.4 * col_far.astype(np.float32)
@@ -599,6 +601,16 @@ class Scene:
                                    int(x0 * self.sw):max(int(x0 * self.sw) + 1, int(x1 * self.sw))]
                 ts = np.array(self.thresholds)
                 self.region_plane[e["effect"]] = int(np.searchsorted(ts, float(np.median(patch)))) if ts.size else 0
+
+    def _off_sky(self) -> np.ndarray:
+        """1 on the ground, about 0.03 on the open sky: the sky is the flat floor of the depth map (the farthest plateau)
+        in the upper 60 % of the picture, edged softly. ``mist`` and ``smoke_drift`` are multiplied by it, because their
+        blobs on a bright sky read as smudges (audit FL-319)."""
+        cv2 = self.cv2
+        top = (np.arange(self.sh, dtype=np.float32) < 0.6 * self.sh)[:, None]
+        sky = ((self.depth <= 0.02) & top).astype(np.float32)
+        sky = cv2.GaussianBlur(sky, (0, 0), 0.012 * self.sw)
+        return 1.0 - 0.97 * sky
 
     def _box_mask(self, region, feather: float) -> np.ndarray:
         x0, y0, x1, y1 = region
@@ -763,13 +775,13 @@ def render_frame(sc: Scene, f: int, out_meta: dict | None = None) -> np.ndarray:
             rgb = rgb * (1 + g * field[..., None] * np.array([1.0, 0.78, 0.5], np.float32))
         elif name == "mist":
             n = _tile_at(sc, st["tile"], 0.012 * t, 0.004 * t)
-            a = s * (0.10 + 0.22 * n) * far ** 1.5
+            a = s * (0.10 + 0.22 * n) * far ** 1.5 * _map_field(sc, st["keep"], ms[len(ms) // 2])
             if mask is not None:
                 a = a * mask
             rgb = rgb * (1 - a[..., None]) + st["mist_col"] * a[..., None]
         elif name == "smoke_drift":
             n = _tile_at(sc, st["tile"], 0.03 * t, -0.006 * t) * _tile_at(sc, st["tile2"], -0.012 * t, 0.0)
-            a = s * 0.55 * np.clip(n * 1.6 - 0.15, 0, 1) * (0.4 + 0.6 * far)
+            a = s * 0.55 * np.clip(n * 1.6 - 0.15, 0, 1) * (0.4 + 0.6 * far) * _map_field(sc, st["keep"], ms[len(ms) // 2])
             if mask is not None:
                 a = a * mask
             rgb = rgb * (1 - a[..., None]) + st["smoke_col"] * a[..., None]

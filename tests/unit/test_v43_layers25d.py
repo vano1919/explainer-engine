@@ -175,6 +175,21 @@ def test_surface_effects_stay_inside_their_region(pic):
     assert diff[: int(H * 0.5)].max() <= 2 and (diff[int(H * 0.75):] > 4).mean() > 0.01
 
 
+@pytest.mark.parametrize("name", ["mist", "smoke_drift"])
+def test_mist_and_smoke_stay_off_the_open_sky(pic, name):
+    """FL-319: blobs of haze or smoke on a bright open sky read as smudges; the sky is the flat floor of the depth map."""
+    path, depth = pic
+    depth = depth.copy()
+    depth[: int(depth.shape[0] * 0.4)] = 0.0       # an open sky: the farthest plateau of the picture
+    pic0 = (path, depth)
+    base = _scene(pic0, [{"effect": "push"}], dur=2.0)
+    sc = _scene(pic0, [{"effect": "push"}, {"effect": name, "strength": 1.5}], dur=2.0)
+    diff = np.abs(_frame(sc, 20) - _frame(base, 20)).max(axis=2)
+    sky, ground = diff[: int(H * 0.25)], diff[int(H * 0.5):]
+    assert ground.mean() > 1.0, f"{name} must still act on the ground"
+    assert sky.mean() < 0.2 * ground.mean(), f"{name} lies on the sky ({sky.mean():.2f} vs {ground.mean():.2f})"
+
+
 @pytest.mark.parametrize("kind", ["boom", "thunder"])
 def test_an_event_effect_waits_for_its_frame(pic, kind):
     sc = _scene(pic, [{"effect": "push"}], dur=2.0, events=[{"frame": 20, "kind": kind}])

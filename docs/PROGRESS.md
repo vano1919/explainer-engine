@@ -6288,3 +6288,15 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
   skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
   the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
+
+## 2026-11-13 — Truce 1914 clips lane: mist and smoke off the open sky, sound data package (script A)
+- Renderer (`production/layers25d.py`, version `layers25d/2.1`, audit FL-319): `mist` and `smoke_drift` are multiplied by a sky
+  weight (the flat farthest plateau of the depth map in the upper 60 % of the picture, edged softly, about 0.03 on the sky),
+  because their blobs on a bright sky read as smudges. Ground and horizon keep the effect. The version bump makes the clip cache
+  redraw every 2.5D shot once. Test: `test_mist_and_smoke_stay_off_the_open_sky`; before/after frames of S05_SH003, S05_SH016,
+  S06_SH001, S08_SH003 in `/mnt/project-files/explainer-engine/demo_run_2026-11-13/FL319_before_after.png`.
+- Script A data fix (assembly thread's sound package, audit TD-326), data only, no words, pictures or routes: 15 motion items
+  `ambience_only` -> `silent_by_design`, `crowd_murmur` out of the no-man's-land bed, the end card's `intentional_silence` text
+  removed. Builder `clips_lane/builder/apply_sound_package.py`. G1-G4 PASS; `stage_guard` run per owner (editor, beats, architect)
+  0 violations each (one combined editor pass flags the two fields owned by other stages, by design).
+- Cost $0. Next: the real G7 runs in the assembly checkout after the LTX ingest.
