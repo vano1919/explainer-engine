@@ -2916,6 +2916,12 @@
     {
      "effect": "fire_flicker",
      "event_id": "S02_SH009.M2",
+     "region": [
+      0.56,
+      0.58,
+      0.67,
+      0.82
+     ],
      "audio": {
       "decision": "ambience_only",
       "why": "the brazier's flame flickers; the fire's crackle is the bed's"
