@@ -175,3 +175,47 @@ def test_direct_writes_the_sound_with_one_audio_track():
     audio = [t for t in d["tracks"] if t["track"] == "audio"]
     assert len(audio) == 1 and audio[0]["decision"] in D.AUDIO_DECISIONS and audio[0]["why"]
     assert not [p for p in D.check(d, "abc", SPINE, frames=72) if p["level"] == "FAIL"]
+
+
+def test_maps_get_their_own_bed_date_stamps_counter_ticks_and_respect_cues_none():
+    """The map criteria (the owner, 13:13 UTC; the clips lane's map test, 2026-11-14): a map always has a bed, a date chip
+    is a period tag (stamp/typewriter wanted, paper until then), a counter ticks by its ease and knocks once (BP-192, never
+    a riser), ``cues: none`` is silent, one sound for the same op on one frame, one thud a line (BP-81)."""
+    from pathlib import Path
+    lib = Path(__file__).resolve().parents[2] / "assets" / "audio" / "library"
+    evs = [{"id": "A1", "op": "label", "start_frame": 46, "end_frame": 64, "from": "chip_aug", "label": "August 1914"},
+           {"id": "A2", "op": "front_line", "start_frame": 0, "end_frame": 40, "cues": "none"},
+           {"id": "A3", "op": "pulse", "start_frame": 60}, {"id": "A4", "op": "pulse", "start_frame": 80},
+           {"id": "A5", "op": "pulse", "start_frame": 80},
+           {"id": "A6", "op": "counter", "start_frame": 100, "end_frame": 148},
+           {"id": "A7", "op": "label", "start_frame": 10, "label": "Ypres"}]
+    snd = LD.choose_sound(evs, library_root=lib, map_view={"span_km": 150})
+    cls = [e["class"] for e in snd["events"]]
+    assert "crowd_murmur" in snd["beds"]                                        # a front line at 150 km: men in trenches
+    assert "data_rise_texture" not in cls and cls.count("ov_tick") == LD.COUNTER_TICKS and cls.count("ov_thud") == 1
+    ticks = [e["at_s"] for e in snd["events"] if e["class"] == "ov_tick"]
+    knock = next(e["at_s"] for e in snd["events"] if e["class"] == "ov_thud")
+    assert ticks == sorted(ticks) and ticks[0] > 100 / 24 and knock == round(148 / 24 - LD.COUNTER_KNOCK_LEAD_S, 3)
+    date = next(e for e in snd["events"] if e.get("event_id") == "A1")
+    assert date["class"] == LD.DATE_FALLBACK and {n["class"] for n in snd["needs"]} >= set(LD.DATE_CLASSES)
+    silent = {s["id"]: s["why"] for s in snd["silent"]}
+    assert "cues none" in silent["A2"] and "one grouped sound" in silent["A5"] and "read, not heard" in silent["A7"]
+    pins = [e for e in snd["events"] if e.get("event_id") in ("A3", "A4")]
+    assert [e["class"] for e in pins] == ["map_pin_set", "map_arrive_click"]   # one thud a line, then the wood tick
+    wide = LD.choose_sound([{"id": "B1", "op": "route_arrow", "start_frame": 0, "end_frame": 48}], library_root=lib,
+                           map_view={"span_km": 1000})
+    assert wide["beds"] == ["wind"] and "never digital silence" in wide["events"][0]["why"]
+    army = LD.choose_sound([{"id": "C1", "op": "marker_travel", "start_frame": 24, "end_frame": 72, "token": "army"}],
+                           library_root=lib, map_view={"span_km": 530})
+    assert any(e["class"] == "army_march" and e["dur_s"] == 2.0 for e in army["events"])
+
+
+def test_a_real_map_shot_takes_its_sound_through_the_same_chooser():
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    script = json.loads((root / "episodes/ep_truce_1914/story/production_script.json").read_text(encoding="utf-8"))
+    shot = next(s for s in script["shots"] if any(a.get("kind") == "counter" for a in s.get("actions") or []))
+    out = LD.sound_of_map(shot, script, None, library_root=root / "assets" / "audio" / "library")
+    cls = [e["class"] for e in out["events"]]
+    assert out["beds"] and "ov_thud" in cls and "data_rise_texture" not in cls

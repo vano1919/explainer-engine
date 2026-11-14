@@ -593,6 +593,17 @@ def _hear_distance(area_pct: float) -> str | None:
     return None if a < 0.5 else "distant" if a < 2 else "medium" if a < 5 else "close"
 
 
+# Maps (the owner, 2026-11-14 13:13 UTC: the director decides the sound on maps too; criteria from the clips lane's map test,
+# map_sound_criteria/README.md). Engineering defaults; BP-192 owns "a counter = ticks and a final knock".
+DATE_CLASSES = ("date_stamp", "typewriter_key")    # a date chip is stamped or typed; the library has neither yet -> needs
+DATE_FALLBACK = "ov_slide"                          # ... until then the period paper foley of a tag laid on the map
+MONTHS = ("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november",
+          "december")
+ARMY_WORDS = ("army", "armies", "troops", "soldiers", "march", "marching", "column", "regiment", "division", "corps", "war",
+              "front")
+COUNTER_TICKS = 9                                   # ticks while the digits roll, spaced by the counter's own ease
+COUNTER_KNOCK_LEAD_S = 0.12                         # the knock lands this long before the counter stops
+MURMUR_SPAN_KM = 400                                # a front line seen at this scale or closer is men in trenches: a far murmur
 MODERN_WORDS = ("garage", "concrete", "car", "cars", "traffic", "engine", "motel", "pool", "city", "office", "electric")
 
 
@@ -601,6 +612,8 @@ def _pick_take(cls: str, root, words: set) -> tuple[list[str], str, str]:
     ranked by the words of what the class must sound like (``BED_WORDS``, twice), then the place's words; a take whose
     words belong to a later world (a garage, a motel pool) drops to the end."""
     from explainer_engine.episode import sound_plan as SP
+    if cls not in SP.EVENT_CLASSES:
+        return [], "missing", f"{cls} is not a class of the sound plan yet: listed under needs"
     found, basis = SP._candidates(cls, root)
     real = [i for i in found if SP._origin(i) != "procedural"]
     if not real:
@@ -619,8 +632,51 @@ def _pick_take(cls: str, root, words: set) -> tuple[list[str], str, str]:
             f"{basis}; best take {ranked[0]['id']}" + (f" (fits: {', '.join(hit)})" if hit else ""))
 
 
+def _is_date(ev: dict) -> bool:
+    text = f"{ev.get('label') or ''} {ev.get('text_shown') or ''}".lower()
+    return str(ev.get("from") or "").startswith("chip_") or bool(re.search(r"\b(1[0-9]{3}|20[0-9]{2})\b", text)) or any(
+        m in text.split() for m in MONTHS)
+
+
+def _map_spots(ev: dict, op: str, fps: float, words: set, scene_words: set, open_air: bool):
+    """The map criteria beyond the AV contract's defaults: ``None`` when they do not apply, else (spots, silent, needs)."""
+    at = int(ev.get("start_frame", 0))
+    end = int(ev.get("end_frame") or at)
+    if str(ev.get("cues") or "").lower() == "none":
+        return [], [{"id": ev.get("id"), "op": op, "decision": "silent_by_design",
+                     "why": "criterion 1: cues none, the line stands at once; nothing is seen drawn"}], []
+    if op == "label" and _is_date(ev):
+        need = [{"class": c, "status": "missing", "why": "a date is stamped or typed; no such take yet"} for c in DATE_CLASSES]
+        return [{"kind": "foley", "what": op, "class": DATE_FALLBACK, "at_s": round(at / fps, 3), "distance": "close",
+                 "decision": "sfx", "sync": "onset", "event_id": ev.get("id"),
+                 "why": "criterion 2-3: a date chip is a period tag stamped onto the map, heard close; the library has no "
+                        "stamp or typewriter take yet, so the paper of the tag (a UI click would be a modern sound)"}], [], need
+    if op == "marker_travel":
+        token = {str(ev.get("token") or "").lower()} | set(re.findall(r"[a-z]+", str(ev.get("label") or "").lower()))
+        if token & set(ARMY_WORDS) or (words | scene_words) & set(ARMY_WORDS):
+            return [{"kind": "ambience", "what": op, "class": "army_march", "at_s": round(at / fps, 3), "distance": "distant",
+                     "decision": "sfx", "sync": "span", "dur_s": round(max(1, end - at) / fps, 3), "event_id": ev.get("id"),
+                     "why": "criterion 2-3: the moving token is an army; a marching column makes a sound, heard far at a "
+                            "map's scale"}], [], []
+    if op == "counter":
+        out = []
+        s0, s1 = at / fps, max(at + 1, end) / fps
+        for j in range(COUNTER_TICKS):
+            u = 0.5 - 0.5 * math.cos(math.pi * (j + 1) / (COUNTER_TICKS + 2))
+            out.append({"kind": "foley", "what": op, "class": "ov_tick", "at_s": round(s0 + (s1 - s0) * u, 3),
+                        "distance": "close", "decision": "sfx", "sync": "onset", "event_id": f"{ev.get('id')}.tick{j + 1}",
+                        "why": "criterion 1-2: the counter's digits roll and tick, spaced by its own ease (BP-192: ticks, "
+                               "then a knock; never a riser)"})
+        out.append({"kind": "foley", "what": op, "class": "ov_thud", "at_s": round(max(s0, s1 - COUNTER_KNOCK_LEAD_S), 3),
+                    "distance": "close", "decision": "sfx", "sync": "onset", "event_id": f"{ev.get('id')}.knock",
+                    "why": "criterion 1-2: the counter lands on its number: one knock (BP-192)"})
+        return out, [], []
+    return None
+
+
 def choose_sound(events: list[dict], *, scene: dict | None = None, spine=None, open_air: bool = True, cold: bool = False,
-                 prev_beds: list[str] | None = None, library_root=None, fps: float = 24.0) -> dict:
+                 prev_beds: list[str] | None = None, library_root=None, fps: float = 24.0,
+                 map_view: dict | None = None) -> dict:
     """The sound of one shot from its VISIBLE events (a 2.5D effect or camera move, or a map action: ``op``, ``id``,
     ``area_pct``, ``start_frame``/``end_frame``, ``text``), by the visual criteria in the same order: (1) only what is seen
     or authored sounds (words never add a sound, BP-192 / AV-07); (2) does it make a sound in nature (light, a candle, a
@@ -635,8 +691,22 @@ def choose_sound(events: list[dict], *, scene: dict | None = None, spine=None, o
     place = set(re.findall(r"[a-z]+", str((scene or {}).get("surroundings", "")).lower()))
     scene_words = {w for w in place | words if len(w) > 3}
     beds, spots, silent, needs = {}, [], [], []
+    grouped = {}
     for ev in events:
         op = ev["op"]
+        key = (op, int(ev.get("start_frame", 0)))
+        if map_view is not None and key in grouped and str(ev.get("cues") or "").lower() != "none":
+            silent.append({"id": ev.get("id"), "op": op, "decision": "silent_by_design",
+                           "why": f"lands with {grouped[key]} on the same frame: one grouped sound (BP-192 max_at_once)"})
+            continue
+        grouped.setdefault(key, ev.get("id"))
+        if map_view is not None:
+            got = _map_spots(ev, op, fps, words, scene_words, open_air)
+            if got is not None:
+                spots.extend(got[0])
+                silent.extend(got[1])
+                needs.extend(got[2])
+                continue
         if op in OWN_AUDIO:
             dec, cls, why = OWN_AUDIO[op]
         else:
@@ -675,6 +745,19 @@ def choose_sound(events: list[dict], *, scene: dict | None = None, spine=None, o
                       "why": f"criterion 1-2: a visible {op} that sounds (BP-192); {why}"})
         if ev.get("end_frame") and spots[-1]["sync"] == "span":
             spots[-1]["dur_s"] = round((int(ev["end_frame"]) - at) / fps, 3)
+    if map_view is not None:
+        pins = [x for x in spots if x["class"] == "map_pin_set"]
+        for x in pins[1:]:                    # BP-81: one emphasis cue a line; the later pulses are the wood tick
+            x.update({"class": "map_arrive_click", "why": "the line's one thud is spent on its first pulse (BP-81); this pulse "
+                                                          "is a wood tick; " + x["why"]})
+        span = float(map_view.get("span_km") or 0)
+        line = any(e["op"] == "front_line" for e in events)
+        if line and 0 < span <= MURMUR_SPAN_KM:
+            beds.setdefault("crowd_murmur", {"distance": "distant", "why": f"criterion 2-3: the front line seen at {span:g} km "
+                                             "is men in trenches; waiting men are a far murmur at this scale (the map's bed)"})
+        elif open_air and not beds:
+            beds.setdefault("wind", {"distance": "distant", "why": f"criterion 2-3: a map is a wide view of open land "
+                                     f"({span:g} km): its own bed is the land's far wind, never digital silence"})
     for cls in prev_beds or []:
         if cls not in beds and not (cls == "wind" and not open_air) and not (cold and cls in COLD_FORBIDS):
             beds[cls] = {"distance": "distant", "why": "criterion 5: the previous shot of the same place has it: the bed "
@@ -725,3 +808,23 @@ def sound_of_direction(d: dict, spine, frames: int, fps: float = 24.0, prev: dic
     prev_beds = (prev or {}).get("sound", {}).get("beds") if prev else None
     return choose_sound(evs, scene=d.get("scene"), spine=spine, open_air=open_sky(d), cold=is_cold(d, _words(spine)),
                         prev_beds=prev_beds, library_root=library_root, fps=fps)
+
+
+def sound_of_map(shot: dict, script: dict, spine=None, fps: int = 24, prev: dict | None = None, library_root=None,
+                 cold: bool = False, open_air: bool = True) -> dict:
+    """A map shot's sound by the same chooser: its actions as visible events (``episode.events.visual_events``) with the
+    fields the map criteria read (``cues``, ``from``, ``label``, ``token``), the view's scale from ``map_view``."""
+    from explainer_engine.episode import events as EV
+    acts = shot.get("actions") or []
+    evs = []
+    for e in EV.visual_events(shot, script, spine, fps):
+        if e["source"] != "actions":
+            continue
+        a = acts[e["index"]] if e["index"] < len(acts) else {}
+        evs.append({"id": a.get("event_id") or f"{shot.get('shot_id')}.A{e['index'] + 1}", "op": e["op"],
+                    "start_frame": e["start_frame"], "end_frame": e["end_frame"], "text": 0,
+                    **{k: a[k] for k in ("cues", "from", "label", "token") if a.get(k) is not None}})
+    prev_beds = (prev or {}).get("beds") if prev else None
+    return choose_sound(evs, scene=shot.get("scene") or {"surroundings": " ".join(str(x) for x in (
+        shot.get("location_id"), shot.get("purpose")) if x)}, spine=spine, open_air=open_air, cold=cold,
+        prev_beds=prev_beds, library_root=library_root, fps=fps, map_view=shot.get("map_view") or {})

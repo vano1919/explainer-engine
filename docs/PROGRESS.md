@@ -6581,3 +6581,25 @@ gate saw. The owner asked for the cause in the code and for gates that catch the
 
 All new numbers are engineering defaults, marked in the code. Tests: `tests/unit/test_c4a_review_fixes.py` (8). Each gate
 catches the old defect on a synthetic picture, and each fix passes it.
+
+## 2026-11-14 — Maps: the director's sound criteria move from the clips lane's test driver into `choose_sound`
+
+The maps thread's free test (`stage_b_round2_2026-11-14/map_sound_criteria/`) had applied map criteria in its own driver
+(`map_test_build.py`, an episode-pinned `ARMY_TOKENS`). They are now `living_director.choose_sound(..., map_view=...)`
+criteria, read from the action and never pinned to a shot. `sound_of_map` hands a map shot's actions to the chooser.
+
+- `cues: none` is silent (nothing is seen drawn). It was ignored before.
+- A date chip (`from: chip_*`, or a month or year in its label) gets a period tag sound. `DATE_CLASSES` (stamp,
+  typewriter) go to `needs` because the library has no such take; until then it plays `ov_slide` paper foley.
+- A `marker_travel` whose token, label, words or place name an army gets a distant `army_march` over its span.
+- A counter gets `COUNTER_TICKS` ticks spaced by its cosine ease and one knock `COUNTER_KNOCK_LEAD_S` before it stops
+  (BP-192). The AV default riser (`data_rise_texture`) is gone.
+- The same op on one frame plays one sound (BP-192 max_at_once). The second and later pulses of a line become the wood tick
+  (BP-81: one thud per line).
+- The map's own bed: a front line seen at <= `MURMUR_SPAN_KM` is a far `crowd_murmur`, otherwise the land's far wind
+  (never digital silence). Criterion 5 carries a bed to the next shot.
+
+Replayed on the 5 maps of the test, it gives the same events as the driver, plus the bed. Tests:
+`test_maps_get_their_own_bed_date_stamps_counter_ticks_and_respect_cues_none` and
+`test_a_real_map_shot_takes_its_sound_through_the_same_chooser`. Library gaps: no stamp, typewriter, pin, cough or snap
+take. New takes are paid, so they wait for the owner.
