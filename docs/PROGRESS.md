@@ -6299,3 +6299,16 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   full cap and says "would pass the cap" past it; STOP_FRACTION, the caps and every other item are untouched; a waiver without
   `by` or `ref` is a ValueError. Test `test_stop_waiver_moves_the_80_percent_line_for_named_items_only_never_the_cap`.
 - The launch of a part now goes through `demo_truce_1914/ltx/launch_safe.sh` (reserve first, launch only if it succeeded, FL-317).
+
+## 2026-11-14 · LTX S5 R2: the three continuity re-makes (S06_SH009, S07_SH005, S07_SH008)
+- Why: the owner's card cmsg_01Hnu5zB86sjUj5GtTgaUkPWNDRDuwFk9fLFHkmrZPYDK8 (option A) after the by-eye check of all 54 neighbouring pairs
+  found three real breaks (button, invented flag, rifle). One launch, run id `d3e015fbb9d4_fc6ae61bf410`, settled 0.2676 USD
+  (estimate 0.2985), series ledger 4.20 of 5.00, no app left running.
+- Done: scene `truce_A_R2.json` (three shots of two scenes, two pictures of their own plus the chained start picture
+  `S07_SH008_chain_f088_TR.png` = frame 88 of S07_SH007, frame pick BP-199, RealPLKSR at the same size); the prompts of S07_SH005 (no flag)
+  and S07_SH008 (rifle already in hand) deviate from the script on purpose, recorded in the scene file (`script_deviation`) and the
+  journal MS-119; old takes in `production/video/superseded/`; new records ingested (S07_SH005 CLIP-06 FAIL, -0.1 dBTP, level trim at
+  the assembly). Start-frame size check: no stretch or shift, only the standard 11 px crop top and bottom (`ltx/r2/R2_START_FRAMES_MEASURE.md`).
+- Focused test: none new (data and a launch, no code change); the ledger waiver is covered by the existing `test_ledger.py` test.
+- Open: the nine minor pairs, S05_SH018/019 caps (NT-312), and the missing gate that compares the end state of a shot with the next
+  shot's start state (FL-120); incident log LTX-01..LTX-08 in `architecture_2026-11-14/INCIDENT_JOURNAL_2026-11-14.md`.

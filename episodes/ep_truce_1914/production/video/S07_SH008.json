@@ -5,17 +5,35 @@
   "backend": "ltx",
   "status": "REVIEW",
   "clip_path": "production/video/cut/S07_SH008.mp4",
-  "clip_sha256": "e368d0bac5b6fb19b6bf1f9f7060a133ea7f7f54bd64976478cc17e11bd52626",
+  "clip_sha256": "4c2d55c3a0fcbb814b1e51200cca75e4c8a281ddb1127361532e15064d30d9a7",
   "raw_path": "production/video/raw/S07_SH008.mp4",
-  "raw_sha256": "bf973588fe0054aa752b1e2b298a3229b3150cf5ad4e039e6584b022265385f6",
+  "raw_sha256": "756f0492344f74c668d872217e70941ad60ecd2edd8d620889fcc1c10b91083e",
   "raw_fps": 24.0,
   "raw_seconds": 9.0417,
   "fps": 24,
   "in_s": 0.0,
   "out_s": 8.25,
   "frames": 198,
-  "speech_raw": [],
-  "speech": [],
+  "speech_raw": [
+    [
+      3.98,
+      4.12
+    ],
+    [
+      5.28,
+      5.4
+    ]
+  ],
+  "speech": [
+    [
+      3.98,
+      4.12
+    ],
+    [
+      5.28,
+      5.4
+    ]
+  ],
   "clip_spoken": false,
   "chain_from_frame": null,
   "ends_on_handover": false,
@@ -29,7 +47,16 @@
       "rule": "CLIP-07",
       "status": "REVIEW",
       "msg": "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 36 frames from frame 0"
     }
   ],
-  "attempts": []
+  "attempts": [
+    {
+      "note": "R2 re-make: starts from tail frame f088 of the kept S07_SH007 (frame_pick BP-199) upscaled with RealPLKSR at the same size; prompt: rifle already in hand (script deviation L-17); stray whisper word \"You\" at 7.6-9.0 s (muted at G8 like S04_SH005, FL-112); take1 in superseded/"
+    }
+  ]
 }
