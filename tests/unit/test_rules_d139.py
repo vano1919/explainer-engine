@@ -46,3 +46,11 @@ def test_ct09_is_clarified_not_weakened():
 def test_d139_is_in_the_decision_log():
     row = _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")
     assert "RULES_RECONCILIATION_JOURNAL.md" in row and "decided by creator 2026-11-14" in row
+
+
+def test_or22_is_scoped_so_the_director_decides_per_shot_creative_choices():
+    orch = (DOCS / "ORCHESTRATION.md").read_text(encoding="utf-8")
+    row = next(line for line in orch.splitlines() if line.startswith("| OR-22 |"))
+    assert "Scoped 2026-11-14 by D-139" in row and "goal or the money" in row
+    d139 = _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")
+    assert "director decides each shot's weather and effects" in d139

@@ -6348,3 +6348,8 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Waits for PR #188 to merge (its files): BP-21/BP-109/BP-181/BP-184 in the registry, `superres.decide` U-2, AV-07's
   director-word note, PROVENANCE rows for SAM 2.1, BiRefNet, LaMa, DA3 and MoGe-2.
 - Tests: `tests/unit/test_rules_d139.py`. docs_lint 0. Cost $0.
+- Follow-up the same day (the creator's card answers 12:37 UTC and his message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X at 12:38 UTC): zoom on a
+  named word = BP-21 accent; 2.5D keeps BP-109's 5 s; a still camera keeps a slow drift; the snow card withdrawn because the
+  director decides weather and effects per shot by written criteria (scene weather as the ceiling, then sky, light, picture,
+  words, neighbours). OR-22 scoped: per-shot creative choices are the director's; only goal or money goes to the creator.
+  Test `test_rules_d139.py` +1. The registry text (BP-21, and PR #188's living-inventory rule "weather in every shot of the scene") waits for PR #188.
