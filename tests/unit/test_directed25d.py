@@ -144,17 +144,17 @@ def test_thin_strokes_stay_in_the_background(tmp_path):
     p, lay = _layers(tmp_path)
     wire = np.zeros((H, W), np.float32)
     cv2.line(wire, (10, 40), (470, 90), 1.0, 2)
-    lay["masks"]["wire"] = wire                       # all stroke: never layered
+    lay["masks"]["wire"] = wire                       # all stroke (thin_share >= THIN_SHARE_MAX): stays on background
     post = lay["masks"]["man"].copy()
-    cv2.line(post, (140, 150), (300, 120), 1.0, 2)    # a wide object with a wire hanging off it: the wire is stripped
+    cv2.line(post, (140, 150), (300, 120), 1.0, 2)    # a wide object with a thin rifle/line: kept whole, never bitten
     lay["masks"]["man"] = post
     st = R.Stage(p, lay, _plan(), OUT)
     assert st.flat == ["wire"] and [o["id"] for o in st.objects] == ["man"]
     sw = st.sw / W
     man = st.objects[0]
-    assert man["alpha"][int(135 * st.sh / H), int(250 * sw)] < 0.1       # the hanging wire is no longer part of the layer
-    assert man["alpha"][int(170 * st.sh / H), int(100 * sw)] > 0.9       # the body still is
-    assert 0 < man["thin_share"] < R.FLAT_SHARE and "wire" in st.masks_src
+    assert man["alpha"][int(135 * st.sh / H), int(220 * sw)] > 0.5       # the thin part stays whole on the kept layer
+    assert man["alpha"][int(170 * st.sh / H), int(100 * sw)] > 0.9       # the body interior is opaque
+    assert 0 < man["thin_share"] < R.THIN_SHARE_MAX and "wire" in st.masks_src
 
 
 def test_a_depth_step_does_not_fold_the_background(tmp_path):

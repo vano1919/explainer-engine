@@ -51,26 +51,29 @@ def _plan(frames=24, **kw):
             **kw}
 
 
-def test_a_rough_outline_keeps_its_nubs_and_the_seam_gate_catches_the_old_bites(tmp_path, monkeypatch):
+def test_a_rough_outline_keeps_its_nubs_and_the_seam_gate_catches_the_old_bites(tmp_path):
     p, lay, _ = _layers(tmp_path, rough=True)
     st = R.Stage(p, lay, _plan(), OUT)
     seam = st.rest_seam()
-    assert MI.rest_seam_row(seam)["status"] == "PASS", seam
-    monkeypatch.setattr(R.Stage, "_strokes", lambda self, parts, r: parts > 0)    # the C4A renderer: every nub cut
-    old = R.Stage(p, lay, _plan(), OUT).rest_seam()
-    assert old["per_outline_px"] > seam["per_outline_px"] * 3
+    assert seam["per_outline_px"] <= 0.04 and MI.rest_seam_row(seam)["status"] == "PASS", seam
+    # Simulate the old C4A morphological bite (cutting disc-dilated MORPH_OPEN nubs out of alpha over the plate)
+    bitten = R.Stage(p, lay, _plan(), OUT)
+    o = bitten.objects[0]
+    r = max(1, int(round(R.THIN_FILL_PX / 2 * bitten.sw / 1920)))
+    disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
+    parts = o["hard0"] & (1 - cv2.morphologyEx(o["hard0"], cv2.MORPH_OPEN, disc))
+    o["alpha"] = o["alpha"] * (1.0 - cv2.dilate(parts.astype(np.float32), disc))
+    old = bitten.rest_seam()
+    assert old["per_outline_px"] > MI.SEAM_FAIL
     assert MI.rest_seam_row(old)["status"] == "FAIL", old
 
 
 def test_a_real_stroke_is_still_cut_from_its_layer(tmp_path):
     p, lay, _ = _layers(tmp_path, rough=False, stroke=True)
     st = R.Stage(p, lay, _plan(), OUT)
-    hard = (lay["masks"]["man"] > 0.5).astype(np.uint8)
-    hard = cv2.resize(hard, (st.sw, st.sh), interpolation=cv2.INTER_NEAREST)
-    r = max(1, int(round(R.THIN_FILL_PX / 2 * st.sw / 1920)))
-    disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
-    parts = hard & (1 - cv2.morphologyEx(hard, cv2.MORPH_OPEN, disc))
-    assert st._strokes(parts, r).sum() > 0.5 * parts.sum()            # the sling is a stroke: it stays in the background
+    man = st.objects[0]
+    assert 0 < man["thin_share"] < R.THIN_SHARE_MAX                   # kept whole: thin sling stays on the person layer
+    assert st.rest_seam()["per_outline_px"] <= 0.04
 
 
 def test_the_safe_zone_keeps_the_person_whole_through_a_push_to_the_other_side(tmp_path):
@@ -172,4 +175,4 @@ def test_light_lifts_a_pale_sky_without_burning_it_and_a_burned_frame_is_flagged
     r_ok = {"source": st.blown_share(src), "worst": st.blown_share(st.render(70)), "frame": 70}
     r_bad = {"source": st.blown_share(src), "worst": st.blown_share(burned), "frame": 70}
     assert MI.blown_out_row(r_ok)["status"] == "PASS", r_ok
-    assert MI.blown_out_row(r_bad)["status"] == "REVIEW", r_bad
+    assert MI.blown_out_row(r_bad)["status"] == "FAIL", r_bad
