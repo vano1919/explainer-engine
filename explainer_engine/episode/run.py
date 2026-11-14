@@ -278,6 +278,8 @@ def stage_script(ep: Episode, rehearsal: bool):
     rows += E.contract_rows(doc, set(SP.EVENT_CLASSES), ep.fps)
     rows += E.absolute_anchor_rows(doc)   # FA-06: on a locked script an absolute anchor under a read line is REVIEW
     rows.append(_claims_row(ep, doc))
+    from explainer_engine.episode import helper_fit as HF
+    rows += HF.check_rows(doc, ep.manifest.get("places") or {})   # MA-09: each helper form fits its words, no quota
     rows.append(_video_share_row(doc, _scope(ep)))
     return rows, {"mix": R.mix_report(doc), "shots": len(shots), "audit_status": audit["status"]}
 

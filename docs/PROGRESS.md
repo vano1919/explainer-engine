@@ -6619,3 +6619,20 @@ Fixes:
 New FAIL gate `face_intact`: each kept face against its first frame, with the camera taken out. The smeared face measured
 0.34, intact faces 0.75 and up, FAIL below 0.80 (engineering default), and faces under 60 px are not judged. Test:
 `test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails`.
+
+## 2026-11-14 — MA-09: the helper form fits its words (logical variety, no quota)
+
+The creator (14:15 UTC): variety matters but it must be logical; nothing new goes into a video for its own sake, the topic and
+the script must call for it. In the Truce 1914 demo all five helper shots were maps because no rule looked at the form
+(KP-37 / VP-18 / VP-02 check only the lane share; incident journal 2026-11-14).
+
+- New `explainer_engine/episode/helper_fit.py`: `cues` reads the shot's words (place, number, comparison, time; a year is time,
+  not a quantity), `shown` reads what the actions draw, `choose` is the director's pick with a written reason, `findings` /
+  `check_rows` give the G1 rows `helper_form_fits_words` (REVIEW) and `helper_forms_seen` (information only). No quota.
+- Schema `ShotSpec`: optional `helper_form` and `helper_reason` (additive).
+- `episode/run.stage_script` adds the rows. Rule MA-09 in `docs/EPISODE_FIRST.md`.
+- On Truce: only S02_SH001 ("over by Christmas" under a route-arrow map) is flagged, with progress suggested; the four other
+  maps fit their words (Flanders, the line from the North Sea to Switzerland, trench to trench) and S05_SH002 already shows
+  its hundred thousand as a counter. All five lack `helper_reason` (REVIEW): the script's data waits for the director pass.
+- Tests: `tests/unit/test_helper_fit.py` (12).
+

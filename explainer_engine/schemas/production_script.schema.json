@@ -1082,6 +1082,16 @@
           "type": "boolean",
           "description": "true = the route was chosen by hand; the router keeps it and only checks it"
         },
+        "helper_form": {
+          "type": "string",
+          "enum": ["map", "counter", "comparison", "progress"],
+          "description": "map_action shots (MA-09): the helper form the director picked from what the words say at that moment"
+        },
+        "helper_reason": {
+          "type": "string",
+          "minLength": 10,
+          "description": "map_action shots (MA-09): why this form serves these words; no quota, a map repeats when the words are about places"
+        },
         "motion_imitation": {
           "type": "array",
           "description": "still_25d only (plan P5, RT-05): what moves in the layered 2.5D shot. Up to two ordered camera segments (from_frame/to_frame, W2; one path when no frames are given) (push, pull, truck, crane, orbit_small) plus handheld and rack_focus; light, atmosphere, surface and subject effects; a shake only on an impact. BP-185 asks for two moving families beyond the camera.",
