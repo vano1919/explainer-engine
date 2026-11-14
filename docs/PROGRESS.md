@@ -6330,3 +6330,26 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   sample step 0.0012 against 0.0023 at the bed's 99.9th percentile, no click.
 - Tests: `tests/unit/test_bed_stereo_and_loop_window.py` (anti-phase case picks a better seed, the window keeps the bed level, the sheet
   carries the window). The -50 floor, BP-53 and BP-191 are untouched; the four duck-step rows stay REVIEW. Cost $0.
+
+## 2026-11-14 — P1 round 2 follow-up: photo shots must live, the camera follows the words (owner + Fable 2.5D audit)
+- Why: the owner called the P1 round 2 clips static ("only the fires move"; 27 of 38 s without camera motion, Fable's audit
+  `architecture_2026-11-14/audit_25d_round2/`): the director missed sun rays, wind, trees and snow, and the gates rewarded
+  stillness (REVIEW stops nothing, `still_is_still` passes a frozen world, no liveliness floor, BP-174/BP-185 not run on
+  `directed25d`). Fable also found a new S01 C3 defect: the post cut on frame 0 and wire rings invented by the plate.
+- New rules (`standards/sourced_rules.json`): BP-194 liveliness (change %/s against the Gemini reference 3.6-12.2, no frozen
+  second, change left with the camera taken out; hypothesis, REVIEW), BP-195 camera on the words (timing; hypothesis),
+  BP-196 the living inventory and the words-to-camera rule (house, FAIL, the owner's messages of 2026-11-14), BP-197 camera
+  amount and snappy zoom measured like the LTX clips (hypothesis). BP-185 now also enforced by `production/direction.py`,
+  with no `still_by_design` exception (the rule text never had one).
+- Code: `production/direction.py` (`seen.living` checklist `LIVING_KINDS`, words -> kinds `LIVING_WORDS`, scene weather,
+  families, ops the renderer lacks FAIL, words -> camera, hold before the first move); `qa/liveliness.py` (new: change %/s,
+  frozen windows, camera-free change, camera curve and moves, word focus, `delivery_row`: a REVIEW clip waits for the
+  director's round before the owner sees it); `qa/motion_intent.py` (`fill_at_rest`, `invented_detail`, both in `Watch`).
+- Measured on the six C3 clips (`live_C3.json` in the work folder): S08, S02, S05_SH016, S05_SH020 now REVIEW on
+  liveliness and frozen seconds; S01 and S06 pass the change floor only by their camera; five of six miss the reference
+  camera amount. The camera-free measure counts parallax too (S01 2.3 %/s), so the inventory stays the main guard.
+- Not done yet: the new effect ops (snow, wind sway, sun glint, steam, stars, embers) are listed but not built in
+  `directed25d` (a direction asking for them FAILs until they are); the S01 frame-0 and invented-detail detectors are
+  tested on synthetic frames, not yet calibrated on the real clip. Tests: 67 passed in the touched suites. $0.
+- Stale text found (ICW-01): roadmap 2026-11-14 B.10/J12 ("quality is not measured by the amount of motion") and K.2 (two
+  shots still by design) conflict with the owner's 2026-11-14 rule; left in place, superseded by BP-194..197.

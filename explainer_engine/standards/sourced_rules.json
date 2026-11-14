@@ -7268,7 +7268,8 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/production/layers25d.py:ALIVE_MIN"
+    "explainer_engine/production/layers25d.py:ALIVE_MIN",
+    "explainer_engine/production/direction.py:ALIVE_MIN"
    ],
    "supersedes": [],
    "decided": "the creator, 2026-11-12 (v4.3 plan section 0.4, answer Q4: the 2.5D shots must feel animated, not like stills with a camera move)"
@@ -7530,6 +7531,81 @@
     "OV-56's 'NOT_RUN in the demo' (a demo is built from the library too)"
    ],
    "research": "2026-11-12 (W1): on the overlay demo the bed-only spectra of 12 shots (cave, river, maps, charts, an LTX clip) lie within 0.03-0.05 of each other in every band; the level spread of a 100 ms window did not tell the numpy wind (1.75 dB) from LTX's real battle sound (1.81 dB), so the level test of the plan's draft was dropped. 0.05 is the engineering line until real beds of different places are measured."
+  },
+  {
+   "id": "BP-194",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A photo shot is alive, measured on its frames (the owner, 2026-11-14: the P1 round 2 clips stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day): the frame changes at least change_floor_pct_s per second by the 2026-11-12 reference method (128x72 grey, frames one second apart, mean absolute difference; the Gemini demo's photo shots measured reference_pct_s); no frozen_window_s window changes less than frozen_change_pct of the frame (a pixel counts above 12 grey levels), so the camera may stand but the world may not; and with the camera taken out (each pair aligned by its similarity transform) the frame still changes local_floor_pct_s per second (calibrated on the six P1 round 2 C3 clips the owner called static: 0.06-1.44 %/s, S01 2.3 %/s mostly crane parallax, which this measure cannot tell from living motion, so the living inventory of BP-196 stays the main guard). The numbers are one measurement (the reference demo) and engineering defaults until the owner sets them or two source types back them.",
+   "thresholds": {
+    "change_floor_pct_s": 3.6,
+    "reference_pct_s": [
+     3.6,
+     12.2
+    ],
+    "frozen_window_s": 1.0,
+    "frozen_change_pct": 2.0,
+    "local_floor_pct_s": 2.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/liveliness.py:liveliness_rows"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-195",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The camera follows the words (the owner, 2026-11-14, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2SvHqtHd2XF1GyLPoL9Gnw): when the spoken words name a part of the picture, a camera move towards that part starts between lead_s before and lag_s after the word, and within settle_s of the word the part is on screen at least area_grow_min times larger or centre_gain_min (share of the frame) nearer the centre. The director's file names the part per word (BP-196); the numbers are engineering defaults.",
+   "thresholds": {
+    "lead_s": 0.5,
+    "lag_s": 0.25,
+    "settle_s": 1.0,
+    "area_grow_min": 1.08,
+    "centre_gain_min": 0.05
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/liveliness.py:word_focus_row",
+    "explainer_engine/production/direction.py:check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-196",
+   "area": "stills",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the owner, 2026-11-14 (P1 round 2 thread, messages of 15:38-15:45 Tbilisi, the last cmsg_01Hnu5zB86sjUj5GtTgaUkPW2SvHqtHd2XF1GyLPoL9Gnw: the director sees the photo as an opportunity and moves everything the photo allows; sun glints and rays, wind, trees and snow were missed; the text decides the objects and the surroundings)",
+   "statement": "The director's file of a photo shot carries a living inventory: every element of the picture that moves in nature (sky, sun, cloud, mist, precipitation, plants, cloth, water and ice, fire, smoke and steam, breath, stars, glints) from the fixed checklist, with where it is, and each gets an effect or a written reason why not; the weather and the surroundings the script's words name (snow, wind, dawn) are written at scene level and are in every shot of the scene even where the picture does not show them; a living kind named in the director's own description or in the shot's words but missing from the inventory FAILs; still_by_design means only that the camera stands, never that nature freezes (BP-185 has no exception); every part of the picture the shot's words name gets a camera move on that word (BP-195) or a written reason.",
+   "thresholds": {},
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/direction.py:check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-197",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The camera of a photo shot is measured like the LTX clips' (zoom and shift from frame matching, the 2026-11-12 method, here per frame step): a shot that is not still by design moves at least zoom_min_pct of zoom or pan_min_pct of pan (the Gemini demo's photo shots: zoom 7-10 %, pan 5-8 % in 3-8 s; ours 4-5 % in 8-10 s), and a move the words call is snappy: its 10-90 % rise takes at most snap_s_max (the owner, 2026-11-14: zoom in and out snappier). A hold before the first word lasts at most hold_before_word_s_max and drifts. Engineering defaults from one reference measurement.",
+   "thresholds": {
+    "zoom_min_pct": 7.0,
+    "pan_min_pct": 5.0,
+    "snap_s_max": 1.0,
+    "hold_before_word_s_max": 2.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/liveliness.py:camera_rows",
+    "explainer_engine/production/direction.py:check"
+   ],
+   "supersedes": []
   }
  ]
 }

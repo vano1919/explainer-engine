@@ -34,6 +34,9 @@ GHOST_MIN_SHIFT = 2.0           # px at the analysis size: below it no copy can 
 GHOST_MIN_PIXELS = 40
 SHARP_REVIEW = 0.5              # the target keeps at least this share of its first frame's sharpness (engineering default)
 SHARP_PICTURE_REVIEW = 0.25      # picture -> last frame: resampling alone costs ~half (accepted v1 clips 0.44-0.5); a blur ~0.02
+REST_BAND_REVIEW = REVEAL_THIN_PX  # fill seen on frame 0 wider than this (px at 1080p): the picture is altered at rest (S01 C3 pole)
+INVENT_RATIO_REVIEW = 1.5          # edge density of the revealed fill over the real background round it (engineering default)
+INVENT_MIN_PIXELS = 400            # at the analysis size: below it the revealed fill is too small to judge
 STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # still_by_design: |scale - 1| and shift (% of width) at most this
 PERCEPTIBLE_SCALE, PERCEPTIBLE_SHIFT = 0.03, 1.0   # an intended move is visible at this scale change or shift (%)
 
@@ -156,6 +159,49 @@ def reveal_row(r: dict) -> dict:
                  f"({r.get('share_wide', r['share']) * 100:.2f} % wider than {REVEAL_THIN_PX:.0f} px), thickest band "
                  f"{r['band_px']:.0f} px at frame {r['frame']} (engineering defaults {REVEAL_SHARE_REVIEW * 100:.1f} %, "
                  f"{REVEAL_BAND_REVIEW:.0f} px)", r, level=G.REVIEW)
+
+
+def fill_at_rest(fill0: np.ndarray, out_height: int = 1080) -> dict:
+    """Frame 0 must be the picture: plate fill visible before anything has moved means a cut-out lost part of what it
+    covers (P1 round 2 S01 C3: the post cut on the first frame, Fable's audit 2026-11-14). The widest band of fill (px)."""
+    cv2 = _cv2()
+    m = (fill0 > 0.5).astype(np.uint8)
+    scale = out_height / fill0.shape[0]
+    band = float(cv2.distanceTransform(m, cv2.DIST_L2, 3).max() * 2 * scale) if m.any() else 0.0
+    return {"share": round(float(m.mean()), 5), "band_px": round(band, 1)}
+
+
+def fill_at_rest_row(r: dict) -> dict:
+    return G.row("fill_at_rest", r["band_px"] <= REST_BAND_REVIEW, f"frame 0 shows plate fill {r['share'] * 100:.2f} % of the "
+                 f"frame, widest band {r['band_px']:.0f} px (frame 0 must be the picture; engineering default "
+                 f"{REST_BAND_REVIEW:.0f} px)", r, level=G.REVIEW)
+
+
+def _edge_density(g: np.ndarray, m: np.ndarray) -> float:
+    cv2 = _cv2()
+    e = cv2.Canny(np.clip(g, 0, 255).astype(np.uint8), 40, 110) > 0
+    return float(e[m].mean()) if m.any() else 0.0
+
+
+def invented_detail(frame_gray: np.ndarray, new_fill: np.ndarray) -> dict | None:
+    """Does the newly revealed fill carry more structure than the real background round it (the S01 C3 wire rings the
+    inpainting model made up)? Edge density inside the revealed fill over the density in a ring of non-fill pixels."""
+    cv2 = _cv2()
+    m = new_fill > 0.5
+    if m.sum() < INVENT_MIN_PIXELS:
+        return None
+    ring = cv2.dilate(m.astype(np.uint8), np.ones((3, 3), np.uint8), iterations=12).astype(bool) & ~m
+    inside, outside = _edge_density(frame_gray, m), _edge_density(frame_gray, ring)
+    return {"inside": round(inside, 4), "around": round(outside, 4), "ratio": round(inside / max(outside, 0.005), 2),
+            "pixels": int(m.sum())}
+
+
+def invented_detail_row(r: dict | None) -> dict:
+    if r is None:
+        return G.row("fill_invents", None, "the revealed fill is too small to judge")
+    return G.row("fill_invents", r["ratio"] <= INVENT_RATIO_REVIEW, f"revealed fill edge density {r['inside']} against "
+                 f"{r['around']} round it (x{r['ratio']}; engineering default x{INVENT_RATIO_REVIEW}: more structure than the "
+                 "real background means the plate made something up)", r, level=G.REVIEW)
 
 
 # --- detector 2: double edge (ghost) ---------------------------------------------------------------------------------------
@@ -338,6 +384,7 @@ class Watch:
         self.ghost = {"score": 0.0, "frame": None, "layer": None}
         self.first = self.last = None
         self.n = 0
+        self.invent = None
 
     def add(self, f: int, frame: np.ndarray, fill: np.ndarray, layer_rows: list[dict] | None) -> None:
         cv2 = _cv2()
@@ -346,6 +393,12 @@ class Watch:
             self.first = frame.copy()
         self.last = frame
         self.n += 1
+        if f % (2 * self.every) == 0 and f > 0:
+            fill_a = cv2.resize(fill.astype(np.float32), ANALYSIS, interpolation=cv2.INTER_AREA)
+            base = cv2.resize(self.fills[0].astype(np.float32), ANALYSIS, interpolation=cv2.INTER_AREA)
+            r = invented_detail(gray(frame), (fill_a > 0.5) & ~(base > 0.5))
+            if r and (self.invent is None or r["ratio"] > self.invent["ratio"]):
+                self.invent = {**r, "frame": f}
         if layer_rows and f % self.every == 0:
             g = gray(frame)
             for lay in layer_rows:
@@ -356,4 +409,6 @@ class Watch:
     def summary(self, out_height: int = 1080) -> dict:
         rv = reveal([m.astype(np.float32) for m in self.fills], out_height)
         gm = global_motion(self.first, self.last) if self.first is not None else None
-        return {"reveal": rv, "double_edge": self.ghost, "global_motion_first_to_last": gm}
+        rest = fill_at_rest(self.fills[0].astype(np.float32), out_height) if self.fills else None
+        return {"reveal": rv, "double_edge": self.ghost, "global_motion_first_to_last": gm, "fill_at_rest": rest,
+                "fill_invents": self.invent}

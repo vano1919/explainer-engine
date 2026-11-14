@@ -125,3 +125,27 @@ def test_layers25d_telemetry_reveals_fill_after_a_truck(tmp_path):
     assert t1["fill"].mean() > t0["fill"].mean() + 0.002     # frame 0 shows only the thin dilation ring of the hole
     assert MI.reveal([t0["fill"], t1["fill"]])["band_px"] > 0
     assert any(abs(r["v"][0]) > 1 for r in t1["layers"])
+
+
+def test_fill_at_rest_catches_a_cut_post_on_frame_0():
+    from explainer_engine.qa import motion_intent as MI
+    f0 = np.zeros((270, 480), np.float32)
+    assert MI.fill_at_rest_row(MI.fill_at_rest(f0))["status"] == "PASS"
+    f0[100:106, 200:230] = 1.0                    # a 6 px (analysis) = 24 px (1080p) gap across a post, visible at rest
+    r = MI.fill_at_rest(f0)
+    assert r["band_px"] > MI.REST_BAND_REVIEW and MI.fill_at_rest_row(r)["status"] == "REVIEW"
+
+
+def test_invented_detail_in_the_revealed_fill():
+    from explainer_engine.qa import motion_intent as MI
+    cv2 = pytest.importorskip("cv2")
+    g = np.full((540, 960), 150, np.float32)       # fog: smooth background
+    new = np.zeros((540, 960), bool)
+    new[200:260, 300:420] = True
+    assert MI.invented_detail_row(MI.invented_detail(g, new))["status"] == "PASS"
+    rings = g.copy()
+    for k in range(6):                             # wire loops the inpainting made up inside the revealed area
+        cv2.circle(rings, (330 + 18 * k, 230), 12, 40, 2)
+    r = MI.invented_detail(rings, new)
+    assert r["ratio"] > MI.INVENT_RATIO_REVIEW and MI.invented_detail_row(r)["status"] == "REVIEW"
+    assert MI.invented_detail_row(MI.invented_detail(g, np.zeros_like(new)))["status"] == "NOT_RUN"
