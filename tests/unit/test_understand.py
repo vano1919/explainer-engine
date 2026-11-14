@@ -134,9 +134,10 @@ def test_understand_writes_scene_layers_and_reuses_the_cache(tmp_path):
     assert not calls                              # same picture + same prompts: cached
     seen2 = json.loads(json.dumps(SEEN))
     seen2["objects"][0]["points"] = [[0.3, 0.6]]
-    U.understand(p, seen2, runners={"da_v2_small": lambda rgb: calls.append(1) or _depth_runner(rgb), "sam": _sam_runner,
-                                    "lama": _lama_runner})
-    assert calls                                  # new prompts: made again
+    sam_calls = []
+    U.understand(p, seen2, runners={"da_v2_small": lambda rgb: calls.append(1) or _depth_runner(rgb),
+                                    "sam": lambda rgb, pr: sam_calls.append(1) or _sam_runner(rgb, pr), "lama": _lama_runner})
+    assert sam_calls and not calls                # new prompts: the mask is made again, the depth of the same picture is reused
 
 
 def test_edge_alignment_prefers_steps_on_the_object_outline():
@@ -146,3 +147,39 @@ def test_edge_alignment_prefers_steps_on_the_object_outline():
     import cv2
     soft = cv2.GaussianBlur(sharp, (0, 0), 6)
     assert U.edge_alignment(sharp, {"o": mask}) > U.edge_alignment(soft, {"o": mask})
+
+
+def test_each_unites_one_prompt_per_point_and_unchanged_masks_are_reused(tmp_path):
+    p, _ = _picture(tmp_path)
+    seen_prompts = []
+
+    def sam(rgb, prompts):
+        seen_prompts.extend(prompts)
+        out = []
+        for pr in prompts:
+            m = np.zeros(rgb.shape[:2], np.float32)
+            x, y = map(int, pr["points"][0])
+            m[max(0, y - 5):y + 5, max(0, x - 5):x + 5] = 1.0
+            out.append({"mask": m, "score": 0.9})
+        return out
+    seen = {"objects": [{"id": "row", "points": [[0.2, 0.5], [0.6, 0.5]], "each": True}], "lights": []}
+    runners = {"da_v2_small": _depth_runner, "sam": sam, "lama": _lama_runner}
+    U.understand(p, seen, runners=runners)
+    assert len(seen_prompts) == 2                  # one prompt per point
+    m = U.load(U.layers_dir(p))["masks"]["row"]
+    assert m[60, 40] == 1 and m[60, 120] == 1      # both parts in the one mask
+    seen_prompts.clear()
+    seen2 = dict(seen, lights=[{"id": "flame", "kind": "fire", "point": [0.76, 0.6], "radius": 0.05}])
+    depth_calls = []
+    man = U.understand(p, seen2, runners=dict(runners, da_v2_small=lambda rgb: depth_calls.append(1) or _depth_runner(rgb)))
+    assert not seen_prompts and not depth_calls    # only the lights changed: masks and depth are reused
+    assert man["masks"]["objects"][0]["reused"] is True
+
+
+def test_a_candle_mask_keeps_its_white_core():
+    img = np.zeros((H, W, 3), np.uint8)
+    img[:] = (40, 30, 30)
+    img[60:80, 140:156] = (255, 170, 40)          # warm outer flame
+    img[64:76, 144:152] = (250, 250, 245)         # white-hot core, no saturation
+    m = U.light_mask(img, (148 / W, 70 / H), 0.06, "candle")
+    assert m[70, 148] > 0.9                        # the core is in the flame, not a hole in a ring

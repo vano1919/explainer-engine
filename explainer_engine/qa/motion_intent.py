@@ -24,12 +24,16 @@ import numpy as np
 from explainer_engine.qa import gates as G
 
 ANALYSIS = (960, 540)
-REVEAL_SHARE_REVIEW = 0.004     # newly visible fill: share of the frame (engineering default)
-REVEAL_BAND_REVIEW = 14.0       # thickest revealed band, px at 1080p (engineering default)
+REVEAL_SHARE_REVIEW = 0.02      # newly visible fill wider than REVEAL_THIN_PX: share of the frame (engineering default)
+REVEAL_BAND_REVIEW = 30.0       # thickest revealed band, px at 1080p (engineering default)
+# P1 calibration (old layers25d, 9 clips, judged by eye on the worst frame): visible smears S01 v1 4.0 % / 23 px, S05_SH020 v1
+# 3.0 % / 41 px, the defects 6.9 % / 61 px and 8.1 % / 145 px; invisible outline slivers S02 v1 1.0 % / 22 px, S06 v1 0.1 % / 15 px
+REVEAL_THIN_PX = 8.0            # a fill sliver thinner than this (px at 1080p) along an outline is not counted in the share
 GHOST_REVIEW = 0.20             # double-edge score (engineering default)
 GHOST_MIN_SHIFT = 2.0           # px at the analysis size: below it no copy can be told from the edge itself
 GHOST_MIN_PIXELS = 40
 SHARP_REVIEW = 0.5              # the target keeps at least this share of its first frame's sharpness (engineering default)
+SHARP_PICTURE_REVIEW = 0.25      # picture -> last frame: resampling alone costs ~half (accepted v1 clips 0.44-0.5); a blur ~0.02
 STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # still_by_design: |scale - 1| and shift (% of width) at most this
 PERCEPTIBLE_SCALE, PERCEPTIBLE_SHIFT = 0.03, 1.0   # an intended move is visible at this scale change or shift (%)
 
@@ -127,20 +131,29 @@ def reveal(fill_maps: list[np.ndarray], out_height: int = 1080) -> dict:
     for f, m in enumerate(fill_maps):
         new = (m > 0.5) & ~base
         share = float(new.mean())
-        band = 0.0
+        band = thick = 0.0
         if new.any():
-            band = float(cv2.distanceTransform(new.astype(np.uint8), cv2.DIST_L2, 3).max()) * 2 * scale
-        if share > worst["share"] or band > worst["band_px"]:
+            width = cv2.distanceTransform(new.astype(np.uint8), cv2.DIST_L2, 3) * 2 * scale
+            band = float(width.max())
+            # a pixel belongs to a wide part when a disc of REVEAL_THIN_PX round it fits: grow the wide cores back
+            core = (width >= REVEAL_THIN_PX).astype(np.uint8)
+            r = max(1, int(round(REVEAL_THIN_PX / 2 / scale)))
+            wide = cv2.dilate(core, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))) & new
+            thick = float(wide.mean())
+        if share > worst["share"] or band > worst["band_px"] or thick > worst.get("share_wide", 0.0):
             worst = {"share": max(share, worst["share"]), "band_px": max(band, worst["band_px"]),
+                     "share_wide": max(thick, worst.get("share_wide", 0.0)),
                      "frame": f if band >= worst["band_px"] else worst["frame"]}
     worst["share"] = round(worst["share"], 5)
+    worst["share_wide"] = round(worst.get("share_wide", 0.0), 5)
     worst["band_px"] = round(worst["band_px"], 1)
     return worst
 
 
 def reveal_row(r: dict) -> dict:
-    ok = r["share"] <= REVEAL_SHARE_REVIEW and r["band_px"] <= REVEAL_BAND_REVIEW
-    return G.row("fill_reveal", ok, f"newly visible fill: worst {r['share'] * 100:.2f} % of the frame, thickest band "
+    ok = r.get("share_wide", r["share"]) <= REVEAL_SHARE_REVIEW and r["band_px"] <= REVEAL_BAND_REVIEW
+    return G.row("fill_reveal", ok, f"newly visible fill: worst {r['share'] * 100:.2f} % of the frame "
+                 f"({r.get('share_wide', r['share']) * 100:.2f} % wider than {REVEAL_THIN_PX:.0f} px), thickest band "
                  f"{r['band_px']:.0f} px at frame {r['frame']} (engineering defaults {REVEAL_SHARE_REVIEW * 100:.1f} %, "
                  f"{REVEAL_BAND_REVIEW:.0f} px)", r, level=G.REVIEW)
 
@@ -246,11 +259,13 @@ def target_sharpness(first: np.ndarray, last: np.ndarray, mask_first: np.ndarray
 
 
 def target_sharpness_row(r: dict, target: str) -> dict:
-    vals = [v for v in (r.get("ratio"), r.get("picture_to_end")) if v is not None]
-    ok = None if not vals else min(vals) >= SHARP_REVIEW
+    checks = [(r.get("ratio"), SHARP_REVIEW), (r.get("picture_to_end"), SHARP_PICTURE_REVIEW)]
+    checks = [(v, t) for v, t in checks if v is not None]
+    ok = None if not checks else all(v >= t for v, t in checks)
     pic = f", picture {r['picture']} -> end" if "picture" in r else ""
     return G.row("target_sharpness", ok, f"{target}: Laplacian variance {r['start']} -> {r['end']}{pic} (keeps at least "
-                 f"{SHARP_REVIEW:.0%}, engineering default)", r, level=G.REVIEW)
+                 f"{SHARP_REVIEW:.0%} of the first frame and {SHARP_PICTURE_REVIEW:.0%} of the picture, engineering defaults)", r,
+                 level=G.REVIEW)
 
 
 # --- the old renderer: telemetry from a layers25d Scene (the renderer itself is not changed) --------------------------------

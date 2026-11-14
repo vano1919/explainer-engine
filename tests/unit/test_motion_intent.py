@@ -25,6 +25,10 @@ def test_reveal_measures_share_and_band():
     r = MI.reveal(maps, 1080)
     assert r["frame"] == 2 and 70 <= r["band_px"] <= 90 and r["share"] == pytest.approx(20 * 350 / (270 * 480), rel=0.01)
     assert MI.reveal_row(r)["status"] == G.REVIEW
+    slivers = [np.zeros((270, 480), np.float32) for _ in range(2)]
+    slivers[1][50:250:20, 20:460] = 1.0           # one-row lines along outlines: 4 px at 1080, many of them
+    sl = MI.reveal(slivers, 1080)
+    assert sl["share"] > MI.REVEAL_SHARE_REVIEW and sl["share_wide"] == 0 and MI.reveal_row(sl)["status"] == G.PASS
     clean = MI.reveal([np.zeros((270, 480), np.float32)] * 4)
     assert clean["share"] == 0 and MI.reveal_row(clean)["status"] == G.PASS
 

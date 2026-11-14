@@ -85,7 +85,12 @@ class Stage:
             bgd = cv2.inpaint(bgd.astype(np.float32), hb, 5, cv2.INPAINT_TELEA)
         self.bg_depth = cv2.GaussianBlur(bgd, (0, 0), max(1.0, BG_SMOOTH * sw)).astype(np.float32)
         # objects: rigid cut-outs at their median depth, far to near
-        want = plan.get("layers")    # None = every object of the scene_layers folder
+        # None = every object of the scene_layers folder that is a layer there ("layer": false = a mask for targeting only,
+        # left in the picture, e.g. a crowd SAM cannot cut cleanly)
+        want = plan.get("layers")
+        if want is None:
+            rows = layers["manifest"].get("masks", {}).get("objects", [])
+            want = [r["id"] for r in rows if r.get("layer", True)] if rows else None
         self.objects = []
         for oid, m in layers["masks"].items():
             if want is not None and oid not in want:

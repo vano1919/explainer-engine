@@ -305,9 +305,15 @@ def light_mask(rgb: np.ndarray, point, radius: float, kind: str = "fire") -> np.
     hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
     warm = ((hsv[..., 0] <= 32) | (hsv[..., 0] >= 170)) & (hsv[..., 2] >= (200 if kind != "glow" else 150)) & \
         (hsv[..., 1] >= 40)
-    core = disc & warm
+    hot = hsv[..., 2] >= 235                          # the white-hot core of a flame has no colour left: it belongs too
+    core = disc & (warm | hot)
     if core.sum() < 6:
         core = disc
+    else:                                             # a ring of warm pixels round a core is one flame: fill its holes
+        filled = core.astype(np.uint8).copy()
+        ff = np.zeros((h + 2, w + 2), np.uint8)
+        cv2.floodFill(filled, ff, (0, 0), 2) if not filled[0, 0] else None
+        core = core | ((filled == 0) & disc)
     m = cv2.dilate(core.astype(np.uint8), np.ones((3, 3), np.uint8), iterations=max(1, int(0.002 * w)))
     return cv2.GaussianBlur(m.astype(np.float32), (0, 0), max(1.0, 0.0015 * w))
 
@@ -391,6 +397,33 @@ def load_u8(path: Path) -> np.ndarray:
     return cv2.imread(str(path), cv2.IMREAD_GRAYSCALE).astype(np.float32) / 255.0
 
 
+def _join_lights(rgb: np.ndarray, m: np.ndarray, o: dict, light_by_id: dict) -> np.ndarray:
+    """A flame belongs to its brazier or candle: it moves with it and leaves no copy. Made fresh on every run, so a better
+    light mask reaches a cached object mask."""
+    for lid in o.get("with_lights", []):
+        li = light_by_id[lid]
+        m = np.maximum(m, light_mask(rgb, li["point"], float(li.get("radius", 0.02)), li.get("kind", "fire")))
+    return m
+
+
+def _write_key(path: Path, key: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(key)
+
+
+def _read_key(path: Path) -> str | None:
+    return path.read_text().strip() if path.exists() else None
+
+
+def _cached_depth(out: Path, sha: str, model: str) -> dict | None:
+    f, side = out / f"depth_{model}.png", out / f"depth_{model}.json"
+    meta = json.loads(side.read_text()) if side.exists() else {}
+    if f.exists() and meta.get("sha") == sha:
+        return {"depth": load_u16(f), "seconds": 0.0, "cached": True, "model_input": meta.get("model_input"),
+                "fov_x_deg": meta.get("fov_x_deg")}
+    return None
+
+
 def layers_dir(picture: Path) -> Path:
     picture = Path(picture)
     return picture.with_name(picture.stem + ".layers")
@@ -419,7 +452,13 @@ def understand(picture: Path, seen: dict, depth_model: str = "da_v2_small", out_
             return man
     out.mkdir(parents=True, exist_ok=True)
     times = {}
-    d = estimate_depth(rgb, depth_model, runners.get(depth_model))
+    sha = sha256_file(picture)
+    d = _cached_depth(out, sha, depth_model)            # a mask change does not re-run the depth model
+    if d is None:
+        d = estimate_depth(rgb, depth_model, runners.get(depth_model))
+        _save_u16(out / f"depth_{depth_model}.png", d["depth"])
+        _write_key(out / f"depth_{depth_model}.json", json.dumps({"sha": sha, "model_input": d["model_input"],
+                                                                  "fov_x_deg": d.get("fov_x_deg")}))
     _save_u16(out / "depth.png", d["depth"])
     times["depth_s"] = d["seconds"]
     if "normals" in d:
@@ -429,23 +468,62 @@ def understand(picture: Path, seen: dict, depth_model: str = "da_v2_small", out_
     obj_rows = []
     if objects:
         t0 = time.time()
-        prompts = [{"points": [[p[0] * w, p[1] * h] for p in o["points"]],
-                    "neg": [[p[0] * w, p[1] * h] for p in o.get("neg", [])], "pick": o.get("pick")} for o in objects]
-        got = (runners.get("sam") or run_sam)(rgb, prompts)
+        # an object whose spec and picture are unchanged keeps its mask (BiRefNet is the slow part); "each": one SAM prompt per
+        # positive point, or "parts": one prompt per group of points (one person = shoulder + coat), the masks united (a row of
+        # people: one prompt for the whole row leaves holes)
+        keys = {o["id"]: hashlib.sha256(json.dumps({"sha": sha, "o": {k: v for k, v in o.items() if k not in ("with_lights", "layer")}},
+                                                    sort_keys=True).encode()).hexdigest() for o in objects}
+        todo = [o for o in objects if _read_key(out / "masks" / f"{o['id']}.key") != keys[o["id"]]
+                or not (out / "masks" / f"{o['id']}.png").exists()]
+        prompts, owner = [], []
+        for o in todo:
+            neg = [[p[0] * w, p[1] * h] for p in o.get("neg", [])]
+            pts = [[p[0] * w, p[1] * h] for p in o.get("points", [])]
+            groups = ([[[q[0] * w, q[1] * h] for q in part] for part in o["parts"]] if o.get("parts")
+                      else [[q] for q in pts] if o.get("each") else [pts])
+            for group in groups:
+                prompts.append({"points": group, "neg": neg, "pick": o.get("pick")})
+                owner.append(o["id"])
+        got = (runners.get("sam") or run_sam)(rgb, prompts) if prompts else []
         times["sam_s"] = round(time.time() - t0, 2)
+        sam_of: dict[str, dict] = {}
+        for oid, g, pr in zip(owner, got, prompts):
+            m = clean_mask(g["mask"], pr["points"])
+            if oid in sam_of:
+                sam_of[oid] = {"mask": np.maximum(sam_of[oid]["mask"], m), "score": min(sam_of[oid]["score"], g["score"])}
+            else:
+                sam_of[oid] = {"mask": m, "score": g["score"]}
         t0 = time.time()
         light_by_id = {li["id"]: li for li in seen.get("lights", [])}
-        for o, g, pr in zip(objects, got, prompts):
-            m = clean_mask(g["mask"], pr["points"])
+        old_rows = {}
+        if man_path.exists():
+            old_rows = {r["id"]: r for r in json.loads(man_path.read_text()).get("masks", {}).get("objects", [])}
+        for o in objects:
+            if o["id"] not in sam_of:                         # reused: the SAM/BiRefNet part, the flames joined again below
+                base = out / "masks" / f"{o['id']}.base.png"
+                m = load_u8(base if base.exists() else out / "masks" / f"{o['id']}.png")
+                m = _join_lights(rgb, m, o, light_by_id)
+                masks[o["id"]] = m
+                _save_u8(out / "masks" / f"{o['id']}.png", m)
+                area = float((m > 0.5).mean())
+                obj_rows.append(dict(old_rows.get(o["id"], {"id": o["id"], "file": f"masks/{o['id']}.png", "sam_score": None,
+                                                             "fine_edges": bool(o.get("fine_edges"))}),
+                                     area_share=round(area, 4),
+                                     depth_median=round(float(np.median(d["depth"][m > 0.5])) if area > 0 else 0.0, 4),
+                                     reused=True, layer=bool(o.get("layer", True))))
+                continue
+            g = sam_of[o["id"]]
+            m = g["mask"]
             if o.get("fine_edges"):
                 m = refine_fine_edges(rgb, m, runners.get("birefnet"))
-            for lid in o.get("with_lights", []):   # a flame belongs to its brazier: it moves with it and leaves no copy
-                li = light_by_id[lid]
-                m = np.maximum(m, light_mask(rgb, li["point"], float(li.get("radius", 0.02)), li.get("kind", "fire")))
+            _save_u8(out / "masks" / f"{o['id']}.base.png", m)
+            m = _join_lights(rgb, m, o, light_by_id)
             masks[o["id"]] = m
             _save_u8(out / "masks" / f"{o['id']}.png", m)
+            _write_key(out / "masks" / f"{o['id']}.key", keys[o["id"]])
             area = float((m > 0.5).mean())
             obj_rows.append({"id": o["id"], "file": f"masks/{o['id']}.png", "sam_score": round(g["score"], 3),
+                             "layer": bool(o.get("layer", True)),
                              "fine_edges": bool(o.get("fine_edges")), "area_share": round(area, 4),
                              "depth_median": round(float(np.median(d["depth"][m > 0.5])) if area > 0 else 0.0, 4)})
         times["birefnet_s"] = round(time.time() - t0, 2)

@@ -114,3 +114,10 @@ def test_object_carries_its_mask_and_frames_are_pure(tmp_path):
     t = {}
     st.render(23, t)
     assert t["fill"].max() > 0                     # the truck shows a little plate beside the man, and the renderer knows it
+
+
+def test_a_mask_marked_not_a_layer_stays_in_the_picture(tmp_path):
+    p, lay = _layers(tmp_path)
+    lay["manifest"]["masks"] = {"objects": [{"id": "man", "layer": False}]}
+    st = R.Stage(p, lay, _plan(), OUT)
+    assert st.objects == [] and "man" in st.masks_src       # still a target, not a cut-out
