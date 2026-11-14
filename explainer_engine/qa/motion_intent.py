@@ -1,0 +1,344 @@
+"""Intent against measurement, and the three deterministic defect detectors (roadmap 2026-11-14 B.10, H.1; phase P1).
+
+The Stage B prototype (2026-11-14) passed three visible defects through every gate: the fill band of S01_SH001 crane 0.95,
+the ghosts of S02_SH008 orbit_small, the blurred photo of S08_SH002 rack_focus "near". This module measures them:
+
+1. ``reveal``: the renderer knows which output pixel shows FILL (inpainted, never painted by the artist); the detector
+   measures how much of the frame newly shows fill and how thick the thickest revealed band is.
+2. ``double_edge``: a layer that moved by ``v`` against what lies behind it leaves a copy (a ghost, a doubled flame) when the
+   frame just outside its edge repeats the layer's own content shifted by ``v``; scored against the same test at the
+   perpendicular shift, so plain image smoothness cancels.
+3. ``target_sharpness``: the Laplacian variance inside the focus target's mask on the last frame against the first.
+
+Plus the intent check (``intended`` / ``minimal`` / ``still_by_design``) on the measured global motion (ORB + similarity,
+the prototype's method). Every threshold here is an engineering default: a miss is REVIEW, never FAIL (D-59), until
+``standards/sourced_rules.json`` has two source types for it. ``layers25d_telemetry`` reads a ``layers25d`` Scene (unchanged
+renderer) so the detectors can be run on the old clips too.
+"""
+from __future__ import annotations
+
+import math
+
+import numpy as np
+
+from explainer_engine.qa import gates as G
+
+ANALYSIS = (960, 540)
+REVEAL_SHARE_REVIEW = 0.004     # newly visible fill: share of the frame (engineering default)
+REVEAL_BAND_REVIEW = 14.0       # thickest revealed band, px at 1080p (engineering default)
+GHOST_REVIEW = 0.20             # double-edge score (engineering default)
+GHOST_MIN_SHIFT = 2.0           # px at the analysis size: below it no copy can be told from the edge itself
+GHOST_MIN_PIXELS = 40
+SHARP_REVIEW = 0.5              # the target keeps at least this share of its first frame's sharpness (engineering default)
+STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # still_by_design: |scale - 1| and shift (% of width) at most this
+PERCEPTIBLE_SCALE, PERCEPTIBLE_SHIFT = 0.03, 1.0   # an intended move is visible at this scale change or shift (%)
+
+
+def _cv2():
+    import cv2
+    return cv2
+
+
+def gray(frame: np.ndarray, size=ANALYSIS) -> np.ndarray:
+    cv2 = _cv2()
+    return cv2.resize(frame, size, interpolation=cv2.INTER_AREA).astype(np.float32).mean(axis=2)
+
+
+# --- motion: what the camera really did -----------------------------------------------------------------------------------
+
+def global_motion(a: np.ndarray, b: np.ndarray) -> dict | None:
+    """Similarity transform between two frames (BGR or RGB uint8): zoom ``scale`` and shift (% of the width) of b against a."""
+    cv2 = _cv2()
+    a = cv2.resize(a, (480, 270), interpolation=cv2.INTER_AREA)
+    b = cv2.resize(b, (480, 270), interpolation=cv2.INTER_AREA)
+    orb = cv2.ORB_create(3000)
+    ka, da = orb.detectAndCompute(cv2.cvtColor(a, cv2.COLOR_RGB2GRAY), None)
+    kb, db = orb.detectAndCompute(cv2.cvtColor(b, cv2.COLOR_RGB2GRAY), None)
+    if da is None or db is None:
+        return None
+    m = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True).match(da, db)
+    if len(m) < 12:
+        return None
+    pa = np.float32([ka[x.queryIdx].pt for x in m])
+    pb = np.float32([kb[x.trainIdx].pt for x in m])
+    M, inl = cv2.estimateAffinePartial2D(pa, pb, method=cv2.RANSAC, ransacReprojThreshold=2.0)
+    if M is None:
+        return None
+    s = float(np.hypot(M[0, 0], M[0, 1]))
+    return {"scale": round(s, 4), "shift_x_pct": round(float(M[0, 2] - (1 - s) * 240) / 480 * 100, 2),
+            "shift_y_pct": round(float(M[1, 2] - (1 - s) * 135) / 480 * 100, 2), "inliers": int(inl.sum())}
+
+
+def intent_rows(intent: str, expect: dict, gm: dict | None, moves_from: int | None = None) -> list[dict]:
+    """The three cases of B.10: intended (did the planned move happen, in its direction, visibly?), minimal (under its caps?),
+    still_by_design (really still?). ``gm`` is the first-to-last global motion."""
+    if gm is None:
+        return [G.row("intent_measured", None, "no global motion could be measured")]
+    ds, sx, sy = gm["scale"] - 1.0, gm["shift_x_pct"], gm["shift_y_pct"]
+    rows = []
+    if intent == "still_by_design":
+        ok = abs(ds) <= STILL_SCALE and abs(sx) <= STILL_SHIFT and abs(sy) <= STILL_SHIFT
+        rows.append(G.row("still_is_still", ok, f"scale {gm['scale']}, shift {sx} / {sy} % (still: within {STILL_SCALE} and "
+                          f"{STILL_SHIFT} %)", gm, level=G.REVIEW))
+    elif intent == "minimal":
+        cap_s, cap_t = float(expect.get("max_scale_change", 0.03)), float(expect.get("max_shift_pct", 1.5))
+        ok = abs(ds) <= cap_s and abs(sx) <= cap_t and abs(sy) <= cap_t
+        rows.append(G.row("minimal_under_cap", ok, f"scale {gm['scale']}, shift {sx} / {sy} % (caps {cap_s}, {cap_t} %)", gm,
+                          level=G.REVIEW))
+    else:
+        want = expect.get("move")
+        if want in ("push", "pull"):
+            sign = 1 if want == "push" else -1
+            got = sign * ds
+            need = float(expect.get("min_scale_change", PERCEPTIBLE_SCALE))
+            rows.append(G.row("intended_move", got >= need, f"{want}: scale {gm['scale']} (needs a change of {need} the "
+                              "planned way)", gm, level=G.REVIEW))
+        elif want in ("truck", "pan", "crane", "tilt"):
+            axis, d = ("x", expect.get("direction", "right")) if want in ("truck", "pan") else ("y", expect.get("direction", "up"))
+            v = sx if axis == "x" else sy
+            # a camera moving right (or up) makes the picture move left (or down) in the frame
+            sign = {"right": -1, "left": 1, "up": 1, "down": -1}[d]
+            need = float(expect.get("min_shift_pct", PERCEPTIBLE_SHIFT))
+            rows.append(G.row("intended_move", sign * v >= need, f"{want} {d}: shift {v} % (needs {need} % that way)", gm,
+                              level=G.REVIEW))
+        else:
+            rows.append(G.row("intended_move", None, f"no measurable expectation for {want!r}"))
+    return rows
+
+
+def target_towards_centre(first_xy, last_xy, size) -> dict:
+    """Is the target nearer the frame centre on the last frame than on the first (the targeted push, H.1)?"""
+    cx, cy = size[0] / 2, size[1] / 2
+    d0 = math.hypot(first_xy[0] - cx, first_xy[1] - cy)
+    d1 = math.hypot(last_xy[0] - cx, last_xy[1] - cy)
+    return G.row("target_towards_centre", d1 < d0, f"target {d0:.0f} px from the centre at the start, {d1:.0f} px at the end",
+                 {"start_px": round(d0, 1), "end_px": round(d1, 1)}, level=G.REVIEW)
+
+
+# --- detector 1: revealed fill --------------------------------------------------------------------------------------------
+
+def reveal(fill_maps: list[np.ndarray], out_height: int = 1080) -> dict:
+    """Fill maps (0..1 per output pixel, any equal size, frame 0 first) -> the worst frame's newly visible fill share and the
+    thickest revealed band (px at the output height); a band is measured by the distance transform of the revealed area."""
+    cv2 = _cv2()
+    base = fill_maps[0] > 0.5
+    scale = out_height / fill_maps[0].shape[0]
+    worst = {"share": 0.0, "band_px": 0.0, "frame": 0}
+    for f, m in enumerate(fill_maps):
+        new = (m > 0.5) & ~base
+        share = float(new.mean())
+        band = 0.0
+        if new.any():
+            band = float(cv2.distanceTransform(new.astype(np.uint8), cv2.DIST_L2, 3).max()) * 2 * scale
+        if share > worst["share"] or band > worst["band_px"]:
+            worst = {"share": max(share, worst["share"]), "band_px": max(band, worst["band_px"]),
+                     "frame": f if band >= worst["band_px"] else worst["frame"]}
+    worst["share"] = round(worst["share"], 5)
+    worst["band_px"] = round(worst["band_px"], 1)
+    return worst
+
+
+def reveal_row(r: dict) -> dict:
+    ok = r["share"] <= REVEAL_SHARE_REVIEW and r["band_px"] <= REVEAL_BAND_REVIEW
+    return G.row("fill_reveal", ok, f"newly visible fill: worst {r['share'] * 100:.2f} % of the frame, thickest band "
+                 f"{r['band_px']:.0f} px at frame {r['frame']} (engineering defaults {REVEAL_SHARE_REVIEW * 100:.1f} %, "
+                 f"{REVEAL_BAND_REVIEW:.0f} px)", r, level=G.REVIEW)
+
+
+# --- detector 2: double edge (ghost) ---------------------------------------------------------------------------------------
+
+def _shift(a: np.ndarray, dx: float, dy: float) -> np.ndarray:
+    """``out(x) = a(x + (dx, dy))``."""
+    cv2 = _cv2()
+    m = np.float32([[1, 0, dx], [0, 1, dy]])
+    return cv2.warpAffine(a.astype(np.float32), m, (a.shape[1], a.shape[0]), flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
+                          borderMode=cv2.BORDER_REPLICATE)
+
+
+def _ncc(a: np.ndarray, b: np.ndarray) -> float:
+    a = a - a.mean()
+    b = b - b.mean()
+    den = math.sqrt(float((a * a).sum()) * float((b * b).sum()))
+    return float((a * b).sum() / den) if den > 1e-9 else 0.0
+
+
+def ghost_score(frame_gray: np.ndarray, alpha: np.ndarray, v: tuple[float, float]) -> dict | None:
+    """One layer on one frame: ``alpha`` its visible mask and ``v`` its shift against what lies behind it since frame 0
+    (both at the analysis size). A ghost repeats the layer's content at ``-v`` outside its edge."""
+    cv2 = _cv2()
+    n = math.hypot(*v)
+    if n < GHOST_MIN_SHIFT:
+        return None
+    A = (alpha > 0.5).astype(np.uint8)
+    if A.sum() < GHOST_MIN_PIXELS:
+        return None
+    r = int(math.ceil(n)) + 2
+    ring = cv2.dilate(A, np.ones((3, 3), np.uint8), iterations=r).astype(bool) & ~A.astype(bool)
+    grad = np.hypot(cv2.Sobel(frame_gray, cv2.CV_32F, 1, 0), cv2.Sobel(frame_gray, cv2.CV_32F, 0, 1))
+    perp = [(-v[1], v[0]), (v[1], -v[0])]
+
+    def ncc_at(s):
+        cand = ring & (_shift(A, s[0], s[1]) > 0.5)
+        if cand.sum() < GHOST_MIN_PIXELS:
+            return None
+        best = -1.0
+        for img in (frame_gray, grad):
+            best = max(best, _ncc(img[cand], _shift(img, s[0], s[1])[cand]))
+        return best, int(cand.sum())
+    main = ncc_at(v)
+    if main is None:
+        return None
+    base = [x[0] for x in (ncc_at(p) for p in perp) if x is not None]
+    if not base:
+        return None
+    return {"score": round(main[0] - max(base), 3), "ncc": round(main[0], 3), "baseline": round(max(base), 3),
+            "pixels": main[1], "shift_px": round(n, 1)}
+
+
+def double_edge(frames_gray: list[np.ndarray], layer_rows: list[list[dict]], every: int = 4) -> dict:
+    """The worst ghost score over the sampled frames and layers. ``layer_rows[f]`` = ``[{"id", "alpha", "v": (dx, dy)}]`` at
+    the analysis size."""
+    worst = {"score": 0.0, "frame": None, "layer": None}
+    for f in range(0, len(frames_gray), every):
+        for lay in layer_rows[f]:
+            g = ghost_score(frames_gray[f], lay["alpha"], lay["v"])
+            if g and g["score"] > worst["score"]:
+                worst = {"score": g["score"], "frame": f, "layer": lay["id"], **g}
+    return worst
+
+
+def double_edge_row(r: dict) -> dict:
+    return G.row("double_edge", r["score"] <= GHOST_REVIEW,
+                 f"worst ghost score {r['score']:.2f}" + (f" ({r['layer']} at frame {r['frame']}, shift {r.get('shift_px')} px)"
+                                                         if r.get("layer") is not None else "")
+                 + f" (engineering default {GHOST_REVIEW})", r, level=G.REVIEW)
+
+
+# --- detector 3: target sharpness -----------------------------------------------------------------------------------------
+
+def sharpness(frame: np.ndarray, mask: np.ndarray) -> float:
+    cv2 = _cv2()
+    g = frame.astype(np.float32).mean(axis=2) if frame.ndim == 3 else frame.astype(np.float32)
+    m = cv2.resize(mask.astype(np.float32), (g.shape[1], g.shape[0]), interpolation=cv2.INTER_LINEAR) > 0.5
+    for it in (3, 1, 0):                          # thin targets (a wire) survive a lighter erosion
+        e = cv2.erode(m.astype(np.uint8), np.ones((3, 3), np.uint8), iterations=it).astype(bool) if it else m
+        if e.sum() >= 50:
+            return float(cv2.Laplacian(g, cv2.CV_32F)[e].var())
+    return float("nan")
+
+
+def _ratio(a: float, b: float):
+    return round(b / a, 3) if a and a == a and b == b else None
+
+
+def target_sharpness(first: np.ndarray, last: np.ndarray, mask_first: np.ndarray, mask_last: np.ndarray,
+                     picture: np.ndarray | None = None, mask_picture: np.ndarray | None = None) -> dict:
+    """Laplacian variance of the target first -> last. With ``picture`` (the source resized to the output) also picture ->
+    last: a clip blurred from its first frame on (Stage B v1 S08_SH002, rack 'near') keeps first == last and is caught only
+    against the picture."""
+    s0, s1 = sharpness(first, mask_first), sharpness(last, mask_last)
+    r = {"start": round(s0, 1), "end": round(s1, 1), "ratio": _ratio(s0, s1)}
+    if picture is not None:
+        sp = sharpness(picture, mask_first if mask_picture is None else mask_picture)
+        r["picture"] = round(sp, 1)
+        r["picture_to_end"] = _ratio(sp, s1)
+    return r
+
+
+def target_sharpness_row(r: dict, target: str) -> dict:
+    vals = [v for v in (r.get("ratio"), r.get("picture_to_end")) if v is not None]
+    ok = None if not vals else min(vals) >= SHARP_REVIEW
+    pic = f", picture {r['picture']} -> end" if "picture" in r else ""
+    return G.row("target_sharpness", ok, f"{target}: Laplacian variance {r['start']} -> {r['end']}{pic} (keeps at least "
+                 f"{SHARP_REVIEW:.0%}, engineering default)", r, level=G.REVIEW)
+
+
+# --- the old renderer: telemetry from a layers25d Scene (the renderer itself is not changed) --------------------------------
+
+def layers25d_telemetry(sc, f: int, size=ANALYSIS) -> dict:
+    """For a ``production.layers25d.Scene`` at frame ``f``: the fill map (output pixels whose top plane shows its Telea fill)
+    and one row per plane k >= 1 with its visible mask and its shift against plane k - 1 since frame 0 (analysis size)."""
+    cv2 = _cv2()
+    ms = sc.matrices(f)
+    W, H = sc.W, sc.H
+    top = np.zeros((H, W), np.int16)
+    alphas = []
+    for k, m in enumerate(ms):
+        a = cv2.warpAffine(sc.layers[k][..., 3], m, (W, H), flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
+                           borderMode=cv2.BORDER_CONSTANT).astype(np.float32) / 255.0
+        alphas.append(a)
+        top[a > 0.5] = k
+    fill = np.zeros((H, W), np.float32)
+    kernel = np.ones((5, 5), np.uint8)
+    for k in range(len(ms) - 1):
+        hole = cv2.dilate((sc.labels >= k + 1).astype(np.uint8) * 255, kernel, iterations=1)
+        hm = cv2.warpAffine(hole, ms[k], (W, H), flags=cv2.INTER_NEAREST | cv2.WARP_INVERSE_MAP,
+                            borderMode=cv2.BORDER_CONSTANT) > 127
+        fill[(top == k) & hm] = 1.0
+    if not hasattr(sc, "_tele0"):
+        sc._tele0 = sc.matrices(0)
+    rows = []
+    sx, sy = size[0] / W, size[1] / H
+    for k in range(1, len(ms)):
+        a_src = sc.layers[k][..., 3] > 128
+        ys, xs = np.nonzero(a_src)
+        if not len(xs):
+            continue
+        p = np.array([xs.mean(), ys.mean(), 1.0])
+
+        def out(mm):
+            return cv2.invertAffineTransform(mm) @ p
+        rel = (out(ms[k]) - out(ms[k - 1])) - (out(sc._tele0[k]) - out(sc._tele0[k - 1]))
+        vis = alphas[k] * (top == k)
+        rows.append({"id": f"plane{k}", "alpha": cv2.resize(vis, size, interpolation=cv2.INTER_AREA),
+                     "v": (float(rel[0] * sx), float(rel[1] * sy))})
+    return {"fill": cv2.resize(fill, (480, 270), interpolation=cv2.INTER_AREA), "layers": rows}
+
+
+def directed_layer_rows(tele_rows: list[dict], out_size=(1920, 1080), size=ANALYSIS) -> list[list[dict]]:
+    """``production.directed25d.render_clip`` telemetry -> per-frame layer rows at the analysis size (shift of each object
+    against the background under its centroid, since frame 0)."""
+    cv2 = _cv2()
+    sx, sy = size[0] / out_size[0], size[1] / out_size[1]
+    first = {lay["id"]: (lay["p_obj"], lay["p_bg"]) for lay in tele_rows[0]["layers"]}
+    out = []
+    for row in tele_rows:
+        rows = []
+        for lay in row["layers"]:
+            po0, pb0 = first[lay["id"]]
+            rel = (lay["p_obj"] - lay["p_bg"]) - (po0 - pb0)
+            rows.append({"id": lay["id"], "alpha": cv2.resize(lay["alpha"], size, interpolation=cv2.INTER_LINEAR),
+                         "v": (float(rel[0] * sx), float(rel[1] * sy))})
+        out.append(rows)
+    return out
+
+
+class Watch:
+    """Collects what the detectors need while a clip renders (memory stays small: the ghost test runs on the sampled frames
+    as they come). ``add`` takes the frame, its fill map and its layer rows (analysis size, shift since frame 0)."""
+
+    def __init__(self, every: int = 4):
+        self.every = every
+        self.fills: list[np.ndarray] = []
+        self.ghost = {"score": 0.0, "frame": None, "layer": None}
+        self.first = self.last = None
+        self.n = 0
+
+    def add(self, f: int, frame: np.ndarray, fill: np.ndarray, layer_rows: list[dict] | None) -> None:
+        cv2 = _cv2()
+        self.fills.append(cv2.resize(fill.astype(np.float32), (480, 270), interpolation=cv2.INTER_AREA).astype(np.float16))
+        if self.first is None:
+            self.first = frame.copy()
+        self.last = frame
+        self.n += 1
+        if layer_rows and f % self.every == 0:
+            g = gray(frame)
+            for lay in layer_rows:
+                s = ghost_score(g, lay["alpha"], lay["v"])
+                if s and s["score"] > self.ghost["score"]:
+                    self.ghost = {"score": s["score"], "frame": f, "layer": lay["id"], **s}
+
+    def summary(self, out_height: int = 1080) -> dict:
+        rv = reveal([m.astype(np.float32) for m in self.fills], out_height)
+        gm = global_motion(self.first, self.last) if self.first is not None else None
+        return {"reveal": rv, "double_edge": self.ghost, "global_motion_first_to_last": gm}
