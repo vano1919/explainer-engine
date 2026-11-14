@@ -41,10 +41,16 @@ DEPTH_PUSH = L.DEPTH_PUSH
 NEAR_TRAVEL = L.NEAR_TRAVEL        # near content travel of a truck/crane at strength 1, share of the width
 RECENTRE = 0.85                    # a targeted push moves the view this share of the way to its target (inside the margin)
 MARGIN = 0.004                     # never sample closer than this share of the width to the picture's edge
+UNFOLD_PX = 0.5                    # the background warp may shift neighbours apart by at most this share of a pixel
+UNFOLD_ITERS = 60
 BG_SMOOTH = 0.006                  # the background's warp depth is the real depth blurred by this share of the width
 HAND_TR, HAND_ROT = L.HAND_TR, L.HAND_ROT
 RACK_SIGMA_PX = 7.0                # rack focus: blur (px at 1080p) of a surface ``RACK_SPAN`` of disparity away from focus
 RACK_SPAN = 0.25
+REST_GROW_PX = 3.0                 # the plate shows this far (px at 1080p) round a layered object's half-alpha edge
+THIN_FILL_PX = 16.0                # a stroke narrower than this (px at 1080p) is never layered: it stays in the background
+FLAT_SHARE = 0.5                   # an object that is at least this share strokes stays in the background whole
+REST_ALPHA_GAIN = 6.0              # alpha 1/6 already counts as the object: its soft edge goes with the layer, not the plate
 FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box", "dust")
 CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
 
@@ -116,6 +122,7 @@ class Stage:
                     entry["height"] = float(ys.max() - ys.min() + 1)
                     entry["d"] = float(np.median(self.depth[m > 0.3]))
             self.lights[li["id"]] = entry
+        self._rest_background(layers)
         self.masks_src = {o["id"]: o["alpha"] for o in self.objects}
         for oid, m in layers["masks"].items():
             if oid not in self.masks_src:
@@ -129,8 +136,50 @@ class Stage:
         self.sky = self._sky()
         self.focus_d = self._focus_depth()
         self.z0 = self._fit_zoom()
+        self._unfold_background()
         yy, xx = np.mgrid[0:self.H, 0:self.W].astype(np.float32)
         self.oxx, self.oyy = xx - self.W / 2, yy - self.H / 2
+
+    def _rest_background(self, layers: dict) -> None:
+        """Frame 0 must be the picture, and nothing may be drawn that the picture does not have (Fable's audit 2026-11-14,
+        S01 C3: a post cut on the first frame where the grown LaMa hole reached past what SAM cut out, and wire rings that
+        appeared behind the moving wire). Two rules:
+
+        - the background shows the plate only under the layered objects (their alpha, grown by ``REST_GROW_PX``) and the
+          picture itself everywhere else;
+        - a thin stroke (a wire, a twig: narrower than ``THIN_FILL_PX``) is never layered, because no fill behind a moving
+          wire is right: the strokes stay in the background and move with it. An object that is mostly strokes
+          (``FLAT_SHARE``) stays in the background whole (``self.flat``)."""
+        cv2 = self.cv2
+        self.flat = []
+        if not self.objects:
+            return
+        A = np.zeros((self.sh, self.sw), np.float32)
+        g = max(1, int(round(REST_GROW_PX * self.sw / 1920)))
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * g + 1, 2 * g + 1))
+        r = max(1, int(round(THIN_FILL_PX / 2 * self.sw / 1920)))
+        disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
+        keep = []
+        for o in self.objects:
+            hard = (o["alpha"] > 0.5).astype(np.uint8)
+            parts = hard & (1 - cv2.morphologyEx(hard, cv2.MORPH_OPEN, disc))   # what an opening removes is thin
+            share = float(parts.sum() / max(1, hard.sum()))
+            o["thin_share"] = round(share, 3)
+            if share >= FLAT_SHARE:
+                self.flat.append(o["id"])
+                continue
+            if parts.any():
+                strip = cv2.dilate(parts.astype(np.float32), disc)
+                o["alpha"] = o["alpha"] * (1.0 - strip)
+                o["rgba"][..., 3] = (o["alpha"] * 255 + 0.5).astype(np.uint8)
+            if (o["alpha"] > 0.5).sum() < 20:
+                self.flat.append(o["id"])
+                continue
+            keep.append(o)
+            A = np.maximum(A, cv2.dilate(np.clip(o["alpha"] * REST_ALPHA_GAIN, 0, 1), k))
+        self.objects = keep
+        self.plate = (self.src.astype(np.float32) * (1 - A[..., None]) + self.plate.astype(np.float32) * A[..., None]).astype(np.uint8)
+        self.hole = A
 
     # --- what the plan points at ----------------------------------------------------------------------------------------
     def point_of(self, target: dict | None) -> tuple[float, float] | None:
@@ -263,6 +312,38 @@ class Stage:
             my = (k * ry + ccy).astype(np.float32)
             d = cv2.remap(self.bg_depth, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
         return mx, my, d
+
+    def _unfold_background(self) -> None:
+        """The background is one sheet warped by its depth. Where the depth jumps (a near post against the far field) a
+        strong move makes the warp fold over itself, and the fold draws mirrored strokes that the picture does not have
+        (S01 C3, the crane: a wire loop beside the right post). The depth is softened only where its slope times the
+        largest parallax of the shot would pass ``UNFOLD_PX`` pixels per pixel: the sheet then stretches instead of folding.
+        ``self.unfold`` records the largest parallax and the share of the picture that was softened."""
+        cv2 = self.cv2
+        fr = sorted(set(list(range(0, self.n, max(1, self.n // 24))) + [self.n - 1]))
+        pts = np.array([[0, 0, 1], [self.W - 1, 0, 1], [0, self.H - 1, 1], [self.W - 1, self.H - 1, 1],
+                        [self.W / 2, self.H / 2, 1]], float).T
+        P = 0.0
+        for f in fr:
+            v = self.view(f)
+            P = max(P, float(np.abs(self.matrix(v, 1.0) @ pts - self.matrix(v, 0.0) @ pts).max()))
+        bd = self.bg_depth
+        softened = np.zeros(bd.shape, bool)
+        if P > 0:
+            gmax = UNFOLD_PX / P
+            sig = max(1.0, 0.002 * self.sw)
+            for _ in range(UNFOLD_ITERS):
+                gy, gx = np.gradient(bd)
+                steep = (np.hypot(gx, gy) > gmax).astype(np.uint8)
+                if not steep.any():
+                    break
+                softened |= steep > 0
+                r = int(3 * sig) | 1
+                m = cv2.GaussianBlur(cv2.dilate(steep, np.ones((r, r), np.uint8)).astype(np.float32), (0, 0), sig)
+                bd = bd * (1 - m) + cv2.GaussianBlur(bd, (0, 0), sig) * m
+                sig = min(sig * 1.25, 0.03 * self.sw)
+        self.bg_depth = bd.astype(np.float32)
+        self.unfold = {"parallax_px": round(P, 1), "softened_share": round(float(softened.mean()), 4)}
 
     def _fit_zoom(self) -> float:
         """The smallest base zoom that keeps every depth's view inside the picture on every frame."""

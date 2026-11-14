@@ -6378,3 +6378,18 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   card, four things must change: the start frames' sha256 do not match `start_frames.json`; TR/TC must be rebuilt with the repo
   module; CH-03 needs a committed scene file; CH-07 needs a `paid_offer/1` file. Nothing paid was started.
 - Tests: `test_superres.py` (17), promote test pinned to `available() == False`; 110 passed in the touched suites. $0.
+
+## 2026-11-14 — P1 round 2: the S01 cut post and the wire rings fixed in `directed25d` (Fable 2.5D audit)
+- Fable's audit of the C3 clips found S01 broken: a post cut on the first frame, and wire rings appearing behind the moving
+  wire. Looked at frame by frame, there were three causes, each fixed in `production/directed25d.py`:
+  - **The LaMa hole was wider than the cut-out.** `_rest_background`: the background shows the plate only under the layered
+    objects (alpha x `REST_ALPHA_GAIN`, grown `REST_GROW_PX`); everywhere else it shows the picture. Frame 0 is the picture.
+  - **Thin strokes were layered.** No fill behind a moving wire is right. A stroke narrower than `THIN_FILL_PX` (found by a
+    morphological opening) is stripped from its layer and stays in the background. An object that is at least `FLAT_SHARE`
+    strokes stays in the background whole (`Stage.flat`; S01 `wire_mid_left`, 88 % strokes).
+  - **The background warp folded at a depth step.** Near post against far field, crane up: neighbours swapped by up to
+    6 px and drew a mirrored wire loop. `_unfold_background` softens the warp depth only where its slope times the shot's
+    largest parallax passes `UNFOLD_PX`. S01: parallax 96.8 px, 3.75 % of the picture softened, `my` slope min 0.43 (was -6.15).
+- Before/after sheet on HF `stage_b_round2_2026-11-14/s01_fix/`.
+- Tests: `test_directed25d.py` +3 (frame 0 = picture with a hole 15 px wider than the mask; strokes stay in the background;
+  a depth step does not fold, and the test fails with the unfold off). 124 passed in the touched suites, docs_lint 0. $0.

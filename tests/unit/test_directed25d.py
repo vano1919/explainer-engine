@@ -121,3 +121,49 @@ def test_a_mask_marked_not_a_layer_stays_in_the_picture(tmp_path):
     lay["manifest"]["masks"] = {"objects": [{"id": "man", "layer": False}]}
     st = R.Stage(p, lay, _plan(), OUT)
     assert st.objects == [] and "man" in st.masks_src       # still a target, not a cut-out
+
+
+# --- Fable's audit 2026-11-14 (S01 C3): a cut post on frame 0, wire rings behind the moving wire, a folded background ------
+
+def test_frame_zero_is_the_picture_even_when_the_fill_hole_is_wider_than_the_mask(tmp_path):
+    p, lay = _layers(tmp_path)
+    m = lay["masks"]["man"]
+    lay["hole"] = cv2.dilate(m, np.ones((31, 31), np.uint8)).astype(np.float32)   # LaMa's hole reaches 15 px past the mask
+    lay["plate"][lay["hole"] > 0] = (90, 90, 90)
+    st = R.Stage(p, lay, _plan(), OUT)
+    src = np.asarray(Image.open(p).convert("RGB"))
+    ref = cv2.resize(src, OUT, interpolation=cv2.INTER_AREA).astype(np.float32)
+    ring = cv2.resize(((lay["hole"] > 0) & (cv2.dilate(m, np.ones((9, 9), np.uint8)) == 0)).astype(np.uint8), OUT,
+                      interpolation=cv2.INTER_NEAREST) > 0
+    diff = np.abs(st.render(0).astype(np.float32) - ref).mean(2)
+    assert diff[ring].mean() < 6                      # the grey plate never shows round the man on the first frame
+    assert float(st.hole.max()) > 0 and float((st.hole > 0.5).mean()) < float((lay["hole"] > 0).mean())
+
+
+def test_thin_strokes_stay_in_the_background(tmp_path):
+    p, lay = _layers(tmp_path)
+    wire = np.zeros((H, W), np.float32)
+    cv2.line(wire, (10, 40), (470, 90), 1.0, 2)
+    lay["masks"]["wire"] = wire                       # all stroke: never layered
+    post = lay["masks"]["man"].copy()
+    cv2.line(post, (140, 150), (300, 120), 1.0, 2)    # a wide object with a wire hanging off it: the wire is stripped
+    lay["masks"]["man"] = post
+    st = R.Stage(p, lay, _plan(), OUT)
+    assert st.flat == ["wire"] and [o["id"] for o in st.objects] == ["man"]
+    sw = st.sw / W
+    man = st.objects[0]
+    assert man["alpha"][int(135 * st.sh / H), int(250 * sw)] < 0.1       # the hanging wire is no longer part of the layer
+    assert man["alpha"][int(170 * st.sh / H), int(100 * sw)] > 0.9       # the body still is
+    assert 0 < man["thin_share"] < R.FLAT_SHARE and "wire" in st.masks_src
+
+
+def test_a_depth_step_does_not_fold_the_background(tmp_path):
+    p, lay = _layers(tmp_path, with_object=False)
+    lay["depth"][: H // 2] = 0.02                     # the far field
+    lay["depth"][H // 2:] = 1.0                       # a near bank, one hard step
+    st = R.Stage(p, lay, _plan(cameras=[{"op": "crane", "strength": 2.0, "direction": "up", "from": 0, "to": 24,
+                                         "easing": "ease_out"}]), OUT)
+    assert st.unfold["parallax_px"] > 0 and st.unfold["softened_share"] > 0
+    for f in (0, 12, 23):
+        mx, my, _ = st.bg_maps(st.view(f))
+        assert np.diff(my, axis=0).min() > 0 and np.diff(mx, axis=1).min() > 0   # neighbours never swap: no mirrored strokes
