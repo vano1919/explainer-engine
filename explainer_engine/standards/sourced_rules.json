@@ -908,7 +908,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/edit/motion_lint.py:BP-21"
+    "explainer_engine/edit/motion_lint.py:BP-21",
+    "explainer_engine/qa/motion_intent.py:intent_rows",
+    "explainer_engine/production/living_director.py:choose_camera"
    ],
    "supersedes": [
     "(new: UR-13 had a range, no rate)"
@@ -7604,7 +7606,8 @@
    "sources": [],
    "enforced_by": [
     "explainer_engine/qa/liveliness.py:camera_rows",
-    "explainer_engine/production/direction.py:check"
+    "explainer_engine/production/direction.py:check",
+    "explainer_engine/production/living_director.py:choose_camera"
    ],
    "supersedes": []
   },
