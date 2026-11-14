@@ -274,27 +274,44 @@
       "description": "the ONE canonical look of the episode (Q8, D-131); its sentences live in `look`"
     },
     "look": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "style_sentence",
-        "face_sentence"
-      ],
-      "description": "GC-03/GC-11: the sentence that opens every picture prompt and the face sentence (adult, angular, weathered; never round or modern-cartoon). Set by the reference round with the creator.",
-      "properties": {
-        "style_sentence": {
-          "type": "string",
-          "minLength": 20
+      "description": "GC-03/GC-11: the sentence that opens every picture prompt and the face sentence (adult, angular, weathered; never round or modern-cartoon). Set by the reference round with the creator. Either the two sentences written here, or the name of a style preset (TD-335, the main-style amendment of 2026-11-12) whose sentences live in config/visual_style_presets.json.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "style_sentence",
+            "face_sentence"
+          ],
+          "properties": {
+            "style_sentence": {
+              "type": "string",
+              "minLength": 20
+            },
+            "face_sentence": {
+              "type": "string",
+              "minLength": 20
+            },
+            "approved_by_creator": {
+              "type": "string",
+              "description": "date-time and message of his OK"
+            }
+          }
         },
-        "face_sentence": {
-          "type": "string",
-          "minLength": 20
-        },
-        "approved_by_creator": {
-          "type": "string",
-          "description": "date-time and message of his OK"
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "preset"
+          ],
+          "properties": {
+            "preset": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
-      }
+      ]
     },
     "image_native_min_long_side": {
       "type": "integer",

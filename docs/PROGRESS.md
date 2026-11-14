@@ -6300,3 +6300,21 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   removed. Builder `clips_lane/builder/apply_sound_package.py`. G1-G4 PASS; `stage_guard` run per owner (editor, beats, architect)
   0 violations each (one combined editor pass flags the two fields owned by other stages, by design).
 - Cost $0. Next: the real G7 runs in the assembly checkout after the LTX ingest.
+
+## 2026-11-14 — Truce 1914 assembly lane (S6-S8, interim master): fixes found on the real run, TD-320..335
+- Voice (`videolane/voice.py`): per-man EQ match and bounded pitch shift (TD-320/321, 0 shifts on the full set); `dither_read` puts one
+  16-bit step of deterministic TPDF dither on the narrator's read where `compose` loads it (TD-329/330, FL-320): the RC-004 chain leaves
+  pauses under half a step, the 16-bit conversion made them exact zero and ED-12's scan read 15 holes. Only the read is dithered; every
+  zero the pipeline makes stays zero, the stem writer (`audio/stems._write`) rounds and adds nothing. Test:
+  `test_read_dither_keeps_the_dropout_gate_honest` (a cleaned pause is not reported, a 100 ms hole put in after loading is).
+- Ingest (`videolane/ingest.py`): TD-323 `late_sound_out`, TD-327 word spans from local Whisper with a 20 dB sound trim.
+- Cue sheet (`episode/cue_sheet.py`, TD-330): a library record may carry `onset_s`; such a one-shot starts that much before its frame
+  (never before 0), plays once, and the planned-onset basis of BP-54 uses the row's `take_onset_s`. Test in `test_av_events.py`. The
+  episode's library view carries it for `trailer_riser__v1` (1.03 s); A1 now measures -40 ms.
+- Manifest (`schemas/episode_manifest.schema.json`, `episode/context.py`, TD-335): `look` accepts the two sentences as before or
+  `{"preset": name}` (the main-style amendment of 2026-11-12); `validate_manifest` resolves the preset after the schema, an unknown
+  preset or a short sentence is a ContractError. Tests: `test_episode_manifest_look.py`. Additive, schema name unchanged.
+- Real run: G1-G7 PASS/REVIEW (G6 read_aligned 81.8 %), G8 FAIL only for the three S07_SH005 impact cues (the library has no gunshot,
+  owner's card open, TD-333), G9 interim master drawn as a rehearsal (9024 frames = 376.0 s, 1920x1080 by TD-313/TD-334, -14.1 LUFS).
+- Stale text found: `docs/PRODUCTION_RULES.md` still names the G7 route `wan` (the route is `video`).
+- Cost $0 in this lane. Next: G10, then the owner's gunshot answer, a G8 re-run and a new mux.

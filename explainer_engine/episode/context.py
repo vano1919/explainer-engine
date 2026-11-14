@@ -32,6 +32,24 @@ def validate_instance(instance: dict, schema_name: str) -> None:
     jsonschema.validate(instance, schema)
 
 
+LOOK_SENTENCE_MIN = 20     # the schema's minLength of a look sentence
+
+
+def validate_manifest(manifest: dict) -> None:
+    """The episode manifest against its schema, then its look resolved (TD-335): a ``look.preset`` must name a preset of
+    ``config/visual_style_presets.json`` (``imagegen/turn_pack.preset``) whose two sentences are at least as long as the schema asks
+    of a look written in the episode; an unknown preset or a short or missing sentence stops the load with a ContractError."""
+    validate_instance(manifest, "episode_manifest.schema.json")
+    look = manifest.get("look") or {}
+    if "preset" in look:
+        from explainer_engine.core.errors import ContractError
+        from explainer_engine.imagegen import turn_pack
+        pre = turn_pack.preset(look["preset"])
+        for k in ("style_sentence", "face_sentence"):
+            if len(str(pre.get(k) or "")) < LOOK_SENTENCE_MIN:
+                raise ContractError(f"style preset {look['preset']!r}: {k} is missing or under {LOOK_SENTENCE_MIN} characters")
+
+
 class EpisodeIsolationError(ValueError):
     """Raised when a cross-episode or path-traversal violation is detected."""
 
@@ -370,7 +388,7 @@ def build_episode_directory_tree(
     readme_text: Optional[str] = None,
 ) -> EpisodeContext:
     """Create the canonical `episodes/<episode_id>/` directory structure and write `episode.json`."""
-    validate_instance(manifest, "episode_manifest.schema.json")
+    validate_manifest(manifest)
     episode_id = str(manifest["episode_id"])
     ep_root = (episodes_root / episode_id).resolve()
     ep_root.mkdir(parents=True, exist_ok=True)
@@ -422,7 +440,7 @@ def load_episode_context(episode_root: Path) -> EpisodeContext:
     if not manifest_path.is_file():
         raise FileNotFoundError(f"Missing episode.json in {ep_root}")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    validate_instance(manifest, "episode_manifest.schema.json")
+    validate_manifest(manifest)
     return EpisodeContext(
         episode_id=str(manifest["episode_id"]),
         root_dir=ep_root,
