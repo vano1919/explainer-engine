@@ -6300,3 +6300,10 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   removed. Builder `clips_lane/builder/apply_sound_package.py`. G1-G4 PASS; `stage_guard` run per owner (editor, beats, architect)
   0 violations each (one combined editor pass flags the two fields owned by other stages, by design).
 - Cost $0. Next: the real G7 runs in the assembly checkout after the LTX ingest.
+
+### 2026-11-14 13:10 UTC (clips lane): S07_SH005 back on the video route (script A sha 4628db7c again)
+- The owner accepted the R3 LTX clips (13:07 UTC); `S07_SH005_seed7111` is the shot's clip. The stopgap that made the shot a 2.5D picture
+  (script db99ec7d, commit 4338a7f) is reverted by reverse-applying `s07sh005_script_diff.patch`: route `video`, WAN_I2V/cinematic_video,
+  edit_plan back, no 2.5D draw. The script file is byte-identical to the audited sha 4628db7c (sound package, TD-326), so no new check.
+- Known deviation (recorded by the LTX lane, scene file `script_deviation`): the script text still says "raises the flag"; the R3 clip has none.
+- Cost $0. The motion-strength proposal (orbit_small, stronger effects) is still waiting for the owner's word.
