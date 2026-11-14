@@ -21,6 +21,12 @@ decision:
    BP-197's ``snap_s_max``, the owner's 12:37 card: snappy only as an accent on a named word); before it, a base move at
    ``BASE_RATE`` (inside BP-21) chosen from the words and the composition; the camera never fully stops (12:37 card 3).
 
+5. ``choose_sound`` (the owner, 13:13 UTC: the audio by the same criteria, on the maps too): only what is seen sounds;
+   light, candles and breath are silent; a small far fire is not heard over the bed; words bring a sounding element one
+   step closer; the previous shot's bed of the same place continues; every take comes from the one library
+   (``episode/sound_plan``'s matcher, ``episode/events.DEFAULTS`` for the map actions and camera moves), a missing one is
+   listed under ``needs``. A map shot passes its actions as visible events.
+
 ``direct`` writes the result into a ``shot_direction/1-draft`` file (``seen.living`` with decisions, ``weather``, ``tracks``,
 ``choice`` with the reasons), so ``direction.check`` and the reviewer see the same decisions. The numbers are engineering
 defaults (REVIEW, D-59) until the owner confirms them on a free round.
@@ -455,9 +461,11 @@ def _track(r: dict, d: dict, weather_layers=None) -> dict:
             "params": {"strength": STRENGTH.get(op, 1.0), **prm}, "validate": {"measure": "change_inside_target"}}
 
 
-def direct(d: dict, spine, frames: int, fps: float = 24.0, picture=None, faces_px=None, prev: dict | None = None) -> dict:
-    """The whole choice for one shot: a copy of ``d`` with ``seen.living`` decided, ``weather``, the tracks (the file's
-    audio tracks kept) and ``choice`` (every reason)."""
+def direct(d: dict, spine, frames: int, fps: float = 24.0, picture=None, faces_px=None, prev: dict | None = None,
+           library_root=None) -> dict:
+    """The whole choice for one shot: a copy of ``d`` with ``seen.living`` decided, ``weather``, the tracks, the sound
+    (``sound``: beds and events from the library, the silent ones and the needs; one audio track that names them) and
+    ``choice`` (every reason)."""
     import copy
     out = copy.deepcopy(d)
     seen = out.setdefault("seen", {})
@@ -507,10 +515,183 @@ def direct(d: dict, spine, frames: int, fps: float = 24.0, picture=None, faces_p
             living.append({**base, "decision": "skip", "why": why})
     cams, cam_why = choose_camera(out, spine, frames, fps, faces, {t["op"] for t in tracks})
     seen["living"] = living
-    audio = [t for t in d.get("tracks", []) if t.get("track") == "audio"]
-    out["tracks"] = cams + tracks + audio
+    out["tracks"] = cams + tracks
+    snd = sound_of_direction(out, spine, frames, fps, prev, library_root)
+    out["sound"] = snd
+    loud = [e for e in snd["events"] if e["decision"] != "review_required"]
+    out["tracks"].append({"track": "audio", "decision": "sfx" if any(e["kind"] != "ambience" for e in loud) else
+                          "ambience_only" if loud else "review_required" if snd["needs"] else "silent_by_design",
+                          "why": "; ".join(f"{e['class']} ({e['distance']}): {e['why']}" for e in snd["events"]) or
+                                 "nothing seen in the shot makes a sound",
+                          "events": [e.get("event_id") or e["class"] for e in snd["events"]]})
     out["choice"] = {"by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
                      "faces": faces, "cap": p["cap"], "weather": out["weather"], "camera": cam_why,
                      "chosen": [x["id"] for x in living if x["decision"] != "skip"],
-                     "skipped": {x["id"]: x["why"] for x in living if x["decision"] == "skip"}, "notes": p["notes"]}
+                     "skipped": {x["id"]: x["why"] for x in living if x["decision"] == "skip"}, "notes": p["notes"],
+                     "sound": {"beds": snd["beds"], "coverage": snd["coverage"], "silent": snd["silent"], "needs": snd["needs"]}}
     return out
+
+
+# --- the sound: the same director, the same criteria (the owner, 2026-11-14 13:13 UTC, message
+# cmsg_01Hnu5zB86sjUj5GtTgaUkPWX1nj38fCbSqH5mWzZKXzHj: "after seeing the photo the director decides not only the motion but
+# the audio too, by the same criteria, on the maps too") ------------------------------------------------------------------
+# the renderer's ops -> the AV contract's op names (episode/events.DEFAULTS), where they differ
+AV_OP = {"fire": "fire_flicker", "fire_box": "fire_flicker", "smoke": "smoke_drift", "sun_shaft": "sun_shaft_drift"}
+# ops the AV contract has no default for, decided here by what they are
+OWN_AUDIO = {
+    "candle": ("silent_by_design", None, "a candle flame makes no sound"),
+    "glow": ("silent_by_design", None, "a distant glow makes no sound"),
+    "sun_glint": ("silent_by_design", None, "light makes no sound"),
+    "glint": ("silent_by_design", None, "a glint is light: no sound"),
+    "stars": ("silent_by_design", None, "stars make no sound"),
+    "light_fade": ("silent_by_design", None, "light going makes no sound"),
+    "breath": ("silent_by_design", None, "a breath is too quiet to hear over the bed"),
+    "steam": ("silent_by_design", None, "steam from a mug is too quiet to hear"),
+    "snow": ("ambience_only", "wind", "falling snow is heard as the wind that carries it"),
+    "spindrift": ("ambience_only", "wind", "blown snow is the wind's"),
+    "wire_sway": ("ambience_only", "wind", "a trembling wire shows the wind: the wind bed carries it"),
+}
+# a bed class -> words of the takes that fit a place (preferred when the take's own words carry them)
+BED_WORDS = {"wind": ("open", "land", "field", "cold", "winter", "plain"),
+             "fire": ("campfire", "bonfire", "brazier", "crackle", "crackles")}
+COLD_FORBIDS = ("crickets", "night_insects", "birds", "seabirds")     # no insects or birdsong in a frozen winter
+
+
+def _hear_distance(area_pct: float) -> str | None:
+    """How a sounding element of this share of the frame is heard: None (too small and far to hear over the bed)."""
+    a = float(area_pct)
+    return None if a < 0.5 else "distant" if a < 2 else "medium" if a < 5 else "close"
+
+
+MODERN_WORDS = ("garage", "concrete", "car", "cars", "traffic", "engine", "motel", "pool", "city", "office", "electric")
+
+
+def _pick_take(cls: str, root, words: set) -> tuple[list[str], str, str]:
+    """(ids best first, status library|placeholder|missing, why) from the one library (sound_plan's matcher). A take is
+    ranked by the words of what the class must sound like (``BED_WORDS``, twice), then the place's words; a take whose
+    words belong to a later world (a garage, a motel pool) drops to the end."""
+    from explainer_engine.episode import sound_plan as SP
+    found, basis = SP._candidates(cls, root)
+    real = [i for i in found if SP._origin(i) != "procedural"]
+    if not real:
+        return ([i["id"] for i in found], "placeholder" if found else "missing",
+                "only a procedural placeholder (never plays)" if found else "no take in the library: listed under needs")
+    modern = set(MODERN_WORDS) | set(SP._MODERN_TAGS)
+    want = set(BED_WORDS.get(cls, ()))
+
+    def rank(i):
+        w = SP._words_of(i)
+        return -(2 * len(w & want) + len(w & words) - 5 * len(w & modern))
+
+    ranked = sorted(real, key=rank)
+    hit = sorted(SP._words_of(ranked[0]) & (words | want))
+    return ([i["id"] for i in ranked], "library",
+            f"{basis}; best take {ranked[0]['id']}" + (f" (fits: {', '.join(hit)})" if hit else ""))
+
+
+def choose_sound(events: list[dict], *, scene: dict | None = None, spine=None, open_air: bool = True, cold: bool = False,
+                 prev_beds: list[str] | None = None, library_root=None, fps: float = 24.0) -> dict:
+    """The sound of one shot from its VISIBLE events (a 2.5D effect or camera move, or a map action: ``op``, ``id``,
+    ``area_pct``, ``start_frame``/``end_frame``, ``text``), by the visual criteria in the same order: (1) only what is seen
+    or authored sounds (words never add a sound, BP-192 / AV-07); (2) does it make a sound in nature (light, a candle, a
+    breath: no); (3) is it heard at its size and distance; (4) the words name it: it comes one step closer; (5) the
+    neighbours: the previous shot's bed of the same place continues. Every visible action that sounds gets its own event
+    (BP-192); a bed the place carries plays under the whole shot. Returns events in the production script's
+    ``sound_events`` form, the silent ones with their reason and the library ``needs``."""
+    from pathlib import Path
+    from explainer_engine.episode import events as EV
+    root = Path(library_root) if library_root else Path(__file__).resolve().parents[2] / "assets" / "audio" / "library"
+    words = set(_words(spine))
+    place = set(re.findall(r"[a-z]+", str((scene or {}).get("surroundings", "")).lower()))
+    scene_words = {w for w in place | words if len(w) > 3}
+    beds, spots, silent, needs = {}, [], [], []
+    for ev in events:
+        op = ev["op"]
+        if op in OWN_AUDIO:
+            dec, cls, why = OWN_AUDIO[op]
+        else:
+            a = EV.default_audio(AV_OP.get(op, op), ev)
+            dec, cls, why = a["decision"], a.get("class"), a.get("why") or "the AV contract's default for this action"
+            if dec == "ambience_only":
+                from explainer_engine.episode import sound_plan as SP
+                cls = SP.AMBIENCE_OF_EFFECT.get(AV_OP.get(op, op))
+        if dec == "ambience_only" and not cls:
+            dec, why = "silent_by_design", f"{op} makes no sound of its own and names no bed"
+        if dec in ("silent_by_design", "review_required"):
+            silent.append({"id": ev.get("id"), "op": op, "decision": dec, "why": why})
+            continue
+        if cls == "wind" and not open_air:
+            silent.append({"id": ev.get("id"), "op": op, "decision": "silent_by_design",
+                           "why": "criterion 1: the place is not open to the sky, no wind is heard"})
+            continue
+        dist = _hear_distance(ev.get("area_pct", 100.0)) if dec == "ambience_only" and cls != "wind" else "medium"
+        if dist is None:
+            silent.append({"id": ev.get("id"), "op": op, "decision": "silent_by_design",
+                           "why": f"criterion 3: {ev.get('area_pct')} % of the frame, too small and far to hear over the bed"})
+            continue
+        if int(ev.get("text", 0)) == 2 and dist != "close":
+            dist = {"distant": "medium", "medium": "close"}[dist]
+            why += "; criterion 4: the words name it, one step closer"
+        if dec == "ambience_only":
+            cur = beds.get(cls)
+            order = ("distant", "medium", "close")
+            if cur is None or order.index(dist) > order.index(cur["distance"]):
+                beds[cls] = {"distance": dist, "why": f"{op} ({ev.get('id')}): {why}"}
+            continue
+        at = int(ev.get("start_frame", 0))
+        spots.append({"kind": "spot" if EV.DEFAULTS.get(op, {}).get("decision") == "sfx" else "foley", "what": op,
+                      "class": cls, "at_s": round(at / fps, 3), "distance": dist, "decision": dec,
+                      "sync": EV.DEFAULTS.get(op, {}).get("sync", "onset"), "event_id": ev.get("id"),
+                      "why": f"criterion 1-2: a visible {op} that sounds (BP-192); {why}"})
+        if ev.get("end_frame") and spots[-1]["sync"] == "span":
+            spots[-1]["dur_s"] = round((int(ev["end_frame"]) - at) / fps, 3)
+    for cls in prev_beds or []:
+        if cls not in beds and not (cls == "wind" and not open_air) and not (cold and cls in COLD_FORBIDS):
+            beds[cls] = {"distance": "distant", "why": "criterion 5: the previous shot of the same place has it: the bed "
+                                                         "continues, no jump"}
+    out_events = []
+    for cls, b in beds.items():
+        if cold and cls in COLD_FORBIDS:
+            silent.append({"id": cls, "op": cls, "decision": "silent_by_design", "why": "a frozen winter has no insects or birdsong"})
+            continue
+        ids, status, pwhy = _pick_take(cls, root, scene_words | set(BED_WORDS.get(cls, ())) | {b["distance"]})
+        e = {"kind": "ambience", "what": cls, "class": cls, "at_s": 0.0, "distance": b["distance"], "decision": "ambience_only",
+             "sync": "span", "why": b["why"], "library": {"status": status, "ids": ids[:3], "why": pwhy}}
+        if status != "library":
+            e["decision"] = "review_required"
+            needs.append({"class": cls, "status": status})
+        out_events.append(e)
+    for s in spots:
+        ids, status, pwhy = _pick_take(s["class"], root, scene_words | {s["distance"]})
+        s["library"] = {"status": status, "ids": ids[:3], "why": pwhy}
+        if status != "library":
+            s["decision"] = "review_required"
+            needs.append({"class": s["class"], "status": status})
+        out_events.append(s)
+    return {"events": out_events, "silent": silent, "needs": needs,
+            "beds": sorted(beds), "coverage": "AMBIENCE_ONLY" if beds and not spots else
+            "FOLEY_AND_AMBIENCE" if beds else "ACTION_FOCUSED" if spots else "MINIMAL_DESIGN"}
+
+
+def sound_of_direction(d: dict, spine, frames: int, fps: float = 24.0, prev: dict | None = None, library_root=None) -> dict:
+    """The 2.5D shot's visible events (its chosen effect tracks with their elements' share and words, and its camera moves)
+    handed to ``choose_sound``."""
+    living = {e["effects"][0]: e for e in (d.get("seen") or {}).get("living", []) if e.get("decision") != "skip"
+              and e.get("effects")}
+    evs = []
+    for t in d.get("tracks", []):
+        if t.get("track") == "audio":
+            continue
+        e = living.get(t.get("id"), {})
+        start = (t.get("timing") or {}).get("start") or {}
+        sf = 0
+        if start.get("word"):
+            try:
+                sf = D.word_frame(spine, start["word"])
+            except ValueError:
+                sf = 0
+        evs.append({"id": t.get("id") or t["op"], "op": t["op"], "area_pct": e.get("area_pct", 100.0),
+                    "text": e.get("text", 0), "start_frame": sf, "end_frame": frames})
+    prev_beds = (prev or {}).get("sound", {}).get("beds") if prev else None
+    return choose_sound(evs, scene=d.get("scene"), spine=spine, open_air=open_sky(d), cold=is_cold(d, _words(spine)),
+                        prev_beds=prev_beds, library_root=library_root, fps=fps)

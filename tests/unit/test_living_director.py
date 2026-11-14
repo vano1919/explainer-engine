@@ -132,3 +132,46 @@ def test_the_balance_keeps_its_floor_outside_the_light_family():
     p = LV.plan({}, 3.0, rows=rows)
     assert "ice" in {c["id"] for c in p["chosen"]} and len(p["chosen"]) == 4
     assert not [n for n in p["notes"] if n.startswith("FAIL")]
+
+
+# --- the sound by the same criteria (the owner, 13:13 UTC) ------------------------------------------------------------------
+
+def test_the_sound_follows_what_is_seen_not_the_words():
+    from pathlib import Path
+    lib = Path(__file__).resolve().parents[2] / "assets" / "audio" / "library"
+    evs = [{"id": "fx_sun", "op": "sun_glint", "area_pct": 25}, {"id": "fx_candle", "op": "candle", "area_pct": 0.3},
+           {"id": "fx_fire", "op": "fire", "area_pct": 3, "text": 2}, {"id": "fx_far_fire", "op": "fire", "area_pct": 0.2},
+           {"id": "fx_clouds", "op": "cloud_drift", "area_pct": 30}, {"id": "cam", "op": "push", "area_pct": 100}]
+    snd = LD.choose_sound(evs, scene={"surroundings": "dusk, frost"}, spine=[{"word": "fire"}], library_root=lib)
+    beds = {e["class"]: e for e in snd["events"]}
+    assert set(beds) == {"fire", "wind"}
+    assert beds["fire"]["distance"] == "close" and "criterion 4" in beds["fire"]["why"]       # 3 % medium, named: closer
+    assert beds["fire"]["library"]["status"] == "library" and "garage" not in beds["fire"]["library"]["ids"][0]
+    silent = {s["id"]: s["why"] for s in snd["silent"]}
+    assert "light makes no sound" in silent["fx_sun"] and "candle" in silent["fx_candle"]
+    assert "criterion 3" in silent["fx_far_fire"] and "camera move" in silent["cam"]
+    # indoors: no wind; a cold scene keeps the previous shot's bed but never insects
+    snd = LD.choose_sound(evs[4:5], open_air=False, cold=True, prev_beds=["fire", "night_insects"], library_root=lib)
+    assert [e["class"] for e in snd["events"]] == ["fire"] and "criterion 5" in snd["events"][0]["why"]
+    assert "criterion 1" in snd["silent"][0]["why"]
+
+
+def test_map_actions_take_their_sound_by_the_same_chooser_and_gaps_are_needs():
+    from pathlib import Path
+    lib = Path(__file__).resolve().parents[2] / "assets" / "audio" / "library"
+    evs = [{"id": "a1", "op": "route_arrow", "start_frame": 24, "end_frame": 72},
+           {"id": "a2", "op": "label", "start_frame": 10}, {"id": "a3", "op": "snap", "start_frame": 80}]
+    snd = LD.choose_sound(evs, library_root=lib)
+    by = {e["event_id"]: e for e in snd["events"]}
+    assert by["a1"]["class"] == "map_route_draw" and by["a1"]["at_s"] == 1.0 and by["a1"]["dur_s"] == 2.0
+    assert by["a1"]["library"]["status"] == "library"
+    assert {s["id"] for s in snd["silent"]} == {"a2"}                          # a name appearing is read, not heard
+    assert by["a3"]["decision"] == "review_required" and {"class": "map_line_snap", "status": "missing"} in snd["needs"]
+
+
+def test_direct_writes_the_sound_with_one_audio_track():
+    d = LD.direct(SEEN, SPINE, 72, 24.0, _dark(), FACES_PX)
+    assert d["sound"]["beds"] and d["choice"]["sound"]["coverage"]
+    audio = [t for t in d["tracks"] if t["track"] == "audio"]
+    assert len(audio) == 1 and audio[0]["decision"] in D.AUDIO_DECISIONS and audio[0]["why"]
+    assert not [p for p in D.check(d, "abc", SPINE, frames=72) if p["level"] == "FAIL"]

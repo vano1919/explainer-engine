@@ -6490,3 +6490,35 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Tests: new `test_living_director.py` (7). `test_direction.py`'s LP-09 case now lets the snow in through a weather record:
   this follows the owner's decision, not a weakening. The touched suites pass (64). Every new number (EVOKES, BASE_RATE,
   FACE_SCORE, FACE_CLOSE, the flake contrast) is an engineering default (REVIEW, D-59). $0.
+
+## 2026-11-14 — The director chooses the sound by the same criteria (the owner, 13:13 UTC)
+- The owner (cmsg_01Hnu5zB86sjUj5GtTgaUkPWX1nj38fCbSqH5mWzZKXzHj): after seeing the photo, the director decides the audio
+  too, by the same criteria, and on the maps as well.
+- `living_director.choose_sound(events, ...)` works on any shot's VISIBLE events: a 2.5D effect or camera move, or a map
+  action (the map thread passes its actions). It applies the visual order:
+  1. Only what is seen or authored sounds; words never add a sound (BP-192, AV-07).
+  2. Does it make a sound in nature? Light, glints, stars, the light going, a candle, breath and mug steam are silent.
+     Snow, blown snow, a trembling wire, clouds and swaying plants are the wind bed. A fire is the fire bed.
+  3. Is it heard at its size? Under 0.5 % of the frame it is not heard over the bed; then distant, medium, close.
+  4. The words name it: one step closer.
+  5. The neighbours: the previous shot's bed of the same place continues.
+  Further rules:
+  - Indoors there is no wind.
+  - A cold scene never gets insects or birdsong.
+  - Map actions and camera moves use `episode/events.DEFAULTS`: a route draws with `map_route_draw`, a label is silent,
+    and a camera move is silent.
+  - Takes come from the one library through `episode/sound_plan`'s matcher. They are ranked by what the class must sound
+    like (a fire: crackle, campfire, brazier), then by the place's words. A take from a later world (a garage, a motel)
+    drops to the end.
+  - A class without a real take is `review_required` and listed under `needs` (today: `map_line_snap`, `cloth_flap`).
+- `direct` writes `sound` (beds, events with their takes and reasons, the silent list, needs, coverage) and one audio track
+  that names them. The six Truce C4A directions now carry their sound with 0 FAILs:
+  - S01: wind (from the clouds; the small dugout fire is too far to hear);
+  - S02: fire medium (campfire crackles) and wind;
+  - S05_SH016 and S05_SH020: fire;
+  - S06: wind and fire;
+  - S08: wind (carried by the snow).
+- The C4A clips stay silent. They will be heard when G8 (cue sheet and stems) renders this plan. Nothing was mixed outside
+  the production path.
+- Tests: `test_living_director.py` +3 (the sound follows the picture, not the words; map actions and needs; one audio
+  track). $0.
