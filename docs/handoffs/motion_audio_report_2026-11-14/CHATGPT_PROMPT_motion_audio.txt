@@ -1,0 +1,75 @@
+გამარჯობა. ქვემოთ არის ჩემი ავტომატური ვიდეო-პროდაქშენის (ისტორიული ვიდეო "Christmas Truce 1914") 6 სტატიკური ფოტოს ("2.5D" მოძრაობა) და 4 რუკის კადარი. თითოეულზე გიგზავნი: რა დაიწერა სკრიპტში მოძრაობაზე და ხმაზე, რა გააკეთა რენდერერმა და ლინკებს (ფოტო, მზა კლიპი).
+
+## ვინ რას აკეთებს (მნიშვნელოვანი)
+- სკრიპტს (ეს JSON-ი: მოძრაობა, ეფექტები, ხმის გადაწყვეტილებები) წერს Claude (Anthropic-ის ენობრივი მოდელი) როგორც მონაცემს. იგი არც ვიდეოს და არც სურათს არ აგენერირებს.
+- ფოტოები დახატა Gemini-მ (გამოსახულების გენერატორი), ერთი სტატიკური სურათი კადარზე.
+- "2.5D მოძრაობას" ამატებს ჩვენი Python პროგრამა `production/layers25d.py` (არა გენერაციული AI): სიღრმის რუკას ითვლის Depth-Anything V2 Small მოდელი, სურათი იყოფა 3-4 სიღრმის პლანად, თითოეული პლანი თავისი სიჩქარით მოძრაობს (პარალაქსი), ეფექტები (ცეცხლის ციმციმი, ნისლი, კვამლი, მზის სხივები, მტვერი, ღრუბლები) მათემატიკურად ემატება, სახეები ხისტი რჩება (YuNet). კამერა: push/pull (ზუმი), truck (გვერდზე), crane (ზევით-ქვევით), orbit_small (პატარა შემობრუნება პარალაქსით).
+- რუკებს ხატავს ჩვენი Python პროგრამა `maps/actions.py` + `production/map_clip.py` (რელიეფის რუკა, მარშრუტი, ფრონტის ხაზი, წარწერა, zoom, მონიშვნა, მრიცხველი), მოქმედება ჩნდება მთხრობელის სიტყვაზე.
+- რენდერერში ძალის ზღვრები: კამერის strength ≤ 1.0-1.5 (profile-ის მიხედვით), ახლო პლანის წანაცვლება ≤ სიგანის 8%. strength-ის გარეშე ეფექტი 1.0-ზეა.
+
+## 6 ფოტო
+### S01_SH001 (2.0 წმ სკრიპტში): Open on the empty frozen field at dawn so the first second says place, cold and danger
+კამერა სკრიპტში: {"shot_size":"wide","vertical_angle":"eye_level_0","horizontal_azimuth_deg":0,"camera_move":"slow_push_in","multiangle_token":null}
+სკრიპტი მოძრაობაზე და ხმაზე (სიტყვასიტყვით): {"motion_profile":"landscape","motion_imitation":[{"effect":"push","event_id":"S01_SH001.M1","audio":{"decision":"silent_by_design","why":"a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"},"strength":0.6},{"effect":"mist","event_id":"S01_SH001.M2","audio":{"decision":"ambience_only","why":"the fog drift is carried by the wind bed"}},{"effect":"sun_shaft_drift","event_id":"S01_SH001.M3","audio":{"decision":"ambience_only","why":"the low sun's light drifts through the fog; the place's bed carries it"}}]}
+რენდერერის შედეგი (გაზომილი): ზუმი ბოლო კადარზე შორი პლანი x1.036, ახლო x1.0609; გვერდითი წანაცვლება 0; სურათი იცვლება ~6.81% წამში.
+ფოტო: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/S01_SH001_start_r2.png
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_five_test_shots/S01_SH001.mp4
+
+### S08_SH002 (8.75 წმ სკრიპტში): Friedrich with the portrait card and the brass button: the other side of the same night
+კამერა სკრიპტში: {"shot_size":"medium_close_up","vertical_angle":"high_angle_30","horizontal_azimuth_deg":0,"camera_move":"slow_push_in","multiangle_token":null}
+სკრიპტი მოძრაობაზე და ხმაზე (სიტყვასიტყვით): {"motion_profile":"object","motion_imitation":[{"effect":"push","event_id":"S08_SH002.M1","audio":{"decision":"silent_by_design","why":"a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"},"strength":0.5},{"effect":"fire_flicker","event_id":"S08_SH002.M2","audio":{"decision":"silent_by_design","why":"a candle makes no sound"},"region":[0.78,0.3,0.92,0.62]},{"effect":"dust","event_id":"S08_SH002.M3","audio":{"decision":"silent_by_design","why":"the place's bed carries it"}}]}
+რენდერერის შედეგი (გაზომილი): ზუმი ბოლო კადარზე შორი პლანი x1.03, ახლო x1.0506; გვერდითი წანაცვლება 0; სურათი იცვლება ~1.62% წამში.
+ფოტო: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/S08_SH002_start.png
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_five_test_shots/S08_SH002.mp4
+
+### S06_SH001 (3.25 წმ სკრიპტში): Time cut to dusk: two men sitting in the open where nobody could sit yesterday
+კამერა სკრიპტში: {"shot_size":"wide","vertical_angle":"eye_level_0","horizontal_azimuth_deg":90,"camera_move":"slow_pull_back","multiangle_token":null}
+სკრიპტი მოძრაობაზე და ხმაზე (სიტყვასიტყვით): {"motion_profile":"landscape","motion_imitation":[{"effect":"pull","event_id":"S06_SH001.M1","audio":{"decision":"silent_by_design","why":"a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"},"strength":0.5},{"effect":"sun_shaft_drift","event_id":"S06_SH001.M2","audio":{"decision":"silent_by_design","why":"light only"},"region":[0.5,0.2,1.0,0.6]},{"effect":"smoke_drift","event_id":"S06_SH001.M3","audio":{"decision":"silent_by_design","why":"the place's bed carries it"}}]}
+რენდერერის შედეგი (გაზომილი): ზუმი ბოლო კადარზე შორი პლანი x1.0, ახლო x1.0; გვერდითი წანაცვლება 0; სურათი იცვლება ~6.51% წამში.
+ფოტო: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/S06_SH001_start.png
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_five_test_shots/S06_SH001.mp4
+
+### S05_SH020 (7.75 წმ სკრიპტში): The joint service: one psalm in two languages
+კამერა სკრიპტში: {"shot_size":"wide","vertical_angle":"eye_level_0","horizontal_azimuth_deg":90,"camera_move":"slow_push_in","multiangle_token":null}
+სკრიპტი მოძრაობაზე და ხმაზე (სიტყვასიტყვით): {"motion_profile":"battle","motion_imitation":[{"effect":"push","event_id":"S05_SH020.M1","audio":{"decision":"silent_by_design","why":"a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"},"strength":0.4},{"effect":"cloud_drift","event_id":"S05_SH020.M2","audio":{"decision":"silent_by_design","why":"a slow sky; silence suits the service"},"region":[0.0,0.0,1.0,0.25]},{"effect":"sun_shaft_drift","event_id":"S05_SH020.M3","audio":{"decision":"ambience_only","why":"the low sun's light drifts over the graves; the place's bed carries it"}}]}
+რენდერერის შედეგი (გაზომილი): ზუმი ბოლო კადარზე შორი პლანი x1.024, ახლო x1.0404; გვერდითი წანაცვლება 0; სურათი იცვლება ~3.6% წამში.
+ფოტო: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/S05_SH020_start.png
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_five_test_shots/S05_SH020.mp4
+
+### S02_SH008 (10.0 წმ სკრიპტში): Raise the stakes from above: the people in charge said no; the men were never asked
+კამერა სკრიპტში: {"shot_size":"wide","vertical_angle":"eye_level_0","horizontal_azimuth_deg":135,"camera_move":"slow_push_in","multiangle_token":null}
+სკრიპტი მოძრაობაზე და ხმაზე (სიტყვასიტყვით): {"motion_profile":"portrait","motion_imitation":[{"effect":"push","event_id":"S02_SH008.M1","audio":{"decision":"silent_by_design","why":"a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"},"strength":0.5},{"effect":"cloud_drift","event_id":"S02_SH008.M2","audio":{"decision":"silent_by_design","why":"the place's bed carries it"},"region":[0.0,0.0,1.0,0.35]},{"effect":"fire_flicker","event_id":"S02_SH008.M3","audio":{"decision":"silent_by_design","why":"the place's bed carries it"}}]}
+რენდერერის შედეგი (გაზომილი): ზუმი ბოლო კადარზე შორი პლანი x1.03, ახლო x1.0506; გვერდითი წანაცვლება 0; სურათი იცვლება ~1.91% წამში.
+ფოტო: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/S02_SH008_start.png
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_five_test_shots/S02_SH008.mp4
+
+### S05_SH016 (3.0 წმ სკრიპტში): Insert: two spades in the frozen earth by the open grave; the work done together (VL-08 breath)
+კამერა სკრიპტში: {"shot_size":"medium_close_up","vertical_angle":"eye_level_0","horizontal_azimuth_deg":45,"camera_move":"static","multiangle_token":null}
+სკრიპტი მოძრაობაზე და ხმაზე (სიტყვასიტყვით): {"motion_profile":"object","motion_imitation":[{"effect":"push","event_id":"S05_SH016.M1","audio":{"decision":"silent_by_design","why":"the silence of the beat; no cue (BP-81)"},"strength":0.3},{"effect":"smoke_drift","event_id":"S05_SH016.M2","audio":{"decision":"silent_by_design","why":"the place's bed carries it"}},{"effect":"sun_shaft_drift","event_id":"S05_SH016.M3","audio":{"decision":"ambience_only","why":"the low sun's light drifts over the spades and the stretcher; the place's bed carries it"}}]}
+რენდერერის შედეგი (გაზომილი): ზუმი ბოლო კადარზე შორი პლანი x1.018, ახლო x1.0302; გვერდითი წანაცვლება 0; სურათი იცვლება ~4.76% წამში.
+ფოტო: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/S05_SH016_start.png
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_five_test_shots/S05_SH016.mp4
+
+## 4 რუკა
+### S02_SH001 (6.0 წმ სკრიპტში): August 1914: the war starts as a fast march, the promise of a short war
+სკრიპტი (სიტყვასიტყვით): {"map_view":{"lon":4.84,"lat":49.9,"span_km":530},"actions":[{"kind":"label","at_word":"August","label":"August 1914","event_id":"S02_SH001.A1","audio":{"decision":"ui_cue","class":"map_arrive_click","sync":"onset","purpose":"clarify"},"from":"chip_aug"},{"kind":"route_arrow","at_word":"Everyone","until_word":"Christmas","from":"aachen","to":"marne","via":["liege","brussels"],"event_id":"S02_SH001.A2","audio":{"decision":"sfx","class":"map_route_draw","sync":"span","purpose":"clarify"}}]}
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S02_SH001.mp4
+
+### S02_SH002 (7.75 წმ სკრიპტში): December: the march has frozen into one trench line from the sea to Switzerland
+სკრიპტი (სიტყვასიტყვით): {"map_view":{"lon":4.95,"lat":49.31,"span_km":1000},"actions":[{"kind":"label","at_word":"December","label":"December 1914","event_id":"S02_SH002.A1","audio":{"decision":"ui_cue","class":"map_arrive_click","sync":"onset","purpose":"clarify"},"from":"chip_dec"},{"kind":"front_line","at_word":"trenches","until_word":"Switzerland","from":"nieuport","to":"swiss_border","via":["ypres","armentieres","la_bassee","arras","noyon","soissons","reims","verdun","st_mihiel","pont_a_mousson"],"event_id":"S02_SH002.A2","audio":{"decision":"sfx","class":"map_route_draw","sync":"span","purpose":"clarify"}}]}
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S02_SH002.mp4
+
+### S02_SH003 (6.0 წმ სკრიპტში): Fly to Flanders: the sector of our story, where the lines nearly touch
+სკრიპტი (სიტყვასიტყვით): {"map_view":{"lon":4.95,"lat":49.31,"span_km":1000},"actions":[{"kind":"front_line","at_word":"Here","from":"nieuport","to":"swiss_border","via":["ypres","armentieres","la_bassee","arras","noyon","soissons","reims","verdun","st_mihiel","pont_a_mousson"],"cues":"none","event_id":"S02_SH003.A0","audio":{"decision":"silent_by_design","why":"the line is already known from the shot before; it stands at once, no draw (BP-81)"}},{"kind":"zoom","at_word":"Here","to":"flanders","value":60,"camera":"fly_to","event_id":"S02_SH003.A1","audio":{"decision":"silent_by_design","why":"a camera move under the voice; the draw sound has just ended (BP-81)"}},{"kind":"highlight","at_word":"close","from":"frelinghien","value":8,"event_id":"S02_SH003.A2","audio":{"decision":"ui_cue","class":"map_arrive_click","sync":"onset","purpose":"clarify"}}]}
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S02_SH003.mp4
+
+### S05_SH002 (6.25 წმ სკრიპტში): How many men: the estimate on the map, the number tied to its claim
+სკრიპტი (სიტყვასიტყვით): {"map_view":{"lon":2.871,"lat":50.692,"span_km":90},"actions":[{"kind":"front_line","at_word":"Nobody","from":"ypres","to":"la_bassee","via":["wulverghem","ploegsteert","frelinghien","armentieres","fleurbaix"],"cues":"none","event_id":"S05_SH002.A0","audio":{"decision":"silent_by_design","why":"the line is already known from the shot before; it stands at once, no draw (BP-81)"}},{"kind":"highlight","at_word":"Nobody","from":"wulverghem","value":3,"event_id":"S05_SH002.A2","audio":{"decision":"silent_by_design","why":"the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"}},{"kind":"highlight","at_word":"Nobody","from":"ploegsteert","value":3,"event_id":"S05_SH002.A3","audio":{"decision":"silent_by_design","why":"the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"}},{"kind":"highlight","at_word":"Nobody","from":"frelinghien","value":3,"event_id":"S05_SH002.A4","audio":{"decision":"silent_by_design","why":"the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"}},{"kind":"highlight","at_word":"Nobody","from":"fleurbaix","value":3,"event_id":"S05_SH002.A5","audio":{"decision":"silent_by_design","why":"the glow of the patches the shot before pulsed; the counter's sound is the cue (BP-81)"}},{"kind":"counter","at_word":"hundred","until_word":"part","value":100000,"unit":"men (estimate)","claim":"C-03","event_id":"S05_SH002.A1","audio":{"decision":"sfx","class":"data_rise_texture","sync":"span","purpose":"clarify"}}]}
+კლიპი: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S05_SH002.mp4
+
+## რა მინდა შენგან
+1. შეაფასე: სკრიპტი თუ რენდერერი არის სუსტი რგოლი იმისთვის, რომ კადრები ნამდვილ მოძრაობას ჰგავდეს, და არა მარტო ნელ ზუმს.
+2. მირჩიე კონკრეტული მოძრაობა თითოეულ ფოტოზე: შემობრუნება გრადუსებით, გვერდითი პარალაქსი, სინათლის ცვლილება, ეფექტების ძალა. ჩვენი ზღვარი: კამერის strength 1.5-მდე, ახლო პლანის წანაცვლება სიგანის 8%-მდე.
+3. რუკებზე: რა შეიძლება დაემატოს, რომ რუკა არ იდგეს მოქმედებებს შორის (ახლა 54-152 კადარი სტატიკურია).
+
+შენიშვნა: ლინკები (Hugging Face) პრივატულია და შენ ვერ გახსნი. ფოტოებს და კადრებს ცალკე ფაილებად ვტვირთავ.
