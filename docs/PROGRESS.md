@@ -6288,3 +6288,36 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
   skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
   the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
+
+## 2026-11-13 — Truce 1914 clips lane: mist and smoke off the open sky, sound data package (script A)
+- Renderer (`production/layers25d.py`, version `layers25d/2.1`, audit FL-319): `mist` and `smoke_drift` are multiplied by a sky
+  weight (the flat farthest plateau of the depth map in the upper 60 % of the picture, edged softly, about 0.03 on the sky),
+  because their blobs on a bright sky read as smudges. Ground and horizon keep the effect. The version bump makes the clip cache
+  redraw every 2.5D shot once. Test: `test_mist_and_smoke_stay_off_the_open_sky`; before/after frames of S05_SH003, S05_SH016,
+  S06_SH001, S08_SH003 in `/mnt/project-files/explainer-engine/demo_run_2026-11-13/FL319_before_after.png`.
+- Script A data fix (assembly thread's sound package, audit TD-326), data only, no words, pictures or routes: 15 motion items
+  `ambience_only` -> `silent_by_design`, `crowd_murmur` out of the no-man's-land bed, the end card's `intentional_silence` text
+  removed. Builder `clips_lane/builder/apply_sound_package.py`. G1-G4 PASS; `stage_guard` run per owner (editor, beats, architect)
+  0 violations each (one combined editor pass flags the two fields owned by other stages, by design).
+- Cost $0. Next: the real G7 runs in the assembly checkout after the LTX ingest.
+
+### 2026-11-14 13:10 UTC (clips lane): S07_SH005 back on the video route (script A sha 4628db7c again)
+- The owner accepted the R3 LTX clips (13:07 UTC); `S07_SH005_seed7111` is the shot's clip. The stopgap that made the shot a 2.5D picture
+  (script db99ec7d, commit 4338a7f) is reverted by reverse-applying `s07sh005_script_diff.patch`: route `video`, WAN_I2V/cinematic_video,
+  edit_plan back, no 2.5D draw. The script file is byte-identical to the audited sha 4628db7c (sound package, TD-326), so no new check.
+- Known deviation (recorded by the LTX lane, scene file `script_deviation`): the script text still says "raises the flag"; the R3 clip has none.
+- Cost $0. The motion-strength proposal (orbit_small, stronger effects) is still waiting for the owner's word.
+
+### 2026-11-14 14:55 UTC (clips lane): map renderer 2.2 and the v2 maps/counters test reel
+- Review of the v1 reel found (owner's reviewer): S05 audio offset, an early counter knock, a front line drawn again though its sound
+  decision said "known already", a tiny army marker, no place names, a date chip pushed off-screen. Causes: the test build's
+  `stage_sound` had no LTX clips and silently used the unsplit read (379.8 s timeline vs 268.1 s read); events were read from the
+  untimed script; fixed sizes vanish at 1000 km. Journal CLIPS-10.
+- `maps/actions.py` map_action/2.1 -> 2.2: a `front_line` with `cues: none` is drawn whole on its word (`stands`), the
+  `marker_travel` marker and the pulse/highlight rings are larger. The version bump redraws map clips once. Test:
+  `test_a_front_line_with_cues_none_stands_whole_on_its_word`.
+- Test reel v2 (free, five Truce map shots, sound chosen by `living_director.sound_of_map`, read laid on the timeline, scribe words
+  of each shot window checked): `explainer-engine/demo_truce_1914/clips/map_counter_test_v2_2026-11-14/` on HF (hash-verified).
+  Open for the code owner: `stage_sound` falls back silently to the unsplit read when an insert clip has no audio; it should be a
+  NeedsReview, with an ASR-per-shot check. The library has no stamp/typewriter take (`date_stamp`, `typewriter_key` under needs).
+- Cost $0. The real script (sha 4628db7c) is untouched; real G7/assembly stay paused.

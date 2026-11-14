@@ -1,0 +1,119 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S07@loc_british_trench:S07_SH004",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_british_trench",
+  "where_when": "British front-line breastwork trench opposite Frelinghien / Boxing Day 1914, morning",
+  "int_ext": "EXT",
+  "time_of_day": "dawn",
+  "weather": "fog",
+  "master_frame": "S07_SH005_start",
+  "landmarks": [
+   {
+    "id": "sandbag_breastwork",
+    "text": "waist-high sandbag breastworks with frost"
+   },
+   {
+    "id": "duckboards",
+    "text": "duckboards over brown floodwater"
+   },
+   {
+    "id": "fire_step",
+    "text": "the fire step"
+   },
+   {
+    "id": "brazier",
+    "text": "a small coke brazier"
+   },
+   {
+    "id": "trench_ladder",
+    "text": "a trench ladder"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "right",
+  "light_source": "the low winter sun",
+  "colour_key": "cold steel-blue winter light, warm orange brazier glow at night"
+ },
+ "cast": {
+  "char_sgt_harris": {
+   "name": "the British sergeant",
+   "description": "Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic",
+   "sheet": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+   "costumes": {
+    "cap_on": "khaki soft cap, goatskin jerkin over the khaki tunic, three chevrons",
+    "cap_off": "bareheaded, the khaki soft cap in his hand, goatskin jerkin over the khaki tunic, three chevrons"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S07_SH004",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_sgt_harris",
+     "screen_pos": "centre",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "cap_on",
+     "action": "Harris stands in the trench, cap on, rifle slung",
+     "eyeline": "off_right"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S07_SH005_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+     "role": "character",
+     "of": "char_sgt_harris"
+    }
+   ],
+   "hook_up": "first",
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S07_SH005",
+   "shot_size": "WS",
+   "angle": "low",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [],
+   "camera_move": "static",
+   "refs": [],
+   "is_master": true,
+   "hook_up": "match_on_action",
+   "angle_change_deg": 135.0,
+   "extras": 1,
+   "landmarks": [
+    {
+     "id": "sandbag_breastwork",
+     "side": "centre"
+    },
+    {
+     "id": "fire_step",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}

@@ -1,0 +1,51 @@
+[
+ {
+  "shot_id": "S07_SH001",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Extreme wide shot, eye-level camera. Exactly 12 people. 12 unnamed background figures. Dawn, fog; key light from the right (the low winter sun).",
+  "refs": [],
+  "questions": [
+   "How many people are in the picture? (expected 12)",
+   "Does the main light come from the right?"
+  ]
+ },
+ {
+  "shot_id": "S07_SH002",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, No man's land between the lines / Boxing Day 1914, morning: keep its landmarks, light and colours, but show it from a new camera position. Image 2 is the Saxon corporal: copy the face, body and costume only, not the pose. Image 3 is the young British private: copy the face, body and costume only, not the pose. Medium shot, eye-level camera. Exactly 2 people. The Saxon corporal, Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots, wearing field-grey round cap with red band, grey greatcoat buttoned with one button missing, the portrait card in the left breast pocket, on the right, in the middle distance, facing left, looking at the young British private, Friedrich stands facing Thomas in the fog. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off, on the left, in the foreground, facing right, looking at the Saxon corporal. Dawn, fog; key light from the right (the low winter sun).",
+  "refs": [
+   "S07_SH001_start",
+   "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 2)",
+   "Is the Saxon corporal on the right of the frame?",
+   "Does the Saxon corporal face left?",
+   "Does the Saxon corporal match the model sheet (face, colours, costume)?",
+   "Is the young British private on the left of the frame?",
+   "Does the young British private face right?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Does the main light come from the right?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S07_SH003",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, No man's land between the lines / Boxing Day 1914, morning: keep its landmarks, light and colours, but show it from a new camera position. Image 2 is the young British private: copy the face, body and costume only, not the pose. Image 3 is the Saxon corporal: copy the face, body and costume only, not the pose. Medium shot, eye-level camera. Exactly 2 people. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off, on the left, in the middle distance, facing right, looking at the Saxon corporal, Thomas faces Friedrich. The Saxon corporal, Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots, wearing field-grey round cap with red band, grey greatcoat buttoned with one button missing, the portrait card in the left breast pocket, on the right, in the middle distance, facing left, looking at the young British private. Dawn, fog; key light from the right (the low winter sun). Change from the previous shot: char_thomas_hale depth now mid (a new set-up (MS, eyeline): Thomas faces Friedrich). Keep everything else the same.",
+  "refs": [
+   "S07_SH001_start",
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 2)",
+   "Is the young British private on the left of the frame?",
+   "Does the young British private face right?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is the Saxon corporal on the right of the frame?",
+   "Does the Saxon corporal face left?",
+   "Does the Saxon corporal match the model sheet (face, colours, costume)?",
+   "Does the main light come from the right?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ }
+]
