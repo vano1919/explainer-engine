@@ -131,6 +131,28 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 | CRAFT-SND-14 | code | the delivered mix meets the loudness and true-peak gate | the delivered file | BP-50 | `explainer_engine/qa/targets.py` |
 <!-- craft-checklist:sound:end -->
 
+## Motion and transition craft (HyperFrames, 2026-11-14)
+
+Source: HeyGen's HyperFrames skill, `vendor/hyperframes-skills/hyperframes/references/motion.md` (measured frame by frame on their own launch films, 2026-11). One source type, so every number here is a hypothesis for us (D-59): guidance for the edit planner and the overlay layer, REVIEW at most, never a FAIL until `docs/SOURCED_RULES.md` has a second source type. It applies to what we draw ourselves (overlays, map actions, 2.5D camera, titles), not to the inside of an LTX clip.
+
+- **Ease by role.** An arrival lands on a long ease-out tail, a camera move or a colour change eases both ways, an exit or a zoom
+  through accelerates. One identical ease and duration on everything is what makes an edit feel machine-made.
+- **Arrive slow, leave clean.** Exits run roughly half as long as entrances and are one motion, never slide-stop-leave. A too
+  snappy entrance reads as a glitch.
+- **Overlap.** The next element starts when the previous one is a third to half done; fully one-after-another looks robotic,
+  all at once looks cheap. Words appear 60-120 ms apart, list items 40-80 ms apart.
+- **A landed title is still.** Once text lands it stops; the motion moves on to the next element, the camera or the world. A
+  slow creeping scale on a title, or breathing and pulsing loops standing in for motion, are the generated-video tells.
+- **Holds.** Text the viewer must read stays about half a second plus 0.3 s a word; the last line of a film at least 2 s.
+- **Cut on motion.** Cut at the fastest frame of a move, with the same direction and speed on both sides; a jump at a cut means
+  the two sides differ at the seam (snapshot just before and after it).
+- **Transitions need a cause.** Use three to five kinds in a film, each caused by something on screen (an object grows into the
+  next world, a whip, a colour flood, a dip of a few dark frames before a hard cut so the cut reads as meant); at most a third
+  of the seams between beats are plain hard cuts, and two worlds never crossfade into each other.
+- **Contrast speeds.** Fast runs and long holds next to each other; a beat of stillness of 0.3-0.75 s before a payoff.
+- **The creator says / we change:** "too fast" = slow the camera moves to about 0.7x, nothing else; "it feels like slides" =
+  enter the next scene through something on screen, cut a move mid-flight.
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers of this skill live in the registry (D-59); the code reads them with `sourced_rules.T`, this list is the reading copy.

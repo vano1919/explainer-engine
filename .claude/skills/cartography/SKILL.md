@@ -44,6 +44,21 @@ map frame is a sentence, not a page.
 9. **Maps are a lane, not the video.** A map run without a character beat stays inside BP-127's cap; see the
    `shot-visuals` skill for the lane balance.
 
+### Map animation technique (HyperFrames, 2026-11-14)
+
+Source: `vendor/hyperframes-skills/hyperframes/references/film.md` "Maps and real places" and the registry's map blocks
+(`nyc-paris-flight`, `us-map-flow`). One source type, technique only (D-59). Their satellite-tile advice does not apply: our
+plates are our own relief (rule 8, `hyperframes-lanes` skill).
+
+- Move the camera first, then animate pins, labels and borders only while the camera holds; a label moving with a moving camera
+  is unreadable.
+- Bake a camera move once and keep the file; never re-render a map move that has not changed.
+- A point placed on a picture by eye misses by a sixth to a quarter of the frame; narrow it on a grid (their `locate.mjs`: 9x9,
+  then 6x6 on the crop, then a check render) or compute it from lon/lat as `maps/` does.
+- A route draws on as a stroke, then the marker lands with a small pop; a round-capped line hidden with dash = gap = offset leaves
+  a dot on some curves, so hide it with a gap longer than the path.
+- A number that counts up takes about 1.2-1.6 s, then holds, and lands on a hit (its sound, BP-192).
+
 ### CHECKLIST (cartography)
 
 Rendered from `explainer_engine/standards/craft_checklists/cartography.json` (the one home of these ids;

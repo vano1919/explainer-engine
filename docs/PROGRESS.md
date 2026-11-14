@@ -6288,3 +6288,23 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
   skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
   the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
+
+## 2026-11-14 — HyperFrames official skills vendored, one entry skill, editing craft taken into our skills ($0)
+- Asked: the creator 2026-11-14 14:36 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW8nQcDdbos7iyR61z3FdCK4): install what best fills the
+  technical side of the 10 % map and 30 % photo lanes; take the logic of the skills into our script and edit agents; Opus medium.
+- Found: HyperFrames (overlay, pinned 0.9.39), LaMa, SAM 2.1 and DA3 are already in use (B5, PR #188), so Remotion would be a second
+  render stack; the remotion-dev/skills repository has no licence file, so nothing of it is copied. HeyGen's own HyperFrames skills
+  (Apache-2.0) and its registry of about 450 blocks (snow, stars, film grain, light leak, light sweep, camera shake, counters,
+  route arcs, transitions) plus free local QA commands (`measure events --map`, `audio`, `measure sync`, `measure energy`,
+  `measure cuts`, `snapshot --review`, `*.motion.json`) were not used yet.
+- Done: `vendor/hyperframes-skills/` (three skills, text and helper scripts only, unchanged, commit pinned in its README);
+  `.claude/skills/hyperframes-lanes/SKILL.md`, the one entry: our rules first (lanes, pin, no telemetry, no HeyGen cloud or paid
+  media, our own maps, licence per item), a need-to-block table that says where our own renderer is already better (snow and
+  stars occluded by depth stay ours), and the QA commands for sync and liveliness. Distilled, paraphrased and marked as one-source
+  hypotheses (D-59): motion and transition craft in `editing-style`, reveal-on-the-word in `visual-beats`, map animation technique
+  in `cartography`. Free test: the registry `snow` block over a 2560x1440 still, rendered with the pinned CLI (5 s, 1080p30),
+  HF `explainer-engine/tools_hyperframes_2026-11-14/` (sha256 checked). The registry snow is a flat overlay (no depth occlusion),
+  which is why the table keeps ours.
+- Not done: no pin bump (0.9.39 -> 0.9.46 is its own change with the overlay thread); no code in `maps/`, `overlay/` or the 2.5D
+  renderer (owned by other threads); no gate wired to the QA commands yet.
+- New test: `tests/unit/test_hyperframes_skills.py` (3).
