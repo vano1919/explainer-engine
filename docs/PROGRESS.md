@@ -6307,3 +6307,17 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   edit_plan back, no 2.5D draw. The script file is byte-identical to the audited sha 4628db7c (sound package, TD-326), so no new check.
 - Known deviation (recorded by the LTX lane, scene file `script_deviation`): the script text still says "raises the flag"; the R3 clip has none.
 - Cost $0. The motion-strength proposal (orbit_small, stronger effects) is still waiting for the owner's word.
+
+### 2026-11-14 14:55 UTC (clips lane): map renderer 2.2 and the v2 maps/counters test reel
+- Review of the v1 reel found (owner's reviewer): S05 audio offset, an early counter knock, a front line drawn again though its sound
+  decision said "known already", a tiny army marker, no place names, a date chip pushed off-screen. Causes: the test build's
+  `stage_sound` had no LTX clips and silently used the unsplit read (379.8 s timeline vs 268.1 s read); events were read from the
+  untimed script; fixed sizes vanish at 1000 km. Journal CLIPS-10.
+- `maps/actions.py` map_action/2.1 -> 2.2: a `front_line` with `cues: none` is drawn whole on its word (`stands`), the
+  `marker_travel` marker and the pulse/highlight rings are larger. The version bump redraws map clips once. Test:
+  `test_a_front_line_with_cues_none_stands_whole_on_its_word`.
+- Test reel v2 (free, five Truce map shots, sound chosen by `living_director.sound_of_map`, read laid on the timeline, scribe words
+  of each shot window checked): `explainer-engine/demo_truce_1914/clips/map_counter_test_v2_2026-11-14/` on HF (hash-verified).
+  Open for the code owner: `stage_sound` falls back silently to the unsplit read when an insert clip has no audio; it should be a
+  NeedsReview, with an ASR-per-shot check. The library has no stamp/typewriter take (`date_stamp`, `typewriter_key` under needs).
+- Cost $0. The real script (sha 4628db7c) is untouched; real G7/assembly stay paused.

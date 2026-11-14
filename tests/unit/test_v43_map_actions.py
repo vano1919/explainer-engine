@@ -142,6 +142,27 @@ def test_each_action_appears_on_its_word_and_renders_the_same_twice(raster, act)
         assert np.hypot(xs.mean() - float(x), ys.mean() - float(y)) < W * 0.25
 
 
+def test_a_front_line_with_cues_none_stands_whole_on_its_word(raster):
+    """map_action/2.2: a line the viewer already knows (``cues: none``, silent by design) is not drawn stroke by stroke: it
+    stands whole on its word."""
+    view = {"lon": 67.0, "lat": 9.0, "span_km": 9500}
+    line = {"kind": "front_line", "at_word": "four thousand", "from": "toba", "to": "india"}
+    grown, landed = {}, {}
+    for name, act in (("drawn", line), ("stands", dict(line, cues="none"))):
+        shot, script = _script(actions=[act], view=view)
+        p = MA.plan(shot, script, PLACES, FPS)
+        p["drift"] = 0.0
+        base = MA.Plate(p, W, H)
+        a = p["actions"][0]
+        fr = lambda f: np.asarray(MA.render_frame(p, f, base, W, H), dtype=np.int16)
+        before, first, last = fr(a["start"] - 1), fr(a["start"]), fr(a["end"])
+        landed[name] = (np.abs(first - before).max(axis=2) > 12).sum()
+        grown[name] = (np.abs(last - first).max(axis=2) > 12).sum()
+    assert landed["stands"] > 5 * max(1, landed["drawn"]), f"the line must be whole on its word: {landed}"
+    assert grown["stands"] < 0.2 * grown["drawn"], f"a cues-none line does not grow after its word: {grown}"
+    assert MA.RENDERER_VERSION == "map_action/2.2"
+
+
 def test_zoom_moves_the_camera_to_its_place():
     shot, script = _script(actions=[{"kind": "zoom", "at_word": "killer", "to": "toba", "value": 1200}],
                            view={"lon": 67.0, "lat": 9.0, "span_km": 9500})

@@ -53,7 +53,7 @@ ANIM_FRAMES = 18          # an action takes this long to arrive (0.75 s at 24 fp
 LEAD_IN = 0.06            # estimated word times: the line starts this share into the shot ...
 LEAD_OUT = 0.12           # ... and ends this share before its end
 MIN_SPAN_KM = 300.0
-RENDERER_VERSION = "map_action/2.1"       # W3 (D-135): the clip cache keys on it (2.1: numbers laid out per card or map)
+RENDERER_VERSION = "map_action/2.2"       # W3 (D-135): the clip cache keys on it (2.1: numbers laid out per card or map)
 WORD = re.compile(r"[A-Za-z0-9']+")
 
 
@@ -148,7 +148,8 @@ def plan(shot: dict, script: dict, places: dict, fps: int, spine: list[dict] | N
                     "state": a.get("state"), "claim": a.get("claim"), "values": a.get("values"), "labels": a.get("labels"),
                     "max": a.get("max"), "camera": a.get("camera") or ("zoom" if kind == "zoom" else "hold"),
                     "name": (places.get(a.get("from")) or {}).get("name") if a.get("from") else None,
-                    "value": a.get("value"), "unit": a.get("unit", ""), "label": a.get("label")})
+                    "value": a.get("value"), "unit": a.get("unit", ""), "label": a.get("label"),
+                    "stands": kind == "front_line" and a.get("cues") == "none"})   # a line the viewer already knows stands at once, nothing is drawn
     ids = {a["event_id"]: a for a in out}
     for a in out:
         if a["route"] is not None:
@@ -191,6 +192,8 @@ def _u(a: dict, f: int) -> float:
 
 def _progress(a: dict, f: int) -> float:
     """A path's progress: a march (slow start, cruise, halt; map law 2) for routes and markers, the ease for the rest."""
+    if a.get("stands"):
+        return 1.0
     if f < a["start"]:
         return 0.0
     u = min(1.0, (f - a["start"]) / max(1, a["end"] - 1 - a["start"]))
@@ -353,7 +356,7 @@ def _draw_path(c, a, p, f, col, ink, accent, px, unit) -> None:
             if len(trail) >= 2:
                 c.line(trail, (*col["ink"], 110), w, dash=(w * 2.0, w * 1.6))
         x, y = D.polyline_point(path, u)
-        D.marker(c, "a", x, y, unit * 0.016)
+        D.marker(c, "a", x, y, unit * 0.030)
         return
     colour = accent
     pieces = [D.polyline_prefix(path, u)]
@@ -462,12 +465,12 @@ def _draw_one(c, a, p, f, view, col, ink, accent, px, unit) -> None:
             cx, cy = px(a["from"])
             for n in range(3):
                 t = ((f - a["start"]) / 24.0 + n / 3.0) % 1.0
-                c.circle(cx, cy, unit * (0.01 + 0.08 * t), outline=(*col["accent"], int(255 * (1 - t))), width=max(2.0, unit * 0.004))
-            c.circle(cx, cy, unit * 0.008, fill=accent)
+                c.circle(cx, cy, unit * (0.014 + 0.12 * t), outline=(*col["accent"], int(255 * (1 - t))), width=max(3.0, unit * 0.006))
+            c.circle(cx, cy, unit * 0.013, fill=accent, outline=ink, width=max(2.0, unit * 0.003))
         elif k == "highlight":
             cx, cy = px(a["from"])
             r = float(a.get("value") or 120.0) / view.km_per_px
-            c.circle(cx, cy, max(4.0, r), fill=(*col["glow"], int(90 * u)), outline=(*col["glow"], int(220 * u)),
+            c.circle(cx, cy, max(unit * 0.03, r), fill=(*col["glow"], int(90 * u)), outline=(*col["glow"], int(220 * u)),
                      width=max(2.0, unit * 0.004))
         elif k == "label":
             cx, cy = px(a["from"])
