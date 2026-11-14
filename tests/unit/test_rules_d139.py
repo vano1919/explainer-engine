@@ -68,3 +68,11 @@ def test_vl17_fits_the_script_and_prompt_to_the_start_picture():
                   "continues the motion from the end state", "never opens a new scene", "OR-17", "recorded"):
         assert words in row, words
     assert "VL-17" in _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")
+
+
+def test_vl18_the_director_chooses_the_sound_after_the_picture_on_every_route():
+    row = _row("VIDEO_LANE.md", "VL-18")
+    for words in ("after the picture is seen", "the bed", "with a reason", "map", "BP-192", "BP-57", "BP-81",
+                  "no second sound director", "creator's word"):
+        assert words in row, words
+    assert "VL-18" in _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")

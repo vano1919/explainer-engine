@@ -6358,3 +6358,6 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - 12:47 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX): VL-17, the script and the prompt are fitted to the start picture
   (anchor photo or hand-over frame) through a written start inventory: hands and what they hold, the ground, a continuation carries the motion
   on. Cause: the S07 gun clips. Code in P2/P3; test `test_rules_d139.py` +1; incident journal entry written.
+- 13:13 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWX1nj38fCbSqH5mWzZKXzHj): VL-18, after the picture is seen the director
+  also chooses the sound (each event's effect and the bed, with a reason) on every route, maps included, inside the existing
+  sound_plan / cue_sheet / library; BP-192 fit, BP-57 variety, BP-81 and BP-55 hold. Test +1.
