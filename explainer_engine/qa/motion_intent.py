@@ -45,6 +45,8 @@ STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # below both the camera is dead (|sc
 SEAM_FAIL = 0.15                # rest_seam: plate pixels inside a layer's outline per outline pixel (C4A scallops 0.68-1.28,
                                 # fixed renderer 0.00-0.04); frame 0 must be the picture (an invariant, so FAIL)
 PEOPLE_CUT_FAIL = 0.01          # people_in_frame: worst share of a kept person outside the frame (the owner, 13:29 UTC)
+FACE_NCC_FAIL = 0.80            # face_intact: a kept face against its first frame (camera taken out); a smear or warp
+                                # drops it (C5 S06 frame 71); light and grain alone keep it above (engineering default)
 SEEN_REVIEW = 10.0              # effect_seen_3s: the 95th percentile change of an effect's own light (levels) within 3 s
                                 # (engineering default, D-59 hypothesis: REVIEW)
 SEGMENT_SHIFT = 1.0             # camera_segments: a truck/crane moves the picture at least this % of the width its way
@@ -521,3 +523,10 @@ def segment_rows(cameras: list[dict], curve: list[dict], fps: float, views: list
     if not out:
         return [G.row("camera_segments", None, "no push, pull, truck or crane planned")]
     return [G.row("camera_segments", not bad, "every planned move happened its way" if not bad else "; ".join(bad), out)]
+
+
+def face_intact_row(r: dict | None) -> dict:
+    if not r or not r.get("faces"):
+        return G.row("face_intact", None, "no live face kept in the frame")
+    return G.row("face_intact", r["ncc"] >= FACE_NCC_FAIL, f"worst face likeness to its first frame {r['ncc']:.2f} "
+                 f"(frame {r.get('frame')}; FAIL below {FACE_NCC_FAIL}: a smeared or warped face)", r)

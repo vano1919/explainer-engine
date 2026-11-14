@@ -199,6 +199,8 @@ def _sun_glint(st, rgb, depth, e, t, v):
     glow = cv2.resize(glow.astype(np.float32), (W, H), interpolation=cv2.INTER_LINEAR)
     front = np.clip((depth - 0.35) / 0.2, 0, 1)                # a post or a man in front blocks the disc
     glow = glow * (1 - 0.85 * front * (cv2.resize(disc.astype(np.float32), (W, H)) > 0.05))
+    if hasattr(st, "people_field"):                            # the wide bloom never washes out a kept person
+        glow = glow * (1 - 0.85 * st.people_field(v))
     return rgb + np.array([255, 236, 196], np.float32) * (0.6 * s * glow)[..., None]
 
 

@@ -6603,3 +6603,19 @@ Replayed on the 5 maps of the test, it gives the same events as the driver, plus
 `test_maps_get_their_own_bed_date_stamps_counter_ticks_and_respect_cues_none` and
 `test_a_real_map_shot_takes_its_sound_through_the_same_chooser`. Library gaps: no stamp, typewriter, pin, cough or snap
 take. New takes are paid, so they wait for the owner.
+
+## 2026-11-14 — C5 eye check before sending: the stronger effects smeared a face; fixed, with a `face_intact` gate
+
+My own look at the first C5 renders found new defects caused by the stronger effects: S06's face smeared sideways and its
+sun disc stretched (cloud drift travel 0.04 W over a blurred sky mask), and the S05_SH020 heads were washed out (shaft and
+sun bloom).
+
+Fixes:
+- the sky slides only where the frame's own depth is far (`SKY_FAR`), never on a kept person (`Stage.people_field`) or
+  the sun disc;
+- `CLOUD_TRAVEL_MAX` is back to 0.012 W, and the cloud light sweep carries the visible motion;
+- the shaft gates by far**3, and the shaft and bloom keep `PEOPLE_SHIELD` off people.
+
+New FAIL gate `face_intact`: each kept face against its first frame, with the camera taken out. The smeared face measured
+0.34, intact faces 0.75 and up, FAIL below 0.80 (engineering default), and faces under 60 px are not judged. Test:
+`test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails`.

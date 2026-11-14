@@ -50,13 +50,18 @@ UNFOLD_PX = 0.5                    # the background warp may shift neighbours ap
 UNFOLD_ITERS = 60
 BG_SMOOTH = 0.006                  # the background's warp depth is the real depth blurred by this share of the width
 HAND_TR, HAND_ROT = L.HAND_TR, L.HAND_ROT
+FACE_PAD = 0.5                     # face_intact compares the face with half its size round it
+FACE_MIN_PX = 60.0                 # ... when it is at least this wide (px at 1080p, padded); smaller faces are not judged
+PEOPLE_SHIELD = 0.85               # light effects (shaft, sun bloom) keep this share off the kept people
+SKY_FAR = 0.9                      # a pixel slides with the clouds only where the frame's own depth is this far (1 - depth)
 SHAFT_GAIN = 1.0                   # sun shaft brightness (was 0.40: unnoticed in 3 s, eye review of C4A x2.5)
 SHAFT_SWAY_DEG, SHAFT_SWAY_S = 6.0, 3.0   # the shafts sway +-6 degrees over 3 s
 MIST_DRIFT = (0.021, 0.034)        # two mist banks, shares of the width per second (>= 40 px/s at 1920)
 MIST_VAR = (0.36, 0.22)            # how much each bank thickens and thins (was one bank of 0.22)
 CLOUD_SWEEP = 0.016                # cloud light sweeping over the sky, share of the width per second (~30 px/s)
 CLOUD_SHADE = 0.10                 # ... +-10 % of the sky's brightness
-CLOUD_TRAVEL_MAX = 0.04            # the sky itself slides at most this share of the width (a remap pulls from its row)
+CLOUD_TRAVEL_MAX = 0.012           # the sky itself slides at most this share of the width: more smears the sun disc and
+                                   # the branches against the sky (C5 S06); the visible motion is the light sweep
 RACK_SIGMA_PX = 7.0                # rack focus: blur (px at 1080p) of a surface ``RACK_SPAN`` of disparity away from focus
 RACK_SPAN = 0.25
 REST_GROW_PX = 3.0                 # the plate shows this far (px at 1080p) round a layered object's half-alpha edge
@@ -390,14 +395,25 @@ class Stage:
             if it.get("face") and hosts:                          # a person: the nearer part of the body decides the scale
                 hm = self.masks_src[min(hosts)[1]] > 0.5
                 out.append({"box": box, "d": float(np.percentile(self.depth[hm], 75)), "soft": bool(it.get("soft")),
-                            "why": it.get("why") or "face"})
+                            "why": it.get("why") or "face", "face": list(it["face"]), "face_d": self._face_depth(it["face"])})
                 continue
             rb = region or box
             ys = slice(int(rb[1] * self.sh), max(int(rb[1] * self.sh) + 1, int(rb[3] * self.sh)))
             xs = slice(int(rb[0] * self.sw), max(int(rb[0] * self.sw) + 1, int(rb[2] * self.sw)))
             out.append({"box": box, "d": float(np.median(self.depth[ys, xs])), "soft": bool(it.get("soft")),
-                        "why": it.get("why") or ("face" if it.get("face") else it.get("mask") or it.get("light"))})
+                        "why": it.get("why") or ("face" if it.get("face") else it.get("mask") or it.get("light")),
+                        **({"face": list(it["face"]), "face_d": self._face_depth(it["face"])} if it.get("face") else {})})
         return out
+
+    def _face_depth(self, face) -> float:
+        """The depth a face is drawn at: its layer's depth when a layered object holds it (layers move rigidly), else the
+        background's depth there."""
+        cxp = int(np.clip((face[0] + face[2]) / 2 * self.sw, 0, self.sw - 1))
+        cyp = int(np.clip((face[1] + face[3]) / 2 * self.sh, 0, self.sh - 1))
+        for o in self.objects:
+            if o["alpha"][cyp, cxp] > 0.5:
+                return float(o["d"])
+        return float(self.bg_depth[cyp, cxp])
 
     def _frame_people(self, z0, s, dp, cx, cy, tx, ty, ox, far):
         """Keep ``self.keep`` inside the frame with ``SAFE_MARGIN`` (plus the handheld sway): first cap the zoom (never below
@@ -441,6 +457,32 @@ class Stage:
             break
         return s, dp, cx, cy
 
+    def people_field(self, v: dict) -> np.ndarray:
+        """The kept people (non-soft ``keep``) on this frame, a feathered map at output size: light and sky effects stay
+        off them. Cached per view."""
+        key = tuple(round(float(v[k]), 6) for k in ("s", "cx", "cy", "tx", "ty", "ox", "rot", "dp"))
+        cache = self.__dict__.setdefault("_pf", {})
+        if key in cache:
+            return cache[key]
+        cv2 = self.cv2
+        q = 4
+        m = np.zeros((self.H // q, self.W // q), np.float32)
+        for kb in self.keep or []:
+            if kb["soft"]:
+                continue
+            inv = cv2.invertAffineTransform(self.matrix(v, kb["d"]))
+            x0, y0, x1, y1 = kb["box"]
+            a = inv @ np.array([x0 * self.sw, y0 * self.sh, 1.0])
+            b = inv @ np.array([x1 * self.sw, y1 * self.sh, 1.0])
+            cv2.rectangle(m, (int(a[0] / q), int(a[1] / q)), (int(b[0] / q), int(b[1] / q)), 1.0, -1)
+        if m.any():
+            m = cv2.GaussianBlur(m, (0, 0), 6.0)
+        out = cv2.resize(m, (self.W, self.H), interpolation=cv2.INTER_LINEAR)
+        if len(cache) > 4:
+            cache.clear()
+        cache[key] = out
+        return out
+
     def aim_check(self) -> list[dict]:
         """Every camera move aimed at a named object must aim INSIDE it: the explicit point of a target with a mask lies in
         the mask's box (S05_SH020 C4A: both crowds aimed at [0.5, 0.5], so the push went to the centre and no truck came)."""
@@ -455,6 +497,22 @@ class Stage:
             out.append({"op": seg["op"], "mask": tg["mask"], "point": [round(x, 3), round(y, 3)],
                         "box": [round(c, 3) for c in b] if b else None, "inside": bool(ok)})
         return out
+
+    def face_crop(self, frame: np.ndarray, f: int, kb: dict, size=(48, 48)):
+        """The kept face ``kb`` as it appears in output ``frame`` ``f`` (grey, ``size``), or None when it is off frame."""
+        cv2 = self.cv2
+        inv = cv2.invertAffineTransform(self.matrix(self.view(f), kb.get("face_d", kb["d"])))
+        x0, y0, x1, y1 = kb["face"]
+        fw, fh = x1 - x0, y1 - y0
+        x0, y0, x1, y1 = x0 - FACE_PAD * fw, y0 - FACE_PAD * fh, x1 + FACE_PAD * fw, y1 + FACE_PAD * fh
+        a = inv @ np.array([x0 * self.sw, y0 * self.sh, 1.0])
+        b = inv @ np.array([x1 * self.sw, y1 * self.sh, 1.0])
+        ax, ay, bx, by = int(a[0]), int(a[1]), int(np.ceil(b[0])), int(np.ceil(b[1]))
+        if ax < 0 or ay < 0 or bx > self.W or by > self.H or bx - ax < FACE_MIN_PX * self.W / 1920:
+            return None                                   # off frame, or too small to judge a smear
+        g = frame[ay:by, ax:bx].astype(np.float32).mean(axis=2)
+        g = cv2.GaussianBlur(cv2.resize(g, size, interpolation=cv2.INTER_AREA), (0, 0), 1.2)
+        return g
 
     def people_cut(self, every: int = 2) -> dict:
         """The measured safe zone: for each kept box, the worst share of it outside the frame over the shot (``every``-th
@@ -706,13 +764,25 @@ class Stage:
                 gate = (1 - np.exp(-(rad / 0.06) ** 2)) * np.exp(-(rad / 0.6) ** 2)
                 rays = cv2.GaussianBlur((rays * gate).astype(np.float32), (0, 0), 6.0)
                 rays = cv2.resize(rays, (W, H), interpolation=cv2.INTER_LINEAR)
-                # only the far, visible surfaces take the shaft: the people and the near wire stand in front of it
-                rgb = rgb + np.array([255, 228, 180], np.float32) * (SHAFT_GAIN * s * LFX.swell(t) * rays * far ** 1.2)[
+                # only the far, visible surfaces take the shaft: the people and the near wire stand in front of it, and a
+                # person is never washed out by it (C5 S05_SH020: heads bleached under the stronger shaft)
+                keep_off = 1 - PEOPLE_SHIELD * self.people_field(v)
+                rgb = rgb + np.array([255, 228, 180], np.float32) * (SHAFT_GAIN * s * LFX.swell(t) * rays * far ** 3 * keep_off)[
                     ..., None]
             elif op == "cloud_drift":
                 sky = cv2.remap(self.sky, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
                 if e.get("box"):
                     sky = np.maximum(sky, self._box_field(e["box"], mx, my, feather=0.06) * (far > 0.9))
+                # only what is sky ON THIS FRAME slides: the blurred sky mask leaked into a head standing against it and
+                # the stronger drift smeared the face (C5 S06, frame 71)
+                sky = sky * np.clip((far - SKY_FAR) / 0.05, 0, 1) * (1 - self.people_field(v))
+                sun = self.lights.get("sun")
+                if sun is not None:                       # the sun disc stays round: it does not slide with the clouds
+                    sx, sy, _ = self._to_out(sun["point"], v=v, d=0.0)
+                    qs = 4
+                    yy, xx = np.mgrid[0:H // qs, 0:W // qs].astype(np.float32) * qs
+                    hole = np.exp(-(((xx - sx) ** 2 + (yy - sy) ** 2) / (0.06 * W) ** 2))
+                    sky = sky * (1 - cv2.resize(hole.astype(np.float32), (W, H), interpolation=cv2.INTER_LINEAR))
                 n_ = L._tile_at(self, self.tiles["a"], 0.006 * t, 0.002 * t) - 0.5
                 travel = min(CLOUD_TRAVEL_MAX, CLOUD_SWEEP * self.n / self.fps)
                 dx = -travel * W * s * float(L.smooth(t / max(1e-3, self.n / self.fps))) + 6.0 * s * n_
@@ -903,6 +973,8 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
     first = last = None
     views = []
     p0 = {}
+    faces = [k for k in st.keep if k.get("face")]
+    face0, face_worst = {}, {"ncc": 1.0, "frame": None, "face": None}
     an = (960, 540)
     t1 = time.time()
     try:
@@ -914,6 +986,18 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
                 first = fr
             last = fr
             v = tl["view"]
+            if faces and (f % ghost_every == 0 or f == st.n - 1):
+                for j, kb in enumerate(faces):           # a face must stay itself: no smear, no warp (C5 S06 frame 71)
+                    g = st.face_crop(fr, f, kb)
+                    if g is None:
+                        continue
+                    if j not in face0:
+                        face0[j] = g
+                        continue
+                    a_, b_ = face0[j] - face0[j].mean(), g - g.mean()
+                    ncc = float((a_ * b_).sum() / max(1e-6, math.sqrt((a_ * a_).sum() * (b_ * b_).sum())))
+                    if ncc < face_worst["ncc"]:
+                        face_worst = {"ncc": round(ncc, 3), "frame": f, "face": kb["face"]}
             views.append({k: (round(float(x), 5) if isinstance(x, float) else x) for k, x in v.items()})
             rows = None
             if watch is not None:
@@ -940,7 +1024,7 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
     tmp.replace(out_mp4)
     spf = (time.time() - t1) / max(1, st.n)
     return {"renderer": VERSION, "shot_id": plan.get("shot_id"), "frames": st.n, "fps": fps, "resolution": [W, H],
-            "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4), "people_in_frame": st.people_cut(), "rest_seam": st.rest_seam(), "effects_seen": st.effects_seen(), "aim": st.aim_check(),
+            "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4), "people_in_frame": st.people_cut(), "face_intact": {**face_worst, "faces": len(faces)}, "rest_seam": st.rest_seam(), "effects_seen": st.effects_seen(), "aim": st.aim_check(),
             "objects": [{"id": o["id"], "depth": round(o["d"], 3)} for o in st.objects],
             "cost_usd": 0.0, "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest(),
             "views": views, "stage": st, "first": first, "last": last}

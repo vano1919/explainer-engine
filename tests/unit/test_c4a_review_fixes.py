@@ -136,3 +136,20 @@ def test_the_director_reads_crowds_carries_an_early_word_and_writes_the_safe_zon
                             [{"op": "candle", "target": {"lights": ["c1"]}}, {"op": "snow", "target": {}}])
     assert keep[0]["face"] == [0.3, 0.3, 0.35, 0.38] and not keep[0].get("soft")
     assert keep[1] == {"light": "c1", "soft": True, "why": "the candle effect lives on it"} and len(keep) == 2
+
+
+def test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails(tmp_path):
+    """C5's first renders: the stronger cloud drift smeared a face standing against the sky and the sun bloom washed out
+    heads. The sky slides only where the frame is far and never on a kept person; ``face_intact`` FAILs a smear."""
+    p, lay, _ = _layers(tmp_path, rough=False)
+    lay["depth"][:] = 0.01                                               # all sky behind him, so the blur would leak
+    lay["depth"][lay["masks"]["man"] > 0] = 0.7
+    keep = [{"face": [0.29, 0.28, 0.34, 0.36]}]
+    fx = [{"op": "cloud_drift", "strength": 1.0, "params": {}}]
+    a = R.Stage(p, lay, _plan(frames=72, keep_in_frame=keep), OUT).render(70)
+    b = R.Stage(p, lay, _plan(frames=72, keep_in_frame=keep, effects=fx), OUT).render(70)
+    head = (slice(int(0.25 * OUT[1]), int(0.40 * OUT[1])), slice(int(0.28 * OUT[0]), int(0.35 * OUT[0])))
+    assert np.abs(a[head].astype(float) - b[head].astype(float)).mean() < 3.0
+    assert MI.face_intact_row({"ncc": 0.34, "frame": 68, "faces": 2})["status"] == "FAIL"
+    assert MI.face_intact_row({"ncc": 0.93, "frame": 68, "faces": 2})["status"] == "PASS"
+    assert MI.face_intact_row({"ncc": 1.0, "frame": None, "faces": 0})["status"] == "NOT_RUN"
