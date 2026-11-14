@@ -801,6 +801,77 @@ def _pitch_shifts(ep: Episode, clip_audio: dict) -> dict:
     return {i: r["shift_st"] for i, r in plan["clips"].items() if r.get("shift_st")}
 
 
+def _insert_seconds(ins: dict, timing: dict, script: dict, fps: int) -> float:
+    """Exact duration in seconds of an LTX dialogue insert from ``timing['inserts']``, ``timing['shots']`` or ``script``."""
+    if ins.get("frames") is not None:
+        return float(ins["frames"]) / float(fps)
+    for k in ("duration_s", "seconds", "duration_sec"):
+        if ins.get(k) is not None:
+            return float(ins[k])
+    if ins.get("end_frame") is not None and ins.get("start_frame") is not None:
+        return float(int(ins["end_frame"]) - int(ins["start_frame"])) / float(fps)
+    if ins.get("end_sec") is not None and ins.get("start_sec") is not None:
+        return float(ins["end_sec"]) - float(ins["start_sec"])
+    sid = ins["shot_id"]
+    sh_tm = (timing.get("shots") or {}).get(sid) or {}
+    if sh_tm.get("frames") is not None:
+        return float(sh_tm["frames"]) / float(fps)
+    for s in script.get("shots") or []:
+        if s.get("shot_id") == sid and s.get("target_duration_seconds") is not None:
+            return float(s["target_duration_seconds"])
+    raise ContractError(f"cannot determine insert duration for {sid}")
+
+
+def _write_silence_wav(path: Path, seconds: float, rate: int = 48000) -> Path:
+    """Write a 16-bit mono PCM silent WAV of exact duration ``seconds`` at ``rate`` Hz."""
+    import wave
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    n_samples = max(1, int(round(float(seconds) * rate)))
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(rate)
+        w.writeframes(b"\x00\x00" * n_samples)
+    return path
+
+
+def _compose_rehearsal_voice_fallback(timing: dict, narration: Path | None, clip_audio: dict, out_wav: Path,
+                                      script: dict, fps: int, rate: int = 48000) -> dict:
+    """Build ``out_wav`` when ``VV.compose`` is stubbed or unavailable in rehearsal: splice exact-length insert clips/silence
+    into the narrator read so the voice track matches the insert-expanded timeline and never falls back to the unsplit read."""
+    import wave
+    out_wav = Path(out_wav)
+    out_wav.parent.mkdir(parents=True, exist_ok=True)
+    read_pcm = b""
+    if narration and Path(narration).is_file():
+        with wave.open(str(narration), "rb") as w:
+            rate = w.getframerate()
+            read_pcm = w.readframes(w.getnframes())
+    ins_pcm = b""
+    ins_rows = []
+    for ins in timing.get("inserts") or []:
+        sid = ins["shot_id"]
+        c = clip_audio[sid]
+        cp = Path(c["path"])
+        if cp.is_file():
+            with wave.open(str(cp), "rb") as w:
+                frames_bytes = w.readframes(w.getnframes())
+                dur_s = w.getnframes() / float(w.getframerate())
+        else:
+            dur_s = _insert_seconds(ins, timing, script, fps)
+            n_s = max(1, int(round(dur_s * rate)))
+            frames_bytes = b"\x00\x00" * n_s
+        ins_pcm += frames_bytes
+        ins_rows.append({"shot_id": sid, "duration_s": round(dur_s, 4), "silence": bool(c.get("silence"))})
+    with wave.open(str(out_wav), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(rate)
+        w.writeframes(read_pcm + ins_pcm)
+    return {"voice_track": str(out_wav), "inserts": ins_rows}
+
+
 def stage_sound(ep: Episode, rehearsal: bool):
     """G8: the sound plan again on the measured clock, then the one renderer (``audio/stems``) into the five stems. A full
     run renders shippable (no placeholder, no missing class, the real read); a rehearsal renders a preview."""
@@ -818,6 +889,7 @@ def stage_sound(ep: Episode, rehearsal: bool):
     polished, polish_info = _polish_read(ep)      # HF-3: every use of the read as sound below takes the polished file
     narration = polished
     voice_rep = None
+    missing_inserts: list[str] = []
     if timing and timing.get("inserts"):   # VL-13: the LTX dialogue laid once on its shots, the read split around it
         from explainer_engine.videolane import ingest as VI
         from explainer_engine.videolane import voice as VV
@@ -826,15 +898,38 @@ def stage_sound(ep: Episode, rehearsal: bool):
             rp = ep.root / "production" / "video" / f"{ins['shot_id']}.json"
             if rp.is_file():
                 d = json.loads(rp.read_text(encoding="utf-8"))
-                clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or [],
-                                              "speaker": _clip_speaker(script, ins["shot_id"])}
+                if d.get("clip_path"):
+                    clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or [],
+                                                  "speaker": _clip_speaker(script, ins["shot_id"])}
         missing = [i["shot_id"] for i in timing["inserts"] if i["shot_id"] not in clip_audio]
-        if not missing:
-            shifts = _pitch_shifts(ep, clip_audio)     # TD-320: bounded, only on clips both estimators agree on
-            voice_rep = VV.compose(timing, narration, clip_audio, ep.path("audio/voice_track.wav"),
-                                   read_speech=VI.speech(narration) if narration else None, pitch_shifts=shifts)
-            write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
-            narration = ep.path("audio/voice_track.wav")
+        if missing and not rehearsal:
+            raise ContractError(f"missing LTX dialogue insert clip record(s): {', '.join(missing)}; "
+                                "never fall back to the unsplit narration (VL-13)")
+        if missing:
+            import wave
+            sr = 48000
+            if narration and Path(narration).is_file():
+                with wave.open(str(narration), "rb") as w:
+                    sr = w.getframerate()
+            sil_dir = ep.path("audio/insert_silence")
+            for ins in timing["inserts"]:
+                sid = ins["shot_id"]
+                if sid not in clip_audio:
+                    dur_s = _insert_seconds(ins, timing, script, ep.fps)
+                    sil_wav = _write_silence_wav(sil_dir / f"{sid}.wav", dur_s, rate=sr)
+                    clip_audio[sid] = {"path": str(sil_wav), "speech": [], "speaker": None,
+                                       "silence": True, "duration_s": round(dur_s, 4)}
+            missing_inserts = list(missing)
+        shifts = _pitch_shifts(ep, clip_audio)     # TD-320: bounded, only on clips both estimators agree on
+        voice_wav = ep.path("audio/voice_track.wav")
+        voice_rep = VV.compose(timing, narration, clip_audio, voice_wav,
+                               read_speech=VI.speech(narration) if narration else None, pitch_shifts=shifts)
+        if not voice_wav.is_file():
+            fb_rep = _compose_rehearsal_voice_fallback(timing, narration, clip_audio, voice_wav, script, ep.fps)
+            if not isinstance(voice_rep, dict):
+                voice_rep = fb_rep
+        write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
+        narration = voice_wav
     # FA-13 / Q2: the narrated video shots' own clip sound, offered to the renderer (it lays it only when the switch is on)
     from explainer_engine.videolane import plan as VP
     spoken = VP.clip_spoken(script)
@@ -852,6 +947,11 @@ def stage_sound(ep: Episode, rehearsal: bool):
     rows = [G.row("sound_is_shippable", bool(rep.get("shippable")) and not bad,
                   "every sound a real take and the real read" if not bad else f"not shippable: {', '.join(bad[:10])}", bad[:30])]
     rows += list((rep.get("levels") or {}).get("rows") or [])
+    if missing_inserts:
+        rows.append(G.row("insert_clips_present", False,
+                          f"rehearsal: {len(missing_inserts)} missing LTX dialogue insert(s) padded with exact-length "
+                          f"silence ({', '.join(missing_inserts)})",
+                          missing_inserts[:30], level=G.REVIEW))
     if polish_info:
         rows.append(G.row("narrator_polished", True, f"{POLISHED_REL}: {polish_info['seconds_before']} s -> "
                           f"{polish_info['seconds_after']} s, the read untouched", polish_info))

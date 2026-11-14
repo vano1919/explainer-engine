@@ -874,9 +874,10 @@
    "area": "motion",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "Scale rate: a push or pull changes scale by 0.5-3 % per second; over 5 %/s reads rushed and is allowed only as a punch accent.",
+   "statement": "Scale rate: a push or pull changes scale by 0.5-3 % per second (before a word accent at least pre_accent_rate_min_per_s = 1.8 %/s, hypothesis / engineering default: the creator saw 0.5 %/s holds as static); over 5 %/s reads rushed and is allowed only as a punch accent.",
    "thresholds": {
     "rate_min_per_s": 0.005,
+    "pre_accent_rate_min_per_s": 0.018,
     "rate_max_per_s": 0.03,
     "rushed_per_s": 0.05
    },

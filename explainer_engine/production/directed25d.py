@@ -72,14 +72,14 @@ CLOUD_TRAVEL_MAX = 0.012           # the sky itself slides at most this share of
 RACK_SIGMA_PX = 7.0                # rack focus: blur (px at 1080p) of a surface ``RACK_SPAN`` of disparity away from focus
 RACK_SPAN = 0.25
 REST_GROW_PX = 3.0                 # the plate shows this far (px at 1080p) round a layered object's half-alpha edge
-THIN_FILL_PX = 16.0                # a stroke narrower than this (px at 1080p) is never layered: it stays in the background
-FLAT_SHARE = 0.5                   # an object that is at least this share strokes stays in the background whole
+REST_FEATHER_PX = 3.0              # soft inward feather (px at 1080p) on a kept layer's mask (engineering default)
+THIN_FILL_PX = 16.0                # a stroke narrower than this (px at 1080p) is measured by opening
+THIN_SHARE_MAX = 0.35              # engineering default: an object at least this share thin strokes stays on the background
+FLAT_SHARE = THIN_SHARE_MAX        # alias kept for compatibility
 SEAM_INSET_PX = 2.0                # rest_seam looks inside a layer's outline from this far in (px at 1080p)
 SEAM_LEVEL = 24.0                  # ... for pixels this many levels away from the picture
 SEEN_S = 3.0                       # an effect must be seen to change within this many seconds (the owner, 13:29 UTC)
 SEEN_TOUCH = 2.0                   # ... over the pixels it changes by more than this many levels
-STROKE_LEN = 2.0                   # a removed piece is a stroke when its long side is at least this many disc widths
-REST_ALPHA_GAIN = 6.0              # alpha 1/6 already counts as the object: its soft edge goes with the layer, not the plate
 FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box") + LFX.OPS + (
     "subject_sway",)
 CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
@@ -165,66 +165,58 @@ class Stage:
             self.phases[i] = rng.uniform(0, 2 * np.pi, 8)
         self.sky = self._sky()
         self.focus_d = self._focus_depth()
+        self._layers_meta = layers
         self.keep = self._keep_boxes()
+        self._flatten_bg_people(layers)
         self.z0 = self._fit_zoom()
         self._unfold_background()
+        self._flatten_bg_people(layers)
         yy, xx = np.mgrid[0:self.H, 0:self.W].astype(np.float32)
         self.oxx, self.oyy = xx - self.W / 2, yy - self.H / 2
 
     def _rest_background(self, layers: dict) -> None:
-        """Frame 0 must be the picture, and nothing may be drawn that the picture does not have (Fable's audit 2026-11-14,
-        S01 C3: a post cut on the first frame where the grown LaMa hole reached past what SAM cut out, and wire rings that
-        appeared behind the moving wire). Two rules:
+        """Frame 0 must be the picture inside every layer (``rest_seam`` <= 0.04). Two rules:
 
-        - the background shows the plate only under the layered objects (their alpha, grown by ``REST_GROW_PX``) and the
-          picture itself everywhere else;
-        - a thin stroke (a wire, a twig: narrower than ``THIN_FILL_PX``) is never layered, because no fill behind a moving
-          wire is right: the strokes stay in the background and move with it. An object that is mostly strokes
-          (``FLAT_SHARE``) stays in the background whole (``self.flat``)."""
+        - measure each object's thin-stroke share with ``MORPH_OPEN`` (disc of diameter ``THIN_FILL_PX`` at 1080p); if
+          ``share >= THIN_SHARE_MAX`` (0.35, engineering default) the whole object stays on the background (``self.flat``,
+          not layered);
+        - otherwise keep the mask whole (no morphological bite subtracted from ``o["alpha"]``, and no ``REST_ALPHA_GAIN``
+          dilation exposing the plate round outlines) with a soft inward feather (~``REST_FEATHER_PX`` = 3 px at 1080p),
+          and show the plate only under the opaque interior of kept layers so frame 0 equals the source picture."""
         cv2 = self.cv2
         self.flat = []
         if not self.objects:
             return
         A = np.zeros((self.sh, self.sw), np.float32)
-        g = max(1, int(round(REST_GROW_PX * self.sw / 1920)))
-        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * g + 1, 2 * g + 1))
+        f_px = max(1.5, REST_FEATHER_PX * self.sw / 1920.0)
         r = max(1, int(round(THIN_FILL_PX / 2 * self.sw / 1920)))
         disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
         keep = []
         for o in self.objects:
             hard = (o["alpha"] > 0.5).astype(np.uint8)
-            o["hard0"] = hard                                     # the outline SAM cut, before any stroke is taken out
-            parts = hard & (1 - cv2.morphologyEx(hard, cv2.MORPH_OPEN, disc))   # what an opening removes is thin
+            o["hard0"] = hard                                     # the outline SAM cut
+            opened = cv2.morphologyEx(hard, cv2.MORPH_OPEN, disc)
+            parts = hard & (1 - opened)                           # what an opening removes is thin
             share = float(parts.sum() / max(1, hard.sum()))
             o["thin_share"] = round(share, 3)
-            if share >= FLAT_SHARE:
+            if share >= THIN_SHARE_MAX:
                 self.flat.append(o["id"])
                 continue
-            parts = self._strokes(parts, r)
-            if parts.any():
-                strip = cv2.dilate(parts.astype(np.float32), disc)
-                o["alpha"] = o["alpha"] * (1.0 - strip)
-                o["rgba"][..., 3] = (o["alpha"] * 255 + 0.5).astype(np.uint8)
+            dist = cv2.distanceTransform(hard, cv2.DIST_L2, 3)
+            inward = np.clip((dist - 0.5) / f_px, 0.0, 1.0).astype(np.float32)
+            # Keep thin attached parts (e.g. a thin rifle on a person) whole while feathering the body inward
+            inward = np.maximum(inward, parts.astype(np.float32))
+            o["alpha"] = (o["alpha"] * inward).astype(np.float32)
+            o["rgba"][..., 3] = (o["alpha"] * 255 + 0.5).astype(np.uint8)
             if (o["alpha"] > 0.5).sum() < 20:
                 self.flat.append(o["id"])
                 continue
             keep.append(o)
-            A = np.maximum(A, cv2.dilate(np.clip(o["alpha"] * REST_ALPHA_GAIN, 0, 1), k))
+            core = (o["alpha"] >= 0.999).astype(np.float32)
+            A = np.maximum(A, core)
         self.objects = keep
         self.plate = (self.src.astype(np.float32) * (1 - A[..., None]) + self.plate.astype(np.float32) * A[..., None]).astype(np.uint8)
         self.hole = A
-
-    def _strokes(self, parts: np.ndarray, r: int) -> np.ndarray:
-        """Of what an opening removed from an object, only the real strokes (a rifle sling, a wire end): pieces at least
-        ``STROKE_LEN`` disc widths long and on average narrower than the disc. The many small nubs an opening bites off a
-        rough outline (hair, a coat's edge, a card's torn rim) stay with the object: cutting them, each grown by the disc,
-        left a scalloped seam of plate round every layered person (eye review of C4A, 2026-11-14, S02/S05_SH016/S06/S08)."""
-        n, lab, stats, _ = self.cv2.connectedComponentsWithStats(parts.astype(np.uint8))
-        keep = np.zeros(n, bool)
-        for i in range(1, n):
-            long_side = max(stats[i, 2], stats[i, 3])
-            keep[i] = long_side >= STROKE_LEN * 2 * r and stats[i, 4] / max(1, long_side) <= 2 * r
-        return keep[lab] & (parts > 0)
 
     def rest_seam(self) -> dict:
         """Frame 0 must be the picture (Fable's audit 2026-11-14). Inside the outline SAM cut (eroded by ``SEAM_INSET_PX``,
@@ -388,6 +380,8 @@ class Stage:
                 else:
                     box = [x0 - fw, y0 - HEAD_UP * fh, x1 + fw, y1 + CHEST_DOWN * fh]
                 region = [x0, y0, x1, y1]
+            elif it.get("box") or it.get("person"):
+                box = list(it.get("box") or it.get("person"))
             elif it.get("mask") and it["mask"] in self.masks_src:
                 box = self._bbox(self.masks_src[it["mask"]])
             elif it.get("light") and it["light"] in self.lights:
@@ -587,8 +581,85 @@ class Stage:
         base = max(self.sw / self.W, self.sh / self.H)
         return base / (v["z0"] * v["s"] * (1 + v["dp"] * d))
 
+    def _bg_person_boxes(self, layers: dict | None = None) -> list[list[float]]:
+        """Every person/face/crowd box that stays on the background sheet (people not layered in ``self.objects``)."""
+        layered_ids = {o["id"] for o in self.objects}
+        boxes: list[list[float]] = []
+        for kb in self.__dict__.get("keep") or []:
+            if kb.get("soft"):
+                continue
+            b = kb["box"]
+            cxp = int(np.clip((b[0] + b[2]) / 2 * self.sw, 0, self.sw - 1))
+            cyp = int(np.clip((b[1] + b[3]) / 2 * self.sh, 0, self.sh - 1))
+            if not any(o["alpha"][cyp, cxp] > 0.5 for o in self.objects):
+                boxes.append(list(b))
+        layers = layers if layers is not None else self.__dict__.get("_layers_meta")
+        if layers is not None:
+            man_objs = (layers.get("manifest") or {}).get("masks", {}).get("objects") or []
+            unlayered = {r["id"] for r in man_objs if not r.get("layer", True)}
+            for oid, m in self.masks_src.items():
+                if oid in layered_ids or oid in getattr(self, "flat", ()):
+                    continue
+                if oid in unlayered or any(w in oid.lower() for w in ("crowd", "person", "people", "man", "men", "soldier", "face", "group")):
+                    b = self._bbox(m)
+                    if b is not None:
+                        boxes.append(b)
+        for extra in (self.p.get("person_boxes"), self.p.get("crowd_boxes"),
+                      (layers or {}).get("person_boxes"), (layers or {}).get("crowd_boxes")):
+            for b in extra or []:
+                if len(b) >= 4:
+                    b4 = [float(v) for v in b[:4]]
+                    if max(b4) > 1.5:
+                        b4 = [b4[0] / self.sw, b4[1] / self.sh, b4[2] / self.sw, b4[3] / self.sh]
+                    boxes.append([float(np.clip(v, 0.0, 1.0)) for v in b4])
+        return boxes
+
+    def _flatten_bg_people(self, layers: dict | None = None) -> None:
+        """Inside every person/face box that stays on the background sheet (people not layered, e.g. a crowd), flatten
+        ``self.bg_depth`` to the box's median with a soft edge so ``bg_maps`` moves those people rigidly."""
+        cv2 = self.cv2
+        boxes = self._bg_person_boxes(layers)
+        if not boxes:
+            return
+        bd = self.bg_depth.astype(np.float32)
+        sig = max(2.0, 0.01 * self.sw)
+        mx_pad = max(2, int(round(0.04 * self.sw)))
+        my_pad = max(2, int(round(0.04 * self.sh)))
+        changed = False
+        for x0, y0, x1, y1 in boxes:
+            ix0 = max(0, int(math.floor(x0 * self.sw)))
+            ix1 = min(self.sw, int(math.ceil(x1 * self.sw)))
+            iy0 = max(0, int(math.floor(y0 * self.sh)))
+            iy1 = min(self.sh, int(math.ceil(y1 * self.sh)))
+            if ix1 <= ix0 or iy1 <= iy0:
+                continue
+            patch = bd[iy0:iy1, ix0:ix1]
+            if float(np.ptp(patch)) <= 1e-5:
+                continue
+            med = float(np.median(patch))
+            core = np.zeros((self.sh, self.sw), np.uint8)
+            cv2.rectangle(core, (max(0, ix0 - mx_pad), max(0, iy0 - my_pad)),
+                          (min(self.sw - 1, ix1 + mx_pad), min(self.sh - 1, iy1 + my_pad)), 1, -1)
+            dist_out = cv2.distanceTransform(1 - core, cv2.DIST_L2, 3)
+            w = np.exp(-0.5 * (dist_out / sig) ** 2).astype(np.float32)
+            bd = bd * (1.0 - w) + med * w
+            changed = True
+        if changed:
+            self.bg_depth = bd.astype(np.float32)
+            for kb in self.__dict__.get("keep") or []:
+                if kb.get("soft"):
+                    continue
+                b = kb["box"]
+                cxp = int(np.clip((b[0] + b[2]) / 2 * self.sw, 0, self.sw - 1))
+                cyp = int(np.clip((b[1] + b[3]) / 2 * self.sh, 0, self.sh - 1))
+                if not any(o["alpha"][cyp, cxp] > 0.5 for o in self.objects):
+                    kb["d"] = float(self.bg_depth[cyp, cxp])
+                    if "face" in kb:
+                        kb["face_d"] = self._face_depth(kb["face"])
+
     def bg_maps(self, v: dict):
         """Per-pixel output->source maps of the background (its own smoothed depth, two fixed-point steps)."""
+        self._flatten_bg_people()
         cv2 = self.cv2
         th = math.radians(v["rot"])
         c, s_ = math.cos(th), math.sin(th)

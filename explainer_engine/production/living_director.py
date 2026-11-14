@@ -42,6 +42,7 @@ from explainer_engine.standards import sourced_rules as SR
 
 CRITERIA = ("1 open_sky", "2 light", "3 picture", "4 words", "5 neighbours", "scene")
 RATE_MIN, RATE_MAX = float(SR.T("BP-21", "rate_min_per_s")), float(SR.T("BP-21", "rate_max_per_s"))
+PRE_ACCENT_RATE = float(SR.T("BP-21", "pre_accent_rate_min_per_s"))   # hypothesis / engineering default: the creator saw 0.5 %/s holds as static
 BASE_RATE = 0.015                     # a base push or pull, scale per second (the middle of BP-21's range; house default)
 SNAP_S = float(SR.T("BP-197", "snap_s_max"))
 ACCENT_S = 1.25                       # an accent's ease-out: its 10-90 % rise is about half of this, inside SNAP_S
@@ -410,7 +411,7 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict], ch
                      validate={"measure": "shift_y_pct", "direction": "up", "perceptible": True})
             reason += f" (crane over {base_s:.1f} s)"
         else:
-            rate = RATE_MIN if targets else BASE_RATE           # a slow approach makes the accent that follows read
+            rate = max(RATE_MIN, PRE_ACCENT_RATE) if targets else BASE_RATE   # pre-accent floor: 0.5 %/s holds read as static
             s = _move_strength(rate, base_s)
             t = _cam(op, s, end=end, target=tgt, ease="linear", validate={"measure": "scale"})
             reason += (f" ({rate * 100:g} %/s over {base_s:.1f} s, BP-21"
