@@ -125,7 +125,9 @@ def test_scene_weather_and_the_words_decide_the_surroundings():
     d["tracks"].append({"track": "atmosphere", "op": "snow", "renderer": "directed25d", "params": {}, "id": "fx_snow"})
     f = _whats(D.check(d), "FAIL")
     assert "names snow" not in f
-    assert "cannot draw 'snow' yet" in f            # until the renderer has the op, the gap is a FAIL, not a frozen sky
+    assert "cannot draw" not in f                   # the renderer draws snow now (living_fx)
+    d["tracks"][-1]["op"] = "hail"
+    assert "effect op unknown" in _whats(D.check(d), "FAIL")
 
 
 def test_a_skipped_element_needs_a_reason_and_is_shown_to_the_reviewer():

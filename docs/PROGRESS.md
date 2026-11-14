@@ -6422,3 +6422,22 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   not choose is REVIEW, and its tier is shown. LP-09 follows the owner's weather choice (12:13 UTC): snow only in S08;
   the other scenes get clear sky, mist, frost glint, wind with smoke and breath.
 - Tests: `test_direction.py` +3 (fixture gains LP scores, mist and sky). $0.
+
+## 2026-11-14 — The living effects in `directed25d` (`production/living_fx.py`): the old effects back, snow, glints, breath, wind
+- The owner: the director missed the sun's glints and rays, the wind, the trees and the snow. Fable's audit: the new
+  renderer had lost the old `layers25d` effects (`dust` was even accepted with no drawing).
+- New `production/living_fx.py`, dispatched from `directed25d._effects`. Every effect is a pure function of the frame,
+  sits in picture space and is covered by what stands in front of it:
+  - particles in three depth layers: `snow`, `rain`, `embers` (rising from their fire), `dust`, and `spindrift` (snow blown
+    low along the ground);
+  - light: `sun_glint` (a breathing disc, a streak, soft spikes, two flare ghosts; near objects block it), `glint` (ice
+    and snow sparkle on bright, pale spots), `stars`, and `light_fade` (the light going);
+  - air: `breath` (an exhale puff every ~3.4 s) and `steam`, both built on the smoke plume;
+  - surfaces: `foliage_sway` (the top moves, the base holds), `cloth_flap`, `wire_sway`, `water_shimmer`;
+  - `subject_sway`: a figure breathes about its feet. Its layer matrix only; no body animation (LP-02).
+- One wind per shot (`scene.wind` -> `plan["wind"]`): smoke, snow, grass and cloth lean the same way. Effect targets may
+  now name an object mask (`target.mask`).
+- `direction.py`: new ops `breath`, `spindrift`, `light_fade` in EFFECT_OPS, the families and the living kinds.
+- Calibrated by eye on S01 (sun glint, frost glints, wire, grass) and S08 (snow, dust). Strength 1.0 is clearly visible.
+- Tests: `test_directed25d.py` +17. Every new effect moves and is pure. Snow falls behind a near object and in front of
+  the far field. The direction test now expects snow to be drawable. 159 passed in the touched suites, docs_lint 0. $0.

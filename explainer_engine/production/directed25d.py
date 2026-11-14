@@ -33,6 +33,7 @@ from pathlib import Path
 import numpy as np
 
 from explainer_engine.production import layers25d as L
+from explainer_engine.production import living_fx as LFX
 
 VERSION = "directed25d/0.1-p1"
 SEGMENTS_MAX = 3
@@ -51,7 +52,8 @@ REST_GROW_PX = 3.0                 # the plate shows this far (px at 1080p) roun
 THIN_FILL_PX = 16.0                # a stroke narrower than this (px at 1080p) is never layered: it stays in the background
 FLAT_SHARE = 0.5                   # an object that is at least this share strokes stays in the background whole
 REST_ALPHA_GAIN = 6.0              # alpha 1/6 already counts as the object: its soft edge goes with the layer, not the plate
-FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box", "dust")
+FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box") + LFX.OPS + (
+    "subject_sway",)
 CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
 
 
@@ -376,8 +378,12 @@ class Stage:
         fill = cv2.remap(self.hole, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
         depth = dbg.copy()
         layers = []
+        sway = {e.get("mask"): float(e.get("strength", 1.0)) for e in self.p.get("effects", []) if e["op"] == "subject_sway"}
         for o in self.objects:
             m = self.matrix(v, o["d"])
+            if o["id"] in sway:            # a figure breathes and sways a little about its feet (no body animation: LP-02)
+                ys, xs = np.nonzero(o["alpha"] > 0.5)
+                m = L._sway(m, {"fps": self.fps}, f, (float(xs.mean()), float(ys.max())), sway[o["id"]])
             w = cv2.warpAffine(o["rgba"], m, (self.W, self.H), flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
                                borderMode=cv2.BORDER_CONSTANT).astype(np.float32)
             a = w[..., 3] / 255.0
@@ -500,6 +506,8 @@ class Stage:
                 moved = cv2.remap(np.clip(rgb, 0, 255), xx + dx * sky, yy + dy * sky, cv2.INTER_LINEAR,
                                   borderMode=cv2.BORDER_REFLECT)
                 rgb = moved
+            elif op in LFX.OPS:
+                rgb = LFX.apply(self, rgb, depth, e, i, t, v, mx, my, layers, zoom)
             elif op == "heat_haze":
                 for lid in e["lights"]:
                     li = self.lights.get(lid)

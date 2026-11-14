@@ -41,21 +41,23 @@ TRACKS = ("camera", "character", "object", "environment", "lighting", "atmospher
 CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
 EFFECT_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box", "dust",
               "snow", "rain", "embers", "steam", "stars", "sun_glint", "glint", "foliage_sway", "cloth_flap", "wire_sway",
-              "water_shimmer", "subject_sway")
+              "water_shimmer", "subject_sway", "breath", "spindrift", "light_fade")
 # BP-185's families of the effects (a camera move is none of them)
-FAMILY_OF = {**{e: "light" for e in ("fire", "candle", "glow", "sun_shaft", "fire_box", "sun_glint", "glint", "stars")},
-             **{e: "atmosphere" for e in ("smoke", "mist", "cloud_drift", "dust", "snow", "rain", "embers", "steam")},
+FAMILY_OF = {**{e: "light" for e in ("fire", "candle", "glow", "sun_shaft", "fire_box", "sun_glint", "glint", "stars",
+                                     "light_fade")},
+             **{e: "atmosphere" for e in ("smoke", "mist", "cloud_drift", "dust", "snow", "rain", "embers", "steam", "breath",
+                                          "spindrift")},
              **{e: "surface" for e in ("heat_haze", "foliage_sway", "cloth_flap", "wire_sway", "water_shimmer")},
              "subject_sway": "subject"}
 ALIVE_MIN = int(SR.T("BP-185", "families_min"))
 # BP-196's fixed checklist: the kinds of living element and the effects that may move each one
 LIVING_KINDS = {
-    "sun": ("sun_shaft", "sun_glint", "glow"), "sky": ("cloud_drift", "stars", "glow"), "cloud": ("cloud_drift",),
-    "mist": ("mist",), "snow": ("snow",), "rain": ("rain",), "wind": ("foliage_sway", "cloth_flap", "wire_sway", "snow",
-                                                                      "smoke", "mist", "steam"),
+    "sun": ("sun_shaft", "sun_glint", "glow", "light_fade"), "sky": ("cloud_drift", "stars", "glow"), "cloud": ("cloud_drift",),
+    "mist": ("mist",), "snow": ("snow", "spindrift", "glint"), "rain": ("rain",),
+    "wind": ("foliage_sway", "cloth_flap", "wire_sway", "snow", "spindrift", "smoke", "mist", "steam"),
     "plants": ("foliage_sway",), "cloth": ("cloth_flap",), "wire": ("wire_sway",), "water": ("water_shimmer", "glint"),
     "ice": ("glint", "sun_glint"), "fire": ("fire", "fire_box", "embers", "smoke", "glow"), "candle": ("candle", "glow"),
-    "smoke": ("smoke",), "steam": ("steam", "smoke"), "breath": ("steam",), "stars": ("stars",), "glint": ("glint", "sun_glint"),
+    "smoke": ("smoke",), "steam": ("steam", "smoke"), "breath": ("breath", "steam"), "stars": ("stars",), "glint": ("glint", "sun_glint"),
     "dust": ("dust",), "heat": ("heat_haze",), "body": ("subject_sway",),
 }
 # words that name a living kind (in seen.what, the scene's weather and surroundings, and the shot's spoken words)
@@ -405,10 +407,14 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
                 e.setdefault("lights", [tg["light"]])
             if tg.get("box"):
                 e["box"] = tg["box"]
+            if tg.get("mask"):
+                e["mask"] = tg["mask"]
             if tg.get("point"):
                 e["point"] = tg["point"]
             if tg.get("origin"):
                 e["origin"] = tg["origin"]
             plan["effects"].append(e)
     plan["cameras"].sort(key=lambda c: c["from"])
+    if (d.get("scene") or {}).get("wind"):
+        plan["wind"] = list(d["scene"]["wind"])        # one wind per shot: smoke, snow, grass and cloth lean together
     return plan

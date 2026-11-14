@@ -167,3 +167,47 @@ def test_a_depth_step_does_not_fold_the_background(tmp_path):
     for f in (0, 12, 23):
         mx, my, _ = st.bg_maps(st.view(f))
         assert np.diff(my, axis=0).min() > 0 and np.diff(mx, axis=1).min() > 0   # neighbours never swap: no mirrored strokes
+
+
+# --- the living effects (living_fx, the owner 2026-11-14 + BP-200) -------------------------------------------------------------
+
+@pytest.mark.parametrize("e", [
+    {"op": "snow", "strength": 1.0, "params": {}}, {"op": "rain", "strength": 1.0, "params": {}},
+    {"op": "spindrift", "strength": 1.0, "params": {}}, {"op": "dust", "strength": 1.0, "params": {}},
+    {"op": "embers", "strength": 1.0, "params": {}, "light": "f1", "lights": ["f1"]},
+    {"op": "sun_glint", "strength": 1.0, "params": {}, "light": "sun", "lights": ["sun"]},
+    {"op": "glint", "strength": 1.0, "params": {}}, {"op": "stars", "strength": 1.0, "params": {}, "box": [0, 0, 1, 0.4]},
+    {"op": "breath", "strength": 1.0, "params": {"period_s": 1.0}, "point": [0.3, 0.45]},
+    {"op": "steam", "strength": 1.0, "params": {}, "point": [0.6, 0.6]},
+    {"op": "light_fade", "strength": 1.0, "params": {}},
+    {"op": "foliage_sway", "strength": 1.0, "params": {}, "box": [0.6, 0.1, 0.95, 0.6]},
+    {"op": "cloth_flap", "strength": 1.0, "params": {}, "box": [0.6, 0.1, 0.95, 0.4]},
+    {"op": "wire_sway", "strength": 1.0, "params": {}, "box": [0.0, 0.1, 1.0, 0.3]},
+    {"op": "water_shimmer", "strength": 1.0, "params": {}, "box": [0.0, 0.7, 1.0, 1.0]},
+    {"op": "subject_sway", "strength": 1.0, "params": {}, "mask": "man"}], ids=lambda e: e["op"])
+def test_every_living_effect_moves_and_is_a_pure_function_of_the_frame(tmp_path, e):
+    p, lay = _layers(tmp_path)
+    if e["op"] in ("glint", "stars"):           # pale bright spots to sparkle on
+        img = np.asarray(Image.open(p).convert("RGB")).copy()
+        img[20:200:23, 20:460:31] = 250
+        Image.fromarray(img).save(p)
+    plan = _plan(frames=24, effects=[e])
+    st = R.Stage(p, lay, plan, OUT)
+    assert e["op"] in R.FX_OPS
+    frames = [st.render(f).astype(np.float32) for f in (0, 6, 12, 18, 23)]
+    moved = max(int((np.abs(a - frames[0]).max(axis=2) > 6).sum()) for a in frames[1:])
+    assert moved >= 20, f"{e['op']} did not move ({moved} pixels changed by more than 6 levels)"
+    assert np.array_equal(st.render(12), R.Stage(p, lay, plan, OUT).render(12))
+
+
+def test_snow_falls_behind_a_near_object_and_in_front_of_the_far_field(tmp_path):
+    p, lay = _layers(tmp_path)                  # the man (depth 0.95) stands in front of every particle layer but the nearest
+    plan = _plan(frames=24, effects=[{"op": "snow", "strength": 1.0, "params": {"density": 3.0}}])
+    st = R.Stage(p, lay, plan, OUT)
+    base = R.Stage(p, lay, _plan(frames=24), OUT)
+    sx, sy = OUT[0] / W, OUT[1] / H
+    man = (slice(int(125 * sy), int(215 * sy)), slice(int(65 * sx), int(135 * sx)))
+    far = (slice(0, int(100 * sy)), slice(int(200 * sx), OUT[0]))
+    dm = np.mean([np.abs(st.render(f).astype(np.float32) - base.render(f))[man].mean() for f in range(0, 24, 4)])
+    df = np.mean([np.abs(st.render(f).astype(np.float32) - base.render(f))[far].mean() for f in range(0, 24, 4)])
+    assert df > 2.0 * dm                         # the far field takes all three layers, the man only the nearest one
