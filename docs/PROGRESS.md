@@ -6619,3 +6619,12 @@ Fixes:
 New FAIL gate `face_intact`: each kept face against its first frame, with the camera taken out. The smeared face measured
 0.34, intact faces 0.75 and up, FAIL below 0.80 (engineering default), and faces under 60 px are not judged. Test:
 `test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails`.
+
+Reworked the same day after a false FAIL on S05_SH020 (intact faces, measured 0.40): the first version compared fixed
+crops, so a face the background's warp moved by a few pixels read as damaged. Now `Stage.face_crop` resamples each face to
+`FACE_GRID` px per face width with a `FACE_PAD` rim, and `Stage.face_likeness` searches the first-frame crop inside a
+window `FACE_SEARCH` wider (normalised template match): a small misplacement is searched out, a smear is not. Calibrated
+on the clips: the smeared S06 face 0.80, intact faces 0.96-0.99, so FAIL below 0.88 (engineering default, D-59 REVIEW
+until sourced). Faces narrower than `FACE_MIN_PX` 55 px at 1080p are not judged: a 45-55 px face in moving mist with a
+nearer man sliding past scored 0.76 while intact (S05_SH020, checked by eye), too close to a smear. So S05_SH020's crowd
+of eleven small faces is NOT_RUN on this gate and was checked by eye; the gate still judges S02 (0.97) and S06 (0.98).

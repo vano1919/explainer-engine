@@ -50,8 +50,11 @@ UNFOLD_PX = 0.5                    # the background warp may shift neighbours ap
 UNFOLD_ITERS = 60
 BG_SMOOTH = 0.006                  # the background's warp depth is the real depth blurred by this share of the width
 HAND_TR, HAND_ROT = L.HAND_TR, L.HAND_ROT
-FACE_PAD = 0.5                     # face_intact compares the face with half its size round it
-FACE_MIN_PX = 60.0                 # ... when it is at least this wide (px at 1080p, padded); smaller faces are not judged
+FACE_PAD = 0.15                    # face_intact compares the face with a thin rim round it (more takes in moving mist)
+FACE_GRID = 24                     # ... resampled to this many pixels per face width
+FACE_SEARCH = 0.35                 # ... searched this share of the face's size round where the camera puts it
+FACE_MIN_PX = 55.0                 # ... when the face is at least this wide (px at 1080p): a 45-55 px face in moving mist
+                                   # with a nearer man sliding past scores 0.76 intact (S05_SH020), too close to judge
 PEOPLE_SHIELD = 0.85               # light effects (shaft, sun bloom) keep this share off the kept people
 SKY_FAR = 0.9                      # a pixel slides with the clouds only where the frame's own depth is this far (1 - depth)
 SHAFT_GAIN = 1.0                   # sun shaft brightness (was 0.40: unnoticed in 3 s, eye review of C4A x2.5)
@@ -498,21 +501,33 @@ class Stage:
                         "box": [round(c, 3) for c in b] if b else None, "inside": bool(ok)})
         return out
 
-    def face_crop(self, frame: np.ndarray, f: int, kb: dict, size=(48, 48)):
-        """The kept face ``kb`` as it appears in output ``frame`` ``f`` (grey, ``size``), or None when it is off frame."""
+    def face_crop(self, frame: np.ndarray, f: int, kb: dict, pad: float = FACE_PAD, px: int = FACE_GRID):
+        """The kept face ``kb`` with ``pad`` of its size round it, as it appears in output ``frame`` ``f``: grey, ``px``
+        pixels per face width (so crops of different frames share one scale), or None when off frame or too small."""
         cv2 = self.cv2
         inv = cv2.invertAffineTransform(self.matrix(self.view(f), kb.get("face_d", kb["d"])))
         x0, y0, x1, y1 = kb["face"]
         fw, fh = x1 - x0, y1 - y0
-        x0, y0, x1, y1 = x0 - FACE_PAD * fw, y0 - FACE_PAD * fh, x1 + FACE_PAD * fw, y1 + FACE_PAD * fh
-        a = inv @ np.array([x0 * self.sw, y0 * self.sh, 1.0])
-        b = inv @ np.array([x1 * self.sw, y1 * self.sh, 1.0])
+        a = inv @ np.array([(x0 - pad * fw) * self.sw, (y0 - pad * fh) * self.sh, 1.0])
+        b = inv @ np.array([(x1 + pad * fw) * self.sw, (y1 + pad * fh) * self.sh, 1.0])
         ax, ay, bx, by = int(a[0]), int(a[1]), int(np.ceil(b[0])), int(np.ceil(b[1]))
-        if ax < 0 or ay < 0 or bx > self.W or by > self.H or bx - ax < FACE_MIN_PX * self.W / 1920:
-            return None                                   # off frame, or too small to judge a smear
+        ax, ay, bx, by = max(0, ax), max(0, ay), min(self.W, bx), min(self.H, by)
+        face_px = (bx - ax) / (1 + 2 * pad)
+        if bx - ax < 8 or by - ay < 8 or face_px < FACE_MIN_PX * self.W / 1920:
+            return None
+        k = px / max(1.0, face_px)
         g = frame[ay:by, ax:bx].astype(np.float32).mean(axis=2)
-        g = cv2.GaussianBlur(cv2.resize(g, size, interpolation=cv2.INTER_AREA), (0, 0), 1.2)
-        return g
+        g = cv2.resize(g, (max(8, int(round((bx - ax) * k))), max(8, int(round((by - ay) * k)))), interpolation=cv2.INTER_AREA)
+        return cv2.GaussianBlur(g, (0, 0), 1.0)
+
+    def face_likeness(self, template: np.ndarray, frame: np.ndarray, f: int, kb: dict) -> float | None:
+        """The best normalised correlation of the face's first-frame crop inside a wider crop of frame ``f``: a small
+        misplacement (the background's own warp moves a face that is not a layer) is searched out, a smear is not."""
+        win = self.face_crop(frame, f, kb, pad=FACE_PAD + FACE_SEARCH)
+        if win is None or win.shape[0] < template.shape[0] or win.shape[1] < template.shape[1]:
+            return None
+        return float(self.cv2.matchTemplate(win.astype(np.float32), template.astype(np.float32),
+                                            self.cv2.TM_CCOEFF_NORMED).max())
 
     def people_cut(self, every: int = 2) -> dict:
         """The measured safe zone: for each kept box, the worst share of it outside the frame over the shot (``every``-th
@@ -988,15 +1003,13 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
             v = tl["view"]
             if faces and (f % ghost_every == 0 or f == st.n - 1):
                 for j, kb in enumerate(faces):           # a face must stay itself: no smear, no warp (C5 S06 frame 71)
-                    g = st.face_crop(fr, f, kb)
-                    if g is None:
-                        continue
                     if j not in face0:
-                        face0[j] = g
+                        g = st.face_crop(fr, f, kb)
+                        if g is not None:
+                            face0[j] = g
                         continue
-                    a_, b_ = face0[j] - face0[j].mean(), g - g.mean()
-                    ncc = float((a_ * b_).sum() / max(1e-6, math.sqrt((a_ * a_).sum() * (b_ * b_).sum())))
-                    if ncc < face_worst["ncc"]:
+                    ncc = st.face_likeness(face0[j], fr, f, kb)
+                    if ncc is not None and ncc < face_worst["ncc"]:
                         face_worst = {"ncc": round(ncc, 3), "frame": f, "face": kb["face"]}
             views.append({k: (round(float(x), 5) if isinstance(x, float) else x) for k, x in v.items()})
             rows = None

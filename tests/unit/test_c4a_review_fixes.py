@@ -150,6 +150,6 @@ def test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails(tm
     b = R.Stage(p, lay, _plan(frames=72, keep_in_frame=keep, effects=fx), OUT).render(70)
     head = (slice(int(0.25 * OUT[1]), int(0.40 * OUT[1])), slice(int(0.28 * OUT[0]), int(0.35 * OUT[0])))
     assert np.abs(a[head].astype(float) - b[head].astype(float)).mean() < 3.0
-    assert MI.face_intact_row({"ncc": 0.34, "frame": 68, "faces": 2})["status"] == "FAIL"
-    assert MI.face_intact_row({"ncc": 0.93, "frame": 68, "faces": 2})["status"] == "PASS"
+    assert MI.face_intact_row({"ncc": 0.80, "frame": 68, "faces": 2})["status"] == "FAIL"
+    assert MI.face_intact_row({"ncc": 0.96, "frame": 68, "faces": 2})["status"] == "PASS"
     assert MI.face_intact_row({"ncc": 1.0, "frame": None, "faces": 0})["status"] == "NOT_RUN"
