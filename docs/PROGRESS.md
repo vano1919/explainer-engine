@@ -6353,3 +6353,5 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   director decides weather and effects per shot by written criteria (scene weather as the ceiling, then sky, light, picture,
   words, neighbours). OR-22 scoped: per-shot creative choices are the director's; only goal or money goes to the creator.
   Test `test_rules_d139.py` +1. The registry text (BP-21, and PR #188's living-inventory rule "weather in every shot of the scene") waits for PR #188.
+- 12:40 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWYVRnJpwAAtZdA2Y88V1xkZ): not only snow; the director picks the best living shot from the words, the picture and the
+  tool list. D-139 and OR-22 now say rules are decision criteria, never facts tied to a shot ("snow only in S08" is Truce's result).

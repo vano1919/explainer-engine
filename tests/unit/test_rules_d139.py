@@ -54,3 +54,9 @@ def test_or22_is_scoped_so_the_director_decides_per_shot_creative_choices():
     assert "Scoped 2026-11-14 by D-139" in row and "goal or the money" in row
     d139 = _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")
     assert "director decides each shot's weather and effects" in d139
+
+
+def test_rules_are_criteria_not_shot_facts():
+    d139 = _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")
+    assert "never as a fact tied to a shot or an episode" in d139
+    assert "Truce S08)" not in d139  # the Truce result is not written as the rule
