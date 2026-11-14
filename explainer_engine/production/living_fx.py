@@ -79,9 +79,10 @@ def _particles(st, rgb, depth, e, t, v, op):
     box = e.get("box")
     src = _source(st, e, v) if op == "embers" else None
     out = rgb
+    allowed = prm.get("layers")                     # the director's weather choice: faces near the lens keep the far flakes
     for li, z in enumerate(PARTICLE_LAYERS):
         n = int(round(base * s * float(prm.get("density", 1.0)) * (0.6 + 0.4 * li) / 2))
-        if n <= 0:
+        if n <= 0 or (allowed is not None and li not in allowed):
             continue
         r = _rng(st, f"{op}:{li}")
         px, py = r.uniform(0, 1, n), r.uniform(0, 1, n)

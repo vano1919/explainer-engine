@@ -160,6 +160,7 @@ def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None =
             if lid not in lights:
                 bad(f"{name}: light {lid!r} is not in seen.lights")
     out += _living(d, spine)
+    out += _weather(d)
     out += _families(d)
     out += _renderable(d)
     if spine is not None:
@@ -220,11 +221,46 @@ def _living(d: dict, spine) -> list[dict]:
                ("scene.surroundings", scene.get("surroundings", ""))]
     if spine is not None:
         sources.append(("the shot's words", [w.get("word", "") for w in spine]))
+    decided = kinds_named(" ".join(str(r.get("weather", "")).replace("_", " ") for r in d.get("weather") or []))
     for where, text in sources:
-        for k in sorted(kinds_named(text) - have):
+        cover = have | decided if where == "scene.weather" else have   # the scene's weather is a ceiling (12:38 UTC)
+        for k in sorted(kinds_named(text) - cover):
             verb = "name" if where.endswith("words") else "names"
             out.append({"level": "FAIL", "what": f"{where} {verb} {k} but seen.living has no {k} (BP-196: every living "
                         "element gets an effect or a reason)"})
+    return out
+
+
+PRECIPITATION = {"snow": "snow", "rain": "rain"}      # effect op -> the weather word family it needs in the scene
+
+
+def _weather(d: dict) -> list[dict]:
+    """The scene's weather is a ceiling, the shot's weather the director's decision (the owner, 2026-11-14 12:38 UTC,
+    message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X; rules reconciliation journal section 7): falling snow or
+    rain where the scene has none FAILs; every weather word of the scene gets a ``weather`` record (``in``, ``decided_by``
+    one of ``living_director.CRITERIA``, ``why``) and one that leaves it out without a reason FAILs. Jumps between
+    neighbouring shots are checked over the sequence (``living_director.weather_jumps``)."""
+    from explainer_engine.production import living_director as LD
+    out = []
+    ceiling = [str(w) for w in ((d.get("scene") or {}).get("weather") or [])]
+    for t in d.get("tracks", []):
+        need = PRECIPITATION.get(t.get("op")) if t.get("track") not in ("camera", "audio") else None
+        if need and not any(w.startswith(need) for w in ceiling):
+            out.append({"level": "FAIL", "what": f"track {t.get('id', '?')}: {t['op']} falls but the scene's weather "
+                        f"({', '.join(ceiling) or 'none'}) has no {need} (the scene's weather is the ceiling)"})
+    recs = {r.get("weather"): r for r in d.get("weather") or []}
+    for w in ceiling:
+        r = recs.get(w)
+        if r is None:
+            continue                       # _living reports the scene's weather left without an element or a decision
+        if r.get("decided_by") not in LD.CRITERIA:
+            out.append({"level": "FAIL", "what": f"weather {w}: decided_by {r.get('decided_by')!r} is not one of "
+                        f"{', '.join(LD.CRITERIA)}"})
+        if not str(r.get("why", "")).strip():
+            out.append({"level": "FAIL", "what": f"weather {w}: {'in' if r.get('in') else 'left out'} without a reason"})
+    for w in recs:
+        if w not in ceiling and recs[w].get("in"):
+            out.append({"level": "FAIL", "what": f"weather {w} is let in but the scene's weather has no {w}"})
     return out
 
 

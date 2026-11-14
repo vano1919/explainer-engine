@@ -6455,3 +6455,38 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   remains"). His scratch code took P3 only to reach the floor.
 - Q1 "as an accent" (snappy zoom vs BP-21) is BP-197's word-tied snap. The BP-21 text is written by the reconciliation
   thread after #188.
+
+## 2026-11-14 — The director chooses the living frame itself; the scene's weather is a ceiling (the owner, 12:38 and 12:40 UTC)
+- The owner (12:40 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWYVRnJpwAAtZdA2Y88V1xkZ): the director has the words, the photo and
+  the list of tools and effects, and decides the best living variant itself. The round 3 (C4) directions had their
+  effects, LP scores and parameters typed per shot by hand. That render was stopped after S01.
+- New `production/living_director.py`. The director's eye writes only what it sees: elements with kind, place, share of
+  the frame, light points, and flags (thin strokes, cloth on a body, body motion). `direct` then decides, with a reason
+  for each decision:
+  - `candidates`: each element becomes the effects its kind allows (`VARIANTS`, the renderer's catalogue). Each is scored
+    by LP-04: words that name it 2, words that evoke it 1 (`EVOKES`), share, distance to the shot's focus, clean motion,
+    cost. A fire's smoke or sparks need open sky or size. The light fade needs words that say the light changes.
+  - Breath comes from the faces YuNet finds in a cold scene, from the mouth landmarks. Faces in a `depicted` region (a
+    photo in the hands) and scores under 0.8 (false hits on drawn skies) are dropped.
+  - `living.plan` picks; the LP-08 floor outside the light family now swaps the lowest light pick for the best non-light
+    candidate when the cap is full. It was only reported before.
+  - `choose_camera`: a word that names a part gets an accent on that word (a push, or a truck across the frame; ease-out
+    1.25 s, rise inside BP-197's 1 s). Before it, a base move at 1.5 %/s (inside BP-21): a pull when the words say the
+    light is going, a crane over an open landscape, a lean-in to faces, otherwise a slow push. A breathing hand follows,
+    so the camera never fully stops.
+- The owner (12:38 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X) supersedes BP-196's "the scene's weather is
+  in every shot". The scene's weather is now a ceiling.
+  - `decide_weather` lets each word of it in or out by (1) open sky, (2) the light (flakes need 30 % of the picture
+    darker than 0.7), (3) the picture (faces in frame keep the far flake layers only), (4) the words, (5) the previous
+    shot of the place. The record names the deciding criterion.
+  - `living.rows_of` adds weather only where it was let in.
+  - `direction._weather` FAILs falling snow or rain outside the ceiling, and weather left out without a reason.
+  - `weather_jumps` FAILs a jump between neighbours of one scene without a reason of the place or the words (CT-08).
+  - `living_fx` particles take `params.layers`.
+  - BP-196's text is amended.
+- The six Truce C4 directions were rebuilt this way. All six have 0 FAILs, and the weather has no jumps. Snow falls only
+  in S08, because only S08's scene has it, and there it reads on 98 % dark picture. S06 gets the light fade, a pull and
+  the sun path on the ice. S02 and S05_SH020 get the faces' breath.
+- Tests: new `test_living_director.py` (7). `test_direction.py`'s LP-09 case now lets the snow in through a weather record:
+  this follows the owner's decision, not a weakening. The touched suites pass (64). Every new number (EVOKES, BASE_RATE,
+  FACE_SCORE, FACE_CLOSE, the flake contrast) is an engineering default (REVIEW, D-59). $0.

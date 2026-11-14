@@ -12,8 +12,9 @@ move and which first, so a shot is neither frozen nor a busy screensaver:
 - LP-06 a visible flame is always alive and outside the cap; LP-07 the cap of effects by duration (4, 5, 6);
 - LP-08 the floor: at least ``effects_min`` effects beyond the flames, ``non_light_min`` of them outside the light family,
   and one full-frame layer of moving air;
-- LP-09 the scene's weather is an element of every shot of the scene (the owner, 2026-11-14 12:13 UTC: snow only in S08;
-  elsewhere clear sky, mist, frost glint, wind with smoke, breath);
+- LP-09 as amended by the owner (2026-11-14 12:38 UTC): the scene's weather is a ceiling, not a fill. A shot carries the
+  scene's precipitation only where the director let it in (``weather`` records, ``production/living_director``: open sky,
+  light, picture, words, neighbours); no snow where the scene has none;
 - LP-10 people in a medium or close view longer than ``long_people_s`` go to LTX or are split; LP-11 at most
   ``rounds_max`` rounds; LP-12 the reviewer sees the skipped list.
 
@@ -97,18 +98,21 @@ def rows_of(d: dict) -> list[dict]:
         eff = e.get("effect") or next((ops[i] for i in e.get("effects") or [] if i in ops), None)
         rows.append({**e, "effect": eff})
     have = {r["effect"] for r in rows}
-    for w in (d.get("scene") or {}).get("weather") or []:
-        if w in WEATHER and WEATHER[w][0] not in have:
+    ceiling = set((d.get("scene") or {}).get("weather") or [])
+    for rec in d.get("weather") or []:             # LP-09 as amended (12:38 UTC): only weather the director let in
+        w = rec.get("weather")
+        if rec.get("in") and w in ceiling and w in WEATHER and WEATHER[w][0] not in have:
             eff, area, text = WEATHER[w]
             rows.append({"id": f"weather_{w}", "kind": w, "effect": eff, "area_pct": area, "text": text, "focus": 1,
                          "quality": 2, "cost": 2, "decision": "add", "from_weather": True})
     return rows
 
 
-def plan(d: dict, duration_s: float) -> dict:
-    """LP-06..LP-10 over the rows: what moves, what is skipped and why, and the notes (``FAIL ...``, ``REVIEW ...``,
-    ``ROUTE ...``) a check turns into problems."""
-    rows = [{**r, "score": score(r), "tier": tier(r)} for r in rows_of(d)]
+def plan(d: dict, duration_s: float, rows: list[dict] | None = None) -> dict:
+    """LP-06..LP-10 over the rows (the file's inventory, or the candidate rows the director's choice step passes): what
+    moves, what is skipped and why, and the notes (``FAIL ...``, ``REVIEW ...``, ``ROUTE ...``) a check turns into
+    problems."""
+    rows = [{**r, "score": score(r), "tier": tier(r)} for r in (rows_of(d) if rows is None else rows)]
     n = cap(duration_s)
     live = [r for r in rows if r["tier"] in TIERS]
     always = [r for r in rows if r.get("effect") in ALWAYS_ON and r["tier"] not in ("FORBIDDEN", "LTX", "SKIP_QUALITY")]
@@ -132,6 +136,17 @@ def plan(d: dict, duration_s: float) -> dict:
             break
         if r not in chosen:
             chosen.append(r)
+    for r in rest:                         # LP-08's floor outside the light family: the best non-light candidate takes the
+        if non_light(chosen) >= NON_LIGHT_MIN:     # slot of the lowest light pick when the cap is full
+            break
+        if r in chosen or FAMILY.get(r.get("effect"), "light") == "light":
+            continue
+        lights = [c for c in chosen if FAMILY.get(c.get("effect"), "light") == "light"]
+        if len(chosen) >= n:
+            if not lights:
+                break
+            chosen.remove(min(lights, key=lambda c: (c["score"], -TIERS.index(c["tier"]))))
+        chosen.append(r)
     if len(chosen) < EFFECTS_MIN:
         notes.append(f"FAIL LP-08: only {len(chosen)} living effects beyond the flames (the floor is {EFFECTS_MIN})")
     if non_light(chosen) < NON_LIGHT_MIN:

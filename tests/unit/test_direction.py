@@ -211,7 +211,9 @@ def test_lp_tiers_routes_and_weather():
     assert L.tier({"effect": "fire", "area_pct": 1, "text": 2, "body_motion": True}) == "LTX"
     assert (L.cap(3.0), L.cap(4.5), L.cap(7.8)) == (4, 5, 6)             # 5 s steps (the owner, 12:37 UTC)
     d = copy.deepcopy(BASE)
-    d["scene"] = {"weather": ["snow"]}                       # LP-09 (the owner: snow only in S08): the scene adds its snow
+    d["scene"] = {"weather": ["snow"]}                       # LP-09 as amended (the owner, 12:38 UTC): a ceiling; the snow
+    assert not any(c["effect"] == "snow" for c in L.plan(d, 263 / 24)["chosen"])      # falls only where the director let it in
+    d["weather"] = [{"weather": "snow", "in": True, "decided_by": "4 words", "why": "the words name the snow"}]
     p = L.plan(d, 263 / 24)
     assert any(c["effect"] == "snow" for c in p["chosen"]) and p["always_on"][0]["id"] == "brazier"
     d["people_mid_or_close"] = True
