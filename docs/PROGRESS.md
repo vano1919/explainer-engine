@@ -6522,3 +6522,18 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   the production path.
 - Tests: `test_living_director.py` +3 (the sound follows the picture, not the words; map actions and needs; one audio
   track). $0.
+
+## 2026-11-14 — P1 round 2 ends: C4A (the director's own choice) on the six photos, results and verdict; stop before P2
+- Six C4A clips rendered by `directed25d` + `living_fx` from directions chosen by `living_director` (effects, weather, camera,
+  sound). All six have 0 direction FAILs. Measured against C3:
+  - frozen seconds went from 42 to 1;
+  - whole-frame change: S08 0.06 -> 4.04 %/s, S05_SH016 0.1 -> 6.64, S02 1.13 -> 5.1, S05_SH020 2.55 -> 5.77; S01 and S06
+    are level (4.94 -> 5.15, 6.85 -> 6.14, with S06's local change 1.44 -> 3.82).
+- Honest verdict:
+  - by the numbers, 4 of 6 are clearly better and none clearly worse; by eye all six are more alive;
+  - breath is too faint, and the sun flare needs the owner's eye;
+  - S02, S08 and S05_SH020 are over 5 s (LP-10: split or LTX).
+- `intended_move` is NOT_RUN on all six, because the auto directions write no `expect` block. That is a P2 item.
+- Reel, table, verdict and the P2 handoff: project files
+  `stage_b_round2_2026-11-14/P1_RESULTS_AND_P2_HANDOFF_2026-11-14.md`, and HF
+  `stage_b_round2_2026-11-14/c4a_director_choice/`. $0. P1 stops for the owner's verdict.
