@@ -6393,3 +6393,19 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Before/after sheet on HF `stage_b_round2_2026-11-14/s01_fix/`.
 - Tests: `test_directed25d.py` +3 (frame 0 = picture with a hole 15 px wider than the mask; strokes stay in the background;
   a depth step does not fold, and the test fails with the unfold off). 124 passed in the touched suites, docs_lint 0. $0.
+
+## 2026-11-14 — BP-199: the frame taken from a clip is chosen by its person (`finish/frame_pick.py`)
+- The owner (12:18 UTC): when the best frame is taken from the end of a clip, the person's position and face decide. The
+  rifle start frame f084 had a face caught mid-move. The frame where the person is most still is cut out and upscaled.
+- New BP-199 (house; the weights are engineering numbers) and `finish/frame_pick.py`:
+  - YuNet face (opencv_zoo, MIT, pinned revision + sha256, `$EXPLAINER_MODELS_DIR`, PROVENANCE row) tracked across the
+    window;
+  - the score: face sharpness, stillness and box jitter (0.6), body stillness below the face (0.3), the whole frame (0.1);
+  - no face: the frame decides and the report says REVIEW;
+  - CLI `pick <clip> --out DIR [--window-s] [--after] [--upscale --size --crop]`, which writes the frame, a JSON report and a
+    sheet. `--upscale` hands the frame to `finish/superres`.
+- Measured on `S07_SH007_seed7105.mp4` (last second, f65-f88): it picks f088. Face change is 2.49 grey levels there and
+  3.55 on the old f084, which the owner saw was not still. The Part III start frames TA/TR/TC/TP are rebuilt from f088.
+- Not touched: `training/pods/ltx/modal_ltx_jobs.py` (`handover_scores`). Its bytes are bound to the LTX thread's GO; that
+  thread was told the function exists.
+- Tests: `test_frame_pick.py` (4). $0.

@@ -7625,6 +7625,26 @@
     "explainer_engine/finish/superres.py:qc"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-199",
+   "area": "pictures",
+   "status": "house",
+   "severity": "REVIEW",
+   "decided": "the owner, 2026-11-14 12:18 UTC (P1 thread, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWB5pdfaVx7mDTvjbhY4CsZD): when the best frame is taken from the end of a clip, the main parts decide, the person's position and face; the frame where the person is most still is cut out and upscaled",
+   "statement": "The frame a continuation, a crop or a still takes from a clip is chosen by its person first: among the candidate frames (the clip's tail, or after the spoken line and its tail, BP-187) the face's sharpness, stillness and box jitter weigh w_face, the body's stillness below the face w_body and the whole frame's sharpness and stillness w_frame; a face counts from YuNet score face_score_min; stillness compares each frame with settle_frames frames on each side. A window where no face is found is chosen by the frame alone and goes to the reviewer. The rule is the owner's; the weights are his priority written as engineering numbers until he or two source types set them.",
+   "thresholds": {
+    "w_face": 0.6,
+    "w_body": 0.3,
+    "w_frame": 0.1,
+    "face_score_min": 0.6,
+    "settle_frames": 2
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/finish/frame_pick.py:score"
+   ],
+   "supersedes": []
   }
  ]
 }
