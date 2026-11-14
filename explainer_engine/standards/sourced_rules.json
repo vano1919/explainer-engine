@@ -7645,6 +7645,43 @@
     "explainer_engine/finish/frame_pick.py:score"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-200",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The living-photo balance of a photo shot (Fable's LIVING_PHOTO_RULES of 2026-11-14, LP-01..LP-12; the owner's weather choice of 2026-11-14 12:13 UTC, LP-09): every element of the director's inventory gets a score w_text x text + scale + focus + quality + cost (text, focus, quality, cost 0..2; scale 0..3 by the share of the frame at scale_steps_pct); an element the words name that is not a dot, or a score of p1_score, is P1, then P2 from p2_score, P3 from p3_score; an element under dot_pct of the frame gets no effect of its own unless it is one of a group; a body that must move goes to LTX; a shot carries at most caps effects for durations up to cap_steps_s (beyond the camera and the always-on flames) and at least effects_min, non_light_min of them outside the light family, one of them a full-frame layer of moving air; the scene's weather is an element of every shot of the scene; people in a medium or close view longer than long_people_s go to LTX or are split; at most rounds_max director rounds. Proposals until the owner confirms them on a free rebuilt round.",
+   "thresholds": {
+    "dot_pct": 0.2,
+    "scale_steps_pct": [
+     0.2,
+     2.0,
+     15.0
+    ],
+    "w_text": 3,
+    "p1_score": 10,
+    "p2_score": 7,
+    "p3_score": 5,
+    "effects_min": 3,
+    "non_light_min": 2,
+    "rounds_max": 2,
+    "long_people_s": 8.0,
+    "cap_steps_s": [
+     4.0,
+     8.0
+    ],
+    "caps": [
+     4,
+     5,
+     6
+    ]
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/living.py:plan"
+   ],
+   "supersedes": []
   }
  ]
 }

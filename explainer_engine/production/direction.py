@@ -163,6 +163,8 @@ def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None =
     if spine is not None:
         out += _words_to_camera(d, spine, fps, frames)
     out += _hold(d, spine, fps, frames)
+    if frames:
+        out += _balance(d, frames / fps)
     if len(cams) > SEGMENTS_MAX:
         bad(f"{len(cams)} camera segments; at most {SEGMENTS_MAX}")
     if d.get("intent") == "still_by_design" and cams:
@@ -222,6 +224,18 @@ def _living(d: dict, spine) -> list[dict]:
             out.append({"level": "FAIL", "what": f"{where} {verb} {k} but seen.living has no {k} (BP-196: every living "
                         "element gets an effect or a reason)"})
     return out
+
+
+def _balance(d: dict, duration_s: float) -> list[dict]:
+    """BP-200 (Fable's LP-01..LP-12): how many living elements move and which first. The inventory carries the LP scores
+    (``area_pct``, ``text``, ``focus``, ``quality``, ``cost``); a file without them cannot be balanced and goes to the
+    reviewer."""
+    from explainer_engine.production import living
+    rows = [e for e in (d.get("seen") or {}).get("living") or [] if e.get("decision") != "skip"]
+    if rows and not any("area_pct" in e for e in rows):
+        return [{"level": "REVIEW", "rule": "BP-200",
+                 "what": "seen.living has no LP scores (area_pct, text, focus, quality, cost): the balance was not checked"}]
+    return [{k: v for k, v in p.items()} for p in living.check(d, duration_s)]
 
 
 def _families(d: dict) -> list[dict]:

@@ -6409,3 +6409,16 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Not touched: `training/pods/ltx/modal_ltx_jobs.py` (`handover_scores`). Its bytes are bound to the LTX thread's GO; that
   thread was told the function exists.
 - Tests: `test_frame_pick.py` (4). $0.
+
+## 2026-11-14 — BP-200: the living-photo balance in code (`production/living.py`, Fable's LP-01..LP-12)
+- Fable's LIVING_PHOTO_RULES (project files, 2026-11-14) ported from his scratch script into the repo as new BP-200
+  (hypothesis, REVIEW numbers). It covers:
+  - the score `3 x text + scale + focus + quality + cost`;
+  - tiers P1/P2/P3, dots and groups, quality 0 skipped, body motion routed to LTX (LP-02);
+  - always-on flames (LP-06) and the cap 4/5/6 by duration (LP-07);
+  - the floor: 3 effects, 2 outside light, one full-frame air layer (LP-08);
+  - scene weather in every shot (LP-09); people mid/close over 8 s go to LTX or a split (LP-10); at most 2 rounds (LP-11).
+- `direction.check(..., frames=)` runs it. An inventory without LP scores is REVIEW. An animated element the balance did
+  not choose is REVIEW, and its tier is shown. LP-09 follows the owner's weather choice (12:13 UTC): snow only in S08;
+  the other scenes get clear sky, mist, frost glint, wind with smoke and breath.
+- Tests: `test_direction.py` +3 (fixture gains LP scores, mist and sky). $0.
