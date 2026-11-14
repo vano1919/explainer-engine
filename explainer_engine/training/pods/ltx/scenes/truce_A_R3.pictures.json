@@ -1,0 +1,16 @@
+{
+  "shots": {
+    "S06_SH009_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S06_SH009_start.png",
+      "sha256": "a3e337a18623a3094e7b162edfa9777de3b9bc5e70530657fe673a1e99ab8fa4"
+    },
+    "S07_SH005_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S07_SH005_start.png",
+      "sha256": "da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3"
+    },
+    "S07_SH008_chain_f088_TR": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S07_SH008_chain_f088_TR.png",
+      "sha256": "ca4b23694fc3f3b700ea22fa348ac7e94b4ce6df14ba2f7e342ba9af9d8ba028"
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+ "schema": "ltx_scene_test/3",
+ "id": "R3",
+ "episode": "episodes/ep_truce_1914",
+ "asked": "the creator in the thread 2026-11-14 12:47 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX): look at the three photos, correct the visual script to fit them and the end of the shot, generate again within the same scope; DRAFT, not launched: needs his word on the price and the cap (ledger 4.20 + reserve 0.97 passes the cap 5.00)",
+ "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+ "storyboard": {
+  "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/R3.json",
+  "sha256": "630f91f98f6e5a3c2e50b553187e776df8aa08937b2c908a78c3d9ec5d7e396c",
+  "verdict": "REVIEW"
+ },
+ "pictures": {
+  "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_R3.pictures.json"
+ },
+ "shots": [
+  {
+   "shot_id": "S06_SH009",
+   "seconds": 6.25,
+   "seconds_basis": "measured_length",
+   "seed": 7110,
+   "motion_prompt": "Thomas holds the top brass button of his tunic between the fingers of his right hand. His left hand enters the frame from below with a small penknife and cuts the thread; the button comes loose and drops into his open right palm. He lowers his right hand, palm up, and the knife leaves the frame. The shot ends on the brass button lying alone in his open right palm. Nobody speaks.",
+   "prompt_parts": {
+    "motion": "Thomas holds the top brass button of his tunic between the fingers of his right hand. His left hand enters the frame from below with a small penknife and cuts the thread; the button comes loose and drops into his open right palm. He lowers his right hand, palm up, and the knife leaves the frame. The shot ends on the brass button lying alone in his open right palm.",
+    "no_speech": "Nobody speaks."
+   },
+   "continuity_mode": "insert",
+   "line": {
+    "speaker": "none",
+    "text": "(Thomas cuts a brass button off his tunic with a penknife)"
+   },
+   "picture": "S06_SH009_start",
+   "script_deviation": "photo_visual_layer.json (owner's rule 2026-11-14 12:47 UTC): visual action corrected to the photo and the end state; the approved script file is unchanged"
+  },
+  {
+   "shot_id": "S07_SH005",
+   "seconds": 7.75,
+   "seconds_basis": "measured_length",
+   "seed": 7111,
+   "motion_prompt": "The captain stands with the revolver in his raised right hand and his empty left hand on his belt. He fires the revolver straight up into the air three times with his right hand, smoke drifting up. Then he lowers his right arm so the revolver points at the ground at his side, and it stays down there. He raises his empty left hand to the peak of his cap in a salute toward the German line. The revolver never goes near his head. Nothing else enters the frame. Sound: impact. Nobody speaks.",
+   "prompt_parts": {
+    "motion": "The captain stands with the revolver in his raised right hand and his empty left hand on his belt. He fires the revolver straight up into the air three times with his right hand, smoke drifting up. Then he lowers his right arm so the revolver points at the ground at his side, and it stays down there. He raises his empty left hand to the peak of his cap in a salute toward the German line. The revolver never goes near his head. Nothing else enters the frame.",
+    "sound": "Sound: impact.",
+    "no_speech": "Nobody speaks."
+   },
+   "continuity_mode": "coverage",
+   "line": {
+    "speaker": "narrator",
+    "text": "At Houplines, on Boxing Day morning, a British captain ended it politely: shots into the air."
+   },
+   "picture": "S07_SH005_start",
+   "script_deviation": "photo_visual_layer.json (owner's rule 2026-11-14 12:47 UTC): visual action corrected to the photo and the end state; the approved script file is unchanged"
+  },
+  {
+   "shot_id": "S07_SH008",
+   "seconds": 9.0,
+   "seconds_basis": "measured_length",
+   "seed": 7112,
+   "motion_prompt": "Thomas stands on the wooden box with both feet planted, his right hand on the muzzle end of the upright rifle. He lifts the rifle clear of the box with his right hand and lowers it to his side, muzzle up, then turns his head from the left to look down the trench toward the glowing brazier. His feet do not leave the box and he does not step down or walk. The camera does not move and nothing else enters the frame. Nobody speaks.",
+   "prompt_parts": {
+    "motion": "Thomas stands on the wooden box with both feet planted, his right hand on the muzzle end of the upright rifle. He lifts the rifle clear of the box with his right hand and lowers it to his side, muzzle up, then turns his head from the left to look down the trench toward the glowing brazier. His feet do not leave the box and he does not step down or walk. The camera does not move and nothing else enters the frame.",
+    "no_speech": "Nobody speaks."
+   },
+   "continuity_mode": "coverage",
+   "line": {
+    "speaker": "narrator",
+    "text": "There had been no treaty. In some places the truce lasted hours. In others, it held until the New Year."
+   },
+   "picture": "S07_SH008_chain_f088_TR",
+   "script_deviation": "photo_visual_layer.json (owner's rule 2026-11-14 12:47 UTC): visual action corrected to the photo and the end state; the approved script file is unchanged",
+   "chain_start": {
+    "source_clip": "S07_SH007_seed7105.mp4",
+    "frame": 88,
+    "picker": "finish/frame_pick.py BP-199 (face 0.6, body 0.3, frame 0.1)",
+    "upscale": "RealPLKSR 4x, shrunk back to 1280x704 (same size)",
+    "sha256": "ca4b23694fc3f3b700ea22fa348ac7e94b4ce6df14ba2f7e342ba9af9d8ba028"
+   }
+  }
+ ],
+ "draft": true,
+ "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+ "voice_missing": [],
+ "voices": {},
+ "voice_problems": [],
+ "read_first": "forced",
+ "budget": {
+  "total_usd": 0.97,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.0,
+  "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+  "caps": {
+   "modal_ltx": 5.0
+  }
+ }
+}

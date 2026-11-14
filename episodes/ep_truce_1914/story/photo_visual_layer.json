@@ -1,0 +1,51 @@
+{
+  "schema": "photo_visual_layer/1",
+  "episode": "episodes/ep_truce_1914",
+  "script_sha256_12": "261d43b80a3a",
+  "rule": "owner 2026-11-14 12:47 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX): after the start photo is made (Gemini picture or LTX last frame) it is looked at first; the script's visual action is corrected to fit the photo and the way the shot must END, so the next shot continues from it; every detail is stated (which hand holds what, which hand acts, where the feet stand, which way he moves). The approved script file stays frozen: the correction lives in this layer and goes to the script owner for the merge.",
+  "shots": {
+    "S06_SH009": {
+      "photo": "S06_SH009_start (2752x1536), medium close-up, high angle",
+      "photo_facts": [
+        "Thomas, freckled, cap on, looks up-left toward the sunrise",
+        "his RIGHT hand (left of the frame) is at his collar and holds the top brass button between thumb and fingers",
+        "his LEFT hand is not in the frame",
+        "a tattered cloth hangs on a string behind him on the left of the frame",
+        "tunic has a row of brass buttons and two chest pockets"
+      ],
+      "script_text": "Thomas cuts the brass button free with a penknife and it drops into his palm.",
+      "corrected_text": "Thomas holds the top brass button of his tunic between the fingers of his right hand. His left hand enters the frame from below with a small penknife and cuts the thread; the button comes loose and drops into his open right palm. He lowers his right hand, palm up, and the knife leaves the frame. The shot ends on the brass button lying alone in his open right palm.",
+      "end_state": "right palm open and up with the brass button on it, no knife in the palm, tunic missing its top button",
+      "why": "R2 take was right in outcome but the text did not say which hand cuts and which hand catches; the palm grew large when the camera followed it"
+    },
+    "S07_SH005": {
+      "photo": "S07_SH005_start (2752x1536), wide, worm's-eye",
+      "photo_facts": [
+        "the captain (sergeant's stripes on the sleeve, peaked cap) looks toward the left of the frame, the sun and the wire",
+        "his RIGHT hand (left of the frame) is raised and holds the revolver, barrel pointing up",
+        "his LEFT hand (right of the frame) is empty and rests on his belt buckle",
+        "his weight is on the straight leg; the other boot is on the wooden step",
+        "two soldiers stand far down the trench behind him, a brazier burns at the right",
+        "no flag anywhere in the picture"
+      ],
+      "script_text": "The captain fires his revolver into the air three times, raises the flag on the parapet, then salutes toward the German line.",
+      "corrected_text": "The captain stands with the revolver in his raised right hand and his empty left hand on his belt. He fires the revolver straight up into the air three times with his right hand, smoke drifting up. Then he lowers his right arm so the revolver points at the ground at his side, and it stays down there. He raises his empty left hand to the peak of his cap in a salute toward the German line. The revolver never goes near his head. Nothing else enters the frame.",
+      "end_state": "left hand at the cap in a salute, right arm down with the revolver pointing at the ground",
+      "why": "R2 take saluted with the revolver hand, the gun beside his head reads as a suicide; owner's rule: salute with the hand that holds no weapon. The script's 'raises the flag' has no flag in the photo and is dropped (FL-118). (A British salute is normally made with the right hand; the owner's rule is followed here.)"
+    },
+    "S07_SH008": {
+      "photo": "S07_SH008_chain_f088_TR (1280x704): frame 88 of the kept S07_SH007, upscaled with RealPLKSR at the same size",
+      "photo_facts": [
+        "Thomas stands on a small wooden box (the fire step) in the left foreground, both feet on it, looks up and to the left of the frame",
+        "the rifle stands upright, its butt on the box beside his left boot",
+        "his RIGHT hand (left of the frame) rests on top of the rifle's muzzle end; his LEFT arm hangs at his side",
+        "greatcoat, satchel on his left hip, cap on",
+        "the floor of the trench (a boardwalk) is lower and is at the right and bottom of the frame; a brazier and a ladder are behind him"
+      ],
+      "script_text": "Thomas climbs down, picks up his rifle and steps onto the fire step.",
+      "corrected_text": "Thomas stands on the wooden box with both feet planted, his right hand on the muzzle end of the upright rifle. He lifts the rifle clear of the box with his right hand and lowers it to his side, muzzle up, then turns his head from the left to look down the trench toward the glowing brazier. His feet do not leave the box and he does not step down or walk. The camera does not move and nothing else enters the frame.",
+      "end_state": "on the box, rifle held at his right side, face turned down the trench",
+      "why": "The script's 'climbs down, picks up his rifle and steps onto the fire step' does not fit the photo: he already stands on the fire step with the rifle in hand. R2 let him step down and the leg stretched into nothing and he walked away backward; no stepping is asked of the model now."
+    }
+  }
+}
