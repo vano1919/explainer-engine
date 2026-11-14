@@ -6330,3 +6330,34 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   sample step 0.0012 against 0.0023 at the bed's 99.9th percentile, no click.
 - Tests: `tests/unit/test_bed_stereo_and_loop_window.py` (anti-phase case picks a better seed, the window keeps the bed level, the sheet
   carries the window). The -50 floor, BP-53 and BP-191 are untouched; the four duck-step rows stay REVIEW. Cost $0.
+
+## 2026-11-14 — D-139: the creator's video-chain rules of 2026-11-14 written in, the new plan reconciled with the old rules
+- Why: the coordinator asked (for the creator) that the 2026-11-14 plan (roadmap section M, the living-photo rules, the upscale
+  direction) be compared with every existing rule, the better rule written in, the risky rewrites kept in a journal, and the
+  real conflicts asked. Journal: `architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md` (project files), 34 rows, $0.
+- Written now (docs only, no code, no file of PR #188 touched): `VIDEO_LANE.md` VL-14 (anchors and chains planned in the script,
+  the director on the video route's photos), VL-15 (a link gate on every pair before the next paid wave), VL-16 (the hand-over
+  frame: last 1.5 s, the main person's face and pose at their stillest, the director picks by idea then quality, then the free
+  model upscale); VL-05 points to VL-16; CT-09 clarified; D-139. The worker `handover_frame` is untouched (the paid LTX test uses it).
+- Stale text found (ICW-01), kept and listed in the journal: roadmap J5 (direction only on 2.5D and maps) against its own M.0;
+  roadmap L-3 (a BP-185 exception) against the creator's later "nature never freezes"; roadmap M.8's general-x4v3 against
+  RealPLKSR; the upscale direction's U-2 ("as is") against his "then upscale"; BP-184 (LTX at most 15 %, J5 era) against
+  BP-109's 60 %; L25-01 (two segments) and L25-05 (no LaMa/SAM) against the roadmap.
+- Asked on cards: BP-21 against the snappy zoom; BP-109's 5 s against the living-photo rules' 8 s (12 of Truce's 24 2.5D
+  shots are longer than 5 s); a fully still camera against BP-181; snow in all four S08 shots or only S08_SH003.
+- Waits for PR #188 to merge (its files): BP-21/BP-109/BP-181/BP-184 in the registry, `superres.decide` U-2, AV-07's
+  director-word note, PROVENANCE rows for SAM 2.1, BiRefNet, LaMa, DA3 and MoGe-2.
+- Tests: `tests/unit/test_rules_d139.py`. docs_lint 0. Cost $0.
+- Follow-up the same day (the creator's card answers 12:37 UTC and his message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X at 12:38 UTC): zoom on a
+  named word = BP-21 accent; 2.5D keeps BP-109's 5 s; a still camera keeps a slow drift; the snow card withdrawn because the
+  director decides weather and effects per shot by written criteria (scene weather as the ceiling, then sky, light, picture,
+  words, neighbours). OR-22 scoped: per-shot creative choices are the director's; only goal or money goes to the creator.
+  Test `test_rules_d139.py` +1. The registry text (BP-21, and PR #188's living-inventory rule "weather in every shot of the scene") waits for PR #188.
+- 12:40 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWYVRnJpwAAtZdA2Y88V1xkZ): not only snow; the director picks the best living shot from the words, the picture and the
+  tool list. D-139 and OR-22 now say rules are decision criteria, never facts tied to a shot ("snow only in S08" is Truce's result).
+- 12:47 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX): VL-17, the script and the prompt are fitted to the start picture
+  (anchor photo or hand-over frame) through a written start inventory: hands and what they hold, the ground, a continuation carries the motion
+  on. Cause: the S07 gun clips. Code in P2/P3; test `test_rules_d139.py` +1; incident journal entry written.
+- 13:13 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWX1nj38fCbSqH5mWzZKXzHj): VL-18, after the picture is seen the director
+  also chooses the sound (each event's effect and the bed, with a reason) on every route, maps included, inside the existing
+  sound_plan / cue_sheet / library; BP-192 fit, BP-57 variety, BP-81 and BP-55 hold. Test +1.
