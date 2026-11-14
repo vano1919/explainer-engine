@@ -676,9 +676,20 @@ def clip_frames(path: Path, start: int, count: int):
 
 
 def _fit(frame: np.ndarray, size: tuple[int, int]) -> np.ndarray:
-    if (frame.shape[1], frame.shape[0]) == tuple(size):
+    """HF-6 (FL-412): the frame scaled to cover the target keeping its aspect, then centre-cropped; never squeezed. The same
+    aspect in gives the same pixels as the plain resize did."""
+    tw, th = int(size[0]), int(size[1])
+    h, w = frame.shape[0], frame.shape[1]
+    if (w, h) == (tw, th):
         return frame
-    return np.asarray(Image.fromarray(frame).resize(tuple(size), Image.LANCZOS))
+    img = Image.fromarray(frame)
+    if w * th == h * tw:   # same aspect: the plain resize, as before
+        return np.asarray(img.resize((tw, th), Image.LANCZOS))
+    scale = max(tw / w, th / h)
+    sw, sh = max(tw, int(round(w * scale))), max(th, int(round(h * scale)))
+    img = img.resize((sw, sh), Image.LANCZOS)
+    x0, y0 = (sw - tw) // 2, (sh - th) // 2
+    return np.asarray(img.crop((x0, y0, x0 + tw, y0 + th)))
 
 
 def whip_length() -> int:
@@ -1444,6 +1455,14 @@ def _boundary_frames(a: dict, b: dict, plan: dict, size: tuple[int, int]) -> tup
     zoom = plan.get("zoom_target_xy") or [0.5, 0.5]
     out = []
     for k in range(total):
+        if t_type == "fade_to_black":   # HF-1: A's own frames down to black, then B's own frames up from it
+            if k < half_a:
+                u, fa, fb = 0.5 * (k + 1) / half_a, tail[min(k, len(tail) - 1)], head[0]
+            else:
+                u, fa, fb = 0.5 + 0.5 * (k - half_a + 1) / half_b, tail[-1], head[min(k - half_a, len(head) - 1)]
+            im = render_transition_frame_pair(Image.fromarray(fa), Image.fromarray(fb), transition_type=t_type, progress_u=u)
+            out.append(np.asarray(im.convert("RGB"), dtype=np.uint8))
+            continue
         u = (k + 1) / (total + 1)
         im = render_transition_frame_pair(Image.fromarray(tail[min(k, len(tail) - 1)]), Image.fromarray(head[min(k, len(head) - 1)]),
                                           transition_type=t_type, progress_u=u, zoom_target_xy=zoom)

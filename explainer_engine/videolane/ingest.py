@@ -21,12 +21,16 @@ The trimmed clip's speech spans (trimmed seconds) are the clip-timed clock's inp
 """
 from __future__ import annotations
 
+import difflib
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 from fractions import Fraction
 from pathlib import Path
+
+import numpy as np
 
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
@@ -66,8 +70,122 @@ def speech(path: Path) -> list[tuple[float, float]]:
     return [(float(a), float(b)) for a, b in R.speech_spans(x)] if len(x) else []
 
 
+# TD-323 (audit, 2026-11-13): the speech detector can close a span early (a sung or held last word); when the sound after the
+# planned out point is still this close to the last span's own level, the cut goes on until it has fallen this far below it
+# (or the raw clip ends). Both numbers are engineering defaults.
+LATE_SOUND_WITHIN_DB = 6.0
+LATE_SOUND_FALL_DB = 12.0
+LATE_SOUND_STEP_S = 0.04
+
+
+def _tokens(text: str) -> list[str]:
+    return re.findall(r"[a-z0-9']+", (text or "").lower())
+
+
+def matched_word_spans(words: list[dict], line_text: str, gap_s: float = 0.35) -> list[tuple[float, float]]:
+    """TD-327 (audit, 2026-11-13): the time spans of the heard words (the local Whisper's, ``{text, start, end}``) that match
+    the shot's own script line, in order (``difflib`` over the lower-cased word tokens), joined where less than ``gap_s``
+    apart. A word the line does not hold (a misheard "You", an extra word) is never in them. ``gap_s`` is an engineering default."""
+    heard = [(_tokens(w.get("text"))[:1] or [""])[0] for w in words]
+    want = _tokens(line_text)
+    blocks = difflib.SequenceMatcher(None, want, heard, autojunk=False).get_matching_blocks()
+    spans: list[tuple[float, float]] = []
+    for _a, b, size in blocks:
+        for k in range(b, b + size):
+            if heard[k]:
+                spans.append((float(words[k]["start"]), float(words[k]["end"])))
+    spans.sort()
+    out: list[tuple[float, float]] = []
+    for a, b in spans:
+        if out and a - out[-1][1] < gap_s:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
+
+
+def _local_words(path: Path) -> list[dict] | None:
+    """The local Whisper's words of a clip, or None when faster-whisper is not installed (it is optional: the detector's spans
+    alone are then used, and the record says so)."""
+    try:
+        from explainer_engine.audio import local_words as LW
+    except ImportError:
+        return None
+    try:
+        return LW.transcribe(path)["words"]
+    except ImportError:
+        return None
+
+
+TRIM_WINDOW_S = 0.02
+TRIM_BELOW_DB = 20.0       # engineering default: a word's span keeps the windows within this of its own loudest window
+
+
+def _trim_to_sound(span: tuple, audio, rate: int) -> tuple | None:
+    """The local Whisper times a word from the end of the one before it, so a first word can start seconds before any sound
+    (S05_SH019: 0.0 s for a word at 2.4 s). The span is cut back to the 20 ms windows within ``TRIM_BELOW_DB`` of its own
+    loudest window; None when it holds no sound at all."""
+    a, b = int(span[0] * rate), int(min(span[1] * rate, len(audio)))
+    win = int(TRIM_WINDOW_S * rate)
+    if b - a < win:
+        return None
+    lv = [_rms_db(audio[i:i + win]) for i in range(a, b - win + 1, win)]
+    top = max(lv)
+    if top <= -70.0:
+        return None
+    keep = [i for i, v in enumerate(lv) if v >= top - TRIM_BELOW_DB]
+    return (round(span[0] + keep[0] * TRIM_WINDOW_S, 3), round(span[0] + (keep[-1] + 1) * TRIM_WINDOW_S, 3))
+
+
+def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float,
+                      audio=None, rate: int = 16000) -> list:
+    """TD-327: the detector's spans plus the matched word spans (each cut back to where sound is, given ``audio``), for a
+    clip-spoken shot only (a silent clip is cut exactly as before), merged where they touch, never past the clip's own length."""
+    if not spoken or not words or not line_text:
+        return [tuple(sp) for sp in spans]
+    extra = [(a, min(dur, b)) for a, b in matched_word_spans(words, line_text)]
+    if audio is not None:
+        extra = [t for t in (_trim_to_sound(e, audio, rate) for e in extra) if t]
+    both = sorted([tuple(sp) for sp in spans] + extra)
+    out: list[tuple[float, float]] = []
+    for a, b in both:
+        if out and a <= out[-1][1] + 1e-9:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
+
+
+def _rms_db(x) -> float:
+    return float(20 * np.log10(float(np.sqrt(np.mean(np.asarray(x, np.float64) ** 2))) + 1e-9)) if len(x) else -120.0
+
+
+def late_sound_out(t_out: float, dur: float, last_span: tuple, audio, rate: int) -> float:
+    """TD-323: the out point (seconds) moved on past ``t_out`` when the loudest 100 ms of the half second after it is within
+    ``LATE_SOUND_WITHIN_DB`` of the last span's own level, to the end of the first 40 ms window that is ``LATE_SOUND_FALL_DB``
+    under that level, else to the clip's end. Unchanged for a quiet tail."""
+    a, b = int(last_span[0] * rate), int(last_span[1] * rate)
+    ref = _rms_db(audio[a:b])
+    if ref <= -80.0 or t_out >= dur:
+        return t_out
+    step, t = int(LATE_SOUND_STEP_S * rate), t_out
+    # the loudest 100 ms window of the half second after the planned out point (a mean over the half second would let the
+    # decay at its far end hide a held note: S03_SH003 measured 8.4 dB under the span on the mean, 5.6 dB on the window)
+    after = audio[int(t_out * rate):int(min(dur, t_out + 0.5) * rate)]
+    win = int(0.1 * rate)
+    loud = max((_rms_db(after[i:i + win]) for i in range(0, max(1, len(after) - win + 1), step)), default=-120.0)
+    if loud < ref - LATE_SOUND_WITHIN_DB:
+        return t_out
+    while t < dur:
+        w = audio[int(t * rate):int(t * rate) + step]
+        if len(w) and _rms_db(w) < ref - LATE_SOUND_FALL_DB:
+            return round(min(dur, t + LATE_SOUND_STEP_S), 4)
+        t += LATE_SOUND_STEP_S
+    return dur
+
+
 def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: float, fps: int, *, spoken: bool,
-                handover_s: float | None = None, drop_first: bool = False, shot_id: str = "?") -> dict:
+                handover_s: float | None = None, drop_first: bool = False, shot_id: str = "?", audio=None, rate: int = 16000) -> dict:
     """The in and out points (clip seconds, on whole frames) of one clip; see the module text.
 
     A hand-over frame (VL-05) before the last speech end + BP-187's tail would cut the line: a ContractError (repair class C,
@@ -88,6 +206,8 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
         lead = max(HEAD_LEAD[1], float(ep.get("head_handle_s", 0.0)))
         t_in = max(0.0, s0 - lead)
         t_out = min(dur, s1 + max(CUT_TAIL[0], min(CUT_TAIL[1], float(ep.get("tail_handle_s", CUT_TAIL[1])))))
+        if audio is not None and handover_s is None:
+            t_out = late_sound_out(t_out, dur, spans[-1], audio, rate)   # TD-323: a last word the detector closed early
     else:
         t_in = min(float(ep.get("head_handle_s", 0.0)), max(0.0, dur - planned_s))
         t_out = min(dur, t_in + planned_s) if planned_s > 0 else dur
@@ -103,8 +223,9 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
     return {"in_s": round(f_in / fps, 4), "out_s": round(f_out / fps, 4), "frames": f_out - f_in}
 
 
-def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
-    """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds."""
+def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int, gain_db: float = 0.0) -> Path:
+    """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds. ``gain_db``
+    (HF-4, a level trim, never a boost) is a ``volume`` filter in front of the pad and the trim; the raw file is not touched."""
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".part.mp4")
     dur = frames / fps
@@ -112,7 +233,8 @@ def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
     # ffmpeg with a 30 fps clip on a 24 fps episode); -frames:v caps the picture, atrim the sound
     cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur + 2.0 / fps:.4f}",
            "-vf", f"fps={fps}", "-frames:v", str(frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
-           "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-af", f"apad,atrim=0:{dur:.4f}", str(tmp)]
+           "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+           "-af", (f"volume={gain_db:.3f}dB," if gain_db else "") + f"apad,atrim=0:{dur:.4f}", str(tmp)]
     subprocess.run(cmd, check=True, capture_output=True)
     got = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
                           "stream=nb_read_frames", "-of", "csv=p=0", str(tmp)], capture_output=True, text=True,
@@ -124,7 +246,19 @@ def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
     return out
 
 
-def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backend: str = "ltx") -> list[dict]:
+def _level_trim(metrics: dict, finds: list[dict]) -> tuple[float, float | None]:
+    """HF-4: ``(trim in dB, true peak before)`` for a cut that has a CLIP-06 finding that is not PASS: 2 dB, or the excess over
+    BP-50's ceiling plus 1 dB when that is more; ``(0.0, None)`` for a cut that is under the ceiling."""
+    from explainer_engine.qa import targets
+    if not any(f.get("rule") == "CLIP-06" and (f.get("status") or f.get("severity")) != "PASS" for f in finds):
+        return 0.0, None
+    peak = (metrics.get("audio") or {}).get("true_peak")
+    if peak is None:
+        return 0.0, None
+    return -max(2.0, float(peak) - float(targets.PROFILES["long"]["true_peak_max"]) + 1.0), float(peak)
+
+
+def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backend: str = "ltx", words_fn=None) -> list[dict]:
     """Ingest one scene's clips. ``clips``: in cut order, ``[{shot_id, path, chain_from_frame?: {frame}}]`` (the worker's rows
     with the downloaded file). Writes the raw copy, the trimmed clip and the record of each; returns the records."""
     from explainer_engine.training import video_qa as VQ
@@ -152,14 +286,29 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         hand = (nxt or {}).get("chain_from_frame")
         handover_s = (int(hand["frame"]) / pr["fps"]) if hand and pr["fps"] else None
         is_cont = bool(c.get("chain_from_frame"))
-        spans = speech(raw) if pr["has_audio"] else []
+        from explainer_engine.qa import sound_realism as R
+        x = R.read_audio(raw) if pr["has_audio"] else np.zeros(0, np.float32)
+        spans = [(float(a), float(b)) for a, b in R.speech_spans(x)] if len(x) else []
+        if sid in spoken and pr["has_audio"]:    # TD-327: the words the detector missed (the detector alone dropped a line's start)
+            words_fn = words_fn or _local_words
+            lines = {l["line_id"]: l for l in script.get("audio_lines") or []}
+            text = " ".join(lines[i]["text"] for i in shot.get("audio_line_ids") or []
+                            if lines.get(i, {}).get("speaker_type") == "character")
+            heard = words_fn(raw)
+            words_source = "local whisper" if heard is not None else "unavailable (detector spans only)"
+            spans = speech_with_words(spans, heard, text, spoken=True, dur=pr["duration"], audio=x, rate=R.SR)
         planned = float(shot.get("target_duration_seconds") or 0.0)
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
-                          handover_s=handover_s, drop_first=is_cont, shot_id=sid)
+                          handover_s=handover_s, drop_first=is_cont, shot_id=sid,
+                          audio=x if len(x) else None, rate=R.SR)
         trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps)
         t_spans = [(round(max(0.0, a - pts["in_s"]), 3), round(min(pts["frames"] / fps, b - pts["in_s"]), 3))
                    for a, b in spans if b > pts["in_s"] and a < pts["out_s"]]
         metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
+        trim_db, peak_before = _level_trim(metrics, finds)
+        if trim_db:   # HF-4 (FL-401, FL-111, TD-305): CLIP-06 is judged on the trimmed cut; the model's clip stays as it is
+            trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps, gain_db=trim_db)
+            metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
         bad = [f for f in finds if f.get("status") == "FAIL" or f.get("severity") == "FAIL"]
         rec = {"schema": SCHEMA, "shot_id": sid, "route": "video", "backend": backend,
                "status": G.FAIL if bad else (G.REVIEW if any((f.get("status") or f.get("severity")) == "REVIEW"
@@ -170,6 +319,10 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "frames": pts["frames"], "speech_raw": spans, "speech": t_spans, "clip_spoken": sid in spoken,
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
                "findings": finds, "attempts": c.get("attempts") or []}
+        if sid in spoken and pr["has_audio"]:
+            rec["speech_words"] = words_source
+        if trim_db:
+            rec.update({"level_trim_db": trim_db, "true_peak_before": peak_before})
         write_json_atomic(vdir / f"{sid}.json", rec)
         out.append(rec)
     return out
@@ -193,7 +346,7 @@ def recut(root: Path, rec: dict, frames: int, fps: int) -> dict:
         raise ContractError(f"{rec['shot_id']}: the shot needs {frames / fps:.2f} s, the raw clip holds {have:.2f} s after "
                             "its in point: make the clip longer (VL-06), it is never stretched")
     out = root / rec["clip_path"]
-    cut(raw, out, float(rec["in_s"]), frames, fps)
+    cut(raw, out, float(rec["in_s"]), frames, fps, gain_db=float(rec.get("level_trim_db") or 0.0))
     new = dict(rec, frames=frames, out_s=round(float(rec["in_s"]) + frames / fps, 4), clip_sha256=_sha(out),
                recut_from=rec.get("frames"))
     write_json_atomic(root / "production" / "video" / f"{rec['shot_id']}.json", new)

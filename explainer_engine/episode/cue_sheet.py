@@ -260,6 +260,8 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
                              gain=LEVELS["ambience"] - BED_STEP_DB * k, fade_in=fi, fade_out=fo,
                              reverb="cave" if bed["room"] == "cave" else "dry", reason=f"bed of {bed['place']}: {why}",
                              confidence=CONFIDENCE["bed"], licence=_licence(items.get(iid)), loop=True, cls=cls))
+            if (items.get(iid) or {}).get("loop_window_s"):
+                rows[-1]["loop_window_s"] = [float(v) for v in items[iid]["loop_window_s"]]   # TD-339: the take's declared loop window
         rows.append(_row(f"TONE_{bed['bed_id']}", scene_id=None, shot_id=bed["shot_ids"][0],
                          asset_id=f"room_tone:{bed['room']}", start=a, end=b, layer="ambience", visual_event="room tone",
                          sync=None, gain=ROOM_TONE_DB, fade_in=fi, fade_out=fo,
@@ -288,12 +290,21 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
             item = items.get(iid)
             is_loop = kind == "ambience" or (item is not None and _kind(item) == "loop")
             lead = 0.0       # an event's take starts at its own onset (one-shots and the takes a span repeats alike)
+            pre = 0.0        # TD-330: a take whose library record carries a measured onset starts that much BEFORE its frame
+            declared = item.get("onset_s") if item is not None else None
             if kind != "ambience" and item is not None and (root / item["file"]).is_file():
-                lead = min(LEAD_MAX_S, take_onset_s(root / item["file"]) or 0.0)
+                if declared is not None:
+                    pre = min(float(declared), max(0.0, at))        # never before the film's start
+                    lead = float(declared) - pre                    # what cannot be placed earlier is skipped as before
+                else:
+                    lead = min(LEAD_MAX_S, take_onset_s(root / item["file"]) or 0.0)
             length = float(ev.get("dur_s") or 0.0) or (max(1.0, s0 + sd - at) if is_loop else
                                                        (_seconds(item, root) if item else 1.0))
             end = min(dur_ep, at + length, s0 + sd + (0.0 if is_loop else SPOT_TAIL_S))
-            if ev.get("sync") == "span" and not is_loop and item is not None and _seconds(item, root) - lead < end - at - 0.05:
+            if declared is not None and pre + lead > 0 and not is_loop:
+                # a shaped take (a riser) plays once from its own head to the file's end, never repeated under the span
+                end = min(end, at - pre + max(0.0, _seconds(item, root) - lead))
+            elif ev.get("sync") == "span" and not is_loop and item is not None and _seconds(item, root) - lead < end - at - 0.05:
                 is_loop = True    # a continuous action lasts its span: the take repeats under it (crossfaded seams)
             dist = ev.get("distance") or "medium"
             cue_id = f"EV_{s['shot_id']}_{ev['class']}_{n_ev}"
@@ -302,7 +313,7 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
             gain = base + (0.0 if kind == "ambience" else _jitter(cue_id + "g", GAIN_JITTER_DB))
             pan = float(ev.get("pan", 0.0 if kind == "ambience" else max(-0.3, min(0.3, ((n_ev % 5) - 2) * 0.15))))
             basis = ev["basis"].split(":")[-1] if ev["basis"].startswith("word") else ev["basis"]
-            rows.append(_row(cue_id, scene_id=s.get("segment_id"), shot_id=s["shot_id"], asset_id=iid, start=at, end=end,
+            rows.append(_row(cue_id, scene_id=s.get("segment_id"), shot_id=s["shot_id"], asset_id=iid, start=at - pre, end=end,
                              layer=layer, visual_event=ev.get("picture_event") or ev.get("what") or ev["class"],
                              sync=at, gain=gain, pan=pan,
                              fade_in=LOOP_FADE_S if kind == "ambience" else EVENT_FADE_S,   # an event starts on its frame
@@ -314,6 +325,8 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
                              confidence=CONFIDENCE.get(basis, CONFIDENCE.get(ev.get("audio_basis"), 0.7)),
                              licence=_licence(item), loop=is_loop, cls=ev["class"], distance=dist, offset=lead,
                              event=ev))
+            if declared is not None:
+                rows[-1]["take_onset_s"] = float(declared)     # the library record's measured onset (planned onset = start + this - offset)
             n_ev += 1
     # music: one row per run of the same mood, crossfades at each change
     runs = []
@@ -507,7 +520,8 @@ def sync_rows(rows: list[dict], plan: dict, onsets: dict | None) -> list[dict]:
         want = s["start_s"] + ev["at_frame"] / fps
         got = (onsets or {}).get(r["cue_id"])
         measured += got is not None
-        got = r["start_s"] if got is None else got
+        if got is None:
+            got = r["start_s"] + (float(r["take_onset_s"]) - float(r.get("asset_offset_s") or 0.0) if "take_onset_s" in r else 0.0)
         d = (got - want) * 1000.0
         if d < -SYNC_EARLY_MS or d > SYNC_LATE_MS:
             fail.append(f"{r['event_id']}:{d:+.0f}ms")

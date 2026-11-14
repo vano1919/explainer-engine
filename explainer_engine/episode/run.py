@@ -21,6 +21,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -129,6 +131,9 @@ def _stage_inputs(ep: Episode, stage: str) -> dict:
         files[TRANSCRIPT_REL] = _sha(ep.root / TRANSCRIPT_REL)
     if stage in ("sound_plan", "sound"):
         files["sound_library/manifest.json"] = _sha(ep.sound_library / "manifest.json")
+    if stage == "sound":   # HF-3 follow-up (TD-317): a changed narrator chain makes the stems stale
+        from explainer_engine.audio import narrator_polish as NP
+        files["narrator_polish_chain"] = hashlib.sha256(NP.CHAIN.encode("utf-8")).hexdigest()
     if stage == "clips":
         files[WAN_LEDGER_REL] = _sha(ep.root / WAN_LEDGER_REL)
     if stage == "voice":   # VL-07: the clip records of the clip-spoken shots time them (G7 re-cuts only the others)
@@ -701,6 +706,101 @@ def _records(ep: Episode) -> list[dict]:
     return json.loads(p.read_text(encoding="utf-8"))["shots"]
 
 
+SILENT_LUFS = -60.0
+POLISHED_REL = "audio/narration_polished.wav"   # HF-3: the read through the narrator chain (RC-004); the read itself is never written
+DELIVERED_MIX_REL = "audio/stems/mix_delivered.wav"   # HF-2: the mix at the delivered loudness (BP-50); G9 muxes this file
+
+
+def _polish_read(ep: Episode) -> tuple[Path | None, dict | None]:
+    """HF-3 (FL-402, RC-004, TD-303): the read through ``audio/narrator_polish.CHAIN`` into its own file. The read stays as
+    it is (its sha is pinned and is an input of G6); a chain that moves the length by more than 1/30 s is refused, because
+    the word timings were measured on the raw read. Returns ``(None, None)`` when there is no read."""
+    from explainer_engine.audio import narrator_polish as NP
+    read = ep.root / READ_REL
+    if not read.is_file():
+        return None, None
+    dst = ep.path(POLISHED_REL)
+    before = NP._seconds(read)
+    NP.polish(read, dst)
+    after = NP._seconds(dst)
+    if abs(after - before) > 1 / 30:
+        dst.unlink(missing_ok=True)
+        raise ContractError(f"narrator polish moved the length by {after - before:+.3f} s: the word timings would be wrong")
+    return dst, {"chain": NP.CHAIN, "seconds_before": round(before, 3), "seconds_after": round(after, 3),
+                 "read_sha256": _sha(read), "polished_sha256": _sha(dst)}
+
+
+def _loudness_rows(prefix: str, meas: dict, what: str) -> list[dict]:
+    """The BP-50 verdicts of a measurement as two gate rows (a REVIEW verdict stays a REVIEW row)."""
+    from explainer_engine.qa import targets as TG
+    v = TG.verdicts(meas, "long")
+    band, tp = TG.PROFILES["long"]["pass_band"], TG.PROFILES["long"]["true_peak_max"]
+    rows = []
+    for gate, key, ok_text in ((f"{prefix}_loudness", "loudness_verdict",
+                                f"{what}: {meas['lufs']:.2f} LUFS (BP-50 band {band[0]:g}..{band[1]:g})"),
+                               (f"{prefix}_true_peak", "true_peak_verdict",
+                                f"{what}: true peak {meas.get('true_peak')} dBTP (BP-50 ceiling {tp:g})")):
+        if key not in v:
+            rows.append(G.row(gate, None, f"{what}: not measured"))
+        else:
+            rows.append(G.row(gate, v[key] == "PASS", ok_text, meas["lufs"] if "loud" in gate else meas.get("true_peak"),
+                              level=G.REVIEW if v[key] == "REVIEW" else G.FAIL))
+    return rows
+
+
+def _deliver_mix(mix_raw: Path, delivered: Path, rehearsal: bool = False) -> tuple[list[dict], dict, dict]:
+    """HF-2 (FL-403, TD-302): the raw mix at the delivered loudness (``qa/targets.normalise_file``, BP-50) in its own file,
+    with the BP-50 verdict rows of the result. Returns ``(rows, raw measurement, delivered measurement)``; a silent mix is
+    copied as it is: in a rehearsal its rows are NOT_RUN, in a real run they FAIL (audit TD-317: nothing silent ships)."""
+    from explainer_engine.qa import targets as TG
+    try:
+        raw_meas = TG.measure_file(mix_raw)
+    except RuntimeError:
+        raw_meas = {}
+    if raw_meas.get("lufs", float("-inf")) <= SILENT_LUFS:   # ebur128 reports its -70 gate for silence
+        shutil.copyfile(mix_raw, delivered)
+        why = "the mix has no measurable loudness (silent)"
+        ok = None if rehearsal else False
+        return [G.row("delivered_mix_loudness", ok, why), G.row("delivered_mix_true_peak", ok, why)], raw_meas, raw_meas
+    meas = TG.normalise_file(mix_raw, delivered, "long", 48000, channels=2)
+    return _loudness_rows("delivered_mix", meas, "the delivered mix"), raw_meas, meas
+
+
+def _master_loudness_rows(master_mp4: Path) -> tuple[list[dict], dict]:
+    """HF-2: BP-50 on the master file itself (no gate measured it before); the measurement and its two rows."""
+    from explainer_engine.qa import targets as TG
+    meas = TG.measure_file(Path(master_mp4))
+    return _loudness_rows("master", meas, "the master file"), meas
+
+
+def _clip_speaker(script: dict, shot_id: str) -> str | None:
+    """The character whose line a clip-spoken shot carries (the first character line of the shot), for the per-man matches."""
+    lines = {l["line_id"]: l for l in script.get("audio_lines") or []}
+    for s in script.get("shots") or []:
+        if s.get("shot_id") == shot_id:
+            for i in s.get("audio_line_ids") or []:
+                if lines.get(i, {}).get("speaker_type") == "character":
+                    return lines[i].get("speaker_id")
+    return None
+
+
+def _pitch_shifts(ep: Episode, clip_audio: dict) -> dict:
+    """TD-320: measure each man's clips by two F0 estimators, write ``audio/voice_pitch_plan.json`` (every clip with its reason)
+    and return the shifts of the clips that pass every test (usually none: the clips carry effects and music)."""
+    from explainer_engine.videolane import voice as VV
+    speakers = {sid: c["speaker"] for sid, c in clip_audio.items() if c.get("speaker")}
+    if not speakers:
+        return {}
+    try:
+        measures = {sid: VV.f0_estimates(VV.read_mono(Path(clip_audio[sid]["path"])), clip_audio[sid].get("speech"))
+                    for sid in speakers}
+    except ImportError:
+        return {}
+    plan = VV.pitch_plan(measures, speakers)
+    write_json_atomic(ep.path("audio/voice_pitch_plan.json"), plan)
+    return {i: r["shift_st"] for i, r in plan["clips"].items() if r.get("shift_st")}
+
+
 def stage_sound(ep: Episode, rehearsal: bool):
     """G8: the sound plan again on the measured clock, then the one renderer (``audio/stems``) into the five stems. A full
     run renders shippable (no placeholder, no missing class, the real read); a rehearsal renders a preview."""
@@ -715,7 +815,8 @@ def stage_sound(ep: Episode, rehearsal: bool):
     SP.write(plan, sources, ep.root)
     read = ep.root / READ_REL
     stems_dir = ep.path("audio/stems")
-    narration = read if read.is_file() else None
+    polished, polish_info = _polish_read(ep)      # HF-3: every use of the read as sound below takes the polished file
+    narration = polished
     voice_rep = None
     if timing and timing.get("inserts"):   # VL-13: the LTX dialogue laid once on its shots, the read split around it
         from explainer_engine.videolane import ingest as VI
@@ -725,11 +826,13 @@ def stage_sound(ep: Episode, rehearsal: bool):
             rp = ep.root / "production" / "video" / f"{ins['shot_id']}.json"
             if rp.is_file():
                 d = json.loads(rp.read_text(encoding="utf-8"))
-                clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or []}
+                clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or [],
+                                              "speaker": _clip_speaker(script, ins["shot_id"])}
         missing = [i["shot_id"] for i in timing["inserts"] if i["shot_id"] not in clip_audio]
         if not missing:
+            shifts = _pitch_shifts(ep, clip_audio)     # TD-320: bounded, only on clips both estimators agree on
             voice_rep = VV.compose(timing, narration, clip_audio, ep.path("audio/voice_track.wav"),
-                                   read_speech=VI.speech(narration) if narration else None)
+                                   read_speech=VI.speech(narration) if narration else None, pitch_shifts=shifts)
             write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
             narration = ep.path("audio/voice_track.wav")
     # FA-13 / Q2: the narrated video shots' own clip sound, offered to the renderer (it lays it only when the switch is on)
@@ -749,6 +852,9 @@ def stage_sound(ep: Episode, rehearsal: bool):
     rows = [G.row("sound_is_shippable", bool(rep.get("shippable")) and not bad,
                   "every sound a real take and the real read" if not bad else f"not shippable: {', '.join(bad[:10])}", bad[:30])]
     rows += list((rep.get("levels") or {}).get("rows") or [])
+    if polish_info:
+        rows.append(G.row("narrator_polished", True, f"{POLISHED_REL}: {polish_info['seconds_before']} s -> "
+                          f"{polish_info['seconds_after']} s, the read untouched", polish_info))
     n_drop = int(stem_audit.get("mid_line_narration_dropouts", 0))
     rows.append(G.row("narration_has_no_dropouts", n_drop == 0 if read.is_file() else None,
                       f"{n_drop} mid-line dropout(s)" if read.is_file() else "no read to scan", n_drop))
@@ -767,9 +873,15 @@ def stage_sound(ep: Episode, rehearsal: bool):
     ev_doc = E.events_report(script, TM.spines_of(timing), ep.fps)
     rep_av = AVR.event_report(ev_doc, plan, sheet, rep)
     write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
+    delivered_rows, raw_meas, meas = _deliver_mix(stems_dir / "mix.wav", ep.path(DELIVERED_MIX_REL), rehearsal)   # HF-2
+    rows += delivered_rows
+    write_json_atomic(ep.path("qa/delivered_mix.json"), {"raw_mix": raw_meas, "delivered_mix": meas,
+                                                         "delivered_sha256": _sha(ep.path(DELIVERED_MIX_REL))})
     return rows, {"stems": "audio/stems", "report": "audio/stems_report.json", "narration": rep.get("narration_source"),
                   "mix_check": "qa/mix_check.json", "av_event_report": "qa/av_event_report.json",
-                  "voice_track": "audio/voice_track.json" if voice_rep else None}
+                  "voice_track": "audio/voice_track.json" if voice_rep else None,
+                  "narrator_polish": polish_info, "delivered_mix": DELIVERED_MIX_REL,
+                  "mix_raw_loudness": raw_meas, "mix_delivered_loudness": meas}
 
 
 def _with_line_times(script: dict, timing: dict | None) -> dict:
@@ -800,14 +912,14 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     from explainer_engine.production import assemble as ASM
     records = _records(ep)
     script = ep.timed_script()
-    plans = plan_episode_cinematic_transitions(script, fps=ep.fps, allow_decorative_wipes=False)
+    plans = plan_episode_cinematic_transitions(script, fps=ep.fps, allow_decorative_wipes=False, honour_authored=True)   # HF-1
     write_json_atomic(ep.path("editing/transition_plan.json"), plans)
     missing = [r["shot_id"] for r in records if not r.get("clip_path")]
     if missing:
         return [G.row("every_clip_to_assemble", False, f"{len(missing)} shot(s) without a clip", missing[:30])], {}
-    mix = ep.path("audio/stems/mix.wav")
+    mix = ep.path(DELIVERED_MIX_REL)   # HF-2: the delivered mix, never the raw one
     if not mix.is_file():
-        return [G.row("the_mix_exists", False, "no audio/stems/mix.wav: run the sound stage (G8)")], {}
+        return [G.row("the_delivered_mix_exists", False, f"no {DELIVERED_MIX_REL}: run the sound stage (G8) again")], {}
     master = ep.path(f"renders/final/{ep.manifest['episode_id']}_master.mp4")
     res = ASM.assemble_shot_clips(records, plans, mix, master, fps=ep.fps, size=ep.size, only=ep.chunks,
                                   chunk_seconds=ep.chunk_seconds if ep.chunk_seconds is not None else ASM.CHUNK_SECONDS)
@@ -883,6 +995,10 @@ def stage_qa(ep: Episode, rehearsal: bool):
         rep_av = AVR.event_report(E.events_report(script, TM.spines_of(ep.timing()), ep.fps), plan, sheet_doc, audio, realism)
         write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
         write_text_atomic(ep.path("qa/av_event_report.md"), AVR.markdown(rep_av))
+    if video:   # HF-2: nothing measured the delivered file's loudness before; BP-50 on the master itself
+        master_rows, master_meas = _master_loudness_rows(Path(video["master_mp4_path"]))
+        write_json_atomic(ep.path("qa/master_loudness.json"), master_meas)
+        realism_rows = realism_rows + master_rows
     acc = dict(acc, gates=list(acc["gates"]) + realism_rows)
     if realism_rows:
         acc["status"] = G.verdict(acc["gates"])["status"]
@@ -943,14 +1059,17 @@ def main(argv=None) -> int:
     r.add_argument("--fps", type=int)
     r.add_argument("--chunks", type=_chunks, help="A:B, draw only those assembly chunks (RULE-R1)")
     r.add_argument("--chunk-seconds", type=float)
+    r.add_argument("--sound-library", type=Path, help="HF-7: the sound library folder (a manifest.json and its categories); "
+                   "default assets/audio/library. Its manifest is in the fingerprint of G4 and G8, so give it to every call")
     s = sub.add_parser("status", help="the stages and their records")
     s.add_argument("episode", type=Path)
+    s.add_argument("--sound-library", type=Path, help="the same folder the runs used (HF-7)")
     a = ap.parse_args(argv)
     if a.cmd == "status":
-        _print_state(Episode(a.episode))
+        _print_state(Episode(a.episode, sound_library=a.sound_library))
         return 0
     ep = Episode(a.episode, size=a.size, fps=a.fps, rehearsal=a.rehearsal, force=a.force, chunks=a.chunks,
-                 chunk_seconds=a.chunk_seconds)
+                 chunk_seconds=a.chunk_seconds, sound_library=a.sound_library)
     try:
         recs = [run_stage(ep, a.stage)] if a.stage else run_to(ep, a.to)
     except StageRefused as exc:
