@@ -7537,7 +7537,7 @@
    "area": "stills",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "A photo shot is alive, measured on its frames (the owner, 2026-11-14: the P1 round 2 clips stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day): the frame changes at least change_floor_pct_s per second by the 2026-11-12 reference method (128x72 grey, frames one second apart, mean absolute difference; the Gemini demo's photo shots measured reference_pct_s); no frozen_window_s window changes less than frozen_change_pct of the frame (a pixel counts above 12 grey levels), so the camera may stand but the world may not; and with the camera taken out (each pair aligned by its similarity transform) the frame still changes local_floor_pct_s per second (calibrated on the six P1 round 2 C3 clips the owner called static: 0.06-1.44 %/s, S01 2.3 %/s mostly crane parallax, which this measure cannot tell from living motion, so the living inventory of BP-196 stays the main guard). The numbers are one measurement (the reference demo) and engineering defaults until the owner sets them or two source types back them.",
+   "statement": "A photo shot is alive, measured on its frames (the owner, 2026-11-14: the P1 round 2 clips stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day): the frame changes at least change_floor_pct_s per second by the 2026-11-12 reference method (128x72 grey, frames one second apart, mean absolute difference; the Gemini demo's photo shots measured reference_pct_s); no frozen_window_s window changes less than frozen_change_pct of the frame (a pixel counts above 12 grey levels; Fable's living-photo rules G-LIVE-1 of 2026-11-14 measured the deadest second of the four clips the owner rejected at 0.4-1.2 % and of the two moving ones at 39-49 %, and raised the audit's 2 % to 5 % so S05_SH020's still part is caught), so the camera may stand but the world may not; and with the camera taken out (each pair aligned by its similarity transform) the frame still changes local_floor_pct_s per second (calibrated on the six P1 round 2 C3 clips the owner called static: 0.06-1.44 %/s, S01 2.3 %/s mostly crane parallax, which this measure cannot tell from living motion, so the living inventory of BP-196 stays the main guard). The numbers are one measurement (the reference demo) and engineering defaults until the owner sets them or two source types back them.",
    "thresholds": {
     "change_floor_pct_s": 3.6,
     "reference_pct_s": [
@@ -7545,7 +7545,7 @@
      12.2
     ],
     "frozen_window_s": 1.0,
-    "frozen_change_pct": 2.0,
+    "frozen_change_pct": 5.0,
     "local_floor_pct_s": 2.0
    },
    "sources": [],
@@ -7604,6 +7604,25 @@
    "enforced_by": [
     "explainer_engine/qa/liveliness.py:camera_rows",
     "explainer_engine/production/direction.py:check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-198",
+   "area": "pictures",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A model upscale is accepted only when it measurably helps (upscale direction II.5, Fable's free test of 2026-11-14 against Gemini's own 2K pictures): Q1 the result shrunk back to the input keeps consistency_psnr_min_db (good models 33.6-48 dB, the colour-shifting ArtFaces model 23-24); Q2 no channel mean moves more than colour_shift_max of 255; Q3 the Laplacian variance is at least detail_gain_min times a plain resize's; Q4 at most oversharp_max times the anchor photo's (Lexica Sharp 4.5x looked artificial); Q5 the LPIPS distance to a plain resize stays under lpips_vs_plain_max (the chosen model 0.10-0.125, DeH264+Lexica 0.17-0.24); Q7 the core rows pass and, with an anchor photo, the result is nearer it than a plain resize. Otherwise the fallback model is tried, then the picture as it is goes to the reviewer. One measurement on three pictures: hypotheses until the owner or two source types set them.",
+   "thresholds": {
+    "consistency_psnr_min_db": 32.0,
+    "colour_shift_max": 2.0,
+    "detail_gain_min": 2.0,
+    "oversharp_max": 2.0,
+    "lpips_vs_plain_max": 0.15
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/finish/superres.py:qc"
    ],
    "supersedes": []
   }

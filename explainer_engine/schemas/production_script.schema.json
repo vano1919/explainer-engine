@@ -1811,6 +1811,23 @@
               },
               "description": "continuation: how the start frame is taken from the clip before (our self-hosted LTX has no extend, so the next clip is generated from this frame)"
             },
+            "state_changed_since_anchor": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "did anything in the frame change since the anchor photo (upscale direction II.3, finish/superres.decide): false lets a crop or a still come from the 2K anchor photo instead of the softer clip frame; null = unknown, treated as changed"
+            },
+            "next_use": {
+              "enum": [
+                "ltx_same",
+                "ltx_crop",
+                "still",
+                "none",
+                null
+              ],
+              "description": "what this shot's hand-over frame feeds (upscale direction II.3): the next LTX clip at the same framing, a punch-in, a still (2.5D, freeze, Short, thumbnail) or nothing"
+            },
             "reuse_of": {
               "type": [
                 "object",

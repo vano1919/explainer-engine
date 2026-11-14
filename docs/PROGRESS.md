@@ -6353,3 +6353,28 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   tested on synthetic frames, not yet calibrated on the real clip. Tests: 67 passed in the touched suites. $0.
 - Stale text found (ICW-01): roadmap 2026-11-14 B.10/J12 ("quality is not measured by the amount of motion") and K.2 (two
   shots still by design) conflict with the owner's 2026-11-14 rule; left in place, superseded by BP-194..197.
+
+## 2026-11-14 — Upscale integration II: `finish/superres.py` (free CPU model upscale, GC-14 promote, U-1..U-8, Q1..Q7)
+- Why: the owner (via Fable's upscale direction `architecture_2026-11-14/UPSCALE_DIRECTION_AND_HANDOFF_2026-11-14.md`, part II)
+  asked for the upscale to be integrated as fast as possible. `finish/upscale.py` only resizes (18-25 % of the detail kept);
+  `turn_pack.promote` needed an `EE_UPSCALER` binary of the class that lost the test, so GC-14 was NOT_RUN in the cloud.
+- New: `finish/superres.py`. RealPLKSR `4xNomos2_realplksr_dysample` -> QC -> SPAN `2xNomosUni_span_multijpg` -> QC -> the
+  picture as it is for the reviewer. Weights fetched at a pinned revision + sha256 into `$EXPLAINER_MODELS_DIR`
+  (the repo's convention, not the handoff's `$EXPLAINER_MODEL_CACHE`); never in git (PROVENANCE rows, CC BY 4.0). Also:
+  - a tiled run with a reflected border;
+  - `to_size` (only ever shrinks);
+  - `colour_fix`, the model card's wavelet fix. Measured on the rifle frame: the mean colour shift was 4.1/255 (RealPLKSR) and
+    5.1/255 (SPAN) without it, 0.12 with it;
+  - `qc` Q1..Q7 (new BP-198, hypothesis REVIEW);
+  - `decide` U-1..U-8 and `plan`;
+  - a cache keyed by picture sha256 + model + revision + crop + size + colour fix;
+  - a CLI: `fetch`, `plan`, `run`, `qc`.
+- `turn_pack.find_upscaler` uses it when torch, spandrel and the weights are present; otherwise it stays NOT_RUN.
+  `production_script.schema.json` `edit_plan` gains two optional fields, `state_changed_since_anchor` and `next_use`
+  (old scripts stay valid).
+- Measured (production path, CPU, $0): rifle frame S07_SH007 f084, 1280x704 -> 2560x1408, RealPLKSR 99 s, QC all PASS
+  (Q1 39.5 dB, Q2 0.12, Q3 x8.33, Q5 LPIPS 0.118). Sheet and result on HF `explainer-engine/upscale_integration_2026-11-14/`.
+- Part III (paid LTX test) reviewed in `upscale_research/PART_III_REVIEW_2026-11-14.md`: no worker change needed. Before the
+  card, four things must change: the start frames' sha256 do not match `start_frames.json`; TR/TC must be rebuilt with the repo
+  module; CH-03 needs a committed scene file; CH-07 needs a `paid_offer/1` file. Nothing paid was started.
+- Tests: `test_superres.py` (17), promote test pinned to `available() == False`; 110 passed in the touched suites. $0.

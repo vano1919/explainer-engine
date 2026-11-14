@@ -137,6 +137,8 @@ def test_promote_is_not_run_without_an_upscaler_and_gates_the_master(tmp_path, m
     _pic(tmp_path / "drop" / "sena.png", seed=2)
     T.intake(root, tmp_path / "drop")
     monkeypatch.delenv(T.UPSCALER_ENV, raising=False)
+    from explainer_engine.finish import superres
+    monkeypatch.setattr(superres, "available", lambda *a: False)
     assert set(T.promote(root)["not_run"]) == {"kael", "sena"}
 
     def double(src, dst):
