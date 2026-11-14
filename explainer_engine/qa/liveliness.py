@@ -102,6 +102,19 @@ def _similarity(a: np.ndarray, b: np.ndarray):
     return M
 
 
+def motion_between(a: np.ndarray, b: np.ndarray) -> dict | None:
+    """Zoom (%) and pan (% of the width) of frame ``b`` against frame ``a``, measured directly (not chained): a slow move
+    lost step by step in ``camera_curve`` is whole here (camera_segments)."""
+    size = (960, 540)
+    M = _similarity(_grey(a, size).astype(np.uint8), _grey(b, size).astype(np.uint8))
+    if M is None:
+        return None
+    w, h = size
+    c = np.vstack([M, [0, 0, 1]]) @ np.array([w / 2, h / 2, 1.0])
+    return {"zoom_pct": round((float(math.hypot(M[0, 0], M[0, 1])) - 1) * 100, 2),
+            "pan_x_pct": round(float((c[0] - w / 2) / w * 100), 2), "pan_y_pct": round(float((c[1] - h / 2) / w * 100), 2)}
+
+
 def local_change_per_s(frames: list[np.ndarray], fps: float) -> dict:
     """``change_per_s`` after the camera is taken out: frame i is warped onto frame i + 1 s by their similarity transform
     and the difference is measured inside the area both frames show. What remains is what moves in the world."""

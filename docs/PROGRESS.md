@@ -6537,3 +6537,47 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Reel, table, verdict and the P2 handoff: project files
   `stage_b_round2_2026-11-14/P1_RESULTS_AND_P2_HANDOFF_2026-11-14.md`, and HF
   `stage_b_round2_2026-11-14/c4a_director_choice/`. $0. P1 stops for the owner's verdict.
+
+## 2026-11-14 — C5: the eye review's fixes, the root causes and five gates that now see them (the owner, 13:29 and 13:39 UTC)
+
+The Sonnet eye review of C4A (`stage_b_round2_2026-11-14/c4a_review/REVIEW_C4A_BY_EYE_ka.md`) found four defects that no
+gate saw. The owner asked for the cause in the code and for gates that catch them next time. Root causes (incident journal,
+13:45 UTC):
+
+- **Scalloped seam round layered people** (S02, S05_SH016, S06, S08, frame 0): `directed25d._rest_background` cut every
+  piece an opening removed from a mask as a "thin stroke", each grown by a 21 px disc. Rough outlines (hair, coat, card rim)
+  gave 100-185 nubs per mask, so the plate showed round every bite. Fix: `Stage._strokes` keeps only real strokes (long
+  side >= `STROKE_LEN` disc widths, mean width < the disc). Gate `rest_seam` (FAIL, an invariant: frame 0 is the picture)
+  counts plate pixels inside the outline SAM cut per outline pixel. C4A renderer 0.68-1.28, fixed renderer 0.00-0.04,
+  FAIL above 0.15.
+- **People and objects cut by the frame**: `view()` only kept the view inside the picture. Fix: the safe zone.
+  `living_director.keep_in_frame` writes every live face (the person whole, or head and chest when the picture already cuts
+  them) and, as soft entries, the lights the chosen effects animate. `direction.resolve` passes it to the plan.
+  `Stage._frame_people` caps the zoom, moves the centre, never past the picture's edge, and drops the soft items first.
+  Gate `people_in_frame` (FAIL above 1 %).
+- **S05_SH020's truck came out as a centred zoom**: `living_director._centre` ignored a crowd's `parts`, so both groups sat
+  at [0.5, 0.5]. The renderer also kept the first push's recentre, so the truck had no room. Fixes: `parts` are read,
+  `TRUCK_STRENGTH` is 2.0, a truck recentres too, and a later aim hands over from the earlier one. An early named word
+  (< `ACCENT_LEAD_S`) is carried by the base move (S05_SH016's 8.7 % jump in 1.2 s). The base rate drops to BP-21's minimum
+  before an accent. Gates: `aim_on_target` (FAIL: an aimed move points inside its object) and `camera_segments` (FAIL: each
+  move in its own frames, measured directly by `liveliness.motion_between`, because the chained `camera_curve` lost half
+  of a slow zoom).
+- **Effects unnoticed in 3 s**. Causes:
+  - the shaft gain was 0.40 and did not grow;
+  - mist was 0.10 + 0.22 n;
+  - cloud drift was 0.012 W over the whole shot (2 px/s on S02);
+  - the noise tiles scrolled in whole tile pixels (7 px steps);
+  - stars were 0.9 and snow 260.
+
+  Fixes:
+  - `living_fx.swell` takes the sun glint and shafts from 0.35 to 1 in 2.5 s, with a wide bloom and a +-8 % sky pulse;
+  - the shafts are x2.5 and sway +-6 degrees;
+  - mist moves as two banks at 40 and 65 px/s, scrolled sub-pixel (`_tile_smooth`);
+  - a cloud-light sweep runs at ~30 px/s;
+  - snow is 420 with bigger near flakes, stars x2.4, candle x1.3.
+
+  Gate `effect_seen_3s` (REVIEW, an engineering default under D-59): each effect's own contribution must change by
+  >= 10 levels (95th percentile) within 3 s.
+
+All new numbers are engineering defaults, marked in the code. Tests: `tests/unit/test_c4a_review_fixes.py` (8). Each gate
+catches the old defect on a synthetic picture, and each fix passes it.

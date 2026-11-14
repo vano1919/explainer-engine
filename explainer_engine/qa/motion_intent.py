@@ -41,6 +41,14 @@ INVENT_MIN_PIXELS = 400            # at the analysis size: below it the revealed
 STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # below both the camera is dead (|scale - 1|, shift % of width, first to last)
 # still_by_design (the owner, 2026-11-14 12:37 UTC: the camera never fully stops; a slow drift or breathing stays, only a
 # deliberate move is wrong): a push or pull at BP-21's slowest deliberate rate or faster, or a pan over DRIFT_SHIFT_PCT_S
+# Gates added after the eye review of C4A (2026-11-14): each defect it found had no gate that could see it.
+SEAM_FAIL = 0.15                # rest_seam: plate pixels inside a layer's outline per outline pixel (C4A scallops 0.68-1.28,
+                                # fixed renderer 0.00-0.04); frame 0 must be the picture (an invariant, so FAIL)
+PEOPLE_CUT_FAIL = 0.01          # people_in_frame: worst share of a kept person outside the frame (the owner, 13:29 UTC)
+SEEN_REVIEW = 10.0              # effect_seen_3s: the 95th percentile change of an effect's own light (levels) within 3 s
+                                # (engineering default, D-59 hypothesis: REVIEW)
+SEGMENT_SHIFT = 1.0             # camera_segments: a truck/crane moves the picture at least this % of the width its way
+SEGMENT_SHARE = 0.5             # ... a push/pull shows at least this share of the zoom the camera actually made
 DRIFT_SHIFT_PCT_S = 0.25        # engineering default: a drift moves the picture at most this share of the width per second
 PERCEPTIBLE_SCALE, PERCEPTIBLE_SHIFT = 0.03, 1.0   # an intended move is visible at this scale change or shift (%)
 
@@ -429,3 +437,87 @@ class Watch:
         rest = fill_at_rest(self.fills[0].astype(np.float32), out_height) if self.fills else None
         return {"reveal": rv, "double_edge": self.ghost, "global_motion_first_to_last": gm, "fill_at_rest": rest,
                 "fill_invents": self.invent}
+
+
+# --- the gates the C4A eye review asked for (2026-11-14) -------------------------------------------------------------------
+
+def rest_seam_row(r: dict | None) -> dict:
+    if not r or not r.get("outline"):
+        return G.row("rest_seam", None, "no layered object: nothing to compare at rest")
+    return G.row("rest_seam", r["per_outline_px"] <= SEAM_FAIL, f"frame 0 shows plate inside layer outlines: "
+                 f"{r['per_outline_px']:.3f} px per outline px (frame 0 must be the picture; FAIL above {SEAM_FAIL})", r)
+
+
+def people_in_frame_row(r: dict | None) -> dict:
+    if not r or not r.get("kept"):
+        return G.row("people_in_frame", None, "no live person to keep in the frame")
+    return G.row("people_in_frame", r["share"] <= PEOPLE_CUT_FAIL, f"worst {r['share'] * 100:.1f} % of a person outside the "
+                 f"frame ({r.get('what')}, frame {r.get('frame')}; FAIL above {PEOPLE_CUT_FAIL * 100:g} %)", r)
+
+
+def aim_row(rows: list[dict] | None) -> dict:
+    if not rows:
+        return G.row("aim_on_target", None, "no camera move aimed at a named object")
+    bad = [r for r in rows if not r["inside"]]
+    return G.row("aim_on_target", not bad, "every aimed move points inside its object" if not bad else
+                 "; ".join(f"{r['op']} at {r['mask']} aims at {r['point']}, outside its box {r['box']}" for r in bad), rows)
+
+
+def effects_seen_row(rows: list[dict] | None) -> dict:
+    if not rows:
+        return G.row("effect_seen_3s", None, "no effect in the shot")
+    weak = [r for r in rows if r["change_p95"] < SEEN_REVIEW]
+    return G.row("effect_seen_3s", not weak, ("every effect changes visibly within 3 s" if not weak else
+                 "unseen in 3 s: " + ", ".join(f"{r['op']} ({r['change_p95']:.1f} levels)" for r in weak))
+                 + f" (REVIEW below {SEEN_REVIEW:g} levels)", rows, level=G.REVIEW)
+
+
+def segment_rows(cameras: list[dict], curve: list[dict], fps: float, views: list[dict] | None = None,
+                 frames: list | None = None) -> list[dict]:
+    """Each planned camera move, in its own frames, against the measured picture motion (``liveliness.camera_curve``):
+    a truck/crane moves the picture its way, a push/pull shows the zoom the camera really made (``views``, after the safe
+    zone). A first-to-last check could not see a truck that came out as a zoom (S05_SH020 C4A)."""
+    if not curve or not cameras:
+        return [G.row("camera_segments", None, "no planned move or no measured motion")]
+
+    def at(f):
+        t = f / fps
+        return min(curve, key=lambda c: abs(c["t"] - t))
+    out, bad = [], []
+    for seg in cameras:
+        op = seg["op"]
+        if op not in ("push", "pull", "truck", "crane"):
+            continue
+        direct = None
+        if frames:                                      # measured between the segment's own two frames, not chained
+            from explainer_engine.qa import liveliness as LV
+            direct = LV.motion_between(frames[min(seg["from"], len(frames) - 1)], frames[min(seg["to"], len(frames) - 1)])
+        if direct is not None:
+            dz, dx, dy = direct["zoom_pct"], direct["pan_x_pct"], direct["pan_y_pct"]
+        else:
+            a, b = at(seg["from"]), at(min(seg["to"], int(round(curve[-1]["t"] * fps))))
+            dz, dx, dy = b["zoom_pct"] - a["zoom_pct"], b["pan_x_pct"] - a["pan_x_pct"], b["pan_y_pct"] - a["pan_y_pct"]
+        rec = {"op": op, "from": seg["from"], "to": seg["to"], "zoom_pct": round(dz, 2), "pan_x_pct": round(dx, 2),
+               "pan_y_pct": round(dy, 2)}
+        if op in ("truck", "crane"):
+            sign = {"right": -1, "left": 1}.get(seg.get("direction"), -1) if op == "truck" else \
+                {"up": 1, "down": -1}.get(seg.get("direction"), 1)
+            v = dx if op == "truck" else dy
+            rec["ok"] = sign * v >= SEGMENT_SHIFT
+            rec["why"] = f"{op} {seg.get('direction')}: picture moved {v:+.2f} % (needs {SEGMENT_SHIFT} % its way)"
+        else:
+            made = None
+            if views:
+                s0, s1 = views[min(seg["from"], len(views) - 1)]["s"], views[min(seg["to"], len(views) - 1)]["s"]
+                made = (s1 / s0 - 1) * 100
+            sign = 1 if op == "push" else -1
+            need = SEGMENT_SHARE * abs(made) if made is not None else PERCEPTIBLE_SCALE * 100 / 2
+            rec["ok"] = sign * dz >= need - 1e-6
+            rec["why"] = (f"{op}: picture zoomed {dz:+.2f} % (camera made {made:+.2f} %, needs {SEGMENT_SHARE:g} of it)"
+                          if made is not None else f"{op}: picture zoomed {dz:+.2f} % (needs {need:.1f} %)")
+        out.append(rec)
+        if not rec["ok"]:
+            bad.append(rec["why"])
+    if not out:
+        return [G.row("camera_segments", None, "no push, pull, truck or crane planned")]
+    return [G.row("camera_segments", not bad, "every planned move happened its way" if not bad else "; ".join(bad), out)]

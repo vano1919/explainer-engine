@@ -409,6 +409,8 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
             "far_share": float(d.get("far_share", 0.2)), "intent": d.get("intent")}
     if d.get("layers") is not None:
         plan["layers"] = list(d["layers"])
+    if d.get("keep_in_frame"):
+        plan["keep_in_frame"] = [dict(k) for k in d["keep_in_frame"]]   # the safe zone: the people the camera never cuts
     for t in tracks:
         if t.get("track") == "audio" or t.get("renderer") not in (None, "directed25d"):
             continue

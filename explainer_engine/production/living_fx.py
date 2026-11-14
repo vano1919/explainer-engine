@@ -22,6 +22,22 @@ OPS = ("snow", "rain", "embers", "dust", "spindrift", "sun_glint", "glint", "sta
        "foliage_sway", "cloth_flap", "wire_sway", "water_shimmer")
 PARTICLE_LAYERS = (0.25, 0.6, 0.92)     # nearness of the three particle layers (1 = at the lens)
 WIND_DEFAULT = (0.02, 0.0)              # shares of the width per second: a light breeze to the right
+# The sun must be SEEN to change inside the first seconds (the owner, 2026-11-14 13:29 UTC: "if the sun ray does not brighten
+# intensely within 3 s nobody notices"; eye review of C4A: sun shafts, mist, clouds and stars unnoticed in 3 s). Engineering
+# defaults, REVIEW by eye (D-59: no sourced number yet).
+SWELL_S = 2.5          # a light effect (sun glint, sun shaft) swells from SWELL_FROM to full within this many seconds
+SWELL_FROM = 0.35
+SKY_PULSE = 0.08       # the sky round the sun breathes +-8 % ...
+SKY_PULSE_S = 2.5      # ... with this period
+BLOOM_R = 0.30         # the sun's wide warm bloom, share of the width (the "light comes out" lift)
+BLOOM_GAIN = 0.30
+SNOW_BASE = 420        # flakes per layer pair at density 1 (was 260: "thin" in the eye review)
+STAR_GAIN = 2.2        # star twinkle brightness (was 0.9: unnoticed)
+
+
+def swell(t: float) -> float:
+    """0 s -> ``SWELL_FROM``, ``SWELL_S`` -> 1, smooth: the light comes out early enough to be seen in a 3 s shot."""
+    return SWELL_FROM + (1 - SWELL_FROM) * float(L.smooth(min(1.0, max(0.0, t / SWELL_S))))
 
 
 def _rng(st, key: str):
@@ -74,7 +90,7 @@ def _particles(st, rgb, depth, e, t, v, op):
     prm = e.get("params", {})
     wx, wy = wind(st)
     wx *= float(prm.get("wind_gain", 1.0))
-    base = {"snow": 260, "rain": 420, "embers": 70, "dust": 110, "spindrift": 180}[op]
+    base = {"snow": SNOW_BASE, "rain": 420, "embers": 70, "dust": 110, "spindrift": 180}[op]
     lit = rgb.mean(axis=2) / 255.0 if op == "dust" else None
     box = e.get("box")
     src = _source(st, e, v) if op == "embers" else None
@@ -90,7 +106,7 @@ def _particles(st, rgb, depth, e, t, v, op):
         speed = 0.35 + 0.65 * z
         if op == "snow":
             x = px + (wx * speed) * t + 0.012 * np.sin(wob * 1.3 * t + ph)
-            y = py + (0.045 + 0.06 * z) * t * (1 + 0.2 * np.sin(ph))
+            y = py + (0.045 + 0.09 * z) * t * (1 + 0.2 * np.sin(ph))
         elif op == "rain":
             x = px + (0.10 + wx) * speed * t
             y = py + 1.4 * speed * t
@@ -117,7 +133,7 @@ def _particles(st, rgb, depth, e, t, v, op):
         inv = cv2.invertAffineTransform(m)
         q = inv @ np.vstack([x * st.sw, y * st.sh, np.ones_like(x)])
         alpha = np.zeros((H, W), np.float32)
-        rad = {"snow": 1.2 + 3.2 * z, "rain": 1.0, "embers": 1.0 + 1.8 * z, "dust": 0.9 + 0.8 * z,
+        rad = {"snow": 1.2 + 4.6 * z, "rain": 1.0, "embers": 1.0 + 1.8 * z, "dust": 0.9 + 0.8 * z,
                "spindrift": 0.8 + 1.6 * z}[op] * k * (1.0 / max(0.5, st.cover_k(v, z)))
         for j in range(n):
             qx, qy = int(q[0, j]), int(q[1, j])
@@ -173,6 +189,9 @@ def _sun_glint(st, rgb, depth, e, t, v):
     ang = np.arctan2(yy - sy, xx - sx)
     spikes = (np.cos(6 * ang + 0.3 * t) ** 8) * np.exp(-(r / 0.07) ** 2) * 0.4 * (0.6 + 0.4 * pulse)
     glow = disc * pulse + streak * (0.6 + 0.4 * pulse) + spikes
+    sky = 1 + SKY_PULSE * math.sin(2 * math.pi * t / SKY_PULSE_S + ph)
+    glow = glow + BLOOM_GAIN * sky * np.exp(-(r / BLOOM_R) ** 2)
+    glow = glow * swell(t)
     cx, cy = W / 2, H / 2
     for g, (frac, size, a) in enumerate(((0.55, 0.018, 0.16), (1.35, 0.03, 0.10))):
         gx, gy = sx + (cx - sx) * frac, sy + (cy - sy) * frac
@@ -180,7 +199,7 @@ def _sun_glint(st, rgb, depth, e, t, v):
     glow = cv2.resize(glow.astype(np.float32), (W, H), interpolation=cv2.INTER_LINEAR)
     front = np.clip((depth - 0.35) / 0.2, 0, 1)                # a post or a man in front blocks the disc
     glow = glow * (1 - 0.85 * front * (cv2.resize(disc.astype(np.float32), (W, H)) > 0.05))
-    return rgb + np.array([255, 236, 196], np.float32) * (0.45 * s * glow)[..., None]
+    return rgb + np.array([255, 236, 196], np.float32) * (0.6 * s * glow)[..., None]
 
 
 def _points(st, key, region, n, pick):
@@ -239,14 +258,17 @@ def _sparkle(st, rgb, depth, e, t, v, mx, my, layers, op):
         ox, oy = int(ox), int(oy)
         if not (0 <= ox < W and 0 <= oy < H) or depth[oy, ox] > d + 0.06:
             continue
-        rr = (2.0 if op == "stars" else 5.0 + 5.0 * a) * k
+        rr = (4.0 + 4.0 * a if op == "stars" else 5.0 + 5.0 * a) * k
         cv2.circle(layer, (ox, oy), max(1, int(round(1.4 * k))), float(a), -1, cv2.LINE_AA)
         if op != "stars":
             cv2.line(layer, (int(ox - rr), oy), (int(ox + rr), oy), float(0.7 * a), 1, cv2.LINE_AA)
             cv2.line(layer, (ox, int(oy - rr)), (ox, int(oy + rr)), float(0.7 * a), 1, cv2.LINE_AA)
+        elif a > 0.5:                                    # a bright star flashes its cross
+            cv2.line(layer, (int(ox - rr), oy), (int(ox + rr), oy), float(0.5 * a), 1, cv2.LINE_AA)
+            cv2.line(layer, (ox, int(oy - rr)), (ox, int(oy + rr)), float(0.5 * a), 1, cv2.LINE_AA)
     layer = layer + cv2.GaussianBlur(layer, (0, 0), 2.5 * k) * 1.2
     col = np.array([255, 252, 240] if op != "stars" else [235, 240, 255], np.float32)
-    return rgb + col * np.clip(layer * (0.9 * s), 0, 1.5)[..., None]
+    return rgb + col * np.clip(layer * ((STAR_GAIN if op == "stars" else 0.9) * s), 0, 1.8)[..., None]
 
 
 def _light_fade(st, rgb, t):

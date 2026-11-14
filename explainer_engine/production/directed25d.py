@@ -42,15 +42,31 @@ DEPTH_PUSH = L.DEPTH_PUSH
 NEAR_TRAVEL = L.NEAR_TRAVEL        # near content travel of a truck/crane at strength 1, share of the width
 RECENTRE = 0.85                    # a targeted push moves the view this share of the way to its target (inside the margin)
 MARGIN = 0.004                     # never sample closer than this share of the width to the picture's edge
+AIM_SLACK = 0.02                   # an aim point may sit this share outside its object's box
+SAFE_MARGIN = 0.02                 # people (and the lights the shot animates) stay this share of the width inside the frame
+EDGE_TOUCH = 0.01                  # a person whose mask comes this close to the picture's edge is already cut by the picture
+HEAD_UP, CHEST_DOWN = 0.4, 1.5     # a cut person keeps from this many face heights above the face to this many below it
 UNFOLD_PX = 0.5                    # the background warp may shift neighbours apart by at most this share of a pixel
 UNFOLD_ITERS = 60
 BG_SMOOTH = 0.006                  # the background's warp depth is the real depth blurred by this share of the width
 HAND_TR, HAND_ROT = L.HAND_TR, L.HAND_ROT
+SHAFT_GAIN = 1.0                   # sun shaft brightness (was 0.40: unnoticed in 3 s, eye review of C4A x2.5)
+SHAFT_SWAY_DEG, SHAFT_SWAY_S = 6.0, 3.0   # the shafts sway +-6 degrees over 3 s
+MIST_DRIFT = (0.021, 0.034)        # two mist banks, shares of the width per second (>= 40 px/s at 1920)
+MIST_VAR = (0.36, 0.22)            # how much each bank thickens and thins (was one bank of 0.22)
+CLOUD_SWEEP = 0.016                # cloud light sweeping over the sky, share of the width per second (~30 px/s)
+CLOUD_SHADE = 0.10                 # ... +-10 % of the sky's brightness
+CLOUD_TRAVEL_MAX = 0.04            # the sky itself slides at most this share of the width (a remap pulls from its row)
 RACK_SIGMA_PX = 7.0                # rack focus: blur (px at 1080p) of a surface ``RACK_SPAN`` of disparity away from focus
 RACK_SPAN = 0.25
 REST_GROW_PX = 3.0                 # the plate shows this far (px at 1080p) round a layered object's half-alpha edge
 THIN_FILL_PX = 16.0                # a stroke narrower than this (px at 1080p) is never layered: it stays in the background
 FLAT_SHARE = 0.5                   # an object that is at least this share strokes stays in the background whole
+SEAM_INSET_PX = 2.0                # rest_seam looks inside a layer's outline from this far in (px at 1080p)
+SEAM_LEVEL = 24.0                  # ... for pixels this many levels away from the picture
+SEEN_S = 3.0                       # an effect must be seen to change within this many seconds (the owner, 13:29 UTC)
+SEEN_TOUCH = 2.0                   # ... over the pixels it changes by more than this many levels
+STROKE_LEN = 2.0                   # a removed piece is a stroke when its long side is at least this many disc widths
 REST_ALPHA_GAIN = 6.0              # alpha 1/6 already counts as the object: its soft edge goes with the layer, not the plate
 FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box") + LFX.OPS + (
     "subject_sway",)
@@ -137,6 +153,7 @@ class Stage:
             self.phases[i] = rng.uniform(0, 2 * np.pi, 8)
         self.sky = self._sky()
         self.focus_d = self._focus_depth()
+        self.keep = self._keep_boxes()
         self.z0 = self._fit_zoom()
         self._unfold_background()
         yy, xx = np.mgrid[0:self.H, 0:self.W].astype(np.float32)
@@ -164,12 +181,14 @@ class Stage:
         keep = []
         for o in self.objects:
             hard = (o["alpha"] > 0.5).astype(np.uint8)
+            o["hard0"] = hard                                     # the outline SAM cut, before any stroke is taken out
             parts = hard & (1 - cv2.morphologyEx(hard, cv2.MORPH_OPEN, disc))   # what an opening removes is thin
             share = float(parts.sum() / max(1, hard.sum()))
             o["thin_share"] = round(share, 3)
             if share >= FLAT_SHARE:
                 self.flat.append(o["id"])
                 continue
+            parts = self._strokes(parts, r)
             if parts.any():
                 strip = cv2.dilate(parts.astype(np.float32), disc)
                 o["alpha"] = o["alpha"] * (1.0 - strip)
@@ -182,6 +201,41 @@ class Stage:
         self.objects = keep
         self.plate = (self.src.astype(np.float32) * (1 - A[..., None]) + self.plate.astype(np.float32) * A[..., None]).astype(np.uint8)
         self.hole = A
+
+    def _strokes(self, parts: np.ndarray, r: int) -> np.ndarray:
+        """Of what an opening removed from an object, only the real strokes (a rifle sling, a wire end): pieces at least
+        ``STROKE_LEN`` disc widths long and on average narrower than the disc. The many small nubs an opening bites off a
+        rough outline (hair, a coat's edge, a card's torn rim) stay with the object: cutting them, each grown by the disc,
+        left a scalloped seam of plate round every layered person (eye review of C4A, 2026-11-14, S02/S05_SH016/S06/S08)."""
+        n, lab, stats, _ = self.cv2.connectedComponentsWithStats(parts.astype(np.uint8))
+        keep = np.zeros(n, bool)
+        for i in range(1, n):
+            long_side = max(stats[i, 2], stats[i, 3])
+            keep[i] = long_side >= STROKE_LEN * 2 * r and stats[i, 4] / max(1, long_side) <= 2 * r
+        return keep[lab] & (parts > 0)
+
+    def rest_seam(self) -> dict:
+        """Frame 0 must be the picture (Fable's audit 2026-11-14). Inside the outline SAM cut (eroded by ``SEAM_INSET_PX``,
+        so the soft edge is not counted) the rest composite (background at rest + every layer, identity view) must show
+        the picture: plate seen there is a seam (the C4A scallops: bites cut out of a layer, plate round each bite). The
+        measure is those pixels per pixel of outline, so it does not grow with the object's size."""
+        cv2 = self.cv2
+        rest = self.plate.astype(np.float32)
+        inner = np.zeros((self.sh, self.sw), bool)
+        outline = 0
+        g = max(1, int(round(SEAM_INSET_PX * self.sw / 1920)))
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * g + 1, 2 * g + 1))
+        for o in self.objects:
+            a = o["alpha"][..., None]
+            rest = rest * (1 - a) + self.src.astype(np.float32) * a
+            h0 = o.get("hard0", (o["alpha"] > 0.5).astype(np.uint8))
+            inner |= cv2.erode(h0, k) > 0
+            outline += int((h0 - cv2.erode(h0, np.ones((3, 3), np.uint8))).sum())
+        if not outline:
+            return {"per_outline_px": 0.0, "pixels": 0, "outline": 0}
+        diff = np.abs(rest - self.src.astype(np.float32)).max(axis=2)
+        bad = (diff > SEAM_LEVEL) & inner
+        return {"per_outline_px": round(float(bad.sum() / outline), 4), "pixels": int(bad.sum()), "outline": outline}
 
     # --- what the plan points at ----------------------------------------------------------------------------------------
     def point_of(self, target: dict | None) -> tuple[float, float] | None:
@@ -250,6 +304,7 @@ class Stage:
                 pulls.append((seg, 1 - u))
             elif seg["op"] == "truck":
                 tx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
+                pulls.append((seg, u))
             elif seg["op"] == "crane":
                 ty += NEAR_TRAVEL * st * u * (1 if d == "down" else -1)
             elif seg["op"] == "pan":
@@ -262,13 +317,25 @@ class Stage:
         zs = z0 * s
         half_x = (1 - 1 / zs) / 2 - MARGIN
         half_y = (1 - 1 / zs) / 2 - MARGIN * self.sw / self.sh
-        for seg, amount in pulls:
+        # one aim at a time: a later targeted move hands the view over from the earlier target to its own (the push to the
+        # Scots, then the truck to the Germans: S05_SH020 C4A kept the first recentre and the truck had no room left)
+        goal, amount = None, 0.0
+        for seg, a in pulls:
             pt = self.point_of(seg.get("target"))
             if pt is None:
                 continue
-            gx, gy = pt[0] / self.sw - cx, pt[1] / self.sh - cy
+            pt = (pt[0] / self.sw, pt[1] / self.sh)
+            if goal is None or seg["op"] == "pull":
+                goal, amount = pt, a
+            else:
+                goal = (goal[0] + (pt[0] - goal[0]) * a, goal[1] + (pt[1] - goal[1]) * a)
+                amount = max(amount, a)
+        if goal is not None:
+            gx, gy = goal[0] - cx, goal[1] - cy
             cx += float(np.clip(RECENTRE * amount * gx, -max(0, half_x), max(0, half_x)))
             cy += float(np.clip(RECENTRE * amount * gy, -max(0, half_y), max(0, half_y)))
+        if self.__dict__.get("keep"):
+            s, dp, cx, cy = self._frame_people(z0, s, dp, cx, cy, tx, ty, ox, far)
         h = self.p.get("handheld")
         if h:
             t = f / self.fps
@@ -276,6 +343,143 @@ class Stage:
             cy += HAND_TR * h * L._wave(t, self.seed, 1) * self.sw / self.sh
             rot += HAND_ROT * h * L._wave(t, self.seed, 2)
         return {"s": s, "cx": cx, "cy": cy, "tx": tx, "ty": ty, "ox": ox, "rot": rot, "dp": dp, "far": far, "z0": z0}
+
+    # --- the safe zone: nobody is cut by the frame -----------------------------------------------------------------------
+    def _bbox(self, m: np.ndarray, thr: float = 0.5):
+        ys, xs = np.nonzero(m > thr)
+        if not len(xs):
+            return None
+        return [xs.min() / self.sw, ys.min() / self.sh, (xs.max() + 1) / self.sw, (ys.max() + 1) / self.sh]
+
+    def _keep_boxes(self) -> list[dict]:
+        """``plan["keep_in_frame"]`` -> boxes (shares of the picture) the camera must keep inside the frame, with their depth.
+
+        - ``{"face": box}``: a live face. The person is the mask that holds the face's centre (else the face widened by its
+          own width each side). A person the picture shows whole stays whole; a person the picture already cuts keeps the
+          head and chest (``HEAD_UP`` .. ``CHEST_DOWN`` face heights) at the mask's full width.
+        - ``{"mask": id}`` / ``{"light": id}``: a named object or the light an effect animates, whole.
+        ``"soft": true`` items give way first when the people cannot all be kept (``_frame_people``)."""
+        out = []
+        for it in self.p.get("keep_in_frame") or []:
+            box, region, hosts = None, None, []
+            if it.get("face"):
+                x0, y0, x1, y1 = it["face"]
+                fw, fh = x1 - x0, y1 - y0
+                cxp = int(np.clip((x0 + x1) / 2 * self.sw, 0, self.sw - 1))
+                cyp = int(np.clip((y0 + y1) / 2 * self.sh, 0, self.sh - 1))
+                hosts = [(float((m > 0.5).sum()), oid) for oid, m in self.masks_src.items() if m[cyp, cxp] > 0.5]
+                mb = self._bbox(self.masks_src[min(hosts)[1]]) if hosts else None
+                if mb is not None and min(mb[0], mb[1], 1 - mb[2], 1 - mb[3]) > EDGE_TOUCH:
+                    box = [min(mb[0], x0), min(mb[1], y0 - HEAD_UP * fh), max(mb[2], x1), mb[3]]
+                elif mb is not None:
+                    box = [min(mb[0], x0), min(mb[1], y0 - HEAD_UP * fh), max(mb[2], x1), y1 + CHEST_DOWN * fh]
+                else:
+                    box = [x0 - fw, y0 - HEAD_UP * fh, x1 + fw, y1 + CHEST_DOWN * fh]
+                region = [x0, y0, x1, y1]
+            elif it.get("mask") and it["mask"] in self.masks_src:
+                box = self._bbox(self.masks_src[it["mask"]])
+            elif it.get("light") and it["light"] in self.lights:
+                li = self.lights[it["light"]]
+                box = self._bbox(li["mask"], 0.3) if "mask" in li else None
+                if box is None:
+                    px, py = li["point"][0] / self.sw, li["point"][1] / self.sh
+                    box = [px - 0.01, py - 0.01, px + 0.01, py + 0.01]
+            if box is None:
+                continue
+            box = [float(np.clip(b, 0, 1)) for b in box]
+            if it.get("face") and hosts:                          # a person: the nearer part of the body decides the scale
+                hm = self.masks_src[min(hosts)[1]] > 0.5
+                out.append({"box": box, "d": float(np.percentile(self.depth[hm], 75)), "soft": bool(it.get("soft")),
+                            "why": it.get("why") or "face"})
+                continue
+            rb = region or box
+            ys = slice(int(rb[1] * self.sh), max(int(rb[1] * self.sh) + 1, int(rb[3] * self.sh)))
+            xs = slice(int(rb[0] * self.sw), max(int(rb[0] * self.sw) + 1, int(rb[2] * self.sw)))
+            out.append({"box": box, "d": float(np.median(self.depth[ys, xs])), "soft": bool(it.get("soft")),
+                        "why": it.get("why") or ("face" if it.get("face") else it.get("mask") or it.get("light"))})
+        return out
+
+    def _frame_people(self, z0, s, dp, cx, cy, tx, ty, ox, far):
+        """Keep ``self.keep`` inside the frame with ``SAFE_MARGIN`` (plus the handheld sway): first cap the zoom (never below
+        the base zoom), then move the view centre as little as possible. When the soft items do not fit with the people,
+        only the people are kept."""
+        base = max(self.sw / self.W, self.sh / self.H)
+        mx = SAFE_MARGIN + HAND_TR * float(self.p.get("handheld") or 0.0)
+        my = mx * self.sw / self.sh
+        groups = [self.keep]
+        if any(k["soft"] for k in self.keep) and any(not k["soft"] for k in self.keep):
+            groups = [self.keep, [k for k in self.keep if not k["soft"]]]
+        for i, grp in enumerate(groups):
+            x0 = min(k["box"][0] for k in grp); x1 = max(k["box"][2] for k in grp)
+            y0 = min(k["box"][1] for k in grp); y1 = max(k["box"][3] for k in grp)
+            d = float(np.median([k["d"] for k in grp]))
+            # the margin never asks for more than the picture has: a person standing on its bottom edge keeps the edge
+            ex0, ex1, ey0, ey1 = max(0.0, x0 - mx), min(1.0, x1 + mx), max(0.0, y0 - my), min(1.0, y1 + my)
+            need = base / (z0 * (1 + dp * d))
+            s_max = min(need * self.W / (self.sw * max(1e-3, ex1 - ex0)), need * self.H / (self.sh * max(1e-3, ey1 - ey0)))
+            if s_max < 1.0 and i + 1 < len(groups):
+                continue                                           # the soft items do not fit with the people: keep the people
+            if s > s_max:
+                s_new = max(1.0, s_max)
+                dp = dp * (s_new - 1) / (s - 1) if s > 1 else dp
+                s = s_new
+            k = base / (z0 * s * (1 + dp * d))
+            hw, hh = k * self.W / (2 * self.sw), k * self.H / (2 * self.sh)
+            par = far + (1 - far) * d
+            orb = max(-1.0, (d - self.focus_d) / max(1e-3, 1 - self.focus_d))
+            wx, wy = cx + tx * par + ox * orb, cy + ty * par * self.sw / self.sh
+            lo, hi = ex1 - hw, ex0 + hw
+            nx = cx + (float(np.clip(wx, lo, hi)) if lo <= hi else (ex0 + ex1) / 2) - wx
+            lo, hi = ey1 - hh, ey0 + hh
+            ny = cy + (float(np.clip(wy, lo, hi)) if lo <= hi else (ey0 + ey1) / 2) - wy
+            # ... and never moves the view past the picture's own edge (that would only raise the base zoom and cut more)
+            zs = z0 * s
+            lim_x = max(0.0, (1 - 1 / zs) / 2 - MARGIN)
+            lim_y = max(0.0, (1 - 1 / zs) / 2 - MARGIN * self.sw / self.sh)
+            cx = float(np.clip(nx, 0.5 - lim_x, 0.5 + lim_x))   # a capped zoom also takes back a recentre it no longer has
+            cy = float(np.clip(ny, 0.5 - lim_y, 0.5 + lim_y))   # room for (else the base zoom rises and cuts everyone)
+            break
+        return s, dp, cx, cy
+
+    def aim_check(self) -> list[dict]:
+        """Every camera move aimed at a named object must aim INSIDE it: the explicit point of a target with a mask lies in
+        the mask's box (S05_SH020 C4A: both crowds aimed at [0.5, 0.5], so the push went to the centre and no truck came)."""
+        out = []
+        for seg in self.p.get("cameras", []):
+            tg = seg.get("target") or {}
+            if tg.get("mask") not in self.masks_src or tg.get("point") is None:
+                continue
+            b = self._bbox(self.masks_src[tg["mask"]])
+            x, y = tg["point"]
+            ok = b is not None and b[0] - AIM_SLACK <= x <= b[2] + AIM_SLACK and b[1] - AIM_SLACK <= y <= b[3] + AIM_SLACK
+            out.append({"op": seg["op"], "mask": tg["mask"], "point": [round(x, 3), round(y, 3)],
+                        "box": [round(c, 3) for c in b] if b else None, "inside": bool(ok)})
+        return out
+
+    def people_cut(self, every: int = 2) -> dict:
+        """The measured safe zone: for each kept box, the worst share of it outside the frame over the shot (``every``-th
+        frame and the last), and where."""
+        worst = {"share": 0.0, "frame": None, "what": None}
+        if not self.keep:
+            return {**worst, "kept": 0}
+        cv2 = self.cv2
+        for f in sorted(set(range(0, self.n, every)) | {self.n - 1}):
+            v = self.view(f)
+            for kb in self.keep:
+                if kb["soft"]:
+                    continue
+                inv = cv2.invertAffineTransform(self.matrix(v, kb["d"]))
+                x0, y0, x1, y1 = kb["box"]
+                pts = np.array([[x0 * self.sw, y0 * self.sh, 1], [x1 * self.sw, y0 * self.sh, 1],
+                                [x0 * self.sw, y1 * self.sh, 1], [x1 * self.sw, y1 * self.sh, 1]]).T
+                q = inv @ pts
+                bx0, bx1, by0, by1 = q[0].min(), q[0].max(), q[1].min(), q[1].max()
+                area = max(1e-6, (bx1 - bx0) * (by1 - by0))
+                inside = max(0.0, min(bx1, self.W) - max(bx0, 0)) * max(0.0, min(by1, self.H) - max(by0, 0))
+                cut = 1 - inside / area
+                if cut > worst["share"]:
+                    worst = {"share": round(float(cut), 4), "frame": f, "what": kb["why"]}
+        return {**worst, "kept": sum(1 for k in self.keep if not k["soft"])}
 
     def _coef(self, v: dict, d):
         """For depth ``d`` (scalar or array): the source point (working px) under the frame centre."""
@@ -431,7 +635,11 @@ class Stage:
         W, H = self.W, self.H
         far = np.clip(1.0 - depth, 0, 1)
         zoom = 1.0 / self.cover_k(v, 0.5)
+        prev_i, before = None, rgb
         for i, e in enumerate(self.p.get("effects", [])):
+            if prev_i is not None:
+                self._seen(prev_i, before, rgb, t)
+            prev_i, before = i, rgb
             op, s = e["op"], float(e.get("strength", 1.0))
             prm = e.get("params", {})
             if op in ("fire", "candle", "glow"):
@@ -448,7 +656,7 @@ class Stage:
                     # the flame: brightness flicker and a small upward-flowing deformation inside its mask
                     if "mask" in li:
                         fm = self._warp_mask(li["mask"], mx, my, v, li, layers)
-                        amp = {"fire": 0.22, "candle": 0.14, "glow": 0.25}[op] * s
+                        amp = {"fire": 0.22, "candle": 0.18, "glow": 0.25}[op] * s
                         rgb = rgb * (1 + amp * g * fm[..., None] * np.array([1.0, 0.85, 0.6], np.float32))
                         if op != "glow" and fm.max() > 0.05:
                             rgb = self._deform_flame(rgb, fm, li, t, i, s, zoom, op)
@@ -470,10 +678,14 @@ class Stage:
                          + 0.05 * L._wave(t * 3.0, self.seed, 3))
                 rgb = rgb * (1 + g * field[..., None] * np.array([1.0, 0.78, 0.5], np.float32))
             elif op == "mist":
-                n = L._tile_at(self, self.tiles["a"], 0.012 * t, 0.004 * t)
+                # two banks drifting at their own speeds, each thickening and thinning, so the mist is seen to move
+                n1 = self._tile_smooth(self.tiles["a"], MIST_DRIFT[0] * t, 0.004 * t)
+                n2 = self._tile_smooth(self.tiles["b"], -MIST_DRIFT[1] * t, 0.002 * t)
                 keep = 1.0 - 0.97 * cv2.remap(self.sky, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
                 col = np.array(prm.get("colour", [206, 209, 214]), np.float32)
-                a = s * (0.10 + 0.22 * n) * far ** float(prm.get("power", 1.5)) * keep
+                breathe = 1 + 0.25 * math.sin(2 * math.pi * t / 2.8 + self.phases[i][1])
+                a = s * np.clip(0.08 + (MIST_VAR[0] * n1 + MIST_VAR[1] * n2) * breathe, 0, 0.75) * far ** float(
+                    prm.get("power", 1.5)) * keep
                 if e.get("box"):
                     a = a * self._box_field(e["box"], mx, my, feather=0.06)
                 rgb = rgb * (1 - a[..., None]) + col * a[..., None]
@@ -485,7 +697,8 @@ class Stage:
                 fx, fy, _ = self._to_out(pt, v=v, d=0.0)
                 qs = 4
                 yy, xx = np.mgrid[0:H // qs, 0:W // qs].astype(np.float32) * qs
-                ang = np.arctan2(yy - fy, xx - fx)
+                ang = np.arctan2(yy - fy, xx - fx) + math.radians(SHAFT_SWAY_DEG) * math.sin(
+                    2 * math.pi * t / SHAFT_SWAY_S + self.phases[i][2])
                 rad = np.hypot(yy - fy, xx - fx) / W
                 ph = self.phases[i]
                 rays = sum(np.cos(nn * ang + ph[j] + 0.25 * (j + 1) * t) for j, nn in enumerate((3, 5, 8)))
@@ -494,18 +707,22 @@ class Stage:
                 rays = cv2.GaussianBlur((rays * gate).astype(np.float32), (0, 0), 6.0)
                 rays = cv2.resize(rays, (W, H), interpolation=cv2.INTER_LINEAR)
                 # only the far, visible surfaces take the shaft: the people and the near wire stand in front of it
-                rgb = rgb + np.array([255, 228, 180], np.float32) * (0.40 * s * rays * far ** 1.2)[..., None]
+                rgb = rgb + np.array([255, 228, 180], np.float32) * (SHAFT_GAIN * s * LFX.swell(t) * rays * far ** 1.2)[
+                    ..., None]
             elif op == "cloud_drift":
                 sky = cv2.remap(self.sky, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
                 if e.get("box"):
                     sky = np.maximum(sky, self._box_field(e["box"], mx, my, feather=0.06) * (far > 0.9))
                 n_ = L._tile_at(self, self.tiles["a"], 0.006 * t, 0.002 * t) - 0.5
-                dx = -0.012 * W * s * float(L.smooth(t / max(1e-3, self.n / self.fps))) + 6.0 * s * n_
+                travel = min(CLOUD_TRAVEL_MAX, CLOUD_SWEEP * self.n / self.fps)
+                dx = -travel * W * s * float(L.smooth(t / max(1e-3, self.n / self.fps))) + 6.0 * s * n_
                 dy = 2.5 * s * n_
                 yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
                 moved = cv2.remap(np.clip(rgb, 0, 255), xx + dx * sky, yy + dy * sky, cv2.INTER_LINEAR,
                                   borderMode=cv2.BORDER_REFLECT)
-                rgb = moved
+                # the clouds' light sweeps over the sky at ~30 px/s: a drifting shade the eye catches in 3 s
+                shade = self._tile_smooth(self.tiles["c"], -CLOUD_SWEEP * t, 0.0) - 0.5
+                rgb = moved * (1 + 2 * CLOUD_SHADE * s * shade * sky)[..., None]
             elif op in LFX.OPS:
                 rgb = LFX.apply(self, rgb, depth, e, i, t, v, mx, my, layers, zoom)
             elif op == "heat_haze":
@@ -525,7 +742,43 @@ class Stage:
                     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
                     rgb = cv2.remap(np.clip(rgb, 0, 255), xx + 3.0 * s * n * up, yy + 1.5 * s * n * up, cv2.INTER_LINEAR,
                                     borderMode=cv2.BORDER_REFLECT)
+        if prev_i is not None:
+            self._seen(prev_i, before, rgb, t)
         return rgb
+
+    def _seen(self, i: int, before, after, t: float) -> None:
+        """Is effect ``i`` SEEN to change in the first ``SEEN_S`` seconds? Its own contribution (luma after minus before,
+        quarter size) against its contribution on frame 0: the 95th percentile of the change over the area it touches, the
+        largest over those seconds (``effects_seen``). The whole-frame liveliness let one fire hide a dead sun (C4A)."""
+        if t > SEEN_S + 1e-6:
+            return
+        cv2 = self.cv2
+        q = (self.W // 4, self.H // 4)
+        c = cv2.resize((np.asarray(after, np.float32) - np.asarray(before, np.float32)).mean(axis=2), q,
+                       interpolation=cv2.INTER_AREA)
+        rec = self.__dict__.setdefault("fx_seen", {}).setdefault(i, {"c0": c, "p95": 0.0, "at_s": 0.0})
+        touch = (np.abs(c) > SEEN_TOUCH) | (np.abs(rec["c0"]) > SEEN_TOUCH)
+        if touch.sum() < 20:
+            return
+        v = float(np.percentile(np.abs(c - rec["c0"])[touch], 95))
+        if v > rec["p95"]:
+            rec["p95"], rec["at_s"] = round(v, 2), round(t, 2)
+
+    def effects_seen(self) -> list[dict]:
+        out = []
+        for i, e in enumerate(self.p.get("effects", [])):
+            rec = (self.__dict__.get("fx_seen") or {}).get(i)
+            out.append({"op": e["op"], "index": i, "change_p95": rec["p95"] if rec else 0.0,
+                        "at_s": rec["at_s"] if rec else None})
+        return out
+
+    def _tile_smooth(self, tile: np.ndarray, ox: float, oy: float) -> np.ndarray:
+        """``layers25d._tile_at`` with a sub-pixel scroll: a tile pixel is ~7 frame pixels, so a whole-pixel roll steps
+        visibly at the drift speeds the eye review asked for (>= 30-40 px/s)."""
+        th, tw = tile.shape
+        m = np.float32([[1, 0, -(ox * tw) % tw], [0, 1, -(oy * th) % th]])
+        rolled = self.cv2.warpAffine(tile, m, (tw, th), flags=self.cv2.INTER_LINEAR, borderMode=self.cv2.BORDER_WRAP)
+        return self.cv2.resize(rolled, (self.W, self.H), interpolation=self.cv2.INTER_CUBIC)
 
     def _flicker_id(self, i: int, lid: str, t: float, speed: float) -> float:
         k = _seed(f"{self.p.get('shot_id')}:{lid}")
@@ -687,7 +940,7 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
     tmp.replace(out_mp4)
     spf = (time.time() - t1) / max(1, st.n)
     return {"renderer": VERSION, "shot_id": plan.get("shot_id"), "frames": st.n, "fps": fps, "resolution": [W, H],
-            "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4),
+            "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4), "people_in_frame": st.people_cut(), "rest_seam": st.rest_seam(), "effects_seen": st.effects_seen(), "aim": st.aim_check(),
             "objects": [{"id": o["id"], "depth": round(o["d"], 3)} for o in st.objects],
             "cost_usd": 0.0, "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest(),
             "views": views, "stage": st, "first": first, "last": last}

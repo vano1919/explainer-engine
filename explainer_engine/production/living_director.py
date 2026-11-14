@@ -45,6 +45,11 @@ RATE_MIN, RATE_MAX = float(SR.T("BP-21", "rate_min_per_s")), float(SR.T("BP-21",
 BASE_RATE = 0.015                     # a base push or pull, scale per second (the middle of BP-21's range; house default)
 SNAP_S = float(SR.T("BP-197", "snap_s_max"))
 ACCENT_S = 1.25                       # an accent's ease-out: its 10-90 % rise is about half of this, inside SNAP_S
+ACCENT_LEAD_S = 1.0                   # an accent needs this much calm before it: a word earlier than this is carried by the
+                                      # base move instead (eye review of C4A 2026-11-14: S05_SH016 jumped 8.7 % in 1.2 s, then froze)
+TRUCK_STRENGTH = 2.0                  # a truck on a word: the people at mid depth travel ~5-8 % of the width (eye review: S05_SH020's
+                                      # truck at strength 1 read as no lateral move)
+KEEP_LIGHTS = ("fire", "candle", "glow", "sun_glint", "sun_shaft")   # their lights stay in frame when the people allow (soft)
 PUSH_SCALE = 0.06                     # directed25d's zoom of a push at strength 1 (layers25d.PUSH_SCALE)
 FACE_SCORE = 0.8                      # YuNet faces below this are false hits on drawn pictures (the six P1 photos: 0.5-0.75)
 FACE_CLOSE = 0.02                     # a face box over this share of the frame is near the lens: only the far flakes fall
@@ -133,7 +138,7 @@ def _centre(o: dict) -> list[float]:
         return [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2]
     if o.get("where"):
         return list(o["where"])
-    pts = o.get("points") or [[0.5, 0.5]]
+    pts = o.get("points") or [p for part in o.get("parts") or [] for p in part] or [[0.5, 0.5]]
     return [sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)]
 
 
@@ -375,6 +380,9 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict], ch
             targets.append((D._norm(w["word"]), int(w.get("frame", w.get("start_frame", 0))), pid,
                             _centre(objs.get(pid) or livs[pid])))
     dur = frames / fps
+    early = targets[0] if targets and targets[0][1] < ACCENT_LEAD_S * fps else None
+    if early:
+        targets = targets[1:]
     first = targets[0][1] if targets else frames
     if d.get("intent") == "still_by_design":
         tracks.append(_cam("handheld", 0.3))
@@ -384,7 +392,10 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict], ch
         base_s = first / fps
         people = bool(faces) and d.get("people_mid_or_close")
         sky_top = any(e.get("kind") in ("sky", "sun", "cloud") and _centre(e)[1] < 0.4 for e in seen.get("living", []))
-        if "light_fade" in chosen_effects:
+        if early:
+            op, tgt, reason = ("push", _aim(early[2], early[3], objs), f"'{early[0]}' names {early[2]} in the first "
+                               f"{ACCENT_LEAD_S:g} s, too early for an accent: the base move leans towards it instead")
+        elif "light_fade" in chosen_effects:
             op, tgt, reason = "pull", None, "the words say the light is going: the camera pulls back as it fades"
         elif not people and sky_top and not targets:
             op, tgt, reason = "crane", None, "an open landscape with the sky above and no named part: the camera rises to it"
@@ -399,16 +410,18 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict], ch
                      validate={"measure": "shift_y_pct", "direction": "up", "perceptible": True})
             reason += f" (crane over {base_s:.1f} s)"
         else:
-            s = _move_strength(BASE_RATE, base_s)
-            t = _cam(op, s, end=end, target=tgt, ease="linear" if targets else "ease_out", validate={"measure": "scale"})
-            reason += f" ({BASE_RATE * 100:g} %/s over {base_s:.1f} s, BP-21)"
+            rate = RATE_MIN if targets else BASE_RATE           # a slow approach makes the accent that follows read
+            s = _move_strength(rate, base_s)
+            t = _cam(op, s, end=end, target=tgt, ease="linear", validate={"measure": "scale"})
+            reason += (f" ({rate * 100:g} %/s over {base_s:.1f} s, BP-21"
+                       + ("; the slowest rate, so the accent on the word stands out)" if targets else ")"))
         tracks.append(t)
         why.append(reason)
     prev = None
     for word, wf, pid, c in targets[:D.SEGMENTS_MAX - len(tracks)]:
         end = {"frame": min(frames - 1, wf + int(round(ACCENT_S * fps)))}
         if prev is not None and abs(c[0] - prev[0]) > 0.2:
-            t = _cam("truck", 1.0, start={"word": word}, end=end, target=_aim(pid, c, objs), ease="ease_out",
+            t = _cam("truck", TRUCK_STRENGTH, start={"word": word}, end=end, target=_aim(pid, c, objs), ease="ease_out",
                      direction="right" if c[0] > prev[0] else "left", validate={"measure": "shift_x_pct"})
             why.append(f"'{word}' names {pid}, across the frame from the last target: a truck to it on the word (accent)")
         else:
@@ -421,6 +434,22 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict], ch
         tracks.append(_cam("handheld", 0.3))
         why.append("a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)")
     return tracks, why
+
+
+def keep_in_frame(faces: list[dict], tracks: list[dict]) -> list[dict]:
+    """The safe zone the renderer holds (the owner, 2026-11-14 13:29 UTC: "people are cut in some frames"): every live
+    person, and softly the lights the chosen effects animate (a candle pushed out of frame wastes its effect)."""
+    keep = [{"face": f["box"], "why": "live face: the person stays whole in the frame"} for f in faces]
+    seen = set()
+    for t in tracks:
+        if t.get("op") not in KEEP_LIGHTS:
+            continue
+        tg = t.get("target") or {}
+        for lid in ([tg["light"]] if tg.get("light") else []) + list(tg.get("lights") or []):
+            if lid not in seen:
+                seen.add(lid)
+                keep.append({"light": lid, "soft": True, "why": f"the {t['op']} effect lives on it"})
+    return keep
 
 
 def _aim(pid: str, c, objs: dict) -> dict:
@@ -514,6 +543,7 @@ def direct(d: dict, spine, frames: int, fps: float = 24.0, picture=None, faces_p
                 why += f" (score {s.get('score', LV.score(r))}; {r['why_score']})"
             living.append({**base, "decision": "skip", "why": why})
     cams, cam_why = choose_camera(out, spine, frames, fps, faces, {t["op"] for t in tracks})
+    out["keep_in_frame"] = keep_in_frame(faces, tracks)
     seen["living"] = living
     out["tracks"] = cams + tracks
     snd = sound_of_direction(out, spine, frames, fps, prev, library_root)
