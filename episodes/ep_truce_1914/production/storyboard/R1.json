@@ -1,0 +1,267 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "R1",
+  "shots": [
+    "S05_SH008",
+    "S05_SH013",
+    "S05_SH011",
+    "S06_SH008",
+    "S06_SH003",
+    "S06_SH010",
+    "S06_SH006"
+  ],
+  "cells": [
+    {
+      "shot_id": "S05_SH008",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S05_SH008_start",
+      "from": null,
+      "seconds": 4.25,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S05_SH008_start.png",
+      "vs_master": {
+        "palette_dist": 0.0168,
+        "top_palette_dist": 0.0554,
+        "luma_gap": 0.0504
+      }
+    },
+    {
+      "shot_id": "S05_SH013",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S05_SH013_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S05_SH013_start.png",
+      "vs_master": {
+        "palette_dist": 0.0314,
+        "top_palette_dist": 0.0149,
+        "luma_gap": 0.0529
+      }
+    },
+    {
+      "shot_id": "S05_SH011",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S05_SH011_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S05_SH011_start.png",
+      "vs_master": {
+        "palette_dist": 0.0056,
+        "top_palette_dist": 0.0081,
+        "luma_gap": 0.0182
+      }
+    },
+    {
+      "shot_id": "S06_SH008",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S06_SH008_start",
+      "from": null,
+      "seconds": 3.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S06_SH008_start.png",
+      "vs_master": {
+        "palette_dist": 0.0239,
+        "top_palette_dist": 0.0307,
+        "luma_gap": 0.0086
+      }
+    },
+    {
+      "shot_id": "S06_SH003",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S06_SH003_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S06_SH003_start.png",
+      "vs_master": {
+        "palette_dist": 0.0204,
+        "top_palette_dist": 0.0283,
+        "luma_gap": 0.0128
+      }
+    },
+    {
+      "shot_id": "S06_SH010",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S06_SH010_start",
+      "from": null,
+      "seconds": 3.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S06_SH010_start.png",
+      "vs_master": {
+        "palette_dist": 0.0917,
+        "top_palette_dist": 0.3226,
+        "luma_gap": 0.0155
+      }
+    },
+    {
+      "shot_id": "S06_SH006",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S06_SH006_start",
+      "from": null,
+      "seconds": 4.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S06_SH006_start.png",
+      "vs_master": {
+        "palette_dist": 0.0251,
+        "top_palette_dist": 0.0449,
+        "luma_gap": 0.0481
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 7 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-09 S05_SH008: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut",
+        "VL-09 S06_SH008: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut",
+        "VL-08 S06_SH006: 4 character lines in a row without a reaction or insert"
+      ],
+      "detail": "3 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S06_SH010 vs S06_SH002_start: palette 0.0917, top third 0.3226 (max 0.08), brightness gap 0.0155 (max 0.18)"
+      ],
+      "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "REVIEW",
+      "measured": [
+        "char_thomas_hale (head) S05_SH011 -> S06_SH008: colours move 0.2051 (> 0.15): clothes, skin or hair changed"
+      ],
+      "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    },
+    {
+      "gate": "storyboard_hero_face_eye_review",
+      "status": "REVIEW",
+      "measured": [
+        "S05_SH011: Thomas left reading the portrait card, Friedrich right: moustache, red-band cap, grey greatcoat (same men as in the part S05a review)",
+        "S06_SH006: Thomas left, Friedrich right: moustache, red-band cap, grey greatcoat (same men as the part S06 review, v5 picture unchanged)"
+      ],
+      "detail": "2 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review",
+      "storyboard_same_place_as_master",
+      "storyboard_hero_costume_holds",
+      "storyboard_hero_face_eye_review"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 7 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-09 S05_SH008: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut",
+          "VL-09 S06_SH008: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut",
+          "VL-08 S06_SH006: 4 character lines in a row without a reaction or insert"
+        ],
+        "detail": "3 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S06_SH010 vs S06_SH002_start: palette 0.0917, top third 0.3226 (max 0.08), brightness gap 0.0155 (max 0.18)"
+        ],
+        "detail": "1 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "REVIEW",
+        "measured": [
+          "char_thomas_hale (head) S05_SH011 -> S06_SH008: colours move 0.2051 (> 0.15): clothes, skin or hair changed"
+        ],
+        "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      },
+      {
+        "gate": "storyboard_hero_face_eye_review",
+        "status": "REVIEW",
+        "measured": [
+          "S05_SH011: Thomas left reading the portrait card, Friedrich right: moustache, red-band cap, grey greatcoat (same men as in the part S05a review)",
+          "S06_SH006: Thomas left, Friedrich right: moustache, red-band cap, grey greatcoat (same men as the part S06 review, v5 picture unchanged)"
+        ],
+        "detail": "2 shot(s) at REVIEW level by the owner's card (RC-101): the face is checked by eye, SFace does not name it"
+      }
+    ]
+  },
+  "pictures": {
+    "S05_SH008_start": "cd0212d6720469005e9909d820fea69f619e289a1c9a6e6cffa7df5cef71f5f5",
+    "S05_SH007_start": "cc07ad460a0850b8a21ff1a4f8449f639ec0abb838450f29b845992a4ee9c0db",
+    "S05_SH013_start": "1251bd138f0f307c654e27ace3a2e2ed040c004fb23de3de20116e432655db27",
+    "S05_SH011_start": "ee214f7d3be303bd0a5a3b322a8dea210221cfcf616d22e58ce424feb5f8c970",
+    "S06_SH008_start": "f4849798352203b02bada672fc2d020b3c9bc8dbf9aed8dbc12f134457c04ad5",
+    "S06_SH002_start": "d514df0361683b6ade96dcd4d066e334795180de630f1bf09ea81ea2db022a11",
+    "S06_SH003_start": "c903555b8077f16373ee7661123fef80f4394274eec66c474db1042cf230e591",
+    "S06_SH010_start": "c89fa9e8731589c4c7b03d4c914cbff836c4e4c9c05f0bf8718eb4cbc84a8979",
+    "S06_SH006_start": "0a02b54b53404e557ced01d98d4fa2b87b29027bbde0c1850594a29286fa9a41"
+  },
+  "plan_digest": "45c39bf8308f8f65e686a33085783018dbaf3840d3c00ad30478ef09705d97fa",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/R1.jpg",
+  "sheet_sha256": "a8adcff4f596eb55e794c28d6d3bc29c5f2bc0149307c2a24a916a9b830859c9"
+}

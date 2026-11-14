@@ -1,0 +1,53 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S05_SH012",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S05_SH012.mp4",
+  "clip_sha256": "9e220e9464e2484d4b8bbf1f9897c9a4815ce4f1ad671d6ec9906d4bdc54b5f2",
+  "raw_path": "production/video/raw/S05_SH012.mp4",
+  "raw_sha256": "3883ae040c4edce3b5af399877e13177ef5f72dfb33486292b232e72236a13f1",
+  "raw_fps": 24.0,
+  "raw_seconds": 4.0417,
+  "fps": 24,
+  "in_s": 0.4167,
+  "out_s": 3.1667,
+  "frames": 66,
+  "speech_raw": [
+    [
+      0.66,
+      1.94
+    ],
+    [
+      2.28,
+      2.68
+    ]
+  ],
+  "speech": [
+    [
+      0.243,
+      1.523
+    ],
+    [
+      1.863,
+      2.263
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "66 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 16 frames from frame 49"
+    }
+  ],
+  "attempts": []
+}

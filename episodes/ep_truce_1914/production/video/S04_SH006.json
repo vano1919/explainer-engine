@@ -1,0 +1,56 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S04_SH006",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S04_SH006.mp4",
+  "clip_sha256": "9187234b770e1c47a5b1a74e4550daf254fff4cfeffc3a7ffa8d7e019d435e52",
+  "raw_path": "production/video/raw/S04_SH006.mp4",
+  "raw_sha256": "cdc3703acfa748612e30714ad9b3a8198cdeafdeed6d15e42816487b2b69cd87",
+  "raw_fps": 24.0,
+  "raw_seconds": 4.0417,
+  "fps": 24,
+  "in_s": 1.1667,
+  "out_s": 4.0417,
+  "frames": 69,
+  "speech_raw": [
+    [
+      1.4,
+      1.72
+    ],
+    [
+      2.92,
+      3.4
+    ],
+    [
+      3.6,
+      3.94
+    ]
+  ],
+  "speech": [
+    [
+      0.233,
+      0.553
+    ],
+    [
+      1.753,
+      2.233
+    ],
+    [
+      2.433,
+      2.773
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "69 frames is not 8k+1 (BP-139)"
+    }
+  ],
+  "attempts": []
+}

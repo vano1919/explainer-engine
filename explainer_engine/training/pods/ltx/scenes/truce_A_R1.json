@@ -1,0 +1,173 @@
+{
+ "schema": "ltx_scene_test/3",
+ "id": "R1",
+ "episode": "episodes/ep_truce_1914",
+ "asked": "the creator via the coordinator, autopilot 2026-11-13 20:40 UTC; cap 5.00 (card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6AULacxKdq5hJZPfuKrQ97 option A); Fable medium audit TD-316 (20:50 UTC): re-make of the 7 wrong-man clips with the speaker bound by look and side; script 261d43b8, frames v5 f2e5a232; DV-109 speaker bound by look and screen side (TD-315)",
+ "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+ "storyboard": {
+  "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/R1.json",
+  "sha256": "7e89204ed2fafcb98eeb6a3a2b611fd3df2109239f10a2aa0c881c5fe9cf01b9",
+  "verdict": "REVIEW"
+ },
+ "pictures": {
+  "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_R1.pictures.json"
+ },
+ "shots": [
+  {
+   "shot_id": "S05_SH008",
+   "seconds": 4.0,
+   "seconds_basis": "measured_line",
+   "seed": 7300,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, breathes out smoke and taps the pocket with the letter. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"My mum. And a little sister.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, breathes out smoke and taps the pocket with the letter.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"My mum. And a little sister.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 2.978,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "My mum. And a little sister."
+   },
+   "picture": "S05_SH008_start"
+  },
+  {
+   "shot_id": "S05_SH013",
+   "seconds": 2.75,
+   "seconds_basis": "measured_line",
+   "seed": 7301,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, pauses, looks away across the field and answers quietly. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"So does mine.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, pauses, looks away across the field and answers quietly.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"So does mine.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 1.714,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "So does mine."
+   },
+   "picture": "S05_SH013_start"
+  },
+  {
+   "shot_id": "S05_SH011",
+   "seconds": 3.0,
+   "seconds_basis": "measured_line",
+   "seed": 7302,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, looks at the portrait card, smiles and hands it back carefully. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"She looks happy.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, looks at the portrait card, smiles and hands it back carefully.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"She looks happy.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 1.812,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "She looks happy."
+   },
+   "picture": "S05_SH011_start"
+  },
+  {
+   "shot_id": "S06_SH008",
+   "seconds": 4.0,
+   "seconds_basis": "measured_line",
+   "seed": 7303,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, says 'Maybe', pauses, then turns and says the rest, holding the German corporal's look. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Maybe. But not today.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, says 'Maybe', pauses, then turns and says the rest, holding the German corporal's look.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Maybe. But not today.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 2.872,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "Maybe. But not today."
+   },
+   "picture": "S06_SH008_start"
+  },
+  {
+   "shot_id": "S06_SH003",
+   "seconds": 3.0,
+   "seconds_basis": "measured_line",
+   "seed": 7304,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, looks at the ground and shrugs a little. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"I don't know.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, looks at the ground and shrugs a little.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"I don't know.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 1.839,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "I don't know."
+   },
+   "picture": "S06_SH003_start"
+  },
+  {
+   "shot_id": "S06_SH010",
+   "seconds": 3.5,
+   "seconds_basis": "measured_line",
+   "seed": 7305,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, holds out the button on his palm and speaks; the German corporal on the right reaches for it. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Something to remember me by.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, holds out the button on his palm and speaks; the German corporal on the right reaches for it.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Something to remember me by.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 2.444,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "Something to remember me by."
+   },
+   "picture": "S06_SH010_start"
+  },
+  {
+   "shot_id": "S06_SH006",
+   "seconds": 3.5,
+   "seconds_basis": "measured_line",
+   "seed": 7306,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, turns to the German corporal on the right and laughs once, tiredly. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"They told us the same about you.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, turns to the German corporal on the right and laughs once, tiredly.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"They told us the same about you.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 2.471,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "They told us the same about you."
+   },
+   "picture": "S06_SH006_start"
+  }
+ ],
+ "draft": false,
+ "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+ "voice_missing": [],
+ "voices": {
+  "char_thomas_hale": {
+   "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+   "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+  }
+ },
+ "voice_problems": [],
+ "read_first": "forced",
+ "budget": {
+  "total_usd": 0.97,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.0,
+  "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+  "caps": {
+   "modal_ltx": 5.0
+  }
+ }
+}

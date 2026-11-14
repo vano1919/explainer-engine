@@ -1,0 +1,45 @@
+{
+  "schema": "episode_stage/1",
+  "episode_id": "ep_truce_1914",
+  "stage": "pictures",
+  "gate": "G5",
+  "verdict": {
+    "status": "FAIL",
+    "failed": [
+      "every_picture_taken_in"
+    ],
+    "not_run": [],
+    "review": []
+  },
+  "rows": [
+    {
+      "gate": "every_picture_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "79 of 79 picture(s) on disk"
+    },
+    {
+      "gate": "every_picture_taken_in",
+      "status": "FAIL",
+      "measured": [
+        "S08_SH004_start"
+      ],
+      "detail": "1 picture(s) the intake never saw, 0 changed since the intake"
+    },
+    {
+      "gate": "every_picture_a_master",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 draft(s) not yet upscaled to the working master (turn_pack promote)"
+    }
+  ],
+  "outputs": {
+    "pictures": "production/pictures.json",
+    "count": 79,
+    "missing": 0
+  },
+  "rehearsal": false,
+  "fingerprint": "639bc0ac297ad175b7dbf96dd9fe0708895857792e9694c2fb9dade7c0bc1f9d",
+  "elapsed_s": 0.65,
+  "at": "2026-11-13T20:17:58Z"
+}

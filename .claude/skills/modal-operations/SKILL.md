@@ -25,6 +25,11 @@ retries, or burst serverless runs on Modal (`docs/providers/MODAL_README.md`).
    followed by `verify_and_mark_stored` in `explainer_engine/cloud/providers/base.py`.
 4. **Ordered multi-GPU fallback**: configure `gpu=["H100", "A100-80GB", "RTX-PRO-6000"]` and `max_inputs=1` with `retries=0` on
    long video generation functions so preemptions never re-bill a 45-minute batch from scratch.
+5. **The paid offer (CH-07, docs/CLOUD_RUNBOOK.md)**: no paid Modal option is offered before a `paid_offer/1` file passes
+   `python -m explainer_engine.cloud.paid_offer check`: the free credit first (`modal billing summary --json`, or the ledgers'
+   month when the gRPC API is not reachable: it works after `pip install "modal[api-proxy-support]"`), today's cards and prices (modal.com/pricing) with Functions operational on
+   status.modal.com, a measured or known VRAM need, two priced combinations, the cheapest chosen, the free/paid split, the cap and
+   the watchdog. The hook refuses a paid LTX GPU rung without `EE_PAID_OFFER=<offer>`.
 
 ## 2. Read-only CLI & adapter inspection
 

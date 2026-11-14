@@ -1,0 +1,4998 @@
+{
+  "schema": "episode_timing/1",
+  "fps": 24,
+  "read_s": 268.08,
+  "total_frames": 9165,
+  "shots": {
+    "S01_SH001": {
+      "start_frame": 0,
+      "frames": 72,
+      "seconds": 3.0,
+      "planned_seconds": 2.0
+    },
+    "S01_SH002": {
+      "start_frame": 72,
+      "frames": 118,
+      "seconds": 4.9167,
+      "planned_seconds": 4.5
+    },
+    "S01_SH003": {
+      "start_frame": 190,
+      "frames": 159,
+      "seconds": 6.625,
+      "planned_seconds": 5.5
+    },
+    "S01_SH004": {
+      "start_frame": 349,
+      "frames": 123,
+      "seconds": 5.125,
+      "planned_seconds": 5.0
+    },
+    "S01_SH005": {
+      "start_frame": 472,
+      "frames": 224,
+      "seconds": 9.3333,
+      "planned_seconds": 8.0
+    },
+    "S02_SH001": {
+      "start_frame": 696,
+      "frames": 137,
+      "seconds": 5.7083,
+      "planned_seconds": 6.0
+    },
+    "S02_SH002": {
+      "start_frame": 833,
+      "frames": 191,
+      "seconds": 7.9583,
+      "planned_seconds": 7.75
+    },
+    "S02_SH003": {
+      "start_frame": 1024,
+      "frames": 132,
+      "seconds": 5.5,
+      "planned_seconds": 6.0
+    },
+    "S02_SH004": {
+      "start_frame": 1156,
+      "frames": 187,
+      "seconds": 7.7917,
+      "planned_seconds": 6.25
+    },
+    "S02_SH005": {
+      "start_frame": 1343,
+      "frames": 127,
+      "seconds": 5.2917,
+      "planned_seconds": 5.5
+    },
+    "S02_SH006": {
+      "start_frame": 1470,
+      "frames": 102,
+      "seconds": 4.25,
+      "planned_seconds": 4.25,
+      "timed_by": "clip"
+    },
+    "S02_SH007": {
+      "start_frame": 1572,
+      "frames": 71,
+      "seconds": 2.9583,
+      "planned_seconds": 4.25,
+      "timed_by": "clip"
+    },
+    "S02_SH008": {
+      "start_frame": 1643,
+      "frames": 263,
+      "seconds": 10.9583,
+      "planned_seconds": 10.0
+    },
+    "S02_SH009": {
+      "start_frame": 1906,
+      "frames": 251,
+      "seconds": 10.4583,
+      "planned_seconds": 8.25
+    },
+    "S03_SH001": {
+      "start_frame": 2157,
+      "frames": 214,
+      "seconds": 8.9167,
+      "planned_seconds": 9.5
+    },
+    "S03_SH002": {
+      "start_frame": 2371,
+      "frames": 104,
+      "seconds": 4.3333,
+      "planned_seconds": 4.0
+    },
+    "S03_SH003": {
+      "start_frame": 2475,
+      "frames": 114,
+      "seconds": 4.75,
+      "planned_seconds": 4.75,
+      "timed_by": "clip"
+    },
+    "S03_SH004": {
+      "start_frame": 2589,
+      "frames": 28,
+      "seconds": 1.1667,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S03_SH005": {
+      "start_frame": 2617,
+      "frames": 88,
+      "seconds": 3.6667,
+      "planned_seconds": 3.25,
+      "timed_by": "clip"
+    },
+    "S03_SH006": {
+      "start_frame": 2705,
+      "frames": 83,
+      "seconds": 3.4583,
+      "planned_seconds": 2.75,
+      "timed_by": "clip"
+    },
+    "S03_SH007": {
+      "start_frame": 2788,
+      "frames": 90,
+      "seconds": 3.75,
+      "planned_seconds": 3.0
+    },
+    "S03_SH008": {
+      "start_frame": 2878,
+      "frames": 121,
+      "seconds": 5.0417,
+      "planned_seconds": 4.75,
+      "timed_by": "clip"
+    },
+    "S03_SH009": {
+      "start_frame": 2999,
+      "frames": 87,
+      "seconds": 3.625,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S03_SH010": {
+      "start_frame": 3086,
+      "frames": 140,
+      "seconds": 5.8333,
+      "planned_seconds": 6.75
+    },
+    "S04_SH001": {
+      "start_frame": 3226,
+      "frames": 74,
+      "seconds": 3.0833,
+      "planned_seconds": 3.0
+    },
+    "S04_SH002": {
+      "start_frame": 3300,
+      "frames": 63,
+      "seconds": 2.625,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S04_SH003": {
+      "start_frame": 3363,
+      "frames": 67,
+      "seconds": 2.7917,
+      "planned_seconds": 2.75,
+      "timed_by": "clip"
+    },
+    "S04_SH004": {
+      "start_frame": 3430,
+      "frames": 88,
+      "seconds": 3.6667,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S04_SH005": {
+      "start_frame": 3518,
+      "frames": 138,
+      "seconds": 5.75,
+      "planned_seconds": 5.5
+    },
+    "S04_SH006": {
+      "start_frame": 3656,
+      "frames": 69,
+      "seconds": 2.875,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S04_SH007": {
+      "start_frame": 3725,
+      "frames": 64,
+      "seconds": 2.6667,
+      "planned_seconds": 4.0,
+      "timed_by": "clip"
+    },
+    "S04_SH008": {
+      "start_frame": 3789,
+      "frames": 240,
+      "seconds": 10.0,
+      "planned_seconds": 9.0
+    },
+    "S04_SH009": {
+      "start_frame": 4029,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S04_SH010": {
+      "start_frame": 4077,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S04_SH011": {
+      "start_frame": 4125,
+      "frames": 85,
+      "seconds": 3.5417,
+      "planned_seconds": 2.5
+    },
+    "S04_SH012": {
+      "start_frame": 4210,
+      "frames": 96,
+      "seconds": 4.0,
+      "planned_seconds": 4.0,
+      "timed_by": "clip"
+    },
+    "S04_SH013": {
+      "start_frame": 4306,
+      "frames": 102,
+      "seconds": 4.25,
+      "planned_seconds": 4.25,
+      "timed_by": "clip"
+    },
+    "S04_SH014": {
+      "start_frame": 4408,
+      "frames": 86,
+      "seconds": 3.5833,
+      "planned_seconds": 4.0
+    },
+    "S04_SH015": {
+      "start_frame": 4494,
+      "frames": 146,
+      "seconds": 6.0833,
+      "planned_seconds": 7.0
+    },
+    "S05_SH001": {
+      "start_frame": 4640,
+      "frames": 152,
+      "seconds": 6.3333,
+      "planned_seconds": 6.0
+    },
+    "S05_SH002": {
+      "start_frame": 4792,
+      "frames": 163,
+      "seconds": 6.7917,
+      "planned_seconds": 6.25
+    },
+    "S05_SH003": {
+      "start_frame": 4955,
+      "frames": 193,
+      "seconds": 8.0417,
+      "planned_seconds": 6.75
+    },
+    "S05_SH004": {
+      "start_frame": 5148,
+      "frames": 54,
+      "seconds": 2.25,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S05_SH005": {
+      "start_frame": 5202,
+      "frames": 84,
+      "seconds": 3.5,
+      "planned_seconds": 3.5,
+      "timed_by": "clip"
+    },
+    "S05_SH006": {
+      "start_frame": 5286,
+      "frames": 189,
+      "seconds": 7.875,
+      "planned_seconds": 9.25
+    },
+    "S05_SH007": {
+      "start_frame": 5475,
+      "frames": 54,
+      "seconds": 2.25,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S05_SH008": {
+      "start_frame": 5529,
+      "frames": 78,
+      "seconds": 3.25,
+      "planned_seconds": 3.25,
+      "timed_by": "clip"
+    },
+    "S05_SH009": {
+      "start_frame": 5607,
+      "frames": 84,
+      "seconds": 3.5,
+      "planned_seconds": 3.5,
+      "timed_by": "clip"
+    },
+    "S05_SH010": {
+      "start_frame": 5691,
+      "frames": 81,
+      "seconds": 3.375,
+      "planned_seconds": 3.0
+    },
+    "S05_SH011": {
+      "start_frame": 5772,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S05_SH012": {
+      "start_frame": 5820,
+      "frames": 84,
+      "seconds": 3.5,
+      "planned_seconds": 3.5,
+      "timed_by": "clip"
+    },
+    "S05_SH013": {
+      "start_frame": 5904,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S05_SH014": {
+      "start_frame": 5952,
+      "frames": 146,
+      "seconds": 6.0833,
+      "planned_seconds": 7.0
+    },
+    "S05_SH015": {
+      "start_frame": 6098,
+      "frames": 60,
+      "seconds": 2.5,
+      "planned_seconds": 3.25
+    },
+    "S05_SH016": {
+      "start_frame": 6158,
+      "frames": 84,
+      "seconds": 3.5,
+      "planned_seconds": 3.0
+    },
+    "S05_SH017": {
+      "start_frame": 6242,
+      "frames": 54,
+      "seconds": 2.25,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S05_SH018": {
+      "start_frame": 6296,
+      "frames": 66,
+      "seconds": 2.75,
+      "planned_seconds": 2.75,
+      "timed_by": "clip"
+    },
+    "S05_SH019": {
+      "start_frame": 6362,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S05_SH020": {
+      "start_frame": 6410,
+      "frames": 188,
+      "seconds": 7.8333,
+      "planned_seconds": 7.75
+    },
+    "S05_SH021": {
+      "start_frame": 6598,
+      "frames": 103,
+      "seconds": 4.2917,
+      "planned_seconds": 4.0
+    },
+    "S06_SH001": {
+      "start_frame": 6701,
+      "frames": 72,
+      "seconds": 3.0,
+      "planned_seconds": 3.25
+    },
+    "S06_SH002": {
+      "start_frame": 6773,
+      "frames": 66,
+      "seconds": 2.75,
+      "planned_seconds": 2.75,
+      "timed_by": "clip"
+    },
+    "S06_SH003": {
+      "start_frame": 6839,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S06_SH004": {
+      "start_frame": 6887,
+      "frames": 84,
+      "seconds": 3.5,
+      "planned_seconds": 3.5,
+      "timed_by": "clip"
+    },
+    "S06_SH005": {
+      "start_frame": 6971,
+      "frames": 49,
+      "seconds": 2.0417,
+      "planned_seconds": 3.0
+    },
+    "S06_SH006": {
+      "start_frame": 7020,
+      "frames": 84,
+      "seconds": 3.5,
+      "planned_seconds": 3.5,
+      "timed_by": "clip"
+    },
+    "S06_SH007": {
+      "start_frame": 7104,
+      "frames": 78,
+      "seconds": 3.25,
+      "planned_seconds": 3.25,
+      "timed_by": "clip"
+    },
+    "S06_SH008": {
+      "start_frame": 7182,
+      "frames": 54,
+      "seconds": 2.25,
+      "planned_seconds": 2.25,
+      "timed_by": "clip"
+    },
+    "S06_SH009": {
+      "start_frame": 7236,
+      "frames": 136,
+      "seconds": 5.6667,
+      "planned_seconds": 4.0
+    },
+    "S06_SH010": {
+      "start_frame": 7372,
+      "frames": 66,
+      "seconds": 2.75,
+      "planned_seconds": 2.75,
+      "timed_by": "clip"
+    },
+    "S06_SH011": {
+      "start_frame": 7438,
+      "frames": 66,
+      "seconds": 2.75,
+      "planned_seconds": 2.75,
+      "timed_by": "clip"
+    },
+    "S06_SH012": {
+      "start_frame": 7504,
+      "frames": 131,
+      "seconds": 5.4583,
+      "planned_seconds": 5.5
+    },
+    "S07_SH001": {
+      "start_frame": 7635,
+      "frames": 102,
+      "seconds": 4.25,
+      "planned_seconds": 4.75
+    },
+    "S07_SH002": {
+      "start_frame": 7737,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S07_SH003": {
+      "start_frame": 7785,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S07_SH004": {
+      "start_frame": 7833,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "timed_by": "clip"
+    },
+    "S07_SH005": {
+      "start_frame": 7881,
+      "frames": 174,
+      "seconds": 7.25,
+      "planned_seconds": 6.75
+    },
+    "S07_SH006": {
+      "start_frame": 8055,
+      "frames": 191,
+      "seconds": 7.9583,
+      "planned_seconds": 6.0
+    },
+    "S07_SH007": {
+      "start_frame": 8246,
+      "frames": 68,
+      "seconds": 2.8333,
+      "planned_seconds": 4.0
+    },
+    "S07_SH008": {
+      "start_frame": 8314,
+      "frames": 201,
+      "seconds": 8.375,
+      "planned_seconds": 8.25
+    },
+    "S08_SH001": {
+      "start_frame": 8515,
+      "frames": 188,
+      "seconds": 7.8333,
+      "planned_seconds": 6.75
+    },
+    "S08_SH002": {
+      "start_frame": 8703,
+      "frames": 234,
+      "seconds": 9.75,
+      "planned_seconds": 8.75
+    },
+    "S08_SH003": {
+      "start_frame": 8937,
+      "frames": 86,
+      "seconds": 3.5833,
+      "planned_seconds": 4.0
+    },
+    "S08_SH004": {
+      "start_frame": 9023,
+      "frames": 142,
+      "seconds": 5.9167,
+      "planned_seconds": 5.0
+    }
+  },
+  "spines": {
+    "S01_SH001": [
+      {
+        "word": "christmas",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "morning",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "1914",
+        "start_frame": 35,
+        "estimated": false
+      }
+    ],
+    "S01_SH002": [
+      {
+        "word": "in",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "few",
+        "start_frame": 19,
+        "estimated": false
+      },
+      {
+        "word": "seconds",
+        "start_frame": 24,
+        "estimated": false
+      },
+      {
+        "word": "this",
+        "start_frame": 43,
+        "estimated": false
+      },
+      {
+        "word": "man",
+        "start_frame": 51,
+        "estimated": false
+      },
+      {
+        "word": "will",
+        "start_frame": 59,
+        "estimated": false
+      },
+      {
+        "word": "walk",
+        "start_frame": 65,
+        "estimated": false
+      },
+      {
+        "word": "toward",
+        "start_frame": 73,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 82,
+        "estimated": false
+      },
+      {
+        "word": "german",
+        "start_frame": 88,
+        "estimated": false
+      },
+      {
+        "word": "guns",
+        "start_frame": 95,
+        "estimated": false
+      }
+    ],
+    "S01_SH003": [
+      {
+        "word": "unarmed",
+        "start_frame": 9,
+        "estimated": false
+      },
+      {
+        "word": "across",
+        "start_frame": 42,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 50,
+        "estimated": false
+      },
+      {
+        "word": "ground",
+        "start_frame": 58,
+        "estimated": false
+      },
+      {
+        "word": "where",
+        "start_frame": 66,
+        "estimated": false
+      },
+      {
+        "word": "men",
+        "start_frame": 75,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 82,
+        "estimated": false
+      },
+      {
+        "word": "been",
+        "start_frame": 89,
+        "estimated": false
+      },
+      {
+        "word": "dying",
+        "start_frame": 94,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 106,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 116,
+        "estimated": false
+      },
+      {
+        "word": "few",
+        "start_frame": 119,
+        "estimated": false
+      },
+      {
+        "word": "yards",
+        "start_frame": 126,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 135,
+        "estimated": false
+      },
+      {
+        "word": "mud",
+        "start_frame": 141,
+        "estimated": false
+      }
+    ],
+    "S01_SH004": [
+      {
+        "word": "that",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 17,
+        "estimated": false
+      },
+      {
+        "word": "thousands",
+        "start_frame": 41,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 49,
+        "estimated": false
+      },
+      {
+        "word": "soldiers",
+        "start_frame": 59,
+        "estimated": false
+      },
+      {
+        "word": "on",
+        "start_frame": 68,
+        "estimated": false
+      },
+      {
+        "word": "both",
+        "start_frame": 76,
+        "estimated": false
+      },
+      {
+        "word": "sides",
+        "start_frame": 83,
+        "estimated": false
+      },
+      {
+        "word": "did",
+        "start_frame": 95,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "same",
+        "start_frame": 107,
+        "estimated": false
+      }
+    ],
+    "S01_SH005": [
+      {
+        "word": "this",
+        "start_frame": 8,
+        "estimated": false
+      },
+      {
+        "word": "is",
+        "start_frame": 17,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 22,
+        "estimated": false
+      },
+      {
+        "word": "day",
+        "start_frame": 27,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 33,
+        "estimated": false
+      },
+      {
+        "word": "war",
+        "start_frame": 39,
+        "estimated": false
+      },
+      {
+        "word": "stopped",
+        "start_frame": 47,
+        "estimated": false
+      },
+      {
+        "word": "along",
+        "start_frame": 71,
+        "estimated": false
+      },
+      {
+        "word": "parts",
+        "start_frame": 79,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 87,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 92,
+        "estimated": false
+      },
+      {
+        "word": "western",
+        "start_frame": 94,
+        "estimated": false
+      },
+      {
+        "word": "front",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "how",
+        "start_frame": 127,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 134,
+        "estimated": false
+      },
+      {
+        "word": "began",
+        "start_frame": 138,
+        "estimated": false
+      },
+      {
+        "word": "with",
+        "start_frame": 148,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 165,
+        "estimated": false
+      },
+      {
+        "word": "song",
+        "start_frame": 170,
+        "estimated": false
+      },
+      {
+        "word": "and",
+        "start_frame": 191,
+        "estimated": false
+      },
+      {
+        "word": "how",
+        "start_frame": 199,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 204,
+        "estimated": false
+      },
+      {
+        "word": "ended",
+        "start_frame": 207,
+        "estimated": false
+      }
+    ],
+    "S02_SH001": [
+      {
+        "word": "the",
+        "start_frame": 7,
+        "estimated": false
+      },
+      {
+        "word": "war",
+        "start_frame": 15,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 24,
+        "estimated": false
+      },
+      {
+        "word": "begun",
+        "start_frame": 28,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 39,
+        "estimated": false
+      },
+      {
+        "word": "august",
+        "start_frame": 46,
+        "estimated": false
+      },
+      {
+        "word": "everyone",
+        "start_frame": 77,
+        "estimated": false
+      },
+      {
+        "word": "said",
+        "start_frame": 82,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 92,
+        "estimated": false
+      },
+      {
+        "word": "would",
+        "start_frame": 96,
+        "estimated": false
+      },
+      {
+        "word": "be",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "over",
+        "start_frame": 103,
+        "estimated": false
+      },
+      {
+        "word": "by",
+        "start_frame": 109,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 116,
+        "estimated": false
+      }
+    ],
+    "S02_SH002": [
+      {
+        "word": "by",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "december",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 36,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 39,
+        "estimated": false
+      },
+      {
+        "word": "dug",
+        "start_frame": 42,
+        "estimated": false
+      },
+      {
+        "word": "itself",
+        "start_frame": 49,
+        "estimated": false
+      },
+      {
+        "word": "into",
+        "start_frame": 58,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 66,
+        "estimated": false
+      },
+      {
+        "word": "ground",
+        "start_frame": 71,
+        "estimated": false
+      },
+      {
+        "word": "one",
+        "start_frame": 97,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 103,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 112,
+        "estimated": false
+      },
+      {
+        "word": "trenches",
+        "start_frame": 116,
+        "estimated": false
+      },
+      {
+        "word": "from",
+        "start_frame": 126,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 141,
+        "estimated": false
+      },
+      {
+        "word": "north",
+        "start_frame": 145,
+        "estimated": false
+      },
+      {
+        "word": "sea",
+        "start_frame": 151,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 160,
+        "estimated": false
+      },
+      {
+        "word": "switzerland",
+        "start_frame": 168,
+        "estimated": false
+      }
+    ],
+    "S02_SH003": [
+      {
+        "word": "here",
+        "start_frame": 10,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 28,
+        "estimated": false
+      },
+      {
+        "word": "flanders",
+        "start_frame": 30,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 54,
+        "estimated": false
+      },
+      {
+        "word": "two",
+        "start_frame": 57,
+        "estimated": false
+      },
+      {
+        "word": "sides",
+        "start_frame": 63,
+        "estimated": false
+      },
+      {
+        "word": "sat",
+        "start_frame": 72,
+        "estimated": false
+      },
+      {
+        "word": "close",
+        "start_frame": 81,
+        "estimated": false
+      },
+      {
+        "word": "enough",
+        "start_frame": 92,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "hear",
+        "start_frame": 104,
+        "estimated": false
+      },
+      {
+        "word": "each",
+        "start_frame": 110,
+        "estimated": false
+      },
+      {
+        "word": "other",
+        "start_frame": 116,
+        "estimated": false
+      },
+      {
+        "word": "cough",
+        "start_frame": 121,
+        "estimated": false
+      }
+    ],
+    "S02_SH004": [
+      {
+        "word": "mud",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "to",
+        "start_frame": 28,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 35,
+        "estimated": false
+      },
+      {
+        "word": "knee",
+        "start_frame": 39,
+        "estimated": false
+      },
+      {
+        "word": "water",
+        "start_frame": 64,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 68,
+        "estimated": false
+      },
+      {
+        "word": "every",
+        "start_frame": 78,
+        "estimated": false
+      },
+      {
+        "word": "boot",
+        "start_frame": 91,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 113,
+        "estimated": false
+      },
+      {
+        "word": "sniper",
+        "start_frame": 116,
+        "estimated": false
+      },
+      {
+        "word": "waiting",
+        "start_frame": 127,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 137,
+        "estimated": false
+      },
+      {
+        "word": "one",
+        "start_frame": 144,
+        "estimated": false
+      },
+      {
+        "word": "careless",
+        "start_frame": 154,
+        "estimated": false
+      },
+      {
+        "word": "head",
+        "start_frame": 166,
+        "estimated": false
+      }
+    ],
+    "S02_SH005": [
+      {
+        "word": "private",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "thomas",
+        "start_frame": 17,
+        "estimated": false
+      },
+      {
+        "word": "hale",
+        "start_frame": 31,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 38,
+        "estimated": false
+      },
+      {
+        "word": "read",
+        "start_frame": 46,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 50,
+        "estimated": false
+      },
+      {
+        "word": "same",
+        "start_frame": 57,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 65,
+        "estimated": false
+      },
+      {
+        "word": "every",
+        "start_frame": 73,
+        "estimated": false
+      },
+      {
+        "word": "night",
+        "start_frame": 89,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 97,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 106,
+        "estimated": false
+      },
+      {
+        "word": "week",
+        "start_frame": 110,
+        "estimated": false
+      }
+    ],
+    "S02_SH006": [
+      {
+        "word": "home",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "by",
+        "start_frame": 11,
+        "estimated": true
+      },
+      {
+        "word": "christmas",
+        "start_frame": 23,
+        "estimated": true
+      },
+      {
+        "word": "she",
+        "start_frame": 34,
+        "estimated": true
+      },
+      {
+        "word": "says",
+        "start_frame": 45,
+        "estimated": true
+      },
+      {
+        "word": "didn't",
+        "start_frame": 57,
+        "estimated": true
+      },
+      {
+        "word": "say",
+        "start_frame": 68,
+        "estimated": true
+      },
+      {
+        "word": "which",
+        "start_frame": 79,
+        "estimated": true
+      },
+      {
+        "word": "one",
+        "start_frame": 91,
+        "estimated": true
+      }
+    ],
+    "S02_SH007": [
+      {
+        "word": "keep",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "your",
+        "start_frame": 10,
+        "estimated": true
+      },
+      {
+        "word": "head",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "down",
+        "start_frame": 17,
+        "estimated": true
+      },
+      {
+        "word": "and",
+        "start_frame": 20,
+        "estimated": true
+      },
+      {
+        "word": "you",
+        "start_frame": 23,
+        "estimated": true
+      },
+      {
+        "word": "might",
+        "start_frame": 50,
+        "estimated": true
+      },
+      {
+        "word": "see",
+        "start_frame": 53,
+        "estimated": true
+      },
+      {
+        "word": "one",
+        "start_frame": 56,
+        "estimated": true
+      }
+    ],
+    "S02_SH008": [
+      {
+        "word": "in",
+        "start_frame": 9,
+        "estimated": false
+      },
+      {
+        "word": "early",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "december",
+        "start_frame": 20,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 45,
+        "estimated": false
+      },
+      {
+        "word": "pope",
+        "start_frame": 48,
+        "estimated": false
+      },
+      {
+        "word": "asked",
+        "start_frame": 52,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 63,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 69,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 74,
+        "estimated": false
+      },
+      {
+        "word": "truce",
+        "start_frame": 83,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 111,
+        "estimated": false
+      },
+      {
+        "word": "appeal",
+        "start_frame": 113,
+        "estimated": false
+      },
+      {
+        "word": "failed",
+        "start_frame": 121,
+        "estimated": false
+      },
+      {
+        "word": "no",
+        "start_frame": 149,
+        "estimated": false
+      },
+      {
+        "word": "official",
+        "start_frame": 155,
+        "estimated": false
+      },
+      {
+        "word": "truce",
+        "start_frame": 168,
+        "estimated": false
+      },
+      {
+        "word": "was",
+        "start_frame": 179,
+        "estimated": false
+      },
+      {
+        "word": "agreed",
+        "start_frame": 184,
+        "estimated": false
+      },
+      {
+        "word": "nobody",
+        "start_frame": 211,
+        "estimated": false
+      },
+      {
+        "word": "asked",
+        "start_frame": 217,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 226,
+        "estimated": false
+      },
+      {
+        "word": "men",
+        "start_frame": 231,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 235,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 239,
+        "estimated": false
+      },
+      {
+        "word": "trenches",
+        "start_frame": 242,
+        "estimated": false
+      }
+    ],
+    "S02_SH009": [
+      {
+        "word": "at",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "parcels",
+        "start_frame": 41,
+        "estimated": false
+      },
+      {
+        "word": "came",
+        "start_frame": 43,
+        "estimated": false
+      },
+      {
+        "word": "up",
+        "start_frame": 54,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 58,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 62,
+        "estimated": false
+      },
+      {
+        "word": "british",
+        "start_frame": 87,
+        "estimated": false
+      },
+      {
+        "word": "soldiers",
+        "start_frame": 90,
+        "estimated": false
+      },
+      {
+        "word": "opened",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "brass",
+        "start_frame": 115,
+        "estimated": false
+      },
+      {
+        "word": "tins",
+        "start_frame": 124,
+        "estimated": false
+      },
+      {
+        "word": "from",
+        "start_frame": 135,
+        "estimated": false
+      },
+      {
+        "word": "princess",
+        "start_frame": 142,
+        "estimated": false
+      },
+      {
+        "word": "mary",
+        "start_frame": 151,
+        "estimated": false
+      },
+      {
+        "word": "cigarettes",
+        "start_frame": 179,
+        "estimated": false
+      },
+      {
+        "word": "tobacco",
+        "start_frame": 201,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 221,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 225,
+        "estimated": false
+      },
+      {
+        "word": "card",
+        "start_frame": 233,
+        "estimated": false
+      }
+    ],
+    "S03_SH001": [
+      {
+        "word": "on",
+        "start_frame": 9,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "german",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "side",
+        "start_frame": 22,
+        "estimated": false
+      },
+      {
+        "word": "little",
+        "start_frame": 46,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 50,
+        "estimated": false
+      },
+      {
+        "word": "trees",
+        "start_frame": 62,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 71,
+        "estimated": false
+      },
+      {
+        "word": "come",
+        "start_frame": 79,
+        "estimated": false
+      },
+      {
+        "word": "up",
+        "start_frame": 83,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 87,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 91,
+        "estimated": false
+      },
+      {
+        "word": "as",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "night",
+        "start_frame": 117,
+        "estimated": false
+      },
+      {
+        "word": "fell",
+        "start_frame": 124,
+        "estimated": false
+      },
+      {
+        "word": "they",
+        "start_frame": 143,
+        "estimated": false
+      },
+      {
+        "word": "went",
+        "start_frame": 144,
+        "estimated": false
+      },
+      {
+        "word": "up",
+        "start_frame": 150,
+        "estimated": false
+      },
+      {
+        "word": "on",
+        "start_frame": 154,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 158,
+        "estimated": false
+      },
+      {
+        "word": "parapets",
+        "start_frame": 162,
+        "estimated": false
+      },
+      {
+        "word": "candles",
+        "start_frame": 185,
+        "estimated": false
+      },
+      {
+        "word": "and",
+        "start_frame": 190,
+        "estimated": false
+      },
+      {
+        "word": "all",
+        "start_frame": 196,
+        "estimated": false
+      }
+    ],
+    "S03_SH002": [
+      {
+        "word": "gefreiter",
+        "start_frame": 10,
+        "estimated": false
+      },
+      {
+        "word": "friedrich",
+        "start_frame": 21,
+        "estimated": false
+      },
+      {
+        "word": "brandt",
+        "start_frame": 33,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 51,
+        "estimated": false
+      },
+      {
+        "word": "carried",
+        "start_frame": 54,
+        "estimated": false
+      },
+      {
+        "word": "this",
+        "start_frame": 63,
+        "estimated": false
+      },
+      {
+        "word": "photograph",
+        "start_frame": 70,
+        "estimated": false
+      },
+      {
+        "word": "since",
+        "start_frame": 83,
+        "estimated": false
+      },
+      {
+        "word": "august",
+        "start_frame": 91,
+        "estimated": false
+      }
+    ],
+    "S03_SH003": [
+      {
+        "word": "stille",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "nacht",
+        "start_frame": 28,
+        "estimated": true
+      },
+      {
+        "word": "heilige",
+        "start_frame": 57,
+        "estimated": true
+      },
+      {
+        "word": "nacht",
+        "start_frame": 86,
+        "estimated": true
+      }
+    ],
+    "S03_SH004": [
+      {
+        "word": "what",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "are",
+        "start_frame": 11,
+        "estimated": true
+      },
+      {
+        "word": "they",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "singing",
+        "start_frame": 21,
+        "estimated": true
+      }
+    ],
+    "S03_SH005": [
+      {
+        "word": "silent",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "night",
+        "start_frame": 11,
+        "estimated": true
+      },
+      {
+        "word": "same",
+        "start_frame": 53,
+        "estimated": true
+      },
+      {
+        "word": "tune",
+        "start_frame": 59,
+        "estimated": true
+      },
+      {
+        "word": "as",
+        "start_frame": 65,
+        "estimated": true
+      },
+      {
+        "word": "ours",
+        "start_frame": 70,
+        "estimated": true
+      }
+    ],
+    "S03_SH006": [
+      {
+        "word": "let",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "'em",
+        "start_frame": 8,
+        "estimated": true
+      },
+      {
+        "word": "sing",
+        "start_frame": 10,
+        "estimated": true
+      },
+      {
+        "word": "heads",
+        "start_frame": 66,
+        "estimated": true
+      },
+      {
+        "word": "down",
+        "start_frame": 69,
+        "estimated": true
+      }
+    ],
+    "S03_SH007": [
+      {
+        "word": "thomas",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "does",
+        "start_frame": 10,
+        "estimated": true
+      },
+      {
+        "word": "not",
+        "start_frame": 20,
+        "estimated": true
+      },
+      {
+        "word": "answer",
+        "start_frame": 30,
+        "estimated": true
+      },
+      {
+        "word": "he",
+        "start_frame": 40,
+        "estimated": true
+      },
+      {
+        "word": "looks",
+        "start_frame": 50,
+        "estimated": true
+      },
+      {
+        "word": "at",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 70,
+        "estimated": true
+      },
+      {
+        "word": "candles",
+        "start_frame": 80,
+        "estimated": true
+      }
+    ],
+    "S03_SH008": [
+      {
+        "word": "silent",
+        "start_frame": 4,
+        "estimated": true
+      },
+      {
+        "word": "night",
+        "start_frame": 25,
+        "estimated": true
+      },
+      {
+        "word": "holy",
+        "start_frame": 85,
+        "estimated": true
+      },
+      {
+        "word": "night",
+        "start_frame": 101,
+        "estimated": true
+      }
+    ],
+    "S03_SH009": [
+      {
+        "word": "good",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "english",
+        "start_frame": 29,
+        "estimated": true
+      },
+      {
+        "word": "more",
+        "start_frame": 44,
+        "estimated": true
+      }
+    ],
+    "S03_SH010": [
+      {
+        "word": "and",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 5,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 9,
+        "estimated": false
+      },
+      {
+        "word": "first",
+        "start_frame": 13,
+        "estimated": false
+      },
+      {
+        "word": "time",
+        "start_frame": 19,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 27,
+        "estimated": false
+      },
+      {
+        "word": "months",
+        "start_frame": 32,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 55,
+        "estimated": false
+      },
+      {
+        "word": "sound",
+        "start_frame": 58,
+        "estimated": false
+      },
+      {
+        "word": "crossing",
+        "start_frame": 66,
+        "estimated": false
+      },
+      {
+        "word": "no",
+        "start_frame": 76,
+        "estimated": false
+      },
+      {
+        "word": "man's",
+        "start_frame": 83,
+        "estimated": false
+      },
+      {
+        "word": "land",
+        "start_frame": 93,
+        "estimated": false
+      },
+      {
+        "word": "was",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "not",
+        "start_frame": 105,
+        "estimated": false
+      },
+      {
+        "word": "gunfire",
+        "start_frame": 116,
+        "estimated": false
+      }
+    ],
+    "S04_SH001": [
+      {
+        "word": "christmas",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "morning",
+        "start_frame": 19,
+        "estimated": false
+      },
+      {
+        "word": "came",
+        "start_frame": 31,
+        "estimated": false
+      },
+      {
+        "word": "white",
+        "start_frame": 40,
+        "estimated": false
+      },
+      {
+        "word": "and",
+        "start_frame": 51,
+        "estimated": false
+      },
+      {
+        "word": "still",
+        "start_frame": 62,
+        "estimated": false
+      }
+    ],
+    "S04_SH002": [
+      {
+        "word": "english",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "merry",
+        "start_frame": 41,
+        "estimated": true
+      },
+      {
+        "word": "christmas",
+        "start_frame": 50,
+        "estimated": true
+      }
+    ],
+    "S04_SH003": [
+      {
+        "word": "it's",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "a",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "trick",
+        "start_frame": 42,
+        "estimated": true
+      },
+      {
+        "word": "nobody",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "move",
+        "start_frame": 54,
+        "estimated": true
+      }
+    ],
+    "S04_SH004": [
+      {
+        "word": "no",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "shooting",
+        "start_frame": 18,
+        "estimated": true
+      },
+      {
+        "word": "merry",
+        "start_frame": 51,
+        "estimated": true
+      },
+      {
+        "word": "christmas",
+        "start_frame": 59,
+        "estimated": true
+      }
+    ],
+    "S04_SH005": [
+      {
+        "word": "thomas",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "leans",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "his",
+        "start_frame": 25,
+        "estimated": true
+      },
+      {
+        "word": "rifle",
+        "start_frame": 38,
+        "estimated": true
+      },
+      {
+        "word": "on",
+        "start_frame": 50,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 63,
+        "estimated": true
+      },
+      {
+        "word": "sandbags",
+        "start_frame": 75,
+        "estimated": true
+      },
+      {
+        "word": "and",
+        "start_frame": 88,
+        "estimated": true
+      },
+      {
+        "word": "climbs",
+        "start_frame": 100,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 113,
+        "estimated": true
+      },
+      {
+        "word": "ladder",
+        "start_frame": 126,
+        "estimated": true
+      }
+    ],
+    "S04_SH006": [
+      {
+        "word": "thomas",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "get",
+        "start_frame": 42,
+        "estimated": true
+      },
+      {
+        "word": "back",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "down",
+        "start_frame": 58,
+        "estimated": true
+      }
+    ],
+    "S04_SH007": [
+      {
+        "word": "if",
+        "start_frame": 6,
+        "estimated": true
+      },
+      {
+        "word": "they",
+        "start_frame": 10,
+        "estimated": true
+      },
+      {
+        "word": "wanted",
+        "start_frame": 15,
+        "estimated": true
+      },
+      {
+        "word": "us",
+        "start_frame": 19,
+        "estimated": true
+      },
+      {
+        "word": "dead",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "we'd",
+        "start_frame": 43,
+        "estimated": true
+      },
+      {
+        "word": "be",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "dead",
+        "start_frame": 52,
+        "estimated": true
+      }
+    ],
+    "S04_SH008": [
+      {
+        "word": "in",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "places",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "lines",
+        "start_frame": 40,
+        "estimated": false
+      },
+      {
+        "word": "were",
+        "start_frame": 45,
+        "estimated": false
+      },
+      {
+        "word": "only",
+        "start_frame": 52,
+        "estimated": false
+      },
+      {
+        "word": "fifty",
+        "start_frame": 58,
+        "estimated": false
+      },
+      {
+        "word": "yards",
+        "start_frame": 72,
+        "estimated": false
+      },
+      {
+        "word": "apart",
+        "start_frame": 79,
+        "estimated": false
+      },
+      {
+        "word": "fifty",
+        "start_frame": 112,
+        "estimated": false
+      },
+      {
+        "word": "yards",
+        "start_frame": 120,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 131,
+        "estimated": false
+      },
+      {
+        "word": "frozen",
+        "start_frame": 138,
+        "estimated": false
+      },
+      {
+        "word": "mud",
+        "start_frame": 148,
+        "estimated": false
+      },
+      {
+        "word": "wire",
+        "start_frame": 169,
+        "estimated": false
+      },
+      {
+        "word": "and",
+        "start_frame": 190,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 193,
+        "estimated": false
+      },
+      {
+        "word": "men",
+        "start_frame": 196,
+        "estimated": false
+      },
+      {
+        "word": "who",
+        "start_frame": 202,
+        "estimated": false
+      },
+      {
+        "word": "never",
+        "start_frame": 209,
+        "estimated": false
+      },
+      {
+        "word": "made",
+        "start_frame": 219,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 224,
+        "estimated": false
+      },
+      {
+        "word": "back",
+        "start_frame": 229,
+        "estimated": false
+      }
+    ],
+    "S04_SH009": [
+      {
+        "word": "you",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "are",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "english",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S04_SH010": [
+      {
+        "word": "and",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "you're",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "german",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S04_SH011": [
+      {
+        "word": "their",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "empty",
+        "start_frame": 28,
+        "estimated": true
+      },
+      {
+        "word": "hands",
+        "start_frame": 57,
+        "estimated": true
+      }
+    ],
+    "S04_SH012": [
+      {
+        "word": "saxon",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "fritz",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "to",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "my",
+        "start_frame": 36,
+        "estimated": true
+      },
+      {
+        "word": "friends",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "merry",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "christmas",
+        "start_frame": 72,
+        "estimated": true
+      },
+      {
+        "word": "tommy",
+        "start_frame": 84,
+        "estimated": true
+      }
+    ],
+    "S04_SH013": [
+      {
+        "word": "we're",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "all",
+        "start_frame": 11,
+        "estimated": true
+      },
+      {
+        "word": "tommies",
+        "start_frame": 23,
+        "estimated": true
+      },
+      {
+        "word": "to",
+        "start_frame": 34,
+        "estimated": true
+      },
+      {
+        "word": "you",
+        "start_frame": 45,
+        "estimated": true
+      },
+      {
+        "word": "it's",
+        "start_frame": 57,
+        "estimated": true
+      },
+      {
+        "word": "really",
+        "start_frame": 68,
+        "estimated": true
+      },
+      {
+        "word": "my",
+        "start_frame": 79,
+        "estimated": true
+      },
+      {
+        "word": "name",
+        "start_frame": 91,
+        "estimated": true
+      }
+    ],
+    "S04_SH014": [
+      {
+        "word": "they",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "shake",
+        "start_frame": 29,
+        "estimated": true
+      },
+      {
+        "word": "hands",
+        "start_frame": 57,
+        "estimated": true
+      }
+    ],
+    "S04_SH015": [
+      {
+        "word": "up",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "and",
+        "start_frame": 15,
+        "estimated": false
+      },
+      {
+        "word": "down",
+        "start_frame": 21,
+        "estimated": false
+      },
+      {
+        "word": "this",
+        "start_frame": 27,
+        "estimated": false
+      },
+      {
+        "word": "part",
+        "start_frame": 34,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 41,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 43,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 47,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 61,
+        "estimated": false
+      },
+      {
+        "word": "same",
+        "start_frame": 62,
+        "estimated": false
+      },
+      {
+        "word": "thing",
+        "start_frame": 73,
+        "estimated": false
+      },
+      {
+        "word": "was",
+        "start_frame": 82,
+        "estimated": false
+      },
+      {
+        "word": "happening",
+        "start_frame": 87,
+        "estimated": false
+      },
+      {
+        "word": "nobody",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 119,
+        "estimated": false
+      },
+      {
+        "word": "ordered",
+        "start_frame": 130,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 137,
+        "estimated": false
+      }
+    ],
+    "S05_SH001": [
+      {
+        "word": "along",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 22,
+        "estimated": false
+      },
+      {
+        "word": "british",
+        "start_frame": 27,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 34,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 42,
+        "estimated": false
+      },
+      {
+        "word": "flanders",
+        "start_frame": 47,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 73,
+        "estimated": false
+      },
+      {
+        "word": "spread",
+        "start_frame": 74,
+        "estimated": false
+      },
+      {
+        "word": "from",
+        "start_frame": 82,
+        "estimated": false
+      },
+      {
+        "word": "trench",
+        "start_frame": 90,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "trench",
+        "start_frame": 107,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 119,
+        "estimated": false
+      },
+      {
+        "word": "patches",
+        "start_frame": 132,
+        "estimated": false
+      }
+    ],
+    "S05_SH002": [
+      {
+        "word": "nobody",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "counted",
+        "start_frame": 22,
+        "estimated": false
+      },
+      {
+        "word": "them",
+        "start_frame": 33,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 53,
+        "estimated": false
+      },
+      {
+        "word": "usual",
+        "start_frame": 57,
+        "estimated": false
+      },
+      {
+        "word": "estimate",
+        "start_frame": 67,
+        "estimated": false
+      },
+      {
+        "word": "is",
+        "start_frame": 82,
+        "estimated": false
+      },
+      {
+        "word": "that",
+        "start_frame": 89,
+        "estimated": false
+      },
+      {
+        "word": "about",
+        "start_frame": 94,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 100,
+        "estimated": true
+      },
+      {
+        "word": "hundred",
+        "start_frame": 100,
+        "estimated": false
+      },
+      {
+        "word": "thousand",
+        "start_frame": 114,
+        "estimated": true
+      },
+      {
+        "word": "men",
+        "start_frame": 130,
+        "estimated": false
+      },
+      {
+        "word": "took",
+        "start_frame": 139,
+        "estimated": false
+      },
+      {
+        "word": "part",
+        "start_frame": 146,
+        "estimated": false
+      }
+    ],
+    "S05_SH003": [
+      {
+        "word": "they",
+        "start_frame": 8,
+        "estimated": false
+      },
+      {
+        "word": "traded",
+        "start_frame": 13,
+        "estimated": false
+      },
+      {
+        "word": "cigarettes",
+        "start_frame": 21,
+        "estimated": false
+      },
+      {
+        "word": "food",
+        "start_frame": 49,
+        "estimated": false
+      },
+      {
+        "word": "buttons",
+        "start_frame": 55,
+        "estimated": true
+      },
+      {
+        "word": "in",
+        "start_frame": 93,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 96,
+        "estimated": false
+      },
+      {
+        "word": "few",
+        "start_frame": 98,
+        "estimated": false
+      },
+      {
+        "word": "places",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "accounts",
+        "start_frame": 121,
+        "estimated": false
+      },
+      {
+        "word": "describe",
+        "start_frame": 128,
+        "estimated": true
+      },
+      {
+        "word": "men",
+        "start_frame": 141,
+        "estimated": false
+      },
+      {
+        "word": "kicking",
+        "start_frame": 152,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 163,
+        "estimated": false
+      },
+      {
+        "word": "ball",
+        "start_frame": 167,
+        "estimated": false
+      },
+      {
+        "word": "around",
+        "start_frame": 173,
+        "estimated": false
+      }
+    ],
+    "S05_SH004": [
+      {
+        "word": "where'd",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "you",
+        "start_frame": 14,
+        "estimated": true
+      },
+      {
+        "word": "learn",
+        "start_frame": 27,
+        "estimated": true
+      },
+      {
+        "word": "english",
+        "start_frame": 40,
+        "estimated": true
+      }
+    ],
+    "S05_SH005": [
+      {
+        "word": "london",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "i",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "was",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "a",
+        "start_frame": 36,
+        "estimated": true
+      },
+      {
+        "word": "waiter",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "four",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "years",
+        "start_frame": 72,
+        "estimated": true
+      }
+    ],
+    "S05_SH006": [
+      {
+        "word": "many",
+        "start_frame": 10,
+        "estimated": false
+      },
+      {
+        "word": "germans",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 25,
+        "estimated": false
+      },
+      {
+        "word": "worked",
+        "start_frame": 34,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 42,
+        "estimated": false
+      },
+      {
+        "word": "britain",
+        "start_frame": 47,
+        "estimated": false
+      },
+      {
+        "word": "before",
+        "start_frame": 53,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 63,
+        "estimated": false
+      },
+      {
+        "word": "war",
+        "start_frame": 68,
+        "estimated": false
+      },
+      {
+        "word": "one",
+        "start_frame": 76,
+        "estimated": false
+      },
+      {
+        "word": "briton",
+        "start_frame": 95,
+        "estimated": false
+      },
+      {
+        "word": "found",
+        "start_frame": 104,
+        "estimated": false
+      },
+      {
+        "word": "his",
+        "start_frame": 112,
+        "estimated": false
+      },
+      {
+        "word": "old",
+        "start_frame": 117,
+        "estimated": false
+      },
+      {
+        "word": "barber",
+        "start_frame": 124,
+        "estimated": false
+      },
+      {
+        "word": "among",
+        "start_frame": 135,
+        "estimated": false
+      },
+      {
+        "word": "them",
+        "start_frame": 141,
+        "estimated": false
+      },
+      {
+        "word": "and",
+        "start_frame": 149,
+        "estimated": false
+      },
+      {
+        "word": "sat",
+        "start_frame": 157,
+        "estimated": false
+      },
+      {
+        "word": "down",
+        "start_frame": 163,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 170,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 176,
+        "estimated": false
+      },
+      {
+        "word": "haircut",
+        "start_frame": 180,
+        "estimated": false
+      }
+    ],
+    "S05_SH007": [
+      {
+        "word": "you",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "have",
+        "start_frame": 14,
+        "estimated": true
+      },
+      {
+        "word": "a",
+        "start_frame": 27,
+        "estimated": true
+      },
+      {
+        "word": "family",
+        "start_frame": 40,
+        "estimated": true
+      }
+    ],
+    "S05_SH008": [
+      {
+        "word": "my",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "mum",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "and",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "a",
+        "start_frame": 39,
+        "estimated": true
+      },
+      {
+        "word": "little",
+        "start_frame": 52,
+        "estimated": true
+      },
+      {
+        "word": "sister",
+        "start_frame": 65,
+        "estimated": true
+      }
+    ],
+    "S05_SH009": [
+      {
+        "word": "my",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "wife",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "my",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "daughter",
+        "start_frame": 36,
+        "estimated": true
+      },
+      {
+        "word": "she",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "is",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "three",
+        "start_frame": 72,
+        "estimated": true
+      }
+    ],
+    "S05_SH010": [
+      {
+        "word": "thomas",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "looks",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "at",
+        "start_frame": 32,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "photograph",
+        "start_frame": 64,
+        "estimated": true
+      }
+    ],
+    "S05_SH011": [
+      {
+        "word": "she",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "looks",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "happy",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S05_SH012": [
+      {
+        "word": "she",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "thinks",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "i",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "am",
+        "start_frame": 36,
+        "estimated": true
+      },
+      {
+        "word": "home",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "for",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "christmas",
+        "start_frame": 72,
+        "estimated": true
+      }
+    ],
+    "S05_SH013": [
+      {
+        "word": "so",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "does",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "mine",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S05_SH014": [
+      {
+        "word": "but",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 14,
+        "estimated": false
+      },
+      {
+        "word": "day",
+        "start_frame": 17,
+        "estimated": false
+      },
+      {
+        "word": "was",
+        "start_frame": 24,
+        "estimated": false
+      },
+      {
+        "word": "not",
+        "start_frame": 29,
+        "estimated": false
+      },
+      {
+        "word": "only",
+        "start_frame": 36,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 48,
+        "estimated": false
+      },
+      {
+        "word": "trading",
+        "start_frame": 53,
+        "estimated": false
+      },
+      {
+        "word": "both",
+        "start_frame": 81,
+        "estimated": false
+      },
+      {
+        "word": "sides",
+        "start_frame": 85,
+        "estimated": false
+      },
+      {
+        "word": "went",
+        "start_frame": 95,
+        "estimated": false
+      },
+      {
+        "word": "out",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 109,
+        "estimated": false
+      },
+      {
+        "word": "bring",
+        "start_frame": 114,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 119,
+        "estimated": false
+      },
+      {
+        "word": "their",
+        "start_frame": 122,
+        "estimated": false
+      },
+      {
+        "word": "dead",
+        "start_frame": 128,
+        "estimated": false
+      }
+    ],
+    "S05_SH015": [
+      {
+        "word": "some",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "had",
+        "start_frame": 18,
+        "estimated": false
+      },
+      {
+        "word": "lain",
+        "start_frame": 23,
+        "estimated": false
+      },
+      {
+        "word": "out",
+        "start_frame": 30,
+        "estimated": false
+      },
+      {
+        "word": "there",
+        "start_frame": 36,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 41,
+        "estimated": false
+      },
+      {
+        "word": "weeks",
+        "start_frame": 47,
+        "estimated": false
+      }
+    ],
+    "S05_SH016": [
+      {
+        "word": "two",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "spades",
+        "start_frame": 9,
+        "estimated": true
+      },
+      {
+        "word": "stand",
+        "start_frame": 19,
+        "estimated": true
+      },
+      {
+        "word": "in",
+        "start_frame": 28,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 37,
+        "estimated": true
+      },
+      {
+        "word": "earth",
+        "start_frame": 47,
+        "estimated": true
+      },
+      {
+        "word": "by",
+        "start_frame": 56,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 66,
+        "estimated": true
+      },
+      {
+        "word": "grave",
+        "start_frame": 75,
+        "estimated": true
+      }
+    ],
+    "S05_SH017": [
+      {
+        "word": "what",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "was",
+        "start_frame": 14,
+        "estimated": true
+      },
+      {
+        "word": "his",
+        "start_frame": 27,
+        "estimated": true
+      },
+      {
+        "word": "name",
+        "start_frame": 40,
+        "estimated": true
+      }
+    ],
+    "S05_SH018": [
+      {
+        "word": "karl",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "he",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "sang",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 40,
+        "estimated": true
+      },
+      {
+        "word": "loudest",
+        "start_frame": 53,
+        "estimated": true
+      }
+    ],
+    "S05_SH019": [
+      {
+        "word": "i'm",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "sorry",
+        "start_frame": 24,
+        "estimated": true
+      }
+    ],
+    "S05_SH020": [
+      {
+        "word": "at",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "one",
+        "start_frame": 15,
+        "estimated": false
+      },
+      {
+        "word": "burial",
+        "start_frame": 22,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 41,
+        "estimated": false
+      },
+      {
+        "word": "scottish",
+        "start_frame": 44,
+        "estimated": false
+      },
+      {
+        "word": "chaplain",
+        "start_frame": 53,
+        "estimated": false
+      },
+      {
+        "word": "read",
+        "start_frame": 68,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 76,
+        "estimated": false
+      },
+      {
+        "word": "twenty",
+        "start_frame": 81,
+        "estimated": true
+      },
+      {
+        "word": "third",
+        "start_frame": 81,
+        "estimated": true
+      },
+      {
+        "word": "psalm",
+        "start_frame": 106,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 121,
+        "estimated": false
+      },
+      {
+        "word": "german",
+        "start_frame": 125,
+        "estimated": false
+      },
+      {
+        "word": "student",
+        "start_frame": 132,
+        "estimated": false
+      },
+      {
+        "word": "read",
+        "start_frame": 141,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 149,
+        "estimated": false
+      },
+      {
+        "word": "after",
+        "start_frame": 153,
+        "estimated": false
+      },
+      {
+        "word": "him",
+        "start_frame": 159,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 172,
+        "estimated": false
+      },
+      {
+        "word": "german",
+        "start_frame": 179,
+        "estimated": false
+      }
+    ],
+    "S05_SH021": [
+      {
+        "word": "harris",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "takes",
+        "start_frame": 10,
+        "estimated": true
+      },
+      {
+        "word": "off",
+        "start_frame": 19,
+        "estimated": true
+      },
+      {
+        "word": "his",
+        "start_frame": 28,
+        "estimated": true
+      },
+      {
+        "word": "cap",
+        "start_frame": 38,
+        "estimated": true
+      },
+      {
+        "word": "at",
+        "start_frame": 47,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 56,
+        "estimated": true
+      },
+      {
+        "word": "edge",
+        "start_frame": 66,
+        "estimated": true
+      },
+      {
+        "word": "of",
+        "start_frame": 75,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 85,
+        "estimated": true
+      },
+      {
+        "word": "graves",
+        "start_frame": 94,
+        "estimated": true
+      }
+    ],
+    "S06_SH001": [
+      {
+        "word": "by",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "late",
+        "start_frame": 15,
+        "estimated": false
+      },
+      {
+        "word": "afternoon",
+        "start_frame": 21,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 46,
+        "estimated": false
+      },
+      {
+        "word": "light",
+        "start_frame": 50,
+        "estimated": false
+      },
+      {
+        "word": "was",
+        "start_frame": 56,
+        "estimated": false
+      },
+      {
+        "word": "going",
+        "start_frame": 62,
+        "estimated": false
+      }
+    ],
+    "S06_SH002": [
+      {
+        "word": "tommy",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "why",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "are",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "we",
+        "start_frame": 40,
+        "estimated": true
+      },
+      {
+        "word": "fighting",
+        "start_frame": 53,
+        "estimated": true
+      }
+    ],
+    "S06_SH003": [
+      {
+        "word": "i",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "don't",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "know",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S06_SH004": [
+      {
+        "word": "they",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "told",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "us",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "you",
+        "start_frame": 36,
+        "estimated": true
+      },
+      {
+        "word": "were",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "enemy",
+        "start_frame": 72,
+        "estimated": true
+      }
+    ],
+    "S06_SH005": [
+      {
+        "word": "thomas",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "looks",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "at",
+        "start_frame": 25,
+        "estimated": true
+      },
+      {
+        "word": "friedrich",
+        "start_frame": 37,
+        "estimated": true
+      }
+    ],
+    "S06_SH006": [
+      {
+        "word": "they",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "told",
+        "start_frame": 12,
+        "estimated": true
+      },
+      {
+        "word": "us",
+        "start_frame": 24,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 36,
+        "estimated": true
+      },
+      {
+        "word": "same",
+        "start_frame": 48,
+        "estimated": true
+      },
+      {
+        "word": "about",
+        "start_frame": 60,
+        "estimated": true
+      },
+      {
+        "word": "you",
+        "start_frame": 72,
+        "estimated": true
+      }
+    ],
+    "S06_SH007": [
+      {
+        "word": "tomorrow",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "maybe",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "we",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "are",
+        "start_frame": 39,
+        "estimated": true
+      },
+      {
+        "word": "enemies",
+        "start_frame": 52,
+        "estimated": true
+      },
+      {
+        "word": "again",
+        "start_frame": 65,
+        "estimated": true
+      }
+    ],
+    "S06_SH008": [
+      {
+        "word": "maybe",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "but",
+        "start_frame": 14,
+        "estimated": true
+      },
+      {
+        "word": "not",
+        "start_frame": 27,
+        "estimated": true
+      },
+      {
+        "word": "today",
+        "start_frame": 40,
+        "estimated": true
+      }
+    ],
+    "S06_SH009": [
+      {
+        "word": "thomas",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "cuts",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "a",
+        "start_frame": 25,
+        "estimated": true
+      },
+      {
+        "word": "brass",
+        "start_frame": 37,
+        "estimated": true
+      },
+      {
+        "word": "button",
+        "start_frame": 50,
+        "estimated": true
+      },
+      {
+        "word": "off",
+        "start_frame": 62,
+        "estimated": true
+      },
+      {
+        "word": "his",
+        "start_frame": 74,
+        "estimated": true
+      },
+      {
+        "word": "tunic",
+        "start_frame": 87,
+        "estimated": true
+      },
+      {
+        "word": "with",
+        "start_frame": 99,
+        "estimated": true
+      },
+      {
+        "word": "a",
+        "start_frame": 111,
+        "estimated": true
+      },
+      {
+        "word": "penknife",
+        "start_frame": 124,
+        "estimated": true
+      }
+    ],
+    "S06_SH010": [
+      {
+        "word": "something",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "to",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "remember",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "me",
+        "start_frame": 40,
+        "estimated": true
+      },
+      {
+        "word": "by",
+        "start_frame": 53,
+        "estimated": true
+      }
+    ],
+    "S06_SH011": [
+      {
+        "word": "then",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "take",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "one",
+        "start_frame": 26,
+        "estimated": true
+      },
+      {
+        "word": "of",
+        "start_frame": 40,
+        "estimated": true
+      },
+      {
+        "word": "mine",
+        "start_frame": 53,
+        "estimated": true
+      }
+    ],
+    "S06_SH012": [
+      {
+        "word": "the",
+        "start_frame": 0,
+        "estimated": false
+      },
+      {
+        "word": "sun",
+        "start_frame": 15,
+        "estimated": false
+      },
+      {
+        "word": "went",
+        "start_frame": 22,
+        "estimated": false
+      },
+      {
+        "word": "down",
+        "start_frame": 28,
+        "estimated": false
+      },
+      {
+        "word": "on",
+        "start_frame": 38,
+        "estimated": false
+      },
+      {
+        "word": "christmas",
+        "start_frame": 44,
+        "estimated": false
+      },
+      {
+        "word": "day",
+        "start_frame": 52,
+        "estimated": false
+      },
+      {
+        "word": "neither",
+        "start_frame": 85,
+        "estimated": false
+      },
+      {
+        "word": "of",
+        "start_frame": 87,
+        "estimated": false
+      },
+      {
+        "word": "them",
+        "start_frame": 94,
+        "estimated": false
+      },
+      {
+        "word": "moved",
+        "start_frame": 99,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 106,
+        "estimated": false
+      },
+      {
+        "word": "leave",
+        "start_frame": 113,
+        "estimated": false
+      }
+    ],
+    "S07_SH001": [
+      {
+        "word": "the",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "next",
+        "start_frame": 14,
+        "estimated": false
+      },
+      {
+        "word": "morning",
+        "start_frame": 19,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 39,
+        "estimated": false
+      },
+      {
+        "word": "men",
+        "start_frame": 42,
+        "estimated": false
+      },
+      {
+        "word": "drifted",
+        "start_frame": 47,
+        "estimated": false
+      },
+      {
+        "word": "back",
+        "start_frame": 56,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 65,
+        "estimated": false
+      },
+      {
+        "word": "their",
+        "start_frame": 71,
+        "estimated": false
+      },
+      {
+        "word": "own",
+        "start_frame": 75,
+        "estimated": false
+      },
+      {
+        "word": "trenches",
+        "start_frame": 81,
+        "estimated": false
+      }
+    ],
+    "S07_SH002": [
+      {
+        "word": "good",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "luck",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "tommy",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S07_SH003": [
+      {
+        "word": "you",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "too",
+        "start_frame": 16,
+        "estimated": true
+      },
+      {
+        "word": "fritz",
+        "start_frame": 32,
+        "estimated": true
+      }
+    ],
+    "S07_SH004": [
+      {
+        "word": "stand",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "to",
+        "start_frame": 24,
+        "estimated": true
+      }
+    ],
+    "S07_SH005": [
+      {
+        "word": "at",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "houplines",
+        "start_frame": 15,
+        "estimated": true
+      },
+      {
+        "word": "on",
+        "start_frame": 38,
+        "estimated": false
+      },
+      {
+        "word": "boxing",
+        "start_frame": 43,
+        "estimated": false
+      },
+      {
+        "word": "day",
+        "start_frame": 50,
+        "estimated": false
+      },
+      {
+        "word": "morning",
+        "start_frame": 57,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 76,
+        "estimated": false
+      },
+      {
+        "word": "british",
+        "start_frame": 80,
+        "estimated": false
+      },
+      {
+        "word": "captain",
+        "start_frame": 86,
+        "estimated": false
+      },
+      {
+        "word": "ended",
+        "start_frame": 96,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 107,
+        "estimated": false
+      },
+      {
+        "word": "politely",
+        "start_frame": 113,
+        "estimated": false
+      },
+      {
+        "word": "shots",
+        "start_frame": 139,
+        "estimated": false
+      },
+      {
+        "word": "into",
+        "start_frame": 147,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 159,
+        "estimated": false
+      },
+      {
+        "word": "air",
+        "start_frame": 164,
+        "estimated": false
+      }
+    ],
+    "S07_SH006": [
+      {
+        "word": "the",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "german",
+        "start_frame": 11,
+        "estimated": true
+      },
+      {
+        "word": "captain",
+        "start_frame": 23,
+        "estimated": true
+      },
+      {
+        "word": "salutes",
+        "start_frame": 34,
+        "estimated": true
+      },
+      {
+        "word": "back",
+        "start_frame": 45,
+        "estimated": true
+      },
+      {
+        "word": "gets",
+        "start_frame": 56,
+        "estimated": true
+      },
+      {
+        "word": "down",
+        "start_frame": 68,
+        "estimated": true
+      },
+      {
+        "word": "into",
+        "start_frame": 79,
+        "estimated": true
+      },
+      {
+        "word": "his",
+        "start_frame": 90,
+        "estimated": true
+      },
+      {
+        "word": "trench",
+        "start_frame": 101,
+        "estimated": true
+      },
+      {
+        "word": "then",
+        "start_frame": 113,
+        "estimated": true
+      },
+      {
+        "word": "fires",
+        "start_frame": 124,
+        "estimated": true
+      },
+      {
+        "word": "two",
+        "start_frame": 135,
+        "estimated": true
+      },
+      {
+        "word": "shots",
+        "start_frame": 146,
+        "estimated": true
+      },
+      {
+        "word": "into",
+        "start_frame": 158,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 169,
+        "estimated": true
+      },
+      {
+        "word": "air",
+        "start_frame": 180,
+        "estimated": true
+      }
+    ],
+    "S07_SH007": [
+      {
+        "word": "thomas",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "looks",
+        "start_frame": 11,
+        "estimated": true
+      },
+      {
+        "word": "up",
+        "start_frame": 23,
+        "estimated": true
+      },
+      {
+        "word": "at",
+        "start_frame": 34,
+        "estimated": true
+      },
+      {
+        "word": "the",
+        "start_frame": 45,
+        "estimated": true
+      },
+      {
+        "word": "shots",
+        "start_frame": 56,
+        "estimated": true
+      }
+    ],
+    "S07_SH008": [
+      {
+        "word": "there",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "had",
+        "start_frame": 11,
+        "estimated": false
+      },
+      {
+        "word": "been",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "no",
+        "start_frame": 23,
+        "estimated": false
+      },
+      {
+        "word": "treaty",
+        "start_frame": 31,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 57,
+        "estimated": false
+      },
+      {
+        "word": "some",
+        "start_frame": 61,
+        "estimated": false
+      },
+      {
+        "word": "places",
+        "start_frame": 68,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 78,
+        "estimated": true
+      },
+      {
+        "word": "truce",
+        "start_frame": 87,
+        "estimated": false
+      },
+      {
+        "word": "lasted",
+        "start_frame": 92,
+        "estimated": false
+      },
+      {
+        "word": "hours",
+        "start_frame": 105,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 132,
+        "estimated": false
+      },
+      {
+        "word": "others",
+        "start_frame": 137,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 152,
+        "estimated": false
+      },
+      {
+        "word": "held",
+        "start_frame": 156,
+        "estimated": false
+      },
+      {
+        "word": "until",
+        "start_frame": 164,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 172,
+        "estimated": false
+      },
+      {
+        "word": "new",
+        "start_frame": 177,
+        "estimated": false
+      },
+      {
+        "word": "year",
+        "start_frame": 181,
+        "estimated": false
+      }
+    ],
+    "S08_SH001": [
+      {
+        "word": "thomas",
+        "start_frame": 10,
+        "estimated": false
+      },
+      {
+        "word": "wrote",
+        "start_frame": 16,
+        "estimated": false
+      },
+      {
+        "word": "home",
+        "start_frame": 24,
+        "estimated": false
+      },
+      {
+        "word": "that",
+        "start_frame": 32,
+        "estimated": false
+      },
+      {
+        "word": "night",
+        "start_frame": 38,
+        "estimated": false
+      },
+      {
+        "word": "so",
+        "start_frame": 61,
+        "estimated": false
+      },
+      {
+        "word": "did",
+        "start_frame": 65,
+        "estimated": false
+      },
+      {
+        "word": "many",
+        "start_frame": 69,
+        "estimated": false
+      },
+      {
+        "word": "others",
+        "start_frame": 76,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "january",
+        "start_frame": 106,
+        "estimated": false
+      },
+      {
+        "word": "british",
+        "start_frame": 129,
+        "estimated": false
+      },
+      {
+        "word": "newspapers",
+        "start_frame": 135,
+        "estimated": false
+      },
+      {
+        "word": "printed",
+        "start_frame": 147,
+        "estimated": false
+      },
+      {
+        "word": "their",
+        "start_frame": 160,
+        "estimated": false
+      },
+      {
+        "word": "letters",
+        "start_frame": 168,
+        "estimated": false
+      }
+    ],
+    "S08_SH002": [
+      {
+        "word": "their",
+        "start_frame": 12,
+        "estimated": false
+      },
+      {
+        "word": "commanders",
+        "start_frame": 15,
+        "estimated": false
+      },
+      {
+        "word": "moved",
+        "start_frame": 24,
+        "estimated": false
+      },
+      {
+        "word": "to",
+        "start_frame": 37,
+        "estimated": false
+      },
+      {
+        "word": "prevent",
+        "start_frame": 45,
+        "estimated": false
+      },
+      {
+        "word": "it",
+        "start_frame": 53,
+        "estimated": false
+      },
+      {
+        "word": "from",
+        "start_frame": 58,
+        "estimated": false
+      },
+      {
+        "word": "happening",
+        "start_frame": 62,
+        "estimated": false
+      },
+      {
+        "word": "again",
+        "start_frame": 73,
+        "estimated": false
+      },
+      {
+        "word": "a",
+        "start_frame": 100,
+        "estimated": false
+      },
+      {
+        "word": "few",
+        "start_frame": 102,
+        "estimated": false
+      },
+      {
+        "word": "small",
+        "start_frame": 108,
+        "estimated": false
+      },
+      {
+        "word": "truces",
+        "start_frame": 120,
+        "estimated": false
+      },
+      {
+        "word": "still",
+        "start_frame": 130,
+        "estimated": false
+      },
+      {
+        "word": "occurred",
+        "start_frame": 141,
+        "estimated": false
+      },
+      {
+        "word": "in",
+        "start_frame": 151,
+        "estimated": false
+      },
+      {
+        "word": "1915",
+        "start_frame": 157,
+        "estimated": false
+      },
+      {
+        "word": "but",
+        "start_frame": 189,
+        "estimated": false
+      },
+      {
+        "word": "nothing",
+        "start_frame": 194,
+        "estimated": false
+      },
+      {
+        "word": "on",
+        "start_frame": 204,
+        "estimated": false
+      },
+      {
+        "word": "that",
+        "start_frame": 211,
+        "estimated": false
+      },
+      {
+        "word": "scale",
+        "start_frame": 216,
+        "estimated": false
+      }
+    ],
+    "S08_SH003": [
+      {
+        "word": "the",
+        "start_frame": 9,
+        "estimated": false
+      },
+      {
+        "word": "war",
+        "start_frame": 14,
+        "estimated": false
+      },
+      {
+        "word": "went",
+        "start_frame": 20,
+        "estimated": false
+      },
+      {
+        "word": "on",
+        "start_frame": 26,
+        "estimated": false
+      },
+      {
+        "word": "for",
+        "start_frame": 33,
+        "estimated": false
+      },
+      {
+        "word": "almost",
+        "start_frame": 39,
+        "estimated": false
+      },
+      {
+        "word": "four",
+        "start_frame": 49,
+        "estimated": false
+      },
+      {
+        "word": "more",
+        "start_frame": 63,
+        "estimated": false
+      },
+      {
+        "word": "years",
+        "start_frame": 72,
+        "estimated": false
+      }
+    ],
+    "S08_SH004": [
+      {
+        "word": "on",
+        "start_frame": 0,
+        "estimated": true
+      },
+      {
+        "word": "screen",
+        "start_frame": 14,
+        "estimated": true
+      },
+      {
+        "word": "for",
+        "start_frame": 28,
+        "estimated": true
+      },
+      {
+        "word": "one",
+        "start_frame": 42,
+        "estimated": true
+      },
+      {
+        "word": "day",
+        "start_frame": 57,
+        "estimated": true
+      },
+      {
+        "word": "they",
+        "start_frame": 71,
+        "estimated": true
+      },
+      {
+        "word": "remembered",
+        "start_frame": 85,
+        "estimated": true
+      },
+      {
+        "word": "they",
+        "start_frame": 99,
+        "estimated": true
+      },
+      {
+        "word": "were",
+        "start_frame": 114,
+        "estimated": true
+      },
+      {
+        "word": "human",
+        "start_frame": 128,
+        "estimated": true
+      }
+    ]
+  },
+  "inserts": [
+    {
+      "shot_id": "S02_SH006",
+      "at_read_frame": 1470,
+      "frames": 102
+    },
+    {
+      "shot_id": "S02_SH007",
+      "at_read_frame": 1470,
+      "frames": 71
+    },
+    {
+      "shot_id": "S03_SH003",
+      "at_read_frame": 2302,
+      "frames": 114
+    },
+    {
+      "shot_id": "S03_SH004",
+      "at_read_frame": 2302,
+      "frames": 28
+    },
+    {
+      "shot_id": "S03_SH005",
+      "at_read_frame": 2302,
+      "frames": 88
+    },
+    {
+      "shot_id": "S03_SH006",
+      "at_read_frame": 2302,
+      "frames": 83
+    },
+    {
+      "shot_id": "S03_SH008",
+      "at_read_frame": 2392,
+      "frames": 121
+    },
+    {
+      "shot_id": "S03_SH009",
+      "at_read_frame": 2392,
+      "frames": 87
+    },
+    {
+      "shot_id": "S04_SH002",
+      "at_read_frame": 2606,
+      "frames": 63
+    },
+    {
+      "shot_id": "S04_SH003",
+      "at_read_frame": 2606,
+      "frames": 67
+    },
+    {
+      "shot_id": "S04_SH004",
+      "at_read_frame": 2606,
+      "frames": 88
+    },
+    {
+      "shot_id": "S04_SH006",
+      "at_read_frame": 2744,
+      "frames": 69
+    },
+    {
+      "shot_id": "S04_SH007",
+      "at_read_frame": 2744,
+      "frames": 64
+    },
+    {
+      "shot_id": "S04_SH009",
+      "at_read_frame": 2984,
+      "frames": 48
+    },
+    {
+      "shot_id": "S04_SH010",
+      "at_read_frame": 2984,
+      "frames": 48
+    },
+    {
+      "shot_id": "S04_SH012",
+      "at_read_frame": 3069,
+      "frames": 96
+    },
+    {
+      "shot_id": "S04_SH013",
+      "at_read_frame": 3069,
+      "frames": 102
+    },
+    {
+      "shot_id": "S05_SH004",
+      "at_read_frame": 3809,
+      "frames": 54
+    },
+    {
+      "shot_id": "S05_SH005",
+      "at_read_frame": 3809,
+      "frames": 84
+    },
+    {
+      "shot_id": "S05_SH007",
+      "at_read_frame": 3998,
+      "frames": 54
+    },
+    {
+      "shot_id": "S05_SH008",
+      "at_read_frame": 3998,
+      "frames": 78
+    },
+    {
+      "shot_id": "S05_SH009",
+      "at_read_frame": 3998,
+      "frames": 84
+    },
+    {
+      "shot_id": "S05_SH011",
+      "at_read_frame": 4079,
+      "frames": 48
+    },
+    {
+      "shot_id": "S05_SH012",
+      "at_read_frame": 4079,
+      "frames": 84
+    },
+    {
+      "shot_id": "S05_SH013",
+      "at_read_frame": 4079,
+      "frames": 48
+    },
+    {
+      "shot_id": "S05_SH017",
+      "at_read_frame": 4369,
+      "frames": 54
+    },
+    {
+      "shot_id": "S05_SH018",
+      "at_read_frame": 4369,
+      "frames": 66
+    },
+    {
+      "shot_id": "S05_SH019",
+      "at_read_frame": 4369,
+      "frames": 48
+    },
+    {
+      "shot_id": "S06_SH002",
+      "at_read_frame": 4732,
+      "frames": 66
+    },
+    {
+      "shot_id": "S06_SH003",
+      "at_read_frame": 4732,
+      "frames": 48
+    },
+    {
+      "shot_id": "S06_SH004",
+      "at_read_frame": 4732,
+      "frames": 84
+    },
+    {
+      "shot_id": "S06_SH006",
+      "at_read_frame": 4781,
+      "frames": 84
+    },
+    {
+      "shot_id": "S06_SH007",
+      "at_read_frame": 4781,
+      "frames": 78
+    },
+    {
+      "shot_id": "S06_SH008",
+      "at_read_frame": 4781,
+      "frames": 54
+    },
+    {
+      "shot_id": "S06_SH010",
+      "at_read_frame": 4917,
+      "frames": 66
+    },
+    {
+      "shot_id": "S06_SH011",
+      "at_read_frame": 4917,
+      "frames": 66
+    },
+    {
+      "shot_id": "S07_SH002",
+      "at_read_frame": 5150,
+      "frames": 48
+    },
+    {
+      "shot_id": "S07_SH003",
+      "at_read_frame": 5150,
+      "frames": 48
+    },
+    {
+      "shot_id": "S07_SH004",
+      "at_read_frame": 5150,
+      "frames": 48
+    }
+  ],
+  "clip_timed": [
+    "S02_SH006",
+    "S02_SH007",
+    "S03_SH003",
+    "S03_SH004",
+    "S03_SH005",
+    "S03_SH006",
+    "S03_SH008",
+    "S03_SH009",
+    "S04_SH002",
+    "S04_SH003",
+    "S04_SH004",
+    "S04_SH006",
+    "S04_SH007",
+    "S04_SH009",
+    "S04_SH010",
+    "S04_SH012",
+    "S04_SH013",
+    "S05_SH004",
+    "S05_SH005",
+    "S05_SH007",
+    "S05_SH008",
+    "S05_SH009",
+    "S05_SH011",
+    "S05_SH012",
+    "S05_SH013",
+    "S05_SH017",
+    "S05_SH018",
+    "S05_SH019",
+    "S06_SH002",
+    "S06_SH003",
+    "S06_SH004",
+    "S06_SH006",
+    "S06_SH007",
+    "S06_SH008",
+    "S06_SH010",
+    "S06_SH011",
+    "S07_SH002",
+    "S07_SH003",
+    "S07_SH004"
+  ],
+  "coverage": 0.8176,
+  "alignment_status": "REVIEW",
+  "unmatched": [
+    "Mud",
+    "(Thomas",
+    "does",
+    "not",
+    "answer;",
+    "he",
+    "looks",
+    "at",
+    "the",
+    "candles)",
+    "(Thomas",
+    "leans",
+    "his",
+    "rifle",
+    "on",
+    "the",
+    "sandbags",
+    "and",
+    "climbs",
+    "the",
+    "ladder)",
+    "the",
+    "(their",
+    "empty",
+    "hands)",
+    "(they",
+    "shake",
+    "hands)",
+    "Along",
+    "a",
+    "thousand",
+    "buttons.",
+    "describe",
+    "(Thomas",
+    "looks",
+    "at",
+    "the",
+    "photograph)",
+    "(two",
+    "spades",
+    "stand",
+    "in",
+    "the",
+    "earth",
+    "by",
+    "the",
+    "grave)",
+    "Twenty-Third",
+    "(Harris",
+    "takes"
+  ]
+}

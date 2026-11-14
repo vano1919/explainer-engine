@@ -1,0 +1,171 @@
+{
+ "schema": "ltx_scene_test/3",
+ "id": "S04b",
+ "episode": "episodes/ep_truce_1914",
+ "asked": "the creator, 2026-11-13 20:30 UTC (decision card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6AULacxKdq5hJZPfuKrQ97 option A, series cap raised 4.00 -> 5.00; earlier cap message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei); audit PASS for launches 3-8 (round 5) on script 261d43b8 and frames v5 f2e5a232; DV-109 speaker bound by look and screen side (TD-315)",
+ "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+ "storyboard": {
+  "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S04b.json",
+  "sha256": "402c14eca4a6e183eb9ccf9099a24316e02685a66453c07943be5a3ab99343fc",
+  "verdict": "REVIEW"
+ },
+ "pictures": {
+  "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S04b.pictures.json"
+ },
+ "shots": [
+  {
+   "shot_id": "S04_SH008",
+   "seconds": 10.0,
+   "seconds_basis": "measured_length",
+   "seed": 7100,
+   "motion_prompt": "Thomas walks slowly across the frozen field past the frosted shapes, the camera following behind him. Nobody speaks.",
+   "prompt_parts": {
+    "motion": "Thomas walks slowly across the frozen field past the frosted shapes, the camera following behind him.",
+    "no_speech": "Nobody speaks."
+   },
+   "continuity_mode": "coverage",
+   "line": {
+    "speaker": "narrator",
+    "text": "In places, the lines were only fifty yards apart. Fifty yards of frozen mud, wire, and the men who never made it back."
+   },
+   "picture": "S04_SH008_start"
+  },
+  {
+   "shot_id": "S04_SH009",
+   "seconds": 3.0,
+   "seconds_basis": "measured_line",
+   "seed": 7101,
+   "motion_prompt": "The German corporal with the moustache and the red-banded cap, on the right, looks the young British private on the left up and down and asks, tilting his head. The German corporal on the right says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"You are English?\"",
+   "prompt_parts": {
+    "motion": "The German corporal with the moustache and the red-banded cap, on the right, looks the young British private on the left up and down and asks, tilting his head.",
+    "speech": "The German corporal on the right says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"You are English?\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 1.94,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_friedrich_brandt",
+    "text": "You are English?"
+   },
+   "picture": "S04_SH009_start"
+  },
+  {
+   "shot_id": "S04_SH010",
+   "seconds": 3.25,
+   "seconds_basis": "measured_line",
+   "seed": 7102,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, answers with a nervous grin. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"And you're German?\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, answers with a nervous grin.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"And you're German?\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 2.062,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "And you're German?"
+   },
+   "picture": "S04_SH010_start"
+  },
+  {
+   "shot_id": "S04_SH012",
+   "seconds": 6.0,
+   "seconds_basis": "measured_line",
+   "seed": 7103,
+   "motion_prompt": "The German corporal with the moustache and the red-banded cap, on the right, smiles slowly and holds out his hand. The German corporal on the right says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Saxon. Fritz, to my friends. Merry Christmas, Tommy.\"",
+   "prompt_parts": {
+    "motion": "The German corporal with the moustache and the red-banded cap, on the right, smiles slowly and holds out his hand.",
+    "speech": "The German corporal on the right says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Saxon. Fritz, to my friends. Merry Christmas, Tommy.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 4.853,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_friedrich_brandt",
+    "text": "Saxon. Fritz, to my friends. Merry Christmas, Tommy."
+   },
+   "picture": "S04_SH012_start"
+  },
+  {
+   "shot_id": "S04_SH013",
+   "seconds": 4.75,
+   "seconds_basis": "measured_line",
+   "seed": 7104,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, looks at the hand and laughs as he speaks. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"We're all Tommies to you. It's really my name.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, looks at the hand and laughs as he speaks.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"We're all Tommies to you. It's really my name.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 3.603,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "We're all Tommies to you. It's really my name."
+   },
+   "picture": "S04_SH013_start"
+  },
+  {
+   "shot_id": "S04_SH014",
+   "seconds": 4.25,
+   "seconds_basis": "measured_length",
+   "seed": 7105,
+   "motion_prompt": "They step together and shake hands firmly, both smiling. Nobody speaks.",
+   "prompt_parts": {
+    "motion": "They step together and shake hands firmly, both smiling.",
+    "no_speech": "Nobody speaks."
+   },
+   "continuity_mode": "coverage",
+   "line": {
+    "speaker": "none",
+    "text": "(they shake hands)"
+   },
+   "picture": "S04_SH014_start"
+  },
+  {
+   "shot_id": "S04_SH015",
+   "seconds": 6.75,
+   "seconds_basis": "measured_length",
+   "seed": 7106,
+   "motion_prompt": "Soldiers climb out and walk toward each other; the camera pans slowly right along them. Nobody speaks.",
+   "prompt_parts": {
+    "motion": "Soldiers climb out and walk toward each other; the camera pans slowly right along them.",
+    "no_speech": "Nobody speaks."
+   },
+   "continuity_mode": "coverage",
+   "line": {
+    "speaker": "narrator",
+    "text": "Up and down this part of the line, the same thing was happening. Nobody had ordered it."
+   },
+   "picture": "S04_SH015_start"
+  }
+ ],
+ "draft": false,
+ "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+ "voice_missing": [],
+ "voices": {
+  "char_friedrich_brandt": {
+   "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+   "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+  },
+  "char_thomas_hale": {
+   "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+   "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+  }
+ },
+ "voice_problems": [],
+ "read_first": "forced",
+ "budget": {
+  "total_usd": 0.97,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.0,
+  "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+  "caps": {
+   "modal_ltx": 5.0
+  }
+ }
+}

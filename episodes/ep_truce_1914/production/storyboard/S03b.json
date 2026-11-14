@@ -1,0 +1,180 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S03b",
+  "shots": [
+    "S03_SH003",
+    "S03_SH005",
+    "S03_SH006"
+  ],
+  "cells": [
+    {
+      "shot_id": "S03_SH003",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH003_start",
+      "from": null,
+      "seconds": 5.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH003_start.png",
+      "vs_master": {
+        "palette_dist": 0.1791,
+        "top_palette_dist": 0.3482,
+        "luma_gap": 0.0269
+      }
+    },
+    {
+      "shot_id": "S03_SH005",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH005_start",
+      "from": null,
+      "seconds": 4.25,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH005_start.png",
+      "vs_master": {
+        "palette_dist": 0.1771,
+        "top_palette_dist": 0.3212,
+        "luma_gap": 0.045
+      }
+    },
+    {
+      "shot_id": "S03_SH006",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH006_start",
+      "from": null,
+      "seconds": 3.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH006_start.png",
+      "vs_master": {
+        "palette_dist": 0.0633,
+        "top_palette_dist": 0.0645,
+        "luma_gap": 0.0026
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 3 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-09 S03_SH003: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut",
+        "VL-09 S03_SH005: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+      ],
+      "detail": "2 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S03_SH003 vs S03_SH001_start: palette 0.1791, top third 0.3482 (max 0.08), brightness gap 0.0269 (max 0.18)",
+        "S03_SH005 vs S03_SH004_start: palette 0.1771, top third 0.3212 (max 0.08), brightness gap 0.045 (max 0.18)"
+      ],
+      "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "REVIEW",
+      "measured": [
+        "char_thomas_hale (head) S03_SH005 -> S03_SH006: colours move 0.1973 (> 0.15): clothes, skin or hair changed"
+      ],
+      "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review",
+      "storyboard_same_place_as_master",
+      "storyboard_hero_costume_holds"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 3 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-09 S03_SH003: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut",
+          "VL-09 S03_SH005: the scene opens on a 'line' cut: a scene opens on an establishing, place or time cut"
+        ],
+        "detail": "2 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S03_SH003 vs S03_SH001_start: palette 0.1791, top third 0.3482 (max 0.08), brightness gap 0.0269 (max 0.18)",
+          "S03_SH005 vs S03_SH004_start: palette 0.1771, top third 0.3212 (max 0.08), brightness gap 0.045 (max 0.18)"
+        ],
+        "detail": "2 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "REVIEW",
+        "measured": [
+          "char_thomas_hale (head) S03_SH005 -> S03_SH006: colours move 0.1973 (> 0.15): clothes, skin or hair changed"
+        ],
+        "detail": "1 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S03_SH003_start": "9048f8bbb22540021ab48f533036a9a200f0e643da73c3ac96d70227953cbda0",
+    "S03_SH001_start": "573538aaa54137fd52fa1406549b53265eb1c75f32b36e26cece60e0943eb0e2",
+    "S03_SH005_start": "1d063ee1bd4009d57cb5e2015b1d72b199f4fbdfe4508d81051270547762acb2",
+    "S03_SH004_start": "3e5f92ad04fb2fa9cd9c21f5c43c1315466c1ff5235c2207e48941572b240c6d",
+    "S03_SH006_start": "bdcb459e2bd34f8661f1c4047346ac131a57807bbcd93793d8ceec3c6dfdec7b"
+  },
+  "plan_digest": "09f9c68b6ebc630af64dfdc0a39bbab0f9e12ca8efd2ea0d989b6c6ab12fa5d2",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S03b.jpg",
+  "sheet_sha256": "122e449b67681aee232e01de1a0b2449d00e8657f1e0cab3a9ddd0f2e1182712"
+}

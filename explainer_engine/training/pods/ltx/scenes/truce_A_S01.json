@@ -1,0 +1,69 @@
+{
+  "schema": "ltx_scene_test/3",
+  "id": "S01",
+  "episode": "episodes/ep_truce_1914",
+  "asked": "the creator, 2026-11-13 18:55 UTC (coordinator relay): start LTX now, script A; pilot part first",
+  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+  "storyboard": {
+    "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S01.json",
+    "sha256": "416e2a1a4991eaa1e8db8f2f54830fae3fe48ae702184e780b47c2d32ef7961b",
+    "verdict": "PASS"
+  },
+  "pictures": {
+    "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S01.pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "S01_SH002",
+      "seconds": 5.5,
+      "seconds_basis": "measured_length",
+      "seed": 7100,
+      "motion_prompt": "Thomas grips the ladder and climbs up out of the trench into the fog, the camera tilting up after him. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "Thomas grips the ladder and climbs up out of the trench into the fog, the camera tilting up after him.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "coverage",
+      "line": {
+        "speaker": "narrator",
+        "text": "In a few seconds, this man will walk toward the German guns."
+      },
+      "picture": "S01_SH002_start"
+    },
+    {
+      "shot_id": "S01_SH003",
+      "seconds": 7.25,
+      "seconds_basis": "measured_length",
+      "seed": 7101,
+      "motion_prompt": "Thomas walks slowly away across the frozen field, the camera following behind him. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "Thomas walks slowly away across the frozen field, the camera following behind him.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "coverage",
+      "line": {
+        "speaker": "narrator",
+        "text": "Unarmed. Across the ground where men had been dying for a few yards of mud."
+      },
+      "picture": "S01_SH003_start"
+    }
+  ],
+  "draft": false,
+  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+  "voice_missing": [],
+  "voices": {},
+  "voice_problems": [],
+  "read_first": "forced",
+  "budget": {
+    "total_usd": 0.97,
+    "pictures_usd": 0.0,
+    "cpu_checks_usd": 0.0,
+    "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+  },
+  "ledger": {
+    "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+    "caps": {
+      "modal_ltx": 10.0
+    }
+  }
+}

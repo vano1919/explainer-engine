@@ -1,0 +1,196 @@
+{
+  "schema": "ltx_scene_test/3",
+  "id": "S03",
+  "episode": "episodes/ep_truce_1914",
+  "asked": "the creator, 2026-11-13 19:36 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei via the coordinator): LTX series cap 4.00 total; audit PASS for launches 3-8 (round 5) on script 261d43b8 and frames v3 b9071eea",
+  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+  "storyboard": {
+    "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S03.json",
+    "sha256": "dc6f06bd9dc0e7833ac1b6fc075c026667835ea735d86b83620873a4b4aa9fdd",
+    "verdict": "REVIEW"
+  },
+  "pictures": {
+    "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S03.pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "S03_SH001",
+      "seconds": 9.5,
+      "seconds_basis": "measured_length",
+      "seed": 7100,
+      "motion_prompt": "Friedrich sets the tree on the parapet and lights its last candle, shielding the flame with his hand. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "Friedrich sets the tree on the parapet and lights its last candle, shielding the flame with his hand.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "coverage",
+      "line": {
+        "speaker": "narrator",
+        "text": "On the German side, little Christmas trees had come up the line. As night fell, they went up on the parapets, candles and all."
+      },
+      "picture": "S03_SH001_start"
+    },
+    {
+      "shot_id": "S03_SH003",
+      "seconds": 4.5,
+      "seconds_basis": "measured_line",
+      "seed": 7101,
+      "motion_prompt": "The soldiers sing together softly, swaying slightly, breath rising in the candlelight. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Stille Nacht, heilige Nacht...\"",
+      "prompt_parts": {
+        "motion": "The soldiers sing together softly, swaying slightly, breath rising in the candlelight.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Stille Nacht, heilige Nacht...\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.262,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "Stille Nacht, heilige Nacht..."
+      },
+      "picture": "S03_SH003_start"
+    },
+    {
+      "shot_id": "S03_SH004",
+      "seconds": 3.0,
+      "seconds_basis": "measured_line",
+      "seed": 7102,
+      "motion_prompt": "Harris turns his head toward Thomas and asks, keeping low. Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"What are they singing?\"",
+      "prompt_parts": {
+        "motion": "Harris turns his head toward Thomas and asks, keeping low.",
+        "speech": "Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"What are they singing?\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 1.81,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_sgt_harris",
+        "text": "What are they singing?"
+      },
+      "picture": "S03_SH004_start"
+    },
+    {
+      "shot_id": "S03_SH005",
+      "seconds": 4.5,
+      "seconds_basis": "measured_line",
+      "seed": 7103,
+      "motion_prompt": "Thomas answers quietly, still looking toward the singing. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Silent Night. Same tune as ours.\"",
+      "prompt_parts": {
+        "motion": "Thomas answers quietly, still looking toward the singing.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Silent Night. Same tune as ours.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.316,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "Silent Night. Same tune as ours."
+      },
+      "picture": "S03_SH005_start"
+    },
+    {
+      "shot_id": "S03_SH006",
+      "seconds": 3.75,
+      "seconds_basis": "measured_line",
+      "seed": 7104,
+      "motion_prompt": "Harris frowns and ducks a little lower as he speaks, not looking away from the parapet. Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Let 'em sing. Heads down.\"",
+      "prompt_parts": {
+        "motion": "Harris frowns and ducks a little lower as he speaks, not looking away from the parapet.",
+        "speech": "Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Let 'em sing. Heads down.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.709,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_sgt_harris",
+        "text": "Let 'em sing. Heads down."
+      },
+      "picture": "S03_SH006_start"
+    },
+    {
+      "shot_id": "S03_SH007",
+      "seconds": 4.25,
+      "seconds_basis": "measured_length",
+      "seed": 7105,
+      "motion_prompt": "Thomas stays still and breathes out; his breath clouds in the cold. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "Thomas stays still and breathes out; his breath clouds in the cold.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "coverage",
+      "line": {
+        "speaker": "none",
+        "text": "(Thomas does not answer; he looks at the candles)"
+      },
+      "picture": "S03_SH007_start"
+    },
+    {
+      "shot_id": "S03_SH008",
+      "seconds": 4.75,
+      "seconds_basis": "measured_line",
+      "seed": 7106,
+      "motion_prompt": "Thomas sings softly; two soldiers behind him join in while Harris stays silent. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Silent night... holy night...\"",
+      "prompt_parts": {
+        "motion": "Thomas sings softly; two soldiers behind him join in while Harris stays silent.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Silent night... holy night...\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.607,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "Silent night... holy night..."
+      },
+      "picture": "S03_SH008_start"
+    },
+    {
+      "shot_id": "S03_SH009",
+      "seconds": 3.75,
+      "seconds_basis": "measured_line",
+      "seed": 7107,
+      "motion_prompt": "The soldiers clap; Friedrich cups his hands and calls across, laughing. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Good, English! More!\"",
+      "prompt_parts": {
+        "motion": "The soldiers clap; Friedrich cups his hands and calls across, laughing.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"Good, English! More!\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.747,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "Good, English! More!"
+      },
+      "picture": "S03_SH009_start"
+    }
+  ],
+  "draft": false,
+  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+  "voice_missing": [],
+  "voices": {
+    "char_friedrich_brandt": {
+      "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+      "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+    },
+    "char_sgt_harris": {
+      "description": "the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
+      "sha256": "b070cabd415907465136348e1de88f706e19af3688972854787d8f27ce6247f0"
+    },
+    "char_thomas_hale": {
+      "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+      "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+    }
+  },
+  "voice_problems": [],
+  "read_first": "forced",
+  "budget": {
+    "total_usd": 0.97,
+    "pictures_usd": 0.0,
+    "cpu_checks_usd": 0.0,
+    "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+  },
+  "ledger": {
+    "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+    "caps": {
+      "modal_ltx": 4.0
+    }
+  }
+}

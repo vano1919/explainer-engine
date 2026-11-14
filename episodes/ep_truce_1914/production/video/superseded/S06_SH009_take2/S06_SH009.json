@@ -1,0 +1,61 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S06_SH009",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S06_SH009.mp4",
+  "clip_sha256": "9ffa7482765d11250a5764dec2ed92328f285646154b41ca4efca5fc913de03c",
+  "raw_path": "production/video/raw/S06_SH009.mp4",
+  "raw_sha256": "f210a99be99fdfae69242489091864f3f05987e322787b86c3aacc2d56d87a41",
+  "raw_fps": 24.0,
+  "raw_seconds": 6.375,
+  "fps": 24,
+  "in_s": 0.0,
+  "out_s": 4.0,
+  "frames": 96,
+  "speech_raw": [
+    [
+      0.52,
+      0.64
+    ],
+    [
+      3.2,
+      3.32
+    ],
+    [
+      5.94,
+      6.1
+    ]
+  ],
+  "speech": [
+    [
+      0.52,
+      0.64
+    ],
+    [
+      3.2,
+      3.32
+    ]
+  ],
+  "clip_spoken": false,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "96 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-07",
+      "status": "REVIEW",
+      "msg": "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"
+    }
+  ],
+  "attempts": [
+    {
+      "note": "R2 re-make (owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWNDRDuwFk9fLFHkmrZPYDK8): the first take ended on a penknife in the palm with no button; the new prompt cuts the button and drops it into the palm; take1 in production/video/superseded/"
+    }
+  ]
+}

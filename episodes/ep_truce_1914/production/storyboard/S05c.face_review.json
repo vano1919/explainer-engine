@@ -1,0 +1,9 @@
+{
+ "schema": "face_review/1",
+ "by": "LTX thread (Claude), 2026-11-13 21:10 UTC, eye check of the v5 start picture",
+ "rule": "RC-101 (owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWRrRegfdMpYg7Zdtbn46LJP option a, this run only)",
+ "frames_file": "v5 f2e5a232",
+ "shots": {
+  "S05_SH018": "Thomas left (khaki cap, hands clasped), Friedrich in the middle next to him: bare head, moustache, grey greatcoat, holding his cap, looks down at the cross"
+ }
+}

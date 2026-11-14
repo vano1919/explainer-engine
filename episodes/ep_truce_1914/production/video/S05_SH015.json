@@ -1,0 +1,53 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S05_SH015",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S05_SH015.mp4",
+  "clip_sha256": "9644de2e2847a490b889873c38c56183e220d0be4ac0b77fd456ee1d89e98385",
+  "raw_path": "production/video/raw/S05_SH015.mp4",
+  "raw_sha256": "2ab01ecb6ec18c9e3aaa6a513f69c83918968ab70e8c2231c20fcd40cae2a7ea",
+  "raw_fps": 24.0,
+  "raw_seconds": 3.0417,
+  "fps": 24,
+  "in_s": 0.0,
+  "out_s": 3.0417,
+  "frames": 73,
+  "speech_raw": [
+    [
+      0.28,
+      0.46
+    ],
+    [
+      1.7,
+      1.82
+    ]
+  ],
+  "speech": [
+    [
+      0.28,
+      0.46
+    ],
+    [
+      1.7,
+      1.82
+    ]
+  ],
+  "clip_spoken": false,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-07",
+      "status": "REVIEW",
+      "msg": "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 16 frames from frame 56"
+    }
+  ],
+  "attempts": []
+}

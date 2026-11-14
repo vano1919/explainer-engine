@@ -1,0 +1,260 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "S03",
+  "shots": [
+    "S03_SH001",
+    "S03_SH003",
+    "S03_SH004",
+    "S03_SH005",
+    "S03_SH006",
+    "S03_SH007",
+    "S03_SH008",
+    "S03_SH009"
+  ],
+  "cells": [
+    {
+      "shot_id": "S03_SH001",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S03_SH001_start",
+      "from": null,
+      "seconds": 10.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH001_start.png"
+    },
+    {
+      "shot_id": "S03_SH003",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH003_start",
+      "from": null,
+      "seconds": 5.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH003_start.png",
+      "vs_master": {
+        "palette_dist": 0.1711,
+        "top_palette_dist": 0.3276,
+        "luma_gap": 0.01
+      }
+    },
+    {
+      "shot_id": "S03_SH004",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S03_SH004_start",
+      "from": null,
+      "seconds": 3.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH004_start.png"
+    },
+    {
+      "shot_id": "S03_SH005",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH005_start",
+      "from": null,
+      "seconds": 4.25,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH005_start.png",
+      "vs_master": {
+        "palette_dist": 0.1771,
+        "top_palette_dist": 0.3212,
+        "luma_gap": 0.045
+      }
+    },
+    {
+      "shot_id": "S03_SH006",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH006_start",
+      "from": null,
+      "seconds": 3.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH006_start.png",
+      "vs_master": {
+        "palette_dist": 0.0633,
+        "top_palette_dist": 0.0645,
+        "luma_gap": 0.0026
+      }
+    },
+    {
+      "shot_id": "S03_SH007",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium",
+      "picture": "S03_SH007_start",
+      "from": null,
+      "seconds": 3.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH007_start.png",
+      "vs_master": {
+        "palette_dist": 0.027,
+        "top_palette_dist": 0.0686,
+        "luma_gap": 0.0112
+      }
+    },
+    {
+      "shot_id": "S03_SH008",
+      "mode": "coverage",
+      "route": "video",
+      "size": "medium_wide",
+      "picture": "S03_SH008_start",
+      "from": null,
+      "seconds": 5.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH008_start.png",
+      "vs_master": {
+        "palette_dist": 0.0171,
+        "top_palette_dist": 0.0254,
+        "luma_gap": 0.003
+      }
+    },
+    {
+      "shot_id": "S03_SH009",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S03_SH009_start",
+      "from": null,
+      "seconds": 3.0,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S03_SH009_start.png",
+      "vs_master": {
+        "palette_dist": 0.0331,
+        "top_palette_dist": 0.0818,
+        "luma_gap": 0.01
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 8 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "REVIEW",
+      "measured": [
+        "S03_SH003 vs S03_SH001_start: palette 0.1711, top third 0.3276 (max 0.08), brightness gap 0.01 (max 0.18)",
+        "S03_SH005 vs S03_SH004_start: palette 0.1771, top third 0.3212 (max 0.08), brightness gap 0.045 (max 0.18)",
+        "S03_SH009 vs S03_SH001_start: palette 0.0331, top third 0.0818 (max 0.08), brightness gap 0.01 (max 0.18)"
+      ],
+      "detail": "3 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "REVIEW",
+      "measured": [
+        "char_friedrich_brandt S03_SH001 -> S03_SH003: colours move 0.1834 (> 0.15): clothes, skin or hair changed",
+        "char_friedrich_brandt (head) S03_SH001 -> S03_SH003: colours move 0.3322 (> 0.15): clothes, skin or hair changed",
+        "char_sgt_harris S03_SH004 -> S03_SH005: colours move 0.2255 (> 0.15): clothes, skin or hair changed",
+        "char_sgt_harris (head) S03_SH004 -> S03_SH005: colours move 0.4042 (> 0.15): clothes, skin or hair changed",
+        "char_thomas_hale (head) S03_SH004 -> S03_SH005: colours move 0.2603 (> 0.15): clothes, skin or hair changed",
+        "char_thomas_hale (head) S03_SH005 -> S03_SH006: colours move 0.1973 (> 0.15): clothes, skin or hair changed",
+        "char_thomas_hale (head) S03_SH007 -> S03_SH008: colours move 0.1647 (> 0.15): clothes, skin or hair changed"
+      ],
+      "detail": "7 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "storyboard_same_place_as_master",
+      "storyboard_hero_costume_holds"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 8 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "REVIEW",
+        "measured": [
+          "S03_SH003 vs S03_SH001_start: palette 0.1711, top third 0.3276 (max 0.08), brightness gap 0.01 (max 0.18)",
+          "S03_SH005 vs S03_SH004_start: palette 0.1771, top third 0.3212 (max 0.08), brightness gap 0.045 (max 0.18)",
+          "S03_SH009 vs S03_SH001_start: palette 0.0331, top third 0.0818 (max 0.08), brightness gap 0.01 (max 0.18)"
+        ],
+        "detail": "3 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "REVIEW",
+        "measured": [
+          "char_friedrich_brandt S03_SH001 -> S03_SH003: colours move 0.1834 (> 0.15): clothes, skin or hair changed",
+          "char_friedrich_brandt (head) S03_SH001 -> S03_SH003: colours move 0.3322 (> 0.15): clothes, skin or hair changed",
+          "char_sgt_harris S03_SH004 -> S03_SH005: colours move 0.2255 (> 0.15): clothes, skin or hair changed",
+          "char_sgt_harris (head) S03_SH004 -> S03_SH005: colours move 0.4042 (> 0.15): clothes, skin or hair changed",
+          "char_thomas_hale (head) S03_SH004 -> S03_SH005: colours move 0.2603 (> 0.15): clothes, skin or hair changed",
+          "char_thomas_hale (head) S03_SH005 -> S03_SH006: colours move 0.1973 (> 0.15): clothes, skin or hair changed",
+          "char_thomas_hale (head) S03_SH007 -> S03_SH008: colours move 0.1647 (> 0.15): clothes, skin or hair changed"
+        ],
+        "detail": "7 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S03_SH001_start": "573538aaa54137fd52fa1406549b53265eb1c75f32b36e26cece60e0943eb0e2",
+    "S03_SH003_start": "73a1c478de400a80e1fab4f84e0fa37912fc2632d036e01a8a98daff812b564b",
+    "S03_SH004_start": "3e5f92ad04fb2fa9cd9c21f5c43c1315466c1ff5235c2207e48941572b240c6d",
+    "S03_SH005_start": "1d063ee1bd4009d57cb5e2015b1d72b199f4fbdfe4508d81051270547762acb2",
+    "S03_SH006_start": "bdcb459e2bd34f8661f1c4047346ac131a57807bbcd93793d8ceec3c6dfdec7b",
+    "S03_SH007_start": "054545fc36c9501dcb92a27e7467cff25840842256f6b5d359eb0da058a90461",
+    "S03_SH008_start": "a7105ae671bfcf70a65cc00367e01f55652931c60852722940eb90d0f3ae44e8",
+    "S03_SH009_start": "99c916785590880aada592dd293b330fe34427d7b0c85a1b1c02bdff581c6a5d"
+  },
+  "plan_digest": "b39759cd356267191f2212315bdd32493bdbc807791a3167693939a12e5add03",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/S03.jpg",
+  "sheet_sha256": "bbd4b27d5212dd9c0551cc81ec43c8ef72287f52b2a72bae8f4f374105d16041"
+}

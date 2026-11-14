@@ -1,0 +1,82 @@
+{
+  "schema": "ltx_scene_test/3",
+  "id": "S02",
+  "episode": "episodes/ep_truce_1914",
+  "asked": "the creator, 2026-11-13 19:36 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei via the coordinator): LTX series cap 4.00 total, the audit PASS first",
+  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+  "storyboard": {
+    "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S02.json",
+    "sha256": "d2d287350a8e19efcfb3ee0f4c60e2f0eddf561875b61edc38a07952943670c1",
+    "verdict": "REVIEW"
+  },
+  "pictures": {
+    "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S02.pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "S02_SH006",
+      "seconds": 5.0,
+      "seconds_basis": "measured_line",
+      "seed": 7100,
+      "motion_prompt": "Thomas reads the letter, smiles tiredly and folds it into his breast pocket. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Home by Christmas, she says. Didn't say which one.\"",
+      "prompt_parts": {
+        "motion": "Thomas reads the letter, smiles tiredly and folds it into his breast pocket.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Home by Christmas, she says. Didn't say which one.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.987,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "Home by Christmas, she says. Didn't say which one."
+      },
+      "picture": "S02_SH006_start"
+    },
+    {
+      "shot_id": "S02_SH007",
+      "seconds": 4.0,
+      "seconds_basis": "measured_line",
+      "seed": 7101,
+      "motion_prompt": "Harris keeps cleaning his rifle, glances up at Thomas as he speaks, then looks back down. Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Keep your head down, and you might see one.\"",
+      "prompt_parts": {
+        "motion": "Harris keeps cleaning his rifle, glances up at Thomas as he speaks, then looks back down.",
+        "speech": "Sergeant Albert Harris says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Keep your head down, and you might see one.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.977,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_sgt_harris",
+        "text": "Keep your head down, and you might see one."
+      },
+      "picture": "S02_SH007_start"
+    }
+  ],
+  "draft": false,
+  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+  "voice_missing": [],
+  "voices": {
+    "char_sgt_harris": {
+      "description": "the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
+      "sha256": "b070cabd415907465136348e1de88f706e19af3688972854787d8f27ce6247f0"
+    },
+    "char_thomas_hale": {
+      "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+      "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+    }
+  },
+  "voice_problems": [],
+  "read_first": "forced",
+  "budget": {
+    "total_usd": 0.97,
+    "pictures_usd": 0.0,
+    "cpu_checks_usd": 0.0,
+    "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+  },
+  "ledger": {
+    "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+    "caps": {
+      "modal_ltx": 4.0
+    }
+  }
+}

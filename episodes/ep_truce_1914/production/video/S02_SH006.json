@@ -1,0 +1,53 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S02_SH006",
+  "route": "video",
+  "backend": "ltx",
+  "status": "FAIL",
+  "clip_path": "production/video/cut/S02_SH006.mp4",
+  "clip_sha256": "8162b20320c3d743847b964f18b25b3f150ff2fefca878d4a8cb774ab7310ec0",
+  "raw_path": "production/video/raw/S02_SH006.mp4",
+  "raw_sha256": "a782fc048d8fe60f48f287323c68cf07bb0e6f0d6c5e700cecf3988f579cb95a",
+  "raw_fps": 24.0,
+  "raw_seconds": 5.0417,
+  "fps": 24,
+  "in_s": 0.6667,
+  "out_s": 4.7917,
+  "frames": 99,
+  "speech_raw": [
+    [
+      0.9,
+      2.08
+    ],
+    [
+      3.32,
+      4.28
+    ]
+  ],
+  "speech": [
+    [
+      0.233,
+      1.413
+    ],
+    [
+      2.653,
+      3.613
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "99 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-06",
+      "status": "FAIL",
+      "msg": "true peak -0.5 dBTP is over the ceiling -1.0 (BP-50)"
+    }
+  ],
+  "attempts": []
+}

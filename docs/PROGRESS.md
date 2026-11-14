@@ -6241,3 +6241,80 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   `test_videolane::test_the_best_tail_search_starts_after_the_line...`, `::test_the_scene_row_tells_the_worker...`.
 - The worker's sha changed, so the OR-37 ladder runs again: L0 (local tests) on the commit; L1/L2 (Modal CPU) and L3 (GPU
   smoke, paid) wait for the creator's word on a priced card. Nothing paid ran.
+- L3 on the P5 worker (the creator's card 14:35 UTC, option a: L1+L2+L3 now; watchdog thread up first): L1 and L2 green;
+  L3 red at 14:43 UTC, run 8462e18a7e41_fc6ae61bf410, H100: CUDA out of memory while the transformer was built, after
+  pipeline 13.4 s and Gemma 35.2 s; no clip. The worker's retry declined correctly (57 s left, ~88 s needed). Settled
+  $0.1684 (the app's 119 s at $5.0937/h, an upper bound) in `ledgers/ltx_scene_test.json`; nothing left running. The Modal
+  client needs `modal[api-proxy-support]` (python-socks) in the cloud container to reach the API through the agent proxy.
+- Cause, read in the pinned LTX-2 code (e98f6d9): Gemma's `encode` has no no_grad and relies on the CLI's
+  `@torch.inference_mode()` main; `LtxSession._open` ran outside it, so the cached prompt embeddings held an autograd graph
+  that kept Gemma's weights on the GPU after its dispose. Fix: the session opens and runs every clip inside
+  `torch.inference_mode()`. Test `test_ltx_inproc::test_the_session_opens_gemma_and_the_transformer_inside_inference_mode`
+  (fails on the old worker). The red ladder is kept as `ladder_2026-11-13_worker_9739fdb2_red.json`; the fixed worker starts
+  a new `ladder.json` (L0..L2 again, L3 on the creator's word).
+- L3 again on the fixed worker 803eea11 (the creator's card 15:28 UTC, option a; a new watchdog thread): GREEN, run
+  24ad0a11628e_fc6ae61bf410, H100, 15:28:42-15:30:35 UTC. One 2 s clip (49 frames) made and sha-checked on HF; gen 77.2 s
+  including the one-time setup (pipeline 4.9 s, Gemma 29.5 s, transformer 18.2 s), so about 24 s for the clip itself; body
+  91 s. Settled $0.1599 (the app's 113 s at $5.0937/h, an upper bound); the two L3 runs together $0.33; nothing left
+  running. The ladder L0..L3 is green on this worker; L4 is the demo's scene on its own GO.
+
+## 2026-11-13 — CH-07: no paid offer before the free credit, today's Modal cards and two priced combinations
+- Asked: the creator 2026-11-13 14:37 UTC (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW4rpktDxvJ3cn9nLY9QaMLC) and his card answer at
+  14:47 UTC (relayed by the coordinator): before any thread offers him a paid option it checks the free credit first, then the
+  Modal cards on offer now, plans the cheapest card + generation combination and offers that.
+- Found: D-133 (CH-01..CH-06) fixed the setup of one LTX launch but never checked the credit, never compared cards (the launch
+  names H100; `providers/modal_provider` marks every card available without a check) and had no rule on the offer itself.
+- Done: `cloud/paid_offer.py` (`paid_offer/1`: `fetch` reads the credit and today's cards, `price` prices the combinations and
+  the free/paid split, `check` fails an offer without the credit check, the GPU check, a measured or known VRAM need or two
+  combinations, and prints the Georgian card text); `cheapest.offer_problems` (protected file, the creator's word recorded) makes
+  the hook refuse a paid LTX GPU rung without `EE_PAID_OFFER=<passing offer>` for that rung and the launch's card; CH-07 in
+  `docs/CLOUD_RUNBOOK.md`, D-133 amended, references in the orchestrator, the watchdog page, the cloud rules and the Modal skill.
+- Measured today (free, read-only): modal.com/pricing equals the 2026-11-07 table (H100 $0.001097/s, RTX PRO 6000 $0.000842/s,
+  A100-80GB $0.000694/s); status.modal.com: Functions operational, a control-plane maintenance on 2026-11-16 01:00-02:00 UTC.
+  `modal billing summary|rates` need Modal's gRPC API, which this cloud container's proxy does not carry ("Could not connect to
+  the Modal server"), so the credit falls back to the ledgers: $5.43 of Modal spend in November in the four project ledgers,
+  a lower bound (runs without a ledger in that folder are not in it).
+- Not covered: the Wan worker (refused by CH-06, no offer check) and the bake-off (its own line); the LTX `stage` CPU rung.
+- Rewritten to the new rule (not weakened): `test_cheapest::test_a_scene_spec_in_one_container_passes_the_hook`,
+  `::test_the_creators_message_waives_only_the_rule_it_names` and `test_v43_ltx_jobs::test_the_session_hook_frees_only_the_ltx_cpu_rungs`
+  now carry a passing offer (`conftest.make_offer`). New: `test_paid_offer.py` (17).
+
+## 2026-11-13 — CH-07 fix: the free credit is `adjustments.credits`, not `metered_cost`
+- Found (Fable tech-decision thread, `modal billing summary --json` from the cloud, 17:32 UTC): metered $22.49 = apps 17.03 +
+  volumes 5.32; the plan credit used is 17.03 (`adjustments.credits`), storage and egress have their own allowance lines,
+  billed 0. So free left is $12.97 of $30; `credit_from_summary` took `metered_cost` and would have said $7.51.
+- Also found: the cloud proxy does carry Modal's gRPC after `pip install "modal[api-proxy-support]"`; the runbook, the
+  `paid_offer` docstring and the modal-operations skill said it does not.
+- Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
+  skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
+  the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
+
+## 2026-11-13 — Ledger: a stop waiver for named items (the creator moves the 80 % line, never the cap)
+
+- Why: the creator's two cards (cmsg_01Hnu5zB86sjUj5GtTgaUkPWUggTDcsmgkbMGTvsCsvmaM, cmsg_01Hnu5zB86sjUj5GtTgaUkPWTk444C224qtw32y4Qt6H95)
+  allow the last two LTX launches of the Truce demo (S07, the S05_SH018 re-make) past the 4.00 stop line inside the 5.00 cap; the
+  ledger refused the reservation at 80 % of the cap. Audit TD-318 (Fable medium thread): write the waiver in the ledger, do not
+  write a false cap.
+- Done: `core/ledger.Run.waive_stop(service, items, by, ref)` records `stop_waivers[item]`; `_reserve` lets a waived item reach the
+  full cap and says "would pass the cap" past it; STOP_FRACTION, the caps and every other item are untouched; a waiver without
+  `by` or `ref` is a ValueError. Test `test_stop_waiver_moves_the_80_percent_line_for_named_items_only_never_the_cap`.
+- The launch of a part now goes through `demo_truce_1914/ltx/launch_safe.sh` (reserve first, launch only if it succeeded, FL-317).
+
+## 2026-11-14 · LTX S5 R2: the three continuity re-makes (S06_SH009, S07_SH005, S07_SH008)
+- Why: the owner's card cmsg_01Hnu5zB86sjUj5GtTgaUkPWNDRDuwFk9fLFHkmrZPYDK8 (option A) after the by-eye check of all 54 neighbouring pairs
+  found three real breaks (button, invented flag, rifle). One launch, run id `d3e015fbb9d4_fc6ae61bf410`, settled 0.2676 USD
+  (estimate 0.2985), series ledger 4.20 of 5.00, no app left running.
+- Done: scene `truce_A_R2.json` (three shots of two scenes, two pictures of their own plus the chained start picture
+  `S07_SH008_chain_f088_TR.png` = frame 88 of S07_SH007, frame pick of the Opus module (PR #188), RealPLKSR at the same size); the prompts of S07_SH005 (no flag)
+  and S07_SH008 (rifle already in hand) deviate from the script on purpose, recorded in the scene file (`script_deviation`) and the
+  journal MS-119; old takes in `production/video/superseded/`; new records ingested (S07_SH005 CLIP-06 FAIL, -0.1 dBTP, level trim at
+  the assembly). Start-frame size check: no stretch or shift, only the standard 11 px crop top and bottom (`ltx/r2/R2_START_FRAMES_MEASURE.md`).
+- Focused test: none new (data and a launch, no code change); the ledger waiver is covered by the existing `test_ledger.py` test.
+- Open: the nine minor pairs, S05_SH018/019 caps (NT-312), and the missing gate that compares the end state of a shot with the next
+  shot's start state (FL-120); incident log LTX-01..LTX-08 in `architecture_2026-11-14/INCIDENT_JOURNAL_2026-11-14.md`.
+
+## 2026-11-14 · LTX S5 R3: photo-aware prompts (S06_SH009, S07_SH005, S07_SH008)
+- Why: the owner judged two R2 takes wrong by eye (the captain saluted with the revolver hand, Thomas stepped down with a stretched leg) and gave the rule that the visual script is corrected from the start photo first (the new video-lane rule in PR #189). New layer `episodes/ep_truce_1914/story/photo_visual_layer.json` (photo facts, script text, corrected text, end state, per shot); the frozen script file is unchanged.
+- Done: one launch R3, run id `1e0fa1f05548_fc6ae61bf410`, settled 0.2289 USD (estimate 0.2985); series cap raised 5.00 -> 5.20 on the owner's word (settled 4.20 + the fixed 0.97 reservation passed 5.00); series 4.4289, real money 4.58 with pictures, under his 4.60 line. R3 takes ingested, R2 takes in `superseded/<shot>_take2/`. S07_SH005 still CLIP-06 FAIL only (true peak -0.1 dBTP, level trim at the assembly).
+- Result by eye: S06_SH009 and S07_SH005 better than R2; S07_SH008 steps down despite "stays on the box" (negatives do not hold), legs plausible. Details in the layer's `r3_result` and the journal.
+- Also: an id the docs do not define (a rule of the unmerged Opus module) was removed from PROGRESS.md and the R2/R3 scene files (docs lint and sourced-rules tests failed on PR #185).

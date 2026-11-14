@@ -1,0 +1,32 @@
+{
+  "shots": {
+    "S04_SH008_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH008_start.png",
+      "sha256": "900095d829188c15e00c874d763aef419beb73d4036d2a2d818c094b332128a6"
+    },
+    "S04_SH009_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH009_start.png",
+      "sha256": "19b20caf6442dc10a3fb17e5e90bb8f82e3949ef2e106937317a69a9b275126f"
+    },
+    "S04_SH010_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH010_start.png",
+      "sha256": "9a359125b08e49e56a17ca283636bc46d542131893f3801e995e637593dea20d"
+    },
+    "S04_SH012_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH012_start.png",
+      "sha256": "c03c50c2788e0c407004a226115017775759d3145e36083a9c90d89cb1e6e85f"
+    },
+    "S04_SH013_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH013_start.png",
+      "sha256": "c1dc49623277aae559d079c3a212c87c7fc9fda116e35a64b22d6145b8eb56b1"
+    },
+    "S04_SH014_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH014_start.png",
+      "sha256": "486e14ab30af42221251ef05b23bb9fd68eef81fc82ec6fba25c7c37231713e0"
+    },
+    "S04_SH015_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S04_SH015_start.png",
+      "sha256": "2df2d9fcff0e81655c79c07697c5147148b43bc5c6a99549400e6814e09f1d8a"
+    }
+  }
+}

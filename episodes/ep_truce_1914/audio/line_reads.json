@@ -1,0 +1,669 @@
+{
+  "schema": "line_reads/1",
+  "lines": {
+    "S02_L006": {
+      "seconds": 3.237,
+      "start_s": 0.0,
+      "end_s": 3.237,
+      "spans": [
+        [
+          0.0,
+          3.237
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S02_L006.mp3",
+      "sha256": "c53a0297f5b09a27c18ae7a9923559b2da399258b3dc9da0b265e1a6d51b6427",
+      "speaker": "char_thomas_hale",
+      "text": "Home by Christmas, she says. Didn't say which one.",
+      "file_seconds": 3.474
+    },
+    "S02_L007": {
+      "seconds": 2.227,
+      "start_s": 0.0,
+      "end_s": 2.227,
+      "spans": [
+        [
+          0.0,
+          2.227
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S02_L007.mp3",
+      "sha256": "2ad1d97cf7ebe6300575373332fda437fe0062c78b4677e004865ad9df5697ef",
+      "speaker": "char_sgt_harris",
+      "text": "Keep your head down, and you might see one.",
+      "file_seconds": 2.429
+    },
+    "S03_L003": {
+      "seconds": 2.512,
+      "start_s": 0.0,
+      "end_s": 2.512,
+      "spans": [
+        [
+          0.0,
+          2.512
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S03_L003.mp3",
+      "sha256": "661c4f50b609be54acc555a90145da16da4d6e3529bc79f64f9bfbdc7dc09d97",
+      "speaker": "char_friedrich_brandt",
+      "text": "Stille Nacht, heilige Nacht...",
+      "file_seconds": 2.691
+    },
+    "S03_L004": {
+      "seconds": 1.06,
+      "start_s": 0.103,
+      "end_s": 1.163,
+      "spans": [
+        [
+          0.103,
+          1.163
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S03_L004.mp3",
+      "sha256": "562e5a82c1fe93d18edc4993203e21af23ad980a526a526e29d37b4bbfe27ba1",
+      "speaker": "char_sgt_harris",
+      "text": "What are they singing?",
+      "file_seconds": 1.567
+    },
+    "S03_L005": {
+      "seconds": 2.566,
+      "start_s": 0.0,
+      "end_s": 2.566,
+      "spans": [
+        [
+          0.0,
+          2.566
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S03_L005.mp3",
+      "sha256": "7b5dbfe6d938857708d5045fd8bce86e03a590fa96781e64b9388cd43ddd5006",
+      "speaker": "char_thomas_hale",
+      "text": "Silent Night. Same tune as ours.",
+      "file_seconds": 2.769
+    },
+    "S03_L006": {
+      "seconds": 1.959,
+      "start_s": 0.0,
+      "end_s": 1.959,
+      "spans": [
+        [
+          0.0,
+          1.959
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S03_L006.mp3",
+      "sha256": "5a4b8db1f8bde4ee9978eeb2474ee12d8a09c1b7a7006ba3a0877513ec5cb8f3",
+      "speaker": "char_sgt_harris",
+      "text": "Let 'em sing. Heads down.",
+      "file_seconds": 2.273
+    },
+    "S03_L008": {
+      "seconds": 2.857,
+      "start_s": 0.0,
+      "end_s": 2.857,
+      "spans": [
+        [
+          0.0,
+          2.857
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S03_L008.mp3",
+      "sha256": "1ede568213a56bbb127f909191b0b930e5826cc303af77bf951f67cd689f1e5c",
+      "speaker": "char_thomas_hale",
+      "text": "Silent night... holy night...",
+      "file_seconds": 3.082
+    },
+    "S03_L009": {
+      "seconds": 1.997,
+      "start_s": 0.0,
+      "end_s": 1.997,
+      "spans": [
+        [
+          0.0,
+          1.997
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S03_L009.mp3",
+      "sha256": "635f74fda3ab16f98768a8c05c1cf31c3fddd344a0a2a92ebe77c8b0ee5fe54b",
+      "speaker": "char_friedrich_brandt",
+      "text": "Good, English! More!",
+      "file_seconds": 2.194
+    },
+    "S04_L002": {
+      "seconds": 1.97,
+      "start_s": 0.0,
+      "end_s": 1.97,
+      "spans": [
+        [
+          0.0,
+          1.97
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L002.mp3",
+      "sha256": "74a3a6914a787f83d70df6cf99cc676ab9dd344b0a9943ec5b39f824daba9d78",
+      "speaker": "char_friedrich_brandt",
+      "text": "English! Merry Christmas!",
+      "file_seconds": 2.116
+    },
+    "S04_L003": {
+      "seconds": 2.046,
+      "start_s": 0.0,
+      "end_s": 2.046,
+      "spans": [
+        [
+          0.0,
+          2.046
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L003.mp3",
+      "sha256": "a5e5e2a719b102949f5a13dfa13bfc57dbf4843f57d02f5e7c9082680cd854f1",
+      "speaker": "char_sgt_harris",
+      "text": "It's a trick. Nobody move.",
+      "file_seconds": 2.273
+    },
+    "S04_L004": {
+      "seconds": 2.296,
+      "start_s": 0.0,
+      "end_s": 2.296,
+      "spans": [
+        [
+          0.0,
+          2.296
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L004.mp3",
+      "sha256": "c6efe9b7f18911a6c1a1ce56cf4ec15512ad5bfd01b1507db264dc2587626695",
+      "speaker": "char_friedrich_brandt",
+      "text": "No shooting! Merry Christmas!",
+      "file_seconds": 2.429
+    },
+    "S04_L006": {
+      "seconds": 1.861,
+      "start_s": 0.0,
+      "end_s": 1.861,
+      "spans": [
+        [
+          0.0,
+          1.861
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L006.mp3",
+      "sha256": "d85ce4f289303d3812f39a506aee46acb5a0e5d6a3688c16c0b26c21891284e6",
+      "speaker": "char_sgt_harris",
+      "text": "Thomas! Get back down!",
+      "file_seconds": 2.194
+    },
+    "S04_L007": {
+      "seconds": 2.415,
+      "start_s": 0.0,
+      "end_s": 2.415,
+      "spans": [
+        [
+          0.0,
+          2.415
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L007.mp3",
+      "sha256": "df7c33a69e9d2c8996cc6fd9f8c8f452db0f487487a43dbc25c1efe02007a599",
+      "speaker": "char_thomas_hale",
+      "text": "If they wanted us dead, we'd be dead.",
+      "file_seconds": 2.586
+    },
+    "S04_L009": {
+      "seconds": 1.19,
+      "start_s": 0.0,
+      "end_s": 1.19,
+      "spans": [
+        [
+          0.0,
+          1.19
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L009.mp3",
+      "sha256": "67097ab0c498a9e6d8efa68f109a8b285ecd10fc61a0babf02ba03a981eb75c8",
+      "speaker": "char_friedrich_brandt",
+      "text": "You are English?",
+      "file_seconds": 1.411
+    },
+    "S04_L010": {
+      "seconds": 1.312,
+      "start_s": 0.0,
+      "end_s": 1.312,
+      "spans": [
+        [
+          0.0,
+          1.312
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L010.mp3",
+      "sha256": "8127235e3692976a5d38c5f2f7146e2b2384ebd9eb137db204a6246f7dd37997",
+      "speaker": "char_thomas_hale",
+      "text": "And you're German?",
+      "file_seconds": 1.567
+    },
+    "S04_L012": {
+      "seconds": 4.103,
+      "start_s": 0.0,
+      "end_s": 4.103,
+      "spans": [
+        [
+          0.0,
+          4.103
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L012.mp3",
+      "sha256": "f44af3b69a13b2f0a3abf5d976c1e65c57092a67b0dbd809d53e988fbe3ba2c1",
+      "speaker": "char_friedrich_brandt",
+      "text": "Saxon. Fritz, to my friends. Merry Christmas, Tommy.",
+      "file_seconds": 4.284
+    },
+    "S04_L013": {
+      "seconds": 2.853,
+      "start_s": 0.0,
+      "end_s": 2.853,
+      "spans": [
+        [
+          0.0,
+          2.853
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S04_L013.mp3",
+      "sha256": "af1bdf0da80a5345ee36f922c3af4158b13b57dafda8c06c87c1f5a161511f68",
+      "speaker": "char_thomas_hale",
+      "text": "We're all Tommies to you. It's really my name.",
+      "file_seconds": 3.082
+    },
+    "S05_L004": {
+      "seconds": 1.165,
+      "start_s": 0.0,
+      "end_s": 1.165,
+      "spans": [
+        [
+          0.0,
+          1.165
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L004.mp3",
+      "sha256": "1b145e6ff5029bd58b80ed78ec98fe61041f52fed3052b01658b576193aaab93",
+      "speaker": "char_thomas_hale",
+      "text": "Where'd you learn English?",
+      "file_seconds": 1.411
+    },
+    "S05_L005": {
+      "seconds": 2.725,
+      "start_s": 0.0,
+      "end_s": 2.725,
+      "spans": [
+        [
+          0.0,
+          2.725
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L005.mp3",
+      "sha256": "634af017cd4e6071160dc5ba068a25dfe4c5ae82f330fd2ba0d43efba3582c95",
+      "speaker": "char_friedrich_brandt",
+      "text": "London. I was a waiter. Four years.",
+      "file_seconds": 2.926
+    },
+    "S05_L007": {
+      "seconds": 0.877,
+      "start_s": 0.0,
+      "end_s": 0.877,
+      "spans": [
+        [
+          0.0,
+          0.877
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L007.mp3",
+      "sha256": "c39e96745075742e301a5e7a0549a9f0ee849b760a99a0db03353c227b046810",
+      "speaker": "char_friedrich_brandt",
+      "text": "You have a family?",
+      "file_seconds": 1.071
+    },
+    "S05_L008": {
+      "seconds": 2.228,
+      "start_s": 0.0,
+      "end_s": 2.228,
+      "spans": [
+        [
+          0.0,
+          2.228
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L008.mp3",
+      "sha256": "4e5df3cd096e9f65205c696dc18a64c1a34d73fb7182f527e90867135aa80737",
+      "speaker": "char_thomas_hale",
+      "text": "My mum. And a little sister.",
+      "file_seconds": 2.429
+    },
+    "S05_L009": {
+      "seconds": 2.812,
+      "start_s": 0.0,
+      "end_s": 2.812,
+      "spans": [
+        [
+          0.0,
+          2.812
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L009.mp3",
+      "sha256": "8985347a0a62ee422d27e978b9cfa9627a3385722fbd9dade2e6a27ea7153523",
+      "speaker": "char_friedrich_brandt",
+      "text": "My wife. My daughter. She is three.",
+      "file_seconds": 3.082
+    },
+    "S05_L011": {
+      "seconds": 1.062,
+      "start_s": 0.0,
+      "end_s": 1.062,
+      "spans": [
+        [
+          0.0,
+          1.062
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L011.mp3",
+      "sha256": "b5737ef4ce6302880606c41a59e6f556ed20e2b18d2ee1c540fd93c71267bf18",
+      "speaker": "char_thomas_hale",
+      "text": "She looks happy.",
+      "file_seconds": 1.228
+    },
+    "S05_L012": {
+      "seconds": 1.829,
+      "start_s": 0.0,
+      "end_s": 1.829,
+      "spans": [
+        [
+          0.0,
+          1.829
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L012.mp3",
+      "sha256": "ac81e5eb221848917ccdfaffffe0ae55189bfc1b6eaead6c9d0bc1edb57ebd3e",
+      "speaker": "char_friedrich_brandt",
+      "text": "She thinks I am home for Christmas.",
+      "file_seconds": 2.038
+    },
+    "S05_L013": {
+      "seconds": 0.964,
+      "start_s": 0.0,
+      "end_s": 0.964,
+      "spans": [
+        [
+          0.0,
+          0.964
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L013.mp3",
+      "sha256": "49cd93f8b475ca6212c38e77991ff9553eb02fc6dca50ae2af04077933da3b98",
+      "speaker": "char_thomas_hale",
+      "text": "So does mine.",
+      "file_seconds": 1.149
+    },
+    "S05_L017": {
+      "seconds": 0.988,
+      "start_s": 0.0,
+      "end_s": 0.988,
+      "spans": [
+        [
+          0.0,
+          0.988
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L017.mp3",
+      "sha256": "259de53f2b0bef33ec03098739313c4b0b5a353d2a6688fe06327eed19fb411c",
+      "speaker": "char_thomas_hale",
+      "text": "What was his name?",
+      "file_seconds": 1.228
+    },
+    "S05_L018": {
+      "seconds": 2.26,
+      "start_s": 0.0,
+      "end_s": 2.26,
+      "spans": [
+        [
+          0.0,
+          2.26
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L018.mp3",
+      "sha256": "cbc2369952b2017fbb1efa46118f80c82109cd56e8b7fb4037387f6725e46bdf",
+      "speaker": "char_friedrich_brandt",
+      "text": "Karl. He sang the loudest.",
+      "file_seconds": 2.429
+    },
+    "S05_L019": {
+      "seconds": 0.833,
+      "start_s": 0.0,
+      "end_s": 0.833,
+      "spans": [
+        [
+          0.0,
+          0.833
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S05_L019.mp3",
+      "sha256": "ef893bab5e22da6dfa5ffcdc47b04ebc50f74269ec373369a1b91446ec21e3ee",
+      "speaker": "char_thomas_hale",
+      "text": "I'm sorry.",
+      "file_seconds": 1.149
+    },
+    "S06_L002": {
+      "seconds": 2.242,
+      "start_s": 0.0,
+      "end_s": 2.242,
+      "spans": [
+        [
+          0.0,
+          2.242
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L002.mp3",
+      "sha256": "991f6a32a73dcd2b5f730a41381d9724fbc7d97dc5100b25c877e9163d9bef5b",
+      "speaker": "char_friedrich_brandt",
+      "text": "Tommy... why are we fighting?",
+      "file_seconds": 2.429
+    },
+    "S06_L003": {
+      "seconds": 1.089,
+      "start_s": 0.0,
+      "end_s": 1.089,
+      "spans": [
+        [
+          0.0,
+          1.089
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L003.mp3",
+      "sha256": "c8497836222234ca20e4a0a2e2811552f6f986de32581639f7b46d78b243102e",
+      "speaker": "char_thomas_hale",
+      "text": "I don't know.",
+      "file_seconds": 1.411
+    },
+    "S06_L004": {
+      "seconds": 1.817,
+      "start_s": 0.0,
+      "end_s": 1.817,
+      "spans": [
+        [
+          0.0,
+          1.817
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L004.mp3",
+      "sha256": "486f48afc9b938031bc06cd698c88211fef9ff48c0eca746eabadbdd94d1402d",
+      "speaker": "char_friedrich_brandt",
+      "text": "They told us you were the enemy.",
+      "file_seconds": 2.116
+    },
+    "S06_L006": {
+      "seconds": 1.721,
+      "start_s": 0.0,
+      "end_s": 1.721,
+      "spans": [
+        [
+          0.0,
+          1.721
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L006.mp3",
+      "sha256": "0fa42b041e617c7a3688c0d4cfd184ba86d0e1c7e89e9cda5f9c27658b88b5df",
+      "speaker": "char_thomas_hale",
+      "text": "They told us the same about you.",
+      "file_seconds": 2.116
+    },
+    "S06_L007": {
+      "seconds": 2.77,
+      "start_s": 0.0,
+      "end_s": 2.77,
+      "spans": [
+        [
+          0.0,
+          2.77
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L007.mp3",
+      "sha256": "76a5acf44e348c948a065254d9970c599411826f2d39f8c4b1a2acbe2b1fe240",
+      "speaker": "char_friedrich_brandt",
+      "text": "Tomorrow, maybe, we are enemies again.",
+      "file_seconds": 3.004
+    },
+    "S06_L008": {
+      "seconds": 2.122,
+      "start_s": 0.0,
+      "end_s": 2.122,
+      "spans": [
+        [
+          0.0,
+          2.122
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L008.mp3",
+      "sha256": "789f52800c96ed588ed7d51f02ceb5964b961505363f1be450562a3484478215",
+      "speaker": "char_thomas_hale",
+      "text": "Maybe. But not today.",
+      "file_seconds": 2.351
+    },
+    "S06_L010": {
+      "seconds": 1.694,
+      "start_s": 0.0,
+      "end_s": 1.694,
+      "spans": [
+        [
+          0.0,
+          1.694
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L010.mp3",
+      "sha256": "edb3ac6a5c80933b4bbd070c54b98a9279f7cdc1b28ab9bbdccdcf57852e79e0",
+      "speaker": "char_thomas_hale",
+      "text": "Something to remember me by.",
+      "file_seconds": 1.881
+    },
+    "S06_L011": {
+      "seconds": 1.346,
+      "start_s": 0.0,
+      "end_s": 1.346,
+      "spans": [
+        [
+          0.0,
+          1.346
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S06_L011.mp3",
+      "sha256": "30af5879ac95b3a407d37bbdc87725dbcd3cd5455db40a67b10e4337066ee67f",
+      "speaker": "char_friedrich_brandt",
+      "text": "Then take one of mine.",
+      "file_seconds": 1.567
+    },
+    "S07_L002": {
+      "seconds": 1.033,
+      "start_s": 0.0,
+      "end_s": 1.033,
+      "spans": [
+        [
+          0.0,
+          1.033
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S07_L002.mp3",
+      "sha256": "b28150db5f59edd0a756c083eafd53259a6874d7a5945f8ac9bc01244876493c",
+      "speaker": "char_friedrich_brandt",
+      "text": "Good luck, Tommy.",
+      "file_seconds": 1.228
+    },
+    "S07_L003": {
+      "seconds": 1.075,
+      "start_s": 0.0,
+      "end_s": 1.075,
+      "spans": [
+        [
+          0.0,
+          1.075
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S07_L003.mp3",
+      "sha256": "158f6fdedc7c247d4706b35482656c9b880310f15de4145ce794c316255c0a03",
+      "speaker": "char_thomas_hale",
+      "text": "You too, Fritz.",
+      "file_seconds": 1.411
+    },
+    "S07_L004": {
+      "seconds": 0.869,
+      "start_s": 0.0,
+      "end_s": 0.869,
+      "spans": [
+        [
+          0.0,
+          0.869
+        ]
+      ],
+      "source": "tts",
+      "file": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/S07_L004.mp3",
+      "sha256": "75ad2d1e6d1822b13b8fc05d75236dbd41427dbc40a59ef8bfaa837a7b182173",
+      "speaker": "char_sgt_harris",
+      "text": "Stand to.",
+      "file_seconds": 1.228
+    }
+  },
+  "method": "ffmpeg silencedetect n=-40.0dB d=0.1 (FL-108)"
+}

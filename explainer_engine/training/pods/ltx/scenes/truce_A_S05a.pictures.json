@@ -1,0 +1,40 @@
+{
+  "shots": {
+    "S05_SH004_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH004_start.png",
+      "sha256": "720819a05156376e5747c5afb168ec77835eab85efa40554d88dac5f4827f601"
+    },
+    "S05_SH005_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH005_start.png",
+      "sha256": "d456f2392e31aa3575ea6cfc2b3e917fcb5266d55fa95832bff5bfd925f9ba13"
+    },
+    "S05_SH006_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH006_start.png",
+      "sha256": "794455bd27f040ac33e7b1a95607cdd9a7b9cf7b52a743dd6fc7391b23f47f0f"
+    },
+    "S05_SH007_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH007_start.png",
+      "sha256": "cc07ad460a0850b8a21ff1a4f8449f639ec0abb838450f29b845992a4ee9c0db"
+    },
+    "S05_SH008_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH008_start.png",
+      "sha256": "cd0212d6720469005e9909d820fea69f619e289a1c9a6e6cffa7df5cef71f5f5"
+    },
+    "S05_SH009_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH009_start.png",
+      "sha256": "39b8155aa8f4363d674d166237b327462243a34e881312cb261be6e031711c9f"
+    },
+    "S05_SH011_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH011_start.png",
+      "sha256": "ee214f7d3be303bd0a5a3b322a8dea210221cfcf616d22e58ce424feb5f8c970"
+    },
+    "S05_SH012_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH012_start.png",
+      "sha256": "2274399c7bf12ec14c14c7d0462ce96bc85f930dc19c6b0296588708366bc3cc"
+    },
+    "S05_SH013_start": {
+      "path": "/home/user/explainer-engine/episodes/ep_truce_1914/assets/generated/images/S05_SH013_start.png",
+      "sha256": "1251bd138f0f307c654e27ace3a2e2ed040c004fb23de3de20116e432655db27"
+    }
+  }
+}

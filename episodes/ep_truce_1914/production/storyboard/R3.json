@@ -1,0 +1,168 @@
+{
+  "schema": "video_storyboard/1",
+  "scene_id": "R3",
+  "shots": [
+    "S06_SH009",
+    "S07_SH005",
+    "S07_SH008"
+  ],
+  "cells": [
+    {
+      "shot_id": "S06_SH009",
+      "mode": "insert",
+      "route": "video",
+      "size": "medium_close_up",
+      "picture": "S06_SH009_start",
+      "from": null,
+      "seconds": 4.5,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S06_SH009_start.png",
+      "vs_master": {
+        "palette_dist": 0.0367,
+        "top_palette_dist": 0.0438,
+        "luma_gap": 0.026
+      }
+    },
+    {
+      "shot_id": "S07_SH005",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S07_SH005_start",
+      "from": null,
+      "seconds": 7.25,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH005_start.png",
+      "vs_master": {
+        "palette_dist": 0.0187,
+        "top_palette_dist": 0.0634,
+        "luma_gap": 0.0518
+      }
+    },
+    {
+      "shot_id": "S07_SH008",
+      "mode": "coverage",
+      "route": "video",
+      "size": "wide",
+      "picture": "S07_SH008_start",
+      "from": null,
+      "seconds": 8.75,
+      "path": "episodes/ep_truce_1914/assets/generated/images/S07_SH008_start.png",
+      "vs_master": {
+        "palette_dist": 0.0044,
+        "top_palette_dist": 0.004,
+        "luma_gap": 0.0256
+      }
+    }
+  ],
+  "rows": [
+    {
+      "gate": "video_edit_plan",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 FAIL finding(s) over 3 video shot(s) (VL-01..VL-06)"
+    },
+    {
+      "gate": "video_edit_plan_review",
+      "status": "REVIEW",
+      "measured": [
+        "VL-09 S06_SH009: the scene opens on a 'insert' cut: a scene opens on an establishing, place or time cut",
+        "VL-09 S07_SH005: the scene opens on a 'action' cut: a scene opens on an establishing, place or time cut"
+      ],
+      "detail": "2 REVIEW finding(s) (VL-03/04/08/09)"
+    },
+    {
+      "gate": "storyboard_pictures_present",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) without their picture"
+    },
+    {
+      "gate": "storyboard_no_repeated_composition",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 repeated composition(s)"
+    },
+    {
+      "gate": "storyboard_same_place_as_master",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+    },
+    {
+      "gate": "storyboard_hero_costume_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+    },
+    {
+      "gate": "storyboard_hero_face_holds",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+    }
+  ],
+  "verdict": {
+    "status": "REVIEW",
+    "failed": [],
+    "not_run": [],
+    "review": [
+      "video_edit_plan_review"
+    ],
+    "gates": [
+      {
+        "gate": "video_edit_plan",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 FAIL finding(s) over 3 video shot(s) (VL-01..VL-06)"
+      },
+      {
+        "gate": "video_edit_plan_review",
+        "status": "REVIEW",
+        "measured": [
+          "VL-09 S06_SH009: the scene opens on a 'insert' cut: a scene opens on an establishing, place or time cut",
+          "VL-09 S07_SH005: the scene opens on a 'action' cut: a scene opens on an establishing, place or time cut"
+        ],
+        "detail": "2 REVIEW finding(s) (VL-03/04/08/09)"
+      },
+      {
+        "gate": "storyboard_pictures_present",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 shot(s) without their picture"
+      },
+      {
+        "gate": "storyboard_no_repeated_composition",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 repeated composition(s)"
+      },
+      {
+        "gate": "storyboard_same_place_as_master",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 picture(s) leave the master's place or light (BP-166 palette, brightness gap)"
+      },
+      {
+        "gate": "storyboard_hero_costume_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero box(es) whose colours move across a cut (BP-166 hero_palette_max), 0 change(s) seen by eye (switch Q3 -> REVIEW)"
+      },
+      {
+        "gate": "storyboard_hero_face_holds",
+        "status": "PASS",
+        "measured": [],
+        "detail": "0 hero face(s) SFace does not name (switch Q3 -> FAIL)"
+      }
+    ]
+  },
+  "pictures": {
+    "S06_SH009_start": "a3e337a18623a3094e7b162edfa9777de3b9bc5e70530657fe673a1e99ab8fa4",
+    "S06_SH002_start": "d514df0361683b6ade96dcd4d066e334795180de630f1bf09ea81ea2db022a11",
+    "S07_SH005_start": "da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3",
+    "S07_SH004_start": "a3b53359cc3563f4a5bbd50a37da15d692eaaefde5ae23457e5060141278018f",
+    "S07_SH008_start": "9699933428ae27fc3e0ca5b575eb640be93a8863977d6a2596109ab7126d1751"
+  },
+  "plan_digest": "934892ca25c30be646097caa6562ebef401ee2b6e1c6e6769d221bf92c2cc002",
+  "sheet": "episodes/ep_truce_1914/production/storyboard/R3.jpg",
+  "sheet_sha256": "ae0e2921013a49457ea03fe2f7f426a0ebfd1b7cc3f0122a6a408b14f8f26ae6"
+}

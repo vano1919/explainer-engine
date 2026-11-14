@@ -1,0 +1,213 @@
+{
+  "schema": "ltx_scene_test/3",
+  "id": "S05a",
+  "episode": "episodes/ep_truce_1914",
+  "asked": "the creator, 2026-11-13 20:30 UTC (decision card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6AULacxKdq5hJZPfuKrQ97 option A, series cap raised 4.00 -> 5.00; earlier cap message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSxQCprLmSP7G4SYadrdnei); audit PASS for launches 3-8 (round 5) on script 261d43b8 and frames v5 f2e5a232",
+  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+  "storyboard": {
+    "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S05a.json",
+    "sha256": "8486bed93416c55a0db0f36086dd87a0580018490d17278b8fe67248c7869816",
+    "verdict": "REVIEW"
+  },
+  "pictures": {
+    "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S05a.pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "S05_SH004",
+      "seconds": 3.0,
+      "seconds_basis": "measured_line",
+      "seed": 7100,
+      "motion_prompt": "Thomas holds out a cigarette and asks, curious. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Where'd you learn English?\"",
+      "prompt_parts": {
+        "motion": "Thomas holds out a cigarette and asks, curious.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Where'd you learn English?\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 1.915,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "Where'd you learn English?"
+      },
+      "picture": "S05_SH004_start"
+    },
+    {
+      "shot_id": "S05_SH005",
+      "seconds": 4.5,
+      "seconds_basis": "measured_line",
+      "seed": 7101,
+      "motion_prompt": "Friedrich takes the cigarette and answers with a small proud smile. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"London. I was a waiter. Four years.\"",
+      "prompt_parts": {
+        "motion": "Friedrich takes the cigarette and answers with a small proud smile.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"London. I was a waiter. Four years.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.475,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "London. I was a waiter. Four years."
+      },
+      "picture": "S05_SH005_start"
+    },
+    {
+      "shot_id": "S05_SH006",
+      "seconds": 8.5,
+      "seconds_basis": "measured_length",
+      "seed": 7102,
+      "motion_prompt": "The German barber snips at the British soldier's hair while the men around them laugh. Nobody speaks.",
+      "prompt_parts": {
+        "motion": "The German barber snips at the British soldier's hair while the men around them laugh.",
+        "no_speech": "Nobody speaks."
+      },
+      "continuity_mode": "insert",
+      "line": {
+        "speaker": "narrator",
+        "text": "Many Germans had worked in Britain before the war. One Briton found his old barber among them, and sat down for a haircut."
+      },
+      "picture": "S05_SH006_start"
+    },
+    {
+      "shot_id": "S05_SH007",
+      "seconds": 2.75,
+      "seconds_basis": "measured_line",
+      "seed": 7103,
+      "motion_prompt": "Friedrich shakes out the match and asks, looking at Thomas. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"You have a family?\"",
+      "prompt_parts": {
+        "motion": "Friedrich shakes out the match and asks, looking at Thomas.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"You have a family?\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 1.627,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "You have a family?"
+      },
+      "picture": "S05_SH007_start"
+    },
+    {
+      "shot_id": "S05_SH008",
+      "seconds": 4.0,
+      "seconds_basis": "measured_line",
+      "seed": 7104,
+      "motion_prompt": "Thomas breathes out smoke and taps the pocket with the letter. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"My mum. And a little sister.\"",
+      "prompt_parts": {
+        "motion": "Thomas breathes out smoke and taps the pocket with the letter.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"My mum. And a little sister.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.978,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "My mum. And a little sister."
+      },
+      "picture": "S05_SH008_start"
+    },
+    {
+      "shot_id": "S05_SH009",
+      "seconds": 4.75,
+      "seconds_basis": "measured_line",
+      "seed": 7105,
+      "motion_prompt": "Friedrich takes the portrait card from his pocket and holds it out. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"My wife. My daughter. She is three.\"",
+      "prompt_parts": {
+        "motion": "Friedrich takes the portrait card from his pocket and holds it out.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"My wife. My daughter. She is three.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 3.562,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "My wife. My daughter. She is three."
+      },
+      "picture": "S05_SH009_start"
+    },
+    {
+      "shot_id": "S05_SH011",
+      "seconds": 3.0,
+      "seconds_basis": "measured_line",
+      "seed": 7106,
+      "motion_prompt": "Thomas looks at the portrait card, smiles and hands it back carefully. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"She looks happy.\"",
+      "prompt_parts": {
+        "motion": "Thomas looks at the portrait card, smiles and hands it back carefully.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"She looks happy.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 1.812,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "She looks happy."
+      },
+      "picture": "S05_SH011_start"
+    },
+    {
+      "shot_id": "S05_SH012",
+      "seconds": 3.75,
+      "seconds_basis": "measured_line",
+      "seed": 7107,
+      "motion_prompt": "Friedrich slips the portrait card into his pocket and looks down as he speaks. Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"She thinks I am home for Christmas.\"",
+      "prompt_parts": {
+        "motion": "Friedrich slips the portrait card into his pocket and looks down as he speaks.",
+        "speech": "Friedrich Brandt says in the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London: \"She thinks I am home for Christmas.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 2.579,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_friedrich_brandt",
+        "text": "She thinks I am home for Christmas."
+      },
+      "picture": "S05_SH012_start"
+    },
+    {
+      "shot_id": "S05_SH013",
+      "seconds": 2.75,
+      "seconds_basis": "measured_line",
+      "seed": 7108,
+      "motion_prompt": "Thomas pauses, looks away across the field and answers quietly. Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"So does mine.\"",
+      "prompt_parts": {
+        "motion": "Thomas pauses, looks away across the field and answers quietly.",
+        "speech": "Thomas Hale says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"So does mine.\""
+      },
+      "continuity_mode": "coverage",
+      "speech_end_s": 1.714,
+      "speech_tail_s": 0.5,
+      "line": {
+        "speaker": "char_thomas_hale",
+        "text": "So does mine."
+      },
+      "picture": "S05_SH013_start"
+    }
+  ],
+  "draft": false,
+  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+  "voice_missing": [],
+  "voices": {
+    "char_friedrich_brandt": {
+      "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+      "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+    },
+    "char_thomas_hale": {
+      "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+      "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+    }
+  },
+  "voice_problems": [],
+  "read_first": "forced",
+  "budget": {
+    "total_usd": 0.97,
+    "pictures_usd": 0.0,
+    "cpu_checks_usd": 0.0,
+    "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+  },
+  "ledger": {
+    "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+    "caps": {
+      "modal_ltx": 5.0
+    }
+  }
+}

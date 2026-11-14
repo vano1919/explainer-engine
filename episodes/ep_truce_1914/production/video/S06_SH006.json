@@ -1,0 +1,57 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S06_SH006",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S06_SH006.mp4",
+  "clip_sha256": "61153ede21b5c700e2830144ac78164e32a4d91caa65cf930e717f8d3a7c1f85",
+  "raw_path": "production/video/raw/S06_SH006.mp4",
+  "raw_sha256": "563dc60ea92ec681d94b7bf9a7b026ea163311854dcecc3ad4164b9f9262ff21",
+  "raw_fps": 24.0,
+  "raw_seconds": 3.7083,
+  "fps": 24,
+  "in_s": 2.25,
+  "out_s": 3.7083,
+  "frames": 35,
+  "speech_raw": [
+    [
+      2.5,
+      2.92
+    ],
+    [
+      3.2,
+      3.68
+    ]
+  ],
+  "speech": [
+    [
+      0.25,
+      0.67
+    ],
+    [
+      0.95,
+      1.43
+    ]
+  ],
+  "clip_spoken": true,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "35 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 13 frames from frame 21"
+    }
+  ],
+  "attempts": [
+    {
+      "note": "re-make with the speaker bound by look and side (TD-316, run c441511c56ed); the first take (name-only prompt, the wrong man spoke) is in production/video/superseded/ or was never ingested"
+    }
+  ]
+}

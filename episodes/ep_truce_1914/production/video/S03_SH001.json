@@ -1,0 +1,58 @@
+{
+  "schema": "video_clip_record/1",
+  "shot_id": "S03_SH001",
+  "route": "video",
+  "backend": "ltx",
+  "status": "REVIEW",
+  "clip_path": "production/video/cut/S03_SH001.mp4",
+  "clip_sha256": "30598d8282ea2b38121dc2b9b84d373522f2c6681add21c6e524ef9cb6b04c56",
+  "raw_path": "production/video/raw/S03_SH001.mp4",
+  "raw_sha256": "9f9b6d2ee9ddeddfed8812073b411ae64576ed47b99790d7cd3aef646e9dd242",
+  "raw_fps": 24.0,
+  "raw_seconds": 9.7083,
+  "fps": 24,
+  "in_s": 0.0,
+  "out_s": 9.5,
+  "frames": 228,
+  "speech_raw": [
+    [
+      2.86,
+      3.0
+    ],
+    [
+      3.84,
+      4.14
+    ]
+  ],
+  "speech": [
+    [
+      2.86,
+      3.0
+    ],
+    [
+      3.84,
+      4.14
+    ]
+  ],
+  "clip_spoken": false,
+  "chain_from_frame": null,
+  "ends_on_handover": false,
+  "findings": [
+    {
+      "rule": "CLIP-02",
+      "status": "REVIEW",
+      "msg": "228 frames is not 8k+1 (BP-139)"
+    },
+    {
+      "rule": "CLIP-07",
+      "status": "REVIEW",
+      "msg": "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 15 frames from frame 25"
+    }
+  ],
+  "attempts": []
+}

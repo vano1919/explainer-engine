@@ -1,0 +1,142 @@
+{
+  "schema": "episode_stage/1",
+  "episode_id": "ep_truce_1914",
+  "stage": "voice",
+  "gate": "G6",
+  "verdict": {
+    "status": "FAIL",
+    "failed": [
+      "clip_spoken_shots_timed_by_their_clips"
+    ],
+    "not_run": [],
+    "review": [
+      "read_aligned_to_the_lines"
+    ]
+  },
+  "rows": [
+    {
+      "gate": "the_read_exists",
+      "status": "PASS",
+      "measured": 268.08,
+      "detail": "audio/narration.wav: 268.08 s"
+    },
+    {
+      "gate": "read_aligned_to_the_lines",
+      "status": "REVIEW",
+      "measured": [
+        "Mud",
+        "(Thomas",
+        "does",
+        "not",
+        "answer;",
+        "he",
+        "looks",
+        "at",
+        "the",
+        "candles)",
+        "(Thomas",
+        "leans",
+        "his",
+        "rifle",
+        "on",
+        "the",
+        "sandbags",
+        "and",
+        "climbs",
+        "the"
+      ],
+      "detail": "81.8% of the written words heard (needs 97%)"
+    },
+    {
+      "gate": "clip_spoken_shots_timed_by_their_clips",
+      "status": "FAIL",
+      "measured": [
+        "S02_SH006",
+        "S03_SH003",
+        "S04_SH009",
+        "S04_SH010",
+        "S04_SH012",
+        "S04_SH013",
+        "S05_SH004",
+        "S05_SH005",
+        "S05_SH007",
+        "S05_SH008",
+        "S05_SH009",
+        "S05_SH011",
+        "S05_SH012",
+        "S05_SH013",
+        "S05_SH017",
+        "S05_SH018",
+        "S05_SH019",
+        "S06_SH002",
+        "S06_SH003",
+        "S06_SH004"
+      ],
+      "detail": "11 of 39 clip-spoken shot(s) timed by their trimmed LTX clip"
+    },
+    {
+      "gate": "av_anchors_inside_retimed_shots",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 shot(s) with an anchor outside the retimed shot (FA-06: anchor on a word or a share of the shot, or re-plan it)"
+    },
+    {
+      "gate": "av_anchors_truncated",
+      "status": "PASS",
+      "measured": [],
+      "detail": "0 event(s) cut short by the retimed shot"
+    }
+  ],
+  "outputs": {
+    "timing": "audio/timing.json",
+    "read_s": 268.08,
+    "planned_s": 367.0,
+    "total_frames": 9165,
+    "clip_timed": [
+      "S02_SH006",
+      "S02_SH007",
+      "S03_SH003",
+      "S03_SH004",
+      "S03_SH005",
+      "S03_SH006",
+      "S03_SH008",
+      "S03_SH009",
+      "S04_SH002",
+      "S04_SH003",
+      "S04_SH004",
+      "S04_SH006",
+      "S04_SH007",
+      "S04_SH009",
+      "S04_SH010",
+      "S04_SH012",
+      "S04_SH013",
+      "S05_SH004",
+      "S05_SH005",
+      "S05_SH007",
+      "S05_SH008",
+      "S05_SH009",
+      "S05_SH011",
+      "S05_SH012",
+      "S05_SH013",
+      "S05_SH017",
+      "S05_SH018",
+      "S05_SH019",
+      "S06_SH002",
+      "S06_SH003",
+      "S06_SH004",
+      "S06_SH006",
+      "S06_SH007",
+      "S06_SH008",
+      "S06_SH010",
+      "S06_SH011",
+      "S07_SH002",
+      "S07_SH003",
+      "S07_SH004"
+    ],
+    "inserts": 39
+  },
+  "rehearsal": true,
+  "fingerprint": "1599d0e51570c9e706767a7d44c999253f23ff44e406d8ed6e3a7d23f3ff7702",
+  "elapsed_s": 0.04,
+  "at": "2026-11-13T20:17:58Z"
+}

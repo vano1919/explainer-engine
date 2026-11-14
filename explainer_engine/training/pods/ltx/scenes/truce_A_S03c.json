@@ -1,0 +1,91 @@
+{
+ "schema": "ltx_scene_test/3",
+ "id": "S03c",
+ "episode": "episodes/ep_truce_1914",
+ "asked": "the creator via the coordinator, autopilot 2026-11-13 20:40 UTC; cap 5.00 (decision card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6AULacxKdq5hJZPfuKrQ97 option A); audit TD-315 (Fable medium thread 20:41 UTC): one bounded probe, S03_SH005 and S03_SH006 with the speaker bound by look and screen side; frames v5 f2e5a232, script 261d43b8",
+ "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
+ "storyboard": {
+  "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/S03b.json",
+  "sha256": "f1484978808951fd86d0ed5754fc8522ab7730e2e6520a96b1053792cbde79c2",
+  "verdict": "REVIEW"
+ },
+ "pictures": {
+  "manifest": "/home/user/explainer-engine/explainer_engine/training/pods/ltx/scenes/truce_A_S03c.pictures.json"
+ },
+ "shots": [
+  {
+   "shot_id": "S03_SH005",
+   "seconds": 4.5,
+   "seconds_basis": "measured_line",
+   "seed": 7103,
+   "motion_prompt": "The young freckled British private in the khaki cap, on the left, answers quietly, still looking toward the singing. The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Silent Night. Same tune as ours.\"",
+   "prompt_parts": {
+    "motion": "The young freckled British private in the khaki cap, on the left, answers quietly, still looking toward the singing.",
+    "speech": "The young British private on the left says in the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent: \"Silent Night. Same tune as ours.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 3.316,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_thomas_hale",
+    "text": "Silent Night. Same tune as ours."
+   },
+   "picture": "S03_SH005_start"
+  },
+  {
+   "shot_id": "S03_SH006",
+   "seconds": 3.75,
+   "seconds_basis": "measured_line",
+   "seed": 7104,
+   "motion_prompt": "The older British sergeant with the grey moustache and three stripes on his sleeve, on the right, frowns and ducks a little lower as he speaks, not looking away from the parapet. The older British sergeant on the right says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Let 'em sing. Heads down.\"",
+   "prompt_parts": {
+    "motion": "The older British sergeant with the grey moustache and three stripes on his sleeve, on the right, frowns and ducks a little lower as he speaks, not looking away from the parapet.",
+    "speech": "The older British sergeant on the right says in the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent: \"Let 'em sing. Heads down.\""
+   },
+   "continuity_mode": "coverage",
+   "speech_end_s": 2.709,
+   "speech_tail_s": 0.5,
+   "line": {
+    "speaker": "char_sgt_harris",
+    "text": "Let 'em sing. Heads down."
+   },
+   "picture": "S03_SH006_start"
+  }
+ ],
+ "draft": false,
+ "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
+ "voice_missing": [],
+ "voices": {
+  "char_friedrich_brandt": {
+   "description": "the voice of a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
+   "sha256": "b728c1e86a91109da624e439ce9947acfb3afc1983cc06ef7ee6ca76afb14c7c"
+  },
+  "char_sgt_harris": {
+   "description": "the voice of a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
+   "sha256": "b070cabd415907465136348e1de88f706e19af3688972854787d8f27ce6247f0"
+  },
+  "char_thomas_hale": {
+   "description": "the voice of a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
+   "sha256": "56854ac34a484720b77dcd08a7e4ebdd97200f1be595d0ba5b3e045aa2ae3ce9"
+  }
+ },
+ "voice_problems": [],
+ "read_first": "forced",
+ "budget": {
+  "total_usd": 0.97,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.0,
+  "note": "GPU launch worst case $0.8886 ((timeout 508 s + cold start 120 s) x $5.0937/h); pictures are already made (S3b), no CPU rung is needed (ladder L0-L3 green on this worker sha 803eea113276)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
+  "caps": {
+   "modal_ltx": 5.0
+  }
+ },
+ "probe": {
+  "what": "voice-binding probe (TD-315, DV): same seeds 7103/7104 as the first takes, only motion and speech parts changed to bind the speaker by look and side from the start picture",
+  "pass": "words exact, right mouth, Thomas median pitch >= 170 Hz, Harris <= 140 Hz",
+  "first_takes": "run 049b3979fea2_fc6ae61bf410 seeds 7103, 7104"
+ }
+}

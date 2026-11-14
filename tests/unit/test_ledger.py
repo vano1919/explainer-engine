@@ -80,3 +80,23 @@ def test_the_qa_loop_allowance_is_a_ceiling_inside_the_elevenlabs_cap(tmp_path, 
     monkeypatch.setenv("EXPLAINER_SPEND_CAPS", str(caps))
     with pytest.raises(spend_caps.OverCeiling):
         Run.open(tmp_path / "none.json", caps={"elevenlabs_credits": 1000}).reserve_allowance("qa_loop", 1, "x", lines=["a"])
+
+
+def test_stop_waiver_moves_the_80_percent_line_for_named_items_only_never_the_cap(tmp_path):
+    run = Run.open(tmp_path / "run.json", caps={"modal_ltx": 5.0})
+    run.reserve("modal_ltx", 3.5, item="a")
+    with pytest.raises(CapReached, match="80 %"):
+        run.reserve("modal_ltx", 0.97, item="b")                      # 4.47 passes 4.0, no waiver
+    with pytest.raises(ValueError):
+        run.waive_stop("modal_ltx", ["b"], by="owner", ref="")        # no waiver without where he said it
+    with pytest.raises(ValueError):
+        run.waive_stop("modal_ltx", ["b"], by="", ref="card")
+    run.waive_stop("modal_ltx", ["b"], by="owner", ref="cmsg_card")
+    with pytest.raises(CapReached, match="80 %"):
+        run.reserve("modal_ltx", 0.97, item="other")                  # a different item still stops at 80 %
+    run.reserve("modal_ltx", 0.97, item="b")                          # the waived item reaches 4.47 <= 5.0
+    run.waive_stop("modal_ltx", ["c"], by="owner", ref="cmsg_card")
+    with pytest.raises(CapReached, match="would pass the cap 5.0"):
+        run.reserve("modal_ltx", 0.97, item="c")                      # 5.44 passes the cap itself
+    again = Run.open(tmp_path / "run.json")
+    assert again.data["stop_waivers"]["b"]["ref"] == "cmsg_card" and again.spent("modal_ltx") == pytest.approx(4.47)
