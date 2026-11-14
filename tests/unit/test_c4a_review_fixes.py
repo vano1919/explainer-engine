@@ -63,7 +63,6 @@ def test_a_rough_outline_keeps_its_nubs_and_the_seam_gate_catches_the_old_bites(
     disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
     parts = o["hard0"] & (1 - cv2.morphologyEx(o["hard0"], cv2.MORPH_OPEN, disc))
     o["alpha"] = o["alpha"] * (1.0 - cv2.dilate(parts.astype(np.float32), disc))
-    bitten.plate = cv2.resize(lay["plate"], (bitten.sw, bitten.sh), interpolation=cv2.INTER_AREA)
     old = bitten.rest_seam()
     assert old["per_outline_px"] > MI.SEAM_FAIL
     assert MI.rest_seam_row(old)["status"] == "FAIL", old

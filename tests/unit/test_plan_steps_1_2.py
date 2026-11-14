@@ -1,11 +1,13 @@
 """Focused unit tests for Plan Steps 1 & 2 (T1-T5):
-- T1: stage_sound raises ContractError when an LTX dialogue insert clip record is missing in a real run, and in a
-  rehearsal builds the voice track with exact-length silence plus a REVIEW row naming the missing shot ids.
+- T1: stage_sound raises ContractError when an LTX dialogue insert clip record is missing in a real run (or when VV.compose
+  fails to write voice_track.wav), and in a rehearsal builds the voice track via real VV.compose with exact-length silence
+  spliced at at_read_frame plus a REVIEW row naming the missing shot ids.
 - T2: directed25d._rest_background removes the morphological bite and REST_ALPHA_GAIN dilation; objects with
   thin_share >= THIN_SHARE_MAX (0.35) stay on the background, while a person mask with a thin rifle stays whole with a
-  soft inward feather and frame 0 equals the source picture inside the outline (rest_seam <= 0.04).
+  soft inward feather, frame 0 equals the source picture inside the outline (rest_seam <= 0.04), and self.plate holds the
+  clean LaMa plate under the full kept mask without baking a foreground ghost rim.
 - T3: directed25d flattens bg_depth to the box median (with a soft edge) inside unlayered person/face/crowd boxes on the
-  background sheet so bg_maps moves them rigidly without stretching.
+  background sheet once during stage setup so bg_maps moves them rigidly without stretching.
 - T4: living_director.choose_camera uses max(RATE_MIN, PRE_ACCENT_RATE) >= 0.018 (BP-21 pre_accent_rate_min_per_s) for
   the pre-word base move when a shot has a trigger word.
 - T5: motion_intent.sliding_liveliness flags a 2 s clip frozen for 1.2 s in the middle as REVIEW (< 1.5 % changed pixels
@@ -13,10 +15,7 @@
 """
 from __future__ import annotations
 
-import importlib
 import json
-import sys
-import types
 import wave
 from pathlib import Path
 
@@ -24,13 +23,22 @@ import numpy as np
 import pytest
 from PIL import Image
 
+from explainer_engine.audio import mix_check as MC
+from explainer_engine.audio import stems as ST
 from explainer_engine.core.errors import ContractError
+from explainer_engine.episode import av_report as AVR
+from explainer_engine.episode import events as EV
+from explainer_engine.episode import production_runner as PR
 from explainer_engine.episode import run as RUN
+from explainer_engine.episode import sound_plan as SP
 from explainer_engine.production import directed25d as R
 from explainer_engine.production import living_director as LD
 from explainer_engine.qa import gates as G
 from explainer_engine.qa import motion_intent as MI
 from explainer_engine.standards import sourced_rules as SR
+from explainer_engine.videolane import ingest as VI
+from explainer_engine.videolane import plan as VP
+from explainer_engine.videolane import voice as VV
 
 cv2 = pytest.importorskip("cv2")
 
@@ -76,12 +84,15 @@ def _setup_t1_episode(tmp_path: Path, monkeypatch) -> tuple[Path, dict]:
         "audio_lines": [
             {"line_id": "S05_L001", "speaker_type": "narrator", "text": "Wait here."},
             {"line_id": "S05_L002", "speaker_type": "character", "speaker_id": "thomas", "text": "Where did you learn English?"},
+            {"line_id": "S05_L003", "speaker_type": "narrator", "text": "He smiled."},
         ],
         "shots": [
             {"shot_id": "S05_SH003", "segment_id": "S05", "route": "still_25d", "target_duration_seconds": 1.0,
              "audio_line_ids": ["S05_L001"]},
             {"shot_id": "S05_SH004", "segment_id": "S05", "route": "video", "target_duration_seconds": 1.5,
              "audio_line_ids": ["S05_L002"]},
+            {"shot_id": "S05_SH005", "segment_id": "S05", "route": "still_25d", "target_duration_seconds": 1.0,
+             "audio_line_ids": ["S05_L003"]},
         ],
     }
     (root / "story" / "production_script.json").write_text(json.dumps(script), encoding="utf-8")
@@ -90,28 +101,40 @@ def _setup_t1_episode(tmp_path: Path, monkeypatch) -> tuple[Path, dict]:
         "shots": [
             {"shot_id": "S05_SH003", "route": "still_25d", "total_frames": 24},
             {"shot_id": "S05_SH004", "route": "video", "total_frames": 36, "fallback_for_wan": True},
+            {"shot_id": "S05_SH005", "route": "still_25d", "total_frames": 24},
         ],
     }), encoding="utf-8")
 
     timing = {
         "fps": 24,
-        "total_frames": 60,
+        "total_frames": 84,
         "clip_timed": ["S05_SH004"],
         "shots": {
             "S05_SH003": {"start_frame": 0, "frames": 24},
             "S05_SH004": {"start_frame": 24, "frames": 36},
+            "S05_SH005": {"start_frame": 60, "frames": 24},
         },
-        "spines": {"S05_SH003": [{"word": "wait", "start_frame": 0}], "S05_SH004": []},
-        "inserts": [{"shot_id": "S05_SH004", "start_frame": 24, "frames": 36, "duration_s": 1.5}],
+        "spines": {
+            "S05_SH003": [{"word": "wait", "start_frame": 0}],
+            "S05_SH004": [],
+            "S05_SH005": [{"word": "smiled", "start_frame": 0}],
+        },
+        "inserts": [{
+            "shot_id": "S05_SH004",
+            "at_read_frame": 24,
+            "start_frame": 24,
+            "frames": 36,
+            "duration_s": 1.5,
+        }],
     }
     (root / "audio" / "timing.json").write_text(json.dumps(timing), encoding="utf-8")
-    _write_pcm_wav(root / "audio" / "narration.wav", 1.0, rate=48000)
-    polished_wav = _write_pcm_wav(root / "audio" / "narration_polished.wav", 1.0, rate=48000)
+    _write_pcm_wav(root / "audio" / "narration.wav", 2.0, rate=48000)
+    polished_wav = _write_pcm_wav(root / "audio" / "narration_polished.wav", 2.0, rate=48000)
 
-    monkeypatch.setattr(RUN.TM, "load", lambda r: timing, raising=False)
-    monkeypatch.setattr(RUN.TM, "timed_script", lambda sc, tm: sc, raising=False)
-    monkeypatch.setattr(RUN.TM, "spines_of", lambda tm: tm["spines"], raising=False)
-    monkeypatch.setattr(RUN, "_polish_read", lambda ep: (polished_wav, {"chain": "test", "seconds_before": 1.0, "seconds_after": 1.0}))
+    monkeypatch.setattr(RUN.TM, "load", lambda r: timing)
+    monkeypatch.setattr(RUN.TM, "timed_script", lambda sc, tm: sc)
+    monkeypatch.setattr(RUN.TM, "spines_of", lambda tm: tm["spines"])
+    monkeypatch.setattr(RUN, "_polish_read", lambda ep: (polished_wav, {"chain": "test", "seconds_before": 2.0, "seconds_after": 2.0}))
     monkeypatch.setattr(RUN, "_deliver_mix", lambda raw, deliv, rehearsal=False: (
         [G.row("delivered_mix_loudness", True, "ok", -14.0), G.row("delivered_mix_true_peak", True, "ok", -1.5)],
         {"lufs": -14.0, "true_peak": -1.5}, {"lufs": -14.0, "true_peak": -1.5}
@@ -119,89 +142,37 @@ def _setup_t1_episode(tmp_path: Path, monkeypatch) -> tuple[Path, dict]:
 
     captured: dict = {}
 
-    sp_mod = types.ModuleType("explainer_engine.episode.sound_plan")
-    sp_mod.build = lambda *a, **k: {"shots": [], "classes": [], "beds": [], "blocked_era_events": [], "av": {"decisions": {}, "review_required": [], "candidates": 0}}
-    sp_mod.resolve = lambda *a, **k: {}
-    sp_mod.write = lambda *a, **k: root / "audio" / "sound_plan.json"
+    monkeypatch.setattr(SP, "build", lambda *a, **k: {
+        "shots": [], "classes": [], "beds": [], "blocked_era_events": [],
+        "av": {"decisions": {}, "review_required": [], "candidates": 0},
+    })
+    monkeypatch.setattr(SP, "resolve", lambda *a, **k: {})
+    monkeypatch.setattr(SP, "write", lambda *a, **k: root / "audio" / "sound_plan.json")
 
-    stems_mod = types.ModuleType("explainer_engine.audio.stems")
     def _fake_render(plan, sources, stems_dir, library_root=None, narration=None, shippable=True, clip_audio=None):
         captured["narration"] = Path(narration) if narration else None
         stems_dir.mkdir(parents=True, exist_ok=True)
         (stems_dir / "cue_sheet.json").write_text(json.dumps({"cues": []}), encoding="utf-8")
-        _write_pcm_wav(stems_dir / "mix.wav", 2.5, rate=48000)
-        _write_pcm_wav(root / RUN.DELIVERED_MIX_REL, 2.5, rate=48000)
+        _write_pcm_wav(stems_dir / "mix.wav", 3.5, rate=48000)
+        _write_pcm_wav(root / RUN.DELIVERED_MIX_REL, 3.5, rate=48000)
         return {"shippable": shippable, "placeholders": [], "not_shippable_because": [], "levels": {"rows": []},
                 "cue_rows": [], "narration_source": str(narration)}
-    stems_mod.render = _fake_render
 
-    pr_mod = types.ModuleType("explainer_engine.episode.production_runner")
-    pr_mod.audit_rendered_audio_stems = lambda **k: {"mid_line_narration_dropouts": 0}
+    monkeypatch.setattr(ST, "render", _fake_render)
+    monkeypatch.setattr(PR, "audit_rendered_audio_stems", lambda **k: {"mid_line_narration_dropouts": 0})
+    monkeypatch.setattr(VI, "speech", lambda p: [(0.1, 0.9), (1.1, 1.9)])
 
-    vi_mod = types.ModuleType("explainer_engine.videolane.ingest")
-    vi_mod.speech = lambda p: []
+    real_compose = VV.compose
 
-    vv_mod = types.ModuleType("explainer_engine.videolane.voice")
-    def _fake_compose(tm, narr, clip_aud, out_wav, read_speech=None, pitch_shifts=None):
+    def _spy_compose(tm, narr, clip_aud, out_wav, read_speech=None, pitch_shifts=None):
         captured["clip_audio"] = dict(clip_aud)
-        with wave.open(str(narr), "rb") as w:
-            sr = w.getframerate()
-            pcm = w.readframes(w.getnframes())
-        for ins in tm["inserts"]:
-            cp = Path(clip_aud[ins["shot_id"]]["path"])
-            with wave.open(str(cp), "rb") as w:
-                assert w.getframerate() == sr
-                pcm += w.readframes(w.getnframes())
-        with wave.open(str(out_wav), "wb") as w:
-            w.setnchannels(1)
-            w.setsampwidth(2)
-            w.setframerate(sr)
-            w.writeframes(pcm)
-        return {"voice_track": str(out_wav), "inserts": list(clip_aud)}
-    vv_mod.compose = _fake_compose
+        return real_compose(tm, narr, clip_aud, out_wav, read_speech=read_speech, pitch_shifts=pitch_shifts)
 
-    vp_mod = types.ModuleType("explainer_engine.videolane.plan")
-    vp_mod.clip_spoken = lambda sc: {"S05_SH004"}
-    vp_mod.is_video = lambda s: s.get("route") == "video"
-
-    mc_mod = types.ModuleType("explainer_engine.audio.mix_check")
-    mc_mod.check = lambda *a, **k: {"rows": []}
-
-    avr_mod = types.ModuleType("explainer_engine.episode.av_report")
-    avr_mod.event_report = lambda *a, **k: {}
-
-    ev_mod = types.ModuleType("explainer_engine.episode.events")
-    ev_mod.events_report = lambda *a, **k: {"shots": {}}
-
-    for name, mod in (
-        ("explainer_engine.episode.sound_plan", sp_mod),
-        ("explainer_engine.audio.stems", stems_mod),
-        ("explainer_engine.episode.production_runner", pr_mod),
-        ("explainer_engine.videolane.ingest", vi_mod),
-        ("explainer_engine.videolane.voice", vv_mod),
-        ("explainer_engine.videolane.plan", vp_mod),
-        ("explainer_engine.audio.mix_check", mc_mod),
-        ("explainer_engine.episode.av_report", avr_mod),
-        ("explainer_engine.episode.events", ev_mod),
-    ):
-        pkg_name, attr = name.rsplit(".", 1)
-        if pkg_name not in sys.modules:
-            try:
-                importlib.import_module(pkg_name)
-            except ImportError:
-                pkg = types.ModuleType(pkg_name)
-                pkg.__path__ = []
-                sys.modules[pkg_name] = pkg
-                parent_name, pkg_attr = pkg_name.rsplit(".", 1)
-                setattr(importlib.import_module(parent_name), pkg_attr, pkg)
-        pkg = sys.modules[pkg_name]
-        monkeypatch.setattr(pkg, attr, mod, raising=False)
-        old_sys = sys.modules.get(name)
-        sys.modules[name] = mod
-        if hasattr(monkeypatch, "_undo"):
-            monkeypatch._undo.append(
-                lambda n=name, o=old_sys: sys.modules.__setitem__(n, o) if o is not None else sys.modules.pop(n, None)
-            )
+    monkeypatch.setattr(VV, "compose", _spy_compose)
+    monkeypatch.setattr(VP, "clip_spoken", lambda sc: {"S05_SH004"})
+    monkeypatch.setattr(MC, "check", lambda *a, **k: {"rows": []})
+    monkeypatch.setattr(AVR, "event_report", lambda *a, **k: {})
+    monkeypatch.setattr(EV, "events_report", lambda *a, **k: {"shots": {}})
 
     return root, captured
 
@@ -218,7 +189,7 @@ def test_t1_stage_sound_rehearsal_missing_insert_builds_exact_silence_and_review
     ep_reh = RUN.Episode(root, sound_library=tmp_path / "sound_lib", rehearsal=True)
     rows, outputs = RUN.stage_sound(ep_reh, rehearsal=True)
 
-    # Never fell back to the unsplit 1.0 s narration_polished.wav
+    # Never fell back to the unsplit 2.0 s narration_polished.wav
     assert captured["narration"] == root / "audio" / "voice_track.wav"
     assert outputs["voice_track"] == "audio/voice_track.json"
 
@@ -231,14 +202,23 @@ def test_t1_stage_sound_rehearsal_missing_insert_builds_exact_silence_and_review
         samples = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
         assert np.all(samples == 0)
 
-    # Combined voice track is 1.0 s read + 1.5 s silence = 2.5 s
+    # Real VV.compose splices the 1.5 s silence at at_read_frame=24 (1.0 s into the 2.0 s read) -> 3.5 s total
     with wave.open(str(root / "audio" / "voice_track.wav"), "rb") as w:
-        assert w.getnframes() == int(round(2.5 * 48000))
+        assert w.getnframes() == int(round(3.5 * 48000))
+        composed = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
+    # Middle [1.05 s, 2.45 s] is silent while post-insert narrator speech [2.55 s, 3.45 s] has signal
+    assert float(np.abs(composed[int(1.05 * 48000):int(2.45 * 48000)]).max()) == 0.0
+    assert float(np.abs(composed[int(2.55 * 48000):int(3.45 * 48000)]).max()) > 1000.0
 
     # REVIEW row names the missing insert shot id
     review_rows = [r for r in rows if r["status"] == G.REVIEW and "S05_SH004" in (r.get("detail") or "")]
     assert len(review_rows) == 1
     assert "S05_SH004" in (review_rows[0].get("measured") or [])
+
+    # If VV.compose fails to write voice_track.wav, stage_sound raises ContractError (no silent fallback splicer)
+    monkeypatch.setattr(VV, "compose", lambda *a, **k: {"status": "PASS", "rows": []})
+    with pytest.raises(ContractError, match="voice_track.wav"):
+        RUN.stage_sound(ep_reh, rehearsal=True)
 
 
 # ---------------------------------------------------------------------------
@@ -269,7 +249,7 @@ def test_t2_person_with_thin_rifle_has_frame0_identical_to_source_and_wire_not_l
     p = tmp_path / "pic.png"
     Image.fromarray(src).save(p)
 
-    # High-contrast LaMa plate so any bleed-through inside the outline would show immediately
+    # High-contrast LaMa plate so any bleed-through inside the outline or ghost on the plate shows immediately
     hole = cv2.dilate(person, np.ones((15, 15), np.uint8)).astype(np.float32)
     plate = src.copy()
     plate[hole > 0] = (230, 235, 240)
@@ -298,6 +278,9 @@ def test_t2_person_with_thin_rifle_has_frame0_identical_to_source_and_wire_not_l
     edge = (person > 0) & (cv2.erode(person, np.ones((3, 3), np.uint8)) == 0)
     assert float(obj["alpha"][edge].mean()) < 0.95               # soft inward feather on the body outline
     assert float(obj["alpha"][170, 150]) == pytest.approx(1.0)
+
+    # Under the full person+rifle mask (including the feathered rim), st.plate is the clean LaMa plate (no dark ghost rim)
+    assert np.array_equal(st.plate[outline_mask], plate[outline_mask])
 
     seam = st.rest_seam()
     assert seam["per_outline_px"] <= 0.04 and MI.rest_seam_row(seam)["status"] == G.PASS
@@ -329,10 +312,11 @@ def test_t3_crowd_box_on_depth_ramp_moves_rigidly_without_stretch(tmp_path):
         "lights": {},
     }
     cams = [{"op": "truck", "direction": "right", "strength": 2.0, "from": 0, "to": 24, "easing": "linear"}]
-    plan = {"shot_id": "T3", "frames": 24, "cameras": cams, "handheld": None, "rack": None, "effects": [], "far_share": 0.2}
+    plan = {"shot_id": "T3", "frames": 24, "cameras": cams, "handheld": None, "rack": None, "effects": [], "far_share": 0.2,
+            "keep_in_frame": [{"face": [0.08, 0.35, 0.14, 0.45]}]}
     st = R.Stage(p, lay, plan, size=(w, h))
 
-    # Inside the crowd box [140:340, 80:190], bg_depth is flattened to the median
+    # Inside the crowd box [140:340, 80:190], bg_depth is flattened to the median even when another unlayered face box exists
     iy0, iy1 = int(80 * st.sh / h), int(190 * st.sh / h)
     ix0, ix1 = int(140 * st.sw / w), int(340 * st.sw / w)
     box_depth = st.bg_depth[iy0:iy1, ix0:ix1]

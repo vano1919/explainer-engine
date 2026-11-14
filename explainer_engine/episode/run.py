@@ -836,42 +836,6 @@ def _write_silence_wav(path: Path, seconds: float, rate: int = 48000) -> Path:
     return path
 
 
-def _compose_rehearsal_voice_fallback(timing: dict, narration: Path | None, clip_audio: dict, out_wav: Path,
-                                      script: dict, fps: int, rate: int = 48000) -> dict:
-    """Build ``out_wav`` when ``VV.compose`` is stubbed or unavailable in rehearsal: splice exact-length insert clips/silence
-    into the narrator read so the voice track matches the insert-expanded timeline and never falls back to the unsplit read."""
-    import wave
-    out_wav = Path(out_wav)
-    out_wav.parent.mkdir(parents=True, exist_ok=True)
-    read_pcm = b""
-    if narration and Path(narration).is_file():
-        with wave.open(str(narration), "rb") as w:
-            rate = w.getframerate()
-            read_pcm = w.readframes(w.getnframes())
-    ins_pcm = b""
-    ins_rows = []
-    for ins in timing.get("inserts") or []:
-        sid = ins["shot_id"]
-        c = clip_audio[sid]
-        cp = Path(c["path"])
-        if cp.is_file():
-            with wave.open(str(cp), "rb") as w:
-                frames_bytes = w.readframes(w.getnframes())
-                dur_s = w.getnframes() / float(w.getframerate())
-        else:
-            dur_s = _insert_seconds(ins, timing, script, fps)
-            n_s = max(1, int(round(dur_s * rate)))
-            frames_bytes = b"\x00\x00" * n_s
-        ins_pcm += frames_bytes
-        ins_rows.append({"shot_id": sid, "duration_s": round(dur_s, 4), "silence": bool(c.get("silence"))})
-    with wave.open(str(out_wav), "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(rate)
-        w.writeframes(read_pcm + ins_pcm)
-    return {"voice_track": str(out_wav), "inserts": ins_rows}
-
-
 def stage_sound(ep: Episode, rehearsal: bool):
     """G8: the sound plan again on the measured clock, then the one renderer (``audio/stems``) into the five stems. A full
     run renders shippable (no placeholder, no missing class, the real read); a rehearsal renders a preview."""
@@ -898,9 +862,12 @@ def stage_sound(ep: Episode, rehearsal: bool):
             rp = ep.root / "production" / "video" / f"{ins['shot_id']}.json"
             if rp.is_file():
                 d = json.loads(rp.read_text(encoding="utf-8"))
-                if d.get("clip_path"):
-                    clip_audio[ins["shot_id"]] = {"path": str(ep.root / d["clip_path"]), "speech": d.get("speech") or [],
-                                                  "speaker": _clip_speaker(script, ins["shot_id"])}
+                raw_cp = d.get("clip_path")
+                if raw_cp and d.get("status") != G.FAIL:
+                    cp = Path(raw_cp) if Path(raw_cp).is_absolute() else (ep.root / raw_cp)
+                    if cp.is_file():
+                        clip_audio[ins["shot_id"]] = {"path": str(cp), "speech": d.get("speech") or [],
+                                                      "speaker": _clip_speaker(script, ins["shot_id"])}
         missing = [i["shot_id"] for i in timing["inserts"] if i["shot_id"] not in clip_audio]
         if missing and not rehearsal:
             raise ContractError(f"missing LTX dialogue insert clip record(s): {', '.join(missing)}; "
@@ -922,12 +889,12 @@ def stage_sound(ep: Episode, rehearsal: bool):
             missing_inserts = list(missing)
         shifts = _pitch_shifts(ep, clip_audio)     # TD-320: bounded, only on clips both estimators agree on
         voice_wav = ep.path("audio/voice_track.wav")
+        if voice_wav.exists():
+            voice_wav.unlink()
         voice_rep = VV.compose(timing, narration, clip_audio, voice_wav,
                                read_speech=VI.speech(narration) if narration else None, pitch_shifts=shifts)
         if not voice_wav.is_file():
-            fb_rep = _compose_rehearsal_voice_fallback(timing, narration, clip_audio, voice_wav, script, ep.fps)
-            if not isinstance(voice_rep, dict):
-                voice_rep = fb_rep
+            raise ContractError(f"VV.compose did not write {voice_wav}")
         write_json_atomic(ep.path("audio/voice_track.json"), voice_rep)
         narration = voice_wav
     # FA-13 / Q2: the narrated video shots' own clip sound, offered to the renderer (it lays it only when the switch is on)
