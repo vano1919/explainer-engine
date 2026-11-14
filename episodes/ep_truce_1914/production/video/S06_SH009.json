@@ -5,9 +5,9 @@
   "backend": "ltx",
   "status": "REVIEW",
   "clip_path": "production/video/cut/S06_SH009.mp4",
-  "clip_sha256": "9ffa7482765d11250a5764dec2ed92328f285646154b41ca4efca5fc913de03c",
+  "clip_sha256": "b0cd916fdb3b0be93012628ed5749e8e378317e61116d14a9df22cda1368065c",
   "raw_path": "production/video/raw/S06_SH009.mp4",
-  "raw_sha256": "f210a99be99fdfae69242489091864f3f05987e322787b86c3aacc2d56d87a41",
+  "raw_sha256": "067a506346c7dcf2740fbe1e7f95b73a84c555689119d9824d46719a701caf49",
   "raw_fps": 24.0,
   "raw_seconds": 6.375,
   "fps": 24,
@@ -16,26 +16,14 @@
   "frames": 96,
   "speech_raw": [
     [
-      0.52,
-      0.64
-    ],
-    [
-      3.2,
-      3.32
-    ],
-    [
-      5.94,
-      6.1
+      1.2,
+      1.36
     ]
   ],
   "speech": [
     [
-      0.52,
-      0.64
-    ],
-    [
-      3.2,
-      3.32
+      1.2,
+      1.36
     ]
   ],
   "clip_spoken": false,
@@ -51,11 +39,16 @@
       "rule": "CLIP-07",
       "status": "REVIEW",
       "msg": "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"
+    },
+    {
+      "rule": "CLIP-11",
+      "status": "REVIEW",
+      "msg": "the picture stands still for 8 frames from frame 8"
     }
   ],
   "attempts": [
     {
-      "note": "R2 re-make (owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWNDRDuwFk9fLFHkmrZPYDK8): the first take ended on a penknife in the palm with no button; the new prompt cuts the button and drops it into the palm; take1 in production/video/superseded/"
+      "note": "R3 re-make with the photo-aware text (photo_visual_layer.json, owner rule 2026-11-14 12:47 UTC): right hand holds the button, left hand cuts, the right palm catches; R2 take is in superseded/S06_SH009_take2; whisper words \"Thanks for watching\" at 4.9-6.3 s are a hallucination on near silence (rms 0.0025), no speech"
     }
   ]
 }

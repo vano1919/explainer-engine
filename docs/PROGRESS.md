@@ -6305,10 +6305,16 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   found three real breaks (button, invented flag, rifle). One launch, run id `d3e015fbb9d4_fc6ae61bf410`, settled 0.2676 USD
   (estimate 0.2985), series ledger 4.20 of 5.00, no app left running.
 - Done: scene `truce_A_R2.json` (three shots of two scenes, two pictures of their own plus the chained start picture
-  `S07_SH008_chain_f088_TR.png` = frame 88 of S07_SH007, frame pick BP-199, RealPLKSR at the same size); the prompts of S07_SH005 (no flag)
+  `S07_SH008_chain_f088_TR.png` = frame 88 of S07_SH007, frame pick of the Opus module (PR #188), RealPLKSR at the same size); the prompts of S07_SH005 (no flag)
   and S07_SH008 (rifle already in hand) deviate from the script on purpose, recorded in the scene file (`script_deviation`) and the
   journal MS-119; old takes in `production/video/superseded/`; new records ingested (S07_SH005 CLIP-06 FAIL, -0.1 dBTP, level trim at
   the assembly). Start-frame size check: no stretch or shift, only the standard 11 px crop top and bottom (`ltx/r2/R2_START_FRAMES_MEASURE.md`).
 - Focused test: none new (data and a launch, no code change); the ledger waiver is covered by the existing `test_ledger.py` test.
 - Open: the nine minor pairs, S05_SH018/019 caps (NT-312), and the missing gate that compares the end state of a shot with the next
   shot's start state (FL-120); incident log LTX-01..LTX-08 in `architecture_2026-11-14/INCIDENT_JOURNAL_2026-11-14.md`.
+
+## 2026-11-14 · LTX S5 R3: photo-aware prompts (S06_SH009, S07_SH005, S07_SH008)
+- Why: the owner judged two R2 takes wrong by eye (the captain saluted with the revolver hand, Thomas stepped down with a stretched leg) and gave the rule that the visual script is corrected from the start photo first (VL-17 in PR #189). New layer `episodes/ep_truce_1914/story/photo_visual_layer.json` (photo facts, script text, corrected text, end state, per shot); the frozen script file is unchanged.
+- Done: one launch R3, run id `1e0fa1f05548_fc6ae61bf410`, settled 0.2289 USD (estimate 0.2985); series cap raised 5.00 -> 5.20 on the owner's word (settled 4.20 + the fixed 0.97 reservation passed 5.00); series 4.4289, real money 4.58 with pictures, under his 4.60 line. R3 takes ingested, R2 takes in `superseded/<shot>_take2/`. S07_SH005 still CLIP-06 FAIL only (true peak -0.1 dBTP, level trim at the assembly).
+- Result by eye: S06_SH009 and S07_SH005 better than R2; S07_SH008 steps down despite "stays on the box" (negatives do not hold), legs plausible. Details in the layer's `r3_result` and the journal.
+- Also: the undefined id BP-199 (a rule of the unmerged Opus module) was removed from PROGRESS.md and the R2/R3 scene files (docs lint and sourced-rules tests failed on PR #185).

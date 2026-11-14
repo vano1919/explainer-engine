@@ -47,5 +47,12 @@
       "end_state": "on the box, rifle held at his right side, face turned down the trench",
       "why": "The script's 'climbs down, picks up his rifle and steps onto the fire step' does not fit the photo: he already stands on the fire step with the rifle in hand. R2 let him step down and the leg stretched into nothing and he walked away backward; no stepping is asked of the model now."
     }
+  },
+  "r3_result": {
+    "run_id": "1e0fa1f05548_fc6ae61bf410",
+    "settled_usd": 0.2289,
+    "S06_SH009": "button cut with the left hand, caught in the right palm, ends on the button in the open palm; palm size natural; better than R2",
+    "S07_SH005": "no flag; three shots up, revolver lowered, the free hand salutes and the gun stays low and away from the head; but the revolver passes into the other hand during the shot (left hand holds it at the end, the right hand salutes); better than R2",
+    "S07_SH008": "the text said he stays on the box; the model ignores the negation: he steps off the box with plausible legs, the rifle in his right hand, and walks out of frame to the right then away; coherent, not what the layer asked; R2 had a stretched leg and a pan away. A negative instruction does not hold: ask for the wanted action instead."
   }
 }

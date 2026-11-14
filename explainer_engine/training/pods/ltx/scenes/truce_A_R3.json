@@ -2,7 +2,7 @@
  "schema": "ltx_scene_test/3",
  "id": "R3",
  "episode": "episodes/ep_truce_1914",
- "asked": "the creator in the thread 2026-11-14 12:47 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX): look at the three photos, correct the visual script to fit them and the end of the shot, generate again within the same scope; DRAFT, not launched: needs his word on the price and the cap (ledger 4.20 + reserve 0.97 passes the cap 5.00)",
+ "asked": "the creator in the thread, 2026-11-14 12:47 UTC rule (cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX) and his word 'Daiwye' 12:53 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWHpC2bXWk2RydD3ZEMr3FWp) after my message with the price (about 0.27-0.30), the real total about 4.65 over his 4.60 line, and the series cap raise 5.00 -> 5.20 (4.20 + reservation 0.97 = 5.17); photo_visual_layer.json; script 261d43b8",
  "method": "video lane VL-01..VL-13 (D-137): one line per clip, seconds from the line, continuations from the best tail frame, coverage from its own picture",
  "storyboard": {
   "record": "/home/user/explainer-engine/episodes/ep_truce_1914/production/storyboard/R3.json",
@@ -70,13 +70,13 @@
    "chain_start": {
     "source_clip": "S07_SH007_seed7105.mp4",
     "frame": 88,
-    "picker": "finish/frame_pick.py BP-199 (face 0.6, body 0.3, frame 0.1)",
+    "picker": "finish/frame_pick.py the frame picker of PR #188 (face 0.6, body 0.3, frame 0.1)",
     "upscale": "RealPLKSR 4x, shrunk back to 1280x704 (same size)",
     "sha256": "ca4b23694fc3f3b700ea22fa348ac7e94b4ce6df14ba2f7e342ba9af9d8ba028"
    }
   }
  ],
- "draft": true,
+ "draft": false,
  "prompt_composer": "videolane.scene.compose_prompt (FA-02)",
  "voice_missing": [],
  "voices": {},
@@ -91,7 +91,7 @@
  "ledger": {
   "path": "/mnt/project-files/explainer-engine/ledgers/ltx_truce_A.json",
   "caps": {
-   "modal_ltx": 5.0
+   "modal_ltx": 5.2
   }
  }
 }

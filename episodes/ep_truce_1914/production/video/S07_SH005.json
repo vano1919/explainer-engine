@@ -5,9 +5,9 @@
   "backend": "ltx",
   "status": "FAIL",
   "clip_path": "production/video/cut/S07_SH005.mp4",
-  "clip_sha256": "780dc6bd3acea4c9da282e78efa029fb2d0f9b5fe054e7e3cd97873ad7936a48",
+  "clip_sha256": "dd9507a2d07d29ea8a3699ad98fd694e7ee5dcb6854fc5b14bb73783bd5b0c78",
   "raw_path": "production/video/raw/S07_SH005.mp4",
-  "raw_sha256": "c6c912a1e93f6fc9f995f99a0d5a5eb45bd6a58e0f2479c74660bf7c5e28e8ba",
+  "raw_sha256": "4235b95eef7c7775381029083931140b29493d0be8b11af425ac3f634117b70e",
   "raw_fps": 24.0,
   "raw_seconds": 8.0417,
   "fps": 24,
@@ -16,14 +16,22 @@
   "frames": 162,
   "speech_raw": [
     [
-      1.16,
-      2.08
+      0.48,
+      1.0
+    ],
+    [
+      1.66,
+      2.14
     ]
   ],
   "speech": [
     [
-      1.16,
-      2.08
+      0.48,
+      1.0
+    ],
+    [
+      1.66,
+      2.14
     ]
   ],
   "clip_spoken": false,
@@ -48,7 +56,7 @@
   ],
   "attempts": [
     {
-      "note": "R2 re-make: no flag in the motion text (the first take invented a black-red-gold flag, FL-118); take1 in production/video/superseded/"
+      "note": "R3 re-make: revolver lowered to the side, salute with the free hand, no flag; observed: the revolver changes hands (it ends in the left hand, the right hand salutes), the salute reads correctly and the gun stays away from his head; R2 take is in superseded/S07_SH005_take2"
     }
   ]
 }

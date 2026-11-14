@@ -5,9 +5,9 @@
   "backend": "ltx",
   "status": "REVIEW",
   "clip_path": "production/video/cut/S07_SH008.mp4",
-  "clip_sha256": "4c2d55c3a0fcbb814b1e51200cca75e4c8a281ddb1127361532e15064d30d9a7",
+  "clip_sha256": "e367d6cc1646e773bf761e65a6b4036e3cbbd38fbe235ba1bcd2bbcc7d3057a5",
   "raw_path": "production/video/raw/S07_SH008.mp4",
-  "raw_sha256": "756f0492344f74c668d872217e70941ad60ecd2edd8d620889fcc1c10b91083e",
+  "raw_sha256": "99ec212a57fea08ec5ecfb19005b16075a72539838d55ea5df46593442e03cfe",
   "raw_fps": 24.0,
   "raw_seconds": 9.0417,
   "fps": 24,
@@ -16,22 +16,22 @@
   "frames": 198,
   "speech_raw": [
     [
-      3.98,
-      4.12
+      6.8,
+      6.94
     ],
     [
-      5.28,
-      5.4
+      7.44,
+      7.58
     ]
   ],
   "speech": [
     [
-      3.98,
-      4.12
+      6.8,
+      6.94
     ],
     [
-      5.28,
-      5.4
+      7.44,
+      7.58
     ]
   ],
   "clip_spoken": false,
@@ -51,12 +51,12 @@
     {
       "rule": "CLIP-11",
       "status": "REVIEW",
-      "msg": "the picture stands still for 36 frames from frame 0"
+      "msg": "the picture stands still for 19 frames from frame 0"
     }
   ],
   "attempts": [
     {
-      "note": "R2 re-make: starts from tail frame f088 of the kept S07_SH007 (frame_pick BP-199) upscaled with RealPLKSR at the same size; prompt: rifle already in hand (script deviation L-17); stray whisper word \"You\" at 7.6-9.0 s (muted at G8 like S04_SH005, FL-112); take1 in superseded/"
+      "note": "R3 re-make from frame 88 of S07_SH007 (RealPLKSR same size): the text said he does not step down but the model steps off the box and walks out of frame to the right with the rifle in his right hand, legs plausible; whisper \"You\" at 7.6-9.0 s again (hallucination on the quiet tail, rms 0.0136); R2 take in superseded/S07_SH008_take2"
     }
   ]
 }
