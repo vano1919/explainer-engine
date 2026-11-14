@@ -47,6 +47,9 @@ SEAM_FAIL = 0.15                # rest_seam: plate pixels inside a layer's outli
 PEOPLE_CUT_FAIL = 0.01          # people_in_frame: worst share of a kept person outside the frame (the owner, 13:29 UTC)
 FACE_NCC_FAIL = 0.88            # face_intact: a kept face's first-frame crop searched in a later frame (camera taken
                                 # out); the C5 S06 cloud smear scored 0.80, intact faces 0.96-0.99 (engineering default)
+BLOWN_REVIEW = 0.01             # blown_out: share of a frame newly burned to flat white by light effects; C5's additive
+                                # shaft burned 10-13 % (S01, S05), C4A 3 %, untouched pictures 0.0-0.5 % (engineering
+                                # default, D-59: REVIEW)
 SEEN_REVIEW = 10.0              # effect_seen_3s: the 95th percentile change of an effect's own light (levels) within 3 s
                                 # (engineering default, D-59 hypothesis: REVIEW)
 SEGMENT_SHIFT = 1.0             # camera_segments: a truck/crane moves the picture at least this % of the width its way
@@ -523,6 +526,15 @@ def segment_rows(cameras: list[dict], curve: list[dict], fps: float, views: list
     if not out:
         return [G.row("camera_segments", None, "no push, pull, truck or crane planned")]
     return [G.row("camera_segments", not bad, "every planned move happened its way" if not bad else "; ".join(bad), out)]
+
+
+def blown_out_row(r: dict | None) -> dict:
+    """Light effects must not burn the picture to flat white: the share of the frame newly blown (beyond the source's own)."""
+    if not r or r.get("frame") is None and not r.get("worst"):
+        return G.row("blown_out", None, "no frame measured")
+    new = max(0.0, r["worst"] - r.get("source", 0.0))
+    return G.row("blown_out", new <= BLOWN_REVIEW, f"{100 * new:.2f} % of the frame burned to flat white beyond the "
+                 f"picture's own (frame {r.get('frame')}; REVIEW above {100 * BLOWN_REVIEW:.0f} %)", r, level=G.REVIEW)
 
 
 def face_intact_row(r: dict | None) -> dict:

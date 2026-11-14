@@ -153,3 +153,23 @@ def test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails(tm
     assert MI.face_intact_row({"ncc": 0.80, "frame": 68, "faces": 2})["status"] == "FAIL"
     assert MI.face_intact_row({"ncc": 0.96, "frame": 68, "faces": 2})["status"] == "PASS"
     assert MI.face_intact_row({"ncc": 1.0, "frame": None, "faces": 0})["status"] == "NOT_RUN"
+
+
+def test_light_lifts_a_pale_sky_without_burning_it_and_a_burned_frame_is_flagged(tmp_path):
+    """C5 S01/S05: the additive shaft and bloom burned 10-13 % of the frame to flat white (the coordinator's eye check).
+    Light is now a screen mix with a ceiling; ``blown_out`` flags a frame burned beyond the picture's own whites."""
+    pale = np.full((40, 40, 3), 235.0, np.float32)
+    pale[::2] += 6.0                                                     # a faint cloud texture on a pale sky
+    lit = LFX.screen(pale, (255, 228, 180), np.full((40, 40), 5.0, np.float32))
+    assert lit.max() <= 255.0                                           # brighter, never past white ...
+    assert lit[..., 0].std() >= (1 - LFX.LIGHT_CEIL) * pale[..., 0].std() - 1e-3      # ... and the clouds still show
+    assert (lit - pale).min() >= 0
+    p, lay, _ = _layers(tmp_path, rough=False)
+    st = R.Stage(p, lay, _plan(frames=72, effects=[{"op": "sun_shaft", "strength": 1.0, "light": "sun", "params": {}}]), OUT)
+    src = cv2.resize(st.src, OUT, interpolation=cv2.INTER_AREA)
+    burned = np.full_like(src, 255)
+    burned[:, : OUT[0] // 2] = src[:, : OUT[0] // 2]
+    r_ok = {"source": st.blown_share(src), "worst": st.blown_share(st.render(70)), "frame": 70}
+    r_bad = {"source": st.blown_share(src), "worst": st.blown_share(burned), "frame": 70}
+    assert MI.blown_out_row(r_ok)["status"] == "PASS", r_ok
+    assert MI.blown_out_row(r_bad)["status"] == "REVIEW", r_bad

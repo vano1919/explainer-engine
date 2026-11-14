@@ -6628,3 +6628,26 @@ on the clips: the smeared S06 face 0.80, intact faces 0.96-0.99, so FAIL below 0
 until sourced). Faces narrower than `FACE_MIN_PX` 55 px at 1080p are not judged: a 45-55 px face in moving mist with a
 nearer man sliding past scored 0.76 while intact (S05_SH020, checked by eye), too close to a smear. So S05_SH020's crowd
 of eleven small faces is NOT_RUN on this gate and was checked by eye; the gate still judges S02 (0.97) and S06 (0.98).
+
+## 2026-11-14 — C5 sun light burned the sky to white; screen mix with a ceiling and a `blown_out` gate
+
+The coordinator's eye check of the C5 reel: S01's frame centre was blown out to near white. Measured on the clips (share
+of the frame with luma >= 245 and local detail under 2 levels): S01 10 %, S05_SH016 13 %, S05_SH020 11 %, against
+0.0-0.5 % for the untouched pictures and 3 % for C4A.
+
+Root cause: `directed25d.Stage.render` (`sun_shaft`) and `living_fx.sun_glint` (the bloom) ADDED their light
+(`rgb + colour * amount`) with no ceiling; after the x2.5 strength of the C4A review, a pale dawn sky with 15-25 levels of
+headroom clipped to flat white and lost its clouds. No gate measured clipping.
+
+Fixes:
+- `living_fx.screen`: light is a screen mix, lifting a pixel at most `LIGHT_CEIL` (bloom 0.55) or `SHAFT_CEIL` (shaft 0.7)
+  of its way to white, so it never passes white and the clouds keep (1 - ceiling) of their detail;
+- the shaft reads by contrast instead of by burning: the gaps between rays dim by up to `SHAFT_SHADE` 0.22 (chosen so the
+  existing seen-in-3-s test still passes; 0.12 measured 7.0 levels against the 10-level floor);
+- only the small sun core (disc above 0.9) may burn to white.
+
+New gate `blown_out` (`qa/motion_intent.blown_out_row`, `Stage.blown_share`): the frame's newly flat-white share beyond
+the picture's own; REVIEW above 1 % (engineering default, D-59). `face_intact` now counts the faces it actually judged,
+so a shot whose faces are all too small reads NOT_RUN instead of a PASS on nothing. Test:
+`test_light_lifts_a_pale_sky_without_burning_it_and_a_burned_frame_is_flagged`. Re-rendered S01, S06, S05_SH016 and
+S05_SH020 (the shots with a sun).

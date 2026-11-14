@@ -31,8 +31,18 @@ SKY_PULSE = 0.08       # the sky round the sun breathes +-8 % ...
 SKY_PULSE_S = 2.5      # ... with this period
 BLOOM_R = 0.30         # the sun's wide warm bloom, share of the width (the "light comes out" lift)
 BLOOM_GAIN = 0.30
+LIGHT_CEIL = 0.55      # light effects lift a pixel at most this share of its way to white (screen mix): the C5 additive
+                       # shaft and bloom clipped 10-13 % of S01/S05 frames to flat white (coordinator's eye check)
 SNOW_BASE = 420        # flakes per layer pair at density 1 (was 260: "thin" in the eye review)
 STAR_GAIN = 2.2        # star twinkle brightness (was 0.9: unnoticed)
+
+
+def screen(rgb: np.ndarray, col, amount: np.ndarray, ceil: float = LIGHT_CEIL) -> np.ndarray:
+    """Add light ``amount`` (0..) of colour ``col`` as a screen mix: a dark pixel brightens a lot, a pale one a little
+    and never past white, so the sky keeps its clouds under a strong shaft. ``ceil`` caps the lift."""
+    a = np.clip(amount, 0, ceil)[..., None] * (np.asarray(col, np.float32) / 255.0)
+    base = np.clip(rgb, 0, 255)
+    return 255.0 - (255.0 - base) * (1.0 - a)
 
 
 def swell(t: float) -> float:
@@ -201,7 +211,11 @@ def _sun_glint(st, rgb, depth, e, t, v):
     glow = glow * (1 - 0.85 * front * (cv2.resize(disc.astype(np.float32), (W, H)) > 0.05))
     if hasattr(st, "people_field"):                            # the wide bloom never washes out a kept person
         glow = glow * (1 - 0.85 * st.people_field(v))
-    return rgb + np.array([255, 236, 196], np.float32) * (0.6 * s * glow)[..., None]
+    disc_core = cv2.resize(np.clip((disc - 0.9) / 0.2, 0, 1).astype(np.float32), (W, H), interpolation=cv2.INTER_LINEAR)
+    lit = screen(rgb, (255, 236, 196), 0.6 * s * glow)
+    # only the small sun disc itself may burn to white; the bloom round it stays below the ceiling
+    add = rgb + np.array([255, 236, 196], np.float32) * (0.6 * s * glow)[..., None]
+    return lit + (add - lit) * disc_core[..., None]
 
 
 def _points(st, key, region, n, pick):

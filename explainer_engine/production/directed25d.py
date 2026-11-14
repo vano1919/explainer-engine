@@ -55,8 +55,12 @@ FACE_GRID = 24                     # ... resampled to this many pixels per face 
 FACE_SEARCH = 0.35                 # ... searched this share of the face's size round where the camera puts it
 FACE_MIN_PX = 55.0                 # ... when the face is at least this wide (px at 1080p): a 45-55 px face in moving mist
                                    # with a nearer man sliding past scores 0.76 intact (S05_SH020), too close to judge
+BLOWN_LUMA = 245.0                 # blown_out: a pixel this bright (luma) ...
+BLOWN_FLAT = 2.0                   # ... with less than this local detail (std in 9x9) has lost its picture to white
 PEOPLE_SHIELD = 0.85               # light effects (shaft, sun bloom) keep this share off the kept people
 SKY_FAR = 0.9                      # a pixel slides with the clouds only where the frame's own depth is this far (1 - depth)
+SHAFT_CEIL = 0.7                   # a ray lifts a pixel at most this share of its way to white (screen mix, blown_out)
+SHAFT_SHADE = 0.22                 # ... and the gaps between rays dim by up to this share (contrast, not burn)
 SHAFT_GAIN = 1.0                   # sun shaft brightness (was 0.40: unnoticed in 3 s, eye review of C4A x2.5)
 SHAFT_SWAY_DEG, SHAFT_SWAY_S = 6.0, 3.0   # the shafts sway +-6 degrees over 3 s
 MIST_DRIFT = (0.021, 0.034)        # two mist banks, shares of the width per second (>= 40 px/s at 1920)
@@ -501,6 +505,13 @@ class Stage:
                         "box": [round(c, 3) for c in b] if b else None, "inside": bool(ok)})
         return out
 
+    def blown_share(self, frame: np.ndarray) -> float:
+        """Share of ``frame`` burned to flat white: luma at least ``BLOWN_LUMA`` with local detail under ``BLOWN_FLAT``."""
+        cv2 = self.cv2
+        y = cv2.cvtColor(np.ascontiguousarray(frame), cv2.COLOR_RGB2GRAY).astype(np.float32)
+        sd = np.sqrt(np.maximum(cv2.blur(y * y, (9, 9)) - cv2.blur(y, (9, 9)) ** 2, 0))
+        return float(((y >= BLOWN_LUMA) & (sd < BLOWN_FLAT)).mean())
+
     def face_crop(self, frame: np.ndarray, f: int, kb: dict, pad: float = FACE_PAD, px: int = FACE_GRID):
         """The kept face ``kb`` with ``pad`` of its size round it, as it appears in output ``frame`` ``f``: grey, ``px``
         pixels per face width (so crops of different frames share one scale), or None when off frame or too small."""
@@ -782,8 +793,13 @@ class Stage:
                 # only the far, visible surfaces take the shaft: the people and the near wire stand in front of it, and a
                 # person is never washed out by it (C5 S05_SH020: heads bleached under the stronger shaft)
                 keep_off = 1 - PEOPLE_SHIELD * self.people_field(v)
-                rgb = rgb + np.array([255, 228, 180], np.float32) * (SHAFT_GAIN * s * LFX.swell(t) * rays * far ** 3 * keep_off)[
-                    ..., None]
+                # a screen mix, not an add: the C5 additive shaft burned the pale sky to flat white (S01, S05)
+                lift = SHAFT_GAIN * s * LFX.swell(t) * far ** 3 * keep_off
+                gaps = cv2.resize(cv2.GaussianBlur(gate.astype(np.float32), (0, 0), 6.0), (W, H), interpolation=cv2.INTER_LINEAR)
+                rmax = max(1e-6, float(rays.max()))
+                # the gaps between rays dim a little, so the shaft reads by contrast on a pale sky instead of by burning it
+                rgb = rgb * (1 - SHAFT_SHADE * lift * gaps * (1 - rays / rmax))[..., None]
+                rgb = LFX.screen(rgb, (255, 228, 180), lift * rays, ceil=SHAFT_CEIL)
             elif op == "cloud_drift":
                 sky = cv2.remap(self.sky, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
                 if e.get("box"):
@@ -990,6 +1006,8 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
     p0 = {}
     faces = [k for k in st.keep if k.get("face")]
     face0, face_worst = {}, {"ncc": 1.0, "frame": None, "face": None}
+    src_out = cv2.resize(st.src, (W, H), interpolation=cv2.INTER_AREA)
+    blown = {"source": round(st.blown_share(src_out), 4), "worst": 0.0, "frame": None}
     an = (960, 540)
     t1 = time.time()
     try:
@@ -1001,6 +1019,10 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
                 first = fr
             last = fr
             v = tl["view"]
+            if f % ghost_every == 0 or f == st.n - 1:      # light must not burn the picture to white (C5 S01 centre)
+                b = st.blown_share(fr)
+                if b > blown["worst"]:
+                    blown.update(worst=round(b, 4), frame=f)
             if faces and (f % ghost_every == 0 or f == st.n - 1):
                 for j, kb in enumerate(faces):           # a face must stay itself: no smear, no warp (C5 S06 frame 71)
                     if j not in face0:
@@ -1037,7 +1059,7 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
     tmp.replace(out_mp4)
     spf = (time.time() - t1) / max(1, st.n)
     return {"renderer": VERSION, "shot_id": plan.get("shot_id"), "frames": st.n, "fps": fps, "resolution": [W, H],
-            "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4), "people_in_frame": st.people_cut(), "face_intact": {**face_worst, "faces": len(faces)}, "rest_seam": st.rest_seam(), "effects_seen": st.effects_seen(), "aim": st.aim_check(),
+            "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4), "people_in_frame": st.people_cut(), "face_intact": {**face_worst, "faces": len(face0), "kept_faces": len(faces)}, "blown_out": blown, "rest_seam": st.rest_seam(), "effects_seen": st.effects_seen(), "aim": st.aim_check(),
             "objects": [{"id": o["id"], "depth": round(o["d"], 3)} for o in st.objects],
             "cost_usd": 0.0, "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest(),
             "views": views, "stage": st, "first": first, "last": last}
