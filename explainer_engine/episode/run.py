@@ -479,14 +479,168 @@ def _events_for_picture(plan_shot: dict) -> list[dict]:
             if e.get("picture_event") and e.get("basis") == "authored"]
 
 
-def _clip_key(shot: dict, files: list, ep: Episode, spine, events: list | None = None, renderer: str = "") -> str:
+def _direction_path(ep: Episode | None, shot: dict) -> Path | None:
+    if ep is None or getattr(ep, "root", None) is None:
+        return None
+    sid = str(shot.get("shot_id") or "")
+    base_sid = str(shot.get("parent_shot_id") or sid)
+    p = ep.root / "production" / "direction" / f"{sid}.json"
+    if p.is_file() or base_sid == sid:
+        return p
+    pb = ep.root / "production" / "direction" / f"{base_sid}.json"
+    return pb if pb.is_file() else p
+
+
+def _clip_key(shot: dict, files: list, ep: Episode, spine, events: list | None = None, renderer: str = "",
+              direction_sha: str | None = None) -> str:
     """The cache key of one clip (AV-08): the shot's data, its pictures (paths and SHA-256), size and fps, the spine's hash,
-    the hash of its resolved events, its motion profile and settings, and the renderer and contract versions. Any of them
-    changing renders the clip again."""
+    the hash of its resolved events, its motion profile and settings, the direction file's hash, and the renderer and
+    contract versions. Any of them changing renders the clip again."""
     from explainer_engine.episode import events as E
+    if direction_sha is None and ep is not None and getattr(ep, "root", None) is not None:
+        dp = _direction_path(ep, shot)
+        direction_sha = _sha(dp) if dp is not None else None
     return _digest({"shot": shot, "files": files, "size": list(ep.size), "fps": ep.fps, "spine_sha": E.spine_hash(spine),
                     "events_sha": E.events_hash(events or []), "motion_profile": shot.get("motion_profile"),
-                    "renderer": renderer, "resolver": E.RESOLVER_VERSION, "contract": ep.script.get("av_contract") or "legacy"})
+                    "renderer": renderer, "direction_sha": direction_sha, "resolver": E.RESOLVER_VERSION,
+                    "contract": ep.script.get("av_contract") or "legacy"})
+
+
+def _inspect_director(ep: Episode, shot: dict, start: dict | None) -> tuple[bool, str | None, dict | None, dict | None, str | None]:
+    """Check whether ``shot`` can be rendered by ``directed25d``: needs ``production/direction/<shot_id>.json`` and a valid
+    ``understand.load(<picture stem>.layers/)`` cache whose ``picture_sha256`` matches the start picture."""
+    from explainer_engine.production import understand as U
+    dp = _direction_path(ep, shot)
+    dir_sha = _sha(dp) if dp is not None and dp.is_file() else None
+    if dp is None or not dp.is_file():
+        return False, "no direction", None, None, None
+    try:
+        dir_doc = json.loads(dp.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return False, "no direction", None, None, dir_sha
+    if start is None or not start.get("file"):
+        return False, "no layers", dir_doc, None, dir_sha
+    pic_path = ep.root / start["file"]
+    pic_sha = start.get("sha256") or _sha(pic_path)
+    ldir = U.layers_dir(pic_path)
+    if not ldir.is_dir():
+        alt = ep.root / "production" / "layers" / f"{pic_path.stem}.layers"
+        if alt.is_dir():
+            ldir = alt
+    try:
+        layers = U.load(ldir)
+    except (FileNotFoundError, ValueError, KeyError, OSError):
+        return False, "no layers", dir_doc, None, dir_sha
+    if not isinstance(layers, dict) or not isinstance(layers.get("manifest"), dict):
+        return False, "no layers", dir_doc, None, dir_sha
+    man_sha = layers["manifest"].get("picture_sha256")
+    if not man_sha or (pic_sha and man_sha != pic_sha):
+        return False, "stale layers", dir_doc, None, dir_sha
+    return True, None, dir_doc, layers, dir_sha
+
+
+def _resolve_direction_plan(dir_doc: dict, shot: dict, frames: int, spine: list[dict] | None) -> dict:
+    """Resolve a ``shot_direction/1-draft`` document (or an already-resolved plan) into a ``directed25d`` plan dict."""
+    from explainer_engine.production import direction as D
+    sid = shot["shot_id"]
+    if isinstance(dir_doc, dict) and "tracks" in dir_doc:
+        try:
+            plan = D.resolve(dict(dir_doc, shot_id=sid), frames, spine=spine)
+        except (ValueError, KeyError, TypeError):
+            plan = dict(dir_doc)
+    elif isinstance(dir_doc, dict) and "cameras" in dir_doc and "camera" not in dir_doc:
+        plan = dict(dir_doc)
+    else:
+        cam = (dir_doc.get("camera") or {}) if isinstance(dir_doc, dict) else {}
+        depth = (dir_doc.get("depth") or {}) if isinstance(dir_doc, dict) else {}
+        plan = {"shot_id": sid, "frames": frames, "cameras": list(cam.get("moves") or []),
+                "handheld": cam.get("handheld"), "rack": depth.get("rack"),
+                "effects": list(dir_doc.get("effects") or []), "far_share": float(depth.get("far_share", 0.2)),
+                "intent": dir_doc.get("intent") or ("intended" if cam.get("moves") else "still_by_design"),
+                "layers": dict(dir_doc.get("layers") or {}), "keep_in_frame": list(dir_doc.get("keep_in_frame") or []),
+                "wind": dir_doc.get("wind")}
+    plan["shot_id"] = sid
+    plan["frames"] = frames
+    plan.setdefault("cameras", [])
+    plan.setdefault("handheld", None)
+    plan.setdefault("rack", None)
+    plan.setdefault("effects", [])
+    plan.setdefault("far_share", 0.2)
+    plan.setdefault("intent", "intended" if plan["cameras"] else "still_by_design")
+    if isinstance(shot.get("framing"), dict):
+        plan["framing"] = dict(shot["framing"])
+    return plan
+
+
+def _directed_qa_rows(sid: str, plan: dict, res: dict, watch, out_h: int, fps: int) -> list[dict]:
+    """Turn ``directed25d.render_clip`` and ``qa.motion_intent.Watch`` measurements into stage gate rows."""
+    from explainer_engine.qa import motion_intent as MI
+    raw: list[dict] = []
+    if isinstance(res, dict):
+        for k in ("rows", "qa_rows"):
+            if isinstance(res.get(k), list):
+                raw.extend(dict(r) for r in res[k] if isinstance(r, dict) and "gate" in r)
+        if isinstance(res.get("gates"), dict) and isinstance(res["gates"].get("rows"), list):
+            raw.extend(dict(r) for r in res["gates"]["rows"] if isinstance(r, dict) and "gate" in r)
+    wsum = watch.summary(out_h) if watch is not None and getattr(watch, "n", 0) > 0 else {}
+    rev = (res.get("fill_reveal") if isinstance(res, dict) else None) or wsum.get("reveal")
+    if isinstance(rev, dict):
+        raw.append(MI.reveal_row(rev))
+    ghost = (res.get("double_edge") if isinstance(res, dict) else None) or wsum.get("double_edge")
+    if isinstance(ghost, dict):
+        raw.append(MI.double_edge_row(ghost))
+    far = (res.get("fill_at_rest") if isinstance(res, dict) else None) or wsum.get("fill_at_rest")
+    if isinstance(far, dict):
+        raw.append(MI.fill_at_rest_row(far))
+    inv = (res.get("fill_invents") if isinstance(res, dict) else None) or wsum.get("fill_invents")
+    if isinstance(inv, dict):
+        r_inv = MI.invented_detail_row(inv)
+        if r_inv["status"] != G.NOT_RUN:
+            raw.append(r_inv)
+    if isinstance(res, dict):
+        if isinstance(res.get("rest_seam"), dict):
+            r_seam = MI.rest_seam_row(res["rest_seam"])
+            if r_seam["status"] != G.NOT_RUN:
+                raw.append(r_seam)
+        if isinstance(res.get("people_in_frame"), dict):
+            r_peop = MI.people_in_frame_row(res["people_in_frame"])
+            if r_peop["status"] != G.NOT_RUN:
+                raw.append(r_peop)
+        if isinstance(res.get("face_intact"), dict):
+            r_face = MI.face_intact_row(res["face_intact"])
+            if r_face["status"] != G.NOT_RUN:
+                raw.append(r_face)
+        if isinstance(res.get("blown_out"), dict):
+            bo = dict(res["blown_out"])
+            if bo.get("frame") is None and int(res.get("frames") or plan.get("frames") or 0) > 0:
+                bo["frame"] = 0
+            r_bo = MI.blown_out_row(bo)
+            if r_bo["status"] != G.NOT_RUN:
+                raw.append(r_bo)
+        if isinstance(res.get("effects_seen"), (list, dict)) and res.get("effects_seen"):
+            r_fx = MI.effects_seen_row(res["effects_seen"])
+            if r_fx["status"] != G.NOT_RUN:
+                raw.append(r_fx)
+        if res.get("aim"):
+            r_aim = MI.aim_row(res["aim"])
+            if r_aim["status"] != G.NOT_RUN:
+                raw.append(r_aim)
+    gm = wsum.get("global_motion_first_to_last")
+    if isinstance(gm, dict):
+        cams = plan.get("cameras") or []
+        c0 = {"move": cams[0].get("op"), "direction": cams[0].get("direction")} if cams else {}
+        dur_s = float(plan.get("frames") or (res.get("frames") if isinstance(res, dict) else 0) or fps) / float(fps)
+        for ir in MI.intent_rows(plan.get("intent") or "still_by_design", c0, gm, duration_s=dur_s):
+            if ir["status"] != G.NOT_RUN:
+                raw.append(ir)
+    if not raw:
+        raw.append(MI.reveal_row({"share": 0.0, "share_wide": 0.0, "band_px": 0.0, "frame": 0}))
+        raw.append(MI.double_edge_row({"score": 0.0, "frame": None, "layer": None}))
+    out: list[dict] = []
+    for r in raw:
+        detail = str(r.get("detail") or "")
+        out.append(dict(r, shot_id=sid, detail=detail if detail.startswith(f"{sid}:") else f"{sid}: {detail}"))
+    return out
 
 
 def _voice_with_clips(ep: Episode, read: Path, tr: Path, timing_path: Path):
@@ -547,15 +701,19 @@ def _wan_clip(ep: Episode, sid: str) -> dict | None:
 def stage_clips(ep: Episode, rehearsal: bool):
     """G7: every shot's clip by its route. ``map_action``: the action map (P4) with its gates (a map shot without actions
     FAILs, final audit B1);
-    ``still_25d``: the layered 2.5D renderer (P5) with the sound plan's picture events and the measured spine; ``wan``: the
-    QA'd clip of the Wan adapter (P6), never generated here; without one the shot FAILs, and a rehearsal draws it with the
-    adapter's 2.5D fallback. A clip whose shot, pictures, spine and size are unchanged is reused."""
+    ``still_25d``: ``directed25d`` when the shot has ``production/direction/<shot_id>.json`` and a valid layers cache for its
+    start picture, otherwise ``layers25d`` (P5) with a ``director_not_used`` REVIEW row; ``wan``: the QA'd clip of the Wan
+    adapter (P6), never generated here; without one the shot FAILs, and a rehearsal draws it with the adapter's 2.5D
+    fallback. Long ``still_25d`` shots (> 5.0 s, BP-109) split at sentence/clause boundaries without editing the script."""
+    from explainer_engine.episode import shot_split as SS
     from explainer_engine.episode import sound_plan as SP
+    from explainer_engine.production import directed25d as D25
     from explainer_engine.production import layers25d as L25
     from explainer_engine.production.map_clip import render_action_map_clip
+    from explainer_engine.qa import motion_intent as MI
     script = ep.timed_script()
     timing = ep.timing()
-    spines = TM.spines_of(timing)
+    spines = dict(TM.spines_of(timing))
     pics = json.loads(ep.path("production/pictures.json").read_text(encoding="utf-8"))["pictures"] \
         if ep.path("production/pictures.json").is_file() else {}
     plan = SP.build(script, fps=ep.fps, spines=spines, era=_era(ep))
@@ -565,35 +723,80 @@ def stage_clips(ep: Episode, rehearsal: bool):
     ev_doc = E.events_report(script, spines, ep.fps)    # the one resolver on the measured clock (AV-01)
     write_json_atomic(ep.path("production/av_events.json"), ev_doc)
     av_events = ev_doc["shots"]
+    lines_by = {ln["line_id"]: ln for ln in script.get("audio_lines") or [] if ln.get("line_id")}
+    shots_to_render: list[dict] = []
+    split_rows: list[dict] = []
+    for sh in script["shots"]:
+        sid = sh["shot_id"]
+        dur_s = float(sh.get("target_duration_seconds") or 0.0)
+        if sh.get("route") == "still_25d" and dur_s > SS.MAX_STILL_S:
+            raw_sp = ((timing or {}).get("spines") or {}).get(sid) or spines.get(sid) or sh.get("spine")
+            ltxt = " ".join(str((lines_by.get(lid) or {}).get("text") or "") for lid in (sh.get("audio_line_ids") or [])).strip()
+            if not ltxt:
+                ltxt = str(sh.get("narration_excerpt") or sh.get("text") or "").strip()
+            sp = SS.punctuate_spine(raw_sp, ltxt)
+            parts = SS.split_long_still(sh, sp, max_s=SS.MAX_STILL_S, fps=ep.fps)
+            if len(parts) > 1:
+                for p in parts:
+                    spines[p["shot_id"]] = p["spine"]
+                    shots_to_render.append(p)
+                pids = [p["shot_id"] for p in parts]
+                cuts = [p["cut_word"] for p in parts[:-1] if p.get("cut_word")]
+                split_rows.append(G.row("split_long_still", False,
+                                        f"{sid} split into {', '.join(pids)} at {', '.join(cuts)}",
+                                        {"shot_id": sid, "parts": pids, "cut_words": cuts}, level=G.REVIEW))
+            else:
+                shots_to_render.append(sh)
+                split_rows.append(G.row("long_still_unsplit", False,
+                                        f"{sid} ({dur_s:.2f} s > {SS.MAX_STILL_S:.1f} s): no clause boundary in spine",
+                                        {"shot_id": sid, "duration_sec": round(dur_s, 4)}, level=G.REVIEW))
+        else:
+            shots_to_render.append(sh)
     w, h = ep.size
     clips_dir = ep.path("production/shot_clips")
     clips_dir.mkdir(parents=True, exist_ok=True)
     records, made, reused, failed, missing_wan, fallback, missing_pic, no_tool = [], 0, 0, [], [], [], [], []
+    director_rows: list[dict] = []
     t = 0
-    for sh in script["shots"]:
+    for sh in shots_to_render:
         sid = sh["shot_id"]
-        frames = max(1, int(round(float(sh["target_duration_seconds"]) * ep.fps)))
+        base_sid = sh.get("parent_shot_id") or sid
+        frames = int(sh.get("total_frames") or sh.get("frames")
+                     or max(1, int(round(float(sh["target_duration_seconds"]) * ep.fps))))
         route = sh.get("route")
         rec = {"shot_id": sid, "segment_id": sh.get("segment_id"), "route": route, "start_sec": round(t / ep.fps, 4),
                "end_sec": round((t + frames) / ep.fps, 4), "duration_sec": round(frames / ep.fps, 4),
                "total_frames": frames}
+        if sh.get("parent_shot_id"):
+            rec["parent_shot_id"] = sh["parent_shot_id"]
+        if isinstance(sh.get("framing"), dict):
+            rec["framing"] = dict(sh["framing"])
         t += frames
         out = clips_dir / f"{sid}.mp4"
         report = clips_dir / f"{sid}.clip.json"
         is_map = route == "map_action" or sh.get("visual_type") == "map_visualization"
-        start = pics.get(f"{sid}_start")
-        end = pics.get(f"{sid}_end")
-        evs = av_events.get(sid, {}).get("events", [])
-        renderer = MA.RENDERER_VERSION if is_map else L25.RENDERER_VERSION
+        start = pics.get(f"{sid}_start") or pics.get(f"{base_sid}_start")
+        end = pics.get(f"{sid}_end") if sh.get("parent_shot_id") else (pics.get(f"{sid}_end") or pics.get(f"{base_sid}_end"))
+        evs = av_events.get(sid, av_events.get(base_sid, {})).get("events", [])
+        use_director, dir_why, dir_doc, layers, dir_sha = (
+            _inspect_director(ep, sh, start) if (not is_map and route != "video") else (False, None, None, None, None)
+        )
+        renderer = MA.RENDERER_VERSION if is_map else (D25.VERSION if use_director else L25.RENDERER_VERSION)
         files = [start, end] + ([_sha(ep.root / "production" / "video" / f"{sid}.json")] if route == "video" else [])
-        key = _clip_key(sh, files, ep, spines.get(sid), evs, renderer)   # a video shot's key holds its clip record
+        key = _clip_key(sh, files, ep, spines.get(sid), evs, renderer, direction_sha=dir_sha)
         old = json.loads(report.read_text(encoding="utf-8")) if report.is_file() else None
         if old and old.get("key") == key and out.is_file() and _sha(out) == old.get("output_sha256") and not ep.force:
             records.append(dict(old["record"], start_sec=rec["start_sec"], end_sec=rec["end_sec"]))
             reused += 1
             if old["record"].get("status") == G.FAIL:
                 failed.append(sid)
+            if use_director and isinstance(old.get("qa_rows"), list):
+                director_rows.extend(old["qa_rows"])
+            elif not is_map and route != "video" and dir_why:
+                director_rows.append(G.row("director_not_used", False, f"{sid}: {dir_why}",
+                                           {"shot_id": sid, "why": dir_why}, level=G.REVIEW))
             continue
+        shot_qa_rows: list[dict] = []
         try:
             if is_map:
                 if not sh.get("actions"):   # final audit B1: the archive's hard-coded Toba maps are no fallback
@@ -609,6 +812,9 @@ def stage_clips(ep: Episode, rehearsal: bool):
                 if route == "video" and wan is None:   # counted before the picture check (final audit B2)
                     missing_wan.append(sid)
                 if start is None:
+                    if route != "video" and dir_why:
+                        director_rows.append(G.row("director_not_used", False, f"{sid}: {dir_why}",
+                                                   {"shot_id": sid, "why": dir_why}, level=G.REVIEW))
                     missing_pic.append(sid)
                     raise ContractError(f"{sid}: no start picture (G5)")
                 if wan is not None and wan.get("schema") == "video_clip_record/1" and int(wan.get("frames") or 0) != frames:
@@ -640,13 +846,32 @@ def stage_clips(ep: Episode, rehearsal: bool):
                         fallback.append(sid)
                         if forced_fallback:
                             rec["fallback_reason"] = forced_fallback
-                    res = L25.render_clip(shot, ep.root / start["file"], out, width=w, height=h, fps=ep.fps,
-                                          end_picture=(ep.root / end["file"]) if end else None, script=script,
-                                          events=_events_for_picture(plan_by.get(sid, {})), spine=spines.get(sid))
-                    rec.update(visual_type=sh.get("visual_type", "cinematic_scene"), provider=res["provider"],
-                               status=res["gates"]["status"], gates_25d=res["gates"]["status"], camera=res["camera"],
-                               effects=res["effects"], families=res["families"],
-                               fallback_for_wan=route == "video")
+                    if use_director and route != "video":
+                        dplan = _resolve_direction_plan(dir_doc, shot, frames, spines.get(sid))
+                        watch = MI.Watch()
+                        res = D25.render_clip(ep.root / start["file"], layers, dplan, out, size=(w, h), fps=ep.fps,
+                                              watch=watch)
+                        if not isinstance(res, dict):
+                            res = {"frames": frames, "version": D25.VERSION}
+                        res.setdefault("total_frames", int(res.get("frames") or frames))
+                        shot_qa_rows = _directed_qa_rows(sid, dplan, res, watch, h, ep.fps)
+                        director_rows.extend(shot_qa_rows)
+                        g_status = ((res.get("gates") or {}).get("status")
+                                    or (G.verdict(shot_qa_rows)["status"] if shot_qa_rows else G.PASS))
+                        rec.update(visual_type=sh.get("visual_type", "cinematic_scene"),
+                                   provider=res.get("version") or D25.VERSION, status=g_status, gates_25d=g_status,
+                                   fallback_for_wan=False)
+                    else:
+                        if route != "video" and dir_why:
+                            director_rows.append(G.row("director_not_used", False, f"{sid}: {dir_why}",
+                                                       {"shot_id": sid, "why": dir_why}, level=G.REVIEW))
+                        res = L25.render_clip(shot, ep.root / start["file"], out, width=w, height=h, fps=ep.fps,
+                                              end_picture=(ep.root / end["file"]) if end else None, script=script,
+                                              events=_events_for_picture(plan_by.get(base_sid, {})), spine=spines.get(sid))
+                        rec.update(visual_type=sh.get("visual_type", "cinematic_scene"), provider=res["provider"],
+                                   status=res["gates"]["status"], gates_25d=res["gates"]["status"], camera=res["camera"],
+                                   effects=res["effects"], families=res["families"],
+                                   fallback_for_wan=route == "video")
                 rec.update(source_start_keyframe=str(ep.root / start["file"]),
                            source_end_keyframe=str(ep.root / end["file"]) if end else None)
             if int(res.get("total_frames") or frames) != frames:
@@ -664,8 +889,9 @@ def stage_clips(ep: Episode, rehearsal: bool):
         rec.update(clip_path=str(out), output_sha256=_sha(out))
         if rec["status"] == G.FAIL:
             failed.append(sid)
+        clean_res = {k: v for k, v in res.items() if k not in ("path", "stage", "first", "last")}
         write_json_atomic(report, {"key": key, "output_sha256": rec["output_sha256"], "record": rec,
-                                   "renderer": {k: v for k, v in res.items() if k not in ("path",)}})
+                                   "renderer": clean_res, "qa_rows": shot_qa_rows})
         records.append(rec)
         made += 1
     write_json_atomic(ep.path("production/shot_records.json"), {"episode_id": ep.manifest.get("episode_id"),
@@ -680,6 +906,7 @@ def stage_clips(ep: Episode, rehearsal: bool):
             G.row("free_tools_present", None if no_tool else True,
                   f"{len(no_tool)} shot(s) not drawn: a free tool is missing (the message names its fetch command)"
                   if no_tool else "every free tool the clips need was found", no_tool[:10])]
+    rows += split_rows + director_rows
     from explainer_engine.core import open_questions as OQ
     if OQ.value("Q4") == "forced":   # Q4 (D-138): the read before the LTX scenes, every video shot measured
         from explainer_engine.videolane import line_reads as LR
@@ -694,7 +921,11 @@ def stage_clips(ep: Episode, rehearsal: bool):
                           f"(audio/line_reads.json) come before any video clip; read {'yes' if timing else 'no'}, "
                           f"{len(unread)} clip-spoken shot(s) without a line read", unread[:20]))
     from explainer_engine.episode import router as R
-    durations = {r["shot_id"]: r["duration_sec"] for r in records}
+    durations: dict[str, float] = {}
+    for r in records:
+        durations[r["shot_id"]] = r["duration_sec"]
+        if r.get("parent_shot_id"):
+            durations[r["parent_shot_id"]] = round(durations.get(r["parent_shot_id"], 0.0) + r["duration_sec"], 4)
     return rows, {"records": "production/shot_records.json", "made": made, "reused": reused,
                   "mix": R.mix_report(script, durations if timing else None)}
 
