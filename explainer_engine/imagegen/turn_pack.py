@@ -608,10 +608,18 @@ def master_path(target: str) -> str:
 
 
 def find_upscaler():
-    """The installed free upscaler as ``fn(src, dst)``, or None (then promotion is NOT_RUN, never a plain resize)."""
+    """The installed free upscaler as ``fn(src, dst)``, or None (then promotion is NOT_RUN, never a plain resize). An
+    ``EE_UPSCALER`` binary wins when set; else the free CPU model of ``finish/superres`` (RealPLKSR -> QC -> SPAN, 2026-11-14)
+    when torch, spandrel and its weights are present."""
     exe = os.environ.get(UPSCALER_ENV)
     if not exe or not Path(exe).is_file():
-        return None
+        from explainer_engine.finish import superres
+        if not superres.available():
+            return None
+
+        def model(src: Path, dst: Path) -> None:
+            superres.upscale_file(src, dst, factor=2)
+        return model
 
     def run(src: Path, dst: Path) -> None:
         subprocess.run([exe, "-i", str(src), "-o", str(dst), "-s", "2"], check=True, capture_output=True, timeout=600)

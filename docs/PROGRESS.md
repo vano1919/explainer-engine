@@ -6330,3 +6330,324 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   sample step 0.0012 against 0.0023 at the bed's 99.9th percentile, no click.
 - Tests: `tests/unit/test_bed_stereo_and_loop_window.py` (anti-phase case picks a better seed, the window keeps the bed level, the sheet
   carries the window). The -50 floor, BP-53 and BP-191 are untouched; the four duck-step rows stay REVIEW. Cost $0.
+
+## 2026-11-14 — P1 round 2 follow-up: photo shots must live, the camera follows the words (owner + Fable 2.5D audit)
+- Why: the owner called the P1 round 2 clips static ("only the fires move"; 27 of 38 s without camera motion, Fable's audit
+  `architecture_2026-11-14/audit_25d_round2/`): the director missed sun rays, wind, trees and snow, and the gates rewarded
+  stillness (REVIEW stops nothing, `still_is_still` passes a frozen world, no liveliness floor, BP-174/BP-185 not run on
+  `directed25d`). Fable also found a new S01 C3 defect: the post cut on frame 0 and wire rings invented by the plate.
+- New rules (`standards/sourced_rules.json`): BP-194 liveliness (change %/s against the Gemini reference 3.6-12.2, no frozen
+  second, change left with the camera taken out; hypothesis, REVIEW), BP-195 camera on the words (timing; hypothesis),
+  BP-196 the living inventory and the words-to-camera rule (house, FAIL, the owner's messages of 2026-11-14), BP-197 camera
+  amount and snappy zoom measured like the LTX clips (hypothesis). BP-185 now also enforced by `production/direction.py`,
+  with no `still_by_design` exception (the rule text never had one).
+- Code: `production/direction.py` (`seen.living` checklist `LIVING_KINDS`, words -> kinds `LIVING_WORDS`, scene weather,
+  families, ops the renderer lacks FAIL, words -> camera, hold before the first move); `qa/liveliness.py` (new: change %/s,
+  frozen windows, camera-free change, camera curve and moves, word focus, `delivery_row`: a REVIEW clip waits for the
+  director's round before the owner sees it); `qa/motion_intent.py` (`fill_at_rest`, `invented_detail`, both in `Watch`).
+- Measured on the six C3 clips (`live_C3.json` in the work folder): S08, S02, S05_SH016, S05_SH020 now REVIEW on
+  liveliness and frozen seconds; S01 and S06 pass the change floor only by their camera; five of six miss the reference
+  camera amount. The camera-free measure counts parallax too (S01 2.3 %/s), so the inventory stays the main guard.
+- Not done yet: the new effect ops (snow, wind sway, sun glint, steam, stars, embers) are listed but not built in
+  `directed25d` (a direction asking for them FAILs until they are); the S01 frame-0 and invented-detail detectors are
+  tested on synthetic frames, not yet calibrated on the real clip. Tests: 67 passed in the touched suites. $0.
+- Stale text found (ICW-01): roadmap 2026-11-14 B.10/J12 ("quality is not measured by the amount of motion") and K.2 (two
+  shots still by design) conflict with the owner's 2026-11-14 rule; left in place, superseded by BP-194..197.
+
+## 2026-11-14 — Upscale integration II: `finish/superres.py` (free CPU model upscale, GC-14 promote, U-1..U-8, Q1..Q7)
+- Why: the owner (via Fable's upscale direction `architecture_2026-11-14/UPSCALE_DIRECTION_AND_HANDOFF_2026-11-14.md`, part II)
+  asked for the upscale to be integrated as fast as possible. `finish/upscale.py` only resizes (18-25 % of the detail kept);
+  `turn_pack.promote` needed an `EE_UPSCALER` binary of the class that lost the test, so GC-14 was NOT_RUN in the cloud.
+- New: `finish/superres.py`. RealPLKSR `4xNomos2_realplksr_dysample` -> QC -> SPAN `2xNomosUni_span_multijpg` -> QC -> the
+  picture as it is for the reviewer. Weights fetched at a pinned revision + sha256 into `$EXPLAINER_MODELS_DIR`
+  (the repo's convention, not the handoff's `$EXPLAINER_MODEL_CACHE`); never in git (PROVENANCE rows, CC BY 4.0). Also:
+  - a tiled run with a reflected border;
+  - `to_size` (only ever shrinks);
+  - `colour_fix`, the model card's wavelet fix. Measured on the rifle frame: the mean colour shift was 4.1/255 (RealPLKSR) and
+    5.1/255 (SPAN) without it, 0.12 with it;
+  - `qc` Q1..Q7 (new BP-198, hypothesis REVIEW);
+  - `decide` U-1..U-8 and `plan`;
+  - a cache keyed by picture sha256 + model + revision + crop + size + colour fix;
+  - a CLI: `fetch`, `plan`, `run`, `qc`.
+- `turn_pack.find_upscaler` uses it when torch, spandrel and the weights are present; otherwise it stays NOT_RUN.
+  `production_script.schema.json` `edit_plan` gains two optional fields, `state_changed_since_anchor` and `next_use`
+  (old scripts stay valid).
+- Measured (production path, CPU, $0): rifle frame S07_SH007 f084, 1280x704 -> 2560x1408, RealPLKSR 99 s, QC all PASS
+  (Q1 39.5 dB, Q2 0.12, Q3 x8.33, Q5 LPIPS 0.118). Sheet and result on HF `explainer-engine/upscale_integration_2026-11-14/`.
+- Part III (paid LTX test) reviewed in `upscale_research/PART_III_REVIEW_2026-11-14.md`: no worker change needed. Before the
+  card, four things must change: the start frames' sha256 do not match `start_frames.json`; TR/TC must be rebuilt with the repo
+  module; CH-03 needs a committed scene file; CH-07 needs a `paid_offer/1` file. Nothing paid was started.
+- Tests: `test_superres.py` (17), promote test pinned to `available() == False`; 110 passed in the touched suites. $0.
+
+## 2026-11-14 — P1 round 2: the S01 cut post and the wire rings fixed in `directed25d` (Fable 2.5D audit)
+- Fable's audit of the C3 clips found S01 broken: a post cut on the first frame, and wire rings appearing behind the moving
+  wire. Looked at frame by frame, there were three causes, each fixed in `production/directed25d.py`:
+  - **The LaMa hole was wider than the cut-out.** `_rest_background`: the background shows the plate only under the layered
+    objects (alpha x `REST_ALPHA_GAIN`, grown `REST_GROW_PX`); everywhere else it shows the picture. Frame 0 is the picture.
+  - **Thin strokes were layered.** No fill behind a moving wire is right. A stroke narrower than `THIN_FILL_PX` (found by a
+    morphological opening) is stripped from its layer and stays in the background. An object that is at least `FLAT_SHARE`
+    strokes stays in the background whole (`Stage.flat`; S01 `wire_mid_left`, 88 % strokes).
+  - **The background warp folded at a depth step.** Near post against far field, crane up: neighbours swapped by up to
+    6 px and drew a mirrored wire loop. `_unfold_background` softens the warp depth only where its slope times the shot's
+    largest parallax passes `UNFOLD_PX`. S01: parallax 96.8 px, 3.75 % of the picture softened, `my` slope min 0.43 (was -6.15).
+- Before/after sheet on HF `stage_b_round2_2026-11-14/s01_fix/`.
+- Tests: `test_directed25d.py` +3 (frame 0 = picture with a hole 15 px wider than the mask; strokes stay in the background;
+  a depth step does not fold, and the test fails with the unfold off). 124 passed in the touched suites, docs_lint 0. $0.
+
+## 2026-11-14 — BP-199: the frame taken from a clip is chosen by its person (`finish/frame_pick.py`)
+- The owner (12:18 UTC): when the best frame is taken from the end of a clip, the person's position and face decide. The
+  rifle start frame f084 had a face caught mid-move. The frame where the person is most still is cut out and upscaled.
+- New BP-199 (house; the weights are engineering numbers) and `finish/frame_pick.py`:
+  - YuNet face (opencv_zoo, MIT, pinned revision + sha256, `$EXPLAINER_MODELS_DIR`, PROVENANCE row) tracked across the
+    window;
+  - the score: face sharpness, stillness and box jitter (0.6), body stillness below the face (0.3), the whole frame (0.1);
+  - no face: the frame decides and the report says REVIEW;
+  - CLI `pick <clip> --out DIR [--window-s] [--after] [--upscale --size --crop]`, which writes the frame, a JSON report and a
+    sheet. `--upscale` hands the frame to `finish/superres`.
+- Measured on `S07_SH007_seed7105.mp4` (last second, f65-f88): it picks f088. Face change is 2.49 grey levels there and
+  3.55 on the old f084, which the owner saw was not still. The Part III start frames TA/TR/TC/TP are rebuilt from f088.
+- Not touched: `training/pods/ltx/modal_ltx_jobs.py` (`handover_scores`). Its bytes are bound to the LTX thread's GO; that
+  thread was told the function exists.
+- Tests: `test_frame_pick.py` (4). $0.
+
+## 2026-11-14 — BP-200: the living-photo balance in code (`production/living.py`, Fable's LP-01..LP-12)
+- Fable's LIVING_PHOTO_RULES (project files, 2026-11-14) ported from his scratch script into the repo as new BP-200
+  (hypothesis, REVIEW numbers). It covers:
+  - the score `3 x text + scale + focus + quality + cost`;
+  - tiers P1/P2/P3, dots and groups, quality 0 skipped, body motion routed to LTX (LP-02);
+  - always-on flames (LP-06) and the cap 4/5/6 by duration (LP-07);
+  - the floor: 3 effects, 2 outside light, one full-frame air layer (LP-08);
+  - scene weather in every shot (LP-09); people mid/close over 8 s go to LTX or a split (LP-10); at most 2 rounds (LP-11).
+- `direction.check(..., frames=)` runs it. An inventory without LP scores is REVIEW. An animated element the balance did
+  not choose is REVIEW, and its tier is shown. LP-09 follows the owner's weather choice (12:13 UTC): snow only in S08;
+  the other scenes get clear sky, mist, frost glint, wind with smoke and breath.
+- Tests: `test_direction.py` +3 (fixture gains LP scores, mist and sky). $0.
+
+## 2026-11-14 — The living effects in `directed25d` (`production/living_fx.py`): the old effects back, snow, glints, breath, wind
+- The owner: the director missed the sun's glints and rays, the wind, the trees and the snow. Fable's audit: the new
+  renderer had lost the old `layers25d` effects (`dust` was even accepted with no drawing).
+- New `production/living_fx.py`, dispatched from `directed25d._effects`. Every effect is a pure function of the frame,
+  sits in picture space and is covered by what stands in front of it:
+  - particles in three depth layers: `snow`, `rain`, `embers` (rising from their fire), `dust`, and `spindrift` (snow blown
+    low along the ground);
+  - light: `sun_glint` (a breathing disc, a streak, soft spikes, two flare ghosts; near objects block it), `glint` (ice
+    and snow sparkle on bright, pale spots), `stars`, and `light_fade` (the light going);
+  - air: `breath` (an exhale puff every ~3.4 s) and `steam`, both built on the smoke plume;
+  - surfaces: `foliage_sway` (the top moves, the base holds), `cloth_flap`, `wire_sway`, `water_shimmer`;
+  - `subject_sway`: a figure breathes about its feet. Its layer matrix only; no body animation (LP-02).
+- One wind per shot (`scene.wind` -> `plan["wind"]`): smoke, snow, grass and cloth lean the same way. Effect targets may
+  now name an object mask (`target.mask`).
+- `direction.py`: new ops `breath`, `spindrift`, `light_fade` in EFFECT_OPS, the families and the living kinds.
+- Calibrated by eye on S01 (sun glint, frost glints, wire, grass) and S08 (snow, dust). Strength 1.0 is clearly visible.
+- Tests: `test_directed25d.py` +17. Every new effect moves and is pure. Snow falls behind a near object and in front of
+  the far field. The direction test now expects snow to be drawable. 159 passed in the touched suites, docs_lint 0. $0.
+
+## 2026-11-14 — The owner's 12:37 UTC cards in the 2.5D rules (via the rules-reconciliation thread)
+- Q2 "5 s stays" (BP-109): a 2.5D shot is at most 5 s. BP-200's 8 s steps (LP-07 cap, LP-10 people route) are now 5 s.
+  Truce S02_SH008 (11 s), S08_SH002 (9.75 s) and S05_SH020 (7.8 s) are therefore ROUTE LP-10: split or LTX. The owner
+  decides which.
+- Still-by-design: "the camera never fully stops". `qa/motion_intent.intent_rows(..., duration_s=)`:
+  - `still_is_still` now fails only a deliberate move: a push or pull at BP-21's slowest rate (0.5 %/s) or faster, or a
+    pan over 0.25 %/s (engineering default);
+  - the new row `camera_breathes` (REVIEW) flags a dead camera.
+  The old fixed-threshold assertion still holds; a new test covers drift, dead camera and push.
+- `living.plan`: P3 elements take free slots under the cap, as section 0 of Fable's rules says ("P3 only if room
+  remains"). His scratch code took P3 only to reach the floor.
+- Q1 "as an accent" (snappy zoom vs BP-21) is BP-197's word-tied snap. The BP-21 text is written by the reconciliation
+  thread after #188.
+
+## 2026-11-14 — The director chooses the living frame itself; the scene's weather is a ceiling (the owner, 12:38 and 12:40 UTC)
+- The owner (12:40 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWYVRnJpwAAtZdA2Y88V1xkZ): the director has the words, the photo and
+  the list of tools and effects, and decides the best living variant itself. The round 3 (C4) directions had their
+  effects, LP scores and parameters typed per shot by hand. That render was stopped after S01.
+- New `production/living_director.py`. The director's eye writes only what it sees: elements with kind, place, share of
+  the frame, light points, and flags (thin strokes, cloth on a body, body motion). `direct` then decides, with a reason
+  for each decision:
+  - `candidates`: each element becomes the effects its kind allows (`VARIANTS`, the renderer's catalogue). Each is scored
+    by LP-04: words that name it 2, words that evoke it 1 (`EVOKES`), share, distance to the shot's focus, clean motion,
+    cost. A fire's smoke or sparks need open sky or size. The light fade needs words that say the light changes.
+  - Breath comes from the faces YuNet finds in a cold scene, from the mouth landmarks. Faces in a `depicted` region (a
+    photo in the hands) and scores under 0.8 (false hits on drawn skies) are dropped.
+  - `living.plan` picks; the LP-08 floor outside the light family now swaps the lowest light pick for the best non-light
+    candidate when the cap is full. It was only reported before.
+  - `choose_camera`: a word that names a part gets an accent on that word (a push, or a truck across the frame; ease-out
+    1.25 s, rise inside BP-197's 1 s). Before it, a base move at 1.5 %/s (inside BP-21): a pull when the words say the
+    light is going, a crane over an open landscape, a lean-in to faces, otherwise a slow push. A breathing hand follows,
+    so the camera never fully stops.
+- The owner (12:38 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X) supersedes BP-196's "the scene's weather is
+  in every shot". The scene's weather is now a ceiling.
+  - `decide_weather` lets each word of it in or out by (1) open sky, (2) the light (flakes need 30 % of the picture
+    darker than 0.7), (3) the picture (faces in frame keep the far flake layers only), (4) the words, (5) the previous
+    shot of the place. The record names the deciding criterion.
+  - `living.rows_of` adds weather only where it was let in.
+  - `direction._weather` FAILs falling snow or rain outside the ceiling, and weather left out without a reason.
+  - `weather_jumps` FAILs a jump between neighbours of one scene without a reason of the place or the words (CT-08).
+  - `living_fx` particles take `params.layers`.
+  - BP-196's text is amended.
+- The six Truce C4 directions were rebuilt this way. All six have 0 FAILs, and the weather has no jumps. Snow falls only
+  in S08, because only S08's scene has it, and there it reads on 98 % dark picture. S06 gets the light fade, a pull and
+  the sun path on the ice. S02 and S05_SH020 get the faces' breath.
+- Tests: new `test_living_director.py` (7). `test_direction.py`'s LP-09 case now lets the snow in through a weather record:
+  this follows the owner's decision, not a weakening. The touched suites pass (64). Every new number (EVOKES, BASE_RATE,
+  FACE_SCORE, FACE_CLOSE, the flake contrast) is an engineering default (REVIEW, D-59). $0.
+
+## 2026-11-14 — The director chooses the sound by the same criteria (the owner, 13:13 UTC)
+- The owner (cmsg_01Hnu5zB86sjUj5GtTgaUkPWX1nj38fCbSqH5mWzZKXzHj): after seeing the photo, the director decides the audio
+  too, by the same criteria, and on the maps as well.
+- `living_director.choose_sound(events, ...)` works on any shot's VISIBLE events: a 2.5D effect or camera move, or a map
+  action (the map thread passes its actions). It applies the visual order:
+  1. Only what is seen or authored sounds; words never add a sound (BP-192, AV-07).
+  2. Does it make a sound in nature? Light, glints, stars, the light going, a candle, breath and mug steam are silent.
+     Snow, blown snow, a trembling wire, clouds and swaying plants are the wind bed. A fire is the fire bed.
+  3. Is it heard at its size? Under 0.5 % of the frame it is not heard over the bed; then distant, medium, close.
+  4. The words name it: one step closer.
+  5. The neighbours: the previous shot's bed of the same place continues.
+  Further rules:
+  - Indoors there is no wind.
+  - A cold scene never gets insects or birdsong.
+  - Map actions and camera moves use `episode/events.DEFAULTS`: a route draws with `map_route_draw`, a label is silent,
+    and a camera move is silent.
+  - Takes come from the one library through `episode/sound_plan`'s matcher. They are ranked by what the class must sound
+    like (a fire: crackle, campfire, brazier), then by the place's words. A take from a later world (a garage, a motel)
+    drops to the end.
+  - A class without a real take is `review_required` and listed under `needs` (today: `map_line_snap`, `cloth_flap`).
+- `direct` writes `sound` (beds, events with their takes and reasons, the silent list, needs, coverage) and one audio track
+  that names them. The six Truce C4A directions now carry their sound with 0 FAILs:
+  - S01: wind (from the clouds; the small dugout fire is too far to hear);
+  - S02: fire medium (campfire crackles) and wind;
+  - S05_SH016 and S05_SH020: fire;
+  - S06: wind and fire;
+  - S08: wind (carried by the snow).
+- The C4A clips stay silent. They will be heard when G8 (cue sheet and stems) renders this plan. Nothing was mixed outside
+  the production path.
+- Tests: `test_living_director.py` +3 (the sound follows the picture, not the words; map actions and needs; one audio
+  track). $0.
+
+## 2026-11-14 — P1 round 2 ends: C4A (the director's own choice) on the six photos, results and verdict; stop before P2
+- Six C4A clips rendered by `directed25d` + `living_fx` from directions chosen by `living_director` (effects, weather, camera,
+  sound). All six have 0 direction FAILs. Measured against C3:
+  - frozen seconds went from 42 to 1;
+  - whole-frame change: S08 0.06 -> 4.04 %/s, S05_SH016 0.1 -> 6.64, S02 1.13 -> 5.1, S05_SH020 2.55 -> 5.77; S01 and S06
+    are level (4.94 -> 5.15, 6.85 -> 6.14, with S06's local change 1.44 -> 3.82).
+- Honest verdict:
+  - by the numbers, 4 of 6 are clearly better and none clearly worse; by eye all six are more alive;
+  - breath is too faint, and the sun flare needs the owner's eye;
+  - S02, S08 and S05_SH020 are over 5 s (LP-10: split or LTX).
+- `intended_move` is NOT_RUN on all six, because the auto directions write no `expect` block. That is a P2 item.
+- Reel, table, verdict and the P2 handoff: project files
+  `stage_b_round2_2026-11-14/P1_RESULTS_AND_P2_HANDOFF_2026-11-14.md`, and HF
+  `stage_b_round2_2026-11-14/c4a_director_choice/`. $0. P1 stops for the owner's verdict.
+
+## 2026-11-14 — C5: the eye review's fixes, the root causes and five gates that now see them (the owner, 13:29 and 13:39 UTC)
+
+The Sonnet eye review of C4A (`stage_b_round2_2026-11-14/c4a_review/REVIEW_C4A_BY_EYE_ka.md`) found four defects that no
+gate saw. The owner asked for the cause in the code and for gates that catch them next time. Root causes (incident journal,
+13:45 UTC):
+
+- **Scalloped seam round layered people** (S02, S05_SH016, S06, S08, frame 0): `directed25d._rest_background` cut every
+  piece an opening removed from a mask as a "thin stroke", each grown by a 21 px disc. Rough outlines (hair, coat, card rim)
+  gave 100-185 nubs per mask, so the plate showed round every bite. Fix: `Stage._strokes` keeps only real strokes (long
+  side >= `STROKE_LEN` disc widths, mean width < the disc). Gate `rest_seam` (FAIL, an invariant: frame 0 is the picture)
+  counts plate pixels inside the outline SAM cut per outline pixel. C4A renderer 0.68-1.28, fixed renderer 0.00-0.04,
+  FAIL above 0.15.
+- **People and objects cut by the frame**: `view()` only kept the view inside the picture. Fix: the safe zone.
+  `living_director.keep_in_frame` writes every live face (the person whole, or head and chest when the picture already cuts
+  them) and, as soft entries, the lights the chosen effects animate. `direction.resolve` passes it to the plan.
+  `Stage._frame_people` caps the zoom, moves the centre, never past the picture's edge, and drops the soft items first.
+  Gate `people_in_frame` (FAIL above 1 %).
+- **S05_SH020's truck came out as a centred zoom**: `living_director._centre` ignored a crowd's `parts`, so both groups sat
+  at [0.5, 0.5]. The renderer also kept the first push's recentre, so the truck had no room. Fixes: `parts` are read,
+  `TRUCK_STRENGTH` is 2.0, a truck recentres too, and a later aim hands over from the earlier one. An early named word
+  (< `ACCENT_LEAD_S`) is carried by the base move (S05_SH016's 8.7 % jump in 1.2 s). The base rate drops to BP-21's minimum
+  before an accent. Gates: `aim_on_target` (FAIL: an aimed move points inside its object) and `camera_segments` (FAIL: each
+  move in its own frames, measured directly by `liveliness.motion_between`, because the chained `camera_curve` lost half
+  of a slow zoom).
+- **Effects unnoticed in 3 s**. Causes:
+  - the shaft gain was 0.40 and did not grow;
+  - mist was 0.10 + 0.22 n;
+  - cloud drift was 0.012 W over the whole shot (2 px/s on S02);
+  - the noise tiles scrolled in whole tile pixels (7 px steps);
+  - stars were 0.9 and snow 260.
+
+  Fixes:
+  - `living_fx.swell` takes the sun glint and shafts from 0.35 to 1 in 2.5 s, with a wide bloom and a +-8 % sky pulse;
+  - the shafts are x2.5 and sway +-6 degrees;
+  - mist moves as two banks at 40 and 65 px/s, scrolled sub-pixel (`_tile_smooth`);
+  - a cloud-light sweep runs at ~30 px/s;
+  - snow is 420 with bigger near flakes, stars x2.4, candle x1.3.
+
+  Gate `effect_seen_3s` (REVIEW, an engineering default under D-59): each effect's own contribution must change by
+  >= 10 levels (95th percentile) within 3 s.
+
+All new numbers are engineering defaults, marked in the code. Tests: `tests/unit/test_c4a_review_fixes.py` (8). Each gate
+catches the old defect on a synthetic picture, and each fix passes it.
+
+## 2026-11-14 — Maps: the director's sound criteria move from the clips lane's test driver into `choose_sound`
+
+The maps thread's free test (`stage_b_round2_2026-11-14/map_sound_criteria/`) had applied map criteria in its own driver
+(`map_test_build.py`, an episode-pinned `ARMY_TOKENS`). They are now `living_director.choose_sound(..., map_view=...)`
+criteria, read from the action and never pinned to a shot. `sound_of_map` hands a map shot's actions to the chooser.
+
+- `cues: none` is silent (nothing is seen drawn). It was ignored before.
+- A date chip (`from: chip_*`, or a month or year in its label) gets a period tag sound. `DATE_CLASSES` (stamp,
+  typewriter) go to `needs` because the library has no such take; until then it plays `ov_slide` paper foley.
+- A `marker_travel` whose token, label, words or place name an army gets a distant `army_march` over its span.
+- A counter gets `COUNTER_TICKS` ticks spaced by its cosine ease and one knock `COUNTER_KNOCK_LEAD_S` before it stops
+  (BP-192). The AV default riser (`data_rise_texture`) is gone.
+- The same op on one frame plays one sound (BP-192 max_at_once). The second and later pulses of a line become the wood tick
+  (BP-81: one thud per line).
+- The map's own bed: a front line seen at <= `MURMUR_SPAN_KM` is a far `crowd_murmur`, otherwise the land's far wind
+  (never digital silence). Criterion 5 carries a bed to the next shot.
+
+Replayed on the 5 maps of the test, it gives the same events as the driver, plus the bed. Tests:
+`test_maps_get_their_own_bed_date_stamps_counter_ticks_and_respect_cues_none` and
+`test_a_real_map_shot_takes_its_sound_through_the_same_chooser`. Library gaps: no stamp, typewriter, pin, cough or snap
+take. New takes are paid, so they wait for the owner.
+
+## 2026-11-14 — C5 eye check before sending: the stronger effects smeared a face; fixed, with a `face_intact` gate
+
+My own look at the first C5 renders found new defects caused by the stronger effects: S06's face smeared sideways and its
+sun disc stretched (cloud drift travel 0.04 W over a blurred sky mask), and the S05_SH020 heads were washed out (shaft and
+sun bloom).
+
+Fixes:
+- the sky slides only where the frame's own depth is far (`SKY_FAR`), never on a kept person (`Stage.people_field`) or
+  the sun disc;
+- `CLOUD_TRAVEL_MAX` is back to 0.012 W, and the cloud light sweep carries the visible motion;
+- the shaft gates by far**3, and the shaft and bloom keep `PEOPLE_SHIELD` off people.
+
+New FAIL gate `face_intact`: each kept face against its first frame, with the camera taken out. The smeared face measured
+0.34, intact faces 0.75 and up, FAIL below 0.80 (engineering default), and faces under 60 px are not judged. Test:
+`test_clouds_and_sun_light_stay_off_a_kept_person_and_a_smeared_face_fails`.
+
+Reworked the same day after a false FAIL on S05_SH020 (intact faces, measured 0.40): the first version compared fixed
+crops, so a face the background's warp moved by a few pixels read as damaged. Now `Stage.face_crop` resamples each face to
+`FACE_GRID` px per face width with a `FACE_PAD` rim, and `Stage.face_likeness` searches the first-frame crop inside a
+window `FACE_SEARCH` wider (normalised template match): a small misplacement is searched out, a smear is not. Calibrated
+on the clips: the smeared S06 face 0.80, intact faces 0.96-0.99, so FAIL below 0.88 (engineering default, D-59 REVIEW
+until sourced). Faces narrower than `FACE_MIN_PX` 55 px at 1080p are not judged: a 45-55 px face in moving mist with a
+nearer man sliding past scored 0.76 while intact (S05_SH020, checked by eye), too close to a smear. So S05_SH020's crowd
+of eleven small faces is NOT_RUN on this gate and was checked by eye; the gate still judges S02 (0.97) and S06 (0.98).
+
+## 2026-11-14 — C5 sun light burned the sky to white; screen mix with a ceiling and a `blown_out` gate
+
+The coordinator's eye check of the C5 reel: S01's frame centre was blown out to near white. Measured on the clips (share
+of the frame with luma >= 245 and local detail under 2 levels): S01 10 %, S05_SH016 13 %, S05_SH020 11 %, against
+0.0-0.5 % for the untouched pictures and 3 % for C4A.
+
+Root cause: `directed25d.Stage.render` (`sun_shaft`) and `living_fx.sun_glint` (the bloom) ADDED their light
+(`rgb + colour * amount`) with no ceiling; after the x2.5 strength of the C4A review, a pale dawn sky with 15-25 levels of
+headroom clipped to flat white and lost its clouds. No gate measured clipping.
+
+Fixes:
+- `living_fx.screen`: light is a screen mix, lifting a pixel at most `LIGHT_CEIL` (bloom 0.55) or `SHAFT_CEIL` (shaft 0.7)
+  of its way to white, so it never passes white and the clouds keep (1 - ceiling) of their detail;
+- the shaft reads by contrast instead of by burning: the gaps between rays dim by up to `SHAFT_SHADE` 0.22 (chosen so the
+  existing seen-in-3-s test still passes; 0.12 measured 7.0 levels against the 10-level floor);
+- only the small sun core (disc above 0.9) may burn to white.
+
+New gate `blown_out` (`qa/motion_intent.blown_out_row`, `Stage.blown_share`): the frame's newly flat-white share beyond
+the picture's own; REVIEW above 1 % (engineering default, D-59). `face_intact` now counts the faces it actually judged,
+so a shot whose faces are all too small reads NOT_RUN instead of a PASS on nothing. Test:
+`test_light_lifts_a_pale_sky_without_burning_it_and_a_burned_frame_is_flagged`. Re-rendered S01, S06, S05_SH016 and
+S05_SH020 (the shots with a sun).

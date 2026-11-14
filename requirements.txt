@@ -15,3 +15,4 @@ scenedetect>=0.6
 scikit-image>=0.22
 imagehash>=4.3
 anthropic>=2.3  # llm/claude_api.py (P0d); imported lazily, the tests use a fake client
+# optional: torch (CPU), spandrel, lpips: finish/superres.py (the free model upscale, GC-14 promote); without them it is NOT_RUN

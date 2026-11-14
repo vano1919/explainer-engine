@@ -908,7 +908,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/edit/motion_lint.py:BP-21"
+    "explainer_engine/edit/motion_lint.py:BP-21",
+    "explainer_engine/qa/motion_intent.py:intent_rows",
+    "explainer_engine/production/living_director.py:choose_camera"
    ],
    "supersedes": [
     "(new: UR-13 had a range, no rate)"
@@ -7268,7 +7270,8 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/production/layers25d.py:ALIVE_MIN"
+    "explainer_engine/production/layers25d.py:ALIVE_MIN",
+    "explainer_engine/production/direction.py:ALIVE_MIN"
    ],
    "supersedes": [],
    "decided": "the creator, 2026-11-12 (v4.3 plan section 0.4, answer Q4: the 2.5D shots must feel animated, not like stills with a camera move)"
@@ -7530,6 +7533,159 @@
     "OV-56's 'NOT_RUN in the demo' (a demo is built from the library too)"
    ],
    "research": "2026-11-12 (W1): on the overlay demo the bed-only spectra of 12 shots (cave, river, maps, charts, an LTX clip) lie within 0.03-0.05 of each other in every band; the level spread of a 100 ms window did not tell the numpy wind (1.75 dB) from LTX's real battle sound (1.81 dB), so the level test of the plan's draft was dropped. 0.05 is the engineering line until real beds of different places are measured."
+  },
+  {
+   "id": "BP-194",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A photo shot is alive, measured on its frames (the owner, 2026-11-14: the P1 round 2 clips stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day): the frame changes at least change_floor_pct_s per second by the 2026-11-12 reference method (128x72 grey, frames one second apart, mean absolute difference; the Gemini demo's photo shots measured reference_pct_s); no frozen_window_s window changes less than frozen_change_pct of the frame (a pixel counts above 12 grey levels; Fable's living-photo rules G-LIVE-1 of 2026-11-14 measured the deadest second of the four clips the owner rejected at 0.4-1.2 % and of the two moving ones at 39-49 %, and raised the audit's 2 % to 5 % so S05_SH020's still part is caught), so the camera may stand but the world may not; and with the camera taken out (each pair aligned by its similarity transform) the frame still changes local_floor_pct_s per second (calibrated on the six P1 round 2 C3 clips the owner called static: 0.06-1.44 %/s, S01 2.3 %/s mostly crane parallax, which this measure cannot tell from living motion, so the living inventory of BP-196 stays the main guard). The numbers are one measurement (the reference demo) and engineering defaults until the owner sets them or two source types back them.",
+   "thresholds": {
+    "change_floor_pct_s": 3.6,
+    "reference_pct_s": [
+     3.6,
+     12.2
+    ],
+    "frozen_window_s": 1.0,
+    "frozen_change_pct": 5.0,
+    "local_floor_pct_s": 2.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/liveliness.py:liveliness_rows"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-195",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The camera follows the words (the owner, 2026-11-14, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2SvHqtHd2XF1GyLPoL9Gnw): when the spoken words name a part of the picture, a camera move towards that part starts between lead_s before and lag_s after the word, and within settle_s of the word the part is on screen at least area_grow_min times larger or centre_gain_min (share of the frame) nearer the centre. The director's file names the part per word (BP-196); the numbers are engineering defaults.",
+   "thresholds": {
+    "lead_s": 0.5,
+    "lag_s": 0.25,
+    "settle_s": 1.0,
+    "area_grow_min": 1.08,
+    "centre_gain_min": 0.05
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/liveliness.py:word_focus_row",
+    "explainer_engine/production/direction.py:check"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-196",
+   "area": "stills",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the owner, 2026-11-14 (P1 round 2 thread, messages of 15:38-15:45 Tbilisi, the last cmsg_01Hnu5zB86sjUj5GtTgaUkPW2SvHqtHd2XF1GyLPoL9Gnw: the director sees the photo as an opportunity and moves everything the photo allows; sun glints and rays, wind, trees and snow were missed; the text decides the objects and the surroundings)",
+   "statement": "The director's file of a photo shot carries a living inventory: every element of the picture that moves in nature (sky, sun, cloud, mist, precipitation, plants, cloth, water and ice, fire, smoke and steam, breath, stars, glints) from the fixed checklist, with where it is, and each gets an effect or a written reason why not; the weather and the surroundings the script's words name (snow, wind, dawn) are written at scene level, and the scene's weather is a ceiling, not a fill (the owner, 2026-11-14 12:38 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X, superseding 'in every shot of the scene'): no snow where the scene has none, and inside the ceiling the director decides each shot's weather by open sky, light, what the picture shows, the words and the neighbours, records which criterion decided, and falling weather outside the ceiling, weather left out without a reason or a jump between neighbours without one FAILs; the director chooses the effects itself from the words, the photo and the renderer's catalogue with a reason per choice (the owner, 12:40 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWYVRnJpwAAtZdA2Y88V1xkZ; production/living_director); a living kind named in the director's own description or in the shot's words but missing from the inventory FAILs; still_by_design means only that the camera stands, never that nature freezes (BP-185 has no exception); every part of the picture the shot's words name gets a camera move on that word (BP-195) or a written reason.",
+   "thresholds": {},
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/direction.py:check",
+    "explainer_engine/production/living_director.py:direct"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-197",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The camera of a photo shot is measured like the LTX clips' (zoom and shift from frame matching, the 2026-11-12 method, here per frame step): a shot that is not still by design moves at least zoom_min_pct of zoom or pan_min_pct of pan (the Gemini demo's photo shots: zoom 7-10 %, pan 5-8 % in 3-8 s; ours 4-5 % in 8-10 s), and a move the words call is snappy: its 10-90 % rise takes at most snap_s_max (the owner, 2026-11-14: zoom in and out snappier). A hold before the first word lasts at most hold_before_word_s_max and drifts. Engineering defaults from one reference measurement.",
+   "thresholds": {
+    "zoom_min_pct": 7.0,
+    "pan_min_pct": 5.0,
+    "snap_s_max": 1.0,
+    "hold_before_word_s_max": 2.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/liveliness.py:camera_rows",
+    "explainer_engine/production/direction.py:check",
+    "explainer_engine/production/living_director.py:choose_camera"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-198",
+   "area": "pictures",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A model upscale is accepted only when it measurably helps (upscale direction II.5, Fable's free test of 2026-11-14 against Gemini's own 2K pictures): Q1 the result shrunk back to the input keeps consistency_psnr_min_db (good models 33.6-48 dB, the colour-shifting ArtFaces model 23-24); Q2 no channel mean moves more than colour_shift_max of 255; Q3 the Laplacian variance is at least detail_gain_min times a plain resize's; Q4 at most oversharp_max times the anchor photo's (Lexica Sharp 4.5x looked artificial); Q5 the LPIPS distance to a plain resize stays under lpips_vs_plain_max (the chosen model 0.10-0.125, DeH264+Lexica 0.17-0.24); Q7 the core rows pass and, with an anchor photo, the result is nearer it than a plain resize. Otherwise the fallback model is tried, then the picture as it is goes to the reviewer. One measurement on three pictures: hypotheses until the owner or two source types set them.",
+   "thresholds": {
+    "consistency_psnr_min_db": 32.0,
+    "colour_shift_max": 2.0,
+    "detail_gain_min": 2.0,
+    "oversharp_max": 2.0,
+    "lpips_vs_plain_max": 0.15
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/finish/superres.py:qc"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-199",
+   "area": "pictures",
+   "status": "house",
+   "severity": "REVIEW",
+   "decided": "the owner, 2026-11-14 12:18 UTC (P1 thread, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWB5pdfaVx7mDTvjbhY4CsZD): when the best frame is taken from the end of a clip, the main parts decide, the person's position and face; the frame where the person is most still is cut out and upscaled",
+   "statement": "The frame a continuation, a crop or a still takes from a clip is chosen by its person first: among the candidate frames (the clip's tail, or after the spoken line and its tail, BP-187) the face's sharpness, stillness and box jitter weigh w_face, the body's stillness below the face w_body and the whole frame's sharpness and stillness w_frame; a face counts from YuNet score face_score_min; stillness compares each frame with settle_frames frames on each side. A window where no face is found is chosen by the frame alone and goes to the reviewer. The rule is the owner's; the weights are his priority written as engineering numbers until he or two source types set them.",
+   "thresholds": {
+    "w_face": 0.6,
+    "w_body": 0.3,
+    "w_frame": 0.1,
+    "face_score_min": 0.6,
+    "settle_frames": 2
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/finish/frame_pick.py:score"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-200",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The living-photo balance of a photo shot (Fable's LIVING_PHOTO_RULES of 2026-11-14, LP-01..LP-12; the owner's weather choice of 2026-11-14 12:13 UTC, LP-09): every element of the director's inventory gets a score w_text x text + scale + focus + quality + cost (text, focus, quality, cost 0..2; scale 0..3 by the share of the frame at scale_steps_pct); an element the words name that is not a dot, or a score of p1_score, is P1, then P2 from p2_score, P3 from p3_score; an element under dot_pct of the frame gets no effect of its own unless it is one of a group; a body that must move goes to LTX; a shot carries at most caps effects for durations up to cap_steps_s (beyond the camera and the always-on flames) and at least effects_min, non_light_min of them outside the light family, one of them a full-frame layer of moving air; the scene's weather is an element of every shot of the scene; people in a medium or close view longer than long_people_s go to LTX or are split; at most rounds_max director rounds. The owner, 2026-11-14 12:37 UTC (rule-reconciliation card Q2, journal architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md): a 2.5D shot stays at most 5 s (BP-109), so Fable's 8 s steps of the cap and of the people route are 5 s. The other numbers are proposals until the owner confirms them on a free rebuilt round.",
+   "thresholds": {
+    "dot_pct": 0.2,
+    "scale_steps_pct": [
+     0.2,
+     2.0,
+     15.0
+    ],
+    "w_text": 3,
+    "p1_score": 10,
+    "p2_score": 7,
+    "p3_score": 5,
+    "effects_min": 3,
+    "non_light_min": 2,
+    "rounds_max": 2,
+    "long_people_s": 5.0,
+    "cap_steps_s": [
+     4.0,
+     5.0
+    ],
+    "caps": [
+     4,
+     5,
+     6
+    ]
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/living.py:plan"
+   ],
+   "supersedes": []
   }
  ]
 }
