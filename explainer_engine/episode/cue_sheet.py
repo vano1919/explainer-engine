@@ -260,6 +260,8 @@ def build(plan: dict, sources: dict, library_root: Path, *, allow_placeholder: b
                              gain=LEVELS["ambience"] - BED_STEP_DB * k, fade_in=fi, fade_out=fo,
                              reverb="cave" if bed["room"] == "cave" else "dry", reason=f"bed of {bed['place']}: {why}",
                              confidence=CONFIDENCE["bed"], licence=_licence(items.get(iid)), loop=True, cls=cls))
+            if (items.get(iid) or {}).get("loop_window_s"):
+                rows[-1]["loop_window_s"] = [float(v) for v in items[iid]["loop_window_s"]]   # TD-339: the take's declared loop window
         rows.append(_row(f"TONE_{bed['bed_id']}", scene_id=None, shot_id=bed["shot_ids"][0],
                          asset_id=f"room_tone:{bed['room']}", start=a, end=b, layer="ambience", visual_event="room tone",
                          sync=None, gain=ROOM_TONE_DB, fade_in=fi, fade_out=fo,

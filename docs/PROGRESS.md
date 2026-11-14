@@ -6318,3 +6318,15 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   owner's card open, TD-333), G9 interim master drawn as a rehearsal (9024 frames = 376.0 s, 1920x1080 by TD-313/TD-334, -14.1 LUFS).
 - Stale text found: `docs/PRODUCTION_RULES.md` still names the G7 route `wan` (the route is `video`).
 - Cost $0 in this lane. Next: G10, then the owner's gunshot answer, a G8 re-run and a new mux.
+
+## 2026-11-14 — Truce 1914 beds (TD-338/339): mono-safe bed images and a loop window for the wind take
+- Diagnosis of the two BP-189 bed dips (201.50 s, 252.00 s): the wind take's `acoustics.widen` pair put the low band of BED_16 in
+  anti-phase (L/R correlation -0.8, mono 10 dB under its channels) and BED_17 sat on the take's own lull (35-47 s of a 49.3 s take).
+- `audio/stems.widen_best`: a bed row takes, from a fixed ordered list of 8 seeds (its own first, then `cue_id#1..#7`), the one with the
+  best L/R correlation over the row, ties to the first; no threshold, `widen` and the other layers unchanged. Wind rows: BED_16 corr
+  -0.80 -> 0.99 (mono -46.1 -> -36.2 dB), BED_17 -0.10 -> 1.00 (-39.5 -> -36.0), BED_19 0.11 -> 1.00, none worse.
+- Library records may carry `loop_window_s`; `cue_sheet` copies it to a bed row and `stems.play_row` loops only that window (existing
+  250 ms equal-power seam crossfade). The Truce view declares `wind_blowing__v1` 0-35 s. No take file edited. Seam measured: largest
+  sample step 0.0012 against 0.0023 at the bed's 99.9th percentile, no click.
+- Tests: `tests/unit/test_bed_stereo_and_loop_window.py` (anti-phase case picks a better seed, the window keeps the bed level, the sheet
+  carries the window). The -50 floor, BP-53 and BP-191 are untouched; the four duck-step rows stay REVIEW. Cost $0.

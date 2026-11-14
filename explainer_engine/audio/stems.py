@@ -234,6 +234,24 @@ def _rms(x: np.ndarray) -> float:
     return float(np.sqrt(np.mean(np.asarray(x, np.float64) ** 2))) if len(x) else 0.0
 
 
+WIDEN_SEEDS = 8      # TD-339: how many fixed seeds a bed row may choose from (an engineering default, not a threshold)
+
+
+def widen_best(x: np.ndarray, cue_id: str) -> np.ndarray:
+    """The row's stereo image: ``acoustics.widen`` with the one of a fixed ordered list of seeds (the row's own seed first, then
+    ``cue_id#1`` .. ``#7``) whose left and right channels correlate best over the whole row, ties to the first. A wide pair whose
+    low band falls in anti-phase loses up to 10 dB when a phone or a mono check sums it (TD-339, 201.5 s of the Truce demo);
+    ``widen`` itself is unchanged and no number is enforced: the best of the list is always taken."""
+    best, best_c = None, None
+    for k in range(WIDEN_SEEDS):
+        seed = acoustics.seed_of(cue_id if k == 0 else f"{cue_id}#{k}")
+        st = acoustics.widen(x, seed=seed)
+        c = float(np.corrcoef(st[:, 0], st[:, 1])[0, 1]) if len(st) > 1 and st.any() else 1.0
+        if best_c is None or c > best_c:
+            best, best_c = st, c
+    return best
+
+
 def play_row(row: dict, snd: "Sounds", k: int) -> np.ndarray:
     """One cue row as a stereo signal of exactly its duration: the take, its offset, pitch, loop or trim, level, low-pass,
     reverb, fades and pan (ambience is widened, music sits in the centre)."""
@@ -247,6 +265,9 @@ def play_row(row: dict, snd: "Sounds", k: int) -> np.ndarray:
                                 m / SR + 0.01, SR)[:m]
     else:
         x = snd.take(row, k)
+    win = row.get("loop_window_s")
+    if win and row.get("loop"):               # TD-339: a bed take loops only its declared window (before its own lull)
+        x = x[int(round(float(win[0]) * SR)):int(round(float(win[1]) * SR))]
     x = x[int(round(row.get("asset_offset_s", 0.0) * SR)):]
     x = _ratio(x, float(row.get("pitch", 1.0)))
     if row.get("loop"):
@@ -257,7 +278,7 @@ def play_row(row: dict, snd: "Sounds", k: int) -> np.ndarray:
     x = _reverb(x, row.get("reverb", "dry"), row["cue_id"])
     x = _fades(x.copy(), int(row["fade_in_s"] * SR), int(row["fade_out_s"] * SR))
     if row["layer"] == "ambience":
-        st = acoustics.widen(x, seed=acoustics.seed_of(row["cue_id"]))[: len(x)]
+        st = widen_best(x, row["cue_id"])[: len(x)]
     elif row["layer"] == "music":
         st = acoustics.pan(x, 0.0) * acoustics.CENTRE_GAIN
     else:
