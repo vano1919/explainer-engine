@@ -6330,3 +6330,21 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   sample step 0.0012 against 0.0023 at the bed's 99.9th percentile, no click.
 - Tests: `tests/unit/test_bed_stereo_and_loop_window.py` (anti-phase case picks a better seed, the window keeps the bed level, the sheet
   carries the window). The -50 floor, BP-53 and BP-191 are untouched; the four duck-step rows stay REVIEW. Cost $0.
+
+## 2026-11-14 — D-139: the creator's video-chain rules of 2026-11-14 written in, the new plan reconciled with the old rules
+- Why: the coordinator asked (for the creator) that the 2026-11-14 plan (roadmap section M, the living-photo rules, the upscale
+  direction) be compared with every existing rule, the better rule written in, the risky rewrites kept in a journal, and the
+  real conflicts asked. Journal: `architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md` (project files), 34 rows, $0.
+- Written now (docs only, no code, no file of PR #188 touched): `VIDEO_LANE.md` VL-14 (anchors and chains planned in the script,
+  the director on the video route's photos), VL-15 (a link gate on every pair before the next paid wave), VL-16 (the hand-over
+  frame: last 1.5 s, the main person's face and pose at their stillest, the director picks by idea then quality, then the free
+  model upscale); VL-05 points to VL-16; CT-09 clarified; D-139. The worker `handover_frame` is untouched (the paid LTX test uses it).
+- Stale text found (ICW-01), kept and listed in the journal: roadmap J5 (direction only on 2.5D and maps) against its own M.0;
+  roadmap L-3 (a BP-185 exception) against the creator's later "nature never freezes"; roadmap M.8's general-x4v3 against
+  RealPLKSR; the upscale direction's U-2 ("as is") against his "then upscale"; BP-184 (LTX at most 15 %, J5 era) against
+  BP-109's 60 %; L25-01 (two segments) and L25-05 (no LaMa/SAM) against the roadmap.
+- Asked on cards: BP-21 against the snappy zoom; BP-109's 5 s against the living-photo rules' 8 s (12 of Truce's 24 2.5D
+  shots are longer than 5 s); a fully still camera against BP-181; snow in all four S08 shots or only S08_SH003.
+- Waits for PR #188 to merge (its files): BP-21/BP-109/BP-181/BP-184 in the registry, `superres.decide` U-2, AV-07's
+  director-word note, PROVENANCE rows for SAM 2.1, BiRefNet, LaMa, DA3 and MoGe-2.
+- Tests: `tests/unit/test_rules_d139.py`. docs_lint 0. Cost $0.
