@@ -149,3 +149,14 @@ def test_invented_detail_in_the_revealed_fill():
     r = MI.invented_detail(rings, new)
     assert r["ratio"] > MI.INVENT_RATIO_REVIEW and MI.invented_detail_row(r)["status"] == "REVIEW"
     assert MI.invented_detail_row(MI.invented_detail(g, np.zeros_like(new)))["status"] == "NOT_RUN"
+
+
+def test_still_by_design_keeps_a_drift_and_flags_a_dead_camera():
+    """The owner, 2026-11-14 12:37 UTC: on a still_by_design shot the camera never fully stops."""
+    img = np.dstack([_texture(540, 960, 5)] * 3).astype(np.uint8)
+    dead = MI.intent_rows("still_by_design", {}, MI.global_motion(img, img), duration_s=10.0)
+    assert dead[0]["status"] == G.PASS and dead[1]["status"] == G.REVIEW and "dead" in dead[1]["detail"]
+    drift = MI.intent_rows("still_by_design", {}, MI.global_motion(img, _zoomed(img, 1.02, dx=-5)), duration_s=10.0)
+    assert drift[0]["status"] == G.PASS and drift[1]["status"] == G.PASS          # 0.2 %/s of zoom over ten seconds
+    push = MI.intent_rows("still_by_design", {}, MI.global_motion(img, _zoomed(img, 1.06)), duration_s=3.0)
+    assert push[0]["status"] == G.REVIEW                                         # 2 %/s: a deliberate push

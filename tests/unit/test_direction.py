@@ -209,7 +209,7 @@ def test_lp_tiers_routes_and_weather():
     assert L.tier({"effect": "glow", "area_pct": 0.1, "text": 0, "focus": 1, "quality": 2, "cost": 2}) == "P3"   # a group
     assert L.tier({"effect": "wire_sway", "area_pct": 6, "text": 0, "focus": 1, "quality": 0, "cost": 0}) == "SKIP_QUALITY"
     assert L.tier({"effect": "fire", "area_pct": 1, "text": 2, "body_motion": True}) == "LTX"
-    assert (L.cap(3.0), L.cap(7.8), L.cap(11.0)) == (4, 5, 6)
+    assert (L.cap(3.0), L.cap(4.5), L.cap(7.8)) == (4, 5, 6)             # 5 s steps (the owner, 12:37 UTC)
     d = copy.deepcopy(BASE)
     d["scene"] = {"weather": ["snow"]}                       # LP-09 (the owner: snow only in S08): the scene adds its snow
     p = L.plan(d, 263 / 24)

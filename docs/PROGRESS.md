@@ -6441,3 +6441,17 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Calibrated by eye on S01 (sun glint, frost glints, wire, grass) and S08 (snow, dust). Strength 1.0 is clearly visible.
 - Tests: `test_directed25d.py` +17. Every new effect moves and is pure. Snow falls behind a near object and in front of
   the far field. The direction test now expects snow to be drawable. 159 passed in the touched suites, docs_lint 0. $0.
+
+## 2026-11-14 — The owner's 12:37 UTC cards in the 2.5D rules (via the rules-reconciliation thread)
+- Q2 "5 s stays" (BP-109): a 2.5D shot is at most 5 s. BP-200's 8 s steps (LP-07 cap, LP-10 people route) are now 5 s.
+  Truce S02_SH008 (11 s), S08_SH002 (9.75 s) and S05_SH020 (7.8 s) are therefore ROUTE LP-10: split or LTX. The owner
+  decides which.
+- Still-by-design: "the camera never fully stops". `qa/motion_intent.intent_rows(..., duration_s=)`:
+  - `still_is_still` now fails only a deliberate move: a push or pull at BP-21's slowest rate (0.5 %/s) or faster, or a
+    pan over 0.25 %/s (engineering default);
+  - the new row `camera_breathes` (REVIEW) flags a dead camera.
+  The old fixed-threshold assertion still holds; a new test covers drift, dead camera and push.
+- `living.plan`: P3 elements take free slots under the cap, as section 0 of Fable's rules says ("P3 only if room
+  remains"). His scratch code took P3 only to reach the floor.
+- Q1 "as an accent" (snappy zoom vs BP-21) is BP-197's word-tied snap. The BP-21 text is written by the reconciliation
+  thread after #188.

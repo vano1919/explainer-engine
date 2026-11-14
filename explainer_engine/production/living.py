@@ -127,10 +127,10 @@ def plan(d: dict, duration_s: float) -> dict:
     def non_light(cs):
         return sum(FAMILY.get(c.get("effect"), "light") != "light" for c in cs)
 
-    for r in rest:
-        if len(chosen) >= n:
+    for r in rest:                         # then P1, P2, P3 by score while room remains under the cap ("P3 only if room
+        if len(chosen) >= n:               # remains", the rules' section 0)
             break
-        if r not in chosen and (r["tier"] != "P3" or len(chosen) < EFFECTS_MIN or non_light(chosen) < NON_LIGHT_MIN):
+        if r not in chosen:
             chosen.append(r)
     if len(chosen) < EFFECTS_MIN:
         notes.append(f"FAIL LP-08: only {len(chosen)} living effects beyond the flames (the floor is {EFFECTS_MIN})")

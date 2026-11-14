@@ -261,7 +261,13 @@ def _light_fade(st, rgb, t):
 
 def _breath(st, rgb, depth, e, i, t, v, zoom, op):
     """Breath in the cold (a short puff from a mouth every few seconds) and steam (a thin steady wisp from a mug): the
-    smoke plume, small, pale, and for breath gated by an exhale clock."""
+    smoke plume, small, pale, and for breath gated by an exhale clock. ``params.points`` gives several mouths or mugs at
+    once (each on its own clock)."""
+    if e.get("params", {}).get("points"):
+        prm = {k: v_ for k, v_ in e["params"].items() if k != "points"}
+        for pt in e["params"]["points"]:
+            rgb = _breath(st, rgb, depth, {**e, "point": pt, "params": prm}, i, t, v, zoom, op)
+        return rgb
     prm = dict(e.get("params", {}))
     if op == "breath":
         period = float(prm.pop("period_s", 3.4))

@@ -7651,7 +7651,7 @@
    "area": "stills",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "The living-photo balance of a photo shot (Fable's LIVING_PHOTO_RULES of 2026-11-14, LP-01..LP-12; the owner's weather choice of 2026-11-14 12:13 UTC, LP-09): every element of the director's inventory gets a score w_text x text + scale + focus + quality + cost (text, focus, quality, cost 0..2; scale 0..3 by the share of the frame at scale_steps_pct); an element the words name that is not a dot, or a score of p1_score, is P1, then P2 from p2_score, P3 from p3_score; an element under dot_pct of the frame gets no effect of its own unless it is one of a group; a body that must move goes to LTX; a shot carries at most caps effects for durations up to cap_steps_s (beyond the camera and the always-on flames) and at least effects_min, non_light_min of them outside the light family, one of them a full-frame layer of moving air; the scene's weather is an element of every shot of the scene; people in a medium or close view longer than long_people_s go to LTX or are split; at most rounds_max director rounds. Proposals until the owner confirms them on a free rebuilt round.",
+   "statement": "The living-photo balance of a photo shot (Fable's LIVING_PHOTO_RULES of 2026-11-14, LP-01..LP-12; the owner's weather choice of 2026-11-14 12:13 UTC, LP-09): every element of the director's inventory gets a score w_text x text + scale + focus + quality + cost (text, focus, quality, cost 0..2; scale 0..3 by the share of the frame at scale_steps_pct); an element the words name that is not a dot, or a score of p1_score, is P1, then P2 from p2_score, P3 from p3_score; an element under dot_pct of the frame gets no effect of its own unless it is one of a group; a body that must move goes to LTX; a shot carries at most caps effects for durations up to cap_steps_s (beyond the camera and the always-on flames) and at least effects_min, non_light_min of them outside the light family, one of them a full-frame layer of moving air; the scene's weather is an element of every shot of the scene; people in a medium or close view longer than long_people_s go to LTX or are split; at most rounds_max director rounds. The owner, 2026-11-14 12:37 UTC (rule-reconciliation card Q2, journal architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md): a 2.5D shot stays at most 5 s (BP-109), so Fable's 8 s steps of the cap and of the people route are 5 s. The other numbers are proposals until the owner confirms them on a free rebuilt round.",
    "thresholds": {
     "dot_pct": 0.2,
     "scale_steps_pct": [
@@ -7666,10 +7666,10 @@
     "effects_min": 3,
     "non_light_min": 2,
     "rounds_max": 2,
-    "long_people_s": 8.0,
+    "long_people_s": 5.0,
     "cap_steps_s": [
      4.0,
-     8.0
+     5.0
     ],
     "caps": [
      4,

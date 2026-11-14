@@ -22,6 +22,7 @@ import math
 import numpy as np
 
 from explainer_engine.qa import gates as G
+from explainer_engine.standards import sourced_rules as SR
 
 ANALYSIS = (960, 540)
 REVEAL_SHARE_REVIEW = 0.02      # newly visible fill wider than REVEAL_THIN_PX: share of the frame (engineering default)
@@ -37,7 +38,10 @@ SHARP_PICTURE_REVIEW = 0.25      # picture -> last frame: resampling alone costs
 REST_BAND_REVIEW = REVEAL_THIN_PX  # fill seen on frame 0 wider than this (px at 1080p): the picture is altered at rest (S01 C3 pole)
 INVENT_RATIO_REVIEW = 1.5          # edge density of the revealed fill over the real background round it (engineering default)
 INVENT_MIN_PIXELS = 400            # at the analysis size: below it the revealed fill is too small to judge
-STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # still_by_design: |scale - 1| and shift (% of width) at most this
+STILL_SCALE, STILL_SHIFT = 0.005, 0.3       # below both the camera is dead (|scale - 1|, shift % of width, first to last)
+# still_by_design (the owner, 2026-11-14 12:37 UTC: the camera never fully stops; a slow drift or breathing stays, only a
+# deliberate move is wrong): a push or pull at BP-21's slowest deliberate rate or faster, or a pan over DRIFT_SHIFT_PCT_S
+DRIFT_SHIFT_PCT_S = 0.25        # engineering default: a drift moves the picture at most this share of the width per second
 PERCEPTIBLE_SCALE, PERCEPTIBLE_SHIFT = 0.03, 1.0   # an intended move is visible at this scale change or shift (%)
 
 
@@ -76,17 +80,30 @@ def global_motion(a: np.ndarray, b: np.ndarray) -> dict | None:
             "shift_y_pct": round(float(M[1, 2] - (1 - s) * 135) / 480 * 100, 2), "inliers": int(inl.sum())}
 
 
-def intent_rows(intent: str, expect: dict, gm: dict | None, moves_from: int | None = None) -> list[dict]:
+def intent_rows(intent: str, expect: dict, gm: dict | None, moves_from: int | None = None,
+                duration_s: float | None = None) -> list[dict]:
     """The three cases of B.10: intended (did the planned move happen, in its direction, visibly?), minimal (under its caps?),
-    still_by_design (really still?). ``gm`` is the first-to-last global motion."""
+    still_by_design (no deliberate move, but not a dead camera either). ``gm`` is the first-to-last global motion;
+    ``duration_s`` turns the still case into rates (without it: a move below the perceptible one is a drift)."""
     if gm is None:
         return [G.row("intent_measured", None, "no global motion could be measured")]
     ds, sx, sy = gm["scale"] - 1.0, gm["shift_x_pct"], gm["shift_y_pct"]
     rows = []
     if intent == "still_by_design":
-        ok = abs(ds) <= STILL_SCALE and abs(sx) <= STILL_SHIFT and abs(sy) <= STILL_SHIFT
-        rows.append(G.row("still_is_still", ok, f"scale {gm['scale']}, shift {sx} / {sy} % (still: within {STILL_SCALE} and "
-                          f"{STILL_SHIFT} %)", gm, level=G.REVIEW))
+        if duration_s:
+            rate, pan = abs(ds) / duration_s, max(abs(sx), abs(sy)) / duration_s
+            lim_s, lim_t = float(SR.T("BP-21", "rate_min_per_s")), DRIFT_SHIFT_PCT_S
+            ok = rate < lim_s and pan <= lim_t
+            what = (f"scale {rate * 100:.2f} %/s, pan {pan:.2f} %/s (a drift stays under BP-21's {lim_s * 100:g} %/s and "
+                    f"{lim_t} %/s)")
+        else:
+            ok = abs(ds) < PERCEPTIBLE_SCALE and abs(sx) < PERCEPTIBLE_SHIFT and abs(sy) < PERCEPTIBLE_SHIFT
+            what = f"scale {gm['scale']}, shift {sx} / {sy} % (a drift stays below {PERCEPTIBLE_SCALE} and {PERCEPTIBLE_SHIFT} %)"
+        rows.append(G.row("still_is_still", ok, "no deliberate move: " + what, gm, level=G.REVIEW))
+        dead = abs(ds) <= STILL_SCALE and abs(sx) <= STILL_SHIFT and abs(sy) <= STILL_SHIFT
+        rows.append(G.row("camera_breathes", not dead, f"scale {gm['scale']}, shift {sx} / {sy} %: "
+                          + ("the camera stands dead (the owner: a slow drift or breathing stays)" if dead else "it drifts"),
+                          gm, level=G.REVIEW))
     elif intent == "minimal":
         cap_s, cap_t = float(expect.get("max_scale_change", 0.03)), float(expect.get("max_shift_pct", 1.5))
         ok = abs(ds) <= cap_s and abs(sx) <= cap_t and abs(sy) <= cap_t
