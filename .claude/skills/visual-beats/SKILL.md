@@ -106,6 +106,18 @@ The mixer auto-varies playback: `audio/cues.py` renders 3 deterministic pitch va
 and the cue bus round-robins them, so two consecutive plays of one sound are never the identical sample (the "machine
 gun" bug). Variation is no licence for density: the writer still spaces the cues; the mixer only de-mechanises them.
 
+## Reveal on the word (HyperFrames, 2026-11-14)
+
+Source: `vendor/hyperframes-skills/hyperframes/references/film.md` and `references/types/explainer.md` (HeyGen's measured notes;
+one source type, guidance, REVIEW at most, D-59). They agree with VB-01 and BP-93 and add three practical points:
+
+- Everything on screen in the first quarter of a scene and then frozen reads as a slideshow. Spread the reveals over the back
+  half of the scene, each when the voice names it, so the narration needs separate phrases to cue on.
+- A read longer than its pictures makes the pictures pad with idle drift: shorten the words, never stretch the motion.
+- A diagram grows one part per named beat from its simplest true form; a finished diagram dropped on screen at once, bullet
+  slides, icons in circles and three cards in a row are the tells of a weak explainer. Labels sit on the part they name and
+  arrive with it.
+
 ## Check
 
 `python -m explainer_engine.production validate <script>`: 0 PV-44 FAIL on the estimated read, under the /3 semantics
