@@ -60,3 +60,11 @@ def test_rules_are_criteria_not_shot_facts():
     d139 = _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")
     assert "never as a fact tied to a shot or an episode" in d139
     assert "Truce S08)" not in d139  # the Truce result is not written as the rule
+
+
+def test_vl17_fits_the_script_and_prompt_to_the_start_picture():
+    row = _row("VIDEO_LANE.md", "VL-17")
+    for words in ("start inventory", "which hand", "free limb", "ground the picture shows",
+                  "continues the motion from the end state", "never opens a new scene", "OR-17", "recorded"):
+        assert words in row, words
+    assert "VL-17" in _row("DECISIONS_AND_OPEN_QUESTIONS.md", "D-139")

@@ -6355,3 +6355,6 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   Test `test_rules_d139.py` +1. The registry text (BP-21, and PR #188's living-inventory rule "weather in every shot of the scene") waits for PR #188.
 - 12:40 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWYVRnJpwAAtZdA2Y88V1xkZ): not only snow; the director picks the best living shot from the words, the picture and the
   tool list. D-139 and OR-22 now say rules are decision criteria, never facts tied to a shot ("snow only in S08" is Truce's result).
+- 12:47 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW4d2LUoKNqp9RzvrrvbNWEX): VL-17, the script and the prompt are fitted to the start picture
+  (anchor photo or hand-over frame) through a written start inventory: hands and what they hold, the ground, a continuation carries the motion
+  on. Cause: the S07 gun clips. Code in P2/P3; test `test_rules_d139.py` +1; incident journal entry written.
