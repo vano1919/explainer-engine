@@ -19,6 +19,11 @@ from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.episode import timing as ET
 from explainer_engine.production import continuity as CONT
+from explainer_engine.videolane import plan as VP
+
+RENDERER_SCRIPT_REL = VP.RENDERER_SCRIPT_REL
+DEFAULT_ENCODE_SETTINGS = {"codec": "libx264", "preset": "veryfast", "crf": 14, "pix_fmt": "yuv420p"}
+MAX_FRAME_DRIFT = 1
 
 DIPS = {
     "S01_SH005", "S02_SH009", "S03_SH010", "S04_SH015",
@@ -74,9 +79,26 @@ def compute_segment_cache_key(
     render_epoch: str,
     edit_entry: dict | None = None,
     source_sha256: str = "",
+    source_path: Path | str | None = None,
+    target_size: tuple[int, int] = TARGET_SIZE,
+    fps: int = FPS,
+    vf_chain: str = "",
+    encode_settings: dict | None = None,
     overlay_authority: str = "plate",
+    overlay_drawn: bool | None = None,
 ) -> str:
-    """Compute a deterministic cache key from all inputs that govern <sid>.mp4."""
+    """Compute a deterministic cache key from all inputs that govern <sid>.mp4 (always hashing the actual file when source_path exists)."""
+    actual_sha = (
+        _file_sha256(Path(source_path))
+        if (source_path is not None and Path(source_path).is_file())
+        else str(source_sha256 or "")
+    )
+    route_str = str(shot_spec.get("route") or "")
+    ov_drawn = (
+        bool(overlay_drawn)
+        if overlay_drawn is not None
+        else should_apply_segment_overlay(shot_spec, route_str, overlay_authority=overlay_authority)
+    )
     payload = {
         "shot_id": sid,
         "route": shot_spec.get("route"),
@@ -88,8 +110,13 @@ def compute_segment_cache_key(
         "timing_id": str(timing_id or ""),
         "render_epoch": str(render_epoch or ""),
         "edit_entry": edit_entry or {},
-        "source_sha256": str(source_sha256 or ""),
+        "source_sha256": actual_sha,
+        "target_size": [int(target_size[0]), int(target_size[1])],
+        "fps": int(fps),
+        "vf_chain": str(vf_chain or ""),
+        "encode_settings": dict(encode_settings or DEFAULT_ENCODE_SETTINGS),
         "overlay_authority": str(overlay_authority or "plate"),
+        "overlay_drawn": ov_drawn,
         "dip_to_black": sid in DIPS,
     }
     raw = json.dumps(payload, sort_keys=True, separators=(",", ":"))
@@ -141,11 +168,11 @@ def synchronize_episode_clock(
     """Retime and persist the single authoritative film clock before building segments or mixing audio."""
     episode_dir = Path(episode_dir)
     timing_doc = json.loads(Path(timing_path).read_text(encoding="utf-8"))
-    script_p = Path(script_path) if script_path else (episode_dir / "story" / "production_script.json")
+    script_p = Path(script_path) if script_path else (episode_dir / RENDERER_SCRIPT_REL)
     script_doc = json.loads(script_p.read_text(encoding="utf-8")) if script_p.is_file() else {}
     ep_p = Path(edit_points_path) if edit_points_path else (episode_dir / "planning" / "full_film_2026-11-15" / "edit_points.json")
     ep_doc = json.loads(ep_p.read_text(encoding="utf-8")) if ep_p.is_file() else {}
-    retimed = ET.retime_with_edit_points(timing_doc, script_doc, ep_doc)
+    retimed = ET.retime_with_edit_points(timing_doc, script_doc, ep_doc, episode_dir=episode_dir)
     dest = Path(out_timing_path) if out_timing_path else Path(timing_path)
     return ET.persist_authoritative_clock(retimed, dest)
 
@@ -187,11 +214,15 @@ def build(
 
     if timing_doc is None:
         timing_doc = synchronize_episode_clock(R, T_PATH)
-    elif "timing_id" not in timing_doc:
-        timing_doc = ET.retime_with_edit_points(timing_doc, {"shots": list((script_shots or {}).values())}, edit_points or {})
+
+    auth_clock_path = T_PATH if T_PATH.is_file() else (R / "audio" / "timing.json" if (R / "audio" / "timing.json").is_file() else None)
+    auth_clock = json.loads(auth_clock_path.read_text(encoding="utf-8")) if auth_clock_path is not None else timing_doc
+    align_findings = ET.verify_clock_alignment(auth_clock, timing_doc)
+    if align_findings:
+        raise ContractError(f"{sid}: clock alignment check failed in build_segments: {align_findings[0]['detail']}")
 
     if script_shots is None:
-        sc_doc = json.loads((R / "story" / "production_script.json").read_text(encoding="utf-8"))
+        sc_doc = json.loads((R / RENDERER_SCRIPT_REL).read_text(encoding="utf-8"))
         script_shots = {s["shot_id"]: s for s in sc_doc.get("shots", [])}
     if edit_points is None:
         ep_file = R / "planning" / "full_film_2026-11-15" / "edit_points.json"
@@ -203,16 +234,24 @@ def build(
     n = int(t_shot["frames"])
     timing_id = timing_doc.get("timing_id") or ET.compute_timing_id(timing_doc)
     render_epoch = timing_doc.get("render_epoch") or f"epoch_{timing_id}"
+    shot_align = ET.verify_clock_alignment(auth_clock, {"shot_id": sid, "timing_id": timing_id, "render_epoch": render_epoch, "frames": n})
+    if shot_align:
+        raise ContractError(f"{sid}: shot clock alignment check failed in build_segments: {shot_align[0]['detail']}")
+
     e = edit_points.get(sid, {}) if isinstance(edit_points.get(sid), dict) else {}
 
     src: Path | None = None
     ss = 0.0
     already_upscaled = False
+    rec_frames: int | None = None
     if route == "video":
         rec = json.loads((R / "production" / "video" / f"{sid}.json").read_text(encoding="utf-8"))
         src, ss, _is_trimmed = resolve_video_source(R, rec, allow_raw_fallback=False)
         already_upscaled = bool(rec.get("upscaled_to_target") or rec.get("upscaled_once"))
-        src_sha = rec.get("clip_sha256") or _file_sha256(src)
+        if rec.get("frames") is not None:
+            rec_frames = int(rec["frames"])
+        # Always hash the actual trimmed file on disk, never trusting a stale rec["clip_sha256"]
+        src_sha = _file_sha256(src)
     else:
         full_clip = R / f"production/shot_clips/{sid}.mp4"
         if full_clip.is_file():
@@ -232,20 +271,19 @@ def build(
             src = cat
             src_sha = _file_sha256(src)
 
-    out = W / "seg" / f"{sid}.mp4"
-    cache_key = compute_segment_cache_key(
-        sid, sh, t_shot,
-        timing_id=timing_id,
-        render_epoch=render_epoch,
-        edit_entry=e,
-        source_sha256=src_sha,
-        overlay_authority=overlay_authority,
-    )
-    if is_segment_cache_valid(out, cache_key):
-        return sid, "cached"
-
     raw_d = dur(src)
     avail_frames = max(1, int(round((raw_d - ss) * FPS)))
+    if rec_frames is not None and abs(n - rec_frames) > MAX_FRAME_DRIFT:
+        raise ContractError(
+            f"{sid}: REVIEW/FAIL — clock frames ({n}) drift from clip record frames ({rec_frames}) by "
+            f"{abs(n - rec_frames)} frames (> {MAX_FRAME_DRIFT} frame tolerance); refusing to silently pad/truncate"
+        )
+    if abs(n - avail_frames) > MAX_FRAME_DRIFT:
+        raise ContractError(
+            f"{sid}: REVIEW/FAIL — clock frames ({n}) drift from source media frames ({avail_frames}) by "
+            f"{abs(n - avail_frames)} frames (> {MAX_FRAME_DRIFT} frame tolerance); refusing to silently pad/truncate"
+        )
+
     pad = max(0, n - avail_frames)
     if route == "video":
         vf = f"fps={FPS}" + (f",tpad=stop_mode=clone:stop={pad},tmix=frames=3:weights='1 2 1'" if pad > 0 else "")
@@ -276,10 +314,29 @@ def build(
     if sid in DIPS:
         vf += f",fade=t=out:st={max(0.0, (n - 10) / FPS):.3f}:d={10 / FPS:.3f}"
 
+    out = W / "seg" / f"{sid}.mp4"
+    cache_key = compute_segment_cache_key(
+        sid, sh, t_shot,
+        timing_id=timing_id,
+        render_epoch=render_epoch,
+        edit_entry=e,
+        source_sha256=src_sha,
+        source_path=src,
+        target_size=TARGET_SIZE,
+        fps=FPS,
+        vf_chain=vf,
+        encode_settings=DEFAULT_ENCODE_SETTINGS,
+        overlay_authority=overlay_authority,
+        overlay_drawn=overlay_drawn,
+    )
+    if is_segment_cache_valid(out, cache_key):
+        return sid, "cached"
+
     run(
         "ffmpeg", "-y", "-v", "error", "-ss", f"{ss:.4f}", "-i", str(src),
-        "-vf", vf, "-frames:v", str(n), "-an", "-c:v", "libx264",
-        "-preset", "veryfast", "-crf", "14", "-pix_fmt", "yuv420p", str(out),
+        "-vf", vf, "-frames:v", str(n), "-an", "-c:v", DEFAULT_ENCODE_SETTINGS["codec"],
+        "-preset", DEFAULT_ENCODE_SETTINGS["preset"], "-crf", str(DEFAULT_ENCODE_SETTINGS["crf"]),
+        "-pix_fmt", DEFAULT_ENCODE_SETTINGS["pix_fmt"], str(out),
     )
     seg_meta = {
         "schema": "segment_build_record/1",

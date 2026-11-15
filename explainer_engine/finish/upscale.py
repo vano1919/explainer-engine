@@ -58,12 +58,18 @@ def probe_size(path: Path | str) -> tuple[int, int]:
 
 
 def upscale(src: Path | str, dst: Path | str, size: tuple[int, int] | None = None, *, sharpen: str = "none", grain: int = 0) -> Path:
-    """``src`` to ``dst`` at the delivery frame. The sound track is dropped (a native-audio LTX clip keeps its own through the
-    sound stems); a temp file is renamed so a half-written clip never lies under the final name."""
+    """``src`` to ``dst`` at the delivery frame. When ``needs_resize(w, h, size)`` is False, passes the clip through without
+    a second resize/re-encode pass (P1-9 / B5)."""
+    import shutil
     w, h = probe_size(src)
     dst = Path(dst)
     dst.parent.mkdir(parents=True, exist_ok=True)
     part = dst.with_suffix(".part.mp4")
+    if not needs_resize(w, h, size):
+        if Path(src).resolve() != dst.resolve():
+            shutil.copyfile(src, part)
+            os.replace(part, dst)
+        return dst
     cmd = ["ffmpeg", "-v", "error", "-y", "-i", str(src), "-vf", video_filter(w, h, size, sharpen=sharpen, grain=grain), "-an", "-c:v", "libx264",
            "-crf", str(CRF), "-preset", "medium", "-pix_fmt", "yuv420p", str(part)]
     done = subprocess.run(cmd, capture_output=True, text=True)

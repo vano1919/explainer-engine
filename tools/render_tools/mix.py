@@ -19,10 +19,15 @@ from scipy import signal
 from explainer_engine.audio import duck as DUCK
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
+import hashlib
+
 from explainer_engine.episode import timing as ET
 from explainer_engine.maps import actions as MA
 from explainer_engine.maps import tactile_renderer as TR
 from explainer_engine.standards import sourced_rules as SR_RULES
+from explainer_engine.videolane import plan as VP
+
+RENDERER_SCRIPT_REL = VP.RENDERER_SCRIPT_REL
 
 SR = 48000
 FPS = 24
@@ -76,22 +81,18 @@ def place_spatial(
     camera_op: str = "hold",
     progress: float = 0.0,
 ) -> None:
-    """Place a mono sound into ``buf`` (shape (N, 2)) using shared ``duck.stage_spatial_sound`` (P1-4)."""
-    i0 = max(0, int(round(t0_s * SR)))
-    if i0 >= len(buf) or len(x) == 0:
-        return
-    n = min(len(x), len(buf) - i0)
-    if n <= 0:
-        return
-    staged = DUCK.stage_spatial_sound(
-        x[:n] * db(gain_db),
+    """Place a mono sound into ``buf`` (shape (N, 2)) using shared ``duck.place_spatial_event`` (P1-4 / B4)."""
+    DUCK.place_spatial_event(
+        buf,
+        x,
+        t0_s,
+        gain_db,
         source_x=source_x,
         distance=distance,
         camera_op=camera_op,
         progress=progress,
         sr=SR,
     )
-    buf[i0:i0 + n] += staged.T
 
 
 def loop_fill_spatial(
@@ -103,6 +104,8 @@ def loop_fill_spatial(
     *,
     source_x: float = 0.5,
     distance: str = "medium",
+    camera_op: str = "hold",
+    progress: float = 0.0,
     xf_s: float = 0.35,
 ) -> None:
     i0, i1 = max(0, int(round(t0_s * SR))), min(len(buf), int(round(t1_s * SR)))
@@ -118,7 +121,7 @@ def loop_fill_spatial(
         out[pos:pos + take] += chunk
         pos += step
     out = fade(out, xf_s, xf_s)
-    place_spatial(buf, out, t0_s, gain_db, source_x=source_x, distance=distance)
+    place_spatial(buf, out, t0_s, gain_db, source_x=source_x, distance=distance, camera_op=camera_op, progress=progress)
 
 
 def emit_map_audio_events_for_shot(
@@ -168,30 +171,7 @@ def emit_map_audio_events_for_shot(
         ev_copy["timeline_start_s"] = round(shot_start_s + sf / float(fps), 4)
         ev_copy["timeline_end_s"] = round(shot_start_s + ef / float(fps), 4)
         out_events.append(ev_copy)
-    if out_events:
-        return out_events
-    hold_frames = max(int(SR_RULES.T("BP-203", "counter_hold_frames")), n_frames // 4)
-    f0 = min(max(4, int(round(0.25 * fps))), max(0, n_frames - 2))
-    f1 = max(f0 + 1, n_frames - hold_frames)
-    style = str((shot.get("map_spec") or {}).get("line_style") or "chalk")
-    sfx_id = "chalk_line__v1" if "chalk" in style else "pencil_line__v1"
-    fallback_plan = {
-        "total_frames": n_frames,
-        "fps": fps,
-        "frame_locked_audio_events": [{
-            "event_id": f"{shot.get('shot_id', 'map')}:draw",
-            "class": "map_route_draw",
-            "sfx_id": sfx_id,
-            "sound_token": f"L:{sfx_id}",
-            "start_frame": f0,
-            "end_frame": f1,
-            "start_s": round(f0 / float(fps), 4),
-            "end_s": round(f1 / float(fps), 4),
-            "timeline_start_s": round(shot_start_s + f0 / float(fps), 4),
-            "timeline_end_s": round(shot_start_s + f1 / float(fps), 4),
-        }],
-    }
-    return list(TR.AudioEventEmitter(fallback_plan).events)
+    return out_events
 
 
 def is_intentional_silence_shot(shot: dict) -> bool:
@@ -298,35 +278,87 @@ def build_music_cues_from_script(script_doc: dict, timing_doc: dict) -> list[dic
     return cues
 
 
+def _bs1770_k_weight_biquads(sr: int = SR) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return exact ITU-R BS.1770-4 Stage 1 (pre-filter) and Stage 2 (RLB high-pass) biquad coefficients."""
+    if int(sr) == 48000:
+        b_pre = np.array([1.53512485958697, -2.69169618940638, 1.19839281085285], dtype=np.float64)
+        a_pre = np.array([1.0, -1.69065929318241, 0.73248077421585], dtype=np.float64)
+        b_rlb = np.array([1.0, -2.0, 1.0], dtype=np.float64)
+        a_rlb = np.array([1.0, -1.99004745483398, 0.99007225036621], dtype=np.float64)
+        return b_pre, a_pre, b_rlb, a_rlb
+
+    # Bilinear transform from ITU-R BS.1770-4 analog filter specifications for non-48kHz sample rates
+    f0_pre = 1681.974450955533
+    g_pre = 3.999843853973347
+    q_pre = 0.7071752369554196
+    k_pre = np.tan(np.pi * f0_pre / float(sr))
+    vh = 10.0 ** (g_pre / 20.0)
+    vb = vh ** 0.4996667741545416
+    a0_p = 1.0 + k_pre / q_pre + k_pre * k_pre
+    b_pre = np.array([
+        (vh + vb * k_pre / q_pre + k_pre * k_pre) / a0_p,
+        2.0 * (k_pre * k_pre - vh) / a0_p,
+        (vh - vb * k_pre / q_pre + k_pre * k_pre) / a0_p,
+    ], dtype=np.float64)
+    a_pre = np.array([
+        1.0,
+        2.0 * (k_pre * k_pre - 1.0) / a0_p,
+        (1.0 - k_pre / q_pre + k_pre * k_pre) / a0_p,
+    ], dtype=np.float64)
+
+    f0_rlb = 38.13547087602444
+    q_rlb = 0.5003270373238773
+    k_rlb = np.tan(np.pi * f0_rlb / float(sr))
+    a0_r = 1.0 + k_rlb / q_rlb + k_rlb * k_rlb
+    b_rlb = np.array([1.0 / a0_r, -2.0 / a0_r, 1.0 / a0_r], dtype=np.float64)
+    a_rlb = np.array([
+        1.0,
+        2.0 * (k_rlb * k_rlb - 1.0) / a0_r,
+        (1.0 - k_rlb / q_rlb + k_rlb * k_rlb) / a0_r,
+    ], dtype=np.float64)
+    return b_pre, a_pre, b_rlb, a_rlb
+
+
 def compute_integrated_lufs(audio: np.ndarray, sr: int = SR) -> float:
-    """Measure ITU-R BS.1770 / EBU R128 gated integrated loudness in LUFS."""
+    """Measure ITU-R BS.1770-4 / EBU R128 gated integrated loudness in LUFS using exact K-weighting biquads
+    and channel-weighted energy summation (G_i = 1.0 for L/R/C, summed across channels)."""
     arr = np.asarray(audio, dtype=np.float64)
     if arr.size == 0:
         return -70.0
     if arr.ndim == 1:
-        stereo = np.stack([arr, arr], axis=-1)
-    elif arr.shape[0] == 2 and arr.shape[-1] > 2:
-        stereo = arr.T
+        ch_data = arr[:, None]
+    elif arr.shape[0] <= 5 and arr.shape[-1] > 5:
+        ch_data = arr.T
     else:
-        stereo = arr
+        ch_data = arr
 
-    # High-shelf pre-filter (~1500 Hz, +4 dB) + high-pass RLB weighting (~38 Hz)
-    sos_hp = signal.butter(2, 38.0, btype="highpass", fs=sr, output="sos")
-    w = signal.sosfilt(sos_hp, stereo, axis=0)
-    b_hs, a_hs = signal.iirfilter(2, min(0.95, 1500.0 / (0.5 * sr)), btype="high", ftype="butter")
-    w = w + 0.58 * signal.lfilter(b_hs, a_hs, w, axis=0)
+    n_samples, n_ch = ch_data.shape
+    if n_samples == 0:
+        return -70.0
 
-    mean_sq_ch = np.mean(w * w, axis=-1)
-    win = max(1, int(0.400 * sr))
-    hop = max(1, int(0.100 * sr))
-    if len(mean_sq_ch) < win:
-        e = float(np.mean(mean_sq_ch))
+    b_pre, a_pre, b_rlb, a_rlb = _bs1770_k_weight_biquads(sr)
+    y = signal.lfilter(b_pre, a_pre, ch_data, axis=0)
+    y = signal.lfilter(b_rlb, a_rlb, y, axis=0)
+    sq = y * y
+
+    ch_weights = np.ones(n_ch, dtype=np.float64)
+    if n_ch >= 5:
+        ch_weights[3:5] = 1.41
+
+    win = max(1, int(round(0.400 * sr)))
+    hop = max(1, int(round(0.100 * sr)))
+    if n_samples < win:
+        mean_sq_per_ch = np.mean(sq, axis=0)
+        e = float(np.sum(mean_sq_per_ch * ch_weights))
         return float(-0.691 + 10.0 * np.log10(max(1e-12, e)))
 
-    blocks = np.array([
-        float(np.mean(mean_sq_ch[i:i + win]))
-        for i in range(0, len(mean_sq_ch) - win + 1, hop)
-    ])
+    n_blocks = 1 + (n_samples - win) // hop
+    cs = np.vstack([np.zeros((1, n_ch), dtype=np.float64), np.cumsum(sq, axis=0)])
+    idx0 = np.arange(n_blocks) * hop
+    idx1 = idx0 + win
+    mean_sq_blocks = (cs[idx1] - cs[idx0]) / float(win)
+    blocks = np.sum(mean_sq_blocks * ch_weights[None, :], axis=1)
+
     l_blocks = -0.691 + 10.0 * np.log10(np.maximum(1e-12, blocks))
     abs_mask = l_blocks > -70.0
     if not np.any(abs_mask):
@@ -335,6 +367,23 @@ def compute_integrated_lufs(audio: np.ndarray, sr: int = SR) -> float:
     rel_mask = abs_mask & (l_blocks > rel_thr)
     gated = blocks[rel_mask] if np.any(rel_mask) else blocks[abs_mask]
     return float(-0.691 + 10.0 * np.log10(max(1e-12, float(np.mean(gated)))))
+
+
+def read_stereo_wav(wav_path: Path | str) -> tuple[np.ndarray, int]:
+    """Reopen a written 16-bit PCM WAV file from disk and return float32 samples (N, C) and sample rate."""
+    p = Path(wav_path)
+    if not p.is_file():
+        raise ContractError(f"Mix WAV file does not exist on disk: {p}")
+    with wave.open(str(p), "rb") as wf:
+        ch = wf.getnchannels()
+        sr = wf.getframerate()
+        sw = wf.getsampwidth()
+        raw = wf.readframes(wf.getnframes())
+    if sw != 2:
+        raise ContractError(f"{p}: expected 16-bit PCM WAV (sampwidth=2), got {sw}")
+    arr = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768.0
+    arr = arr.reshape(-1, ch) if ch > 1 else arr[:, None]
+    return arr, sr
 
 
 def compute_true_peak_dbtp(audio: np.ndarray, oversample: int = 4) -> float:
@@ -384,17 +433,39 @@ def normalize_to_target_lufs_and_true_peak(
 
 
 def measure_mix_loudness_report(
-    mix: np.ndarray,
+    mix: np.ndarray | Path | str,
     *,
+    wav_path: Path | str | None = None,
     voice_stem: np.ndarray | None = None,
     bed_stem: np.ndarray | None = None,
     sfx_stem: np.ndarray | None = None,
     music_stem: np.ndarray | None = None,
     timing_doc: dict | None = None,
+    extra_findings: list[dict] | None = None,
+    shot_beds: dict[str, dict] | None = None,
     sr: int = SR,
 ) -> dict:
-    """P1-4 Final-File & Stem Loudness Report: measure integrated LUFS, 4x True Peak dBTP, stem LU gaps under speech (BP-52),
-    and per-shot loudness."""
+    """P1-4 & B4 Final-File & Stem Loudness Report: reopen the written WAV from disk when provided,
+    measure ITU-R BS.1770-4 integrated LUFS, 4x True Peak dBTP, stem LU gaps under speech (BP-52), and per-shot loudness."""
+    measured_from_disk = False
+    measured_file_str: str | None = None
+    measured_file_sha: str | None = None
+    if isinstance(mix, (Path, str)):
+        disk_p = Path(mix)
+        mix_arr, sr = read_stereo_wav(disk_p)
+        measured_from_disk = True
+        measured_file_str = str(disk_p)
+        measured_file_sha = hashlib.sha256(disk_p.read_bytes()).hexdigest()
+    elif wav_path is not None and Path(wav_path).is_file():
+        disk_p = Path(wav_path)
+        mix_arr, sr = read_stereo_wav(disk_p)
+        measured_from_disk = True
+        measured_file_str = str(disk_p)
+        measured_file_sha = hashlib.sha256(disk_p.read_bytes()).hexdigest()
+    else:
+        mix_arr = np.asarray(mix, dtype=np.float32)
+
+    mix = mix_arr
     int_lufs = compute_integrated_lufs(mix, sr=sr)
     tp_dbtp = compute_true_peak_dbtp(mix)
     v_lufs = compute_integrated_lufs(voice_stem, sr=sr) if voice_stem is not None else None
@@ -444,12 +515,17 @@ def measure_mix_loudness_report(
             "detail": f"music_under_voice_lu={mus_gap:.2f} < {MUSIC_UNDER_MIN_LU:.1f} LU",
         })
 
+    if extra_findings:
+        findings.extend(extra_findings)
     status = "FAIL" if any(f["status"] == "FAIL" for f in findings) else ("REVIEW" if findings else "PASS")
-    return {
+    out_rep = {
         "schema": "mix_loudness_report/1",
         "status": status,
         "timing_id": (timing_doc or {}).get("timing_id"),
         "render_epoch": (timing_doc or {}).get("render_epoch"),
+        "measured_from_disk": measured_from_disk,
+        "measured_file": measured_file_str,
+        "measured_file_sha256": measured_file_sha,
         "integrated_lufs": round(int_lufs, 2),
         "true_peak_dbtp": round(tp_dbtp, 2),
         "stems": {
@@ -463,6 +539,9 @@ def measure_mix_loudness_report(
         "per_shot": per_shot,
         "findings": findings,
     }
+    if shot_beds is not None:
+        out_rep["shot_beds"] = shot_beds
+    return out_rep
 
 
 def synth_sfx(kind: str, dur_s: float = 1.0, seed: int = 1) -> np.ndarray:
@@ -537,18 +616,33 @@ def run_mix(
     T_PATH = Path(timing_path) if timing_path is not None else t_p
 
     if script_doc is None:
-        script_doc = json.loads((R / "story" / "production_script.json").read_text(encoding="utf-8"))
+        script_doc = json.loads((R / RENDERER_SCRIPT_REL).read_text(encoding="utf-8"))
     if edit_points is None:
         ep_file = R / "planning" / "full_film_2026-11-15" / "edit_points.json"
         edit_points = json.loads(ep_file.read_text(encoding="utf-8")).get("clips", {}) if ep_file.is_file() else {}
     if timing_doc is None:
         raw_t = json.loads(T_PATH.read_text(encoding="utf-8"))
-        timing_doc = ET.retime_with_edit_points(raw_t, script_doc, edit_points)
+        timing_doc = ET.retime_with_edit_points(raw_t, script_doc, edit_points, episode_dir=R)
         ET.persist_authoritative_clock(timing_doc, T_PATH)
-    elif "timing_id" not in timing_doc:
-        timing_doc = ET.retime_with_edit_points(timing_doc, script_doc, edit_points)
+
+    auth_clock_p = T_PATH if T_PATH.is_file() else (R / "audio" / "timing.json" if (R / "audio" / "timing.json").is_file() else None)
+    auth_clock = json.loads(auth_clock_p.read_text(encoding="utf-8")) if auth_clock_p is not None else timing_doc
+    align_findings = ET.verify_clock_alignment(auth_clock, timing_doc)
+    if align_findings:
+        raise ContractError(f"Clock alignment check failed in mix: {align_findings[0]['detail']}")
 
     sc_by_id = {s["shot_id"]: s for s in script_doc.get("shots", [])}
+    sound_plan_shots: dict[str, dict] = {}
+    sp_p = R / "audio" / "sound_plan.json"
+    if sp_p.is_file():
+        try:
+            sp_doc = json.loads(sp_p.read_text(encoding="utf-8"))
+            for sp_sh in sp_doc.get("shots", []) or []:
+                if isinstance(sp_sh, dict) and sp_sh.get("shot_id"):
+                    sound_plan_shots[str(sp_sh["shot_id"])] = sp_sh
+        except Exception:
+            pass
+
     total_frames = int(timing_doc["total_frames"])
     total_s = total_frames / float(FPS)
     N = int(round(total_s * SR)) + SR
@@ -557,6 +651,8 @@ def run_mix(
     BEDS = np.zeros((N, 2), dtype=np.float32)
     SFX = np.zeros((N, 2), dtype=np.float32)
     MUS = np.zeros((N, 2), dtype=np.float32)
+    mix_findings: list[dict] = []
+    shot_beds: dict[str, dict] = {}
 
     # 1. Place narrator read and single-trimmed spoken inserts using authoritative timing_doc
     read_p = DL / "clock" / "narrator_read.mp3"
@@ -594,17 +690,93 @@ def run_mix(
                 t0 = float(row["timeline_start_frame"]) / float(FPS)
                 place_spatial(VOICE, seg_x, t0, 0.0, source_x=0.5, distance="close")
 
-    # 2. Emit map audio events dynamically via tactile_renderer.AudioEventEmitter (P1-4)
+    # 1b. Populate ambience beds from sound plan / shot bed spec via loop_fill_spatial, or record intentional absence (B4)
+    for sid, t_sh in timing_doc.get("shots", {}).items():
+        sh = sc_by_id.get(sid) or {}
+        sp_entry = sound_plan_shots.get(sid) or {}
+        sh_sp = sh.get("sound_plan") if isinstance(sh.get("sound_plan"), dict) else {}
+        t0_bed = float(t_sh.get("start_frame", 0)) / float(FPS)
+        t1_bed = float(t_sh.get("end_frame", int(t_sh.get("start_frame", 0)) + int(t_sh.get("frames", 0)))) / float(FPS)
+        if is_intentional_silence_shot(sh) or bool(sh_sp.get("bed_intentionally_absent")) or str(sh_sp.get("bed") or "").lower() == "none":
+            shot_beds[sid] = {
+                "shot_id": sid,
+                "bed_populated": False,
+                "bed_intentionally_absent": True,
+                "reason": "intentional_silence or explicit bed absence in sound plan",
+            }
+            continue
+        bed_kind = str(
+            sh_sp.get("bed")
+            or (sh.get("audio") or {}).get("bed")
+            or (sp_entry.get("bed") or {}).get("class")
+            or sp_entry.get("room")
+            or "wind_room_tone"
+        )
+        bed_gain_db = float(sh_sp.get("gain_db", (sp_entry.get("bed") or {}).get("gain_db", -24.0)))
+        bed_src_x = float(sh_sp.get("source_x", (sp_entry.get("bed") or {}).get("source_x", 0.5)))
+        bed_dist = str(sh_sp.get("distance", (sp_entry.get("bed") or {}).get("distance", "medium")))
+        cam_op = str((sh.get("camera_spec") or {}).get("camera_move") or "hold")
+        bed_dur = max(1.5, t1_bed - t0_bed)
+        bed_src = synth_sfx(bed_kind, dur_s=min(4.0, bed_dur + 0.5), seed=abs(hash((sid, bed_kind))) % 10000)
+        loop_fill_spatial(
+            BEDS,
+            bed_src,
+            t0_bed,
+            t1_bed,
+            bed_gain_db,
+            source_x=bed_src_x,
+            distance=bed_dist,
+            camera_op=cam_op,
+        )
+        shot_beds[sid] = {
+            "shot_id": sid,
+            "bed_populated": True,
+            "bed_intentionally_absent": False,
+            "bed_kind": bed_kind,
+            "gain_db": bed_gain_db,
+            "source_x": bed_src_x,
+            "distance": bed_dist,
+            "camera_op": cam_op,
+            "start_s": round(t0_bed, 4),
+            "end_s": round(t1_bed, 4),
+        }
+
+    # 2. Emit map audio events dynamically via tactile_renderer.AudioEventEmitter (P1-4 / B4: no 0.25s/0.35s fallback)
     for sid, t_sh in timing_doc.get("shots", {}).items():
         sh = sc_by_id.get(sid) or {}
         if is_intentional_silence_shot(sh):
             continue
         if sh.get("route") == "map" or sh.get("map_spec") is not None:
-            for ev in emit_map_audio_events_for_shot(sh, t_sh, fps=FPS):
-                t0 = float(ev.get("timeline_start_s", 0.0))
-                t1 = float(ev.get("timeline_end_s", t0 + 0.35))
+            map_evs = emit_map_audio_events_for_shot(sh, t_sh, fps=FPS)
+            if not map_evs:
+                mix_findings.append({
+                    "rule": "BP-203",
+                    "shot_id": sid,
+                    "status": "REVIEW",
+                    "detail": f"{sid}: map shot has no planned frame-locked audio events in AudioEventEmitter (refusing 0.25s/0.35s fallback)",
+                })
+                continue
+            for ev in map_evs:
+                if ev.get("timeline_start_s") is None or ev.get("timeline_end_s") is None:
+                    mix_findings.append({
+                        "rule": "BP-203",
+                        "shot_id": sid,
+                        "status": "REVIEW",
+                        "detail": f"{sid}: map audio event {ev.get('event_id')!r} missing explicit timeline_start_s/timeline_end_s",
+                    })
+                    continue
+                t0 = float(ev["timeline_start_s"])
+                t1 = float(ev["timeline_end_s"])
+                if t1 <= t0:
+                    mix_findings.append({
+                        "rule": "BP-203",
+                        "shot_id": sid,
+                        "status": "REVIEW",
+                        "detail": f"{sid}: map audio event {ev.get('event_id')!r} has non-positive duration ({t0}..{t1})",
+                    })
+                    continue
                 kind = str(ev.get("sfx_id") or ev.get("kind") or "chalk")
-                dur_ev = max(0.04, t1 - t0)
+                dur_ev = t1 - t0
                 place_spatial(
                     SFX,
                     synth_sfx(kind, dur_ev, seed=abs(hash((sid, t0))) % 10000),
@@ -636,29 +808,34 @@ def run_mix(
             BEDS[i0:i1] = 0.0
             MUS[i0:i1] = 0.0
 
-    # 4. Dynamic presence-band ducking via shared duck.duck_presence_band (BP-204)
+    # 4. Dynamic presence-band ducking via shared duck.duck_stems_under_voice (BP-204 / B4)
     v_mono = np.mean(VOICE, axis=-1)
-    BEDS_DUCKED = DUCK.duck_presence_band(BEDS, v_mono, sr=SR, presence_cut_db=5.5, outer_cut_db=1.8)
-    MUS_DUCKED = DUCK.duck_presence_band(MUS, v_mono, sr=SR, presence_cut_db=6.5, outer_cut_db=2.2)
+    BEDS_DUCKED, MUS_DUCKED = DUCK.duck_stems_under_voice(
+        BEDS, MUS, v_mono, sr=SR, bed_presence_cut_db=5.5, bed_outer_cut_db=1.8, music_presence_cut_db=6.5, music_outer_cut_db=2.2
+    )
 
     raw_mix = VOICE + BEDS_DUCKED + SFX + MUS_DUCKED
     final_mix, norm_meta = normalize_to_target_lufs_and_true_peak(raw_mix, target_lufs=TARGET_LUFS, limiter_dbtp=LIMITER_TP_DBTP, sr=SR)
 
     out_wav = W / "full_mix.wav"
-    pcm = np.clip(final_mix * 32767.0, -32768, 32767).astype(np.int16)
+    pcm = np.clip(np.rint(final_mix * 32767.0), -32768, 32767).astype(np.int16)
     with wave.open(str(out_wav), "wb") as wf:
         wf.setnchannels(2)
         wf.setsampwidth(2)
         wf.setframerate(SR)
         wf.writeframes(pcm.tobytes())
 
+    # Reopen the written WAV file from disk to measure the actual delivered file (B4)
     report = measure_mix_loudness_report(
-        final_mix,
+        out_wav,
+        wav_path=out_wav,
         voice_stem=VOICE,
         bed_stem=BEDS_DUCKED,
         sfx_stem=SFX,
         music_stem=MUS_DUCKED,
         timing_doc=timing_doc,
+        extra_findings=mix_findings,
+        shot_beds=shot_beds,
         sr=SR,
     )
     report["normalization"] = norm_meta

@@ -42,8 +42,19 @@ BP201_HEAD_LEAD_S = float(SR.T("BP-201", "head_lead_s"))
 BP201_TAIL_MIN_S = float(SR.T("BP-201", "reaction_tail_min_s"))
 BP201_TAIL_TARGET_S = float(SR.T("BP-201", "reaction_tail_target_s"))
 HEAD_LEAD = [float(SR.T("BP-190", "head_lead_s")[0]), BP201_HEAD_LEAD_S]
-CUT_TAIL = [BP201_TAIL_MIN_S, max(BP201_TAIL_TARGET_S, float(SR.T("BP-190", "tail_s")[1]), 0.65)]
+CUT_TAIL = [BP201_TAIL_MIN_S, BP201_TAIL_TARGET_S]
 SPEECH_TAIL_S = float(SR.T("BP-187", "speech_tail_s"))   # a spoken line ends inside its clip with this much after it
+
+
+def resolve_reaction_tail_s(edit_plan: dict | None = None, reaction_tail_s: float | None = None) -> float:
+    """Single BP-201 reaction-tail rule shared by ingest.edit_points and ingest.whisper_edit_points."""
+    ep = edit_plan or {}
+    raw_target = (
+        float(reaction_tail_s)
+        if reaction_tail_s is not None
+        else float(ep.get("tail_handle_s", BP201_TAIL_TARGET_S))
+    )
+    return max(float(CUT_TAIL[0]), min(float(CUT_TAIL[1]), raw_target))
 
 
 def build_trim_contract(rec_or_pts: dict, shot_id: str = "") -> dict:
@@ -228,7 +239,7 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
         s0, s1 = spans[0][0], spans[-1][1]
         lead = max(HEAD_LEAD[1], float(ep.get("head_handle_s", 0.0)))
         t_in = max(0.0, s0 - lead)
-        reaction_tail = max(0.50, float(CUT_TAIL[0]), min(max(0.65, float(CUT_TAIL[1])), float(ep.get("tail_handle_s", max(0.55, float(CUT_TAIL[1]))))))
+        reaction_tail = resolve_reaction_tail_s(ep)
         t_out = min(dur, s1 + reaction_tail)
         if audio is not None and handover_s is None:
             t_out = late_sound_out(t_out, dur, spans[-1], audio, rate)   # TD-323: a last word the detector closed early
@@ -455,7 +466,7 @@ def whisper_edit_points(
             first_start = float(clean_words[0].get("start", 0.0))
             last_end = float(clean_words[-1].get("end", first_start + 1.0))
             t_in = round(max(0.0, first_start - head_lead_s), 3)
-            tail_need = max(REACTION_TAIL_MIN_S, float(reaction_tail_s))
+            tail_need = resolve_reaction_tail_s(shot.get("edit_plan"), reaction_tail_s)
             t_out = round(min(raw_dur, max(t_in + min_dur_s, last_end + tail_need)), 3)
             avail_tail = round(t_out - last_end, 3)
             entry: dict = {

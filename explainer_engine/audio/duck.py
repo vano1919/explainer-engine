@@ -165,3 +165,59 @@ def stage_spatial_sound(
     left = x * gain * np.cos(angle)
     right = x * gain * np.sin(angle)
     return np.stack([left.astype(np.float32), right.astype(np.float32)], axis=0)
+
+
+def place_spatial_event(
+    buf: np.ndarray,
+    x: np.ndarray,
+    t0_s: float,
+    gain_db: float = 0.0,
+    *,
+    source_x: float = 0.5,
+    distance: str = "medium",
+    camera_op: str = "hold",
+    progress: float = 0.0,
+    sr: int = 48000,
+) -> None:
+    """Shared spatial event placement into a (N, 2) stereo buffer used by both tools/render_tools/mix.py and audio/stems.py."""
+    i0 = max(0, int(round(float(t0_s) * sr)))
+    if i0 >= len(buf) or len(x) == 0:
+        return
+    n = min(len(x), len(buf) - i0)
+    if n <= 0:
+        return
+    lin_gain = float(10.0 ** (float(gain_db) / 20.0))
+    staged = stage_spatial_sound(
+        np.asarray(x[:n], dtype=np.float32) * lin_gain,
+        source_x=source_x,
+        distance=distance,
+        camera_op=camera_op,
+        progress=progress,
+        sr=sr,
+    )
+    buf[i0:i0 + n] += staged.T
+
+
+def duck_stems_under_voice(
+    ambience: np.ndarray,
+    music: np.ndarray,
+    voice_sidechain: np.ndarray,
+    *,
+    sr: int = 48000,
+    bed_presence_cut_db: float = 5.5,
+    bed_outer_cut_db: float = 1.8,
+    music_presence_cut_db: float = 6.5,
+    music_outer_cut_db: float = 2.2,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Shared presence-band ducking for ambience bed and music stems under voice, used by both mix.py and stems.py."""
+    v_sc = np.asarray(voice_sidechain, dtype=np.float32)
+    if v_sc.ndim > 1:
+        v_sc = v_sc.mean(axis=-1 if v_sc.shape[-1] <= 2 and v_sc.shape[0] > 2 else 0)
+    bed_ducked = duck_presence_band(
+        ambience, v_sc, sr=sr, presence_cut_db=bed_presence_cut_db, outer_cut_db=bed_outer_cut_db
+    )
+    mus_ducked = duck_presence_band(
+        music, v_sc, sr=sr, presence_cut_db=music_presence_cut_db, outer_cut_db=music_outer_cut_db
+    )
+    return bed_ducked, mus_ducked
+

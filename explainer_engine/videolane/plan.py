@@ -453,6 +453,7 @@ def draft_edit_plans(script: dict) -> dict[str, dict]:
 # footballs, tins), fast motion, and identity across cuts.
 # LTX excels at short atmospheric shots (smoke, fire, snow, fog, water), environments, slow camera moves, wide/far shots,
 # people from behind / over-the-shoulder / in silhouette, and simple single-person hand/foot actions.
+RENDERER_SCRIPT_REL = "story/production_script.json"
 LTX_UNNATURAL_PROPS = ("photograph", "photo", "scissors", "comb", "football", "ball", "tin", "chocolate", "button", "letter", "cake", "bread", "cigar", "cigarette")
 LTX_NATURAL_SIZES = ("extreme_wide", "wide", "over_the_shoulder")
 FORBID_LTX_SPEAKING_CLOSE = bool(SR.T("BP-205", "forbid_ltx_speaking_close"))
@@ -545,16 +546,44 @@ def inspect_ltx_start_frame(
     if meta.get("anatomy_ok") is False or meta.get("identity_match") is False:
         issues.append("start-frame visual check: anatomy or character identity mismatch on start frame")
 
-    confidence = str(meta.get("confidence", "high")).lower()
-    if confidence in ("low", "uncertain", "unverified"):
-        issues.append(f"start-frame visual check: confidence={confidence!r} requires REVIEW (never silent PASS)")
+    has_image_evidence = (
+        (isinstance(start_frame, (str, Path)) and Path(start_frame).is_file())
+        or (isinstance(start_frame, np.ndarray) and start_frame.ndim >= 2)
+    )
+    has_positions_evidence = any(
+        isinstance(pos, dict) and (pos.get("face_box") or pos.get("box") or pos.get("bbox"))
+        for pos in (positions if isinstance(positions, list) else [])
+    )
+    has_meta_evidence = bool(
+        frame_sha
+        or meta.get("sha256")
+        or meta.get("v5_file")
+        or "face_area_frac" in meta
+        or "anatomy_ok" in meta
+        or "identity_match" in meta
+        or (isinstance(dims, (list, tuple)) and len(dims) == 2 and int(dims[0] or 0) > 0 and int(dims[1] or 0) > 0)
+    )
+    has_any_evidence = has_image_evidence or has_positions_evidence or has_meta_evidence
+
+    if "confidence" in meta and meta["confidence"] is not None:
+        confidence = str(meta["confidence"]).lower()
+    elif has_any_evidence:
+        confidence = "high"
+    else:
+        confidence = "missing"
+
+    if not has_any_evidence or confidence in ("low", "uncertain", "unverified", "missing", "none"):
+        issues.append(
+            f"start-frame visual check: missing or unverified start-frame evidence (confidence={confidence!r}) requires REVIEW (never silent PASS)"
+        )
 
     status = "REVIEW" if issues else "PASS"
     return {
         "shot_id": sid,
         "status": status,
         "confidence": confidence,
-        "source_sha256": frame_sha,
+        "has_evidence": has_any_evidence,
+        "source_sha256": frame_sha or str(meta.get("sha256") or ""),
         "dimensions": dims,
         "face_area_frac": round(face_area_frac, 4),
         "roster_count": len(roster),
@@ -709,18 +738,99 @@ def classify_ltx_natural_fit(
     }
 
 
+def _discover_episode_start_frame_records(
+    script: dict,
+    episode_dir: Path | str | None = None,
+    script_path: Path | str | None = None,
+) -> tuple[dict[str, dict], dict[str, Path]]:
+    """Load real start-frame records (sha256, v5_file, dimensions, see/keep notes) and local image paths for an episode."""
+    ep_root: Path | None = None
+    if episode_dir is not None and Path(episode_dir).is_dir():
+        ep_root = Path(episode_dir)
+    elif script_path is not None:
+        sp = Path(script_path)
+        if sp.is_dir():
+            ep_root = sp
+        elif sp.parent.name == "story":
+            ep_root = sp.parent.parent
+    if ep_root is None and isinstance(script, dict) and script.get("episode_id"):
+        cand = Path(__file__).resolve().parents[2] / "episodes" / str(script["episode_id"])
+        if cand.is_dir():
+            ep_root = cand
+
+    records: dict[str, dict] = {}
+    frame_paths: dict[str, Path] = {}
+    if ep_root is None or not ep_root.is_dir():
+        return records, frame_paths
+
+    pics_p = ep_root / "production" / "pictures.json"
+    if pics_p.is_file():
+        try:
+            pics_doc = json.loads(pics_p.read_text(encoding="utf-8"))
+            for k, v in (pics_doc.get("pictures") or {}).items():
+                sid = k[:-6] if str(k).endswith("_start") else str(k)
+                if isinstance(v, dict):
+                    records.setdefault(sid, {}).update({
+                        "source_sha256": str(v.get("sha256") or v.get("source_sha256") or ""),
+                        "confidence": str(v.get("confidence") or "high"),
+                    })
+                    rel_f = v.get("path") or v.get("file")
+                    if rel_f and (ep_root / str(rel_f)).is_file():
+                        frame_paths[sid] = ep_root / str(rel_f)
+        except Exception:
+            pass
+
+    manifest_p = ep_root / "planning" / "full_film_2026-11-15" / "inputs_manifest.json"
+    if manifest_p.is_file():
+        try:
+            man_doc = json.loads(manifest_p.read_text(encoding="utf-8"))
+            for k, v in (man_doc.get("pictures") or {}).items():
+                sid = k[:-6] if str(k).endswith("_start") else str(k)
+                if isinstance(v, dict) and v.get("sha256"):
+                    rec = records.setdefault(sid, {})
+                    rec.setdefault("source_sha256", str(v["sha256"]))
+                    rec.setdefault("v5_file", str(v.get("v5_file") or ""))
+                    rec.setdefault("url", str(v.get("url") or ""))
+                    rec.setdefault("confidence", "high")
+        except Exception:
+            pass
+
+    splan_p = ep_root / "planning" / "full_film_2026-11-15" / "shot_plan.json"
+    if splan_p.is_file():
+        try:
+            sp_doc = json.loads(splan_p.read_text(encoding="utf-8"))
+            for row in sp_doc.get("shots") or []:
+                if isinstance(row, dict) and row.get("shot"):
+                    sid = str(row["shot"])
+                    if sid in records:
+                        records[sid].setdefault("see", str(row.get("see") or ""))
+                        records[sid].setdefault("keep", str(row.get("keep") or ""))
+        except Exception:
+            pass
+
+    return records, frame_paths
+
+
 def reroute_unnatural_ltx_shots(
     script: dict,
     *,
     apply_routes: bool = True,
     script_path: Path | str | None = None,
+    episode_dir: Path | str | None = None,
     inspections: dict[str, dict] | None = None,
+    start_frames: dict[str, object] | None = None,
+    first_frame_comparisons: dict[str, dict] | None = None,
 ) -> dict:
-    """Apply Creator Correction C2 (BP-205) across ``script``, update each rerouted shot's ``route`` in-place in the
-    returned script copy (and in ``segments[*].shots``), and persist atomically to ``script_path`` when provided."""
+    """Apply Creator Correction C2 (BP-205) across ``script``, passing each shot's real start-frame record,
+    ``start_frame``, and ``first_frame_comparison`` into ``classify_ltx_natural_fit``, updating ``route`` in-place,
+    and persisting atomically to ``script_path`` when provided."""
     import copy as _copy
     doc = _copy.deepcopy(script)
-    inspections = inspections or {}
+    inspections = dict(inspections or {})
+    start_frames = dict(start_frames or {})
+    first_frame_comparisons = dict(first_frame_comparisons or {})
+
+    ep_records, ep_frames = _discover_episode_start_frame_records(doc, episode_dir=episode_dir, script_path=script_path)
     evals: dict[str, dict] = {}
     rerouted_to_25d: list[str] = []
     kept_ltx_natural: list[str] = []
@@ -731,7 +841,26 @@ def reroute_unnatural_ltx_shots(
             return
         orig_route = s.get("route", "still_25d")
         was_video = is_video(s)
-        ev = classify_ltx_natural_fit(s, doc, inspection_meta=inspections.get(sid))
+
+        sf = start_frames.get(sid)
+        if sf is None:
+            sf = s.get("start_frame") or s.get("start_picture") or ep_frames.get(sid)
+
+        insp_meta = inspections.get(sid)
+        if insp_meta is None:
+            insp_meta = s.get("start_frame_inspection") or s.get("start_frame_record") or ep_records.get(sid)
+
+        ff_cmp = first_frame_comparisons.get(sid) or s.get("first_frame_comparison")
+        if ff_cmp is None and sf is not None and s.get("clip_first_frame") is not None:
+            ff_cmp = compare_ltx_first_frame_to_source(sf, s["clip_first_frame"])
+
+        ev = classify_ltx_natural_fit(
+            s,
+            doc,
+            start_frame=sf,
+            inspection_meta=insp_meta,
+            first_frame_comparison=ff_cmp,
+        )
         evals[sid] = ev
         if was_video:
             if ev["natural_for_ltx"]:
@@ -779,10 +908,41 @@ def apply_and_persist_ltx_routes(
     script_path: Path | str,
     *,
     out_path: Path | str | None = None,
+    episode_dir: Path | str | None = None,
     inspections: dict[str, dict] | None = None,
+    start_frames: dict[str, object] | None = None,
+    first_frame_comparisons: dict[str, dict] | None = None,
 ) -> dict:
-    """Load ``script_path``, resolve and apply C2/BP-205 LTX route decisions, and persist atomically."""
-    src_p = Path(script_path)
-    dst_p = Path(out_path) if out_path is not None else src_p
+    """Load ``script_path`` (or episode dir), resolve and apply C2/BP-205 LTX route decisions with start-frame evidence,
+    and persist atomically to the canonical renderer script path (``RENDERER_SCRIPT_REL = 'story/production_script.json'``)."""
+    from explainer_engine.core.store import write_json_atomic
+
+    raw_p = Path(script_path)
+    if raw_p.is_dir():
+        ep_root = raw_p
+        src_p = ep_root / RENDERER_SCRIPT_REL
+    else:
+        src_p = raw_p
+        ep_root = (
+            Path(episode_dir)
+            if episode_dir is not None
+            else (src_p.parent.parent if src_p.parent.name == "story" else src_p.parent)
+        )
+
+    renderer_script_p = ep_root / RENDERER_SCRIPT_REL
+    dst_p = Path(out_path) if out_path is not None else (renderer_script_p if raw_p.is_dir() else src_p)
     doc = json.loads(src_p.read_text(encoding="utf-8"))
-    return reroute_unnatural_ltx_shots(doc, apply_routes=True, script_path=dst_p, inspections=inspections)
+    res = reroute_unnatural_ltx_shots(
+        doc,
+        apply_routes=True,
+        script_path=dst_p,
+        episode_dir=ep_root,
+        inspections=inspections,
+        start_frames=start_frames,
+        first_frame_comparisons=first_frame_comparisons,
+    )
+    if renderer_script_p.resolve() != dst_p.resolve():
+        renderer_script_p.parent.mkdir(parents=True, exist_ok=True)
+        write_json_atomic(renderer_script_p, res["script"])
+    res["renderer_script_path"] = str(renderer_script_p)
+    return res

@@ -336,7 +336,8 @@ def upscale(bgr: np.ndarray, out_dir: Path, name: str, size=None, crop=None, anc
                 res = to_size(big, *want)
                 if MODELS[mid].get("colour_fix"):
                     res = colour_fix(res, src)
-                cv2.imwrite(str(dst), res)
+                if not bool(cv2.imwrite(str(dst), res)) or not dst.is_file():
+                    raise ConfigError(f"cv2.imwrite failed to write {dst}")
                 cached = False
         except ConfigError as e:
             tries.append({"model": mid, "status": G.NOT_RUN, "detail": str(e)})
@@ -348,7 +349,8 @@ def upscale(bgr: np.ndarray, out_dir: Path, name: str, size=None, crop=None, anc
             return {"name": name, "result": str(dst), "model": mid, "status": G.PASS, "tries": tries,
                     "input_sha256": hashlib.sha256(buf.tobytes()).hexdigest(), "size": list(want)}
     plain = out_dir / f"{name}.as_is.png"
-    cv2.imwrite(str(plain), cv2.resize(src, want, interpolation=cv2.INTER_LANCZOS4))
+    if not bool(cv2.imwrite(str(plain), cv2.resize(src, want, interpolation=cv2.INTER_LANCZOS4))) or not plain.is_file():
+        raise ConfigError(f"cv2.imwrite failed to write fallback image {plain}")
     status = G.NOT_RUN if all(t["status"] == G.NOT_RUN for t in tries if "status" in t) and not any("rows" in t for t in tries) \
         else G.REVIEW
     return {"name": name, "result": str(plain), "model": None, "status": status, "tries": tries,
@@ -367,7 +369,9 @@ def upscale_file(src: Path, dst: Path, factor: int = 2, loader=None) -> dict:
     if r["status"] != G.PASS:
         raise ConfigError(f"superres: {r.get('detail')} ({[t.get('model') for t in r['tries']]})")
     Path(dst).parent.mkdir(parents=True, exist_ok=True)
-    cv2.imwrite(str(dst), cv2.imread(r["result"]))
+    res_img = cv2.imread(str(r["result"]))
+    if res_img is None or not bool(cv2.imwrite(str(dst), res_img)) or not Path(dst).is_file():
+        raise ConfigError(f"cv2.imwrite failed to write {dst}")
     return r
 
 
@@ -493,9 +497,19 @@ def upscale_with_backend(
     qc_rows: list[dict] = []
     detail = "ok"
 
+    def _derive_qc_status(rows: list[dict]) -> str:
+        if not rows:
+            return G.REVIEW
+        if any(r.get("status") == G.FAIL for r in rows):
+            return G.FAIL
+        return G.PASS if accepted(rows) else G.REVIEW
+
     if chosen in UPSCALER_REGISTRY:
         res = UPSCALER_REGISTRY[chosen](im, (target_w, target_h), lane=lane)
-        qc_rows = qc(im, res)
+        qc_rows = qc(im, res, lp=lpips_fn())
+        status = _derive_qc_status(qc_rows)
+        if status != G.PASS:
+            detail = f"registered backend {chosen} did not pass QC (status={status})"
     elif chosen in ("none", "as_is"):
         if allow_resize_on_none and (w0, h0) != (target_w, target_h):
             res = cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
@@ -506,9 +520,9 @@ def upscale_with_backend(
     elif chosen == "temporal_video":
         # Honest contract: temporal_video requires a registered multi-frame sequence model; never fake PASS with single-frame Lanczos
         res = im.copy()
-        cv2.imwrite(str(out), res)
+        wrote_tv = bool(cv2.imwrite(str(out), res)) and Path(out).is_file()
         return {
-            "status": G.NOT_RUN,
+            "status": G.NOT_RUN if wrote_tv else G.FAIL,
             "review_status": G.REVIEW,
             "lane": lane,
             "backend": chosen,
@@ -519,12 +533,19 @@ def upscale_with_backend(
             "input_size": [w0, h0],
             "output_size": [int(res.shape[1]), int(res.shape[0])],
             "qc": [],
-            "detail": "temporal_video backend has no registered sequence model; source kept untouched (NOT_RUN)",
+            "detail": (
+                "temporal_video backend has no registered sequence model; source kept untouched (NOT_RUN)"
+                if wrote_tv
+                else f"cv2.imwrite failed to write {out}"
+            ),
             "out": str(out),
         }
     elif chosen == "lanczos":
         res = im if (w0, h0) == (target_w, target_h) else cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
-        qc_rows = qc(im, res)
+        qc_rows = qc(im, res, lp=lpips_fn())
+        status = _derive_qc_status(qc_rows)
+        if status != G.PASS:
+            detail = f"lanczos plain resize did not pass superres QC gates (status={status})"
     elif chosen in ("realplksr4x", "span2x"):
         try:
             up_res = upscale(
@@ -536,13 +557,28 @@ def upscale_with_backend(
                 chain=(chosen,),
                 loader=loader,
             )
-            res_p = Path(up_res["result"])
-            res = cv2.imread(str(res_p), cv2.IMREAD_COLOR) if res_p.is_file() else im.copy()
-            status = up_res["status"]
-            qc_rows = (up_res.get("tries") or [{}])[0].get("qc") or qc(im, res)
-            if status != G.PASS:
+            res_p = Path(up_res.get("result") or "")
+            if not res_p.is_file():
+                res = im.copy()
+                status = G.FAIL
                 fallback_used = True
-                detail = f"model {chosen} returned status={status}; not silently masked as PASS"
+                qc_rows = []
+                detail = f"model {chosen} output file missing ({res_p}); refusing to report PASS on input copy"
+            else:
+                loaded_res = cv2.imread(str(res_p), cv2.IMREAD_COLOR)
+                if loaded_res is None:
+                    res = im.copy()
+                    status = G.FAIL
+                    fallback_used = True
+                    qc_rows = []
+                    detail = f"model {chosen} output file unreadable ({res_p}); refusing to report PASS"
+                else:
+                    res = loaded_res
+                    status = up_res["status"]
+                    qc_rows = (up_res.get("tries") or [{}])[0].get("rows") or (up_res.get("tries") or [{}])[0].get("qc") or qc(im, res)
+                    if status != G.PASS:
+                        fallback_used = True
+                        detail = f"model {chosen} returned status={status}; not silently masked as PASS"
         except Exception as exc:
             res = im.copy()
             status = G.FAIL
@@ -555,7 +591,10 @@ def upscale_with_backend(
     if restore_grain and grain_strength > 0 and chosen not in ("none", "as_is") and status == G.PASS:
         res = restore_painted_grain(res, strength=grain_strength)
         dither_applied = True
-    cv2.imwrite(str(out), res)
+    wrote_ok = bool(cv2.imwrite(str(out), res)) and Path(out).is_file()
+    if not wrote_ok:
+        status = G.FAIL
+        detail = f"cv2.imwrite failed to write output file {out}" 
     return {
         "status": status,
         "lane": lane,
@@ -611,7 +650,8 @@ def run_5shot_upscale_ab_harness(
                 0, 255,
             ).astype(np.uint8)
             src_p = out_dir / f"{sid}_src.png"
-            cv2.imwrite(str(src_p), base)
+            if not bool(cv2.imwrite(str(src_p), base)) or not src_p.is_file():
+                raise ConfigError(f"cv2.imwrite failed to write {src_p}")
             img = base
 
         by_backend: dict[str, dict] = {}

@@ -464,7 +464,8 @@ def stage_voice(ep: Episode, rehearsal: bool):
         read_s = w.getnframes() / float(w.getframerate())
     aligned = TM.align_read(ep.script, json.loads(tr.read_text(encoding="utf-8")), read_s)
     timing = TM.retime(ep.script, aligned, ep.fps, read_s)
-    write_json_atomic(timing_path, timing)
+    timing = TM.retime_with_edit_points(timing, ep.script, episode_dir=ep.root)
+    timing = TM.persist_authoritative_clock(timing, timing_path)
     planned = sum(float(s.get("target_duration_seconds") or 0) for s in ep.script["shots"])
     from explainer_engine.audio import scribe_words as SW
     rows = [G.row("the_read_exists", True, f"{READ_REL}: {read_s:.2f} s", read_s),
@@ -860,7 +861,8 @@ def _voice_with_clips(ep: Episode, read: Path, tr: Path, timing_path: Path):
     else:
         rows.append(G.row("the_read_exists", True, "no narrator line: the clips speak every line (VL-07)"))
     timing = TM.retime_with_clips(ep.script, aligned, ep.fps, read_s, clips)
-    write_json_atomic(timing_path, timing)
+    timing = TM.retime_with_edit_points(timing, ep.script, episode_dir=ep.root)
+    timing = TM.persist_authoritative_clock(timing, timing_path)
     rows.append(G.row("clip_spoken_shots_timed_by_their_clips", not missing, f"{len(spoken) - len(missing)} of "
                       f"{len(spoken)} clip-spoken shot(s) timed by their trimmed LTX clip", missing[:20]))
     rows += _anchor_rows(ep, timing)

@@ -472,3 +472,54 @@ def level_report(plan: dict, voice: np.ndarray, background: np.ndarray) -> dict:
                           f"{med} dB, spread {spread:.2f} dB (BP-186: {SPREAD_MAX_DB})", round(spread, 2),
                           level=SR_RULES.level("BP-186")))
     return {"per_shot": per_shot, "groups": groups, "rows": rows}
+
+
+def place_spatial_cue(
+    buf: np.ndarray,
+    x: np.ndarray,
+    t0_s: float,
+    gain_db: float = 0.0,
+    *,
+    source_x: float = 0.5,
+    distance: str = "medium",
+    camera_op: str = "hold",
+    progress: float = 0.0,
+    sr: int = SR,
+) -> None:
+    """Delegate spatial cue placement to shared duck.place_spatial_event (shared with tools/render_tools/mix.py)."""
+    duck.place_spatial_event(
+        buf,
+        x,
+        t0_s,
+        gain_db,
+        source_x=source_x,
+        distance=distance,
+        camera_op=camera_op,
+        progress=progress,
+        sr=sr,
+    )
+
+
+def duck_background_stems(
+    ambience: np.ndarray,
+    music: np.ndarray,
+    voice_sidechain: np.ndarray,
+    *,
+    sr: int = SR,
+    bed_presence_cut_db: float = 5.5,
+    bed_outer_cut_db: float = 1.8,
+    music_presence_cut_db: float = 6.5,
+    music_outer_cut_db: float = 2.2,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Delegate background stem ducking to shared duck.duck_stems_under_voice (shared with tools/render_tools/mix.py)."""
+    return duck.duck_stems_under_voice(
+        ambience,
+        music,
+        voice_sidechain,
+        sr=sr,
+        bed_presence_cut_db=bed_presence_cut_db,
+        bed_outer_cut_db=bed_outer_cut_db,
+        music_presence_cut_db=music_presence_cut_db,
+        music_outer_cut_db=music_outer_cut_db,
+    )
+

@@ -349,15 +349,47 @@ def _ordered_shots_from_script_and_timing(script: dict | None, timing_doc: dict)
     return ordered
 
 
+def _load_clip_records_for_episode(
+    episode_dir: Path | str | None,
+    shots_list: list[dict],
+    explicit_records: dict[str, dict] | None = None,
+) -> dict[str, dict]:
+    records: dict[str, dict] = {}
+    if isinstance(explicit_records, dict):
+        for sid, rec in explicit_records.items():
+            if isinstance(rec, dict):
+                records[str(sid)] = dict(rec)
+    if episode_dir is not None:
+        vdir = Path(episode_dir) / "production" / "video"
+        if vdir.is_dir():
+            for s in shots_list:
+                sid = s.get("shot_id")
+                if not sid or sid in records:
+                    continue
+                rec_p = vdir / f"{sid}.json"
+                if rec_p.is_file():
+                    try:
+                        loaded = json.loads(rec_p.read_text(encoding="utf-8"))
+                        if isinstance(loaded, dict) and "frames" in loaded:
+                            records[str(sid)] = loaded
+                    except Exception:
+                        pass
+    return records
+
+
 def retime_with_edit_points(
     timing_doc: dict,
     script: dict | None = None,
     edit_points_doc: dict | None = None,
     raw_durations: dict[str, float] | None = None,
+    *,
+    episode_dir: Path | str | None = None,
+    clip_records: dict[str, dict] | None = None,
 ) -> dict:
     """P0-1 Authoritative Film Clock: synchronize ``timing.json`` shot frame counts, start/end frames, segment windows,
     narrator offsets, dialogue positions, and map events with trimmed clips for ALL shots (both spoken inserts and
-    non-insert video/render shots), and attach ``timing_id`` and ``render_epoch``."""
+    non-insert video/render shots), using the actual ingested clip record (``production/video/<sid>.json``) as the
+    authoritative source of truth when present, and attach ``timing_id`` and ``render_epoch``."""
     doc = copy.deepcopy(timing_doc)
     script = script or {}
     fps = int(doc.get("fps") or 24)
@@ -368,6 +400,7 @@ def retime_with_edit_points(
     ) or {}
     raw_durations = raw_durations or {}
     shots_list = _ordered_shots_from_script_and_timing(script, doc)
+    ingested_records = _load_clip_records_for_episode(episode_dir, shots_list, clip_records)
 
     # Support both {"shot_id": ...} and {"shot": ...} in doc["inserts"]
     spoken_inserts: dict[str, dict] = {}
@@ -384,8 +417,16 @@ def retime_with_edit_points(
             continue
         t_shot = doc["shots"][sid]
         old_frames = int(t_shot.get("frames", fps))
+        rec = ingested_records.get(sid)
         ep = ep_clips.get(sid)
-        if isinstance(ep, dict) and ep.get("retime_clock", True):
+        if isinstance(rec, dict) and rec.get("frames") is not None:
+            new_frames = max(1, int(rec["frames"]))
+            t_in = float(rec.get("in_s", 0.0))
+            t_out = float(rec.get("out_s", round(t_in + new_frames / fps, 4)))
+            clip_p_str = str(rec.get("clip_path") or f"production/video/cut/{sid}.mp4")
+            clip_sha_str = str(rec.get("clip_sha256") or "")
+            timing_source = "clip_record"
+        elif isinstance(ep, dict) and ep.get("retime_clock", True):
             t_in = float(ep.get("in_s", ep.get("in", 0.0)))
             if "frames" in ep and ep["frames"] is not None:
                 new_frames = max(1, int(ep["frames"]))
@@ -404,26 +445,38 @@ def retime_with_edit_points(
             else:
                 new_frames = old_frames
                 t_out = round(t_in + old_frames / fps, 4)
+            clip_p_str = str(ep.get("clip_path") or f"production/video/cut/{sid}.mp4")
+            clip_sha_str = str(ep.get("clip_sha256") or "")
+            timing_source = "edit_points"
+        else:
+            new_frames = 0
+            t_in = 0.0
+            t_out = 0.0
+            clip_p_str = ""
+            clip_sha_str = ""
+            timing_source = "none"
 
-            if new_frames > 0:
-                frame_deltas[sid] = new_frames - old_frames
-                t_shot["frames"] = new_frames
-                t_shot["seconds"] = round(new_frames / fps, 4)
-                t_shot["duration_s"] = round(new_frames / fps, 4)
-                t_shot["trim_contract"] = {
-                    "in_s": round(t_in, 4),
-                    "out_s": round(t_out, 4),
-                    "trim_duration_s": round(new_frames / fps, 4),
-                    "frames": new_frames,
-                    "clip_path": str(ep.get("clip_path") or f"production/video/cut/{sid}.mp4"),
-                    "head_lead_min_s": BP201_HEAD_LEAD_S,
-                    "reaction_tail_min_s": BP201_TAIL_MIN_S,
-                    "reaction_tail_target_s": BP201_TAIL_TARGET_S,
-                    "single_trimmed_source": True,
-                }
-                if sid in spoken_inserts:
-                    spoken_inserts[sid]["frames"] = new_frames
-                    spoken_inserts[sid]["seconds"] = round(new_frames / fps, 4)
+        if new_frames > 0:
+            frame_deltas[sid] = new_frames - old_frames
+            t_shot["frames"] = new_frames
+            t_shot["seconds"] = round(new_frames / fps, 4)
+            t_shot["duration_s"] = round(new_frames / fps, 4)
+            t_shot["trim_contract"] = {
+                "in_s": round(t_in, 4),
+                "out_s": round(t_out, 4),
+                "trim_duration_s": round(new_frames / fps, 4),
+                "frames": new_frames,
+                "clip_path": clip_p_str,
+                "clip_sha256": clip_sha_str,
+                "head_lead_min_s": BP201_HEAD_LEAD_S,
+                "reaction_tail_min_s": BP201_TAIL_MIN_S,
+                "reaction_tail_target_s": BP201_TAIL_TARGET_S,
+                "single_trimmed_source": True,
+                "timing_source": timing_source,
+            }
+            if sid in spoken_inserts:
+                spoken_inserts[sid]["frames"] = new_frames
+                spoken_inserts[sid]["seconds"] = round(new_frames / fps, 4)
 
     # Recompute monotonic start_frame / end_frame across all shots, shift spines, and build downstream schedules
     cur_frame = 0
@@ -561,7 +614,15 @@ def persist_authoritative_clock(timing_doc: dict, path: Path) -> dict:
 def verify_clock_alignment(timing_doc: dict, consumer_record: dict) -> list[dict]:
     """Verify that a segment build, audio mix, or QA review record was produced against the exact authoritative clock."""
     findings: list[dict] = []
-    expected_id = timing_doc.get("timing_id") or compute_timing_id(timing_doc)
+    computed_auth_id = compute_timing_id(timing_doc)
+    declared_auth_id = timing_doc.get("timing_id")
+    if declared_auth_id and declared_auth_id != computed_auth_id:
+        findings.append({
+            "rule": "BP-201",
+            "status": "FAIL",
+            "detail": f"clock mismatch: authoritative timing_id={declared_auth_id!r} != computed={computed_auth_id!r}",
+        })
+    expected_id = declared_auth_id or computed_auth_id
     got_id = consumer_record.get("timing_id")
     if got_id != expected_id:
         findings.append({
@@ -569,6 +630,14 @@ def verify_clock_alignment(timing_doc: dict, consumer_record: dict) -> list[dict
             "status": "FAIL",
             "detail": f"clock mismatch: consumer timing_id={got_id!r} != authoritative timing_id={expected_id!r}",
         })
+    if isinstance(consumer_record.get("shots"), dict) and got_id:
+        computed_consumer_id = compute_timing_id(consumer_record)
+        if got_id != computed_consumer_id:
+            findings.append({
+                "rule": "BP-201",
+                "status": "FAIL",
+                "detail": f"clock mismatch: supplied timing_doc timing_id={got_id!r} != its computed fingerprint {computed_consumer_id!r}",
+            })
     expected_epoch = timing_doc.get("render_epoch")
     got_epoch = consumer_record.get("render_epoch")
     if expected_epoch and got_epoch and got_epoch != expected_epoch:

@@ -655,8 +655,15 @@ class LtxSession:
                                    diffvae_optimization=args.diffvae_optimization)
         self.setup["pipeline_s"] = round(self.now() - t0, 1)
         t1, cache = self.now(), {}
-        for i in range(0, len(self.prompts), PROMPT_GROUP):
-            group = self.prompts[i:i + PROMPT_GROUP]
+        prompts_to_encode = list(self.prompts)
+        neg_init = getattr(args, "negative_prompt", None)
+        if neg_init:
+            san_neg = sanitize_painterly_negative_prompt(neg_init)
+            for cand in (neg_init, san_neg):
+                if cand and cand not in prompts_to_encode:
+                    prompts_to_encode.append(cand)
+        for i in range(0, len(prompts_to_encode), PROMPT_GROUP):
+            group = prompts_to_encode[i:i + PROMPT_GROUP]
             cache.update(zip(group, pipe.prompt_encoder(group)))
         pipe.prompt_encoder = _CachedPrompts(cache)
         L.cleanup()
@@ -689,12 +696,21 @@ class LtxSession:
             video_marker, audio_marker = D.markers_from_args(args, device=D.get_device(), color_space=hdr)
             vae_dtype = D.vae_dtype_for_hdr(hdr, torch.bfloat16)
             chunk_config = D.chunk_config_from_args(args)
-            chunks, num_frames, tiling_config = self.pipe.stream_chunks(
+            neg_prompt = (
+                sanitize_painterly_negative_prompt(args.negative_prompt)
+                if getattr(args, "negative_prompt", None)
+                else getattr(args, "negative_prompt", None)
+            )
+            stream_kw = dict(
                 prompt=args.prompt, seed=args.seed, height=args.height, width=args.width, num_frames=args.num_frames,
                 frame_rate=args.frame_rate, images=args.images, vae_dtype=vae_dtype, color_space=hdr,
                 enhance_prompt=args.enhance_prompt, enhance_static_cache=args.enhance_static_cache,
                 tiling_config=D.AUTO_TILING, generated_keyframes=args.num_generated_keyframes,
-                decode_with_keyframes=args.decode_with_keyframes, chunk_config=chunk_config)
+                decode_with_keyframes=args.decode_with_keyframes, chunk_config=chunk_config,
+            )
+            if neg_prompt is not None:
+                stream_kw["negative_prompt"] = neg_prompt
+            chunks, num_frames, tiling_config = self.pipe.stream_chunks(**stream_kw)
             if chunk_config is not None:
                 video, audio, audio_sampling_rate = D.split_decoded_chunks(chunks)
                 video_chunks_number = 1
