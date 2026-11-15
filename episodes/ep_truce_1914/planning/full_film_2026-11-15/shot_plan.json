@@ -26,7 +26,656 @@
    "grey blur blobs in the sky band from mist/cloud effects without a sky mask (S02_SH009, S05_SH003, S06_SH005, S08_SH003 old renders)",
    "LTX S03_SH007 white bloom (bad take)",
    "S08_SH003 picture contradicts its line (data)"
-  ]
+  ],
+  "audio_rule": "Audio is designed for every shot, maps included, from the photo, the scene and the mood (creator 2026-11-15 17:00/17:02 UTC): look at the picture first, then write what is heard, where it comes from (pan = source x), how loud (distance) and why. Mandatory does not mean filler: a sound that does not belong is left out, silence is a choice when the scene calls for it, a needed sound that is missing is flagged as a GAP. Beds sit 22-36 dB under the voice, spots 14-30 dB under; everything ducks a further 8-10 dB while a voice speaks. No question to the creator is needed for this.",
+  "audio_assets_2026_11_15": {
+   "music": [
+    {
+     "file": "km_silent_night.mp3",
+     "title": "Silent Night",
+     "creator": "Kevin MacLeod",
+     "source": "https://incompetech.com/ (ISRC USUAN1100075; also on Wikimedia Commons as CC BY 3.0)",
+     "licence": "CC BY 4.0 (incompetech); monetisation allowed with attribution",
+     "attribution": "\"Silent Night\" Kevin MacLeod (incompetech.com) Licensed under Creative Commons: By Attribution 4.0 https://creativecommons.org/licenses/by/4.0/",
+     "instrumental": "yes (Whisper found no words, 2026-11-15)",
+     "duration_s": 131.2,
+     "sha256": "4303f2a73ffd4e872503eb0898f62d7d0b9f1f15c783fcb3495e01c7383b6c00",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/music/km_silent_night.mp3"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "mixkit_1700_gun_explosion_with_long_echo.mp3",
+     "id": "1700",
+     "title": "Gun explosion with long echo",
+     "source": "https://mixkit.co/free-sound-effects/explosion/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1700/1700-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "6edcdd3df46f3ad5e9dcc90adc7c2db81b51e30b375dc499d8de78c05c858323",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1700_gun_explosion_with_long_echo.mp3"
+    },
+    {
+     "file": "mixkit_2186_blast_hit_with_echo.mp3",
+     "id": "2186",
+     "title": "Blast hit with echo",
+     "source": "https://mixkit.co/free-sound-effects/explosion/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2186/2186-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "3cf23e56da56ab9cd77106cc65e51e619e50b4b7057fa01a2c7a1ec869ece424",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2186_blast_hit_with_echo.mp3"
+    },
+    {
+     "file": "mixkit_2786_far_away_war_explosions.mp3",
+     "id": "2786",
+     "title": "Far away war explosions",
+     "source": "https://mixkit.co/free-sound-effects/cinematic/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2786/2786-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "8b08cc4e7e13bc0f14032cabc2700db15402d11ff79e038e61e130c2252d9e30",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2786_far_away_war_explosions.mp3"
+    },
+    {
+     "file": "mixkit_1696_distant_war_explosions.mp3",
+     "id": "1696",
+     "title": "Distant war explosions",
+     "source": "https://mixkit.co/free-sound-effects/explosion/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1696/1696-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "13645654719677874ced99b92e428a176d3e376c0785015512af12d8ec67d55b",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1696_distant_war_explosions.mp3"
+    },
+    {
+     "file": "mixkit_2772_bomb_distant_explotion.mp3",
+     "id": "2772",
+     "title": "Bomb distant explotion",
+     "source": "https://mixkit.co/free-sound-effects/explosion/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2772/2772-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "312456bee4e95794f5a19fe674f93f76f5b8ffe52897c43a013230659b76fdee",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2772_bomb_distant_explotion.mp3"
+    },
+    {
+     "file": "mixkit_1690_distant_explosion.mp3",
+     "id": "1690",
+     "title": "Distant explosion",
+     "source": "https://mixkit.co/free-sound-effects/explosion/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1690/1690-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "a399d5c65bfbf7286e4d82f0762ec3d33777ce310a97bd12ac2942f3f18374a2",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1690_distant_explosion.mp3"
+    },
+    {
+     "file": "mixkit_2758_explosive_impact_from_afar.mp3",
+     "id": "2758",
+     "title": "Explosive impact from afar",
+     "source": "https://mixkit.co/free-sound-effects/explosion/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2758/2758-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "65e16ee0825af21f8c11e1cd4fd966be7b33c67ab57bff7d2710a20e181707f9",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2758_explosive_impact_from_afar.mp3"
+    },
+    {
+     "file": "mixkit_2378_scissors_cutting_paper.mp3",
+     "id": "2378",
+     "title": "Scissors cutting paper",
+     "source": "https://mixkit.co/free-sound-effects/paper/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2378/2378-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "8a9dc5b73277d6ccf0f9cb19c48458ef9af0658fec9ca7083c2b094da1d39138",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2378_scissors_cutting_paper.mp3"
+    },
+    {
+     "file": "mixkit_1939_coins_handling.mp3",
+     "id": "1939",
+     "title": "Coins handling",
+     "source": "https://mixkit.co/free-sound-effects/coin/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1939/1939-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "4414c8cb215833772c5d954655a5346b1379d76575d4805be8b51561eb8bdfc4",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1939_coins_handling.mp3"
+    },
+    {
+     "file": "mixkit_1993_clinking_coins.mp3",
+     "id": "1993",
+     "title": "Clinking coins",
+     "source": "https://mixkit.co/free-sound-effects/coin/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1993/1993-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "17c875a7bd16c05cba029fa4967c2eba4b1974c8ef85c75f0169ec427c053d04",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1993_clinking_coins.mp3"
+    },
+    {
+     "file": "mixkit_1382_mechanical_typewriter_single_hit.mp3",
+     "id": "1382",
+     "title": "Mechanical typewriter single hit",
+     "source": "https://mixkit.co/free-sound-effects/typewriter/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1382/1382-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "9ff9b0b9bb4c4a309f5e964b9d5338f74359eac6b87c26f8717cf1df4cce27bd",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1382_mechanical_typewriter_single_hit.mp3"
+    },
+    {
+     "file": "mixkit_1365_mechanical_typewriter_hit.mp3",
+     "id": "1365",
+     "title": "Mechanical typewriter hit",
+     "source": "https://mixkit.co/free-sound-effects/typewriter/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1365/1365-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "2fdf685f3bc91b847acf22204596e654bfabf13d46dea89b86664b370a4b7871",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1365_mechanical_typewriter_hit.mp3"
+    },
+    {
+     "file": "mixkit_1372_old_typewriter_typing.mp3",
+     "id": "1372",
+     "title": "Old typewriter typing",
+     "source": "https://mixkit.co/free-sound-effects/typewriter/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1372/1372-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "de5b1e64d95d74c4b92101d72e5cb5273a91ba60ea67e288bfd103cd50207ee3",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1372_old_typewriter_typing.mp3"
+    },
+    {
+     "file": "mixkit_1383_typewriter_return_bell_sound.mp3",
+     "id": "1383",
+     "title": "Typewriter return bell sound",
+     "source": "https://mixkit.co/free-sound-effects/typewriter/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1383/1383-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "e711dfcddee29ce28db8d8f0c15f3f824371b5a15ccd5595d1f2a77ee03bbd47",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1383_typewriter_return_bell_sound.mp3"
+    },
+    {
+     "file": "mixkit_1530_paper_slide.mp3",
+     "id": "1530",
+     "title": "Paper slide",
+     "source": "https://mixkit.co/free-sound-effects/paper/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1530/1530-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "630ac68a95829c9b04cd981b8e8249efb2a03947a95f05ff4296b2e5169e1c82",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1530_paper_slide.mp3"
+    },
+    {
+     "file": "mixkit_2369_writing_scribble_on_paper.mp3",
+     "id": "2369",
+     "title": "Writing scribble on paper",
+     "source": "https://mixkit.co/free-sound-effects/paper/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2369/2369-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "71157e7d44d9a624fc3449ef36b229065367e216e333817e6013c2a87333ad56",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2369_writing_scribble_on_paper.mp3"
+    },
+    {
+     "file": "mixkit_3194_writing_pencil.mp3",
+     "id": "3194",
+     "title": "Writing pencil",
+     "source": "https://mixkit.co/free-sound-effects/pencil/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/3194/3194-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "e5182826c40a93c5bf86f9bd81b311e04207cc5d5f07b9bee8dabd87eee1a8ce",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_3194_writing_pencil.mp3"
+    },
+    {
+     "file": "mixkit_2376_short_pencil_writing.mp3",
+     "id": "2376",
+     "title": "Short pencil writing",
+     "source": "https://mixkit.co/free-sound-effects/pencil/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2376/2376-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "815231851bb7f8adeaa513bda8a37331ca6e474c98b851232a475a04489b710f",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2376_short_pencil_writing.mp3"
+    },
+    {
+     "file": "mixkit_2379_papers_being_moved_or_wrinkling.mp3",
+     "id": "2379",
+     "title": "Papers being moved or wrinkling",
+     "source": "https://mixkit.co/free-sound-effects/paper/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2379/2379-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "7722a2cb2c933837b41ae82aff14faaefe141ceb50669947053a22ec185df2cd",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2379_papers_being_moved_or_wrinkling.mp3"
+    },
+    {
+     "file": "mixkit_2385_paper_crinkle.mp3",
+     "id": "2385",
+     "title": "Paper crinkle",
+     "source": "https://mixkit.co/free-sound-effects/paper/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2385/2385-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "70f8eb2786ce19cf37ce2f6baeda15052a12b3380e4a4443762a84a6d12a869a",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2385_paper_crinkle.mp3"
+    },
+    {
+     "file": "mixkit_1850_cutlery_knives_handle.mp3",
+     "id": "1850",
+     "title": "Cutlery knives handle",
+     "source": "https://mixkit.co/free-sound-effects/cutlery/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1850/1850-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "ec7ec959dbd06fb8a39c77cb263d2626b066e61bbdb67ff8fa1532cbf9047a4f",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1850_cutlery_knives_handle.mp3"
+    },
+    {
+     "file": "mixkit_133_taking_cutlery_from_a_plate.mp3",
+     "id": "133",
+     "title": "Taking cutlery from a plate",
+     "source": "https://mixkit.co/free-sound-effects/cutlery/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/133/133-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "0d0d3d4a9cf693cb2f8f66d146af3ecf5adfa9f50f707d9a15f24f24ee54e67d",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_133_taking_cutlery_from_a_plate.mp3"
+    },
+    {
+     "file": "mixkit_132_placing_cutlery_on_a_plate.mp3",
+     "id": "132",
+     "title": "Placing cutlery on a plate",
+     "source": "https://mixkit.co/free-sound-effects/cutlery/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/132/132-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "3a7c6b29da588f8588097850237c85f24c994c66a603efa4d7bd97ce8b796eef",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_132_placing_cutlery_on_a_plate.mp3"
+    },
+    {
+     "file": "mixkit_2835_stirring_cutlery_in_ceramic_plate.mp3",
+     "id": "2835",
+     "title": "Stirring cutlery in ceramic plate",
+     "source": "https://mixkit.co/free-sound-effects/cutlery/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2835/2835-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "2ca8097184d31d4eaded2e49bc1a02fea18c24f30ce66f1b7554351af7d4e6b4",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2835_stirring_cutlery_in_ceramic_plate.mp3"
+    },
+    {
+     "file": "mixkit_116_food_can_quick_opening.mp3",
+     "id": "116",
+     "title": "Food can quick opening",
+     "source": "https://mixkit.co/free-sound-effects/metal/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/116/116-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "3414f89462b2377c7cef2a5cb7afccdb8efac8aac12d91c8c0dbb3949e853f43",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_116_food_can_quick_opening.mp3"
+    },
+    {
+     "file": "mixkit_1842_metal_bowl_hit.mp3",
+     "id": "1842",
+     "title": "Metal bowl hit",
+     "source": "https://mixkit.co/free-sound-effects/metal/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1842/1842-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "726a6f4c34845fb7fc2296ab316ff627be6ce4fdaacc6bac2b94d5128ace6d42",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1842_metal_bowl_hit.mp3"
+    },
+    {
+     "file": "mixkit_2244_chewing_something_crunchy.mp3",
+     "id": "2244",
+     "title": "Chewing something crunchy",
+     "source": "https://mixkit.co/free-sound-effects/eat/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2244/2244-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "6fcb53a54efbd8ecfe251dad69c159a2b45fe20f8758ea3286b2c677b07c4c6a",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2244_chewing_something_crunchy.mp3"
+    },
+    {
+     "file": "mixkit_2252_hungry_man_eating.mp3",
+     "id": "2252",
+     "title": "Hungry man eating",
+     "source": "https://mixkit.co/free-sound-effects/eat/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2252/2252-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "127502c288c125c6c219ecd370c22e555e641c455474613b4c04fc5e386ebe8f",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2252_hungry_man_eating.mp3"
+    },
+    {
+     "file": "mixkit_150_swallowing_a_water_drink_in_the_throat.mp3",
+     "id": "150",
+     "title": "Swallowing a water drink in the throat",
+     "source": "https://mixkit.co/free-sound-effects/eat/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/150/150-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "ea4eee58ee02fddb3386091d449faf9887b698ca7513b5ebf118d6ce404640ba",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_150_swallowing_a_water_drink_in_the_throat.mp3"
+    },
+    {
+     "file": "mixkit_1329_campfire_burning_crackles.mp3",
+     "id": "1329",
+     "title": "Campfire burning crackles",
+     "source": "https://mixkit.co/free-sound-effects/fire/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1329/1329-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "73d22bdfe741fd1bb879ec53b9b080a910a9202f0873bb1afced15c0ca7fd15e",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1329_campfire_burning_crackles.mp3"
+    },
+    {
+     "file": "mixkit_1330_campfire_crackles.mp3",
+     "id": "1330",
+     "title": "Campfire crackles",
+     "source": "https://mixkit.co/free-sound-effects/fire/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1330/1330-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "47dee6aa6ee5ec0d3136aee0255789833dcaaff27c1334e82ffaa016efb1d7c4",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1330_campfire_crackles.mp3"
+    },
+    {
+     "file": "mixkit_1736_campfire_night_wind.mp3",
+     "id": "1736",
+     "title": "Campfire night wind",
+     "source": "https://mixkit.co/free-sound-effects/fire/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1736/1736-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "f4ba18fc9fa32be7fd3e483dd83b7811d06f5d00c9cc83dcefc84cbb981afdc7",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1736_campfire_night_wind.mp3"
+    },
+    {
+     "file": "mixkit_539_footsteps_on_the_snow.mp3",
+     "id": "539",
+     "title": "Footsteps on the snow",
+     "source": "https://mixkit.co/free-sound-effects/snow/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/539/539-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "106412571bc4cde713ae8f2e0f6429de0855ddfe41b2145f0e538ec26f4e671d",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_539_footsteps_on_the_snow.mp3"
+    },
+    {
+     "file": "mixkit_538_footsteps_on_frozen_ground.mp3",
+     "id": "538",
+     "title": "Footsteps on frozen ground",
+     "source": "https://mixkit.co/free-sound-effects/footsteps/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/538/538-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "485dddb31d2defa512aaab4a9e65b80314b1aededa5ef057aef6f59a5f09e5dd",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_538_footsteps_on_frozen_ground.mp3"
+    },
+    {
+     "file": "mixkit_537_footsteps_in_deep_mud.mp3",
+     "id": "537",
+     "title": "Footsteps in deep mud",
+     "source": "https://mixkit.co/free-sound-effects/footsteps/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/537/537-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "ef960202677a50b254dfb78d8d9c19ee861254ba05da43dd1afd6aa226c681af",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_537_footsteps_in_deep_mud.mp3"
+    },
+    {
+     "file": "mixkit_536_footsteps_in_a_muddy_puddle.mp3",
+     "id": "536",
+     "title": "Footsteps in a muddy puddle",
+     "source": "https://mixkit.co/free-sound-effects/footsteps/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/536/536-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "7dd74e99ae0cb5b29fd67579049d9965658fadb69c9f4d46210f8a8693725bd6",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_536_footsteps_in_a_muddy_puddle.mp3"
+    },
+    {
+     "file": "mixkit_461_big_army_crowd_marching.mp3",
+     "id": "461",
+     "title": "Big army crowd marching",
+     "source": "https://mixkit.co/free-sound-effects/footsteps/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/461/461-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "5c6c89e21bcf27b561b5a4e3c361c9d2e3c7a0d62ae0d52c06468f2fa760f52b",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_461_big_army_crowd_marching.mp3"
+    },
+    {
+     "file": "mixkit_456_male_crowd_whispering.mp3",
+     "id": "456",
+     "title": "Male crowd whispering",
+     "source": "https://mixkit.co/free-sound-effects/crowd/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/456/456-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "cb32be5b5ccbd19ecb35434b7b416bd477adb163593e58af7ca28f4b5a39327d",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_456_male_crowd_whispering.mp3"
+    },
+    {
+     "file": "mixkit_455_male_crowd_whispering_voices.mp3",
+     "id": "455",
+     "title": "Male crowd whispering voices",
+     "source": "https://mixkit.co/free-sound-effects/crowd/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/455/455-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "2c89c55e77fcf8553ded3b567074932e3804304a85533177ef27b4853baa8541",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_455_male_crowd_whispering_voices.mp3"
+    },
+    {
+     "file": "mixkit_423_small_man_crowd_laughing.mp3",
+     "id": "423",
+     "title": "Small man crowd laughing",
+     "source": "https://mixkit.co/free-sound-effects/laugh/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/423/423-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "1973af4310ae6ad8130e7ecb42acb32a01252d3f4a796cf2ce19181fcabac1a1",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_423_small_man_crowd_laughing.mp3"
+    },
+    {
+     "file": "mixkit_459_male_crowd_cheering_short.mp3",
+     "id": "459",
+     "title": "Male crowd cheering short",
+     "source": "https://mixkit.co/free-sound-effects/crowd/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/459/459-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "2bbde3e55e1dd4766d278a7e34a00e6b9cc15bb61ef5f521d30ed59e9a3a0d4b",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_459_male_crowd_cheering_short.mp3"
+    },
+    {
+     "file": "mixkit_457_male_crowd_cheering_and_whistling.mp3",
+     "id": "457",
+     "title": "Male crowd cheering and whistling",
+     "source": "https://mixkit.co/free-sound-effects/crowd/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/457/457-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "f0ae724e716a53652a263d828ff57dea0ed6e6aec85f3b42f171fbaf24e3d4af",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_457_male_crowd_cheering_and_whistling.mp3"
+    },
+    {
+     "file": "mixkit_411_human_male_casual_laugh.mp3",
+     "id": "411",
+     "title": "Human male casual laugh",
+     "source": "https://mixkit.co/free-sound-effects/laugh/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/411/411-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "8b00fc52168a6096bf2ef3a70dfa7980a2197a987e25c6283517f43d9cb7501e",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_411_human_male_casual_laugh.mp3"
+    },
+    {
+     "file": "mixkit_1175_winter_wind_loop.mp3",
+     "id": "1175",
+     "title": "Winter wind loop",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1175/1175-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "dd71cee26a51bf9d653389bb158289cc4e2a5be5078ccfe59ba1ed610dc209da",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1175_winter_wind_loop.mp3"
+    },
+    {
+     "file": "mixkit_1153_blizzard_cold_winds.mp3",
+     "id": "1153",
+     "title": "Blizzard cold winds",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1153/1153-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "1ec87ab5b09932e931e55e691bf491b1d334c2102926714bbb19c218c4d9e35b",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1153_blizzard_cold_winds.mp3"
+    },
+    {
+     "file": "mixkit_1276_wind_howl_exterior.mp3",
+     "id": "1276",
+     "title": "Wind howl exterior",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1276/1276-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "add4129fec5a0e6fa369d8ee088853bd3cc3aed91147191755c7244ba069ece8",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1276_wind_howl_exterior.mp3"
+    },
+    {
+     "file": "mixkit_1172_wind_cold_interior.mp3",
+     "id": "1172",
+     "title": "Wind cold interior",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1172/1172-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "27f343f14e48867587902fdea483538ae0d9d4b89d4c7bc68288b20c617dd119",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1172_wind_cold_interior.mp3"
+    },
+    {
+     "file": "mixkit_1173_soft_wind_interior.mp3",
+     "id": "1173",
+     "title": "Soft wind interior",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1173/1173-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "44d42a95934e6d51ed77944e92554d678f275f34dc1b977d03896eea4c0e59df",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1173_soft_wind_interior.mp3"
+    },
+    {
+     "file": "mixkit_1165_light_wind.mp3",
+     "id": "1165",
+     "title": "Light wind",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1165/1165-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "1f27ebf75059b88fa586c8efcfa2c7a6172d27aa4f06387aca8717f95b072610",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1165_light_wind.mp3"
+    },
+    {
+     "file": "mixkit_1166_meadow_wind_light.mp3",
+     "id": "1166",
+     "title": "Meadow wind light",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1166/1166-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "de5dd3fb26cd75eddd86de3cd983955c3aec403a26f0dad12b5fbf358cf35ea4",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1166_meadow_wind_light.mp3"
+    },
+    {
+     "file": "mixkit_1143_cinematic_whoosh_deep_impact.mp3",
+     "id": "1143",
+     "title": "Cinematic whoosh deep impact",
+     "source": "https://mixkit.co/free-sound-effects/cinematic/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1143/1143-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "9854bff8a78fcebef95350ff0ec72a41ba449ab372bbd601b55d84de13bd626d",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1143_cinematic_whoosh_deep_impact.mp3"
+    },
+    {
+     "file": "mixkit_786_cinematic_suspense_swell.mp3",
+     "id": "786",
+     "title": "Cinematic suspense swell",
+     "source": "https://mixkit.co/free-sound-effects/cinematic/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/786/786-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "741e1b26d635c9aedab4f6783ced46a327dfa8b330502a3e152882379e54ca5f",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_786_cinematic_suspense_swell.mp3"
+    },
+    {
+     "file": "mixkit_678_trailer_cinematic_suspense_swell.mp3",
+     "id": "678",
+     "title": "Trailer cinematic suspense swell",
+     "source": "https://mixkit.co/free-sound-effects/cinematic/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/678/678-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "d8860792cd7c12c73dc6fe96dd14f1b66b2a03f2727f6172b2c59dfee2e43562",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_678_trailer_cinematic_suspense_swell.mp3"
+    },
+    {
+     "file": "mixkit_549_deep_cinematic_subtle_drum_impact.mp3",
+     "id": "549",
+     "title": "Deep cinematic subtle drum impact",
+     "source": "https://mixkit.co/free-sound-effects/drum/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/549/549-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "c4f8b69331a5b24b5e072c6514adb43b2023ff3c2e8b87b153346b37620b0221",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_549_deep_cinematic_subtle_drum_impact.mp3"
+    },
+    {
+     "file": "mixkit_498_deep_heartbeat_impact.mp3",
+     "id": "498",
+     "title": "Deep heartbeat impact",
+     "source": "https://mixkit.co/free-sound-effects/cinematic/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/498/498-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "1cc994250942fb7e62760d99cdb62c9217cfa989b06f25cea35e2788bd599dc4",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_498_deep_heartbeat_impact.mp3"
+    },
+    {
+     "file": "mixkit_2664_cinematic_rumbling_swell.mp3",
+     "id": "2664",
+     "title": "Cinematic rumbling swell",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2664/2664-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "24964fec44d1270edf5471c2c5fa5bb49e6fb4e9c03162647d390a2f2119f5b2",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2664_cinematic_rumbling_swell.mp3"
+    },
+    {
+     "file": "mixkit_1170_cinematic_wind_swell.mp3",
+     "id": "1170",
+     "title": "Cinematic wind swell",
+     "source": "https://mixkit.co/free-sound-effects/wind/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1170/1170-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "276016a3b966cab966cc68c5a7a046f3295f4ecf2fe2022783c34b9fb475493c",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1170_cinematic_wind_swell.mp3"
+    },
+    {
+     "file": "mixkit_2282_cinematic_transition_brass_hum.mp3",
+     "id": "2282",
+     "title": "Cinematic transition brass hum",
+     "source": "https://mixkit.co/free-sound-effects/transition/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2282/2282-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "05a294f3c19ed88ff6f0dbe781c4cb9c6664b7e1d129d38201fc73833120b628",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2282_cinematic_transition_brass_hum.mp3"
+    },
+    {
+     "file": "mixkit_2297_bass_rumble_hum.mp3",
+     "id": "2297",
+     "title": "Bass rumble hum",
+     "source": "https://mixkit.co/free-sound-effects/transition/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/2297/2297-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "90c50094fc834a5210f3087715585ade13b1f3a3b5d060ba317f32505dc1e143",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_2297_bass_rumble_hum.mp3"
+    },
+    {
+     "file": "mixkit_619_cinematic_church_bell_hit.mp3",
+     "id": "619",
+     "title": "Cinematic church bell hit",
+     "source": "https://mixkit.co/free-sound-effects/bell/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/619/619-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "629b121451a648cb286758093363641a04474b2e7216dcb85194dcb11148172c",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_619_cinematic_church_bell_hit.mp3"
+    },
+    {
+     "file": "mixkit_623_low_church_bell_calling.mp3",
+     "id": "623",
+     "title": "Low church bell calling",
+     "source": "https://mixkit.co/free-sound-effects/church/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/623/623-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "13c7e0c9036458b50b1af57414f59fd4c65685cf05e265647cc3cff2f6194d1a",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_623_low_church_bell_calling.mp3"
+    },
+    {
+     "file": "mixkit_1122_metal_click.mp3",
+     "id": "1122",
+     "title": "Metal click",
+     "source": "https://mixkit.co/free-sound-effects/metal/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/1122/1122-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "fdca0c283d5ba529681f3828d2197eed3077096a122a58013c44f5ffd39bfd15",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_1122_metal_click.mp3"
+    },
+    {
+     "file": "mixkit_3138_metal_bar_movement_hits.mp3",
+     "id": "3138",
+     "title": "Metal bar movement hits",
+     "source": "https://mixkit.co/free-sound-effects/metal/",
+     "preview_url": "https://assets.mixkit.co/active_storage/sfx/3138/3138-preview.mp3",
+     "licence": "Mixkit Sound Effects Free License (free for commercial use incl. YouTube monetisation, no attribution required) https://mixkit.co/license/#sfxFree",
+     "sha256": "4c9e06dafc06863b592ef203059441af2395964fa7577e1cf5f9ae1cd85b3110",
+     "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_3138_metal_bar_movement_hits.mp3"
+    }
+   ]
+  }
  },
  "shots": [
   {
@@ -51,8 +700,28 @@
    "cold": "breathless still cold: frost haze, spindrift; no falling snow (clear sunrise)",
    "still": "wire, stakes, sandbags, trees",
    "keep": "the shell hole and both parapets",
-   "snd": "bed: open-land wind, low and thin (amb_wind_open_land); single far crow-less silence; one distant muffled rumble at 0.6 s far left (amb_low_rumble, -30 dB) = the war is still there",
-   "tr": "cut"
+   "snd": "bed L:amb_wind_open_land__v2 thin, -30, high-pass 150 Hz (cold air, no body). Spots: M:2786 far away war explosions, cut to one low thud [0.6 s; pan -0.7; -30 dB]; wire creak: M:3138 metal bar, pitched down, very soft [on the push, 1.8 s; pan +0.3; -32 dB]. Left out on purpose: no birds (a war landscape), no music hit before '1914'.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Empty frozen field at sunrise, fog, wire, little lamps far off. The silence of a front that should be loud.",
+    "bed": "L:amb_wind_open_land__v2 thin, -30, high-pass 150 Hz (cold air, no body)",
+    "spots": [
+     {
+      "sound": "M:2786 far away war explosions, cut to one low thud",
+      "when": "0.6 s",
+      "pan": -0.7,
+      "level_db": -30
+     },
+     {
+      "sound": "wire creak: M:3138 metal bar, pitched down, very soft",
+      "when": "on the push, 1.8 s",
+      "pan": 0.3,
+      "level_db": -32
+     }
+    ],
+    "left_out": "no birds (a war landscape), no music hit before '1914'",
+    "gap": ""
+   }
   },
   {
    "shot": "S01_SH002",
@@ -72,7 +741,27 @@
    "mood": "hook: the man who will walk",
    "clip": "LTX narrated (Thomas leans on the ladder, then climbs out): clip own sound -12 dB, use 0.0-4.9 s (slot), the climb starts inside the slot",
    "tr": "cut",
-   "snd": "bed: trench wind; ladder creak and boots on rungs from the clip; brazier crackle right"
+   "snd": "bed trench close: L:amb_wind_open_land__v1 -28 low-passed 4 kHz (we are below ground) + M:1329 campfire crackles -26 pan +0.4 (brazier right). Spots: C: ladder creak and boots from the clip [as he climbs; pan +0.0; -14 dB]; L:cloth_rustle__v2 coat on the sandbags [top of the ladder; pan +0.1; -22 dB]. Left out on purpose: no voices around him: he goes alone.",
+   "audio": {
+    "hear": "Thomas in the trench by the ladder, a brazier and a candle in the dugout, he climbs to the parapet.",
+    "bed": "trench close: L:amb_wind_open_land__v1 -28 low-passed 4 kHz (we are below ground) + M:1329 campfire crackles -26 pan +0.4 (brazier right)",
+    "spots": [
+     {
+      "sound": "C: ladder creak and boots from the clip",
+      "when": "as he climbs",
+      "pan": 0,
+      "level_db": -14
+     },
+     {
+      "sound": "L:cloth_rustle__v2 coat on the sandbags",
+      "when": "top of the ladder",
+      "pan": 0.1,
+      "level_db": -22
+     }
+    ],
+    "left_out": "no voices around him: he goes alone",
+    "gap": ""
+   }
   },
   {
    "shot": "S01_SH003",
@@ -92,7 +781,27 @@
    "mood": "the walk, unarmed",
    "clip": "LTX narrated (Thomas walks away from camera between the wire): clip own sound -12 dB, footsteps in snow added in sync (footstep_snow, centre, close -> mid), use 0.0-6.6 s",
    "tr": "cut",
-   "snd": "bed: open-land wind; footsteps; one far muffled rumble on 'dying' (amb_low_rumble, -30 dB)"
+   "snd": "bed open land: L:amb_wind_open_land__v2 -26 (wind opens up as we leave the trench). Spots: M:538 footsteps on frozen ground, synced to his steps [whole shot; pan +0.0; -18 dB]; M:2786 one far muffled rumble [on 'dying'; pan -0.8; -30 dB]. Left out on purpose: no breath SFX (too close for this wide).",
+   "audio": {
+    "hear": "He walks out across no man's land, smoke from dugouts on both sides, frozen ground, sun ahead.",
+    "bed": "open land: L:amb_wind_open_land__v2 -26 (wind opens up as we leave the trench)",
+    "spots": [
+     {
+      "sound": "M:538 footsteps on frozen ground, synced to his steps",
+      "when": "whole shot",
+      "pan": 0,
+      "level_db": -18
+     },
+     {
+      "sound": "M:2786 one far muffled rumble",
+      "when": "on 'dying'",
+      "pan": -0.8,
+      "level_db": -30
+     }
+    ],
+    "left_out": "no breath SFX (too close for this wide)",
+    "gap": ""
+   }
   },
   {
    "shot": "S01_SH004",
@@ -116,8 +825,28 @@
    "cold": "frost haze, breath",
    "still": "wire, farm, sandbags",
    "keep": "the climbing men and the walking group",
-   "snd": "bed: open-land wind; mid-distance footsteps in snow (footstep_snow) panned right as the pan arrives; faint murmur of voices far right (Battle Crowd murmuring, -28 dB, high-cut)",
-   "tr": "cut"
+   "snd": "bed L:amb_wind_open_land__v2 -27. Spots: L:army_waiting_murmur__v1, high-cut 3 kHz [rises over the shot; pan +0.3; -28 dB]; L:footstep_snow__v1..v3 scattered, distant [right side as the camera arrives; pan +0.5; -26 dB]. Left out on purpose: no cheering yet: this is cautious.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Wide: men climbing out of both trenches, figures walking toward each other, a ruined farm, lamps.",
+    "bed": "L:amb_wind_open_land__v2 -27",
+    "spots": [
+     {
+      "sound": "L:army_waiting_murmur__v1, high-cut 3 kHz",
+      "when": "rises over the shot",
+      "pan": 0.3,
+      "level_db": -28
+     },
+     {
+      "sound": "L:footstep_snow__v1..v3 scattered, distant",
+      "when": "right side as the camera arrives",
+      "pan": 0.5,
+      "level_db": -26
+     }
+    ],
+    "left_out": "no cheering yet: this is cautious",
+    "gap": ""
+   }
   },
   {
    "shot": "S01_SH005",
@@ -141,8 +870,28 @@
    "cold": "night frost, light falling snow (overcast night sky = allowed), blue grade with the warm candle points",
    "still": "trees, trench walls",
    "keep": "the winding trench and the lit trees",
-   "snd": "bed: night wind low; very faint distant men singing far right (no library take: leave silent and let the music carry it); brazier crackle soft centre",
-   "tr": "dip to black 0.5 s into the map chapter (chapter change)"
+   "snd": "bed L:campfire_night_wind__v1 -28 (night wind + far fire). Spots: C: S03_SH003 singing, reverbed, very far [under 'with a song'; pan +0.6; -30 dB]; M:2786 far thud [under 'how it ended'; pan -0.6; -30 dB]. Left out on purpose: the singing is a hint only; music swell after 'stopped' per the accents table.",
+   "tr": "dip to black 0.5 s into the map chapter (chapter change)",
+   "audio": {
+    "hear": "Night, moon, Christmas trees on the parapet, candles, men at braziers. 'How it began, with a song. And how it ended.'",
+    "bed": "L:campfire_night_wind__v1 -28 (night wind + far fire)",
+    "spots": [
+     {
+      "sound": "C: S03_SH003 singing, reverbed, very far",
+      "when": "under 'with a song'",
+      "pan": 0.6,
+      "level_db": -30
+     },
+     {
+      "sound": "M:2786 far thud",
+      "when": "under 'how it ended'",
+      "pan": -0.6,
+      "level_db": -30
+     }
+    ],
+    "left_out": "the singing is a hint only; music swell after 'stopped' per the accents table",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH001",
@@ -163,8 +912,28 @@
    "see": "S10 map: August 1914 arrow from Aachen through Belgium to the Marne",
    "cam": "map renderer as S10",
    "live": "the arrow draws on 'August'; date chip 'August 1914'",
-   "snd": "map sounds as SOUND_EVENTS v2 (pen line, chip tick); no bed",
-   "tr": "cut"
+   "snd": "bed paper room tone: L:map_paper_open__v1 at 0 s -24, then near silence. Spots: M:1365 mechanical typewriter hit [when the 'August 1914' label appears; pan -0.6; -18 dB]; L:pencil_line__v1 looped, follows the red line [while the line draws; pan +0.0; -22 dB]. Left out on purpose: no war sounds on the map.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Map, August 1914: the front line is drawn like ink across paper.",
+    "bed": "paper room tone: L:map_paper_open__v1 at 0 s -24, then near silence",
+    "spots": [
+     {
+      "sound": "M:1365 mechanical typewriter hit",
+      "when": "when the 'August 1914' label appears",
+      "pan": -0.6,
+      "level_db": -18
+     },
+     {
+      "sound": "L:pencil_line__v1 looped, follows the red line",
+      "when": "while the line draws",
+      "pan": 0,
+      "level_db": -22
+     }
+    ],
+    "left_out": "no war sounds on the map",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH002",
@@ -185,8 +954,34 @@
    "see": "S10 map: December 1914, front line Nieuport-Ypres-Verdun-Swiss border",
    "cam": "map renderer as S10",
    "live": "line draws on 'one line of trenches', ends at the Swiss border on 'Switzerland'",
-   "snd": "map: pen line + soft dig thud when the line settles; no bed",
-   "tr": "cut"
+   "snd": "bed none (paper). Spots: M:1382 typewriter single hit ['December 1914' label; pan -0.6; -18 dB]; L:pencil_line__v1 [while the line draws; pan +0.0; -22 dB]; L:soft_thud__v2 low (the line digs in) [when the line settles, on 'Switzerland'; pan +0.0; -20 dB].",
+   "tr": "cut",
+   "audio": {
+    "hear": "Map, December 1914: the line hardens into trenches from the sea to Switzerland.",
+    "bed": "none (paper)",
+    "spots": [
+     {
+      "sound": "M:1382 typewriter single hit",
+      "when": "'December 1914' label",
+      "pan": -0.6,
+      "level_db": -18
+     },
+     {
+      "sound": "L:pencil_line__v1",
+      "when": "while the line draws",
+      "pan": 0,
+      "level_db": -22
+     },
+     {
+      "sound": "L:soft_thud__v2 low (the line digs in)",
+      "when": "when the line settles, on 'Switzerland'",
+      "pan": 0,
+      "level_db": -20
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH003",
@@ -207,9 +1002,35 @@
    "see": "S10 map: close Flanders view, dual lines, Frelinghien highlight",
    "cam": "map zoom as S10",
    "live": "highlight on Frelinghien on 'cough'",
-   "snd": "map: one human cough (cough__v1) on the word 'cough', far left, low; no bed",
+   "snd": "bed none. Spots: L:swish_soft__v3 (the zoom) [zoom start; pan +0.0; -24 dB]; L:cough__v1 far and small [on 'cough'; pan -0.5; -22 dB]; L:cough__v1 pitched -2 st, answering [0.6 s later; pan +0.5; -26 dB].",
    "tr": "cut",
-   "log": "La Bassee label lacks the accent (La Bassée) in S05 maps: data fix in episode.json key_coordinates"
+   "log": "La Bassee label lacks the accent (La Bassée) in S05 maps: data fix in episode.json key_coordinates",
+   "audio": {
+    "hear": "Map zooms into Flanders, the two lines almost touch, a glow marks the spot.",
+    "bed": "none",
+    "spots": [
+     {
+      "sound": "L:swish_soft__v3 (the zoom)",
+      "when": "zoom start",
+      "pan": 0,
+      "level_db": -24
+     },
+     {
+      "sound": "L:cough__v1 far and small",
+      "when": "on 'cough'",
+      "pan": -0.5,
+      "level_db": -22
+     },
+     {
+      "sound": "L:cough__v1 pitched -2 st, answering",
+      "when": "0.6 s later",
+      "pan": 0.5,
+      "level_db": -26
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH004",
@@ -233,8 +1054,34 @@
    "cold": "wet cold: breath, wind-bent smoke; no falling snow",
    "still": "men, brazier cage, ladder, sandbags",
    "keep": "all five men whole, boots in frame",
-   "snd": "bed: trench wind + dripping water; brazier crackle centre-right; squelch of a boot in mud on 'Mud' (footstep_dirt, slowed); distant single rifle crack far right on 'sniper' (NOT IN LIBRARY: leave silent, see library gaps)",
-   "tr": "cut"
+   "snd": "bed trench: wind low -30 + M:1330 campfire crackles -26 pan +0.2 + drip/water slosh: M:536 footsteps in muddy puddle, slowed, -26. Spots: M:537 deep mud step [on 'Mud'; pan -0.3; -18 dB]; M:536 puddle squelch [on 'boot'; pan +0.2; -20 dB]; M:1700 gun with long echo, very far, high-cut (sniper) [on 'sniper'; pan +0.8; -26 dB]. Left out on purpose: 1 s of bed dip before 'sniper' (per accents). GAP: a true single rifle crack would be better than M:1700.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Flooded trench, men standing in water, a brazier, a seated man; mud and cold.",
+    "bed": "trench: wind low -30 + M:1330 campfire crackles -26 pan +0.2 + drip/water slosh: M:536 footsteps in muddy puddle, slowed, -26",
+    "spots": [
+     {
+      "sound": "M:537 deep mud step",
+      "when": "on 'Mud'",
+      "pan": -0.3,
+      "level_db": -18
+     },
+     {
+      "sound": "M:536 puddle squelch",
+      "when": "on 'boot'",
+      "pan": 0.2,
+      "level_db": -20
+     },
+     {
+      "sound": "M:1700 gun with long echo, very far, high-cut (sniper)",
+      "when": "on 'sniper'",
+      "pan": 0.8,
+      "level_db": -26
+     }
+    ],
+    "left_out": "1 s of bed dip before 'sniper' (per accents)",
+    "gap": "a true single rifle crack would be better than M:1700"
+   }
   },
   {
    "shot": "S02_SH005",
@@ -258,8 +1105,28 @@
    "cold": "breath of the reader rises into frame bottom once (from below the frame, POV)",
    "still": "hands, letter body",
    "keep": "both hands and the letter",
-   "snd": "bed: trench wind low; paper rustle (paper_move) on 'read'; brazier crackle close bottom-centre",
-   "tr": "cut"
+   "snd": "bed close brazier M:1329 -24 centre-low + trench wind -32. Spots: M:2385 paper crinkle [as the letter moves, on 'read'; pan +0.0; -16 dB]; L:cloth_rustle__v1 glove [0.2 s; pan +0.2; -24 dB].",
+   "tr": "cut",
+   "audio": {
+    "hear": "POV: gloved hands hold a worn letter by the brazier.",
+    "bed": "close brazier M:1329 -24 centre-low + trench wind -32",
+    "spots": [
+     {
+      "sound": "M:2385 paper crinkle",
+      "when": "as the letter moves, on 'read'",
+      "pan": 0,
+      "level_db": -16
+     },
+     {
+      "sound": "L:cloth_rustle__v1 glove",
+      "when": "0.2 s",
+      "pan": 0.2,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH006",
@@ -279,7 +1146,27 @@
    "mood": "wry, sad",
    "clip": "LTX voice; trim end to 4.5 s (last frame stillest); clip audio is the line",
    "tr": "cut",
-   "snd": "clip voice; bed trench wind; brazier crackle"
+   "snd": "bed M:1329 brazier -26 pan -0.2 + trench wind -32. Spots: C: Thomas's line [whole; pan +0.0; 0 dB]; M:2379 paper move as he lowers the letter [end; pan +0.1; -22 dB].",
+   "audio": {
+    "hear": "Thomas reads the letter by the brazier (dialogue).",
+    "bed": "M:1329 brazier -26 pan -0.2 + trench wind -32",
+    "spots": [
+     {
+      "sound": "C: Thomas's line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:2379 paper move as he lowers the letter",
+      "when": "end",
+      "pan": 0.1,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH007",
@@ -299,7 +1186,27 @@
    "mood": "grim humour",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice; bed"
+   "snd": "bed M:1329 brazier -26 centre + wind -32. Spots: C: Harris's line [whole; pan +0.0; 0 dB]; M:1122 metal click (rifle bolt) between words [0.4 s; pan -0.4; -22 dB].",
+   "audio": {
+    "hear": "Sgt Harris cleans his rifle by the brazier, Thomas beside him.",
+    "bed": "M:1329 brazier -26 centre + wind -32",
+    "spots": [
+     {
+      "sound": "C: Harris's line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:1122 metal click (rifle bolt) between words",
+      "when": "0.4 s",
+      "pan": -0.4,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH008",
@@ -323,9 +1230,29 @@
    "cold": "dusk frost, breath",
    "still": "men, brazier cage",
    "keep": "both men whole including boots, the brazier",
-   "snd": "bed: trench wind; brazier crackle centre; the narrator alone on 'Nobody asked the men' (bed dips 3 dB under that sentence)",
+   "snd": "bed M:1736 campfire night wind -27. Spots: L:cloth_move__v2 [a shoulder shifts, 4 s; pan +0.4; -26 dB]; M:1842 metal bowl hit, very soft (tin cup on knee) [6 s; pan -0.3; -26 dB]. Left out on purpose: bed dips 3 dB under 'Nobody asked the men' and the music swells only after it.",
    "tr": "cut",
-   "log": "V4 (steam/breath decided but invisible) and V5 (boots cut at the end of the push) are renderer defects: journal"
+   "log": "V4 (steam/breath decided but invisible) and V5 (boots cut at the end of the push) are renderer defects: journal",
+   "audio": {
+    "hear": "Night falling, two men silent by the brazier, steam from tin cups. 'Nobody asked the men in the trenches.'",
+    "bed": "M:1736 campfire night wind -27",
+    "spots": [
+     {
+      "sound": "L:cloth_move__v2",
+      "when": "a shoulder shifts, 4 s",
+      "pan": 0.4,
+      "level_db": -26
+     },
+     {
+      "sound": "M:1842 metal bowl hit, very soft (tin cup on knee)",
+      "when": "6 s",
+      "pan": -0.3,
+      "level_db": -26
+     }
+    ],
+    "left_out": "bed dips 3 dB under 'Nobody asked the men' and the music swells only after it",
+    "gap": ""
+   }
   },
   {
    "shot": "S02_SH009",
@@ -349,9 +1276,41 @@
    "cold": "breath; NO sky effects (the sky is a thin strip, no mist blobs: the old render had grey blur blobs at the top = defect)",
    "still": "men, tins",
    "keep": "all four front men",
-   "snd": "bed: trench wind low, murmur of men; tin lid click (buckle_click, low) on 'opened'; paper rustle on 'card'",
+   "snd": "bed M:1330 brazier -26 + L:army_waiting_murmur__v1 high-cut -30. Spots: M:116 tin opening [on 'opened'; pan -0.3; -16 dB]; M:1939 coins handling, pitched down (tin contents) [after 'tins'; pan -0.2; -22 dB]; M:2379 card paper [on 'card'; pan +0.2; -20 dB]; M:2590 match lighting [on 'cigarettes'; pan +0.4; -20 dB].",
    "tr": "dip to black 0.4 s (day -> night, cross to the German side)",
-   "log": "old 2.5D render had blurry grey blobs in the sky band (mist/cloud effect without a sky mask): journal"
+   "log": "old 2.5D render had blurry grey blobs in the sky band (mist/cloud effect without a sky mask): journal",
+   "audio": {
+    "hear": "Men around a brazier open Princess Mary tins: cigarettes, tobacco, a card.",
+    "bed": "M:1330 brazier -26 + L:army_waiting_murmur__v1 high-cut -30",
+    "spots": [
+     {
+      "sound": "M:116 tin opening",
+      "when": "on 'opened'",
+      "pan": -0.3,
+      "level_db": -16
+     },
+     {
+      "sound": "M:1939 coins handling, pitched down (tin contents)",
+      "when": "after 'tins'",
+      "pan": -0.2,
+      "level_db": -22
+     },
+     {
+      "sound": "M:2379 card paper",
+      "when": "on 'card'",
+      "pan": 0.2,
+      "level_db": -20
+     },
+     {
+      "sound": "M:2590 match lighting",
+      "when": "on 'cigarettes'",
+      "pan": 0.4,
+      "level_db": -20
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH001",
@@ -371,7 +1330,27 @@
    "mood": "quiet homesickness, the enemy as a man",
    "clip": "LTX, narrated; clip own sound at -12 dB under the narrator (Whisper heard a false 'You' = noise, fine); full 9.7 s",
    "tr": "cut",
-   "snd": "bed: night wind; candle flicker silent; soft cloth rustle from the clip"
+   "snd": "bed night wind -30 (L:campfire_night_wind__v1 with the fire turned down). Spots: L:cloth_rustle__v3 coat [as he lifts; pan +0.0; -22 dB]; L:soft_thud__v1 tree set down on sandbags [when it lands; pan +0.2; -20 dB]. Left out on purpose: candles are silent.",
+   "audio": {
+    "hear": "German trench at night: Friedrich lifts a lit tree onto the parapet; candles, a dugout door glowing.",
+    "bed": "night wind -30 (L:campfire_night_wind__v1 with the fire turned down)",
+    "spots": [
+     {
+      "sound": "L:cloth_rustle__v3 coat",
+      "when": "as he lifts",
+      "pan": 0,
+      "level_db": -22
+     },
+     {
+      "sound": "L:soft_thud__v1 tree set down on sandbags",
+      "when": "when it lands",
+      "pan": 0.2,
+      "level_db": -20
+     }
+    ],
+    "left_out": "candles are silent",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH002",
@@ -395,8 +1374,28 @@
    "cold": "night blue grade, breath not visible (no face)",
    "still": "hand, photo, candle body",
    "keep": "hand and photograph whole",
-   "snd": "bed: night wind very low; candle silent; far German voices murmur (-30 dB) from the right = the trench beyond",
-   "tr": "cut"
+   "snd": "bed night wind very low -34. Spots: L:cloth_move__v1 glove [0.3 s; pan +0.3; -26 dB]; far German voices murmur: L:army_waiting_murmur__v1 -32 high-cut [under; pan +0.7; -32 dB]. Left out on purpose: no music: the carol must enter clean next shot.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Close: a candle and Friedrich's gloved hand holding a photograph.",
+    "bed": "night wind very low -34",
+    "spots": [
+     {
+      "sound": "L:cloth_move__v1 glove",
+      "when": "0.3 s",
+      "pan": 0.3,
+      "level_db": -26
+     },
+     {
+      "sound": "far German voices murmur: L:army_waiting_murmur__v1 -32 high-cut",
+      "when": "under",
+      "pan": 0.7,
+      "level_db": -32
+     }
+    ],
+    "left_out": "no music: the carol must enter clean next shot",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH003",
@@ -416,7 +1415,27 @@
    "mood": "carol: Stille Nacht",
    "clip": "LTX voice (Friedrich sings). FIX: the old cut clipped 'Nacht'; play the raw clip to its natural end 4.71 s, do not trim",
    "tr": "cut",
-   "snd": "clip voice; no bed under the singing except a breath of wind"
+   "snd": "bed none (the singing is the scene). Spots: C: the singing [play to end; pan +0.0; 0 dB]; wind breath -36 [under; pan +0.0; -36 dB]. Left out on purpose: no score.",
+   "audio": {
+    "hear": "Friedrich and two men singing 'Stille Nacht' under a lit tree.",
+    "bed": "none (the singing is the scene)",
+    "spots": [
+     {
+      "sound": "C: the singing",
+      "when": "play to end",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "wind breath -36",
+      "when": "under",
+      "pan": 0,
+      "level_db": -36
+     }
+    ],
+    "left_out": "no score",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH004",
@@ -436,7 +1455,27 @@
    "mood": "curious",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice; the German singing continues far away under it (reuse S03_SH003 clip audio, -18 dB, high-cut, panned right)"
+   "snd": "bed night wind -30. Spots: C: S03_SH003 singing reused, far [under; pan +0.6; -18 dB]; C: Harris's line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "British side: Thomas and Harris at the parapet, rifles, moonlit field. 'What are they singing?'",
+    "bed": "night wind -30",
+    "spots": [
+     {
+      "sound": "C: S03_SH003 singing reused, far",
+      "when": "under",
+      "pan": 0.6,
+      "level_db": -18
+     },
+     {
+      "sound": "C: Harris's line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH005",
@@ -456,7 +1495,27 @@
    "mood": "recognition",
    "clip": "LTX voice, full 4.71 s",
    "tr": "cut",
-   "snd": "clip voice; far singing continues (-20 dB)"
+   "snd": "bed brazier soft M:1329 -30. Spots: C: Thomas's line [whole; pan +0.0; 0 dB]; far singing [under; pan +0.6; -20 dB].",
+   "audio": {
+    "hear": "Thomas and Harris sitting in the trench with small candles and a brazier.",
+    "bed": "brazier soft M:1329 -30",
+    "spots": [
+     {
+      "sound": "C: Thomas's line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "far singing",
+      "when": "under",
+      "pan": 0.6,
+      "level_db": -20
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH006",
@@ -476,7 +1535,33 @@
    "mood": "gruff caution",
    "clip": "LTX voice ('Let him sing' heard for 'Let 'em sing': accept), full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice; far singing"
+   "snd": "bed brazier -30. Spots: C: line [whole; pan +0.0; 0 dB]; far singing [under; pan +0.6; -20 dB]; L:cloth_move__v3 as Harris ducks [end; pan -0.2; -22 dB].",
+   "audio": {
+    "hear": "Harris close, Thomas behind: 'Let 'em sing. Heads down.'",
+    "bed": "brazier -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "far singing",
+      "when": "under",
+      "pan": 0.6,
+      "level_db": -20
+     },
+     {
+      "sound": "L:cloth_move__v3 as Harris ducks",
+      "when": "end",
+      "pan": -0.2,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH007",
@@ -496,8 +1581,22 @@
    "mood": "silent beat: Thomas looks at the candles",
    "clip": "LTX, NO voice: mute the clip audio (Whisper hears 'Oh my God' in its noise); trim to 3.75 s before the white bloom grows (a white glow covers the candles from ~2.0 s = defect: cut out at 1.9 s if visible on the eye check, else hold)",
    "tr": "cut",
-   "snd": "far singing continues (-16 dB, the only sound), candle silent",
-   "log": "LTX clip S03_SH007 grows a white fog bloom over the candles mid-clip (frame at 2.2 s): bad take"
+   "snd": "bed none. Spots: far singing, the only sound [whole; pan +0.6; -16 dB]. Left out on purpose: clip audio muted (bad take).",
+   "log": "LTX clip S03_SH007 grows a white fog bloom over the candles mid-clip (frame at 2.2 s): bad take",
+   "audio": {
+    "hear": "Thomas alone, looking at the candles (clip audio muted).",
+    "bed": "none",
+    "spots": [
+     {
+      "sound": "far singing, the only sound",
+      "when": "whole",
+      "pan": 0.6,
+      "level_db": -16
+     }
+    ],
+    "left_out": "clip audio muted (bad take)",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH008",
@@ -517,7 +1616,27 @@
    "mood": "Thomas answers with the song",
    "clip": "LTX voice, full 5.04 s (two soldiers walk into the back at the end: acceptable, they come to listen)",
    "tr": "cut",
-   "snd": "clip voice; far German singing under it"
+   "snd": "bed brazier M:1329 -30. Spots: C: Thomas singing [whole; pan +0.0; 0 dB]; far German singing [under; pan +0.6; -22 dB].",
+   "audio": {
+    "hear": "Thomas starts to sing back, Harris listens, men gather behind.",
+    "bed": "brazier M:1329 -30",
+    "spots": [
+     {
+      "sound": "C: Thomas singing",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "far German singing",
+      "when": "under",
+      "pan": 0.6,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH009",
@@ -537,7 +1656,27 @@
    "mood": "delight",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice; brazier"
+   "snd": "bed brazier -28 + L:army_waiting_murmur__v1 -30. Spots: C: Friedrich's line [whole; pan +0.0; 0 dB]; M:423 small man crowd laughing, short, warm [after 'More!'; pan +0.3; -22 dB].",
+   "audio": {
+    "hear": "German trench: men around the tree and a brazier hear the English song; 'Good, English! More!'",
+    "bed": "brazier -28 + L:army_waiting_murmur__v1 -30",
+    "spots": [
+     {
+      "sound": "C: Friedrich's line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:423 small man crowd laughing, short, warm",
+      "when": "after 'More!'",
+      "pan": 0.3,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S03_SH010",
@@ -561,8 +1700,28 @@
    "cold": "night frost, light snow, blue grade",
    "still": "trees, wire, stakes",
    "keep": "the candle line",
-   "snd": "bed: night wind very low; far voices singing faintly from the right (reuse S03_SH008 clip audio, -24 dB, reverb, panned right); NO rumble",
-   "tr": "dip to black 0.6 s (night -> Christmas morning)"
+   "snd": "bed night wind -30. Spots: C: S03_SH008 singing, reverbed, far [under; pan +0.6; -24 dB]; C: S03_SH003 singing, far, other side [under, overlapping; pan -0.6; -26 dB]. Left out on purpose: NO rumble: 'the sound was not gunfire'.",
+   "tr": "dip to black 0.6 s (night -> Christmas morning)",
+   "audio": {
+    "hear": "Wide moonlit no man's land, trees and candles along both parapets.",
+    "bed": "night wind -30",
+    "spots": [
+     {
+      "sound": "C: S03_SH008 singing, reverbed, far",
+      "when": "under",
+      "pan": 0.6,
+      "level_db": -24
+     },
+     {
+      "sound": "C: S03_SH003 singing, far, other side",
+      "when": "under, overlapping",
+      "pan": -0.6,
+      "level_db": -26
+     }
+    ],
+    "left_out": "NO rumble: 'the sound was not gunfire'",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH001",
@@ -586,8 +1745,15 @@
    "cold": "frost haze, no falling snow (clear dawn)",
    "still": "wire, farm",
    "keep": "both trench lines",
-   "snd": "bed: almost silent open-land wind, -6 dB lower than S01 (the stillness); one far crow-like silence; nothing else",
-   "tr": "cut"
+   "snd": "bed L:amb_wind_open_land__v2 -34 (6 dB under S01: stillness). Spots: none. Left out on purpose: nothing else: the stillness is the scene.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Dawn, frost, an empty trench line, sun haze. 'White and still.'",
+    "bed": "L:amb_wind_open_land__v2 -34 (6 dB under S01: stillness)",
+    "spots": [],
+    "left_out": "nothing else: the stillness is the scene",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH002",
@@ -607,7 +1773,27 @@
    "mood": "startling friendliness",
    "clip": "LTX voice (raw clip has 'Merry'), full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice; far, from the German side"
+   "snd": "bed open wind -30. Spots: C: line, far [whole; pan +0.4; 0 dB]; L:cloth_rustle__v2 arm wave [on the wave; pan +0.4; -24 dB].",
+   "audio": {
+    "hear": "Friedrich rises over the German parapet and waves: 'English! Merry Christmas!'",
+    "bed": "open wind -30",
+    "spots": [
+     {
+      "sound": "C: line, far",
+      "when": "",
+      "pan": 0.4,
+      "level_db": 0
+     },
+     {
+      "sound": "L:cloth_rustle__v2 arm wave",
+      "when": "on the wave",
+      "pan": 0.4,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH003",
@@ -627,7 +1813,27 @@
    "mood": "suspicion",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice; trench close"
+   "snd": "bed trench wind low-passed -30 + M:1329 -30 pan -0.4. Spots: C: line [whole; pan +0.0; 0 dB]; M:1122 rifle click [after 'move'; pan +0.3; -22 dB].",
+   "audio": {
+    "hear": "Harris and Thomas crouched in the trench, a dugout fire. 'It's a trick. Nobody move.'",
+    "bed": "trench wind low-passed -30 + M:1329 -30 pan -0.4",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:1122 rifle click",
+      "when": "after 'move'",
+      "pan": 0.3,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH004",
@@ -647,7 +1853,27 @@
    "mood": "arms wide",
    "clip": "LTX voice, full 4.38 s",
    "tr": "cut",
-   "snd": "clip voice far; wind"
+   "snd": "bed open wind -28. Spots: C: line [whole; pan +0.0; 0 dB]; M:538 two steps on frozen ground [as he climbs out; pan +0.0; -22 dB].",
+   "audio": {
+    "hear": "Friedrich climbs out with arms wide: 'No shooting!'",
+    "bed": "open wind -28",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:538 two steps on frozen ground",
+      "when": "as he climbs out",
+      "pan": 0,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH005",
@@ -667,7 +1893,33 @@
    "mood": "decision: Thomas climbs out",
    "clip": "LTX, no line: clip own sound at -12 dB (rifle lean, ladder creak), full 6.38 s",
    "tr": "cut",
-   "snd": "clip foley; footstep on ladder; bed wind rises as he reaches the top"
+   "snd": "bed trench wind rising to open wind at the top: -30 -> -26. Spots: M:1122 rifle set down on sandbags (+ L:soft_thud__v1) [start; pan -0.2; -18 dB]; C: ladder creaks [climb; pan +0.0; -14 dB]; M:786 cinematic suspense swell, very low [under the climb; pan +0.0; -30 dB].",
+   "audio": {
+    "hear": "Thomas leans his rifle on the sandbags and climbs the ladder.",
+    "bed": "trench wind rising to open wind at the top: -30 -> -26",
+    "spots": [
+     {
+      "sound": "M:1122 rifle set down on sandbags (+ L:soft_thud__v1)",
+      "when": "start",
+      "pan": -0.2,
+      "level_db": -18
+     },
+     {
+      "sound": "C: ladder creaks",
+      "when": "climb",
+      "pan": 0,
+      "level_db": -14
+     },
+     {
+      "sound": "M:786 cinematic suspense swell, very low",
+      "when": "under the climb",
+      "pan": 0,
+      "level_db": -30
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH006",
@@ -687,7 +1939,21 @@
    "mood": "alarm",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed trench wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Harris shouts after him.",
+    "bed": "trench wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH007",
@@ -707,7 +1973,27 @@
    "mood": "calm certainty",
    "clip": "LTX voice, full 4.38 s",
    "tr": "cut",
-   "snd": "clip voice; wind louder (he is on the parapet)"
+   "snd": "bed open wind -26 (louder: he is exposed). Spots: C: line [whole; pan +0.0; 0 dB]; L:cloth_rustle__v1 coat in wind [whole; pan +0.0; -24 dB].",
+   "audio": {
+    "hear": "Thomas standing on the parapet, the wind on him.",
+    "bed": "open wind -26 (louder: he is exposed)",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "L:cloth_rustle__v1 coat in wind",
+      "when": "",
+      "pan": 0,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH008",
@@ -727,7 +2013,27 @@
    "mood": "the walk across fifty yards",
    "clip": "LTX, narrated: clip own sound -12 dB, footsteps in snow added in sync with Thomas's steps (footstep_snow, centre, close -> mid as he walks away), full 10.04 s",
    "tr": "cut",
-   "snd": "bed: open-land wind; footsteps; bed dips on 'the men who never made it back'"
+   "snd": "bed open wind -26. Spots: M:538 frozen footsteps synced [whole; pan +0.0; -18 dB]; M:3138 wire scrape on coat, soft [as he passes the wire, ~3 s; pan -0.4; -24 dB]. Left out on purpose: bed dips on 'the men who never made it back'.",
+   "audio": {
+    "hear": "He walks through wire and frozen craters toward a German figure, smoke beyond.",
+    "bed": "open wind -26",
+    "spots": [
+     {
+      "sound": "M:538 frozen footsteps synced",
+      "when": "whole",
+      "pan": 0,
+      "level_db": -18
+     },
+     {
+      "sound": "M:3138 wire scrape on coat, soft",
+      "when": "as he passes the wire, ~3 s",
+      "pan": -0.4,
+      "level_db": -24
+     }
+    ],
+    "left_out": "bed dips on 'the men who never made it back'",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH009",
@@ -747,7 +2053,21 @@
    "mood": "first words",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice; wind"
+   "snd": "bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "They face each other, sun between them.",
+    "bed": "open wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH010",
@@ -767,7 +2087,21 @@
    "mood": "a smile",
    "clip": "LTX voice, full 3.38 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Thomas smiles: 'And you're German?'",
+    "bed": "open wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH011",
@@ -791,8 +2125,22 @@
    "cold": "breath, frost",
    "still": "ALL FOUR HANDS and the sleeves (never animate a hand)",
    "keep": "all hands",
-   "snd": "silence of the field: wind very low; one cloth rustle (cloth_move) as the push lands",
-   "tr": "cut"
+   "snd": "bed wind -36. Spots: L:cloth_move__v4 sleeves [as the push lands; pan +0.0; -24 dB]. Left out on purpose: silence: the release (music resolves here).",
+   "tr": "cut",
+   "audio": {
+    "hear": "Close: two empty hands reach toward each other.",
+    "bed": "wind -36",
+    "spots": [
+     {
+      "sound": "L:cloth_move__v4 sleeves",
+      "when": "as the push lands",
+      "pan": 0,
+      "level_db": -24
+     }
+    ],
+    "left_out": "silence: the release (music resolves here)",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH012",
@@ -812,7 +2160,21 @@
    "mood": "warm introduction",
    "clip": "LTX voice, full 6.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Friedrich introduces himself, handshake.",
+    "bed": "open wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH013",
@@ -832,7 +2194,21 @@
    "mood": "joke, warmth",
    "clip": "LTX voice, full 5.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Thomas answers with a smile.",
+    "bed": "open wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH014",
@@ -852,7 +2228,21 @@
    "mood": "the handshake",
    "clip": "LTX, no line; trim to 0.0-2.6 s so it ENDS on the clasped hands (the raw clip lets go and steps apart); clip own sound -12 dB",
    "tr": "cut",
-   "snd": "glove clasp (cloth_move) on the clasp; wind"
+   "snd": "bed open wind -28. Spots: L:cloth_move__v2 glove clasp [on the clasp; pan +0.0; -18 dB].",
+   "audio": {
+    "hear": "Wide: they shake hands on the frozen field.",
+    "bed": "open wind -28",
+    "spots": [
+     {
+      "sound": "L:cloth_move__v2 glove clasp",
+      "when": "on the clasp",
+      "pan": 0,
+      "level_db": -18
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S04_SH015",
@@ -872,7 +2262,33 @@
    "mood": "it spreads",
    "clip": "LTX narrated, clip own sound -12 dB (crowd murmur), full 7.04 s",
    "tr": "dip to black 0.4 s (chapter: the truce spreads, maps)",
-   "snd": "bed: open land; murmur of many men rising (Battle Crowd murmuring, -24 dB, high-cut so it is friendly not battle)"
+   "snd": "bed open wind -28. Spots: L:crowd_talking_big__v1 high-cut 3 kHz (friendly, not battle) [rising over the shot; pan +0.2; -24 dB]; L:footstep_snow__v1..v3 many, scattered [whole; pan +0.0; -26 dB]; M:411 one male laugh far [4 s; pan +0.5; -26 dB].",
+   "audio": {
+    "hear": "Wide: men pour out of both trenches, figures crossing, a farm behind, fires.",
+    "bed": "open wind -28",
+    "spots": [
+     {
+      "sound": "L:crowd_talking_big__v1 high-cut 3 kHz (friendly, not battle)",
+      "when": "rising over the shot",
+      "pan": 0.2,
+      "level_db": -24
+     },
+     {
+      "sound": "L:footstep_snow__v1..v3 many, scattered",
+      "when": "",
+      "pan": 0,
+      "level_db": -26
+     },
+     {
+      "sound": "M:411 one male laugh far",
+      "when": "4 s",
+      "pan": 0.5,
+      "level_db": -26
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH001",
@@ -893,8 +2309,22 @@
    "see": "S10 close map: British line in Flanders, ripples at Wulverghem, Ploegsteert, Frelinghien, Fleurbaix",
    "cam": "map renderer as S10",
    "live": "ripples pop one by one on 'trench to trench'",
-   "snd": "map: soft tick per ripple; no bed",
-   "tr": "cut"
+   "snd": "bed none. Spots: L:tick_wood__v1 one per patch that lights [each ripple; pan +0.0; -22 dB].",
+   "tr": "cut",
+   "audio": {
+    "hear": "Map: the truce spreads along the line in patches.",
+    "bed": "none",
+    "spots": [
+     {
+      "sound": "L:tick_wood__v1 one per patch that lights",
+      "when": "each ripple",
+      "pan": 0,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH002",
@@ -915,8 +2345,28 @@
    "see": "S10 map: '100,000 men (estimate)' counter",
    "cam": "as S10",
    "live": "counter lands on 'hundred thousand'",
-   "snd": "map: counter ticks + soft knock when the number lands (BP-192)",
-   "tr": "cut"
+   "snd": "bed none. Spots: L:tick__v1..v3 counter ticks [count; pan +0.0; -24 dB]; M:1365 typewriter hit [when the label lands; pan +0.5; -18 dB].",
+   "tr": "cut",
+   "audio": {
+    "hear": "Map: '100,000 men (estimate)' label lands.",
+    "bed": "none",
+    "spots": [
+     {
+      "sound": "L:tick__v1..v3 counter ticks",
+      "when": "count",
+      "pan": 0,
+      "level_db": -24
+     },
+     {
+      "sound": "M:1365 typewriter hit",
+      "when": "when the label lands",
+      "pan": 0.5,
+      "level_db": -18
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH003",
@@ -940,8 +2390,34 @@
    "cold": "breath, frost; no falling snow (clear)",
    "still": "men, wire",
    "keep": "every man in the front group",
-   "snd": "bed: open land; friendly murmur and one warm laugh (laugh_warm, mid-left); far shouts of the football game panned to the ball (Battle Crowd murmuring, -26 dB)",
-   "tr": "cut"
+   "snd": "bed L:crowd_talking_big__v1 high-cut -26 + M:1330 fire -28 pan +0.5 (fire right). Spots: L:laugh_warm__v1 [2 s; pan -0.3; -22 dB]; M:457 male crowd cheering and whistling, far (the football) [on 'kicking a ball'; pan +0.6; -28 dB]; M:1939 coins handling [on 'buttons'; pan -0.2; -22 dB]. GAP: a ball kick (leather thump) would sell 'kicking a ball': use L:soft_thud__v3 pitched up as a stand-in.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Wide field: groups trading by a fire, a farm behind, a ball game in the distance.",
+    "bed": "L:crowd_talking_big__v1 high-cut -26 + M:1330 fire -28 pan +0.5 (fire right)",
+    "spots": [
+     {
+      "sound": "L:laugh_warm__v1",
+      "when": "2 s",
+      "pan": -0.3,
+      "level_db": -22
+     },
+     {
+      "sound": "M:457 male crowd cheering and whistling, far (the football)",
+      "when": "on 'kicking a ball'",
+      "pan": 0.6,
+      "level_db": -28
+     },
+     {
+      "sound": "M:1939 coins handling",
+      "when": "on 'buttons'",
+      "pan": -0.2,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": "a ball kick (leather thump) would sell 'kicking a ball': use L:soft_thud__v3 pitched up as a stand-in"
+   }
   },
   {
    "shot": "S05_SH004",
@@ -961,7 +2437,21 @@
    "mood": "curiosity",
    "clip": "LTX voice ('Where do you learn': accept), full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice; murmur bed"
+   "snd": "bed crowd murmur -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Thomas and Friedrich close, trading; crowd behind.",
+    "bed": "crowd murmur -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH005",
@@ -981,7 +2471,27 @@
    "mood": "London memory",
    "clip": "LTX voice, full 4.71 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed crowd murmur -30. Spots: C: line [whole; pan +0.0; 0 dB]; M:2385 paper/tobacco exchange [whole; pan +0.0; -24 dB].",
+   "audio": {
+    "hear": "Friedrich: 'London. I was a waiter.'",
+    "bed": "crowd murmur -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:2385 paper/tobacco exchange",
+      "when": "",
+      "pan": 0,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH006",
@@ -1001,7 +2511,27 @@
    "mood": "human comedy: the barber",
    "clip": "LTX narrated, clip own sound -12 dB: KEEP its laughter (2.3-3.7 s, fits the barber), 8.71 s",
    "tr": "cut",
-   "snd": "murmur bed; scissors not in library"
+   "snd": "bed crowd murmur -28 + fire drum M:1329 -26 pan +0.3. Spots: M:2378 scissors snips, 3-4 times, synced to the barber's hand [from 'haircut'; pan +0.1; -16 dB]; M:411 one laugh from the watchers [end; pan +0.5; -24 dB].",
+   "audio": {
+    "hear": "A British soldier sits on a crate by a fire drum while a German barber cuts his hair; men watch.",
+    "bed": "crowd murmur -28 + fire drum M:1329 -26 pan +0.3",
+    "spots": [
+     {
+      "sound": "M:2378 scissors snips, 3-4 times, synced to the barber's hand",
+      "when": "from 'haircut'",
+      "pan": 0.1,
+      "level_db": -16
+     },
+     {
+      "sound": "M:411 one laugh from the watchers",
+      "when": "end",
+      "pan": 0.5,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH007",
@@ -1021,7 +2551,27 @@
    "mood": "gentle question",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed crowd murmur -32. Spots: M:2590 match strike [start; pan +0.3; -18 dB]; C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Friedrich lights a cigarette / looks at a photo in the glow: 'You have a family?'",
+    "bed": "crowd murmur -32",
+    "spots": [
+     {
+      "sound": "M:2590 match strike",
+      "when": "start",
+      "pan": 0.3,
+      "level_db": -18
+     },
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH008",
@@ -1041,7 +2591,21 @@
    "mood": "family",
    "clip": "LTX voice, full 4.04 s (check the last frame: pouches near 3.3 s)",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed crowd murmur -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Thomas: 'My mum. And a little sister.'",
+    "bed": "crowd murmur -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH009",
@@ -1061,7 +2625,27 @@
    "mood": "his daughter",
    "clip": "LTX voice, full 5.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed crowd murmur -32. Spots: C: line [whole; pan +0.0; 0 dB]; M:2379 photo card [whole; pan +0.0; -24 dB].",
+   "audio": {
+    "hear": "Friedrich holds the photograph: 'My wife. My daughter.'",
+    "bed": "crowd murmur -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:2379 photo card",
+      "when": "",
+      "pan": 0,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH010",
@@ -1085,8 +2669,22 @@
    "cold": "breath, frost on the gloves",
    "still": "ALL hands and the photograph",
    "keep": "the photograph and the four hands",
-   "snd": "near silence: wind low; paper touch (paper_move, very soft) at 0.3 s",
-   "tr": "cut"
+   "snd": "bed wind low -34; the crowd fades away. Spots: M:2380 paper touch, very soft [0.3 s; pan +0.0; -24 dB]. Left out on purpose: near silence: intimacy.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Close: gloved hands holding the photograph between them.",
+    "bed": "wind low -34; the crowd fades away",
+    "spots": [
+     {
+      "sound": "M:2380 paper touch, very soft",
+      "when": "0.3 s",
+      "pan": 0,
+      "level_db": -24
+     }
+    ],
+    "left_out": "near silence: intimacy",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH011",
@@ -1106,7 +2704,21 @@
    "mood": "kind",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed crowd -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'She looks happy.'",
+    "bed": "crowd -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH012",
@@ -1126,7 +2738,21 @@
    "mood": "ache",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed crowd -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'She thinks I am home for Christmas.'",
+    "bed": "crowd -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH013",
@@ -1146,7 +2772,21 @@
    "mood": "shared ache",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut (hold 0.5 s of silence before the narration turns)",
-   "snd": "clip voice; murmur bed fades out under 'So does mine'"
+   "snd": "bed crowd fading out. Spots: C: line [whole; pan +0.0; 0 dB]. Left out on purpose: music out under the line.",
+   "audio": {
+    "hear": "They sit together on a crate: 'So does mine.'",
+    "bed": "crowd fading out",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "music out under the line",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH014",
@@ -1166,7 +2806,27 @@
    "mood": "SOLEMN turn: bringing in the dead",
    "clip": "LTX narrated, clip own sound -14 dB, full 7.04 s",
    "tr": "cut",
-   "snd": "bed changes: murmur gone, cold wind only; slow footsteps in snow; restraint"
+   "snd": "bed open wind -28, crowd gone. Spots: M:539 slow footsteps on snow, several [whole; pan +0.0; -22 dB]; L:cloth_rustle__v3 stretcher canvas [3 s; pan -0.3; -26 dB]. Left out on purpose: restraint: no music, no voices.",
+   "audio": {
+    "hear": "Men carry the dead on stretchers across the frozen field.",
+    "bed": "open wind -28, crowd gone",
+    "spots": [
+     {
+      "sound": "M:539 slow footsteps on snow, several",
+      "when": "whole",
+      "pan": 0,
+      "level_db": -22
+     },
+     {
+      "sound": "L:cloth_rustle__v3 stretcher canvas",
+      "when": "3 s",
+      "pan": -0.3,
+      "level_db": -26
+     }
+    ],
+    "left_out": "restraint: no music, no voices",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH015",
@@ -1186,7 +2846,27 @@
    "mood": "grief",
    "clip": "LTX narrated, full 3.04 s, clip own sound -14 dB (spade in frozen earth)",
    "tr": "cut",
-   "snd": "wind; spade scrape from the clip"
+   "snd": "bed wind -30. Spots: C: spade scrape [whole; pan +0.0; -16 dB]; M:537 earth thrown (mud step, dry) [on each throw; pan +0.2; -22 dB].",
+   "audio": {
+    "hear": "Two men dig a grave with spades by the sunlit field.",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "C: spade scrape",
+      "when": "",
+      "pan": 0,
+      "level_db": -16
+     },
+     {
+      "sound": "M:537 earth thrown (mud step, dry)",
+      "when": "on each throw",
+      "pan": 0.2,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH016",
@@ -1210,8 +2890,15 @@
    "cold": "spindrift, frost, cold grade",
    "still": "spades, blanket, mound",
    "keep": "both spades whole",
-   "snd": "wind alone, slightly stronger gust at 1.5 s; nothing else (restraint)",
-   "tr": "cut"
+   "snd": "bed wind alone -30, one gust at 1.5 s (L:wind_blowing__v1). Spots: none. Left out on purpose: nothing else.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Two spades stand in the earth by the grave.",
+    "bed": "wind alone -30, one gust at 1.5 s (L:wind_blowing__v1)",
+    "spots": [],
+    "left_out": "nothing else",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH017",
@@ -1231,7 +2918,21 @@
    "mood": "respect",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice; wind"
+   "snd": "bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "Thomas and Friedrich by a cross: 'What was his name?'",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH018",
@@ -1251,7 +2952,21 @@
    "mood": "grief",
    "clip": "LTX voice, full 4.38 s",
    "tr": "cut",
-   "snd": "clip voice; wind"
+   "snd": "bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'Karl. He sang the loudest.'",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH019",
@@ -1271,7 +2986,21 @@
    "mood": "apology",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice; wind"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'I'm sorry.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S05_SH020",
@@ -1295,9 +3024,23 @@
    "cold": "breath, frost; no falling snow",
    "still": "every man, crosses",
    "keep": "both groups whole",
-   "snd": "bed: wind very low; no music swell; a single soft bell-less silence; the narrator carries it",
+   "snd": "bed wind very low -34. Spots: L:cloth_move__v1..v4 caps removed, scattered [4-6 s; pan +0.0; -28 dB]. Left out on purpose: no music swell; the narrator carries it. GAP: a far murmured psalm in English then German would fit; we have none (ElevenLabs, paid) and leave it out.",
    "tr": "cut",
-   "log": "V6: planned pan imperceptible; breath invisible: renderer defects"
+   "log": "V6: planned pan imperceptible; breath invisible: renderer defects",
+   "audio": {
+    "hear": "A joint burial: rows of men with heads bowed, crosses, a chaplain reading.",
+    "bed": "wind very low -34",
+    "spots": [
+     {
+      "sound": "L:cloth_move__v1..v4 caps removed, scattered",
+      "when": "4-6 s",
+      "pan": 0,
+      "level_db": -28
+     }
+    ],
+    "left_out": "no music swell; the narrator carries it",
+    "gap": "a far murmured psalm in English then German would fit; we have none (ElevenLabs, paid) and leave it out"
+   }
   },
   {
    "shot": "S05_SH021",
@@ -1317,7 +3060,21 @@
    "mood": "silent beat: Harris takes off his cap",
    "clip": "LTX, no line: clip audio -18 dB (wind only, its noise has a false 'You'), full 5.04 s; ends on the lifted cap",
    "tr": "dip to black 0.5 s (chapter: dusk)",
-   "snd": "wind; cloth rustle when the cap comes off"
+   "snd": "bed wind -30. Spots: L:cloth_rustle__v2 cap off [when the cap comes off; pan +0.0; -18 dB].",
+   "audio": {
+    "hear": "Harris takes off his cap at the edge of the graves.",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "L:cloth_rustle__v2 cap off",
+      "when": "when the cap comes off",
+      "pan": 0,
+      "level_db": -18
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH001",
@@ -1341,8 +3098,15 @@
    "cold": "breath, dusk frost",
    "still": "men, crates",
    "keep": "both men and their boots",
-   "snd": "bed: dusk wind low; brazier crackle right",
-   "tr": "cut"
+   "snd": "bed dusk wind -30 + M:1329 small brazier -28 pan +0.5. Spots: none.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Late afternoon: the two men sit on crates, a small brazier, a ruined farm, low sun.",
+    "bed": "dusk wind -30 + M:1329 small brazier -28 pan +0.5",
+    "spots": [],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH002",
@@ -1362,7 +3126,21 @@
    "mood": "the question",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice; brazier"
+   "snd": "bed brazier -30, wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'Tommy... why are we fighting?'",
+    "bed": "brazier -30, wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH003",
@@ -1382,7 +3160,21 @@
    "mood": "honest",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'I don't know.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH004",
@@ -1402,7 +3194,21 @@
    "mood": "bitter truth",
    "clip": "LTX voice, full 4.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'They told us you were the enemy.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH005",
@@ -1426,8 +3232,15 @@
    "cold": "frost, spindrift",
    "still": "shadows (they belong to still men), wire",
    "keep": "both shadows whole",
-   "snd": "wind low; brazier crackle off-screen behind camera (centre, close)",
-   "tr": "cut"
+   "snd": "bed wind -32 + brazier off-screen behind camera -30 centre. Spots: none.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Their two long shadows on the frost, lamps along the trench.",
+    "bed": "wind -32 + brazier off-screen behind camera -30 centre",
+    "spots": [],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH006",
@@ -1447,7 +3260,21 @@
    "mood": "mirror",
    "clip": "LTX voice, full 3.71 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'They told us the same about you.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH007",
@@ -1467,7 +3294,21 @@
    "mood": "fatal maybe",
    "clip": "LTX voice, full 5.04 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'Tomorrow, maybe, we are enemies again.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH008",
@@ -1487,7 +3328,21 @@
    "mood": "THE line: 'Maybe. But not today.'",
    "clip": "LTX voice; FIX: the raw clip says 'Maybe' twice (0.0-0.6 s and 1.72-1.92 s). Start the clip at 1.45 s and play to 4.04 s (2.6 s): 'Maybe. But not today.'",
    "tr": "cut (0.4 s of held silence after 'today' before the next shot)",
-   "snd": "clip voice; brazier; nothing else"
+   "snd": "bed brazier -30. Spots: C: line [whole; pan +0.0; 0 dB]. Left out on purpose: music enters AFTER 'today'.",
+   "audio": {
+    "hear": "'Maybe. But not today.'",
+    "bed": "brazier -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "music enters AFTER 'today'",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH009",
@@ -1507,7 +3362,27 @@
    "mood": "silent beat: the button",
    "clip": "LTX R3 take (accepted 11-14), no line: clip own sound -12 dB, full 6.38 s; knife click and cloth snip audible",
    "tr": "cut",
-   "snd": "small cloth snip; wind low"
+   "snd": "bed wind -32. Spots: M:2378 scissors snip, slowed and quieter (knife through thread) [on the cut; pan +0.0; -18 dB]; M:3183 fluttering coin, tiny (the button in his palm) [when it drops into the palm; pan +0.0; -22 dB].",
+   "audio": {
+    "hear": "Thomas cuts a brass button off his tunic with a penknife.",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "M:2378 scissors snip, slowed and quieter (knife through thread)",
+      "when": "on the cut",
+      "pan": 0,
+      "level_db": -18
+     },
+     {
+      "sound": "M:3183 fluttering coin, tiny (the button in his palm)",
+      "when": "when it drops into the palm",
+      "pan": 0,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH010",
@@ -1527,7 +3402,21 @@
    "mood": "gift",
    "clip": "LTX voice, full 3.71 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "He offers the button: 'Something to remember me by.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH011",
@@ -1547,7 +3436,27 @@
    "mood": "gift returned",
    "clip": "LTX voice, full 3.38 s",
    "tr": "cut",
-   "snd": "clip voice"
+   "snd": "bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB]; M:1993 clinking coins, one soft click (buttons touch) [on the exchange; pan +0.0; -24 dB].",
+   "audio": {
+    "hear": "Friedrich gives one of his: 'Then take one of mine.'",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:1993 clinking coins, one soft click (buttons touch)",
+      "when": "on the exchange",
+      "pan": 0,
+      "level_db": -24
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S06_SH012",
@@ -1571,8 +3480,15 @@
    "cold": "dusk cold grade, frost",
    "still": "the two men",
    "keep": "the two men centred and whole",
-   "snd": "bed: dusk wind, brazier crackle left; everything thins as the light goes",
-   "tr": "dip to black 0.8 s (night -> next morning)"
+   "snd": "bed dusk wind -30 + brazier -32 pan -0.4, both fading as the light goes. Spots: none.",
+   "tr": "dip to black 0.8 s (night -> next morning)",
+   "audio": {
+    "hear": "Sunset, the two men small in the distance, lamps on the trench, mist.",
+    "bed": "dusk wind -30 + brazier -32 pan -0.4, both fading as the light goes",
+    "spots": [],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH001",
@@ -1596,8 +3512,22 @@
    "cold": "frost haze, no falling snow",
    "still": "men, wire",
    "keep": "the walking groups",
-   "snd": "bed: morning wind; many slow footsteps in snow (footstep_snow, layered, panned both ways)",
-   "tr": "cut"
+   "snd": "bed morning wind -30. Spots: M:539 many slow footsteps on snow, layered, panned both ways [whole; pan +0.0; -22 dB]. Left out on purpose: no voices.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Morning: lines of men walk back through mist toward their own trenches.",
+    "bed": "morning wind -30",
+    "spots": [
+     {
+      "sound": "M:539 many slow footsteps on snow, layered, panned both ways",
+      "when": "whole",
+      "pan": 0,
+      "level_db": -22
+     }
+    ],
+    "left_out": "no voices",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH002",
@@ -1617,7 +3547,21 @@
    "mood": "farewell offered: Friedrich wishes him luck",
    "clip": "LTX voice, full 3.04 s",
    "tr": "cut",
-   "snd": "clip voice; wind"
+   "snd": "bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB].",
+   "audio": {
+    "hear": "'Good luck, Tommy.'",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH003",
@@ -1637,7 +3581,27 @@
    "mood": "farewell returned; Thomas turns back to his line",
    "clip": "LTX voice, full 3.04 s (Thomas turns away = good)",
    "tr": "cut",
-   "snd": "clip voice; footsteps"
+   "snd": "bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB]; M:538 he walks away [end; pan -0.3; -22 dB].",
+   "audio": {
+    "hear": "'You too, Fritz.' Thomas turns away.",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "M:538 he walks away",
+      "when": "end",
+      "pan": -0.3,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH004",
@@ -1657,7 +3621,27 @@
    "mood": "back to war",
    "clip": "LTX voice, full 3.04 s; the narration of S07_SH005 starts under its last 1.0 s (J-cut) so the revolver shots land near 'ended it politely'",
    "tr": "cut",
-   "snd": "clip voice; trench wind"
+   "snd": "bed trench wind -30 + brazier -30 pan +0.4. Spots: C: line [whole; pan +0.0; 0 dB]; L:buckle_click__v1 sling [as he turns; pan +0.1; -22 dB].",
+   "audio": {
+    "hear": "Harris in the trench, rifle slung, brazier: 'Stand to.'",
+    "bed": "trench wind -30 + brazier -30 pan +0.4",
+    "spots": [
+     {
+      "sound": "C: line",
+      "when": "",
+      "pan": 0,
+      "level_db": 0
+     },
+     {
+      "sound": "L:buckle_click__v1 sling",
+      "when": "as he turns",
+      "pan": 0.1,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH005",
@@ -1677,7 +3661,27 @@
    "mood": "polite end: two shots into the air, salute",
    "clip": "LTX R3 take, narrated; KEEP its two gunshots (0.5 s and 1.6 s of the clip, loud) at full effect level; the narrator ducks 4 dB under each bang; full 8.04 s; level trim -0.5 dB (CLIP-06 -0.1 dBTP)",
    "tr": "cut",
-   "snd": "gunshots from the clip, echo across no man's land (reverb tail 1.2 s); bed trench wind"
+   "snd": "bed trench wind -30. Spots: C: the shots from the clip [whole; pan -0.3; -6 dB]; reverb tail 1.2 s across the field [after each shot; pan +0.3; -14 dB]. Left out on purpose: music silent.",
+   "audio": {
+    "hear": "The British captain fires a revolver into the air, then salutes.",
+    "bed": "trench wind -30",
+    "spots": [
+     {
+      "sound": "C: the shots from the clip",
+      "when": "",
+      "pan": -0.3,
+      "level_db": -6
+     },
+     {
+      "sound": "reverb tail 1.2 s across the field",
+      "when": "after each shot",
+      "pan": 0.3,
+      "level_db": -14
+     }
+    ],
+    "left_out": "music silent",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH006",
@@ -1697,7 +3701,21 @@
    "mood": "the German answer",
    "clip": "LTX, no line: clip audio has ONE shot at 7.9 s; add a second shot 0.9 s earlier by reusing the S07_SH005 clip's second bang (-4 dB, far, panned right); full 8.71 s",
    "tr": "cut",
-   "snd": "two far shots from the German trench (right), long echo; wind"
+   "snd": "bed wind -30. Spots: second shot reused from S07_SH005, far, long echo [7.0 s; pan +0.6; -10 dB].",
+   "audio": {
+    "hear": "The German captain salutes back from his parapet, steps down, two shots answer.",
+    "bed": "wind -30",
+    "spots": [
+     {
+      "sound": "second shot reused from S07_SH005, far, long echo",
+      "when": "7.0 s",
+      "pan": 0.6,
+      "level_db": -10
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH007",
@@ -1717,7 +3735,21 @@
    "mood": "Thomas hears it end",
    "clip": "LTX, no line: clip audio -18 dB, full 3.71 s",
    "tr": "cut",
-   "snd": "the echo of the second shot dies over this shot; wind"
+   "snd": "bed wind -32. Spots: echo of the second shot dies [start; pan +0.6; -16 dB]. Left out on purpose: music: Thunder Dreams drone enters after the echo.",
+   "audio": {
+    "hear": "Thomas looks up at the sound of the shots.",
+    "bed": "wind -32",
+    "spots": [
+     {
+      "sound": "echo of the second shot dies",
+      "when": "start",
+      "pan": 0.6,
+      "level_db": -16
+     }
+    ],
+    "left_out": "music: Thunder Dreams drone enters after the echo",
+    "gap": ""
+   }
   },
   {
    "shot": "S07_SH008",
@@ -1737,7 +3769,27 @@
    "mood": "history's verdict, war resumes",
    "clip": "LTX R3 take narrated, clip own sound -14 dB, full 9.04 s",
    "tr": "dip to black 0.6 s (night: the letter)",
-   "snd": "trench wind; one distant rumble at the end (amb_low_rumble, far, -28 dB) = the guns are back"
+   "snd": "bed trench wind -30. Spots: L:step_leather__v1..v4 on duckboards [his steps; pan +0.0; -20 dB]; M:2786 distant guns [at the end; pan -0.7; -26 dB].",
+   "audio": {
+    "hear": "Thomas walks down the trench, back to war.",
+    "bed": "trench wind -30",
+    "spots": [
+     {
+      "sound": "L:step_leather__v1..v4 on duckboards",
+      "when": "his steps",
+      "pan": 0,
+      "level_db": -20
+     },
+     {
+      "sound": "M:2786 distant guns",
+      "when": "at the end",
+      "pan": -0.7,
+      "level_db": -26
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S08_SH001",
@@ -1761,8 +3813,28 @@
    "cold": "warm interior vs blue cold outside",
    "still": "the writing hand (do not animate the pencil), candle body",
    "keep": "hand, letter, button",
-   "snd": "bed: night wind outside, muffled (low-pass) because we are inside; pencil scratching (pencil_scribble, close, centre); candle silent",
-   "tr": "cut"
+   "snd": "bed M:1172 wind cold interior -32 (inside, muffled). Spots: L:pencil_scribble__v1/v2 close [while writing; pan +0.0; -18 dB]; M:2379 paper slide [on 'letters'; pan +0.2; -22 dB]. Left out on purpose: candle silent.",
+   "tr": "cut",
+   "audio": {
+    "hear": "Night dugout: a hand writes a letter by candlelight; the moon outside.",
+    "bed": "M:1172 wind cold interior -32 (inside, muffled)",
+    "spots": [
+     {
+      "sound": "L:pencil_scribble__v1/v2 close",
+      "when": "while writing",
+      "pan": 0,
+      "level_db": -18
+     },
+     {
+      "sound": "M:2379 paper slide",
+      "when": "on 'letters'",
+      "pan": 0.2,
+      "level_db": -22
+     }
+    ],
+    "left_out": "candle silent",
+    "gap": ""
+   }
   },
   {
    "shot": "S08_SH002",
@@ -1786,9 +3858,23 @@
    "cold": "draft-bent candle, blue grade in the shadows against the small warm light",
    "still": "hands, photo, button, candle body",
    "keep": "hands, photo, button",
-   "snd": "bed: night wind with gusts that match the candle bending; a soft metallic touch when the button is first seen (coin-like, not in library: leave silent)",
+   "snd": "bed interior wind -32 with gusts matched to the candle bending. Spots: M:3183 coin, tiny metallic touch [when the button is first seen; pan +0.2; -22 dB].",
    "tr": "cut",
-   "log": "V1 'pretty cute snow', V2 snow on frame 0, V3 snow over the close subject: renderer defects"
+   "log": "V1 'pretty cute snow', V2 snow on frame 0, V3 snow over the close subject: renderer defects",
+   "audio": {
+    "hear": "Close: hands hold the photograph and the German button by the candle.",
+    "bed": "interior wind -32 with gusts matched to the candle bending",
+    "spots": [
+     {
+      "sound": "M:3183 coin, tiny metallic touch",
+      "when": "when the button is first seen",
+      "pan": 0.2,
+      "level_db": -22
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S08_SH003",
@@ -1812,9 +3898,29 @@
    "cold": "cold, empty",
    "still": "wire, stakes",
    "keep": "the field",
-   "snd": "bed: open-land wind; two distant artillery rumbles far left and far right (amb_low_rumble, -26 dB, 1.2 s apart)",
+   "snd": "bed open wind -28. Spots: M:2786 artillery far left [0.8 s; pan -0.8; -24 dB]; M:1696 distant war explosions far right [2.0 s; pan +0.8; -26 dB].",
    "tr": "dip to black 0.6 s",
-   "log": "S08_SH003 picture contradicts its line (men in the field during 'The war went on for almost four more years'): data change to reuse S01_SH001_start"
+   "log": "S08_SH003 picture contradicts its line (men in the field during 'The war went on for almost four more years'): data change to reuse S01_SH001_start",
+   "audio": {
+    "hear": "Bookend: the opening field (S01_SH001 picture). 'The war went on for almost four more years.'",
+    "bed": "open wind -28",
+    "spots": [
+     {
+      "sound": "M:2786 artillery far left",
+      "when": "0.8 s",
+      "pan": -0.8,
+      "level_db": -24
+     },
+     {
+      "sound": "M:1696 distant war explosions far right",
+      "when": "2.0 s",
+      "pan": 0.8,
+      "level_db": -26
+     }
+    ],
+    "left_out": "",
+    "gap": ""
+   }
   },
   {
    "shot": "S08_SH004",
@@ -1838,8 +3944,22 @@
    "cold": "none",
    "still": "candle body",
    "keep": "candle and text",
-   "snd": "silence except a very low wind; the candle is silent; music (if any) resolves here",
-   "tr": "fade to black 1.0 s (end)"
+   "snd": "bed none. Spots: music: Ancient Rite hands over to the last phrase of Silent Night (Kevin MacLeod, instrumental, 2026-11-15 additions); the carol from S03 comes back as the memory [crossfade at 0.5 s, fades out with the candle by 5.5 s; pan +0.0; -18 dB]. Left out on purpose: the candle is silent.",
+   "tr": "fade to black 1.0 s (end)",
+   "audio": {
+    "hear": "Black; one candle; the end text.",
+    "bed": "none",
+    "spots": [
+     {
+      "sound": "music: Ancient Rite hands over to the last phrase of Silent Night (Kevin MacLeod, instrumental, 2026-11-15 additions); the carol from S03 comes back as the memory",
+      "when": "crossfade at 0.5 s, fades out with the candle by 5.5 s",
+      "pan": 0,
+      "level_db": -18
+     }
+    ],
+    "left_out": "the candle is silent",
+    "gap": ""
+   }
   }
  ]
 }

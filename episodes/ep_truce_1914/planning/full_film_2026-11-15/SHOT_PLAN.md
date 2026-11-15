@@ -44,7 +44,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breathless still cold: frost haze, spindrift; no falling snow (clear sunrise)
 - **Never moves:** wire, stakes, sandbags, trees
 - **Keep in frame:** the shell hole and both parapets
-- **Sound:** bed: open-land wind, low and thin (amb_wind_open_land); single far crow-less silence; one distant muffled rumble at 0.6 s far left (amb_low_rumble, -30 dB) = the war is still there
+- **Hear (from the photo):** Empty frozen field at sunrise, fog, wire, little lamps far off. The silence of a front that should be loud.
+- **Sound:** bed L:amb_wind_open_land__v2 thin, -30, high-pass 150 Hz (cold air, no body). Spots: M:2786 far away war explosions, cut to one low thud [0.6 s; pan -0.7; -30 dB]; wire creak: M:3138 metal bar, pitched down, very soft [on the push, 1.8 s; pan +0.3; -32 dB]. Left out on purpose: no birds (a war landscape), no music hit before '1914'.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1cdedccd304005bdb602b72a.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S01_SH001.mp4
@@ -53,7 +54,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "In a few seconds, this man will walk toward the German guns."
 - LTX clip heard: "You"
 - **Clip:** LTX narrated (Thomas leans on the ladder, then climbs out): clip own sound -12 dB, use 0.0-4.9 s (slot), the climb starts inside the slot
-- **Sound:** bed: trench wind; ladder creak and boots on rungs from the clip; brazier crackle right
+- **Hear (from the photo):** Thomas in the trench by the ladder, a brazier and a candle in the dugout, he climbs to the parapet.
+- **Sound:** bed trench close: L:amb_wind_open_land__v1 -28 low-passed 4 kHz (we are below ground) + M:1329 campfire crackles -26 pan +0.4 (brazier right). Spots: C: ladder creak and boots from the clip [as he climbs; pan +0.0; -14 dB]; L:cloth_rustle__v2 coat on the sandbags [top of the ladder; pan +0.1; -22 dB]. Left out on purpose: no voices around him: he goes alone.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w3/cache/7bd3b95964074b9cdee9cb0e.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/35cc6a85cd8e_fc6ae61bf410/S01_SH002/S01_SH002_seed7100.mp4
@@ -62,7 +64,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "Unarmed. Across the ground where men had been dying for a few yards of mud."
 - LTX clip heard: "You"
 - **Clip:** LTX narrated (Thomas walks away from camera between the wire): clip own sound -12 dB, footsteps in snow added in sync (footstep_snow, centre, close -> mid), use 0.0-6.6 s
-- **Sound:** bed: open-land wind; footsteps; one far muffled rumble on 'dying' (amb_low_rumble, -30 dB)
+- **Hear (from the photo):** He walks out across no man's land, smoke from dugouts on both sides, frozen ground, sun ahead.
+- **Sound:** bed open land: L:amb_wind_open_land__v2 -26 (wind opens up as we leave the trench). Spots: M:538 footsteps on frozen ground, synced to his steps [whole shot; pan +0.0; -18 dB]; M:2786 one far muffled rumble [on 'dying'; pan -0.8; -30 dB]. Left out on purpose: no breath SFX (too close for this wide).
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e9a173240a9ccdfcc4f83157.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/35cc6a85cd8e_fc6ae61bf410/S01_SH002/S01_SH003_seed7101.mp4
@@ -75,7 +78,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** frost haze, breath
 - **Never moves:** wire, farm, sandbags
 - **Keep in frame:** the climbing men and the walking group
-- **Sound:** bed: open-land wind; mid-distance footsteps in snow (footstep_snow) panned right as the pan arrives; faint murmur of voices far right (Battle Crowd murmuring, -28 dB, high-cut)
+- **Hear (from the photo):** Wide: men climbing out of both trenches, figures walking toward each other, a ruined farm, lamps.
+- **Sound:** bed L:amb_wind_open_land__v2 -27. Spots: L:army_waiting_murmur__v1, high-cut 3 kHz [rises over the shot; pan +0.3; -28 dB]; L:footstep_snow__v1..v3 scattered, distant [right side as the camera arrives; pan +0.5; -26 dB]. Left out on purpose: no cheering yet: this is cautious.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/136c47a2d212e626ee7837ca.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S01_SH004.mp4
@@ -88,7 +92,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** night frost, light falling snow (overcast night sky = allowed), blue grade with the warm candle points
 - **Never moves:** trees, trench walls
 - **Keep in frame:** the winding trench and the lit trees
-- **Sound:** bed: night wind low; very faint distant men singing far right (no library take: leave silent and let the music carry it); brazier crackle soft centre
+- **Hear (from the photo):** Night, moon, Christmas trees on the parapet, candles, men at braziers. 'How it began, with a song. And how it ended.'
+- **Sound:** bed L:campfire_night_wind__v1 -28 (night wind + far fire). Spots: C: S03_SH003 singing, reverbed, very far [under 'with a song'; pan +0.6; -30 dB]; M:2786 far thud [under 'how it ended'; pan -0.6; -30 dB]. Left out on purpose: the singing is a hint only; music swell after 'stopped' per the accents table.
 - **Out:** dip to black 0.5 s into the map chapter (chapter change)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/8b77b881e734b3d58179831d.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S01_SH005.mp4
@@ -101,7 +106,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Picture:** S10 map: August 1914 arrow from Aachen through Belgium to the Marne
 - **Camera:** map renderer as S10
 - **Living:** the arrow draws on 'August'; date chip 'August 1914'
-- **Sound:** map sounds as SOUND_EVENTS v2 (pen line, chip tick); no bed
+- **Hear (from the photo):** Map, August 1914: the front line is drawn like ink across paper.
+- **Sound:** bed paper room tone: L:map_paper_open__v1 at 0 s -24, then near silence. Spots: M:1365 mechanical typewriter hit [when the 'August 1914' label appears; pan -0.6; -18 dB]; L:pencil_line__v1 looped, follows the red line [while the line draws; pan +0.0; -22 dB]. Left out on purpose: no war sounds on the map.
 - **Out:** cut
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/maps_our_code_after_s8/S02_SH001_new.mp4
 
@@ -110,7 +116,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Picture:** S10 map: December 1914, front line Nieuport-Ypres-Verdun-Swiss border
 - **Camera:** map renderer as S10
 - **Living:** line draws on 'one line of trenches', ends at the Swiss border on 'Switzerland'
-- **Sound:** map: pen line + soft dig thud when the line settles; no bed
+- **Hear (from the photo):** Map, December 1914: the line hardens into trenches from the sea to Switzerland.
+- **Sound:** bed none (paper). Spots: M:1382 typewriter single hit ['December 1914' label; pan -0.6; -18 dB]; L:pencil_line__v1 [while the line draws; pan +0.0; -22 dB]; L:soft_thud__v2 low (the line digs in) [when the line settles, on 'Switzerland'; pan +0.0; -20 dB].
 - **Out:** cut
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/maps_our_code_after_s8/S02_SH002_new.mp4
 
@@ -119,7 +126,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Picture:** S10 map: close Flanders view, dual lines, Frelinghien highlight
 - **Camera:** map zoom as S10
 - **Living:** highlight on Frelinghien on 'cough'
-- **Sound:** map: one human cough (cough__v1) on the word 'cough', far left, low; no bed
+- **Hear (from the photo):** Map zooms into Flanders, the two lines almost touch, a glow marks the spot.
+- **Sound:** bed none. Spots: L:swish_soft__v3 (the zoom) [zoom start; pan +0.0; -24 dB]; L:cough__v1 far and small [on 'cough'; pan -0.5; -22 dB]; L:cough__v1 pitched -2 st, answering [0.6 s later; pan +0.5; -26 dB].
 - **Out:** cut
 - **Journal:** La Bassee label lacks the accent (La Bassée) in S05 maps: data fix in episode.json key_coordinates
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/maps_our_code_after_s8/S02_SH003_new.mp4
@@ -132,7 +140,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** wet cold: breath, wind-bent smoke; no falling snow
 - **Never moves:** men, brazier cage, ladder, sandbags
 - **Keep in frame:** all five men whole, boots in frame
-- **Sound:** bed: trench wind + dripping water; brazier crackle centre-right; squelch of a boot in mud on 'Mud' (footstep_dirt, slowed); distant single rifle crack far right on 'sniper' (NOT IN LIBRARY: leave silent, see library gaps)
+- **Hear (from the photo):** Flooded trench, men standing in water, a brazier, a seated man; mud and cold.
+- **Sound:** bed trench: wind low -30 + M:1330 campfire crackles -26 pan +0.2 + drip/water slosh: M:536 footsteps in muddy puddle, slowed, -26. Spots: M:537 deep mud step [on 'Mud'; pan -0.3; -18 dB]; M:536 puddle squelch [on 'boot'; pan +0.2; -20 dB]; M:1700 gun with long echo, very far, high-cut (sniper) [on 'sniper'; pan +0.8; -26 dB]. Left out on purpose: 1 s of bed dip before 'sniper' (per accents). GAP: a true single rifle crack would be better than M:1700.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/6b51ff920adfc201e0136cf9.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S02_SH004.mp4
@@ -145,7 +154,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath of the reader rises into frame bottom once (from below the frame, POV)
 - **Never moves:** hands, letter body
 - **Keep in frame:** both hands and the letter
-- **Sound:** bed: trench wind low; paper rustle (paper_move) on 'read'; brazier crackle close bottom-centre
+- **Hear (from the photo):** POV: gloved hands hold a worn letter by the brazier.
+- **Sound:** bed close brazier M:1329 -24 centre-low + trench wind -32. Spots: M:2385 paper crinkle [as the letter moves, on 'read'; pan +0.0; -16 dB]; L:cloth_rustle__v1 glove [0.2 s; pan +0.2; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/2bbae2bafe8a0b07d0bb1825.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S02_SH005.mp4
@@ -154,7 +164,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "Home by Christmas, she says. Didn't say which one."
 - LTX clip heard: "Home by Christmas, she says. Didn't say which one."
 - **Clip:** LTX voice; trim end to 4.5 s (last frame stillest); clip audio is the line
-- **Sound:** clip voice; bed trench wind; brazier crackle
+- **Hear (from the photo):** Thomas reads the letter by the brazier (dialogue).
+- **Sound:** bed M:1329 brazier -26 pan -0.2 + trench wind -32. Spots: C: Thomas's line [whole; pan +0.0; 0 dB]; M:2379 paper move as he lowers the letter [end; pan +0.1; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/17d614227c2f28788e9600fe.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/752d93fd5ca1_fc6ae61bf410/S02_SH006/S02_SH006_seed7100.mp4
@@ -163,7 +174,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *sgt_harris:* "Keep your head down, and you might see one."
 - LTX clip heard: "Keep your head down and you might see one."
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice; bed
+- **Hear (from the photo):** Sgt Harris cleans his rifle by the brazier, Thomas beside him.
+- **Sound:** bed M:1329 brazier -26 centre + wind -32. Spots: C: Harris's line [whole; pan +0.0; 0 dB]; M:1122 metal click (rifle bolt) between words [0.4 s; pan -0.4; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/ac7c952748cd4b48030b5e81.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/752d93fd5ca1_fc6ae61bf410/S02_SH006/S02_SH007_seed7101.mp4
@@ -176,7 +188,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** dusk frost, breath
 - **Never moves:** men, brazier cage
 - **Keep in frame:** both men whole including boots, the brazier
-- **Sound:** bed: trench wind; brazier crackle centre; the narrator alone on 'Nobody asked the men' (bed dips 3 dB under that sentence)
+- **Hear (from the photo):** Night falling, two men silent by the brazier, steam from tin cups. 'Nobody asked the men in the trenches.'
+- **Sound:** bed M:1736 campfire night wind -27. Spots: L:cloth_move__v2 [a shoulder shifts, 4 s; pan +0.4; -26 dB]; M:1842 metal bowl hit, very soft (tin cup on knee) [6 s; pan -0.3; -26 dB]. Left out on purpose: bed dips 3 dB under 'Nobody asked the men' and the music swells only after it.
 - **Out:** cut
 - **Journal:** V4 (steam/breath decided but invisible) and V5 (boots cut at the end of the push) are renderer defects: journal
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/fb9c67af38a3f9aea8dba213.png
@@ -190,7 +203,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath; NO sky effects (the sky is a thin strip, no mist blobs: the old render had grey blur blobs at the top = defect)
 - **Never moves:** men, tins
 - **Keep in frame:** all four front men
-- **Sound:** bed: trench wind low, murmur of men; tin lid click (buckle_click, low) on 'opened'; paper rustle on 'card'
+- **Hear (from the photo):** Men around a brazier open Princess Mary tins: cigarettes, tobacco, a card.
+- **Sound:** bed M:1330 brazier -26 + L:army_waiting_murmur__v1 high-cut -30. Spots: M:116 tin opening [on 'opened'; pan -0.3; -16 dB]; M:1939 coins handling, pitched down (tin contents) [after 'tins'; pan -0.2; -22 dB]; M:2379 card paper [on 'card'; pan +0.2; -20 dB]; M:2590 match lighting [on 'cigarettes'; pan +0.4; -20 dB].
 - **Out:** dip to black 0.4 s (day -> night, cross to the German side)
 - **Journal:** old 2.5D render had blurry grey blobs in the sky band (mist/cloud effect without a sky mask): journal
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/ceec8c01a785c839081978bc.png
@@ -203,7 +217,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "On the German side, little Christmas trees had come up the line. As night fell, they went up on the parapets, candles and all."
 - LTX clip heard: "You"
 - **Clip:** LTX, narrated; clip own sound at -12 dB under the narrator (Whisper heard a false 'You' = noise, fine); full 9.7 s
-- **Sound:** bed: night wind; candle flicker silent; soft cloth rustle from the clip
+- **Hear (from the photo):** German trench at night: Friedrich lifts a lit tree onto the parapet; candles, a dugout door glowing.
+- **Sound:** bed night wind -30 (L:campfire_night_wind__v1 with the fire turned down). Spots: L:cloth_rustle__v3 coat [as he lifts; pan +0.0; -22 dB]; L:soft_thud__v1 tree set down on sandbags [when it lands; pan +0.2; -20 dB]. Left out on purpose: candles are silent.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/99f8c4769cbc757f217bcba3.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH001_seed7100.mp4
@@ -216,7 +231,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** night blue grade, breath not visible (no face)
 - **Never moves:** hand, photo, candle body
 - **Keep in frame:** hand and photograph whole
-- **Sound:** bed: night wind very low; candle silent; far German voices murmur (-30 dB) from the right = the trench beyond
+- **Hear (from the photo):** Close: a candle and Friedrich's gloved hand holding a photograph.
+- **Sound:** bed night wind very low -34. Spots: L:cloth_move__v1 glove [0.3 s; pan +0.3; -26 dB]; far German voices murmur: L:army_waiting_murmur__v1 -32 high-cut [under; pan +0.7; -32 dB]. Left out on purpose: no music: the carol must enter clean next shot.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1ce703b5e381affc86aaa892.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S03_SH002.mp4
@@ -225,7 +241,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Stille Nacht, heilige Nacht..."
 - LTX clip heard: "Stilenacht, Heiligenacht"
 - **Clip:** LTX voice (Friedrich sings). FIX: the old cut clipped 'Nacht'; play the raw clip to its natural end 4.71 s, do not trim
-- **Sound:** clip voice; no bed under the singing except a breath of wind
+- **Hear (from the photo):** Friedrich and two men singing 'Stille Nacht' under a lit tree.
+- **Sound:** bed none (the singing is the scene). Spots: C: the singing [play to end; pan +0.0; 0 dB]; wind breath -36 [under; pan +0.0; -36 dB]. Left out on purpose: no score.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S03_SH003_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/dd951163fc4b_fc6ae61bf410/S03_SH003/S03_SH003_seed7200.mp4
@@ -234,7 +251,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *sgt_harris:* "What are they singing?"
 - LTX clip heard: "What are they singing?"
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice; the German singing continues far away under it (reuse S03_SH003 clip audio, -18 dB, high-cut, panned right)
+- **Hear (from the photo):** British side: Thomas and Harris at the parapet, rifles, moonlit field. 'What are they singing?'
+- **Sound:** bed night wind -30. Spots: C: S03_SH003 singing reused, far [under; pan +0.6; -18 dB]; C: Harris's line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/9c5546268537f154272d13be.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH004_seed7102.mp4
@@ -243,7 +261,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "Silent Night. Same tune as ours."
 - LTX clip heard: "Silent night, same tune as ours."
 - **Clip:** LTX voice, full 4.71 s
-- **Sound:** clip voice; far singing continues (-20 dB)
+- **Hear (from the photo):** Thomas and Harris sitting in the trench with small candles and a brazier.
+- **Sound:** bed brazier soft M:1329 -30. Spots: C: Thomas's line [whole; pan +0.0; 0 dB]; far singing [under; pan +0.6; -20 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/30944f63efba78420f46b07c.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/4e31028adebf_fc6ae61bf410/S03_SH005/S03_SH005_seed7103.mp4
@@ -252,7 +271,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *sgt_harris:* "Let 'em sing. Heads down."
 - LTX clip heard: "Let him sing. Heads down."
 - **Clip:** LTX voice ('Let him sing' heard for 'Let 'em sing': accept), full 4.04 s
-- **Sound:** clip voice; far singing
+- **Hear (from the photo):** Harris close, Thomas behind: 'Let 'em sing. Heads down.'
+- **Sound:** bed brazier -30. Spots: C: line [whole; pan +0.0; 0 dB]; far singing [under; pan +0.6; -20 dB]; L:cloth_move__v3 as Harris ducks [end; pan -0.2; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/4da9a0b8a639c9bd818a97f1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/4e31028adebf_fc6ae61bf410/S03_SH005/S03_SH006_seed7104.mp4
@@ -261,7 +281,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(Thomas does not answer; he looks at the candles)"
 - LTX clip heard: "Oh, my God."
 - **Clip:** LTX, NO voice: mute the clip audio (Whisper hears 'Oh my God' in its noise); trim to 3.75 s before the white bloom grows (a white glow covers the candles from ~2.0 s = defect: cut out at 1.9 s if visible on the eye check, else hold)
-- **Sound:** far singing continues (-16 dB, the only sound), candle silent
+- **Hear (from the photo):** Thomas alone, looking at the candles (clip audio muted).
+- **Sound:** bed none. Spots: far singing, the only sound [whole; pan +0.6; -16 dB]. Left out on purpose: clip audio muted (bad take).
 - **Out:** cut
 - **Journal:** LTX clip S03_SH007 grows a white fog bloom over the candles mid-clip (frame at 2.2 s): bad take
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e9df2d1b39748533c7a03595.png
@@ -271,7 +292,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "Silent night... holy night..."
 - LTX clip heard: "Silent night, holy night"
 - **Clip:** LTX voice, full 5.04 s (two soldiers walk into the back at the end: acceptable, they come to listen)
-- **Sound:** clip voice; far German singing under it
+- **Hear (from the photo):** Thomas starts to sing back, Harris listens, men gather behind.
+- **Sound:** bed brazier M:1329 -30. Spots: C: Thomas singing [whole; pan +0.0; 0 dB]; far German singing [under; pan +0.6; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/aa004b10a4c4740cc8529847.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH008_seed7106.mp4
@@ -280,7 +302,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Good, English! More!"
 - LTX clip heard: "Good English! More!"
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice; brazier
+- **Hear (from the photo):** German trench: men around the tree and a brazier hear the English song; 'Good, English! More!'
+- **Sound:** bed brazier -28 + L:army_waiting_murmur__v1 -30. Spots: C: Friedrich's line [whole; pan +0.0; 0 dB]; M:423 small man crowd laughing, short, warm [after 'More!'; pan +0.3; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/5181df4f6a1a2f87fce4c48a.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH009_seed7107.mp4
@@ -293,7 +316,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** night frost, light snow, blue grade
 - **Never moves:** trees, wire, stakes
 - **Keep in frame:** the candle line
-- **Sound:** bed: night wind very low; far voices singing faintly from the right (reuse S03_SH008 clip audio, -24 dB, reverb, panned right); NO rumble
+- **Hear (from the photo):** Wide moonlit no man's land, trees and candles along both parapets.
+- **Sound:** bed night wind -30. Spots: C: S03_SH008 singing, reverbed, far [under; pan +0.6; -24 dB]; C: S03_SH003 singing, far, other side [under, overlapping; pan -0.6; -26 dB]. Left out on purpose: NO rumble: 'the sound was not gunfire'.
 - **Out:** dip to black 0.6 s (night -> Christmas morning)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/042e791830efe7ef6b667d84.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S03_SH010.mp4
@@ -309,7 +333,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** frost haze, no falling snow (clear dawn)
 - **Never moves:** wire, farm
 - **Keep in frame:** both trench lines
-- **Sound:** bed: almost silent open-land wind, -6 dB lower than S01 (the stillness); one far crow-like silence; nothing else
+- **Hear (from the photo):** Dawn, frost, an empty trench line, sun haze. 'White and still.'
+- **Sound:** bed L:amb_wind_open_land__v2 -34 (6 dB under S01: stillness). Spots: none. Left out on purpose: nothing else: the stillness is the scene.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/b681716d06f3cfbf7f1ccacc.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S04_SH001.mp4
@@ -318,7 +343,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "English! Merry Christmas!"
 - LTX clip heard: "English! Merry Christmas!"
 - **Clip:** LTX voice (raw clip has 'Merry'), full 4.04 s
-- **Sound:** clip voice; far, from the German side
+- **Hear (from the photo):** Friedrich rises over the German parapet and waves: 'English! Merry Christmas!'
+- **Sound:** bed open wind -30. Spots: C: line, far [whole; pan +0.4; 0 dB]; L:cloth_rustle__v2 arm wave [on the wave; pan +0.4; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/e69dee53372e986211c98a4f.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH002_seed7100.mp4
@@ -327,7 +353,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *sgt_harris:* "It's a trick. Nobody move."
 - LTX clip heard: "It's a trick. Nobody move."
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice; trench close
+- **Hear (from the photo):** Harris and Thomas crouched in the trench, a dugout fire. 'It's a trick. Nobody move.'
+- **Sound:** bed trench wind low-passed -30 + M:1329 -30 pan -0.4. Spots: C: line [whole; pan +0.0; 0 dB]; M:1122 rifle click [after 'move'; pan +0.3; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/9c6d322aa73deabfeaad5784.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH003_seed7101.mp4
@@ -336,7 +363,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "No shooting! Merry Christmas!"
 - LTX clip heard: "No shooting! Merry Christmas!"
 - **Clip:** LTX voice, full 4.38 s
-- **Sound:** clip voice far; wind
+- **Hear (from the photo):** Friedrich climbs out with arms wide: 'No shooting!'
+- **Sound:** bed open wind -28. Spots: C: line [whole; pan +0.0; 0 dB]; M:538 two steps on frozen ground [as he climbs out; pan +0.0; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/758dbead47c7f025c1d2124a.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH004_seed7102.mp4
@@ -345,7 +373,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(Thomas leans his rifle on the sandbags and climbs the ladder)"
 - LTX clip heard: "(nothing)"
 - **Clip:** LTX, no line: clip own sound at -12 dB (rifle lean, ladder creak), full 6.38 s
-- **Sound:** clip foley; footstep on ladder; bed wind rises as he reaches the top
+- **Hear (from the photo):** Thomas leans his rifle on the sandbags and climbs the ladder.
+- **Sound:** bed trench wind rising to open wind at the top: -30 -> -26. Spots: M:1122 rifle set down on sandbags (+ L:soft_thud__v1) [start; pan -0.2; -18 dB]; C: ladder creaks [climb; pan +0.0; -14 dB]; M:786 cinematic suspense swell, very low [under the climb; pan +0.0; -30 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/089a194403bb504678b96fae.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH005_seed7103.mp4
@@ -354,7 +383,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *sgt_harris:* "Thomas! Get back down!"
 - LTX clip heard: "Thomas! Get back down!"
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Harris shouts after him.
+- **Sound:** bed trench wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/0ebbd5b964742af1d27108f0.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH006_seed7104.mp4
@@ -363,7 +393,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "If they wanted us dead, we'd be dead."
 - LTX clip heard: "If they wanted us dead, we'd be dead."
 - **Clip:** LTX voice, full 4.38 s
-- **Sound:** clip voice; wind louder (he is on the parapet)
+- **Hear (from the photo):** Thomas standing on the parapet, the wind on him.
+- **Sound:** bed open wind -26 (louder: he is exposed). Spots: C: line [whole; pan +0.0; 0 dB]; L:cloth_rustle__v1 coat in wind [whole; pan +0.0; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/f687326ded501c8e7f9eeaab.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH007_seed7105.mp4
@@ -372,7 +403,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "In places, the lines were only fifty yards apart. Fifty yards of frozen mud, wire, and the men who never made it back."
 - LTX clip heard: "(nothing)"
 - **Clip:** LTX, narrated: clip own sound -12 dB, footsteps in snow added in sync with Thomas's steps (footstep_snow, centre, close -> mid as he walks away), full 10.04 s
-- **Sound:** bed: open-land wind; footsteps; bed dips on 'the men who never made it back'
+- **Hear (from the photo):** He walks through wire and frozen craters toward a German figure, smoke beyond.
+- **Sound:** bed open wind -26. Spots: M:538 frozen footsteps synced [whole; pan +0.0; -18 dB]; M:3138 wire scrape on coat, soft [as he passes the wire, ~3 s; pan -0.4; -24 dB]. Left out on purpose: bed dips on 'the men who never made it back'.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/1f4b1178ccfce58026247da2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH008_seed7100.mp4
@@ -381,7 +413,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "You are English?"
 - LTX clip heard: "You are English?"
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice; wind
+- **Hear (from the photo):** They face each other, sun between them.
+- **Sound:** bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S04_SH009_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH009_seed7101.mp4
@@ -390,7 +423,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "And you're German?"
 - LTX clip heard: "And you're German?"
 - **Clip:** LTX voice, full 3.38 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Thomas smiles: 'And you're German?'
+- **Sound:** bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH010_start_n1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH010_seed7102.mp4
@@ -403,7 +437,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath, frost
 - **Never moves:** ALL FOUR HANDS and the sleeves (never animate a hand)
 - **Keep in frame:** all hands
-- **Sound:** silence of the field: wind very low; one cloth rustle (cloth_move) as the push lands
+- **Hear (from the photo):** Close: two empty hands reach toward each other.
+- **Sound:** bed wind -36. Spots: L:cloth_move__v4 sleeves [as the push lands; pan +0.0; -24 dB]. Left out on purpose: silence: the release (music resolves here).
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/6abdb2918f268ec74e346250.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S04_SH011.mp4
@@ -412,7 +447,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Saxon. Fritz, to my friends. Merry Christmas, Tommy."
 - LTX clip heard: "Saxon. Fritz to my friends. Merry Christmas, Tommy."
 - **Clip:** LTX voice, full 6.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Friedrich introduces himself, handshake.
+- **Sound:** bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH012_start_n1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH012_seed7103.mp4
@@ -421,7 +457,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "We're all Tommies to you. It's really my name."
 - LTX clip heard: "We're all Tommies to you. It's really my name."
 - **Clip:** LTX voice, full 5.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Thomas answers with a smile.
+- **Sound:** bed open wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S04_SH013_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH013_seed7104.mp4
@@ -430,7 +467,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(they shake hands)"
 - LTX clip heard: "You"
 - **Clip:** LTX, no line; trim to 0.0-2.6 s so it ENDS on the clasped hands (the raw clip lets go and steps apart); clip own sound -12 dB
-- **Sound:** glove clasp (cloth_move) on the clasp; wind
+- **Hear (from the photo):** Wide: they shake hands on the frozen field.
+- **Sound:** bed open wind -28. Spots: L:cloth_move__v2 glove clasp [on the clasp; pan +0.0; -18 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH014_start_n1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH014_seed7105.mp4
@@ -439,7 +477,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "Up and down this part of the line, the same thing was happening. Nobody had ordered it."
 - LTX clip heard: "you"
 - **Clip:** LTX narrated, clip own sound -12 dB (crowd murmur), full 7.04 s
-- **Sound:** bed: open land; murmur of many men rising (Battle Crowd murmuring, -24 dB, high-cut so it is friendly not battle)
+- **Hear (from the photo):** Wide: men pour out of both trenches, figures crossing, a farm behind, fires.
+- **Sound:** bed open wind -28. Spots: L:crowd_talking_big__v1 high-cut 3 kHz (friendly, not battle) [rising over the shot; pan +0.2; -24 dB]; L:footstep_snow__v1..v3 many, scattered [whole; pan +0.0; -26 dB]; M:411 one male laugh far [4 s; pan +0.5; -26 dB].
 - **Out:** dip to black 0.4 s (chapter: the truce spreads, maps)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/5eb300f0c039c4bd10c802e2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH015_seed7106.mp4
@@ -452,7 +491,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Picture:** S10 close map: British line in Flanders, ripples at Wulverghem, Ploegsteert, Frelinghien, Fleurbaix
 - **Camera:** map renderer as S10
 - **Living:** ripples pop one by one on 'trench to trench'
-- **Sound:** map: soft tick per ripple; no bed
+- **Hear (from the photo):** Map: the truce spreads along the line in patches.
+- **Sound:** bed none. Spots: L:tick_wood__v1 one per patch that lights [each ripple; pan +0.0; -22 dB].
 - **Out:** cut
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/maps_our_code_after_s8/S05_SH001_new.mp4
 
@@ -461,7 +501,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Picture:** S10 map: '100,000 men (estimate)' counter
 - **Camera:** as S10
 - **Living:** counter lands on 'hundred thousand'
-- **Sound:** map: counter ticks + soft knock when the number lands (BP-192)
+- **Hear (from the photo):** Map: '100,000 men (estimate)' label lands.
+- **Sound:** bed none. Spots: L:tick__v1..v3 counter ticks [count; pan +0.0; -24 dB]; M:1365 typewriter hit [when the label lands; pan +0.5; -18 dB].
 - **Out:** cut
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/maps_our_code_after_s8/S05_SH002_new.mp4
 
@@ -473,7 +514,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath, frost; no falling snow (clear)
 - **Never moves:** men, wire
 - **Keep in frame:** every man in the front group
-- **Sound:** bed: open land; friendly murmur and one warm laugh (laugh_warm, mid-left); far shouts of the football game panned to the ball (Battle Crowd murmuring, -26 dB)
+- **Hear (from the photo):** Wide field: groups trading by a fire, a farm behind, a ball game in the distance.
+- **Sound:** bed L:crowd_talking_big__v1 high-cut -26 + M:1330 fire -28 pan +0.5 (fire right). Spots: L:laugh_warm__v1 [2 s; pan -0.3; -22 dB]; M:457 male crowd cheering and whistling, far (the football) [on 'kicking a ball'; pan +0.6; -28 dB]; M:1939 coins handling [on 'buttons'; pan -0.2; -22 dB]. GAP: a ball kick (leather thump) would sell 'kicking a ball': use L:soft_thud__v3 pitched up as a stand-in.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/9a45b4c1a2ea6f25ccf7f783.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S05_SH003.mp4
@@ -482,7 +524,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "Where'd you learn English?"
 - LTX clip heard: "Where do you learn English?"
 - **Clip:** LTX voice ('Where do you learn': accept), full 3.04 s
-- **Sound:** clip voice; murmur bed
+- **Hear (from the photo):** Thomas and Friedrich close, trading; crowd behind.
+- **Sound:** bed crowd murmur -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1be456d64b6827f0cf9889ef.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH004_seed7100.mp4
@@ -491,7 +534,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "London. I was a waiter. Four years."
 - LTX clip heard: "London. I was a waiter. Four years."
 - **Clip:** LTX voice, full 4.71 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Friedrich: 'London. I was a waiter.'
+- **Sound:** bed crowd murmur -30. Spots: C: line [whole; pan +0.0; 0 dB]; M:2385 paper/tobacco exchange [whole; pan +0.0; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH005_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH005_seed7101.mp4
@@ -500,7 +544,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "Many Germans had worked in Britain before the war. One Briton found his old barber among them, and sat down for a haircut."
 - LTX clip heard: "LAUGHTER"
 - **Clip:** LTX narrated, clip own sound -12 dB: KEEP its laughter (2.3-3.7 s, fits the barber), 8.71 s
-- **Sound:** murmur bed; scissors not in library
+- **Hear (from the photo):** A British soldier sits on a crate by a fire drum while a German barber cuts his hair; men watch.
+- **Sound:** bed crowd murmur -28 + fire drum M:1329 -26 pan +0.3. Spots: M:2378 scissors snips, 3-4 times, synced to the barber's hand [from 'haircut'; pan +0.1; -16 dB]; M:411 one laugh from the watchers [end; pan +0.5; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/4027aba2635cd8e7e7071f05.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH006_seed7102.mp4
@@ -509,7 +554,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "You have a family?"
 - LTX clip heard: "You have a family."
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Friedrich lights a cigarette / looks at a photo in the glow: 'You have a family?'
+- **Sound:** bed crowd murmur -32. Spots: M:2590 match strike [start; pan +0.3; -18 dB]; C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH007_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH007_seed7103.mp4
@@ -518,7 +564,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "My mum. And a little sister."
 - LTX clip heard: "My mum, and a little sister."
 - **Clip:** LTX voice, full 4.04 s (check the last frame: pouches near 3.3 s)
-- **Sound:** clip voice
+- **Hear (from the photo):** Thomas: 'My mum. And a little sister.'
+- **Sound:** bed crowd murmur -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH008_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S05_SH008_seed7300.mp4
@@ -527,7 +574,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "My wife. My daughter. She is three."
 - LTX clip heard: "My wife. My daughter. She is three."
 - **Clip:** LTX voice, full 5.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Friedrich holds the photograph: 'My wife. My daughter.'
+- **Sound:** bed crowd murmur -32. Spots: C: line [whole; pan +0.0; 0 dB]; M:2379 photo card [whole; pan +0.0; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed/S05_SH009_start_n1_card.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH009_seed7105.mp4
@@ -540,7 +588,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath, frost on the gloves
 - **Never moves:** ALL hands and the photograph
 - **Keep in frame:** the photograph and the four hands
-- **Sound:** near silence: wind low; paper touch (paper_move, very soft) at 0.3 s
+- **Hear (from the photo):** Close: gloved hands holding the photograph between them.
+- **Sound:** bed wind low -34; the crowd fades away. Spots: M:2380 paper touch, very soft [0.3 s; pan +0.0; -24 dB]. Left out on purpose: near silence: intimacy.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH010_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S05_SH010.mp4
@@ -549,7 +598,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "She looks happy."
 - LTX clip heard: "She looks happy."
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** 'She looks happy.'
+- **Sound:** bed crowd -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S05_SH011_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S05_SH011_seed7302.mp4
@@ -558,7 +608,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "She thinks I am home for Christmas."
 - LTX clip heard: "She thinks I am home for Christmas."
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** 'She thinks I am home for Christmas.'
+- **Sound:** bed crowd -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S05_SH012_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH012_seed7107.mp4
@@ -567,7 +618,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "So does mine."
 - LTX clip heard: "So does mine."
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice; murmur bed fades out under 'So does mine'
+- **Hear (from the photo):** They sit together on a crate: 'So does mine.'
+- **Sound:** bed crowd fading out. Spots: C: line [whole; pan +0.0; 0 dB]. Left out on purpose: music out under the line.
 - **Out:** cut (hold 0.5 s of silence before the narration turns)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH013_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S05_SH013_seed7301.mp4
@@ -576,7 +628,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "But the day was not only for trading. Both sides went out to bring in their dead."
 - LTX clip heard: "You"
 - **Clip:** LTX narrated, clip own sound -14 dB, full 7.04 s
-- **Sound:** bed changes: murmur gone, cold wind only; slow footsteps in snow; restraint
+- **Hear (from the photo):** Men carry the dead on stretchers across the frozen field.
+- **Sound:** bed open wind -28, crowd gone. Spots: M:539 slow footsteps on snow, several [whole; pan +0.0; -22 dB]; L:cloth_rustle__v3 stretcher canvas [3 s; pan -0.3; -26 dB]. Left out on purpose: restraint: no music, no voices.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/57a4ea9bd4270fd9064a409d.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH014_seed7100.mp4
@@ -585,7 +638,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "Some had lain out there for weeks."
 - LTX clip heard: "(nothing)"
 - **Clip:** LTX narrated, full 3.04 s, clip own sound -14 dB (spade in frozen earth)
-- **Sound:** wind; spade scrape from the clip
+- **Hear (from the photo):** Two men dig a grave with spades by the sunlit field.
+- **Sound:** bed wind -30. Spots: C: spade scrape [whole; pan +0.0; -16 dB]; M:537 earth thrown (mud step, dry) [on each throw; pan +0.2; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e2490163ec3a5422222edeca.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH015_seed7101.mp4
@@ -598,7 +652,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** spindrift, frost, cold grade
 - **Never moves:** spades, blanket, mound
 - **Keep in frame:** both spades whole
-- **Sound:** wind alone, slightly stronger gust at 1.5 s; nothing else (restraint)
+- **Hear (from the photo):** Two spades stand in the earth by the grave.
+- **Sound:** bed wind alone -30, one gust at 1.5 s (L:wind_blowing__v1). Spots: none. Left out on purpose: nothing else.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/45bb0e8ecc8c760ab0be75af.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S05_SH016.mp4
@@ -607,7 +662,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "What was his name?"
 - LTX clip heard: "What was his name?"
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice; wind
+- **Hear (from the photo):** Thomas and Friedrich by a cross: 'What was his name?'
+- **Sound:** bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e3fa664985bac13da28cd720.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH017_seed7102.mp4
@@ -616,7 +672,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Karl. He sang the loudest."
 - LTX clip heard: "Carl, he sang the loudest."
 - **Clip:** LTX voice, full 4.38 s
-- **Sound:** clip voice; wind
+- **Hear (from the photo):** 'Karl. He sang the loudest.'
+- **Sound:** bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH018_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cde4357602e2_fc6ae61bf410/S05_SH018/S05_SH018_seed7400.mp4
@@ -625,7 +682,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "I'm sorry."
 - LTX clip heard: "I'm sorry"
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice; wind
+- **Hear (from the photo):** 'I'm sorry.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH019_seed7104.mp4
 
@@ -637,7 +695,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath, frost; no falling snow
 - **Never moves:** every man, crosses
 - **Keep in frame:** both groups whole
-- **Sound:** bed: wind very low; no music swell; a single soft bell-less silence; the narrator carries it
+- **Hear (from the photo):** A joint burial: rows of men with heads bowed, crosses, a chaplain reading.
+- **Sound:** bed wind very low -34. Spots: L:cloth_move__v1..v4 caps removed, scattered [4-6 s; pan +0.0; -28 dB]. Left out on purpose: no music swell; the narrator carries it. GAP: a far murmured psalm in English then German would fit; we have none (ElevenLabs, paid) and leave it out.
 - **Out:** cut
 - **Journal:** V6: planned pan imperceptible; breath invisible: renderer defects
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/0961d9551910c9b0cd967e5e.png
@@ -647,7 +706,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(Harris takes off his cap at the edge of the graves)"
 - LTX clip heard: "You"
 - **Clip:** LTX, no line: clip audio -18 dB (wind only, its noise has a false 'You'), full 5.04 s; ends on the lifted cap
-- **Sound:** wind; cloth rustle when the cap comes off
+- **Hear (from the photo):** Harris takes off his cap at the edge of the graves.
+- **Sound:** bed wind -30. Spots: L:cloth_rustle__v2 cap off [when the cap comes off; pan +0.0; -18 dB].
 - **Out:** dip to black 0.5 s (chapter: dusk)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/c030b4def7eef27edcc0292d.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH021_seed7105.mp4
@@ -663,7 +723,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** breath, dusk frost
 - **Never moves:** men, crates
 - **Keep in frame:** both men and their boots
-- **Sound:** bed: dusk wind low; brazier crackle right
+- **Hear (from the photo):** Late afternoon: the two men sit on crates, a small brazier, a ruined farm, low sun.
+- **Sound:** bed dusk wind -30 + M:1329 small brazier -28 pan +0.5. Spots: none.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/0beb5fddd6f4426807a55589.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/2p5d_after_s6_fixes/S06_SH001_new.mp4
@@ -672,7 +733,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Tommy... why are we fighting?"
 - LTX clip heard: "Tommy, why are we fighting?"
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice; brazier
+- **Hear (from the photo):** 'Tommy... why are we fighting?'
+- **Sound:** bed brazier -30, wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S06_SH002_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH002_seed7100.mp4
@@ -681,7 +743,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "I don't know."
 - LTX clip heard: "I don't know."
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** 'I don't know.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH003_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH003_seed7304.mp4
@@ -690,7 +753,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "They told us you were the enemy."
 - LTX clip heard: "They told us you were the enemy."
 - **Clip:** LTX voice, full 4.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** 'They told us you were the enemy.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/fc29ca07f635138501dffed1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH004_seed7102.mp4
@@ -703,7 +767,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** frost, spindrift
 - **Never moves:** shadows (they belong to still men), wire
 - **Keep in frame:** both shadows whole
-- **Sound:** wind low; brazier crackle off-screen behind camera (centre, close)
+- **Hear (from the photo):** Their two long shadows on the frost, lamps along the trench.
+- **Sound:** bed wind -32 + brazier off-screen behind camera -30 centre. Spots: none.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/fdfc498552fff49255c364e1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S06_SH005.mp4
@@ -712,7 +777,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "They told us the same about you."
 - LTX clip heard: "They told us the same about you."
 - **Clip:** LTX voice, full 3.71 s
-- **Sound:** clip voice
+- **Hear (from the photo):** 'They told us the same about you.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/d1484fa3a280046b2ea5de16.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH006_seed7306.mp4
@@ -721,7 +787,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Tomorrow, maybe, we are enemies again."
 - LTX clip heard: "Tomorrow, maybe, we are enemies again."
 - **Clip:** LTX voice, full 5.04 s
-- **Sound:** clip voice
+- **Hear (from the photo):** 'Tomorrow, maybe, we are enemies again.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH007_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH007_seed7104.mp4
@@ -730,7 +797,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "Maybe. But not today."
 - LTX clip heard: "Maybe. Maybe. But not today."
 - **Clip:** LTX voice; FIX: the raw clip says 'Maybe' twice (0.0-0.6 s and 1.72-1.92 s). Start the clip at 1.45 s and play to 4.04 s (2.6 s): 'Maybe. But not today.'
-- **Sound:** clip voice; brazier; nothing else
+- **Hear (from the photo):** 'Maybe. But not today.'
+- **Sound:** bed brazier -30. Spots: C: line [whole; pan +0.0; 0 dB]. Left out on purpose: music enters AFTER 'today'.
 - **Out:** cut (0.4 s of held silence after 'today' before the next shot)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH008_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH008_seed7303.mp4
@@ -739,7 +807,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(Thomas cuts a brass button off his tunic with a penknife)"
 - LTX clip heard: "(nothing)"
 - **Clip:** LTX R3 take (accepted 11-14), no line: clip own sound -12 dB, full 6.38 s; knife click and cloth snip audible
-- **Sound:** small cloth snip; wind low
+- **Hear (from the photo):** Thomas cuts a brass button off his tunic with a penknife.
+- **Sound:** bed wind -32. Spots: M:2378 scissors snip, slowed and quieter (knife through thread) [on the cut; pan +0.0; -18 dB]; M:3183 fluttering coin, tiny (the button in his palm) [when it drops into the palm; pan +0.0; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/459180abd24b5054b68873f1.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S06_SH009_seed7110.mp4
@@ -748,7 +817,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "Something to remember me by."
 - LTX clip heard: "Something to remember me by."
 - **Clip:** LTX voice, full 3.71 s
-- **Sound:** clip voice
+- **Hear (from the photo):** He offers the button: 'Something to remember me by.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S06_SH010_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH010_seed7305.mp4
@@ -757,7 +827,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Then take one of mine."
 - LTX clip heard: "Then, take one of mine."
 - **Clip:** LTX voice, full 3.38 s
-- **Sound:** clip voice
+- **Hear (from the photo):** Friedrich gives one of his: 'Then take one of mine.'
+- **Sound:** bed wind -32. Spots: C: line [whole; pan +0.0; 0 dB]; M:1993 clinking coins, one soft click (buttons touch) [on the exchange; pan +0.0; -24 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S06_SH011_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH011_seed7108.mp4
@@ -770,7 +841,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** dusk cold grade, frost
 - **Never moves:** the two men
 - **Keep in frame:** the two men centred and whole
-- **Sound:** bed: dusk wind, brazier crackle left; everything thins as the light goes
+- **Hear (from the photo):** Sunset, the two men small in the distance, lamps on the trench, mist.
+- **Sound:** bed dusk wind -30 + brazier -32 pan -0.4, both fading as the light goes. Spots: none.
 - **Out:** dip to black 0.8 s (night -> next morning)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/d6dd993ef61f64d9b6129ebc.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S06_SH012.mp4
@@ -786,7 +858,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** frost haze, no falling snow
 - **Never moves:** men, wire
 - **Keep in frame:** the walking groups
-- **Sound:** bed: morning wind; many slow footsteps in snow (footstep_snow, layered, panned both ways)
+- **Hear (from the photo):** Morning: lines of men walk back through mist toward their own trenches.
+- **Sound:** bed morning wind -30. Spots: M:539 many slow footsteps on snow, layered, panned both ways [whole; pan +0.0; -22 dB]. Left out on purpose: no voices.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/82ece8ecbcfa5da9123fe8cd.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S07_SH001.mp4
@@ -795,7 +868,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *friedrich_brandt:* "Good luck, Tommy."
 - LTX clip heard: "Good luck, Tommy."
 - **Clip:** LTX voice, full 3.04 s
-- **Sound:** clip voice; wind
+- **Hear (from the photo):** 'Good luck, Tommy.'
+- **Sound:** bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S07_SH002_start_mirror.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH002_seed7100.mp4
@@ -804,7 +878,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *thomas_hale:* "You too, Fritz."
 - LTX clip heard: "You too, Fritz."
 - **Clip:** LTX voice, full 3.04 s (Thomas turns away = good)
-- **Sound:** clip voice; footsteps
+- **Hear (from the photo):** 'You too, Fritz.' Thomas turns away.
+- **Sound:** bed wind -30. Spots: C: line [whole; pan +0.0; 0 dB]; M:538 he walks away [end; pan -0.3; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S07_SH003_start_fix2.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH003_seed7101.mp4
@@ -813,7 +888,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *sgt_harris:* "Stand to."
 - LTX clip heard: "stan 2"
 - **Clip:** LTX voice, full 3.04 s; the narration of S07_SH005 starts under its last 1.0 s (J-cut) so the revolver shots land near 'ended it politely'
-- **Sound:** clip voice; trench wind
+- **Hear (from the photo):** Harris in the trench, rifle slung, brazier: 'Stand to.'
+- **Sound:** bed trench wind -30 + brazier -30 pan +0.4. Spots: C: line [whole; pan +0.0; 0 dB]; L:buckle_click__v1 sling [as he turns; pan +0.1; -22 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/060bfd79498d4a66871d9528.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH004_seed7102.mp4
@@ -822,7 +898,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "At Houplines, on Boxing Day morning, a British captain ended it politely: shots into the air."
 - LTX clip heard: "BANG! BANG!"
 - **Clip:** LTX R3 take, narrated; KEEP its two gunshots (0.5 s and 1.6 s of the clip, loud) at full effect level; the narrator ducks 4 dB under each bang; full 8.04 s; level trim -0.5 dB (CLIP-06 -0.1 dBTP)
-- **Sound:** gunshots from the clip, echo across no man's land (reverb tail 1.2 s); bed trench wind
+- **Hear (from the photo):** The British captain fires a revolver into the air, then salutes.
+- **Sound:** bed trench wind -30. Spots: C: the shots from the clip [whole; pan -0.3; -6 dB]; reverb tail 1.2 s across the field [after each shot; pan +0.3; -14 dB]. Left out on purpose: music silent.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/064e7631e9b16acc8c24f40f.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S07_SH005_seed7111.mp4
@@ -831,7 +908,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(the German captain salutes back, gets down into his trench, then fires two shots into the air)"
 - LTX clip heard: "I'll see you next time."
 - **Clip:** LTX, no line: clip audio has ONE shot at 7.9 s; add a second shot 0.9 s earlier by reusing the S07_SH005 clip's second bang (-4 dB, far, panned right); full 8.71 s
-- **Sound:** two far shots from the German trench (right), long echo; wind
+- **Hear (from the photo):** The German captain salutes back from his parapet, steps down, two shots answer.
+- **Sound:** bed wind -30. Spots: second shot reused from S07_SH005, far, long echo [7.0 s; pan +0.6; -10 dB].
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/ab948b9d23ecd7a1affa1b5c.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH006_seed7104.mp4
@@ -840,7 +918,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *none:* "(Thomas looks up at the shots)"
 - LTX clip heard: "You"
 - **Clip:** LTX, no line: clip audio -18 dB, full 3.71 s
-- **Sound:** the echo of the second shot dies over this shot; wind
+- **Hear (from the photo):** Thomas looks up at the sound of the shots.
+- **Sound:** bed wind -32. Spots: echo of the second shot dies [start; pan +0.6; -16 dB]. Left out on purpose: music: Thunder Dreams drone enters after the echo.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/button_fix/S07_SH007_start.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH007_seed7105.mp4
@@ -849,7 +928,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - *narrator:* "There had been no treaty. In some places the truce lasted hours. In others, it held until the New Year."
 - LTX clip heard: "You"
 - **Clip:** LTX R3 take narrated, clip own sound -14 dB, full 9.04 s
-- **Sound:** trench wind; one distant rumble at the end (amb_low_rumble, far, -28 dB) = the guns are back
+- **Hear (from the photo):** Thomas walks down the trench, back to war.
+- **Sound:** bed trench wind -30. Spots: L:step_leather__v1..v4 on duckboards [his steps; pan +0.0; -20 dB]; M:2786 distant guns [at the end; pan -0.7; -26 dB].
 - **Out:** dip to black 0.6 s (night: the letter)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/button_fix/S07_SH008_start.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S07_SH008_seed7112.mp4
@@ -865,7 +945,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** warm interior vs blue cold outside
 - **Never moves:** the writing hand (do not animate the pencil), candle body
 - **Keep in frame:** hand, letter, button
-- **Sound:** bed: night wind outside, muffled (low-pass) because we are inside; pencil scratching (pencil_scribble, close, centre); candle silent
+- **Hear (from the photo):** Night dugout: a hand writes a letter by candlelight; the moon outside.
+- **Sound:** bed M:1172 wind cold interior -32 (inside, muffled). Spots: L:pencil_scribble__v1/v2 close [while writing; pan +0.0; -18 dB]; M:2379 paper slide [on 'letters'; pan +0.2; -22 dB]. Left out on purpose: candle silent.
 - **Out:** cut
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/03bcf8817982220b0b2b0ef6.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S08_SH001.mp4
@@ -878,7 +959,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** draft-bent candle, blue grade in the shadows against the small warm light
 - **Never moves:** hands, photo, button, candle body
 - **Keep in frame:** hands, photo, button
-- **Sound:** bed: night wind with gusts that match the candle bending; a soft metallic touch when the button is first seen (coin-like, not in library: leave silent)
+- **Hear (from the photo):** Close: hands hold the photograph and the German button by the candle.
+- **Sound:** bed interior wind -32 with gusts matched to the candle bending. Spots: M:3183 coin, tiny metallic touch [when the button is first seen; pan +0.2; -22 dB].
 - **Out:** cut
 - **Journal:** V1 'pretty cute snow', V2 snow on frame 0, V3 snow over the close subject: renderer defects
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/89645231dc29774437adbc26.png
@@ -892,7 +974,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** cold, empty
 - **Never moves:** wire, stakes
 - **Keep in frame:** the field
-- **Sound:** bed: open-land wind; two distant artillery rumbles far left and far right (amb_low_rumble, -26 dB, 1.2 s apart)
+- **Hear (from the photo):** Bookend: the opening field (S01_SH001 picture). 'The war went on for almost four more years.'
+- **Sound:** bed open wind -28. Spots: M:2786 artillery far left [0.8 s; pan -0.8; -24 dB]; M:1696 distant war explosions far right [2.0 s; pan +0.8; -26 dB].
 - **Out:** dip to black 0.6 s
 - **Journal:** S08_SH003 picture contradicts its line (men in the field during 'The war went on for almost four more years'): data change to reuse S01_SH001_start
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/ae380e00e9c9f5cf5946a1e4.png
@@ -906,7 +989,8 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Cold:** none
 - **Never moves:** candle body
 - **Keep in frame:** candle and text
-- **Sound:** silence except a very low wind; the candle is silent; music (if any) resolves here
+- **Hear (from the photo):** Black; one candle; the end text.
+- **Sound:** bed none. Spots: music: Ancient Rite hands over to the last phrase of Silent Night (Kevin MacLeod, instrumental, 2026-11-15 additions); the carol from S03 comes back as the memory [crossfade at 0.5 s, fades out with the candle by 5.5 s; pan +0.0; -18 dB]. Left out on purpose: the candle is silent.
 - **Out:** fade to black 1.0 s (end)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S08_SH004_start_candle.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S08_SH004.mp4
@@ -925,5 +1009,16 @@ The score sits under the narrator: ducked 8-10 dB while a voice speaks, it rises
 | S05_SH014-SH021 the dead | 246-277 s | no score (restraint) |
 | S06_SH008 "Maybe. But not today." | 297.2 s | Despair and Triumph enters softly right AFTER "today" (not under the line) and carries S06_SH009-SH012 to the dip |
 | S07_SH005-SH006 shots | 326-341 s | silence; after the second echo Thunder Dreams low drone enters (the war is back) |
-| S08 letter -> end card | 352.8-380 s | Ancient Rite low; resolves on the end card, last note fades with the candle |
-Gap: no free instrumental "Silent Night" recording in the library. The melody (Gruber, 1818) is public domain, but every recording has its own licence. Optional: one solo instrumental recording from YouTube Audio Library (free, check the attribution flag per track) or Musopen (public-domain or CC recordings), for the end card only. Nothing is downloaded without the creator's word.
+| S08 letter -> end card | 352.8-380 s | Ancient Rite low under the letter; on the end card it hands over to the last phrase of Silent Night (Kevin MacLeod, instrumental): the carol of S03 returns as the memory, fading out with the candle |
+Silent Night: found and added (Kevin MacLeod, instrumental, CC BY 4.0, sound_library_2026-11-15_additions/music/km_silent_night.mp3).
+
+
+## Audio rule and new sounds (2026-11-15 17:30 UTC, the creator's words 17:00 and 17:02)
+- Audio is designed for every shot, maps included, from the photo, the scene and the mood (creator 2026-11-15 17:00/17:02 UTC): look at the picture first, then write what is heard, where it comes from (pan = source x), how loud (distance) and why. Mandatory does not mean filler: a sound that does not belong is left out, silence is a choice when the scene calls for it, a needed sound that is missing is flagged as a GAP. Beds sit 22-36 dB under the voice, spots 14-30 dB under; everything ducks a further 8-10 dB while a voice speaks. No question to the creator is needed for this.
+- Every shot's **Sound** line above was rewritten from its photo (the old lines are in CORRECTIONS_LOG.md part C).
+- New free sounds: sound_library_2026-11-15_additions on HF (manifest audio_assets_2026_11_15 in shot_plan.json, with sha256 and licence for each):
+  63 Mixkit effects (Mixkit Sound Effects Free License: commercial use and YouTube monetisation allowed, no attribution): distant artillery, a far gun with echo,
+  scissors, match strike, tin opening, coins and buttons, typewriter hits for map labels, paper and pencil, cutlery and chewing, crowds and laughs, fire,
+  footsteps on snow, frozen ground and mud, winter and interior winds, suspense swells and low impacts. Plus "Silent Night" by Kevin MacLeod (CC BY 4.0).
+- Description attribution lines needed: the Kevin MacLeod tracks used (format in catalog.sqlite), including "Silent Night".
+- Gaps still open (left out, not faked): a true single rifle crack (S02_SH004 uses a far gun with echo), a leather ball kick (S05_SH003 stand-in), a murmured psalm at the burial (S05_SH020, left to the narrator).

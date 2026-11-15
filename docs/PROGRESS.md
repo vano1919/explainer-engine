@@ -6664,3 +6664,8 @@ clip-audio decisions: S06_SH008 double "Maybe", S03_SH003 cut word, S03_SH007 bl
 Narration and dialogue reads already exist (ElevenLabs 2026-11-13, text identical): no paid step. Defects found by eye are
 logged in `docs/wip/argon_2026-11-14/INCIDENT_JOURNAL_argon_loop.md` for the Argon loop. Tests: the 7 episode-data test
 files (128 passed, 1 skipped). Render waits for the creator's OK.
+
+## 2026-11-15 17:30 UTC: Truce 1914 audio redesign (data only)
+- Every shot's sound in planning/full_film_2026-11-15 (SHOT_PLAN.md, shot_plan.json) was rewritten from its photo, scene and mood, maps included; silence where the scene calls for it; gaps flagged.
+- New free sounds on HF sound_library_2026-11-15_additions: 63 Mixkit effects (free licence, no attribution) + Kevin MacLeod "Silent Night" (CC BY 4.0, instrumental) for the end card.
+- Rule recorded in the incident journal: audio design is mandatory in every plan and needs no question to the creator (creator 2026-11-15). No code changed.
