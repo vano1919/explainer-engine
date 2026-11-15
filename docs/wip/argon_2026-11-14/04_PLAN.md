@@ -607,3 +607,13 @@ Free ($0)
 	
 
 python -m explainer_engine.docs_lint returns 0 findings; full pytest suite passes; next episode requires only episode.json + production_script.json + anchor photos + 1 LTX wave run.
+---
+## Order of work after 2026-11-15 (the creator, 07:37-07:40 UTC)
+1. Incident audit: every incident from all journals once, checked against the current code; guards added where missing ($0).
+2. Full-system rewrite by Argon: one big structured Task prompt with the latest code, every defect, every rule, the director
+   knowledge base and the visual checks; rewrite the whole system under the new rules (including parts not touched yet), resolve
+   conflicts, find technical errors at every stage, propose improvements.
+3. NEXT STAGE - first minute of the film, assembled with Argon: a 1-minute cut in the fixed 60 % LTX / 30 % 2.5D / 10 % helper mix
+   with narration and sound. Argon evaluates it itself: is the video good, is it good enough for YouTube, is it technically sound,
+   how is the audio; for every bad moment it finds the moment (timecode) and the cause in the code.
+4. ChatGPT final review only after all fixes are done.

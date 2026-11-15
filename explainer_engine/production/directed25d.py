@@ -32,7 +32,21 @@ from pathlib import Path
 import numpy as np
 from explainer_engine.production import layers25d as L
 from explainer_engine.production import living_fx as LFX
-VERSION = "directed25d/0.1-p1"
+def _code_digest() -> str:
+    """Hash of this renderer's own code and its effects module: any code change changes VERSION, so the clip cache key
+    (episode/run.py _clip_key) never reuses a clip rendered by older code (audit #29, 2026-11-15: scallops, snaps and whips
+    fixed in S6/S10 would otherwise come back from the cache)."""
+    import hashlib
+    from pathlib import Path as _P
+    h = hashlib.sha256()
+    for name in ("directed25d.py", "living_fx.py"):
+        f = _P(__file__).with_name(name)
+        if f.is_file():
+            h.update(f.read_bytes().replace(b"\r\n", b"\n"))
+    return h.hexdigest()[:12]
+
+
+VERSION = "directed25d/0.2-" + _code_digest()
 SEGMENTS_MAX = 3
 PUSH_SCALE = L.PUSH_SCALE          # zoom change of a push at strength 1 (same as layers25d)
 DEPTH_PUSH = L.DEPTH_PUSH

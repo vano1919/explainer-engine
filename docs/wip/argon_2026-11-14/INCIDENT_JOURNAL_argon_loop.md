@@ -18,3 +18,14 @@
 | outer soldier cut at the frame edge | _keep_boxes looked for the host mask only at the face-centre pixel (missed torso masks); _frame_people used the group median depth | torso-aware host lookup; per-person depth in the bounds | test_s10_defect1 (people inside frame) | fixed |
 | close maps a blur of blobs; macro relief noisy | plate.relief_upsample used output pixel width, so macro views were treated as close and got the micro boost; close views amplified SR_HR + world-octave noise | upsample by span only; close views fade relief to 25 % + parchment + light hatch; macro micro-gain capped (D-59 hypotheses) | test_s10_defect2 (64 px blob contrast) | fixed, eye-checked |
 | accents dropped (Liege, Armentieres) | episode.json stored ASCII names; the missing-glyph check did not compare accented glyphs with their base letter | episode.json names corrected (data); draw.has_missing_glyph checks NFD base glyphs; map_label_text kept only as a fallback | test_s10_defect2 + test_m9 | fixed, eye-checked |
+
+## 2026-11-15 11:55 Tbilisi - full incident audit (all journals) and missing guards
+- docs/wip/argon_2026-11-14/INCIDENT_AUDIT_2026-11-15.md: 76 incidents from the three journals checked against d689cd5:
+  34 fixed+guard, 2 fixed without guard (+3 partial), 14 process, 24 open, 3 not checkable.
+- New finding #29: directed25d.VERSION never changed ("directed25d/0.1-p1"), so the clip cache could reuse clips rendered by older,
+  defective code. Fix: VERSION carries a hash of directed25d.py + living_fx.py. Guard: tests/unit/test_renderer_version_guard.py
+  (fails on the old constant).
+- Missing guards added (tests/unit/test_audit_guards_2026_11_15.py): #51 small face in mist passes face_intact; #42 modern take
+  ranks below a period take; #60 map events use the timed script; #61 sector markers sized by view; #65 dual front line colours;
+  #23 documented route names exist in the router.
+- The 24 open items go to Argon Task 1 (logic fixes).
