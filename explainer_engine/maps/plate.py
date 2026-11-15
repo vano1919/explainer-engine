@@ -2,7 +2,9 @@
 
 A plate is land, coast, lakes, rivers and borders in palette colours (with Natural Earth's shaded relief raster on the land when
 `shaded_relief=True`, ``maps/relief.py``; v4.3 P4 removed the synthetic DEM with its hand-placed Toba and Waterloo terrain,
-finding F6) and nothing else. The colours can follow the episode's map look (``look``: palette token names, EP-02). It has no letters (CMP-01): this module never calls ``Canvas.text`` and its spec has no text field, so the
+finding F6) and nothing else. When the episode's historical period is before 1945, ``borders_1914.json.gz`` is drawn instead of
+modern borders; modern borders are never drawn for 1914 (M7). The colours can follow the episode's map look (``look``: palette
+token names, EP-02). It has no letters (CMP-01): this module never calls ``Canvas.text`` and its spec has no text field, so the
 guarantee holds by construction, and ``tests/unit/test_maps.py`` fails if the renderer ever draws one. Labels, units and arrows
 are drawn over the plate by ``maps/render.py`` at the frame the viewer sees.
 """
@@ -11,7 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
+import re
 import sys
 from pathlib import Path
 
@@ -28,7 +30,49 @@ LOOK_KEYS = ("sea", "land", "coast", "river", "border", "lake")
 RELIEF_FLAT = 0.82   # Natural Earth SR_HR's grey on flat ground (measured on the Indian Ocean basin's plains, 2026-11-12)
 
 
-def spec_hash(view: geo.View, layers=LAYERS, shaded_relief: bool = False, look: dict | None = None) -> str:
+def _extract_year(val) -> int | None:
+    if val is None or isinstance(val, bool):
+        return None
+    if isinstance(val, (int, float)):
+        return int(val)
+    if isinstance(val, dict):
+        for k in ("start_year", "end_year", "year", "period"):
+            y = _extract_year(val.get(k))
+            if y is not None:
+                return y
+        if isinstance(val.get("historical_period"), (dict, int, str)):
+            return _extract_year(val.get("historical_period"))
+        return None
+    if isinstance(val, str):
+        s = val.strip()
+        if s == "borders_1914" or s == "1914":
+            return 1914
+        m = re.search(r"(-?\d{3,5})", s)
+        if m:
+            y = int(m.group(1))
+            return -abs(y) if "bce" in s.lower() else y
+    return None
+
+
+def is_pre_1945(period=None, look: dict | None = None, layers=LAYERS) -> bool:
+    """True when the episode's period is before 1945 (or ``borders_1914`` is requested), so 1914 borders replace modern borders."""
+    if layers and "borders_1914" in layers:
+        return True
+    y = _extract_year(period)
+    if y is None and isinstance(look, dict):
+        if look.get("borders") in ("1914", "borders_1914"):
+            return True
+        y = _extract_year(look)
+    return y is not None and y < 1945
+
+
+def spec_hash(
+    view: geo.View,
+    layers=LAYERS,
+    shaded_relief: bool = False,
+    look: dict | None = None,
+    period=None,
+) -> str:
     """The cache key: the view, the layers, the style and the data it was drawn from."""
     sources = json.loads((Path(geo.__file__).with_name("data") / "SOURCES.json").read_text(encoding="utf-8"))
     body = {
@@ -37,11 +81,15 @@ def spec_hash(view: geo.View, layers=LAYERS, shaded_relief: bool = False, look: 
         "style": STYLE,
         "data": sources["output"]["sha256"],
     }
+    if is_pre_1945(period, look, layers):
+        body["borders_1914"] = (sources.get("borders_1914") or {}).get("sha256", "1914")
     if shaded_relief:
         from explainer_engine.maps import relief
         body["shaded_relief"] = relief.SOURCE_ZIP_SHA256
     if look:
-        body["look"] = {k: look[k] for k in sorted(look)}
+        clean_look = {k: look[k] for k in sorted(look) if k not in ("period", "historical_period", "start_year", "end_year")}
+        if clean_look:
+            body["look"] = clean_look
     return hashlib.sha256(json.dumps(body, sort_keys=True).encode("utf-8")).hexdigest()
 
 
@@ -87,9 +135,10 @@ def draw_base(
     shaded_relief: bool = False,
     cache_dir: Path | str | None = None,
     look: dict | None = None,
+    period=None,
 ) -> D.Canvas:
     """Land, lakes, rivers and borders over the sea (land lit by the real relief when `shaded_relief=True`), as a supersampled
-    canvas (no letters). ``cache_dir`` is kept for callers; relief needs no per-view cache."""
+    canvas (no letters). When the episode's period is before 1945, ``borders_1914`` replaces modern borders."""
     ds, col = geo.dataset(), colours(look)
     c = D.Canvas(view.width, view.height, col["sea"], ss)
     lon0, lat0, lon1, lat1 = view.bbox(0.02)
@@ -130,15 +179,23 @@ def draw_base(
             pts = geo.clip_polygon(list(zip(x.tolist(), y.tolist())), *rect)
             if len(pts) >= 3:
                 c.polygon(pts, fill=(*col["lake"], 255))
-    for layer, key, width, dash in (("borders", "border", STYLE["border_px"], (6.0, 4.0)), ("rivers", "river", STYLE["river_px"], None)):
-        if layer not in layers:
-            continue
-        for line in ds[layer]:
+    use_1914 = is_pre_1945(period, look, layers)
+    border_lines = geo.borders_1914() if use_1914 else ds["borders"]
+    has_borders = ("borders" in layers) or ("borders_1914" in layers)
+    if has_borders:
+        for line in border_lines:
             if not geo._hit(line.bbox, box):
                 continue
             x, y = view.to_px(line.pts[:, 0], line.pts[:, 1])
             for piece in geo.clip_line(list(zip(x.tolist(), y.tolist())), *rect):
-                c.line(piece, (*col[key], 255), max(1.0, width * unit), dash=dash)
+                c.line(piece, (*col["border"], 255), max(1.0, STYLE["border_px"] * unit), dash=(6.0, 4.0))
+    if "rivers" in layers:
+        for line in ds["rivers"]:
+            if not geo._hit(line.bbox, box):
+                continue
+            x, y = view.to_px(line.pts[:, 0], line.pts[:, 1])
+            for piece in geo.clip_line(list(zip(x.tolist(), y.tolist())), *rect):
+                c.line(piece, (*col["river"], 255), max(1.0, STYLE["river_px"] * unit), dash=None)
     return c
 
 
@@ -149,21 +206,36 @@ def render_plate(
     shaded_relief: bool = False,
     cache_dir: Path | str | None = None,
     look: dict | None = None,
+    period=None,
 ) -> Image.Image:
-    return draw_base(view, layers, ss, shaded_relief=shaded_relief, cache_dir=cache_dir, look=look).image().convert("RGB")
+    return draw_base(view, layers, ss, shaded_relief=shaded_relief, cache_dir=cache_dir, look=look, period=period).image().convert("RGB")
 
 
-def plate_path(view: geo.View, directory: Path | str, layers=LAYERS, shaded_relief: bool = False, look: dict | None = None) -> Path:
+def plate_path(
+    view: geo.View,
+    directory: Path | str,
+    layers=LAYERS,
+    shaded_relief: bool = False,
+    look: dict | None = None,
+    period=None,
+) -> Path:
     prefix = "relief-plate" if shaded_relief else "plate"
-    return Path(directory) / f"{prefix}-{spec_hash(view, layers, shaded_relief=shaded_relief, look=look)[:16]}.png"
+    return Path(directory) / f"{prefix}-{spec_hash(view, layers, shaded_relief=shaded_relief, look=look, period=period)[:16]}.png"
 
 
-def save_plate(view: geo.View, directory: Path | str, layers=LAYERS, shaded_relief: bool = False, look: dict | None = None) -> Path:
+def save_plate(
+    view: geo.View,
+    directory: Path | str,
+    layers=LAYERS,
+    shaded_relief: bool = False,
+    look: dict | None = None,
+    period=None,
+) -> Path:
     """The plate in the cache folder; a hit is not drawn again (the file name is the hash of what it shows)."""
-    path = plate_path(view, directory, layers, shaded_relief=shaded_relief, look=look)
+    path = plate_path(view, directory, layers, shaded_relief=shaded_relief, look=look, period=period)
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
-        D.write_bytes_atomic(path, D.png_bytes(render_plate(view, layers, shaded_relief=shaded_relief, cache_dir=directory, look=look)))
+        D.write_bytes_atomic(path, D.png_bytes(render_plate(view, layers, shaded_relief=shaded_relief, cache_dir=directory, look=look, period=period)))
     return path
 
 
@@ -227,7 +299,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     s = json.loads(Path(argv[0]).read_text(encoding="utf-8"))
     view = geo.View(s["lon"], s["lat"], s["span_km"], s["width"], s["height"])
-    D.write_bytes_atomic(argv[1], D.png_bytes(render_plate(view, shaded_relief=bool(s.get("shaded_relief", False)))))
+    period = s.get("period") or s.get("historical_period") or s.get("start_year")
+    D.write_bytes_atomic(argv[1], D.png_bytes(render_plate(view, shaded_relief=bool(s.get("shaded_relief", False)), period=period)))
     return 0
 
 

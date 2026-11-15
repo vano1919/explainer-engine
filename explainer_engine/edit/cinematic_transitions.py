@@ -6,6 +6,8 @@ Aligned with `explainer_engine.production.cut_plan` (`ED-04`):
   1. `map_to_location_zoom_through` / `infographic_number_to_scene_morph`: Handoffs between a 10% GIS map/infographic
      and a physical historical location shot.
   2. `cross_dissolve_8f` (`cut_plan_transition = "dissolve"`): Segment or location transitions (`not same_location` or `not same_segment`).
+  3. Map -> Map handoffs (M8): same location + inherited camera -> seamless cut (0 blend frames, 0.15 s audio prelap);
+     different location -> `cross_dissolve_8f` (8 frames).
 - Decorative wipes (`atmospheric_smoke_ash_wipe`, `foreground_object_wipe`, `motion_matched_pan_whip`) are disabled by default
   and only used if a shot explicitly declares `explicit_transition_override` AND `allow_decorative_wipes=True`.
 """
@@ -104,6 +106,13 @@ def compute_visual_continuity_alignment(
     }
 
 
+def _is_map_shot(shot: Dict[str, Any]) -> bool:
+    vtype = str(shot.get("visual_type") or "")
+    gmode = str(shot.get("generation_mode") or "")
+    route = str(shot.get("route") or "")
+    return route == "map_action" or vtype == "map_visualization" or gmode in ("TACTILE_MAP", "MAP_25D")
+
+
 def select_optimal_cinematic_transition(
     shot_a: Dict[str, Any],
     shot_b: Dict[str, Any],
@@ -116,24 +125,40 @@ def select_optimal_cinematic_transition(
     ``honour_authored`` (HF-1): when the outgoing shot carries the script's own ``transition_out``, that wins over the
     structural choice below (``AUTHORED_FRAMES``). Off by default, so every existing plan is what it was."""
     continuity = compute_visual_continuity_alignment(shot_a, shot_b)
-    vtype_a = str(shot_a.get("visual_type") or "")
-    vtype_b = str(shot_b.get("visual_type") or "")
-    gmode_a = str(shot_a.get("generation_mode") or "")
-    gmode_b = str(shot_b.get("generation_mode") or "")
-
-    is_a_infographic = vtype_a == "map_visualization" or gmode_a in ("TACTILE_MAP", "MAP_25D")
-    is_b_infographic = vtype_b == "map_visualization" or gmode_b in ("TACTILE_MAP", "MAP_25D")
+    is_a_infographic = _is_map_shot(shot_a)
+    is_b_infographic = _is_map_shot(shot_b)
+    inherited_camera = bool(
+        is_a_infographic
+        and is_b_infographic
+        and continuity["same_location"]
+        and shot_b.get("inherit_camera", True) is not False
+        and shot_b.get("prev_end_view", True) is not False
+    )
 
     explicit_override = shot_a.get("explicit_transition_override")
     authored = str(shot_a.get("transition_out") or "") if honour_authored else ""
     if authored in AUTHORED_FRAMES:
         dur_frames = AUTHORED_FRAMES[authored]
         t_type = "hard_cut_with_jl_bridge" if dur_frames == 0 else authored
-        audio_prelap_s = 0.25 if continuity["same_location"] else 0.35
+        audio_prelap_s = (
+            0.15
+            if (is_a_infographic and is_b_infographic and continuity["same_location"] and inherited_camera)
+            else (0.25 if continuity["same_location"] else 0.35)
+        )
     elif allow_decorative_wipes and explicit_override in TRANSITION_TYPES:
         t_type = str(explicit_override)
         dur_frames = 0 if t_type == "hard_cut_with_jl_bridge" else 10
         audio_prelap_s = 0.35
+    # 0. Map -> Map handoff (M8): same location + inherited camera -> seamless 0f cut (0.15s prelap); else cross_dissolve_8f
+    elif is_a_infographic and is_b_infographic:
+        if continuity["same_location"] and inherited_camera:
+            t_type = "hard_cut_with_jl_bridge"
+            dur_frames = 0
+            audio_prelap_s = 0.15
+        else:
+            t_type = "cross_dissolve_8f"
+            dur_frames = 8
+            audio_prelap_s = 0.35
     # 1. Map / Infographic -> Physical Location Scene Handoff
     elif is_a_infographic and not is_b_infographic:
         subtype_a = str(shot_a.get("infographic_subtype") or "")

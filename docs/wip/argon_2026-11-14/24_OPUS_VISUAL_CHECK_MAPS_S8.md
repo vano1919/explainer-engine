@@ -1,0 +1,6 @@
+# Opus visual check of the maps after S8 (rendered with our code, 2026-11-15)
+Reel: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/argon_loop_2026-11-15/maps_our_code_after_s8/maps_new_reel.mp4
+Sheet: .../maps_our_code_after_s8/maps_new_sheet.jpg
+FIXED (seen): camera continues from map to map (S02_SH002 starts where SH001 ends, SH003 where SH002 ends, S05_SH002 where SH001 ends); the front line stands at the cut; the Flanders zoom now happens; counter reads "100,000 men (estimate)" without a 0.
+NOT YET (seen): the August/December HUD card is clipped by the top frame edge; the August arrows do not carry over into SH002 (no ghost); no place-name labels at all in our script (Argon's sample labels Paris, Brussels, Ypres...); the 60-90 km views are very blurry (no micro-relief detail); the highlight disc in S02_SH003 is huge and the border dashes are heavy; the front line is still the dashed "caterpillar" style, not Argon's dual Entente/German line; style is far from Argon's sample.
+TESTS: 99/100 map tests; test_m5_label_8pos_collision_free_and_chip_hud_card fails (two colocated labels overlap by a few px even after fixing the padded-box check). Related suites: all other failures also fail on the previous commit.

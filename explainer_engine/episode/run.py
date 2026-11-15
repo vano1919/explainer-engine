@@ -492,7 +492,7 @@ def _direction_path(ep: Episode | None, shot: dict) -> Path | None:
 
 
 def _clip_key(shot: dict, files: list, ep: Episode, spine, events: list | None = None, renderer: str = "",
-              direction_sha: str | None = None) -> str:
+              direction_sha: str | None = None, prev_end_view: dict | None = None) -> str:
     """The cache key of one clip (AV-08): the shot's data, its pictures (paths and SHA-256), size and fps, the spine's hash,
     the hash of its resolved events, its motion profile and settings, the direction file's hash, and the renderer and
     contract versions. Any of them changing renders the clip again."""
@@ -500,10 +500,13 @@ def _clip_key(shot: dict, files: list, ep: Episode, spine, events: list | None =
     if direction_sha is None and ep is not None and getattr(ep, "root", None) is not None:
         dp = _direction_path(ep, shot)
         direction_sha = _sha(dp) if dp is not None else None
-    return _digest({"shot": shot, "files": files, "size": list(ep.size), "fps": ep.fps, "spine_sha": E.spine_hash(spine),
-                    "events_sha": E.events_hash(events or []), "motion_profile": shot.get("motion_profile"),
-                    "renderer": renderer, "direction_sha": direction_sha, "resolver": E.RESOLVER_VERSION,
-                    "contract": ep.script.get("av_contract") or "legacy"})
+    body = {"shot": shot, "files": files, "size": list(ep.size), "fps": ep.fps, "spine_sha": E.spine_hash(spine),
+            "events_sha": E.events_hash(events or []), "motion_profile": shot.get("motion_profile"),
+            "renderer": renderer, "direction_sha": direction_sha, "resolver": E.RESOLVER_VERSION,
+            "contract": ep.script.get("av_contract") or "legacy"}
+    if prev_end_view is not None:
+        body["prev_end_view"] = prev_end_view
+    return _digest(body)
 
 
 def _inspect_director(ep: Episode, shot: dict, start: dict | None) -> tuple[bool, str | None, dict | None, dict | None, str | None]:
@@ -700,7 +703,7 @@ def _wan_clip(ep: Episode, sid: str) -> dict | None:
 
 def stage_clips(ep: Episode, rehearsal: bool):
     """G7: every shot's clip by its route. ``map_action``: the action map (P4) with its gates (a map shot without actions
-    FAILs, final audit B1);
+    FAILs, final audit B1); consecutive same-location map shots inherit the previous map shot's end view (M3);
     ``still_25d``: ``directed25d`` when the shot has ``production/direction/<shot_id>.json`` and a valid layers cache for its
     start picture, otherwise ``layers25d`` (P5) with a ``director_not_used`` REVIEW row; ``wan``: the QA'd clip of the Wan
     adapter (P6), never generated here; without one the shot FAILs, and a rehearsal draws it with the adapter's 2.5D
@@ -758,6 +761,8 @@ def stage_clips(ep: Episode, rehearsal: bool):
     records, made, reused, failed, missing_wan, fallback, missing_pic, no_tool = [], 0, 0, [], [], [], [], []
     director_rows: list[dict] = []
     t = 0
+    prev_map_loc: str | None = None
+    prev_map_end_view: dict | None = None
     for sh in shots_to_render:
         sid = sh["shot_id"]
         base_sid = sh.get("parent_shot_id") or sid
@@ -775,6 +780,12 @@ def stage_clips(ep: Episode, rehearsal: bool):
         out = clips_dir / f"{sid}.mp4"
         report = clips_dir / f"{sid}.clip.json"
         is_map = route == "map_action" or sh.get("visual_type") == "map_visualization"
+        cur_loc = sh.get("location_id") or sh.get("place")
+        inherited_end_view = None
+        if is_map and prev_map_end_view is not None:
+            same_loc = (cur_loc == prev_map_loc) if (cur_loc is not None or prev_map_loc is not None) else True
+            if same_loc:
+                inherited_end_view = dict(prev_map_end_view)
         start = pics.get(f"{sid}_start") or pics.get(f"{base_sid}_start")
         end = pics.get(f"{sid}_end") if sh.get("parent_shot_id") else (pics.get(f"{sid}_end") or pics.get(f"{base_sid}_end"))
         evs = av_events.get(sid, av_events.get(base_sid, {})).get("events", [])
@@ -783,13 +794,26 @@ def stage_clips(ep: Episode, rehearsal: bool):
         )
         renderer = MA.RENDERER_VERSION if is_map else (D25.VERSION if use_director else L25.RENDERER_VERSION)
         files = [start, end] + ([_sha(ep.root / "production" / "video" / f"{sid}.json")] if route == "video" else [])
-        key = _clip_key(sh, files, ep, spines.get(sid), evs, renderer, direction_sha=dir_sha)
+        key = _clip_key(sh, files, ep, spines.get(sid), evs, renderer, direction_sha=dir_sha,
+                        prev_end_view=inherited_end_view)
         old = json.loads(report.read_text(encoding="utf-8")) if report.is_file() else None
         if old and old.get("key") == key and out.is_file() and _sha(out) == old.get("output_sha256") and not ep.force:
             records.append(dict(old["record"], start_sec=rec["start_sec"], end_sec=rec["end_sec"]))
             reused += 1
             if old["record"].get("status") == G.FAIL:
                 failed.append(sid)
+            if is_map:
+                ev_file = clips_dir / f"{sid}_end_view.json"
+                if ev_file.is_file():
+                    prev_map_end_view = json.loads(ev_file.read_text(encoding="utf-8"))
+                elif isinstance((old.get("renderer") or {}).get("end_view"), dict):
+                    prev_map_end_view = dict(old["renderer"]["end_view"])
+                    write_json_atomic(ev_file, prev_map_end_view)
+                else:
+                    prev_map_end_view = None
+                prev_map_loc = cur_loc
+            else:
+                prev_map_loc, prev_map_end_view = None, None
             if use_director and isinstance(old.get("qa_rows"), list):
                 director_rows.extend(old["qa_rows"])
             elif not is_map and route != "video" and dir_why:
@@ -803,11 +827,15 @@ def stage_clips(ep: Episode, rehearsal: bool):
                     raise ContractError(f"{sid}: a map_action shot without actions (RT-03): write its actions on their "
                                         "words; the archive's fixed relief map is not used in a v4.3 episode")
                 res = render_action_map_clip(sh, script, ep.manifest, out, width=w, height=h, fps=ep.fps,
-                                             spine=spines.get(sid), keyframes_out_dir=ep.path("assets/maps/renders"))
+                                             spine=spines.get(sid), keyframes_out_dir=ep.path("assets/maps/renders"),
+                                             cache_dir=clips_dir, prev_end_view=inherited_end_view)
                 rec.update(visual_type="map_visualization", provider=res["provider"], status=res["gates"]["status"],
                            gates_map=res["gates"]["status"], source_start_keyframe=res.get("start_keyframe_path"),
                            source_end_keyframe=res.get("end_keyframe_path"))
+                prev_map_end_view = res.get("end_view")
+                prev_map_loc = cur_loc
             else:
+                prev_map_loc, prev_map_end_view = None, None
                 wan = _wan_clip(ep, sid) if route == "video" else None
                 if route == "video" and wan is None:   # counted before the picture check (final audit B2)
                     missing_wan.append(sid)
@@ -877,11 +905,15 @@ def stage_clips(ep: Episode, rehearsal: bool):
             if int(res.get("total_frames") or frames) != frames:
                 raise ContractError(f"{sid}: the clip has {res.get('total_frames')} frames, the shot {frames}")
         except ContractError as exc:
+            if is_map:
+                prev_map_loc, prev_map_end_view = None, None
             rec.update(status=G.FAIL, error=str(exc), clip_path=None)
             failed.append(sid)
             records.append(rec)
             continue
         except ConfigError as exc:   # a free tool is missing: nothing was measured for this shot (final audit B3)
+            if is_map:
+                prev_map_loc, prev_map_end_view = None, None
             rec.update(status=G.NOT_RUN, error=str(exc), clip_path=None)
             no_tool.append(f"{sid}: {exc}")
             records.append(rec)
@@ -1307,8 +1339,8 @@ def stage_qa(ep: Episode, rehearsal: bool):
     write_json_atomic(ep.path("production/production_manifest.json"), manifest)
     write_json_atomic(ep.path("qa/acceptance_report.json"), manifest)
     return acc["gates"], {"manifest": "production/production_manifest.json", "acceptance": acc["status"],
-                         "contact_sheet": manifest["contact_sheet_path"],
-                         "video_master_qa": "qa/video_master_qa.json" if vm else None}
+                          "contact_sheet": manifest["contact_sheet_path"],
+                          "video_master_qa": "qa/video_master_qa.json" if vm else None}
 
 
 def _narration_source(ep: Episode, audio: dict | None) -> str | None:

@@ -1,4 +1,3 @@
-
 """The drawing kit of the maps and the compensator: palette colours, supersampled canvas, easing, the markers. PIL + numpy.
 
 Colours come only from ``design/palette.json`` (tokens, blends of tokens); sizes are shares of the frame height, so a frame drawn at
@@ -22,6 +21,20 @@ from explainer_engine.design import palette as PAL
 ROOT = Path(__file__).resolve().parents[2]
 FONT_FILES = [ROOT / "assets" / "fonts" / "ComicNeue-Bold.ttf", ROOT / "assets" / "fonts" / "Bangers-Regular.ttf"]
 MAP_FONT = ROOT / "assets" / "fonts" / "Inter.ttf"   # map lettering: never a comic face on a map (v4.3 P4, cartography skill)
+MAP_FONT_FALLBACKS = [
+    ROOT / "explainer_engine" / "overlay" / "hyperframes" / "fonts" / "Inter.ttf",
+    Path("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf"),
+    Path("/usr/share/fonts/opentype/inter/Inter-Regular.otf"),
+    Path("/usr/share/fonts/truetype/inter/Inter-SemiBold.ttf"),
+    Path("/usr/share/fonts/truetype/inter/Inter-Regular.ttf"),
+    Path("C:/Windows/Fonts/Inter-SemiBold.ttf"),
+    Path("C:/Windows/Fonts/Inter-Regular.ttf"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+    Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf"),
+    Path("C:/Windows/Fonts/segoeui.ttf"),
+    Path("C:/Windows/Fonts/arial.ttf"),
+]
 SS = 2  # supersampling of a drawn frame: edges are smooth and the downsample is deterministic
 
 
@@ -43,19 +56,68 @@ def faction(side: str) -> tuple[int, int, int]:
     return rgb({"a": "faction_a", "b": "faction_b"}[side])
 
 
-@lru_cache(maxsize=64)
-def font(px: int, face: str = "ui") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    if face == "map" and MAP_FONT.exists():
-        f = ImageFont.truetype(str(MAP_FONT), max(8, int(px)))
+def _load_ttf(path: Path, px: int, variation: str | None = None) -> ImageFont.FreeTypeFont:
+    f = ImageFont.truetype(str(path), max(8, int(px)))
+    if variation:
         try:
-            f.set_variation_by_name("SemiBold")
+            f.set_variation_by_name(variation)
         except (OSError, ValueError):   # a FreeType without variation support keeps the default instance
             pass
-        return f
-    for path in FONT_FILES:
+    return f
+
+
+def glyph_mask(f: ImageFont.FreeTypeFont | ImageFont.ImageFont, ch: str) -> np.ndarray:
+    """Render a single character on a small grayscale canvas for missing-glyph (.notdef) detection."""
+    size = int(getattr(f, "size", 24) or 24)
+    side = max(32, size * 3)
+    im = Image.new("L", (side, side), 0)
+    ImageDraw.Draw(im).text((size // 2, size // 2), ch, font=f, fill=255)
+    return np.asarray(im, dtype=np.uint8)
+
+
+def has_missing_glyph(f: ImageFont.FreeTypeFont | ImageFont.ImageFont, text: str) -> bool:
+    """True when any printable non-whitespace character in ``text`` renders identically to the font's .notdef glyph."""
+    notdef = glyph_mask(f, "\ufffe")
+    for ch in set(text):
+        if not ch.isprintable() or ch.isspace():
+            continue
+        g = glyph_mask(f, ch)
+        if g.sum() == 0 or np.array_equal(g, notdef):
+            return True
+    return False
+
+
+@lru_cache(maxsize=64)
+def font(px: int, face: str = "ui") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    size = max(8, int(px))
+    if face == "map":
+        for path in [MAP_FONT] + MAP_FONT_FALLBACKS + FONT_FILES:
+            if path.exists():
+                f = _load_ttf(path, size, variation="SemiBold" if path == MAP_FONT else None)
+                if not has_missing_glyph(f, "Liège–Armentières"):
+                    return f
+    for path in FONT_FILES + [MAP_FONT] + MAP_FONT_FALLBACKS:
         if path.exists():
-            return ImageFont.truetype(str(path), max(8, int(px)))
-    return ImageFont.load_default(size=max(8, int(px)))
+            f = _load_ttf(path, size)
+            if not has_missing_glyph(f, "Liège–Armentières"):
+                return f
+    for path in ([MAP_FONT] + MAP_FONT_FALLBACKS + FONT_FILES):
+        if path.exists():
+            return _load_ttf(path, size)
+    return ImageFont.load_default(size=size)
+
+
+def font_for_text(px: int, face: str = "ui", text: str = "") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    """Pick the configured face font, falling back safely to a bundled/system Unicode font if any glyph is missing (M9)."""
+    f = font(px, face)
+    if text and any(ord(c) > 127 for c in text) and has_missing_glyph(f, text):
+        size = max(8, int(px))
+        for path in [MAP_FONT] + MAP_FONT_FALLBACKS + FONT_FILES:
+            if path.exists():
+                cand = _load_ttf(path, size, variation="SemiBold" if path == MAP_FONT else None)
+                if not has_missing_glyph(cand, text):
+                    return cand
+    return f
 
 
 def ease_in_out(u: float) -> float:
@@ -203,12 +265,12 @@ class Canvas:
     face = "ui"   # "map": the map face (Inter); set by the map renderers
 
     def text(self, xy, s: str, size: float, fill, anchor: str = "la", stroke: float = 0, stroke_fill=None):
-        f = font(self.px(size), self.face)
+        f = font_for_text(self.px(size), self.face, s)
         self.d.text((xy[0] * self.ss, xy[1] * self.ss), s, font=f, fill=fill, anchor=anchor,
                     stroke_width=self.px(stroke) if stroke else 0, stroke_fill=stroke_fill)
 
     def text_width(self, s: str, size: float) -> float:
-        return self.d.textlength(s, font=font(self.px(size), self.face)) / self.ss
+        return self.d.textlength(s, font=font_for_text(self.px(size), self.face, s)) / self.ss
 
     def paste(self, layer: Image.Image, xy=(0, 0)):
         """Paste an RGBA layer given at output size (it is scaled to the supersampled canvas)."""

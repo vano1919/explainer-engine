@@ -2,8 +2,12 @@
 free of subprocess and clients; the frames come from ``maps.render.render_frame``, FFmpeg encodes them here). P4 reworks it."""
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 
+from explainer_engine.core.store import write_json_atomic
 from explainer_engine.maps import geo, plate
 from explainer_engine.maps.render import build_episode_gis_map_spec, render_frame
 
@@ -21,7 +25,6 @@ def render_episode_gis_map_clip(
     using `maps/geo.py`, `maps/plate.py`, `maps/render.py`, `maps/camera.py`, and `maps/timeline.py`."""
     import hashlib
     import subprocess
-    from pathlib import Path
     from explainer_engine.maps import timeline as TL
 
     out_mp4_path = Path(out_mp4_path)
@@ -109,21 +112,77 @@ def render_episode_gis_map_clip(
     }
 
 
-def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path, width: int = 1920, height: int = 1080,
-                           fps: int = 24, spine=None, keyframes_out_dir=None) -> dict:
+def _resolve_spine(shot: dict, spine, out_path: Path):
+    if spine is not None:
+        return spine
+    if shot.get("spine") or shot.get("word_spine"):
+        return shot.get("spine") or shot.get("word_spine")
+    sid = str(shot.get("shot_id") or "")
+    if not sid:
+        return None
+    for parent in (out_path.parent, *out_path.parents):
+        sp_file = parent / "production" / "spines" / f"{sid}.json"
+        if sp_file.is_file():
+            doc = json.loads(sp_file.read_text(encoding="utf-8"))
+            return doc.get("words") or doc.get("spine") if isinstance(doc, dict) else doc
+        tm_file = parent / "audio" / "timing.json"
+        if tm_file.is_file():
+            doc = json.loads(tm_file.read_text(encoding="utf-8"))
+            sp = (doc.get("spines") or {}).get(sid)
+            if sp:
+                return [{"word": w["word"], "start_frame": w["start_frame"]} for w in sp]
+    return None
+
+
+def _resolve_prev_end_view(shot: dict, prev_end_view):
+    cand = prev_end_view if prev_end_view is not None else shot.get("prev_end_view")
+    if isinstance(cand, (str, Path)):
+        p = Path(cand)
+        return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
+    if isinstance(cand, dict) and {"lon", "lat", "span_km"} <= set(cand):
+        return {"lon": float(cand["lon"]), "lat": float(cand["lat"]), "span_km": float(cand["span_km"])}
+    return None
+
+
+def render_action_map_clip(
+    shot: dict,
+    script: dict,
+    episode: dict,
+    out_mp4_path,
+    width: int = 1920,
+    height: int = 1080,
+    fps: int = 24,
+    spine=None,
+    keyframes_out_dir=None,
+    cache_dir=None,
+    prev_end_view: dict | str | Path | None = None,
+) -> dict:
     """A ``map_action`` shot (v4.3 P4): the real-relief plate in the episode's map look, the action layer on its words.
 
-    ``episode`` is the episode.json document (``places``, ``map_look``). Frames are a pure function of the plan and the frame
-    number (``maps/actions.py``); FFmpeg encodes them here (CMP-14 keeps the renderers free of subprocess)."""
+    ``episode`` is the episode.json document (``places``, ``map_look``, ``historical_period``). Persists
+    ``<cache>/<shot_id>_end_view.json`` (``lon``, ``lat``, ``span_km`` at the last frame) and chains from ``prev_end_view``
+    when provided (M3, M4, M7)."""
     import hashlib
     import subprocess
-    from pathlib import Path
     from explainer_engine.maps import actions as MA
 
     out = Path(out_mp4_path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    look = episode.get("map_look") or {}
-    p = MA.plan(shot, script, episode.get("places") or {}, fps, spine)
+    cdir = Path(cache_dir) if cache_dir is not None else out.parent
+    cdir.mkdir(parents=True, exist_ok=True)
+
+    look = dict(episode.get("map_look") or {})
+    period = episode.get("historical_period") or episode.get("period") or script.get("historical_period")
+    if period is not None:
+        look.setdefault("period", period)
+
+    resolved_spine = _resolve_spine(shot, spine, out)
+    resolved_prev = _resolve_prev_end_view(shot, prev_end_view)
+    shot_for_plan = dict(shot)
+    if period is not None and "period" not in shot_for_plan:
+        shot_for_plan["period"] = period
+
+    p = MA.plan(shot_for_plan, script, episode.get("places") or {}, fps, resolved_spine, prev_end_view=resolved_prev)
     base = MA.card_base(width, height, look) if p["card"] else MA.Plate(p, width, height, look)
     tmp = out.with_name(out.stem + ".part.mp4")
     proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{width}x{height}",
@@ -159,9 +218,17 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
             keys[name] = str(kd / f"{p['shot_id']}_map_{name}.png")
             im.save(keys[name])
     upsample = None
+    end_view = None
+    end_view_path = None
     if not p["card"]:
         raster_km = 111.32 / 60.0       # Natural Earth SR_HR: 1/60 degree a pixel at the equator
         upsample = round(max(base.upsample(MA.camera(p, f), raster_km) for f in range(p["frames"])), 2)
+        ev = MA.camera(p, p["frames"] - 1)
+        end_view = {"lon": float(ev["lon"]), "lat": float(ev["lat"]), "span_km": float(ev["span_km"])}
+        end_view_path = cdir / f"{p['shot_id']}_end_view.json"
+        write_json_atomic(end_view_path, end_view)
+        if out.parent != cdir:
+            write_json_atomic(out.parent / f"{p['shot_id']}_end_view.json", end_view)
     from explainer_engine.qa import gates as G
     first_action = min((a["start"] for a in p["actions"]), default=None)
     rows = [G.row("map_has_actions", bool(p["actions"]), f"{len(p['actions'])} action(s) on their words (RT-03)",
@@ -173,7 +240,9 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
                   [x["detail"] for x in p["path_findings"]][:5], level=G.REVIEW)]
     return {"status": "generated", "provider": "python_action_map", "cost_usd": 0.0, "shot_id": p["shot_id"],
             "gates": G.verdict(rows), "relief_upsample_max": upsample,
-            "card": p["card"], "word_basis": p["basis"], "actions": [{k: a[k] for k in ("kind", "word", "start", "end", "event_id")} | {"decision": a["audio"]["decision"]}
+            "card": p["card"], "word_basis": p["basis"], "spine_basis": p["spine_basis"],
+            "end_view": end_view, "end_view_path": str(end_view_path) if end_view_path else None,
+            "actions": [{k: a[k] for k in ("kind", "word", "start", "end", "event_id")} | {"decision": a["audio"]["decision"]}
                         for a in p["actions"]],
             "longest_still_frames": longest, "dense": p["dense"],
             "total_frames": p["frames"], "fps": fps, "resolution": [width, height], "path": str(out),
