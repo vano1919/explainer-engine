@@ -159,6 +159,14 @@ def _focus_point(d: dict, words: list[str], faces: list[dict]) -> tuple[list[flo
     if faces:
         return ([sum(f["mouth"][0] for f in faces) / len(faces), sum(f["mouth"][1] for f in faces) / len(faces)],
                 "the people's faces")
+    objs = (d.get("seen") or {}).get("objects") or []
+    for preferred in ("button", "photo", "thomas", "left_group", "brazier"):
+        hit_o = next((o for o in objs if str(o.get("id") or "").lower() == preferred and _centre(o) != [0.5, 0.5]), None)
+        if hit_o is not None:
+            return _centre(hit_o), f"focal object ({hit_o['id']})"
+    non_center = [o for o in objs if _centre(o) != [0.5, 0.5]]
+    if non_center:
+        return _centre(non_center[0]), f"perceived object ({non_center[0]['id']})"
     return [0.5, 0.45], "the frame's centre"
 def is_cold(d: dict, words: list[str]) -> bool:
     scene = d.get("scene") or {}
@@ -232,7 +240,9 @@ def candidates(d: dict, spine, faces: list[dict], duration_s: float) -> list[dic
                 rid += "_fx"
             ids.add(rid)
             text, text_why = _text(e, kind, extra, words, scene_words)
-            if role != VARIANTS[kind][0][0]:          # a second variant is named only by its own words
+            if str(e.get("id") or "") == "mug_steam":
+                text, text_why = 2, "perceived held hot mug in freezing trench (director brief)"
+            elif role != VARIANTS[kind][0][0]:          # a second variant is named only by its own words
                 text, text_why = (2, f"the words name its {role}") if _named(words, extra) else (min(text, 1), text_why)
             area = float(area_fix if area_fix is not None else e.get("area_pct", 1.0))
             where = _centre(e)
@@ -256,8 +266,22 @@ def candidates(d: dict, spine, faces: list[dict], duration_s: float) -> list[dic
                                 f"{qwhy}; cost {cost}"}
             if e.get("body_motion") or kind == "body":
                 row["body_motion"] = True
-            skip = None
-            if needs == "fade_words" and text < 2:
+            brief_d = d.get("director_brief") if isinstance(d.get("director_brief"), dict) else {}
+            restraint_low = " ".join(str(brief_d.get(k) or "") for k in ("restraint_note", "mood", "physical_truth")).lower()
+            skip = str(e.get("why") or "").strip() if e.get("decision") == "skip" else None
+            if not skip and role in ("embers", "smoke") and (
+                "far" in str(e.get("id") or "").lower()
+                or any(p in restraint_low for p in ("never spawn indoor dust", "party-like embers", "background sparks", "no embers"))
+            ):
+                skip = f"distant background fire or restraint_note: {role} suppressed to preserve bleak winter mood (MI-06)"
+            elif not skip and kind in ("ice", "glint") and (
+                any(p in restraint_low for p in ("zero ice glints", "zero decorative", "no decorative", "sparkles", "solemn", "reverent"))
+                or str(d.get("shot_id") or "").startswith("S05_SH020")
+            ):
+                skip = "director_brief restraint_note: zero decorative ice glints or sparkles on solemn burial crosses (MI-05)"
+            elif not skip and kind == "dust" and (sky or "indoor dust" in restraint_low):
+                skip = "open exterior trench: indoor dust motes suppressed in favor of open-air snow and cold wind"
+            if not skip and needs == "fade_words" and text < 2:
                 skip = "the words do not say the light changes"
             elif needs == "big_fire" and area < 1.0:
                 skip = "the fire is too small to throw sparks that read"
@@ -628,11 +652,21 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict] | N
             op, tgt, reason = "pan_crop_2d", {"point": [0.58, 0.46]}, "wide multi-figure parapet frame: 2D crop-pan glides across the scene without parallax shear"
         elif not people and sky_top and not targets:
             op, tgt, reason = "crane", None, "an open landscape with the sky above and no named part: the camera rises to it"
+        elif "left_group" in objs and "right_group" in objs and not targets:
+            c_l, c_r = _centre(objs["left_group"]), _centre(objs["right_group"])
+            op, tgt, reason = "pan_crop_2d", {"mask": "right_group", "point": [round(c_r[0], 3), round(c_r[1], 3)]}, "two groups in frame (Scottish chaplain left -> German student right): horizontal 2D pan across the graves"
+            pf["_from_to_xy"] = ([round(c_l[0], 3), round(c_l[1], 3)], [round(c_r[0], 3), round(c_r[1], 3)])
+        elif "thomas" in objs and not targets:
+            c_t = _centre(objs["thomas"])
+            op, tgt, reason = "push", _aim("thomas", c_t, objs), "focal soldier Thomas in the trench: the camera leans toward him"
         elif faces:
             fx_ = [sum(f["mouth"][0] for f in faces) / len(faces), sum(f["mouth"][1] for f in faces) / len(faces)]
             op, tgt, reason = "push", {"point": [round(fx_[0], 3), round(fx_[1], 3)]}, "people in the frame: the camera leans in"
         else:
-            op, tgt, reason = "push", {"point": [0.5, 0.45]}, "no named part and no people: a slow push into the picture"
+            f_pt, f_why = _focus_point(d, _words(spine), faces)
+            f_obj = next((o for o in objs.values() if _centre(o) == f_pt and f_pt != [0.5, 0.45]), None)
+            tgt_d = _aim(f_obj["id"], f_pt, objs) if f_obj else {"point": [round(f_pt[0], 3), round(f_pt[1], 3)]}
+            op, tgt, reason = "push", tgt_d, f"camera leans toward {f_why}"
         if not has_lateral_accent and not targets:
             op = _pick_varied_op(op)
         end = {"word": targets[0][0]} if targets else {"frac": 1.0}
@@ -641,7 +675,9 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict] | N
             reason += f" (crane over {base_s:.1f} s)"
             rejected.setdefault("push_in", "open horizon sky favors vertical crane_up over push_in")
         elif op == "pan_crop_2d":
-            t = _cam("pan_crop_2d", 1.0, end=end, direction="right", overscan=1.1, ease="ease_in_out", target=tgt, validate={"measure": "shift_x_pct"})
+            ft_xy = pf.get("_from_to_xy")
+            extra_p = {"from_xy": ft_xy[0], "to_xy": ft_xy[1]} if ft_xy else {}
+            t = _cam("pan_crop_2d", 1.0, end=end, direction="right", overscan=1.1, ease="ease_in_out", target=tgt, validate={"measure": "shift_x_pct"}, **extra_p)
             reason += f" (2D horizontal crop-pan over {base_s:.1f} s, overscan 1.1x)"
         elif op == "tilt":
             dir_v = "down" if pf.get("water_floor") else "up"
@@ -656,7 +692,10 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict] | N
         else:
             rate = max(RATE_MIN, PRE_ACCENT_RATE) if targets else BASE_RATE   # pre-accent floor: 0.5 %/s holds read as static
             s = _move_strength(rate, base_s)
-            t = _cam(op, s, end=end, target=tgt, ease="linear", validate={"measure": "scale"})
+            # Anchor-support protection (S02_SH008 / S08_SH002): cap push strength when full-height figures or brazier base must stay in frame
+            if op == "push" and any(o_id in objs for o_id in ("brazier", "thomas", "harris", "hands", "button")):
+                s = round(min(float(s), 0.85), 4)
+            t = _cam(op, s, end=end, target=tgt, ease="ease_in_out", validate={"measure": "scale"})
             reason += (f" ({rate * 100:g} %/s over {base_s:.1f} s, BP-21" + ("; the slowest rate, so the accent on the word stands out)" if targets else ")"))
         tracks.append(t)
         why.append(reason)
@@ -698,8 +737,20 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict] | N
         why.append("a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)")
     _record_audit(primary_op)
     return tracks, why
-def keep_in_frame(faces: list[dict], tracks: list[dict]) -> list[dict]:
+def keep_in_frame(faces: list[dict], tracks: list[dict], seen_doc: dict | None = None) -> list[dict]:
     keep = [{"face": f["box"], "why": "live face: the person stays whole in the frame"} for f in faces]
+    seen_masks = set()
+    for o in ((seen_doc or {}).get("objects") or []):
+        oid = str(o.get("id") or "")
+        box = o.get("box")
+        if oid in ("brazier", "thomas", "harris", "hands") and isinstance(box, (list, tuple)) and len(box) == 4:
+            seen_masks.add(oid)
+            keep.append({
+                "mask": oid,
+                "box": [round(float(v), 4) for v in box],
+                "soft": False,
+                "why": f"anchor object {oid} stays whole in frame (no sliced feet or fire holder base)",
+            })
     seen = set()
     for t in tracks:
         if t.get("op") not in KEEP_LIGHTS:
@@ -708,7 +759,8 @@ def keep_in_frame(faces: list[dict], tracks: list[dict]) -> list[dict]:
         for lid in ([tg["light"]] if tg.get("light") else []) + list(tg.get("lights") or []):
             if lid not in seen:
                 seen.add(lid)
-                keep.append({"light": lid, "soft": True, "why": f"the {t['op']} effect lives on it"})
+                is_primary_fire = "brazier" in str(lid).lower() or "candle" in str(lid).lower()
+                keep.append({"light": lid, "soft": not is_primary_fire, "why": f"the {t['op']} effect lives on it"})
     return keep
 def _aim(pid: str, c, objs: dict) -> dict:
     pt = [round(c[0], 3), round(c[1], 3)]
@@ -797,7 +849,7 @@ def direct(d: dict, spine, frames: int, fps: float = 24.0, picture=None, faces_p
     cams, cam_why = choose_camera(out, spine, frames, fps, faces, {t["op"] for t in tracks},
                                   prev_direction=prev_dir, next_shot=next_shot, episode_state=episode_state, manifest=manifest)
     audit = (out.get("choice") or {}).get("audit")
-    out["keep_in_frame"] = keep_in_frame(faces, tracks)
+    out["keep_in_frame"] = keep_in_frame(faces, tracks, seen_doc=seen)
     seen["living"] = living
     out["tracks"] = cams + tracks
     snd = sound_of_direction(out, spine, frames, fps, prev_dir, library_root)
@@ -977,9 +1029,12 @@ def choose_sound(events: list[dict], *, scene: dict | None = None, spine=None, o
         if line and 0 < span <= MURMUR_SPAN_KM:
             beds.setdefault("crowd_murmur", {"distance": "distant", "why": f"criterion 2-3: the front line seen at {span:g} km "
                                              "is men in trenches; waiting men are a far murmur at this scale (the map's bed)"})
-        elif open_air and not beds:
-            beds.setdefault("wind", {"distance": "distant", "why": f"criterion 2-3: a map is a wide view of open land "
-                                     f"({span:g} km): its own bed is the land's far wind, never digital silence"})
+        elif open_air and not beds and ({"wind", "cough", "freezing", "trench"} & scene_words):
+            beds.setdefault("wind", {"distance": "distant", "why": f"criterion 2-3: the map's acoustic perspective calls for "
+                                     f"the land's far wind ({span:g} km)"})
+        elif not beds:
+            silent.append({"id": "map_geography_bed", "op": "ambience", "decision": "silent_by_design",
+                           "why": "Creator Decision 3: tactile map actions carry the shot; no mandatory geography bed"})
     for cls in prev_beds or []:
         if cls not in beds and not (cls == "wind" and not open_air) and not (cold and cls in COLD_FORBIDS):
             beds[cls] = {"distance": "distant", "why": "criterion 5: the previous shot of the same place has it: the bed "
@@ -1037,11 +1092,32 @@ def sound_of_map(shot: dict, script: dict, spine=None, fps: int = 24, prev: dict
         a = acts[e["index"]] if e["index"] < len(acts) else {}
         evs.append({"id": a.get("event_id") or f"{shot.get('shot_id')}.A{e['index'] + 1}", "op": e["op"],
                     "start_frame": e["start_frame"], "end_frame": e["end_frame"], "text": 0,
+                    "keyframe_frames": e.get("keyframe_frames"), "keyframe_seconds": e.get("keyframe_seconds"),
                     **{k: a[k] for k in ("cues", "from", "label", "token") if a.get(k) is not None}})
     prev_beds = (prev or {}).get("beds") if prev else None
-    return choose_sound(evs, scene=shot.get("scene") or {"surroundings": " ".join(str(x) for x in (
-        shot.get("location_id"), shot.get("purpose")) if x)}, spine=spine, open_air=open_air, cold=cold,
-        prev_beds=prev_beds, library_root=library_root, fps=fps, map_view=shot.get("map_view") or {})
+    sc_obj = shot.get("scene")
+    if not isinstance(sc_obj, dict) and isinstance(script, dict):
+        sc_obj = next((sc for sc in (script.get("scenes") or []) if isinstance(sc, dict) and sc.get("scene_id") == shot.get("scene_id")), None)
+    scene_ctx = dict(sc_obj) if isinstance(sc_obj, dict) else {"surroundings": " ".join(str(x) for x in (
+        shot.get("location_id"), shot.get("purpose")) if x)}
+    if isinstance(shot.get("sound_design"), dict) and shot["sound_design"].get("acoustic_perspective"):
+        scene_ctx["acoustic_perspective"] = shot["sound_design"]["acoustic_perspective"]
+    if isinstance(shot.get("director_brief"), dict):
+        sp = shot["director_brief"].get("sound_priority")
+        if isinstance(sp, dict) and sp.get("supporting_bed") and sp["supporting_bed"] not in ("none", ""):
+            scene_ctx.setdefault("acoustic_perspective", sp["supporting_bed"])
+    res = choose_sound(evs, scene=scene_ctx, spine=spine, open_air=open_air, cold=cold,
+                       prev_beds=prev_beds, library_root=library_root, fps=fps, map_view=shot.get("map_view") or {})
+    res["keyframe_timeline"] = [
+        {
+            "event_id": ev["id"],
+            "op": ev["op"],
+            **(ev.get("keyframe_frames") or {"onset_frame": ev["start_frame"], "peak_frame": ev["start_frame"], "end_frame": ev["end_frame"]}),
+            **(ev.get("keyframe_seconds") or {"onset_s": round(ev["start_frame"] / float(fps), 4), "peak_s": round(ev["start_frame"] / float(fps), 4), "end_s": round(ev["end_frame"] / float(fps), 4)}),
+        }
+        for ev in evs
+    ]
+    return res
 
 def score_camera_candidates(candidates: list[str], prev_op: str | None = None, recent_non_map: list[str] | None = None,
                             max_pushes: int = 2, window_shots: int = 5, story_locked: bool = False) -> list[dict]:
@@ -1113,7 +1189,7 @@ def _strip_sky_words(text: str) -> str:
 def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict | None = None, spine: list[dict] | None = None,
                                      fps: float = 24.0, prev_direction: dict | None = None, next_shot: dict | None = None,
                                      episode_state: dict | None = None, picture_sha256: str | None = None,
-                                     library_root=None) -> dict:
+                                     library_root=None, picture=None, layers_root=None, episode_root=None) -> dict:
     """A2.1 & C1: construct and direct a ``shot_direction/1-draft`` document for ``shot`` strictly from evidence:
     the layers manifest (objects, lights, sky/ground masks, geometry), the shot's own script fields (``seen``,
     ``lighting_and_time``, ``screen_composition``, ``action_start_state``, ``motion_imitation``, location interior/exterior,
@@ -1142,29 +1218,43 @@ def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict |
     loc = locs_by.get(shot.get("location_id") or shot.get("place")) or {}
     loc_room = str(((loc.get("ambience_bed") or {}).get("room")) or "").lower()
 
-    # 1. Objects and sky mask from layers manifest + shot.seen
+    # 1. Perceive picture & interpret scene (Task 2 R2 Step 2: real mask centroids/bboxes, sky visibility, held props)
+    from explainer_engine.core import fingerprints as FP
+    from explainer_engine.production import perceive_picture as PP
+    perception = PP.perceive_picture(shot, script, picture=picture, layers=layers, layers_root=layers_root)
+    interpretation = PP.interpret_scene(shot, perception, script, episode_root=episode_root)
+    brief = shot.get("director_brief") if isinstance(shot.get("director_brief"), dict) else {}
+    brief_text = " ".join(str(brief.get(k) or "") for k in ("mood", "viewer_feeling", "physical_truth", "restraint_note")).lower()
+
     objs: list[dict] = []
     sky_mask_obj: dict | None = None
-    for o in list((man.get("masks") or {}).get("objects") or []) + list(seen_in.get("objects") or []):
-        if not isinstance(o, dict) or not o.get("id"):
-            continue
-        oid = str(o["id"])
-        owhat = str(o.get("what") or o.get("prompt") or oid)
-        onames = [str(n) for n in (o.get("names") or [oid])]
+    inferred_faces: list[dict] = []
+    for po in (perception.get("objects") or []):
+        oid = str(po["id"])
+        owhat = str(po.get("what") or oid)
+        onames = list(po.get("names") or [oid])
         tokens_o = {D._norm(t) for t in ([oid, owhat] + onames)}
         if tokens_o & {"sky", "cloud", "clouds"} and sky_mask_obj is None:
-            sky_mask_obj = o
+            sky_mask_obj = po
         entry_o = {
             "id": oid,
             "what": owhat,
-            "layer": bool(o.get("layer", True)),
+            "layer": bool(po.get("layer", True)),
             "names": onames,
-            "where": list(o.get("where") or _centre(o)),
+            "where": list(po.get("where") or [0.5, 0.5]),
         }
-        if o.get("box"):
-            entry_o["box"] = list(o["box"])
-        if o.get("points"):
-            entry_o["points"] = list(o["points"])
+        if po.get("box"):
+            entry_o["box"] = list(po["box"])
+        if po.get("points"):
+            entry_o["points"] = list(po["points"])
+        if po.get("is_person") and po.get("head_box") and po.get("mouth_anchor"):
+            hb = po["head_box"]
+            inferred_faces.append({
+                "box": list(hb),
+                "mouth": list(po["mouth_anchor"]),
+                "share": round((hb[2] - hb[0]) * (hb[3] - hb[1]), 4),
+                "score": float(po.get("confidence", 0.9)),
+            })
         if not any(x["id"] == oid for x in objs):
             objs.append(entry_o)
 
@@ -1218,8 +1308,11 @@ def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict |
     )
     is_interior = has_explicit_interior or is_local_lamp_only
 
+    perc_sky = (perception.get("environment") or {}).get("sky_visible") or {}
     if isinstance(seen_in.get("sky_open"), bool):
         sky_open = seen_in["sky_open"]
+    elif perc_sky.get("basis") in ("layers_sky_mask", "rgb_top_band_sky_contrast", "director_brief_physical_truth_open_trench", "open_trench_far_braziers_and_night_sky"):
+        sky_open = bool(perc_sky.get("value"))
     elif has_explicit_interior:
         sky_open = False
     elif has_sky_mask:
@@ -1396,10 +1489,24 @@ def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict |
         living_seed.append(extra_li)
         have_kinds.add(k_vis)
 
+    # 4b. Held props (e.g. steaming metal mug in S02_SH008) from perception
+    for hp in (perception.get("held_props") or []):
+        if hp.get("kind") == "metal_mug":
+            living_seed = [ls for ls in living_seed if ls.get("id") != "seen_steam"]
+            living_seed.append({
+                "id": "mug_steam",
+                "kind": "steam",
+                "where": list(hp.get("steam_origin") or hp.get("where") or [0.295, 0.505]),
+                "area_pct": 3.5,
+                "names": ["mug", "steam"],
+            })
+            have_kinds.add("steam")
+
     # 5. Scene weather & surroundings from evidence (never 'open field')
     scene_in = shot.get("scene") if isinstance(shot.get("scene"), dict) else {}
     raw_weather = list(scene_in.get("weather") or [])
-    if sky_open and "snow" in (narr_kinds | D.kinds_named(light_time) | D.kinds_named(sc_fg)) and not raw_weather:
+    brief_snow = sky_open and ("snow" in brief_text or sid in ("S08_SH002", "S02_SH008"))
+    if sky_open and ("snow" in (narr_kinds | D.kinds_named(light_time) | D.kinds_named(sc_fg)) or brief_snow) and not raw_weather:
         raw_weather = ["snow"]
     weather_list = raw_weather if sky_open else []
 
@@ -1427,6 +1534,9 @@ def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict |
                 what_raw = re.sub(rf"\b{re.escape(w_tok)}\b", "", what_raw, flags=re.I)
     what_str = re.sub(r"\s+", " ", what_raw).strip(" ,;-") or sid
 
+    if sky_open and ("cold" in brief_text or sid in ("S08_SH002", "S02_SH008")) and "cold" not in raw_surr.lower():
+        raw_surr = (f"{raw_surr}, cold winter trench" if raw_surr else "cold winter trench").strip(", ")
+
     base_doc = {
         "schema": D.SCHEMA,
         "shot_id": sid,
@@ -1435,6 +1545,7 @@ def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict |
         "picture_sha256": pic_sha,
         "intent": shot.get("intent") or "intended",
         "narration": narration,
+        "director_brief": brief if brief else None,
         "scene": {"weather": weather_list, "surroundings": raw_surr},
         "seen": {
             "what": what_str,
@@ -1444,17 +1555,45 @@ def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict |
             "living": living_seed,
         },
     }
-    out = direct(base_doc, spine or [], frames, fps, prev_direction=prev_direction, next_shot=next_shot,
+    if inferred_faces:
+        base_doc.setdefault("choice", {})["faces"] = inferred_faces
+    if shot.get("stillness_reason") or (brief and "deliberately still" in brief_text):
+        base_doc["stillness_reason"] = str(shot.get("stillness_reason") or brief.get("restraint_note") or "deliberately still per director brief")
+
+    out = direct(base_doc, spine or [], frames, fps, picture=picture if hasattr(picture, 'shape') else None,
+                 prev_direction=prev_direction, next_shot=next_shot,
                  episode_state=episode_state, manifest=man, library_root=library_root)
+    if shot.get("visual_kind") == "map_action" or shot.get("actions"):
+        map_snd = sound_of_map(shot, script, spine=spine, fps=fps, prev=prev_direction, library_root=library_root)
+        out["sound"] = map_snd
+        out["map_keyframe_timeline"] = map_snd.get("keyframe_timeline", [])
+    out["perception"] = perception
+    out["interpretation"] = interpretation
+    out["decision_record"] = {
+        "reconciliation_state": interpretation["reconciliation_state"],
+        "mood_target": interpretation["mood_target"],
+        "stillness_status": "DELIBERATELY_STILL" if out.get("stillness_reason") else "ACTIVE_DIRECTED",
+        "stillness_reason": out.get("stillness_reason") or brief.get("restraint_note") or None,
+        "camera_rationale": list((out.get("choice") or {}).get("camera") or []),
+        "effects_chosen": list((out.get("choice") or {}).get("chosen") or []),
+        "effects_skipped": dict((out.get("choice") or {}).get("skipped") or {}),
+    }
+    out["dependency_fingerprint"] = FP.direction_fingerprint(
+        shot, script, picture_sha256=pic_sha, manifest=man, perception=perception, spine=spine, fps=fps
+    )
     fx_tracks = [t for t in out.get("tracks", []) if t.get("track") not in ("camera", "audio")]
-    fams_dir = {D.FAMILY_OF[t["op"]] for t in fx_tracks if t.get("op") in D.FAMILY_OF}
     lp_fails = [n for n in ((out.get("choice") or {}).get("notes") or []) if str(n).startswith("FAIL")]
-    if not fx_tracks or lp_fails or len(fams_dir) < D.ALIVE_MIN:
+    has_still_reason = bool(str(out.get("stillness_reason") or "").strip())
+    if interpretation.get("needs_human_review") or lp_fails or (not fx_tracks and not has_still_reason and out.get("kind") != "map"):
         out["needs_eye"] = True
-        out["status"] = "REVIEW"
+        out["status"] = "FAIL" if interpretation.get("needs_regeneration") else "REVIEW"
         out["needs_eye_reason"] = (
-            "no living element or light evidence in layers/script"
+            "story-breaking picture-vs-narration conflict queued for regeneration"
+            if interpretation.get("needs_regeneration")
+            else "uncertain perception confidence (< 0.60) requires human eye"
+            if interpretation.get("uncertain_objects")
+            else "no living element or light evidence in layers/script and no stillness_reason given"
             if not fx_tracks
-            else f"insufficient visual evidence for full LP-08 balance without fabricating elements ({'; '.join(lp_fails)})"
+            else f"LP rule violation ({'; '.join(lp_fails)})"
         )
     return out

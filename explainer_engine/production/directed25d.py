@@ -39,7 +39,7 @@ def _code_digest() -> str:
     import hashlib
     from pathlib import Path as _P
     h = hashlib.sha256()
-    for name in ("directed25d.py", "living_fx.py"):
+    for name in ("directed25d.py", "living_fx.py", "motion_isolation.py"):
         f = _P(__file__).with_name(name)
         if f.is_file():
             h.update(f.read_bytes().replace(b"\r\n", b"\n"))
@@ -473,7 +473,11 @@ class Stage:
                 box = self._bbox(self.masks_src[it["mask"]])
             elif it.get("light") and it["light"] in self.lights:
                 li = self.lights[it["light"]]
-                box = self._bbox(li["mask"], 0.3) if "mask" in li else None
+                host = self._layer_of_light(li, [])
+                if host is not None and host["id"] in self.masks_src and not it.get("flame_only"):
+                    box = self._bbox(self.masks_src[host["id"]], 0.3)
+                else:
+                    box = self._bbox(li["mask"], 0.3) if "mask" in li else None
                 if box is None:
                     px, py = li["point"][0] / self.sw, li["point"][1] / self.sh
                     box = [px - 0.01, py - 0.01, px + 0.01, py + 0.01]
@@ -1025,7 +1029,13 @@ class Stage:
         speed = 2.6 if op == "fire" else 1.4
         wob = np.sin(2 * math.pi * (yy / max(6.0, hh * 0.45) + speed * t) + (k % 628) / 100.0)
         amp = (0.10 if op == "fire" else 0.06) * ww * s
-        field = cv2.GaussianBlur(cv2.dilate(fm[y0:y1, x0:x1], np.ones((3, 3), np.uint8), iterations=3), (0, 0), 2.0)
+        from explainer_engine.production import motion_isolation as MI
+        host = self._layer_of_light(li, [])
+        holder_crop = None
+        if host is not None and host["id"] in self.masks_src:
+            hm_full = cv2.resize(self.masks_src[host["id"]].astype(np.float32), (self.W, self.H), interpolation=cv2.INTER_LINEAR)
+            holder_crop = hm_full[y0:y1, x0:x1]
+        field, _ = MI.isolate_flame_mover(sub, fm[y0:y1, x0:x1], op=op, holder_mask=holder_crop)
         dx = amp * wob * tip * field
         dy = -0.04 * hh * s * (0.5 + 0.5 * np.sin(2 * math.pi * 1.7 * speed * t + k % 7)) * tip * field
         moved = cv2.remap(np.ascontiguousarray(sub), (xx + dx).astype(np.float32), (yy + dy).astype(np.float32),

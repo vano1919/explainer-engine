@@ -1,7 +1,39 @@
 {
-  "schema": "director_knowledge_base/1.0",
+  "schema": "director_knowledge_base/2.0",
+  "version": "2.0.0",
+  "murch_decision_hierarchy": {
+    "emotion": 0.51,
+    "story": 0.23,
+    "rhythm": 0.10,
+    "eye_trace": 0.07,
+    "planarity_2d": 0.05,
+    "continuity_3d": 0.04,
+    "rule": "Emotional truth (director_brief) and story focus outweigh mechanical geometry; never add decorative effects to satisfy a count."
+  },
+  "stillness_and_liveliness_policy": {
+    "mandatory_effect_count": 0,
+    "mandatory_family_count": 0,
+    "deliberately_still_allowed": true,
+    "require_written_reason_per_element": true,
+    "outcomes": {
+      "DELIBERATELY_STILL": "PASS when the director records a concrete stillness_reason or why per element serving the brief.",
+      "ACCIDENTALLY_FROZEN": "FAIL when camera or living tracks were planned with non-zero strength but rendered frames show near-zero optical flow.",
+      "TECHNICALLY_BROKEN": "FAIL when holder_leak_p95, forbidden_region_particle_leak, or anchor crop slicing exceeds calibrated safety bounds."
+    }
+  },
+  "perception_and_reconciliation_policy": {
+    "missed_detection_is_not_absence": true,
+    "uncertainty_threshold": 0.60,
+    "low_confidence_action": "REVIEW (needs_eye=true, conservative framing, never invent effects)",
+    "authority_split": {
+      "physical_objects_and_geometry": "perceive_picture(start_01.png) + layers/manifest.json",
+      "story_meaning": "spoken audio_lines",
+      "emotional_intent": "shot.director_brief",
+      "story_breaking_conflict": "episodes/<ep>/production/regeneration_queue.json"
+    }
+  },
   "camera_feasibility_rules": {
-    "push_in": {"changes_3d_angle": false, "max_scale_gain": 0.12, "require_all_kept_faces_inside_end_crop": true, "min_face_edge_clearance_pct": 0.04},
+    "push_in": {"changes_3d_angle": false, "max_scale_gain": 0.12, "require_all_kept_faces_inside_end_crop": true, "min_face_edge_clearance_pct": 0.04, "protect_foreground_anchor_bases": true},
     "pull_back": {"changes_3d_angle": false, "start_overscan": 1.15, "forbid_joint_cut_on_start_crop": ["neck", "chin", "eyes", "ankles"]},
     "pan_crop_2d": {"changes_3d_angle": false, "overscan": 1.1, "max_shift_x_pct": 0.09, "safe_for_unlayered_crowds": true, "require_kept_span_x_max": 0.86},
     "crane_up": {"changes_3d_angle": false, "require_sky_open": true, "min_sky_area_pct": 12.0, "min_bottom_face_clearance_pct": 0.12},
@@ -14,14 +46,14 @@
     {"idiom_id": "IDM_ESTAB_HORIZON", "intent_cues": ["morning", "dawn", "dusk", "afternoon", "light was going", "sun went down", "next morning", "war stopped", "mud to the knee"], "route": "still_25d", "shot_size": "extreme_wide", "camera_priority": ["crane_up", "pull_back", "pan_crop_2d"], "fx_priority": ["mist", "sun_shaft", "light_fade", "cloud_drift"], "transition_in_scene": "hard_cut_with_jl_bridge", "transition_at_boundary": "cross_dissolve_8f", "sound_coverage": "AMBIENCE_ONLY"},
     {"idiom_id": "IDM_HOOK_ACTION", "intent_cues": ["walk toward", "climb", "unarmed", "guns", "sprint", "charge"], "route": "video", "shot_size": "medium_wide", "camera_priority": ["tilt_up", "tracking_shot"], "fx_priority": ["ltx_native_motion"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "FOLEY_AND_AMBIENCE"},
     {"idiom_id": "IDM_SCALE_REVEAL", "intent_cues": ["thousands", "both sides", "up and down", "all along", "neither of them"], "route": "still_25d", "shot_size": "extreme_wide", "camera_priority": ["pull_back", "pan_crop_2d"], "fx_priority": ["mist", "breath", "fire"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "FOLEY_AND_AMBIENCE"},
-    {"idiom_id": "IDM_TWO_GROUP_PIVOT", "intent_cues": ["after him", "from one", "to the other", "both sides", "nobody asked", "scottish chaplain", "german student"], "route": "still_25d", "shot_size": "wide", "camera_priority": ["pan_crop_2d", "truck_25d", "push_in"], "fx_priority": ["breath", "mist", "fire", "candle"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "AMBIENCE_ONLY"},
-    {"idiom_id": "IDM_INTIMATE_PORTRAIT", "intent_cues": ["read the same line", "carried this photograph", "wrote home", "thought of"], "route": "still_25d", "shot_size": "medium_close_up", "camera_priority": ["push_in", "rack_focus", "pan_crop_2d"], "fx_priority": ["candle", "fire", "dust", "breath"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "AMBIENCE_ONLY"},
-    {"idiom_id": "IDM_OBJECT_INSERT", "intent_cues": ["empty hands", "two spades", "spades", "looks at the photograph", "brass tins", "truces", "happening again"], "route": "still_25d", "shot_size": "close_up", "camera_priority": ["rack_focus", "push_in", "pan_crop_2d"], "fx_priority": ["sun_glint", "dust", "smoke", "candle"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "AMBIENCE_ONLY"},
+    {"idiom_id": "IDM_TWO_GROUP_PIVOT", "intent_cues": ["after him", "from one", "to the other", "both sides", "nobody asked", "scottish chaplain", "german student"], "route": "still_25d", "shot_size": "wide", "camera_priority": ["pan_crop_2d", "push_in"], "fx_priority": ["breath", "mist", "fire", "candle"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "AMBIENCE_ONLY"},
+    {"idiom_id": "IDM_INTIMATE_PORTRAIT", "intent_cues": ["read the same line", "carried this photograph", "wrote home", "thought of"], "route": "still_25d", "shot_size": "medium_close_up", "camera_priority": ["push_in", "rack_focus", "pan_crop_2d"], "fx_priority": ["candle", "fire", "snow", "breath"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "AMBIENCE_ONLY"},
+    {"idiom_id": "IDM_OBJECT_INSERT", "intent_cues": ["empty hands", "two spades", "spades", "looks at the photograph", "brass tins", "truces", "happening again"], "route": "still_25d", "shot_size": "close_up", "camera_priority": ["push_in", "rack_focus", "pan_crop_2d"], "fx_priority": ["candle", "snow", "mist", "breath"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "AMBIENCE_ONLY"},
     {"idiom_id": "IDM_DIALOGUE_TURN", "intent_cues": ["said", "replied", "handshake", "haircut", "salute"], "route": "video", "shot_size": "medium", "camera_priority": ["hold", "handheld"], "fx_priority": ["ltx_native_motion"], "transition_in_scene": "hard_cut_with_jl_bridge", "sound_coverage": "FOLEY_AND_AMBIENCE"},
-    {"idiom_id": "IDM_MAP_THEATER", "intent_cues": ["begun in august", "from the north sea to switzerland", "western front"], "route": "map_action", "helper_style": "tactical_relief_map", "shot_size": "top_down_map", "camera_priority": ["route_pan", "scale"], "fx_priority": ["route_arrow", "front_line", "progress_bar", "label"], "transition_in_scene": "cross_dissolve_8f", "sound_coverage": "FOLEY_AND_AMBIENCE"},
+    {"idiom_id": "IDM_MAP_THEATER", "intent_cues": ["begun in august", "from the north sea to switzerland", "western front"], "route": "map_action", "helper_style": "tactical_relief_map", "shot_size": "top_down_map", "camera_priority": ["route_pan", "scale"], "fx_priority": ["route_arrow", "front_line", "progress_bar", "label"], "transition_in_scene": "cross_dissolve_8f", "sound_coverage": "ACTION_FOCUSED"},
     {"idiom_id": "IDM_MAP_SECTOR_FLYIN", "intent_cues": ["here, in flanders", "along the british line", "spread from trench to trench"], "route": "map_action", "helper_style": "sector_radar_zoom", "shot_size": "top_down_map", "camera_priority": ["fly_to", "push"], "fx_priority": ["front_line", "highlight", "pulse"], "transition_in_scene": "map_to_location_zoom_through", "sound_coverage": "ACTION_FOCUSED"},
-    {"idiom_id": "IDM_MAP_PATCH_COUNT", "intent_cues": ["hundred thousand", "estimate", "counted"], "route": "map_action", "helper_style": "data_counter_overlay", "shot_size": "top_down_map", "camera_priority": ["hold", "push"], "fx_priority": ["counter", "highlight", "front_line"], "transition_in_scene": "infographic_number_to_scene_morph", "sound_coverage": "FOLEY_AND_AMBIENCE"},
-    {"idiom_id": "IDM_HELPER_DOCUMENT", "intent_cues": ["pope asked", "newspapers printed", "commanders moved to prevent", "order", "decree"], "route": "map_action", "helper_style": "archival_document_card", "shot_size": "insert_card", "camera_priority": ["pan_crop_2d", "push"], "fx_priority": ["label", "highlight", "split_compare"], "transition_in_scene": "cross_dissolve_8f", "sound_coverage": "FOLEY_AND_AMBIENCE"},
+    {"idiom_id": "IDM_MAP_PATCH_COUNT", "intent_cues": ["hundred thousand", "estimate", "counted"], "route": "map_action", "helper_style": "data_counter_overlay", "shot_size": "top_down_map", "camera_priority": ["hold", "push"], "fx_priority": ["counter", "highlight", "front_line"], "transition_in_scene": "infographic_number_to_scene_morph", "sound_coverage": "ACTION_FOCUSED"},
+    {"idiom_id": "IDM_HELPER_DOCUMENT", "intent_cues": ["pope asked", "newspapers printed", "commanders moved to prevent", "order", "decree"], "route": "map_action", "helper_style": "archival_document_card", "shot_size": "insert_card", "camera_priority": ["pan_crop_2d", "push"], "fx_priority": ["label", "highlight", "split_compare"], "transition_in_scene": "cross_dissolve_8f", "sound_coverage": "ACTION_FOCUSED"},
     {"idiom_id": "IDM_EPILOGUE_STATEMENT", "intent_cues": ["war went on", "four more years", "remembered they were human"], "route": "still_25d", "shot_size": "extreme_wide", "camera_priority": ["crane_up", "pull_back", "pan_crop_2d"], "fx_priority": ["smoke", "sun_shaft", "light_fade", "mist"], "transition_in_scene": "fade_to_black", "sound_coverage": "AMBIENCE_ONLY"}
   ]
 }

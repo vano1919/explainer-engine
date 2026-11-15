@@ -147,12 +147,20 @@ def plan(d: dict, duration_s: float, rows: list[dict] | None = None) -> dict:
                 break
             chosen.remove(min(lights, key=lambda c: (c["score"], -TIERS.index(c["tier"]))))
         chosen.append(r)
-    if len(chosen) < EFFECTS_MIN:
-        notes.append(f"FAIL LP-08: only {len(chosen)} living effects beyond the flames (the floor is {EFFECTS_MIN})")
-    if non_light(chosen) < NON_LIGHT_MIN:
-        notes.append(f"FAIL LP-08: {non_light(chosen)} effects outside the light family (the floor is {NON_LIGHT_MIN})")
-    if not any(c.get("effect") in GLOBAL_AIR for c in chosen):
-        notes.append("FAIL LP-08: no full-frame layer of moving air (mist, snow, dust, cloud drift or spindrift)")
+    # Creator Decision 2 & D-59 (2026-11-15): no mandatory effect count floors; a deliberately still or restrained shot
+    # with a written reason passes cleanly, and uncalibrated LP-08 count hypotheses are REVIEW, never FAIL.
+    has_restraint_reason = bool(
+        str(d.get("stillness_reason") or "").strip()
+        or str(((d.get("decision_record") or {}).get("stillness_reason")) or "").strip()
+        or str(((d.get("director_brief") or {}).get("restraint_note")) or "").strip()
+    )
+    if not has_restraint_reason:
+        if len(chosen) < EFFECTS_MIN:
+            notes.append(f"REVIEW LP-08: only {len(chosen)} living effects beyond the flames (soft hint is {EFFECTS_MIN}, D-59)")
+        if non_light(chosen) < NON_LIGHT_MIN:
+            notes.append(f"REVIEW LP-08: {non_light(chosen)} effects outside the light family (soft hint is {NON_LIGHT_MIN}, D-59)")
+        if not any(c.get("effect") in GLOBAL_AIR for c in chosen):
+            notes.append("REVIEW LP-08: no full-frame layer of moving air (mist, snow, dust, cloud drift or spindrift)")
     for r in rows:
         if r["tier"] == "FORBIDDEN":
             notes.append(f"FAIL LP-01: {r['id']} contradicts the words")

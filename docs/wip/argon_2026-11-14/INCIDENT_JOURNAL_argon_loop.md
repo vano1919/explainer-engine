@@ -54,3 +54,17 @@
   candles/sun alive, heads kept. Weak (goes to Task 2, director quality): every push targets the frame centre (0.5, 0.45) instead of
   the subject the words name; S02_SH008's push 2.5 cuts the brazier and feet at the bottom; glitter points on crosses and wire;
   S08_SH002 fails LP-08 (floor of 3 effects, an uncalibrated hypothesis that should be REVIEW by D-59).
+
+## 2026-11-15 19:30 Tbilisi - Task 2 Step 2B (vertical slice) + Step 7 applied; slice look-and-listen round 1
+- Argon Step 2B (30 files: perceive_picture, motion_isolation, fingerprints, look_and_listen, perceive_audio, rhythm profile, briefs for the
+  slice) and Step 7 (34 files: 84 briefs, LTX compose_prompt, map timing/sound by scene, YouTube Fit splits, proportional re-hooks).
+  Guards: test_task2_step2b_vertical_slice.py (fail on 9ecdd875). Per-file regression: no new failures (4191 passed).
+- Claude fixed 3 regressions Argon left: schema contract loosened (motion_imitation allowed on video) instead of fixing the data ->
+  contract restored, S07_SH005's still-shot motion_imitation moved to authored_intent_archive; stars test given a verified sky;
+  map-bed test updated to Decision 3 (no mandatory bed, documented silence).
+- Eye check (S08_SH002, S02_SH008, S05_SH020 on the PC, HF task2_slice_r1/): real centroids, word-timed pushes, no invented sky,
+  no glints on the crosses. Defects (37_SLICE_REVIEW_1.md): the creator: "the cold is not felt, it is pretty cute snow" (uniform sharp
+  dots, no wind/depth); snow on frame 0; snow over the close subject; decided steam/breath/snow invisible in S02 and S05; boots and
+  brazier legs cut at the end of S02; the S05 pan to the German group imperceptible.
+- The 84 briefs: only the slice shots are real screenwriting; ~80 are template output (generic moods that contradict the line,
+  default anchor boxes). Not sent to the creator for review; goes to the new Argon self-loop chat (diagnosis + plan).

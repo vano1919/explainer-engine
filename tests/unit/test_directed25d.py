@@ -191,6 +191,8 @@ def test_every_living_effect_moves_and_is_a_pure_function_of_the_frame(tmp_path,
         img = np.asarray(Image.open(p).convert("RGB")).copy()
         img[20:200:23, 20:460:31] = 250
         Image.fromarray(img).save(p)
+    if e["op"] == "stars":                      # stars twinkle only in a verified sky (MI-07, Task 2): give the fixture one
+        lay["depth"][: H // 3] = 0.0
     plan = _plan(frames=24, effects=[e])
     st = R.Stage(p, lay, plan, OUT)
     assert e["op"] in R.FX_OPS

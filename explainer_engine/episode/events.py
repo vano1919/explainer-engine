@@ -326,12 +326,17 @@ def visual_events(shot: dict, script: dict, measured_spine: list[dict] | None = 
         authored = item.get("audio") if not ev.pop("_authored", False) else item["audio"]
         audio = dict(authored) if isinstance(authored, dict) else default_audio(ev["op"], item)
         audio.setdefault("sync", "span" if ev["op"] in CONTINUOUS and audio.get("decision") == "sfx" else "onset")
+        s_f = int(ev["start_frame"])
+        e_f = int(ev["end_frame"])
+        peak_f = s_f + max(1, int(round((e_f - s_f) * 0.6))) if e_f > s_f else s_f
         e = {"event_id": item.get("event_id") or f"{sid}.{letter}{ev['index'] + 1}", "shot_id": sid,
-             "source": ev["source"], "index": ev["index"], "op": ev["op"], "start_frame": int(ev["start_frame"]),
-             "end_frame": int(ev["end_frame"]), "audio": audio, "audio_basis": "authored" if authored else "default",
+             "source": ev["source"], "index": ev["index"], "op": ev["op"], "start_frame": s_f,
+             "end_frame": e_f, "audio": audio, "audio_basis": "authored" if authored else "default",
              "id_basis": "authored" if item.get("event_id") else "derived",
              "timing": {"start": ev["timing_start"], "end": ev["timing_end"]}, "word": item.get("at_word"),
-             "until_word": item.get("until_word")}
+             "until_word": item.get("until_word"),
+             "keyframe_frames": {"onset_frame": s_f, "peak_frame": peak_f, "end_frame": e_f},
+             "keyframe_seconds": {"onset_s": round(s_f / float(fps), 4), "peak_s": round(peak_f / float(fps), 4), "end_s": round(e_f / float(fps), 4)}}
         if ev.get("truncated_frames"):
             e["truncated_frames"] = int(ev["truncated_frames"])
         if ev["source"] == "sound_events":
@@ -342,7 +347,19 @@ def visual_events(shot: dict, script: dict, measured_spine: list[dict] | None = 
             e["route"] = item["route"]
         e["_cues"] = item.get("cues", "auto")
         events.append(e)
-    return _derive(events, frames)
+    derived = _derive(events, frames)
+    for d_ev in derived:
+        if "keyframe_frames" not in d_ev:
+            sf = int(d_ev.get("start_frame", 0))
+            ef = int(d_ev.get("end_frame", sf))
+            pf = sf + max(1, int(round((ef - sf) * 0.6))) if ef > sf else sf
+            d_ev["keyframe_frames"] = {"onset_frame": sf, "peak_frame": pf, "end_frame": ef}
+            d_ev["keyframe_seconds"] = {
+                "onset_s": round(sf / float(fps), 4),
+                "peak_s": round(pf / float(fps), 4),
+                "end_s": round(ef / float(fps), 4),
+            }
+    return derived
 
 
 DERIVED_CUES = {   # the map sound taxonomy's arrival and confirmation cues (AV brief, 2026-11-13). No start cue: the line's own

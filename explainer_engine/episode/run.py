@@ -561,11 +561,14 @@ def ensure_shot_direction(ep: Episode, shot: dict, script: dict, start: dict | N
     if dp is None:
         return None, None, []
     layers, pic_sha, l_why = _load_valid_layers(ep, start)
+    from explainer_engine.core import fingerprints as FP
+    l_sha = str(((layers or {}).get("manifest") or {}).get("sha256") or "")
     if dp.is_file():
         try:
             doc = json.loads(dp.read_text(encoding="utf-8"))
-            probs = D._feasibility(doc, manifest=(layers or {}).get("manifest"))
-            return dp, doc, probs
+            if FP.is_direction_fresh(doc, shot=shot, script=script, picture_sha256=pic_sha, manifest=(layers or {}).get("manifest"), spine=spine, fps=float(ep.fps)):
+                probs = D._feasibility(doc, manifest=(layers or {}).get("manifest"))
+                return dp, doc, probs
         except (ValueError, OSError):
             pass
     if require_layers and l_why is not None:
@@ -590,8 +593,9 @@ def ensure_shot_direction(ep: Episode, shot: dict, script: dict, start: dict | N
         if p.get("level") == "FAIL"
         and not (has_fx and doc.get("needs_eye") and (p.get("rule") == "BP-200" or "BP-185" in str(p.get("what") or "")))
     ]
-    if not has_fx:
-        hard_fails.append({"level": "FAIL", "what": f"{shot.get('shot_id')}: needs_eye (no living element or light evidence)"})
+    stillness_ok = bool(str(doc.get("stillness_reason") or "").strip())
+    if not has_fx and not stillness_ok:
+        hard_fails.append({"level": "FAIL", "what": f"{shot.get('shot_id')}: needs_eye (no living element, light evidence, or stillness_reason)"})
     if not hard_fails:
         dp.parent.mkdir(parents=True, exist_ok=True)
         write_json_atomic(dp, doc)
@@ -1298,7 +1302,18 @@ def stage_sound(ep: Episode, rehearsal: bool):
     script = ep.timed_script()
     timing = ep.timing()
     routes = {r["shot_id"]: (r.get("route") if not r.get("fallback_for_wan") else "still_25d") for r in _records(ep)}
-    plan = SP.build(script, fps=ep.fps, spines=TM.spines_of(timing), routes=routes, era=_era(ep))
+    directions = {}
+    dir_root = ep.root / "production" / "direction"
+    if dir_root.is_dir():
+        for dp in sorted(dir_root.glob("*.json")):
+            try:
+                dd = json.loads(dp.read_text(encoding="utf-8"))
+                if isinstance(dd, dict) and dd.get("shot_id"):
+                    directions[dd["shot_id"]] = dd
+            except (ValueError, OSError):
+                pass
+    plan = SP.build(script, fps=ep.fps, spines=TM.spines_of(timing), routes=routes, era=_era(ep),
+                    directions=directions, plan_status="authoritative_post_direction" if directions else "provisional_pre_direction")
     sources = SP.resolve(plan, ep.sound_library)
     SP.write(plan, sources, ep.root)
     read = ep.root / READ_REL
@@ -1533,6 +1548,11 @@ def stage_qa(ep: Episode, rehearsal: bool):
                            stem_audit=stem_audit, video=video, fps=ep.fps,
                            forbidden_tokens=sorted(ctx.forbidden_semantic_tokens),
                            narration_source=_narration_source(ep, audio), paid=paid_lines(ep.root))
+    if ep.path("qa/look_and_listen_record.json").is_file() or ep.manifest.get("require_look_and_listen"):
+        from explainer_engine.qa import look_and_listen as LL
+        ll_rows = LL.check_look_and_listen_gate(ep.root, rehearsal=rehearsal)
+        acc = dict(acc, gates=acc["gates"] + ll_rows)
+        acc["status"] = G.verdict(acc["gates"])["status"]
     from explainer_engine.videolane import plan as VP
     vm = None
     if video and any(VP.is_video(s) for s in script.get("shots", [])):   # VL-12: the master as the viewer gets it

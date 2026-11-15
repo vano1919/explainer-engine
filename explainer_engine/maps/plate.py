@@ -98,8 +98,81 @@ def spec_hash(
     return hashlib.sha256(json.dumps(body, sort_keys=True).encode("utf-8")).hexdigest()
 
 
-def colours(look: dict | None = None) -> dict[str, tuple[int, int, int]]:
-    """The plate's colours: palette blends, or the episode map look's palette tokens (``look[key]`` names a token)."""
+SCENE_MAP_GRADE_TINTS: dict[str, dict[str, tuple[tuple[int, int, int], float]]] = {
+    "late_summer_1914": {
+        "land": ((216, 198, 158), 0.28),
+        "sea": ((88, 114, 132), 0.20),
+        "lake": ((88, 114, 132), 0.20),
+        "river": ((84, 108, 126), 0.20),
+    },
+    "flanders_winter_1914": {
+        "land": ((184, 192, 198), 0.34),
+        "sea": ((64, 84, 102), 0.28),
+        "lake": ((64, 84, 102), 0.28),
+        "river": ((70, 90, 108), 0.25),
+    },
+    "winter_dusk": {
+        "land": ((156, 164, 176), 0.40),
+        "sea": ((48, 64, 82), 0.35),
+        "lake": ((48, 64, 82), 0.35),
+        "river": ((56, 74, 94), 0.30),
+    },
+}
+
+
+def resolve_scene_map_look(
+    look: dict | None = None,
+    *,
+    scene: dict | None = None,
+    shot: dict | None = None,
+) -> dict:
+    """Resolve a scene-matched map look directly in plate palette space (no generic post-filter).
+
+    Matches the map plate's land/sea/parchment tones to the surrounding scene's season, time of day,
+    and emotional tone while preserving explicit caller overrides in ``look``.
+    """
+    merged: dict = dict(look or {})
+    sc = scene or {}
+    sh = shot or {}
+    text_blob = " ".join(
+        str(x or "")
+        for x in (
+            sc.get("title"),
+            sc.get("summary"),
+            sc.get("time_of_day"),
+            sc.get("atmosphere"),
+            sh.get("shot_purpose"),
+            (sh.get("director_brief") or {}).get("emotional_intent") if isinstance(sh.get("director_brief"), dict) else "",
+            ((sh.get("map_action") or {}).get("date_badge") or {}).get("text") if isinstance((sh.get("map_action") or {}).get("date_badge"), dict) else (sh.get("map_action") or {}).get("date_badge"),
+        )
+    ).lower()
+
+    profile_name = str(merged.get("scene_grade_profile") or "").strip()
+    if not profile_name:
+        if any(k in text_blob for k in ("august 1914", "summer", "mobilization", "strategic")):
+            if "december" not in text_blob and "winter" not in text_blob and "flanders" not in text_blob:
+                profile_name = "late_summer_1914"
+        if not profile_name:
+            if any(k in text_blob for k in ("dusk", "night", "twilight", "candle", "christmas eve")):
+                profile_name = "winter_dusk"
+            elif any(k in text_blob for k in ("december", "winter", "frost", "frozen", "flanders", "ypres", "trench", "mud")):
+                profile_name = "flanders_winter_1914"
+            else:
+                profile_name = "flanders_winter_1914"
+
+    merged["scene_grade_profile"] = profile_name
+    return merged
+
+
+def colours(
+    look: dict | None = None,
+    *,
+    scene: dict | None = None,
+    shot: dict | None = None,
+) -> dict[str, tuple[int, int, int]]:
+    """The plate's colours: palette blends, or the episode map look's palette tokens (``look[key]`` names a token),
+    plus optional scene-matched palette grading directly in plate colour space (without a post-filter)."""
+    eff_look = resolve_scene_map_look(look, scene=scene, shot=shot) if (scene is not None or shot is not None) else (look or {})
     paper, ink, blue, grey = D.rgb("paper"), D.rgb("ink"), D.rgb("support_blue"), D.rgb("grey_mid")
     base = {
         "sea": D.blend(blue, paper, STYLE["sea_mix"]),
@@ -109,9 +182,18 @@ def colours(look: dict | None = None) -> dict[str, tuple[int, int, int]]:
         "border": D.blend(grey, ink, 0.25),
         "lake": D.blend(blue, paper, STYLE["sea_mix"]),
     }
+    prof = str(eff_look.get("scene_grade_profile") or "").strip()
+    if prof in SCENE_MAP_GRADE_TINTS:
+        for k, (target_rgb, weight) in SCENE_MAP_GRADE_TINTS[prof].items():
+            if k in base:
+                base[k] = D.blend(base[k], target_rgb, weight)
     for k in LOOK_KEYS:
-        if look and look.get(k):
-            base[k] = D.rgb(look[k])
+        if eff_look and eff_look.get(k):
+            val = eff_look[k]
+            if isinstance(val, (list, tuple)) and len(val) == 3:
+                base[k] = (int(val[0]), int(val[1]), int(val[2]))
+            else:
+                base[k] = D.rgb(val)
     return base
 
 

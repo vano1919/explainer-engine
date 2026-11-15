@@ -333,13 +333,25 @@ def _balance(d: dict, duration_s: float) -> list[dict]:
                  "what": "seen.living has no LP scores (area_pct, text, focus, quality, cost): the balance was not checked"}]
     return [{k: v for k, v in p.items()} for p in living.check(d, duration_s)]
 def _families(d: dict) -> list[dict]:
+    # Creator Decision 2 (2026-11-15): no mandatory effect or family count FAILs. A deliberately still or restrained shot
+    # is allowed when the director writes why; only an accidentally frozen render fails.
     fams = {FAMILY_OF[t["op"]] for t in d.get("tracks", []) if t.get("track") not in ("camera", "audio")
             and t.get("op") in FAMILY_OF}
     out = []
+    if d.get("accidental_freeze"):
+        out.append({"level": "FAIL", "what": "accidental_freeze: motion was planned but rendered frames stood still"})
+        return out
+    has_reason = bool(
+        str(d.get("stillness_reason") or "").strip()
+        or str(((d.get("decision_record") or {}).get("stillness_reason")) or "").strip()
+        or str(((d.get("director_brief") or {}).get("restraint_note")) or "").strip()
+        or any(e.get("decision") == "skip" and str(e.get("why", "")).strip() for e in ((d.get("seen") or {}).get("living") or []))
+    )
     if len(fams) < ALIVE_MIN:
-        out.append({"level": "FAIL", "what": f"alive beyond the camera: {sorted(fams) or 'nothing'}; BP-185 needs {ALIVE_MIN} "
-                    "families (atmosphere, light, surface, subject), whatever the intent"})
-    elif fams == {"light"}:
+        if not has_reason:
+            out.append({"level": "REVIEW", "what": f"alive beyond the camera: {sorted(fams) or 'nothing'}; BP-185 soft hint is {ALIVE_MIN} "
+                        "families (atmosphere, light, surface, subject) unless stillness_reason / restraint_note is given"})
+    elif fams == {"light"} and not has_reason:
         out.append({"level": "REVIEW", "what": "every moving family is light: the flames flicker and nothing else lives"})
     return out
 def _renderable(d: dict) -> list[dict]:
@@ -468,8 +480,12 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
     tracks = d.get("tracks", [])
     if variant:
         tracks = d["variants"][variant]["tracks"]
+    brief_d = d.get("director_brief") if isinstance(d.get("director_brief"), dict) else {}
+    restraint_txt = " ".join(str(brief_d.get(k) or "") for k in ("mood", "restraint_note")).lower()
+    solemn_restraint = bool(d.get("solemn_restraint") or any(w in restraint_txt for w in ("solemn", "reverent", "burial", "zero ice glints", "no decorative")))
     plan = {"shot_id": d["shot_id"], "frames": int(frames), "cameras": [], "handheld": None, "rack": None, "effects": [],
-            "far_share": float(d.get("far_share", 0.2)), "intent": d.get("intent")}
+            "far_share": float(d.get("far_share", 0.2)), "intent": d.get("intent"),
+            "solemn_restraint": solemn_restraint}
     if d.get("layers") is not None:
         plan["layers"] = list(d["layers"])
     if d.get("keep_in_frame"):

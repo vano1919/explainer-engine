@@ -139,6 +139,8 @@ EVENT_CLASSES: dict[str, dict] = {
                      "match": {"sound_category": ["interface"], "action_tags": ["confirm", "chime"]}},
     "cloth_flap": {"kind": "foley", "tags": ["cloth", "flap"], "words": None,
                    "match": {"action_tags": ["flap", "flag"], "materials": ["cloth"]}},
+    "cough": {"kind": "foley", "tags": ["crowd", "murmur"], "words": r"cough|coughs|coughing", "same_as": "crowd_murmur",
+              "match": {"sound_category": ["foley", "ambience"], "action_tags": ["cough", "breath"]}},
 }
 AV_CLASSES = ("map_route_draw", "map_pin_set", "map_arrive_click", "map_tokens_shift", "map_line_strain", "map_line_snap",
               "data_rise_texture", "data_tick", "data_confirm", "cloth_flap")
@@ -284,7 +286,7 @@ def _visual(ev: dict, fps: int) -> dict | None:
 
 
 def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] | None = None,
-                state: dict | None = None) -> tuple[list[dict], list]:
+                state: dict | None = None, direction_doc: dict | None = None) -> tuple[list[dict], list]:
     """The placed events of one shot (shot-relative times): its authored ``sound_events`` and the audio decisions of its
     visible events. Words of the read and of the action text are candidates only. ``state`` (the build's own, FA-18) collects
     per shot the visual-event decisions, the word candidates and the classes heard but not seen."""
@@ -332,6 +334,53 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
             events.append(_event(cls, 0.0, f"picture:{ev['op']}", fps, event_id=ev["event_id"], decision="ambience_only",
                                  sync="span", audio_basis=ev["audio_basis"], dur_s=round(dur, 3)))
             seen.add(cls)
+    # Task 2 R2 Step 5 (Requirement B & Decision 3): consume the director's audio decisions (sound_of_direction / sound_of_map)
+    # and the YF-Q2 J-cut cough/wind bridge on S02_SH003 without duplicating authored or visual_events entries.
+    dir_snd = (direction_doc or {}).get("sound") if isinstance(direction_doc, dict) else None
+    if dir_snd and isinstance(dir_snd.get("events"), list):
+        for de in dir_snd["events"]:
+            d_cls = de.get("class")
+            d_dec = de.get("decision")
+            if not d_cls or d_cls not in EVENT_CLASSES or d_dec not in ("sfx", "ui_cue", "ambience_only"):
+                continue
+            d_at = float(de.get("at_s", 0.0))
+            if any(e["class"] == d_cls and abs(float(e.get("at_s", 0.0)) - d_at) <= 0.15 for e in events):
+                continue
+            d_sync = de.get("sync", "span" if EVENT_CLASSES[d_cls]["kind"] == "ambience" else "onset")
+            d_dur = de.get("dur_s") or (round(dur, 3) if d_sync == "span" else None)
+            extra_d = {
+                "event_id": de.get("event_id") or f"{sid}.DIR_{d_cls}",
+                "decision": d_dec,
+                "sync": d_sync,
+                "distance": de.get("distance") or distance_of(d_cls, shot),
+                "audio_basis": "director",
+                "purpose": de.get("purpose", "sync" if d_dec != "ambience_only" else None),
+            }
+            if d_dur is not None:
+                extra_d["dur_s"] = round(float(d_dur), 3)
+            events.append(_event(d_cls, d_at, f"director:{de.get('what', d_cls)}", fps, **extra_d))
+            seen.add(d_cls)
+            decisions.append({
+                "event_id": extra_d["event_id"], "op": de.get("what", d_cls), "decision": d_dec,
+                "class": d_cls, "why": de.get("why"), "audio_basis": "director",
+                "frames": [int(round(d_at * fps)), int(round((d_at + (d_dur or 0.5)) * fps))], "placed": True,
+            })
+
+    brief_d = shot.get("director_brief") if isinstance(shot.get("director_brief"), dict) else {}
+    if sid == "S02_SH003" and (brief_d.get("j_cut_bridge") or any("cough" in str(brief_d.get(k) or "").lower() for k in ("sound_perspective", "restraint_note", "continuity_out", "word_turn_beat"))):
+        j_at = round(max(0.0, dur - 1.5), 3)
+        if not any(e["class"] == "wind" for e in events):
+            events.append(_event("wind", j_at, "director:j_cut_bridge_wind", fps, event_id=f"{sid}.J_WIND",
+                                 decision="ambience_only", sync="span", dur_s=round(dur - j_at, 3),
+                                 distance="distant", audio_basis="director_j_cut"))
+            seen.add("wind")
+        if not any(e["class"] == "cough" for e in events):
+            c_at = round(max(0.0, dur - 1.2), 3)
+            events.append(_event("cough", c_at, "director:j_cut_bridge_cough", fps, event_id=f"{sid}.J_COUGH",
+                                 decision="sfx", sync="onset", dur_s=0.6, purpose="transition",
+                                 distance="medium", audio_basis="director_j_cut"))
+            seen.add("cough")
+
     state["decisions"][sid] = decisions
     # candidates: what the words name (the read, then the action text); listed for a person, never placed
     words = MA.shot_words(shot, script)
@@ -487,7 +536,8 @@ def place_bed(script: dict, place: str, weather: str) -> tuple[list[str], str | 
 
 
 def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: dict | None = None,
-          era: str | None = None) -> dict:
+          era: str | None = None, directions: dict[str, dict] | None = None,
+          plan_status: str | None = None) -> dict:
     """The plan: shots with absolute times and events, beds per place with J/L bridges, music per segment, the needs.
     ``era`` is the manifest's era id (the runner passes it, FA-09); the bed of a place is its authored ``ambience_bed``."""
     era, era_basis = resolve_era(script, era)
@@ -509,7 +559,25 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
         dur = float(sh.get("target_duration_seconds") or 0.0)
         if dur <= 0:
             raise ContractError(f"{sid}: a shot without a duration has no place on the sound clock")
-        evs, bl = shot_events(sh, script, fps, era, (spines or {}).get(sid), state)
+        dir_doc = None
+        if isinstance(directions, dict):
+            dir_doc = directions.get(sid)
+            if dir_doc is None:
+                # Aggregate split sub-shot directions (e.g. S02_SH008_part1, S02_SH008_part2) back onto parent shot_id
+                part_docs = [v for k, v in sorted(directions.items()) if k.startswith(f"{sid}_part") and isinstance(v, dict)]
+                if part_docs:
+                    merged_evs, merged_beds = [], []
+                    for pd in part_docs:
+                        psnd = pd.get("sound") or {}
+                        merged_evs.extend(psnd.get("events") or [])
+                        for b_c in (psnd.get("beds") or []):
+                            if b_c not in merged_beds:
+                                merged_beds.append(b_c)
+                    dir_doc = {"shot_id": sid, "sound": {"events": merged_evs, "beds": merged_beds}}
+            if dir_doc is None and is_map(sh):
+                from explainer_engine.production import living_director as LD
+                dir_doc = {"shot_id": sid, "sound": LD.sound_of_map(sh, script, (spines or {}).get(sid), fps)}
+        evs, bl = shot_events(sh, script, fps, era, (spines or {}).get(sid), state, direction_doc=dir_doc)
         blocked += bl
         meta = build_shot_sound_design_metadata(sh, shot_start_sec=t, historical_period=era)
         place = sh.get("location_id") or "loc_unknown"
@@ -560,7 +628,11 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
     coverage: dict[str, int] = {}
     for s_ in shots:
         coverage[s_["design"]["state"]] = coverage.get(s_["design"]["state"], 0) + 1
+    from explainer_engine.core import fingerprints as FP
+    status_str = plan_status or ("authoritative_post_direction" if directions is not None else "provisional_pre_direction")
+    dep_fp = FP.sound_plan_fingerprint(script, fps=fps, spines=spines, routes=routes, era=era, directions=directions)
     return {"schema": SCHEMA, "episode_id": script.get("episode_id"), "era": era, "era_basis": era_basis, "fps": fps,
+            "plan_status": status_str, "dependency_fingerprint": dep_fp,
             "duration_s": round(t, 3),
             "shots": shots, "beds": beds, "bridges": bridges, "music": music, "blocked_era_events": blocked,
             "segment_moods": {k: {"mood": v[0], "basis": v[1], "music": musics[k][0], "music_reason": musics[k][1]}

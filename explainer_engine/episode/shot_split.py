@@ -34,8 +34,58 @@ def is_safe_word_boundary(words: list[dict], idx: int) -> bool:
         return False
     nxt = _norm_word(words[idx + 1].get("word") or words[idx + 1].get("text") or "")
     return nxt in SAFE_SPLIT_NEXT_WORDS
-def punctuate_spine(spine: list[dict] | None, text: str = "") -> list[dict]:
+def synthesize_word_spine(
+    text: str | None,
+    duration_s: float,
+    *,
+    fps: int = 24,
+) -> list[dict]:
+    """Synthesize a deterministic word-level timing spine from ``text`` and ``duration_s``.
+
+    Used when pre-render script planning or ``split_long_still(shot, None)`` runs before
+    Whisper ``audio/timing.json`` is generated, weighting word durations by character length
+    plus natural clause-boundary pause weights (``.?!`` > ``:;—`` > ``,``).
+    """
+    tokens = [tok for tok in str(text or "").split() if tok.strip()]
+    if not tokens or duration_s <= 0.0:
+        return []
+    weights: list[float] = []
+    for tok in tokens:
+        core_len = max(1, len(_norm_word(tok)))
+        w = float(core_len) + 1.5
+        clean = tok.rstrip(_TRAILING_QUOTES)
+        if clean.endswith((".", "?", "!")):
+            w += 2.6
+        elif clean.endswith((":", ";", "—", "–", "…")):
+            w += 1.8
+        elif clean.endswith(","):
+            w += 1.1
+        weights.append(w)
+    total_w = sum(weights) or 1.0
+    cursor = 0.0
+    out: list[dict] = []
+    for idx, (tok, w) in enumerate(zip(tokens, weights)):
+        dt = float(duration_s) * (w / total_w)
+        t0 = cursor
+        t1 = float(duration_s) if idx == len(tokens) - 1 else (cursor + dt)
+        cursor = t1
+        clean = tok.rstrip(_TRAILING_QUOTES)
+        out.append({
+            "word": tok,
+            "text": tok,
+            "start_s": round(t0, 4),
+            "end_s": round(t1, 4),
+            "start_frame": int(round(t0 * fps)),
+            "end_frame": int(round(t1 * fps)),
+            "clause_end": bool(clean and clean.endswith(CLAUSE_PUNCT)),
+        })
+    return out
+
+
+def punctuate_spine(spine: list[dict] | None, text: str = "", *, duration_s: float | None = None, fps: int = 24) -> list[dict]:
     if not spine:
+        if text and duration_s and float(duration_s) > 0.0:
+            return synthesize_word_spine(text, float(duration_s), fps=fps)
         return []
     out = [dict(w) for w in spine]
     if not text or all(is_clause_end(w) for w in out):
@@ -164,13 +214,20 @@ def _word_end_s_at(words: list[dict], idx: int, fps: int, total_s: float) -> flo
     return float((idx + 1) * total_s / max(1, len(words)))
 def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_STILL_S, *,
                      fps: int | None = None, seen: dict | None = None,
-                     allow_word_fallback: bool = True) -> list[dict]:
-    route = shot.get("route")
+                     allow_word_fallback: bool = True, text: str | None = None,
+                     limit_s: float | None = None) -> list[dict]:
+    if limit_s is not None:
+        max_s = float(limit_s)
+    route = shot.get("route") or shot.get("visual_kind")
     if route is not None and route != "still_25d":
         return [copy.deepcopy(shot)]
     words = list(spine or shot.get("spine") or [])
     sp_fps = int(fps or _shot_fps(shot, words))
     total_s = _shot_duration_s(shot, words, sp_fps)
+    if not words and total_s > float(max_s) + 1e-9:
+        raw_txt = str(text or shot.get("_spoken_text") or shot.get("narration_text") or "").strip()
+        if raw_txt:
+            words = synthesize_word_spine(raw_txt, total_s, fps=sp_fps)
     if total_s <= float(max_s) + 1e-9 or len(words) < 2:
         return [copy.deepcopy(shot)]
     total_frames = int(shot.get("total_frames") or shot.get("frames") or max(1, int(round(total_s * sp_fps))))
@@ -307,9 +364,75 @@ def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_ST
             part_words[0]["_part_end_frame"] = f_hi
             part_words[0]["_parent_frames"] = total_frames
             part_words[0]["_parent_spine"] = [dict(x) for x in words]
+        part["duration_s"] = p_dur
         part["spine"] = part_words
         part["cut_word"] = _word_token(words[w_hi - 1]) if idx < k - 1 else None
+        part_norm_words = {_norm_word(_word_token(w)) for w in words[w_lo:w_hi]}
+        part_norm_words.discard("")
+        part_excerpt = " ".join(_word_token(w) for w in words[w_lo:w_hi]).strip()
+        if isinstance(part.get("motion_imitation"), list) and part_norm_words:
+            kept_mi = []
+            for mi in part["motion_imitation"]:
+                if not isinstance(mi, dict):
+                    continue
+                at_w = _norm_word(str(mi.get("at_word") or ""))
+                if at_w and at_w not in part_norm_words:
+                    continue
+                kept_mi.append(copy.deepcopy(mi))
+            part["motion_imitation"] = kept_mi
+        if isinstance(part.get("director_brief"), dict) and part_norm_words:
+            pb = copy.deepcopy(part["director_brief"])
+            fh = pb.get("focal_hierarchy")
+            if isinstance(fh, dict) and isinstance(fh.get("timed_focal_shifts"), list):
+                matched = [
+                    shf for shf in fh["timed_focal_shifts"]
+                    if isinstance(shf, dict) and _norm_word(str(shf.get("at_word") or "")) in part_norm_words
+                ]
+                if matched:
+                    fh["primary_anchor"] = str(matched[-1].get("anchor") or fh.get("primary_anchor") or "center")
+            part["director_brief"] = pb
+        part["split_from"] = {
+            "shot_id": sid,
+            "part_index": idx,
+            "part_count": k,
+            "start_s": round(s_lo, 4),
+            "end_s": round(s_hi, 4),
+            "cut_after_word": _word_token(words[w_hi - 1]) if w_hi > w_lo else "",
+            "narration_excerpt": part_excerpt,
+        }
         if idx >= 1:
             part["framing"] = {"crop": CUTIN_CROP, "focus": _resolve_focus(shot, words[w_lo:w_hi], words, seen=seen)}
         parts.append(part)
     return parts
+
+
+def build_shot_split_plan(
+    shot: dict[str, Any],
+    spine: list[dict[str, Any]] | None = None,
+    *,
+    text: str | None = None,
+    limit_s: float = MAX_STILL_S,
+) -> dict[str, Any] | None:
+    """Build a serialisable ``split_plan`` metadata block for a ``still_25d`` shot exceeding ``limit_s`` (BP-109)."""
+    parts = split_long_still(shot, spine, max_s=limit_s, text=text)
+    if len(parts) <= 1:
+        return None
+    return {
+        "original_shot_id": str(shot.get("shot_id") or ""),
+        "original_duration_s": round(float(shot.get("duration_s") or shot.get("target_duration_seconds") or 0.0), 3),
+        "limit_s": float(limit_s),
+        "part_count": len(parts),
+        "parts": [
+            {
+                "part_shot_id": str(p.get("shot_id") or ""),
+                "duration_s": round(float(p.get("duration_s") or p.get("duration_sec") or 0.0), 3),
+                "start_s": float((p.get("split_from") or {}).get("start_s", 0.0)),
+                "end_s": float((p.get("split_from") or {}).get("end_s", 0.0)),
+                "cut_after_word": str((p.get("split_from") or {}).get("cut_after_word") or ""),
+                "narration_excerpt": str((p.get("split_from") or {}).get("narration_excerpt") or ""),
+                "framing": p.get("framing"),
+                "transition_out": str(p.get("transition_out") or "hard_cut"),
+            }
+            for p in parts
+        ],
+    }

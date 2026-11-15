@@ -204,7 +204,10 @@ def test_maps_get_their_own_bed_date_stamps_counter_ticks_and_respect_cues_none(
     assert [e["class"] for e in pins] == ["map_pin_set", "map_arrive_click"]   # one thud a line, then the wood tick
     wide = LD.choose_sound([{"id": "B1", "op": "route_arrow", "start_frame": 0, "end_frame": 48}], library_root=lib,
                            map_view={"span_km": 1000})
-    assert wide["beds"] == ["wind"] and "never digital silence" in wide["events"][0]["why"]
+    # Creator Decision 3 (2026-11-15): no mandatory geography bed on maps; the drawn action sounds and the bed's absence is
+    # a documented, intentional silence
+    assert wide["beds"] == [] and wide["events"][0]["class"] == "map_route_draw"
+    assert any(s.get("decision") == "silent_by_design" and "Decision 3" in s.get("why", "") for s in wide["silent"])
     army = LD.choose_sound([{"id": "C1", "op": "marker_travel", "start_frame": 24, "end_frame": 72, "token": "army"}],
                            library_root=lib, map_view={"span_km": 530})
     assert any(e["class"] == "army_march" and e["dur_s"] == 2.0 for e in army["events"])

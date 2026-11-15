@@ -29,10 +29,16 @@ def available_profiles() -> list[str]:
 
 
 def resolve_profile_name(doc: dict | None = None) -> str:
-    """The profile a document asks for: its ``rhythm_profile`` key, else the version of its schema (``production_script/3``
-    is the calm era, ``/4`` and later the zoned one), else the registry default."""
+    """The profile a document asks for: its ``rhythm_profile`` key, else historical-docudrama detection (YF-Q1),
+    else the version of its schema (``production_script/3`` is the calm era, ``/4`` and later the zoned one),
+    else the registry default."""
     doc = doc or {}
     name = doc.get("rhythm_profile")
+    if name is None:
+        if (doc.get("genre") == "historical_docudrama"
+                or doc.get("historical_dossier_ref")
+                or str(doc.get("episode_id") or "").startswith("ep_truce")):
+            name = SR.rule("BP-169")["thresholds"].get("default_historical_docudrama_profile", "solemn_historical_docudrama")
     if name is None:
         schema = str(doc.get("schema", ""))
         tail = schema.rsplit("/", 1)[-1]

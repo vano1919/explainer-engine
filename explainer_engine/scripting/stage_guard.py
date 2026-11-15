@@ -70,6 +70,7 @@ STAGES = {
 V4_OWNERS = (
     ("shots[*].sound_events", "beats"), ("shots[*].intentional_silence", "beats"), ("shots[*].sound_design", "beats"),
     ("shots[*].audio_line_ids", "writer"),
+    ("shots[*].director_brief", "editor"), ("shots[*].split_plan", "editor"), ("shots[*].authored_intent_archive", "editor"),
     ("shots*", "editor"),
     ("segments[*].mood", "editor"), ("segments[*].music", "editor"),
     ("segments*", "architect"),

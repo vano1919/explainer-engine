@@ -1817,13 +1817,20 @@
    "area": "story",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A forward-pointing line (an open question or a promise) at least every 150 s, and near 3:00 and 6:00 in an 8-12 min video; over 180 s without one is REVIEW.",
+   "statement": "A forward-pointing line (an open question or a promise) at least every 20.83% of runtime (150 s on a 12-min video; over 25% of runtime / 180 s without one is REVIEW), and near 25% and 50% of runtime (3:00 and 6:00 in an 8-12 min video).",
    "thresholds": {
     "microhook_every_s": 150,
     "review_gap_s": 180,
     "rehook_at_s": [
      180,
      360
+    ],
+    "reference_runtime_s": 720,
+    "microhook_every_share": 0.2083,
+    "review_gap_share": 0.25,
+    "rehook_at_share": [
+     0.25,
+     0.5
     ]
    },
    "sources": [
@@ -3329,9 +3336,12 @@
    "area": "story",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Turns arrive on a cadence (ST-13): between the hook and the resolution no stretch longer than 150 s passes without a turn (a reversal, midpoint, crisis, twist or climax, or a BUT join); the seconds are words at BP-01's heard pace.",
+   "statement": "Turns arrive on a cadence (ST-13): between the hook and the resolution no stretch longer than 20.83% of runtime (150 s on a 12-min video) passes without a turn (a reversal, midpoint, crisis, twist or climax, or a BUT join); the seconds are words at BP-01's heard pace.",
    "thresholds": {
-    "turn_gap_s": 150
+    "turn_gap_s": 150,
+    "reference_runtime_s": 720,
+    "turn_gap_share": 0.2083,
+    "min_turn_gap_s": 45.0
    },
    "sources": [
     {
@@ -6638,8 +6648,261 @@
        }
       ]
      },
-     "calm_docudrama": "legacy: read the other BP rows"
-    }
+     "calm_docudrama": "legacy: read the other BP rows",
+     "solemn_historical_docudrama": {
+      "calm_middle_share": 0.5417,
+      "zones": [
+       {
+        "id": "hook_0_30s",
+        "mode": "calm_story",
+        "window_s": [
+         0,
+         30
+        ],
+        "heard_wpm_target": 148,
+        "heard_wpm_band": [
+         125,
+         165
+        ],
+        "speaking_wpm_target": 175,
+        "speaking_wpm_band": [
+         155,
+         195
+        ],
+        "pauses_gt_05s_per_min_max": 8.0,
+        "median_words_max": 11,
+        "shots_per_min_target": 18.0,
+        "shots_per_min_band": [
+         14,
+         24
+        ],
+        "shot_len_s_band": [
+         1.5,
+         4.5
+        ],
+        "dramatic_changes_per_min_target": 16.0,
+        "dramatic_changes_per_min_band": [
+         12,
+         22
+        ],
+        "still_max_s": 4.5,
+        "static_still_max_s": 2.5,
+        "tease_events_per_min": 1.5,
+        "tease_max_gap_s": 30,
+        "sfx_events_per_min_band": [
+         6.0,
+         12.0
+        ],
+        "music_cues_per_min": 1.0,
+        "camera_move_share_max": 0.45,
+        "tts_tags": [
+         "softly",
+         "curious",
+         "pause",
+         "drawn out"
+        ]
+       },
+       {
+        "id": "early_30_90s",
+        "mode": "calm_story",
+        "window_s": [
+         30,
+         90
+        ],
+        "heard_wpm_target": 142,
+        "heard_wpm_band": [
+         120,
+         160
+        ],
+        "speaking_wpm_target": 170,
+        "speaking_wpm_band": [
+         150,
+         190
+        ],
+        "pauses_gt_05s_per_min_max": 9.0,
+        "median_words_max": 12,
+        "shots_per_min_target": 15.0,
+        "shots_per_min_band": [
+         12,
+         20
+        ],
+        "shot_len_s_band": [
+         2.0,
+         5.0
+        ],
+        "dramatic_changes_per_min_target": 14.0,
+        "dramatic_changes_per_min_band": [
+         10,
+         20
+        ],
+        "still_max_s": 5.0,
+        "static_still_max_s": 3.0,
+        "tease_events_per_min": 1.0,
+        "tease_max_gap_s": 45,
+        "sfx_events_per_min_band": [
+         5.0,
+         10.0
+        ],
+        "music_cues_per_min": 1.0,
+        "camera_move_share_max": 0.5,
+        "tts_tags": [
+         "softly",
+         "curious",
+         "pause"
+        ]
+       },
+       {
+        "id": "middle_calm_90_480s",
+        "mode": "calm_story",
+        "window_s": [
+         90,
+         480
+        ],
+        "heard_wpm_target": 136,
+        "heard_wpm_band": [
+         115,
+         160
+        ],
+        "speaking_wpm_target": 165,
+        "speaking_wpm_band": [
+         145,
+         185
+        ],
+        "pauses_gt_05s_per_min_max": 10.0,
+        "median_words_max": 14,
+        "shots_per_min_target": 14.0,
+        "shots_per_min_band": [
+         11,
+         18
+        ],
+        "shot_len_s_band": [
+         2.5,
+         5.0
+        ],
+        "dramatic_changes_per_min_target": 12.0,
+        "dramatic_changes_per_min_band": [
+         9,
+         18
+        ],
+        "still_max_s": 5.0,
+        "static_still_max_s": 3.5,
+        "tease_events_per_min": 0.8,
+        "tease_max_gap_s": 65,
+        "sfx_events_per_min_band": [
+         4.0,
+         9.0
+        ],
+        "music_cues_per_min": 0.8,
+        "camera_move_share_max": 0.55,
+        "tts_tags": [
+         "softly",
+         "pause",
+         "drawn out",
+         "curious"
+        ]
+       },
+       {
+        "id": "late_third_480_660s",
+        "mode": "calm_story",
+        "window_s": [
+         480,
+         660
+        ],
+        "heard_wpm_target": 140,
+        "heard_wpm_band": [
+         120,
+         160
+        ],
+        "speaking_wpm_target": 168,
+        "speaking_wpm_band": [
+         150,
+         188
+        ],
+        "pauses_gt_05s_per_min_max": 9.5,
+        "median_words_max": 13,
+        "shots_per_min_target": 15.0,
+        "shots_per_min_band": [
+         12,
+         20
+        ],
+        "shot_len_s_band": [
+         2.0,
+         5.0
+        ],
+        "dramatic_changes_per_min_target": 14.0,
+        "dramatic_changes_per_min_band": [
+         10,
+         20
+        ],
+        "still_max_s": 5.0,
+        "static_still_max_s": 3.0,
+        "tease_events_per_min": 1.0,
+        "tease_max_gap_s": 50,
+        "sfx_events_per_min_band": [
+         5.0,
+         11.0
+        ],
+        "music_cues_per_min": 1.0,
+        "camera_move_share_max": 0.5,
+        "tts_tags": [
+         "softly",
+         "pause",
+         "drawn out"
+        ]
+       },
+       {
+        "id": "climax_660_720s",
+        "mode": "calm_story",
+        "window_s": [
+         660,
+         720
+        ],
+        "heard_wpm_target": 132,
+        "heard_wpm_band": [
+         115,
+         155
+        ],
+        "speaking_wpm_target": 160,
+        "speaking_wpm_band": [
+         140,
+         180
+        ],
+        "pauses_gt_05s_per_min_max": 11.0,
+        "median_words_max": 12,
+        "shots_per_min_target": 14.0,
+        "shots_per_min_band": [
+         11,
+         18
+        ],
+        "shot_len_s_band": [
+         2.5,
+         5.0
+        ],
+        "dramatic_changes_per_min_target": 12.0,
+        "dramatic_changes_per_min_band": [
+         9,
+         18
+        ],
+        "still_max_s": 5.0,
+        "static_still_max_s": 3.5,
+        "tease_events_per_min": 0.8,
+        "tease_max_gap_s": 60,
+        "sfx_events_per_min_band": [
+         4.0,
+         8.0
+        ],
+        "music_cues_per_min": 1.0,
+        "camera_move_share_max": 0.55,
+        "tts_tags": [
+         "softly",
+         "short pause",
+         "drawn out"
+        ]
+       }
+      ]
+     }
+    },
+    "default_historical_docudrama_profile": "solemn_historical_docudrama"
    },
    "sources": [
     {
@@ -7266,7 +7529,7 @@
    "id": "BP-185",
    "area": "stills",
    "status": "house",
-   "severity": "FAIL",
+   "severity": "REVIEW",
    "statement": "A 2.5D shot is alive beyond the camera: at least families_min moving systems from different families among atmosphere (ash, smoke, mist, rain, embers, dust), light (fire flicker, lightning, sun shafts), surface (water shimmer, heat haze, foliage sway) and subject (a rigid sway of the subject's plane). A camera move alone does not count. Action beats inside a 2.5D shot get their impact effect on the sound event's frame.",
    "thresholds": {
     "families_min": 2

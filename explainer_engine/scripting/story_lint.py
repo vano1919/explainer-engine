@@ -36,6 +36,18 @@ SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 scene rewrite: a missing 
 MIDPOINT_BAND = tuple(SR.T("BP-75", "midpoint_share"))  # ST-12: the midpoint/reversal sits at 40-60 % of the words
 MIDPOINT_MIN_SEGMENTS = SR.T("BP-75", "min_segments")
 TURN_GAP_S = SR.T("BP-76", "turn_gap_s")  # ST-13: a turn at least this often
+TURN_GAP_SHARE = float(SR.T("BP-76", "turn_gap_share") or 0.2083)
+MIN_TURN_GAP_S = float(SR.T("BP-76", "min_turn_gap_s") or 45.0)
+
+
+def proportional_turn_gap_s(total_s: float | None = None) -> float:
+    """Return the BP-76 maximum turn gap in seconds as a proportion (20.83%) of episode runtime.
+
+    When ``total_s`` is omitted or ``<= 0``, falls back to the 720 s reference ``TURN_GAP_S`` (150 s).
+    """
+    if total_s is None or float(total_s) <= 0.0:
+        return float(TURN_GAP_S)
+    return max(MIN_TURN_GAP_S, round(float(total_s) * TURN_GAP_SHARE, 2))
 WORDS_PER_S = SR.T("BP-01", "wpm_target") / 60  # ST-13: words become seconds at BP-01's heard pace
 SETUP_MIN, CONCLUSION_MIN = SR.T("BP-90", "setup_lines_min"), SR.T("BP-90", "conclusion_lines_min")  # ST-14 (RX-03)
 SPEECH_VERBS = tuple(SR.T("BP-70", "speech_verbs"))  # reported speech (D-63): "Musk says...", "he asks..."
@@ -207,7 +219,10 @@ def lint(doc: dict) -> list[dict]:
                f"{MIDPOINT_BAND[0]:.0%}-{MIDPOINT_BAND[1]:.0%}, BP-75): the pivot belongs mid-story", sev("BP-75"))
     if total:
         gap_words, gap_from = 0.0, None
-        budget = TURN_GAP_S * WORDS_PER_S
+        ep_meta = doc.get("episode") or {}
+        explicit_rt = ep_meta.get("target_duration_seconds") or ep_meta.get("runtime_s")
+        eff_turn_gap_s = proportional_turn_gap_s(float(explicit_rt)) if explicit_rt else float(TURN_GAP_S)
+        budget = eff_turn_gap_s * WORDS_PER_S
         for (sid, d), w in zip(sd, seg_words):
             is_turn = bool(d) and (d["function"] in TURN_FUNCS or d.get("turn") == "but")
             if is_turn or (d and d["function"] in {"resolution", "button"}):
@@ -218,7 +233,7 @@ def lint(doc: dict) -> list[dict]:
             if gap_words > budget:
                 _f(out, "ST-13", f"{gap_from}..{sid}", f"about {gap_words / WORDS_PER_S:.0f} s at {WORDS_PER_S * 60:g} wpm "
                    f"without a turn (a BUT, reversal, midpoint, crisis, twist or climax): something must change at least every "
-                   f"{TURN_GAP_S:g} s (BP-76)", sev("BP-76"))
+                   f"{eff_turn_gap_s:g} s (BP-76)", sev("BP-76"))
                 gap_words, gap_from = 0.0, None
     out += exchanges(doc)
     out += reported_speech(doc)
@@ -623,6 +638,41 @@ def lint_v4(doc: dict) -> list[dict]:
                 f"Narrator spoken share is {n_share:.1%} ({narr_dur:.1f}s / {total_spoken:.1f}s); narrator spine must be at least {n_min:.0%}",
                 "REVIEW",
             )
+
+    # Proportional BP-76 turn cadence check on v4 scene-based scripts
+    scenes = doc.get("scenes") or []
+    total_shot_s = sum(float(sh.get("duration_s") or sh.get("target_duration_seconds") or 0.0) for sh in shots)
+    if scenes and total_shot_s > 0.0:
+        eff_gap_s = proportional_turn_gap_s(total_shot_s)
+        gap_s = 0.0
+        gap_start_sc = None
+        for sc in scenes:
+            sc_id = sc.get("scene_id", "?")
+            sc_shots = [sh for sh in shots if sh.get("scene_id") == sc_id]
+            sc_dur = sum(float(sh.get("duration_s") or sh.get("target_duration_seconds") or 0.0) for sh in sc_shots)
+            purpose_txt = f"{sc.get('scene_purpose', '')} {sc.get('summary', '')} {sc.get('emotional_turn', '')}".lower()
+            has_turn = bool(
+                sc.get("is_turn")
+                or sc.get("turn") in ("but", "therefore", "reversal", "midpoint", "crisis", "twist", "climax")
+                or any(tok in purpose_txt for tok in ("but", "however", "instead", "failed", "refused", "silence", "stopped", "stepped", "burial", "ended", "prevent"))
+                or any("?" in str(al.get("text", "")) for al in audio_lines if al.get("scene_id") == sc_id)
+            )
+            if has_turn:
+                gap_s = 0.0
+                gap_start_sc = None
+            else:
+                gap_start_sc = gap_start_sc or sc_id
+                gap_s += sc_dur
+                if gap_s > eff_gap_s:
+                    _f(
+                        out,
+                        "ST-13",
+                        f"{gap_start_sc}..{sc_id}",
+                        f"About {gap_s:.1f}s without a narrative turn or value shift; proportional BP-76 requires a turn at least every {eff_gap_s:.1f}s ({TURN_GAP_SHARE:.0%} of {total_shot_s:.1f}s)",
+                        sev("BP-76"),
+                    )
+                    gap_s = 0.0
+                    gap_start_sc = None
     return out
 
 

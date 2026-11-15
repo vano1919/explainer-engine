@@ -93,14 +93,148 @@ def voice_drift(out: Path, episode: str, voices: dict) -> list[str]:
     return bad
 
 
-def compose_prompt(script: dict, shot: dict) -> dict:
-    """FA-02: ``{"prompt", "parts", "spoken", "voice_missing"}`` for one video shot (see the module text)."""
+def _brief_clause(shot: dict) -> str:
+    """Format a concise LTX conditioning clause from ``shot['director_brief']`` when present."""
+    brief = shot.get("director_brief")
+    if not isinstance(brief, dict) or not brief:
+        return ""
+    mood = str(brief.get("mood") or brief.get("emotional_intent") or brief.get("viewer_takeaway") or "").strip()
+    fa = brief.get("focal_anchor") if isinstance(brief.get("focal_anchor"), dict) else {}
+    primary = str(fa.get("id") or "").strip()
+    wtb = brief.get("word_turn_beat") if isinstance(brief.get("word_turn_beat"), dict) else {}
+    turn_w = str(wtb.get("word") or "").strip()
+    turn_i = str(wtb.get("intent") or "").strip()
+    restraint = str(brief.get("restraint_note") or "").strip()
+    pieces: list[str] = []
+    if mood:
+        pieces.append(f"Director mood: {mood.rstrip('.')}")
+    if primary:
+        pieces.append(f"focus on {primary}")
+    if turn_w and turn_i:
+        pieces.append(f"on '{turn_w}' {turn_i.rstrip('.')}")
+    if restraint:
+        pieces.append(restraint.rstrip("."))
+    if not pieces:
+        return ""
+    return "; ".join(pieces) + "."
+
+
+def _reconcile_start_state_with_perception(
+    script: dict,
+    shot: dict,
+    *,
+    episode_dir: Path | None = None,
+    persist_conflicts: bool = True,
+) -> dict:
+    """Reconcile ``action_start_state`` and ``video_prompt.motion_prompt`` with start-picture perception.
+
+    Rule (R2 Step 7.2):
+    - The start picture wins for what is physically present in frame (``ADAPTED_STAGING_NON_BREAKING``).
+    - Story-breaking conflicts between the required spoken narrative subject/action and the start picture
+      are routed to ``production/regeneration_queue.json`` (``STORY_BREAKING_CONFLICT``).
+    """
+    import re as _re
+    from explainer_engine.production import perceive_picture as PP
+
+    vp = shot.get("video_prompt") or {}
+    motion = str(vp.get("motion_prompt") or "").strip()
+    start_state = str(shot.get("action_start_state") or vp.get("action_start_state") or "").strip()
+    sid = str(shot.get("shot_id") or "")
+
+    perception = shot.get("perception") if isinstance(shot.get("perception"), dict) else None
+    interpretation = shot.get("scene_interpretation") if isinstance(shot.get("scene_interpretation"), dict) else None
+
+    if perception is None and (shot.get("layers") or shot.get("picture_path") or (episode_dir is not None and sid)):
+        layers_root = (Path(episode_dir) / "production" / "clips" / sid / "layers") if episode_dir is not None and sid else None
+        if shot.get("layers") or shot.get("picture_path") or (layers_root and layers_root.exists()):
+            perception = PP.perceive_picture(shot, script, layers=shot.get("layers"), layers_root=layers_root)
+
+    if perception is None:
+        return {
+            "motion": motion,
+            "reconciled_start_state": start_state,
+            "adapted_to_picture": False,
+            "regeneration_required": False,
+            "reconciliation_state": "NO_PERCEPTION_INPUT",
+            "conflict_records": [],
+        }
+
+    ep_root = Path(episode_dir) if (episode_dir is not None and persist_conflicts) else None
+    if ep_root is None and persist_conflicts and script.get("_episode_dir"):
+        ep_root = Path(str(script["_episode_dir"]))
+
+    if interpretation is None:
+        interpretation = PP.interpret_scene(shot, perception, script, episode_root=ep_root)
+
+    reconciled_state = start_state
+    reconciled_motion = motion
+    adapted = False
+
+    sky_info = ((perception.get("environment") or {}).get("sky_visible") or {})
+    enclosure_info = ((perception.get("environment") or {}).get("enclosure") or {})
+    if sky_info.get("value") is False or enclosure_info.get("value") == "interior_dugout":
+        for sky_term in ("open sky", "starlit sky", "drifting clouds overhead", "open field"):
+            if sky_term in reconciled_state.lower():
+                reconciled_state = _re.sub(_re.escape(sky_term), "enclosed timber dugout interior", reconciled_state, flags=_re.I)
+                adapted = True
+            if sky_term in reconciled_motion.lower():
+                reconciled_motion = _re.sub(_re.escape(sky_term), "enclosed timber dugout interior", reconciled_motion, flags=_re.I)
+                adapted = True
+
+    non_breaking = list(interpretation.get("non_breaking_adaptations") or [])
+    story_breaking = list(interpretation.get("story_breaking_conflicts") or [])
+    lights = list(perception.get("lights") or [])
+
+    if non_breaking:
+        adapted = True
+        if lights:
+            l0 = lights[0]
+            l_id = str(l0.get("id") or "practical_light").replace("_", " ")
+            l_c = l0.get("centroid") or [0.5, 0.5]
+            note = f"picture shows {l_id} at ({float(l_c[0]):.2f}, {float(l_c[1]):.2f})"
+            if note.lower() not in reconciled_state.lower():
+                reconciled_state = f"{reconciled_state.rstrip('.')} ({note}).".strip()
+        else:
+            missing_q = ", ".join(str(a.get("query") or "") for a in non_breaking if a.get("query"))
+            if missing_q:
+                reconciled_state = f"{reconciled_state.rstrip('.')} (adapted to picture: omit non-spoken {missing_q}).".strip()
+
+    return {
+        "motion": reconciled_motion,
+        "reconciled_start_state": reconciled_state,
+        "adapted_to_picture": adapted,
+        "regeneration_required": bool(interpretation.get("needs_regeneration") or story_breaking),
+        "reconciliation_state": str(interpretation.get("reconciliation_state") or "ALIGNED"),
+        "conflict_records": story_breaking + non_breaking,
+    }
+
+
+def compose_prompt(
+    script: dict,
+    shot: dict,
+    *,
+    episode_dir: Path | None = None,
+    persist_conflicts: bool = True,
+) -> dict:
+    """FA-02: ``{"prompt", "parts", "spoken", "voice_missing"}`` for one video shot (see the module text),
+    enriched in Step 7 to consume ``director_brief`` and reconcile ``action_start_state`` with perception."""
     from explainer_engine.episode import sound_plan as SPL
     from explainer_engine.videolane import plan as P
-    motion = str((shot.get("video_prompt") or {}).get("motion_prompt") or "").strip()
+    reconciled = _reconcile_start_state_with_perception(
+        script,
+        shot,
+        episode_dir=episode_dir,
+        persist_conflicts=persist_conflicts,
+    )
+    motion = str(reconciled["motion"] or (shot.get("video_prompt") or {}).get("motion_prompt") or "").strip()
     lines = {ln["line_id"]: ln for ln in script.get("audio_lines", [])}
     cast = _cast(script)
     parts = {"motion": motion}
+    if reconciled["adapted_to_picture"] and reconciled["reconciled_start_state"]:
+        parts["start_state"] = f"Start state from picture: {reconciled['reconciled_start_state'].rstrip('.')}."
+    brief_str = _brief_clause(shot)
+    if brief_str:
+        parts["brief"] = brief_str
     spoken, missing = [], []
     for lid in shot.get("audio_line_ids") or []:
         ln = lines.get(lid) or {}
@@ -125,9 +259,30 @@ def compose_prompt(script: dict, shot: dict) -> dict:
         parts["sound"] = "Sound: " + ", ".join(sounds) + "."
     if not spoken:
         parts["no_speech"] = NOBODY_SPEAKS
-    prompt = " ".join(p for p in (parts.get("motion"), parts.get("speech"), parts.get("sound"), parts.get("no_speech")) if p)
-    return {"prompt": prompt, "parts": parts, "spoken": bool(spoken), "voice_missing": missing,
-            "clip_spoken": shot.get("shot_id") in P.clip_spoken(script)}
+    prompt = " ".join(
+        p for p in (
+            parts.get("motion"),
+            parts.get("start_state"),
+            parts.get("brief"),
+            parts.get("speech"),
+            parts.get("sound"),
+            parts.get("no_speech"),
+        ) if p
+    )
+    out = {
+        "prompt": prompt,
+        "parts": parts,
+        "spoken": bool(spoken),
+        "voice_missing": missing,
+        "clip_spoken": shot.get("shot_id") in P.clip_spoken(script),
+    }
+    if reconciled["reconciled_start_state"] or reconciled["conflict_records"] or reconciled["regeneration_required"]:
+        out["reconciled_start_state"] = reconciled["reconciled_start_state"]
+        out["adapted_to_picture"] = reconciled["adapted_to_picture"]
+        out["regeneration_required"] = reconciled["regeneration_required"]
+        out["reconciliation_state"] = reconciled["reconciliation_state"]
+        out["conflict_records"] = reconciled["conflict_records"]
+    return out
 
 
 def _sha(p: Path) -> str:
@@ -175,7 +330,7 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
             unmeasured.append(f"{sid} ({secs['basis']})")
         if secs["over"]:
             raise ContractError(f"{sid}: its line needs {secs['needed_s']} s, the model makes {max_s} s (VL-06): split it")
-        comp = compose_prompt(script, s)
+        comp = compose_prompt(script, s, episode_dir=root)
         voice_missing += [f"{sid}: {who}" for who in comp["voice_missing"]]
         speakers |= {str((lines.get(lid) or {}).get("speaker_id")) for lid in char_ids}
         row = {"shot_id": sid, "seconds": secs["seconds"], "seconds_basis": secs["basis"], "seed": seed_base + k,

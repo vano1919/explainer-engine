@@ -231,6 +231,14 @@ def _mask_bbox(m: np.ndarray, thr: float = 0.5) -> list[float] | None:
     h, w = m.shape[:2]
     return [round(float(xs.min() / w), 4), round(float(ys.min() / h), 4),
             round(float((xs.max() + 1) / w), 4), round(float((ys.max() + 1) / h), 4)]
+
+
+def _mask_centroid(m: np.ndarray, thr: float = 0.5) -> list[float] | None:
+    ys, xs = np.nonzero(m > thr)
+    if not len(xs):
+        return None
+    h, w = m.shape[:2]
+    return [round(float(xs.mean() / w), 4), round(float(ys.mean() / h), 4)]
 def _box_contains(outer: list[float], inner: list[float], slack: float = 0.02) -> bool:
     return (outer[0] - slack <= inner[0] and inner[2] <= outer[2] + slack
             and outer[1] - slack <= inner[1] and inner[3] <= outer[3] + slack)
@@ -685,11 +693,14 @@ def understand(picture: Path, seen: dict, depth_model: str = "da_v2_small", out_
                 masks[o["id"]] = m
                 _save_u8(out / "masks" / f"{o['id']}.png", m)
                 area = float((m > 0.5).mean())
+                mb = _mask_bbox(m)
+                mc = _mask_centroid(m)
                 obj_rows.append(dict(old_rows.get(o["id"], {"id": o["id"], "file": f"masks/{o['id']}.png", "sam_score": None,
                                                              "fine_edges": bool(o.get("fine_edges"))}),
                                      area_share=round(area, 4),
                                      depth_median=round(float(np.median(d["depth"][m > 0.5])) if area > 0 else 0.0, 4),
-                                     reused=True, layer=bool(o.get("layer", True))))
+                                     reused=True, layer=bool(o.get("layer", True)),
+                                     **({"box": mb} if mb else {}), **({"where": mc} if mc else {})))
                 continue
             g = sam_of[o["id"]]
             m = g["mask"]
@@ -701,10 +712,13 @@ def understand(picture: Path, seen: dict, depth_model: str = "da_v2_small", out_
             _save_u8(out / "masks" / f"{o['id']}.png", m)
             _write_key(out / "masks" / f"{o['id']}.key", keys[o["id"]])
             area = float((m > 0.5).mean())
+            mb = _mask_bbox(m)
+            mc = _mask_centroid(m)
             obj_rows.append({"id": o["id"], "file": f"masks/{o['id']}.png", "sam_score": round(g["score"], 3),
                              "layer": bool(o.get("layer", True)),
                              "fine_edges": bool(o.get("fine_edges")), "area_share": round(area, 4),
-                             "depth_median": round(float(np.median(d["depth"][m > 0.5])) if area > 0 else 0.0, 4)})
+                             "depth_median": round(float(np.median(d["depth"][m > 0.5])) if area > 0 else 0.0, 4),
+                             **({"box": mb} if mb else {}), **({"where": mc} if mc else {})})
         times["birefnet_s"] = round(time.time() - t0, 2)
     light_rows = []
     for li in seen.get("lights", []):
@@ -746,10 +760,22 @@ def load(layers: Path) -> dict:
     man = json.loads((layers / "manifest.json").read_text())
     if man.get("schema") != SCHEMA:
         raise ValueError(f"{layers}: not a {SCHEMA} folder")
+    masks_loaded = {o["id"]: load_u8(layers / o["file"]) for o in man["masks"]["objects"]}
+    for o in man["masks"]["objects"]:
+        m_arr = masks_loaded.get(o["id"])
+        if m_arr is not None:
+            if not o.get("box"):
+                mb = _mask_bbox(m_arr)
+                if mb:
+                    o["box"] = mb
+            if not o.get("where") or list(o.get("where")) == [0.5, 0.5]:
+                mc = _mask_centroid(m_arr)
+                if mc:
+                    o["where"] = mc
     out = {"manifest": man, "depth": load_u16(layers / "depth.png"),
            "plate": cv2.imread(str(layers / "plate.png"))[..., ::-1].copy(),
            "hole": load_u8(layers / "hole.png") if man["plate"].get("hole") else None,
-           "masks": {o["id"]: load_u8(layers / o["file"]) for o in man["masks"]["objects"]},
+           "masks": masks_loaded,
            "lights": {li["id"]: load_u8(layers / li["file"]) for li in man["lights"] if li.get("file")}}
     if man.get("normals"):
         n = cv2.imread(str(layers / man["normals"]))[..., ::-1].astype(np.float32) / 255.0 * 2 - 1

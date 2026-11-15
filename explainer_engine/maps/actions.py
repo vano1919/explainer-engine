@@ -505,9 +505,19 @@ def plan(
         path, found = _path_ll(a, places, sid) if kind in PATH_KINDS else (None, [])
         findings += found
         stands = _stands(a)
+        s_f = int(ev["start_frame"])
+        e_f = int(ev["end_frame"])
+        peak_f = s_f + max(1, int(round((e_f - s_f) * 0.6))) if e_f > s_f else s_f
+        kf_frames = ev.get("keyframe_frames") or {"onset_frame": s_f, "peak_frame": peak_f, "end_frame": e_f}
+        kf_seconds = ev.get("keyframe_seconds") or {
+            "onset_s": round(s_f / float(fps), 4),
+            "peak_s": round(peak_f / float(fps), 4),
+            "end_s": round(e_f / float(fps), 4),
+        }
         out.append({"kind": kind, "event_id": ev["event_id"], "audio": ev["audio"],
                     "start": 0 if stands else ev["start_frame"], "word_start": ev["start_frame"],
                     "end": ev["end_frame"], "timing": ev["timing"], "word": a.get("at_word"), "until_word": a.get("until_word"),
+                    "keyframe_frames": kf_frames, "keyframe_seconds": kf_seconds,
                     "from": _place(places, a.get("from"), sid, kind), "to": _place(places, a.get("to"), sid, kind),
                     "from_id": a.get("from"), "to_id": a.get("to"), "path": path, "route": a.get("route"),
                     "state": a.get("state"), "claim": a.get("claim"), "values": a.get("values"), "labels": a.get("labels"),
@@ -535,8 +545,19 @@ def plan(
         or script.get("historical_period")
         or (1914 if "1914" in str(script.get("episode_id") or shot.get("episode_id") or "") else None)
     )
+    keyframe_timeline = [
+        {
+            "event_id": a["event_id"],
+            "kind": a["kind"],
+            "word": a.get("word"),
+            "until_word": a.get("until_word"),
+            **a["keyframe_frames"],
+            **a["keyframe_seconds"],
+        }
+        for a in out
+    ]
     return {"shot_id": sid, "frames": frames, "fps": fps, "basis": basis, "spine_basis": basis, "card": card,
-            "actions": out, "carry_over": carry_over, "auto_labels": auto_labels,
+            "actions": out, "keyframe_timeline": keyframe_timeline, "carry_over": carry_over, "auto_labels": auto_labels,
             "dense": dense, "drift": DRIFT, "path_findings": findings,
             "view0": view0, "own_view": own_view,
             "prev_end_view": dict(view0) if (prev_end_view is not None and not card) else None,

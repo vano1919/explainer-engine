@@ -10,6 +10,10 @@
     },
     "schema": {
       "type": "string"
+    },
+    "rhythm_profile": {
+      "type": "string",
+      "description": "Named rhythm profile from BP-169 (e.g. solemn_historical_docudrama, mrbeast_animated, calm_docudrama)."
     }
   },
   "if": {
@@ -1887,6 +1891,106 @@
             "string"
           ],
           "description": "Audit #3: machine-readable record when an accepted clip action differs from the frozen script text."
+        },
+        "director_brief": {
+          "type": "object",
+          "required": [
+            "narrative_purpose",
+            "viewer_takeaway",
+            "focal_anchor",
+            "word_turn_beat",
+            "restraint_note",
+            "continuity_in",
+            "continuity_out"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "narrative_purpose": {
+              "type": "string",
+              "minLength": 5
+            },
+            "viewer_takeaway": {
+              "type": "string",
+              "minLength": 5
+            },
+            "focal_anchor": {
+              "type": "object",
+              "required": [
+                "id",
+                "box_hint",
+                "keep_in_frame"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "box_hint": {
+                  "type": "array",
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "keep_in_frame": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "secondary_anchors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "word_turn_beat": {
+              "type": "object",
+              "required": [
+                "word",
+                "occurrence",
+                "intent"
+              ],
+              "properties": {
+                "word": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "occurrence": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "intent": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              }
+            },
+            "restraint_note": {
+              "type": "string",
+              "minLength": 3
+            },
+            "continuity_in": {
+              "type": "string",
+              "minLength": 2
+            },
+            "continuity_out": {
+              "type": "string",
+              "minLength": 2
+            }
+          }
+        },
+        "authored_intent_archive": {
+          "type": "object",
+          "description": "Preserved original authored staging when screen_composition or prompts are aligned to the approved painting."
+        },
+        "split_plan": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "description": "Clause-boundary sub-shot split plan (<= 5.0 s per part, BP-109) for long still_25d shots."
         }
       },
       "allOf": [
@@ -2299,13 +2403,30 @@
                   "voice_card": {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["age", "timbre", "pace", "accent"],
+                    "required": [
+                      "age",
+                      "timbre",
+                      "pace",
+                      "accent"
+                    ],
                     "description": "Q5 (the creator 2026-11-13, D-138; voice-caster): the four facets of the ONE fixed voice text, each found word for word in voice_description; the composer puts that text verbatim into every LTX prompt of the character",
                     "properties": {
-                      "age": {"type": "string", "minLength": 2},
-                      "timbre": {"type": "string", "minLength": 2},
-                      "pace": {"type": "string", "minLength": 2},
-                      "accent": {"type": "string", "minLength": 2}
+                      "age": {
+                        "type": "string",
+                        "minLength": 2
+                      },
+                      "timbre": {
+                        "type": "string",
+                        "minLength": 2
+                      },
+                      "pace": {
+                        "type": "string",
+                        "minLength": 2
+                      },
+                      "accent": {
+                        "type": "string",
+                        "minLength": 2
+                      }
                     }
                   }
                 }
@@ -2778,6 +2899,10 @@
         "av_contract": {
           "const": "av_events/1",
           "description": "AV-02 (D-135): a locked script whose every action and motion item carries event_id and audio"
+        },
+        "rhythm_profile": {
+          "type": "string",
+          "description": "Named rhythm profile from BP-169 (e.g. solemn_historical_docudrama, mrbeast_animated, calm_docudrama)."
         }
       }
     },

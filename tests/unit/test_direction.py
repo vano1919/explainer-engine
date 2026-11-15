@@ -152,11 +152,13 @@ def test_bp185_two_families_whatever_the_intent():
     d["intent"] = "still_by_design"
     d["tracks"] = [t for t in d["tracks"] if t.get("op") not in ("push", "smoke", "mist", "cloud_drift")]
     d["seen"]["living"] = d["seen"]["living"][:1]
-    f = _whats(D.check(d), "FAIL")
-    assert "BP-185 needs" in f and "whatever the intent" in f
+    r = _whats(D.check(d), "REVIEW")
+    assert "BP-185" in r and "stillness_reason" in r
     d["tracks"].append({"track": "lighting", "op": "candle", "renderer": "directed25d", "params": {}, "id": "c"})
     d["tracks"].append({"track": "lighting", "op": "sun_shaft", "renderer": "directed25d", "params": {}, "id": "s"})
-    assert "BP-185" in _whats(D.check(d), "FAIL")       # three light effects are still one family
+    assert "BP-185" in _whats(D.check(d), "REVIEW")     # three light effects are still one family (REVIEW per Decision 2)
+    d["stillness_reason"] = "deliberately still intimate relic shot"
+    assert "BP-185" not in _whats(D.check(d))
 
 
 def test_the_camera_follows_the_words():
@@ -198,8 +200,8 @@ def test_the_balance_needs_scores_and_a_floor_of_moving_air():
     d = copy.deepcopy(BASE)                                  # without the mist and the sky only smoke moves beyond the flame
     d["seen"]["living"] = d["seen"]["living"][:2]
     d["tracks"] = [t for t in d["tracks"] if t.get("id") not in ("fx_mist", "fx_sky")]
-    f = _whats(D.check(d, frames=263), "FAIL")
-    assert "only 1 living effects" in f and "no full-frame layer of moving air" in f
+    r = _whats(D.check(d, frames=263), "REVIEW")
+    assert "only 1 living effects" in r and "no full-frame layer of moving air" in r
 
 
 def test_lp_tiers_routes_and_weather():

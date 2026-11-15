@@ -12,7 +12,9 @@ def test_default_profile_is_mrbeast_animated_and_legacy_scripts_resolve_to_calm(
     assert RP.resolve_profile_name({"schema": "production_script/3"}) == "calm_docudrama"
     assert RP.resolve_profile_name({"schema": "production_script/4"}) == "mrbeast_animated"
     assert RP.resolve_profile_name({"schema": "production_script/3", "rhythm_profile": "mrbeast_animated"}) == "mrbeast_animated"
-    assert set(RP.available_profiles()) == {"mrbeast_animated", "calm_docudrama"}
+    assert set(RP.available_profiles()) == {"mrbeast_animated", "solemn_historical_docudrama", "calm_docudrama"}
+    assert RP.resolve_profile_name({"rhythm_profile": "solemn_historical_docudrama"}) == "solemn_historical_docudrama"
+    assert RP.resolve_profile_name({"episode_id": "ep_truce_1914", "historical_dossier_ref": "x"}) == "solemn_historical_docudrama"
 
 
 def test_zone_lookup_covers_all_five_zones_and_scales_to_custom_duration():

@@ -121,3 +121,6 @@ Machine-readable sources of truth: `explainer_engine/design/palette.json` (colou
 - `rules_registry/11_VOICE_ACTING_AND_LIPSYNC_SPINE.md` — Character voice contrast, 24fps word timing spine, selective lip-sync.
 - `rules_registry/12_FINAL_ASSEMBLY_AND_PACKAGING.md` — 3-minute chunked review assembly, color grade LUT, YouTube CTR packaging.
 
+- [SCREENWRITER_GUIDE](SCREENWRITER_GUIDE.md) — Screenwriter guide: open-text `director_brief`, authored intent vs. approved staging, and sequential emotional continuity.
+- [DIRECTOR_GUIDE](DIRECTOR_GUIDE.md) — Scene Director guide: five-stage perception-to-feedback chain, zero effect quotas, and stillness vs. broken output.
+- [MOTION_ISOLATION](MOTION_ISOLATION.md) — Relationship-specific mover/holder motion isolation and multi-component optical-flow leak gate.

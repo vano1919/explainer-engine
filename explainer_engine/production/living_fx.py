@@ -246,16 +246,24 @@ def _sparkle(st, rgb, depth, e, t, v, mx, my, layers, op):
     k = H / 1080.0
     s = float(e.get("strength", 1.0))
     prm = e.get("params", {})
+    from explainer_engine.production import motion_isolation as MI
     if e.get("mask") and e["mask"] in st.masks_src:
-        region = st.masks_src[e["mask"]]
+        region = st.masks_src[e["mask"]].copy()
     elif e.get("box"):
         x0, y0, x1, y1 = e["box"]
         region = np.zeros((st.sh, st.sw), np.float32)
         region[int(y0 * st.sh):int(y1 * st.sh), int(x0 * st.sw):int(x1 * st.sw)] = 1
     elif op == "stars":
-        region = st.sky
+        region = st.sky.copy()
     else:
         region = np.ones((st.sh, st.sw), np.float32)
+    # MI-05 (Task 2 R2 Step 3): clip stars strictly to sky_mask * (1 - fg_union) even when a box is given (S02_SH008),
+    # and clip glint strictly to ground snow outside foreground objects/crosses (S05_SH020).
+    solemn_flag = bool(st.p.get("solemn_restraint") or prm.get("solemn_restraint"))
+    region = MI.isolate_sparkle_region(
+        region, op=op, sky_mask=getattr(st, "sky", None), masks_src=getattr(st, "masks_src", None),
+        depth=getattr(st, "depth", None), solemn=solemn_flag,
+    )
     n = int(prm.get("count", 60 if op == "stars" else 90) * max(0.3, s))
     if op == "stars":
         pick = lambda lum, sat: np.clip(lum - 90, 0, None) * (sat < 60)          # noqa: E731
@@ -355,8 +363,9 @@ def _surface(st, rgb, e, t, v, mx, my, layers, op):
                                          + 0.35 * np.sin(2 * math.pi * 1.1 * t + xx / (45 * k) + 1.3))
         dy = 0.25 * np.abs(dx) * tip
     elif op == "cloth_flap":
+        from explainer_engine.production import motion_isolation as MI
         fixed_left = e.get("params", {}).get("fixed", "left") == "left"
-        along = np.clip((xx - x0) / max(1, x1 - x0), 0, 1) if fixed_left else np.clip((x1 - xx) / max(1, x1 - x0), 0, 1)
+        along = MI.attachment_ramp(xx, x0, x1, fixed_left=fixed_left, pinned_frac=0.20)
         phase = 2 * math.pi * (along * 2.2 - 1.6 * t)
         dy = 6.0 * k * s * gust * along * np.sin(phase)
         dx = 2.0 * k * s * gust * along * np.cos(phase + 0.7)

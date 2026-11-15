@@ -195,7 +195,12 @@ def render_action_map_clip(
     cdir = Path(cache_dir) if cache_dir is not None else out.parent
     cdir.mkdir(parents=True, exist_ok=True)
 
-    look = dict(episode.get("map_look") or {})
+    from explainer_engine.maps import plate
+    scene_obj = next(
+        (sc for sc in (script.get("scenes") or []) if isinstance(sc, dict) and sc.get("scene_id") == shot.get("scene_id")),
+        shot.get("scene") if isinstance(shot.get("scene"), dict) else None,
+    )
+    look = plate.resolve_scene_map_look(episode.get("map_look"), scene=scene_obj, shot=shot)
     period = episode.get("historical_period") or episode.get("period") or script.get("historical_period")
     if period is not None:
         look.setdefault("period", period)
@@ -268,9 +273,11 @@ def render_action_map_clip(
                   [x["detail"] for x in p["path_findings"]][:5], level=G.REVIEW)]
     return {"status": "generated", "provider": "python_action_map", "cost_usd": 0.0, "shot_id": p["shot_id"],
             "gates": G.verdict(rows), "relief_upsample_max": upsample,
+            "scene_grade_profile": look.get("scene_grade_profile"),
+            "keyframe_timeline": p.get("keyframe_timeline", []),
             "card": p["card"], "word_basis": p["basis"], "spine_basis": p["spine_basis"],
             "end_view": end_view, "end_view_path": str(end_view_path) if end_view_path else None,
-            "actions": [{k: a[k] for k in ("kind", "word", "start", "end", "event_id")} | {"decision": a["audio"]["decision"]}
+            "actions": [{k: a[k] for k in ("kind", "word", "start", "end", "event_id")} | {"decision": a["audio"]["decision"], "keyframe_frames": a.get("keyframe_frames"), "keyframe_seconds": a.get("keyframe_seconds")}
                         for a in p["actions"]],
             "longest_still_frames": longest, "dense": p["dense"],
             "total_frames": p["frames"], "fps": fps, "resolution": [width, height], "path": str(out),
