@@ -299,9 +299,10 @@ def arrow_head(c: Canvas, tip, back, size: float, fill, ink=None) -> None:
     dx, dy = tip[0] - back[0], tip[1] - back[1]
     n = math.hypot(dx, dy) or 1.0
     ux, uy = dx / n, dy / n
-    left = (tip[0] - ux * size - uy * size * 0.55, tip[1] - uy * size + ux * size * 0.55)
-    right = (tip[0] - ux * size + uy * size * 0.55, tip[1] - uy * size - ux * size * 0.55)
-    c.polygon([tip, left, right], fill=fill, outline=ink, width=max(1.0, size * 0.12) if ink else 0)
+    left = (tip[0] - ux * size - uy * size * 0.58, tip[1] - uy * size + ux * size * 0.58)
+    notch = (tip[0] - ux * size * 0.72, tip[1] - uy * size * 0.72)
+    right = (tip[0] - ux * size + uy * size * 0.58, tip[1] - uy * size - ux * size * 0.58)
+    c.polygon([tip, left, notch, right], fill=fill, outline=ink, width=max(1.0, size * 0.12) if ink else 0)
 
 
 def polyline_prefix(pts: list[tuple[float, float]], share: float) -> list[tuple[float, float]]:

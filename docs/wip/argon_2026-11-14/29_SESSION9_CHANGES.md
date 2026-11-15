@@ -1,0 +1,23 @@
+# Session 9 Map Visual Parity & Regression Fixes (V1–V7)
+
+- **V1 (HUD Date Card Safe Margin)**:
+  - Raised `safe_frame_bounds` margins in `explainer_engine/maps/actions.py` (backed by `explainer_engine/maps/data/__init__.py`) from `2.81%` horizontal / `3.70%` top to `>= 4.0%` on every edge (`4.5%` X, `5.0%` top, `6.11%` bottom).
+  - Added `_hud_chip_box` placing `from: "chip_*"` HUD date cards (`August 1914`, `December 1914`) at `(4.8% W, 6.8% H)` with outer border stroke clamped inside `safe_frame_bounds` and styled with an archival left accent bar.
+- **V2 (Automatic Place Label Pills & Macro Theater Reference Cities)**:
+  - Added `_build_auto_labels` in `explainer_engine/maps/actions.py` to automatically extract narration-named places (including aliases in `MD.NARRATION_PLACE_ALIASES`), action `from`/`to`/`via` places from `episode.json["places"]`, and theater reference cities (`Paris`, `Brussels`, `Aachen`, `Ypres`, `Liège`, `Verdun` from `MD.THEATER_REFERENCE_CITIES`) at macro spans (`>= 220 km`), deduplicated once per place per shot and capped at `6` labels per frame by priority.
+  - Added `_draw_geo_label_pill` to render rounded archival label pills with location pin dots and leader lines via `place_label_8pos`.
+- **V3 (Deterministic Multi-Octave Micro-Relief Above 3x Upsample & Two-Tier Zoom Plate)**:
+  - Added `relief_upsample`, `_world_octave`, and `micro_relief_detail` in `explainer_engine/maps/plate.py` to apply world-locked multi-octave Sobel hillshade from the upsampled relief + topographic octaves + parchment grain strictly inside `land_mask` whenever `relief_upsample(view) > 3.0`, never altering sea pixels or inventing coastlines/rivers.
+  - Updated `Plate.__init__` and `Plate.frame` in `explainer_engine/maps/actions.py` to build a secondary native-scale `fine_image` plate when a shot's zoom ratio exceeds `2.2x` (`S02_SH003`, `1000 -> 60 km`), eliminating `MAX_W = 8192` crop blur and border magnification at close spans.
+- **V4 (Dual Entente/German Front Line & Swept Chevron Route Arrow with Shadow)**:
+  - Added `_draw_dual_front_line` in `explainer_engine/maps/actions.py` to draw `front_line` actions with an Entente blue west flank (`faction_a`), German red east flank (`faction_b`), dark `ink` core, soft shadow underlay, and perpendicular traverse ticks.
+  - Updated `arrow_head` in `explainer_engine/maps/draw.py` to a 4-point swept chevron polygon and updated `_draw_path` in `explainer_engine/maps/actions.py` with a soft drop shadow and stable lookback tangent (`_arrow_lookback`).
+- **V5 (22% Ghost Carry-Over Across Same-Theater Map Shots)**:
+  - Added `_build_carry_over` in `explainer_engine/maps/actions.py` and updated `draw()` to carry over path actions (`route_arrow`, `front_line`, `supply_line`) from the preceding same-theater map shot at `22%` opacity (`MD.CARRY_OVER_GHOST_ALPHA = 0.22`) from frame `0`.
+  - Updated `_resolve_prev_end_view` in `explainer_engine/production/map_clip.py` to automatically chain `<prev_shot_id>_end_view.json` when consecutive map shots share a location.
+- **V6 (Kilometre-Sized Clamped Highlights/Pulses & Thin 1914 Border Dashes)**:
+  - Added `_sector_diameter_px` in `explainer_engine/maps/actions.py` clamping `highlight` and `pulse` sector diameters (`km / km_per_px`) to `6–14%` of frame height (`r` in `3–7%` of height) and bounding total highlight area to `<= 3%` of the frame.
+  - Clamped 1914 border dash width in `explainer_engine/maps/plate.py` to `<= 2.0 px` at `1080p` (`dash = (5.0, 3.5)`).
+- **V7 (8-Position Colocated Label Solver Fix)**:
+  - Fixed `place_label_8pos` and `_precollect_obstacles` in `explainer_engine/maps/actions.py`: separated second-tier leader vertical offsets (`dy_up2 = -pad - 2.0 * th - 2.5 * pad_y`, `dy_dn2 = +pad + th + 2.5 * pad_y`) so they clear first-tier boxes, sampled path obstacles at uniform arc-length steps with soft weight (`0.05`) instead of stacking duplicate hard boxes at every spline vertex, and weighted hard label/HUD overlaps (`1e6`) above soft path overlaps (`200`).
+  - Updated `explainer_engine/maps/data/build_1914.py` `--check` mode to compare decompressed canonical JSON when OS gzip header bytes differ across Windows and Linux.

@@ -35,6 +35,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 from explainer_engine.core.errors import ContractError
+from explainer_engine.maps import data as MD
 from explainer_engine.maps import draw as D
 from explainer_engine.maps import geo, plate
 
@@ -53,12 +54,17 @@ ANIM_FRAMES = 18          # an action takes this long to arrive (0.75 s at 24 fp
 LEAD_IN = 0.06            # estimated word times: the line starts this share into the shot ...
 LEAD_OUT = 0.12           # ... and ends this share before its end
 MIN_SPAN_KM = 300.0
-RENDERER_VERSION = "map_action/2.2"       # M1-M9 (2026-11-15): camera inheritance, log-zoom pan coupling, 8-pos labels, 1914 borders
+RENDERER_VERSION = "map_action/2.3"       # M1-M9 (2026-11-15): camera inheritance, log-zoom pan coupling, 8-pos labels, 1914 borders
 WORD = re.compile(r"[A-Za-z0-9']+")
 
 
 def _words(text: str) -> list[str]:
     return [w.lower() for w in WORD.findall(text or "")]
+
+
+def _shot_text(shot: dict, script: dict) -> str:
+    lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
+    return " ".join(str(lines.get(lid, {}).get("text") or "") for lid in shot.get("audio_line_ids", [])).strip()
 
 
 def shot_words(shot: dict, script: dict) -> list[str]:
@@ -123,6 +129,308 @@ def _stands(a: dict) -> bool:
     return bool(a.get("stands") or a.get("cues") == "none")
 
 
+def _is_map_shot_dict(s: dict) -> bool:
+    return bool(
+        s.get("route") == "map_action"
+        or s.get("visual_type") == "map_visualization"
+        or s.get("generation_mode") in ("TACTILE_MAP", "MAP_25D")
+    )
+
+
+def _same_theater(shot_a: dict, shot_b: dict, places: dict) -> bool:
+    loc_a = shot_a.get("location_id") or shot_a.get("place")
+    loc_b = shot_b.get("location_id") or shot_b.get("place")
+    if loc_a is not None or loc_b is not None:
+        return loc_a == loc_b
+    mv_a, mv_b = shot_a.get("map_view"), shot_b.get("map_view")
+    if isinstance(mv_a, dict) and isinstance(mv_b, dict) and "lon" in mv_a and "lon" in mv_b:
+        return geo.distance_km(float(mv_a["lon"]), float(mv_a["lat"]), float(mv_b["lon"]), float(mv_b["lat"])) < 1500.0
+    return True
+
+
+def _build_carry_over(shot: dict, script: dict, places: dict, own_acts: list[dict], frames: int, sid: str) -> list[dict]:
+    """Carry over path actions from the previous same-theater map shot as a 22 % ghost from frame 0 (V5)."""
+    prev_acts: list[dict] = []
+    if isinstance(shot.get("carry_over_actions"), list):
+        prev_acts = list(shot["carry_over_actions"])
+    elif isinstance(shot.get("prev_shot"), dict) and _same_theater(shot["prev_shot"], shot, places):
+        prev_acts = list(shot["prev_shot"].get("actions") or [])
+    else:
+        shots = script.get("shots") or []
+        for idx, s in enumerate(shots):
+            if s.get("shot_id") == sid and idx > 0:
+                prev_s = shots[idx - 1]
+                if _is_map_shot_dict(prev_s) and _same_theater(prev_s, shot, places):
+                    prev_acts = list(prev_s.get("actions") or [])
+                break
+    if not prev_acts:
+        return []
+    own_keys = {(a.get("kind"), a.get("from_id"), a.get("to_id")) for a in own_acts}
+    out: list[dict] = []
+    for pa in prev_acts:
+        k = pa.get("kind")
+        if k not in ("route_arrow", "front_line", "supply_line"):
+            continue
+        f_id, t_id = pa.get("from"), pa.get("to")
+        if not f_id or not t_id or f_id not in places or t_id not in places:
+            continue
+        if (k, f_id, t_id) in own_keys:
+            continue
+        path, _ = _path_ll(pa, places, sid)
+        if not path:
+            continue
+        out.append({
+            "kind": k,
+            "event_id": f"ghost:{pa.get('event_id') or k}",
+            "start": 0,
+            "end": frames,
+            "from": _place(places, f_id, sid, k),
+            "to": _place(places, t_id, sid, k),
+            "from_id": f_id,
+            "to_id": t_id,
+            "path": path,
+            "route": None,
+            "stands": True,
+            "cues": "none",
+            "ghost": True,
+            "alpha": MD.CARRY_OVER_GHOST_ALPHA,
+        })
+    return out
+
+
+def _find_word_frame(phrase: str, words: list[str], starts: list[int]) -> int | None:
+    tokens = _words(phrase)
+    if not tokens or not words or len(starts) != len(words):
+        return None
+    t0 = tokens[0]
+    for i, w in enumerate(words):
+        if w == t0:
+            if len(tokens) == 1 or words[i:i + len(tokens)] == tokens:
+                return int(starts[i])
+    return None
+
+
+def _build_auto_labels(
+    shot: dict,
+    script: dict,
+    places: dict,
+    acts: list[dict],
+    raw_acts: list[dict],
+    words: list[str],
+    starts: list[int],
+    own_view: dict | None,
+) -> list[dict]:
+    """Automatic place label pills from narration/action places plus macro theater reference cities (V2)."""
+    if not places or own_view is None:
+        return []
+    explicit_pids = {a.get("from_id") for a in acts if a["kind"] == "label" and not _is_chip(a.get("from_id"))}
+    explicit_names = {
+        str(a.get("label") or a.get("name") or "").strip().lower()
+        for a in acts
+        if a["kind"] == "label" and not _is_chip(a.get("from_id"))
+    }
+    by_pid: dict[str, dict] = {}
+    order_counter = 0
+
+    def upsert(
+        pid: str,
+        lon: float,
+        lat: float,
+        text: str,
+        start: int,
+        stands: bool,
+        priority: int,
+        prefer: str = "NE",
+        macro_only: bool = False,
+        close_only: bool = False,
+    ) -> None:
+        nonlocal order_counter
+        norm = text.strip().lower()
+        if pid in explicit_pids or norm in explicit_names:
+            return
+        pref_dir = MD.PLACE_LABEL_PREFER.get(pid, prefer)
+        if pid in by_pid:
+            cur = by_pid[pid]
+            if priority < cur["priority"]:
+                cur["priority"] = priority
+            if stands:
+                cur["stands"] = True
+                cur["start"] = 0
+            else:
+                cur["start"] = min(cur["start"], int(start))
+            if not macro_only:
+                cur["macro_only"] = False
+            if not close_only:
+                cur["close_only"] = False
+            return
+        by_pid[pid] = {
+            "id": pid,
+            "lon": float(lon),
+            "lat": float(lat),
+            "text": text,
+            "start": 0 if stands else int(start),
+            "stands": bool(stands),
+            "priority": int(priority),
+            "prefer": pref_dir,
+            "macro_only": bool(macro_only),
+            "close_only": bool(close_only),
+            "order": order_counter,
+        }
+        order_counter += 1
+
+    # 1. Narration-named places (including aliases like "North Sea" -> nieuport, "Switzerland" -> swiss_border)
+    raw_text_low = _shot_text(shot, script).lower()
+    zoom_only_pids = {
+        raw_a.get(k)
+        for raw_a in raw_acts
+        if raw_a.get("kind") == "zoom"
+        for k in ("from", "to")
+        if raw_a.get(k)
+    }
+    for alias, target_pid in MD.NARRATION_PLACE_ALIASES.items():
+        if alias in raw_text_low and target_pid in places and not _is_chip(target_pid):
+            pinfo = places[target_pid]
+            wf = _find_word_frame(alias, words, starts)
+            upsert(
+                target_pid,
+                float(pinfo["lon"]),
+                float(pinfo["lat"]),
+                str(pinfo.get("name") or target_pid),
+                wf if wf is not None else 0,
+                wf is None,
+                priority=1,
+                prefer="E",
+            )
+    for pid, pinfo in places.items():
+        if _is_chip(pid) or not isinstance(pinfo, dict) or "lon" not in pinfo or "lat" not in pinfo:
+            continue
+        pname = str(pinfo.get("name") or pid)
+        candidates = {pid.replace("_", " ").lower(), pname.lower(), re.sub(r"^the\s+", "", pname.lower())}
+        for cand in candidates:
+            if cand and re.search(rf"\b{re.escape(cand)}\b", raw_text_low):
+                wf = _find_word_frame(cand, words, starts)
+                # A regional zoom target (e.g. "Flanders") yields to specific sector towns when 6 towns are in frame
+                is_region_zoom = pid in zoom_only_pids or pid == "flanders"
+                upsert(
+                    pid,
+                    float(pinfo["lon"]),
+                    float(pinfo["lat"]),
+                    pname,
+                    0 if is_region_zoom else (wf if wf is not None else 0),
+                    is_region_zoom or (wf is None),
+                    priority=5 if is_region_zoom else 1,
+                    prefer="NW" if is_region_zoom else "NE",
+                )
+                break
+
+    # 2. Places named in shot actions (from, to, and via waypoints)
+    standing_line_pids: set[str] = set()
+    for a, raw_a in zip(acts, raw_acts):
+        if a["kind"] in PATH_KINDS and _stands(a):
+            for k in ("from", "to"):
+                if raw_a.get(k):
+                    standing_line_pids.add(raw_a[k])
+            for v_pid in raw_a.get("via") or []:
+                standing_line_pids.add(v_pid)
+
+    prefer_cycle = ("E", "W", "NE", "NW", "SE", "SW")
+    for idx, (a, raw_a) in enumerate(zip(acts, raw_acts)):
+        k = a["kind"]
+        if k == "label":
+            continue
+        st = _stands(a)
+        for role_idx, role in enumerate(("from", "to")):
+            pid = raw_a.get(role)
+            if not pid or _is_chip(pid) or pid not in places:
+                continue
+            pinfo = places[pid]
+            is_standing = st or (pid in standing_line_pids) or k == "zoom"
+            prio = 5 if k == "zoom" else (1 if k in ("pulse", "highlight", "spread") else 2)
+            pref = raw_a.get("prefer") or prefer_cycle[(idx + role_idx) % len(prefer_cycle)]
+            upsert(
+                pid,
+                float(pinfo["lon"]),
+                float(pinfo["lat"]),
+                str(pinfo.get("name") or pid),
+                0 if is_standing else a["start"],
+                is_standing,
+                priority=prio,
+                prefer=pref,
+            )
+        for v_idx, v_pid in enumerate(raw_a.get("via") or []):
+            if not v_pid or _is_chip(v_pid) or v_pid not in places:
+                continue
+            pinfo = places[v_pid]
+            is_standing = st or (v_pid in standing_line_pids)
+            prio = 3 if k == "route_arrow" else 4
+            pref = prefer_cycle[(idx + v_idx + 2) % len(prefer_cycle)]
+            upsert(
+                v_pid,
+                float(pinfo["lon"]),
+                float(pinfo["lat"]),
+                str(pinfo.get("name") or v_pid),
+                0 if is_standing else a["start"],
+                is_standing,
+                priority=prio,
+                prefer=pref,
+            )
+
+    # 3. Theater key reference cities at macro spans (Paris / Brussels / Aachen / Ypres / Liege / Verdun)
+    vlon, vlat = float(own_view["lon"]), float(own_view["lat"])
+    for _th_name, th_cfg in MD.THEATER_REFERENCE_CITIES.items():
+        b0, b1, b2, b3 = th_cfg["bbox"]
+        if not (b0 <= vlon <= b2 and b1 <= vlat <= b3):
+            continue
+        has_theater_place = any(
+            isinstance(pv, dict)
+            and "lon" in pv
+            and "lat" in pv
+            and b0 <= float(pv["lon"]) <= b2
+            and b1 <= float(pv["lat"]) <= b3
+            for pk, pv in places.items()
+            if not _is_chip(pk)
+        )
+        if not has_theater_place:
+            continue
+        for city in th_cfg["cities"]:
+            cid = city["id"]
+            if cid in places and isinstance(places[cid], dict):
+                clon = float(places[cid]["lon"])
+                clat = float(places[cid]["lat"])
+                cname = str(places[cid].get("name") or city["name"])
+            else:
+                clon, clat, cname = float(city["lon"]), float(city["lat"]), str(city["name"])
+            upsert(
+                cid,
+                clon,
+                clat,
+                cname,
+                start=0,
+                stands=True,
+                priority=3,
+                prefer=city.get("prefer", "NE"),
+                macro_only=cid not in by_pid,
+            )
+        # Also make close-sector places from episode.json available when zoomed in (< 180 km, e.g. S02_SH003 end)
+        for idx_p, (pid, pinfo) in enumerate(places.items()):
+            if _is_chip(pid) or pid == "flanders" or pid in by_pid or not isinstance(pinfo, dict):
+                continue
+            if "lon" in pinfo and "lat" in pinfo:
+                upsert(
+                    pid,
+                    float(pinfo["lon"]),
+                    float(pinfo["lat"]),
+                    str(pinfo.get("name") or pid),
+                    start=0,
+                    stands=True,
+                    priority=4,
+                    prefer=prefer_cycle[idx_p % len(prefer_cycle)],
+                    close_only=True,
+                )
+
+    return sorted(by_pid.values(), key=lambda x: (x["priority"], x["order"]))
+
+
 def plan(
     shot: dict,
     script: dict,
@@ -148,7 +456,7 @@ def plan(
         prev_end_view = shot["prev_end_view"]
     evs = [e for e in E.visual_events(shot, script, spine, fps) if e["source"] == "actions"]
     words = shot_words(shot, script)
-    basis = word_frames(words, frames, spine)[1]
+    starts, basis = word_frames(words, frames, spine)
     out, findings = [], []
     for a, ev in zip(acts, evs):
         kind = a["kind"]
@@ -192,6 +500,8 @@ def plan(
     dense = sum(1 for a in out if (a["from"] and not _is_chip(a.get("from_id"))) or a["path"]) >= DENSE_ACTIONS
     own_view = None if card else _own_view(shot, out)
     view0 = None if card else _first_view(shot, out, prev_end_view=prev_end_view)
+    carry_over = [] if card else _build_carry_over(shot, script, places, out, frames, sid)
+    auto_labels = [] if card else _build_auto_labels(shot, script, places, out, acts, words, starts, own_view)
     period = (
         shot.get("period")
         or shot.get("historical_period")
@@ -199,7 +509,8 @@ def plan(
         or (1914 if "1914" in str(script.get("episode_id") or shot.get("episode_id") or "") else None)
     )
     return {"shot_id": sid, "frames": frames, "fps": fps, "basis": basis, "spine_basis": basis, "card": card,
-            "actions": out, "dense": dense, "drift": DRIFT, "path_findings": findings,
+            "actions": out, "carry_over": carry_over, "auto_labels": auto_labels,
+            "dense": dense, "drift": DRIFT, "path_findings": findings,
             "view0": view0, "own_view": own_view,
             "prev_end_view": dict(view0) if (prev_end_view is not None and not card) else None,
             "period": period}
@@ -350,9 +661,9 @@ def camera(p: dict, f: int) -> dict:
 
 def safe_frame_bounds(width: int = 1920, height: int = 1080) -> tuple[float, float, float, float]:
     """Safe-frame bounding box ``(xmin, ymin, xmax, ymax)`` in output pixels (M5)."""
-    mx = max(4.0, width * (54.0 / 1920.0))
-    mt = max(4.0, height * (40.0 / 1080.0))
-    mb = max(4.0, height * (66.0 / 1080.0))
+    mx = max(4.0, width * max(MD.SAFE_MARGIN_MIN_FRAC, MD.SAFE_MARGIN_X_FRAC))
+    mt = max(4.0, height * max(MD.SAFE_MARGIN_MIN_FRAC, MD.SAFE_MARGIN_TOP_FRAC))
+    mb = max(4.0, height * max(MD.SAFE_MARGIN_MIN_FRAC, MD.SAFE_MARGIN_BOTTOM_FRAC))
     return mx, mt, width - mx, height - mb
 
 
@@ -368,6 +679,11 @@ def place_label_8pos(
 ) -> tuple[float, float, tuple[float, float, float, float], bool]:
     """8-position greedy label/chip solver with safe-frame clamping and obstacle avoidance (M5)."""
     pad = max(2.0, th * 0.35)
+    pad_x = max(2.0, tw * 0.04)
+    pad_y = max(2.0, th * 0.10)
+    # Second-tier leader offsets clear the first-tier boxes (-pad - th and +pad) plus 2 * pad_y so colocated labels never overlap (V7)
+    dy_up2 = -pad - 2.0 * th - 2.5 * pad_y
+    dy_dn2 = +pad + th + 2.5 * pad_y
     order_map = {
         "NE": [
             (+pad, -pad - th, False),
@@ -376,8 +692,8 @@ def place_label_8pos(
             (-pad - tw, +pad, False),
             (+pad * 1.4, -th * 0.5, False),
             (-pad * 1.4 - tw, -th * 0.5, False),
-            (+pad * 2.4, -pad * 2.0 - th, True),
-            (-pad * 2.4 - tw, -pad * 2.0 - th, True),
+            (+pad * 1.8, dy_up2, True),
+            (-pad * 1.8 - tw, dy_up2, True),
         ],
         "NW": [
             (-pad - tw, -pad - th, False),
@@ -386,8 +702,8 @@ def place_label_8pos(
             (+pad, +pad, False),
             (-pad * 1.4 - tw, -th * 0.5, False),
             (+pad * 1.4, -th * 0.5, False),
-            (-pad * 2.4 - tw, -pad * 2.0 - th, True),
-            (+pad * 2.4, -pad * 2.0 - th, True),
+            (-pad * 1.8 - tw, dy_up2, True),
+            (+pad * 1.8, dy_up2, True),
         ],
         "E": [
             (+pad * 1.35, -th * 0.5, False),
@@ -396,8 +712,8 @@ def place_label_8pos(
             (-pad * 1.35 - tw, -th * 0.5, False),
             (-pad - tw, -pad - th, False),
             (-pad - tw, +pad, False),
-            (+pad * 2.5, -th * 0.5, True),
-            (-pad * 2.5 - tw, -th * 0.5, True),
+            (+pad * 1.8, dy_up2, True),
+            (-pad * 1.8 - tw, dy_up2, True),
         ],
         "W": [
             (-pad * 1.35 - tw, -th * 0.5, False),
@@ -406,8 +722,8 @@ def place_label_8pos(
             (+pad * 1.35, -th * 0.5, False),
             (+pad, -pad - th, False),
             (+pad, +pad, False),
-            (-pad * 2.5 - tw, -th * 0.5, True),
-            (+pad * 2.5, -th * 0.5, True),
+            (-pad * 1.8 - tw, dy_up2, True),
+            (+pad * 1.8, dy_up2, True),
         ],
         "SE": [
             (+pad, +pad, False),
@@ -416,8 +732,8 @@ def place_label_8pos(
             (-pad - tw, -pad - th, False),
             (+pad * 1.35, -th * 0.5, False),
             (-pad * 1.35 - tw, -th * 0.5, False),
-            (+pad * 2.4, +pad * 2.0, True),
-            (-pad * 2.4 - tw, +pad * 2.0, True),
+            (+pad * 1.8, dy_dn2, True),
+            (-pad * 1.8 - tw, dy_dn2, True),
         ],
         "SW": [
             (-pad - tw, +pad, False),
@@ -426,32 +742,45 @@ def place_label_8pos(
             (+pad, -pad - th, False),
             (-pad * 1.35 - tw, -th * 0.5, False),
             (+pad * 1.35, -th * 0.5, False),
-            (-pad * 2.4 - tw, +pad * 2.0, True),
-            (+pad * 2.4, +pad * 2.0, True),
+            (-pad * 1.8 - tw, dy_dn2, True),
+            (+pad * 1.8, dy_dn2, True),
         ],
     }
-    candidates = order_map.get(prefer, order_map["NE"])
+    extra_ring = [
+        (+pad * 1.8, dy_dn2, True),
+        (-pad * 1.8 - tw, dy_dn2, True),
+        (+pad * 2.4, dy_up2 - th - 2.5 * pad_y, True),
+        (-pad * 2.4 - tw, dy_up2 - th - 2.5 * pad_y, True),
+        (+pad * 2.4, dy_dn2 + th + 2.5 * pad_y, True),
+        (-pad * 2.4 - tw, dy_dn2 + th + 2.5 * pad_y, True),
+    ]
+    candidates = list(order_map.get(prefer, order_map["NE"])) + extra_ring
     xmin, ymin, xmax, ymax = safe_frame_bounds(width, height)
     max_x0 = max(xmin, xmax - tw)
     max_y0 = max(ymin, ymax - th)
 
     best = None
     best_cost = float("inf")
-    pad_x = max(2.0, tw * 0.04)
-    pad_y = max(2.0, th * 0.10)
     for idx, (dx, dy, leader) in enumerate(candidates):
         x0 = float(np.clip(cx + dx, xmin, max_x0))
         y0 = float(np.clip(cy + dy, ymin, max_y0))
         x1, y1 = x0 + tw, y0 + th
 
-        overlap = 0.0
+        hard_overlap = 0.0
+        soft_overlap = 0.0
         px0, py0, px1, py1 = x0 - pad_x, y0 - pad_y, x1 + pad_x, y1 + pad_y   # the stored box is padded: test the padded box
-        for ox0, oy0, ox1, oy1 in occupied:
+        for obs in occupied:
+            ox0, oy0, ox1, oy1 = obs[0], obs[1], obs[2], obs[3]
+            w_obs = float(obs[4]) if len(obs) > 4 else 1.0
             iw = max(0.0, min(px1, ox1) - max(px0, ox0))
             ih = max(0.0, min(py1, oy1) - max(py0, oy0))
-            overlap += iw * ih
+            if w_obs >= 0.5:
+                hard_overlap += iw * ih * w_obs
+            else:
+                soft_overlap += iw * ih * w_obs
 
-        cost = overlap * 1000.0 + idx * 8.0 + (30.0 if leader else 0.0)
+        overlap = hard_overlap + soft_overlap
+        cost = hard_overlap * 1000000.0 + soft_overlap * 200.0 + idx * 14.0 + (30.0 if leader else 0.0)
         if cost < best_cost:
             best_cost = cost
             best = (x0, y0, (x0 - pad_x, y0 - pad_y, x1 + pad_x, y1 + pad_y), leader)
@@ -489,7 +818,8 @@ def colours(look: dict | None = None) -> dict:
     look = look or {}
     pick = lambda k, d: D.rgb(look.get(k) or d)   # noqa: E731
     return {"ink": pick("ink", "ink"), "accent": pick("accent", "answer_coral"), "ash": pick("ash", "grey_mid"),
-            "paper": D.rgb("paper"), "card": pick("card", "kit_card"), "glow": pick("accent", "uncertain_amber")}
+            "paper": D.rgb("paper"), "card": pick("card", "kit_card"), "glow": pick("accent", "uncertain_amber"),
+            "allied": D.rgb(look.get("allied") or "faction_a"), "german": D.rgb(look.get("german") or "faction_b")}
 
 
 def _fmt(v: float, like: float | None = None) -> str:
@@ -520,25 +850,39 @@ def counter_layout(p: dict, c: D.Canvas, a: dict, unit: float) -> tuple[float, f
     size = unit * (0.12 if p.get("card") else 0.07)
     x0, y0, _, _ = _box(p, c, "counter")
     w = c.text_width(final_text, size) + size
+    th = size * 1.5
     if p.get("card"):
         x0, y0 = x0 - w / 2, y0 - size * 0.75
-    return x0, y0, x0 + w, y0 + size * 1.5, final_text, final_text, size
+    xmin, ymin, xmax, ymax = safe_frame_bounds(c.w, c.h)
+    stroke = max(2.0, unit * 0.004)
+    x0 = float(np.clip(x0, xmin + stroke, max(xmin + stroke, xmax - stroke - w)))
+    y0 = float(np.clip(y0, ymin + stroke, max(ymin + stroke, ymax - stroke - th)))
+    return x0, y0, x0 + w, y0 + th, final_text, final_text, size
 
 
-def _precollect_obstacles(base: D.Canvas, p: dict, f: int, px, unit: float) -> list[tuple[float, float, float, float]]:
+def _hud_chip_box(c: D.Canvas, text: str, unit: float) -> tuple[float, float, float, float, float, float]:
+    """Safe-frame clamped HUD date card layout ``(x0, y0, x1, y1, size, stroke)`` at least 4% inside every edge (V1)."""
+    xmin, ymin, xmax, ymax = safe_frame_bounds(c.w, c.h)
+    size = max(unit * 0.042, 6.0)
+    stroke = max(2.0, unit * 0.004)
+    tw = c.text_width(text, size) + size * 1.25
+    th = size * 1.5
+    x0 = max(xmin + stroke, c.w * MD.HUD_CARD_X_FRAC)
+    y0 = max(ymin + stroke, c.h * MD.HUD_CARD_Y_FRAC)
+    x0 = min(x0, max(xmin + stroke, xmax - stroke - tw))
+    y0 = min(y0, max(ymin + stroke, ymax - stroke - th))
+    return x0, y0, x0 + tw, y0 + th, size, stroke
+
+
+def _precollect_obstacles(base: D.Canvas, p: dict, f: int, px, unit: float) -> list[tuple]:
     """Collect bounding boxes of drawn lines and HUD cards at frame ``f`` so labels avoid them (M5)."""
-    occupied: list[tuple[float, float, float, float]] = []
+    occupied: list[tuple] = []
     for a in p["actions"]:
-        if f < a["start"] and not _stands(a):
-            continue
         k = a["kind"]
         if k == "label" and _is_chip(a.get("from_id")):
             text = a.get("label") or a.get("name") or a["from_id"]
-            size = max(unit * 0.045, 6.0)
-            tw = base.text_width(text, size) + size
-            th = size * 1.5
-            x0, y0 = base.w * 0.04, base.h * 0.04
-            occupied.append((x0, y0, x0 + tw, y0 + th))
+            x0, y0, x1, y1, _sz, stroke = _hud_chip_box(base, text, unit)
+            occupied.append((x0 - stroke, y0 - stroke, x1 + stroke, y1 + stroke))
         elif k == "counter":
             x0, y0, x1, y1, _, _, _ = counter_layout(p, base, a, unit)
             occupied.append((x0, y0, x1, y1))
@@ -546,19 +890,66 @@ def _precollect_obstacles(base: D.Canvas, p: dict, f: int, px, unit: float) -> l
             x0, y0, x1, y1 = _box(p, base, k)
             occupied.append((x0, y0, x1, y1))
         elif k in PATH_KINDS and a.get("path") and px is not None:
-            path = [px(q) for q in a["path"]]
-            u = _head(p, a, f)
-            part = D.polyline_prefix(path, u)
-            r = max(4.0, unit * 0.018)
+            # Reserve the full path corridor across the shot so standing city labels never jump when a line draws through them
+            part = [px(q) for q in a["path"]]
+            r = max(2.5, unit * 0.0055)
+            step = max(6.0, r * 1.8)
+            acc = step
             for p0, p1 in zip(part, part[1:]):
                 seg_len = math.hypot(p1[0] - p0[0], p1[1] - p0[1])
-                steps = max(1, int(math.ceil(seg_len / max(4.0, r))))
-                for s_idx in range(steps + 1):
-                    t = s_idx / steps
-                    qx = p0[0] + (p1[0] - p0[0]) * t
-                    qy = p0[1] + (p1[1] - p0[1]) * t
-                    occupied.append((qx - r, qy - r, qx + r, qy + r))
+                if seg_len <= 1e-6:
+                    continue
+                pos = 0.0
+                while pos <= seg_len:
+                    if acc >= step:
+                        t = pos / seg_len
+                        qx = p0[0] + (p1[0] - p0[0]) * t
+                        qy = p0[1] + (p1[1] - p0[1]) * t
+                        occupied.append((qx - r, qy - r, qx + r, qy + r, 0.05))
+                        acc = 0.0
+                    rem = step - acc
+                    if pos + rem <= seg_len:
+                        pos += rem
+                        acc = step
+                    else:
+                        acc += seg_len - pos
+                        break
     return occupied
+
+
+def _draw_geo_label_pill(
+    c: D.Canvas,
+    cx: float,
+    cy: float,
+    text: str,
+    alpha: int,
+    prefer: str,
+    col: dict,
+    unit: float,
+    occupied: list,
+    label_boxes: list[dict] | None,
+) -> None:
+    """Draw a collision-free place label pill with pin dot and optional leader line (V2, V7)."""
+    size = max(unit * 0.022, 6.5)
+    pad_in_x = max(3.0, size * 0.45)
+    tw = max(8.0, c.text_width(text, size) + 2.0 * pad_in_x)
+    th = max(8.0, size * 1.48)
+    lx, ly, _, leader = place_label_8pos(cx, cy, tw, th, occupied, prefer=prefer, width=c.w, height=c.h)
+    pin_r = max(2.0, unit * 0.0042)
+    dist_to_pill = math.hypot(
+        cx - float(np.clip(cx, lx, lx + tw)),
+        cy - float(np.clip(cy, ly, ly + th)),
+    )
+    if leader or dist_to_pill > th * 0.95:
+        c.line([(cx, cy), (lx + tw * 0.5, ly + th * 0.5)], (*col["ink"], int(alpha * 0.78)), max(1.0, unit * 0.002))
+    if 0.0 <= cx <= c.w and 0.0 <= cy <= c.h:
+        c.circle(cx, cy, pin_r, fill=(*col["paper"], alpha), outline=(*col["ink"], alpha), width=max(1.0, unit * 0.002))
+    pill_fill = (*D.blend(col["paper"], col["card"], 0.12), int(alpha * 0.94))
+    pill_out = (*col["ink"], int(alpha * 0.90))
+    c.rect(lx, ly, lx + tw, ly + th, fill=pill_fill, outline=pill_out, width=max(1.2, unit * 0.0022), radius=th * 0.24)
+    c.text((lx + pad_in_x, ly + th * 0.5), text, size, (*col["ink"], alpha), anchor="lm")
+    if label_boxes is not None:
+        label_boxes.append({"text": text, "kind": "geo_label", "box": (lx, ly, lx + tw, ly + th), "leader": leader})
 
 
 def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | None = None) -> None:
@@ -570,6 +961,17 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
     unit = base.h
     occupied = _precollect_obstacles(base, p, f, px, unit)
     label_boxes: list[dict] = []
+    # 1. Render carried-over ghost lines from the previous same-theater map shot at 22% opacity (V5)
+    for g in p.get("carry_over") or []:
+        cg = D.Canvas(base.w, base.h, None, base.ss)
+        cg.face = base.face
+        _draw_one(cg, g, p, f, view, col, ink, accent, px, unit, occupied=occupied, label_boxes=None)
+        arr = np.asarray(cg.im, dtype=np.uint8).copy()
+        ghost_alpha = float(g.get("alpha", MD.CARRY_OVER_GHOST_ALPHA))
+        arr[:, :, 3] = np.clip(arr[:, :, 3].astype(np.float32) * ghost_alpha + 0.5, 0, 255).astype(np.uint8)
+        base.im.alpha_composite(Image.fromarray(arr, mode="RGBA"))
+    # 2. Render active actions of this shot
+    geo_label_count = 0
     for a in p["actions"]:
         if f < a["start"] and not _stands(a):
             continue
@@ -577,6 +979,36 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
         c.face = base.face
         _draw_one(c, a, p, f, view, col, ink, accent, px, unit, occupied=occupied, label_boxes=label_boxes)
         base.im.alpha_composite(c.im)
+        if a["kind"] == "label" and not _is_chip(a.get("from_id")):
+            geo_label_count += 1
+    # 3. Render automatic place label pills and macro reference cities up to MAX_LABELS_PER_FRAME (V2)
+    if view is not None and px is not None and p.get("auto_labels"):
+        xmin, ymin, xmax, ymax = safe_frame_bounds(base.w, base.h)
+        visible_auto: list[dict] = []
+        for lb in p["auto_labels"]:
+            if not lb.get("stands") and f < lb["start"]:
+                continue
+            if lb.get("macro_only") and view.span_km < MD.MACRO_LABEL_MIN_SPAN_KM:
+                continue
+            if lb.get("close_only") and view.span_km >= MD.MACRO_LABEL_MIN_SPAN_KM:
+                continue
+            cx, cy = px((lb["lon"], lb["lat"]))
+            if not (xmin <= cx <= xmax and ymin <= cy <= ymax):
+                continue
+            visible_auto.append({**lb, "cx": cx, "cy": cy})
+        slots_left = max(0, MD.MAX_LABELS_PER_FRAME - geo_label_count)
+        selected_auto = visible_auto[:slots_left]
+        # Place standing labels before newly appearing labels so standing labels never jump slots across frames
+        selected_auto.sort(key=lambda x: (0 if x.get("stands") else 1, x["start"], x["priority"], x["order"]))
+        if selected_auto:
+            ca = D.Canvas(base.w, base.h, None, base.ss)
+            ca.face = base.face
+            for lb in selected_auto:
+                alpha = 255 if lb.get("stands") else int(255 * min(1.0, (f - lb["start"] + 1) / 6.0))
+                _draw_geo_label_pill(
+                    ca, lb["cx"], lb["cy"], lb["text"], alpha, lb.get("prefer", "NE"), col, unit, occupied, label_boxes
+                )
+            base.im.alpha_composite(ca.im)
     p.setdefault("_label_boxes", {})[f] = label_boxes
 
 
@@ -614,6 +1046,71 @@ def _flow(c, path_px, f, colour, r) -> None:
         c.circle(x, y, r, fill=colour)
 
 
+def _draw_dual_front_line(c: D.Canvas, part: list[tuple[float, float]], col: dict, ink: tuple, w: float, unit: float) -> None:
+    """Draw the Western Front dual Entente (blue west) / German (red east) line around a dark core with traverse ticks (V4)."""
+    if len(part) < 2:
+        return
+    # Soft warm/dark shadow under the front line
+    c.line(part, (*col["ink"], 55), w * 2.3)
+    offset_px = max(1.8, w * 0.42)
+    west_line: list[tuple[float, float]] = []
+    east_line: list[tuple[float, float]] = []
+    # Determine overall north->south vs south->north orientation so west (smaller x) is always Entente blue and east (larger x) is German red
+    overall_dy = part[-1][1] - part[0][1]
+    overall_dx = part[-1][0] - part[0][0]
+    sign = 1.0 if (overall_dy > 0 or (abs(overall_dy) < 1e-3 and overall_dx >= 0)) else -1.0
+    for i, (tx, ty) in enumerate(part):
+        p_prev = part[max(0, i - 1)]
+        p_next = part[min(len(part) - 1, i + 1)]
+        dx, dy = (p_next[0] - p_prev[0]) * sign, (p_next[1] - p_prev[1]) * sign
+        ln = math.hypot(dx, dy) or 1.0
+        # For north->south (dy > 0), east (+x) unit normal is (+dy/ln, -dx/ln); if east_nx < 0 on a sharp bend, keep east on +x
+        east_nx, east_ny = dy / ln, -dx / ln
+        if east_nx < 0:
+            east_nx, east_ny = -east_nx, -east_ny
+        west_line.append((tx - east_nx * offset_px, ty - east_ny * offset_px))
+        east_line.append((tx + east_nx * offset_px, ty + east_ny * offset_px))
+
+    flank_w = max(1.5, w * 0.46)
+    casing_w = max(2.2, flank_w * 1.55)
+    core_w = max(1.2, w * 0.28)
+    c.line(west_line, (*col["ink"], 235), casing_w)
+    c.line(east_line, (*col["ink"], 235), casing_w)
+    c.line(west_line, (*col["allied"], 248), flank_w)
+    c.line(east_line, (*col["german"], 248), flank_w)
+    c.line(part, ink, core_w)
+
+    # Perpendicular traverse ticks along the trench core
+    tick_spacing = max(8.0, unit * 0.024)
+    tick_half = max(2.5, offset_px * 1.35)
+    tick_w = max(1.0, unit * 0.0018)
+    acc_d = tick_spacing * 0.5
+    for a_pt, b_pt in zip(part, part[1:]):
+        seg_d = math.hypot(b_pt[0] - a_pt[0], b_pt[1] - a_pt[1])
+        if seg_d <= 1e-4:
+            continue
+        ux, uy = (b_pt[0] - a_pt[0]) / seg_d, (b_pt[1] - a_pt[1]) / seg_d
+        nx, ny = -uy, ux
+        pos = 0.0
+        while pos + (tick_spacing - acc_d) <= seg_d:
+            pos += tick_spacing - acc_d
+            mx = a_pt[0] + ux * pos
+            my = a_pt[1] + uy * pos
+            c.line([(mx - nx * tick_half, my - ny * tick_half), (mx + nx * tick_half, my + ny * tick_half)],
+                   (*col["ink"], 220), tick_w)
+            acc_d = 0.0
+        acc_d += seg_d - pos
+
+
+def _arrow_lookback(part: list[tuple[float, float]], min_dist: float) -> tuple[float, float]:
+    """Find a point along ``part`` at least ``min_dist`` behind ``part[-1]`` so the arrowhead direction never wobbles (V4)."""
+    tip = part[-1]
+    for pt in reversed(part[:-1]):
+        if math.hypot(tip[0] - pt[0], tip[1] - pt[1]) >= min_dist:
+            return pt
+    return part[0]
+
+
 def _draw_path(c, a, p, f, col, ink, accent, px, unit) -> None:
     k = a["kind"]
     path = [px(q) for q in a["path"]]
@@ -642,13 +1139,32 @@ def _draw_path(c, a, p, f, col, ink, accent, px, unit) -> None:
             if r > 1:
                 c.line([(bx - r, by - r), (bx + r, by + r)], ink, max(2.0, w * 0.9))
                 c.line([(bx - r, by + r), (bx + r, by - r)], ink, max(2.0, w * 0.9))
+    if k == "front_line":
+        for part in pieces:
+            if len(part) >= 2:
+                _draw_dual_front_line(c, part, col, ink, w, unit)
+        return
+    if k == "route_arrow":
+        part = pieces[0]
+        if len(part) >= 2:
+            s_dx, s_dy = max(1.5, unit * 0.003), max(2.0, unit * 0.004)
+            shadow_pts = [(x + s_dx, y + s_dy) for x, y in part]
+            c.line(shadow_pts, (*col["ink"], 50), w * 2.2)
+            c.line(shadow_pts, (*col["ink"], 85), w * 1.65)
+            c.line(part, ink, w * 1.7)
+            c.line(part, colour, w)
+            if u > 0.02:
+                tip = part[-1]
+                back = _arrow_lookback(part, max(4.0, w * 1.6))
+                D.arrow_head(c, (tip[0] + s_dx, tip[1] + s_dy), (back[0] + s_dx, back[1] + s_dy), w * 2.6, (*col["ink"], 75), None)
+                D.arrow_head(c, tip, back, w * 2.6, accent, ink)
+        if u >= 1.0:
+            _flow(c, path, f - a["end"], (*col["paper"], 170), max(1.5, w * 0.35))
+        return
     for part in pieces:
         if len(part) >= 2:
             c.line(part, ink, w * 1.7)
             c.line(part, colour, w, dash=(w * 2.2, w * 1.2) if k in ("front_line", "supply_line") else None)
-    if k == "route_arrow" and u > 0.02 and len(pieces[0]) >= 2:
-        part = pieces[0]
-        D.arrow_head(c, part[-1], part[-2] if part[-2] != part[-1] else part[0], w * 2.6, accent, ink)
     if u >= 1.0 and k in ("route_arrow", "supply_line") and not (k == "supply_line" and supply_state(p, a, f)[0] == "cut"):
         _flow(c, path, f - a["end"], (*col["paper"], 170), max(1.5, w * 0.35))
 
@@ -704,6 +1220,12 @@ def _draw_numbers(c, a, p, f, col, ink, accent, unit) -> None:
                        stroke=max(1.0, size * 0.08), stroke_fill=(*col["paper"], alpha))
 
 
+def _sector_diameter_px(km: float, view: geo.View, unit: float) -> float:
+    """Sector diameter in pixels clamped to 6-14 % of the frame height (V6)."""
+    raw_d = float(km) / max(1e-6, view.km_per_px)
+    return float(np.clip(raw_d, unit * MD.SECTOR_WIDTH_MIN_FRAC, unit * MD.SECTOR_WIDTH_MAX_FRAC))
+
+
 def _draw_one(c, a, p, f, view, col, ink, accent, px, unit, occupied=None, label_boxes=None) -> None:
     u = _u(a, f)
     k = a["kind"]
@@ -731,41 +1253,44 @@ def _draw_one(c, a, p, f, view, col, ink, accent, px, unit, occupied=None, label
             c.paste(layer.image().filter(ImageFilter.GaussianBlur(max(1.0, r * 0.10))))
     elif k == "pulse":
         cx, cy = px(a["from"])
+        km = float(a.get("value") or MD.DEFAULT_PULSE_KM)
+        diam = _sector_diameter_px(km, view, unit)
+        max_r = diam * 0.5
         for n in range(3):
             t = ((f - a["start"]) / 24.0 + n / 3.0) % 1.0
-            c.circle(cx, cy, unit * (0.01 + 0.08 * t), outline=(*col["accent"], int(255 * (1 - t))), width=max(2.0, unit * 0.004))
-        c.circle(cx, cy, unit * 0.008, fill=accent)
+            r_ring = max_r * (0.20 + 0.80 * t)
+            c.circle(cx, cy, r_ring, outline=(*col["accent"], int(235 * (1 - t))), width=max(1.5, unit * 0.003))
+        c.circle(cx, cy, max(2.0, unit * 0.006), fill=accent)
+        p.setdefault("_pulse_radii", {}).setdefault(f, []).append(max_r)
     elif k == "highlight":
         cx, cy = px(a["from"])
-        r = float(a.get("value") or 120.0) / view.km_per_px
-        c.circle(cx, cy, max(4.0, r), fill=(*col["glow"], int(90 * u)), outline=(*col["glow"], int(220 * u)),
-                 width=max(2.0, unit * 0.004))
+        km = float(a.get("value") or MD.DEFAULT_HIGHLIGHT_KM)
+        diam = _sector_diameter_px(km, view, unit)
+        active_hl = max(1, sum(1 for x in p["actions"] if x["kind"] == "highlight" and (f >= x["start"] or _stands(x))))
+        max_area_r = math.sqrt((MD.HIGHLIGHT_AREA_MAX_FRAC * 0.85 * c.w * c.h) / (math.pi * active_hl))
+        r = min(diam * 0.5, max_area_r)
+        c.circle(cx, cy, max(3.0, r), fill=(*col["glow"], int(85 * u)), outline=(*col["glow"], int(215 * u)),
+                 width=max(1.5, unit * 0.003))
+        p.setdefault("_highlight_radii", {}).setdefault(f, []).append(r)
     elif k == "label":
         text = a.get("label") or a.get("name") or a["from_id"]
         alpha = int(255 * min(1.0, (f - a["start"] + 1) / 6))
         if _is_chip(a.get("from_id")):   # M5: date actions at chip_* render as a top-left screen-space HUD card
-            size = max(unit * 0.045, 6.0)
-            tw = c.text_width(text, size) + size
-            th = size * 1.5
-            x0, y0 = c.w * 0.04, c.h * 0.04
-            c.rect(x0, y0, x0 + tw, y0 + th, fill=(*col["card"], int(240 * alpha / 255)), outline=(*col["ink"], alpha),
-                   width=max(2.0, unit * 0.004), radius=size * 0.25)
-            c.text((x0 + size * 0.5, y0 + th * 0.5), text, size, (*col["ink"], alpha), anchor="lm")
+            x0, y0, x1, y1, size, stroke = _hud_chip_box(c, text, unit)
+            th = y1 - y0
+            card_fill = (*D.blend(col["paper"], col["card"], 0.25), int(242 * alpha / 255))
+            c.rect(x0, y0, x1, y1, fill=card_fill, outline=(*col["ink"], alpha),
+                   width=stroke, radius=size * 0.25)
+            bar_w = max(3.0, size * 0.22)
+            bar_col = col["allied"] if "dec" in str(a.get("from_id")).lower() else col["accent"]
+            c.rect(x0, y0, x0 + bar_w, y1, fill=(*bar_col, alpha), radius=size * 0.12)
+            c.text((x0 + size * 0.65, y0 + th * 0.5), text, size, (*col["ink"], alpha), anchor="lm")
             if label_boxes is not None:
-                label_boxes.append({"text": text, "kind": "hud_chip", "box": (x0, y0, x0 + tw, y0 + th)})
+                label_boxes.append({"text": text, "kind": "hud_chip", "box": (x0, y0, x1, y1)})
         else:
             cx, cy = px(a["from"])
-            size = max(unit * 40 / 1080, 6.0)
-            tw = max(4.0, c.text_width(text, size))
-            th = size
             occ = occupied if occupied is not None else []
-            lx, ly, _, leader = place_label_8pos(cx, cy, tw, th, occ, prefer=a.get("prefer", "NE"), width=c.w, height=c.h)
-            if leader:
-                c.line([(cx, cy), (lx + tw * 0.5, ly + th * 0.5)], (*col["ink"], int(alpha * 0.75)), max(1.0, unit * 0.002))
-            c.text((lx, ly + th * 0.5), text, size, (*col["ink"], alpha), anchor="lm",
-                   stroke=max(1.0, size * 0.12), stroke_fill=(*col["paper"], alpha))
-            if label_boxes is not None:
-                label_boxes.append({"text": text, "kind": "geo_label", "box": (lx, ly, lx + tw, ly + th), "leader": leader})
+            _draw_geo_label_pill(c, cx, cy, text, alpha, a.get("prefer", "NE"), col, unit, occ, label_boxes)
     elif k == "counter":
         target_val = float(a.get("value") or 0)
         u_cnt = _u_counter(a, f)
@@ -801,7 +1326,15 @@ class Plate:
 
     def __init__(self, p: dict, width: int, height: int, look: dict | None = None, shaded_relief: bool = True):
         views = [camera(p, f) for f in range(p["frames"])]
-        fine = min(v["span_km"] / width for v in views)
+        spans = [v["span_km"] for v in views]
+        min_span, max_span = min(spans), max(spans)
+        # When a shot zooms more than 2.2x (e.g. S02_SH003 1000 -> 60 km), build a wide plate and a native close-range plate
+        # so the close view is never clamped by MAX_W or blurred/magnified from the wide plate (V3, V6).
+        has_zoom_split = (max_span / max(1e-3, min_span)) > 2.2
+        wide_views = [v for v in views if v["span_km"] >= min_span * 2.0] if has_zoom_split else views
+        if not wide_views:
+            wide_views = views
+        fine = min(v["span_km"] / width for v in wide_views)
         boxes = [geo.View(v["lon"], v["lat"], v["span_km"], width, height).bbox(0.02) for v in views]
         lon0, lat0 = min(b[0] for b in boxes), min(b[1] for b in boxes)
         lon1, lat1 = max(b[2] for b in boxes), max(b[3] for b in boxes)
@@ -813,15 +1346,43 @@ class Plate:
         ph = int(max(height, math.ceil(pw * h_km / span)))
         self.view = geo.View((lon0 + lon1) / 2, lat, span, pw, ph)
         self.image = plate.render_plate(self.view, ss=1, shaded_relief=shaded_relief, look=look, period=p.get("period"))
+        self.fine_view: geo.View | None = None
+        self.fine_image: Image.Image | None = None
+        self.fine_threshold_km: float = 0.0
+        if has_zoom_split:
+            close_cut = min_span * 2.2
+            close_views = [v for v in views if v["span_km"] <= close_cut]
+            if close_views:
+                c_fine = min(v["span_km"] / width for v in close_views)
+                c_boxes = [geo.View(v["lon"], v["lat"], v["span_km"], width, height).bbox(0.04) for v in close_views]
+                clon0, clat0 = min(b[0] for b in c_boxes), min(b[1] for b in c_boxes)
+                clon1, clat1 = max(b[2] for b in c_boxes), max(b[3] for b in c_boxes)
+                clat = (clat0 + clat1) / 2
+                ckx = geo.KM_PER_DEG * math.cos(math.radians(clat))
+                cspan = (clon1 - clon0) * ckx
+                ch_km = (clat1 - clat0) * geo.KM_PER_DEG
+                cpw = int(min(self.MAX_W, max(width, math.ceil(cspan / c_fine))))
+                cph = int(max(height, math.ceil(cpw * ch_km / cspan)))
+                self.fine_view = geo.View((clon0 + clon1) / 2, clat, cspan, cpw, cph)
+                self.fine_image = plate.render_plate(
+                    self.fine_view, ss=1, shaded_relief=shaded_relief, look=look, period=p.get("period")
+                )
+                self.fine_threshold_km = close_cut
         self.width, self.height = width, height
 
     def frame(self, v: dict, ss: int = 1) -> Image.Image:
         """The plate crop of view ``v`` at ``ss`` times the frame size (a supersampled canvas takes it as it is)."""
         fv = geo.View(v["lon"], v["lat"], v["span_km"], self.width, self.height)
-        x0, y0 = self.view.to_px(*fv.to_lonlat(0, 0))
-        x1, y1 = self.view.to_px(*fv.to_lonlat(fv.width, fv.height))
-        return self.image.transform((self.width * ss, self.height * ss), Image.EXTENT,
-                                    (float(x0), float(y0), float(x1), float(y1)), Image.BICUBIC)
+        src_view, src_im = self.view, self.image
+        if self.fine_view is not None and self.fine_image is not None and v["span_km"] <= self.fine_threshold_km:
+            fx0, fy0 = self.fine_view.to_px(*fv.to_lonlat(0, 0))
+            fx1, fy1 = self.fine_view.to_px(*fv.to_lonlat(fv.width, fv.height))
+            if fx0 >= 0 and fy0 >= 0 and fx1 <= self.fine_view.width and fy1 <= self.fine_view.height:
+                src_view, src_im = self.fine_view, self.fine_image
+        x0, y0 = src_view.to_px(*fv.to_lonlat(0, 0))
+        x1, y1 = src_view.to_px(*fv.to_lonlat(fv.width, fv.height))
+        return src_im.transform((self.width * ss, self.height * ss), Image.EXTENT,
+                                (float(x0), float(y0), float(x1), float(y1)), Image.BICUBIC)
 
     def upsample(self, v: dict, raster_km_per_px: float) -> float:
         """How much the relief raster is enlarged in view ``v`` (above about 3 the relief looks soft: a finer DEM is needed)."""

@@ -17,6 +17,7 @@ from explainer_engine.core.errors import ConfigError, ContractError
 from explainer_engine.edit.cinematic_transitions import select_optimal_cinematic_transition
 from explainer_engine.maps import actions as MA
 from explainer_engine.maps import camera as CAM
+from explainer_engine.maps import data as MD
 from explainer_engine.maps import draw as D
 from explainer_engine.maps import geo, plate, relief
 from explainer_engine.production.map_clip import render_action_map_clip
@@ -511,6 +512,256 @@ def test_m9_font_renders_liege_armentieres_with_no_notdef_glyphs(tmp_path, monke
     D.font.cache_clear()
 
 
+# --- S9 V1..V7 focused tests + S02 & S05 visual contact-sheet test ---------------------------------------------------
+
+def test_v1_hud_date_card_inside_safe_frame_at_least_4pct_margin(raster):
+    """V1: safe_frame_bounds and HUD date card (August 1914 / December 1914) stay >= 4 % inside every frame edge."""
+    for tw_px, th_px in ((W, H), (640, 360), (1920, 1080)):
+        xmin, ymin, xmax, ymax = MA.safe_frame_bounds(tw_px, th_px)
+        assert xmin >= tw_px * 0.04 - 1e-6 and ymin >= th_px * 0.04 - 1e-6
+        assert xmax <= tw_px * 0.96 + 1e-6 and ymax <= th_px * 0.96 + 1e-6
+
+    places = {**PLACES, "chip_aug": {"lon": 1.584, "lat": 50.892, "name": "date chip"},
+              "chip_dec": {"lon": -1.119, "lat": 51.182, "name": "date chip"}}
+    for chip_id, label_txt in (("chip_aug", "August 1914"), ("chip_dec", "December 1914")):
+        shot, script = _script(
+            text="The killer lay four thousand miles away in the ash.",
+            actions=[{"kind": "label", "at_word": "killer", "from": chip_id, "label": label_txt}],
+            view={"lon": 67.0, "lat": 9.0, "span_km": 9500.0},
+        )
+        p = MA.plan(shot, script, places, FPS)
+        p["drift"] = 0.0
+        base = MA.Plate(p, W, H)
+        f_end = p["frames"] - 1
+        clean = np.asarray(base.frame(MA.camera(p, f_end), 1).convert("RGB"), dtype=np.int16)
+        drawn = np.asarray(MA.render_frame(p, f_end, base, W, H, ss=1), dtype=np.int16)
+        diff = np.abs(drawn - clean).max(axis=2) > 12
+        ys, xs = np.nonzero(diff)
+        assert xs.min() >= W * 0.04 and ys.min() >= H * 0.04
+        assert xs.max() <= W * 0.96 and ys.max() <= H * 0.96
+        hud_boxes = [b["box"] for b in p["_label_boxes"][f_end] if b["kind"] == "hud_chip"]
+        assert len(hud_boxes) == 1
+        bx0, by0, bx1, by1 = hud_boxes[0]
+        xmin, ymin, xmax, ymax = MA.safe_frame_bounds(W, H)
+        assert bx0 >= xmin and by0 >= ymin and bx1 <= xmax and by1 <= ymax
+
+
+def test_v2_auto_place_label_pills_and_macro_reference_cities_capped_at_6(raster):
+    """V2: automatic place label pills for narration/action places + theater reference cities at macro spans, <= 6 per frame."""
+    ep_dir = REPO / "episodes" / "ep_truce_1914"
+    episode = json.loads((ep_dir / "episode.json").read_text(encoding="utf-8"))
+    script = json.loads((ep_dir / "story" / "production_script.json").read_text(encoding="utf-8"))
+    places = episode["places"]
+    shots = {s["shot_id"]: s for s in script["shots"]}
+
+    # Macro shot S02_SH001 authors no geo labels, yet must draw >= 3 and <= 6 unique city pills
+    p1 = MA.plan(shots["S02_SH001"], script, places, FPS)
+    base1 = MA.Plate(p1, 640, 360, look={"period": 1914})
+    for f_idx in (0, p1["frames"] - 1):
+        MA.render_frame(p1, f_idx, base1, 640, 360, look={"period": 1914}, ss=1)
+        geo_lbls = [b for b in p1["_label_boxes"][f_idx] if b["kind"] == "geo_label"]
+        names = [b["text"] for b in geo_lbls]
+        assert 3 <= len(geo_lbls) <= 6
+        assert len(names) == len(set(names)), f"duplicate label pills on frame {f_idx}: {names}"
+    end_names_1 = {b["text"] for b in p1["_label_boxes"][p1["frames"] - 1] if b["kind"] == "geo_label"}
+    assert {"Aachen", "Brussels", "Paris"} <= end_names_1
+
+    # Close shot S05_SH001 (90 km) must draw Flanders sector town pills (<= 6, unique)
+    p5 = MA.plan(shots["S05_SH001"], script, places, FPS)
+    base5 = MA.Plate(p5, 640, 360, look={"period": 1914})
+    MA.render_frame(p5, p5["frames"] - 1, base5, 640, 360, look={"period": 1914}, ss=1)
+    geo_lbls_5 = [b for b in p5["_label_boxes"][p5["frames"] - 1] if b["kind"] == "geo_label"]
+    names_5 = [b["text"] for b in geo_lbls_5]
+    assert 4 <= len(geo_lbls_5) <= 6 and len(names_5) == len(set(names_5))
+    assert {"Wulverghem", "Ploegsteert", "Frelinghien", "Fleurbaix"} <= set(names_5)
+
+
+def test_v3_close_span_micro_relief_detail_above_3x_upsample_without_inventing_coast_or_rivers(raster):
+    """V3: when relief upsample > 3x (60-90 km), multi-octave Sobel hillshade + parchment grain sharpens land without
+    inventing coastlines or rivers."""
+    from scipy.ndimage import sobel
+    v_close = geo.View(2.89, 50.71, 75.0, 320, 180)
+    assert plate.relief_upsample(v_close) > 3.0
+
+    im_crisp = np.asarray(plate.render_plate(v_close, layers=("land",), shaded_relief=True, ss=1, period=1914), dtype=np.float32)
+    im_blur = np.asarray(
+        plate.render_plate(v_close, layers=("land",), shaded_relief=True, ss=1, look={"disable_micro_relief": True}, period=1914),
+        dtype=np.float32,
+    )
+    luma_crisp = 0.299 * im_crisp[:, :, 0] + 0.587 * im_crisp[:, :, 1] + 0.114 * im_crisp[:, :, 2]
+    luma_blur = 0.299 * im_blur[:, :, 0] + 0.587 * im_blur[:, :, 1] + 0.114 * im_blur[:, :, 2]
+
+    grad_crisp = float(np.hypot(sobel(luma_crisp, axis=1), sobel(luma_crisp, axis=0)).std())
+    grad_blur = float(np.hypot(sobel(luma_blur, axis=1), sobel(luma_blur, axis=0)).std())
+    assert grad_crisp > grad_blur * 1.8, f"close-span micro-relief did not sharpen terrain: {grad_crisp} vs {grad_blur}"
+
+    # Verify sea pixels on a mixed coast view are untouched by land micro-relief
+    v_coast = geo.View(2.60, 51.15, 75.0, 240, 135)
+    mask_land = plate.land_mask(v_coast, ss=1)
+    rgb_crisp = plate.relief_rgb(v_coast, plate.colours(), look={})
+    rgb_plain = plate.relief_rgb(v_coast, plate.colours(), look={"disable_micro_relief": True})
+    assert np.array_equal(rgb_crisp[~mask_land], rgb_plain[~mask_land]), "micro-relief must never alter sea or invent coasts"
+
+
+def test_v4_western_front_dual_line_and_route_arrow_head_and_shadow(raster):
+    """V4: front_line draws Entente blue on the west and German red on the east around a dark core with traverse ticks;
+    route_arrow draws a soft drop shadow and swept chevron arrowhead."""
+    places = {
+        "north_pt": {"lon": 4.0, "lat": 51.0, "name": "North"},
+        "south_pt": {"lon": 4.0, "lat": 48.0, "name": "South"},
+        "east_pt": {"lon": 6.0, "lat": 50.0, "name": "East"},
+        "west_pt": {"lon": 2.5, "lat": 50.0, "name": "West"},
+    }
+    shot_fl, script_fl = _script(
+        text="The killer lay four thousand miles away in the ash.",
+        actions=[{"kind": "front_line", "at_word": "killer", "from": "north_pt", "to": "south_pt", "cues": "none"}],
+        view={"lon": 4.0, "lat": 49.5, "span_km": 420.0},
+    )
+    p_fl = MA.plan(shot_fl, script_fl, places, FPS)
+    p_fl["auto_labels"] = []
+    c_fl = D.Canvas(320, 180, (245, 238, 224), ss=2)
+    c_fl.face = "map"
+    view_fl = geo.View(4.0, 49.5, 420.0, 320, 180)
+    MA.draw(c_fl, p_fl, 0, view_fl)
+    rgb_fl = np.asarray(c_fl.image().convert("RGB"), dtype=np.int16)
+
+    # Sample horizontal slice across the vertical front line at y=90 (centre x=160)
+    row = rgb_fl[90, :, :]
+    west_band = row[148:159]
+    core_px = row[160]
+    east_band = row[161:172]
+    assert (west_band[:, 2] - west_band[:, 0]).max() > 35, "west flank of front_line must be Entente blue (B > R)"
+    assert (east_band[:, 0] - east_band[:, 2]).max() > 35, "east flank of front_line must be German red (R > B)"
+    assert core_px.mean() < 90, "centre of front_line must be dark ink core"
+
+    # Route arrow shadow + arrowhead check
+    shot_ar, script_ar = _script(
+        text="The killer lay four thousand miles away in the ash.",
+        actions=[{"kind": "route_arrow", "at_word": "killer", "from": "east_pt", "to": "west_pt", "cues": "none"}],
+        view={"lon": 4.25, "lat": 50.0, "span_km": 420.0},
+    )
+    p_ar = MA.plan(shot_ar, script_ar, places, FPS)
+    p_ar["auto_labels"] = []
+    c_ar = D.Canvas(320, 180, (245, 238, 224), ss=2)
+    c_ar.face = "map"
+    view_ar = geo.View(4.25, 50.0, 420.0, 320, 180)
+    MA.draw(c_ar, p_ar, 0, view_ar)
+    rgb_ar = np.asarray(c_ar.image().convert("RGB"), dtype=np.int16)
+    bg_luma = float(rgb_ar[10, 10].mean())
+    tip_x, tip_y = view_ar.to_px(2.5, 50.0)
+    tx, ty = int(round(float(tip_x))), int(round(float(tip_y)))
+    head_patch = rgb_ar[max(0, ty - 10):ty + 11, max(0, tx - 4):tx + 16]
+    assert (head_patch[:, :, 0] - head_patch[:, :, 2] > 40).sum() >= 15, "route_arrow must render a prominent arrowhead"
+    # Drop shadow below the arrow shaft is darker than background but lighter than solid ink
+    shaft_cols = rgb_ar[:, 160, :].mean(axis=1)
+    assert ((shaft_cols < bg_luma - 8) & (shaft_cols > 80)).any(), "route_arrow must include a soft drop shadow"
+
+
+def test_v5_carry_over_ghost_line_at_22pct_in_next_same_theater_shot(raster):
+    """V5: an action line or arrow drawn in shot k stays visible as a 22 % ghost at frame 0 of shot k+1 in the same theater."""
+    ep_dir = REPO / "episodes" / "ep_truce_1914"
+    episode = json.loads((ep_dir / "episode.json").read_text(encoding="utf-8"))
+    script = json.loads((ep_dir / "story" / "production_script.json").read_text(encoding="utf-8"))
+    places = episode["places"]
+    shots = {s["shot_id"]: s for s in script["shots"]}
+
+    p1 = MA.plan(shots["S02_SH001"], script, places, FPS)
+    ev1 = MA.camera(p1, p1["frames"] - 1)
+    p2 = MA.plan(shots["S02_SH002"], script, places, FPS, prev_end_view=ev1)
+    assert len(p2["carry_over"]) == 1
+    ghost = p2["carry_over"][0]
+    assert ghost["kind"] == "route_arrow" and ghost["from_id"] == "aachen" and ghost["to_id"] == "marne"
+    assert abs(float(ghost["alpha"]) - 0.22) < 1e-6
+
+    # Render frame 0 of S02_SH002 (before December front_line starts) and verify ghost pixels along the August route
+    p2_no_lbl = dict(p2, auto_labels=[])
+    base2 = MA.Plate(p2_no_lbl, W, H, look={"period": 1914})
+    clean_f0 = np.asarray(base2.frame(MA.camera(p2_no_lbl, 0), 1).convert("RGB"), dtype=np.float32)
+    drawn_f0 = np.asarray(MA.render_frame(p2_no_lbl, 0, base2, W, H, look={"period": 1914}, ss=1), dtype=np.float32)
+    v0 = geo.View(ev1["lon"], ev1["lat"], ev1["span_km"], W, H)
+    route_hits = 0
+    for lon, lat in ghost["path"][2:-2:3]:
+        rx, ry = v0.to_px(lon, lat)
+        ix, iy = int(round(float(rx))), int(round(float(ry)))
+        if 2 <= ix < W - 2 and 2 <= iy < H - 2:
+            diff_patch = np.abs(drawn_f0[iy - 2:iy + 3, ix - 2:ix + 3] - clean_f0[iy - 2:iy + 3, ix - 2:ix + 3]).max()
+            if diff_patch > 8.0:
+                route_hits += 1
+    assert route_hits >= 10, f"expected carried-over 22% ghost route pixels at frame 0 of S02_SH002, got {route_hits} hits"
+
+
+def test_v6_highlight_and_pulse_clamped_6_to_14pct_height_and_thin_1914_borders(raster):
+    """V6: highlight discs and pulse rings are clamped to 6-14 % of frame height (area <= 3 % of frame);
+    1914 border dashes are <= 2 px at 1080p."""
+    for val_km, want_frac in ((0.2, 0.06), (500.0, 0.14)):
+        shot, script = _script(
+            text="The killer lay four thousand miles away in the ash.",
+            actions=[
+                {"kind": "highlight", "at_word": "killer", "from": "toba", "value": val_km},
+                {"kind": "pulse", "at_word": "four", "from": "shinfa", "value": val_km},
+            ],
+            view={"lon": 67.0, "lat": 9.0, "span_km": 90.0},
+        )
+        p = MA.plan(shot, script, PLACES, FPS)
+        p["auto_labels"] = []
+        base = MA.Plate(p, W, H)
+        f_end = p["frames"] - 1
+        MA.render_frame(p, f_end, base, W, H, ss=1)
+        hl_r = p["_highlight_radii"][f_end][0]
+        pl_r = p["_pulse_radii"][f_end][0]
+        assert abs((2.0 * hl_r) / H - want_frac) < 1e-4
+        assert abs((2.0 * pl_r) / H - want_frac) < 1e-4
+        assert (math.pi * hl_r * hl_r) / (W * H) <= 0.03
+
+    # Verify 1914 border dashes are thin (<= 2 px at 1080p)
+    v_1080 = geo.View(5.95, 49.25, 120.0, 1920, 1080)
+    im_land = np.asarray(plate.render_plate(v_1080, layers=("land",), ss=1, period=1914), dtype=np.int16)
+    im_b1914 = np.asarray(plate.render_plate(v_1080, layers=("land", "borders"), ss=1, period=1914), dtype=np.int16)
+    b_mask = np.abs(im_b1914 - im_land).max(axis=2) > 10
+    # Measure horizontal run lengths across the vertical Franco-German 1914 border segment near (5.90E, 49.25N)
+    bx, by = v_1080.to_px(5.90, 49.25)
+    ix, iy = int(round(float(bx))), int(round(float(by)))
+    widths = []
+    for r_y in range(max(0, iy - 80), min(1080, iy + 80)):
+        row_runs = b_mask[r_y, max(0, ix - 30):min(1920, ix + 30)]
+        if row_runs.any():
+            widths.append(int(row_runs.sum()))
+    assert widths and int(np.median(widths)) <= 2, f"1914 border dash width at 1080p exceeded 2 px: {widths[:10]}"
+
+
+def test_v7_colocated_labels_on_front_line_zero_overlap(raster):
+    """V7: multiple colocated labels sitting directly on a front_line never overlap each other."""
+    places = {
+        **PLACES,
+        "p_same_1": {"lon": 67.0, "lat": 9.0, "name": "Alpha Sector"},
+        "p_same_2": {"lon": 67.0, "lat": 9.0, "name": "Bravo Sector"},
+        "p_same_3": {"lon": 67.0, "lat": 9.0, "name": "Charlie Sector"},
+        "p_same_4": {"lon": 67.0, "lat": 9.0, "name": "Delta Sector"},
+    }
+    shot, script = _script(
+        text="In August the killer lay four thousand miles away in the ash.",
+        actions=[
+            {"kind": "front_line", "at_word": "August", "from": "toba", "to": "shinfa", "cues": "none"},
+            {"kind": "label", "at_word": "killer", "from": "p_same_1", "label": "Alpha Sector"},
+            {"kind": "label", "at_word": "four", "from": "p_same_2", "label": "Bravo Sector"},
+            {"kind": "label", "at_word": "thousand", "from": "p_same_3", "label": "Charlie Sector"},
+            {"kind": "label", "at_word": "miles", "from": "p_same_4", "label": "Delta Sector"},
+        ],
+        view={"lon": 67.0, "lat": 9.0, "span_km": 9500.0},
+    )
+    p = MA.plan(shot, script, places, FPS)
+    base = MA.Plate(p, W, H)
+    MA.render_frame(p, p["frames"] - 1, base, W, H, ss=1)
+    boxes = [b["box"] for b in p["_label_boxes"][p["frames"] - 1] if b["kind"] == "geo_label"]
+    assert len(boxes) >= 4
+    for i in range(len(boxes)):
+        for j in range(i + 1, len(boxes)):
+            b1, b2 = boxes[i], boxes[j]
+            iw = max(0.0, min(b1[2], b2[2]) - max(b1[0], b2[0]))
+            ih = max(0.0, min(b1[3], b2[3]) - max(b1[1], b2[1]))
+            assert iw * ih == 0.0, f"labels {i} and {j} overlapped: {b1} vs {b2}"
+
+
 def test_visual_s02_sh001_to_003_keyframes_contact_sheet_and_safe_frame(raster, tmp_path):
     """Visual test: renders S02_SH001..003 keyframes (first/last frame of each shot) into a contact sheet PNG in tmp
     and asserts zero camera jump between consecutive shots (<= 0.5 % span) and no label outside the safe frame."""
@@ -522,54 +773,101 @@ def test_visual_s02_sh001_to_003_keyframes_contact_sheet_and_safe_frame(raster, 
     shots_by_id = {s["shot_id"]: s for s in script["shots"]}
 
     kw, kh = 640, 360
-    plans = []
+    shot_ids = ("S02_SH001", "S02_SH002", "S02_SH003", "S05_SH001", "S05_SH002")
+    plans: dict[str, dict] = {}
+    bases: dict[str, MA.Plate] = {}
     keyframes = []
     prev_end_view = None
+    prev_seg = None
 
-    for sid in ("S02_SH001", "S02_SH002", "S02_SH003"):
+    for sid in shot_ids:
         sh = dict(shots_by_id[sid])
-        if prev_end_view is not None:
+        seg = sh.get("segment_id")
+        if prev_end_view is not None and seg == prev_seg:
             sh["prev_end_view"] = prev_end_view
         p = MA.plan(sh, script, places, FPS)
         base = MA.Plate(p, kw, kh, look=look)
         im_start = MA.render_frame(p, 0, base, kw, kh, look=look, ss=1)
         im_end = MA.render_frame(p, p["frames"] - 1, base, kw, kh, look=look, ss=1)
-        keyframes.append((sid, "start", im_start, MA.camera(p, 0)))
-        keyframes.append((sid, "end", im_end, MA.camera(p, p["frames"] - 1)))
+        keyframes.append((sid, "start", im_start, MA.camera(p, 0), 0))
+        keyframes.append((sid, "end", im_end, MA.camera(p, p["frames"] - 1), p["frames"] - 1))
         prev_end_view = MA.camera(p, p["frames"] - 1)
-        plans.append(p)
+        prev_seg = seg
+        plans[sid] = p
+        bases[sid] = base
 
     # Assert zero camera jump between consecutive shots (end view of shot k == start view of shot k+1 within 0.5% span)
-    for k in range(len(plans) - 1):
-        end_k = MA.camera(plans[k], plans[k]["frames"] - 1)
-        start_next = MA.camera(plans[k + 1], 0)
+    for sid_a, sid_b in (("S02_SH001", "S02_SH002"), ("S02_SH002", "S02_SH003"), ("S05_SH001", "S05_SH002")):
+        pa, pb = plans[sid_a], plans[sid_b]
+        end_k = MA.camera(pa, pa["frames"] - 1)
+        start_next = MA.camera(pb, 0)
         span_diff_pct = abs(end_k["span_km"] - start_next["span_km"]) / end_k["span_km"]
-        lon_diff = abs(end_k["lon"] - start_next["lon"])
-        lat_diff = abs(end_k["lat"] - start_next["lat"])
-        assert span_diff_pct <= 0.005, f"shot {k}->{k+1} span jump {span_diff_pct:.4%} > 0.5%"
-        assert lon_diff < 1e-4 and lat_diff < 1e-4
+        assert span_diff_pct <= 0.005, f"shot {sid_a}->{sid_b} span jump {span_diff_pct:.4%} > 0.5%"
+        assert abs(end_k["lon"] - start_next["lon"]) < 1e-4 and abs(end_k["lat"] - start_next["lat"]) < 1e-4
 
     # Assert S02_SH003 zoomed into Flanders (~60 km)
-    end_sh003 = MA.camera(plans[2], plans[2]["frames"] - 1)
+    end_sh003 = MA.camera(plans["S02_SH003"], plans["S02_SH003"]["frames"] - 1)
     assert end_sh003["span_km"] <= 65.0
 
     # Assert no label outside safe frame across all rendered keyframes
     xmin, ymin, xmax, ymax = MA.safe_frame_bounds(kw, kh)
-    for p in plans:
-        for _f_idx, lboxes in p.get("_label_boxes", {}).items():
-            for lb in lboxes:
-                bx0, by0, bx1, by1 = lb["box"]
-                if lb["kind"] == "geo_label":
-                    assert bx0 >= xmin - 1e-3 and by0 >= ymin - 1e-3 and bx1 <= xmax + 1e-3 and by1 <= ymax + 1e-3
-                else:
-                    assert 0 <= bx0 and bx1 <= kw and 0 <= by0 and by1 <= kh
+    assert xmin >= kw * 0.04 - 1e-6 and ymin >= kh * 0.04 - 1e-6
+    for sid, _which, _im, cam_v, f_idx in keyframes:
+        p = plans[sid]
+        lboxes = p.get("_label_boxes", {}).get(f_idx, [])
+        geo_lbls = [lb for lb in lboxes if lb["kind"] == "geo_label"]
+        if cam_v["span_km"] >= 300.0:
+            assert len(geo_lbls) >= 3, f"{sid} f={f_idx} (macro span={cam_v['span_km']:.1f}km) has < 3 labels: {geo_lbls}"
+        assert len(geo_lbls) <= 6
+        all_boxes = [lb["box"] for lb in lboxes]
+        if f_idx in p.get("_counter_boxes", {}):
+            all_boxes.append(p["_counter_boxes"][f_idx])
+        for bx0, by0, bx1, by1 in all_boxes:
+            assert bx0 >= xmin - 1e-3 and by0 >= ymin - 1e-3 and bx1 <= xmax + 1e-3 and by1 <= ymax + 1e-3, (
+                f"{sid} f={f_idx} box {(bx0, by0, bx1, by1)} outside safe frame {(xmin, ymin, xmax, ymax)}"
+            )
+        for i in range(len(all_boxes)):
+            for j in range(i + 1, len(all_boxes)):
+                b1, b2 = all_boxes[i], all_boxes[j]
+                iw = max(0.0, min(b1[2], b2[2]) - max(b1[0], b2[0]))
+                ih = max(0.0, min(b1[3], b2[3]) - max(b1[1], b2[1]))
+                assert iw * ih == 0.0, f"{sid} f={f_idx} boxes overlapped: {b1} vs {b2}"
+
+    # 4. Assert line pixels present at frame 0 of S02_SH002 (carry-over ghost) and S02_SH003 (standing front_line)
+    for sid, path_source in (
+        ("S02_SH002", plans["S02_SH002"]["carry_over"][0]["path"]),
+        ("S02_SH003", plans["S02_SH003"]["actions"][0]["path"]),
+    ):
+        p_nl = dict(plans[sid], auto_labels=[])
+        b_nl = bases[sid]
+        v0_dict = MA.camera(p_nl, 0)
+        v0 = geo.View(v0_dict["lon"], v0_dict["lat"], v0_dict["span_km"], kw, kh)
+        clean0 = np.asarray(b_nl.frame(v0_dict, 1).convert("RGB"), dtype=np.float32)
+        drawn0 = np.asarray(MA.render_frame(p_nl, 0, b_nl, kw, kh, look=look, ss=1), dtype=np.float32)
+        hits = 0
+        for lon, lat in path_source[2:-2:4]:
+            px_x, px_y = v0.to_px(lon, lat)
+            ix, iy = int(round(float(px_x))), int(round(float(px_y)))
+            if 2 <= ix < kw - 2 and 2 <= iy < kh - 2:
+                if float(np.abs(drawn0[iy - 2:iy + 3, ix - 2:ix + 3] - clean0[iy - 2:iy + 3, ix - 2:ix + 3]).max()) > 8.0:
+                    hits += 1
+        assert hits >= 8, f"{sid} frame 0 missing line pixels along path ({hits} hits)"
+
+    # 5. Assert highlight area <= 3 % of the frame on S02_SH003 and S05_SH002
+    for sid in ("S02_SH003", "S05_SH002"):
+        p = plans[sid]
+        f_end = p["frames"] - 1
+        radii = p.get("_highlight_radii", {}).get(f_end, [])
+        assert radii, f"{sid} end frame must record highlight radii"
+        total_area_frac = sum(math.pi * r * r for r in radii) / float(kw * kh)
+        assert total_area_frac <= 0.03, f"{sid} highlight area {total_area_frac:.4%} > 3.0%"
 
     # Assemble 3x2 contact sheet PNG in tmp_path
-    sheet = Image.new("RGB", (kw * 3, kh * 2), (22, 26, 35))
-    for idx, (_sid, _which, im, _cam) in enumerate(keyframes):
-        col_i = idx // 2
-        row_i = idx % 2
+    sheet = Image.new("RGB", (kw * 2, kh * 5), (22, 26, 35))
+    for idx, (_sid, _which, im, _cam, _f_idx) in enumerate(keyframes):
+        col_i = idx % 2
+        row_i = idx // 2
         sheet.paste(im, (col_i * kw, row_i * kh))
-    sheet_path = tmp_path / "s02_sh001_003_contact_sheet.png"
+    sheet_path = tmp_path / "s02_s05_keyframes_contact_sheet.png"
     sheet.save(sheet_path)
-    assert sheet_path.is_file() and sheet_path.stat().st_size > 10000
+    assert sheet_path.is_file() and sheet_path.stat().st_size > 20000

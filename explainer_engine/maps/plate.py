@@ -20,6 +20,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from explainer_engine.maps import data as MD
 from explainer_engine.maps import draw as D
 from explainer_engine.maps import geo
 from explainer_engine.standards import sourced_rules as SR
@@ -110,6 +111,76 @@ def colours(look: dict | None = None) -> dict[str, tuple[int, int, int]]:
     return base
 
 
+def relief_upsample(view: geo.View, raster_km_per_px: float = MD.RASTER_KM_PER_PX) -> float:
+    """How much the relief raster is enlarged in ``view`` (above 3x, deterministic micro-relief detail is added, V3)."""
+    eff_km_per_px = min(view.km_per_px, view.span_km / 640.0)
+    return float(raster_km_per_px) / max(1e-6, eff_km_per_px)
+
+
+def _world_octave(view: geo.View, step_deg: float, seed_salt: int) -> np.ndarray:
+    """Sample a deterministic world-coordinate (lon/lat) terrain octave so relief ridges stay fixed on the ground (V3)."""
+    from scipy.ndimage import gaussian_filter, map_coordinates
+    h, w = int(view.height), int(view.width)
+    xs = np.arange(w, dtype=np.float64) + 0.5
+    ys = np.arange(h, dtype=np.float64) + 0.5
+    lon, _ = view.to_lonlat(xs, np.zeros_like(xs))
+    _, lat = view.to_lonlat(np.zeros_like(ys), ys)
+    gx_coord = np.asarray(lon) / step_deg
+    gy_coord = np.asarray(lat) / step_deg
+    c0, c1 = int(np.floor(gx_coord.min())) - 3, int(np.ceil(gx_coord.max())) + 4
+    r0, r1 = int(np.floor(gy_coord.min())) - 3, int(np.ceil(gy_coord.max())) + 4
+    # Cap grid dimensions if step_deg is very fine on a wide view
+    if (c1 - c0) > 512 or (r1 - r0) > 512:
+        scale = max((c1 - c0) / 512.0, (r1 - r0) / 512.0)
+        step_deg *= scale
+        gx_coord = np.asarray(lon) / step_deg
+        gy_coord = np.asarray(lat) / step_deg
+        c0, c1 = int(np.floor(gx_coord.min())) - 3, int(np.ceil(gx_coord.max())) + 4
+        r0, r1 = int(np.floor(gy_coord.min())) - 3, int(np.ceil(gy_coord.max())) + 4
+    rr_idx, cc_idx = np.mgrid[r0:r1, c0:c1].astype(np.int64)
+    # Fast deterministic integer hash -> float32 in [-1, 1]
+    h_int = (rr_idx * 73856093) ^ (cc_idx * 19349663) ^ (seed_salt * 83492791)
+    h_int = ((h_int >> 13) ^ h_int) * 1274126177
+    grid = (((h_int ^ (h_int >> 16)) & 0x7FFFFFFF).astype(np.float32) / 1073741824.0) - 1.0
+    grid = gaussian_filter(grid, sigma=1.35)
+    ry, cx = np.meshgrid(gy_coord - r0, gx_coord - c0, indexing="ij")
+    return map_coordinates(grid, [ry, cx], order=3, mode="nearest").astype(np.float32)
+
+
+def micro_relief_detail(shade: np.ndarray, view: geo.View, upsample: float) -> np.ndarray:
+    """Deterministic multi-octave Sobel hillshade from upsampled relief + parchment grain when upsample > 3x (V3)."""
+    from scipy.ndimage import gaussian_filter, sobel
+    u_micro = float(min(1.0, (upsample - MD.MICRO_RELIEF_UPSAMPLE_MIN) / 3.0))
+    # 1. Multi-octave Sobel hillshade extracted from the upsampled relief field
+    s_fine = gaussian_filter(shade, sigma=1.2)
+    s_med = gaussian_filter(shade, sigma=3.5)
+    s_broad = gaussian_filter(shade, sigma=8.0)
+    scale_boost = min(22.0, upsample * 0.90)
+    dem_gx = (0.50 * sobel(s_fine, axis=1) + 0.35 * sobel(s_med, axis=1) + 0.15 * sobel(s_broad, axis=1)) * scale_boost
+    dem_gy = (0.50 * sobel(s_fine, axis=0) + 0.35 * sobel(s_med, axis=0) + 0.15 * sobel(s_broad, axis=0)) * scale_boost
+    dem_hill = np.clip((dem_gx * 0.7071 - dem_gy * 0.7071), -0.12, 0.12)
+    # 2. World-locked multi-octave topographic ridges + Sobel hillshade + parchment grain (S5 sample)
+    oct_broad = _world_octave(view, 0.055, 191401)
+    oct_meso = _world_octave(view, 0.018, 191402)
+    oct_fine = _world_octave(view, 0.006, 191403)
+
+    def _norm_hill(field: np.ndarray) -> np.ndarray:
+        gx = sobel(field, axis=1)
+        gy = sobel(field, axis=0)
+        hs = gx * 0.7071 - gy * 0.7071
+        std = float(hs.std())
+        return hs / max(std, 1e-5)
+
+    h_broad = _norm_hill(oct_broad)
+    h_meso = _norm_hill(oct_meso)
+    h_fine = _norm_hill(oct_fine)
+    micro_hill = np.clip((0.52 * h_broad + 0.32 * h_meso + 0.16 * h_fine) * 0.095, -0.20, 0.18)
+
+    rng = D.seeded("micro_relief", round(view.lon, 4), round(view.lat, 4), round(view.span_km, 2), view.width, view.height)
+    paper_grain = rng.standard_normal(shade.shape).astype(np.float32) * 0.016
+    return ((dem_hill + micro_hill + paper_grain) * (0.55 + 0.45 * u_micro)).astype(np.float32)
+
+
 def relief_rgb(view: geo.View, col: dict, look: dict | None = None, path=None) -> np.ndarray:
     """Land lit by the real relief, the sea flat (a hint of the raster's sea floor), seeded grain if the look asks for it."""
     from explainer_engine.maps import relief
@@ -117,7 +188,17 @@ def relief_rgb(view: geo.View, col: dict, look: dict | None = None, path=None) -
     shade = relief.sample(view, path)
     mask = land_mask(view, ss=1)
     k = float(look.get("relief_strength", 1.0))
-    gain = np.clip(1.0 + k * 1.6 * (shade / RELIEF_FLAT - 1.0), 0.45, 1.3)[..., None]
+    upsample = relief_upsample(view)
+    if upsample > MD.MICRO_RELIEF_UPSAMPLE_MIN and not look.get("disable_micro_relief"):
+        u_micro = float(min(1.0, (upsample - MD.MICRO_RELIEF_UPSAMPLE_MIN) / 3.0))
+        land_vals = shade[mask] if mask.any() else shade
+        local_mean = float(land_vals.mean())
+        shade_adj = shade - u_micro * 0.85 * (local_mean - RELIEF_FLAT)
+        base_gain = (1.0 - 0.08 * u_micro) + k * 1.35 * (shade_adj / RELIEF_FLAT - 1.0)
+        detail = micro_relief_detail(shade, view, upsample)
+        gain = np.clip(base_gain + (k * detail) * mask, 0.50, 1.06)[..., None]
+    else:
+        gain = np.clip(1.0 + k * 1.6 * (shade / RELIEF_FLAT - 1.0), 0.45, 1.3)[..., None]
     land = np.asarray(col["land"], np.float32) * gain
     sea = np.asarray(col["sea"], np.float32) * (0.97 + 0.03 * shade)[..., None]
     out = np.where(mask[..., None], land, sea)
@@ -183,19 +264,26 @@ def draw_base(
     border_lines = geo.borders_1914() if use_1914 else ds["borders"]
     has_borders = ("borders" in layers) or ("borders_1914" in layers)
     if has_borders:
+        border_w = (
+            min(MD.BORDER_1914_MAX_PX_1080, max(1.0, STYLE["border_px"] * min(unit, 1080) * 0.85))
+            if use_1914
+            else max(1.0, STYLE["border_px"] * unit)
+        )
+        border_dash = (MD.BORDER_1914_DASH_ON, MD.BORDER_1914_DASH_OFF) if use_1914 else (6.0, 4.0)
         for line in border_lines:
             if not geo._hit(line.bbox, box):
                 continue
             x, y = view.to_px(line.pts[:, 0], line.pts[:, 1])
             for piece in geo.clip_line(list(zip(x.tolist(), y.tolist())), *rect):
-                c.line(piece, (*col["border"], 255), max(1.0, STYLE["border_px"] * unit), dash=(6.0, 4.0))
+                c.line(piece, (*col["border"], 255), border_w, dash=border_dash)
     if "rivers" in layers:
+        river_w = min(2.5, max(1.0, STYLE["river_px"] * min(unit, 1080))) if use_1914 else max(1.0, STYLE["river_px"] * unit)
         for line in ds["rivers"]:
             if not geo._hit(line.bbox, box):
                 continue
             x, y = view.to_px(line.pts[:, 0], line.pts[:, 1])
             for piece in geo.clip_line(list(zip(x.tolist(), y.tolist())), *rect):
-                c.line(piece, (*col["river"], 255), max(1.0, STYLE["river_px"] * unit), dash=None)
+                c.line(piece, (*col["river"], 255), river_w, dash=None)
     return c
 
 

@@ -259,10 +259,14 @@ def build_doc(from_geojson: Path | None = None) -> dict:
 
 def build(from_geojson: Path | None = None, check: bool = False) -> int:
     doc = build_doc(from_geojson)
-    payload = gzip.compress(json.dumps(doc, separators=(",", ":"), sort_keys=True).encode("utf-8"), 9, mtime=0)
+    canon_json = json.dumps(doc, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    payload = gzip.compress(canon_json, 9, mtime=0)
     digest = hashlib.sha256(payload).hexdigest()
     if check:
-        same = OUT.exists() and OUT.read_bytes() == payload
+        same = OUT.exists() and (
+            OUT.read_bytes() == payload
+            or gzip.decompress(OUT.read_bytes()) == canon_json
+        )
         print("borders_1914.json.gz is current" if same else "borders_1914.json.gz differs from a fresh build")
         return 0 if same else 1
     tmp = OUT.with_name(OUT.name + ".tmp")
