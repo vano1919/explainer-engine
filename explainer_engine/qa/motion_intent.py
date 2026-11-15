@@ -328,6 +328,8 @@ class Watch:
         self.first = self.last = None
         self.n = 0
         self.invent = None
+        self.prev_g = None             # frame-to-frame steps for the camera-jump guard (no_camera_jump)
+        self.steps: list[float] = []
     def add(self, f: int, frame: np.ndarray, fill: np.ndarray, layer_rows: list[dict] | None) -> None:
         cv2 = _cv2()
         self.fills.append(cv2.resize(fill.astype(np.float32), (480, 270), interpolation=cv2.INTER_AREA).astype(np.float16))
@@ -335,6 +337,10 @@ class Watch:
             self.first = frame.copy()
         self.last = frame
         self.n += 1
+        g_small = cv2.cvtColor(cv2.resize(frame, (480, 270), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY).astype(np.float32)
+        if self.prev_g is not None:
+            self.steps.append(float(np.abs(g_small - self.prev_g).mean()))
+        self.prev_g = g_small
         if f % (2 * self.every) == 0 and f > 0:
             fill_a = cv2.resize(fill.astype(np.float32), ANALYSIS, interpolation=cv2.INTER_AREA)
             base = cv2.resize(self.fills[0].astype(np.float32), ANALYSIS, interpolation=cv2.INTER_AREA)
@@ -352,7 +358,7 @@ class Watch:
         gm = global_motion(self.first, self.last) if self.first is not None else None
         rest = fill_at_rest(self.fills[0].astype(np.float32), out_height) if self.fills else None
         return {"reveal": rv, "double_edge": self.ghost, "global_motion_first_to_last": gm, "fill_at_rest": rest,
-                "fill_invents": self.invent}
+                "fill_invents": self.invent, "camera_jumps": jumps_from_steps(self.steps)}
 def rest_seam_row(r: dict | None) -> dict:
     if not r or not r.get("outline"):
         return G.row("rest_seam", None, "no layered object: nothing to compare at rest")
@@ -485,3 +491,49 @@ def face_intact_row(r: dict | None) -> dict:
         return G.row("face_intact", None, "no live face kept in the frame")
     return G.row("face_intact", r["ncc"] >= FACE_NCC_FAIL, f"worst face likeness to its first frame {r['ncc']:.2f} "
                  f"(frame {r.get('frame')}; FAIL below {FACE_NCC_FAIL}: a smeared or warped face)", r)
+
+
+# Camera jumps seen by eye (the creator, 2026-11-14/15): a one-frame snap (S05_SH020 frame 73 and 143: the view jumped to a wider
+# framing for one frame and back) and a short whip back at the end of an accent (S05_SH020 S7 render, frames 148-151). Measured on
+# the frame-to-frame mean luma change at the analysis size. Calibration (D-59, known bad vs known good on real renders):
+#   bad:  isolated frame 73 = 32.3 with neighbours 0.3 / 0.6 (C5 and PR #192 before S6); whip run of 4 frames at 29-32 (S7)
+#   good: S6 re-render of S05_SH020 (no isolated spike); accent snaps of 15 frames at 14-21 (S02_SH008, S05_SH020 after S6)
+JUMP_RATIO = 4.0        # a step this many times the clip's median change ...
+JUMP_NEIGHBOUR = 3.0    # ... and this many times both neighbours is an isolated one-frame snap
+JUMP_MIN = 6.0          # luma levels: below this nothing reads as a jump
+WHIP_RATIO = 8.0        # a run of steps above this many times the median ...
+WHIP_MAX_RUN = 4        # ... that lasts at most this many frames is a whip, not a deliberate accent (accents rise over ~1 s)
+
+
+def frame_jumps(frames_gray: list[np.ndarray]) -> dict:
+    """One-frame snaps and short whips in a clip: every isolated spike and every short run of very large steps."""
+    return jumps_from_steps([float(np.abs(frames_gray[i].astype(np.float32) - frames_gray[i - 1].astype(np.float32)).mean())
+                             for i in range(1, len(frames_gray))])
+
+
+def jumps_from_steps(steps: list[float]) -> dict:
+    """``frame_jumps`` on precomputed frame-to-frame steps (``Watch`` collects them while the clip renders)."""
+    d = np.array(steps, dtype=np.float64)
+    if d.size < 3:
+        return {"median": 0.0, "snaps": [], "whips": []}
+    med = max(float(np.median(d)), 1e-3)
+    snaps = [i + 1 for i in range(1, d.size - 1)
+             if d[i] > max(JUMP_MIN, JUMP_RATIO * med) and d[i] > JUMP_NEIGHBOUR * max(d[i - 1], d[i + 1])]
+    whips, run = [], []
+    for i, v in enumerate(d):
+        if v > max(JUMP_MIN, WHIP_RATIO * med):
+            run.append(i + 1)
+        else:
+            if 0 < len(run) <= WHIP_MAX_RUN:
+                whips.append([run[0], run[-1]])
+            run = []
+    if 0 < len(run) <= WHIP_MAX_RUN:
+        whips.append([run[0], run[-1]])
+    return {"median": round(med, 3), "max": round(float(d.max()), 2), "snaps": snaps, "whips": whips}
+
+
+def frame_jumps_row(r: dict) -> dict:
+    """FAIL on any one-frame snap or short whip: calibrated on the S05_SH020 renders (see the constants above)."""
+    bad = bool(r["snaps"] or r["whips"])
+    return G.row("no_camera_jump", not bad, (f"one-frame snaps at {r['snaps']}, whips at {r['whips']} (median step {r['median']})"
+                                             if bad else f"no snap or whip (median step {r['median']}, max {r.get('max')})"), r)
