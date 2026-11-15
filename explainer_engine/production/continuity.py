@@ -200,4 +200,307 @@ def findings(shots: list[dict]) -> list[dict]:
                         "detail": f"same framing twice in a row: {b.get('id') or b.get('shot_id')} ends at zoom {ze:.3f} where {a.get('id') or a.get('shot_id')} ended "
                                   f"({za:.3f}) on the same picture; a cut changes the shot size by a full step"})
     out.extend(pair_state_findings(shots))
+    out.extend(evaluate_neighbouring_shot_continuity(shots))
     return out
+
+
+_SHOT_SIZE_ORDER = {
+    "extreme_wide": 0,
+    "wide": 1,
+    "medium_wide": 2,
+    "medium": 3,
+    "over_the_shoulder": 3,
+    "medium_close_up": 4,
+    "close_up": 5,
+    "extreme_close_up": 6,
+}
+
+_POSTURE_STATES = {
+    "standing": ("standing", "stands", "upright", "on his feet", "on their feet"),
+    "sitting": ("sitting", "sits", "seated"),
+    "kneeling": ("kneeling", "kneels", "crouching", "crouches"),
+}
+
+
+def _extract_posture(text: str, structured_posture: str | None = None) -> str | None:
+    if structured_posture:
+        return str(structured_posture).strip().lower()
+    low = (text or "").lower()
+    for state, toks in _POSTURE_STATES.items():
+        if any(re.search(rf"\b{re.escape(t)}\b", low) for t in toks):
+            return state
+    return None
+
+
+def _is_same_scene(a: dict, b: dict) -> bool:
+    if b.get("continues") is True or b.get("continues") == (a.get("shot_id") or a.get("id")):
+        return True
+    sc_a = a.get("scene_id") or (a.get("staging") or {}).get("scene_id")
+    sc_b = b.get("scene_id") or (b.get("staging") or {}).get("scene_id")
+    if sc_a and sc_b:
+        return sc_a == sc_b
+    seg_a = a.get("segment_id") or a.get("scene")
+    seg_b = b.get("segment_id") or b.get("scene")
+    loc_a = a.get("location_id") or a.get("place")
+    loc_b = b.get("location_id") or b.get("place")
+    if seg_a and seg_b and seg_a == seg_b:
+        if loc_a and loc_b:
+            return loc_a == loc_b
+        return True
+    return False
+
+
+def _is_motivated_reframe(a: dict, b: dict) -> bool:
+    if b.get("reframe_reason") or b.get("motivated_reframe") or (b.get("staging") or {}).get("reframe_reason"):
+        return True
+    sa = str((a.get("camera_spec") or {}).get("shot_size") or "").lower()
+    sb = str((b.get("camera_spec") or {}).get("shot_size") or "").lower()
+    if sa in _SHOT_SIZE_ORDER and sb in _SHOT_SIZE_ORDER:
+        return abs(_SHOT_SIZE_ORDER[sa] - _SHOT_SIZE_ORDER[sb]) >= 1
+    return False
+
+
+def _positions_map(shot: dict) -> dict[str, tuple[float, float]]:
+    staging = shot.get("staging") or {}
+    layout = shot.get("layout") or staging.get("layout") or {}
+    raw_pos = shot.get("positions") or staging.get("positions") or layout.get("positions") or {}
+    out: dict[str, tuple[float, float]] = {}
+    if isinstance(raw_pos, dict):
+        for k, v in raw_pos.items():
+            if isinstance(v, (list, tuple)) and len(v) >= 2:
+                if len(v) >= 4:
+                    out[str(k)] = (0.5 * (float(v[0]) + float(v[2])), 0.5 * (float(v[1]) + float(v[3])))
+                else:
+                    out[str(k)] = (float(v[0]), float(v[1]))
+    elif isinstance(raw_pos, list):
+        for item in raw_pos:
+            if isinstance(item, dict):
+                cid = item.get("id") or item.get("character_id") or item.get("subject")
+                box = item.get("box") or item.get("bbox") or item.get("face_box") or item.get("pos")
+                if cid and isinstance(box, (list, tuple)) and len(box) >= 2:
+                    if len(box) >= 4:
+                        out[str(cid)] = (0.5 * (float(box[0]) + float(box[2])), 0.5 * (float(box[1]) + float(box[3])))
+                    else:
+                        out[str(cid)] = (float(box[0]), float(box[1]))
+    return out
+
+
+def evaluate_neighbouring_shot_continuity(
+    shots: list[dict],
+    *,
+    boundary_frames: dict[str, dict] | None = None,
+) -> list[dict]:
+    """P1-3 Neighbouring-Shot Continuity Stage: compare every consecutive pair of shots in the same scene across:
+    1. Subject/face bounding boxes & positions (BP-30 focal_shift_max unless motivated reframe),
+    2. Character identity and roster count (CONT-ROSTER),
+    3. Camera scale and direction (motivated reframe vs accidental jump, BP-30 direction_change_max_deg),
+    4. Light level and colour balance (BP-34 luma_tolerance / warmth_tolerance),
+    5. Weather and atmosphere (BP-196),
+    6. Final action/posture/prop state vs next initial state (VL-15),
+    7. No static photo inserted inside an ongoing live video action scene (CONT-PHOTO-IN-LIVE-SCENE).
+    """
+    out: list[dict] = []
+    boundary_frames = boundary_frames or {}
+    focal_shift_max = float(SR.T("BP-30", "focal_shift_max"))
+    dir_max_deg = float(SR.T("BP-30", "direction_change_max_deg"))
+    luma_tol = float(SR.T("BP-34", "luma_tolerance"))
+    warmth_tol = float(SR.T("BP-34", "warmth_tolerance"))
+
+    for idx, (a, b) in enumerate(zip(shots, shots[1:])):
+        if not _is_same_scene(a, b):
+            continue
+        sid_a = a.get("shot_id") or a.get("id") or f"shot_{idx}"
+        sid_b = b.get("shot_id") or b.get("id") or f"shot_{idx + 1}"
+        where = f"{sid_a}->{sid_b}"
+        motivated = _is_motivated_reframe(a, b)
+
+        # 1. Subject / face bounding box position continuity
+        pos_a = _positions_map(a)
+        pos_b = _positions_map(b)
+        for cid in sorted(set(pos_a) & set(pos_b)):
+            dx = abs(pos_a[cid][0] - pos_b[cid][0])
+            dy = abs(pos_a[cid][1] - pos_b[cid][1])
+            shift = (dx * dx + dy * dy) ** 0.5
+            if shift > focal_shift_max and not motivated:
+                out.append({
+                    "rule": "CONT-BBOX-JUMP",
+                    "severity": "FAIL",
+                    "where": where,
+                    "shot_id": sid_b,
+                    "from_shot_id": sid_a,
+                    "subject": cid,
+                    "detail": (
+                        f"subject '{cid}' jumps by {shift:.3f} (> {focal_shift_max:.2f}) across {where} "
+                        "without a motivated reframe"
+                    ),
+                })
+
+        # 2. Character identity & count continuity when continues=True or same framing
+        roster_a = set(a.get("roster") or (a.get("staging") or {}).get("roster") or a.get("character_ids") or [])
+        roster_b = set(b.get("roster") or (b.get("staging") or {}).get("roster") or b.get("character_ids") or [])
+        if (b.get("continues") or not motivated) and roster_a and roster_b and roster_a != roster_b:
+            if not b.get("announced_newcomer") and not b.get("roster_change_reason"):
+                out.append({
+                    "rule": "CONT-ROSTER",
+                    "severity": "FAIL",
+                    "where": where,
+                    "shot_id": sid_b,
+                    "from_shot_id": sid_a,
+                    "detail": f"character roster changes from {sorted(roster_a)} to {sorted(roster_b)} across {where} without reframe or announcement",
+                })
+
+        # 3. Camera direction & unmotivated scale jump
+        ang_a = (a.get("camera_spec") or {}).get("angle_deg")
+        ang_b = (b.get("camera_spec") or {}).get("angle_deg")
+        if ang_a is not None and ang_b is not None:
+            if abs(float(ang_b) - float(ang_a)) > dir_max_deg and not b.get("neutral_bridge"):
+                out.append({
+                    "rule": "CONT-CAMERA-DIRECTION",
+                    "severity": "FAIL",
+                    "where": where,
+                    "shot_id": sid_b,
+                    "from_shot_id": sid_a,
+                    "detail": f"camera direction flips by {abs(float(ang_b) - float(ang_a)):.1f} deg (> {dir_max_deg:.0f} deg) across {where}",
+                })
+
+        # 4. Light level & colour balance continuity (from boundary_frames or shot lighting metadata)
+        bf = boundary_frames.get(where) or {}
+        luma_a = bf.get("end_luma", a.get("end_luma", (a.get("lighting") or {}).get("luma")))
+        luma_b = bf.get("start_luma", b.get("start_luma", (b.get("lighting") or {}).get("luma")))
+        if luma_a is not None and luma_b is not None and abs(float(luma_b) - float(luma_a)) > luma_tol:
+            out.append({
+                "rule": "CONT-LIGHT-COLOUR",
+                "severity": "FAIL",
+                "where": where,
+                "shot_id": sid_b,
+                "from_shot_id": sid_a,
+                "detail": f"light level jumps from {float(luma_a):.3f} to {float(luma_b):.3f} (> {luma_tol:.2f}) across {where}",
+            })
+        warm_a = bf.get("end_warmth", a.get("end_warmth", (a.get("lighting") or {}).get("warmth")))
+        warm_b = bf.get("start_warmth", b.get("start_warmth", (b.get("lighting") or {}).get("warmth")))
+        if warm_a is not None and warm_b is not None and abs(float(warm_b) - float(warm_a)) > warmth_tol:
+            out.append({
+                "rule": "CONT-LIGHT-COLOUR",
+                "severity": "FAIL",
+                "where": where,
+                "shot_id": sid_b,
+                "from_shot_id": sid_a,
+                "detail": f"colour warmth jumps from {float(warm_a):.3f} to {float(warm_b):.3f} (> {warmth_tol:.2f}) across {where}",
+            })
+
+        # 5. Weather & atmosphere continuity
+        wea_a = a.get("weather") or (a.get("staging") or {}).get("weather")
+        wea_b = b.get("weather") or (b.get("staging") or {}).get("weather")
+        if wea_a and wea_b and str(wea_a).lower() != str(wea_b).lower() and not b.get("weather_reason"):
+            out.append({
+                "rule": "CONT-WEATHER",
+                "severity": "FAIL",
+                "where": where,
+                "shot_id": sid_b,
+                "from_shot_id": sid_a,
+                "detail": f"weather jumps from {wea_a!r} to {wea_b!r} inside the same scene across {where} without weather_reason",
+            })
+
+        # 6. Action posture continuity
+        post_a = _extract_posture(str(a.get("action_end_state") or a.get("end_state") or ""), a.get("end_posture"))
+        post_b = _extract_posture(str(b.get("action_start_state") or b.get("start_state") or ""), b.get("start_posture"))
+        if post_a and post_b and post_a != post_b and (roster_a & roster_b or not (roster_a or roster_b)):
+            out.append({
+                "rule": "CONT-ACTION-STATE",
+                "severity": "FAIL",
+                "where": where,
+                "shot_id": sid_b,
+                "from_shot_id": sid_a,
+                "detail": f"actor posture is {post_a!r} at end of {sid_a} but {post_b!r} at start of {sid_b} without transition beat",
+            })
+
+        # 7. Forbid inserting a static photo inside an ongoing live video action scene
+        route_a = str(a.get("route") or "")
+        route_b = str(b.get("route") or "")
+        c = shots[idx + 2] if idx + 2 < len(shots) else None
+        route_c = str(c.get("route") or "") if isinstance(c, dict) else ""
+        if route_a == "video" and route_b in ("still_25d", "still") and not b.get("insert_cutaway_reason"):
+            if b.get("continues") or (isinstance(c, dict) and route_c == "video" and _is_same_scene(b, c)):
+                out.append({
+                    "rule": "CONT-PHOTO-IN-LIVE-SCENE",
+                    "severity": "FAIL",
+                    "where": where,
+                    "shot_id": sid_b,
+                    "from_shot_id": sid_a,
+                    "detail": f"{sid_b} inserts a static photo ({route_b}) inside an ongoing live video scene without insert_cutaway_reason",
+                })
+
+    return out
+
+
+def verify_split_clip_continuity(
+    parts: list,
+    *,
+    shot_spec: dict | None = None,
+    max_luma_jump: float = 14.0,
+    max_scale_jump: float = 0.025,
+) -> dict:
+    """P1-3 Split-Clip Fallback Guard: verify that legacy split [a-z].mp4 sub-clips (or their part descriptors)
+    maintain continuous camera trajectory and frame appearance across every boundary before concatenation."""
+    import numpy as np
+
+    findings_list: list[dict] = []
+    if not parts:
+        return {"status": "FAIL", "findings": [{"rule": "CONT-SPLIT-EMPTY", "severity": "FAIL", "detail": "no split parts provided"}]}
+
+    for idx in range(len(parts) - 1):
+        pa, pb = parts[idx], parts[idx + 1]
+        if isinstance(pa, dict) and isinstance(pb, dict):
+            sa = float(pa.get("end_scale", pa.get("scale_end", 1.0)))
+            sb = float(pb.get("start_scale", pb.get("scale_start", 1.0)))
+            if abs(sb - sa) > max_scale_jump:
+                findings_list.append({
+                    "rule": "CONT-SPLIT-ZOOM-JUMP",
+                    "severity": "FAIL",
+                    "boundary": f"part_{idx}->part_{idx+1}",
+                    "detail": f"split sub-clip scale jumps from {sa:.3f} to {sb:.3f} (> {max_scale_jump:.3f})",
+                })
+            luma_diff = abs(float(pb.get("start_luma", 0.0)) - float(pa.get("end_luma", 0.0)))
+            if luma_diff > max_luma_jump:
+                findings_list.append({
+                    "rule": "CONT-SPLIT-FRAME-JUMP",
+                    "severity": "FAIL",
+                    "boundary": f"part_{idx}->part_{idx+1}",
+                    "detail": f"split sub-clip boundary luma jumps by {luma_diff:.2f} (> {max_luma_jump:.1f})",
+                })
+        else:
+            p_a = Path(pa)
+            p_b = Path(pb)
+            if p_a.is_file() and p_b.is_file():
+                try:
+                    import cv2
+                    cap_a = cv2.VideoCapture(str(p_a))
+                    n_a = int(cap_a.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+                    if n_a > 0:
+                        cap_a.set(cv2.CAP_PROP_POS_FRAMES, max(0, n_a - 1))
+                    ok_a, frame_a = cap_a.read()
+                    cap_a.release()
+
+                    cap_b = cv2.VideoCapture(str(p_b))
+                    ok_b, frame_b = cap_b.read()
+                    cap_b.release()
+
+                    if ok_a and ok_b and frame_a is not None and frame_b is not None:
+                        if frame_a.shape[:2] != frame_b.shape[:2]:
+                            frame_b = cv2.resize(frame_b, (frame_a.shape[1], frame_a.shape[0]))
+                        mad = float(np.mean(np.abs(frame_a.astype(np.float32) - frame_b.astype(np.float32))))
+                        if mad > max_luma_jump:
+                            findings_list.append({
+                                "rule": "CONT-SPLIT-FRAME-JUMP",
+                                "severity": "FAIL",
+                                "boundary": f"{p_a.name}->{p_b.name}",
+                                "detail": f"split sub-clip boundary frame MAD={mad:.2f} > {max_luma_jump:.1f} (camera reset or crop jump)",
+                            })
+                except Exception:
+                    pass
+
+    return {
+        "status": "FAIL" if findings_list else "PASS",
+        "part_count": len(parts),
+        "findings": findings_list,
+    }

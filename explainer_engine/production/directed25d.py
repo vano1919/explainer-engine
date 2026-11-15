@@ -573,17 +573,38 @@ class Stage:
         cv2 = self.cv2
         q = 4
         m = np.zeros((self.H // q, self.W // q), np.float32)
+        core = np.zeros((self.H // q, self.W // q), np.float32)
         for kb in self.keep or []:
-            if kb["soft"]:
-                continue
             inv = cv2.invertAffineTransform(self.matrix(v, kb["d"]))
-            x0, y0, x1, y1 = kb["box"]
-            a = inv @ np.array([x0 * self.sw, y0 * self.sh, 1.0])
-            b = inv @ np.array([x1 * self.sw, y1 * self.sh, 1.0])
-            cv2.rectangle(m, (int(a[0] / q), int(a[1] / q)), (int(b[0] / q), int(b[1] / q)), 1.0, -1)
+            if not kb.get("soft"):
+                x0, y0, x1, y1 = kb["box"]
+                a = inv @ np.array([x0 * self.sw, y0 * self.sh, 1.0])
+                b = inv @ np.array([x1 * self.sw, y1 * self.sh, 1.0])
+                cv2.rectangle(m, (int(a[0] / q), int(a[1] / q)), (int(b[0] / q), int(b[1] / q)), 1.0, -1)
+                cv2.rectangle(core, (int(a[0] / q), int(a[1] / q)), (int(b[0] / q), int(b[1] / q)), 1.0, -1)
+            if kb.get("face"):
+                fx0, fy0, fx1, fy1 = kb["face"]
+                fa = inv @ np.array([fx0 * self.sw, fy0 * self.sh, 1.0])
+                fb = inv @ np.array([fx1 * self.sw, fy1 * self.sh, 1.0])
+                cv2.rectangle(m, (int(fa[0] / q), int(fa[1] / q)), (int(fb[0] / q), int(fb[1] / q)), 1.0, -1)
+                cv2.rectangle(core, (int(fa[0] / q), int(fa[1] / q)), (int(fb[0] / q), int(fb[1] / q)), 1.0, -1)
+        # P1-5 Fix (BP-202): also protect foreground object masks (photos, hands, props, heroes in self.objects)
+        for o in getattr(self, "objects", []) or []:
+            if float(o.get("d", 0.0)) >= 0.40 or str(o.get("id", "")).lower() in ("hero", "foreground", "fg", "photo", "prop", "person"):
+                m_aff = self.matrix(v, o["d"])
+                w_alpha = cv2.warpAffine(
+                    (o["alpha"] > 0.35).astype(np.float32),
+                    m_aff,
+                    (self.W, self.H),
+                    flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
+                    borderMode=cv2.BORDER_CONSTANT,
+                )
+                w_small = cv2.resize(w_alpha, (self.W // q, self.H // q), interpolation=cv2.INTER_AREA)
+                m = np.maximum(m, w_small)
+                core = np.maximum(core, (w_small > 0.5).astype(np.float32))
         if m.any():
-            m = cv2.GaussianBlur(m, (0, 0), 6.0)
-        out = cv2.resize(m, (self.W, self.H), interpolation=cv2.INTER_LINEAR)
+            m = np.maximum(core, cv2.GaussianBlur(m, (0, 0), 4.0))
+        out = np.clip(cv2.resize(m, (self.W, self.H), interpolation=cv2.INTER_LINEAR), 0.0, 1.0)
         if len(cache) > 4:
             cache.clear()
         cache[key] = out
@@ -825,6 +846,7 @@ class Stage:
         rgb = self._rack(rgb, depth, f)
         if self.p.get("visual_bridge") or self.p.get("on_screen_text"):
             from explainer_engine.production import visual_bridge as VB
+            self.p["overlay_rendered_in_plate"] = True
             rgb = VB.render_on_frame(rgb, self.p, f, self.fps, self.n, keep_boxes=self.keep)
         if tele is not None:
             tele.update({"view": v, "fill": fill, "depth": depth, "layers": layers, "bg_maps": (mx, my)})
@@ -1188,3 +1210,39 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
             "objects": [{"id": o["id"], "depth": round(o["d"], 3)} for o in st.objects],
             "cost_usd": 0.0, "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest(),
             "views": views, "stage": st, "first": first, "last": last}
+
+
+def verify_rendered_split_camera_continuity(
+    stage_or_views: list[dict],
+    split_boundaries: list[int],
+    *,
+    max_scale_step: float | None = None,
+    max_center_step: float | None = None,
+) -> dict:
+    """P1-5 Rendered Split Camera Continuity Check (BP-202): verify that across split boundaries in a 2.5D shot,
+    consecutive frames f-1 -> f have smooth camera scale and center trajectory without a zoom reset or jump."""
+    from explainer_engine.standards import sourced_rules as _SR
+    pan_rate_max = float(_SR.T("BP-202", "narrative_pan_rate_max"))
+    s_tol = 0.015 if max_scale_step is None else float(max_scale_step)
+    c_tol = max(0.015, pan_rate_max / 24.0 * 2.5) if max_center_step is None else float(max_center_step)
+
+    findings: list[dict] = []
+    for b_frame in split_boundaries:
+        if 0 < b_frame < len(stage_or_views):
+            va = stage_or_views[b_frame - 1]
+            vb = stage_or_views[b_frame]
+            ds = abs(float(vb.get("s", 1.0)) - float(va.get("s", 1.0)))
+            dcx = abs(float(vb.get("cx", 0.5)) - float(va.get("cx", 0.5)))
+            dcy = abs(float(vb.get("cy", 0.5)) - float(va.get("cy", 0.5)))
+            if ds > s_tol or dcx > c_tol or dcy > c_tol:
+                findings.append({
+                    "rule": "BP-202",
+                    "status": "FAIL",
+                    "boundary_frame": b_frame,
+                    "detail": f"camera jump at split boundary frame {b_frame}: ds={ds:.4f}, dcx={dcx:.4f}, dcy={dcy:.4f}",
+                })
+    return {
+        "status": "FAIL" if findings else "PASS",
+        "boundaries_checked": list(split_boundaries),
+        "findings": findings,
+    }

@@ -653,13 +653,21 @@ def stage_direction(ep: Episode, rehearsal: bool = False, *, shots: list[dict] |
             prev_direction=prev_dir, next_shot=next_sh, episode_state=ep_state,
             require_layers=not is_map,
         )
+        brief = sh.get("director_brief") if isinstance(sh.get("director_brief"), dict) else {}
+        stillness_ok = bool(
+            brief.get("stillness_reason")
+            or brief.get("restraint_note")
+            or sh.get("still_by_design")
+            or sh.get("stillness_reason")
+            or (doc or {}).get("still_by_design")
+        )
         has_fx = any(t.get("track") not in ("camera", "audio") for t in ((doc or {}).get("tracks") or []))
         hard_fails = [
             pr for pr in probs
             if pr.get("level") == "FAIL"
-            and not (has_fx and (doc or {}).get("needs_eye") and (pr.get("rule") == "BP-200" or "BP-185" in str(pr.get("what") or "")))
+            and not ((has_fx or stillness_ok) and ((doc or {}).get("needs_eye") or stillness_ok) and (pr.get("rule") == "BP-200" or "BP-185" in str(pr.get("what") or "")))
         ]
-        if not is_map and not has_fx:
+        if not is_map and not has_fx and not stillness_ok:
             hard_fails.append({"level": "FAIL", "what": f"{sid}: needs_eye (no living element or light evidence)"})
         if doc is not None and not hard_fails:
             if dp is not None and not dp.is_file() and not is_map:

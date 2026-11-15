@@ -2,9 +2,10 @@ from __future__ import annotations
 import copy
 import re
 from typing import Any
+from explainer_engine.standards import sourced_rules as SR
 MAX_STILL_S = 5.0
 MIN_PART_S = 1.0
-CUTIN_CROP = 1.0  # Step 2 Fix: never jump-cut 1.35x on sub-parts of the same still
+CUTIN_CROP = float(SR.T("BP-202", "subshot_cutin_crop"))  # Step 2 Fix (BP-202): never jump-cut 1.35x on sub-parts of the same still
 DEFAULT_FOCUS = [0.5, 0.45]
 CLAUSE_PUNCT = (".", ",", ";", ":", "!", "?", "—", "–", "…")
 _TRAILING_QUOTES = "\"'”’)]}"
@@ -391,14 +392,33 @@ def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_ST
                 if matched:
                     fh["primary_anchor"] = str(matched[-1].get("anchor") or fh.get("primary_anchor") or "center")
             part["director_brief"] = pb
+        total_f = max(1, int(total_frames))
+        base_amount = 0.09
+        s0_cont = round(1.0 + base_amount * (f_lo / float(total_f)), 4)
+        s1_cont = round(1.0 + base_amount * (f_hi / float(total_f)), 4)
         part["split_from"] = {
             "shot_id": sid,
             "part_index": idx,
             "part_count": k,
             "start_s": round(s_lo, 4),
             "end_s": round(s_hi, 4),
+            "parent_start_frame": f_lo,
+            "parent_end_frame": f_hi,
+            "parent_total_frames": total_f,
+            "start_scale": s0_cont,
+            "end_scale": s1_cont,
             "cut_after_word": _word_token(words[w_hi - 1]) if w_hi > w_lo else "",
             "narration_excerpt": part_excerpt,
+        }
+        part["continuous_camera_slice"] = {
+            "parent_shot_id": sid,
+            "part_index": idx,
+            "part_count": k,
+            "parent_start_frame": f_lo,
+            "parent_end_frame": f_hi,
+            "parent_total_frames": total_f,
+            "start_scale": s0_cont,
+            "end_scale": s1_cont,
         }
         if idx >= 1:
             part["framing"] = {"crop": CUTIN_CROP, "focus": _resolve_focus(shot, words[w_lo:w_hi], words, seen=seen)}

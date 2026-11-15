@@ -263,3 +263,148 @@ def check_look_and_listen_gate(episode_root: Path, rehearsal: bool = False) -> l
         ),
     ]
     return rows
+
+
+REQUIRED_REVIEW_RECORD_FIELDS = (
+    "shot_id",
+    "route",
+    "scene_id",
+    "source_sha256",
+    "output_sha256",
+    "frame_count",
+    "timing_range",
+    "visual_findings",
+    "audio_findings",
+    "decision",
+    "render_epoch",
+)
+
+
+def build_per_shot_review_record(
+    shot_id: str,
+    *,
+    route: str,
+    scene_id: str = "",
+    source_sha256: str = "",
+    output_sha256: str = "",
+    frame_count: int = 0,
+    timing_range: list[float] | tuple[float, float] = (0.0, 0.0),
+    visual_findings: list[dict] | None = None,
+    audio_findings: list[dict] | None = None,
+    decision: str | None = None,
+    render_epoch: str = "",
+    timing_id: str = "",
+) -> dict:
+    """P2-7 Per-Shot Review Record: build an auditable review record tied to source/output hashes and render_epoch.
+    Any shot missing hashes, frame count, or render_epoch is marked ``NOT_REVIEWED`` (never ``PASS``).
+    """
+    vis = list(visual_findings) if visual_findings is not None else []
+    aud = list(audio_findings) if audio_findings is not None else []
+    has_evidence = bool(
+        shot_id
+        and route
+        and source_sha256
+        and source_sha256 != "missing"
+        and output_sha256
+        and output_sha256 != "missing"
+        and int(frame_count) > 0
+        and render_epoch
+    )
+    if not has_evidence:
+        resolved_decision = "NOT_REVIEWED"
+    elif decision in ("PASS", "REVIEW", "FAIL", "NOT_REVIEWED"):
+        resolved_decision = decision
+    else:
+        all_f = vis + aud
+        if any((f.get("status") or f.get("severity")) == "FAIL" for f in all_f):
+            resolved_decision = "FAIL"
+        elif any((f.get("status") or f.get("severity")) == "REVIEW" for f in all_f):
+            resolved_decision = "REVIEW"
+        else:
+            resolved_decision = "PASS"
+
+    return {
+        "schema": "per_shot_review_record/1",
+        "shot_id": str(shot_id),
+        "route": str(route),
+        "scene_id": str(scene_id or str(shot_id).split("_")[0]),
+        "source_sha256": str(source_sha256 or ""),
+        "output_sha256": str(output_sha256 or ""),
+        "frame_count": int(frame_count or 0),
+        "timing_range": [round(float(timing_range[0]), 4), round(float(timing_range[1]), 4)],
+        "visual_findings": vis,
+        "audio_findings": aud,
+        "decision": resolved_decision,
+        "render_epoch": str(render_epoch or ""),
+        "timing_id": str(timing_id or ""),
+    }
+
+
+def validate_episode_review_records(
+    shots: list[dict],
+    records_by_shot: dict[str, dict] | None,
+    *,
+    expected_render_epoch: str = "",
+    expected_timing_id: str = "",
+) -> dict:
+    """Verify every shot in ``shots`` has a complete, current-epoch review record.
+    Missing or stale records are reported as ``NOT_REVIEWED`` and block episode ``PASS``."""
+    records_by_shot = records_by_shot or {}
+    per_shot: dict[str, dict] = {}
+    not_reviewed: list[str] = []
+    failed: list[str] = []
+    review_needed: list[str] = []
+
+    for sh in shots:
+        sid = str(sh.get("shot_id") or "")
+        if not sid:
+            continue
+        rec = records_by_shot.get(sid)
+        if not isinstance(rec, dict):
+            per_shot[sid] = build_per_shot_review_record(
+                sid,
+                route=str(sh.get("route") or "still_25d"),
+                scene_id=str(sh.get("scene_id") or sh.get("segment_id") or sid.split("_")[0]),
+                decision="NOT_REVIEWED",
+            )
+            not_reviewed.append(sid)
+            continue
+        missing_fields = [k for k in REQUIRED_REVIEW_RECORD_FIELDS if k not in rec or rec[k] in (None, "")]
+        stale_epoch = bool(expected_render_epoch and rec.get("render_epoch") != expected_render_epoch)
+        stale_timing = bool(expected_timing_id and rec.get("timing_id") and rec.get("timing_id") != expected_timing_id)
+        if missing_fields or stale_epoch or stale_timing or int(rec.get("frame_count", 0)) <= 0:
+            rec_copy = dict(rec, decision="NOT_REVIEWED")
+            if stale_epoch:
+                rec_copy["stale_reason"] = f"render_epoch {rec.get('render_epoch')!r} != {expected_render_epoch!r}"
+            elif missing_fields:
+                rec_copy["stale_reason"] = f"missing fields: {missing_fields}"
+            per_shot[sid] = rec_copy
+            not_reviewed.append(sid)
+            continue
+        per_shot[sid] = rec
+        dec = str(rec.get("decision") or "NOT_REVIEWED")
+        if dec == "NOT_REVIEWED":
+            not_reviewed.append(sid)
+        elif dec == "FAIL":
+            failed.append(sid)
+        elif dec == "REVIEW":
+            review_needed.append(sid)
+
+    if failed:
+        overall = "FAIL"
+    elif not_reviewed:
+        overall = "NOT_REVIEWED"
+    elif review_needed:
+        overall = "REVIEW"
+    else:
+        overall = "PASS"
+
+    return {
+        "schema": "episode_review_audit/1",
+        "status": overall,
+        "shot_count": len(per_shot),
+        "not_reviewed": not_reviewed,
+        "failed": failed,
+        "review": review_needed,
+        "records": per_shot,
+    }

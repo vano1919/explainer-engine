@@ -461,7 +461,7 @@ def test_a_line_the_detector_closed_early_keeps_its_last_word():
     x = _held_note_audio(2.9)
     plain = VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True)
     held = VI.edit_points(3.6, [(0.5, 2.0)], None, 3.0, 24, spoken=True, audio=x, rate=16000)
-    assert plain["out_s"] <= 2.55                         # span end + the 0.5 s tail cap: cuts into the held note
+    assert plain["out_s"] <= 2.70                         # span end + the BP-201 0.65 s tail cap: cuts into the held note
     assert 2.9 <= held["out_s"] <= 3.1                    # moved on to where the sound has fallen
     assert held["frames"] > plain["frames"] and held["in_s"] == plain["in_s"]
 

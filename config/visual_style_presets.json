@@ -43,7 +43,8 @@
         "mood": "warm_human_camaraderie_and_resilience_inside_high_stakes_historical_drama"
       },
       "master_prompt_prefix": "High-budget 3D animated European adventure film aesthetic (refined Franco-Belgian Bande Dessinée character stylization combined with cinematic historical realism, logical human proportions, no cartoon giant noses, expressive eyes, vivid facial acting, smooth 3D sculpted shading without 2D ink outlines, hyper-tactile materials of weathered leather, wet stone, rough hide, and moss, soft diffused volumetric natural light with shallow depth of field, controlled earthy palette of warm gold, moss green, slate grey, and terracotta, warm human camaraderie inside historical drama).",
-      "retired": "replaced on 2026-11-12 by crossworld_main_style_v1 (the creator, 14:03 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWNY8aTebJUp6PNsqn5TzSqM); kept for the episodes made before"
+      "retired": "replaced on 2026-11-12 by crossworld_main_style_v1 (the creator, 14:03 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWNY8aTebJUp6PNsqn5TzSqM); kept for the episodes made before",
+      "ltx_negative_prompt": "blurry, out of focus, overexposed, underexposed, low contrast, washed out colors, excessive noise, grainy texture, poor lighting, flickering, motion blur, distorted proportions, unnatural skin tones, deformed facial features, asymmetrical face, extra limbs, disfigured hands, extra fingers, fused fingers, missing fingers, bad anatomy, warped geometry, jitter, camera shake, text, watermark, subtitle, logo, signature, compression artifacts, macroblocking"
     },
     "crossworld_main_style_v1": {
       "id": "crossworld_main_style_v1",
@@ -109,7 +110,8 @@
         "the reference couple leaked into all 5 era pictures",
         "Viking picture copied the reference pose and fur clothes",
         "oil lantern in Ancient Egypt"
-      ]
+      ],
+      "ltx_negative_prompt": "blurry, out of focus, overexposed, underexposed, low contrast, washed out colors, excessive noise, grainy texture, poor lighting, flickering, motion blur, distorted proportions, unnatural skin tones, deformed facial features, asymmetrical face, extra limbs, disfigured hands, extra fingers, fused fingers, missing fingers, bad anatomy, warped geometry, jitter, camera shake, text, watermark, subtitle, logo, signature, compression artifacts, macroblocking"
     }
   }
 }

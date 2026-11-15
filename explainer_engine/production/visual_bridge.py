@@ -57,37 +57,75 @@ def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     return ImageFont.load_default()
 
 
+def resolve_safe_overlay_box(
+    prefer_box: tuple[float, float, float, float],
+    keep_boxes: list[dict] | None = None,
+) -> dict:
+    """P1-5 Safe Overlay Box Resolver: find a non-colliding normalized box ``(x0, y0, x1, y1)`` avoiding all face
+    and keep boxes (expanding across 8 positions + compact banner scales). When every candidate still collides with
+    faces, returns ``suppressed=True`` and ``status='REVIEW'`` instead of drawing over a face."""
+    x0, y0, x1, y1 = prefer_box
+    w, h = max(0.05, x1 - x0), max(0.04, y1 - y0)
+    faces = [
+        kb.get("face") or kb.get("box")
+        for kb in (keep_boxes or [])
+        if isinstance(kb, dict) and (kb.get("face") or kb.get("forbid_overlay"))
+    ]
+    faces = [f for f in faces if isinstance(f, (list, tuple)) and len(f) == 4]
+    if not faces:
+        return {"box": (x0, y0, x1, y1), "suppressed": False, "status": "PASS", "reason": "no_face_boxes"}
+
+    def overlap_area(bx):
+        bx0, by0, bx1, by1 = bx
+        tot = 0.0
+        for fx0, fy0, fx1, fy1 in faces:
+            ix = max(0.0, min(bx1, fx1 + 0.025) - max(bx0, fx0 - 0.025))
+            iy = max(0.0, min(by1, fy1 + 0.025) - max(by0, fy0 - 0.025))
+            tot += ix * iy
+        return tot
+
+    if overlap_area((x0, y0, x1, y1)) <= 1e-6:
+        return {"box": (x0, y0, x1, y1), "suppressed": False, "status": "PASS", "reason": "preferred_box_clear"}
+
+    for scale in (1.0, 0.78, 0.62):
+        cw = min(0.88, w * scale)
+        ch = max(0.045, h * scale)
+        cx_mid = max(0.06, 0.5 - 0.5 * cw)
+        candidates = [
+            (0.06, 0.78, 0.06 + cw, min(0.95, 0.78 + ch)),
+            (0.06, 0.06, 0.06 + cw, 0.06 + ch),
+            (max(0.06, 0.94 - cw), 0.78, 0.94, min(0.95, 0.78 + ch)),
+            (max(0.06, 0.94 - cw), 0.06, 0.94, 0.06 + ch),
+            (cx_mid, max(0.04, 0.93 - ch), cx_mid + cw, 0.93),
+            (cx_mid, 0.05, cx_mid + cw, 0.05 + ch),
+            (0.06, 0.44, 0.06 + cw, 0.44 + ch),
+            (max(0.06, 0.94 - cw), 0.44, 0.94, 0.44 + ch),
+        ]
+        for cand in candidates:
+            if overlap_area(cand) <= 1e-6:
+                return {
+                    "box": cand,
+                    "suppressed": False,
+                    "status": "PASS" if scale == 1.0 else "REVIEW",
+                    "reason": "relocated_clear" if scale == 1.0 else f"relocated_compact_{scale:.2f}",
+                }
+
+    return {
+        "box": (0.0, 0.0, 0.0, 0.0),
+        "suppressed": True,
+        "status": "REVIEW",
+        "reason": "all_candidate_boxes_overlap_faces_suppressed",
+    }
+
+
 def safe_overlay_box(
     prefer_box: tuple[float, float, float, float],
     keep_boxes: list[dict] | None = None,
 ) -> tuple[float, float, float, float]:
-    """Ensure an overlay box ``(x0, y0, x1, y1)`` in normalized ``[0, 1]`` coordinates avoids face boxes."""
-    x0, y0, x1, y1 = prefer_box
-    w, h = x1 - x0, y1 - y0
-    faces = [kb["face"] for kb in (keep_boxes or []) if isinstance(kb, dict) and kb.get("face")]
-    if not faces:
-        return x0, y0, x1, y1
-
-    def overlaps(bx):
-        bx0, by0, bx1, by1 = bx
-        for fx0, fy0, fx1, fy1 in faces:
-            if min(bx1, fx1 + 0.03) > max(bx0, fx0 - 0.03) and min(by1, fy1 + 0.03) > max(by0, fy0 - 0.03):
-                return True
-        return False
-
-    if not overlaps((x0, y0, x1, y1)):
-        return x0, y0, x1, y1
-
-    candidates = [
-        (0.06, 0.78, 0.06 + w, 0.78 + h),
-        (0.06, 0.08, 0.06 + w, 0.08 + h),
-        (max(0.06, 0.94 - w), 0.78, 0.94, 0.78 + h),
-        (max(0.06, 0.94 - w), 0.08, 0.94, 0.08 + h),
-    ]
-    for cand in candidates:
-        if not overlaps(cand):
-            return cand
-    return x0, y0, x1, y1
+    """Ensure an overlay box ``(x0, y0, x1, y1)`` in normalized ``[0, 1]`` coordinates avoids face boxes.
+    Never returns the colliding original box when all candidates overlap faces (returns (0, 0, 0, 0) suppressed box)."""
+    res = resolve_safe_overlay_box(prefer_box, keep_boxes)
+    return res["box"]
 
 
 def normalize_bridge_items(plan_or_shot: dict, total_frames: int, fps: int = 24) -> list[dict]:
@@ -205,7 +243,20 @@ def render_on_frame(
             )
             draw.text((tx, ty), text, font=font, fill=(252, 246, 232, alpha))
         else:
-            x0, y0, x1, y1 = safe_overlay_box(it["box"], keep_boxes)
+            from explainer_engine.standards import sourced_rules as _SR
+            _ = _SR.T("BP-206", "pluggable_backends")
+            resolved = resolve_safe_overlay_box(it["box"], keep_boxes)
+            if resolved["suppressed"]:
+                if isinstance(plan_or_shot, dict):
+                    plan_or_shot["overlay_collision_review"] = True
+                    plan_or_shot.setdefault("overlay_findings", []).append({
+                        "rule": "BP-206",
+                        "status": "REVIEW",
+                        "item_id": it.get("id"),
+                        "detail": resolved["reason"],
+                    })
+                continue
+            x0, y0, x1, y1 = resolved["box"]
             px0, py0 = int(round(x0 * W)), int(round(y0 * H))
             font = _load_font(int(round(H * 0.028)))
             text = it["text"]

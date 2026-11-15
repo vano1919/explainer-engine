@@ -455,18 +455,187 @@ def draft_edit_plans(script: dict) -> dict[str, dict]:
 # people from behind / over-the-shoulder / in silhouette, and simple single-person hand/foot actions.
 LTX_UNNATURAL_PROPS = ("photograph", "photo", "scissors", "comb", "football", "ball", "tin", "chocolate", "button", "letter", "cake", "bread", "cigar", "cigarette")
 LTX_NATURAL_SIZES = ("extreme_wide", "wide", "over_the_shoulder")
+FORBID_LTX_SPEAKING_CLOSE = bool(SR.T("BP-205", "forbid_ltx_speaking_close"))
+FORBID_LTX_SMALL_HAND_PROPS = bool(SR.T("BP-205", "forbid_ltx_small_hand_props"))
+FORBID_LTX_TWO_PERSON_CLOSE = bool(SR.T("BP-205", "forbid_ltx_two_person_close_contact"))
 
 
-def classify_ltx_natural_fit(shot: dict, script: dict) -> dict:
-    """Evaluate whether ``shot`` is natural for LTX video generation under Creator Rule C2 (``RT-LTX-FIT``).
+def inspect_ltx_start_frame(
+    shot: dict,
+    start_frame=None,
+    *,
+    inspection_meta: dict | None = None,
+) -> dict:
+    """P0-2 Visual Start-Frame Check: inspect the registered start frame (image array/path + structured staging/layout/boxes)
+    for close faces, hand-held small objects, two-person contact, anatomy/identity defects, or low visual confidence.
+    Low confidence or unverified start frame is marked REVIEW (never silent PASS).
+    """
+    import hashlib
+    import numpy as np
 
-    Returns ``{"shot_id", "natural_for_ltx", "recommended_route", "recommended_framing", "reasons"}``.
+    sid = shot.get("shot_id", "?")
+    meta = dict(inspection_meta or shot.get("start_frame_inspection") or {})
+    staging = shot.get("staging") or {}
+    layout = shot.get("layout") or staging.get("layout") or {}
+    positions = shot.get("positions") or staging.get("positions") or layout.get("positions") or []
+    roster = shot.get("roster") or staging.get("roster") or shot.get("character_ids") or []
+    fixed = shot.get("fixed") or staging.get("fixed") or []
+
+    frame_sha = meta.get("source_sha256", "")
+    dims = meta.get("dimensions", [0, 0])
+    if isinstance(start_frame, (str, Path)) and Path(start_frame).is_file():
+        raw_bytes = Path(start_frame).read_bytes()
+        frame_sha = hashlib.sha256(raw_bytes).hexdigest()
+        try:
+            import cv2
+            arr = cv2.imread(str(start_frame), cv2.IMREAD_COLOR)
+            if arr is not None:
+                dims = [int(arr.shape[1]), int(arr.shape[0])]
+        except Exception:
+            pass
+    elif isinstance(start_frame, np.ndarray) and start_frame.ndim >= 2:
+        frame_sha = hashlib.sha256(np.ascontiguousarray(start_frame).tobytes()).hexdigest()
+        dims = [int(start_frame.shape[1]), int(start_frame.shape[0])]
+
+    issues: list[str] = []
+    face_area_frac = float(meta.get("face_area_frac", 0.0))
+    for pos in positions if isinstance(positions, list) else []:
+        if not isinstance(pos, dict):
+            continue
+        box = pos.get("face_box") or pos.get("box") or pos.get("bbox")
+        if isinstance(box, (list, tuple)) and len(box) == 4:
+            w = max(0.0, float(box[2]) - float(box[0]))
+            h = max(0.0, float(box[3]) - float(box[1]))
+            if w > 1.0 or h > 1.0:
+                fw = float(dims[0] or 2560)
+                fh = float(dims[1] or 1440)
+                w, h = w / fw, h / fh
+            if pos.get("face_box") is not None or str(pos.get("kind", "")).lower() == "face":
+                face_area_frac = max(face_area_frac, w * h)
+
+    if face_area_frac > 0.045:
+        issues.append(f"start-frame visual check: prominent frontal face box ({face_area_frac:.1%} of frame > 4.5%)")
+
+    if bool(meta.get("hand_prop_contact")) or any(
+        isinstance(f, dict) and str(f.get("interaction") or f.get("held_by") or "").strip()
+        for f in (fixed if isinstance(fixed, list) else [])
+    ):
+        issues.append("start-frame visual check: hand-to-prop manipulation detected in staging/frame")
+
+    # Check two-person proximity in positions/layout even when no keyword is present
+    centers: list[tuple[float, float]] = []
+    for pos in positions if isinstance(positions, list) else []:
+        if isinstance(pos, dict):
+            b = pos.get("box") or pos.get("bbox")
+            if isinstance(b, (list, tuple)) and len(b) == 4:
+                cx = 0.5 * (float(b[0]) + float(b[2]))
+                cy = 0.5 * (float(b[1]) + float(b[3]))
+                if cx > 1.0 or cy > 1.0:
+                    cx /= float(dims[0] or 2560)
+                    cy /= float(dims[1] or 1440)
+                centers.append((cx, cy))
+    if len(centers) >= 2:
+        for i in range(len(centers)):
+            for j in range(i + 1, len(centers)):
+                dist = ((centers[i][0] - centers[j][0]) ** 2 + (centers[i][1] - centers[j][1]) ** 2) ** 0.5
+                if dist < 0.26:
+                    issues.append(f"start-frame visual check: two characters in close physical proximity (dist={dist:.2f} < 0.26)")
+                    break
+
+    if meta.get("anatomy_ok") is False or meta.get("identity_match") is False:
+        issues.append("start-frame visual check: anatomy or character identity mismatch on start frame")
+
+    confidence = str(meta.get("confidence", "high")).lower()
+    if confidence in ("low", "uncertain", "unverified"):
+        issues.append(f"start-frame visual check: confidence={confidence!r} requires REVIEW (never silent PASS)")
+
+    status = "REVIEW" if issues else "PASS"
+    return {
+        "shot_id": sid,
+        "status": status,
+        "confidence": confidence,
+        "source_sha256": frame_sha,
+        "dimensions": dims,
+        "face_area_frac": round(face_area_frac, 4),
+        "roster_count": len(roster),
+        "issues": issues,
+    }
+
+
+def compare_ltx_first_frame_to_source(
+    start_frame,
+    clip_first_frame,
+    *,
+    max_mean_abs_diff: float = 18.0,
+    min_luma_corr: float = 0.85,
+) -> dict:
+    """P0-2 Frame-0 Registration Check: compare frame 0 of the generated LTX clip against its source start image."""
+    import numpy as np
+
+    def _to_bgr(img):
+        if isinstance(img, np.ndarray):
+            return img
+        if isinstance(img, (str, Path)) and Path(img).is_file():
+            import cv2
+            return cv2.imread(str(img), cv2.IMREAD_COLOR)
+        return None
+
+    a = _to_bgr(start_frame)
+    b = _to_bgr(clip_first_frame)
+    if a is None or b is None:
+        return {
+            "status": "REVIEW",
+            "matched": False,
+            "reason": "missing start_frame or clip_first_frame for frame-0 comparison",
+        }
+    if a.shape[:2] != b.shape[:2]:
+        try:
+            import cv2
+            b = cv2.resize(b, (a.shape[1], a.shape[0]), interpolation=cv2.INTER_AREA)
+        except Exception:
+            pass
+    af = a.astype(np.float32)
+    bf = b.astype(np.float32)
+    mad = float(np.mean(np.abs(af - bf)))
+    a_flat = af.mean(axis=-1).ravel()
+    b_flat = bf.mean(axis=-1).ravel()
+    a_std = float(np.std(a_flat))
+    b_std = float(np.std(b_flat))
+    if a_std < 1e-5 or b_std < 1e-5:
+        corr = 1.0 if mad < 1.0 else 0.0
+    else:
+        corr = float(np.corrcoef(a_flat, b_flat)[0, 1])
+    matched = mad <= max_mean_abs_diff and corr >= min_luma_corr
+    return {
+        "status": "PASS" if matched else "FAIL",
+        "matched": matched,
+        "mean_abs_diff": round(mad, 3),
+        "luma_corr": round(corr, 4),
+        "reason": "frame 0 matches registered start image" if matched else (
+            f"frame 0 diverged from start image (MAD={mad:.2f} > {max_mean_abs_diff} or corr={corr:.3f} < {min_luma_corr})"
+        ),
+    }
+
+
+def classify_ltx_natural_fit(
+    shot: dict,
+    script: dict,
+    *,
+    start_frame=None,
+    inspection_meta: dict | None = None,
+    first_frame_comparison: dict | None = None,
+) -> dict:
+    """Evaluate whether ``shot`` is natural for LTX video generation under Creator Rule C2 (``BP-205`` / ``RT-LTX-FIT``).
+
+    The keyword list is strictly a first screen; structural staging/layout/positions and start-frame visual inspection
+    decide even when no prop keyword appears in the prompt text. Low confidence returns ``status='REVIEW'`` and routes
+    away from blind LTX generation.
     """
     import re
     sid = shot.get("shot_id", "?")
     lines = _lines(script)
     size = str((shot.get("camera_spec") or {}).get("shot_size") or "medium").lower()
-    chars = list(shot.get("character_ids") or [])
+    chars = list(shot.get("character_ids") or (shot.get("staging") or {}).get("roster") or shot.get("roster") or [])
     line_ids = list(shot.get("audio_line_ids") or [])
     has_char_speech = any((lines.get(lid) or {}).get("speaker_type") == "character" for lid in line_ids)
     spoken_text = " ".join(str((lines.get(lid) or {}).get("text") or "") for lid in line_ids)
@@ -488,22 +657,33 @@ def classify_ltx_natural_fit(shot: dict, script: dict) -> dict:
         or "back turned" in text_blob
     )
 
-    if has_char_speech and size not in ("extreme_wide", "wide") and not is_ots_or_behind:
-        reasons.append(f"frontal/near talking face in {size} (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)")
-    if size in ("medium_close_up", "close_up", "extreme_close_up") and not is_ots_or_behind and chars:
-        reasons.append(f"close facial framing in {size} (C2: route to 2.5D living photo or close hand/object insert)")
-    if len(chars) >= 2 and size not in ("extreme_wide", "wide") and not is_ots_or_behind:
-        reasons.append(f"two-person interaction in {size} (C2: LTX warps two-person interaction and swaps identity)")
+    if FORBID_LTX_SPEAKING_CLOSE and has_char_speech and size not in ("extreme_wide", "wide") and not is_ots_or_behind:
+        reasons.append(f"frontal/near talking face in {size} (C2/BP-205: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)")
+    if FORBID_LTX_SPEAKING_CLOSE and size in ("medium_close_up", "close_up", "extreme_close_up") and not is_ots_or_behind and chars:
+        reasons.append(f"close facial framing in {size} (C2/BP-205: route to 2.5D living photo or close hand/object insert)")
+    if FORBID_LTX_TWO_PERSON_CLOSE and len(chars) >= 2 and size not in ("extreme_wide", "wide") and not is_ots_or_behind:
+        reasons.append(f"two-person interaction in {size} (C2/BP-205: LTX warps two-person interaction and swaps identity)")
     hit_props = [pr for pr in LTX_UNNATURAL_PROPS if re.search(rf"\b{re.escape(pr)}\b", text_blob)]
-    if hit_props and size not in ("extreme_wide",):
-        reasons.append(f"small prop/ball action ({', '.join(hit_props[:2])}) (C2: LTX deforms small props in hands/feet)")
+    if FORBID_LTX_SMALL_HAND_PROPS and hit_props and size not in ("extreme_wide",):
+        reasons.append(f"small prop/ball action ({', '.join(hit_props[:2])}) (C2/BP-205: LTX deforms small props in hands/feet)")
+
+    # Second stage: visual start-frame & structured staging inspection (catches non-keyword props, close faces, low confidence)
+    sf_check = inspect_ltx_start_frame(shot, start_frame=start_frame, inspection_meta=inspection_meta)
+    for iss in sf_check.get("issues", []):
+        reasons.append(iss)
+
+    if isinstance(first_frame_comparison, dict) and not first_frame_comparison.get("matched", True):
+        reasons.append(str(first_frame_comparison.get("reason") or "LTX frame 0 diverged from source start image"))
 
     if not reasons:
         return {
             "shot_id": sid,
             "natural_for_ltx": True,
+            "status": "PASS",
+            "screen_stage": "keyword_plus_visual_start_frame",
             "recommended_route": shot.get("route", "video"),
             "recommended_framing": size,
+            "start_frame_check": sf_check,
             "reasons": ["wide/atmospheric/from-behind/slow motion fits LTX natural strengths"],
         }
 
@@ -520,33 +700,89 @@ def classify_ltx_natural_fit(shot: dict, script: dict) -> dict:
     return {
         "shot_id": sid,
         "natural_for_ltx": False,
+        "status": "REVIEW",
+        "screen_stage": "keyword_plus_visual_start_frame",
         "recommended_route": rec_route,
         "recommended_framing": rec_framing,
+        "start_frame_check": sf_check,
         "reasons": reasons,
     }
 
 
-def reroute_unnatural_ltx_shots(script: dict) -> dict:
-    """Apply Creator Correction C2 across ``script`` and return a summary of route assignments."""
+def reroute_unnatural_ltx_shots(
+    script: dict,
+    *,
+    apply_routes: bool = True,
+    script_path: Path | str | None = None,
+    inspections: dict[str, dict] | None = None,
+) -> dict:
+    """Apply Creator Correction C2 (BP-205) across ``script``, update each rerouted shot's ``route`` in-place in the
+    returned script copy (and in ``segments[*].shots``), and persist atomically to ``script_path`` when provided."""
     import copy as _copy
     doc = _copy.deepcopy(script)
-    evals = {}
-    rerouted_to_25d = []
-    kept_ltx_natural = []
-    for s in doc.get("shots", []):
-        if s.get("route") in ("map_action",):
-            continue
-        ev = classify_ltx_natural_fit(s, doc)
-        evals[s["shot_id"]] = ev
-        if is_video(s):
+    inspections = inspections or {}
+    evals: dict[str, dict] = {}
+    rerouted_to_25d: list[str] = []
+    kept_ltx_natural: list[str] = []
+
+    def _apply_to_shot(s: dict) -> None:
+        sid = s.get("shot_id")
+        if not sid or s.get("route") in ("map_action", "map"):
+            return
+        orig_route = s.get("route", "still_25d")
+        was_video = is_video(s)
+        ev = classify_ltx_natural_fit(s, doc, inspection_meta=inspections.get(sid))
+        evals[sid] = ev
+        if was_video:
             if ev["natural_for_ltx"]:
-                kept_ltx_natural.append(s["shot_id"])
+                if sid not in kept_ltx_natural:
+                    kept_ltx_natural.append(sid)
             else:
-                rerouted_to_25d.append(s["shot_id"])
+                if sid not in rerouted_to_25d:
+                    rerouted_to_25d.append(sid)
+                if apply_routes:
+                    s["route"] = ev["recommended_route"]
             s["c2_natural_fit"] = ev
+            s["route_decision"] = {
+                "original_route": orig_route,
+                "resolved_route": s["route"],
+                "recommended_framing": ev["recommended_framing"],
+                "status": ev["status"],
+                "screen_stage": ev["screen_stage"],
+                "reasons": ev["reasons"],
+            }
+            s["start_frame_record"] = ev.get("start_frame_check", {})
+
+    for s in doc.get("shots", []) or []:
+        if isinstance(s, dict):
+            _apply_to_shot(s)
+    for seg in doc.get("segments", []) or []:
+        if isinstance(seg, dict):
+            for s in seg.get("shots", []) or []:
+                if isinstance(s, dict):
+                    _apply_to_shot(s)
+
+    if script_path is not None:
+        from explainer_engine.core.store import write_json_atomic
+        write_json_atomic(Path(script_path), doc)
+
     return {
         "evaluations": evals,
         "kept_ltx_natural": kept_ltx_natural,
         "rerouted_to_25d": rerouted_to_25d,
+        "persisted_to": str(script_path) if script_path is not None else None,
         "script": doc,
     }
+
+
+def apply_and_persist_ltx_routes(
+    script_path: Path | str,
+    *,
+    out_path: Path | str | None = None,
+    inspections: dict[str, dict] | None = None,
+) -> dict:
+    """Load ``script_path``, resolve and apply C2/BP-205 LTX route decisions, and persist atomically."""
+    src_p = Path(script_path)
+    dst_p = Path(out_path) if out_path is not None else src_p
+    doc = json.loads(src_p.read_text(encoding="utf-8"))
+    return reroute_unnatural_ltx_shots(doc, apply_routes=True, script_path=dst_p, inspections=inspections)

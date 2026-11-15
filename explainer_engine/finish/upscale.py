@@ -123,3 +123,9 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def needs_resize(src_w: int, src_h: int, target_size: tuple[int, int] | None = None) -> bool:
+    """P1-9 Single Resize Guard: return True only when (src_w, src_h) differs from target delivery size."""
+    tw, th = target_size or delivery.size()
+    return (int(src_w), int(src_h)) != (int(tw), int(th))

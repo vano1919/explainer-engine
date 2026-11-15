@@ -170,9 +170,12 @@ def _particles(st, rgb, depth, e, t, v, op):
         if op in ("snow", "spindrift"):
             alpha = cv2.GaussianBlur(alpha, (0, 0), (0.5 + 1.2 * z) * k)
         behind = np.clip((z + 0.04 - depth) / 0.08, 0, 1)        # only where the scene is farther than the layer
-        # Step 2 Fix (V2 & V3): Frame 0 == source painting (fade_in=0 at t=0) and protect foreground faces/hands/photos
-        fade_in = 0.0 if t <= 1e-6 else min(1.0, t / 0.40)
-        fg_shield = (1.0 - 0.90 * st.people_field(v)) if (op in ("snow", "spindrift") and hasattr(st, "people_field")) else 1.0
+        # Step 2 & P1-5 Fix (BP-202): Frame 0 == source painting (fade_in=0 at t=0) and >=90% shield on faces & fg objects
+        from explainer_engine.standards import sourced_rules as _SR
+        f0_alpha = float(_SR.T("BP-202", "frame0_particle_alpha"))
+        shield_min = float(_SR.T("BP-202", "fg_subject_snow_shield"))
+        fade_in = f0_alpha if t <= 1e-6 else min(1.0, t / 0.40)
+        fg_shield = np.clip(1.0 - max(shield_min, 0.94) * st.people_field(v), 0.0, 1.0) if (op in ("snow", "spindrift", "rain") and hasattr(st, "people_field")) else 1.0
         alpha = np.clip(alpha, 0, 1) * behind * fade_in * fg_shield
         if op == "embers":
             glow = alpha + cv2.GaussianBlur(alpha, (0, 0), 4 * k) * 1.5
@@ -411,3 +414,33 @@ def apply(st, rgb, depth, e, i, t, v, mx, my, layers, zoom):
     if op in ("steam", "breath"):
         return _breath(st, rgb, depth, e, i, t, v, zoom, op)
     return _surface(st, rgb, e, t, v, mx, my, layers, op)
+
+
+def measure_particle_leakage(
+    particle_alpha_protected: np.ndarray,
+    particle_alpha_unprotected: np.ndarray,
+    fg_or_face_mask: np.ndarray,
+    *,
+    max_leakage_ratio: float | None = None,
+) -> dict:
+    """P1-5 Quantitative Particle Protection Check (BP-202): measure the ratio of particle opacity inside
+    foreground object and face masks after ``people_field`` shielding vs unprotected particle opacity."""
+    from explainer_engine.standards import sourced_rules as _SR
+    shield_target = float(_SR.T("BP-202", "fg_subject_snow_shield"))
+    allowed_leak = (1.0 - shield_target) if max_leakage_ratio is None else float(max_leakage_ratio)
+
+    prot = np.asarray(particle_alpha_protected, dtype=np.float32)
+    unprot = np.asarray(particle_alpha_unprotected, dtype=np.float32)
+    mask = (np.asarray(fg_or_face_mask, dtype=np.float32) > 0.5)
+    if not np.any(mask):
+        return {"status": "PASS", "leakage_ratio": 0.0, "shield_efficiency": 1.0, "max_allowed_leakage": round(allowed_leak, 4)}
+    unprot_sum = float(np.sum(np.abs(unprot[mask])))
+    prot_sum = float(np.sum(np.abs(prot[mask])))
+    leak_ratio = (prot_sum / unprot_sum) if unprot_sum > 1e-8 else 0.0
+    passed = leak_ratio <= allowed_leak + 1e-4
+    return {
+        "status": "PASS" if passed else "FAIL",
+        "leakage_ratio": round(leak_ratio, 4),
+        "shield_efficiency": round(1.0 - leak_ratio, 4),
+        "max_allowed_leakage": round(allowed_leak, 4),
+    }

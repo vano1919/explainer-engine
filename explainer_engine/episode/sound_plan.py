@@ -754,11 +754,13 @@ def write(plan: dict, sources: dict, episode_dir: Path) -> Path:
 
 
 def advisory_density_hint(shot_sound: dict, shot_spec: dict | None = None) -> dict:
-    """Creator Correction C1 (No Numeric Quotas Decide): sound density is an advisory REVIEW hint only, never a FAIL gate.
+    """Creator Correction C1 (BP-204, No Numeric Quotas Decide): sound density is an advisory REVIEW hint only, never a FAIL gate.
 
     Intentional silence (``intentional_silence`` / ``sound_design.silence``) or restrained solemn beats pass with
     zero spot cues.
     """
+    from explainer_engine.standards import sourced_rules as _SR
+    blocking = bool(_SR.T("BP-204", "quota_blocking"))
     design = shot_sound.get("design") or {}
     state = design.get("state")
     silence = design.get("silence_reason") or (shot_spec or {}).get("intentional_silence")
@@ -769,7 +771,7 @@ def advisory_density_hint(shot_sound: dict, shot_spec: dict | None = None) -> di
             "shot_id": shot_sound.get("shot_id"),
             "status": "PASS",
             "severity": "INFO",
-            "blocking": False,
+            "blocking": blocking,
             "detail": f"intentional silence / restraint honoured: {silence or state}",
         }
     cues_per_10s = round(len(evs) * 10.0 / dur, 2)
@@ -777,7 +779,7 @@ def advisory_density_hint(shot_sound: dict, shot_spec: dict | None = None) -> di
         "shot_id": shot_sound.get("shot_id"),
         "status": "PASS" if evs or state in ("AMBIENCE_ONLY", "MUSIC_SUPPORTED") else "REVIEW",
         "severity": "REVIEW",
-        "blocking": False,
+        "blocking": blocking,
         "cues_per_10s": cues_per_10s,
         "detail": "advisory density hint only (C1: numbers never decide; brief, picture and camera decide)",
     }

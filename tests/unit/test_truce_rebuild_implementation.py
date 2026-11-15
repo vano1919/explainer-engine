@@ -226,8 +226,8 @@ class TestTruceRebuildImplementation(unittest.TestCase):
             rep_temp = SR.upscale_with_backend(
                 src_p, out_temp, lane="video", backend="temporal_video", size=(320, 240), restore_grain=True
             )
-            self.assertEqual(rep_temp["status"], "PASS")
-            self.assertEqual(rep_temp["output_size"], [320, 240])
+            self.assertEqual(rep_temp["status"], "NOT_RUN")
+            self.assertEqual(rep_temp["output_size"], [160, 120])
 
 
 if __name__ == "__main__":

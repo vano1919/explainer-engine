@@ -38,9 +38,32 @@ from explainer_engine.qa import gates as G
 from explainer_engine.standards import sourced_rules as SR
 
 SCHEMA = "video_clip_record/1"
-HEAD_LEAD = [float(v) for v in SR.T("BP-190", "head_lead_s")]
-CUT_TAIL = [float(v) for v in SR.T("BP-190", "tail_s")]
+BP201_HEAD_LEAD_S = float(SR.T("BP-201", "head_lead_s"))
+BP201_TAIL_MIN_S = float(SR.T("BP-201", "reaction_tail_min_s"))
+BP201_TAIL_TARGET_S = float(SR.T("BP-201", "reaction_tail_target_s"))
+HEAD_LEAD = [float(SR.T("BP-190", "head_lead_s")[0]), BP201_HEAD_LEAD_S]
+CUT_TAIL = [BP201_TAIL_MIN_S, max(BP201_TAIL_TARGET_S, float(SR.T("BP-190", "tail_s")[1]), 0.65)]
 SPEECH_TAIL_S = float(SR.T("BP-187", "speech_tail_s"))   # a spoken line ends inside its clip with this much after it
+
+
+def build_trim_contract(rec_or_pts: dict, shot_id: str = "") -> dict:
+    in_s = float(rec_or_pts.get("in_s", rec_or_pts.get("in", 0.0)))
+    out_s = float(rec_or_pts.get("out_s", rec_or_pts.get("out", 0.0)))
+    frames = int(rec_or_pts.get("frames", 0))
+    sid = shot_id or str(rec_or_pts.get("shot_id") or "")
+    return {
+        "shot_id": sid,
+        "in_s": round(in_s, 4),
+        "out_s": round(out_s, 4),
+        "trim_duration_s": round(max(0.0, out_s - in_s), 4),
+        "frames": frames,
+        "clip_path": str(rec_or_pts.get("clip_path") or (f"production/video/cut/{sid}.mp4" if sid else "")),
+        "clip_sha256": str(rec_or_pts.get("clip_sha256") or ""),
+        "head_lead_min_s": BP201_HEAD_LEAD_S,
+        "reaction_tail_min_s": BP201_TAIL_MIN_S,
+        "reaction_tail_target_s": BP201_TAIL_TARGET_S,
+        "single_trimmed_source": True,
+    }
 
 
 def _sha(p: Path) -> str:
@@ -216,7 +239,7 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
         t_in = max(t_in, fr)
     if handover_s is not None:
         t_out = min(dur, handover_s + fr)            # end ON the hand-over frame (VL-05)
-    f_in, f_out = int(round(t_in * fps)), int(round(t_out * fps))
+    f_in, f_out = int(t_in * fps + 1e-6), int(round(t_out * fps))
     if spoken and f_in / fps > spans[0][0] - HEAD_LEAD[0] + 1e-6 and spans[0][0] >= HEAD_LEAD[0]:
         f_in = max(0, int((spans[0][0] - HEAD_LEAD[0]) * fps))   # the first word is never cut
     if f_out - f_in < 1:
@@ -320,6 +343,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "frames": pts["frames"], "speech_raw": spans, "speech": t_spans, "clip_spoken": sid in spoken,
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
                "findings": finds, "attempts": c.get("attempts") or []}
+        rec["trim_contract"] = build_trim_contract(rec, sid)
         if sid in spoken and pr["has_audio"]:
             rec["speech_words"] = words_source
         if trim_db:
@@ -368,7 +392,7 @@ def clip_timings(root: Path, script: dict) -> dict:
 
 
 
-REACTION_TAIL_MIN_S = 0.50
+REACTION_TAIL_MIN_S = BP201_TAIL_MIN_S
 HALLUCINATED_TAIL_TOKENS = {"you", "you.", "thank", "thanks", "bye"}
 
 
@@ -376,8 +400,8 @@ def whisper_edit_points(
     whisper_doc: dict,
     script: dict,
     *,
-    head_lead_s: float = 0.40,
-    reaction_tail_s: float = 0.55,
+    head_lead_s: float = BP201_HEAD_LEAD_S,
+    reaction_tail_s: float = BP201_TAIL_TARGET_S,
     min_dur_s: float = 1.50,
     raw_durations: dict[str, float] | None = None,
 ) -> dict:

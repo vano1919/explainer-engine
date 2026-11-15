@@ -2028,7 +2028,43 @@
             "null"
           ],
           "description": "Creator Correction C2: LTX natural-fit classification and route recommendation."
-        }
+        },
+        "staging": {},
+        "scene_id": {},
+        "continues": {},
+        "layout": {},
+        "fixed": {},
+        "roster": {},
+        "positions": {},
+        "reframe_reason": {},
+        "motivated_reframe": {},
+        "announced_newcomer": {},
+        "roster_change_reason": {},
+        "neutral_bridge": {},
+        "weather": {},
+        "weather_reason": {},
+        "insert_cutaway_reason": {},
+        "end_props": {},
+        "start_props": {},
+        "end_posture": {},
+        "start_posture": {},
+        "end_luma": {},
+        "start_luma": {},
+        "end_warmth": {},
+        "start_warmth": {},
+        "lighting": {},
+        "route_decision": {},
+        "start_frame_record": {},
+        "start_frame_inspection": {},
+        "split_from": {},
+        "continuous_camera_slice": {},
+        "silent_by_design": {},
+        "still_by_design": {},
+        "stillness_reason": {},
+        "overlay_rendered_in_plate": {},
+        "overlay_collision_review": {},
+        "overlay_findings": {},
+        "draw_spans_frames": {}
       },
       "allOf": [
         {
@@ -2827,6 +2863,54 @@
               "music": {
                 "type": "boolean",
                 "description": "SP-05: score this segment (true) or let the place's bed carry it (false)"
+              },
+              "staging": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "scene_id": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "weather": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "weather_reason": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "tone": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "shots": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "null"
+                ]
               }
             }
           }

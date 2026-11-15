@@ -91,7 +91,7 @@ def fake_ltx(log, written):
     def parser_factory(params=None, supports_auto_duration=True):
         p = argparse.ArgumentParser()
         for f in ("--transformer-path", "--text-encoder-path", "--video-vae-path", "--audio-vae-path",
-                  "--spatial-upsampler-path", "--prompt", "--output-path"):
+                  "--spatial-upsampler-path", "--prompt", "--negative-prompt", "--output-path"):
             p.add_argument(f)
         p.add_argument("--image", nargs=3, action="append", dest="images")
         for f in ("--width", "--height", "--num-frames", "--seed"):

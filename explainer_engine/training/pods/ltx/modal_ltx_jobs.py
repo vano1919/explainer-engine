@@ -128,15 +128,66 @@ def ltx_frames(seconds: float, fps: int) -> int:
     return 8 * math.ceil((n - 1) / 8) + 1
 
 
-def native_spec(launch: dict, seconds: float) -> dict:
-    """The clip the model makes for a shot of ``seconds``: its own rate and the launch's size, 8k+1 frames; a shot longer than
-    the longest proven clip raises ValueError (split it in the script)."""
+PAINTERLY_NEGATIVE_PROMPT = (
+    "blurry, out of focus, overexposed, underexposed, low contrast, washed out colors, excessive noise, "
+    "grainy texture, poor lighting, flickering, motion blur, distorted proportions, unnatural skin tones, "
+    "deformed facial features, asymmetrical face, extra limbs, disfigured hands, extra fingers, fused fingers, "
+    "missing fingers, bad anatomy, warped geometry, jitter, camera shake, text, watermark, subtitle, logo, "
+    "signature, compression artifacts, macroblocking"
+)
+FORBIDDEN_PAINTERLY_NEGATIVE_TERMS = (
+    "cartoonish rendering",
+    "cartoonish",
+    "3d cgi look",
+    "3d cgi",
+    "illustration",
+    "painting",
+    "painted",
+    "2d",
+)
+
+
+def sanitize_painterly_negative_prompt(neg_prompt: str | None) -> str:
+    """P0-8 (R1): Strip anti-painterly / anti-illustration terms ('cartoonish rendering', '3D CGI look', 'illustration',
+    'painting', '2D') from an LTX negative prompt while preserving anatomical, glitch, jitter, and watermark exclusions."""
+    raw = str(neg_prompt or PAINTERLY_NEGATIVE_PROMPT).strip()
+    parts = [p.strip() for p in raw.split(",") if p.strip()]
+    cleaned: list[str] = []
+    for p in parts:
+        low = p.lower()
+        if any(bad in low for bad in FORBIDDEN_PAINTERLY_NEGATIVE_TERMS):
+            continue
+        cleaned.append(p)
+    joined = ", ".join(cleaned)
+    for req in ("deformed facial features", "extra fingers", "flickering", "watermark", "jitter"):
+        if req not in joined.lower():
+            cleaned.append(req)
+    return ", ".join(cleaned)
+
+
+def resolve_negative_prompt(launch: dict | None = None, job: dict | None = None, style_preset: dict | None = None) -> str:
+    """Resolve the painterly-safe negative prompt from job, style_preset, or launch config."""
+    raw = (
+        (job or {}).get("negative_prompt")
+        or (style_preset or {}).get("ltx_negative_prompt")
+        or (launch or {}).get("negative_prompt")
+        or PAINTERLY_NEGATIVE_PROMPT
+    )
+    return sanitize_painterly_negative_prompt(raw)
+
+
+def native_spec(launch: dict, seconds: float, *, resolution_override: tuple[int, int] | list[int] | None = None) -> dict:
+    """The clip the model makes for a shot of ``seconds``: its own rate and the launch's size (or an A/B resolution override
+    from ``launch['native']['sizes']`` under P1-9/R2), 8k+1 frames; a shot longer than the longest proven clip raises ValueError."""
     n = launch["native"]
     frames = ltx_frames(seconds, n["fps"])
     if frames > n["max_frames"]:
         raise ValueError(f"{seconds:g} s is {frames} frames at {n['fps']} fps, past the longest clip of {n['max_frames']} "
                          f"frames ({max_seconds(launch):.2f} s): split the shot in the script")
-    return {"fps": n["fps"], "width": n["use"][0], "height": n["use"][1], "frames": frames}
+    use_wh = list(resolution_override) if resolution_override is not None else list(n.get("ab_use") or n["use"])
+    if use_wh not in n["sizes"]:
+        raise ValueError(f"resolution {use_wh} is not in launch native.sizes {n['sizes']}")
+    return {"fps": n["fps"], "width": use_wh[0], "height": use_wh[1], "frames": frames}
 
 
 def max_seconds(launch: dict) -> float:
@@ -477,15 +528,18 @@ def fit_picture(img, width, height, face_box=None, headroom: float = 0.35):
 
 def ltx_cmd(launch, job, picture, mp4, python=None):
     """The LTX-2 CLI of one shot (the bake-off's ``ltx_cmd``): split weights from the Volume, the start picture at frame 0,
-    every other setting the CLI's own LTX-2.5 default."""
+    and an explicit painterly-safe ``--negative-prompt`` (P0-8/R1) so LTX-2's default 'cartoonish rendering' / '3D CGI look'
+    negative prompt never suppresses our illustrated brushwork."""
     root, u = weights_root(launch), launch["uses"]
+    neg = resolve_negative_prompt(launch, job)
     cmd = [python or sys.executable, "-m", launch["module"], "--transformer-path", str(root / u["transformer"]),
            "--text-encoder-path", str(root / u["text_encoder"]), "--video-vae-path", str(root / u["video_vae"]),
            "--audio-vae-path", str(root / u["audio_vae"]), "--spatial-upsampler-path", str(root / u["spatial_upsampler"])]
     if u.get("distilled_lora"):
         cmd += ["--distilled-lora", str(root / u["distilled_lora"])]
-    cmd += ["--image", str(picture), "0", "1.0", "--prompt", job["motion_prompt"], "--width", str(job["width"]),
-            "--height", str(job["height"]), "--num-frames", str(ltx_frames(job["seconds"], job["fps"])),
+    cmd += ["--image", str(picture), "0", "1.0", "--prompt", job["motion_prompt"], "--negative-prompt", neg,
+            "--width", str(job["width"]), "--height", str(job["height"]),
+            "--num-frames", str(ltx_frames(job["seconds"], job["fps"])),
             "--frame-rate", str(job["fps"]), "--seed", str(job["seed"]), "--output-path", str(mp4)]
     return cmd
 

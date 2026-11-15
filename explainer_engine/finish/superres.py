@@ -433,13 +433,17 @@ UPSCALER_BACKENDS = ("none", "as_is", "lanczos", "temporal_video", "realplksr4x"
 UPSCALER_REGISTRY: dict[str, object] = {}
 
 
+DEFAULT_GRAIN_STRENGTH = float(SR.T("BP-206", "default_grain_strength"))
+PLUGGABLE_BACKENDS = tuple(str(x) for x in SR.T("BP-206", "pluggable_backends"))
+
+
 def register_upscaler(name: str, fn) -> None:
     """Register a custom spatial or temporal upscaler backend ``fn(bgr_or_frames, size, **kwargs)``."""
     UPSCALER_REGISTRY[str(name).strip().lower()] = fn
 
 
-def restore_painted_grain(img: np.ndarray, strength: float = 0.012, seed: int = 1914) -> np.ndarray:
-    """Restore subtle micro-canvas paper/bristle luminance texture after upscaling so painted strokes never look plastic."""
+def restore_painted_grain(img: np.ndarray, strength: float = DEFAULT_GRAIN_STRENGTH, seed: int = 1914) -> np.ndarray:
+    """Apply optional synthetic Gaussian luminance dither (disabled by default in P2-6; never presented as real brush recovery)."""
     if strength <= 0:
         return img
     h, w = img.shape[:2]
@@ -456,13 +460,18 @@ def upscale_with_backend(
     backend: str = "auto",
     size: tuple[int, int] | None = None,
     crop: tuple[float, float, float, float] | None = None,
-    restore_grain: bool = True,
-    grain_strength: float = 0.010,
+    restore_grain: bool = False,
+    grain_strength: float = DEFAULT_GRAIN_STRENGTH,
+    allow_resize_on_none: bool = False,
+    loader=None,
 ) -> dict:
-    """Creator Correction C3: pluggable per-lane upscaler (still_25d vs video, temporal option, 'none' option, grain restore).
-
-    Does not lock the pipeline to photo-trained frame-by-frame 4xNomos2 RealPLKSR / SPAN; allows dropping in
-    any temporal video upscaler or keeping crisp Lanczos + brushwork grain restoration.
+    """P2-6 Honest Upscaler Contract (BP-206 / C3):
+    - ``none`` / ``as_is`` keep native resolution unless ``allow_resize_on_none=True``.
+    - ``temporal_video`` without a registered multi-frame sequence model returns ``status='NOT_RUN'`` / ``REVIEW``,
+      never substituting single-image Lanczos as ``PASS``.
+    - ``realplksr4x`` / ``span2x`` call ``upscale(im, ...)`` with real ``qc()`` checks; missing weights or QC rejections
+      report ``NOT_RUN`` / ``REVIEW`` / ``FAIL`` honestly and never silently mask exceptions as ``PASS``.
+    - Synthetic Gaussian dither (``restore_grain``) is off by default and labeled ``synthetic_dither_applied``.
     """
     cv2 = _cv2()
     im = cv2.imread(str(src), cv2.IMREAD_COLOR)
@@ -476,34 +485,168 @@ def upscale_with_backend(
     target_w, target_h = size if size is not None else (w0, h0)
     chosen = str(backend or "auto").strip().lower()
     if chosen == "auto":
-        chosen = "lanczos" if lane == "video" else "lanczos"
+        chosen = "lanczos"
+
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    status = G.PASS
+    fallback_used = False
+    qc_rows: list[dict] = []
+    detail = "ok"
 
     if chosen in UPSCALER_REGISTRY:
         res = UPSCALER_REGISTRY[chosen](im, (target_w, target_h), lane=lane)
+        qc_rows = qc(im, res)
     elif chosen in ("none", "as_is"):
+        if allow_resize_on_none and (w0, h0) != (target_w, target_h):
+            res = cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+            detail = "resized_explicitly"
+        else:
+            res = im.copy()
+            detail = "kept_as_is_no_resize"
+    elif chosen == "temporal_video":
+        # Honest contract: temporal_video requires a registered multi-frame sequence model; never fake PASS with single-frame Lanczos
+        res = im.copy()
+        cv2.imwrite(str(out), res)
+        return {
+            "status": G.NOT_RUN,
+            "review_status": G.REVIEW,
+            "lane": lane,
+            "backend": chosen,
+            "fallback_used": False,
+            "restore_grain": False,
+            "synthetic_dither_applied": False,
+            "resized": False,
+            "input_size": [w0, h0],
+            "output_size": [int(res.shape[1]), int(res.shape[0])],
+            "qc": [],
+            "detail": "temporal_video backend has no registered sequence model; source kept untouched (NOT_RUN)",
+            "out": str(out),
+        }
+    elif chosen == "lanczos":
         res = im if (w0, h0) == (target_w, target_h) else cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
-    elif chosen in ("lanczos", "temporal_video"):
-        res = cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+        qc_rows = qc(im, res)
     elif chosen in ("realplksr4x", "span2x"):
         try:
-            return upscale(src, out, size=size, crop=crop, model=chosen)
-        except Exception:
-            res = cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+            up_res = upscale(
+                im,
+                Path(out).parent,
+                Path(out).stem,
+                size=(target_w, target_h) if size is not None else None,
+                crop=None,
+                chain=(chosen,),
+                loader=loader,
+            )
+            res_p = Path(up_res["result"])
+            res = cv2.imread(str(res_p), cv2.IMREAD_COLOR) if res_p.is_file() else im.copy()
+            status = up_res["status"]
+            qc_rows = (up_res.get("tries") or [{}])[0].get("qc") or qc(im, res)
+            if status != G.PASS:
+                fallback_used = True
+                detail = f"model {chosen} returned status={status}; not silently masked as PASS"
+        except Exception as exc:
+            res = im.copy()
+            status = G.FAIL
+            fallback_used = False
+            detail = f"model {chosen} raised {type(exc).__name__}: {exc}"
     else:
-        raise ConfigError(f"Unknown upscaler backend {chosen!r}; valid: {UPSCALER_BACKENDS + tuple(UPSCALER_REGISTRY)}")
+        raise ConfigError(f"Unknown upscaler backend {chosen!r}; valid: {PLUGGABLE_BACKENDS + tuple(UPSCALER_REGISTRY)}")
 
-    if restore_grain and chosen not in ("none", "as_is"):
+    dither_applied = False
+    if restore_grain and grain_strength > 0 and chosen not in ("none", "as_is") and status == G.PASS:
         res = restore_painted_grain(res, strength=grain_strength)
-    Path(out).parent.mkdir(parents=True, exist_ok=True)
+        dither_applied = True
     cv2.imwrite(str(out), res)
     return {
-        "status": G.PASS,
+        "status": status,
         "lane": lane,
         "backend": chosen,
+        "fallback_used": fallback_used,
         "restore_grain": bool(restore_grain),
+        "synthetic_dither_applied": dither_applied,
+        "dither_kind": "gaussian_luminance_dither" if dither_applied else "none",
+        "resized": [int(res.shape[1]), int(res.shape[0])] != [w0, h0],
         "input_size": [w0, h0],
         "output_size": [int(res.shape[1]), int(res.shape[0])],
+        "qc": qc_rows,
+        "detail": detail,
         "out": str(out),
+    }
+
+
+def run_5shot_upscale_ab_harness(
+    out_dir: Path,
+    *,
+    shots: list[dict] | None = None,
+    target_size: tuple[int, int] = (320, 180),
+    backends: tuple[str, ...] = ("as_is", "lanczos", "realplksr4x", "span2x", "temporal_video"),
+    loader=None,
+) -> dict:
+    """P2-6 5-Shot Upscale A/B Evaluation Harness: test 5 representative shots (wide still, close face,
+    dark interior, map plate, LTX video frame) across candidate backends with honest status & QC metrics."""
+    cv2 = _cv2()
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    default_archetypes = [
+        {"shot_id": "AB_01_wide_still", "archetype": "wide_still", "lane": "still_25d", "seed": 11, "luma_bias": 110},
+        {"shot_id": "AB_02_close_face", "archetype": "close_face", "lane": "still_25d", "seed": 22, "luma_bias": 135},
+        {"shot_id": "AB_03_dark_interior", "archetype": "dark_interior", "lane": "still_25d", "seed": 33, "luma_bias": 42},
+        {"shot_id": "AB_04_map_plate", "archetype": "map_plate", "lane": "map", "seed": 44, "luma_bias": 165},
+        {"shot_id": "AB_05_ltx_video_frame", "archetype": "ltx_video_frame", "lane": "video", "seed": 55, "luma_bias": 95},
+    ]
+    cases = shots if (isinstance(shots, list) and len(shots) >= 5) else default_archetypes
+    results: list[dict] = []
+
+    for c in cases[:5]:
+        sid = str(c.get("shot_id") or "AB_shot")
+        lane = str(c.get("lane") or "still_25d")
+        src_p = c.get("src_path")
+        if src_p and Path(src_p).is_file():
+            img = cv2.imread(str(src_p), cv2.IMREAD_COLOR)
+        else:
+            rng = np.random.default_rng(int(c.get("seed", 11)))
+            h_s, w_s = target_size[1] // 2, target_size[0] // 2
+            base = np.clip(
+                cv2.GaussianBlur(rng.normal(float(c.get("luma_bias", 100)), 38.0, (h_s, w_s, 3)).astype(np.float32), (0, 0), 1.1),
+                0, 255,
+            ).astype(np.uint8)
+            src_p = out_dir / f"{sid}_src.png"
+            cv2.imwrite(str(src_p), base)
+            img = base
+
+        by_backend: dict[str, dict] = {}
+        for b_name in backends:
+            dst_p = out_dir / f"{sid}_{b_name}.png"
+            rep = upscale_with_backend(
+                Path(src_p),
+                dst_p,
+                lane=lane,
+                backend=b_name,
+                size=target_size,
+                restore_grain=False,
+                loader=loader,
+            )
+            by_backend[b_name] = {
+                "status": rep["status"],
+                "resized": rep["resized"],
+                "input_size": rep["input_size"],
+                "output_size": rep["output_size"],
+                "synthetic_dither_applied": rep["synthetic_dither_applied"],
+                "detail": rep["detail"],
+                "qc_gates": {r["gate"]: r["status"] for r in (rep.get("qc") or [])},
+            }
+        results.append({
+            "shot_id": sid,
+            "archetype": c.get("archetype", lane),
+            "lane": lane,
+            "backends": by_backend,
+        })
+
+    return {
+        "schema": "upscale_5shot_ab_report/1",
+        "shot_count": len(results),
+        "target_size": list(target_size),
+        "shots": results,
     }
 
 

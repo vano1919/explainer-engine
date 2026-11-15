@@ -78,30 +78,38 @@ def step_finding(gain: np.ndarray, sr: int) -> dict | None:
             "detail": f"gain steps {step:.2f} dB in a millisecond (at most {MAX_STEP_DB_PER_MS:g}): a dip heard as a cut"}
 
 
+PRESENCE_BAND_HZ = tuple(float(v) for v in SR.T("BP-204", "presence_band_hz"))
+PRESENCE_CUT_DB = float(SR.T("BP-204", "presence_cut_db"))
+OUTER_CUT_DB = float(SR.T("BP-204", "outer_cut_db"))
+
+
 def duck_presence_band(
     bed_or_bus: np.ndarray,
     voice_sidechain: np.ndarray,
     sr: int = 48000,
     *,
-    presence_hz: tuple[float, float] = (280.0, 3600.0),
-    presence_cut_db: float = 5.5,
-    outer_cut_db: float = 1.8,
+    presence_hz: tuple[float, float] = PRESENCE_BAND_HZ,
+    presence_cut_db: float = PRESENCE_CUT_DB,
+    outer_cut_db: float = OUTER_CUT_DB,
     threshold_db: float = -37.0,
 ) -> np.ndarray:
-    """Step 5 Fix: dynamic presence-band (280-3600 Hz) ducking instead of -9 dB broadband crushing.
-
-    Carves the vocal presence band (280-3600 Hz) by ``presence_cut_db`` when speech is active while
-    ducking low-end warmth (< 280 Hz) and high-air wind hiss / fire crackle (> 3600 Hz) by only
-    ``outer_cut_db`` (1.8 dB), so environmental beds remain audible under continuous narration.
+    """Step 5 Fix (BP-204): dynamic presence-band (280-3600 Hz) ducking instead of -9 dB broadband crushing.
+    Supports 1D (N,), channel-first (2, N), and sample-first (N, 2) stereo arrays.
     """
     from scipy import signal
 
     arr = np.asarray(bed_or_bus, dtype=np.float32)
     sc = np.asarray(voice_sidechain, dtype=np.float32)
     if sc.ndim > 1:
-        sc = sc.mean(axis=0)
+        sc = sc.mean(axis=-1 if sc.shape[-1] <= 2 and sc.shape[0] > 2 else 0)
     is_1d = arr.ndim == 1
-    stereo = arr[None, :] if is_1d else arr
+    channels_last = (not is_1d) and arr.shape[-1] in (1, 2) and arr.shape[0] > 2
+    if is_1d:
+        stereo = arr[None, :]
+    elif channels_last:
+        stereo = arr.T
+    else:
+        stereo = arr
     n = stereo.shape[-1]
     sc = sc[:n] if len(sc) >= n else np.pad(sc, (0, n - len(sc)))
 
@@ -118,7 +126,9 @@ def duck_presence_band(
     g_pres = (10.0 ** (-abs(presence_cut_db) * gate / 20.0)).astype(np.float32)
     g_outer = (10.0 ** (-abs(outer_cut_db) * gate / 20.0)).astype(np.float32)
     out = presence * g_pres + outer * g_outer
-    return out[0] if is_1d else out
+    if is_1d:
+        return out[0]
+    return out.T if channels_last else out
 
 
 def stage_spatial_sound(

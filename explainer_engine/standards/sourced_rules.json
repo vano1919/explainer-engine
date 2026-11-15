@@ -1503,7 +1503,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/faces.py:BP-34",
-    ".claude/skills/shot-visuals/SKILL.md"
+    ".claude/skills/shot-visuals/SKILL.md",
+    "explainer_engine/production/continuity.py:evaluate_neighbouring_shot_continuity"
    ],
    "supersedes": [
     "faces.BORDER_KEYED (key border only)"
@@ -7676,7 +7677,7 @@
    "area": "audio",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "The pause between two lines is measured speech to speech on the delivered file (realism plan SD-06/SD-07), never planned from a clip's tail: pause_s in conversation; an intended dramatic pause is written in the script and stays under dramatic_max_s. A clip is therefore trimmed at both ends from the speech the detector finds in its own sound: in at the first speech minus head_lead_s, out at the last speech plus tail_s (BP-187 keeps the generation's tail). One clip carries one line: LTX leaves 0.85-1.0 s between two sentences of one clip.",
+   "statement": "The pause between two lines is measured speech to speech on the delivered file (realism plan SD-06/SD-07), never planned from a clip's tail: pause_s in conversation; an intended dramatic pause is written in the script and stays under dramatic_max_s. Inside scene_join.py conversational turn-splitting uses head_lead_s [0.15, 0.25] and tail_s [0.25, 0.5]; for clip-spoken LTX video ingest and episode retiming, BP-201 overrides the upper head lead to 0.40 s and reaction tail floor to 0.50 s (target 0.55 s) so no spoken syllable is ever severed.",
    "thresholds": {
     "pause_s": [
      0.25,
@@ -7756,7 +7757,7 @@
    "status": "house",
    "severity": "FAIL",
    "decided": "the creator, 2026-11-12 19:43 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ: motion on a map, chart or counter makes a sound) and 21:44 UTC (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu: no sounds on the map's actions)",
-   "statement": "An action sound is heard (realism plan SD-03/SD-14/SD-15; replaces OV-53's 'under the scene's sounds'): measured on the delivered file, the loudest 100 ms of every planned action sound (a map move, a chart bar, a counter, a footstep, a spear) stands at least heard_min_db over the bed around it, else the motion has no sound; the target is target_above_bed_db over the bed and under the voice, at most max_at_once sounds together, and a shot where motion is seen has at least spots_per_5s_min point sounds every five seconds (both REVIEW, the plan's proposals). The sound is a real take that fits the motion (a line drawn = a pen stroke that lasts with the line, a spreading zone = a low air swell, a counter = ticks and a final knock), never a sine or noise.",
+   "statement": "An action sound is heard (realism plan SD-03/SD-14/SD-15; replaces OV-53's 'under the scene's sounds'): measured on the delivered file, the loudest 100 ms of every planned action sound (a map move, a chart bar, a counter, a footstep, a spear) stands at least heard_min_db over the bed around it, else the motion has no sound; the target is target_above_bed_db over the bed and under the voice, at most max_at_once sounds together, and spots_per_5s_min is an advisory REVIEW hint only (superseded by BP-204 C1: intentional silence is valid and numeric quotas never force sound). The sound is a real take that fits the motion, never a sine or noise.",
    "thresholds": {
     "heard_min_db": 3.0,
     "target_above_bed_db": [
@@ -7921,7 +7922,7 @@
    "area": "stills",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "The living-photo balance of a photo shot (Fable's LIVING_PHOTO_RULES of 2026-11-14, LP-01..LP-12; the owner's weather choice of 2026-11-14 12:13 UTC, LP-09): every element of the director's inventory gets a score w_text x text + scale + focus + quality + cost (text, focus, quality, cost 0..2; scale 0..3 by the share of the frame at scale_steps_pct); an element the words name that is not a dot, or a score of p1_score, is P1, then P2 from p2_score, P3 from p3_score; an element under dot_pct of the frame gets no effect of its own unless it is one of a group; a body that must move goes to LTX; a shot carries at most caps effects for durations up to cap_steps_s (beyond the camera and the always-on flames) and at least effects_min, non_light_min of them outside the light family, one of them a full-frame layer of moving air; the scene's weather is the ceiling for exterior and open-air shots of the scene (interior shots show outdoor weather only through a visible window or open door, D-132); people in a medium or close view longer than long_people_s go to LTX or are split; at most rounds_max director rounds. The owner, 2026-11-14 12:37 UTC (rule-reconciliation card Q2, journal architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md): a 2.5D shot stays at most 5 s (BP-109), so Fable's 8 s steps of the cap and of the people route are 5 s. The other numbers are proposals until the owner confirms them on a free rebuilt round.",
+   "statement": "The living-photo balance of a photo shot (Fable's LIVING_PHOTO_RULES of 2026-11-14, LP-01..LP-12; the owner's weather choice of 2026-11-14 12:13 UTC, LP-09): every element of the director's inventory gets a score w_text x text + scale + focus + quality + cost (text, focus, quality, cost 0..2; scale 0..3 by the share of the frame at scale_steps_pct); an element the words name that is not a dot, or a score of p1_score, is P1, then P2 from p2_score, P3 from p3_score; an element under dot_pct of the frame gets no effect of its own unless it is one of a group; a body that must move goes to LTX; a shot carries at most caps effects for durations up to cap_steps_s (beyond the camera and the always-on flames) and at least effects_min, non_light_min of them outside the light family, one of them a full-frame layer of moving air; the scene's weather is the ceiling for exterior and open-air shots of the scene (interior shots show outdoor weather only through a visible window or open door, D-132); people in a medium or close view longer than long_people_s go to LTX or are split; at most rounds_max director rounds. The owner, 2026-11-14 12:37 UTC (rule-reconciliation card Q2, journal architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md): a 2.5D shot stays at most 5 s (BP-109), so Fable's 8 s steps of the cap and of the people route are 5 s. The other numbers are proposals until the owner confirms them on a free rebuilt round. Deliberately still / restrained shots that record an explicit stillness_reason or restraint_note (director_knowledge_base.json deliberately_still_allowed: true) are exempt from effects_min and non_light_min.",
    "thresholds": {
     "dot_pct": 0.2,
     "scale_steps_pct": [
@@ -8038,7 +8039,8 @@
    "enforced_by": [
     "explainer_engine/maps/actions.py:_u_counter",
     "explainer_engine/maps/actions.py:emit_frame_locked_audio_events",
-    "explainer_engine/maps/tactile_renderer.py:AudioEventEmitter"
+    "explainer_engine/maps/tactile_renderer.py:AudioEventEmitter",
+    "tools/render_tools/mix.py:emit_map_audio_events_for_shot"
    ],
    "supersedes": []
   },
