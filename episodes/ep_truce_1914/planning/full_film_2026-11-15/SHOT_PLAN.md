@@ -910,3 +910,20 @@ Every shot was looked at (photo + clip start/middle/end) and every LTX clip was 
 - **Out:** fade to black 1.0 s (end)
 - photo: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S08_SH004_start_candle.png
 - current clip: https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S08_SH004.mp4
+
+## Music accents (added 2026-11-15 17:00 UTC, the creator's question on dramatic moments)
+All tracks are Kevin MacLeod / incompetech, CC BY 4.0, already in the library (attribution line in the video description, text in catalog.sqlite).
+The score sits under the narrator: ducked 8-10 dB while a voice speaks, it rises to its own level only in the gaps listed below.
+| moment | time (clock) | cue |
+|---|---|---|
+| S01_SH005 "the day the war stopped" | 19.7-29.0 s | Echoes of Time swells +4 dB on "stopped", falls to nothing under the dip to black |
+| S02_SH004 misery, "sniper" | 48.2-56.0 s | Dark Times low string pulse; a 1 s silence before "sniper" |
+| S03 night | 91-133 s | no score: the carol is the music |
+| S04_SH005-SH008 Thomas climbs out and walks | 143.8-165.8 s | Lightless Dawn tension pad rises slowly from the climb to the walk; cuts to silence on "the men who never made it back" |
+| S04_SH011 empty hands | 169.8 s | silence (the release) |
+| S05_SH003 trading | 204.4-246 s | Village Consort, light, low; out under "So does mine" |
+| S05_SH014-SH021 the dead | 246-277 s | no score (restraint) |
+| S06_SH008 "Maybe. But not today." | 297.2 s | Despair and Triumph enters softly right AFTER "today" (not under the line) and carries S06_SH009-SH012 to the dip |
+| S07_SH005-SH006 shots | 326-341 s | silence; after the second echo Thunder Dreams low drone enters (the war is back) |
+| S08 letter -> end card | 352.8-380 s | Ancient Rite low; resolves on the end card, last note fades with the candle |
+Gap: no free instrumental "Silent Night" recording in the library. The melody (Gruber, 1818) is public domain, but every recording has its own licence. Optional: one solo instrumental recording from YouTube Audio Library (free, check the attribution flag per track) or Musopen (public-domain or CC recordings), for the end card only. Nothing is downloaded without the creator's word.
