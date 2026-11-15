@@ -7847,8 +7847,8 @@
    },
    "selective_control": null,
    "transition_out": "hard_cut",
-   "route": "still_25d",
-   "route_reason": "place, object or tableau with no line spoken in frame: the 2.5D renderer carries it (RT-02)",
+   "route": "video",
+   "route_reason": "LTX R3 performance clip accepted for S07_SH005 (Audit #4 / BP-109 60/30/10 mix)",
    "route_locked": true,
    "shot_role": "action",
    "sound_events": [

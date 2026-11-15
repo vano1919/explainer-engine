@@ -25,6 +25,13 @@ from explainer_engine.standards import sourced_rules as SR
 ROUTES = ("map_action", "still_25d", "video")
 LEGACY_ROUTES = {"wan": "video"}   # D-131's name of the video route (D-132)
 DIALOGUE_SHOT_MAX_S = float(SR.T("BP-108", "dialogue_shot_max_s"))
+_LANE_SHARE = SR.T("BP-109", "lane_share")
+MIX_TARGETS = {
+    "video": float(_LANE_SHARE["video"]),
+    "still_25d": float(_LANE_SHARE["still"]),
+    "map_action": float(_LANE_SHARE["helper"]),
+}
+MIX_TOL = float(SR.T("BP-109", "lane_tolerance"))
 
 # a body doing something a still cannot fake: whole-body motion, contact with a thing, a strike, a fall (Q4)
 BODY_ACTION = re.compile(
@@ -47,6 +54,17 @@ MAP_WORDS = re.compile(r"\b(map|relief map|war table|globe|route arrows?|wind ar
 # shots whose subject is too far away or too many to need body animation
 DISTANT_CROWD = re.compile(r"\b(herd|herds|crowd|flock|band of|clans gather|distant figures|tiny figures|figures descending|"
                            r"aerial|tableau|silhouettes of)\b", re.I)
+
+_TIME_PROMISE_RE = re.compile(
+    r"\b(home\s+before\s+the\s+leaves\s+fall|by\s+christmas|four\s+months|five\s+months|countdown|"
+    r"weeks\s+turned\s+into\s+months|days\s+until|before\s+winter)\b",
+    re.I,
+)
+_RATIO_COMPARE_RE = re.compile(
+    r"\b(against|versus|vs\.?|outnumbered|ratio|compared\s+to|\d[\d,]*\s+to\s+\d[\d,]*)\b",
+    re.I,
+)
+_QUANT_HELPER_KINDS = ("counter", "progress_bar", "milestone", "bar_grow", "split_compare")
 
 
 def _text(shot: dict) -> str:
@@ -112,7 +130,7 @@ def mix_report(script: dict, durations: dict[str, float] | None = None) -> dict:
     secs: dict[str, float] = defaultdict(float)
     missing = []
     for s in script.get("shots", []):
-        r = s.get("route")
+        r = LEGACY_ROUTES.get(s.get("route"), s.get("route"))
         if r not in ROUTES:
             missing.append(s["shot_id"])
             continue
@@ -122,6 +140,73 @@ def mix_report(script: dict, durations: dict[str, float] | None = None) -> dict:
     shares = {r: round(secs[r] / total, 4) if total else 0.0 for r in ROUTES}
     return {"basis": "measured" if durations else "estimated", "total_seconds": round(total, 2),
             "seconds": {r: round(secs[r], 2) for r in ROUTES}, "shares": shares, "unrouted": missing}
+
+
+def mix_gate_rows(script: dict, durations: dict[str, float] | None = None, tol: float = MIX_TOL,
+                  scope: str = "full") -> list[dict]:
+    """A2.3 (BP-109): enforce the 60/30/10 duration mix with explicit tolerance ``tol`` (default +-5 percentage points from
+    ``sourced_rules.json`` BP-109). On a ``full`` episode a route outside its band is a hard ``FAIL``; on a ``sample``
+    episode it is ``REVIEW``."""
+    from explainer_engine.qa import gates as G
+    rep = mix_report(script, durations)
+    shares = rep["shares"]
+    outside: list[str] = []
+    for r in ROUTES:
+        target = MIX_TARGETS[r]
+        got = float(shares.get(r, 0.0))
+        if abs(got - target) > tol + 1e-6:
+            outside.append(f"{r}={got:.1%} (target {target:.0%} +- {tol:.0%})")
+    lvl = G.REVIEW if scope == "sample" else G.FAIL
+    summary = ", ".join(f"{r} {shares.get(r, 0.0):.1%} (target {MIX_TARGETS[r]:.0%})" for r in ("video", "still_25d", "map_action"))
+    return [G.row("route_mix_60_30_10", not outside,
+                  f"visual mix ({rep['basis']}): {summary}; tolerance +-{tol:.0%} (BP-109)"
+                  + (f" — outside band: {', '.join(outside)}" if outside else ""),
+                  rep, level=lvl)]
+
+
+def infer_helper_form(text: str, actions: list[dict] | None = None) -> str:
+    """MA-09 (Audit #66): infer which 10% helper form fits a shot's spoken line and actions."""
+    acts = list(actions or [])
+    kinds = {str(a.get("kind") or "") for a in acts}
+    if kinds & {"progress_bar", "milestone"}:
+        return "timeline_progress"
+    if "counter" in kinds:
+        return "counter"
+    if kinds & {"bar_grow", "split_compare"}:
+        return "comparison_chart"
+    t = str(text or "")
+    if _TIME_PROMISE_RE.search(t):
+        return "timeline_progress"
+    if _RATIO_COMPARE_RE.search(t) and len(re.findall(r"\b\d[\d,]*\b", t)) >= 2:
+        return "comparison_chart"
+    if re.search(r"\b(\d[\d,]*\s+(?:men|soldiers|casualties|dead|miles|kilometers|km|patches|sectors)|hundred\s+thousand)\b", t, re.I):
+        return "counter"
+    return "geographic_map"
+
+
+def helper_fit_rows(script: dict) -> list[dict]:
+    """MA-09 (Audit #66): verify that 10% helper-lane shots whose narration is a time promise / countdown or a pure numerical
+    comparison include a matching quantitative/temporal helper action (``progress_bar``, ``milestone``, ``counter``,
+    ``bar_grow``, ``split_compare``) instead of being drawn as a pure geographic map."""
+    from explainer_engine.qa import gates as G
+    lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", []) if ln.get("line_id")}
+    mismatched: list[str] = []
+    for s in script.get("shots", []):
+        if s.get("route") != "map_action":
+            continue
+        sid = s.get("shot_id", "?")
+        ltxt = " ".join(str((lines.get(lid) or {}).get("text") or "") for lid in (s.get("audio_line_ids") or [])).strip()
+        text = " ".join(x for x in (ltxt, str(s.get("narration_excerpt") or ""), str(s.get("narrative_purpose") or "")) if x)
+        acts = list(s.get("actions") or [])
+        kinds = {str(a.get("kind") or "") for a in acts}
+        has_quant = bool(kinds & set(_QUANT_HELPER_KINDS))
+        if _TIME_PROMISE_RE.search(text) and not has_quant:
+            mismatched.append(f"{sid}: time/countdown promise drawn as pure map without progress_bar/milestone/counter (MA-09)")
+        elif _RATIO_COMPARE_RE.search(text) and len(re.findall(r"\b\d[\d,]*\b", text)) >= 2 and not has_quant:
+            mismatched.append(f"{sid}: numerical ratio/comparison drawn as pure map without bar_grow/split_compare/counter (MA-09)")
+    return [G.row("helper_lane_form_fit", not mismatched,
+                  f"{len(mismatched)} helper shot(s) drawn as pure geographic map when narration calls for a counter, progress bar or comparison chart (MA-09)",
+                  mismatched[:20], level=G.REVIEW)]
 
 
 def talking_check(script: dict) -> list[dict]:

@@ -143,6 +143,17 @@ def check() -> list[dict]:
     for path in _docs():
         if path.name != "INDEX.md" and path.name not in index:
             add("not_indexed", f"{path.name} is not listed in docs/INDEX.md")
+    # Audit #23: verify PRODUCTION_RULES.md names the canonical v4.3 routes from episode/router.py (never stale 'wan').
+    prod_rules = _text(DOCS / "PRODUCTION_RULES.md") if (DOCS / "PRODUCTION_RULES.md").is_file() else ""
+    if "G7 clips by route (`map_action`, `still_25d`, `wan`)" in prod_rules:
+        add("stale_route_name", "PRODUCTION_RULES.md still lists (`map_action`, `still_25d`, `wan`) instead of (`map_action`, `still_25d`, `video`)")
+    # Audit #40: verify BP-200 statement does not say "every shot of the scene" (weather is an exterior/open-air ceiling, D-132).
+    sr_path = ROOT / "explainer_engine" / "standards" / "sourced_rules.json"
+    if sr_path.is_file():
+        sr_doc = json.loads(sr_path.read_text(encoding="utf-8"))
+        for rule in sr_doc.get("rules", []):
+            if rule.get("id") == "BP-200" and "every shot of the scene" in str(rule.get("statement") or ""):
+                add("bp200_interior_weather", "BP-200 statement in sourced_rules.json still says 'every shot of the scene'")
     return findings
 
 

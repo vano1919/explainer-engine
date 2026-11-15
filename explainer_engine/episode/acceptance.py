@@ -28,6 +28,43 @@ def _map_shot(s: dict) -> bool:
         or s.get("generation_mode") in ("MAP_25D", "TACTILE_MAP")
 
 
+def _positive_prompt_text(val) -> str:
+    """TD-336 (Audit #21): extract only positive prompt text from a prompt field (excluding ``negative_prompt`` / ``neg`` keys
+    when the prompt is a dict, and stripping inline ``negative_prompt: ...`` clauses)."""
+    if val is None:
+        return ""
+    if isinstance(val, dict):
+        parts = []
+        for k, v in val.items():
+            kl = str(k).lower()
+            if kl.startswith("neg") or "negative" in kl:
+                continue
+            parts.append(_positive_prompt_text(v))
+        return " ".join(p for p in parts if p)
+    if isinstance(val, (list, tuple)):
+        return " ".join(_positive_prompt_text(x) for x in val)
+    return str(val)
+
+
+def _still_25d_gate_status(sid: str, by_id: dict[str, dict], by_parent: dict[str, list[dict]]) -> str | None:
+    """Part B3: resolve ``gates_25d`` for ``sid`` either directly or across its split sub-shot records (``parent_shot_id`` /
+    ``split_of``)."""
+    direct = by_id.get(sid)
+    if direct is not None and direct.get("gates_25d") not in (None, ""):
+        return str(direct.get("gates_25d"))
+    parts = by_parent.get(sid) or []
+    if not parts:
+        return None
+    statuses = [str(p.get("gates_25d") or "") for p in parts]
+    if any(st == "FAIL" for st in statuses):
+        return "FAIL"
+    if any(st in ("", "INCOMPLETE", "NOT_RUN") for st in statuses):
+        return "INCOMPLETE"
+    if any(st == "REVIEW" for st in statuses):
+        return "REVIEW"
+    return "PASS"
+
+
 def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plans: list[dict] | None,
           audio: dict | None, stem_audit: dict | None, video: dict | None, fps: int,
           forbidden_tokens=(), narration_source: str | None = None, paid_calls: int | None = None,
@@ -50,7 +87,10 @@ def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plan
         pat = re.compile(r"\b(" + "|".join(re.escape(t) for t in forbidden_tokens) + r")\b", re.I)
         hits = []
         for s in script.get("shots", []):
-            text = " ".join(str(s.get(k) or "") for k in ("image_prompt", "narrative_purpose", "action_start_state", "action_end_state"))
+            text = " ".join(
+                _positive_prompt_text(s.get(k))
+                for k in ("image_prompt", "video_prompt", "narrative_purpose", "action_start_state", "action_end_state")
+            )
             hits += [f"{s.get('shot_id')}:{m.group(0)}" for m in pat.finditer(text)]
         rows.append(row("no_foreign_era_words_in_prompts", not hits, f"{len(hits)} forbidden word(s) in the shots' prompts", hits[:20]))
     else:
@@ -98,11 +138,17 @@ def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plan
         rows.append(row("every_map_shot_rendered", not missing, f"{len(made_maps)} of {len(want_maps)} map shot(s) of the script rendered",
                         missing))
 
-    # P5: every still_25d shot carries the layered renderer's measured gates (alive, tears, faces, frozen, chunks...)
+    # P5: every still_25d shot carries the layered/directed renderer's measured gates (including split sub-shots, Part B3)
     want_25 = [x["shot_id"] for x in script.get("shots", []) if x.get("route") == "still_25d"]
     by_id = {r.get("shot_id"): r for r in shot_records}
-    unmeasured = [sid for sid in want_25 if (by_id.get(sid) or {}).get("gates_25d") in (None, "", "INCOMPLETE", "NOT_RUN")]
-    failed_25 = [sid for sid in want_25 if (by_id.get(sid) or {}).get("gates_25d") == "FAIL"]
+    by_parent: dict[str, list[dict]] = {}
+    for r in shot_records:
+        parent = r.get("parent_shot_id") or r.get("split_of")
+        if parent:
+            by_parent.setdefault(str(parent), []).append(r)
+    statuses_25 = {sid: _still_25d_gate_status(sid, by_id, by_parent) for sid in want_25}
+    unmeasured = [sid for sid in want_25 if statuses_25.get(sid) in (None, "", "INCOMPLETE", "NOT_RUN")]
+    failed_25 = [sid for sid in want_25 if statuses_25.get(sid) == "FAIL"]
     if failed_25:
         rows.append(row("camera_motion_measured", False, f"{len(failed_25)} still_25d shot(s) FAIL their motion gates",
                         failed_25[:20]))

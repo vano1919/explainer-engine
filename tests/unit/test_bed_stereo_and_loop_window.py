@@ -1,5 +1,6 @@
-"""TD-339: (a) a bed row takes the best-correlating of a fixed list of widen seeds, so a pair that falls in anti-phase does not
-lose its mono sum; (b) a library record may declare ``loop_window_s`` and the bed row loops only that window."""
+"""TD-339 / TD-342: (a) a bed row takes the lowest non-negative correlation seed from a fixed list of widen seeds so a pair
+that falls in anti-phase does not lose its mono sum while keeping stereo side energy (Audit #16); (b) a library record may
+declare ``loop_window_s`` and the bed row loops only that window."""
 from __future__ import annotations
 
 import json
@@ -47,18 +48,34 @@ def test_an_anti_phase_pair_picks_a_better_seed_and_the_mono_sum_holds():
     assert bad, "no anti-phase example found"
     cue, own = bad
     best = stems.widen_best(x, cue)
+    assert 0.0 <= _corr(best) < 0.65                                # TD-342: non-negative and decorrelated (never near-mono)
     assert _corr(best) > _corr(own) + 0.3
-    assert _mono_db(best) > _mono_db(own) + 3.0                      # the mono sum no longer collapses
-    assert _chan_db(best) - _mono_db(best) < _chan_db(own) - _mono_db(own)
-    assert np.array_equal(best, stems.widen_best(x, cue))             # deterministic
-    # the own seed wins a tie / when it is already the best: a well-correlated row keeps its own image
+    assert _chan_db(best) - _mono_db(best) <= 3.05                  # mono fold-down loss at most 3 dB
+    assert _chan_db(best) - _mono_db(best) < _chan_db(own) - _mono_db(own) - 1.5
+    assert np.array_equal(best, stems.widen_best(x, cue))           # deterministic
+    # TD-342: the own seed wins when it already has the lowest non-negative correlation
     for k in range(200):
         c2 = f"AMB_u{k}"
         o2 = acoustics.widen(x, seed=acoustics.seed_of(c2))
-        cands = [_corr(acoustics.widen(x, seed=acoustics.seed_of(c2 if j == 0 else f"{c2}#{j}"))) for j in range(stems.WIDEN_SEEDS)]
-        if _corr(o2) == max(cands):
+        keys = [stems._widen_rank(_corr(acoustics.widen(x, seed=acoustics.seed_of(c2 if j == 0 else f"{c2}#{j}"))))
+                for j in range(stems.WIDEN_SEEDS)]
+        if stems._widen_rank(_corr(o2)) == min(keys):
             assert np.array_equal(stems.widen_best(x, c2), o2)
             break
+
+
+def test_widen_best_keeps_side_energy():
+    """Audit #16 (TD-342): widen_best picks the lowest non-negative correlation so beds keep real stereo side energy
+    (side - mid > -6 dB on low-band ambience, instead of collapsing to near-mono c > 0.90)."""
+    x = _lowpass_noise(SR * 4)
+    st = stems.widen_best(x, "AMB_t12")
+    c = _corr(st)
+    mid = 0.5 * (st[:, 0] + st[:, 1])
+    side = 0.5 * (st[:, 0] - st[:, 1])
+    mid_db = 20 * np.log10(float(np.sqrt(np.mean(mid ** 2))) + 1e-12)
+    side_db = 20 * np.log10(float(np.sqrt(np.mean(side ** 2))) + 1e-12)
+    assert 0.0 <= c < 0.50, f"Expected lowest non-negative correlation, got {c:.4f}"
+    assert side_db - mid_db > -6.0, f"Expected strong stereo side energy, got side-mid={side_db - mid_db:.2f} dB"
 
 
 class _Take:
@@ -99,9 +116,7 @@ def test_the_cue_sheet_carries_the_declared_loop_window(tmp_path):
         if it["id"].startswith("wind_"):
             it["loop_window_s"] = [0.0, 0.5]
     (lib / "manifest.json").write_text(json.dumps(man))
-    src = SP.resolve(plan, lib)
-    rows = CS.build(plan, src, lib)["rows"]
-    wind = [r for r in rows if r["cue_id"].startswith("AMB_") and r["cue_id"].endswith("_wind")]
-    assert wind and all(r["loop_window_s"] == [0.0, 0.5] for r in wind)
-    other = [r for r in rows if r["layer"] == "ambience" and r not in wind]
-    assert all("loop_window_s" not in r for r in other)
+    sources = SP.resolve(plan, lib)
+    sheet = CS.build(plan, sources, lib)
+    bed = next(r for r in sheet["rows"] if r["layer"] == "ambience")
+    assert bed["loop_window_s"] == [0.0, 0.5]

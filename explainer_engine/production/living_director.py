@@ -562,14 +562,17 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict] | N
         targets = targets[1:]
     first = targets[0][1] if targets else frames
     has_lateral_accent = len(targets) >= 2 and abs(targets[1][3][0] - targets[0][3][0]) > 0.2
+    story_locked = bool(d.get("camera_locked") or d.get("story_force_move"))
     def _pick_varied_op(preferred: str, allow_push: bool = True) -> str:
+        if story_locked:
+            return preferred
         if preferred == "push" and push_cap_reached:
-            rejected["push_in"] = f"CAM-VAR-02: {recent_pushes} pushes in last {len(recent_non_map)} non-map shots (cap is {max_pushes} in {window_shots} consecutive non-map shots, <= 40%)"
+            rejected["push_in"] = f"CAM-VAR-02 (variety score penalty): {recent_pushes} pushes in last {len(recent_non_map)} non-map shots (preference <= {max_pushes} in {window_shots})"
             allow_push = False
         if preferred != prev_op and (preferred != "push" or allow_push):
             return preferred
         if preferred == prev_op:
-            rejected[preferred] = f"CAM-VAR-01: previous shot used {prev_op}; no two identical primary camera moves in a row"
+            rejected[preferred] = f"CAM-VAR-01 (variety score penalty): previous shot used {prev_op}; scoring favors varied move"
         crane_ok = "crane_25d" not in rejected
         rack_ok = float(geom.get("fg_bg_depth_delta", 0.0)) >= 0.25 and (n_people > 0 or bool(objs) or pf.get("hands_only"))
         order = []
@@ -593,10 +596,15 @@ def choose_camera(d: dict, spine, frames: int, fps: float, faces: list[dict] | N
                 order.append("crane")
         if allow_push:
             order.append("push")
-        for cand in order:
-            if cand != prev_op and (cand != "push" or allow_push):
-                return cand
-        return "pan_crop_2d" if prev_op != "pan_crop_2d" else "pull"
+        scored = score_camera_candidates(
+            [preferred] + [c for c in order if c != preferred],
+            prev_op=prev_op,
+            recent_non_map=recent_non_map,
+            max_pushes=max_pushes,
+            window_shots=window_shots,
+            story_locked=story_locked,
+        )
+        return scored[0]["op"] if scored else ("pan_crop_2d" if prev_op != "pan_crop_2d" else "pull")
     if first >= 0.5 * fps:
         base_s = first / fps
         people = (bool(faces) and d.get("people_mid_or_close")) or (n_people > 0 and not targets and idiom["name"] != "wide_establishing_landscape")
@@ -1034,3 +1042,419 @@ def sound_of_map(shot: dict, script: dict, spine=None, fps: int = 24, prev: dict
     return choose_sound(evs, scene=shot.get("scene") or {"surroundings": " ".join(str(x) for x in (
         shot.get("location_id"), shot.get("purpose")) if x)}, spine=spine, open_air=open_air, cold=cold,
         prev_beds=prev_beds, library_root=library_root, fps=fps, map_view=shot.get("map_view") or {})
+
+def score_camera_candidates(candidates: list[str], prev_op: str | None = None, recent_non_map: list[str] | None = None,
+                            max_pushes: int = 2, window_shots: int = 5, story_locked: bool = False) -> list[dict]:
+    """A2.5: score candidate camera operations using soft variety penalties instead of hard FAIL rules.
+    When ``story_locked=True`` (explicit storytelling override), the preferred move receives a +0.60 story bonus that
+    outweighs the repeat/push-density penalties; otherwise variety penalties rank varied moves ahead of repeats."""
+    recent = list(recent_non_map or [])[-(max(1, window_shots - 1)):]
+    pushes = sum(1 for m in recent if m in ("push", "push_in"))
+    rows = []
+    seen = set()
+    for idx, op in enumerate(candidates):
+        if op in seen:
+            continue
+        seen.add(op)
+        base = 1.0 - 0.04 * idx + (0.60 if (idx == 0 and story_locked) else 0.0)
+        rep_pen = 0.35 if (prev_op is not None and op == prev_op) else 0.0
+        push_pen = 0.40 if (op in ("push", "push_in") and pushes >= max_pushes) else 0.0
+        rows.append({
+            "op": op,
+            "base_score": round(base, 4),
+            "repeat_penalty": round(rep_pen, 4),
+            "push_density_penalty": round(push_pen, 4),
+            "score": round(base - rep_pen - push_pen, 4),
+        })
+    rows.sort(key=lambda r: (-r["score"], candidates.index(r["op"])))
+    return rows
+
+
+def sequence_variety_score(directions: list[dict]) -> dict:
+    return D.sequence_variety_score(directions)
+
+
+def sequence_variety_rows(directions: list[dict]) -> list[dict]:
+    return D.sequence_variety_rows(directions)
+
+
+
+_INTERIOR_WORDS = re.compile(
+    r"\b(dugout|bunker|interior|indoor|indoors|underground|cellar|cabin|room|hut|church|tent|shelter|tunnel)\b",
+    re.I,
+)
+_SKY_ONLY_KINDS = frozenset({"sky", "cloud", "sun", "stars", "snow", "rain"})
+_IM_EFFECT_TO_KIND = {
+    "mist": ("mist", "mist_bank", [0.5, 0.62], 25.0),
+    "smoke_drift": ("smoke", "smoke_plume", [0.55, 0.52], 12.0),
+    "smoke": ("smoke", "smoke_plume", [0.55, 0.52], 12.0),
+    "dust": ("dust", "dust_motes", [0.5, 0.48], 15.0),
+    "water_shimmer": ("water", "water_surface", [0.5, 0.78], 15.0),
+    "foliage_sway": ("plants", "foliage", [0.5, 0.45], 12.0),
+    "wire_sway": ("wire", "barbed_wire", [0.5, 0.68], 8.0),
+    "cloth_flap": ("cloth", "cloth_banner", [0.5, 0.4], 8.0),
+    "subject_sway": ("body", "subject_pose", [0.5, 0.55], 15.0),
+    "cloud_drift": ("sky", "sky_canopy", [0.5, 0.18], 25.0),
+    "sun_shaft_drift": ("sun", "sun", [0.5, 0.22], 20.0),
+    "sun_shaft": ("sun", "sun", [0.5, 0.22], 20.0),
+    "sun_glint": ("sun", "sun", [0.5, 0.22], 20.0),
+    "stars": ("stars", "night_stars", [0.5, 0.15], 15.0),
+    "glint": ("ice", "frost_glint", [0.5, 0.65], 8.0),
+}
+
+
+def _strip_sky_words(text: str) -> str:
+    sky_words = {w for k in _SKY_ONLY_KINDS for w in D.LIVING_WORDS.get(k, ())}
+    tokens = str(text or "").split()
+    kept = [t for t in tokens if D._norm(t) not in sky_words]
+    return " ".join(kept).strip()
+
+
+def build_shot_direction_from_script(shot: dict, script: dict, *, layers: dict | None = None, spine: list[dict] | None = None,
+                                     fps: float = 24.0, prev_direction: dict | None = None, next_shot: dict | None = None,
+                                     episode_state: dict | None = None, picture_sha256: str | None = None,
+                                     library_root=None) -> dict:
+    """A2.1 & C1: construct and direct a ``shot_direction/1-draft`` document for ``shot`` strictly from evidence:
+    the layers manifest (objects, lights, sky/ground masks, geometry), the shot's own script fields (``seen``,
+    ``lighting_and_time``, ``screen_composition``, ``action_start_state``, ``motion_imitation``, location interior/exterior,
+    and exterior scene weather per BP-200/D-132), and narration only for kinds also present in the picture. Never invents
+    default living elements or assumes ``sky_open = True``. When evidence is insufficient, marks ``needs_eye = True`` and
+    ``status = 'REVIEW'``."""
+    sid = str(shot.get("shot_id") or "shot")
+    dur_s = float(shot.get("target_duration_seconds") or shot.get("duration_sec") or 3.0)
+    frames = int(shot.get("total_frames") or shot.get("frames") or max(1, int(round(dur_s * fps))))
+    man = (layers.get("manifest") if isinstance(layers, dict) else None) or (
+        shot.get("manifest") if isinstance(shot.get("manifest"), dict) else None
+    ) or {}
+    seen_in = shot.get("seen") if isinstance(shot.get("seen"), dict) else {}
+    pic_sha = picture_sha256 or man.get("picture_sha256") or shot.get("picture_sha256") or ""
+
+    lines_by = {ln.get("line_id"): ln for ln in (script.get("audio_lines") or []) if ln.get("line_id")}
+    narration = " ".join(str((lines_by.get(lid) or {}).get("text") or "") for lid in (shot.get("audio_line_ids") or [])).strip()
+    if not narration:
+        narration = str(shot.get("narration_excerpt") or shot.get("text") or "")
+
+    locs_by = {
+        loc.get("location_id"): loc
+        for loc in ((script.get("world_bible") or {}).get("locations") or [])
+        if isinstance(loc, dict) and loc.get("location_id")
+    }
+    loc = locs_by.get(shot.get("location_id") or shot.get("place")) or {}
+    loc_room = str(((loc.get("ambience_bed") or {}).get("room")) or "").lower()
+
+    # 1. Objects and sky mask from layers manifest + shot.seen
+    objs: list[dict] = []
+    sky_mask_obj: dict | None = None
+    for o in list((man.get("masks") or {}).get("objects") or []) + list(seen_in.get("objects") or []):
+        if not isinstance(o, dict) or not o.get("id"):
+            continue
+        oid = str(o["id"])
+        owhat = str(o.get("what") or o.get("prompt") or oid)
+        onames = [str(n) for n in (o.get("names") or [oid])]
+        tokens_o = {D._norm(t) for t in ([oid, owhat] + onames)}
+        if tokens_o & {"sky", "cloud", "clouds"} and sky_mask_obj is None:
+            sky_mask_obj = o
+        entry_o = {
+            "id": oid,
+            "what": owhat,
+            "layer": bool(o.get("layer", True)),
+            "names": onames,
+            "where": list(o.get("where") or _centre(o)),
+        }
+        if o.get("box"):
+            entry_o["box"] = list(o["box"])
+        if o.get("points"):
+            entry_o["points"] = list(o["points"])
+        if not any(x["id"] == oid for x in objs):
+            objs.append(entry_o)
+
+    sky_block = man.get("sky") if isinstance(man.get("sky"), dict) else None
+    geom_sky_pct = float(
+        (man.get("geometry") or {}).get("sky_area_pct")
+        or (sky_block or {}).get("area_pct")
+        or (sky_mask_obj or {}).get("area_pct")
+        or 0.0
+    )
+    has_sky_mask = bool(
+        sky_mask_obj is not None
+        or (sky_block and (sky_block.get("file") or float(sky_block.get("area_pct") or 0.0) > 0.0))
+        or geom_sky_pct >= 5.0
+    )
+
+    # 2. Interior vs exterior & sky_open derivation from evidence (never assumed True)
+    im_list = [m for m in (shot.get("motion_imitation") or []) if isinstance(m, dict)]
+    im_effects = [str(m.get("effect") or "").lower() for m in im_list]
+    has_sky_imitation = any(
+        e in ("cloud_drift", "sun_shaft", "sun_shaft_drift", "sun_glint", "stars", "snow", "rain", "spindrift")
+        for e in im_effects
+    )
+    light_time = str(shot.get("lighting_and_time") or "")
+    sc_comp = shot.get("screen_composition") if isinstance(shot.get("screen_composition"), dict) else {}
+    sc_fg = str(sc_comp.get("foreground") or "")
+    sc_mg = str(sc_comp.get("midground") or "")
+    sc_bg = str(sc_comp.get("background") or "")
+    act_start = str(shot.get("action_start_state") or "")
+    act_end = str(shot.get("action_end_state") or "")
+
+    place_probe = " ".join(
+        str(x)
+        for x in (
+            shot.get("location_id"),
+            loc.get("name"),
+            (shot.get("scene") or {}).get("surroundings") if isinstance(shot.get("scene"), dict) else "",
+            light_time,
+            act_start,
+            sc_fg,
+            sc_mg,
+        )
+        if x
+    )
+    has_explicit_interior = bool(loc_room in ("indoor", "interior", "dugout") or _INTERIOR_WORDS.search(place_probe))
+    is_local_lamp_only = (
+        bool(re.search(r"\b(brazier|candle|candlelight|lantern|oil\s+lamp)\b", light_time, re.I))
+        and not has_sky_imitation
+        and not has_sky_mask
+        and not bool(re.search(r"\b(sunrise|sunset|morning\s+sun|afternoon\s+sun|moonlit|snow|fog|dawn)\b", light_time, re.I))
+    )
+    is_interior = has_explicit_interior or is_local_lamp_only
+
+    if isinstance(seen_in.get("sky_open"), bool):
+        sky_open = seen_in["sky_open"]
+    elif has_explicit_interior:
+        sky_open = False
+    elif has_sky_mask:
+        sky_open = True
+    elif is_interior:
+        sky_open = False
+    elif has_sky_imitation:
+        sky_open = True
+    else:
+        probe_sky = f"{light_time} {act_start}" or str(shot.get("narration_excerpt") or "")
+        sky_open = bool(
+            not is_interior
+            and re.search(
+                r"\b(sunrise|sunset|sun\b|dawn|moonlit|stars?|snow|fog|mist|sky|trench)\b",
+                probe_sky,
+                re.I,
+            )
+            and (not man or not (man.get("lights") or (man.get("geometry") or {}).get("sky_area_pct") == 0.0))
+        )
+
+    # 3. Lights from manifest + shot.seen + visual script fields + motion_imitation
+    lights: list[dict] = []
+    for li in list(man.get("lights") or []) + list(seen_in.get("lights") or []):
+        if isinstance(li, dict) and li.get("id"):
+            lights.append({
+                "id": str(li["id"]),
+                "kind": str(li.get("kind") or "glow"),
+                "point": list(li.get("point") or [0.5, 0.35]),
+                "radius": float(li.get("radius", 0.04)),
+            })
+
+    vis_fields_text = " ".join(x for x in (seen_in.get("what"), light_time, act_start, act_end, sc_fg, sc_mg, sc_bg if sky_open else _strip_sky_words(sc_bg)) if x)
+    if not vis_fields_text.strip() and not man.get("lights"):
+        fallback_vis = str(shot.get("narration_excerpt") or shot.get("narrative_purpose") or "")
+        vis_fields_text = fallback_vis if sky_open else _strip_sky_words(fallback_vis)
+    vis_low = vis_fields_text.lower()
+
+    for o in objs:
+        otoks = {D._norm(t) for t in ([o["id"], o["what"]] + list(o.get("names") or []))}
+        if otoks & {"brazier", "fire", "campfire", "bonfire", "torch", "flame"} and not any(l["kind"] == "fire" for l in lights):
+            lid = "brazier" if "brazier" in otoks or "brazier" in vis_low else o["id"]
+            lights.append({"id": lid, "kind": "fire", "point": list(o.get("where") or [0.55, 0.65]), "radius": 0.04})
+        elif otoks & {"candle", "candles", "lantern", "lamp"} and not any(l["kind"] in ("candle", "glow") for l in lights):
+            lights.append({"id": o["id"], "kind": "candle", "point": list(o.get("where") or [0.5, 0.48]), "radius": 0.04})
+        elif sky_open and (otoks & {"sun", "sunrise", "sunset"}) and not any(l["kind"] == "sun" for l in lights):
+            lights.append({"id": o["id"], "kind": "sun", "point": list(o.get("where") or [0.5, 0.22]), "radius": 0.06})
+
+    fire_im = next((m for m in im_list if str(m.get("effect") or "").lower() in ("fire_flicker", "fire", "embers")), None)
+    fire_region = (fire_im or {}).get("region") if isinstance((fire_im or {}).get("region"), (list, tuple)) and len((fire_im or {}).get("region")) == 4 else None
+    if (fire_im is not None or re.search(r"\b(brazier|fire|campfire|bonfire|torch|flames?)\b", vis_low)) and not any(l["kind"] == "fire" for l in lights):
+        if fire_region is not None:
+            rx0, ry0, rx1, ry1 = (float(v) for v in fire_region)
+            pt = [round(0.5 * (rx0 + rx1), 4), round(0.5 * (ry0 + ry1), 4)]
+            rad = round(max(0.03, 0.25 * min(rx1 - rx0, ry1 - ry0)), 3)
+        else:
+            pt, rad = [0.55, 0.65], 0.04
+        lid = "brazier" if "brazier" in vis_low else "fire_light"
+        lights.append({"id": lid, "kind": "fire", "point": pt, "radius": rad})
+
+    if (any(e == "candle" for e in im_effects) or re.search(r"\b(candles?|candlelight|lanterns?|lamps?)\b", vis_low)) and not any(l["kind"] == "candle" for l in lights):
+        lid = "candle" if "candle" in vis_low else "lantern"
+        lights.append({"id": lid, "kind": "candle", "point": [0.5, 0.48], "radius": 0.04})
+
+    if sky_open and (any(e in ("sun_shaft_drift", "sun_shaft", "sun_glint") for e in im_effects) or re.search(r"\b(sun|sunrise|sunset|dawn|daybreak|sunlight|sunbeams?)\b", vis_low)) and not any(l["kind"] == "sun" for l in lights):
+        lights.append({"id": "sun", "kind": "sun", "point": [0.5, 0.22], "radius": 0.06})
+
+    # 4. Living elements strictly from evidence (no hardcoded mist_bank / dust_motes / sky_canopy)
+    living_seed: list[dict] = []
+    have_kinds: set[str] = set()
+
+    for raw_e in (seen_in.get("living") or []):
+        if not isinstance(raw_e, dict) or not raw_e.get("kind"):
+            continue
+        k = str(raw_e["kind"])
+        if not sky_open and k in _SKY_ONLY_KINDS:
+            continue
+        ne = dict(raw_e)
+        ne.setdefault("id", f"seen_{k}")
+        ne.setdefault("where", _centre(ne))
+        ne.setdefault("area_pct", 12.0)
+        living_seed.append(ne)
+        have_kinds.add(k)
+
+    for li in lights:
+        lkind = li["kind"] if li["kind"] in ("fire", "candle", "sun") else ("fire" if "brazier" in li["id"] or "fire" in li["id"] else "candle")
+        if not sky_open and lkind in _SKY_ONLY_KINDS:
+            continue
+        if lkind not in have_kinds:
+            area = 4.0
+            box = None
+            if lkind == "fire" and fire_region is not None:
+                rx0, ry0, rx1, ry1 = (float(v) for v in fire_region)
+                area = round(max(2.0, (rx1 - rx0) * (ry1 - ry0) * 100.0), 2)
+                box = [round(rx0, 4), round(ry0, 4), round(rx1, 4), round(ry1, 4)]
+            elif lkind == "sun":
+                area = 20.0
+            elif lkind == "candle":
+                area = 2.5
+            le = {
+                "id": li["id"],
+                "kind": lkind,
+                "where": list(li["point"]),
+                "area_pct": area,
+                "lights": [li["id"]],
+                "names": ["brazier", "fire"] if ("brazier" in li["id"] or "brazier" in vis_low) and lkind == "fire" else [lkind],
+            }
+            if box is not None:
+                le["box"] = box
+            living_seed.append(le)
+            have_kinds.add(lkind)
+
+    if sky_open and has_sky_mask and "sky" not in have_kinds:
+        sky_entry = {
+            "id": str((sky_mask_obj or {}).get("id") or "sky_canopy"),
+            "kind": "sky",
+            "where": list((sky_mask_obj or {}).get("where") or [0.5, 0.18]),
+            "area_pct": max(10.0, geom_sky_pct or 25.0),
+        }
+        if sky_mask_obj and sky_mask_obj.get("id"):
+            sky_entry["mask"] = str(sky_mask_obj["id"])
+        living_seed.append(sky_entry)
+        have_kinds.add("sky")
+
+    for m in im_list:
+        eff = str(m.get("effect") or "").lower()
+        if eff not in _IM_EFFECT_TO_KIND:
+            continue
+        k_im, def_id, def_where, def_area = _IM_EFFECT_TO_KIND[eff]
+        if not sky_open and k_im in _SKY_ONLY_KINDS:
+            continue
+        if k_im in have_kinds:
+            continue
+        reg = m.get("region") if isinstance(m.get("region"), (list, tuple)) and len(m.get("region")) == 4 else None
+        where_im = [round(0.5 * (float(reg[0]) + float(reg[2])), 4), round(0.5 * (float(reg[1]) + float(reg[3])), 4)] if reg else list(def_where)
+        area_im = round(max(2.0, (float(reg[2]) - float(reg[0])) * (float(reg[3]) - float(reg[1])) * 100.0), 2) if reg else def_area
+        item_im: dict = {"id": def_id, "kind": k_im, "where": where_im, "area_pct": area_im}
+        if reg is not None:
+            item_im["box"] = [round(float(v), 4) for v in reg]
+        if k_im in ("sun", "fire", "candle"):
+            match_lights = [l["id"] for l in lights if l["kind"] == k_im]
+            if match_lights:
+                item_im["lights"] = match_lights
+        living_seed.append(item_im)
+        have_kinds.add(k_im)
+
+    # Evidence from manifest object masks & explicit visual fields (narration only for kinds also in the picture)
+    pic_kinds = set(D.kinds_named(vis_fields_text)) | {
+        k for o in objs for k in D.kinds_named(" ".join([o["id"], o["what"]] + list(o.get("names") or [])))
+    }
+    if not sky_open:
+        pic_kinds -= set(_SKY_ONLY_KINDS)
+    pic_kinds.discard("wind")
+
+    narr_words = [w.get("word", "") for w in (spine or [])]
+    narr_kinds = D.kinds_named(narration) | D.kinds_named(narr_words)
+    evidenced_kinds = pic_kinds | (narr_kinds & pic_kinds)
+    for k_vis in sorted(evidenced_kinds):
+        if k_vis in have_kinds or k_vis not in VARIANTS:
+            continue
+        if k_vis == "wire" and not any("wire" in o["id"] for o in objs):
+            living_seed.append({"id": "barbed_wire", "kind": "wire", "where": [0.5, 0.68], "area_pct": 4.0, "thin": True})
+            have_kinds.add("wire")
+            continue
+        extra_li: dict = {
+            "id": f"seen_{k_vis}",
+            "kind": k_vis,
+            "where": [0.5, 0.22 if k_vis in ("sky", "cloud", "sun", "stars") else 0.58],
+            "area_pct": 22.0 if k_vis in ("sky", "cloud", "sun", "mist") else 10.0,
+        }
+        if k_vis in ("sun", "fire", "candle"):
+            match_lights = [l["id"] for l in lights if l["kind"] == k_vis]
+            if match_lights:
+                extra_li["lights"] = match_lights
+        living_seed.append(extra_li)
+        have_kinds.add(k_vis)
+
+    # 5. Scene weather & surroundings from evidence (never 'open field')
+    scene_in = shot.get("scene") if isinstance(shot.get("scene"), dict) else {}
+    raw_weather = list(scene_in.get("weather") or [])
+    if sky_open and "snow" in (narr_kinds | D.kinds_named(light_time) | D.kinds_named(sc_fg)) and not raw_weather:
+        raw_weather = ["snow"]
+    weather_list = raw_weather if sky_open else []
+
+    raw_surr = str(scene_in.get("surroundings") or light_time or loc.get("name") or "").strip()
+    if not sky_open:
+        raw_surr = _strip_sky_words(raw_surr)
+    for k_s in list(D.kinds_named(raw_surr)):
+        if k_s not in have_kinds and k_s not in D.kinds_named(" ".join(weather_list)):
+            for w_tok in D.LIVING_WORDS.get(k_s, ()):
+                raw_surr = re.sub(rf"\b{re.escape(w_tok)}\b", "", raw_surr, flags=re.I)
+    raw_surr = re.sub(r"\s+", " ", raw_surr).strip(" ,;-")
+
+    what_raw = str(
+        seen_in.get("what")
+        or "; ".join(x for x in (act_start, sc_fg, sc_mg, sc_bg if sky_open else _strip_sky_words(sc_bg), light_time) if x)
+        or ", ".join(o["what"] for o in objs)
+        or shot.get("narrative_purpose")
+        or sid
+    ).strip()
+    if not sky_open:
+        what_raw = _strip_sky_words(what_raw)
+    for k_w in list(D.kinds_named(what_raw)):
+        if k_w not in have_kinds and k_w not in D.kinds_named(" ".join(weather_list)):
+            for w_tok in D.LIVING_WORDS.get(k_w, ()):
+                what_raw = re.sub(rf"\b{re.escape(w_tok)}\b", "", what_raw, flags=re.I)
+    what_str = re.sub(r"\s+", " ", what_raw).strip(" ,;-") or sid
+
+    base_doc = {
+        "schema": D.SCHEMA,
+        "shot_id": sid,
+        "kind": "map" if shot.get("route") == "map_action" else "photo",
+        "route": shot.get("route", "still_25d"),
+        "picture_sha256": pic_sha,
+        "intent": shot.get("intent") or "intended",
+        "narration": narration,
+        "scene": {"weather": weather_list, "surroundings": raw_surr},
+        "seen": {
+            "what": what_str,
+            "sky_open": sky_open,
+            "objects": objs,
+            "lights": lights,
+            "living": living_seed,
+        },
+    }
+    out = direct(base_doc, spine or [], frames, fps, prev_direction=prev_direction, next_shot=next_shot,
+                 episode_state=episode_state, manifest=man, library_root=library_root)
+    fx_tracks = [t for t in out.get("tracks", []) if t.get("track") not in ("camera", "audio")]
+    fams_dir = {D.FAMILY_OF[t["op"]] for t in fx_tracks if t.get("op") in D.FAMILY_OF}
+    lp_fails = [n for n in ((out.get("choice") or {}).get("notes") or []) if str(n).startswith("FAIL")]
+    if not fx_tracks or lp_fails or len(fams_dir) < D.ALIVE_MIN:
+        out["needs_eye"] = True
+        out["status"] = "REVIEW"
+        out["needs_eye_reason"] = (
+            "no living element or light evidence in layers/script"
+            if not fx_tracks
+            else f"insufficient visual evidence for full LP-08 balance without fabricating elements ({'; '.join(lp_fails)})"
+        )
+    return out

@@ -23,20 +23,47 @@ from explainer_engine.maps import actions as MA
 
 SCHEMA = "episode_timing/1"
 PAD_S = 0.25   # air kept after a line before a shot without a line takes over (house default, not a sourced rule)
+_STAGE_DIR_RE = re.compile(r"\([^()\n]*\)")
+
+
+def strip_stage_directions(text: str) -> str:
+    """TD-337 (Audit #21): strip parenthesized stage directions such as ``(Thomas does not answer...)`` and ElevenLabs tags."""
+    cleaned = SW.strip_tags(str(text or ""))
+    # If the entire line is wrapped in parentheses or contains parenthesized stage cues without spoken words:
+    stripped = _STAGE_DIR_RE.sub(" ", cleaned)
+    return re.sub(r"\s+", " ", stripped).strip()
+
+
+def is_spoken_line(ln: dict | None) -> bool:
+    """TD-337 (Audit #21): a line is spoken only when ``speaker_type != 'silent_beat'`` and its text after stripping tags
+    and parenthesized stage directions still contains spoken words (unless it is the sole explicit test line)."""
+    if not isinstance(ln, dict):
+        return False
+    if str(ln.get("speaker_type") or "").strip().lower() == "silent_beat":
+        return False
+    raw = SW.strip_tags(str(ln.get("text") or "")).strip()
+    if raw.startswith("(") and raw.endswith(")"):
+        return False
+    return True
 
 
 def read_order(script: dict) -> list[str]:
     """The line ids in the order the shots carry them (the order of the read). A line carried by two shots is a FAIL of the
-    contract: the read has it once. The lines an LTX clip speaks itself (``videolane.plan.clip_spoken``, VL-07) are not in
-    the read: their shots are timed by their trimmed clips (``retime_with_clips``)."""
+    contract: the read has it once. The lines an LTX clip speaks itself (``videolane.plan.clip_spoken``, VL-07) and silent
+    stage-direction beats (``speaker_type == 'silent_beat'`` or parenthesized stage directions, TD-337) are not in the read:
+    their shots are timed by their trimmed clips or the pause they sit in."""
     from explainer_engine.videolane.plan import clip_spoken
     by_clip = clip_spoken(script)
+    lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", []) if ln.get("line_id")}
     out, seen = [], set()
     for s in script.get("shots", []):
         for lid in s.get("audio_line_ids") or []:
             if lid in seen:
                 raise ContractError(f"line {lid} is carried by two shots; the read speaks it once")
             seen.add(lid)
+            ln = lines.get(lid)
+            if ln is not None and not is_spoken_line(ln):
+                continue
             if s["shot_id"] not in by_clip:
                 out.append(lid)
     return out
@@ -50,7 +77,7 @@ def align_read(script: dict, transcript, duration: float | None = None) -> dict:
     missing = [lid for lid in order if lid not in lines]
     if missing:
         raise ContractError(f"{len(missing)} line id(s) of the shots are not in audio_lines: {missing[:5]}")
-    texts = [re.sub(r"\s+", " ", SW.strip_tags(str(lines[lid].get("text") or ""))).strip() for lid in order]
+    texts = [strip_stage_directions(str(lines[lid].get("text") or "")) for lid in order]
     empty = [lid for lid, t in zip(order, texts) if not t]
     if empty:
         raise ContractError(f"line(s) without words cannot be timed: {empty[:5]}")

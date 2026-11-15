@@ -19,7 +19,7 @@ from behind or a cartoon face YuNet misses goes to the reviewer). The weights ar
 engineering defaults until he or two source types set them.
 
     python -m explainer_engine.finish.frame_pick fetch
-    python -m explainer_engine.finish.frame_pick pick <clip.mp4> --out DIR [--window-s 1.0] [--after FRAME]
+    python -m explainer_engine.finish.frame_pick pick <clip.mp4> --out DIR [--window-s 1.5] [--after FRAME]
                                                      [--upscale] [--size 1280x704] [--crop x0,y0,x1,y1]
 
 ``pick`` writes ``<clip>_f<NNN>.png`` (the chosen frame as it is), ``frame_pick.json`` and ``frame_pick_sheet.jpg``
@@ -50,6 +50,7 @@ W_BODY = float(SR.T("BP-199", "w_body"))
 W_FRAME = float(SR.T("BP-199", "w_frame"))
 FACE_SCORE_MIN = float(SR.T("BP-199", "face_score_min"))
 SETTLE = int(SR.T("BP-199", "settle_frames"))
+DEFAULT_WINDOW_S = 1.5      # VL-16 (Audit #7b): 1.5 s handover search window
 CHANGE_FLOOR = 1.0          # grey levels: a window that changes less than this everywhere is still; its noise is not ranked
 BODY_W, BODY_H = 1.6, 6.0   # the body box: the face centre +- BODY_W face widths, from the face top down BODY_H face heights
 
@@ -220,8 +221,9 @@ def score(frames: list[np.ndarray], track: list | None = None) -> list[dict]:
     return rows
 
 
-def pick(clip: Path, window_s: float = 1.0, after: int | None = None, model: Path | None | str = "auto") -> dict:
-    """The chosen frame of ``clip``: candidates from ``after`` (or the last ``window_s`` seconds) to the last frame."""
+def pick(clip: Path, window_s: float = DEFAULT_WINDOW_S, after: int | None = None, model: Path | None | str = "auto") -> dict:
+    """The chosen frame of ``clip``: candidates from ``after`` (or the last ``window_s`` seconds, default 1.5 s per VL-16)
+    to the last frame."""
     n, fps = clip_info(clip)
     if n < 1:
         raise ConfigError(f"{clip}: no frames")
@@ -283,7 +285,7 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("pick")
     p.add_argument("clip", type=Path)
     p.add_argument("--out", type=Path, required=True)
-    p.add_argument("--window-s", type=float, default=1.0)
+    p.add_argument("--window-s", type=float, default=DEFAULT_WINDOW_S)
     p.add_argument("--after", type=int)
     p.add_argument("--upscale", action="store_true")
     p.add_argument("--size")

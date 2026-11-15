@@ -455,8 +455,8 @@ def import_check(module: str, run=subprocess.run) -> list[str]:
     return [] if r.returncode == 0 else [ln.split()[1] for ln in (r.stdout or "").splitlines() if ln.startswith("MISSING")] or mods
 
 
-def fit_picture(img, width, height):
-    """Centre-crop to the clip's aspect, then Lanczos to its size."""
+def fit_picture(img, width, height, face_box=None, headroom: float = 0.35):
+    """Crop to the clip's aspect (preserving ``face_box`` and its top ``headroom`` when given, Audit #8), then Lanczos to its size."""
     from PIL import Image
     w, h = img.size
     if w * height > h * width:
@@ -464,6 +464,14 @@ def fit_picture(img, width, height):
     else:
         cw, ch = w, round(w * height / width)
     left, top = (w - cw) // 2, (h - ch) // 2
+    if face_box is not None and w > 0 and h > 0:
+        from explainer_engine.finish.superres import crop_box_for_face
+        box = [left / w, top / h, (left + cw) / w, (top + ch) / h]
+        adj = crop_box_for_face(box, face_box, headroom=headroom)
+        left = int(round(adj[0] * w))
+        top = int(round(adj[1] * h))
+        left = max(0, min(w - cw, left))
+        top = max(0, min(h - ch, top))
     return img.convert("RGB").crop((left, top, left + cw, top + ch)).resize((width, height), Image.LANCZOS)
 
 
@@ -847,18 +855,62 @@ def _grey_frames(clip: Path, first: int, count: int, width: int = HANDOVER_W, sh
     return np.frombuffer(raw[:n * width * h], np.uint8).reshape(n, h, width).astype(np.float32)
 
 
-def handover_scores(frames) -> list[dict]:
-    """VL-05: every candidate frame's sharpness (variance of a 4-neighbour Laplacian), motion (mean absolute change to its
-    neighbours, the motion blur and the mid-pose a frozen hand-over would keep) and score. Pure numpy."""
+HANDOVER_WINDOW_S = 1.5      # VL-16 (Audit #7b): 1.5 s handover search window
+W_FACE = 0.6                 # BP-199 (Audit #7b): person face weight
+W_BODY = 0.3                 # BP-199 (Audit #7b): person body weight
+W_FRAME = 0.1                # BP-199 (Audit #7b): whole-frame weight
+
+
+def _lap_var_2d(g) -> float:
     import numpy as np
+    if g.shape[0] < 3 or g.shape[1] < 3:
+        return 0.0
+    lap = (-4 * g[1:-1, 1:-1] + g[:-2, 1:-1] + g[2:, 1:-1] + g[1:-1, :-2] + g[1:-1, 2:])
+    return float(np.var(lap))
+
+
+def _crop_norm(g, box) -> "np.ndarray":
+    h, w = g.shape[:2]
+    x0 = max(0, min(w - 1, int(round(box[0] * w))))
+    y0 = max(0, min(h - 1, int(round(box[1] * h))))
+    x1 = max(x0 + 1, min(w, int(round(box[2] * w))))
+    y1 = max(y0 + 1, min(h, int(round(box[3] * h))))
+    return g[y0:y1, x0:x1]
+
+
+def handover_scores(frames, face_box=None, body_box=None) -> list[dict]:
+    """VL-05 / VL-16 / BP-199 (Audit #7b): score every candidate handover frame by person stillness and face sharpness
+    first (``W_FACE=0.6, W_BODY=0.3, W_FRAME=0.1``) so a sharp background never overrides a moving face/body."""
+    import numpy as np
+    fbox = list(face_box) if face_box is not None else [0.30, 0.12, 0.70, 0.50]
+    bbox = list(body_box) if body_box is not None else [0.22, 0.45, 0.78, 0.92]
     out = []
     for i, g in enumerate(frames):
-        lap = (-4 * g[1:-1, 1:-1] + g[:-2, 1:-1] + g[2:, 1:-1] + g[1:-1, :-2] + g[1:-1, 2:])
-        diffs = [float(np.abs(g - frames[j]).mean()) for j in (i - 1, i + 1) if 0 <= j < len(frames)]
-        out.append({"i": i, "sharpness": float(lap.var()), "motion": float(np.mean(diffs)) if diffs else 0.0})
-    top = max((o["sharpness"] for o in out), default=0.0) or 1.0
+        js = [j for j in (i - 1, i + 1) if 0 <= j < len(frames)]
+        f_crop = _crop_norm(g, fbox)
+        b_crop = _crop_norm(g, bbox)
+        frame_diffs = [float(np.abs(g - frames[j]).mean()) for j in js]
+        face_diffs = [float(np.abs(f_crop - _crop_norm(frames[j], fbox)).mean()) for j in js]
+        body_diffs = [float(np.abs(b_crop - _crop_norm(frames[j], bbox)).mean()) for j in js]
+        out.append({
+            "i": i,
+            "sharpness": _lap_var_2d(g),
+            "motion": float(np.mean(frame_diffs)) if frame_diffs else 0.0,
+            "face_sharp": _lap_var_2d(f_crop),
+            "face_motion": float(np.mean(face_diffs)) if face_diffs else 0.0,
+            "body_motion": float(np.mean(body_diffs)) if body_diffs else 0.0,
+        })
+    top_frame_s = max((o["sharpness"] for o in out), default=0.0) or 1.0
+    top_face_s = max((o["face_sharp"] for o in out), default=0.0) or 1.0
+    top_frame_m = max([o["motion"] for o in out] + [1.0]) or 1.0
+    top_face_m = max([o["face_motion"] for o in out] + [1.0]) or 1.0
+    top_body_m = max([o["body_motion"] for o in out] + [1.0]) or 1.0
     for o in out:
-        o["score"] = o["sharpness"] / top - HANDOVER_MOTION_W * o["motion"] / 255.0 * 10.0
+        face_term = (o["face_sharp"] / top_face_s) - (o["face_motion"] / top_face_m)
+        body_term = -(o["body_motion"] / top_body_m)
+        frame_term = (o["sharpness"] / top_frame_s) - HANDOVER_MOTION_W * (o["motion"] / top_frame_m)
+        o["person_score"] = W_FACE * face_term + W_BODY * body_term + W_FRAME * frame_term
+        o["score"] = o["person_score"]
     return out
 
 
@@ -872,15 +924,8 @@ def speech_floor(fps: int, speech_end_s=None, tail_s=0.0) -> int | None:
 
 def handover_frame(clip: Path, frames: int, fps: int, cont: dict | None, launch: dict, sh=subprocess.run,
                    speech_end_s=None, tail_s=0.0) -> dict:
-    """The frame of a clip that starts its continuation (VL-05). ``pick: last`` (or no plan) is ``chain_from``; ``pick:
-    best_tail`` scores the last ``window_s`` seconds and takes the sharpest, stillest frame, so a blurred or mid-motion last
-    frame is never frozen into the next clip's first frame. Our LTX-2.5 distilled CLI has no extend: this frame IS the
-    hand-over.
-
-    P5: when the clip speaks a line (``speech_end_s``, from the scene row), the search starts only at ``speech_floor``, the
-    line's end plus BP-187's ``tail_s``; the result says it (``after``). When no frame of the clip lies there, ``frame`` is None
-    with ``why``: the chain stops instead of cutting the line (the clip was sized from a measured read, Q4, so this means the
-    scene file and the clip disagree)."""
+    """The frame of a clip that starts its continuation (VL-05, VL-16, BP-199). ``pick: last`` (or no plan) is ``chain_from``;
+    ``pick: best_tail`` scores the last ``window_s`` seconds (default 1.5 s, VL-16) using BP-199 person weights."""
     last = chain_from(launch, frames)
     cont = cont or {}
     pick = cont.get("pick", "last")
@@ -892,7 +937,7 @@ def handover_frame(clip: Path, frames: int, fps: int, cont: dict | None, launch:
                        f"{floor}), after the clip's last frame {last}: no hand-over frame that keeps the line whole"}
     if pick == "last":
         return {"frame": last, "pick": "last", **after}
-    n = max(2, min(last + 1, int(round(float(cont.get("window_s", 0.75)) * fps))))
+    n = max(2, min(last + 1, int(round(float(cont.get("window_s", HANDOVER_WINDOW_S)) * fps))))
     first = last + 1 - n
     if floor is not None and floor > first:
         first = floor                             # never a frame inside the line or its tail

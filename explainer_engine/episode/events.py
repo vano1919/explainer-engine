@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 from explainer_engine.core.errors import ContractError
 from explainer_engine.maps import actions as MA
@@ -425,6 +426,43 @@ def spine_hash(spine) -> str:
 
 def events_hash(events: list[dict]) -> str:
     return hashlib.sha256(json.dumps(events, sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+
+def sound_event_reason_rows(script: dict, sidecar: dict | Path | None = None) -> list[dict]:
+    """Audit #44 (BP-55 / AV-04): every authored ``sound_events[]`` entry must have a written reason, either inline in
+    ``why`` / ``purpose`` or in the ``production/director_sound_reasons.json`` sidecar."""
+    sidecar_map: dict[str, str] = {}
+    if isinstance(sidecar, Path):
+        p = sidecar / "production" / "director_sound_reasons.json" if sidecar.is_dir() else sidecar
+        if p.is_file():
+            try:
+                raw = json.loads(p.read_text(encoding="utf-8"))
+                if isinstance(raw, dict):
+                    reasons = raw.get("reasons") if isinstance(raw.get("reasons"), dict) else raw
+                    for k, v in reasons.items():
+                        sidecar_map[str(k)] = str(v.get("why") if isinstance(v, dict) else v or "").strip()
+            except (ValueError, OSError):
+                pass
+    elif isinstance(sidecar, dict):
+        reasons = sidecar.get("reasons") if isinstance(sidecar.get("reasons"), dict) else sidecar
+        for k, v in reasons.items():
+            sidecar_map[str(k)] = str(v.get("why") if isinstance(v, dict) else v or "").strip()
+    missing: list[str] = []
+    total = 0
+    for sh in script.get("shots", []):
+        sid = sh.get("shot_id", "?")
+        for k, item in enumerate(sh.get("sound_events") or []):
+            total += 1
+            ev_id = str(item.get("event_id") or f"{sid}.S{k + 1}")
+            inline_why = str(item.get("why") or item.get("reason") or "").strip()
+            sc_why = sidecar_map.get(ev_id) or sidecar_map.get(f"{sid}.S{k + 1}") or sidecar_map.get(sid) or ""
+            if not inline_why and not sc_why:
+                missing.append(ev_id)
+    if total == 0:
+        return [G.row("sound_events_have_reasons", True, "no authored sound_events in script", 0)]
+    return [G.row("sound_events_have_reasons", not missing,
+                  f"{total - len(missing)} of {total} sound_event(s) have a written reason (inline why or director_sound_reasons.json)",
+                  missing[:30], level=G.FAIL if sidecar is not None else G.REVIEW)]
 
 
 def contract_rows(script: dict, classes=None, fps: int = 24) -> list[dict]:

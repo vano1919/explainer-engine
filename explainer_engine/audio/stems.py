@@ -237,18 +237,25 @@ def _rms(x: np.ndarray) -> float:
 WIDEN_SEEDS = 8      # TD-339: how many fixed seeds a bed row may choose from (an engineering default, not a threshold)
 
 
+def _widen_rank(c: float) -> tuple[int, float]:
+    """TD-342 (Audit #16): prefer non-negative correlation (0.0 <= c, mono loss <= 3 dB) with the LOWEST correlation so beds
+    keep real stereo side energy (side - mid around -0.3..-6.2 dB instead of collapsing to mono at c -> 1.0); if all seeds are
+    negative, pick the least negative (highest c)."""
+    return (0, round(c, 9)) if c >= 0.0 else (1, round(-c, 9))
+
+
 def widen_best(x: np.ndarray, cue_id: str) -> np.ndarray:
-    """The row's stereo image: ``acoustics.widen`` with the one of a fixed ordered list of seeds (the row's own seed first, then
-    ``cue_id#1`` .. ``#7``) whose left and right channels correlate best over the whole row, ties to the first. A wide pair whose
-    low band falls in anti-phase loses up to 10 dB when a phone or a mono check sums it (TD-339, 201.5 s of the Truce demo);
-    ``widen`` itself is unchanged and no number is enforced: the best of the list is always taken."""
-    best, best_c = None, None
+    """The row's stereo image (TD-339, TD-342): ``acoustics.widen`` across ``WIDEN_SEEDS`` deterministic seeds, choosing the
+    seed with the lowest non-negative L/R correlation (or the highest correlation if all are negative), ties to the first.
+    This prevents anti-phase mono dropouts while keeping real stereo width (side energy)."""
+    best, best_key = None, None
     for k in range(WIDEN_SEEDS):
         seed = acoustics.seed_of(cue_id if k == 0 else f"{cue_id}#{k}")
         st = acoustics.widen(x, seed=seed)
         c = float(np.corrcoef(st[:, 0], st[:, 1])[0, 1]) if len(st) > 1 and st.any() else 1.0
-        if best_c is None or c > best_c:
-            best, best_c = st, c
+        key = _widen_rank(c)
+        if best_key is None or key < best_key:
+            best, best_key = st, key
     return best
 
 
@@ -306,6 +313,30 @@ def onset_of(x: np.ndarray, hop_s: float = 0.005) -> float | None:
 
 CLIP_AUDIO_DB = -12.0     # engineering default: a narrated clip's own sound sits this far under its natural level (Q2's ear)
 SEAM_FADE_S = float(SR_RULES.T("BP-188", "seam_fade_s"))   # the de-click fade at every clip edge
+SILENT_TAIL_RMS = 0.02    # FL-112 (Audit #6): near-silent clip tails (RMS < 0.02) are muted so stray LTX/Whisper noise never plays
+
+
+def mute_silent_tail(x: np.ndarray, sr: int = SR, rms_floor: float = SILENT_TAIL_RMS, window_s: float = 0.25) -> np.ndarray:
+    """FL-112 (Audit #6): mute trailing windows (or whole-clip quiet tails) whose linear RMS is below ``rms_floor`` (0.02)
+    with a short de-click ramp so stray LTX tail words ('You', 'Thanks for watching') never bleed into the mix."""
+    out = np.asarray(x, dtype=np.float32).copy()
+    if not len(out) or sr <= 0:
+        return out
+    if _rms(out) < rms_floor:
+        return np.zeros_like(out)
+    win = max(1, int(round(window_s * sr)))
+    end = len(out)
+    while end >= win:
+        seg = out[end - win : end]
+        if _rms(seg) >= rms_floor:
+            break
+        end -= win
+    if end < len(out):
+        fade_n = min(end, max(1, int(round(SEAM_FADE_S * sr))))
+        if fade_n > 0 and end > 0:
+            out[end - fade_n : end] *= np.linspace(1.0, 0.0, fade_n, dtype=np.float32)
+        out[end:] = 0.0
+    return out
 
 
 def clip_audio_layer(plan: dict, clip_audio: dict | None, n: int) -> tuple[np.ndarray, list[dict], str]:
@@ -323,7 +354,8 @@ def clip_audio_layer(plan: dict, clip_audio: dict | None, n: int) -> tuple[np.nd
         if s is None:
             continue
         from explainer_engine.videolane.voice import read_mono
-        x = read_mono(Path(path), SR)[: int(round(s["dur_s"] * SR))] * (10 ** (CLIP_AUDIO_DB / 20))
+        raw = mute_silent_tail(read_mono(Path(path), SR)[: int(round(s["dur_s"] * SR))], SR)
+        x = raw * (10 ** (CLIP_AUDIO_DB / 20))
         x = _fades(x.astype(np.float32), int(SEAM_FADE_S * SR), int(SEAM_FADE_S * SR))
         i0 = int(round(s["start_s"] * SR))
         m = min(len(x), n - i0)

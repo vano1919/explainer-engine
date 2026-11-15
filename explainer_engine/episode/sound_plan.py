@@ -68,6 +68,10 @@ EVENT_CLASSES: dict[str, dict] = {
     "stone_tools": {"kind": "foley", "tags": ["stone", "tool"], "words": r"flint|knapping|flaker|microlith|stone tool|stone tools"},
     "bow": {"kind": "foley", "tags": ["bow"], "words": r"bow|arrow|arrows"},
     "impact": {"kind": "spot", "tags": ["impact"], "words": r"crash|slams|falls|collapse|collapses", "picture_event": "impact"},
+    "gunshot": {"kind": "spot", "tags": ["gunshot", "rifle"],
+                "words": r"gunshot|gunshots|rifle shot|shots rang|pistol|revolver|carbine|salvo|firearm",
+                "picture_event": "impact",
+                "match": {"sound_category": ["weapons", "spot", "impacts"], "action_tags": ["gunshot", "shot", "fire", "rifle"]}},
     # classes some eras forbid (ERA_COMPATIBILITY_TABLE): named so a script that asks for them is refused, not silently kept
     "horse_hooves": {"kind": "foley", "tags": ["horse", "hooves"], "words": r"horse|horses|cavalry|gallop|galloping|hooves"},
     "metal_clash": {"kind": "spot", "tags": ["sword", "metal"], "words": r"sword|swords|sabre|saber|bayonet"},
@@ -149,7 +153,7 @@ SEEN = {"eruption_boom": r"smoke|plume|lava|ash cloud|crater|volcano|caldera", "
         "horse_hooves": r"horse|horses|cavalry|rider|riders|chariot|chariots", "war_horn": r"horn|horns|trumpet|signal",
         "army_march": r"army|column|soldiers|troops|legion|phalanx|march", "metal_clash": r"sword|swords|blade|melee",
         "crowd_shout": r"charge|charges|attack|surge|surges|rush", "battle_din": r"battle|army|armies|soldiers|warriors",
-        "chariot": r"chariot|chariots|cart|wagon|wheels", "arrow_volley": r"bow|bows|arrow|arrows|volley"}
+        "chariot": r"chariot|chariots|cart|wagon|wheels", "arrow_volley": r"bow|bows|arrow|arrows|volley", "gunshot": r"rifle|rifles|gun|guns|pistol|revolver|musket|muzzle|shot|shots"}   # soldiers or a trench in frame are not a shot
 _SEEN = {c: re.compile(rf"\b({w})\b", re.I) for c, w in SEEN.items()}
 COVERAGE_STATES = ("FULL_LAYERED_DESIGN", "AMBIENCE_ONLY", "FOLEY_AND_AMBIENCE", "ACTION_FOCUSED", "MUSIC_SUPPORTED",
                    "MINIMAL_DESIGN", "INTENTIONAL_SILENCE")
@@ -178,9 +182,17 @@ _ERA_NAMES = {"footsteps_dirt": "footstep_dirt", "footsteps_stone": "footstep_st
 # library tags that place a sound in a later world: a take carrying one never plays in that era (the burnt garage's fire
 # crackle is not a Pleistocene hearth)
 _MODERN_TAGS = {"city", "street", "traffic", "garage", "motel", "highway", "warehouse", "factory", "office", "courthouse",
-                "parking", "electric", "battery", "industrial", "workshop", "pool"}
+                "parking", "electric", "battery", "industrial", "workshop", "pool", "concrete", "car", "cars", "engine"}
 ERA_FOREIGN_TAGS = {"prehistoric_pleistocene": _MODERN_TAGS | {"clock", "ui", "notebook", "pencil"},
-                    "bronze_age": _MODERN_TAGS}   # W1: the Trojan plain and the cliff-edge scene (the motel pool's crickets stay out)
+                    "bronze_age": _MODERN_TAGS,
+                    "ww1_1914": _MODERN_TAGS,
+                    "napoleonic_1815": _MODERN_TAGS}   # Audit #42: filter modern garage/traffic/concrete/motel tags in historical eras
+_PERIOD_FIT_WORDS = {
+    "wind": {"open", "land", "field", "cold", "winter", "plain", "rural", "meadow", "grass"},
+    "fire": {"campfire", "bonfire", "brazier", "crackle", "crackles", "hearth", "wood", "torch"},
+    "footsteps_dirt": {"dirt", "earth", "mud", "soil", "gravel", "path", "field"},
+    "gunshot": {"gunshot", "rifle", "shot", "musket", "pistol", "firearm", "crack"},
+}
 BED_OF_WEATHER = {"volcanic_ash_storm_and_wind": ["ash_fall", "wind"], "heavy_rain_and_wind": ["rain", "wind"],
                   "enclosed_draft": ["fire"], "freezing_wind_and_snow": ["wind"], "high_altitude_wind": ["wind"]}
 
@@ -594,6 +606,14 @@ def _facet_hit(item: dict, match: dict) -> bool:
     return True
 
 
+def _rank_take(item: dict, cls: str) -> tuple[int, int, str]:
+    """Audit #42: rank period-fitting takes first and demote any take carrying modern tags/words."""
+    w = _words_of(item)
+    modern_hits = len(w & _MODERN_TAGS)
+    fit_hits = len(w & _PERIOD_FIT_WORDS.get(cls, set()))
+    return (modern_hits, -fit_hits, str(item.get("id") or ""))
+
+
 def _candidates(cls: str, root: Path) -> tuple[list[dict], str]:
     """(takes, basis): catalog facets first (``facets``), else the class's legacy tags (``legacy_tags``, reported)."""
     spec = EVENT_CLASSES[cls]
@@ -601,8 +621,12 @@ def _candidates(cls: str, root: Path) -> tuple[list[dict], str]:
     if spec.get("match"):
         hit = [i for i in usable if _facet_hit(i, spec["match"])]
         if hit:
-            return hit, "facets"
-    return sfx_library.find(Path(root), tags=spec["tags"]), "legacy_tags"
+            return sorted(hit, key=lambda i: _rank_take(i, cls)), "facets"
+    found = sfx_library.find(Path(root), tags=spec["tags"])
+    if not found and cls == "gunshot":
+        gun_words = {"gunshot", "gunshots", "rifle", "pistol", "revolver", "carbine", "firearm", "musket"}
+        found = [i for i in usable if gun_words & _words_of(i)]
+    return sorted(found, key=lambda i: _rank_take(i, cls)), "legacy_tags"
 
 
 def resolve(plan: dict, library_root: Path) -> dict:
@@ -610,12 +634,13 @@ def resolve(plan: dict, library_root: Path) -> dict:
     Each source says how it was matched (catalog ``facets`` or the reported ``legacy_tags`` fallback), how many of its takes
     carry an inferred catalog, their technical QC and whether a person has listened (three statuses, never merged)."""
     out = {}
-    foreign = ERA_FOREIGN_TAGS.get(plan.get("era"), set())
+    era = plan.get("era")
+    foreign = ERA_FOREIGN_TAGS.get(era, _MODERN_TAGS if era and not str(era).startswith("modern") else set())   # every modern_* era keeps its own world
     for cls in plan["classes"]:
         tags = EVENT_CLASSES[cls]["tags"]
         found, basis = _candidates(cls, library_root)
         found = [i for i in found if not foreign & _words_of(i)]
-        real = [i for i in found if _origin(i) != "procedural"]
+        real = sorted([i for i in found if _origin(i) != "procedural"], key=lambda i: _rank_take(i, cls))
         info = {"match": basis, "same_as": EVENT_CLASSES[cls].get("same_as")}
         if real:
             out[cls] = {"status": "library", "ids": [i["id"] for i in real], "origin": _origin(real[0]), **info,

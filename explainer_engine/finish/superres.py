@@ -54,6 +54,7 @@ DELIVERY_W = 2560                   # BP-167
 PSNR_MIN = float(SR.T("BP-198", "consistency_psnr_min_db"))
 COLOUR_MAX = float(SR.T("BP-198", "colour_shift_max"))
 DETAIL_MIN = float(SR.T("BP-198", "detail_gain_min"))
+SAME_SIZE_DETAIL_MIN = 1.0          # Audit #9: same-size restoration has no Lanczos upscale blur on 'plain', so require gain >= 1.0
 OVERSHARP_MAX = float(SR.T("BP-198", "oversharp_max"))
 INVENT_MAX = float(SR.T("BP-198", "lpips_vs_plain_max"))
 _LOADED: dict = {}
@@ -166,11 +167,49 @@ def colour_fix(result: np.ndarray, original: np.ndarray, sigma: float = 6.0) -> 
     return np.clip(out + 0.5, 0, 255).astype(np.uint8)
 
 
-def crop_box(img: np.ndarray, box) -> np.ndarray:
-    """``box`` = [x0, y0, x1, y1] as shares of the frame."""
+def crop_box(img: np.ndarray, box, face_box=None, headroom: float = 0.35, margin: float = 0.04) -> np.ndarray:
+    """``box`` = [x0, y0, x1, y1] as shares of the frame. When ``face_box`` ([fx0, fy0, fx1, fy1] in normalized 0..1
+    coordinates) is given, shifts the crop window so the face and its hat/headroom stay inside (Audit #8)."""
+    if face_box is not None:
+        box = crop_box_for_face(box, face_box, headroom=headroom, margin=margin)
     h, w = img.shape[:2]
     x0, y0, x1, y1 = box
     return img[int(round(y0 * h)):int(round(y1 * h)), int(round(x0 * w)):int(round(x1 * w))]
+
+
+def crop_box_for_face(box, face_box, headroom: float = 0.35, margin: float = 0.04) -> list[float]:
+    """Audit #8: shift a normalized crop window ``[x0, y0, x1, y1]`` (or zoom factor) without changing its size so that
+    ``face_box`` ``[fx0, fy0, fx1, fy1]`` plus top ``headroom`` (for hat/cap/helmet) and edge ``margin`` stay inside."""
+    if isinstance(box, (int, float)):
+        zoom = max(1.0, float(box))
+        cw, ch = 1.0 / zoom, 1.0 / zoom
+        x0, y0, x1, y1 = 0.5 - cw / 2.0, 0.5 - ch / 2.0, 0.5 + cw / 2.0, 0.5 + ch / 2.0
+    else:
+        x0, y0, x1, y1 = (float(v) for v in box)
+        cw, ch = max(1e-6, x1 - x0), max(1e-6, y1 - y0)
+    fx0, fy0, fx1, fy1 = (float(v) for v in face_box)
+    fw, fh = max(0.0, fx1 - fx0), max(0.0, fy1 - fy0)
+    need_x0 = max(0.0, fx0 - margin * max(fw, 0.1))
+    need_x1 = min(1.0, fx1 + margin * max(fw, 0.1))
+    need_y0 = max(0.0, fy0 - headroom * fh - margin * 0.5)
+    need_y1 = min(1.0, fy1 + margin * max(fh, 0.1))
+    if need_x1 - need_x0 <= cw:
+        if x0 > need_x0:
+            x0 = need_x0
+        elif x0 + cw < need_x1:
+            x0 = need_x1 - cw
+    else:
+        x0 = 0.5 * (need_x0 + need_x1) - 0.5 * cw
+    if need_y1 - need_y0 <= ch:
+        if y0 > need_y0:
+            y0 = need_y0
+        elif y0 + ch < need_y1:
+            y0 = need_y1 - ch
+    else:
+        y0 = need_y0
+    x0 = float(np.clip(x0, 0.0, max(0.0, 1.0 - cw)))
+    y0 = float(np.clip(y0, 0.0, max(0.0, 1.0 - ch)))
+    return [round(x0, 4), round(y0, 4), round(min(1.0, x0 + cw), 4), round(min(1.0, y0 + ch), 4)]
 
 
 # --- QC: Q1..Q7 (BP-198) ----------------------------------------------------------------------------------------------------
@@ -207,8 +246,9 @@ def qc(original: np.ndarray, result: np.ndarray, anchor: np.ndarray | None = Non
     cv2 = _cv2()
     h, w = original.shape[:2]
     H, W = result.shape[:2]
-    back = cv2.resize(result, (w, h), interpolation=cv2.INTER_AREA)
-    plain = cv2.resize(original, (W, H), interpolation=cv2.INTER_LANCZOS4)
+    same_size = (H == h and W == w)
+    back = result if same_size else cv2.resize(result, (w, h), interpolation=cv2.INTER_AREA)
+    plain = original if same_size else cv2.resize(original, (W, H), interpolation=cv2.INTER_LANCZOS4)
     rows = []
     p = _psnr(back, original)
     rows.append(G.row("Q1_structure", p >= PSNR_MIN, f"result shrunk back to the input: {p:.1f} dB (at least {PSNR_MIN}, BP-198)",
@@ -217,8 +257,10 @@ def qc(original: np.ndarray, result: np.ndarray, anchor: np.ndarray | None = Non
     rows.append(G.row("Q2_colour", shift <= COLOUR_MAX, f"largest channel mean shift {shift:.2f}/255 (at most {COLOUR_MAX})",
                       round(shift, 3), level=G.REVIEW))
     gain = _lap(result) / max(_lap(plain), 1e-6)
-    rows.append(G.row("Q3_detail_added", gain >= DETAIL_MIN, f"Laplacian variance x{gain:.2f} of a plain resize (at least "
-                      f"x{DETAIL_MIN})", round(gain, 3), level=G.REVIEW))
+    req_gain = SAME_SIZE_DETAIL_MIN if same_size else DETAIL_MIN
+    rows.append(G.row("Q3_detail_added", True if same_size and gain >= req_gain else gain >= req_gain,
+                      f"Laplacian variance x{gain:.2f} of {'same-size input (not judged against 2x upscale DETAIL_MIN)' if same_size else f'a plain resize (at least x{DETAIL_MIN})'}",
+                      round(gain, 3), level=G.REVIEW))
     if anchor is not None:
         a = cv2.resize(anchor, (W, H), interpolation=cv2.INTER_AREA if anchor.shape[1] > W else cv2.INTER_LANCZOS4)
         over = _lap(result) / max(_lap(a), 1e-6)

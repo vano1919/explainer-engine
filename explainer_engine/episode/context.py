@@ -341,11 +341,17 @@ def validate_asset_compatibility(
                 f"allowed_era_tags {list(context.allowed_era_tags)} for '{context.episode_id}'.",
             )
 
-    # 3. Semantic subject / token contamination check
+    # 3. Semantic subject / token contamination check (TD-336: exclude negative_prompt fields)
+    def _pos_prompt(val) -> str:
+        if isinstance(val, dict):
+            return " ".join(str(v or "") for k, v in val.items() if not str(k).lower().startswith("neg") and "negative" not in str(k).lower())
+        return str(val or "")
+
     text_fields = [
         str(asset_meta.get("subject") or ""),
         str(asset_meta.get("description") or ""),
-        str(asset_meta.get("prompt") or ""),
+        _pos_prompt(asset_meta.get("prompt")),
+        _pos_prompt(asset_meta.get("image_prompt")),
         " ".join(str(x) for x in (asset_meta.get("domain_tags") or [])),
         " ".join(str(x) for x in (asset_meta.get("subject_tags") or [])),
         " ".join(str(x) for x in (asset_meta.get("characters") or [])),

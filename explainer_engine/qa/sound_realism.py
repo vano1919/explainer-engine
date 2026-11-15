@@ -228,9 +228,17 @@ def measure(path: Path, timeline: dict | None = None, x: np.ndarray | None = Non
         # speech padded by 0.15 s: a line's breath and decay are not the bed (love scene 2026-11-12: a 0.5 s pause measured as a
         # 10 dB "jump" from the breath alone); each side's level is the median of its quiet windows within the side window,
         # or, when a short pause leaves fewer than two there, of the three quiet windows of that shot nearest the cut
-        quiet = ~_mask(len(w100), 0.1, _pad(spans, 0.15, dur))
+        # Part B1 (Audit #22): mask out planned spot/foley SFX events as well as speech so a gunshot/bell/thud next to a cut
+        # is never mistaken for the ambience bed, and cap the fallback search to 1.5 s from the cut (never 8 s away).
+        ev_spans = [
+            (max(0.0, float(e.get("at_s", 0.0)) - 0.10), min(dur, float(e.get("at_s", 0.0)) + float(e.get("dur_s") or 0.25) + 0.15))
+            for e in (tl.get("events") or [])
+            if isinstance(e, dict) and e.get("at_s") is not None and e.get("kind") != "ambience"
+        ]
+        quiet = ~_mask(len(w100), 0.1, _pad(spans, 0.15, dur) + ev_spans)
         cut_rows = []
         bounds = [0.0] + sorted(cuts) + [dur]
+        max_fallback_side = max(float(side), 1.5)
 
         def side_level(c, sign):
             k = bounds.index(c)
@@ -238,7 +246,9 @@ def measure(path: Path, timeline: dict | None = None, x: np.ndarray | None = Non
             near = quiet & ((c100 >= c - side) & (c100 < c) if sign < 0 else (c100 >= c) & (c100 < c + side))
             if near.sum() >= 2:
                 return float(np.median(w100[near]))
-            idx = np.flatnonzero(quiet & (c100 >= lo_t) & (c100 < hi_t))
+            lo_b = max(lo_t, c - max_fallback_side) if sign < 0 else c
+            hi_b = c if sign < 0 else min(hi_t, c + max_fallback_side)
+            idx = np.flatnonzero(quiet & (c100 >= lo_b) & (c100 < hi_b))
             if not len(idx):
                 return None
             idx = idx[np.argsort(np.abs(c100[idx] - c))[:3]]

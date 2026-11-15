@@ -1509,6 +1509,10 @@
                     }
                   }
                 ]
+              },
+              "why": {
+                "type": "string",
+                "description": "Reason why the director placed or kept this sound event (Audit #44)."
               }
             },
             "not": {
@@ -1876,6 +1880,13 @@
               "description": "the reason this shot is silent (same as intentional_silence; one of the two)"
             }
           }
+        },
+        "script_deviation": {
+          "type": [
+            "object",
+            "string"
+          ],
+          "description": "Audit #3: machine-readable record when an accepted clip action differs from the frozen script text."
         }
       },
       "allOf": [

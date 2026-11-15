@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import math
 import re
+from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageFilter
@@ -54,24 +55,50 @@ ANIM_FRAMES = 18          # an action takes this long to arrive (0.75 s at 24 fp
 LEAD_IN = 0.06            # estimated word times: the line starts this share into the shot ...
 LEAD_OUT = 0.12           # ... and ends this share before its end
 MIN_SPAN_KM = 300.0
-RENDERER_VERSION = "map_action/2.3"       # M1-M9 (2026-11-15): camera inheritance, log-zoom pan coupling, 8-pos labels, 1914 borders
+
+
+def _code_digest() -> str:
+    """Audit #29 / Part B6: hash map renderer modules so code changes invalidate cached map clips."""
+    import hashlib
+    h = hashlib.sha256()
+    for name in ("actions.py", "plate.py", "draw.py"):
+        f = Path(__file__).with_name(name)
+        if f.is_file():
+            h.update(f.read_bytes().replace(b"\r\n", b"\n"))
+    return h.hexdigest()[:12]
+
+
+RENDERER_VERSION = "map_action/2.3-" + _code_digest()
 WORD = re.compile(r"[A-Za-z0-9']+")
+_STAGE_DIR_RE = re.compile(r"\([^()\n]*\)")
 
 
 def _words(text: str) -> list[str]:
     return [w.lower() for w in WORD.findall(text or "")]
 
 
+def _spoken_line_text(ln: dict | None) -> str:
+    """TD-337 (Audit #21): return spoken text of an audio_line, ignoring silent_beat lines and parenthesized stage directions."""
+    if not isinstance(ln, dict):
+        return ""
+    if str(ln.get("speaker_type") or "").strip().lower() == "silent_beat":
+        return ""
+    raw = str(ln.get("text") or "").strip()
+    if raw.startswith("(") and raw.endswith(")"):
+        return ""
+    return _STAGE_DIR_RE.sub(" ", raw).strip()
+
+
 def _shot_text(shot: dict, script: dict) -> str:
     lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
-    return " ".join(str(lines.get(lid, {}).get("text") or "") for lid in shot.get("audio_line_ids", [])).strip()
+    return " ".join(_spoken_line_text(lines.get(lid)) for lid in shot.get("audio_line_ids", [])).strip()
 
 
 def shot_words(shot: dict, script: dict) -> list[str]:
     lines = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
     out: list[str] = []
     for lid in shot.get("audio_line_ids", []):
-        out += _words(lines.get(lid, {}).get("text", ""))
+        out += _words(_spoken_line_text(lines.get(lid)))
     return out
 
 

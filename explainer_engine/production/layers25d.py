@@ -61,7 +61,7 @@ PATH_MOVES = ("push", "pull", "truck", "crane", "orbit_small")
 ALIVE_FAMILIES = ("atmosphere", "light", "surface", "subject")
 ALIVE_MIN = int(SR.T("BP-185", "families_min"))
 NEEDS_REGION = ("water_shimmer", "heat_haze", "foliage_sway", "cloth_flap", "cloud_drift")
-SEGMENTS_MAX = 2
+SEGMENTS_MAX = 3  # R-19: match direction.SEGMENTS_MAX = 3
 EASINGS = ("ease_in_out", "ease_in", "ease_out", "linear")
 # W2 motion profiles (house defaults, D-135): the moves that suit the picture, their strength cap, how far the farthest plane
 # follows the near one in a truck or a crane (a document is flat: everything moves together), and the handheld cap
@@ -80,7 +80,12 @@ EVENT_EFFECTS = {"boom": ("shake", "lightning"), "eruption": ("shake", "lightnin
                  "thunder": ("lightning",), "flash": ("lightning",)}
 
 PLANES = 4
-RENDERER_VERSION = "layers25d/2.1"        # W2 (D-135): the clip cache keys on it (2.1: mist and smoke stay off the open sky, FL-319)
+def _code_digest() -> str:
+    """Audit #29 / Part B6: hash layers25d.py so renderer code fixes invalidate cached 2.5D clips."""
+    return hashlib.sha256(Path(__file__).read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:12]
+
+
+RENDERER_VERSION = "layers25d/2.1-" + _code_digest()  # W2 (D-135) + Audit #29 code hash
 LAYERS_MIN = int(SR.T("BP-181", "parallax_layers_min"))
 NEAR_TRAVEL = 0.05          # the near plane's travel end to end, share of the width (plan P5.2: target 4-6 %)
 TRAVEL_BAND = (0.04, 0.06)

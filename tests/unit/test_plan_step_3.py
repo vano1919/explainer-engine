@@ -268,7 +268,7 @@ def test_t6_missing_or_stale_direction_and_layers_falls_back_to_layers25d_with_r
     assert called["layers25d"] == 3
     not_used = [r for r in rows if r["gate"] == "director_not_used"]
     assert len(not_used) == 3
-    assert all(r["status"] == G.REVIEW for r in not_used)
+    assert all(r["status"] == G.FAIL for r in not_used)  # A2.1/A2.2: director_not_used is a hard technical veto (FAIL)
     details = " | ".join(r["detail"] for r in not_used)
     assert "no direction" in details
     assert "no layers" in details
@@ -393,6 +393,8 @@ def test_t7_split_long_still_10_96s_splits_at_nearest_legal_boundary_into_parts_
 
 
 def test_t7_7s_shot_without_punctuation_stays_whole_with_review_row(tmp_path, monkeypatch):
+    """A2.4 & A2.2: a 7s unpunctuated multi-word still splits on a safe word boundary (before 'inside') into parts <= 5.0 s;
+    an unsplittable 1-word >5s still emits long_still_unsplit with status G.FAIL (never REVIEW)."""
     from explainer_engine.episode.shot_split import split_long_still
 
     monkeypatch.setenv("EXPLAINER_DEPTH_DIR", str(tmp_path / "no_model"))
@@ -412,14 +414,16 @@ def test_t7_7s_shot_without_punctuation_stays_whole_with_review_row(tmp_path, mo
         })
     shot = _shot("S01_SH009", duration_s=7.0, text=" ".join(words))
     parts = split_long_still(copy.deepcopy(shot), spine, max_s=5.0)
-    assert len(parts) == 1 and parts[0]["shot_id"] == "S01_SH009"
-    assert parts[0]["target_duration_seconds"] == 7.0
+    assert [p["shot_id"] for p in parts] == ["S01_SH009a", "S01_SH009b"]
+    assert all(p["target_duration_seconds"] <= 5.0 for p in parts)
+    assert parts[0]["cut_word"] == "waiting"
 
-    root = _make_episode(tmp_path, [shot], spines={"S01_SH009": spine})
+    # A 1-word 7.0s shot cannot be split on any word boundary -> emits long_still_unsplit as G.FAIL (A2.2).
+    one_word_spine = [{"word": "silence", "index": 0, "start_s": 0.0, "end_s": 7.0, "start_frame": 0, "end_frame": 7 * FPS}]
+    shot_1w = _shot("S01_SH010", duration_s=7.0, text="silence")
+    root = _make_episode(tmp_path, [shot_1w], spines={"S01_SH010": one_word_spine})
     ep = RUN.Episode(root, size=SIZE, fps=FPS, rehearsal=True)
     rows, _ = RUN.stage_clips(ep, rehearsal=True)
     unsplit = [r for r in rows if r["gate"] == "long_still_unsplit"]
-    assert len(unsplit) == 1 and unsplit[0]["status"] == G.REVIEW
-    assert "S01_SH009" in unsplit[0]["detail"]
-    recs = json.loads((root / "production" / "shot_records.json").read_text(encoding="utf-8"))["shots"]
-    assert [r["shot_id"] for r in recs] == ["S01_SH009"] and recs[0]["total_frames"] == 7 * FPS
+    assert len(unsplit) == 1 and unsplit[0]["status"] == G.FAIL
+    assert "S01_SH010" in unsplit[0]["detail"]

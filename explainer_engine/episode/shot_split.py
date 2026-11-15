@@ -3,11 +3,18 @@ import copy
 import re
 from typing import Any
 MAX_STILL_S = 5.0
+MIN_PART_S = 1.0
 CUTIN_CROP = 1.35
 DEFAULT_FOCUS = [0.5, 0.45]
 CLAUSE_PUNCT = (".", ",", ";", ":", "!", "?", "—", "–", "…")
 _TRAILING_QUOTES = "\"'”’)]}"
 _WORD_NORM_RE = re.compile(r"[^\w']+", re.UNICODE)
+SAFE_SPLIT_NEXT_WORDS = frozenset({
+    "and", "but", "or", "nor", "yet", "so", "while", "where", "when", "before", "after", "until",
+    "because", "though", "although", "since", "as", "across", "through", "under", "into", "from",
+    "with", "without", "inside", "outside", "around", "along", "between", "against", "toward",
+    "towards", "over", "in", "on", "at", "by", "for", "to", "that", "which", "who", "whom", "whose",
+})
 def _norm_word(token: str) -> str:
     return _WORD_NORM_RE.sub("", str(token).lower()).strip("'")
 def _word_token(w: dict) -> str:
@@ -21,6 +28,12 @@ def is_clause_end(w: dict) -> bool:
         return True
     tok = _word_token(w).rstrip(_TRAILING_QUOTES)
     return bool(tok) and tok.endswith(CLAUSE_PUNCT)
+def is_safe_word_boundary(words: list[dict], idx: int) -> bool:
+    """True when splitting after ``words[idx]`` breaks before a conjunction, preposition, or relative clause starter."""
+    if idx < 0 or idx + 1 >= len(words):
+        return False
+    nxt = _norm_word(words[idx + 1].get("word") or words[idx + 1].get("text") or "")
+    return nxt in SAFE_SPLIT_NEXT_WORDS
 def punctuate_spine(spine: list[dict] | None, text: str = "") -> list[dict]:
     if not spine:
         return []
@@ -150,7 +163,8 @@ def _word_end_s_at(words: list[dict], idx: int, fps: int, total_s: float) -> flo
             return nxt
     return float((idx + 1) * total_s / max(1, len(words)))
 def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_STILL_S, *,
-                     fps: int | None = None, seen: dict | None = None) -> list[dict]:
+                     fps: int | None = None, seen: dict | None = None,
+                     allow_word_fallback: bool = True) -> list[dict]:
     route = shot.get("route")
     if route is not None and route != "still_25d":
         return [copy.deepcopy(shot)]
@@ -162,7 +176,7 @@ def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_ST
     total_frames = int(shot.get("total_frames") or shot.get("frames") or max(1, int(round(total_s * sp_fps))))
     eps = 1e-6
     t_of = lambda i: _word_end_s_at(words, i, sp_fps, total_s)
-    def _candidates(w_lo: int, w_hi: int, s_lo: float, s_hi: float) -> list[int]:
+    def _clause_candidates(w_lo: int, w_hi: int, s_lo: float, s_hi: float) -> list[int]:
         out = []
         for i in range(w_lo, w_hi - 1):
             if is_clause_end(words[i]):
@@ -170,50 +184,65 @@ def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_ST
                 if s_lo + eps < t < s_hi - eps:
                     out.append(i)
         return out
-    memo: dict[tuple[int, int], list[tuple[int, int, float, float]]] = {}
-    def _split_seg(w_lo: int, w_hi: int, s_lo: float, s_hi: float) -> list[tuple[int, int, float, float]]:
-        key = (w_lo, w_hi)
+    def _word_candidates(w_lo: int, w_hi: int, s_lo: float, s_hi: float) -> list[int]:
+        safe = []
+        any_w = []
+        for i in range(w_lo, w_hi - 1):
+            t = t_of(i)
+            if not (s_lo + eps < t < s_hi - eps):
+                continue
+            any_w.append(i)
+            if is_safe_word_boundary(words, i) and (t - s_lo) >= MIN_PART_S - eps and (s_hi - t) >= MIN_PART_S - eps:
+                safe.append(i)
+        return safe or any_w
+    memo: dict[tuple[int, int, bool], list[tuple[int, int, float, float]]] = {}
+    def _all_ok(segs: list[tuple[int, int, float, float]]) -> bool:
+        return all((b - a) <= float(max_s) + eps for _, _, a, b in segs)
+    def _split_seg(w_lo: int, w_hi: int, s_lo: float, s_hi: float, use_fallback: bool = False) -> list[tuple[int, int, float, float]]:
+        key = (w_lo, w_hi, use_fallback)
         if key in memo:
             return memo[key]
         if (s_hi - s_lo) <= float(max_s) + eps:
             res = [(w_lo, w_hi, s_lo, s_hi)]
             memo[key] = res
             return res
-        cands = _candidates(w_lo, w_hi, s_lo, s_hi)
+        cands = _clause_candidates(w_lo, w_hi, s_lo, s_hi)
+        if not cands and use_fallback:
+            cands = _word_candidates(w_lo, w_hi, s_lo, s_hi)
         if not cands:
             res = [(w_lo, w_hi, s_lo, s_hi)]
             memo[key] = res
             return res
         mid = 0.5 * (s_lo + s_hi)
         dist = lambda i: abs(t_of(i) - mid)
-        def _all_ok(segs: list[tuple[int, int, float, float]]) -> bool:
-            return all((b - a) <= float(max_s) + eps for _, _, a, b in segs)
         tier1 = [i for i in cands if (t_of(i) - s_lo) <= float(max_s) + eps and (s_hi - t_of(i)) <= float(max_s) + eps]
         if tier1:
             pick = min(tier1, key=dist)
         else:
             tier2_l = [i for i in cands if (t_of(i) - s_lo) <= float(max_s) + eps
-                       and _all_ok(_split_seg(i + 1, w_hi, t_of(i), s_hi))]
+                       and _all_ok(_split_seg(i + 1, w_hi, t_of(i), s_hi, use_fallback))]
             tier2_r = [i for i in cands if (s_hi - t_of(i)) <= float(max_s) + eps
-                       and _all_ok(_split_seg(w_lo, i + 1, s_lo, t_of(i)))]
+                       and _all_ok(_split_seg(w_lo, i + 1, s_lo, t_of(i), use_fallback))]
             if tier2_l:
                 pick = min(tier2_l, key=dist)
             elif tier2_r:
                 pick = min(tier2_r, key=dist)
             else:
-                tier3 = [i for i in cands if _all_ok(_split_seg(w_lo, i + 1, s_lo, t_of(i)))
-                         and _all_ok(_split_seg(i + 1, w_hi, t_of(i), s_hi))]
+                tier3 = [i for i in cands if _all_ok(_split_seg(w_lo, i + 1, s_lo, t_of(i), use_fallback))
+                         and _all_ok(_split_seg(i + 1, w_hi, t_of(i), s_hi, use_fallback))]
                 if tier3:
-                    pick = min(tier3, key=lambda i: (len(_split_seg(w_lo, i + 1, s_lo, t_of(i)))
-                                                     + len(_split_seg(i + 1, w_hi, t_of(i), s_hi)), dist(i)))
+                    pick = min(tier3, key=lambda i: (len(_split_seg(w_lo, i + 1, s_lo, t_of(i), use_fallback))
+                                                     + len(_split_seg(i + 1, w_hi, t_of(i), s_hi, use_fallback)), dist(i)))
                 else:
                     legal_left = [i for i in cands if (t_of(i) - s_lo) <= float(max_s) + eps]
                     pick = min(legal_left or cands, key=dist)
         t_cut = t_of(pick)
-        res = _split_seg(w_lo, pick + 1, s_lo, t_cut) + _split_seg(pick + 1, w_hi, t_cut, s_hi)
+        res = _split_seg(w_lo, pick + 1, s_lo, t_cut, use_fallback) + _split_seg(pick + 1, w_hi, t_cut, s_hi, use_fallback)
         memo[key] = res
         return res
-    segs = _split_seg(0, len(words), 0.0, total_s)
+    segs = _split_seg(0, len(words), 0.0, total_s, False)
+    if allow_word_fallback and (len(segs) <= 1 or not _all_ok(segs)):
+        segs = _split_seg(0, len(words), 0.0, total_s, True)
     if len(segs) <= 1:
         return [copy.deepcopy(shot)]
     k = len(segs)
@@ -240,6 +269,7 @@ def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_ST
         part = copy.deepcopy(shot)
         part["shot_id"] = f"{sid}{chr(ord('a') + idx)}"
         part["parent_shot_id"] = sid
+        part["split_of"] = sid
         part["target_duration_seconds"] = p_dur
         part["duration_sec"] = p_dur
         part["frames"] = p_frames
@@ -249,6 +279,9 @@ def split_long_still(shot: dict, spine: list[dict] | None, max_s: float = MAX_ST
         part["start_s"] = round(s_lo, 4)
         part["end_s"] = round(s_hi, 4)
         part["word_range"] = [w_lo, w_hi]
+        if idx < k - 1:
+            part["transition_out"] = "hard_cut"
+            part.pop("explicit_transition_override", None)
         part_words = []
         for pos, w in enumerate(words[w_lo:w_hi], start=w_lo):
             nw = dict(w)

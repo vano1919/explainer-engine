@@ -214,7 +214,9 @@ def render_action_map_clip(
                              "-crf", "16", "-pix_fmt", "yuv420p", str(tmp)], stdin=subprocess.PIPE)
     from explainer_engine.standards import sourced_rules as SR
     size = tuple(SR.T("BP-164", "analysis_size"))
-    still_diff, still_max = float(SR.T("BP-164", "frozen_diff_max")), int(SR.T("BP-164", "frozen_run_frames"))
+    still_diff = float(SR.T("BP-164", "frozen_diff_max"))
+    max_static_s = float(SR.T("BP-147", "static_flag_s"))
+    still_max = int(round(max_static_s * fps))
     first = last = prev = None
     run = longest = 0
     for f in range(p["frames"]):
@@ -257,8 +259,10 @@ def render_action_map_clip(
     first_action = min((a["start"] for a in p["actions"]), default=None)
     rows = [G.row("map_has_actions", bool(p["actions"]), f"{len(p['actions'])} action(s) on their words (RT-03)",
                   len(p["actions"])),
-            G.row("map_not_standing_still", longest <= still_max, f"longest still stretch {longest} frames (BP-164: "
-                  f"{still_max}); the first action starts at frame {first_action}", longest, level=SR.level("BP-164")),
+            G.row("map_not_standing_still", longest <= still_max,
+                  f"longest still stretch {longest} frames ({longest / max(1, fps):.2f} s; CMP-08 / BP-147 max_static_s: "
+                  f"{max_static_s:g} s = {still_max} frames); the first action starts at frame {first_action}",
+                  longest, level=SR.level("BP-147")),
             G.row("map_routes_follow_the_land", not p["path_findings"], f"{len(p['path_findings'])} route finding(s) of map "
                   "law 2 on the via-waypoint splines (maps/paths.validate, CMP-02)",
                   [x["detail"] for x in p["path_findings"]][:5], level=G.REVIEW)]

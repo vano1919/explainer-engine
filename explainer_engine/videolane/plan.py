@@ -20,6 +20,9 @@ The clip's length comes from its line, never a fixed 10 s (VL-06): onset + the l
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from explainer_engine.qa import gates as G
 from explainer_engine.standards import sourced_rules as SR
 
@@ -127,16 +130,20 @@ def _f(rule, sid, severity, detail) -> dict:
 
 
 def findings(script: dict, max_s: float = 10.0) -> list[dict]:
-    """Every VL-01..VL-08 finding of the script's video shots (and of the shots cut against them)."""
+    """Every VL-01..VL-08 and VL-14 finding of the script's video shots (and of the shots cut against them)."""
     out: list[dict] = []
     lines = _lines(script)
     spoken = clip_spoken(script)
     ids = {s["shot_id"] for s in script.get("shots", [])}
+    same_scene_video_pairs = 0
+    continuation_count = 0
     for scene in scenes(script):
         run = 0
         for k, s in enumerate(scene):
             sid = s["shot_id"]
             prev = scene[k - 1] if k else None
+            if prev is not None and is_video(prev) and is_video(s):
+                same_scene_video_pairs += 1
             # the last earlier shot of the scene that set the axis side / the screen positions (an insert between two
             # coverage shots does not reset them)
             axis_at = next(({"shot_id": o["shot_id"], "axis_side": o["edit_plan"]["axis_side"]} for o in reversed(scene[:k])
@@ -158,6 +165,8 @@ def findings(script: dict, max_s: float = 10.0) -> list[dict]:
                 out.append(_f("VL-01", sid, G.FAIL, "a video shot without its edit_plan (written before any paid clip)"))
                 continue
             mode = ep.get("continuity_mode")
+            if mode == "continuation" or ep.get("anchor_from") == "prev_last_frame":
+                continuation_count += 1
             if len(s.get("audio_line_ids") or []) > 1 and sid in spoken:
                 out.append(_f("VL-02", sid, G.FAIL, "two lines in one LTX clip: LTX leaves 0.85-1.0 s between "
                               "sentences; one clip, one line"))
@@ -222,7 +231,99 @@ def findings(script: dict, max_s: float = 10.0) -> list[dict]:
             if cs_["over"]:
                 out.append(_f("VL-06", sid, G.FAIL, f"needs {cs_['needed_s']} s of clip, the model makes {max_s:g} s: split "
                               "the line or the shot"))
+    if same_scene_video_pairs >= 2 and continuation_count == 0:
+        out.append(_f("VL-14", "episode", G.REVIEW,
+                      f"0 continuations planned across {same_scene_video_pairs} consecutive same-scene video shot pair(s) (VL-14)"))
     return out
+
+
+def anchor_chain_rows(script: dict) -> list[dict]:
+    """VL-14 (Audit #67): check whether consecutive same-scene video shots declare any continuation / prev_last_frame
+    handover across the episode."""
+    same_scene_pairs = 0
+    continuations = 0
+    for scene in scenes(script):
+        for prev, cur in zip(scene, scene[1:]):
+            if is_video(prev) and is_video(cur):
+                same_scene_pairs += 1
+                ep = cur.get("edit_plan") or {}
+                if ep.get("continuity_mode") == "continuation" or ep.get("anchor_from") == "prev_last_frame":
+                    continuations += 1
+    if same_scene_pairs == 0:
+        return [G.row("video_anchor_chain", True, "no consecutive same-scene video shot pairs", 0, level=G.REVIEW)]
+    ok = continuations > 0
+    return [G.row("video_anchor_chain", ok,
+                  f"{continuations} continuation(s) across {same_scene_pairs} consecutive same-scene video pair(s) (VL-14)",
+                  {"continuations": continuations, "same_scene_video_pairs": same_scene_pairs}, level=G.REVIEW)]
+
+
+def script_deviation_rows(script: dict, video_records: dict[str, dict] | Path | None = None) -> list[dict]:
+    """Audit #3: when an accepted video clip record's prompt/action differs from the frozen script's motion prompt or
+    action text, a machine-readable ``script_deviation`` record (``{script_says, clip_does, reason}``) must be present on
+    either the clip record or the shot."""
+    recs: dict[str, dict] = {}
+    if isinstance(video_records, Path):
+        vdir = video_records / "production" / "video" if (video_records / "production" / "video").is_dir() else video_records
+        if vdir.is_dir():
+            for p in sorted(vdir.glob("*.json")):
+                try:
+                    recs[p.stem] = json.loads(p.read_text(encoding="utf-8"))
+                except (ValueError, OSError):
+                    pass
+    elif isinstance(video_records, dict):
+        recs = dict(video_records)
+    unrecorded: list[str] = []
+    for s in script.get("shots", []):
+        sid = s.get("shot_id", "?")
+        rec = recs.get(sid) or s.get("accepted_clip_record") or {}
+        if not isinstance(rec, dict) or rec.get("status") == G.FAIL:
+            continue
+        script_motion = str(((s.get("video_prompt") or {}).get("motion_prompt") if isinstance(s.get("video_prompt"), dict) else s.get("video_prompt")) or s.get("action_end_state") or "").strip()
+        clip_prompt = str(rec.get("prompt") or rec.get("accepted_prompt") or rec.get("clip_action") or "").strip()
+        explicit_diff = bool(rec.get("differs_from_script") or s.get("differs_from_script"))
+        if (script_motion and clip_prompt and clip_prompt.lower() != script_motion.lower()) or explicit_diff:
+            dev = rec.get("script_deviation") or s.get("script_deviation")
+            has_valid_dev = (
+                isinstance(dev, dict)
+                and bool(str(dev.get("reason") or dev.get("why") or "").strip())
+                and bool(str(dev.get("clip_does") or dev.get("actual") or clip_prompt).strip())
+            ) or (isinstance(dev, str) and bool(dev.strip()))
+            if not has_valid_dev:
+                unrecorded.append(sid)
+    return [G.row("script_deviation_recorded", not unrecorded,
+                  f"{len(unrecorded)} accepted clip(s) diverge from frozen script text without a script_deviation record",
+                  unrecorded[:30])]
+
+
+def accepted_ltx_route_rows(script: dict, video_records: dict[str, dict] | set[str] | Path | None = None) -> list[dict]:
+    """Audit #4: every shot that has an accepted LTX video clip record (``production/video/<shot_id>.json``) must have
+    ``route == 'video'`` in ``production_script.json``."""
+    accepted_ids: set[str] = set()
+    if isinstance(video_records, Path):
+        vdir = video_records / "production" / "video" if (video_records / "production" / "video").is_dir() else video_records
+        if vdir.is_dir():
+            for p in sorted(vdir.glob("*.json")):
+                try:
+                    doc = json.loads(p.read_text(encoding="utf-8"))
+                except (ValueError, OSError):
+                    continue
+                if doc.get("status") != G.FAIL and (doc.get("route") in (None, "video", "wan") or doc.get("clip_path")):
+                    accepted_ids.add(p.stem)
+    elif isinstance(video_records, set):
+        accepted_ids = set(video_records)
+    elif isinstance(video_records, dict):
+        for sid, doc in video_records.items():
+            if isinstance(doc, dict) and doc.get("status") != G.FAIL:
+                accepted_ids.add(str(sid))
+    mismatched: list[str] = []
+    for s in script.get("shots", []):
+        sid = s.get("shot_id", "?")
+        has_rec = sid in accepted_ids or bool(s.get("accepted_ltx_clip") or s.get("ltx_clip_accepted"))
+        if has_rec and not is_video(s):
+            mismatched.append(f"{sid}: route={s.get('route')!r} (has accepted LTX clip)")
+    return [G.row("accepted_ltx_route_match", not mismatched,
+                  f"{len(mismatched)} shot(s) have an accepted LTX clip record but route != 'video'",
+                  mismatched[:30])]
 
 
 def fit_rows(script: dict, max_s: float, model: str, fps: int) -> list[dict]:
@@ -248,7 +349,7 @@ def rows(script: dict, max_s: float = 10.0) -> list[dict]:
     rev = [f"{f['rule']} {f['shot_id']}: {f['detail']}" for f in fs if f["severity"] == G.REVIEW]
     n = sum(1 for s in script.get("shots", []) if is_video(s))
     return [G.row("video_edit_plan", not fail, f"{len(fail)} FAIL finding(s) over {n} video shot(s) (VL-01..VL-06)", fail[:30]),
-            G.row("video_edit_plan_review", not rev, f"{len(rev)} REVIEW finding(s) (VL-03/04/08/09)", rev[:30],
+            G.row("video_edit_plan_review", not rev, f"{len(rev)} REVIEW finding(s) (VL-03/04/08/09/14)", rev[:30],
                   level=G.REVIEW)]
 
 

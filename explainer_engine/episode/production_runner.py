@@ -18,6 +18,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from explainer_engine.audio import acoustics, dropouts, sound_director
+from explainer_engine.episode.timing import is_spoken_line, strip_stage_directions
 
 
 def _read_wav_mono_and_stereo(wav_path: Path) -> tuple[np.ndarray, np.ndarray, int]:
@@ -61,9 +62,10 @@ def audit_rendered_audio_stems(
             "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
         }
 
-    # Build synthetic word spine from audio_lines to verify independent narration stem continuity across all 25 spoken lines
+    # Build synthetic word spine from spoken audio_lines (skipping silent_beat and stage directions, TD-337)
     words: List[Dict[str, Any]] = []
-    for ln in script_doc.get("audio_lines", []):
+    spoken_lines = [ln for ln in script_doc.get("audio_lines", []) if is_spoken_line(ln) and strip_stage_directions(str(ln.get("text") or ""))]
+    for ln in spoken_lines:
         s_sec = float(ln.get("start_sec", 0.0))
         e_sec = float(ln.get("end_sec", s_sec + float(ln.get("estimated_duration_seconds", 4.0))))
         active_end_sec = max(s_sec + 0.20, e_sec - 0.14)
@@ -88,11 +90,11 @@ def audit_rendered_audio_stems(
 
     sd_findings = sound_director._check_stems(manifest, spine, loaded_stereo, {}, (0.5, 1.5))
 
-    # Measure active-speech narration RMS and check for mid-line dropouts
+    # Measure active-speech narration RMS and check for mid-line dropouts on spoken lines only (TD-337)
     nar_mono = loaded_mono["narration"]
     line_audits: List[Dict[str, Any]] = []
     mid_line_dropouts = 0
-    for ln in script_doc.get("audio_lines", []):
+    for ln in spoken_lines:
         s_sec = float(ln.get("start_sec", 0.0))
         e_sec = float(ln.get("end_sec", s_sec + 4.0))
         active_end = max(s_sec + 0.2, e_sec - 0.14)

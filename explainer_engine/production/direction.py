@@ -529,3 +529,50 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
     if (d.get("scene") or {}).get("wind"):
         plan["wind"] = list(d["scene"]["wind"])        # one wind per shot: smoke, snow, grass and cloth lean together
     return plan
+
+def sequence_variety_score(directions: list[dict]) -> dict:
+    """A2.5: compute a 0..1 variety score over a sequence of shot direction documents. Variety constraints
+    (no_two_same_camera_ops_in_a_row, max_push_in_in_5_shot_window) are aesthetic preferences (REVIEW, D-59), never hard FAIL."""
+    kb = load_knowledge_base()
+    var = kb.get("variety_and_continuity_rules") or {}
+    win_n = int(var.get("window_size_non_map", 5))
+    max_pushes = int(var.get("max_push_in_in_5_shot_window", 2))
+    ops = []
+    non_map_ops = []
+    for d in directions or []:
+        audit_op = (((d.get("choice") or {}).get("audit") or {}).get("chosen") or {}).get("primary_op")
+        if not audit_op:
+            cams = [t.get("op") for t in (d.get("tracks") or []) if isinstance(t, dict) and t.get("track") == "camera" and t.get("op") not in ("handheld",)]
+            audit_op = cams[-1] if cams else "hold"
+        ops.append((str(d.get("shot_id") or "?"), str(audit_op)))
+        if str(d.get("kind") or "") != "map" and str(d.get("route") or "") != "map_action":
+            non_map_ops.append((str(d.get("shot_id") or "?"), str(audit_op)))
+    repeats = [f"{ops[i-1][0]}->{ops[i][0]}:{ops[i][1]}" for i in range(1, len(ops)) if ops[i][1] == ops[i - 1][1]]
+    push_windows = []
+    for i in range(max(0, len(non_map_ops) - win_n + 1)):
+        w = non_map_ops[i : i + win_n]
+        if len(w) == win_n:
+            n_p = sum(1 for _, op in w if op in ("push", "push_in"))
+            if n_p > max_pushes:
+                push_windows.append(f"{w[0][0]}..{w[-1][0]} ({n_p} pushes)")
+    n_shots = max(1, len(ops))
+    penalty = 0.15 * len(repeats) / n_shots + 0.15 * len(push_windows) / n_shots
+    return {
+        "score": round(max(0.0, 1.0 - penalty), 4),
+        "adjacent_repeats": repeats,
+        "push_window_excess": push_windows,
+    }
+
+
+def sequence_variety_rows(directions: list[dict]) -> list[dict]:
+    """A2.5: variety checks emit REVIEW (D-59 aesthetic preference), never FAIL."""
+    from explainer_engine.qa import gates as G
+    rep = sequence_variety_score(directions)
+    return [
+        G.row("director_no_consecutive_identical_camera", not rep["adjacent_repeats"],
+              f"variety score {rep['score']:.2f}: {len(rep['adjacent_repeats'])} consecutive identical primary move(s) (aesthetic preference, REVIEW)",
+              rep, level=G.REVIEW),
+        G.row("director_push_density_window", not rep["push_window_excess"],
+              f"variety score {rep['score']:.2f}: {len(rep['push_window_excess'])} 5-shot window(s) above 2 pushes (aesthetic preference, REVIEW)",
+              rep, level=G.REVIEW),
+    ]

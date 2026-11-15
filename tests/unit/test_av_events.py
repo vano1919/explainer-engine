@@ -416,7 +416,8 @@ def test_two_camera_segments_add_up_without_a_jump():
      "before"),
     ([{"effect": "push"}, {"effect": "truck"}], None, "need their frames"),
     ([{"effect": "push", "from_frame": 0, "to_frame": 10}, {"effect": "pull", "from_frame": 10, "to_frame": 20},
-      {"effect": "truck", "from_frame": 20, "to_frame": 30}], None, "at most 2"),
+      {"effect": "truck", "from_frame": 20, "to_frame": 30}, {"effect": "push", "from_frame": 30, "to_frame": 40}], None,
+     "at most 3"),   # R-19 (direction.SEGMENTS_MAX = 3; layers25d matched it in Task 1, B5)
     ([{"effect": "orbit_small"}], "document", "does not move by"),
     ([{"effect": "cloth_flap"}], None, "needs a region"),
     ([{"effect": "cloud_drift"}], None, "needs a region"),

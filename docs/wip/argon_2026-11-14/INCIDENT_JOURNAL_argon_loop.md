@@ -29,3 +29,28 @@
   ranks below a period take; #60 map events use the timed script; #61 sector markers sized by view; #65 dual front line colours;
   #23 documented route names exist in the router.
 - The 24 open items go to Argon Task 1 (logic fixes).
+
+## 2026-11-15 15:00 Tbilisi - Argon Task 1 (logic fixes) applied and verified by Claude
+- Argon returned 34 files (30 defects: the 24 open audit rows + ChatGPT A2.1-A2.5 + its own B1-B8). Claude's checks: comments
+  preserved; 36 tests pass, none skipped; 30 guards fail on 4d209a8. About 10 guards first failed only with AttributeError; round 1
+  made them assert behaviour through public entry points.
+- Correction round 1 (sent in the same chat; Argon fixed all six):
+  | # | defect Claude found | root cause | general fix | guard |
+  |---|---|---|---|---|
+  | C1 | the auto director invented mist, dust and an animated sky on every shot (S02_SH009, a dugout with a brazier: sky_open True, brazier unused) | living_director.build_shot_direction_from_script seeded fixed living elements, sky_open=True, "open field" | seen built only from evidence (layers manifest, the shot's script fields, narration only for kinds in the picture); thin evidence -> needs_eye / REVIEW | test_c1_auto_director_uses_only_evidence_interior_brazier_vs_exterior_sky_mask |
+  | C2 | run.stage_direction was dead code | never called | stage_clips calls it (one path) | test_run_generates_and_validates_direction_and_fails_on_director_not_used |
+  | C3 | paid preflight checked 40 fixed prop words; an entering prop failed | fixed tuple | general noun heads + entering/held props allowed | test_preflight_refuses_prompt_object_absent_from_start_picture |
+  | C5 | scripts/apply_task1_data_fixes.py rewrote JSON with indent=2 (30 000 lines) | one-shot script | removed; data kept in the repo's format | - |
+- Defects Claude fixed after round 1 (Argon had claimed every test passed: false):
+  | defect | root cause (code) | fix | guard (fails on Argon's version) |
+  |---|---|---|---|
+  | layers25d and map records kept EMPTY gate_rows; the director's renderer rows were dropped too (Audit #33 looked fixed) | run.py read res["gates"]["rows"]; qa.gates.verdict writes "gates" (older bug at the director path too); Argon's own map test failed with KeyError | run._verdict_rows reads the key verdict writes, used at all four places | tests/unit/test_task1_review_guards.py::test_layers25d_fallback_record_keeps_its_real_gate_rows |
+  | modern-era sounds filtered as "modern" in a modern film | sound_plan.resolve compared the era to "modern" exactly; "modern_20th_century" got the 1914 filter | every modern_* era keeps its own world | test_v43_sound_plan::test_a_take_from_a_later_world_never_plays_in_the_era (existing, was failing) |
+  | every trench shot "saw" a gunshot | SEEN["gunshot"] contained soldier/soldiers/trench | only weapons/shots count | test_task1_review_guards::test_soldiers_or_a_trench_in_frame_do_not_make_a_gunshot_seen |
+  | docs_lint crashed when docs/PRODUCTION_RULES.md is absent | unconditional read | read only if present | test_docs (existing, was failing) |
+  | old test pinned 2 camera segments | R-19 says 3 (layers25d now matches) | test updated to 4 -> "at most 3" | test_av_events |
+- Eye check (auto director, real layers, no hand-written direction): S08_SH002, S05_SH020, S02_SH008 rendered on CPU (11-15 min each),
+  HF explainer-engine/argon_loop_2026-11-15/task1_auto_director/. Good: frame 0 = picture, no jumps, no invented sky, flames/embers/
+  candles/sun alive, heads kept. Weak (goes to Task 2, director quality): every push targets the frame centre (0.5, 0.45) instead of
+  the subject the words name; S02_SH008's push 2.5 cuts the brazier and feet at the bottom; glitter points on crosses and wire;
+  S08_SH002 fails LP-08 (floor of 3 effects, an uncalibrated hypothesis that should be REVIEW by D-59).
