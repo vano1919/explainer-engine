@@ -22,6 +22,7 @@ Prototype only (P1): nothing in ``episode/run.py`` calls this module yet (P2 wir
 from __future__ import annotations
 
 import hashlib
+import re
 import json
 import os
 import time
@@ -200,6 +201,184 @@ def edge_alignment(depth: np.ndarray, masks: dict[str, np.ndarray]) -> float | N
 
 # --- masks: SAM 2.1 from the director's points, BiRefNet on fine edges -----------------------------------------------------
 
+GEOMETRY_KEYS = ("person_boxes", "edge_margin_x", "edge_margin_y", "sky_area_pct", "fg_bg_depth_delta", "unlayered_people")
+PERSON_TOKENS = {"person", "people", "man", "men", "woman", "women", "soldier", "soldiers", "chaplain", "student",
+                 "officer", "officers", "thomas", "harris", "crowd", "group", "groups", "troops", "infantry",
+                 "british", "german", "germans", "scots", "scottish"}
+NON_PERSON_TOKENS = {"wire", "post", "posts", "sandbag", "sandbags", "brazier", "braziers", "candle", "candles",
+                     "cross", "crosses", "spade", "spades", "stretcher", "crate", "crates", "photo", "button",
+                     "tarp", "tree", "trees", "willow", "willows", "pine", "pines", "sky", "cloud", "clouds",
+                     "sun", "mist", "snow", "ice", "frost", "fire", "smoke", "steam"}
+def _is_person_object(o: dict) -> bool:
+    if o.get("is_person") is not None:
+        return bool(o["is_person"])
+    id_toks = set(re.findall(r"[a-z]+", str(o.get("id") or "").lower()))
+    if id_toks & NON_PERSON_TOKENS:
+        return False
+    if id_toks & PERSON_TOKENS:
+        return True
+    desc = str(o.get("what") or o.get("prompt") or "").lower()
+    head = re.split(r"\b(under|behind|near|by|on|in|beside|around)\b", desc, maxsplit=1)[0]
+    head_toks = set(re.findall(r"[a-z]+", head))
+    if head_toks & NON_PERSON_TOKENS:
+        return False
+    name_toks = {t for n in (o.get("names") or []) for t in re.findall(r"[a-z]+", str(n).lower())}
+    return bool((head_toks | name_toks) & PERSON_TOKENS)
+def _mask_bbox(m: np.ndarray, thr: float = 0.5) -> list[float] | None:
+    ys, xs = np.nonzero(m > thr)
+    if not len(xs):
+        return None
+    h, w = m.shape[:2]
+    return [round(float(xs.min() / w), 4), round(float(ys.min() / h), 4),
+            round(float((xs.max() + 1) / w), 4), round(float((ys.max() + 1) / h), 4)]
+def _box_contains(outer: list[float], inner: list[float], slack: float = 0.02) -> bool:
+    return (outer[0] - slack <= inner[0] and inner[2] <= outer[2] + slack
+            and outer[1] - slack <= inner[1] and inner[3] <= outer[3] + slack)
+def picture_geometry(manifest: dict | None = None, seen: dict | None = None, *,
+                     depth: np.ndarray | None = None, masks: dict[str, np.ndarray] | None = None,
+                     faces: list[dict] | None = None, d: dict | None = None) -> dict:
+    man = manifest if isinstance(manifest, dict) else {}
+    seen_d = seen if isinstance(seen, dict) else ((d.get("seen") if isinstance(d, dict) else None) or {})
+    pf = ((d.get("picture_facts") if isinstance(d, dict) else None)
+          or seen_d.get("picture_facts") or man.get("picture_facts") or {})
+    man_objs = list((man.get("masks") or {}).get("objects") or []) if isinstance(man.get("masks"), dict) else []
+    seen_objs = list(seen_d.get("objects") or [])
+    merged_objs: dict[str, dict] = {}
+    for o in man_objs:
+        if isinstance(o, dict) and o.get("id"):
+            merged_objs[o["id"]] = dict(o)
+    for o in seen_objs:
+        if isinstance(o, dict) and o.get("id"):
+            cur = merged_objs.get(o["id"], {})
+            merged_objs[o["id"]] = {**cur, **o, "box": o.get("box") or cur.get("box"),
+                                    "layer": o.get("layer", cur.get("layer", True))}
+    if man.get("unlayered_people") is not None:
+        unlayered_people = bool(man["unlayered_people"])
+    elif pf.get("unlayered_crowd") is not None or pf.get("unlayered_people") is not None:
+        unlayered_people = bool(pf.get("unlayered_crowd") or pf.get("unlayered_people"))
+    else:
+        unlayered_people = any(not o.get("layer", True) for o in merged_objs.values() if _is_person_object(o))
+    if man.get("person_boxes") is not None and masks is None:
+        person_boxes = [[round(float(v), 4) for v in b] for b in man["person_boxes"]]
+    else:
+        person_boxes = []
+        for oid, o in merged_objs.items():
+            if not _is_person_object(o):
+                continue
+            b = _mask_bbox(masks[oid]) if (masks is not None and oid in masks) else None
+            if b is None and isinstance(o.get("box"), (list, tuple)) and len(o["box"]) == 4:
+                b = [round(float(v), 4) for v in o["box"]]
+            if b is None:
+                pts = list(o.get("points") or []) + [
+                    p for part in (o.get("parts") or []) if isinstance(part, (list, tuple)) for p in part
+                ]
+                pts = [p for p in pts if isinstance(p, (list, tuple)) and len(p) >= 2]
+                if pts:
+                    xs, ys = [float(p[0]) for p in pts], [float(p[1]) for p in pts]
+                    b = [round(max(0.0, min(xs) - 0.025), 4), round(max(0.0, min(ys) - 0.04), 4),
+                         round(min(1.0, max(xs) + 0.025), 4), round(min(1.0, max(ys) + 0.04), 4)]
+            if b is not None:
+                person_boxes.append(b)
+        raw_faces: list = list(faces or [])
+        for src_f in (seen_d.get("faces"), pf.get("faces"),
+                      (d.get("choice", {}).get("faces") if isinstance(d, dict) and isinstance(d.get("choice"), dict) else None),
+                      (d.get("keep_in_frame") if isinstance(d, dict) else None)):
+            if isinstance(src_f, list):
+                raw_faces.extend(src_f)
+        for f in raw_faces:
+            fb = None
+            if isinstance(f, dict) and isinstance(f.get("box") or f.get("face"), (list, tuple)):
+                fb = [round(float(v), 4) for v in (f.get("box") or f.get("face"))[:4]]
+            elif isinstance(f, (list, tuple)) and len(f) == 4 and all(isinstance(v, (int, float)) for v in f):
+                fb = [round(float(v), 4) for v in f]
+            if fb is not None and not any(_box_contains(pb, fb) for pb in person_boxes):
+                person_boxes.append(fb)
+        if not person_boxes and isinstance(pf.get("face_x_range"), (list, tuple)) and len(pf["face_x_range"]) == 2:
+            x0, x1 = float(pf["face_x_range"][0]), float(pf["face_x_range"][1])
+            n_p = max(2, int(pf.get("people") or 2))
+            person_boxes = [[round(max(0.0, x0 - 0.02), 4), 0.34, round(min(1.0, x0 + 0.04), 4), 0.78],
+                            [round(max(0.0, x1 - 0.04), 4), 0.34, round(min(1.0, x1 + 0.02), 4), 0.78]]
+            for k_i in range(1, n_p - 1):
+                xm = x0 + (x1 - x0) * (k_i / max(1, n_p - 1))
+                person_boxes.append([round(xm - 0.02, 4), 0.35, round(xm + 0.02, 4), 0.75])
+        elif not person_boxes and int(pf.get("people") or 0) > 0:
+            n_p = int(pf["people"])
+            mx = float(pf["edge_margin_x"]) if pf.get("edge_margin_x") is not None else (0.18 if n_p > 1 else 0.35)
+            if n_p == 1:
+                person_boxes = [[round(mx, 4), 0.25, round(min(1.0 - mx, mx + 0.30), 4), 0.82]]
+            else:
+                person_boxes = [[round(mx, 4), 0.28, round(min(0.48, mx + 0.16), 4), 0.82],
+                                [round(max(0.52, 1.0 - mx - 0.16), 4), 0.28, round(1.0 - mx, 4), 0.82]]
+    if man.get("edge_margin_x") is not None and masks is None:
+        edge_margin_x = round(float(man["edge_margin_x"]), 4)
+    elif pf.get("edge_margin_x") is not None:
+        edge_margin_x = round(float(pf["edge_margin_x"]), 4)
+    elif person_boxes:
+        edge_margin_x = round(float(min(min(b[0] for b in person_boxes), min(1.0 - b[2] for b in person_boxes))), 4)
+    else:
+        edge_margin_x = 1.0
+    if man.get("edge_margin_y") is not None and masks is None:
+        edge_margin_y = round(float(man["edge_margin_y"]), 4)
+    elif pf.get("edge_margin_y") is not None:
+        edge_margin_y = round(float(pf["edge_margin_y"]), 4)
+    elif person_boxes:
+        edge_margin_y = round(float(min(min(b[1] for b in person_boxes), min(1.0 - b[3] for b in person_boxes))), 4)
+    else:
+        edge_margin_y = 1.0
+    if man.get("sky_area_pct") is not None and depth is None:
+        sky_area_pct = round(float(man["sky_area_pct"]), 2)
+    elif pf.get("sky_area_pct") is not None:
+        sky_area_pct = round(float(pf["sky_area_pct"]), 2)
+    else:
+        sky_liv = [float(e.get("area_pct", 0.0)) for e in (seen_d.get("living") or [])
+                   if isinstance(e, dict) and e.get("kind") in ("sky", "cloud") and e.get("area_pct") is not None]
+        if sky_liv:
+            sky_area_pct = round(float(max(sky_liv)), 2)
+        elif depth is not None:
+            h_d = depth.shape[0]
+            top = (np.arange(h_d, dtype=np.float32) < 0.6 * h_d)[:, None]
+            sky_area_pct = round(float(((depth <= 0.05) & top).mean() * 100.0), 2)
+        elif seen_d.get("sky_open") is False or pf.get("sky_open") is False:
+            sky_area_pct = 0.0
+        elif (seen_d.get("sky_open") is True or pf.get("sky_open") is True
+              or any(isinstance(li, dict) and li.get("kind") == "sun"
+                     for li in list(seen_d.get("lights") or []) + list(man.get("lights") or []))):
+            sky_area_pct = 20.0
+        else:
+            sky_area_pct = 0.0
+    if man.get("fg_bg_depth_delta") is not None and depth is None:
+        fg_bg_depth_delta = round(float(man["fg_bg_depth_delta"]), 4)
+    elif pf.get("fg_bg_depth_delta") is not None:
+        fg_bg_depth_delta = round(float(pf["fg_bg_depth_delta"]), 4)
+    elif depth is not None:
+        fg_union = np.zeros(depth.shape, dtype=bool)
+        meds = []
+        for m in (masks or {}).values():
+            if (m > 0.5).any():
+                fg_union |= (m > 0.5)
+                meds.append(float(np.median(depth[m > 0.5])))
+        if meds:
+            bg_med = float(np.median(depth[~fg_union])) if (~fg_union).any() else float(np.percentile(depth, 15))
+            fg_bg_depth_delta = round(float(max(max(meds) - bg_med, max(meds) - min(meds))), 4)
+        else:
+            fg_bg_depth_delta = round(float(np.percentile(depth, 90) - np.percentile(depth, 10)), 4)
+    else:
+        meds = [float(o["depth_median"]) for o in man_objs if isinstance(o, dict) and o.get("depth_median") is not None]
+        if len(meds) >= 2:
+            span_objs = max(meds) - min(meds)
+            has_far_bg = bool(seen_d.get("depth_checks")) or sky_area_pct >= 5.0
+            bg_est = min(min(meds), 0.18 if has_far_bg else min(meds))
+            fg_bg_depth_delta = round(float(max(span_objs, max(meds) - bg_est)), 4)
+        elif len(meds) == 1:
+            fg_bg_depth_delta = round(float(abs(meds[0] - 0.2)), 4)
+        else:
+            d_cand = (man.get("depth") or {}).get("candidates") or {}
+            chosen_m = (man.get("depth") or {}).get("chosen") or next(iter(d_cand), "depth_pro")
+            c_rows = ((d_cand.get(chosen_m) or {}).get("checks") or {}).get("rows") or []
+            vals = [float(v) for r in c_rows for v in (r.get("values") or []) if isinstance(v, (int, float))]
+            fg_bg_depth_delta = round(float(max(vals) - min(vals)), 4) if vals else 0.0
+    return {"person_boxes": person_boxes, "edge_margin_x": edge_margin_x, "edge_margin_y": edge_margin_y,
+            "sky_area_pct": sky_area_pct, "fg_bg_depth_delta": fg_bg_depth_delta, "unlayered_people": bool(unlayered_people)}
 def run_sam(rgb: np.ndarray, prompts: list[dict]) -> list[np.ndarray]:
     """SAM 2.1 Hiera-L (transformers): one mask per prompt (positive ``points`` and negative ``neg``, picture pixels); the image
     is embedded once. The best of SAM's three proposals by its own IoU estimate is kept."""
@@ -448,7 +627,7 @@ def understand(picture: Path, seen: dict, depth_model: str = "da_v2_small", out_
     man_path = out / "manifest.json"
     if man_path.exists() and not force:
         man = json.loads(man_path.read_text())
-        if man.get("key") == key:
+        if man.get("key") == key and all(k in man for k in GEOMETRY_KEYS):
             return man
     out.mkdir(parents=True, exist_ok=True)
     times = {}
@@ -544,15 +723,17 @@ def understand(picture: Path, seen: dict, depth_model: str = "da_v2_small", out_
     if hole is not None:
         _save_u8(out / "hole.png", hole.astype(np.float32))
     times["lama_s"] = round(time.time() - t0, 2)
-    man = {"schema": SCHEMA, "key": key, "picture": picture.name, "picture_sha256": sha256_file(picture),
-           "size": [w, h], "depth": {"model": depth_model, "repo": REPOS[depth_model], "licence": LICENCES[depth_model],
-                                     "file": "depth.png", "bits": 16, "blur_px": 0,
-                                     "model_input": d["model_input"], "fov_x_deg": d.get("fov_x_deg")},
-           "normals": "normals.png" if "normals" in d else None,
-           "masks": {"model": REPOS["sam21"], "refine": REPOS["birefnet"], "objects": obj_rows},
-           "lights": light_rows,
-           "plate": {"model": REPOS["lama"], "file": "plate.png", "hole": "hole.png" if hole is not None else None,
-                     "tiles": tiles, "hole_share": round(float(hole.mean()), 4) if hole is not None else 0.0},
+    man_base = {"schema": SCHEMA, "key": key, "picture": picture.name, "picture_sha256": sha256_file(picture),
+                "size": [w, h], "depth": {"model": depth_model, "repo": REPOS[depth_model], "licence": LICENCES[depth_model],
+                                          "file": "depth.png", "bits": 16, "blur_px": 0,
+                                          "model_input": d["model_input"], "fov_x_deg": d.get("fov_x_deg")},
+                "normals": "normals.png" if "normals" in d else None,
+                "masks": {"model": REPOS["sam21"], "refine": REPOS["birefnet"], "objects": obj_rows},
+                "lights": light_rows,
+                "plate": {"model": REPOS["lama"], "file": "plate.png", "hole": "hole.png" if hole is not None else None,
+                          "tiles": tiles, "hole_share": round(float(hole.mean()), 4) if hole is not None else 0.0}}
+    geom = picture_geometry(man_base, seen, depth=d["depth"], masks=masks)
+    man = {**man_base, **geom, "edge_alignment": edge_alignment(d["depth"], masks),
            "seconds": times, "made": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     write_json_atomic(man_path, man)
     return man

@@ -1,0 +1,130 @@
+{
+  "schema": "shot_direction/1-draft",
+  "shot_id": "S01_SH001",
+  "kind": "photo",
+  "picture": "S01_SH001_start.png",
+  "picture_sha256": "d25c5989e95b6752f7ef972ae7d1c595cdb6753ac54899453076efa67f71256e",
+  "author": "seen: the thread's Claude looking at the picture; choice: production/living_director",
+  "written": "2026-11-14",
+  "purpose": "Open the film: the space between two lines at dawn; a calm that should not be trusted.",
+  "emotion": "uneasy stillness",
+  "focus": {
+    "target": {"point": [0.505, 0.36]},
+    "why": "the eye goes from the wire to the open field and the sun"
+  },
+  "composition": "keep the symmetry of the two trench lines; the near wire may leave the bottom of the frame",
+  "route": {
+    "renderer": "directed25d",
+    "why": "camera, light and atmosphere only: level 0-2 of B.4"
+  },
+  "transition_out": {
+    "type": "cut",
+    "why": "unchanged from the script (P6 decides transitions from the rendered motion)"
+  },
+  "stage_b_v1": {
+    "intent": "intended",
+    "motion_imitation": [
+      {"effect": "crane", "direction": "up", "strength": 0.5, "easing": "ease_out", "event_id": "S01_SH001.M1", "audio": {"decision": "silent_by_design", "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"}},
+      {"effect": "mist", "strength": 1.0, "event_id": "S01_SH001.M2", "audio": {"decision": "ambience_only", "why": "the fog drift is carried by the wind bed"}},
+      {"effect": "sun_shaft_drift", "strength": 0.8, "origin": [0.505, 0.294], "event_id": "S01_SH001.M3", "audio": {"decision": "ambience_only", "why": "the low sun's light drifts through the fog; the place's bed carries it"}}
+    ],
+    "why": "The opening is a look over the parapet: the camera rises over the frozen wire and the field opens toward the enemy line, so the first three seconds say place, cold and danger. A centred zoom on a symmetric picture only enlarges it; a rise makes the foreground wire sink against the far fog, which is the depth this picture was drawn for."
+  },
+  "seen": {
+    "what": "Dawn over no man's land: trench lines left and right, a low sun on the horizon at the centre, fog on the field, iced shell holes; barbed wire on posts in the near corners, sandbags bottom right, small fires in the trench dugouts.",
+    "objects": [
+      {"id": "wire_left_near", "what": "near-left wire post with barbed wire", "points": [[0.055, 0.74], [0.075, 0.85], [0.045, 0.68]], "fine_edges": true},
+      {"id": "wire_right_near", "what": "near-right wire posts", "points": [[0.8, 0.73], [0.885, 0.67], [0.965, 0.62]], "fine_edges": true},
+      {"id": "sandbags_near", "what": "sandbags bottom right", "points": [[0.87, 0.91], [0.8, 0.96]]},
+      {"id": "wire_mid_left", "what": "crossed stakes with wire, mid-left", "points": [[0.31, 0.55], [0.235, 0.57], [0.375, 0.57]], "fine_edges": true},
+      {"id": "wire_mid_right", "what": "crossed stakes with wire, mid-right", "points": [[0.735, 0.62], [0.69, 0.5], [0.66, 0.64]], "fine_edges": true}
+    ],
+    "lights": [
+      {"id": "sun", "kind": "sun", "point": [0.505, 0.294]},
+      {"id": "fire_dugout_l1", "kind": "fire", "point": [0.068, 0.505], "radius": 0.012},
+      {"id": "fire_dugout_l2", "kind": "candle", "point": [0.175, 0.445], "radius": 0.008},
+      {"id": "fire_dugout_r1", "kind": "candle", "point": [0.908, 0.535], "radius": 0.008},
+      {"id": "fire_dugout_r2", "kind": "candle", "point": [0.84, 0.488], "radius": 0.007}
+    ],
+    "depth_checks": [
+      {"near": [0.06, 0.8], "far": [0.5, 0.45], "why": "near post before the field"},
+      {"near": [0.5, 0.85], "far": [0.5, 0.55], "why": "near ground before the mid field"},
+      {"near": [0.5, 0.55], "far": [0.5, 0.33], "why": "mid field before the horizon"},
+      {"near": [0.88, 0.88], "far": [0.8, 0.6], "why": "sandbags before the wire behind"}
+    ],
+    "living": [
+      {"id": "sun", "kind": "sun", "where": [0.505, 0.294], "area_pct": 1.0, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun"], "why": "P1: text 1: the words evoke it ('morning'); area 1 %; focus 2: 0.16 from the focus (the frame's centre); quality 2: moves cleanly; cost 2"},
+      {"id": "sun_rays", "kind": "sun", "where": [0.505, 0.294], "area_pct": 20.0, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun_rays"], "why": "P1: text 1: the words evoke it ('morning'); area 20 %; focus 2: 0.16 from the focus (the frame's centre); quality 2: moves cleanly; cost 2"},
+      {"id": "sun_fade", "kind": "sun", "where": [0.505, 0.294], "area_pct": 100.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "the words do not say the light changes"},
+      {"id": "field_mist", "kind": "mist", "where": [0.5, 0.45], "area_pct": 30.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_field_mist"], "why": "P1: text 1: the words evoke it ('morning'); area 30 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "frost_and_frozen_pools", "kind": "ice", "where": [0.5, 0.81], "area_pct": 8.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P1) (score 10; text 1: the words evoke it ('christmas'); area 8 %; focus 1: 0.36 from the focus (the frame's centre); quality 2: moves cleanly; cost 2)"},
+      {"id": "dugout_fire", "kind": "fire", "where": [0.068, 0.505], "area_pct": 0.3, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_dugout_fire"], "why": "always on (LP-06): text 0: the words do not touch it; area 0.3 %; focus 0: 0.44 from the focus (the frame's centre); quality 2: moves cleanly; cost 2"},
+      {"id": "dugout_fire_embers", "kind": "fire", "where": [0.068, 0.505], "area_pct": 0.3, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "skip", "why": "the fire is too small to throw sparks that read"},
+      {"id": "dugout_fire_smoke", "kind": "fire", "where": [0.068, 0.505], "area_pct": 0.3, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 0.3 %; focus 0: 0.44 from the focus (the frame's centre); quality 2: moves cleanly; cost 2)"},
+      {"id": "dugout_candles", "kind": "candle", "where": [0.6, 0.49], "area_pct": 0.15, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_dugout_candles"], "why": "always on (LP-06): text 1: the words evoke it ('christmas'); area 0.15 %; focus 2: 0.11 from the focus (the frame's centre); quality 2: moves cleanly; cost 2"},
+      {"id": "clouds", "kind": "sky", "where": [0.5, 0.1], "area_pct": 35.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_clouds"], "why": "P1: text 1: the words evoke it ('morning'); area 35 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "pines", "kind": "plants", "where": [0.05, 0.27], "area_pct": 4.0, "text": 0, "focus": 0, "quality": 1, "cost": 1, "decision": "skip", "why": "LP-04: score too low (score 4; text 0: the words do not touch it; area 4 %; focus 0: 0.48 from the focus (the frame's centre); quality 1: no clean mask, a soft box only; cost 1)"},
+      {"id": "barbed_wire", "kind": "wire", "where": [0.2, 0.55], "area_pct": 6.0, "text": 0, "focus": 1, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 4; text 0: the words do not touch it; area 6 %; focus 1: 0.32 from the focus (the frame's centre); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+      {"id": "trench_tarp", "kind": "cloth", "where": [0.11, 0.45], "area_pct": 0.7, "text": 0, "focus": 1, "quality": 1, "cost": 1, "decision": "skip", "why": "LP-04: score too low (score 4; text 0: the words do not touch it; area 0.7 %; focus 1: 0.39 from the focus (the frame's centre); quality 1: no clean mask, a soft box only; cost 1)"}
+    ]
+  },
+  "scene": {
+    "weather": [],
+    "wind": [0.025, 0.0],
+    "surroundings": "dawn, clear sky, mist on the field, frost"
+  },
+  "people_mid_or_close": false,
+  "intent": "intended",
+  "tracks": [
+    {"track": "camera", "op": "crane", "renderer": "directed25d", "params": {"strength": 1.0, "direction": "up", "ease": "ease_out"}, "timing": {"end": {"frac": 1.0}}, "validate": {"measure": "shift_y_pct", "direction": "up", "perceptible": true}},
+    {"id": "fx_sun", "track": "lighting", "op": "sun_glint", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_sun_rays", "track": "lighting", "op": "sun_shaft", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_field_mist", "track": "atmosphere", "op": "mist", "renderer": "directed25d", "target": {}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_dugout_fire", "track": "lighting", "op": "fire", "renderer": "directed25d", "target": {"lights": ["fire_dugout_l1"]}, "params": {"strength": 1.0, "spill_radius": 0.033}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_dugout_candles", "track": "lighting", "op": "candle", "renderer": "directed25d", "target": {"lights": ["fire_dugout_l2", "fire_dugout_r1", "fire_dugout_r2"]}, "params": {"strength": 1.0, "spill_radius": 0.03}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_clouds", "track": "atmosphere", "op": "cloud_drift", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"track": "audio", "decision": "ambience_only", "why": "wind (medium): cloud_drift (fx_clouds): clouds are heard as the wind bed", "events": ["wind"]}
+  ],
+  "round": "C5: C4A + the eye-review fixes (safe zone, seams, effects, camera plan)",
+  "rules": ["BP-185", "BP-194", "BP-195", "BP-196", "BP-197", "BP-200", "owner 2026-11-14 12:37 cards", "owner 2026-11-14 12:38 weather ceiling", "owner 2026-11-14 12:40 the director decides"],
+  "overrides": [
+    {"field": "tracks", "from": "C4 effects typed per shot by hand", "to": "C4 effects chosen by living_director from the words, the photo and the catalogue", "why": "the owner, 2026-11-14 12:40 UTC: the director decides the living frame itself"}
+  ],
+  "rounds": [],
+  "weather": [],
+  "keep_in_frame": [
+    {"light": "sun", "soft": true, "why": "the sun_glint effect lives on it"},
+    {"light": "fire_dugout_l1", "soft": true, "why": "the fire effect lives on it"},
+    {"light": "fire_dugout_l2", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "fire_dugout_r1", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "fire_dugout_r2", "soft": true, "why": "the candle effect lives on it"}
+  ],
+  "sound": {
+    "events": [
+      {"kind": "ambience", "what": "wind", "class": "wind", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "cloud_drift (fx_clouds): clouds are heard as the wind bed", "library": {"status": "library", "ids": ["wind_01"], "why": "legacy_tags; best take wind_01 (fits: cold, open, winter)"}}
+    ],
+    "silent": [
+      {"id": "crane", "op": "crane", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "fx_sun", "op": "sun_glint", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_sun_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_field_mist", "op": "mist", "decision": "silent_by_design", "why": "mist makes no sound of its own and names no bed"},
+      {"id": "fx_dugout_fire", "op": "fire", "decision": "silent_by_design", "why": "criterion 3: 0.3 % of the frame, too small and far to hear over the bed"},
+      {"id": "fx_dugout_candles", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"}
+    ],
+    "needs": [],
+    "beds": ["wind"],
+    "coverage": "AMBIENCE_ONLY"
+  },
+  "choice": {
+    "by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
+    "faces": [],
+    "cap": 4,
+    "weather": [],
+    "camera": ["an open landscape with the sky above and no named part: the camera rises to it (crane over 3.0 s)"],
+    "chosen": ["sun", "sun_rays", "field_mist", "dugout_fire", "dugout_candles", "clouds"],
+    "skipped": {"sun_fade": "the words do not say the light changes", "frost_and_frozen_pools": "LP-07: the cap of 4 is taken by higher scores (P1) (score 10; text 1: the words evoke it ('christmas'); area 8 %; focus 1: 0.36 from the focus (the frame's centre); quality 2: moves cleanly; cost 2)", "dugout_fire_embers": "the fire is too small to throw sparks that read", "dugout_fire_smoke": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 0.3 %; focus 0: 0.44 from the focus (the frame's centre); quality 2: moves cleanly; cost 2)", "pines": "LP-04: score too low (score 4; text 0: the words do not touch it; area 4 %; focus 0: 0.48 from the focus (the frame's centre); quality 1: no clean mask, a soft box only; cost 1)", "barbed_wire": "LP-05: it cannot move cleanly (score 4; text 0: the words do not touch it; area 6 %; focus 1: 0.32 from the focus (the frame's centre); quality 0: thin strokes cannot be cut out cleanly; cost 1)", "trench_tarp": "LP-04: score too low (score 4; text 0: the words do not touch it; area 0.7 %; focus 1: 0.39 from the focus (the frame's centre); quality 1: no clean mask, a soft box only; cost 1)"},
+    "notes": ["REVIEW LP-07: 5 P1 elements over the cap of 4 for 3 s"],
+    "sound": {"beds": ["wind"], "coverage": "AMBIENCE_ONLY", "silent": [{"id": "crane", "op": "crane", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "fx_sun", "op": "sun_glint", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_sun_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_field_mist", "op": "mist", "decision": "silent_by_design", "why": "mist makes no sound of its own and names no bed"}, {"id": "fx_dugout_fire", "op": "fire", "decision": "silent_by_design", "why": "criterion 3: 0.3 % of the frame, too small and far to hear over the bed"}, {"id": "fx_dugout_candles", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"}], "needs": []},
+    "audit": {"idiom": {"id": "IDM_ESTAB_HORIZON", "name": "wide_establishing_landscape", "why": "wide landscape/horizon frame (sky_area_pct=35%)"}, "chosen": {"primary_op": "crane", "ops": ["crane"], "why": ["an open landscape with the sky above and no named part: the camera rises to it (crane over 3.0 s)"]}, "rejected": {"orbit_small": "REJECTED (thin foreground wire/structures would tear under lateral orbit -> downgrade to crane or push_in)", "truck_25d": "REJECTED (inpainted hole_share=0.125 > 0.06 risks exposing fill -> downgrade to pan_crop_2d)", "push_in": "open horizon sky favors vertical crane_up over push_in"}, "measurements": {"person_boxes": [], "edge_margin_x": 1.0, "edge_margin_y": 1.0, "sky_area_pct": 35.0, "fg_bg_depth_delta": 0.7691, "unlayered_people": false, "hole_share": 0.1254, "people_count": 0}}
+  }
+}

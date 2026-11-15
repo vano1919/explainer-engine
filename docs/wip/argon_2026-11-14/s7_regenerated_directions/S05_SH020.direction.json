@@ -1,0 +1,181 @@
+{
+  "schema": "shot_direction/1-draft",
+  "shot_id": "S05_SH020",
+  "kind": "photo",
+  "picture": "S05_SH020_start.png",
+  "picture_sha256": "0ed409434bda10ea47fdcc750eb5397772daf59f95608f6c5b062a0ec3f72919",
+  "author": "seen: the thread's Claude looking at the picture; choice: production/living_director",
+  "written": "2026-11-14",
+  "purpose": "The psalm passes from one army to the other.",
+  "emotion": "shared grief, awe",
+  "focus": {
+    "target": {"mask": "right_group"},
+    "why": "on 'German' the second army takes the psalm"
+  },
+  "composition": "keep the symmetry until the word; then lean to the Germans",
+  "route": {
+    "renderer": "directed25d",
+    "why": "camera, light and atmosphere only: level 0-2 of B.4"
+  },
+  "transition_out": {
+    "type": "cut",
+    "why": "unchanged from the script (P6 decides transitions from the rendered motion)"
+  },
+  "stage_b_v1": {
+    "intent": "intended",
+    "motion_imitation": [
+      {"effect": "truck", "direction": "right", "strength": 1.0, "easing": "ease_in_out", "at_word": "german", "event_id": "S05_SH020.M1", "audio": {"decision": "silent_by_design", "why": "a slow camera move under the voice; silence suits the service"}},
+      {"effect": "cloud_drift", "strength": 0.6, "region": [0.0, 0.0, 1.0, 0.25], "event_id": "S05_SH020.M2", "audio": {"decision": "silent_by_design", "why": "a slow sky; silence suits the service"}},
+      {"effect": "mist", "strength": 1.0, "event_id": "S05_SH020.M3", "audio": {"decision": "ambience_only", "why": "the field's fog; the place's bed carries it"}},
+      {"effect": "sun_shaft_drift", "strength": 0.5, "origin": [0.497, 0.207], "event_id": "S05_SH020.M4", "audio": {"decision": "ambience_only", "why": "the low sun behind the service; the place's bed carries it"}}
+    ],
+    "why": "One psalm in two languages. The camera holds still and reverent while the Scottish chaplain reads (British and Highlanders on the left), then on 'German' it travels slowly right across the gap to the German side, the way the psalm passed from one army to the other. The script's centred push toward 'the chaplain and the young German' cannot work on this picture: it is a symmetric group with no chaplain in its centre."
+  },
+  "seen": {
+    "what": "Symmetrical burial at sunrise: British and Scottish soldiers bare-headed on the left, Germans on the right, three graves with crosses and candles in the centre, braziers in both trench walls, wire posts in the near corners; no chaplain in the centre.",
+    "objects": [
+      {"id": "left_group", "what": "British and Scots, left: five men", "parts": [[[0.17, 0.62], [0.165, 0.45]], [[0.245, 0.62], [0.245, 0.44]], [[0.31, 0.45], [0.31, 0.58]], [[0.365, 0.43], [0.37, 0.57]], [[0.41, 0.43], [0.41, 0.55]]], "layer": false, "neg": [[0.11, 0.55]], "names": ["scottish", "chaplain"]},
+      {"id": "right_group", "what": "Germans, right: six men", "parts": [[[0.585, 0.45], [0.58, 0.58]], [[0.64, 0.45], [0.64, 0.58]], [[0.69, 0.44], [0.7, 0.6]], [[0.735, 0.44], [0.735, 0.62]], [[0.79, 0.48], [0.8, 0.65]], [[0.85, 0.45], [0.86, 0.65]]], "layer": false, "neg": [[0.91, 0.55]], "names": ["student"]},
+      {"id": "cross_left", "what": "left grave cross", "points": [[0.335, 0.79]], "fine_edges": true},
+      {"id": "cross_centre", "what": "front centre cross", "points": [[0.503, 0.8], [0.503, 0.74]], "fine_edges": true},
+      {"id": "cross_right", "what": "right grave cross", "points": [[0.69, 0.8]], "fine_edges": true},
+      {"id": "post_left", "what": "near-left wire posts", "points": [[0.05, 0.83], [0.07, 0.93]], "fine_edges": true},
+      {"id": "post_right", "what": "near-right wire posts", "points": [[0.945, 0.85], [0.915, 0.86]], "fine_edges": true}
+    ],
+    "lights": [
+      {"id": "sun", "kind": "sun", "point": [0.497, 0.235]},
+      {"id": "brazier_left", "kind": "fire", "point": [0.11, 0.54], "radius": 0.022},
+      {"id": "brazier_right", "kind": "fire", "point": [0.91, 0.545], "radius": 0.022},
+      {"id": "candle_1", "kind": "candle", "point": [0.269, 0.853], "radius": 0.007},
+      {"id": "candle_2", "kind": "candle", "point": [0.396, 0.893], "radius": 0.007},
+      {"id": "candle_3", "kind": "candle", "point": [0.556, 0.915], "radius": 0.007},
+      {"id": "candle_4", "kind": "candle", "point": [0.579, 0.882], "radius": 0.007},
+      {"id": "candle_5", "kind": "candle", "point": [0.452, 0.655], "radius": 0.006},
+      {"id": "candle_6", "kind": "candle", "point": [0.554, 0.666], "radius": 0.006}
+    ],
+    "depth_checks": [
+      {"near": [0.19, 0.6], "far": [0.3, 0.33], "why": "front soldier before the trench line"},
+      {"near": [0.8, 0.6], "far": [0.62, 0.33], "why": "front German before the far wire"},
+      {"near": [0.5, 0.8], "far": [0.5, 0.42], "why": "front cross before the back crosses"},
+      {"near": [0.06, 0.88], "far": [0.2, 0.6], "why": "near post before the soldiers"}
+    ],
+    "living": [
+      {"id": "grave_candles", "kind": "candle", "where": [0.45, 0.85], "area_pct": 0.6, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_grave_candles"], "why": "always on (LP-06): text 1: the words evoke it ('burial'); area 0.6 %; focus 1: 0.37 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2"},
+      {"id": "braziers", "kind": "fire", "where": [0.5, 0.54], "area_pct": 2.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_braziers"], "why": "always on (LP-06): text 0: the words do not touch it; area 2 %; focus 1: 0.20 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2"},
+      {"id": "braziers_embers", "kind": "fire", "where": [0.5, 0.54], "area_pct": 2.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 6 is taken by higher scores (P2) (score 7; text 0: the words do not touch it; area 2 %; focus 1: 0.20 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2)"},
+      {"id": "field_mist", "kind": "mist", "where": [0.5, 0.3], "area_pct": 20.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_field_mist"], "why": "P1: text 1: the scene's surroundings name it; area 20 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "sun", "kind": "sun", "where": [0.497, 0.235], "area_pct": 1.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun"], "why": "P2: text 1: the scene's surroundings name it; area 1 %; focus 1: 0.34 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2"},
+      {"id": "sun_rays", "kind": "sun", "where": [0.497, 0.235], "area_pct": 20.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun_rays"], "why": "P1: text 1: the scene's surroundings name it; area 20 %; focus 1: 0.34 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2"},
+      {"id": "sun_fade", "kind": "sun", "where": [0.497, 0.235], "area_pct": 100.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "the words do not say the light changes"},
+      {"id": "brazier_smoke", "kind": "smoke", "where": [0.5, 0.45], "area_pct": 2.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 6 is taken by higher scores (P2) (score 7; text 0: the words do not touch it; area 2 %; focus 1: 0.21 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2)"},
+      {"id": "overcast", "kind": "cloud", "where": [0.5, 0.05], "area_pct": 30.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_overcast"], "why": "P2: text 0: the words do not touch it; area 30 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "frost_on_the_snow", "kind": "ice", "where": [0.5, 0.75], "area_pct": 10.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_frost_on_the_snow"], "why": "P1: text 1: the scene's surroundings name it; area 10 %; focus 1: 0.31 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2"},
+      {"id": "kilts_and_coat_hems", "kind": "cloth", "where": [0.3, 0.6], "area_pct": 8.0, "text": 0, "focus": 2, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 5; text 0: the words do not touch it; area 8 %; focus 2: 0.09 from the focus (the part the words name (left_group)); quality 0: it lies on a body: moving it reads as the body moving; cost 1)"},
+      {"id": "bare_trees", "kind": "plants", "where": [0.85, 0.15], "area_pct": 4.0, "text": 0, "focus": 0, "quality": 1, "cost": 1, "decision": "skip", "why": "LP-04: score too low (score 4; text 0: the words do not touch it; area 4 %; focus 0: 0.66 from the focus (the part the words name (left_group)); quality 1: no clean mask, a soft box only; cost 1)"},
+      {"id": "lips_reading", "kind": "body", "where": [0.41, 0.36], "area_pct": 0.3, "text": 0, "focus": 2, "quality": 1, "cost": 0, "body_motion": true, "decision": "skip", "why": "LP-02: body motion, LTX's work (score 4; text 0: the words do not touch it; area 0.3 %; focus 2: 0.19 from the focus (the part the words name (left_group)); quality 1: no clean mask, a soft box only; cost 0)"},
+      {"id": "wire", "kind": "wire", "where": [0.08, 0.85], "area_pct": 4.0, "text": 0, "focus": 0, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 3; text 0: the words do not touch it; area 4 %; focus 0: 0.40 from the focus (the part the words name (left_group)); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+      {"id": "breath_of_the_faces", "kind": "breath", "where": [0.518, 0.403], "area_pct": 0.84, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_breath_of_the_faces"], "why": "P1: 11 live face(s) found in a cold scene: their breath shows"}
+    ]
+  },
+  "scene": {
+    "weather": [],
+    "wind": [0.025, 0.0],
+    "surroundings": "sunrise, mist, frost"
+  },
+  "people_mid_or_close": true,
+  "intent": "intended",
+  "tracks": [
+    {"track": "camera", "op": "push", "renderer": "directed25d", "params": {"strength": 0.55, "ease": "linear"}, "timing": {"end": {"word": "scottish"}}, "validate": {"measure": "scale"}, "target": {"point": [0.518, 0.403]}},
+    {"track": "camera", "op": "push", "renderer": "directed25d", "params": {"strength": 1.0, "ease": "ease_out"}, "timing": {"start": {"word": "scottish"}, "end": {"word": "scottish", "offset": 30}}, "validate": {"measure": "scale"}, "target": {"mask": "left_group", "point": [0.3, 0.514]}},
+    {"track": "camera", "op": "pan_crop_2d", "renderer": "directed25d", "params": {"strength": 2.0, "ease": "ease_out", "direction": "right", "overscan": 1.1, "from_xy": [0.3, 0.514], "to_xy": [0.717, 0.533]}, "timing": {"start": {"word": "student"}, "end": {"word": "student", "offset": 30}}, "validate": {"measure": "shift_x_pct"}, "target": {"mask": "right_group", "point": [0.717, 0.533]}},
+    {"track": "camera", "op": "handheld", "renderer": "directed25d", "params": {"strength": 0.3}, "timing": {}, "validate": {}},
+    {"id": "fx_grave_candles", "track": "lighting", "op": "candle", "renderer": "directed25d", "target": {"lights": ["candle_1", "candle_2", "candle_3", "candle_4", "candle_5", "candle_6"]}, "params": {"strength": 1.0, "spill_radius": 0.03}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_braziers", "track": "lighting", "op": "fire", "renderer": "directed25d", "target": {"lights": ["brazier_left", "brazier_right"]}, "params": {"strength": 1.0, "spill_radius": 0.085}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_field_mist", "track": "atmosphere", "op": "mist", "renderer": "directed25d", "target": {}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_sun", "track": "lighting", "op": "sun_glint", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_sun_rays", "track": "lighting", "op": "sun_shaft", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_overcast", "track": "atmosphere", "op": "cloud_drift", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_frost_on_the_snow", "track": "lighting", "op": "glint", "renderer": "directed25d", "target": {"box": [0.342, 0.592, 0.658, 0.908]}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_breath_of_the_faces", "track": "atmosphere", "op": "breath", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0, "period_s": 3.6, "points": [[0.5766, 0.3752], [0.6246, 0.3872], [0.7176, 0.3971], [0.4124, 0.3794], [0.3069, 0.4051], [0.3557, 0.3883], [0.2102, 0.4319], [0.2615, 0.4142], [0.7527, 0.4206], [0.8009, 0.4415], [0.6763, 0.3934]]}, "validate": {"measure": "change_inside_target"}},
+    {"track": "audio", "decision": "ambience_only", "why": "fire (medium): fire (fx_braziers): the fire's crackle is the bed's; wind (medium): cloud_drift (fx_overcast): clouds are heard as the wind bed", "events": ["fire", "wind"]}
+  ],
+  "round": "C5: C4A + the eye-review fixes (safe zone, seams, effects, camera plan)",
+  "rules": ["BP-185", "BP-194", "BP-195", "BP-196", "BP-197", "BP-200", "owner 2026-11-14 12:37 cards", "owner 2026-11-14 12:38 weather ceiling", "owner 2026-11-14 12:40 the director decides"],
+  "overrides": [
+    {"field": "tracks", "from": "C4 effects typed per shot by hand", "to": "C4 effects chosen by living_director from the words, the photo and the catalogue", "why": "the owner, 2026-11-14 12:40 UTC: the director decides the living frame itself"}
+  ],
+  "rounds": [],
+  "weather": [],
+  "keep_in_frame": [
+    {"face": [0.5709, 0.3488, 0.5854, 0.382], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.6174, 0.3586, 0.6343, 0.3952], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.7124, 0.3642, 0.7313, 0.407], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.403, 0.3543, 0.4177, 0.3888], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.2959, 0.3749, 0.3136, 0.4146], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.3442, 0.3606, 0.3611, 0.3982], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.1965, 0.3941, 0.2181, 0.4437], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.2491, 0.3789, 0.2683, 0.4245], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.7446, 0.3841, 0.7654, 0.429], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.7949, 0.401, 0.816, 0.453], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.6699, 0.3619, 0.6877, 0.4012], "why": "live face: the person stays whole in the frame"},
+    {"light": "candle_1", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_2", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_3", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_4", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_5", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_6", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "brazier_left", "soft": true, "why": "the fire effect lives on it"},
+    {"light": "brazier_right", "soft": true, "why": "the fire effect lives on it"},
+    {"light": "sun", "soft": true, "why": "the sun_glint effect lives on it"}
+  ],
+  "sound": {
+    "events": [
+      {"kind": "ambience", "what": "fire", "class": "fire", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "fire (fx_braziers): the fire's crackle is the bed's", "library": {"status": "library", "ids": ["fire_campfire_01", "fire_01", "fire_garage_02"], "why": "legacy_tags; best take fire_campfire_01 (fits: campfire, crackle)"}},
+      {"kind": "ambience", "what": "wind", "class": "wind", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "cloud_drift (fx_overcast): clouds are heard as the wind bed", "library": {"status": "library", "ids": ["wind_01"], "why": "legacy_tags; best take wind_01 (fits: cold, open, winter)"}}
+    ],
+    "silent": [
+      {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "pan_crop_2d", "op": "pan_crop_2d", "decision": "silent_by_design", "why": "a camera move makes no sound in nature (AV-03)"},
+      {"id": "handheld", "op": "handheld", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "fx_grave_candles", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"},
+      {"id": "fx_field_mist", "op": "mist", "decision": "silent_by_design", "why": "mist makes no sound of its own and names no bed"},
+      {"id": "fx_sun", "op": "sun_glint", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_sun_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_frost_on_the_snow", "op": "glint", "decision": "silent_by_design", "why": "a glint is light: no sound"},
+      {"id": "fx_breath_of_the_faces", "op": "breath", "decision": "silent_by_design", "why": "a breath is too quiet to hear over the bed"}
+    ],
+    "needs": [],
+    "beds": ["fire", "wind"],
+    "coverage": "AMBIENCE_ONLY"
+  },
+  "choice": {
+    "by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
+    "faces": [
+      {"box": [0.5709, 0.3488, 0.5854, 0.382], "mouth": [0.5766, 0.3752], "share": 0.00048031996125494055, "score": 0.927},
+      {"box": [0.6174, 0.3586, 0.6343, 0.3952], "mouth": [0.6246, 0.3872], "share": 0.0006190017201049864, "score": 0.923},
+      {"box": [0.7124, 0.3642, 0.7313, 0.407], "mouth": [0.7176, 0.3971], "share": 0.0008088884902723603, "score": 0.92},
+      {"box": [0.403, 0.3543, 0.4177, 0.3888], "mouth": [0.4124, 0.3794], "share": 0.0005071286989922886, "score": 0.918},
+      {"box": [0.2959, 0.3749, 0.3136, 0.4146], "mouth": [0.3069, 0.4051], "share": 0.0007013727142568676, "score": 0.916},
+      {"box": [0.3442, 0.3606, 0.3611, 0.3982], "mouth": [0.3557, 0.3883], "share": 0.0006358488191576321, "score": 0.915},
+      {"box": [0.1965, 0.3941, 0.2181, 0.4437], "mouth": [0.2102, 0.4319], "share": 0.001067169015892567, "score": 0.915},
+      {"box": [0.2491, 0.3789, 0.2683, 0.4245], "mouth": [0.2615, 0.4142], "share": 0.0008767160848179857, "score": 0.911},
+      {"box": [0.7446, 0.3841, 0.7654, 0.429], "mouth": [0.7527, 0.4206], "share": 0.0009360712934105488, "score": 0.91},
+      {"box": [0.7949, 0.401, 0.816, 0.453], "mouth": [0.8009, 0.4415], "share": 0.001096278819687795, "score": 0.909},
+      {"box": [0.6699, 0.3619, 0.6877, 0.4012], "mouth": [0.6763, 0.3934], "share": 0.0007025032206385974, "score": 0.908}
+    ],
+    "cap": 6,
+    "weather": [],
+    "camera": [
+      "people in the frame: the camera leans in (1.8 %/s over 1.8 s, BP-21; the slowest rate, so the accent on the word stands out)",
+      "'scottish' names left_group: a snap push to it on the word (accent, rise inside 1 s)",
+      "'student' names right_group, across the frame from the last target: a pan_crop_2d to it on the word (accent)",
+      "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"
+    ],
+    "chosen": ["grave_candles", "braziers", "field_mist", "sun", "sun_rays", "overcast", "frost_on_the_snow", "breath_of_the_faces"],
+    "skipped": {"braziers_embers": "LP-07: the cap of 6 is taken by higher scores (P2) (score 7; text 0: the words do not touch it; area 2 %; focus 1: 0.20 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2)", "sun_fade": "the words do not say the light changes", "brazier_smoke": "LP-07: the cap of 6 is taken by higher scores (P2) (score 7; text 0: the words do not touch it; area 2 %; focus 1: 0.21 from the focus (the part the words name (left_group)); quality 2: moves cleanly; cost 2)", "kilts_and_coat_hems": "LP-05: it cannot move cleanly (score 5; text 0: the words do not touch it; area 8 %; focus 2: 0.09 from the focus (the part the words name (left_group)); quality 0: it lies on a body: moving it reads as the body moving; cost 1)", "bare_trees": "LP-04: score too low (score 4; text 0: the words do not touch it; area 4 %; focus 0: 0.66 from the focus (the part the words name (left_group)); quality 1: no clean mask, a soft box only; cost 1)", "lips_reading": "LP-02: body motion, LTX's work (score 4; text 0: the words do not touch it; area 0.3 %; focus 2: 0.19 from the focus (the part the words name (left_group)); quality 1: no clean mask, a soft box only; cost 0)", "wire": "LP-05: it cannot move cleanly (score 3; text 0: the words do not touch it; area 4 %; focus 0: 0.40 from the focus (the part the words name (left_group)); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+    "notes": ["ROUTE LP-10: people in a medium or close view for 7.83333 s: LTX or split"],
+    "sound": {"beds": ["fire", "wind"], "coverage": "AMBIENCE_ONLY", "silent": [{"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "pan_crop_2d", "op": "pan_crop_2d", "decision": "silent_by_design", "why": "a camera move makes no sound in nature (AV-03)"}, {"id": "handheld", "op": "handheld", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "fx_grave_candles", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"}, {"id": "fx_field_mist", "op": "mist", "decision": "silent_by_design", "why": "mist makes no sound of its own and names no bed"}, {"id": "fx_sun", "op": "sun_glint", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_sun_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_frost_on_the_snow", "op": "glint", "decision": "silent_by_design", "why": "a glint is light: no sound"}, {"id": "fx_breath_of_the_faces", "op": "breath", "decision": "silent_by_design", "why": "a breath is too quiet to hear over the bed"}], "needs": []},
+    "audit": {"idiom": {"id": "IDM_TWO_GROUP_PIVOT", "name": "two_person_or_group_to_group_exchange", "why": "two-person or group-to-group exchange (2 named targets, 11 people)"}, "chosen": {"primary_op": "pan_crop_2d", "ops": ["push", "push", "pan_crop_2d", "handheld"], "why": ["people in the frame: the camera leans in (1.8 %/s over 1.8 s, BP-21; the slowest rate, so the accent on the word stands out)", "'scottish' names left_group: a snap push to it on the word (accent, rise inside 1 s)", "'student' names right_group, across the frame from the last target: a pan_crop_2d to it on the word (accent)", "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"]}, "rejected": {"orbit_small": "FORBIDDEN (creator's veto: unlayered people in frame, edge_margin_x=0.115; lateral angle change shears crowd/people -> downgrade to pan_crop_2d or push_in + rack_focus)", "truck_25d": "FORBIDDEN (creator's veto: unlayered people in frame, edge_margin_x=0.115; 3D parallax truck shears faces and clips outer figures -> downgrade to pan_crop_2d)"}, "measurements": {"person_boxes": [[0.14, 0.39, 0.435, 0.66], [0.555, 0.4, 0.885, 0.69], [0.5709, 0.3488, 0.5854, 0.382], [0.6174, 0.3586, 0.6343, 0.3952], [0.7124, 0.3642, 0.7313, 0.407], [0.403, 0.3543, 0.4177, 0.3888], [0.3442, 0.3606, 0.3611, 0.3982], [0.6699, 0.3619, 0.6877, 0.4012]], "edge_margin_x": 0.115, "edge_margin_y": 0.31, "sky_area_pct": 30.0, "fg_bg_depth_delta": 0.7806, "unlayered_people": true, "hole_share": 0.0426, "people_count": 11}}
+  }
+}

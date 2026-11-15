@@ -1,3 +1,32 @@
+"""The Scene Director's file for one shot (roadmap 2026-11-14 B.1 ``shot_direction/1``; phase P1 draft, human-in-the-loop).
+
+The director (in P1 the thread's Claude, looking at the real picture and the rendered frames; L-11 a) writes one JSON per
+shot. The script stays Stage A's approved intent; this file is Stage B's decision as a difference with a reason. P1 only
+loads, checks and resolves it into a ``production/directed25d`` plan; P2 turns the draft into a versioned schema and a runner
+stage (``direction``, after ``pictures``, before ``clips``).
+
+The draft's fields: ``schema``, ``shot_id``, ``kind`` (photo|map), ``picture_sha256``, ``seen`` (what is REALLY in the frame:
+``what`` in words, ``objects`` with points, ``lights``, ``depth_checks``), ``purpose``, ``emotion``, ``focus``, ``composition``,
+``intent`` (intended|minimal|still_by_design), ``tracks`` (camera, character, object, environment, lighting, atmosphere,
+audio; each with ``op``, ``target``, ``timing``, ``renderer``, ``validate``), ``sound``, ``transition_out``, ``route``,
+``overrides`` (field, from, to, why: a change without a reason FAILs), ``rounds`` and ``expect`` (what QA measures).
+
+The owner's rules of 2026-11-14 (after P1 round 2 stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day):
+
+- ``seen.living`` (BP-196): every element of the picture that moves in nature, from the fixed checklist ``LIVING_KINDS``,
+  with ``where`` and a ``decision``: ``animate`` (``effects`` = the ids of the tracks that move it), ``add`` (not in the
+  picture, but the scene's weather or the words call for it: snow that falls) or ``skip`` (``why``; a REVIEW row, so the
+  reviewer sees every element left frozen). A living kind named in ``seen.what``, in ``scene.weather`` / ``scene.surroundings``
+  or in the shot's spoken words but missing from the inventory FAILs: that is how the sun of a sunrise gets its rays.
+- BP-185 for every photo shot, ``still_by_design`` included (it means the camera stands, never that nature freezes): at least
+  ``ALIVE_MIN`` families move beyond the camera; when all of them are light (a flame and nothing else) it is REVIEW.
+- The camera follows the words (BP-196, timing BP-195): every object or living element with ``names`` that the shot's words
+  name gets a camera track aimed at it (``target.mask`` / ``target.living``) starting on that word, or a ``text_targets_skip``
+  entry with ``word`` and ``why``.
+- A hold before the first move lasts at most ``HOLD_MAX_S`` unless a handheld or drift moves the camera meanwhile (BP-197).
+- Every effect op the file asks of ``directed25d`` must exist in the renderer (``directed25d.FX_OPS``): an op not built yet
+  FAILs, so a missing tool shows up as a gap instead of a silently frozen element.
+"""
 from __future__ import annotations
 import json
 import re
@@ -6,7 +35,7 @@ from explainer_engine.standards import sourced_rules as SR
 SCHEMA = "shot_direction/1-draft"
 INTENTS = ("intended", "minimal", "still_by_design")
 TRACKS = ("camera", "character", "object", "environment", "lighting", "atmosphere", "audio")
-CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
+CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "pan_crop_2d", "tilt", "orbit", "handheld", "rack_focus")
 EFFECT_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box", "dust",
               "snow", "rain", "embers", "steam", "stars", "sun_glint", "glint", "foliage_sway", "cloth_flap", "wire_sway",
               "water_shimmer", "subject_sway", "breath", "spindrift", "light_fade")
@@ -51,11 +80,98 @@ _WORD_KIND = {w: k for k, ws in LIVING_WORDS.items() for w in ws}
 LIVING_DECISIONS = ("animate", "add", "skip")
 LEAD_S, LAG_S = float(SR.T("BP-195", "lead_s")), float(SR.T("BP-195", "lag_s"))
 HOLD_MAX_S = float(SR.T("BP-197", "hold_before_word_s_max"))
-MOVING_CAMERA = ("push", "pull", "truck", "crane", "pan", "tilt", "orbit", "rack_focus")
+MOVING_CAMERA = ("push", "pull", "truck", "crane", "pan", "pan_crop_2d", "tilt", "orbit", "rack_focus")
 AUDIO_DECISIONS = ("sfx", "ui_cue", "ambience_only", "music_only", "silent_by_design", "review_required")
 RENDERERS = ("directed25d", "layers25d", "map_action", "ltx", "blender", "none")
 MINIMAL_MAX = 0.5          # a "minimal" shot moves its camera at no more than this strength (engineering default, REVIEW)
 SEGMENTS_MAX = 3
+KB_PATH = Path(__file__).resolve().parents[1] / "standards" / "director_knowledge_base.json"
+_KB_CACHE: dict | None = None
+def load_knowledge_base(path: Path | None = None) -> dict:
+    global _KB_CACHE
+    if path is not None:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    if _KB_CACHE is None:
+        _KB_CACHE = json.loads(KB_PATH.read_text(encoding="utf-8"))
+    return _KB_CACHE
+def _feasibility(d: dict, manifest: dict | None = None) -> list[dict]:
+    from explainer_engine.production import understand as U
+    kb = load_knowledge_base()
+    rules = kb.get("camera_feasibility_rules") or {}
+    orbit_rule = rules.get("orbit_small") or {}
+    truck_rule = rules.get("truck_25d") or {}
+    crane_rule = rules.get("crane_up") or rules.get("crane_25d") or {}
+    rack_rule = rules.get("rack_focus") or {}
+    orbit_edge_min = float(orbit_rule.get("min_edge_margin_x", 0.22))
+    orbit_hole_max = float(orbit_rule.get("max_hole_share", 0.04))
+    orbit_delta_min = float(rack_rule.get("min_fg_bg_depth_delta", 0.28))
+    truck_edge_min = float(truck_rule.get("min_edge_margin_x", 0.14))
+    truck_hole_max = float(truck_rule.get("max_hole_share", 0.06))
+    truck_delta_min = 0.22
+    crane_sky_min = float(crane_rule.get("min_sky_area_pct", 12.0))
+    crane_edge_y_min = float(crane_rule.get("min_bottom_face_clearance_pct", 0.12))
+    man = manifest if manifest is not None else d.get("manifest")
+    geom = U.picture_geometry(man, d.get("seen"), d=d)
+    audit_meas = (((d.get("choice") or {}).get("audit") or {}).get("measurements") or {})
+    for k in ("person_boxes", "edge_margin_x", "edge_margin_y", "sky_area_pct", "fg_bg_depth_delta", "unlayered_people", "hole_share"):
+        if man is None and k in audit_meas:
+            geom[k] = audit_meas[k]
+    person_boxes = geom.get("person_boxes") or []
+    kept_faces = [k["face"] for k in (d.get("keep_in_frame") or []) if isinstance(k.get("face"), (list, tuple)) and len(k["face"]) == 4]
+    choice_faces = [f["box"] for f in ((d.get("choice") or {}).get("faces") or []) if isinstance(f.get("box"), (list, tuple)) and len(f["box"]) == 4]
+    all_people = list(person_boxes) + kept_faces + choice_faces
+    has_people = bool(all_people or d.get("people_mid_or_close") or audit_meas.get("people_count", 0) > 0)
+    edge_x = float(geom.get("edge_margin_x", 1.0))
+    edge_y = float(geom.get("edge_margin_y", 1.0))
+    if all_people and edge_x >= 1.0:
+        edge_x = round(min(min(float(b[0]), 1.0 - float(b[2])) for b in all_people), 4)
+    if all_people and edge_y >= 1.0:
+        edge_y = round(min(min(float(b[1]), 1.0 - float(b[3])) for b in all_people), 4)
+    sky_pct = float(geom.get("sky_area_pct", 0.0))
+    depth_delta = float(geom.get("fg_bg_depth_delta", 0.0))
+    unlayered_people = bool(geom.get("unlayered_people", False))
+    man_d = man if isinstance(man, dict) else {}
+    hole_share = float(geom.get("hole_share", (man_d.get("plate") or {}).get("hole_share", (man_d.get("masks") or {}).get("hole_share", 0.0))))
+    out = []
+    cams = [t for t in d.get("tracks", []) if t.get("track") == "camera" and t.get("op") not in ("hold", "handheld", "rack_focus")]
+    for t in cams:
+        op = str(t.get("op", ""))
+        if op in ("orbit", "orbit_small", "truck", "truck_25d"):
+            is_orbit = op.startswith("orbit")
+            min_edge = orbit_edge_min if is_orbit else truck_edge_min
+            max_hole = orbit_hole_max if is_orbit else truck_hole_max
+            min_delta = orbit_delta_min if is_orbit else truck_delta_min
+            if has_people and (edge_x < min_edge or unlayered_people):
+                out.append({"level": "FAIL", "rule": "_feasibility",
+                            "what": f"_feasibility: creator's veto: {op} changes lateral angle on a shot with people near the edge (edge_margin_x={edge_x:.3f} < {min_edge:g}, unlayered_people={unlayered_people}): use push or horizontal pan without angle change (pan_crop_2d)"})
+            elif is_orbit and has_people:
+                out.append({"level": "REVIEW", "rule": "_feasibility",
+                            "what": "orbit changes lateral angle on one photo with kept people: use push or horizontal pan without angle change"})
+            if hole_share > max_hole:
+                out.append({"level": "REVIEW", "rule": "_feasibility",
+                            "what": f"_feasibility: {op} with inpainted hole_share {hole_share:.3f} > {max_hole:g} risks exposing fill (D-59)"})
+            if 0.0 < depth_delta < min_delta:
+                out.append({"level": "REVIEW", "rule": "_feasibility",
+                            "what": f"_feasibility: {op} with fg_bg_depth_delta {depth_delta:.3f} < {min_delta:g} has insufficient depth separation (D-59)"})
+        elif op in ("crane", "crane_up", "crane_25d"):
+            if sky_pct < crane_sky_min:
+                out.append({"level": "REVIEW", "rule": "_feasibility",
+                            "what": f"_feasibility: {op} with sky_area_pct {sky_pct:g}% < {crane_sky_min:g}% lacks vertical headroom (D-59)"})
+            if has_people and edge_y < crane_edge_y_min:
+                out.append({"level": "REVIEW", "rule": "_feasibility",
+                            "what": f"_feasibility: {op} with edge_margin_y {edge_y:.3f} < {crane_edge_y_min:g} risks vertical crop (D-59)"})
+    return out
+def _audit_present(d: dict) -> list[dict]:
+    choice = d.get("choice")
+    if not isinstance(choice, dict) or not isinstance(choice.get("audit"), dict):
+        return [{"level": "REVIEW", "rule": "_audit_present",
+                 "what": "_audit_present: choice.audit is missing (director must record idiom, chosen, rejected, measurements)"}]
+    audit = choice["audit"]
+    missing = [k for k in ("idiom", "chosen", "rejected", "measurements") if not audit.get(k)]
+    if missing:
+        return [{"level": "REVIEW", "rule": "_audit_present",
+                 "what": f"_audit_present: choice.audit is missing {' , '.join(missing)}"}]
+    return []
 def load(path: Path) -> dict:
     return json.loads(Path(path).read_text())
 def _ids(d: dict) -> tuple[set, set]:
@@ -67,7 +183,7 @@ def kinds_named(text: str | list) -> set:
     words = text if isinstance(text, list) else re.findall(r"[a-zA-Z']+", str(text or ""))
     return {_WORD_KIND[_norm(w)] for w in words if _norm(w) in _WORD_KIND}
 def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None = None, fps: float = 24.0,
-          frames: int | None = None) -> list[dict]:
+          frames: int | None = None, manifest: dict | None = None) -> list[dict]:
     out = []
     def bad(what, level="FAIL"):
         out.append({"level": level, "what": what})
@@ -121,7 +237,10 @@ def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None =
     out += _hold(d, spine, fps, frames)
     if frames:
         out += _balance(d, frames / fps)
-    if any(t.get("op") == "orbit" for t in cams) and any(k.get("face") for k in (d.get("keep_in_frame") or [])):
+    out += _feasibility(d, manifest=manifest)
+    if "choice" in d:
+        out += _audit_present(d)
+    if any(t.get("op") == "orbit" for t in cams) and any(k.get("face") for k in (d.get("keep_in_frame") or [])) and not any("orbit changes lateral angle" in r["what"] for r in out):
         bad("orbit changes lateral angle on one photo with kept people: use push or horizontal pan without angle change", "REVIEW")
     if len(cams) > SEGMENTS_MAX:
         bad(f"{len(cams)} camera segments; at most {SEGMENTS_MAX}")
@@ -379,9 +498,13 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
                                 "at": a, "frames": max(1, b - a), "strength": float(prm.get("strength", 1.0)),
                                 **{k: prm[k] for k in ("sigma_px", "span") if k in prm}}
                 continue
-            plan["cameras"].append({"op": op, "strength": float(prm.get("strength", 1.0)), "direction": prm.get("direction"),
-                                    "from": a, "to": max(a + 1, b), "easing": prm.get("ease", "ease_in_out"),
-                                    "target": _target(t.get("target"))})
+            cam_row = {"op": op, "strength": float(prm.get("strength", 1.0)), "direction": prm.get("direction"),
+                       "from": a, "to": max(a + 1, b), "easing": prm.get("ease", "ease_in_out"),
+                       "target": _target(t.get("target"))}
+            for k in ("overscan", "from_xy", "to_xy"):
+                if k in prm:
+                    cam_row[k] = prm[k]
+            plan["cameras"].append(cam_row)
         else:
             tg = t.get("target") or {}
             e = {"op": op, "strength": float(prm.pop("strength", 1.0)), "params": prm}

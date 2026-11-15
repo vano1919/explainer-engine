@@ -1,3 +1,27 @@
+"""Directed 2.5D: the renderer prototype that carries out a Scene Director's plan (roadmap 2026-11-14 B.4-B.6, phase P1).
+
+PROTOTYPE (P1, round 2 on the six Stage B photos): ``episode/run.py`` does not call it, and ``production/layers25d.py`` is
+unchanged. P3 folds what the owner accepts into ``layers25d``. It reads a picture's ``scene_layers/1`` folder
+(``production/understand.py``) and a resolved plan (``production/direction.resolve``), and lifts the five limits the roadmap
+found in ``layers25d`` (A.5):
+
+1. Depth at full size, never blurred into planes: the BACKGROUND is one continuous sheet (the clean plate) moved per pixel by
+   its own depth (a smoothed copy of it, so a slope stretches and never tears); every named OBJECT (SAM 2.1 + BiRefNet mask) is
+   a rigid cut-out at its median depth, in depth order. A crane or a truck shows the ground moving continuously, so the plane
+   seams of ``layers25d`` (the fill band of S01 crane 0.95) do not exist.
+2. Fills from LaMa (the plate), not Telea; the renderer knows on every frame which output pixel shows plate fill
+   (``telemetry.fill``) for the reveal detector (``qa/motion_intent``).
+3. A camera with a target: push and pull move towards a point or a mask while they zoom (inside the picture's margin); rack
+   focus pulls between two masks' depths; up to ``SEGMENTS_MAX`` word-timed segments; truck, crane (parallax), pan and tilt
+   (no parallax, level 1 of B.4), orbit (small), handheld.
+4. Effects with targets and instances: every flame, candle and glow is its own instance with its own phase (two braziers and
+   six candles in one shot), its light spills on the surfaces round it with distance falloff and flickers with it, the flame
+   itself deforms; smoke rises from a source point and the nearer objects cover it (composited depth); mist and sun shafts
+   are weighted by the depth of the VISIBLE surface, so they sit behind the near wire and people.
+5. ``legacy`` box effects (``fire_box``) keep the Stage B v1 behaviour for the ablations C1/C2 of the roadmap's K.1.
+
+Every frame is a pure function of its number (all randomness from the shot's seed).
+"""
 from __future__ import annotations
 import hashlib
 import math
@@ -56,7 +80,8 @@ SEEN_S = 3.0                       # an effect must be seen to change within thi
 SEEN_TOUCH = 2.0                   # ... over the pixels it changes by more than this many levels
 FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box") + LFX.OPS + (
     "subject_sway",)
-CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
+CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "pan_crop_2d", "tilt", "orbit", "handheld", "rack_focus")
+PAN_CROP_OVERSCAN = 1.10
 def _seed(s: str) -> int:
     return int(hashlib.sha256(s.encode()).hexdigest()[:8], 16)
 def _real_strokes(cv2, parts: np.ndarray, r: int) -> np.ndarray:
@@ -286,6 +311,18 @@ class Stage:
             elif seg["op"] == "pan":
                 cx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
                 pulls.append((seg, u))
+            elif seg["op"] == "pan_crop_2d":
+                # Rigid 2D window pan inside a small overscan: z-parallax is 0 (dp, tx, ty, ox unchanged).
+                if isinstance(seg.get("from_xy"), (list, tuple)) and isinstance(seg.get("to_xy"), (list, tuple)):
+                    fxy, txy = seg["from_xy"], seg["to_xy"]
+                    if f == int(seg["from"]) and u == 0.0:
+                        cx, cy = float(fxy[0]), float(fxy[1])
+                    elif u > 0.0:
+                        cx = float(fxy[0]) + (float(txy[0]) - float(fxy[0])) * u
+                        cy = float(fxy[1]) + (float(txy[1]) - float(fxy[1])) * u
+                else:
+                    cx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
+                    pulls.append((seg, u))
             elif seg["op"] == "tilt":
                 cy += NEAR_TRAVEL * st * u * (1 if d == "down" else -1) * self.sw / self.sh
             elif seg["op"] == "orbit":
@@ -318,7 +355,9 @@ class Stage:
             cx += HAND_TR * h * L._wave(t, self.seed, 0)
             cy += HAND_TR * h * L._wave(t, self.seed, 1) * self.sw / self.sh
             rot += HAND_ROT * h * L._wave(t, self.seed, 2)
-        return {"s": s, "cx": cx, "cy": cy, "tx": tx, "ty": ty, "ox": ox, "rot": rot, "dp": dp, "far": far, "z0": z0}
+        no_par = bool(abs(tx) < 1e-7 and abs(ty) < 1e-7 and abs(ox) < 1e-7 and abs(dp) < 1e-7)
+        return {"s": s, "cx": cx, "cy": cy, "tx": tx, "ty": ty, "ox": ox, "rot": rot, "dp": dp, "far": far, "z0": z0,
+                "no_parallax": no_par}
     def _bbox(self, m: np.ndarray, thr: float = 0.5):
         ys, xs = np.nonzero(m > thr)
         if not len(xs):
@@ -640,6 +679,9 @@ class Stage:
             return True
         frm = self.p.get("framing") if isinstance(self.p.get("framing"), dict) else None
         crop_floor = float(frm.get("crop") or 1.0) if frm else 1.0
+        for c in self.p.get("cameras", []):
+            if c.get("op") == "pan_crop_2d":
+                crop_floor = max(crop_floor, float(c.get("overscan") or PAN_CROP_OVERSCAN))
         lo, hi = max(1.0, crop_floor), max(1.6, crop_floor + 0.4)
         if fits(lo):
             return lo
@@ -652,8 +694,9 @@ class Stage:
         v = self.view(f)
         mx, my, dbg = self.bg_maps(v)
         sway = {e.get("mask"): float(e.get("strength", 1.0)) for e in self.p.get("effects", []) if e["op"] == "subject_sway"}
-        at_rest = (f == 0 and abs(v["tx"]) < 1e-7 and abs(v["ty"]) < 1e-7
-                   and abs(v["ox"]) < 1e-7 and abs(v["dp"]) < 1e-7 and not sway)
+        no_parallax = (abs(v["tx"]) < 1e-7 and abs(v["ty"]) < 1e-7
+                       and abs(v["ox"]) < 1e-7 and abs(v["dp"]) < 1e-7 and not sway)
+        at_rest = no_parallax
         base_img = self.src if at_rest else self.plate
         rgb = cv2.remap(base_img, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT).astype(np.float32)
         fill = (np.zeros((self.H, self.W), np.float32) if at_rest

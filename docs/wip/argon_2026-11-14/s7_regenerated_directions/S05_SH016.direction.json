@@ -1,0 +1,131 @@
+{
+  "schema": "shot_direction/1-draft",
+  "shot_id": "S05_SH016",
+  "kind": "photo",
+  "picture": "S05_SH016_start.png",
+  "picture_sha256": "391eaa3c1e71e261a4d419931b8c75ff40f377215b1e3fec0d3ef466d4bc7dda",
+  "author": "seen: the thread's Claude looking at the picture; choice: production/living_director",
+  "written": "2026-11-14",
+  "purpose": "A breath after the burial.",
+  "emotion": "emptiness",
+  "focus": {
+    "target": {"mask": "spade_left"},
+    "why": "the spades are the beat"
+  },
+  "composition": "keep the two spades whole and the stretcher readable",
+  "route": {
+    "renderer": "directed25d",
+    "why": "camera, light and atmosphere only: level 0-2 of B.4"
+  },
+  "transition_out": {
+    "type": "cut",
+    "why": "unchanged from the script (P6 decides transitions from the rendered motion)"
+  },
+  "stage_b_v1": {
+    "intent": "still_by_design",
+    "motion_imitation": [
+      {"effect": "fire_flicker", "strength": 1.0, "region": [0.07, 0.3, 0.18, 0.47], "event_id": "S05_SH016.M2", "audio": {"decision": "silent_by_design", "why": "the silence of the beat; no cue (BP-81)"}},
+      {"effect": "mist", "strength": 0.7, "event_id": "S05_SH016.M3", "audio": {"decision": "ambience_only", "why": "the field's haze; the place's bed carries it"}}
+    ],
+    "why": "A breath after the burial work (VL-08): two spades, one British and one German, stand together. The script's own camera_spec says static while its motion_imitation said push 0.3; the picture settles it for static. The spades do not move; only the small fires and the far haze live."
+  },
+  "seen": {
+    "what": "Two spades stand in frozen earth in the centre foreground; a covered stretcher lies mid-left; a smoking brazier and dugout fires left, candles in the trench walls right, a low sun top right of centre.",
+    "objects": [
+      {"id": "spade_left", "what": "left spade (D handle)", "points": [[0.335, 0.1], [0.36, 0.4], [0.39, 0.7], [0.42, 0.68]], "fine_edges": true, "names": ["spades"]},
+      {"id": "spade_right", "what": "right spade (T handle)", "points": [[0.66, 0.17], [0.645, 0.4], [0.62, 0.68]], "fine_edges": true},
+      {"id": "stretcher", "what": "covered stretcher", "points": [[0.3, 0.52], [0.45, 0.48], [0.2, 0.6]], "neg": [[0.37, 0.45]]}
+    ],
+    "lights": [
+      {"id": "sun", "kind": "sun", "point": [0.585, 0.17]},
+      {"id": "brazier_left", "kind": "fire", "point": [0.12, 0.378], "radius": 0.022},
+      {"id": "fire_2", "kind": "candle", "point": [0.249, 0.345], "radius": 0.01},
+      {"id": "fire_3", "kind": "candle", "point": [0.312, 0.313], "radius": 0.01},
+      {"id": "candle_r1", "kind": "candle", "point": [0.843, 0.414], "radius": 0.009},
+      {"id": "candle_r2", "kind": "candle", "point": [0.945, 0.384], "radius": 0.008},
+      {"id": "candle_r3", "kind": "candle", "point": [0.917, 0.6], "radius": 0.008}
+    ],
+    "depth_checks": [
+      {"near": [0.4, 0.72], "far": [0.3, 0.52], "why": "left spade blade before the stretcher"},
+      {"near": [0.3, 0.52], "far": [0.12, 0.3], "why": "stretcher before the brazier"},
+      {"near": [0.5, 0.88], "far": [0.5, 0.4], "why": "near earth before the field"},
+      {"near": [0.63, 0.65], "far": [0.8, 0.35], "why": "right spade before the trench wall"}
+    ],
+    "living": [
+      {"id": "brazier", "kind": "fire", "where": [0.12, 0.378], "area_pct": 0.5, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_brazier"], "why": "always on (LP-06): text 0: the words do not touch it; area 0.5 %; focus 1: 0.27 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2"},
+      {"id": "brazier_embers", "kind": "fire", "where": [0.12, 0.378], "area_pct": 0.5, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "the fire is too small to throw sparks that read"},
+      {"id": "fires_and_candles", "kind": "candle", "where": [0.6, 0.4], "area_pct": 0.15, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_fires_and_candles"], "why": "always on (LP-06): text 1: the words evoke it ('grave'); area 0.15 %; focus 1: 0.23 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2"},
+      {"id": "brazier_smoke", "kind": "smoke", "where": [0.12, 0.3], "area_pct": 2.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P2) (score 7; text 0: the words do not touch it; area 2 %; focus 1: 0.31 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2)"},
+      {"id": "field_mist", "kind": "mist", "where": [0.5, 0.3], "area_pct": 15.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_field_mist"], "why": "P1: text 1: the scene's surroundings name it; area 15 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "sun_glow", "kind": "sun", "where": [0.585, 0.17], "area_pct": 20.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun_glow"], "why": "P1: text 1: the scene's surroundings name it; area 20 %; focus 1: 0.37 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2"},
+      {"id": "sun_glow_rays", "kind": "sun", "where": [0.585, 0.17], "area_pct": 20.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun_glow_rays"], "why": "P1: text 1: the scene's surroundings name it; area 20 %; focus 1: 0.37 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2"},
+      {"id": "sun_glow_fade", "kind": "sun", "where": [0.585, 0.17], "area_pct": 100.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "the words do not say the light changes"},
+      {"id": "frost_on_spades_and_earth", "kind": "ice", "where": [0.51, 0.45], "area_pct": 0.3, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_frost_on_spades_and_earth"], "why": "P1: text 1: the scene's surroundings name it; area 0.3 %; focus 2: 0.14 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2"},
+      {"id": "clouds", "kind": "cloud", "where": [0.5, 0.05], "area_pct": 25.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P2) (score 8; text 0: the words do not touch it; area 25 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2)"},
+      {"id": "stretcher_tarp", "kind": "cloth", "where": [0.35, 0.5], "area_pct": 8.0, "text": 0, "focus": 2, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 5; text 0: the words do not touch it; area 8 %; focus 2: 0.04 from the focus (the part the words name (spade_left)); quality 0: it lies on a body: moving it reads as the body moving; cost 1)"},
+      {"id": "frosted_grass", "kind": "plants", "where": [0.3, 0.75], "area_pct": 3.0, "text": 0, "focus": 1, "quality": 1, "cost": 1, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 3 %; focus 1: 0.29 from the focus (the part the words name (spade_left)); quality 1: no clean mask, a soft box only; cost 1)"},
+      {"id": "wire", "kind": "wire", "where": [0.15, 0.25], "area_pct": 3.0, "text": 0, "focus": 1, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 4; text 0: the words do not touch it; area 3 %; focus 1: 0.32 from the focus (the part the words name (spade_left)); quality 0: thin strokes cannot be cut out cleanly; cost 1)"}
+    ]
+  },
+  "scene": {
+    "weather": [],
+    "wind": [0.025, 0.0],
+    "surroundings": "low sun, mist, frost"
+  },
+  "people_mid_or_close": false,
+  "intent": "intended",
+  "tracks": [
+    {"track": "camera", "op": "push", "renderer": "directed25d", "params": {"strength": 0.875, "ease": "linear"}, "timing": {"end": {"frac": 1.0}}, "validate": {"measure": "scale"}, "target": {"mask": "spade_left", "point": [0.376, 0.47]}},
+    {"id": "fx_brazier", "track": "lighting", "op": "fire", "renderer": "directed25d", "target": {"lights": ["brazier_left"]}, "params": {"strength": 1.0, "spill_radius": 0.042}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_fires_and_candles", "track": "lighting", "op": "candle", "renderer": "directed25d", "target": {"lights": ["fire_2", "fire_3", "candle_r1", "candle_r2", "candle_r3"]}, "params": {"strength": 1.0, "spill_radius": 0.03}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_field_mist", "track": "atmosphere", "op": "mist", "renderer": "directed25d", "target": {}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_sun_glow", "track": "lighting", "op": "sun_glint", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_sun_glow_rays", "track": "lighting", "op": "sun_shaft", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_frost_on_spades_and_earth", "track": "lighting", "op": "glint", "renderer": "directed25d", "target": {"box": [0.3, 0.05, 0.72, 0.85]}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"track": "audio", "decision": "ambience_only", "why": "fire (distant): fire (fx_brazier): the fire's crackle is the bed's", "events": ["fire"]}
+  ],
+  "round": "C5: C4A + the eye-review fixes (safe zone, seams, effects, camera plan)",
+  "rules": ["BP-185", "BP-194", "BP-195", "BP-196", "BP-197", "BP-200", "owner 2026-11-14 12:37 cards", "owner 2026-11-14 12:38 weather ceiling", "owner 2026-11-14 12:40 the director decides"],
+  "overrides": [
+    {"field": "tracks", "from": "C4 effects typed per shot by hand", "to": "C4 effects chosen by living_director from the words, the photo and the catalogue", "why": "the owner, 2026-11-14 12:40 UTC: the director decides the living frame itself"}
+  ],
+  "rounds": [],
+  "weather": [],
+  "keep_in_frame": [
+    {"light": "brazier_left", "soft": true, "why": "the fire effect lives on it"},
+    {"light": "fire_2", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "fire_3", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_r1", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_r2", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "candle_r3", "soft": true, "why": "the candle effect lives on it"},
+    {"light": "sun", "soft": true, "why": "the sun_glint effect lives on it"}
+  ],
+  "sound": {
+    "events": [
+      {"kind": "ambience", "what": "fire", "class": "fire", "at_s": 0.0, "distance": "distant", "decision": "ambience_only", "sync": "span", "why": "fire (fx_brazier): the fire's crackle is the bed's", "library": {"status": "library", "ids": ["fire_campfire_01", "fire_01", "fire_garage_02"], "why": "legacy_tags; best take fire_campfire_01 (fits: campfire, crackle)"}}
+    ],
+    "silent": [
+      {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "fx_fires_and_candles", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"},
+      {"id": "fx_field_mist", "op": "mist", "decision": "silent_by_design", "why": "mist makes no sound of its own and names no bed"},
+      {"id": "fx_sun_glow", "op": "sun_glint", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_sun_glow_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_frost_on_spades_and_earth", "op": "glint", "decision": "silent_by_design", "why": "a glint is light: no sound"}
+    ],
+    "needs": [],
+    "beds": ["fire"],
+    "coverage": "AMBIENCE_ONLY"
+  },
+  "choice": {
+    "by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
+    "faces": [],
+    "cap": 4,
+    "weather": [],
+    "camera": ["'spades' names spade_left in the first 1 s, too early for an accent: the base move leans towards it instead (1.5 %/s over 3.5 s, BP-21)"],
+    "chosen": ["brazier", "fires_and_candles", "field_mist", "sun_glow", "sun_glow_rays", "frost_on_spades_and_earth"],
+    "skipped": {"brazier_embers": "the fire is too small to throw sparks that read", "brazier_smoke": "LP-07: the cap of 4 is taken by higher scores (P2) (score 7; text 0: the words do not touch it; area 2 %; focus 1: 0.31 from the focus (the part the words name (spade_left)); quality 2: moves cleanly; cost 2)", "sun_glow_fade": "the words do not say the light changes", "clouds": "LP-07: the cap of 4 is taken by higher scores (P2) (score 8; text 0: the words do not touch it; area 25 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2)", "stretcher_tarp": "LP-05: it cannot move cleanly (score 5; text 0: the words do not touch it; area 8 %; focus 2: 0.04 from the focus (the part the words name (spade_left)); quality 0: it lies on a body: moving it reads as the body moving; cost 1)", "frosted_grass": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 3 %; focus 1: 0.29 from the focus (the part the words name (spade_left)); quality 1: no clean mask, a soft box only; cost 1)", "wire": "LP-05: it cannot move cleanly (score 4; text 0: the words do not touch it; area 3 %; focus 1: 0.32 from the focus (the part the words name (spade_left)); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+    "notes": [],
+    "sound": {"beds": ["fire"], "coverage": "AMBIENCE_ONLY", "silent": [{"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "fx_fires_and_candles", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"}, {"id": "fx_field_mist", "op": "mist", "decision": "silent_by_design", "why": "mist makes no sound of its own and names no bed"}, {"id": "fx_sun_glow", "op": "sun_glint", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_sun_glow_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_frost_on_spades_and_earth", "op": "glint", "decision": "silent_by_design", "why": "a glint is light: no sound"}], "needs": []},
+    "audit": {"idiom": {"id": "IDM_OBJECT_INSERT", "name": "object_insert_symbol", "why": "symbolic object/detail insert named by the narration"}, "chosen": {"primary_op": "push", "ops": ["push"], "why": ["'spades' names spade_left in the first 1 s, too early for an accent: the base move leans towards it instead (1.5 %/s over 3.5 s, BP-21)"]}, "rejected": {"orbit_small": "REJECTED (thin foreground wire/structures would tear under lateral orbit -> downgrade to crane or push_in)", "truck_25d": "REJECTED (inpainted hole_share=0.154 > 0.06 risks exposing fill -> downgrade to pan_crop_2d)"}, "measurements": {"person_boxes": [], "edge_margin_x": 1.0, "edge_margin_y": 1.0, "sky_area_pct": 25.0, "fg_bg_depth_delta": 0.6583, "unlayered_people": false, "hole_share": 0.1544, "people_count": 0}}
+  }
+}

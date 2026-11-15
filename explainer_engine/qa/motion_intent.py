@@ -1,3 +1,20 @@
+"""Intent against measurement, and the three deterministic defect detectors (roadmap 2026-11-14 B.10, H.1; phase P1).
+
+The Stage B prototype (2026-11-14) passed three visible defects through every gate: the fill band of S01_SH001 crane 0.95,
+the ghosts of S02_SH008 orbit_small, the blurred photo of S08_SH002 rack_focus "near". This module measures them:
+
+1. ``reveal``: the renderer knows which output pixel shows FILL (inpainted, never painted by the artist); the detector
+   measures how much of the frame newly shows fill and how thick the thickest revealed band is.
+2. ``double_edge``: a layer that moved by ``v`` against what lies behind it leaves a copy (a ghost, a doubled flame) when the
+   frame just outside its edge repeats the layer's own content shifted by ``v``; scored against the same test at the
+   perpendicular shift, so plain image smoothness cancels.
+3. ``target_sharpness``: the Laplacian variance inside the focus target's mask on the last frame against the first.
+
+Plus the intent check (``intended`` / ``minimal`` / ``still_by_design``) on the measured global motion (ORB + similarity,
+the prototype's method). Every threshold here is an engineering default: a miss is REVIEW, never FAIL (D-59), until
+``standards/sourced_rules.json`` has two source types for it. ``layers25d_telemetry`` reads a ``layers25d`` Scene (unchanged
+renderer) so the detectors can be run on the old clips too.
+"""
 from __future__ import annotations
 import math
 import numpy as np

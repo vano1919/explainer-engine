@@ -134,13 +134,37 @@ def _resolve_spine(shot: dict, spine, out_path: Path):
     return None
 
 
-def _resolve_prev_end_view(shot: dict, prev_end_view):
+def _resolve_prev_end_view(shot: dict, prev_end_view, script: dict | None = None, cache_dir: Path | None = None):
     cand = prev_end_view if prev_end_view is not None else shot.get("prev_end_view")
+    if cand is False or shot.get("inherit_camera") is False:
+        return None
     if isinstance(cand, (str, Path)):
         p = Path(cand)
         return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
     if isinstance(cand, dict) and {"lon", "lat", "span_km"} <= set(cand):
         return {"lon": float(cand["lon"]), "lat": float(cand["lat"]), "span_km": float(cand["span_km"])}
+    if script is not None and cache_dir is not None:
+        sid = shot.get("shot_id")
+        shots = script.get("shots") or []
+        for idx, s in enumerate(shots):
+            if s.get("shot_id") == sid and idx > 0:
+                prev_s = shots[idx - 1]
+                is_prev_map = (
+                    prev_s.get("route") == "map_action"
+                    or prev_s.get("visual_type") == "map_visualization"
+                    or prev_s.get("generation_mode") in ("TACTILE_MAP", "MAP_25D")
+                )
+                loc_a = prev_s.get("location_id") or prev_s.get("place")
+                loc_b = shot.get("location_id") or shot.get("place")
+                same_loc = (loc_a == loc_b) if (loc_a is not None or loc_b is not None) else True
+                if is_prev_map and same_loc:
+                    prev_sid = prev_s.get("shot_id")
+                    ev_file = Path(cache_dir) / f"{prev_sid}_end_view.json"
+                    if ev_file.is_file():
+                        doc = json.loads(ev_file.read_text(encoding="utf-8"))
+                        if isinstance(doc, dict) and {"lon", "lat", "span_km"} <= set(doc):
+                            return {"lon": float(doc["lon"]), "lat": float(doc["lat"]), "span_km": float(doc["span_km"])}
+                break
     return None
 
 
@@ -177,7 +201,7 @@ def render_action_map_clip(
         look.setdefault("period", period)
 
     resolved_spine = _resolve_spine(shot, spine, out)
-    resolved_prev = _resolve_prev_end_view(shot, prev_end_view)
+    resolved_prev = _resolve_prev_end_view(shot, prev_end_view, script=script, cache_dir=cdir)
     shot_for_plan = dict(shot)
     if period is not None and "period" not in shot_for_plan:
         shot_for_plan["period"] = period
