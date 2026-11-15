@@ -4,7 +4,7 @@ import re
 from typing import Any
 MAX_STILL_S = 5.0
 MIN_PART_S = 1.0
-CUTIN_CROP = 1.35
+CUTIN_CROP = 1.0  # Step 2 Fix: never jump-cut 1.35x on sub-parts of the same still
 DEFAULT_FOCUS = [0.5, 0.45]
 CLAUSE_PUNCT = (".", ",", ";", ":", "!", "?", "—", "–", "…")
 _TRAILING_QUOTES = "\"'”’)]}"
@@ -436,3 +436,42 @@ def build_shot_split_plan(
             for p in parts
         ],
     }
+
+
+def build_continuous_camera_waypoints(shot: dict, spine: list[dict] | None = None, fps: int = 24) -> list[dict]:
+    """Step 2 Fix: build a single continuous multi-waypoint camera pass over ``0..total_frames`` for a long 2.5D still.
+
+    Instead of splitting a 6-10 s still into sub-clips ``a/b/c`` that each reset ``s=1.0, dp=0.0`` at their local
+    frame 0, this function returns continuous camera segments over the full shot frame range ``[0, total_frames]``.
+    """
+    dur = float(shot.get("target_duration_seconds") or 0.0)
+    total_frames = max(1, int(round(dur * fps)))
+    existing_cams = list(shot.get("cameras") or [])
+    if existing_cams:
+        # Ensure segments cover [0, total_frames] monotonically without resetting zoom to 1.0 mid-shot
+        out = []
+        for idx, c in enumerate(existing_cams):
+            seg = dict(c)
+            seg.setdefault("start", 0 if idx == 0 else int(out[-1]["end"]))
+            seg.setdefault("end", total_frames if idx == len(existing_cams) - 1 else min(total_frames, int(seg["start"]) + max(fps, total_frames // len(existing_cams))))
+            out.append(seg)
+        if out:
+            out[-1]["end"] = total_frames
+        return out
+
+    brief = shot.get("director_brief") if isinstance(shot.get("director_brief"), dict) else {}
+    fa = brief.get("focal_anchor") if isinstance(brief.get("focal_anchor"), dict) else {}
+    box = fa.get("box_hint") if isinstance(fa.get("box_hint"), list) and len(fa.get("box_hint")) == 4 else [0.25, 0.20, 0.75, 0.85]
+    cx = round(0.5 * (float(box[0]) + float(box[2])), 4)
+    cy = round(0.5 * (float(box[1]) + float(box[3])), 4)
+    cam_spec = shot.get("camera_spec") or {}
+    move = str(cam_spec.get("camera_move") or "push_in").lower()
+    op = "pull_back" if "pull" in move else ("crane_up" if "crane" in move or "tilt_up" in move else ("pan_crop_2d" if "pan" in move else "push_in"))
+    return [{
+        "op": op,
+        "start": 0,
+        "end": total_frames,
+        "amount": 0.09 if op in ("push_in", "pull_back") else 0.06,
+        "target": {"point": [cx, cy], "mask": str(fa.get("id") or "primary")},
+        "continuous_single_pass": True,
+    }]

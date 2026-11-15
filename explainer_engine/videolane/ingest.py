@@ -205,7 +205,8 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
         s0, s1 = spans[0][0], spans[-1][1]
         lead = max(HEAD_LEAD[1], float(ep.get("head_handle_s", 0.0)))
         t_in = max(0.0, s0 - lead)
-        t_out = min(dur, s1 + max(CUT_TAIL[0], min(CUT_TAIL[1], float(ep.get("tail_handle_s", CUT_TAIL[1])))))
+        reaction_tail = max(0.50, float(CUT_TAIL[0]), min(max(0.65, float(CUT_TAIL[1])), float(ep.get("tail_handle_s", max(0.55, float(CUT_TAIL[1]))))))
+        t_out = min(dur, s1 + reaction_tail)
         if audio is not None and handover_s is None:
             t_out = late_sound_out(t_out, dur, spans[-1], audio, rate)   # TD-323: a last word the detector closed early
     else:
@@ -364,6 +365,101 @@ def clip_timings(root: Path, script: dict) -> dict:
             if d.get("status") != G.FAIL:
                 out[sid] = {"frames": int(d["frames"]), "speech": d.get("speech") or []}
     return out
+
+
+
+REACTION_TAIL_MIN_S = 0.50
+HALLUCINATED_TAIL_TOKENS = {"you", "you.", "thank", "thanks", "bye"}
+
+
+def whisper_edit_points(
+    whisper_doc: dict,
+    script: dict,
+    *,
+    head_lead_s: float = 0.40,
+    reaction_tail_s: float = 0.55,
+    min_dur_s: float = 1.50,
+    raw_durations: dict[str, float] | None = None,
+) -> dict:
+    """Step 1 (Trim/Clock Fix): compute frame-accurate edit_points from measured Whisper word timestamps.
+
+    - For every clip-spoken shot, trims ``in`` to ``max(0.0, first_word_start - head_lead_s)`` and
+      ``out`` to ``min(raw_dur, last_word_end + max(REACTION_TAIL_MIN_S, reaction_tail_s))`` so no spoken
+      syllable is ever severed mid-word and at least 0.50 s of reaction tail is preserved when available.
+    - For silent or narrator-voiced clips where Whisper detects hallucinated trailing speech tokens
+      (e.g. ``"You"`` in the last 1.2 s), records ``mute_tail_from_s`` so the mixer fades out the tail.
+    """
+    from explainer_engine.videolane import plan as P
+
+    spoken = P.clip_spoken(script)
+    shots_by_id = {s["shot_id"]: s for s in script.get("shots", [])}
+    raw_durations = raw_durations or {}
+    clips_out: dict[str, dict] = {}
+    whisper_clips = whisper_doc.get("clips") if isinstance(whisper_doc, dict) and "clips" in whisper_doc else whisper_doc
+    if not isinstance(whisper_clips, dict):
+        whisper_clips = {}
+
+    for sid, wrec in sorted(whisper_clips.items()):
+        shot = shots_by_id.get(sid) or {}
+        words = list((wrec or {}).get("words") or [])
+        raw_dur = float(
+            raw_durations.get(sid)
+            or (wrec or {}).get("duration")
+            or (wrec or {}).get("raw_seconds")
+            or max([float(w.get("end", 0.0)) for w in words] + [float(shot.get("target_duration_seconds") or 4.0)])
+        )
+        if sid in spoken and words:
+            # Filter out duplicate early false-starts if the same opening word repeats >1.0s later (e.g. S06_SH008 "Maybe")
+            clean_words = list(words)
+            if len(clean_words) >= 2:
+                w0 = re.sub(r"\W+", "", str(clean_words[0].get("word", "")).lower())
+                w1 = re.sub(r"\W+", "", str(clean_words[1].get("word", "")).lower())
+                if w0 and w0 == w1 and (float(clean_words[1].get("start", 0.0)) - float(clean_words[0].get("end", 0.0))) > 0.8:
+                    clean_words = clean_words[1:]
+            # Filter trailing single-word "You" hallucination after real speech
+            if len(clean_words) >= 2:
+                w_last = re.sub(r"\W+", "", str(clean_words[-1].get("word", "")).lower())
+                gap = float(clean_words[-1].get("start", 0.0)) - float(clean_words[-2].get("end", 0.0))
+                if w_last in HALLUCINATED_TAIL_TOKENS and gap >= 0.45:
+                    mute_at = round(float(clean_words[-2].get("end", 0.0)) + 0.25, 3)
+                    clean_words = clean_words[:-1]
+                else:
+                    mute_at = None
+            else:
+                mute_at = None
+
+            first_start = float(clean_words[0].get("start", 0.0))
+            last_end = float(clean_words[-1].get("end", first_start + 1.0))
+            t_in = round(max(0.0, first_start - head_lead_s), 3)
+            tail_need = max(REACTION_TAIL_MIN_S, float(reaction_tail_s))
+            t_out = round(min(raw_dur, max(t_in + min_dur_s, last_end + tail_need)), 3)
+            avail_tail = round(t_out - last_end, 3)
+            entry: dict = {
+                "in": t_in,
+                "out": t_out,
+                "speech_start_s": round(first_start, 3),
+                "speech_end_s": round(last_end, 3),
+                "reaction_tail_s": avail_tail,
+                "truncated_in_raw": avail_tail < 0.20,
+            }
+            if mute_at is not None:
+                entry["mute_tail_from_s"] = mute_at
+            clips_out[sid] = entry
+        elif words:
+            # Silent / narrated shot: check for hallucinated trailing tokens like "You"
+            tail_hallucinations = [
+                w for w in words
+                if re.sub(r"\W+", "", str(w.get("word", "")).lower()) in HALLUCINATED_TAIL_TOKENS
+            ]
+            if tail_hallucinations:
+                first_hal = min(float(w.get("start", raw_dur)) for w in tail_hallucinations)
+                clips_out[sid] = {
+                    "in": 0.0,
+                    "out": round(raw_dur, 3),
+                    "mute_tail_from_s": round(max(0.0, first_hal - 0.08), 3),
+                    "why": "mute LTX hallucinated speech token in tail",
+                }
+    return {"schema": "edit_points/2", "clips": clips_out}
 
 
 def main(argv=None) -> int:

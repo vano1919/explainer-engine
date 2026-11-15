@@ -185,7 +185,7 @@ def test_split_long_still_and_direction_resolve_keep_effects_cameras_and_cutin_f
     parts = SS.split_long_still(shot, sp, max_s=5.0, fps=24, seen=dir_doc["seen"])
     assert [p["shot_id"] for p in parts] == ["S05_SH020a", "S05_SH020b"]
     assert parts[0]["end_frame"] <= 94 and parts[1]["start_frame"] == parts[0]["end_frame"]
-    assert parts[1]["framing"] == {"crop": 1.35, "focus": [0.72, 0.53]}
+    assert parts[1]["framing"] == {"crop": 1.0, "focus": [0.72, 0.53]}
     stud_w = next(w for w in parts[1]["spine"] if "student" in w["word"].lower())
     assert stud_w["frame"] == stud_w["start_frame"] == 132 - parts[1]["start_frame"]
     plan_a = RUN._resolve_direction_plan(dir_doc, parts[0], parts[0]["total_frames"], parts[0]["spine"])

@@ -823,6 +823,9 @@ class Stage:
             layers.append({"id": o["id"], "alpha": a, "m": m})
         rgb = self._effects(rgb, depth, f, v, mx, my, layers)
         rgb = self._rack(rgb, depth, f)
+        if self.p.get("visual_bridge") or self.p.get("on_screen_text"):
+            from explainer_engine.production import visual_bridge as VB
+            rgb = VB.render_on_frame(rgb, self.p, f, self.fps, self.n, keep_boxes=self.keep)
         if tele is not None:
             tele.update({"view": v, "fill": fill, "depth": depth, "layers": layers, "bg_maps": (mx, my)})
         return np.clip(rgb + 0.5, 0, 255).astype(np.uint8)
@@ -1036,7 +1039,9 @@ class Stage:
             hm_full = cv2.resize(self.masks_src[host["id"]].astype(np.float32), (self.W, self.H), interpolation=cv2.INTER_LINEAR)
             holder_crop = hm_full[y0:y1, x0:x1]
         field, _ = MI.isolate_flame_mover(sub, fm[y0:y1, x0:x1], op=op, holder_mask=holder_crop)
-        dx = amp * wob * tip * field
+        wind_vx = float(LFX.wind(self)[0]) if hasattr(LFX, "wind") else 0.04
+        draft_bend = wind_vx * (3.2 + 1.4 * math.sin(2 * math.pi * 0.85 * t + (k % 17))) * ww * s * (tip ** 1.35) * field
+        dx = (amp * wob * tip * field) + draft_bend
         dy = -0.04 * hh * s * (0.5 + 0.5 * np.sin(2 * math.pi * 1.7 * speed * t + k % 7)) * tip * field
         moved = cv2.remap(np.ascontiguousarray(sub), (xx + dx).astype(np.float32), (yy + dy).astype(np.float32),
                           cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)

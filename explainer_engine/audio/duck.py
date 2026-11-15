@@ -76,3 +76,82 @@ def step_finding(gain: np.ndarray, sr: int) -> dict | None:
         return None
     return {"rule": "BP-53", "severity": "REVIEW", "where": "music duck",
             "detail": f"gain steps {step:.2f} dB in a millisecond (at most {MAX_STEP_DB_PER_MS:g}): a dip heard as a cut"}
+
+
+def duck_presence_band(
+    bed_or_bus: np.ndarray,
+    voice_sidechain: np.ndarray,
+    sr: int = 48000,
+    *,
+    presence_hz: tuple[float, float] = (280.0, 3600.0),
+    presence_cut_db: float = 5.5,
+    outer_cut_db: float = 1.8,
+    threshold_db: float = -37.0,
+) -> np.ndarray:
+    """Step 5 Fix: dynamic presence-band (280-3600 Hz) ducking instead of -9 dB broadband crushing.
+
+    Carves the vocal presence band (280-3600 Hz) by ``presence_cut_db`` when speech is active while
+    ducking low-end warmth (< 280 Hz) and high-air wind hiss / fire crackle (> 3600 Hz) by only
+    ``outer_cut_db`` (1.8 dB), so environmental beds remain audible under continuous narration.
+    """
+    from scipy import signal
+
+    arr = np.asarray(bed_or_bus, dtype=np.float32)
+    sc = np.asarray(voice_sidechain, dtype=np.float32)
+    if sc.ndim > 1:
+        sc = sc.mean(axis=0)
+    is_1d = arr.ndim == 1
+    stereo = arr[None, :] if is_1d else arr
+    n = stereo.shape[-1]
+    sc = sc[:n] if len(sc) >= n else np.pad(sc, (0, n - len(sc)))
+
+    win = max(1, int(0.12 * sr))
+    env = np.convolve(np.abs(sc), np.ones(win, dtype=np.float32) / win, mode="same")
+    gate = (env > (10.0 ** (threshold_db / 20.0))).astype(np.float32)
+    smooth_w = max(1, int(0.32 * sr))
+    gate = np.clip(np.convolve(gate, np.ones(smooth_w, dtype=np.float32) / smooth_w, mode="same"), 0.0, 1.0)
+
+    sos_bp = signal.butter(2, [presence_hz[0], presence_hz[1]], btype="bandpass", fs=sr, output="sos")
+    presence = signal.sosfilt(sos_bp, stereo, axis=-1).astype(np.float32)
+    outer = stereo - presence
+
+    g_pres = (10.0 ** (-abs(presence_cut_db) * gate / 20.0)).astype(np.float32)
+    g_outer = (10.0 ** (-abs(outer_cut_db) * gate / 20.0)).astype(np.float32)
+    out = presence * g_pres + outer * g_outer
+    return out[0] if is_1d else out
+
+
+def stage_spatial_sound(
+    audio: np.ndarray,
+    *,
+    source_x: float = 0.5,
+    distance: str = "medium",
+    camera_op: str = "hold",
+    progress: float = 0.0,
+    sr: int = 48000,
+) -> np.ndarray:
+    """Step 5 & Creator C1: stage sound inside the picture space so level, pan, and distance follow the source and camera.
+
+    - ``source_x`` in ``[0, 1]`` maps to stereo pan ``[-0.75, +0.75]`` via equal-power panning.
+    - ``distance`` (``distant`` | ``medium`` | ``close``) applies air-absorption low-pass filtering and distance gain.
+    - ``camera_op`` (``push`` / ``push_in`` / ``fly_to``) adds up to +2.5 dB proximity gain as ``progress`` goes 0 -> 1.
+    """
+    from scipy import signal
+
+    x = np.asarray(audio, dtype=np.float32)
+    if x.ndim > 1:
+        x = x.mean(axis=0)
+    lp_hz = {"distant": 2800.0, "medium": 6800.0, "close": None}.get(str(distance), 6800.0)
+    if lp_hz and len(x) > 16:
+        sos = signal.butter(2, lp_hz, btype="low", fs=sr, output="sos")
+        x = signal.sosfilt(sos, x).astype(np.float32)
+    dist_db = {"distant": -5.0, "medium": -1.5, "close": 0.0}.get(str(distance), -1.5)
+    cam_db = 2.5 * float(np.clip(progress, 0.0, 1.0)) if str(camera_op) in ("push", "push_in", "fly_to", "zoom") else (
+        -2.0 * float(np.clip(progress, 0.0, 1.0)) if str(camera_op) in ("pull", "pull_back") else 0.0
+    )
+    gain = 10.0 ** ((dist_db + cam_db) / 20.0)
+    pan = float(np.clip(2.0 * float(source_x) - 1.0, -0.75, 0.75))
+    angle = (pan + 1.0) * np.pi / 4.0
+    left = x * gain * np.cos(angle)
+    right = x * gain * np.sin(angle)
+    return np.stack([left.astype(np.float32), right.astype(np.float32)], axis=0)

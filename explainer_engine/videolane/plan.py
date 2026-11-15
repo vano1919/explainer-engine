@@ -26,7 +26,15 @@ from pathlib import Path
 from explainer_engine.qa import gates as G
 from explainer_engine.standards import sourced_rules as SR
 
-MODES = ("continuation", "coverage", "insert")
+MODES = ("continuation", "coverage", "insert", "ltx_chain_tail", "ltx_chain_crop_ots", "ltx_scene_master_cov", "ltx_flf_bridge", "cutaway_insert_bridge", "new_anchor_reset")
+CONTINUITY_SUBMODES = {
+    "ltx_chain_tail": "continuation",
+    "ltx_chain_crop_ots": "continuation",
+    "ltx_scene_master_cov": "coverage",
+    "ltx_flf_bridge": "continuation",
+    "cutaway_insert_bridge": "insert",
+    "new_anchor_reset": "coverage",
+}
 SIZES = ("extreme_wide", "wide", "medium_wide", "medium", "over_the_shoulder", "medium_close_up", "close_up",
          "extreme_close_up")
 SIZE_STEP = {"extreme_wide": 0, "wide": 1, "medium_wide": 2, "medium": 3, "over_the_shoulder": 3, "medium_close_up": 4,
@@ -164,7 +172,8 @@ def findings(script: dict, max_s: float = 10.0) -> list[dict]:
             if not ep:
                 out.append(_f("VL-01", sid, G.FAIL, "a video shot without its edit_plan (written before any paid clip)"))
                 continue
-            mode = ep.get("continuity_mode")
+            raw_mode = ep.get("continuity_mode")
+            mode = CONTINUITY_SUBMODES.get(raw_mode, raw_mode)
             if mode == "continuation" or ep.get("anchor_from") == "prev_last_frame":
                 continuation_count += 1
             if len(s.get("audio_line_ids") or []) > 1 and sid in spoken:
@@ -437,3 +446,107 @@ def draft_edit_plans(script: dict) -> dict[str, dict]:
                 ep["speech_onset_s"] = SPEECH_ONSET_S
             out[s["shot_id"]] = ep
     return out
+
+
+# ---- Creator Correction C2: Use LTX Only Where It Is Natural (RT-LTX-FIT) --------------------------------------------------
+# LTX breaks frontal talking faces, close-ups, two-person facial interactions, small hand props (photographs, scissors,
+# footballs, tins), fast motion, and identity across cuts.
+# LTX excels at short atmospheric shots (smoke, fire, snow, fog, water), environments, slow camera moves, wide/far shots,
+# people from behind / over-the-shoulder / in silhouette, and simple single-person hand/foot actions.
+LTX_UNNATURAL_PROPS = ("photograph", "photo", "scissors", "comb", "football", "ball", "tin", "chocolate", "button", "letter", "cake", "bread", "cigar", "cigarette")
+LTX_NATURAL_SIZES = ("extreme_wide", "wide", "over_the_shoulder")
+
+
+def classify_ltx_natural_fit(shot: dict, script: dict) -> dict:
+    """Evaluate whether ``shot`` is natural for LTX video generation under Creator Rule C2 (``RT-LTX-FIT``).
+
+    Returns ``{"shot_id", "natural_for_ltx", "recommended_route", "recommended_framing", "reasons"}``.
+    """
+    import re
+    sid = shot.get("shot_id", "?")
+    lines = _lines(script)
+    size = str((shot.get("camera_spec") or {}).get("shot_size") or "medium").lower()
+    chars = list(shot.get("character_ids") or [])
+    line_ids = list(shot.get("audio_line_ids") or [])
+    has_char_speech = any((lines.get(lid) or {}).get("speaker_type") == "character" for lid in line_ids)
+    spoken_text = " ".join(str((lines.get(lid) or {}).get("text") or "") for lid in line_ids)
+    text_blob = " ".join([
+        str(shot.get("action_start_state") or ""),
+        str(shot.get("action_end_state") or ""),
+        str(shot.get("narrative_purpose") or ""),
+        spoken_text,
+        str((shot.get("video_prompt") or {}).get("motion_prompt") if isinstance(shot.get("video_prompt"), dict) else shot.get("video_prompt") or ""),
+    ]).lower()
+
+    reasons: list[str] = []
+    is_ots_or_behind = (
+        size == "over_the_shoulder"
+        or "over-the-shoulder" in text_blob
+        or "over the shoulder" in text_blob
+        or "from behind" in text_blob
+        or "silhouette" in text_blob
+        or "back turned" in text_blob
+    )
+
+    if has_char_speech and size not in ("extreme_wide", "wide") and not is_ots_or_behind:
+        reasons.append(f"frontal/near talking face in {size} (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)")
+    if size in ("medium_close_up", "close_up", "extreme_close_up") and not is_ots_or_behind and chars:
+        reasons.append(f"close facial framing in {size} (C2: route to 2.5D living photo or close hand/object insert)")
+    if len(chars) >= 2 and size not in ("extreme_wide", "wide") and not is_ots_or_behind:
+        reasons.append(f"two-person interaction in {size} (C2: LTX warps two-person interaction and swaps identity)")
+    hit_props = [pr for pr in LTX_UNNATURAL_PROPS if re.search(rf"\b{re.escape(pr)}\b", text_blob)]
+    if hit_props and size not in ("extreme_wide",):
+        reasons.append(f"small prop/ball action ({', '.join(hit_props[:2])}) (C2: LTX deforms small props in hands/feet)")
+
+    if not reasons:
+        return {
+            "shot_id": sid,
+            "natural_for_ltx": True,
+            "recommended_route": shot.get("route", "video"),
+            "recommended_framing": size,
+            "reasons": ["wide/atmospheric/from-behind/slow motion fits LTX natural strengths"],
+        }
+
+    if hit_props and not has_char_speech:
+        rec_route = "still_25d"
+        rec_framing = "close_up_insert_25d"
+    elif has_char_speech:
+        rec_route = "still_25d"
+        rec_framing = "living_photo_with_voice_or_ots"
+    else:
+        rec_route = "still_25d"
+        rec_framing = "living_photo_25d"
+
+    return {
+        "shot_id": sid,
+        "natural_for_ltx": False,
+        "recommended_route": rec_route,
+        "recommended_framing": rec_framing,
+        "reasons": reasons,
+    }
+
+
+def reroute_unnatural_ltx_shots(script: dict) -> dict:
+    """Apply Creator Correction C2 across ``script`` and return a summary of route assignments."""
+    import copy as _copy
+    doc = _copy.deepcopy(script)
+    evals = {}
+    rerouted_to_25d = []
+    kept_ltx_natural = []
+    for s in doc.get("shots", []):
+        if s.get("route") in ("map_action",):
+            continue
+        ev = classify_ltx_natural_fit(s, doc)
+        evals[s["shot_id"]] = ev
+        if is_video(s):
+            if ev["natural_for_ltx"]:
+                kept_ltx_natural.append(s["shot_id"])
+            else:
+                rerouted_to_25d.append(s["shot_id"])
+            s["c2_natural_fit"] = ev
+    return {
+        "evaluations": evals,
+        "kept_ltx_natural": kept_ltx_natural,
+        "rerouted_to_25d": rerouted_to_25d,
+        "script": doc,
+    }

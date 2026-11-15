@@ -361,8 +361,8 @@ def test_t7_split_long_still_10_96s_splits_at_nearest_legal_boundary_into_parts_
     # Nearest legal first boundary is 4.6 s ("truce."), not 5.2 s ("failed." > 5.0 s).
     assert parts[0]["spine"][-1]["word"] == "truce."
     assert parts[1]["spine"][-1]["word"] == "agreed."
-    assert parts[1]["framing"] == {"crop": 1.35, "focus": [0.58, 0.42]}
-    assert parts[2]["framing"] == {"crop": 1.35, "focus": [0.58, 0.42]}
+    assert parts[1]["framing"] == {"crop": 1.0, "focus": [0.58, 0.42]}
+    assert parts[2]["framing"] == {"crop": 1.0, "focus": [0.58, 0.42]}
 
     # IDs, frames, durations, and word ranges add up exactly to the original shot.
     assert sum(p["frames"] for p in parts) == 263

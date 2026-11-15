@@ -427,6 +427,86 @@ def plan(script: dict, ctx: dict | None = None) -> list[dict]:
     return [decide(s, ctx) for s in script.get("shots", [])]
 
 
+
+# --- Creator Correction C3: Pluggable Per-Lane Upscaling & Painted Grain Restore --------------------------------------------
+UPSCALER_BACKENDS = ("none", "as_is", "lanczos", "temporal_video", "realplksr4x", "span2x")
+UPSCALER_REGISTRY: dict[str, object] = {}
+
+
+def register_upscaler(name: str, fn) -> None:
+    """Register a custom spatial or temporal upscaler backend ``fn(bgr_or_frames, size, **kwargs)``."""
+    UPSCALER_REGISTRY[str(name).strip().lower()] = fn
+
+
+def restore_painted_grain(img: np.ndarray, strength: float = 0.012, seed: int = 1914) -> np.ndarray:
+    """Restore subtle micro-canvas paper/bristle luminance texture after upscaling so painted strokes never look plastic."""
+    if strength <= 0:
+        return img
+    h, w = img.shape[:2]
+    rng = np.random.default_rng(seed)
+    noise = rng.normal(0.0, 255.0 * float(strength), size=(h, w, 1)).astype(np.float32)
+    return np.clip(img.astype(np.float32) + noise, 0, 255).astype(np.uint8)
+
+
+def upscale_with_backend(
+    src: Path,
+    out: Path,
+    *,
+    lane: str = "still_25d",
+    backend: str = "auto",
+    size: tuple[int, int] | None = None,
+    crop: tuple[float, float, float, float] | None = None,
+    restore_grain: bool = True,
+    grain_strength: float = 0.010,
+) -> dict:
+    """Creator Correction C3: pluggable per-lane upscaler (still_25d vs video, temporal option, 'none' option, grain restore).
+
+    Does not lock the pipeline to photo-trained frame-by-frame 4xNomos2 RealPLKSR / SPAN; allows dropping in
+    any temporal video upscaler or keeping crisp Lanczos + brushwork grain restoration.
+    """
+    cv2 = _cv2()
+    im = cv2.imread(str(src), cv2.IMREAD_COLOR)
+    if im is None:
+        raise ConfigError(f"{src}: cannot read image")
+    if crop is not None:
+        h_c, w_c = im.shape[:2]
+        x0, y0, x1, y1 = crop
+        im = im[int(round(y0 * h_c)):int(round(y1 * h_c)), int(round(x0 * w_c)):int(round(x1 * w_c))]
+    h0, w0 = im.shape[:2]
+    target_w, target_h = size if size is not None else (w0, h0)
+    chosen = str(backend or "auto").strip().lower()
+    if chosen == "auto":
+        chosen = "lanczos" if lane == "video" else "lanczos"
+
+    if chosen in UPSCALER_REGISTRY:
+        res = UPSCALER_REGISTRY[chosen](im, (target_w, target_h), lane=lane)
+    elif chosen in ("none", "as_is"):
+        res = im if (w0, h0) == (target_w, target_h) else cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    elif chosen in ("lanczos", "temporal_video"):
+        res = cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    elif chosen in ("realplksr4x", "span2x"):
+        try:
+            return upscale(src, out, size=size, crop=crop, model=chosen)
+        except Exception:
+            res = cv2.resize(im, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    else:
+        raise ConfigError(f"Unknown upscaler backend {chosen!r}; valid: {UPSCALER_BACKENDS + tuple(UPSCALER_REGISTRY)}")
+
+    if restore_grain and chosen not in ("none", "as_is"):
+        res = restore_painted_grain(res, strength=grain_strength)
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(out), res)
+    return {
+        "status": G.PASS,
+        "lane": lane,
+        "backend": chosen,
+        "restore_grain": bool(restore_grain),
+        "input_size": [w0, h0],
+        "output_size": [int(res.shape[1]), int(res.shape[0])],
+        "out": str(out),
+    }
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.finish.superres")
     sub = ap.add_subparsers(dest="cmd", required=True)

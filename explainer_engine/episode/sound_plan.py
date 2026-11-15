@@ -405,8 +405,14 @@ def shot_events(shot: dict, script: dict, fps: int, era: str, spine: list[dict] 
         cands.append({"class": cls, "source": "action_text", "at_s": None, "basis": "text",
                       "why": "the shot's action text names it: a person authors the event with its frame (AV-07)"})
     state["candidates"][sid] = [c for c in cands if c["class"] not in seen]
+    brief_fa = ((shot.get("director_brief") or {}).get("focal_anchor") or {}) if isinstance(shot.get("director_brief"), dict) else {}
+    box_h = brief_fa.get("box_hint") if isinstance(brief_fa.get("box_hint"), list) and len(brief_fa.get("box_hint")) == 4 else [0.25, 0.2, 0.75, 0.8]
+    default_pan = round(float(np.clip((float(box_h[0]) + float(box_h[2])) - 1.0, -0.75, 0.75)), 3) if "np" in globals() else round(max(-0.75, min(0.75, (float(box_h[0]) + float(box_h[2])) - 1.0)), 3)
+    cam_move = str((shot.get("camera_spec") or {}).get("camera_move") or "hold").lower()
     for ev in events:
         ev["distance"] = ev.get("distance") or distance_of(ev["class"], shot)
+        ev.setdefault("pan", 0.0 if ev.get("kind") == "ambience" else default_pan)
+        ev.setdefault("camera_coupled_gain_db", 2.0 if "push" in cam_move else (-1.5 if "pull" in cam_move else 0.0))
     state["heard"][sid] = heard_only
     forbidden = _forbidden(era)
     kept = []
@@ -745,3 +751,33 @@ def write(plan: dict, sources: dict, episode_dir: Path) -> Path:
     ok, why = shippable(sources, plan)
     write_json_atomic(path, dict(plan, sources=sources, needs=needs(sources), shippable=ok, not_shippable_because=why))
     return path
+
+
+def advisory_density_hint(shot_sound: dict, shot_spec: dict | None = None) -> dict:
+    """Creator Correction C1 (No Numeric Quotas Decide): sound density is an advisory REVIEW hint only, never a FAIL gate.
+
+    Intentional silence (``intentional_silence`` / ``sound_design.silence``) or restrained solemn beats pass with
+    zero spot cues.
+    """
+    design = shot_sound.get("design") or {}
+    state = design.get("state")
+    silence = design.get("silence_reason") or (shot_spec or {}).get("intentional_silence")
+    evs = shot_sound.get("events") or []
+    dur = max(0.1, float(shot_sound.get("dur_s") or 1.0))
+    if silence or state == "INTENTIONAL_SILENCE":
+        return {
+            "shot_id": shot_sound.get("shot_id"),
+            "status": "PASS",
+            "severity": "INFO",
+            "blocking": False,
+            "detail": f"intentional silence / restraint honoured: {silence or state}",
+        }
+    cues_per_10s = round(len(evs) * 10.0 / dur, 2)
+    return {
+        "shot_id": shot_sound.get("shot_id"),
+        "status": "PASS" if evs or state in ("AMBIENCE_ONLY", "MUSIC_SUPPORTED") else "REVIEW",
+        "severity": "REVIEW",
+        "blocking": False,
+        "cues_per_10s": cues_per_10s,
+        "detail": "advisory density hint only (C1: numbers never decide; brief, picture and camera decide)",
+    }

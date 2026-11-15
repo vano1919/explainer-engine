@@ -556,12 +556,14 @@ def plan(
         }
         for a in out
     ]
-    return {"shot_id": sid, "frames": frames, "fps": fps, "basis": basis, "spine_basis": basis, "card": card,
+    _res = {"shot_id": sid, "frames": frames, "fps": fps, "basis": basis, "spine_basis": basis, "card": card,
             "actions": out, "keyframe_timeline": keyframe_timeline, "carry_over": carry_over, "auto_labels": auto_labels,
             "dense": dense, "drift": DRIFT, "path_findings": findings,
             "view0": view0, "own_view": own_view,
             "prev_end_view": dict(view0) if (prev_end_view is not None and not card) else None,
             "period": period}
+    _res["frame_locked_audio_events"] = emit_frame_locked_audio_events(_res)
+    return _res
 
 
 def _own_view(shot: dict, acts: list[dict]) -> dict:
@@ -607,11 +609,15 @@ def _u(a: dict, f: int) -> float:
 
 
 def _u_counter(a: dict, f: int) -> float:
-    """Eased progress of a counter from its first visible frame (never 0 at ``f == a['start']``, M6)."""
+    """Eased progress of a counter from its first visible frame (never 0 at ``f == a['start']``, M6),
+    reaching 1.0 with a hold tail (at least 18 frames or 1/3 of span) before ``a['end']`` so the final target
+    value (e.g. ``100,000 men (estimate)`` in ``S05_SH002``) lands cleanly and holds on screen (Step 4 Fix)."""
     if f < a["start"]:
         return 0.0
     span = max(1, a["end"] - a["start"])
-    return D.ease_in_out(min(1.0, (f - a["start"] + 1) / span))
+    hold_frames = min(18, max(1, span // 3)) if span > 3 else 0
+    active_span = max(1, span - hold_frames)
+    return D.ease_in_out(min(1.0, (f - a["start"] + 1) / active_span))
 
 
 def _progress(a: dict, f: int) -> float:
@@ -1458,3 +1464,84 @@ def render_frame(p: dict, f: int, base, width: int, height: int, look: dict | No
     c.face = "map"
     draw(c, p, f, view, look)
     return c.image().convert("RGB")
+
+
+def emit_frame_locked_audio_events(p: dict) -> list[dict]:
+    """Step 4 Fix: emit frame-locked audio spans strictly for the frames where a map action moves or lands.
+
+    - ``route_arrow``, ``front_line``, ``supply_line``: emits ``map_route_draw`` (``pencil_line__v1`` / ``chalk_line__v1``)
+      ONLY over ``[draw_start_frame, draw_end_frame)`` where ``0.0 < progress(f) < 1.0`` and ``ds/df > 0`` (never when standing
+      or after the line finishes drawing).
+    - ``label``, ``pulse``, ``highlight``: emits ``map_pin_set`` at ``start`` frame when not standing.
+    - ``counter``: emits ``data_tick`` across the active counting span and ``data_confirm`` on the exact landing frame.
+    """
+    fps = int(p.get("fps") or 24)
+    total_frames = int(p.get("frames") or fps)
+    events: list[dict] = []
+    for a in p.get("actions") or []:
+        if _stands(a) or a.get("ghost"):
+            continue
+        k = a["kind"]
+        s_f = max(0, int(a.get("start", 0)))
+        e_f = min(total_frames, int(a.get("end", total_frames)))
+        if k in ("route_arrow", "front_line", "supply_line"):
+            active_frames = [
+                f for f in range(s_f, e_f)
+                if _head(p, a, f) > _head(p, a, max(0, f - 1)) + 1e-5
+            ]
+            if active_frames:
+                f0, f1 = active_frames[0], active_frames[-1] + 1
+                events.append({
+                    "event_id": f"{a.get('event_id', k)}:draw",
+                    "action_kind": k,
+                    "class": "map_route_draw",
+                    "sound_token": "L:chalk_line__v1" if k == "front_line" else "L:pencil_line__v1",
+                    "sync": "span",
+                    "start_frame": f0,
+                    "end_frame": f1,
+                    "start_s": round(f0 / fps, 4),
+                    "end_s": round(f1 / fps, 4),
+                    "dur_s": round((f1 - f0) / fps, 4),
+                })
+        elif k in ("label", "pulse", "highlight", "spread", "plume"):
+            events.append({
+                "event_id": f"{a.get('event_id', k)}:onset",
+                "action_kind": k,
+                "class": "map_pin_set",
+                "sound_token": "L:thud_soft__v1",
+                "sync": "onset",
+                "start_frame": s_f,
+                "end_frame": min(total_frames, s_f + 6),
+                "start_s": round(s_f / fps, 4),
+                "end_s": round(min(total_frames, s_f + 6) / fps, 4),
+                "dur_s": round(min(6, total_frames - s_f) / fps, 4),
+            })
+        elif k == "counter":
+            span = max(1, e_f - s_f)
+            hold_frames = min(18, max(1, span // 3)) if span > 3 else 0
+            land_f = max(s_f + 1, e_f - hold_frames)
+            events.append({
+                "event_id": f"{a.get('event_id', k)}:ticks",
+                "action_kind": k,
+                "class": "data_tick",
+                "sound_token": "L:ui_click_kenney__v1",
+                "sync": "span",
+                "start_frame": s_f,
+                "end_frame": land_f,
+                "start_s": round(s_f / fps, 4),
+                "end_s": round(land_f / fps, 4),
+                "dur_s": round((land_f - s_f) / fps, 4),
+            })
+            events.append({
+                "event_id": f"{a.get('event_id', k)}:land",
+                "action_kind": k,
+                "class": "data_confirm",
+                "sound_token": "L:bell_soft__v1",
+                "sync": "onset",
+                "start_frame": land_f,
+                "end_frame": min(total_frames, land_f + 8),
+                "start_s": round(land_f / fps, 4),
+                "end_s": round(min(total_frames, land_f + 8) / fps, 4),
+                "dur_s": round(min(8, total_frames - land_f) / fps, 4),
+            })
+    return events

@@ -1,36 +1,236 @@
 {
- "schema": "edit_points/1",
+ "schema": "edit_points/2",
  "clips": {
+  "S02_SH004": {
+   "in": 0.0,
+   "out": 3.0,
+   "mute_tail_from_s": 1.3,
+   "why": "KEEP-TRIM: mute LTX hallucinated 'You' at 1.38-1.88s"
+  },
   "S02_SH006": {
    "in": 0.0,
-   "out": 4.5
+   "out": 4.85,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.34,
+   "reaction_tail_s": 0.51,
+   "why": "KEEP-TRIM: restore full 'Come on, lads!' + 0.51s reaction tail"
+  },
+  "S02_SH007": {
+   "in": 0.0,
+   "out": 4.0,
+   "speech_start_s": 0.0,
+   "speech_end_s": 3.52,
+   "reaction_tail_s": 0.48,
+   "why": "KEEP-TRIM: preserve full 'Hold your fire' + tail"
   },
   "S03_SH003": {
    "in": 0.0,
-   "out": "end",
-   "why": "old cut clipped 'Nacht'"
+   "out": 4.71,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.42,
+   "reaction_tail_s": 0.29,
+   "why": "KEEP-TRIM: preserve full 'Stille Nacht! Heilige Nacht!' to raw end"
+  },
+  "S03_SH004": {
+   "in": 1.35,
+   "out": 3.0,
+   "speech_start_s": 1.92,
+   "speech_end_s": 2.84,
+   "reaction_tail_s": 0.16,
+   "why": "KEEP-TRIM: shift in_s to 1.35s so 'Listen.' (1.92-2.84s) is never cut off at 2.25s"
+  },
+  "S03_SH005": {
+   "in": 0.0,
+   "out": 4.7,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.22,
+   "reaction_tail_s": 0.48,
+   "why": "KEEP-TRIM: extend slot from 3.25s to 4.70s so 'Wait... that's German.' finishes cleanly"
+  },
+  "S03_SH006": {
+   "in": 0.0,
+   "out": 3.95,
+   "speech_start_s": 0.0,
+   "speech_end_s": 3.38,
+   "reaction_tail_s": 0.57,
+   "mute_tail_from_s": 3.5,
+   "why": "KEEP-TRIM: extend slot from 2.75s to 3.95s so 'Boys\u2014sing it back.' finishes, muting trailing 'You' at 3.58s"
   },
   "S03_SH007": {
    "in": 0.0,
-   "out": 3.75,
+   "out": 1.9,
    "clip_audio": "mute",
-   "why": "false words in noise; white bloom from ~2 s: cut at 1.9 s if the eye check sees it"
+   "why": "Cut before white sky bloom at 2.0s; mute false noise tokens"
+  },
+  "S03_SH008": {
+   "in": 0.0,
+   "out": 5.0,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.8,
+   "reaction_tail_s": 0.2,
+   "why": "Full raw clip for carol phrasing"
+  },
+  "S03_SH009": {
+   "in": 1.4,
+   "out": 4.0,
+   "speech_start_s": 1.8,
+   "speech_end_s": 3.9,
+   "reaction_tail_s": 0.1,
+   "why": "KEEP-TRIM: shift window to 1.40..4.00s so 'Good, English! More!' (2.28-3.90s) is heard in full"
+  },
+  "S04_SH002": {
+   "in": 0.0,
+   "out": 4.0,
+   "speech_start_s": 0.0,
+   "speech_end_s": 3.76,
+   "reaction_tail_s": 0.24,
+   "why": "Extend from 2.00s to 4.00s so 'Merry Christmas, Tommy! No shoot!' is not severed"
+  },
+  "S04_SH003": {
+   "in": 0.0,
+   "out": 4.0,
+   "speech_start_s": 0.0,
+   "speech_end_s": 3.78,
+   "reaction_tail_s": 0.22,
+   "why": "Extend from 2.75s to 4.00s so 'He's got no rifle.' finishes"
+  },
+  "S04_SH004": {
+   "in": 0.0,
+   "out": 4.25,
+   "speech_start_s": 0.0,
+   "speech_end_s": 3.68,
+   "reaction_tail_s": 0.57,
+   "why": "Extend from 2.25s to 4.25s so 'Keep your head down, Tommy.' finishes with 0.57s tail"
+  },
+  "S04_SH006": {
+   "in": 0.5,
+   "out": 4.0,
+   "speech_start_s": 0.86,
+   "speech_end_s": 3.84,
+   "reaction_tail_s": 0.16,
+   "why": "Shift in_s to 0.50s and extend to 4.00s for full 'Come over! Halfway!'"
+  },
+  "S04_SH007": {
+   "in": 1.1,
+   "out": 4.4,
+   "speech_start_s": 1.52,
+   "speech_end_s": 4.1,
+   "reaction_tail_s": 0.3,
+   "why": "Shift in_s to 1.10s and extend to 4.40s for 'If I go, don't shoot theGerman.'"
+  },
+  "S04_SH009": {
+   "in": 0.0,
+   "out": 2.75,
+   "speech_start_s": 0.0,
+   "speech_end_s": 2.18,
+   "reaction_tail_s": 0.57,
+   "why": "Extend from 2.00s to 2.75s for 'Just the two of them.'"
+  },
+  "S04_SH010": {
+   "in": 0.65,
+   "out": 3.2,
+   "speech_start_s": 1.04,
+   "speech_end_s": 2.62,
+   "reaction_tail_s": 0.58,
+   "why": "Shift in_s to 0.65s and extend to 3.20s so 'No. Let them.' has 0.58s tail"
+  },
+  "S04_SH012": {
+   "in": 0.0,
+   "out": 5.85,
+   "speech_start_s": 0.0,
+   "speech_end_s": 5.3,
+   "reaction_tail_s": 0.55,
+   "why": "Extend from 4.00s to 5.85s so 'Friedrich. From Leipzig. Before this\u2014a postman.' is complete"
+  },
+  "S04_SH013": {
+   "in": 0.35,
+   "out": 5.0,
+   "speech_start_s": 0.7,
+   "speech_end_s": 4.68,
+   "reaction_tail_s": 0.32,
+   "why": "Shift in_s to 0.35s and extend to 5.00s so 'railway clerk\u2014Coldstream Guards' finishes"
   },
   "S04_SH014": {
    "in": 0.0,
    "out": 2.6,
-   "why": "end on the clasped hands"
+   "why": "End on clasped hands before breakup"
   },
-  "S06_SH008": {
-   "in": 1.45,
-   "out": "end",
-   "why": "raw clip says 'Maybe' twice (0.0-0.6, 1.72-1.92 s)"
+  "S05_SH003": {
+   "in": 0.0,
+   "out": 3.5,
+   "mute_tail_from_s": 2.6,
+   "why": "KEEP-TRIM: mute hallucinated 'You' at 2.68-3.04s"
   },
-  "S05_SH021": {
-   "clip_audio_db": -18
+  "S05_SH004": {
+   "in": 0.9,
+   "out": 3.0,
+   "speech_start_s": 1.42,
+   "speech_end_s": 2.46,
+   "reaction_tail_s": 0.54,
+   "why": "Shift in_s to 0.90s and extend to 3.00s so 'Try this. From Dresden.' has 0.54s tail"
   },
-  "S07_SH007": {
-   "clip_audio_db": -18
+  "S05_SH005": {
+   "in": 0.0,
+   "out": 4.65,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.12,
+   "reaction_tail_s": 0.53,
+   "why": "Extend from 3.50s to 4.65s so 'Real butter. Good God.' has 0.53s tail"
+  },
+  "S05_SH006": {
+   "in": 0.0,
+   "out": 4.0,
+   "clip_audio_db": -12,
+   "keep": "laughter 2.3-3.7 s"
+  },
+  "S05_SH007": {
+   "in": 1.4,
+   "out": 3.0,
+   "speech_start_s": 1.94,
+   "speech_end_s": 2.88,
+   "reaction_tail_s": 0.12,
+   "why": "Shift in_s to 1.40s so 'Here. The King's tin.' (1.94-2.88s) is not cut at 2.25s"
+  },
+  "S05_SH008": {
+   "in": 0.75,
+   "out": 4.0,
+   "speech_start_s": 1.16,
+   "speech_end_s": 3.7,
+   "reaction_tail_s": 0.3,
+   "why": "Shift in_s to 0.75s and extend to 4.00s for full 'A button for a button.'"
+  },
+  "S05_SH009": {
+   "in": 0.0,
+   "out": 4.8,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.24,
+   "reaction_tail_s": 0.56,
+   "why": "Extend from 3.50s to 4.80s so 'You need a trim, my friend.' has 0.56s tail"
+  },
+  "S05_SH011": {
+   "in": 0.5,
+   "out": 2.35,
+   "speech_start_s": 0.88,
+   "speech_end_s": 1.76,
+   "reaction_tail_s": 0.59,
+   "mute_tail_from_s": 2.25,
+   "why": "KEEP-TRIM: keep 'Take a little off the ears.' + 0.59s tail; mute trailing 'You' at 2.40s"
+  },
+  "S05_SH012": {
+   "in": 0.0,
+   "out": 3.4,
+   "speech_start_s": 0.0,
+   "speech_end_s": 2.78,
+   "reaction_tail_s": 0.62,
+   "why": "KEEP-TRIM: preserve full 'Stand still\u2014or I take the ear too.' + 0.62s laugh tail"
+  },
+  "S05_SH013": {
+   "in": 0.8,
+   "out": 3.0,
+   "speech_start_s": 1.18,
+   "speech_end_s": 2.42,
+   "reaction_tail_s": 0.58,
+   "why": "Shift in_s to 0.80s and extend to 3.00s so 'Pass it here!' has 0.58s tail"
   },
   "S05_SH014": {
    "clip_audio_db": -14
@@ -38,16 +238,134 @@
   "S05_SH015": {
    "clip_audio_db": -14
   },
-  "S07_SH008": {
-   "clip_audio_db": -14
+  "S05_SH016": {
+   "in": 0.0,
+   "out": 2.5,
+   "mute_tail_from_s": 1.85,
+   "why": "KEEP-TRIM: mute hallucinated 'You' at 1.96-2.50s"
   },
-  "S05_SH006": {
-   "clip_audio_db": -12,
-   "keep": "laughter 2.3-3.7 s"
+  "S05_SH017": {
+   "in": 1.45,
+   "out": 3.0,
+   "speech_start_s": 1.94,
+   "speech_end_s": 2.8,
+   "reaction_tail_s": 0.2,
+   "why": "Shift in_s to 1.45s so 'Two-one to Germany!' (1.94-2.80s) is not cut at 2.25s"
+  },
+  "S05_SH018": {
+   "in": 0.0,
+   "out": 4.4,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.02,
+   "reaction_tail_s": 0.38,
+   "why": "Extend from 2.75s to 4.40s so 'The crossbar was two coats\u2014too wide!' is complete"
+  },
+  "S05_SH019": {
+   "in": 1.5,
+   "out": 3.0,
+   "speech_start_s": 2.4,
+   "speech_end_s": 3.0,
+   "reaction_tail_s": 0.0,
+   "why": "Shift in_s to 1.50s so 'Over here\u2014together.' (2.40-3.00s) is inside the window"
+  },
+  "S05_SH021": {
+   "clip_audio_db": -18
+  },
+  "S06_SH001": {
+   "in": 0.0,
+   "out": 4.5,
+   "mute_tail_from_s": 3.6,
+   "why": "KEEP-TRIM: mute hallucinated 'You' at 3.68-4.50s"
+  },
+  "S06_SH002": {
+   "in": 1.4,
+   "out": 4.0,
+   "speech_start_s": 2.12,
+   "speech_end_s": 3.78,
+   "reaction_tail_s": 0.22,
+   "why": "Shift in_s to 1.40s and extend to 4.00s so 'My wife, Clara. And our boy.' is complete"
+  },
+  "S06_SH003": {
+   "in": 0.8,
+   "out": 2.8,
+   "speech_start_s": 1.72,
+   "speech_end_s": 2.2,
+   "reaction_tail_s": 0.6,
+   "why": "Shift in_s to 0.80s so 'He's three now.' (1.72-2.20s) has 0.60s reaction tail"
+  },
+  "S06_SH004": {
+   "in": 0.0,
+   "out": 3.4,
+   "speech_start_s": 0.0,
+   "speech_end_s": 2.84,
+   "reaction_tail_s": 0.56,
+   "why": "KEEP-TRIM: preserve 'He has your eyes. When do you go home?' + 0.56s tail"
+  },
+  "S06_SH006": {
+   "in": 1.2,
+   "out": 3.7,
+   "speech_start_s": 2.18,
+   "speech_end_s": 3.66,
+   "reaction_tail_s": 0.04,
+   "why": "Shift in_s to 1.20s so 'Why are we doing this, Friedrich?' is not clipped at 3.50s"
+  },
+  "S06_SH007": {
+   "in": 0.0,
+   "out": 5.0,
+   "speech_start_s": 0.0,
+   "speech_end_s": 4.88,
+   "reaction_tail_s": 0.12,
+   "why": "Extend from 3.25s to 5.00s so 'Because the men in Berlin and London...' is complete"
+  },
+  "S06_SH008": {
+   "in": 1.45,
+   "out": 4.0,
+   "speech_start_s": 1.72,
+   "speech_end_s": 3.54,
+   "reaction_tail_s": 0.46,
+   "why": "KEEP-TRIM: skip duplicate 'Maybe' at 0.0-0.6s and keep 1.45..4.00s"
+  },
+  "S06_SH010": {
+   "in": 0.0,
+   "out": 2.75,
+   "speech_start_s": 0.0,
+   "speech_end_s": 1.6,
+   "reaction_tail_s": 1.15,
+   "mute_tail_from_s": 2.2,
+   "why": "KEEP-TRIM: keep 'Keep the head down, Tommy.' + tail; mute 'You' at 2.30s"
+  },
+  "S06_SH011": {
+   "in": 0.35,
+   "out": 2.9,
+   "speech_start_s": 0.74,
+   "speech_end_s": 2.14,
+   "reaction_tail_s": 0.76,
+   "why": "KEEP-TRIM: shift in_s to 0.35s for clean 'And you, Friedrich. Good luck.' + 0.76s salute tail"
+  },
+  "S07_SH002": {
+   "in": 0.95,
+   "out": 2.95,
+   "speech_start_s": 1.46,
+   "speech_end_s": 2.36,
+   "reaction_tail_s": 0.59,
+   "why": "Shift in_s to 0.95s and extend to 2.95s so 'Eight thirty. Back in.' has 0.59s tail"
+  },
+  "S07_SH003": {
+   "in": 0.0,
+   "out": 2.8,
+   "speech_start_s": 0.0,
+   "speech_end_s": 0.92,
+   "reaction_tail_s": 1.88,
+   "why": "KEEP-TRIM: hold full turn and walk back toward lines"
   },
   "S07_SH004": {
+   "in": 0.0,
+   "out": 2.5,
+   "speech_start_s": 0.0,
+   "speech_end_s": 1.48,
+   "reaction_tail_s": 1.02,
    "jcut_next_narration_s": 1.0,
-   "why": "S07_SH005 narration starts under the last 1.0 s so the bangs land near 'ended it politely'"
+   "why": "KEEP-TRIM: 'Goodbye, Tommy.' + 1.02s tail with J-cut bridge"
   },
   "S07_SH005": {
    "clip_audio_db": 0,
@@ -64,7 +382,19 @@
     "pan": 0.6
    }
   },
-  "default_dialogue": "LTX clip voice, full raw length",
-  "default_narrated_or_silent": "clip own sound at -12 dB ducked (Q2)"
+  "S07_SH007": {
+   "clip_audio_db": -18
+  },
+  "S07_SH008": {
+   "clip_audio_db": -14
+  },
+  "S08_SH001": {
+   "in": 0.0,
+   "out": 4.25,
+   "mute_tail_from_s": 3.55,
+   "why": "KEEP-TRIM: mute hallucinated 'You' at 3.64-4.24s"
+  },
+  "default_dialogue": "LTX clip voice, trimmed to [first_word - 0.40s, last_word + 0.55s] (BP-201)",
+  "default_narrated_or_silent": "clip own sound at -12 dB presence-ducked (BP-204)"
  }
 }

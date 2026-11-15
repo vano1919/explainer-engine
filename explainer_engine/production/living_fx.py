@@ -55,7 +55,7 @@ def _rng(st, key: str):
 
 
 def wind(st) -> tuple[float, float]:
-    w = st.p.get("wind")
+    w = (getattr(st, "p", None) or {}).get("wind")
     return (float(w[0]), float(w[1])) if w else WIND_DEFAULT
 
 
@@ -153,6 +153,13 @@ def _particles(st, rgb, depth, e, t, v, op):
                 ln = (16 + 34 * z) * k
                 cv2.line(alpha, (qx, qy), (int(qx + ln * 0.12), int(qy + ln)), 0.35 + 0.35 * z, max(1, int(round(k))),
                          cv2.LINE_AA)
+            elif op in ("snow", "spindrift") and z >= 0.45:
+                # Step 2 Fix (V1): wind-driven diagonal snow streaks with motion blur on mid/near blizzard layers
+                a = 0.62 + 0.38 * z
+                gust_streak = 1.0 + 0.35 * math.sin(2 * math.pi * 0.31 * t + z * 3.1)
+                sx_len = int(round((4.0 + 10.0 * z) * k * gust_streak * (1.0 if wx >= 0 else -1.0)))
+                sy_len = int(round((3.0 + 7.0 * z) * k))
+                cv2.line(alpha, (qx, qy), (qx + sx_len, qy + sy_len), float(a), max(1, int(round(rad * 1.35))), cv2.LINE_AA)
             else:
                 a = 0.55 + 0.45 * z
                 if op == "embers":
@@ -163,7 +170,10 @@ def _particles(st, rgb, depth, e, t, v, op):
         if op in ("snow", "spindrift"):
             alpha = cv2.GaussianBlur(alpha, (0, 0), (0.5 + 1.2 * z) * k)
         behind = np.clip((z + 0.04 - depth) / 0.08, 0, 1)        # only where the scene is farther than the layer
-        alpha = np.clip(alpha, 0, 1) * behind
+        # Step 2 Fix (V2 & V3): Frame 0 == source painting (fade_in=0 at t=0) and protect foreground faces/hands/photos
+        fade_in = 0.0 if t <= 1e-6 else min(1.0, t / 0.40)
+        fg_shield = (1.0 - 0.90 * st.people_field(v)) if (op in ("snow", "spindrift") and hasattr(st, "people_field")) else 1.0
+        alpha = np.clip(alpha, 0, 1) * behind * fade_in * fg_shield
         if op == "embers":
             glow = alpha + cv2.GaussianBlur(alpha, (0, 0), 4 * k) * 1.5
             out = out + np.array([255, 150, 60], np.float32) * np.clip(glow, 0, 1)[..., None] * 0.9 * s
@@ -323,13 +333,13 @@ def _breath(st, rgb, depth, e, i, t, v, zoom, op):
         puff = math.sin(math.pi * min(1.0, u / 0.45)) if u < 0.45 else 0.0
         if puff <= 0.01:
             return rgb
-        prm.setdefault("height", 0.06)
-        prm.setdefault("width", 0.006)
-        prm.setdefault("opacity", 0.55 * puff)
+        prm.setdefault("height", 0.085)
+        prm.setdefault("width", 0.009)
+        prm.setdefault("opacity", 0.78 * puff)
     else:
-        prm.setdefault("height", 0.10)
-        prm.setdefault("width", 0.004)
-        prm.setdefault("opacity", 0.45)
+        prm.setdefault("height", 0.13)
+        prm.setdefault("width", 0.007)
+        prm.setdefault("opacity", 0.72)
     prm.setdefault("colour", [232, 234, 238])
     prm.setdefault("drift", 0.4 + 6 * wind(st)[0])
     return st._smoke(rgb, depth, {**e, "params": prm}, i, t, v, float(e.get("strength", 1.0)), zoom)

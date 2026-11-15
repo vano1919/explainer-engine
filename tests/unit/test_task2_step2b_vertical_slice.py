@@ -121,7 +121,7 @@ def test_step1_contracts_and_vertical_slice_briefs_and_ownership():
     assert (ROOT / "docs" / "DIRECTOR_GUIDE.md").is_file()
     assert (ROOT / "docs" / "MOTION_ISOLATION.md").is_file()
     kb = json.loads((ROOT / "explainer_engine" / "standards" / "director_knowledge_base.json").read_text(encoding="utf-8"))
-    assert kb.get("version") == "2.0.0"
+    assert kb.get("version") == "2.1.0"
 
     # 2. Stage ownership for director_brief and authored_intent_archive (V4_OWNERS is a tuple of (pattern, owner))
     owners_dict = dict(SG.V4_OWNERS)

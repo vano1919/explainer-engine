@@ -1667,7 +1667,13 @@
               "enum": [
                 "continuation",
                 "coverage",
-                "insert"
+                "insert",
+                "ltx_chain_tail",
+                "ltx_chain_crop_ots",
+                "ltx_scene_master_cov",
+                "ltx_flf_bridge",
+                "cutaway_insert_bridge",
+                "new_anchor_reset"
               ],
               "description": "continuation = the same action goes on (the next clip starts from a chosen frame of the clip before); coverage = a new camera angle on the same scene, drawn fresh from the scene master and the hero sheets; insert = a reaction, hand, object or detail (prefer still_25d)"
             },
@@ -1865,6 +1871,14 @@
                 }
               },
               "description": "this shot reuses another shot's clip or picture with a new framing"
+            },
+            "planned_end_state": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true,
+              "description": "Step 7: expected end-frame state (require_face, min_frame_sharp, max_frame_change, subject_box) checked by frame_pick.verify_planned_end_state."
             }
           }
         },
@@ -1991,6 +2005,29 @@
           ],
           "additionalProperties": true,
           "description": "Clause-boundary sub-shot split plan (<= 5.0 s per part, BP-109) for long still_25d shots."
+        },
+        "on_screen_text": {
+          "type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "description": "Step 3: on-screen text rendered over silent_beat / epilogue shots (e.g. S08_SH004)."
+        },
+        "visual_bridge": {
+          "type": [
+            "array",
+            "object",
+            "null"
+          ],
+          "description": "Step 6: VB-1..VB-8 word-locked documentary callout overlays."
+        },
+        "c2_natural_fit": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Creator Correction C2: LTX natural-fit classification and route recommendation."
         }
       },
       "allOf": [

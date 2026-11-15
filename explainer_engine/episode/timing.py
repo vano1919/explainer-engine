@@ -262,3 +262,109 @@ def spines_of(timing: dict | None) -> dict:
 def load(root: Path) -> dict | None:
     p = Path(root) / "audio" / "timing.json"
     return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
+
+
+_ON_SCREEN_RE = re.compile(r"\(\s*on\s+screen\s*:\s*([^)]+?)\s*\)", re.I)
+
+
+def extract_on_screen_text(shot: dict, script: dict) -> list[dict]:
+    """Step 3 (Epilogue On-Screen Text): extract ``(on screen: ...)`` lines from silent_beat or audio_lines."""
+    lines_by_id = {ln.get("line_id"): ln for ln in script.get("audio_lines", [])}
+    out: list[dict] = []
+    for lid in shot.get("audio_line_ids") or []:
+        ln = lines_by_id.get(lid) or {}
+        raw = str(ln.get("text") or "").strip()
+        for m in _ON_SCREEN_RE.finditer(raw):
+            caption = m.group(1).strip().strip('"')
+            if caption:
+                out.append({
+                    "line_id": lid,
+                    "speaker_type": ln.get("speaker_type", "silent_beat"),
+                    "text": caption,
+                    "fade_in_s": 0.8,
+                    "fade_out_s": 1.0,
+                })
+    if shot.get("on_screen_text") and not out:
+        out.append({
+            "line_id": f"{shot.get('shot_id', 'shot')}_onscreen",
+            "speaker_type": "silent_beat",
+            "text": str(shot["on_screen_text"]).strip(),
+            "fade_in_s": 0.8,
+            "fade_out_s": 1.0,
+        })
+    return out
+
+
+def retime_with_edit_points(
+    timing_doc: dict,
+    script: dict,
+    edit_points_doc: dict,
+    raw_durations: dict[str, float] | None = None,
+) -> dict:
+    """Step 1 & Step 3: synchronize ``timing.json`` shot frame counts and narrator insert offsets with trimmed LTX clips,
+    and attach ``on_screen_texts`` for ``silent_beat`` shots (such as ``S08_SH004``)."""
+    import copy as _copy
+
+    doc = _copy.deepcopy(timing_doc)
+    fps = int(doc.get("fps") or 24)
+    ep_clips = (edit_points_doc.get("clips") if isinstance(edit_points_doc, dict) and "clips" in edit_points_doc else edit_points_doc) or {}
+    raw_durations = raw_durations or {}
+    shots_list = script.get("shots", [])
+    spoken_inserts = {ins["shot_id"]: ins for ins in doc.get("inserts", []) if isinstance(ins, dict) and "shot_id" in ins}
+
+    frame_deltas: dict[str, int] = {}
+    for s in shots_list:
+        sid = s["shot_id"]
+        if sid not in doc.get("shots", {}):
+            continue
+        t_shot = doc["shots"][sid]
+        old_frames = int(t_shot["frames"])
+        ep = ep_clips.get(sid)
+        if isinstance(ep, dict) and ("in" in ep or "out" in ep) and (sid in spoken_inserts or ep.get("retime_clock", True)):
+            t_in = float(ep.get("in", 0.0))
+            out_val = ep.get("out", "end")
+            if out_val == "end" or out_val is None:
+                t_out = float(raw_durations.get(sid, t_in + old_frames / fps))
+            else:
+                t_out = float(out_val)
+            if t_out > t_in:
+                new_frames = max(fps, int(round((t_out - t_in) * fps)))
+                if sid in spoken_inserts:
+                    frame_deltas[sid] = new_frames - old_frames
+                    t_shot["frames"] = new_frames
+                    t_shot["seconds"] = round(new_frames / fps, 4)
+                    spoken_inserts[sid]["frames"] = new_frames
+                    spoken_inserts[sid]["seconds"] = round(new_frames / fps, 4)
+
+    # Recompute monotonic start_frame / end_frame across all shots and shift spines accordingly
+    cur_frame = 0
+    on_screen_map: dict[str, list[dict]] = {}
+    for s in shots_list:
+        sid = s["shot_id"]
+        if sid not in doc.get("shots", {}):
+            continue
+        t_shot = doc["shots"][sid]
+        old_start = int(t_shot.get("start_frame", cur_frame))
+        n_frames = int(t_shot["frames"])
+        shift = cur_frame - old_start
+        t_shot["start_frame"] = cur_frame
+        t_shot["end_frame"] = cur_frame + n_frames
+        t_shot["seconds"] = round(n_frames / fps, 4)
+        if sid in doc.get("spines", {}) and doc["spines"][sid] and shift != 0:
+            for w in doc["spines"][sid]:
+                if "frame" in w:
+                    w["frame"] = int(w["frame"]) + shift
+                if "start_frame" in w:
+                    w["start_frame"] = int(w["start_frame"]) + shift
+                if "end_frame" in w:
+                    w["end_frame"] = int(w["end_frame"]) + shift
+        ost = extract_on_screen_text(s, script)
+        if ost:
+            on_screen_map[sid] = ost
+            t_shot["on_screen_text"] = ost
+        cur_frame += n_frames
+
+    doc["total_frames"] = cur_frame
+    doc["total_seconds"] = round(cur_frame / fps, 4)
+    doc["on_screen_texts"] = on_screen_map
+    return doc
