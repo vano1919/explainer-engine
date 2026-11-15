@@ -82,6 +82,8 @@ FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift",
     "subject_sway",)
 CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "pan_crop_2d", "tilt", "orbit", "handheld", "rack_focus")
 PAN_CROP_OVERSCAN = 1.10
+PAN_ACCENT_RATE_MAX = 0.019        # D-59 hypothesis: max pan rate (/s) on a multi-segment crop-pan so accents never whip
+PUSH_ACCENT_RATE_MAX = 0.020       # D-59 hypothesis: max zoom rate (/s) on a push paired with pan_crop_2d (inside BP-21)
 def _seed(s: str) -> int:
     return int(hashlib.sha256(s.encode()).hexdigest()[:8], 16)
 def _real_strokes(cv2, parts: np.ndarray, r: int) -> np.ndarray:
@@ -277,52 +279,96 @@ class Stage:
         top = (np.arange(self.sh, dtype=np.float32) < 0.6 * self.sh)[:, None]
         sky = ((self.depth <= 0.03) & top).astype(np.float32)
         return self.cv2.GaussianBlur(sky, (0, 0), 0.012 * self.sw)
+    def _bounds_at_zoom(self, z0: float, s_at: float, dp_at: float, cx0: float, cy0: float) -> tuple[float, float, float, float]:
+        zs = z0 * s_at
+        half_x = max(0.0, (1 - 1 / zs) / 2 - MARGIN)
+        half_y = max(0.0, (1 - 1 / zs) / 2 - MARGIN * self.sw / self.sh)
+        lo_dx, hi_dx = -half_x, half_x
+        lo_dy, hi_dy = -half_y, half_y
+        if not self.__dict__.get("keep"):
+            return lo_dx, hi_dx, lo_dy, hi_dy
+        hard = [k for k in self.keep if not k["soft"]] or self.keep
+        base = max(self.sw / self.W, self.sh / self.H)
+        mx = SAFE_MARGIN + HAND_TR * float(self.p.get("handheld") or 0.0)
+        my = mx * self.sw / self.sh
+        x0 = min(k["box"][0] for k in hard); x1 = max(k["box"][2] for k in hard)
+        y0 = min(k["box"][1] for k in hard); y1 = max(k["box"][3] for k in hard)
+        d_med = float(np.median([k["d"] for k in hard]))
+        ex0, ex1, ey0, ey1 = max(0.0, x0 - mx), min(1.0, x1 + mx), max(0.0, y0 - my), min(1.0, y1 + my)
+        need = base / (z0 * (1 + dp_at * d_med))
+        s_max = min(need * self.W / (self.sw * max(1e-3, ex1 - ex0)), need * self.H / (self.sh * max(1e-3, ey1 - ey0)))
+        s_eff = min(s_at, max(1.0, s_max))
+        dp_eff = dp_at * (s_eff - 1) / (s_at - 1) if s_at > 1 and dp_at > 0 and s_at > s_max else dp_at
+        g_lo_x, g_hi_x = -1e9, 1e9
+        g_lo_y, g_hi_y = -1e9, 1e9
+        for kb in hard:
+            dk = float(kb["d"])
+            kk = base / (z0 * s_eff * (1 + dp_eff * dk))
+            hw_k, hh_k = kk * self.W / (2 * self.sw), kk * self.H / (2 * self.sh)
+            kx0, ky0, kx1, ky1 = kb["box"]
+            g_lo_x = max(g_lo_x, min(1.0, kx1 + mx) - hw_k)
+            g_hi_x = min(g_hi_x, max(0.0, kx0 - mx) + hw_k)
+            g_lo_y = max(g_lo_y, min(1.0, ky1 + my) - hh_k)
+            g_hi_y = min(g_hi_y, max(0.0, ky0 - my) + hh_k)
+        if g_lo_x <= g_hi_x:
+            lo_dx = max(lo_dx, g_lo_x - cx0)
+            hi_dx = min(hi_dx, g_hi_x - cx0)
+        if g_lo_y <= g_hi_y:
+            lo_dy = max(lo_dy, g_lo_y - cy0)
+            hi_dy = min(hi_dy, g_hi_y - cy0)
+        return lo_dx, hi_dx, lo_dy, hi_dy
     def view(self, f: int, z0: float | None = None) -> dict:
         z0 = self.z0 if z0 is None else z0
         s, dp = 1.0, 0.0
-        cx, cy = 0.5, 0.5
+        s_cum, dp_cum = 1.0, 0.0
+        cx0, cy0 = 0.5, 0.5
         frm = self.p.get("framing") if isinstance(self.p.get("framing"), dict) else None
         if frm and isinstance(frm.get("focus"), (list, tuple)) and len(frm["focus"]) == 2:
             hx0 = max(0.0, (1 - 1 / max(1.0, z0)) / 2 - MARGIN)
             hy0 = max(0.0, (1 - 1 / max(1.0, z0)) / 2 - MARGIN * self.sw / self.sh)
-            cx = float(np.clip(float(frm["focus"][0]), 0.5 - hx0, 0.5 + hx0))
-            cy = float(np.clip(float(frm["focus"][1]), 0.5 - hy0, 0.5 + hy0))
+            cx0 = float(np.clip(float(frm["focus"][0]), 0.5 - hx0, 0.5 + hx0))
+            cy0 = float(np.clip(float(frm["focus"][1]), 0.5 - hy0, 0.5 + hy0))
+        cx, cy = cx0, cy0
         tx = ty = ox = 0.0
         rot = 0.0
         pulls = []
         far = self.p.get("far_share", 0.2)
+        has_pan2d = any(c.get("op") == "pan_crop_2d" for c in self.p.get("cameras", []))
         for seg in self.p.get("cameras", []):
-            u = L.segment_u({"from": seg["from"], "to": seg["to"], "easing": seg.get("easing", "ease_in_out")}, f, self.n)
+            a_f, b_f = seg.get("from", 0), seg.get("to", self.n)
+            dur_s = max(1, b_f - 1 - a_f) / self.fps
+            t_lin = min(1.0, max(0.0, (f - a_f) / max(1, b_f - 1 - a_f)))
+            ease = seg.get("easing", "ease_in_out")
+            if has_pan2d and ease == "ease_out":
+                u = 1.12 * t_lin - 0.12 * t_lin * t_lin
+            else:
+                u = L.segment_u({"from": a_f, "to": b_f, "easing": ease}, f, self.n)
             st = float(seg.get("strength", 1.0))
+            if has_pan2d and seg["op"] == "push" and self.__dict__.get("keep") and PUSH_SCALE * st > PUSH_ACCENT_RATE_MAX * dur_s:
+                st = (PUSH_ACCENT_RATE_MAX * dur_s) / PUSH_SCALE
             d = seg.get("direction")
             if seg["op"] == "push":
                 s *= 1 + PUSH_SCALE * st * u
                 dp += DEPTH_PUSH * st * u
-                pulls.append((seg, u))
+                s_cum *= 1 + PUSH_SCALE * st
+                dp_cum += DEPTH_PUSH * st
+                pulls.append((seg, u, s_cum, dp_cum, dur_s))
             elif seg["op"] == "pull":
                 s *= (1 + PUSH_SCALE * st * (1 - u)) * (1 + DEPTH_PUSH * st)
                 dp -= DEPTH_PUSH * st * u / (1 + DEPTH_PUSH * st)
-                pulls.append((seg, 1 - u))
+                pulls.append((seg, 1 - u, s, dp, dur_s))
             elif seg["op"] == "truck":
                 tx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
-                pulls.append((seg, u))
+                pulls.append((seg, u, s_cum, dp_cum, dur_s))
             elif seg["op"] == "crane":
                 ty += NEAR_TRAVEL * st * u * (1 if d == "down" else -1)
             elif seg["op"] == "pan":
-                cx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
-                pulls.append((seg, u))
+                pulls.append((seg, u, s_cum, dp_cum, dur_s))
             elif seg["op"] == "pan_crop_2d":
                 # Rigid 2D window pan inside a small overscan: z-parallax is 0 (dp, tx, ty, ox unchanged).
-                if isinstance(seg.get("from_xy"), (list, tuple)) and isinstance(seg.get("to_xy"), (list, tuple)):
-                    fxy, txy = seg["from_xy"], seg["to_xy"]
-                    if f == int(seg["from"]) and u == 0.0:
-                        cx, cy = float(fxy[0]), float(fxy[1])
-                    elif u > 0.0:
-                        cx = float(fxy[0]) + (float(txy[0]) - float(fxy[0])) * u
-                        cy = float(fxy[1]) + (float(txy[1]) - float(fxy[1])) * u
-                else:
-                    cx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
-                    pulls.append((seg, u))
+                if not pulls and isinstance(seg.get("from_xy"), (list, tuple)) and len(seg["from_xy"]) == 2:
+                    pulls.append(({"op": "pan_crop_2d", "target": {"point": list(seg["from_xy"])}}, 1.0, s_cum, dp_cum, dur_s))
+                pulls.append((seg, u, s_cum, dp_cum, dur_s))
             elif seg["op"] == "tilt":
                 cy += NEAR_TRAVEL * st * u * (1 if d == "down" else -1) * self.sw / self.sh
             elif seg["op"] == "orbit":
@@ -332,13 +378,39 @@ class Stage:
         half_x = (1 - 1 / zs) / 2 - MARGIN
         half_y = (1 - 1 / zs) / 2 - MARGIN * self.sw / self.sh
         dx_goal = dy_goal = None
-        for seg, a in pulls:
+        for idx_p, (seg, a, s_seg, dp_seg, dur_s) in enumerate(pulls):
+            if abs(tx) < 1e-7 and abs(ox) < 1e-7:
+                lo_dx, hi_dx, lo_dy, hi_dy = self._bounds_at_zoom(z0, s_seg, dp_seg, cx0, cy0)
+            else:
+                lo_dx, hi_dx = -max(0.0, half_x), max(0.0, half_x)
+                lo_dy, hi_dy = -max(0.0, half_y), max(0.0, half_y)
             pt = self.point_of(seg.get("target"))
-            if pt is None:
+            if pt is not None:
+                pt = (pt[0] / self.sw, pt[1] / self.sh)
+            elif isinstance(seg.get("to_xy"), (list, tuple)) and len(seg["to_xy"]) == 2:
+                pt = (float(seg["to_xy"][0]), float(seg["to_xy"][1]))
+            if pt is not None:
+                raw_dx = RECENTRE * (pt[0] - cx0)
+                raw_dy = RECENTRE * (pt[1] - cy0)
+                if seg["op"] in ("pan", "pan_crop_2d"):
+                    d_dir = seg.get("direction")
+                    st_v = float(seg.get("strength", 1.0))
+                    step_x = NEAR_TRAVEL * st_v * (-1 if d_dir == "left" else 1) if d_dir in ("left", "right") else 0.0
+                    if abs(step_x) > abs(raw_dx) and (raw_dx == 0.0 or (step_x > 0) == (raw_dx > 0)):
+                        raw_dx = step_x
+            elif seg["op"] in ("pan", "pan_crop_2d"):
+                d_dir = seg.get("direction")
+                st_v = float(seg.get("strength", 1.0))
+                prev_dx = dx_goal or 0.0
+                raw_dx = prev_dx + NEAR_TRAVEL * st_v * (-1 if d_dir == "left" else 1)
+                raw_dy = dy_goal or 0.0
+            else:
                 continue
-            pt = (pt[0] / self.sw, pt[1] / self.sh)
-            tx_i = float(np.clip(RECENTRE * (pt[0] - cx), -max(0.0, half_x), max(0.0, half_x)))
-            ty_i = float(np.clip(RECENTRE * (pt[1] - cy), -max(0.0, half_y), max(0.0, half_y)))
+            tx_i = float(np.clip(raw_dx, lo_dx, hi_dx)) if lo_dx <= hi_dx else 0.0
+            ty_i = float(np.clip(raw_dy, lo_dy, hi_dy)) if lo_dy <= hi_dy else 0.0
+            if has_pan2d and idx_p > 0 and dx_goal is not None and self.__dict__.get("keep"):
+                max_step_x = PAN_ACCENT_RATE_MAX * dur_s
+                tx_i = float(np.clip(tx_i, dx_goal - max_step_x, dx_goal + max_step_x))
             if dx_goal is None or seg["op"] == "pull":
                 dx_goal, dy_goal = tx_i * a, ty_i * a
             else:
@@ -372,7 +444,9 @@ class Stage:
                 fw, fh = x1 - x0, y1 - y0
                 cxp = int(np.clip((x0 + x1) / 2 * self.sw, 0, self.sw - 1))
                 cyp = int(np.clip((y0 + y1) / 2 * self.sh, 0, self.sh - 1))
-                hosts = [(float((m > 0.5).sum()), oid) for oid, m in self.masks_src.items() if m[cyp, cxp] > 0.5]
+                by1 = min(self.sh, int(round((y1 + CHEST_DOWN * fh) * self.sh)) + 1)
+                hosts = [(float((m > 0.5).sum()), oid) for oid, m in self.masks_src.items()
+                         if m[cyp, cxp] > 0.5 or (m[cyp:by1, cxp] > 0.5).any()]
                 mb = self._bbox(self.masks_src[min(hosts)[1]]) if hosts else None
                 if mb is not None and min(mb[0], mb[1], 1 - mb[2], 1 - mb[3]) > EDGE_TOUCH:
                     box = [min(mb[0], x0), min(mb[1], y0 - HEAD_UP * fh), max(mb[2], x1), mb[3]]
@@ -440,13 +514,27 @@ class Stage:
                 s_new = max(1.0, s_max)
                 dp_cur = dp_cur * (s_new - 1) / (s_cur - 1) if s_cur > 1 and dp_cur > 0 else dp_cur
                 s_cur = s_new
-            k = base / (z0 * s_cur * (1 + dp_cur * d))
-            hw, hh = k * self.W / (2 * self.sw), k * self.H / (2 * self.sh)
-            par = far + (1 - far) * d
-            orb = max(-1.0, (d - self.focus_d) / max(1e-3, 1 - self.focus_d))
-            wx, wy = cx + tx * par + ox * orb, cy + ty * par * self.sw / self.sh
-            lo_x, hi_x = ex1 - hw, ex0 + hw
-            lo_y, hi_y = ey1 - hh, ey0 + hh
+            if abs(tx) < 1e-7 and abs(ox) < 1e-7 and abs(ty) < 1e-7:
+                wx, wy = cx, cy
+                lo_x, hi_x = -1e9, 1e9
+                lo_y, hi_y = -1e9, 1e9
+                for kb in grp:
+                    dk = float(kb["d"])
+                    kk = base / (z0 * s_cur * (1 + dp_cur * dk))
+                    hw_k, hh_k = kk * self.W / (2 * self.sw), kk * self.H / (2 * self.sh)
+                    kx0, ky0, kx1, ky1 = kb["box"]
+                    lo_x = max(lo_x, min(1.0, kx1 + mx) - hw_k)
+                    hi_x = min(hi_x, max(0.0, kx0 - mx) + hw_k)
+                    lo_y = max(lo_y, min(1.0, ky1 + my) - hh_k)
+                    hi_y = min(hi_y, max(0.0, ky0 - my) + hh_k)
+            else:
+                k = base / (z0 * s_cur * (1 + dp_cur * d))
+                hw, hh = k * self.W / (2 * self.sw), k * self.H / (2 * self.sh)
+                par = far + (1 - far) * d
+                orb = max(-1.0, (d - self.focus_d) / max(1e-3, 1 - self.focus_d))
+                wx, wy = cx + tx * par + ox * orb, cy + ty * par * self.sw / self.sh
+                lo_x, hi_x = ex1 - hw, ex0 + hw
+                lo_y, hi_y = ey1 - hh, ey0 + hh
             if i + 1 < len(groups) and not (lo_x <= wx <= hi_x and lo_y <= wy <= hi_y):
                 continue
             s, dp = s_cur, dp_cur

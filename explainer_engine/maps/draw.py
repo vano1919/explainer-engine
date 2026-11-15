@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import io
 import math
+import unicodedata
 from functools import lru_cache
 from pathlib import Path
 
@@ -75,15 +76,39 @@ def glyph_mask(f: ImageFont.FreeTypeFont | ImageFont.ImageFont, ch: str) -> np.n
     return np.asarray(im, dtype=np.uint8)
 
 
+ACCENTED_MAP_LABELS: dict[str, str] = {
+    "Liege": "Liège",
+    "liege": "Liège",
+    "Armentieres": "Armentières",
+    "armentieres": "Armentières",
+}
+
+
+def map_label_text(text: str) -> str:
+    """Preserve Unicode accents and restore canonical diacritics on map toponyms (Liège, Armentières)."""
+    s = str(text or "")
+    if s in ACCENTED_MAP_LABELS:
+        return ACCENTED_MAP_LABELS[s]
+    for plain, accented in (("Liege", "Liège"), ("Armentieres", "Armentières")):
+        if plain in s:
+            s = s.replace(plain, accented)
+    return s
+
+
 def has_missing_glyph(f: ImageFont.FreeTypeFont | ImageFont.ImageFont, text: str) -> bool:
     """True when any printable non-whitespace character in ``text`` renders identically to the font's .notdef glyph."""
     notdef = glyph_mask(f, "\ufffe")
+    notdef_rep = glyph_mask(f, "\ufffd")
     for ch in set(text):
         if not ch.isprintable() or ch.isspace():
             continue
         g = glyph_mask(f, ch)
-        if g.sum() == 0 or np.array_equal(g, notdef):
+        if g.sum() == 0 or np.array_equal(g, notdef) or (ch != "\ufffd" and np.array_equal(g, notdef_rep)):
             return True
+        if ord(ch) > 127:
+            decomp = unicodedata.normalize("NFD", ch)
+            if len(decomp) > 1 and np.array_equal(g, glyph_mask(f, decomp[0])):
+                return True
     return False
 
 
@@ -265,11 +290,13 @@ class Canvas:
     face = "ui"   # "map": the map face (Inter); set by the map renderers
 
     def text(self, xy, s: str, size: float, fill, anchor: str = "la", stroke: float = 0, stroke_fill=None):
+        s = map_label_text(s) if self.face == "map" else s
         f = font_for_text(self.px(size), self.face, s)
         self.d.text((xy[0] * self.ss, xy[1] * self.ss), s, font=f, fill=fill, anchor=anchor,
                     stroke_width=self.px(stroke) if stroke else 0, stroke_fill=stroke_fill)
 
     def text_width(self, s: str, size: float) -> float:
+        s = map_label_text(s) if self.face == "map" else s
         return self.d.textlength(s, font=font_for_text(self.px(size), self.face, s)) / self.ss
 
     def paste(self, layer: Image.Image, xy=(0, 0)):

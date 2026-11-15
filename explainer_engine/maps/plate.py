@@ -29,6 +29,10 @@ LAYERS = ("land", "lakes", "rivers", "borders")
 STYLE = {"sea_mix": 0.55, "coast_px": 0.0022, "river_px": 0.0030, "border_px": 0.0016}  # strokes are shares of the frame height
 LOOK_KEYS = ("sea", "land", "coast", "river", "border", "lake")
 RELIEF_FLAT = 0.82   # Natural Earth SR_HR's grey on flat ground (measured on the Indian Ocean basin's plains, 2026-11-12)
+CLOSE_RELIEF_FADE = 0.25          # D-59 hypothesis: at upsample > 3x, fade raster relief down to ~25 %
+MICRO_RELIEF_GAIN_CAP = 0.035     # D-59 hypothesis: cap micro-relief / hatch gain so plates never look noisy
+MACRO_RELIEF_GAIN = 1.15          # D-59 hypothesis: sharp macro relief gain without harsh clipping noise
+CLOSE_BLOB_STD_MAX = 1.2          # D-59 hypothesis: max 64 px Gaussian-blur luma std on a close-span paper plate
 
 
 def _extract_year(val) -> int | None:
@@ -113,7 +117,7 @@ def colours(look: dict | None = None) -> dict[str, tuple[int, int, int]]:
 
 def relief_upsample(view: geo.View, raster_km_per_px: float = MD.RASTER_KM_PER_PX) -> float:
     """How much the relief raster is enlarged in ``view`` (above 3x, deterministic micro-relief detail is added, V3)."""
-    eff_km_per_px = min(view.km_per_px, view.span_km / 640.0)
+    eff_km_per_px = view.span_km / 640.0
     return float(raster_km_per_px) / max(1e-6, eff_km_per_px)
 
 
@@ -150,39 +154,33 @@ def _world_octave(view: geo.View, step_deg: float, seed_salt: int) -> np.ndarray
 def micro_relief_detail(shade: np.ndarray, view: geo.View, upsample: float) -> np.ndarray:
     """Deterministic multi-octave Sobel hillshade from upsampled relief + parchment grain when upsample > 3x (V3)."""
     from scipy.ndimage import gaussian_filter, sobel
-    u_micro = float(min(1.0, (upsample - MD.MICRO_RELIEF_UPSAMPLE_MIN) / 3.0))
+    u_micro = float(min(1.0, max(0.0, (upsample - MD.MICRO_RELIEF_UPSAMPLE_MIN) / 3.0)))
     # 1. Multi-octave Sobel hillshade extracted from the upsampled relief field
-    s_fine = gaussian_filter(shade, sigma=1.2)
-    s_med = gaussian_filter(shade, sigma=3.5)
-    s_broad = gaussian_filter(shade, sigma=8.0)
-    scale_boost = min(22.0, upsample * 0.90)
-    dem_gx = (0.50 * sobel(s_fine, axis=1) + 0.35 * sobel(s_med, axis=1) + 0.15 * sobel(s_broad, axis=1)) * scale_boost
-    dem_gy = (0.50 * sobel(s_fine, axis=0) + 0.35 * sobel(s_med, axis=0) + 0.15 * sobel(s_broad, axis=0)) * scale_boost
-    dem_hill = np.clip((dem_gx * 0.7071 - dem_gy * 0.7071), -0.12, 0.12)
+    s_fine = gaussian_filter(shade, sigma=1.5)
+    gx = sobel(s_fine, axis=1)
+    gy = sobel(s_fine, axis=0)
+    slope = np.hypot(gx, gy)
+    p90 = float(np.percentile(slope, 90))
+    slope_weight = np.clip(0.50 + 0.50 * (slope / max(p90, 1e-4)), 0.50, 1.0).astype(np.float32)
     # 2. World-locked multi-octave topographic ridges + Sobel hillshade + parchment grain (S5 sample)
-    oct_broad = _world_octave(view, 0.055, 191401)
-    oct_meso = _world_octave(view, 0.018, 191402)
-    oct_fine = _world_octave(view, 0.006, 191403)
-
-    def _norm_hill(field: np.ndarray) -> np.ndarray:
-        gx = sobel(field, axis=1)
-        gy = sobel(field, axis=0)
-        hs = gx * 0.7071 - gy * 0.7071
-        std = float(hs.std())
-        return hs / max(std, 1e-5)
-
-    h_broad = _norm_hill(oct_broad)
-    h_meso = _norm_hill(oct_meso)
-    h_fine = _norm_hill(oct_fine)
-    micro_hill = np.clip((0.52 * h_broad + 0.32 * h_meso + 0.16 * h_fine) * 0.095, -0.20, 0.18)
+    # At close spans (upsample > 3x), a clean high-pass parchment weave + light procedural cartographic hatch
+    # carries the paper texture without inventing coastlines, rivers, or low-frequency terrain blobs (D-59).
+    h, w = shade.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    h_primary = np.sin(2.0 * np.pi * (xx + yy) / 4.0)
+    h_cross = np.sin(2.0 * np.pi * (xx - yy) / 5.5)
+    hatch = (0.70 * h_primary + 0.30 * h_cross).astype(np.float32) * 0.018 * slope_weight
 
     rng = D.seeded("micro_relief", round(view.lon, 4), round(view.lat, 4), round(view.span_km, 2), view.width, view.height)
-    paper_grain = rng.standard_normal(shade.shape).astype(np.float32) * 0.016
-    return ((dem_hill + micro_hill + paper_grain) * (0.55 + 0.45 * u_micro)).astype(np.float32)
+    raw_grain = rng.standard_normal(shade.shape).astype(np.float32)
+    paper_grain = (raw_grain - gaussian_filter(raw_grain, sigma=2.5)).astype(np.float32) * 0.012
+    detail = (hatch + paper_grain) * (0.65 + 0.35 * u_micro)
+    return np.clip(detail, -MICRO_RELIEF_GAIN_CAP, MICRO_RELIEF_GAIN_CAP).astype(np.float32)
 
 
 def relief_rgb(view: geo.View, col: dict, look: dict | None = None, path=None) -> np.ndarray:
     """Land lit by the real relief, the sea flat (a hint of the raster's sea floor), seeded grain if the look asks for it."""
+    from scipy.ndimage import gaussian_filter, sobel
     from explainer_engine.maps import relief
     look = look or {}
     shade = relief.sample(view, path)
@@ -191,12 +189,19 @@ def relief_rgb(view: geo.View, col: dict, look: dict | None = None, path=None) -
     upsample = relief_upsample(view)
     if upsample > MD.MICRO_RELIEF_UPSAMPLE_MIN and not look.get("disable_micro_relief"):
         u_micro = float(min(1.0, (upsample - MD.MICRO_RELIEF_UPSAMPLE_MIN) / 3.0))
+        fade = 1.0 - (1.0 - CLOSE_RELIEF_FADE) * u_micro
         land_vals = shade[mask] if mask.any() else shade
         local_mean = float(land_vals.mean())
-        shade_adj = shade - u_micro * 0.85 * (local_mean - RELIEF_FLAT)
-        base_gain = (1.0 - 0.08 * u_micro) + k * 1.35 * (shade_adj / RELIEF_FLAT - 1.0)
+        broad_sigma = max(4.0, min(view.width, view.height) * 0.04)
+        shade_broad = gaussian_filter(shade, sigma=broad_sigma)
+        ref = (1.0 - u_micro) * RELIEF_FLAT + u_micro * (0.80 * shade_broad + 0.20 * local_mean)
+        base_gain = 1.0 + k * MACRO_RELIEF_GAIN * fade * ((shade - ref) / RELIEF_FLAT)
         detail = micro_relief_detail(shade, view, upsample)
-        gain = np.clip(base_gain + (k * detail) * mask, 0.50, 1.06)[..., None]
+        gain = np.clip(base_gain + (k * detail) * mask, 0.78, 1.06)[..., None]
+    elif not look.get("disable_micro_relief"):
+        s_macro = gaussian_filter(shade, sigma=max(0.8, view.width / 1280.0)) if view.width > 1280 else shade
+        macro_hill = np.clip((sobel(s_macro, axis=1) - sobel(s_macro, axis=0)) * 0.18, -MICRO_RELIEF_GAIN_CAP * 0.5, MICRO_RELIEF_GAIN_CAP * 0.5)
+        gain = np.clip(1.0 + k * MACRO_RELIEF_GAIN * (s_macro / RELIEF_FLAT - 1.0) + (k * macro_hill) * mask, 0.68, 1.12)[..., None]
     else:
         gain = np.clip(1.0 + k * 1.6 * (shade / RELIEF_FLAT - 1.0), 0.45, 1.3)[..., None]
     land = np.asarray(col["land"], np.float32) * gain
