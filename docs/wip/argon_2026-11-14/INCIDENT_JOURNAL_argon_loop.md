@@ -68,3 +68,24 @@
   brazier legs cut at the end of S02; the S05 pan to the German group imperceptible.
 - The 84 briefs: only the slice shots are real screenwriting; ~80 are template output (generic moods that contradict the line,
   default anchor boxes). Not sent to the creator for review; goes to the new Argon self-loop chat (diagnosis + plan).
+
+## 2026-11-15 20:40 Tbilisi - full-film plan (thread "Make the first full Truce 1914 video"): defects found by eye and by ear, not fixed in code
+Data-only thread: results and data were fixed (84 director briefs, picture override, edit points, map label), pipeline code untouched.
+Plan: episodes/ep_truce_1914/planning/full_film_2026-11-15/SHOT_PLAN.md. Whisper small.en over all 56 LTX clips: ltx_whisper_small_en_2026-11-15.json.
+| shot | defect | cause (where) | status |
+|---|---|---|---|
+| S02_SH008, S05_SH020, S06_SH001 | steam/breath decided but invisible | directed25d/living_fx draw them below a visible level (V4); look_and_listen does not fail "decided but not visible" | open, code (Argon loop) |
+| S02_SH008 | boots and brazier legs cut at the end of the push | keep_in_frame not enforced on the last camera segment (V5) | open, code |
+| S05_SH020 | pan to the German group imperceptible | pan_crop_2d resolved strength/clamp (V6) | open, code |
+| S08_SH002 | snow reads "pretty, cute": uniform sharp dots, no wind or depth; snow on frame 0; snow over the hands/photo | weather layer has one flake size/speed, no gusts, no occlusion rule (V1-V3) | open, code |
+| S02_SH009, S05_SH003, S06_SH005, S08_SH003 (old 2.5D renders) | grey blurred blobs in the sky band | a mist/cloud effect drawn without a verified sky mask (older renderer runs; recheck on the new render) | open, check on re-render |
+| S03_SH007 (LTX) | white fog bloom grows over the candles from ~2 s; Whisper hears "Oh my God" in its noise | bad LTX take | data: trim + mute (edit_points.json) |
+| S06_SH008 (LTX) | "Maybe" said twice (0.0-0.6 s and 1.72-1.92 s) | LTX take | data: start the clip at 1.45 s |
+| S03_SH003 (LTX) | last word "Nacht" cut | edit_points span detector closed early (journal 183) | data: play to the clip end |
+| S04_SH014 (LTX) | the men let go and step apart at the end | LTX take | data: end at 2.6 s on the clasp |
+| S07_SH005 (LTX) | bangs at 0.5/1.6 s of the clip, before the narrator says "shots into the air" | timing of picture vs words | data: J-cut 1.0 s from S07_SH004 |
+| S07_SH006 (LTX) | only one shot audible (7.9 s), the script has two | LTX take | data: second bang reused from S07_SH005 |
+| S08_SH003 | picture shows men still fraternising during "The war went on for almost four more years" | picture choice | data: reuse S01_SH001_start (picture_overrides.json) |
+| S05_SH001/SH002 maps | "La Bassee" without its accent | episode.json data | data: fixed in episode.json |
+| library | no rifle crack, scissors, coin touch, real artillery in the free library | library coverage | left silent; optional paid SFX only on the creator's word |
+| 2026-11-15 17:30 UTC | ep_truce_1914 all 84 shots (plan full_film_2026-11-15) | Audio design was thin and template-like: many video shots had only "clip voice", maps had no own sounds, eating, trading, haircut and button moments had no foley, gaps were left silent instead of sourced, and the planner asked the creator whether audio was wanted. Cause: the planning step (stage_direction / director_brief sound fields, and this thread's plan_spec) has no rule that audio is mandatory and photo-driven, and no check that every shot carries bed + source-placed spots + a reason. | RULE (creator 2026-11-15 17:00/17:02 UTC): audio design (music cues, source-placed SFX, ambience, maps included) is MANDATORY in every plan and needs NO question to the creator; it is written per shot from the photo, the scene and the mood (what is heard, from where, how loud, why); mandatory is not filler: a sound that does not belong is left out, silence is allowed when the scene calls for it, a missing needed sound is flagged as a GAP and sourced from free licensed libraries (quality first). Data fix done in shot_plan.json/SHOT_PLAN.md + CORRECTIONS_LOG part C. Code guard for the Argon loop: a plan lint that fails a shot without bed, spots-or-explicit-silence and a reason, and fails a map_action shot without map sounds. |

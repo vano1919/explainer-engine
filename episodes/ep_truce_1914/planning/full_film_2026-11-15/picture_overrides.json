@@ -1,0 +1,15 @@
+{
+ "schema": "picture_overrides/1",
+ "why": "S08_SH003's picture shows men still fraternising during 'The war went on for almost four more years'; the film ends on the empty field of its opening (bookend). Data only.",
+ "overrides": {
+  "S08_SH003_start": {
+   "use": "S01_SH001_start",
+   "file": "api_S3_scenes_w2/S01_SH001_start_r2.png",
+   "sha256": "d25c5989e95b6752f7ef972ae7d1c595cdb6753ac54899453076efa67f71256e",
+   "replaces": {
+    "file": "api_S3_scenes_w1/S08_SH003_start.png",
+    "sha256": "1e2151be9cfcfa7aaa7ea6f2182f94a0ef1c48bd34544c9c5ada2d78fb636938"
+   }
+  }
+ }
+}

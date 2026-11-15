@@ -1,0 +1,70 @@
+{
+ "schema": "edit_points/1",
+ "clips": {
+  "S02_SH006": {
+   "in": 0.0,
+   "out": 4.5
+  },
+  "S03_SH003": {
+   "in": 0.0,
+   "out": "end",
+   "why": "old cut clipped 'Nacht'"
+  },
+  "S03_SH007": {
+   "in": 0.0,
+   "out": 3.75,
+   "clip_audio": "mute",
+   "why": "false words in noise; white bloom from ~2 s: cut at 1.9 s if the eye check sees it"
+  },
+  "S04_SH014": {
+   "in": 0.0,
+   "out": 2.6,
+   "why": "end on the clasped hands"
+  },
+  "S06_SH008": {
+   "in": 1.45,
+   "out": "end",
+   "why": "raw clip says 'Maybe' twice (0.0-0.6, 1.72-1.92 s)"
+  },
+  "S05_SH021": {
+   "clip_audio_db": -18
+  },
+  "S07_SH007": {
+   "clip_audio_db": -18
+  },
+  "S05_SH014": {
+   "clip_audio_db": -14
+  },
+  "S05_SH015": {
+   "clip_audio_db": -14
+  },
+  "S07_SH008": {
+   "clip_audio_db": -14
+  },
+  "S05_SH006": {
+   "clip_audio_db": -12,
+   "keep": "laughter 2.3-3.7 s"
+  },
+  "S07_SH004": {
+   "jcut_next_narration_s": 1.0,
+   "why": "S07_SH005 narration starts under the last 1.0 s so the bangs land near 'ended it politely'"
+  },
+  "S07_SH005": {
+   "clip_audio_db": 0,
+   "keep": "two gunshots 0.5 s and 1.6 s",
+   "narrator_duck_db": -4,
+   "level_trim_db": -0.5
+  },
+  "S07_SH006": {
+   "clip_audio_db": 0,
+   "add": {
+    "reuse": "S07_SH005 clip second bang (1.55-2.6 s)",
+    "at_s": 7.0,
+    "gain_db": -4,
+    "pan": 0.6
+   }
+  },
+  "default_dialogue": "LTX clip voice, full raw length",
+  "default_narrated_or_silent": "clip own sound at -12 dB ducked (Q2)"
+ }
+}

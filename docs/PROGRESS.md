@@ -6651,3 +6651,21 @@ the picture's own; REVIEW above 1 % (engineering default, D-59). `face_intact` n
 so a shot whose faces are all too small reads NOT_RUN instead of a PASS on nothing. Test:
 `test_light_lifts_a_pale_sky_without_burning_it_and_a_burned_frame_is_flagged`. Re-rendered S01, S06, S05_SH016 and
 S05_SH020 (the shots with a sun).
+
+## 2026-11-15 — Truce 1914 full film: shot-by-shot plan and data fixes (no pipeline code)
+Thread "Make the first full Truce 1914 video". Every photo and every current clip looked at (contact sheets, HF
+`explainer-engine/demo_truce_1914/full_film_2026-11-15/gallery/`), all 56 LTX clips transcribed with Whisper small.en.
+Data changed: the 84 `director_brief`s of script A rewritten from the narration and the picture (mood, physical truth,
+camera with word beats and targets, what never moves, cold, staged sound; the full shot spec under
+`director_brief.plan_2026_11_15`); `episode.json` La Bassée accent. New planning files in
+`episodes/ep_truce_1914/planning/full_film_2026-11-15/`: `SHOT_PLAN.md` / `shot_plan.json`, `edit_points.json` (trims and
+clip-audio decisions: S06_SH008 double "Maybe", S03_SH003 cut word, S03_SH007 bloom, S04_SH014 handshake end, S07 shots),
+`picture_overrides.json` (S08_SH003 reuses S01_SH001_start: its own picture contradicted the line), the Whisper table.
+Narration and dialogue reads already exist (ElevenLabs 2026-11-13, text identical): no paid step. Defects found by eye are
+logged in `docs/wip/argon_2026-11-14/INCIDENT_JOURNAL_argon_loop.md` for the Argon loop. Tests: the 7 episode-data test
+files (128 passed, 1 skipped). Render waits for the creator's OK.
+
+## 2026-11-15 17:30 UTC: Truce 1914 audio redesign (data only)
+- Every shot's sound in planning/full_film_2026-11-15 (SHOT_PLAN.md, shot_plan.json) was rewritten from its photo, scene and mood, maps included; silence where the scene calls for it; gaps flagged.
+- New free sounds on HF sound_library_2026-11-15_additions: 63 Mixkit effects (free licence, no attribution) + Kevin MacLeod "Silent Night" (CC BY 4.0, instrumental) for the end card.
+- Rule recorded in the incident journal: audio design is mandatory in every plan and needs no question to the creator (creator 2026-11-15). No code changed.

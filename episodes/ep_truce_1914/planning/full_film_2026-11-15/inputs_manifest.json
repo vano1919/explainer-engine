@@ -1,0 +1,548 @@
+{
+ "schema": "episode_inputs/1",
+ "episode": "ep_truce_1914",
+ "script_branch": "claude/project-thread-o239rq",
+ "pictures": {
+  "S01_SH001_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1cdedccd304005bdb602b72a.png",
+   "sha256": "d25c5989e95b6752f7ef972ae7d1c595cdb6753ac54899453076efa67f71256e",
+   "v5_file": "api_S3_scenes_w2/S01_SH001_start_r2.png"
+  },
+  "S01_SH002_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w3/cache/7bd3b95964074b9cdee9cb0e.png",
+   "sha256": "65159f9efe73e3a91f4d1d08eb4724347abf2a208d3933ee0b7844b873b35a58",
+   "v5_file": "api_S3_scenes_w3/S01_SH002_start.png"
+  },
+  "S01_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e9a173240a9ccdfcc4f83157.png",
+   "sha256": "643e471230764c2b85e0de0f9b35e90bd199008f8c0a0dffd919990aaf39d048",
+   "v5_file": "api_S3_scenes_w2/S01_SH003_start.png"
+  },
+  "S01_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/136c47a2d212e626ee7837ca.png",
+   "sha256": "09b68604c43244b980bedca5d0f59b1d5c4f53966ea8038096e0367ed28abc59",
+   "v5_file": "api_S3_scenes_w1/S01_SH004_start.png"
+  },
+  "S01_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/8b77b881e734b3d58179831d.png",
+   "sha256": "35bdd6857fc0644f2e91927a2aa81b53985e5334e923d6fac872731e2f3f3dab",
+   "v5_file": "api_S3_scenes_w1/S01_SH005_start.png"
+  },
+  "S02_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/6b51ff920adfc201e0136cf9.png",
+   "sha256": "acf6958ad37be7b0ba80ed78465def34c39f33663f7b83c48f1707037e7a9e1e",
+   "v5_file": "api_S3_scenes_w1/S02_SH004_start.png"
+  },
+  "S02_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/2bbae2bafe8a0b07d0bb1825.png",
+   "sha256": "53b07cbe3e9b51c25badc3bfd98823e3a2b87b97368fa250a5341f7714e5701d",
+   "v5_file": "api_S3_scenes_w1/S02_SH005_start.png"
+  },
+  "S02_SH006_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/17d614227c2f28788e9600fe.png",
+   "sha256": "fe8f6c03e5a1e16e40c93bcd56ea73bdef351a2d88dd72f40197c48b99ec2b62",
+   "v5_file": "api_S3_scenes_w2/S02_SH006_start.png"
+  },
+  "S02_SH007_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/ac7c952748cd4b48030b5e81.png",
+   "sha256": "2491153a615481469d90dcce17a5608df9d5af33a41496c564a3ade01cdf2312",
+   "v5_file": "api_S3_scenes_w2/S02_SH007_start.png"
+  },
+  "S02_SH008_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/fb9c67af38a3f9aea8dba213.png",
+   "sha256": "ea636c84db530f1c582646e908ff008867005bec3aeab9e95471f37b5b96904c",
+   "v5_file": "api_S3_scenes_w1/S02_SH008_start.png"
+  },
+  "S02_SH009_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/ceec8c01a785c839081978bc.png",
+   "sha256": "a99e99c7378f9cb9e56ae7bfa13125cfba9b60cd75f1dd07ae660f91d42efe8d",
+   "v5_file": "api_S3_scenes_w2/S02_SH009_start.png"
+  },
+  "S03_SH001_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/99f8c4769cbc757f217bcba3.png",
+   "sha256": "573538aaa54137fd52fa1406549b53265eb1c75f32b36e26cece60e0943eb0e2",
+   "v5_file": "api_S3_scenes_w1/S03_SH001_start.png"
+  },
+  "S03_SH002_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1ce703b5e381affc86aaa892.png",
+   "sha256": "ff99d0365da0f7f68e34454a06ed7a71a46c6317e459711827de2918e9d268e0",
+   "v5_file": "api_S3_scenes_w2/S03_SH002_start_r2.png"
+  },
+  "S03_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S03_SH003_start_fix2.png",
+   "sha256": "9048f8bbb22540021ab48f533036a9a200f0e643da73c3ac96d70227953cbda0",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S03_SH003_start_fix2.png"
+  },
+  "S03_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/9c5546268537f154272d13be.png",
+   "sha256": "3e5f92ad04fb2fa9cd9c21f5c43c1315466c1ff5235c2207e48941572b240c6d",
+   "v5_file": "api_S3_scenes_w1/S03_SH004_start.png"
+  },
+  "S03_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/30944f63efba78420f46b07c.png",
+   "sha256": "1d063ee1bd4009d57cb5e2015b1d72b199f4fbdfe4508d81051270547762acb2",
+   "v5_file": "api_S3_scenes_w2/S03_SH005_start.png"
+  },
+  "S03_SH006_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/4da9a0b8a639c9bd818a97f1.png",
+   "sha256": "bdcb459e2bd34f8661f1c4047346ac131a57807bbcd93793d8ceec3c6dfdec7b",
+   "v5_file": "api_S3_scenes_w2/S03_SH006_start.png"
+  },
+  "S03_SH007_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e9df2d1b39748533c7a03595.png",
+   "sha256": "054545fc36c9501dcb92a27e7467cff25840842256f6b5d359eb0da058a90461",
+   "v5_file": "api_S3_scenes_w2/S03_SH007_start.png"
+  },
+  "S03_SH008_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/aa004b10a4c4740cc8529847.png",
+   "sha256": "a7105ae671bfcf70a65cc00367e01f55652931c60852722940eb90d0f3ae44e8",
+   "v5_file": "api_S3_scenes_w2/S03_SH008_start.png"
+  },
+  "S03_SH009_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/5181df4f6a1a2f87fce4c48a.png",
+   "sha256": "99c916785590880aada592dd293b330fe34427d7b0c85a1b1c02bdff581c6a5d",
+   "v5_file": "api_S3_scenes_w2/S03_SH009_start.png"
+  },
+  "S03_SH010_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/042e791830efe7ef6b667d84.png",
+   "sha256": "dc230211d9f21c814d3894865da7eca2bc5c0aa91a691ba5a26abec5cd5aa720",
+   "v5_file": "api_S3_scenes_w1/S03_SH010_start.png"
+  },
+  "S04_SH001_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/b681716d06f3cfbf7f1ccacc.png",
+   "sha256": "967bdbdab35bac4b420d42ba84fb5d0250d7466935154626971aea0f9884dfc2",
+   "v5_file": "api_S3_scenes_w2/S04_SH001_start_r2.png"
+  },
+  "S04_SH002_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/e69dee53372e986211c98a4f.png",
+   "sha256": "229617f201562b8f491f6531ed092441c27443a27c3436f4f3d18ba08120f5dc",
+   "v5_file": "api_S3_scenes_w1/S04_SH002_start.png"
+  },
+  "S04_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/9c6d322aa73deabfeaad5784.png",
+   "sha256": "0f8fe23338722df4a3e84f606c1af753e461af715ee39e064b0f4afc8c671aa8",
+   "v5_file": "api_S3_scenes_w1/S04_SH003_start.png"
+  },
+  "S04_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/758dbead47c7f025c1d2124a.png",
+   "sha256": "6819348d9423b03bae16274029e61f84e90f5f1a6e7131f3be095043045a465d",
+   "v5_file": "api_S3_scenes_w2/S04_SH004_start.png"
+  },
+  "S04_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/089a194403bb504678b96fae.png",
+   "sha256": "6b99bd9a32508f67bcee515b7c1c1e1afd64e6a92daea9591aff40ed6e65ff87",
+   "v5_file": "api_S3_scenes_w2/S04_SH005_start.png"
+  },
+  "S04_SH006_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/0ebbd5b964742af1d27108f0.png",
+   "sha256": "913c66cc4d994bf2d313e87bf78b5fcb2a17ee440d2806db289c5ee41a6df66d",
+   "v5_file": "api_S3_scenes_w2/S04_SH006_start.png"
+  },
+  "S04_SH007_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/f687326ded501c8e7f9eeaab.png",
+   "sha256": "fe9588c4a4a816281ae81513f42ac9c37ba56bb19388887ab185ad0cd2fd536d",
+   "v5_file": "api_S3_scenes_w2/S04_SH007_start.png"
+  },
+  "S04_SH008_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/1f4b1178ccfce58026247da2.png",
+   "sha256": "900095d829188c15e00c874d763aef419beb73d4036d2a2d818c094b332128a6",
+   "v5_file": "api_S3_scenes_w1/S04_SH008_start.png"
+  },
+  "S04_SH009_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S04_SH009_start_mirror.png",
+   "sha256": "19b20caf6442dc10a3fb17e5e90bb8f82e3949ef2e106937317a69a9b275126f",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S04_SH009_start_mirror.png"
+  },
+  "S04_SH010_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH010_start_n1.png",
+   "sha256": "9a359125b08e49e56a17ca283636bc46d542131893f3801e995e637593dea20d",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles/p1/S04_SH010_start_n1.png"
+  },
+  "S04_SH011_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/6abdb2918f268ec74e346250.png",
+   "sha256": "7fa62fc7ef569ca207ebc3f412bfadc1f6ee0e04e17a9e9c241fc58e5d9ab161",
+   "v5_file": "api_S3_scenes_w1/S04_SH011_start.png"
+  },
+  "S04_SH012_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH012_start_n1.png",
+   "sha256": "c03c50c2788e0c407004a226115017775759d3145e36083a9c90d89cb1e6e85f",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles/p2/S04_SH012_start_n1.png"
+  },
+  "S04_SH013_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S04_SH013_start_fix2.png",
+   "sha256": "c1dc49623277aae559d079c3a212c87c7fc9fda116e35a64b22d6145b8eb56b1",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S04_SH013_start_fix2.png"
+  },
+  "S04_SH014_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH014_start_n1.png",
+   "sha256": "486e14ab30af42221251ef05b23bb9fd68eef81fc82ec6fba25c7c37231713e0",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/api_newangles/p2/S04_SH014_start_n1.png"
+  },
+  "S04_SH015_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/5eb300f0c039c4bd10c802e2.png",
+   "sha256": "2df2d9fcff0e81655c79c07697c5147148b43bc5c6a99549400e6814e09f1d8a",
+   "v5_file": "api_S3_scenes_w1/S04_SH015_start.png"
+  },
+  "S05_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/9a45b4c1a2ea6f25ccf7f783.png",
+   "sha256": "3241c15867ca9985b63950d60beb5947d911144efb1bc18940b0c5934473a888",
+   "v5_file": "api_S3_scenes_w1/S05_SH003_start.png"
+  },
+  "S05_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1be456d64b6827f0cf9889ef.png",
+   "sha256": "720819a05156376e5747c5afb168ec77835eab85efa40554d88dac5f4827f601",
+   "v5_file": "api_S3_scenes_w2/S05_SH004_start.png"
+  },
+  "S05_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH005_start_mirror.png",
+   "sha256": "d456f2392e31aa3575ea6cfc2b3e917fcb5266d55fa95832bff5bfd925f9ba13",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH005_start_mirror.png"
+  },
+  "S05_SH006_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/4027aba2635cd8e7e7071f05.png",
+   "sha256": "794455bd27f040ac33e7b1a95607cdd9a7b9cf7b52a743dd6fc7391b23f47f0f",
+   "v5_file": "api_S3_scenes_w1/S05_SH006_start.png"
+  },
+  "S05_SH007_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH007_start_mirror.png",
+   "sha256": "cc07ad460a0850b8a21ff1a4f8449f639ec0abb838450f29b845992a4ee9c0db",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH007_start_mirror.png"
+  },
+  "S05_SH008_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH008_start_mirror.png",
+   "sha256": "cd0212d6720469005e9909d820fea69f619e289a1c9a6e6cffa7df5cef71f5f5",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH008_start_mirror.png"
+  },
+  "S05_SH009_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed/S05_SH009_start_n1_card.png",
+   "sha256": "39b8155aa8f4363d674d166237b327462243a34e881312cb261be6e031711c9f",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed/S05_SH009_start_n1_card.png"
+  },
+  "S05_SH010_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH010_start_mirror.png",
+   "sha256": "e8aba06f051b33d561dd13a56b7feb941733f35476240008cbf59044276a8947",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH010_start_mirror.png"
+  },
+  "S05_SH011_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S05_SH011_start_fix2.png",
+   "sha256": "ee214f7d3be303bd0a5a3b322a8dea210221cfcf616d22e58ce424feb5f8c970",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S05_SH011_start_fix2.png"
+  },
+  "S05_SH012_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S05_SH012_start_fix2.png",
+   "sha256": "2274399c7bf12ec14c14c7d0462ce96bc85f930dc19c6b0296588708366bc3cc",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S05_SH012_start_fix2.png"
+  },
+  "S05_SH013_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH013_start_mirror.png",
+   "sha256": "1251bd138f0f307c654e27ace3a2e2ed040c004fb23de3de20116e432655db27",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH013_start_mirror.png"
+  },
+  "S05_SH014_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/57a4ea9bd4270fd9064a409d.png",
+   "sha256": "8da55afa4ba6b05ad59f07e778c9ecf6da9b9075caabad013129998fc1e8f1e0",
+   "v5_file": "api_S3_scenes_w1/S05_SH014_start.png"
+  },
+  "S05_SH015_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e2490163ec3a5422222edeca.png",
+   "sha256": "7e586c204363933a9d4802ee83b76dc5630789e46c846f6c81f85c904b77c4c4",
+   "v5_file": "api_S3_scenes_w2/S05_SH015_start.png"
+  },
+  "S05_SH016_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/45bb0e8ecc8c760ab0be75af.png",
+   "sha256": "391eaa3c1e71e261a4d419931b8c75ff40f377215b1e3fec0d3ef466d4bc7dda",
+   "v5_file": "api_S3_scenes_w1/S05_SH016_start.png"
+  },
+  "S05_SH017_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e3fa664985bac13da28cd720.png",
+   "sha256": "10a1e5cf404ae8085c8fb0d2d5ca966473f780de06d23f681ef4c20be284ff9b",
+   "v5_file": "api_S3_scenes_w2/S05_SH017_start.png"
+  },
+  "S05_SH018_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S05_SH018_start_mirror.png",
+   "sha256": "ea7bda57f8c6969ea2cddf838d295ca80d1aa6ddac374241926c542b7de35075",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S05_SH018_start_mirror.png"
+  },
+  "S05_SH019_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/local_fix/S05_SH019_start_fix.png",
+   "sha256": "95e7129ac87a94715fe0715627cb638ab33d361ee935f1a79421042d3be5290b",
+   "v5_file": "local_fix/S05_SH019_start_fix.png"
+  },
+  "S05_SH020_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/0961d9551910c9b0cd967e5e.png",
+   "sha256": "0ed409434bda10ea47fdcc750eb5397772daf59f95608f6c5b062a0ec3f72919",
+   "v5_file": "api_S3_scenes_w1/S05_SH020_start.png"
+  },
+  "S05_SH021_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/c030b4def7eef27edcc0292d.png",
+   "sha256": "52d6de376ac619e95525696f2c7df206226ecf8cd7c3fd5caa9ce9ddc7ca0f37",
+   "v5_file": "api_S3_scenes_w2/S05_SH021_start.png"
+  },
+  "S06_SH001_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/0beb5fddd6f4426807a55589.png",
+   "sha256": "20c7240a415d7b215bd501cab11060fb093cb855e74b7fe352f8e63e66b919bd",
+   "v5_file": "api_S3_scenes_w1/S06_SH001_start.png"
+  },
+  "S06_SH002_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S06_SH002_start_mirror.png",
+   "sha256": "d514df0361683b6ade96dcd4d066e334795180de630f1bf09ea81ea2db022a11",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S06_SH002_start_mirror.png"
+  },
+  "S06_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH003_start_fix2.png",
+   "sha256": "c903555b8077f16373ee7661123fef80f4394274eec66c474db1042cf230e591",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S06_SH003_start_fix2.png"
+  },
+  "S06_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/fc29ca07f635138501dffed1.png",
+   "sha256": "8b291d60251700b6806fa672f7f46252fb1c5d6a587efe0cb9c7dfbda7da7edf",
+   "v5_file": "api_S3_scenes_w2/S06_SH004_start.png"
+  },
+  "S06_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/fdfc498552fff49255c364e1.png",
+   "sha256": "7391d3ac093184e85c92804ad739aca9a5f1352c051926e8fd52ba2569ecb98e",
+   "v5_file": "api_S3_scenes_w2/S06_SH005_start_r2.png"
+  },
+  "S06_SH006_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/d1484fa3a280046b2ea5de16.png",
+   "sha256": "0a02b54b53404e557ced01d98d4fa2b87b29027bbde0c1850594a29286fa9a41",
+   "v5_file": "api_S3_scenes_w2/S06_SH006_start.png"
+  },
+  "S06_SH007_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH007_start_fix2.png",
+   "sha256": "30a0dc424b84459292a1df8f5e029cdd57fb14b195eeb1bcecdd1c54c44191dc",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S06_SH007_start_fix2.png"
+  },
+  "S06_SH008_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH008_start_fix2.png",
+   "sha256": "f4849798352203b02bada672fc2d020b3c9bc8dbf9aed8dbc12f134457c04ad5",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S06_SH008_start_fix2.png"
+  },
+  "S06_SH009_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/459180abd24b5054b68873f1.png",
+   "sha256": "a3e337a18623a3094e7b162edfa9777de3b9bc5e70530657fe673a1e99ab8fa4",
+   "v5_file": "api_S3_scenes_w1/S06_SH009_start.png"
+  },
+  "S06_SH010_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S06_SH010_start_mirror.png",
+   "sha256": "c89fa9e8731589c4c7b03d4c914cbff836c4e4c9c05f0bf8718eb4cbc84a8979",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S06_SH010_start_mirror.png"
+  },
+  "S06_SH011_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S06_SH011_start_mirror.png",
+   "sha256": "2daf93c78c0a86fe0bb6560583e924c32efda012af45ae6cfeed62bc2c24aa89",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S06_SH011_start_mirror.png"
+  },
+  "S06_SH012_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/d6dd993ef61f64d9b6129ebc.png",
+   "sha256": "f0aceb5a2a07cbd933116764560090b7d579fe03e1b4bd78638df11c4475b2be",
+   "v5_file": "api_S3_scenes_w1/S06_SH012_start.png"
+  },
+  "S07_SH001_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/82ece8ecbcfa5da9123fe8cd.png",
+   "sha256": "2559bc774f92920cdb634cfab3afd3f7da752aee07cd6973f96192505678e696",
+   "v5_file": "api_S3_scenes_w1/S07_SH001_start.png"
+  },
+  "S07_SH002_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/mirrored/S07_SH002_start_mirror.png",
+   "sha256": "6964fdcc2478bc0e6492d08af99585e50aae20382cc7c5f41cb5c7ce70b6da72",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/mirrored/S07_SH002_start_mirror.png"
+  },
+  "S07_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S07_SH003_start_fix2.png",
+   "sha256": "29c8d7576f447909eef7ba57b12701699b45d0bdd0233557d1db51bba228fe72",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/fixed2/S07_SH003_start_fix2.png"
+  },
+  "S07_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/060bfd79498d4a66871d9528.png",
+   "sha256": "a3b53359cc3563f4a5bbd50a37da15d692eaaefde5ae23457e5060141278018f",
+   "v5_file": "api_S3_scenes_w1/S07_SH004_start.png"
+  },
+  "S07_SH005_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/064e7631e9b16acc8c24f40f.png",
+   "sha256": "da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3",
+   "v5_file": "api_S3_scenes_w2/S07_SH005_start.png"
+  },
+  "S07_SH006_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/ab948b9d23ecd7a1affa1b5c.png",
+   "sha256": "fe18ad2e4dfe70c4de82b0fe77ff97cbdff071e1cd7eb478dd2f2fd5adcb9859",
+   "v5_file": "api_S3_scenes_w1/S07_SH006_start.png"
+  },
+  "S07_SH007_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/button_fix/S07_SH007_start.png",
+   "sha256": "7ae336a63a2a1b20b4156ab29bd9861de78f0fd2dc2838f311bc084775e2d938",
+   "v5_file": "button_fix/S07_SH007_start.png"
+  },
+  "S07_SH008_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/button_fix/S07_SH008_start.png",
+   "sha256": "9699933428ae27fc3e0ca5b575eb640be93a8863977d6a2596109ab7126d1751",
+   "v5_file": "button_fix/S07_SH008_start.png"
+  },
+  "S08_SH001_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/03bcf8817982220b0b2b0ef6.png",
+   "sha256": "38d7ea7cd62206fc4a671f74e2312262c3d84d92490cd5f07c11411468934ea1",
+   "v5_file": "api_S3_scenes_w1/S08_SH001_start.png"
+  },
+  "S08_SH002_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/89645231dc29774437adbc26.png",
+   "sha256": "2aa79cda8d12bf783d39c053f5ff3b3c54a3593d7318e4d5d167b0fabf653648",
+   "v5_file": "api_S3_scenes_w1/S08_SH002_start.png"
+  },
+  "S08_SH003_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1cdedccd304005bdb602b72a.png",
+   "sha256": "d25c5989e95b6752f7ef972ae7d1c595cdb6753ac54899453076efa67f71256e",
+   "v5_file": "api_S3_scenes_w2/S01_SH001_start_r2.png",
+   "override": "reuses S01_SH001_start (picture_overrides.json)"
+  },
+  "S08_SH004_start": {
+   "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S08_SH004_start_candle.png",
+   "sha256": "ab009277a67eb84416c208591b70f5eb172d3c568f7a97d31b188b5bf46587e4",
+   "v5_file": "/mnt/project-files/explainer-engine/demo_truce_1914/clips_lane/pictures/S08_SH004_start_candle.png"
+  }
+ },
+ "ltx_clips": {
+  "S01_SH002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/35cc6a85cd8e_fc6ae61bf410/S01_SH002/S01_SH002_seed7100.mp4",
+  "S01_SH003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/35cc6a85cd8e_fc6ae61bf410/S01_SH002/S01_SH003_seed7101.mp4",
+  "S02_SH006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/752d93fd5ca1_fc6ae61bf410/S02_SH006/S02_SH006_seed7100.mp4",
+  "S02_SH007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/752d93fd5ca1_fc6ae61bf410/S02_SH006/S02_SH007_seed7101.mp4",
+  "S03_SH001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH001_seed7100.mp4",
+  "S03_SH003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/dd951163fc4b_fc6ae61bf410/S03_SH003/S03_SH003_seed7200.mp4",
+  "S03_SH004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH004_seed7102.mp4",
+  "S03_SH005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/4e31028adebf_fc6ae61bf410/S03_SH005/S03_SH005_seed7103.mp4",
+  "S03_SH006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/4e31028adebf_fc6ae61bf410/S03_SH005/S03_SH006_seed7104.mp4",
+  "S03_SH007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH007_seed7105.mp4",
+  "S03_SH008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH008_seed7106.mp4",
+  "S03_SH009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH009_seed7107.mp4",
+  "S04_SH002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH002_seed7100.mp4",
+  "S04_SH003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH003_seed7101.mp4",
+  "S04_SH004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH004_seed7102.mp4",
+  "S04_SH005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH005_seed7103.mp4",
+  "S04_SH006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH006_seed7104.mp4",
+  "S04_SH007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c77ad9cdd010_fc6ae61bf410/S04_SH002/S04_SH007_seed7105.mp4",
+  "S04_SH008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH008_seed7100.mp4",
+  "S04_SH009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH009_seed7101.mp4",
+  "S04_SH010": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH010_seed7102.mp4",
+  "S04_SH012": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH012_seed7103.mp4",
+  "S04_SH013": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH013_seed7104.mp4",
+  "S04_SH014": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH014_seed7105.mp4",
+  "S04_SH015": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH015_seed7106.mp4",
+  "S05_SH004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH004_seed7100.mp4",
+  "S05_SH005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH005_seed7101.mp4",
+  "S05_SH006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH006_seed7102.mp4",
+  "S05_SH007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH007_seed7103.mp4",
+  "S05_SH008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S05_SH008_seed7300.mp4",
+  "S05_SH009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH009_seed7105.mp4",
+  "S05_SH011": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S05_SH011_seed7302.mp4",
+  "S05_SH012": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/671e136e4bdc_fc6ae61bf410/S05_SH004/S05_SH012_seed7107.mp4",
+  "S05_SH013": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S05_SH013_seed7301.mp4",
+  "S05_SH014": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH014_seed7100.mp4",
+  "S05_SH015": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH015_seed7101.mp4",
+  "S05_SH017": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH017_seed7102.mp4",
+  "S05_SH018": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cde4357602e2_fc6ae61bf410/S05_SH018/S05_SH018_seed7400.mp4",
+  "S05_SH019": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH019_seed7104.mp4",
+  "S05_SH021": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/cb3c1d2e63b8_fc6ae61bf410/S05_SH014/S05_SH021_seed7105.mp4",
+  "S06_SH002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH002_seed7100.mp4",
+  "S06_SH003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH003_seed7304.mp4",
+  "S06_SH004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH004_seed7102.mp4",
+  "S06_SH006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH006_seed7306.mp4",
+  "S06_SH007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH007_seed7104.mp4",
+  "S06_SH008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH008_seed7303.mp4",
+  "S06_SH009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S06_SH009_seed7110.mp4",
+  "S06_SH010": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH010_seed7305.mp4",
+  "S06_SH011": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/df474a1fd412_fc6ae61bf410/S06_SH002/S06_SH011_seed7108.mp4",
+  "S07_SH002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH002_seed7100.mp4",
+  "S07_SH003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH003_seed7101.mp4",
+  "S07_SH004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH004_seed7102.mp4",
+  "S07_SH005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S07_SH005_seed7111.mp4",
+  "S07_SH006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH006_seed7104.mp4",
+  "S07_SH007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH007_seed7105.mp4",
+  "S07_SH008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S07_SH008_seed7112.mp4"
+ },
+ "reads": {
+  "S01_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S01_L001.mp3",
+  "S01_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S01_L002.mp3",
+  "S01_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S01_L003.mp3",
+  "S01_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S01_L004.mp3",
+  "S01_L005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S01_L005.mp3",
+  "S02_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L001.mp3",
+  "S02_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L002.mp3",
+  "S02_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L003.mp3",
+  "S02_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L004.mp3",
+  "S02_L005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L005.mp3",
+  "S02_L006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L006.mp3",
+  "S02_L007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L007.mp3",
+  "S02_L008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L008.mp3",
+  "S02_L009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S02_L009.mp3",
+  "S03_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L001.mp3",
+  "S03_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L002.mp3",
+  "S03_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L003.mp3",
+  "S03_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L004.mp3",
+  "S03_L005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L005.mp3",
+  "S03_L006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L006.mp3",
+  "S03_L008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L008.mp3",
+  "S03_L009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L009.mp3",
+  "S03_L010": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S03_L010.mp3",
+  "S04_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L001.mp3",
+  "S04_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L002.mp3",
+  "S04_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L003.mp3",
+  "S04_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L004.mp3",
+  "S04_L006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L006.mp3",
+  "S04_L007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L007.mp3",
+  "S04_L008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L008.mp3",
+  "S04_L009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L009.mp3",
+  "S04_L010": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L010.mp3",
+  "S04_L012": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L012.mp3",
+  "S04_L013": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L013.mp3",
+  "S04_L015": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S04_L015.mp3",
+  "S05_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L001.mp3",
+  "S05_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L002.mp3",
+  "S05_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L003.mp3",
+  "S05_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L004.mp3",
+  "S05_L005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L005.mp3",
+  "S05_L006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L006.mp3",
+  "S05_L007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L007.mp3",
+  "S05_L008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L008.mp3",
+  "S05_L009": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L009.mp3",
+  "S05_L011": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L011.mp3",
+  "S05_L012": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L012.mp3",
+  "S05_L013": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L013.mp3",
+  "S05_L014": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L014.mp3",
+  "S05_L015": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L015.mp3",
+  "S05_L017": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L017.mp3",
+  "S05_L018": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L018.mp3",
+  "S05_L019": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L019.mp3",
+  "S05_L020": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S05_L020.mp3",
+  "S06_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L001.mp3",
+  "S06_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L002.mp3",
+  "S06_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L003.mp3",
+  "S06_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L004.mp3",
+  "S06_L006": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L006.mp3",
+  "S06_L007": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L007.mp3",
+  "S06_L008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L008.mp3",
+  "S06_L010": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L010.mp3",
+  "S06_L011": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L011.mp3",
+  "S06_L012": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S06_L012.mp3",
+  "S07_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S07_L001.mp3",
+  "S07_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S07_L002.mp3",
+  "S07_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S07_L003.mp3",
+  "S07_L004": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S07_L004.mp3",
+  "S07_L005": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S07_L005.mp3",
+  "S07_L008": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S07_L008.mp3",
+  "S08_L001": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S08_L001.mp3",
+  "S08_L002": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S08_L002.mp3",
+  "S08_L003": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/audio/reads/S08_L003.mp3"
+ },
+ "clock": {
+  "narration.wav": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/narration.wav",
+  "narration.scribe.json": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/narration.scribe.json",
+  "timing.json": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/timing.json",
+  "line_reads.json": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/line_reads.json",
+  "join_manifest.json": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/join_manifest.json",
+  "SHA256SUMS": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/SHA256SUMS",
+  "CLOCK_NOTE.md": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/CLOCK_NOTE.md"
+ },
+ "sound_library": [
+  "https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/sound_library_2026-11-13",
+  "https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/realism_w1_2026-11-12/library"
+ ]
+}
