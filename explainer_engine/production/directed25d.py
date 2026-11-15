@@ -1,41 +1,13 @@
-"""Directed 2.5D: the renderer prototype that carries out a Scene Director's plan (roadmap 2026-11-14 B.4-B.6, phase P1).
-
-PROTOTYPE (P1, round 2 on the six Stage B photos): ``episode/run.py`` does not call it, and ``production/layers25d.py`` is
-unchanged. P3 folds what the owner accepts into ``layers25d``. It reads a picture's ``scene_layers/1`` folder
-(``production/understand.py``) and a resolved plan (``production/direction.resolve``), and lifts the five limits the roadmap
-found in ``layers25d`` (A.5):
-
-1. Depth at full size, never blurred into planes: the BACKGROUND is one continuous sheet (the clean plate) moved per pixel by
-   its own depth (a smoothed copy of it, so a slope stretches and never tears); every named OBJECT (SAM 2.1 + BiRefNet mask) is
-   a rigid cut-out at its median depth, in depth order. A crane or a truck shows the ground moving continuously, so the plane
-   seams of ``layers25d`` (the fill band of S01 crane 0.95) do not exist.
-2. Fills from LaMa (the plate), not Telea; the renderer knows on every frame which output pixel shows plate fill
-   (``telemetry.fill``) for the reveal detector (``qa/motion_intent``).
-3. A camera with a target: push and pull move towards a point or a mask while they zoom (inside the picture's margin); rack
-   focus pulls between two masks' depths; up to ``SEGMENTS_MAX`` word-timed segments; truck, crane (parallax), pan and tilt
-   (no parallax, level 1 of B.4), orbit (small), handheld.
-4. Effects with targets and instances: every flame, candle and glow is its own instance with its own phase (two braziers and
-   six candles in one shot), its light spills on the surfaces round it with distance falloff and flickers with it, the flame
-   itself deforms; smoke rises from a source point and the nearer objects cover it (composited depth); mist and sun shafts
-   are weighted by the depth of the VISIBLE surface, so they sit behind the near wire and people.
-5. ``legacy`` box effects (``fire_box``) keep the Stage B v1 behaviour for the ablations C1/C2 of the roadmap's K.1.
-
-Every frame is a pure function of its number (all randomness from the shot's seed).
-"""
 from __future__ import annotations
-
 import hashlib
 import math
 import re
 import subprocess
 import time
 from pathlib import Path
-
 import numpy as np
-
 from explainer_engine.production import layers25d as L
 from explainer_engine.production import living_fx as LFX
-
 VERSION = "directed25d/0.1-p1"
 SEGMENTS_MAX = 3
 PUSH_SCALE = L.PUSH_SCALE          # zoom change of a push at strength 1 (same as layers25d)
@@ -85,15 +57,16 @@ SEEN_TOUCH = 2.0                   # ... over the pixels it changes by more than
 FX_OPS = ("fire", "candle", "glow", "smoke", "mist", "sun_shaft", "cloud_drift", "heat_haze", "fire_box") + LFX.OPS + (
     "subject_sway",)
 CAMERA_OPS = ("hold", "push", "pull", "truck", "crane", "pan", "tilt", "orbit", "handheld", "rack_focus")
-
-
 def _seed(s: str) -> int:
     return int(hashlib.sha256(s.encode()).hexdigest()[:8], 16)
-
-
+def _real_strokes(cv2, parts: np.ndarray, r: int) -> np.ndarray:
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(parts.astype(np.uint8))
+    keep = np.zeros(n, bool)
+    for i in range(1, n):
+        long_side = max(stats[i, 2], stats[i, 3])
+        keep[i] = long_side >= STROKE_LEN * 2 * r and stats[i, 4] / max(1, long_side) <= 2 * r
+    return keep[lab] & (parts > 0)
 class Stage:
-    """Everything the frames of one shot need that does not depend on the frame number."""
-
     def __init__(self, picture: Path, layers: dict, plan: dict, size=(1920, 1080), fps: int = 24):
         import cv2
         from PIL import Image
@@ -174,22 +147,13 @@ class Stage:
         self._flatten_bg_people(layers)
         yy, xx = np.mgrid[0:self.H, 0:self.W].astype(np.float32)
         self.oxx, self.oyy = xx - self.W / 2, yy - self.H / 2
-
     def _rest_background(self, layers: dict) -> None:
-        """Frame 0 must be the picture inside every layer (``rest_seam`` <= 0.04). Two rules:
-
-        - measure each object's thin-stroke share with ``MORPH_OPEN`` (disc of diameter ``THIN_FILL_PX`` at 1080p); if
-          ``share >= THIN_SHARE_MAX`` (0.35, engineering default) the whole object stays on the background (``self.flat``,
-          not layered);
-        - otherwise keep the mask whole (no morphological bite subtracted from ``o["alpha"]``, and no ``REST_ALPHA_GAIN``
-          dilation exposing the plate outside outlines) with a soft inward feather inside the ``SEAM_INSET_PX`` boundary rim
-          while keeping real attached strokes (``_strokes``, e.g. a thin rifle or sling) and the eroded interior opaque, and
-          show the clean plate under the full support of every kept layer so no foreground ghost remains when layers move."""
         cv2 = self.cv2
         self.flat = []
         if not self.objects:
             return
-        A = np.zeros((self.sh, self.sw), np.float32)
+        A_plate = np.zeros((self.sh, self.sw), np.float32)
+        A_hole = np.zeros((self.sh, self.sw), np.float32)
         g = max(1, int(round(SEAM_INSET_PX * self.sw / 1920)))
         k_in = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * g + 1, 2 * g + 1))
         r = max(1, int(round(THIN_FILL_PX / 2 * self.sw / 1920)))
@@ -206,38 +170,35 @@ class Stage:
             if share >= THIN_SHARE_MAX:
                 self.flat.append(o["id"])
                 continue
+            real_strokes = _real_strokes(cv2, parts, r)
             strokes = self._strokes(parts, r)
             inner_o = cv2.erode(hard, k_in) > 0
             dist = cv2.distanceTransform(hard, cv2.DIST_L2, 3)
             inward = np.clip((dist - 0.25) / (g + 0.5), 0.0, 1.0).astype(np.float32)
-            inward = np.maximum(inward, strokes.astype(np.float32))
-            o["alpha"] = np.where(inner_o | (strokes > 0), 1.0, raw_a * inward).astype(np.float32)
+            inward = np.maximum(inward, real_strokes.astype(np.float32))
+            o["alpha"] = np.where(inner_o | (real_strokes > 0), 1.0, raw_a * inward).astype(np.float32)
+            bitten = (strokes > 0) & ~(real_strokes > 0)
+            if bitten.any():
+                strip = cv2.dilate(bitten.astype(np.float32), disc)
+                o["alpha"] = o["alpha"] * (1.0 - strip)
             o["rgba"][..., 3] = (o["alpha"] * 255 + 0.5).astype(np.uint8)
             if (o["alpha"] > 0.5).sum() < 20:
                 self.flat.append(o["id"])
                 continue
             keep.append(o)
-            A = np.maximum(A, (raw_a > 0.01).astype(np.float32))
+            A_plate = np.maximum(A_plate, (raw_a > 0.01).astype(np.float32))
+            A_hole = np.maximum(A_hole, o["alpha"])
         self.objects = keep
-        self.plate = (self.src.astype(np.float32) * (1 - A[..., None]) + self.plate.astype(np.float32) * A[..., None]).astype(np.uint8)
-        self.hole = A
-
+        self.plate = (self.src.astype(np.float32) * (1 - A_plate[..., None]) + self.plate.astype(np.float32) * A_plate[..., None]).astype(np.uint8)
+        self.hole = A_hole
     def _strokes(self, parts: np.ndarray, r: int) -> np.ndarray:
-        """Of what an opening removed from an object, only the real thin attached strokes (a rifle barrel, a sling): pieces
-        at least ``STROKE_LEN`` disc widths long and on average narrower than the disc, distinguished from small perimeter
-        nubs on a rough outline."""
         n, lab, stats, _ = self.cv2.connectedComponentsWithStats(parts.astype(np.uint8))
         keep = np.zeros(n, bool)
         for i in range(1, n):
             long_side = max(stats[i, 2], stats[i, 3])
             keep[i] = long_side >= STROKE_LEN * 2 * r and stats[i, 4] / max(1, long_side) <= 2 * r
         return keep[lab] & (parts > 0)
-
     def rest_seam(self) -> dict:
-        """Frame 0 must be the picture (Fable's audit 2026-11-14). Inside the outline SAM cut (eroded by ``SEAM_INSET_PX``,
-        so the soft edge is not counted) the rest composite (background at rest + every layer, identity view) must show
-        the picture: plate seen there is a seam (the C4A scallops: bites cut out of a layer, plate round each bite). The
-        measure is those pixels per pixel of outline, so it does not grow with the object's size."""
         cv2 = self.cv2
         rest = self.plate.astype(np.float32)
         inner = np.zeros((self.sh, self.sw), bool)
@@ -255,10 +216,7 @@ class Stage:
         diff = np.abs(rest - self.src.astype(np.float32)).max(axis=2)
         bad = (diff > SEAM_LEVEL) & inner
         return {"per_outline_px": round(float(bad.sum() / outline), 4), "pixels": int(bad.sum()), "outline": outline}
-
-    # --- what the plan points at ----------------------------------------------------------------------------------------
     def point_of(self, target: dict | None) -> tuple[float, float] | None:
-        """A target -> its point in working pixels: an explicit point, a mask's centroid or a light's point."""
         if not target:
             return None
         if target.get("point") is not None:
@@ -271,7 +229,6 @@ class Stage:
         if lid and lid in self.lights:
             return self.lights[lid]["point"]
         return None
-
     def depth_of(self, target: dict | None) -> float | None:
         if not target:
             return None
@@ -286,25 +243,25 @@ class Stage:
             x, y = int(np.clip(pt[0], 0, self.sw - 1)), int(np.clip(pt[1], 0, self.sh - 1))
             return float(self.depth[y, x])
         return None
-
     def _focus_depth(self) -> float:
         for seg in self.p.get("cameras", []):
             if seg["op"] == "orbit" and seg.get("target"):
                 return self.depth_of(seg["target"]) or 0.5
         return 0.5
-
     def _sky(self) -> np.ndarray:
         top = (np.arange(self.sh, dtype=np.float32) < 0.6 * self.sh)[:, None]
         sky = ((self.depth <= 0.03) & top).astype(np.float32)
         return self.cv2.GaussianBlur(sky, (0, 0), 0.012 * self.sw)
-
-    # --- the camera ---------------------------------------------------------------------------------------------------------
     def view(self, f: int, z0: float | None = None) -> dict:
-        """The camera at frame ``f``: zoom ``s``, view centre (share of the picture), parallax translation ``T`` (share of
-        the width, for the nearest depth), orbit ``O``, rotation (degrees), depth push ``dp``."""
         z0 = self.z0 if z0 is None else z0
         s, dp = 1.0, 0.0
         cx, cy = 0.5, 0.5
+        frm = self.p.get("framing") if isinstance(self.p.get("framing"), dict) else None
+        if frm and isinstance(frm.get("focus"), (list, tuple)) and len(frm["focus"]) == 2:
+            hx0 = max(0.0, (1 - 1 / max(1.0, z0)) / 2 - MARGIN)
+            hy0 = max(0.0, (1 - 1 / max(1.0, z0)) / 2 - MARGIN * self.sw / self.sh)
+            cx = float(np.clip(float(frm["focus"][0]), 0.5 - hx0, 0.5 + hx0))
+            cy = float(np.clip(float(frm["focus"][1]), 0.5 - hy0, 0.5 + hy0))
         tx = ty = ox = 0.0
         rot = 0.0
         pulls = []
@@ -318,8 +275,8 @@ class Stage:
                 dp += DEPTH_PUSH * st * u
                 pulls.append((seg, u))
             elif seg["op"] == "pull":
-                s *= 1 + PUSH_SCALE * st * (1 - u)
-                dp += DEPTH_PUSH * st * (1 - u)
+                s *= (1 + PUSH_SCALE * st * (1 - u)) * (1 + DEPTH_PUSH * st)
+                dp -= DEPTH_PUSH * st * u / (1 + DEPTH_PUSH * st)
                 pulls.append((seg, 1 - u))
             elif seg["op"] == "truck":
                 tx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
@@ -328,6 +285,7 @@ class Stage:
                 ty += NEAR_TRAVEL * st * u * (1 if d == "down" else -1)
             elif seg["op"] == "pan":
                 cx += NEAR_TRAVEL * st * u * (-1 if d == "left" else 1)
+                pulls.append((seg, u))
             elif seg["op"] == "tilt":
                 cy += NEAR_TRAVEL * st * u * (1 if d == "down" else -1) * self.sw / self.sh
             elif seg["op"] == "orbit":
@@ -336,23 +294,22 @@ class Stage:
         zs = z0 * s
         half_x = (1 - 1 / zs) / 2 - MARGIN
         half_y = (1 - 1 / zs) / 2 - MARGIN * self.sw / self.sh
-        # one aim at a time: a later targeted move hands the view over from the earlier target to its own (the push to the
-        # Scots, then the truck to the Germans: S05_SH020 C4A kept the first recentre and the truck had no room left)
-        goal, amount = None, 0.0
+        dx_goal = dy_goal = None
         for seg, a in pulls:
             pt = self.point_of(seg.get("target"))
             if pt is None:
                 continue
             pt = (pt[0] / self.sw, pt[1] / self.sh)
-            if goal is None or seg["op"] == "pull":
-                goal, amount = pt, a
+            tx_i = float(np.clip(RECENTRE * (pt[0] - cx), -max(0.0, half_x), max(0.0, half_x)))
+            ty_i = float(np.clip(RECENTRE * (pt[1] - cy), -max(0.0, half_y), max(0.0, half_y)))
+            if dx_goal is None or seg["op"] == "pull":
+                dx_goal, dy_goal = tx_i * a, ty_i * a
             else:
-                goal = (goal[0] + (pt[0] - goal[0]) * a, goal[1] + (pt[1] - goal[1]) * a)
-                amount = max(amount, a)
-        if goal is not None:
-            gx, gy = goal[0] - cx, goal[1] - cy
-            cx += float(np.clip(RECENTRE * amount * gx, -max(0, half_x), max(0, half_x)))
-            cy += float(np.clip(RECENTRE * amount * gy, -max(0, half_y), max(0, half_y)))
+                dx_goal = dx_goal + (tx_i - dx_goal) * a
+                dy_goal = dy_goal + (ty_i - dy_goal) * a
+        if dx_goal is not None:
+            cx += dx_goal
+            cy += dy_goal
         if self.__dict__.get("keep"):
             s, dp, cx, cy = self._frame_people(z0, s, dp, cx, cy, tx, ty, ox, far)
         h = self.p.get("handheld")
@@ -362,22 +319,12 @@ class Stage:
             cy += HAND_TR * h * L._wave(t, self.seed, 1) * self.sw / self.sh
             rot += HAND_ROT * h * L._wave(t, self.seed, 2)
         return {"s": s, "cx": cx, "cy": cy, "tx": tx, "ty": ty, "ox": ox, "rot": rot, "dp": dp, "far": far, "z0": z0}
-
-    # --- the safe zone: nobody is cut by the frame -----------------------------------------------------------------------
     def _bbox(self, m: np.ndarray, thr: float = 0.5):
         ys, xs = np.nonzero(m > thr)
         if not len(xs):
             return None
         return [xs.min() / self.sw, ys.min() / self.sh, (xs.max() + 1) / self.sw, (ys.max() + 1) / self.sh]
-
     def _keep_boxes(self) -> list[dict]:
-        """``plan["keep_in_frame"]`` -> boxes (shares of the picture) the camera must keep inside the frame, with their depth.
-
-        - ``{"face": box}``: a live face. The person is the mask that holds the face's centre (else the face widened by its
-          own width each side). A person the picture shows whole stays whole; a person the picture already cuts keeps the
-          head and chest (``HEAD_UP`` .. ``CHEST_DOWN`` face heights) at the mask's full width.
-        - ``{"mask": id}`` / ``{"light": id}``: a named object or the light an effect animates, whole.
-        ``"soft": true`` items give way first when the people cannot all be kept (``_frame_people``)."""
         out = []
         for it in self.p.get("keep_in_frame") or []:
             box, region, hosts = None, None, []
@@ -406,33 +353,33 @@ class Stage:
             if box is None:
                 continue
             box = [float(np.clip(b, 0, 1)) for b in box]
-            if it.get("face") and hosts:                          # a person: the nearer part of the body decides the scale
+            is_soft = bool(it.get("soft"))
+            frm = self.p.get("framing") if isinstance(self.p.get("framing"), dict) else None
+            if it.get("face") and frm and float(frm.get("crop") or 1.0) > 1.05 and isinstance(frm.get("focus"), (list, tuple)):
+                fcx, fcy = (it["face"][0] + it["face"][2]) / 2, (it["face"][1] + it["face"][3]) / 2
+                half_c = 0.5 / float(frm["crop"])
+                if abs(fcx - float(frm["focus"][0])) > half_c or abs(fcy - float(frm["focus"][1])) > half_c:
+                    is_soft = True
+            if it.get("face") and hosts:
                 hm = self.masks_src[min(hosts)[1]] > 0.5
-                out.append({"box": box, "d": float(np.percentile(self.depth[hm], 75)), "soft": bool(it.get("soft")),
+                out.append({"box": box, "d": float(np.percentile(self.depth[hm], 75)), "soft": is_soft,
                             "why": it.get("why") or "face", "face": list(it["face"]), "face_d": self._face_depth(it["face"])})
                 continue
             rb = region or box
             ys = slice(int(rb[1] * self.sh), max(int(rb[1] * self.sh) + 1, int(rb[3] * self.sh)))
             xs = slice(int(rb[0] * self.sw), max(int(rb[0] * self.sw) + 1, int(rb[2] * self.sw)))
-            out.append({"box": box, "d": float(np.median(self.depth[ys, xs])), "soft": bool(it.get("soft")),
+            out.append({"box": box, "d": float(np.median(self.depth[ys, xs])), "soft": is_soft,
                         "why": it.get("why") or ("face" if it.get("face") else it.get("mask") or it.get("light")),
                         **({"face": list(it["face"]), "face_d": self._face_depth(it["face"])} if it.get("face") else {})})
         return out
-
     def _face_depth(self, face) -> float:
-        """The depth a face is drawn at: its layer's depth when a layered object holds it (layers move rigidly), else the
-        background's depth there."""
         cxp = int(np.clip((face[0] + face[2]) / 2 * self.sw, 0, self.sw - 1))
         cyp = int(np.clip((face[1] + face[3]) / 2 * self.sh, 0, self.sh - 1))
         for o in self.objects:
             if o["alpha"][cyp, cxp] > 0.5:
                 return float(o["d"])
         return float(self.bg_depth[cyp, cxp])
-
     def _frame_people(self, z0, s, dp, cx, cy, tx, ty, ox, far):
-        """Keep ``self.keep`` inside the frame with ``SAFE_MARGIN`` (plus the handheld sway): first cap the zoom (never below
-        the base zoom), then move the view centre as little as possible. When the soft items do not fit with the people,
-        only the people are kept."""
         base = max(self.sw / self.W, self.sh / self.H)
         mx = SAFE_MARGIN + HAND_TR * float(self.p.get("handheld") or 0.0)
         my = mx * self.sw / self.sh
@@ -447,22 +394,25 @@ class Stage:
             ex0, ex1, ey0, ey1 = max(0.0, x0 - mx), min(1.0, x1 + mx), max(0.0, y0 - my), min(1.0, y1 + my)
             need = base / (z0 * (1 + dp * d))
             s_max = min(need * self.W / (self.sw * max(1e-3, ex1 - ex0)), need * self.H / (self.sh * max(1e-3, ey1 - ey0)))
-            if s_max < 1.0 and i + 1 < len(groups):
-                continue                                           # the soft items do not fit with the people: keep the people
-            if s > s_max:
+            if s > s_max and i + 1 < len(groups):
+                continue
+            s_cur, dp_cur = s, dp
+            if s_cur > s_max:
                 s_new = max(1.0, s_max)
-                dp = dp * (s_new - 1) / (s - 1) if s > 1 else dp
-                s = s_new
-            k = base / (z0 * s * (1 + dp * d))
+                dp_cur = dp_cur * (s_new - 1) / (s_cur - 1) if s_cur > 1 and dp_cur > 0 else dp_cur
+                s_cur = s_new
+            k = base / (z0 * s_cur * (1 + dp_cur * d))
             hw, hh = k * self.W / (2 * self.sw), k * self.H / (2 * self.sh)
             par = far + (1 - far) * d
             orb = max(-1.0, (d - self.focus_d) / max(1e-3, 1 - self.focus_d))
             wx, wy = cx + tx * par + ox * orb, cy + ty * par * self.sw / self.sh
-            lo, hi = ex1 - hw, ex0 + hw
-            nx = cx + (float(np.clip(wx, lo, hi)) if lo <= hi else (ex0 + ex1) / 2) - wx
-            lo, hi = ey1 - hh, ey0 + hh
-            ny = cy + (float(np.clip(wy, lo, hi)) if lo <= hi else (ey0 + ey1) / 2) - wy
-            # ... and never moves the view past the picture's own edge (that would only raise the base zoom and cut more)
+            lo_x, hi_x = ex1 - hw, ex0 + hw
+            lo_y, hi_y = ey1 - hh, ey0 + hh
+            if i + 1 < len(groups) and not (lo_x <= wx <= hi_x and lo_y <= wy <= hi_y):
+                continue
+            s, dp = s_cur, dp_cur
+            nx = cx + (float(np.clip(wx, lo_x, hi_x)) if lo_x <= hi_x else (ex0 + ex1) / 2) - wx
+            ny = cy + (float(np.clip(wy, lo_y, hi_y)) if lo_y <= hi_y else (ey0 + ey1) / 2) - wy
             zs = z0 * s
             lim_x = max(0.0, (1 - 1 / zs) / 2 - MARGIN)
             lim_y = max(0.0, (1 - 1 / zs) / 2 - MARGIN * self.sw / self.sh)
@@ -470,10 +420,7 @@ class Stage:
             cy = float(np.clip(ny, 0.5 - lim_y, 0.5 + lim_y))   # room for (else the base zoom rises and cuts everyone)
             break
         return s, dp, cx, cy
-
     def people_field(self, v: dict) -> np.ndarray:
-        """The kept people (non-soft ``keep``) on this frame, a feathered map at output size: light and sky effects stay
-        off them. Cached per view."""
         key = tuple(round(float(v[k]), 6) for k in ("s", "cx", "cy", "tx", "ty", "ox", "rot", "dp"))
         cache = self.__dict__.setdefault("_pf", {})
         if key in cache:
@@ -496,10 +443,7 @@ class Stage:
             cache.clear()
         cache[key] = out
         return out
-
     def aim_check(self) -> list[dict]:
-        """Every camera move aimed at a named object must aim INSIDE it: the explicit point of a target with a mask lies in
-        the mask's box (S05_SH020 C4A: both crowds aimed at [0.5, 0.5], so the push went to the centre and no truck came)."""
         out = []
         for seg in self.p.get("cameras", []):
             tg = seg.get("target") or {}
@@ -511,17 +455,12 @@ class Stage:
             out.append({"op": seg["op"], "mask": tg["mask"], "point": [round(x, 3), round(y, 3)],
                         "box": [round(c, 3) for c in b] if b else None, "inside": bool(ok)})
         return out
-
     def blown_share(self, frame: np.ndarray) -> float:
-        """Share of ``frame`` burned to flat white: luma at least ``BLOWN_LUMA`` with local detail under ``BLOWN_FLAT``."""
         cv2 = self.cv2
         y = cv2.cvtColor(np.ascontiguousarray(frame), cv2.COLOR_RGB2GRAY).astype(np.float32)
         sd = np.sqrt(np.maximum(cv2.blur(y * y, (9, 9)) - cv2.blur(y, (9, 9)) ** 2, 0))
         return float(((y >= BLOWN_LUMA) & (sd < BLOWN_FLAT)).mean())
-
     def face_crop(self, frame: np.ndarray, f: int, kb: dict, pad: float = FACE_PAD, px: int = FACE_GRID):
-        """The kept face ``kb`` with ``pad`` of its size round it, as it appears in output ``frame`` ``f``: grey, ``px``
-        pixels per face width (so crops of different frames share one scale), or None when off frame or too small."""
         cv2 = self.cv2
         inv = cv2.invertAffineTransform(self.matrix(self.view(f), kb.get("face_d", kb["d"])))
         x0, y0, x1, y1 = kb["face"]
@@ -537,19 +476,13 @@ class Stage:
         g = frame[ay:by, ax:bx].astype(np.float32).mean(axis=2)
         g = cv2.resize(g, (max(8, int(round((bx - ax) * k))), max(8, int(round((by - ay) * k)))), interpolation=cv2.INTER_AREA)
         return cv2.GaussianBlur(g, (0, 0), 1.0)
-
     def face_likeness(self, template: np.ndarray, frame: np.ndarray, f: int, kb: dict) -> float | None:
-        """The best normalised correlation of the face's first-frame crop inside a wider crop of frame ``f``: a small
-        misplacement (the background's own warp moves a face that is not a layer) is searched out, a smear is not."""
         win = self.face_crop(frame, f, kb, pad=FACE_PAD + FACE_SEARCH)
         if win is None or win.shape[0] < template.shape[0] or win.shape[1] < template.shape[1]:
             return None
         return float(self.cv2.matchTemplate(win.astype(np.float32), template.astype(np.float32),
                                             self.cv2.TM_CCOEFF_NORMED).max())
-
     def people_cut(self, every: int = 2) -> dict:
-        """The measured safe zone: for each kept box, the worst share of it outside the frame over the shot (``every``-th
-        frame and the last), and where."""
         worst = {"share": 0.0, "frame": None, "what": None}
         if not self.keep:
             return {**worst, "kept": 0}
@@ -571,31 +504,23 @@ class Stage:
                 if cut > worst["share"]:
                     worst = {"share": round(float(cut), 4), "frame": f, "what": kb["why"]}
         return {**worst, "kept": sum(1 for k in self.keep if not k["soft"])}
-
     def _coef(self, v: dict, d):
-        """For depth ``d`` (scalar or array): the source point (working px) under the frame centre."""
         par = v["far"] + (1 - v["far"]) * d
         orb = np.maximum(-1.0, (d - self.focus_d) / max(1e-3, 1 - self.focus_d))
         ccx = v["cx"] * self.sw + (v["tx"] * par + v["ox"] * orb) * self.sw
         ccy = v["cy"] * self.sh + v["ty"] * par * self.sw
         return ccx, ccy
-
     def matrix(self, v: dict, d: float) -> np.ndarray:
-        """2x3 output->source affine for a rigid layer at depth ``d``."""
         ccx, ccy = self._coef(v, d)
         k = self.cover_k(v, d)
         th = math.radians(v["rot"])
         a, b = k * math.cos(th), k * math.sin(th)
         return np.array([[a, -b, ccx - a * self.W / 2 + b * self.H / 2],
                          [b, a, ccy - b * self.W / 2 - a * self.H / 2]], dtype=np.float64)
-
     def cover_k(self, v: dict, d):
-        """Working pixels per output pixel at depth ``d``."""
         base = max(self.sw / self.W, self.sh / self.H)
         return base / (v["z0"] * v["s"] * (1 + v["dp"] * d))
-
     def _bg_person_boxes(self, layers: dict | None = None) -> list[list[float]]:
-        """Every person/face/crowd box that stays on the background sheet (people not layered in ``self.objects``)."""
         layered_ids = {o["id"] for o in self.objects}
         boxes: list[list[float]] = []
         for kb in self.__dict__.get("keep") or []:
@@ -621,10 +546,7 @@ class Stage:
                     if b is not None:
                         boxes.append(b)
         return boxes
-
     def _flatten_bg_people(self, layers: dict | None = None) -> None:
-        """Inside every person/face box that stays on the background sheet (people not layered, e.g. a crowd), flatten
-        ``self.bg_depth`` to the box's median with a soft edge so ``bg_maps`` moves those people rigidly."""
         cv2 = self.cv2
         boxes = self._bg_person_boxes(layers)
         if not boxes:
@@ -664,9 +586,7 @@ class Stage:
                     continue
                 if "face" in kb:
                     kb["face_d"] = self._face_depth(kb["face"])
-
     def bg_maps(self, v: dict):
-        """Per-pixel output->source maps of the background (its own smoothed depth, two fixed-point steps)."""
         cv2 = self.cv2
         th = math.radians(v["rot"])
         c, s_ = math.cos(th), math.sin(th)
@@ -680,13 +600,7 @@ class Stage:
             my = (k * ry + ccy).astype(np.float32)
             d = cv2.remap(self.bg_depth, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
         return mx, my, d
-
     def _unfold_background(self) -> None:
-        """The background is one sheet warped by its depth. Where the depth jumps (a near post against the far field) a
-        strong move makes the warp fold over itself, and the fold draws mirrored strokes that the picture does not have
-        (S01 C3, the crane: a wire loop beside the right post). The depth is softened only where its slope times the
-        largest parallax of the shot would pass ``UNFOLD_PX`` pixels per pixel: the sheet then stretches instead of folding.
-        ``self.unfold`` records the largest parallax and the share of the picture that was softened."""
         cv2 = self.cv2
         fr = sorted(set(list(range(0, self.n, max(1, self.n // 24))) + [self.n - 1]))
         pts = np.array([[0, 0, 1], [self.W - 1, 0, 1], [0, self.H - 1, 1], [self.W - 1, self.H - 1, 1],
@@ -712,13 +626,10 @@ class Stage:
                 sig = min(sig * 1.25, 0.03 * self.sw)
         self.bg_depth = bd.astype(np.float32)
         self.unfold = {"parallax_px": round(P, 1), "softened_share": round(float(softened.mean()), 4)}
-
     def _fit_zoom(self) -> float:
-        """The smallest base zoom that keeps every depth's view inside the picture on every frame."""
         ds = [0.0, 0.5, 1.0] + [o["d"] for o in self.objects]
         corners = np.array([[0, 0, 1], [self.W - 1, 0, 1], [0, self.H - 1, 1], [self.W - 1, self.H - 1, 1]], float).T
         fr = sorted(set(list(range(0, self.n, max(1, self.n // 24))) + [self.n - 1]))
-
         def fits(z):
             for f in fr:
                 v = self.view(f, z)
@@ -727,15 +638,15 @@ class Stage:
                     if q[0].min() < 0 or q[1].min() < 0 or q[0].max() > self.sw - 1 or q[1].max() > self.sh - 1:
                         return False
             return True
-        lo, hi = 1.0, 1.6
+        frm = self.p.get("framing") if isinstance(self.p.get("framing"), dict) else None
+        crop_floor = float(frm.get("crop") or 1.0) if frm else 1.0
+        lo, hi = max(1.0, crop_floor), max(1.6, crop_floor + 0.4)
         if fits(lo):
             return lo
         for _ in range(16):
             mid = (lo + hi) / 2
             lo, hi = (lo, mid) if fits(mid) else (mid, hi)
         return hi
-
-    # --- one frame ----------------------------------------------------------------------------------------------------------
     def render(self, f: int, tele: dict | None = None) -> np.ndarray:
         cv2 = self.cv2
         v = self.view(f)
@@ -766,10 +677,7 @@ class Stage:
         if tele is not None:
             tele.update({"view": v, "fill": fill, "depth": depth, "layers": layers, "bg_maps": (mx, my)})
         return np.clip(rgb + 0.5, 0, 255).astype(np.uint8)
-
-    # --- effects ------------------------------------------------------------------------------------------------------------
     def _to_out(self, src_xy, mx=None, my=None, v=None, d=None):
-        """A working-pixel point -> output pixels (inverse of the layer's affine at depth ``d``)."""
         if d is None:
             x, y = int(np.clip(src_xy[0], 0, self.sw - 1)), int(np.clip(src_xy[1], 0, self.sh - 1))
             d = float(self.bg_depth[y, x])
@@ -777,15 +685,12 @@ class Stage:
         inv = self.cv2.invertAffineTransform(m)
         q = inv @ np.array([src_xy[0], src_xy[1], 1.0])
         return float(q[0]), float(q[1]), d
-
     def _layer_of_light(self, li: dict, layers: list[dict]):
-        """The object a light sits on (its matrix), or None for the background."""
         x, y = int(np.clip(li["point"][0], 0, self.sw - 1)), int(np.clip(li["point"][1], 0, self.sh - 1))
         for o in reversed(self.objects):
             if o["alpha"][y, x] > 0.5:
                 return o
         return None
-
     def _warp_mask(self, mask, mx, my, v, li, layers):
         cv2 = self.cv2
         host = self._layer_of_light(li, layers)
@@ -794,7 +699,6 @@ class Stage:
         m = self.matrix(v, host["d"])
         return cv2.warpAffine(mask, m, (self.W, self.H), flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
                               borderMode=cv2.BORDER_CONSTANT)
-
     def _effects(self, rgb, depth, f, v, mx, my, layers):
         cv2 = self.cv2
         t = f / self.fps
@@ -928,11 +832,7 @@ class Stage:
         if prev_i is not None:
             self._seen(prev_i, before, rgb, t)
         return rgb
-
     def _seen(self, i: int, before, after, t: float) -> None:
-        """Is effect ``i`` SEEN to change in the first ``SEEN_S`` seconds? Its own contribution (luma after minus before,
-        quarter size) against its contribution on frame 0: the 95th percentile of the change over the area it touches, the
-        largest over those seconds (``effects_seen``). The whole-frame liveliness let one fire hide a dead sun (C4A)."""
         if t > SEEN_S + 1e-6:
             return
         cv2 = self.cv2
@@ -946,7 +846,6 @@ class Stage:
         v = float(np.percentile(np.abs(c - rec["c0"])[touch], 95))
         if v > rec["p95"]:
             rec["p95"], rec["at_s"] = round(v, 2), round(t, 2)
-
     def effects_seen(self) -> list[dict]:
         out = []
         for i, e in enumerate(self.p.get("effects", [])):
@@ -954,24 +853,18 @@ class Stage:
             out.append({"op": e["op"], "index": i, "change_p95": rec["p95"] if rec else 0.0,
                         "at_s": rec["at_s"] if rec else None})
         return out
-
     def _tile_smooth(self, tile: np.ndarray, ox: float, oy: float) -> np.ndarray:
-        """``layers25d._tile_at`` with a sub-pixel scroll: a tile pixel is ~7 frame pixels, so a whole-pixel roll steps
-        visibly at the drift speeds the eye review asked for (>= 30-40 px/s)."""
         th, tw = tile.shape
         m = np.float32([[1, 0, -(ox * tw) % tw], [0, 1, -(oy * th) % th]])
         rolled = self.cv2.warpAffine(tile, m, (tw, th), flags=self.cv2.INTER_LINEAR, borderMode=self.cv2.BORDER_WRAP)
         return self.cv2.resize(rolled, (self.W, self.H), interpolation=self.cv2.INTER_CUBIC)
-
     def _flicker_id(self, i: int, lid: str, t: float, speed: float) -> float:
         k = _seed(f"{self.p.get('shot_id')}:{lid}")
         ph = [((k >> (4 * j)) % 628) / 100.0 for j in range(3)]
         sp = speed * (0.85 + 0.3 * ((k >> 13) % 100) / 100.0)
         return float(0.5 * math.sin(2 * math.pi * 4.1 * sp * t + ph[0]) + 0.3 * math.sin(2 * math.pi * 7.3 * sp * t + ph[1])
                      + 0.2 * math.sin(2 * math.pi * 11.9 * sp * t + ph[2]))
-
     def _deform_flame(self, rgb, fm, li, t, i, s, zoom, op):
-        """The flame's own motion: an upward-flowing sideways wobble, strongest at its tip, only inside (and just round) it."""
         cv2 = self.cv2
         ys, xs = np.nonzero(fm > 0.2)
         if len(xs) < 4:
@@ -995,9 +888,7 @@ class Stage:
         out = rgb.copy()
         out[y0:y1, x0:x1] = moved
         return out
-
     def _smoke(self, rgb, depth, e, i, t, v, s, zoom):
-        """A plume from a source point: rising, widening, drifting; the surfaces nearer than the source cover it."""
         cv2 = self.cv2
         W, H = self.W, self.H
         if e.get("light") and e["light"] in self.lights:
@@ -1024,7 +915,6 @@ class Stage:
         a = np.clip(float(prm.get("opacity", 0.55)) * s * dens * behind, 0, 0.8)
         col = np.array(prm.get("colour", [150, 146, 150]), np.float32)
         return rgb * (1 - a[..., None]) + col * a[..., None]
-
     def _box_field(self, box, mx, my, feather=0.04):
         cv2 = self.cv2
         if not hasattr(self, "_boxes"):
@@ -1038,8 +928,6 @@ class Stage:
             m = cv2.GaussianBlur(m.astype(np.float32), (0, 0), 0.02 * self.sw) if feather == 0.04 else m.astype(np.float32)
             self._boxes[key] = m / max(1e-6, float(m.max()))
         return cv2.remap(self._boxes[key], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
-
-    # --- rack focus ---------------------------------------------------------------------------------------------------------
     def rack_focus_at(self, f: int) -> float | None:
         r = self.p.get("rack")
         if not r:
@@ -1049,7 +937,6 @@ class Stage:
         span = max(1, int(r.get("frames", round(L.RACK_S * self.fps))))
         u = float(L.smooth((f - r["at"]) / span))
         return d0 + (d1 - d0) * u
-
     def _rack(self, rgb, depth, f):
         fd = self.rack_focus_at(f)
         if fd is None:
@@ -1066,12 +953,8 @@ class Stage:
             out += pyr[j] * wgt[..., None]
         out += pyr[3] * np.clip(lvl - 2, 0, 1)[..., None]
         return out
-
-
 def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(1920, 1080), fps: int = 24,
                 watch=None, ghost_every: int = 4) -> dict:
-    """Render one directed shot to ``out_mp4``; a ``qa.motion_intent.Watch`` (optional) receives every frame with its fill
-    map and, on the sampled frames, each object's visible mask and shift against the background under it since frame 0."""
     import cv2
     t0 = time.time()
     st = Stage(picture, layers, plan, size, fps)

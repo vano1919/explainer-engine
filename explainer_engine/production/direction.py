@@ -1,40 +1,8 @@
-"""The Scene Director's file for one shot (roadmap 2026-11-14 B.1 ``shot_direction/1``; phase P1 draft, human-in-the-loop).
-
-The director (in P1 the thread's Claude, looking at the real picture and the rendered frames; L-11 a) writes one JSON per
-shot. The script stays Stage A's approved intent; this file is Stage B's decision as a difference with a reason. P1 only
-loads, checks and resolves it into a ``production/directed25d`` plan; P2 turns the draft into a versioned schema and a runner
-stage (``direction``, after ``pictures``, before ``clips``).
-
-The draft's fields: ``schema``, ``shot_id``, ``kind`` (photo|map), ``picture_sha256``, ``seen`` (what is REALLY in the frame:
-``what`` in words, ``objects`` with points, ``lights``, ``depth_checks``), ``purpose``, ``emotion``, ``focus``, ``composition``,
-``intent`` (intended|minimal|still_by_design), ``tracks`` (camera, character, object, environment, lighting, atmosphere,
-audio; each with ``op``, ``target``, ``timing``, ``renderer``, ``validate``), ``sound``, ``transition_out``, ``route``,
-``overrides`` (field, from, to, why: a change without a reason FAILs), ``rounds`` and ``expect`` (what QA measures).
-
-The owner's rules of 2026-11-14 (after P1 round 2 stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day):
-
-- ``seen.living`` (BP-196): every element of the picture that moves in nature, from the fixed checklist ``LIVING_KINDS``,
-  with ``where`` and a ``decision``: ``animate`` (``effects`` = the ids of the tracks that move it), ``add`` (not in the
-  picture, but the scene's weather or the words call for it: snow that falls) or ``skip`` (``why``; a REVIEW row, so the
-  reviewer sees every element left frozen). A living kind named in ``seen.what``, in ``scene.weather`` / ``scene.surroundings``
-  or in the shot's spoken words but missing from the inventory FAILs: that is how the sun of a sunrise gets its rays.
-- BP-185 for every photo shot, ``still_by_design`` included (it means the camera stands, never that nature freezes): at least
-  ``ALIVE_MIN`` families move beyond the camera; when all of them are light (a flame and nothing else) it is REVIEW.
-- The camera follows the words (BP-196, timing BP-195): every object or living element with ``names`` that the shot's words
-  name gets a camera track aimed at it (``target.mask`` / ``target.living``) starting on that word, or a ``text_targets_skip``
-  entry with ``word`` and ``why``.
-- A hold before the first move lasts at most ``HOLD_MAX_S`` unless a handheld or drift moves the camera meanwhile (BP-197).
-- Every effect op the file asks of ``directed25d`` must exist in the renderer (``directed25d.FX_OPS``): an op not built yet
-  FAILs, so a missing tool shows up as a gap instead of a silently frozen element.
-"""
 from __future__ import annotations
-
 import json
 import re
 from pathlib import Path
-
 from explainer_engine.standards import sourced_rules as SR
-
 SCHEMA = "shot_direction/1-draft"
 INTENTS = ("intended", "minimal", "still_by_design")
 TRACKS = ("camera", "character", "object", "environment", "lighting", "atmosphere", "audio")
@@ -88,36 +56,21 @@ AUDIO_DECISIONS = ("sfx", "ui_cue", "ambience_only", "music_only", "silent_by_de
 RENDERERS = ("directed25d", "layers25d", "map_action", "ltx", "blender", "none")
 MINIMAL_MAX = 0.5          # a "minimal" shot moves its camera at no more than this strength (engineering default, REVIEW)
 SEGMENTS_MAX = 3
-
-
 def load(path: Path) -> dict:
     return json.loads(Path(path).read_text())
-
-
 def _ids(d: dict) -> tuple[set, set]:
     seen = d.get("seen") or {}
     return {o["id"] for o in seen.get("objects", [])}, {li["id"] for li in seen.get("lights", [])}
-
-
 def _norm(w: str) -> str:
     return str(w).lower().strip(".,!?;:'\"()-")
-
-
 def kinds_named(text: str | list) -> set:
-    """The living kinds a text (or a list of words) names."""
     words = text if isinstance(text, list) else re.findall(r"[a-zA-Z']+", str(text or ""))
     return {_WORD_KIND[_norm(w)] for w in words if _norm(w) in _WORD_KIND}
-
-
 def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None = None, fps: float = 24.0,
           frames: int | None = None) -> list[dict]:
-    """Problems of one direction file: ``[{"level": "FAIL"|"REVIEW", "what": text}]``; an empty list passes. ``spine``
-    (the shot's clock words) turns on the words rules: living kinds the words name, and the camera on the named parts."""
     out = []
-
     def bad(what, level="FAIL"):
         out.append({"level": level, "what": what})
-
     if d.get("schema") != SCHEMA:
         bad(f"schema is {d.get('schema')!r}, not {SCHEMA}")
     if d.get("intent") not in INTENTS:
@@ -168,6 +121,8 @@ def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None =
     out += _hold(d, spine, fps, frames)
     if frames:
         out += _balance(d, frames / fps)
+    if any(t.get("op") == "orbit" for t in cams) and any(k.get("face") for k in (d.get("keep_in_frame") or [])):
+        bad("orbit changes lateral angle on one photo with kept people: use push or horizontal pan without angle change", "REVIEW")
     if len(cams) > SEGMENTS_MAX:
         bad(f"{len(cams)} camera segments; at most {SEGMENTS_MAX}")
     if d.get("intent") == "still_by_design" and cams:
@@ -177,8 +132,6 @@ def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None =
             if float(t.get("params", {}).get("strength", 1.0)) > MINIMAL_MAX:
                 bad(f"minimal but {t['op']} strength {t['params']['strength']} > {MINIMAL_MAX}", "REVIEW")
     return out
-
-
 def _living(d: dict, spine) -> list[dict]:
     out = []
     seen = d.get("seen") or {}
@@ -229,17 +182,8 @@ def _living(d: dict, spine) -> list[dict]:
             out.append({"level": "FAIL", "what": f"{where} {verb} {k} but seen.living has no {k} (BP-196: every living "
                         "element gets an effect or a reason)"})
     return out
-
-
-PRECIPITATION = {"snow": "snow", "rain": "rain"}      # effect op -> the weather word family it needs in the scene
-
-
+PRECIPITATION = {"snow": "snow", "rain": "rain"}
 def _weather(d: dict) -> list[dict]:
-    """The scene's weather is a ceiling, the shot's weather the director's decision (the owner, 2026-11-14 12:38 UTC,
-    message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X; rules reconciliation journal section 7): falling snow or
-    rain where the scene has none FAILs; every weather word of the scene gets a ``weather`` record (``in``, ``decided_by``
-    one of ``living_director.CRITERIA``, ``why``) and one that leaves it out without a reason FAILs. Jumps between
-    neighbouring shots are checked over the sequence (``living_director.weather_jumps``)."""
     from explainer_engine.production import living_director as LD
     out = []
     ceiling = [str(w) for w in ((d.get("scene") or {}).get("weather") or [])]
@@ -262,20 +206,13 @@ def _weather(d: dict) -> list[dict]:
         if w not in ceiling and recs[w].get("in"):
             out.append({"level": "FAIL", "what": f"weather {w} is let in but the scene's weather has no {w}"})
     return out
-
-
 def _balance(d: dict, duration_s: float) -> list[dict]:
-    """BP-200 (Fable's LP-01..LP-12): how many living elements move and which first. The inventory carries the LP scores
-    (``area_pct``, ``text``, ``focus``, ``quality``, ``cost``); a file without them cannot be balanced and goes to the
-    reviewer."""
     from explainer_engine.production import living
     rows = [e for e in (d.get("seen") or {}).get("living") or [] if e.get("decision") != "skip"]
     if rows and not any("area_pct" in e for e in rows):
         return [{"level": "REVIEW", "rule": "BP-200",
                  "what": "seen.living has no LP scores (area_pct, text, focus, quality, cost): the balance was not checked"}]
     return [{k: v for k, v in p.items()} for p in living.check(d, duration_s)]
-
-
 def _families(d: dict) -> list[dict]:
     fams = {FAMILY_OF[t["op"]] for t in d.get("tracks", []) if t.get("track") not in ("camera", "audio")
             and t.get("op") in FAMILY_OF}
@@ -286,25 +223,18 @@ def _families(d: dict) -> list[dict]:
     elif fams == {"light"}:
         out.append({"level": "REVIEW", "what": "every moving family is light: the flames flicker and nothing else lives"})
     return out
-
-
 def _renderable(d: dict) -> list[dict]:
     from explainer_engine.production import directed25d
     return [{"level": "FAIL", "what": f"track {t.get('id', '?')}: directed25d cannot draw {t['op']!r} yet (not built)"}
             for t in d.get("tracks", []) if t.get("renderer") == "directed25d" and t.get("track") not in ("camera", "audio")
             and t.get("op") in EFFECT_OPS and t["op"] not in directed25d.FX_OPS]
-
-
 def _named_parts(d: dict) -> dict:
-    """word -> the object or living id whose ``names`` contain it."""
     seen = d.get("seen") or {}
     out = {}
     for e in list(seen.get("objects", [])) + list(seen.get("living", [])):
         for n in e.get("names", []):
             out[_norm(n)] = e["id"]
     return out
-
-
 def _words_to_camera(d: dict, spine: list[dict], fps: float, frames: int | None) -> list[dict]:
     parts = _named_parts(d)
     if not parts:
@@ -340,8 +270,6 @@ def _words_to_camera(d: dict, spine: list[dict], fps: float, frames: int | None)
             out.append({"level": "REVIEW", "what": f"the camera on '{word}' ({pid}) starts at frame(s) {starts}, the word is at "
                         f"{wf} (BP-195: from {LEAD_S} s before to {LAG_S} s after)"})
     return out
-
-
 def _hold(d: dict, spine, fps: float, frames: int | None) -> list[dict]:
     tracks = d.get("tracks", [])
     if any(t.get("track") == "camera" and t.get("op") == "handheld" for t in tracks):
@@ -361,10 +289,7 @@ def _hold(d: dict, spine, fps: float, frames: int | None) -> list[dict]:
         return [{"level": "REVIEW", "what": f"the camera stands for {first / fps:.1f} s before its first move with no drift or "
                  f"handheld meanwhile (BP-197: at most {HOLD_MAX_S} s)"}]
     return []
-
-
 def word_frame(spine: list[dict], word: str, nth: int = 1) -> int:
-    """The frame of the ``nth`` spoken ``word`` in the shot's clock spine (``clock/timing.json``)."""
     k = 0
     for w in spine or []:
         if str(w.get("word", "")).lower().strip(".,!?;:'\"") == word.lower():
@@ -372,20 +297,17 @@ def word_frame(spine: list[dict], word: str, nth: int = 1) -> int:
             if k == nth:
                 return int(w.get("frame", w.get("start_frame", 0)))
     raise ValueError(f"the word {word!r} (#{nth}) is not spoken in this shot")
-
-
 def _frame(spec: dict | None, frames: int, spine, default: int) -> int:
     if not spec:
         return default
     if "frame" in spec:
-        return int(spec["frame"])
+        return max(0, min(int(frames), int(spec["frame"])))
     if "frac" in spec:
-        return int(round(float(spec["frac"]) * frames))
+        return max(0, min(int(frames), int(round(float(spec["frac"]) * frames))))
     if "word" in spec:
-        return word_frame(spine, spec["word"], int(spec.get("nth", 1))) + int(spec.get("offset", 0))
+        off = int(spec.get("offset", spec.get("offset_frames", 0)))
+        return max(0, min(int(frames), word_frame(spine, spec["word"], int(spec.get("nth", int(spec.get("occurrence", 1))))) + off))
     raise ValueError(f"timing {spec!r}: give frame, frac or word")
-
-
 def _target(tg: dict | None) -> dict | None:
     if not tg:
         return None
@@ -397,11 +319,33 @@ def _target(tg: dict | None) -> dict | None:
     if tg.get("light"):
         out["light"] = tg["light"]
     return out or None
-
-
 def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str | None = None) -> dict:
-    """The direction -> a ``directed25d`` plan. ``variant`` picks a named alternative block (``variants.<name>``: its
-    ``tracks`` replace the main ones) for the ablations and the comparisons the owner chooses from."""
+    if spine and isinstance(spine[0], dict) and "_parent_spine" in spine[0]:
+        f_lo = int(spine[0].get("_part_start_frame", 0))
+        f_hi = int(spine[0].get("_part_end_frame", f_lo + int(frames)))
+        p_frames = int(spine[0].get("_parent_frames", max(f_hi, int(frames))))
+        full = resolve(d, p_frames, spine=spine[0]["_parent_spine"], variant=variant)
+        full["shot_id"] = d["shot_id"]
+        full["frames"] = int(frames)
+        part_cams = []
+        for c in full["cameras"]:
+            c0, c1 = int(c["from"]), int(c["to"])
+            if c1 <= f_lo or c0 >= f_hi:
+                continue
+            ov0, ov1 = max(c0, f_lo), min(c1, f_hi)
+            frac = (ov1 - ov0) / max(1, c1 - c0)
+            nc = dict(c, **{"from": ov0 - f_lo, "to": max(ov0 - f_lo + 1, ov1 - f_lo),
+                            "strength": round(float(c.get("strength", 1.0)) * frac, 4)})
+            part_cams.append(nc)
+        full["cameras"] = part_cams
+        if full.get("rack"):
+            r0 = int(full["rack"]["at"])
+            r1 = r0 + int(full["rack"]["frames"])
+            if r1 <= f_lo or r0 >= f_hi:
+                full["rack"] = None
+            else:
+                full["rack"] = dict(full["rack"], at=max(0, r0 - f_lo), frames=max(1, min(r1, f_hi) - max(r0, f_lo)))
+        return full
     tracks = d.get("tracks", [])
     if variant:
         tracks = d["variants"][variant]["tracks"]
@@ -418,6 +362,9 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
         tm = t.get("timing", {})
         a = _frame(tm.get("start"), frames, spine, 0)
         b = _frame(tm.get("end"), frames, spine, frames)
+        if isinstance(tm.get("start"), dict) and "word" in tm["start"] and isinstance(tm.get("end"), dict) and "frame" in tm["end"]:
+            if b - a < 12:
+                b = min(int(frames), a + 30)
         op = t["op"]
         if t["track"] == "camera":
             if op == "hold":
@@ -453,6 +400,9 @@ def resolve(d: dict, frames: int, spine: list[dict] | None = None, variant: str 
                 e["origin"] = tg["origin"]
             plan["effects"].append(e)
     plan["cameras"].sort(key=lambda c: c["from"])
+    for c_prev, c_next in zip(plan["cameras"], plan["cameras"][1:]):
+        if c_prev["to"] == c_next["from"] and c_prev["to"] < int(frames):
+            c_prev["to"] = c_next["from"] + 1
     if (d.get("scene") or {}).get("wind"):
         plan["wind"] = list(d["scene"]["wind"])        # one wind per shot: smoke, snow, grass and cloth lean together
     return plan

@@ -1,0 +1,14 @@
+"audit": {
+  "idiom": "IDM_TWO_GROUP_PIVOT (narration contrasts 'Scottish chaplain' and 'German student' across a burial)",
+  "lane": "still_25d -> split into S05_SH020a (3.88s) + S05_SH020b (3.87s) (LP-10 / BP-109: 7.75s > 5.0s cap)",
+  "shot_size": "wide (11 faces detected, max face share 0.11% < 0.5% medium threshold)",
+  "camera_chosen": "pan_crop_2d (rightward 2D pan at 1.08x overscan on word 'German', zero 3D angle change)",
+  "camera_rejected": {
+    "orbit_small": "FORBIDDEN (11 people in frame; unlayered crowd; outer faces at x=0.196 and x=0.816 would clip)",
+    "truck_25d": "REJECTED (left_group and right_group have layer=false; 2D crop-pan avoids parallax edge clipping)",
+    "push_in": "SKIPPED for part B (CAM-VAR-01: part A already used push_in on 'Scottish')"
+  },
+  "continuity_prev_next": "Follows S05_SH019 (medium_wide video) with scale step out to wide; hands off focal_xy [0.68, 0.40] to S05_SH021",
+  "transition_out": "hard_cut_with_jl_bridge (same location loc_no_mans_land, 0.25s ambience continuity)",
+  "sound": "fire (medium) + wind (medium) continues from S05_SH019; 0 spot cues to preserve solemn psalm read"
+}
