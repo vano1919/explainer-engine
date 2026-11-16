@@ -149,11 +149,11 @@ def test_d2_directed25d_pan_crop_2d_rigid_window_pan_zero_parallax_zero_fill(tmp
     plate = np.zeros_like(img)  # black plate: any fill leak would show up in tl["fill"] and frame pixels
 
     lay = {
-        "manifest": {"lights": [], "masks": {"objects": [{"id": "soldier_fg", "layer": True}]}},
+        "manifest": {"lights": [], "masks": {"objects": [{"id": "prop_fg", "layer": True}]}},
         "depth": depth,
         "plate": plate,
         "hole": hole,
-        "masks": {"soldier_fg": fg_mask},
+        "masks": {"prop_fg": fg_mask},
         "lights": {},
     }
     dir_doc = {

@@ -495,3 +495,49 @@ def build_continuous_camera_waypoints(shot: dict, spine: list[dict] | None = Non
         "target": {"point": [cx, cy], "mask": str(fa.get("id") or "primary")},
         "continuous_single_pass": True,
     }]
+
+
+def plan_continuous_still_timeline(
+    shot: dict[str, Any],
+    spine: list[dict[str, Any]] | None = None,
+    *,
+    max_s: float = MAX_STILL_S,
+    fps: int = 24,
+    text: str | None = None,
+) -> dict[str, Any]:
+    """P0-1: One still = one visual clip.
+
+    Keeps the full ``still_25d`` shot as ONE continuous visual timeline with continuous camera waypoints
+    over ``[0, total_frames]``, while preserving clause/sentence narration segments as non-cutting metadata.
+    """
+    full_shot = copy.deepcopy(shot)
+    dur_s = float(full_shot.get("target_duration_seconds") or full_shot.get("duration_s") or 0.0)
+    total_frames = int(full_shot.get("total_frames") or full_shot.get("frames") or max(1, int(round(dur_s * fps))))
+    full_shot["total_frames"] = total_frames
+    full_shot["frames"] = total_frames
+    waypoints = build_continuous_camera_waypoints(full_shot, spine, fps=fps)
+    full_shot["continuous_camera_waypoints"] = waypoints
+    split_plan = build_shot_split_plan(full_shot, spine, text=text, limit_s=max_s) if dur_s > float(max_s) + 1e-9 else None
+    narration_segments: list[dict[str, Any]] = []
+    boundary_frames: list[int] = []
+    if split_plan and split_plan.get("parts"):
+        parts = split_long_still(full_shot, spine, max_s=max_s, fps=fps, text=text)
+        for idx, pt in enumerate(parts):
+            narration_segments.append({
+                "segment_index": idx,
+                "start_frame": int(pt.get("start_frame", 0)),
+                "end_frame": int(pt.get("end_frame", total_frames)),
+                "start_s": float(pt.get("start_s", 0.0)),
+                "end_s": float(pt.get("end_s", dur_s)),
+                "cut_word": pt.get("cut_word"),
+            })
+            if idx > 0:
+                boundary_frames.append(int(pt.get("start_frame", 0)))
+    full_shot["narration_segments"] = narration_segments
+    return {
+        "shot": full_shot,
+        "visual_clips": [full_shot],
+        "waypoints": waypoints,
+        "narration_segments": narration_segments,
+        "boundary_frames": boundary_frames,
+    }

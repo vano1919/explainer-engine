@@ -629,10 +629,10 @@ def stage_direction(ep: Episode, rehearsal: bool = False, *, shots: list[dict] |
                 if not ltxt:
                     ltxt = str(sh.get("narration_excerpt") or sh.get("text") or "").strip()
                 sp = SS.punctuate_spine(raw_sp, ltxt)
-                parts = SS.split_long_still(sh, sp, max_s=SS.MAX_STILL_S, fps=ep.fps)
-                for pt in parts:
-                    spines[pt["shot_id"]] = pt.get("spine") or []
-                    shots_to_direct.append(pt)
+                cont = SS.plan_continuous_still_timeline(sh, sp, max_s=SS.MAX_STILL_S, fps=ep.fps, text=ltxt)
+                full_sh = cont["shot"]
+                spines[full_sh["shot_id"]] = sp or full_sh.get("spine") or []
+                shots_to_direct.append(full_sh)
             elif sh.get("route") in ("still_25d", "map_action"):
                 shots_to_direct.append(sh)
     else:
@@ -747,6 +747,8 @@ def _resolve_direction_plan(dir_doc: dict, shot: dict, frames: int, spine: list[
                 "wind": dir_doc.get("wind")}
     plan["shot_id"] = sid
     plan["frames"] = frames
+    if not plan.get("cameras") and isinstance(shot.get("continuous_camera_waypoints"), list):
+        plan["cameras"] = list(shot["continuous_camera_waypoints"])
     plan.setdefault("cameras", [])
     plan.setdefault("handheld", None)
     plan.setdefault("rack", None)
@@ -921,21 +923,13 @@ def stage_clips(ep: Episode, rehearsal: bool):
             if not ltxt:
                 ltxt = str(sh.get("narration_excerpt") or sh.get("text") or "").strip()
             sp = SS.punctuate_spine(raw_sp, ltxt)
-            parts = SS.split_long_still(sh, sp, max_s=SS.MAX_STILL_S, fps=ep.fps)
-            if len(parts) > 1:
-                for p in parts:
-                    spines[p["shot_id"]] = p["spine"]
-                    shots_to_render.append(p)
-                pids = [p["shot_id"] for p in parts]
-                cuts = [p["cut_word"] for p in parts[:-1] if p.get("cut_word")]
-                split_rows.append(G.row("split_long_still", False,
-                                        f"{sid} split into {', '.join(pids)} at {', '.join(cuts)}",
-                                        {"shot_id": sid, "parts": pids, "cut_words": cuts}, level=G.REVIEW))
-            else:
-                shots_to_render.append(sh)
-                split_rows.append(G.row("long_still_unsplit", False,
-                                        f"{sid} ({dur_s:.2f} s > {SS.MAX_STILL_S:.1f} s): no boundary in spine (BP-109 veto)",
-                                        {"shot_id": sid, "duration_sec": round(dur_s, 4)}, level=G.FAIL))
+            cont = SS.plan_continuous_still_timeline(sh, sp, max_s=SS.MAX_STILL_S, fps=ep.fps, text=ltxt)
+            full_sh = cont["shot"]
+            spines[full_sh["shot_id"]] = sp or full_sh.get("spine") or []
+            shots_to_render.append(full_sh)
+            split_rows.append(G.row("single_still_timeline", True,
+                                    f"{sid} ({dur_s:.2f} s): rendered as 1 continuous visual clip with {len(cont['narration_segments'])} narration segment(s)",
+                                    {"shot_id": sid, "narration_segments": cont["narration_segments"]}))
         else:
             shots_to_render.append(sh)
     w, h = ep.size
@@ -957,9 +951,12 @@ def stage_clips(ep: Episode, rehearsal: bool):
         frames = int(sh.get("total_frames") or sh.get("frames")
                      or max(1, int(round(float(sh["target_duration_seconds"]) * ep.fps))))
         route = sh.get("route")
+        _t_id = (timing or {}).get("timing_id") or (TM.compute_timing_id(timing) if timing else None)
+        _r_ep = (timing or {}).get("render_epoch") or (f"epoch_{_t_id}" if _t_id else None)
         rec = {"shot_id": sid, "segment_id": sh.get("segment_id"), "route": route, "start_sec": round(t / ep.fps, 4),
                "end_sec": round((t + frames) / ep.fps, 4), "duration_sec": round(frames / ep.fps, 4),
-               "total_frames": frames}
+               "total_frames": frames, "frames": frames,
+               **({"timing_id": _t_id, "render_epoch": _r_ep} if _t_id else {})}
         if sh.get("parent_shot_id"):
             rec["parent_shot_id"] = sh["parent_shot_id"]
         if isinstance(sh.get("framing"), dict):
@@ -1083,6 +1080,15 @@ def stage_clips(ep: Episode, rehearsal: bool):
                             res = {"frames": frames, "version": D25.VERSION}
                         res.setdefault("total_frames", int(res.get("frames") or frames))
                         shot_qa_rows = _directed_qa_rows(sid, dplan, res, watch, h, ep.fps)
+                        b_frames = [int(seg.get("start_frame", 0)) for seg in (sh.get("narration_segments") or []) if int(seg.get("start_frame", 0)) > 0]
+                        if isinstance(res.get("views"), list) and res["views"] and b_frames:
+                            cont_chk = D25.verify_rendered_split_camera_continuity(res["views"], b_frames)
+                            shot_qa_rows.append(G.row(
+                                "split_camera_continuity",
+                                cont_chk["status"] == "PASS",
+                                f"{sid}: camera continuity across {len(b_frames)} segment boundary(s): {cont_chk['status']}",
+                                cont_chk,
+                            ))
                         director_rows.extend(shot_qa_rows)
                         g_status = ((res.get("gates") or {}).get("status")
                                     or (G.verdict(shot_qa_rows)["status"] if shot_qa_rows else G.PASS))
@@ -1129,8 +1135,17 @@ def stage_clips(ep: Episode, rehearsal: bool):
                                    "renderer": clean_res, "qa_rows": shot_qa_rows})
         records.append(rec)
         made += 1
-    write_json_atomic(ep.path("production/shot_records.json"), {"episode_id": ep.manifest.get("episode_id"),
-                                                                 "fps": ep.fps, "size": list(ep.size), "shots": records})
+    _ep_tid = (timing or {}).get("timing_id") or (TM.compute_timing_id(timing) if timing else None)
+    _ep_rep = (timing or {}).get("render_epoch") or (f"epoch_{_ep_tid}" if _ep_tid else None)
+    write_json_atomic(ep.path("production/shot_records.json"), {
+        "episode_id": ep.manifest.get("episode_id"),
+        "fps": ep.fps, "size": list(ep.size),
+        **({"timing_id": _ep_tid, "render_epoch": _ep_rep} if _ep_tid else {}),
+        "shots": records,
+    })
+    from explainer_engine.edit.cinematic_transitions import build_boundary_manifest
+    bm_doc = build_boundary_manifest(script, records, fps=ep.fps, honour_authored=True)
+    write_json_atomic(ep.path("editing/boundary_manifest.json"), bm_doc)
     n = len(records)
     rows = [G.row("every_shot_has_a_clip", not [r for r in records if not r.get("clip_path")],
                   f"{sum(1 for r in records if r.get('clip_path'))} of {n} shot(s) have a clip", missing_pic[:20]),
@@ -1322,11 +1337,27 @@ def stage_sound(ep: Episode, rehearsal: bool):
                     directions[dd["shot_id"]] = dd
             except (ValueError, OSError):
                 pass
+    bm_p = ep.path("editing/boundary_manifest.json")
+    if bm_p.is_file():
+        bm_doc = json.loads(bm_p.read_text(encoding="utf-8"))
+    else:
+        from explainer_engine.edit.cinematic_transitions import build_boundary_manifest
+        bm_doc = build_boundary_manifest(script, _records(ep), fps=ep.fps, honour_authored=True)
+        write_json_atomic(bm_p, bm_doc)
     plan = SP.build(script, fps=ep.fps, spines=TM.spines_of(timing), routes=routes, era=_era(ep),
-                    directions=directions, plan_status="authoritative_post_direction" if directions else "provisional_pre_direction")
+                    directions=directions, plan_status="authoritative_post_direction" if directions else "provisional_pre_direction",
+                    boundary_manifest=bm_doc)
+    if timing:
+        plan["timing_id"] = timing.get("timing_id") or TM.compute_timing_id(timing)
+        plan["render_epoch"] = timing.get("render_epoch") or f"epoch_{plan['timing_id']}"
     sources = SP.resolve(plan, ep.sound_library)
     SP.write(plan, sources, ep.root)
-    read = ep.root / READ_REL
+    try:
+        read = TM.resolve_narration_path(ep.root)
+    except ContractError:
+        if not rehearsal:
+            raise
+        read = ep.root / READ_REL
     stems_dir = ep.path("audio/stems")
     polished, polish_info = _polish_read(ep)      # HF-3: every use of the read as sound below takes the polished file
     narration = polished
@@ -1505,7 +1536,16 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     from explainer_engine.production import assemble as ASM
     records = _records(ep)
     script = _expand_script_for_records(ep.timed_script(), records, ep.fps)
-    plans = plan_episode_cinematic_transitions(script, fps=ep.fps, allow_decorative_wipes=False, honour_authored=True)   # HF-1
+    bm_p = ep.path("editing/boundary_manifest.json")
+    if bm_p.is_file():
+        bm_doc = json.loads(bm_p.read_text(encoding="utf-8"))
+    else:
+        from explainer_engine.edit.cinematic_transitions import build_boundary_manifest
+        bm_doc = build_boundary_manifest(script, records, fps=ep.fps, honour_authored=True)
+        write_json_atomic(bm_p, bm_doc)
+    plans = [b["transition_plan"] for b in (bm_doc.get("boundaries") or []) if isinstance(b, dict) and b.get("transition_plan")]
+    if len(plans) != max(0, len(script.get("shots", [])) - 1):
+        plans = plan_episode_cinematic_transitions(script, fps=ep.fps, allow_decorative_wipes=False, honour_authored=True)   # HF-1
     write_json_atomic(ep.path("editing/transition_plan.json"), plans)
     missing = [r["shot_id"] for r in records if not r.get("clip_path")]
     if missing:
@@ -1523,6 +1563,29 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     if not left:
         rows.append(G.row("master_frames_match_the_shots", res["total_frames"] == planned,
                           f"master {res['total_frames']} frames, the shots {planned}", res["total_frames"]))
+    timing = ep.timing()
+    if timing:
+        t_id = timing.get("timing_id") or TM.compute_timing_id(timing)
+        r_ep = timing.get("render_epoch") or f"epoch_{t_id}"
+        res["timing_id"] = t_id
+        res["render_epoch"] = r_ep
+        align_errs = []
+        for rec in records:
+            align_errs.extend(TM.verify_clock_alignment(timing, rec))
+        sp_p = ep.path("audio/sound_plan.json")
+        if sp_p.is_file():
+            sp_doc = json.loads(sp_p.read_text(encoding="utf-8"))
+            if sp_doc.get("timing_id"):
+                align_errs.extend(TM.verify_clock_alignment(timing, sp_doc))
+        align_errs.extend(TM.verify_clock_alignment(timing, res))
+        rows.append(G.row("clock_alignment", not align_errs,
+                          "G7/G8/G9 timing_id and render_epoch match authoritative clock" if not align_errs
+                          else align_errs[0]["detail"], align_errs[:10]))
+    flagged_cuts = [b for b in (bm_doc.get("boundaries") or []) if b.get("editorial_review_status") == "REVIEW"]
+    if flagged_cuts:
+        rows.append(G.row("boundary_editorial_review", False,
+                          f"{len(flagged_cuts)} authored hard cut(s) with severe visual jump need editorial reason",
+                          [b["boundary_id"] for b in flagged_cuts], level=G.REVIEW))
     write_json_atomic(ep.path("production/master.json"), res)
     return rows, {"master": str(master.relative_to(ep.root)) if not left else None, "chunks": res["chunks"]["count"],
                   "left": left}

@@ -655,8 +655,8 @@ def run_mix(
     shot_beds: dict[str, dict] = {}
 
     # 1. Place narrator read and single-trimmed spoken inserts using authoritative timing_doc
-    read_p = DL / "clock" / "narrator_read.mp3"
-    read_x = load_mono(read_p) if read_p.is_file() else np.zeros(N, dtype=np.float32)
+    read_p = ET.resolve_narration_path(R, dl_dir=DL)
+    read_x = load_mono(read_p)
     for row in timing_doc.get("narrator_offsets", []):
         sid = row["shot_id"]
         if row.get("paused_for_insert"):

@@ -1455,7 +1455,7 @@ def _boundary_frames(a: dict, b: dict, plan: dict, size: tuple[int, int]) -> tup
     zoom = plan.get("zoom_target_xy") or [0.5, 0.5]
     out = []
     for k in range(total):
-        if t_type == "fade_to_black":   # HF-1: A's own frames down to black, then B's own frames up from it
+        if t_type in ("fade_to_black", "warm_dip", "warm_fire_glow_dip"):   # HF-1 / P0-4: A down to dip, then B up from it
             if k < half_a:
                 u, fa, fb = 0.5 * (k + 1) / half_a, tail[min(k, len(tail) - 1)], head[0]
             else:

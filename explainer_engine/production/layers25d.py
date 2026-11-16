@@ -958,6 +958,64 @@ class Meter:
         return max((sum(1 for s in steps if a <= s < a + self.fps) for a in range(len(self.lumas))), default=0)
 
 
+
+
+def measure_people_in_frame(sc: Scene, *, every: int = 1) -> dict:
+    """P0-2: measure worst person clipping across every output frame in layers25d fallback."""
+    import cv2
+    p = sc.p
+    boxes: list[dict] = []
+    unregistered: list[str] = []
+    keep_cfg = p.get("keep_in_frame") or []
+    for idx, fc in enumerate(sc.faces or []):
+        x0, y0, x1, y1 = [float(v) for v in fc["box"]]
+        # sc.faces boxes are in source pixels; normalize to [0, 1]
+        nx0, ny0, nx1, ny1 = x0 / max(1, sc.sw), y0 / max(1, sc.sh), x1 / max(1, sc.sw), y1 / max(1, sc.sh)
+        fw, fh = max(0.01, nx1 - nx0), max(0.01, ny1 - ny0)
+        pbox = [float(np.clip(v, 0.0, 1.0)) for v in (nx0 - 0.5 * fw, ny0 - 0.25 * fh, nx1 + 0.5 * fw, ny1 + 1.2 * fh)]
+        pl = sc.face_plane[idx] if idx < len(getattr(sc, "face_plane", [])) else 0
+        boxes.append({"box": pbox, "plane": pl, "why": f"face_{idx}"})
+        if not keep_cfg:
+            unregistered.append(f"face_{idx}")
+    for idx, it in enumerate(keep_cfg):
+        if isinstance(it, dict) and isinstance(it.get("face"), (list, tuple)) and len(it["face"]) == 4:
+            x0, y0, x1, y1 = [float(v) for v in it["face"]]
+            fw, fh = max(0.01, x1 - x0), max(0.01, y1 - y0)
+            pbox = [float(np.clip(v, 0.0, 1.0)) for v in (x0 - 0.5 * fw, y0 - 0.25 * fh, x1 + 0.5 * fw, y1 + 1.2 * fh)]
+            boxes.append({"box": pbox, "plane": 0, "why": str(it.get("why") or f"keep_{idx}")})
+
+    missing_protection = bool(sc.faces is None and not boxes) or bool(unregistered)
+    worst = {"share": 0.0, "frame": None, "what": None}
+    if not boxes:
+        return {**worst, "kept": 0, "unregistered_people": unregistered, "missing_protection": missing_protection}
+
+    n_frames = max(1, int(p.get("frames") or 1))
+    w_focus = float(getattr(sc, "w_focus", 0.5))
+    for f in sorted(set(range(0, n_frames, max(1, int(every)))) | {n_frames - 1}):
+        sh = shake_offset(p, f, sc.H)
+        for kb in boxes:
+            k_pl = int(kb["plane"])
+            w_k = float(sc.weights[k_pl]) if k_pl < len(sc.weights) else 0.5
+            v = plane_view(p, f, w_k, w_focus)
+            m = _matrix(v, sc.W, sc.H, sc.sw, sc.sh, sc.z0, sh)
+            inv = cv2.invertAffineTransform(m)
+            bx0n, by0n, bx1n, by1n = kb["box"]
+            pts = np.array([
+                [bx0n * sc.sw, by0n * sc.sh, 1.0],
+                [bx1n * sc.sw, by0n * sc.sh, 1.0],
+                [bx0n * sc.sw, by1n * sc.sh, 1.0],
+                [bx1n * sc.sw, by1n * sc.sh, 1.0],
+            ]).T
+            q = inv @ pts
+            qx0, qx1, qy0, qy1 = q[0].min(), q[0].max(), q[1].min(), q[1].max()
+            area = max(1e-6, (qx1 - qx0) * (qy1 - qy0))
+            inside = max(0.0, min(qx1, sc.W) - max(qx0, 0.0)) * max(0.0, min(qy1, sc.H) - max(qy0, 0.0))
+            cut = 1.0 - inside / area
+            if cut > worst["share"]:
+                worst = {"share": round(float(cut), 4), "frame": f, "what": kb["why"]}
+    return {**worst, "kept": len(boxes), "unregistered_people": unregistered, "missing_protection": missing_protection}
+
+
 def gates(sc: Scene, meter: Meter, sec_per_frame: float, chunk_match: bool | None, end_picture: dict | None) -> list[dict]:
     p = sc.p
     rows = []
@@ -1022,6 +1080,11 @@ def gates(sc: Scene, meter: Meter, sec_per_frame: float, chunk_match: bool | Non
                           f"{LAYOUT_SAME_MIN}); " + ("cross-moved" if end_picture["used"] else
                                                      "not cross-moved: the script should make these two shots"),
                           round(end_picture["similarity"], 3), level="REVIEW"))
+    from explainer_engine.qa import motion_intent as _MI
+    peop = measure_people_in_frame(sc, every=1)
+    r_peop = _MI.people_in_frame_row(peop)
+    if r_peop["status"] != G.NOT_RUN:
+        rows.append(r_peop)
     return rows
 
 
@@ -1094,7 +1157,9 @@ def render_clip(shot: dict, picture: Path, out_mp4: Path, *, width: int = 1920, 
                             faces if faces is not None else (sc.faces_src or []))
         chunk = all(hashlib.sha256(render_frame(fresh, f).tobytes()).hexdigest() == h for f, h in hashes.items())
     rows = gates(sc, meter, spf, chunk, end)
+    peop_res = measure_people_in_frame(sc, every=1)
     return {"status": "generated", "provider": "python_layered_25d", "cost_usd": 0.0, "shot_id": p["shot_id"],
+            "people_in_frame": peop_res,
             "path": str(out_mp4), "total_frames": p["frames"], "fps": fps, "resolution": [width, height],
             "depth_basis": sc.depth_basis, "faces": len(sc.faces or []), "faces_basis": sc.faces_basis,
             "planes": len(sc.weights), "plane_weights": [round(w, 3) for w in sc.weights], "base_zoom": round(sc.z0, 4),

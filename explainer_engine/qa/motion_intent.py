@@ -365,9 +365,25 @@ def rest_seam_row(r: dict | None) -> dict:
     return G.row("rest_seam", r["per_outline_px"] <= SEAM_FAIL, f"frame 0 shows plate inside layer outlines: "
                  f"{r['per_outline_px']:.3f} px per outline px (frame 0 must be the picture; FAIL above {SEAM_FAIL})", r)
 def people_in_frame_row(r: dict | None) -> dict:
-    if not r or not r.get("kept"):
+    if not r:
+        return G.row("people_in_frame", False, "NOT_MEASURED: missing people framing protection data", None, level=G.REVIEW)
+    kept = int(r.get("kept") or 0)
+    share = float(r.get("share") or 0.0)
+    if kept > 0 and share > PEOPLE_CUT_FAIL:
+        return G.row("people_in_frame", False, f"worst {share * 100:.1f} % of a person outside the "
+                     f"frame ({r.get('what')}, frame {r.get('frame')}; FAIL above {PEOPLE_CUT_FAIL * 100:g} %)", r, level=G.FAIL)
+    if r.get("missing_protection") or r.get("unregistered_people"):
+        unreg = r.get("unregistered_people") or []
+        return G.row(
+            "people_in_frame",
+            False,
+            f"NOT_MEASURED: missing keep_in_frame protection ({', '.join(map(str, unreg)) or 'no protection data'})",
+            r,
+            level=G.REVIEW,
+        )
+    if not kept:
         return G.row("people_in_frame", None, "no live person to keep in the frame")
-    return G.row("people_in_frame", r["share"] <= PEOPLE_CUT_FAIL, f"worst {r['share'] * 100:.1f} % of a person outside the "
+    return G.row("people_in_frame", True, f"worst {share * 100:.1f} % of a person outside the "
                  f"frame ({r.get('what')}, frame {r.get('frame')}; FAIL above {PEOPLE_CUT_FAIL * 100:g} %)", r)
 def aim_row(rows: list[dict] | None) -> dict:
     if not rows:

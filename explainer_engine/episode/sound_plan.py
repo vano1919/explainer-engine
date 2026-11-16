@@ -543,7 +543,7 @@ def place_bed(script: dict, place: str, weather: str) -> tuple[list[str], str | 
 
 def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: dict | None = None,
           era: str | None = None, directions: dict[str, dict] | None = None,
-          plan_status: str | None = None) -> dict:
+          plan_status: str | None = None, boundary_manifest: dict | None = None) -> dict:
     """The plan: shots with absolute times and events, beds per place with J/L bridges, music per segment, the needs.
     ``era`` is the manifest's era id (the runner passes it, FA-09); the bed of a place is its authored ``ambience_bed``."""
     era, era_basis = resolve_era(script, era)
@@ -609,12 +609,27 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
         shots[-1]["design"] = design_of(sh, shots[-1], beds[-1], mood, on, why)
         shots[-1]["transition_out"] = sh.get("transition_out")
         t += dur
+    bm_list = list((boundary_manifest or {}).get("boundaries") or [])
+    bm_by_to = {str(b.get("to_shot_id")): b for b in bm_list if isinstance(b, dict) and b.get("to_shot_id")}
     bridges = []
     for a, b in zip(beds, beds[1:]):
         cut = b["start_s"]
-        bridges.append({"at_s": cut, "from": a["bed_id"], "to": b["bed_id"], "j_start_s": round(max(0.0, cut - BRIDGE_S), 3),
-                        "l_end_s": round(min(t, cut + BRIDGE_S), 3)})
-        a["tail_s"], b["lead_s"] = BRIDGE_S, BRIDGE_S
+        to_sid = str((b.get("shot_ids") or [""])[0])
+        bm_entry = bm_by_to.get(to_sid)
+        if bm_entry and bm_entry.get("intentional_silence"):
+            lead_s, tail_s = 0.0, 0.0
+        elif bm_entry:
+            lead_s = float(bm_entry.get("j_cut_prelap_sec") or BRIDGE_S)
+            tail_s = float(bm_entry.get("l_cut_postlap_sec") or BRIDGE_S)
+            amb_b = float(bm_entry.get("ambience_bridge_sec") or 0.0)
+            if amb_b > 0:
+                lead_s = max(lead_s, amb_b)
+                tail_s = max(tail_s, amb_b)
+        else:
+            lead_s, tail_s = BRIDGE_S, BRIDGE_S
+        bridges.append({"at_s": cut, "from": a["bed_id"], "to": b["bed_id"], "j_start_s": round(max(0.0, cut - lead_s), 3),
+                        "l_end_s": round(min(t, cut + tail_s), 3)})
+        a["tail_s"], b["lead_s"] = round(tail_s, 3), round(lead_s, 3)
     music = []
     by_seg: dict[str, list] = {}
     for s in shots:
@@ -640,7 +655,7 @@ def build(script: dict, *, fps: int = 24, spines: dict | None = None, routes: di
     return {"schema": SCHEMA, "episode_id": script.get("episode_id"), "era": era, "era_basis": era_basis, "fps": fps,
             "plan_status": status_str, "dependency_fingerprint": dep_fp,
             "duration_s": round(t, 3),
-            "shots": shots, "beds": beds, "bridges": bridges, "music": music, "blocked_era_events": blocked,
+            "shots": shots, "beds": beds, "bridges": bridges, "boundaries": bm_list, "music": music, "blocked_era_events": blocked,
             "segment_moods": {k: {"mood": v[0], "basis": v[1], "music": musics[k][0], "music_reason": musics[k][1]}
                               for k, v in moods.items()}, "coverage": coverage,
             "classes": sorted({e["class"] for s in shots for e in s["events"]} | {c for b in beds for c in b["classes"]}

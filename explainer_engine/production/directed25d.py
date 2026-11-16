@@ -500,8 +500,62 @@ class Stage:
             ys = slice(int(rb[1] * self.sh), max(int(rb[1] * self.sh) + 1, int(rb[3] * self.sh)))
             xs = slice(int(rb[0] * self.sw), max(int(rb[0] * self.sw) + 1, int(rb[2] * self.sw)))
             out.append({"box": box, "d": float(np.median(self.depth[ys, xs])), "soft": is_soft,
-                        "why": it.get("why") or ("face" if it.get("face") else it.get("mask") or it.get("light")),
+                        "why": it.get("why") or ("face" if it.get("face") else it.get("mask") or it.get("light")), "is_light": bool(it.get("light")),
                         **({"face": list(it["face"]), "face_d": self._face_depth(it["face"])} if it.get("face") else {})})
+        # P0-2: register every person found in masks or detected faces, even if missing from keep_in_frame
+        self._unregistered_people = []
+        person_tokens = {"crowd", "crowds", "person", "people", "man", "men", "woman", "women",
+                         "soldier", "soldiers", "face", "faces", "group", "groups", "troops", "infantry",
+                         "officer", "officers", "guard", "guards", "civilian", "civilians", "hero", "figure"}
+        def _covered(cand_box):
+            cx = 0.5 * (cand_box[0] + cand_box[2])
+            cy = 0.5 * (cand_box[1] + cand_box[3])
+            for ex in out:
+                eb = ex["box"]
+                if eb[0] <= cx <= eb[2] and eb[1] <= cy <= eb[3]:
+                    return True
+            return False
+
+        layers_meta = getattr(self, "_layers_meta", None) or {}
+        man_objs = (layers_meta.get("manifest") or {}).get("masks", {}).get("objects") or []
+        man_by_id = {str(r.get("id")): r for r in man_objs if isinstance(r, dict) and r.get("id")}
+        for oid, m in self.masks_src.items():
+            tokens = set(re.findall(r"[a-z]+", str(oid).lower()))
+            kind = str((man_by_id.get(oid) or {}).get("kind") or (man_by_id.get(oid) or {}).get("class") or "").lower()
+            if not (tokens & person_tokens or kind in person_tokens):
+                continue
+            mb = self._bbox(m)
+            if mb is None:
+                continue
+            mb = [float(np.clip(b, 0, 1)) for b in mb]
+            if not _covered(mb):
+                self._unregistered_people.append(str(oid))
+                ys = slice(int(mb[1] * self.sh), max(int(mb[1] * self.sh) + 1, int(mb[3] * self.sh)))
+                xs = slice(int(mb[0] * self.sw), max(int(mb[0] * self.sw) + 1, int(mb[2] * self.sw)))
+                out.append({"box": mb, "d": float(np.median(self.depth[ys, xs])), "soft": False,
+                            "why": f"auto_mask:{oid}", "unregistered": True})
+
+        det_faces = layers_meta.get("faces") if isinstance(layers_meta.get("faces"), list) else []
+        for idx_f, fc in enumerate(det_faces):
+            fbox = fc.get("box") if isinstance(fc, dict) else None
+            if not (isinstance(fbox, (list, tuple)) and len(fbox) == 4):
+                continue
+            x0, y0, x1, y1 = [float(v) for v in fbox]
+            if max(x0, y0, x1, y1) > 1.5:
+                x0, y0, x1, y1 = x0 / max(1, self.sw), y0 / max(1, self.sh), x1 / max(1, self.sw), y1 / max(1, self.sh)
+            fw, fh = max(0.01, x1 - x0), max(0.01, y1 - y0)
+            pbox = [float(np.clip(v, 0, 1)) for v in (x0 - fw, y0 - HEAD_UP * fh, x1 + fw, y1 + CHEST_DOWN * fh)]
+            if not _covered(pbox):
+                fid = str(fc.get("id") or f"detected_face_{idx_f}")
+                self._unregistered_people.append(fid)
+                out.append({"box": pbox, "d": self._face_depth([x0, y0, x1, y1]), "soft": False,
+                            "why": f"auto_face:{fid}", "face": [x0, y0, x1, y1],
+                            "face_d": self._face_depth([x0, y0, x1, y1]), "unregistered": True})
+
+        self._missing_protection = bool(
+            (not out and not (self.p.get("keep_in_frame") or []) and layers_meta.get("faces") is None and not self.masks_src)
+            or bool(self._unregistered_people)
+        )
         return out
     def _face_depth(self, face) -> float:
         cxp = int(np.clip((face[0] + face[2]) / 2 * self.sw, 0, self.sw - 1))
@@ -648,16 +702,21 @@ class Stage:
             return None
         return float(self.cv2.matchTemplate(win.astype(np.float32), template.astype(np.float32),
                                             self.cv2.TM_CCOEFF_NORMED).max())
-    def people_cut(self, every: int = 2) -> dict:
+    def people_cut(self, every: int = 1, include_soft: bool = True) -> dict:
         worst = {"share": 0.0, "frame": None, "what": None}
+        unreg = list(getattr(self, "_unregistered_people", []))
+        miss = bool(getattr(self, "_missing_protection", False))
         if not self.keep:
-            return {**worst, "kept": 0}
+            return {**worst, "kept": 0, "unregistered_people": unreg, "missing_protection": True if miss or not self.keep else False}
         cv2 = self.cv2
-        for f in sorted(set(range(0, self.n, every)) | {self.n - 1}):
+        checked = 0
+        for f in sorted(set(range(0, self.n, max(1, int(every)))) | {max(0, self.n - 1)}):
             v = self.view(f)
             for kb in self.keep:
-                if kb["soft"]:
+                if kb.get("is_light") and kb["soft"]:
                     continue
+                if f == 0:
+                    checked += 1
                 inv = cv2.invertAffineTransform(self.matrix(v, kb["d"]))
                 x0, y0, x1, y1 = kb["box"]
                 pts = np.array([[x0 * self.sw, y0 * self.sh, 1], [x1 * self.sw, y0 * self.sh, 1],
@@ -669,7 +728,7 @@ class Stage:
                 cut = 1 - inside / area
                 if cut > worst["share"]:
                     worst = {"share": round(float(cut), 4), "frame": f, "what": kb["why"]}
-        return {**worst, "kept": sum(1 for k in self.keep if not k["soft"])}
+        return {**worst, "kept": checked, "unregistered_people": unreg, "missing_protection": miss}
     def _coef(self, v: dict, d):
         par = v["far"] + (1 - v["far"]) * d
         orb = np.maximum(-1.0, (d - self.focus_d) / max(1e-3, 1 - self.focus_d))

@@ -27,6 +27,12 @@ TRANSITION_TYPES: Tuple[str, ...] = (
     "foreground_object_wipe",
     "atmospheric_smoke_ash_wipe",
     "cross_dissolve_8f",
+    "cross_dissolve_12f",
+    "cross_dissolve_14f",
+    "cross_dissolve_16f",
+    "cross_dissolve_17f",
+    "warm_dip",
+    "warm_fire_glow_dip",
     "hard_cut_with_jl_bridge",
     "fade_to_black",
 )
@@ -39,6 +45,12 @@ AUTHORED_FRAMES: Dict[str, int] = {
     "j_cut": 0,
     "l_cut": 0,
     "cross_dissolve_8f": 8,
+    "cross_dissolve_12f": 12,
+    "cross_dissolve_14f": 14,
+    "cross_dissolve_16f": 16,
+    "cross_dissolve_17f": 17,
+    "warm_dip": 14,
+    "warm_fire_glow_dip": 14,
     "fade_to_black": 24,
 }
 
@@ -143,7 +155,7 @@ def select_optimal_cinematic_transition(
         audio_prelap_s = (
             0.15
             if (is_a_infographic and is_b_infographic and continuity["same_location"] and inherited_camera)
-            else (0.25 if continuity["same_location"] else 0.35)
+            else (0.30 if continuity["same_location"] else 0.40)
         )
     elif allow_decorative_wipes and explicit_override in TRANSITION_TYPES:
         t_type = str(explicit_override)
@@ -184,7 +196,7 @@ def select_optimal_cinematic_transition(
     else:
         t_type = "hard_cut_with_jl_bridge"
         dur_frames = 0
-        audio_prelap_s = 0.25 if continuity["same_location"] else 0.35
+        audio_prelap_s = 0.30 if continuity["same_location"] else 0.40
 
     cut_plan_transition = "cut" if t_type == "hard_cut_with_jl_bridge" or continuity["same_location"] else "dissolve"
 
@@ -197,7 +209,7 @@ def select_optimal_cinematic_transition(
         "transition_frames": dur_frames,
         "transition_duration_sec": round(dur_frames / max(fps, 1), 4),
         "audio_j_cut_prelap_sec": audio_prelap_s,
-        "audio_l_cut_postlap_sec": round(audio_prelap_s * 0.85, 3),
+        "audio_l_cut_postlap_sec": round(max(0.30, audio_prelap_s * 0.85) if audio_prelap_s >= 0.30 else audio_prelap_s * 0.85, 3),
         "zoom_target_xy": continuity["focal_xy_from"],
         "continuity": continuity,
     }
@@ -244,6 +256,13 @@ def render_transition_frame_pair(
         gain = (1.0 - 2.0 * u) if u <= 0.5 else (2.0 * u - 1.0)
         return Image.fromarray(np.clip(src * gain, 0, 255).astype(np.uint8), mode="RGB")
 
+    if transition_type in ("warm_dip", "warm_fire_glow_dip"):
+        glow = np.array([235.0, 145.0, 62.0], dtype=np.float32)
+        src = np.asarray(frame_a if u <= 0.5 else frame_b, dtype=np.float32)
+        mix_g = (2.0 * u) if u <= 0.5 else (2.0 * (1.0 - u))
+        out_arr = src * (1.0 - 0.78 * mix_g) + glow[None, None, :] * (0.78 * mix_g)
+        return Image.fromarray(np.clip(out_arr, 0, 255).astype(np.uint8), mode="RGB")
+
     if transition_type == "map_to_location_zoom_through":
         tx, ty = float(zoom_target_xy[0]) * w, float(zoom_target_xy[1]) * h
         z_a = 1.0 + 2.2 * (ease_u ** 1.6)
@@ -283,3 +302,141 @@ def render_transition_frame_pair(
     arr_b = np.asarray(frame_b, dtype=np.float32)
     mixed = arr_a * (1.0 - ease_u) + arr_b * ease_u
     return Image.fromarray(np.clip(mixed, 0, 255).astype(np.uint8), mode="RGB")
+
+
+def analyze_boundary_frames(frame_a: np.ndarray, frame_b: np.ndarray) -> Dict[str, Any]:
+    """P0-4: Post-G7 visual-boundary analysis (MAD, luma distribution, colour temperature, composition continuity).
+
+    Used as an editorial REVIEW signal, not an automatic override rule.
+    """
+    a = np.asarray(frame_a, dtype=np.float32)
+    b = np.asarray(frame_b, dtype=np.float32)
+    if a.shape != b.shape:
+        im_b = Image.fromarray(np.clip(b, 0, 255).astype(np.uint8)).resize((a.shape[1], a.shape[0]), Image.BILINEAR)
+        b = np.asarray(im_b, dtype=np.float32)
+    mad = float(np.mean(np.abs(a - b)))
+    luma_a = 0.2126 * a[:, :, 0] + 0.7152 * a[:, :, 1] + 0.0722 * a[:, :, 2]
+    luma_b = 0.2126 * b[:, :, 0] + 0.7152 * b[:, :, 1] + 0.0722 * b[:, :, 2]
+    mean_la = float(np.mean(luma_a))
+    mean_lb = float(np.mean(luma_b))
+    luma_delta = mean_lb - mean_la
+    ha, _ = np.histogram(luma_a, bins=16, range=(0.0, 256.0), density=True)
+    hb, _ = np.histogram(luma_b, bins=16, range=(0.0, 256.0), density=True)
+    luma_hist_dist = float(np.sum(np.abs(ha - hb)) * 16.0)
+    temp_a = float(np.mean(a[:, :, 0] - a[:, :, 2]))
+    temp_b = float(np.mean(b[:, :, 0] - b[:, :, 2]))
+    color_temp_delta = temp_b - temp_a
+    # Composition continuity via normalized cross-correlation of downsampled luma
+    la_flat = (luma_a - mean_la).ravel()
+    lb_flat = (luma_b - mean_lb).ravel()
+    denom = float(np.linalg.norm(la_flat) * np.linalg.norm(lb_flat))
+    comp_corr = float(np.dot(la_flat, lb_flat) / denom) if denom > 1e-6 else (1.0 if abs(luma_delta) < 1.0 else 0.0)
+    severe_jump = bool(mad >= 45.0 or abs(luma_delta) >= 40.0 or abs(color_temp_delta) >= 35.0)
+    return {
+        "measured": True,
+        "mad": round(mad, 2),
+        "luma_a": round(mean_la, 2),
+        "luma_b": round(mean_lb, 2),
+        "luma_delta": round(luma_delta, 2),
+        "luma_hist_dist": round(luma_hist_dist, 4),
+        "color_temp_delta": round(color_temp_delta, 2),
+        "composition_continuity": round(comp_corr, 4),
+        "severe_jump": severe_jump,
+    }
+
+
+def _read_boundary_frame_pair(clip_a: str | None, clip_b: str | None) -> Tuple[np.ndarray, np.ndarray] | None:
+    if not clip_a or not clip_b:
+        return None
+    try:
+        import cv2
+    except Exception:
+        return None
+    cap_a = cv2.VideoCapture(str(clip_a))
+    cap_b = cv2.VideoCapture(str(clip_b))
+    try:
+        if not cap_a.isOpened() or not cap_b.isOpened():
+            return None
+        n_a = int(cap_a.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+        if n_a > 0:
+            cap_a.set(cv2.CAP_PROP_POS_FRAMES, max(0, n_a - 1))
+        ok_a, fa = cap_a.read()
+        ok_b, fb = cap_b.read()
+        if not ok_a or not ok_b or fa is None or fb is None:
+            return None
+        return fa[:, :, ::-1], fb[:, :, ::-1]
+    finally:
+        cap_a.release()
+        cap_b.release()
+
+
+def build_boundary_manifest(
+    script_doc: Dict[str, Any],
+    shot_records: List[Dict[str, Any]] | None = None,
+    fps: int = 24,
+    *,
+    honour_authored: bool = True,
+    boundary_frames: Dict[str, Tuple[np.ndarray, np.ndarray]] | None = None,
+) -> Dict[str, Any]:
+    """P0-4: Build ONE authoritative picture-and-audio boundary manifest before G8.
+
+    Both G8 (sound_plan / cue_sheet) and G9 (stage_assemble) consume this manifest so J/L overlaps,
+    ambience bridges, foley/action continuations, intentional silence, and visual transitions share one timeline.
+    """
+    shots = list(script_doc.get("shots") or [])
+    rec_by_id = {str(r.get("shot_id")): r for r in (shot_records or []) if isinstance(r, dict) and r.get("shot_id")}
+    boundaries: List[Dict[str, Any]] = []
+    for idx, (a, b) in enumerate(zip(shots, shots[1:])):
+        sid_a = str(a.get("shot_id") or a.get("id") or f"shot_{idx}")
+        sid_b = str(b.get("shot_id") or b.get("id") or f"shot_{idx + 1}")
+        key = f"{sid_a}->{sid_b}"
+        plan = select_optimal_cinematic_transition(a, b, fps=fps, allow_decorative_wipes=False, honour_authored=honour_authored)
+        cont = plan["continuity"]
+        same_loc = bool(cont.get("same_location"))
+        silence = bool(a.get("intentional_silence") or b.get("intentional_silence"))
+        ambience_bridge_s = 0.0 if (same_loc or silence) else 0.5
+        foley_cont = bool(a.get("action_continuation") or b.get("action_continuation") or (same_loc and plan["transition_type"] == "hard_cut_with_jl_bridge"))
+
+        pair = (boundary_frames or {}).get(key)
+        if pair is None and sid_a in rec_by_id and sid_b in rec_by_id:
+            pair = _read_boundary_frame_pair(rec_by_id[sid_a].get("clip_path"), rec_by_id[sid_b].get("clip_path"))
+        vis = analyze_boundary_frames(pair[0], pair[1]) if pair is not None else {"measured": False, "severe_jump": False}
+
+        authored_out = str(a.get("transition_out") or "")
+        editorial_reason = str(a.get("editorial_reason") or a.get("cut_reason") or "").strip()
+        flagged = bool(
+            vis.get("severe_jump")
+            and plan["transition_type"] == "hard_cut_with_jl_bridge"
+            and authored_out == "hard_cut"
+            and not editorial_reason
+        )
+        boundaries.append({
+            "cut_index": idx,
+            "boundary_id": key,
+            "from_shot_id": sid_a,
+            "to_shot_id": sid_b,
+            "picture_transition": {
+                "transition_type": plan["transition_type"],
+                "transition_frames": plan["transition_frames"],
+                "transition_duration_sec": plan["transition_duration_sec"],
+                "cut_plan_transition": plan["cut_plan_transition"],
+                "authored": bool(plan.get("authored")),
+                "authored_transition_out": authored_out or None,
+                "editorial_reason": editorial_reason or None,
+            },
+            "j_cut_prelap_sec": float(plan["audio_j_cut_prelap_sec"]),
+            "l_cut_postlap_sec": float(plan["audio_l_cut_postlap_sec"]),
+            "shared_ambience": bool(same_loc and not silence),
+            "ambience_bridge_sec": ambience_bridge_s,
+            "foley_action_continuation": foley_cont,
+            "intentional_silence": silence,
+            "visual_analysis": vis,
+            "editorial_review_status": "REVIEW" if flagged else "PASS",
+            "editorial_flag": "severe_jump_unmotivated_hard_cut" if flagged else None,
+            "transition_plan": plan,
+        })
+    return {
+        "schema": "boundary_manifest/1",
+        "fps": int(fps),
+        "boundaries": boundaries,
+    }

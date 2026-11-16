@@ -381,14 +381,11 @@ def test_t7_split_long_still_10_96s_splits_at_nearest_legal_boundary_into_parts_
     rows, _ = RUN.stage_clips(ep, rehearsal=True)
     assert script_path.read_text(encoding="utf-8") == script_before
 
-    split_rows = [r for r in rows if r["gate"] == "split_long_still"]
-    assert len(split_rows) == 1 and split_rows[0]["status"] == G.REVIEW
-    detail = split_rows[0]["detail"]
-    assert "S02_SH008" in detail
-    assert "S02_SH008a" in detail and "S02_SH008b" in detail and "S02_SH008c" in detail
-    assert "truce." in detail and "agreed." in detail
+    # P0-1 (fix round A): one still = one visual clip. The long still is NOT split into a/b/c clips any more; its
+    # narration clauses are kept as non-cutting metadata on ONE record with one continuous camera timeline.
+    assert not [r for r in rows if r["gate"] == "split_long_still"]
     recs = json.loads((root / "production" / "shot_records.json").read_text(encoding="utf-8"))["shots"]
-    assert [r["shot_id"] for r in recs] == ["S02_SH008a", "S02_SH008b", "S02_SH008c"]
+    assert [r["shot_id"] for r in recs] == ["S02_SH008"]
     assert sum(r["total_frames"] for r in recs) == 263
 
 
@@ -424,6 +421,7 @@ def test_t7_7s_shot_without_punctuation_stays_whole_with_review_row(tmp_path, mo
     root = _make_episode(tmp_path, [shot_1w], spines={"S01_SH010": one_word_spine})
     ep = RUN.Episode(root, size=SIZE, fps=FPS, rehearsal=True)
     rows, _ = RUN.stage_clips(ep, rehearsal=True)
-    unsplit = [r for r in rows if r["gate"] == "long_still_unsplit"]
-    assert len(unsplit) == 1 and unsplit[0]["status"] == G.FAIL
-    assert "S01_SH010" in unsplit[0]["detail"]
+    # P0-1: a long still that cannot be split on a word boundary simply stays ONE visual clip (no long_still_unsplit FAIL).
+    assert not [r for r in rows if r["gate"] == "long_still_unsplit"]
+    recs = json.loads((root / "production" / "shot_records.json").read_text(encoding="utf-8"))["shots"]
+    assert [r["shot_id"] for r in recs] == ["S01_SH010"]

@@ -348,6 +348,13 @@ def test_b4a_mix_populates_ambience_beds_or_records_intentional_absence_and_remo
     t_path = tmp_path / "clock" / "timing.json"
     ET.persist_authoritative_clock(timing_doc, t_path)
 
+    # P0-3: narration is a hard contract now (no silent substitution): give the fixture a canonical narration.wav
+    (tmp_path / "audio").mkdir(exist_ok=True)
+    with wave.open(str(tmp_path / "audio" / "narration.wav"), "wb") as _w:
+        _w.setnchannels(1)
+        _w.setsampwidth(2)
+        _w.setframerate(24000)
+        _w.writeframes((np.sin(np.arange(24000 * 6) / 20.0) * 3000).astype(np.int16).tobytes())
     rep = MIX.run_mix(
         episode_dir=tmp_path,
         dl_dir=tmp_path,

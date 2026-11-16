@@ -656,3 +656,42 @@ def verify_clock_alignment(timing_doc: dict, consumer_record: dict) -> list[dict
                 "detail": f"{sid}: consumer frames={consumer_record['frames']} != authoritative frames={t_shot['frames']}",
             })
     return findings
+
+
+def resolve_narration_path(
+    episode_dir: Path,
+    dl_dir: Path | None = None,
+    *,
+    explicit_path: Path | str | None = None,
+) -> Path:
+    """P0-3 shared narration resolver for both episode/run.py and tools/render_tools/mix.py.
+
+    ``audio/narration.wav`` is canonical. Never silently substitutes zero signal when missing.
+    """
+    if explicit_path is not None:
+        ep_p = Path(explicit_path)
+        if ep_p.is_file():
+            return ep_p
+        raise ContractError(f"Explicit narration audio path does not exist: {ep_p}")
+    ep_dir = Path(episode_dir)
+    canonical = ep_dir / "audio" / "narration.wav"
+    if canonical.is_file():
+        return canonical
+    candidates: list[Path] = []
+    if dl_dir is not None:
+        candidates.append(Path(dl_dir) / "clock" / "narrator_read.mp3")
+    candidates.append(ep_dir / "clock" / "narrator_read.mp3")
+    for cand in candidates:
+        if cand.is_file():
+            return cand
+    searched = [str(canonical)] + [str(c) for c in candidates]
+    raise ContractError(
+        "Missing canonical narration audio (no silent substitution allowed): searched " + ", ".join(searched)
+    )
+
+
+def frame_to_sample(frame_index: int, sample_rate: int = 48000, fps: int = 24) -> int:
+    """P0-5: Map authoritative video frame index to audio sample index: round(frame * sr / fps).
+    At 48 kHz / 24 fps, 1 frame == 2000 samples.
+    """
+    return int(round(float(frame_index) * float(sample_rate) / float(max(1, fps))))
