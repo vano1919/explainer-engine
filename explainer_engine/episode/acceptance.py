@@ -11,6 +11,7 @@ from pathlib import Path
 
 from explainer_engine.episode.validate import check_episode_ids
 from explainer_engine.qa.gates import row, verdict
+from explainer_engine.qa.scene_continuity import scene_rows
 
 DURATION_TOL = 0.02          # the master may differ from the script's planned length by 2 % (frame rounding, J/L cuts)
 
@@ -175,6 +176,8 @@ def gates(*, root: Path, script: dict, shot_records: list[dict], transition_plan
         rows.append(row("master_length_matches_the_script", ok,
                         f"master {dur:.2f} s vs script {planned:.2f} s (tolerance {DURATION_TOL:.0%}), frames {'match' if frames_ok else 'differ'}",
                         {"master_s": dur, "script_s": planned, "frames": video.get("total_frames")}))
+
+    rows += scene_rows(script)   # scene bibles, meaning links, document inserts (no rows for scripts without scene_bibles)
 
     if paid is not None:
         loose = [f"{x.get('ledger')}:{x.get('shot_id') or x.get('id') or '?'}" for x in paid if not x.get("plan_id")]
