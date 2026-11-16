@@ -140,3 +140,46 @@ def check(stems_dir: Path, *, plan: dict | None = None, sheet: dict | None = Non
                           f"{SILENCE_DBFS:g} dBFS outside a declared silence (first at {dead[:3]})", len(dead),
                           level=SR_RULES.level("BP-161")))
     return {"schema": "mix_check/1", "profile": profile, "rows": rows, "verdict": G.verdict(rows), "numbers": numbers}
+
+
+# --- ambience continuity across a cut (owner-approved Python item 5, 2026-11-16; WARN mode until calibrated on real stems) ----
+BED_JUMP_PASS_DB = 3.0      # DESIGN_RULE: an ambience level step across a cut up to 3 dB passes
+BED_JUMP_REVIEW_DB = 6.0    # 3-6 dB is a REVIEW, over 6 dB is a FAIL *band*
+
+
+def ambience_jump_db(ambience: np.ndarray, boundary_s: float, window_s: float = 1.0, sr: int = SR) -> float | None:
+    """The step in the ambience stem's RMS level (dB) from the ``window_s`` before ``boundary_s`` to the ``window_s`` after.
+    None when either side has no samples. Root cause of the 'jumpy slideshow': every cut re-started the whole sound, and no
+    check compared the bed on the two sides of a cut."""
+    x = np.asarray(ambience, dtype=np.float64)
+    x = x.mean(axis=1) if x.ndim == 2 else x
+    i = int(round(boundary_s * sr))
+    w = int(round(window_s * sr))
+    before, after = x[max(0, i - w):i], x[i:i + w]
+    if len(before) < sr // 10 or len(after) < sr // 10:
+        return None
+    return round(abs(_db(after) - _db(before)), 2)
+
+
+def bed_jump_band(jump_db: float) -> str:
+    return "PASS" if jump_db <= BED_JUMP_PASS_DB else ("REVIEW" if jump_db <= BED_JUMP_REVIEW_DB else "FAIL")
+
+
+def ambience_continuity_rows(ambience: np.ndarray, boundaries_s: list[float], calibrated: bool = False,
+                             window_s: float = 1.0, sr: int = SR) -> list[dict]:
+    """DIALOGUE_SOUND_CONTINUITY: one row over all the cuts. WARN mode (``calibrated`` False): a band of FAIL is reported in
+    the detail but the row stays a REVIEW, never a FAIL, so existing renders and tests do not break before the numbers are
+    calibrated on real stems. Audibility to a human ear is never claimed here (NOT_VERIFIED)."""
+    jumps = {round(b, 2): ambience_jump_db(ambience, b, window_s, sr) for b in boundaries_s}
+    measured = {b: j for b, j in jumps.items() if j is not None}
+    if not measured:
+        return [G.row("DIALOGUE_SOUND_CONTINUITY", None, "no cut with ambience on both sides to measure")]
+    bands = {b: bed_jump_band(j) for b, j in measured.items()}
+    bad = {b: j for b, j in measured.items() if bands[b] != "PASS"}
+    hard = [b for b, k in bands.items() if k == "FAIL"]
+    level = G.FAIL if (calibrated and hard) else G.REVIEW
+    mode = "enforced" if calibrated else "warn (not calibrated)"
+    return [G.row("DIALOGUE_SOUND_CONTINUITY", not bad,
+                  f"{len(bad)} of {len(measured)} cut(s) step the ambience by more than {BED_JUMP_PASS_DB:g} dB "
+                  f"({len(hard)} over {BED_JUMP_REVIEW_DB:g} dB); mode {mode}; human audibility NOT_VERIFIED",
+                  {"jumps_db": bad}, level=level)]

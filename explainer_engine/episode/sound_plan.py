@@ -798,3 +798,29 @@ def advisory_density_hint(shot_sound: dict, shot_spec: dict | None = None) -> di
         "cues_per_10s": cues_per_10s,
         "detail": "advisory density hint only (C1: numbers never decide; brief, picture and camera decide)",
     }
+
+
+# --- section beds + bridges (owner-approved Python item 5; metadata gate, REVIEW rows) --------------------------------------
+def section_bed_rows(plan: dict) -> list[dict]:
+    """A plan with ``section_beds`` must keep ONE continuous bed per section and every bridge must be a crossfade or declare a
+    silence: a hard replacement of the whole sound at a cut is the 'jumpy slideshow'. Plans without ``section_beds`` (older
+    episodes) get no rows. REVIEW rows only; human audibility is reported NOT_VERIFIED, never PASS."""
+    from explainer_engine.qa import gates as G
+    beds = plan.get("section_beds")
+    if not beds:
+        return []
+    broken = [b.get("section_id", "?") for b in beds if not b.get("bed_id") or b.get("continuous") is not True]
+    bridges = plan.get("bridges") or []
+    hard = [f"{b.get('from')}->{b.get('to')}@{b.get('at_s')}" for b in bridges
+            if b.get("silence_intent") in (None, "", "none")
+            and not (float(b.get("crossfade_frames") or 0) > 0 or float(b.get("crossfade_seconds") or 0) > 0)]
+    rows = [G.row("SECTION_BED_CONTINUITY", not broken and not hard,
+                  f"{len(broken)} section(s) without one continuous bed, {len(hard)} bridge(s) that replace the sound at the cut "
+                  "(no crossfade and no declared silence)", {"sections": broken, "bridges": hard[:20]}, level=G.REVIEW)]
+    ver = plan.get("audibility_verification")
+    ver = ver.get("status") if isinstance(ver, dict) else ver
+    unverified = ver in (None, "NOT_VERIFIED")
+    rows.append(G.row("SOUND_BED_AUDIBILITY_REVIEW", None if unverified else True,
+                      "human audibility of the beds is NOT_VERIFIED until somebody listens" if unverified
+                      else f"audibility verified: {ver}"))
+    return rows
