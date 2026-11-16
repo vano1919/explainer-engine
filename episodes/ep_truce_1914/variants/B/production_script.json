@@ -1759,7 +1759,23 @@
      }
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S01_SH001] Open on the empty frozen field at dawn so the first second says place, cold and danger (Fog lies on the frozen field between the wire -> The fog thins enough to show the German parapet) at loc_no_mans_land.",
+    "narration_anchor": "S01_L001",
+    "dramatic_beat_id": "BEAT_S01_SH001",
+    "visual_action": "Fog lies on the frozen field between the wire -> The fog thins enough to show the German parapet",
+    "relationship": "Connects S01_L001 to open on the empty frozen field at dawn so the first second says place, cold and danger",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": null,
+    "continuity_to": "S01_SH002"
+   }
   },
   {
    "shot_id": "S01_SH002",
@@ -1840,7 +1856,25 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 4.5,
+   "edited_shot_duration_seconds": 4.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S01_SH002] Hook: a soldier climbs out of his trench toward the enemy; the image the whole video pays off (Thomas stands at the trench ladder, his rifle leaning against the sandbags -> Thomas has climbed onto the parapet into the fog) at loc_british_trench.",
+    "narration_anchor": "S01_L002",
+    "dramatic_beat_id": "BEAT_S01_SH002",
+    "visual_action": "Thomas stands at the trench ladder, his rifle leaning against the sandbags -> Thomas has climbed onto the parapet into the fog",
+    "relationship": "Connects S01_L002 to hook: a soldier climbs out of his trench toward the enemy; the image the whole video pays off",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "prop_smle_rifle",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S01_SH001",
+    "continuity_to": "S01_SH003"
+   }
   },
   {
    "shot_id": "S01_SH003",
@@ -1919,7 +1953,24 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 5.5,
+   "edited_shot_duration_seconds": 5.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S01_SH003] Hook: the walk across the open ground, seen from behind; the danger made physical (Thomas walks away from camera between the wire -> Thomas is a small figure halfway across the field) at loc_no_mans_land.",
+    "narration_anchor": "S01_L003",
+    "dramatic_beat_id": "BEAT_S01_SH003",
+    "visual_action": "Thomas walks away from camera between the wire -> Thomas is a small figure halfway across the field",
+    "relationship": "Connects S01_L003 to hook: the walk across the open ground, seen from behind; the danger made physical",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S01_SH002",
+    "continuity_to": "S01_SH004"
+   }
   },
   {
    "shot_id": "S01_SH004",
@@ -1996,7 +2047,23 @@
      }
     }
    ],
-   "motion_profile": "battle"
+   "motion_profile": "battle",
+   "source_clip_duration_seconds": 5.0,
+   "edited_shot_duration_seconds": 5.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S01_SH004] Widen from one man to many so the viewer knows it is history, not one story (Men climb out of both trench lines along the field -> Small groups meet in the middle of the field) at loc_no_mans_land.",
+    "narration_anchor": "S01_L004",
+    "dramatic_beat_id": "BEAT_S01_SH004",
+    "visual_action": "Men climb out of both trench lines along the field -> Small groups meet in the middle of the field",
+    "relationship": "Connects S01_L004 to widen from one man to many so the viewer knows it is history, not one story",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S01_SH003",
+    "continuity_to": "S01_SH005"
+   }
   },
   {
    "shot_id": "S01_SH005",
@@ -2082,7 +2149,24 @@
      ]
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 8.0,
+   "edited_shot_duration_seconds": 8.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S01_SH005] The promise of the video over its most magical picture: the candle trees in the dark (A row of small candle-lit fir trees stands along the German parapet at night -> The candle row runs into the dark) at loc_german_trench.",
+    "narration_anchor": "S01_L005",
+    "dramatic_beat_id": "BEAT_S01_SH005",
+    "visual_action": "A row of small candle-lit fir trees stands along the German parapet at night -> The candle row runs into the dark",
+    "relationship": "Connects S01_L005 to the promise of the video over its most magical picture: the candle trees in the dark",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "prop_candle_tree",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S01_SH004",
+    "continuity_to": "S02_SH001"
+   }
   },
   {
    "shot_id": "S02_SH001",
@@ -2176,6 +2260,22 @@
     "lon": 4.6,
     "lat": 49.4,
     "span_km": 520
+   },
+   "source_clip_duration_seconds": 6.0,
+   "edited_shot_duration_seconds": 6.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH001] August 1914: the war starts as a fast march, the promise of a short war (The plate of Belgium and northern France, empty -> An arrow has swept through Belgium toward the Marne) at loc_western_front_map.",
+    "narration_anchor": "S02_L001",
+    "dramatic_beat_id": "BEAT_S02_SH001",
+    "visual_action": "The plate of Belgium and northern France, empty -> An arrow has swept through Belgium toward the Marne",
+    "relationship": "Connects S02_L001 to august 1914: the war starts as a fast march, the promise of a short war",
+    "dramatic_function": "narrative_progression",
+    "shot_specific_entities": [
+     "loc_western_front_map"
+    ],
+    "continuity_from": "S01_SH005",
+    "continuity_to": "S02_SH002"
    }
   },
   {
@@ -2278,6 +2378,22 @@
     "lon": 4.6,
     "lat": 49.4,
     "span_km": 520
+   },
+   "source_clip_duration_seconds": 7.75,
+   "edited_shot_duration_seconds": 7.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH002] December: the march has frozen into one trench line from the sea to Switzerland (The plate with the August arrow faded -> The front line runs from the coast to the Swiss border) at loc_western_front_map.",
+    "narration_anchor": "S02_L002",
+    "dramatic_beat_id": "BEAT_S02_SH002",
+    "visual_action": "The plate with the August arrow faded -> The front line runs from the coast to the Swiss border",
+    "relationship": "Connects S02_L002 to december: the march has frozen into one trench line from the sea to switzerland",
+    "dramatic_function": "narrative_progression",
+    "shot_specific_entities": [
+     "loc_western_front_map"
+    ],
+    "continuity_from": "S02_SH001",
+    "continuity_to": "S02_SH003"
    }
   },
   {
@@ -2367,6 +2483,22 @@
     "lon": 4.6,
     "lat": 49.4,
     "span_km": 520
+   },
+   "source_clip_duration_seconds": 6.0,
+   "edited_shot_duration_seconds": 6.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH003] Fly to Flanders: the sector of our story, where the lines nearly touch (The whole front line on the plate -> The camera is over Flanders and one sector glows) at loc_western_front_map.",
+    "narration_anchor": "S02_L003",
+    "dramatic_beat_id": "BEAT_S02_SH003",
+    "visual_action": "The whole front line on the plate -> The camera is over Flanders and one sector glows",
+    "relationship": "Connects S02_L003 to fly to flanders: the sector of our story, where the lines nearly touch",
+    "dramatic_function": "narrative_progression",
+    "shot_specific_entities": [
+     "loc_western_front_map"
+    ],
+    "continuity_from": "S02_SH002",
+    "continuity_to": "S02_SH004"
    }
   },
   {
@@ -2451,7 +2583,23 @@
      ]
     }
    ],
-   "motion_profile": "battle"
+   "motion_profile": "battle",
+   "source_clip_duration_seconds": 6.25,
+   "edited_shot_duration_seconds": 6.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH004] Make the cold and the danger physical before we meet the hero (Soldiers in greatcoats stand in floodwater along the trench -> Same; one man ducks below the parapet) at loc_british_trench.",
+    "narration_anchor": "S02_L004",
+    "dramatic_beat_id": "BEAT_S02_SH004",
+    "visual_action": "Soldiers in greatcoats stand in floodwater along the trench -> Same; one man ducks below the parapet",
+    "relationship": "Connects S02_L004 to make the cold and the danger physical before we meet the hero",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_british_trench"
+    ],
+    "continuity_from": "S02_SH003",
+    "continuity_to": "S02_SH005"
+   }
   },
   {
    "shot_id": "S02_SH005",
@@ -2536,7 +2684,24 @@
      ]
     }
    ],
-   "motion_profile": "document"
+   "motion_profile": "document",
+   "source_clip_duration_seconds": 5.5,
+   "edited_shot_duration_seconds": 5.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH005] Plant the letter motif: the line from home the story will answer at the end (A mud-smudged letter is held open in two cold hands -> Same) at loc_british_trench.",
+    "narration_anchor": "S02_L005",
+    "dramatic_beat_id": "BEAT_S02_SH005",
+    "visual_action": "A mud-smudged letter is held open in two cold hands -> Same",
+    "relationship": "Connects S02_L005 to plant the letter motif: the line from home the story will answer at the end",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "prop_mothers_letter",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S02_SH004",
+    "continuity_to": "S02_SH006"
+   }
   },
   {
    "shot_id": "S02_SH006",
@@ -2610,6 +2775,24 @@
      "char_thomas_hale": "left"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.25,
+   "edited_shot_duration_seconds": 4.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH006] Meet Thomas: one wry line shows who he is without the narrator telling us (Thomas sits on the fire step by the brazier holding the letter -> Thomas folds the letter into his breast pocket) at loc_british_trench.",
+    "narration_anchor": "S02_L006",
+    "dramatic_beat_id": "BEAT_S02_SH006",
+    "visual_action": "Thomas sits on the fire step by the brazier holding the letter -> Thomas folds the letter into his breast pocket",
+    "relationship": "Connects S02_L006 to meet thomas: one wry line shows who he is without the narrator telling us",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "prop_mothers_letter",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S02_SH005",
+    "continuity_to": "S02_SH007"
    }
   },
   {
@@ -2684,6 +2867,24 @@
      "char_sgt_harris": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.25,
+   "edited_shot_duration_seconds": 4.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH007] Harris answers: his whole philosophy in one line, and the rule Thomas will break (Harris sits further along the fire step cleaning his rifle -> Harris glances at Thomas, then back to the rifle) at loc_british_trench.",
+    "narration_anchor": "S02_L007",
+    "dramatic_beat_id": "BEAT_S02_SH007",
+    "visual_action": "Harris sits further along the fire step cleaning his rifle -> Harris glances at Thomas, then back to the rifle",
+    "relationship": "Connects S02_L007 to harris answers: his whole philosophy in one line, and the rule thomas will break",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "char_thomas_hale",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S02_SH006",
+    "continuity_to": "S02_SH008"
    }
   },
   {
@@ -2770,7 +2971,25 @@
      ]
     }
    ],
-   "motion_profile": "portrait"
+   "motion_profile": "portrait",
+   "source_clip_duration_seconds": 10.0,
+   "edited_shot_duration_seconds": 10.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH008] Raise the stakes from above: the people in charge said no; the men were never asked (Thomas and Harris sit by the brazier at dusk -> Same; the push ends on Thomas) at loc_british_trench.",
+    "narration_anchor": "S02_L008",
+    "dramatic_beat_id": "BEAT_S02_SH008",
+    "visual_action": "Thomas and Harris sit by the brazier at dusk -> Same; the push ends on Thomas",
+    "relationship": "Connects S02_L008 to raise the stakes from above: the people in charge said no; the men were never asked",
+    "dramatic_function": "narration_visual",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_sgt_harris",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S02_SH007",
+    "continuity_to": "S02_SH009"
+   }
   },
   {
    "shot_id": "S02_SH009",
@@ -2848,7 +3067,32 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 8.25,
+   "edited_shot_duration_seconds": 8.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S02_SH009] Christmas Eve arrives as parcels: British soldiers open Princess Mary's brass tins (bodies at work, narrated) (Soldiers on the fire step hold small brass gift tins -> They open the lids and pass cigarettes along) at loc_british_trench.",
+    "narration_anchor": "S02_L009",
+    "dramatic_beat_id": "BEAT_S02_SH009",
+    "visual_action": "Soldiers on the fire step hold small brass gift tins -> They open the lids and pass cigarettes along",
+    "relationship": "Connects S02_L009 to christmas eve arrives as parcels: british soldiers open princess mary's brass tins (bodies at work, narrated)",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "loc_british_trench"
+    ],
+    "continuity_from": "S02_SH008",
+    "continuity_to": "S03_SH001"
+   },
+   "face_continuity": {
+    "face_bearing": true,
+    "max_hold_seconds": 6.0,
+    "identity_reference": "FACE_REF_BRITISH_TRENCH_SOLDIERS",
+    "identity_min_pass": 0.7,
+    "identity_fail_below": 0.6,
+    "local_face_motion": "prohibited",
+    "threshold_classification": "DESIGN_RULE"
+   }
   },
   {
    "shot_id": "S03_SH001",
@@ -2929,7 +3173,25 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 9.5,
+   "edited_shot_duration_seconds": 9.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH001] Cross the wire to the other side: Friedrich lights a candle on the tree, the enemy shown as a man (Friedrich stands on the fire step holding a small fir tree -> The tree stands on the parapet, its candles lit) at loc_german_trench.",
+    "narration_anchor": "S03_L001",
+    "dramatic_beat_id": "BEAT_S03_SH001",
+    "visual_action": "Friedrich stands on the fire step holding a small fir tree -> The tree stands on the parapet, its candles lit",
+    "relationship": "Connects S03_L001 to cross the wire to the other side: friedrich lights a candle on the tree, the enemy shown as a man",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "prop_candle_tree",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S02_SH009",
+    "continuity_to": "S03_SH002"
+   }
   },
   {
    "shot_id": "S03_SH002",
@@ -3014,7 +3276,24 @@
      ]
     }
    ],
-   "motion_profile": "object"
+   "motion_profile": "object",
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH002] Plant the portrait card: who Friedrich is fighting for (A small sepia portrait card lies in a gloved hand in candlelight -> Same) at loc_german_trench.",
+    "narration_anchor": "S03_L002",
+    "dramatic_beat_id": "BEAT_S03_SH002",
+    "visual_action": "A small sepia portrait card lies in a gloved hand in candlelight -> Same",
+    "relationship": "Connects S03_L002 to plant the portrait card: who friedrich is fighting for",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "prop_family_photo",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S03_SH001",
+    "continuity_to": "S03_SH003"
+   }
   },
   {
    "shot_id": "S03_SH003",
@@ -3088,6 +3367,24 @@
      "char_friedrich_brandt": "center"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.75,
+   "edited_shot_duration_seconds": 4.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH003] The song begins: men in the enemy trench sing, the turn of the night (Friedrich and five Saxon soldiers stand in the trench by the candle tree -> They sing together, faces lit by candles) at loc_german_trench.",
+    "narration_anchor": "S03_L003",
+    "dramatic_beat_id": "BEAT_S03_SH003",
+    "visual_action": "Friedrich and five Saxon soldiers stand in the trench by the candle tree -> They sing together, faces lit by candles",
+    "relationship": "Connects S03_L003 to the song begins: men in the enemy trench sing, the turn of the night",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "prop_candle_tree",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S03_SH002",
+    "continuity_to": "S03_SH004"
    }
   },
   {
@@ -3162,6 +3459,24 @@
      "char_thomas_hale": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH004] The British hear it: Harris's question opens the scene's argument (Harris and Thomas stand on the fire step listening, rifles on the parapet -> Harris turns his head to Thomas) at loc_british_trench.",
+    "narration_anchor": "S03_L004",
+    "dramatic_beat_id": "BEAT_S03_SH004",
+    "visual_action": "Harris and Thomas stand on the fire step listening, rifles on the parapet -> Harris turns his head to Thomas",
+    "relationship": "Connects S03_L004 to the british hear it: harris's question opens the scene's argument",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "char_thomas_hale",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S03_SH003",
+    "continuity_to": "S03_SH005"
    }
   },
   {
@@ -3236,6 +3551,24 @@
      "char_thomas_hale": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.25,
+   "edited_shot_duration_seconds": 3.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH005] Thomas recognises the tune: the first bridge between the trenches (Thomas listens, eyes on the candles -> Thomas answers without looking away) at loc_british_trench.",
+    "narration_anchor": "S03_L005",
+    "dramatic_beat_id": "BEAT_S03_SH005",
+    "visual_action": "Thomas listens, eyes on the candles -> Thomas answers without looking away",
+    "relationship": "Connects S03_L005 to thomas recognises the tune: the first bridge between the trenches",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_sgt_harris",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S03_SH004",
+    "continuity_to": "S03_SH006"
    }
   },
   {
@@ -3310,6 +3643,24 @@
      "char_thomas_hale": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.75,
+   "edited_shot_duration_seconds": 2.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH006] Harris repeats his rule (heads down): the obstacle Thomas is about to defy (Harris frowns toward the lights -> Harris pulls his own head lower behind the sandbags) at loc_british_trench.",
+    "narration_anchor": "S03_L006",
+    "dramatic_beat_id": "BEAT_S03_SH006",
+    "visual_action": "Harris frowns toward the lights -> Harris pulls his own head lower behind the sandbags",
+    "relationship": "Connects S03_L006 to harris repeats his rule (heads down): the obstacle thomas is about to defy",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "char_thomas_hale",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S03_SH005",
+    "continuity_to": "S03_SH007"
    }
   },
   {
@@ -3389,7 +3740,24 @@
       "why": "the smoke after the shot; the shot itself is A's clip audio"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 3.0,
+   "edited_shot_duration_seconds": 3.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH007] Thomas does not answer: the silence is the answer (VL-08 reaction) (Thomas looks at the candles -> Thomas breathes out; his breath clouds) at loc_british_trench.",
+    "narration_anchor": "S03_L007",
+    "dramatic_beat_id": "BEAT_S03_SH007",
+    "visual_action": "Thomas looks at the candles -> Thomas breathes out; his breath clouds",
+    "relationship": "Connects S03_L007 to thomas does not answer: the silence is the answer (vl-08 reaction)",
+    "dramatic_function": "listener_reaction",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S03_SH006",
+    "continuity_to": "S03_SH008"
+   }
   },
   {
    "shot_id": "S03_SH008",
@@ -3463,6 +3831,24 @@
      "char_thomas_hale": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.75,
+   "edited_shot_duration_seconds": 4.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH008] Thomas sings back: the answer across no man's land (Thomas starts to sing quietly -> Two more soldiers behind him join in) at loc_british_trench.",
+    "narration_anchor": "S03_L008",
+    "dramatic_beat_id": "BEAT_S03_SH008",
+    "visual_action": "Thomas starts to sing quietly -> Two more soldiers behind him join in",
+    "relationship": "Connects S03_L008 to thomas sings back: the answer across no man's land",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_sgt_harris",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S03_SH007",
+    "continuity_to": "S03_SH009"
    }
   },
   {
@@ -3537,6 +3923,24 @@
      "char_friedrich_brandt": "center"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH009] The Germans applaud the British carol: the first exchange between the trenches (Friedrich and the Saxon soldiers listen by the candle tree -> Friedrich claps and calls across with cupped hands) at loc_german_trench.",
+    "narration_anchor": "S03_L009",
+    "dramatic_beat_id": "BEAT_S03_SH009",
+    "visual_action": "Friedrich and the Saxon soldiers listen by the candle tree -> Friedrich claps and calls across with cupped hands",
+    "relationship": "Connects S03_L009 to the germans applaud the british carol: the first exchange between the trenches",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "prop_candle_tree",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S03_SH008",
+    "continuity_to": "S03_SH010"
    }
   },
   {
@@ -3623,7 +4027,24 @@
      ]
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 6.75,
+   "edited_shot_duration_seconds": 6.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S03_SH010] The two trench lines singing at once: the image of the night (Both trench lines in the dark, candles along one -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S03_L010",
+    "dramatic_beat_id": "BEAT_S03_SH010",
+    "visual_action": "Both trench lines in the dark, candles along one -> Same",
+    "relationship": "Connects S03_L010 to the two trench lines singing at once: the image of the night",
+    "dramatic_function": "scene_exit",
+    "shot_specific_entities": [
+     "prop_candle_tree",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S03_SH009",
+    "continuity_to": "S04_SH001"
+   }
   },
   {
    "shot_id": "S04_SH001",
@@ -3700,7 +4121,23 @@
      }
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 3.0,
+   "edited_shot_duration_seconds": 3.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH001] Time cut to Christmas morning: the field white and silent (The frozen field under hoarfrost and fog -> The fog lifts a little) at loc_no_mans_land.",
+    "narration_anchor": "S04_L001",
+    "dramatic_beat_id": "BEAT_S04_SH001",
+    "visual_action": "The frozen field under hoarfrost and fog -> The fog lifts a little",
+    "relationship": "Connects S04_L001 to time cut to christmas morning: the field white and silent",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S03_SH010",
+    "continuity_to": "S04_SH002"
+   }
   },
   {
    "shot_id": "S04_SH002",
@@ -3772,6 +4209,23 @@
      "char_friedrich_brandt": "center"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH002] A voice from the enemy trench: the invitation (Friedrich's head and shoulders show above the German parapet -> Friedrich waves one arm) at loc_german_trench.",
+    "narration_anchor": "S04_L002",
+    "dramatic_beat_id": "BEAT_S04_SH002",
+    "visual_action": "Friedrich's head and shoulders show above the German parapet -> Friedrich waves one arm",
+    "relationship": "Connects S04_L002 to a voice from the enemy trench: the invitation",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S04_SH001",
+    "continuity_to": "S04_SH003"
    }
   },
   {
@@ -3846,6 +4300,24 @@
      "char_thomas_hale": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.75,
+   "edited_shot_duration_seconds": 2.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH003] Harris forbids it: the obstacle (Harris and Thomas crouch behind the parapet -> Harris keeps his eyes on the German line) at loc_british_trench.",
+    "narration_anchor": "S04_L003",
+    "dramatic_beat_id": "BEAT_S04_SH003",
+    "visual_action": "Harris and Thomas crouch behind the parapet -> Harris keeps his eyes on the German line",
+    "relationship": "Connects S04_L003 to harris forbids it: the obstacle",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "char_thomas_hale",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S04_SH002",
+    "continuity_to": "S04_SH004"
    }
   },
   {
@@ -3918,6 +4390,23 @@
      "char_friedrich_brandt": "center"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH004] Friedrich climbs out unarmed: the risk is taken by the enemy first (Friedrich climbs onto the German parapet -> Friedrich stands on top, arms open, a small box in one hand) at loc_german_trench.",
+    "narration_anchor": "S04_L004",
+    "dramatic_beat_id": "BEAT_S04_SH004",
+    "visual_action": "Friedrich climbs onto the German parapet -> Friedrich stands on top, arms open, a small box in one hand",
+    "relationship": "Connects S04_L004 to friedrich climbs out unarmed: the risk is taken by the enemy first",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S04_SH003",
+    "continuity_to": "S04_SH005"
    }
   },
   {
@@ -3999,7 +4488,25 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 5.5,
+   "edited_shot_duration_seconds": 5.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH005] Thomas decides: he leaves the rifle and climbs (the hook's first image) (Thomas stands at the ladder, rifle in hand -> Thomas has leaned the rifle on the sandbags and climbs) at loc_british_trench.",
+    "narration_anchor": "S04_L005",
+    "dramatic_beat_id": "BEAT_S04_SH005",
+    "visual_action": "Thomas stands at the ladder, rifle in hand -> Thomas has leaned the rifle on the sandbags and climbs",
+    "relationship": "Connects S04_L005 to thomas decides: he leaves the rifle and climbs (the hook's first image)",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "prop_smle_rifle",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S04_SH004",
+    "continuity_to": "S04_SH006"
+   }
   },
   {
    "shot_id": "S04_SH006",
@@ -4071,6 +4578,23 @@
      "char_sgt_harris": "left"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH006] Harris tries to stop him (Harris crouches on the fire step looking up -> Harris is still crouched, one hand reaching up) at loc_british_trench.",
+    "narration_anchor": "S04_L006",
+    "dramatic_beat_id": "BEAT_S04_SH006",
+    "visual_action": "Harris crouches on the fire step looking up -> Harris is still crouched, one hand reaching up",
+    "relationship": "Connects S04_L006 to harris tries to stop him",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S04_SH005",
+    "continuity_to": "S04_SH007"
    }
   },
   {
@@ -4143,6 +4667,23 @@
      "char_thomas_hale": "center"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH007] Thomas answers from the parapet: his reason, practical, not heroic (Thomas kneels on the parapet, looking back down -> Thomas stands up on the parapet) at loc_british_trench.",
+    "narration_anchor": "S04_L007",
+    "dramatic_beat_id": "BEAT_S04_SH007",
+    "visual_action": "Thomas kneels on the parapet, looking back down -> Thomas stands up on the parapet",
+    "relationship": "Connects S04_L007 to thomas answers from the parapet: his reason, practical, not heroic",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S04_SH006",
+    "continuity_to": "S04_SH008"
    }
   },
   {
@@ -4223,7 +4764,24 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 9.0,
+   "edited_shot_duration_seconds": 9.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH008] The walk across: fifty yards of frozen mud, wire and the dead (the hook paid off) (Thomas walks away from camera between the wire -> Thomas passes shapes under frost and nears Friedrich) at loc_no_mans_land.",
+    "narration_anchor": "S04_L008",
+    "dramatic_beat_id": "BEAT_S04_SH008",
+    "visual_action": "Thomas walks away from camera between the wire -> Thomas passes shapes under frost and nears Friedrich",
+    "relationship": "Connects S04_L008 to the walk across: fifty yards of frozen mud, wire and the dead (the hook paid off)",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH007",
+    "continuity_to": "S04_SH009"
+   }
   },
   {
    "shot_id": "S04_SH009",
@@ -4297,6 +4855,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH009] Face to face: the first question (Thomas and Friedrich stop two paces apart -> Friedrich tilts his head) at loc_no_mans_land.",
+    "narration_anchor": "S04_L009",
+    "dramatic_beat_id": "BEAT_S04_SH009",
+    "visual_action": "Thomas and Friedrich stop two paces apart -> Friedrich tilts his head",
+    "relationship": "Connects S04_L009 to face to face: the first question",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH008",
+    "continuity_to": "S04_SH010"
    }
   },
   {
@@ -4371,6 +4947,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH010] Thomas's answer turns it back on him (Thomas stands facing Friedrich -> Thomas grins nervously) at loc_no_mans_land.",
+    "narration_anchor": "S04_L010",
+    "dramatic_beat_id": "BEAT_S04_SH010",
+    "visual_action": "Thomas stands facing Friedrich -> Thomas grins nervously",
+    "relationship": "Connects S04_L010 to thomas's answer turns it back on him",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH009",
+    "continuity_to": "S04_SH011"
    }
   },
   {
@@ -4440,7 +5034,23 @@
      "strength": 0.3
     }
    ],
-   "motion_profile": "object"
+   "motion_profile": "object",
+   "source_clip_duration_seconds": 2.5,
+   "edited_shot_duration_seconds": 2.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH011] Insert: two pairs of empty hands, held a little out; nobody is armed (VL-08 breath) (Two pairs of empty hands, one in khaki sleeves and one in field grey, held a little out from the sides -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S04_L011",
+    "dramatic_beat_id": "BEAT_S04_SH011",
+    "visual_action": "Two pairs of empty hands, one in khaki sleeves and one in field grey, held a little out from the sides -> Same",
+    "relationship": "Connects S04_L011 to insert: two pairs of empty hands, held a little out; nobody is armed (vl-08 breath)",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH010",
+    "continuity_to": "S04_SH012"
+   }
   },
   {
    "shot_id": "S04_SH012",
@@ -4514,6 +5124,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH012] Friedrich: Saxon, and 'Tommy', the joke the name will turn (Friedrich faces Thomas -> Friedrich smiles and holds out his hand) at loc_no_mans_land.",
+    "narration_anchor": "S04_L012",
+    "dramatic_beat_id": "BEAT_S04_SH012",
+    "visual_action": "Friedrich faces Thomas -> Friedrich smiles and holds out his hand",
+    "relationship": "Connects S04_L012 to friedrich: saxon, and 'tommy', the joke the name will turn",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH011",
+    "continuity_to": "S04_SH013"
    }
   },
   {
@@ -4588,6 +5216,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 4.25,
+   "edited_shot_duration_seconds": 4.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH013] Thomas laughs: Tommy, the nickname for every British soldier, really is his name (Thomas looks at the offered hand -> Thomas laughs) at loc_no_mans_land.",
+    "narration_anchor": "S04_L013",
+    "dramatic_beat_id": "BEAT_S04_SH013",
+    "visual_action": "Thomas looks at the offered hand -> Thomas laughs",
+    "relationship": "Connects S04_L013 to thomas laughs: tommy, the nickname for every british soldier, really is his name",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH012",
+    "continuity_to": "S04_SH014"
    }
   },
   {
@@ -4661,6 +5307,24 @@
      "char_thomas_hale": "left",
      "char_friedrich_brandt": "right"
     }
+   },
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH014] The handshake: the centre of the film in one gesture (Thomas and Friedrich face each other two paces apart -> They shake hands firmly) at loc_no_mans_land.",
+    "narration_anchor": "S04_L014",
+    "dramatic_beat_id": "BEAT_S04_SH014",
+    "visual_action": "Thomas and Friedrich face each other two paces apart -> They shake hands firmly",
+    "relationship": "Connects S04_L014 to the handshake: the centre of the film in one gesture",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH013",
+    "continuity_to": "S04_SH015"
    }
   },
   {
@@ -4739,7 +5403,23 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 7.0,
+   "edited_shot_duration_seconds": 7.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S04_SH015] Others follow along the line: bodies climbing and walking, the truce spreading (Soldiers climb out of both lines -> Groups meet in the middle and shake hands) at loc_no_mans_land.",
+    "narration_anchor": "S04_L015",
+    "dramatic_beat_id": "BEAT_S04_SH015",
+    "visual_action": "Soldiers climb out of both lines -> Groups meet in the middle and shake hands",
+    "relationship": "Connects S04_L015 to others follow along the line: bodies climbing and walking, the truce spreading",
+    "dramatic_function": "scene_exit",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S04_SH014",
+    "continuity_to": "S05_SH001"
+   }
   },
   {
    "shot_id": "S05_SH001",
@@ -4868,6 +5548,22 @@
     "lon": 2.87,
     "lat": 50.66,
     "span_km": 45
+   },
+   "source_clip_duration_seconds": 6.0,
+   "edited_shot_duration_seconds": 6.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH001] Show the truce was not one field but patches along the British line in Flanders (The Flanders sector, front line drawn -> Patches pulse along the British line) at loc_western_front_map.",
+    "narration_anchor": "S05_L001",
+    "dramatic_beat_id": "BEAT_S05_SH001",
+    "visual_action": "The Flanders sector, front line drawn -> Patches pulse along the British line",
+    "relationship": "Connects S05_L001 to show the truce was not one field but patches along the british line in flanders",
+    "dramatic_function": "narrative_progression",
+    "shot_specific_entities": [
+     "loc_western_front_map"
+    ],
+    "continuity_from": "S04_SH015",
+    "continuity_to": "S05_SH002"
    }
   },
   {
@@ -4947,6 +5643,22 @@
     "lon": 2.87,
     "lat": 50.66,
     "span_km": 45
+   },
+   "source_clip_duration_seconds": 6.25,
+   "edited_shot_duration_seconds": 6.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH002] How many men: the estimate on the map, the number tied to its claim (The patches glow along the line -> The counter stands at about 100,000) at loc_western_front_map.",
+    "narration_anchor": "S05_L002",
+    "dramatic_beat_id": "BEAT_S05_SH002",
+    "visual_action": "The patches glow along the line -> The counter stands at about 100,000",
+    "relationship": "Connects S05_L002 to how many men: the estimate on the map, the number tied to its claim",
+    "dramatic_function": "narrative_progression",
+    "shot_specific_entities": [
+     "loc_western_front_map"
+    ],
+    "continuity_from": "S05_SH001",
+    "continuity_to": "S05_SH003"
    }
   },
   {
@@ -5025,7 +5737,23 @@
      }
     }
    ],
-   "motion_profile": "battle"
+   "motion_profile": "battle",
+   "source_clip_duration_seconds": 6.75,
+   "edited_shot_duration_seconds": 6.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH003] The trading, wide: what men did with one free day (Groups of British and German soldiers stand mixed in the field -> Same; a ball in the air far behind) at loc_no_mans_land.",
+    "narration_anchor": "S05_L003",
+    "dramatic_beat_id": "BEAT_S05_SH003",
+    "visual_action": "Groups of British and German soldiers stand mixed in the field -> Same; a ball in the air far behind",
+    "relationship": "Connects S05_L003 to the trading, wide: what men did with one free day",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH002",
+    "continuity_to": "S05_SH004"
+   }
   },
   {
    "shot_id": "S05_SH004",
@@ -5099,6 +5827,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH004] Thomas asks how the enemy speaks his language (Thomas holds out a cigarette to Friedrich -> Thomas asks, still holding it out) at loc_no_mans_land.",
+    "narration_anchor": "S05_L004",
+    "dramatic_beat_id": "BEAT_S05_SH004",
+    "visual_action": "Thomas holds out a cigarette to Friedrich -> Thomas asks, still holding it out",
+    "relationship": "Connects S05_L004 to thomas asks how the enemy speaks his language",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH003",
+    "continuity_to": "S05_SH005"
    }
   },
   {
@@ -5173,6 +5919,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.5,
+   "edited_shot_duration_seconds": 3.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH005] Friedrich: London, a waiter, four years; why so many Germans spoke English (Friedrich takes the cigarette -> Friedrich answers with a small proud smile) at loc_no_mans_land.",
+    "narration_anchor": "S05_L005",
+    "dramatic_beat_id": "BEAT_S05_SH005",
+    "visual_action": "Friedrich takes the cigarette -> Friedrich answers with a small proud smile",
+    "relationship": "Connects S05_L005 to friedrich: london, a waiter, four years; why so many germans spoke english",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH004",
+    "continuity_to": "S05_SH006"
    }
   },
   {
@@ -5251,7 +6015,23 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 9.25,
+   "edited_shot_duration_seconds": 9.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH006] A detail only a truce could make: a Briton sits down for a haircut from his pre-war German barber (A British soldier sits on an ammunition box with a cloth round his neck -> A German soldier trims his hair with scissors while others laugh) at loc_no_mans_land.",
+    "narration_anchor": "S05_L006",
+    "dramatic_beat_id": "BEAT_S05_SH006",
+    "visual_action": "A British soldier sits on an ammunition box with a cloth round his neck -> A German soldier trims his hair with scissors while others laugh",
+    "relationship": "Connects S05_L006 to a detail only a truce could make: a briton sits down for a haircut from his pre-war german barber",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH005",
+    "continuity_to": "S05_SH007"
+   }
   },
   {
    "shot_id": "S05_SH007",
@@ -5325,6 +6105,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH007] Friedrich asks the first real question (Friedrich lights a cigarette for Thomas -> Friedrich shakes out the match and asks) at loc_no_mans_land.",
+    "narration_anchor": "S05_L007",
+    "dramatic_beat_id": "BEAT_S05_SH007",
+    "visual_action": "Friedrich lights a cigarette for Thomas -> Friedrich shakes out the match and asks",
+    "relationship": "Connects S05_L007 to friedrich asks the first real question",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH006",
+    "continuity_to": "S05_SH008"
    }
   },
   {
@@ -5399,6 +6197,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.25,
+   "edited_shot_duration_seconds": 3.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH008] Thomas: mother and sister, the people waiting at home (Thomas exhales smoke -> Thomas taps his breast pocket where the letter is) at loc_no_mans_land.",
+    "narration_anchor": "S05_L008",
+    "dramatic_beat_id": "BEAT_S05_SH008",
+    "visual_action": "Thomas exhales smoke -> Thomas taps his breast pocket where the letter is",
+    "relationship": "Connects S05_L008 to thomas: mother and sister, the people waiting at home",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH007",
+    "continuity_to": "S05_SH009"
    }
   },
   {
@@ -5475,6 +6291,25 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.5,
+   "edited_shot_duration_seconds": 3.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH009] Friedrich shows the portrait card: his wife and daughter (Friedrich takes the portrait card from his breast pocket -> He holds it out toward Thomas) at loc_no_mans_land.",
+    "narration_anchor": "S05_L009",
+    "dramatic_beat_id": "BEAT_S05_SH009",
+    "visual_action": "Friedrich takes the portrait card from his breast pocket -> He holds it out toward Thomas",
+    "relationship": "Connects S05_L009 to friedrich shows the portrait card: his wife and daughter",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "prop_family_photo",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH008",
+    "continuity_to": "S05_SH010"
    }
   },
   {
@@ -5546,7 +6381,24 @@
      "strength": 0.5
     }
    ],
-   "motion_profile": "object"
+   "motion_profile": "object",
+   "source_clip_duration_seconds": 3.0,
+   "edited_shot_duration_seconds": 3.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH010] The portrait card in Thomas's hands: the insert that lets the line land (VL-08) (The portrait card between two pairs of hands -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S05_L010",
+    "dramatic_beat_id": "BEAT_S05_SH010",
+    "visual_action": "The portrait card between two pairs of hands -> Same",
+    "relationship": "Connects S05_L010 to the portrait card in thomas's hands: the insert that lets the line land (vl-08)",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "prop_family_photo",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH009",
+    "continuity_to": "S05_SH011"
+   }
   },
   {
    "shot_id": "S05_SH011",
@@ -5622,6 +6474,25 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH011] Thomas: the kindness that costs him (Thomas holds the portrait card -> Thomas hands it back carefully) at loc_no_mans_land.",
+    "narration_anchor": "S05_L011",
+    "dramatic_beat_id": "BEAT_S05_SH011",
+    "visual_action": "Thomas holds the portrait card -> Thomas hands it back carefully",
+    "relationship": "Connects S05_L011 to thomas: the kindness that costs him",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "prop_family_photo",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH010",
+    "continuity_to": "S05_SH012"
    }
   },
   {
@@ -5698,6 +6569,25 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.5,
+   "edited_shot_duration_seconds": 3.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH012] Friedrich: the wish both men share, said as a fact (Friedrich puts the portrait card back into his pocket -> Friedrich looks down) at loc_no_mans_land.",
+    "narration_anchor": "S05_L012",
+    "dramatic_beat_id": "BEAT_S05_SH012",
+    "visual_action": "Friedrich puts the portrait card back into his pocket -> Friedrich looks down",
+    "relationship": "Connects S05_L012 to friedrich: the wish both men share, said as a fact",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "prop_family_photo",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH011",
+    "continuity_to": "S05_SH013"
    }
   },
   {
@@ -5772,6 +6662,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH013] Thomas: the echo of the letter (Thomas is silent a moment -> Thomas answers, looking away) at loc_no_mans_land.",
+    "narration_anchor": "S05_L013",
+    "dramatic_beat_id": "BEAT_S05_SH013",
+    "visual_action": "Thomas is silent a moment -> Thomas answers, looking away",
+    "relationship": "Connects S05_L013 to thomas: the echo of the letter",
+    "dramatic_function": "listener_reaction",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH012",
+    "continuity_to": "S05_SH014"
    }
   },
   {
@@ -5852,7 +6760,24 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 7.0,
+   "edited_shot_duration_seconds": 7.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH014] The turn of the day: both sides bring in their dead (Pairs of soldiers carry stretchers across the field -> They lay the stretchers down by a row of graves being dug) at loc_no_mans_land.",
+    "narration_anchor": "S05_L014",
+    "dramatic_beat_id": "BEAT_S05_SH014",
+    "visual_action": "Pairs of soldiers carry stretchers across the field -> They lay the stretchers down by a row of graves being dug",
+    "relationship": "Connects S05_L014 to the turn of the day: both sides bring in their dead",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "prop_spade",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH013",
+    "continuity_to": "S05_SH015"
+   }
   },
   {
    "shot_id": "S05_SH015",
@@ -5935,7 +6860,26 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 3.25,
+   "edited_shot_duration_seconds": 3.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH015] Thomas and Friedrich dig side by side: enemies doing the same work (Thomas and Friedrich dig a grave side by side -> They stop and lean on their spades) at loc_no_mans_land.",
+    "narration_anchor": "S05_L015",
+    "dramatic_beat_id": "BEAT_S05_SH015",
+    "visual_action": "Thomas and Friedrich dig a grave side by side -> They stop and lean on their spades",
+    "relationship": "Connects S05_L015 to thomas and friedrich dig side by side: enemies doing the same work",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "prop_spade",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH014",
+    "continuity_to": "S05_SH016"
+   }
   },
   {
    "shot_id": "S05_SH016",
@@ -6006,7 +6950,24 @@
      "strength": 0.3
     }
    ],
-   "motion_profile": "object"
+   "motion_profile": "object",
+   "source_clip_duration_seconds": 3.0,
+   "edited_shot_duration_seconds": 3.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH016] Insert: two spades in the frozen earth by the open grave; the work done together (VL-08 breath) (A British and a German spade stand side by side in a heap of frozen earth -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S05_L016",
+    "dramatic_beat_id": "BEAT_S05_SH016",
+    "visual_action": "A British and a German spade stand side by side in a heap of frozen earth -> Same",
+    "relationship": "Connects S05_L016 to insert: two spades in the frozen earth by the open grave; the work done together (vl-08 breath)",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "prop_spade",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH015",
+    "continuity_to": "S05_SH017"
+   }
   },
   {
    "shot_id": "S05_SH017",
@@ -6080,6 +7041,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH017] Thomas asks the name: the dead get a person (Thomas stands at the grave's edge -> Thomas looks across at Friedrich) at loc_no_mans_land.",
+    "narration_anchor": "S05_L017",
+    "dramatic_beat_id": "BEAT_S05_SH017",
+    "visual_action": "Thomas stands at the grave's edge -> Thomas looks across at Friedrich",
+    "relationship": "Connects S05_L017 to thomas asks the name: the dead get a person",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH016",
+    "continuity_to": "S05_SH018"
    }
   },
   {
@@ -6154,6 +7133,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.75,
+   "edited_shot_duration_seconds": 2.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH018] Friedrich: one name, Karl (Friedrich stands at the grave, cap in hand -> Friedrich looks down at the earth) at loc_no_mans_land.",
+    "narration_anchor": "S05_L018",
+    "dramatic_beat_id": "BEAT_S05_SH018",
+    "visual_action": "Friedrich stands at the grave, cap in hand -> Friedrich looks down at the earth",
+    "relationship": "Connects S05_L018 to friedrich: one name, karl",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH017",
+    "continuity_to": "S05_SH019"
    }
   },
   {
@@ -6228,6 +7225,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH019] Thomas: the apology no army could give (Thomas looks at the grave -> Thomas lowers his head) at loc_no_mans_land.",
+    "narration_anchor": "S05_L019",
+    "dramatic_beat_id": "BEAT_S05_SH019",
+    "visual_action": "Thomas looks at the grave -> Thomas lowers his head",
+    "relationship": "Connects S05_L019 to thomas: the apology no army could give",
+    "dramatic_function": "listener_reaction",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH018",
+    "continuity_to": "S05_SH020"
    }
   },
   {
@@ -6311,7 +7326,23 @@
      ]
     }
    ],
-   "motion_profile": "battle"
+   "motion_profile": "battle",
+   "source_clip_duration_seconds": 7.75,
+   "edited_shot_duration_seconds": 7.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH020] The joint service: one psalm in two languages (British, Scottish and German soldiers stand bareheaded around a row of graves -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S05_L020",
+    "dramatic_beat_id": "BEAT_S05_SH020",
+    "visual_action": "British, Scottish and German soldiers stand bareheaded around a row of graves -> Same",
+    "relationship": "Connects S05_L020 to the joint service: one psalm in two languages",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH019",
+    "continuity_to": "S05_SH021"
+   }
   },
   {
    "shot_id": "S05_SH021",
@@ -6390,7 +7421,24 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S05_SH021] Harris comes out last and takes off his cap: the hard man changes (Harris stands apart at the edge of the field -> Harris takes off his cap and holds it) at loc_no_mans_land.",
+    "narration_anchor": "S05_L021",
+    "dramatic_beat_id": "BEAT_S05_SH021",
+    "visual_action": "Harris stands apart at the edge of the field -> Harris takes off his cap and holds it",
+    "relationship": "Connects S05_L021 to harris comes out last and takes off his cap: the hard man changes",
+    "dramatic_function": "listener_reaction",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH020",
+    "continuity_to": "S06_SH001"
+   }
   },
   {
    "shot_id": "S06_SH001",
@@ -6476,7 +7524,25 @@
      ]
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 3.25,
+   "edited_shot_duration_seconds": 3.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH001] Time cut to dusk: two men sitting in the open where nobody could sit yesterday (Thomas and Friedrich sit on an ammunition box in the field -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S06_L001",
+    "dramatic_beat_id": "BEAT_S06_SH001",
+    "visual_action": "Thomas and Friedrich sit on an ammunition box in the field -> Same",
+    "relationship": "Connects S06_L001 to time cut to dusk: two men sitting in the open where nobody could sit yesterday",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S05_SH021",
+    "continuity_to": "S06_SH002"
+   }
   },
   {
    "shot_id": "S06_SH002",
@@ -6550,6 +7616,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.75,
+   "edited_shot_duration_seconds": 2.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH002] Friedrich asks the question of the film (They sit side by side on the box -> Friedrich turns to Thomas) at loc_no_mans_land.",
+    "narration_anchor": "S06_L002",
+    "dramatic_beat_id": "BEAT_S06_SH002",
+    "visual_action": "They sit side by side on the box -> Friedrich turns to Thomas",
+    "relationship": "Connects S06_L002 to friedrich asks the question of the film",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH001",
+    "continuity_to": "S06_SH003"
    }
   },
   {
@@ -6624,6 +7708,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH003] Thomas has no answer (Thomas looks at the ground -> Thomas shrugs a little) at loc_no_mans_land.",
+    "narration_anchor": "S06_L003",
+    "dramatic_beat_id": "BEAT_S06_SH003",
+    "visual_action": "Thomas looks at the ground -> Thomas shrugs a little",
+    "relationship": "Connects S06_L003 to thomas has no answer",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH002",
+    "continuity_to": "S06_SH004"
    }
   },
   {
@@ -6698,6 +7800,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.5,
+   "edited_shot_duration_seconds": 3.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH004] Friedrich: what they were told (Friedrich looks out over the field -> Friedrich half smiles) at loc_no_mans_land.",
+    "narration_anchor": "S06_L004",
+    "dramatic_beat_id": "BEAT_S06_SH004",
+    "visual_action": "Friedrich looks out over the field -> Friedrich half smiles",
+    "relationship": "Connects S06_L004 to friedrich: what they were told",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH003",
+    "continuity_to": "S06_SH005"
    }
   },
   {
@@ -6767,7 +7887,23 @@
      "strength": 0.3
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 3.0,
+   "edited_shot_duration_seconds": 3.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH005] Thomas's reaction: he looks at the 'enemy' beside him (VL-08) (Two shadows on the frozen ground side by side -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S06_L005",
+    "dramatic_beat_id": "BEAT_S06_SH005",
+    "visual_action": "Two shadows on the frozen ground side by side -> Same",
+    "relationship": "Connects S06_L005 to thomas's reaction: he looks at the 'enemy' beside him (vl-08)",
+    "dramatic_function": "listener_reaction",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH004",
+    "continuity_to": "S06_SH006"
+   }
   },
   {
    "shot_id": "S06_SH006",
@@ -6841,6 +7977,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.5,
+   "edited_shot_duration_seconds": 3.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH006] Thomas: the same lie on both sides (Thomas looks at Friedrich -> Thomas laughs once without joy) at loc_no_mans_land.",
+    "narration_anchor": "S06_L006",
+    "dramatic_beat_id": "BEAT_S06_SH006",
+    "visual_action": "Thomas looks at Friedrich -> Thomas laughs once without joy",
+    "relationship": "Connects S06_L006 to thomas: the same lie on both sides",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH005",
+    "continuity_to": "S06_SH007"
    }
   },
   {
@@ -6915,6 +8069,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 3.25,
+   "edited_shot_duration_seconds": 3.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH007] Friedrich names tomorrow (Friedrich looks at the sinking sun -> Friedrich smiles with sad eyes) at loc_no_mans_land.",
+    "narration_anchor": "S06_L007",
+    "dramatic_beat_id": "BEAT_S06_SH007",
+    "visual_action": "Friedrich looks at the sinking sun -> Friedrich smiles with sad eyes",
+    "relationship": "Connects S06_L007 to friedrich names tomorrow",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH006",
+    "continuity_to": "S06_SH008"
    }
   },
   {
@@ -6989,6 +8161,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.25,
+   "edited_shot_duration_seconds": 2.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH008] The line of the film: But not today (They sit side by side -> Thomas looks at Friedrich and holds his look) at loc_no_mans_land.",
+    "narration_anchor": "S06_L008",
+    "dramatic_beat_id": "BEAT_S06_SH008",
+    "visual_action": "They sit side by side -> Thomas looks at Friedrich and holds his look",
+    "relationship": "Connects S06_L008 to the line of the film: but not today",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH007",
+    "continuity_to": "S06_SH009"
    }
   },
   {
@@ -7076,7 +8266,25 @@
       0.6
      ]
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH009] The button: Thomas cuts it off his own uniform, a small act against the army (silent insert) (Thomas's fingers hold the top brass button of his tunic -> The button is cut free and lies in his palm) at loc_no_mans_land.",
+    "narration_anchor": "S06_L009",
+    "dramatic_beat_id": "BEAT_S06_SH009",
+    "visual_action": "Thomas's fingers hold the top brass button of his tunic -> The button is cut free and lies in his palm",
+    "relationship": "Connects S06_L009 to the button: thomas cuts it off his own uniform, a small act against the army (silent insert)",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "prop_brass_button",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH008",
+    "continuity_to": "S06_SH010"
+   }
   },
   {
    "shot_id": "S06_SH010",
@@ -7153,6 +8361,26 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.75,
+   "edited_shot_duration_seconds": 2.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH010] The gift and its words: Thomas holds out the button; Friedrich gives one of his own back (Thomas holds out the brass button on his palm -> Friedrich reaches to take it) at loc_no_mans_land.",
+    "narration_anchor": "S06_L010",
+    "dramatic_beat_id": "BEAT_S06_SH010",
+    "visual_action": "Thomas holds out the brass button on his palm -> Friedrich reaches to take it",
+    "relationship": "Connects S06_L010 to the gift and its words: thomas holds out the button; friedrich gives one of his own back",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "prop_brass_button",
+     "prop_grey_button",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH009",
+    "continuity_to": "S06_SH011"
    }
   },
   {
@@ -7230,6 +8458,26 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.75,
+   "edited_shot_duration_seconds": 2.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH011] Friedrich gives one of his own: the exchange is equal (Friedrich holds Thomas's brass button -> Friedrich twists a grey button off his greatcoat and presses it into Thomas's hand) at loc_no_mans_land.",
+    "narration_anchor": "S06_L011",
+    "dramatic_beat_id": "BEAT_S06_SH011",
+    "visual_action": "Friedrich holds Thomas's brass button -> Friedrich twists a grey button off his greatcoat and presses it into Thomas's hand",
+    "relationship": "Connects S06_L011 to friedrich gives one of his own: the exchange is equal",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "prop_brass_button",
+     "prop_grey_button",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH010",
+    "continuity_to": "S06_SH012"
    }
   },
   {
@@ -7313,7 +8561,23 @@
      ]
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 5.5,
+   "edited_shot_duration_seconds": 5.5,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S06_SH012] The narrator closes the scene: the day ends and neither wants to go (BP-90) (Two silhouettes sit on the box against the last light -> Same; the light goes) at loc_no_mans_land.",
+    "narration_anchor": "S06_L012",
+    "dramatic_beat_id": "BEAT_S06_SH012",
+    "visual_action": "Two silhouettes sit on the box against the last light -> Same; the light goes",
+    "relationship": "Connects S06_L012 to the narrator closes the scene: the day ends and neither wants to go (bp-90)",
+    "dramatic_function": "scene_exit",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH011",
+    "continuity_to": "S07_SH001"
+   }
   },
   {
    "shot_id": "S07_SH001",
@@ -7390,7 +8654,23 @@
      "strength": 0.4
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 4.75,
+   "edited_shot_duration_seconds": 4.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH001] Time cut to the next morning: everyone walks back (Soldiers walk back to both lines in fog -> Same) at loc_no_mans_land.",
+    "narration_anchor": "S07_L001",
+    "dramatic_beat_id": "BEAT_S07_SH001",
+    "visual_action": "Soldiers walk back to both lines in fog -> Same",
+    "relationship": "Connects S07_L001 to time cut to the next morning: everyone walks back",
+    "dramatic_function": "establish",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S06_SH012",
+    "continuity_to": "S07_SH002"
+   }
   },
   {
    "shot_id": "S07_SH002",
@@ -7464,6 +8744,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH002] Friedrich's farewell (Friedrich stands facing Thomas in the fog -> Friedrich gives a small nod) at loc_no_mans_land.",
+    "narration_anchor": "S07_L002",
+    "dramatic_beat_id": "BEAT_S07_SH002",
+    "visual_action": "Friedrich stands facing Thomas in the fog -> Friedrich gives a small nod",
+    "relationship": "Connects S07_L002 to friedrich's farewell",
+    "dramatic_function": "dialogue_ots",
+    "shot_specific_entities": [
+     "char_friedrich_brandt",
+     "char_thomas_hale",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S07_SH001",
+    "continuity_to": "S07_SH003"
    }
   },
   {
@@ -7538,6 +8836,24 @@
      "char_friedrich_brandt": "right"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH003] Thomas's farewell: Fritz, the nickname for every German, said as a friend's name (Thomas faces Friedrich -> Thomas turns to go) at loc_no_mans_land.",
+    "narration_anchor": "S07_L003",
+    "dramatic_beat_id": "BEAT_S07_SH003",
+    "visual_action": "Thomas faces Friedrich -> Thomas turns to go",
+    "relationship": "Connects S07_L003 to thomas's farewell: fritz, the nickname for every german, said as a friend's name",
+    "dramatic_function": "scene_exit",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "char_friedrich_brandt",
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S07_SH002",
+    "continuity_to": "S07_SH004"
    }
   },
   {
@@ -7610,6 +8926,23 @@
      "char_sgt_harris": "center"
     },
     "speech_onset_s": 0.75
+   },
+   "source_clip_duration_seconds": 2.0,
+   "edited_shot_duration_seconds": 2.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH004] Harris gives the order: the war's voice is back (Harris stands in the trench, cap on, rifle slung -> Harris turns away down the trench) at loc_british_trench.",
+    "narration_anchor": "S07_L004",
+    "dramatic_beat_id": "BEAT_S07_SH004",
+    "visual_action": "Harris stands in the trench, cap on, rifle slung -> Harris turns away down the trench",
+    "relationship": "Connects S07_L004 to harris gives the order: the war's voice is back",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_sgt_harris",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S07_SH003",
+    "continuity_to": "S07_SH005"
    }
   },
   {
@@ -7700,7 +9033,24 @@
      "source": "clip_audio",
      "event_id": "S07_SH005.S1"
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 6.75,
+   "edited_shot_duration_seconds": 6.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH005] The signal: a British captain fires three shots into the air, raises a flag and salutes the German line (after Capt. Stockwell, Houplines, 26 December 1914) (A British captain stands on the fire step, revolver raised -> He has fired three shots, raised a flag reading MERRY CHRISTMAS, and salutes toward the German line) at loc_british_trench.",
+    "narration_anchor": "S07_L005",
+    "dramatic_beat_id": "BEAT_S07_SH005",
+    "visual_action": "A British captain stands on the fire step, revolver raised -> He has fired three shots, raised a flag reading MERRY CHRISTMAS, and salutes toward the German line",
+    "relationship": "Connects S07_L005 to the signal: a british captain fires three shots into the air, raises a flag and salutes the german line (after capt. stockwell, houplines, 26 december 1914)",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "prop_flag_merry_christmas",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S07_SH004",
+    "continuity_to": "S07_SH006"
+   }
   },
   {
    "shot_id": "S07_SH006",
@@ -7777,7 +9127,23 @@
       "why": "the smoke after the shot; the shot itself is A's clip audio"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 6.0,
+   "edited_shot_duration_seconds": 6.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH006] The answer: the German captain salutes back and gets down into his trench, then fires two shots into the air (A German captain stands on the German parapet, saluting toward the British line -> He has stepped down behind the parapet; two pistol shots go up from the German trench) at loc_german_trench.",
+    "narration_anchor": "S07_L006",
+    "dramatic_beat_id": "BEAT_S07_SH006",
+    "visual_action": "A German captain stands on the German parapet, saluting toward the British line -> He has stepped down behind the parapet; two pistol shots go up from the German trench",
+    "relationship": "Connects S07_L006 to the answer: the german captain salutes back and gets down into his trench, then fires two shots into the air",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "loc_german_trench"
+    ],
+    "continuity_from": "S07_SH005",
+    "continuity_to": "S07_SH007"
+   }
   },
   {
    "shot_id": "S07_SH007",
@@ -7858,7 +9224,25 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH007] Thomas at the sound, rifle in hand: the face that knows (Thomas stands on the fire step with his rifle -> Thomas looks up toward the sound, then across) at loc_british_trench.",
+    "narration_anchor": "S07_L007",
+    "dramatic_beat_id": "BEAT_S07_SH007",
+    "visual_action": "Thomas stands on the fire step with his rifle -> Thomas looks up toward the sound, then across",
+    "relationship": "Connects S07_L007 to thomas at the sound, rifle in hand: the face that knows",
+    "dramatic_function": "listener_reaction",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "prop_smle_rifle",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S07_SH006",
+    "continuity_to": "S07_SH008"
+   }
   },
   {
    "shot_id": "S07_SH008",
@@ -7939,7 +9323,25 @@
       "why": "carried by the place's bed"
      }
     }
-   ]
+   ],
+   "source_clip_duration_seconds": 8.25,
+   "edited_shot_duration_seconds": 8.25,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S07_SH008] Thomas takes up his rifle again (Thomas stands at the foot of the ladder, the rifle leaning on the sandbags -> Thomas picks up his rifle and steps onto the fire step) at loc_british_trench.",
+    "narration_anchor": "S07_L008",
+    "dramatic_beat_id": "BEAT_S07_SH008",
+    "visual_action": "Thomas stands at the foot of the ladder, the rifle leaning on the sandbags -> Thomas picks up his rifle and steps onto the fire step",
+    "relationship": "Connects S07_L008 to thomas takes up his rifle again",
+    "dramatic_function": "action",
+    "shot_specific_entities": [
+     "char_thomas_hale",
+     "prop_smle_rifle",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S07_SH007",
+    "continuity_to": "S08_SH001"
+   }
   },
   {
    "shot_id": "S08_SH001",
@@ -8026,7 +9428,26 @@
      ]
     }
    ],
-   "motion_profile": "document"
+   "motion_profile": "document",
+   "source_clip_duration_seconds": 6.75,
+   "edited_shot_duration_seconds": 6.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S08_SH001] The letter answered: Thomas writes home with the German button on the paper (A hand writes a letter by candlelight; a grey German button lies on the page -> Same) at loc_british_trench.",
+    "narration_anchor": "S08_L001",
+    "dramatic_beat_id": "BEAT_S08_SH001",
+    "visual_action": "A hand writes a letter by candlelight; a grey German button lies on the page -> Same",
+    "relationship": "Connects S08_L001 to the letter answered: thomas writes home with the german button on the paper",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "prop_brass_button",
+     "prop_grey_button",
+     "prop_mothers_letter",
+     "loc_british_trench"
+    ],
+    "continuity_from": "S07_SH008",
+    "continuity_to": "S08_SH002"
+   }
   },
   {
    "shot_id": "S08_SH002",
@@ -8098,7 +9519,38 @@
      "strength": 0.5
     }
    ],
-   "motion_profile": "object"
+   "motion_profile": "object",
+   "source_clip_duration_seconds": 8.75,
+   "edited_shot_duration_seconds": 8.75,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S08_SH002] Friedrich with the portrait card and the brass button: the other side of the same night (Friedrich's hands hold the portrait card with a brass button on it, by a candle stub in a tin holder -> Same) at loc_german_trench.",
+    "narration_anchor": "S08_L002",
+    "dramatic_beat_id": "BEAT_S08_SH002",
+    "visual_action": "Friedrich's hands hold the portrait card with a brass button on it, by a candle stub in a tin holder -> Same",
+    "relationship": "Connects S08_L002 to friedrich with the portrait card and the brass button: the other side of the same night",
+    "dramatic_function": "insert_cutaway",
+    "shot_specific_entities": [
+     "prop_family_photo",
+     "prop_brass_button",
+     "loc_german_trench"
+    ],
+    "continuity_from": "S08_SH001",
+    "continuity_to": "S08_SH003"
+   },
+   "framing_intent": "medium_close_up",
+   "crop_policy": "preserve_required_subject_regions",
+   "visible_regions_required": [
+    "hands",
+    "prop_family_photo",
+    "prop_brass_button",
+    "candle"
+   ],
+   "intentional_crop_regions": [
+    "lower_body",
+    "surrounding_trench"
+   ],
+   "frame_safe_margin_pct": 2.0
   },
   {
    "shot_id": "S08_SH003",
@@ -8168,7 +9620,23 @@
      "direction": "up"
     }
    ],
-   "motion_profile": "landscape"
+   "motion_profile": "landscape",
+   "source_clip_duration_seconds": 4.0,
+   "edited_shot_duration_seconds": 4.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S08_SH003] Pull up and away: two trench lines, a narrow strip between, and the years still to come (Two trench lines in snow from above -> Same, smaller) at loc_no_mans_land.",
+    "narration_anchor": "S08_L003",
+    "dramatic_beat_id": "BEAT_S08_SH003",
+    "visual_action": "Two trench lines in snow from above -> Same, smaller",
+    "relationship": "Connects S08_L003 to pull up and away: two trench lines, a narrow strip between, and the years still to come",
+    "dramatic_function": "scene_exit",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S08_SH002",
+    "continuity_to": "S08_SH004"
+   }
   },
   {
    "shot_id": "S08_SH004",
@@ -8238,8 +9706,44 @@
     }
    ],
    "motion_profile": "document",
-   "intentional_silence": "the end card: the bed fades out under the black and the text holds in silence"
+   "intentional_silence": "the end card: the bed fades out under the black and the text holds in silence",
+   "source_clip_duration_seconds": 5.0,
+   "edited_shot_duration_seconds": 5.0,
+   "meaning_link": {
+    "type": "CONTINUITY",
+    "text": "[S08_SH004] The last line on black (Black -> Black with the line of text) at loc_no_mans_land.",
+    "narration_anchor": "S08_L004",
+    "dramatic_beat_id": "BEAT_S08_SH004",
+    "visual_action": "Black -> Black with the line of text",
+    "relationship": "Connects S08_L004 to the last line on black",
+    "dramatic_function": "exit",
+    "shot_specific_entities": [
+     "loc_no_mans_land"
+    ],
+    "continuity_from": "S08_SH003",
+    "continuity_to": null
+   }
   }
  ],
- "av_contract": "av_events/1"
+ "av_contract": "av_events/1",
+ "map_quality_status": {
+  "status": "deferred",
+  "reason": "Owner decision: defer map visual-quality redesign until last without blocking narration, 2.5D, or audio.",
+  "blocking": false
+ },
+ "visual_mix_band": {
+  "classification": "DESIGN_RULE",
+  "video": [
+   0.55,
+   0.65
+  ],
+  "still_25d": [
+   0.25,
+   0.35
+  ],
+  "map_action": [
+   0.08,
+   0.12
+  ]
+ }
 }

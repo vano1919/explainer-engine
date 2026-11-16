@@ -8420,147 +8420,252 @@
       "from": "BED_01_loc_no_mans_land",
       "to": "BED_02_loc_british_trench",
       "j_start_s": 1.5,
-      "l_end_s": 2.5
+      "l_end_s": 2.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_01_loc_no_mans_land to BED_02_loc_british_trench at 2.0s."
     },
     {
       "at_s": 6.5,
       "from": "BED_02_loc_british_trench",
       "to": "BED_03_loc_no_mans_land",
       "j_start_s": 6.0,
-      "l_end_s": 7.0
+      "l_end_s": 7.0,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_02_loc_british_trench to BED_03_loc_no_mans_land at 6.5s."
     },
     {
       "at_s": 17.0,
       "from": "BED_03_loc_no_mans_land",
       "to": "BED_04_loc_german_trench",
       "j_start_s": 16.5,
-      "l_end_s": 17.5
+      "l_end_s": 17.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_03_loc_no_mans_land to BED_04_loc_german_trench at 17.0s."
     },
     {
       "at_s": 25.0,
       "from": "BED_04_loc_german_trench",
       "to": "BED_05_loc_western_front_map",
       "j_start_s": 24.5,
-      "l_end_s": 25.5
+      "l_end_s": 25.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_04_loc_german_trench to BED_05_loc_western_front_map at 25.0s."
     },
     {
       "at_s": 44.75,
       "from": "BED_05_loc_western_front_map",
       "to": "BED_06_loc_british_trench",
       "j_start_s": 44.25,
-      "l_end_s": 45.25
+      "l_end_s": 45.25,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_05_loc_western_front_map to BED_06_loc_british_trench at 44.75s."
     },
     {
       "at_s": 83.25,
       "from": "BED_06_loc_british_trench",
       "to": "BED_07_loc_german_trench",
       "j_start_s": 82.75,
-      "l_end_s": 83.75
+      "l_end_s": 83.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_06_loc_british_trench to BED_07_loc_german_trench at 83.25s."
     },
     {
       "at_s": 101.5,
       "from": "BED_07_loc_german_trench",
       "to": "BED_08_loc_british_trench",
       "j_start_s": 101.0,
-      "l_end_s": 102.0
+      "l_end_s": 102.0,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_07_loc_german_trench to BED_08_loc_british_trench at 101.5s."
     },
     {
       "at_s": 117.5,
       "from": "BED_08_loc_british_trench",
       "to": "BED_09_loc_german_trench",
       "j_start_s": 117.0,
-      "l_end_s": 118.0
+      "l_end_s": 118.0,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_08_loc_british_trench to BED_09_loc_german_trench at 117.5s."
     },
     {
       "at_s": 119.5,
       "from": "BED_09_loc_german_trench",
       "to": "BED_10_loc_no_mans_land",
       "j_start_s": 119.0,
-      "l_end_s": 120.0
+      "l_end_s": 120.0,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_09_loc_german_trench to BED_10_loc_no_mans_land at 119.5s."
     },
     {
       "at_s": 129.25,
       "from": "BED_10_loc_no_mans_land",
       "to": "BED_11_loc_german_trench",
       "j_start_s": 128.75,
-      "l_end_s": 129.75
+      "l_end_s": 129.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_10_loc_no_mans_land to BED_11_loc_german_trench at 129.25s."
     },
     {
       "at_s": 131.25,
       "from": "BED_11_loc_german_trench",
       "to": "BED_12_loc_british_trench",
       "j_start_s": 130.75,
-      "l_end_s": 131.75
+      "l_end_s": 131.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_11_loc_german_trench to BED_12_loc_british_trench at 131.25s."
     },
     {
       "at_s": 134.0,
       "from": "BED_12_loc_british_trench",
       "to": "BED_13_loc_german_trench",
       "j_start_s": 133.5,
-      "l_end_s": 134.5
+      "l_end_s": 134.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_12_loc_british_trench to BED_13_loc_german_trench at 134.0s."
     },
     {
       "at_s": 136.25,
       "from": "BED_13_loc_german_trench",
       "to": "BED_14_loc_british_trench",
       "j_start_s": 135.75,
-      "l_end_s": 136.75
+      "l_end_s": 136.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_13_loc_german_trench to BED_14_loc_british_trench at 136.25s."
     },
     {
       "at_s": 148.0,
       "from": "BED_14_loc_british_trench",
       "to": "BED_15_loc_no_mans_land",
       "j_start_s": 147.5,
-      "l_end_s": 148.5
+      "l_end_s": 148.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_14_loc_british_trench to BED_15_loc_no_mans_land at 148.0s."
     },
     {
       "at_s": 182.75,
       "from": "BED_15_loc_no_mans_land",
       "to": "BED_16_loc_western_front_map",
       "j_start_s": 182.25,
-      "l_end_s": 183.25
+      "l_end_s": 183.25,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_15_loc_no_mans_land to BED_16_loc_western_front_map at 182.75s."
     },
     {
       "at_s": 195.0,
       "from": "BED_16_loc_western_front_map",
       "to": "BED_17_loc_no_mans_land",
       "j_start_s": 194.5,
-      "l_end_s": 195.5
+      "l_end_s": 195.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_16_loc_western_front_map to BED_17_loc_no_mans_land at 195.0s."
     },
     {
       "at_s": 315.5,
       "from": "BED_17_loc_no_mans_land",
       "to": "BED_18_loc_british_trench",
       "j_start_s": 315.0,
-      "l_end_s": 316.0
+      "l_end_s": 316.0,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_17_loc_no_mans_land to BED_18_loc_british_trench at 315.5s."
     },
     {
       "at_s": 324.25,
       "from": "BED_18_loc_british_trench",
       "to": "BED_19_loc_german_trench",
       "j_start_s": 323.75,
-      "l_end_s": 324.75
+      "l_end_s": 324.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_18_loc_british_trench to BED_19_loc_german_trench at 324.25s."
     },
     {
       "at_s": 330.25,
       "from": "BED_19_loc_german_trench",
       "to": "BED_20_loc_british_trench",
       "j_start_s": 329.75,
-      "l_end_s": 330.75
+      "l_end_s": 330.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_19_loc_german_trench to BED_20_loc_british_trench at 330.25s."
     },
     {
       "at_s": 349.25,
       "from": "BED_20_loc_british_trench",
       "to": "BED_21_loc_german_trench",
       "j_start_s": 348.75,
-      "l_end_s": 349.75
+      "l_end_s": 349.75,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_20_loc_british_trench to BED_21_loc_german_trench at 349.25s."
     },
     {
       "at_s": 358.0,
       "from": "BED_21_loc_german_trench",
       "to": "BED_22_loc_no_mans_land",
       "j_start_s": 357.5,
-      "l_end_s": 358.5
+      "l_end_s": 358.5,
+      "transition_intent": "ambience_crossfade",
+      "crossfade_seconds": 1.0,
+      "crossfade_frames": 24,
+      "silence_intent": "none",
+      "meaning_link": "Continuous bed transition from BED_21_loc_german_trench to BED_22_loc_no_mans_land at 358.0s."
     }
   ],
   "music": [
@@ -8893,5 +8998,109 @@
   },
   "needs": [],
   "shippable": true,
-  "not_shippable_because": []
+  "not_shippable_because": [],
+  "section_beds": [
+    {
+      "section_id": "SEC_INTRO",
+      "bed_id": "BED_SEC_INTRO",
+      "continuous": true,
+      "continuity_policy": "evolve",
+      "layers": [
+        {
+          "type": "ambience",
+          "id": "wind",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "section_id": "SEC_VERSE_1",
+      "bed_id": "BED_SEC_VERSE_1",
+      "continuous": true,
+      "continuity_policy": "crossfade",
+      "layers": [
+        {
+          "type": "ambience",
+          "id": "wind",
+          "role": "primary"
+        },
+        {
+          "type": "ambience",
+          "id": "fire",
+          "role": "secondary"
+        }
+      ]
+    },
+    {
+      "section_id": "SEC_CHORUS_1",
+      "bed_id": "BED_SEC_CHORUS_1",
+      "continuous": true,
+      "continuity_policy": "carry",
+      "layers": [
+        {
+          "type": "ambience",
+          "id": "wind",
+          "role": "primary"
+        },
+        {
+          "type": "music",
+          "id": "music_bed",
+          "role": "motif"
+        }
+      ]
+    },
+    {
+      "section_id": "SEC_VERSE_2_BRIDGE",
+      "bed_id": "BED_SEC_VERSE_2_BRIDGE",
+      "continuous": true,
+      "continuity_policy": "crossfade",
+      "layers": [
+        {
+          "type": "ambience",
+          "id": "wind",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "section_id": "SEC_CHORUS_2",
+      "bed_id": "BED_SEC_CHORUS_2",
+      "continuous": true,
+      "continuity_policy": "carry",
+      "layers": [
+        {
+          "type": "ambience",
+          "id": "wind",
+          "role": "primary"
+        },
+        {
+          "type": "ambience",
+          "id": "crowd_murmur",
+          "role": "scene"
+        }
+      ]
+    },
+    {
+      "section_id": "SEC_OUTRO",
+      "bed_id": "BED_SEC_OUTRO",
+      "continuous": true,
+      "continuity_policy": "evolve",
+      "layers": [
+        {
+          "type": "ambience",
+          "id": "wind",
+          "role": "primary"
+        },
+        {
+          "type": "music",
+          "id": "music_bed",
+          "role": "motif"
+        }
+      ]
+    }
+  ],
+  "audibility_verification": {
+    "status": "NOT_VERIFIED",
+    "reason": "Metadata continuity updated in sound_plan.json; signal-level ambience checks and human listening review have not been run."
+  }
 }

@@ -2148,6 +2148,240 @@
         },
         "visible_singing_coverage": {
           "type": "object"
+        },
+        "source_clip_duration_seconds": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "edited_shot_duration_seconds": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "benchmark_exception": {
+          "type": "boolean"
+        },
+        "exception_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scene_bible_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "coverage_role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "axis_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "camera_side": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "screen_position": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "eyeline_target": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "framing_intent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lighting_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "costume_state_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prop_state_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sound_bed_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "continuity_in": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "continuity_out": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "chain_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sequence_index": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "previous_shot_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "next_shot_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reference_frame_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "return_to_master": {
+          "type": "boolean"
+        },
+        "return_target_reference_shot_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "face_continuity": {
+          "type": "object"
+        },
+        "crop_policy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "visible_regions_required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "intentional_crop_regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "frame_safe_margin_pct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "visual_relationship": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "narration_anchor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "visual_association": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "association_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "literal_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "insert_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "document_motivation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "audio_link": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "minimum_hold_seconds": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "locked_shot": {
+          "type": "boolean"
+        },
+        "conversion_eligibility": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mix_priority": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "allOf": [
@@ -3119,6 +3353,15 @@
           }
         },
         "three_chorus_expansion_proposal": {
+          "type": "object"
+        },
+        "scene_bibles": {
+          "type": "array"
+        },
+        "visual_mix_band": {
+          "type": "object"
+        },
+        "map_quality_status": {
           "type": "object"
         }
       }
