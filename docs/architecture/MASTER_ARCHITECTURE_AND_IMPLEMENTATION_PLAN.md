@@ -9,7 +9,7 @@
 
 ## 0. Live status — update after every milestone
 
-**Overall:** Phase 0 is complete with explicit limitations. Phase 1 remains in read-only inventory/specification. PR Quality runs #997 and #1001 passed on the documentation branch; PR #195 remains Draft/Open and has no human review. No production source code, runtime episode data, existing branch or other PR has been changed; no paid generation or cloud GPU job has been launched.
+**Overall:** Phase 0 is complete with explicit limitations. Phase 1 remains in read-only inventory/specification. PR Quality run #997 and workflow run ID 43942791002 passed on the documentation branch; PR #195 remains Draft/Open and has no human review. No production source code, runtime episode data, existing branch or other PR has been changed; no paid generation or cloud GPU job has been launched.
 
 | ID | Work item | Status | Evidence / limitation |
 |---|---|---|---|
@@ -20,7 +20,7 @@
 | P0.4 | Tests, CI, coding standards and release controls | DONE WITH LIMITATIONS | 367 Python unit-test files found. The read-only audit ran no tests; afterward PR #195 Quality run #997 passed its non-system tests, docs lint and palette checks on PR head b6668d1. Ruff absent. Branch protection/rulesets not fully verified. |
 | P0.5 | KEEP / IMPROVE / REPLACE / REMOVE / BUILD disposition | DONE — INITIAL | See section 4. Code-level changes still require individual specs and tests. |
 | P0.6 | Target architecture and implementation roadmap | DONE — PROPOSED BASELINE | See sections 5–9. Some concrete infrastructure products remain benchmark decisions. |
-| P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | Master file fetched back and checked; Draft PR #195 contains one documentation file and targets the active baseline. Quality run #997 passed on head b6668d1. No reviews, inline threads or PR comments exist; awaiting human review/merge. |
+| P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | Master file fetched back and checked; Draft PR #195 contains one documentation file and targets the active baseline. Quality run #997 passed on head b6668d1; follow-up workflow run ID 43942791002 also passed on head 6fa90a7. No reviews, inline threads or PR comments exist; awaiting human review/merge. |
 | P1.0 | Current state ownership and timeline writer/consumer inventory | IN PROGRESS | Four source-level persistence paths were confirmed: two v4.3 voice branches, render_tools/build_segments and render_tools/mix; gemini_task/timing is another reader. External TRUCE_TIMING_JSON vs episode/audio/timing.json authority and a full source-tree sweep remain unresolved. |
 | P1.1 | Phase 1 architecture/specification | IN PROGRESS | Drafted below: retain current owners, add episode_timing/1 and /2 contracts first, then read-only state/dependency projections. Awaiting Owner acceptance. |
 | P1.2 | Timeline schema, semantic validator and fixtures | NOT STARTED | No code or schema changed. Blocked on P1.0 inventory and acceptance of this specification. |
@@ -938,7 +938,7 @@ Concrete DB, queue/event broker, dashboard framework, object-storage vendor, pro
 - This audit did not independently view the HF media and did not execute tests; project reports are attributed as reports.
 
 ## 2026-11-16 — Phase 1 initial code discovery (specification only)
-- PR #195 Quality run #997 passed on the first Phase 1 spec commit b6668d1; follow-up run #1001 passed on commit 6fa90a7. Non-system tests, docs lint and palette checks were green. No human review, inline review thread or PR discussion comment was present at the time of this update.
+- PR #195 Quality run #997 passed on the first Phase 1 spec commit b6668d1; follow-up Quality workflow run ID 43942791002 passed on commit 6fa90a7. Non-system tests, docs lint and palette checks were green. No human review, inline review thread or PR discussion comment was present at the time of this update.
 - Confirmed separate owners for episode.json, EpisodeJob/job_manifest.json, JobStore/state.json, production/stages/*.json and the film clock. These are not interchangeable state stores.
 - Expanded the writer inventory from the two v4.3 voice branches to include tools/render_tools/build_segments.py and tools/render_tools/mix.py. Also found gemini_task/timing.py as a reader of the same clock.
 - Identified a physical path split: the v4.3 runner writes episode/audio/timing.json, while Truce render tools default to external TRUCE_TIMING_JSON / inputs/clock/timing.json, with episode/audio/timing.json as a read fallback. A single logical schema does not yet prove that these file copies share one authority.
