@@ -103,8 +103,10 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
     return {"in_s": round(f_in / fps, 4), "out_s": round(f_out / fps, 4), "frames": f_out - f_in}
 
 
-def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
-    """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds."""
+def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int, gain_db: float = 0.0) -> Path:
+    """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds.
+    ``gain_db`` (HF-4, FL-401): a level change of the clip's sound (negative = lower), a ``volume`` filter before the pad and
+    the trim; the picture and the raw file are not touched."""
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".part.mp4")
     dur = frames / fps
@@ -112,7 +114,8 @@ def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int) -> Path:
     # ffmpeg with a 30 fps clip on a 24 fps episode); -frames:v caps the picture, atrim the sound
     cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur + 2.0 / fps:.4f}",
            "-vf", f"fps={fps}", "-frames:v", str(frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
-           "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-af", f"apad,atrim=0:{dur:.4f}", str(tmp)]
+           "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+           "-af", (f"volume={gain_db:.2f}dB," if gain_db else "") + f"apad,atrim=0:{dur:.4f}", str(tmp)]
     subprocess.run(cmd, check=True, capture_output=True)
     got = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
                           "stream=nb_read_frames", "-of", "csv=p=0", str(tmp)], capture_output=True, text=True,
@@ -160,6 +163,16 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         t_spans = [(round(max(0.0, a - pts["in_s"]), 3), round(min(pts["frames"] / fps, b - pts["in_s"]), 3))
                    for a, b in spans if b > pts["in_s"] and a < pts["out_s"]]
         metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
+        trim = {}
+        if any(f.get("rule") == "CLIP-06" and (f.get("status") or f.get("severity")) != "PASS" for f in finds):
+            # HF-4 (FL-401, TD-304): a clip over BP-50's true-peak ceiling is cut again lower, never dropped: at least 2 dB,
+            # or the excess over the ceiling plus 1 dB. CLIP-06 is judged as before, on the trimmed cut.
+            from explainer_engine.qa import targets as T
+            tp = float((metrics.get("audio") or {}).get("true_peak"))
+            trim_db = max(2.0, tp - float(T.PROFILES["long"]["true_peak_max"]) + 1.0)
+            trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps, gain_db=-trim_db)
+            metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
+            trim = {"level_trim_db": round(trim_db, 2), "true_peak_before": tp}
         bad = [f for f in finds if f.get("status") == "FAIL" or f.get("severity") == "FAIL"]
         rec = {"schema": SCHEMA, "shot_id": sid, "route": "video", "backend": backend,
                "status": G.FAIL if bad else (G.REVIEW if any((f.get("status") or f.get("severity")) == "REVIEW"
@@ -169,7 +182,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "raw_seconds": round(pr["duration"], 4), "fps": fps, "in_s": pts["in_s"], "out_s": pts["out_s"],
                "frames": pts["frames"], "speech_raw": spans, "speech": t_spans, "clip_spoken": sid in spoken,
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
-               "findings": finds, "attempts": c.get("attempts") or []}
+               "findings": finds, "attempts": c.get("attempts") or [], **trim}
         write_json_atomic(vdir / f"{sid}.json", rec)
         out.append(rec)
     return out
@@ -193,7 +206,7 @@ def recut(root: Path, rec: dict, frames: int, fps: int) -> dict:
         raise ContractError(f"{rec['shot_id']}: the shot needs {frames / fps:.2f} s, the raw clip holds {have:.2f} s after "
                             "its in point: make the clip longer (VL-06), it is never stretched")
     out = root / rec["clip_path"]
-    cut(raw, out, float(rec["in_s"]), frames, fps)
+    cut(raw, out, float(rec["in_s"]), frames, fps, gain_db=-float(rec.get("level_trim_db") or 0.0))
     new = dict(rec, frames=frames, out_s=round(float(rec["in_s"]) + frames / fps, 4), clip_sha256=_sha(out),
                recut_from=rec.get("frames"))
     write_json_atomic(root / "production" / "video" / f"{rec['shot_id']}.json", new)

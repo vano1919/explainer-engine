@@ -26,7 +26,19 @@ TRANSITION_TYPES: Tuple[str, ...] = (
     "atmospheric_smoke_ash_wipe",
     "cross_dissolve_8f",
     "hard_cut_with_jl_bridge",
+    "fade_to_black",
 )
+
+# HF-1 (FL-406, TD-301): the script's own ``transition_out`` words and what they mean for the film. A fade to black is
+# 24 frames (1 s at 24 fps; the first half takes shot A to black, the second half brings shot B up): an engineering
+# default, because no sourced rule names a length for a fade (the dissolve is 8 frames, ED-04).
+AUTHORED_TRANSITIONS: Dict[str, Tuple[str, int]] = {
+    "hard_cut": ("hard_cut_with_jl_bridge", 0),
+    "j_cut": ("hard_cut_with_jl_bridge", 0),
+    "l_cut": ("hard_cut_with_jl_bridge", 0),
+    "cross_dissolve_8f": ("cross_dissolve_8f", 8),
+    "fade_to_black": ("fade_to_black", 24),
+}
 
 CAMERA_MOVE_VECTORS: Dict[str, Tuple[float, float, float]] = {
     "static": (0.0, 0.0, 0.0),
@@ -97,8 +109,13 @@ def select_optimal_cinematic_transition(
     shot_b: Dict[str, Any],
     fps: int = 24,
     allow_decorative_wipes: bool = False,
+    honour_authored: bool = False,
 ) -> Dict[str, Any]:
-    """Select the optimal cinematic transition and audio bridge between Shot A and Shot B (`ED-04` compliant)."""
+    """Select the optimal cinematic transition and audio bridge between Shot A and Shot B (`ED-04` compliant).
+
+    ``honour_authored`` (HF-1): when the outgoing shot carries a ``transition_out`` the script author wrote, that wins over
+    the structural choice below (`hard_cut`/`j_cut`/`l_cut` -> a hard cut, `cross_dissolve_8f` -> 8 frames,
+    `fade_to_black` -> 24 frames); the plan row says ``"authored": true``. Off, the plan is what it always was."""
     continuity = compute_visual_continuity_alignment(shot_a, shot_b)
     vtype_a = str(shot_a.get("visual_type") or "")
     vtype_b = str(shot_b.get("visual_type") or "")
@@ -109,7 +126,11 @@ def select_optimal_cinematic_transition(
     is_b_infographic = vtype_b == "map_visualization" or gmode_b in ("TACTILE_MAP", "MAP_25D")
 
     explicit_override = shot_a.get("explicit_transition_override")
-    if allow_decorative_wipes and explicit_override in TRANSITION_TYPES:
+    authored = shot_a.get("transition_out") if honour_authored else None
+    if authored in AUTHORED_TRANSITIONS:
+        t_type, dur_frames = AUTHORED_TRANSITIONS[str(authored)]
+        audio_prelap_s = 0.25 if continuity["same_location"] else 0.35
+    elif allow_decorative_wipes and explicit_override in TRANSITION_TYPES:
         t_type = str(explicit_override)
         dur_frames = 0 if t_type == "hard_cut_with_jl_bridge" else 10
         audio_prelap_s = 0.35
@@ -141,13 +162,17 @@ def select_optimal_cinematic_transition(
         audio_prelap_s = 0.25 if continuity["same_location"] else 0.35
 
     cut_plan_transition = "cut" if t_type == "hard_cut_with_jl_bridge" or continuity["same_location"] else "dissolve"
+    if authored in AUTHORED_TRANSITIONS:
+        cut_plan_transition = {"hard_cut_with_jl_bridge": "cut", "cross_dissolve_8f": "dissolve",
+                               "fade_to_black": "fade_to_black"}[t_type]
 
-    return {
+    row = {
         "from_shot_id": shot_a.get("shot_id") or shot_a.get("id"),
         "to_shot_id": shot_b.get("shot_id") or shot_b.get("id"),
         "transition_type": t_type,
         "cut_plan_transition": cut_plan_transition,
-        "ed04_compliant": not (cut_plan_transition == "dissolve" and continuity["same_location"] and not (is_a_infographic or is_b_infographic)),
+        "ed04_compliant": authored in AUTHORED_TRANSITIONS or not (
+            cut_plan_transition == "dissolve" and continuity["same_location"] and not (is_a_infographic or is_b_infographic)),
         "transition_frames": dur_frames,
         "transition_duration_sec": round(dur_frames / max(fps, 1), 4),
         "audio_j_cut_prelap_sec": audio_prelap_s,
@@ -155,18 +180,23 @@ def select_optimal_cinematic_transition(
         "zoom_target_xy": continuity["focal_xy_from"],
         "continuity": continuity,
     }
+    if authored in AUTHORED_TRANSITIONS:
+        row["authored"] = True
+    return row
 
 
 def plan_episode_cinematic_transitions(
     script_doc: Dict[str, Any],
     fps: int = 24,
     allow_decorative_wipes: bool = False,
+    honour_authored: bool = False,
 ) -> List[Dict[str, Any]]:
     """Build the complete shot-to-shot cinematic transition plan for an episode (`ED-04` compliant)."""
     shots = script_doc.get("shots", [])
     plans: List[Dict[str, Any]] = []
     for a, b in zip(shots, shots[1:]):
-        plans.append(select_optimal_cinematic_transition(a, b, fps=fps, allow_decorative_wipes=allow_decorative_wipes))
+        plans.append(select_optimal_cinematic_transition(a, b, fps=fps, allow_decorative_wipes=allow_decorative_wipes,
+                                                         honour_authored=honour_authored))
     return plans
 
 
@@ -221,6 +251,11 @@ def render_transition_frame_pair(
         mixed[:, :, 1] += 255.0 * bloom * 0.65
         mixed[:, :, 2] += 255.0 * bloom * 0.25
         return Image.fromarray(np.clip(mixed, 0, 255).astype(np.uint8), mode="RGB")
+
+    if transition_type == "fade_to_black":   # HF-1: the first half takes A to black, the second brings B up from black
+        src, k = (frame_a, 1.0 - 2.0 * u) if u < 0.5 else (frame_b, 2.0 * u - 1.0)
+        arr = np.asarray(src, dtype=np.float32) * max(0.0, k)
+        return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode="RGB")
 
     # Default cross_dissolve_8f
     arr_a = np.asarray(frame_a, dtype=np.float32)
