@@ -211,12 +211,13 @@ def test_shot_with_ltx_clip_record_is_video_route(tmp_path):
     rows_ok, out_ok = RUN.stage_script(ep_ok, rehearsal=True)
     mix_row_ok = next((r for r in rows_ok if r["gate"] == "route_mix_60_30_10"), None)
     ltx_row_ok = next((r for r in rows_ok if r["gate"] == "accepted_ltx_route_match"), None)
-    assert mix_row_ok is not None and mix_row_ok["status"] == G.PASS
+    # item 4 (2026-11-16): Truce declares its OWN mix (2.5D 60 / LTX 30 / helper 10, advisory), so the mix row is a REVIEW at most
+    assert mix_row_ok is not None and mix_row_ok["status"] in (G.PASS, G.REVIEW)
     assert ltx_row_ok is not None and ltx_row_ok["status"] == G.PASS
     shares = out_ok["mix"]["shares"]
     assert 0.55 <= shares["video"] <= 0.65 and 0.25 <= shares["still_25d"] <= 0.35 and 0.05 <= shares["map_action"] <= 0.15
 
-    # Reverting S07_SH005 to still_25d pushes still_25d to 35.29% (> 35% ceiling) and triggers accepted_ltx_route_match FAIL
+    # Reverting S07_SH005 to still_25d still triggers accepted_ltx_route_match FAIL (the mix row is advisory)
     bad_shots = copy.deepcopy(truce_script["shots"])
     for s in bad_shots:
         if s["shot_id"] == "S07_SH005":
@@ -230,7 +231,7 @@ def test_shot_with_ltx_clip_record_is_video_route(tmp_path):
     rows_bad, _ = RUN.stage_script(RUN.Episode(ep_bad_root, rehearsal=True), rehearsal=True)
     mix_row_bad = next((r for r in rows_bad if r["gate"] == "route_mix_60_30_10"), None)
     ltx_row_bad = next((r for r in rows_bad if r["gate"] == "accepted_ltx_route_match"), None)
-    assert mix_row_bad is not None and mix_row_bad["status"] == G.FAIL
+    assert mix_row_bad is not None and mix_row_bad["status"] != G.FAIL   # advisory under the declared band (item 4)
     assert ltx_row_bad is not None and ltx_row_bad["status"] == G.FAIL
 
 

@@ -155,6 +155,47 @@ def mix_report(script: dict, durations: dict[str, float] | None = None) -> dict:
             "seconds": {r: round(secs[r], 2) for r in ROUTES}, "shares": shares, "unrouted": missing}
 
 
+_DECLARED_TARGET_KEYS = {"cinematic_video_target": "video", "composed_illustration_target": "still_25d",
+                         "map_visualization_target": "map_action"}
+
+
+def _declared_mix(script: dict) -> dict | None:
+    """Owner-approved item 4: a docudrama that declares its OWN planning mix (``visual_mix_target`` + ``visual_mix_band`` in the
+    production script, 2.5D 60 / LTX 30 / helper 10 for Truce) is judged against that declaration, as an advisory REVIEW. A script
+    without the pair keeps BP-109's registry mix and its FAIL (cartoon episodes are video-heavy by design; the registry is
+    not flipped for them)."""
+    tgt, band = script.get("visual_mix_target"), script.get("visual_mix_band")
+    if not isinstance(tgt, dict) or not isinstance(band, dict):
+        return None
+    targets = {r: float(tgt[k]) for k, r in _DECLARED_TARGET_KEYS.items() if k in tgt}
+    aliases = {"video": ("video", "video_ltx_band"), "still_25d": ("still_25d", "still_25d_band"),
+               "map_action": ("map_action", "map_helper_band")}
+    bands = {}
+    for r, keys in aliases.items():
+        for k in keys:
+            if isinstance(band.get(k), (list, tuple)) and len(band[k]) == 2:
+                bands[r] = band[k]
+                break
+    return {"targets": targets, "bands": bands} if targets and bands else None
+
+
+def _declared_mix_row(script: dict, rep: dict, declared: dict) -> dict:
+    from explainer_engine.qa import gates as G
+    shares = rep["shares"]
+    outside = [f"{r}={shares.get(r, 0.0):.1%} (band {lo:.0%}-{hi:.0%})" for r, (lo, hi) in declared["bands"].items()
+               if not float(lo) - 1e-6 <= float(shares.get(r, 0.0)) <= float(hi) + 1e-6]
+    locked = [s["shot_id"] for s in script.get("shots", []) if s.get("locked_shot")]
+    eligible = [s["shot_id"] for s in script.get("shots", [])
+                if not s.get("locked_shot") and s.get("conversion_eligibility") == "eligible_if_asset_available"]
+    summary = ", ".join(f"{r} {shares.get(r, 0.0):.1%} (target {declared['targets'].get(r, 0.0):.0%})"
+                        for r in ("video", "still_25d", "map_action"))
+    detail = (f"visual mix ({rep['basis']}) against the episode's own declared band: {summary}; {len(locked)} locked shot(s) "
+              f"(chorus / visible singing) are never converted; {len(eligible)} unlocked shot(s) eligible for conversion"
+              + (f" — outside band: {', '.join(outside)}" if outside else ""))
+    return G.row("route_mix_60_30_10", not outside, detail,
+                 dict(rep, locked_shots=len(locked), eligible_conversions=eligible[:40]), level=G.REVIEW)
+
+
 def mix_gate_rows(script: dict, durations: dict[str, float] | None = None, tol: float = MIX_TOL,
                   scope: str = "full") -> list[dict]:
     """A2.3 (BP-109): enforce the 60/30/10 duration mix with explicit tolerance ``tol`` (default +-5 percentage points from
@@ -163,6 +204,9 @@ def mix_gate_rows(script: dict, durations: dict[str, float] | None = None, tol: 
     from explainer_engine.qa import gates as G
     rep = mix_report(script, durations)
     shares = rep["shares"]
+    declared = _declared_mix(script)
+    if declared is not None:
+        return [_declared_mix_row(script, rep, declared)]
     outside: list[str] = []
     for r in ROUTES:
         target = MIX_TARGETS[r]

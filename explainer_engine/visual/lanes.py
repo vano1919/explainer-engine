@@ -87,8 +87,10 @@ class LanePlanner:
         self.total = sum(self.secs)
         self.aid = [designer.visual_archetype(s) for s in shots]
         self.allowed = [designer.lanes(s, a) for s, a in zip(shots, self.aid)]
+        # owner-approved item 4: a locked shot (a chorus / visible-singing shot) keeps its lane; no margin or monotony swap may move it
+        self.allowed = [[s["lane"]] if s.get("locked_shot") and s.get("lane") in ok else ok for s, ok in zip(shots, self.allowed)]
         self.heat = [designer.intensity(s, a) for s, a in zip(shots, self.aid)]
-        self.helper = [designer.helper_candidate(s) for s in shots]
+        self.helper = [None if s.get("locked_shot") else designer.helper_candidate(s) for s in shots]   # a locked shot is never a HELPER visual
         self.scene_mode = [s.get("mode") == "scene" for s in shots]
         before = F.lane_shares(self.src["shots"], F.V3)
         lanes = [SD.archetype(a)["default_lane"] if SD.archetype(a)["default_lane"] in ok else ok[0]
