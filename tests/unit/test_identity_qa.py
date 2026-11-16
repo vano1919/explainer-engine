@@ -108,3 +108,42 @@ def test_mouth_openness_follows_the_dark_inside_of_the_box_and_the_box_follows_t
     o = ID.mouth_openness([shut, wide], box)
     assert o[1] > o[0] + 0.05
     assert box[0] < 0.5 < box[2] and box[1] > 0.4
+
+
+# --- owner-approved Python item 2: face hold + identity band (warn mode until calibrated) -----------------------------------
+def _s02_sh009():
+    import json
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[2] / "episodes" / "ep_truce_1914" / "story" / "production_script.json"
+    return next(s for s in json.loads(p.read_text(encoding="utf-8"))["shots"] if s["shot_id"] == "S02_SH009")
+
+
+def test_a_long_unsplit_face_still_breaks_the_hold_limit():
+    from explainer_engine.qa import identity as I
+    shot = {"shot_id": "X", "target_duration_seconds": 10.5, "face_continuity": {"face_bearing": True, "max_hold_seconds": 6.0}}
+    row = I.face_continuity_rows(shot)[0]
+    assert row["check_id"] == "face_hold:X" and row["measured"] == 10.5 and row["passed"] is False and row["severity"] == "REVIEW"
+
+
+def test_a_split_still_is_held_for_its_longest_part_only():
+    from explainer_engine.qa import identity as I
+    shot = _s02_sh009()
+    assert I.face_hold_seconds(shot) < 6.0
+    assert I.face_continuity_rows(shot)[0]["passed"] is True
+
+
+def test_identity_bands_and_warn_mode():
+    from explainer_engine.qa import identity as I
+    assert [I.identity_band(x) for x in (0.82, 0.65, 0.56)] == ["PASS", "REVIEW", "FAIL"]
+    shot = {"shot_id": "X", "target_duration_seconds": 4.0, "face_continuity": {"face_bearing": True}}
+    warn = I.face_continuity_rows(shot, {"min": 0.56})[1]
+    assert warn["mode"] == "warn" and warn["passed"] is True and warn["threshold"]["band"] == "FAIL"
+    hard = I.face_continuity_rows(shot, {"min": 0.56}, calibrated=True)[1]
+    assert hard["mode"] == "enforced" and hard["passed"] is False
+
+
+def test_no_rows_without_face_continuity_and_not_run_without_scores():
+    from explainer_engine.qa import identity as I
+    assert I.face_continuity_rows({"shot_id": "X"}) == []
+    shot = {"shot_id": "X", "target_duration_seconds": 4.0, "face_continuity": {"face_bearing": True}}
+    assert I.face_continuity_rows(shot)[1]["mode"] == "not_run"

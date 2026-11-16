@@ -81,6 +81,54 @@ def style_check(shot_id: str, image_embedding, refs: list, control_embedding=Non
                  rule="AC-14")
 
 
+# --- face hold + identity band (owner-approved Python item 2, 2026-11-16; WARN mode until calibrated) ----------------------
+FACE_HOLD_MAX_S = 6.0          # DESIGN_RULE: the longest one face-bearing still is held (the data's face_continuity may override)
+IDENTITY_PASS_AT = 0.70        # DESIGN_RULE band edges: PASS >= 0.70, REVIEW 0.60-0.69, FAIL below 0.60 (needs calibration)
+IDENTITY_FAIL_BELOW = 0.60
+
+
+def face_hold_seconds(shot: dict) -> float:
+    """How long one face-bearing picture stays on screen: the longest sub-shot of its ``split_plan`` (a long still is
+    split by ``episode/shot_split``), else the shot's own length. Root cause of S02_SH009 (a 10.5 s still, identity 0.56):
+    nothing measured the hold of a face, so a drifting face stayed on screen as long as its narration line."""
+    parts = ((shot.get("split_plan") or {}).get("parts")) or []
+    held = [float(p.get("duration_s") or 0.0) for p in parts]
+    if held:
+        return max(held)
+    return float(shot.get("edited_shot_duration_seconds") or shot.get("target_duration_seconds") or 0.0)
+
+
+def identity_band(score: float, pass_at: float = IDENTITY_PASS_AT, fail_below: float = IDENTITY_FAIL_BELOW) -> str:
+    """PASS / REVIEW / FAIL for one cosine score. FAIL here is a band name, not a verdict (see ``face_continuity_rows``)."""
+    return "PASS" if score >= pass_at else ("REVIEW" if score >= fail_below else "FAIL")
+
+
+def face_continuity_rows(shot: dict, scores: dict | None = None, calibrated: bool = False) -> list[dict]:
+    """The rows of a shot whose data carries ``face_continuity`` (``face_bearing``, ``max_hold_seconds``, ``identity_min_pass``,
+    ``identity_fail_below``). A shot without it gets no rows. Both rows are REVIEW rows: the hold is measured on the data,
+    the identity band is a WARN (``passed`` stays True, ``mode`` says warn) until ``calibrated`` is True, so existing tests
+    and runs do not break before the thresholds are calibrated on our hero frames (BP-133)."""
+    fc = shot.get("face_continuity")
+    if not fc or not fc.get("face_bearing"):
+        return []
+    sid = shot.get("shot_id", "?")
+    limit = float(fc.get("max_hold_seconds") or FACE_HOLD_MAX_S)
+    hold = face_hold_seconds(shot)
+    rows = [check(f"face_hold:{sid}", "REVIEW", round(hold, 3), limit, hold <= limit + 1e-6)]
+    if scores is None:
+        rows.append(dict(check(f"identity_band:{sid}", "REVIEW", None, "no rendered frame scored yet (NOT_VERIFIED)", True),
+                         mode="not_run"))
+        return rows
+    lo = float(fc.get("identity_fail_below") or IDENTITY_FAIL_BELOW)
+    hi = float(fc.get("identity_min_pass") or IDENTITY_PASS_AT)
+    band = identity_band(float(scores["min"]), hi, lo)
+    row_ = check(f"identity_band:{sid}", "REVIEW", scores["min"], {"pass_at": hi, "fail_below": lo, "band": band},
+                 band == "PASS" if calibrated else True)
+    row_["mode"] = "enforced" if calibrated else "warn"
+    rows.append(row_)
+    return rows
+
+
 # --- lip sync ----------------------------------------------------------------------------------------------------------
 def mouth_box(face: dict) -> tuple[float, float, float, float]:
     """The mouth's box (shares of the frame) from a ``face_points.detect`` face {x, y (centre), w, h}: the lower middle of it."""
