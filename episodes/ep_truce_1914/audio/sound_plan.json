@@ -2473,7 +2473,14 @@
         },
         "heard_not_seen": []
       },
-      "transition_out": "hard_cut"
+      "transition_out": "hard_cut",
+      "visible_singing": {
+        "route": "route_c_25d_visemes",
+        "viseme_driver": "phoneme_timing_primary_energy_secondary",
+        "carol_vocal_stem": "S03_L008_thomas_silent_night",
+        "score_policy": "no_conventional_score_over_carol_peak",
+        "breath_vapor_sync": "phrase_endings_and_audible_exhalations"
+      }
     },
     {
       "shot_id": "S03_SH009",

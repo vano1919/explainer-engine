@@ -2030,7 +2030,12 @@
           "description": "Creator Correction C2: LTX natural-fit classification and route recommendation."
         },
         "staging": {},
-        "scene_id": {},
+        "scene_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "continues": {},
         "layout": {},
         "fixed": {},
@@ -2064,7 +2069,86 @@
         "overlay_rendered_in_plate": {},
         "overlay_collision_review": {},
         "overlay_findings": {},
-        "draw_spans_frames": {}
+        "draw_spans_frames": {},
+        "section_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "chorus_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sub_scene_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "time_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "place_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "continuity_group_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "continuity_mode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "continuity_from": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_frame_source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sound_bridge": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "editorial_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "meaning_link": {
+          "type": [
+            "object",
+            "string",
+            "null"
+          ]
+        },
+        "visible_singing": {
+          "type": "object"
+        },
+        "visible_singing_coverage": {
+          "type": "object"
+        }
       },
       "allOf": [
         {
@@ -3024,6 +3108,18 @@
         "rhythm_profile": {
           "type": "string",
           "description": "Named rhythm profile from BP-169 (e.g. solemn_historical_docudrama, mrbeast_animated, calm_docudrama)."
+        },
+        "structure_profile": {
+          "type": "object"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "three_chorus_expansion_proposal": {
+          "type": "object"
         }
       }
     },

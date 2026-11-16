@@ -96,7 +96,21 @@
     "same_location_min_scale_step": 0.3,
     "max_eye_trace_focal_jump_on_hard_cut": 0.32,
     "map_to_map_same_theater_inherit_camera": true,
-    "map_to_map_transition": "cross_dissolve_8f"
+    "map_to_map_transition": "cross_dissolve_8f",
+    "meaning_link_types": [
+      "CAUSE",
+      "CONSEQUENCE",
+      "PARALLEL",
+      "CONTRAST",
+      "POV_TRANSFER",
+      "OBJECT_MOTIF",
+      "TIME_JUMP",
+      "EPOCH_JUMP"
+    ],
+    "chorus_sequence_continuity": true,
+    "allow_multi_location_chorus": true,
+    "forbid_unmotivated_still_in_continuous_action": true,
+    "time_place_epoch_jump_requires_meaning_link": true
   },
   "idiom_grammar": [
     {
@@ -395,19 +409,37 @@
   },
   "ltx_natural_fit_policy_c2": {
     "ltx_natural_for": [
-      "short atmospheric shots (smoke, fire, snow, fog, water)",
-      "environments and landscapes with slow camera moves",
-      "wide and extreme-wide shots with small figures",
+      "wide silhouettes, landscape, snow, fog, fire, lantern glow, and atmosphere with slow camera moves",
+      "single-character medium close-up (MCU), 3/4 painted face, closed mouth or restrained expression, one coherent soft light, 4-5 s",
       "people seen from behind, over-the-shoulder (OTS), or in silhouette",
-      "simple single-person hand or foot actions without intricate props"
+      "approaches, walking, climbing, leaving trenches, and wide group compositions",
+      "two-character visible handshake in wide/medium-wide framing (detail hands/buttons as 2.5D insert at pause)"
     ],
-    "ltx_unnatural_route_to_25d_or_ots": [
-      "close-up and medium-close-up talking faces",
-      "two-person facial interaction, handshakes, haircuts, or gift swaps with visible faces",
-      "small props held in hands (photographs, scissors, footballs, brass tins, letters)",
-      "fast complex multi-limb motion or identity-critical reverse angles"
+    "ltx_25d_or_detail_insert": [
+      "tiny objects, letters, family photographs, buttons, rifles on sandbags (2.5D insert at motivated pause)",
+      "complex multi-finger hand interactions (2.5D fallback where necessary, not a blanket ban on faces)",
+      "identity-critical static portraits when no physical action occurs"
     ],
+    "visible_singing_policy": {
+      "owner_decision_date": "2026-11-16",
+      "primary_combination": "Route C (2.5D audio-driven viseme mouth shapes M0-M5 over approved painted 3/4 face) + Route E (mixed cinematic coverage: eye CU, chest breath, hand on lantern/coat)",
+      "optional_variation": "Route A (profile / 3/4 rear view with timed breath vapor and controlled jaw)",
+      "experimental_fallback": "Route D (LatentSync 1.6 mouth/lower-face composite only; never replace full face; MuseTalk 1.5 secondary experiment)",
+      "ltx_face_rule_elsewhere": "Retain semi-realistic painted 2.5D/LTX 3/4 MCU face rule (closed mouth, restrained motion, 4-5 s, one soft light) for all non-singing shots",
+      "viseme_inventory": [
+        "M0_closed_rest",
+        "M1_slightly_open",
+        "M2_medium_open",
+        "M3_wide_open_vowel",
+        "M4_rounded_vowel",
+        "M5_narrow_teeth"
+      ],
+      "sustained_vowel_rule": "Drive visemes primarily by phoneme timing with audio energy and note duration as secondary controls; hold vowel shapes across sustained notes; never drive mouth openness by raw volume alone."
+    },
     "continuity_modes": [
+      "continuation",
+      "coverage",
+      "insert",
       "ltx_chain_tail",
       "ltx_chain_crop_ots",
       "ltx_scene_master_cov",

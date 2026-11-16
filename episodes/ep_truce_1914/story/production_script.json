@@ -12,8 +12,8 @@
   "dialogue_ratio_max": 0.45
  },
  "visual_mix_target": {
-  "cinematic_video_target": 0.6,
-  "composed_illustration_target": 0.3,
+  "cinematic_video_target": 0.3,
+  "composed_illustration_target": 0.6,
   "map_visualization_target": 0.1
  },
  "historical_dossier_ref": "episodes/ep_truce_1914/story/research_dossier.md",
@@ -1826,7 +1826,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_INTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S01_WALK",
+   "scene_id": "SC_S01_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DAWN_FLASHFORWARD",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S01",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S01_SH001_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_no_mans_land to loc_british_trench within SUB_S01_WALK to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_INTRO (SUB_S01_WALK): Cross-cuts from loc_no_mans_land to loc_british_trench within SUB_S01_WALK to connect both sides."
   },
   {
    "shot_id": "S01_SH002",
@@ -1963,7 +1979,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_INTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S01_WALK",
+   "scene_id": "SC_S01_loc_british_trench",
+   "time_id": "T_1914_12_25_DAWN_FLASHFORWARD",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S01",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH005_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_british_trench to loc_no_mans_land within SUB_S01_WALK to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_INTRO (SUB_S01_WALK): Cross-cuts from loc_british_trench to loc_no_mans_land within SUB_S01_WALK to connect both sides."
   },
   {
    "shot_id": "S01_SH003",
@@ -2098,7 +2130,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_INTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S01_WALK",
+   "scene_id": "SC_S01_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DAWN_FLASHFORWARD",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S01",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH008_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_INTRO (SUB_S01_WALK): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S01_SH004",
@@ -2243,7 +2291,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_INTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S01_WALK",
+   "scene_id": "SC_S01_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DAWN_FLASHFORWARD",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S01",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S01_SH004_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_no_mans_land to loc_german_trench within SUB_S01_WALK to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_INTRO (SUB_S01_WALK): Cross-cuts from loc_no_mans_land to loc_german_trench within SUB_S01_WALK to connect both sides."
   },
   {
    "shot_id": "S01_SH005",
@@ -2446,7 +2510,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_INTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S01_WALK",
+   "scene_id": "SC_S01_loc_german_trench",
+   "time_id": "T_1914_12_25_DAWN_FLASHFORWARD",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S01",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S01_SH005_start",
+   "meaning_link": {
+    "type": "TIME_JUMP",
+    "text": "Transitions from S01 (loc_german_trench) to S02 (loc_western_front_map) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "insert in SEC_INTRO (SUB_S01_WALK): Transitions from S01 (loc_german_trench) to S02 (loc_western_front_map) to advance the dramatic sequence."
   },
   {
    "shot_id": "S02_SH001",
@@ -2592,7 +2672,23 @@
      "snd": "map sounds as SOUND_EVENTS v2 (pen line, chip tick); no bed",
      "tr": "cut"
     }
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_western_front_map",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_western_front_map",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH001_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "coverage in SEC_VERSE_1 (SUB_S02_STALEMATE): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S02_SH002",
@@ -2742,7 +2838,23 @@
      "snd": "map: pen line + soft dig thud when the line settles; no bed",
      "tr": "cut"
     }
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_western_front_map",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_western_front_map",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "coverage in SEC_VERSE_1 (SUB_S02_STALEMATE): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S02_SH003",
@@ -2905,7 +3017,23 @@
      "tr": "cut",
      "log": "La Bassee label lacks the accent (La Bassée) in S05 maps: data fix in episode.json key_coordinates"
     }
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_western_front_map",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_western_front_map",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH003_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_western_front_map to loc_british_trench within SUB_S02_STALEMATE to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "coverage in SEC_VERSE_1 (SUB_S02_STALEMATE): Cross-cuts from loc_western_front_map to loc_british_trench within SUB_S02_STALEMATE to connect both sides."
   },
   {
    "shot_id": "S02_SH004",
@@ -3112,7 +3240,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_british_trench",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH004_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_VERSE_1 (SUB_S02_STALEMATE): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S02_SH005",
@@ -3299,7 +3443,23 @@
     "reasons": [
      "small prop/ball action (letter) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_british_trench",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH005_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_VERSE_1 (SUB_S02_STALEMATE): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S02_SH006",
@@ -3433,7 +3593,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "small prop/ball action (letter) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_british_trench",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH004_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_VERSE_1 (SUB_S02_STALEMATE): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S02_SH007",
@@ -3567,7 +3743,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_british_trench",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH004_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_VERSE_1 (SUB_S02_STALEMATE): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S02_SH008",
@@ -3797,7 +3989,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_british_trench",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH008_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_VERSE_1 (SUB_S02_STALEMATE): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S02_SH009",
@@ -3999,7 +4207,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_VERSE_1",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S02_STALEMATE",
+   "scene_id": "SC_S02_loc_british_trench",
+   "time_id": "T_1914_12_MID_FLASHBACK",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S02",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S02_SH009_start",
+   "meaning_link": {
+    "type": "CONSEQUENCE",
+    "text": "Transitions from S02 (loc_british_trench) to S03 (loc_german_trench) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "insert in SEC_VERSE_1 (SUB_S02_STALEMATE): Transitions from S02 (loc_british_trench) to S03 (loc_german_trench) to advance the dramatic sequence."
   },
   {
    "shot_id": "S03_SH001",
@@ -4146,7 +4370,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_german_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH001_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_1 (SUB_S03_CAROL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S03_SH002",
@@ -4299,7 +4539,23 @@
     "reasons": [
      "small prop/ball action (photograph) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_german_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH002_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_1 (SUB_S03_CAROL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S03_SH003",
@@ -4432,7 +4688,23 @@
     "reasons": [
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_german_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH001_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_german_trench to loc_british_trench within SUB_S03_CAROL to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_1 (SUB_S03_CAROL): Cross-cuts from loc_german_trench to loc_british_trench within SUB_S03_CAROL to connect both sides."
   },
   {
    "shot_id": "S03_SH004",
@@ -4566,7 +4838,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_british_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH004_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_1 (SUB_S03_CAROL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S03_SH005",
@@ -4700,7 +4988,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_british_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH004_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_1 (SUB_S03_CAROL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S03_SH006",
@@ -4762,9 +5066,8 @@
    "route_locked": true,
    "shot_role": "dialogue_ots",
    "edit_plan": {
-    "continuity_mode": "coverage",
+    "continuity_mode": "continuation",
     "cut_in_reason": "line",
-    "scene_master": "S03_SH004_start",
     "axis_side": "A",
     "screen_direction": "none",
     "camera_in": "rest",
@@ -4778,6 +5081,11 @@
      "require_face": true,
      "min_frame_sharp": 15.0,
      "max_frame_change": 18.0
+    },
+    "continuity_from": "S03_SH005",
+    "continue_frame": {
+     "pick": "best_tail",
+     "window_s": 0.75
     }
    },
    "director_brief": {
@@ -4834,7 +5142,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_british_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S03_loc_british_trench",
+   "continuity_mode": "continuation",
+   "continuity_from": "S03_SH005",
+   "start_frame_source": "prev_best_tail:S03_SH005",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "continuation in SEC_CHORUS_1 (SUB_S03_CAROL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S03_SH007",
@@ -4965,7 +5289,28 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "visible_singing_coverage": {
+    "route": "route_e_mixed_coverage",
+    "detail_focus": "eyes_and_breath_before_singing",
+    "optional_variation": "route_a_profile_breath"
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_british_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH004_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_1 (SUB_S03_CAROL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S03_SH008",
@@ -5022,8 +5367,8 @@
    },
    "selective_control": null,
    "transition_out": "hard_cut",
-   "route": "video",
-   "route_reason": "a hero speaks or a body performs in this shot; LTX clip, one line at most (RT-02, VL-02)",
+   "route": "still_25d",
+   "route_reason": "Owner Decision Sec 11 (Route C+E): Thomas sings VISIBLY on screen via 2.5D audio-driven visemes (M0-M5) composited over approved painted 3/4 face, preserving identity at $0.",
    "route_locked": true,
    "shot_role": "action",
    "edit_plan": {
@@ -5099,7 +5444,41 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "visible_singing": {
+    "enabled": true,
+    "route": "route_c_25d_visemes",
+    "coverage_combination": "C+E",
+    "optional_variation": "route_a_profile_breath",
+    "experimental_fallback": "route_d_latentsync_1_6_mouth_only",
+    "viseme_inventory": [
+     "M0",
+     "M1",
+     "M2",
+     "M3",
+     "M4",
+     "M5"
+    ],
+    "framing": "medium_close_up_3_4",
+    "audio_driver": "phoneme_timing_primary_energy_secondary",
+    "ltx_face_rule_elsewhere": true
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_british_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH004_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_british_trench to loc_german_trench within SUB_S03_CAROL to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_1 (SUB_S03_CAROL): Cross-cuts from loc_british_trench to loc_german_trench within SUB_S03_CAROL to connect both sides."
   },
   {
    "shot_id": "S03_SH009",
@@ -5232,7 +5611,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_german_trench",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH001_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_german_trench to loc_no_mans_land within SUB_S03_CAROL to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_1 (SUB_S03_CAROL): Cross-cuts from loc_german_trench to loc_no_mans_land within SUB_S03_CAROL to connect both sides."
   },
   {
    "shot_id": "S03_SH010",
@@ -5420,7 +5815,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_1",
+   "chorus_id": "CHORUS_1",
+   "sub_scene_id": "SUB_S03_CAROL",
+   "scene_id": "SC_S03_loc_no_mans_land",
+   "time_id": "T_1914_12_24_NIGHT",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S03",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S03_SH010_start",
+   "meaning_link": {
+    "type": "TIME_JUMP",
+    "text": "Transitions from S03 (loc_no_mans_land) to S04 (loc_no_mans_land) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "insert in SEC_CHORUS_1 (SUB_S03_CAROL): Transitions from S03 (loc_no_mans_land) to S04 (loc_no_mans_land) to advance the dramatic sequence."
   },
   {
    "shot_id": "S04_SH001",
@@ -5565,7 +5976,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH001_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_no_mans_land to loc_german_trench within SUB_S04_CROSSING to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S04_CROSSING): Cross-cuts from loc_no_mans_land to loc_german_trench within SUB_S04_CROSSING to connect both sides."
   },
   {
    "shot_id": "S04_SH002",
@@ -5696,7 +6123,23 @@
     "reasons": [
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_german_trench",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH002_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_german_trench to loc_british_trench within SUB_S04_CROSSING to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Cross-cuts from loc_german_trench to loc_british_trench within SUB_S04_CROSSING to connect both sides."
   },
   {
    "shot_id": "S04_SH003",
@@ -5830,7 +6273,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_british_trench",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH003_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_british_trench to loc_german_trench within SUB_S04_CROSSING to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Cross-cuts from loc_british_trench to loc_german_trench within SUB_S04_CROSSING to connect both sides."
   },
   {
    "shot_id": "S04_SH004",
@@ -5961,7 +6420,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_german_trench",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH002_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_german_trench to loc_british_trench within SUB_S04_CROSSING to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Cross-cuts from loc_german_trench to loc_british_trench within SUB_S04_CROSSING to connect both sides."
   },
   {
    "shot_id": "S04_SH005",
@@ -6093,7 +6568,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_british_trench",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH003_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH006",
@@ -6224,7 +6715,23 @@
     "reasons": [
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_british_trench",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH003_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH007",
@@ -6355,7 +6862,23 @@
     "reasons": [
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_british_trench",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH003_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_british_trench to loc_no_mans_land within SUB_S04_CROSSING to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Cross-cuts from loc_british_trench to loc_no_mans_land within SUB_S04_CROSSING to connect both sides."
   },
   {
    "shot_id": "S04_SH008",
@@ -6418,10 +6941,9 @@
    "edit_plan": {
     "continuity_mode": "coverage",
     "cut_in_reason": "scene_change",
-    "scene_master": "S04_SH008_start",
     "axis_side": "A",
     "screen_direction": "away_from_camera",
-    "camera_in": "push",
+    "camera_in": "rest",
     "camera_out": "push",
     "screen_positions": {
      "char_thomas_hale": "center"
@@ -6432,7 +6954,8 @@
      "require_face": false,
      "min_frame_sharp": 15.0,
      "max_frame_change": 18.0
-    }
+    },
+    "scene_master": "S04_SH008_start"
    },
    "director_brief": {
     "narrative_purpose": "The walk across: fifty yards of frozen mud, wire and the dead (the hook paid off)",
@@ -6487,7 +7010,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH008_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "continuation in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH009",
@@ -6621,7 +7160,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH009_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH010",
@@ -6755,7 +7310,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH009_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S04_SH011",
@@ -6919,7 +7490,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH011_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S04_CROSSING): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S04_SH012",
@@ -7053,7 +7640,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH009_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH013",
@@ -7187,7 +7790,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH009_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH014",
@@ -7249,9 +7868,8 @@
    "route_locked": true,
    "shot_role": "action",
    "edit_plan": {
-    "continuity_mode": "coverage",
+    "continuity_mode": "continuation",
     "cut_in_reason": "action",
-    "scene_master": "S04_SH009_start",
     "axis_side": "A",
     "screen_direction": "none",
     "camera_in": "rest",
@@ -7264,6 +7882,11 @@
      "require_face": false,
      "min_frame_sharp": 15.0,
      "max_frame_change": 18.0
+    },
+    "continuity_from": "S04_SH013",
+    "continue_frame": {
+     "pick": "best_tail",
+     "window_s": 0.75
     }
    },
    "director_brief": {
@@ -7319,7 +7942,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04_loc_no_mans_land",
+   "continuity_mode": "continuation",
+   "continuity_from": "S04_SH013",
+   "start_frame_source": "prev_best_tail:S04_SH013",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "continuation in SEC_CHORUS_2 (SUB_S04_CROSSING): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S04_SH015",
@@ -7445,7 +8084,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S04_CROSSING",
+   "scene_id": "SC_S04_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S04",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S04_SH015_start",
+   "meaning_link": {
+    "type": "TIME_JUMP",
+    "text": "Transitions from S04 (loc_no_mans_land) to S05 (loc_western_front_map) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S04_CROSSING): Transitions from S04 (loc_no_mans_land) to S05 (loc_western_front_map) to advance the dramatic sequence."
   },
   {
    "shot_id": "S05_SH001",
@@ -7621,7 +8276,23 @@
      "snd": "map: soft tick per ripple; no bed",
      "tr": "cut"
     }
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_western_front_map",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_western_front_map",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH001_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH002",
@@ -7810,7 +8481,23 @@
      "snd": "map: counter ticks + soft knock when the number lands (BP-192)",
      "tr": "cut"
     }
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_western_front_map",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_western_front_map",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH002_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_western_front_map to loc_no_mans_land within SUB_S05_BURIAL to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Cross-cuts from loc_western_front_map to loc_no_mans_land within SUB_S05_BURIAL to connect both sides."
   },
   {
    "shot_id": "S05_SH003",
@@ -7990,7 +8677,23 @@
     "reasons": [
      "small prop/ball action (ball) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH003_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH004",
@@ -8125,7 +8828,23 @@
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (cigarette) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH003_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH005",
@@ -8260,7 +8979,23 @@
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (cigarette) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH003_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH006",
@@ -8386,7 +9121,23 @@
     "reasons": [
      "small prop/ball action (scissors) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH003_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH007",
@@ -8521,7 +9272,23 @@
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (cigarette) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH007_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH008",
@@ -8656,7 +9423,23 @@
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (letter) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH007_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH009",
@@ -8720,9 +9503,8 @@
    "route_locked": true,
    "shot_role": "dialogue_ots",
    "edit_plan": {
-    "continuity_mode": "coverage",
+    "continuity_mode": "continuation",
     "cut_in_reason": "line",
-    "scene_master": "S05_SH007_start",
     "axis_side": "A",
     "screen_direction": "none",
     "camera_in": "rest",
@@ -8736,6 +9518,11 @@
      "require_face": true,
      "min_frame_sharp": 15.0,
      "max_frame_change": 18.0
+    },
+    "continuity_from": "S05_SH008",
+    "continue_frame": {
+     "pick": "best_tail",
+     "window_s": 0.75
     }
    },
    "director_brief": {
@@ -8792,7 +9579,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05_loc_no_mans_land",
+   "continuity_mode": "continuation",
+   "continuity_from": "S05_SH008",
+   "start_frame_source": "prev_best_tail:S05_SH008",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "continuation in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH010",
@@ -8939,7 +9742,23 @@
     "reasons": [
      "small prop/ball action (photograph) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH010_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH011",
@@ -9075,7 +9894,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH007_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH012",
@@ -9211,7 +10046,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH007_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH013",
@@ -9346,7 +10197,23 @@
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (letter) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH007_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH014",
@@ -9474,7 +10341,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH014_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH015",
@@ -9608,7 +10491,23 @@
     "reasons": [
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH014_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH016",
@@ -9755,7 +10654,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH016_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH017",
@@ -9889,7 +10804,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH014_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH018",
@@ -10027,7 +10958,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH014_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S05_SH019",
@@ -10161,7 +11108,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH014_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH020",
@@ -10362,7 +11325,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH020_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S05_BURIAL): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S05_SH021",
@@ -10492,7 +11471,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S05_BURIAL",
+   "scene_id": "SC_S05_loc_no_mans_land",
+   "time_id": "T_1914_12_25_MIDDAY",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S05",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S05_SH014_start",
+   "meaning_link": {
+    "type": "TIME_JUMP",
+    "text": "Transitions from S05 (loc_no_mans_land) to S06 (loc_no_mans_land) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S05_BURIAL): Transitions from S05 (loc_no_mans_land) to S06 (loc_no_mans_land) to advance the dramatic sequence."
   },
   {
    "shot_id": "S06_SH001",
@@ -10646,7 +11641,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH001_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S06_SUNSET): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S06_SH002",
@@ -10780,7 +11791,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S06_SH003",
@@ -10914,7 +11941,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S06_SH004",
@@ -11048,7 +12091,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S06_SH005",
@@ -11193,7 +12252,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH005_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S06_SUNSET): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S06_SH006",
@@ -11327,7 +12402,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S06_SH007",
@@ -11461,7 +12552,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S06_SH008",
@@ -11595,7 +12702,23 @@
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S06_SH009",
@@ -11726,7 +12849,23 @@
      "close facial framing in medium_close_up (C2: route to 2.5D living photo or close hand/object insert)",
      "small prop/ball action (button) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S06_SUNSET): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S06_SH010",
@@ -11864,7 +13003,23 @@
      "two-person interaction in medium_wide (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (button) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S06_SH011",
@@ -12002,7 +13157,23 @@
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)",
      "small prop/ball action (button) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH002_start",
+   "meaning_link": {
+    "type": "POV_TRANSFER",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_CHORUS_2 (SUB_S06_SUNSET): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S06_SH012",
@@ -12187,7 +13358,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_CHORUS_2",
+   "chorus_id": "CHORUS_2",
+   "sub_scene_id": "SUB_S06_SUNSET",
+   "scene_id": "SC_S06_loc_no_mans_land",
+   "time_id": "T_1914_12_25_DUSK",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S06",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S06_SH012_start",
+   "meaning_link": {
+    "type": "TIME_JUMP",
+    "text": "Transitions from S06 (loc_no_mans_land) to S07 (loc_no_mans_land) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "insert in SEC_CHORUS_2 (SUB_S06_SUNSET): Transitions from S06 (loc_no_mans_land) to S07 (loc_no_mans_land) to advance the dramatic sequence."
   },
   {
    "shot_id": "S07_SH001",
@@ -12332,7 +13519,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_no_mans_land",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH001_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_OUTRO (SUB_S07_RETURN): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S07_SH002",
@@ -12466,7 +13669,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_no_mans_land",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH002_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S07_SH003",
@@ -12600,7 +13819,23 @@
      "frontal/near talking face in medium (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)",
      "two-person interaction in medium (C2: LTX warps two-person interaction and swaps identity)"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_no_mans_land",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH002_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_no_mans_land to loc_british_trench within SUB_S07_RETURN to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Cross-cuts from loc_no_mans_land to loc_british_trench within SUB_S07_RETURN to connect both sides."
   },
   {
    "shot_id": "S07_SH004",
@@ -12731,7 +13966,23 @@
     "reasons": [
      "frontal/near talking face in medium_wide (C2: LTX breaks talking faces; route to 2.5D living photo with voice or OTS)"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_british_trench",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH004_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S07_SH005",
@@ -12949,7 +14200,40 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "edit_plan": {
+    "continuity_mode": "coverage",
+    "cut_in_reason": "scene_change",
+    "scene_master": "S07_SH001_start",
+    "axis_side": "A",
+    "screen_direction": "none",
+    "camera_in": "rest",
+    "camera_out": "rest",
+    "screen_positions": {
+     "char_thomas_hale": "center"
+    },
+    "planned_end_state": {
+     "require_face": true,
+     "min_frame_sharp": 15.0,
+     "max_frame_change": 18.0
+    }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_british_trench",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH001_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_british_trench to loc_german_trench within SUB_S07_RETURN to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Cross-cuts from loc_british_trench to loc_german_trench within SUB_S07_RETURN to connect both sides."
   },
   {
    "shot_id": "S07_SH006",
@@ -13090,7 +14374,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_german_trench",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH006_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_german_trench to loc_british_trench within SUB_S07_RETURN to connect both sides."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Cross-cuts from loc_german_trench to loc_british_trench within SUB_S07_RETURN to connect both sides."
   },
   {
    "shot_id": "S07_SH007",
@@ -13222,7 +14522,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_british_trench",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH004_start",
+   "meaning_link": {
+    "type": "CAUSE",
+    "text": "Continues the physical action and emotional beat within the same scene."
+   },
+   "sound_bridge": "0.3s action/dialogue bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Continues the physical action and emotional beat within the same scene."
   },
   {
    "shot_id": "S07_SH008",
@@ -13354,7 +14670,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S07_RETURN",
+   "scene_id": "SC_S07_loc_british_trench",
+   "time_id": "T_1914_12_26_MORNING",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S07",
+   "continuity_mode": "coverage",
+   "continuity_from": null,
+   "start_frame_source": "S07_SH004_start",
+   "meaning_link": {
+    "type": "CONSEQUENCE",
+    "text": "Transitions from S07 (loc_british_trench) to S08 (loc_british_trench) to advance the dramatic sequence."
+   },
+   "sound_bridge": "0.4-0.6s J/L bridge",
+   "editorial_reason": "coverage in SEC_OUTRO (SUB_S07_RETURN): Transitions from S07 (loc_british_trench) to S08 (loc_british_trench) to advance the dramatic sequence."
   },
   {
    "shot_id": "S08_SH001",
@@ -13545,7 +14877,23 @@
     "reasons": [
      "small prop/ball action (button, letter) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S08_EPILOGUE",
+   "scene_id": "SC_S08_loc_british_trench",
+   "time_id": "T_1914_1918_EPILOGUE",
+   "place_id": "loc_british_trench",
+   "continuity_group_id": "CG_S08",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S08_SH001_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_british_trench to loc_german_trench within SUB_S08_EPILOGUE to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_OUTRO (SUB_S08_EPILOGUE): Cross-cuts from loc_british_trench to loc_german_trench within SUB_S08_EPILOGUE to connect both sides."
   },
   {
    "shot_id": "S08_SH002",
@@ -13748,7 +15096,23 @@
     "reasons": [
      "small prop/ball action (tin, button) (C2: LTX deforms small props in hands/feet)"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S08_EPILOGUE",
+   "scene_id": "SC_S08_loc_german_trench",
+   "time_id": "T_1914_1918_EPILOGUE",
+   "place_id": "loc_german_trench",
+   "continuity_group_id": "CG_S08",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S08_SH002_start",
+   "meaning_link": {
+    "type": "PARALLEL",
+    "text": "Cross-cuts from loc_german_trench to loc_no_mans_land within SUB_S08_EPILOGUE to connect both sides."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_OUTRO (SUB_S08_EPILOGUE): Cross-cuts from loc_german_trench to loc_no_mans_land within SUB_S08_EPILOGUE to connect both sides."
   },
   {
    "shot_id": "S08_SH003",
@@ -13912,7 +15276,23 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S08_EPILOGUE",
+   "scene_id": "SC_S08_loc_no_mans_land",
+   "time_id": "T_1914_1918_EPILOGUE",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S08",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S08_SH003_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_OUTRO (SUB_S08_EPILOGUE): Connects action to character reaction or meaningful physical detail."
   },
   {
    "shot_id": "S08_SH004",
@@ -14081,9 +15461,333 @@
     "reasons": [
      "wide/atmospheric/from-behind/slow motion fits LTX natural strengths"
     ]
-   }
+   },
+   "section_id": "SEC_OUTRO",
+   "chorus_id": null,
+   "sub_scene_id": "SUB_S08_EPILOGUE",
+   "scene_id": "SC_S08_loc_no_mans_land",
+   "time_id": "T_1914_1918_EPILOGUE",
+   "place_id": "loc_no_mans_land",
+   "continuity_group_id": "CG_S08",
+   "continuity_mode": "insert",
+   "continuity_from": null,
+   "start_frame_source": "S08_SH004_start",
+   "meaning_link": {
+    "type": "OBJECT_MOTIF",
+    "text": "Connects action to character reaction or meaningful physical detail."
+   },
+   "sound_bridge": "ambience_bed_carry",
+   "editorial_reason": "insert in SEC_OUTRO (SUB_S08_EPILOGUE): Connects action to character reaction or meaningful physical detail."
   }
  ],
  "av_contract": "av_events/1",
- "rhythm_profile": "solemn_historical_docudrama"
+ "rhythm_profile": "solemn_historical_docudrama",
+ "structure_profile": {
+  "profile_id": "pilot_6_8_min",
+  "chorus_count": 2,
+  "target_runtime_band_s": [
+   365,
+   465
+  ],
+  "nominal_runtime_s": 420,
+  "channel_standard_target": "8-12 min (3 distinct choruses)"
+ },
+ "sections": [
+  {
+   "section_id": "SEC_INTRO",
+   "section_type": "intro",
+   "structure_role": "Intro / Hook",
+   "purpose": "Unarmed soldier walks toward the enemy at dawn; pose the central dramatic question.",
+   "duration_band": [
+    25,
+    35
+   ],
+   "visual_lane_bands": {
+    "video": [
+     0.4,
+     0.6
+    ],
+    "still": [
+     0.3,
+     0.45
+    ],
+    "helper": [
+     0.0,
+     0.15
+    ]
+   },
+   "speech_mix_band": {
+    "narrator": [
+     0.9,
+     1.0
+    ],
+    "dialogue": [
+     0.0,
+     0.1
+    ]
+   },
+   "scene_ids": [
+    "S01"
+   ],
+   "transition_in": "fade_from_black",
+   "transition_out": "cross_dissolve_12f",
+   "sound_motif": "Freezing wind over no man's land; distant quiet",
+   "continuity_group_id": "CG_S01_HOOK"
+  },
+  {
+   "section_id": "SEC_VERSE_1",
+   "section_type": "verse",
+   "structure_role": "Verse 1",
+   "purpose": "Flashback to mid-December 1914: frozen front, mud, snipers, and Christmas expectations.",
+   "duration_band": [
+    60,
+    80
+   ],
+   "visual_lane_bands": {
+    "video": [
+     0.1,
+     0.25
+    ],
+    "still": [
+     0.55,
+     0.75
+    ],
+    "helper": [
+     0.1,
+     0.25
+    ]
+   },
+   "speech_mix_band": {
+    "narrator": [
+     0.85,
+     1.0
+    ],
+    "dialogue": [
+     0.0,
+     0.15
+    ]
+   },
+   "scene_ids": [
+    "S02"
+   ],
+   "transition_in": "cross_dissolve_12f",
+   "transition_out": "warm_fire_glow_dip",
+   "sound_motif": "Narration over map ticks, rain/sleet, distant artillery",
+   "continuity_group_id": "CG_S02_VERSE1"
+  },
+  {
+   "section_id": "SEC_CHORUS_1",
+   "section_type": "chorus",
+   "structure_role": "Chorus 1 — The Song Across No Man's Land",
+   "purpose": "Christmas Eve recognition: enemy becomes human through shared carol (Thomas visibly sings via Route C+E).",
+   "duration_band": [
+    70,
+    90
+   ],
+   "visual_lane_bands": {
+    "video": [
+     0.65,
+     0.85
+    ],
+    "still": [
+     0.1,
+     0.25
+    ],
+    "helper": [
+     0.0,
+     0.1
+    ]
+   },
+   "speech_mix_band": {
+    "narrator": [
+     0.5,
+     0.7
+    ],
+    "dialogue": [
+     0.3,
+     0.5
+    ]
+   },
+   "scene_ids": [
+    "S03"
+   ],
+   "transition_in": "warm_fire_glow_dip",
+   "transition_out": "cross_dissolve_14f",
+   "sound_motif": "Wind and trench ambience -> German carol -> Thomas visible vocal response -> unified carol",
+   "continuity_group_id": "CG_CHORUS_1_EVE"
+  },
+  {
+   "section_id": "SEC_VERSE_2_BRIDGE",
+   "section_type": "bridge",
+   "structure_role": "Verse 2 / Bridge",
+   "purpose": "Research-backed factual bridge (C-01, C-15, C-25, C-26): geography, patchy spread across Flanders, failed Papal appeal, Princess Mary tins.",
+   "duration_band": [
+    60,
+    80
+   ],
+   "visual_lane_bands": {
+    "video": [
+     0.1,
+     0.25
+    ],
+    "still": [
+     0.5,
+     0.75
+    ],
+    "helper": [
+     0.1,
+     0.3
+    ]
+   },
+   "speech_mix_band": {
+    "narrator": [
+     0.75,
+     0.95
+    ],
+    "dialogue": [
+     0.05,
+     0.25
+    ]
+   },
+   "scene_ids": [
+    "S03_BRIDGE_PROPOSED"
+   ],
+   "claims": [
+    "C-01",
+    "C-15",
+    "C-25",
+    "C-26"
+   ],
+   "transition_in": "cross_dissolve_14f",
+   "transition_out": "cross_dissolve_12f",
+   "sound_motif": "Carol L-cut tail -> archival paper rustle and map ticks -> frost dawn wind",
+   "continuity_group_id": "CG_BRIDGE_CONTEXT"
+  },
+  {
+   "section_id": "SEC_CHORUS_2",
+   "section_type": "chorus",
+   "structure_role": "Chorus 2 — The First Step and the Cost of One Day",
+   "purpose": "Christmas Day climax: crossing, handshake, shared humanity, joint burial of Karl, Harris removing cap, sunset question.",
+   "duration_band": [
+    100,
+    120
+   ],
+   "visual_lane_bands": {
+    "video": [
+     0.65,
+     0.85
+    ],
+    "still": [
+     0.1,
+     0.25
+    ],
+    "helper": [
+     0.0,
+     0.1
+    ]
+   },
+   "speech_mix_band": {
+    "narrator": [
+     0.45,
+     0.65
+    ],
+    "dialogue": [
+     0.35,
+     0.55
+    ]
+   },
+   "scene_ids": [
+    "S04",
+    "S05",
+    "S06"
+   ],
+   "transition_in": "cross_dissolve_12f",
+   "transition_out": "cross_dissolve_16f",
+   "sound_motif": "Frost footsteps -> subdued voices -> music opens on meeting -> withdraws at burial -> wind and silence",
+   "continuity_group_id": "CG_CHORUS_2_DAY"
+  },
+  {
+   "section_id": "SEC_OUTRO",
+   "section_type": "outro",
+   "structure_role": "Outro / Closing",
+   "purpose": "26 December return to arms, commanders' orders, four more years of war, and final historical verdict.",
+   "duration_band": [
+    50,
+    60
+   ],
+   "visual_lane_bands": {
+    "video": [
+     0.2,
+     0.4
+    ],
+    "still": [
+     0.45,
+     0.65
+    ],
+    "helper": [
+     0.05,
+     0.2
+    ]
+   },
+   "speech_mix_band": {
+    "narrator": [
+     0.85,
+     1.0
+    ],
+    "dialogue": [
+     0.0,
+     0.15
+    ]
+   },
+   "scene_ids": [
+    "S07",
+    "S08"
+   ],
+   "transition_in": "cross_dissolve_16f",
+   "transition_out": "fade_to_black",
+   "sound_motif": "Distant warning shots -> return of war bed -> restrained closing theme",
+   "continuity_group_id": "CG_OUTRO_RETURN"
+  }
+ ],
+ "three_chorus_expansion_proposal": {
+  "target_profiles": [
+   "8-10 min (nominal 9:00)",
+   "10-12 min (nominal 11:00)"
+  ],
+  "chorus_sequences": [
+   {
+    "chorus_id": "CHORUS_1",
+    "title": "The Song Across No Man's Land",
+    "dramatic_role": "Recognition",
+    "emotional_arc": "fear -> curiosity -> recognition",
+    "duration_band_s": [
+     65,
+     80
+    ],
+    "sound_identity": "Night wind -> German carol -> Thomas visible vocal response (Route C+E) -> shared carol"
+   },
+   {
+    "chorus_id": "CHORUS_2",
+    "title": "The First Step",
+    "dramatic_role": "Choice, trust, and growth of the truce",
+    "emotional_arc": "hesitation -> physical risk -> handshake -> wider gathering",
+    "duration_band_s": [
+     75,
+     90
+    ],
+    "sound_identity": "Frost footsteps -> cloth/rifle -> first greeting -> expanding crowd murmur"
+   },
+   {
+    "chorus_id": "CHORUS_3",
+    "title": "The Cost of One Day",
+    "dramatic_role": "Human consequence, grief, and moral question",
+    "emotional_arc": "warmth -> family memory -> shared burial -> silence -> dusk question",
+    "duration_band_s": [
+     80,
+     100
+    ],
+    "sound_identity": "Shovel and frozen earth -> score withdraws -> Harris cap silence -> dusk wind -> 'But not today'"
+   }
+  ]
+ }
 }

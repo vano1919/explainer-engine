@@ -3,7 +3,7 @@
  "about": "The Ink Chronicle archetype registry (roadmap 7.3 and 7.4, ICW-03; D-97): the 20 archetypes of research report F.1 with their default lane, fallback, Blender technique, camera language and reuse, and the 23 lane sub-categories of brief section 5 with the twelve attributes each one carries. Read by visual/shot_design.py (ShotDesigner) and visual/lanes.py (LanePlanner); validated by schemas/archetypes_ic.schema.json plus shot_design.registry_errors. Shares, tolerances and shot caps are never stored here: they are BP-108 and BP-109's (standards/sourced_rules.json). Planner weights below are heuristics (HYP), not validator thresholds. archetypes_ic/2 (2026-11-06, D-116): every sub-category carries its route (J2, J4, J5 or H), an optional route_alt (LTX_A2V = the D-90 audio-driven LTX clip) and route_status (T until the phase-3 test, then confirmed or rejected); visual/lanes.py writes the route into every planned shot.",
  "planner": {
   "video_run_max": 3,
-  "video_run_max_evidence": "HYP: roadmap 7.2 ('a VIDEO_3D run of more than three consecutive shots without a STILL_3D or HELPER is REVIEW'); REVIEW only (KP-48); proposed as a sourced_rules row for ICW-07",
+  "video_run_max_evidence": "HYP: roadmap 7.2 ('a VIDEO_3D run of more than three consecutive shots without a STILL_3D or HELPER is REVIEW'); REVIEW only (KP-48); continuous chorus sequences (continuity_group_id / role='chorus') are exempt from automatic margin swaps.",
   "intensity": {
    "mode": {"scene": 3, "insert": 2, "establish": 1, "narrated": 1},
    "dialogue_on_screen": 3,
