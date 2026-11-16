@@ -716,7 +716,8 @@ The current eight-stage v4.3 pipeline remains the source of execution order: scr
 
 **PROPOSED**
 - Add JSON Schema and semantic validation for episode_timing/1 and episode_timing/2 using the existing Draft 2020-12 + jsonschema contract framework.
-- Preserve both versions and their emitted shapes. Validate the authoritative clock at the persistence boundary only after the full writer/consumer inventory proves the contract covers all legitimate variants.
+- Validate both write and read boundaries: persist_authoritative_clock() validates before atomic persistence; one shared validated load_clock(path) is used by load(root) and every direct timing-file reader. Do not leave a json.loads() bypass in the active clock paths.
+- Preserve both versions and their emitted shapes, current path override/fallback precedence and existing timing algorithms. Do not silently copy or reconcile two physical timing files.
 - After the timeline contract is stable, expose a read-only ProductionStateSnapshot and a read-only dependency graph projection from current canonical records.
 
 **KEEP**
@@ -790,9 +791,9 @@ For each call site record: file/function, producer or consumer, schema version(s
 **Expected scope, subject to P1.0 evidence:**
 - explainer_engine/schemas/episode_timing.schema.json
 - explainer_engine/core/contracts.py
-- explainer_engine/episode/timing.py (validation at the authoritative persistence boundary only; no timing algorithm edits)
-- tools/render_tools/build_segments.py and tools/render_tools/mix.py (only if the final design needs validated loading or explicit path/authority handling; preserve their current render/audio behavior)
-- explainer_engine/gemini_task/timing.py (only if a shared validated loader is introduced; preserve its read-only judgment behavior)
+- explainer_engine/episode/timing.py (shared validated load_clock(path), load(root) delegation and persist_authoritative_clock() validation; no timing algorithm edits)
+- tools/render_tools/build_segments.py and tools/render_tools/mix.py (replace direct timing json.loads() reads with the shared validated loader; preserve current configured-path and fallback precedence, render/audio behavior)
+- explainer_engine/gemini_task/timing.py (remain read-only; receive validated data through ET.load)
 - tests/fixtures/contracts/episode_timing/valid.json
 - tests/fixtures/contracts/episode_timing/invalid__*.json
 - tests/fixtures/contracts/episode_timing/valid_v2.json
@@ -808,6 +809,8 @@ Do not expand the file list without documenting why and updating the task contra
 - /1 must accept both retime() and retime_with_clips() outputs. /2 must accept retime_with_edit_points() output, including legitimate optional metadata retained from its /1 input.
 - Require only fields guaranteed by every producer of that version. Optional producer-specific fields must remain optional unless the call-site inventory proves otherwise.
 - Keep additionalProperties strict where the existing emitted document shape is fully enumerated; do not reject legitimate fields discovered in P1.0.
+- load_clock(path) validates and returns the unchanged document; load(root) keeps its current None-if-missing behavior and delegates when the clock exists. Readers must not mutate or upgrade loaded documents.
+- persist_authoritative_clock() validates the final versioned document before write_json_atomic; it must not auto-fix a stale render_epoch or rewrite historical files.
 - Do not auto-upgrade /1 documents to /2, rewrite historical files, rename keys, or normalize values during validation.
 
 **Semantic validation to specify and test**
@@ -828,9 +831,10 @@ The exact JSON Schema fields and semantic edge cases are finalized from P1.0's c
 2. Add invalid fixtures for each version: missing required field, invalid frame geometry, discontinuous/overlapping ranges, invalid spine coordinate, mismatched /2 end/seconds, and stale timing_id/render_epoch as applicable.
 3. Add unit tests proving both versions pass unchanged, invalid cases fail with findings, and the current timing fingerprint is preserved.
 4. Add runner-level regression proving both voice branches persist a schema-valid clock and downstream timing consumers still read it; use fake/local inputs only.
-5. Add offline regression for render-tool synchronization, segment-build reading and mixer reading/writing across the configured `TRUCE_TIMING_JSON` path and episode fallback. No video generation, paid audio generation or external GPU job is allowed.
-6. Run focused tests first, then the relevant contracts/lifecycle/timing/runner/render-tool regression tests, then the repository's full non-system Quality workflow.
-7. Independent fresh-context review checks schema coverage against every inventory row, path authority, no data-shape drift, no unrelated edits and no unapproved paid call.
+5. Add offline regression for render-tool synchronization, segment-build reading and mixer reading/writing across the configured TRUCE_TIMING_JSON path and episode fallback. Verify precedence when both locations exist and detect clock mismatch without silently copying either file. No video generation, paid audio generation or external GPU job is allowed.
+6. Add a read-only regression proving gemini_task/timing.py receives validated timing through ET.load and preserves its measured-versus-planned judgment.
+7. Run focused tests first, then the relevant contracts/lifecycle/timing/runner/render-tool regression tests, then the repository's full non-system Quality workflow.
+8. Independent fresh-context review checks schema coverage against every inventory row, path authority, no data-shape drift, no unrelated edits and no unapproved paid call.
 
 **Acceptance criteria**
 - Every active producer's valid output validates under exactly one declared version.
