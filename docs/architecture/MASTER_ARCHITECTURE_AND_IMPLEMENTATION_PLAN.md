@@ -9,7 +9,7 @@
 
 ## 0. Live status — update after every milestone
 
-**Overall:** Phase 0 is complete with explicit limitations and PR Quality run #997 passed. Phase 1 is in specification only. No production source code has been changed; PR #195 remains Draft/Open and has no human review; no existing branch/PR has been merged, closed or retargeted; no paid generation or cloud GPU job has been launched.
+**Overall:** Phase 0 is complete with explicit limitations. Phase 1 remains in read-only inventory/specification. PR Quality runs #997 and #1001 passed on the documentation branch; PR #195 remains Draft/Open and has no human review. No production source code, runtime episode data, existing branch or other PR has been changed; no paid generation or cloud GPU job has been launched.
 
 | ID | Work item | Status | Evidence / limitation |
 |---|---|---|---|
@@ -21,7 +21,7 @@
 | P0.5 | KEEP / IMPROVE / REPLACE / REMOVE / BUILD disposition | DONE — INITIAL | See section 4. Code-level changes still require individual specs and tests. |
 | P0.6 | Target architecture and implementation roadmap | DONE — PROPOSED BASELINE | See sections 5–9. Some concrete infrastructure products remain benchmark decisions. |
 | P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | Master file fetched back and checked; Draft PR #195 contains one documentation file and targets the active baseline. Quality run #997 passed on head b6668d1. No reviews, inline threads or PR comments exist; awaiting human review/merge. |
-| P1.0 | Current state ownership and timeline writer/consumer inventory | IN PROGRESS | Initial read confirms separate Episode manifest, EpisodeJob lifecycle, JobStore checkpoints, v4.3 stage records and audio/timing.json. Full repository call-site inventory is still required before enabling validation at the write boundary. |
+| P1.0 | Current state ownership and timeline writer/consumer inventory | IN PROGRESS | Four source-level persistence paths were confirmed: two v4.3 voice branches, render_tools/build_segments and render_tools/mix; gemini_task/timing is another reader. External TRUCE_TIMING_JSON vs episode/audio/timing.json authority and a full source-tree sweep remain unresolved. |
 | P1.1 | Phase 1 architecture/specification | IN PROGRESS | Drafted below: retain current owners, add episode_timing/1 and /2 contracts first, then read-only state/dependency projections. Awaiting Owner acceptance. |
 | P1.2 | Timeline schema, semantic validator and fixtures | NOT STARTED | No code or schema changed. Blocked on P1.0 inventory and acceptance of this specification. |
 | P1.3 | Read-only Production State and dependency snapshot | NOT STARTED | No new persisted state file or scheduler. Design follows only after P1.2 compatibility is proven. |
@@ -695,7 +695,7 @@ These records have different owners and meanings. They must not be collapsed int
 | job_manifest.json, job_manifest/1 | core/store.EpisodeJob + core/contracts.py | Approval lifecycle, gated transitions, approvals, reservations and artifact hashes | KEEP; do not silently wire it into the v4.3 runner or change its lifecycle |
 | state.json + artifacts/NN_*.json | core/store.JobStore | Generic job checkpoint/status and contiguous completed-stage prefix for callers that use JobStore | KEEP; this is not the v4.3 episode stage record store |
 | production/stages/<stage>.json, episode_stage/1 | episode/run.py | v4.3 stage verdicts, outputs, rehearsal flag and input fingerprint | KEEP; current pipeline remains sequential in this phase |
-| audio/timing.json, episode_timing/1 or /2 | episode/timing.py | Active v4.3 authoritative film clock: shot frame ranges, word spines and (in /2) edit-point/clip-reconciled schedules | KEEP as the canonical v4.3 clock; add an explicit contract before changing its format |
+| audio/timing.json and configured TRUCE_TIMING_JSON, episode_timing/1 or /2 | episode/timing.py; render_tools/build_segments.py; render_tools/mix.py | Same clock data shape: shot frame ranges, word spines and (in /2) edit-point/clip-reconciled schedules. The v4.3 runner defaults to episode/audio/timing.json; Truce render tools default to an external inputs/clock/timing.json path and fall back to episode/audio/timing.json when that configured file is absent. | KEEP; establish one explicit authority per run and validate every reader/writer without silently syncing divergent copies |
 
 A future ProductionStateSnapshot is a read-only projection over these owners. It is not a new authority, does not write back to these records, and must distinguish NOT_PRESENT / UNKNOWN from PASS. It must never invent an approval, stage completion, cost, asset or clock version when the source record is absent.
 
@@ -708,7 +708,10 @@ The current eight-stage v4.3 pipeline remains the source of execution order: scr
 - EpisodeJob and JobStore already provide lifecycle rules, atomic writes and checkpoint behavior for their respective callers.
 - episode/run.py stores independently fingerprinted stage records.
 - episode/timing.py emits episode_timing/1 from retime()/retime_with_clips(), and episode_timing/2 after retime_with_edit_points().
-- persist_authoritative_clock() writes audio/timing.json atomically; both normal narration and clip-spoken voice paths reach it.
+- The v4.3 runner has two persistence call paths: normal narration (stage_voice) and clip-spoken dialogue (_voice_with_clips); both end at persist_authoritative_clock().
+- Truce render tools add two more call paths: build_segments.synchronize_episode_clock() retimes and persists to its configured output path; mix.run_mix() does the same when timing_doc is not supplied. Both use the same episode/timing.py functions.
+- The v4.3 runner defaults to episode/audio/timing.json. tools/render_tools defaults to the external TRUCE_TIMING_JSON / inputs/clock/timing.json path, and reads episode/audio/timing.json only as a fallback when the configured timing path is absent. The two paths are not automatically reconciled by a shared filesystem path; authority selection must be explicit per run.
+- episode/run.py and tools/render_tools also contain direct JSON reads of the selected clock. gemini_task/timing.py reads through ET.load(). The inventory below records the observed entry points.
 - timing_id is currently a 16-character SHA-256-derived fingerprint of fps, total frames and the ordered shot frame/trim geometry. Consumers use timing_id / render_epoch and per-shot frame values for alignment.
 
 **PROPOSED**
@@ -747,7 +750,40 @@ Inventory the complete active-branch call graph and classify every occurrence of
 - Readers/consumers: load(), Episode.timing(), timed_script(), spines_of(), compute_timing_id(), verify_clock_alignment(), frame_to_sample(), _anchor_rows(), sound planning, clips/direction/render/assembly/QA, and every direct audio/timing.json reader.
 - Compatibility inputs: older episode_timing/1 documents, clip-spoken episodes, missing narration/rehearsal behavior, edit-point/clip records, and any existing runtime timing files outside the tracked source tree.
 
-For each call site record: file/function, producer or consumer, schema version(s), required fields, mutation behavior, timing_id/render_epoch use, and test coverage. Search must include the active integration branch, not just main/default. The inventory is not complete merely because the known stage_voice call path was found. No schema enforcement is enabled until this inventory and fixture set cover all active variants.
+For each call site record: file/function, producer or consumer, schema version(s), required fields, mutation behavior, timing_id/render_epoch use, and test coverage. Search must include the active integration branch, not just main/default. No schema enforcement is enabled until this inventory and fixture set cover all active variants.
+
+### P1.0 observed writer / reader call sites (read-only audit)
+
+| File / function | Role | Observed behavior | Clock/path implications |
+|---|---|---|---|
+| \`explainer_engine/episode/run.py::stage_voice\` (around lines 446–479) | Writer path A | \`align_read → retime → retime_with_edit_points → persist_authoritative_clock\` | Writes the active episode's \`audio/timing.json\`; final document is /2 |
+| \`explainer_engine/episode/run.py::_voice_with_clips\` (around lines 840–879) | Writer path B | \`retime_with_clips → retime_with_edit_points → persist_authoritative_clock\` | Same destination and persistence function; final document is /2 |
+| \`tools/render_tools/build_segments.py::synchronize_episode_clock\` (around lines 150–177) | Writer path C | Reads raw timing + script + edit points, calls \`ET.retime_with_edit_points\`, then \`ET.persist_authoritative_clock\` | Default output is external \`TRUCE_TIMING_JSON\` (\`inputs/clock/timing.json\`); optional \`out_timing_path\` can redirect it |
+| \`tools/render_tools/mix.py::run_mix\` (around lines 598–630) | Conditional writer path D | When \`timing_doc\` is not supplied, reads \`T_PATH\`, calls \`ET.retime_with_edit_points\`, persists it; with supplied \`timing_doc\`, it skips this write | Uses the same configurable external path, with an \`audio/timing.json\` fallback for reading the authority |
+| \`tools/render_tools/build_segments.py::build\` (around lines 200–237) | Reader / consumer | Loads the authority, calls \`ET.verify_clock_alignment\`, verifies each shot's clock/frame alignment, and binds frame range + \`timing_id\` + \`render_epoch\` into the segment cache key/record | Direct JSON read; does not use a validated shared loader |
+| \`tools/render_tools/mix.py::run_mix\` (around lines 620–690+) | Reader / consumer | Verifies the selected authority and consumes \`shots\`, \`narrator_offsets\`, \`dialogue_positions\`, frame ranges and segment boundaries to place narrator, clip dialogue, ambience, SFX and music | Direct JSON read; does not use a validated shared loader |
+| \`explainer_engine/episode/run.py::Episode.timing / timed_script\` and G7–G10 stages | Reader / consumer | \`TM.load\`, \`TM.timed_script\`, \`TM.spines_of\`, clock identity propagation and \`TM.verify_clock_alignment\` for direction/clips, sound, assembly and QA | Reads episode/audio/timing.json; stage records also bind the clock identity |
+| \`explainer_engine/gemini_task/timing.py::durations\` | Reader / consumer | Calls \`ET.load(root)\`; uses measured per-shot seconds to judge shot/frame and clip-duration suitability before picture work | Explicitly declares G6's \`audio/timing.json\` as the only timing source; no write |
+| \`explainer_engine/episode/production_runner.py\` | Indirect wrapper / helper | Imports only \`is_spoken_line\` and \`strip_stage_directions\` from episode/timing; delegates execution to \`episode/run.py\` | No independent clock read/write identified |
+| \`explainer_engine/maps/timeline.py\` | Downstream frame mapping | Converts supplied word anchors into item-relative map/HUD event frames | Consumes a supplied spine; does not load or persist the master clock |
+
+**Observed version shapes**
+- \`retime()\` emits \`episode_timing/1\`: \`schema\`, \`fps\`, \`read_s\`, \`total_frames\`, \`shots\`, \`spines\`, \`coverage\`, \`alignment_status\`, \`unmatched\`.
+- \`retime_with_clips()\` also emits /1 and adds \`inserts\` and \`clip_timed\`; those keys must be treated as legitimate optional /1 fields.
+- \`retime_with_edit_points()\` upgrades the result to /2 and adds the edit-point/trim-derived frame schedule, segment bounds, narrator offsets, dialogue positions, map events, on-screen text, frame deltas, \`timing_id\` and \`render_epoch\`.
+- \`persist_authoritative_clock()\` recomputes \`timing_id\` but preserves an existing \`render_epoch\` when one is present. Semantic validation should therefore detect a stale epoch rather than silently repairing it.
+
+**Adjacent clocks / contracts — do not merge**
+- \`explainer_engine/audio/spine.py\` compiles the older \`audio_spine/1\` and /2 contract from \`words.json\` + \`timed.json\` and its own post-hoc windows. The current v4.3 runner does not use it as the \`audio/timing.json\` writer.
+- \`explainer_engine/production/timing.py\` produces a separate production-timed/edit-decision structure from the older production script flow.
+- \`explainer_engine/maps/timeline.py\` maps an already supplied word spine to local map/HUD event frames; it is not a second master clock.
+- \`explainer_engine/gemini_task/timing.py\` is not an independent clock: it reads the active episode clock through \`episode/timing.py\`.
+
+**Current coverage / gaps**
+- \`tests/unit/test_v43_runner.py\` exercises the /1 retiming/word-spine logic, \`timed_script\`, shot tiling and the read/clip timing behavior in the v4.3 runner tests.
+- \`tests/unit/test_contracts.py\` registers contract schemas and fixtures, but \`episode_timing\` is absent from its contract list; no \`episode_timing.schema.json\` or \`tests/fixtures/contracts/episode_timing/\` exists on this baseline.
+- The inspected test candidates did not reveal a focused regression for \`tools/render_tools/build_segments.py::synchronize_episode_clock\` or \`tools/render_tools/mix.py::run_mix\` persistence/reader compatibility. Add explicit offline coverage for those paths before enforcing the schema.
+- This is a source-level inventory of the identified active runtime paths, not yet a mathematically exhaustive search of all 967 Python paths in the recursive repository tree. GitHub's code-search endpoint returned no indexed matches for this branch. A final source-tree sweep and the physical timing-file provenance check remain open P1.0 tasks.
 
 ### 8.3.4 P1.2 — first implementation slice: episode_timing contract
 
@@ -755,6 +791,8 @@ For each call site record: file/function, producer or consumer, schema version(s
 - explainer_engine/schemas/episode_timing.schema.json
 - explainer_engine/core/contracts.py
 - explainer_engine/episode/timing.py (validation at the authoritative persistence boundary only; no timing algorithm edits)
+- tools/render_tools/build_segments.py and tools/render_tools/mix.py (only if the final design needs validated loading or explicit path/authority handling; preserve their current render/audio behavior)
+- explainer_engine/gemini_task/timing.py (only if a shared validated loader is introduced; preserve its read-only judgment behavior)
 - tests/fixtures/contracts/episode_timing/valid.json
 - tests/fixtures/contracts/episode_timing/invalid__*.json
 - tests/fixtures/contracts/episode_timing/valid_v2.json
@@ -790,8 +828,9 @@ The exact JSON Schema fields and semantic edge cases are finalized from P1.0's c
 2. Add invalid fixtures for each version: missing required field, invalid frame geometry, discontinuous/overlapping ranges, invalid spine coordinate, mismatched /2 end/seconds, and stale timing_id/render_epoch as applicable.
 3. Add unit tests proving both versions pass unchanged, invalid cases fail with findings, and the current timing fingerprint is preserved.
 4. Add runner-level regression proving both voice branches persist a schema-valid clock and downstream timing consumers still read it; use fake/local inputs only.
-5. Run focused tests first, then the relevant contracts/lifecycle/timing/runner regression tests, then the repository's full non-system Quality workflow.
-6. Independent fresh-context review checks schema coverage against every inventory row, no data-shape drift, no unrelated edits and no unapproved paid call.
+5. Add offline regression for render-tool synchronization, segment-build reading and mixer reading/writing across the configured `TRUCE_TIMING_JSON` path and episode fallback. No video generation, paid audio generation or external GPU job is allowed.
+6. Run focused tests first, then the relevant contracts/lifecycle/timing/runner/render-tool regression tests, then the repository's full non-system Quality workflow.
+7. Independent fresh-context review checks schema coverage against every inventory row, path authority, no data-shape drift, no unrelated edits and no unapproved paid call.
 
 **Acceptance criteria**
 - Every active producer's valid output validates under exactly one declared version.
@@ -899,15 +938,16 @@ Concrete DB, queue/event broker, dashboard framework, object-storage vendor, pro
 - This audit did not independently view the HF media and did not execute tests; project reports are attributed as reports.
 
 ## 2026-11-16 — Phase 1 initial code discovery (specification only)
-- PR #195 Quality run #997 completed successfully on PR head b6668d1; non-system tests, docs lint and palette checks passed. No human review, inline review thread or PR discussion comment was present at the time of this update.
-- Confirmed separate owners for episode.json, EpisodeJob/job_manifest.json, JobStore/state.json, production/stages/*.json and audio/timing.json. They are not interchangeable state stores.
-- Confirmed both narration and clip-spoken voice paths call the same atomic authoritative-clock persistence function; the complete repository-wide writer/consumer inventory remains P1.0 work.
+- PR #195 Quality run #997 passed on the first Phase 1 spec commit b6668d1; follow-up run #1001 passed on commit 6fa90a7. Non-system tests, docs lint and palette checks were green. No human review, inline review thread or PR discussion comment was present at the time of this update.
+- Confirmed separate owners for episode.json, EpisodeJob/job_manifest.json, JobStore/state.json, production/stages/*.json and the film clock. These are not interchangeable state stores.
+- Expanded the writer inventory from the two v4.3 voice branches to include tools/render_tools/build_segments.py and tools/render_tools/mix.py. Also found gemini_task/timing.py as a reader of the same clock.
+- Identified a physical path split: the v4.3 runner writes episode/audio/timing.json, while Truce render tools default to external TRUCE_TIMING_JSON / inputs/clock/timing.json, with episode/audio/timing.json as a read fallback. A single logical schema does not yet prove that these file copies share one authority.
 - Confirmed episode_timing/1 and /2 are emitted by the active timing code but have no dedicated schema, fixtures or entry in the current contract registry/table.
-- No code, runtime data, branch baseline, existing PR or paid resource was changed. Phase 1 implementation remains blocked on P1.0 inventory and Owner acceptance of the specification.
+- No code, runtime data, existing branch or other PR was changed. Phase 1 implementation remains blocked on the final P1.0 sweep, path-provenance decision and Owner acceptance of the specification.
 
 ## Next actions
 1. Review PR #195, including the Phase 1 detailed specification; the PR remains Draft and unmerged.
-2. Finish P1.0 read-only inventory of all active-branch timing writers, readers and versioned output shapes.
+2. Finish the P1.0 source-tree sweep and resolve the external-vs-episode timing-file authority/provenance for each production run.
 3. Obtain Owner acceptance of this specification.
 4. Only then implement P1.2 as a small schema/semantic-validator/fixture/test PR. Do not start a broad refactor or build a parallel Production State.
 
