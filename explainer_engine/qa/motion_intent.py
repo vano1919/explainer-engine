@@ -394,7 +394,10 @@ def aim_row(rows: list[dict] | None) -> dict:
 def effects_seen_row(rows: list[dict] | None) -> dict:
     if not rows:
         return G.row("effect_seen_3s", None, "no effect in the shot")
-    weak = [r for r in rows if r["change_p95"] < SEEN_REVIEW]
+    active = [r for r in rows if not r.get("still_by_design")]
+    if not active:
+        return G.row("effect_seen_3s", True, "still_by_design: restrained shot", rows)
+    weak = [r for r in active if r["change_p95"] < SEEN_REVIEW]
     return G.row("effect_seen_3s", not weak, ("every effect changes visibly within 3 s" if not weak else
                  "unseen in 3 s: " + ", ".join(f"{r['op']} ({r['change_p95']:.1f} levels)" for r in weak))
                  + f" (REVIEW below {SEEN_REVIEW:g} levels)", rows, level=G.REVIEW)

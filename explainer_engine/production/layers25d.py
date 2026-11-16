@@ -548,8 +548,9 @@ class Scene:
         self.fx = {}
         luma = src.astype(np.float32) @ np.array([0.299, 0.587, 0.114], np.float32)
         self.luma = luma
-        for e in self.p["effects"]:
+        for idx, e in enumerate(self.p["effects"]):
             name = e["effect"]
+            fx_key = e.get("id") or f"fx_{idx}"
             st = {}
             if name == "fire_flicker":
                 if e.get("region"):
@@ -596,16 +597,17 @@ class Scene:
             col_dark = src[luma <= np.quantile(luma, 0.3)].reshape(-1, 3).mean(axis=0)
             st["mist_col"] = 0.6 * np.array([206, 209, 214], np.float32) + 0.4 * col_far.astype(np.float32)
             st["smoke_col"] = 0.5 * np.array([88, 82, 78], np.float32) + 0.5 * col_dark.astype(np.float32)
-            self.fx[name] = st
+            self.fx[fx_key] = st
         # where in the depth each effect's region sits: its plane carries the region with the camera
         self.region_plane = {}
-        for e in self.p["effects"]:
+        for idx, e in enumerate(self.p["effects"]):
+            fx_key = e.get("id") or f"fx_{idx}"
             if e.get("region"):
                 x0, y0, x1, y1 = e["region"]
                 patch = self.depth[int(y0 * self.sh):max(int(y0 * self.sh) + 1, int(y1 * self.sh)),
                                    int(x0 * self.sw):max(int(x0 * self.sw) + 1, int(x1 * self.sw))]
                 ts = np.array(self.thresholds)
-                self.region_plane[e["effect"]] = int(np.searchsorted(ts, float(np.median(patch)))) if ts.size else 0
+                self.region_plane[fx_key] = int(np.searchsorted(ts, float(np.median(patch)))) if ts.size else 0
 
     def _off_sky(self) -> np.ndarray:
         """1 on the ground, about 0.03 on the open sky: the sky is the flat floor of the depth map (the farthest plateau)
@@ -768,10 +770,14 @@ def render_frame(sc: Scene, f: int, out_meta: dict | None = None) -> np.ndarray:
     far = np.clip(1.0 - depth, 0.0, 1.0)
     W, H = sc.W, sc.H
     k = H / 1080.0
-    for e in p["effects"]:
+    fx_seen = out_meta.setdefault("fx_seen", {}) if out_meta is not None else None
+    before_fx = None
+    for idx, e in enumerate(p["effects"]):
+        before_fx = rgb if (fx_seen is not None and t <= 3.0 + 1e-6) else None
         name, s = e["effect"], e["strength"]
-        st = sc.fx.get(name, {})
-        plane_m = ms[sc.region_plane.get(name, len(ms) // 2)]
+        fx_key = e.get("id") or f"fx_{idx}"
+        st = sc.fx.get(fx_key, sc.fx.get(name, {}))
+        plane_m = ms[sc.region_plane.get(fx_key, sc.region_plane.get(name, len(ms) // 2))]
         mask = _map_field(sc, st["mask"], plane_m) if "mask" in st else None
         if name == "fire_flicker":
             field = _map_field(sc, st["field"], ms[len(ms) // 2])
@@ -854,6 +860,15 @@ def render_frame(sc: Scene, f: int, out_meta: dict | None = None) -> np.ndarray:
     if out_meta is not None:
         out_meta["cover"] = cover
         out_meta["matrices"] = ms
+        if before_fx is not None and fx_seen is not None:
+            diff_m = np.abs(rgb.astype(np.float32) - before_fx.astype(np.float32)).mean(axis=2)
+            if mask is not None and (mask > 0.25).any():
+                val = float(np.percentile(diff_m[mask > 0.25], 95))
+            else:
+                val = float(np.percentile(diff_m, 95))
+            rec = fx_seen.setdefault(idx, {"op": name, "index": idx, "change_p95": 0.0, "at_s": None})
+            if val > rec["change_p95"]:
+                rec["change_p95"], rec["at_s"] = round(val, 2), round(t, 2)
     return np.clip(rgb + 0.5, 0, 255).astype(np.uint8)
 
 
@@ -1128,6 +1143,7 @@ def render_clip(shot: dict, picture: Path, out_mp4: Path, *, width: int = 1920, 
                              "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p", str(tmp)],
                             stdin=subprocess.PIPE)
     meter = Meter(sc, measure_faces)
+    fx_seen_all: dict[int, dict] = {}
     probe = sorted({p["frames"] // 2, min(p["frames"] - 1, p["frames"] // 2 + 1)})
     hashes = {}
     t1 = time.time()
@@ -1142,6 +1158,10 @@ def render_clip(shot: dict, picture: Path, out_mp4: Path, *, width: int = 1920, 
                           ).astype(np.uint8)
             if f in probe:
                 hashes[f] = hashlib.sha256(fr.tobytes()).hexdigest()
+            for k_fx, v_fx in (meta.get("fx_seen") or {}).items():
+                prev = fx_seen_all.get(k_fx)
+                if prev is None or v_fx["change_p95"] > prev["change_p95"]:
+                    fx_seen_all[k_fx] = dict(v_fx)
             meter.add(f, fr, meta)
             proc.stdin.write(fr.tobytes())
     finally:
@@ -1167,6 +1187,7 @@ def render_clip(shot: dict, picture: Path, out_mp4: Path, *, width: int = 1920, 
             "events": [{k: e[k] for k in ("event_id", "op", "start_frame", "end_frame")} | {"decision": e["audio"]["decision"]}
                        for e in p["events"]],
             "handheld": p["handheld"], "rack": p["rack"],
-            "effects": [e["effect"] for e in p["effects"]], "impacts": p["impacts"], "families": p["families"],
+            "effects": [e["effect"] for e in p["effects"]], "effects_seen": [fx_seen_all[k] for k in sorted(fx_seen_all)],
+            "impacts": p["impacts"], "families": p["families"],
             "prep_s": round(prep_s, 2), "sec_per_frame": round(spf, 3), "end_picture": end,
             "gates": G.verdict(rows), "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest()}

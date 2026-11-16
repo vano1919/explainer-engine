@@ -59,19 +59,55 @@ def wind(st) -> tuple[float, float]:
     return (float(w[0]), float(w[1])) if w else WIND_DEFAULT
 
 
+def resolve_target_contract(e: dict, st=None) -> dict:
+    """Resolve and validate the spatial target contract for a living effect."""
+    mid = e.get("mask") or e.get("object_id") or e.get("mask_id")
+    lid = e.get("light") or (e.get("lights")[0] if e.get("lights") else None)
+    holder_id = e.get("holder_object_id") or (e.get("target") or {}).get("holder_object_id")
+    box = e.get("box")
+    frame_wide = bool(e.get("frame_wide") or (e.get("params") or {}).get("frame_wide"))
+    if mid:
+        exists = (st is None) or (mid in getattr(st, "masks_src", {}))
+        return {"valid": exists, "kind": "mask", "target_id": mid, "holder_object_id": holder_id,
+                "reason": None if exists else f"mask {mid!r} not in masks_src"}
+    if lid:
+        return {"valid": True, "kind": "light", "target_id": lid, "holder_object_id": holder_id, "reason": None}
+    if box:
+        return {"valid": True, "kind": "box", "target_id": tuple(box), "holder_object_id": holder_id, "reason": None}
+    if frame_wide:
+        return {"valid": True, "kind": "frame_wide", "target_id": "frame_wide", "holder_object_id": holder_id, "reason": None}
+    return {"valid": False, "kind": None, "target_id": None, "holder_object_id": holder_id,
+            "reason": "missing required target (object_id/mask_id, light+holder, box, or frame_wide)"}
+
+
+def _mask_depth(st, mid: str, m: np.ndarray) -> float | None:
+    cache = st.__dict__.setdefault("_mask_depths", {})
+    if mid in cache:
+        return cache[mid]
+    depth = getattr(st, "depth", None)
+    if depth is not None and (m > 0.5).any():
+        d = float(np.median(depth[m > 0.5]))
+        cache[mid] = d
+        return d
+    return None
+
+
 def _field(st, e, mx, my, v, layers, feather=0.04):
-    """The effect's region in the frame: its object mask (moving with its layer), its box, or the whole frame."""
+    """The effect's region in the frame: its object mask (moving with its own depth plane), its box, or None."""
     cv2 = st.cv2
-    mid = e.get("mask")
+    mid = e.get("mask") or e.get("object_id") or e.get("mask_id")
     if mid and mid in st.masks_src:
         m = st.masks_src[mid]
         host = next((o for o in st.objects if o["id"] == mid), None)
-        if host is not None:
-            mat = st.matrix(v, host["d"])
+        d = host["d"] if host is not None else _mask_depth(st, mid, m)
+        if d is not None:
+            mat = st.matrix(v, d)
             return cv2.warpAffine(m, mat, (st.W, st.H), flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
                                   borderMode=cv2.BORDER_CONSTANT)
-        return cv2.remap(m, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
-    if e.get("box"):
+        if mx is not None and my is not None:
+            return cv2.remap(m, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+        return None
+    if e.get("box") and mx is not None and my is not None:
         return st._box_field(e["box"], mx, my, feather=feather)
     return None
 
@@ -89,7 +125,7 @@ def _source(st, e, v):
 
 # --- particles ----------------------------------------------------------------------------------------------------------------
 
-def _particles(st, rgb, depth, e, t, v, op):
+def _particles(st, rgb, depth, e, t, v, op, mx=None, my=None, layers=None):
     """Snow, rain, embers, dust and spindrift in three depth layers: a particle is drawn only where the scene behind it is
     farther than its layer (a man in front hides the far flakes), it is larger and faster the nearer it is, and its layer
     follows the camera with that layer's parallax."""
@@ -105,6 +141,16 @@ def _particles(st, rgb, depth, e, t, v, op):
     box = e.get("box")
     src = _source(st, e, v) if op == "embers" else None
     out = rgb
+    mid = e.get("mask") or e.get("object_id") or e.get("mask_id")
+    region_mask = None
+    if mid:
+        if mid not in getattr(st, "masks_src", {}):
+            st.__dict__.setdefault("fx_target_status", []).append({"op": op, "status": "NOT_RUN", "reason": f"missing mask {mid!r}"})
+            return rgb
+        region_mask = _field(st, e, mx, my, v, layers)
+        if region_mask is None:
+            st.__dict__.setdefault("fx_target_status", []).append({"op": op, "status": "NOT_RUN", "reason": f"unresolved mask {mid!r}"})
+            return rgb
     allowed = prm.get("layers")                     # the director's weather choice: faces near the lens keep the far flakes
     for li, z in enumerate(PARTICLE_LAYERS):
         n = int(round(base * s * float(prm.get("density", 1.0)) * (0.6 + 0.4 * li) / 2))
@@ -177,6 +223,8 @@ def _particles(st, rgb, depth, e, t, v, op):
         fade_in = f0_alpha if t <= 1e-6 else min(1.0, t / 0.40)
         fg_shield = np.clip(1.0 - max(shield_min, 0.94) * st.people_field(v), 0.0, 1.0) if (op in ("snow", "spindrift", "rain") and hasattr(st, "people_field")) else 1.0
         alpha = np.clip(alpha, 0, 1) * behind * fade_in * fg_shield
+        if region_mask is not None:
+            alpha = alpha * np.clip(region_mask, 0.0, 1.0)
         if op == "embers":
             glow = alpha + cv2.GaussianBlur(alpha, (0, 0), 4 * k) * 1.5
             out = out + np.array([255, 150, 60], np.float32) * np.clip(glow, 0, 1)[..., None] * 0.9 * s
@@ -360,7 +408,11 @@ def _surface(st, rgb, e, t, v, mx, my, layers, op):
     s = float(e.get("strength", 1.0))
     mm = _field(st, e, mx, my, v, layers)
     if mm is None:
-        mm = np.ones((H, W), np.float32)
+        if e.get("frame_wide") or (e.get("params") or {}).get("frame_wide"):
+            mm = np.ones((H, W), np.float32)
+        else:
+            st.__dict__.setdefault("fx_target_status", []).append({"op": op, "status": "NOT_RUN", "reason": "missing required target"})
+            return rgb
     ys, xs = np.nonzero(mm > 0.3)
     if len(ys) == 0:
         return rgb
@@ -404,7 +456,7 @@ def apply(st, rgb, depth, e, i, t, v, mx, my, layers, zoom):
     op = e["op"]
     st._cur_e = e
     if op in ("snow", "rain", "embers", "dust", "spindrift"):
-        return _particles(st, rgb, depth, e, t, v, op)
+        return _particles(st, rgb, depth, e, t, v, op, mx=mx, my=my, layers=layers)
     if op == "sun_glint":
         return _sun_glint(st, rgb, depth, e, t, v)
     if op in ("glint", "stars"):

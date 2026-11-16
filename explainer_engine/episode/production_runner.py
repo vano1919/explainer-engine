@@ -168,14 +168,17 @@ def generate_master_video_contact_sheet(
     return out_jpg_path
 
 
-def run_episode_production(episode_dir: Path | str, width: int = 1920, height: int = 1080, fps: int | None = None,
+def run_episode_production(episode_dir: Path | str, width: int | None = None, height: int | None = None, fps: int | None = None,
                            force_rerender_clips: bool = False, rehearsal: bool = True) -> Dict[str, Any]:
     """Every stage of ``episode/run.py`` up to QA; returns the production manifest (``production/production_manifest.json``).
     ``rehearsal`` (the default here, as in the archive's one-call run) goes on after a FAIL; the manifest then says so and
     ``all_gates_passed`` is false. Nothing paid is called."""
     import json
+    from explainer_engine.core import delivery
     from explainer_engine.episode import run as RUN
-    ep = RUN.Episode(Path(episode_dir), size=(width, height), fps=fps, rehearsal=rehearsal, force=force_rerender_clips)
+    dw, dh = delivery.size()
+    sz = (int(width) if width is not None else dw, int(height) if height is not None else dh)
+    ep = RUN.Episode(Path(episode_dir), size=sz, fps=fps, rehearsal=rehearsal, force=force_rerender_clips)
     RUN.run_to(ep, "qa")
     man = ep.path("production/production_manifest.json")
     if not man.is_file():

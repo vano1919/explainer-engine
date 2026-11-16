@@ -222,12 +222,15 @@ def check(d: dict, picture_sha256: str | None = None, spine: list[dict] | None =
         elif t.get("op") not in EFFECT_OPS:
             bad(f"{name}: effect op unknown")
         tg = t.get("target") or {}
-        for key in ("mask", "from_mask", "to_mask"):
+        for key in ("mask", "from_mask", "to_mask", "object_id", "mask_id", "holder_object_id"):
             if tg.get(key) and tg[key] not in objs:
                 bad(f"{name}: target {key} {tg[key]!r} is not an object of seen.objects")
         for lid in tg.get("lights", []) + ([tg["light"]] if tg.get("light") else []):
             if lid not in lights:
                 bad(f"{name}: light {lid!r} is not in seen.lights")
+        if t.get("track") == "effect" and t.get("op") in ("foliage_sway", "cloth_flap", "wire_sway", "water_shimmer"):
+            if not (tg.get("mask") or tg.get("object_id") or tg.get("mask_id") or tg.get("box") or tg.get("frame_wide")):
+                bad(f"{name}: spatial surface effect requires target mask, box, or explicit frame_wide=True")
     out += _living(d, spine)
     out += _weather(d)
     out += _families(d)
@@ -277,6 +280,8 @@ def _living(d: dict, spine) -> list[dict]:
             ids = e.get("effects") or []
             if not ids:
                 out.append({"level": "FAIL", "what": f"{name} ({k}): {dec} but no effect track named"})
+            objs_set, _ = _ids(d)
+            e_mask = e.get("mask") or (e.get("id") if e.get("id") in objs_set else None)
             for tid in ids:
                 t = tracks.get(tid)
                 if t is None:
@@ -284,6 +289,12 @@ def _living(d: dict, spine) -> list[dict]:
                 elif t.get("op") not in LIVING_KINDS[k]:
                     out.append({"level": "FAIL", "what": f"{name} ({k}): track {tid} op {t.get('op')!r} does not move a {k} "
                                 f"({', '.join(LIVING_KINDS[k])})"})
+                else:
+                    tg = t.get("target") or {}
+                    t_mask = tg.get("mask") or tg.get("object_id") or tg.get("mask_id")
+                    if e_mask and t_mask and t_mask != e_mask:
+                        out.append({"level": "FAIL", "what": f"{name} ({k}): track {tid} targets {t_mask!r}, not living element's own region {e_mask!r}"})
+
             if dec == "animate" and not (e.get("where") or e.get("mask") or e.get("box")):
                 out.append({"level": "FAIL", "what": f"{name}: no where/mask/box (the effect needs the element's place)"})
     scene = d.get("scene") or {}

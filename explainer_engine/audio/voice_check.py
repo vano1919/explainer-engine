@@ -95,6 +95,19 @@ def check_speakers(x: np.ndarray, sr: int, turns: list[tuple[str, float, float]]
 REGISTRY = Path(__file__).resolve().parents[2] / "config" / "channel_voices.json"
 
 
+def check_character_accents(cast: dict) -> list[dict]:
+    """B-EXTRA (5): Ensure character records declare an accent; emit REVIEW when missing."""
+    out: list[dict] = []
+    for cid, rec in (cast or {}).items():
+        if not isinstance(rec, dict):
+            continue
+        accent = str(rec.get("accent") or (rec.get("voice") or {}).get("accent") or "").strip()
+        if not accent:
+            out.append({"level": "REVIEW", "character_id": cid, "rule": "voice_accent",
+                        "detail": f"character {cid!r} is missing declared voice accent"})
+    return out
+
+
 def registry_errors(doc: dict) -> list[dict]:
     """The registry's findings: the schema (CN-01), then one entry per voice id and at most one channel narrator."""
     found = contracts.errors(doc)

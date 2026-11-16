@@ -205,6 +205,8 @@ def evaluate_motion_isolation(
 
     mover_diffs: list[float] = []
     holder_diffs: list[float] = []
+    mover_flows: list[float] = []
+    holder_flows: list[float] = []
     bg_residuals: list[float] = []
     halo_errors: list[float] = []
 
@@ -227,10 +229,14 @@ def evaluate_motion_isolation(
             gi_aligned = cv2.warpAffine(gi, mat, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
         diff = np.abs(gi_aligned - g0)
+        res_flow = cv2.calcOpticalFlowFarneback(g0, gi_aligned, None, 0.5, 2, 15, 2, 5, 1.1, 0)
+        flow_mag = np.hypot(res_flow[..., 0], res_flow[..., 1])
         if (mover > 0.25).any():
             mover_diffs.append(float(np.percentile(diff[mover > 0.25], 95)))
+            mover_flows.append(float(np.percentile(flow_mag[mover > 0.25], 95)))
         if (anchor > 0.25).any():
             holder_diffs.append(float(np.percentile(diff[anchor > 0.25], 95)))
+            holder_flows.append(float(np.percentile(flow_mag[anchor > 0.25], 95)))
         bg_zone = (mover < 0.1) & (anchor < 0.1) & (fg < 0.1)
         if bg_zone.any():
             bg_residuals.append(float(np.percentile(diff[bg_zone], 90)))
@@ -242,16 +248,20 @@ def evaluate_motion_isolation(
 
     elem_p95 = round(max(mover_diffs) if mover_diffs else 0.0, 4)
     hold_p95 = round(max(holder_diffs) if holder_diffs else 0.0, 4)
+    elem_flow_p95 = round(max(mover_flows) if mover_flows else 0.0, 4)
+    hold_flow_p95 = round(max(holder_flows) if holder_flows else 0.0, 4)
     cam_res = round(float(np.mean(bg_residuals)) if bg_residuals else 0.0, 4)
     halo_p95 = round(max(halo_errors) if halo_errors else 0.0, 4)
     leak_ratio = round(hold_p95 / max(1e-3, elem_p95), 4) if elem_p95 > 0 else (999.0 if hold_p95 > max_holder_luma else 0.0)
 
-    passed = (hold_p95 <= max_holder_luma) or (leak_ratio <= max_ratio)
+    passed = (hold_p95 <= max_holder_luma) and (leak_ratio <= max_ratio)
     return {
         "status": "PASS" if passed else "FAIL",
         "passed": bool(passed),
         "element_motion_p95": elem_p95,
         "holder_leak_p95": hold_p95,
+        "mover_flow_p95": elem_flow_p95,
+        "holder_flow_p95": hold_flow_p95,
         "leak_ratio": leak_ratio,
         "camera_residual_error": cam_res,
         "boundary_halo_error": halo_p95,

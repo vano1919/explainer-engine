@@ -696,11 +696,7 @@ class LtxSession:
             video_marker, audio_marker = D.markers_from_args(args, device=D.get_device(), color_space=hdr)
             vae_dtype = D.vae_dtype_for_hdr(hdr, torch.bfloat16)
             chunk_config = D.chunk_config_from_args(args)
-            neg_prompt = (
-                sanitize_painterly_negative_prompt(args.negative_prompt)
-                if getattr(args, "negative_prompt", None)
-                else getattr(args, "negative_prompt", None)
-            )
+            neg_prompt = sanitize_painterly_negative_prompt(getattr(args, "negative_prompt", None))
             stream_kw = dict(
                 prompt=args.prompt, seed=args.seed, height=args.height, width=args.width, num_frames=args.num_frames,
                 frame_rate=args.frame_rate, images=args.images, vae_dtype=vae_dtype, color_space=hdr,
@@ -1318,3 +1314,21 @@ if modal is not None:
         if res.get("state") != "DONE":   # a FAILED clip is a non-zero exit, never a 0
             print(LTX_FAILED, flush=True)
             raise SystemExit(4)
+
+
+def build_ltx_render_manifest(launch: dict, job: dict, *, lora: str | None = None) -> dict:
+    """B-P1(d): Pin model, LoRA, prompt, sanitized negative prompt, and seed in the LTX render manifest."""
+    uses = launch.get("uses") or {}
+    return {
+        "schema": "ltx_render_manifest/1",
+        "shot_id": job.get("shot_id"),
+        "model": uses.get("transformer") or launch.get("module"),
+        "lora": lora or uses.get("distilled_lora"),
+        "prompt": job.get("motion_prompt", ""),
+        "negative_prompt": resolve_negative_prompt(launch, job),
+        "seed": int(job.get("seed", 0)),
+        "width": int(job.get("width", 1920)),
+        "height": int(job.get("height", 1088)),
+        "fps": int(job.get("fps", 24)),
+        "seconds": float(job.get("seconds", 1.0)),
+    }

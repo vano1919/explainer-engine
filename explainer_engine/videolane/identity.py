@@ -281,3 +281,100 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def evaluate_ltx_face_identity(
+    frames: list,
+    reference_image=None,
+    *,
+    detector=None,
+    recognizer=None,
+    out_cut_sheet: Path | None = None,
+    min_cosine: float = 0.45,
+    max_landmark_drift: float = 0.12,
+) -> dict[str, Any]:
+    """B-P1(a): Compare first/middle/last LTX frames to approved character reference using YuNet/SFace
+    plus normalized landmark drift. Missing face or reference returns NOT_MEASURED, never PASS."""
+    import numpy as np
+    from PIL import Image
+    from explainer_engine.qa import face_points as FP
+    from explainer_engine.qa import pixels as PX
+
+    if not frames or len(frames) < 3:
+        return {"status": "NOT_MEASURED", "passed": False, "reason": "fewer than 3 frames"}
+    if reference_image is None:
+        return {"status": "NOT_MEASURED", "passed": False, "reason": "missing approved character reference"}
+
+    idxs = [0, len(frames) // 2, len(frames) - 1]
+    sampled = [np.asarray(frames[i]) for i in idxs]
+
+    if out_cut_sheet is not None:
+        h, w = sampled[0].shape[:2]
+        sheet = Image.new("RGB", (w * 3, h))
+        for k, fr in enumerate(sampled):
+            sheet.paste(Image.fromarray(np.clip(fr, 0, 255).astype(np.uint8)), (k * w, 0))
+        Path(out_cut_sheet).parent.mkdir(parents=True, exist_ok=True)
+        sheet.save(out_cut_sheet)
+
+    rec = recognizer if recognizer is not None else FP.recognizer()
+    det = detector
+    if det is None:
+        if not PX.YUNET.is_file() or rec is None:
+            return {"status": "NOT_MEASURED", "passed": False, "reason": "YuNet/SFace model unavailable",
+                    "cut_sheet": str(out_cut_sheet) if out_cut_sheet else None}
+        det = lambda fr: FP.detect(fr, PX.YUNET, rec)  # noqa: E731
+
+    ref_faces = det(np.asarray(reference_image))
+    if not ref_faces:
+        return {"status": "NOT_MEASURED", "passed": False, "reason": "no face detected in reference",
+                "cut_sheet": str(out_cut_sheet) if out_cut_sheet else None}
+    ref_face = ref_faces[0]
+    ref_emb = ref_face.get("_emb")
+    if ref_emb is None:
+        return {"status": "NOT_MEASURED", "passed": False, "reason": "no SFace embedding in reference",
+                "cut_sheet": str(out_cut_sheet) if out_cut_sheet else None}
+
+    cosines: dict[str, float] = {}
+    drifts: dict[str, float] = {}
+    labels = ("first", "middle", "last")
+    for lbl, fr in zip(labels, sampled):
+        faces = det(fr)
+        if not faces or faces[0].get("_emb") is None:
+            return {"status": "NOT_MEASURED", "passed": False, "reason": f"no face detected in {lbl} frame",
+                    "cut_sheet": str(out_cut_sheet) if out_cut_sheet else None}
+        f0 = faces[0]
+        if rec is not None and hasattr(rec, "match"):
+            import cv2
+            cos = float(rec.match(np.asarray(f0["_emb"], dtype=np.float32),
+                                  np.asarray(ref_emb, dtype=np.float32),
+                                  cv2.FaceRecognizerSF_FR_COSINE))
+        else:
+            a = np.asarray(f0["_emb"], dtype=np.float32).ravel()
+            b = np.asarray(ref_emb, dtype=np.float32).ravel()
+            cos = float(np.dot(a, b) / (max(1e-8, float(np.linalg.norm(a) * np.linalg.norm(b)))))
+        cosines[lbl] = round(cos, 4)
+
+        dx = abs(float(f0.get("x", 0.0)) - float(ref_face.get("x", 0.0))) / max(1e-4, float(ref_face.get("w", 0.1)))
+        dy = abs(float(f0.get("y", 0.0)) - float(ref_face.get("y", 0.0))) / max(1e-4, float(ref_face.get("h", 0.1)))
+        lm0 = f0.get("landmarks")
+        lmr = ref_face.get("landmarks")
+        if lm0 is not None and lmr is not None:
+            l_arr = np.asarray(lm0, dtype=np.float32)
+            r_arr = np.asarray(lmr, dtype=np.float32)
+            drift = float(np.linalg.norm(l_arr - r_arr, axis=-1).mean()) / max(1e-4, float(ref_face.get("w", 0.1)))
+        else:
+            drift = float(np.hypot(dx, dy)) * 0.25
+        drifts[lbl] = round(drift, 4)
+
+    min_cos = min(cosines.values())
+    max_drift = max(drifts.values())
+    passed = (min_cos >= min_cosine) and (max_drift <= max_landmark_drift)
+    return {
+        "status": "PASS" if passed else "FAIL",
+        "passed": bool(passed),
+        "cosines": cosines,
+        "min_cosine": min_cos,
+        "landmark_drifts": drifts,
+        "max_landmark_drift": max_drift,
+        "cut_sheet": str(out_cut_sheet) if out_cut_sheet else None,
+    }

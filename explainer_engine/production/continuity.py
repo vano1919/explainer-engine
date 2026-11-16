@@ -504,3 +504,53 @@ def verify_split_clip_continuity(
         "part_count": len(parts),
         "findings": findings_list,
     }
+
+
+_NIGHT_WORDS_RE = re.compile(r"\b(every\s+night|at\s+night|midnight|pitch\s+dark|nighttime|moonlight)\b", re.I)
+_DAY_LIGHT_RE = re.compile(r"\b(sunrise|dawn|morning|daylight|noon|midday|afternoon|bright\s+sun)\b", re.I)
+_DAY_WORDS_RE = re.compile(r"\b(sunrise|dawn|at\s+noon|midday|broad\s+daylight)\b", re.I)
+_NIGHT_LIGHT_RE = re.compile(r"\b(night|midnight|moonlit|darkness)\b", re.I)
+
+
+def check_narration_time_of_day(shots: list[dict], audio_lines: list[dict] | None = None) -> list[dict]:
+    """B-EXTRA (3): Flag (REVIEW) when narration time-of-day words conflict with the shot's declared light/time_of_day."""
+    by_lid = {ln.get("line_id"): str(ln.get("text") or "") for ln in (audio_lines or []) if ln.get("line_id")}
+    out: list[dict] = []
+    for sh in shots:
+        sid = sh.get("shot_id", "?")
+        light = str(sh.get("light") or sh.get("time_of_day") or "").strip()
+        if not light:
+            continue
+        narr_parts = [sh.get("narration") or sh.get("spoken_text") or ""]
+        for lid in sh.get("audio_line_ids") or []:
+            if lid in by_lid:
+                narr_parts.append(by_lid[lid])
+        narr = " ".join(p for p in narr_parts if p)
+        if not narr.strip():
+            continue
+        if _NIGHT_WORDS_RE.search(narr) and _DAY_LIGHT_RE.search(light):
+            out.append({"level": "REVIEW", "shot_id": sid, "rule": "narration_time_of_day",
+                        "detail": f"narration mentions night over declared light {light!r}"})
+        elif _DAY_WORDS_RE.search(narr) and _NIGHT_LIGHT_RE.search(light):
+            out.append({"level": "REVIEW", "shot_id": sid, "rule": "narration_time_of_day",
+                        "detail": f"narration mentions daytime over declared light {light!r}"})
+    return out
+
+
+def costume_prop_continuity_findings(shots: list[dict]) -> list[dict]:
+    """B-EXTRA (4): Check prop and costume attribute continuity across adjacent shots of the same scene."""
+    out: list[dict] = []
+    for a, b in zip(shots, shots[1:]):
+        if not _is_same_scene(a, b):
+            continue
+        ca = a.get("costume") if isinstance(a.get("costume"), dict) else {}
+        cb = b.get("costume") if isinstance(b.get("costume"), dict) else {}
+        for k in sorted(set(ca) & set(cb)):
+            if str(ca[k]).strip().lower() != str(cb[k]).strip().lower():
+                out.append({
+                    "level": "REVIEW",
+                    "shot_id": b.get("shot_id", "?"),
+                    "rule": "costume_prop_continuity",
+                    "detail": f"costume/prop {k!r} changed from {ca[k]!r} ({a.get('shot_id')}) to {cb[k]!r} ({b.get('shot_id')}) in same scene",
+                })
+    return out

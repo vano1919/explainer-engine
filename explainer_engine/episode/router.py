@@ -31,6 +31,14 @@ MIX_TARGETS = {
     "still_25d": float(_LANE_SHARE["still"]),
     "map_action": float(_LANE_SHARE["helper"]),
 }
+ILLUSTRATED_HISTORY_TARGETS = {"still_25d": 0.60, "video": 0.30, "map_action": 0.10}
+
+
+def lane_mix_targets(profile_name: str | None = None) -> dict[str, float]:
+    """Return lane share targets (still 60 / video 30 / helper 10 for illustrated_history)."""
+    if profile_name in ("illustrated_history", "solemn_historical_docudrama"):
+        return dict(ILLUSTRATED_HISTORY_TARGETS)
+    return dict(MIX_TARGETS)
 MIX_TOL = float(SR.T("BP-109", "lane_tolerance"))
 
 # a body doing something a still cannot fake: whole-body motion, contact with a thing, a strike, a fall (Q4)
@@ -89,6 +97,11 @@ def speaking_heroes(script: dict) -> dict[str, set[str]]:
 def route_shot(shot: dict, speakers: set[str] | None = None) -> tuple[str, str]:
     """(route, reason) for one shot. Order: maps, a speaker on screen, a body action, else 2.5D."""
     text = _text(shot)
+    if (shot.get("helper_subtype") in ("document", "letter", "newspaper", "telegram")
+            or shot.get("archival_asset")
+            or shot.get("visual_type") in ("archival_document", "archival_letter", "archival_newspaper", "archival_telegram")):
+        sub = shot.get("helper_subtype") or (shot.get("archival_asset") or {}).get("subtype") or "document"
+        return "map_action", f"archival helper ({sub}): validated historical artifact rendered in helper lane (B-P1c)"
     if shot.get("visual_type") == "map_visualization" or shot.get("generation_mode") in ("TACTILE_MAP", "MAP_25D") \
             or (not shot.get("character_ids") and MAP_WORDS.search(text)):
         return "map_action", "geography or numbers: drawn by Python over a letter-free plate, the action timed to the words (Q6)"

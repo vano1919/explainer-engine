@@ -20,6 +20,23 @@ from explainer_engine.standards import sourced_rules as SR
 LEGACY = "calm_docudrama"
 
 
+ILLUSTRATED_HISTORY_PROFILE: dict = {
+    "description": "Flexible ranges (not quotas) for illustrated historical films (still 60% / video 30% / helper 10%).",
+    "lane_share": {"still": 0.60, "video": 0.30, "helper": 0.10},
+    "shots_per_min_band": [6.0, 14.0],
+    "shot_len_s_band": [4.0, 10.0],
+    "still_max_s": 12.0,
+    "zones": [
+        {"id": "opening", "mode": "measured", "window_s": [0, 60], "heard_wpm_band": [120, 160],
+         "shots_per_min_band": [6, 14], "shot_len_s_band": [4.0, 10.0], "still_max_s": 12.0},
+        {"id": "body", "mode": "measured", "window_s": [60, 660], "heard_wpm_band": [115, 155],
+         "shots_per_min_band": [6, 12], "shot_len_s_band": [4.5, 12.0], "still_max_s": 12.0},
+        {"id": "closing", "mode": "measured", "window_s": [660, 720], "heard_wpm_band": [110, 145],
+         "shots_per_min_band": [5, 10], "shot_len_s_band": [5.0, 12.0], "still_max_s": 12.0},
+    ],
+}
+
+
 def _profiles() -> dict:
     return SR.T("BP-169", "profiles")
 
@@ -52,6 +69,8 @@ def resolve_profile_name(doc: dict | None = None) -> str:
 
 def get_profile(doc_or_name: dict | str | None = None) -> dict:
     name = doc_or_name if isinstance(doc_or_name, str) else resolve_profile_name(doc_or_name)
+    if name == "illustrated_history":
+        return ILLUSTRATED_HISTORY_PROFILE
     if name not in _profiles():
         raise KeyError(f"unknown rhythm profile {name!r}; known: {available_profiles()}")
     prof = _profiles()[name]

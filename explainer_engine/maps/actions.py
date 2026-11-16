@@ -915,8 +915,12 @@ def counter_layout(p: dict, c: D.Canvas, a: dict, unit: float) -> tuple[float, f
 
 
 def _hud_chip_box(c: D.Canvas, text: str, unit: float) -> tuple[float, float, float, float, float, float]:
-    """Safe-frame clamped HUD date card layout ``(x0, y0, x1, y1, size, stroke)`` at least 4% inside every edge (V1)."""
+    """Safe-frame clamped HUD date card layout ``(x0, y0, x1, y1, size, stroke)`` at least 5% title-safe inside every edge."""
     xmin, ymin, xmax, ymax = safe_frame_bounds(c.w, c.h)
+    xmin = max(xmin, c.w * 0.05)
+    ymin = max(ymin, c.h * 0.05)
+    xmax = min(xmax, c.w * 0.95)
+    ymax = min(ymax, c.h * 0.95)
     size = max(unit * 0.042, 6.0)
     stroke = max(2.0, unit * 0.004)
     tw = c.text_width(text, size) + size * 1.25
@@ -982,6 +986,8 @@ def _draw_geo_label_pill(
     unit: float,
     occupied: list,
     label_boxes: list[dict] | None,
+    *,
+    is_region: bool = False,
 ) -> None:
     """Draw a collision-free place label pill with pin dot and optional leader line (V2, V7)."""
     size = max(unit * 0.022, 6.5)
@@ -996,7 +1002,7 @@ def _draw_geo_label_pill(
     )
     if leader or dist_to_pill > th * 0.95:
         c.line([(cx, cy), (lx + tw * 0.5, ly + th * 0.5)], (*col["ink"], int(alpha * 0.78)), max(1.0, unit * 0.002))
-    if 0.0 <= cx <= c.w and 0.0 <= cy <= c.h:
+    if (not is_region) and 0.0 <= cx <= c.w and 0.0 <= cy <= c.h:
         c.circle(cx, cy, pin_r, fill=(*col["paper"], alpha), outline=(*col["ink"], alpha), width=max(1.0, unit * 0.002))
     pill_fill = (*D.blend(col["paper"], col["card"], 0.12), int(alpha * 0.94))
     pill_out = (*col["ink"], int(alpha * 0.90))
@@ -1015,8 +1021,9 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
     unit = base.h
     occupied = _precollect_obstacles(base, p, f, px, unit)
     label_boxes: list[dict] = []
-    # 1. Render carried-over ghost lines from the previous same-theater map shot at 22% opacity (V5)
-    for g in p.get("carry_over") or []:
+    # 1. Render carried-over ghost lines only when phase is not reset (B-EXTRA 2)
+    carry_list = [] if p.get("phase_reset") else (p.get("carry_over") or [])
+    for g in carry_list:
         cg = D.Canvas(base.w, base.h, None, base.ss)
         cg.face = base.face
         _draw_one(cg, g, p, f, view, col, ink, accent, px, unit, occupied=occupied, label_boxes=None)
@@ -1042,9 +1049,10 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
         for lb in p["auto_labels"]:
             if not lb.get("stands") and f < lb["start"]:
                 continue
-            if lb.get("macro_only") and view.span_km < MD.MACRO_LABEL_MIN_SPAN_KM:
+            lock_span = float(p.get("locked_span_km") or view.span_km)
+            if lb.get("macro_only") and lock_span < MD.MACRO_LABEL_MIN_SPAN_KM:
                 continue
-            if lb.get("close_only") and view.span_km >= MD.MACRO_LABEL_MIN_SPAN_KM:
+            if lb.get("close_only") and lock_span >= MD.MACRO_LABEL_MIN_SPAN_KM:
                 continue
             cx, cy = px((lb["lon"], lb["lat"]))
             if not (xmin <= cx <= xmax and ymin <= cy <= ymax):
@@ -1059,8 +1067,10 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
             ca.face = base.face
             for lb in selected_auto:
                 alpha = 255 if lb.get("stands") else int(255 * min(1.0, (f - lb["start"] + 1) / 6.0))
+                _is_reg = bool(lb.get("is_region") or lb.get("kind") == "region" or str(lb.get("pid") or "").lower() == "flanders")
                 _draw_geo_label_pill(
-                    ca, lb["cx"], lb["cy"], lb["text"], alpha, lb.get("prefer", "NE"), col, unit, occupied, label_boxes
+                    ca, lb["cx"], lb["cy"], lb["text"], alpha, lb.get("prefer", "NE"), col, unit, occupied, label_boxes,
+                    is_region=_is_reg,
                 )
             base.im.alpha_composite(ca.im)
     p.setdefault("_label_boxes", {})[f] = label_boxes
@@ -1344,7 +1354,8 @@ def _draw_one(c, a, p, f, view, col, ink, accent, px, unit, occupied=None, label
         else:
             cx, cy = px(a["from"])
             occ = occupied if occupied is not None else []
-            _draw_geo_label_pill(c, cx, cy, text, alpha, a.get("prefer", "NE"), col, unit, occ, label_boxes)
+            _is_reg = bool(a.get("is_region") or a.get("place_kind") == "region" or str(a.get("from_id") or "").lower() == "flanders")
+            _draw_geo_label_pill(c, cx, cy, text, alpha, a.get("prefer", "NE"), col, unit, occ, label_boxes, is_region=_is_reg)
     elif k == "counter":
         target_val = float(a.get("value") or 0)
         u_cnt = _u_counter(a, f)
@@ -1545,3 +1556,20 @@ def emit_frame_locked_audio_events(p: dict) -> list[dict]:
                 "dur_s": round(min(8, total_frames - land_f) / fps, 4),
             })
     return events
+
+
+def validate_map_labels(plan: dict, places: dict) -> list[dict]:
+    """B-EXTRA (1): Validate every map label text against canonical place list and check for missing glyphs."""
+    issues: list[dict] = []
+    fnt = D.font_for_text(24, "ui", "Verdun")
+    for a in plan.get("actions") or []:
+        if a.get("kind") == "label" and not _is_chip(a.get("from_id")):
+            pid = a.get("from_id")
+            text = str(a.get("label") or a.get("name") or pid or "")
+            if pid and pid in places and isinstance(places[pid], dict):
+                canon = D.map_label_text(str(places[pid].get("name") or pid))
+                if text and canon and text != canon:
+                    issues.append({"level": "FAIL", "where": pid, "detail": f"label {text!r} != canonical {canon!r}"})
+            if D.has_missing_glyph(fnt, text):
+                issues.append({"level": "FAIL", "where": pid or text, "detail": f"missing glyph in {text!r}"})
+    return issues

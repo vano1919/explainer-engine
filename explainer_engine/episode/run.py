@@ -812,6 +812,13 @@ def _directed_qa_rows(sid: str, plan: dict, res: dict, watch, out_h: int, fps: i
             r_aim = MI.aim_row(res["aim"])
             if r_aim["status"] != G.NOT_RUN:
                 raw.append(r_aim)
+        if isinstance(res.get("motion_isolation"), dict) and res["motion_isolation"].get("status") != "NOT_RUN":
+            mi = res["motion_isolation"]
+            raw.append({
+                "gate": "motion_isolation",
+                "status": G.PASS if mi.get("passed") else G.FAIL,
+                "detail": f"holder_leak={mi.get('holder_leak_p95')} leak_ratio={mi.get('leak_ratio')} holder_flow={mi.get('holder_flow_p95')}",
+            })
     gm = wsum.get("global_motion_first_to_last")
     if isinstance(gm, dict):
         cams = plan.get("cameras") or []
@@ -1016,7 +1023,20 @@ def stage_clips(ep: Episode, rehearsal: bool):
             continue
         shot_qa_rows: list[dict] = []
         try:
-            if is_map:
+            if is_map and (sh.get("helper_subtype") in ("document", "letter", "newspaper", "telegram")
+                           or sh.get("archival_asset")
+                           or sh.get("visual_type") in ("archival_document", "archival_letter", "archival_newspaper", "archival_telegram")):
+                from explainer_engine.production.archival_helper import render_archival_helper_clip
+                res = render_archival_helper_clip(sh, script, ep.manifest, out, width=w, height=h, fps=ep.fps,
+                                                  keyframes_out_dir=ep.path("assets/archival/renders"))
+                arch_rows = _verdict_rows(res.get("gates"))
+                shot_qa_rows = arch_rows
+                rec.update(visual_type=f"archival_{res['asset']['subtype']}", provider=res["provider"],
+                           status=res["gates"]["status"], gates_map=res["gates"]["status"], gate_rows=arch_rows,
+                           source_start_keyframe=res.get("start_keyframe_path"),
+                           source_end_keyframe=res.get("end_keyframe_path"))
+                prev_map_loc, prev_map_end_view = None, None
+            elif is_map:
                 if not sh.get("actions"):   # final audit B1: the archive's hard-coded Toba maps are no fallback
                     raise ContractError(f"{sid}: a map_action shot without actions (RT-03): write its actions on their "
                                         "words; the archive's fixed relief map is not used in a v4.3 episode")
@@ -1586,6 +1606,20 @@ def stage_assemble(ep: Episode, rehearsal: bool):
         rows.append(G.row("boundary_editorial_review", False,
                           f"{len(flagged_cuts)} authored hard cut(s) with severe visual jump need editorial reason",
                           [b["boundary_id"] for b in flagged_cuts], level=G.REVIEW))
+    from explainer_engine.core import delivery as _DELIV
+    declared_sz = tuple(ep.manifest.get("delivery_size") or _DELIV.size())
+    if tuple(ep.size) != declared_sz:
+        rows.append(G.row("delivery_profile_match", False,
+                          f"episode size {tuple(ep.size)} != declared delivery profile {declared_sz}",
+                          {"actual": list(ep.size), "declared": list(declared_sz)}))
+    else:
+        rows.append(G.row("delivery_profile_match", True, f"delivery profile {declared_sz[0]}x{declared_sz[1]}"))
+    if not left and master.is_file():
+        from explainer_engine.qa import final_frame_qa as FFQA
+        ff_ops = [{"stage": "assemble", "op": "encode", "encoded": True, "size": list(ep.size), "fps": ep.fps, "upscaler": "native"}]
+        ff_manifest = FFQA.build_resize_encode_manifest(ff_ops, output_path=master)
+        res["final_frame_manifest"] = ff_manifest
+        write_json_atomic(ep.path("qa/final_frame_manifest.json"), ff_manifest)
     write_json_atomic(ep.path("production/master.json"), res)
     return rows, {"master": str(master.relative_to(ep.root)) if not left else None, "chunks": res["chunks"]["count"],
                   "left": left}

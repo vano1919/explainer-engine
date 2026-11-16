@@ -159,6 +159,8 @@ class Stage:
         self.lights = {}
         for li in layers["manifest"].get("lights", []):
             entry = {"id": li["id"], "kind": li.get("kind"), "point": (li["point"][0] * sw, li["point"][1] * sh)}
+            if li.get("holder_object_id"):
+                entry["holder_object_id"] = li["holder_object_id"]
             if li["id"] in layers["lights"]:
                 m = np.clip(rs(layers["lights"][li["id"]].astype(np.float32), cv2.INTER_LINEAR), 0, 1)
                 ys, xs = np.nonzero(m > 0.3)
@@ -473,7 +475,7 @@ class Stage:
                 box = self._bbox(self.masks_src[it["mask"]])
             elif it.get("light") and it["light"] in self.lights:
                 li = self.lights[it["light"]]
-                host = self._layer_of_light(li, [])
+                host = self._layer_of_light(li, [], effect=it)
                 if host is not None and host["id"] in self.masks_src and not it.get("flame_only"):
                     box = self._bbox(self.masks_src[host["id"]], 0.3)
                 else:
@@ -918,15 +920,27 @@ class Stage:
         inv = self.cv2.invertAffineTransform(m)
         q = inv @ np.array([src_xy[0], src_xy[1], 1.0])
         return float(q[0]), float(q[1]), d
-    def _layer_of_light(self, li: dict, layers: list[dict]):
+    def _layer_of_light(self, li: dict, layers: list[dict], effect: dict | None = None):
+        holder_id = ((effect or {}).get("holder_object_id")
+                     or ((effect or {}).get("target") or {}).get("holder_object_id")
+                     or li.get("holder_object_id"))
+        if holder_id:
+            host = next((o for o in self.objects if o["id"] == holder_id), None)
+            if host is not None:
+                return host
+            if holder_id in self.masks_src:
+                m = self.masks_src[holder_id]
+                d = float(np.median(self.depth[m > 0.5])) if (m > 0.5).any() else 0.5
+                return {"id": holder_id, "d": d, "alpha": m, "explicit": True}
+            return None
         x, y = int(np.clip(li["point"][0], 0, self.sw - 1)), int(np.clip(li["point"][1], 0, self.sh - 1))
         for o in reversed(self.objects):
             if o["alpha"][y, x] > 0.5:
                 return o
         return None
-    def _warp_mask(self, mask, mx, my, v, li, layers):
+    def _warp_mask(self, mask, mx, my, v, li, layers, effect: dict | None = None):
         cv2 = self.cv2
-        host = self._layer_of_light(li, layers)
+        host = self._layer_of_light(li, layers, effect=effect)
         if host is None:
             return cv2.remap(mask, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
         m = self.matrix(v, host["d"])
@@ -953,16 +967,16 @@ class Stage:
                     speed = {"fire": 1.0, "candle": 0.55, "glow": 0.8}[op]
                     g = self._flicker_id(i, lid, t, speed)
                     ox, oy, _ = self._to_out(li["point"], v=v, d=li.get("d"))
-                    host = self._layer_of_light(li, layers)
+                    host = self._layer_of_light(li, layers, effect=e)
                     if host is not None:
                         ox, oy, _ = self._to_out(li["point"], v=v, d=host["d"])
                     # the flame: brightness flicker and a small upward-flowing deformation inside its mask
                     if "mask" in li:
-                        fm = self._warp_mask(li["mask"], mx, my, v, li, layers)
+                        fm = self._warp_mask(li["mask"], mx, my, v, li, layers, effect=e)
                         amp = {"fire": 0.22, "candle": 0.18, "glow": 0.25}[op] * s
                         rgb = rgb * (1 + amp * g * fm[..., None] * np.array([1.0, 0.85, 0.6], np.float32))
                         if op != "glow" and fm.max() > 0.05:
-                            rgb = self._deform_flame(rgb, fm, li, t, i, s, zoom, op)
+                            rgb = self._deform_flame(rgb, fm, li, t, i, s, zoom, op, effect=e)
                     # the spill: the flicker of the light on the surfaces round it, falling off with distance
                     R = float(prm.get("spill_radius", {"fire": 0.10, "candle": 0.05, "glow": 0.03}[op])) * W
                     R = R * zoom
@@ -1050,7 +1064,7 @@ class Stage:
                     li = self.lights.get(lid)
                     if li is None or "mask" not in li:
                         continue
-                    fm = self._warp_mask(li["mask"], mx, my, v, li, layers)
+                    fm = self._warp_mask(li["mask"], mx, my, v, li, layers, effect=e)
                     hgt = max(8.0, li.get("height", 20.0) * zoom * (self.W / self.sw) * float(prm.get("rise", 3.0)))
                     col = cv2.dilate((fm > 0.2).astype(np.uint8), np.ones((3, 3), np.uint8), iterations=3).astype(np.float32)
                     up = np.zeros_like(col)
@@ -1072,19 +1086,42 @@ class Stage:
         q = (self.W // 4, self.H // 4)
         c = cv2.resize((np.asarray(after, np.float32) - np.asarray(before, np.float32)).mean(axis=2), q,
                        interpolation=cv2.INTER_AREA)
-        rec = self.__dict__.setdefault("fx_seen", {}).setdefault(i, {"c0": c, "p95": 0.0, "at_s": 0.0})
-        touch = (np.abs(c) > SEEN_TOUCH) | (np.abs(rec["c0"]) > SEEN_TOUCH)
-        if touch.sum() < 20:
-            return
-        v = float(np.percentile(np.abs(c - rec["c0"])[touch], 95))
+        rec = self.__dict__.setdefault("fx_seen", {}).setdefault(i, {"c0": c, "p95": 0.0, "ref_p95": 0.0, "at_s": 0.0})
+        eff = (self.p.get("effects") or [])[i] if i < len(self.p.get("effects") or []) else {}
+        mid = eff.get("mask") or eff.get("object_id") or eff.get("mask_id")
+        tmask = None
+        if mid and mid in self.masks_src:
+            tmask = cv2.resize(self.masks_src[mid].astype(np.float32), q, interpolation=cv2.INTER_AREA) > 0.25
+        elif eff.get("box"):
+            x0, y0, x1, y1 = eff["box"]
+            tmask = np.zeros((q[1], q[0]), bool)
+            tmask[int(y0 * q[1]):int(y1 * q[1]), int(x0 * q[0]):int(x1 * q[0])] = True
+        if tmask is not None and tmask.any():
+            v = float(np.percentile(np.abs(c - rec["c0"])[tmask], 95))
+            ref_v = float(np.percentile(np.abs(c - rec["c0"])[~tmask], 95)) if (~tmask).any() else 0.0
+        else:
+            touch = (np.abs(c) > SEEN_TOUCH) | (np.abs(rec["c0"]) > SEEN_TOUCH)
+            if touch.sum() < 20:
+                return
+            v = float(np.percentile(np.abs(c - rec["c0"])[touch], 95))
+            ref_v = 0.0
         if v > rec["p95"]:
-            rec["p95"], rec["at_s"] = round(v, 2), round(t, 2)
+            rec["p95"], rec["ref_p95"], rec["at_s"] = round(v, 2), round(ref_v, 2), round(t, 2)
     def effects_seen(self) -> list[dict]:
         out = []
+        still_design = self.p.get("intent") == "still_by_design"
         for i, e in enumerate(self.p.get("effects", [])):
             rec = (self.__dict__.get("fx_seen") or {}).get(i)
-            out.append({"op": e["op"], "index": i, "change_p95": rec["p95"] if rec else 0.0,
-                        "at_s": rec["at_s"] if rec else None})
+            out.append({
+                "op": e["op"], "index": i,
+                "mood": e.get("mood"), "onset_s": e.get("onset_s", 0.0),
+                "intensity": e.get("intensity", e.get("strength", 1.0)),
+                "ramp_s": e.get("ramp_s"),
+                "change_p95": rec["p95"] if rec else 0.0,
+                "ref_change_p95": rec["ref_p95"] if rec else 0.0,
+                "at_s": rec["at_s"] if rec else None,
+                "still_by_design": still_design,
+            })
         return out
     def _tile_smooth(self, tile: np.ndarray, ox: float, oy: float) -> np.ndarray:
         th, tw = tile.shape
@@ -1097,7 +1134,7 @@ class Stage:
         sp = speed * (0.85 + 0.3 * ((k >> 13) % 100) / 100.0)
         return float(0.5 * math.sin(2 * math.pi * 4.1 * sp * t + ph[0]) + 0.3 * math.sin(2 * math.pi * 7.3 * sp * t + ph[1])
                      + 0.2 * math.sin(2 * math.pi * 11.9 * sp * t + ph[2]))
-    def _deform_flame(self, rgb, fm, li, t, i, s, zoom, op):
+    def _deform_flame(self, rgb, fm, li, t, i, s, zoom, op, effect: dict | None = None):
         cv2 = self.cv2
         ys, xs = np.nonzero(fm > 0.2)
         if len(xs) < 4:
@@ -1209,6 +1246,9 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
                              "-crf", "16", "-pix_fmt", "yuv420p", str(tmp)], stdin=subprocess.PIPE)
     first = last = None
     views = []
+    mi_frames: list[np.ndarray] = []
+    mi_views: list[dict] = []
+    mi_stride = max(1, st.n // 6)
     p0 = {}
     faces = [k for k in st.keep if k.get("face")]
     face0, face_worst = {}, {"ncc": 1.0, "frame": None, "face": None}
@@ -1239,7 +1279,11 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
                     ncc = st.face_likeness(face0[j], fr, f, kb)
                     if ncc is not None and ncc < face_worst["ncc"]:
                         face_worst = {"ncc": round(ncc, 3), "frame": f, "face": kb["face"]}
-            views.append({k: (round(float(x), 5) if isinstance(x, float) else x) for k, x in v.items()})
+            v_rec = {k: (round(float(x), 5) if isinstance(x, float) else x) for k, x in v.items()}
+            views.append(v_rec)
+            if f == 0 or f == st.n - 1 or f % mi_stride == 0:
+                mi_frames.append(fr.copy())
+                mi_views.append(v_rec)
             rows = None
             if watch is not None:
                 rows = []
@@ -1264,8 +1308,32 @@ def render_clip(picture: Path, layers: dict, plan: dict, out_mp4: Path, size=(19
         raise RuntimeError(f"ffmpeg failed on {plan.get('shot_id')}")
     tmp.replace(out_mp4)
     spf = (time.time() - t1) / max(1, st.n)
+    from explainer_engine.production import motion_isolation as MI
+    mover_m = np.zeros((st.sh, st.sw), np.float32)
+    anchor_m = np.zeros((st.sh, st.sw), np.float32)
+    for eff in st.p.get("effects", []):
+        mid = eff.get("mask") or eff.get("object_id") or eff.get("mask_id")
+        if mid and mid in st.masks_src:
+            mover_m = np.maximum(mover_m, st.masks_src[mid])
+        hid = eff.get("holder_object_id") or (eff.get("target") or {}).get("holder_object_id")
+        if hid and hid in st.masks_src:
+            anchor_m = np.maximum(anchor_m, st.masks_src[hid])
+        for lid in eff.get("lights", []) + ([eff["light"]] if eff.get("light") else []):
+            li = st.lights.get(lid)
+            if li is not None:
+                if "mask" in li:
+                    mover_m = np.maximum(mover_m, li["mask"])
+                lhid = li.get("holder_object_id")
+                if lhid and lhid in st.masks_src:
+                    anchor_m = np.maximum(anchor_m, st.masks_src[lhid])
+    mi_res = (
+        MI.evaluate_motion_isolation(mi_frames, mover_mask=mover_m, anchor_mask=anchor_m, views=mi_views)
+        if (mover_m.any() or anchor_m.any()) and len(mi_frames) >= 2
+        else {"status": "NOT_RUN", "passed": True, "reason": "no declared mover/holder masks"}
+    )
     return {"renderer": VERSION, "shot_id": plan.get("shot_id"), "frames": st.n, "fps": fps, "resolution": [W, H],
             "path": str(out_mp4), "prep_s": round(prep, 2), "sec_per_frame": round(spf, 3), "base_zoom": round(st.z0, 4), "people_in_frame": st.people_cut(), "face_intact": {**face_worst, "faces": len(face0), "kept_faces": len(faces)}, "blown_out": blown, "rest_seam": st.rest_seam(), "effects_seen": st.effects_seen(), "aim": st.aim_check(),
+            "motion_isolation": mi_res, "fx_target_status": getattr(st, "fx_target_status", []),
             "objects": [{"id": o["id"], "depth": round(o["d"], 3)} for o in st.objects],
             "cost_usd": 0.0, "output_sha256": hashlib.sha256(out_mp4.read_bytes()).hexdigest(),
             "views": views, "stage": st, "first": first, "last": last}
