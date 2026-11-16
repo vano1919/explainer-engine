@@ -2,14 +2,14 @@
 
 > **Owner:** Creator  
 > **Document role:** Master architecture, module map, phased implementation roadmap, acceptance gates and live status register.  
-> **Status:** Phase 0 complete with limitations; Draft PR #195 is open for review against the active integration baseline.  
+> **Status:** Phase 0 complete with limitations; its PR Quality workflow is green. Phase 1 specification is in progress in the same Draft PR #195; no production implementation has started.  
 > **Audit baseline:** o239-argon-impl @ a060cf0bb33a00974568d91c1dd30816de35da32 (2026-11-16 13:52:45 UTC).  
 > **Document branch:** docs/phase-0-master-architecture-2026-11-16.  
 > **Authority:** This file owns the target architecture, roadmap and phase status. Existing detailed schemas/rules remain in their canonical documents and are linked rather than duplicated.
 
 ## 0. Live status — update after every milestone
 
-**Overall:** Phase 0 is complete with explicit limitations. The target architecture and staged roadmap are documented as the proposed baseline. No production source code has been changed; no existing branch/PR has been merged, closed or retargeted; no paid generation or cloud GPU job has been launched.
+**Overall:** Phase 0 is complete with explicit limitations and PR Quality run #997 passed. Phase 1 is in specification only. No production source code has been changed; PR #195 remains Draft/Open and has no human review; no existing branch/PR has been merged, closed or retargeted; no paid generation or cloud GPU job has been launched.
 
 | ID | Work item | Status | Evidence / limitation |
 |---|---|---|---|
@@ -17,10 +17,15 @@
 | P0.1 | Repository, branch and PR inventory | DONE WITH LIMITATIONS | 2,546 tree entries; 102 branch refs; 17 open Draft PRs; branch heads sampled. Full semantic reconciliation of every unique PR change is not complete. |
 | P0.2 | Current architecture, modules, contracts and runtime | DONE WITH LIMITATIONS | Episode runner, routing, timing, audio, assembly, contracts, store, ledger, governance, QA and tests inspected. No full automated import/dependency graph was generated. |
 | P0.3 | Truce 1914 production and incident audit | DONE WITH LIMITATIONS | Manifest, script, 84-shot plan, edit points, runbook, correction log and incident reports inspected. Hugging Face video/image binaries were not independently opened in this audit. |
-| P0.4 | Tests, CI, coding standards and release controls | DONE WITH LIMITATIONS | 367 Python unit-test files found; recent PR Quality jobs passed. No tests were run in this read-only audit. Current HEAD returned no combined status rows. Ruff absent. Branch protection/rulesets not fully verified. |
+| P0.4 | Tests, CI, coding standards and release controls | DONE WITH LIMITATIONS | 367 Python unit-test files found. The read-only audit ran no tests; afterward PR #195 Quality run #997 passed its non-system tests, docs lint and palette checks on PR head b6668d1. Ruff absent. Branch protection/rulesets not fully verified. |
 | P0.5 | KEEP / IMPROVE / REPLACE / REMOVE / BUILD disposition | DONE — INITIAL | See section 4. Code-level changes still require individual specs and tests. |
 | P0.6 | Target architecture and implementation roadmap | DONE — PROPOSED BASELINE | See sections 5–9. Some concrete infrastructure products remain benchmark decisions. |
-| P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | File fetched back and checked (806 lines); Draft PR #195 contains exactly one documentation file and targets the active baseline. Awaiting human review/merge; no production code changed. |
+| P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | Master file fetched back and checked; Draft PR #195 contains one documentation file and targets the active baseline. Quality run #997 passed on head b6668d1. No reviews, inline threads or PR comments exist; awaiting human review/merge. |
+| P1.0 | Current state ownership and timeline writer/consumer inventory | IN PROGRESS | Initial read confirms separate Episode manifest, EpisodeJob lifecycle, JobStore checkpoints, v4.3 stage records and audio/timing.json. Full repository call-site inventory is still required before enabling validation at the write boundary. |
+| P1.1 | Phase 1 architecture/specification | IN PROGRESS | Drafted below: retain current owners, add episode_timing/1 and /2 contracts first, then read-only state/dependency projections. Awaiting Owner acceptance. |
+| P1.2 | Timeline schema, semantic validator and fixtures | NOT STARTED | No code or schema changed. Blocked on P1.0 inventory and acceptance of this specification. |
+| P1.3 | Read-only Production State and dependency snapshot | NOT STARTED | No new persisted state file or scheduler. Design follows only after P1.2 compatibility is proven. |
+| P1.4 | ID/version inventory and migration/compatibility plan | NOT STARTED | Preserve current identifiers and existing files; no bulk migration. |
 
 **Status protocol:** only NOT STARTED, IN PROGRESS, BLOCKED, DONE, DONE WITH LIMITATIONS. Every update records date, commit/artifact, evidence and limitation. A status is never DONE merely because code was written or an agent claimed completion.
 
@@ -639,7 +644,7 @@ Behavior exists in the intended runtime; contracts/compatibility pass; focused a
 | Phase | Scope | Outcome / acceptance evidence | Status |
 |---|---|---|---|
 | 0 | Evidence audit, target architecture, branch/data reconciliation, risk register | This master plan, disposition, evidence and limitations | DONE WITH LIMITATIONS |
-| 1 | Core contracts, Production State, IDs, versioning, timeline contract, dependency graph | schema compatibility, checkpoint/store tests, migration plan | NOT STARTED |
+| 1 | Core contracts, Production State, IDs, versioning, timeline contract, dependency graph | schema compatibility, checkpoint/store tests, migration plan | IN PROGRESS |
 | 2 | Thin end-to-end vertical slice | approved script → one bridge item → one shot → preview → render → QC → short clip/master → review bundle | NOT STARTED |
 | 3 | Main AI Director, Expert interfaces, Skill/Agent registry | decision trace, mock agents, permission and approval tests | NOT STARTED |
 | 4 | Editorial, historical research, narrative and bridge | claim coverage, sourced dossier, story/visual approvals | NOT STARTED |
@@ -673,6 +678,159 @@ approved sample script
 ~~~
 
 The slice must use reusable contracts/adapters. It must not be a throwaway notebook unrelated to the real episode runner.
+
+## 8.3 Phase 1 — detailed specification (draft; no implementation authorization yet)
+
+### Objective
+
+Strengthen the actual v4.3 production-state and film-clock contracts without introducing a competing state store, changing current runtime behavior, or migrating existing episode data. Phase 1 begins with compatibility and state ownership, not with the Main AI Director, a new database, a queue, or a broad refactor.
+
+### 8.3.1 Current source-of-truth inventory
+
+These records have different owners and meanings. They must not be collapsed into one writable ProductionState file.
+
+| Current record | Owner / module | What it means | Phase 1 disposition |
+|---|---|---|---|
+| episodes/<id>/episode.json | Episode definition consumed by episode/run.py | Episode identity, creative metadata, fps/render settings and episode configuration | KEEP; do not turn it into a runtime execution log |
+| job_manifest.json, job_manifest/1 | core/store.EpisodeJob + core/contracts.py | Approval lifecycle, gated transitions, approvals, reservations and artifact hashes | KEEP; do not silently wire it into the v4.3 runner or change its lifecycle |
+| state.json + artifacts/NN_*.json | core/store.JobStore | Generic job checkpoint/status and contiguous completed-stage prefix for callers that use JobStore | KEEP; this is not the v4.3 episode stage record store |
+| production/stages/<stage>.json, episode_stage/1 | episode/run.py | v4.3 stage verdicts, outputs, rehearsal flag and input fingerprint | KEEP; current pipeline remains sequential in this phase |
+| audio/timing.json, episode_timing/1 or /2 | episode/timing.py | Active v4.3 authoritative film clock: shot frame ranges, word spines and (in /2) edit-point/clip-reconciled schedules | KEEP as the canonical v4.3 clock; add an explicit contract before changing its format |
+
+A future ProductionStateSnapshot is a read-only projection over these owners. It is not a new authority, does not write back to these records, and must distinguish NOT_PRESENT / UNKNOWN from PASS. It must never invent an approval, stage completion, cost, asset or clock version when the source record is absent.
+
+The current eight-stage v4.3 pipeline remains the source of execution order: script → sound_plan → pictures → voice → clips → sound → assemble → qa. Its fingerprint already includes the immediately previous stage record plus stage-specific file inputs, size and fps. The first dependency graph is therefore a read-only representation of this existing chain and its known inputs, not a new scheduler or permission to parallelize stages.
+
+### 8.3.2 Current → proposed → keep/change/remove → trade-offs → recommendation
+
+**CURRENT**
+- Versioned JSON Schema validation is centralized in core/contracts.py.
+- EpisodeJob and JobStore already provide lifecycle rules, atomic writes and checkpoint behavior for their respective callers.
+- episode/run.py stores independently fingerprinted stage records.
+- episode/timing.py emits episode_timing/1 from retime()/retime_with_clips(), and episode_timing/2 after retime_with_edit_points().
+- persist_authoritative_clock() writes audio/timing.json atomically; both normal narration and clip-spoken voice paths reach it.
+- timing_id is currently a 16-character SHA-256-derived fingerprint of fps, total frames and the ordered shot frame/trim geometry. Consumers use timing_id / render_epoch and per-shot frame values for alignment.
+
+**PROPOSED**
+- Add JSON Schema and semantic validation for episode_timing/1 and episode_timing/2 using the existing Draft 2020-12 + jsonschema contract framework.
+- Preserve both versions and their emitted shapes. Validate the authoritative clock at the persistence boundary only after the full writer/consumer inventory proves the contract covers all legitimate variants.
+- After the timeline contract is stable, expose a read-only ProductionStateSnapshot and a read-only dependency graph projection from current canonical records.
+
+**KEEP**
+- core/contracts.py as the single contract-validation entry point.
+- core/store.py, EpisodeJob, JobStore, their existing state files and their atomic/checkpoint semantics.
+- episode/run.py's eight stages, sequential order, fingerprints, freshness checks, rehearsal rules and stage-record shape.
+- episode/timing.py's retime algorithms, frame math, shot/word spine semantics, compute_timing_id() algorithm and render_epoch naming.
+- audio/timing.json as the active v4.3 clock path.
+- job_manifest/1, episode_manifest/1, episode_stage/1, episode_timing/1 and episode_timing/2 as distinct contracts with distinct owners.
+
+**CHANGE**
+- Add the missing episode_timing contract schema, semantic rules, fixtures and regression coverage.
+- Document the timing contract in docs/CONTRACTS.md and register it in tests/unit/test_contracts.py using the repository's existing fixture conventions.
+- Add a read-only snapshot/projection only as a later slice, after the timeline contract is accepted and proven.
+
+**REMOVE**
+- Remove nothing in Phase 1. Do not delete audio/spine.py, legacy audio_spine contracts, state.json, job_manifest.json, old timing versions or existing stage records as part of this work.
+
+**TRADE-OFFS**
+- Strict validation will expose undocumented legacy shapes; that is useful only if those shapes are inventoried first and either represented intentionally or migrated through a separate reviewed plan.
+- A read-only snapshot avoids divergent state, but it cannot become a transactional system-of-record until a separately approved architecture decision defines ownership and migration.
+- Keeping the current sequential runner avoids destabilizing production, but it does not provide general DAG scheduling or parallel execution yet.
+
+**RECOMMENDATION**
+Start with a compatibility-first episode_timing contract. Do not create a new persisted ProductionState, ID service, event bus, database, queue, or scheduler in this first code slice.
+
+### 8.3.3 P1.0 — mandatory writer/consumer inventory (must finish before code)
+
+Inventory the complete active-branch call graph and classify every occurrence of:
+- Producers/writers: retime(), retime_with_clips(), retime_with_edit_points(), persist_authoritative_clock(), all writes or copies targeting audio/timing.json.
+- Readers/consumers: load(), Episode.timing(), timed_script(), spines_of(), compute_timing_id(), verify_clock_alignment(), frame_to_sample(), _anchor_rows(), sound planning, clips/direction/render/assembly/QA, and every direct audio/timing.json reader.
+- Compatibility inputs: older episode_timing/1 documents, clip-spoken episodes, missing narration/rehearsal behavior, edit-point/clip records, and any existing runtime timing files outside the tracked source tree.
+
+For each call site record: file/function, producer or consumer, schema version(s), required fields, mutation behavior, timing_id/render_epoch use, and test coverage. Search must include the active integration branch, not just main/default. The inventory is not complete merely because the known stage_voice call path was found. No schema enforcement is enabled until this inventory and fixture set cover all active variants.
+
+### 8.3.4 P1.2 — first implementation slice: episode_timing contract
+
+**Expected scope, subject to P1.0 evidence:**
+- explainer_engine/schemas/episode_timing.schema.json
+- explainer_engine/core/contracts.py
+- explainer_engine/episode/timing.py (validation at the authoritative persistence boundary only; no timing algorithm edits)
+- tests/fixtures/contracts/episode_timing/valid.json
+- tests/fixtures/contracts/episode_timing/invalid__*.json
+- tests/fixtures/contracts/episode_timing/valid_v2.json
+- tests/fixtures/contracts/episode_timing/invalid__v2_*.json
+- tests/unit/test_contracts.py
+- tests/unit/test_v43_runner.py only if needed for write-boundary integration coverage
+- docs/CONTRACTS.md
+
+Do not expand the file list without documenting why and updating the task contract. If P1.0 finds additional legitimate producers or consumers, return to the specification and revise scope before implementation.
+
+**Schema compatibility**
+- Keep one schema file per contract name and model /1 and /2 as explicit alternatives (for example, a top-level oneOf with exact schema constants), consistent with existing versioned-schema conventions.
+- /1 must accept both retime() and retime_with_clips() outputs. /2 must accept retime_with_edit_points() output, including legitimate optional metadata retained from its /1 input.
+- Require only fields guaranteed by every producer of that version. Optional producer-specific fields must remain optional unless the call-site inventory proves otherwise.
+- Keep additionalProperties strict where the existing emitted document shape is fully enumerated; do not reject legitimate fields discovered in P1.0.
+- Do not auto-upgrade /1 documents to /2, rewrite historical files, rename keys, or normalize values during validation.
+
+**Semantic validation to specify and test**
+- fps is a positive integer; total_frames is a positive integer; each shot has a valid non-empty ID key, non-negative start_frame and positive frames.
+- Ordered shot ranges tile the master clock without unintended gaps or overlaps; the final end equals total_frames.
+- For /1, derive end_frame as start_frame + frames for validation only; do not require a stored end_frame.
+- For /2, stored end_frame must equal start_frame + frames; duration/seconds and total_seconds must agree with frame counts and fps within the documented rounding tolerance.
+- Each word-spine item references a valid shot and has a valid frame coordinate under that version's relative/absolute convention. Reject negative, out-of-window or malformed coordinates; preserve estimated flags and existing token spelling.
+- In /2, validate timing_id using the existing compute_timing_id() algorithm and render_epoch against the existing epoch_<timing_id> convention when those fields are present/required by the inventoried producer.
+- Validate segment, narrator, dialogue, insert and map schedule bounds only where the producer guarantees their structure. Do not infer missing events or convert REVIEW-level hypotheses into hard FAILs.
+- Reuse existing ContractError and finding severities. Do not introduce Pydantic or another validation library.
+
+The exact JSON Schema fields and semantic edge cases are finalized from P1.0's complete inventory, not guessed from one sample output.
+
+### 8.3.5 Test-first and acceptance gates
+
+1. Add valid /1 and /2 fixtures captured from real deterministic producers or minimized from their exact output shapes.
+2. Add invalid fixtures for each version: missing required field, invalid frame geometry, discontinuous/overlapping ranges, invalid spine coordinate, mismatched /2 end/seconds, and stale timing_id/render_epoch as applicable.
+3. Add unit tests proving both versions pass unchanged, invalid cases fail with findings, and the current timing fingerprint is preserved.
+4. Add runner-level regression proving both voice branches persist a schema-valid clock and downstream timing consumers still read it; use fake/local inputs only.
+5. Run focused tests first, then the relevant contracts/lifecycle/timing/runner regression tests, then the repository's full non-system Quality workflow.
+6. Independent fresh-context review checks schema coverage against every inventory row, no data-shape drift, no unrelated edits and no unapproved paid call.
+
+**Acceptance criteria**
+- Every active producer's valid output validates under exactly one declared version.
+- Existing /1 documents remain readable; /2 output remains unchanged except for validation failure on genuinely invalid data.
+- Timing algorithms, timing_id values, render_epoch values and downstream frame/sample alignment are unchanged for the same inputs.
+- No automatic data migration or rewrite occurs.
+- Tests prove schema compatibility, semantic constraints, runner integration and failure behavior.
+- Quality CI is green; reviewer finds no unhandled valid producer variant.
+- The PR changes only the approved contract/test/docs scope.
+
+### 8.3.6 P1.3 — read-only state and dependency projections (later slice)
+
+After P1.2 is merged and compatibility is proven:
+- Define a typed/read-only ProductionStateSnapshot assembled from episode.json, job_manifest.json when present, JobStore state when applicable, production/stages/*.json and audio/timing.json.
+- Each field must identify its source and observation time/fingerprint; absent files stay NOT_PRESENT / UNKNOWN.
+- The snapshot must not write back, synthesize lifecycle approvals, mark a stage complete, or promote a rehearsal to a production pass.
+- Define the current v4.3 dependency graph as eight ordered stages plus each stage's hashed file inputs and previous-stage record dependency.
+- Graph nodes identify input/output contracts, fingerprint, freshness and PASS/REVIEW/FAIL/NOT_RUN. A missing or stale source blocks a dependent node; no scheduler or parallelism change is included.
+- Add failure-injection tests for absent/corrupt/stale records and confirm the snapshot is deterministic and read-only.
+
+### 8.3.7 P1.4 — IDs, versions and migration plan (later slice)
+
+- Preserve current namespaces and identifiers: episode_id, job_id, shot_id, line_id, timing_id and render_epoch.
+- Do not create a global ID generator until a demonstrated collision/cross-system requirement exists.
+- Document which ID is stable identity, which is content fingerprint, and which is a version/epoch. Do not use timing_id as an entity ID.
+- Version changes are additive and explicit. Old records remain readable by their declared versions; migration is offline, deterministic, backed up, reviewable and reversible.
+- No blanket file migration, silent re-versioning or ID rewrite.
+
+### 8.3.8 Rollback and non-goals
+
+- If a legacy producer emits a valid shape not covered by the draft, stop enforcement and extend the reviewed contract; do not weaken validation globally.
+- The schema/validator can be reverted without rewriting existing timeline data because the first slice is validation-only.
+- No change to runner sequencing, timing math, scene/shot behavior, visual mix, audio generation, asset storage, spend approval or publication.
+- No new database, queue, distributed scheduler, worker architecture, Main AI Director or Expert agent runtime.
+- No paid API or GPU work; all tests use fixtures/fakes/local deterministic data.
+
+### 8.3.9 Owner decision gate
+
+This specification is a draft. Owner acceptance is required before P1.2 implementation. The next permitted work before acceptance is only P1.0 read-only call-site/fixture inventory and revisions to this specification.
 
 ---
 
@@ -740,11 +898,18 @@ Concrete DB, queue/event broker, dashboard framework, object-storage vendor, pro
 - Documentation, branch integration and CI coding standards need reconciliation before broad architecture work.
 - This audit did not independently view the HF media and did not execute tests; project reports are attributed as reports.
 
+## 2026-11-16 — Phase 1 initial code discovery (specification only)
+- PR #195 Quality run #997 completed successfully on PR head b6668d1; non-system tests, docs lint and palette checks passed. No human review, inline review thread or PR discussion comment was present at the time of this update.
+- Confirmed separate owners for episode.json, EpisodeJob/job_manifest.json, JobStore/state.json, production/stages/*.json and audio/timing.json. They are not interchangeable state stores.
+- Confirmed both narration and clip-spoken voice paths call the same atomic authoritative-clock persistence function; the complete repository-wide writer/consumer inventory remains P1.0 work.
+- Confirmed episode_timing/1 and /2 are emitted by the active timing code but have no dedicated schema, fixtures or entry in the current contract registry/table.
+- No code, runtime data, branch baseline, existing PR or paid resource was changed. Phase 1 implementation remains blocked on P1.0 inventory and Owner acceptance of the specification.
+
 ## Next actions
-1. Review this master document on the dedicated documentation branch.
-2. Finish final consistency and branch-diff review; create a reviewable PR to the active integration baseline.
-3. Do not start code migration until Phase 1 has an accepted spec, contracts, tests and acceptance criteria.
-4. Start Phase 1 with the smallest core/contract vertical slice, not a broad refactor.
+1. Review PR #195, including the Phase 1 detailed specification; the PR remains Draft and unmerged.
+2. Finish P1.0 read-only inventory of all active-branch timing writers, readers and versioned output shapes.
+3. Obtain Owner acceptance of this specification.
+4. Only then implement P1.2 as a small schema/semantic-validator/fixture/test PR. Do not start a broad refactor or build a parallel Production State.
 
 ---
 
