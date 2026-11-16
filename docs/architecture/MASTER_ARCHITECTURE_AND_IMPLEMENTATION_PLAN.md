@@ -2,7 +2,7 @@
 
 > **Owner:** Creator  
 > **Document role:** Master architecture, module map, phased implementation roadmap, acceptance gates and live status register.  
-> **Status:** Phase 0 audit complete with limitations; final consistency/review gate remains.  
+> **Status:** Phase 0 complete with limitations; Draft PR #195 is open for review against the active integration baseline.  
 > **Audit baseline:** o239-argon-impl @ a060cf0bb33a00974568d91c1dd30816de35da32 (2026-11-16 13:52:45 UTC).  
 > **Document branch:** docs/phase-0-master-architecture-2026-11-16.  
 > **Authority:** This file owns the target architecture, roadmap and phase status. Existing detailed schemas/rules remain in their canonical documents and are linked rather than duplicated.
@@ -20,7 +20,7 @@
 | P0.4 | Tests, CI, coding standards and release controls | DONE WITH LIMITATIONS | 367 Python unit-test files found; recent PR Quality jobs passed. No tests were run in this read-only audit. Current HEAD returned no combined status rows. Ruff absent. Branch protection/rulesets not fully verified. |
 | P0.5 | KEEP / IMPROVE / REPLACE / REMOVE / BUILD disposition | DONE — INITIAL | See section 4. Code-level changes still require individual specs and tests. |
 | P0.6 | Target architecture and implementation roadmap | DONE — PROPOSED BASELINE | See sections 5–9. Some concrete infrastructure products remain benchmark decisions. |
-| P0.7 | Final consistency review and reviewable PR | IN PROGRESS | Verify this file, its diff and status; create a reviewable PR. No production implementation starts from this document alone. |
+| P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | File fetched back and checked (806 lines); Draft PR #195 contains exactly one documentation file and targets the active baseline. Awaiting human review/merge; no production code changed. |
 
 **Status protocol:** only NOT STARTED, IN PROGRESS, BLOCKED, DONE, DONE WITH LIMITATIONS. Every update records date, commit/artifact, evidence and limitation. A status is never DONE merely because code was written or an agent claimed completion.
 
