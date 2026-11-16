@@ -12,9 +12,9 @@
    "S05b": "S05_SH014-SH021: NO score (restraint at the burial); wind only",
    "S06": "mus_despair_and_triumph__v1 (reflective), very low, from S06_SH001; out on the dip to black",
    "S07": "S07_SH001-SH004 none (footsteps, farewells); after the shots: mus_dark_times__v1 low from S07_SH007",
-   "S08": "mus_ancient_rite__v1 (reflective), low; resolves on the end card"
+   "S08": "mus_ancient_rite__v1 (reflective), low; resolves on the closing candle shot S08_SH004 (no disclosure end card; disclosure is in description and pinned comment only)"
   },
-  "voice": "Narrator: the ElevenLabs reads of 2026-11-13 (Odom, 33 lines, text identical to the current script, measured clock in demo_truce_1914/clock). Dialogue: the LTX clips' own voices (the creator's choice of 11-13), every line checked by Whisper on 11-15; fixes: S06_SH008 start at 1.45 s (double 'Maybe'), S03_SH003 play to its end (cut word), S03_SH007 muted (false words in noise). ElevenLabs character reads stay as the fallback for any clip whose voice fails the ear check. No paid voice step.",
+  "voice": "Narrator: the ElevenLabs reads of 2026-11-13 (Odom, 33 lines, measured clock in demo_truce_1914/clock). Dialogue (Owner Decision 2026-11-16, final): OUR voices (ElevenLabs) replace LTX clip-generated voices across all 39 dialogue lines (spec in episodes/ep_truce_1914/audio/our_voices_spec.json; Brandt re-cast to German-accented baritone 95-125 Hz; Python mix/voice pipeline change is Item 6 on the Python approval list and is not executed until owner approval; no paid voice run without owner's word).",
   "clip_sound": "Video shots with a line: the clip's own audio is the dialogue. Narrated or silent video shots: the clip's own sound at -12 dB (switch Q2, creator 11-13) ducked under the narrator, except where the shot says otherwise.",
   "staging": "Every spot sound is panned to its source's x in the picture (pan = 2x-1) and set by distance (close 0 dB, mid -6, far -12); during a push its level rises up to +3 dB as the camera closes; beds change with the place (open field: wind; trench: wind low + crackle; dugout: wind low-passed). The old one-bed-everywhere (fire + calm wind) is replaced.",
   "library_gaps": "Not in the free library: rifle crack (S02_SH004 sniper), scissors (S05_SH006), coin/button touch (S08_SH002), distant real artillery (amb_low_rumble stands in). Plan: leave those silent (no paid step); the gunshots of S07 come from the LTX clips. Optional later: ElevenLabs SFX ~4 takes, about 0.10 USD, only on the creator's word.",
@@ -675,7 +675,8 @@
      "hf": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/sound_library_2026-11-15_additions/mixkit/mixkit_3138_metal_bar_movement_hits.mp3"
     }
    ]
-  }
+  },
+  "glove_continuity_rule": "Single glove rule (Mac Audit #01/#02): Thomas Hale has bare, cold chapped hands in all shots (POV stills S02_SH005, S05_SH010, S08_SH001 and LTX shots); Friedrich Brandt wears field-grey woollen gloves in trench/dugout portrait inserts (S03_SH002, S08_SH002) and bare hands when striking a match or shaking hands."
  },
  "shots": [
   {
@@ -864,10 +865,10 @@
    "picture": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/8b77b881e734b3d58179831d.png",
    "ltx_heard": null,
    "mood": "title promise, night before; solemn and mysterious",
-   "see": "moonlit night, clouds, dead trees on the horizon left; a winding trench with lit Christmas trees on the parapet (.3-.8, .35-.55); men with lamps inside the trench (.48, .65) (.62, .68), braziers (.66, .7)",
+   "see": "Christmas-morning golden dawn over no man's land seen from the British parapet: a single burnt-out Christmas-Eve candle stub on a frosted sandbag in the foreground, silent wire and mist beyond (NEW PHOTO flagged to replace deep-blue night tree plate)",
    "cam": "slow crane-like push down the trench line toward the lit trees (target (.55, .5)), 9.3 s split by the runner into two parts: part 1 holds wide on 'the day the war stopped', part 2 pushes on 'with a song'",
    "live": "tree candles twinkle (every tree, small radius); braziers flicker; moonlit clouds drift; light wind-driven snow, far layer only, diagonal",
-   "cold": "night frost, light falling snow (overcast night sky = allowed), blue grade with the warm candle points",
+   "cold": "frost haze and ground spindrift only; no falling snow (golden dawn)",
    "still": "trees, trench walls",
    "keep": "the winding trench and the lit trees",
    "snd": "bed L:campfire_night_wind__v1 -28 (night wind + far fire). Spots: C: S03_SH003 singing, reverbed, very far [under 'with a song'; pan +0.6; -30 dB]; M:2786 far thud [under 'how it ended'; pan -0.6; -30 dB]. Left out on purpose: the singing is a hint only; music swell after 'stopped' per the accents table.",
@@ -1092,14 +1093,14 @@
    "lines": [
     [
      "narrator",
-     "Private Thomas Hale had read the same line every night for a week."
+     "Private Thomas Hale had read the same line by the brazier all week."
     ]
    ],
    "current_clip": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/clips/own_lane_g7_rehearsal/S02_SH005.mp4",
    "picture": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/2bbae2bafe8a0b07d0bb1825.png",
    "ltx_heard": null,
    "mood": "private longing; the letter",
-   "see": "POV: gloved hands hold a worn letter (.3-.65, .1-.75) in front of the brazier (.6, .8); sunset sky top-left, candle in the dugout (.17, .6)",
+   "see": "POV: Thomas's bare, cold chapped hands (no gloves) hold a worn letter (.3-.65, .1-.75) in front of the glowing coke brazier at dusk (NEW PHOTO flagged to remove fingerless gloves)",
    "cam": "very slow push into the letter (target (.48, .4)), keep both hands in frame; no move on frame 0",
    "live": "brazier flame + rising embers past the letter's lower edge; candle; a faint tremble of the letter edge from the wind (edge only, the hands do not move)",
    "cold": "breath of the reader rises into frame bottom once (from below the frame, POV)",
@@ -3892,10 +3893,10 @@
    "picture": "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/ae380e00e9c9f5cf5946a1e4.png",
    "ltx_heard": null,
    "mood": "the war goes on (no comfort)",
-   "see": "NEW CHOICE: reuse the picture of S01_SH001 (the empty frozen field of the opening) instead of the current S08_SH003 picture, which shows men still fraternising in the field and so contradicts 'The war went on'. Bookend: the film ends where it began, the field empty again",
+   "see": "empty frozen no man's land at golden winter sunrise (deliberate bookend via picture_overrides.json -> S01_SH001_start): wire on X-stakes, ground fog, no falling snow",
    "cam": "slow pull back (the field recedes), 3.6 s",
    "live": "fog drift; cold blue-grey grade over the golden picture if the renderer can (else none); spindrift",
-   "cold": "cold, empty",
+   "cold": "ground spindrift and frost haze only; no falling snow (matches S01_SH001 golden sunrise bookend)",
    "still": "wire, stakes",
    "keep": "the field",
    "snd": "bed open wind -28. Spots: M:2786 artillery far left [0.8 s; pan -0.8; -24 dB]; M:1696 distant war explosions far right [2.0 s; pan +0.8; -26 dB].",

@@ -1198,6 +1198,21 @@
           "audio_basis": "authored",
           "dur_s": 5.5,
           "distance": "close"
+        },
+        {
+          "class": "paper_map",
+          "kind": "foley",
+          "at_s": 0.25,
+          "at_frame": 6,
+          "basis": "authored",
+          "event_id": "S02_SH005.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_2379_papers_being_moved_or_wrinkling.mp3",
+          "why": "Motivate the close letter insert with subtle paper handling foley (Mixkit 2379) under S02_L005 (Mac Audit #13)."
         }
       ],
       "visual_events": [
@@ -1258,8 +1273,8 @@
             "reason": "bed BED_06_loc_british_trench (wind, fire) + fire"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S02_SH005.S1: mixkit_2379_papers_being_moved_or_wrinkling.mp3)"
           },
           "spot": {
             "active": false,
@@ -1281,7 +1296,9 @@
             "fire",
             "fire"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S02_SH005.S1 (paper_map): soft paper crinkle as Thomas holds his mother's worn letter"
+          ],
           "perspective": [
             "close"
           ],
@@ -1317,7 +1334,23 @@
       "audio_line_ids": [
         "S02_L006"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "paper_map",
+          "kind": "foley",
+          "at_s": 2.8,
+          "at_frame": 67,
+          "basis": "authored",
+          "event_id": "S02_SH006.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_2385_paper_crinkle.mp3",
+          "why": "Foley sync for Thomas folding the letter into his pocket after S02_L006 (Mixkit 2385, Mac Audit #15)."
+        }
+      ],
       "visual_events": [],
       "candidates": [
         {
@@ -1349,8 +1382,8 @@
             "reason": "bed BED_06_loc_british_trench (wind, fire)"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S02_SH006.S1: mixkit_2385_paper_crinkle.mp3)"
           },
           "spot": {
             "active": false,
@@ -1371,7 +1404,9 @@
             "wind",
             "fire"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S02_SH006.S1 (paper_map): folding the worn letter and slipping it into tunic breast pocket"
+          ],
           "perspective": [
             "(no event)"
           ],
@@ -1665,6 +1700,21 @@
           "audio_basis": "authored",
           "dur_s": 8.25,
           "distance": "medium"
+        },
+        {
+          "class": "map_arrive_click",
+          "kind": "foley",
+          "at_s": 1.2,
+          "at_frame": 29,
+          "basis": "authored",
+          "event_id": "S02_SH009.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "medium",
+          "sfx_asset": "mixkit_116_food_can_quick_opening.mp3",
+          "why": "Tactile brass tin lid & Christmas card foley (Mixkit 116 / 1530) under S02_L009 (Mac Audit #16)."
         }
       ],
       "visual_events": [
@@ -1731,8 +1781,8 @@
             "reason": "bed BED_06_loc_british_trench (wind, fire) + fire"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S02_SH009.S1: mixkit_116_food_can_quick_opening.mp3)"
           },
           "spot": {
             "active": false,
@@ -1754,7 +1804,9 @@
             "fire",
             "fire"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S02_SH009.S1 (map_arrive_click): soft brass tin lid click and card paper slide as Princess Mary gift tins open"
+          ],
           "perspective": [
             "medium"
           ],
@@ -1899,6 +1951,21 @@
           "audio_basis": "authored",
           "dur_s": 4.0,
           "distance": "close"
+        },
+        {
+          "class": "ov_slide",
+          "kind": "foley",
+          "at_s": 0.2,
+          "at_frame": 5,
+          "basis": "authored",
+          "event_id": "S03_SH002.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_1530_paper_slide.mp3",
+          "why": "Subtle card handling foley (Mixkit 1530) for Friedrich's family portrait insert under S03_L002 (Mac Audit #17)."
         }
       ],
       "visual_events": [
@@ -1965,8 +2032,8 @@
             "reason": "bed BED_07_loc_german_trench (wind, crowd_murmur) + wind"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S03_SH002.S1: mixkit_1530_paper_slide.mp3)"
           },
           "spot": {
             "active": false,
@@ -1988,7 +2055,9 @@
             "crowd_murmur",
             "wind"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S03_SH002.S1 (ov_slide): soft card slide in woollen gloved hand holding sepia family portrait"
+          ],
           "perspective": [
             "close"
           ],
@@ -4657,7 +4726,23 @@
       "audio_line_ids": [
         "S05_L008"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "cloth_flap",
+          "kind": "foley",
+          "at_s": 1.1,
+          "at_frame": 26,
+          "basis": "authored",
+          "event_id": "S05_SH008.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_2385_paper_crinkle.mp3",
+          "why": "Sync wool/paper pocket tap foley (Mixkit 2385) when Thomas mentions his mum and sister (Mac Audit #18)."
+        }
+      ],
       "visual_events": [],
       "candidates": [
         {
@@ -4682,8 +4767,8 @@
             "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S05_SH008.S1: mixkit_2385_paper_crinkle.mp3)"
           },
           "spot": {
             "active": false,
@@ -4704,7 +4789,9 @@
             "wind",
             "crowd_murmur"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S05_SH008.S1 (cloth_flap): soft wool pat and paper rustle as Thomas taps the letter in his breast pocket"
+          ],
           "perspective": [
             "(no event)"
           ],
@@ -4736,7 +4823,23 @@
       "audio_line_ids": [
         "S05_L009"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "ov_slide",
+          "kind": "foley",
+          "at_s": 0.4,
+          "at_frame": 10,
+          "basis": "authored",
+          "event_id": "S05_SH009.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_1530_paper_slide.mp3",
+          "why": "Card slide foley (Mixkit 1530) as Friedrich draws the family portrait from his pocket (Mac Audit #19)."
+        }
+      ],
       "visual_events": [],
       "candidates": [],
       "heard_not_seen": [],
@@ -4753,8 +4856,8 @@
             "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S05_SH009.S1: mixkit_1530_paper_slide.mp3)"
           },
           "spot": {
             "active": false,
@@ -4775,7 +4878,9 @@
             "wind",
             "crowd_murmur"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S05_SH009.S1 (ov_slide): sepia portrait card sliding from Friedrich's field-grey breast pocket"
+          ],
           "perspective": [
             "(no event)"
           ],
@@ -4805,7 +4910,23 @@
       "audio_line_ids": [
         "S05_L010"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "ov_slide",
+          "kind": "foley",
+          "at_s": 0.2,
+          "at_frame": 5,
+          "basis": "authored",
+          "event_id": "S05_SH010.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_2379_papers_being_moved_or_wrinkling.mp3",
+          "why": "Motivate silent reaction insert S05_SH010 with tactile card handoff foley (Mixkit 2379, Mac Audit #20)."
+        }
+      ],
       "visual_events": [
         {
           "event_id": "S05_SH010.M1",
@@ -4862,8 +4983,8 @@
             "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S05_SH010.S1: mixkit_2379_papers_being_moved_or_wrinkling.mp3)"
           },
           "spot": {
             "active": false,
@@ -4884,7 +5005,9 @@
             "wind",
             "crowd_murmur"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S05_SH010.S1 (ov_slide): cardboard portrait passed gently between Friedrich's gloved hand and Thomas's bare hand"
+          ],
           "perspective": [
             "(no event)"
           ],
@@ -4918,7 +5041,23 @@
       "audio_line_ids": [
         "S05_L011"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "ov_slide",
+          "kind": "foley",
+          "at_s": 1.1,
+          "at_frame": 26,
+          "basis": "authored",
+          "event_id": "S05_SH011.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_1530_paper_slide.mp3",
+          "why": "Card handoff foley (Mixkit 1530) as Thomas returns the portrait after S05_L011 (Mac Audit #21)."
+        }
+      ],
       "visual_events": [],
       "candidates": [],
       "heard_not_seen": [],
@@ -4935,8 +5074,8 @@
             "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S05_SH011.S1: mixkit_1530_paper_slide.mp3)"
           },
           "spot": {
             "active": false,
@@ -4957,7 +5096,9 @@
             "wind",
             "crowd_murmur"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S05_SH011.S1 (ov_slide): soft card slide as Thomas hands the portrait back to Friedrich"
+          ],
           "perspective": [
             "(no event)"
           ],
@@ -4987,7 +5128,23 @@
       "audio_line_ids": [
         "S05_L012"
       ],
-      "events": [],
+      "events": [
+        {
+          "class": "cloth_flap",
+          "kind": "foley",
+          "at_s": 0.5,
+          "at_frame": 12,
+          "basis": "authored",
+          "event_id": "S05_SH012.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_2385_paper_crinkle.mp3",
+          "why": "Pocket cloth & card foley (Mixkit 2385) as Friedrich puts the portrait away (Mac Audit #22)."
+        }
+      ],
       "visual_events": [],
       "candidates": [],
       "heard_not_seen": [],
@@ -5004,8 +5161,8 @@
             "reason": "bed BED_17_loc_no_mans_land (wind, crowd_murmur)"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S05_SH012.S1: mixkit_2385_paper_crinkle.mp3)"
           },
           "spot": {
             "active": false,
@@ -5026,7 +5183,9 @@
             "wind",
             "crowd_murmur"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S05_SH012.S1 (cloth_flap): portrait card slipping back into wool tunic pocket"
+          ],
           "perspective": [
             "(no event)"
           ],
@@ -7486,6 +7645,21 @@
           "audio_basis": "authored",
           "dur_s": 6.75,
           "distance": "close"
+        },
+        {
+          "class": "ov_draw",
+          "kind": "foley",
+          "at_s": 0.3,
+          "at_frame": 7,
+          "basis": "authored",
+          "event_id": "S08_SH001.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 3.5,
+          "distance": "close",
+          "sfx_asset": "mixkit_3194_writing_pencil.mp3",
+          "why": "Pencil-on-paper writing foley (Mixkit 3194) motivating the epilogue letter insert under S08_L001 (Mac Audit #23)."
         }
       ],
       "visual_events": [
@@ -7553,8 +7727,8 @@
             "reason": "bed BED_20_loc_british_trench (wind, fire) + wind"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S08_SH001.S1: mixkit_3194_writing_pencil.mp3)"
           },
           "spot": {
             "active": false,
@@ -7576,7 +7750,9 @@
             "fire",
             "wind"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S08_SH001.S1 (ov_draw): pencil writing 'Dear Mum' on letter paper beside the German tunic button"
+          ],
           "perspective": [
             "close"
           ],
@@ -7625,6 +7801,21 @@
           "audio_basis": "authored",
           "dur_s": 8.75,
           "distance": "close"
+        },
+        {
+          "class": "map_arrive_click",
+          "kind": "foley",
+          "at_s": 0.6,
+          "at_frame": 14,
+          "basis": "authored",
+          "event_id": "S08_SH002.S1",
+          "decision": "foley",
+          "sync": "onset",
+          "audio_basis": "authored",
+          "dur_s": 1.2,
+          "distance": "close",
+          "sfx_asset": "mixkit_1939_coins_handling.mp3",
+          "why": "Subtle brass button & card touch foley (Mixkit 1939 / 1530) motivating the relic study under S08_L002 (Mac Audit #24)."
         }
       ],
       "visual_events": [
@@ -7691,8 +7882,8 @@
             "reason": "bed BED_21_loc_german_trench (wind, crowd_murmur) + wind"
           },
           "foley": {
-            "active": false,
-            "reason": "no visible body or object movement named"
+            "active": true,
+            "reason": "authored document/relic handling foley (S08_SH002.S1: mixkit_1939_coins_handling.mp3)"
           },
           "spot": {
             "active": false,
@@ -7714,7 +7905,9 @@
             "crowd_murmur",
             "wind"
           ],
-          "audible_actions": [],
+          "audible_actions": [
+            "S08_SH002.S1 (map_arrive_click): soft brass button touch against sepia portrait card in Friedrich's gloved hands"
+          ],
           "perspective": [
             "close"
           ],
@@ -9102,5 +9295,37 @@
   "audibility_verification": {
     "status": "NOT_VERIFIED",
     "reason": "Metadata continuity updated in sound_plan.json; signal-level ambience checks and human listening review have not been run."
+  },
+  "our_voices_routing": {
+    "owner_decision": "2026-11-16: Use OUR voices (ElevenLabs) for all 39 character dialogue lines instead of LTX clip audio (Python Approval Item 6).",
+    "spec_file_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json",
+    "ltx_clip_speech_muted": true,
+    "section_bed_ducking": {
+      "continuous_section_beds": [
+        "BED_SEC_INTRO",
+        "BED_SEC_VERSE_1",
+        "BED_SEC_CHORUS_1",
+        "BED_SEC_VERSE_2_BRIDGE",
+        "BED_SEC_CHORUS_2",
+        "BED_SEC_OUTRO"
+      ],
+      "base_bed_level_db_range": [
+        -26.0,
+        -24.0
+      ],
+      "presence_band_ducking_hz": [
+        1000,
+        3500
+      ],
+      "presence_band_cut_db": -4.5,
+      "broadband_bed_duck_under_speech_db": -3.5,
+      "music_duck_under_speech_db": -9.0,
+      "duck_attack_ms": 150,
+      "duck_release_ms": 350,
+      "high_freq_wind_preservation_above_hz": 3600,
+      "carol_peak_policy": "During S03_SH003 (Friedrich singing Stille Nacht) and S03_SH008 (Thomas visibly singing Silent Night), non-diegetic score is muted (music.active=False) and BED_SEC_CHORUS_1 continues uninterrupted underneath.",
+      "audibility_verification": "NOT_VERIFIED"
+    },
+    "audibility_verification": "NOT_VERIFIED"
   }
 }

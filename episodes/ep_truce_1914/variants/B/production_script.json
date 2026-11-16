@@ -12,8 +12,8 @@
   "dialogue_ratio_max": 0.45
  },
  "visual_mix_target": {
-  "cinematic_video_target": 0.6,
-  "composed_illustration_target": 0.3,
+  "cinematic_video_target": 0.3,
+  "composed_illustration_target": 0.6,
   "map_visualization_target": 0.1
  },
  "historical_dossier_ref": "episodes/ep_truce_1914/story/research_dossier.md",
@@ -26,7 +26,7 @@
     "name": "Thomas Hale",
     "historical_role": "Private of an English county infantry battalion, 20, from Nottingham (invented composite hero)",
     "fixed_appearance_prompt": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki peaked service cap, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
-    "costume_continuity_notes": "khaki peaked service cap (never a steel helmet: none were issued in 1914), greatcoat open over the tunic, the top right brass tunic button cut off from S06_SH009 on, rifle only where the shot says",
+    "costume_continuity_notes": "khaki peaked service cap (never a steel helmet: none were issued in 1914), greatcoat open over the tunic, bare cold chapped hands in all shots (no gloves, resolving Mac Audit #01/#02 across POV stills and LTX clips), the top right brass tunic button cut off from S06_SH009 on, rifle only where the shot says",
     "voice_card": {
      "age": "early twenties",
      "timbre": "a light, slightly husky tenor",
@@ -34,7 +34,63 @@
      "accent": "a working-class East Midlands English accent"
     },
     "voice_description": "a young man in his early twenties, a light, slightly husky tenor, quick, then hesitant, with a working-class East Midlands English accent",
-    "voice_profile_id": "voice_thomas_hale_1914"
+    "voice_profile_id": "voice_thomas_hale_1914",
+    "is_composite_invented": true,
+    "character_status": "invented_composite",
+    "dramatization_level": "invented",
+    "basis_claim_ids": [
+     "I-01",
+     "C-02",
+     "C-10",
+     "C-14",
+     "C-16",
+     "C-22",
+     "C-26"
+    ],
+    "our_voice_spec": {
+     "speaker_id": "char_thomas_hale",
+     "character_name": "Private Thomas Hale (20, Nottingham \u2014 invented composite hero)",
+     "voice_name": "Toby - British Male (or owner-approved East Midlands tenor candidate)",
+     "elevenlabs_voice_id": "pYDLV125o4CgqP8i49Lg",
+     "audition_required": true,
+     "audition_reason": "Verify working-class East Midlands cadence vs generic RP; keep light husky tenor timbre distinct from Brandt and Harris.",
+     "model_id": "eleven_multilingual_v2",
+     "language_code": "en",
+     "required_voice_card": "a working-class East Midlands English accent; light, slightly husky tenor, early twenties",
+     "target_f0_hz_band": [
+      145,
+      185
+     ],
+     "measured_clip_f0_median_hz": 163.0,
+     "measured_old_read_f0_median_hz": 156.0,
+     "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.78,
+      "style": 0.22,
+      "use_speaker_boost": true
+     },
+     "pan_by_screen_side": {
+      "left": -0.25,
+      "center": 0.0,
+      "right": 0.25
+     },
+     "lines_count": 17,
+     "words_count": 83,
+     "chars_count": 432,
+     "special_lines": {
+      "S03_L008": {
+       "shot_id": "S03_SH008",
+       "text": "Silent night... holy night...",
+       "delivery_mode": "visible_singing_route_c_plus_e",
+       "note": "Drives 2.5D viseme mouth shapes (M0-M5) + breath vapor on S03_SH008; requires sustained vowel phrasing or dedicated sung vocal take."
+      },
+      "S05_L004": {
+       "shot_id": "S05_SH004",
+       "text": "Where'd you learn English?",
+       "note": "Replaces LTX clip voice that altered contraction to 'Where do you learn English?'."
+      }
+     }
+    }
    },
    {
     "character_id": "char_friedrich_brandt",
@@ -42,7 +98,7 @@
     "name": "Friedrich Brandt",
     "historical_role": "Gefreiter of a Saxon infantry regiment, 32, a waiter in London before the war (invented composite hero)",
     "fixed_appearance_prompt": "Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots",
-    "costume_continuity_notes": "field-grey cap, never a spiked helmet on screen; greatcoat buttoned; the family portrait card lives in his left breast pocket; one greatcoat button missing from S06_SH011 on (he gives it to Thomas)",
+    "costume_continuity_notes": "field-grey round Kratzchen cap with red-and-white / green-and-white cockades (never a Stahlhelm), long double-breasted field-grey greatcoat, field-grey woollen gloves in trench/epilogue portrait inserts (S03_SH002, S08_SH002) and bare hands when lighting a match or shaking hands in S04-S06, one grey horn button twisted off from S06_SH011 on",
     "voice_card": {
      "age": "early thirties",
      "timbre": "a warm, soft baritone",
@@ -50,7 +106,62 @@
      "accent": "a German accent with English learned in London"
     },
     "voice_description": "a man in his early thirties, a warm, soft baritone, calm and careful, with a German accent with English learned in London",
-    "voice_profile_id": "voice_friedrich_brandt_1914"
+    "voice_profile_id": "voice_friedrich_brandt_1914",
+    "is_composite_invented": true,
+    "character_status": "invented_composite",
+    "dramatization_level": "invented",
+    "basis_claim_ids": [
+     "I-01",
+     "C-09",
+     "C-10",
+     "C-12",
+     "C-14",
+     "C-16",
+     "C-27"
+    ],
+    "our_voice_spec": {
+     "speaker_id": "char_friedrich_brandt",
+     "character_name": "Gefreiter Friedrich Brandt (32, Saxon regiment, former London waiter \u2014 invented composite hero)",
+     "voice_name": "RECAST_REQUIRED_GERMAN_BARITONE (replaces Paul G4t3322LqgEAU2HEgGCv)",
+     "previous_cast_voice_id": "G4t3322LqgEAU2HEgGCv",
+     "previous_cast_defect": "Paul ('English Barritone Narration') had an English accent and 157 Hz median F0 (nearly identical to Thomas's 156 Hz).",
+     "audition_required": true,
+     "audition_reason": "Select warm soft German-accented baritone (F0 95-125 Hz) speaking English learned in London, with native German pronunciation on S03_L003.",
+     "model_id": "eleven_multilingual_v2",
+     "language_code_default": "en",
+     "language_code_overrides": {
+      "S03_L003": "de"
+     },
+     "required_voice_card": "a German accent with English learned in London; warm soft baritone, early thirties",
+     "target_f0_hz_band": [
+      95,
+      125
+     ],
+     "measured_clip_f0_median_hz": 103.0,
+     "measured_old_read_f0_median_hz": 157.0,
+     "settings": {
+      "stability": 0.58,
+      "similarity_boost": 0.8,
+      "style": 0.18,
+      "use_speaker_boost": true
+     },
+     "pan_by_screen_side": {
+      "left": -0.25,
+      "center": 0.0,
+      "right": 0.25
+     },
+     "lines_count": 16,
+     "words_count": 81,
+     "chars_count": 459,
+     "special_lines": {
+      "S03_L003": {
+       "shot_id": "S03_SH003",
+       "text": "Stille Nacht, heilige Nacht...",
+       "language_code": "de",
+       "note": "Fixes High Audit #07/#08 where LTX clip garbled German words as 'Stilenacht, Heiligenacht' (Whisper match 0.00)."
+      }
+     }
+    }
    },
    {
     "character_id": "char_sgt_harris",
@@ -66,7 +177,55 @@
      "accent": "a Lancashire English accent"
     },
     "voice_description": "a man in his early forties, a low, gravelly voice, clipped and hard, with a Lancashire English accent",
-    "voice_profile_id": "voice_sgt_harris_1914"
+    "voice_profile_id": "voice_sgt_harris_1914",
+    "is_composite_invented": true,
+    "character_status": "invented_composite",
+    "dramatization_level": "invented",
+    "basis_claim_ids": [
+     "I-01",
+     "C-08",
+     "C-18",
+     "C-19",
+     "C-21"
+    ],
+    "our_voice_spec": {
+     "speaker_id": "char_sgt_harris",
+     "character_name": "Sergeant Albert Harris (42, regular platoon sergeant \u2014 invented composite hero)",
+     "voice_name": "Gideon - Rugged, Gravelly and Northern",
+     "elevenlabs_voice_id": "q1h5HGdnfVxp4TXTJRNN",
+     "audition_required": false,
+     "audition_reason": "Gideon matches Lancashire/Northern gravelly card; lock lower pitch register (85-115 Hz) to prevent high F0 spikes on short commands.",
+     "model_id": "eleven_multilingual_v2",
+     "language_code": "en",
+     "required_voice_card": "a Lancashire English accent; low gravelly voice, early forties",
+     "target_f0_hz_band": [
+      85,
+      115
+     ],
+     "measured_clip_f0_median_hz": 92.0,
+     "measured_old_read_f0_median_hz": 146.0,
+     "settings": {
+      "stability": 0.65,
+      "similarity_boost": 0.84,
+      "style": 0.12,
+      "use_speaker_boost": true
+     },
+     "pan_by_screen_side": {
+      "left": -0.25,
+      "center": 0.0,
+      "right": 0.25
+     },
+     "lines_count": 6,
+     "words_count": 29,
+     "chars_count": 147,
+     "special_lines": {
+      "S07_L004": {
+       "shot_id": "S07_SH004",
+       "text": "Stand to.",
+       "note": "Fixes High Audit #08/#09 where LTX clip garbled 'Stand to.' as 'stan 2' (Whisper match 0.00)."
+      }
+     }
+    }
    }
   ],
   "locations": [
@@ -255,7 +414,15 @@
    "cause_from_segment_id": null,
    "effect_to_segment_id": "S02",
    "why_a_scene": null,
-   "scene": null
+   "scene": null,
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-01",
+    "C-02",
+    "C-03",
+    "C-04",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S02",
@@ -288,7 +455,17 @@
    },
    "target_duration_seconds": 58.25,
    "cause_from_segment_id": "S01",
-   "effect_to_segment_id": "S03"
+   "effect_to_segment_id": "S03",
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-05",
+    "C-06",
+    "C-07",
+    "C-08",
+    "C-25",
+    "C-26",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S03",
@@ -322,7 +499,13 @@
    },
    "target_duration_seconds": 43.0,
    "cause_from_segment_id": "S02",
-   "effect_to_segment_id": "S04"
+   "effect_to_segment_id": "S04",
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-09",
+    "C-10",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S04",
@@ -356,7 +539,19 @@
    },
    "target_duration_seconds": 56.5,
    "cause_from_segment_id": "S03",
-   "effect_to_segment_id": "S05"
+   "effect_to_segment_id": "S05",
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "C-03",
+    "C-07",
+    "C-11",
+    "C-12",
+    "C-13",
+    "C-14",
+    "C-15",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S05",
@@ -390,7 +585,18 @@
    },
    "target_duration_seconds": 85.5,
    "cause_from_segment_id": "S04",
-   "effect_to_segment_id": "S06"
+   "effect_to_segment_id": "S06",
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-03",
+    "C-15",
+    "C-16",
+    "C-17",
+    "C-18",
+    "C-19",
+    "C-27",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S06",
@@ -423,7 +629,13 @@
    },
    "target_duration_seconds": 38.5,
    "cause_from_segment_id": "S05",
-   "effect_to_segment_id": "S07"
+   "effect_to_segment_id": "S07",
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-16",
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S07",
@@ -457,7 +669,13 @@
    },
    "target_duration_seconds": 35.75,
    "cause_from_segment_id": "S06",
-   "effect_to_segment_id": "S08"
+   "effect_to_segment_id": "S08",
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-20",
+    "C-21",
+    "I-01"
+   ]
   },
   {
    "segment_id": "S08",
@@ -472,7 +690,14 @@
    "cause_from_segment_id": "S07",
    "effect_to_segment_id": null,
    "why_a_scene": null,
-   "scene": null
+   "scene": null,
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-22",
+    "C-23",
+    "C-24",
+    "I-01"
+   ]
   }
  ],
  "audio_lines": [
@@ -489,7 +714,12 @@
     "C-01"
    ],
    "estimated_duration_seconds": 1.11,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-01"
+   ]
   },
   {
    "line_id": "S01_L002",
@@ -502,7 +732,13 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.44,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-01",
+    "I-01"
+   ]
   },
   {
    "line_id": "S01_L003",
@@ -517,7 +753,12 @@
     "C-02"
    ],
    "estimated_duration_seconds": 5.56,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-02"
+   ]
   },
   {
    "line_id": "S01_L004",
@@ -532,7 +773,12 @@
     "C-03"
    ],
    "estimated_duration_seconds": 4.07,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-03"
+   ]
   },
   {
    "line_id": "S01_L005",
@@ -549,7 +795,14 @@
     "C-21"
    ],
    "estimated_duration_seconds": 8.52,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-04",
+    "C-10",
+    "C-21"
+   ]
   },
   {
    "line_id": "S02_L001",
@@ -564,7 +817,12 @@
     "C-05"
    ],
    "estimated_duration_seconds": 5.19,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-05"
+   ]
   },
   {
    "line_id": "S02_L002",
@@ -579,7 +837,12 @@
     "C-06"
    ],
    "estimated_duration_seconds": 7.04,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-06"
+   ]
   },
   {
    "line_id": "S02_L003",
@@ -594,7 +857,12 @@
     "C-07"
    ],
    "estimated_duration_seconds": 5.19,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-07"
+   ]
   },
   {
    "line_id": "S02_L004",
@@ -609,7 +877,12 @@
     "C-08"
    ],
    "estimated_duration_seconds": 5.56,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-08"
+   ]
   },
   {
    "line_id": "S02_L005",
@@ -618,11 +891,17 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "gentle",
-   "text": "Private Thomas Hale had read the same line every night for a week.",
+   "text": "Private Thomas Hale had read the same line by the brazier all week.",
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.81,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-05",
+    "I-01"
+   ]
   },
   {
    "line_id": "S02_L006",
@@ -636,7 +915,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 3.6,
    "requires_visible_lipsync": false,
-   "intent": "aside"
+   "intent": "aside",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S02_L006"
   },
   {
    "line_id": "S02_L007",
@@ -650,7 +935,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 3.6,
    "requires_visible_lipsync": false,
-   "intent": "challenge"
+   "intent": "challenge",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S02_L007"
   },
   {
    "line_id": "S02_L008",
@@ -665,7 +956,12 @@
     "C-25"
    ],
    "estimated_duration_seconds": 9.26,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-25"
+   ]
   },
   {
    "line_id": "S02_L009",
@@ -680,7 +976,12 @@
     "C-26"
    ],
    "estimated_duration_seconds": 7.41,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-26"
+   ]
   },
   {
    "line_id": "S03_L001",
@@ -695,7 +996,12 @@
     "C-09"
    ],
    "estimated_duration_seconds": 8.89,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-09"
+   ]
   },
   {
    "line_id": "S03_L002",
@@ -708,7 +1014,13 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 3.33,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-09",
+    "I-01"
+   ]
   },
   {
    "line_id": "S03_L003",
@@ -724,7 +1036,14 @@
    ],
    "estimated_duration_seconds": 4.0,
    "requires_visible_lipsync": false,
-   "intent": "setup"
+   "intent": "setup",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S03_L003"
   },
   {
    "line_id": "S03_L004",
@@ -738,7 +1057,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "question"
+   "intent": "question",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S03_L004"
   },
   {
    "line_id": "S03_L005",
@@ -752,7 +1077,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.4,
    "requires_visible_lipsync": false,
-   "intent": "reveal"
+   "intent": "reveal",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S03_L005"
   },
   {
    "line_id": "S03_L006",
@@ -766,7 +1097,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.0,
    "requires_visible_lipsync": false,
-   "intent": "command"
+   "intent": "command",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S03_L006"
   },
   {
    "line_id": "S03_L007",
@@ -779,7 +1116,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 3.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S03_L008",
@@ -795,7 +1137,14 @@
    ],
    "estimated_duration_seconds": 4.0,
    "requires_visible_lipsync": false,
-   "intent": "turn"
+   "intent": "turn",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S03_L008"
   },
   {
    "line_id": "S03_L009",
@@ -811,7 +1160,14 @@
    ],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "banter"
+   "intent": "banter",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S03_L009"
   },
   {
    "line_id": "S03_L010",
@@ -826,7 +1182,12 @@
     "C-10"
    ],
    "estimated_duration_seconds": 5.93,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-10"
+   ]
   },
   {
    "line_id": "S04_L001",
@@ -841,7 +1202,12 @@
     "C-11"
    ],
    "estimated_duration_seconds": 2.22,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-11"
+   ]
   },
   {
    "line_id": "S04_L002",
@@ -857,7 +1223,14 @@
    ],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "setup"
+   "intent": "setup",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-12",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L002"
   },
   {
    "line_id": "S04_L003",
@@ -871,7 +1244,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.0,
    "requires_visible_lipsync": false,
-   "intent": "command"
+   "intent": "command",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L003"
   },
   {
    "line_id": "S04_L004",
@@ -887,7 +1266,14 @@
    ],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "setup"
+   "intent": "setup",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-12",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L004"
   },
   {
    "line_id": "S04_L005",
@@ -900,7 +1286,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 5.5,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S04_L006",
@@ -914,7 +1305,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "command"
+   "intent": "command",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L006"
   },
   {
    "line_id": "S04_L007",
@@ -928,7 +1325,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 3.2,
    "requires_visible_lipsync": false,
-   "intent": "defend"
+   "intent": "defend",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L007"
   },
   {
    "line_id": "S04_L008",
@@ -944,7 +1347,13 @@
     "C-13"
    ],
    "estimated_duration_seconds": 8.52,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-07",
+    "C-13"
+   ]
   },
   {
    "line_id": "S04_L009",
@@ -958,7 +1367,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "question"
+   "intent": "question",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L009"
   },
   {
    "line_id": "S04_L010",
@@ -972,7 +1387,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "banter"
+   "intent": "banter",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L010"
   },
   {
    "line_id": "S04_L011",
@@ -985,7 +1406,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 2.5,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S04_L012",
@@ -1001,7 +1427,14 @@
    ],
    "estimated_duration_seconds": 3.2,
    "requires_visible_lipsync": false,
-   "intent": "banter"
+   "intent": "banter",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-14",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L012"
   },
   {
    "line_id": "S04_L013",
@@ -1015,7 +1448,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 3.6,
    "requires_visible_lipsync": false,
-   "intent": "banter"
+   "intent": "banter",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S04_L013"
   },
   {
    "line_id": "S04_L014",
@@ -1028,7 +1467,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S04_L015",
@@ -1044,7 +1488,13 @@
     "C-15"
    ],
    "estimated_duration_seconds": 6.3,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-03",
+    "C-15"
+   ]
   },
   {
    "line_id": "S05_L001",
@@ -1059,7 +1509,12 @@
     "C-15"
    ],
    "estimated_duration_seconds": 5.19,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-15"
+   ]
   },
   {
    "line_id": "S05_L002",
@@ -1074,7 +1529,12 @@
     "C-03"
    ],
    "estimated_duration_seconds": 5.56,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-03"
+   ]
   },
   {
    "line_id": "S05_L003",
@@ -1090,7 +1550,13 @@
     "C-17"
    ],
    "estimated_duration_seconds": 5.93,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-16",
+    "C-17"
+   ]
   },
   {
    "line_id": "S05_L004",
@@ -1104,7 +1570,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "question"
+   "intent": "question",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L004"
   },
   {
    "line_id": "S05_L005",
@@ -1120,7 +1592,14 @@
    ],
    "estimated_duration_seconds": 2.8,
    "requires_visible_lipsync": false,
-   "intent": "reveal"
+   "intent": "reveal",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "C-27",
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L005"
   },
   {
    "line_id": "S05_L006",
@@ -1135,7 +1614,12 @@
     "C-27"
    ],
    "estimated_duration_seconds": 8.52,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-27"
+   ]
   },
   {
    "line_id": "S05_L007",
@@ -1149,7 +1633,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "question"
+   "intent": "question",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L007"
   },
   {
    "line_id": "S05_L008",
@@ -1163,7 +1653,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.4,
    "requires_visible_lipsync": false,
-   "intent": "reveal"
+   "intent": "reveal",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L008"
   },
   {
    "line_id": "S05_L009",
@@ -1177,7 +1673,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.8,
    "requires_visible_lipsync": false,
-   "intent": "reveal"
+   "intent": "reveal",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L009"
   },
   {
    "line_id": "S05_L010",
@@ -1190,7 +1692,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 3.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S05_L011",
@@ -1204,7 +1711,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "concede"
+   "intent": "concede",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L011"
   },
   {
    "line_id": "S05_L012",
@@ -1218,7 +1731,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.8,
    "requires_visible_lipsync": false,
-   "intent": "reveal"
+   "intent": "reveal",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L012"
   },
   {
    "line_id": "S05_L013",
@@ -1232,7 +1751,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "concede"
+   "intent": "concede",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L013"
   },
   {
    "line_id": "S05_L014",
@@ -1247,7 +1772,12 @@
     "C-18"
    ],
    "estimated_duration_seconds": 6.3,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-18"
+   ]
   },
   {
    "line_id": "S05_L015",
@@ -1262,7 +1792,12 @@
     "C-18"
    ],
    "estimated_duration_seconds": 2.59,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-18"
+   ]
   },
   {
    "line_id": "S05_L016",
@@ -1275,7 +1810,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 3.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S05_L017",
@@ -1289,7 +1829,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "question"
+   "intent": "question",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L017"
   },
   {
    "line_id": "S05_L018",
@@ -1303,7 +1849,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.0,
    "requires_visible_lipsync": false,
-   "intent": "reveal"
+   "intent": "reveal",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L018"
   },
   {
    "line_id": "S05_L019",
@@ -1317,7 +1869,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 0.8,
    "requires_visible_lipsync": false,
-   "intent": "concede"
+   "intent": "concede",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S05_L019"
   },
   {
    "line_id": "S05_L020",
@@ -1332,7 +1890,12 @@
     "C-19"
    ],
    "estimated_duration_seconds": 7.04,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-19"
+   ]
   },
   {
    "line_id": "S05_L021",
@@ -1345,7 +1908,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S06_L001",
@@ -1358,7 +1926,13 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 2.59,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ]
   },
   {
    "line_id": "S06_L002",
@@ -1372,7 +1946,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.0,
    "requires_visible_lipsync": false,
-   "intent": "question"
+   "intent": "question",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L002"
   },
   {
    "line_id": "S06_L003",
@@ -1386,7 +1966,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "concede"
+   "intent": "concede",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L003"
   },
   {
    "line_id": "S06_L004",
@@ -1400,7 +1986,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.8,
    "requires_visible_lipsync": false,
-   "intent": "press"
+   "intent": "press",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L004"
   },
   {
    "line_id": "S06_L005",
@@ -1413,7 +2005,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 3.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S06_L006",
@@ -1427,7 +2024,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.8,
    "requires_visible_lipsync": false,
-   "intent": "concede"
+   "intent": "concede",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L006"
   },
   {
    "line_id": "S06_L007",
@@ -1441,7 +2044,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.4,
    "requires_visible_lipsync": false,
-   "intent": "setup"
+   "intent": "setup",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L007"
   },
   {
    "line_id": "S06_L008",
@@ -1455,7 +2064,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.6,
    "requires_visible_lipsync": false,
-   "intent": "decide"
+   "intent": "decide",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L008"
   },
   {
    "line_id": "S06_L009",
@@ -1468,7 +2083,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S06_L010",
@@ -1482,7 +2102,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.0,
    "requires_visible_lipsync": false,
-   "intent": "aside"
+   "intent": "aside",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L010"
   },
   {
    "line_id": "S06_L011",
@@ -1496,7 +2122,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 2.0,
    "requires_visible_lipsync": false,
-   "intent": "decide"
+   "intent": "decide",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S06_L011"
   },
   {
    "line_id": "S06_L012",
@@ -1509,7 +2141,13 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.81,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ]
   },
   {
    "line_id": "S07_L001",
@@ -1522,7 +2160,13 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.07,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "line_id": "S07_L002",
@@ -1536,7 +2180,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "aside"
+   "intent": "aside",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S07_L002"
   },
   {
    "line_id": "S07_L003",
@@ -1550,7 +2200,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 1.2,
    "requires_visible_lipsync": false,
-   "intent": "aside"
+   "intent": "aside",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S07_L003"
   },
   {
    "line_id": "S07_L004",
@@ -1564,7 +2220,13 @@
    "citation_ids": [],
    "estimated_duration_seconds": 0.8,
    "requires_visible_lipsync": false,
-   "intent": "command"
+   "intent": "command",
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "voice_spec_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json#S07_L004"
   },
   {
    "line_id": "S07_L005",
@@ -1579,7 +2241,12 @@
     "C-21"
    ],
    "estimated_duration_seconds": 5.93,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-21"
+   ]
   },
   {
    "line_id": "S07_L006",
@@ -1594,7 +2261,13 @@
     "C-21"
    ],
    "estimated_duration_seconds": 6.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-18",
+    "C-21"
+   ]
   },
   {
    "line_id": "S07_L007",
@@ -1607,7 +2280,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 4.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "reconstructed",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "line_id": "S07_L008",
@@ -1622,7 +2300,12 @@
     "C-20"
    ],
    "estimated_duration_seconds": 7.41,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-20"
+   ]
   },
   {
    "line_id": "S08_L001",
@@ -1637,7 +2320,12 @@
     "C-22"
    ],
    "estimated_duration_seconds": 5.93,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-22"
+   ]
   },
   {
    "line_id": "S08_L002",
@@ -1652,7 +2340,12 @@
     "C-23"
    ],
    "estimated_duration_seconds": 8.15,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-23"
+   ]
   },
   {
    "line_id": "S08_L003",
@@ -1667,7 +2360,12 @@
     "C-24"
    ],
    "estimated_duration_seconds": 3.33,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "documented",
+   "is_invented_dialogue": false,
+   "basis_claim_ids": [
+    "C-24"
+   ]
   },
   {
    "line_id": "S08_L004",
@@ -1680,7 +2378,12 @@
    "register_type": "dramatized_in_scene_speech",
    "citation_ids": [],
    "estimated_duration_seconds": 5.0,
-   "requires_visible_lipsync": false
+   "requires_visible_lipsync": false,
+   "dramatization_level": "invented",
+   "is_invented_dialogue": true,
+   "basis_claim_ids": [
+    "I-01"
+   ]
   }
  ],
  "shots": [
@@ -1775,7 +2478,16 @@
     ],
     "continuity_from": null,
     "continuity_to": "S01_SH002"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-01",
+    "C-11"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "sensory",
+   "visual_association": "Empty frozen killing ground at dawn with silent wire and frost haze evokes the eerie stillness of Christmas morning 1914 without a literal title card.",
+   "audit_fix_note": "Mac Audit #10/#32: Resolved by association-bridge rule (sunrise stillness over wire)."
   },
   {
    "shot_id": "S01_SH002",
@@ -1788,13 +2500,11 @@
    "character_ids": [
     "char_thomas_hale"
    ],
-   "prop_ids": [
-    "prop_smle_rifle"
-   ],
+   "prop_ids": [],
    "audio_line_ids": [
     "S01_L002"
    ],
-   "action_start_state": "Thomas stands at the trench ladder, his rifle leaning against the sandbags",
+   "action_start_state": "Thomas stands unarmed at the foot of the trench ladder, hands empty",
    "action_end_state": "Thomas has climbed onto the parapet into the fog",
    "camera_spec": {
     "shot_size": "medium_wide",
@@ -1804,8 +2514,8 @@
     "multiangle_token": null
    },
    "screen_composition": {
-    "foreground": "frosted sandbags of the parapet",
-    "midground": "Thomas climbing the wooden ladder, hands bare",
+    "foreground": "the frost-rimmed rungs of the wooden trench ladder",
+    "midground": "Thomas in greatcoat and soft cap at the foot of the ladder, hands empty and unarmed",
     "background": "white fog over no man's land",
     "screen_direction_notes": "Thomas climbs away from camera, up and out"
    },
@@ -1821,7 +2531,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A young British soldier in a soft khaki cap and greatcoat at the foot of a trench ladder, his rifle left leaning on the sandbags, fog above the parapet, low golden winter sunrise through frost haze.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A young British soldier in a soft khaki cap and greatcoat standing unarmed at the foot of a wooden trench ladder in golden winter dawn frost haze, bare hands gripping the ladder rails.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -1874,7 +2584,13 @@
     ],
     "continuity_from": "S01_SH001",
     "continuity_to": "S01_SH003"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "I-01"
+   ],
+   "audit_fix_note": "Mac Audit #42: Removed prop_smle_rifle from S01_SH002 start state/props to match the unarmed start picture and S01_L003 ('Unarmed')."
   },
   {
    "shot_id": "S01_SH003",
@@ -1970,7 +2686,12 @@
     ],
     "continuity_from": "S01_SH002",
     "continuity_to": "S01_SH004"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S01_SH004",
@@ -2063,7 +2784,11 @@
     ],
     "continuity_from": "S01_SH003",
     "continuity_to": "S01_SH005"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-03"
+   ]
   },
   {
    "shot_id": "S01_SH005",
@@ -2074,14 +2799,12 @@
    "generation_mode": "STILL_25D",
    "location_id": "loc_german_trench",
    "character_ids": [],
-   "prop_ids": [
-    "prop_candle_tree"
-   ],
+   "prop_ids": [],
    "audio_line_ids": [
     "S01_L005"
    ],
-   "action_start_state": "A row of small candle-lit fir trees stands along the German parapet at night",
-   "action_end_state": "The candle row runs into the dark",
+   "action_start_state": "A single burnt-out Christmas-Eve candle stub rests on the frost-rimmed British parapet as golden dawn light rises across no man's land",
+   "action_end_state": "The morning mist drifts across the silent wire beyond the burnt-out candle stub",
    "camera_spec": {
     "shot_size": "wide",
     "vertical_angle": "eye_level_0",
@@ -2090,12 +2813,12 @@
     "multiangle_token": null
    },
    "screen_composition": {
-    "foreground": "British sandbags in silhouette, frost on them",
-    "midground": "no man's land in moonlight and wire",
+    "foreground": "a single burnt-out wax candle stub in a tin holder on a frost-covered sandbag parapet",
+    "midground": "barbed wire and silent frozen no man's land in golden Christmas-morning mist",
     "background": "a long row of tiny candle-lit fir trees along the German parapet",
     "screen_direction_notes": "the candle row runs from screen left into the distance right"
    },
-   "lighting_and_time": "deep blue night, warm candle points",
+   "lighting_and_time": "low golden Christmas-morning dawn, frost haze",
    "continuity_refs": {
     "reuse_location_anchor": true,
     "inherit_from_previous_shot_id": null
@@ -2107,7 +2830,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Night over no man's land seen from the British parapet, across the wire a long row of small fir trees with lit candles standing along the top of the German trench, breath-like mist, deep blue night, warm candle points.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Morning golden dawn over no man's land seen from the British parapet; in the foreground a single burnt-out Christmas-Eve candle stub on a frosted sandbag, silent barbed wire and mist across the field.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -2166,7 +2889,17 @@
     ],
     "continuity_from": "S01_SH004",
     "continuity_to": "S02_SH001"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-04",
+    "C-10",
+    "C-21"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "symbolic",
+   "visual_association": "A single burnt-out Christmas-Eve candle stub in Christmas-morning dawn light links 'the day the war stopped' to the previous night's song without jumping back to midnight or repeating S03_SH001's fir trees.",
+   "audit_fix_note": "Mac Audit #03/#33/#37: Changed S01_SH005 from deep-blue night with fir trees to golden Christmas-morning dawn with a single burnt-out candle stub relic (NEW PHOTO flagged for render)."
   },
   {
    "shot_id": "S02_SH001",
@@ -2227,7 +2960,7 @@
     {
      "kind": "label",
      "at_word": "August",
-     "label": "August 1914",
+     "label": "The Schlieffen March",
      "event_id": "S02_SH001.A1",
      "audio": {
       "decision": "ui_cue",
@@ -2276,7 +3009,15 @@
     ],
     "continuity_from": "S01_SH005",
     "continuity_to": "S02_SH002"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-05"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "historical",
+   "visual_association": "Sweeping invasion tracer from Aachen through Li\u00e8ge and Brussels toward the Marne visualizes the mobile summer campaign ('The Schlieffen March') without repeating the spoken word 'August'.",
+   "audit_fix_note": "Mac Audit #10/#11: Changed HUD map label from 'August 1914' to associative 'The Schlieffen March' so spoken date and caption do not repeat."
   },
   {
    "shot_id": "S02_SH002",
@@ -2337,7 +3078,7 @@
     {
      "kind": "label",
      "at_word": "December",
-     "label": "December 1914",
+     "label": "400 Miles of Trenches",
      "event_id": "S02_SH002.A1",
      "audio": {
       "decision": "ui_cue",
@@ -2394,7 +3135,15 @@
     ],
     "continuity_from": "S02_SH001",
     "continuity_to": "S02_SH003"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-06"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "historical",
+   "visual_association": "The continuous fortified line locking from Nieuport to the Swiss border visualizes the winter stalemate ('400 Miles of Trenches') without repeating the spoken word 'December'.",
+   "audit_fix_note": "Mac Audit #10/#12: Changed HUD map label from 'December 1914' to associative '400 Miles of Trenches' so spoken date and caption do not repeat."
   },
   {
    "shot_id": "S02_SH003",
@@ -2499,7 +3248,11 @@
     ],
     "continuity_from": "S02_SH002",
     "continuity_to": "S02_SH004"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-07"
+   ]
   },
   {
    "shot_id": "S02_SH004",
@@ -2599,7 +3352,11 @@
     ],
     "continuity_from": "S02_SH003",
     "continuity_to": "S02_SH005"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-08"
+   ]
   },
   {
    "shot_id": "S02_SH005",
@@ -2616,7 +3373,7 @@
    "audio_line_ids": [
     "S02_L005"
    ],
-   "action_start_state": "A mud-smudged letter is held open in two cold hands",
+   "action_start_state": "A mud-smudged letter is held open in Thomas's two bare, cold chapped hands by the glowing brazier at dusk",
    "action_end_state": "Same",
    "camera_spec": {
     "shot_size": "medium_close_up",
@@ -2643,7 +3400,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. An over-the-shoulder close view of an open letter in pencil handwriting held in a young soldier's cold hands, the words 'home by Christmas' legible on one line, warm brazier glow behind, warm brazier light at dusk.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. An over-the-shoulder close view of an open letter in pencil handwriting held in a young British soldier's bare, cold chapped hands (no gloves) beside a glowing coke brazier at dusk, the words 'home by Christmas' legible.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -2701,7 +3458,34 @@
     ],
     "continuity_from": "S02_SH004",
     "continuity_to": "S02_SH006"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-05",
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "read_aloud",
+   "audio_link": {
+    "type": "narration_and_foley",
+    "source_id": "S02_L005",
+    "sfx_asset": "mixkit_2379_papers_being_moved_or_wrinkling.mp3"
+   },
+   "minimum_hold_seconds": 4.0,
+   "sound_events": [
+    {
+     "event_id": "S02_SH005.S1",
+     "kind": "foley",
+     "class": "paper_map",
+     "what": "soft paper crinkle as Thomas holds his mother's worn letter",
+     "at_s": 0.25,
+     "distance": "close",
+     "purpose": "clarify",
+     "why": "Motivate the close letter insert with subtle paper handling foley (Mixkit 2379) under S02_L005 (Mac Audit #13)."
+    }
+   ],
+   "costume_state_ref": "COSTUME_BRITISH_1914_GREATCOAT_SOFT_CAP_BARE_HANDS",
+   "audit_fix_note": "Mac Audit #01/#02/#04/#13: Reworded S02_L005 to 'by the brazier all week', locked bare hands on Thomas (NEW PHOTO flagged for POV still), and added paper foley S02_SH005.S1."
   },
   {
    "shot_id": "S02_SH006",
@@ -2720,7 +3504,7 @@
    "audio_line_ids": [
     "S02_L006"
    ],
-   "action_start_state": "Thomas sits on the fire step by the brazier holding the letter",
+   "action_start_state": "Thomas sits on the fire step by the brazier holding the letter in his bare hands",
    "action_end_state": "Thomas folds the letter into his breast pocket",
    "camera_spec": {
     "shot_size": "medium",
@@ -2747,7 +3531,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A young British soldier with a freckled face in a soft khaki cap sitting on a trench fire step beside a glowing brazier, a letter in his hands, warm brazier light at dusk.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A young British soldier with a freckled face in a soft khaki cap sitting on a trench fire step beside a glowing coke brazier at dusk, holding a folded letter in his bare cold hands.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -2793,7 +3577,34 @@
     ],
     "continuity_from": "S02_SH005",
     "continuity_to": "S02_SH007"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-05",
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "character_reading",
+   "audio_link": {
+    "type": "dialogue_and_foley",
+    "source_id": "S02_L006",
+    "sfx_asset": "mixkit_2385_paper_crinkle.mp3"
+   },
+   "minimum_hold_seconds": 2.5,
+   "sound_events": [
+    {
+     "event_id": "S02_SH006.S1",
+     "kind": "foley",
+     "class": "paper_map",
+     "what": "folding the worn letter and slipping it into tunic breast pocket",
+     "at_s": 2.8,
+     "distance": "close",
+     "purpose": "sync",
+     "why": "Foley sync for Thomas folding the letter into his pocket after S02_L006 (Mixkit 2385, Mac Audit #15)."
+    }
+   ],
+   "costume_state_ref": "COSTUME_BRITISH_1914_GREATCOAT_SOFT_CAP_BARE_HANDS",
+   "audit_fix_note": "Mac Audit #01/#02/#06/#15: Locked bare hands on Thomas in S02_SH006, added folding-letter foley S02_SH006.S1, and linked S02_L006 to our-voices spec."
   },
   {
    "shot_id": "S02_SH007",
@@ -2885,7 +3696,12 @@
     ],
     "continuity_from": "S02_SH006",
     "continuity_to": "S02_SH008"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-08",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S02_SH008",
@@ -2989,7 +3805,12 @@
     ],
     "continuity_from": "S02_SH007",
     "continuity_to": "S02_SH009"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-25",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S02_SH009",
@@ -3004,7 +3825,7 @@
    "audio_line_ids": [
     "S02_L009"
    ],
-   "action_start_state": "Soldiers on the fire step hold small brass gift tins",
+   "action_start_state": "Soldiers on the fire step open Christmas parcels and small embossed brass Princess Mary gift tins",
    "action_end_state": "They open the lids and pass cigarettes along",
    "camera_spec": {
     "shot_size": "medium_wide",
@@ -3031,7 +3852,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Four British soldiers in greatcoats and soft caps sitting on a trench fire step at dusk opening small embossed brass gift tins, cigarettes and a folded card inside, a glowing brazier, dusk, warm brazier light.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. Four British soldiers in greatcoats and soft caps sitting on a trench fire step at dusk beside opened Christmas parcels and small embossed brass Princess Mary gift tins, warm brazier light on the brass.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -3092,7 +3913,35 @@
     "identity_fail_below": 0.6,
     "local_face_motion": "prohibited",
     "threshold_classification": "DESIGN_RULE"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-26"
+   ],
+   "insert_type": "document",
+   "document_motivation": "narrative_evidence",
+   "audio_link": {
+    "type": "narration_and_foley",
+    "source_id": "S02_L009",
+    "sfx_asset": "mixkit_116_food_can_quick_opening.mp3"
+   },
+   "minimum_hold_seconds": 4.0,
+   "sound_events": [
+    {
+     "event_id": "S02_SH009.S1",
+     "kind": "foley",
+     "class": "map_arrive_click",
+     "what": "soft brass tin lid click and card paper slide as Princess Mary gift tins open",
+     "at_s": 1.2,
+     "distance": "medium",
+     "purpose": "clarify",
+     "why": "Tactile brass tin lid & Christmas card foley (Mixkit 116 / 1530) under S02_L009 (Mac Audit #16)."
+    }
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "historical",
+   "visual_association": "Soldiers opening Christmas parcels and embossed brass Princess Mary tins by the brazier connects the freezing trench to the home front (C-26).",
+   "audit_fix_note": "Mac Audit #16/#34/#38/#39: Added 'Christmas parcels' to action/prompt text, added tin/card foley S02_SH009.S1, and enforced max_hold_seconds=6.0 face-hold split."
   },
   {
    "shot_id": "S03_SH001",
@@ -3191,7 +4040,16 @@
     ],
     "continuity_from": "S02_SH009",
     "continuity_to": "S03_SH002"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-09",
+    "I-01"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "historical",
+   "visual_association": "Primary historical beat (C-09): Friedrich places and lights the small candle-lit Tannenbaum on the Saxon parapet\u2014the single shot where the Christmas tree is introduced directly.",
+   "audit_fix_note": "Mac Audit #33/#35: Designated S03_SH001 as the primary historical tree-lighting beat (C-09) while removing tree literalism from S01_SH005."
   },
   {
    "shot_id": "S03_SH002",
@@ -3293,7 +4151,34 @@
     ],
     "continuity_from": "S03_SH001",
     "continuity_to": "S03_SH003"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-05",
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "narrative_evidence",
+   "audio_link": {
+    "type": "narration_and_foley",
+    "source_id": "S03_L002",
+    "sfx_asset": "mixkit_1530_paper_slide.mp3"
+   },
+   "minimum_hold_seconds": 2.5,
+   "sound_events": [
+    {
+     "event_id": "S03_SH002.S1",
+     "kind": "foley",
+     "class": "ov_slide",
+     "what": "soft card slide in woollen gloved hand holding sepia family portrait",
+     "at_s": 0.2,
+     "distance": "close",
+     "purpose": "clarify",
+     "why": "Subtle card handling foley (Mixkit 1530) for Friedrich's family portrait insert under S03_L002 (Mac Audit #17)."
+    }
+   ],
+   "costume_state_ref": "COSTUME_SAXON_1914_GREATCOAT_FIELD_CAP_WOOLLEN_GLOVES",
+   "audit_fix_note": "Mac Audit #17: Locked woollen gloves as Friedrich's Saxon cold-weather costume state and added card slide foley S03_SH002.S1."
   },
   {
    "shot_id": "S03_SH003",
@@ -3385,7 +4270,12 @@
     ],
     "continuity_from": "S03_SH002",
     "continuity_to": "S03_SH004"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S03_SH004",
@@ -3477,7 +4367,16 @@
     ],
     "continuity_from": "S03_SH003",
     "continuity_to": "S03_SH005"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "sensory",
+   "visual_association": "Acoustic reaction: Harris and Thomas listen on the dark British fire step as the off-screen German carol drifts across no man's land.",
+   "audit_fix_note": "Mac Audit #27/#40: 'singing' is an off-screen acoustic event heard across the wire; visual shows the listeners' reaction."
   },
   {
    "shot_id": "S03_SH005",
@@ -3569,7 +4468,12 @@
     ],
     "continuity_from": "S03_SH004",
     "continuity_to": "S03_SH006"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S03_SH006",
@@ -3661,7 +4565,13 @@
     ],
     "continuity_from": "S03_SH005",
     "continuity_to": "S03_SH007"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-08",
+    "C-10",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S03_SH007",
@@ -3757,7 +4667,13 @@
     ],
     "continuity_from": "S03_SH006",
     "continuity_to": "S03_SH008"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-09",
+    "C-10",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S03_SH008",
@@ -3849,7 +4765,12 @@
     ],
     "continuity_from": "S03_SH007",
     "continuity_to": "S03_SH009"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-10",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S03_SH009",
@@ -3941,7 +4862,13 @@
     ],
     "continuity_from": "S03_SH008",
     "continuity_to": "S03_SH010"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-10",
+    "C-12",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S03_SH010",
@@ -4044,7 +4971,12 @@
     ],
     "continuity_from": "S03_SH009",
     "continuity_to": "S04_SH001"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-09",
+    "C-10"
+   ]
   },
   {
    "shot_id": "S04_SH001",
@@ -4137,7 +5069,11 @@
     ],
     "continuity_from": "S03_SH010",
     "continuity_to": "S04_SH002"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-11"
+   ]
   },
   {
    "shot_id": "S04_SH002",
@@ -4226,7 +5162,12 @@
     ],
     "continuity_from": "S04_SH001",
     "continuity_to": "S04_SH003"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-12",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH003",
@@ -4318,7 +5259,13 @@
     ],
     "continuity_from": "S04_SH002",
     "continuity_to": "S04_SH004"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-08",
+    "C-12",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH004",
@@ -4407,7 +5354,12 @@
     ],
     "continuity_from": "S04_SH003",
     "continuity_to": "S04_SH005"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-12",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH005",
@@ -4506,7 +5458,12 @@
     ],
     "continuity_from": "S04_SH004",
     "continuity_to": "S04_SH006"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH006",
@@ -4595,7 +5552,12 @@
     ],
     "continuity_from": "S04_SH005",
     "continuity_to": "S04_SH007"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-02",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH007",
@@ -4684,7 +5646,13 @@
     ],
     "continuity_from": "S04_SH006",
     "continuity_to": "S04_SH008"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-02",
+    "C-12",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH008",
@@ -4781,7 +5749,14 @@
     ],
     "continuity_from": "S04_SH007",
     "continuity_to": "S04_SH009"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "C-07",
+    "C-13",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH009",
@@ -4873,7 +5848,13 @@
     ],
     "continuity_from": "S04_SH008",
     "continuity_to": "S04_SH010"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-12",
+    "C-14",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH010",
@@ -4965,7 +5946,13 @@
     ],
     "continuity_from": "S04_SH009",
     "continuity_to": "S04_SH011"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-12",
+    "C-14",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH011",
@@ -5050,7 +6037,12 @@
     ],
     "continuity_from": "S04_SH010",
     "continuity_to": "S04_SH012"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH012",
@@ -5142,7 +6134,12 @@
     ],
     "continuity_from": "S04_SH011",
     "continuity_to": "S04_SH013"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-14",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH013",
@@ -5234,7 +6231,12 @@
     ],
     "continuity_from": "S04_SH012",
     "continuity_to": "S04_SH014"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-14",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH014",
@@ -5325,7 +6327,13 @@
     ],
     "continuity_from": "S04_SH013",
     "continuity_to": "S04_SH015"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-02",
+    "C-14",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S04_SH015",
@@ -5419,7 +6427,12 @@
     ],
     "continuity_from": "S04_SH014",
     "continuity_to": "S05_SH001"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-03",
+    "C-15"
+   ]
   },
   {
    "shot_id": "S05_SH001",
@@ -5564,7 +6577,11 @@
     ],
     "continuity_from": "S04_SH015",
     "continuity_to": "S05_SH002"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-15"
+   ]
   },
   {
    "shot_id": "S05_SH002",
@@ -5659,7 +6676,11 @@
     ],
     "continuity_from": "S05_SH001",
     "continuity_to": "S05_SH003"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-03"
+   ]
   },
   {
    "shot_id": "S05_SH003",
@@ -5753,7 +6774,12 @@
     ],
     "continuity_from": "S05_SH002",
     "continuity_to": "S05_SH004"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-16",
+    "C-17"
+   ]
   },
   {
    "shot_id": "S05_SH004",
@@ -5845,7 +6871,12 @@
     ],
     "continuity_from": "S05_SH003",
     "continuity_to": "S05_SH005"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-27",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH005",
@@ -5937,7 +6968,12 @@
     ],
     "continuity_from": "S05_SH004",
     "continuity_to": "S05_SH006"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-27",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH006",
@@ -6031,7 +7067,11 @@
     ],
     "continuity_from": "S05_SH005",
     "continuity_to": "S05_SH007"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-27"
+   ]
   },
   {
    "shot_id": "S05_SH007",
@@ -6123,7 +7163,12 @@
     ],
     "continuity_from": "S05_SH006",
     "continuity_to": "S05_SH008"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH008",
@@ -6215,7 +7260,32 @@
     ],
     "continuity_from": "S05_SH007",
     "continuity_to": "S05_SH009"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "character_reading",
+   "audio_link": {
+    "type": "dialogue_and_foley",
+    "source_id": "S05_L008",
+    "sfx_asset": "mixkit_2385_paper_crinkle.mp3"
+   },
+   "minimum_hold_seconds": 2.5,
+   "sound_events": [
+    {
+     "event_id": "S05_SH008.S1",
+     "kind": "foley",
+     "class": "cloth_flap",
+     "what": "soft wool pat and paper rustle as Thomas taps the letter in his breast pocket",
+     "at_s": 1.1,
+     "distance": "close",
+     "purpose": "sync",
+     "why": "Sync wool/paper pocket tap foley (Mixkit 2385) when Thomas mentions his mum and sister (Mac Audit #18)."
+    }
+   ]
   },
   {
    "shot_id": "S05_SH009",
@@ -6310,7 +7380,31 @@
     ],
     "continuity_from": "S05_SH008",
     "continuity_to": "S05_SH010"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "character_reading",
+   "audio_link": {
+    "type": "dialogue_and_foley",
+    "source_id": "S05_L009",
+    "sfx_asset": "mixkit_1530_paper_slide.mp3"
+   },
+   "minimum_hold_seconds": 2.5,
+   "sound_events": [
+    {
+     "event_id": "S05_SH009.S1",
+     "kind": "foley",
+     "class": "ov_slide",
+     "what": "sepia portrait card sliding from Friedrich's field-grey breast pocket",
+     "at_s": 0.4,
+     "distance": "close",
+     "purpose": "sync",
+     "why": "Card slide foley (Mixkit 1530) as Friedrich draws the family portrait from his pocket (Mac Audit #19)."
+    }
+   ]
   },
   {
    "shot_id": "S05_SH010",
@@ -6327,7 +7421,7 @@
    "audio_line_ids": [
     "S05_L010"
    ],
-   "action_start_state": "The portrait card between two pairs of hands",
+   "action_start_state": "The sepia portrait card held between Thomas's bare cold hands (left) and Friedrich's hand (right)",
    "action_end_state": "Same",
    "camera_spec": {
     "shot_size": "medium_close_up",
@@ -6354,7 +7448,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A close view of a small sepia portrait card of a young woman with a three-year-old girl in a white dress, held between a khaki-sleeved hand and a field-grey-sleeved hand over frozen ground, low pale-gold winter sun at midday, frost haze.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A close view of a small sepia portrait card of a young woman with a three-year-old girl in a white dress, held gently in a British soldier's bare cold hands (left, khaki cuff, no gloves) in pale-gold winter sunlight.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -6398,7 +7492,33 @@
     ],
     "continuity_from": "S05_SH009",
     "continuity_to": "S05_SH011"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "sonic_motif",
+   "audio_link": {
+    "type": "sound_effect",
+    "source_id": "S05_SH010.S1",
+    "sfx_asset": "mixkit_2379_papers_being_moved_or_wrinkling.mp3"
+   },
+   "minimum_hold_seconds": 2.5,
+   "sound_events": [
+    {
+     "event_id": "S05_SH010.S1",
+     "kind": "foley",
+     "class": "ov_slide",
+     "what": "cardboard portrait passed gently between Friedrich's gloved hand and Thomas's bare hand",
+     "at_s": 0.2,
+     "distance": "close",
+     "purpose": "clarify",
+     "why": "Motivate silent reaction insert S05_SH010 with tactile card handoff foley (Mixkit 2379, Mac Audit #20)."
+    }
+   ],
+   "costume_state_ref": "COSTUME_THOMAS_BARE_HANDS_FRIEDRICH_GLOVED_OR_BARE",
+   "audit_fix_note": "Mac Audit #02/#20: Updated S05_SH010 prompt to bare British hands (NEW PHOTO flagged for POV still) and added card handoff foley S05_SH010.S1."
   },
   {
    "shot_id": "S05_SH011",
@@ -6493,7 +7613,31 @@
     ],
     "continuity_from": "S05_SH010",
     "continuity_to": "S05_SH012"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "character_reading",
+   "audio_link": {
+    "type": "dialogue_and_foley",
+    "source_id": "S05_L011",
+    "sfx_asset": "mixkit_1530_paper_slide.mp3"
+   },
+   "minimum_hold_seconds": 2.0,
+   "sound_events": [
+    {
+     "event_id": "S05_SH011.S1",
+     "kind": "foley",
+     "class": "ov_slide",
+     "what": "soft card slide as Thomas hands the portrait back to Friedrich",
+     "at_s": 1.1,
+     "distance": "close",
+     "purpose": "sync",
+     "why": "Card handoff foley (Mixkit 1530) as Thomas returns the portrait after S05_L011 (Mac Audit #21)."
+    }
+   ]
   },
   {
    "shot_id": "S05_SH012",
@@ -6588,7 +7732,31 @@
     ],
     "continuity_from": "S05_SH011",
     "continuity_to": "S05_SH013"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "character_reading",
+   "audio_link": {
+    "type": "dialogue_and_foley",
+    "source_id": "S05_L012",
+    "sfx_asset": "mixkit_2385_paper_crinkle.mp3"
+   },
+   "minimum_hold_seconds": 2.5,
+   "sound_events": [
+    {
+     "event_id": "S05_SH012.S1",
+     "kind": "foley",
+     "class": "cloth_flap",
+     "what": "portrait card slipping back into wool tunic pocket",
+     "at_s": 0.5,
+     "distance": "close",
+     "purpose": "sync",
+     "why": "Pocket cloth & card foley (Mixkit 2385) as Friedrich puts the portrait away (Mac Audit #22)."
+    }
+   ]
   },
   {
    "shot_id": "S05_SH013",
@@ -6680,7 +7848,11 @@
     ],
     "continuity_from": "S05_SH012",
     "continuity_to": "S05_SH014"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH014",
@@ -6777,7 +7949,11 @@
     ],
     "continuity_from": "S05_SH013",
     "continuity_to": "S05_SH015"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-18"
+   ]
   },
   {
    "shot_id": "S05_SH015",
@@ -6879,7 +8055,12 @@
     ],
     "continuity_from": "S05_SH014",
     "continuity_to": "S05_SH016"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-18",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH016",
@@ -6967,7 +8148,11 @@
     ],
     "continuity_from": "S05_SH015",
     "continuity_to": "S05_SH017"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-18"
+   ]
   },
   {
    "shot_id": "S05_SH017",
@@ -7059,7 +8244,12 @@
     ],
     "continuity_from": "S05_SH016",
     "continuity_to": "S05_SH018"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-18",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH018",
@@ -7151,7 +8341,13 @@
     ],
     "continuity_from": "S05_SH017",
     "continuity_to": "S05_SH019"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-10",
+    "C-18",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH019",
@@ -7243,7 +8439,12 @@
     ],
     "continuity_from": "S05_SH018",
     "continuity_to": "S05_SH020"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-18",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S05_SH020",
@@ -7342,7 +8543,11 @@
     ],
     "continuity_from": "S05_SH019",
     "continuity_to": "S05_SH021"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-19"
+   ]
   },
   {
    "shot_id": "S05_SH021",
@@ -7359,7 +8564,7 @@
    "audio_line_ids": [
     "S05_L021"
    ],
-   "action_start_state": "Harris stands apart at the edge of the field",
+   "action_start_state": "Harris stands apart at the edge of the fresh graves and burial service, then slowly removes his cap",
    "action_end_state": "Harris takes off his cap and holds it",
    "camera_spec": {
     "shot_size": "wide",
@@ -7386,7 +8591,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A weathered British sergeant in a goatskin jerkin standing alone at the edge of a burial service in a frozen field, slowly taking off his cap, low amber late-afternoon sun, long shadows.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A weathered British sergeant in a goatskin jerkin standing alone at the edge of the fresh graves and joint burial service in a frozen field, low amber late-afternoon sun, taking off his peaked cap.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -7438,7 +8643,14 @@
     ],
     "continuity_from": "S05_SH020",
     "continuity_to": "S06_SH001"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-18",
+    "C-19",
+    "I-01"
+   ],
+   "audit_fix_note": "Mac Audit #41: Added 'fresh graves' to S05_SH021 action_start_state and start_frame_prompt to match S05_L021."
   },
   {
    "shot_id": "S06_SH001",
@@ -7471,7 +8683,7 @@
     "background": "a low amber sun behind the willows",
     "screen_direction_notes": "Thomas left, Friedrich right"
    },
-   "lighting_and_time": "low amber winter sunset",
+   "lighting_and_time": "late-afternoon low amber winter sun, fading light",
    "continuity_refs": {
     "reuse_location_anchor": true,
     "inherit_from_previous_shot_id": null
@@ -7542,7 +8754,16 @@
     ],
     "continuity_from": "S05_SH021",
     "continuity_to": "S06_SH002"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ],
+   "visual_relationship": "visual_association",
+   "association_type": "sensory",
+   "visual_association": "In December at 50.7\u00b0N in Flanders, late afternoon (~15:45) is low amber sunset light fading across the frozen field.",
+   "audit_fix_note": "Mac Audit #26: Aligned S06_SH001 lighting_and_time phrasing to 'late-afternoon low amber winter sun, fading light'."
   },
   {
    "shot_id": "S06_SH002",
@@ -7634,7 +8855,11 @@
     ],
     "continuity_from": "S06_SH001",
     "continuity_to": "S06_SH003"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH003",
@@ -7726,7 +8951,11 @@
     ],
     "continuity_from": "S06_SH002",
     "continuity_to": "S06_SH004"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH004",
@@ -7818,7 +9047,11 @@
     ],
     "continuity_from": "S06_SH003",
     "continuity_to": "S06_SH005"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH005",
@@ -7903,7 +9136,11 @@
     ],
     "continuity_from": "S06_SH004",
     "continuity_to": "S06_SH006"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH006",
@@ -7995,7 +9232,11 @@
     ],
     "continuity_from": "S06_SH005",
     "continuity_to": "S06_SH007"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH007",
@@ -8087,7 +9328,12 @@
     ],
     "continuity_from": "S06_SH006",
     "continuity_to": "S06_SH008"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH008",
@@ -8179,7 +9425,12 @@
     ],
     "continuity_from": "S06_SH007",
     "continuity_to": "S06_SH009"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH009",
@@ -8227,7 +9478,7 @@
    "image_prompt": {
     "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A close view of a young soldier's cold fingers cutting the top brass button off a khaki tunic with a small penknife, amber sunset light on the cloth, low amber sunset, last light.",
     "end_frame_prompt": null,
-    "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
+    "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools, hanging rag on a pole, unexplained cloth on stick"
    },
    "video_prompt": {
     "motion_prompt": "Thomas cuts the brass button free with a penknife and it drops into his palm.",
@@ -8284,7 +9535,13 @@
     ],
     "continuity_from": "S06_SH008",
     "continuity_to": "S06_SH010"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ],
+   "audit_fix_note": "Mac Audit #31: Added negative prompt ban on hanging rag/cloth on pole (NEW PHOTO / inpaint flagged on S06_SH009_start.png)."
   },
   {
    "shot_id": "S06_SH010",
@@ -8381,7 +9638,12 @@
     ],
     "continuity_from": "S06_SH009",
     "continuity_to": "S06_SH011"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH011",
@@ -8478,7 +9740,12 @@
     ],
     "continuity_from": "S06_SH010",
     "continuity_to": "S06_SH012"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-16",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S06_SH012",
@@ -8577,7 +9844,13 @@
     ],
     "continuity_from": "S06_SH011",
     "continuity_to": "S07_SH001"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-16",
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S07_SH001",
@@ -8670,7 +9943,11 @@
     ],
     "continuity_from": "S06_SH012",
     "continuity_to": "S07_SH002"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-20"
+   ]
   },
   {
    "shot_id": "S07_SH002",
@@ -8762,7 +10039,12 @@
     ],
     "continuity_from": "S07_SH001",
     "continuity_to": "S07_SH003"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S07_SH003",
@@ -8854,7 +10136,14 @@
     ],
     "continuity_from": "S07_SH002",
     "continuity_to": "S07_SH004"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ],
+   "lighting_ref": "LIGHT_MORNING_GOLD_FOG_MATCH_S07_SH002",
+   "audit_fix_note": "Mac Audit #30: Locked lighting_ref to warm gold morning fog matching S07_SH002 and S07_SH004 (NEW PHOTO / colour regrade flagged on S07_SH003_start.png)."
   },
   {
    "shot_id": "S07_SH004",
@@ -8943,7 +10232,12 @@
     ],
     "continuity_from": "S07_SH003",
     "continuity_to": "S07_SH005"
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S07_SH005",
@@ -9050,7 +10344,11 @@
     ],
     "continuity_from": "S07_SH004",
     "continuity_to": "S07_SH006"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-21"
+   ]
   },
   {
    "shot_id": "S07_SH006",
@@ -9143,7 +10441,11 @@
     ],
     "continuity_from": "S07_SH005",
     "continuity_to": "S07_SH007"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-21"
+   ]
   },
   {
    "shot_id": "S07_SH007",
@@ -9242,7 +10544,12 @@
     ],
     "continuity_from": "S07_SH006",
     "continuity_to": "S07_SH008"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-21",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S07_SH008",
@@ -9341,7 +10648,12 @@
     ],
     "continuity_from": "S07_SH007",
     "continuity_to": "S08_SH001"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-20",
+    "I-01"
+   ]
   },
   {
    "shot_id": "S08_SH001",
@@ -9360,7 +10672,7 @@
    "audio_line_ids": [
     "S08_L001"
    ],
-   "action_start_state": "A hand writes a letter by candlelight; a grey German button lies on the page",
+   "action_start_state": "Thomas's bare cold hand writes a letter in pencil by candlelight; Friedrich's grey German button lies on the page",
    "action_end_state": "Same",
    "camera_spec": {
     "shot_size": "medium_close_up",
@@ -9387,7 +10699,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A close view of a soldier's hand writing 'Dear Mum' in pencil on a fresh page by candlelight, a grey German tunic button lying on the paper, an older folded letter beside it, warm candlelight at night.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A close view of a British soldier's bare hand (no gloves, khaki cuff) writing 'Dear Mum' in pencil on a fresh page by candlelight, a grey German tunic button resting on the paper beside his mother's worn letter.",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -9447,7 +10759,36 @@
     ],
     "continuity_from": "S07_SH008",
     "continuity_to": "S08_SH002"
-   }
+   },
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-16",
+    "C-22",
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "read_aloud",
+   "audio_link": {
+    "type": "narration_and_foley",
+    "source_id": "S08_L001",
+    "sfx_asset": "mixkit_3194_writing_pencil.mp3"
+   },
+   "minimum_hold_seconds": 4.0,
+   "sound_events": [
+    {
+     "event_id": "S08_SH001.S1",
+     "kind": "foley",
+     "class": "ov_draw",
+     "what": "pencil writing 'Dear Mum' on letter paper beside the German tunic button",
+     "at_s": 0.3,
+     "dur_s": 3.5,
+     "distance": "close",
+     "purpose": "clarify",
+     "why": "Pencil-on-paper writing foley (Mixkit 3194) motivating the epilogue letter insert under S08_L001 (Mac Audit #23)."
+    }
+   ],
+   "costume_state_ref": "COSTUME_BRITISH_1914_GREATCOAT_SOFT_CAP_BARE_HANDS",
+   "audit_fix_note": "Mac Audit #02/#23: Locked bare hand on Thomas in S08_SH001 and added pencil writing foley S08_SH001.S1."
   },
   {
    "shot_id": "S08_SH002",
@@ -9550,7 +10891,35 @@
     "lower_body",
     "surrounding_trench"
    ],
-   "frame_safe_margin_pct": 2.0
+   "frame_safe_margin_pct": 2.0,
+   "dramatization_level": "reconstructed",
+   "basis_claim_ids": [
+    "C-16",
+    "C-23",
+    "I-01"
+   ],
+   "insert_type": "document",
+   "document_motivation": "narrative_evidence",
+   "audio_link": {
+    "type": "narration_and_foley",
+    "source_id": "S08_L002",
+    "sfx_asset": "mixkit_1939_coins_handling.mp3"
+   },
+   "minimum_hold_seconds": 4.0,
+   "sound_events": [
+    {
+     "event_id": "S08_SH002.S1",
+     "kind": "foley",
+     "class": "map_arrive_click",
+     "what": "soft brass button touch against sepia portrait card in Friedrich's gloved hands",
+     "at_s": 0.6,
+     "distance": "close",
+     "purpose": "clarify",
+     "why": "Subtle brass button & card touch foley (Mixkit 1939 / 1530) motivating the relic study under S08_L002 (Mac Audit #24)."
+    }
+   ],
+   "costume_state_ref": "COSTUME_SAXON_1914_GREATCOAT_FIELD_CAP_WOOLLEN_GLOVES",
+   "audit_fix_note": "Mac Audit #02/#24 & Mac Crop Defect: Friedrich's woollen gloved hands hold the portrait card + British brass button; unsafe 1.35x split crop removed; button/card foley S08_SH002.S1 added."
   },
   {
    "shot_id": "S08_SH003",
@@ -9565,8 +10934,8 @@
    "audio_line_ids": [
     "S08_L003"
    ],
-   "action_start_state": "Two trench lines in snow from above",
-   "action_end_state": "Same, smaller",
+   "action_start_state": "Empty frozen no man's land between the two trench lines in golden sunrise fog, wire on stakes in the foreground (bookend with S01_SH001)",
+   "action_end_state": "The camera pulls back slowly over the silent wire as the lines remain unchanged for four more years",
    "camera_spec": {
     "shot_size": "extreme_wide",
     "vertical_angle": "bird_eye_60",
@@ -9580,7 +10949,7 @@
     "background": "the white plain running to the horizon",
     "screen_direction_notes": "no axis: a static place or object view"
    },
-   "lighting_and_time": "cold blue dusk, snow",
+   "lighting_and_time": "low golden winter sunrise glowing through heavy ground fog (bookend with S01_SH001; ground spindrift only, no falling snow)",
    "continuity_refs": {
     "reuse_location_anchor": true,
     "inherit_from_previous_shot_id": null
@@ -9592,7 +10961,7 @@
     "end_frame_reason": null
    },
    "image_prompt": {
-    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. A high aerial view at dusk of two zigzag trench lines in snowy Flanders fields, a narrow strip of wire and shell holes between them, tiny lights in both lines, cold blue dusk, snow.",
+    "start_frame_prompt": "Flanders, Christmas 1914, a frozen winter world. An empty frozen field between two trench lines at golden winter sunrise, barbed wire on X-stakes in the foreground, ground fog and low spindrift, no falling snow (deliberate bookend with S01_SH001_start).",
     "end_frame_prompt": null,
     "negative_prompt": "text, captions, watermark, logo, modern clothing, steel helmets, Brodie helmet, Stahlhelm, gas masks, tanks, barbed-wire tangles over faces, deformed hands, extra fingers, cartoon, plastic CGI sheen, gore, blood pools"
    },
@@ -9636,7 +11005,13 @@
     ],
     "continuity_from": "S08_SH002",
     "continuity_to": "S08_SH004"
-   }
+   },
+   "dramatization_level": "documented",
+   "basis_claim_ids": [
+    "C-24"
+   ],
+   "lighting_ref": "LIGHT_DAWN_GOLD_FOG_BOOKEND",
+   "audit_fix_note": "Mac Audit #25: Updated S08_SH003 lighting_and_time, action_start_state, and weather to match the deliberate S01_SH001 golden sunrise bookend (no falling snow)."
   },
   {
    "shot_id": "S08_SH004",
@@ -9722,7 +11097,13 @@
     ],
     "continuity_from": "S08_SH003",
     "continuity_to": null
-   }
+   },
+   "dramatization_level": "invented",
+   "basis_claim_ids": [
+    "C-01",
+    "C-04",
+    "I-01"
+   ]
   }
  ],
  "av_contract": "av_events/1",
@@ -9733,17 +11114,168 @@
  },
  "visual_mix_band": {
   "classification": "DESIGN_RULE",
-  "video": [
+  "reference_note": "Advisory planning reference (2.5D 60% / LTX video 30% / helper 10%); section bands govern actual allocation and chorus/singing shots are locked.",
+  "still_25d_band": [
    0.55,
    0.65
   ],
-  "still_25d": [
+  "video_ltx_band": [
    0.25,
    0.35
   ],
-  "map_action": [
+  "map_helper_band": [
    0.08,
    0.12
+  ],
+  "measured_current_render_shares": {
+   "video_ltx": 0.547,
+   "still_25d": 0.365,
+   "map_action": 0.087
+  }
+ },
+ "docudrama_disclosure": {
+  "policy": "Disclosure ONLY in YouTube video description and pinned comment (English and Georgian). NO end card in video.",
+  "include_end_card": false,
+  "disclosure_channels": [
+   "youtube_description",
+   "pinned_comment"
+  ],
+  "dramatization_levels_supported": [
+   "documented",
+   "reconstructed",
+   "invented"
+  ],
+  "composite_characters": [
+   {
+    "character_id": "char_thomas_hale",
+    "name": "Private Thomas Hale",
+    "dramatization_level": "invented",
+    "basis_claim_ids": [
+     "I-01",
+     "C-02",
+     "C-10",
+     "C-14",
+     "C-16",
+     "C-22",
+     "C-26"
+    ],
+    "description_en": "Invented composite English infantry private (20, Nottingham) representing British soldiers in the Frelinghien-Houplines sector.",
+    "description_ka": "\u10db\u10dd\u10d2\u10dd\u10dc\u10d8\u10da\u10d8 \u10d9\u10e0\u10d4\u10d1\u10d8\u10d7\u10d8 \u10d8\u10dc\u10d2\u10da\u10d8\u10e1\u10d4\u10da\u10d8 \u10ef\u10d0\u10e0\u10d8\u10e1\u10d9\u10d0\u10ea\u10d8 (20 \u10ec\u10da\u10d8\u10e1, \u10dc\u10dd\u10e2\u10d8\u10dc\u10d2\u10d4\u10db\u10d8), \u10e0\u10dd\u10db\u10d4\u10da\u10d8\u10ea \u10e4\u10e0\u10d4\u10da\u10d8\u10dc\u10d2\u10d8\u10d4\u10dc-\u10e3\u10de\u10da\u10d8\u10dc\u10d8\u10e1 \u10e1\u10d4\u10e5\u10e2\u10dd\u10e0\u10d8\u10e1 \u10d1\u10e0\u10d8\u10e2\u10d0\u10dc\u10d4\u10da \u10e1\u10d0\u10db\u10ee\u10d4\u10d3\u10e0\u10dd\u10d4\u10d1\u10e1 \u10d2\u10d0\u10dc\u10d0\u10e1\u10d0\u10ee\u10d8\u10d4\u10e0\u10d4\u10d1\u10e1."
+   },
+   {
+    "character_id": "char_friedrich_brandt",
+    "name": "Gefreiter Friedrich Brandt",
+    "dramatization_level": "invented",
+    "basis_claim_ids": [
+     "I-01",
+     "C-09",
+     "C-10",
+     "C-12",
+     "C-14",
+     "C-16",
+     "C-27"
+    ],
+    "description_en": "Invented composite Saxon corporal (32, former London waiter) grounded in documented Saxon regiments and pre-war German workers in Britain.",
+    "description_ka": "\u10db\u10dd\u10d2\u10dd\u10dc\u10d8\u10da\u10d8 \u10d9\u10e0\u10d4\u10d1\u10d8\u10d7\u10d8 \u10e1\u10d0\u10e5\u10e1\u10dd\u10dc\u10d4\u10da\u10d8 \u10d4\u10e4\u10e0\u10d4\u10d8\u10e2\u10dd\u10e0\u10d8 (32 \u10ec\u10da\u10d8\u10e1, \u10dd\u10db\u10d0\u10db\u10d3\u10d4 \u10da\u10dd\u10dc\u10d3\u10dd\u10dc\u10e8\u10d8 \u10dd\u10e4\u10d8\u10ea\u10d8\u10d0\u10dc\u10e2\u10d8), \u10e0\u10dd\u10db\u10d4\u10da\u10d8\u10ea \u10d4\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10d0 \u10e1\u10d0\u10e5\u10e1\u10dd\u10dc\u10e3\u10e0 \u10de\u10dd\u10da\u10d9\u10d4\u10d1\u10e1\u10d0 \u10d3\u10d0 \u10dd\u10db\u10d0\u10db\u10d3\u10d4 \u10d1\u10e0\u10d8\u10e2\u10d0\u10dc\u10d4\u10d7\u10e8\u10d8 \u10db\u10dd\u10db\u10e3\u10e8\u10d0\u10d5\u10d4 \u10d2\u10d4\u10e0\u10db\u10d0\u10dc\u10d4\u10da\u10d4\u10d1\u10d8\u10e1 \u10e0\u10d4\u10d0\u10da\u10e3\u10e0 \u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10d4\u10d1\u10e1."
+   },
+   {
+    "character_id": "char_sgt_harris",
+    "name": "Sergeant Albert Harris",
+    "dramatization_level": "invented",
+    "basis_claim_ids": [
+     "I-01",
+     "C-08",
+     "C-18",
+     "C-19",
+     "C-21"
+    ],
+    "description_en": "Invented composite British platoon sergeant (42) representing regular NCO caution and frontline grief.",
+    "description_ka": "\u10db\u10dd\u10d2\u10dd\u10dc\u10d8\u10da\u10d8 \u10d9\u10e0\u10d4\u10d1\u10d8\u10d7\u10d8 \u10d1\u10e0\u10d8\u10e2\u10d0\u10dc\u10d4\u10da\u10d8 \u10e1\u10d4\u10e0\u10df\u10d0\u10dc\u10e2\u10d8 (42 \u10ec\u10da\u10d8\u10e1), \u10e0\u10dd\u10db\u10d4\u10da\u10d8\u10ea \u10d2\u10d0\u10db\u10dd\u10ea\u10d3\u10d8\u10da\u10d8 \u10e3\u10dc\u10e2\u10d4\u10e0-\u10dd\u10e4\u10d8\u10ea\u10e0\u10d4\u10d1\u10d8\u10e1 \u10e1\u10d8\u10e4\u10e0\u10d7\u10ee\u10d8\u10da\u10d4\u10e1\u10d0 \u10d3\u10d0 \u10e4\u10e0\u10dd\u10dc\u10e2\u10d8\u10e1 \u10e2\u10d9\u10d8\u10d5\u10d8\u10da\u10e1 \u10d2\u10d0\u10db\u10dd\u10ee\u10d0\u10e2\u10d0\u10d5\u10e1."
+   }
+  ],
+  "en": {
+   "video_description": "HISTORICAL DOCUDRAMA NOTE: This film is a painted historical docudrama about the Christmas Truce of December 1914 on the Western Front. All historical context, dates, locations (Flanders, Frelinghien-Houplines, Fleurbaix), Pope Benedict XV's failed 7 December 1914 truce appeal, Princess Mary's brass gift tins, the carols sung across the wire, the joint burials of the fallen, and the 26 December return to arms are grounded in documented historical records. To tell this story through human eyes, the three named soldiers\u2014Private Thomas Hale, Gefreiter Friedrich Brandt, and Sergeant Albert Harris\u2014are invented composite characters, and their personal letters, family photograph, and spoken dialogue are dramatized reconstructions inspired by surviving soldiers' letters and war diaries rather than verbatim historical quotes.",
+   "pinned_comment": "\ud83d\udccc Historical Note: Every historical event in this video\u2014from the candlelit trees on German parapets and 'Stille Nacht / Silent Night' across no man's land to the joint burials at Fleurbaix and the resumption of fighting at Houplines\u2014is documented history (December 1914). Thomas Hale, Friedrich Brandt, and Sgt. Harris are composite dramatic characters created for this docudrama, and their dialogue is written to reflect the real experiences and letters of the men who were there."
+  },
+  "ka": {
+   "video_description": "\u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10e3\u10da\u10d8 \u10d3\u10dd\u10d9\u10e3\u10d3\u10e0\u10d0\u10db\u10d8\u10e1 \u10e8\u10d4\u10dc\u10d8\u10e8\u10d5\u10dc\u10d0: \u10d4\u10e1 \u10e4\u10d8\u10da\u10db\u10d8 \u10ec\u10d0\u10e0\u10db\u10dd\u10d0\u10d3\u10d2\u10d4\u10dc\u10e1 \u10d3\u10d0\u10ee\u10d0\u10e2\u10e3\u10da \u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10e3\u10da \u10d3\u10dd\u10d9\u10e3\u10d3\u10e0\u10d0\u10db\u10d0\u10e1 1914 \u10ec\u10da\u10d8\u10e1 \u10d3\u10d4\u10d9\u10d4\u10db\u10d1\u10e0\u10d8\u10e1 \u10e1\u10d0\u10e8\u10dd\u10d1\u10d0\u10dd \u10d6\u10d0\u10d5\u10d8\u10e1 \u10e8\u10d4\u10e1\u10d0\u10ee\u10d4\u10d1 \u10d3\u10d0\u10e1\u10d0\u10d5\u10da\u10d4\u10d7\u10d8\u10e1 \u10e4\u10e0\u10dd\u10dc\u10e2\u10d6\u10d4. \u10e7\u10d5\u10d4\u10da\u10d0 \u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10e3\u10da\u10d8 \u10e4\u10d0\u10e5\u10e2\u10d8, \u10d7\u10d0\u10e0\u10d8\u10e6\u10d8, \u10d2\u10d4\u10dd\u10d2\u10e0\u10d0\u10e4\u10d8\u10d0 (\u10e4\u10da\u10d0\u10dc\u10d3\u10e0\u10d8\u10d0, \u10e4\u10e0\u10d4\u10da\u10d8\u10dc\u10d2\u10d8\u10d4\u10dc-\u10e3\u10de\u10da\u10d8\u10dc\u10d8, \u10e4\u10da\u10d4\u10e0\u10d1\u10d4), \u10e0\u10dd\u10db\u10d8\u10e1 \u10de\u10d0\u10de \u10d1\u10d4\u10dc\u10d4\u10d3\u10d8\u10e5\u10e2\u10d4 XV-\u10d8\u10e1 1914 \u10ec\u10da\u10d8\u10e1 7 \u10d3\u10d4\u10d9\u10d4\u10db\u10d1\u10e0\u10d8\u10e1 \u10ec\u10d0\u10e0\u10e3\u10db\u10d0\u10e2\u10d4\u10d1\u10d4\u10da\u10d8 \u10e1\u10d0\u10db\u10e8\u10d5\u10d8\u10d3\u10dd\u10d1\u10dd \u10db\u10dd\u10ec\u10dd\u10d3\u10d4\u10d1\u10d0, \u10de\u10e0\u10d8\u10dc\u10ea\u10d4\u10e1\u10d0 \u10db\u10d4\u10e0\u10d8\u10e1 \u10d7\u10d8\u10d7\u10d1\u10e0\u10d8\u10e1 \u10e1\u10d0\u10e8\u10dd\u10d1\u10d0\u10dd \u10d9\u10dd\u10da\u10dd\u10e4\u10d4\u10d1\u10d8, \u10e1\u10d0\u10dc\u10d2\u10e0\u10d4\u10d1\u10e1 \u10e8\u10dd\u10e0\u10d8\u10e1 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10e3\u10da\u10d8 \u10e1\u10d0\u10e8\u10dd\u10d1\u10d0\u10dd \u10e1\u10d0\u10d2\u10d0\u10da\u10dd\u10d1\u10da\u10d4\u10d1\u10d8, \u10d3\u10d0\u10e6\u10e3\u10de\u10e3\u10da\u10d7\u10d0 \u10d4\u10e0\u10d7\u10dd\u10d1\u10da\u10d8\u10d5\u10d8 \u10d3\u10d0\u10d9\u10e0\u10eb\u10d0\u10da\u10d5\u10d0 \u10d3\u10d0 26 \u10d3\u10d4\u10d9\u10d4\u10db\u10d1\u10d4\u10e0\u10e1 \u10ea\u10d4\u10ea\u10ee\u10da\u10d8\u10e1 \u10d2\u10d0\u10dc\u10d0\u10ee\u10da\u10d4\u10d1\u10d0 \u10d4\u10e7\u10e0\u10d3\u10dc\u10dd\u10d1\u10d0 \u10d3\u10dd\u10d9\u10e3\u10db\u10d4\u10dc\u10e2\u10e3\u10e0 \u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10e3\u10da \u10ec\u10e7\u10d0\u10e0\u10dd\u10d4\u10d1\u10e1. \u10d0\u10db\u10d1\u10d8\u10e1 \u10d0\u10d3\u10d0\u10db\u10d8\u10d0\u10dc\u10e3\u10e0\u10d8 \u10d7\u10d5\u10d0\u10da\u10d8\u10d7 \u10d2\u10d0\u10d3\u10db\u10dd\u10e1\u10d0\u10ea\u10d4\u10db\u10d0\u10d3, \u10e1\u10d0\u10db\u10d8 \u10e1\u10d0\u10ee\u10d4\u10da\u10dd\u10d1\u10d8\u10d7\u10d8 \u10d2\u10db\u10d8\u10e0\u10d8 \u2014 \u10e0\u10d8\u10d2\u10d8\u10d7\u10d8 \u10d7\u10dd\u10db\u10d0\u10e1 \u10f0\u10d4\u10d8\u10da\u10d8, \u10d4\u10e4\u10e0\u10d4\u10d8\u10e2\u10dd\u10e0\u10d8 \u10e4\u10e0\u10d8\u10d3\u10e0\u10d8\u10ee \u10d1\u10e0\u10d0\u10dc\u10d3\u10e2\u10d8 \u10d3\u10d0 \u10e1\u10d4\u10e0\u10df\u10d0\u10dc\u10e2\u10d8 \u10d0\u10da\u10d1\u10d4\u10e0\u10e2 \u10f0\u10d0\u10e0\u10d8\u10e1\u10d8 \u2014 \u10ec\u10d0\u10e0\u10db\u10dd\u10d0\u10d3\u10d2\u10d4\u10dc\u10e1 \u10db\u10dd\u10d2\u10dd\u10dc\u10d8\u10da \u10d9\u10e0\u10d4\u10d1\u10d8\u10d7 \u10de\u10d4\u10e0\u10e1\u10dd\u10dc\u10d0\u10df\u10d4\u10d1\u10e1, \u10ee\u10dd\u10da\u10dd \u10db\u10d0\u10d7\u10d8 \u10de\u10d8\u10e0\u10d0\u10d3\u10d8 \u10ec\u10d4\u10e0\u10d8\u10da\u10d4\u10d1\u10d8, \u10e1\u10d0\u10dd\u10ef\u10d0\u10ee\u10dd \u10e4\u10dd\u10e2\u10dd \u10d3\u10d0 \u10d3\u10d8\u10d0\u10da\u10dd\u10d2\u10d4\u10d1\u10d8 \u10d0\u10e0\u10d8\u10e1 \u10ef\u10d0\u10e0\u10d8\u10e1\u10d9\u10d0\u10ea\u10d4\u10d1\u10d8\u10e1 \u10e0\u10d4\u10d0\u10da\u10e3\u10e0 \u10ec\u10d4\u10e0\u10d8\u10da\u10d4\u10d1\u10e1\u10d0 \u10d3\u10d0 \u10d3\u10e6\u10d8\u10e3\u10e0\u10d4\u10d1\u10d6\u10d4 \u10d3\u10d0\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10e3\u10da\u10d8 \u10d3\u10e0\u10d0\u10db\u10d0\u10e2\u10e3\u10e0\u10d2\u10d8\u10e3\u10da\u10d8 \u10e0\u10d4\u10d9\u10dd\u10dc\u10e1\u10e2\u10e0\u10e3\u10e5\u10ea\u10d8\u10d0 \u10d3\u10d0 \u10d0\u10e0\u10d0 \u10e1\u10d8\u10e2\u10e7\u10d5\u10d0\u10e1\u10d8\u10e2\u10e7\u10d5\u10d8\u10d7\u10d8 \u10ea\u10d8\u10e2\u10d0\u10e2\u10d4\u10d1\u10d8.",
+   "pinned_comment": "\ud83d\udccc \u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10e3\u10da\u10d8 \u10e8\u10d4\u10dc\u10d8\u10e8\u10d5\u10dc\u10d0: \u10d5\u10d8\u10d3\u10d4\u10dd\u10e8\u10d8 \u10dc\u10d0\u10e9\u10d5\u10d4\u10dc\u10d4\u10d1\u10d8 \u10e7\u10d5\u10d4\u10da\u10d0 \u10d8\u10e1\u10e2\u10dd\u10e0\u10d8\u10e3\u10da\u10d8 \u10db\u10dd\u10d5\u10da\u10d4\u10dc\u10d0 \u2014 \u10d2\u10d4\u10e0\u10db\u10d0\u10dc\u10e3\u10da \u10e1\u10d0\u10dc\u10d2\u10e0\u10d4\u10d1\u10d6\u10d4 \u10d0\u10dc\u10d7\u10d4\u10d1\u10e3\u10da\u10d8 \u10dc\u10d0\u10eb\u10d5\u10d8\u10e1 \u10ee\u10d4\u10d4\u10d1\u10d8\u10d3\u10d0\u10dc \u10d3\u10d0 \u201eStille Nacht / Silent Night\u201c-\u10d8\u10e1 \u10e1\u10d8\u10db\u10e6\u10d4\u10e0\u10d8\u10d3\u10d0\u10dc \u10d3\u10d0\u10ec\u10e7\u10d4\u10d1\u10e3\u10da\u10d8, \u10e4\u10da\u10d4\u10e0\u10d1\u10d4\u10e1\u10d7\u10d0\u10dc \u10d3\u10d0\u10e6\u10e3\u10de\u10e3\u10da\u10d7\u10d0 \u10d4\u10e0\u10d7\u10dd\u10d1\u10da\u10d8\u10d5\u10d8 \u10d3\u10d0\u10d9\u10e0\u10eb\u10d0\u10da\u10d5\u10d8\u10d7\u10d0 \u10d3\u10d0 \u10e3\u10de\u10da\u10d8\u10dc\u10d7\u10d0\u10dc \u10d1\u10e0\u10eb\u10dd\u10da\u10d8\u10e1 \u10d2\u10d0\u10dc\u10d0\u10ee\u10da\u10d4\u10d1\u10d8\u10d7 \u10d3\u10d0\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10e3\u10da\u10d8 \u2014 \u10d4\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10d0 1914 \u10ec\u10da\u10d8\u10e1 \u10d3\u10d4\u10d9\u10d4\u10db\u10d1\u10e0\u10d8\u10e1 \u10e0\u10d4\u10d0\u10da\u10e3\u10e0 \u10d3\u10dd\u10d9\u10e3\u10db\u10d4\u10dc\u10e2\u10e3\u10e0 \u10e4\u10d0\u10e5\u10e2\u10d4\u10d1\u10e1. \u10d7\u10dd\u10db\u10d0\u10e1 \u10f0\u10d4\u10d8\u10da\u10d8, \u10e4\u10e0\u10d8\u10d3\u10e0\u10d8\u10ee \u10d1\u10e0\u10d0\u10dc\u10d3\u10e2\u10d8 \u10d3\u10d0 \u10e1\u10d4\u10e0\u10df\u10d0\u10dc\u10e2\u10d8 \u10f0\u10d0\u10e0\u10d8\u10e1\u10d8 \u10d0\u10e0\u10d8\u10d0\u10dc \u10d0\u10db \u10d3\u10dd\u10d9\u10e3\u10d3\u10e0\u10d0\u10db\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1 \u10e8\u10d4\u10e5\u10db\u10dc\u10d8\u10da\u10d8 \u10d9\u10e0\u10d4\u10d1\u10d8\u10d7\u10d8 \u10de\u10d4\u10e0\u10e1\u10dd\u10dc\u10d0\u10df\u10d4\u10d1\u10d8, \u10ee\u10dd\u10da\u10dd \u10db\u10d0\u10d7\u10d8 \u10d3\u10d8\u10d0\u10da\u10dd\u10d2\u10d4\u10d1\u10d8 \u10d4\u10e7\u10e0\u10d3\u10dc\u10dd\u10d1\u10d0 \u10e4\u10e0\u10dd\u10dc\u10e2\u10d4\u10da\u10d8 \u10ef\u10d0\u10e0\u10d8\u10e1\u10d9\u10d0\u10ea\u10d4\u10d1\u10d8\u10e1 \u10dc\u10d0\u10db\u10d3\u10d5\u10d8\u10da \u10ec\u10d4\u10e0\u10d8\u10da\u10d4\u10d1\u10e1\u10d0 \u10d3\u10d0 \u10db\u10dd\u10d2\u10dd\u10dc\u10d4\u10d1\u10d4\u10d1\u10e1."
+  }
+ },
+ "our_voices_spec": {
+  "spec_file_ref": "episodes/ep_truce_1914/audio/our_voices_spec.json",
+  "owner_decision": "2026-11-16 (final): All 39 character dialogue lines use OUR voices (ElevenLabs), replacing LTX clip-generated voices. Python pipeline changes (mix.py / voice pipeline) are in Python Approval List Item 6 and are NOT executed until owner approval.",
+  "cost_and_cap_contract": {
+   "total_dialogue_lines": 39,
+   "total_words": 193,
+   "total_characters": 1038,
+   "credits_per_character": 1,
+   "single_pass_credits": 1038,
+   "audition_pass_credits": 180,
+   "estimated_cost_per_line_usd": 0.0059,
+   "estimated_single_pass_cost_usd": 0.23,
+   "hard_cap_credits": 1500,
+   "hard_cap_usd": 1.0,
+   "stop_fraction": 0.8,
+   "stop_at_credits": 1200,
+   "spend_caps_key": "config/spend_caps.json :: casting.casting_credits_max (1500) & allowances.qa_loop (2000)",
+   "requires_explicit_owner_approval": true
+  },
+  "word_clock_alignment_contract": {
+   "clock_authority": "production/video/<shot_id>.json trim_contract [in_s, out_s] + audio/timing.json (24 fps)",
+   "scribe_whisper_word_timestamps": true,
+   "default_speech_onset_s": 0.75,
+   "reaction_tail_s_band": [
+    0.5,
+    0.55
+   ],
+   "max_tempo_stretch_band": [
+    0.92,
+    1.08
+   ],
+   "ltx_clip_audio_policy": "Mute LTX vocal track on all 39 clip-spoken shots; eliminate LTX word garbling (S03_SH003, S05_SH004, S07_SH004) and hallucinated tail words (S01_SH002, S01_SH003)."
+  },
+  "section_sound_bed_interaction": {
+   "continuous_section_beds": [
+    "BED_SEC_INTRO",
+    "BED_SEC_VERSE_1",
+    "BED_SEC_CHORUS_1",
+    "BED_SEC_VERSE_2_BRIDGE",
+    "BED_SEC_CHORUS_2",
+    "BED_SEC_OUTRO"
+   ],
+   "base_bed_level_db_range": [
+    -26.0,
+    -24.0
+   ],
+   "presence_band_ducking_hz": [
+    1000,
+    3500
+   ],
+   "presence_band_cut_db": -4.5,
+   "broadband_bed_duck_under_speech_db": -3.5,
+   "music_duck_under_speech_db": -9.0,
+   "duck_attack_ms": 150,
+   "duck_release_ms": 350,
+   "high_freq_wind_preservation_above_hz": 3600,
+   "carol_peak_policy": "During S03_SH003 (Friedrich singing Stille Nacht) and S03_SH008 (Thomas visibly singing Silent Night), non-diegetic score is muted (music.active=False) and BED_SEC_CHORUS_1 continues uninterrupted underneath.",
+   "audibility_verification": "NOT_VERIFIED"
+  }
+ },
+ "mac_content_audit_resolution": {
+  "classification_file_ref": "episodes/ep_truce_1914/planning/full_film_2026-11-15/mac_content_audit_classification.json",
+  "total_rows": 43,
+  "classification_counts": {
+   "TEXT_CHANGE": 29,
+   "FIXED_BY_THE_ASSOCIATION_BRIDGE_RULE": 9,
+   "NEW_PHOTO_OR_NEW_PHOTO_PLUS_TEXT_CHANGE": 5
+  },
+  "deferred_photo_shots": [
+   "S01_SH005",
+   "S02_SH005",
+   "S05_SH010",
+   "S06_SH009",
+   "S07_SH003"
   ]
  }
 }
