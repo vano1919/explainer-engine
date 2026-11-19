@@ -304,7 +304,9 @@ def trim_decision(spans: list, words: list[dict] | None, line_text: str | None, 
                   audio=None, rate: int = 16000) -> dict:
     """The one trim rule (Step 1.2): ``{spans, mute_tail_from_s, detector, rejected}``. The detector's spans plus the matched
     words that a voice supports (clamped to the voiced span); the word-only artifact filters run first. Without audio the words
-    cannot be checked: ``detector`` is "none" and no word is added (it is never guessed from words alone)."""
+    cannot be checked: ``detector`` is "none" and no word is added (it is never guessed from words alone). Scope note (review S4):
+    the incoming ``spans`` (the detector's energy spans, ``speech_spans``) stay in the base UNCHECKED for voice; only the
+    words added from the transcript are voice-checked, so a loud non-voice span the detector found still reaches the cut."""
     base = [tuple(sp) for sp in spans]
     if not spoken or not words or not line_text:
         return {"spans": base, "mute_tail_from_s": None, "detector": "n/a", "rejected": [], "notes": []}
