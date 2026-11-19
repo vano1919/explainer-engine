@@ -6811,3 +6811,5 @@ W5 LTX continuity, free part (2026-11-19, final plan P-6 / CT-1 / CT-2, $0, base
 
 ## 2026-11-19 (W5, night) LTX A/B scene built
 `scenes/truce_ab_2026-11-19.json` (ltx_scene_test/2, 9 clips: 3 shots x arms a/b/c, every prompt opens "This video is in the style of the film 1917 (2019)." per the owner 22:26 UTC). `scene_run.scene_ends` pins each shot's end picture from the pictures manifest into the spec; test in test_ltx_kinds. Scene budget total $3.50 (GPU hard bill ~3.17 + CPU staging).
+
+Scene reordered (plan thread audit, 22:40 UTC): b top, a x3, b x2, c x3 last; scene sha12 now 89de1b10b8be (GO follows it). F1: night_reserve/night_settle wired before/after the launch calls (e6c5fa9).

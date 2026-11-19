@@ -44,6 +44,48 @@
    "kind": "clip"
   },
   {
+   "shot_id": "S04_SH008_a",
+   "picture": "S04_SH008_start",
+   "seconds": 9.0,
+   "seed": 7100,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, toward a distant figure. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
+   "arm": "a",
+   "kind": "clip"
+  },
+  {
+   "shot_id": "S07_SH006_a",
+   "picture": "S07_SH006_start",
+   "seconds": 6.0,
+   "seed": 7104,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench parapet at dawn. A German captain stands on the parapet and salutes toward the British line, then steps down out of sight behind the parapet. Then his arm rises above it and fires a pistol twice into the air. The camera does not move. Sound: boots on duckboards, a leather glove creaking, two sharp pistol shots echoing over the field, then silence and wind.",
+   "arm": "a",
+   "kind": "clip"
+  },
+  {
+   "shot_id": "S04_SH008_b",
+   "picture": "S04_SH008_start",
+   "seconds": 9.0,
+   "seed": 7100,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, toward a distant figure. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
+   "arm": "b",
+   "kind": "keyframes",
+   "end": "S04_SH008_end",
+   "end_frame": 216,
+   "engine": "distilled"
+  },
+  {
+   "shot_id": "S07_SH006_b",
+   "picture": "S07_SH006_start",
+   "seconds": 6.0,
+   "seed": 7104,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench parapet at dawn. A German captain stands on the parapet and salutes toward the British line, then steps down out of sight behind the parapet. Then his arm rises above it and fires a pistol twice into the air. The camera does not move. Sound: boots on duckboards, a leather glove creaking, two sharp pistol shots echoing over the field, then silence and wind.",
+   "arm": "b",
+   "kind": "keyframes",
+   "end": "S07_SH006_end",
+   "end_frame": 144,
+   "engine": "distilled"
+  },
+  {
    "shot_id": "S07_SH008_c",
    "picture": "S07_SH008_start",
    "seconds": 8.25,
@@ -64,27 +106,6 @@
    }
   },
   {
-   "shot_id": "S04_SH008_a",
-   "picture": "S04_SH008_start",
-   "seconds": 9.0,
-   "seed": 7100,
-   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, toward a distant figure. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
-   "arm": "a",
-   "kind": "clip"
-  },
-  {
-   "shot_id": "S04_SH008_b",
-   "picture": "S04_SH008_start",
-   "seconds": 9.0,
-   "seed": 7100,
-   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, toward a distant figure. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
-   "arm": "b",
-   "kind": "keyframes",
-   "end": "S04_SH008_end",
-   "end_frame": 216,
-   "engine": "distilled"
-  },
-  {
    "shot_id": "S04_SH008_c",
    "picture": "S04_SH008_start",
    "seconds": 9.0,
@@ -103,27 +124,6 @@
     "distilled_lora_strength_stage_2": 0.5,
     "image_strength": 1.0
    }
-  },
-  {
-   "shot_id": "S07_SH006_a",
-   "picture": "S07_SH006_start",
-   "seconds": 6.0,
-   "seed": 7104,
-   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench parapet at dawn. A German captain stands on the parapet and salutes toward the British line, then steps down out of sight behind the parapet. Then his arm rises above it and fires a pistol twice into the air. The camera does not move. Sound: boots on duckboards, a leather glove creaking, two sharp pistol shots echoing over the field, then silence and wind.",
-   "arm": "a",
-   "kind": "clip"
-  },
-  {
-   "shot_id": "S07_SH006_b",
-   "picture": "S07_SH006_start",
-   "seconds": 6.0,
-   "seed": 7104,
-   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench parapet at dawn. A German captain stands on the parapet and salutes toward the British line, then steps down out of sight behind the parapet. Then his arm rises above it and fires a pistol twice into the air. The camera does not move. Sound: boots on duckboards, a leather glove creaking, two sharp pistol shots echoing over the field, then silence and wind.",
-   "arm": "b",
-   "kind": "keyframes",
-   "end": "S07_SH006_end",
-   "end_frame": 144,
-   "engine": "distilled"
   },
   {
    "shot_id": "S07_SH006_c",
