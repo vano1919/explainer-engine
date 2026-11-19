@@ -86,6 +86,9 @@ def job_spec(scene_path, launch=None) -> dict:
         have = hashlib.sha256(Path(pic["path"]).read_bytes()).hexdigest()
         if have != pic["sha256"]:
             raise SystemExit(f"the start picture {pic['path']} of {sid} is not the one the scene pins")
+        checked = {r.get("shot_id"): (r.get("picture_check") or {}).get("picture_sha256") for r in scene["shots"]}
+        if scene.get("schema") == "ltx_scene_test/3" and checked.get(sid) != have:   # MA-05: checked bytes = launched bytes
+            raise SystemExit(f"the start picture of {sid} changed after its picture check: write the scene again")
     shots = scene["shots"]
     secs = {float(s["seconds"]) for s in shots}
     nat = L.native_spec(launch, max(secs))
