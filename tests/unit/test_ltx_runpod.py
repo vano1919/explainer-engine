@@ -276,7 +276,7 @@ def test_the_retired_guard_lets_only_this_launcher_through(episode, tmp_path):
             with pytest.raises(ConfigError, match="retired for a v4.3 episode"):
                 retired.refuse(tool, episode / "production", env={}, cwd=tmp_path, script=other)
     ex = retired.load()["tools"]["runpod"]["exception"]
-    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj" in ex["decided"] and ex["launchers"] == [mine]
+    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj" in ex["decided"] and ex["launchers"] == [mine, "explainer_engine/training/pods/klein/klein_pod.sh"]
     assert retired.excepted("qwen_image", mine) is False                       # Qwen stays retired everywhere
 
 

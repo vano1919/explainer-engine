@@ -36,8 +36,8 @@
   "container_disk_gb": 60,
   "container_disk_why": "~21 GB of diffusers weights (an estimate from the plan, not measured) plus pictures; no network volume",
   "weights_dir": "/workspace/dl",
-  "cap_usd": null,
-  "cap_why": "OPEN: the plan thread reports the owner's $0.60 card answer (cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv), but it was not recorded here from a relay: cap_usd stays null until the creator's number is confirmed to this thread; `plan` and `run` refuse without it",
+  "cap_usd": 0.6,
+  "cap_why": "the creator's card answer, 2026-11-19 18:10 UTC (decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv), confirmed to this thread by his own message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4 (18:13 UTC): $0.60 for the picture pod with FLUX 3 Klein; guard stop at it, PROBLEM at 80 % ($0.48). `create --max-usd` must be this same number. A ceiling, not a target.",
   "problem_at": 0.8,
   "max_pictures": 24,
   "minutes": {
@@ -64,6 +64,5 @@
     "source": "RUNPOD_AB_PLAN.md section 5 (18 pictures: 11 / 20 / 35 min = $0.13 / $0.24 / $0.42 at $0.72/h); estimates, not measured"
   },
   "hf_out": "explainer-engine/klein_out",
-  "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it",
-  "recommended_cap_usd": 0.6
+  "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it"
 }

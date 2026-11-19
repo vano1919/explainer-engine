@@ -44,6 +44,7 @@ def test_the_real_launch_keeps_every_open_pin_null_and_refuses():
     lf = K.LAUNCH
     m = lf["models"][lf["model"]]
     assert m["repo"] == "black-forest-labs/flux-3-image-klein" and m["revision"] == REV and m["gated"] is True
+    assert lf["cap_usd"] == 0.6 and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4" in lf["cap_why"]   # the owner's own word
     assert m["files"] is None and lf["pipeline_class"] is None and lf["diffusers_version"] is None and lf["image"] is None
     assert "prompt upsampler" in m["layout"] or "pup" in m["layout"]
     pins = K.open_pins(lf)
@@ -219,3 +220,21 @@ def test_plan_reads_the_batch_file_only(tmp_path):
     bp.write_text(json.dumps(_batch()))
     out = K.plan(str(bp))
     assert out["ok"] is False and out["problems"] and out["estimate"]["expected"]["usd"] > 0 and out["card"].startswith("NVIDIA RTX PRO 4500")
+
+
+def test_the_retired_guard_lets_only_the_two_ab_launchers_through(tmp_path):
+    from explainer_engine.core.errors import ConfigError
+    from explainer_engine.episode import retired
+    ep = tmp_path / "ep"
+    ep.mkdir()
+    (ep / "episode.json").write_text(json.dumps({"schema": "episode_manifest/1"}))
+    klein = "explainer_engine/training/pods/klein/klein_pod.sh"
+    retired.refuse("runpod", ep / "production", env={}, cwd=tmp_path, script=klein)
+    retired.refuse("runpod", ep / "production", env={}, cwd=tmp_path, script="/repo/" + klein)
+    for other in ("explainer_engine/training/pods/p14/p14.sh", "explainer_engine/training/pods/klein/klein_pod.sh.bak",
+                  "other/klein/klein_pod.sh", "explainer_engine/training/pods/xworld_v1.sh", None):
+        with pytest.raises(ConfigError, match="retired for a v4.3 episode"):
+            retired.refuse("runpod", ep / "production", env={}, cwd=tmp_path, script=other)
+    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4" in retired.load()["tools"]["runpod"]["exception"]["decided"]
+    assert retired.excepted("ltx", klein) is False              # the ltx entry keeps only its own launcher
+    assert retired.excepted("qwen_image", klein) is False
