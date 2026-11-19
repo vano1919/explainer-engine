@@ -421,8 +421,10 @@ def test_p0_8_and_p1_9_ltx_painterly_negative_prompt_and_single_resize_switch():
     launch = LTX.load_launch()
     job = {"shot_id": "S02_SH002", "seconds": 5.0, "fps": 24, "width": 1280, "height": 704, "seed": 42, "motion_prompt": "Soldiers walk in snow"}
     cmd = LTX.ltx_cmd(launch, job, "/tmp/in.png", "/tmp/out.mp4")
-    assert "--negative-prompt" in cmd
-    neg = cmd[cmd.index("--negative-prompt") + 1].lower()
+    # the distilled CLI has no CFG and no --negative-prompt flag (L3 on Modal, 2026-11-19: "unrecognized arguments"); the
+    # painterly-safe text is still resolved and written to the run record, and the guided CLI is given it
+    assert "--negative-prompt" not in cmd
+    neg = LTX.resolve_negative_prompt(launch, job).lower()
     for required_term in ("deformed facial features", "extra fingers", "flickering", "watermark", "jitter"):
         assert required_term in neg
     for forbidden_term in ("cartoonish", "3d cgi", "illustration", "painting", "2d"):

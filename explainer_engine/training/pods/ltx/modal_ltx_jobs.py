@@ -643,7 +643,8 @@ def ltx_cmd(launch, job, picture, mp4, python=None):
            "--audio-vae-path", str(root / u["audio_vae"]), "--spatial-upsampler-path", str(root / u["spatial_upsampler"])]
     if u.get("distilled_lora"):
         cmd += ["--distilled-lora", str(root / u["distilled_lora"])]
-    cmd += ["--image", str(picture), "0", "1.0", "--prompt", job["motion_prompt"], "--negative-prompt", neg,
+    # the distilled CLI has no CFG and takes no --negative-prompt (L3 on 2026-11-19 22:46: "unrecognized arguments")
+    cmd += ["--image", str(picture), "0", "1.0", "--prompt", job["motion_prompt"],
             "--width", str(job["width"]), "--height", str(job["height"]),
             "--num-frames", str(ltx_frames(job["seconds"], job["fps"])),
             "--frame-rate", str(job["fps"]), "--seed", str(job["seed"]), "--output-path", str(mp4)]
@@ -797,7 +798,7 @@ def kind_cmd(launch, job, start_png, mp4, end_png=None, source=None, audio=None,
         paths = {"start": start_png, "end": end_png}
         for c in kind_conditioning(job, frames):
             cmd += ["--image", str(paths[c["role"]]), str(c["frame"]), str(c["strength"]), c["binding"]]
-        return cmd + ["--prompt", job["motion_prompt"], "--negative-prompt", neg, "--width", str(job["width"]),
+        return cmd + ["--prompt", job["motion_prompt"], "--width", str(job["width"]),   # distilled CLI: no --negative-prompt
                       "--height", str(job["height"]), "--num-frames", str(frames), "--frame-rate", str(job["fps"]),
                       "--seed", str(job["seed"]), "--output-path", str(mp4)]
     cmd = [python or sys.executable, "-m", spec["module"], "--text-encoder-path", str(root / u["text_encoder"]),
