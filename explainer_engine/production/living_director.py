@@ -777,6 +777,11 @@ def _track(r: dict, d: dict, weather_layers=None, base_by_id: dict | None = None
     tgt = {}
     if tk == "light":
         tgt = {"light": r["lights"][0]}
+        # the director may name a light the picture's layers do not hold (it adds a sun for a dawn text); the renderer then
+        # needs the point the director saw, else the effect crashed at ``directed25d._effects`` (KeyError 'origin')
+        li = next((x for x in (d.get("seen") or {}).get("lights") or [] if x.get("id") == tgt["light"]), None)
+        if li and li.get("point"):
+            tgt["origin"] = list(li["point"])
     elif tk == "lights":
         tgt = {"lights": r["lights"]}
         if op == "fire":

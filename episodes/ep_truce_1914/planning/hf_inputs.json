@@ -1,0 +1,86 @@
+{
+ "schema": "hf_inputs/1",
+ "repo": "vano1919/tmr-artifacts",
+ "repo_type": "dataset",
+ "note": "inputs of the first-60-seconds slice (S01_SH001..S02_SH005); the binaries are fetched, never committed",
+ "files": [
+  {
+   "dest": "assets/generated/images/S01_SH001_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/1cdedccd304005bdb602b72a.png",
+   "sha256": "d25c5989e95b6752f7ef972ae7d1c595cdb6753ac54899453076efa67f71256e",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "assets/generated/images/S01_SH002_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w3/cache/7bd3b95964074b9cdee9cb0e.png",
+   "sha256": "65159f9efe73e3a91f4d1d08eb4724347abf2a208d3933ee0b7844b873b35a58",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "assets/generated/images/S01_SH003_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e9a173240a9ccdfcc4f83157.png",
+   "sha256": "643e471230764c2b85e0de0f9b35e90bd199008f8c0a0dffd919990aaf39d048",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "assets/generated/images/S01_SH004_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/136c47a2d212e626ee7837ca.png",
+   "sha256": "09b68604c43244b980bedca5d0f59b1d5c4f53966ea8038096e0367ed28abc59",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "assets/generated/images/S01_SH005_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/8b77b881e734b3d58179831d.png",
+   "sha256": "35bdd6857fc0644f2e91927a2aa81b53985e5334e923d6fac872731e2f3f3dab",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "assets/generated/images/S02_SH004_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/6b51ff920adfc201e0136cf9.png",
+   "sha256": "acf6958ad37be7b0ba80ed78465def34c39f33663f7b83c48f1707037e7a9e1e",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "assets/generated/images/S02_SH005_start.png",
+   "hf_path": "explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/2bbae2bafe8a0b07d0bb1825.png",
+   "sha256": "53b07cbe3e9b51c25badc3bfd98823e3a2b87b97368fa250a5341f7714e5701d",
+   "what": "start picture, 2752x1536 (Gemini chat export), sha256 matches inputs_manifest.json"
+  },
+  {
+   "dest": "audio/clock/narration.wav",
+   "hf_path": "explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/narration.wav",
+   "sha256": "6cfb3b7b73b51674985b1b5f74f6a8f18cf7a37d4d2263d57c0ee3e79d94055a",
+   "what": "the full read and its clock (built on script c2abcdd3, 2026-11-13)"
+  },
+  {
+   "dest": "audio/clock/narration.scribe.json",
+   "hf_path": "explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/narration.scribe.json",
+   "sha256": "ad530b3c2eac9197128149e6bc20ba1a919bfc7ef4f33f0d4bbc3193f5e9c5ca",
+   "what": "the full read and its clock (built on script c2abcdd3, 2026-11-13)"
+  },
+  {
+   "dest": "audio/clock/timing.json",
+   "hf_path": "explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/timing.json",
+   "sha256": "68e7c96e2089ad6ec31141dfb74131f954eebbd2c50032ca1b73321917fc7d92",
+   "what": "the full read and its clock (built on script c2abcdd3, 2026-11-13)"
+  },
+  {
+   "dest": "audio/clock/line_reads.json",
+   "hf_path": "explainer-engine/demo_truce_1914/full_film_2026-11-15/inputs/clock/line_reads.json",
+   "sha256": "4a0e28ae54789d2be718d5ee3738065aa526536adc3ec840a0bdbf5dbbc15043",
+   "what": "the full read and its clock (built on script c2abcdd3, 2026-11-13)"
+  },
+  {
+   "dest": "assets/hf_inputs/ltx_raw/S01_SH002.mp4",
+   "hf_path": "explainer-engine/ltx_route/out/35cc6a85cd8e_fc6ae61bf410/S01_SH002/S01_SH002_seed7100.mp4",
+   "sha256": "3b81a70b87d901168d5f2d9ea39f03c8b8082b3152069400844171e7ca3e7421",
+   "what": "accepted raw LTX-2.5 take (paid run of 2026-11-13)"
+  },
+  {
+   "dest": "assets/hf_inputs/ltx_raw/S01_SH003.mp4",
+   "hf_path": "explainer-engine/ltx_route/out/35cc6a85cd8e_fc6ae61bf410/S01_SH002/S01_SH003_seed7101.mp4",
+   "sha256": "46d38bc0a181c1fe59e05358d6130b709222642f4246071515e92a930182dbe0",
+   "what": "accepted raw LTX-2.5 take (paid run of 2026-11-13)"
+  }
+ ]
+}

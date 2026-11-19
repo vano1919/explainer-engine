@@ -1,0 +1,158 @@
+{
+ "schema": "layer_specs/1",
+ "note": "per still: detection phrases (id -> phrase for Grounding-DINO) and light sources (id, kind, x, y, radius share of width). S01_SH004, S01_SH005, S02_SH004, S02_SH005 are the Mac's specs (hf render/tools/specs.py, written from the SHOT_PLAN 'see' lines); S01_SH001 was written from its own picture and director_brief (focal anchor: barbed wire on stakes; the sun is at the picture's horizon centre).",
+ "shots": {
+  "S01_SH001": {
+   "q": {
+    "wire": "barbed wire on wooden stakes"
+   },
+   "lights": [
+    {
+     "id": "sun",
+     "kind": "sun",
+     "point": [
+      0.505,
+      0.3
+     ],
+     "radius": 0.03
+    }
+   ]
+  },
+  "S01_SH004": {
+   "q": {
+    "farm": "ruined farmhouse",
+    "soldiers_left": "soldier climbing out of the trench",
+    "soldiers_right": "soldier walking",
+    "wire": "barbed wire"
+   },
+   "lights": [
+    {
+     "id": "sun",
+     "kind": "sun",
+     "point": [
+      0.5,
+      0.27
+     ],
+     "radius": 0.03
+    },
+    {
+     "id": "lamp_r1",
+     "kind": "glow",
+     "point": [
+      0.8,
+      0.5
+     ],
+     "radius": 0.01
+    },
+    {
+     "id": "lamp_r2",
+     "kind": "glow",
+     "point": [
+      0.88,
+      0.52
+     ],
+     "radius": 0.01
+    }
+   ]
+  },
+  "S01_SH005": {
+   "q": {
+    "tree_l": "lit christmas tree",
+    "tree_r": "lit christmas tree on the parapet",
+    "man_a": "soldier with a lamp",
+    "man_b": "soldier"
+   },
+   "lights": [
+    {
+     "id": "tree_lights",
+     "kind": "candle",
+     "point": [
+      0.45,
+      0.42
+     ],
+     "radius": 0.012
+    },
+    {
+     "id": "lamp_a",
+     "kind": "candle",
+     "point": [
+      0.48,
+      0.65
+     ],
+     "radius": 0.01
+    },
+    {
+     "id": "lamp_b",
+     "kind": "candle",
+     "point": [
+      0.62,
+      0.68
+     ],
+     "radius": 0.01
+    },
+    {
+     "id": "brazier",
+     "kind": "fire",
+     "point": [
+      0.66,
+      0.7
+     ],
+     "radius": 0.025
+    }
+   ]
+  },
+  "S02_SH004": {
+   "q": {
+    "man_left": "standing soldier",
+    "group": "group of soldiers by the brazier",
+    "man_bench": "soldier sitting on a bench"
+   },
+   "lights": [
+    {
+     "id": "brazier",
+     "kind": "fire",
+     "point": [
+      0.62,
+      0.73
+     ],
+     "radius": 0.04
+    },
+    {
+     "id": "niche_candle",
+     "kind": "candle",
+     "point": [
+      0.18,
+      0.62
+     ],
+     "radius": 0.01
+    }
+   ]
+  },
+  "S02_SH005": {
+   "q": {
+    "letter": "letter",
+    "hands": "gloved hands"
+   },
+   "lights": [
+    {
+     "id": "brazier",
+     "kind": "fire",
+     "point": [
+      0.6,
+      0.8
+     ],
+     "radius": 0.04
+    },
+    {
+     "id": "niche_candle",
+     "kind": "candle",
+     "point": [
+      0.17,
+      0.6
+     ],
+     "radius": 0.01
+    }
+   ]
+  }
+ }
+}

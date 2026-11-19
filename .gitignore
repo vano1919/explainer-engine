@@ -42,3 +42,9 @@ id_ed25519*
 assets/audio/originals/
 assets/audio/library/catalog.sqlite
 assets/audio/previews/
+
+# episode working areas filled by episode/hf_inputs fetch and the runner (binaries are never committed)
+episodes/*/assets/generated/
+episodes/*/assets/hf_inputs/
+episodes/*/audio/clock/
+episodes/*/.hf_cache/

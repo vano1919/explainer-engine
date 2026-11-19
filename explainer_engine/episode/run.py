@@ -40,6 +40,7 @@ ALIASES = {"G1": "script", "G2": "script", "G3": "script", "G4": "sound_plan", "
            "G9": "assemble", "G10": "qa"}
 RECORD_SCHEMA = "episode_stage/1"
 SCRIPT_REL = "story/production_script.json"
+SLICE_FULL_SCRIPT_REL = "story/full_production_script.json"
 READ_REL = "audio/narration.wav"            # the episode's real read (ElevenLabs), the lines in the shots' order
 TRANSCRIPT_REL = "audio/narration.scribe.json"   # its Scribe transcript (words with times)
 TIMING_REL = "audio/timing.json"                 # the G6 persisted authoritative episode clock
@@ -102,6 +103,13 @@ class Episode:
         if not sp.is_file():
             raise ConfigError(f"{self.root} has no {SCRIPT_REL}")
         self.script = json.loads(sp.read_text(encoding="utf-8"))
+        self.slice = self.manifest.get("slice") if isinstance(self.manifest.get("slice"), dict) else None
+        self.full_script = self.script
+        if self.slice:   # a slice (episode/slice.py): the whole script is kept for the gates about the whole episode
+            fp_ = self.root / SLICE_FULL_SCRIPT_REL
+            if not fp_.is_file():
+                raise ConfigError(f"{self.root} is a slice but has no {SLICE_FULL_SCRIPT_REL}")
+            self.full_script = json.loads(fp_.read_text(encoding="utf-8"))
         self.fps = int(fps or self.script.get("fps") or self.manifest.get("fps") or 24)
         self.size = tuple(size or self.manifest.get("render_size") or DEFAULT_SIZE)
         self.rehearsal, self.force, self.chunks, self.auto_direct = rehearsal, force, chunks, auto_direct
@@ -199,6 +207,9 @@ def run_stage(ep: Episode, stage: str) -> dict:
         rows, outputs = [G.row(f"{stage}_ran", False, f"{type(exc).__name__}: {exc}")], {}
     except ConfigError as exc:     # a missing free tool or setting: nothing measured, recorded as NOT_RUN (final audit B3)
         rows, outputs = [G.row(f"{stage}_ran", None, f"{type(exc).__name__}: {exc}")], {}
+    if stage == "qa" and ep.slice:   # a slice is never a pass: it ends REVIEW at best
+        rows = rows + [G.row("slice_not_shippable", False, f"slice {ep.slice.get('first')}..{ep.slice.get('last')} of "
+                             f"{ep.slice.get('of')}: slice, not shippable (the test bench, not an episode)", level=G.REVIEW)]
     if stage == "qa":   # a rehearsal is never a pass: an earlier stage did not pass, so nothing from this run ships
         rows = rows + [G.row("not_a_rehearsal", not rehearsal, "the chain passed every stage" if not rehearsal else
                              "a rehearsal: an earlier stage did not pass, so nothing from this run ships")]
@@ -207,6 +218,9 @@ def run_stage(ep: Episode, stage: str) -> dict:
     rec = {"schema": RECORD_SCHEMA, "episode_id": ep.manifest.get("episode_id"), "stage": stage, "gate": GATES[stage],
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    if ep.slice:   # every output of a slice run says so
+        rec["slice"] = {"stamp": "slice, not shippable", "shippable": False, "first": ep.slice.get("first"),
+                        "last": ep.slice.get("last"), "shots": len(ep.slice.get("shots") or [])}
     write_json_atomic(record_path(ep.root, stage), rec)
     return rec
 
@@ -244,13 +258,23 @@ def stage_script(ep: Episode, rehearsal: bool):
     errs = sorted(jsonschema.Draft202012Validator(schema).iter_errors(doc), key=lambda e: list(e.path))
     rows.append(G.row("script_schema", not errs, f"{len(errs)} schema error(s)",
                       [f"{list(e.path)}: {e.message[:160]}" for e in errs[:10]]))
-    audit = run_all_gate_audits(doc)
+    audit = run_all_gate_audits(ep.full_script)
+    outside = []
+    if ep.slice:   # a slice counts the findings that sit on its own shots, segments and lines; the rest is recorded
+        inside = ({s_["shot_id"] for s_ in doc.get("shots", [])} | {s_["segment_id"] for s_ in doc.get("segments", [])}
+                  | {l_["line_id"] for l_ in doc.get("audio_lines", [])})
+        outside = [i for i in audit["issues"] if str(i.get("where")) not in inside]
+        audit = dict(audit, issues=[i for i in audit["issues"] if str(i.get("where")) in inside])
     fails = [i for i in audit["issues"] if i.get("severity", "FAIL") == "FAIL"]
     reviews = [i for i in audit["issues"] if i.get("severity") == "REVIEW"]
     short = lambda xs: [f"{i.get('rule')} {i.get('where')}: {str(i.get('detail'))[:140]}" for i in xs[:20]]  # noqa: E731
     rows.append(G.row("script_lints_fail", not fails, f"{len(fails)} FAIL finding(s) of the gate audit", short(fails)))
     rows.append(G.row("script_lints_review", not reviews, f"{len(reviews)} REVIEW finding(s) of the gate audit",
                       short(reviews), level=G.REVIEW))
+    if ep.slice:
+        rows.append(G.not_applicable("script_lints_outside_the_slice", f"{len(outside)} finding(s) of the gate audit on the "
+                                     "full script sit outside the slice's shots; recorded, not applied to the slice",
+                                     [f"{i.get('rule')} {i.get('where')}: {str(i.get('detail'))[:120]}" for i in outside[:20]]))
     shots = doc.get("shots", [])
     bad = [s.get("shot_id") for s in shots if s.get("route") not in R.ROUTES or not str(s.get("route_reason") or "").strip()]
     rows.append(G.row("every_shot_routed", bool(shots) and not bad, f"{len(bad)} of {len(shots)} shot(s) without a route "
@@ -259,7 +283,7 @@ def stage_script(ep: Episode, rehearsal: bool):
     old = retired.retired_routes_in(doc)
     rows.append(G.row("no_retired_route", not old, f"{len(old)} shot field(s) name a retired route (Q10, D-131: "
                       "config/retired_era.json)", old[:20]))
-    rows += R.talking_check(doc)
+    rows += _whole_episode_rows(ep, lambda d_: R.talking_check(d_), doc)
     from explainer_engine.training.pods.ltx import modal_ltx_jobs as LJ
     from explainer_engine.videolane import plan as VP
     if LJ.native_problems(LJ.LAUNCH):
@@ -288,10 +312,20 @@ def stage_script(ep: Episode, rehearsal: bool):
     rows += VP.accepted_ltx_route_rows(doc, ep.root)                                            # Audit #4
     rows += VP.script_deviation_rows(doc, ep.root)                                              # Audit #3
     rows += R.helper_fit_rows(doc)                                                              # Audit #66 (MA-09)
-    rows += R.mix_gate_rows(doc, scope=_scope(ep))                                              # A2.3 (BP-109 60/30/10 gate)
+    rows += _whole_episode_rows(ep, lambda d_: R.mix_gate_rows(d_, scope=_scope(ep)), doc)     # A2.3 (BP-109 60/30/10 gate)
     rows.append(_claims_row(ep, doc))
-    rows.append(_video_share_row(doc, _scope(ep)))
+    rows += _whole_episode_rows(ep, lambda d_: [_video_share_row(d_, _scope(ep))], doc)
     return rows, {"mix": R.mix_report(doc), "shots": len(shots), "audit_status": audit["status"]}
+
+
+def _whole_episode_rows(ep: Episode, fn, doc: dict) -> list[dict]:
+    """The rows of a gate that is about the whole episode (the mix, the speaker rule, the video share). A full run: on the
+    script as it is. A slice: computed on the FULL script and shown as NOT_APPLICABLE with that value, never as a pass
+    and never as a block (``episode/slice.py``)."""
+    if not ep.slice:
+        return fn(doc)
+    return [G.not_applicable(r["gate"], f"not applicable to a slice; on the full episode: {r['status']}: {r['detail']}",
+                             {"full_episode_status": r["status"], "measured": r.get("measured")}) for r in fn(ep.full_script)]
 
 
 def _scope(ep: Episode) -> str:
@@ -1598,6 +1632,10 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     if not mix.is_file():
         return [G.row("the_delivered_mix_exists", False, f"no {DELIVERED_MIX_REL}: run the sound stage (G8) again")], {}
     master = ep.path(f"renders/final/{ep.manifest['episode_id']}_master.mp4")
+    if ep.slice:   # the stamp sits next to the master
+        master.parent.mkdir(parents=True, exist_ok=True)
+        write_text_atomic(master.parent / "SLICE_NOT_SHIPPABLE.txt", f"slice, not shippable: {ep.slice.get('first')}.."
+                          f"{ep.slice.get('last')} of {ep.slice.get('of')}\n")
     res = ASM.assemble_shot_clips(records, plans, mix, master, fps=ep.fps, size=ep.size, only=ep.chunks,
                                   chunk_seconds=ep.chunk_seconds if ep.chunk_seconds is not None else ASM.CHUNK_SECONDS)
     left = res["chunks"]["left"]
@@ -1780,10 +1818,18 @@ def main(argv=None) -> int:
     r.add_argument("--chunk-seconds", type=float)
     r.add_argument("--sound-library", type=Path, help="HF-7: the sound library folder (a manifest.json and its categories); "
                    "default assets/audio/library. Its manifest is in the fingerprint of G4 and G8, so give it to every call")
+    sl_ = sub.add_parser("slice", help="derive a slice episode folder (a few shots of the real episode, never shippable)")
+    sl_.add_argument("episode", type=Path)
+    sl_.add_argument("--shots", required=True)
+    sl_.add_argument("--out", type=Path, required=True)
+    sl_.add_argument("--clock", type=Path)
     s = sub.add_parser("status", help="the stages and their records")
     s.add_argument("episode", type=Path)
     s.add_argument("--sound-library", type=Path, help="the same folder the runs used (HF-7)")
     a = ap.parse_args(argv)
+    if a.cmd == "slice":
+        from explainer_engine.episode import slice as SL
+        return SL.main([str(a.episode), "--shots", a.shots, "--out", str(a.out)] + (["--clock", str(a.clock)] if a.clock else []))
     if a.cmd == "status":
         _print_state(Episode(a.episode, sound_library=a.sound_library))
         return 0

@@ -9,6 +9,7 @@ A row: ``{"gate": <name>, "status": "PASS"|"FAIL"|"REVIEW"|"NOT_RUN", "measured"
 from __future__ import annotations
 
 PASS, FAIL, REVIEW, NOT_RUN = "PASS", "FAIL", "REVIEW", "NOT_RUN"
+NOT_APPLICABLE = "NOT_APPLICABLE"   # a whole-episode gate on a slice: computed on the full episode, recorded, never a pass
 
 
 def row(gate: str, ok: bool | None, detail: str, measured=None, level: str = FAIL) -> dict:
@@ -22,11 +23,22 @@ def row(gate: str, ok: bool | None, detail: str, measured=None, level: str = FAI
     return {"gate": gate, "status": PASS if ok else level, "measured": measured, "detail": detail}
 
 
+def not_applicable(gate: str, detail: str, measured=None) -> dict:
+    """A gate that is about the whole episode while the run is a slice (``episode/slice``): its value, computed on the full
+    episode, is kept in ``measured`` and shown; it neither passes nor blocks the slice, and the verdict lists it."""
+    return {"gate": gate, "status": NOT_APPLICABLE, "measured": measured, "detail": detail}
+
+
 def verdict(rows: list[dict]) -> dict:
     """PASS only when every gate PASSed; FAIL when any FAILed; else INCOMPLETE (something was not measured); else REVIEW
     (a hypothesis gate missed: a person looks)."""
     failed = [r["gate"] for r in rows if r["status"] == FAIL]
     not_run = [r["gate"] for r in rows if r["status"] == NOT_RUN]
     review = [r["gate"] for r in rows if r["status"] == REVIEW]
-    status = FAIL if failed else (NOT_RUN if not rows else ("INCOMPLETE" if not_run else (REVIEW if review else PASS)))
-    return {"status": status, "failed": failed, "not_run": not_run, "review": review, "gates": rows}
+    na = [r["gate"] for r in rows if r["status"] == NOT_APPLICABLE]
+    measured = [r for r in rows if r["status"] != NOT_APPLICABLE]
+    status = FAIL if failed else (NOT_RUN if not measured else ("INCOMPLETE" if not_run else (REVIEW if review else PASS)))
+    out = {"status": status, "failed": failed, "not_run": not_run, "review": review, "gates": rows}
+    if na:
+        out["not_applicable"] = na
+    return out

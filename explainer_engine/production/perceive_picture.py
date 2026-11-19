@@ -79,8 +79,13 @@ def run_grounding_dino_tiny(rgb: np.ndarray, queries: list[str], box_threshold: 
         inputs = proc(images=im, text=text, return_tensors="pt")
         with torch.inference_mode():
             outputs = model(**inputs)
+        import inspect
+        # transformers 5 renamed ``box_threshold`` to ``threshold``; the old call raised a TypeError that the handler below
+        # swallowed, so every picture came back with no detections (a silent pass). Pick the name the installed version takes.
+        kw = "threshold" if "threshold" in inspect.signature(proc.post_process_grounded_object_detection).parameters \
+            else "box_threshold"
         res = proc.post_process_grounded_object_detection(
-            outputs, inputs.input_ids, box_threshold=box_threshold, text_threshold=0.25, target_sizes=[im.size[::-1]]
+            outputs, inputs.input_ids, **{kw: box_threshold}, text_threshold=0.25, target_sizes=[im.size[::-1]]
         )[0]
         h, w = rgb.shape[:2]
         out = []
@@ -94,7 +99,7 @@ def run_grounding_dino_tiny(rgb: np.ndarray, queries: list[str], box_threshold: 
                 "detector": model_id,
             })
         return out
-    except Exception:
+    except (ImportError, OSError):   # the weights or a package are missing: nothing was detected, the caller records that
         return []
 
 
