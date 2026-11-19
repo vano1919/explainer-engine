@@ -2,7 +2,8 @@
 
 The slices live in ``docs/architecture/v4_1_allowlists.json``. The list is read from the BASE ref, so a pull request cannot widen
 its own scope; only the slice that introduces the file (no copy on the base yet) reads its own copy. A head branch that is no
-slice branch is exempt (ordinary work, PR #195 and hotfixes). The control files themselves (the list, this checker, the
+slice branch is exempt (ordinary work, PR #195 and hotfixes); binding is the exact head branch of a slice, and a head branch
+under ``slice_branch_prefix`` that no slice lists fails (unknown slice id). The control files themselves (the list, this checker, the
 workflow) may appear only in the allowlist of the slice named in ``control_slice``.
 
 CLI (CI): ``python -m explainer_engine.scope_check --base origin/<base> --head HEAD --head-ref <branch>``; exit 1 on a path
@@ -48,6 +49,9 @@ def check(cfg: dict, head_ref: str, paths: list[str]) -> list[str]:
     """Problems (empty = pass). Pure function over the config, so it is testable without git."""
     found = slice_for(cfg, head_ref)
     if found is None:
+        prefix = cfg.get("slice_branch_prefix")
+        if prefix and head_ref.startswith(prefix):   # a V4.1 slice branch with an id nobody listed
+            return [f"branch {head_ref} looks like a V4.1 slice branch ({prefix}*) but names no slice of the allowlist"]
         return []
     sid, entry = found
     problems = []
@@ -70,7 +74,7 @@ def main(argv=None) -> int:
     args = a.parse_args(argv)
     root = Path(args.root)
     cfg = load_allowlists(root, args.base)
-    if slice_for(cfg, args.head_ref) is None:
+    if slice_for(cfg, args.head_ref) is None and not args.head_ref.startswith(cfg.get("slice_branch_prefix") or "\0"):
         print(f"scope: branch {args.head_ref} is no V4.1 slice branch; not enforced")
         return 0
     problems = check(cfg, args.head_ref, changed_paths(root, args.base, args.head))
