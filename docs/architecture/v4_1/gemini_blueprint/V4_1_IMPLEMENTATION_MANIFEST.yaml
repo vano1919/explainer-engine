@@ -1,0 +1,199 @@
+manifest_id: V4.1-MANIFEST-01
+architecture_version: 4.1.0
+generated_utc: '2026-11-19'
+repository: vano1919/explainer-engine
+baseline_branch: argon/p1-2-timing-contract
+baseline_head_sha: 0592114c6c2d44a9af00b11553f169516e175864
+code_baseline_sha: eb80e4434ea120f48cb9aea094ebd7b2b423d8f0
+recommended_implementation_branch: argon/v4-1-closed-loop
+document_sha256:
+  V4_1_MASTER_ARCHITECTURE_AND_DECISION_BRIEF.md: c94b7b55bcc4c13cd885d9908b69a9fbf48a181895d6f7c03136bbb565ef27fc
+  V4_1_FILE_BY_FILE_IMPLEMENTATION_PLAN.md: 8396def955daf25c55caab928bab4c355632f9f2e189bdebcec6d5fbc880d7ea
+  V4_1_DATA_CONTRACTS_AND_QA_SPECIFICATION.md: 4fa9ba556e521e4b751130f447c393aa39d1d9689af74615ea61a2c4c6d2c44b
+  V4_1_EXTERNAL_RESEARCH_AND_EVIDENCE_REGISTER.md: 7f15b8a3485f131962b049bc15cab9f4fb8c7a8d6596d33252ea1416add66fef
+  V4_1_CLAUDE_REVIEW_AND_IMPLEMENTATION_GUARDRAILS.md: 6fbf8432669c9137396b2eca9c2d9c58f566417ae352cf7a02434a4ce9966a63
+  V4_1_DEEP_COMPLETION_AUDIT.md: 5ea791dece7b069e8268b9fb900eb5c8e9e38a90d3221a5e1dd4a209808bb4c2
+approved_adrs:
+- ADR-V41-01
+- ADR-V41-02
+- ADR-V41-03
+- ADR-V41-04
+- ADR-V41-05
+- ADR-V41-06
+- ADR-V41-07
+- ADR-V41-08
+- ADR-V41-09
+- ADR-V41-10
+- ADR-V41-11
+global_forbidden_without_creator_approval:
+- config/picture_route.json
+- config/model_routing.json
+- config/spend_caps.json
+- config/retired_era.json
+required_reviewer_signoff:
+  independent_reviewer: Claude
+  output_file: V4_1_CLAUDE_INDEPENDENT_REVIEW.md
+  final_authority: Creator
+work_packages:
+- id: WP-00
+  priority: P0
+  name: Repository Baseline and Test Triage
+  depends_on: []
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - tests/**/*.py
+  allowed_create:
+  - docs/architecture/v4_1_wp00_test_triage.json
+  required_tests:
+  - python3 -m explainer_engine.docs_lint
+  - pytest --tb=short -q
+  acceptance_criteria:
+  - docs_lint returns 0 finding(s)
+  - 100% of failing tests classified by category
+  - Zero failures on WP-02 touched suites
+- id: WP-01
+  priority: P0
+  name: Data Contracts, Separate Rational Clocks and RouteRegistry
+  depends_on:
+  - WP-00
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/core/contracts.py
+  allowed_create:
+  - explainer_engine/core/media_clocks.py
+  - explainer_engine/core/shot_state.py
+  - explainer_engine/core/route_registry.py
+  - explainer_engine/schemas/*.schema.json
+  - tests/unit/test_v41_media_clocks.py
+  - tests/unit/test_v41_shot_state.py
+  - tests/unit/test_v41_route_registry.py
+  required_tests:
+  - pytest -q tests/unit/test_v41_media_clocks.py tests/unit/test_v41_shot_state.py
+    tests/unit/test_v41_route_registry.py
+- id: WP-02
+  priority: P0
+  name: Single-Shot Closed-Loop Proof (Milestone 1)
+  depends_on:
+  - WP-01
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/episode/run.py
+  - explainer_engine/videolane/scene.py
+  allowed_create:
+  - explainer_engine/qa/observe_image.py
+  - explainer_engine/qa/observe_video.py
+  - explainer_engine/edit/action_cut.py
+  - explainer_engine/audio/event_sync.py
+  - tests/integration/test_v41_wp02_single_shot_closed_loop.py
+  required_tests:
+  - pytest -q tests/integration/test_v41_wp02_single_shot_closed_loop.py
+  mandatory_negative_tests:
+  - T1_image_mismatch
+  - T2_post_observe_swap
+  - T3_motion_timing_diff
+  - T4_mid_word_and_ghost_speech
+  - T5_intentional_cut_on_action
+  - T6_av_clock_offset
+  - T7_qa_blocker_halt
+- id: WP-03
+  priority: P1
+  name: Adaptive Video Inspection Router and Audio Evidence Fusion
+  depends_on:
+  - WP-02
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/qa/observe_video.py
+  allowed_create:
+  - explainer_engine/qa/video_inspection_router.py
+  - explainer_engine/audio/evidence_fusion.py
+  - tests/unit/test_v41_inspection_router.py
+  - tests/unit/test_v41_audio_fusion.py
+- id: WP-04
+  priority: P1
+  name: Action-Aware Editing, Intentional Cut-on-Action and Event Sync
+  depends_on:
+  - WP-02
+  - WP-03
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/audio/sfx_planner.py
+  - explainer_engine/audio/spine.py
+  - explainer_engine/videolane/plan.py
+  regression_fixtures:
+  - 1914-F01
+  - 1914-F02
+  - 1914-F03
+  - 1914-F04
+  - 1914-F05
+  - 1914-F06
+  - 1914-F10
+- id: WP-05
+  priority: P1
+  name: Wire Disconnected QA and Media Modules
+  depends_on:
+  - WP-02
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/qa/retry_router.py
+  - explainer_engine/qa/loop.py
+  - explainer_engine/imagegen/turn_pack.py
+  - explainer_engine/episode/run.py
+- id: WP-06
+  priority: P1
+  name: Head-to-Head 2.5D Renderer Benchmark (layers25d vs directed25d)
+  depends_on:
+  - WP-00
+  - WP-05
+  paid_budget_usd: 0.0
+  allowed_create:
+  - scripts/benchmark_25d_v1_v6.py
+- id: WP-07
+  priority: P1
+  name: Split Paid Empirical Benchmarks (Video/Retake, Restoration, Foley)
+  depends_on:
+  - WP-03
+  - WP-05
+  requires_creator_budget_approval: true
+  split_caps_usd:
+    experiment_1_video_retake: 8.0
+    experiment_2_restoration: 3.0
+    experiment_3_foley: 2.5
+- id: WP-08
+  priority: P2
+  name: 60-Second End-to-End Closed-Loop Vertical Slice
+  depends_on:
+  - WP-04
+  - WP-05
+  - WP-06
+  - WP-07
+  requires_creator_budget_approval: true
+- id: WP-09
+  priority: P2
+  name: 12-Minute Full Episode Production Validation
+  depends_on:
+  - WP-08
+  requires_creator_budget_approval: true
+- id: WP-10
+  priority: P2
+  name: 12+1 Domain Skills Consolidation, Expert Library and Optional OTIO
+  depends_on:
+  - WP-08
+  paid_budget_usd: 0.0
+- id: WP-B1
+  priority: P1
+  name: 3D Blender 10% Cartography, Terrain and Infographics Lab (Parallel, Outside
+    Production)
+  depends_on:
+  - WP-01
+  paid_budget_usd: 0.0
+  requires_creator_d131_carveout_for_promotion: true
+  allowed_create:
+  - explainer_engine/experimental/blender_lab/**
+  forbidden_modify:
+  - explainer_engine/episode/run.py
+  - config/retired_era.json
+level_b_enforcement_design: explainer_engine/governance/check_wp_scope.py (PROPOSED)
+level_c_enforcement_design: .github/workflows/quality.yml + GitHub Branch Protection
+  (PROPOSED)
+read_only_pytest_verified: 164 passed, 0 failed, 1 skipped (11 core WP-02 touched
+  unit suites)
