@@ -84,5 +84,81 @@
     "image_strength": 1.0,
     "source": "ltx_pipelines.utils.constants and utils.args at LTX-2 e98f6d9 (the CLI's own defaults, written out so the run record holds every setting)"
   },
-  "kind_why": "W5 (final plan 2026-11-19, P-6/CT-2): job kinds keyframes / upscale_x2 / retake / a2v. The guided two-stage pipelines (keyframes, upscale_x2, a2v) need the DEV transformer and the distilled LoRA of the same pinned revision (README at e98f6d9: 'the full model; used by the guided two-stage pipelines'); both are pinned by sha256 here and equal config/cloud_pins.json models.video_ltx.sha256_files (a test keeps them together). They are NOT on the Volume yet: staging them is a paid CPU step of the A/B plan."
+  "kind_why": "W5 (final plan 2026-11-19, P-6/CT-2): job kinds keyframes / upscale_x2 / retake / a2v. The guided two-stage pipelines (keyframes, upscale_x2, a2v) need the DEV transformer and the distilled LoRA of the same pinned revision (README at e98f6d9: 'the full model; used by the guided two-stage pipelines'); both are pinned by sha256 here and equal config/cloud_pins.json models.video_ltx.sha256_files (a test keeps them together). They are NOT on the Volume yet: staging them is a paid CPU step of the A/B plan.",
+  "runpod": {
+    "_doc": "The RunPod path of the LTX A/B (W5, plan RUNPOD_AB_PLAN.md section 3; the creator chose the platform only, decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj, no spend approved). Prices read 2026-11-19 ~17:50 UTC from the live catalog: estimates, not measured. Minutes are [min, expected, max].",
+    "launcher": "explainer_engine/training/pods/ltx/runpod_ltx_pod.sh",
+    "cards": [
+      {
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "vram_gb": 96,
+        "usd_per_h": {
+          "COMMUNITY": 1.69,
+          "SECURE": 2.69
+        },
+        "note": "in stock (LOW) 2026-11-19; the pinned image and LTX commit were only proven on Modal H100, sm_120 needs a CUDA 12.8+ torch build: L3 decides"
+      },
+      {
+        "gpu": "NVIDIA H100 PCIe",
+        "vram_gb": 80,
+        "usd_per_h": {
+          "COMMUNITY": 1.99,
+          "SECURE": 2.89
+        },
+        "note": "no stock 2026-11-19"
+      },
+      {
+        "gpu": "NVIDIA A100 80GB PCIe",
+        "vram_gb": 80,
+        "usd_per_h": {
+          "COMMUNITY": 1.19,
+          "SECURE": 2.19
+        },
+        "note": "no stock 2026-11-19"
+      }
+    ],
+    "image": null,
+    "image_why": "OPEN (OR-22): no image digest in config/cloud_pins.json is proven for this card; the launcher refuses `plan` for a create until a digest with its CUDA 12.8+ proof is pinned there and named here",
+    "container_disk_gb": 220,
+    "container_disk_why": "~120 GB of bf16 weights (an estimate, not measured) plus clips and the code bundle; a network volume is never used (it bills while stopped)",
+    "min_cuda": "12.8",
+    "weights_dir": "/workspace/dl",
+    "recommended_cap_usd": 3.5,
+    "cap_usd": null,
+    "cap_why": "recommended by the plan thread (guard stop, PROBLEM at 80 %); the owner's cap answer is not recorded, so cap_usd stays null and `plan` needs --cap-usd",
+    "problem_at": 0.8,
+    "minutes": {
+      "boot": [
+        5,
+        10,
+        15
+      ],
+      "download": [
+        10,
+        20,
+        35
+      ],
+      "load": [
+        3,
+        5,
+        8
+      ],
+      "smoke": [
+        2,
+        3,
+        5
+      ],
+      "run_distilled": [
+        1.5,
+        2.5,
+        4
+      ],
+      "run_guided": [
+        4,
+        7,
+        12
+      ],
+      "source": "RUNPOD_AB_PLAN.md section 2 (arm minutes per run: distilled 8 runs 12/20/32, guided 3 runs 12/21/36); the card speed is SPEED 1.3 in cloud/runpod.py, not measured for LTX"
+    }
+  }
 }

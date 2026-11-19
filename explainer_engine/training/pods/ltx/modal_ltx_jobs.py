@@ -499,8 +499,9 @@ def _tok():
     return t
 
 
-def weights_root(launch, vol_root="/w"):
-    return Path(vol_root) / "model" / launch["model_repo"]
+def weights_root(launch, vol_root=None):
+    """Where the pinned files live: the Modal Volume (``/w``), or ``$EE_LTX_VOL_ROOT`` on a RunPod pod (runpod_ltx_jobs)."""
+    return Path(vol_root or os.environ.get("EE_LTX_VOL_ROOT") or "/w") / "model" / launch["model_repo"]
 
 
 STAGE_CPU, STAGE_MEM_GIB, STAGE_TIMEOUT_S = 4, 16, 3600   # CPU only, ~$0.32 an hour at the 2026-11-07 table

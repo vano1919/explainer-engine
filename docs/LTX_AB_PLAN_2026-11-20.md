@@ -101,3 +101,22 @@ fresh keyframe only, start+end, guided, or hop-1 continuation. (D-132)
 2. OR-23 plan approved by the plan thread (OR-24) and the creator's word, the cap decided by him, GO card bound to the plan sha.
 3. OR-37 ladder again for the new worker and launch bytes (L1, L2 free CPU; L3 paid).
 4. The $0 prerequisites of section 2 done and looked at.
+
+## RunPod path (D-132, the creator's platform choice, decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj)
+
+The platform only; no spend is approved by it. Built at $0 in `training/pods/ltx/runpod_ltx_jobs.py` (the pod-side runner and the local (D-132)
+`plan`), `runpod_ltx_pod.sh` (the wrapper script) and the `runpod` section of `launch.json`; the plan is (D-132)
+`RUNPOD_AB_PLAN.md` in the project files. It reuses the Modal worker's pure functions (job refusals, CLI arguments, run record, clip
+generator, HF upload and sha256 verify); only the weights place differs (`EE_LTX_VOL_ROOT`, `/workspace/dl`). (D-132)
+- Ladder: L0 tests and L1 `runpod dryrun` are free and local; L2 is the first in-pod step (every file of the batch downloaded and
+  sha256-checked, the pod ends on any fail before a model loads); L3 is one smoke clip on that card; L4 is the batch, each clip verified
+  on HF before the next starts (OR-33). At 80 % of the cap no new clip starts.
+- Local refusals before `create` (`plan`): no pinned image, no cap, cap above `per_pod_usd`, a job refused by the Modal rules, hop > 2,
+  one run over the cap, the batch's max estimate over the cap.
+- Open (OR-22, nothing assumed): `runpod.image` is null (no digest is proven for the Blackwell card, sm_120 needs a CUDA 12.8+ torch),
+  `cap_usd` is null (the owner's cap answer), the code bundle sha256 in the pod script is a placeholder until the bundle is built, the
+  ~120 GB of weights and the minutes are estimates, not measured.
+- Retired exception: `config/retired_era.json` entries `runpod` and `ltx` carry an `exception` for this one launcher; every other (D-132)
+  RunPod launcher and the p15 launcher stay refused (`retired.excepted`).
+- Before the first paid minute: the owner's cap, the OR-34 audit, `runpod check`, the Haiku watchdog (OR-36), and at the end `runpod check`
+  showing nothing running.

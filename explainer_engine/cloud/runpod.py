@@ -1813,7 +1813,7 @@ def main(argv=None, api=None, live=None):
         from explainer_engine.core.errors import ConfigError
         from explainer_engine.episode import retired
         try:
-            retired.refuse("runpod", *[x for x in rest if not x.startswith("-")])
+            retired.refuse("runpod", *[x for x in rest if not x.startswith("-")], script=_opt(rest, "--script"))
         except ConfigError as e:
             raise SystemExit(f"refused, no pod was made: {e}")
         if _opt(rest, "--rules") and _opt(rest, "--test"):

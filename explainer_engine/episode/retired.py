@@ -38,13 +38,24 @@ def v43_episode_of(path) -> Path | None:
     return None
 
 
-def refuse(tool: str, *paths, env=None, cwd=None) -> None:
+def excepted(tool: str, script) -> bool:
+    """True when ``script`` is the one launcher the creator excepted for ``tool`` (its ``exception.launchers``, matched on the path's
+    tail): the LTX A/B's RunPod pod script and nothing else (decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj)."""
+    if not script:
+        return False
+    posix = Path(script).as_posix()
+    return any(posix == f or posix.endswith("/" + f) for f in ((load()["tools"].get(tool) or {}).get("exception") or {}).get("launchers", []))
+
+
+def refuse(tool: str, *paths, env=None, cwd=None, script=None) -> None:
     """Stop a retired tool inside a v4.3 episode (Q10, D-131); nothing happens outside one, unless the tool is retired
     ``everywhere`` (Qwen and its LoRA: the creator, 2026-11-12 14:01 UTC, final audit C3: the style rounds too)."""
     tools = load()["tools"]
     if tool not in tools:
         raise ValueError(f"unknown retired tool {tool!r}; known: {sorted(tools)}")
     t = tools[tool]
+    if excepted(tool, script):
+        return
     if t.get("everywhere"):
         raise ConfigError(f"{tool} ({t['what']}) is retired everywhere ({t['everywhere']}); use {t['replacement']}. "
                           "Nothing was started.")
