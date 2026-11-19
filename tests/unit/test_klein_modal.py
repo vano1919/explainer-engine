@@ -257,3 +257,22 @@ def test_the_caps_sum_to_the_creators_total_and_the_weights_check_on_the_gpu_is_
 
 def test_the_worker_reads_the_hf_token_from_the_owners_secret_name():
     assert W.SECRET_NAME == "custom-secret"                                                     # the second account's secret (the owner, 20:41 UTC)
+
+
+def test_the_worker_file_imports_where_the_container_puts_it(tmp_path):
+    import importlib.util
+    import shutil
+    d = tmp_path / "root"                                                                       # /root/modal_klein_jobs.py has few parent folders
+    d.mkdir()
+    for n in ("modal_klein_jobs.py", "launch.json"):
+        shutil.copy(Path(W.__file__).with_name(n), d / n)
+    spec = importlib.util.spec_from_file_location("mk_shallow", d / "modal_klein_jobs.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)                                                                # L1 failed here with IndexError: parents[3]
+    assert mod.LADDER_PATH.name == "ladder_modal_klein.json"
+
+
+def test_the_ladder_folder_falls_back_without_a_deep_path(monkeypatch, tmp_path):
+    monkeypatch.setattr(W, "SHARED_GATES", tmp_path / "no_such_folder")
+    monkeypatch.setattr(W, "KLEIN_DIR", Path("/root"))                                          # the container: no parents[3]
+    assert W._ladder_dir() == Path("/jobs/klein_modal") or W._ladder_dir().name == "klein_modal"

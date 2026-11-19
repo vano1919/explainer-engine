@@ -37,8 +37,13 @@ LAUNCH_PATH = KLEIN_DIR / "launch.json"
 LAUNCHER = KLEIN_DIR / "klein_pod.sh"                      # its two printf pins are the one record of the code bundle and batch sha256
 SHARED_GATES = Path("/mnt/project-files/explainer-engine/final_plan_2026-11-19/ab_gates")   # the project's shared folder: any thread sees the rungs
 # The ladder record lives OUTSIDE the code bundle (a record written after the pin must never change the bundle it pins).
-LADDER_PATH = Path(os.environ.get("EE_KLEIN_LADDER") or (SHARED_GATES if SHARED_GATES.is_dir() else KLEIN_DIR.parents[3] / "jobs" / "klein_modal")
-                   / "ladder_modal_klein.json")
+def _ladder_dir() -> Path:
+    if SHARED_GATES.is_dir():
+        return SHARED_GATES
+    return (KLEIN_DIR.parents[3] if len(KLEIN_DIR.parents) > 3 else KLEIN_DIR) / "jobs" / "klein_modal"     # inside the container the file sits in /root
+
+
+LADDER_PATH = Path(os.environ.get("EE_KLEIN_LADDER") or (_ladder_dir() / "ladder_modal_klein.json"))
 SECRET_NAME = "custom-secret"   # the owner's second account holds his HF token under this name (his message 2026-11-19 20:41 UTC); the key inside is HF_TOKEN
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
