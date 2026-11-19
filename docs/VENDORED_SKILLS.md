@@ -93,3 +93,49 @@ Vendored 39 (below), skipped 15 (with reason, next section), archived 6. The S1-
 - `v-scenario-*` assume the Scenario MCP/API; used as method text only (`film-direction`).
 - `v-elevenlabs-*` show raw API calls; ours go through the connector and its PreToolUse hook (`elevenlabs-voice`).
 - A grep for telemetry, beacons and analytics in the vendored text found none that sends data (`v-ffmpeg-skill/PRIVACY.md` says it sends none).
+
+## SK-1 trial tasks and star counts (NOT_RUN, owners decided by the plan thread)
+
+The trial task per skill (P-3) is done by the stream that first uses it, before use. Star counts for S4-S19 were not re-verified (GitHub API blocked): NOT_RUN.
+
+| Folder | Trial owner | Trial status |
+|---|---|---|
+| `v-animate-characters` | W5 | NOT_RUN |
+| `v-audio-production-skill` | W6 | NOT_RUN |
+| `v-color-grading-skill` | W7 | NOT_RUN |
+| `v-design-sound` | W6 | NOT_RUN |
+| `v-director-cinematic` | W8 | NOT_RUN |
+| `v-edit-video` | W7 | NOT_RUN |
+| `v-elevenlabs-music` | W6 | NOT_RUN |
+| `v-elevenlabs-sound-effects` | W6 | NOT_RUN |
+| `v-elevenlabs-speech-to-text` | W6 | NOT_RUN |
+| `v-elevenlabs-text-to-speech` | W6 | NOT_RUN |
+| `v-fact-check-workflow` | W8 | NOT_RUN |
+| `v-ffmpeg-skill` | W7 | NOT_RUN |
+| `v-hook-writing` | W8 | NOT_RUN |
+| `v-ltxv2-video` | W5 | NOT_RUN |
+| `v-media-analysis-skill` | W4 | NOT_RUN |
+| `v-newsjack-fact-check` | W8 | NOT_RUN |
+| `v-qc-skill` | W4 | NOT_RUN |
+| `v-scenario-consistency` | W9 | NOT_RUN |
+| `v-scenario-quality-gate` | W4 | NOT_RUN |
+| `v-scenario-storyboards` | W9 | NOT_RUN |
+| `v-scenario-video-color-grade` | W7 | NOT_RUN |
+| `v-source-verification` | W8 | NOT_RUN |
+| `v-subtitle-skill` | W7 | NOT_RUN |
+| `v-superpowers-subagent-driven-development` | every code thread (before first use) | NOT_RUN |
+| `v-superpowers-systematic-debugging` | every code thread (before first use) | NOT_RUN |
+| `v-superpowers-test-driven-development` | every code thread (before first use) | NOT_RUN |
+| `v-superpowers-verification-before-completion` | every code thread (before first use) | NOT_RUN |
+| `v-sw-dialogue` | W8 | NOT_RUN |
+| `v-sw-premise-theme` | W8 | NOT_RUN |
+| `v-sw-scene-craft` | W8 | NOT_RUN |
+| `v-sw-story-structure` | W8 | NOT_RUN |
+| `v-sw-workflow` | W8 | NOT_RUN |
+| `v-thumbnail-skill` | W7 | NOT_RUN |
+| `v-transcription-skill` | W6 | NOT_RUN |
+| `v-video-editing-skill` | W7 | NOT_RUN |
+| `v-viral-hooks` | W8 | NOT_RUN |
+| `v-viral-youtube-shorts` | W7 | NOT_RUN |
+| `v-visual-skills-image` | W9 | NOT_RUN |
+| `v-visual-skills-video` | W9 | NOT_RUN |
