@@ -810,7 +810,7 @@
    "speaker_id": "narrator",
    "addressee_id": null,
    "delivery_direction": "light irony on 'Christmas'",
-   "text": "The war had begun in August. Everyone said it would be over by Christmas.",
+   "text": "The war had begun in August. Many said it would be over by Christmas.",
    "register_type": "verified_historical_fact",
    "citation_ids": [
     "C-05"
@@ -3489,7 +3489,7 @@
     },
     {
      "kind": "route_arrow",
-     "at_word": "Everyone",
+     "at_word": "Many",
      "until_word": "Christmas",
      "from": "aachen",
      "to": "marne",
