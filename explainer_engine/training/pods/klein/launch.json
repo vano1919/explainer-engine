@@ -118,7 +118,7 @@
     "cpu": 2,
     "memory_gib": 24,
     "scaledown_window_s": 2,
-    "startup_timeout_s": 600,
+    "startup_timeout_s": 120,
     "hf_hub_pin": "1.33.0",
     "prices_date": "2026-11-07",
     "prices_source": "cloud/modal_schedule.GPUS + CPU_CORE_S + MEM_GIB_S (modal.com/pricing fetched 2026-11-07); the CH-07 paid offer re-reads today's price before every paid rung",
@@ -130,9 +130,9 @@
     "cold_start_why": "an ESTIMATE (the LTX worker's rounded measured overhead); the L3 smoke measures it and this number is then replaced",
     "caps": {
       "smoke_usd": 0.35,
-      "run_usd": 1.0
+      "run_usd": 0.65
     },
-    "caps_why": "run_usd is the creator's Klein cap ($1.00, 19:40 UTC); smoke_usd is a tenth-class test (one smoke picture and one picture) inside it; both must stay under 80 % of the creator's Modal line (core/ledger STOP_FRACTION)",
+    "caps_why": "the creator's Klein $1 is the TOTAL, smoke included (plan thread audit E1): smoke_usd 0.35 + run_usd 0.65 = cap_usd 1.00; run_usd is the main rung's own cap; each must stay under 80 % of the creator's Modal line (core/ledger STOP_FRACTION)",
     "minutes": {
       "boot": [
         0.5,
@@ -150,6 +150,9 @@
         3
       ],
       "source": "ESTIMATES for the Modal run (container start and the model load; the weights are staged on the Volume by the L2 rung, so no download); seconds_per_picture stays the pod table's (same card); L3 measures"
-    }
+    },
+    "torch_pin": "2.8.0",
+    "torch_cuda_index": "https://download.pytorch.org/whl/cu128",
+    "torch_pin_why": "torch 2.8.0 / cu128 as the OR-34 audit read it from the image (2026-11-19, not confirmed from the image bytes here); add_python=3.12 gives Modal its own Python that cannot see the image's torch, so torch is installed explicitly and L1 (env_check) returns torch.__version__ and torch.version.cuda and goes red on a different version"
   }
 }

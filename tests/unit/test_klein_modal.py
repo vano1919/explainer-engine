@@ -30,7 +30,7 @@ def test_the_modal_section_is_pinned_the_rate_is_the_price_table_and_every_timeo
     L = W.LAUNCH
     assert W.modal_problems(L) == [] and W.gpus(L) == ["L40S", "A100-80GB"]
     assert W.stated_rate(L) == W.rate_usd_h(L) == 2.2373 and L["modal"]["prices_date"] and L["modal"]["prices_source"]   # source and date recorded
-    assert L["cap_usd"] == 1.0 and L["modal"]["caps"]["run_usd"] == 1.0 and L["modal"]["scaledown_window_s"] <= 5
+    assert L["cap_usd"] == 1.0 and L["modal"]["caps"]["run_usd"] == 0.65 and L["modal"]["startup_timeout_s"] == 120 and L["modal"]["scaledown_window_s"] <= 5
     for gpu in W.gpus(L):
         smoke_t, run_t = W.timeouts(L, gpu)
         h = W.stated_rate(L, gpu)
@@ -57,7 +57,7 @@ def test_a_paid_preflight_refuses_with_no_modal_line_and_with_a_wrong_account(mo
         W.preflight(W.LAUNCH, env=dict(ENV, EE_PAID_OFFER=str(offer)))
     with pytest.raises(SystemExit, match="CH-07"):                                              # and no passing paid offer: still refused
         W.preflight(W.LAUNCH, env=dict(ENV))
-    monkeypatch.setattr(spend_caps, "load", lambda *a, **k: {"modal": {"per_run_usd": 1.0}})   # a line under the cap's 80 % rule
+    monkeypatch.setattr(spend_caps, "load", lambda *a, **k: {"modal": {"per_run_usd": 0.7}})   # a line under the cap's 80 % rule (0.56 < the 0.65 run cap)
     with pytest.raises(SystemExit, match="above 80 % of the creator's"):
         W.preflight(W.LAUNCH, env=dict(ENV, EE_PAID_OFFER=str(offer)))
     with pytest.raises(SystemExit, match="MODAL1"):
@@ -217,7 +217,9 @@ def test_each_picture_is_uploaded_and_verified_before_the_next_one_through_the_b
                  download=dl, now=lambda: 5000.0, api=api, baked=tmp_path / "none", generate=ordered_gen, clock=lambda: 5300.0, upload_op=Op,
                  fetch=lambda spec, dest: Path(dest), tmp=str(tmp_path / "in"))
     assert res["state"] == "DONE", res
-    assert api.order == ["gen:L3_smoke", "upload", "gen:P0", "upload", "gen:P1", "upload"]    # OR-33: each one on HF before the next starts
+    assert api.order[:6] == ["gen:L3_smoke", "upload", "gen:P0", "upload", "gen:P1", "upload"]   # OR-33: each one on HF before the next starts
+    assert set(api.order[6:]) == {"upload"} and api.order[6:]                                  # E6: run_record.json and modal_record.json go up at the end
+    assert (tmp_path / "w" / "out" / "modal_record.json").is_file()
     assert res["price_source"] == "EE_PRICE" and res["cap_source"] == "EE_MAX_USD"
     assert res["spent_usd"] == pytest.approx((300 + 120) / 3600 * 2.2373, abs=0.005)           # the clock includes the cold start at the card's rate
 
@@ -237,3 +239,17 @@ def test_the_creators_modal_line_is_3_50_a_run_with_no_episode_line():
     with pytest.raises(spend_caps.OverCeiling, match="per_episode_usd"):
         spend_caps.modal(episode=True)                                                          # an episode's Modal runs still wait for his episode line
     assert W.LAUNCH["modal"]["caps"]["run_usd"] <= 0.8 * m["per_run_usd"]                       # the Klein cap passes the ledger's 80 % rule
+
+
+def test_the_caps_sum_to_the_creators_total_and_the_weights_check_on_the_gpu_is_size_only(tmp_path):
+    L, vol = _launch_with_files(tmp_path)
+    c = L["modal"]["caps"]
+    assert c["smoke_usd"] + c["run_usd"] <= L["cap_usd"] + 1e-9                                 # E1: his Klein $1 is the total, smoke included
+    over = json.loads(json.dumps(L)); over["modal"]["caps"]["run_usd"] = 0.7
+    assert any("smoke_usd" in p and "total" in p for p in W.modal_problems(over, check_table=False))
+    assert L["modal"]["torch_pin"] and "cu128" in L["modal"]["torch_cuda_index"]                # E3: torch is installed explicitly, L1 proves it
+    from explainer_engine.training.pods.klein import klein_jobs as K
+    f = sorted(K.model_of(L)["files"])[0]
+    p = K.weights_root(L, vol) / f
+    p.write_bytes(p.read_bytes() + b"x")                                                        # a wrong size is caught without hashing
+    assert any(f in b for b in W.check_weights(L, vol, hash_files=False))

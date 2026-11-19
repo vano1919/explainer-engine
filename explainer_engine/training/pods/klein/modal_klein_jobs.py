@@ -147,6 +147,9 @@ def modal_problems(launch: dict, *, check_table: bool = True) -> list[str]:
         bad.append("modal.cold_start_s is not set (the measured container overhead; an estimate until L3 measures it)")
     if not bad and launch.get("cap_usd") and c["run_usd"] > float(launch["cap_usd"]) + 1e-9:
         bad.append(f"modal.caps.run_usd {c['run_usd']} is above the creator's recorded cap_usd {launch['cap_usd']}")
+    if not bad and launch.get("cap_usd") and c["smoke_usd"] + c["run_usd"] > float(launch["cap_usd"]) + 1e-9:
+        bad.append(f"modal.caps smoke_usd {c['smoke_usd']} + run_usd {c['run_usd']} is above the creator's recorded total cap_usd "
+                   f"{launch['cap_usd']} (his Klein $1 is the total, smoke included)")
     if not bad and m["scaledown_window_s"] > 5:
         bad.append(f"modal.scaledown_window_s {m['scaledown_window_s']} is above 5 s (no warm container is paid)")
     if not bad and check_table:
@@ -346,8 +349,9 @@ def set_clock(env, rate: float, cap: float, cold_start_s: float, now=time.time) 
     return {"price_usd_per_h": rate, "cap_usd": cap, "cold_start_s": cold_start_s}
 
 
-def check_weights(launch: dict, vol_root=VOL + "/klein") -> list[str]:
-    """Every model file of the pin present on the Volume with its size, read after staging (L2 on CPU, never on the GPU)."""
+def check_weights(launch: dict, vol_root=VOL + "/klein", *, hash_files: bool = True) -> list[str]:
+    """Every model file of the pin present on the Volume, hashed after staging (L2 on CPU, never on the GPU). ``hash_files=False``
+    checks presence and the pinned size only: the GPU body must not hash 21 GB twice, ``klein_jobs.run`` L2 does it once."""
     from explainer_engine.training.pods.klein import klein_jobs as K
     m = K.model_of(launch)
     root = K.weights_root(launch, vol_root)
@@ -356,6 +360,10 @@ def check_weights(launch: dict, vol_root=VOL + "/klein") -> list[str]:
         p = root / f
         if not p.is_file() or p.stat().st_size == 0:
             bad.append(f"missing {f}")
+        elif not hash_files:
+            size = (m.get("sizes") or {}).get(f)
+            if size is not None and p.stat().st_size != size:
+                bad.append(f"size {p.stat().st_size} is not the pinned {size}: {f}")
         elif K.file_id(p, want) != want:
             bad.append(f"{'sha256' if len(want) == 64 else 'git blob id'} mismatch {f}")
     return bad
@@ -388,22 +396,43 @@ def body(spec: dict, launch: dict, *, gpu: str, timeout_s: int, vol_root=VOL + "
         sys.path.insert(0, str(ee))
     view = modal_view(launch, gpu)
     from explainer_engine.training.pods.klein import klein_jobs as K
-    unstaged = [f"{p}" for p in check_weights(view, vol_root)]
+    unstaged = [f"{p}" for p in check_weights(view, vol_root, hash_files=False)]
     if unstaged:
         return {"state": "FAILED", "error": "the model files are not staged on the Volume (run the L2 rung first)",
                 "problems": unstaged[:8]}
     batch = json.loads((batch_dir / "batch.json").read_text(encoding="utf-8"))
     if spec.get("smoke_only"):
         batch = dict(batch, jobs=batch["jobs"][:1], prefix=str(batch["prefix"]) + "_modal_smoke")
-    clock = set_clock(env, stated_rate(launch, gpu), spec["cap_usd"], _modal(launch)["cold_start_s"], now=now)
-    res = (run_fn or K.run)(batch, WORK / "out" if work is WORK else Path(work) / "out", api=api, launch=view, vol_root=vol_root,
-                            created=float(env["EE_CREATED"]), **run_kw)
+    clock = set_clock(env, stated_rate(launch, gpu), spec["cap_usd"], _modal(launch)["cold_start_s"], now=lambda: t0)   # fetch, unpack and hash time is on the clock
+    out = WORK / "out" if work is WORK else Path(work) / "out"
+    try:
+        res = (run_fn or K.run)(batch, out, api=api, launch=view, vol_root=vol_root, created=float(env["EE_CREATED"]), **run_kw)
+    except Exception as exc:  # noqa: BLE001 - the end path below still uploads what exists (OR-33); the rung is red
+        res = {"end": "CRASHED", "problems": [f"{type(exc).__name__}: {str(exc)[:200]}"]}
     commit()
     ok = res.get("end") == "DONE"
-    return {"state": "DONE" if ok else "FAILED", "end": res.get("end"), "gpu": gpu, "spent_usd": res.get("spent_usd"), "clock": clock,
-            "price_source": res.get("price_source"), "cap_source": res.get("cap_source"), "steps": res.get("steps"),
-            "pictures": res.get("pictures"), "problems": res.get("problems"), "body_s": round(now() - t0, 1)}
+    result = {"state": "DONE" if ok else "FAILED", "end": res.get("end"), "gpu": gpu, "smoke_only": bool(spec.get("smoke_only")),
+              "spent_usd": res.get("spent_usd"), "clock": clock, "price_source": res.get("price_source"),
+              "cap_source": res.get("cap_source"), "steps": res.get("steps"), "pictures": res.get("pictures"),
+              "problems": res.get("problems"), "body_s": round(now() - t0, 1)}
+    if api is not None:                              # run_record.json and the rung's own record go up verified, also on CAPPED or a failure
+        out.mkdir(parents=True, exist_ok=True)
+        from explainer_engine.core.store import write_json_atomic
+        write_json_atomic(Path(out) / "modal_record.json", result)
+        bad = upload_records(api, out, str(batch["prefix"]), ("run_record.json", "modal_record.json"), op=run_kw.get("upload_op"))
+        if bad:
+            result.update(state="FAILED", problems=list(result.get("problems") or []) + bad)
+    return result
 
+
+def upload_records(api, out, prefix: str, names, op=None) -> list[str]:
+    """OR-33 for the records: each named file that exists is uploaded and its sha256 / blob id read back from HF (empty list = verified)."""
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as M          # the pinned bundle is on sys.path by now
+    present = [n for n in names if (Path(out) / n).is_file()]
+    for _ in range(2):
+        M.upload_round(api, Path(out), prefix, {}, final=True, op=op)
+    res = M.verify_uploads(api, Path(out), prefix)
+    return [f"{n}: {res.get(n, 'not verified')}" for n in present if res.get(n) != "ok"]
 
 LAUNCH = load_launch()
 
@@ -413,7 +442,8 @@ if modal is not None:
     vol = modal.Volume.from_name(_m.get("volume") or "ee-weights", version=2, create_if_missing=True)   # the second account starts without one; a Volume is free until it holds data
     pip = LAUNCH.get("diffusers_version")
     image = (modal.Image.from_registry(LAUNCH["image"], add_python="3.12")
-             .run_commands("python3 -c \"import torch; print('torch==' + torch.__version__)\" > /root/constraints.txt || true",
+             .run_commands(f'pip install -q "torch=={_m.get("torch_pin")}" --index-url {_m.get("torch_cuda_index")}',
+                           f'echo "torch=={_m.get("torch_pin")}" > /root/constraints.txt',
                            f'PIP_CONSTRAINT=/root/constraints.txt pip install -q "huggingface_hub=={_m.get("hf_hub_pin")}" '
                            f'"diffusers=={LAUNCH.get("diffusers_version")}" "transformers=={LAUNCH.get("transformers_version")}"')
              .add_local_file(str(LAUNCH_PATH), "/root/launch.json"))
@@ -428,7 +458,15 @@ if modal is not None:
                 __import__(mod)
             except Exception as exc:  # noqa: BLE001 - reported, the rung is red
                 bad.append(f"{mod}: {type(exc).__name__}: {str(exc)[:120]}")
-        return bad
+        info = {}
+        try:
+            import torch
+            info = {"torch": torch.__version__, "cuda": torch.version.cuda}
+            if info["torch"].split("+")[0] != _m.get("torch_pin"):
+                bad.append(f"torch {info['torch']} is not the pinned {_m.get('torch_pin')}")
+        except Exception:  # noqa: BLE001 - already in bad
+            pass
+        return {"problems": bad, **info}
 
     @app.function(image=image, cpu=(2.0, 2.0), memory=(8192, 8192), timeout=3600, retries=0, volumes={VOL: vol}, secrets=secrets)
     def weights_stage(launch: dict, spec: dict):
@@ -485,9 +523,10 @@ if modal is not None:
         bad += [f"klein_pod.sh carries no {k} sha256 pin" for k, v in pins.items() if not v]
         if bad:
             raise SystemExit("the launch is not pinned:\n" + "\n".join(bad))
-        missing = env_check.remote()
-        print("env_check", missing or "imports ok")
-        record("L1", not missing, missing=missing, pins=pins)
+        res = env_check.remote()
+        missing = res["problems"]
+        print("env_check", missing or "imports ok", {k: v for k, v in res.items() if k != "problems"})
+        record("L1", not missing, missing=missing, pins=pins, torch=res.get("torch"), cuda=res.get("cuda"))
 
     @app.local_entrypoint()
     def weights(plan: str = ""):
