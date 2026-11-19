@@ -1,5 +1,7 @@
 # Mac Render Runbook (`o239-argon-impl`)
 
+> **V4.1 update (D-139, decision 2, 2026-11-19): ONE render path.** A master is made only by `python -m explainer_engine.episode run <episode> --to qa` (G8 sound from `audio/stems`, library takes logged in `audio/stems_report.json`; G9 chunked assembly). `tools/render_tools/mix.py` synthesizes its sound (D-136, OV-56) and is **preview only**: it refuses to write into any `renders/final` folder and its report says `preview_only`. `tools/render_tools/build_segments.py` is a standalone preview helper too; its hard-coded `DIPS` are NOT ported (the script's authored `transition_out` is the single source, plan owner decision 2026-11-19; `qa/known_review_items.json` lists the difference). No BBC RemArc sound in a monetised master (PC-10). The "Standalone segment + mix path" commands below are for previews only.
+
 **Branch / Base Commit:** `o239-argon-impl` (`817be690` + Task A P0 fixes)  
 **Canonical Narration Input:** `audio/narration.wav` (both `episode/run.py` and `tools/render_tools/mix.py` resolve via `explainer_engine.episode.timing.resolve_narration_path`; missing narration is a hard `ContractError`, never silent zeros).
 
@@ -21,7 +23,7 @@
 # Episode-first pipeline (G7-G10)
 python3 -m explainer_engine.episode.run --episode episodes/ep_truce_1914 --from G7 --to G10
 
-# Standalone segment + mix path (uses same timing.json & resolve_narration_path)
+# PREVIEW ONLY (D-139): standalone segment + mix path (uses same timing.json & resolve_narration_path); never a master
 python3 tools/render_tools/build_segments.py <SHOT_ID>
 python3 tools/render_tools/mix.py
 ```
