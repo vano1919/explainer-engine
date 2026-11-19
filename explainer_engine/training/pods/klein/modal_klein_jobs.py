@@ -372,11 +372,11 @@ def stage_weights(launch: dict, vol_root=VOL + "/klein", download=None) -> list[
 
 
 def body(spec: dict, launch: dict, *, gpu: str, timeout_s: int, vol_root=VOL + "/klein", work=WORK, commit=lambda: None, api=None,
-         download=None, now=time.time, env=None, run_fn=None, **run_kw) -> dict:
+         download=None, now=time.time, env=None, run_fn=None, baked=BAKED_LAUNCH, **run_kw) -> dict:
     """The paid body: gate, fetch and check the pinned files, set the clock, check the weights are staged, then ``klein_jobs.run`` unchanged."""
     env = os.environ if env is None else env
     t0 = now()
-    bad = container_gate(launch, gpu=gpu)
+    bad = container_gate(launch, baked, gpu=gpu)
     if bad:
         return {"state": "FAILED", "error": "refused in the container: " + "; ".join(bad)}
     try:

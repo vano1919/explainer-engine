@@ -178,15 +178,15 @@ def test_the_body_sets_the_clock_and_cap_that_run_reads_and_calls_run_unchanged(
     for k in ("EE_PRICE", "EE_MAX_USD", "EE_CREATED"):
         monkeypatch.setenv(k, "0")                                                              # restored by monkeypatch after the test
     res = W.body({"paths": paths, "pins": pins, "cap_usd": 1.0}, L, gpu="L40S", timeout_s=1340, vol_root=vol, work=tmp_path / "w",
-                 download=dl, now=lambda: 5000.0, run_fn=fake_run)
+                 download=dl, now=lambda: 5000.0, run_fn=fake_run, baked=tmp_path / "none")
     assert res["state"] == "DONE" and seen["price"] == "2.2373" and seen["cap"] == "1.0" and float(seen["created"]) == 5000.0 - 120
     assert res["clock"] == {"price_usd_per_h": 2.2373, "cap_usd": 1.0, "cold_start_s": 120} and seen["n"] == 2
     assert seen["launch"]["weights_dir"] == "/w/klein" and seen["launch"]["minutes"]["download"] == [0, 0, 0]   # the Volume holds the weights: no download minutes
     res = W.body({"paths": paths, "pins": pins, "cap_usd": 1.0}, L, gpu="A100-80GB", timeout_s=1055, vol_root=vol, work=tmp_path / "w2",
-                 download=dl, now=lambda: 5000.0, run_fn=fake_run)
+                 download=dl, now=lambda: 5000.0, run_fn=fake_run, baked=tmp_path / "none")
     assert seen["price"] == "2.7845"                                                            # the fallback card runs on its own rate
     res = W.body({"paths": paths, "pins": pins, "cap_usd": 1.0}, L, gpu="H100", timeout_s=1000, vol_root=vol, work=tmp_path / "w3",
-                 download=dl, now=lambda: 5000.0, run_fn=fake_run)
+                 download=dl, now=lambda: 5000.0, run_fn=fake_run, baked=tmp_path / "none")
     assert res["state"] == "FAILED" and "not one of the launch's cards" in res["error"]
 
 
@@ -194,10 +194,10 @@ def test_the_body_refuses_unstaged_weights_on_the_gpu_and_a_replaced_bundle(tmp_
     L, vol = _launch_with_files(tmp_path)
     pins, paths, dl = _bundle(tmp_path, _batch(2))
     res = W.body({"paths": paths, "pins": pins, "cap_usd": 1.0}, L, gpu="L40S", timeout_s=1340, vol_root=str(tmp_path / "empty"),
-                 work=tmp_path / "w", download=dl, run_fn=lambda *a, **k: pytest.fail("run must not start"))
+                 work=tmp_path / "w", download=dl, run_fn=lambda *a, **k: pytest.fail("run must not start"), baked=tmp_path / "none")
     assert res["state"] == "FAILED" and "not staged on the Volume" in res["error"]          # L2 runs on CPU, never on the paid card
     res = W.body({"paths": paths, "pins": dict(pins, code="00" * 32), "cap_usd": 1.0}, L, gpu="L40S", timeout_s=1340, vol_root=vol,
-                 work=tmp_path / "w2", download=dl, run_fn=lambda *a, **k: pytest.fail("run must not start"))
+                 work=tmp_path / "w2", download=dl, run_fn=lambda *a, **k: pytest.fail("run must not start"), baked=tmp_path / "none")
     assert res["state"] == "FAILED" and "the pin says" in res["error"]
     other = dict(L, cap_usd=0.5)                                                                # the launch passed in must be the baked one's shape
     assert W.container_gate(other, baked=tmp_path / "none") and any("run_usd" in p for p in W.container_gate(other))
@@ -214,7 +214,7 @@ def test_each_picture_is_uploaded_and_verified_before_the_next_one_through_the_b
     for k in ("EE_PRICE", "EE_MAX_USD", "EE_CREATED"):
         monkeypatch.setenv(k, "0")
     res = W.body({"paths": paths, "pins": pins, "cap_usd": 1.0}, L, gpu="L40S", timeout_s=1340, vol_root=vol, work=tmp_path / "w",
-                 download=dl, now=lambda: 5000.0, api=api, generate=ordered_gen, clock=lambda: 5300.0, upload_op=Op,
+                 download=dl, now=lambda: 5000.0, api=api, baked=tmp_path / "none", generate=ordered_gen, clock=lambda: 5300.0, upload_op=Op,
                  fetch=lambda spec, dest: Path(dest), tmp=str(tmp_path / "in"))
     assert res["state"] == "DONE", res
     assert api.order == ["gen:L3_smoke", "upload", "gen:P0", "upload", "gen:P1", "upload"]    # OR-33: each one on HF before the next starts
