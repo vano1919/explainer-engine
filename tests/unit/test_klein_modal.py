@@ -200,7 +200,7 @@ def test_the_body_refuses_unstaged_weights_on_the_gpu_and_a_replaced_bundle(tmp_
                  work=tmp_path / "w2", download=dl, run_fn=lambda *a, **k: pytest.fail("run must not start"), baked=tmp_path / "none")
     assert res["state"] == "FAILED" and "the pin says" in res["error"]
     other = dict(L, cap_usd=0.5)                                                                # the launch passed in must be the baked one's shape
-    assert W.container_gate(other, baked=tmp_path / "none") and any("run_usd" in p for p in W.container_gate(other))
+    assert W.container_gate(other, baked=tmp_path / "none") and any("run_usd" in p for p in W.container_gate(other, baked=tmp_path / "none"))
 
 
 def test_each_picture_is_uploaded_and_verified_before_the_next_one_through_the_body(tmp_path, monkeypatch):
