@@ -58,7 +58,19 @@ def run(plan_path: Path, narration: Path, library: Path, out: Path, seconds: flo
     # a phone-playable file: the mix as AAC in an m4a (what the delivery codec makes of it)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(out / "stems" / "mix.wav"), "-c:a", "aac", "-b:a", "192k",
                     str(out / "mix_parity_60s.m4a")], check=True)
-    record = {"schema": "mix_parity/1", "seconds": seconds, "plan": str(plan_path), "preview_not_final": True,
+    stem_lufs = {}
+    for name in ("narration", "music", "ambience", "sfx"):
+        with wave.open(str(out / "stems" / f"{name}.wav")) as w:
+            x = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(np.float32).reshape(-1, w.getnchannels()) / 32768
+        v = MC.integrated_lufs(x)
+        stem_lufs[name] = None if v == float("-inf") else round(v, 1)
+    # effect loudness while an effect plays: the sfx stem over the windows of its placed events
+    ev = []
+    for e in rep["events_placed"]:
+        if e.get("layer") in ("foley", "spot", "transition") and e["cue_id"] not in rep["silent_rows"]:
+            ev.append((e["at_s"], min(e["end_s"], e["at_s"] + 3.0)))
+    record_effects = {"events_played": len(ev), "events_silent": len(rep["silent_rows"])}
+    record = {"stem_lufs": stem_lufs, "effects": record_effects, "schema": "mix_parity/1", "seconds": seconds, "plan": str(plan_path), "preview_not_final": True,
               "silent_rows": rep["silent_rows"], "placeholders": rep["placeholders"], "mix_chain": rep["mix_chain"],
               "verify": verdict, "levels": rep["levels"]["groups"], "sounds_used": len(rep["sounds_used"])}
     write_json_atomic(out / "mix_parity_report.json", record)

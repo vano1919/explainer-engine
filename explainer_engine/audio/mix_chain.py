@@ -15,10 +15,9 @@ Order, after the vendored ``v-design-sound`` mix practice (references/mix.md) an
    to the mix.
 
 Numbers: loudness, peak and the voice-over-music gap are read from ``qa/targets`` and ``standards/sourced_rules`` (BP-50, BP-208),
-never copied (there is no second loudness table). ``ATTACK_MS``, ``RELEASE_MS``, ``CARVE_DB``, ``CARVE_BAND_HZ`` and
-``TP_MARGIN_DB`` are engineering defaults taken from the vendored skill's mix.md; they are **hypotheses without a registry row**
-(a registry row needs two source types, D-59): they are named here, reported in every ``mix_chain/1`` record, and the plan thread
-is asked to register them (not done here: ``standards/`` is outside W6's files).
+never copied (there is no second loudness table). The chain's own settings (attack, release, the carve, the limiter margin and the
+gap margin) are read from BP-214, a hypothesis row (REVIEW only, one source of one type: the vendored skill's mix.md), and listed in
+every ``mix_chain/1`` record.
 """
 from __future__ import annotations
 
@@ -40,13 +39,13 @@ from explainer_engine.validators import mix as VM
 SR = 48000
 SCHEMA = "mix_chain/1"
 
-# hypotheses (v-design-sound references/mix.md, "What it does" 2-3); not in the registry
-ATTACK_MS = 10.0
-RELEASE_MS = 250.0
-CARVE_DB = 3.0
-CARVE_BAND_HZ = (1000.0, 4000.0)
-TP_MARGIN_DB = 0.5            # the limiter's ceiling sits this far under BP-50's true_peak_max (AAC overshoot)
-GAP_MARGIN_LU = 0.5           # the music is trimmed to the gap plus this, so the measured gap is not on the edge
+# BP-214 (hypothesis, REVIEW only): the chain's engineering settings, read from the registry
+ATTACK_MS = float(C.T("BP-214", "attack_ms"))
+RELEASE_MS = float(C.T("BP-214", "release_ms"))
+CARVE_DB = float(C.T("BP-214", "carve_db"))
+CARVE_BAND_HZ = tuple(float(v) for v in C.T("BP-214", "carve_band_hz"))
+TP_MARGIN_DB = float(C.T("BP-214", "tp_margin_db"))      # the limiter's ceiling sits this far under BP-50's true_peak_max (AAC overshoot)
+GAP_MARGIN_LU = float(C.T("BP-214", "gap_margin_lu"))    # the music is trimmed to the gap plus this, so the measured gap is not on the edge
 SPEECH_THRESHOLD = 0.02       # the voice's control level where a window counts as speech (stems / mix_check)
 
 # one home each: BP-50 through qa/targets (the one set of loudness numbers), BP-208 through validators/_common (what VAL-MIX reads)
@@ -172,7 +171,7 @@ def mix_stems(nar: np.ndarray, amb: np.ndarray, sfx: np.ndarray, mus: np.ndarray
     rec: dict = {"schema": SCHEMA, "sidechain": {"attack_ms": ATTACK_MS, "release_ms": RELEASE_MS, "music_depth_db": music_duck_db,
                                                   "bed_depth_db": bed_duck_db, "step_finding": step},
                  "carve": {"band_hz": list(CARVE_BAND_HZ), "depth_db": CARVE_DB},
-                 "hypotheses_without_registry_row": ["attack_ms", "release_ms", "carve.band_hz", "carve.depth_db", "tp_margin_db"]}
+                 "settings_rule": "BP-214 (hypothesis, REVIEW only)", "tp_margin_db": TP_MARGIN_DB, "gap_margin_lu": GAP_MARGIN_LU}
     # music at least GAP_MIN_LU under the voice while it speaks
     v_l, m_l = lufs_where(nar, mask), lufs_where(mus, mask)
     trim = 0.0

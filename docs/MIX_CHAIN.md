@@ -7,17 +7,14 @@ steps G8 had (duck, bus limit, scale-down) and adds the master. Judged by `valid
 | Step | What | Where the number lives |
 |---|---|---|
 | Voice bus | the read, centre, never ducked or filtered | |
-| Music duck | sidechain from the voice, attack 10 ms, release 250 ms | depth: BP-53 house depth (`audio/duck.DEPTH_DB`); attack/release: `mix_chain.ATTACK_MS/RELEASE_MS` (hypothesis, no registry row) |
-| Carve | 1-4 kHz of the music dips 3 dB while the voice speaks (zero-phase band split) | `mix_chain.CARVE_BAND_HZ/CARVE_DB` (hypothesis, from the vendored `v-design-sound` mix.md) |
+| Music duck | sidechain from the voice, attack 10 ms, release 250 ms | depth: BP-53 house depth (`audio/duck.DEPTH_DB`); attack/release: BP-214 (hypothesis, REVIEW only) |
+| Carve | 1-4 kHz of the music dips 3 dB while the voice speaks (zero-phase band split) | BP-214 (from the vendored `v-design-sound` mix.md) |
 | Music under voice | static trim until the voice is at least `voice_over_music_min_lu` over the music while it speaks (+0.5 LU margin) | BP-208 |
-| Bed | ducked at BP-53's floor depth; effects not ducked | BP-53, `audio/stems.BED_DUCK_DB` |
+| Bed | ducked at BP-53's floor depth; effects not ducked (the plan must hand the chain ONE bed: wind and crowd summed into one bed stem, the owner's standing decision) | BP-53, `audio/stems.BED_DUCK_DB` |
 | Master | one static gain to BP-50's target, then one 4x-oversampled true-peak limiter with a ceiling `TP_MARGIN_DB` (0.5 dB) under `true_peak_max`, applied to every stem alike so the stems still sum to the mix | BP-50, BP-208 tight band (`lufs_tight_band`) |
 | Per scene | at least `effects_per_scene_min` effects; one bed with no gap (rows that abut or cross-fade by at most 1 s are one bed) | BP-209 |
 
-No loudness or peak number is written in `mix_chain`: the target, the peak ceiling, the gap and the tight band are read from the
-registry (`qa/targets.PROFILES`, `sourced_rules`). `attack`, `release`, the carve and `TP_MARGIN_DB` are **hypotheses with no
-registry row** (a row needs two source types, D-59); every `mix_chain/1` record lists them under `hypotheses_without_registry_row`.
-`standards/` is outside W6's files, so registering them is a request to the plan thread.
+No loudness or peak number is written in `mix_chain`: the target and the peak ceiling come from `qa/targets.PROFILES`, the gap and the tight band from BP-208, and the chain's own settings (attack, release, carve, limiter margin, gap margin) from BP-214, a hypothesis row (REVIEW only, one source of one type: the vendored skill's mix.md). `tests/unit/test_mix_chain.py` keeps the module and the registry together.
 
 `stems.render(..., master=False)` skips the master (a preview where loudness does not matter); the default is on.
 

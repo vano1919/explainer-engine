@@ -44,6 +44,16 @@ def _chain(**kw):
     return voice, MC.mix_stems(nar, amb, sfx, mus, voice, bed_duck_db=6.0, music_duck_db=duck.DEPTH_DB, **kw)
 
 
+def test_the_chain_settings_are_read_from_bp_214_a_review_only_hypothesis():
+    from explainer_engine.standards import sourced_rules as SRR
+    r = SRR.rule("BP-214")
+    assert r["status"] == "hypothesis" and r["severity"] == "REVIEW"
+    t = r["thresholds"]
+    assert (MC.ATTACK_MS, MC.RELEASE_MS, MC.CARVE_DB, MC.TP_MARGIN_DB, MC.GAP_MARGIN_LU) == (
+        t["attack_ms"], t["release_ms"], t["carve_db"], t["tp_margin_db"], t["gap_margin_lu"])
+    assert list(MC.CARVE_BAND_HZ) == t["carve_band_hz"]
+
+
 def test_the_numbers_come_from_the_registry_not_from_here():
     assert MC.LUFS_TARGET == T.PROFILES["long"]["lufs"]
     assert MC.TP_MAX == T.PROFILES["long"]["true_peak_max"]
