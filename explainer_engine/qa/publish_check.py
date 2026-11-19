@@ -1,5 +1,5 @@
 
-"""The publish checklist (PC-01..PC-09, docs/QA_SPECIFICATION.md; audit 2026-10-19 M6): what the creator types into Studio,
+"""The publish checklist (PC-01..PC-10, docs/QA_SPECIFICATION.md; audit 2026-10-19 M6): what the creator types into Studio,
 checked for free before approval #2. Nothing here uploads (invariant 4). stdlib + jsonschema.
 
     python -m explainer_engine.qa.publish_check <publish.json> [--script production_script.json] [--episode <folder>]   # exit 1 on a FAIL
@@ -23,11 +23,17 @@ from pathlib import Path
 
 import jsonschema
 
+from explainer_engine.audio.sources import YOUTUBE_CLAIM_RISK
+
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "publish.schema.json"
 TITLE_MAX, DESCRIPTION_MAX = 100, 5000  # Studio's field limits (characters)
 MIN_CHAPTER_S, MIN_CHAPTERS = 10, 3
 SHORT_MAX_S, SHORT_CLAIM_RISK_S = 180, 60
 SAFE_AUDIO = {"own_voice", "library", "procedural"}
+LIBRARY_MANIFEST = Path(__file__).resolve().parents[2] / "assets" / "audio" / "library" / "manifest.json"
+# media classes of a master whose provenance has no record file yet: listed by name, REVIEW, never PASS (D-139, PC-10)
+UNRECORDED_CLASSES = ("narration_read", "ltx_clip_audio", "pictures", "archival_documents")
+NO_MONETISE_MARKER = "DO_NOT_MONETISE"
 TRIGGERS = ("photoreal_pictures", "real_person_realistic", "real_event_altered", "ai_music_main")
 
 
@@ -102,6 +108,7 @@ def check(pub: dict, doc: dict | None = None, episode: Path | None = None) -> li
         add("PC-08", "approval", "no recorded creator approval (publish.json approval {by, ref}): nothing may be uploaded (invariant 4)")
     if episode is not None:
         out += gate_findings(Path(episode))
+        out += third_party_findings(Path(episode), pub.get("description", ""))
     return out
 
 
@@ -137,6 +144,65 @@ def gate_findings(episode: Path) -> list[dict]:
     return out
 
 
+def third_party_findings(episode: Path, description: str = "", manifest: Path | None = None) -> list[dict]:
+    """PC-10 (D-139, MA-17): every sound the master played, read from ``audio/stems_report.json`` (what the runner's G8 logged), against
+    the library manifest's licences, and the media classes that have no provenance record yet. FAIL: the report is missing (not run
+    never passes), a played item whose licence is in ``sources.YOUTUBE_CLAIM_RISK`` (a source YouTube could block or claim: BBC RemArc), a
+    ``DO_NOT_MONETISE`` marker in the episode folder. REVIEW: unverified generated audio, an item the manifest does not know, a
+    CC BY credit missing from the description, a class without a provenance record. Writes ``qa/third_party_media.json``."""
+    out: list[dict] = []
+    items: list[dict] = []
+
+    def add(where, detail, sev="FAIL"):
+        out.append({"rule": "PC-10", "severity": sev, "where": where, "detail": detail})
+
+    for mark in sorted(episode.rglob(NO_MONETISE_MARKER + "*")):
+        add(str(mark.relative_to(episode)), "marker: this material must not be monetised (it may carry non-commercial sound)")
+    report = episode / "audio" / "stems_report.json"
+    classes_without_record = list(UNRECORDED_CLASSES)
+    if not report.is_file():
+        add("audio/stems_report.json", "no sound log: the runner's G8 has not run, so what played is unknown (not run never passes)")
+    else:
+        try:
+            rep = json.loads(report.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            rep = {}
+            add("audio/stems_report.json", f"unreadable: {exc}")
+        mp = Path(manifest) if manifest else LIBRARY_MANIFEST
+        lib = {i["id"]: i for i in json.loads(mp.read_text(encoding="utf-8"))["items"]} if mp.is_file() else {}
+        seen = {}
+        for u in rep.get("sounds_used", []):
+            if u.get("id") and u["id"] not in seen:
+                seen[u["id"]] = u
+        for iid, u in sorted(seen.items()):
+            it = lib.get(iid)
+            lic = (it or {}).get("licence") or {}
+            row = {"class": "sound", "id": iid, "source": ((it or {}).get("source") or {}).get("kind"), "license": lic.get("type"),
+                   "commercial_use": lic.get("commercial_use"), "status": "PASS"}
+            if it is None:
+                row["status"] = "REVIEW"
+                add(iid, "played but not in the library manifest: no licence record", "REVIEW")
+            elif lic.get("type") in YOUTUBE_CLAIM_RISK:
+                row["status"] = "FAIL"
+                add(iid, f"licence {lic.get('type')}: {YOUTUBE_CLAIM_RISK[lic['type']]}")
+            elif lic.get("status") == "generated_terms_unverified" or lic.get("commercial_use") is None:
+                row["status"] = "REVIEW"
+                add(iid, "generated audio whose terms are not verified", "REVIEW")
+            elif lic.get("attribution_required") and lic.get("attribution_text") and lic["attribution_text"] not in description:
+                row["status"] = "REVIEW"
+                add(iid, f"{lic.get('type')} needs its credit line in the description", "REVIEW")
+            items.append(row)
+    for c in classes_without_record:
+        items.append({"class": c, "id": None, "source": None, "license": None, "commercial_use": None, "status": "REVIEW"})
+        add(c, "no provenance record for this media class yet (listed, never passed)", "REVIEW")
+    from explainer_engine.core.store import write_json_atomic
+    write_json_atomic(episode / "qa" / "third_party_media.json",
+                      {"schema": "third_party_media/1", "items": items, "classes_without_record": classes_without_record,
+                       "unresolved_reviews": {"count": sum(f["severity"] == "REVIEW" for f in out),
+                                              "where": [f["where"] for f in out if f["severity"] == "REVIEW"]}})
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("publish")
@@ -150,7 +216,8 @@ def main(argv: list[str] | None = None) -> int:
     found = check(pub, doc, episode)
     for f in found:
         print(f"{f['severity']:6} {f['rule']} {f['where']}: {f['detail']}")
-    print(f"{sum(f['severity'] == 'FAIL' for f in found)} FAIL, {sum(f['severity'] == 'REVIEW' for f in found)} REVIEW")
+    print(f"{sum(f['severity'] == 'FAIL' for f in found)} FAIL, {sum(f['severity'] == 'REVIEW' for f in found)} REVIEW "
+          f"(unresolved REVIEW items: {sum(f['severity'] == 'REVIEW' for f in found)})")
     return 1 if any(f["severity"] == "FAIL" for f in found) else 0
 
 

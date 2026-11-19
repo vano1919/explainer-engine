@@ -112,3 +112,38 @@ def test_a_note_that_says_no_attribution_is_not_a_credit_but_cc_by_and_a_licence
     for note in ("attribution not required", "No attribution required", "without attribution", "Attribution is never needed"):
         assert sfx_library.credit_line(item({"note": note})) is None, note
     assert sfx_library.credit_line(item({"note": "Attribution required: A"})) == "x__v1: Attribution required: A"
+
+
+def _item(iid, lic):
+    return {"id": iid, "category": "foley", "tags": ["x"], "review": {"human": "not_listened"}, "licence": lic}
+
+
+def test_a_licence_in_the_youtube_claim_risk_set_is_rejected_and_every_other_item_keeps_its_stored_status():
+    """D-139 (MA-17): the 34 BBC items were stored as ``production: verified`` by the 2026-11-13 exception."""
+    from explainer_engine.audio import sources
+    assert set(sources.YOUTUBE_CLAIM_RISK) == {"bbc_remarc"}
+    bbc = _item("b", {"type": "bbc_remarc", "commercial_use": False, "production": "verified", "status": "licensed"})
+    assert sfx_library.production_status(bbc) == "rejected"
+    assert sfx_library.production_status(_item("t", {"type": "bbc_remarc", "production": "verified"})) == "rejected"
+    cc0 = _item("c", {"type": "cc0", "commercial_use": True, "production": "verified", "status": "cc0"})
+    assert sfx_library.production_status(cc0) == "verified"
+    assert sfx_library.production_status(_item("o", {"status": "own_procedural"})) == "verified"
+    # a non-commercial item OUTSIDE the set keeps whatever it was stored as (not a general licence rule)
+    other = _item("n", {"type": "some_nc_licence", "commercial_use": False, "production": "verified"})
+    assert sfx_library.production_status(other) == "verified"
+    assert sfx_library.production_status(_item("q", {"status": "generated_terms_unverified"})) == "quarantine"
+
+
+def test_find_returns_no_bbc_id_from_the_real_library_and_the_1914_plan_resolves_without_one():
+    import json
+    from pathlib import Path
+    from explainer_engine.episode import sound_plan as SP
+    root = Path(__file__).resolve().parents[2]
+    lib = root / "assets" / "audio" / "library"
+    items = json.loads((lib / "manifest.json").read_text(encoding="utf-8"))["items"]
+    bbc = {i["id"] for i in items if i["licence"].get("type") == "bbc_remarc"}
+    assert len(bbc) >= 6 and not bbc & {i["id"] for i in sfx_library.find(lib)}
+    plan = json.loads((root / "episodes" / "ep_truce_1914" / "audio" / "sound_plan.json").read_text(encoding="utf-8"))
+    sources = SP.resolve(plan, lib)
+    assert all(s["status"] == "library" for s in sources.values())          # the same pools still have real takes
+    assert not any(set(s["ids"]) & bbc for s in sources.values())

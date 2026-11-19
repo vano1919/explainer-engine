@@ -25,14 +25,16 @@ FPS = 24
 
 
 # --- licences: the creator's scope (2026-11-13) ------------------------------------------------------------------------
-def test_licence_matters_for_music_only_and_bbc_is_the_recorded_sfx_exception():
-    assert S.verdict("bbc_remarc", use="sfx") == "verified"
+def test_licence_matters_for_music_and_bbc_is_no_longer_a_sfx_exception_for_a_monetised_master():
+    # D-139 (creator, plan approval 2026-11-19): the 2026-11-13 "yes, BBC too" card no longer covers a monetised master
+    assert S.SFX_EXCEPTIONS == {}
+    assert S.verdict("bbc_remarc", use="sfx") == "rejected"
     assert S.verdict("bbc_remarc", use="music") == "rejected"           # never a BBC take as background music
     assert S.verdict("bbc_remarc") == "rejected"                        # the default is the strict reading
     assert S.verdict("cc_by_sa", use="music") == "rejected" and S.verdict("cc_by_4", use="music") == "verified"
     rec = S.licence_record("bbc_remarc", creator="BBC", source_url="u", read_on="2026-11-13",
                            attribution_text=S.BBC_CREDIT, use="sfx")
-    assert rec["production"] == "verified" and "07:49" in rec["exception"] and rec["attribution_required"]
+    assert rec["production"] == "rejected" and "exception" not in rec and rec["attribution_required"]
 
 
 def test_a_bbc_pick_fetches_only_the_head_a_loop_needs(monkeypatch):
