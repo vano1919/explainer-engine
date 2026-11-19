@@ -29,6 +29,7 @@ from pathlib import Path
 
 from explainer_engine.core.errors import ConfigError, ContractError
 from explainer_engine.core.store import write_json_atomic, write_text_atomic
+from explainer_engine.episode import shot_state as SS
 from explainer_engine.episode import timing as TM
 from explainer_engine.qa import gates as G
 
@@ -191,6 +192,7 @@ def run_stage(ep: Episode, stage: str) -> dict:
     if stage not in STAGES:
         raise ConfigError(f"unknown stage {stage!r}: one of {', '.join(STAGES)} or G1..G10")
     rehearsal = check_before(ep, stage)
+    ss_resets = SS.check_all(ep.root)   # W3: a file that changed since it was bound resets every later shot state (plan 5.1)
     t0 = time.time()
     fp = fingerprint(ep, stage)
     try:
@@ -207,6 +209,7 @@ def run_stage(ep: Episode, stage: str) -> dict:
     rec = {"schema": RECORD_SCHEMA, "episode_id": ep.manifest.get("episode_id"), "stage": stage, "gate": GATES[stage],
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    SS.hook(ep.root, stage, rec, ss_resets, rehearsal)   # W3: reset notes + bind a passing stage's files (shot_state.py)
     write_json_atomic(record_path(ep.root, stage), rec)
     return rec
 
