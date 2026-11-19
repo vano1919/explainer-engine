@@ -46,7 +46,8 @@ def test_the_real_launch_pins_what_was_read_and_keeps_the_rest_open():
     m = lf["models"][lf["model"]]
     assert list(lf["models"]) == ["flux-3-image-klein"]                       # the 4B switch is dropped (the owner's card)
     assert m["repo"] == "black-forest-labs/flux-3-image-klein" and m["revision"] == REV and m["gated"] is True
-    assert lf["cap_usd"] == 0.6 and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4" in lf["cap_why"]   # the owner's own word
+    assert lf["cap_usd"] == 1.0 and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWB2qsAtWtX3jWU1XUQtHEm7" in lf["cap_why"]   # raised by the owner's own word, 19:40 UTC
+    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4" in lf["cap_why"]                             # the earlier $0.60 word stays on record
     assert lf["cards"][0]["gpu"] == "NVIDIA L40S" and lf["cards"][0]["usd_per_h"] == 1.09
     # the files read from the repo at the pinned revision: transformer + text_encoder + vae + the modular index, nothing else
     files = m["files"]
@@ -290,3 +291,29 @@ def test_a_wrong_git_blob_id_of_a_small_file_ends_l2_too(tmp_path, launch, sha_o
     gen = Gen()
     res = K.run(_batch(), tmp_path / "out", api=Api(), generate=gen, **_kw(tmp_path, launch))
     assert res["end"] == "L2_FAILED" and gen.calls == [] and any("git blob id mismatch" in p for p in res["steps"]["L2"]["problems"])
+
+
+def test_the_clock_and_the_cap_follow_what_create_set_and_fall_back_to_the_batch(tmp_path, launch, monkeypatch):
+    launch["cap_usd"] = 1.0                                                     # the recorded ceiling the owner gave (19:40 UTC)
+    monkeypatch.delenv("EE_PRICE", raising=False)
+    monkeypatch.delenv("EE_MAX_USD", raising=False)
+    monkeypatch.delenv("EE_CREATED", raising=False)
+    clock = lambda: 1000.0 + 600                                                # noqa: E731 - ten minutes after the pod was born
+    kw = dict(api=Api(), generate=Gen(), clock=clock, created=1000.0)
+    res = K.run(_batch(2), tmp_path / "a", **kw, **_kw(tmp_path, launch))      # nothing set by create: the batch's price 0.72 and cap 0.6
+    assert res["price_usd_per_h"] == 0.72 and res["price_source"] == "batch" and res["cap_usd"] == 0.6 and res["cap_source"] == "batch"
+    assert res["spent_usd"] == pytest.approx(0.12, abs=0.005)
+    monkeypatch.setenv("EE_PRICE", "1.50")                                      # create gave another, dearer card (G15)
+    monkeypatch.setenv("EE_MAX_USD", "1.0")                                     # and the raised ceiling: accepted, it is not above the recorded one
+    res = K.run(_batch(2), tmp_path / "b", **kw, **_kw(tmp_path, launch))
+    assert res["price_usd_per_h"] == 1.5 and res["price_source"] == "EE_PRICE" and res["cap_usd"] == 1.0 and res["cap_source"] == "EE_MAX_USD"
+    assert res["end"] != "REFUSED" and res["spent_usd"] == pytest.approx(600 / 3600 * 1.5, abs=0.005)   # the clock runs on EE_PRICE, not the batch price
+    monkeypatch.setenv("EE_PRICE", "2.69")                                      # a card whose worst-case setup alone is over $1.00: the pod refuses, on 2.69
+    gen = Gen()
+    res = K.run(_batch(2), tmp_path / "b2", api=Api(), generate=gen, clock=clock, created=1000.0, **_kw(tmp_path, launch))
+    assert res["end"] == "REFUSED" and res["price_usd_per_h"] == 2.69 and any("over the cap $1.0" in p for p in res["problems"]) and gen.calls == []
+    monkeypatch.setenv("EE_PRICE", "1.50")
+    monkeypatch.setenv("EE_MAX_USD", "1.01")                                    # one cent above the recorded ceiling: refused before any load
+    gen = Gen()
+    res = K.run(_batch(2), tmp_path / "c", api=Api(), generate=gen, clock=clock, created=1000.0, **_kw(tmp_path, launch))
+    assert res["end"] == "REFUSED" and any("EE_MAX_USD" in p for p in res["problems"]) and "L2" not in res["steps"] and gen.calls == []

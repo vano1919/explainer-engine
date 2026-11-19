@@ -77,8 +77,8 @@
   "container_disk_gb": 60,
   "container_disk_why": "~21 GB of diffusers weights (an estimate from the plan, not measured) plus pictures; no network volume",
   "weights_dir": "/workspace/dl",
-  "cap_usd": 0.6,
-  "cap_why": "the creator's card answer, 2026-11-19 18:10 UTC (decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv), confirmed to this thread by his own message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4 (18:13 UTC): $0.60 for the picture pod with FLUX 3 Klein; guard stop at it, PROBLEM at 80 % ($0.48). `create --max-usd` must be this same number. A ceiling, not a target.",
+  "cap_usd": 1.0,
+  "cap_why": "RAISED to $1.00 for any card by the creator's own message cmsg_01Hnu5zB86sjUj5GtTgaUkPWB2qsAtWtX3jWU1XUQtHEm7 (2026-11-19 19:40 UTC): one dollar limit, whichever card is ready. Earlier: the creator's card answer, 2026-11-19 18:10 UTC (decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv), confirmed to this thread by his own message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4 (18:13 UTC): $0.60 for the picture pod with FLUX 3 Klein; guard stop at it, PROBLEM at 80 % ($0.48). `create --max-usd` must be this same number. A ceiling, not a target.",
   "problem_at": 0.8,
   "max_pictures": 24,
   "minutes": {

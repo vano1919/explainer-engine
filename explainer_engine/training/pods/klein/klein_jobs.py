@@ -245,11 +245,17 @@ def run(batch: dict, out, *, api=None, download=None, generate=None, fetch=None,
     UPLOAD_FAILED, PICTURE_FAILED, REFUSED. ``generate(job, launch, refs, png)`` and ``fetch(spec, dest)`` are injectable."""
     launch, out = launch or LAUNCH, Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    price, cap, prefix = float(batch["price"]), float(batch["cap_usd"]), batch["prefix"]
+    prefix = batch["prefix"]
+    # the card `create` really got (G15: EE_PRICE is the dead-man's price of that card) and the ceiling the creator gave it
+    # (EE_MAX_USD, create --max-usd) win over the batch's own numbers; the batch values stand only when create set nothing
+    env_price, env_cap = (os.environ.get("EE_PRICE") or "").strip(), (os.environ.get("EE_MAX_USD") or "").strip()
+    price, price_src = (float(env_price), "EE_PRICE") if env_price else (float(batch["price"]), "batch")
+    cap, cap_src = (float(env_cap), "EE_MAX_USD") if env_cap else (float(batch["cap_usd"]), "batch")
     vol = vol_root or launch["weights_dir"]
     os.environ["EE_KLEIN_VOL_ROOT"] = str(vol)
     t0 = float(created if created is not None else (os.environ.get("EE_CREATED") or clock()))   # the pod's birth: boot and installs count
     rec = {"card": batch.get("card"), "model": launch.get("model"), "price_usd_per_h": price, "cap_usd": cap,
+           "price_source": price_src, "cap_source": cap_src,
            "launch_sha": launch_sha(launch), "steps": {}}
     spent = lambda: (clock() - t0) / 3600.0 * price      # noqa: E731 - measured pod seconds times the card price
 
