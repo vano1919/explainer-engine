@@ -188,6 +188,9 @@ VOICE_FLOOR_DBFS = -62.0      # nothing quieter is a voice
 VOICE_BELOW_PEAK_DB = 45.0    # nor anything this far under the clip's loudest frames
 WORD_MIN_VOICED_S = 0.08      # a word needs this much voiced time inside its own span (or half its length when shorter)
 MUTE_TAIL_AFTER_S = 0.25
+# Silero options, recorded so the numbers can be reproduced: faster-whisper's default speech_pad_ms=400 widens every span by 0.4 s
+# of silence on each side (S06_SH008 spans ran 0.00-1.10 over a line heard at 0.19-0.63), and padding is not voiced, so it is 0.
+SILERO_VAD_OPTIONS = {"threshold": 0.5, "min_silence_duration_ms": int(VOICE_GAP_S * 1000), "speech_pad_ms": 0}
 HALLUCINATED_TAIL_TOKENS = {"you", "you.", "thank", "thanks", "bye"}
 
 
@@ -229,7 +232,7 @@ def _silero_voiced_spans(audio, rate: int) -> list[tuple[float, float]] | None:
     if rate != 16000 and len(x):
         x = np.interp(np.arange(0, len(x) * 16000 / rate), np.arange(len(x)) * 16000 / rate, x).astype(np.float32)
     try:
-        ts = get_speech_timestamps(x, VadOptions(min_silence_duration_ms=int(VOICE_GAP_S * 1000)), sampling_rate=16000)
+        ts = get_speech_timestamps(x, VadOptions(**SILERO_VAD_OPTIONS), sampling_rate=16000)
     except Exception:
         return None
     return [(round(t["start"] / 16000, 3), round(t["end"] / 16000, 3)) for t in ts]
