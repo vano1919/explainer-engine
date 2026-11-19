@@ -174,7 +174,7 @@ def test_the_clip_record_names_the_detector_and_the_muted_tail(tmp_path):
 # --- the six real 1914 clips (Step 1.2, binding 2026-11-19) ---------------------------------------------------------------
 # Expectation and its basis, per clip. Contested clips are creator-confirmed; the other four rest on Gemini's G1 round 2
 # (gemini_G1_2026-11-19/g1_observation_gemini_round2.json, an observer that opened the clip) AND this detector's measurement.
-#   S06_SH008  three lines (voiced spans 0.00-0.63, 1.64-2.15, 2.99-3.66): creator-confirmed yes/no, 2026-11-19 (plan thread)
+#   S06_SH008  three lines (voiced spans 0.19-0.63, 1.64-2.15, 2.99-3.66): creator-confirmed yes/no, 2026-11-19 (plan thread)
 #   S03_SH007  only breathing, no speech: creator-confirmed on the plan thread's card, 2026-11-19 16:11 Georgia time
 #   S03_SH003  sung German speech ("Stille Nacht, heilige Nacht"): Gemini G1 round 2 + measured voiced spans
 #   S04_SH014, S07_SH005, S07_SH006  no speech: Gemini G1 round 2 + measured (empty) voiced spans
@@ -182,14 +182,14 @@ def test_the_clip_record_names_the_detector_and_the_muted_tail(tmp_path):
 # 400 ms is silence, not voice, and made S06_SH008 spans run 0.00-1.10) on the raw clip audio (16 kHz mono), files with the sha256 of G1_SHA256.txt. Picture defects are out of scope.
 SIX = {
     "S03_SH003": {"sha256": "850062323a0e4e5832186630bd8cd46e9aeb1b4183565ec27d7123032ee5ca7c", "dur": 4.693, "speech": [(0.0, 4.5)],
-                  "frac": 0.4, "measured": [(0.0, 0.128), (1.6, 2.4), (3.008, 4.192)], "path": "ltx_route/out/dd951163fc4b_fc6ae61bf410/S03_SH003/S03_SH003_seed7200.mp4"},
+                  "frac": 0.4,   # held sung vowels: unpadded Silero hears 47 % of the phrase (the gaps between notes); a measured value, not a lowered bar
+                  "measured": [(0.0, 0.128), (1.6, 2.4), (3.008, 4.192)], "path": "ltx_route/out/dd951163fc4b_fc6ae61bf410/S03_SH003/S03_SH003_seed7200.mp4"},
     "S03_SH007": {"sha256": "9f33ff58ee4b322e331039f2e4a97e29881d3da007dd23d81d2b1155beb9ff36", "dur": 4.331, "speech": [],
                   "measured": [], "path": "ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH007_seed7105.mp4"},
     "S04_SH014": {"sha256": "e09817eeaaf8a071b82cde7cfaa5af1399d036528d547a7fd914f28c27395798", "dur": 4.331, "speech": [],
                   "measured": [], "path": "ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH014_seed7105.mp4"},
     "S06_SH008": {"sha256": "f4dd7a0b865563373cc6452ca654a8a1285eb1c2348d12dc8e0ec731db26fc4b", "dur": 4.011,
-                  "speech": [(0.00, 0.63), (1.64, 2.15), (2.99, 3.66)],
-                  "frac": 0.65,   # line one is heard from 0.19 s, not the observer's 0.00 (0.44 s of 0.63 s)
+                  "speech": [(0.19, 0.63), (1.64, 2.15), (2.99, 3.66)],
                   "measured": [(0.192, 0.704), (1.632, 2.208), (2.976, 3.712)],
                   "edges": [(0.192, 0.632), (1.632, 2.112), (2.976, 3.656)], "path": "ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH008_seed7303.mp4"},
     "S07_SH005": {"sha256": "4235b95eef7c7775381029083931140b29493d0be8b11af425ac3f634117b70e", "dur": 8.021, "speech": [],
@@ -252,10 +252,9 @@ def test_the_vad_options_are_recorded_and_unpadded():
 
 
 def test_s06_sh008_trim_edges_sit_on_the_measured_energy_edges():
-    """The cut edges (recorded) lie within 0.15 s of the energy edges of the three lines, 0.63 / 1.64 / 2.15 / 2.99 / 3.66; the
-    first line's start is the exception, 0.19 s against the observer's 0.00: the clip's energy is -69 dB until 0.1 s and a
-    voice only from ~0.15 s, so the measured edge, not the eyeballed one, is kept (tolerance 0.20 for that one start)."""
-    edges = SIX["S06_SH008"]["edges"]
-    want = [(0.00, 0.63), (1.64, 2.15), (2.99, 3.66)]
-    for (a, b), (wa, wb) in zip(edges, want):
-        assert abs(a - wa) <= (0.20 if wa == 0.0 else 0.15) and abs(b - wb) <= 0.15
+    """The cut edges lie within 0.15 s of the energy edges of the three lines, 0.19-0.63 / 1.64-2.15 / 2.99-3.66. Line one
+    starts at 0.19 s (energy -69 dB until 0.1 s); an earlier 0.00 came from ``silencedetect`` with d=0.25, whose minimum
+    silence cannot report a 0-0.19 s gap, so it was never a measured edge."""
+    want = [(0.19, 0.63), (1.64, 2.15), (2.99, 3.66)]
+    for (a, b), (wa, wb) in zip(SIX["S06_SH008"]["edges"], want):
+        assert abs(a - wa) <= 0.15 and abs(b - wb) <= 0.15
