@@ -3746,3 +3746,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-19 — Blender grey-box blocking lab (W10, free)
+- New `explainer_engine/lab/blender_blocking.py` (lab only, imported by nothing in production): headless Blender (`bpy` 4.5, Cycles CPU) builds the three Truce 1914 places from the batch-2 prompt text (35 / 50 / 28 mm), capsule people 1.75 m with a facing cone, a faint 1 m floor grid, and renders start/end frames at 1920x1080 plus top-down plan views and a pixel-size report. Test: `tests/unit/test_blender_blocking.py` (layout rules always; one-frame render when `bpy` is installed).
+- Findings: the 50 mm / 100 m lane shot makes both people 47 px tall (6 px heads), so S04_SH008 needs a closer camera; the batch-1 officer pair moved position, height, scale and body angle at once (batch 2 fixes it). Results: HF `explainer-engine/demo_truce_1914/blocking_2026-11-19/`. Costs $0.
