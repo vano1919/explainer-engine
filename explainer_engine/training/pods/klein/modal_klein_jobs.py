@@ -441,7 +441,7 @@ if modal is not None:
     app = modal.App(_m.get("app_name") or "ee-klein-jobs")
     vol = modal.Volume.from_name(_m.get("volume") or "ee-weights", version=2, create_if_missing=True)   # the second account starts without one; a Volume is free until it holds data
     pip = LAUNCH.get("diffusers_version")
-    image = (modal.Image.from_registry(LAUNCH["image"], add_python="3.12")
+    image = (modal.Image.from_registry(LAUNCH["image"], add_python=f"{sys.version_info.major}.{sys.version_info.minor}")   # serialized functions need the same minor version as the launcher
              .run_commands(f'pip install -q "torch=={_m.get("torch_pin")}" --index-url {_m.get("torch_cuda_index")}',
                            f'echo "torch=={_m.get("torch_pin")}" > /root/constraints.txt',
                            f'PIP_CONSTRAINT=/root/constraints.txt pip install -q "huggingface_hub=={_m.get("hf_hub_pin")}" '
